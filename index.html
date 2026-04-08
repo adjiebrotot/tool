@@ -172,7 +172,7 @@
 
     .filter-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 0.9rem;
       align-items: end;
     }
@@ -235,6 +235,19 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1rem;
+    }
+
+    .domain-group-heading {
+      grid-column: 1 / -1;
+      margin: 0.35rem 0 -0.2rem;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .domain-group-heading.is-hidden {
+      display: none;
     }
 
     .tool-card {
@@ -553,10 +566,17 @@
           </div>
 
           <div class="field">
-            <label for="tagFilter">Tag</label>
-            <select id="tagFilter" name="tag" multiple size="4" aria-describedby="tagHelp">
+            <label for="domainFilter">Domain</label>
+            <select id="domainFilter" name="domain">
+              <option value="all">All domains</option>
             </select>
-            <small id="tagHelp" style="color: var(--muted);">Select one or more tags.</small>
+          </div>
+
+          <div class="field">
+            <label for="geographyFilter">Geography</label>
+            <select id="geographyFilter" name="geography">
+              <option value="all">All geographies</option>
+            </select>
           </div>
 
           <div class="field">
@@ -576,7 +596,9 @@
         To add a new tool later, duplicate one <article class="tool-card"> block below
         and update these fields only:
         - data-status
-        - data-tags
+        - data-domain
+        - data-geography
+        - data-tags (other tags only)
         - h3 title
         - subtitle paragraph
         - description paragraph
@@ -587,7 +609,9 @@
         <article
           class="tool-card"
           data-status="Active"
-          data-tags="Indonesia, Finance"
+          data-domain="Finance"
+          data-geography="Indonesia"
+          data-tags="Tax"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
@@ -603,9 +627,9 @@
             Deciding whether to file personal income tax separately (Pisah Harta) or jointly (Gabung Harta) should not be based on love. It’s mathematical. You’re better off spending your money on another romantic dinner than on extra tax.
           </p>
 
-          <ul class="tool-tags" aria-label="Tags">
-            <li>Indonesia</li>
+          <ul class="tool-tags" aria-label="Categories">
             <li>Finance</li>
+            <li>Indonesia</li>
           </ul>
 
           <div class="tool-footer">
@@ -616,7 +640,9 @@
         <article
           class="tool-card"
           data-status="Active"
-          data-tags="Universal, Finance"
+          data-domain="Finance"
+          data-geography="Universal"
+          data-tags="Financing"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
@@ -632,9 +658,9 @@
             I’m a believer in the saying: “The lower class uses debt, the middle class avoids debt, and the upper class uses debt.” However, there’s a big difference in how the lower and upper classes use debt. Use this tool to take on debt that actually benefits you. It won’t make you rich, but it might help ensure you don’t make banks even richer.
           </p>
 
-          <ul class="tool-tags" aria-label="Tags">
-            <li>Universal</li>
+          <ul class="tool-tags" aria-label="Categories">
             <li>Finance</li>
+            <li>Universal</li>
           </ul>
 
           <div class="tool-footer">
@@ -645,7 +671,9 @@
         <article
           class="tool-card"
           data-status="Coming soon"
-          data-tags="Universal, Finance"
+          data-domain="Finance"
+          data-geography="Universal"
+          data-tags="Property"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
@@ -661,9 +689,9 @@
             Is buying property always beneficial? Well, no. It’s a long-term financial decision that requires proper analysis. Sometimes renting wins; sometimes buying does. How do you know which one works for you? Use this tool.
           </p>
 
-          <ul class="tool-tags" aria-label="Tags">
-            <li>Universal</li>
+          <ul class="tool-tags" aria-label="Categories">
             <li>Finance</li>
+            <li>Universal</li>
           </ul>
 
           <div class="tool-footer">
@@ -674,7 +702,9 @@
         <article
           class="tool-card"
           data-status="Coming soon"
-          data-tags="Australia, Finance"
+          data-domain="Finance"
+          data-geography="Australia"
+          data-tags="Superannuation"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
@@ -690,9 +720,9 @@
             If you are a temporary resident of Australia (or intend to stay temporarily), your superannuation will be subject to the Departing Australia Superannuation Payment (DASP). While concessional contributions can reduce tax now, they may be taxed more heavily under DASP later. Does increasing your super balance still make sense? Use this tool.
           </p>
 
-          <ul class="tool-tags" aria-label="Tags">
-            <li>Australia</li>
+          <ul class="tool-tags" aria-label="Categories">
             <li>Finance</li>
+            <li>Australia</li>
           </ul>
 
           <div class="tool-footer">
@@ -727,18 +757,23 @@
     (function () {
       const cards = Array.from(document.querySelectorAll('.tool-card'));
       const statusFilter = document.getElementById('statusFilter');
-      const tagFilter = document.getElementById('tagFilter');
+      const domainFilter = document.getElementById('domainFilter');
+      const geographyFilter = document.getElementById('geographyFilter');
       const searchFilter = document.getElementById('searchFilter');
       const resultsSummary = document.getElementById('resultsSummary');
       const emptyState = document.getElementById('emptyState');
       const filtersForm = document.getElementById('filters');
+      const toolGrid = document.getElementById('toolGrid');
 
       const uniqueStatuses = [...new Set(cards.map(card => card.dataset.status.trim()))].sort((a, b) => {
         const order = { 'Active': 1, 'Coming soon': 2, 'Deprecated': 3 };
         return (order[a] || 99) - (order[b] || 99);
       });
 
-      const uniqueTags = [...new Set(cards.flatMap(card => card.dataset.tags.split(',').map(tag => tag.trim())).filter(Boolean))]
+      const uniqueDomains = [...new Set(cards.map(card => card.dataset.domain.trim()).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b));
+
+      const uniqueGeographies = [...new Set(cards.map(card => card.dataset.geography.trim()).filter(Boolean))]
         .sort((a, b) => a.localeCompare(b));
 
       uniqueStatuses.forEach(status => {
@@ -748,30 +783,80 @@
         statusFilter.appendChild(option);
       });
 
-      uniqueTags.forEach(tag => {
+      uniqueDomains.forEach(domain => {
         const option = document.createElement('option');
-        option.value = tag.toLowerCase();
-        option.textContent = tag;
-        tagFilter.appendChild(option);
+        option.value = domain.toLowerCase();
+        option.textContent = domain;
+        domainFilter.appendChild(option);
       });
+
+      uniqueGeographies.forEach(geography => {
+        const option = document.createElement('option');
+        option.value = geography.toLowerCase();
+        option.textContent = geography;
+        geographyFilter.appendChild(option);
+      });
+
+      cards.sort((a, b) => {
+        const domainCompare = a.dataset.domain.localeCompare(b.dataset.domain);
+        if (domainCompare !== 0) return domainCompare;
+        return a.querySelector('h3').textContent.localeCompare(b.querySelector('h3').textContent);
+      }).forEach(card => {
+        card.parentElement.appendChild(card);
+      });
+
+      let lastDomain = '';
+      cards.forEach(card => {
+        const domain = card.dataset.domain.trim();
+        if (domain !== lastDomain) {
+          const heading = document.createElement('h3');
+          heading.className = 'domain-group-heading';
+          heading.dataset.domainHeading = domain.toLowerCase();
+          heading.textContent = domain;
+          toolGrid.insertBefore(heading, card);
+          lastDomain = domain;
+        }
+      });
+
+      function updateDomainHeadingsVisibility() {
+        const headings = Array.from(toolGrid.querySelectorAll('.domain-group-heading'));
+        headings.forEach((heading, index) => {
+          const nextHeading = headings[index + 1];
+          let sibling = heading.nextElementSibling;
+          let hasVisibleCard = false;
+
+          while (sibling && sibling !== nextHeading) {
+            if (sibling.classList.contains('tool-card') && !sibling.classList.contains('is-hidden')) {
+              hasVisibleCard = true;
+              break;
+            }
+            sibling = sibling.nextElementSibling;
+          }
+
+          heading.classList.toggle('is-hidden', !hasVisibleCard);
+        });
+      }
 
       function applyFilters() {
         const selectedStatus = statusFilter.value;
-        const selectedTags = Array.from(tagFilter.selectedOptions).map(option => option.value);
+        const selectedDomain = domainFilter.value;
+        const selectedGeography = geographyFilter.value;
         const query = searchFilter.value.trim().toLowerCase();
 
         let visibleCount = 0;
 
         cards.forEach(card => {
           const status = card.dataset.status.trim().toLowerCase();
-          const tags = card.dataset.tags.split(',').map(tag => tag.trim().toLowerCase());
+          const domain = card.dataset.domain.trim().toLowerCase();
+          const geography = card.dataset.geography.trim().toLowerCase();
           const text = card.textContent.toLowerCase();
 
           const matchesStatus = selectedStatus === 'all' || status === selectedStatus;
-          const matchesTag = selectedTags.length === 0 || selectedTags.every(tag => tags.includes(tag));
+          const matchesDomain = selectedDomain === 'all' || domain === selectedDomain;
+          const matchesGeography = selectedGeography === 'all' || geography === selectedGeography;
           const matchesSearch = query === '' || text.includes(query);
 
-          const show = matchesStatus && matchesTag && matchesSearch;
+          const show = matchesStatus && matchesDomain && matchesGeography && matchesSearch;
           card.classList.toggle('is-hidden', !show);
 
           if (show) visibleCount += 1;
@@ -782,10 +867,12 @@
           : `Showing ${visibleCount} tools.`;
 
         emptyState.classList.toggle('is-visible', visibleCount === 0);
+        updateDomainHeadingsVisibility();
       }
 
       statusFilter.addEventListener('change', applyFilters);
-      tagFilter.addEventListener('change', applyFilters);
+      domainFilter.addEventListener('change', applyFilters);
+      geographyFilter.addEventListener('change', applyFilters);
       searchFilter.addEventListener('input', applyFilters);
       filtersForm.addEventListener('reset', () => {
         window.requestAnimationFrame(applyFilters);
