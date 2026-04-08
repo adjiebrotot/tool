@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Adjie Brotot Tools | Practical Finance & Decision-Making Tools</title>
+  <meta name="description" content="Adjie Brotot Tools is a collection of practical tools for everyday, well-calculated decisions — including tax, financing, property, and superannuation comparisons.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="canonical" href="https://tool.adjiebrotots.com/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Adjie Brotot Tools">
+  <meta property="og:description" content="Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions. Shared with the world, because why not.">
+  <meta property="og:url" content="https://tool.adjiebrotots.com/">
+  <meta property="og:site_name" content="Adjie Brotot Tools">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Adjie Brotot Tools">
+  <meta name="twitter:description" content="Practical tools for tax, finance, property, and superannuation decisions.">
+
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-soft: #f1f5f9;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #dbe4ee;
+      --border-strong: #cbd5e1;
+      --accent: #0f766e;
+      --accent-strong: #115e59;
+      --accent-soft: #ccfbf1;
+      --active-bg: #dcfce7;
+      --active-text: #166534;
+      --soon-bg: #fef3c7;
+      --soon-text: #92400e;
+      --deprecated-bg: #fee2e2;
+      --deprecated-text: #991b1b;
+      --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+      --radius-sm: 14px;
+      --max-width: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(13, 148, 136, 0.08), transparent 24%),
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 20%),
+        var(--bg);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .container {
+      width: min(calc(100% - 2rem), var(--max-width));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      padding: 2.5rem 0 1.25rem;
+    }
+
+    .hero {
+      padding: 2rem 0 1rem;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, rgba(15, 118, 110, 0.08), rgba(255, 255, 255, 0.95));
+      border: 1px solid rgba(15, 118, 110, 0.15);
+      border-radius: calc(var(--radius) + 4px);
+      box-shadow: var(--shadow);
+      padding: clamp(1.5rem, 4vw, 3rem);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    h1 {
+      margin: 1rem 0 0.8rem;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 68ch;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.7vw, 1.15rem);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .hero-chip {
+      border: 1px solid var(--border-strong);
+      background: rgba(255,255,255,0.85);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 0.5rem 0.9rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    main {
+      padding: 1.25rem 0 2.5rem;
+    }
+
+    .section-heading {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+      margin: 0 0 1rem;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: clamp(1.6rem, 2.8vw, 2rem);
+      letter-spacing: -0.02em;
+    }
+
+    .section-heading p {
+      margin: 0.2rem 0 0;
+      color: var(--muted);
+      max-width: 56ch;
+    }
+
+    .filter-panel {
+      margin: 1.5rem 0 1.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1rem;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.9rem;
+      align-items: end;
+    }
+
+    .field {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .field label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .field select,
+    .field input,
+    .filter-reset {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 14px;
+      border: 1px solid var(--border-strong);
+      padding: 0.8rem 0.95rem;
+      font: inherit;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .filter-reset {
+      cursor: pointer;
+      font-weight: 700;
+      background: var(--surface-soft);
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .filter-reset:hover,
+    .filter-reset:focus-visible,
+    .field select:focus-visible,
+    .field input:focus-visible,
+    .tool-link:focus-visible,
+    .skip-link:focus-visible {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.15);
+    }
+
+    .filter-reset:hover {
+      transform: translateY(-1px);
+      background: #fff;
+    }
+
+    .results-summary {
+      margin-top: 0.9rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 100%;
+    }
+
+    .tool-card.is-hidden {
+      display: none;
+    }
+
+    .tool-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.8rem;
+      align-items: flex-start;
+    }
+
+    .tool-title-group h3 {
+      margin: 0;
+      font-size: 1.28rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .tool-title-group p {
+      margin: 0.45rem 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .status-badge {
+      flex-shrink: 0;
+      border-radius: 999px;
+      padding: 0.42rem 0.78rem;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .status-active {
+      background: var(--active-bg);
+      color: var(--active-text);
+      border-color: #bbf7d0;
+    }
+
+    .status-coming-soon {
+      background: var(--soon-bg);
+      color: var(--soon-text);
+      border-color: #fde68a;
+    }
+
+    .status-deprecated {
+      background: var(--deprecated-bg);
+      color: var(--deprecated-text);
+      border-color: #fecaca;
+    }
+
+    .tool-description {
+      margin: 0;
+      color: var(--text);
+    }
+
+    .tool-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tool-tags li {
+      border-radius: 999px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 0.4rem 0.72rem;
+    }
+
+    .tool-footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .tool-meta {
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .tool-link,
+    .tool-link-disabled {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0.72rem 1rem;
+      border-radius: 14px;
+      font-weight: 800;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .tool-link {
+      background: var(--accent);
+      color: #fff;
+      border: 1px solid var(--accent);
+    }
+
+    .tool-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(15, 118, 110, 0.2);
+      background: var(--accent-strong);
+    }
+
+    .tool-link-disabled {
+      background: var(--surface-soft);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      cursor: not-allowed;
+    }
+
+    .empty-state {
+      margin-top: 1rem;
+      padding: 1.1rem 1.2rem;
+      background: var(--surface);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius);
+      color: var(--muted);
+      display: none;
+    }
+
+    .empty-state.is-visible {
+      display: block;
+    }
+
+    .notes {
+      margin-top: 2.5rem;
+      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.88));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+    }
+
+    .notes h2 {
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+      font-size: 1.35rem;
+    }
+
+    .notes p,
+    .notes li {
+      color: var(--muted);
+    }
+
+    .notes code {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.12rem 0.35rem;
+      font-size: 0.94em;
+      color: var(--text);
+    }
+
+    footer {
+      padding: 0 0 3rem;
+    }
+
+    .footer-card {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: calc(var(--radius) + 4px);
+      padding: 1.35rem;
+      box-shadow: var(--shadow);
+    }
+
+    .footer-card p {
+      margin: 0 0 1rem;
+      color: #cbd5e1;
+    }
+
+    .footer-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .footer-card a {
+      color: #99f6e4;
+      text-decoration: underline;
+      text-underline-offset: 0.16em;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 1rem;
+      top: -100%;
+      background: #fff;
+      color: var(--text);
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-strong);
+      z-index: 1000;
+    }
+
+    .skip-link:focus {
+      top: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .filter-grid,
+      .tool-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tool-top {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        width: min(calc(100% - 1rem), var(--max-width));
+      }
+
+      .site-header {
+        padding-top: 1rem;
+      }
+
+      .hero-meta {
+        margin-top: 1rem;
+      }
+
+      .tool-card,
+      .filter-panel,
+      .notes,
+      .footer-card {
+        padding: 1rem;
+      }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Adjie Brotot Tools",
+    "url": "https://tool.adjiebrotots.com/",
+    "description": "Tools that actually help adjiebrotot in everyday life to make intelligent, well-calculated decisions. Shared with the world, because why not.",
+    "inLanguage": "en",
+    "about": ["Finance", "Tax", "Property", "Superannuation"],
+    "mainEntity": {
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "WebApplication",
+            "name": "Pisah vs Gabung",
+            "url": "https://tool.adjiebrotots.com/pisahvsgabung/",
+            "description": "Compare Indonesian personal income tax under separate filing (Pisah Harta) vs joint filing (Gabung Harta).",
+            "applicationCategory": "FinanceApplication"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "WebApplication",
+            "name": "Finance vs Cash",
+            "url": "https://tool.adjiebrotots.com/financingvscash/",
+            "description": "Compare paying in full versus financing and investing unused cash at the risk-free rate.",
+            "applicationCategory": "FinanceApplication"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "WebApplication",
+            "name": "Rent vs Own Home",
+            "description": "Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.",
+            "applicationCategory": "FinanceApplication"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "item": {
+            "@type": "WebApplication",
+            "name": "Superannuation DASP Simulator",
+            "description": "Compare Australian superannuation salary sacrifice to assess whether it’s worthwhile when DASP applies.",
+            "applicationCategory": "FinanceApplication"
+          }
+        }
+      ]
+    }
+  }
+  </script>
+</head>
+<body itemscope itemtype="https://schema.org/WebPage">
+  <a class="skip-link" href="#tool-directory">Skip to tool directory</a>
+
+  <header class="site-header">
+    <div class="container hero">
+      <div class="hero-card">
+        <span class="eyebrow">Everyday decision tools</span>
+        <h1 itemprop="headline">Adjie Brotot Tools</h1>
+        <p itemprop="description">
+          Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions. Shared with the world, because why not.
+        </p>
+        <div class="hero-meta" aria-label="Highlights">
+          <span class="hero-chip">SEO-friendly</span>
+          <span class="hero-chip">Filter by tag &amp; status</span>
+          <span class="hero-chip">Simple to expand</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="container" aria-labelledby="tool-directory-heading" id="tool-directory">
+      <div class="section-heading">
+        <div>
+          <h2 id="tool-directory-heading">Tool directory</h2>
+          <p>Browse all current tools, upcoming ideas, and future releases from Adjie Brotot Tools.</p>
+        </div>
+      </div>
+
+      <section class="filter-panel" aria-labelledby="filter-heading">
+        <h2 id="filter-heading" style="margin:0 0 1rem; font-size:1.1rem;">Filter tools</h2>
+        <form class="filter-grid" id="filters" action="#tool-directory">
+          <div class="field">
+            <label for="statusFilter">Status</label>
+            <select id="statusFilter" name="status">
+              <option value="all">All statuses</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="tagFilter">Tag</label>
+            <select id="tagFilter" name="tag">
+              <option value="all">All tags</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="searchFilter">Keyword</label>
+            <input id="searchFilter" name="search" type="search" placeholder="Search title or description" autocomplete="off">
+          </div>
+
+          <div class="field">
+            <label for="resetFilters">Reset filters</label>
+            <button class="filter-reset" id="resetFilters" type="reset">Show everything</button>
+          </div>
+        </form>
+        <p class="results-summary" id="resultsSummary" aria-live="polite">Showing 4 tools.</p>
+      </section>
+
+      <!--
+        To add a new tool later, duplicate one <article class="tool-card"> block below
+        and update these fields only:
+        - data-status
+        - data-tags
+        - h3 title
+        - subtitle paragraph
+        - description paragraph
+        - visible tags list
+        - link/button
+      -->
+      <div class="tool-grid" id="toolGrid">
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-tags="Indonesia, Finance"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-top">
+            <div class="tool-title-group">
+              <h3 itemprop="name">🤑 Pisah vs Gabung</h3>
+              <p itemprop="abstract">Compare Indonesian personal income tax under separate filing (Pisah Harta) vs joint filing (Gabung Harta).</p>
+            </div>
+            <span class="status-badge status-active">Active</span>
+          </div>
+
+          <p class="tool-description" itemprop="description">
+            Deciding whether to file personal income tax separately (Pisah Harta) or jointly (Gabung Harta) should not be based on love. It’s mathematical. You’re better off spending your money on another romantic dinner than on extra tax.
+          </p>
+
+          <ul class="tool-tags" aria-label="Tags">
+            <li>Indonesia</li>
+            <li>Finance</li>
+          </ul>
+
+          <div class="tool-footer">
+            <span class="tool-meta">Category: Finance</span>
+            <a class="tool-link" href="https://tool.adjiebrotots.com/pisahvsgabung/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-tags="Universal, Finance"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-top">
+            <div class="tool-title-group">
+              <h3 itemprop="name">💸 Finance vs Cash</h3>
+              <p itemprop="abstract">Compare paying in full versus financing and investing unused cash at the risk-free rate.</p>
+            </div>
+            <span class="status-badge status-active">Active</span>
+          </div>
+
+          <p class="tool-description" itemprop="description">
+            I’m a believer in the saying: “The lower class uses debt, the middle class avoids debt, and the upper class uses debt.” However, there’s a big difference in how the lower and upper classes use debt. Use this tool to take on debt that actually benefits you. It won’t make you rich, but it might help ensure you don’t make banks even richer.
+          </p>
+
+          <ul class="tool-tags" aria-label="Tags">
+            <li>Universal</li>
+            <li>Finance</li>
+          </ul>
+
+          <div class="tool-footer">
+            <span class="tool-meta">Category: Finance</span>
+            <a class="tool-link" href="https://tool.adjiebrotots.com/financingvscash/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Coming soon"
+          data-tags="Universal, Finance"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-top">
+            <div class="tool-title-group">
+              <h3 itemprop="name">🏠 Rent vs Own Home</h3>
+              <p itemprop="abstract">Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.</p>
+            </div>
+            <span class="status-badge status-coming-soon">Coming soon</span>
+          </div>
+
+          <p class="tool-description" itemprop="description">
+            Is buying property always beneficial? Well, no. It’s a long-term financial decision that requires proper analysis. Sometimes renting wins; sometimes buying does. How do you know which one works for you? Use this tool.
+          </p>
+
+          <ul class="tool-tags" aria-label="Tags">
+            <li>Universal</li>
+            <li>Finance</li>
+          </ul>
+
+          <div class="tool-footer">
+            <span class="tool-meta">Category: Finance</span>
+            <span class="tool-link-disabled" aria-disabled="true">Coming soon</span>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Coming soon"
+          data-tags="Australia, Finance"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-top">
+            <div class="tool-title-group">
+              <h3 itemprop="name">🧓🏼 Superannuation DASP Simulator</h3>
+              <p itemprop="abstract">Compare Australian superannuation salary sacrifice to assess whether it’s worthwhile when DASP applies.</p>
+            </div>
+            <span class="status-badge status-coming-soon">Coming soon</span>
+          </div>
+
+          <p class="tool-description" itemprop="description">
+            If you are a temporary resident of Australia (or intend to stay temporarily), your superannuation will be subject to the Departing Australia Superannuation Payment (DASP). While concessional contributions can reduce tax now, they may be taxed more heavily under DASP later. Does increasing your super balance still make sense? Use this tool.
+          </p>
+
+          <ul class="tool-tags" aria-label="Tags">
+            <li>Australia</li>
+            <li>Finance</li>
+          </ul>
+
+          <div class="tool-footer">
+            <span class="tool-meta">Category: Finance</span>
+            <span class="tool-link-disabled" aria-disabled="true">Coming soon</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="empty-state" id="emptyState" role="status" aria-live="polite">
+        No tools match your current filters. Try clearing one or more filters.
+      </div>
+
+      <aside class="notes" aria-labelledby="maintain-heading">
+        <h2 id="maintain-heading">Maintenance notes</h2>
+        <p>
+          This page is built so search engines can read the tool content directly from the HTML, while the filters are handled with lightweight JavaScript.
+        </p>
+        <ul>
+          <li>To add a new tool, duplicate a card and update its title, subtitle, status, description, tags, and link.</li>
+          <li>Supported statuses are <code>Active</code>, <code>Coming soon</code>, and <code>Deprecated</code>.</li>
+          <li>Tags are read automatically from each card, so new tags will appear in the filter without extra setup.</li>
+          <li>For best SEO, also update the JSON-LD block in the <code>&lt;head&gt;</code> when adding major new tools.</li>
+        </ul>
+      </aside>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-card">
+        <p>
+          <strong>Disclaimer:</strong> This tool is provided on an “as is” and “as available” basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any decisions.
+        </p>
+        <p>
+          If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you’re interested, confused, or would like help learning how to use the tool, feel free to email me as well. I’m happy to help over a cup of coffee 🙂
+        </p>
+        <p>
+          If you need a similar or customised tool for your own use, don’t hesitate to get in touch, we can always work something out. I'm based in Perth and occasionally visit Jakarta.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const cards = Array.from(document.querySelectorAll('.tool-card'));
+      const statusFilter = document.getElementById('statusFilter');
+      const tagFilter = document.getElementById('tagFilter');
+      const searchFilter = document.getElementById('searchFilter');
+      const resultsSummary = document.getElementById('resultsSummary');
+      const emptyState = document.getElementById('emptyState');
+      const filtersForm = document.getElementById('filters');
+
+      const uniqueStatuses = [...new Set(cards.map(card => card.dataset.status.trim()))].sort((a, b) => {
+        const order = { 'Active': 1, 'Coming soon': 2, 'Deprecated': 3 };
+        return (order[a] || 99) - (order[b] || 99);
+      });
+
+      const uniqueTags = [...new Set(cards.flatMap(card => card.dataset.tags.split(',').map(tag => tag.trim())).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b));
+
+      uniqueStatuses.forEach(status => {
+        const option = document.createElement('option');
+        option.value = status.toLowerCase();
+        option.textContent = status;
+        statusFilter.appendChild(option);
+      });
+
+      uniqueTags.forEach(tag => {
+        const option = document.createElement('option');
+        option.value = tag.toLowerCase();
+        option.textContent = tag;
+        tagFilter.appendChild(option);
+      });
+
+      function applyFilters() {
+        const selectedStatus = statusFilter.value;
+        const selectedTag = tagFilter.value;
+        const query = searchFilter.value.trim().toLowerCase();
+
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+          const status = card.dataset.status.trim().toLowerCase();
+          const tags = card.dataset.tags.split(',').map(tag => tag.trim().toLowerCase());
+          const text = card.textContent.toLowerCase();
+
+          const matchesStatus = selectedStatus === 'all' || status === selectedStatus;
+          const matchesTag = selectedTag === 'all' || tags.includes(selectedTag);
+          const matchesSearch = query === '' || text.includes(query);
+
+          const show = matchesStatus && matchesTag && matchesSearch;
+          card.classList.toggle('is-hidden', !show);
+
+          if (show) visibleCount += 1;
+        });
+
+        resultsSummary.textContent = visibleCount === 1
+          ? 'Showing 1 tool.'
+          : `Showing ${visibleCount} tools.`;
+
+        emptyState.classList.toggle('is-visible', visibleCount === 0);
+      }
+
+      statusFilter.addEventListener('change', applyFilters);
+      tagFilter.addEventListener('change', applyFilters);
+      searchFilter.addEventListener('input', applyFilters);
+      filtersForm.addEventListener('reset', () => {
+        window.requestAnimationFrame(applyFilters);
+      });
+
+      applyFilters();
+    })();
+  </script>
+</body>
+</html>
