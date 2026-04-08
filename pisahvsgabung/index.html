@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PPh 21 — Pisah Harta vs Gabung Harta Scenario Explorer</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+  <style>
+    :root {
+      --bg:#0b1020;--panel:#11172a;--text:#e8eefc;--muted:#a8b4d4;
+      --border:rgba(255,255,255,0.08);--accent:#3b82f6;--accent2:#22c55e;--accent3:#ef4444;
+      --gold:#f59e0b;--input-bg:rgba(255,255,255,0.06);--card-bg:rgba(255,255,255,0.03);
+      --shadow:0 4px 24px rgba(0,0,0,0.4);
+      --line-a:#3b82f6;--line-b:#ef4444;--line-c:#22c55e;--line-d:#f59e0b;
+    }
+    body.light {
+      --bg:#f0f4ff;--panel:#ffffff;--text:#1a2340;--muted:#5a6a8a;
+      --border:rgba(0,0,0,0.10);--accent:#2563eb;--accent2:#16a34a;--accent3:#dc2626;
+      --gold:#d97706;--input-bg:rgba(0,0,0,0.04);--card-bg:rgba(255,255,255,0.85);
+      --shadow:0 4px 24px rgba(0,0,0,0.12);
+      --line-a:#1d4ed8;--line-b:#b91c1c;--line-c:#15803d;--line-d:#b45309;
+    }
+    *{box-sizing:border-box;min-width:0}
+    body{margin:0;font-family:'DM Sans',Inter,system-ui,-apple-system,sans-serif;color:var(--text);background:var(--bg);transition:background 0.25s,color 0.25s;overflow-x:hidden}
+    .container{max-width:1400px;margin:0 auto;padding:24px}
+    .card{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
+    .header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start}
+    h1{margin:0 0 8px;font-size:2rem;font-weight:800;letter-spacing:-0.02em}
+    h2{margin:0 0 10px;font-size:1.15rem;font-weight:700}
+    h3{margin:0 0 8px;font-size:0.92rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.06em}
+    p,.muted{color:var(--muted);line-height:1.55;margin:0}
+    .layout{display:grid;grid-template-columns:390px 1fr;gap:18px}
+    .controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden}
+    .ctrl-tabs{display:flex;border-bottom:1px solid var(--border)}
+    .ctrl-tab{flex:1;padding:13px 10px;text-align:center;font-weight:700;font-size:0.88rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s}
+    .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
+    .ctrl-panel{display:none;padding:16px 18px 20px}
+    .ctrl-panel.active{display:block}
+    .slider-block{padding:12px 0 16px;border-top:1px solid var(--border)}
+    .slider-block:first-of-type{border-top:none;padding-top:4px}
+    .slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:7px}
+    .slider-label{font-weight:700;font-size:0.9rem}
+    .slider-value{color:var(--gold);font-weight:700;font-variant-numeric:tabular-nums;font-size:0.9rem}
+    input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+    .help{color:var(--muted);font-size:0.82rem;margin-top:5px;line-height:1.4}
+    .field-row{display:flex;flex-direction:column;gap:5px;padding:10px 0 14px;border-top:1px solid var(--border)}
+    .field-row:first-of-type{border-top:none}
+    .field-label{font-weight:700;font-size:0.9rem}
+    .field-sub{color:var(--muted);font-size:0.8rem;line-height:1.35;margin-top:2px}
+    .num-input,.currency-input{background:var(--input-bg);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:0.92rem;font-weight:600;padding:8px 11px;width:100%;outline:none;transition:border-color 0.15s}
+    .num-input:focus,.currency-input:focus{border-color:var(--accent)}
+    .currency-wrap{position:relative}
+    .currency-wrap .prefix{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;font-size:0.88rem;pointer-events:none}
+    .currency-wrap .currency-input{padding-left:32px;font-variant-numeric:tabular-nums}
+    select.num-input{appearance:auto;cursor:pointer}
+    /* Fix dropdown contrast in dark/light mode */
+    .num-input option{background:#1a2340;color:#e8eefc}
+    body.light .num-input option{background:#ffffff;color:#1a2340}
+    .sel-input option{background:#1a2340;color:#e8eefc}
+    body.light .sel-input option{background:#ffffff;color:#1a2340}
+    .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+    .btn-theme:hover{border-color:var(--accent);color:var(--text)}
+    .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px 18px;border-top:1px solid var(--border)}
+    .btn-primary{background:var(--accent);color:white;border:none;border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:0.9rem;transition:opacity 0.15s}
+    .btn-primary:hover{opacity:0.85}
+    .btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:0.9rem;transition:border-color 0.15s}
+    .btn-secondary:hover{border-color:var(--accent)}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+    .metric{padding:18px 20px}
+    .metric .label{color:var(--muted);font-size:0.84rem;margin-bottom:6px}
+    .metric .value{font-size:1.4rem;font-weight:800;letter-spacing:-0.02em}
+    .metric .sub{color:var(--muted);font-size:0.78rem;margin-top:4px}
+    .chart-card{padding:20px}
+    .legend{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 14px;font-size:0.88rem}
+    .legend-item{display:flex;align-items:center;gap:8px}
+    .dot{width:12px;height:12px;border-radius:999px;flex-shrink:0}
+    .canvas-wrap{position:relative;width:100%;height:420px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,0.015),rgba(255,255,255,0))}
+    body.light .canvas-wrap{background:linear-gradient(180deg,rgba(0,0,0,0.015),rgba(0,0,0,0))}
+    .hover-box{margin-top:10px;color:var(--muted);font-size:0.88rem;min-height:22px}
+    .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+    .tile{padding:14px;background:var(--input-bg);border:1px solid var(--border);border-radius:14px}
+    .tile .label{color:var(--muted);font-size:0.82rem;margin-bottom:6px;line-height:1.3}
+    .tile .value{font-size:1.05rem;font-weight:800}
+    table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:0.88rem}
+    th,td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
+    th:first-child,td:first-child{text-align:left;white-space:normal}
+    th{color:var(--muted);font-size:0.82rem;font-weight:600}
+    .table-wrap{overflow:auto;max-height:400px}
+    tr:hover td{background:rgba(255,255,255,0.03)}
+    body.light tr:hover td{background:rgba(0,0,0,0.03)}
+    .detail-section{padding:20px;margin-top:18px}
+    .tab-btns{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+    .tab-btn{padding:8px 16px;border-radius:10px;border:1px solid var(--border);background:var(--input-bg);color:var(--muted);font-weight:700;font-size:0.84rem;cursor:pointer;transition:all 0.15s}
+    .tab-btn.active{background:var(--accent);color:white;border-color:var(--accent)}
+    .bottom{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+    .info-box{padding:16px 18px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:14px;margin-bottom:14px;font-size:0.85rem;line-height:1.55;color:var(--muted)}
+    .info-box strong{color:var(--text)}
+    .positive{color:var(--accent2)}
+    .negative{color:var(--accent3)}
+    .warning{margin:0 18px 14px;padding:10px 13px;border-radius:10px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);color:#fde8b1;display:none;font-size:0.84rem;line-height:1.5}
+    body.light .warning{background:rgba(245,158,11,0.08);color:#92400e}
+    .bracket-section{padding:10px 0 6px;border-top:1px solid var(--border)}
+    .bracket-section-label{font-weight:700;font-size:0.9rem;margin-bottom:10px}
+    .bracket-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px;align-items:center}
+    .bracket-row-header{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:4px}
+    .bracket-col-label{font-size:0.75rem;color:var(--muted);font-weight:600;text-align:center}
+    .num-input-sm{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.8rem;font-weight:600;padding:6px 8px;width:100%;outline:none;transition:border-color 0.15s;text-align:right}
+    .num-input-sm:focus{border-color:var(--accent)}
+    .num-input-sm:disabled{opacity:0.4;cursor:not-allowed}
+    .ptkp-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+    .ptkp-label-sm{font-size:0.82rem;color:var(--muted)}
+    /* Input mode toggle */
+    .input-mode-toggle{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+    .mode-btn{flex:1;padding:8px 6px;text-align:center;font-size:0.8rem;font-weight:700;cursor:pointer;background:transparent;border:none;color:var(--muted);transition:all 0.15s}
+    .mode-btn.active{background:var(--accent);color:#fff}
+    /* Position indicator */
+    .position-card{background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.18);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+    .position-card .pos-title{font-size:0.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+    .position-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:0.85rem}
+    .position-row .pos-label{color:var(--muted)}
+    .position-row .pos-val{font-weight:700;font-variant-numeric:tabular-nums}
+    /* Two-level header table */
+    .tbl-group-header{text-align:center}
+    @media(max-width:900px){.layout,.bottom,.metrics{grid-template-columns:1fr}.controls{position:static}.canvas-wrap{height:380px!important}.summary-grid{grid-template-columns:repeat(2,1fr)}.header{flex-direction:column;gap:10px;padding:16px 18px}.container{padding:16px}}
+    @media(max-width:600px){h1{font-size:1.35rem}.container{padding:10px}.summary-grid{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:1fr}.btn-row{flex-direction:column}.header{padding:14px 16px}}
+  </style>
+</head>
+<body>
+<div class="container">
+  <section class="header card">
+    <div>
+      <h1>🇮🇩 PPh — Pisah Harta vs Gabung Harta</h1>
+      <p>Compare Indonesian personal income tax under separate filing (Pisah Harta: K/0 + TK/0) vs joint filing (Gabung Harta: K/I/0). Adjust income split, dependents (tanggungan), and deductions (pengurang) to find which scheme saves more tax.</p>
+    </div>
+    <button id="themeToggle" class="btn-theme">☀️ Light</button>
+  </section>
+
+  <section class="layout">
+    <aside class="controls card">
+      <div class="ctrl-tabs">
+        <button class="ctrl-tab active" data-tab="inputs">📊 Inputs</button>
+        <button class="ctrl-tab" data-tab="advanced">📋 PTKP & Brackets</button>
+      </div>
+
+      <div class="ctrl-panel active" id="tab-inputs">
+        <div class="field-row">
+          <div class="field-label">Number of Dependents (Tanggungan)</div>
+          <select class="num-input sel-input" id="dependents">
+            <option value="0" selected>0 — no dependents</option>
+            <option value="1">1 — one child (anak)</option>
+            <option value="2">2 — two children (anak)</option>
+            <option value="3">3 — three children (anak)</option>
+          </select>
+          <div class="field-sub">Max 3 dependents (tanggungan). Adds Rp 4.5M per dependent to PTKP.</div>
+        </div>
+
+        <div class="field-row" style="border-top:1px solid var(--border);padding-top:12px;">
+          <div class="field-label" style="margin-bottom:8px;">Income Input Method</div>
+          <div class="input-mode-toggle">
+            <button class="mode-btn active" id="modeBtnTotal">Total + Split %</button>
+            <button class="mode-btn" id="modeBtnSplit">Husband + Wife</button>
+          </div>
+        </div>
+
+        <!-- Mode A: Total + Split % -->
+        <div id="modeTotal">
+          <div class="field-row">
+            <div class="field-label">Total Household Gross Salary</div>
+            <div class="currency-wrap">
+              <span class="prefix">Rp</span>
+              <input class="currency-input" id="totalSalaryInput" type="text" inputmode="numeric" value="500,000,000" />
+            </div>
+            <div class="field-sub">Combined annual gross salary of husband + wife.</div>
+          </div>
+          <div class="slider-block">
+            <div class="slider-head">
+              <div class="slider-label">Wife's share of income</div>
+              <div class="slider-value" id="splitValue">50%</div>
+            </div>
+            <input id="splitPct" type="range" min="0" max="100" step="1" value="50" />
+            <div class="help">Percentage of total household salary earned by wife. Husband earns the remainder.</div>
+          </div>
+        </div>
+
+        <!-- Mode B: Individual inputs -->
+        <div id="modeIndividual" style="display:none;">
+          <div class="field-row">
+            <div class="field-label">Husband's Gross Salary</div>
+            <div class="currency-wrap">
+              <span class="prefix">Rp</span>
+              <input class="currency-input" id="husbandSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
+            </div>
+            <div class="field-sub">Annual gross salary of the husband.</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Wife's Gross Salary</div>
+            <div class="currency-wrap">
+              <span class="prefix">Rp</span>
+              <input class="currency-input" id="wifeSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
+            </div>
+            <div class="field-sub">Annual gross salary of the wife.</div>
+          </div>
+          <div class="field-row" style="padding-top:4px">
+            <div class="field-sub">Combined: <strong id="combinedLabel">Rp 500,000,000</strong> &nbsp;|&nbsp; Wife share: <strong id="splitDerivedLabel">50.0%</strong></div>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Annual Deductions (Pengurang)</div>
+          <div class="currency-wrap">
+            <span class="prefix">Rp</span>
+            <input class="currency-input" id="deductionInput" type="text" inputmode="numeric" value="0" />
+          </div>
+          <div class="field-sub">Biaya jabatan, iuran pensiun, or other allowable deductions. Applied to gross income before PTKP. Split proportionally by each spouse's income share.</div>
+        </div>
+      </div>
+
+      <div class="ctrl-panel" id="tab-advanced">
+        <div class="bracket-section" style="border-top:none;padding-top:0">
+          <div class="bracket-section-label">PTKP Values (Rp)</div>
+          <div class="ptkp-row">
+            <div class="ptkp-label-sm">TK/0 — Single (base)</div>
+            <input class="num-input-sm" id="ptkpBase" type="text" inputmode="numeric" value="54,000,000" />
+          </div>
+          <div class="ptkp-row">
+            <div class="ptkp-label-sm">K — Married addition</div>
+            <input class="num-input-sm" id="ptkpMarried" type="text" inputmode="numeric" value="4,500,000" />
+          </div>
+          <div class="ptkp-row">
+            <div class="ptkp-label-sm">I — Working spouse addition</div>
+            <input class="num-input-sm" id="ptkpSpouse" type="text" inputmode="numeric" value="54,000,000" />
+          </div>
+          <div class="ptkp-row">
+            <div class="ptkp-label-sm">Per dependent (tanggungan)</div>
+            <input class="num-input-sm" id="ptkpDependent" type="text" inputmode="numeric" value="4,500,000" />
+          </div>
+          <div class="help" style="margin-top:4px">Computed PTKP → Pisah: <strong id="ptkpHDisplay">—</strong> (H) + <strong id="ptkpWDisplay">—</strong> (W) | Gabung: <strong id="ptkpGDisplay">—</strong></div>
+        </div>
+
+        <div class="bracket-section">
+          <div class="bracket-section-label">Tax Brackets (PPh 21)</div>
+          <div class="bracket-row-header">
+            <div class="bracket-col-label">From (Rp)</div>
+            <div class="bracket-col-label">To (Rp) <span style="font-size:0.68rem">(blank=∞)</span></div>
+            <div class="bracket-col-label">Rate (%)</div>
+          </div>
+          <div id="bracketsContainer"></div>
+          <div class="help" style="margin-top:6px">Edit thresholds and rates. "From" is auto-managed. Last bracket has no upper bound.</div>
+        </div>
+
+        <div class="bracket-section">
+          <div class="info-box" style="margin-top:8px">
+            <strong>Pisah Harta (K/0 + TK/0):</strong> Each spouse files their own SPT. Husband uses PTKP K/tanggungan, wife uses PTKP TK/0. Double bracket access.<br><br>
+            <strong>Gabung Harta (K/I/0):</strong> Combined income, single SPT. Uses PTKP K/I/tanggungan. One bracket ladder for all income.
+          </div>
+        </div>
+      </div>
+
+      <div class="warning" id="capWarning"></div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="resetBtn">↺ Reset to defaults</button>
+        <button class="btn-secondary" id="downloadBtn">⬇ Download CSV</button>
+      </div>
+    </aside>
+
+    <main>
+      <section class="metrics">
+        <div class="metric card">
+          <div class="label">Pisah Harta — Total Tax</div>
+          <div class="value" id="kpiPisah">—</div>
+          <div class="sub" id="kpiPisahRate"></div>
+        </div>
+        <div class="metric card">
+          <div class="label">Gabung Harta — Total Tax</div>
+          <div class="value" id="kpiGabung">—</div>
+          <div class="sub" id="kpiGabungRate"></div>
+        </div>
+        <div class="metric card">
+          <div class="label">Tax Savings (Cheaper Option)</div>
+          <div class="value" id="kpiSaving">—</div>
+          <div class="sub" id="kpiWinner"></div>
+        </div>
+      </section>
+
+      <!-- Position indicator -->
+      <section class="position-card" id="positionCard">
+        <div class="pos-title">📍 Your Current Tax Position</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;">
+          <div class="position-row"><span class="pos-label">PTKP (Pisah H)</span><span class="pos-val" id="posP_ptkpH">—</span></div>
+          <div class="position-row"><span class="pos-label">PTKP (Pisah W)</span><span class="pos-val" id="posP_ptkpW">—</span></div>
+          <div class="position-row"><span class="pos-label">PTKP (Gabung)</span><span class="pos-val" id="posG_ptkp">—</span></div>
+          <div class="position-row"><span class="pos-label">Max Marginal Bracket</span><span class="pos-val" id="posMarginBracket">—</span></div>
+          <div class="position-row"><span class="pos-label">Effective Rate — Pisah</span><span class="pos-val" id="posEffPisah">—</span></div>
+          <div class="position-row"><span class="pos-label">Effective Rate — Gabung</span><span class="pos-val" id="posEffGabung">—</span></div>
+        </div>
+      </section>
+
+      <section class="chart-card card" style="margin-bottom:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
+          <h2 style="margin:0;">Total Tax by Household Salary</h2>
+          <button class="btn-secondary" id="chartResetZoom" style="font-size:0.8rem;padding:6px 12px;">⟳ Reset zoom</button>
+        </div>
+        <p class="muted" style="font-size:0.84rem;margin-top:4px;">Shows total tax payable across salary range. The gap between lines = tax savings.</p>
+        <div class="legend" id="chartLegend"></div>
+        <div class="canvas-wrap">
+          <canvas id="chartCanvas"></canvas>
+        </div>
+        <div class="hover-box" id="hoverBox">Hover over the chart to inspect a salary point.</div>
+      </section>
+
+      <section class="chart-card card" style="margin-bottom:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
+          <h2 style="margin:0;">Tax Difference (Gabung − Pisah)</h2>
+          <button class="btn-secondary" id="chartResetZoom2" style="font-size:0.8rem;padding:6px 12px;">⟳ Reset zoom</button>
+        </div>
+        <p class="muted" style="font-size:0.84rem;margin-top:4px;">Positive = Gabung Harta pays more (Pisah Harta wins). Negative = Gabung Harta pays less (Gabung Harta wins).</p>
+        <div class="legend" id="chartLegend2"></div>
+        <div class="canvas-wrap">
+          <canvas id="chartCanvas2"></canvas>
+        </div>
+        <div class="hover-box" id="hoverBox2">Hover over the chart to inspect the difference.</div>
+      </section>
+
+      <section class="bottom">
+        <div class="card" style="padding:20px;">
+          <h3>Summary at Current Salary</h3>
+          <div class="summary-grid" id="summaryGrid"></div>
+        </div>
+        <div class="card" style="padding:20px;">
+          <h3>Crossover Analysis</h3>
+          <div id="crossoverInfo" style="font-size:0.9rem;line-height:1.6;"></div>
+        </div>
+      </section>
+
+      <section class="detail-section card">
+        <h3>Detailed Breakdown by Salary</h3>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-scenario="comparison">Comparison</button>
+          <button class="tab-btn" data-scenario="pisah">Pisah Harta Detail</button>
+          <button class="tab-btn" data-scenario="gabung">Gabung Harta Detail</button>
+        </div>
+        <div class="table-wrap" id="detailTable"></div>
+      </section>
+    </main>
+  </section>
+</div>
+
+<script>
+(function(){
+
+const $ = id => document.getElementById(id);
+
+/* ── Currency input formatting ── */
+function formatCurrencyInput(el) {
+  const raw = el.value.replace(/[^0-9]/g, '');
+  const num = parseInt(raw) || 0;
+  el.value = num === 0 ? '0' : num.toLocaleString('en-US');
+}
+function parseCurrencyInput(el) {
+  return parseInt(el.value.replace(/[^0-9]/g, '')) || 0;
+}
+
+/* ── Formatters — uses M (million) and B (billion) consistently ── */
+const fmt = {
+  idr(v, compact=false){
+    const n=Number(v||0);const abs=Math.abs(n);const sign=n<0?'−':'';
+    if(compact&&abs>=1e12) return sign+'Rp '+(abs/1e12).toFixed(2)+'T';
+    if(compact&&abs>=1e9) return sign+'Rp '+(abs/1e9).toFixed(2)+'B';
+    if(compact&&abs>=1e6) return sign+'Rp '+(abs/1e6).toFixed(1)+'M';
+    if(compact&&abs>=1e3) return sign+'Rp '+(abs/1e3).toFixed(0)+'K';
+    return sign+'Rp '+Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0});
+  },
+  pct(v,d=2){const n=Number(v||0);const p=Math.abs(n)<=1?n*100:n;return p.toFixed(d)+'%';},
+  num(v,d=0){return Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});},
+  salaryLabel(mio){
+    if(mio>=1000) return 'Rp '+(mio/1000).toFixed(mio%1000===0?0:1)+'B';
+    return 'Rp '+fmt.num(mio)+'M';
+  }
+};
+
+/* ── Tax constants (defaults — overridden by PTKP editor) ── */
+const PTKP_BASE_DEFAULT    = 54000000;
+const PTKP_MARRIED_DEFAULT = 4500000;
+const PTKP_SPOUSE_DEFAULT  = 54000000;
+const PTKP_DEPENDENT_DEFAULT = 4500000;
+
+const BRACKETS_DEFAULT = [
+  { from:0,         to: 60000000,    rate: 0.05 },
+  { from:60000001,  to: 250000000,   rate: 0.15 },
+  { from:250000001, to: 500000000,   rate: 0.25 },
+  { from:500000001, to: 5000000000,  rate: 0.30 },
+  { from:5000000001,to: null,        rate: 0.35 },
+];
+
+function calcTaxProgressive(income) {
+  if (income <= 0) return 0;
+  let tax = 0;
+  let remaining = income;
+  let prev = 0;
+  for (const b of S.brackets) {
+    const top = b.to !== null ? b.to : Infinity;
+    const width = top - prev;
+    const chunk = Math.min(remaining, width);
+    tax += chunk * b.rate;
+    remaining -= chunk;
+    prev = top;
+    if (remaining <= 0) break;
+  }
+  return tax;
+}
+
+// Marginal bracket rate for a given taxable income
+function marginalBracket(income) {
+  if (income <= 0) return S.brackets[0];
+  for (let i = S.brackets.length - 1; i >= 0; i--) {
+    if (income > S.brackets[i].from) return S.brackets[i];
+  }
+  return S.brackets[0];
+}
+
+/* ── DEFAULTS ── */
+const DEFAULTS = {
+  dependents: 0,
+  splitPct: 50,
+  totalSalary: 500000000,
+  deduction: 0,
+  inputMode: 'total', // 'total' or 'individual'
+  husbandSalary: 250000000,
+  wifeSalary: 250000000,
+  ptkpBase: PTKP_BASE_DEFAULT,
+  ptkpMarried: PTKP_MARRIED_DEFAULT,
+  ptkpSpouse: PTKP_SPOUSE_DEFAULT,
+  ptkpDependent: PTKP_DEPENDENT_DEFAULT,
+  brackets: JSON.parse(JSON.stringify(BRACKETS_DEFAULT)),
+};
+
+let S = JSON.parse(JSON.stringify(DEFAULTS));
+
+const els = {
+  dependents: $('dependents'),
+  splitPct: $('splitPct'),
+  totalSalaryInput: $('totalSalaryInput'),
+  husbandSalaryInput: $('husbandSalaryInput'),
+  wifeSalaryInput: $('wifeSalaryInput'),
+  deductionInput: $('deductionInput'),
+  resetBtn: $('resetBtn'),
+  downloadBtn: $('downloadBtn'),
+  bracketsContainer: $('bracketsContainer'),
+  ptkpBase: $('ptkpBase'),
+  ptkpMarried: $('ptkpMarried'),
+  ptkpSpouse: $('ptkpSpouse'),
+  ptkpDependent: $('ptkpDependent'),
+};
+
+let latestRows = [];
+let activeTab = 'comparison';
+let chartInstance = null;
+let chartInstance2 = null;
+
+function cssVar(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
+
+function readInputs(){
+  S.dependents = parseInt(els.dependents.value)||0;
+  S.ptkpBase      = parseInt(els.ptkpBase.value.replace(/[^0-9]/g,''))||PTKP_BASE_DEFAULT;
+  S.ptkpMarried   = parseInt(els.ptkpMarried.value.replace(/[^0-9]/g,''))||PTKP_MARRIED_DEFAULT;
+  S.ptkpSpouse    = parseInt(els.ptkpSpouse.value.replace(/[^0-9]/g,''))||PTKP_SPOUSE_DEFAULT;
+  S.ptkpDependent = parseInt(els.ptkpDependent.value.replace(/[^0-9]/g,''))||PTKP_DEPENDENT_DEFAULT;
+
+  if (S.inputMode === 'individual') {
+    S.husbandSalary = Math.max(0, parseCurrencyInput(els.husbandSalaryInput));
+    S.wifeSalary = Math.max(0, parseCurrencyInput(els.wifeSalaryInput));
+    S.totalSalary = S.husbandSalary + S.wifeSalary;
+    S.splitPct = S.totalSalary > 0 ? Math.round((S.wifeSalary / S.totalSalary) * 100) : 50;
+    // Update derived labels
+    $('combinedLabel').textContent = 'Rp ' + S.totalSalary.toLocaleString('en-US');
+    $('splitDerivedLabel').textContent = (S.totalSalary > 0 ? (S.wifeSalary/S.totalSalary*100).toFixed(1) : '50.0') + '%';
+  } else {
+    S.splitPct = Math.max(0,Math.min(100,parseFloat(els.splitPct.value)||0));
+    S.totalSalary = Math.max(0, parseCurrencyInput(els.totalSalaryInput));
+  }
+  S.deduction = Math.max(0, parseCurrencyInput(els.deductionInput));
+}
+
+function refreshSliderLabels(){
+  const sv=$('splitValue');
+  if(sv) sv.textContent = S.splitPct + '%';
+}
+
+/* ── Compute: sweep salary range, also compute current point ── */
+function computeModel() {
+  const dep = S.dependents;
+  const wifePct = S.splitPct / 100;
+  const husbandPct = 1 - wifePct;
+
+  // Use live PTKP values from S
+  const ptkpHusband_pisah = S.ptkpBase + S.ptkpMarried + dep * S.ptkpDependent;
+  const ptkpWife_pisah    = S.ptkpBase;
+  const ptkpGabung        = S.ptkpBase + S.ptkpMarried + S.ptkpSpouse + dep * S.ptkpDependent;
+
+  // Update PTKP display in advanced tab
+  if($('ptkpHDisplay')) $('ptkpHDisplay').textContent = fmt.idr(ptkpHusband_pisah,true);
+  if($('ptkpWDisplay')) $('ptkpWDisplay').textContent = fmt.idr(ptkpWife_pisah,true);
+  if($('ptkpGDisplay')) $('ptkpGDisplay').textContent = fmt.idr(ptkpGabung,true);
+
+  // Deduction as a ratio of gross (so it scales across the salary sweep)
+  const deductionRate = S.totalSalary > 0 ? S.deduction / S.totalSalary : 0;
+
+  const rows = [];
+  const salaries = [];
+  for(let s=100;s<=1000;s+=20) salaries.push(s);
+  for(let s=1100;s<=5000;s+=100) salaries.push(s);
+
+  for (const salMio of salaries) {
+    const totalGross = salMio * 1e6;
+    const totalDeduction = totalGross * deductionRate;
+    const netIncome = Math.max(0, totalGross - totalDeduction);
+    const wifeNet = netIncome * wifePct;
+    const husbandNet = netIncome * husbandPct;
+
+    const taxableH_p = Math.max(0, husbandNet - ptkpHusband_pisah);
+    const taxableW_p = Math.max(0, wifeNet - ptkpWife_pisah);
+    const taxH_p = calcTaxProgressive(taxableH_p);
+    const taxW_p = calcTaxProgressive(taxableW_p);
+    const totalTax_p = taxH_p + taxW_p;
+
+    const taxableG = Math.max(0, netIncome - ptkpGabung);
+    const totalTax_g = calcTaxProgressive(taxableG);
+    const taxH_g = netIncome > 0 ? totalTax_g * (husbandNet / netIncome) : 0;
+    const taxW_g = netIncome > 0 ? totalTax_g * (wifeNet / netIncome) : 0;
+
+    const diff = totalTax_g - totalTax_p;
+
+    rows.push({
+      salary: salMio, totalGross, totalDeduction, netIncome,
+      pisahTax: totalTax_p, gabungTax: totalTax_g, diff,
+      pisahRate: totalGross > 0 ? totalTax_p / totalGross : 0,
+      gabungRate: totalGross > 0 ? totalTax_g / totalGross : 0,
+      husbandGross: totalGross * husbandPct, wifeGross: totalGross * wifePct,
+      husbandNet, wifeNet,
+      ptkpH: ptkpHusband_pisah, ptkpW: ptkpWife_pisah,
+      taxableH: taxableH_p, taxableW: taxableW_p,
+      taxH: taxH_p, taxW: taxW_p,
+      ptkpGabung, taxableGabung: taxableG,
+      taxH_g, taxW_g,
+    });
+  }
+
+  // Crossover interpolation
+  let crossover = null;
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i-1].diff * rows[i].diff < 0) {
+      const r0=rows[i-1], r1=rows[i];
+      crossover = r0.salary + (r1.salary - r0.salary) * Math.abs(r0.diff) / (Math.abs(r0.diff) + Math.abs(r1.diff));
+      break;
+    }
+  }
+
+  // Current salary exact computation
+  const currentNet = Math.max(0, S.totalSalary - S.deduction);
+  const curWifeNet = currentNet * wifePct;
+  const curHusbandNet = currentNet * husbandPct;
+
+  const curTxH_p = Math.max(0, curHusbandNet - ptkpHusband_pisah);
+  const curTxW_p = Math.max(0, curWifeNet - ptkpWife_pisah);
+  const curTaxH_p = calcTaxProgressive(curTxH_p);
+  const curTaxW_p = calcTaxProgressive(curTxW_p);
+  const curTaxP = curTaxH_p + curTaxW_p;
+
+  const curTxG = Math.max(0, currentNet - ptkpGabung);
+  const curTaxG = calcTaxProgressive(curTxG);
+
+  // Marginal bracket: whichever of H/W/Gabung has the highest taxable income
+  const maxTaxableForMarginal = Math.max(curTxH_p, curTxW_p, curTxG);
+  const marginal = marginalBracket(maxTaxableForMarginal);
+
+  const current = {
+    totalGross: S.totalSalary, totalDeduction: S.deduction, netIncome: currentNet,
+    pisahTax: curTaxP, gabungTax: curTaxG, diff: curTaxG - curTaxP,
+    pisahRate: S.totalSalary > 0 ? curTaxP / S.totalSalary : 0,
+    gabungRate: S.totalSalary > 0 ? curTaxG / S.totalSalary : 0,
+    husbandGross: S.totalSalary * husbandPct, wifeGross: S.totalSalary * wifePct,
+    husbandNet: curHusbandNet, wifeNet: curWifeNet,
+    ptkpH: ptkpHusband_pisah, ptkpW: ptkpWife_pisah, ptkpGabung,
+    taxableH: curTxH_p, taxableW: curTxW_p, taxableGabung: curTxG,
+    marginalRate: marginal.rate,
+    marginalBracketFrom: marginal.from,
+  };
+
+  return { rows, summary: { current, crossover, ptkpH: ptkpHusband_pisah, ptkpW: ptkpWife_pisah, ptkpGabung } };
+}
+
+/* ── Charts ── */
+function buildLegend(id, series){
+  const el=$(id);el.innerHTML='';
+  series.forEach(s=>{
+    const item=document.createElement('div');item.className='legend-item';
+    item.innerHTML=`<span class="dot" style="background:${cssVar(s.colorVar)}"></span><span>${s.label}</span>`;
+    el.appendChild(item);
+  });
+}
+
+function renderMainChart(rows){
+  const series=[
+    {key:'pisahTax',colorVar:'--line-a',label:'Pisah Harta (K/0 + TK/0)'},
+    {key:'gabungTax',colorVar:'--line-b',label:'Gabung Harta (K/I/0)'},
+  ];
+  buildLegend('chartLegend',series);
+  const labels=rows.map(r=>r.salary);
+  const datasets=series.map(s=>({
+    label:s.label,data:rows.map(r=>r[s.key]??0),
+    borderColor:cssVar(s.colorVar),backgroundColor:cssVar(s.colorVar)+'22',
+    borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.3,fill:false,
+  }));
+  const gridColor=cssVar('--border'),mutedColor=cssVar('--muted'),textColor=cssVar('--text');
+  const config={
+    type:'line',data:{labels,datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,animation:{duration:300},
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            title:ctx=>'Salary '+fmt.salaryLabel(ctx[0].label),
+            label:ctx=>'  '+ctx.dataset.label.split('(')[0].trim()+': '+fmt.idr(ctx.parsed.y,true),
+          },
+          backgroundColor:'#1e1e2e',titleColor:textColor,bodyColor:mutedColor,borderColor:gridColor,borderWidth:1,padding:10,
+          onAfterBody:(items)=>{
+            if(!items.length)return;
+            const parts=items.map(i=>i.dataset.label.split('(')[0].trim()+': '+fmt.idr(i.parsed.y,true)).join('  |  ');
+            $('hoverBox').textContent='Salary '+fmt.salaryLabel(items[0].label)+'  —  '+parts;
+          }
+        },
+        zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:0.08},pinch:{enabled:true},mode:'x'}},
+      },
+      scales:{
+        x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{size:11},callback:(v,i)=>fmt.salaryLabel(labels[i])},grid:{color:gridColor},title:{display:true,text:'Total Household Salary',color:mutedColor}},
+        y:{ticks:{color:mutedColor,font:{size:11},callback:v=>fmt.idr(v,true)},grid:{color:gridColor},title:{display:true,text:'Total Tax Payable',color:mutedColor}},
+      }
+    }
+  };
+  if(chartInstance){
+    chartInstance.data.labels=labels;chartInstance.data.datasets=datasets;
+    chartInstance.options.scales.x.ticks.color=mutedColor;chartInstance.options.scales.x.grid.color=gridColor;
+    chartInstance.options.scales.y.ticks.color=mutedColor;chartInstance.options.scales.y.grid.color=gridColor;
+    chartInstance.update('none');
+  } else {
+    chartInstance=new Chart($('chartCanvas'),config);
+  }
+}
+
+function renderDiffChart(rows){
+  buildLegend('chartLegend2',[
+    {colorVar:'--line-a',label:'Pisah Harta wins (positive)'},
+    {colorVar:'--line-b',label:'Gabung Harta wins (negative)'},
+  ]);
+  const labels=rows.map(r=>r.salary);
+  const diffData=rows.map(r=>r.diff);
+  const gridColor=cssVar('--border'),mutedColor=cssVar('--muted'),textColor=cssVar('--text');
+  const config={
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Pisah wins',data:diffData.map(d=>d>=0?d:null),borderColor:cssVar('--line-a'),backgroundColor:cssVar('--line-a')+'22',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.3,fill:false,spanGaps:false},
+      {label:'Gabung wins',data:diffData.map(d=>d<0?d:null),borderColor:cssVar('--line-b'),backgroundColor:cssVar('--line-b')+'22',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.3,fill:false,spanGaps:false},
+      {label:'Full line',data:diffData,borderColor:cssVar('--muted')+'44',borderWidth:1,pointRadius:0,tension:0.3,fill:false,borderDash:[4,4]},
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,animation:{duration:300},
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            title:ctx=>'Salary '+fmt.salaryLabel(ctx[0].label),
+            label:ctx=>{
+              if(ctx.datasetIndex===2)return null;
+              const v=ctx.parsed.y;if(v==null)return null;
+              return v>=0?'  Pisah saves: '+fmt.idr(v,true):'  Gabung saves: '+fmt.idr(-v,true);
+            },
+          },
+          filter:item=>item.datasetIndex<2&&item.parsed.y!=null,
+          backgroundColor:'#1e1e2e',titleColor:textColor,bodyColor:mutedColor,borderColor:gridColor,borderWidth:1,padding:10,
+          onAfterBody:(items)=>{
+            if(!items.length)return;
+            const v=rows[items[0].dataIndex]?.diff||0;
+            $('hoverBox2').textContent='Salary '+fmt.salaryLabel(items[0].label)+'  —  '+(v>=0?'Pisah Harta saves '+fmt.idr(v,true):'Gabung Harta saves '+fmt.idr(-v,true));
+          }
+        },
+        zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:0.08},pinch:{enabled:true},mode:'x'}},
+      },
+      scales:{
+        x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{size:11},callback:(v,i)=>fmt.salaryLabel(labels[i])},grid:{color:gridColor}},
+        y:{ticks:{color:mutedColor,font:{size:11},callback:v=>fmt.idr(v,true)},grid:{color:gridColor},title:{display:true,text:'Tax Difference (positive = Pisah wins)',color:mutedColor}},
+      }
+    }
+  };
+  if(chartInstance2){
+    chartInstance2.data.labels=labels;chartInstance2.data.datasets=config.data.datasets;
+    chartInstance2.options.scales.x.ticks.color=mutedColor;chartInstance2.options.scales.x.grid.color=gridColor;
+    chartInstance2.options.scales.y.ticks.color=mutedColor;chartInstance2.options.scales.y.grid.color=gridColor;
+    chartInstance2.update('none');
+  } else {
+    chartInstance2=new Chart($('chartCanvas2'),config);
+  }
+}
+
+function updateKPIs(state){
+  const c=state.summary.current;
+  $('kpiPisah').textContent=fmt.idr(c.pisahTax,true);
+  $('kpiPisahRate').textContent='Effective Rate: '+fmt.pct(c.pisahRate);
+  $('kpiGabung').textContent=fmt.idr(c.gabungTax,true);
+  $('kpiGabungRate').textContent='Effective Rate: '+fmt.pct(c.gabungRate);
+
+  const diff=c.diff;
+  const absDiff=Math.abs(diff);
+  if(absDiff<1000){
+    $('kpiSaving').textContent='≈ Rp 0';
+    $('kpiSaving').className='value';
+    $('kpiWinner').textContent='No significant difference';
+  } else if(diff>0){
+    $('kpiSaving').textContent=fmt.idr(absDiff,true);
+    $('kpiSaving').className='value positive';
+    $('kpiWinner').textContent='✅ Pisah Harta wins';
+  } else {
+    $('kpiSaving').textContent=fmt.idr(absDiff,true);
+    $('kpiSaving').className='value negative';
+    $('kpiWinner').textContent='✅ Gabung Harta wins';
+  }
+
+  // Position indicator
+  $('posP_ptkpH').textContent = fmt.idr(c.ptkpH, true);
+  $('posP_ptkpW').textContent = fmt.idr(c.ptkpW, true);
+  $('posG_ptkp').textContent  = fmt.idr(c.ptkpGabung, true);
+  const margRate = (c.marginalRate * 100).toFixed(0) + '%';
+  const margFrom = fmt.idr(c.marginalBracketFrom, true);
+  $('posMarginBracket').textContent = margRate + ' (from ' + margFrom + ')';
+  $('posEffPisah').textContent  = fmt.pct(c.pisahRate);
+  $('posEffGabung').textContent = fmt.pct(c.gabungRate);
+}
+
+function updateSummary(state){
+  const c=state.summary.current;
+  const s=state.summary;
+  const grid=$('summaryGrid');
+  const tiles=[
+    {label:'PTKP Husband (Pisah)',value:fmt.idr(s.ptkpH,true)},
+    {label:'PTKP Wife (Pisah)',value:fmt.idr(s.ptkpW,true)},
+    {label:'Total PTKP Pisah',value:fmt.idr(s.ptkpH+s.ptkpW,true)},
+    {label:'PTKP Gabung (K/I/'+S.dependents+')',value:fmt.idr(s.ptkpGabung,true)},
+    {label:'Gross Salary',value:fmt.idr(c.totalGross,true)},
+    {label:'Deductions (Pengurang)',value:fmt.idr(c.totalDeduction,true)},
+    {label:'Net Income (after deductions)',value:fmt.idr(c.netIncome,true)},
+    {label:'Husband Net Income',value:fmt.idr(c.husbandNet,true)},
+    {label:'Wife Net Income',value:fmt.idr(c.wifeNet,true)},
+  ];
+  grid.innerHTML=tiles.map(t=>`<div class="tile"><div class="label">${t.label}</div><div class="value">${t.value}</div></div>`).join('');
+
+  const info=$('crossoverInfo');
+  if(S.splitPct===0 || S.splitPct===100){
+    info.innerHTML=`<strong>With ${S.splitPct}% wife income:</strong><br>The non-earning spouse's PTKP is entirely wasted under Pisah Harta. Gabung Harta consolidates all PTKP into one filing, making it <span class="negative">beneficial</span> at this split.<br><br>Adjust the income split to see where Pisah Harta becomes advantageous due to double bracket access.`;
+  } else if(s.crossover){
+    info.innerHTML='<strong>Crossover point:</strong> ~'+fmt.salaryLabel(Math.round(s.crossover))+'<br><br>Below this salary, <span class="negative">Gabung Harta (K/I/'+S.dependents+')</span> may pay less because the higher combined PTKP is utilized more efficiently relative to income.<br><br>Above this salary, <span class="positive">Pisah Harta (K/'+S.dependents+' + TK/0)</span> wins because each spouse accesses lower tax brackets independently.';
+  } else {
+    const last=state.rows[state.rows.length-1];
+    if(last.diff>=0){
+      info.innerHTML='<strong>No crossover found in range.</strong><br><br>At this income split ('+S.splitPct+'%), <span class="positive">Pisah Harta</span> is better (or equal) across the entire salary range. Both schemes have the same total PTKP at even splits, but Pisah Harta benefits from dual bracket access.';
+    } else {
+      info.innerHTML='<strong>No crossover found in range.</strong><br><br>At this income split, <span class="negative">Gabung Harta</span> appears advantageous across the range. This typically occurs when the income split is very uneven.';
+    }
+  }
+}
+
+function updateDetailTable(rows){
+  const wrap=$('detailTable');
+  const milestones=[100,150,200,250,300,400,500,600,750,1000,1250,1500,2000,2500,3000,4000,5000];
+  const filtered=milestones.map(m=>rows.find(r=>r.salary>=m)).filter(Boolean);
+  const seen=new Set();const unique=[];
+  filtered.forEach(r=>{if(!seen.has(r.salary)){seen.add(r.salary);unique.push(r);}});
+
+  if(activeTab==='comparison'){
+    wrap.innerHTML=`<table>
+      <thead>
+        <tr>
+          <th rowspan="2">Salary</th>
+          <th rowspan="2">Pisah Tax</th>
+          <th rowspan="2">Gabung Tax</th>
+          <th rowspan="2">Difference</th>
+          <th rowspan="2">Winner</th>
+          <th colspan="2" class="tbl-group-header">Effective Rate</th>
+        </tr>
+        <tr>
+          <th>Pisah</th>
+          <th>Gabung</th>
+        </tr>
+      </thead>
+      <tbody>${unique.map(r=>{
+        const d=r.diff;const cls=d>1000?'positive':d<-1000?'negative':'';
+        const w=Math.abs(d)<1000?'—':d>0?'Pisah':'Gabung';
+        return `<tr><td>${fmt.salaryLabel(r.salary)}</td><td>${fmt.idr(r.pisahTax,true)}</td><td>${fmt.idr(r.gabungTax,true)}</td><td class="${cls}">${d>=0?'+':''}${fmt.idr(d,true)}</td><td>${w}</td><td>${fmt.pct(r.pisahRate)}</td><td>${fmt.pct(r.gabungRate)}</td></tr>`;
+      }).join('')}</tbody></table>`;
+  } else if(activeTab==='pisah'){
+    wrap.innerHTML=`<table>
+      <thead>
+        <tr>
+          <th rowspan="2">Salary</th>
+          <th rowspan="2">Husband Net</th>
+          <th rowspan="2">Wife Net</th>
+          <th colspan="2" class="tbl-group-header">PTKP</th>
+          <th rowspan="2">Taxable H</th>
+          <th rowspan="2">Taxable W</th>
+          <th rowspan="2">Tax H</th>
+          <th rowspan="2">Tax W</th>
+          <th rowspan="2">Total Tax</th>
+        </tr>
+        <tr>
+          <th>Husband</th>
+          <th>Wife</th>
+        </tr>
+      </thead>
+      <tbody>${unique.map(r=>`<tr><td>${fmt.salaryLabel(r.salary)}</td><td>${fmt.idr(r.husbandNet,true)}</td><td>${fmt.idr(r.wifeNet,true)}</td><td>${fmt.idr(r.ptkpH,true)}</td><td>${fmt.idr(r.ptkpW,true)}</td><td>${fmt.idr(r.taxableH,true)}</td><td>${fmt.idr(r.taxableW,true)}</td><td>${fmt.idr(r.taxH,true)}</td><td>${fmt.idr(r.taxW,true)}</td><td>${fmt.idr(r.pisahTax,true)}</td></tr>`).join('')}</tbody></table>`;
+  } else {
+    wrap.innerHTML=`<table>
+      <thead>
+        <tr>
+          <th rowspan="2">Salary</th>
+          <th rowspan="2">Net Income</th>
+          <th rowspan="2">PTKP K/I/${S.dependents}</th>
+          <th rowspan="2">Taxable Income</th>
+          <th rowspan="2">Total Tax</th>
+          <th rowspan="2">Tax H (prop.)</th>
+          <th rowspan="2">Tax W (prop.)</th>
+          <th rowspan="2">Effective Rate</th>
+        </tr>
+        <tr></tr>
+      </thead>
+      <tbody>${unique.map(r=>`<tr><td>${fmt.salaryLabel(r.salary)}</td><td>${fmt.idr(r.netIncome,true)}</td><td>${fmt.idr(r.ptkpGabung,true)}</td><td>${fmt.idr(r.taxableGabung,true)}</td><td>${fmt.idr(r.gabungTax,true)}</td><td>${fmt.idr(r.taxH_g,true)}</td><td>${fmt.idr(r.taxW_g,true)}</td><td>${fmt.pct(r.gabungRate)}</td></tr>`).join('')}</tbody></table>`;
+  }
+}
+
+/* ── Main loop ── */
+function rerender(){
+  readInputs();
+  refreshSliderLabels();
+
+  const warn=$('capWarning');
+  if(S.splitPct===0){
+    warn.style.display='block';
+    warn.textContent='⚠️ With 0% wife income, Pisah Harta wastes wife\'s PTKP (Rp 54M) entirely. Gabung Harta is strongly recommended.';
+  } else if(S.splitPct===100){
+    warn.style.display='block';
+    warn.textContent='⚠️ With 100% wife income (0% husband), Pisah Harta wastes husband\'s PTKP (K/'+S.dependents+') entirely. Gabung Harta is strongly recommended.';
+  } else {
+    warn.style.display='none';
+  }
+
+  if(S.deduction > S.totalSalary){
+    warn.style.display='block';
+    warn.textContent='⚠️ Deductions (pengurang) exceed gross salary. Net income is set to Rp 0.';
+  }
+
+  const state=computeModel();
+  latestRows=state.rows;
+
+  renderMainChart(state.rows);
+  renderDiffChart(state.rows);
+  updateKPIs(state);
+  updateSummary(state);
+  updateDetailTable(state.rows);
+}
+
+/* ── Reset ── */
+function resetAll(){
+  S=JSON.parse(JSON.stringify(DEFAULTS));
+  S.brackets=JSON.parse(JSON.stringify(BRACKETS_DEFAULT));
+  els.dependents.value=DEFAULTS.dependents;
+  els.splitPct.value=DEFAULTS.splitPct;
+  els.totalSalaryInput.value=DEFAULTS.totalSalary.toLocaleString('en-US');
+  els.husbandSalaryInput.value=DEFAULTS.husbandSalary.toLocaleString('en-US');
+  els.wifeSalaryInput.value=DEFAULTS.wifeSalary.toLocaleString('en-US');
+  els.deductionInput.value='0';
+  els.ptkpBase.value=DEFAULTS.ptkpBase.toLocaleString('en-US');
+  els.ptkpMarried.value=DEFAULTS.ptkpMarried.toLocaleString('en-US');
+  els.ptkpSpouse.value=DEFAULTS.ptkpSpouse.toLocaleString('en-US');
+  els.ptkpDependent.value=DEFAULTS.ptkpDependent.toLocaleString('en-US');
+  setInputMode('total');
+  buildBracketEditor();
+  rerender();
+}
+
+/* ── Input mode toggle ── */
+function setInputMode(mode){
+  S.inputMode = mode;
+  $('modeTotal').style.display = mode==='total' ? '' : 'none';
+  $('modeIndividual').style.display = mode==='individual' ? '' : 'none';
+  $('modeBtnTotal').classList.toggle('active', mode==='total');
+  $('modeBtnSplit').classList.toggle('active', mode==='individual');
+  rerender();
+}
+
+/* ── Bracket number formatting helpers ── */
+function formatBracketNum(n){ return n===null||n===undefined?'':Number(n).toLocaleString('en-US'); }
+function parseBracketNum(str){ return str===''?null:parseInt(str.replace(/[^0-9]/g,''),10)||0; }
+function formatBracketInput(el){
+  const raw=el.value.replace(/[^0-9]/g,'');
+  if(raw===''){el.value='';return;}
+  const n=parseInt(raw,10)||0;
+  el.value=n.toLocaleString('en-US');
+}
+
+/* ── Bracket editor ── */
+function buildBracketEditor(){
+  const container = els.bracketsContainer;
+  container.innerHTML='';
+  S.brackets.forEach((b,i)=>{
+    const row = document.createElement('div');
+    row.className='bracket-row';
+
+    // FROM (auto-managed, readonly)
+    const fromEl = document.createElement('input');
+    fromEl.className='num-input-sm';
+    fromEl.type='text';
+    fromEl.value=formatBracketNum(b.from);
+    fromEl.disabled=true;
+
+    // TO (editable except last)
+    const toEl = document.createElement('input');
+    toEl.className='num-input-sm';
+    toEl.type='text';
+    toEl.inputMode='numeric';
+    toEl.placeholder='∞';
+    if(b.to!==null) toEl.value=formatBracketNum(b.to);
+    toEl.disabled=(i===S.brackets.length-1);
+    toEl.addEventListener('input',function(){
+      const pos=this.selectionStart, oldLen=this.value.length;
+      formatBracketInput(this);
+      const newLen=this.value.length;
+      this.setSelectionRange(Math.max(0,pos+(newLen-oldLen)),Math.max(0,pos+(newLen-oldLen)));
+    });
+    toEl.addEventListener('change',()=>{
+      const newTo=toEl.value===''?null:parseBracketNum(toEl.value);
+      S.brackets[i].to=newTo;
+      if(i+1<S.brackets.length&&newTo!==null){
+        S.brackets[i+1].from=newTo+1;
+      }
+      buildBracketEditor();
+      rerender();
+    });
+
+    // RATE
+    const rateEl = document.createElement('input');
+    rateEl.className='num-input-sm';
+    rateEl.type='number';
+    rateEl.min=0;rateEl.max=100;rateEl.step=0.5;
+    rateEl.value=(b.rate*100).toFixed(1);
+    rateEl.addEventListener('change',()=>{
+      S.brackets[i].rate=Math.max(0,Math.min(100,parseFloat(rateEl.value)||0))/100;
+      rerender();
+    });
+
+    row.appendChild(fromEl);
+    row.appendChild(toEl);
+    row.appendChild(rateEl);
+    container.appendChild(row);
+  });
+}
+
+/* ── CSV ── */
+function downloadCsv(){
+  if(!latestRows.length)return;
+  const h=['Salary_Mio','HusbandGross','WifeGross','Deduction','NetIncome','PTKP_H_Pisah','PTKP_W_Pisah','TaxableH_Pisah','TaxableW_Pisah','TaxH_Pisah','TaxW_Pisah','TotalTax_Pisah','PTKP_Gabung','Taxable_Gabung','TotalTax_Gabung','Difference','Winner','EffRate_Pisah','EffRate_Gabung'];
+  const lines=latestRows.map(r=>{
+    const w=Math.abs(r.diff)<1000?'Same':r.diff>0?'Pisah':'Gabung';
+    return [r.salary,r.husbandGross,r.wifeGross,r.totalDeduction,r.netIncome,r.ptkpH,r.ptkpW,r.taxableH,r.taxableW,r.taxH,r.taxW,r.pisahTax,r.ptkpGabung,r.taxableGabung,r.gabungTax,r.diff,w,(r.pisahRate*100).toFixed(2)+'%',(r.gabungRate*100).toFixed(2)+'%'].join(',');
+  });
+  const csv=[h.join(','),...lines].join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='pisah_vs_gabung_harta.csv';
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+
+/* ── Event wiring ── */
+['input','change'].forEach(evt=>{
+  els.splitPct.addEventListener(evt,rerender);
+});
+
+// Currency input: format on input and blur, then rerender
+[els.totalSalaryInput, els.deductionInput, els.husbandSalaryInput, els.wifeSalaryInput].forEach(el=>{
+  el.addEventListener('input',function(){
+    const pos=this.selectionStart;
+    const oldLen=this.value.length;
+    formatCurrencyInput(this);
+    const newLen=this.value.length;
+    const newPos=Math.max(0,pos+(newLen-oldLen));
+    this.setSelectionRange(newPos,newPos);
+    rerender();
+  });
+  el.addEventListener('blur',function(){
+    formatCurrencyInput(this);
+    rerender();
+  });
+});
+
+// PTKP inputs — text with comma formatting
+[els.ptkpBase, els.ptkpMarried, els.ptkpSpouse, els.ptkpDependent].forEach(el=>{
+  el.addEventListener('input',function(){
+    const pos=this.selectionStart, oldLen=this.value.length;
+    formatBracketInput(this);
+    const newLen=this.value.length;
+    this.setSelectionRange(Math.max(0,pos+(newLen-oldLen)),Math.max(0,pos+(newLen-oldLen)));
+    rerender();
+  });
+  el.addEventListener('blur',function(){ formatBracketInput(this); rerender(); });
+});
+
+// Input mode buttons
+$('modeBtnTotal').addEventListener('click',()=>setInputMode('total'));
+$('modeBtnSplit').addEventListener('click',()=>setInputMode('individual'));
+
+els.dependents.addEventListener('change',rerender);
+els.resetBtn.addEventListener('click',resetAll);
+els.downloadBtn.addEventListener('click',downloadCsv);
+
+document.querySelectorAll('.ctrl-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.ctrl-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    $('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeTab=btn.dataset.scenario;
+    if(latestRows.length)updateDetailTable(latestRows);
+  });
+});
+
+$('themeToggle').addEventListener('click',()=>{
+  document.body.classList.toggle('light');
+  $('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';
+  if(latestRows&&latestRows.length){
+    if(chartInstance){chartInstance.destroy();chartInstance=null;}
+    if(chartInstance2){chartInstance2.destroy();chartInstance2=null;}
+    rerender();
+  }
+});
+
+$('chartResetZoom').addEventListener('click',()=>{if(chartInstance)chartInstance.resetZoom();});
+$('chartResetZoom2').addEventListener('click',()=>{if(chartInstance2)chartInstance2.resetZoom();});
+
+$('chartCanvas').addEventListener('mouseleave',()=>{$('hoverBox').textContent='Hover over the chart to inspect a salary point.';});
+$('chartCanvas2').addEventListener('mouseleave',()=>{$('hoverBox2').textContent='Hover over the chart to inspect the difference.';});
+
+/* ── Init ── */
+buildBracketEditor();
+rerender();
+
+})();
+</script>
+</body>
+</html>
