@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Finance vs Cash — Scenario Explorer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0b1020;--panel:#11172a;--text:#e8eefc;--muted:#a8b4d4;
+  --border:rgba(255,255,255,0.08);--accent:#3b82f6;--accent2:#22c55e;--accent3:#ef4444;
+  --gold:#f59e0b;--input-bg:rgba(255,255,255,0.06);--card-bg:rgba(255,255,255,0.03);
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --line-a:#3b82f6;--line-b:#ef4444;--line-c:#22c55e;--line-d:#f59e0b;--line-e:#a855f7;--line-f:#ec4899;
+  --positive:#22c55e;--negative:#ef4444;
+}
+body.light{
+  --bg:#f0f4ff;--panel:#ffffff;--text:#1a2340;--muted:#5a6a8a;
+  --border:rgba(0,0,0,0.10);--accent:#2563eb;--accent2:#16a34a;--accent3:#dc2626;
+  --gold:#d97706;--input-bg:rgba(0,0,0,0.04);--card-bg:rgba(255,255,255,0.85);
+  --shadow:0 4px 24px rgba(0,0,0,0.12);
+  --line-a:#1d4ed8;--line-b:#b91c1c;--line-c:#15803d;--line-d:#b45309;--line-e:#7c3aed;--line-f:#db2777;
+  --positive:#16a34a;--negative:#dc2626;
+}
+*{box-sizing:border-box;min-width:0;}
+body{margin:0;overflow-x:hidden;font-family:'DM Sans',system-ui,sans-serif;color:var(--text);background:var(--bg);transition:background .25s,color .25s;}
+.container{max-width:1440px;margin:0 auto;padding:24px;}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);}
+.header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;}
+h1{margin:0 0 4px;font-size:1.85rem;font-weight:800;letter-spacing:-.02em;}
+h2{margin:0 0 10px;font-size:1.1rem;font-weight:700;}
+h3{margin:0 0 8px;font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+p,.muted{color:var(--muted);line-height:1.55;margin:0;}
+.layout{display:grid;grid-template-columns:380px 1fr;gap:18px;}
+.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 32px);overflow-y:auto;}
+.controls::-webkit-scrollbar{width:4px;}
+.controls::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-theme:hover{border-color:var(--accent);color:var(--text);}
+.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);}
+.ctrl-tab{flex:1;padding:13px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
+.ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent);}
+.ctrl-panel{display:none;padding:16px 18px 20px;}
+.ctrl-panel.active{display:block;}
+.field-row{display:flex;flex-direction:column;gap:5px;padding:10px 0 14px;border-top:1px solid var(--border);}
+.field-row:first-of-type{border-top:none;}
+.field-label{font-weight:700;font-size:.88rem;}
+.field-sub{color:var(--muted);font-size:.78rem;line-height:1.35;margin-top:2px;}
+.num-input,.sel-input{background:var(--input-bg);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:.9rem;font-weight:600;padding:8px 11px;width:100%;outline:none;transition:border-color .15s;font-family:inherit;}
+.num-input:focus,.sel-input:focus{border-color:var(--accent);}
+.sel-input{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a8b4d4'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.sel-input option{background:#1a2340;color:#e8eefc;}
+body.light .sel-input option{background:#ffffff;color:#1a2340;}
+.slider-block{padding:12px 0 16px;border-top:1px solid var(--border);}
+.slider-block:first-of-type{border-top:none;padding-top:4px;}
+.slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:7px;}
+.slider-label{font-weight:700;font-size:.88rem;}
+.slider-value{color:var(--gold);font-weight:700;font-variant-numeric:tabular-nums;font-size:.88rem;font-family:'JetBrains Mono',monospace;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+.help{color:var(--muted);font-size:.78rem;margin-top:5px;line-height:1.4;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px 18px;border-top:1px solid var(--border);}
+.btn-primary{background:var(--accent);color:white;border:none;border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:.88rem;transition:opacity .15s;font-family:inherit;}
+.btn-primary:hover{opacity:.85;}
+.btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:.88rem;transition:border-color .15s;font-family:inherit;}
+.btn-secondary:hover{border-color:var(--accent);}
+.btn-sm{padding:6px 12px;font-size:.8rem;border-radius:8px;}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.metric{padding:18px 20px;}
+.metric .label{color:var(--muted);font-size:.84rem;margin-bottom:6px;}
+.metric .value{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;font-family:'JetBrains Mono','DM Sans',monospace;}
+.metric .sub{color:var(--muted);font-size:.78rem;margin-top:4px;}
+.chart-card{padding:20px;margin-bottom:18px;}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 14px;font-size:.86rem;}
+.legend-item{display:flex;align-items:center;gap:8px;}
+.dot{width:12px;height:12px;border-radius:999px;flex-shrink:0;}
+.canvas-wrap{position:relative;width:100%;height:420px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0));}
+body.light .canvas-wrap{background:linear-gradient(180deg,rgba(0,0,0,.015),rgba(0,0,0,0));}
+.hover-box{margin-top:10px;color:var(--muted);font-size:.86rem;min-height:22px;}
+.scenario-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.scenario-card{background:var(--input-bg);border:1px solid var(--border);border-radius:12px;padding:12px;cursor:pointer;transition:border-color .15s;}
+.scenario-card:hover{border-color:rgba(255,255,255,.15);}
+body.light .scenario-card:hover{border-color:rgba(0,0,0,.2);}
+.scenario-card.active{border-color:var(--accent);background:rgba(59,130,246,.06);}
+.scenario-card .sc-header{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.scenario-card .sc-name{font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:8px;}
+.scenario-card .sc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.scenario-card .sc-actions{display:flex;gap:4px;}
+.scenario-card .sc-summary{color:var(--muted);font-size:.78rem;margin-top:6px;line-height:1.4;}
+.sc-btn{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:3px 7px;font-size:.72rem;cursor:pointer;transition:all .15s;font-family:inherit;}
+.sc-btn:hover{border-color:var(--accent);color:var(--text);}
+.sc-btn.del:hover{border-color:var(--accent3);color:var(--accent3);}
+.warning{margin:0 18px 14px;padding:10px 13px;border-radius:10px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:#fde8b1;display:none;font-size:.82rem;line-height:1.5;}
+body.light .warning{background:rgba(245,158,11,.08);color:#92400e;}
+.neg-carry{margin:0 18px 14px;padding:10px 13px;border-radius:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#fca5a5;display:none;font-size:.82rem;line-height:1.5;}
+body.light .neg-carry{background:rgba(239,68,68,.06);color:#991b1b;}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.84rem;}
+th,td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}
+th:first-child,td:first-child{text-align:left;white-space:normal;}
+th{color:var(--muted);font-size:.78rem;font-weight:600;position:sticky;top:0;background:var(--bg);z-index:1;}
+.table-wrap{overflow:auto;max-height:450px;}
+tr:hover td{background:rgba(255,255,255,.03);}
+body.light tr:hover td{background:rgba(0,0,0,.03);}
+.detail-section{padding:20px;margin-top:18px;}
+.tab-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.tab-btn{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--muted);font-weight:700;font-size:.82rem;cursor:pointer;transition:all .15s;font-family:inherit;}
+.tab-btn.active{color:var(--text);border-color:var(--accent);background:rgba(59,130,246,.08);}
+.inline-row{display:flex;gap:8px;align-items:center;}
+.inline-row .num-input{flex:1;}
+.inline-row .sel-input{width:auto;min-width:80px;}
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border);}
+.toggle-label{font-weight:700;font-size:.88rem;flex:1;}
+.toggle{position:relative;width:42px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--input-bg);border:1px solid var(--border);border-radius:12px;transition:.2s;}
+.toggle .slider:before{content:'';position:absolute;height:18px;width:18px;left:2px;bottom:2px;background:var(--muted);border-radius:50%;transition:.2s;}
+.toggle input:checked+.slider{background:rgba(59,130,246,.3);border-color:var(--accent);}
+.toggle input:checked+.slider:before{transform:translateX(18px);background:var(--accent);}
+.surface-wrap{width:100%;height:520px;border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.mode-tabs{display:flex;gap:8px;margin-top:12px;}
+.mode-tab{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:8px 16px;color:var(--muted);font-weight:700;font-size:.82rem;cursor:pointer;transition:all .15s;font-family:inherit;}
+.mode-tab.active{color:var(--text);border-color:var(--accent);background:rgba(59,130,246,.08);}
+/* Tooltip styles */
+.tip-wrap{display:inline-flex;align-items:center;gap:4px;}
+.tip-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--input-bg);border:1px solid var(--border);color:var(--muted);font-size:10px;font-weight:700;cursor:help;flex-shrink:0;line-height:1;font-style:normal;}
+.tip-icon:hover{border-color:var(--accent);color:var(--accent);}
+#globalTooltip{position:fixed;z-index:99999;background:#1e2a45;border:1px solid var(--accent);border-radius:10px;padding:8px 12px;font-size:.78rem;color:#e8eefc;line-height:1.5;width:220px;box-shadow:0 4px 20px rgba(0,0,0,.5);pointer-events:none;opacity:0;transition:opacity .15s;white-space:normal;text-align:left;font-weight:400;}
+body.light #globalTooltip{background:#fff;color:#1a2340;border-color:var(--accent);box-shadow:0 4px 20px rgba(0,0,0,.2);}
+#globalTooltip.visible{opacity:1;}
+#globalTooltip::after{content:'';position:absolute;top:100%;left:var(--arrow-left,50%);transform:translateX(-50%);border:6px solid transparent;border-top-color:#1e2a45;}
+body.light #globalTooltip::after{border-top-color:#fff;}
+/* Metric card tooltip */
+.metric .label{display:flex;align-items:center;gap:5px;}
+@media(max-width:900px){
+  .layout,.metrics{grid-template-columns:1fr;}
+  .controls{position:static;max-height:none;}
+  .canvas-wrap{height:380px!important;}
+  .metrics{grid-template-columns:repeat(2,1fr);}
+  .header{flex-direction:column;gap:12px;}
+}
+@media(max-width:600px){
+  h1{font-size:1.35rem;}
+  .container{padding:10px;}
+  .metrics{grid-template-columns:1fr;}
+  .btn-row{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+<div id="globalTooltip"></div>
+<div class="container">
+<section class="header card">
+  <div>
+    <h1>💸 Finance vs Cash Purchase</h1>
+    <p>Compare paying in full versus financing and investing unused cash at the risk-free rate.</p>
+  </div>
+  <button class="btn-theme" id="themeToggle">☀️ Light</button>
+</section>
+
+<section class="layout">
+<aside class="controls card">
+  <div class="ctrl-tabs">
+    <button class="ctrl-tab active" data-tab="base">💰<br>Base</button>
+    <button class="ctrl-tab" data-tab="scenarios">📊<br>Scenarios</button>
+    <button class="ctrl-tab" data-tab="chart">📈<br>Chart</button>
+    <button class="ctrl-tab" data-tab="sens">🔬<br>Sensitivity</button>
+  </div>
+
+  <div class="ctrl-panel active" id="tab-base">
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Purchase Cost <i class="tip-icon" data-tip="The total price of the asset or item being purchased (e.g. a car, equipment, or property).">?</i></span></div>
+      <input class="num-input fmt-num" id="purchaseCost" type="text" inputmode="decimal" value="50,000"/>
+      <div class="field-sub">Total price of the item being purchased.</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Available Cash <i class="tip-icon" data-tip="How much cash you have on hand. Must be at least equal to the purchase cost — financing something you cannot fully afford upfront is not modelled.">?</i></span></div>
+      <input class="num-input fmt-num" id="availableCash" type="text" inputmode="decimal" value="50,000"/>
+      <div class="field-sub">Cash on hand. Must be ≥ purchase cost to run the simulation.</div>
+    </div>
+    <div class="slider-block">
+      <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Risk-Free Rate (annual %) <i class="tip-icon" data-tip="The annual return earned on uninvested cash (e.g. high-yield savings account, T-bills). Applies to all scenarios as the baseline investment return.">?</i></span></div><div class="slider-value" id="baseRfVal">4.50%</div></div>
+      <input id="baseRf" type="range" min="0" max="20" step="0.1" value="4.5"/>
+      <div class="help">Annual return on invested unused cash (e.g. HYSA, T-bills). Shared across all scenarios.</div>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-label"><span class="tip-wrap">Enable Inflation Adjustment <i class="tip-icon" data-tip="When enabled, all ending wealth values are also shown in today's dollars, adjusted for the annual inflation rate you set.">?</i></span></div>
+      <label class="toggle"><input type="checkbox" id="inflationToggle"/><span class="slider"></span></label>
+    </div>
+    <div class="field-row" id="inflationRow" style="display:none;">
+      <div class="field-label"><span class="tip-wrap">Inflation Rate (annual %) <i class="tip-icon" data-tip="The assumed annual rate of inflation. Used to convert nominal future values into real (purchasing-power) terms.">?</i></span></div>
+      <input class="num-input" id="inflationRate" type="number" min="0" max="30" step="0.1" value="2.5"/>
+      <div class="field-sub">Used to compute real (inflation-adjusted) values.</div>
+    </div>
+  </div>
+
+  <div class="ctrl-panel" id="tab-scenarios">
+    <h3>Financing Scenarios</h3>
+    <div class="scenario-list" id="scenarioList"></div>
+    <button class="btn-primary btn-sm" id="addScenarioBtn" style="width:100%;margin-bottom:12px;">+ Add Scenario</button>
+    <div id="scenarioEditor" style="display:none;">
+      <h3 id="editorTitle">Edit Scenario</h3>
+      <div class="field-row"><div class="field-label"><span class="tip-wrap">Scenario Name <i class="tip-icon" data-tip="A label to identify this financing option in charts and tables.">?</i></span></div><input class="num-input" id="scName" type="text" value=""/></div>
+      <div class="slider-block">
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Finance Rate (annual %) <i class="tip-icon" data-tip="The annual interest rate on the loan. Used with compound-period conversion to calculate exact periodic payments.">?</i></span></div><div class="slider-value" id="scRateVal">5.00%</div></div>
+        <input id="scRate" type="range" min="0" max="30" step="0.1" value="5"/>
+        <div class="help">Annual interest rate on the financed amount.</div>
+      </div>
+      <div class="field-row"><div class="field-label"><span class="tip-wrap">Down Payment <i class="tip-icon" data-tip="The amount paid upfront before financing. Reduces the loan principal. If available cash is less than purchase cost, your entire cash will be used as down payment automatically.">?</i></span></div><input class="num-input fmt-num" id="scDown" type="text" inputmode="decimal" value="0"/><div class="field-sub">Amount paid upfront before financing.</div></div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Repayment Frequency <i class="tip-icon" data-tip="How often you make loan payments. Affects the period rate (compound-converted from annual) and the term unit shown below.">?</i></span></div>
+        <select class="sel-input" id="scFreq"><option value="weekly">Weekly</option><option value="fortnightly">Fortnightly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap" id="termLabel">Term (months) <i class="tip-icon" data-tip="The number of repayment periods. Shown in weeks for weekly/fortnightly, months for monthly, or years for yearly frequency.">?</i></span></div>
+        <input class="num-input" id="scTerm" type="number" min="1" max="3000" step="1" value="60"/>
+        <div class="field-sub" id="termSub">Number of monthly payments (e.g. 60 = 5 years).</div>
+      </div>
+      <div class="field-row"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="An upfront fee charged to set up the loan. Can be a fixed dollar amount or a percentage of the financed amount. Reduces your investable cash at the start.">?</i></span></div>
+        <div class="inline-row"><input class="num-input fmt-num" id="scFeeAmt" type="text" inputmode="decimal" value="0"/><select class="sel-input" id="scFeeType" style="min-width:70px;"><option value="fixed">$</option><option value="pct">%</option></select></div>
+        <div class="field-sub">Fixed $ amount or % of financed amount, paid upfront.</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="btn-primary btn-sm" id="saveScenarioBtn">Save</button>
+        <button class="btn-secondary btn-sm" id="cancelScenarioBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctrl-panel" id="tab-chart">
+    <h3>Main Chart Settings</h3>
+    <div class="field-row"><div class="field-label"><span class="tip-wrap">Chart Metric <i class="tip-icon" data-tip="The value to plot over time. &quot;Ending Wealth&quot; = investment balance minus loan balance. &quot;Net Benefit&quot; = financing wealth vs cash-purchase wealth.">?</i></span></div>
+      <select class="sel-input" id="chartMetric"><option value="wealth">Ending Wealth Over Time</option><option value="netBenefit">Net Benefit vs Cash</option><option value="investmentValue">Investment Value Over Time</option><option value="loanBalance">Loan Balance Over Time</option></select>
+    </div>
+    <div class="field-row"><div class="field-label"><span class="tip-wrap">Optimization Target <i class="tip-icon" data-tip="Determines which scenario is highlighted as &quot;Best&quot;. Net Benefit favours the scenario that leaves you the wealthiest vs paying cash. Lowest Interest/Cost minimises borrowing expense.">?</i></span></div>
+      <select class="sel-input" id="optTarget"><option value="netBenefit">Highest Net Benefit</option><option value="lowestInterest">Lowest Total Interest</option><option value="lowestCost">Lowest Financing Cost</option></select>
+      <div class="field-sub">How to rank and highlight the best scenario.</div>
+    </div>
+  </div>
+
+  <div class="ctrl-panel" id="tab-sens">
+    <h3>Sensitivity Analysis</h3>
+    <div class="field-row"><div class="field-label"><span class="tip-wrap">Apply to Scenario <i class="tip-icon" data-tip="The base financing scenario whose parameters will be swept in the sensitivity analysis.">?</i></span></div><select class="sel-input" id="sensScenario"></select></div>
+    <div class="field-row"><div class="field-label"><span class="tip-wrap">Objective (output metric) <i class="tip-icon" data-tip="The output value to compute at each point in the sweep. Net Benefit = financing end wealth minus cash-purchase end wealth.">?</i></span></div>
+      <select class="sel-input" id="sensObjective"><option value="netBenefit">Net Benefit vs Cash</option><option value="totalInterest">Total Interest Paid</option><option value="totalFinanceCost">Total Financing Cost</option><option value="endWealth">Ending Wealth</option><option value="inflAdjNetBenefit">Inflation-Adj Net Benefit</option></select>
+    </div>
+    <div class="mode-tabs"><button class="mode-tab active" id="mode2d">2D Sweep</button><button class="mode-tab" id="mode3d">3D Surface</button></div>
+    <div class="field-row" style="margin-top:8px;"><div class="field-label"><span class="tip-wrap">X-Axis Variable <i class="tip-icon" data-tip="The input parameter to vary along the X axis. All other parameters remain at their scenario defaults.">?</i></span></div>
+      <select class="sel-input" id="sensVarX"><option value="financeRate">Finance Rate (%)</option><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="downPayment">Down Payment ($)</option><option value="termYears">Term (years)</option></select>
+    </div>
+    <div class="field-row"><div class="field-label"><span class="tip-wrap">X Range <i class="tip-icon" data-tip="The minimum and maximum values to sweep the X-axis variable between.">?</i></span></div><div class="inline-row"><input class="num-input" id="sensXStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensXEnd" type="number" step="0.5" value="10"/></div></div>
+    <div id="sensYBlock" style="display:none;">
+      <div class="field-row"><div class="field-label"><span class="tip-wrap">Y-Axis Variable <i class="tip-icon" data-tip="The second input parameter to vary for the 3D surface plot. Must differ from the X-axis variable.">?</i></span></div>
+        <select class="sel-input" id="sensVarY"><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="financeRate">Finance Rate (%)</option><option value="downPayment">Down Payment ($)</option><option value="termYears">Term (years)</option></select>
+      </div>
+      <div class="field-row"><div class="field-label"><span class="tip-wrap">Y Range <i class="tip-icon" data-tip="The minimum and maximum values to sweep the Y-axis variable between.">?</i></span></div><div class="inline-row"><input class="num-input" id="sensYStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensYEnd" type="number" step="0.5" value="8"/></div></div>
+    </div>
+    <div class="field-row"><div class="field-label"><span class="tip-wrap">Grid Resolution <i class="tip-icon" data-tip="Number of evenly-spaced sample points along each axis. Higher values give smoother curves but take longer to compute.">?</i></span></div><input class="num-input" id="sensSteps" type="number" min="5" max="50" step="1" value="20"/><div class="field-sub">Number of steps per axis.</div></div>
+    <button class="btn-primary btn-sm" id="runSensBtn" style="width:100%;margin-top:8px;">▶ Run Analysis</button>
+  </div>
+
+  <div class="warning" id="warnBanner"></div>
+  <div class="neg-carry" id="negCarryBanner"></div>
+  <div class="btn-row">
+    <button class="btn-primary" id="resetBtn">↺ Reset defaults</button>
+    <button class="btn-secondary" id="downloadBtn">⬇ CSV</button>
+  </div>
+</aside>
+
+<main>
+  <section class="metrics">
+    <div class="metric card"><div class="label"><span class="tip-wrap">Best Strategy <i class="tip-icon" data-tip="The financing scenario that wins on your chosen Optimization Target (Net Benefit, Lowest Interest, or Lowest Cost). Shows &quot;Cash Purchase&quot; if no scenario beats paying cash.">?</i></span></div><div class="value" id="kpiBest">—</div><div class="sub" id="kpiBestSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Net Benefit vs Cash <i class="tip-icon" data-tip="End-of-term wealth under the best financing scenario minus end-of-term wealth under the cash-purchase baseline. Positive = financing left you richer.">?</i></span></div><div class="value" id="kpiNetBenefit">—</div><div class="sub" id="kpiNetSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Total Interest (Best) <i class="tip-icon" data-tip="The total interest paid over the full loan term under the best scenario. Does not include origination fees.">?</i></span></div><div class="value" id="kpiInterest">—</div><div class="sub" id="kpiIntSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Cash Purchase Wealth <i class="tip-icon" data-tip="The ending wealth if you paid cash: leftover funds (available cash minus purchase cost) compounded at the risk-free rate over the longest scenario term.">?</i></span></div><div class="value" id="kpiCashWealth">—</div><div class="sub" id="kpiCashSub"></div></div>
+  </section>
+  <section class="chart-card card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
+      <h2 id="chartTitle" style="margin:0;">Ending Wealth Over Time</h2>
+      <button class="btn-secondary btn-sm" id="chartResetZoom">⟳ Reset zoom</button>
+    </div>
+    <div class="legend" id="chartLegend"></div>
+    <div class="canvas-wrap"><canvas id="chartCanvas"></canvas></div>
+    <div class="hover-box" id="hoverBox">Hover over the chart to inspect a period.</div>
+  </section>
+  <section class="chart-card card" id="sens2dSection" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
+      <h2 id="sens2dTitle" style="margin:0;">2D Sensitivity</h2>
+      <button class="btn-secondary btn-sm" id="sensResetZoom">⟳ Reset zoom</button>
+    </div>
+    <div class="legend" id="sensLegend"></div>
+    <div class="canvas-wrap"><canvas id="sensCanvas"></canvas></div>
+  </section>
+  <section class="chart-card card" id="sens3dSection" style="display:none;">
+    <h2 id="sens3dTitle" style="margin:0 0 12px;">3D Sensitivity Surface</h2>
+    <div class="surface-wrap" id="plotly3d"></div>
+  </section>
+  <section class="detail-section card">
+    <h2>Scenario Comparison</h2>
+    <div class="table-wrap" id="compTableWrap"></div>
+  </section>
+  <section class="detail-section card" style="margin-top:18px;">
+    <h2>Amortization Schedule</h2>
+    <div class="tab-bar" id="amortTabs"></div>
+    <div class="table-wrap" id="amortTableWrap"></div>
+  </section>
+</main>
+</section>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const SCENARIO_COLORS=['--line-a','--line-b','--line-c','--line-d','--line-e','--line-f'];
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+
+const fmt={
+  currency(v,compact=false){
+    const n=Number(v||0),abs=Math.abs(n),sign=n<0?'−':'';
+    if(compact&&abs>=1e9)return sign+'$'+(abs/1e9).toFixed(2)+'b';
+    if(compact&&abs>=1e6)return sign+'$'+(abs/1e6).toFixed(2)+'m';
+    if(compact&&abs>=1e3)return sign+'$'+(abs/1e3).toFixed(0)+'k';
+    return(n<0?'−':'')+new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(abs);
+  },
+  currencyExact(v){const n=Number(v||0);return(n<0?'−':'')+new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:2}).format(Math.abs(n));},
+  pct(v,d=2){const n=Number(v||0);const p=Math.abs(n)<=1?n*100:n;return p.toFixed(d)+'%';},
+  num(v,d=0){return Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});},
+  fmtInput(v){const n=parseFloat(String(v).replace(/,/g,''));if(isNaN(n))return'0';if(n===Math.floor(n))return Math.floor(n).toLocaleString('en-US');return n.toLocaleString('en-US',{maximumFractionDigits:2});}
+};
+
+/* Auto-format number inputs */
+function parseNumInput(el){return parseFloat(String(el.value).replace(/,/g,''))||0;}
+function setupFmtInputs(){
+  document.querySelectorAll('.fmt-num').forEach(el=>{
+    el.addEventListener('focus',()=>{const raw=parseFloat(String(el.value).replace(/,/g,''));if(!isNaN(raw))el.value=raw;});
+    el.addEventListener('blur',()=>{const raw=parseFloat(String(el.value).replace(/,/g,''));el.value=(!isNaN(raw)&&raw>0)?fmt.fmtInput(raw):'0';rerender();});
+    el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.target.blur();}});
+  });
+}
+
+let scenarios=[], editingIdx=-1, activeAmortIdx=0, sensMode='2d';
+let baseRiskFreeRate=4.5; // global risk-free rate from Base tab
+
+function periodsPerYear(f){return{weekly:52,fortnightly:26,monthly:12,yearly:1}[f]||12;}
+function freqLabel(f){return{weekly:'week',fortnightly:'fortnight',monthly:'month',yearly:'year'}[f]||'period';}
+function termUnitLabel(f){return{weekly:'weeks',fortnightly:'weeks',monthly:'months',yearly:'years'}[f]||'periods';}
+function termToYears(termPeriods,f){return termPeriods/periodsPerYear(f);}
+
+// Default term in periods based on freq (5 years in each unit)
+function defaultTerm(freq){return{weekly:260,fortnightly:130,monthly:60,yearly:5}[freq]||60;}
+
+function defaultScenario(name,rate){
+  const freq='monthly';
+  return{name:name||'Scenario '+(scenarios.length+1),financeRate:rate||5,downPayment:0,termPeriods:defaultTerm(freq),freq,feeAmt:0,feeType:'fixed'};
+}
+
+/*
+ ══════════════════════════════════════════════════════════
+ FINANCIAL ENGINE — VERIFIED MATHEMATICS
+ ══════════════════════════════════════════════════════════
+
+ 1. PERIOD RATE (compound conversion — NOT simple r/n):
+    r_period = (1 + r_annual)^(1/ppy) − 1
+
+ 2. AMORTIZATION PAYMENT (standard annuity formula):
+    If r > 0:  PMT = P × r(1+r)^n / ((1+r)^n − 1)
+    If r = 0:  PMT = P / n
+    where P=principal, r=period rate, n=total periods
+
+ 3. EACH PERIOD:
+    interest_i  = balance_i × r_period
+    principal_i = PMT − interest_i
+    balance_{i+1} = balance_i − principal_i
+
+ 4. INVESTMENT GROWTH (financing path):
+    Start with: availableCash − downPayment − originationFee
+    Each period: investBal = investBal × (1 + rf_period) − PMT
+    rf_period = (1 + rf_annual)^(1/ppy) − 1
+
+ 5. CASH PURCHASE BASELINE:
+    leftover = availableCash − purchaseCost
+    endWealth = leftover × (1 + rf_annual)^termYears
+
+ 6. NET BENEFIT = financing_endWealth − cash_endWealth
+    Positive ⟹ financing preserves more wealth
+
+ 7. INFLATION: real = nominal / (1 + inflation)^years
+ ══════════════════════════════════════════════════════════
+*/
+
+function computeAmortization(principal, annualRate, termPeriods, freq){
+  const ppy=periodsPerYear(freq);
+  const n=Math.round(termPeriods);
+  const r=Math.pow(1+annualRate/100, 1/ppy)-1; // compound period rate
+
+  if(principal<=0||n<=0) return{payment:0,schedule:[],totalInterest:0,totalPaid:0,periods:0,periodRate:0};
+
+  let pmt;
+  if(r===0) pmt=principal/n;
+  else{
+    const factor=Math.pow(1+r,n);
+    pmt=principal*(r*factor)/(factor-1); // standard annuity formula
+  }
+
+  let bal=principal, totalInt=0;
+  const schedule=[];
+  for(let i=1;i<=n;i++){
+    const intPart=bal*r;
+    let prinPart=pmt-intPart;
+    // Final payment: clear exact remaining balance
+    if(i===n){prinPart=bal; const finalPmt=intPart+bal; schedule.push({num:i,startBal:bal,interest:intPart,principal:prinPart,payment:finalPmt,endBal:0}); totalInt+=intPart; bal=0;}
+    else{if(prinPart>bal)prinPart=bal; const endBal=Math.max(0,bal-prinPart); schedule.push({num:i,startBal:bal,interest:intPart,principal:prinPart,payment:pmt,endBal}); totalInt+=intPart; bal=endBal;}
+  }
+  const totalPaid=schedule.reduce((s,p)=>s+p.payment,0);
+  return{payment:pmt,schedule,totalInterest:totalInt,totalPaid,periods:n,periodRate:r};
+}
+
+function computeScenario(sc, purchaseCost, availableCash, riskFreeRate, inflationRate, inflationEnabled){
+  const down=Math.min(Math.max(0,sc.downPayment),purchaseCost,availableCash);
+  const financed=purchaseCost-down;
+  const termYears=termToYears(sc.termPeriods,sc.freq);
+  if(financed<=0) return computeScenarioAsCash(purchaseCost,availableCash,sc,riskFreeRate,inflationRate,inflationEnabled);
+
+  const ppy=periodsPerYear(sc.freq);
+  const n=Math.round(sc.termPeriods);
+  let fee=sc.feeType==='pct'?financed*(sc.feeAmt/100):Math.max(0,sc.feeAmt);
+  const cashAfterUpfront=availableCash-down-fee;
+  if(cashAfterUpfront<0) return null;
+
+  const amort=computeAmortization(financed,sc.financeRate,sc.termPeriods,sc.freq);
+  const rfPeriod=Math.pow(1+riskFreeRate/100,1/ppy)-1;
+  let investBal=cashAfterUpfront;
+  const timeline=[{period:0,investBal:cashAfterUpfront,loanBal:financed,wealth:cashAfterUpfront-financed,cumInterest:0,cumPaid:0}];
+  let cumInt=0,cumPaid=0;
+
+  for(let i=0;i<n;i++){
+    investBal=investBal*(1+rfPeriod); // grow first
+    const pmt=amort.schedule[i]?amort.schedule[i].payment:amort.payment;
+    investBal-=pmt; // then pay
+    cumInt+=(amort.schedule[i]?amort.schedule[i].interest:0);
+    cumPaid+=pmt;
+    const loanBal=amort.schedule[i]?amort.schedule[i].endBal:0;
+    timeline.push({period:i+1,investBal,loanBal,wealth:investBal-loanBal,cumInterest:cumInt,cumPaid});
+  }
+
+  const endWealth=investBal;
+  const totalFinanceCost=amort.totalInterest+fee;
+  const totalOOP=down+fee+amort.totalPaid;
+  let inflAdj=null;
+  if(inflationEnabled&&inflationRate>0){
+    const rd=Math.pow(1+inflationRate/100,termYears);
+    inflAdj={endWealthReal:endWealth/rd,totalFinanceCostReal:totalFinanceCost/rd};
+  }
+  return{down,financed,fee,amort,endWealth,totalInterest:amort.totalInterest,totalFee:fee,totalFinanceCost,payment:amort.payment,totalOOP,timeline,negCarry:riskFreeRate<sc.financeRate,inflAdj,cashAfter:cashAfterUpfront,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
+}
+
+function computeScenarioAsCash(purchaseCost,availableCash,sc,riskFreeRate,inflationRate,inflationEnabled){
+  const leftover=Math.max(0,availableCash-purchaseCost);
+  const ppy=periodsPerYear(sc.freq);
+  const n=Math.round(sc.termPeriods);
+  const termYears=termToYears(sc.termPeriods,sc.freq);
+  const rfP=Math.pow(1+riskFreeRate/100,1/ppy)-1;
+  let bal=leftover;
+  const timeline=[{period:0,investBal:leftover,loanBal:0,wealth:leftover,cumInterest:0,cumPaid:0}];
+  for(let i=0;i<n;i++){bal*=(1+rfP);timeline.push({period:i+1,investBal:bal,loanBal:0,wealth:bal,cumInterest:0,cumPaid:0});}
+  let inflAdj=null;
+  if(inflationEnabled&&inflationRate>0) inflAdj={endWealthReal:bal/Math.pow(1+inflationRate/100,termYears)};
+  return{down:purchaseCost,financed:0,fee:0,amort:{payment:0,schedule:[],totalInterest:0,totalPaid:0,periods:0,periodRate:0},endWealth:bal,totalInterest:0,totalFee:0,totalFinanceCost:0,payment:0,totalOOP:purchaseCost,timeline,negCarry:false,inflAdj,cashAfter:leftover,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
+}
+
+function computeCashBaseline(purchaseCost,availableCash,termYears,riskFreeRate,inflationRate,inflationEnabled){
+  const leftover=Math.max(0,availableCash-purchaseCost);
+  const endWealth=leftover*Math.pow(1+riskFreeRate/100,termYears);
+  let inflAdj=null;
+  if(inflationEnabled&&inflationRate>0) inflAdj={endWealthReal:endWealth/Math.pow(1+inflationRate/100,termYears)};
+  return{endWealth,investedCash:leftover,inflAdj};
+}
+
+function quickNetBenefit(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled,objective){
+  const res=computeScenario(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled);
+  if(!res)return null;
+  const cb=computeCashBaseline(purchaseCost,availableCash,res.termYears,riskFreeRate,inflationRate,inflationEnabled);
+  const nb=res.endWealth-cb.endWealth;
+  if(objective==='netBenefit')return nb;
+  if(objective==='totalInterest')return res.totalInterest;
+  if(objective==='totalFinanceCost')return res.totalFinanceCost;
+  if(objective==='endWealth')return res.endWealth;
+  if(objective==='inflAdjNetBenefit'){if(!res.inflAdj||!cb.inflAdj)return nb;return(res.inflAdj.endWealthReal||0)-(cb.inflAdj.endWealthReal||0);}
+  return nb;
+}
+
+/* ─── Rendering ─── */
+let chartInstance=null,sensChartInstance=null,latestResults=null;
+
+function rerender(){
+  const purchaseCost=Math.max(0,parseNumInput($('purchaseCost')));
+  let availableCash=parseNumInput($('availableCash'));
+  if(availableCash<=0)availableCash=purchaseCost;
+  const inflationEnabled=$('inflationToggle').checked;
+  const inflationRate=parseFloat($('inflationRate').value)||0;
+  const riskFreeRate=parseFloat($('baseRf').value)||0;
+  baseRiskFreeRate=riskFreeRate;
+  $('inflationRow').style.display=inflationEnabled?'':'none';
+  const optTarget=$('optTarget').value;
+
+  let warn='';
+  const cashShortfall = availableCash < purchaseCost;
+  if(cashShortfall){
+    warn='⚠ Available cash ($'+fmt.num(availableCash)+') is less than the purchase cost ($'+fmt.num(purchaseCost)+'). Financing something you cannot afford upfront is not modelled here — please increase your available cash or reduce the purchase cost.';
+    $('warnBanner').style.display='block';$('warnBanner').textContent=warn;
+    $('negCarryBanner').style.display='none';
+    // Clear all outputs
+    ['kpiBest','kpiNetBenefit','kpiInterest','kpiCashWealth'].forEach(id=>{$(id).textContent='—';$(id).style.color=cssVar('--text');});
+    ['kpiBestSub','kpiNetSub','kpiIntSub','kpiCashSub'].forEach(id=>{$(id).textContent='';});
+    if(chartInstance){chartInstance.destroy();chartInstance=null;}
+    $('chartLegend').innerHTML='';
+    $('compTableWrap').innerHTML='<p class="muted">Adjust inputs above to run the simulation.</p>';
+    $('amortTabs').innerHTML='';
+    $('amortTableWrap').innerHTML='<p class="muted">Adjust inputs above to run the simulation.</p>';
+    return;
+  }
+  $('warnBanner').style.display='none';
+
+  const results=[];let anyNegCarry=false;
+  scenarios.forEach((sc,i)=>{
+    const res=computeScenario(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled);
+    if(res){res.name=sc.name;res.idx=i;res.colorVar=SCENARIO_COLORS[i%SCENARIO_COLORS.length];if(res.negCarry)anyNegCarry=true;}
+    results.push(res);
+  });
+  $('negCarryBanner').style.display=anyNegCarry?'block':'none';
+  $('negCarryBanner').textContent=anyNegCarry?'⚠ Negative carry: finance rate exceeds risk-free rate. Financing will likely cost more than investing.':'';
+
+  results.forEach(r=>{if(!r)return;const cb=computeCashBaseline(purchaseCost,availableCash,r.termYears,riskFreeRate,inflationRate,inflationEnabled);r.cashBaseWealth=cb.endWealth;r.netBenefit=r.endWealth-cb.endWealth;if(r.inflAdj&&cb.inflAdj)r.inflAdj.netBenefitReal=(r.inflAdj.endWealthReal||0)-(cb.inflAdj.endWealthReal||0);});
+
+  const valid=results.filter(r=>r);
+  let bestIdx=-1;
+  if(valid.length){
+    if(optTarget==='netBenefit')bestIdx=valid.reduce((b,r)=>r.netBenefit>(results[b]?.netBenefit??-Infinity)?r.idx:b,valid[0].idx);
+    else if(optTarget==='lowestInterest')bestIdx=valid.reduce((b,r)=>r.totalInterest<(results[b]?.totalInterest??Infinity)?r.idx:b,valid[0].idx);
+    else if(optTarget==='lowestCost')bestIdx=valid.reduce((b,r)=>r.totalFinanceCost<(results[b]?.totalFinanceCost??Infinity)?r.idx:b,valid[0].idx);
+  }
+  const allNeg=valid.every(r=>r.netBenefit<0);
+  const bestResult=bestIdx>=0?results[bestIdx]:null;
+  const maxTerm=valid.reduce((m,r)=>Math.max(m,r.termYears),5);
+  const cashBase=computeCashBaseline(purchaseCost,availableCash,maxTerm,riskFreeRate,inflationRate,inflationEnabled);
+  latestResults={results,cashBase,bestIdx,allNeg,purchaseCost,availableCash,maxTerm,inflationEnabled,inflationRate,riskFreeRate};
+
+  // KPIs
+  if(allNeg||!bestResult){$('kpiBest').textContent='Cash Purchase';$('kpiBest').style.color=cssVar('--accent2');$('kpiBestSub').textContent=valid.length?'No financing scenario beats paying cash.':'Add scenarios to compare.';}
+  else{$('kpiBest').textContent=bestResult.name;$('kpiBest').style.color=cssVar(bestResult.colorVar);$('kpiBestSub').textContent='Based on '+$('optTarget').selectedOptions[0].text.toLowerCase()+'.';}
+  if(bestResult){const nb=bestResult.netBenefit;$('kpiNetBenefit').textContent=fmt.currency(nb,true);$('kpiNetBenefit').style.color=nb>=0?cssVar('--positive'):cssVar('--negative');$('kpiNetSub').textContent=nb>=0?'Financing is more wealth-efficient':'Cash purchase preserves more wealth';$('kpiInterest').textContent=fmt.currency(bestResult.totalInterest,true);$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent=fmt.currencyExact(bestResult.payment)+'/'+freqLabel(bestResult.freq);}
+  else{$('kpiNetBenefit').textContent='—';$('kpiNetBenefit').style.color=cssVar('--text');$('kpiNetSub').textContent='';$('kpiInterest').textContent='—';$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent='';}
+  $('kpiCashWealth').textContent=fmt.currency(cashBase.endWealth,true);$('kpiCashWealth').style.color=cssVar('--text');$('kpiCashSub').textContent=`After ${maxTerm.toFixed(1)} yr at ${fmt.pct(riskFreeRate/100)} risk-free`;
+
+  renderMainChart(results);renderComparisonTable(results);renderAmortTabs(results);updateSensScenarioDropdown();
+}
+
+function renderMainChart(results){
+  const metric=$('chartMetric').value;
+  const titles={wealth:'Ending Wealth Over Time',netBenefit:'Net Benefit vs Cash Purchase',investmentValue:'Investment Value Over Time',loanBalance:'Loan Balance Over Time'};
+  $('chartTitle').textContent=titles[metric]||'Chart';
+  const maxN=results.reduce((m,r)=>r?Math.max(m,r.n):m,0);
+  if(maxN===0){if(chartInstance){chartInstance.destroy();chartInstance=null;}return;}
+  const labels=[];for(let i=0;i<=maxN;i++)labels.push(i);
+  const datasets=[],legendItems=[];
+  if(metric==='wealth'){
+    const v0=results.find(r=>r);
+    if(v0){const ppy=v0.ppy,rfP=Math.pow(1+latestResults.riskFreeRate/100,1/ppy)-1,left=Math.max(0,latestResults.availableCash-latestResults.purchaseCost);const cd=[];let b=left;for(let i=0;i<=maxN;i++){cd.push(b);b*=(1+rfP);}
+    datasets.push({label:'Cash Purchase',data:cd,borderColor:cssVar('--muted'),backgroundColor:'transparent',borderWidth:2,borderDash:[6,4],pointRadius:0,pointHoverRadius:4,tension:.3,fill:false});legendItems.push({label:'Cash Purchase',color:cssVar('--muted'),dash:true});}
+  }
+  const maxNResult=results.find(r=>r&&r.n===maxN);
+  const freqLabelMap={weekly:'Week',fortnightly:'Fortnight',monthly:'Month',yearly:'Year'};
+  const xAxisLabel=maxNResult?freqLabelMap[maxNResult.freq]||'Period':'Period';
+  const yAxisLabel={wealth:'Wealth ($)',netBenefit:'Net Benefit ($)',investmentValue:'Investment Value ($)',loanBalance:'Loan Balance ($)'}[metric]||'Value ($)';
+  results.forEach(r=>{if(!r)return;const color=cssVar(r.colorVar);const data=[];
+    const rfP_r=Math.pow(1+latestResults.riskFreeRate/100,1/r.ppy)-1;
+    const left=Math.max(0,latestResults.availableCash-latestResults.purchaseCost);
+    const lastT=r.timeline[r.timeline.length-1];
+    for(let p=0;p<=maxN;p++){
+      if(p<r.timeline.length){const t=r.timeline[p];
+        if(metric==='wealth')data.push(t.wealth);
+        else if(metric==='netBenefit')data.push(t.wealth-left*Math.pow(1+rfP_r,p));
+        else if(metric==='investmentValue')data.push(t.investBal);
+        else if(metric==='loanBalance')data.push(t.loanBal);
+      } else {
+        // Loan paid off — continue compounding leftover invest balance at risk-free rate
+        const extra=p-(r.timeline.length-1);const grownWealth=lastT.investBal*Math.pow(1+rfP_r,extra);
+        if(metric==='wealth')data.push(grownWealth);
+        else if(metric==='netBenefit')data.push(grownWealth-left*Math.pow(1+rfP_r,p));
+        else if(metric==='investmentValue')data.push(grownWealth);
+        else if(metric==='loanBalance')data.push(0);
+      }
+    }
+    datasets.push({label:r.name,data,borderColor:color,backgroundColor:color+'22',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:.3,fill:false});legendItems.push({label:r.name,color});
+  });
+  const le=$('chartLegend');le.innerHTML='';legendItems.forEach(l=>{const d=document.createElement('div');d.className='legend-item';d.innerHTML=`<span class="dot" style="background:${l.color};${l.dash?'border:2px dashed '+l.color+';background:transparent;':''}"></span><span>${l.label}</span>`;le.appendChild(d);});
+  const gc=cssVar('--border'),mc=cssVar('--muted'),tc=cssVar('--text');
+  const cfg={type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>`${xAxisLabel} ${c[0].label}`,label:c=>`  ${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`},backgroundColor:'#1e1e2e',titleColor:tc,bodyColor:mc,borderColor:gc,borderWidth:1,padding:10,onAfterBody:items=>{if(!items.length)return;$('hoverBox').textContent=`${xAxisLabel} ${items[0].label}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  ');}},zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},scales:{x:{title:{display:true,text:xAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,maxTicksLimit:12,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:yAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
+  if(chartInstance){chartInstance.data=cfg.data;chartInstance.options.scales.x.ticks.color=mc;chartInstance.options.scales.x.grid.color=gc;chartInstance.options.scales.x.title.color=mc;chartInstance.options.scales.x.title.text=xAxisLabel;chartInstance.options.scales.y.ticks.color=mc;chartInstance.options.scales.y.grid.color=gc;chartInstance.options.scales.y.title.color=mc;chartInstance.options.scales.y.title.text=yAxisLabel;chartInstance.update('none');}
+  else chartInstance=new Chart($('chartCanvas'),cfg);
+}
+
+function renderComparisonTable(results){
+  const valid=results.filter(r=>r);if(!valid.length){$('compTableWrap').innerHTML='<p class="muted">Add financing scenarios to compare.</p>';return;}
+  const inflOn=latestResults.inflationEnabled,pc=latestResults.purchaseCost;
+  let h='<table><thead><tr><th>Metric</th><th>Cash Purchase</th>';valid.forEach(r=>{h+='<th>'+r.name+'</th>';});h+='</tr></thead><tbody>';
+  const rows=[
+    ['Down Payment','—',r=>fmt.currency(r.down)],['Financed Amount','—',r=>fmt.currency(r.financed)],
+    ['Periodic Payment','—',r=>r.payment>0?fmt.currencyExact(r.payment)+'/'+freqLabel(r.freq):'—'],
+    ['Total Interest Paid','$0',r=>fmt.currencyExact(r.totalInterest)],['Total Fees Paid','$0',r=>fmt.currencyExact(r.totalFee)],
+    ['Total Financing Cost','$0',r=>fmt.currencyExact(r.totalFinanceCost)],['Total Out-of-Pocket',fmt.currency(pc),r=>fmt.currencyExact(r.totalOOP)],
+    ['Ending Wealth',r=>fmt.currencyExact(r.cashBaseWealth),r=>fmt.currencyExact(r.endWealth)],
+    ['Net Benefit vs Cash','Baseline',r=>{const v=r.netBenefit;return`<span style="color:${v>=0?cssVar('--positive'):cssVar('--negative')};font-weight:700">${fmt.currencyExact(v)}</span>`;}],
+  ];
+  if(inflOn)rows.push(['Inflation-Adj Net Benefit','Baseline',r=>{if(!r.inflAdj||r.inflAdj.netBenefitReal===undefined)return'—';const v=r.inflAdj.netBenefitReal;return`<span style="color:${v>=0?cssVar('--positive'):cssVar('--negative')};font-weight:700">${fmt.currencyExact(v)}</span>`;}]);
+  rows.forEach(([label,cashVal,fn])=>{
+    const cv=typeof cashVal==='function'?cashVal(valid[0]):cashVal;
+    h+=`<tr><td>${label}</td><td>${cv}</td>`;valid.forEach(r=>{h+='<td>'+fn(r)+'</td>';});h+='</tr>';
+  });
+  h+='</tbody></table>';$('compTableWrap').innerHTML=h;
+}
+
+function renderAmortTabs(results){
+  const valid=results.filter(r=>r&&r.amort.schedule.length>0);const tb=$('amortTabs');tb.innerHTML='';
+  if(!valid.length){$('amortTableWrap').innerHTML='<p class="muted">No financing scenarios with payments.</p>';return;}
+  if(activeAmortIdx>=valid.length)activeAmortIdx=0;
+  valid.forEach((r,i)=>{const b=document.createElement('button');b.className='tab-btn'+(i===activeAmortIdx?' active':'');b.textContent=r.name;b.addEventListener('click',()=>{activeAmortIdx=i;renderAmortTabs(results);});tb.appendChild(b);});
+  const r=valid[activeAmortIdx];
+  const periodHdr=freqLabel(r.freq).charAt(0).toUpperCase()+freqLabel(r.freq).slice(1)+' #';
+  let h='<table><thead><tr><th>'+periodHdr+'</th><th>Start Balance</th><th>Interest</th><th>Principal</th><th>Payment</th><th>End Balance</th></tr></thead><tbody>';
+  let tI=0,tP=0,tPmt=0;
+  r.amort.schedule.forEach(p=>{tI+=p.interest;tP+=p.principal;tPmt+=p.payment;h+=`<tr><td>${fmt.num(p.num)}</td><td>${fmt.currencyExact(p.startBal)}</td><td>${fmt.currencyExact(p.interest)}</td><td>${fmt.currencyExact(p.principal)}</td><td>${fmt.currencyExact(p.payment)}</td><td>${fmt.currencyExact(p.endBal)}</td></tr>`;});
+  h+=`<tr style="font-weight:800;border-top:2px solid var(--accent);"><td>Total</td><td></td><td>${fmt.currencyExact(tI)}</td><td>${fmt.currencyExact(tP)}</td><td>${fmt.currencyExact(tPmt)}</td><td></td></tr>`;
+  if(r.totalFee>0)h+=`<tr><td colspan="6" style="text-align:left;color:var(--muted);">+ Origination Fee: ${fmt.currencyExact(r.totalFee)}</td></tr>`;
+  h+=`<tr><td colspan="6" style="text-align:left;color:var(--muted);">= Grand Total: ${fmt.currencyExact(tPmt+r.totalFee+r.down)} (incl. ${fmt.currencyExact(r.down)} down)</td></tr>`;
+  h+='</tbody></table>';$('amortTableWrap').innerHTML=h;
+}
+
+function updateSensScenarioDropdown(){const s=$('sensScenario'),p=s.value;s.innerHTML='';scenarios.forEach((sc,i)=>{const o=document.createElement('option');o.value=i;o.textContent=sc.name;s.appendChild(o);});if(p&&parseInt(p)<scenarios.length)s.value=p;}
+
+/* ─── Sensitivity Engine ─── */
+function runSensitivity(){
+  const scIdx=parseInt($('sensScenario').value);if(isNaN(scIdx)||!scenarios[scIdx])return;
+  const baseSc={...scenarios[scIdx]};const obj=$('sensObjective').value;const varX=$('sensVarX').value;
+  const xS=parseFloat($('sensXStart').value)||0,xE=parseFloat($('sensXEnd').value)||10;
+  const steps=Math.max(5,Math.min(50,parseInt($('sensSteps').value)||20));
+  const pc=parseNumInput($('purchaseCost'))||50000;let ac=parseNumInput($('availableCash'));if(ac<=0)ac=pc;
+  const inflOn=$('inflationToggle').checked,inflR=parseFloat($('inflationRate').value)||0;
+  const rfRate=parseFloat($('baseRf').value)||0;
+
+  function applyVar(sc,vn,val){
+    const m={...sc};
+    if(vn==='financeRate')m.financeRate=val;
+    else if(vn==='riskFreeRate'){/* now a global, override via closure */m._rfOverride=val;}
+    else if(vn==='downPayment')m.downPayment=val;
+    else if(vn==='termYears')m.termPeriods=Math.max(1,Math.round(Math.max(0.25,val)*periodsPerYear(m.freq)));
+    return m;
+  }
+  function getNetBenefit(m,pc,ac,inflR,inflOn,obj){
+    const rf=m._rfOverride!==undefined?m._rfOverride:rfRate;
+    return quickNetBenefit(m,pc,ac,rf,inflR,inflOn,obj);
+  }
+  const xVals=[];for(let i=0;i<steps;i++)xVals.push(xS+i*(xE-xS)/(steps-1));
+
+  if(sensMode==='2d'){
+    $('sens2dSection').style.display='';$('sens3dSection').style.display='none';
+    const objL=$('sensObjective').selectedOptions[0].text,xL=$('sensVarX').selectedOptions[0].text;
+    $('sens2dTitle').textContent=`${objL} vs ${xL}`;
+    const data=xVals.map(x=>{const m=applyVar(baseSc,varX,x);const v=getNetBenefit(m,pc,ac,inflR,inflOn,obj);return v!==null?v:0;});
+    const labels=xVals.map(x=>x.toFixed(2));const color=cssVar(SCENARIO_COLORS[scIdx%SCENARIO_COLORS.length]);
+    const gc=cssVar('--border'),mc=cssVar('--muted');
+    const datasets=[{label:objL,data,borderColor:color,backgroundColor:color+'22',borderWidth:2.5,pointRadius:2,pointHoverRadius:5,tension:.3,fill:false},{label:'Zero',data:xVals.map(()=>0),borderColor:cssVar('--muted'),borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}];
+    $('sensLegend').innerHTML=`<div class="legend-item"><span class="dot" style="background:${color}"></span><span>${baseSc.name}</span></div>`;
+    const cfg={type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>`${xL}: ${c[0].label}`,label:c=>`${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`}},zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},scales:{x:{title:{display:true,text:xL,color:mc},ticks:{color:mc,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:objL,color:mc},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
+    if(sensChartInstance){sensChartInstance.data=cfg.data;sensChartInstance.options=cfg.options;sensChartInstance.update('none');}
+    else sensChartInstance=new Chart($('sensCanvas'),cfg);
+  } else {
+    // ═══ 3D SURFACE PLOT ═══
+    $('sens2dSection').style.display='none';$('sens3dSection').style.display='';
+    const varY=$('sensVarY').value;
+    const yS=parseFloat($('sensYStart').value)||0,yE=parseFloat($('sensYEnd').value)||8;
+    const yVals=[];for(let i=0;i<steps;i++)yVals.push(yS+i*(yE-yS)/(steps-1));
+    const xL=$('sensVarX').selectedOptions[0].text,yL=$('sensVarY').selectedOptions[0].text,zL=$('sensObjective').selectedOptions[0].text;
+    $('sens3dTitle').textContent=`3D Surface: ${zL}`;
+
+    // Build z matrix [y][x]
+    const zData=[];
+    for(let yi=0;yi<steps;yi++){const row=[];for(let xi=0;xi<steps;xi++){let m=applyVar(baseSc,varX,xVals[xi]);m=applyVar(m,varY,yVals[yi]);const v=getNetBenefit(m,pc,ac,inflR,inflOn,obj);row.push(v!==null?v:0);}zData.push(row);}
+
+    const isLight=document.body.classList.contains('light');
+    const plotData=[{type:'surface',x:xVals,y:yVals,z:zData,
+      colorscale:[[0,'#ef4444'],[0.25,'#f59e0b'],[0.5,'#fef9c3'],[0.75,'#86efac'],[1,'#22c55e']],
+      contours:{z:{show:true,usecolormap:true,highlightcolor:'#fff',project:{z:false}}},
+      hovertemplate:`${xL}: %{x:.2f}<br>${yL}: %{y:.2f}<br>${zL}: $%{z:,.0f}<extra></extra>`
+    }];
+    const layout={autosize:true,margin:{l:0,r:0,t:0,b:0},
+      paper_bgcolor:isLight?'#ffffff':'#11172a',
+      scene:{
+        xaxis:{title:xL,color:isLight?'#1a2340':'#a8b4d4',gridcolor:isLight?'rgba(0,0,0,.08)':'rgba(255,255,255,.08)'},
+        yaxis:{title:yL,color:isLight?'#1a2340':'#a8b4d4',gridcolor:isLight?'rgba(0,0,0,.08)':'rgba(255,255,255,.08)'},
+        zaxis:{title:zL,color:isLight?'#1a2340':'#a8b4d4',gridcolor:isLight?'rgba(0,0,0,.08)':'rgba(255,255,255,.08)',tickprefix:'$',tickformat:',.0f'},
+        bgcolor:isLight?'#f0f4ff':'#0b1020',
+        camera:{eye:{x:1.8,y:1.8,z:1.2}}
+      },
+      font:{family:'DM Sans',color:isLight?'#1a2340':'#e8eefc'}
+    };
+    Plotly.newPlot('plotly3d',plotData,layout,{responsive:true,displayModeBar:true,displaylogo:false});
+  }
+}
+
+/* ─── Scenario Management ─── */
+function renderScenarioList(){
+  const list=$('scenarioList');list.innerHTML='';
+  scenarios.forEach((sc,i)=>{
+    const div=document.createElement('div');div.className='scenario-card'+(editingIdx===i?' active':'');const color=cssVar(SCENARIO_COLORS[i%SCENARIO_COLORS.length]);
+    div.innerHTML=`<div class="sc-header"><div class="sc-name"><span class="sc-dot" style="background:${color}"></span>${sc.name}</div><div class="sc-actions"><button class="sc-btn" data-action="edit" data-idx="${i}">Edit</button><button class="sc-btn" data-action="dup" data-idx="${i}">Dup</button><button class="sc-btn del" data-action="del" data-idx="${i}">✕</button></div></div><div class="sc-summary">${fmt.pct(sc.financeRate/100)} rate · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${sc.downPayment>0?fmt.currency(sc.downPayment)+' down':'No down pmt'}</div>`;
+    div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)'});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;$('scenarioEditor').style.display='none';}renderScenarioList();rerender();}});});
+    div.addEventListener('click',()=>openEditor(i));list.appendChild(div);
+  });
+}
+
+function updateTermLabel(freq){
+  const unit=termUnitLabel(freq);
+  // Update the label text node (first child of tip-wrap)
+  const lbl=$('termLabel');
+  lbl.firstChild.textContent='Term ('+unit+') ';
+  const sub=$('termSub');
+  if(freq==='weekly')sub.textContent='Number of weekly payments (e.g. 260 = 5 years).';
+  else if(freq==='fortnightly')sub.textContent='Number of fortnightly payments (e.g. 130 = 5 years).';
+  else if(freq==='monthly')sub.textContent='Number of monthly payments (e.g. 60 = 5 years).';
+  else sub.textContent='Number of yearly payments (e.g. 5 = 5 years).';
+}
+
+function openEditor(idx){
+  editingIdx=idx;const sc=scenarios[idx];
+  $('editorTitle').textContent='Edit: '+sc.name;
+  $('scName').value=sc.name;
+  $('scRate').value=sc.financeRate;
+  $('scRateVal').textContent=fmt.pct(sc.financeRate/100);
+  $('scDown').value=fmt.fmtInput(sc.downPayment);
+  $('scTerm').value=sc.termPeriods;
+  $('scFreq').value=sc.freq;
+  updateTermLabel(sc.freq);
+  $('scFeeAmt').value=fmt.fmtInput(sc.feeAmt);
+  $('scFeeType').value=sc.feeType;
+  $('scenarioEditor').style.display='block';
+  renderScenarioList();
+}
+
+function saveEditor(){
+  if(editingIdx<0)return;
+  const sc=scenarios[editingIdx];
+  sc.name=$('scName').value||'Scenario '+(editingIdx+1);
+  const _r=parseFloat($('scRate').value);sc.financeRate=isNaN(_r)?5:_r;
+  sc.downPayment=Math.max(0,parseNumInput($('scDown')));
+  const newFreq=$('scFreq').value;
+  // If freq changed, convert termPeriods
+  if(newFreq!==sc.freq){sc.freq=newFreq;updateTermLabel(newFreq);}
+  sc.termPeriods=Math.max(1,Math.round(parseFloat($('scTerm').value)||defaultTerm(sc.freq)));
+  sc.feeAmt=Math.max(0,parseNumInput($('scFeeAmt')));
+  sc.feeType=$('scFeeType').value;
+  renderScenarioList();rerender();
+}
+
+function closeEditor(){editingIdx=-1;$('scenarioEditor').style.display='none';renderScenarioList();}
+
+/* ─── Events ─── */
+$('addScenarioBtn').addEventListener('click',()=>{scenarios.push(defaultScenario());openEditor(scenarios.length-1);rerender();});
+$('saveScenarioBtn').addEventListener('click',()=>{saveEditor();closeEditor();});
+$('cancelScenarioBtn').addEventListener('click',closeEditor);
+
+// Base RF rate slider
+['input','change'].forEach(evt=>{$('baseRf').addEventListener(evt,()=>{$('baseRfVal').textContent=fmt.pct(parseFloat($('baseRf').value)/100);rerender();});});
+
+// Finance rate slider in editor — live update display
+['input','change'].forEach(evt=>{$('scRate').addEventListener(evt,()=>{$('scRateVal').textContent=fmt.pct(parseFloat($('scRate').value)/100);});});
+
+// Freq change updates term label immediately
+$('scFreq').addEventListener('change',()=>{updateTermLabel($('scFreq').value);});
+
+['scName','scTerm','scFeeType'].forEach(id=>{['input','change'].forEach(evt=>{$(id).addEventListener(evt,()=>{/* live preview only on save click */});});});
+['scDown','scFeeAmt'].forEach(id=>{$(id).addEventListener('blur',()=>{/* handled on save */});});
+['chartMetric','optTarget'].forEach(id=>{$(id).addEventListener('change',rerender);});
+$('inflationToggle').addEventListener('change',rerender);
+$('inflationRate').addEventListener('change',rerender);
+
+document.querySelectorAll('.ctrl-tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.ctrl-tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');$('tab-'+btn.dataset.tab).classList.add('active');});});
+$('mode2d').addEventListener('click',()=>{sensMode='2d';$('mode2d').classList.add('active');$('mode3d').classList.remove('active');$('sensYBlock').style.display='none';});
+$('mode3d').addEventListener('click',()=>{sensMode='3d';$('mode3d').classList.add('active');$('mode2d').classList.remove('active');$('sensYBlock').style.display='';});
+$('runSensBtn').addEventListener('click',runSensitivity);
+
+$('themeToggle').addEventListener('click',()=>{document.body.classList.toggle('light');$('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';if(chartInstance){chartInstance.destroy();chartInstance=null;}if(sensChartInstance){sensChartInstance.destroy();sensChartInstance=null;}rerender();});
+$('chartResetZoom').addEventListener('click',()=>{if(chartInstance)chartInstance.resetZoom();});
+$('sensResetZoom').addEventListener('click',()=>{if(sensChartInstance)sensChartInstance.resetZoom();});
+$('chartCanvas').addEventListener('mouseleave',()=>{$('hoverBox').textContent='Hover over the chart to inspect a period.';});
+
+$('resetBtn').addEventListener('click',()=>{
+  scenarios=[];
+  scenarios.push(defaultScenario('60mo Monthly @ 5%',5));
+  scenarios.push({...defaultScenario('36mo Monthly @ 7%',7),termPeriods:36,financeRate:7});
+  editingIdx=-1;
+  $('scenarioEditor').style.display='none';
+  $('purchaseCost').value=fmt.fmtInput(50000);
+  $('availableCash').value=fmt.fmtInput(50000);
+  $('baseRf').value=4.5;
+  $('baseRfVal').textContent='4.50%';
+  $('inflationToggle').checked=false;
+  $('inflationRate').value=2.5;
+  $('chartMetric').value='wealth';
+  $('optTarget').value='netBenefit';
+  $('sens2dSection').style.display='none';
+  $('sens3dSection').style.display='none';
+  renderScenarioList();rerender();
+});
+
+$('downloadBtn').addEventListener('click',()=>{if(!latestResults||!latestResults.results.length)return;const valid=latestResults.results.filter(r=>r);if(!valid.length)return;const hd=['Period',...valid.map(r=>r.name+' Wealth'),...valid.map(r=>r.name+' InvestBal'),...valid.map(r=>r.name+' LoanBal'),...valid.map(r=>r.name+' CumInterest')];const maxN=valid.reduce((m,r)=>Math.max(m,r.n),0);const lines=[];for(let p=0;p<=maxN;p++){const row=[p];valid.forEach(r=>{const t=r.timeline[Math.min(p,r.timeline.length-1)];row.push(t.wealth.toFixed(2));});valid.forEach(r=>{const t=r.timeline[Math.min(p,r.timeline.length-1)];row.push(t.investBal.toFixed(2));});valid.forEach(r=>{const t=r.timeline[Math.min(p,r.timeline.length-1)];row.push(t.loanBal.toFixed(2));});valid.forEach(r=>{const t=r.timeline[Math.min(p,r.timeline.length-1)];row.push(t.cumInterest.toFixed(2));});lines.push(row.join(','));}const csv=[hd.join(','),...lines].join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='financing_vs_cash.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);});
+
+/* ─── Global Tooltip ─── */
+(function(){
+  const tip=document.getElementById('globalTooltip');
+  let hideTimer=null;
+  document.addEventListener('mouseover',e=>{
+    const icon=e.target.closest('[data-tip]');
+    if(!icon){return;}
+    clearTimeout(hideTimer);
+    tip.textContent=icon.dataset.tip;
+    tip.classList.add('visible');
+    const r=icon.getBoundingClientRect();
+    const tw=220, margin=8;
+    // Position above the icon, centred
+    let left=r.left+r.width/2-tw/2;
+    let top=r.top-tip.offsetHeight-margin;
+    // Clamp horizontally within viewport
+    left=Math.max(margin,Math.min(left,window.innerWidth-tw-margin));
+    // If would go above viewport, show below instead
+    if(top<margin){top=r.bottom+margin;tip.style.setProperty('--arrow-top','true');}
+    else{tip.style.removeProperty('--arrow-top');}
+    tip.style.left=left+'px';
+    tip.style.top=top+'px';
+    // Update arrow horizontal position to point at icon
+    const arrowLeft=r.left+r.width/2-left;
+    tip.style.setProperty('--arrow-left',Math.max(16,Math.min(arrowLeft,tw-16))+'px');
+  });
+  document.addEventListener('mouseout',e=>{
+    const icon=e.target.closest('[data-tip]');
+    if(!icon)return;
+    hideTimer=setTimeout(()=>tip.classList.remove('visible'),80);
+  });
+})();
+
+/* ─── Init ─── */
+scenarios.push(defaultScenario('60mo Monthly @ 5%',5));
+scenarios.push({...defaultScenario('36mo Monthly @ 7%',7),termPeriods:36,financeRate:7});
+setupFmtInputs();renderScenarioList();rerender();
+})();
+</script>
+</body>
+</html>
