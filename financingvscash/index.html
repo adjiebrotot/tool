@@ -172,17 +172,7 @@ body.light #globalTooltip::after{border-top-color:#fff;}
 
   <div class="ctrl-panel active" id="tab-base">
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Purchase Cost <i class="tip-icon" data-tip="The total price of the asset or item being purchased (e.g. a car, equipment, or property).">?</i></span></div>
-      <input class="num-input fmt-num" id="purchaseCost" type="text" inputmode="decimal" value="50,000"/>
-      <div class="field-sub">Total price of the item being purchased.</div>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Available Cash <i class="tip-icon" data-tip="How much cash you have on hand. Must be at least equal to the purchase cost — financing something you cannot fully afford upfront is not modelled.">?</i></span></div>
-      <input class="num-input fmt-num" id="availableCash" type="text" inputmode="decimal" value="50,000"/>
-      <div class="field-sub">Cash on hand. Must be ≥ purchase cost to run the simulation.</div>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Currency Symbol <i class="tip-icon" data-tip="Display-only setting. It changes the symbol shown across the UI, without affecting calculations.">?</i></span></div>
+      <div class="field-label">Currency Symbol</div>
       <select class="sel-input" id="currencySymbol">
         <option value="$" selected>$ - Dollar</option>
         <option value="¥">¥ - Yen/Yuan</option>
@@ -192,7 +182,16 @@ body.light #globalTooltip::after{border-top-color:#fff;}
         <option value="RM">RM - Ringgit</option>
         <option value="₿">₿ - Bitcoin</option>
       </select>
-      <div class="field-sub">Preference only. Number math remains the same.</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Purchase Cost <i class="tip-icon" data-tip="The total price of the asset or item being purchased (e.g. a car, equipment, or property).">?</i></span></div>
+      <input class="num-input fmt-num" id="purchaseCost" type="text" inputmode="decimal" value="50,000"/>
+      <div class="field-sub">Total price of the item being purchased.</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Available Cash <i class="tip-icon" data-tip="How much cash you have on hand. Must be at least equal to the purchase cost — financing something you cannot fully afford upfront is not modelled.">?</i></span></div>
+      <input class="num-input fmt-num" id="availableCash" type="text" inputmode="decimal" value="50,000"/>
+      <div class="field-sub">Cash on hand. Must be ≥ purchase cost to run the simulation.</div>
     </div>
     <div class="slider-block">
       <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Risk-Free Rate (annual %) <i class="tip-icon" data-tip="The annual return earned on uninvested cash (e.g. high-yield savings account, T-bills). Applies to all scenarios as the baseline investment return.">?</i></span></div><div class="slider-value" id="baseRfVal">4.50%</div></div>
@@ -222,7 +221,11 @@ body.light #globalTooltip::after{border-top-color:#fff;}
         <input id="scRate" type="range" min="0" max="30" step="0.1" value="5"/>
         <div class="help">Annual interest rate on the financed amount.</div>
       </div>
-      <div class="field-row"><div class="field-label"><span class="tip-wrap">Down Payment <i class="tip-icon" data-tip="The amount paid upfront before financing. Reduces the loan principal. If available cash is less than purchase cost, your entire cash will be used as down payment automatically.">?</i></span></div><input class="num-input fmt-num" id="scDown" type="text" inputmode="decimal" value="0"/><div class="field-sub">Amount paid upfront before financing.</div></div>
+      <div class="slider-block">
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment (% of purchase cost) <i class="tip-icon" data-tip="The share of purchase cost paid upfront. 0% means full financing. 100% means the purchase is fully paid in cash, so no loan is needed.">?</i></span></div><div class="slider-value" id="scDownVal">0%</div></div>
+        <input id="scDownPct" type="range" min="0" max="100" step="1" value="0"/>
+        <div class="help">Choose what percentage of the purchase cost is paid upfront before financing the remainder.</div>
+      </div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Repayment Frequency <i class="tip-icon" data-tip="How often you make loan payments. Affects the period rate (compound-converted from annual) and the term unit shown below.">?</i></span></div>
         <select class="sel-input" id="scFreq"><option value="weekly">Weekly</option><option value="fortnightly">Fortnightly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select>
@@ -262,12 +265,12 @@ body.light #globalTooltip::after{border-top-color:#fff;}
     </div>
     <div class="mode-tabs"><button class="mode-tab active" id="mode2d">2D Sweep</button><button class="mode-tab" id="mode3d">3D Surface</button></div>
     <div class="field-row" style="margin-top:8px;"><div class="field-label"><span class="tip-wrap">X-Axis Variable <i class="tip-icon" data-tip="The input parameter to vary along the X axis. All other parameters remain at their scenario defaults.">?</i></span></div>
-      <select class="sel-input" id="sensVarX"><option value="financeRate">Finance Rate (%)</option><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="downPayment">Down Payment ($)</option><option value="termYears">Term (years)</option></select>
+      <select class="sel-input" id="sensVarX"><option value="financeRate">Finance Rate (%)</option><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="termYears">Term (years)</option></select>
     </div>
     <div class="field-row"><div class="field-label"><span class="tip-wrap">X Range <i class="tip-icon" data-tip="The minimum and maximum values to sweep the X-axis variable between.">?</i></span></div><div class="inline-row"><input class="num-input" id="sensXStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensXEnd" type="number" step="0.5" value="10"/></div></div>
     <div id="sensYBlock" style="display:none;">
       <div class="field-row"><div class="field-label"><span class="tip-wrap">Y-Axis Variable <i class="tip-icon" data-tip="The second input parameter to vary for the 3D surface plot. Must differ from the X-axis variable.">?</i></span></div>
-        <select class="sel-input" id="sensVarY"><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="financeRate">Finance Rate (%)</option><option value="downPayment">Down Payment ($)</option><option value="termYears">Term (years)</option></select>
+        <select class="sel-input" id="sensVarY"><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="financeRate">Finance Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="termYears">Term (years)</option></select>
       </div>
       <div class="field-row"><div class="field-label"><span class="tip-wrap">Y Range <i class="tip-icon" data-tip="The minimum and maximum values to sweep the Y-axis variable between.">?</i></span></div><div class="inline-row"><input class="num-input" id="sensYStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensYEnd" type="number" step="0.5" value="8"/></div></div>
     </div>
@@ -375,7 +378,7 @@ function defaultTerm(freq){return{weekly:260,fortnightly:130,monthly:60,yearly:5
 
 function defaultScenario(name,rate){
   const freq='monthly';
-  return{name:name||'Scenario '+(scenarios.length+1),financeRate:rate||5,downPayment:0,termPeriods:defaultTerm(freq),freq,feeAmt:0,feeType:'fixed'};
+  return{name:name||'Scenario '+(scenarios.length+1),financeRate:rate||5,downPaymentPct:0,termPeriods:defaultTerm(freq),freq,feeAmt:0,feeType:'fixed'};
 }
 
 /*
@@ -440,7 +443,9 @@ function computeAmortization(principal, annualRate, termPeriods, freq){
 }
 
 function computeScenario(sc, purchaseCost, availableCash, riskFreeRate, inflationRate, inflationEnabled){
-  const down=Math.min(Math.max(0,sc.downPayment),purchaseCost,availableCash);
+  const downPct=Math.min(100,Math.max(0,sc.downPaymentPct||0));
+  const requestedDown=purchaseCost*(downPct/100);
+  const down=Math.min(requestedDown,purchaseCost,availableCash);
   const financed=purchaseCost-down;
   const termYears=termToYears(sc.termPeriods,sc.freq);
   if(financed<=0) return computeScenarioAsCash(purchaseCost,availableCash,sc,riskFreeRate,inflationRate,inflationEnabled);
@@ -631,7 +636,8 @@ function renderComparisonTable(results){
   const inflOn=latestResults.inflationEnabled,pc=latestResults.purchaseCost;
   let h='<table><thead><tr><th>Metric</th><th>Cash Purchase</th>';valid.forEach(r=>{h+='<th>'+r.name+'</th>';});h+='</tr></thead><tbody>';
   const rows=[
-    ['Down Payment','—',r=>fmt.currency(r.down)],['Financed Amount','—',r=>fmt.currency(r.financed)],
+    ['Down Payment (%)','—',r=>fmt.pct((r.down/latestResults.purchaseCost)||0,2)],
+    ['Down Payment Amount','—',r=>fmt.currency(r.down)],['Financed Amount','—',r=>fmt.currency(r.financed)],
     ['Periodic Payment','—',r=>r.payment>0?fmt.currencyExact(r.payment)+'/'+freqLabel(r.freq):'—'],
     ['Total Interest Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalInterest)],['Total Fees Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalFee)],
     ['Total Financing Cost',fmt.currency(0),r=>fmt.currencyExact(r.totalFinanceCost)],['Total Out-of-Pocket',fmt.currency(pc),r=>fmt.currencyExact(r.totalOOP)],
@@ -678,7 +684,7 @@ function runSensitivity(){
     const m={...sc};
     if(vn==='financeRate')m.financeRate=val;
     else if(vn==='riskFreeRate'){/* now a global, override via closure */m._rfOverride=val;}
-    else if(vn==='downPayment')m.downPayment=val;
+    else if(vn==='downPayment')m.downPaymentPct=Math.min(100,Math.max(0,val));
     else if(vn==='termYears')m.termPeriods=Math.max(1,Math.round(Math.max(0.25,val)*periodsPerYear(m.freq)));
     return m;
   }
@@ -739,7 +745,7 @@ function renderScenarioList(){
   const list=$('scenarioList');list.innerHTML='';
   scenarios.forEach((sc,i)=>{
     const div=document.createElement('div');div.className='scenario-card'+(editingIdx===i?' active':'');const color=cssVar(SCENARIO_COLORS[i%SCENARIO_COLORS.length]);
-    div.innerHTML=`<div class="sc-header"><div class="sc-name"><span class="sc-dot" style="background:${color}"></span>${sc.name}</div><div class="sc-actions"><button class="sc-btn" data-action="edit" data-idx="${i}">Edit</button><button class="sc-btn" data-action="dup" data-idx="${i}">Dup</button><button class="sc-btn del" data-action="del" data-idx="${i}">✕</button></div></div><div class="sc-summary">${fmt.pct(sc.financeRate/100)} rate · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${sc.downPayment>0?fmt.currency(sc.downPayment)+' down':'No down pmt'}</div>`;
+    div.innerHTML=`<div class="sc-header"><div class="sc-name"><span class="sc-dot" style="background:${color}"></span>${sc.name}</div><div class="sc-actions"><button class="sc-btn" data-action="edit" data-idx="${i}">Edit</button><button class="sc-btn" data-action="dup" data-idx="${i}">Dup</button><button class="sc-btn del" data-action="del" data-idx="${i}">✕</button></div></div><div class="sc-summary">${fmt.pct(sc.financeRate/100)} rate · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down</div>`;
     div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)'});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;$('scenarioEditor').style.display='none';}renderScenarioList();rerender();}});});
     div.addEventListener('click',()=>openEditor(i));list.appendChild(div);
   });
@@ -759,11 +765,15 @@ function updateTermLabel(freq){
 
 function openEditor(idx){
   editingIdx=idx;const sc=scenarios[idx];
+  if(sc.downPaymentPct===undefined&&sc.downPayment!==undefined){
+    sc.downPaymentPct=Math.min(100,Math.max(0,(sc.downPayment/(parseNumInput($('purchaseCost'))||1))*100));
+  }
   $('editorTitle').textContent='Edit: '+sc.name;
   $('scName').value=sc.name;
   $('scRate').value=sc.financeRate;
   $('scRateVal').textContent=fmt.pct(sc.financeRate/100);
-  $('scDown').value=fmt.fmtInput(sc.downPayment);
+  $('scDownPct').value=Math.min(100,Math.max(0,sc.downPaymentPct||0));
+  $('scDownVal').textContent=fmt.pct(($('scDownPct').value||0)/100,0);
   $('scTerm').value=sc.termPeriods;
   $('scFreq').value=sc.freq;
   updateTermLabel(sc.freq);
@@ -778,7 +788,8 @@ function saveEditor(){
   const sc=scenarios[editingIdx];
   sc.name=$('scName').value||'Scenario '+(editingIdx+1);
   const _r=parseFloat($('scRate').value);sc.financeRate=isNaN(_r)?5:_r;
-  sc.downPayment=Math.max(0,parseNumInput($('scDown')));
+  const downPct=parseFloat($('scDownPct').value);
+  sc.downPaymentPct=isNaN(downPct)?0:Math.min(100,Math.max(0,downPct));
   const newFreq=$('scFreq').value;
   // If freq changed, convert termPeriods
   if(newFreq!==sc.freq){sc.freq=newFreq;updateTermLabel(newFreq);}
@@ -800,12 +811,13 @@ $('cancelScenarioBtn').addEventListener('click',closeEditor);
 
 // Finance rate slider in editor — live update display
 ['input','change'].forEach(evt=>{$('scRate').addEventListener(evt,()=>{$('scRateVal').textContent=fmt.pct(parseFloat($('scRate').value)/100);});});
+['input','change'].forEach(evt=>{$('scDownPct').addEventListener(evt,()=>{$('scDownVal').textContent=fmt.pct(parseFloat($('scDownPct').value||0)/100,0);});});
 
 // Freq change updates term label immediately
 $('scFreq').addEventListener('change',()=>{updateTermLabel($('scFreq').value);});
 
 ['scName','scTerm','scFeeType'].forEach(id=>{['input','change'].forEach(evt=>{$(id).addEventListener(evt,()=>{/* live preview only on save click */});});});
-['scDown','scFeeAmt'].forEach(id=>{$(id).addEventListener('blur',()=>{/* handled on save */});});
+['scFeeAmt'].forEach(id=>{$(id).addEventListener('blur',()=>{/* handled on save */});});
 ['chartMetric','optTarget'].forEach(id=>{$(id).addEventListener('change',rerender);});
 $('currencySymbol').addEventListener('change',rerender);
 $('inflationToggle').addEventListener('change',rerender);
