@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rent vs Own — Property Scenario Explorer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap');
+:root {
+  --bg:#0b1020;--panel:#11172a;--text:#e8eefc;--muted:#a8b4d4;--border:rgba(255,255,255,0.08);
+  --accent:#3b82f6;--accent2:#22c55e;--accent3:#ef4444;--gold:#f59e0b;
+  --input-bg:rgba(255,255,255,0.06);--card-bg:rgba(255,255,255,0.03);--shadow:0 4px 24px rgba(0,0,0,0.4);
+  --line-a:#3b82f6;--line-b:#ef4444;--line-c:#22c55e;--line-d:#f59e0b;--line-e:#a855f7;
+}
+/* Global Tooltip */
+#globalTooltip{position:fixed;z-index:99999;pointer-events:none;max-width:260px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.8rem;line-height:1.45;color:var(--text);box-shadow:0 6px 24px rgba(0,0,0,.45);opacity:0;transition:opacity .12s;display:none;}
+#globalTooltip.visible{display:block;opacity:1;}
+#globalTooltip .tt-arrow{position:absolute;bottom:-7px;width:12px;height:7px;overflow:hidden;transform:translateX(-50%);}
+#globalTooltip .tt-arrow::before{content:'';display:block;width:10px;height:10px;background:var(--panel);border:1px solid var(--border);transform:rotate(45deg) translate(-3px,-3px);}
+#globalTooltip.flip-below .tt-arrow{bottom:auto;top:-7px;}
+#globalTooltip.flip-below .tt-arrow::before{transform:rotate(45deg) translate(3px,3px);}
+.tip-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:rgba(168,180,212,.18);color:var(--muted);font-size:.7rem;font-weight:800;cursor:default;margin-left:5px;flex-shrink:0;vertical-align:middle;line-height:1;border:1px solid var(--border);}
+.tip-icon:hover{border-color:var(--accent);color:var(--accent);}
+/* Toggle switch */
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0 12px;border-top:1px solid var(--border);}
+.toggle-label{font-weight:700;font-size:.88rem;flex:1;}
+.toggle-switch{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:var(--input-bg);border:1px solid var(--border);border-radius:999px;cursor:pointer;transition:background .2s;}
+.toggle-switch input:checked+.toggle-track{background:var(--accent);border-color:var(--accent);}
+.toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;pointer-events:none;}
+.toggle-switch input:checked~.toggle-knob,.toggle-switch input:checked+.toggle-track+.toggle-knob{transform:translateX(18px);}
+.toggle-track .toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;}
+.toggle-switch input:checked+.toggle-track .toggle-knob{transform:translateX(18px);}
+body.light {
+  --bg:#f0f4ff;--panel:#ffffff;--text:#1a2340;--muted:#5a6a8a;--border:rgba(0,0,0,0.10);
+  --accent:#2563eb;--accent2:#16a34a;--accent3:#dc2626;--gold:#d97706;
+  --input-bg:rgba(0,0,0,0.04);--card-bg:rgba(255,255,255,0.85);--shadow:0 4px 24px rgba(0,0,0,0.12);
+  --line-a:#1d4ed8;--line-b:#b91c1c;--line-c:#15803d;--line-d:#b45309;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',Inter,system-ui,sans-serif;color:var(--text);background:var(--bg);transition:background .25s,color .25s;min-height:100vh;}
+.container{max-width:1460px;margin:0 auto;padding:24px;}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);}
+.header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+.header-left h1{font-size:1.85rem;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;}
+.header-left p{color:var(--muted);font-size:.9rem;}
+.header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
+.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-theme:hover{border-color:var(--accent);color:var(--text);}
+.layout{display:grid;grid-template-columns:380px 1fr;gap:18px;}
+.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;}
+.controls::-webkit-scrollbar{width:0;height:0;}
+.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);}
+.ctrl-tab{flex:1;padding:12px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
+.ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent);}
+.ctrl-panel{display:none;padding:14px 16px 18px;}
+.ctrl-panel.active{display:block;}
+.section-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.section-label:first-child{margin-top:0;}
+.slider-block{padding:10px 0 14px;border-top:1px solid var(--border);}
+.slider-block:first-of-type{border-top:none;}
+.slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;}
+.slider-label{font-weight:700;font-size:.88rem;}
+.slider-value{color:var(--gold);font-weight:700;font-size:.88rem;font-variant-numeric:tabular-nums;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+.help{color:var(--muted);font-size:.8rem;margin-top:4px;line-height:1.4;}
+.field-row{display:flex;flex-direction:column;gap:4px;padding:10px 0 12px;border-top:1px solid var(--border);}
+.field-row:first-of-type{border-top:none;}
+.field-label{font-weight:700;font-size:.88rem;}
+.field-sub{color:var(--muted);font-size:.78rem;line-height:1.35;margin-top:2px;}
+.num-input{background:var(--input-bg);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:.9rem;font-weight:600;padding:7px 10px;width:100%;outline:none;transition:border-color .15s;}
+.num-input:focus{border-color:var(--accent);}
+.input-row{display:flex;gap:8px;align-items:center;}
+.input-row .num-input{flex:1;}
+.input-row select{background:var(--panel);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:.88rem;font-weight:600;padding:7px 10px;outline:none;cursor:pointer;}
+select{background:var(--panel)!important;color:var(--text)!important;border:1px solid var(--border);border-radius:9px;outline:none;}
+select:focus{border-color:var(--accent);}
+select option{background:var(--panel);color:var(--text);}
+.radio-group{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+.radio-opt{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .15s;}
+.radio-opt:hover{border-color:rgba(255,255,255,.2);}
+body.light .radio-opt:hover{border-color:rgba(0,0,0,.2);}
+.radio-opt.selected{border-color:var(--accent);background:rgba(59,130,246,.08);}
+.radio-opt input[type=radio]{margin-top:2px;accent-color:var(--accent);flex-shrink:0;}
+.radio-opt-text{font-size:.82rem;line-height:1.45;color:var(--muted);}
+.radio-opt-text strong{color:var(--text);font-weight:700;display:block;margin-bottom:2px;font-size:.86rem;}
+.cagr-box{background:var(--input-bg);border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:8px;display:grid;gap:10px;}
+#cagrRows{display:grid;gap:8px;}
+.cagr-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr) auto;gap:8px;align-items:center;}
+.cagr-actions{display:flex;flex-wrap:wrap;gap:8px;}
+.cagr-row input{width:100%;min-width:0;background:var(--panel);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.84rem;padding:8px 10px;outline:none;}
+.cagr-row input:focus{border-color:var(--accent);}
+.cagr-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.cagr-btn.delete{background:transparent;color:var(--accent3);border:1px solid rgba(239,68,68,.45);padding-inline:10px;}
+.cagr-btn.delete:disabled{opacity:.45;cursor:not-allowed;}
+.cagr-result{color:var(--accent2);font-size:.82rem;font-weight:700;line-height:1.4;min-height:1.2em;}
+@media(max-width:520px){
+  .cagr-row{grid-template-columns:1fr;}
+  .cagr-row .cagr-btn.delete{justify-self:start;}
+}
+.warning{margin:0 0 12px;padding:10px 12px;border-radius:10px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:#fde8b1;display:none;font-size:.82rem;line-height:1.5;}
+body.light .warning{background:rgba(245,158,11,.08);color:#92400e;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:12px 16px 16px;border-top:1px solid var(--border);}
+.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.88rem;transition:opacity .15s;flex:1;}
+.btn-primary:hover{opacity:.85;}
+.btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.88rem;transition:border-color .15s;flex:1;}
+.btn-secondary:hover{border-color:var(--accent);}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.metric{padding:16px 18px;}
+.metric .label{color:var(--muted);font-size:.82rem;margin-bottom:6px;}
+.metric .value{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;}
+.metric .sub{color:var(--muted);font-size:.78rem;margin-top:4px;}
+.chart-card{padding:20px;margin-bottom:18px;}
+.chart-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.chart-header h2{font-size:1.1rem;}
+.chart-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.graph-btn{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--muted);padding:5px 12px;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .15s;}
+.graph-btn.active{border-color:var(--accent);color:var(--text);background:rgba(59,130,246,.12);}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:.86rem;}
+.legend-item{display:flex;align-items:center;gap:7px;}
+.dot{width:11px;height:11px;border-radius:999px;flex-shrink:0;}
+.canvas-wrap{position:relative;width:100%;height:400px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent);}
+body.light .canvas-wrap{background:linear-gradient(180deg,rgba(0,0,0,.015),transparent);}
+.hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:20px;}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+.summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:18px;}
+.tile{padding:12px;background:var(--input-bg);border:1px solid var(--border);border-radius:12px;}
+.tile .label{color:var(--muted);font-size:.78rem;margin-bottom:5px;line-height:1.3;}
+.tile .value{font-size:.98rem;font-weight:800;}
+.tile .value.pos{color:var(--accent2);}
+.tile .value.neg{color:var(--accent3);}
+.detail-section{padding:20px;margin-bottom:18px;}
+.tab-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.tab-btn{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--muted);padding:6px 14px;font-size:.84rem;font-weight:700;cursor:pointer;transition:all .15s;}
+.tab-btn.active{border-color:var(--accent);color:var(--text);background:rgba(59,130,246,.12);}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.84rem;}
+th,td{padding:8px 6px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}
+th:first-child,td:first-child{text-align:left;}
+th{color:var(--muted);font-size:.78rem;font-weight:600;}
+tr:hover td{background:rgba(255,255,255,.03);}
+body.light tr:hover td{background:rgba(0,0,0,.03);}
+.table-wrap{overflow:auto;max-height:420px;}
+.table-wrap thead th{position:sticky;top:0;background:var(--panel);z-index:2;box-shadow:0 1px 0 var(--border);}
+.table-wrap table{min-width:100%;}
+h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
+@media(max-width:1200px){
+  .layout{grid-template-columns:1fr;}
+  .controls{position:static;max-height:none;}
+  .metrics{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:700px){
+  .metrics{grid-template-columns:1fr 1fr;}
+  .bottom{grid-template-columns:1fr;}
+  .summary-grid{grid-template-columns:1fr 1fr;}
+  .header{flex-direction:column;}
+  h1{font-size:1.4rem;}
+  .container{padding:12px;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<section class="header card">
+  <div class="header-left">
+    <h1>🏠 Rent vs Own</h1>
+    <p>Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.</p>
+  </div>
+  <div class="header-right">
+    <button class="btn-theme" id="themeToggle">☀️ Light</button>
+  </div>
+</section>
+
+<!-- LAYOUT -->
+<section class="layout">
+<aside class="controls card">
+  <div class="ctrl-tabs">
+    <button class="ctrl-tab active" data-tab="general">🌐 General</button>
+    <button class="ctrl-tab" data-tab="own">🏡 Own</button>
+    <button class="ctrl-tab" data-tab="rent">🏢 Rent</button>
+  </div>
+
+  <!-- GENERAL TAB -->
+  <div class="ctrl-panel active" id="tab-general">
+    <div class="section-label">Property</div>
+    <div class="field-row">
+      <div class="field-label">Property Price <span class="tip-icon" data-tip="The current market purchase price of the property being modelled. This is the starting value for house equity and mortgage calculations.">?</span></div>
+      <input class="num-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
+      <div class="field-sub">Purchase price of the property ($).</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Down Payment <span class="tip-icon" data-tip="The percentage of the property price paid upfront as a deposit. Set to 100% to model an all-cash purchase (no mortgage). Try different values — 20% isn't always optimal. The renter equivalent invests this same amount instead.">?</span></div>
+      <div class="slider-head" style="margin-bottom:4px;">
+        <span style="font-size:.82rem;color:var(--muted)">% of property price</span>
+        <span class="slider-value" id="downPaymentPctVal">20%</span>
+      </div>
+      <input type="range" id="downPaymentPct" min="5" max="100" step="1" value="20"/>
+      <div class="help">Down payment = <span id="downPaymentDollar" style="color:var(--gold);font-weight:700;">$160,000</span></div>
+    </div>
+    <div class="section-label">Cash</div>
+    <div class="field-row">
+      <div class="field-label">Risk-Free Rate <span class="tip-icon" data-tip="The annual return earned on any uninvested cash — surplus above rent or mortgage, and any leftover initial cash. Could be a HYSA, term deposit, ETFs, or bonds. Both scenarios compound idle cash at this rate.">?</span></div>
+      <div class="slider-head" style="margin-bottom:4px;">
+        <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
+        <span class="slider-value" id="riskFreeRateVal">4.50%</span>
+      </div>
+      <input type="range" id="riskFreeRate" min="-10" max="25" step="0.1" value="4.5"/>
+      <div class="help">Rate at which surplus cash (not used for rent/mortgage) compounds annually.</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Initial Cash <span class="tip-icon" data-tip="Your total cash available right now. This funds the down payment + setup costs for the Buy scenario. Any leftover is invested at the risk-free rate from day one. The Rent scenario invests the full amount from day one. If left blank, it defaults to exactly down payment + setup cost — no surplus, no shortfall.">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;">(optional)</span></div>
+      <input class="num-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" value=""/>
+      <div class="field-sub" id="initialCashSub">Defaults to down payment + setup cost. Any excess is invested at the risk-free rate.</div>
+      <div class="warning" id="initialCashWarn" style="display:none;margin-top:6px;"></div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Monthly Housing Budget <span class="tip-icon" data-tip="The total monthly cash available for housing costs. If left blank, it's auto-set to the higher of rent or mortgage payment each year. Any surplus above actual costs is invested at the risk-free rate.">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;">(optional)</span></div>
+      <input class="num-input money-input" id="monthlyBudget" type="text" inputmode="numeric" data-money="true" value="0"/>
+      <div class="field-sub">If 0, auto-set to the higher of rent or mortgage payment. Leftover invested at risk-free rate.</div>
+    </div>
+    <div class="field-row" id="budgetIncreaseRow" style="display:none;">
+      <div class="field-label">Budget Annual Increase <span class="tip-icon" data-tip="The rate at which your monthly housing budget grows each year — only applies when a manual budget is set above. Use this to model wage growth, CPI adjustments, or property-linked cost increases. The budget compounds at this rate annually, growing the surplus (or shrinking the shortfall) over time.">?</span></div>
+      <div class="slider-head" style="margin-bottom:4px;">
+        <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
+        <span class="slider-value" id="monthlyBudgetIncreaseVal">0.00%</span>
+      </div>
+      <input type="range" id="monthlyBudgetIncrease" min="0" max="25" step="0.1" value="0"/>
+      <div class="help">Budget grows from <span id="budgetIncreaseBase" style="color:var(--gold);font-weight:700;">—</span> at this rate each year.</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Time Horizon <span class="tip-icon" data-tip="Number of years to project the scenario. Longer horizons allow property compounding and mortgage payoff effects to fully materialise. Up to 100 years supported.">?</span></div>
+      <div class="slider-head" style="margin-bottom:4px;">
+        <span style="font-size:.82rem;color:var(--muted)">years</span>
+        <span class="slider-value" id="horizonVal">30 yrs</span>
+      </div>
+      <input type="range" id="horizon" min="5" max="100" step="1" value="30"/>
+    </div>
+    <div class="section-label">Rent-Then-Buy Scenario</div>
+    <div class="toggle-row">
+      <span class="toggle-label">Enable Rent-Then-Buy <span class="tip-icon" data-tip="Model a third scenario where you rent for X years, then buy the property at the then-current market price. This helps compare the optimal timing of entry into property ownership.">?</span></span>
+      <label class="toggle-switch" id="rtbToggleWrap">
+        <input type="checkbox" id="rtbEnabled"/>
+        <div class="toggle-track"><div class="toggle-knob"></div></div>
+      </label>
+    </div>
+    <div id="rtbParams" style="display:none;">
+      <div class="field-row" style="border-top:none;padding-top:0;">
+        <div class="field-label">Buy at Year <span class="tip-icon" data-tip="The year at which the Rent-Then-Buy scenario transitions from renting to purchasing the property. Before this year, all cashflows match the pure-rent scenario. At this year, the accumulated savings are used as the down payment (if sufficient) and a new mortgage begins.">?</span></div>
+        <div class="slider-head" style="margin-bottom:4px;">
+          <span style="font-size:.82rem;color:var(--muted)">years of renting first</span>
+          <span class="slider-value" id="rtbBuyYearVal">5 yrs</span>
+        </div>
+        <input type="range" id="rtbBuyYear" min="1" max="50" step="1" value="5"/>
+        <div class="help">Switch from renting to buying at this year. Property price grows at RPPI until then.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OWN TAB -->
+  <div class="ctrl-panel" id="tab-own">
+    <div class="section-label">Mortgage</div>
+    <div class="field-row">
+      <div class="field-label">Mortgage Type <span class="tip-icon" data-tip="Principal & Interest: each payment reduces both interest and loan balance, building equity faster. Interest Only: payments cover only interest, principal stays unchanged until term ends — lower monthly payments but no equity build from repayments.">?</span></div>
+      <div class="radio-group">
+        <label class="radio-opt selected" id="radioPI">
+          <input type="radio" name="mortgageType" value="pi" checked/>
+          <div class="radio-opt-text"><strong>Principal & Interest</strong>Pay down loan each period; builds equity faster.</div>
+        </label>
+        <label class="radio-opt" id="radioIO">
+          <input type="radio" name="mortgageType" value="io"/>
+          <div class="radio-opt-text"><strong>Interest Only</strong>Pay only interest; principal unchanged until term ends.</div>
+        </label>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Mortgage Rate <span class="tip-icon" data-tip="The annual interest rate charged on the mortgage. This determines the monthly repayment amount. For P&I loans, higher rates mean more interest and slower equity build. For IO loans, it directly sets the monthly payment.">?</span></div>
+      <div class="slider-head" style="margin-bottom:4px;">
+        <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
+        <span class="slider-value" id="mortgageRateVal">6.00%</span>
+      </div>
+      <input type="range" id="mortgageRate" min="0" max="25" step="0.1" value="6"/>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Mortgage Term <span class="tip-icon" data-tip="The total number of years over which the loan is amortised. A longer term means lower monthly payments but more total interest paid. Once the loan is fully repaid, the entire monthly budget becomes surplus savings.">?</span></div>
+      <div class="slider-head" style="margin-bottom:4px;">
+        <span style="font-size:.82rem;color:var(--muted)">years</span>
+        <span class="slider-value" id="mortgageTermVal">30 yrs</span>
+      </div>
+      <input type="range" id="mortgageTerm" min="5" max="50" step="1" value="30"/>
+    </div>
+    <div class="toggle-row" style="padding:10px 0 12px;border-top:1px solid var(--border);">
+      <span class="toggle-label">Cost = Interest Only <span class="tip-icon" data-tip="When ON: Accumulated Cost counts only interest + ongoing (money truly lost — principal repayment builds equity). When OFF: full mortgage payment + ongoing are treated as outgoing costs.">?</span></span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="costInterestOnly"/>
+        <div class="toggle-track"><div class="toggle-knob"></div></div>
+      </label>
+    </div>
+    <div class="section-label">Property Growth</div>
+    <div class="field-row">
+      <div class="field-label">House Price Growth (RPPI) <span class="tip-icon" data-tip="The Residential Property Price Index annual growth rate — how much the property appreciates each year. This drives house equity growth and the future purchase price in the Rent-Then-Buy scenario. Use the CAGR calculator below to derive this from historical data.">?</span></div>
+      <div class="slider-head" style="margin-bottom:4px;">
+        <span style="font-size:.82rem;color:var(--muted)">% p.a. CAGR</span>
+        <span class="slider-value" id="houseGrowthVal">5.00%</span>
+      </div>
+      <input type="range" id="houseGrowth" min="-10" max="25" step="0.1" value="5"/>
+      <div class="help">Residential Property Price Index annual growth rate.</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Calculate CAGR from Historical Prices</div>
+      <div class="cagr-box">
+        <div id="cagrRows">
+          <div class="cagr-row">
+            <input type="number" placeholder="Year e.g. 2002" class="cagr-year"/>
+            <input type="text" inputmode="numeric" placeholder="Price e.g. 175,000" class="cagr-price money-input" data-money="true"/>
+            <button class="cagr-btn delete cagr-delete" type="button" disabled>Delete</button>
+          </div>
+          <div class="cagr-row">
+            <input type="number" placeholder="Year e.g. 2025" class="cagr-year"/>
+            <input type="text" inputmode="numeric" placeholder="Price e.g. 400,000" class="cagr-price money-input" data-money="true"/>
+            <button class="cagr-btn delete cagr-delete" type="button" disabled>Delete</button>
+          </div>
+        </div>
+        <div class="cagr-actions">
+          <button class="cagr-btn" id="cagrAddRow" type="button">+ Row</button>
+          <button class="cagr-btn" id="cagrCalc" type="button" style="background:var(--accent2);">Calc CAGR →</button>
+        </div>
+        <div class="cagr-result" id="cagrResult"></div>
+      </div>
+      <div class="field-sub">Enter year & price pairs — CAGR will be applied to the House Price Growth slider above.</div>
+    </div>
+    <div class="section-label">Costs of Owning</div>
+    <div class="field-row">
+      <div class="field-label">Setup Cost (Stamp Duty, Legal, etc.) <span class="tip-icon" data-tip="One-time upfront costs when purchasing the property — includes stamp duty, conveyancing, building inspection, and other transaction fees. Paid from savings (not added to the loan) and reduces the renter's initial investable capital.">?</span></div>
+      <div class="input-row">
+        <input class="num-input money-input" id="setupCost" type="text" inputmode="numeric" data-money="true" value="32,000"/>
+        <select id="setupCostType">
+          <option value="dollar">$</option>
+          <option value="pct">%</option>
+        </select>
+      </div>
+      <div class="field-sub">One-time cost at purchase (added to initial outlay, not loan).</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Ongoing Costs of Owning <span class="tip-icon" data-tip="Annual recurring costs of owning the property beyond the mortgage: council rates, building insurance, maintenance, strata levies, land tax, lawn care, etc. Can be entered as a fixed dollar amount or as a % of current property value.">?</span></div>
+      <div class="input-row">
+        <input class="num-input money-input" id="ownOngoingCost" type="text" inputmode="numeric" data-money="true" value="6,000"/>
+        <select id="ownOngoingCostFreq">
+          <option value="yearly">Yearly</option>
+          <option value="monthly">Monthly</option>
+          <option value="weekly">Weekly</option>
+        </select>
+      </div>
+      <select id="ownOngoingCostType" style="margin-top:6px;width:100%;">
+        <option value="dollar">Fixed $ amount</option>
+        <option value="pct">% of property value</option>
+      </select>
+      <div class="field-sub">Council rates, insurance, maintenance, lawn, etc.</div>
+    </div>
+  </div>
+
+  <!-- RENT TAB -->
+  <div class="ctrl-panel" id="tab-rent">
+    <div class="section-label">Rental Payments</div>
+    <div class="field-row">
+      <div class="field-label">Rent Amount <span class="tip-icon" data-tip="The current weekly, monthly, or yearly rent payment. This is the base figure that grows each year at the Rent Inflation rate. The renter invests any monthly budget surplus above this rent amount.">?</span></div>
+      <div class="input-row">
+        <input class="num-input money-input" id="rentAmount" type="text" inputmode="numeric" data-money="true" value="2,800"/>
+        <select id="rentFreq">
+          <option value="monthly">Monthly</option>
+          <option value="weekly">Weekly</option>
+          <option value="yearly">Yearly</option>
+        </select>
+      </div>
+      <div class="field-sub">Rent = <span id="rentMonthlyDisplay" style="color:var(--gold);font-weight:700;">$2,800/mo</span></div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Rent Inflation <span class="tip-icon" data-tip="The annual rate at which rent increases each year. Historical rent inflation has typically tracked general CPI or slightly above. Higher rent inflation erodes the renter's monthly surplus faster over time.">?</span></div>
+      <div class="slider-head" style="margin-bottom:4px;">
+        <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
+        <span class="slider-value" id="rentInflationVal">3.00%</span>
+      </div>
+      <input type="range" id="rentInflation" min="-10" max="25" step="0.1" value="3"/>
+      <div class="help">Annual rate at which rent grows.</div>
+    </div>
+    <div class="section-label">Costs of Renting</div>
+    <div class="field-row">
+      <div class="field-label">Ongoing Costs of Renting <span class="tip-icon" data-tip="Extra costs the renter bears beyond the base rent: contents insurance, renters' insurance, utility connection fees, etc. Unlike owners, renters don't pay council rates or building maintenance — so this is typically much lower than the own scenario.">?</span></div>
+      <div class="input-row">
+        <input class="num-input money-input" id="rentOngoingCost" type="text" inputmode="numeric" data-money="true" value="1,200"/>
+        <select id="rentOngoingCostFreq">
+          <option value="yearly">Yearly</option>
+          <option value="monthly">Monthly</option>
+          <option value="weekly">Weekly</option>
+        </select>
+      </div>
+      <select id="rentOngoingCostType" style="margin-top:6px;width:100%;">
+        <option value="dollar">Fixed $ amount</option>
+        <option value="pct">% of property value</option>
+      </select>
+      <div class="field-sub">Contents insurance, extra costs renters bear (no council rates, no maintenance).</div>
+    </div>
+  </div>
+
+  <div class="warning" id="warningBanner"></div>
+  <div class="btn-row">
+    <button class="btn-primary" id="resetBtn">↺ Reset</button>
+    <button class="btn-secondary" id="downloadBtn">⬇ CSV</button>
+  </div>
+</aside>
+
+<main>
+  <!-- KPI CARDS -->
+  <section class="metrics">
+    <div class="metric card">
+      <div class="label">Breakeven Year <span class="tip-icon" data-tip="The first year when the Buy scenario's net equity (house equity + cash) overtakes the pure Rent scenario's invested savings. Before this year, renting produces higher net wealth.">?</span></div>
+      <div class="value" id="kpiBreakeven">—</div>
+      <div class="sub">When owning net equity overtakes renting</div>
+    </div>
+    <div class="metric card">
+      <div class="label">Own Net Equity (Final) <span class="tip-icon" data-tip="Total net wealth for the Buy scenario at the end of the time horizon: property value minus remaining mortgage, plus any accumulated liquid cash savings.">?</span></div>
+      <div class="value" id="kpiOwnEquity">—</div>
+      <div class="sub">House equity + cash at year end</div>
+    </div>
+    <div class="metric card">
+      <div class="label">Rent Net Equity (Final) <span class="tip-icon" data-tip="Total net wealth for the pure Rent scenario at the end of the time horizon: the invested savings portfolio (initial down payment equivalent + monthly surpluses compounded at the risk-free rate).">?</span></div>
+      <div class="value" id="kpiRentEquity">—</div>
+      <div class="sub">Invested savings at year end</div>
+    </div>
+    <div class="metric card">
+      <div class="label">Equity Difference <span class="tip-icon" data-tip="Own Net Equity minus Rent Net Equity at the final year. Positive (green) means buying wins; negative (red) means renting & investing wins over the chosen time horizon.">?</span></div>
+      <div class="value" id="kpiDiff">—</div>
+      <div class="sub">Own minus Rent at final year</div>
+    </div>
+  </section>
+
+  <!-- CHART -->
+  <section class="chart-card card">
+    <div class="chart-header">
+      <h2>Financial Comparison Over Time</h2>
+      <div class="chart-controls">
+        <button class="graph-btn active" data-graph="netEquity" id="graphNetEquity">Net Equity</button>
+        <button class="graph-btn" data-graph="cash" id="graphCash">Liquid Cash</button>
+        <button class="graph-btn" data-graph="cost" id="graphCost">Accum. Cost</button>
+        <button class="btn-secondary" id="chartResetZoom" style="font-size:.78rem;padding:5px 11px;">⟳ Zoom</button>
+      </div>
+    </div>
+    <div class="legend" id="chartLegend"></div>
+    <div class="canvas-wrap"><canvas id="chartCanvas"></canvas></div>
+    <div class="hover-box" id="hoverBox">Hover over the chart to inspect a year.</div>
+  </section>
+
+  <!-- BOTTOM SUMMARY -->
+  <section class="bottom" id="summarySection">
+    <div class="card">
+      <h3 style="padding:16px 18px 0;">🏡 Own — Snapshot <span class="tip-icon" data-tip="Summary of the Buy scenario at the final year of the time horizon.">?</span></h3>
+      <div class="summary-grid" id="ownSummary"></div>
+    </div>
+    <div class="card">
+      <h3 style="padding:16px 18px 0;">🏢 Rent — Snapshot <span class="tip-icon" data-tip="Summary of the pure Rent scenario at the final year of the time horizon.">?</span></h3>
+      <div class="summary-grid" id="rentSummary"></div>
+    </div>
+  </section>
+  <section id="rtbSummarySection" style="display:none;margin-bottom:18px;">
+    <div class="card">
+      <h3 style="padding:16px 18px 0;">🔄 Rent-Then-Buy — Snapshot <span class="tip-icon" data-tip="Summary of the Rent-Then-Buy scenario. Before the buy year, cashflows match the rent scenario. At the buy year, accumulated savings fund the down payment on the then-market-price property, and a new mortgage begins.">?</span></h3>
+      <div class="summary-grid" id="rtbSummary"></div>
+    </div>
+  </section>
+
+  <!-- DETAIL TABLES -->
+  <section class="detail-section card">
+    <div class="tab-row">
+      <button class="tab-btn active" data-table="own">🏡 Own Cashflow</button>
+      <button class="tab-btn" data-table="rent">🏢 Rent Cashflow</button>
+      <button class="tab-btn" id="rtbTableTab" data-table="rtb" style="display:none;">🔄 Rent-Then-Buy Cashflow</button>
+    </div>
+    <div class="table-wrap" id="detailTableWrap"></div>
+  </section>
+</main>
+</section>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ── DEFAULTS ── */
+const DEFAULTS = {
+  propertyPrice: 800000,
+  downPaymentPct: 20,
+  monthlyBudget: 0,
+  riskFreeRate: 4.5,
+  horizon: 30,
+  mortgageType: 'pi',
+  mortgageRate: 6.0,
+  mortgageTerm: 30,
+  houseGrowth: 5.0,
+  setupCost: 32000,
+  setupCostType: 'dollar',
+  ownOngoingCost: 6000,
+  ownOngoingCostFreq: 'yearly',
+  ownOngoingCostType: 'dollar',
+  rentAmount: 2800,
+  rentFreq: 'monthly',
+  rentInflation: 3.0,
+  rentOngoingCost: 1200,
+  rentOngoingCostFreq: 'yearly',
+  rentOngoingCostType: 'dollar',
+  initialCash: 0,
+  costInterestOnly: false,
+  rtbEnabled: false,
+  rtbBuyYear: 5,
+  monthlyBudgetIncrease: 0,
+};
+
+let S = JSON.parse(JSON.stringify(DEFAULTS));
+let latestRows = [];
+let cachedRtbRows = null;
+let activeTable = 'own';
+let activeGraph = 'netEquity';
+let chartInstance = null;
+
+/* ── HELPERS ── */
+const $ = id => document.getElementById(id);
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function parseNum(val){
+  if(typeof val==='number') return Number.isFinite(val) ? val : 0;
+  const cleaned = String(val ?? '').replace(/,/g,'').replace(/[^\d.-]/g,'').trim();
+  if(cleaned==='' || cleaned==='-' || cleaned==='.' || cleaned==='-.') return 0;
+  const parsed = Number(cleaned);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+function parseFloatSafe(val, fallback){
+  const n = parseFloat(val);
+  return isNaN(n) ? fallback : n;
+}
+function parseIntSafe(val, fallback){
+  const n = parseInt(val);
+  return isNaN(n) ? fallback : n;
+}
+function formatMoneyValue(val){
+  const n = parseNum(val);
+  if(!Number.isFinite(n)) return '';
+  const isInt = Math.abs(n % 1) < 1e-9;
+  return n.toLocaleString('en-AU',{
+    minimumFractionDigits:0,
+    maximumFractionDigits:isInt ? 0 : 2
+  });
+}
+function formatMoneyInput(el){
+  if(!el) return;
+  const raw = String(el.value ?? '').replace(/,/g,'').trim();
+  if(raw===''){ el.value=''; return; }
+  el.value = formatMoneyValue(raw);
+}
+function syncMoneyInputs(){
+  document.querySelectorAll('[data-money="true"]').forEach(formatMoneyInput);
+}
+
+const fmt = {
+  currency(v, compact=false){
+    const n=Number(v||0), abs=Math.abs(n), sign=n<0?'−':'';
+    if(compact&&abs>=1e9) return sign+'$'+(abs/1e9).toFixed(2)+'b';
+    if(compact&&abs>=1e6) return sign+'$'+(abs/1e6).toFixed(2)+'m';
+    if(compact&&abs>=1e3) return sign+'$'+(abs/1e3).toFixed(0)+'k';
+    return (n<0?'−':'')+'$'+Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0});
+  },
+  pct(v,d=2){ const n=Number(v||0); return (Math.abs(n)<=1?n*100:n).toFixed(d)+'%'; },
+  num(v,d=0){ return Number(v||0).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d}); },
+};
+
+function toYearly(val, freq){
+  if(freq==='weekly') return val*52;
+  if(freq==='monthly') return val*12;
+  return val;
+}
+function toMonthly(val, freq){
+  if(freq==='weekly') return val*52/12;
+  if(freq==='yearly') return val/12;
+  return val;
+}
+
+/* ── MORTGAGE CALC ── */
+function calcMonthlyMortgage(principal, annualRate, termYears, type){
+  const r = annualRate/100/12;
+  const n = termYears*12;
+  if(type==='io') return principal*r;
+  if(r===0) return principal/n;
+  return principal*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
+}
+
+/* ── READ INPUTS ── */
+function readInputs(){
+  S.propertyPrice   = Math.max(50000, parseNum($('propertyPrice').value)||DEFAULTS.propertyPrice);
+  S.downPaymentPct  = parseFloatSafe($('downPaymentPct').value, DEFAULTS.downPaymentPct);
+  S.monthlyBudget   = Math.max(0, parseNum($('monthlyBudget').value)||0);
+  S.riskFreeRate    = parseFloatSafe($('riskFreeRate').value, DEFAULTS.riskFreeRate);
+  S.horizon         = parseIntSafe($('horizon').value, DEFAULTS.horizon);
+  S.mortgageType    = document.querySelector('input[name="mortgageType"]:checked')?.value||'pi';
+  S.mortgageRate    = parseFloatSafe($('mortgageRate').value, DEFAULTS.mortgageRate);
+  S.mortgageTerm    = parseIntSafe($('mortgageTerm').value, DEFAULTS.mortgageTerm);
+  S.houseGrowth     = parseFloatSafe($('houseGrowth').value, DEFAULTS.houseGrowth);
+  S.setupCost       = Math.max(0, parseNum($('setupCost').value)||0);
+  S.setupCostType   = $('setupCostType').value;
+  S.ownOngoingCost  = Math.max(0, parseNum($('ownOngoingCost').value)||0);
+  S.ownOngoingCostFreq  = $('ownOngoingCostFreq').value;
+  S.ownOngoingCostType  = $('ownOngoingCostType').value;
+  S.rentAmount      = Math.max(0, parseNum($('rentAmount').value)||DEFAULTS.rentAmount);
+  S.rentFreq        = $('rentFreq').value;
+  S.rentInflation   = parseFloatSafe($('rentInflation').value, DEFAULTS.rentInflation);
+  S.rentOngoingCost = Math.max(0, parseNum($('rentOngoingCost').value)||0);
+  S.rentOngoingCostFreq = $('rentOngoingCostFreq').value;
+  S.rentOngoingCostType = $('rentOngoingCostType').value;
+  S.initialCash     = Math.max(0, parseNum($('initialCash').value)||0);
+  S.costInterestOnly = $('costInterestOnly').checked;
+  S.rtbEnabled      = $('rtbEnabled').checked;
+  S.rtbBuyYear      = parseIntSafe($('rtbBuyYear').value, DEFAULTS.rtbBuyYear);
+  S.monthlyBudgetIncrease = parseFloatSafe($('monthlyBudgetIncrease').value, 0);
+}
+
+function refreshLabels(){
+  const dp = S.propertyPrice * S.downPaymentPct/100;
+  $('downPaymentPctVal').textContent = S.downPaymentPct+'%';
+  $('downPaymentDollar').textContent = fmt.currency(dp);
+  $('riskFreeRateVal').textContent   = S.riskFreeRate.toFixed(2)+'%';
+  $('horizonVal').textContent        = S.horizon+' yrs';
+  $('mortgageRateVal').textContent   = S.mortgageRate.toFixed(2)+'%';
+  $('mortgageTermVal').textContent   = S.mortgageTerm+' yrs';
+  $('houseGrowthVal').textContent    = S.houseGrowth.toFixed(2)+'%';
+  $('rentInflationVal').textContent  = S.rentInflation.toFixed(2)+'%';
+
+  // RTB slider — clamp max to horizon-1
+  const rtbSlider = $('rtbBuyYear');
+  const maxRtb = Math.max(1, S.horizon - 1);
+  if(parseInt(rtbSlider.max) !== maxRtb){ rtbSlider.max = maxRtb; }
+  if(S.rtbBuyYear > maxRtb){ S.rtbBuyYear = maxRtb; rtbSlider.value = maxRtb; }
+  $('rtbBuyYearVal').textContent = S.rtbBuyYear+' yrs';
+
+  const rentMonthly = toMonthly(S.rentAmount, S.rentFreq);
+  $('rentMonthlyDisplay').textContent = fmt.currency(rentMonthly)+'/mo';
+
+  // Show/hide budget increase row only when budget is manually set
+  const budgetSet = S.monthlyBudget > 0;
+  $('budgetIncreaseRow').style.display = budgetSet ? 'block' : 'none';
+  $('monthlyBudgetIncreaseVal').textContent = S.monthlyBudgetIncrease.toFixed(2)+'%';
+  if(budgetSet){
+    $('budgetIncreaseBase').textContent = fmt.currency(S.monthlyBudget)+'/mo';
+  }
+
+  // Initial cash: compute required and show live feedback
+  const setupCostDollarUI = S.setupCostType==='pct' ? S.propertyPrice*S.setupCost/100 : S.setupCost;
+  const dpDollar = S.propertyPrice * S.downPaymentPct/100;
+  const required = dpDollar + setupCostDollarUI;
+  const cashWarn = $('initialCashWarn');
+  const cashSub  = $('initialCashSub');
+  if(S.initialCash > 0){
+    const leftover = S.initialCash - required;
+    if(leftover < 0){
+      cashWarn.style.display='block';
+      cashWarn.textContent='⚠️ Initial cash '+fmt.currency(S.initialCash)+' is '+fmt.currency(-leftover)+' short of down payment + setup cost ('+fmt.currency(required)+'). The shortfall reduces the loan equity at start.';
+      cashSub.textContent = 'Required: '+fmt.currency(required)+' (down payment + setup cost).';
+    } else {
+      cashWarn.style.display='none';
+      cashSub.textContent = leftover > 0
+        ? 'Leftover '+fmt.currency(leftover)+' invested at risk-free rate from day one.'
+        : 'Exactly covers down payment + setup cost — no surplus.';
+    }
+  } else {
+    cashWarn.style.display='none';
+    // Show auto initialCash: may be higher if RTB future purchase exceeds current required
+    const rtbPriceUI = S.rtbEnabled ? (S.propertyPrice * Math.pow(1+S.houseGrowth/100, S.rtbBuyYear)) : 0;
+    const rtbSetupUI = S.rtbEnabled ? (S.setupCostType==='pct' ? rtbPriceUI*S.setupCost/100 : S.setupCost) : 0;
+    const rtbDPUI    = S.rtbEnabled ? rtbPriceUI * S.downPaymentPct/100 : 0;
+    const rtbFutReq  = rtbDPUI + rtbSetupUI;
+    const pvRTB      = (S.rtbEnabled && (1+S.riskFreeRate/100) > 0)
+      ? rtbFutReq / Math.pow(1+S.riskFreeRate/100, S.rtbBuyYear)
+      : rtbFutReq;
+    const autoIC = Math.max(required, pvRTB);
+    if(S.rtbEnabled && pvRTB > required){
+      cashSub.textContent = 'Auto: '+fmt.currency(autoIC)+' (raised from '+fmt.currency(required)+' to cover RTB future purchase of '+fmt.currency(rtbFutReq)+' at Yr '+S.rtbBuyYear+').';
+    } else {
+      cashSub.textContent = 'Auto: '+fmt.currency(autoIC)+' (down payment + setup cost). Any excess is invested at the risk-free rate.';
+    }
+  }
+}
+
+/* ── MODEL ── */
+function computeModel(){
+  const P  = S.propertyPrice;
+  const dp = P * S.downPaymentPct/100;
+  const loan = P - dp;
+  const rfr  = S.riskFreeRate/100;
+
+  // Setup cost
+  const setupCostDollar = S.setupCostType==='pct' ? P*S.setupCost/100 : S.setupCost;
+
+  // Monthly mortgage payment (Buy scenario, from day 0)
+  const mPayment = calcMonthlyMortgage(loan, S.mortgageRate, S.mortgageTerm, S.mortgageType);
+
+  // Monthly rent (year 0)
+  const rentMonthly0 = toMonthly(S.rentAmount, S.rentFreq);
+
+  // ── Year-1 ongoing costs (needed for auto-budget baseline) ──
+  const ownOngoingYearly0 = S.ownOngoingCostType==='pct'
+    ? P * S.ownOngoingCost/100
+    : toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
+  const ownOngoingMonthly0 = ownOngoingYearly0 / 12;
+
+  const rentOngoingYearly0 = S.rentOngoingCostType==='pct'
+    ? P * S.rentOngoingCost/100
+    : toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
+  const rentOngoingMonthly0 = rentOngoingYearly0 / 12;
+
+  // ── Pre-calculate RTB mortgage for auto-budget (if RTB enabled) ──
+  // RTB property price at buyYear, DP%, setup cost, loan, and monthly payment
+  const rtbEnabled   = S.rtbEnabled;
+  const buyYear      = S.rtbBuyYear;
+  const h            = S.houseGrowth/100;
+  const rtbPropPrice0 = rtbEnabled ? P * Math.pow(1+h, buyYear) : 0;
+  const rtbSetup0     = rtbEnabled
+    ? (S.setupCostType==='pct' ? rtbPropPrice0 * S.setupCost/100 : S.setupCost)
+    : 0;
+  const rtbDP0        = rtbEnabled ? rtbPropPrice0 * S.downPaymentPct/100 : 0;
+  const rtbLoan0      = rtbEnabled ? Math.max(0, rtbPropPrice0 - rtbDP0) : 0;
+  const rtbMPayment0  = rtbEnabled
+    ? calcMonthlyMortgage(rtbLoan0, S.mortgageRate, S.mortgageTerm, S.mortgageType)
+    : 0;
+  // RTB ongoing at buyYear (use year-1 as proxy for auto-budget baseline)
+  const rtbOwnOngoingMonthly0 = ownOngoingMonthly0; // will grow with property by buyYear, but year-1 is conservative
+
+  // ── Auto budget: max of ALL three scenarios' peak monthly outgoing ──
+  // Own (yr1): mPayment + ownOngoing
+  // Rent (yr1): rentMonthly0 + rentOngoing
+  // RTB (at buyYear, post-buy): rtbMPayment0 + ownOngoing
+  const budgetIsManual = S.monthlyBudget > 0;
+  const autoMonthlyBudget = Math.max(
+    mPayment + ownOngoingMonthly0,
+    rentMonthly0 + rentOngoingMonthly0,
+    rtbEnabled ? (rtbMPayment0 + rtbOwnOngoingMonthly0) : 0
+  );
+  const monthlyBudget0 = budgetIsManual ? S.monthlyBudget : autoMonthlyBudget;
+  const budgetGrowth   = budgetIsManual ? S.monthlyBudgetIncrease/100 : 0;
+
+  // For KPI warnings we pass the year-1 base budget
+  const monthlyBudget = monthlyBudget0;
+
+  // ── Auto Initial Cash ──
+  // rfr already declared at top of computeModel.
+  // auto cash must cover max of:
+  //   A) Buy: dp + setupCostDollar
+  //   B) RTB: PV of (rtbDP0 + rtbSetup0) at RFR over buyYear years
+  const requiredNow    = dp + setupCostDollar;
+  const requiredRTBFut = rtbEnabled ? (rtbDP0 + rtbSetup0) : 0;
+  // Present value of RTB purchase cost (how much cash we need today to fund it at RFR growth)
+  const pvRTBRequired  = rtbEnabled && (1+rfr) > 0
+    ? requiredRTBFut / Math.pow(1+rfr, buyYear)
+    : requiredRTBFut;
+  const autoInitialCash = Math.max(requiredNow, pvRTBRequired);
+
+  const initialCashUsed    = S.initialCash > 0 ? S.initialCash : autoInitialCash;
+  const ownCashStart       = Math.max(0, initialCashUsed - requiredNow); // buyer leftover → invested
+  const renterStartCapital = initialCashUsed;                             // renter invests all
+
+  const rows = [];
+
+  // Year 0
+  let ownPropValue    = P;
+  let ownPrincipal    = loan;
+  let ownCash         = ownCashStart; // buyer surplus cash invested from day 0
+  let ownAccumCost    = setupCostDollar;
+  let ownAccumInterest= 0;
+
+  let rentCash        = renterStartCapital;
+  let rentAccumCost   = 0;
+  let rentRent        = rentMonthly0;
+
+  rows.push({
+    year:0,
+    ownPropValue, ownPrincipal, ownCash,
+    ownHouseEquity: ownPropValue - ownPrincipal,
+    ownNetEquity: ownPropValue - ownPrincipal + ownCash,
+    ownAccumCost: setupCostDollar, ownAccumInterest:0,
+    ownMortgagePayment:0,
+    rentCash, rentNetEquity:rentCash, rentAccumCost:0, rentRent:rentMonthly0*12,
+    netEquityOwn: ownPropValue - ownPrincipal + ownCash,
+    netEquityRent: rentCash,
+    cashOwn: ownCash,
+    cashRent: rentCash,
+    costOwn: setupCostDollar,
+    costRent: 0,
+    initialCashUsed, ownCashStart, renterStartCapital,
+  });
+
+  const r12 = S.mortgageRate/100/12;
+  const ri  = S.rentInflation/100;
+  const rfm = Math.pow(1+rfr, 1/12)-1; // monthly risk-free
+
+  for(let yr=1; yr<=S.horizon; yr++){
+    // Rent for this year (inflates each year)
+    const currentRentMonthly = rentMonthly0 * Math.pow(1+ri, yr-1);
+
+    // Ongoing costs — monthly equivalent; own uses PREVIOUS year prop value (before appreciation)
+    let ownOngoingYearly = toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
+    if(S.ownOngoingCostType==='pct') ownOngoingYearly = ownPropValue * S.ownOngoingCost/100;
+    const ownOngoingMonthly = ownOngoingYearly / 12;
+
+    let rentOngoingYearly = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
+    if(S.rentOngoingCostType==='pct') rentOngoingYearly = P * S.rentOngoingCost/100;
+    const rentOngoingMonthly = rentOngoingYearly / 12;
+
+    // Budget this year (grows p.a. only if manually set)
+    // Auto mode: max(ownTotalCost, rentTotalCost) so the more-expensive scenario
+    // can be fully funded; the cheaper one invests the difference.
+    // Note: ownMortgage may be 0 if paid off — recalculated inside loop.
+    const yearlyBudget = budgetIsManual
+      ? monthlyBudget0 * Math.pow(1+budgetGrowth, yr-1)
+      : null; // computed per-month in auto mode
+
+    let yearInterest = 0;
+    let lastMBudget   = monthlyBudget0; // updated each month, used for row display
+
+    for(let m=0; m<12; m++){
+      const hasMortgage   = ownPrincipal > 1e-2;
+      const mMortgage     = hasMortgage ? mPayment : 0;
+      const mOwnCost      = mMortgage + ownOngoingMonthly;   // true monthly cost of owning
+      const mRentCost     = currentRentMonthly + rentOngoingMonthly; // true monthly cost of renting
+
+      // ── Budget for this month ──
+      // Manual: use the growing budget. Auto: use pre-calculated global max (covers all 3 scenarios)
+      const mBudget = budgetIsManual ? yearlyBudget : monthlyBudget0;
+      lastMBudget = mBudget;
+
+      // ── Own: amortise mortgage ──
+      let mInterestThisMonth = 0;
+      if(hasMortgage){
+        mInterestThisMonth  = ownPrincipal * r12;
+        const principalPart = S.mortgageType==='pi'
+          ? Math.min(mPayment - mInterestThisMonth, ownPrincipal)
+          : 0;
+        yearInterest     += mInterestThisMonth;
+        ownPrincipal      = Math.max(0, ownPrincipal - principalPart);
+        ownAccumInterest += mInterestThisMonth;
+      }
+
+      // ── Liquid cash: cash × (1+RFR) + (budget − cost) ──
+      const ownSurplus  = mBudget - mOwnCost;
+      const rentSurplus = mBudget - mRentCost;
+      ownCash  = Math.max(0, ownCash  * (1+rfm) + ownSurplus);
+      rentCash = Math.max(0, rentCash * (1+rfm) + rentSurplus);
+
+      // ── Accum Cost: full mortgage+ongoing, or interest+ongoing only per toggle ──
+      const ownCostThisMonth = S.costInterestOnly
+        ? mInterestThisMonth + ownOngoingMonthly
+        : mOwnCost;
+      ownAccumCost  += ownCostThisMonth;
+      rentAccumCost += mRentCost;
+    }
+
+    // House appreciates at end of year
+    ownPropValue = ownPropValue * (1+h);
+
+    const ownHouseEquity = ownPropValue - ownPrincipal;
+    const ownNetEquity   = ownHouseEquity + ownCash;  // equity = property + liquid cash
+    const rentNetEquity  = rentCash;                  // renter has no property
+
+    rows.push({
+      year:yr,
+      ownPropValue, ownPrincipal, ownCash,
+      ownHouseEquity, ownNetEquity, ownAccumCost, ownAccumInterest,
+      ownMortgagePayment: mPayment*12,
+      ownYearInterest: yearInterest,
+      ownYearPrincipal: Math.max(0, mPayment*12 - yearInterest),
+      rentCash, rentNetEquity, rentAccumCost, rentRent: currentRentMonthly*12,
+      netEquityOwn: ownNetEquity,
+      netEquityRent: rentNetEquity,
+      cashOwn: ownCash,
+      cashRent: rentCash,
+      costOwn: ownAccumCost,
+      costRent: rentAccumCost,
+      yearlyBudget: lastMBudget,
+    });
+  }
+
+  // Find breakeven (Own vs Rent)
+  let breakeven = null;
+  for(let i=1;i<rows.length;i++){
+    if(rows[i].netEquityOwn>=rows[i].netEquityRent && (i===1||rows[i-1].netEquityOwn<rows[i-1].netEquityRent)){
+      breakeven = rows[i].year; break;
+    }
+  }
+
+  // ── RENT-THEN-BUY SCENARIO ──
+  let rtbRows = null;
+  if(S.rtbEnabled){
+    rtbRows = computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, setupCostDollar, mPayment, initialCashUsed, ownOngoingMonthly0, rentOngoingMonthly0, rtbMPayment0);
+  }
+
+  const last = rows[rows.length-1];
+  return {
+    rows, breakeven,
+    monthlyBudget, mPayment, rentMonthly0,
+    rtbRows,
+    initialCashUsed, ownCashStart, renterStartCapital,
+    summary:{
+      ownNetEquity: last.ownNetEquity,
+      rentNetEquity: last.rentNetEquity,
+      diff: last.ownNetEquity - last.rentNetEquity,
+      ownPropValue: last.ownPropValue,
+      ownHouseEquity: last.ownHouseEquity,
+      ownCash: last.ownCash,
+      rentCash: last.rentCash,
+      ownAccumCost: last.ownAccumCost,
+      rentAccumCost: last.rentAccumCost,
+      setupCostDollar,
+    }
+  };
+}
+
+/* ── RENT-THEN-BUY COMPUTATION ──
+   Phase 1 (yr 0..buyYear-1): identical to pure rent — renter invests dp+setupCost + monthly surplus.
+   Phase 2 (yr buyYear..horizon): buys at then-market price; uses accumulated cash as down payment.
+     - If cash >= setupCost (at new price) + some down, uses full cash as down + setup, remainder goes to principal.
+     - New mortgage on remaining principal at same rate/term.
+     - From buyYear onward, cashflows mirror "own" but starting from the new property price.
+*/
+function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, originalSetupCostDollar, originalMPayment, initialCashUsed, ownOngoingMonthly0, rentOngoingMonthly0global, rtbMPaymentRef){
+  const P0  = S.propertyPrice;
+  const h   = S.houseGrowth/100;
+  const ri  = S.rentInflation/100;
+  const rfr = S.riskFreeRate/100;
+  const rfm = Math.pow(1+rfr, 1/12)-1;
+  const r12 = S.mortgageRate/100/12;
+  const buyYear = S.rtbBuyYear;
+
+  // RTB renter starts with initialCashUsed (same as pure rent scenario)
+  let rtbCash       = initialCashUsed;
+  let rtbAccumCost  = 0;
+  let rtbPropValue  = 0;
+  let rtbPrincipal  = 0;
+  let rtbCash2      = 0; // savings after buying
+  let rtbAccumInterest = 0;
+  let rtbSetupCostAtBuy = 0;
+  let rtbMPayment   = 0;
+  let rtbPropValueAtBuy = 0;
+  let boughtAlready = false;
+
+  const rows = [];
+
+  // Year 0 row (pre-buy phase)
+  rows.push({
+    year:0,
+    phase:'rent',
+    rtbPropValue:0, rtbPrincipal:0, rtbCash:rtbCash, rtbCash2:0,
+    rtbHouseEquity:0,
+    rtbNetEquity: rtbCash,
+    rtbAccumCost:0, rtbAccumInterest:0,
+    rtbMortgagePayment:0,
+    rtbRent: rentMonthly0*12,
+    netEquityRTB: rtbCash,
+    cashRTB: rtbCash,
+    costRTB: 0,
+  });
+
+  for(let yr=1; yr<=S.horizon; yr++){
+    const currentRentMonthly = rentMonthly0 * Math.pow(1+ri, yr-1);
+
+    // Budget grows from base at budgetGrowth p.a. — yr=1 is base, yr=2 is base*(1+g), etc.
+    const yearlyBudget = monthlyBudget0 * Math.pow(1+budgetGrowth, yr-1);
+
+    if(yr <= buyYear){
+      // ─── Phase 1: still renting ───
+      let rentOngoingYearly = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
+      if(S.rentOngoingCostType==='pct') rentOngoingYearly = P0 * S.rentOngoingCost/100;
+      const rentOngoingMonthly = rentOngoingYearly / 12;
+
+      let rtbP1YearSurplus = 0;
+      for(let m=0; m<12; m++){
+        const mRentCost     = currentRentMonthly + rentOngoingMonthly;
+        const rtbOwnCostRef = rtbMPaymentRef + ownOngoingMonthly0;
+        const mBudget = budgetIsManual
+          ? monthlyBudget0 * Math.pow(1+budgetGrowth, yr-1)
+          : Math.max(rtbOwnCostRef, mRentCost);
+        const surplus = mBudget - mRentCost;
+        rtbCash = Math.max(0, rtbCash*(1+rfm) + surplus);
+        rtbP1YearSurplus += Math.max(0, surplus);
+        rtbAccumCost += mRentCost;
+      }
+
+      if(yr === buyYear){
+        // ─── TRANSITION: BUY AT END OF buyYear via standard mortgage ───
+        // Property price has grown for buyYear years at RPPI
+        rtbPropValueAtBuy = P0 * Math.pow(1+h, buyYear);
+        rtbSetupCostAtBuy = S.setupCostType==='pct'
+          ? rtbPropValueAtBuy * S.setupCost/100
+          : S.setupCost;
+
+        // Down payment = same % as configured, applied to the new (higher) property price
+        const rtbDPAtBuy = rtbPropValueAtBuy * S.downPaymentPct / 100;
+
+        // Cash spent at purchase: DP + setup cost
+        // Remaining cash stays invested at RFR
+        const cashSpent = rtbDPAtBuy + rtbSetupCostAtBuy;
+        rtbCash2 = Math.max(0, rtbCash - cashSpent); // leftover cash after purchase
+        rtbAccumCost += rtbSetupCostAtBuy;            // only setup is a true cost
+
+        // Loan = property price − DP (standard mortgage, same rate and term)
+        rtbPrincipal = Math.max(0, rtbPropValueAtBuy - rtbDPAtBuy);
+        rtbPropValue = rtbPropValueAtBuy;
+        rtbMPayment  = calcMonthlyMortgage(rtbPrincipal, S.mortgageRate, S.mortgageTerm, S.mortgageType);
+        boughtAlready = true;
+
+        // Net Equity = house equity (propValue − loan) + remaining cash
+        // Drop vs pre-buy = only the setup cost (DP converts from liquid cash to house equity)
+        const rtbHouseEquity = rtbPropValue - rtbPrincipal; // = rtbDPAtBuy
+        const rtbNetEquity   = rtbHouseEquity + rtbCash2;   // ≈ preBuyCash − setupCost
+        rows.push({
+          year:yr,
+          phase:'buy-transition',
+          rtbPropValue, rtbPrincipal, rtbCash:rtbCash2, rtbCash2,
+          rtbHouseEquity, rtbNetEquity,
+          rtbAccumCost, rtbAccumInterest,
+          rtbMortgagePayment: rtbMPayment*12,
+          rtbRent: currentRentMonthly*12,
+          netEquityRTB: rtbNetEquity,
+          cashRTB: rtbCash2,
+          costRTB: rtbAccumCost,
+        });
+        continue;
+      }
+
+      const rtbNetEq = rtbCash;
+      rows.push({
+        year:yr,
+        phase:'rent',
+        rtbPropValue:0, rtbPrincipal:0, rtbCash, rtbCash2:0,
+        rtbHouseEquity:0, rtbNetEquity: rtbNetEq,
+        rtbAccumCost, rtbAccumInterest:0,
+        rtbMortgagePayment:0,
+        rtbYearInterest:0, rtbYearPrincipal:0, rtbYearSurplus:rtbP1YearSurplus,
+        rtbRent: currentRentMonthly*12,
+        netEquityRTB: rtbNetEq,
+        cashRTB: rtbCash,
+        costRTB: rtbAccumCost,
+      });
+
+    } else {
+      // ─── Phase 2: now owning (post-buy) ───
+      let ownOngoingYearly = toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
+      if(S.ownOngoingCostType==='pct') ownOngoingYearly = rtbPropValue * S.ownOngoingCost/100;
+      const ownOngoingMonthly = ownOngoingYearly / 12;
+
+      let rentOngoingYearly2 = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
+      if(S.rentOngoingCostType==='pct') rentOngoingYearly2 = P0 * S.rentOngoingCost/100;
+      const rentOngoingMonthly = rentOngoingYearly2 / 12;
+
+      let rtbYearInterest = 0, rtbYearPrincipal = 0, rtbYearSurplus = 0;
+      for(let m=0; m<12; m++){
+        const hasMortgage = rtbPrincipal > 1e-2;
+        const mMortgage   = hasMortgage ? rtbMPayment : 0;
+        const mOwnCost    = mMortgage + ownOngoingMonthly;
+
+        let rtbInterest = 0, rtbPrincipalPaid = 0;
+        if(hasMortgage){
+          rtbInterest      = rtbPrincipal * r12;
+          rtbPrincipalPaid = S.mortgageType==='pi'
+            ? Math.min(rtbMPayment - rtbInterest, rtbPrincipal)
+            : 0;
+          rtbPrincipal     = Math.max(0, rtbPrincipal - rtbPrincipalPaid);
+          rtbAccumInterest += rtbInterest;
+          rtbYearInterest  += rtbInterest;
+          rtbYearPrincipal += rtbPrincipalPaid;
+        }
+
+        const mRentRef2 = currentRentMonthly + rentOngoingMonthly;
+        const mBudget = budgetIsManual
+          ? monthlyBudget0 * Math.pow(1+budgetGrowth, yr-1)
+          : Math.max(mOwnCost, mRentRef2);
+        const surplus = mBudget - mOwnCost;
+        const actualSurplus = Math.max(0, surplus);
+        rtbCash2 = Math.max(0, rtbCash2*(1+rfm) + surplus);
+        rtbYearSurplus += actualSurplus;
+
+        const rtbCostThisMonth = S.costInterestOnly
+          ? rtbInterest + ownOngoingMonthly
+          : mOwnCost;
+        rtbAccumCost += rtbCostThisMonth;
+      }
+      rtbPropValue = rtbPropValue * (1+h);
+
+      const rtbHouseEquity = rtbPropValue - rtbPrincipal;
+      const rtbNetEquity = rtbHouseEquity + rtbCash2;
+      rows.push({
+        year:yr,
+        phase:'own',
+        rtbPropValue, rtbPrincipal, rtbCash:0, rtbCash2,
+        rtbHouseEquity, rtbNetEquity,
+        rtbAccumCost, rtbAccumInterest,
+        rtbMortgagePayment: rtbMPayment*12,
+        rtbYearInterest, rtbYearPrincipal, rtbYearSurplus,
+        rtbRent:0,
+        netEquityRTB: rtbNetEquity,
+        cashRTB: rtbCash2,
+        costRTB: rtbAccumCost,
+      });
+    }
+  }
+
+  const rtbDPAtBuy = rtbPropValueAtBuy * S.downPaymentPct / 100;
+  const rtbLoanAtBuy = Math.max(0, rtbPropValueAtBuy - rtbDPAtBuy);
+  return { rows, rtbMPayment, rtbPropValueAtBuy, rtbSetupCostAtBuy, rtbDPAtBuy, rtbLoanAtBuy };
+}
+
+/* ── CHART ── */
+function buildLegend(series){
+  const el = $('chartLegend');
+  el.innerHTML = '';
+  series.forEach(s=>{
+    const d = document.createElement('div');
+    d.className='legend-item';
+    d.innerHTML=`<span class="dot" style="background:${cssVar(s.colorVar)}"></span><span>${s.label}</span>`;
+    el.appendChild(d);
+  });
+}
+
+function getGraphSeries(){
+  const haRTB = S.rtbEnabled;
+  if(activeGraph==='netEquity'){
+    const s = [
+      {key:'netEquityOwn',  colorVar:'--line-a', label:'Own — Net Equity'},
+      {key:'netEquityRent', colorVar:'--line-b', label:'Rent — Net Equity'},
+    ];
+    if(haRTB) s.push({key:'netEquityRTB', colorVar:'--line-c', label:'Rent-Then-Buy — Net Equity'});
+    return s;
+  }
+  if(activeGraph==='cash'){
+    const s = [
+      {key:'cashOwn',  colorVar:'--line-a', label:'Own — Liquid Cash'},
+      {key:'cashRent', colorVar:'--line-b', label:'Rent — Liquid Cash'},
+    ];
+    if(haRTB) s.push({key:'cashRTB', colorVar:'--line-c', label:'Rent-Then-Buy — Liquid Cash'});
+    return s;
+  }
+  const s = [
+    {key:'costOwn',  colorVar:'--line-a', label:'Own — Accum. Cost (Mortgage+Ongoing)'},
+    {key:'costRent', colorVar:'--line-b', label:'Rent — Accum. Cost (Rent+Ongoing)'},
+  ];
+  if(haRTB) s.push({key:'costRTB', colorVar:'--line-c', label:'Rent-Then-Buy — Accum. Cost'});
+  return s;
+}
+
+function renderChart(rows){
+  const series = getGraphSeries();
+  buildLegend(series);
+  // Use integer year numbers for labels — must be plain numbers, not strings
+  const labels   = rows.map(r=> (typeof r.year === 'number' && isFinite(r.year)) ? r.year : 0);
+  const rtbBuyYearIdx = S.rtbEnabled ? labels.indexOf(S.rtbBuyYear) : -1;
+  const datasets = series.map(s=>{
+    const isRTB = s.label.startsWith('Rent-Then-Buy');
+    const pointRadii = rows.map((r, i) => {
+      if(isRTB && i === rtbBuyYearIdx && rtbBuyYearIdx >= 0) return 5;
+      return 0;
+    });
+    const pointStyles = rows.map((r, i) => {
+      if(isRTB && i === rtbBuyYearIdx && rtbBuyYearIdx >= 0) return 'circle';
+      return 'circle';
+    });
+    return {
+      label: s.label,
+      data: rows.map(r=>r[s.key]??0),
+      borderColor: cssVar(s.colorVar),
+      backgroundColor: cssVar(s.colorVar)+'22',
+      borderWidth:2.5,
+      pointRadius: pointRadii,
+      pointHoverRadius: 6,
+      pointBackgroundColor: isRTB ? cssVar(s.colorVar) : undefined,
+      pointBorderColor: isRTB ? '#fff' : undefined,
+      pointBorderWidth: isRTB ? 2 : 0,
+      tension:0.3, fill:false,
+    };
+  });
+
+  // Callback references chart's own live labels — avoids stale closure on update
+  const xTickCallback = function(val, i){
+    const lbl = this.chart.data.labels[i];
+    return (lbl !== undefined && lbl !== null) ? `Yr ${lbl}` : '';
+  };
+
+  const g=cssVar('--border'), m=cssVar('--muted'), t=cssVar('--text');
+  const cfg = {
+    type:'line', data:{labels,datasets},
+    options:{
+      responsive:true, maintainAspectRatio:false, animation:{duration:200},
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            title: ctx=>`Year ${ctx[0].label}`,
+            label: ctx=>`  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y,true)}`,
+          },
+          backgroundColor:cssVar('--panel')||'#11172a',
+          titleColor:t, bodyColor:m, borderColor:g, borderWidth:1, padding:10,
+        },
+        zoom:{
+          pan:{enabled:true,mode:'x'},
+          zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'},
+        },
+      },
+      scales:{
+        x:{ticks:{color:m,maxTicksLimit:12,font:{family:'inherit',size:11},callback:xTickCallback},grid:{color:g}},
+        y:{ticks:{color:m,font:{family:'inherit',size:11},callback:v=>fmt.currency(v,true)},grid:{color:g}},
+      },
+    },
+  };
+
+  if(chartInstance){
+    chartInstance.data.labels=labels;
+    chartInstance.data.datasets=datasets;
+    chartInstance.options.scales.x.ticks.color=m;
+    chartInstance.options.scales.x.ticks.callback=xTickCallback;
+    chartInstance.options.scales.x.grid.color=g;
+    chartInstance.options.scales.y.ticks.color=m;
+    chartInstance.options.scales.y.grid.color=g;
+    chartInstance.options.plugins.tooltip.backgroundColor=cssVar('--panel')||'#11172a';
+    chartInstance.options.plugins.tooltip.titleColor=t;
+    chartInstance.options.plugins.tooltip.bodyColor=m;
+    chartInstance.options.plugins.tooltip.borderColor=g;
+    chartInstance.update('none');
+  } else {
+    chartInstance = new Chart($('chartCanvas'), cfg);
+  }
+}
+
+/* ── KPIs ── */
+function updateKPIs(state){
+  const {breakeven,summary,mPayment,monthlyBudget,rentMonthly0,initialCashUsed,ownCashStart,renterStartCapital} = state;
+  $('kpiBreakeven').textContent = breakeven ? `Year ${breakeven}` : '—';
+  $('kpiBreakeven').style.color = breakeven ? cssVar('--accent') : cssVar('--muted');
+  $('kpiOwnEquity').textContent = fmt.currency(summary.ownNetEquity, true);
+  $('kpiRentEquity').textContent= fmt.currency(summary.rentNetEquity, true);
+  const diff = summary.diff;
+  $('kpiDiff').textContent = (diff>=0?'+':'')+fmt.currency(diff, true);
+  $('kpiDiff').style.color = diff>=0 ? cssVar('--accent2') : cssVar('--accent3');
+
+  const warn = $('warningBanner');
+  if(S.monthlyBudget > 0){
+    // Rough year-1 ongoing costs for warning purposes
+    const setupCostDollarWarn = S.setupCostType==='pct' ? S.propertyPrice*S.setupCost/100 : S.setupCost;
+    const ownOngoingWarn = (toYearly(S.ownOngoingCost, S.ownOngoingCostFreq))/12;
+    const rentOngoingWarn = (toYearly(S.rentOngoingCost, S.rentOngoingCostFreq))/12;
+    const ownTotalWarn  = mPayment + ownOngoingWarn;
+    const rentTotalWarn = rentMonthly0 + rentOngoingWarn;
+    if(monthlyBudget < ownTotalWarn && monthlyBudget < rentTotalWarn){
+      warn.style.display='block';
+      warn.textContent='⚠️ Budget ('+fmt.currency(monthlyBudget)+'/mo) is below both total own cost ('+fmt.currency(ownTotalWarn,true)+'/mo incl. ongoing) and rent cost ('+fmt.currency(rentTotalWarn,true)+'/mo incl. ongoing). Surplus will be zero — both scenarios just compound existing cash.';
+    } else { warn.style.display='none'; }
+  } else { warn.style.display='none'; }
+}
+
+/* ── SUMMARY TILES ── */
+function updateSummary(state){
+  const {summary,mPayment,rentMonthly0,monthlyBudget,initialCashUsed,ownCashStart,renterStartCapital} = state;
+  const yrs = S.horizon;
+
+  $('ownSummary').innerHTML = `
+    <div class="tile"><div class="label">Property Value (Yr ${yrs})</div><div class="value">${fmt.currency(summary.ownPropValue,true)}</div></div>
+    <div class="tile"><div class="label">Principal Remaining</div><div class="value">${fmt.currency(state.rows[state.rows.length-1].ownPrincipal,true)}</div></div>
+    <div class="tile"><div class="label">House Equity (Yr ${yrs})</div><div class="value pos">${fmt.currency(summary.ownHouseEquity,true)}</div></div>
+    <div class="tile"><div class="label">Liquid Cash (Yr ${yrs})</div><div class="value">${fmt.currency(summary.ownCash,true)}</div></div>
+    <div class="tile"><div class="label">Monthly Mortgage</div><div class="value">${fmt.currency(mPayment)}/mo</div></div>
+    <div class="tile"><div class="label">Total Cost (Interest+Setup)</div><div class="value neg">${fmt.currency(summary.ownAccumCost,true)}</div></div>
+  `;
+
+  $('rentSummary').innerHTML = `
+    <div class="tile"><div class="label">Invested Capital (Yr ${yrs})</div><div class="value pos">${fmt.currency(summary.rentCash,true)}</div></div>
+    <div class="tile"><div class="label">Net Equity (Yr ${yrs})</div><div class="value">${fmt.currency(summary.rentNetEquity,true)}</div></div>
+    <div class="tile"><div class="label">Initial Cash Invested</div><div class="value">${fmt.currency(renterStartCapital,true)}</div></div>
+    <div class="tile"><div class="label">Monthly Rent (Yr 1)</div><div class="value">${fmt.currency(rentMonthly0)}/mo</div></div>
+    <div class="tile"><div class="label">Monthly Budget (Yr 1)</div><div class="value">${fmt.currency(monthlyBudget)}/mo${S.monthlyBudgetIncrease>0?' +'+S.monthlyBudgetIncrease.toFixed(1)+'%/yr':''}</div></div>
+    <div class="tile"><div class="label">Total Rent Paid</div><div class="value neg">${fmt.currency(summary.rentAccumCost,true)}</div></div>
+  `;
+}
+
+/* ── DETAIL TABLE ── */
+function updateDetailTable(rows, rtbRows){
+  const wrap = $('detailTableWrap');
+  let html = '';
+  if(activeTable==='own'){
+    html = `<table><thead><tr>
+      <th>Year</th><th>Prop. Value</th><th>→ Interest</th><th>→ Principal</th><th>Surplus→Cash</th><th>Principal Left</th><th>House Equity</th><th>Liquid Cash</th><th>Net Equity</th><th>Accum. Cost</th>
+    </tr></thead><tbody>`;
+    rows.forEach(r=>{
+      html+=`<tr>
+        <td>${r.year}</td>
+        <td>${fmt.currency(r.ownPropValue,true)}</td>
+        <td style="color:var(--accent3)">${r.year===0?'—':fmt.currency(r.ownYearInterest||0,true)}</td>
+        <td style="color:var(--accent2)">${r.year===0?'—':fmt.currency(r.ownYearPrincipal||0,true)}</td>
+        <td style="color:var(--gold)">${r.year===0?'—':fmt.currency(r.ownYearSurplus||0,true)}</td>
+        <td>${fmt.currency(r.ownPrincipal,true)}</td>
+        <td>${fmt.currency(r.ownHouseEquity,true)}</td>
+        <td>${fmt.currency(r.ownCash,true)}</td>
+        <td style="color:${r.ownNetEquity>=0?cssVar('--accent2'):cssVar('--accent3')}">${fmt.currency(r.ownNetEquity,true)}</td>
+        <td>${fmt.currency(r.ownAccumCost,true)}</td>
+      </tr>`;
+    });
+  } else if(activeTable==='rent'){
+    html = `<table><thead><tr>
+      <th>Year</th><th>Annual Rent</th><th>Surplus→Cash</th><th>Liquid Cash</th><th>Net Equity</th><th>Accum. Cost</th>
+    </tr></thead><tbody>`;
+    rows.forEach(r=>{
+      html+=`<tr>
+        <td>${r.year}</td>
+        <td>${r.year===0?'—':fmt.currency(r.rentRent,true)}</td>
+        <td style="color:var(--gold)">${r.year===0?'—':fmt.currency(r.rentYearSurplus||0,true)}</td>
+        <td>${fmt.currency(r.rentCash,true)}</td>
+        <td style="color:${cssVar('--accent2')}">${fmt.currency(r.rentNetEquity,true)}</td>
+        <td>${r.year===0?'—':fmt.currency(r.rentAccumCost,true)}</td>
+      </tr>`;
+    });
+  } else if(activeTable==='rtb' && rtbRows){
+    html = `<table><thead><tr>
+      <th>Year</th><th>Phase</th><th>Prop. Value</th><th>→ Interest</th><th>→ Principal</th><th>Surplus→Cash</th><th>Principal Left</th><th>House Equity</th><th>Liquid Cash</th><th>Net Equity</th><th>Accum. Cost</th>
+    </tr></thead><tbody>`;
+    rtbRows.forEach(r=>{
+      const phase = r.phase==='rent'?'🏢 Renting': r.phase==='buy-transition'?'🔄 Bought':'🏡 Owning';
+      const isOwning = r.phase!=='rent';
+      const propVal = isOwning?fmt.currency(r.rtbPropValue,true):'—';
+      const interest = isOwning&&r.year>0?fmt.currency(r.rtbYearInterest||0,true):'—';
+      const principal = isOwning&&r.year>0?fmt.currency(r.rtbYearPrincipal||0,true):'—';
+      const surplus = r.year>0?fmt.currency(r.rtbYearSurplus||0,true):'—';
+      const princ = isOwning?fmt.currency(r.rtbPrincipal,true):'—';
+      const hEq = isOwning?fmt.currency(r.rtbHouseEquity,true):'—';
+      const cash = r.phase==='rent'?fmt.currency(r.rtbCash||0,true):fmt.currency(r.rtbCash2||0,true);
+      html+=`<tr>
+        <td>${r.year}</td>
+        <td>${phase}</td>
+        <td>${propVal}</td>
+        <td style="color:var(--accent3)">${interest}</td>
+        <td style="color:var(--accent2)">${principal}</td>
+        <td style="color:var(--gold)">${surplus}</td>
+        <td>${princ}</td>
+        <td>${hEq}</td>
+        <td>${cash}</td>
+        <td style="color:${r.rtbNetEquity>=0?cssVar('--accent2'):cssVar('--accent3')}">${fmt.currency(r.rtbNetEquity,true)}</td>
+        <td>${r.year===0?'—':fmt.currency(r.rtbAccumCost,true)}</td>
+      </tr>`;
+    });
+  }
+  html+='</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+/* ── RTB SUMMARY ── */
+function updateRTBSummary(state){
+  if(!state.rtbRows) return;
+  const {rows, rtbMPayment, rtbPropValueAtBuy, rtbSetupCostAtBuy, rtbDPAtBuy, rtbLoanAtBuy} = state.rtbRows;
+  const last = rows[rows.length-1];
+  const yrs = S.horizon;
+  $('rtbSummary').innerHTML = `
+    <div class="tile"><div class="label">Property Price at Buy (Yr ${S.rtbBuyYear})</div><div class="value">${fmt.currency(rtbPropValueAtBuy||0,true)}</div></div>
+    <div class="tile"><div class="label">Down Payment at Buy</div><div class="value">${fmt.currency(rtbDPAtBuy||0,true)}</div></div>
+    <div class="tile"><div class="label">Loan at Buy</div><div class="value">${fmt.currency(rtbLoanAtBuy||0,true)}</div></div>
+    <div class="tile"><div class="label">Setup Cost at Buy</div><div class="value neg">${fmt.currency(rtbSetupCostAtBuy||0,true)}</div></div>
+    <div class="tile"><div class="label">Monthly Mortgage (post-buy)</div><div class="value">${fmt.currency(rtbMPayment||0)}/mo</div></div>
+    <div class="tile"><div class="label">Property Value (Yr ${yrs})</div><div class="value">${fmt.currency(last.rtbPropValue||0,true)}</div></div>
+    <div class="tile"><div class="label">House Equity (Yr ${yrs})</div><div class="value pos">${fmt.currency(last.rtbHouseEquity||0,true)}</div></div>
+    <div class="tile"><div class="label">Liquid Cash (Yr ${yrs})</div><div class="value">${fmt.currency((last.rtbCash2||last.rtbCash||0),true)}</div></div>
+    <div class="tile"><div class="label">Net Equity (Yr ${yrs})</div><div class="value ${last.rtbNetEquity>=0?'pos':'neg'}">${fmt.currency(last.rtbNetEquity,true)}</div></div>
+  `;
+}
+
+/* ── MAIN RERENDER ── */
+function rerender(){
+  readInputs();
+  refreshLabels();
+  const state = computeModel();
+  latestRows = state.rows;
+  cachedRtbRows = state.rtbRows ? state.rtbRows.rows : null;
+
+  // Merge RTB data into main rows for chart rendering
+  if(state.rtbRows){
+    const rtbByYear = {};
+    state.rtbRows.rows.forEach(r=>{ rtbByYear[r.year]=r; });
+    latestRows = latestRows.map(r=>{
+      const rtbR = rtbByYear[r.year];
+      if(rtbR){
+        return Object.assign({}, r, {
+          netEquityRTB: rtbR.netEquityRTB,
+          cashRTB: rtbR.cashRTB,
+          costRTB: rtbR.costRTB,
+        });
+      }
+      return r;
+    });
+  }
+
+  renderChart(latestRows);
+  updateKPIs(state);
+  updateSummary(state);
+  updateDetailTable(latestRows, cachedRtbRows);
+  // Show/hide RTB UI
+  $('rtbParams').style.display = S.rtbEnabled ? 'block' : 'none';
+  $('rtbSummarySection').style.display = S.rtbEnabled ? 'block' : 'none';
+  $('rtbTableTab').style.display = S.rtbEnabled ? 'inline-block' : 'none';
+  if(!S.rtbEnabled && activeTable==='rtb'){ activeTable='own'; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.table==='own')); }
+  updateRTBSummary(state);
+}
+
+/* ── RESET ── */
+function resetAll(){
+  S = JSON.parse(JSON.stringify(DEFAULTS));
+  $('propertyPrice').value  = formatMoneyValue(DEFAULTS.propertyPrice);
+  $('downPaymentPct').value = DEFAULTS.downPaymentPct;
+  $('monthlyBudget').value  = formatMoneyValue(DEFAULTS.monthlyBudget);
+  $('riskFreeRate').value   = DEFAULTS.riskFreeRate;
+  $('horizon').value        = DEFAULTS.horizon;
+  $('mortgageRate').value   = DEFAULTS.mortgageRate;
+  $('mortgageTerm').value   = DEFAULTS.mortgageTerm;
+  $('houseGrowth').value    = DEFAULTS.houseGrowth;
+  $('setupCost').value      = formatMoneyValue(DEFAULTS.setupCost);
+  $('setupCostType').value  = DEFAULTS.setupCostType;
+  $('ownOngoingCost').value = formatMoneyValue(DEFAULTS.ownOngoingCost);
+  $('ownOngoingCostFreq').value = DEFAULTS.ownOngoingCostFreq;
+  $('ownOngoingCostType').value = DEFAULTS.ownOngoingCostType;
+  $('rentAmount').value     = formatMoneyValue(DEFAULTS.rentAmount);
+  $('rentFreq').value       = DEFAULTS.rentFreq;
+  $('rentInflation').value  = DEFAULTS.rentInflation;
+  $('rentOngoingCost').value= formatMoneyValue(DEFAULTS.rentOngoingCost);
+  $('rentOngoingCostFreq').value = DEFAULTS.rentOngoingCostFreq;
+  $('rentOngoingCostType').value = DEFAULTS.rentOngoingCostType;
+  $('initialCash').value     = '';
+  $('costInterestOnly').checked = DEFAULTS.costInterestOnly;
+  $('rtbEnabled').checked   = DEFAULTS.rtbEnabled;
+  $('rtbBuyYear').value     = DEFAULTS.rtbBuyYear;
+  $('monthlyBudgetIncrease').value = DEFAULTS.monthlyBudgetIncrease;
+  document.querySelector('input[name="mortgageType"][value="pi"]').checked=true;
+  $('radioPI').classList.add('selected'); $('radioIO').classList.remove('selected');
+  rerender();
+}
+
+/* ── CSV ── */
+function downloadCsv(){
+  if(!latestRows.length) return;
+  const h=['Year','Own_PropValue','Own_Principal','Own_HouseEquity','Own_Cash','Own_NetEquity','Own_AccumCost','Rent_AnnualRent','Rent_Cash','Rent_NetEquity','Rent_AccumCost'];
+  const lines = latestRows.map(r=>[
+    r.year,r.ownPropValue.toFixed(0),r.ownPrincipal.toFixed(0),r.ownHouseEquity.toFixed(0),
+    r.ownCash.toFixed(0),r.ownNetEquity.toFixed(0),r.ownAccumCost.toFixed(0),
+    r.rentRent.toFixed(0),r.rentCash.toFixed(0),r.rentNetEquity.toFixed(0),r.rentAccumCost.toFixed(0),
+  ].join(','));
+  const csv=[h.join(','),...lines].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download='rent_vs_own.csv'; document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ── CAGR CALCULATOR ── */
+function syncCagrDeleteButtons(){
+  const rows = document.querySelectorAll('#cagrRows .cagr-row');
+  rows.forEach(row=>{
+    const btn = row.querySelector('.cagr-delete');
+    if(btn) btn.disabled = rows.length <= 2;
+  });
+}
+function buildCagrRow(year='', price=''){
+  const row=document.createElement('div');
+  row.className='cagr-row';
+  row.innerHTML = `
+    <input type="number" placeholder="Year e.g. 2020" class="cagr-year" value="${year}"/>
+    <input type="text" inputmode="numeric" placeholder="Price e.g. 450,000" class="cagr-price money-input" data-money="true" value="${price}"/>
+    <button class="cagr-btn delete cagr-delete" type="button">Delete</button>
+  `;
+  formatMoneyInput(row.querySelector('.cagr-price'));
+  return row;
+}
+function calcCAGR(){
+  const pairs = Array.from(document.querySelectorAll('#cagrRows .cagr-row'))
+    .map(row=>({
+      y: parseFloat(row.querySelector('.cagr-year')?.value),
+      p: parseNum(row.querySelector('.cagr-price')?.value)
+    }))
+    .filter(item=>!isNaN(item.y) && item.p>0);
+
+  if(pairs.length < 2){ $('cagrResult').textContent='Need at least 2 valid year and price points.'; return; }
+
+  pairs.sort((a,b)=>a.y-b.y);
+  const first=pairs[0], last=pairs[pairs.length-1];
+  const n=last.y-first.y;
+  if(n<=0){ $('cagrResult').textContent='End year must be after start year.'; return; }
+
+  const cagr=(Math.pow(last.p/first.p, 1/n)-1)*100;
+  $('cagrResult').textContent=`CAGR: ${cagr.toFixed(2)}% p.a. — applied ✓`;
+  $('houseGrowth').value=cagr.toFixed(2);
+  rerender();
+}
+
+/* ── EVENTS ── */
+['propertyPrice','downPaymentPct','monthlyBudget','riskFreeRate','horizon',
+ 'mortgageRate','mortgageTerm','houseGrowth','setupCost','setupCostType',
+ 'ownOngoingCost','ownOngoingCostFreq','ownOngoingCostType',
+ 'rentAmount','rentFreq','rentInflation','rentOngoingCost','rentOngoingCostFreq','rentOngoingCostType',
+ 'rtbBuyYear','monthlyBudgetIncrease','initialCash'
+].forEach(id=>{
+  const el=$(id); if(!el) return;
+  ['input','change'].forEach(ev=>el.addEventListener(ev, ()=>{
+    if(el.matches('[data-money="true"]') && ev==='change') formatMoneyInput(el);
+    rerender();
+  }));
+});
+
+$('rtbEnabled').addEventListener('change', rerender);
+$('costInterestOnly').addEventListener('change', rerender);
+
+document.querySelectorAll('[data-money="true"]').forEach(el=>{
+  el.addEventListener('blur', ()=>{ formatMoneyInput(el); rerender(); });
+});
+
+document.querySelectorAll('input[name="mortgageType"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    document.querySelectorAll('.radio-opt').forEach(o=>o.classList.remove('selected'));
+    r.closest('.radio-opt').classList.add('selected');
+    rerender();
+  });
+});
+
+document.querySelectorAll('.ctrl-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.ctrl-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    $('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeTable=btn.dataset.table;
+    const state = { rows: latestRows, rtbRows: null };
+    // Re-derive rtbRows from latestRows is complex — just call updateDetailTable with cached rtbRows
+    if(latestRows.length) updateDetailTable(latestRows, cachedRtbRows);
+  });
+});
+
+document.querySelectorAll('.graph-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.graph-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeGraph=btn.dataset.graph;
+    if(latestRows.length){ renderChart(latestRows); }
+  });
+});
+
+$('resetBtn').addEventListener('click', resetAll);
+$('downloadBtn').addEventListener('click', downloadCsv);
+$('chartResetZoom').addEventListener('click',()=>{ if(chartInstance) chartInstance.resetZoom(); });
+$('themeToggle').addEventListener('click',()=>{
+  document.body.classList.toggle('light');
+  $('themeToggle').textContent = document.body.classList.contains('light') ? '🌙 Dark' : '☀️ Light';
+  if(latestRows.length) renderChart(latestRows);
+});
+$('chartCanvas').addEventListener('mouseleave',()=>{ $('hoverBox').textContent='Hover over the chart to inspect a year.'; });
+$('cagrCalc').addEventListener('click', calcCAGR);
+$('cagrAddRow').addEventListener('click',()=>{
+  $('cagrRows').appendChild(buildCagrRow());
+  syncCagrDeleteButtons();
+});
+$('cagrRows').addEventListener('click',(e)=>{
+  const btn = e.target.closest('.cagr-delete');
+  if(!btn) return;
+  const rows = document.querySelectorAll('#cagrRows .cagr-row');
+  if(rows.length <= 2) return;
+  btn.closest('.cagr-row')?.remove();
+  syncCagrDeleteButtons();
+});
+$('cagrRows').addEventListener('blur',(e)=>{
+  const input = e.target.closest('.cagr-price');
+  if(!input) return;
+  formatMoneyInput(input);
+}, true);
+
+/* ── GLOBAL TOOLTIP ── */
+(function initTooltip(){
+  const tt = document.createElement('div');
+  tt.id = 'globalTooltip';
+  tt.innerHTML = '<div class="tt-text"></div><div class="tt-arrow"></div>';
+  document.body.appendChild(tt);
+  const ttText = tt.querySelector('.tt-text');
+  const ttArrow = tt.querySelector('.tt-arrow');
+  const PAD = 8;
+
+  document.addEventListener('mouseover', e=>{
+    const icon = e.target.closest('[data-tip]');
+    if(!icon){ hide(); return; }
+    const tip = icon.getAttribute('data-tip');
+    if(!tip){ hide(); return; }
+    ttText.textContent = tip;
+    tt.classList.remove('flip-below');
+    tt.classList.add('visible');
+    tt.style.display = 'block';
+    tt.style.opacity = '0';
+
+    // Position
+    const rect = icon.getBoundingClientRect();
+    const ttW = tt.offsetWidth;
+    const ttH = tt.offsetHeight;
+    const iconCX = rect.left + rect.width/2;
+
+    // Default: above the icon
+    let top = rect.top - ttH - 10;
+    let left = iconCX - ttW/2;
+
+    // Flip below if clips top
+    let flipped = false;
+    if(top < PAD){
+      top = rect.bottom + 10;
+      flipped = true;
+      tt.classList.add('flip-below');
+    }
+
+    // Clamp left/right
+    left = Math.max(PAD, Math.min(left, window.innerWidth - ttW - PAD));
+
+    // Clamp top
+    top = Math.max(PAD, Math.min(top, window.innerHeight - ttH - PAD));
+
+    tt.style.left = left+'px';
+    tt.style.top  = top+'px';
+    tt.style.opacity = '1';
+
+    // Arrow X position: point at icon center, clamped within bubble
+    const arrowX = Math.max(10, Math.min(iconCX - left, ttW - 10));
+    ttArrow.style.left = arrowX+'px';
+  });
+
+  document.addEventListener('mouseout', e=>{
+    const icon = e.target.closest('[data-tip]');
+    if(!icon) return;
+    if(!e.relatedTarget || !icon.contains(e.relatedTarget)) hide();
+  });
+
+  function hide(){ tt.classList.remove('visible'); tt.style.display='none'; }
+})();
+
+/* ── INIT ── */
+syncMoneyInputs();
+syncCagrDeleteButtons();
+rerender();
+
+})();
+</script>
+</body>
+</html>
