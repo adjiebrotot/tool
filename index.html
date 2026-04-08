@@ -567,16 +567,16 @@
 
           <div class="field">
             <label for="domainFilter">Domain</label>
-            <select id="domainFilter" name="domain" multiple size="4" aria-describedby="domainHelp">
+            <select id="domainFilter" name="domain">
+              <option value="all">All domains</option>
             </select>
-            <small id="domainHelp" style="color: var(--muted);">Select one or more domains.</small>
           </div>
 
           <div class="field">
             <label for="geographyFilter">Geography</label>
-            <select id="geographyFilter" name="geography" multiple size="4" aria-describedby="geographyHelp">
+            <select id="geographyFilter" name="geography">
+              <option value="all">All geographies</option>
             </select>
-            <small id="geographyHelp" style="color: var(--muted);">Select one or more geographies.</small>
           </div>
 
           <div class="field">
@@ -598,6 +598,7 @@
         - data-status
         - data-domain
         - data-geography
+        - data-tags (other tags only)
         - h3 title
         - subtitle paragraph
         - description paragraph
@@ -610,6 +611,7 @@
           data-status="Active"
           data-domain="Finance"
           data-geography="Indonesia"
+          data-tags="Tax"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
@@ -626,8 +628,8 @@
           </p>
 
           <ul class="tool-tags" aria-label="Categories">
-            <li>Domain: Finance</li>
-            <li>Geography: Indonesia</li>
+            <li>Finance</li>
+            <li>Indonesia</li>
           </ul>
 
           <div class="tool-footer">
@@ -640,6 +642,7 @@
           data-status="Active"
           data-domain="Finance"
           data-geography="Universal"
+          data-tags="Financing"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
@@ -656,8 +659,8 @@
           </p>
 
           <ul class="tool-tags" aria-label="Categories">
-            <li>Domain: Finance</li>
-            <li>Geography: Universal</li>
+            <li>Finance</li>
+            <li>Universal</li>
           </ul>
 
           <div class="tool-footer">
@@ -670,6 +673,7 @@
           data-status="Coming soon"
           data-domain="Finance"
           data-geography="Universal"
+          data-tags="Property"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
@@ -686,8 +690,8 @@
           </p>
 
           <ul class="tool-tags" aria-label="Categories">
-            <li>Domain: Finance</li>
-            <li>Geography: Universal</li>
+            <li>Finance</li>
+            <li>Universal</li>
           </ul>
 
           <div class="tool-footer">
@@ -700,6 +704,7 @@
           data-status="Coming soon"
           data-domain="Finance"
           data-geography="Australia"
+          data-tags="Superannuation"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
@@ -716,8 +721,8 @@
           </p>
 
           <ul class="tool-tags" aria-label="Categories">
-            <li>Domain: Finance</li>
-            <li>Geography: Australia</li>
+            <li>Finance</li>
+            <li>Australia</li>
           </ul>
 
           <div class="tool-footer">
@@ -834,8 +839,8 @@
 
       function applyFilters() {
         const selectedStatus = statusFilter.value;
-        const selectedDomains = Array.from(domainFilter.selectedOptions).map(option => option.value);
-        const selectedGeographies = Array.from(geographyFilter.selectedOptions).map(option => option.value);
+        const selectedDomain = domainFilter.value;
+        const selectedGeography = geographyFilter.value;
         const query = searchFilter.value.trim().toLowerCase();
 
         let visibleCount = 0;
@@ -847,8 +852,8 @@
           const text = card.textContent.toLowerCase();
 
           const matchesStatus = selectedStatus === 'all' || status === selectedStatus;
-          const matchesDomain = selectedDomains.length === 0 || selectedDomains.includes(domain);
-          const matchesGeography = selectedGeographies.length === 0 || selectedGeographies.includes(geography);
+          const matchesDomain = selectedDomain === 'all' || domain === selectedDomain;
+          const matchesGeography = selectedGeography === 'all' || geography === selectedGeography;
           const matchesSearch = query === '' || text.includes(query);
 
           const show = matchesStatus && matchesDomain && matchesGeography && matchesSearch;
