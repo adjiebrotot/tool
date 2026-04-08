@@ -181,6 +181,19 @@ body.light #globalTooltip::after{border-top-color:#fff;}
       <input class="num-input fmt-num" id="availableCash" type="text" inputmode="decimal" value="50,000"/>
       <div class="field-sub">Cash on hand. Must be ≥ purchase cost to run the simulation.</div>
     </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Currency Symbol <i class="tip-icon" data-tip="Display-only setting. It changes the symbol shown across the UI, without affecting calculations.">?</i></span></div>
+      <select class="sel-input" id="currencySymbol">
+        <option value="$" selected>$ - Dollar</option>
+        <option value="¥">¥ - Yen/Yuan</option>
+        <option value="€">€ - Euro</option>
+        <option value="£">£ - Pound</option>
+        <option value="Rp">Rp - Rupiah</option>
+        <option value="RM">RM - Ringgit</option>
+        <option value="₿">₿ - Bitcoin</option>
+      </select>
+      <div class="field-sub">Preference only. Number math remains the same.</div>
+    </div>
     <div class="slider-block">
       <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Risk-Free Rate (annual %) <i class="tip-icon" data-tip="The annual return earned on uninvested cash (e.g. high-yield savings account, T-bills). Applies to all scenarios as the baseline investment return.">?</i></span></div><div class="slider-value" id="baseRfVal">4.50%</div></div>
       <input id="baseRf" type="range" min="0" max="20" step="0.1" value="4.5"/>
@@ -219,9 +232,9 @@ body.light #globalTooltip::after{border-top-color:#fff;}
         <input class="num-input" id="scTerm" type="number" min="1" max="3000" step="1" value="60"/>
         <div class="field-sub" id="termSub">Number of monthly payments (e.g. 60 = 5 years).</div>
       </div>
-      <div class="field-row"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="An upfront fee charged to set up the loan. Can be a fixed dollar amount or a percentage of the financed amount. Reduces your investable cash at the start.">?</i></span></div>
+      <div class="field-row"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="An upfront fee charged to set up the loan. Can be a fixed amount or a percentage of the financed amount. Reduces your investable cash at the start.">?</i></span></div>
         <div class="inline-row"><input class="num-input fmt-num" id="scFeeAmt" type="text" inputmode="decimal" value="0"/><select class="sel-input" id="scFeeType" style="min-width:70px;"><option value="fixed">$</option><option value="pct">%</option></select></div>
-        <div class="field-sub">Fixed $ amount or % of financed amount, paid upfront.</div>
+        <div class="field-sub">Fixed amount or % of financed amount, paid upfront.</div>
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;">
         <button class="btn-primary btn-sm" id="saveScenarioBtn">Save</button>
@@ -316,16 +329,24 @@ body.light #globalTooltip::after{border-top-color:#fff;}
 const $=id=>document.getElementById(id);
 const SCENARIO_COLORS=['--line-a','--line-b','--line-c','--line-d','--line-e','--line-f'];
 function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+let currentCurrencySymbol='$';
+
+function moneySymbol(){return currentCurrencySymbol||'$';}
+function moneyWithSymbol(n,{minimumFractionDigits=0,maximumFractionDigits=0}={}){
+  const abs=Math.abs(Number(n||0));
+  const formatted=abs.toLocaleString('en-US',{minimumFractionDigits,maximumFractionDigits});
+  return moneySymbol()+formatted;
+}
 
 const fmt={
   currency(v,compact=false){
     const n=Number(v||0),abs=Math.abs(n),sign=n<0?'−':'';
-    if(compact&&abs>=1e9)return sign+'$'+(abs/1e9).toFixed(2)+'b';
-    if(compact&&abs>=1e6)return sign+'$'+(abs/1e6).toFixed(2)+'m';
-    if(compact&&abs>=1e3)return sign+'$'+(abs/1e3).toFixed(0)+'k';
-    return(n<0?'−':'')+new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(abs);
+    if(compact&&abs>=1e9)return sign+moneySymbol()+(abs/1e9).toFixed(2)+'b';
+    if(compact&&abs>=1e6)return sign+moneySymbol()+(abs/1e6).toFixed(2)+'m';
+    if(compact&&abs>=1e3)return sign+moneySymbol()+(abs/1e3).toFixed(0)+'k';
+    return sign+moneyWithSymbol(abs,{maximumFractionDigits:0});
   },
-  currencyExact(v){const n=Number(v||0);return(n<0?'−':'')+new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:2}).format(Math.abs(n));},
+  currencyExact(v){const n=Number(v||0);return(n<0?'−':'')+moneyWithSymbol(Math.abs(n),{minimumFractionDigits:2,maximumFractionDigits:2});},
   pct(v,d=2){const n=Number(v||0);const p=Math.abs(n)<=1?n*100:n;return p.toFixed(d)+'%';},
   num(v,d=0){return Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});},
   fmtInput(v){const n=parseFloat(String(v).replace(/,/g,''));if(isNaN(n))return'0';if(n===Math.floor(n))return Math.floor(n).toLocaleString('en-US');return n.toLocaleString('en-US',{maximumFractionDigits:2});}
@@ -505,11 +526,13 @@ function rerender(){
   baseRiskFreeRate=riskFreeRate;
   $('inflationRow').style.display=inflationEnabled?'':'none';
   const optTarget=$('optTarget').value;
+  currentCurrencySymbol=$('currencySymbol').value||'$';
+  $('scFeeType').querySelector('option[value="fixed"]').textContent=moneySymbol();
 
   let warn='';
   const cashShortfall = availableCash < purchaseCost;
   if(cashShortfall){
-    warn='⚠ Available cash ($'+fmt.num(availableCash)+') is less than the purchase cost ($'+fmt.num(purchaseCost)+'). Financing something you cannot afford upfront is not modelled here — please increase your available cash or reduce the purchase cost.';
+    warn='⚠ Available cash ('+fmt.currencyExact(availableCash)+') is less than the purchase cost ('+fmt.currencyExact(purchaseCost)+'). Financing something you cannot afford upfront is not modelled here — please increase your available cash or reduce the purchase cost.';
     $('warnBanner').style.display='block';$('warnBanner').textContent=warn;
     $('negCarryBanner').style.display='none';
     // Clear all outputs
@@ -574,7 +597,7 @@ function renderMainChart(results){
   const maxNResult=results.find(r=>r&&r.n===maxN);
   const freqLabelMap={weekly:'Week',fortnightly:'Fortnight',monthly:'Month',yearly:'Year'};
   const xAxisLabel=maxNResult?freqLabelMap[maxNResult.freq]||'Period':'Period';
-  const yAxisLabel={wealth:'Wealth ($)',netBenefit:'Net Benefit ($)',investmentValue:'Investment Value ($)',loanBalance:'Loan Balance ($)'}[metric]||'Value ($)';
+  const yAxisLabel={wealth:`Wealth (${moneySymbol()})`,netBenefit:`Net Benefit (${moneySymbol()})`,investmentValue:`Investment Value (${moneySymbol()})`,loanBalance:`Loan Balance (${moneySymbol()})`}[metric]||`Value (${moneySymbol()})`;
   results.forEach(r=>{if(!r)return;const color=cssVar(r.colorVar);const data=[];
     const rfP_r=Math.pow(1+latestResults.riskFreeRate/100,1/r.ppy)-1;
     const left=Math.max(0,latestResults.availableCash-latestResults.purchaseCost);
@@ -610,8 +633,8 @@ function renderComparisonTable(results){
   const rows=[
     ['Down Payment','—',r=>fmt.currency(r.down)],['Financed Amount','—',r=>fmt.currency(r.financed)],
     ['Periodic Payment','—',r=>r.payment>0?fmt.currencyExact(r.payment)+'/'+freqLabel(r.freq):'—'],
-    ['Total Interest Paid','$0',r=>fmt.currencyExact(r.totalInterest)],['Total Fees Paid','$0',r=>fmt.currencyExact(r.totalFee)],
-    ['Total Financing Cost','$0',r=>fmt.currencyExact(r.totalFinanceCost)],['Total Out-of-Pocket',fmt.currency(pc),r=>fmt.currencyExact(r.totalOOP)],
+    ['Total Interest Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalInterest)],['Total Fees Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalFee)],
+    ['Total Financing Cost',fmt.currency(0),r=>fmt.currencyExact(r.totalFinanceCost)],['Total Out-of-Pocket',fmt.currency(pc),r=>fmt.currencyExact(r.totalOOP)],
     ['Ending Wealth',r=>fmt.currencyExact(r.cashBaseWealth),r=>fmt.currencyExact(r.endWealth)],
     ['Net Benefit vs Cash','Baseline',r=>{const v=r.netBenefit;return`<span style="color:${v>=0?cssVar('--positive'):cssVar('--negative')};font-weight:700">${fmt.currencyExact(v)}</span>`;}],
   ];
@@ -694,14 +717,14 @@ function runSensitivity(){
     const plotData=[{type:'surface',x:xVals,y:yVals,z:zData,
       colorscale:[[0,'#ef4444'],[0.25,'#f59e0b'],[0.5,'#fef9c3'],[0.75,'#86efac'],[1,'#22c55e']],
       contours:{z:{show:true,usecolormap:true,highlightcolor:'#fff',project:{z:false}}},
-      hovertemplate:`${xL}: %{x:.2f}<br>${yL}: %{y:.2f}<br>${zL}: $%{z:,.0f}<extra></extra>`
+      hovertemplate:`${xL}: %{x:.2f}<br>${yL}: %{y:.2f}<br>${zL}: ${moneySymbol()}%{z:,.0f}<extra></extra>`
     }];
     const layout={autosize:true,margin:{l:0,r:0,t:0,b:0},
       paper_bgcolor:isLight?'#ffffff':'#11172a',
       scene:{
         xaxis:{title:xL,color:isLight?'#1a2340':'#a8b4d4',gridcolor:isLight?'rgba(0,0,0,.08)':'rgba(255,255,255,.08)'},
         yaxis:{title:yL,color:isLight?'#1a2340':'#a8b4d4',gridcolor:isLight?'rgba(0,0,0,.08)':'rgba(255,255,255,.08)'},
-        zaxis:{title:zL,color:isLight?'#1a2340':'#a8b4d4',gridcolor:isLight?'rgba(0,0,0,.08)':'rgba(255,255,255,.08)',tickprefix:'$',tickformat:',.0f'},
+        zaxis:{title:zL,color:isLight?'#1a2340':'#a8b4d4',gridcolor:isLight?'rgba(0,0,0,.08)':'rgba(255,255,255,.08)',tickprefix:moneySymbol(),tickformat:',.0f'},
         bgcolor:isLight?'#f0f4ff':'#0b1020',
         camera:{eye:{x:1.8,y:1.8,z:1.2}}
       },
@@ -784,6 +807,7 @@ $('scFreq').addEventListener('change',()=>{updateTermLabel($('scFreq').value);})
 ['scName','scTerm','scFeeType'].forEach(id=>{['input','change'].forEach(evt=>{$(id).addEventListener(evt,()=>{/* live preview only on save click */});});});
 ['scDown','scFeeAmt'].forEach(id=>{$(id).addEventListener('blur',()=>{/* handled on save */});});
 ['chartMetric','optTarget'].forEach(id=>{$(id).addEventListener('change',rerender);});
+$('currencySymbol').addEventListener('change',rerender);
 $('inflationToggle').addEventListener('change',rerender);
 $('inflationRate').addEventListener('change',rerender);
 
@@ -805,6 +829,7 @@ $('resetBtn').addEventListener('click',()=>{
   $('scenarioEditor').style.display='none';
   $('purchaseCost').value=fmt.fmtInput(50000);
   $('availableCash').value=fmt.fmtInput(50000);
+  $('currencySymbol').value='$';
   $('baseRf').value=4.5;
   $('baseRfVal').textContent='4.50%';
   $('inflationToggle').checked=false;
