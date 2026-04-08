@@ -8,6 +8,7 @@
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0f172a">
   <link rel="canonical" href="https://tool.adjiebrotots.com/">
+  <link rel="icon" href="https://www.adjiebrotots.com/favicon.ico">
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="Adjie Brotot Tools">
@@ -385,34 +386,6 @@
       display: block;
     }
 
-    .notes {
-      margin-top: 2.5rem;
-      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.88));
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-    }
-
-    .notes h2 {
-      margin-top: 0;
-      margin-bottom: 0.75rem;
-      font-size: 1.35rem;
-    }
-
-    .notes p,
-    .notes li {
-      color: var(--muted);
-    }
-
-    .notes code {
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.12rem 0.35rem;
-      font-size: 0.94em;
-      color: var(--text);
-    }
-
     footer {
       padding: 0 0 3rem;
     }
@@ -482,7 +455,6 @@
 
       .tool-card,
       .filter-panel,
-      .notes,
       .footer-card {
         padding: 1rem;
       }
@@ -554,16 +526,10 @@
   <header class="site-header">
     <div class="container hero">
       <div class="hero-card">
-        <span class="eyebrow">Everyday decision tools</span>
         <h1 itemprop="headline">Adjie Brotot Tools</h1>
         <p itemprop="description">
           Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions. Shared with the world, because why not.
         </p>
-        <div class="hero-meta" aria-label="Highlights">
-          <span class="hero-chip">SEO-friendly</span>
-          <span class="hero-chip">Filter by tag &amp; status</span>
-          <span class="hero-chip">Simple to expand</span>
-        </div>
       </div>
     </div>
   </header>
@@ -573,7 +539,6 @@
       <div class="section-heading">
         <div>
           <h2 id="tool-directory-heading">Tool directory</h2>
-          <p>Browse all current tools, upcoming ideas, and future releases from Adjie Brotot Tools.</p>
         </div>
       </div>
 
@@ -589,9 +554,9 @@
 
           <div class="field">
             <label for="tagFilter">Tag</label>
-            <select id="tagFilter" name="tag">
-              <option value="all">All tags</option>
+            <select id="tagFilter" name="tag" multiple size="4" aria-describedby="tagHelp">
             </select>
+            <small id="tagHelp" style="color: var(--muted);">Select one or more tags.</small>
           </div>
 
           <div class="field">
@@ -600,8 +565,8 @@
           </div>
 
           <div class="field">
-            <label for="resetFilters">Reset filters</label>
-            <button class="filter-reset" id="resetFilters" type="reset">Show everything</button>
+            <label for="resetFilters">&nbsp;</label>
+            <button class="filter-reset" id="resetFilters" type="reset">Reset filters</button>
           </div>
         </form>
         <p class="results-summary" id="resultsSummary" aria-live="polite">Showing 4 tools.</p>
@@ -644,7 +609,6 @@
           </ul>
 
           <div class="tool-footer">
-            <span class="tool-meta">Category: Finance</span>
             <a class="tool-link" href="https://tool.adjiebrotots.com/pisahvsgabung/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
           </div>
         </article>
@@ -674,7 +638,6 @@
           </ul>
 
           <div class="tool-footer">
-            <span class="tool-meta">Category: Finance</span>
             <a class="tool-link" href="https://tool.adjiebrotots.com/financingvscash/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
           </div>
         </article>
@@ -704,7 +667,6 @@
           </ul>
 
           <div class="tool-footer">
-            <span class="tool-meta">Category: Finance</span>
             <span class="tool-link-disabled" aria-disabled="true">Coming soon</span>
           </div>
         </article>
@@ -734,7 +696,6 @@
           </ul>
 
           <div class="tool-footer">
-            <span class="tool-meta">Category: Finance</span>
             <span class="tool-link-disabled" aria-disabled="true">Coming soon</span>
           </div>
         </article>
@@ -743,19 +704,6 @@
       <div class="empty-state" id="emptyState" role="status" aria-live="polite">
         No tools match your current filters. Try clearing one or more filters.
       </div>
-
-      <aside class="notes" aria-labelledby="maintain-heading">
-        <h2 id="maintain-heading">Maintenance notes</h2>
-        <p>
-          This page is built so search engines can read the tool content directly from the HTML, while the filters are handled with lightweight JavaScript.
-        </p>
-        <ul>
-          <li>To add a new tool, duplicate a card and update its title, subtitle, status, description, tags, and link.</li>
-          <li>Supported statuses are <code>Active</code>, <code>Coming soon</code>, and <code>Deprecated</code>.</li>
-          <li>Tags are read automatically from each card, so new tags will appear in the filter without extra setup.</li>
-          <li>For best SEO, also update the JSON-LD block in the <code>&lt;head&gt;</code> when adding major new tools.</li>
-        </ul>
-      </aside>
     </section>
   </main>
 
@@ -809,7 +757,7 @@
 
       function applyFilters() {
         const selectedStatus = statusFilter.value;
-        const selectedTag = tagFilter.value;
+        const selectedTags = Array.from(tagFilter.selectedOptions).map(option => option.value);
         const query = searchFilter.value.trim().toLowerCase();
 
         let visibleCount = 0;
@@ -820,7 +768,7 @@
           const text = card.textContent.toLowerCase();
 
           const matchesStatus = selectedStatus === 'all' || status === selectedStatus;
-          const matchesTag = selectedTag === 'all' || tags.includes(selectedTag);
+          const matchesTag = selectedTags.length === 0 || selectedTags.every(tag => tags.includes(tag));
           const matchesSearch = query === '' || text.includes(query);
 
           const show = matchesStatus && matchesTag && matchesSearch;
