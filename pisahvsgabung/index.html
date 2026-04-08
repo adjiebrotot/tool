@@ -183,6 +183,14 @@
             <input id="splitPct" type="range" min="0" max="100" step="1" value="50" />
             <div class="help">Percentage of total household salary earned by wife. Husband earns the remainder.</div>
           </div>
+          <div class="field-row">
+            <div class="field-label">Combined Annual Deductions (Pengurang)</div>
+            <div class="currency-wrap">
+              <span class="prefix">Rp</span>
+              <input class="currency-input" id="deductionInput" type="text" inputmode="numeric" value="0" />
+            </div>
+            <div class="field-sub">Biaya jabatan, iuran pensiun, or other allowable deductions. Applied to gross income before PTKP. Split proportionally by each spouse's income share.</div>
+          </div>
         </div>
 
         <!-- Mode B: Individual inputs -->
@@ -206,15 +214,22 @@
           <div class="field-row" style="padding-top:4px">
             <div class="field-sub">Combined: <strong id="combinedLabel">Rp 500,000,000</strong> &nbsp;|&nbsp; Wife share: <strong id="splitDerivedLabel">50.0%</strong></div>
           </div>
-        </div>
-
-        <div class="field-row">
-          <div class="field-label">Annual Deductions (Pengurang)</div>
-          <div class="currency-wrap">
-            <span class="prefix">Rp</span>
-            <input class="currency-input" id="deductionInput" type="text" inputmode="numeric" value="0" />
+          <div class="field-row">
+            <div class="field-label">Husband's Annual Deductions (Pengurang)</div>
+            <div class="currency-wrap">
+              <span class="prefix">Rp</span>
+              <input class="currency-input" id="husbandDeductionInput" type="text" inputmode="numeric" value="0" />
+            </div>
+            <div class="field-sub">Applied only to husband's gross income before PTKP.</div>
           </div>
-          <div class="field-sub">Biaya jabatan, iuran pensiun, or other allowable deductions. Applied to gross income before PTKP. Split proportionally by each spouse's income share.</div>
+          <div class="field-row">
+            <div class="field-label">Wife's Annual Deductions (Pengurang)</div>
+            <div class="currency-wrap">
+              <span class="prefix">Rp</span>
+              <input class="currency-input" id="wifeDeductionInput" type="text" inputmode="numeric" value="0" />
+            </div>
+            <div class="field-sub">Applied only to wife's gross income before PTKP.</div>
+          </div>
         </div>
       </div>
 
@@ -428,6 +443,8 @@ const DEFAULTS = {
   splitPct: 50,
   totalSalary: 500000000,
   deduction: 0,
+  husbandDeduction: 0,
+  wifeDeduction: 0,
   inputMode: 'total', // 'total' or 'individual'
   husbandSalary: 250000000,
   wifeSalary: 250000000,
@@ -447,6 +464,8 @@ const els = {
   husbandSalaryInput: $('husbandSalaryInput'),
   wifeSalaryInput: $('wifeSalaryInput'),
   deductionInput: $('deductionInput'),
+  husbandDeductionInput: $('husbandDeductionInput'),
+  wifeDeductionInput: $('wifeDeductionInput'),
   resetBtn: $('resetBtn'),
   downloadBtn: $('downloadBtn'),
   bracketsContainer: $('bracketsContainer'),
@@ -473,7 +492,10 @@ function readInputs(){
   if (S.inputMode === 'individual') {
     S.husbandSalary = Math.max(0, parseCurrencyInput(els.husbandSalaryInput));
     S.wifeSalary = Math.max(0, parseCurrencyInput(els.wifeSalaryInput));
+    S.husbandDeduction = Math.max(0, parseCurrencyInput(els.husbandDeductionInput));
+    S.wifeDeduction = Math.max(0, parseCurrencyInput(els.wifeDeductionInput));
     S.totalSalary = S.husbandSalary + S.wifeSalary;
+    S.deduction = S.husbandDeduction + S.wifeDeduction;
     S.splitPct = S.totalSalary > 0 ? Math.round((S.wifeSalary / S.totalSalary) * 100) : 50;
     // Update derived labels
     $('combinedLabel').textContent = 'Rp ' + S.totalSalary.toLocaleString('en-US');
@@ -481,8 +503,10 @@ function readInputs(){
   } else {
     S.splitPct = Math.max(0,Math.min(100,parseFloat(els.splitPct.value)||0));
     S.totalSalary = Math.max(0, parseCurrencyInput(els.totalSalaryInput));
+    S.husbandDeduction = 0;
+    S.wifeDeduction = 0;
+    S.deduction = Math.max(0, parseCurrencyInput(els.deductionInput));
   }
-  S.deduction = Math.max(0, parseCurrencyInput(els.deductionInput));
 }
 
 function refreshSliderLabels(){
@@ -507,7 +531,13 @@ function computeModel() {
   if($('ptkpGDisplay')) $('ptkpGDisplay').textContent = fmt.idr(ptkpGabung,true);
 
   // Deduction as a ratio of gross (so it scales across the salary sweep)
-  const deductionRate = S.totalSalary > 0 ? S.deduction / S.totalSalary : 0;
+  const totalDeductionRate = S.totalSalary > 0 ? S.deduction / S.totalSalary : 0;
+  const husbandDeductionRate = S.inputMode === 'individual'
+    ? (S.husbandSalary > 0 ? S.husbandDeduction / S.husbandSalary : 0)
+    : totalDeductionRate;
+  const wifeDeductionRate = S.inputMode === 'individual'
+    ? (S.wifeSalary > 0 ? S.wifeDeduction / S.wifeSalary : 0)
+    : totalDeductionRate;
 
   const rows = [];
   const salaries = [];
@@ -516,10 +546,14 @@ function computeModel() {
 
   for (const salMio of salaries) {
     const totalGross = salMio * 1e6;
-    const totalDeduction = totalGross * deductionRate;
-    const netIncome = Math.max(0, totalGross - totalDeduction);
-    const wifeNet = netIncome * wifePct;
-    const husbandNet = netIncome * husbandPct;
+    const wifeGross = totalGross * wifePct;
+    const husbandGross = totalGross * husbandPct;
+    const husbandDeduction = husbandGross * husbandDeductionRate;
+    const wifeDeduction = wifeGross * wifeDeductionRate;
+    const totalDeduction = husbandDeduction + wifeDeduction;
+    const husbandNet = Math.max(0, husbandGross - husbandDeduction);
+    const wifeNet = Math.max(0, wifeGross - wifeDeduction);
+    const netIncome = husbandNet + wifeNet;
 
     const taxableH_p = Math.max(0, husbandNet - ptkpHusband_pisah);
     const taxableW_p = Math.max(0, wifeNet - ptkpWife_pisah);
@@ -539,7 +573,7 @@ function computeModel() {
       pisahTax: totalTax_p, gabungTax: totalTax_g, diff,
       pisahRate: totalGross > 0 ? totalTax_p / totalGross : 0,
       gabungRate: totalGross > 0 ? totalTax_g / totalGross : 0,
-      husbandGross: totalGross * husbandPct, wifeGross: totalGross * wifePct,
+      husbandGross, wifeGross,
       husbandNet, wifeNet,
       ptkpH: ptkpHusband_pisah, ptkpW: ptkpWife_pisah,
       taxableH: taxableH_p, taxableW: taxableW_p,
@@ -560,9 +594,13 @@ function computeModel() {
   }
 
   // Current salary exact computation
-  const currentNet = Math.max(0, S.totalSalary - S.deduction);
-  const curWifeNet = currentNet * wifePct;
-  const curHusbandNet = currentNet * husbandPct;
+  const currentHusbandGross = S.totalSalary * husbandPct;
+  const currentWifeGross = S.totalSalary * wifePct;
+  const currentHusbandDeduction = S.inputMode === 'individual' ? S.husbandDeduction : S.deduction * husbandPct;
+  const currentWifeDeduction = S.inputMode === 'individual' ? S.wifeDeduction : S.deduction * wifePct;
+  const curHusbandNet = Math.max(0, currentHusbandGross - currentHusbandDeduction);
+  const curWifeNet = Math.max(0, currentWifeGross - currentWifeDeduction);
+  const currentNet = curHusbandNet + curWifeNet;
 
   const curTxH_p = Math.max(0, curHusbandNet - ptkpHusband_pisah);
   const curTxW_p = Math.max(0, curWifeNet - ptkpWife_pisah);
@@ -582,7 +620,7 @@ function computeModel() {
     pisahTax: curTaxP, gabungTax: curTaxG, diff: curTaxG - curTaxP,
     pisahRate: S.totalSalary > 0 ? curTaxP / S.totalSalary : 0,
     gabungRate: S.totalSalary > 0 ? curTaxG / S.totalSalary : 0,
-    husbandGross: S.totalSalary * husbandPct, wifeGross: S.totalSalary * wifePct,
+    husbandGross: currentHusbandGross, wifeGross: currentWifeGross,
     husbandNet: curHusbandNet, wifeNet: curWifeNet,
     ptkpH: ptkpHusband_pisah, ptkpW: ptkpWife_pisah, ptkpGabung,
     taxableH: curTxH_p, taxableW: curTxW_p, taxableGabung: curTxG,
@@ -786,13 +824,14 @@ function updateDetailTable(rows){
       <thead>
         <tr>
           <th rowspan="2">Salary</th>
-          <th rowspan="2">Pisah Tax</th>
-          <th rowspan="2">Gabung Tax</th>
+          <th colspan="2" class="tbl-group-header">Tax Payables</th>
           <th rowspan="2">Difference</th>
           <th rowspan="2">Winner</th>
           <th colspan="2" class="tbl-group-header">Effective Rate</th>
         </tr>
         <tr>
+          <th>Pisah</th>
+          <th>Gabung</th>
           <th>Pisah</th>
           <th>Gabung</th>
         </tr>
@@ -807,16 +846,19 @@ function updateDetailTable(rows){
       <thead>
         <tr>
           <th rowspan="2">Salary</th>
-          <th rowspan="2">Husband Net</th>
-          <th rowspan="2">Wife Net</th>
+          <th colspan="2" class="tbl-group-header">Net Income</th>
           <th colspan="2" class="tbl-group-header">PTKP</th>
-          <th rowspan="2">Taxable H</th>
-          <th rowspan="2">Taxable W</th>
-          <th rowspan="2">Tax H</th>
-          <th rowspan="2">Tax W</th>
+          <th colspan="2" class="tbl-group-header">Taxable Income</th>
+          <th colspan="2" class="tbl-group-header">Tax Payables</th>
           <th rowspan="2">Total Tax</th>
         </tr>
         <tr>
+          <th>Husband</th>
+          <th>Wife</th>
+          <th>Husband</th>
+          <th>Wife</th>
+          <th>Husband</th>
+          <th>Wife</th>
           <th>Husband</th>
           <th>Wife</th>
         </tr>
@@ -831,13 +873,14 @@ function updateDetailTable(rows){
           <th rowspan="2">PTKP K/I/${S.dependents}</th>
           <th rowspan="2">Taxable Income</th>
           <th rowspan="2">Total Tax</th>
-          <th rowspan="2">Tax H (prop.)</th>
-          <th rowspan="2">Tax W (prop.)</th>
-          <th rowspan="2">Effective Rate</th>
+          <th colspan="2" class="tbl-group-header">Tax Payables (Proportional)</th>
         </tr>
-        <tr></tr>
+        <tr>
+          <th>Husband</th>
+          <th>Wife</th>
+        </tr>
       </thead>
-      <tbody>${unique.map(r=>`<tr><td>${fmt.salaryLabel(r.salary)}</td><td>${fmt.idr(r.netIncome,true)}</td><td>${fmt.idr(r.ptkpGabung,true)}</td><td>${fmt.idr(r.taxableGabung,true)}</td><td>${fmt.idr(r.gabungTax,true)}</td><td>${fmt.idr(r.taxH_g,true)}</td><td>${fmt.idr(r.taxW_g,true)}</td><td>${fmt.pct(r.gabungRate)}</td></tr>`).join('')}</tbody></table>`;
+      <tbody>${unique.map(r=>`<tr><td>${fmt.salaryLabel(r.salary)}</td><td>${fmt.idr(r.netIncome,true)}</td><td>${fmt.idr(r.ptkpGabung,true)}</td><td>${fmt.idr(r.taxableGabung,true)}</td><td>${fmt.idr(r.gabungTax,true)}</td><td>${fmt.idr(r.taxH_g,true)}</td><td>${fmt.idr(r.taxW_g,true)}</td></tr>`).join('')}</tbody></table>`;
   }
 }
 
@@ -857,9 +900,13 @@ function rerender(){
     warn.style.display='none';
   }
 
-  if(S.deduction > S.totalSalary){
+  if(S.inputMode === 'total' && S.deduction > S.totalSalary){
     warn.style.display='block';
     warn.textContent='⚠️ Deductions (pengurang) exceed gross salary. Net income is set to Rp 0.';
+  }
+  if(S.inputMode === 'individual' && (S.husbandDeduction > S.husbandSalary || S.wifeDeduction > S.wifeSalary)){
+    warn.style.display='block';
+    warn.textContent='⚠️ One spouse deduction exceeds that spouse gross salary. Net income for that spouse is set to Rp 0.';
   }
 
   const state=computeModel();
@@ -882,6 +929,8 @@ function resetAll(){
   els.husbandSalaryInput.value=DEFAULTS.husbandSalary.toLocaleString('en-US');
   els.wifeSalaryInput.value=DEFAULTS.wifeSalary.toLocaleString('en-US');
   els.deductionInput.value='0';
+  els.husbandDeductionInput.value='0';
+  els.wifeDeductionInput.value='0';
   els.ptkpBase.value=DEFAULTS.ptkpBase.toLocaleString('en-US');
   els.ptkpMarried.value=DEFAULTS.ptkpMarried.toLocaleString('en-US');
   els.ptkpSpouse.value=DEFAULTS.ptkpSpouse.toLocaleString('en-US');
@@ -989,7 +1038,7 @@ function downloadCsv(){
 });
 
 // Currency input: format on input and blur, then rerender
-[els.totalSalaryInput, els.deductionInput, els.husbandSalaryInput, els.wifeSalaryInput].forEach(el=>{
+[els.totalSalaryInput, els.deductionInput, els.husbandSalaryInput, els.wifeSalaryInput, els.husbandDeductionInput, els.wifeDeductionInput].forEach(el=>{
   el.addEventListener('input',function(){
     const pos=this.selectionStart;
     const oldLen=this.value.length;
