@@ -124,6 +124,12 @@
     .position-row .pos-val{font-weight:700;font-variant-numeric:tabular-nums}
     /* Two-level header table */
     .tbl-group-header{text-align:center}
+    .page-footer{max-width:1400px;margin:0 auto;padding:0 24px 24px}
+    .page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px}
+    .page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:0.9rem}
+    .page-footer-info p:last-child{margin-bottom:0}
+    .visitor-counter{margin-top:12px;font-size:0.75rem;color:var(--muted);opacity:0.7;display:flex;justify-content:center}
+    .visitor-counter a{color:inherit;text-decoration:none}
     @media(max-width:900px){.layout,.bottom,.metrics{grid-template-columns:1fr}.controls{position:static}.canvas-wrap{height:380px!important}.summary-grid{grid-template-columns:repeat(2,1fr)}.header{flex-direction:column;gap:10px;padding:16px 18px}.container{padding:16px}}
     @media(max-width:600px){h1{font-size:1.35rem}.container{padding:10px}.summary-grid{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:1fr}.btn-row{flex-direction:column}.header{padding:14px 16px}}
   </style>
@@ -361,19 +367,23 @@
         <div class="table-wrap" id="detailTable"></div>
       </section>
     </main>
-<section class="page-footer-info" style="max-width:1400px;margin:0 auto;padding:0 24px 24px;">
-  <p style="margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:0.9rem;">
-    <strong>Disclaimer:</strong> This tool is provided on an “as is” and “as available” basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any decisions.
-  </p>
-  <p style="margin:0 0 14px;color:var(--muted);line-height:1.6;font-size:0.9rem;">
-    If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you’re interested, confused, or would like help learning how to use the tool, feel free to email me as well 🙂
-  </p>
-  <a href='http://www.freevisitorcounters.com'>www.freevisitorcounters</a> <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=252c1fe8e79622091e0b0d1127907d92f973ac73'></script>
-<script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1531995/t/3"></script>
-</section>
-
   </section>
 </div>
+<footer class="page-footer">
+  <section class="page-footer-info">
+    <p>
+      <strong>Disclaimer:</strong> This tool is provided on an “as is” and “as available” basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any decisions.
+    </p>
+    <p>
+      If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you’re interested, confused, or would like help learning how to use the tool, feel free to email me as well 🙂
+    </p>
+  </section>
+  <div class="visitor-counter">
+    <a href='http://www.freevisitorcounters.com'>www.freevisitorcounters.com</a>
+  </div>
+  <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=252c1fe8e79622091e0b0d1127907d92f973ac73'></script>
+  <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1531995/t/3"></script>
+</footer>
 
 <script>
 (function(){
