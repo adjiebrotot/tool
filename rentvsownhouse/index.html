@@ -16,6 +16,10 @@
   --line-a:#3b82f6;--line-b:#ef4444;--line-c:#22c55e;--line-d:#f59e0b;--line-e:#a855f7;
   --line-rtb-rent:#ff5555;--line-rtb-own:#5bb5ff;
 }
+/* Group header rows in two-row table headers */
+.th-group{text-align:center;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:rgba(59,130,246,.06);border-bottom:1px solid rgba(59,130,246,.3)!important;}
+body.light .th-group{background:rgba(37,99,235,.04);}
+th[rowspan]{vertical-align:middle;}
 /* Global Tooltip */
 #globalTooltip{position:fixed;z-index:99999;pointer-events:none;max-width:260px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.8rem;line-height:1.45;color:var(--text);box-shadow:0 6px 24px rgba(0,0,0,.45);opacity:0;transition:opacity .12s;display:none;}
 #globalTooltip.visible{display:block;opacity:1;}
@@ -190,10 +194,25 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
   <!-- GENERAL TAB -->
   <div class="ctrl-panel active" id="tab-general">
     <div class="section-label">Property</div>
+    <div class="field-row" style="border-top:none;padding-top:0;">
+      <div class="field-label">Currency Symbol</div>
+      <select class="num-input" id="currencySymbol" style="cursor:pointer;">
+        <option value="$" selected>$ — Dollar</option>
+        <option value="A$">A$ — AUD Dollar</option>
+        <option value="€">€ — Euro</option>
+        <option value="£">£ — Pound</option>
+        <option value="¥">¥ — Yen / Yuan</option>
+        <option value="₩">₩ — Won</option>
+        <option value="Rp">Rp — Rupiah</option>
+        <option value="RM">RM — Ringgit</option>
+        <option value="฿">฿ — Baht</option>
+        <option value="₿">₿ — Bitcoin</option>
+      </select>
+    </div>
     <div class="field-row">
       <div class="field-label">Property Price <span class="tip-icon" data-tip="The current market purchase price of the property being modelled. This is the starting value for house equity and mortgage calculations.">?</span></div>
       <input class="num-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
-      <div class="field-sub">Purchase price of the property ($).</div>
+      <div class="field-sub">Purchase price of the property.</div>
     </div>
     <div class="field-row">
       <div class="field-label">Down Payment <span class="tip-icon" data-tip="The percentage of the property price paid upfront as a deposit. Set to 100% to model an all-cash purchase (no mortgage). Try different values — 20% isn't always optimal. The renter equivalent invests this same amount instead.">?</span></div>
@@ -278,6 +297,13 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
           <div class="radio-opt-text"><strong>Interest Only</strong>Pay only interest; principal unchanged until term ends.</div>
         </label>
       </div>
+      <div class="toggle-row" style="margin-top:8px;padding-top:8px;padding-bottom:0;">
+        <span class="toggle-label">Cost = Interest Only <span class="tip-icon" data-tip="When ON: Accumulated Cost counts only interest + ongoing (money truly lost — principal repayment builds equity). When OFF: full mortgage payment + ongoing are treated as outgoing costs.">?</span></span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="costInterestOnly"/>
+          <div class="toggle-track"><div class="toggle-knob"></div></div>
+        </label>
+      </div>
     </div>
     <div class="field-row">
       <div class="field-label">Mortgage Rate <span class="tip-icon" data-tip="The annual interest rate charged on the mortgage. This determines the monthly repayment amount. For P&I loans, higher rates mean more interest and slower equity build. For IO loans, it directly sets the monthly payment.">?</span></div>
@@ -294,13 +320,6 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
         <span class="slider-value" id="mortgageTermVal">30 yrs</span>
       </div>
       <input type="range" id="mortgageTerm" min="5" max="50" step="1" value="30"/>
-    </div>
-    <div class="toggle-row" style="padding:10px 0 12px;border-top:1px solid var(--border);">
-      <span class="toggle-label">Cost = Interest Only <span class="tip-icon" data-tip="When ON: Accumulated Cost counts only interest + ongoing (money truly lost — principal repayment builds equity). When OFF: full mortgage payment + ongoing are treated as outgoing costs.">?</span></span>
-      <label class="toggle-switch">
-        <input type="checkbox" id="costInterestOnly"/>
-        <div class="toggle-track"><div class="toggle-knob"></div></div>
-      </label>
     </div>
     <div class="section-label">Property Growth</div>
     <div class="field-row">
@@ -363,6 +382,15 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
       </select>
       <div class="field-sub">Council rates, insurance, maintenance, lawn, etc.</div>
     </div>
+    <div class="field-row" id="ownOngoingInflationRow">
+      <div class="field-label">Own Ongoing Cost Inflation <span class="tip-icon" data-tip="Annual rate at which fixed-dollar ongoing ownership costs increase. Applies only when 'Fixed $ amount' is selected — % of property value already grows with house appreciation.">?</span></div>
+      <div class="slider-head" style="margin-bottom:4px;">
+        <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
+        <span class="slider-value" id="ownOngoingInflationVal">0.00%</span>
+      </div>
+      <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.1" value="0"/>
+      <div class="help">E.g. 3% means council rates and maintenance grow 3% per year.</div>
+    </div>
   </div>
 
   <!-- RENT TAB -->
@@ -402,9 +430,18 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
       </div>
       <select id="rentOngoingCostType" style="margin-top:6px;width:100%;">
         <option value="dollar">Fixed $ amount</option>
-        <option value="pct">% of property value</option>
+        <option value="pct">% of annual rent</option>
       </select>
       <div class="field-sub">Contents insurance, extra costs renters bear (no council rates, no maintenance).</div>
+    </div>
+    <div class="field-row" id="rentOngoingInflationRow">
+      <div class="field-label">Rent Ongoing Cost Inflation <span class="tip-icon" data-tip="Annual rate at which fixed-dollar renting ongoing costs increase. Applies only when 'Fixed $ amount' is selected — % of annual rent already grows with rent inflation.">?</span></div>
+      <div class="slider-head" style="margin-bottom:4px;">
+        <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
+        <span class="slider-value" id="rentOngoingInflationVal">0.00%</span>
+      </div>
+      <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.1" value="0"/>
+      <div class="help">E.g. 2% means contents insurance grows 2% per year.</div>
     </div>
   </div>
 
@@ -507,17 +544,20 @@ const DEFAULTS = {
   ownOngoingCost: 6000,
   ownOngoingCostFreq: 'yearly',
   ownOngoingCostType: 'dollar',
+  ownOngoingInflation: 0,
   rentAmount: 2800,
   rentFreq: 'monthly',
   rentInflation: 3.0,
   rentOngoingCost: 1200,
   rentOngoingCostFreq: 'yearly',
   rentOngoingCostType: 'dollar',
+  rentOngoingInflation: 0,
   initialCash: 0,
   costInterestOnly: false,
   rtbEnabled: false,
   rtbBuyYear: 5,
   monthlyBudgetIncrease: 0,
+  currencySymbol: '$',
 };
 
 let S = JSON.parse(JSON.stringify(DEFAULTS));
@@ -526,10 +566,16 @@ let cachedRtbRows = null;
 let activeTable = 'own';
 let activeGraph = 'netEquity';
 let chartInstance = null;
+let currentCurrencySymbol = '$';
 
 /* ── HELPERS ── */
 const $ = id => document.getElementById(id);
 const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function moneySymbol(){ return currentCurrencySymbol || '$'; }
+function moneyWithSymbol(n, {minimumFractionDigits=0, maximumFractionDigits=0}={}){
+  const abs = Math.abs(Number(n||0));
+  return moneySymbol() + abs.toLocaleString('en-AU', {minimumFractionDigits, maximumFractionDigits});
+}
 
 function parseNum(val){
   if(typeof val==='number') return Number.isFinite(val) ? val : 0;
@@ -568,10 +614,10 @@ function syncMoneyInputs(){
 const fmt = {
   currency(v, compact=false){
     const n=Number(v||0), abs=Math.abs(n), sign=n<0?'−':'';
-    if(compact&&abs>=1e9) return sign+'$'+(abs/1e9).toFixed(2)+'b';
-    if(compact&&abs>=1e6) return sign+'$'+(abs/1e6).toFixed(2)+'m';
-    if(compact&&abs>=1e3) return sign+'$'+(abs/1e3).toFixed(0)+'k';
-    return (n<0?'−':'')+'$'+Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0});
+    if(compact&&abs>=1e9) return sign+moneySymbol()+(abs/1e9).toFixed(2)+'b';
+    if(compact&&abs>=1e6) return sign+moneySymbol()+(abs/1e6).toFixed(2)+'m';
+    if(compact&&abs>=1e3) return sign+moneySymbol()+(abs/1e3).toFixed(0)+'k';
+    return (n<0?'−':'')+moneyWithSymbol(Math.abs(n));
   },
   pct(v,d=2){ const n=Number(v||0); return (Math.abs(n)<=1?n*100:n).toFixed(d)+'%'; },
   num(v,d=0){ return Number(v||0).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d}); },
@@ -619,11 +665,15 @@ function readInputs(){
   S.rentOngoingCost = Math.max(0, parseNum($('rentOngoingCost').value)||0);
   S.rentOngoingCostFreq = $('rentOngoingCostFreq').value;
   S.rentOngoingCostType = $('rentOngoingCostType').value;
+  S.rentOngoingInflation = parseFloatSafe($('rentOngoingInflation').value, 0);
+  S.ownOngoingInflation  = parseFloatSafe($('ownOngoingInflation').value, 0);
   S.initialCash     = Math.max(0, parseNum($('initialCash').value)||0);
   S.costInterestOnly = $('costInterestOnly').checked;
   S.rtbEnabled      = $('rtbEnabled').checked;
   S.rtbBuyYear      = parseIntSafe($('rtbBuyYear').value, DEFAULTS.rtbBuyYear);
   S.monthlyBudgetIncrease = parseFloatSafe($('monthlyBudgetIncrease').value, 0);
+  S.currencySymbol  = $('currencySymbol').value || '$';
+  currentCurrencySymbol = S.currencySymbol;
 }
 
 function refreshLabels(){
@@ -632,10 +682,15 @@ function refreshLabels(){
   $('downPaymentDollar').textContent = fmt.currency(dp);
   $('riskFreeRateVal').textContent   = S.riskFreeRate.toFixed(2)+'%';
   $('horizonVal').textContent        = S.horizon+' yrs';
-  $('mortgageRateVal').textContent   = S.mortgageRate.toFixed(2)+'%';
-  $('mortgageTermVal').textContent   = S.mortgageTerm+' yrs';
-  $('houseGrowthVal').textContent    = S.houseGrowth.toFixed(2)+'%';
-  $('rentInflationVal').textContent  = S.rentInflation.toFixed(2)+'%';
+  $('mortgageRateVal').textContent        = S.mortgageRate.toFixed(2)+'%';
+  $('mortgageTermVal').textContent        = S.mortgageTerm+' yrs';
+  $('houseGrowthVal').textContent         = S.houseGrowth.toFixed(2)+'%';
+  $('rentInflationVal').textContent       = S.rentInflation.toFixed(2)+'%';
+  $('ownOngoingInflationVal').textContent = S.ownOngoingInflation.toFixed(2)+'%';
+  $('rentOngoingInflationVal').textContent= S.rentOngoingInflation.toFixed(2)+'%';
+  // Show inflation sliders only for fixed-$ mode
+  $('ownOngoingInflationRow').style.display  = S.ownOngoingCostType==='dollar' ? '' : 'none';
+  $('rentOngoingInflationRow').style.display = S.rentOngoingCostType==='dollar' ? '' : 'none';
 
   // RTB slider — clamp max to horizon-1
   const rtbSlider = $('rtbBuyYear');
@@ -685,7 +740,7 @@ function refreshLabels(){
       : rtbFutReq;
     const rentMonthlyUI     = toMonthly(S.rentAmount, S.rentFreq);
     const rentOngoingUI     = S.rentOngoingCostType==='pct'
-      ? S.propertyPrice * S.rentOngoingCost/100
+      ? rentMonthlyUI * 12 * S.rentOngoingCost/100   // % of annual rent
       : toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
     const rentFirstYearUI   = rentMonthlyUI * 12 + rentOngoingUI;
     const autoIC = Math.max(required, rentFirstYearUI, pvRTB);
@@ -720,7 +775,7 @@ function computeModel(){
   const ownOngoingMonthly0 = ownOngoingYearly0 / 12;
 
   const rentOngoingYearly0 = S.rentOngoingCostType==='pct'
-    ? P * S.rentOngoingCost/100
+    ? rentMonthly0 * 12 * S.rentOngoingCost/100   // % of annual rent (not property value)
     : toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
   const rentOngoingMonthly0 = rentOngoingYearly0 / 12;
 
@@ -816,11 +871,19 @@ function computeModel(){
 
     // Ongoing costs — monthly equivalent; own uses PREVIOUS year prop value (before appreciation)
     let ownOngoingYearly = toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
-    if(S.ownOngoingCostType==='pct') ownOngoingYearly = ownPropValue * S.ownOngoingCost/100;
+    if(S.ownOngoingCostType==='pct'){
+      ownOngoingYearly = ownPropValue * S.ownOngoingCost/100;
+    } else {
+      ownOngoingYearly *= Math.pow(1 + S.ownOngoingInflation/100, yr-1);
+    }
     const ownOngoingMonthly = ownOngoingYearly / 12;
 
     let rentOngoingYearly = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
-    if(S.rentOngoingCostType==='pct') rentOngoingYearly = P * S.rentOngoingCost/100;
+    if(S.rentOngoingCostType==='pct'){
+      rentOngoingYearly = currentRentMonthly * 12 * S.rentOngoingCost/100; // % of annual rent
+    } else {
+      rentOngoingYearly *= Math.pow(1 + S.rentOngoingInflation/100, yr-1);
+    }
     const rentOngoingMonthly = rentOngoingYearly / 12;
 
     // Manual budget for this year (grows p.a. only if manually set)
@@ -831,12 +894,15 @@ function computeModel(){
     // Cashflow tracking for this year
     const ownBegCash  = ownCash;
     const rentBegCash = rentCash;
-    let yearInterest    = 0;
-    let ownYearSurplus  = 0;
-    let rentYearSurplus = 0;
-    let ownYearCost     = 0;   // actual expenses (per costInterestOnly toggle)
-    let rentYearCost    = 0;
-    let ownYearBudget   = 0;
+    let yearInterest         = 0;
+    let ownYearCost          = 0;   // actual expenses (per costInterestOnly toggle)
+    let rentYearCost         = 0;
+    let ownYearBudget        = 0;
+    let ownYearInterestInc   = 0;   // interest income on own cash (RFR return)
+    let rentYearInterestInc  = 0;   // interest income on rent cash (RFR return)
+    let ownYearOngoingPart   = 0;   // ongoing costs only (no mortgage)
+    let rentYearOngoingPart  = 0;   // ongoing costs only (no rent payment)
+    let ownYearMortPmt       = 0;   // actual mortgage payments (P+I)
 
     for(let m=0; m<12; m++){
       const hasMortgage   = ownPrincipal > 1e-2;
@@ -845,10 +911,6 @@ function computeModel(){
       const mRentCost     = currentRentMonthly + rentOngoingMonthly; // true monthly cost of renting
 
       // ── Budget for this month ──
-      // Manual: use the growing budget.
-      // Auto: dynamic = max of all active scenarios' actual costs this month.
-      // When RTB is enabled, always include the future RTB own-cost so all scenarios
-      // accumulate savings at the same (highest) rate regardless of phase.
       const rtbAutoRef = rtbEnabled ? rtbMPayment0 + ownOngoingMonthly : 0;
       const mBudget = budgetIsManual
         ? manualMonthlyBudget
@@ -866,6 +928,11 @@ function computeModel(){
         ownPrincipal      = Math.max(0, ownPrincipal - principalPart);
         ownAccumInterest += mInterestThisMonth;
       }
+      ownYearMortPmt += mMortgage;
+
+      // ── Interest income on cash (BEFORE updating cash) ──
+      ownYearInterestInc  += ownCash * rfm;
+      rentYearInterestInc += rentCash * rfm;
 
       // ── Liquid cash: cash × (1+RFR) + (budget − cost) ──
       const ownSurplus  = mBudget - mOwnCost;
@@ -873,8 +940,8 @@ function computeModel(){
       ownCash  = Math.max(0, ownCash  * (1+rfm) + ownSurplus);
       rentCash = Math.max(0, rentCash * (1+rfm) + rentSurplus);
 
-      ownYearSurplus  += Math.max(0, ownSurplus);
-      rentYearSurplus += Math.max(0, rentSurplus);
+      ownYearOngoingPart  += ownOngoingMonthly;
+      rentYearOngoingPart += rentOngoingMonthly;
 
       // ── Accum Cost: full mortgage+ongoing, or interest+ongoing only per toggle ──
       const ownCostThisMonth = S.costInterestOnly
@@ -885,6 +952,9 @@ function computeModel(){
       ownYearCost   += ownCostThisMonth;
       rentYearCost  += mRentCost;
     }
+    // Derived year values
+    const ownYearSurplus  = ownYearBudget - ownYearMortPmt - ownYearOngoingPart;
+    const rentYearSurplus = ownYearBudget - rentYearCost;
 
     // House appreciates at end of year
     ownPropValue = ownPropValue * (1+h);
@@ -899,17 +969,21 @@ function computeModel(){
       ownHouseEquity, ownNetEquity, ownAccumCost, ownAccumInterest,
       ownMortgagePayment: mPayment*12,
       ownYearInterest: yearInterest,
-      ownYearPrincipal: Math.max(0, mPayment*12 - yearInterest),
+      ownYearPrincipal: Math.max(0, ownYearMortPmt - yearInterest),
       ownBegCash, ownYearBudget, ownYearCost, ownYearSurplus,
+      ownYearOngoing: ownYearOngoingPart,
+      ownYearInterestInc,
       rentCash, rentNetEquity, rentAccumCost, rentRent: currentRentMonthly*12,
       rentBegCash, rentYearCost, rentYearSurplus,
+      rentYearOngoing: rentYearOngoingPart,
+      rentYearInterestInc,
       netEquityOwn: ownNetEquity,
       netEquityRent: rentNetEquity,
       cashOwn: ownCash,
       cashRent: rentCash,
       costOwn: ownAccumCost,
       costRent: rentAccumCost,
-      yearlyBudget: ownYearBudget / 12, // monthly equivalent for display
+      yearlyBudget: ownYearBudget / 12,
     });
   }
 
@@ -1002,26 +1076,35 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
     if(yr <= buyYear){
       // ─── Phase 1: still renting ───
       let rentOngoingYearly = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
-      if(S.rentOngoingCostType==='pct') rentOngoingYearly = P0 * S.rentOngoingCost/100;
+      if(S.rentOngoingCostType==='pct'){
+        rentOngoingYearly = currentRentMonthly * 12 * S.rentOngoingCost/100;
+      } else {
+        rentOngoingYearly *= Math.pow(1 + S.rentOngoingInflation/100, yr-1);
+      }
       const rentOngoingMonthly = rentOngoingYearly / 12;
 
       const rtbBegCashP1 = rtbCash;
       let rtbP1YearSurplus = 0;
       let rtbP1YearBudget  = 0;
       let rtbP1YearCost    = 0;
+      let rtbP1YearInterestInc = 0;
+      let rtbP1YearOngoing = 0; // rent + ongoing (all non-mortgage costs during renting)
       for(let m=0; m<12; m++){
         const mRentCost     = currentRentMonthly + rentOngoingMonthly;
         const rtbOwnCostRef = rtbMPaymentRef + ownOngoingMonthly0;
         const mBudget = budgetIsManual
           ? monthlyBudget0 * Math.pow(1+budgetGrowth, yr-1)
           : Math.max(rtbOwnCostRef, mRentCost);
+        rtbP1YearInterestInc += rtbCash * rfm;
         const surplus = mBudget - mRentCost;
         rtbCash = Math.max(0, rtbCash*(1+rfm) + surplus);
         rtbP1YearSurplus += Math.max(0, surplus);
         rtbP1YearBudget  += mBudget;
         rtbP1YearCost    += mRentCost;
+        rtbP1YearOngoing += mRentCost; // during renting, "ongoing" = rent + rent-ongoing
         rtbAccumCost += mRentCost;
       }
+      const rtbP1Surplus = rtbP1YearBudget - rtbP1YearCost; // net surplus (uncapped)
 
       if(yr === buyYear){
         // ─── TRANSITION: BUY AT END OF buyYear via standard mortgage ───
@@ -1058,7 +1141,10 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
           rtbAccumCost, rtbAccumInterest,
           rtbMortgagePayment: rtbMPayment*12,
           rtbBegCash: rtbBegCashP1, rtbYearBudget: rtbP1YearBudget, rtbYearCost: rtbP1YearCost,
-          rtbYearSurplus: rtbP1YearSurplus,
+          rtbYearOngoing: rtbP1YearOngoing,
+          rtbYearInterestInc: rtbP1YearInterestInc,
+          rtbYearSurplus: rtbP1Surplus,
+          rtbYearInterest:0, rtbYearPrincipal:0,
           rtbRent: currentRentMonthly*12,
           netEquityRTB: rtbNetEquity,
           cashRTB: rtbCash2,
@@ -1075,8 +1161,11 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
         rtbHouseEquity:0, rtbNetEquity: rtbNetEq,
         rtbAccumCost, rtbAccumInterest:0,
         rtbMortgagePayment:0,
-        rtbYearInterest:0, rtbYearPrincipal:0, rtbYearSurplus:rtbP1YearSurplus,
+        rtbYearInterest:0, rtbYearPrincipal:0,
+        rtbYearSurplus: rtbP1Surplus,
         rtbBegCash: rtbBegCashP1, rtbYearBudget: rtbP1YearBudget, rtbYearCost: rtbP1YearCost,
+        rtbYearOngoing: rtbP1YearOngoing,
+        rtbYearInterestInc: rtbP1YearInterestInc,
         rtbRent: currentRentMonthly*12,
         netEquityRTB: rtbNetEq,
         cashRTB: rtbCash,
@@ -1086,16 +1175,25 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
     } else {
       // ─── Phase 2: now owning (post-buy) ───
       let ownOngoingYearly = toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
-      if(S.ownOngoingCostType==='pct') ownOngoingYearly = rtbPropValue * S.ownOngoingCost/100;
+      if(S.ownOngoingCostType==='pct'){
+        ownOngoingYearly = rtbPropValue * S.ownOngoingCost/100;
+      } else {
+        ownOngoingYearly *= Math.pow(1 + S.ownOngoingInflation/100, yr-1);
+      }
       const ownOngoingMonthly = ownOngoingYearly / 12;
 
       let rentOngoingYearly2 = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
-      if(S.rentOngoingCostType==='pct') rentOngoingYearly2 = P0 * S.rentOngoingCost/100;
+      if(S.rentOngoingCostType==='pct'){
+        rentOngoingYearly2 = currentRentMonthly * 12 * S.rentOngoingCost/100;
+      } else {
+        rentOngoingYearly2 *= Math.pow(1 + S.rentOngoingInflation/100, yr-1);
+      }
       const rentOngoingMonthly = rentOngoingYearly2 / 12;
 
       const rtbBegCashP2 = rtbCash2;
-      let rtbYearInterest = 0, rtbYearPrincipal = 0, rtbYearSurplus = 0;
+      let rtbYearInterest = 0, rtbYearPrincipal = 0;
       let rtbYearBudget2 = 0, rtbYearCost2 = 0;
+      let rtbYearInterestInc2 = 0, rtbYearOngoing2 = 0, rtbYearMortPmt2 = 0;
       for(let m=0; m<12; m++){
         const hasMortgage = rtbPrincipal > 1e-2;
         const mMortgage   = hasMortgage ? rtbMPayment : 0;
@@ -1112,16 +1210,17 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
           rtbYearInterest  += rtbInterest;
           rtbYearPrincipal += rtbPrincipalPaid;
         }
+        rtbYearMortPmt2 += mMortgage;
 
         const mRentRef2 = currentRentMonthly + rentOngoingMonthly;
         const mBudget = budgetIsManual
           ? monthlyBudget0 * Math.pow(1+budgetGrowth, yr-1)
           : Math.max(mOwnCost, mRentRef2);
+        rtbYearInterestInc2 += rtbCash2 * rfm;
         const surplus = mBudget - mOwnCost;
-        const actualSurplus = Math.max(0, surplus);
         rtbCash2 = Math.max(0, rtbCash2*(1+rfm) + surplus);
-        rtbYearSurplus += actualSurplus;
-        rtbYearBudget2 += mBudget;
+        rtbYearBudget2   += mBudget;
+        rtbYearOngoing2  += ownOngoingMonthly;
 
         const rtbCostThisMonth = S.costInterestOnly
           ? rtbInterest + ownOngoingMonthly
@@ -1133,6 +1232,7 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
 
       const rtbHouseEquity = rtbPropValue - rtbPrincipal;
       const rtbNetEquity = rtbHouseEquity + rtbCash2;
+      const rtbYearSurplus2 = rtbYearBudget2 - rtbYearMortPmt2 - rtbYearOngoing2;
       rows.push({
         year:yr,
         phase:'own',
@@ -1140,8 +1240,11 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
         rtbHouseEquity, rtbNetEquity,
         rtbAccumCost, rtbAccumInterest,
         rtbMortgagePayment: rtbMPayment*12,
-        rtbYearInterest, rtbYearPrincipal, rtbYearSurplus,
+        rtbYearInterest, rtbYearPrincipal,
+        rtbYearSurplus: rtbYearSurplus2,
         rtbBegCash: rtbBegCashP2, rtbYearBudget: rtbYearBudget2, rtbYearCost: rtbYearCost2,
+        rtbYearOngoing: rtbYearOngoing2,
+        rtbYearInterestInc: rtbYearInterestInc2,
         rtbRent:0,
         netEquityRTB: rtbNetEquity,
         cashRTB: rtbCash2,
@@ -1341,7 +1444,7 @@ function updateSummary(state){
     <div class="tile"><div class="label">House Equity (Yr ${yrs})</div><div class="value pos">${fmt.currency(summary.ownHouseEquity,true)}</div></div>
     <div class="tile"><div class="label">Liquid Cash (Yr ${yrs})</div><div class="value">${fmt.currency(summary.ownCash,true)}</div></div>
     <div class="tile"><div class="label">Monthly Mortgage</div><div class="value">${fmt.currency(mPayment)}/mo</div></div>
-    <div class="tile"><div class="label">Total Cost (Interest+Setup)</div><div class="value neg">${fmt.currency(summary.ownAccumCost,true)}</div></div>
+    <div class="tile"><div class="label">Total Cost (${S.costInterestOnly ? 'Interest+Ongoing+Setup' : 'Mortgage Pmt+Ongoing+Setup'})</div><div class="value neg">${fmt.currency(summary.ownAccumCost,true)}</div></div>
   `;
 
   $('rentSummary').innerHTML = `
@@ -1357,82 +1460,111 @@ function updateSummary(state){
 /* ── DETAIL TABLE ── */
 function updateDetailTable(rows, rtbRows){
   const wrap = $('detailTableWrap');
+  const na = '—';
+  const c  = (v,compact=true) => fmt.currency(v,compact);
+  const pos = cssVar('--accent2'), neg = cssVar('--accent3');
   let html = '';
+
   if(activeTable==='own'){
-    html = `<table><thead><tr>
-      <th>Year</th><th>Beg. Cash</th><th>Ann. Budget</th><th>Ann. Expenses</th><th>Prop. Value</th><th>→ Interest</th><th>→ Principal</th><th>Surplus→Cash</th><th>Principal Left</th><th>House Equity</th><th>End Cash</th><th>Net Equity</th><th>Accum. Cost</th>
-    </tr></thead><tbody>`;
+    html = `<table><thead>
+      <tr>
+        <th rowspan="2">Year</th>
+        <th colspan="8" class="th-group">Cash Position</th>
+        <th colspan="3" class="th-group">Mortgage Position</th>
+        <th colspan="2" class="th-group">Financial Position</th>
+      </tr>
+      <tr>
+        <th>Beg. Cash</th><th>Ann. Budget</th><th>Principal Exp.</th><th>Interest Exp.</th><th>Ongoing Exp.</th><th>Surplus</th><th>Interest Inc.</th><th>End Cash</th>
+        <th>Prop. Value</th><th>Principal Left</th><th>House Equity</th>
+        <th>Net Equity</th><th>Accum. Cost</th>
+      </tr>
+    </thead><tbody>`;
     rows.forEach(r=>{
+      const y0 = r.year===0;
       html+=`<tr>
         <td>${r.year}</td>
-        <td>${r.year===0?'—':fmt.currency(r.ownBegCash||0,true)}</td>
-        <td style="color:var(--accent)">${r.year===0?'—':fmt.currency(r.ownYearBudget||0,true)}</td>
-        <td style="color:var(--accent3)">${r.year===0?fmt.currency(r.ownAccumCost||0,true):fmt.currency(r.ownYearCost||0,true)}</td>
-        <td>${fmt.currency(r.ownPropValue,true)}</td>
-        <td style="color:var(--accent3)">${r.year===0?'—':fmt.currency(r.ownYearInterest||0,true)}</td>
-        <td style="color:var(--accent2)">${r.year===0?'—':fmt.currency(r.ownYearPrincipal||0,true)}</td>
-        <td style="color:var(--gold)">${r.year===0?'—':fmt.currency(r.ownYearSurplus||0,true)}</td>
-        <td>${fmt.currency(r.ownPrincipal,true)}</td>
-        <td>${fmt.currency(r.ownHouseEquity,true)}</td>
-        <td>${fmt.currency(r.ownCash,true)}</td>
-        <td style="color:${r.ownNetEquity>=0?cssVar('--accent2'):cssVar('--accent3')}">${fmt.currency(r.ownNetEquity,true)}</td>
-        <td>${fmt.currency(r.ownAccumCost,true)}</td>
+        <td>${y0?na:c(r.ownBegCash||0)}</td>
+        <td style="color:var(--accent)">${y0?na:c(r.ownYearBudget||0)}</td>
+        <td style="color:${neg}">${y0?na:c(r.ownYearPrincipal||0)}</td>
+        <td style="color:${neg}">${y0?na:c(r.ownYearInterest||0)}</td>
+        <td style="color:${neg}">${y0?na:c(r.ownYearOngoing||0)}</td>
+        <td style="color:var(--gold)">${y0?na:c(r.ownYearSurplus||0)}</td>
+        <td style="color:${pos}">${y0?na:c(r.ownYearInterestInc||0)}</td>
+        <td>${c(r.ownCash)}</td>
+        <td>${c(r.ownPropValue)}</td>
+        <td>${c(r.ownPrincipal)}</td>
+        <td style="color:${pos}">${c(r.ownHouseEquity)}</td>
+        <td style="color:${r.ownNetEquity>=0?pos:neg}">${c(r.ownNetEquity)}</td>
+        <td style="color:${neg}">${c(r.ownAccumCost)}</td>
       </tr>`;
     });
+
   } else if(activeTable==='rent'){
-    html = `<table><thead><tr>
-      <th>Year</th><th>Beg. Cash</th><th>Ann. Budget</th><th>Annual Rent</th><th>Ongoing Cost</th><th>Ann. Expenses</th><th>Surplus→Cash</th><th>End Cash</th><th>Net Equity</th><th>Accum. Cost</th>
-    </tr></thead><tbody>`;
+    html = `<table><thead>
+      <tr>
+        <th rowspan="2">Year</th>
+        <th colspan="7" class="th-group">Cash Position</th>
+        <th colspan="2" class="th-group">Financial Position</th>
+      </tr>
+      <tr>
+        <th>Beg. Cash</th><th>Ann. Budget</th><th>Rent Exp.</th><th>Surplus</th><th>Interest Inc.</th><th>Ongoing Exp.</th><th>End Cash</th>
+        <th>Net Equity</th><th>Accum. Cost</th>
+      </tr>
+    </thead><tbody>`;
     rows.forEach(r=>{
-      const rentOngoingYr = r.year===0 ? 0 : (r.rentYearCost||0) - (r.rentRent||0);
+      const y0 = r.year===0;
       html+=`<tr>
         <td>${r.year}</td>
-        <td>${r.year===0?'—':fmt.currency(r.rentBegCash||0,true)}</td>
-        <td style="color:var(--accent)">${r.year===0?'—':fmt.currency(r.ownYearBudget||0,true)}</td>
-        <td>${r.year===0?'—':fmt.currency(r.rentRent,true)}</td>
-        <td>${r.year===0?'—':fmt.currency(rentOngoingYr,true)}</td>
-        <td style="color:var(--accent3)">${r.year===0?'—':fmt.currency(r.rentYearCost||0,true)}</td>
-        <td style="color:var(--gold)">${r.year===0?'—':fmt.currency(r.rentYearSurplus||0,true)}</td>
-        <td>${fmt.currency(r.rentCash,true)}</td>
-        <td style="color:${cssVar('--accent2')}">${fmt.currency(r.rentNetEquity,true)}</td>
-        <td>${r.year===0?'—':fmt.currency(r.rentAccumCost,true)}</td>
+        <td>${y0?na:c(r.rentBegCash||0)}</td>
+        <td style="color:var(--accent)">${y0?na:c(r.ownYearBudget||0)}</td>
+        <td style="color:${neg}">${y0?na:c(r.rentRent||0)}</td>
+        <td style="color:var(--gold)">${y0?na:c(r.rentYearSurplus||0)}</td>
+        <td style="color:${pos}">${y0?na:c(r.rentYearInterestInc||0)}</td>
+        <td style="color:${neg}">${y0?na:c(r.rentYearOngoing||0)}</td>
+        <td>${c(r.rentCash)}</td>
+        <td style="color:${pos}">${c(r.rentNetEquity)}</td>
+        <td style="color:${neg}">${y0?na:c(r.rentAccumCost)}</td>
       </tr>`;
     });
+
   } else if(activeTable==='rtb' && rtbRows){
-    html = `<table><thead><tr>
-      <th>Year</th><th>Phase</th><th>Beg. Cash</th><th>Ann. Budget</th><th>Ann. Expenses</th><th>Prop. Value</th><th>→ Interest</th><th>→ Principal</th><th>Surplus→Cash</th><th>Principal Left</th><th>House Equity</th><th>End Cash</th><th>Net Equity</th><th>Accum. Cost</th>
-    </tr></thead><tbody>`;
+    html = `<table><thead>
+      <tr>
+        <th rowspan="2">Year</th>
+        <th rowspan="2">Phase</th>
+        <th colspan="9" class="th-group">Cash Position</th>
+        <th colspan="2" class="th-group">Financial Position</th>
+      </tr>
+      <tr>
+        <th>Beg. Cash</th><th>Ann. Budget</th><th>Total Exp.</th><th>Principal Exp.</th><th>Interest Exp.</th><th>Ongoing Exp.</th><th>Surplus</th><th>Interest Inc.</th><th>End Cash</th>
+        <th>Net Equity</th><th>Accum. Cost</th>
+      </tr>
+    </thead><tbody>`;
     rtbRows.forEach(r=>{
-      const phase = r.phase==='rent'?'🏢 Renting': r.phase==='buy-transition'?'🔄 Bought':'🏡 Owning';
+      const y0 = r.year===0;
+      const phaseLabel = r.phase==='rent'?'🏢 Renting': r.phase==='buy-transition'?'🔄 Bought':'🏡 Owning';
       const isOwning = r.phase!=='rent';
-      const propVal = isOwning?fmt.currency(r.rtbPropValue,true):'—';
-      const interest = isOwning&&r.year>0?fmt.currency(r.rtbYearInterest||0,true):'—';
-      const principal = isOwning&&r.year>0?fmt.currency(r.rtbYearPrincipal||0,true):'—';
-      const surplus = r.year>0?fmt.currency(r.rtbYearSurplus||0,true):'—';
-      const princ = isOwning?fmt.currency(r.rtbPrincipal,true):'—';
-      const hEq = isOwning?fmt.currency(r.rtbHouseEquity,true):'—';
-      const cash = r.phase==='rent'?fmt.currency(r.rtbCash||0,true):fmt.currency(r.rtbCash2||0,true);
-      const begCash = r.year===0?'—':fmt.currency(r.rtbBegCash||0,true);
-      const annBudget = r.year===0?'—':fmt.currency(r.rtbYearBudget||0,true);
-      const annExp = r.year===0?'—':fmt.currency(r.rtbYearCost||0,true);
+      const cash = r.phase==='rent' ? r.rtbCash||0 : r.rtbCash2||0;
+      // Total expense = principal + interest + ongoing (for both renting and owning)
+      const rtbTotalExp = (r.rtbYearPrincipal||0) + (r.rtbYearInterest||0) + (r.rtbYearOngoing||0);
       html+=`<tr>
         <td>${r.year}</td>
-        <td>${phase}</td>
-        <td>${begCash}</td>
-        <td style="color:var(--accent)">${annBudget}</td>
-        <td style="color:var(--accent3)">${annExp}</td>
-        <td>${propVal}</td>
-        <td style="color:var(--accent3)">${interest}</td>
-        <td style="color:var(--accent2)">${principal}</td>
-        <td style="color:var(--gold)">${surplus}</td>
-        <td>${princ}</td>
-        <td>${hEq}</td>
-        <td>${cash}</td>
-        <td style="color:${r.rtbNetEquity>=0?cssVar('--accent2'):cssVar('--accent3')}">${fmt.currency(r.rtbNetEquity,true)}</td>
-        <td>${r.year===0?'—':fmt.currency(r.rtbAccumCost,true)}</td>
+        <td>${phaseLabel}</td>
+        <td>${y0?na:c(r.rtbBegCash||0)}</td>
+        <td style="color:var(--accent)">${y0?na:c(r.rtbYearBudget||0)}</td>
+        <td style="color:${neg}">${y0?na:c(rtbTotalExp)}</td>
+        <td style="color:${neg}">${y0||!isOwning?na:c(r.rtbYearPrincipal||0)}</td>
+        <td style="color:${neg}">${y0||!isOwning?na:c(r.rtbYearInterest||0)}</td>
+        <td style="color:${neg}">${y0?na:c(r.rtbYearOngoing||0)}</td>
+        <td style="color:var(--gold)">${y0?na:c(r.rtbYearSurplus||0)}</td>
+        <td style="color:${pos}">${y0?na:c(r.rtbYearInterestInc||0)}</td>
+        <td>${c(cash)}</td>
+        <td style="color:${r.rtbNetEquity>=0?pos:neg}">${c(r.rtbNetEquity)}</td>
+        <td style="color:${neg}">${y0?na:c(r.rtbAccumCost)}</td>
       </tr>`;
     });
   }
+
   html+='</tbody></table>';
   wrap.innerHTML = html;
 }
@@ -1515,6 +1647,10 @@ function resetAll(){
   $('rentOngoingCost').value= formatMoneyValue(DEFAULTS.rentOngoingCost);
   $('rentOngoingCostFreq').value = DEFAULTS.rentOngoingCostFreq;
   $('rentOngoingCostType').value = DEFAULTS.rentOngoingCostType;
+  $('rentOngoingInflation').value= DEFAULTS.rentOngoingInflation;
+  $('ownOngoingInflation').value = DEFAULTS.ownOngoingInflation;
+  $('currencySymbol').value     = DEFAULTS.currencySymbol;
+  currentCurrencySymbol         = DEFAULTS.currencySymbol;
   $('initialCash').value     = '';
   $('costInterestOnly').checked = DEFAULTS.costInterestOnly;
   $('rtbEnabled').checked   = DEFAULTS.rtbEnabled;
@@ -1583,9 +1719,9 @@ function calcCAGR(){
 /* ── EVENTS ── */
 ['propertyPrice','downPaymentPct','monthlyBudget','riskFreeRate','horizon',
  'mortgageRate','mortgageTerm','houseGrowth','setupCost','setupCostType',
- 'ownOngoingCost','ownOngoingCostFreq','ownOngoingCostType',
- 'rentAmount','rentFreq','rentInflation','rentOngoingCost','rentOngoingCostFreq','rentOngoingCostType',
- 'rtbBuyYear','monthlyBudgetIncrease','initialCash'
+ 'ownOngoingCost','ownOngoingCostFreq','ownOngoingCostType','ownOngoingInflation',
+ 'rentAmount','rentFreq','rentInflation','rentOngoingCost','rentOngoingCostFreq','rentOngoingCostType','rentOngoingInflation',
+ 'rtbBuyYear','monthlyBudgetIncrease','initialCash','currencySymbol'
 ].forEach(id=>{
   const el=$(id); if(!el) return;
   ['input','change'].forEach(ev=>el.addEventListener(ev, ()=>{
