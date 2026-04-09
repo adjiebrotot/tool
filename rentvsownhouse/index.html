@@ -20,6 +20,8 @@
 .th-group{text-align:center;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:rgba(59,130,246,.06);border-bottom:1px solid rgba(59,130,246,.3)!important;}
 body.light .th-group{background:rgba(37,99,235,.04);}
 th[rowspan]{vertical-align:middle;}
+.th-sep-right{border-right:1px solid rgba(59,130,246,.35)!important;}
+body.light .th-sep-right{border-right:1px solid rgba(37,99,235,.35)!important;}
 /* Global Tooltip */
 #globalTooltip{position:fixed;z-index:99999;pointer-events:none;max-width:260px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.8rem;line-height:1.45;color:var(--text);box-shadow:0 6px 24px rgba(0,0,0,.45);opacity:0;transition:opacity .12s;display:none;}
 #globalTooltip.visible{display:block;opacity:1;}
@@ -150,7 +152,9 @@ th{color:var(--muted);font-size:.78rem;font-weight:600;}
 tr:hover td{background:rgba(255,255,255,.03);}
 body.light tr:hover td{background:rgba(0,0,0,.03);}
 .table-wrap{overflow:auto;max-height:420px;}
-.table-wrap thead th{position:sticky;top:0;background:var(--panel);z-index:2;box-shadow:0 1px 0 var(--border);}
+.table-wrap thead th{position:sticky;background:var(--panel);z-index:2;box-shadow:0 1px 0 var(--border);}
+.table-wrap thead tr:first-child th{top:0;z-index:4;}
+.table-wrap thead tr:nth-child(2) th{top:34px;z-index:3;}
 .table-wrap table{min-width:100%;}
 h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
 @media(max-width:1200px){
@@ -193,12 +197,10 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
 
   <!-- GENERAL TAB -->
   <div class="ctrl-panel active" id="tab-general">
-    <div class="section-label">Property</div>
     <div class="field-row" style="border-top:none;padding-top:0;">
       <div class="field-label">Currency Symbol</div>
       <select class="num-input" id="currencySymbol" style="cursor:pointer;">
         <option value="$" selected>$ — Dollar</option>
-        <option value="A$">A$ — AUD Dollar</option>
         <option value="€">€ — Euro</option>
         <option value="£">£ — Pound</option>
         <option value="¥">¥ — Yen / Yuan</option>
@@ -206,9 +208,9 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
         <option value="Rp">Rp — Rupiah</option>
         <option value="RM">RM — Ringgit</option>
         <option value="฿">฿ — Baht</option>
-        <option value="₿">₿ — Bitcoin</option>
       </select>
     </div>
+    <div class="section-label">Property</div>
     <div class="field-row">
       <div class="field-label">Property Price <span class="tip-icon" data-tip="The current market purchase price of the property being modelled. This is the starting value for house equity and mortgage calculations.">?</span></div>
       <input class="num-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
@@ -1530,13 +1532,15 @@ function updateDetailTable(rows, rtbRows){
   } else if(activeTable==='rtb' && rtbRows){
     html = `<table><thead>
       <tr>
-        <th rowspan="2">Year</th>
-        <th rowspan="2">Phase</th>
-        <th colspan="9" class="th-group">Cash Position</th>
+        <th rowspan="2" class="th-group th-sep-right">Year</th>
+        <th rowspan="2" class="th-group th-sep-right">Phase</th>
+        <th colspan="9" class="th-group th-sep-right">Cash Position</th>
+        <th colspan="3" class="th-group th-sep-right">Mortgage Position</th>
         <th colspan="2" class="th-group">Financial Position</th>
       </tr>
       <tr>
         <th>Beg. Cash</th><th>Ann. Budget</th><th>Total Exp.</th><th>Principal Exp.</th><th>Interest Exp.</th><th>Ongoing Exp.</th><th>Surplus</th><th>Interest Inc.</th><th>End Cash</th>
+        <th>Prop. Value</th><th>Principal Left</th><th>House Equity</th>
         <th>Net Equity</th><th>Accum. Cost</th>
       </tr>
     </thead><tbody>`;
@@ -1559,6 +1563,9 @@ function updateDetailTable(rows, rtbRows){
         <td style="color:var(--gold)">${y0?na:c(r.rtbYearSurplus||0)}</td>
         <td style="color:${pos}">${y0?na:c(r.rtbYearInterestInc||0)}</td>
         <td>${c(cash)}</td>
+        <td>${y0||!isOwning?na:c(r.rtbPropValue||0)}</td>
+        <td>${y0||!isOwning?na:c(r.rtbPrincipal||0)}</td>
+        <td style="color:${pos}">${y0||!isOwning?na:c(r.rtbHouseEquity||0)}</td>
         <td style="color:${r.rtbNetEquity>=0?pos:neg}">${c(r.rtbNetEquity)}</td>
         <td style="color:${neg}">${y0?na:c(r.rtbAccumCost)}</td>
       </tr>`;
