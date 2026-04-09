@@ -140,9 +140,11 @@ body.light .canvas-wrap{background:linear-gradient(180deg,rgba(0,0,0,.015),trans
 .tile .value.pos{color:var(--accent2);}
 .tile .value.neg{color:var(--accent3);}
 .detail-section{padding:20px;margin-bottom:18px;}
-.tab-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.tab-controls{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.tab-row{display:flex;gap:10px;flex-wrap:wrap;}
 .tab-btn{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--muted);padding:6px 14px;font-size:.84rem;font-weight:700;cursor:pointer;transition:all .15s;}
 .tab-btn.active{border-color:var(--accent);color:var(--text);background:rgba(59,130,246,.12);}
+.cagr-toggle-btn{margin-top:8px;}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.84rem;}
 th,td{padding:8px 6px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}
 th:first-child,td:first-child{text-align:left;}
@@ -228,21 +230,6 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
         <option value="฿">฿ — Baht</option>
       </select>
     </div>
-    <div class="section-label">Property</div>
-    <div class="field-row">
-      <div class="field-label">Property Price <span class="tip-icon" data-tip="The current market purchase price of the property being modelled. This is the starting value for house equity and mortgage calculations.">?</span></div>
-      <input class="num-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
-      <div class="field-sub">Purchase price of the property.</div>
-    </div>
-    <div class="field-row">
-      <div class="field-label">Down Payment <span class="tip-icon" data-tip="The percentage of the property price paid upfront as a deposit. Set to 100% to model an all-cash purchase (no mortgage). Try different values — 20% isn't always optimal. The renter equivalent invests this same amount instead.">?</span></div>
-      <div class="slider-head" style="margin-bottom:4px;">
-        <span style="font-size:.82rem;color:var(--muted)">% of property price</span>
-        <span class="slider-value" id="downPaymentPctVal">20%</span>
-      </div>
-      <input type="range" id="downPaymentPct" min="5" max="100" step="1" value="20"/>
-      <div class="help">Down payment = <span id="downPaymentDollar" style="color:var(--gold);font-weight:700;">$160,000</span></div>
-    </div>
     <div class="section-label">Cash</div>
     <div class="field-row">
       <div class="field-label">Risk-Free Rate <span class="tip-icon" data-tip="The annual return earned on any uninvested cash — surplus above rent or mortgage, and any leftover initial cash. Could be a HYSA, term deposit, ETFs, or bonds. Both scenarios compound idle cash at this rate.">?</span></div>
@@ -304,6 +291,21 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
 
   <!-- OWN TAB -->
   <div class="ctrl-panel" id="tab-own">
+    <div class="section-label">Property</div>
+    <div class="field-row" style="border-top:none;padding-top:0;">
+      <div class="field-label">Property Price <span class="tip-icon" data-tip="The current market purchase price of the property being modelled. This is the starting value for house equity and mortgage calculations.">?</span></div>
+      <input class="num-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
+      <div class="field-sub">Purchase price of the property.</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Down Payment <span class="tip-icon" data-tip="The percentage of the property price paid upfront as a deposit. Set to 100% to model an all-cash purchase (no mortgage). Try different values — 20% isn't always optimal. The renter equivalent invests this same amount instead.">?</span></div>
+      <div class="slider-head" style="margin-bottom:4px;">
+        <span style="font-size:.82rem;color:var(--muted)">% of property price</span>
+        <span class="slider-value" id="downPaymentPctVal">20%</span>
+      </div>
+      <input type="range" id="downPaymentPct" min="5" max="100" step="1" value="20"/>
+      <div class="help">Down payment = <span id="downPaymentDollar" style="color:var(--gold);font-weight:700;">$160,000</span></div>
+    </div>
     <div class="section-label">Mortgage</div>
     <div class="field-row">
       <div class="field-label">Mortgage Type <span class="tip-icon" data-tip="Principal & Interest: each payment reduces both interest and loan balance, building equity faster. Interest Only: payments cover only interest, principal stays unchanged until term ends — lower monthly payments but no equity build from repayments.">?</span></div>
@@ -320,7 +322,7 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
       <div class="toggle-row" style="margin-top:8px;padding-top:8px;padding-bottom:0;">
         <span class="toggle-label">Cost = Interest Only <span class="tip-icon" data-tip="When ON: Accumulated Cost counts only interest + ongoing (money truly lost — principal repayment builds equity). <br>When OFF: full mortgage payment + ongoing are treated as outgoing costs.">?</span></span>
         <label class="toggle-switch">
-          <input type="checkbox" id="costInterestOnly"/>
+          <input type="checkbox" id="costInterestOnly" checked/>
           <div class="toggle-track"><div class="toggle-knob"></div></div>
         </label>
       </div>
@@ -353,7 +355,8 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
     </div>
     <div class="field-row">
       <div class="field-label">Calculate CAGR from Historical Prices</div>
-      <div class="cagr-box">
+      <button class="btn-secondary cagr-toggle-btn" id="cagrToolToggle" type="button">Show Tool</button>
+      <div class="cagr-box" id="cagrToolWrap" style="display:none;">
         <div id="cagrRows">
           <div class="cagr-row">
             <input type="number" placeholder="Year e.g. 2002" class="cagr-year"/>
@@ -468,7 +471,6 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
   <div class="warning" id="warningBanner"></div>
   <div class="btn-row">
     <button class="btn-primary" id="resetBtn">↺ Reset</button>
-    <button class="btn-secondary" id="downloadBtn">⬇ CSV</button>
   </div>
 </aside>
 
@@ -533,10 +535,13 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
 
   <!-- DETAIL TABLES -->
   <section class="detail-section card">
-    <div class="tab-row">
-      <button class="tab-btn active" data-table="own">🏡 Own Cashflow</button>
-      <button class="tab-btn" data-table="rent">🏢 Rent Cashflow</button>
-      <button class="tab-btn" id="rtbTableTab" data-table="rtb" style="display:none;">🔄 Rent-Then-Buy Cashflow</button>
+    <div class="tab-controls">
+      <div class="tab-row">
+        <button class="tab-btn active" data-table="own">🏡 Own Cashflow</button>
+        <button class="tab-btn" data-table="rent">🏢 Rent Cashflow</button>
+        <button class="tab-btn" id="rtbTableTab" data-table="rtb" style="display:none;">🔄 Rent-Then-Buy Cashflow</button>
+      </div>
+      <button class="btn-secondary" id="downloadBtn" type="button">⬇ CSV</button>
     </div>
     <div class="table-wrap" id="detailTableWrap"></div>
   </section>
@@ -573,7 +578,7 @@ const DEFAULTS = {
   rentOngoingCostType: 'dollar',
   rentOngoingInflation: 0,
   initialCash: 0,
-  costInterestOnly: false,
+  costInterestOnly: true,
   rtbEnabled: false,
   rtbBuyYear: 5,
   monthlyBudgetIncrease: 0,
@@ -1714,6 +1719,7 @@ function resetAll(){
   $('monthlyBudgetIncrease').value = DEFAULTS.monthlyBudgetIncrease;
   document.querySelector('input[name="mortgageType"][value="pi"]').checked=true;
   $('radioPI').classList.add('selected'); $('radioIO').classList.remove('selected');
+  updateCagrToolVisibility(false);
   rerender();
 }
 
@@ -1829,6 +1835,13 @@ function calcCAGR(){
   $('houseGrowth').value=cagr.toFixed(2);
   rerender();
 }
+function updateCagrToolVisibility(show){
+  const wrap = $('cagrToolWrap');
+  const btn = $('cagrToolToggle');
+  if(!wrap || !btn) return;
+  wrap.style.display = show ? 'grid' : 'none';
+  btn.textContent = show ? 'Hide Tool' : 'Show Tool';
+}
 
 /* ── EVENTS ── */
 ['propertyPrice','downPaymentPct','monthlyBudget','riskFreeRate','horizon',
@@ -1900,6 +1913,10 @@ $('themeToggle').addEventListener('click',()=>{
 window.addEventListener('resize', syncDetailHeaderLayout);
 $('chartCanvas').addEventListener('mouseleave',()=>{ $('hoverBox').textContent='Hover over the chart to inspect a year.'; });
 $('cagrCalc').addEventListener('click', calcCAGR);
+$('cagrToolToggle').addEventListener('click',()=>{
+  const show = $('cagrToolWrap').style.display === 'none';
+  updateCagrToolVisibility(show);
+});
 $('cagrAddRow').addEventListener('click',()=>{
   $('cagrRows').appendChild(buildCagrRow());
   syncCagrDeleteButtons();
@@ -1984,6 +2001,7 @@ $('cagrRows').addEventListener('blur',(e)=>{
 /* ── INIT ── */
 syncMoneyInputs();
 syncCagrDeleteButtons();
+updateCagrToolVisibility(false);
 rerender();
 
 })();
