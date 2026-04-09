@@ -56,7 +56,7 @@ body{font-family:'DM Sans',Inter,system-ui,sans-serif;color:var(--text);backgrou
 .header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-theme:hover{border-color:var(--accent);color:var(--text);}
-.layout{display:grid;grid-template-columns:380px 1fr;gap:18px;}
+.layout{display:grid;grid-template-columns:380px minmax(0,1fr);gap:18px;}
 .controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;}
 .controls::-webkit-scrollbar{width:0;height:0;}
 .ctrl-tabs{display:flex;border-bottom:1px solid var(--border);}
@@ -149,11 +149,11 @@ th{color:var(--muted);font-size:.78rem;font-weight:600;}
 tr:hover td{background:rgba(255,255,255,.03);}
 body.light tr:hover td{background:rgba(0,0,0,.03);}
 .table-wrap{overflow-x:auto;overflow-y:auto;max-height:420px;border:1px solid var(--border);border-radius:10px;}
-.table-wrap thead th{position:sticky;background:var(--panel);z-index:2;box-shadow:none;}
+/* Sticky header — use box-shadow instead of border-bottom to survive border-collapse+sticky bug */
+.table-wrap thead th{position:sticky;background:var(--panel);z-index:2;border-bottom:none;box-shadow:inset 0 -1px 0 var(--border);}
 .table-wrap thead tr:first-child th{top:0;z-index:4;}
 .table-wrap thead tr:nth-child(2) th{top:var(--thead-row1-height,34px);z-index:3;}
 .table-wrap thead tr:first-child th[rowspan]{z-index:5;}
-.table-wrap thead th{border-bottom:1px solid var(--border);}
 .table-wrap table{min-width:max-content;}
 .table-wrap table th:first-child,
 .table-wrap table td:first-child{
