@@ -47,8 +47,8 @@ body.light {
   --line-a:#1d4ed8;--line-b:#b91c1c;--line-c:#15803d;--line-d:#b45309;
   --line-rtb-rent:#dd1c1c;--line-rtb-own:#1a6fe8;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',Inter,system-ui,sans-serif;color:var(--text);background:var(--bg);transition:background .25s,color .25s;min-height:100vh;}
+*{box-sizing:border-box;min-width:0;margin:0;padding:0;}
+body{margin:0;font-family:'DM Sans',Inter,system-ui,-apple-system,sans-serif;color:var(--text);background:var(--bg);transition:background .25s,color .25s;min-height:100vh;overflow-x:hidden;}
 .container{max-width:1460px;margin:0 auto;padding:24px;}
 .card{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);}
 .header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
@@ -170,17 +170,23 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 .th-sep-right,.td-sep-right{border-right:1px solid var(--border)!important;}
 h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
 @media(max-width:1200px){
-  .layout{grid-template-columns:1fr;}
-  .controls{position:static;max-height:none;}
   .metrics{grid-template-columns:repeat(2,1fr);}
 }
-@media(max-width:700px){
-  .metrics{grid-template-columns:1fr 1fr;}
-  .bottom{grid-template-columns:1fr;}
+@media(max-width:900px){
+  .layout,.bottom,.metrics{grid-template-columns:1fr;}
+  .controls{position:static;max-height:none;}
+  .canvas-wrap{height:380px!important;}
+  .summary-grid{grid-template-columns:repeat(2,1fr);}
+  .header{flex-direction:column;gap:10px;padding:16px 18px;}
+  .container{padding:16px;}
+}
+@media(max-width:600px){
+  h1{font-size:1.35rem;}
+  .container{padding:10px;}
   .summary-grid{grid-template-columns:1fr 1fr;}
-  .header{flex-direction:column;}
-  h1{font-size:1.4rem;}
-  .container{padding:12px;}
+  .metrics{grid-template-columns:1fr;}
+  .btn-row{flex-direction:column;}
+  .header{padding:14px 16px;}
 }
 </style>
 </head>
