@@ -19,7 +19,6 @@
 /* Group header rows in two-row table headers */
 .th-group{text-align:center;font-size:.78rem;font-weight:600;letter-spacing:normal;text-transform:none;color:var(--muted);background:var(--panel);}
 th[rowspan]{vertical-align:middle;}
-.th-sep-right{border-right:1px solid var(--border)!important;}
 /* Global Tooltip */
 #globalTooltip{position:fixed;z-index:99999;pointer-events:none;max-width:260px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.8rem;line-height:1.45;color:var(--text);box-shadow:0 6px 24px rgba(0,0,0,.45);opacity:0;transition:opacity .12s;display:none;}
 #globalTooltip.visible{display:block;opacity:1;}
@@ -149,7 +148,7 @@ th:first-child,td:first-child{text-align:left;}
 th{color:var(--muted);font-size:.78rem;font-weight:600;}
 tr:hover td{background:rgba(255,255,255,.03);}
 body.light tr:hover td{background:rgba(0,0,0,.03);}
-.table-wrap{overflow:auto;max-height:420px;}
+.table-wrap{overflow-x:auto;overflow-y:auto;max-height:420px;border:1px solid var(--border);border-radius:10px;}
 .table-wrap thead th{position:sticky;background:var(--panel);z-index:2;box-shadow:none;}
 .table-wrap thead tr:first-child th{top:0;z-index:4;}
 .table-wrap thead tr:nth-child(2) th{top:var(--thead-row1-height,34px);z-index:3;}
@@ -164,6 +163,8 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 }
 .table-wrap table tbody td:first-child{z-index:1;}
 .table-wrap table thead th:first-child{z-index:6;}
+/* Group separator applied to both th and td */
+.th-sep-right,.td-sep-right{border-right:1px solid var(--border)!important;}
 h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
 @media(max-width:1200px){
   .layout{grid-template-columns:1fr;}
@@ -1449,21 +1450,21 @@ function updateSummary(state){
   const yrs = S.horizon;
 
   $('ownSummary').innerHTML = `
-    <div class="tile"><div class="label">Property Value (Yr ${yrs})</div><div class="value">${fmt.currency(summary.ownPropValue,true)}</div></div>
-    <div class="tile"><div class="label">Principal Remaining</div><div class="value">${fmt.currency(state.rows[state.rows.length-1].ownPrincipal,true)}</div></div>
+    <div class="tile"><div class="label">Net Equity (Yr ${yrs})</div><div class="value ${summary.ownNetEquity>=0?'pos':'neg'}">${fmt.currency(summary.ownNetEquity,true)}</div></div>
+    <div class="tile"><div class="label">Accumulated Cost (Yr ${yrs})</div><div class="value neg">${fmt.currency(summary.ownAccumCost,true)}</div></div>
     <div class="tile"><div class="label">House Equity (Yr ${yrs})</div><div class="value pos">${fmt.currency(summary.ownHouseEquity,true)}</div></div>
     <div class="tile"><div class="label">Liquid Cash (Yr ${yrs})</div><div class="value">${fmt.currency(summary.ownCash,true)}</div></div>
     <div class="tile"><div class="label">Monthly Mortgage</div><div class="value">${fmt.currency(mPayment)}/mo</div></div>
-    <div class="tile"><div class="label">Total Cost (${S.costInterestOnly ? 'Interest+Ongoing+Setup' : 'Mortgage Pmt+Ongoing+Setup'})</div><div class="value neg">${fmt.currency(summary.ownAccumCost,true)}</div></div>
+    <div class="tile"><div class="label">Principal Remaining (Yr ${yrs})</div><div class="value">${fmt.currency(state.rows[state.rows.length-1].ownPrincipal,true)}</div></div>
   `;
 
   $('rentSummary').innerHTML = `
-    <div class="tile"><div class="label">Invested Capital (Yr ${yrs})</div><div class="value pos">${fmt.currency(summary.rentCash,true)}</div></div>
-    <div class="tile"><div class="label">Net Equity (Yr ${yrs})</div><div class="value">${fmt.currency(summary.rentNetEquity,true)}</div></div>
-    <div class="tile"><div class="label">Initial Cash Invested</div><div class="value">${fmt.currency(renterStartCapital,true)}</div></div>
-    <div class="tile"><div class="label">Monthly Rent (Yr 1)</div><div class="value">${fmt.currency(rentMonthly0)}/mo</div></div>
-    <div class="tile"><div class="label">Monthly Budget (Yr 1)</div><div class="value">${fmt.currency(monthlyBudget)}/mo${S.monthlyBudgetIncrease>0?' +'+S.monthlyBudgetIncrease.toFixed(1)+'%/yr':''}</div></div>
-    <div class="tile"><div class="label">Total Rent Paid</div><div class="value neg">${fmt.currency(summary.rentAccumCost,true)}</div></div>
+    <div class="tile"><div class="label">Net Equity (Yr ${yrs})</div><div class="value ${summary.rentNetEquity>=0?'pos':'neg'}">${fmt.currency(summary.rentNetEquity,true)}</div></div>
+    <div class="tile"><div class="label">Accumulated Cost (Yr ${yrs})</div><div class="value neg">${fmt.currency(summary.rentAccumCost,true)}</div></div>
+    <div class="tile"><div class="label">Yearly Rent (Yr 1)</div><div class="value">${fmt.currency(rentMonthly0*12,true)}</div></div>
+    <div class="tile"><div class="label">Yearly Rent (Yr ${yrs})</div><div class="value">${fmt.currency(state.rows[state.rows.length-1].rentRent,true)}</div></div>
+    <div class="tile"><div class="label">Liquid Cash (Yr 1)</div><div class="value">${fmt.currency(state.rows[1]?.rentCash||0,true)}</div></div>
+    <div class="tile"><div class="label">Liquid Cash (Yr ${yrs})</div><div class="value">${fmt.currency(summary.rentCash,true)}</div></div>
   `;
 }
 
@@ -1492,7 +1493,7 @@ function updateDetailTable(rows, rtbRows){
     rows.forEach(r=>{
       const y0 = r.year===0;
       html+=`<tr>
-        <td>${r.year}</td>
+        <td class="td-sep-right">${r.year}</td>
         <td>${y0?na:c(r.ownBegCash||0)}</td>
         <td style="color:var(--accent)">${y0?na:c(r.ownYearBudget||0)}</td>
         <td style="color:${neg}">${y0?na:c(r.ownYearPrincipal||0)}</td>
@@ -1500,10 +1501,10 @@ function updateDetailTable(rows, rtbRows){
         <td style="color:${neg}">${y0?na:c(r.ownYearOngoing||0)}</td>
         <td style="color:var(--gold)">${y0?na:c(r.ownYearSurplus||0)}</td>
         <td style="color:${pos}">${y0?na:c(r.ownYearInterestInc||0)}</td>
-        <td>${c(r.ownCash)}</td>
+        <td class="td-sep-right">${c(r.ownCash)}</td>
         <td>${c(r.ownPropValue)}</td>
         <td>${c(r.ownPrincipal)}</td>
-        <td style="color:${pos}">${c(r.ownHouseEquity)}</td>
+        <td class="td-sep-right" style="color:${pos}">${c(r.ownHouseEquity)}</td>
         <td style="color:${r.ownNetEquity>=0?pos:neg}">${c(r.ownNetEquity)}</td>
         <td style="color:${neg}">${c(r.ownAccumCost)}</td>
       </tr>`;
@@ -1524,14 +1525,14 @@ function updateDetailTable(rows, rtbRows){
     rows.forEach(r=>{
       const y0 = r.year===0;
       html+=`<tr>
-        <td>${r.year}</td>
+        <td class="td-sep-right">${r.year}</td>
         <td>${y0?na:c(r.rentBegCash||0)}</td>
         <td style="color:var(--accent)">${y0?na:c(r.ownYearBudget||0)}</td>
         <td style="color:${neg}">${y0?na:c(r.rentRent||0)}</td>
         <td style="color:var(--gold)">${y0?na:c(r.rentYearSurplus||0)}</td>
         <td style="color:${pos}">${y0?na:c(r.rentYearInterestInc||0)}</td>
         <td style="color:${neg}">${y0?na:c(r.rentYearOngoing||0)}</td>
-        <td>${c(r.rentCash)}</td>
+        <td class="td-sep-right">${c(r.rentCash)}</td>
         <td style="color:${pos}">${c(r.rentNetEquity)}</td>
         <td style="color:${neg}">${y0?na:c(r.rentAccumCost)}</td>
       </tr>`;
@@ -1560,8 +1561,8 @@ function updateDetailTable(rows, rtbRows){
       // Total expense = principal + interest + ongoing (for both renting and owning)
       const rtbTotalExp = (r.rtbYearPrincipal||0) + (r.rtbYearInterest||0) + (r.rtbYearOngoing||0);
       html+=`<tr>
-        <td>${r.year}</td>
-        <td>${phaseLabel}</td>
+        <td class="td-sep-right">${r.year}</td>
+        <td class="td-sep-right">${phaseLabel}</td>
         <td>${y0?na:c(r.rtbBegCash||0)}</td>
         <td style="color:var(--accent)">${y0?na:c(r.rtbYearBudget||0)}</td>
         <td style="color:${neg}">${y0?na:c(rtbTotalExp)}</td>
@@ -1570,10 +1571,10 @@ function updateDetailTable(rows, rtbRows){
         <td style="color:${neg}">${y0?na:c(r.rtbYearOngoing||0)}</td>
         <td style="color:var(--gold)">${y0?na:c(r.rtbYearSurplus||0)}</td>
         <td style="color:${pos}">${y0?na:c(r.rtbYearInterestInc||0)}</td>
-        <td>${c(cash)}</td>
+        <td class="td-sep-right">${c(cash)}</td>
         <td>${y0||!isOwning?na:c(r.rtbPropValue||0)}</td>
         <td>${y0||!isOwning?na:c(r.rtbPrincipal||0)}</td>
-        <td style="color:${pos}">${y0||!isOwning?na:c(r.rtbHouseEquity||0)}</td>
+        <td class="td-sep-right" style="color:${pos}">${y0||!isOwning?na:c(r.rtbHouseEquity||0)}</td>
         <td style="color:${r.rtbNetEquity>=0?pos:neg}">${c(r.rtbNetEquity)}</td>
         <td style="color:${neg}">${y0?na:c(r.rtbAccumCost)}</td>
       </tr>`;
@@ -1601,15 +1602,12 @@ function updateRTBSummary(state){
   const last = rows[rows.length-1];
   const yrs = S.horizon;
   $('rtbSummary').innerHTML = `
-    <div class="tile"><div class="label">Property Price at Buy (Yr ${S.rtbBuyYear})</div><div class="value">${fmt.currency(rtbPropValueAtBuy||0,true)}</div></div>
-    <div class="tile"><div class="label">Down Payment at Buy</div><div class="value">${fmt.currency(rtbDPAtBuy||0,true)}</div></div>
-    <div class="tile"><div class="label">Loan at Buy</div><div class="value">${fmt.currency(rtbLoanAtBuy||0,true)}</div></div>
-    <div class="tile"><div class="label">Setup Cost at Buy</div><div class="value neg">${fmt.currency(rtbSetupCostAtBuy||0,true)}</div></div>
-    <div class="tile"><div class="label">Monthly Mortgage (post-buy)</div><div class="value">${fmt.currency(rtbMPayment||0)}/mo</div></div>
-    <div class="tile"><div class="label">Property Value (Yr ${yrs})</div><div class="value">${fmt.currency(last.rtbPropValue||0,true)}</div></div>
+    <div class="tile"><div class="label">Net Equity (Yr ${yrs})</div><div class="value ${last.rtbNetEquity>=0?'pos':'neg'}">${fmt.currency(last.rtbNetEquity,true)}</div></div>
+    <div class="tile"><div class="label">Accumulated Cost (Yr ${yrs})</div><div class="value neg">${fmt.currency(last.rtbAccumCost||0,true)}</div></div>
     <div class="tile"><div class="label">House Equity (Yr ${yrs})</div><div class="value pos">${fmt.currency(last.rtbHouseEquity||0,true)}</div></div>
     <div class="tile"><div class="label">Liquid Cash (Yr ${yrs})</div><div class="value">${fmt.currency((last.rtbCash2||last.rtbCash||0),true)}</div></div>
-    <div class="tile"><div class="label">Net Equity (Yr ${yrs})</div><div class="value ${last.rtbNetEquity>=0?'pos':'neg'}">${fmt.currency(last.rtbNetEquity,true)}</div></div>
+    <div class="tile"><div class="label">Property Price at Buy (Yr ${S.rtbBuyYear})</div><div class="value">${fmt.currency(rtbPropValueAtBuy||0,true)}</div></div>
+    <div class="tile"><div class="label">Monthly Mortgage</div><div class="value">${fmt.currency(rtbMPayment||0)}/mo</div></div>
   `;
 }
 
