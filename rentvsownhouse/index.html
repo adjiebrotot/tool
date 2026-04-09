@@ -153,16 +153,18 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 .table-wrap thead th{position:sticky;background:var(--panel);z-index:2;border-bottom:none;box-shadow:inset 0 -1px 0 var(--border);}
 .table-wrap thead tr:first-child th{top:0;z-index:4;}
 .table-wrap thead tr:nth-child(2) th{top:var(--thead-row1-height,34px);z-index:3;}
-.table-wrap thead tr:first-child th[rowspan]{z-index:5;}
 .table-wrap table{min-width:max-content;}
-.table-wrap table th:first-child,
 .table-wrap table td:first-child{
   position:sticky;
   left:0;
   background:var(--panel);
+  z-index:1;
 }
-.table-wrap table tbody td:first-child{z-index:1;}
-.table-wrap table thead th:first-child{z-index:6;}
+/* Corner cell (Year, rowspan=2 in first header row) — frozen in both x and y; must outrank all other sticky cells */
+.table-wrap table thead tr:first-child th:first-child{
+  left:0;
+  z-index:8;
+}
 /* Group separator applied to both th and td */
 .th-sep-right,.td-sep-right{border-right:1px solid var(--border)!important;}
 h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
@@ -1686,17 +1688,75 @@ function resetAll(){
 
 /* ── CSV ── */
 function downloadCsv(){
-  if(!latestRows.length) return;
-  const h=['Year','Own_PropValue','Own_Principal','Own_HouseEquity','Own_Cash','Own_NetEquity','Own_AccumCost','Rent_AnnualRent','Rent_Cash','Rent_NetEquity','Rent_AccumCost'];
-  const lines = latestRows.map(r=>[
-    r.year,r.ownPropValue.toFixed(0),r.ownPrincipal.toFixed(0),r.ownHouseEquity.toFixed(0),
-    r.ownCash.toFixed(0),r.ownNetEquity.toFixed(0),r.ownAccumCost.toFixed(0),
-    r.rentRent.toFixed(0),r.rentCash.toFixed(0),r.rentNetEquity.toFixed(0),r.rentAccumCost.toFixed(0),
-  ].join(','));
-  const csv=[h.join(','),...lines].join('\n');
+  const na='';
+  let headers,lines,filename;
+  if(activeTable==='own'){
+    if(!latestRows.length) return;
+    headers=['Year','Beg_Cash','Ann_Budget','Principal_Exp','Interest_Exp','Ongoing_Exp','Surplus','Interest_Inc','End_Cash','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
+    lines=latestRows.map(r=>{const y0=r.year===0;return[
+      r.year,
+      y0?na:(r.ownBegCash||0).toFixed(0),
+      y0?na:(r.ownYearBudget||0).toFixed(0),
+      y0?na:(r.ownYearPrincipal||0).toFixed(0),
+      y0?na:(r.ownYearInterest||0).toFixed(0),
+      y0?na:(r.ownYearOngoing||0).toFixed(0),
+      y0?na:(r.ownYearSurplus||0).toFixed(0),
+      y0?na:(r.ownYearInterestInc||0).toFixed(0),
+      (r.ownCash||0).toFixed(0),
+      (r.ownPropValue||0).toFixed(0),
+      (r.ownPrincipal||0).toFixed(0),
+      (r.ownHouseEquity||0).toFixed(0),
+      (r.ownNetEquity||0).toFixed(0),
+      (r.ownAccumCost||0).toFixed(0),
+    ].join(',');});
+    filename='own_cashflow.csv';
+  } else if(activeTable==='rent'){
+    if(!latestRows.length) return;
+    headers=['Year','Beg_Cash','Ann_Budget','Rent_Exp','Surplus','Interest_Inc','Ongoing_Exp','End_Cash','Net_Equity','Accum_Cost'];
+    lines=latestRows.map(r=>{const y0=r.year===0;return[
+      r.year,
+      y0?na:(r.rentBegCash||0).toFixed(0),
+      y0?na:(r.ownYearBudget||0).toFixed(0),
+      y0?na:(r.rentRent||0).toFixed(0),
+      y0?na:(r.rentYearSurplus||0).toFixed(0),
+      y0?na:(r.rentYearInterestInc||0).toFixed(0),
+      y0?na:(r.rentYearOngoing||0).toFixed(0),
+      (r.rentCash||0).toFixed(0),
+      (r.rentNetEquity||0).toFixed(0),
+      y0?na:(r.rentAccumCost||0).toFixed(0),
+    ].join(',');});
+    filename='rent_cashflow.csv';
+  } else if(activeTable==='rtb'){
+    if(!cachedRtbRows||!cachedRtbRows.length) return;
+    headers=['Year','Phase','Beg_Cash','Ann_Budget','Total_Exp','Principal_Exp','Interest_Exp','Ongoing_Exp','Surplus','Interest_Inc','End_Cash','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
+    lines=cachedRtbRows.map(r=>{
+      const y0=r.year===0, own=r.phase!=='rent';
+      const cash=r.phase==='rent'?r.rtbCash||0:r.rtbCash2||0;
+      const tot=(r.rtbYearPrincipal||0)+(r.rtbYearInterest||0)+(r.rtbYearOngoing||0);
+      return[
+        r.year, r.phase,
+        y0?na:(r.rtbBegCash||0).toFixed(0),
+        y0?na:(r.rtbYearBudget||0).toFixed(0),
+        y0?na:tot.toFixed(0),
+        (y0||!own)?na:(r.rtbYearPrincipal||0).toFixed(0),
+        (y0||!own)?na:(r.rtbYearInterest||0).toFixed(0),
+        y0?na:(r.rtbYearOngoing||0).toFixed(0),
+        y0?na:(r.rtbYearSurplus||0).toFixed(0),
+        y0?na:(r.rtbYearInterestInc||0).toFixed(0),
+        cash.toFixed(0),
+        (y0||!own)?na:(r.rtbPropValue||0).toFixed(0),
+        (y0||!own)?na:(r.rtbPrincipal||0).toFixed(0),
+        (y0||!own)?na:(r.rtbHouseEquity||0).toFixed(0),
+        (r.rtbNetEquity||0).toFixed(0),
+        y0?na:(r.rtbAccumCost||0).toFixed(0),
+      ].join(',');
+    });
+    filename='rent_then_buy_cashflow.csv';
+  } else { return; }
+  const csv=[headers.join(','),...lines].join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
-  a.download='rent_vs_own.csv'; document.body.appendChild(a); a.click(); a.remove();
+  a.download=filename; document.body.appendChild(a); a.click(); a.remove();
 }
 
 /* ── CAGR CALCULATOR ── */
