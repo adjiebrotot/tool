@@ -287,8 +287,7 @@ body.light #globalTooltip::after{border-top-color:#fff;}
   <div class="warning" id="warnBanner"></div>
   <div class="neg-carry" id="negCarryBanner"></div>
   <div class="btn-row">
-    <button class="btn-primary" id="resetBtn">↺ Reset defaults</button>
-    <button class="btn-secondary" id="downloadBtn">⬇ CSV</button>
+    <button class="btn-primary" id="resetBtn">↺ Reset</button>
   </div>
 </aside>
 
@@ -327,6 +326,9 @@ body.light #globalTooltip::after{border-top-color:#fff;}
   <section class="detail-section card" style="margin-top:18px;">
     <h2>Amortization Schedule</h2>
     <div class="tab-bar" id="amortTabs"></div>
+    <div class="tab-bar">
+      <button class="btn-secondary btn-sm" id="downloadBtn" type="button">⬇ CSV</button>
+    </div>
     <div class="table-wrap" id="amortTableWrap"></div>
   </section>
 </main>
@@ -874,7 +876,25 @@ $('resetBtn').addEventListener('click',()=>{
   renderScenarioList();rerender();
 });
 
-$('downloadBtn').addEventListener('click',()=>{if(!latestResults||!latestResults.results.length)return;const valid=latestResults.results.filter(r=>r);if(!valid.length)return;const hd=['Period',...valid.map(r=>r.name+' Wealth'),...valid.map(r=>r.name+' InvestBal'),...valid.map(r=>r.name+' LoanBal'),...valid.map(r=>r.name+' CumInterest')];const maxN=valid.reduce((m,r)=>Math.max(m,r.n),0);const lines=[];for(let p=0;p<=maxN;p++){const row=[p];valid.forEach(r=>{const t=r.timeline[Math.min(p,r.timeline.length-1)];row.push(t.wealth.toFixed(2));});valid.forEach(r=>{const t=r.timeline[Math.min(p,r.timeline.length-1)];row.push(t.investBal.toFixed(2));});valid.forEach(r=>{const t=r.timeline[Math.min(p,r.timeline.length-1)];row.push(t.loanBal.toFixed(2));});valid.forEach(r=>{const t=r.timeline[Math.min(p,r.timeline.length-1)];row.push(t.cumInterest.toFixed(2));});lines.push(row.join(','));}const csv=[hd.join(','),...lines].join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='financing_vs_cash.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);});
+$('downloadBtn').addEventListener('click',()=>{
+  const table=$('amortTableWrap').querySelector('table');
+  if(!table)return;
+  const esc=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const rows=[...table.querySelectorAll('tr')].map(tr=>
+    [...tr.querySelectorAll('th,td')].map(cell=>esc(cell.textContent.trim())).join(',')
+  );
+  if(!rows.length)return;
+  const csv=rows.join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='amortization_schedule.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
 
 /* ─── Global Tooltip ─── */
 (function(){
