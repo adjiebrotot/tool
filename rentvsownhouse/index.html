@@ -783,21 +783,16 @@ function computeModel(){
   const rentMonthly0 = toMonthly(S.rentAmount, S.rentFreq);
 
   // ── Year-1 ongoing costs (needed for auto-budget baseline) ──
-  const ownOngoingYearly0 = S.ownOngoingCostType==='pct'
-    ? P * S.ownOngoingCost/100
-    : toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
-  const ownOngoingMonthly0 = ownOngoingYearly0 / 12;
-
   const rentOngoingYearly0 = S.rentOngoingCostType==='pct'
     ? rentMonthly0 * 12 * S.rentOngoingCost/100   // % of annual rent (not property value)
     : toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
-  const rentOngoingMonthly0 = rentOngoingYearly0 / 12;
 
-  // ── Pre-calculate RTB mortgage for auto-budget (if RTB enabled) ──
+  // ── Pre-calculate RTB mortgage (if RTB enabled) ──
   // RTB property price at buyYear, DP%, setup cost, loan, and monthly payment
   const rtbEnabled   = S.rtbEnabled;
   const buyYear      = S.rtbBuyYear;
   const h            = S.houseGrowth/100;
+  const ri           = S.rentInflation/100;
   const rtbPropPrice0 = rtbEnabled ? P * Math.pow(1+h, buyYear) : 0;
   const rtbSetup0     = rtbEnabled
     ? (S.setupCostType==='pct' ? rtbPropPrice0 * S.setupCost/100 : S.setupCost)
@@ -807,24 +802,70 @@ function computeModel(){
   const rtbMPayment0  = rtbEnabled
     ? calcMonthlyMortgage(rtbLoan0, S.mortgageRate, S.mortgageTerm, S.mortgageType)
     : 0;
-  // RTB ongoing at buyYear (use year-1 as proxy for auto-budget baseline)
-  const rtbOwnOngoingMonthly0 = ownOngoingMonthly0; // will grow with property by buyYear, but year-1 is conservative
 
-  // ── Auto budget: max of ALL three scenarios' peak monthly outgoing ──
-  // Own (yr1): mPayment + ownOngoing
-  // Rent (yr1): rentMonthly0 + rentOngoing
-  // RTB (at buyYear, post-buy): rtbMPayment0 + ownOngoing
+  function ownRequiredMonthly(year){
+    const propValueAtYearStart = P * Math.pow(1+h, Math.max(0, year-1));
+    let ownOngoingYearly = toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
+    if(S.ownOngoingCostType==='pct'){
+      ownOngoingYearly = propValueAtYearStart * S.ownOngoingCost/100;
+    } else {
+      ownOngoingYearly *= Math.pow(1 + S.ownOngoingInflation/100, year-1);
+    }
+    const ownOngoingMonthly = ownOngoingYearly / 12;
+    const ownMortgageMonthly = (
+      S.mortgageType==='pi'
+        ? (year <= S.mortgageTerm ? mPayment : 0)
+        : (loan > 0 ? mPayment : 0)
+    );
+    return ownMortgageMonthly + ownOngoingMonthly;
+  }
+
+  function rentRequiredMonthly(year){
+    const currentRentMonthly = rentMonthly0 * Math.pow(1+ri, year-1);
+    let rentOngoingYearly = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
+    if(S.rentOngoingCostType==='pct'){
+      rentOngoingYearly = currentRentMonthly * 12 * S.rentOngoingCost/100;
+    } else {
+      rentOngoingYearly *= Math.pow(1 + S.rentOngoingInflation/100, year-1);
+    }
+    return currentRentMonthly + (rentOngoingYearly / 12);
+  }
+
+  function rtbRequiredMonthly(year){
+    if(!rtbEnabled) return 0;
+    if(year <= buyYear) return rentRequiredMonthly(year);
+    const propValueAtYearStart = P * Math.pow(1+h, Math.max(0, year-1));
+    let ownOngoingYearly = toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
+    if(S.ownOngoingCostType==='pct'){
+      ownOngoingYearly = propValueAtYearStart * S.ownOngoingCost/100;
+    } else {
+      ownOngoingYearly *= Math.pow(1 + S.ownOngoingInflation/100, year-1);
+    }
+    const ownOngoingMonthly = ownOngoingYearly / 12;
+    const yearsOwned = year - buyYear;
+    const rtbMortgageMonthly = (
+      S.mortgageType==='pi'
+        ? ((yearsOwned >= 1 && yearsOwned <= S.mortgageTerm) ? rtbMPayment0 : 0)
+        : (rtbLoan0 > 0 ? rtbMPayment0 : 0)
+    );
+    return rtbMortgageMonthly + ownOngoingMonthly;
+  }
+
+  function getAutoMonthlyBudgetForYear(year){
+    return Math.max(
+      ownRequiredMonthly(year),
+      rentRequiredMonthly(year),
+      rtbRequiredMonthly(year)
+    );
+  }
+
+  // ── Monthly budget ──
   const budgetIsManual = S.monthlyBudget > 0;
-  const autoMonthlyBudget = Math.max(
-    mPayment + ownOngoingMonthly0,
-    rentMonthly0 + rentOngoingMonthly0,
-    rtbEnabled ? (rtbMPayment0 + rtbOwnOngoingMonthly0) : 0
-  );
-  const monthlyBudget0 = budgetIsManual ? S.monthlyBudget : autoMonthlyBudget;
+  const monthlyBudget0 = S.monthlyBudget;
   const budgetGrowth   = budgetIsManual ? S.monthlyBudgetIncrease/100 : 0;
 
   // For KPI warnings we pass the year-1 base budget
-  const monthlyBudget = monthlyBudget0;
+  const monthlyBudget = budgetIsManual ? monthlyBudget0 : getAutoMonthlyBudgetForYear(1);
 
   // ── Auto Initial Cash ──
   // rfr already declared at top of computeModel.
@@ -842,7 +883,7 @@ function computeModel(){
   const autoInitialCash = Math.max(requiredNow, rentFirstYearCost, pvRTBRequired);
 
   const initialCashUsed    = S.initialCash > 0 ? S.initialCash : autoInitialCash;
-  const ownCashStart       = Math.max(0, initialCashUsed - requiredNow); // buyer leftover → invested
+  const ownCashStart       = initialCashUsed - requiredNow; // buyer leftover/shortfall → carried into cash
   const renterStartCapital = initialCashUsed;                             // renter invests all
 
   const rows = [];
@@ -876,7 +917,6 @@ function computeModel(){
   });
 
   const r12 = S.mortgageRate/100/12;
-  const ri  = S.rentInflation/100;
   const rfm = Math.pow(1+rfr, 1/12)-1; // monthly risk-free
 
   for(let yr=1; yr<=S.horizon; yr++){
@@ -925,10 +965,9 @@ function computeModel(){
       const mRentCost     = currentRentMonthly + rentOngoingMonthly; // true monthly cost of renting
 
       // ── Budget for this month ──
-      const rtbAutoRef = rtbEnabled ? rtbMPayment0 + ownOngoingMonthly : 0;
       const mBudget = budgetIsManual
         ? manualMonthlyBudget
-        : Math.max(mOwnCost, mRentCost, rtbAutoRef);
+        : getAutoMonthlyBudgetForYear(yr);
       ownYearBudget += mBudget;
 
       // ── Own: amortise mortgage ──
@@ -951,8 +990,8 @@ function computeModel(){
       // ── Liquid cash: cash × (1+RFR) + (budget − cost) ──
       const ownSurplus  = mBudget - mOwnCost;
       const rentSurplus = mBudget - mRentCost;
-      ownCash  = Math.max(0, ownCash  * (1+rfm) + ownSurplus);
-      rentCash = Math.max(0, rentCash * (1+rfm) + rentSurplus);
+      ownCash  = ownCash  * (1+rfm) + ownSurplus;
+      rentCash = rentCash * (1+rfm) + rentSurplus;
 
       ownYearOngoingPart  += ownOngoingMonthly;
       rentYearOngoingPart += rentOngoingMonthly;
@@ -1012,7 +1051,7 @@ function computeModel(){
   // ── RENT-THEN-BUY SCENARIO ──
   let rtbRows = null;
   if(S.rtbEnabled){
-    rtbRows = computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, setupCostDollar, mPayment, initialCashUsed, ownOngoingMonthly0, rentOngoingMonthly0, rtbMPayment0);
+    rtbRows = computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, initialCashUsed, getAutoMonthlyBudgetForYear);
   }
 
   const last = rows[rows.length-1];
@@ -1043,7 +1082,7 @@ function computeModel(){
      - New mortgage on remaining principal at same rate/term.
      - From buyYear onward, cashflows mirror "own" but starting from the new property price.
 */
-function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, originalSetupCostDollar, originalMPayment, initialCashUsed, ownOngoingMonthly0, rentOngoingMonthly0global, rtbMPaymentRef){
+function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, initialCashUsed, getAutoMonthlyBudgetForYear){
   const P0  = S.propertyPrice;
   const h   = S.houseGrowth/100;
   const ri  = S.rentInflation/100;
@@ -1062,7 +1101,6 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
   let rtbSetupCostAtBuy = 0;
   let rtbMPayment   = 0;
   let rtbPropValueAtBuy = 0;
-  let boughtAlready = false;
 
   const rows = [];
 
@@ -1084,9 +1122,6 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
   for(let yr=1; yr<=S.horizon; yr++){
     const currentRentMonthly = rentMonthly0 * Math.pow(1+ri, yr-1);
 
-    // Budget grows from base at budgetGrowth p.a. — yr=1 is base, yr=2 is base*(1+g), etc.
-    const yearlyBudget = monthlyBudget0 * Math.pow(1+budgetGrowth, yr-1);
-
     if(yr <= buyYear){
       // ─── Phase 1: still renting ───
       let rentOngoingYearly = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
@@ -1105,14 +1140,13 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
       let rtbP1YearOngoing = 0; // rent + ongoing (all non-mortgage costs during renting)
       for(let m=0; m<12; m++){
         const mRentCost     = currentRentMonthly + rentOngoingMonthly;
-        const rtbOwnCostRef = rtbMPaymentRef + ownOngoingMonthly0;
         const mBudget = budgetIsManual
           ? monthlyBudget0 * Math.pow(1+budgetGrowth, yr-1)
-          : Math.max(rtbOwnCostRef, mRentCost);
+          : getAutoMonthlyBudgetForYear(yr);
         rtbP1YearInterestInc += rtbCash * rfm;
         const surplus = mBudget - mRentCost;
-        rtbCash = Math.max(0, rtbCash*(1+rfm) + surplus);
-        rtbP1YearSurplus += Math.max(0, surplus);
+        rtbCash = rtbCash*(1+rfm) + surplus;
+        rtbP1YearSurplus += surplus;
         rtbP1YearBudget  += mBudget;
         rtbP1YearCost    += mRentCost;
         rtbP1YearOngoing += mRentCost; // during renting, "ongoing" = rent + rent-ongoing
@@ -1134,14 +1168,13 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
         // Cash spent at purchase: DP + setup cost
         // Remaining cash stays invested at RFR
         const cashSpent = rtbDPAtBuy + rtbSetupCostAtBuy;
-        rtbCash2 = Math.max(0, rtbCash - cashSpent); // leftover cash after purchase
+        rtbCash2 = rtbCash - cashSpent; // leftover cash/shortfall after purchase
         rtbAccumCost += rtbSetupCostAtBuy;            // only setup is a true cost
 
         // Loan = property price − DP (standard mortgage, same rate and term)
         rtbPrincipal = Math.max(0, rtbPropValueAtBuy - rtbDPAtBuy);
         rtbPropValue = rtbPropValueAtBuy;
         rtbMPayment  = calcMonthlyMortgage(rtbPrincipal, S.mortgageRate, S.mortgageTerm, S.mortgageType);
-        boughtAlready = true;
 
         // Net Equity = house equity (propValue − loan) + remaining cash
         // Drop vs pre-buy = only the setup cost (DP converts from liquid cash to house equity)
@@ -1196,14 +1229,6 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
       }
       const ownOngoingMonthly = ownOngoingYearly / 12;
 
-      let rentOngoingYearly2 = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
-      if(S.rentOngoingCostType==='pct'){
-        rentOngoingYearly2 = currentRentMonthly * 12 * S.rentOngoingCost/100;
-      } else {
-        rentOngoingYearly2 *= Math.pow(1 + S.rentOngoingInflation/100, yr-1);
-      }
-      const rentOngoingMonthly = rentOngoingYearly2 / 12;
-
       const rtbBegCashP2 = rtbCash2;
       let rtbYearInterest = 0, rtbYearPrincipal = 0;
       let rtbYearBudget2 = 0, rtbYearCost2 = 0;
@@ -1226,13 +1251,12 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
         }
         rtbYearMortPmt2 += mMortgage;
 
-        const mRentRef2 = currentRentMonthly + rentOngoingMonthly;
         const mBudget = budgetIsManual
           ? monthlyBudget0 * Math.pow(1+budgetGrowth, yr-1)
-          : Math.max(mOwnCost, mRentRef2);
+          : getAutoMonthlyBudgetForYear(yr);
         rtbYearInterestInc2 += rtbCash2 * rfm;
         const surplus = mBudget - mOwnCost;
-        rtbCash2 = Math.max(0, rtbCash2*(1+rfm) + surplus);
+        rtbCash2 = rtbCash2*(1+rfm) + surplus;
         rtbYearBudget2   += mBudget;
         rtbYearOngoing2  += ownOngoingMonthly;
 
@@ -1442,7 +1466,7 @@ function updateKPIs(state){
     const rentTotalWarn = rentMonthly0 + rentOngoingWarn;
     if(monthlyBudget < ownTotalWarn && monthlyBudget < rentTotalWarn){
       warn.style.display='block';
-      warn.textContent='⚠️ Budget ('+fmt.currency(monthlyBudget)+'/mo) is below both total own cost ('+fmt.currency(ownTotalWarn,true)+'/mo incl. ongoing) and rent cost ('+fmt.currency(rentTotalWarn,true)+'/mo incl. ongoing). Surplus will be zero — both scenarios just compound existing cash.';
+      warn.textContent='⚠️ Budget ('+fmt.currency(monthlyBudget)+'/mo) is below both total own cost ('+fmt.currency(ownTotalWarn,true)+'/mo incl. ongoing) and rent cost ('+fmt.currency(rentTotalWarn,true)+'/mo incl. ongoing). Surplus will be negative and cash may decline below zero.';
     } else { warn.style.display='none'; }
   } else { warn.style.display='none'; }
 }
@@ -1488,7 +1512,7 @@ function updateDetailTable(rows, rtbRows){
         <th colspan="2" class="th-group">Financial Position</th>
       </tr>
       <tr>
-        <th>Beg. Cash</th><th>Ann. Budget</th><th>Principal Exp.</th><th>Interest Exp.</th><th>Ongoing Exp.</th><th>Surplus</th><th>Interest Inc.</th><th class="th-sep-right">End Cash</th>
+        <th>Beg. Cash</th><th>Ann. Budget</th><th>Principal Exp.</th><th>Interest Exp.</th><th>Ongoing Exp.</th><th>Interest Inc.</th><th>Surplus</th><th class="th-sep-right">End Cash</th>
         <th>Prop. Value</th><th>Principal Left</th><th class="th-sep-right">House Equity</th>
         <th>Net Equity</th><th>Accum. Cost</th>
       </tr>
@@ -1502,8 +1526,8 @@ function updateDetailTable(rows, rtbRows){
         <td style="color:${neg}">${y0?na:c(r.ownYearPrincipal||0)}</td>
         <td style="color:${neg}">${y0?na:c(r.ownYearInterest||0)}</td>
         <td style="color:${neg}">${y0?na:c(r.ownYearOngoing||0)}</td>
-        <td style="color:var(--gold)">${y0?na:c(r.ownYearSurplus||0)}</td>
         <td style="color:${pos}">${y0?na:c(r.ownYearInterestInc||0)}</td>
+        <td style="color:var(--gold)">${y0?na:c(r.ownYearSurplus||0)}</td>
         <td class="td-sep-right">${c(r.ownCash)}</td>
         <td>${c(r.ownPropValue)}</td>
         <td>${c(r.ownPrincipal)}</td>
@@ -1521,7 +1545,7 @@ function updateDetailTable(rows, rtbRows){
         <th colspan="2" class="th-group">Financial Position</th>
       </tr>
       <tr>
-        <th>Beg. Cash</th><th>Ann. Budget</th><th>Rent Exp.</th><th>Surplus</th><th>Interest Inc.</th><th>Ongoing Exp.</th><th class="th-sep-right">End Cash</th>
+        <th>Beg. Cash</th><th>Ann. Budget</th><th>Rent Exp.</th><th>Ongoing Exp.</th><th>Interest Inc.</th><th>Surplus</th><th class="th-sep-right">End Cash</th>
         <th>Net Equity</th><th>Accum. Cost</th>
       </tr>
     </thead><tbody>`;
@@ -1532,9 +1556,9 @@ function updateDetailTable(rows, rtbRows){
         <td>${y0?na:c(r.rentBegCash||0)}</td>
         <td style="color:var(--accent)">${y0?na:c(r.ownYearBudget||0)}</td>
         <td style="color:${neg}">${y0?na:c(r.rentRent||0)}</td>
-        <td style="color:var(--gold)">${y0?na:c(r.rentYearSurplus||0)}</td>
-        <td style="color:${pos}">${y0?na:c(r.rentYearInterestInc||0)}</td>
         <td style="color:${neg}">${y0?na:c(r.rentYearOngoing||0)}</td>
+        <td style="color:${pos}">${y0?na:c(r.rentYearInterestInc||0)}</td>
+        <td style="color:var(--gold)">${y0?na:c(r.rentYearSurplus||0)}</td>
         <td class="td-sep-right">${c(r.rentCash)}</td>
         <td style="color:${pos}">${c(r.rentNetEquity)}</td>
         <td style="color:${neg}">${y0?na:c(r.rentAccumCost)}</td>
@@ -1551,7 +1575,7 @@ function updateDetailTable(rows, rtbRows){
         <th colspan="2" class="th-group">Financial Position</th>
       </tr>
       <tr>
-        <th>Beg. Cash</th><th>Ann. Budget</th><th>Total Exp.</th><th>Principal Exp.</th><th>Interest Exp.</th><th>Ongoing Exp.</th><th>Surplus</th><th>Interest Inc.</th><th class="th-sep-right">End Cash</th>
+        <th>Beg. Cash</th><th>Ann. Budget</th><th>Total Exp.</th><th>Principal Exp.</th><th>Interest Exp.</th><th>Ongoing Exp.</th><th>Interest Inc.</th><th>Surplus</th><th class="th-sep-right">End Cash</th>
         <th>Prop. Value</th><th>Principal Left</th><th class="th-sep-right">House Equity</th>
         <th>Net Equity</th><th>Accum. Cost</th>
       </tr>
@@ -1572,8 +1596,8 @@ function updateDetailTable(rows, rtbRows){
         <td style="color:${neg}">${y0||!isOwning?na:c(r.rtbYearPrincipal||0)}</td>
         <td style="color:${neg}">${y0||!isOwning?na:c(r.rtbYearInterest||0)}</td>
         <td style="color:${neg}">${y0?na:c(r.rtbYearOngoing||0)}</td>
-        <td style="color:var(--gold)">${y0?na:c(r.rtbYearSurplus||0)}</td>
         <td style="color:${pos}">${y0?na:c(r.rtbYearInterestInc||0)}</td>
+        <td style="color:var(--gold)">${y0?na:c(r.rtbYearSurplus||0)}</td>
         <td class="td-sep-right">${c(cash)}</td>
         <td>${y0||!isOwning?na:c(r.rtbPropValue||0)}</td>
         <td>${y0||!isOwning?na:c(r.rtbPrincipal||0)}</td>
@@ -1693,7 +1717,7 @@ function downloadCsv(){
   let headers,lines,filename;
   if(activeTable==='own'){
     if(!latestRows.length) return;
-    headers=['Year','Beg_Cash','Ann_Budget','Principal_Exp','Interest_Exp','Ongoing_Exp','Surplus','Interest_Inc','End_Cash','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
+    headers=['Year','Beg_Cash','Ann_Budget','Principal_Exp','Interest_Exp','Ongoing_Exp','Interest_Inc','Surplus','End_Cash','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
     lines=latestRows.map(r=>{const y0=r.year===0;return[
       r.year,
       y0?na:(r.ownBegCash||0).toFixed(0),
@@ -1701,8 +1725,8 @@ function downloadCsv(){
       y0?na:(r.ownYearPrincipal||0).toFixed(0),
       y0?na:(r.ownYearInterest||0).toFixed(0),
       y0?na:(r.ownYearOngoing||0).toFixed(0),
-      y0?na:(r.ownYearSurplus||0).toFixed(0),
       y0?na:(r.ownYearInterestInc||0).toFixed(0),
+      y0?na:(r.ownYearSurplus||0).toFixed(0),
       (r.ownCash||0).toFixed(0),
       (r.ownPropValue||0).toFixed(0),
       (r.ownPrincipal||0).toFixed(0),
@@ -1713,15 +1737,15 @@ function downloadCsv(){
     filename='own_cashflow.csv';
   } else if(activeTable==='rent'){
     if(!latestRows.length) return;
-    headers=['Year','Beg_Cash','Ann_Budget','Rent_Exp','Surplus','Interest_Inc','Ongoing_Exp','End_Cash','Net_Equity','Accum_Cost'];
+    headers=['Year','Beg_Cash','Ann_Budget','Rent_Exp','Ongoing_Exp','Interest_Inc','Surplus','End_Cash','Net_Equity','Accum_Cost'];
     lines=latestRows.map(r=>{const y0=r.year===0;return[
       r.year,
       y0?na:(r.rentBegCash||0).toFixed(0),
       y0?na:(r.ownYearBudget||0).toFixed(0),
       y0?na:(r.rentRent||0).toFixed(0),
-      y0?na:(r.rentYearSurplus||0).toFixed(0),
-      y0?na:(r.rentYearInterestInc||0).toFixed(0),
       y0?na:(r.rentYearOngoing||0).toFixed(0),
+      y0?na:(r.rentYearInterestInc||0).toFixed(0),
+      y0?na:(r.rentYearSurplus||0).toFixed(0),
       (r.rentCash||0).toFixed(0),
       (r.rentNetEquity||0).toFixed(0),
       y0?na:(r.rentAccumCost||0).toFixed(0),
@@ -1729,7 +1753,7 @@ function downloadCsv(){
     filename='rent_cashflow.csv';
   } else if(activeTable==='rtb'){
     if(!cachedRtbRows||!cachedRtbRows.length) return;
-    headers=['Year','Phase','Beg_Cash','Ann_Budget','Total_Exp','Principal_Exp','Interest_Exp','Ongoing_Exp','Surplus','Interest_Inc','End_Cash','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
+    headers=['Year','Phase','Beg_Cash','Ann_Budget','Total_Exp','Principal_Exp','Interest_Exp','Ongoing_Exp','Interest_Inc','Surplus','End_Cash','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
     lines=cachedRtbRows.map(r=>{
       const y0=r.year===0, own=r.phase!=='rent';
       const cash=r.phase==='rent'?r.rtbCash||0:r.rtbCash2||0;
@@ -1742,8 +1766,8 @@ function downloadCsv(){
         (y0||!own)?na:(r.rtbYearPrincipal||0).toFixed(0),
         (y0||!own)?na:(r.rtbYearInterest||0).toFixed(0),
         y0?na:(r.rtbYearOngoing||0).toFixed(0),
-        y0?na:(r.rtbYearSurplus||0).toFixed(0),
         y0?na:(r.rtbYearInterestInc||0).toFixed(0),
+        y0?na:(r.rtbYearSurplus||0).toFixed(0),
         cash.toFixed(0),
         (y0||!own)?na:(r.rtbPropValue||0).toFixed(0),
         (y0||!own)?na:(r.rtbPrincipal||0).toFixed(0),
