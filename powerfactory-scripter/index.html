@@ -479,10 +479,11 @@
   .input-table-hide-bounds .col-ub  { display: none; }
 
   /* ── PAGE FOOTER ─────────────────────────────────────────────────── */
+  /* Sits below the layout div — visible on mobile when page scrolls */
   .page-footer {
-    margin-top: 28px;
     border-top: 1px solid var(--border);
-    padding: 16px 0 8px;
+    padding: 14px 20px 20px;
+    background: var(--bg);
   }
   .page-footer-info p {
     font-size: 11px;
@@ -496,62 +497,85 @@
   }
   .page-footer-info a:hover { text-decoration: underline; }
 
+  /* Desktop: layout fills viewport so footer is out of view — hide to avoid dead space */
+  @media (min-width: 769px) {
+    .page-footer { display: none; }
+  }
+
   /* ── MOBILE RESPONSIVE ──────────────────────────────────────────── */
   @media (max-width: 768px) {
+    /* Hard-stop horizontal overflow at the root */
+    html {
+      overflow-x: hidden;
+    }
+    body {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+
+    /* Header: wrap badges below logo */
     header {
-      padding: 0 12px;
-      gap: 8px;
+      padding: 6px 12px;
+      gap: 6px;
       flex-wrap: wrap;
       height: auto;
-      min-height: 48px;
-      padding-top: 6px;
-      padding-bottom: 6px;
     }
     header .logo {
       font-size: 12px;
-      flex: 1;
+      flex: 1 1 0;
+      min-width: 0;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      min-width: 0;
     }
-    #mode-banner {
-      gap: 4px;
-      flex-wrap: wrap;
-    }
-    .badge {
-      font-size: 9px;
-      padding: 1px 5px;
-    }
+    #mode-banner { gap: 4px; flex-wrap: wrap; flex-shrink: 0; }
+    .badge { font-size: 9px; padding: 1px 5px; }
+
+    /* Stack layout as a vertical flex column */
     .layout {
-      grid-template-columns: 1fr;
+      display: flex;
+      flex-direction: column;
       height: auto;
       overflow: visible;
     }
-    body {
-      overflow-y: auto;
-    }
+
+    /* Left pane: natural height, clamp width */
     .left-pane {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-x: hidden;
       overflow-y: visible;
       height: auto;
       border-right: none;
       border-bottom: 1px solid var(--border);
-      padding: 12px 12px 24px;
+      padding: 12px 12px 20px;
     }
+
+    /* Clip any child overflows inside left pane */
+    .section-card, .section-body { overflow-x: hidden; }
+
+    /* Right pane: fixed height for usable code view */
     .right-pane {
-      height: 80vh;
-      min-height: 400px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      height: 70vh;
+      min-height: 360px;
     }
+
+    /* Toolbar: wrap to multiple lines */
     .right-toolbar {
       flex-wrap: wrap;
       gap: 6px;
-      padding: 8px 12px;
+      padding: 8px 10px;
     }
     .right-toolbar .pane-title {
       width: 100%;
       margin-right: 0;
-      margin-bottom: 2px;
     }
+
+    /* Forms: single column */
     .form-row {
       grid-template-columns: 1fr;
     }
@@ -559,16 +583,27 @@
       padding-top: 0;
       padding-bottom: 2px;
     }
-    .dyn-table {
-      min-width: 360px;
+
+    /* Tables scroll inside wrapper, never push page */
+    .dyn-table-wrapper {
+      overflow-x: auto;
+      max-width: 100%;
     }
+    .dyn-table { min-width: 280px; }
     .dyn-table td input,
-    .dyn-table td select {
-      min-width: 50px;
-    }
+    .dyn-table td select { min-width: 40px; }
+
+    /* Output var header wraps */
     .output-var-header {
       flex-wrap: wrap;
+      gap: 4px;
     }
+    .output-var-header select { max-width: 140px; }
+    .output-var-header input[type="text"] { min-width: 60px; }
+
+    /* Long text wraps */
+    .info-box, code { word-break: break-word; }
+    .btn-row { flex-wrap: wrap; }
   }
 </style>
 </head>
@@ -836,16 +871,7 @@
     </div>
 
     <!-- ── FOOTER DISCLAIMER ──────────────────────────────────── -->
-    <footer class="page-footer">
-      <section class="page-footer-info">
-        <p>
-          <strong>Disclaimer:</strong> This tool is provided on an "as is" and "as available" basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for validating the generated code before use in any production or engineering context.
-        </p>
-        <p>
-          If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you're interested, confused, or would like help learning how to use the tool, feel free to email me as well.
-        </p>
-      </section>
-    </footer>
+    <!-- (mobile footer is placed outside .layout — see below) -->
 
   </div><!-- end left-pane -->
 
@@ -877,6 +903,18 @@
   </div>
 
 </div><!-- end layout -->
+
+<!-- ── PAGE FOOTER ─────────────────────────────────────────────── -->
+<footer class="page-footer">
+  <section class="page-footer-info">
+    <p>
+      <strong>Disclaimer:</strong> This tool is provided on an "as is" and "as available" basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for validating the generated code before use in any production or engineering context.
+    </p>
+    <p>
+      If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you're interested, confused, or would like help learning how to use the tool, feel free to email me as well.
+    </p>
+  </section>
+</footer>
 
 <!-- ============================================================
      JAVASCRIPT — all logic
