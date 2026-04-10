@@ -113,13 +113,6 @@
     cursor: pointer;
     user-select: none;
   }
-  .section-header .sec-num {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--accent);
-    font-weight: 600;
-    min-width: 22px;
-  }
   .section-header h3 {
     font-size: 13px;
     font-weight: 600;
@@ -401,6 +394,69 @@
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
+  /* ── TOOLTIPS ────────────────────────────────────────────────────── */
+  .tt {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    background: rgba(122,134,160,0.18);
+    color: var(--muted);
+    border-radius: 50%;
+    font-size: 9px;
+    font-weight: 700;
+    font-family: var(--sans);
+    cursor: help;
+    flex-shrink: 0;
+    border: 1px solid rgba(122,134,160,0.35);
+    position: relative;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+  .tt::before {
+    content: attr(data-tip);
+    visibility: hidden;
+    opacity: 0;
+    background: #1a2138;
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-align: left;
+    border-radius: 5px;
+    padding: 8px 11px;
+    position: absolute;
+    z-index: 300;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 250px;
+    font-size: 11px;
+    line-height: 1.55;
+    font-weight: 400;
+    font-family: var(--sans);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.55);
+    transition: opacity 0.15s;
+    pointer-events: none;
+    white-space: normal;
+  }
+  .tt::after {
+    content: '';
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: calc(130% - 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--border);
+    transition: opacity 0.15s;
+  }
+  .tt:hover::before,
+  .tt:hover::after {
+    visibility: visible;
+    opacity: 1;
+  }
+
   /* ── COPY TOAST ──────────────────────────────────────────────────── */
   #copy-toast {
     position: fixed;
@@ -653,31 +709,28 @@
     <!-- ── SECTION 1 · INITIALISATION ──────────────────────────── -->
     <div class="section-card" id="sec-init">
       <div class="section-header" onclick="toggleSection('sec-init')">
-        <span class="sec-num">01</span>
         <h3>Initialisation</h3>
         <span class="toggle-icon">▾</span>
       </div>
       <div class="section-body">
         <div class="form-row">
-          <label>API Path</label>
+          <label>API Path <span class="tt" data-tip="Full path to the PowerFactory Python API folder, e.g. C:\Program Files\DIgSILENT\PowerFactory 2022 SP1\Python\3.8. This folder must contain the powerfactory.pyd (Windows) or powerfactory.so (Linux) module that is appended to sys.path.">?</span></label>
           <div>
             <input type="text" id="pf-api-path" placeholder="C:\Program Files\DIgSILENT\PowerFactory 2022 SP1\Python\3.8" />
-            <div class="hint">Path to the PowerFactory Python API directory</div>
           </div>
         </div>
         <div class="form-row">
-          <label>Username</label>
+          <label>Username <span class="tt" data-tip="Your DIgSILENT PowerFactory login username. Passed directly to pf.GetApplication(username) to connect in Engine Mode. Leave blank only if single-user mode is configured.">?</span></label>
           <input type="text" id="pf-username" placeholder="USERNAME_HERE" />
         </div>
         <div class="form-row">
-          <label>Output Directory</label>
+          <label>Output Directory <span class="tt" data-tip="Root folder where all results are saved. Subfolders /graph and /raw are auto-created for timeseries PNG graphs and raw CSV exports respectively. Summary results go in the root as Run_YYYYMMDD.csv.">?</span></label>
           <div>
             <input type="text" id="output-dir" placeholder="C:\Users\user\results" />
-            <div class="hint">Directory where CSV results will be saved</div>
           </div>
         </div>
         <div class="form-row">
-          <label>Problem Type</label>
+          <label>Problem Type <span class="tt" data-tip="Brute Force: iterate every combination of input value ranges. Optimisation: use a search algorithm to find the best input values. Custom: load input values row-by-row from an Excel scenario file.">?</span></label>
           <select id="problem-type" onchange="onProblemTypeChange()">
             <option value="brute_force">Brute Force</option>
             <option value="optimisation">Optimisation</option>
@@ -685,7 +738,7 @@
           </select>
         </div>
         <div class="form-row">
-          <label>Study Type</label>
+          <label>Study Type <span class="tt" data-tip="Steady State: load flow via ComLdf. Dynamic RMS: RMS simulation via ComInc+ComSim. Dynamic EMT: EMT simulation via ComInc (iopt_sim=ins)+ComSim. Harmonic: harmonic load flow via ComHldf. Timeseries outputs require a dynamic study type.">?</span></label>
           <select id="study-type" onchange="onStudyTypeChange()">
             <option value="steady_state">Steady State</option>
             <option value="dynamic_rms">Dynamic RMS</option>
@@ -694,14 +747,13 @@
           </select>
         </div>
         <div class="form-row" id="row-tstop" style="display:none">
-          <label>Stop Time (s)</label>
+          <label>Stop Time (s) <span class="tt" data-tip="Simulation end time in seconds. Sets ComSim.tstop before execution. Default 20 s for RMS; 0.25 s for EMT is typical for fast transients.">?</span></label>
           <div>
             <input type="number" id="tstop" value="20" step="0.01" min="0" />
-            <div class="hint">Simulation stop time for dynamic studies</div>
           </div>
         </div>
         <div class="form-row">
-          <label>Coding Style</label>
+          <label>Coding Style <span class="tt" data-tip="Python File: wraps everything in a main() function for clean script execution. Notebook Style: organises code into labelled cell blocks so each section can be run independently in Jupyter/VS Code notebooks.">?</span></label>
           <select id="coding-style">
             <option value="python_file">Python File</option>
             <option value="notebook">Notebook Style</option>
@@ -713,7 +765,6 @@
     <!-- ── SECTION 2 · INPUT VARIABLES ─────────────────────────── -->
     <div class="section-card" id="sec-inputs">
       <div class="section-header" onclick="toggleSection('sec-inputs')">
-        <span class="sec-num">02</span>
         <h3>Input Variables</h3>
         <span class="toggle-icon">▾</span>
       </div>
@@ -726,12 +777,12 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Name</th>
-                <th>Object</th>
-                <th>Variable</th>
-                <th class="col-lb">Lower Bound</th>
-                <th class="col-ub">Upper Bound</th>
-                <th class="col-step">Step Size</th>
+                <th>Name <span class="tt" data-tip="Python identifier for this input. Used as the column header in results and as the variable name in generated code. Must be unique across ALL input and output variables.">?</span></th>
+                <th>Object <span class="tt" data-tip="PowerFactory object query passed to GetCalcRelevantObjects(). Examples: WFController.ElmDsl, Generator1.ElmSym. Uses PF hierarchical name matching — partial paths are fine as long as they are unambiguous.">?</span></th>
+                <th>Variable <span class="tt" data-tip="Attribute name on the PowerFactory object to SET before each simulation. Examples: K_droop, pgini, usetp. Must be a writable parameter of that object class (check the PF Equipment Model Library).">?</span></th>
+                <th class="col-lb">Lower Bound <span class="tt" data-tip="Minimum value for this parameter. Used by Brute Force (start of range) and Optimisation (lower search boundary).">?</span></th>
+                <th class="col-ub">Upper Bound <span class="tt" data-tip="Maximum value for this parameter. Used by Brute Force (end of range, inclusive) and Optimisation (upper search boundary).">?</span></th>
+                <th class="col-step">Step Size <span class="tt" data-tip="Increment between values in Brute Force mode. E.g. lower=0, upper=10, step=0.5 generates [0, 0.5, 1.0, …, 10.0]. Integer detection: if all three bounds/step are whole numbers, dtype=int is used.">?</span></th>
                 <th></th>
               </tr>
             </thead>
@@ -747,7 +798,6 @@
     <!-- ── SECTION 3 · CUSTOM MODE CONFIG ─────────────────────── -->
     <div class="section-card cond-hidden" id="sec-custom">
       <div class="section-header" onclick="toggleSection('sec-custom')">
-        <span class="sec-num">03</span>
         <h3>Custom Mode Config</h3>
         <span class="toggle-icon">▾</span>
       </div>
@@ -756,18 +806,15 @@
           Each <strong>row</strong> in the spreadsheet is one scenario.<br/>
           The first column is <code>Scenario</code> (scenario number/label).<br/>
           Each subsequent <strong>column</strong> header is the <strong>Name</strong> you defined for each input variable (e.g. <code>K_droop</code>).<br/>
+          The sheet name is always <code>Sheet1</code> (the template generates exactly one sheet).<br/>
           Click <strong>Download Template</strong> to get a pre-filled template based on your input variable names.
         </div>
         <div class="btn-row" style="margin-top:0;margin-bottom:10px;">
           <button class="btn btn-ghost btn-xs" onclick="downloadCustomTemplate()">⬇ Download Template (.xlsx)</button>
         </div>
         <div class="form-row">
-          <label>Scenario File Path</label>
+          <label>Scenario File Path <span class="tt" data-tip="Full path to the Excel (.xlsx) file containing your scenario table. Use Download Template to get a pre-filled header row. Each data row is one simulation scenario.">?</span></label>
           <input type="text" id="scenario-file-path" placeholder="C:\scenarios\my_scenarios.xlsx" />
-        </div>
-        <div class="form-row">
-          <label>Sheet Name</label>
-          <input type="text" id="scenario-sheet-name" placeholder="Sheet1" />
         </div>
       </div>
     </div>
@@ -775,15 +822,15 @@
     <!-- ── SECTION 4 · OUTPUT VARIABLES ───────────────────────── -->
     <div class="section-card" id="sec-outputs">
       <div class="section-header" onclick="toggleSection('sec-outputs')">
-        <span class="sec-num">04</span>
         <h3>Output Variables</h3>
         <span class="toggle-icon">▾</span>
       </div>
       <div class="section-body">
         <div class="info-box">
-          <strong>Attribute</strong>: read a scalar attribute after solving.<br/>
-          <strong>Timeseries</strong>: extract a metric from the dynamic result (ElmRes).<br/>
-          <strong>Custom Calculation</strong>: user-defined Python function referencing other outputs.
+          <strong>Attribute</strong>: read a scalar result attribute from a PF element after solving (obj.GetAttribute).<br/>
+          <strong>Timeseries</strong>: extract a scalar metric from the dynamic result file (ElmRes). Requires a dynamic study type.<br/>
+          <strong>Custom Calculation</strong>: user-defined Python function that can reference other input/output variable values.<br/>
+          Variable names must be unique across <em>all</em> input and output variables.
         </div>
         <div id="output-vars-container"></div>
         <div class="btn-row">
@@ -795,29 +842,27 @@
     <!-- ── SECTION 6 · OPTIMISATION SETTINGS ─────────────────── -->
     <div class="section-card cond-hidden" id="sec-optim">
       <div class="section-header" onclick="toggleSection('sec-optim')">
-        <span class="sec-num">05</span>
         <h3>Optimisation Settings</h3>
         <span class="toggle-icon">▾</span>
       </div>
       <div class="section-body">
         <div class="form-row">
-          <label>Sense</label>
+          <label>Sense <span class="tt" data-tip="Whether to minimise or maximise the objective output variable. For maximise, the generated code negates the value before passing it to the algorithm (standard convention for minimisers).">?</span></label>
           <select id="optim-sense">
             <option value="minimise">Minimise</option>
             <option value="maximise">Maximise</option>
           </select>
         </div>
         <div class="form-row">
-          <label>Objective</label>
+          <label>Objective <span class="tt" data-tip="The output variable whose scalar value the algorithm optimises. Must be a single numeric scalar — not a timeseries raw or graph output. Define it first in the Output Variables section.">?</span></label>
           <div>
             <select id="optim-objective">
               <option value="">— select output variable —</option>
             </select>
-            <div class="hint">Must be exactly one output variable</div>
           </div>
         </div>
         <div class="form-row">
-          <label>Algorithm</label>
+          <label>Algorithm <span class="tt" data-tip="Placeholder: manual wiring — wire up evaluate_one_case() yourself. scipy_minimize: gradient-based L-BFGS-B (local). differential_evolution: global stochastic search (scipy). gp_minimize: Bayesian optimisation via scikit-optimize (pip install scikit-optimize).">?</span></label>
           <select id="optim-algorithm">
             <option value="placeholder">Placeholder (manual)</option>
             <option value="scipy_minimize">scipy_minimize</option>
@@ -826,11 +871,11 @@
           </select>
         </div>
         <div class="form-row">
-          <label>Max Iterations</label>
+          <label>Max Iterations <span class="tt" data-tip="Maximum number of algorithm iterations / function evaluations. More iterations improve solution quality but increase runtime. Typical values: 50–200 for gradient-based, 100–500 for evolutionary/Bayesian.">?</span></label>
           <input type="number" id="optim-max-iter" value="50" min="1" />
         </div>
         <hr class="divider" />
-        <div class="sub-label">Constraints</div>
+        <div class="sub-label">Constraints <span class="tt" data-tip="Soft inequality constraints. Violations are penalised by adding 1e6 to the objective value — they do not hard-stop the algorithm. Add constraints for outputs that must satisfy a bound (e.g. voltage >= 0.95 pu).">?</span></div>
         <div class="dyn-table-wrapper">
           <table class="dyn-table" id="constraint-table">
             <thead>
@@ -853,33 +898,32 @@
     <!-- ── SECTION 7 · ADDITIONAL CONFIG ──────────────────────── -->
     <div class="section-card" id="sec-addl">
       <div class="section-header" onclick="toggleSection('sec-addl')">
-        <span class="sec-num">06</span>
         <h3>Additional Config</h3>
         <span class="toggle-icon">▾</span>
       </div>
       <div class="section-body">
         <div class="checkbox-row">
           <input type="checkbox" id="iterate-study-cases" />
-          <label for="iterate-study-cases">Iterate through study cases</label>
+          <label for="iterate-study-cases">Iterate through study cases <span class="tt" data-tip="Loop over every study case found in the active project (project.GetContents('Study Cases')). Each study case is activated before the parameter sweep begins. Useful for N-1 contingency analysis across multiple system states.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="iterate-operating-scenarios" />
-          <label for="iterate-operating-scenarios">Iterate through operating scenarios</label>
+          <label for="iterate-operating-scenarios">Iterate through operating scenarios <span class="tt" data-tip="Loop over every operating scenario in the active project. Each scenario is activated (scenario.Activate()) before running. Combines with study case iteration if both are checked.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="use-progress-bar" checked />
-          <label for="use-progress-bar">Use progress bar (tqdm)</label>
+          <label for="use-progress-bar">Use progress bar (tqdm) <span class="tt" data-tip="Wrap the main loop with tqdm to show a live progress bar and ETA in the console. Requires: pip install tqdm. Disable if running in an environment that does not support ANSI terminal output.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="open-pf-window" />
-          <label for="open-pf-window">Open PowerFactory window</label>
+          <label for="open-pf-window">Open PowerFactory window <span class="tt" data-tip="Call app.Show() to make the PowerFactory GUI visible while the script runs. Useful during development and debugging. Call app.Hide() (default) for faster headless batch execution.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="save-intermediate" onchange="onSaveIntermediateChange()" />
-          <label for="save-intermediate">Save intermediate results every X minutes</label>
+          <label for="save-intermediate">Save intermediate results every X minutes <span class="tt" data-tip="Periodically flush partial results to a timestamped CSV during long runs. Prevents total data loss if the script crashes or PowerFactory locks up mid-sweep. Files are saved to the root output directory.">?</span></label>
         </div>
         <div id="row-save-interval" class="form-row cond-hidden">
-          <label>Interval (min)</label>
+          <label>Interval (min) <span class="tt" data-tip="How often to write the intermediate CSV. Lower values reduce data loss but add minor I/O overhead. Recommended: 10–30 min for multi-hour runs.">?</span></label>
           <input type="number" id="save-interval-minutes" value="30" min="1" />
         </div>
       </div>
@@ -936,6 +980,13 @@
      JAVASCRIPT — all logic
 ============================================================ -->
 <script>
+/* ================================================================
+   TOOLTIP HELPER
+================================================================ */
+function tip(text) {
+  return `<span class="tt" data-tip="${text.replace(/"/g, '&quot;')}">?</span>`;
+}
+
 /* ================================================================
    GLOBAL STATE — output variable counter, ace editors map
 ================================================================ */
@@ -1103,46 +1154,48 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
         <option value="timeseries" ${type==='timeseries'?'selected':''}>Timeseries</option>
         <option value="custom_calculation" ${type==='custom_calculation'?'selected':''}>Custom Calculation</option>
       </select>
+      ${tip('Attribute: read a scalar after solving via obj.GetAttribute. Timeseries: extract a metric from ElmRes (dynamic only). Custom Calculation: define your own Python function referencing other variable names.')}
       <input type="text" id="${id}-name" value="${data.name||''}" placeholder="output_name"
         style="flex:1;font-size:12px;padding:3px 8px;min-width:80px;" oninput="onOutputNameChange()" />
+      ${tip('Unique Python identifier for this output. Cannot share a name with any input variable or another output variable. Used as the column header in the results CSV.')}
       <button class="btn btn-ghost btn-icon btn-xs" title="Collapse" onclick="toggleOutputVar('${id}')" id="${id}-toggle" style="font-size:14px;flex-shrink:0;">▾</button>
       <button class="btn btn-remove btn-xs" onclick="removeOutputVar('${id}')">✕</button>
     </div>
     <div class="output-var-body" id="${id}-body">
       <!-- OBJECT (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-obj">
-        <label>Object</label>
+        <label>Object ${tip('PowerFactory object query passed to GetCalcRelevantObjects(). Examples: RENEWABLES-132kV(1).ElmTerm, Line1.ElmLne. For Attribute type this is the element to read from; for Timeseries it is the element whose result column is searched in ElmRes.')}</label>
         <input type="text" id="${id}-obj" value="${data.object_query||''}" placeholder="Element.ElmType" />
       </div>
       <!-- VARIABLE (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-var">
-        <label>Variable</label>
+        <label>Variable ${tip('The result variable name to read. For Attribute: e.g. m:THD, u:setp, c:loading — read via obj.GetAttribute(variable). For Timeseries: the variable recorded in ElmRes, e.g. m:u, c:loading — found via res.FindColumn(obj, variable).')}</label>
         <input type="text" id="${id}-var" value="${data.variable||''}" placeholder="m:THD" />
       </div>
       <!-- METRIC (hidden for attribute and custom_calculation) -->
       <div class="form-row ${(isAttr||isCust)?'cond-hidden':''}" id="${id}-row-metric">
-        <label>Metric</label>
+        <label>Metric ${tip('Scalar metric to extract from the timeseries signal. Maximum/Minimum use native ElmRes.FindMaxInColumn/FindMinInColumn (most efficient). All other metrics scan the column row-by-row using GetValue.')}</label>
         <select id="${id}-metric" onchange="onMetricChange('${id}')">
           ${metricOptions}
         </select>
       </div>
       <!-- THRESHOLD -->
       <div class="form-row ${!showThresh?'cond-hidden':''}" id="${id}-row-threshold">
-        <label>Threshold</label>
+        <label>Threshold ${tip('Numeric threshold for frequency/first_time metrics. frequency_above counts samples > threshold; frequency_below counts samples < threshold. first_time_above/below returns the first time the signal crosses the threshold.')}</label>
         <input type="number" id="${id}-threshold" value="${data.threshold||''}" step="any" placeholder="0.9" />
       </div>
       <!-- SETTLE PARAMS -->
       <div class="${!showSettle?'cond-hidden':''}" id="${id}-row-settle">
         <div class="form-row">
-          <label>Settle Band</label>
+          <label>Settle Band ${tip('Half-width of the ±band around the Reference Value. The signal must stay within [ref - band, ref + band] for the entire Hold Time to be considered settled.')}</label>
           <input type="number" id="${id}-settle-band" value="${data.settle_band||''}" step="any" placeholder="0.05" />
         </div>
         <div class="form-row">
-          <label>Hold Time (s)</label>
+          <label>Hold Time (s) ${tip('Minimum continuous duration (in seconds) that the signal must remain within the settle band before the settling time is declared.')}</label>
           <input type="number" id="${id}-settle-hold" value="${data.settle_hold_time||''}" step="any" placeholder="0.5" />
         </div>
         <div class="form-row">
-          <label>Reference Value</label>
+          <label>Reference Value ${tip('Target steady-state value (e.g. 1.0 pu for voltage). The settle band is centered on this value: [ref − band, ref + band].')}</label>
           <input type="number" id="${id}-settle-ref" value="${data.settle_reference_value||''}" step="any" placeholder="1.0" />
         </div>
       </div>
@@ -1150,12 +1203,19 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       <div class="${!isTs?'cond-hidden':''}" id="${id}-row-output-graph">
         <div class="checkbox-row" style="margin-top:4px;">
           <input type="checkbox" id="${id}-output-graph" ${data.output_graph?'checked':''} />
-          <label for="${id}-output-graph">Output graph (Time vs variable, saved as .png)</label>
+          <label for="${id}-output-graph">Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>) ${tip('Generates a matplotlib Time vs variable line plot for each scenario and saves it as a .png in the graph/ subfolder of your output directory. Requires matplotlib (pip install matplotlib).')}</label>
+        </div>
+      </div>
+      <!-- OUTPUT RAW CSV (timeseries only) -->
+      <div class="${!isTs?'cond-hidden':''}" id="${id}-row-output-raw">
+        <div class="checkbox-row" style="margin-bottom:4px;">
+          <input type="checkbox" id="${id}-output-raw" ${data.output_raw_csv?'checked':''} />
+          <label for="${id}-output-raw">Output raw data (time vs variable, saved as .csv in <code>{output_dir}/raw</code>) ${tip('Saves the full time-series column (time_s, variable_name) as a CSV file for each scenario in the raw/ subfolder. Useful for post-processing or importing into other tools.')}</label>
         </div>
       </div>
       <!-- CUSTOM FUNCTION -->
       <div class="${!isCust?'cond-hidden':''}" id="${id}-row-custom-fn">
-        <div class="sub-label" style="margin-top:8px;">Custom Function (must return exactly one scalar)</div>
+        <div class="sub-label" style="margin-top:8px;">Custom Function (must return exactly one scalar) ${tip('Define a Python function whose arguments are names of Input Variables or other Output Variables. The generator extracts argument values from the result row and calls this function automatically after each simulation.')}</div>
         <div class="hint" style="margin-bottom:6px;">Arguments must be names of defined <strong>Input Variables</strong> or other <strong>Output Variables</strong>.</div>
         <div class="ace-editor-container">
           <div class="ace-editor" id="${id}-ace"></div>
@@ -1176,8 +1236,9 @@ function onOutputTypeChange(id) {
   document.getElementById(`${id}-row-var`)?.classList.toggle('cond-hidden', isCust);
   // Show/hide metric (hidden for attribute and custom_calculation)
   document.getElementById(`${id}-row-metric`)?.classList.toggle('cond-hidden', isAttr || isCust);
-  // Show/hide output graph (timeseries only)
+  // Show/hide output graph and raw CSV (timeseries only)
   document.getElementById(`${id}-row-output-graph`)?.classList.toggle('cond-hidden', !isTs);
+  document.getElementById(`${id}-row-output-raw`)?.classList.toggle('cond-hidden', !isTs);
   // Show/hide custom fn
   document.getElementById(`${id}-row-custom-fn`)?.classList.toggle('cond-hidden', !isCust);
 
@@ -1252,10 +1313,11 @@ function getOutputVars() {
     const settle_hold = document.getElementById(`${id}-settle-hold`)?.value?.trim() || '';
     const settle_ref  = document.getElementById(`${id}-settle-ref`)?.value?.trim() || '';
     const customFn = aceEditors[id] ? aceEditors[id].getValue() : '';
-    const output_graph = document.getElementById(`${id}-output-graph`)?.checked || false;
+    const output_graph   = document.getElementById(`${id}-output-graph`)?.checked || false;
+    const output_raw_csv = document.getElementById(`${id}-output-raw`)?.checked || false;
     return { id, type, name, object_query: obj, variable: varN, metric, threshold,
              settle_band, settle_hold_time: settle_hold, settle_reference_value: settle_ref,
-             customFn, output_graph };
+             customFn, output_graph, output_raw_csv };
   });
 }
 
@@ -1350,7 +1412,6 @@ function readConfig() {
     },
     customMode: {
       scenarioFilePath: document.getElementById('scenario-file-path').value.trim(),
-      sheetName:        document.getElementById('scenario-sheet-name').value.trim(),
     },
     additionalConfig: {
       iterateStudyCases:        document.getElementById('iterate-study-cases').checked,
@@ -1400,7 +1461,6 @@ function loadConfig(cfg) {
 
   const cm = cfg.customMode || {};
   document.getElementById('scenario-file-path').value  = cm.scenarioFilePath || '';
-  document.getElementById('scenario-sheet-name').value = cm.sheetName || '';
 
   const ac = cfg.additionalConfig || {};
   document.getElementById('iterate-study-cases').checked         = !!ac.iterateStudyCases;
@@ -1428,9 +1488,36 @@ function validateConfig(cfg) {
   if (cfg.inputVariables.length === 0)  errors.push('At least one input variable is required.');
   if (cfg.outputVariables.length === 0) errors.push('At least one output variable is required.');
 
+  // ── Duplicate name detection across inputs AND outputs ────────────
+  const allInputNames  = cfg.inputVariables.map((iv, i) => iv.name || `input_${i}`);
+  const allOutputNames = cfg.outputVariables.map(ov => ov.name).filter(Boolean);
+
+  // Duplicates within input variables
+  const seenInputNames = new Set();
+  allInputNames.forEach((n, i) => {
+    if (seenInputNames.has(n)) errors.push(`Input variable #${i + 1}: Name "${n}" is already used by another input variable.`);
+    seenInputNames.add(n);
+  });
+
+  // Duplicates within output variables
+  const seenOutputNames = new Set();
+  allOutputNames.forEach((n, i) => {
+    if (seenOutputNames.has(n)) errors.push(`Output variable #${i + 1}: Name "${n}" is already used by another output variable.`);
+    seenOutputNames.add(n);
+  });
+
+  // Cross-collision: input name used as output name or vice versa
+  const inputNameSet = new Set(allInputNames);
+  allOutputNames.forEach(n => {
+    if (inputNameSet.has(n)) {
+      errors.push(`Name "${n}" is used by both an input variable and an output variable. All variable names must be unique.`);
+    }
+  });
+  // ──────────────────────────────────────────────────────────────────
+
   cfg.inputVariables.forEach((iv, i) => {
-    if (!iv.object_query) errors.push(`Input variable #${i}: Object is required.`);
-    if (!iv.variable)     errors.push(`Input variable #${i}: Variable is required.`);
+    if (!iv.object_query) errors.push(`Input variable #${i + 1}: Object is required.`);
+    if (!iv.variable)     errors.push(`Input variable #${i + 1}: Variable is required.`);
   });
 
   cfg.outputVariables.forEach((ov, i) => {
@@ -1450,6 +1537,21 @@ function validateConfig(cfg) {
     if (ov.type === 'custom_calculation' && (!ov.customFn || ov.customFn.trim().length < 5))
       errors.push(`Output variable "${ov.name}": Custom function body is required.`);
   });
+
+  // ── Duplicate custom function name detection ───────────────────────
+  const seenFnNames = new Set();
+  cfg.outputVariables.forEach(ov => {
+    if (ov.type !== 'custom_calculation') return;
+    const firstLine = (ov.customFn || '').trim().split('\n')[0];
+    const defMatch  = firstLine.match(/^def\s+(\w+)\s*\(/);
+    if (!defMatch) return;
+    const fnName = defMatch[1];
+    if (seenFnNames.has(fnName)) {
+      errors.push(`Custom function name "${fnName}" is defined more than once. Each custom calculation must use a unique function name.`);
+    }
+    seenFnNames.add(fnName);
+  });
+  // ──────────────────────────────────────────────────────────────────
 
   if (init.problemType === 'optimisation') {
     if (!cfg.optimisation.sense)               errors.push('Optimisation: Sense is required.');
@@ -1551,8 +1653,9 @@ function sanitizeName(name) {
 // ── IMPORTS ──────────────────────────────────────────────────────
 function buildImports(cfg) {
   const init = cfg.initialisation;
-  const hasTimeseries = cfg.outputVariables.some(o => o.type === 'timeseries' || o.type === 'custom_calculation');
+  const hasTimeseries  = cfg.outputVariables.some(o => o.type === 'timeseries' || o.type === 'custom_calculation');
   const hasOutputGraph = cfg.outputVariables.some(o => o.type === 'timeseries' && o.output_graph);
+  const hasOutputRaw   = cfg.outputVariables.some(o => o.type === 'timeseries' && o.output_raw_csv);
   const apiPath = init.powerfactoryApiPath || 'POWERFACTORY_API_PATH_HERE';
   const username = init.username || 'USERNAME_HERE';
 
@@ -2035,17 +2138,13 @@ function buildTimeseriesGraphHelper(cfg) {
   const graphVars = cfg.outputVariables.filter(o => o.type === 'timeseries' && o.output_graph);
   if (graphVars.length === 0) return '';
 
-  const iterSC = cfg.additionalConfig.iterateStudyCases;
-  const iterOS = cfg.additionalConfig.iterateOperatingScenarios;
-
   return `
 # ── TIMESERIES GRAPH HELPER ──────────────────────────────────────
-def plot_timeseries_graph(app, spec, row, output_dir, context_title_parts):
+def plot_timeseries_graph(app, spec, row, graph_dir, context_title_parts):
     """
-    Plot timeseries data (Time vs variable) and save as .png.
-    Title composition:
-      context_title_parts: list of strings prefixed to the title (study case, op scenario)
-      Input variable name=value pairs are appended, then the output variable name.
+    Plot timeseries data (Time vs variable) and save as .png in graph_dir.
+    context_title_parts: list of strings prefixed to the chart title
+    (e.g. study case name, operating scenario name).
     """
     res = app.GetFromStudyCase("ElmRes")
     res.Load()
@@ -2070,25 +2169,79 @@ def plot_timeseries_graph(app, spec, row, output_dir, context_title_parts):
     finally:
         res.Release()
 
-    # Build title
     title_parts = list(context_title_parts)
     for s in input_specs:
         title_parts.append(f"{s['name']}={row.get(s['name'], '?')}")
     title_parts.append(spec["name"])
-    title = " - ".join(title_parts)
+    title = " | ".join(title_parts)
 
     plt.figure(figsize=(10, 6))
     plt.plot(time_values, data_values)
-    plt.title(title, fontsize=10)
+    plt.title(title, fontsize=9)
     plt.xlabel("Time (s)")
     plt.ylabel(spec["name"])
     plt.grid(True)
     plt.tight_layout()
-    graph_filename = f"{spec['name']}_{timestamp_string()}.png"
-    graph_path = os.path.join(output_dir, graph_filename)
+    safe_fname = spec["name"].replace("/", "-").replace(" ", "_")
+    graph_filename = f"{safe_fname}_{timestamp_string()}.png"
+    graph_path = os.path.join(graph_dir, graph_filename)
     plt.savefig(graph_path)
     plt.close()
     safe_print(f"Graph saved: {graph_path}")
+
+`;
+}
+
+// ── TIMESERIES RAW CSV HELPER ─────────────────────────────────
+function buildRawCsvHelper(cfg) {
+  const rawVars = cfg.outputVariables.filter(o => o.type === 'timeseries' && o.output_raw_csv);
+  if (rawVars.length === 0) return '';
+
+  return `
+# ── TIMESERIES RAW CSV HELPER ────────────────────────────────────
+def save_timeseries_raw_csv(app, spec, row, raw_dir, context_label_parts):
+    """
+    Save the full time vs variable timeseries as a CSV in raw_dir.
+    Columns: time_s, <spec name>.
+    context_label_parts: list of strings used to compose the filename
+    (e.g. study case name, operating scenario name, input values).
+    """
+    res = app.GetFromStudyCase("ElmRes")
+    res.Load()
+    try:
+        n_rows = res.GetNumberOfRows()
+        time_values = []
+        for r in range(n_rows):
+            err, t = res.GetValue(r, 0)
+            time_values.append(float(t) if err == 0 else float("nan"))
+
+        obj_results = app.GetCalcRelevantObjects(spec["object_query"])
+        obj_ref = obj_results[0] if obj_results else None
+        col = res.FindColumn(obj_ref, spec["variable"])
+        if col < 0:
+            safe_print(f"Raw CSV skipped: column not found for {spec['name']}")
+            return
+
+        data_values = []
+        for r in range(n_rows):
+            err, v = res.GetValue(r, col)
+            data_values.append(float(v) if err == 0 else float("nan"))
+    finally:
+        res.Release()
+
+    raw_df = pd.DataFrame({"time_s": time_values, spec["name"]: data_values})
+
+    label_parts = list(context_label_parts)
+    for s in input_specs:
+        val = row.get(s["name"], "x")
+        label_parts.append(f"{s['name']}_{val}")
+    label_parts.append(spec["name"])
+    safe_name = "_".join(str(p) for p in label_parts)
+    safe_name = safe_name.replace(" ", "_").replace("(", "").replace(")", "").replace("/", "-")
+    raw_filename = f"{safe_name}_{timestamp_string()}.csv"
+    raw_path = os.path.join(raw_dir, raw_filename)
+    raw_df.to_csv(raw_path, index=False)
+    safe_print(f"Raw CSV saved: {raw_path}")
 
 `;
 }
@@ -2125,13 +2278,15 @@ function buildCustomFunctionHelpers(cfg) {
     custom_results = {}
 `;
   customVars.forEach(ov => {
-    const safe = sanitizeName(ov.name);
-    // Extract argument names from first line of function def
+    // Extract the actual function name and arguments from the def line
     const firstLine = (ov.customFn || '').trim().split('\n')[0];
-    const argMatch = firstLine.match(/\(([^)]*)\)/);
-    const args = argMatch ? argMatch[1].split(',').map(a => a.trim()).filter(Boolean) : [];
+    const defMatch  = firstLine.match(/^def\s+(\w+)\s*\(([^)]*)\)/);
+    // Use the name as written by the user; fall back to sanitized output name only if no def line
+    const callee = defMatch ? defMatch[1] : sanitizeName(ov.name);
+    const rawArgs = defMatch ? defMatch[2] : '';
+    const args = rawArgs.split(',').map(a => a.trim()).filter(Boolean);
     const argStr = args.map(a => `base_result_row.get("${a}", None)`).join(', ');
-    code += `    custom_results["${ov.name}"] = ${safe}(${argStr})\n`;
+    code += `    custom_results["${ov.name}"] = ${callee}(${argStr})\n`;
   });
   code += '    return custom_results\n';
 
@@ -2161,12 +2316,11 @@ function buildInputSpecs(cfg) {
 
   if (problemType === 'custom') {
     const fp = cfg.customMode.scenarioFilePath || 'SCENARIO_FILE_PATH_HERE';
-    const sn = cfg.customMode.sheetName || 'Sheet1';
     code += `# Custom mode: load scenario file
 # Column headers: "Scenario" (first column), then each input variable name
+# Sheet name is always "Sheet1" (template generates a single sheet)
 scenario_file_path = r"${fp}"
-sheet_name = "${sn}"
-scenario_df = pd.read_excel(scenario_file_path, sheet_name=sheet_name)
+scenario_df = pd.read_excel(scenario_file_path, sheet_name="Sheet1")
 # Alternative for CSV: scenario_df = pd.read_csv(scenario_file_path)
 
 # Resolve PowerFactory objects (done once, reused each scenario row)
@@ -2211,7 +2365,8 @@ function buildOutputSpecs(cfg) {
         "object_query": "${ov.object_query}",
         "variable":     "${ov.variable}",
         "metric":       "${ov.metric}",
-        "output_graph": ${ov.output_graph ? 'True' : 'False'}`;
+        "output_graph":   ${ov.output_graph   ? 'True' : 'False'},
+        "output_raw_csv": ${ov.output_raw_csv ? 'True' : 'False'}`;
       if (ov.threshold) entry += `,\n        "threshold":    ${ov.threshold}`;
       if (ov.settle_band) entry += `,\n        "settle_band":  ${ov.settle_band}`;
       if (ov.settle_hold_time) entry += `,\n        "settle_hold_time": ${ov.settle_hold_time}`;
@@ -2232,10 +2387,15 @@ function buildOutputSpecs(cfg) {
 // ── OUTPUT DIR SETUP ──────────────────────────────────────────
 function buildOutputDirSetup(cfg) {
   const outDir = cfg.initialisation.outputDir || 'OUTPUT_DIR_HERE';
-  return `
+  const hasGraph = cfg.outputVariables.some(o => o.type === 'timeseries' && o.output_graph);
+  const hasRaw   = cfg.outputVariables.some(o => o.type === 'timeseries' && o.output_raw_csv);
+  let code = `
 output_dir = r"${outDir}"
 ensure_output_dir(output_dir)
 `;
+  if (hasGraph) code += `graph_dir = os.path.join(output_dir, "graph")\nensure_output_dir(graph_dir)\n`;
+  if (hasRaw)   code += `raw_dir   = os.path.join(output_dir, "raw")\nensure_output_dir(raw_dir)\n`;
+  return code;
 }
 
 // ── RUN STUDY CALL (inline) ───────────────────────────────────
@@ -2254,21 +2414,36 @@ function buildGraphCalls(cfg, indent, hasIterSC, hasIterOS) {
   const graphVars = cfg.outputVariables.filter(o => o.type === 'timeseries' && o.output_graph);
   if (graphVars.length === 0) return '';
 
-  let code = `\n${indent}    # Timeseries graphs\n`;
+  let code = `\n${indent}    # Timeseries graphs (saved to graph_dir)\n`;
   code += `${indent}    _ctx_parts = []\n`;
   if (hasIterSC) code += `${indent}    _ctx_parts.append(study_case.loc_name)\n`;
   if (hasIterOS) code += `${indent}    _ctx_parts.append(op_scenario.loc_name)\n`;
   code += `${indent}    for _gspec in [s for s in output_specs if s["type"] == "timeseries" and s.get("output_graph")]:\n`;
-  code += `${indent}        plot_timeseries_graph(app, _gspec, row, output_dir, _ctx_parts)\n`;
+  code += `${indent}        plot_timeseries_graph(app, _gspec, row, graph_dir, _ctx_parts)\n`;
+  return code;
+}
+
+// ── RAW CSV CALLS INLINE ──────────────────────────────────────
+function buildRawCsvCalls(cfg, indent, hasIterSC, hasIterOS) {
+  const rawVars = cfg.outputVariables.filter(o => o.type === 'timeseries' && o.output_raw_csv);
+  if (rawVars.length === 0) return '';
+
+  let code = `\n${indent}    # Timeseries raw CSV (saved to raw_dir)\n`;
+  code += `${indent}    _raw_ctx = []\n`;
+  if (hasIterSC) code += `${indent}    _raw_ctx.append(study_case.loc_name)\n`;
+  if (hasIterOS) code += `${indent}    _raw_ctx.append(op_scenario.loc_name)\n`;
+  code += `${indent}    for _rspec in [s for s in output_specs if s["type"] == "timeseries" and s.get("output_raw_csv")]:\n`;
+  code += `${indent}        save_timeseries_raw_csv(app, _rspec, row, raw_dir, _raw_ctx)\n`;
   return code;
 }
 
 // ── PROBLEM LOOP BODY ─────────────────────────────────────────
 function buildProblemLoop(cfg) {
   const pt = cfg.initialisation.problemType;
-  const hasTs  = cfg.outputVariables.some(o => o.type === 'timeseries');
-  const hasCust = cfg.outputVariables.some(o => o.type === 'custom_calculation');
+  const hasTs    = cfg.outputVariables.some(o => o.type === 'timeseries');
+  const hasCust  = cfg.outputVariables.some(o => o.type === 'custom_calculation');
   const hasGraph = cfg.outputVariables.some(o => o.type === 'timeseries' && o.output_graph);
+  const hasRaw   = cfg.outputVariables.some(o => o.type === 'timeseries' && o.output_raw_csv);
   const hasSave = cfg.additionalConfig.saveIntermediateEnabled;
   const hasBar  = cfg.additionalConfig.useProgressBar;
   const intervalMin = cfg.additionalConfig.saveIntermediateMinutes || 30;
@@ -2349,6 +2524,9 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     if (hasGraph) {
       pre += buildGraphCalls(cfg, indent, hasIterSC, hasIterOS);
     }
+    if (hasRaw) {
+      pre += buildRawCsvCalls(cfg, indent, hasIterSC, hasIterOS);
+    }
     pre += `\n${indent}    results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)\n`;
     pre += `${indent}    success_count += 1\n\n`;
     pre += `${indent}except Exception:\n`;
@@ -2387,6 +2565,9 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     }
     if (hasGraph) {
       pre += buildGraphCalls(cfg, indent, hasIterSC, hasIterOS);
+    }
+    if (hasRaw) {
+      pre += buildRawCsvCalls(cfg, indent, hasIterSC, hasIterOS);
     }
     pre += `\n${indent}    results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)\n`;
     pre += `${indent}    success_count += 1\n\n`;
@@ -2451,11 +2632,17 @@ def evaluate_one_case(param_values):
       pre += `    row.update(evaluate_custom_calculations(row))\n`;
     }
     if (hasGraph) {
-      // In optimisation mode, no study/op scenario iteration in evaluate_one_case
-      pre += `\n    # Timeseries graphs\n`;
+      // In optimisation mode there is no study/op scenario iteration context
+      pre += `\n    # Timeseries graphs (saved to graph_dir)\n`;
       pre += `    _ctx_parts = []\n`;
       pre += `    for _gspec in [s for s in output_specs if s["type"] == "timeseries" and s.get("output_graph")]:\n`;
-      pre += `        plot_timeseries_graph(app, _gspec, row, output_dir, _ctx_parts)\n`;
+      pre += `        plot_timeseries_graph(app, _gspec, row, graph_dir, _ctx_parts)\n`;
+    }
+    if (hasRaw) {
+      pre += `\n    # Timeseries raw CSV (saved to raw_dir)\n`;
+      pre += `    _raw_ctx = []\n`;
+      pre += `    for _rspec in [s for s in output_specs if s["type"] == "timeseries" and s.get("output_raw_csv")]:\n`;
+      pre += `        save_timeseries_raw_csv(app, _rspec, row, raw_dir, _raw_ctx)\n`;
     }
     pre += `
     results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)
@@ -2587,6 +2774,7 @@ function generateCode() {
   const sec6_studyhelper = buildStudyHelper(cfg);
   const sec7_elmres      = buildElmResHelpers(cfg);
   const sec7b_graphhelper = buildTimeseriesGraphHelper(cfg);
+  const sec7c_rawhelper   = buildRawCsvHelper(cfg);
   const sec8_customfn    = buildCustomFunctionHelpers(cfg);
   const sec9_outdir      = buildOutputDirSetup(cfg);
   const sec10_inputspecs = buildInputSpecs(cfg);
@@ -2600,7 +2788,7 @@ function generateCode() {
     const sections = [
       sec1_imports + sec2_prep,
       sec3_projsel + sec4_checks,
-      sec5_helpers + sec6_studyhelper + sec7_elmres + sec7b_graphhelper + sec8_customfn,
+      sec5_helpers + sec6_studyhelper + sec7_elmres + sec7b_graphhelper + sec7c_rawhelper + sec8_customfn,
       sec9_outdir + sec10_inputspecs,
       sec11_outspecs,
       sec12_loop,
@@ -2618,6 +2806,7 @@ function generateCode() {
       sec6_studyhelper,
       sec7_elmres,
       sec7b_graphhelper,
+      sec7c_rawhelper,
       sec8_customfn,
       sec9_outdir,
       sec10_inputspecs,
@@ -2688,7 +2877,7 @@ function downloadCustomTemplate() {
     const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
     ws['!cols'] = headers.map(h => ({ wch: Math.max(String(h).length + 4, 12) }));
     const wb = XLSX.utils.book_new();
-    const sheetName = (document.getElementById('scenario-sheet-name').value.trim() || 'Sheet1').substring(0, 31);
+    const sheetName = 'Sheet1';
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
     XLSX.writeFile(wb, 'scenario_template.xlsx');
   } else {
@@ -2733,7 +2922,7 @@ function resetForm() {
     inputVariables: [],
     outputVariables: [],
     optimisation: { sense:'minimise', objectiveOutputName:'', algorithm:'placeholder', maxIterations:50, constraints:[] },
-    customMode: { scenarioFilePath:'', sheetName:'' },
+    customMode: { scenarioFilePath:'' },
     additionalConfig: { iterateStudyCases:false, iterateOperatingScenarios:false, useProgressBar:true, openPowerFactoryWindow:false, saveIntermediateEnabled:false, saveIntermediateMinutes:30 }
   });
   window._generatedCode = '';
