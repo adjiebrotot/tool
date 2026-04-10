@@ -42,6 +42,8 @@ p,.muted{color:var(--muted);line-height:1.55;margin:0;}
 .controls::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-theme:hover{border-color:var(--accent);color:var(--text);}
+.btn-back{text-decoration:none;display:inline-flex;align-items:center;}
+.header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
 .ctrl-tabs{display:flex;border-bottom:1px solid var(--border);}
 .ctrl-tab{flex:1;padding:13px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent);}
@@ -165,7 +167,10 @@ body.light #globalTooltip::after{border-top-color:#fff;}
     <h1>💸 Finance vs Cash Purchase</h1>
     <p>Compare paying in full versus financing and investing unused cash at the risk-free rate.</p>
   </div>
-  <button class="btn-theme" id="themeToggle">☀️ Light</button>
+  <div class="header-right">
+    <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Catalogue</a>
+    <button class="btn-theme" id="themeToggle">☀️ Light</button>
+  </div>
 </section>
 
 <section class="layout">

@@ -57,6 +57,7 @@ body{margin:0;font-family:'DM Sans',Inter,system-ui,-apple-system,sans-serif;col
 .header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-theme:hover{border-color:var(--accent);color:var(--text);}
+.btn-back{text-decoration:none;display:inline-flex;align-items:center;}
 .layout{display:grid;grid-template-columns:380px minmax(0,1fr);gap:18px;}
 .controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;}
 .controls::-webkit-scrollbar{width:0;height:0;}
@@ -208,6 +209,7 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
     <p>Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.</p>
   </div>
   <div class="header-right">
+    <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Catalogue</a>
     <button class="btn-theme" id="themeToggle">☀️ Light</button>
   </div>
 </section>
