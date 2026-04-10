@@ -1,0 +1,2425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PowerFactory Script Generator</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+<!-- Ace.js for Python syntax highlighting in custom function editors -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js"></script>
+<!-- Highlight.js for code preview -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+  /* =====================================================================
+     DESIGN: Industrial/Technical — dark sidebar, steel-toned panels,
+     monospace accents. Built for engineers, not marketers.
+  ===================================================================== */
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg:        #0f1117;
+    --surface:   #181d27;
+    --card:      #1e2535;
+    --border:    #2a3347;
+    --accent:    #3d8ef0;
+    --accent2:   #1fcf9a;
+    --danger:    #e05252;
+    --warn:      #e0a233;
+    --text:      #d4daf0;
+    --muted:     #7a86a0;
+    --label:     #a0adc0;
+    --highlight: #232d44;
+    --mono:      'IBM Plex Mono', monospace;
+    --sans:      'IBM Plex Sans', sans-serif;
+    --radius:    6px;
+    --shadow:    0 2px 12px rgba(0,0,0,0.4);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── TOP BAR ─────────────────────────────────────────────────────── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  header .logo {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  header .logo span { color: var(--accent2); }
+
+  #mode-banner {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .badge {
+    background: var(--highlight);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── LAYOUT ──────────────────────────────────────────────────────── */
+  .layout {
+    display: grid;
+    grid-template-columns: 540px 1fr;
+    height: calc(100vh - 56px);
+    overflow: hidden;
+  }
+  .left-pane {
+    overflow-y: auto;
+    padding: 20px 20px 40px;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+  }
+  .right-pane {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  /* ── SECTION CARDS ───────────────────────────────────────────────── */
+  .section-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .section-header .sec-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    min-width: 22px;
+  }
+  .section-header h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+  .section-header .toggle-icon {
+    color: var(--muted);
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+  .section-header.collapsed .toggle-icon { transform: rotate(-90deg); }
+  .section-body {
+    padding: 16px;
+  }
+  .section-body.hidden { display: none; }
+
+  /* ── FORM ELEMENTS ───────────────────────────────────────────────── */
+  .form-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    align-items: start;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .form-row.full { grid-template-columns: 1fr; }
+  label {
+    font-size: 12px;
+    color: var(--label);
+    padding-top: 7px;
+    font-weight: 500;
+  }
+  input[type="text"], input[type="number"], select, textarea {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 6px 10px;
+    width: 100%;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+  input.error, select.error { border-color: var(--danger) !important; }
+
+  select option { background: var(--card); }
+
+  .hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .checkbox-row label {
+    padding-top: 0;
+    cursor: pointer;
+    color: var(--text);
+  }
+
+  /* ── DYNAMIC TABLES ──────────────────────────────────────────────── */
+  .dyn-table-wrapper { overflow-x: auto; }
+  .dyn-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 500px;
+  }
+  .dyn-table th {
+    background: var(--surface);
+    color: var(--label);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .dyn-table td {
+    padding: 5px 4px;
+    vertical-align: top;
+    border-bottom: 1px solid rgba(42,51,71,0.5);
+  }
+  .dyn-table td input,
+  .dyn-table td select {
+    padding: 5px 6px;
+    font-size: 12px;
+    width: 100%;
+    min-width: 60px;
+  }
+  .dyn-table td.td-action {
+    width: 36px;
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  /* ── BUTTONS ─────────────────────────────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 14px;
+    transition: opacity 0.15s, background 0.15s;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary   { background: var(--accent);  color: #fff; }
+  .btn-success   { background: var(--accent2); color: #0f1117; }
+  .btn-danger    { background: var(--danger);  color: #fff; }
+  .btn-ghost     { background: var(--highlight); color: var(--text); border: 1px solid var(--border); }
+  .btn-warn      { background: var(--warn);    color: #0f1117; }
+  .btn-xs        { padding: 3px 8px; font-size: 11px; }
+  .btn-icon      { width: 28px; height: 28px; padding: 0; justify-content: center; font-size: 14px; }
+  .btn-remove    { background: rgba(224,82,82,0.12); color: var(--danger); border: 1px solid rgba(224,82,82,0.3); }
+  .btn-remove:hover { background: var(--danger); color: #fff; }
+
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  /* ── RIGHT PANE ──────────────────────────────────────────────────── */
+  .right-toolbar {
+    padding: 12px 16px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .right-toolbar .pane-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-right: auto;
+  }
+
+  #code-preview-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+  }
+  #code-preview {
+    margin: 0;
+    padding: 16px 20px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    background: #11151f !important;
+    min-height: 100%;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  #code-preview code {
+    font-family: inherit;
+    background: none !important;
+    padding: 0;
+  }
+  .hljs { background: transparent !important; }
+
+  .placeholder-msg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--muted);
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .placeholder-msg .big { font-size: 36px; }
+
+  /* ── VALIDATION ERRORS ───────────────────────────────────────────── */
+  #validation-errors {
+    display: none;
+    background: rgba(224,82,82,0.1);
+    border: 1px solid rgba(224,82,82,0.4);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+  #validation-errors h4 {
+    color: var(--danger);
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  #validation-errors ul {
+    list-style: none;
+    padding: 0;
+  }
+  #validation-errors ul li {
+    font-size: 12px;
+    color: #e08888;
+    padding: 2px 0;
+  }
+  #validation-errors ul li::before { content: "✕ "; }
+
+  /* ── CUSTOM FUNCTION ACE EDITOR ──────────────────────────────────── */
+  .ace-editor-container {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .ace-editor {
+    width: 100%;
+    height: 120px;
+    font-size: 12px;
+  }
+
+  /* ── CONDITIONAL SHOW/HIDE ───────────────────────────────────────── */
+  .cond-hidden { display: none !important; }
+
+  /* ── SCROLLBAR ───────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* ── COPY TOAST ──────────────────────────────────────────────────── */
+  #copy-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--accent2);
+    color: #0f1117;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  #copy-toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ── OUTPUT ROWS WITH CONDITIONAL FIELDS ─────────────────────────── */
+  .output-row-extra {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    margin-top: 6px;
+    font-size: 12px;
+  }
+  .output-row-extra .form-row { margin-bottom: 6px; }
+  .output-row-extra label { font-size: 11px; }
+
+  /* Separator */
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 12px 0;
+  }
+
+  .sub-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 8px;
+    margin-top: 4px;
+  }
+
+  /* ── INFO BOX ────────────────────────────────────────────────────── */
+  .info-box {
+    background: rgba(61,142,240,0.08);
+    border: 1px solid rgba(61,142,240,0.25);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    font-size: 11.5px;
+    color: #8ab4e8;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  /* ── OUTPUT VAR CONTAINER ────────────────────────────────────────── */
+  .output-var-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .output-var-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.2);
+    border-bottom: 1px solid var(--border);
+  }
+  .output-var-header .ov-index {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 20px;
+  }
+  .output-var-body { padding: 10px 12px; }
+
+  /* Constraint table */
+  #constraint-table { margin-top: 0; }
+</style>
+</head>
+<body>
+
+<!-- TOP HEADER -->
+<header>
+  <div class="logo">⚡ PowerFactory Scripter - Help you automate PF simulations. Because why not.</div>
+  <div id="mode-banner">
+    <span class="badge" id="badge-problem">Brute Force</span>
+    <span class="badge" id="badge-study">Steady State</span>
+    <span class="badge" id="badge-style">Python File</span>
+  </div>
+</header>
+
+<!-- TOAST -->
+<div id="copy-toast">Copied to clipboard!</div>
+
+<!-- MAIN LAYOUT -->
+<div class="layout">
+
+  <!-- ============================================================
+       LEFT PANE — all input forms
+  ============================================================ -->
+  <div class="left-pane">
+
+    <!-- Validation errors -->
+    <div id="validation-errors">
+      <h4>Validation Errors</h4>
+      <ul id="validation-list"></ul>
+    </div>
+
+    <!-- ── SECTION 1 · INITIALISATION ──────────────────────────── -->
+    <div class="section-card" id="sec-init">
+      <div class="section-header" onclick="toggleSection('sec-init')">
+        <span class="sec-num">01</span>
+        <h3>Initialisation</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="form-row">
+          <label>API Path</label>
+          <div>
+            <input type="text" id="pf-api-path" placeholder="C:\Program Files\DIgSILENT\PowerFactory 2022 SP1\Python\3.8" />
+            <div class="hint">Path to the PowerFactory Python API directory</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Username</label>
+          <input type="text" id="pf-username" placeholder="USERNAME_HERE" />
+        </div>
+        <div class="form-row">
+          <label>Output Directory</label>
+          <div>
+            <input type="text" id="output-dir" placeholder="C:\Users\user\results" />
+            <div class="hint">Directory where CSV results will be saved</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Problem Type</label>
+          <select id="problem-type" onchange="onProblemTypeChange()">
+            <option value="brute_force">Brute Force</option>
+            <option value="optimisation">Optimisation</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Study Type</label>
+          <select id="study-type" onchange="onStudyTypeChange()">
+            <option value="steady_state">Steady State</option>
+            <option value="dynamic_rms">Dynamic RMS</option>
+            <option value="dynamic_emt">Dynamic EMT</option>
+            <option value="harmonic">Harmonic</option>
+          </select>
+        </div>
+        <div class="form-row" id="row-tstop" style="display:none">
+          <label>Stop Time (s)</label>
+          <div>
+            <input type="number" id="tstop" value="20" step="0.01" min="0" />
+            <div class="hint">Simulation stop time for dynamic studies</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Coding Style</label>
+          <select id="coding-style">
+            <option value="python_file">Python File</option>
+            <option value="notebook">Notebook Style</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 2 · PROJECT / SELECTION CONFIG ──────────────── -->
+    <div class="section-card" id="sec-proj">
+      <div class="section-header" onclick="toggleSection('sec-proj')">
+        <span class="sec-num">02</span>
+        <h3>Project / Selection Config</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="info-box">
+          Python file style uses terminal <code>input()</code> prompts if indices are omitted.
+          Notebook style leaves assignment lines editable inline.
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="use-project-folder" onchange="onProjectFolderToggle()" />
+          <label for="use-project-folder">Use project folder first</label>
+        </div>
+        <div id="row-folder-index" class="form-row cond-hidden">
+          <label>Folder Index</label>
+          <input type="number" id="project-folder-index" value="0" min="0" />
+        </div>
+        <div class="form-row">
+          <label>Project Index</label>
+          <div>
+            <input type="number" id="project-index" placeholder="(leave blank for prompt)" min="0" />
+            <div class="hint">Leave blank to use interactive terminal prompt in generated code</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 3 · INPUT VARIABLES ────────────────────────── -->
+    <div class="section-card" id="sec-inputs">
+      <div class="section-header" onclick="toggleSection('sec-inputs')">
+        <span class="sec-num">03</span>
+        <h3>Input Variables</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="info-box">
+          Define each parameter to vary. <strong>Step Size</strong> = increment value (not number of steps).<br/>
+          For Custom mode these define variable names; values come from the scenario file.
+        </div>
+        <div class="dyn-table-wrapper">
+          <table class="dyn-table" id="input-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Object Query</th>
+                <th>Variable</th>
+                <th>Lower Bound</th>
+                <th>Upper Bound</th>
+                <th>Step Size</th>
+                <th>Data Type</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="input-tbody"></tbody>
+          </table>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-xs" onclick="addInputRow()">+ Add Input Variable</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 4 · CUSTOM MODE CONFIG ─────────────────────── -->
+    <div class="section-card cond-hidden" id="sec-custom">
+      <div class="section-header" onclick="toggleSection('sec-custom')">
+        <span class="sec-num">04</span>
+        <h3>Custom Mode Config</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="info-box">
+          Each <strong>row</strong> in the spreadsheet is one scenario.<br/>
+          Each <strong>column</strong> corresponds to an input variable, named as <code>Object.Variable</code>.<br/>
+          Example columns: <code>ElementA.VariableA</code>, <code>ElementA.VariableB</code>
+        </div>
+        <div class="form-row">
+          <label>Scenario File Path</label>
+          <input type="text" id="scenario-file-path" placeholder="C:\scenarios\my_scenarios.xlsx" />
+        </div>
+        <div class="form-row">
+          <label>Sheet Name</label>
+          <input type="text" id="scenario-sheet-name" placeholder="Sheet1" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 5 · OUTPUT VARIABLES ───────────────────────── -->
+    <div class="section-card" id="sec-outputs">
+      <div class="section-header" onclick="toggleSection('sec-outputs')">
+        <span class="sec-num">05</span>
+        <h3>Output Variables</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="info-box">
+          <strong>Attribute</strong>: read a scalar attribute after solving.<br/>
+          <strong>Timeseries</strong>: extract a metric from the dynamic result (ElmRes).<br/>
+          <strong>Custom Calculation</strong>: user-defined Python function referencing other outputs.
+        </div>
+        <div id="output-vars-container"></div>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-xs" onclick="addOutputVar()">+ Add Output Variable</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 6 · OPTIMISATION SETTINGS ─────────────────── -->
+    <div class="section-card cond-hidden" id="sec-optim">
+      <div class="section-header" onclick="toggleSection('sec-optim')">
+        <span class="sec-num">06</span>
+        <h3>Optimisation Settings</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="form-row">
+          <label>Sense</label>
+          <select id="optim-sense">
+            <option value="minimise">Minimise</option>
+            <option value="maximise">Maximise</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Objective</label>
+          <div>
+            <select id="optim-objective">
+              <option value="">— select output variable —</option>
+            </select>
+            <div class="hint">Must be exactly one output variable</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Algorithm</label>
+          <select id="optim-algorithm">
+            <option value="placeholder">Placeholder (manual)</option>
+            <option value="scipy_minimize">scipy_minimize</option>
+            <option value="differential_evolution">differential_evolution</option>
+            <option value="gp_minimize">gp_minimize</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Max Iterations</label>
+          <input type="number" id="optim-max-iter" value="50" min="1" />
+        </div>
+        <hr class="divider" />
+        <div class="sub-label">Constraints</div>
+        <div class="dyn-table-wrapper">
+          <table class="dyn-table" id="constraint-table">
+            <thead>
+              <tr>
+                <th>Output Variable</th>
+                <th>Operator</th>
+                <th>Value</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="constraint-tbody"></tbody>
+          </table>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-xs" onclick="addConstraint()">+ Add Constraint</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 7 · ADDITIONAL CONFIG ──────────────────────── -->
+    <div class="section-card" id="sec-addl">
+      <div class="section-header" onclick="toggleSection('sec-addl')">
+        <span class="sec-num">07</span>
+        <h3>Additional Config</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="checkbox-row">
+          <input type="checkbox" id="iterate-study-cases" />
+          <label for="iterate-study-cases">Iterate through study cases</label>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="iterate-operating-scenarios" />
+          <label for="iterate-operating-scenarios">Iterate through operating scenarios</label>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="use-progress-bar" checked />
+          <label for="use-progress-bar">Use progress bar (tqdm)</label>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="open-pf-window" />
+          <label for="open-pf-window">Open PowerFactory window</label>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="save-intermediate" onchange="onSaveIntermediateChange()" />
+          <label for="save-intermediate">Save intermediate results every X minutes</label>
+        </div>
+        <div id="row-save-interval" class="form-row cond-hidden">
+          <label>Interval (min)</label>
+          <input type="number" id="save-interval-minutes" value="30" min="1" />
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end left-pane -->
+
+  <!-- ============================================================
+       RIGHT PANE — code preview + controls
+  ============================================================ -->
+  <div class="right-pane">
+    <div class="right-toolbar">
+      <span class="pane-title">▸ Generated Code Preview</span>
+      <button class="btn btn-primary" onclick="generateCode()">⚡ Generate Code</button>
+      <button class="btn btn-success" onclick="copyCode()">⎘ Copy</button>
+      <button class="btn btn-ghost" onclick="downloadPy()">↓ .py</button>
+      <button class="btn btn-ghost" onclick="downloadTxt()">↓ .txt</button>
+      <button class="btn btn-ghost" onclick="exportConfigJSON()">↑ Export JSON</button>
+      <label class="btn btn-ghost" style="cursor:pointer; position:relative;">
+        ↓ Import JSON
+        <input type="file" accept=".json" id="import-json-file" onchange="importConfigJSON(event)" style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;top:0;left:0;" />
+      </label>
+      <button class="btn btn-danger btn-xs" onclick="resetForm()">↺ Reset</button>
+    </div>
+    <div id="code-preview-wrapper">
+      <pre id="code-preview"><code class="language-python">
+<div class="placeholder-msg">
+  <span class="big">⚡</span>
+  <span>Configure inputs and click <strong>Generate Code</strong></span>
+</div>
+      </code></pre>
+    </div>
+  </div>
+
+</div><!-- end layout -->
+
+<!-- ============================================================
+     JAVASCRIPT — all logic
+============================================================ -->
+<script>
+/* ================================================================
+   GLOBAL STATE — output variable counter, ace editors map
+================================================================ */
+let outputVarCounter = 0;
+const aceEditors = {}; // keyed by output var id
+
+/* ================================================================
+   SECTION COLLAPSE TOGGLE
+================================================================ */
+function toggleSection(id) {
+  const card = document.getElementById(id);
+  const header = card.querySelector('.section-header');
+  const body = card.querySelector('.section-body');
+  const collapsed = header.classList.toggle('collapsed');
+  body.classList.toggle('hidden', collapsed);
+}
+
+/* ================================================================
+   REACTIVE UI UPDATES
+================================================================ */
+function onProblemTypeChange() {
+  const pt = document.getElementById('problem-type').value;
+  // Custom section
+  document.getElementById('sec-custom').classList.toggle('cond-hidden', pt !== 'custom');
+  // Optimisation section
+  document.getElementById('sec-optim').classList.toggle('cond-hidden', pt !== 'optimisation');
+  // Update badge
+  const labels = { brute_force: 'Brute Force', optimisation: 'Optimisation', custom: 'Custom' };
+  document.getElementById('badge-problem').textContent = labels[pt] || pt;
+  // Refresh objective dropdown when switching to optimisation
+  if (pt === 'optimisation') refreshObjectiveDropdown();
+}
+
+function onStudyTypeChange() {
+  const st = document.getElementById('study-type').value;
+  const isDynamic = st === 'dynamic_rms' || st === 'dynamic_emt';
+  document.getElementById('row-tstop').style.display = isDynamic ? 'grid' : 'none';
+  if (st === 'dynamic_emt') document.getElementById('tstop').value = 0.25;
+  else if (st === 'dynamic_rms') document.getElementById('tstop').value = 20;
+  const labels = { steady_state:'Steady State', dynamic_rms:'Dynamic RMS', dynamic_emt:'Dynamic EMT', harmonic:'Harmonic' };
+  document.getElementById('badge-study').textContent = labels[st] || st;
+}
+
+document.getElementById('coding-style').addEventListener('change', function() {
+  const labels = { python_file:'Python File', notebook:'Notebook' };
+  document.getElementById('badge-style').textContent = labels[this.value] || this.value;
+});
+
+function onProjectFolderToggle() {
+  const checked = document.getElementById('use-project-folder').checked;
+  document.getElementById('row-folder-index').classList.toggle('cond-hidden', !checked);
+}
+
+function onSaveIntermediateChange() {
+  const checked = document.getElementById('save-intermediate').checked;
+  document.getElementById('row-save-interval').classList.toggle('cond-hidden', !checked);
+}
+
+/* ================================================================
+   INPUT VARIABLE TABLE
+================================================================ */
+let inputRowCounter = 0;
+
+function addInputRow(data = {}) {
+  const idx = inputRowCounter++;
+  const tbody = document.getElementById('input-tbody');
+  const tr = document.createElement('tr');
+  tr.id = `input-row-${idx}`;
+  tr.innerHTML = `
+    <td style="color:var(--muted);font-family:var(--mono);font-size:11px;vertical-align:middle">${idx}</td>
+    <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="WFController.ElmDsl" /></td>
+    <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="K_droop" /></td>
+    <td><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" /></td>
+    <td><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" /></td>
+    <td><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" /></td>
+    <td>
+      <select id="iv-dtype-${idx}">
+        <option value="float" ${(data.dtype||'float')==='float'?'selected':''}>float</option>
+        <option value="int" ${data.dtype==='int'?'selected':''}>int</option>
+        <option value="str" ${data.dtype==='str'?'selected':''}>str</option>
+      </select>
+    </td>
+    <td class="td-action">
+      <button class="btn btn-remove btn-icon" title="Remove" onclick="removeRow('input-row-${idx}')">✕</button>
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function removeRow(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function getInputRows() {
+  const tbody = document.getElementById('input-tbody');
+  return Array.from(tbody.querySelectorAll('tr')).map(tr => {
+    const idx = tr.id.replace('input-row-', '');
+    return {
+      object_query: document.getElementById(`iv-obj-${idx}`)?.value?.trim() || '',
+      variable:     document.getElementById(`iv-var-${idx}`)?.value?.trim() || '',
+      lower:        document.getElementById(`iv-lb-${idx}`)?.value?.trim() || '0',
+      upper:        document.getElementById(`iv-ub-${idx}`)?.value?.trim() || '1',
+      step:         document.getElementById(`iv-step-${idx}`)?.value?.trim() || '1',
+      dtype:        document.getElementById(`iv-dtype-${idx}`)?.value || 'float',
+    };
+  });
+}
+
+/* ================================================================
+   OUTPUT VARIABLE ITEMS
+================================================================ */
+const METRICS = [
+  'maximum','minimum','mean','median',
+  'frequency_above','frequency_below',
+  'first_time_above','first_time_below','time_settle'
+];
+const THRESHOLD_METRICS = ['frequency_above','frequency_below','first_time_above','first_time_below'];
+const SETTLE_METRICS = ['time_settle'];
+
+function metricLabel(m) {
+  return m.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function addOutputVar(data = {}) {
+  const id = `ov-${outputVarCounter++}`;
+  const container = document.getElementById('output-vars-container');
+  const div = document.createElement('div');
+  div.className = 'output-var-item';
+  div.id = id;
+  const type = data.type || 'attribute';
+  div.innerHTML = buildOutputVarHTML(id, data, type);
+  container.appendChild(div);
+  // init ace if custom
+  if (type === 'custom_calculation') {
+    initAceEditor(id, data.customFn || '');
+  }
+  // refresh objective dropdown
+  if (document.getElementById('problem-type').value === 'optimisation') {
+    refreshObjectiveDropdown();
+  }
+}
+
+function buildOutputVarHTML(id, data = {}, type = 'attribute') {
+  const metricOptions = METRICS.map(m =>
+    `<option value="${m}" ${(data.metric||'')==m?'selected':''}>${metricLabel(m)}</option>`
+  ).join('');
+  const isAttr = type === 'attribute';
+  const isTs   = type === 'timeseries';
+  const isCust = type === 'custom_calculation';
+  const metric = data.metric || 'maximum';
+  const showThresh = THRESHOLD_METRICS.includes(metric);
+  const showSettle = metric === 'time_settle';
+
+  return `
+    <div class="output-var-header">
+      <span class="ov-index">OUT</span>
+      <select style="width:160px;font-size:12px;padding:3px 6px;" id="${id}-type" onchange="onOutputTypeChange('${id}')">
+        <option value="attribute" ${type==='attribute'?'selected':''}>Attribute</option>
+        <option value="timeseries" ${type==='timeseries'?'selected':''}>Timeseries</option>
+        <option value="custom_calculation" ${type==='custom_calculation'?'selected':''}>Custom Calculation</option>
+      </select>
+      <input type="text" id="${id}-name" value="${data.name||''}" placeholder="output_name"
+        style="flex:1;font-size:12px;padding:3px 8px;" oninput="onOutputNameChange()" />
+      <button class="btn btn-remove btn-xs" onclick="removeOutputVar('${id}')">✕ Remove</button>
+    </div>
+    <div class="output-var-body">
+      <div class="form-row">
+        <label>Object Query</label>
+        <input type="text" id="${id}-obj" value="${data.object_query||''}" placeholder="Element.ElmType" />
+      </div>
+      <div class="form-row">
+        <label>Variable</label>
+        <input type="text" id="${id}-var" value="${data.variable||''}" placeholder="m:THD" />
+      </div>
+      <!-- METRIC (hidden for attribute) -->
+      <div class="form-row ${isAttr?'cond-hidden':''}" id="${id}-row-metric">
+        <label>Metric</label>
+        <select id="${id}-metric" onchange="onMetricChange('${id}')">
+          ${metricOptions}
+        </select>
+      </div>
+      <!-- THRESHOLD -->
+      <div class="form-row ${(!showThresh||isAttr)?'cond-hidden':''}" id="${id}-row-threshold">
+        <label>Threshold</label>
+        <input type="number" id="${id}-threshold" value="${data.threshold||''}" step="any" placeholder="0.9" />
+      </div>
+      <!-- SETTLE PARAMS -->
+      <div class="${(!showSettle||isAttr)?'cond-hidden':''}" id="${id}-row-settle">
+        <div class="form-row">
+          <label>Settle Band</label>
+          <input type="number" id="${id}-settle-band" value="${data.settle_band||''}" step="any" placeholder="0.05" />
+        </div>
+        <div class="form-row">
+          <label>Hold Time (s)</label>
+          <input type="number" id="${id}-settle-hold" value="${data.settle_hold_time||''}" step="any" placeholder="0.5" />
+        </div>
+        <div class="form-row">
+          <label>Reference Value</label>
+          <input type="number" id="${id}-settle-ref" value="${data.settle_reference_value||''}" step="any" placeholder="1.0" />
+        </div>
+      </div>
+      <!-- CUSTOM FUNCTION -->
+      <div class="${!isCust?'cond-hidden':''}" id="${id}-row-custom-fn">
+        <div class="sub-label" style="margin-top:8px;">Custom Function (must return one scalar)</div>
+        <div class="hint" style="margin-bottom:6px;">Arguments must reference previously defined output variable names.</div>
+        <div class="ace-editor-container">
+          <div class="ace-editor" id="${id}-ace"></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function onOutputTypeChange(id) {
+  const type = document.getElementById(`${id}-type`).value;
+  const isAttr = type === 'attribute';
+  const isTs   = type === 'timeseries';
+  const isCust = type === 'custom_calculation';
+
+  // Show/hide metric
+  document.getElementById(`${id}-row-metric`)?.classList.toggle('cond-hidden', isAttr);
+  // Show/hide custom fn
+  document.getElementById(`${id}-row-custom-fn`)?.classList.toggle('cond-hidden', !isCust);
+
+  // Reinit ace if custom and not yet created
+  if (isCust && !aceEditors[id]) {
+    initAceEditor(id, '');
+  }
+
+  // Metric-based conditionals
+  const metric = document.getElementById(`${id}-metric`)?.value || '';
+  const showThresh = !isAttr && THRESHOLD_METRICS.includes(metric);
+  const showSettle = !isAttr && metric === 'time_settle';
+  document.getElementById(`${id}-row-threshold`)?.classList.toggle('cond-hidden', !showThresh);
+  document.getElementById(`${id}-row-settle`)?.classList.toggle('cond-hidden', !showSettle);
+
+  if (document.getElementById('problem-type').value === 'optimisation') refreshObjectiveDropdown();
+}
+
+function onMetricChange(id) {
+  const metric = document.getElementById(`${id}-metric`)?.value || '';
+  const showThresh = THRESHOLD_METRICS.includes(metric);
+  const showSettle = metric === 'time_settle';
+  document.getElementById(`${id}-row-threshold`)?.classList.toggle('cond-hidden', !showThresh);
+  document.getElementById(`${id}-row-settle`)?.classList.toggle('cond-hidden', !showSettle);
+}
+
+function onOutputNameChange() {
+  if (document.getElementById('problem-type').value === 'optimisation') refreshObjectiveDropdown();
+}
+
+function removeOutputVar(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+  if (aceEditors[id]) { aceEditors[id].destroy(); delete aceEditors[id]; }
+  if (document.getElementById('problem-type').value === 'optimisation') refreshObjectiveDropdown();
+}
+
+function initAceEditor(id, initialValue) {
+  setTimeout(() => {
+    const aceEl = document.getElementById(`${id}-ace`);
+    if (!aceEl) return;
+    const editor = ace.edit(aceEl);
+    editor.setTheme('ace/theme/tomorrow_night');
+    editor.session.setMode('ace/mode/python');
+    editor.setOptions({ showLineNumbers: true, tabSize: 4, useSoftTabs: true, fontSize: '12px' });
+    editor.setValue(initialValue || `def output_name(arg1, arg2):\n    return arg1 + arg2`, -1);
+    aceEditors[id] = editor;
+  }, 50);
+}
+
+function getOutputVars() {
+  const container = document.getElementById('output-vars-container');
+  const items = container.querySelectorAll('.output-var-item');
+  return Array.from(items).map(div => {
+    const id = div.id;
+    const type = document.getElementById(`${id}-type`)?.value || 'attribute';
+    const name = document.getElementById(`${id}-name`)?.value?.trim() || '';
+    const obj  = document.getElementById(`${id}-obj`)?.value?.trim() || '';
+    const varN = document.getElementById(`${id}-var`)?.value?.trim() || '';
+    const metric = document.getElementById(`${id}-metric`)?.value || '';
+    const threshold = document.getElementById(`${id}-threshold`)?.value?.trim() || '';
+    const settle_band = document.getElementById(`${id}-settle-band`)?.value?.trim() || '';
+    const settle_hold = document.getElementById(`${id}-settle-hold`)?.value?.trim() || '';
+    const settle_ref  = document.getElementById(`${id}-settle-ref`)?.value?.trim() || '';
+    const customFn = aceEditors[id] ? aceEditors[id].getValue() : '';
+    return { id, type, name, object_query: obj, variable: varN, metric, threshold,
+             settle_band, settle_hold_time: settle_hold, settle_reference_value: settle_ref, customFn };
+  });
+}
+
+/* ================================================================
+   CONSTRAINT TABLE
+================================================================ */
+let constraintCounter = 0;
+
+function addConstraint(data = {}) {
+  const idx = constraintCounter++;
+  const tbody = document.getElementById('constraint-tbody');
+  const tr = document.createElement('tr');
+  tr.id = `con-row-${idx}`;
+
+  // Build output var options
+  const outputVars = getOutputVars();
+  const options = outputVars.map(ov =>
+    `<option value="${ov.name}" ${data.output===ov.name?'selected':''}>${ov.name||'(unnamed)'}</option>`
+  ).join('');
+
+  tr.innerHTML = `
+    <td>
+      <select id="con-out-${idx}">
+        <option value="">— select —</option>
+        ${options}
+      </select>
+    </td>
+    <td>
+      <select id="con-op-${idx}">
+        <option value=">=" ${data.operator==='>='?'selected':''}>>=</option>
+        <option value="<=" ${data.operator==='<='?'selected':''}><=</option>
+        <option value="==" ${data.operator==='=='?'selected':''}>==</option>
+      </select>
+    </td>
+    <td><input type="number" id="con-val-${idx}" value="${data.value||''}" step="any" placeholder="0.95" /></td>
+    <td class="td-action">
+      <button class="btn btn-remove btn-icon" onclick="removeRow('con-row-${idx}')">✕</button>
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function getConstraints() {
+  const tbody = document.getElementById('constraint-tbody');
+  return Array.from(tbody.querySelectorAll('tr')).map(tr => {
+    const idx = tr.id.replace('con-row-','');
+    return {
+      output:   document.getElementById(`con-out-${idx}`)?.value || '',
+      operator: document.getElementById(`con-op-${idx}`)?.value || '>=',
+      value:    document.getElementById(`con-val-${idx}`)?.value?.trim() || '0',
+    };
+  });
+}
+
+function refreshObjectiveDropdown() {
+  const sel = document.getElementById('optim-objective');
+  const current = sel.value;
+  const outputVars = getOutputVars();
+  sel.innerHTML = '<option value="">— select output variable —</option>';
+  outputVars.forEach(ov => {
+    const opt = document.createElement('option');
+    opt.value = ov.name;
+    opt.textContent = ov.name || '(unnamed)';
+    if (ov.name === current) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+/* ================================================================
+   READ CONFIG FROM FORM
+================================================================ */
+function readConfig() {
+  const codingStyle = document.getElementById('coding-style').value;
+  document.getElementById('badge-style').textContent = codingStyle === 'python_file' ? 'Python File' : 'Notebook';
+  return {
+    initialisation: {
+      powerfactoryApiPath: document.getElementById('pf-api-path').value.trim(),
+      username:            document.getElementById('pf-username').value.trim(),
+      outputDir:           document.getElementById('output-dir').value.trim(),
+      problemType:         document.getElementById('problem-type').value,
+      studyType:           document.getElementById('study-type').value,
+      codingStyle:         codingStyle,
+      tstop:               document.getElementById('tstop').value.trim(),
+    },
+    projectSelection: {
+      useProjectFolder:    document.getElementById('use-project-folder').checked,
+      projectFolderIndex:  document.getElementById('project-folder-index').value.trim(),
+      projectIndex:        document.getElementById('project-index').value.trim(),
+    },
+    inputVariables:  getInputRows(),
+    outputVariables: getOutputVars(),
+    optimisation: {
+      sense:              document.getElementById('optim-sense').value,
+      objectiveOutputName: document.getElementById('optim-objective').value,
+      algorithm:          document.getElementById('optim-algorithm').value,
+      maxIterations:      document.getElementById('optim-max-iter').value,
+      constraints:        getConstraints(),
+    },
+    customMode: {
+      scenarioFilePath: document.getElementById('scenario-file-path').value.trim(),
+      sheetName:        document.getElementById('scenario-sheet-name').value.trim(),
+    },
+    additionalConfig: {
+      iterateStudyCases:        document.getElementById('iterate-study-cases').checked,
+      iterateOperatingScenarios:document.getElementById('iterate-operating-scenarios').checked,
+      useProgressBar:           document.getElementById('use-progress-bar').checked,
+      openPowerFactoryWindow:   document.getElementById('open-pf-window').checked,
+      saveIntermediateEnabled:  document.getElementById('save-intermediate').checked,
+      saveIntermediateMinutes:  document.getElementById('save-interval-minutes').value.trim(),
+    }
+  };
+}
+
+/* ================================================================
+   LOAD CONFIG INTO FORM
+================================================================ */
+function loadConfig(cfg) {
+  const init = cfg.initialisation || {};
+  document.getElementById('pf-api-path').value      = init.powerfactoryApiPath || '';
+  document.getElementById('pf-username').value      = init.username || '';
+  document.getElementById('output-dir').value       = init.outputDir || '';
+  document.getElementById('problem-type').value     = init.problemType || 'brute_force';
+  document.getElementById('study-type').value       = init.studyType || 'steady_state';
+  document.getElementById('coding-style').value     = init.codingStyle || 'python_file';
+  document.getElementById('tstop').value            = init.tstop || '20';
+
+  const ps = cfg.projectSelection || {};
+  document.getElementById('use-project-folder').checked  = !!ps.useProjectFolder;
+  document.getElementById('project-folder-index').value  = ps.projectFolderIndex || '';
+  document.getElementById('project-index').value         = ps.projectIndex || '';
+
+  // Input variables
+  document.getElementById('input-tbody').innerHTML = '';
+  inputRowCounter = 0;
+  (cfg.inputVariables || []).forEach(iv => addInputRow(iv));
+
+  // Output variables
+  document.getElementById('output-vars-container').innerHTML = '';
+  outputVarCounter = 0;
+  Object.keys(aceEditors).forEach(k => { aceEditors[k].destroy(); delete aceEditors[k]; });
+  (cfg.outputVariables || []).forEach(ov => addOutputVar(ov));
+
+  const opt = cfg.optimisation || {};
+  document.getElementById('optim-sense').value       = opt.sense || 'minimise';
+  document.getElementById('optim-algorithm').value   = opt.algorithm || 'placeholder';
+  document.getElementById('optim-max-iter').value    = opt.maxIterations || 50;
+  refreshObjectiveDropdown();
+  document.getElementById('optim-objective').value   = opt.objectiveOutputName || '';
+
+  document.getElementById('constraint-tbody').innerHTML = '';
+  constraintCounter = 0;
+  (opt.constraints || []).forEach(c => addConstraint(c));
+
+  const cm = cfg.customMode || {};
+  document.getElementById('scenario-file-path').value  = cm.scenarioFilePath || '';
+  document.getElementById('scenario-sheet-name').value = cm.sheetName || '';
+
+  const ac = cfg.additionalConfig || {};
+  document.getElementById('iterate-study-cases').checked         = !!ac.iterateStudyCases;
+  document.getElementById('iterate-operating-scenarios').checked = !!ac.iterateOperatingScenarios;
+  document.getElementById('use-progress-bar').checked           = ac.useProgressBar !== false;
+  document.getElementById('open-pf-window').checked             = !!ac.openPowerFactoryWindow;
+  document.getElementById('save-intermediate').checked          = !!ac.saveIntermediateEnabled;
+  document.getElementById('save-interval-minutes').value        = ac.saveIntermediateMinutes || 30;
+
+  onProblemTypeChange();
+  onStudyTypeChange();
+  onProjectFolderToggle();
+  onSaveIntermediateChange();
+}
+
+/* ================================================================
+   VALIDATION
+================================================================ */
+function validateConfig(cfg) {
+  const errors = [];
+  const init = cfg.initialisation;
+  if (!init.problemType) errors.push('Problem type is required.');
+  if (!init.studyType)   errors.push('Study type is required.');
+  if (!init.codingStyle) errors.push('Coding style is required.');
+
+  if (cfg.inputVariables.length === 0)  errors.push('At least one input variable is required.');
+  if (cfg.outputVariables.length === 0) errors.push('At least one output variable is required.');
+
+  cfg.inputVariables.forEach((iv, i) => {
+    if (!iv.object_query) errors.push(`Input variable #${i}: Object Query is required.`);
+    if (!iv.variable)     errors.push(`Input variable #${i}: Variable is required.`);
+  });
+
+  cfg.outputVariables.forEach((ov, i) => {
+    if (!ov.name) errors.push(`Output variable #${i}: Name is required.`);
+    if (!isPythonIdentifier(sanitizeName(ov.name)) && ov.name) {
+      errors.push(`Output variable #${i}: Name "${ov.name}" is not a valid Python identifier (will be sanitized).`);
+    }
+    if (!ov.object_query) errors.push(`Output variable #${i}: Object Query is required.`);
+    if (ov.type === 'timeseries' && THRESHOLD_METRICS.includes(ov.metric) && !ov.threshold)
+      errors.push(`Output variable "${ov.name}": Threshold is required for metric "${ov.metric}".`);
+    if (ov.type === 'timeseries' && ov.metric === 'time_settle') {
+      if (!ov.settle_band)          errors.push(`Output variable "${ov.name}": Settle Band is required for Time Settle.`);
+      if (!ov.settle_hold_time)     errors.push(`Output variable "${ov.name}": Hold Time is required for Time Settle.`);
+      if (!ov.settle_reference_value) errors.push(`Output variable "${ov.name}": Reference Value is required for Time Settle.`);
+    }
+    if (ov.type === 'custom_calculation' && (!ov.customFn || ov.customFn.trim().length < 5))
+      errors.push(`Output variable "${ov.name}": Custom function body is required.`);
+  });
+
+  if (init.problemType === 'optimisation') {
+    if (!cfg.optimisation.sense)               errors.push('Optimisation: Sense is required.');
+    if (!cfg.optimisation.objectiveOutputName) errors.push('Optimisation: Objective output variable is required.');
+  }
+
+  if (init.problemType === 'custom') {
+    if (!cfg.customMode.scenarioFilePath) errors.push('Custom mode: Scenario file path is required.');
+  }
+
+  return errors;
+}
+
+function showValidationErrors(errors) {
+  const box = document.getElementById('validation-errors');
+  const ul  = document.getElementById('validation-list');
+  if (errors.length === 0) { box.style.display = 'none'; return; }
+  ul.innerHTML = errors.map(e => `<li>${e}</li>`).join('');
+  box.style.display = 'block';
+  box.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function isPythonIdentifier(name) {
+  return /^[A-Za-z_][A-Za-z0-9_]*$/.test(name);
+}
+
+function sanitizeName(name) {
+  if (!name) return 'unnamed_output';
+  return name.replace(/[^A-Za-z0-9_]/g, '_').replace(/^([0-9])/, '_$1');
+}
+
+/* ================================================================
+   DETERMINISTIC CODE BUILDER FUNCTIONS
+================================================================ */
+
+// ── IMPORTS ──────────────────────────────────────────────────────
+function buildImports(cfg) {
+  const init = cfg.initialisation;
+  const hasTimeseries = cfg.outputVariables.some(o => o.type === 'timeseries' || o.type === 'custom_calculation');
+  const apiPath = init.powerfactoryApiPath || 'POWERFACTORY_API_PATH_HERE';
+  const username = init.username || 'USERNAME_HERE';
+
+  let tqdmImport = '';
+  if (cfg.additionalConfig.useProgressBar) {
+    tqdmImport = 'from tqdm import tqdm';
+  }
+
+  let optimImports = '';
+  if (init.problemType === 'optimisation') {
+    const alg = cfg.optimisation.algorithm;
+    if (alg === 'scipy_minimize') {
+      optimImports = 'from scipy.optimize import minimize';
+    } else if (alg === 'differential_evolution') {
+      optimImports = 'from scipy.optimize import differential_evolution';
+    } else if (alg === 'gp_minimize') {
+      optimImports = 'from skopt import gp_minimize\nfrom skopt.space import Real, Integer\nfrom skopt.utils import use_named_args';
+    }
+  }
+
+  return `import sys
+import os
+import time
+import traceback
+import itertools
+from datetime import datetime
+
+sys.path.append(r"${apiPath}")
+
+import powerfactory as pf
+import pandas as pd
+import numpy as np
+${tqdmImport ? tqdmImport + '\n' : ''}${optimImports ? optimImports + '\n' : ''}`;
+}
+
+// ── PREPARATION (app connection, project listing) ─────────────
+function buildPreparation(cfg) {
+  const username = cfg.initialisation.username || 'USERNAME_HERE';
+  const openWindow = cfg.additionalConfig.openPowerFactoryWindow;
+  const useFolder  = cfg.projectSelection.useProjectFolder;
+
+  if (useFolder) {
+    return `# ── PREPARATION ────────────────────────────────────────────────
+app = pf.GetApplication("${username}")
+user = app.GetCurrentUser()
+
+# Show available project folders
+projects_folder = user.GetContents("*.IntFolder")
+[print(f"i: {index}, folder: {value}") for index, value in enumerate(projects_folder)]
+`;
+  } else {
+    return `# ── PREPARATION ────────────────────────────────────────────────
+app = pf.GetApplication("${username}")
+user = app.GetCurrentUser()
+
+# Show available projects
+projects = user.GetContents("*.IntPrj")
+[print(f"i: {index}, project: {value}") for index, value in enumerate(projects)]
+`;
+  }
+}
+
+// ── PROJECT SELECTION ─────────────────────────────────────────
+function buildProjectSelection(cfg) {
+  const ps = cfg.projectSelection;
+  const cs = cfg.initialisation.codingStyle;
+  const needsPrompt = cs === 'python_file';
+  const folderIdx = ps.projectFolderIndex !== '' ? ps.projectFolderIndex : null;
+  const projIdx   = ps.projectIndex !== '' ? ps.projectIndex : null;
+
+  let lines = '\n# ── PROJECT SELECTION ──────────────────────────────────────────\n';
+
+  if (ps.useProjectFolder) {
+    const fi = folderIdx !== null ? folderIdx : (needsPrompt ? 'int(input("Enter project folder index: "))' : 'PROJECT_FOLDER_INDEX_HERE');
+    lines += `# Open desired project folder\n`;
+    lines += `projects = projects_folder[${fi}].GetContents("*.IntPrj")\n`;
+    lines += `[print(f"i: {index}, project: {value}") for index, value in enumerate(projects)]\n\n`;
+  }
+
+  const pi = projIdx !== null ? projIdx : (needsPrompt ? 'int(input("Enter project index: "))' : 'PROJECT_INDEX_HERE');
+  lines += `project = projects[${pi}]\n`;
+  lines += `project.Activate()\n`;
+
+  return lines;
+}
+
+// ── CHECKS ────────────────────────────────────────────────────
+function buildChecks(cfg) {
+  const openWin = cfg.additionalConfig.openPowerFactoryWindow;
+  return `
+# ── CHECKS ──────────────────────────────────────────────────────
+print("Checks")
+print("Project: ", app.GetActiveProject())
+print("Study Case: ", app.GetActiveStudyCase())
+print("Operating Scenario: ", app.GetActiveScenario())
+
+# PowerFactory window visibility
+${openWin ? 'app.Show()' : 'app.Hide()'}
+`;
+}
+
+// ── COMMON HELPERS ────────────────────────────────────────────
+function buildCommonHelpers(cfg) {
+  const hasTs    = cfg.outputVariables.some(o => o.type === 'timeseries' || o.type === 'custom_calculation');
+  const hasCustom = cfg.outputVariables.some(o => o.type === 'custom_calculation');
+  const hasSaveInt = cfg.additionalConfig.saveIntermediateEnabled;
+  const hasScenarios = cfg.additionalConfig.iterateStudyCases || cfg.additionalConfig.iterateOperatingScenarios;
+
+  let code = `
+# ── COMMON HELPERS ──────────────────────────────────────────────
+def safe_print(msg):
+    try:
+        print(msg)
+    except Exception:
+        pass
+
+
+def timestamp_string():
+    return datetime.now().strftime("%Y%m%d-%H%M%S")
+
+
+def ensure_output_dir(path):
+    os.makedirs(path, exist_ok=True)
+
+
+def get_single_pf_object(app, object_query):
+    """Resolve a PowerFactory object by query string using GetCalcRelevantObjects."""
+    objects = app.GetCalcRelevantObjects(object_query)
+    if not objects:
+        raise ValueError(f"Object not found: {object_query}")
+    return objects[0]
+
+
+def build_range(lower, upper, step, dtype_name="float"):
+    """Build a list of values from lower to upper with given step (increment value)."""
+    if dtype_name == "int":
+        return list(range(int(lower), int(upper) + 1, int(step)))
+    values = np.arange(float(lower), float(upper) + float(step) * 0.5, float(step))
+    values = [float(v) for v in values]
+    return values
+
+`;
+
+  if (hasSaveInt) {
+    code += `
+def save_intermediate_results(df, output_dir, prefix, last_save_time, interval_minutes):
+    current_time = time.time()
+    if interval_minutes is None:
+        return last_save_time
+    if current_time - last_save_time >= interval_minutes * 60:
+        filename = f"{prefix}_{timestamp_string()}.csv"
+        full_path = os.path.join(output_dir, filename)
+        df.to_csv(full_path, index=False)
+        safe_print(f"Intermediate results saved: {full_path}")
+        return current_time
+    return last_save_time
+
+`;
+  }
+
+  if (hasScenarios) {
+    code += `
+def get_study_cases(app):
+    project = app.GetActiveProject()
+    study_case_root = project.GetContents("Study Cases")
+    if not study_case_root:
+        return []
+    return study_case_root[0].GetContents()
+
+
+def get_operating_scenarios(app):
+    project = app.GetActiveProject()
+    scenario_root = project.GetContents("Operation Scenarios")
+    if not scenario_root:
+        return []
+    return scenario_root[0].GetContents()
+
+`;
+  }
+
+  return code;
+}
+
+// ── STUDY HELPERS ─────────────────────────────────────────────
+function buildStudyHelper(cfg) {
+  const st = cfg.initialisation.studyType;
+  const tstop = cfg.initialisation.tstop || '20';
+  let code = '\n# ── STUDY EXECUTION HELPERS ────────────────────────────────────\n';
+
+  if (st === 'steady_state') {
+    code += `def run_study_steady_state(app):
+    """Execute a load flow using ComLdf."""
+    cmd = app.GetFromStudyCase("ComLdf")
+    cmd.Execute()
+`;
+  } else if (st === 'harmonic') {
+    code += `def run_study_harmonic(app):
+    """Execute a harmonic load flow using ComHldf."""
+    cmd = app.GetFromStudyCase("ComHldf")
+    cmd.Execute()
+`;
+  } else if (st === 'dynamic_rms') {
+    code += `def run_study_dynamic_rms(app, tstop=${tstop}):
+    """Execute a dynamic RMS simulation using ComInc + ComSim."""
+    output_window = app.GetOutputWindow()
+    output_window.Clear()
+
+    comInc = app.GetFromStudyCase("ComInc")
+    comInc.iopt_sim = "rms"
+
+    comSim = app.GetFromStudyCase("ComSim")
+    comSim.tstop = tstop
+
+    comInc.Execute()
+    comSim.Execute()
+`;
+  } else if (st === 'dynamic_emt') {
+    code += `def run_study_dynamic_emt(app, tstop=${tstop}):
+    """Execute a dynamic EMT simulation using ComInc (iopt_sim='ins') + ComSim."""
+    output_window = app.GetOutputWindow()
+    output_window.Clear()
+
+    comInc = app.GetFromStudyCase("ComInc")
+    comInc.iopt_sim = "ins"  # EMT mode
+
+    comSim = app.GetFromStudyCase("ComSim")
+    comSim.tstop = tstop
+
+    comInc.Execute()
+    comSim.Execute()
+`;
+  }
+
+  return code;
+}
+
+// ── ELMRES HELPERS (for timeseries) ──────────────────────────
+function buildElmResHelpers(cfg) {
+  const hasTs = cfg.outputVariables.some(o => o.type === 'timeseries' || o.type === 'custom_calculation');
+  if (!hasTs) return '';
+
+  return `
+# ── ELMRES / TIMESERIES HELPERS ─────────────────────────────────
+# Direct ElmRes API access — no CSV export/re-import required.
+# API ref: ElmRes.Load(), FindColumn(obj, varName), GetValue(row, col),
+#          FindMaxInColumn(col), FindMinInColumn(col), GetNumberOfRows(),
+#          GetNumberOfColumns(), Release()
+# Entry point: app.GetFromStudyCase("ElmRes")  (API ref §8.5)
+
+def _load_elmres_column(res, obj_query, var_name):
+    """
+    Locate a column inside an already-loaded ElmRes object.
+
+    Parameters
+    ----------
+    res       : ElmRes object (must already have Load() called)
+    obj_query : str  — object filter string, e.g. "RENEWABLES-132kV(1).ElmTerm"
+                       Pass None to search by variable name only.
+    var_name  : str  — variable name recorded in ElmRes, e.g. "m:u"
+
+    Returns
+    -------
+    col_index : int  — 0-based column index, or -1 if not found
+
+    Notes
+    -----
+    FindColumn(obj, varName) — obj may be a DataObject reference or None.
+    When obj is None the API matches by variable name across all columns.
+    The time axis is always stored in column 0.
+    """
+    if obj_query is not None:
+        from powerfactory import app as _pf_app  # resolved at call time
+        objects = _pf_app.GetCalcRelevantObjects(obj_query)
+        obj_ref = objects[0] if objects else None
+    else:
+        obj_ref = None
+
+    col_index = res.FindColumn(obj_ref, var_name)
+    return col_index
+
+
+def _read_column_values(res, col_index):
+    """
+    Read all valid row values from one ElmRes column.
+
+    Returns a plain Python list of floats (np.nan for any read errors).
+    Uses GetValue(row, col) per API ref §6.18.
+    GetValue returns a tuple (errorCode, value); errorCode 0 means success.
+    """
+    n_rows = res.GetNumberOfRows()
+    values = []
+    for row in range(n_rows):
+        err, val = res.GetValue(row, col_index)
+        values.append(float(val) if err == 0 else float("nan"))
+    return values
+
+
+def calculate_timeseries_metric(time_values, data_values, metric, threshold=None,
+                                settle_band=None, settle_hold_time=None,
+                                settle_reference_value=None):
+    """
+    Compute a scalar metric from plain Python lists read directly from ElmRes.
+
+    Parameters
+    ----------
+    time_values : list[float]  — time axis (column 0 of ElmRes)
+    data_values : list[float]  — signal values for the target column
+    metric      : str
+    threshold   : float | None — required for frequency/first_time metrics
+    settle_band, settle_hold_time, settle_reference_value : float | None
+                               — required for time_settle metric
+
+    Returns
+    -------
+    dict — {key: scalar}  e.g. {"value": 1.05, "time": 0.32}
+    """
+    # ── metrics with native ElmRes support (no row scan needed) ──────
+    # NOTE: FindMaxInColumn / FindMinInColumn are called by the caller
+    # (extract_timeseries_outputs) to avoid reloading ElmRes per metric.
+    # These two metrics are handled at the dispatch level.
+
+    # ── metrics computed from plain Python lists ──────────────────────
+    valid_pairs = [(t, v) for t, v in zip(time_values, data_values)
+                   if v == v]  # exclude NaN (NaN != NaN)
+
+    if not valid_pairs:
+        return {"value": float("nan")}
+
+    times, vals = zip(*valid_pairs)
+
+    if metric == "mean":
+        return {"value": sum(vals) / len(vals)}
+
+    if metric == "median":
+        sorted_vals = sorted(vals)
+        n = len(sorted_vals)
+        mid = n // 2
+        median = sorted_vals[mid] if n % 2 else (sorted_vals[mid - 1] + sorted_vals[mid]) / 2
+        return {"value": median}
+
+    if metric == "frequency_above":
+        return {"value": sum(1 for v in vals if v > threshold)}
+
+    if metric == "frequency_below":
+        return {"value": sum(1 for v in vals if v < threshold)}
+
+    if metric == "first_time_above":
+        for t, v in zip(times, vals):
+            if v > threshold:
+                return {"time": t}
+        return {"time": float("nan")}
+
+    if metric == "first_time_below":
+        for t, v in zip(times, vals):
+            if v < threshold:
+                return {"time": t}
+        return {"time": float("nan")}
+
+    if metric == "time_settle":
+        if settle_band is None or settle_hold_time is None or settle_reference_value is None:
+            return {"time": float("nan")}
+        lower = settle_reference_value - settle_band
+        upper  = settle_reference_value + settle_band
+        pairs = list(zip(times, vals))
+        for i, (t_candidate, _) in enumerate(pairs):
+            # Check that all remaining samples are within band AND
+            # the hold duration requirement is satisfied
+            tail = pairs[i:]
+            if not tail:
+                break
+            last_time = tail[-1][0]
+            if last_time - t_candidate < settle_hold_time:
+                break  # not enough time left in signal
+            in_band = all(lower <= v <= upper for _, v in tail)
+            if in_band:
+                return {"time": t_candidate}
+        return {"time": float("nan")}
+
+    raise ValueError(f"Unsupported metric: {metric}")
+
+
+def extract_attribute_output(app, object_query, variable_name):
+    """
+    Read a scalar result attribute from a PowerFactory element.
+    Uses GetCalcRelevantObjects (API ref §3.3) + GetAttribute (API ref §5).
+    """
+    obj = get_single_pf_object(app, object_query)
+    return obj.GetAttribute(variable_name)
+
+
+def extract_timeseries_outputs(app, output_specs):
+    """
+    Read all timeseries metrics directly from the active ElmRes object.
+
+    Strategy (API ref §6.18 and §8.5):
+      1. app.GetFromStudyCase("ElmRes")  — get the active result object
+      2. res.Load()                      — load results into memory
+      3. res.FindColumn(obj, varName)    — locate each required column
+      4. For maximum/minimum: use native res.FindMaxInColumn(col)
+         and res.FindMinInColumn(col) — no row scan needed
+      5. For all other metrics: res.GetValue(row, col) across all rows
+      6. res.Release()                   — free memory when done
+
+    No CSV file is written or read.
+    """
+    timeseries_results = {}
+
+    ts_specs = [s for s in output_specs if s["type"] == "timeseries"]
+    if not ts_specs:
+        return timeseries_results
+
+    # Obtain the ElmRes object for the active study case (API ref §8.5)
+    res = app.GetFromStudyCase("ElmRes")
+    res.Load()
+
+    try:
+        # Time axis is always column 0
+        n_rows = res.GetNumberOfRows()
+        time_values = []
+        for row in range(n_rows):
+            err, t = res.GetValue(row, 0)
+            time_values.append(float(t) if err == 0 else float("nan"))
+
+        for spec in ts_specs:
+            metric = spec["metric"]
+
+            # Locate the data column for this output variable
+            # FindColumn(obj, varName) — obj resolved via GetCalcRelevantObjects
+            obj_results = app.GetCalcRelevantObjects(spec["object_query"])
+            obj_ref = obj_results[0] if obj_results else None
+            col = res.FindColumn(obj_ref, spec["variable"])
+
+            if col < 0:
+                # Column not found — record NaN and continue
+                timeseries_results[f'{spec["name"]}_value'] = float("nan")
+                continue
+
+            # ── Use native ElmRes methods for max/min (most efficient) ──
+            if metric == "maximum":
+                # FindMaxInColumn returns (errorCode, value, rowIndex)
+                err, max_val, max_row = res.FindMaxInColumn(col)
+                if err == 0:
+                    t_err, t_val = res.GetValue(max_row, 0)
+                    timeseries_results[f'{spec["name"]}_value'] = float(max_val)
+                    timeseries_results[f'{spec["name"]}_time']  = float(t_val) if t_err == 0 else float("nan")
+                else:
+                    timeseries_results[f'{spec["name"]}_value'] = float("nan")
+                continue
+
+            if metric == "minimum":
+                # FindMinInColumn returns (errorCode, value, rowIndex)
+                err, min_val, min_row = res.FindMinInColumn(col)
+                if err == 0:
+                    t_err, t_val = res.GetValue(min_row, 0)
+                    timeseries_results[f'{spec["name"]}_value'] = float(min_val)
+                    timeseries_results[f'{spec["name"]}_time']  = float(t_val) if t_err == 0 else float("nan")
+                else:
+                    timeseries_results[f'{spec["name"]}_value'] = float("nan")
+                continue
+
+            # ── All other metrics: read column row by row ───────────────
+            data_values = _read_column_values(res, col)
+
+            metric_result = calculate_timeseries_metric(
+                time_values=time_values,
+                data_values=data_values,
+                metric=metric,
+                threshold=spec.get("threshold"),
+                settle_band=spec.get("settle_band"),
+                settle_hold_time=spec.get("settle_hold_time"),
+                settle_reference_value=spec.get("settle_reference_value")
+            )
+
+            for key, val in metric_result.items():
+                timeseries_results[f'{spec["name"]}_{key}'] = val
+
+    finally:
+        # Always release ElmRes memory even if an exception occurs
+        res.Release()
+
+    return timeseries_results
+
+`;
+}
+
+// ── CUSTOM FUNCTION HELPERS ───────────────────────────────────
+function buildCustomFunctionHelpers(cfg) {
+  const customVars = cfg.outputVariables.filter(o => o.type === 'custom_calculation');
+  if (customVars.length === 0) return '';
+
+  let code = '\n# ── CUSTOM CALCULATION FUNCTIONS ────────────────────────────────\n';
+  const nameMap = [];
+
+  customVars.forEach(ov => {
+    const safe = sanitizeName(ov.name);
+    if (safe !== ov.name) {
+      nameMap.push(`# Name mapping: "${ov.name}" -> "${safe}"`);
+    }
+    // Include user-provided function body, indented
+    let fnBody = ov.customFn || `def ${safe}():\n    return 0`;
+    // If the function does not start with 'def', wrap it
+    if (!fnBody.trim().startsWith('def ')) {
+      fnBody = `def ${safe}():\n    ${fnBody.trim().split('\n').join('\n    ')}`;
+    }
+    code += fnBody + '\n\n';
+  });
+
+  if (nameMap.length > 0) {
+    code = '\n# ── CUSTOM CALCULATION FUNCTIONS ────────────────────────────────\n' +
+           nameMap.join('\n') + '\n\n' + code.replace('\n# ── CUSTOM CALCULATION FUNCTIONS ────────────────────────────────\n', '');
+  }
+
+  code += `def evaluate_custom_calculations(base_result_row):
+    """Evaluate all user-defined custom calculation functions against result row."""
+    custom_results = {}
+`;
+  customVars.forEach(ov => {
+    const safe = sanitizeName(ov.name);
+    // Extract argument names from first line of function def
+    const firstLine = (ov.customFn || '').trim().split('\n')[0];
+    const argMatch = firstLine.match(/\(([^)]*)\)/);
+    const args = argMatch ? argMatch[1].split(',').map(a => a.trim()).filter(Boolean) : [];
+    const argStr = args.map(a => `base_result_row.get("${a}", None)`).join(', ');
+    code += `    custom_results["${ov.name}"] = ${safe}(${argStr})\n`;
+  });
+  code += '    return custom_results\n';
+
+  return code;
+}
+
+// ── INPUT SPECS ───────────────────────────────────────────────
+function buildInputSpecs(cfg) {
+  const inputs = cfg.inputVariables;
+  const problemType = cfg.initialisation.problemType;
+
+  let code = '\n# ── INPUT SPECS ─────────────────────────────────────────────────\n';
+  code += 'input_specs = [\n';
+  inputs.forEach((iv, i) => {
+    code += `    {
+        "name":         "input_${i}",
+        "object_query": "${iv.object_query}",
+        "variable":     "${iv.variable}",
+        "lower":        ${iv.lower || 0},
+        "upper":        ${iv.upper || 1},
+        "step":         ${iv.step || 1},
+        "dtype":        "${iv.dtype || 'float'}"
+    },\n`;
+  });
+  code += ']\n\n';
+
+  if (problemType === 'custom') {
+    const fp = cfg.customMode.scenarioFilePath || 'SCENARIO_FILE_PATH_HERE';
+    const sn = cfg.customMode.sheetName || 'Sheet1';
+    code += `# Custom mode: load scenario file
+scenario_file_path = r"${fp}"
+sheet_name = "${sn}"
+scenario_df = pd.read_excel(scenario_file_path, sheet_name=sheet_name)
+# Alternative: scenario_df = pd.read_csv(scenario_file_path)
+
+`;
+  } else {
+    code += `# Resolve PowerFactory objects and build value ranges
+input_objects = {}
+input_ranges = {}
+
+for i, spec in enumerate(input_specs):
+    input_objects[i] = get_single_pf_object(app, spec["object_query"])
+    input_ranges[i] = build_range(spec["lower"], spec["upper"], spec["step"], spec["dtype"])
+
+`;
+  }
+
+  return code;
+}
+
+// ── OUTPUT SPECS ──────────────────────────────────────────────
+function buildOutputSpecs(cfg) {
+  const outputs = cfg.outputVariables;
+  let code = '# ── OUTPUT SPECS ─────────────────────────────────────────────────\n';
+  code += 'output_specs = [\n';
+  outputs.forEach(ov => {
+    const safe = sanitizeName(ov.name);
+    if (ov.type === 'attribute') {
+      code += `    {
+        "type":         "attribute",
+        "name":         "${ov.name}",
+        "object_query": "${ov.object_query}",
+        "variable":     "${ov.variable}"
+    },\n`;
+    } else if (ov.type === 'timeseries') {
+      let entry = `    {
+        "type":         "timeseries",
+        "name":         "${ov.name}",
+        "object_query": "${ov.object_query}",
+        "variable":     "${ov.variable}",
+        "metric":       "${ov.metric}"`;
+      if (ov.threshold) entry += `,\n        "threshold":    ${ov.threshold}`;
+      if (ov.settle_band) entry += `,\n        "settle_band":  ${ov.settle_band}`;
+      if (ov.settle_hold_time) entry += `,\n        "settle_hold_time": ${ov.settle_hold_time}`;
+      if (ov.settle_reference_value) entry += `,\n        "settle_reference_value": ${ov.settle_reference_value}`;
+      entry += '\n    },\n';
+      code += entry;
+    } else if (ov.type === 'custom_calculation') {
+      code += `    {
+        "type":         "custom_calculation",
+        "name":         "${ov.name}",
+        "object_query": "${ov.object_query}",
+        "variable":     "${ov.variable}"
+    },\n`;
+    }
+  });
+  code += ']\n';
+  return code;
+}
+
+// ── OUTPUT DIR SETUP ──────────────────────────────────────────
+function buildOutputDirSetup(cfg) {
+  const outDir = cfg.initialisation.outputDir || 'OUTPUT_DIR_HERE';
+  return `
+output_dir = r"${outDir}"
+ensure_output_dir(output_dir)
+`;
+}
+
+// ── RUN STUDY CALL (inline) ───────────────────────────────────
+function buildRunStudyCall(cfg) {
+  const st = cfg.initialisation.studyType;
+  const tstop = cfg.initialisation.tstop || '20';
+  if (st === 'steady_state') return 'run_study_steady_state(app)';
+  if (st === 'harmonic')     return 'run_study_harmonic(app)';
+  if (st === 'dynamic_rms')  return `run_study_dynamic_rms(app, tstop=${tstop})`;
+  if (st === 'dynamic_emt')  return `run_study_dynamic_emt(app, tstop=${tstop})`;
+  return 'run_study_steady_state(app)';
+}
+
+// ── PROBLEM LOOP BODY ─────────────────────────────────────────
+function buildProblemLoop(cfg) {
+  const pt = cfg.initialisation.problemType;
+  const hasTs  = cfg.outputVariables.some(o => o.type === 'timeseries');
+  const hasCust = cfg.outputVariables.some(o => o.type === 'custom_calculation');
+  const hasSave = cfg.additionalConfig.saveIntermediateEnabled;
+  const hasBar  = cfg.additionalConfig.useProgressBar;
+  const intervalMin = cfg.additionalConfig.saveIntermediateMinutes || 30;
+  const runCall = buildRunStudyCall(cfg);
+  const hasIterSC = cfg.additionalConfig.iterateStudyCases;
+  const hasIterOS = cfg.additionalConfig.iterateOperatingScenarios;
+
+  const indentSC = hasIterSC ? '    ' : '';
+  const indentOS = hasIterOS ? indentSC + '    ' : indentSC;
+  const indent   = indentOS + '    '; // inside combo loop
+
+  // wrapper code lines
+  let wrapperStart = '';
+  let wrapperEnd   = '';
+
+  if (hasIterSC) {
+    wrapperStart += `${indentSC}for study_case in study_cases:\n`;
+    wrapperStart += `${indentSC}    study_case.Activate()\n`;
+    wrapperStart += `${indentSC}    safe_print(f"Study case: {study_case.loc_name}")\n`;
+    wrapperEnd = `${indentSC}\n` + wrapperEnd;
+  }
+  if (hasIterOS) {
+    wrapperStart += `${indentOS}for op_scenario in operating_scenarios:\n`;
+    wrapperStart += `${indentOS}    op_scenario.Activate()\n`;
+    wrapperStart += `${indentOS}    safe_print(f"Operating scenario: {op_scenario.loc_name}")\n`;
+    wrapperEnd = '' + wrapperEnd;
+  }
+
+  // Setup before loop
+  let pre = '\n# ── PROBLEM LOOP ─────────────────────────────────────────────────\n';
+
+  if (hasIterSC) {
+    pre += `study_cases = get_study_cases(app)\n`;
+  }
+  if (hasIterOS) {
+    pre += `operating_scenarios = get_operating_scenarios(app)\n`;
+  }
+
+  pre += `results_df = pd.DataFrame()
+iteration_count = 0
+success_count = 0
+failed_count = 0
+last_save_time = time.time()
+`;
+
+  // ─── BRUTE FORCE ──────────────────────────────────────────────────
+  if (pt === 'brute_force') {
+    pre += `
+all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(input_specs))]))
+`;
+    if (hasBar) {
+      pre += `\n${wrapperStart}${indentOS}for combo in tqdm(all_combinations, desc="Brute Force"):\n`;
+    } else {
+      pre += `\n${wrapperStart}${indentOS}for combo in all_combinations:\n`;
+    }
+    pre += `${indent}try:\n`;
+    pre += `${indent}    iteration_count += 1\n`;
+    pre += `${indent}    current_inputs = {}\n`;
+    pre += `${indent}    for i, value in enumerate(combo):\n`;
+    pre += `${indent}        spec = input_specs[i]\n`;
+    pre += `${indent}        setattr(input_objects[i], spec["variable"], value)\n`;
+    pre += `${indent}        current_inputs[spec["name"]] = value\n\n`;
+    pre += `${indent}    ${runCall}\n\n`;
+    pre += `${indent}    row = {}\n`;
+    pre += `${indent}    row.update(current_inputs)\n\n`;
+    pre += `${indent}    # Attribute outputs\n`;
+    pre += `${indent}    for spec in output_specs:\n`;
+    pre += `${indent}        if spec["type"] == "attribute":\n`;
+    pre += `${indent}            row[spec["name"]] = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    if (hasTs) {
+      pre += `\n${indent}    # Timeseries outputs\n`;
+      pre += `${indent}    row.update(extract_timeseries_outputs(app, output_specs))\n`;
+    }
+    if (hasCust) {
+      pre += `\n${indent}    # Custom calculation outputs\n`;
+      pre += `${indent}    row.update(evaluate_custom_calculations(row))\n`;
+    }
+    pre += `\n${indent}    results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)\n`;
+    pre += `${indent}    success_count += 1\n\n`;
+    pre += `${indent}except Exception:\n`;
+    pre += `${indent}    failed_count += 1\n`;
+    pre += `${indent}    error_row = {"error": traceback.format_exc()}\n`;
+    pre += `${indent}    results_df = pd.concat([results_df, pd.DataFrame([error_row])], ignore_index=True)\n`;
+    if (hasSave) {
+      pre += `\n${indent}last_save_time = save_intermediate_results(results_df, output_dir, "intermediate", last_save_time, ${intervalMin})\n`;
+    }
+    pre += `\n${wrapperEnd}`;
+  }
+
+  // ─── CUSTOM SCENARIO ──────────────────────────────────────────────
+  else if (pt === 'custom') {
+    if (hasBar) {
+      pre += `\n${wrapperStart}${indentOS}for _, scenario_row in tqdm(scenario_df.iterrows(), total=len(scenario_df), desc="Scenarios"):\n`;
+    } else {
+      pre += `\n${wrapperStart}${indentOS}for _, scenario_row in scenario_df.iterrows():\n`;
+    }
+    pre += `${indent}try:\n`;
+    pre += `${indent}    iteration_count += 1\n`;
+    pre += `${indent}    row = {}\n\n`;
+    pre += `${indent}    for i, spec in enumerate(input_specs):\n`;
+    pre += `${indent}        column_name = f'{spec["object_query"]}.{spec["variable"]}'\n`;
+    pre += `${indent}        value = scenario_row[column_name]\n`;
+    pre += `${indent}        setattr(input_objects[i], spec["variable"], value)\n`;
+    pre += `${indent}        row[spec["name"]] = value\n\n`;
+    pre += `${indent}    ${runCall}\n\n`;
+    pre += `${indent}    for spec in output_specs:\n`;
+    pre += `${indent}        if spec["type"] == "attribute":\n`;
+    pre += `${indent}            row[spec["name"]] = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    if (hasTs) {
+      pre += `\n${indent}    row.update(extract_timeseries_outputs(app, output_specs))\n`;
+    }
+    if (hasCust) {
+      pre += `${indent}    row.update(evaluate_custom_calculations(row))\n`;
+    }
+    pre += `\n${indent}    results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)\n`;
+    pre += `${indent}    success_count += 1\n\n`;
+    pre += `${indent}except Exception:\n`;
+    pre += `${indent}    failed_count += 1\n`;
+    pre += `${indent}    error_row = {"error": traceback.format_exc()}\n`;
+    pre += `${indent}    results_df = pd.concat([results_df, pd.DataFrame([error_row])], ignore_index=True)\n`;
+    if (hasSave) {
+      pre += `\n${indent}last_save_time = save_intermediate_results(results_df, output_dir, "intermediate", last_save_time, ${intervalMin})\n`;
+    }
+    pre += `\n${wrapperEnd}`;
+  }
+
+  // ─── OPTIMISATION ─────────────────────────────────────────────────
+  else if (pt === 'optimisation') {
+    const alg       = cfg.optimisation.algorithm;
+    const sense     = cfg.optimisation.sense || 'minimise';
+    const objName   = cfg.optimisation.objectiveOutputName || 'OBJECTIVE_OUTPUT_HERE';
+    const maxIter   = cfg.optimisation.maxIterations || 50;
+    const constraints = cfg.optimisation.constraints || [];
+
+    // Build constraint penalty block
+    let penaltyLines = '';
+    if (constraints.length > 0) {
+      penaltyLines += '    penalty = 0.0\n';
+      constraints.forEach(c => {
+        penaltyLines += `    if not (row.get("${c.output}", 0) ${c.operator} ${c.value}):\n`;
+        penaltyLines += `        penalty += 1e6\n`;
+      });
+      penaltyLines += '    objective_value_adjusted = objective_value + penalty\n';
+    } else {
+      penaltyLines += '    objective_value_adjusted = objective_value\n';
+    }
+
+    const returnLine = sense === 'maximise'
+      ? '    return -(objective_value_adjusted)'
+      : '    return objective_value_adjusted';
+
+    pre += `
+def evaluate_one_case(param_values):
+    global iteration_count, results_df
+    iteration_count += 1
+    row = {}
+
+    for i, value in enumerate(param_values):
+        spec = input_specs[i]
+        setattr(input_objects[i], spec["variable"], value)
+        row[spec["name"]] = value
+
+    ${runCall}
+
+    for spec in output_specs:
+        if spec["type"] == "attribute":
+            row[spec["name"]] = extract_attribute_output(app, spec["object_query"], spec["variable"])
+`;
+    if (hasTs) {
+      pre += `
+    row.update(extract_timeseries_outputs(app, output_specs))
+`;
+    }
+    if (hasCust) {
+      pre += `    row.update(evaluate_custom_calculations(row))\n`;
+    }
+    pre += `
+    results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)
+    return row
+
+
+`;
+
+    if (alg === 'gp_minimize') {
+      // Build skopt space
+      pre += `# Gaussian Process search space\nspace = [\n`;
+      cfg.inputVariables.forEach((iv, i) => {
+        if (iv.dtype === 'int') {
+          pre += `    Integer(${iv.lower}, ${iv.upper}, name="input_${i}"),\n`;
+        } else {
+          pre += `    Real(${iv.lower}, ${iv.upper}, name="input_${i}"),\n`;
+        }
+      });
+      pre += `]\n\n`;
+
+      pre += `@use_named_args(space)\ndef objective(**params):\n`;
+      pre += `    ordered_values = [params[f"input_{i}"] for i in range(len(input_specs))]\n`;
+      pre += `    row = evaluate_one_case(ordered_values)\n\n`;
+      pre += `    objective_value = row["${objName}"]\n`;
+      pre += penaltyLines + '\n';
+      pre += returnLine + '\n\n';
+      pre += `result = gp_minimize(objective, space, n_calls=${maxIter}, random_state=42)\n`;
+      pre += `safe_print(f"Optimisation complete. Best value: {result.fun}")\n`;
+
+    } else if (alg === 'differential_evolution') {
+      const bounds = cfg.inputVariables.map(iv => `(${iv.lower}, ${iv.upper})`).join(', ');
+      pre += `def de_objective(param_values):\n`;
+      pre += `    row = evaluate_one_case(list(param_values))\n`;
+      pre += `    objective_value = row["${objName}"]\n`;
+      pre += penaltyLines + '\n';
+      pre += returnLine + '\n\n';
+      pre += `bounds = [${bounds}]\n`;
+      pre += `result = differential_evolution(de_objective, bounds, maxiter=${maxIter}, seed=42)\n`;
+      pre += `safe_print(f"Optimisation complete. Best value: {result.fun}")\n`;
+
+    } else if (alg === 'scipy_minimize') {
+      const x0 = cfg.inputVariables.map(iv =>
+        `${(parseFloat(iv.lower||0) + parseFloat(iv.upper||1)) / 2}`
+      ).join(', ');
+      const bounds = cfg.inputVariables.map(iv => `(${iv.lower}, ${iv.upper})`).join(', ');
+      pre += `def minimize_objective(param_values):\n`;
+      pre += `    row = evaluate_one_case(list(param_values))\n`;
+      pre += `    objective_value = row["${objName}"]\n`;
+      pre += penaltyLines + '\n';
+      pre += returnLine + '\n\n';
+      pre += `x0 = [${x0}]\n`;
+      pre += `bounds = [${bounds}]\n`;
+      pre += `result = minimize(minimize_objective, x0, bounds=bounds, options={"maxiter": ${maxIter}})\n`;
+      pre += `safe_print(f"Optimisation complete. Best value: {result.fun}")\n`;
+
+    } else {
+      // Placeholder
+      pre += `# TODO: Replace with your preferred optimisation algorithm\n`;
+      pre += `# Current selection: Placeholder — wire up evaluate_one_case manually.\n`;
+      pre += `# Example: call evaluate_one_case([val0, val1, ...]) in your loop.\n`;
+    }
+  }
+
+  return pre;
+}
+
+// ── OUTPUT EXPORT ─────────────────────────────────────────────
+function buildOutputExport(cfg) {
+  return `
+# ── OUTPUT EXPORT ─────────────────────────────────────────────────
+final_output_path = os.path.join(output_dir, f"Run{timestamp_string()}.csv")
+results_df.to_csv(final_output_path, index=False)
+
+print("Run complete.")
+print(f"Final output: {final_output_path}")
+print(f"Total attempted runs: {len(results_df)}")
+`;
+}
+
+// ── NOTEBOOK WRAPPER ──────────────────────────────────────────
+function buildNotebookWrapper(sections) {
+  const cellNames = [
+    'Preparation & Imports',
+    'Project Selection & Checks',
+    'Helper Functions',
+    'Input Specs & Object Resolution',
+    'Output Specs',
+    'Problem Loop & Study Execution',
+    'Output Export'
+  ];
+  let result = '';
+  sections.forEach((sec, i) => {
+    result += `# ╔══════════════════════════════════════════════════════════════╗\n`;
+    result += `# ║ Cell ${i+1} — ${cellNames[i] || 'Section'}\n`;
+    result += `# ╚══════════════════════════════════════════════════════════════╝\n`;
+    result += sec + '\n';
+  });
+  return result;
+}
+
+// ── PYTHON FILE WRAPPER ───────────────────────────────────────
+function buildPythonFileWrapper(body) {
+  return `def main():
+${body.split('\n').map(l => '    ' + l).join('\n')}
+
+
+if __name__ == "__main__":
+    main()
+`;
+}
+
+/* ================================================================
+   MASTER GENERATE CODE FUNCTION
+================================================================ */
+function generateCode() {
+  const cfg = readConfig();
+  const errors = validateConfig(cfg);
+  showValidationErrors(errors);
+  if (errors.length > 0) return;
+
+  // Assemble code sections
+  const sec1_imports     = buildImports(cfg);
+  const sec2_prep        = buildPreparation(cfg);
+  const sec3_projsel     = buildProjectSelection(cfg);
+  const sec4_checks      = buildChecks(cfg);
+  const sec5_helpers     = buildCommonHelpers(cfg);
+  const sec6_studyhelper = buildStudyHelper(cfg);
+  const sec7_elmres      = buildElmResHelpers(cfg);
+  const sec8_customfn    = buildCustomFunctionHelpers(cfg);
+  const sec9_outdir      = buildOutputDirSetup(cfg);
+  const sec10_inputspecs = buildInputSpecs(cfg);
+  const sec11_outspecs   = buildOutputSpecs(cfg);
+  const sec12_loop       = buildProblemLoop(cfg);
+  const sec13_export     = buildOutputExport(cfg);
+
+  let finalCode = '';
+
+  if (cfg.initialisation.codingStyle === 'notebook') {
+    const sections = [
+      sec1_imports + sec2_prep,
+      sec3_projsel + sec4_checks,
+      sec5_helpers + sec6_studyhelper + sec7_elmres + sec8_customfn,
+      sec9_outdir + sec10_inputspecs,
+      sec11_outspecs,
+      sec12_loop,
+      sec13_export
+    ];
+    finalCode = buildNotebookWrapper(sections);
+  } else {
+    // Python file style
+    const body = [
+      sec1_imports,
+      sec2_prep,
+      sec3_projsel,
+      sec4_checks,
+      sec5_helpers,
+      sec6_studyhelper,
+      sec7_elmres,
+      sec8_customfn,
+      sec9_outdir,
+      sec10_inputspecs,
+      sec11_outspecs,
+      sec12_loop,
+      sec13_export,
+    ].join('\n');
+    finalCode = buildPythonFileWrapper(body);
+  }
+
+  // Store for download
+  window._generatedCode = finalCode;
+
+  // Render with syntax highlighting
+  const preEl  = document.getElementById('code-preview');
+  const codeEl = preEl.querySelector('code') || preEl;
+  preEl.innerHTML = `<code class="language-python">${escapeHtml(finalCode)}</code>`;
+  hljs.highlightElement(preEl.querySelector('code'));
+}
+
+function escapeHtml(str) {
+  return str
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+/* ================================================================
+   COPY / DOWNLOAD
+================================================================ */
+function copyCode() {
+  const code = window._generatedCode;
+  if (!code) { alert('Generate code first.'); return; }
+  navigator.clipboard.writeText(code).then(() => {
+    const toast = document.getElementById('copy-toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  });
+}
+
+function downloadPy() {
+  if (!window._generatedCode) { alert('Generate code first.'); return; }
+  download(window._generatedCode, 'powerfactory_script.py', 'text/plain');
+}
+
+function downloadTxt() {
+  if (!window._generatedCode) { alert('Generate code first.'); return; }
+  download(window._generatedCode, 'powerfactory_script.txt', 'text/plain');
+}
+
+function download(content, filename, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], { type }));
+  a.download = filename;
+  a.click();
+}
+
+/* ================================================================
+   EXPORT / IMPORT CONFIG JSON
+================================================================ */
+function exportConfigJSON() {
+  const cfg = readConfig();
+  download(JSON.stringify(cfg, null, 2), 'powerfactory_config.json', 'application/json');
+}
+
+function importConfigJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const cfg = JSON.parse(e.target.result);
+      loadConfig(cfg);
+    } catch(err) {
+      alert('Invalid JSON file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+/* ================================================================
+   RESET FORM
+================================================================ */
+function resetForm() {
+  if (!confirm('Reset all fields to defaults?')) return;
+  loadConfig({
+    initialisation: { powerfactoryApiPath:'', username:'', outputDir:'', problemType:'brute_force', studyType:'steady_state', codingStyle:'python_file', tstop:'20' },
+    projectSelection: { useProjectFolder:false, projectFolderIndex:'', projectIndex:'' },
+    inputVariables: [],
+    outputVariables: [],
+    optimisation: { sense:'minimise', objectiveOutputName:'', algorithm:'placeholder', maxIterations:50, constraints:[] },
+    customMode: { scenarioFilePath:'', sheetName:'' },
+    additionalConfig: { iterateStudyCases:false, iterateOperatingScenarios:false, useProgressBar:true, openPowerFactoryWindow:false, saveIntermediateEnabled:false, saveIntermediateMinutes:30 }
+  });
+  window._generatedCode = '';
+  document.getElementById('code-preview').innerHTML = `<code class="language-python">
+<div class="placeholder-msg">
+  <span class="big">⚡</span>
+  <span>Configure inputs and click <strong>Generate Code</strong></span>
+</div>
+  </code>`;
+  document.getElementById('validation-errors').style.display = 'none';
+}
+
+/* ================================================================
+   INIT — add default rows on load
+================================================================ */
+(function init() {
+  addInputRow({ object_query: 'WFController.ElmDsl', variable: 'K_droop', lower: 0, upper: 10, step: 0.5, dtype: 'float' });
+  addOutputVar({ type: 'attribute', name: 'Bus_THD', object_query: 'RENEWABLES-132kV(1).ElmTerm', variable: 'm:THD' });
+  onProblemTypeChange();
+  onStudyTypeChange();
+})();
+</script>
+</body>
+</html>
