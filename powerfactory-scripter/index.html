@@ -47,6 +47,8 @@
     min-height: 100vh;
     font-size: 14px;
     line-height: 1.5;
+    display: flex;
+    flex-direction: column;
   }
 
   /* ── TOP BAR ─────────────────────────────────────────────────────── */
@@ -76,7 +78,8 @@
   .layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    height: calc(100vh - 56px);
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
   }
   .left-pane {
@@ -347,6 +350,34 @@
   }
   #validation-errors ul li::before { content: "✕ "; }
 
+  /* ── VALIDATION WARNINGS ────────────────────────────────────────── */
+  #validation-warnings {
+    display: none;
+    background: rgba(224,162,51,0.1);
+    border: 1px solid rgba(224,162,51,0.4);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+  #validation-warnings h4 {
+    color: var(--warn);
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  #validation-warnings ul {
+    list-style: none;
+    padding: 0;
+  }
+  #validation-warnings ul li {
+    font-size: 12px;
+    color: #d4a04a;
+    padding: 2px 0;
+  }
+  #validation-warnings ul li::before { content: "⚠ "; }
+
   /* ── CUSTOM FUNCTION ACE EDITOR ──────────────────────────────────── */
   .ace-editor-container {
     border: 1px solid var(--border);
@@ -462,24 +493,32 @@
   .input-table-hide-bounds .col-lb,
   .input-table-hide-bounds .col-ub  { display: none; }
 
-  /* ── PAGE FOOTER ─────────────────────────────────────────────────── */
-  /* Sits below the layout div — visible on mobile when page scrolls */
-  .page-footer {
+  /* ── APP FOOTER ──────────────────────────────────────────────── */
+  .app-footer {
     border-top: 1px solid var(--border);
-    padding: 14px 20px 20px;
+    padding: 10px 20px 12px;
     background: var(--bg);
+    flex-shrink: 0;
   }
-  .page-footer-info p {
+  .app-footer p {
     font-size: 11px;
     color: var(--muted);
     line-height: 1.6;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
   }
-  .page-footer-info a {
+  .app-footer a {
     color: var(--accent);
     text-decoration: none;
   }
-  .page-footer-info a:hover { text-decoration: underline; }
+  .app-footer a:hover { text-decoration: underline; }
+  .footer-counter {
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--muted);
+  }
 
   /* ── MOBILE RESPONSIVE ──────────────────────────────────────────── */
   @media (max-width: 768px) {
@@ -605,6 +644,12 @@
       <ul id="validation-list"></ul>
     </div>
 
+    <!-- Validation warnings -->
+    <div id="validation-warnings">
+      <h4>Warnings</h4>
+      <ul id="validation-warning-list"></ul>
+    </div>
+
     <!-- ── SECTION 1 · INITIALISATION ──────────────────────────── -->
     <div class="section-card" id="sec-init">
       <div class="section-header" onclick="toggleSection('sec-init')">
@@ -681,6 +726,7 @@
             <thead>
               <tr>
                 <th>#</th>
+                <th>Name</th>
                 <th>Object</th>
                 <th>Variable</th>
                 <th class="col-lb">Lower Bound</th>
@@ -708,8 +754,12 @@
       <div class="section-body">
         <div class="info-box">
           Each <strong>row</strong> in the spreadsheet is one scenario.<br/>
-          Each <strong>column</strong> header must be <code>Object.Variable</code> (e.g. <code>WFController.ElmDsl.K_droop</code>).<br/>
-          Click <strong>Download Template</strong> to get a pre-filled header row based on your input variables.
+          The first column is <code>Scenario</code> (scenario number/label).<br/>
+          Each subsequent <strong>column</strong> header is the <strong>Name</strong> you defined for each input variable (e.g. <code>K_droop</code>).<br/>
+          Click <strong>Download Template</strong> to get a pre-filled template based on your input variable names.
+        </div>
+        <div class="btn-row" style="margin-top:0;margin-bottom:10px;">
+          <button class="btn btn-ghost btn-xs" onclick="downloadCustomTemplate()">⬇ Download Template (.xlsx)</button>
         </div>
         <div class="form-row">
           <label>Scenario File Path</label>
@@ -718,9 +768,6 @@
         <div class="form-row">
           <label>Sheet Name</label>
           <input type="text" id="scenario-sheet-name" placeholder="Sheet1" />
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-ghost btn-xs" onclick="downloadCustomTemplate()">⬇ Download Template (.xlsx)</button>
         </div>
       </div>
     </div>
@@ -838,18 +885,6 @@
       </div>
     </div>
 
-    <!-- ── FOOTER DISCLAIMER ──────────────────────────────────── -->
-    <footer class="page-footer">
-      <section class="page-footer-info">
-        <p>
-          <strong>Disclaimer:</strong> This tool is provided on an "as is" and "as available" basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for validating the generated code before use in any production or engineering context.
-        </p>
-        <p>
-          If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you're interested, confused, or would like help learning how to use the tool, feel free to email me as well.
-        </p>
-      </section>
-    </footer>
-
   </div><!-- end left-pane -->
 
   <!-- ============================================================
@@ -861,7 +896,6 @@
       <button class="btn btn-primary" onclick="generateCode()">⚡ Generate Code</button>
       <button class="btn btn-success" onclick="copyCode()">⎘ Copy</button>
       <button class="btn btn-ghost" onclick="downloadPy()">↓ .py</button>
-      <button class="btn btn-ghost" onclick="downloadTxt()">↓ .txt</button>
       <button class="btn btn-ghost" onclick="exportConfigJSON()">↑ Export JSON</button>
       <label class="btn btn-ghost" style="cursor:pointer; position:relative;">
         ↓ Import JSON
@@ -880,6 +914,23 @@
   </div>
 
 </div><!-- end layout -->
+
+<!-- ============================================================
+     APP FOOTER — disclaimer + visitor counter
+============================================================ -->
+<footer class="app-footer">
+  <p>
+    <strong>Disclaimer:</strong> This tool is provided on an "as is" and "as available" basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for validating the generated code before use in any production or engineering context.
+  </p>
+  <p>
+    If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you're interested, confused, or would like help learning how to use the tool, feel free to email me as well.
+  </p>
+  <div class="footer-counter">
+    <a href='https://www.counters-free.net/'>Hit Counters free</a>
+    <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=19ca3766689fdb3126e3a51a650c100f1707a275'></script>
+    <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1532435/t/3"></script>
+  </div>
+</footer>
 
 <!-- ============================================================
      JAVASCRIPT — all logic
@@ -945,8 +996,10 @@ function addInputRow(data = {}) {
   const tbody = document.getElementById('input-tbody');
   const tr = document.createElement('tr');
   tr.id = `input-row-${idx}`;
+  const rowNum = tbody.querySelectorAll('tr').length + 1;
   tr.innerHTML = `
-    <td style="color:var(--muted);font-family:var(--mono);font-size:11px;vertical-align:middle">${idx}</td>
+    <td style="color:var(--muted);font-family:var(--mono);font-size:11px;vertical-align:middle">${rowNum}</td>
+    <td><input type="text" id="iv-name-${idx}" value="${data.name||''}" placeholder="var_name" /></td>
     <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="WFController.ElmDsl" /></td>
     <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="K_droop" /></td>
     <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" /></td>
@@ -971,12 +1024,15 @@ function inferDtype(lower, upper, step) {
 
 function getInputRows() {
   const tbody = document.getElementById('input-tbody');
-  return Array.from(tbody.querySelectorAll('tr')).map(tr => {
+  return Array.from(tbody.querySelectorAll('tr')).map((tr, i) => {
     const idx = tr.id.replace('input-row-', '');
     const lower = document.getElementById(`iv-lb-${idx}`)?.value?.trim() || '0';
     const upper = document.getElementById(`iv-ub-${idx}`)?.value?.trim() || '1';
     const step  = document.getElementById(`iv-step-${idx}`)?.value?.trim() || '1';
+    const rawName = document.getElementById(`iv-name-${idx}`)?.value?.trim() || '';
+    const name = rawName || `input_${i}`;
     return {
+      name,
       object_query: document.getElementById(`iv-obj-${idx}`)?.value?.trim() || '',
       variable:     document.getElementById(`iv-var-${idx}`)?.value?.trim() || '',
       lower, upper, step,
@@ -1009,6 +1065,7 @@ function addOutputVar(data = {}) {
   const type = data.type || 'attribute';
   div.innerHTML = buildOutputVarHTML(id, data, type);
   container.appendChild(div);
+  reindexOutputVars();
   // init ace if custom
   if (type === 'custom_calculation') {
     initAceEditor(id, data.customFn || '');
@@ -1019,6 +1076,14 @@ function addOutputVar(data = {}) {
   }
 }
 
+function reindexOutputVars() {
+  const items = document.querySelectorAll('#output-vars-container .output-var-item');
+  items.forEach((item, i) => {
+    const el = item.querySelector('.ov-index');
+    if (el) el.textContent = `#${i + 1}`;
+  });
+}
+
 function buildOutputVarHTML(id, data = {}, type = 'attribute') {
   const metricOptions = METRICS.map(m =>
     `<option value="${m}" ${(data.metric||'')==m?'selected':''}>${metricLabel(m)}</option>`
@@ -1027,12 +1092,12 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
   const isTs   = type === 'timeseries';
   const isCust = type === 'custom_calculation';
   const metric = data.metric || 'maximum';
-  const showThresh = THRESHOLD_METRICS.includes(metric);
-  const showSettle = metric === 'time_settle';
+  const showThresh = THRESHOLD_METRICS.includes(metric) && !isAttr && !isCust;
+  const showSettle = metric === 'time_settle' && !isAttr && !isCust;
 
   return `
     <div class="output-var-header">
-      <span class="ov-index">OUT</span>
+      <span class="ov-index">#?</span>
       <select style="width:160px;font-size:12px;padding:3px 6px;" id="${id}-type" onchange="onOutputTypeChange('${id}')">
         <option value="attribute" ${type==='attribute'?'selected':''}>Attribute</option>
         <option value="timeseries" ${type==='timeseries'?'selected':''}>Timeseries</option>
@@ -1044,28 +1109,30 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       <button class="btn btn-remove btn-xs" onclick="removeOutputVar('${id}')">✕</button>
     </div>
     <div class="output-var-body" id="${id}-body">
-      <div class="form-row">
+      <!-- OBJECT (hidden for custom_calculation) -->
+      <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-obj">
         <label>Object</label>
         <input type="text" id="${id}-obj" value="${data.object_query||''}" placeholder="Element.ElmType" />
       </div>
-      <div class="form-row">
+      <!-- VARIABLE (hidden for custom_calculation) -->
+      <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-var">
         <label>Variable</label>
         <input type="text" id="${id}-var" value="${data.variable||''}" placeholder="m:THD" />
       </div>
-      <!-- METRIC (hidden for attribute) -->
-      <div class="form-row ${isAttr?'cond-hidden':''}" id="${id}-row-metric">
+      <!-- METRIC (hidden for attribute and custom_calculation) -->
+      <div class="form-row ${(isAttr||isCust)?'cond-hidden':''}" id="${id}-row-metric">
         <label>Metric</label>
         <select id="${id}-metric" onchange="onMetricChange('${id}')">
           ${metricOptions}
         </select>
       </div>
       <!-- THRESHOLD -->
-      <div class="form-row ${(!showThresh||isAttr)?'cond-hidden':''}" id="${id}-row-threshold">
+      <div class="form-row ${!showThresh?'cond-hidden':''}" id="${id}-row-threshold">
         <label>Threshold</label>
         <input type="number" id="${id}-threshold" value="${data.threshold||''}" step="any" placeholder="0.9" />
       </div>
       <!-- SETTLE PARAMS -->
-      <div class="${(!showSettle||isAttr)?'cond-hidden':''}" id="${id}-row-settle">
+      <div class="${!showSettle?'cond-hidden':''}" id="${id}-row-settle">
         <div class="form-row">
           <label>Settle Band</label>
           <input type="number" id="${id}-settle-band" value="${data.settle_band||''}" step="any" placeholder="0.05" />
@@ -1079,10 +1146,17 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
           <input type="number" id="${id}-settle-ref" value="${data.settle_reference_value||''}" step="any" placeholder="1.0" />
         </div>
       </div>
+      <!-- OUTPUT GRAPH (timeseries only) -->
+      <div class="${!isTs?'cond-hidden':''}" id="${id}-row-output-graph">
+        <div class="checkbox-row" style="margin-top:4px;">
+          <input type="checkbox" id="${id}-output-graph" ${data.output_graph?'checked':''} />
+          <label for="${id}-output-graph">Output graph (Time vs variable, saved as .png)</label>
+        </div>
+      </div>
       <!-- CUSTOM FUNCTION -->
       <div class="${!isCust?'cond-hidden':''}" id="${id}-row-custom-fn">
-        <div class="sub-label" style="margin-top:8px;">Custom Function (must return one scalar)</div>
-        <div class="hint" style="margin-bottom:6px;">Arguments must reference previously defined output variable names.</div>
+        <div class="sub-label" style="margin-top:8px;">Custom Function (must return exactly one scalar)</div>
+        <div class="hint" style="margin-bottom:6px;">Arguments must be names of defined <strong>Input Variables</strong> or other <strong>Output Variables</strong>.</div>
         <div class="ace-editor-container">
           <div class="ace-editor" id="${id}-ace"></div>
         </div>
@@ -1097,8 +1171,13 @@ function onOutputTypeChange(id) {
   const isTs   = type === 'timeseries';
   const isCust = type === 'custom_calculation';
 
-  // Show/hide metric
-  document.getElementById(`${id}-row-metric`)?.classList.toggle('cond-hidden', isAttr);
+  // Show/hide object/variable (hidden for custom_calculation)
+  document.getElementById(`${id}-row-obj`)?.classList.toggle('cond-hidden', isCust);
+  document.getElementById(`${id}-row-var`)?.classList.toggle('cond-hidden', isCust);
+  // Show/hide metric (hidden for attribute and custom_calculation)
+  document.getElementById(`${id}-row-metric`)?.classList.toggle('cond-hidden', isAttr || isCust);
+  // Show/hide output graph (timeseries only)
+  document.getElementById(`${id}-row-output-graph`)?.classList.toggle('cond-hidden', !isTs);
   // Show/hide custom fn
   document.getElementById(`${id}-row-custom-fn`)?.classList.toggle('cond-hidden', !isCust);
 
@@ -1107,10 +1186,10 @@ function onOutputTypeChange(id) {
     initAceEditor(id, '');
   }
 
-  // Metric-based conditionals
+  // Metric-based conditionals (only relevant for timeseries)
   const metric = document.getElementById(`${id}-metric`)?.value || '';
-  const showThresh = !isAttr && THRESHOLD_METRICS.includes(metric);
-  const showSettle = !isAttr && metric === 'time_settle';
+  const showThresh = !isAttr && !isCust && THRESHOLD_METRICS.includes(metric);
+  const showSettle = !isAttr && !isCust && metric === 'time_settle';
   document.getElementById(`${id}-row-threshold`)?.classList.toggle('cond-hidden', !showThresh);
   document.getElementById(`${id}-row-settle`)?.classList.toggle('cond-hidden', !showSettle);
 
@@ -1133,6 +1212,7 @@ function removeOutputVar(id) {
   const el = document.getElementById(id);
   if (el) el.remove();
   if (aceEditors[id]) { aceEditors[id].destroy(); delete aceEditors[id]; }
+  reindexOutputVars();
   if (document.getElementById('problem-type').value === 'optimisation') refreshObjectiveDropdown();
 }
 
@@ -1172,8 +1252,10 @@ function getOutputVars() {
     const settle_hold = document.getElementById(`${id}-settle-hold`)?.value?.trim() || '';
     const settle_ref  = document.getElementById(`${id}-settle-ref`)?.value?.trim() || '';
     const customFn = aceEditors[id] ? aceEditors[id].getValue() : '';
+    const output_graph = document.getElementById(`${id}-output-graph`)?.checked || false;
     return { id, type, name, object_query: obj, variable: varN, metric, threshold,
-             settle_band, settle_hold_time: settle_hold, settle_reference_value: settle_ref, customFn };
+             settle_band, settle_hold_time: settle_hold, settle_reference_value: settle_ref,
+             customFn, output_graph };
   });
 }
 
@@ -1352,11 +1434,12 @@ function validateConfig(cfg) {
   });
 
   cfg.outputVariables.forEach((ov, i) => {
-    if (!ov.name) errors.push(`Output variable #${i}: Name is required.`);
+    if (!ov.name) errors.push(`Output variable #${i + 1}: Name is required.`);
     if (!isPythonIdentifier(sanitizeName(ov.name)) && ov.name) {
-      errors.push(`Output variable #${i}: Name "${ov.name}" is not a valid Python identifier (will be sanitized).`);
+      errors.push(`Output variable #${i + 1}: Name "${ov.name}" is not a valid Python identifier (will be sanitized).`);
     }
-    if (!ov.object_query) errors.push(`Output variable #${i}: Object is required.`);
+    if (ov.type !== 'custom_calculation' && !ov.object_query)
+      errors.push(`Output variable #${i + 1} "${ov.name}": Object is required.`);
     if (ov.type === 'timeseries' && THRESHOLD_METRICS.includes(ov.metric) && !ov.threshold)
       errors.push(`Output variable "${ov.name}": Threshold is required for metric "${ov.metric}".`);
     if (ov.type === 'timeseries' && ov.metric === 'time_settle') {
@@ -1389,6 +1472,69 @@ function showValidationErrors(errors) {
   box.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 
+function validateCustomCalcWarnings(cfg) {
+  const warnings = [];
+  const inputNames = cfg.inputVariables.map(iv => iv.name).filter(Boolean);
+  const allOutputVars = cfg.outputVariables;
+
+  cfg.outputVariables.forEach((ov, i) => {
+    if (ov.type !== 'custom_calculation') return;
+    const fn = (ov.customFn || '').trim();
+    if (!fn) return;
+
+    // All valid argument names = input var names + other output var names
+    const otherOutputNames = allOutputVars
+      .filter((_, j) => j !== i)
+      .map(o => o.name)
+      .filter(Boolean);
+    const validArgs = new Set([...inputNames, ...otherOutputNames]);
+
+    // Extract function arguments from def line
+    const defMatch = fn.match(/^def\s+\w+\s*\(([^)]*)\)/m);
+    if (defMatch) {
+      const args = defMatch[1].split(',').map(a => a.trim()).filter(Boolean);
+      args.forEach(arg => {
+        if (!validArgs.has(arg)) {
+          warnings.push(`Output "${ov.name}": Function argument "${arg}" is not a defined input or output variable name.`);
+        }
+      });
+    }
+
+    // Check for multiple return values (return with comma not inside brackets)
+    const returnMatches = fn.match(/\breturn\b[^\n]+/g);
+    if (returnMatches) {
+      returnMatches.forEach(ret => {
+        const retVal = ret.replace(/#[^\n]*$/, '').trim();
+        if (hasMultipleReturnValues(retVal)) {
+          warnings.push(`Output "${ov.name}": Function must return exactly one value (no tuples). Found: "${ret.trim()}"`);
+        }
+      });
+    }
+  });
+
+  return warnings;
+}
+
+function hasMultipleReturnValues(retStr) {
+  const val = retStr.replace(/^return\s+/, '').trim();
+  let depth = 0;
+  for (let i = 0; i < val.length; i++) {
+    const c = val[i];
+    if ('([{'.includes(c)) depth++;
+    else if (')]}'.includes(c)) depth--;
+    else if (c === ',' && depth === 0) return true;
+  }
+  return false;
+}
+
+function showValidationWarnings(warnings) {
+  const box = document.getElementById('validation-warnings');
+  const ul  = document.getElementById('validation-warning-list');
+  if (!warnings || warnings.length === 0) { box.style.display = 'none'; return; }
+  ul.innerHTML = warnings.map(w => `<li>${w}</li>`).join('');
+  box.style.display = 'block';
+}
+
 function isPythonIdentifier(name) {
   return /^[A-Za-z_][A-Za-z0-9_]*$/.test(name);
 }
@@ -1406,6 +1552,7 @@ function sanitizeName(name) {
 function buildImports(cfg) {
   const init = cfg.initialisation;
   const hasTimeseries = cfg.outputVariables.some(o => o.type === 'timeseries' || o.type === 'custom_calculation');
+  const hasOutputGraph = cfg.outputVariables.some(o => o.type === 'timeseries' && o.output_graph);
   const apiPath = init.powerfactoryApiPath || 'POWERFACTORY_API_PATH_HERE';
   const username = init.username || 'USERNAME_HERE';
 
@@ -1426,6 +1573,10 @@ function buildImports(cfg) {
     }
   }
 
+  const matplotlibImport = hasOutputGraph
+    ? 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\n'
+    : '';
+
   return `import sys
 import os
 import time
@@ -1438,7 +1589,7 @@ sys.path.append(r"${apiPath}")
 import powerfactory as pf
 import pandas as pd
 import numpy as np
-${tqdmImport ? tqdmImport + '\n' : ''}${optimImports ? optimImports + '\n' : ''}`;
+${matplotlibImport}${tqdmImport ? tqdmImport + '\n' : ''}${optimImports ? optimImports + '\n' : ''}`;
 }
 
 // ── PREPARATION (app connection, project listing) ─────────────
@@ -1879,6 +2030,69 @@ def extract_timeseries_outputs(app, output_specs):
 `;
 }
 
+// ── TIMESERIES GRAPH HELPER ───────────────────────────────────
+function buildTimeseriesGraphHelper(cfg) {
+  const graphVars = cfg.outputVariables.filter(o => o.type === 'timeseries' && o.output_graph);
+  if (graphVars.length === 0) return '';
+
+  const iterSC = cfg.additionalConfig.iterateStudyCases;
+  const iterOS = cfg.additionalConfig.iterateOperatingScenarios;
+
+  return `
+# ── TIMESERIES GRAPH HELPER ──────────────────────────────────────
+def plot_timeseries_graph(app, spec, row, output_dir, context_title_parts):
+    """
+    Plot timeseries data (Time vs variable) and save as .png.
+    Title composition:
+      context_title_parts: list of strings prefixed to the title (study case, op scenario)
+      Input variable name=value pairs are appended, then the output variable name.
+    """
+    res = app.GetFromStudyCase("ElmRes")
+    res.Load()
+    try:
+        n_rows = res.GetNumberOfRows()
+        time_values = []
+        for r in range(n_rows):
+            err, t = res.GetValue(r, 0)
+            time_values.append(float(t) if err == 0 else float("nan"))
+
+        obj_results = app.GetCalcRelevantObjects(spec["object_query"])
+        obj_ref = obj_results[0] if obj_results else None
+        col = res.FindColumn(obj_ref, spec["variable"])
+        if col < 0:
+            safe_print(f"Graph skipped: column not found for {spec['name']}")
+            return
+
+        data_values = []
+        for r in range(n_rows):
+            err, v = res.GetValue(r, col)
+            data_values.append(float(v) if err == 0 else float("nan"))
+    finally:
+        res.Release()
+
+    # Build title
+    title_parts = list(context_title_parts)
+    for s in input_specs:
+        title_parts.append(f"{s['name']}={row.get(s['name'], '?')}")
+    title_parts.append(spec["name"])
+    title = " - ".join(title_parts)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(time_values, data_values)
+    plt.title(title, fontsize=10)
+    plt.xlabel("Time (s)")
+    plt.ylabel(spec["name"])
+    plt.grid(True)
+    plt.tight_layout()
+    graph_filename = f"{spec['name']}_{timestamp_string()}.png"
+    graph_path = os.path.join(output_dir, graph_filename)
+    plt.savefig(graph_path)
+    plt.close()
+    safe_print(f"Graph saved: {graph_path}")
+
+`;
+}
+
 // ── CUSTOM FUNCTION HELPERS ───────────────────────────────────
 function buildCustomFunctionHelpers(cfg) {
   const customVars = cfg.outputVariables.filter(o => o.type === 'custom_calculation');
@@ -1932,8 +2146,9 @@ function buildInputSpecs(cfg) {
   let code = '\n# ── INPUT SPECS ─────────────────────────────────────────────────\n';
   code += 'input_specs = [\n';
   inputs.forEach((iv, i) => {
+    const name = iv.name || `input_${i}`;
     code += `    {
-        "name":         "input_${i}",
+        "name":         "${name}",
         "object_query": "${iv.object_query}",
         "variable":     "${iv.variable}",
         "lower":        ${iv.lower || 0},
@@ -1948,7 +2163,7 @@ function buildInputSpecs(cfg) {
     const fp = cfg.customMode.scenarioFilePath || 'SCENARIO_FILE_PATH_HERE';
     const sn = cfg.customMode.sheetName || 'Sheet1';
     code += `# Custom mode: load scenario file
-# Columns must be named Object.Variable (e.g. WFController.ElmDsl.K_droop)
+# Column headers: "Scenario" (first column), then each input variable name
 scenario_file_path = r"${fp}"
 sheet_name = "${sn}"
 scenario_df = pd.read_excel(scenario_file_path, sheet_name=sheet_name)
@@ -1995,7 +2210,8 @@ function buildOutputSpecs(cfg) {
         "name":         "${ov.name}",
         "object_query": "${ov.object_query}",
         "variable":     "${ov.variable}",
-        "metric":       "${ov.metric}"`;
+        "metric":       "${ov.metric}",
+        "output_graph": ${ov.output_graph ? 'True' : 'False'}`;
       if (ov.threshold) entry += `,\n        "threshold":    ${ov.threshold}`;
       if (ov.settle_band) entry += `,\n        "settle_band":  ${ov.settle_band}`;
       if (ov.settle_hold_time) entry += `,\n        "settle_hold_time": ${ov.settle_hold_time}`;
@@ -2005,9 +2221,7 @@ function buildOutputSpecs(cfg) {
     } else if (ov.type === 'custom_calculation') {
       code += `    {
         "type":         "custom_calculation",
-        "name":         "${ov.name}",
-        "object_query": "${ov.object_query}",
-        "variable":     "${ov.variable}"
+        "name":         "${ov.name}"
     },\n`;
     }
   });
@@ -2035,11 +2249,26 @@ function buildRunStudyCall(cfg) {
   return 'run_study_steady_state(app)';
 }
 
+// ── GRAPH CALLS INLINE ────────────────────────────────────────
+function buildGraphCalls(cfg, indent, hasIterSC, hasIterOS) {
+  const graphVars = cfg.outputVariables.filter(o => o.type === 'timeseries' && o.output_graph);
+  if (graphVars.length === 0) return '';
+
+  let code = `\n${indent}    # Timeseries graphs\n`;
+  code += `${indent}    _ctx_parts = []\n`;
+  if (hasIterSC) code += `${indent}    _ctx_parts.append(study_case.loc_name)\n`;
+  if (hasIterOS) code += `${indent}    _ctx_parts.append(op_scenario.loc_name)\n`;
+  code += `${indent}    for _gspec in [s for s in output_specs if s["type"] == "timeseries" and s.get("output_graph")]:\n`;
+  code += `${indent}        plot_timeseries_graph(app, _gspec, row, output_dir, _ctx_parts)\n`;
+  return code;
+}
+
 // ── PROBLEM LOOP BODY ─────────────────────────────────────────
 function buildProblemLoop(cfg) {
   const pt = cfg.initialisation.problemType;
   const hasTs  = cfg.outputVariables.some(o => o.type === 'timeseries');
   const hasCust = cfg.outputVariables.some(o => o.type === 'custom_calculation');
+  const hasGraph = cfg.outputVariables.some(o => o.type === 'timeseries' && o.output_graph);
   const hasSave = cfg.additionalConfig.saveIntermediateEnabled;
   const hasBar  = cfg.additionalConfig.useProgressBar;
   const intervalMin = cfg.additionalConfig.saveIntermediateMinutes || 30;
@@ -2117,6 +2346,9 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
       pre += `\n${indent}    # Custom calculation outputs\n`;
       pre += `${indent}    row.update(evaluate_custom_calculations(row))\n`;
     }
+    if (hasGraph) {
+      pre += buildGraphCalls(cfg, indent, hasIterSC, hasIterOS);
+    }
     pre += `\n${indent}    results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)\n`;
     pre += `${indent}    success_count += 1\n\n`;
     pre += `${indent}except Exception:\n`;
@@ -2140,8 +2372,7 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     pre += `${indent}    iteration_count += 1\n`;
     pre += `${indent}    row = {}\n\n`;
     pre += `${indent}    for i, spec in enumerate(input_specs):\n`;
-    pre += `${indent}        column_name = f'{spec["object_query"]}.{spec["variable"]}'\n`;
-    pre += `${indent}        value = scenario_row[column_name]\n`;
+    pre += `${indent}        value = scenario_row[spec["name"]]\n`;
     pre += `${indent}        setattr(input_objects[i], spec["variable"], value)\n`;
     pre += `${indent}        row[spec["name"]] = value\n\n`;
     pre += `${indent}    ${runCall}\n\n`;
@@ -2153,6 +2384,9 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     }
     if (hasCust) {
       pre += `${indent}    row.update(evaluate_custom_calculations(row))\n`;
+    }
+    if (hasGraph) {
+      pre += buildGraphCalls(cfg, indent, hasIterSC, hasIterOS);
     }
     pre += `\n${indent}    results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)\n`;
     pre += `${indent}    success_count += 1\n\n`;
@@ -2215,6 +2449,13 @@ def evaluate_one_case(param_values):
     }
     if (hasCust) {
       pre += `    row.update(evaluate_custom_calculations(row))\n`;
+    }
+    if (hasGraph) {
+      // In optimisation mode, no study/op scenario iteration in evaluate_one_case
+      pre += `\n    # Timeseries graphs\n`;
+      pre += `    _ctx_parts = []\n`;
+      pre += `    for _gspec in [s for s in output_specs if s["type"] == "timeseries" and s.get("output_graph")]:\n`;
+      pre += `        plot_timeseries_graph(app, _gspec, row, output_dir, _ctx_parts)\n`;
     }
     pre += `
     results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)
@@ -2334,6 +2575,8 @@ function generateCode() {
   const errors = validateConfig(cfg);
   showValidationErrors(errors);
   if (errors.length > 0) return;
+  const warnings = validateCustomCalcWarnings(cfg);
+  showValidationWarnings(warnings);
 
   // Assemble code sections
   const sec1_imports     = buildImports(cfg);
@@ -2343,6 +2586,7 @@ function generateCode() {
   const sec5_helpers     = buildCommonHelpers(cfg);
   const sec6_studyhelper = buildStudyHelper(cfg);
   const sec7_elmres      = buildElmResHelpers(cfg);
+  const sec7b_graphhelper = buildTimeseriesGraphHelper(cfg);
   const sec8_customfn    = buildCustomFunctionHelpers(cfg);
   const sec9_outdir      = buildOutputDirSetup(cfg);
   const sec10_inputspecs = buildInputSpecs(cfg);
@@ -2356,7 +2600,7 @@ function generateCode() {
     const sections = [
       sec1_imports + sec2_prep,
       sec3_projsel + sec4_checks,
-      sec5_helpers + sec6_studyhelper + sec7_elmres + sec8_customfn,
+      sec5_helpers + sec6_studyhelper + sec7_elmres + sec7b_graphhelper + sec8_customfn,
       sec9_outdir + sec10_inputspecs,
       sec11_outspecs,
       sec12_loop,
@@ -2373,6 +2617,7 @@ function generateCode() {
       sec5_helpers,
       sec6_studyhelper,
       sec7_elmres,
+      sec7b_graphhelper,
       sec8_customfn,
       sec9_outdir,
       sec10_inputspecs,
@@ -2420,11 +2665,6 @@ function downloadPy() {
   download(window._generatedCode, 'powerfactory_script.py', 'text/plain');
 }
 
-function downloadTxt() {
-  if (!window._generatedCode) { alert('Generate code first.'); return; }
-  download(window._generatedCode, 'powerfactory_script.txt', 'text/plain');
-}
-
 function download(content, filename, type) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([content], { type }));
@@ -2439,22 +2679,22 @@ function downloadCustomTemplate() {
     alert('Add input variables (with Object and Variable filled) first.');
     return;
   }
-  // Column headers match the format used by the generated Python code:
-  // f'{spec["object_query"]}.{spec["variable"]}'
-  const headers = validInputs.map(iv => `${iv.object_query}.${iv.variable}`);
+  // Column headers: "Scenario" first, then each input variable name
+  const headers = ['Scenario', ...validInputs.map((iv, i) => iv.name || `input_${i}`)];
+  // Pre-fill 4 scenario rows
+  const dataRows = [1, 2, 3, 4].map(n => [n, ...validInputs.map(() => '')]);
 
   if (typeof XLSX !== 'undefined') {
-    // xlsx with header row + one blank sample row
-    const ws = XLSX.utils.aoa_to_sheet([headers, headers.map(() => '')]);
-    // Auto-width columns
-    ws['!cols'] = headers.map(h => ({ wch: Math.max(h.length + 4, 12) }));
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
+    ws['!cols'] = headers.map(h => ({ wch: Math.max(String(h).length + 4, 12) }));
     const wb = XLSX.utils.book_new();
     const sheetName = (document.getElementById('scenario-sheet-name').value.trim() || 'Sheet1').substring(0, 31);
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
     XLSX.writeFile(wb, 'scenario_template.xlsx');
   } else {
     // CSV fallback
-    const csvContent = headers.map(h => `"${h.replace(/"/g,'""')}"`).join(',') + '\n';
+    const rows = [headers, ...dataRows];
+    const csvContent = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
     download(csvContent, 'scenario_template.csv', 'text/csv');
   }
 }
@@ -2504,13 +2744,14 @@ function resetForm() {
 </div>
   </code>`;
   document.getElementById('validation-errors').style.display = 'none';
+  document.getElementById('validation-warnings').style.display = 'none';
 }
 
 /* ================================================================
    INIT — add default rows on load
 ================================================================ */
 (function init() {
-  addInputRow({ object_query: 'WFController.ElmDsl', variable: 'K_droop', lower: 0, upper: 10, step: 0.5 });
+  addInputRow({ name: 'K_droop', object_query: 'WFController.ElmDsl', variable: 'K_droop', lower: 0, upper: 10, step: 0.5 });
   addOutputVar({ type: 'attribute', name: 'Bus_THD', object_query: 'RENEWABLES-132kV(1).ElmTerm', variable: 'm:THD' });
   onProblemTypeChange();
   onStudyTypeChange();
