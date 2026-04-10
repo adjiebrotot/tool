@@ -2263,13 +2263,15 @@ function buildCustomFunctionHelpers(cfg) {
     custom_results = {}
 `;
   customVars.forEach(ov => {
-    const safe = sanitizeName(ov.name);
-    // Extract argument names from first line of function def
+    // Extract the actual function name and arguments from the def line
     const firstLine = (ov.customFn || '').trim().split('\n')[0];
-    const argMatch = firstLine.match(/\(([^)]*)\)/);
-    const args = argMatch ? argMatch[1].split(',').map(a => a.trim()).filter(Boolean) : [];
+    const defMatch  = firstLine.match(/^def\s+(\w+)\s*\(([^)]*)\)/);
+    // Use the name as written by the user; fall back to sanitized output name only if no def line
+    const callee = defMatch ? defMatch[1] : sanitizeName(ov.name);
+    const rawArgs = defMatch ? defMatch[2] : '';
+    const args = rawArgs.split(',').map(a => a.trim()).filter(Boolean);
     const argStr = args.map(a => `base_result_row.get("${a}", None)`).join(', ');
-    code += `    custom_results["${ov.name}"] = ${safe}(${argStr})\n`;
+    code += `    custom_results["${ov.name}"] = ${callee}(${argStr})\n`;
   });
   code += '    return custom_results\n';
 
