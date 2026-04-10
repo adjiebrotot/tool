@@ -1538,6 +1538,21 @@ function validateConfig(cfg) {
       errors.push(`Output variable "${ov.name}": Custom function body is required.`);
   });
 
+  // ── Duplicate custom function name detection ───────────────────────
+  const seenFnNames = new Set();
+  cfg.outputVariables.forEach(ov => {
+    if (ov.type !== 'custom_calculation') return;
+    const firstLine = (ov.customFn || '').trim().split('\n')[0];
+    const defMatch  = firstLine.match(/^def\s+(\w+)\s*\(/);
+    if (!defMatch) return;
+    const fnName = defMatch[1];
+    if (seenFnNames.has(fnName)) {
+      errors.push(`Custom function name "${fnName}" is defined more than once. Each custom calculation must use a unique function name.`);
+    }
+    seenFnNames.add(fnName);
+  });
+  // ──────────────────────────────────────────────────────────────────
+
   if (init.problemType === 'optimisation') {
     if (!cfg.optimisation.sense)               errors.push('Optimisation: Sense is required.');
     if (!cfg.optimisation.objectiveOutputName) errors.push('Optimisation: Objective output variable is required.');
