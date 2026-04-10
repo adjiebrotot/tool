@@ -440,6 +440,46 @@
   ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
   /* ── TOOLTIPS ────────────────────────────────────────────────────── */
+  #globalTooltip {
+    position: fixed;
+    z-index: 99999;
+    pointer-events: none;
+    max-width: 260px;
+    background: #1a2138;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text);
+    box-shadow: 0 6px 24px rgba(0,0,0,.45);
+    opacity: 0;
+    transition: opacity .12s;
+    display: none;
+  }
+  #globalTooltip.visible { display: block; opacity: 1; }
+  #globalTooltip .tt-arrow {
+    position: absolute;
+    bottom: -7px;
+    width: 12px;
+    height: 7px;
+    overflow: hidden;
+    transform: translateX(-50%);
+  }
+  #globalTooltip .tt-arrow::before {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    background: #1a2138;
+    border: 1px solid var(--border);
+    transform: rotate(45deg) translate(-3px,-3px);
+  }
+  #globalTooltip.flip-below .tt-arrow { bottom: auto; top: -7px; }
+  #globalTooltip.flip-below .tt-arrow::before {
+    transform: rotate(45deg) translate(3px,3px);
+  }
+
   .tt {
     display: inline-flex;
     align-items: center;
@@ -459,50 +499,7 @@
     vertical-align: middle;
     margin-left: 4px;
   }
-  .tt::before {
-    content: attr(data-tip);
-    visibility: hidden;
-    opacity: 0;
-    background: #1a2138;
-    border: 1px solid var(--border);
-    color: var(--text);
-    text-align: left;
-    border-radius: 5px;
-    padding: 8px 11px;
-    position: absolute;
-    z-index: 300;
-    bottom: 50%;
-    right: calc(100% + 10px);
-    transform: translateY(50%);
-    width: 250px;
-    font-size: 11px;
-    line-height: 1.55;
-    font-weight: 400;
-    font-family: var(--sans);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.55);
-    transition: opacity 0.15s;
-    pointer-events: none;
-    white-space: normal;
-    text-transform: none;
-    letter-spacing: normal;
-  }
-  .tt::after {
-    content: '';
-    visibility: hidden;
-    opacity: 0;
-    position: absolute;
-    bottom: 50%;
-    right: calc(100% + 1px);
-    transform: translateY(50%);
-    border: 5px solid transparent;
-    border-left-color: var(--border);
-    transition: opacity 0.15s;
-  }
-  .tt:hover::before,
-  .tt:hover::after {
-    visibility: visible;
-    opacity: 1;
-  }
+  .tt:hover { border-color: var(--accent); color: var(--accent); }
 
   /* ── COPY TOAST ──────────────────────────────────────────────────── */
   #copy-toast {
@@ -3006,6 +3003,66 @@ function resetForm() {
   document.getElementById('validation-errors').style.display = 'none';
   document.getElementById('validation-warnings').style.display = 'none';
 }
+
+/* ================================================================
+   GLOBAL TOOLTIP
+================================================================ */
+(function initTooltip() {
+  const tt = document.createElement('div');
+  tt.id = 'globalTooltip';
+  tt.innerHTML = '<div class="tt-text"></div><div class="tt-arrow"></div>';
+  document.body.appendChild(tt);
+  const ttText = tt.querySelector('.tt-text');
+  const ttArrow = tt.querySelector('.tt-arrow');
+  const PAD = 8;
+
+  document.addEventListener('mouseover', e => {
+    const icon = e.target.closest('.tt[data-tip]');
+    if (!icon) { hide(); return; }
+    const tip = icon.getAttribute('data-tip');
+    if (!tip) { hide(); return; }
+
+    ttText.textContent = tip;
+    tt.classList.remove('flip-below');
+    tt.classList.add('visible');
+    tt.style.display = 'block';
+    tt.style.opacity = '0';
+
+    const rect = icon.getBoundingClientRect();
+    const ttW = tt.offsetWidth;
+    const ttH = tt.offsetHeight;
+    const iconCX = rect.left + rect.width / 2;
+
+    let top = rect.top - ttH - 10;
+    let left = iconCX - ttW / 2;
+
+    if (top < PAD) {
+      top = rect.bottom + 10;
+      tt.classList.add('flip-below');
+    }
+
+    left = Math.max(PAD, Math.min(left, window.innerWidth - ttW - PAD));
+    top = Math.max(PAD, Math.min(top, window.innerHeight - ttH - PAD));
+
+    tt.style.left = `${left}px`;
+    tt.style.top = `${top}px`;
+    tt.style.opacity = '1';
+
+    const arrowX = Math.max(10, Math.min(iconCX - left, ttW - 10));
+    ttArrow.style.left = `${arrowX}px`;
+  });
+
+  document.addEventListener('mouseout', e => {
+    const icon = e.target.closest('.tt[data-tip]');
+    if (!icon) return;
+    if (!e.relatedTarget || !icon.contains(e.relatedTarget)) hide();
+  });
+
+  function hide() {
+    tt.classList.remove('visible');
+    tt.style.display = 'none';
+  }
+})();
 
 /* ================================================================
    INIT — add default rows on load
