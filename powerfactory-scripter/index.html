@@ -1097,6 +1097,8 @@ function onStudyTypeChange() {
   document.getElementById('row-tstop').style.display = isDynamic ? 'grid' : 'none';
   if (st === 'dynamic_emt') document.getElementById('tstop').value = 0.25;
   else if (st === 'dynamic_rms') document.getElementById('tstop').value = 20;
+  updateTimeseriesAvailability();
+  refreshLiveWarnings();
 }
 
 
@@ -1170,6 +1172,14 @@ const METRICS = [
 ];
 const THRESHOLD_METRICS = ['frequency_above','frequency_below','first_time_above','first_time_below'];
 const SETTLE_METRICS = ['time_settle'];
+const KNOWN_ELM_OBJECT_TYPES = new Set([
+  'ElmArea','ElmAsm','ElmAsmsc','ElmBbone','ElmBmu','ElmBoundary','ElmBranch',
+  'ElmCabsys','ElmComp','ElmCoup','ElmDsl','ElmFeeder','ElmFile','ElmFilter',
+  'ElmGenstat','ElmGndswt','ElmLne','ElmLnesec','ElmNec','ElmNet','ElmPvsys',
+  'ElmRelay','ElmRes','ElmShnt','ElmStactrl','ElmSubstat','ElmSvs','ElmSym',
+  'ElmTerm','ElmTr2','ElmTr3','ElmTr4','ElmTrfstat','ElmVac','ElmVoltreg',
+  'ElmXnet','ElmZone'
+]);
 
 function metricLabel(m) {
   return m.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -1193,6 +1203,8 @@ function addOutputVar(data = {}) {
   if (document.getElementById('problem-type').value === 'optimisation') {
     refreshObjectiveDropdown();
   }
+  updateTimeseriesAvailability();
+  refreshLiveWarnings();
 }
 
 function reindexOutputVars() {
@@ -1323,6 +1335,7 @@ function onOutputTypeChange(id) {
   document.getElementById(`${id}-row-settle`)?.classList.toggle('cond-hidden', !showSettle);
 
   if (document.getElementById('problem-type').value === 'optimisation') refreshObjectiveDropdown();
+  refreshLiveWarnings();
 }
 
 function onMetricChange(id) {
@@ -1331,10 +1344,12 @@ function onMetricChange(id) {
   const showSettle = metric === 'time_settle';
   document.getElementById(`${id}-row-threshold`)?.classList.toggle('cond-hidden', !showThresh);
   document.getElementById(`${id}-row-settle`)?.classList.toggle('cond-hidden', !showSettle);
+  refreshLiveWarnings();
 }
 
 function onOutputNameChange() {
   if (document.getElementById('problem-type').value === 'optimisation') refreshObjectiveDropdown();
+  refreshLiveWarnings();
 }
 
 function removeOutputVar(id) {
@@ -1343,6 +1358,7 @@ function removeOutputVar(id) {
   if (aceEditors[id]) { aceEditors[id].destroy(); delete aceEditors[id]; }
   reindexOutputVars();
   if (document.getElementById('problem-type').value === 'optimisation') refreshObjectiveDropdown();
+  refreshLiveWarnings();
 }
 
 function toggleOutputVar(id) {
@@ -1683,6 +1699,61 @@ function validateCustomCalcWarnings(cfg) {
   });
 
   return warnings;
+}
+
+function buildObjectTypeWarnings(cfg) {
+  const warnings = [];
+  const checkObjectQuery = (objectQuery, label) => {
+    if (!objectQuery) return;
+    const objectType = objectQuery.trim().split('.').pop();
+    if (!objectType || !objectType.startsWith('Elm')) {
+      warnings.push(`${label}: Object "${objectQuery}" should end with a PowerFactory object type (e.g., ".ElmTerm", ".ElmDsl").`);
+      return;
+    }
+    if (!KNOWN_ELM_OBJECT_TYPES.has(objectType)) {
+      warnings.push(`${label}: Object type "${objectType}" is not recognised from the PowerFactory API reference. Check for typos.`);
+    }
+  };
+
+  cfg.inputVariables.forEach((iv, i) => checkObjectQuery(iv.object_query, `Input variable #${i + 1}`));
+  cfg.outputVariables.forEach((ov, i) => {
+    if (ov.type === 'custom_calculation') return;
+    checkObjectQuery(ov.object_query, `Output variable #${i + 1} "${ov.name || '(unnamed)'}"`);
+  });
+
+  return warnings;
+}
+
+function updateTimeseriesAvailability() {
+  const st = document.getElementById('study-type').value;
+  const isDynamic = st === 'dynamic_rms' || st === 'dynamic_emt';
+  document.querySelectorAll('#output-vars-container .output-var-item').forEach(div => {
+    const id = div.id;
+    const typeSelect = document.getElementById(`${id}-type`);
+    const tsOption = typeSelect?.querySelector('option[value="timeseries"]');
+    if (tsOption) tsOption.disabled = !isDynamic;
+    if (!isDynamic && typeSelect?.value === 'timeseries') {
+      typeSelect.value = 'attribute';
+      onOutputTypeChange(id);
+    }
+  });
+}
+
+function getLiveWarnings(cfg) {
+  const warnings = [...validateCustomCalcWarnings(cfg), ...buildObjectTypeWarnings(cfg)];
+  const st = cfg.initialisation.studyType;
+  const isDynamic = st === 'dynamic_rms' || st === 'dynamic_emt';
+  if (!isDynamic && cfg.outputVariables.some(ov => ov.type === 'timeseries')) {
+    warnings.push('Timeseries output variables are available only for Dynamic RMS or Dynamic EMT study types.');
+  }
+  return warnings;
+}
+
+function refreshLiveWarnings() {
+  updateTimeseriesAvailability();
+  const cfg = readConfig();
+  const warnings = getLiveWarnings(cfg);
+  showValidationWarnings(warnings);
 }
 
 function hasMultipleReturnValues(retStr) {
@@ -2830,7 +2901,7 @@ function generateCode() {
   const errors = validateConfig(cfg);
   showValidationErrors(errors);
   if (errors.length > 0) return;
-  const warnings = validateCustomCalcWarnings(cfg);
+  const warnings = getLiveWarnings(cfg);
   showValidationWarnings(warnings);
 
   // Assemble code sections
@@ -2972,6 +3043,7 @@ function importConfigJSON(event) {
     try {
       const cfg = JSON.parse(e.target.result);
       loadConfig(cfg);
+      refreshLiveWarnings();
     } catch(err) {
       alert('Invalid JSON file: ' + err.message);
     }
@@ -3072,6 +3144,9 @@ function resetForm() {
   addOutputVar({ type: 'attribute', name: 'Bus_THD', object_query: 'RENEWABLES-132kV(1).ElmTerm', variable: 'm:THD' });
   onProblemTypeChange();
   onStudyTypeChange();
+  document.addEventListener('input', () => refreshLiveWarnings());
+  document.addEventListener('change', () => refreshLiveWarnings());
+  refreshLiveWarnings();
 })();
 </script>
 </body>
