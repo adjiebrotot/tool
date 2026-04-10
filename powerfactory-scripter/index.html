@@ -7,6 +7,8 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 <!-- Ace.js for Python syntax highlighting in custom function editors -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js"></script>
+<!-- SheetJS for xlsx template download in custom mode -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <!-- Highlight.js for code preview -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -90,7 +92,7 @@
   /* ── LAYOUT ──────────────────────────────────────────────────────── */
   .layout {
     display: grid;
-    grid-template-columns: 540px 1fr;
+    grid-template-columns: 1fr 1fr;
     height: calc(100vh - 56px);
     overflow: hidden;
   }
@@ -470,6 +472,104 @@
 
   /* Constraint table */
   #constraint-table { margin-top: 0; }
+
+  /* ── COLUMN HIDING FOR INPUT TABLE ──────────────────────────────── */
+  .input-table-hide-step .col-step { display: none; }
+  .input-table-hide-bounds .col-lb,
+  .input-table-hide-bounds .col-ub  { display: none; }
+
+  /* ── PAGE FOOTER ─────────────────────────────────────────────────── */
+  .page-footer {
+    margin-top: 28px;
+    border-top: 1px solid var(--border);
+    padding: 16px 0 8px;
+  }
+  .page-footer-info p {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .page-footer-info a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .page-footer-info a:hover { text-decoration: underline; }
+
+  /* ── MOBILE RESPONSIVE ──────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    header {
+      padding: 0 12px;
+      gap: 8px;
+      flex-wrap: wrap;
+      height: auto;
+      min-height: 48px;
+      padding-top: 6px;
+      padding-bottom: 6px;
+    }
+    header .logo {
+      font-size: 12px;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+    #mode-banner {
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 9px;
+      padding: 1px 5px;
+    }
+    .layout {
+      grid-template-columns: 1fr;
+      height: auto;
+      overflow: visible;
+    }
+    body {
+      overflow-y: auto;
+    }
+    .left-pane {
+      overflow-y: visible;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 12px 24px;
+    }
+    .right-pane {
+      height: 80vh;
+      min-height: 400px;
+    }
+    .right-toolbar {
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 12px;
+    }
+    .right-toolbar .pane-title {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 2px;
+    }
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+    .form-row label {
+      padding-top: 0;
+      padding-bottom: 2px;
+    }
+    .dyn-table {
+      min-width: 360px;
+    }
+    .dyn-table td input,
+    .dyn-table td select {
+      min-width: 50px;
+    }
+    .output-var-header {
+      flex-wrap: wrap;
+    }
+  }
 </style>
 </head>
 <body>
@@ -561,58 +661,27 @@
       </div>
     </div>
 
-    <!-- ── SECTION 2 · PROJECT / SELECTION CONFIG ──────────────── -->
-    <div class="section-card" id="sec-proj">
-      <div class="section-header" onclick="toggleSection('sec-proj')">
-        <span class="sec-num">02</span>
-        <h3>Project / Selection Config</h3>
-        <span class="toggle-icon">▾</span>
-      </div>
-      <div class="section-body">
-        <div class="info-box">
-          Python file style uses terminal <code>input()</code> prompts if indices are omitted.
-          Notebook style leaves assignment lines editable inline.
-        </div>
-        <div class="checkbox-row">
-          <input type="checkbox" id="use-project-folder" onchange="onProjectFolderToggle()" />
-          <label for="use-project-folder">Use project folder first</label>
-        </div>
-        <div id="row-folder-index" class="form-row cond-hidden">
-          <label>Folder Index</label>
-          <input type="number" id="project-folder-index" value="0" min="0" />
-        </div>
-        <div class="form-row">
-          <label>Project Index</label>
-          <div>
-            <input type="number" id="project-index" placeholder="(leave blank for prompt)" min="0" />
-            <div class="hint">Leave blank to use interactive terminal prompt in generated code</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── SECTION 3 · INPUT VARIABLES ────────────────────────── -->
+    <!-- ── SECTION 2 · INPUT VARIABLES ─────────────────────────── -->
     <div class="section-card" id="sec-inputs">
       <div class="section-header" onclick="toggleSection('sec-inputs')">
-        <span class="sec-num">03</span>
+        <span class="sec-num">02</span>
         <h3>Input Variables</h3>
         <span class="toggle-icon">▾</span>
       </div>
       <div class="section-body">
-        <div class="info-box">
-          Define each parameter to vary. <strong>Step Size</strong> = increment value (not number of steps).<br/>
-          For Custom mode these define variable names; values come from the scenario file.
+        <div class="info-box" id="input-info-box">
+          Define each parameter to vary. <strong>Step Size</strong> = increment value (not number of steps). For <strong>Optimisation</strong> mode, bounds define the search space (step not used). For <strong>Custom</strong> mode, values come from the scenario file (bounds and step not used).
         </div>
         <div class="dyn-table-wrapper">
           <table class="dyn-table" id="input-table">
             <thead>
               <tr>
                 <th>#</th>
-                <th>Object Query</th>
+                <th>Object</th>
                 <th>Variable</th>
-                <th>Lower Bound</th>
-                <th>Upper Bound</th>
-                <th>Step Size</th>
+                <th class="col-lb">Lower Bound</th>
+                <th class="col-ub">Upper Bound</th>
+                <th class="col-step">Step Size</th>
                 <th>Data Type</th>
                 <th></th>
               </tr>
@@ -626,18 +695,18 @@
       </div>
     </div>
 
-    <!-- ── SECTION 4 · CUSTOM MODE CONFIG ─────────────────────── -->
+    <!-- ── SECTION 3 · CUSTOM MODE CONFIG ─────────────────────── -->
     <div class="section-card cond-hidden" id="sec-custom">
       <div class="section-header" onclick="toggleSection('sec-custom')">
-        <span class="sec-num">04</span>
+        <span class="sec-num">03</span>
         <h3>Custom Mode Config</h3>
         <span class="toggle-icon">▾</span>
       </div>
       <div class="section-body">
         <div class="info-box">
           Each <strong>row</strong> in the spreadsheet is one scenario.<br/>
-          Each <strong>column</strong> corresponds to an input variable, named as <code>Object.Variable</code>.<br/>
-          Example columns: <code>ElementA.VariableA</code>, <code>ElementA.VariableB</code>
+          Each <strong>column</strong> header must be <code>Object.Variable</code> (e.g. <code>WFController.ElmDsl.K_droop</code>).<br/>
+          Click <strong>Download Template</strong> to get a pre-filled header row based on your input variables.
         </div>
         <div class="form-row">
           <label>Scenario File Path</label>
@@ -647,13 +716,16 @@
           <label>Sheet Name</label>
           <input type="text" id="scenario-sheet-name" placeholder="Sheet1" />
         </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-xs" onclick="downloadCustomTemplate()">⬇ Download Template (.xlsx)</button>
+        </div>
       </div>
     </div>
 
-    <!-- ── SECTION 5 · OUTPUT VARIABLES ───────────────────────── -->
+    <!-- ── SECTION 4 · OUTPUT VARIABLES ───────────────────────── -->
     <div class="section-card" id="sec-outputs">
       <div class="section-header" onclick="toggleSection('sec-outputs')">
-        <span class="sec-num">05</span>
+        <span class="sec-num">04</span>
         <h3>Output Variables</h3>
         <span class="toggle-icon">▾</span>
       </div>
@@ -673,7 +745,7 @@
     <!-- ── SECTION 6 · OPTIMISATION SETTINGS ─────────────────── -->
     <div class="section-card cond-hidden" id="sec-optim">
       <div class="section-header" onclick="toggleSection('sec-optim')">
-        <span class="sec-num">06</span>
+        <span class="sec-num">05</span>
         <h3>Optimisation Settings</h3>
         <span class="toggle-icon">▾</span>
       </div>
@@ -731,7 +803,7 @@
     <!-- ── SECTION 7 · ADDITIONAL CONFIG ──────────────────────── -->
     <div class="section-card" id="sec-addl">
       <div class="section-header" onclick="toggleSection('sec-addl')">
-        <span class="sec-num">07</span>
+        <span class="sec-num">06</span>
         <h3>Additional Config</h3>
         <span class="toggle-icon">▾</span>
       </div>
@@ -762,6 +834,18 @@
         </div>
       </div>
     </div>
+
+    <!-- ── FOOTER DISCLAIMER ──────────────────────────────────── -->
+    <footer class="page-footer">
+      <section class="page-footer-info">
+        <p>
+          <strong>Disclaimer:</strong> This tool is provided on an "as is" and "as available" basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for validating the generated code before use in any production or engineering context.
+        </p>
+        <p>
+          If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you're interested, confused, or would like help learning how to use the tool, feel free to email me as well.
+        </p>
+      </section>
+    </footer>
 
   </div><!-- end left-pane -->
 
@@ -829,6 +913,11 @@ function onProblemTypeChange() {
   document.getElementById('badge-problem').textContent = labels[pt] || pt;
   // Refresh objective dropdown when switching to optimisation
   if (pt === 'optimisation') refreshObjectiveDropdown();
+  // Toggle input table column visibility
+  const table = document.getElementById('input-table');
+  // Optimisation: hide step size only; Custom: hide step + bounds
+  table.classList.toggle('input-table-hide-step', pt === 'optimisation' || pt === 'custom');
+  table.classList.toggle('input-table-hide-bounds', pt === 'custom');
 }
 
 function onStudyTypeChange() {
@@ -845,11 +934,6 @@ document.getElementById('coding-style').addEventListener('change', function() {
   const labels = { python_file:'Python File', notebook:'Notebook' };
   document.getElementById('badge-style').textContent = labels[this.value] || this.value;
 });
-
-function onProjectFolderToggle() {
-  const checked = document.getElementById('use-project-folder').checked;
-  document.getElementById('row-folder-index').classList.toggle('cond-hidden', !checked);
-}
 
 function onSaveIntermediateChange() {
   const checked = document.getElementById('save-intermediate').checked;
@@ -870,9 +954,9 @@ function addInputRow(data = {}) {
     <td style="color:var(--muted);font-family:var(--mono);font-size:11px;vertical-align:middle">${idx}</td>
     <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="WFController.ElmDsl" /></td>
     <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="K_droop" /></td>
-    <td><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" /></td>
-    <td><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" /></td>
-    <td><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" /></td>
+    <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" /></td>
+    <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" /></td>
+    <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" /></td>
     <td>
       <select id="iv-dtype-${idx}">
         <option value="float" ${(data.dtype||'float')==='float'?'selected':''}>float</option>
@@ -961,12 +1045,13 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
         <option value="custom_calculation" ${type==='custom_calculation'?'selected':''}>Custom Calculation</option>
       </select>
       <input type="text" id="${id}-name" value="${data.name||''}" placeholder="output_name"
-        style="flex:1;font-size:12px;padding:3px 8px;" oninput="onOutputNameChange()" />
-      <button class="btn btn-remove btn-xs" onclick="removeOutputVar('${id}')">✕ Remove</button>
+        style="flex:1;font-size:12px;padding:3px 8px;min-width:80px;" oninput="onOutputNameChange()" />
+      <button class="btn btn-ghost btn-icon btn-xs" title="Collapse" onclick="toggleOutputVar('${id}')" id="${id}-toggle" style="font-size:14px;flex-shrink:0;">▾</button>
+      <button class="btn btn-remove btn-xs" onclick="removeOutputVar('${id}')">✕</button>
     </div>
-    <div class="output-var-body">
+    <div class="output-var-body" id="${id}-body">
       <div class="form-row">
-        <label>Object Query</label>
+        <label>Object</label>
         <input type="text" id="${id}-obj" value="${data.object_query||''}" placeholder="Element.ElmType" />
       </div>
       <div class="form-row">
@@ -1055,6 +1140,14 @@ function removeOutputVar(id) {
   if (el) el.remove();
   if (aceEditors[id]) { aceEditors[id].destroy(); delete aceEditors[id]; }
   if (document.getElementById('problem-type').value === 'optimisation') refreshObjectiveDropdown();
+}
+
+function toggleOutputVar(id) {
+  const body = document.getElementById(`${id}-body`);
+  const btn  = document.getElementById(`${id}-toggle`);
+  if (!body) return;
+  const isHidden = body.classList.toggle('hidden');
+  btn.textContent = isHidden ? '▸' : '▾';
 }
 
 function initAceEditor(id, initialValue) {
@@ -1171,11 +1264,6 @@ function readConfig() {
       codingStyle:         codingStyle,
       tstop:               document.getElementById('tstop').value.trim(),
     },
-    projectSelection: {
-      useProjectFolder:    document.getElementById('use-project-folder').checked,
-      projectFolderIndex:  document.getElementById('project-folder-index').value.trim(),
-      projectIndex:        document.getElementById('project-index').value.trim(),
-    },
     inputVariables:  getInputRows(),
     outputVariables: getOutputVars(),
     optimisation: {
@@ -1213,11 +1301,6 @@ function loadConfig(cfg) {
   document.getElementById('coding-style').value     = init.codingStyle || 'python_file';
   document.getElementById('tstop').value            = init.tstop || '20';
 
-  const ps = cfg.projectSelection || {};
-  document.getElementById('use-project-folder').checked  = !!ps.useProjectFolder;
-  document.getElementById('project-folder-index').value  = ps.projectFolderIndex || '';
-  document.getElementById('project-index').value         = ps.projectIndex || '';
-
   // Input variables
   document.getElementById('input-tbody').innerHTML = '';
   inputRowCounter = 0;
@@ -1254,7 +1337,6 @@ function loadConfig(cfg) {
 
   onProblemTypeChange();
   onStudyTypeChange();
-  onProjectFolderToggle();
   onSaveIntermediateChange();
 }
 
@@ -1272,7 +1354,7 @@ function validateConfig(cfg) {
   if (cfg.outputVariables.length === 0) errors.push('At least one output variable is required.');
 
   cfg.inputVariables.forEach((iv, i) => {
-    if (!iv.object_query) errors.push(`Input variable #${i}: Object Query is required.`);
+    if (!iv.object_query) errors.push(`Input variable #${i}: Object is required.`);
     if (!iv.variable)     errors.push(`Input variable #${i}: Variable is required.`);
   });
 
@@ -1281,7 +1363,7 @@ function validateConfig(cfg) {
     if (!isPythonIdentifier(sanitizeName(ov.name)) && ov.name) {
       errors.push(`Output variable #${i}: Name "${ov.name}" is not a valid Python identifier (will be sanitized).`);
     }
-    if (!ov.object_query) errors.push(`Output variable #${i}: Object Query is required.`);
+    if (!ov.object_query) errors.push(`Output variable #${i}: Object is required.`);
     if (ov.type === 'timeseries' && THRESHOLD_METRICS.includes(ov.metric) && !ov.threshold)
       errors.push(`Output variable "${ov.name}": Threshold is required for metric "${ov.metric}".`);
     if (ov.type === 'timeseries' && ov.metric === 'time_settle') {
@@ -1369,20 +1451,7 @@ ${tqdmImport ? tqdmImport + '\n' : ''}${optimImports ? optimImports + '\n' : ''}
 // ── PREPARATION (app connection, project listing) ─────────────
 function buildPreparation(cfg) {
   const username = cfg.initialisation.username || 'USERNAME_HERE';
-  const openWindow = cfg.additionalConfig.openPowerFactoryWindow;
-  const useFolder  = cfg.projectSelection.useProjectFolder;
-
-  if (useFolder) {
-    return `# ── PREPARATION ────────────────────────────────────────────────
-app = pf.GetApplication("${username}")
-user = app.GetCurrentUser()
-
-# Show available project folders
-projects_folder = user.GetContents("*.IntFolder")
-[print(f"i: {index}, folder: {value}") for index, value in enumerate(projects_folder)]
-`;
-  } else {
-    return `# ── PREPARATION ────────────────────────────────────────────────
+  return `# ── PREPARATION ────────────────────────────────────────────────
 app = pf.GetApplication("${username}")
 user = app.GetCurrentUser()
 
@@ -1390,29 +1459,32 @@ user = app.GetCurrentUser()
 projects = user.GetContents("*.IntPrj")
 [print(f"i: {index}, project: {value}") for index, value in enumerate(projects)]
 `;
-  }
 }
 
-// ── PROJECT SELECTION ─────────────────────────────────────────
+// ── PROJECT & SCENARIO SELECTION ──────────────────────────────
 function buildProjectSelection(cfg) {
-  const ps = cfg.projectSelection;
-  const cs = cfg.initialisation.codingStyle;
-  const needsPrompt = cs === 'python_file';
-  const folderIdx = ps.projectFolderIndex !== '' ? ps.projectFolderIndex : null;
-  const projIdx   = ps.projectIndex !== '' ? ps.projectIndex : null;
+  const iterSC = cfg.additionalConfig.iterateStudyCases;
+  const iterOS = cfg.additionalConfig.iterateOperatingScenarios;
 
-  let lines = '\n# ── PROJECT SELECTION ──────────────────────────────────────────\n';
+  let lines = '\n# ── PROJECT & SCENARIO SELECTION ──────────────────────────────\n';
+  lines += `project = projects[int(input("Enter project index: "))]\n`;
+  lines += `project.Activate()\n`;
 
-  if (ps.useProjectFolder) {
-    const fi = folderIdx !== null ? folderIdx : (needsPrompt ? 'int(input("Enter project folder index: "))' : 'PROJECT_FOLDER_INDEX_HERE');
-    lines += `# Open desired project folder\n`;
-    lines += `projects = projects_folder[${fi}].GetContents("*.IntPrj")\n`;
-    lines += `[print(f"i: {index}, project: {value}") for index, value in enumerate(projects)]\n\n`;
+  if (!iterSC) {
+    lines += `\n# Select study case\n`;
+    lines += `study_cases = get_study_cases(app)\n`;
+    lines += `[print(f"i: {index}, sc: {value}") for index, value in enumerate(study_cases)]\n`;
+    lines += `study_case = study_cases[int(input("Enter study case index: "))]\n`;
+    lines += `study_case.Activate()\n`;
   }
 
-  const pi = projIdx !== null ? projIdx : (needsPrompt ? 'int(input("Enter project index: "))' : 'PROJECT_INDEX_HERE');
-  lines += `project = projects[${pi}]\n`;
-  lines += `project.Activate()\n`;
+  if (!iterOS) {
+    lines += `\n# Select operating scenario\n`;
+    lines += `operating_scenarios = get_operating_scenarios(app)\n`;
+    lines += `[print(f"i: {index}, os: {value}") for index, value in enumerate(operating_scenarios)]\n`;
+    lines += `op_scenario = operating_scenarios[int(input("Enter operating scenario index: "))]\n`;
+    lines += `op_scenario.Activate()\n`;
+  }
 
   return lines;
 }
@@ -1437,7 +1509,6 @@ function buildCommonHelpers(cfg) {
   const hasTs    = cfg.outputVariables.some(o => o.type === 'timeseries' || o.type === 'custom_calculation');
   const hasCustom = cfg.outputVariables.some(o => o.type === 'custom_calculation');
   const hasSaveInt = cfg.additionalConfig.saveIntermediateEnabled;
-  const hasScenarios = cfg.additionalConfig.iterateStudyCases || cfg.additionalConfig.iterateOperatingScenarios;
 
   let code = `
 # ── COMMON HELPERS ──────────────────────────────────────────────
@@ -1491,8 +1562,8 @@ def save_intermediate_results(df, output_dir, prefix, last_save_time, interval_m
 `;
   }
 
-  if (hasScenarios) {
-    code += `
+  // Always include — needed for prompt selection or iteration
+  code += `
 def get_study_cases(app):
     project = app.GetActiveProject()
     study_case_root = project.GetContents("Study Cases")
@@ -1509,7 +1580,6 @@ def get_operating_scenarios(app):
     return scenario_root[0].GetContents()
 
 `;
-  }
 
   return code;
 }
@@ -1885,10 +1955,16 @@ function buildInputSpecs(cfg) {
     const fp = cfg.customMode.scenarioFilePath || 'SCENARIO_FILE_PATH_HERE';
     const sn = cfg.customMode.sheetName || 'Sheet1';
     code += `# Custom mode: load scenario file
+# Columns must be named Object.Variable (e.g. WFController.ElmDsl.K_droop)
 scenario_file_path = r"${fp}"
 sheet_name = "${sn}"
 scenario_df = pd.read_excel(scenario_file_path, sheet_name=sheet_name)
-# Alternative: scenario_df = pd.read_csv(scenario_file_path)
+# Alternative for CSV: scenario_df = pd.read_csv(scenario_file_path)
+
+# Resolve PowerFactory objects (done once, reused each scenario row)
+input_objects = {}
+for i, spec in enumerate(input_specs):
+    input_objects[i] = get_single_pf_object(app, spec["object_query"])
 
 `;
   } else {
@@ -2363,6 +2439,33 @@ function download(content, filename, type) {
   a.click();
 }
 
+function downloadCustomTemplate() {
+  const inputs = getInputRows();
+  const validInputs = inputs.filter(iv => iv.object_query && iv.variable);
+  if (validInputs.length === 0) {
+    alert('Add input variables (with Object and Variable filled) first.');
+    return;
+  }
+  // Column headers match the format used by the generated Python code:
+  // f'{spec["object_query"]}.{spec["variable"]}'
+  const headers = validInputs.map(iv => `${iv.object_query}.${iv.variable}`);
+
+  if (typeof XLSX !== 'undefined') {
+    // xlsx with header row + one blank sample row
+    const ws = XLSX.utils.aoa_to_sheet([headers, headers.map(() => '')]);
+    // Auto-width columns
+    ws['!cols'] = headers.map(h => ({ wch: Math.max(h.length + 4, 12) }));
+    const wb = XLSX.utils.book_new();
+    const sheetName = (document.getElementById('scenario-sheet-name').value.trim() || 'Sheet1').substring(0, 31);
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    XLSX.writeFile(wb, 'scenario_template.xlsx');
+  } else {
+    // CSV fallback
+    const csvContent = headers.map(h => `"${h.replace(/"/g,'""')}"`).join(',') + '\n';
+    download(csvContent, 'scenario_template.csv', 'text/csv');
+  }
+}
+
 /* ================================================================
    EXPORT / IMPORT CONFIG JSON
 ================================================================ */
@@ -2394,7 +2497,6 @@ function resetForm() {
   if (!confirm('Reset all fields to defaults?')) return;
   loadConfig({
     initialisation: { powerfactoryApiPath:'', username:'', outputDir:'', problemType:'brute_force', studyType:'steady_state', codingStyle:'python_file', tstop:'20' },
-    projectSelection: { useProjectFolder:false, projectFolderIndex:'', projectIndex:'' },
     inputVariables: [],
     outputVariables: [],
     optimisation: { sense:'minimise', objectiveOutputName:'', algorithm:'placeholder', maxIterations:50, constraints:[] },
