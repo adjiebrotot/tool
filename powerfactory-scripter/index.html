@@ -141,7 +141,7 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     margin-bottom: 14px;
-    overflow: hidden;
+    overflow: visible;
   }
   .section-header {
     display: flex;
@@ -230,7 +230,12 @@
   }
 
   /* ── DYNAMIC TABLES ──────────────────────────────────────────────── */
-  .dyn-table-wrapper { overflow-x: auto; }
+  .dyn-table-wrapper {
+    overflow-x: auto;
+    overflow-y: visible;
+    position: relative;
+    z-index: 1;
+  }
   .dyn-table {
     width: 100%;
     border-collapse: collapse;
@@ -478,6 +483,8 @@
     transition: opacity 0.15s;
     pointer-events: none;
     white-space: normal;
+    text-transform: none;
+    letter-spacing: normal;
   }
   .tt::after {
     content: '';
