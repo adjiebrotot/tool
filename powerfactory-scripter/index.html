@@ -72,6 +72,46 @@
     letter-spacing: 0.04em;
   }
   header .logo span { color: var(--accent2); }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .header-text {
+    min-width: 0;
+  }
+  .header-title {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .header-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--bg);
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .back-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
 
 
   /* ── LAYOUT ──────────────────────────────────────────────────────── */
@@ -426,9 +466,9 @@
     padding: 8px 11px;
     position: absolute;
     z-index: 300;
-    bottom: 130%;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 50%;
+    left: calc(100% + 10px);
+    transform: translateY(50%);
     width: 250px;
     font-size: 11px;
     line-height: 1.55;
@@ -444,11 +484,11 @@
     visibility: hidden;
     opacity: 0;
     position: absolute;
-    bottom: calc(130% - 6px);
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 50%;
+    left: calc(100% + 1px);
+    transform: translateY(50%);
     border: 5px solid transparent;
-    border-top-color: var(--border);
+    border-right-color: var(--border);
     transition: opacity 0.15s;
   }
   .tt:hover::before,
@@ -599,6 +639,24 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .header-left {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      flex: 1;
+    }
+    .header-title {
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+    .header-subtitle {
+      font-size: 11px;
+      line-height: 1.35;
+    }
+    .back-link {
+      font-size: 11px;
+      padding: 5px 8px;
+    }
 
     /* Stack layout as a vertical flex column */
     .layout {
@@ -680,7 +738,13 @@
 
 <!-- TOP HEADER -->
 <header>
-  <div class="logo">⚡ PowerFactory Scripter - Help you automate PF simulations. Because why not.</div>
+  <div class="header-left">
+    <a class="back-link" href="https://tool.adjiebrotots.com/" target="_self" rel="noopener">← Other Tools</a>
+    <div class="header-text">
+      <div class="header-title">⚡ PowerFactory Scripter</div>
+      <div class="header-subtitle">Help you automate PF simulations. Because why not</div>
+    </div>
+  </div>
 </header>
 
 <!-- TOAST -->
