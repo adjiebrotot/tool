@@ -117,13 +117,19 @@
   /* ── LAYOUT ──────────────────────────────────────────────────────── */
   .layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(320px, 44%) minmax(0, 1fr);
+    gap: 0;
+    align-items: start;
     flex: 1;
     min-height: 0;
-    overflow: hidden;
+    overflow: visible;
   }
   .left-pane {
+    position: sticky;
+    top: 72px;
+    align-self: start;
     overflow-y: auto;
+    max-height: calc(100vh - 88px);
     padding: 20px 20px 40px;
     background: var(--bg);
     border-right: 1px solid var(--border);
@@ -672,12 +678,16 @@
 
     /* Left pane: natural height, clamp width */
     .left-pane {
+      position: static;
+      top: auto;
+      align-self: auto;
       width: 100%;
       max-width: 100%;
       box-sizing: border-box;
       overflow-x: hidden;
       overflow-y: visible;
       height: auto;
+      max-height: none;
       border-right: none;
       border-bottom: 1px solid var(--border);
       padding: 12px 12px 20px;
