@@ -1265,8 +1265,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
           <input type="text" id="${id}-obj" value="${isTs ? '' : (data.object_query||'')}" placeholder="Element.ElmType" oninput="onOutputObjectInput('${id}')" />
         </div>
         <div id="${id}-obj-timeseries-wrap" class="${isTs?'':'cond-hidden'}" style="display:flex;align-items:center;">
-          <input type="text" id="${id}-obj-prefix" value="${tsPrefix}" placeholder="*" oninput="onOutputObjectInput('${id}')" style="border-top-right-radius:0;border-bottom-right-radius:0;" />
-          <span style="padding:6px 10px;border:1px solid var(--border);border-left:0;border-top-right-radius:var(--radius);border-bottom-right-radius:var(--radius);background:var(--surface);font-family:var(--mono);font-size:12px;color:var(--label);">.ElmRes</span>
+          <input type="text" id="${id}-obj-prefix" value="${buildTimeseriesObjectQuery(tsPrefix)}" placeholder="*.ElmRes" oninput="onOutputObjectInput('${id}')" />
         </div>
       </div>
       <!-- ATTRIBUTE (hidden for custom_calculation) -->
@@ -1345,6 +1344,10 @@ function onOutputTypeChange(id) {
   document.getElementById(`${id}-row-custom-fn`)?.classList.toggle('cond-hidden', !isCust);
   document.getElementById(`${id}-obj-attribute-wrap`)?.classList.toggle('cond-hidden', isTs);
   document.getElementById(`${id}-obj-timeseries-wrap`)?.classList.toggle('cond-hidden', !isTs);
+  if (isTs) {
+    const objPrefixInput = document.getElementById(`${id}-obj-prefix`);
+    if (objPrefixInput) objPrefixInput.value = '*.ElmRes';
+  }
   enforceTimeseriesElmResObject(id, type);
   // Reinit ace if custom and not yet created
   if (isCust && !aceEditors[id]) {
@@ -1391,12 +1394,12 @@ function enforceTimeseriesElmResObject(id, forcedType = null) {
   if (!objInput) return;
   if (type === 'timeseries') {
     const source = objPrefixInput?.value || objInput.value;
-    const prefix = getTimeseriesObjectPrefix(source);
+    const objectQuery = buildTimeseriesObjectQuery(source);
     if (objPrefixInput) {
-      objPrefixInput.value = prefix;
-      objPrefixInput.placeholder = '*';
+      objPrefixInput.value = objectQuery;
+      objPrefixInput.placeholder = '*.ElmRes';
     }
-    objInput.value = buildTimeseriesObjectQuery(prefix);
+    objInput.value = objectQuery;
     objInput.placeholder = 'Element.ElmType';
   } else {
     objInput.placeholder = 'Element.ElmType';
@@ -1827,6 +1830,9 @@ function getLiveWarnings(cfg) {
   const isDynamic = st === 'dynamic_rms' || st === 'dynamic_emt';
   if (!isDynamic && cfg.outputVariables.some(ov => ov.type === 'timeseries')) {
     warnings.push('Timeseries output variables are available only for Dynamic RMS or Dynamic EMT study types.');
+  }
+  if (cfg.outputVariables.some(ov => ov.type === 'timeseries')) {
+    warnings.push('Object Element of a Timeseries output variable must be an .ElmRes object.');
   }
   return warnings;
 }
