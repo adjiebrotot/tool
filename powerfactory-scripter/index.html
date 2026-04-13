@@ -1375,7 +1375,11 @@ function onMetricChange(id) {
 }
 
 function stripElmResSuffix(rawValue) {
-  const cleaned = (rawValue || '').trim().replace(/(?:\.ElmRes)+$/ig, '').replace(/\.$/, '').trim();
+  const cleaned = (rawValue || '')
+    .trim()
+    .replace(/\.ElmRes/ig, '')
+    .replace(/\.+$/, '')
+    .trim();
   return cleaned;
 }
 
