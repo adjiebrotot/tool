@@ -852,7 +852,7 @@
       </div>
       <div class="section-body">
         <div class="info-box" id="input-info-box">
-          Define each parameter to vary. <strong>Step Size</strong> = increment value (not number of steps). For <strong>Optimisation</strong> mode, bounds define the search space (step not used). For <strong>Custom</strong> mode, values come from the scenario file (bounds and step not used).
+          Define each parameter to vary. <strong>Step Size</strong> = increment value (not number of steps). For <strong>Optimisation</strong> mode, bounds define the search space (step not used). For <strong>Custom</strong> mode, values come from the scenario file (bounds and step not used). Wildcards in <strong>Object</strong> (for example <code>*.ElmDsl</code> or any <code>*</code>) are supported for Brute Force/Optimisation and apply the same input value to all matched objects.
         </div>
         <div class="dyn-table-wrapper">
           <table class="dyn-table" id="input-table">
@@ -860,7 +860,7 @@
               <tr>
                 <th>#</th>
                 <th>Name <span class="tt" data-tip="Python identifier for this input. Used as the column header in results and as the variable name in generated code. Must be unique across ALL input and output variables.">?</span></th>
-                <th>Object <span class="tt" data-tip="PowerFactory object query passed to GetCalcRelevantObjects(). Examples: WFController.ElmDsl, Generator1.ElmSym. Uses PF hierarchical name matching — partial paths are fine as long as they are unambiguous.">?</span></th>
+                <th>Object <span class="tt" data-tip="PowerFactory object query passed to GetCalcRelevantObjects(). Examples: WFController.ElmDsl, Generator1.ElmSym, *.ElmDsl. Any query containing '*' is treated as a wildcard and may match multiple objects. In Brute Force/Optimisation, assignments are applied to all matches. In Custom mode, wildcard input object queries are not supported.">?</span></th>
                 <th>Attribute <span class="tt" data-tip="Attribute name on the PowerFactory object to SET before each simulation. Examples: K_droop, pgini, usetp. Must be a writable parameter of that object class (check the PF Equipment Model Library).">?</span></th>
                 <th class="col-lb">Lower Bound <span class="tt" data-tip="Minimum value for this parameter. Used by Brute Force (start of range) and Optimisation (lower search boundary).">?</span></th>
                 <th class="col-ub">Upper Bound <span class="tt" data-tip="Maximum value for this parameter. Used by Brute Force (end of range, inclusive) and Optimisation (upper search boundary).">?</span></th>
@@ -889,7 +889,8 @@
           The first column is <code>Scenario</code> (scenario number/label).<br/>
           Each subsequent <strong>column</strong> header is the <strong>Name</strong> you defined for each input variable (e.g. <code>K_droop</code>).<br/>
           The sheet name is always <code>Sheet1</code> (the template generates exactly one sheet).<br/>
-          Click <strong>Download Template</strong> to get a pre-filled template based on your input variable names.
+          Click <strong>Download Template</strong> to get a pre-filled template based on your input variable names.<br/>
+          <strong>Wildcard limitation:</strong> Custom mode does not support wildcard input object queries. Generate a template with one variable/object first, then manually expand columns as <code>ElementName.ElmType.attribute</code>.
         </div>
         <div class="btn-row" style="margin-top:0;margin-bottom:10px;">
           <button class="btn btn-ghost btn-xs" onclick="downloadCustomTemplate()">⬇ Download Template (.xlsx)</button>
@@ -1544,6 +1545,12 @@ function readConfig() {
   };
 }
 
+function isWildcardObjectQuery(objectQuery) {
+  const query = (objectQuery || '').trim();
+  if (!query) return false;
+  return query.startsWith('*.') || query.includes('*');
+}
+
 /* ================================================================
    LOAD CONFIG INTO FORM
 ================================================================ */
@@ -1680,6 +1687,18 @@ function validateConfig(cfg) {
 
   if (init.problemType === 'custom') {
     if (!cfg.customMode.scenarioFilePath) errors.push('Custom mode: Scenario file path is required.');
+    const wildcardInputs = cfg.inputVariables
+      .map((iv, i) => ({ iv, i }))
+      .filter(({ iv }) => isWildcardObjectQuery(iv.object_query));
+    if (wildcardInputs.length > 0) {
+      const names = wildcardInputs
+        .map(({ iv, i }) => `"${iv.name || `input_${i + 1}`}"`)
+        .join(', ');
+      errors.push(
+        `Custom mode does not support wildcard input object queries (${names}). ` +
+        `Generate the template with one variable/object first, then manually expand columns in ElementName.ElmType.attribute format.`
+      );
+    }
   }
 
   return errors;
@@ -1957,6 +1976,14 @@ def get_single_pf_object(app, object_query):
     return objects[0]
 
 
+def get_pf_objects(app, object_query):
+    """Resolve one or more PowerFactory objects by query string."""
+    objects = app.GetCalcRelevantObjects(object_query)
+    if not objects:
+        raise ValueError(f"Object not found: {object_query}")
+    return objects
+
+
 def build_range(lower, upper, step, dtype_name="float"):
     """Build a list of values from lower to upper with given step (increment value)."""
     if dtype_name == "int":
@@ -2201,8 +2228,17 @@ def extract_attribute_output(app, object_query, variable_name):
     Read a scalar result attribute from a PowerFactory element.
     Uses GetCalcRelevantObjects (API ref §3.3) + GetAttribute (API ref §5).
     """
-    obj = get_single_pf_object(app, object_query)
-    return obj.GetAttribute(variable_name)
+    objects = get_pf_objects(app, object_query)
+    if len(objects) == 1:
+        return objects[0].GetAttribute(variable_name)
+
+    values = {}
+    for obj in objects:
+        loc_name = getattr(obj, "loc_name", "Object")
+        cls_name = obj.GetClassName() if hasattr(obj, "GetClassName") else "ElmObj"
+        key = f"{loc_name}.{cls_name}.{variable_name}"
+        values[key] = obj.GetAttribute(variable_name)
+    return values
 
 
 def extract_timeseries_outputs(app, output_specs):
@@ -2502,7 +2538,7 @@ input_objects = {}
 input_ranges = {}
 
 for i, spec in enumerate(input_specs):
-    input_objects[i] = get_single_pf_object(app, spec["object_query"])
+    input_objects[i] = get_pf_objects(app, spec["object_query"])
     input_ranges[i] = build_range(spec["lower"], spec["upper"], spec["step"], spec["dtype"])
 
 `;
@@ -2671,7 +2707,8 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     pre += `${indent}    current_inputs = {}\n`;
     pre += `${indent}    for i, value in enumerate(combo):\n`;
     pre += `${indent}        spec = input_specs[i]\n`;
-    pre += `${indent}        setattr(input_objects[i], spec["variable"], value)\n`;
+    pre += `${indent}        for obj in input_objects[i]:\n`;
+    pre += `${indent}            setattr(obj, spec["variable"], value)\n`;
     pre += `${indent}        current_inputs[spec["name"]] = value\n\n`;
     pre += `${indent}    ${runCall}\n\n`;
     pre += `${indent}    row = {}\n`;
@@ -2679,7 +2716,11 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     pre += `${indent}    # Attribute outputs\n`;
     pre += `${indent}    for spec in output_specs:\n`;
     pre += `${indent}        if spec["type"] == "attribute":\n`;
-    pre += `${indent}            row[spec["name"]] = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    pre += `${indent}            _attr_val = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    pre += `${indent}            if isinstance(_attr_val, dict):\n`;
+    pre += `${indent}                row.update(_attr_val)\n`;
+    pre += `${indent}            else:\n`;
+    pre += `${indent}                row[spec["name"]] = _attr_val\n`;
     if (hasTs) {
       pre += `\n${indent}    # Timeseries outputs\n`;
       pre += `${indent}    row.update(extract_timeseries_outputs(app, output_specs))\n`;
@@ -2723,7 +2764,11 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     pre += `${indent}    ${runCall}\n\n`;
     pre += `${indent}    for spec in output_specs:\n`;
     pre += `${indent}        if spec["type"] == "attribute":\n`;
-    pre += `${indent}            row[spec["name"]] = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    pre += `${indent}            _attr_val = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    pre += `${indent}            if isinstance(_attr_val, dict):\n`;
+    pre += `${indent}                row.update(_attr_val)\n`;
+    pre += `${indent}            else:\n`;
+    pre += `${indent}                row[spec["name"]] = _attr_val\n`;
     if (hasTs) {
       pre += `\n${indent}    row.update(extract_timeseries_outputs(app, output_specs))\n`;
     }
@@ -2781,14 +2826,19 @@ def evaluate_one_case(param_values):
 
     for i, value in enumerate(param_values):
         spec = input_specs[i]
-        setattr(input_objects[i], spec["variable"], value)
+        for obj in input_objects[i]:
+            setattr(obj, spec["variable"], value)
         row[spec["name"]] = value
 
     ${runCall}
 
     for spec in output_specs:
         if spec["type"] == "attribute":
-            row[spec["name"]] = extract_attribute_output(app, spec["object_query"], spec["variable"])
+            _attr_val = extract_attribute_output(app, spec["object_query"], spec["variable"])
+            if isinstance(_attr_val, dict):
+                row.update(_attr_val)
+            else:
+                row[spec["name"]] = _attr_val
 `;
     if (hasTs) {
       pre += `
