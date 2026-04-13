@@ -1957,6 +1957,14 @@ def get_single_pf_object(app, object_query):
     return objects[0]
 
 
+def get_pf_objects(app, object_query):
+    """Resolve all relevant PowerFactory objects for an input query."""
+    objects = app.GetCalcRelevantObjects(object_query)
+    if not objects:
+        raise ValueError(f"Object(s) not found: {object_query}")
+    return objects
+
+
 def build_range(lower, upper, step, dtype_name="float"):
     """Build a list of values from lower to upper with given step (increment value)."""
     if dtype_name == "int":
@@ -2469,7 +2477,14 @@ function buildInputSpecs(cfg) {
   code += 'input_specs = [\n';
   inputs.forEach((iv, i) => {
     const name = iv.name || `input_${i}`;
-    code += `    {
+    if (problemType === 'custom') {
+      code += `    {
+        "name":         "${name}",
+        "object_query": "${iv.object_query}",
+        "variable":     "${iv.variable}"
+    },\n`;
+    } else {
+      code += `    {
         "name":         "${name}",
         "object_query": "${iv.object_query}",
         "variable":     "${iv.variable}",
@@ -2478,6 +2493,7 @@ function buildInputSpecs(cfg) {
         "step":         ${iv.step || 1},
         "dtype":        "${iv.dtype || 'float'}"
     },\n`;
+    }
   });
   code += ']\n\n';
 
@@ -2490,10 +2506,10 @@ scenario_file_path = r"${fp}"
 scenario_df = pd.read_excel(scenario_file_path, sheet_name="Sheet1")
 # Alternative for CSV: scenario_df = pd.read_csv(scenario_file_path)
 
-# Resolve PowerFactory objects (done once, reused each scenario row)
+# Resolve all relevant PowerFactory objects for each input mapping key
 input_objects = {}
 for i, spec in enumerate(input_specs):
-    input_objects[i] = get_single_pf_object(app, spec["object_query"])
+    input_objects[i] = get_pf_objects(app, spec["object_query"])
 
 `;
   } else {
@@ -2502,7 +2518,7 @@ input_objects = {}
 input_ranges = {}
 
 for i, spec in enumerate(input_specs):
-    input_objects[i] = get_single_pf_object(app, spec["object_query"])
+    input_objects[i] = get_pf_objects(app, spec["object_query"])
     input_ranges[i] = build_range(spec["lower"], spec["upper"], spec["step"], spec["dtype"])
 
 `;
@@ -2671,7 +2687,8 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     pre += `${indent}    current_inputs = {}\n`;
     pre += `${indent}    for i, value in enumerate(combo):\n`;
     pre += `${indent}        spec = input_specs[i]\n`;
-    pre += `${indent}        setattr(input_objects[i], spec["variable"], value)\n`;
+    pre += `${indent}        for obj in input_objects[i]:\n`;
+    pre += `${indent}            setattr(obj, spec["variable"], value)\n`;
     pre += `${indent}        current_inputs[spec["name"]] = value\n\n`;
     pre += `${indent}    ${runCall}\n\n`;
     pre += `${indent}    row = {}\n`;
@@ -2718,7 +2735,8 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     pre += `${indent}    row = {}\n\n`;
     pre += `${indent}    for i, spec in enumerate(input_specs):\n`;
     pre += `${indent}        value = scenario_row[spec["name"]]\n`;
-    pre += `${indent}        setattr(input_objects[i], spec["variable"], value)\n`;
+    pre += `${indent}        for obj in input_objects[i]:\n`;
+    pre += `${indent}            setattr(obj, spec["variable"], value)\n`;
     pre += `${indent}        row[spec["name"]] = value\n\n`;
     pre += `${indent}    ${runCall}\n\n`;
     pre += `${indent}    for spec in output_specs:\n`;
@@ -2781,7 +2799,8 @@ def evaluate_one_case(param_values):
 
     for i, value in enumerate(param_values):
         spec = input_specs[i]
-        setattr(input_objects[i], spec["variable"], value)
+        for obj in input_objects[i]:
+            setattr(obj, spec["variable"], value)
         row[spec["name"]] = value
 
     ${runCall}
