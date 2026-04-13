@@ -2522,8 +2522,18 @@ scenario_df = pd.read_excel(scenario_file_path, sheet_name="Sheet1")
 # Resolve PowerFactory objects (done once, reused each scenario row)
 input_objects = {}
 custom_column_object_cache = {}
+custom_object_attribute_columns = []
 for i, spec in enumerate(input_specs):
     input_objects[i] = get_single_pf_object(app, spec["object_query"])
+for column_name in scenario_df.columns:
+    parsed = parse_custom_object_attribute_column(column_name)
+    if parsed:
+        object_query, attribute_name = parsed
+        custom_object_attribute_columns.append({
+            "column_name": column_name,
+            "object_query": object_query,
+            "attribute_name": attribute_name
+        })
 
 `;
   } else {
@@ -2750,11 +2760,13 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     pre += `${indent}        value = scenario_row[spec["name"]]\n`;
     pre += `${indent}        setattr(input_objects[i], spec["variable"], value)\n`;
     pre += `${indent}        row[spec["name"]] = value\n\n`;
-    pre += `${indent}    for column_name, column_value in scenario_row.items():\n`;
-    pre += `${indent}        parsed = parse_custom_object_attribute_column(column_name)\n`;
-    pre += `${indent}        if not parsed:\n`;
+    pre += `${indent}    for custom_col in custom_object_attribute_columns:\n`;
+    pre += `${indent}        column_name = custom_col["column_name"]\n`;
+    pre += `${indent}        object_query = custom_col["object_query"]\n`;
+    pre += `${indent}        attribute_name = custom_col["attribute_name"]\n`;
+    pre += `${indent}        column_value = scenario_row[column_name]\n`;
+    pre += `${indent}        if pd.isna(column_value):\n`;
     pre += `${indent}            continue\n`;
-    pre += `${indent}        object_query, attribute_name = parsed\n`;
     pre += `${indent}        try:\n`;
     pre += `${indent}            target_obj = resolve_pf_object_cached(app, object_query, custom_column_object_cache)\n`;
     pre += `${indent}        except Exception as exc:\n`;
