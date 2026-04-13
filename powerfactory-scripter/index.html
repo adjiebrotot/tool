@@ -1835,7 +1835,10 @@ function getLiveWarnings(cfg) {
   if (!isDynamic && cfg.outputVariables.some(ov => ov.type === 'timeseries')) {
     warnings.push('Timeseries output variables are available only for Dynamic RMS or Dynamic EMT study types.');
   }
-  if (cfg.outputVariables.some(ov => ov.type === 'timeseries')) {
+  const hasInvalidTimeseriesObject = cfg.outputVariables.some(ov => (
+    ov.type === 'timeseries' && !/\.ElmRes\s*$/i.test((ov.object_query || '').trim())
+  ));
+  if (hasInvalidTimeseriesObject) {
     warnings.push('Object Element of a Timeseries output variable must be an .ElmRes object.');
   }
   return warnings;
