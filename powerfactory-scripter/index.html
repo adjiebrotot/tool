@@ -861,7 +861,7 @@
                 <th>#</th>
                 <th>Name <span class="tt" data-tip="Python identifier for this input. Used as the column header in results and as the variable name in generated code. Must be unique across ALL input and output variables.">?</span></th>
                 <th>Object <span class="tt" data-tip="PowerFactory object query passed to GetCalcRelevantObjects(). Examples: WFController.ElmDsl, Generator1.ElmSym. Uses PF hierarchical name matching — partial paths are fine as long as they are unambiguous.">?</span></th>
-                <th>Variable <span class="tt" data-tip="Attribute name on the PowerFactory object to SET before each simulation. Examples: K_droop, pgini, usetp. Must be a writable parameter of that object class (check the PF Equipment Model Library).">?</span></th>
+                <th>Attribute <span class="tt" data-tip="Attribute name on the PowerFactory object to SET before each simulation. Examples: K_droop, pgini, usetp. Must be a writable parameter of that object class (check the PF Equipment Model Library).">?</span></th>
                 <th class="col-lb">Lower Bound <span class="tt" data-tip="Minimum value for this parameter. Used by Brute Force (start of range) and Optimisation (lower search boundary).">?</span></th>
                 <th class="col-ub">Upper Bound <span class="tt" data-tip="Maximum value for this parameter. Used by Brute Force (end of range, inclusive) and Optimisation (upper search boundary).">?</span></th>
                 <th class="col-step">Step Size <span class="tt" data-tip="Increment between values in Brute Force mode. E.g. lower=0, upper=10, step=0.5 generates [0, 0.5, 1.0, …, 10.0]. Integer detection: if all three bounds/step are whole numbers, dtype=int is used.">?</span></th>
@@ -909,7 +909,7 @@
       </div>
       <div class="section-body">
         <div class="info-box">
-          <strong>Attribute</strong>: read a scalar result attribute from a PF element after solving (obj.GetAttribute).<br/>
+          <strong>Single Attribute</strong>: read a scalar result attribute from a PF element after solving (obj.GetAttribute).<br/>
           <strong>Timeseries</strong>: extract a scalar metric from the dynamic result file (ElmRes). Requires a dynamic study type.<br/>
           <strong>Custom Calculation</strong>: user-defined Python function that can reference other input/output variable values.<br/>
           Variable names must be unique across <em>all</em> input and output variables.
@@ -1261,12 +1261,12 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
         <label>Object ${tip('PowerFactory object query passed to GetCalcRelevantObjects(). Examples: Grid.ElmTerm, Line1.ElmLne. For Attribute type this is the element to read from; for Timeseries it is the element whose result column is searched in ElmRes.')}</label>
         <input type="text" id="${id}-obj" value="${data.object_query||''}" placeholder="Element.ElmType" />
       </div>
-      <!-- VARIABLE (hidden for custom_calculation) -->
+      <!-- ATTRIBUTE (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-var">
-        <label>Variable ${tip('The result variable name to read. For Attribute: e.g. m:THD, u:setp, c:loading — read via obj.GetAttribute(variable). For Timeseries: the variable recorded in ElmRes, e.g. m:u, c:loading — found via res.FindColumn(obj, variable).')}</label>
+        <label>Attribute ${tip('The result attribute name to read. For Attribute: e.g. m:THD, u:setp, c:loading — read via obj.GetAttribute(variable). For Timeseries: the variable recorded in ElmRes, e.g. m:u, c:loading — found via res.FindColumn(obj, variable).')}</label>
         <input type="text" id="${id}-var" value="${data.variable||''}" placeholder="Attribute name" />
       </div>
-      <!-- METRIC (hidden for attribute and custom_calculation) -->
+      <!-- METRIC (hidden for single_attribute and custom_calculation) -->
       <div class="form-row ${(isAttr||isCust)?'cond-hidden':''}" id="${id}-row-metric">
         <label>Metric ${tip('Scalar metric to extract from the timeseries signal. Maximum/Minimum use native ElmRes.FindMaxInColumn/FindMinInColumn (most efficient). All other metrics scan the column row-by-row using GetValue.')}</label>
         <select id="${id}-metric" onchange="onMetricChange('${id}')">
