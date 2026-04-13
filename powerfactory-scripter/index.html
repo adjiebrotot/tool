@@ -1258,7 +1258,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
     <div class="output-var-body" id="${id}-body">
       <!-- OBJECT (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-obj">
-        <label>Object ${tip('PowerFactory object query passed to GetCalcRelevantObjects(). Examples: RENEWABLES-132kV(1).ElmTerm, Line1.ElmLne. For Attribute type this is the element to read from; for Timeseries it is the element whose result column is searched in ElmRes.')}</label>
+        <label>Object ${tip('PowerFactory object query passed to GetCalcRelevantObjects(). Examples: Grid.ElmTerm, Line1.ElmLne. For Attribute type this is the element to read from; for Timeseries it is the element whose result column is searched in ElmRes.')}</label>
         <input type="text" id="${id}-obj" value="${data.object_query||''}" placeholder="Element.ElmType" />
       </div>
       <!-- VARIABLE (hidden for custom_calculation) -->
@@ -2057,7 +2057,7 @@ def _load_elmres_column(res, obj_query, var_name):
     Parameters
     ----------
     res       : ElmRes object (must already have Load() called)
-    obj_query : str  — object filter string, e.g. "RENEWABLES-132kV(1).ElmTerm"
+    obj_query : str  — object filter string, e.g. "Grid.ElmTerm"
                        Pass None to search by variable name only.
     var_name  : str  — variable name recorded in ElmRes, e.g. "m:u"
 
@@ -3155,7 +3155,7 @@ function resetForm() {
 ================================================================ */
 (function init() {
   addInputRow({ name: 'WFController_kdroop', object_query: 'WFController.ElmDsl', variable: 'K_droop', lower: 0, upper: 10, step: 0.5 });
-  addOutputVar({ type: 'attribute', name: 'Bus_THD', object_query: 'RENEWABLES-132kV(1).ElmTerm', variable: 'm:THD' });
+  addOutputVar({ type: 'attribute', name: 'Bus_THD', object_query: 'Grid.ElmTerm', variable: 'm:u' });
   onProblemTypeChange();
   onStudyTypeChange();
   document.addEventListener('input', () => refreshLiveWarnings());
