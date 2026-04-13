@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DCA Scenario Explorer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap');
+:root {
+  --bg:#0b1020; --panel:#11172a; --text:#e8eefc; --muted:#a8b4d4;
+  --border:rgba(255,255,255,0.08); --accent:#3b82f6; --accent2:#22c55e;
+  --accent3:#ef4444; --gold:#f59e0b; --input-bg:rgba(255,255,255,0.06);
+  --card-bg:rgba(255,255,255,0.03); --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --line-a:#3b82f6; --line-b:#ef4444; --line-c:#22c55e; --line-d:#f59e0b;
+  --line-e:#a855f7; --line-f:#06b6d4;
+}
+body.light {
+  --bg:#f0f4ff; --panel:#fff; --text:#1a2340; --muted:#5a6a8a;
+  --border:rgba(0,0,0,0.10); --accent:#2563eb; --accent2:#16a34a;
+  --accent3:#dc2626; --gold:#d97706; --input-bg:rgba(0,0,0,0.04);
+  --card-bg:rgba(255,255,255,0.85); --shadow:0 4px 24px rgba(0,0,0,0.12);
+  --line-a:#1d4ed8; --line-b:#b91c1c; --line-c:#15803d; --line-d:#b45309;
+  --line-e:#7c3aed; --line-f:#0891b2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',Inter,system-ui,sans-serif;color:var(--text);background:var(--bg);transition:background .25s,color .25s;min-height:100vh}
+.container{max-width:1500px;margin:0 auto;padding:24px}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
+.header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
+h1{font-size:1.9rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+h2{font-size:1.1rem;font-weight:700;margin-bottom:10px}
+h3{font-size:.82rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+p,.muted{color:var(--muted);line-height:1.55}
+.layout{display:grid;grid-template-columns:380px 1fr;gap:18px}
+.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 32px);overflow-y:auto}
+.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;background:var(--card-bg)}
+.ctrl-tab{flex:1;padding:12px 8px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
+.ctrl-panel{display:none;padding:14px 16px 18px}
+.ctrl-panel.active{display:block}
+.slider-block{padding:10px 0 14px;border-top:1px solid var(--border)}
+.slider-block:first-of-type{border-top:none;padding-top:4px}
+.slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+.slider-label{font-weight:700;font-size:.88rem}
+.slider-value{color:var(--gold);font-weight:700;font-variant-numeric:tabular-nums;font-size:.88rem}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+.help{color:var(--muted);font-size:.8rem;margin-top:4px;line-height:1.4}
+.field-row{display:flex;flex-direction:column;gap:4px;padding:10px 0 12px;border-top:1px solid var(--border)}
+.field-row:first-of-type{border-top:none}
+.field-label{font-weight:700;font-size:.88rem}
+.field-sub{color:var(--muted);font-size:.78rem;line-height:1.35;margin-top:2px}
+.num-input,.txt-input{background:var(--input-bg);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:.88rem;font-weight:600;padding:7px 10px;width:100%;outline:none;transition:border-color .15s;font-family:inherit}
+.num-input:focus,.txt-input:focus{border-color:var(--accent)}
+select.txt-input{cursor:pointer}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:12px 16px 16px;border-top:1px solid var(--border)}
+.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.88rem;transition:opacity .15s;font-family:inherit}
+.btn-primary:hover{opacity:.85}
+.btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.88rem;transition:border-color .15s;font-family:inherit}
+.btn-secondary:hover{border-color:var(--accent)}
+.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
+.btn-theme:hover{border-color:var(--accent);color:var(--text)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.metric{padding:16px 18px}
+.metric .label{color:var(--muted);font-size:.82rem;margin-bottom:5px}
+.metric .value{font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
+.metric .sub{font-size:.78rem;color:var(--muted);margin-top:3px}
+.chart-card{padding:20px;margin-bottom:18px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 14px;font-size:.86rem}
+.legend-item{display:flex;align-items:center;gap:7px;cursor:pointer;opacity:1;transition:opacity .15s}
+.legend-item.hidden{opacity:.35}
+.dot{width:11px;height:11px;border-radius:999px;flex-shrink:0}
+.canvas-wrap{position:relative;width:100%;height:420px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0))}
+body.light .canvas-wrap{background:linear-gradient(180deg,rgba(0,0,0,.015),rgba(0,0,0,0))}
+.hover-box{margin-top:10px;color:var(--muted);font-size:.86rem;min-height:22px}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}
+.tile{padding:12px 14px;background:var(--input-bg);border:1px solid var(--border);border-radius:12px}
+.tile .label{color:var(--muted);font-size:.78rem;margin-bottom:5px;line-height:1.3}
+.tile .value{font-size:.98rem;font-weight:800}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.84rem}
+th,td{padding:8px 7px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-size:.78rem;font-weight:600}
+.table-wrap{overflow:auto;max-height:380px}
+tr:hover td{background:rgba(255,255,255,.03)}
+body.light tr:hover td{background:rgba(0,0,0,.03)}
+.detail-section{padding:20px;margin-bottom:18px}
+.tab-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tab-btn{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s;font-family:inherit}
+.tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Securities Manager */
+.sec-list{display:flex;flex-direction:column;gap:8px}
+.sec-card{background:var(--input-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.sec-header{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;user-select:none}
+.sec-header:hover{background:rgba(255,255,255,.04)}
+.sec-name{font-weight:700;font-size:.88rem;flex:1}
+.sec-badge{font-size:.72rem;padding:2px 7px;border-radius:6px;font-weight:700}
+.badge-ticker{background:rgba(59,130,246,.2);color:#93c5fd}
+.badge-custom{background:rgba(34,197,94,.2);color:#86efac}
+.sec-body{padding:12px;border-top:1px solid var(--border);display:none}
+.sec-body.open{display:block}
+.sec-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.sec-row label{font-size:.8rem;color:var(--muted);min-width:80px;flex-shrink:0}
+.sec-row .num-input,.sec-row .txt-input{flex:1;min-width:80px}
+.sec-del{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.25);color:#fca5a5;border-radius:8px;padding:4px 10px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit}
+.sec-del:hover{background:rgba(239,68,68,.3)}
+.color-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:2px solid var(--border)}
+.add-sec-area{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.add-sec-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.add-sec-row .txt-input{flex:1;min-width:90px}
+.radio-group{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.radio-opt{display:flex;gap:7px;align-items:flex-start;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:border-color .15s;flex:1;min-width:140px}
+.radio-opt:hover{border-color:rgba(255,255,255,.2)}
+.radio-opt.selected{border-color:var(--accent);background:rgba(59,130,246,.08)}
+.radio-opt input[type=radio]{margin-top:2px;accent-color:var(--accent);flex-shrink:0}
+.radio-opt-text{font-size:.8rem;line-height:1.4;color:var(--muted)}
+.radio-opt-text strong{color:var(--text);font-weight:700;display:block;margin-bottom:1px;font-size:.84rem}
+.warning{margin:0 0 12px;padding:9px 12px;border-radius:10px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:#fde8b1;display:none;font-size:.82rem;line-height:1.5}
+body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
+.status-bar{font-size:.8rem;padding:6px 10px;border-radius:8px;margin-top:8px;display:none}
+.status-loading{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.2);color:#93c5fd;display:block}
+.status-error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.2);color:#fca5a5;display:block}
+.status-ok{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.2);color:#86efac;display:block}
+.chart-view-btns{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.view-btn{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s;font-family:inherit}
+.view-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+@media(max-width:1100px){
+  .layout,.bottom{grid-template-columns:1fr}
+  .controls{position:static;max-height:none}
+  .canvas-wrap{height:340px}
+  .summary-grid{grid-template-columns:repeat(2,1fr)}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  h1{font-size:1.4rem}
+  .container{padding:12px}
+  .metrics{grid-template-columns:1fr}
+  .btn-row{flex-direction:column}
+  .header{flex-direction:column;gap:12px}
+}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<section class="header card">
+  <div>
+    <h1>📈 DCA Scenario Explorer</h1>
+    <p class="muted">Compare Dollar Cost Averaging strategies across multiple securities with real market data or custom models.</p>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <button class="btn-theme" id="themeToggle">☀️ Light</button>
+  </div>
+</section>
+
+<section class="layout">
+
+<!-- SIDEBAR CONTROLS -->
+<aside class="controls card">
+  <div class="ctrl-tabs">
+    <button class="ctrl-tab active" data-tab="securities">📦 Securities</button>
+    <button class="ctrl-tab" data-tab="settings">⚙️ Settings</button>
+  </div>
+
+  <!-- SECURITIES TAB -->
+  <div class="ctrl-panel active" id="tab-securities">
+    <div class="field-row" style="border-top:none;padding-top:0">
+      <div class="field-label">Add Security</div>
+      <div class="field-sub">Enter a Yahoo Finance ticker (e.g. AAPL, SPY, BTC-USD) or add a custom risk-free asset.</div>
+      <div class="add-sec-area">
+        <div class="add-sec-row">
+          <input class="txt-input" id="tickerInput" placeholder="e.g. AAPL" style="text-transform:uppercase" />
+          <button class="btn-primary" id="addTickerBtn" style="white-space:nowrap">+ Ticker</button>
+        </div>
+        <div class="add-sec-row" style="margin-top:6px">
+          <input class="txt-input" id="customNameInput" placeholder="Custom name" />
+          <button class="btn-secondary" id="addCustomBtn" style="white-space:nowrap">+ Custom</button>
+        </div>
+        <div class="status-bar" id="fetchStatus"></div>
+      </div>
+    </div>
+
+    <div class="field-row" style="padding-top:8px">
+      <div class="field-label">Securities</div>
+      <div id="secList" class="sec-list"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div class="ctrl-panel" id="tab-settings">
+    <div class="field-row" style="border-top:none;padding-top:0">
+      <div class="field-label">Date Range</div>
+      <div class="field-sub">Simulation uses the shortest available date range across all selected tickers.</div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <div style="flex:1">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">Start</div>
+          <input class="txt-input" type="date" id="startDate" />
+        </div>
+        <div style="flex:1">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">End</div>
+          <input class="txt-input" type="date" id="endDate" />
+        </div>
+      </div>
+      <div class="status-bar" id="dateRangeStatus"></div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-label">Chart View</div>
+      <div class="field-sub">Select what to display on the main chart.</div>
+      <div class="radio-group" style="margin-top:6px">
+        <label class="radio-opt selected" id="viewOptPrice">
+          <input type="radio" name="chartView" value="price" checked/>
+          <div class="radio-opt-text"><strong>Security Prices</strong>Normalised price of each asset.</div>
+        </label>
+        <label class="radio-opt" id="viewOptDeposit">
+          <input type="radio" name="chartView" value="deposit"/>
+          <div class="radio-opt-text"><strong>Total Deposited</strong>Cumulative cash invested.</div>
+        </label>
+        <label class="radio-opt" id="viewOptEquity">
+          <input type="radio" name="chartView" value="equity"/>
+          <div class="radio-opt-text"><strong>Total Equity</strong>Portfolio market value over time.</div>
+        </label>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-label">Simulation Mode</div>
+      <div class="radio-group" style="margin-top:4px">
+        <label class="radio-opt selected" id="simOptReal">
+          <input type="radio" name="simMode" value="real" checked/>
+          <div class="radio-opt-text"><strong>Real Data</strong>Uses fetched or simulated historical prices.</div>
+        </label>
+        <label class="radio-opt" id="simOptMonte">
+          <input type="radio" name="simMode" value="monte"/>
+          <div class="radio-opt-text"><strong>Monte Carlo</strong>Run 50 simulations with random paths.</div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="warning" id="mainWarning"></div>
+  <div class="btn-row">
+    <button class="btn-primary" id="runBtn">▶ Run Simulation</button>
+    <button class="btn-secondary" id="resetBtn">↺ Reset</button>
+    <button class="btn-secondary" id="downloadBtn">⬇ CSV</button>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main>
+  <!-- KPI CARDS -->
+  <section class="metrics">
+    <div class="metric card">
+      <div class="label">Best Final Equity</div>
+      <div class="value" id="kpiBestEquity">—</div>
+      <div class="sub" id="kpiBestName">Run simulation</div>
+    </div>
+    <div class="metric card">
+      <div class="label">Best Return on Investment</div>
+      <div class="value" id="kpiBestROI">—</div>
+      <div class="sub" id="kpiBestROIName">—</div>
+    </div>
+    <div class="metric card">
+      <div class="label">Total Deposited (all)</div>
+      <div class="value" id="kpiTotalDeposit">—</div>
+      <div class="sub">Across all securities</div>
+    </div>
+    <div class="metric card">
+      <div class="label">Simulation Periods</div>
+      <div class="value" id="kpiPeriods">—</div>
+      <div class="sub" id="kpiDateRange">—</div>
+    </div>
+  </section>
+
+  <!-- CHART -->
+  <section class="chart-card card">
+    <div class="section-title">
+      <h2 id="chartTitle">DCA Simulation</h2>
+      <button class="btn-secondary" id="chartResetZoom" style="font-size:.8rem;padding:5px 11px">⟳ Reset Zoom</button>
+    </div>
+    <div class="legend" id="chartLegend"></div>
+    <div class="canvas-wrap"><canvas id="chartCanvas"></canvas></div>
+    <div class="hover-box" id="hoverBox">Run simulation then hover to inspect data points.</div>
+  </section>
+
+  <!-- BOTTOM: Summary + Milestone Table -->
+  <section class="bottom">
+    <div class="card" style="padding:18px">
+      <h2>Final Summary</h2>
+      <div id="summaryGrid" class="summary-grid"></div>
+    </div>
+    <div class="card" style="padding:18px">
+      <h2>Period Milestones</h2>
+      <div class="table-wrap">
+        <table id="milestoneTable">
+          <thead><tr><th>Period</th><th>Date</th><th colspan="2">—</th></tr></thead>
+          <tbody id="milestoneBody"><tr><td colspan="4" style="color:var(--muted);text-align:center;padding:20px">Run simulation to see milestones</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- DETAILED BREAKDOWN -->
+  <section class="detail-section card">
+    <h2>Detailed Breakdown</h2>
+    <div class="tab-bar" id="detailTabs"></div>
+    <div class="table-wrap">
+      <table id="detailTable">
+        <thead id="detailHead"><tr><th>Date</th><th>Price</th><th>Deposited</th><th>Units</th><th>Total Units</th><th>Equity</th><th>Return</th></tr></thead>
+        <tbody id="detailBody"><tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">Run simulation to see detailed data</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+</section><!-- /layout -->
+</div><!-- /container -->
+
+<script>
+(function(){
+'use strict';
+
+/* ─── CONSTANTS ─── */
+const LINE_COLORS = ['--line-a','--line-b','--line-c','--line-d','--line-e','--line-f'];
+const COLOR_NAMES  = ['Blue','Red','Green','Gold','Purple','Cyan'];
+
+/* ─── STATE ─── */
+let securities = []; // { id, type:'ticker'|'custom', ticker, name, color, amount, style, dayOrDate, returnPct, stdPct, priceData:[], loaded:false }
+let simResults = []; // per security simulation output
+let latestRows = [];
+let chartInstance = null;
+let activeDetailSec = 0;
+let chartView = 'price';
+let simMode = 'real';
+let secIdCounter = 0;
+
+/* ─── HELPERS ─── */
+const $ = id => document.getElementById(id);
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function deepCopy(o){ return JSON.parse(JSON.stringify(o)); }
+function showStatus(el, msg, type){
+  el.className = 'status-bar status-'+type;
+  el.innerHTML = (type==='loading'?'<span class="spinner"></span>':'')+msg;
+}
+function hideStatus(el){ el.className='status-bar'; el.textContent=''; }
+
+const fmt = {
+  currency(v, compact=false){
+    const n=Number(v||0), abs=Math.abs(n), sign=n<0?'−':'';
+    if(compact&&abs>=1e9) return sign+'$'+(abs/1e9).toFixed(2)+'b';
+    if(compact&&abs>=1e6) return sign+'$'+(abs/1e6).toFixed(2)+'m';
+    if(compact&&abs>=1e3) return sign+'$'+(abs/1e3).toFixed(0)+'k';
+    return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n);
+  },
+  pct(v,d=2){ const n=Number(v||0); return (Math.abs(n)<=1?n*100:n).toFixed(d)+'%'; },
+  num(v,d=0){ return Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); },
+  date(d){ return d instanceof Date ? d.toISOString().slice(0,10) : d; },
+};
+
+/* ─── DATE UTILS ─── */
+function parseDate(s){ const [y,m,d]=s.split('-'); return new Date(+y,+m-1,+d); }
+function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+function isoDate(d){ return d.toISOString().slice(0,10); }
+function dayOfWeek(d){ return d.getDay(); } // 0=Sun
+function getWeekdayInWeek(d, day){ // find given weekday (1=Mon..5=Fri) in the week of d
+  const r=new Date(d);
+  const dow=r.getDay()||7; // Mon=1..Sun=7
+  const diff=(day)-(dow<=5?dow:5);
+  r.setDate(r.getDate()+diff);
+  return r;
+}
+
+/* ─── SIMULATED PRICE GENERATION (GBM) ─── */
+function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPrice=100){
+  const dates=[];
+  const prices=[];
+  let d=new Date(startDate);
+  const end=new Date(endDate);
+  let price=startPrice;
+  const dt=1/252;
+  const mu=annualReturn/100;
+  const sigma=annualStd/100;
+  while(d<=end){
+    const dow=d.getDay();
+    if(dow!==0&&dow!==6){
+      dates.push(isoDate(d));
+      prices.push(price);
+      // GBM step
+      const z=(Math.random()*2-1)+(Math.random()*2-1)+(Math.random()*2-1); // approx normal
+      price=price*Math.exp((mu-0.5*sigma*sigma)*dt+sigma*Math.sqrt(dt)*z);
+    }
+    d=addDays(d,1);
+  }
+  return {dates, prices};
+}
+
+/* ─── FETCH PROXY via Yahoo Finance (via allorigins) ─── */
+async function fetchYahooFinance(ticker, startDate, endDate){
+  const start=Math.floor(new Date(startDate).getTime()/1000);
+  const end=Math.floor(new Date(endDate).getTime()/1000+86400);
+  const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?period1=${start}&period2=${end}&interval=1d&events=history`;
+  const proxy=`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+  const resp=await fetch(proxy,{signal:AbortSignal.timeout(15000)});
+  if(!resp.ok) throw new Error('Network error');
+  const wrapper=await resp.json();
+  const data=JSON.parse(wrapper.contents);
+  const result=data?.chart?.result?.[0];
+  if(!result) throw new Error('No data returned for '+ticker);
+  const timestamps=result.timestamp;
+  const closes=result.indicators?.adjclose?.[0]?.adjclose || result.indicators?.quote?.[0]?.close;
+  if(!timestamps||!closes) throw new Error('Invalid data structure');
+  const dates=[], prices=[];
+  for(let i=0;i<timestamps.length;i++){
+    if(closes[i]==null) continue;
+    dates.push(isoDate(new Date(timestamps[i]*1000)));
+    prices.push(closes[i]);
+  }
+  if(!dates.length) throw new Error('No price data in range');
+  return {dates, prices};
+}
+
+/* ─── SECURITY MANAGEMENT ─── */
+function getColor(idx){ return LINE_COLORS[idx % LINE_COLORS.length]; }
+
+function addSecurity(cfg){
+  const id = ++secIdCounter;
+  const colorIdx = securities.length % LINE_COLORS.length;
+  const sec = {
+    id, colorVar: getColor(colorIdx), colorName: COLOR_NAMES[colorIdx],
+    type: cfg.type, ticker: cfg.ticker||'', name: cfg.name||cfg.ticker||'Custom',
+    amount: 500, style: 'monthly-date', dayOrDate: 1,
+    returnPct: 8, stdPct: 15,
+    priceData: null, loaded: false, open: true,
+    ...cfg
+  };
+  securities.push(sec);
+  renderSecList();
+  return sec;
+}
+
+function removeSecurity(id){
+  securities = securities.filter(s=>s.id!==id);
+  renderSecList();
+}
+
+function renderSecList(){
+  const el=$('secList');
+  if(!securities.length){
+    el.innerHTML='<div style="color:var(--muted);font-size:.82rem;padding:8px 0">No securities added yet. Add a ticker or custom asset above.</div>';
+    return;
+  }
+  el.innerHTML='';
+  securities.forEach((sec,idx)=>{
+    const card=document.createElement('div');
+    card.className='sec-card';
+    card.innerHTML=`
+      <div class="sec-header" data-id="${sec.id}">
+        <span class="color-dot" style="background:${cssVar(sec.colorVar)}"></span>
+        <span class="sec-name">${sec.name}</span>
+        <span class="sec-badge ${sec.type==='ticker'?'badge-ticker':'badge-custom'}">${sec.type==='ticker'?'📊 Ticker':'⚙️ Custom'}</span>
+        <span style="color:var(--muted);font-size:.9rem">${sec.open?'▲':'▼'}</span>
+      </div>
+      <div class="sec-body ${sec.open?'open':''}" id="secBody${sec.id}">
+        ${sec.type==='custom'?`
+        <div class="sec-row">
+          <label>Return %/yr</label>
+          <input class="num-input" id="secReturn${sec.id}" type="number" min="-50" max="200" step="0.5" value="${sec.returnPct}" style="max-width:90px"/>
+          <label style="min-width:50px">Std Dev%</label>
+          <input class="num-input" id="secStd${sec.id}" type="number" min="0" max="200" step="0.5" value="${sec.stdPct}" style="max-width:90px"/>
+        </div>`:
+        `<div class="sec-row" style="align-items:center">
+          <span style="font-size:.8rem;color:var(--muted)">Ticker: <strong style="color:var(--text)">${sec.ticker}</strong></span>
+          <span class="status-bar ${sec.loaded?'status-ok':''}" style="display:inline-block;font-size:.75rem;padding:2px 8px;margin-left:4px" id="secLoadStatus${sec.id}">${sec.loaded?'✓ Loaded':'Not loaded'}</span>
+        </div>`}
+        <div class="sec-row">
+          <label>Amount $</label>
+          <input class="num-input" id="secAmount${sec.id}" type="number" min="1" step="50" value="${sec.amount}" style="max-width:110px"/>
+          <label style="min-width:60px">per invest.</label>
+        </div>
+        <div class="field-row" style="border-top:none;padding:6px 0 0">
+          <div class="field-label" style="font-size:.8rem">Investment Style</div>
+          <div class="radio-group" style="margin-top:4px">
+            ${['monthly-date','monthly-top','monthly-bottom','weekly-day','weekly-top','weekly-bottom'].map(s=>`
+            <label class="radio-opt${sec.style===s?' selected':''}" id="secStyleOpt${sec.id}_${s.replace(/-/g,'_')}">
+              <input type="radio" name="secStyle${sec.id}" value="${s}" ${sec.style===s?'checked':''}/>
+              <div class="radio-opt-text"><strong>${styleLabel(s)}</strong>${styleDesc(s)}</div>
+            </label>`).join('')}
+          </div>
+        </div>
+        <div class="sec-row" id="secDayRow${sec.id}" style="${showDayRow(sec.style)?'':'display:none'}">
+          <label id="secDayLabel${sec.id}">${sec.style.startsWith('monthly')?'Day of month':'Day (1=Mon)' }</label>
+          <input class="num-input" id="secDay${sec.id}" type="number" min="1" max="31" step="1" value="${sec.dayOrDate}" style="max-width:80px"/>
+        </div>
+        <button class="sec-del" id="secDel${sec.id}" style="margin-top:8px">🗑 Remove</button>
+      </div>`;
+    el.appendChild(card);
+
+    // Wire events
+    card.querySelector('.sec-header').addEventListener('click',()=>{
+      sec.open=!sec.open;
+      card.querySelector('.sec-body').classList.toggle('open',sec.open);
+      card.querySelector('.sec-header span:last-child').textContent=sec.open?'▲':'▼';
+    });
+    $(`secDel${sec.id}`).addEventListener('click',()=>removeSecurity(sec.id));
+    $(`secAmount${sec.id}`).addEventListener('input',e=>sec.amount=parseFloat(e.target.value)||100);
+    if(sec.type==='custom'){
+      $(`secReturn${sec.id}`).addEventListener('input',e=>sec.returnPct=parseFloat(e.target.value)||8);
+      $(`secStd${sec.id}`).addEventListener('input',e=>sec.stdPct=parseFloat(e.target.value)||15);
+    }
+    // Style radios
+    card.querySelectorAll(`input[name="secStyle${sec.id}"]`).forEach(r=>{
+      r.addEventListener('change',()=>{
+        card.querySelectorAll('.radio-opt').forEach(o=>o.classList.remove('selected'));
+        r.closest('.radio-opt').classList.add('selected');
+        sec.style=r.value;
+        const dayRow=$(`secDayRow${sec.id}`);
+        dayRow.style.display=showDayRow(sec.style)?'':'none';
+        $(`secDayLabel${sec.id}`).textContent=sec.style.startsWith('monthly')?'Day of month':'Day (1=Mon)';
+      });
+    });
+    if(showDayRow(sec.style)){
+      $(`secDay${sec.id}`).addEventListener('input',e=>sec.dayOrDate=parseInt(e.target.value)||1);
+    }
+  });
+}
+
+function styleLabel(s){
+  return {
+    'monthly-date':'Monthly (Fixed Date)',
+    'monthly-top':'Monthly (Top/Highest)',
+    'monthly-bottom':'Monthly (Bottom/Lowest)',
+    'weekly-day':'Weekly (Fixed Day)',
+    'weekly-top':'Weekly (Top of Week)',
+    'weekly-bottom':'Weekly (Bottom of Week)',
+  }[s]||s;
+}
+function styleDesc(s){
+  return {
+    'monthly-date':'Buy on a specific day each month.',
+    'monthly-top':'Buy on the month\'s highest price day.',
+    'monthly-bottom':'Buy on the month\'s lowest price day.',
+    'weekly-day':'Buy on a specific weekday each week.',
+    'weekly-top':'Buy on the week\'s peak price day.',
+    'weekly-bottom':'Buy on the week\'s lowest price day.',
+  }[s]||'';
+}
+function showDayRow(s){ return s==='monthly-date'||s==='weekly-day'; }
+
+/* ─── FETCH TICKER DATA ─── */
+async function loadTickerData(sec, startDate, endDate){
+  const statusEl = $(`secLoadStatus${sec.id}`);
+  showStatus($('fetchStatus'),'Fetching '+sec.ticker+'...','loading');
+  try {
+    const data = await fetchYahooFinance(sec.ticker, startDate, endDate);
+    sec.priceData = data;
+    sec.loaded = true;
+    if(statusEl){ statusEl.className='status-bar status-ok'; statusEl.textContent='✓ Loaded'; }
+    showStatus($('fetchStatus'), sec.ticker+' loaded: '+data.dates.length+' trading days','ok');
+    return true;
+  } catch(e){
+    sec.loaded = false;
+    sec.priceData = null;
+    if(statusEl){ statusEl.className='status-bar status-error'; statusEl.textContent='✗ Failed'; }
+    showStatus($('fetchStatus'),'Failed to load '+sec.ticker+': '+e.message,'error');
+    return false;
+  }
+}
+
+/* ─── ADD TICKER BUTTON ─── */
+$('addTickerBtn').addEventListener('click', async()=>{
+  const ticker=$('tickerInput').value.trim().toUpperCase();
+  if(!ticker){ showStatus($('fetchStatus'),'Please enter a ticker symbol.','error'); return; }
+  if(securities.find(s=>s.ticker===ticker&&s.type==='ticker')){
+    showStatus($('fetchStatus'),ticker+' already added.','error'); return;
+  }
+  const sec=addSecurity({type:'ticker',ticker,name:ticker});
+  $('tickerInput').value='';
+  // Try to fetch with current dates
+  const sd=$('startDate').value||'2020-01-01';
+  const ed=$('endDate').value||isoDate(new Date());
+  await loadTickerData(sec, sd, ed);
+  renderSecList();
+});
+
+$('tickerInput').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addTickerBtn').click(); });
+
+$('addCustomBtn').addEventListener('click',()=>{
+  const name=$('customNameInput').value.trim()||'Custom Asset';
+  addSecurity({type:'custom',name});
+  $('customNameInput').value='';
+});
+
+/* ─── DEFAULT DATE RANGE ─── */
+(function initDates(){
+  const end=new Date();
+  const start=new Date(); start.setFullYear(start.getFullYear()-5);
+  $('startDate').value=isoDate(start);
+  $('endDate').value=isoDate(end);
+})();
+
+/* ─── SIMULATION ENGINE ─── */
+function getInvestmentDates(priceData, style, dayOrDate){
+  const {dates, prices} = priceData;
+  const dateIndex = {};
+  dates.forEach((d,i)=>dateIndex[d]=i);
+  const result=[]; // indices into priceData where purchase happens
+
+  if(style==='monthly-date'){
+    // Group by year-month, find closest trading day to dayOrDate
+    const months={};
+    dates.forEach((d,i)=>{ const ym=d.slice(0,7); if(!months[ym])months[ym]=[]; months[ym].push(i); });
+    Object.values(months).forEach(idxs=>{
+      const target=dayOrDate;
+      // find closest index
+      let best=idxs[0];
+      idxs.forEach(i=>{
+        const day=parseInt(dates[i].slice(8,10));
+        if(Math.abs(day-target)<Math.abs(parseInt(dates[best].slice(8,10))-target)) best=i;
+      });
+      result.push(best);
+    });
+  } else if(style==='monthly-top'){
+    const months={};
+    dates.forEach((d,i)=>{ const ym=d.slice(0,7); if(!months[ym])months[ym]=[]; months[ym].push(i); });
+    Object.values(months).forEach(idxs=>{
+      let best=idxs[0];
+      idxs.forEach(i=>{ if(prices[i]>prices[best]) best=i; });
+      result.push(best);
+    });
+  } else if(style==='monthly-bottom'){
+    const months={};
+    dates.forEach((d,i)=>{ const ym=d.slice(0,7); if(!months[ym])months[ym]=[]; months[ym].push(i); });
+    Object.values(months).forEach(idxs=>{
+      let best=idxs[0];
+      idxs.forEach(i=>{ if(prices[i]<prices[best]) best=i; });
+      result.push(best);
+    });
+  } else if(style==='weekly-day'){
+    // Group by ISO week, find closest day
+    const weeks={};
+    dates.forEach((d,i)=>{
+      const dt=parseDate(d);
+      const y=dt.getFullYear(), doy=Math.floor((dt-new Date(y,0,1))/86400000);
+      const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
+      const key=y+'-'+String(wk).padStart(2,'0');
+      if(!weeks[key]) weeks[key]=[];
+      weeks[key].push(i);
+    });
+    const targetDow=Math.min(5,Math.max(1,dayOrDate)); // 1=Mon..5=Fri
+    Object.values(weeks).forEach(idxs=>{
+      let best=idxs[0];
+      idxs.forEach(i=>{
+        const dow=parseDate(dates[i]).getDay()||7;
+        const bestDow=parseDate(dates[best]).getDay()||7;
+        if(Math.abs(dow-targetDow)<Math.abs(bestDow-targetDow)) best=i;
+      });
+      result.push(best);
+    });
+  } else if(style==='weekly-top'){
+    const weeks={};
+    dates.forEach((d,i)=>{
+      const dt=parseDate(d);
+      const y=dt.getFullYear(), doy=Math.floor((dt-new Date(y,0,1))/86400000);
+      const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
+      const key=y+'-'+String(wk).padStart(2,'0');
+      if(!weeks[key]) weeks[key]=[];
+      weeks[key].push(i);
+    });
+    Object.values(weeks).forEach(idxs=>{
+      let best=idxs[0];
+      idxs.forEach(i=>{ if(prices[i]>prices[best]) best=i; });
+      result.push(best);
+    });
+  } else if(style==='weekly-bottom'){
+    const weeks={};
+    dates.forEach((d,i)=>{
+      const dt=parseDate(d);
+      const y=dt.getFullYear(), doy=Math.floor((dt-new Date(y,0,1))/86400000);
+      const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
+      const key=y+'-'+String(wk).padStart(2,'0');
+      if(!weeks[key]) weeks[key]=[];
+      weeks[key].push(i);
+    });
+    Object.values(weeks).forEach(idxs=>{
+      let best=idxs[0];
+      idxs.forEach(i=>{ if(prices[i]<prices[best]) best=i; });
+      result.push(best);
+    });
+  }
+
+  // Remove duplicates, sort
+  return [...new Set(result)].sort((a,b)=>a-b);
+}
+
+function simulateSecurity(sec){
+  const {dates, prices} = sec.priceData;
+  const investIdxs = getInvestmentDates(sec.priceData, sec.style, sec.dayOrDate);
+  const investSet = new Set(investIdxs);
+
+  let totalUnits=0, totalDeposited=0;
+  const rows=[];
+
+  // Build a running state over all trading days
+  const investRows=[];
+  for(let i=0;i<dates.length;i++){
+    if(investSet.has(i)){
+      const price=prices[i];
+      const units=sec.amount/price;
+      totalUnits+=units;
+      totalDeposited+=sec.amount;
+      investRows.push({
+        date:dates[i], price, amountInvested:sec.amount, unitsAdded:units,
+        totalUnits, totalDeposited, equity:totalUnits*price,
+        returnPct:(totalUnits*price-totalDeposited)/totalDeposited*100
+      });
+    }
+  }
+
+  // Also daily equity for chart
+  let runUnits=0, runDeposited=0;
+  const dailyRows=[];
+  let secInvestIdx=0;
+  for(let i=0;i<dates.length;i++){
+    if(investSet.has(i)){
+      runUnits+=sec.amount/prices[i];
+      runDeposited+=sec.amount;
+    }
+    dailyRows.push({
+      date:dates[i], price:prices[i],
+      totalUnits:runUnits, totalDeposited:runDeposited,
+      equity:runUnits*prices[i]
+    });
+  }
+
+  return { investRows, dailyRows, finalEquity: runUnits*(prices[prices.length-1]||1), totalDeposited:runDeposited };
+}
+
+/* ─── RUN SIMULATION ─── */
+async function runSimulation(){
+  if(!securities.length){
+    showWarning('Add at least one security to run simulation.');
+    return;
+  }
+
+  const startDate=$('startDate').value;
+  const endDate=$('endDate').value;
+  if(!startDate||!endDate){ showWarning('Please set start and end dates.'); return; }
+
+  showStatus($('fetchStatus'),'Preparing simulation...','loading');
+
+  // Generate price data for custom securities
+  for(const sec of securities){
+    if(sec.type==='custom'){
+      sec.priceData = generateGBMPrices(startDate, endDate, sec.returnPct, sec.stdPct);
+      sec.loaded=true;
+    } else if(!sec.loaded||!sec.priceData){
+      await loadTickerData(sec, startDate, endDate);
+      if(!sec.priceData){ showWarning('Could not load data for '+sec.ticker+'. Skipping.'); continue; }
+    }
+  }
+
+  // Find common date range
+  const loadedSecs = securities.filter(s=>s.priceData&&s.priceData.dates.length);
+  if(!loadedSecs.length){ showWarning('No securities with data loaded.'); return; }
+
+  const latestStart = loadedSecs.map(s=>s.priceData.dates[0]).sort().pop();
+  const earliestEnd = loadedSecs.map(s=>s.priceData.dates[s.priceData.dates.length-1]).sort()[0];
+
+  if(latestStart>=earliestEnd){ showWarning('No overlapping date range between securities.'); return; }
+
+  // Trim all to common range
+  for(const sec of loadedSecs){
+    const {dates,prices}=sec.priceData;
+    const si=dates.findIndex(d=>d>=latestStart);
+    const ei=dates.findLastIndex(d=>d<=earliestEnd);
+    if(si<0||ei<0) continue;
+    sec.priceData={dates:dates.slice(si,ei+1), prices:prices.slice(si,ei+1)};
+  }
+
+  showStatus($('dateRangeStatus'),`Date range: ${latestStart} → ${earliestEnd}`,'ok');
+
+  // Run simulations
+  simResults=[];
+  for(const sec of loadedSecs){
+    try {
+      const res=simulateSecurity(sec);
+      simResults.push({sec, ...res});
+    } catch(e){
+      console.error('Sim error for '+sec.name, e);
+    }
+  }
+
+  if(!simResults.length){ showWarning('Simulation produced no results.'); return; }
+
+  hideStatus($('fetchStatus'));
+  updateChart();
+  updateKPIs();
+  updateTables();
+}
+
+$('runBtn').addEventListener('click', runSimulation);
+
+/* ─── CHART ─── */
+function updateChart(){
+  if(!simResults.length) return;
+
+  const view = chartView;
+  const titles = {price:'Security Prices (Normalised)', deposit:'Total Deposited ($)', equity:'Total Equity ($)'};
+  $('chartTitle').textContent = titles[view];
+
+  // Build unified date axis from first result's daily rows
+  const allDates = simResults[0].dailyRows.map(r=>r.date);
+
+  // Build legend
+  const legendEl=$('chartLegend');
+  legendEl.innerHTML='';
+  const hiddenSeries=new Set();
+
+  const datasets = simResults.map((res,idx)=>{
+    let data;
+    if(view==='price'){
+      const first=res.dailyRows[0]?.price||1;
+      data=res.dailyRows.map(r=>r.price/first*100);
+    } else if(view==='deposit'){
+      data=res.dailyRows.map(r=>r.totalDeposited);
+    } else {
+      data=res.dailyRows.map(r=>r.equity);
+    }
+
+    // Legend item
+    const item=document.createElement('div');
+    item.className='legend-item';
+    item.dataset.idx=idx;
+    item.innerHTML=`<span class="dot" style="background:${cssVar(res.sec.colorVar)}"></span><span>${res.sec.name}</span>`;
+    item.addEventListener('click',()=>{
+      if(hiddenSeries.has(idx)) hiddenSeries.delete(idx); else hiddenSeries.add(idx);
+      item.classList.toggle('hidden', hiddenSeries.has(idx));
+      if(chartInstance){
+        chartInstance.data.datasets[idx].hidden=hiddenSeries.has(idx);
+        chartInstance.update();
+      }
+    });
+    legendEl.appendChild(item);
+
+    return {
+      label: res.sec.name,
+      data,
+      borderColor: cssVar(res.sec.colorVar),
+      backgroundColor: cssVar(res.sec.colorVar)+'22',
+      borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.2, fill:false
+    };
+  });
+
+  // Add invest markers as scatter if equity view
+  const gridColor=cssVar('--border'), mutedColor=cssVar('--muted'), textColor=cssVar('--text');
+
+  const chartData={labels:allDates, datasets};
+  const isPrice = view==='price';
+
+  const yCallback = val => isPrice ? fmt.num(val,1)+'%' : fmt.currency(val,true);
+  const tooltipLabel = ctx => `  ${ctx.dataset.label}: ${isPrice?fmt.num(ctx.parsed.y,2)+'%':fmt.currency(ctx.parsed.y,true)}`;
+
+  if(chartInstance){
+    chartInstance.data.labels=allDates;
+    chartInstance.data.datasets=datasets;
+    chartInstance.options.scales.x.ticks.color=mutedColor;
+    chartInstance.options.scales.x.grid.color=gridColor;
+    chartInstance.options.scales.y.ticks.color=mutedColor;
+    chartInstance.options.scales.y.ticks.callback=yCallback;
+    chartInstance.options.scales.y.grid.color=gridColor;
+    chartInstance.options.plugins.tooltip.callbacks.label=tooltipLabel;
+    chartInstance.options.plugins.tooltip.titleColor=textColor;
+    chartInstance.options.plugins.tooltip.bodyColor=mutedColor;
+    chartInstance.options.plugins.tooltip.borderColor=gridColor;
+    chartInstance.update('none');
+  } else {
+    chartInstance = new Chart($('chartCanvas'),{
+      type:'line',
+      data:chartData,
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        animation:{duration:300},
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            callbacks:{
+              title:ctx=>{
+                const label=ctx[0]?.label||'';
+                return label;
+              },
+              label:tooltipLabel
+            },
+            backgroundColor:cssVar('--panel')||'#11172a',
+            titleColor:textColor, bodyColor:mutedColor,
+            borderColor:gridColor, borderWidth:1, padding:10,
+            afterBody(items){
+              if(!items.length) return;
+              const parts=items.map(i=>`${i.dataset.label}: ${isPrice?fmt.num(i.parsed.y,2)+'%':fmt.currency(i.parsed.y,true)}`).join('  |  ');
+              $('hoverBox').textContent=`${items[0].label}  —  ${parts}`;
+            }
+          },
+          zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}
+        },
+        scales:{
+          x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:(val,idx)=>allDates[idx]?.slice(0,7)||''},grid:{color:gridColor}},
+          y:{ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}
+        }
+      }
+    });
+  }
+}
+
+$('chartResetZoom').addEventListener('click',()=>{ if(chartInstance) chartInstance.resetZoom(); });
+$('chartCanvas').addEventListener('mouseleave',()=>{ $('hoverBox').textContent='Hover to inspect data points.'; });
+
+/* ─── KPIs ─── */
+function updateKPIs(){
+  if(!simResults.length) return;
+  const finals=simResults.map(r=>({name:r.sec.name, equity:r.finalEquity, deposited:r.totalDeposited, roi:(r.finalEquity-r.totalDeposited)/r.totalDeposited}));
+  const best=finals.reduce((a,b)=>b.equity>a.equity?b:a);
+  const bestROI=finals.reduce((a,b)=>b.roi>a.roi?b:a);
+  const totalDep=finals.reduce((s,r)=>s+r.deposited,0);
+  const firstRes=simResults[0];
+  const days=firstRes.dailyRows.length;
+
+  $('kpiBestEquity').textContent=fmt.currency(best.equity,true);
+  $('kpiBestName').textContent=best.name;
+  $('kpiBestROI').textContent=fmt.pct(bestROI.roi);
+  $('kpiBestROIName').textContent=bestROI.name;
+  $('kpiTotalDeposit').textContent=fmt.currency(totalDep,true);
+  $('kpiPeriods').textContent=fmt.num(days)+' days';
+  const d0=firstRes.dailyRows[0]?.date, dn=firstRes.dailyRows[firstRes.dailyRows.length-1]?.date;
+  $('kpiDateRange').textContent=(d0&&dn)?d0+' → '+dn:'—';
+}
+
+/* ─── TABLES ─── */
+function updateTables(){
+  if(!simResults.length) return;
+
+  // Summary grid
+  const sg=$('summaryGrid');
+  sg.innerHTML='';
+  simResults.forEach(res=>{
+    const roi=(res.finalEquity-res.totalDeposited)/res.totalDeposited;
+    sg.innerHTML+=`
+      <div class="tile" style="border-left:3px solid ${cssVar(res.sec.colorVar)}">
+        <div class="label">${res.sec.name}</div>
+        <div class="value">${fmt.currency(res.finalEquity,true)}</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:3px">ROI: ${fmt.pct(roi)} | Dep: ${fmt.currency(res.totalDeposited,true)}</div>
+        <div style="font-size:.75rem;color:var(--muted)">Trades: ${res.investRows.length}</div>
+      </div>`;
+  });
+
+  // Milestone table
+  const allDates=simResults[0].dailyRows.map(r=>r.date);
+  const totalDays=allDates.length;
+  const milestoneIdxs=[0,
+    Math.floor(totalDays*.1),Math.floor(totalDays*.2),Math.floor(totalDays*.3),
+    Math.floor(totalDays*.5),Math.floor(totalDays*.7),Math.floor(totalDays*.9),totalDays-1
+  ].filter((v,i,a)=>a.indexOf(v)===i);
+
+  const thead=$('milestoneTable').querySelector('thead tr');
+  thead.innerHTML=`<th>Period</th><th>Date</th>`+simResults.map(r=>`<th>${r.sec.name} Equity</th><th>ROI</th>`).join('');
+
+  const tbody=$('milestoneBody');
+  tbody.innerHTML='';
+  milestoneIdxs.forEach(idx=>{
+    const date=allDates[idx];
+    const pct=Math.round(idx/(totalDays-1)*100);
+    let row=`<td>${pct}%</td><td>${date}</td>`;
+    simResults.forEach(res=>{
+      const d=res.dailyRows[idx]||res.dailyRows[res.dailyRows.length-1];
+      const roi=d.totalDeposited>0?(d.equity-d.totalDeposited)/d.totalDeposited:0;
+      row+=`<td>${fmt.currency(d.equity,true)}</td><td style="color:${roi>=0?'var(--accent2)':'var(--accent3)'}">${fmt.pct(roi)}</td>`;
+    });
+    tbody.innerHTML+=`<tr>${row}</tr>`;
+  });
+
+  // Detail tabs
+  const tabs=$('detailTabs');
+  tabs.innerHTML='';
+  simResults.forEach((res,i)=>{
+    const btn=document.createElement('button');
+    btn.className='tab-btn'+(i===activeDetailSec?' active':'');
+    btn.textContent=res.sec.name;
+    btn.addEventListener('click',()=>{
+      tabs.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      activeDetailSec=i;
+      renderDetailTable(i);
+    });
+    tabs.appendChild(btn);
+  });
+  renderDetailTable(activeDetailSec<simResults.length?activeDetailSec:0);
+
+  latestRows=simResults[0].dailyRows;
+}
+
+function renderDetailTable(idx){
+  const res=simResults[idx];
+  if(!res) return;
+  const tbody=$('detailBody');
+  tbody.innerHTML='';
+  res.investRows.forEach(r=>{
+    const color=r.returnPct>=0?'var(--accent2)':'var(--accent3)';
+    tbody.innerHTML+=`<tr>
+      <td>${r.date}</td>
+      <td>${fmt.currency(r.price)}</td>
+      <td>${fmt.currency(r.amountInvested)}</td>
+      <td>${r.unitsAdded.toFixed(6)}</td>
+      <td>${r.totalUnits.toFixed(6)}</td>
+      <td>${fmt.currency(r.equity)}</td>
+      <td style="color:${color}">${fmt.pct(r.returnPct/100)}</td>
+    </tr>`;
+  });
+  if(!res.investRows.length) tbody.innerHTML='<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">No investment dates in range.</td></tr>';
+}
+
+/* ─── CHART VIEW TOGGLE ─── */
+document.querySelectorAll('input[name="chartView"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    document.querySelectorAll('.radio-opt').forEach(o=>{
+      if(o.id.startsWith('viewOpt')) o.classList.remove('selected');
+    });
+    r.closest('.radio-opt').classList.add('selected');
+    chartView=r.value;
+    if(simResults.length) updateChart();
+  });
+});
+
+document.querySelectorAll('input[name="simMode"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    document.querySelectorAll('.radio-opt').forEach(o=>{
+      if(o.id.startsWith('simOpt')) o.classList.remove('selected');
+    });
+    r.closest('.radio-opt').classList.add('selected');
+    simMode=r.value;
+  });
+});
+
+/* ─── THEME TOGGLE ─── */
+$('themeToggle').addEventListener('click',()=>{
+  document.body.classList.toggle('light');
+  $('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';
+  if(simResults.length){ updateChart(); renderSecList(); }
+});
+
+/* ─── RESET ─── */
+$('resetBtn').addEventListener('click',()=>{
+  securities=[];
+  simResults=[];
+  latestRows=[];
+  if(chartInstance){ chartInstance.destroy(); chartInstance=null; }
+  renderSecList();
+  $('summaryGrid').innerHTML='';
+  $('milestoneBody').innerHTML='<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">Run simulation to see milestones</td></tr>';
+  $('detailBody').innerHTML='<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">Run simulation to see detailed data</td></tr>';
+  $('detailTabs').innerHTML='';
+  $('chartLegend').innerHTML='';
+  $('hoverBox').textContent='Run simulation then hover to inspect data points.';
+  ['kpiBestEquity','kpiBestROI','kpiTotalDeposit','kpiPeriods'].forEach(id=>$(id).textContent='—');
+  ['kpiBestName','kpiBestROIName'].forEach(id=>$(id).textContent='—');
+  $('kpiDateRange').textContent='—';
+  hideStatus($('fetchStatus'));
+  hideStatus($('dateRangeStatus'));
+  hideWarning();
+});
+
+/* ─── DOWNLOAD CSV ─── */
+$('downloadBtn').addEventListener('click',()=>{
+  if(!simResults.length){ showWarning('Run simulation first.'); return; }
+  const headers=['Date',...simResults.flatMap(r=>[r.sec.name+'_Price',r.sec.name+'_Deposited',r.sec.name+'_Equity',r.sec.name+'_ROI%'])];
+  const allDates=simResults[0].dailyRows.map(r=>r.date);
+  const lines=allDates.map((date,i)=>{
+    return [date,...simResults.flatMap(res=>{
+      const d=res.dailyRows[i];
+      const roi=d?.totalDeposited>0?(d.equity-d.totalDeposited)/d.totalDeposited*100:0;
+      return [d?.price?.toFixed(4)||'',d?.totalDeposited?.toFixed(2)||'',d?.equity?.toFixed(2)||'',roi.toFixed(2)];
+    })].join(',');
+  });
+  const csv=[headers.join(','),...lines].join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='dca_simulation.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+});
+
+/* ─── WARNINGS ─── */
+function showWarning(msg){ const w=$('mainWarning'); w.style.display='block'; w.textContent=msg; }
+function hideWarning(){ const w=$('mainWarning'); w.style.display='none'; }
+
+/* ─── CTRL TABS ─── */
+document.querySelectorAll('.ctrl-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.ctrl-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    $('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ─── INIT: Add default securities ─── */
+addSecurity({type:'custom',name:'S&P 500 (Custom)',returnPct:10,stdPct:18,amount:500,style:'monthly-date',dayOrDate:1});
+addSecurity({type:'custom',name:'Risk-Free 5%',returnPct:5,stdPct:0.5,amount:500,style:'monthly-date',dayOrDate:1});
+
+})();
+</script>
+</body>
+</html>
