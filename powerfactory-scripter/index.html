@@ -3155,7 +3155,7 @@ function resetForm() {
 ================================================================ */
 (function init() {
   addInputRow({ name: 'WFController_kdroop', object_query: 'WFController.ElmDsl', variable: 'K_droop', lower: 0, upper: 10, step: 0.5 });
-  addOutputVar({ type: 'attribute', name: 'Bus_THD', object_query: 'Grid.ElmTerm', variable: 'm:u' });
+  addOutputVar({ type: 'attribute', name: 'Bus_voltage', object_query: 'Grid.ElmTerm', variable: 'm:u' });
   onProblemTypeChange();
   onStudyTypeChange();
   document.addEventListener('input', () => refreshLiveWarnings());
