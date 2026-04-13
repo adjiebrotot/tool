@@ -1134,9 +1134,9 @@ function addInputRow(data = {}) {
   const rowNum = tbody.querySelectorAll('tr').length + 1;
   tr.innerHTML = `
     <td style="color:var(--muted);font-family:var(--mono);font-size:11px;vertical-align:middle">${rowNum}</td>
-    <td><input type="text" id="iv-name-${idx}" value="${data.name||''}" placeholder="var_name" /></td>
-    <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="WFController.ElmDsl" /></td>
-    <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="K_droop" /></td>
+    <td><input type="text" id="iv-name-${idx}" value="${data.name||''}" placeholder="Var name" /></td>
+    <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" /></td>
+    <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" /></td>
     <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" /></td>
     <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" /></td>
     <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" /></td>
@@ -1249,7 +1249,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
         <option value="custom_calculation" ${type==='custom_calculation'?'selected':''}>Custom Calculation</option>
       </select>
       ${tip('Attribute: read a scalar after solving via obj.GetAttribute. Timeseries: extract a metric from ElmRes (dynamic only). Custom Calculation: define your own Python function referencing other variable names.')}
-      <input type="text" id="${id}-name" value="${data.name||''}" placeholder="output_name"
+      <input type="text" id="${id}-name" value="${data.name||''}" placeholder="Output var name"
         style="flex:1;font-size:12px;padding:3px 8px;min-width:80px;" oninput="onOutputNameChange()" />
       ${tip('Unique Python identifier for this output. Cannot share a name with any input variable or another output variable. Used as the column header in the results CSV.')}
       <button class="btn btn-ghost btn-icon btn-xs" title="Collapse" onclick="toggleOutputVar('${id}')" id="${id}-toggle" style="font-size:14px;flex-shrink:0;">▾</button>
@@ -1264,7 +1264,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       <!-- VARIABLE (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-var">
         <label>Variable ${tip('The result variable name to read. For Attribute: e.g. m:THD, u:setp, c:loading — read via obj.GetAttribute(variable). For Timeseries: the variable recorded in ElmRes, e.g. m:u, c:loading — found via res.FindColumn(obj, variable).')}</label>
-        <input type="text" id="${id}-var" value="${data.variable||''}" placeholder="m:THD" />
+        <input type="text" id="${id}-var" value="${data.variable||''}" placeholder="Attribute name" />
       </div>
       <!-- METRIC (hidden for attribute and custom_calculation) -->
       <div class="form-row ${(isAttr||isCust)?'cond-hidden':''}" id="${id}-row-metric">
@@ -3154,7 +3154,7 @@ function resetForm() {
    INIT — add default rows on load
 ================================================================ */
 (function init() {
-  addInputRow({ name: 'K_droop', object_query: 'WFController.ElmDsl', variable: 'K_droop', lower: 0, upper: 10, step: 0.5 });
+  addInputRow({ name: 'WFController_kdroop', object_query: 'WFController.ElmDsl', variable: 'K_droop', lower: 0, upper: 10, step: 0.5 });
   addOutputVar({ type: 'attribute', name: 'Bus_THD', object_query: 'RENEWABLES-132kV(1).ElmTerm', variable: 'm:THD' });
   onProblemTypeChange();
   onStudyTypeChange();
