@@ -402,16 +402,66 @@ function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPri
   return {dates, prices};
 }
 
-/* ─── FETCH PROXY via Yahoo Finance (via allorigins) ─── */
+/* ─── FETCH PROXY via Yahoo Finance (with proxy fallbacks) ─── */
+async function fetchWithTimeout(url, timeoutMs=15000){
+  const controller = new AbortController();
+  const timeoutId = setTimeout(()=>controller.abort(), timeoutMs);
+  try{
+    const resp = await fetch(url, {signal: controller.signal, cache:'no-store'});
+    return resp;
+  } catch(err){
+    if(err?.name === 'AbortError') throw new Error('signal timed out');
+    throw err;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 async function fetchYahooFinance(ticker, startDate, endDate){
   const start=Math.floor(new Date(startDate).getTime()/1000);
   const end=Math.floor(new Date(endDate).getTime()/1000+86400);
   const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?period1=${start}&period2=${end}&interval=1d&events=history`;
-  const proxy=`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-  const resp=await fetch(proxy,{signal:AbortSignal.timeout(15000)});
-  if(!resp.ok) throw new Error('Network error');
-  const wrapper=await resp.json();
-  const data=JSON.parse(wrapper.contents);
+  const proxyCandidates = [
+    {
+      name: 'allorigins-raw',
+      url: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+      parse: async resp => await resp.json()
+    },
+    {
+      name: 'allorigins-get',
+      url: `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+      parse: async resp => {
+        const wrapper = await resp.json();
+        return JSON.parse(wrapper.contents);
+      }
+    },
+    {
+      name: 'jina-ai-read',
+      url: `https://r.jina.ai/http://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?period1=${start}&period2=${end}&interval=1d&events=history`,
+      parse: async resp => {
+        const txt = await resp.text();
+        const jsonStart = txt.indexOf('{');
+        return JSON.parse(jsonStart>=0 ? txt.slice(jsonStart) : txt);
+      }
+    }
+  ];
+
+  let data = null;
+  let lastError = null;
+  for(const candidate of proxyCandidates){
+    try{
+      const resp = await fetchWithTimeout(candidate.url, 15000);
+      if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      data = await candidate.parse(resp);
+      if(data?.chart?.result?.[0]) break;
+      throw new Error('No chart result');
+    }catch(err){
+      lastError = err;
+      data = null;
+    }
+  }
+  if(!data) throw new Error(`Unable to fetch market data via proxy (${lastError?.message||'unknown error'})`);
+
   const result=data?.chart?.result?.[0];
   if(!result) throw new Error('No data returned for '+ticker);
   const timestamps=result.timestamp;
