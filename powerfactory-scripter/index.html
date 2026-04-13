@@ -852,7 +852,7 @@
       </div>
       <div class="section-body">
         <div class="info-box" id="input-info-box">
-          Define each parameter to vary. <strong>Step Size</strong> = increment value (not number of steps). For <strong>Optimisation</strong> mode, bounds define the search space (step not used). For <strong>Custom</strong> mode, values come from the scenario file (bounds and step not used).
+          Define each parameter to vary. <strong>Step Size</strong> = increment value (not number of steps). For <strong>Optimisation</strong> mode, bounds define the search space (step not used). For <strong>Custom</strong> mode, values come from the scenario file (bounds and step not used). Wildcards in <strong>Object</strong> (for example <code>*.ElmDsl</code> or any <code>*</code>) are supported for Brute Force/Optimisation and apply the same input value to all matched objects.
         </div>
         <div class="dyn-table-wrapper">
           <table class="dyn-table" id="input-table">
@@ -860,7 +860,7 @@
               <tr>
                 <th>#</th>
                 <th>Name <span class="tt" data-tip="Python identifier for this input. Used as the column header in results and as the variable name in generated code. Must be unique across ALL input and output variables.">?</span></th>
-                <th>Object <span class="tt" data-tip="PowerFactory object query passed to GetCalcRelevantObjects(). Examples: WFController.ElmDsl, Generator1.ElmSym. Uses PF hierarchical name matching — partial paths are fine as long as they are unambiguous.">?</span></th>
+                <th>Object <span class="tt" data-tip="PowerFactory object query passed to GetCalcRelevantObjects(). Examples: WFController.ElmDsl, Generator1.ElmSym, *.ElmDsl. Any query containing '*' is treated as a wildcard and may match multiple objects. In Brute Force/Optimisation, assignments are applied to all matches. In Custom mode, wildcard input object queries are not supported.">?</span></th>
                 <th>Attribute <span class="tt" data-tip="Attribute name on the PowerFactory object to SET before each simulation. Examples: K_droop, pgini, usetp. Must be a writable parameter of that object class (check the PF Equipment Model Library).">?</span></th>
                 <th class="col-lb">Lower Bound <span class="tt" data-tip="Minimum value for this parameter. Used by Brute Force (start of range) and Optimisation (lower search boundary).">?</span></th>
                 <th class="col-ub">Upper Bound <span class="tt" data-tip="Maximum value for this parameter. Used by Brute Force (end of range, inclusive) and Optimisation (upper search boundary).">?</span></th>
@@ -1182,10 +1182,9 @@ function getInputRows() {
 ================================================================ */
 const METRICS = [
   'maximum','minimum','mean','median',
-  'frequency_above','frequency_below',
   'first_time_above','first_time_below','time_settle'
 ];
-const THRESHOLD_METRICS = ['frequency_above','frequency_below','first_time_above','first_time_below'];
+const THRESHOLD_METRICS = ['first_time_above','first_time_below'];
 const SETTLE_METRICS = ['time_settle'];
 const KNOWN_ELM_OBJECT_TYPES = new Set([
   'ElmArea','ElmAsm','ElmAsmsc','ElmBbone','ElmBmu','ElmBoundary','ElmBranch',
@@ -1238,6 +1237,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
   const isAttr = type === 'attribute';
   const isTs   = type === 'timeseries';
   const isCust = type === 'custom_calculation';
+  const tsPrefix = getTimeseriesObjectPrefix(data.object_query || '');
   const metric = data.metric || 'maximum';
   const showThresh = THRESHOLD_METRICS.includes(metric) && !isAttr && !isCust;
   const showSettle = metric === 'time_settle' && !isAttr && !isCust;
@@ -1261,7 +1261,13 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       <!-- OBJECT (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-obj">
         <label>Object ${tip('PowerFactory object query passed to GetCalcRelevantObjects(). Examples: Grid.ElmTerm, Line1.ElmLne. For Scalar type this is the element to read from; for Timeseries this is fixed to ElmRes and always ends with .ElmRes.')}</label>
-        <input type="text" id="${id}-obj" value="${data.object_query||''}" placeholder="Element.ElmType" oninput="onOutputObjectInput('${id}')" />
+        <div id="${id}-obj-attribute-wrap" class="${isTs?'cond-hidden':''}">
+          <input type="text" id="${id}-obj" value="${isTs ? '' : (data.object_query||'')}" placeholder="Element.ElmType" oninput="onOutputObjectInput('${id}')" />
+        </div>
+        <div id="${id}-obj-timeseries-wrap" class="${isTs?'':'cond-hidden'}" style="display:flex;align-items:center;">
+          <input type="text" id="${id}-obj-prefix" value="${tsPrefix}" placeholder="*" oninput="onOutputObjectInput('${id}')" style="border-top-right-radius:0;border-bottom-right-radius:0;" />
+          <span style="padding:6px 10px;border:1px solid var(--border);border-left:0;border-top-right-radius:var(--radius);border-bottom-right-radius:var(--radius);background:var(--surface);font-family:var(--mono);font-size:12px;color:var(--label);">.ElmRes</span>
+        </div>
       </div>
       <!-- ATTRIBUTE (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-var">
@@ -1270,14 +1276,14 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       </div>
       <!-- METRIC (hidden for single_attribute and custom_calculation) -->
       <div class="form-row ${(isAttr||isCust)?'cond-hidden':''}" id="${id}-row-metric">
-        <label>Metric ${tip('Scalar metric to extract from the timeseries signal. Maximum/Minimum use native ElmRes.FindMaxInColumn/FindMinInColumn (most efficient). All other metrics scan the column row-by-row using GetValue.')}</label>
+        <label>Metric ${tip('Scalar metric to extract from the timeseries signal. Maximum/Minimum use native ElmRes.FindMaxInColumn/FindMinInColumn (most efficient). Other metrics scan the column row-by-row using GetValue.')}</label>
         <select id="${id}-metric" onchange="onMetricChange('${id}')">
           ${metricOptions}
         </select>
       </div>
       <!-- THRESHOLD -->
       <div class="form-row ${!showThresh?'cond-hidden':''}" id="${id}-row-threshold">
-        <label>Threshold ${tip('Numeric threshold for frequency/first_time metrics. frequency_above counts samples > threshold; frequency_below counts samples < threshold. first_time_above/below returns the first time the signal crosses the threshold.')}</label>
+        <label>Threshold ${tip('Numeric threshold for first_time metrics. first_time_above/below returns the first time the signal crosses the threshold.')}</label>
         <input type="number" id="${id}-threshold" value="${data.threshold||''}" step="any" placeholder="0.9" />
       </div>
       <!-- SETTLE PARAMS -->
@@ -1337,6 +1343,8 @@ function onOutputTypeChange(id) {
   document.getElementById(`${id}-row-output-raw`)?.classList.toggle('cond-hidden', !isTs);
   // Show/hide custom fn
   document.getElementById(`${id}-row-custom-fn`)?.classList.toggle('cond-hidden', !isCust);
+  document.getElementById(`${id}-obj-attribute-wrap`)?.classList.toggle('cond-hidden', isTs);
+  document.getElementById(`${id}-obj-timeseries-wrap`)?.classList.toggle('cond-hidden', !isTs);
   enforceTimeseriesElmResObject(id, type);
   // Reinit ace if custom and not yet created
   if (isCust && !aceEditors[id]) {
@@ -1363,18 +1371,33 @@ function onMetricChange(id) {
   refreshLiveWarnings();
 }
 
-function normalizeElmResObjectQuery(rawValue) {
-  const cleaned = (rawValue || '').trim().replace(/\.ElmRes$/i, '');
-  return `${cleaned || '*'}.ElmRes`;
+function stripElmResSuffix(rawValue) {
+  const cleaned = (rawValue || '').trim().replace(/(?:\.ElmRes)+$/ig, '').replace(/\.$/, '').trim();
+  return cleaned;
+}
+
+function getTimeseriesObjectPrefix(rawValue) {
+  return stripElmResSuffix(rawValue) || '*';
+}
+
+function buildTimeseriesObjectQuery(prefixValue) {
+  return `${getTimeseriesObjectPrefix(prefixValue)}.ElmRes`;
 }
 
 function enforceTimeseriesElmResObject(id, forcedType = null) {
   const type = forcedType || document.getElementById(`${id}-type`)?.value || 'attribute';
   const objInput = document.getElementById(`${id}-obj`);
+  const objPrefixInput = document.getElementById(`${id}-obj-prefix`);
   if (!objInput) return;
   if (type === 'timeseries') {
-    objInput.value = normalizeElmResObjectQuery(objInput.value);
-    objInput.placeholder = '*.ElmRes';
+    const source = objPrefixInput?.value || objInput.value;
+    const prefix = getTimeseriesObjectPrefix(source);
+    if (objPrefixInput) {
+      objPrefixInput.value = prefix;
+      objPrefixInput.placeholder = '*';
+    }
+    objInput.value = buildTimeseriesObjectQuery(prefix);
+    objInput.placeholder = 'Element.ElmType';
   } else {
     objInput.placeholder = 'Element.ElmType';
   }
@@ -1426,7 +1449,11 @@ function getOutputVars() {
     const id = div.id;
     const type = document.getElementById(`${id}-type`)?.value || 'attribute';
     const name = document.getElementById(`${id}-name`)?.value?.trim() || '';
-    const obj  = document.getElementById(`${id}-obj`)?.value?.trim() || '';
+    const objInput = document.getElementById(`${id}-obj`);
+    const objPrefixInput = document.getElementById(`${id}-obj-prefix`);
+    const obj  = type === 'timeseries'
+      ? buildTimeseriesObjectQuery(objPrefixInput?.value || objInput?.value || '')
+      : (objInput?.value?.trim() || '');
     const varN = document.getElementById(`${id}-var`)?.value?.trim() || '';
     const metric = document.getElementById(`${id}-metric`)?.value || '';
     const threshold = document.getElementById(`${id}-threshold`)?.value?.trim() || '';
@@ -1543,6 +1570,12 @@ function readConfig() {
       saveIntermediateMinutes:  document.getElementById('save-interval-minutes').value.trim(),
     }
   };
+}
+
+function isWildcardObjectQuery(objectQuery) {
+  const query = (objectQuery || '').trim();
+  if (!query) return false;
+  return query.startsWith('*.') || query.includes('*');
 }
 
 /* ================================================================
@@ -1681,6 +1714,18 @@ function validateConfig(cfg) {
 
   if (init.problemType === 'custom') {
     if (!cfg.customMode.scenarioFilePath) errors.push('Custom mode: Scenario file path is required.');
+    const wildcardInputs = cfg.inputVariables
+      .map((iv, i) => ({ iv, i }))
+      .filter(({ iv }) => isWildcardObjectQuery(iv.object_query));
+    if (wildcardInputs.length > 0) {
+      const names = wildcardInputs
+        .map(({ iv, i }) => `"${iv.name || `input_${i + 1}`}"`)
+        .join(', ');
+      errors.push(
+        `Custom mode does not support wildcard input object queries (${names}). ` +
+        `Generate the template with one variable/object first, then manually expand columns in ElementName.ElmType.attribute format.`
+      );
+    }
   }
 
   return errors;
@@ -2148,7 +2193,7 @@ def calculate_timeseries_metric(time_values, data_values, metric, threshold=None
     time_values : list[float]  — time axis (column 0 of ElmRes)
     data_values : list[float]  — signal values for the target column
     metric      : str
-    threshold   : float | None — required for frequency/first_time metrics
+    threshold   : float | None — required for first_time metrics
     settle_band, settle_hold_time, settle_reference_value : float | None
                                — required for time_settle metric
 
@@ -2179,12 +2224,6 @@ def calculate_timeseries_metric(time_values, data_values, metric, threshold=None
         mid = n // 2
         median = sorted_vals[mid] if n % 2 else (sorted_vals[mid - 1] + sorted_vals[mid]) / 2
         return {"value": median}
-
-    if metric == "frequency_above":
-        return {"value": sum(1 for v in vals if v > threshold)}
-
-    if metric == "frequency_below":
-        return {"value": sum(1 for v in vals if v < threshold)}
 
     if metric == "first_time_above":
         for t, v in zip(times, vals):
@@ -2226,8 +2265,17 @@ def extract_attribute_output(app, object_query, variable_name):
     Read a scalar result attribute from a PowerFactory element.
     Uses GetCalcRelevantObjects (API ref §3.3) + GetAttribute (API ref §5).
     """
-    obj = get_single_pf_object(app, object_query)
-    return obj.GetAttribute(variable_name)
+    objects = get_pf_objects(app, object_query)
+    if len(objects) == 1:
+        return objects[0].GetAttribute(variable_name)
+
+    values = {}
+    for obj in objects:
+        loc_name = getattr(obj, "loc_name", "Object")
+        cls_name = obj.GetClassName() if hasattr(obj, "GetClassName") else "ElmObj"
+        key = f"{loc_name}.{cls_name}.{variable_name}"
+        values[key] = obj.GetAttribute(variable_name)
+    return values
 
 
 def extract_timeseries_outputs(app, output_specs):
@@ -2494,7 +2542,14 @@ function buildInputSpecs(cfg) {
   code += 'input_specs = [\n';
   inputs.forEach((iv, i) => {
     const name = iv.name || `input_${i}`;
-    code += `    {
+    if (problemType === 'custom') {
+      code += `    {
+        "name":         "${name}",
+        "object_query": "${iv.object_query}",
+        "variable":     "${iv.variable}"
+    },\n`;
+    } else {
+      code += `    {
         "name":         "${name}",
         "object_query": "${iv.object_query}",
         "variable":     "${iv.variable}",
@@ -2503,6 +2558,7 @@ function buildInputSpecs(cfg) {
         "step":         ${iv.step || 1},
         "dtype":        "${iv.dtype || 'float'}"
     },\n`;
+    }
   });
   code += ']\n\n';
 
@@ -2519,7 +2575,7 @@ scenario_file_path = r"${fp}"
 scenario_df = pd.read_excel(scenario_file_path, sheet_name="Sheet1")
 # Alternative for CSV: scenario_df = pd.read_csv(scenario_file_path)
 
-# Resolve PowerFactory objects (done once, reused each scenario row)
+# Resolve all relevant PowerFactory objects for each input mapping key
 input_objects = {}
 custom_column_object_cache = {}
 custom_object_attribute_columns = []
@@ -2542,7 +2598,7 @@ input_objects = {}
 input_ranges = {}
 
 for i, spec in enumerate(input_specs):
-    input_objects[i] = get_single_pf_object(app, spec["object_query"])
+    input_objects[i] = get_pf_objects(app, spec["object_query"])
     input_ranges[i] = build_range(spec["lower"], spec["upper"], spec["step"], spec["dtype"])
 
 `;
@@ -2711,7 +2767,8 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     pre += `${indent}    current_inputs = {}\n`;
     pre += `${indent}    for i, value in enumerate(combo):\n`;
     pre += `${indent}        spec = input_specs[i]\n`;
-    pre += `${indent}        setattr(input_objects[i], spec["variable"], value)\n`;
+    pre += `${indent}        for obj in input_objects[i]:\n`;
+    pre += `${indent}            setattr(obj, spec["variable"], value)\n`;
     pre += `${indent}        current_inputs[spec["name"]] = value\n\n`;
     pre += `${indent}    ${runCall}\n\n`;
     pre += `${indent}    row = {}\n`;
@@ -2719,7 +2776,11 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     pre += `${indent}    # Attribute outputs\n`;
     pre += `${indent}    for spec in output_specs:\n`;
     pre += `${indent}        if spec["type"] == "attribute":\n`;
-    pre += `${indent}            row[spec["name"]] = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    pre += `${indent}            _attr_val = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    pre += `${indent}            if isinstance(_attr_val, dict):\n`;
+    pre += `${indent}                row.update(_attr_val)\n`;
+    pre += `${indent}            else:\n`;
+    pre += `${indent}                row[spec["name"]] = _attr_val\n`;
     if (hasTs) {
       pre += `\n${indent}    # Timeseries outputs\n`;
       pre += `${indent}    row.update(extract_timeseries_outputs(app, output_specs))\n`;
@@ -2758,7 +2819,8 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     pre += `${indent}    row = {}\n\n`;
     pre += `${indent}    for i, spec in enumerate(input_specs):\n`;
     pre += `${indent}        value = scenario_row[spec["name"]]\n`;
-    pre += `${indent}        setattr(input_objects[i], spec["variable"], value)\n`;
+    pre += `${indent}        for obj in input_objects[i]:\n`;
+    pre += `${indent}            setattr(obj, spec["variable"], value)\n`;
     pre += `${indent}        row[spec["name"]] = value\n\n`;
     pre += `${indent}    for custom_col in custom_object_attribute_columns:\n`;
     pre += `${indent}        column_name = custom_col["column_name"]\n`;
@@ -2778,7 +2840,11 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     pre += `${indent}    ${runCall}\n\n`;
     pre += `${indent}    for spec in output_specs:\n`;
     pre += `${indent}        if spec["type"] == "attribute":\n`;
-    pre += `${indent}            row[spec["name"]] = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    pre += `${indent}            _attr_val = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    pre += `${indent}            if isinstance(_attr_val, dict):\n`;
+    pre += `${indent}                row.update(_attr_val)\n`;
+    pre += `${indent}            else:\n`;
+    pre += `${indent}                row[spec["name"]] = _attr_val\n`;
     if (hasTs) {
       pre += `\n${indent}    row.update(extract_timeseries_outputs(app, output_specs))\n`;
     }
@@ -2836,14 +2902,19 @@ def evaluate_one_case(param_values):
 
     for i, value in enumerate(param_values):
         spec = input_specs[i]
-        setattr(input_objects[i], spec["variable"], value)
+        for obj in input_objects[i]:
+            setattr(obj, spec["variable"], value)
         row[spec["name"]] = value
 
     ${runCall}
 
     for spec in output_specs:
         if spec["type"] == "attribute":
-            row[spec["name"]] = extract_attribute_output(app, spec["object_query"], spec["variable"])
+            _attr_val = extract_attribute_output(app, spec["object_query"], spec["variable"])
+            if isinstance(_attr_val, dict):
+                row.update(_attr_val)
+            else:
+                row[spec["name"]] = _attr_val
 `;
     if (hasTs) {
       pre += `
