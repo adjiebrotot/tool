@@ -35,9 +35,13 @@ h2{font-size:1.1rem;font-weight:700;margin-bottom:10px}
 h3{font-size:.82rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
 p,.muted{color:var(--muted);line-height:1.55}
 .layout{display:grid;grid-template-columns:380px 1fr;gap:18px}
-.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 32px);overflow-y:auto}
-.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;background:var(--card-bg)}
-.ctrl-tab{flex:1;padding:12px 8px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 32px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(168,180,212,.35) transparent}
+.controls::-webkit-scrollbar{width:8px}
+.controls::-webkit-scrollbar-track{background:transparent}
+.controls::-webkit-scrollbar-thumb{background:rgba(168,180,212,.32);border-radius:999px}
+.controls::-webkit-scrollbar-thumb:hover{background:rgba(168,180,212,.52)}
+.ctrl-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;background:var(--card-bg)}
+.ctrl-tab{padding:12px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
 .ctrl-panel{display:none;padding:14px 16px 18px}
 .ctrl-panel.active{display:block}
@@ -75,8 +79,9 @@ select.txt-input{cursor:pointer}
 .canvas-wrap{position:relative;width:100%;height:420px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0))}
 body.light .canvas-wrap{background:linear-gradient(180deg,rgba(0,0,0,.015),rgba(0,0,0,0))}
 .hover-box{margin-top:10px;color:var(--muted);font-size:.86rem;min-height:22px}
-.bottom{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.bottom{display:grid;grid-template-columns:1fr;gap:18px;margin-bottom:18px}
 .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}
+.summary-row{margin-bottom:18px}
 .tile{padding:12px 14px;background:var(--input-bg);border:1px solid var(--border);border-radius:12px}
 .tile .label{color:var(--muted);font-size:.78rem;margin-bottom:5px;line-height:1.3}
 .tile .value{font-size:.98rem;font-weight:800}
@@ -103,7 +108,7 @@ body.light tr:hover td{background:rgba(0,0,0,.03)}
 .badge-custom{background:rgba(34,197,94,.2);color:#86efac}
 .sec-body{padding:12px;border-top:1px solid var(--border);display:none}
 .sec-body.open{display:block}
-.sec-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.sec-row{display:flex;gap:8px;align-items:center;margin:0;padding:6px 0;flex-wrap:wrap}
 .sec-row label{font-size:.8rem;color:var(--muted);min-width:80px;flex-shrink:0}
 .sec-row .num-input,.sec-row .txt-input{flex:1;min-width:80px}
 .sec-del{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.25);color:#fca5a5;border-radius:8px;padding:4px 10px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit}
@@ -142,6 +147,7 @@ body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
   .metrics{grid-template-columns:1fr}
   .btn-row{flex-direction:column}
   .header{flex-direction:column;gap:12px}
+  .ctrl-tabs{grid-template-columns:1fr}
 }
 .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -291,12 +297,13 @@ body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
     <div class="hover-box" id="hoverBox">Run simulation then hover to inspect data points.</div>
   </section>
 
-  <!-- BOTTOM: Summary + Milestone Table -->
+  <section class="card summary-row" style="padding:18px">
+    <h2>Final Summary</h2>
+    <div id="summaryGrid" class="summary-grid"></div>
+  </section>
+
+  <!-- BOTTOM: Milestone Table -->
   <section class="bottom">
-    <div class="card" style="padding:18px">
-      <h2>Final Summary</h2>
-      <div id="summaryGrid" class="summary-grid"></div>
-    </div>
     <div class="card" style="padding:18px">
       <h2>Period Milestones</h2>
       <div class="table-wrap">
@@ -331,6 +338,8 @@ body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
 /* ─── CONSTANTS ─── */
 const LINE_COLORS = ['--line-a','--line-b','--line-c','--line-d','--line-e','--line-f'];
 const COLOR_NAMES  = ['Blue','Red','Green','Gold','Purple','Cyan'];
+const STYLE_ORDER = ['monthly-top','monthly-bottom','weekly-top','weekly-bottom','monthly-date','weekly-day'];
+const WEEKDAY_OPTIONS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 
 /* ─── STATE ─── */
 let securities = []; // { id, type:'ticker'|'custom', ticker, name, color, amount, style, dayOrDate, returnPct, stdPct, priceData:[], loaded:false }
@@ -538,7 +547,7 @@ function renderSecList(){
         <div class="field-row" style="border-top:none;padding:6px 0 0">
           <div class="field-label" style="font-size:.8rem">Investment Style</div>
           <div class="radio-group" style="margin-top:4px">
-            ${['monthly-date','monthly-top','monthly-bottom','weekly-day','weekly-top','weekly-bottom'].map(s=>`
+            ${STYLE_ORDER.map(s=>`
             <label class="radio-opt${sec.style===s?' selected':''}" id="secStyleOpt${sec.id}_${s.replace(/-/g,'_')}">
               <input type="radio" name="secStyle${sec.id}" value="${s}" ${sec.style===s?'checked':''}/>
               <div class="radio-opt-text"><strong>${styleLabel(s)}</strong>${styleDesc(s)}</div>
@@ -546,8 +555,11 @@ function renderSecList(){
           </div>
         </div>
         <div class="sec-row" id="secDayRow${sec.id}" style="${showDayRow(sec.style)?'':'display:none'}">
-          <label id="secDayLabel${sec.id}">${sec.style.startsWith('monthly')?'Day of month':'Day (1=Mon)' }</label>
-          <input class="num-input" id="secDay${sec.id}" type="number" min="1" max="31" step="1" value="${sec.dayOrDate}" style="max-width:80px"/>
+          <label id="secDayLabel${sec.id}">${sec.style==='monthly-date'?'Day of month':'Day of week'}</label>
+          ${sec.style==='weekly-day'
+            ? `<select class="txt-input" id="secDay${sec.id}" style="max-width:170px">${WEEKDAY_OPTIONS.map((d,i)=>`<option value="${i+1}" ${Math.min(7,Math.max(1,sec.dayOrDate))===i+1?'selected':''}>${d}</option>`).join('')}</select>`
+            : `<input class="num-input" id="secDay${sec.id}" type="number" min="1" max="31" step="1" value="${Math.min(31,Math.max(1,sec.dayOrDate||1))}" style="max-width:80px"/>`
+          }
         </div>
         <button class="sec-del" id="secDel${sec.id}" style="margin-top:8px">🗑 Remove</button>
       </div>`;
@@ -572,34 +584,49 @@ function renderSecList(){
         r.closest('.radio-opt').classList.add('selected');
         sec.style=r.value;
         const dayRow=$(`secDayRow${sec.id}`);
+        sec.dayOrDate=1;
         dayRow.style.display=showDayRow(sec.style)?'':'none';
-        $(`secDayLabel${sec.id}`).textContent=sec.style.startsWith('monthly')?'Day of month':'Day (1=Mon)';
+        dayRow.innerHTML=renderDaySelector(sec);
       });
     });
-    if(showDayRow(sec.style)){
+    if(showDayRow(sec.style) && $(`secDay${sec.id}`)){
       $(`secDay${sec.id}`).addEventListener('input',e=>sec.dayOrDate=parseInt(e.target.value)||1);
+      $(`secDay${sec.id}`).addEventListener('change',e=>sec.dayOrDate=parseInt(e.target.value)||1);
     }
   });
+}
+
+function renderDaySelector(sec){
+  if(sec.style==='weekly-day'){
+    return `
+      <label id="secDayLabel${sec.id}">Day of week</label>
+      <select class="txt-input" id="secDay${sec.id}" style="max-width:170px">
+        ${WEEKDAY_OPTIONS.map((d,i)=>`<option value="${i+1}" ${Math.min(7,Math.max(1,sec.dayOrDate||1))===i+1?'selected':''}>${d}</option>`).join('')}
+      </select>`;
+  }
+  return `
+    <label id="secDayLabel${sec.id}">Day of month</label>
+    <input class="num-input" id="secDay${sec.id}" type="number" min="1" max="31" step="1" value="${Math.min(31,Math.max(1,sec.dayOrDate||1))}" style="max-width:80px"/>`;
 }
 
 function styleLabel(s){
   return {
     'monthly-date':'Monthly (Fixed Date)',
-    'monthly-top':'Monthly (Top/Highest)',
-    'monthly-bottom':'Monthly (Bottom/Lowest)',
-    'weekly-day':'Weekly (Fixed Day)',
-    'weekly-top':'Weekly (Top of Week)',
-    'weekly-bottom':'Weekly (Bottom of Week)',
+    'monthly-top':'Monthly (Top)',
+    'monthly-bottom':'Monthly (Bottom)',
+    'weekly-day':'Weekly (Fixed Date)',
+    'weekly-top':'Weekly (Top)',
+    'weekly-bottom':'Weekly (Bottom)',
   }[s]||s;
 }
 function styleDesc(s){
   return {
     'monthly-date':'Buy on a specific day each month.',
-    'monthly-top':'Buy on the month\'s highest price day.',
-    'monthly-bottom':'Buy on the month\'s lowest price day.',
-    'weekly-day':'Buy on a specific weekday each week.',
-    'weekly-top':'Buy on the week\'s peak price day.',
-    'weekly-bottom':'Buy on the week\'s lowest price day.',
+    'monthly-top':'Buy on the month\'s highest price day. Forward-looking - for demonstration only.',
+    'monthly-bottom':'Buy on the month\'s lowest price day. Forward-looking - for demonstration only.',
+    'weekly-day':'Buy on a chosen weekday (Monday to Sunday) each week.',
+    'weekly-top':'Buy on the week\'s peak price day. Forward-looking - for demonstration only.',
+    'weekly-bottom':'Buy on the week\'s lowest price day. Forward-looking - for demonstration only.',
   }[s]||'';
 }
 function showDayRow(s){ return s==='monthly-date'||s==='weekly-day'; }
@@ -704,7 +731,7 @@ function getInvestmentDates(priceData, style, dayOrDate){
       if(!weeks[key]) weeks[key]=[];
       weeks[key].push(i);
     });
-    const targetDow=Math.min(5,Math.max(1,dayOrDate)); // 1=Mon..5=Fri
+    const targetDow=Math.min(7,Math.max(1,dayOrDate)); // 1=Mon..7=Sun (nearest trading day)
     Object.values(weeks).forEach(idxs=>{
       let best=idxs[0];
       idxs.forEach(i=>{
