@@ -1181,10 +1181,9 @@ function getInputRows() {
 ================================================================ */
 const METRICS = [
   'maximum','minimum','mean','median',
-  'frequency_above','frequency_below',
   'first_time_above','first_time_below','time_settle'
 ];
-const THRESHOLD_METRICS = ['frequency_above','frequency_below','first_time_above','first_time_below'];
+const THRESHOLD_METRICS = ['first_time_above','first_time_below'];
 const SETTLE_METRICS = ['time_settle'];
 const KNOWN_ELM_OBJECT_TYPES = new Set([
   'ElmArea','ElmAsm','ElmAsmsc','ElmBbone','ElmBmu','ElmBoundary','ElmBranch',
@@ -1237,6 +1236,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
   const isAttr = type === 'attribute';
   const isTs   = type === 'timeseries';
   const isCust = type === 'custom_calculation';
+  const tsPrefix = getTimeseriesObjectPrefix(data.object_query || '');
   const metric = data.metric || 'maximum';
   const showThresh = THRESHOLD_METRICS.includes(metric) && !isAttr && !isCust;
   const showSettle = metric === 'time_settle' && !isAttr && !isCust;
@@ -1260,7 +1260,13 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       <!-- OBJECT (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-obj">
         <label>Object ${tip('PowerFactory object query passed to GetCalcRelevantObjects(). Examples: Grid.ElmTerm, Line1.ElmLne. For Scalar type this is the element to read from; for Timeseries this is fixed to ElmRes and always ends with .ElmRes.')}</label>
-        <input type="text" id="${id}-obj" value="${data.object_query||''}" placeholder="Element.ElmType" oninput="onOutputObjectInput('${id}')" />
+        <div id="${id}-obj-attribute-wrap" class="${isTs?'cond-hidden':''}">
+          <input type="text" id="${id}-obj" value="${isTs ? '' : (data.object_query||'')}" placeholder="Element.ElmType" oninput="onOutputObjectInput('${id}')" />
+        </div>
+        <div id="${id}-obj-timeseries-wrap" class="${isTs?'':'cond-hidden'}" style="display:flex;align-items:center;">
+          <input type="text" id="${id}-obj-prefix" value="${tsPrefix}" placeholder="*" oninput="onOutputObjectInput('${id}')" style="border-top-right-radius:0;border-bottom-right-radius:0;" />
+          <span style="padding:6px 10px;border:1px solid var(--border);border-left:0;border-top-right-radius:var(--radius);border-bottom-right-radius:var(--radius);background:var(--surface);font-family:var(--mono);font-size:12px;color:var(--label);">.ElmRes</span>
+        </div>
       </div>
       <!-- ATTRIBUTE (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-var">
@@ -1269,14 +1275,14 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       </div>
       <!-- METRIC (hidden for single_attribute and custom_calculation) -->
       <div class="form-row ${(isAttr||isCust)?'cond-hidden':''}" id="${id}-row-metric">
-        <label>Metric ${tip('Scalar metric to extract from the timeseries signal. Maximum/Minimum use native ElmRes.FindMaxInColumn/FindMinInColumn (most efficient). All other metrics scan the column row-by-row using GetValue.')}</label>
+        <label>Metric ${tip('Scalar metric to extract from the timeseries signal. Maximum/Minimum use native ElmRes.FindMaxInColumn/FindMinInColumn (most efficient). Other metrics scan the column row-by-row using GetValue.')}</label>
         <select id="${id}-metric" onchange="onMetricChange('${id}')">
           ${metricOptions}
         </select>
       </div>
       <!-- THRESHOLD -->
       <div class="form-row ${!showThresh?'cond-hidden':''}" id="${id}-row-threshold">
-        <label>Threshold ${tip('Numeric threshold for frequency/first_time metrics. frequency_above counts samples > threshold; frequency_below counts samples < threshold. first_time_above/below returns the first time the signal crosses the threshold.')}</label>
+        <label>Threshold ${tip('Numeric threshold for first_time metrics. first_time_above/below returns the first time the signal crosses the threshold.')}</label>
         <input type="number" id="${id}-threshold" value="${data.threshold||''}" step="any" placeholder="0.9" />
       </div>
       <!-- SETTLE PARAMS -->
@@ -1336,6 +1342,8 @@ function onOutputTypeChange(id) {
   document.getElementById(`${id}-row-output-raw`)?.classList.toggle('cond-hidden', !isTs);
   // Show/hide custom fn
   document.getElementById(`${id}-row-custom-fn`)?.classList.toggle('cond-hidden', !isCust);
+  document.getElementById(`${id}-obj-attribute-wrap`)?.classList.toggle('cond-hidden', isTs);
+  document.getElementById(`${id}-obj-timeseries-wrap`)?.classList.toggle('cond-hidden', !isTs);
   enforceTimeseriesElmResObject(id, type);
   // Reinit ace if custom and not yet created
   if (isCust && !aceEditors[id]) {
@@ -1362,18 +1370,33 @@ function onMetricChange(id) {
   refreshLiveWarnings();
 }
 
-function normalizeElmResObjectQuery(rawValue) {
-  const cleaned = (rawValue || '').trim().replace(/\.ElmRes$/i, '');
-  return `${cleaned || '*'}.ElmRes`;
+function stripElmResSuffix(rawValue) {
+  const cleaned = (rawValue || '').trim().replace(/(?:\.ElmRes)+$/ig, '').replace(/\.$/, '').trim();
+  return cleaned;
+}
+
+function getTimeseriesObjectPrefix(rawValue) {
+  return stripElmResSuffix(rawValue) || '*';
+}
+
+function buildTimeseriesObjectQuery(prefixValue) {
+  return `${getTimeseriesObjectPrefix(prefixValue)}.ElmRes`;
 }
 
 function enforceTimeseriesElmResObject(id, forcedType = null) {
   const type = forcedType || document.getElementById(`${id}-type`)?.value || 'attribute';
   const objInput = document.getElementById(`${id}-obj`);
+  const objPrefixInput = document.getElementById(`${id}-obj-prefix`);
   if (!objInput) return;
   if (type === 'timeseries') {
-    objInput.value = normalizeElmResObjectQuery(objInput.value);
-    objInput.placeholder = '*.ElmRes';
+    const source = objPrefixInput?.value || objInput.value;
+    const prefix = getTimeseriesObjectPrefix(source);
+    if (objPrefixInput) {
+      objPrefixInput.value = prefix;
+      objPrefixInput.placeholder = '*';
+    }
+    objInput.value = buildTimeseriesObjectQuery(prefix);
+    objInput.placeholder = 'Element.ElmType';
   } else {
     objInput.placeholder = 'Element.ElmType';
   }
@@ -1425,7 +1448,11 @@ function getOutputVars() {
     const id = div.id;
     const type = document.getElementById(`${id}-type`)?.value || 'attribute';
     const name = document.getElementById(`${id}-name`)?.value?.trim() || '';
-    const obj  = document.getElementById(`${id}-obj`)?.value?.trim() || '';
+    const objInput = document.getElementById(`${id}-obj`);
+    const objPrefixInput = document.getElementById(`${id}-obj-prefix`);
+    const obj  = type === 'timeseries'
+      ? buildTimeseriesObjectQuery(objPrefixInput?.value || objInput?.value || '')
+      : (objInput?.value?.trim() || '');
     const varN = document.getElementById(`${id}-var`)?.value?.trim() || '';
     const metric = document.getElementById(`${id}-metric`)?.value || '';
     const threshold = document.getElementById(`${id}-threshold`)?.value?.trim() || '';
@@ -2123,7 +2150,7 @@ def calculate_timeseries_metric(time_values, data_values, metric, threshold=None
     time_values : list[float]  — time axis (column 0 of ElmRes)
     data_values : list[float]  — signal values for the target column
     metric      : str
-    threshold   : float | None — required for frequency/first_time metrics
+    threshold   : float | None — required for first_time metrics
     settle_band, settle_hold_time, settle_reference_value : float | None
                                — required for time_settle metric
 
@@ -2154,12 +2181,6 @@ def calculate_timeseries_metric(time_values, data_values, metric, threshold=None
         mid = n // 2
         median = sorted_vals[mid] if n % 2 else (sorted_vals[mid - 1] + sorted_vals[mid]) / 2
         return {"value": median}
-
-    if metric == "frequency_above":
-        return {"value": sum(1 for v in vals if v > threshold)}
-
-    if metric == "frequency_below":
-        return {"value": sum(1 for v in vals if v < threshold)}
 
     if metric == "first_time_above":
         for t, v in zip(times, vals):
