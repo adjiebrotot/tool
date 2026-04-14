@@ -260,6 +260,14 @@
     border-bottom: 1px solid var(--border);
     white-space: nowrap;
   }
+  #input-table th {
+    text-align: center;
+  }
+  #input-table th .th-two-line {
+    display: inline-block;
+    line-height: 1.15;
+    text-align: center;
+  }
   .dyn-table td {
     padding: 5px 4px;
     vertical-align: top;
@@ -863,9 +871,9 @@
                 <th>Name <span class="tt" data-tip="Python identifier for this input. Used as the column header in results and as the variable name in generated code. Must be unique across ALL input and output variables.">?</span></th>
                 <th>Object <span class="tt" data-tip="PowerFactory object query passed to GetCalcRelevantObjects(). Examples: WFController.ElmDsl, Generator1.ElmSym, *.ElmDsl. Any query containing '*' is treated as a wildcard and may match multiple objects. In all modes, the same value is applied to all matched objects per iteration. Use Permutate (Brute Force/Optimisation only) to independently vary each object.">?</span></th>
                 <th>Attribute <span class="tt" data-tip="Attribute name on the PowerFactory object to SET before each simulation. Examples: K_droop, pgini, usetp. Must be a writable parameter of that object class (check the PF Equipment Model Library).">?</span></th>
-                <th class="col-lb">Lower Bound <span class="tt" data-tip="Minimum value for this parameter. Used by Brute Force (start of range) and Optimisation (lower search boundary).">?</span></th>
-                <th class="col-ub">Upper Bound <span class="tt" data-tip="Maximum value for this parameter. Used by Brute Force (end of range, inclusive) and Optimisation (upper search boundary).">?</span></th>
-                <th class="col-step">Step Size <span class="tt" data-tip="Increment between values in Brute Force mode. E.g. lower=0, upper=10, step=0.5 generates [0, 0.5, 1.0, …, 10.0]. Integer detection: if all three bounds/step are whole numbers, dtype=int is used.">?</span></th>
+                <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tt" data-tip="Minimum value for this parameter. Used by Brute Force (start of range) and Optimisation (lower search boundary).">?</span></th>
+                <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tt" data-tip="Maximum value for this parameter. Used by Brute Force (end of range, inclusive) and Optimisation (upper search boundary).">?</span></th>
+                <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tt" data-tip="Increment between values in Brute Force mode. E.g. lower=0, upper=10, step=0.5 generates [0, 0.5, 1.0, …, 10.0]. Integer detection: if all three bounds/step are whole numbers, dtype=int is used.">?</span></th>
                 <th class="col-permutate">Permutate <span class="tt" data-tip="Only applies to wildcard object queries (e.g. *.ElmTerm). When checked, each matched object independently iterates through the full value range — all combinations are generated. WARNING: M values and N objects produces M^N simulations, which can be extremely large. Leave unchecked to apply the same value to all matched objects simultaneously. Not available in Custom mode.">?</span></th>
                 <th></th>
               </tr>
@@ -1108,6 +1116,7 @@ function onProblemTypeChange() {
   table.classList.toggle('input-table-hide-step', pt === 'optimisation' || pt === 'custom');
   table.classList.toggle('input-table-hide-bounds', pt === 'custom');
   table.classList.toggle('input-table-hide-permutate', pt === 'custom');
+  syncPermutateCheckboxes();
 }
 
 function onStudyTypeChange() {
@@ -1140,7 +1149,7 @@ function addInputRow(data = {}) {
   tr.innerHTML = `
     <td style="color:var(--muted);font-family:var(--mono);font-size:11px;vertical-align:middle">${rowNum}</td>
     <td><input type="text" id="iv-name-${idx}" value="${data.name||''}" placeholder="Var name" /></td>
-    <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" /></td>
+    <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" oninput="onInputObjectQueryChange(${idx})" onchange="onInputObjectQueryChange(${idx})" /></td>
     <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" /></td>
     <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" /></td>
     <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" /></td>
@@ -1151,6 +1160,7 @@ function addInputRow(data = {}) {
     </td>
   `;
   tbody.appendChild(tr);
+  syncPermutateCheckboxForRow(idx);
 }
 
 function removeRow(id) {
@@ -1164,6 +1174,7 @@ function inferDtype(lower, upper, step) {
 }
 
 function getInputRows() {
+  const problemType = document.getElementById('problem-type')?.value;
   const tbody = document.getElementById('input-tbody');
   return Array.from(tbody.querySelectorAll('tr')).map((tr, i) => {
     const idx = tr.id.replace('input-row-', '');
@@ -1172,13 +1183,15 @@ function getInputRows() {
     const step  = document.getElementById(`iv-step-${idx}`)?.value?.trim() || '1';
     const rawName = document.getElementById(`iv-name-${idx}`)?.value?.trim() || '';
     const name = rawName || `input_${i}`;
+    const objectQuery = document.getElementById(`iv-obj-${idx}`)?.value?.trim() || '';
+    const allowPermutate = problemType !== 'custom' && isWildcardObjectQuery(objectQuery);
     return {
       name,
-      object_query: document.getElementById(`iv-obj-${idx}`)?.value?.trim() || '',
+      object_query: objectQuery,
       variable:     document.getElementById(`iv-var-${idx}`)?.value?.trim() || '',
       lower, upper, step,
       dtype: inferDtype(lower, upper, step),
-      permutate: document.getElementById(`iv-perm-${idx}`)?.checked || false,
+      permutate: allowPermutate && (document.getElementById(`iv-perm-${idx}`)?.checked || false),
     };
   });
 }
@@ -1589,6 +1602,29 @@ function isWildcardObjectQuery(objectQuery) {
   const query = (objectQuery || '').trim();
   if (!query) return false;
   return query.startsWith('*.') || query.includes('*');
+}
+
+function syncPermutateCheckboxForRow(idx) {
+  const objectInput = document.getElementById(`iv-obj-${idx}`);
+  const permutateInput = document.getElementById(`iv-perm-${idx}`);
+  if (!objectInput || !permutateInput) return;
+  const problemType = document.getElementById('problem-type')?.value;
+  const hasWildcard = isWildcardObjectQuery(objectInput.value);
+  const shouldDisable = !hasWildcard || problemType === 'custom';
+  permutateInput.disabled = shouldDisable;
+  if (shouldDisable) permutateInput.checked = false;
+}
+
+function syncPermutateCheckboxes() {
+  const rows = document.querySelectorAll('#input-tbody tr');
+  rows.forEach(tr => {
+    const idx = tr.id.replace('input-row-', '');
+    syncPermutateCheckboxForRow(idx);
+  });
+}
+
+function onInputObjectQueryChange(idx) {
+  syncPermutateCheckboxForRow(idx);
 }
 
 /* ================================================================
