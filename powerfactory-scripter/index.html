@@ -601,6 +601,7 @@
   .input-table-hide-step .col-step { display: none; }
   .input-table-hide-bounds .col-lb,
   .input-table-hide-bounds .col-ub  { display: none; }
+  .input-table-hide-permutate .col-permutate { display: none; }
 
   /* ── APP FOOTER ──────────────────────────────────────────────── */
   .app-footer {
@@ -852,7 +853,7 @@
       </div>
       <div class="section-body">
         <div class="info-box" id="input-info-box">
-          Define each parameter to vary. <strong>Step Size</strong> = increment value (not number of steps). For <strong>Optimisation</strong> mode, bounds define the search space (step not used). For <strong>Custom</strong> mode, values come from the scenario file (bounds and step not used). Wildcards in <strong>Object</strong> (for example <code>*.ElmDsl</code> or any <code>*</code>) are supported for Brute Force/Optimisation and apply the same input value to all matched objects.
+          Define each parameter to vary. <strong>Step Size</strong> = increment value (not number of steps). For <strong>Optimisation</strong> mode, bounds define the search space (step not used). For <strong>Custom</strong> mode, values come from the scenario file (bounds and step not used). Wildcards in <strong>Object</strong> (for example <code>*.ElmDsl</code> or any <code>*</code>) are supported in all modes and apply the same value to all matched objects. In Brute Force/Optimisation, enable <strong>Permutate</strong> to independently vary each matched object — warning: this grows combinations exponentially.
         </div>
         <div class="dyn-table-wrapper">
           <table class="dyn-table" id="input-table">
@@ -860,11 +861,12 @@
               <tr>
                 <th>#</th>
                 <th>Name <span class="tt" data-tip="Python identifier for this input. Used as the column header in results and as the variable name in generated code. Must be unique across ALL input and output variables.">?</span></th>
-                <th>Object <span class="tt" data-tip="PowerFactory object query passed to GetCalcRelevantObjects(). Examples: WFController.ElmDsl, Generator1.ElmSym, *.ElmDsl. Any query containing '*' is treated as a wildcard and may match multiple objects. In Brute Force/Optimisation, assignments are applied to all matches. In Custom mode, wildcard input object queries are not supported.">?</span></th>
+                <th>Object <span class="tt" data-tip="PowerFactory object query passed to GetCalcRelevantObjects(). Examples: WFController.ElmDsl, Generator1.ElmSym, *.ElmDsl. Any query containing '*' is treated as a wildcard and may match multiple objects. In all modes, the same value is applied to all matched objects per iteration. Use Permutate (Brute Force/Optimisation only) to independently vary each object.">?</span></th>
                 <th>Attribute <span class="tt" data-tip="Attribute name on the PowerFactory object to SET before each simulation. Examples: K_droop, pgini, usetp. Must be a writable parameter of that object class (check the PF Equipment Model Library).">?</span></th>
                 <th class="col-lb">Lower Bound <span class="tt" data-tip="Minimum value for this parameter. Used by Brute Force (start of range) and Optimisation (lower search boundary).">?</span></th>
                 <th class="col-ub">Upper Bound <span class="tt" data-tip="Maximum value for this parameter. Used by Brute Force (end of range, inclusive) and Optimisation (upper search boundary).">?</span></th>
                 <th class="col-step">Step Size <span class="tt" data-tip="Increment between values in Brute Force mode. E.g. lower=0, upper=10, step=0.5 generates [0, 0.5, 1.0, …, 10.0]. Integer detection: if all three bounds/step are whole numbers, dtype=int is used.">?</span></th>
+                <th class="col-permutate">Permutate <span class="tt" data-tip="Only applies to wildcard object queries (e.g. *.ElmTerm). When checked, each matched object independently iterates through the full value range — all combinations are generated. WARNING: M values and N objects produces M^N simulations, which can be extremely large. Leave unchecked to apply the same value to all matched objects simultaneously. Not available in Custom mode.">?</span></th>
                 <th></th>
               </tr>
             </thead>
@@ -888,7 +890,8 @@
           Each <strong>row</strong> in the spreadsheet is one scenario.<br/>
           The first column is <code>Scenario</code> (scenario number/label).<br/>
           Each subsequent <strong>column</strong> header is the <strong>Name</strong> you defined for each input variable (e.g. <code>K_droop</code>).<br/>
-          You can also append extra columns in the format <code>ElementName.ElmType.attribute</code> (e.g. <code>WFController.ElmDsl.K_droop</code>) to set any object attribute per scenario row.<br/>
+          Wildcard object queries (e.g. <code>*.ElmSym</code>) <strong>are</strong> supported — the scenario value is applied to <em>all</em> matched objects simultaneously (no permutation).<br/>
+          You can also append extra columns in the format <code>ElementName.ElmType.attribute</code> (e.g. <code>WFController.ElmDsl.K_droop</code>) to set any individual object attribute per scenario row.<br/>
           The sheet name is always <code>Sheet1</code> (the template generates exactly one sheet).<br/>
           Click <strong>Download Template</strong> to get a pre-filled template based on your input variable names, then add optional object-attribute columns as needed.
         </div>
@@ -1101,9 +1104,10 @@ function onProblemTypeChange() {
   if (pt === 'optimisation') refreshObjectiveDropdown();
   // Toggle input table column visibility
   const table = document.getElementById('input-table');
-  // Optimisation: hide step size only; Custom: hide step + bounds
+  // Optimisation: hide step size only; Custom: hide step + bounds + permutate
   table.classList.toggle('input-table-hide-step', pt === 'optimisation' || pt === 'custom');
   table.classList.toggle('input-table-hide-bounds', pt === 'custom');
+  table.classList.toggle('input-table-hide-permutate', pt === 'custom');
 }
 
 function onStudyTypeChange() {
@@ -1141,6 +1145,7 @@ function addInputRow(data = {}) {
     <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" /></td>
     <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" /></td>
     <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" /></td>
+    <td class="col-permutate" style="text-align:center;vertical-align:middle"><input type="checkbox" id="iv-perm-${idx}" ${data.permutate ? 'checked' : ''} /></td>
     <td class="td-action">
       <button class="btn btn-remove btn-icon" title="Remove" onclick="removeRow('input-row-${idx}')">✕</button>
     </td>
@@ -1173,6 +1178,7 @@ function getInputRows() {
       variable:     document.getElementById(`iv-var-${idx}`)?.value?.trim() || '',
       lower, upper, step,
       dtype: inferDtype(lower, upper, step),
+      permutate: document.getElementById(`iv-perm-${idx}`)?.checked || false,
     };
   });
 }
@@ -1721,18 +1727,8 @@ function validateConfig(cfg) {
 
   if (init.problemType === 'custom') {
     if (!cfg.customMode.scenarioFilePath) errors.push('Custom mode: Scenario file path is required.');
-    const wildcardInputs = cfg.inputVariables
-      .map((iv, i) => ({ iv, i }))
-      .filter(({ iv }) => isWildcardObjectQuery(iv.object_query));
-    if (wildcardInputs.length > 0) {
-      const names = wildcardInputs
-        .map(({ iv, i }) => `"${iv.name || `input_${i + 1}`}"`)
-        .join(', ');
-      errors.push(
-        `Custom mode does not support wildcard input object queries (${names}). ` +
-        `Generate the template with one variable/object first, then manually expand columns in ElementName.ElmType.attribute format.`
-      );
-    }
+    // Wildcard inputs ARE supported in Custom mode: the same scenario value is applied to all
+    // matched objects. Users can permutate manually via ElementName.ElmType.attribute columns.
   }
 
   return errors;
@@ -2015,6 +2011,16 @@ def get_single_pf_object(app, object_query):
     if not objects:
         raise ValueError(f"Object not found: {object_query}")
     return objects[0]
+
+
+def get_pf_objects(app, object_query):
+    """Resolve all PowerFactory objects matching a query (supports wildcards).
+    Returns a list; for exact-match queries this is a single-element list.
+    """
+    objects = app.GetCalcRelevantObjects(object_query)
+    if not objects:
+        raise ValueError(f"No objects found for query: {object_query}")
+    return list(objects)
 
 
 CUSTOM_COLUMN_PATTERN = re.compile(r"^(.+)\\.(Elm\\w+)\\.(.+)$")
@@ -2562,6 +2568,7 @@ function buildInputSpecs(cfg) {
         "variable":     "${iv.variable}"
     },\n`;
     } else {
+      const isWild = isWildcardObjectQuery(iv.object_query);
       code += `    {
         "name":         "${name}",
         "object_query": "${iv.object_query}",
@@ -2569,7 +2576,9 @@ function buildInputSpecs(cfg) {
         "lower":        ${iv.lower || 0},
         "upper":        ${iv.upper || 1},
         "step":         ${iv.step || 1},
-        "dtype":        "${iv.dtype || 'float'}"
+        "dtype":        "${iv.dtype || 'float'}",
+        "permutate":    ${iv.permutate && isWild ? 'True' : 'False'},
+        "is_wildcard":  ${isWild ? 'True' : 'False'}
     },\n`;
     }
   });
@@ -2579,7 +2588,9 @@ function buildInputSpecs(cfg) {
     const fp = cfg.customMode.scenarioFilePath || 'SCENARIO_FILE_PATH_HERE';
     code += `# Custom mode: load scenario file
 # Column headers: "Scenario" (first column), then each input variable name.
-# Optional extra columns:
+# Wildcard object queries (e.g. *.ElmSym) are supported: the scenario value is
+# applied to all matched objects simultaneously (no permutation in custom mode).
+# Optional extra columns for per-object control:
 #   ElementName.ElmType.attribute
 # Example:
 #   WFController.ElmDsl.K_droop
@@ -2593,7 +2604,7 @@ input_objects = {}
 custom_column_object_cache = {}
 custom_object_attribute_columns = []
 for i, spec in enumerate(input_specs):
-    input_objects[i] = get_single_pf_object(app, spec["object_query"])
+    input_objects[i] = get_pf_objects(app, spec["object_query"])
 for column_name in scenario_df.columns:
     parsed = parse_custom_object_attribute_column(column_name)
     if parsed:
@@ -2768,7 +2779,19 @@ last_save_time = time.time()
   // ─── BRUTE FORCE ──────────────────────────────────────────────────
   if (pt === 'brute_force') {
     pre += `
-all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(input_specs))]))
+# Expand permutate+wildcard specs: each matched object becomes an independent slot
+effective_ranges = []
+effective_spec_map = []  # list of (spec_index, target_obj_or_None)
+for i, spec in enumerate(input_specs):
+    if spec.get("permutate") and spec.get("is_wildcard") and len(input_objects[i]) > 1:
+        for obj in input_objects[i]:
+            effective_ranges.append(input_ranges[i])
+            effective_spec_map.append((i, obj))
+    else:
+        effective_ranges.append(input_ranges[i])
+        effective_spec_map.append((i, None))  # None = apply value to all matched objects
+
+all_combinations = list(itertools.product(*effective_ranges))
 `;
     if (hasBar) {
       pre += `\n${wrapperStart}${indentOS}for combo in tqdm(all_combinations, desc="Brute Force"):\n`;
@@ -2778,11 +2801,19 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
     pre += `${indent}try:\n`;
     pre += `${indent}    iteration_count += 1\n`;
     pre += `${indent}    current_inputs = {}\n`;
-    pre += `${indent}    for i, value in enumerate(combo):\n`;
-    pre += `${indent}        spec = input_specs[i]\n`;
-    pre += `${indent}        for obj in input_objects[i]:\n`;
-    pre += `${indent}            setattr(obj, spec["variable"], value)\n`;
-    pre += `${indent}        current_inputs[spec["name"]] = value\n\n`;
+    pre += `${indent}    for slot_idx, value in enumerate(combo):\n`;
+    pre += `${indent}        spec_idx, target_obj = effective_spec_map[slot_idx]\n`;
+    pre += `${indent}        spec = input_specs[spec_idx]\n`;
+    pre += `${indent}        if target_obj is not None:\n`;
+    pre += `${indent}            # Permutate: this slot controls one specific object\n`;
+    pre += `${indent}            setattr(target_obj, spec["variable"], value)\n`;
+    pre += `${indent}            elm_type = spec["object_query"].split(".")[-1]\n`;
+    pre += `${indent}            current_inputs[f"{target_obj.loc_name}.{elm_type}.{spec['variable']}"] = value\n`;
+    pre += `${indent}        else:\n`;
+    pre += `${indent}            # Non-permutate: apply same value to all matched objects\n`;
+    pre += `${indent}            for obj in input_objects[spec_idx]:\n`;
+    pre += `${indent}                setattr(obj, spec["variable"], value)\n`;
+    pre += `${indent}            current_inputs[spec["name"]] = value\n\n`;
     pre += `${indent}    ${runCall}\n\n`;
     pre += `${indent}    row = {}\n`;
     pre += `${indent}    row.update(current_inputs)\n\n`;
@@ -2908,16 +2939,37 @@ all_combinations = list(itertools.product(*[input_ranges[i] for i in range(len(i
       : '    return objective_value_adjusted';
 
     pre += `
+# Build effective parameter space (expands permutate+wildcard specs per object)
+effective_spec_map = []  # list of (spec_index, target_obj_or_None)
+effective_bounds = []    # list of (lower, upper) for each effective slot
+for i, spec in enumerate(input_specs):
+    if spec.get("permutate") and spec.get("is_wildcard") and len(input_objects[i]) > 1:
+        for obj in input_objects[i]:
+            effective_spec_map.append((i, obj))
+            effective_bounds.append((float(spec["lower"]), float(spec["upper"])))
+    else:
+        effective_spec_map.append((i, None))
+        effective_bounds.append((float(spec["lower"]), float(spec["upper"])))
+
+
 def evaluate_one_case(param_values):
     global iteration_count, results_df
     iteration_count += 1
     row = {}
 
-    for i, value in enumerate(param_values):
-        spec = input_specs[i]
-        for obj in input_objects[i]:
-            setattr(obj, spec["variable"], value)
-        row[spec["name"]] = value
+    for slot_idx, value in enumerate(param_values):
+        spec_idx, target_obj = effective_spec_map[slot_idx]
+        spec = input_specs[spec_idx]
+        if target_obj is not None:
+            # Permutate: this slot controls one specific matched object
+            setattr(target_obj, spec["variable"], value)
+            elm_type = spec["object_query"].split(".")[-1]
+            row[f"{target_obj.loc_name}.{elm_type}.{spec['variable']}"] = value
+        else:
+            # Non-permutate: apply same value to all matched objects
+            for obj in input_objects[spec_idx]:
+                setattr(obj, spec["variable"], value)
+            row[spec["name"]] = value
 
     ${runCall}
 
@@ -2958,19 +3010,18 @@ def evaluate_one_case(param_values):
 `;
 
     if (alg === 'gp_minimize') {
-      // Build skopt space
-      pre += `# Gaussian Process search space\nspace = [\n`;
-      cfg.inputVariables.forEach((iv, i) => {
-        if (iv.dtype === 'int') {
-          pre += `    Integer(${iv.lower}, ${iv.upper}, name="input_${i}"),\n`;
-        } else {
-          pre += `    Real(${iv.lower}, ${iv.upper}, name="input_${i}"),\n`;
-        }
-      });
-      pre += `]\n\n`;
+      // Build skopt space dynamically from effective_spec_map (supports permutate expansion)
+      pre += `# Gaussian Process search space (built at runtime to support permutate expansion)\n`;
+      pre += `space = []\n`;
+      pre += `for slot_idx, (spec_idx, _) in enumerate(effective_spec_map):\n`;
+      pre += `    spec = input_specs[spec_idx]\n`;
+      pre += `    if spec["dtype"] == "int":\n`;
+      pre += `        space.append(Integer(int(spec["lower"]), int(spec["upper"]), name=f"slot_{slot_idx}"))\n`;
+      pre += `    else:\n`;
+      pre += `        space.append(Real(float(spec["lower"]), float(spec["upper"]), name=f"slot_{slot_idx}"))\n\n`;
 
       pre += `@use_named_args(space)\ndef objective(**params):\n`;
-      pre += `    ordered_values = [params[f"input_{i}"] for i in range(len(input_specs))]\n`;
+      pre += `    ordered_values = [params[f"slot_{i}"] for i in range(len(effective_spec_map))]\n`;
       pre += `    row = evaluate_one_case(ordered_values)\n\n`;
       pre += `    objective_value = row["${objName}"]\n`;
       pre += penaltyLines + '\n';
@@ -2979,36 +3030,32 @@ def evaluate_one_case(param_values):
       pre += `safe_print(f"Optimisation complete. Best value: {result.fun}")\n`;
 
     } else if (alg === 'differential_evolution') {
-      const bounds = cfg.inputVariables.map(iv => `(${iv.lower}, ${iv.upper})`).join(', ');
       pre += `def de_objective(param_values):\n`;
       pre += `    row = evaluate_one_case(list(param_values))\n`;
       pre += `    objective_value = row["${objName}"]\n`;
       pre += penaltyLines + '\n';
       pre += returnLine + '\n\n';
-      pre += `bounds = [${bounds}]\n`;
-      pre += `result = differential_evolution(de_objective, bounds, maxiter=${maxIter}, seed=42)\n`;
+      pre += `# effective_bounds is built above and accounts for permutate expansion\n`;
+      pre += `result = differential_evolution(de_objective, effective_bounds, maxiter=${maxIter}, seed=42)\n`;
       pre += `safe_print(f"Optimisation complete. Best value: {result.fun}")\n`;
 
     } else if (alg === 'scipy_minimize') {
-      const x0 = cfg.inputVariables.map(iv =>
-        `${(parseFloat(iv.lower||0) + parseFloat(iv.upper||1)) / 2}`
-      ).join(', ');
-      const bounds = cfg.inputVariables.map(iv => `(${iv.lower}, ${iv.upper})`).join(', ');
       pre += `def minimize_objective(param_values):\n`;
       pre += `    row = evaluate_one_case(list(param_values))\n`;
       pre += `    objective_value = row["${objName}"]\n`;
       pre += penaltyLines + '\n';
       pre += returnLine + '\n\n';
-      pre += `x0 = [${x0}]\n`;
-      pre += `bounds = [${bounds}]\n`;
-      pre += `result = minimize(minimize_objective, x0, bounds=bounds, options={"maxiter": ${maxIter}})\n`;
+      pre += `# x0 and bounds are built from effective_bounds (accounts for permutate expansion)\n`;
+      pre += `x0 = [(b[0] + b[1]) / 2 for b in effective_bounds]\n`;
+      pre += `result = minimize(minimize_objective, x0, bounds=effective_bounds, options={"maxiter": ${maxIter}})\n`;
       pre += `safe_print(f"Optimisation complete. Best value: {result.fun}")\n`;
 
     } else {
       // Placeholder
       pre += `# TODO: Replace with your preferred optimisation algorithm\n`;
       pre += `# Current selection: Placeholder — wire up evaluate_one_case manually.\n`;
-      pre += `# Example: call evaluate_one_case([val0, val1, ...]) in your loop.\n`;
+      pre += `# Example: call evaluate_one_case([val0, val1, ...]) for each effective slot\n`;
+      pre += `# (effective_spec_map length = number of decision variables after permutate expansion).\n`;
     }
   }
 
