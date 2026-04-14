@@ -1981,23 +1981,44 @@ function buildProjectSelection(cfg) {
   const iterOS = cfg.additionalConfig.iterateOperatingScenarios;
 
   let lines = '\n# ── PROJECT & SCENARIO SELECTION ──────────────────────────────\n';
-  lines += `project = projects[int(input("Enter project index: "))]\n`;
+  lines += `if len(projects) == 0:\n`;
+  lines += `    raise RuntimeError("No projects found for this user.")\n`;
+  lines += `elif len(projects) == 1:\n`;
+  lines += `    project = projects[0]\n`;
+  lines += `    print(f"Auto-selected project: {project.loc_name}")\n`;
+  lines += `else:\n`;
+  lines += `    [print(f"i: {index}, project: {value}") for index, value in enumerate(projects)]\n`;
+  lines += `    project = projects[int(input("Enter project index: "))]\n`;
   lines += `project.Activate()\n`;
 
   if (!iterSC) {
     lines += `\n# Select study case\n`;
     lines += `study_cases = get_study_cases(app)\n`;
-    lines += `[print(f"i: {index}, sc: {value}") for index, value in enumerate(study_cases)]\n`;
-    lines += `study_case = study_cases[int(input("Enter study case index: "))]\n`;
+    lines += `if len(study_cases) == 0:\n`;
+    lines += `    raise RuntimeError("No study cases found in the project.")\n`;
+    lines += `elif len(study_cases) == 1:\n`;
+    lines += `    study_case = study_cases[0]\n`;
+    lines += `    print(f"Auto-selected study case: {study_case.loc_name}")\n`;
+    lines += `else:\n`;
+    lines += `    [print(f"i: {index}, sc: {value}") for index, value in enumerate(study_cases)]\n`;
+    lines += `    study_case = study_cases[int(input("Enter study case index: "))]\n`;
     lines += `study_case.Activate()\n`;
   }
 
   if (!iterOS) {
     lines += `\n# Select operating scenario\n`;
     lines += `operating_scenarios = get_operating_scenarios(app)\n`;
-    lines += `[print(f"i: {index}, os: {value}") for index, value in enumerate(operating_scenarios)]\n`;
-    lines += `op_scenario = operating_scenarios[int(input("Enter operating scenario index: "))]\n`;
-    lines += `op_scenario.Activate()\n`;
+    lines += `if len(operating_scenarios) == 0:\n`;
+    lines += `    safe_print("No operating scenarios found — skipping activation.")\n`;
+    lines += `    op_scenario = None\n`;
+    lines += `elif len(operating_scenarios) == 1:\n`;
+    lines += `    op_scenario = operating_scenarios[0]\n`;
+    lines += `    print(f"Auto-selected operating scenario: {op_scenario.loc_name}")\n`;
+    lines += `    op_scenario.Activate()\n`;
+    lines += `else:\n`;
+    lines += `    [print(f"i: {index}, os: {value}") for index, value in enumerate(operating_scenarios)]\n`;
+    lines += `    op_scenario = operating_scenarios[int(input("Enter operating scenario index: "))]\n`;
+    lines += `    op_scenario.Activate()\n`;
   }
 
   return lines;
@@ -2125,6 +2146,23 @@ def get_operating_scenarios(app):
     if not scenario_root:
         return []
     return scenario_root[0].GetContents()
+
+
+def extract_attribute_output(app, object_query, variable_name):
+    """
+    Read a scalar result attribute from a PowerFactory element.
+    Uses GetCalcRelevantObjects (API ref §3.3) + GetAttribute (API ref §5).
+    Returns a single scalar when one object is matched, or a dict of
+    {loc_name: value} when multiple objects are matched.
+    """
+    objects = get_pf_objects(app, object_query)
+    if len(objects) == 1:
+        return objects[0].GetAttribute(variable_name)
+    values = {}
+    for obj in objects:
+        loc_name = getattr(obj, "loc_name", "Object")
+        values[loc_name] = obj.GetAttribute(variable_name)
+    return values
 
 `;
 
@@ -2313,24 +2351,6 @@ def calculate_timeseries_metric(time_values, data_values, metric, threshold=None
         return {"time": float("nan")}
 
     raise ValueError(f"Unsupported metric: {metric}")
-
-
-def extract_attribute_output(app, object_query, variable_name):
-    """
-    Read a scalar result attribute from a PowerFactory element.
-    Uses GetCalcRelevantObjects (API ref §3.3) + GetAttribute (API ref §5).
-    """
-    objects = get_pf_objects(app, object_query)
-    if len(objects) == 1:
-        return objects[0].GetAttribute(variable_name)
-
-    values = {}
-    for obj in objects:
-        loc_name = getattr(obj, "loc_name", "Object")
-        cls_name = obj.GetClassName() if hasattr(obj, "GetClassName") else "ElmObj"
-        key = f"{loc_name}.{cls_name}.{variable_name}"
-        values[key] = obj.GetAttribute(variable_name)
-    return values
 
 
 def extract_timeseries_outputs(app, output_specs):
@@ -2829,6 +2849,18 @@ for i, spec in enumerate(input_specs):
 
 all_combinations = list(itertools.product(*effective_ranges))
 `;
+    // Cache initial attribute values once, before all loops
+    pre += `
+# Cache initial attribute values — restored to original after each simulation run
+_input_restore_list = []
+for _i, _spec in enumerate(input_specs):
+    for _obj in input_objects[_i]:
+        try:
+            _orig_val = _obj.GetAttribute(_spec["variable"])
+        except Exception:
+            _orig_val = None
+        _input_restore_list.append((_obj, _spec["variable"], _orig_val))
+`;
     if (hasBar) {
       pre += `\n${wrapperStart}${indentOS}for combo in tqdm(all_combinations, desc="Brute Force"):\n`;
     } else {
@@ -2843,13 +2875,16 @@ all_combinations = list(itertools.product(*effective_ranges))
     pre += `${indent}        if target_obj is not None:\n`;
     pre += `${indent}            # Permutate: this slot controls one specific object\n`;
     pre += `${indent}            setattr(target_obj, spec["variable"], value)\n`;
-    pre += `${indent}            elm_type = spec["object_query"].split(".")[-1]\n`;
-    pre += `${indent}            current_inputs[f"{target_obj.loc_name}.{elm_type}.{spec['variable']}"] = value\n`;
+    pre += `${indent}            current_inputs[f"{spec['name']} {target_obj.loc_name}"] = value\n`;
     pre += `${indent}        else:\n`;
     pre += `${indent}            # Non-permutate: apply same value to all matched objects\n`;
     pre += `${indent}            for obj in input_objects[spec_idx]:\n`;
     pre += `${indent}                setattr(obj, spec["variable"], value)\n`;
-    pre += `${indent}            current_inputs[spec["name"]] = value\n\n`;
+    pre += `${indent}            if len(input_objects[spec_idx]) == 1:\n`;
+    pre += `${indent}                current_inputs[spec["name"]] = value\n`;
+    pre += `${indent}            else:\n`;
+    pre += `${indent}                for obj in input_objects[spec_idx]:\n`;
+    pre += `${indent}                    current_inputs[f"{spec['name']} {obj.loc_name}"] = value\n\n`;
     pre += `${indent}    ${runCall}\n\n`;
     pre += `${indent}    row = {}\n`;
     pre += `${indent}    row.update(current_inputs)\n\n`;
@@ -2875,9 +2910,17 @@ all_combinations = list(itertools.product(*effective_ranges))
     if (hasRaw) {
       pre += buildRawCsvCalls(cfg, indent, hasIterSC, hasIterOS);
     }
+    pre += `\n${indent}    # Restore input attributes to their initial values\n`;
+    pre += `${indent}    for _obj, _var, _orig in _input_restore_list:\n`;
+    pre += `${indent}        if _orig is not None:\n`;
+    pre += `${indent}            _obj.SetAttribute(_var, _orig)\n`;
     pre += `\n${indent}    results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)\n`;
     pre += `${indent}    success_count += 1\n\n`;
     pre += `${indent}except Exception:\n`;
+    pre += `${indent}    # Restore input attributes even on failure\n`;
+    pre += `${indent}    for _obj, _var, _orig in _input_restore_list:\n`;
+    pre += `${indent}        if _orig is not None:\n`;
+    pre += `${indent}            _obj.SetAttribute(_var, _orig)\n`;
     pre += `${indent}    failed_count += 1\n`;
     pre += `${indent}    error_row = {"error": traceback.format_exc()}\n`;
     pre += `${indent}    results_df = pd.concat([results_df, pd.DataFrame([error_row])], ignore_index=True)\n`;
@@ -2889,6 +2932,18 @@ all_combinations = list(itertools.product(*effective_ranges))
 
   // ─── CUSTOM SCENARIO ──────────────────────────────────────────────
   else if (pt === 'custom') {
+    // Cache initial attribute values once, before all loops
+    pre += `
+# Cache initial attribute values — restored to original after each simulation run
+_input_restore_list = []
+for _i, _spec in enumerate(input_specs):
+    for _obj in input_objects[_i]:
+        try:
+            _orig_val = _obj.GetAttribute(_spec["variable"])
+        except Exception:
+            _orig_val = None
+        _input_restore_list.append((_obj, _spec["variable"], _orig_val))
+`;
     if (hasBar) {
       pre += `\n${wrapperStart}${indentOS}for _, scenario_row in tqdm(scenario_df.iterrows(), total=len(scenario_df), desc="Scenarios"):\n`;
     } else {
@@ -2901,7 +2956,11 @@ all_combinations = list(itertools.product(*effective_ranges))
     pre += `${indent}        value = scenario_row[spec["name"]]\n`;
     pre += `${indent}        for obj in input_objects[i]:\n`;
     pre += `${indent}            setattr(obj, spec["variable"], value)\n`;
-    pre += `${indent}        row[spec["name"]] = value\n\n`;
+    pre += `${indent}        if len(input_objects[i]) == 1:\n`;
+    pre += `${indent}            row[spec["name"]] = value\n`;
+    pre += `${indent}        else:\n`;
+    pre += `${indent}            for obj in input_objects[i]:\n`;
+    pre += `${indent}                row[f"{spec['name']} {obj.loc_name}"] = value\n\n`;
     pre += `${indent}    for custom_col in custom_object_attribute_columns:\n`;
     pre += `${indent}        column_name = custom_col["column_name"]\n`;
     pre += `${indent}        object_query = custom_col["object_query"]\n`;
@@ -2937,9 +2996,17 @@ all_combinations = list(itertools.product(*effective_ranges))
     if (hasRaw) {
       pre += buildRawCsvCalls(cfg, indent, hasIterSC, hasIterOS);
     }
+    pre += `\n${indent}    # Restore input attributes to their initial values\n`;
+    pre += `${indent}    for _obj, _var, _orig in _input_restore_list:\n`;
+    pre += `${indent}        if _orig is not None:\n`;
+    pre += `${indent}            _obj.SetAttribute(_var, _orig)\n`;
     pre += `\n${indent}    results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)\n`;
     pre += `${indent}    success_count += 1\n\n`;
     pre += `${indent}except Exception:\n`;
+    pre += `${indent}    # Restore input attributes even on failure\n`;
+    pre += `${indent}    for _obj, _var, _orig in _input_restore_list:\n`;
+    pre += `${indent}        if _orig is not None:\n`;
+    pre += `${indent}            _obj.SetAttribute(_var, _orig)\n`;
     pre += `${indent}    failed_count += 1\n`;
     pre += `${indent}    error_row = {"error": traceback.format_exc()}\n`;
     pre += `${indent}    results_df = pd.concat([results_df, pd.DataFrame([error_row])], ignore_index=True)\n`;
@@ -2987,6 +3054,16 @@ for i, spec in enumerate(input_specs):
         effective_spec_map.append((i, None))
         effective_bounds.append((float(spec["lower"]), float(spec["upper"])))
 
+# Cache initial attribute values — restored after each evaluate_one_case call
+_input_restore_list = []
+for _i, _spec in enumerate(input_specs):
+    for _obj in input_objects[_i]:
+        try:
+            _orig_val = _obj.GetAttribute(_spec["variable"])
+        except Exception:
+            _orig_val = None
+        _input_restore_list.append((_obj, _spec["variable"], _orig_val))
+
 
 def evaluate_one_case(param_values):
     global iteration_count, results_df
@@ -2999,13 +3076,16 @@ def evaluate_one_case(param_values):
         if target_obj is not None:
             # Permutate: this slot controls one specific matched object
             setattr(target_obj, spec["variable"], value)
-            elm_type = spec["object_query"].split(".")[-1]
-            row[f"{target_obj.loc_name}.{elm_type}.{spec['variable']}"] = value
+            row[f"{spec['name']} {target_obj.loc_name}"] = value
         else:
             # Non-permutate: apply same value to all matched objects
             for obj in input_objects[spec_idx]:
                 setattr(obj, spec["variable"], value)
-            row[spec["name"]] = value
+            if len(input_objects[spec_idx]) == 1:
+                row[spec["name"]] = value
+            else:
+                for obj in input_objects[spec_idx]:
+                    row[f"{spec['name']} {obj.loc_name}"] = value
 
     ${runCall}
 
@@ -3039,6 +3119,11 @@ def evaluate_one_case(param_values):
       pre += `        save_timeseries_raw_csv(app, _rspec, row, raw_dir, _raw_ctx)\n`;
     }
     pre += `
+    # Restore input attributes to their initial values
+    for _obj, _var, _orig in _input_restore_list:
+        if _orig is not None:
+            _obj.SetAttribute(_var, _orig)
+
     results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)
     return row
 
@@ -3115,8 +3200,8 @@ print(f"Total attempted runs: {len(results_df)}")
 function buildNotebookWrapper(sections) {
   const cellNames = [
     'Preparation & Imports',
-    'Project Selection & Checks',
     'Helper Functions',
+    'Project Selection & Checks',
     'Input Specs & Object Resolution',
     'Output Specs',
     'Problem Loop & Study Execution',
@@ -3174,10 +3259,11 @@ function generateCode() {
   let finalCode = '';
 
   if (cfg.initialisation.codingStyle === 'notebook') {
+    // Notebook cell order: helpers first so project-selection cell can call them
     const sections = [
       sec1_imports + sec2_prep,
-      sec3_projsel + sec4_checks,
       sec5_helpers + sec6_studyhelper + sec7_elmres + sec7b_graphhelper + sec7c_rawhelper + sec8_customfn,
+      sec3_projsel + sec4_checks,
       sec9_outdir + sec10_inputspecs,
       sec11_outspecs,
       sec12_loop,
@@ -3185,18 +3271,18 @@ function generateCode() {
     ];
     finalCode = buildNotebookWrapper(sections);
   } else {
-    // Python file style
+    // Python file style — helpers must be defined before top-level calls that use them
     const body = [
       sec1_imports,
-      sec2_prep,
-      sec3_projsel,
-      sec4_checks,
       sec5_helpers,
       sec6_studyhelper,
       sec7_elmres,
       sec7b_graphhelper,
       sec7c_rawhelper,
       sec8_customfn,
+      sec2_prep,
+      sec3_projsel,
+      sec4_checks,
       sec9_outdir,
       sec10_inputspecs,
       sec11_outspecs,
