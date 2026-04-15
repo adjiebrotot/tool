@@ -232,16 +232,25 @@ body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
   <div class="ctrl-panel active" id="tab-securities">
     <div class="section-label" style="margin-top:0">Add Security</div>
     <div class="field-row" style="border-top:none;padding-top:0">
-      <div class="field-sub">Enter a Yahoo Finance ticker (e.g. AAPL, SPY, BTC-USD) or add a custom modelled asset.</div>
       <div class="add-sec-area" style="border-top:none;padding-top:4px">
-        <div class="add-sec-row">
-          <input class="txt-input" id="tickerInput" placeholder="e.g. AAPL" style="text-transform:uppercase" />
-          <button class="btn-primary" id="addTickerBtn" style="white-space:nowrap;flex:0 0 auto">+ Ticker</button>
+        <div class="add-sec-row" style="gap:6px;align-items:center">
+          <input class="txt-input" id="newSecName" placeholder="Security name" style="flex:1;min-width:0" />
+          <input type="color" id="newSecColor" title="Pick colour (optional)" style="width:34px;height:34px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--input-bg);padding:2px;flex-shrink:0" />
         </div>
-        <div class="add-sec-row" style="margin-top:6px">
-          <input class="txt-input" id="customNameInput" placeholder="Custom name" />
-          <button class="btn-secondary" id="addCustomBtn" style="white-space:nowrap;flex:0 0 auto">+ Custom</button>
+        <div class="radio-group" style="margin-top:8px">
+          <label class="radio-opt selected" id="typeOptCustom">
+            <input type="radio" name="newSecType" value="custom" checked/>
+            <div class="radio-opt-text"><strong>Custom</strong>Simulated asset (define return &amp; volatility)</div>
+          </label>
+          <label class="radio-opt" id="typeOptTicker">
+            <input type="radio" name="newSecType" value="ticker"/>
+            <div class="radio-opt-text"><strong>Ticker</strong>Live Yahoo Finance data</div>
+          </label>
         </div>
+        <div id="tickerInputRow" style="display:none;margin-top:6px">
+          <input class="txt-input" id="tickerInput" placeholder="e.g. AAPL, SPY, BTC-USD" style="text-transform:uppercase;width:100%" />
+        </div>
+        <button class="btn-primary" id="addSecBtn" style="margin-top:8px;width:100%">+ Add Security</button>
         <div class="status-bar" id="fetchStatus"></div>
       </div>
     </div>
@@ -395,8 +404,9 @@ body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
 'use strict';
 
 /* ─── CONSTANTS ─── */
-const LINE_COLORS = ['--line-a','--line-b','--line-c','--line-d','--line-e','--line-f'];
-const COLOR_NAMES  = ['Blue','Red','Green','Gold','Purple','Cyan'];
+const LINE_COLORS     = ['--line-a','--line-b','--line-c','--line-d','--line-e','--line-f'];
+const LINE_COLOR_HEX  = ['#3b82f6','#ef4444','#22c55e','#f59e0b','#a855f7','#06b6d4'];
+const COLOR_NAMES     = ['Blue','Red','Green','Gold','Purple','Cyan'];
 const DATE_BASED_STYLES = ['monthly-date','weekly-day'];
 const FORWARD_STYLES    = ['monthly-top','monthly-bottom','weekly-top','weekly-bottom'];
 const MOMENTUM_STYLES   = ['momentum-peak','momentum-dip'];
@@ -420,6 +430,7 @@ let currentRandomSeed = DEFAULT_RANDOM_SEED;
 /* ─── HELPERS ─── */
 const $ = id => document.getElementById(id);
 function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function getSecColor(sec){ return sec.colorHex || cssVar(sec.colorVar); }
 function showStatus(el, msg, type){
   el.className = 'status-bar status-'+type;
   el.innerHTML = (type==='loading'?'<span class="spinner"></span>':'')+msg;
@@ -588,6 +599,7 @@ function addSecurity(cfg){
   securities.forEach(s => { s.open = false; });
   const sec = {
     id, colorVar: getColor(colorIdx), colorName: COLOR_NAMES[colorIdx],
+    colorHex: cfg.colorHex || LINE_COLOR_HEX[colorIdx],
     type: cfg.type, ticker: cfg.ticker||'', name: cfg.name||cfg.ticker||'Custom',
     amount: 500, style: 'monthly-date', dayOrDate: 1,
     returnPct: 8, stdPct: 15,
@@ -595,6 +607,8 @@ function addSecurity(cfg){
     priceData: null, loaded: false, open: true,
     ...cfg
   };
+  // Ensure colorHex from cfg overrides the default set above
+  if(cfg.colorHex) sec.colorHex = cfg.colorHex;
   securities.push(sec);
   renderSecList();
   return sec;
@@ -621,7 +635,7 @@ function renderSecList(){
     const isMomentum=MOMENTUM_STYLES.includes(sec.style);
     card.innerHTML=`
       <div class="sec-header" data-id="${sec.id}">
-        <span class="color-dot" style="background:${cssVar(sec.colorVar)}"></span>
+        <span class="color-dot" style="background:${getSecColor(sec)}"></span>
         <span class="sec-name">${sec.name}</span>
         <span class="sec-badge ${sec.type==='ticker'?'badge-ticker':'badge-custom'}">${sec.type==='ticker'?'📊 Ticker':'⚙️ Custom'}</span>
         <span style="color:var(--muted);font-size:.9rem">${sec.open?'▲':'▼'}</span>
@@ -652,8 +666,6 @@ function renderSecList(){
             <label id="secDayLabel${sec.id}">${sec.style==='monthly-date'?'Day of month':'Day of week'}</label>
             ${renderDaySelectorInner(sec)}
           </div>
-          <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:8px 0 4px;padding-bottom:3px;border-bottom:1px solid var(--border)">Forward-Looking <span class="tip-icon warn" data-tip="⚠️ For demonstration only. These strategies use prices within the period to pick the buy date — they require future knowledge and cannot be replicated in real life.">!</span></div>
-          <div class="radio-group" style="margin-top:4px">${forward}</div>
           <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent2);margin:8px 0 4px;padding-bottom:3px;border-bottom:1px solid var(--border)">Momentum</div>
           <div class="radio-group" style="margin-top:4px">${momentumHtml}</div>
           <div id="secMomRow${sec.id}" style="${isMomentum?'':'display:none'}">
@@ -669,6 +681,9 @@ function renderSecList(){
               Invest at EOM if target not reached
             </label>
           </div>
+          <!-- NOTE: Forward-Looking must always remain at the bottom when new Investment Styles are added -->
+          <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:8px 0 4px;padding-bottom:3px;border-bottom:1px solid var(--border)">Forward-Looking <span class="tip-icon warn" data-tip="⚠️ For demonstration only. These strategies use prices within the period to pick the buy date — they require future knowledge and cannot be replicated in real life.">!</span></div>
+          <div class="radio-group" style="margin-top:4px">${forward}</div>
         </div>
         <button class="sec-del" id="secDel${sec.id}" style="margin-top:8px">🗑 Remove</button>
       </div>`;
@@ -734,6 +749,9 @@ function renderSecList(){
       momEOMEl.addEventListener('change',e=>{ sec.momentumEOM=e.target.checked; scheduleRun(); });
     }
   });
+  // Update color picker default to the next available slot
+  const cp=$('newSecColor');
+  if(cp) cp.value = LINE_COLOR_HEX[securities.length % LINE_COLOR_HEX.length];
 }
 
 function renderStyleOpt(sec,s){
@@ -795,29 +813,42 @@ async function loadTickerData(sec, startDate, endDate){
   }
 }
 
-/* ─── ADD TICKER BUTTON ─── */
-$('addTickerBtn').addEventListener('click', async()=>{
-  const ticker=$('tickerInput').value.trim().toUpperCase();
-  if(!ticker){ showStatus($('fetchStatus'),'Please enter a ticker symbol.','error'); return; }
-  if(securities.find(s=>s.ticker===ticker&&s.type==='ticker')){
-    showStatus($('fetchStatus'),ticker+' already added.','error'); return;
+/* ─── ADD SECURITY BUTTON ─── */
+$('addSecBtn').addEventListener('click', async()=>{
+  const name = $('newSecName').value.trim();
+  const type = document.querySelector('input[name="newSecType"]:checked')?.value || 'custom';
+  const colorHex = $('newSecColor').value;
+
+  if(type === 'ticker'){
+    const ticker = $('tickerInput').value.trim().toUpperCase();
+    if(!ticker){ showStatus($('fetchStatus'),'Please enter a ticker symbol.','error'); return; }
+    if(securities.find(s=>s.ticker===ticker&&s.type==='ticker')){
+      showStatus($('fetchStatus'),ticker+' already added.','error'); return;
+    }
+    const sec = addSecurity({type:'ticker', ticker, name: name||ticker, colorHex});
+    $('newSecName').value=''; $('tickerInput').value='';
+    const sd=$('startDate').value||'2020-01-01';
+    const ed=$('endDate').value||isoDate(new Date());
+    await loadTickerData(sec, sd, ed);
+    renderSecList();
+  } else {
+    if(!name){ showStatus($('fetchStatus'),'Please enter a security name.','error'); return; }
+    addSecurity({type:'custom', name, colorHex});
+    $('newSecName').value='';
   }
-  const sec=addSecurity({type:'ticker',ticker,name:ticker});
-  $('tickerInput').value='';
-  const sd=$('startDate').value||'2020-01-01';
-  const ed=$('endDate').value||isoDate(new Date());
-  await loadTickerData(sec, sd, ed);
-  renderSecList();
   scheduleRun();
 });
 
-$('tickerInput').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addTickerBtn').click(); });
+$('tickerInput').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addSecBtn').click(); });
+$('newSecName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addSecBtn').click(); });
 
-$('addCustomBtn').addEventListener('click',()=>{
-  const name=$('customNameInput').value.trim()||'Custom Asset';
-  addSecurity({type:'custom',name});
-  $('customNameInput').value='';
-  scheduleRun();
+// Toggle ticker input visibility based on type selection
+document.querySelectorAll('input[name="newSecType"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    $('tickerInputRow').style.display = r.value==='ticker' ? '' : 'none';
+    document.querySelectorAll('#typeOptCustom,#typeOptTicker').forEach(o=>o.classList.remove('selected'));
+    r.closest('.radio-opt').classList.add('selected');
+  });
 });
 
 /* ─── CURRENCY CHANGE ─── */
@@ -1012,7 +1043,8 @@ async function runSimulation(){
       const secRng = createSeededRng(secSeed);
       sec.priceData = generateGBMPrices(startDate, endDate, sec.returnPct, sec.stdPct, 100, secRng);
       sec.loaded=true;
-    } else if(!sec.loaded||!sec.priceData){
+    } else {
+      // Always reload ticker data so the selected date range is respected
       await loadTickerData(sec, startDate, endDate);
       if(!sec.priceData){ showWarning('Could not load data for '+sec.ticker+'. Skipping.'); continue; }
     }
@@ -1067,7 +1099,7 @@ function updatePriceChart(){
 
   const datasets=simResults.map((res,idx)=>{
     const first=res.dailyRows[0]?.price||1;
-    const color=cssVar(res.sec.colorVar);
+    const color=getSecColor(res.sec);
     const item=document.createElement('div');
     item.className='legend-item';
     item.innerHTML=`<span class="dot" style="background:${color}"></span><span>${res.sec.name}</span>`;
@@ -1115,7 +1147,7 @@ function updateEquityChart(){
   const datasets=[];
 
   simResults.forEach((res,idx)=>{
-    const color=cssVar(res.sec.colorVar);
+    const color=getSecColor(res.sec);
     dsIndexMap[idx]={equity:datasets.length};
     datasets.push({ label:res.sec.name+' Equity', data:res.dailyRows.map(r=>r.equity),
       borderColor:color, backgroundColor:color+'22', borderWidth:2.5, pointRadius:0, pointHoverRadius:5,
@@ -1193,7 +1225,7 @@ function updateTables(){
   simResults.forEach(res=>{
     const roi=(res.finalEquity-res.totalDeposited)/res.totalDeposited;
     sg.innerHTML+=`
-      <div class="tile" style="border-left:3px solid ${cssVar(res.sec.colorVar)}">
+      <div class="tile" style="border-left:3px solid ${getSecColor(res.sec)}">
         <div class="label">${res.sec.name}</div>
         <div class="value">${fmt.currency(res.finalEquity,true)}</div>
         <div style="font-size:.75rem;color:var(--muted);margin-top:3px">ROI: ${fmt.pct(roi)} | Dep: ${fmt.currency(res.totalDeposited,true)}</div>
