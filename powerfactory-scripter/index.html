@@ -1278,12 +1278,12 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
     <div class="output-var-body" id="${id}-body">
       <!-- OBJECT (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-obj">
-        <label>Object ${tip('For Scalar: PowerFactory object query passed to GetCalcRelevantObjects() (e.g. Grid.ElmTerm). For Timeseries: the object name as it appears in the ElmRes export header row (e.g. "POC Line_Aggregated" or "POC Line_Aggregated.ElmTerm"). The .ElmXxx class suffix is stripped automatically during matching.')}</label>
+        <label>Object ${tip('For Scalar: PowerFactory object query passed to GetCalcRelevantObjects() (e.g. Grid.ElmTerm). For Timeseries: the object name as it appears in the ElmRes export header row (e.g. "Grid" or "Grid.ElmTerm"). The .ElmXxx class suffix is stripped automatically during matching.')}</label>
         <div id="${id}-obj-attribute-wrap" class="${isTs?'cond-hidden':''}">
           <input type="text" id="${id}-obj" value="${isTs ? '' : (data.object_query||'')}" placeholder="Element.ElmType" oninput="onOutputObjectInput('${id}')" />
         </div>
         <div id="${id}-obj-timeseries-wrap" class="${isTs?'':'cond-hidden'}" style="display:flex;align-items:center;">
-          <input type="text" id="${id}-obj-prefix" value="${tsObjVal}" placeholder="POC Line_Aggregated" oninput="onOutputObjectInput('${id}')" />
+          <input type="text" id="${id}-obj-prefix" value="${tsObjVal}" placeholder="Grid.ElmTerm" oninput="onOutputObjectInput('${id}')" />
         </div>
       </div>
       <!-- ATTRIBUTE (hidden for custom_calculation) -->
