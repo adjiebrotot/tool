@@ -267,6 +267,11 @@ body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
         <option value="">— None (Agnostic)</option>
       </select>
     </div>
+    <div class="field-row">
+      <div class="field-label">Simulation Seed</div>
+      <input class="num-input" id="randomSeed" type="number" min="0" step="1" value="25823952204" />
+      <div class="field-sub">Used for custom security randomness when Return and Std Dev are defined.</div>
+    </div>
 
     <div class="section-label">Date Range</div>
     <div class="field-row" style="border-top:none;padding-top:0">
@@ -395,6 +400,7 @@ const DATE_BASED_STYLES = ['monthly-date','weekly-day'];
 const FORWARD_STYLES    = ['monthly-top','monthly-bottom','weekly-top','weekly-bottom'];
 const STYLE_ORDER = [...DATE_BASED_STYLES, ...FORWARD_STYLES];
 const WEEKDAY_OPTIONS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DEFAULT_RANDOM_SEED = 25823952204;
 
 /* ─── STATE ─── */
 let securities = [];
@@ -407,6 +413,7 @@ let showDeposited = true;
 let currentCurrencySymbol = '$';
 let secIdCounter = 0;
 let runDebounceTimer = null;
+let currentRandomSeed = DEFAULT_RANDOM_SEED;
 
 /* ─── HELPERS ─── */
 const $ = id => document.getElementById(id);
@@ -418,6 +425,11 @@ function showStatus(el, msg, type){
 function hideStatus(el){ el.className='status-bar'; el.textContent=''; }
 
 function scheduleRun(){ clearTimeout(runDebounceTimer); runDebounceTimer=setTimeout(runSimulation,400); }
+function sanitizeSeed(v){
+  const n = Number(v);
+  if(!Number.isFinite(n)) return DEFAULT_RANDOM_SEED;
+  return Math.floor(Math.abs(n));
+}
 
 const fmt = {
   currency(v, compact=false){
@@ -447,7 +459,27 @@ function getWeekdayInWeek(d, day){ // find given weekday (1=Mon..5=Fri) in the w
 }
 
 /* ─── SIMULATED PRICE GENERATION (GBM) ─── */
-function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPrice=100){
+function createSeededRng(seed){
+  let state = seed >>> 0;
+  if(state===0) state = 0x6d2b79f5;
+  return function(){
+    state |= 0;
+    state = (state + 0x6D2B79F5) | 0;
+    let t = Math.imul(state ^ state >>> 15, 1 | state);
+    t ^= t + Math.imul(t ^ t >>> 7, 61 | t);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function deriveSeed(baseSeed, key=''){
+  let h = (sanitizeSeed(baseSeed) >>> 0) || 0x811c9dc5;
+  for(let i=0;i<key.length;i++){
+    h ^= key.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  return h >>> 0;
+}
+
+function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPrice=100, randomFn=Math.random){
   const dates=[];
   const prices=[];
   let d=new Date(startDate);
@@ -462,7 +494,7 @@ function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPri
       dates.push(isoDate(d));
       prices.push(price);
       // GBM step
-      const z=(Math.random()*2-1)+(Math.random()*2-1)+(Math.random()*2-1); // approx normal
+      const z=(randomFn()*2-1)+(randomFn()*2-1)+(randomFn()*2-1); // approx normal
       price=price*Math.exp((mu-0.5*sigma*sigma)*dt+sigma*Math.sqrt(dt)*z);
     }
     d=addDays(d,1);
@@ -754,6 +786,10 @@ $('currencySymbol').addEventListener('change',e=>{
   currentCurrencySymbol=e.target.value;
   if(simResults.length){ updateTables(); updateEquityChart(); }
 });
+$('randomSeed').addEventListener('input',e=>{
+  currentRandomSeed = sanitizeSeed(e.target.value);
+  scheduleRun();
+});
 
 /* ─── DEFAULT DATE RANGE ─── */
 (function initDates(){
@@ -916,7 +952,9 @@ async function runSimulation(){
   // Generate price data for custom securities
   for(const sec of securities){
     if(sec.type==='custom'){
-      sec.priceData = generateGBMPrices(startDate, endDate, sec.returnPct, sec.stdPct);
+      const secSeed = deriveSeed(currentRandomSeed, `${sec.name}|${sec.returnPct}|${sec.stdPct}|${sec.amount}|${sec.style}|${sec.dayOrDate}`);
+      const secRng = createSeededRng(secSeed);
+      sec.priceData = generateGBMPrices(startDate, endDate, sec.returnPct, sec.stdPct, 100, secRng);
       sec.loaded=true;
     } else if(!sec.loaded||!sec.priceData){
       await loadTickerData(sec, startDate, endDate);
@@ -1183,6 +1221,9 @@ $('themeToggle').addEventListener('click',()=>{
 /* ─── RESET ─── */
 $('resetBtn').addEventListener('click',()=>{
   securities=[]; simResults=[]; latestRows=[];
+  secIdCounter=0;
+  currentCurrencySymbol='$';
+  currentRandomSeed=DEFAULT_RANDOM_SEED;
   if(priceChartInstance){ priceChartInstance.destroy(); priceChartInstance=null; }
   if(equityChartInstance){ equityChartInstance.destroy(); equityChartInstance=null; }
   renderSecList();
@@ -1193,7 +1234,11 @@ $('resetBtn').addEventListener('click',()=>{
   $('priceLegend').innerHTML=''; $('equityLegend').innerHTML='';
   $('priceHoverBox').textContent='Add securities and run to view price data.';
   $('equityHoverBox').textContent='Add securities and run to view equity data.';
+  $('currencySymbol').value='$';
+  $('randomSeed').value=DEFAULT_RANDOM_SEED;
   hideStatus($('fetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
+  initializeDefaultSecurities();
+  scheduleRun();
 });
 
 /* ─── DOWNLOAD CSV (Detailed Breakdown of active tab) ─── */
@@ -1262,8 +1307,12 @@ document.querySelectorAll('.ctrl-tab').forEach(btn=>{
 });
 
 /* ─── INIT: Add default securities ─── */
-addSecurity({type:'custom',name:'S&P 500 (Custom)',returnPct:10,stdPct:18,amount:500,style:'monthly-date',dayOrDate:1});
-addSecurity({type:'custom',name:'Risk-Free 5%',returnPct:5,stdPct:0.5,amount:500,style:'monthly-date',dayOrDate:1});
+function initializeDefaultSecurities(){
+  addSecurity({type:'custom',name:'S&P500',returnPct:10,stdPct:18,amount:500,style:'monthly-date',dayOrDate:1});
+  addSecurity({type:'custom',name:'Risk-Free 5%',returnPct:5,stdPct:0.5,amount:500,style:'monthly-date',dayOrDate:1});
+}
+
+initializeDefaultSecurities();
 scheduleRun();
 
 })();
