@@ -590,11 +590,11 @@ function renderSecList(){
       <div class="sec-body ${sec.open?'open':''}" id="secBody${sec.id}">
         ${sec.type==='custom'?`
         <div class="sec-row">
-          <label>Return % p.a. <span class="tip-icon" data-tip="Expected annual return used to generate a simulated price path via Geometric Brownian Motion.">?</span></label>
+          <label>Return (% p.a.) <span class="tip-icon" data-tip="Expected annual return used to generate a simulated price path via Geometric Brownian Motion.">?</span></label>
           <input class="num-input" id="secReturn${sec.id}" type="number" min="-50" max="200" step="0.5" value="${sec.returnPct}" style="max-width:80px"/>
         </div>
         <div class="sec-row">
-          <label>Std Dev% <span class="tip-icon" data-tip="Annual volatility (standard deviation). Higher values produce more volatile simulated paths.">?</span></label>
+          <label>Std Dev (%) <span class="tip-icon" data-tip="Annual volatility (standard deviation). Higher values produce more volatile simulated paths.">?</span></label>
           <input class="num-input" id="secStd${sec.id}" type="number" min="0" max="200" step="0.5" value="${sec.stdPct}" style="max-width:80px"/>
         </div>`:
         `<div class="sec-row" style="align-items:center">
@@ -602,7 +602,7 @@ function renderSecList(){
           <span class="status-bar ${sec.loaded?'status-ok':''}" style="display:inline-block;font-size:.75rem;padding:2px 8px;margin-left:4px" id="secLoadStatus${sec.id}">${sec.loaded?'✓ Loaded':'Not loaded'}</span>
         </div>`}
         <div class="sec-row">
-          <label>Amount per invest. <span class="tip-icon" data-tip="Fixed amount invested on each DCA purchase date.">?</span></label>
+          <label>Amount per invest <span class="tip-icon" data-tip="Fixed amount invested on each DCA purchase date.">?</span></label>
           <input class="num-input" id="secAmount${sec.id}" type="number" min="1" step="50" value="${sec.amount}" style="max-width:100px"/>
         </div>
         <div style="padding:6px 0 0">
