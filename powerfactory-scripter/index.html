@@ -1825,12 +1825,6 @@ function getLiveWarnings(cfg) {
   if (!isDynamic && cfg.outputVariables.some(ov => ov.type === 'timeseries')) {
     warnings.push('Timeseries output variables are available only for Dynamic RMS or Dynamic EMT study types.');
   }
-  const hasInvalidTimeseriesObject = cfg.outputVariables.some(ov => (
-    ov.type === 'timeseries' && !/\.ElmRes\s*$/i.test((ov.object_query || '').trim())
-  ));
-  if (hasInvalidTimeseriesObject) {
-    warnings.push('Object Element of a Timeseries output variable must be an .ElmRes object.');
-  }
   return warnings;
 }
 
@@ -2470,8 +2464,14 @@ def plot_timeseries_graph(elmres_time, elmres_cols, spec, row, graph_dir, contex
     plt.ylabel(spec["name"])
     plt.grid(True)
     plt.tight_layout()
-    safe_fname = spec["name"].replace("/", "-").replace(" ", "_")
-    graph_filename = f"{safe_fname}_{timestamp_string()}.png"
+    label_parts = list(context_title_parts)
+    for s in input_specs:
+        val = row.get(s["name"], "x")
+        label_parts.append(f"{s['name']}_{val}")
+    label_parts.append(spec["name"])
+    safe_name = "_".join(str(p) for p in label_parts)
+    safe_name = safe_name.replace(" ", "_").replace("(", "").replace(")", "").replace("/", "-")
+    graph_filename = f"{safe_name}_{timestamp_string()}.png"
     graph_path = os.path.join(graph_dir, graph_filename)
     plt.savefig(graph_path)
     plt.close()
