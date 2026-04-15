@@ -541,7 +541,8 @@ async function fetchWithTimeout(url, timeoutMs=15000){
 async function fetchYahooFinance(ticker, startDate, endDate){
   const start=Math.floor(new Date(startDate).getTime()/1000);
   const end=Math.floor(new Date(endDate).getTime()/1000+86400);
-  const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?period1=${start}&period2=${end}&interval=1d&events=history`;
+  const cacheBuster=isoDate(new Date()); // daily cache-bust: proxies like allorigins.win cache by URL, so a stale period2 response would clip recent data
+  const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?period1=${start}&period2=${end}&interval=1d&events=history&_cb=${cacheBuster}`;
   const proxyCandidates = [
     {
       name: 'allorigins-raw',
@@ -558,7 +559,7 @@ async function fetchYahooFinance(ticker, startDate, endDate){
     },
     {
       name: 'jina-ai-read',
-      url: `https://r.jina.ai/http://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?period1=${start}&period2=${end}&interval=1d&events=history`,
+      url: `https://r.jina.ai/http://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?period1=${start}&period2=${end}&interval=1d&events=history&_cb=${cacheBuster}`,
       parse: async resp => {
         const txt = await resp.text();
         const jsonStart = txt.indexOf('{');
