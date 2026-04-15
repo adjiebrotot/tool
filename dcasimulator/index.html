@@ -39,7 +39,7 @@ p,.muted{color:var(--muted);line-height:1.55}
 .controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
 .controls::-webkit-scrollbar{width:0;height:0}
 .ctrl-tabs{display:flex;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;background:var(--panel)}
-.ctrl-tab{padding:12px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
+.ctrl-tab{flex:1 1 0;padding:12px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
 .ctrl-panel{display:none;padding:14px 16px 18px}
 .ctrl-panel.active{display:block}
@@ -57,6 +57,8 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .num-input,.txt-input{background:var(--input-bg);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:.88rem;font-weight:600;padding:7px 10px;width:100%;outline:none;transition:border-color .15s;font-family:inherit}
 .num-input:focus,.txt-input:focus{border-color:var(--accent)}
 select.txt-input{cursor:pointer}
+.num-input option,.txt-input option{background:#1a2340;color:#e8eefc}
+body.light .num-input option,body.light .txt-input option{background:#ffffff;color:#1a2340}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:12px 16px 16px;border-top:1px solid var(--border)}
 .btn-primary{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.88rem;transition:opacity .15s;font-family:inherit}
 .btn-primary:hover{opacity:.85}
@@ -609,12 +611,12 @@ function renderSecList(){
           <div style="font-size:.8rem;font-weight:700;margin-bottom:6px">Investment Style</div>
           <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:4px 0 4px;padding-bottom:3px;border-bottom:1px solid var(--border)">Date-Based</div>
           <div class="radio-group" style="margin-top:4px">${dataBased}</div>
+          <div class="sec-row" id="secDayRow${sec.id}" style="${showDayRow(sec.style)?'':'display:none'}">
+            <label id="secDayLabel${sec.id}">${sec.style==='monthly-date'?'Day of month':'Day of week'}</label>
+            ${renderDaySelectorInner(sec)}
+          </div>
           <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:8px 0 4px;padding-bottom:3px;border-bottom:1px solid var(--border)">Forward-Looking <span class="tip-icon warn" data-tip="⚠️ For demonstration only. These strategies use prices within the period to pick the buy date — they require future knowledge and cannot be replicated in real life.">!</span></div>
           <div class="radio-group" style="margin-top:4px">${forward}</div>
-        </div>
-        <div class="sec-row" id="secDayRow${sec.id}" style="${showDayRow(sec.style)?'':'display:none'}">
-          <label id="secDayLabel${sec.id}">${sec.style==='monthly-date'?'Day of month':'Day of week'}</label>
-          ${renderDaySelectorInner(sec)}
         </div>
         <button class="sec-del" id="secDel${sec.id}" style="margin-top:8px">🗑 Remove</button>
       </div>`;
