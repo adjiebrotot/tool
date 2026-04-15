@@ -292,6 +292,7 @@ body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
 
   <div class="warning" id="mainWarning"></div>
   <div class="btn-row">
+    <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
     <button class="btn-secondary" id="resetBtn" style="flex:1">↺ Reset</button>
   </div>
 </aside>
@@ -398,7 +399,8 @@ const LINE_COLORS = ['--line-a','--line-b','--line-c','--line-d','--line-e','--l
 const COLOR_NAMES  = ['Blue','Red','Green','Gold','Purple','Cyan'];
 const DATE_BASED_STYLES = ['monthly-date','weekly-day'];
 const FORWARD_STYLES    = ['monthly-top','monthly-bottom','weekly-top','weekly-bottom'];
-const STYLE_ORDER = [...DATE_BASED_STYLES, ...FORWARD_STYLES];
+const MOMENTUM_STYLES   = ['momentum-peak','momentum-dip'];
+const STYLE_ORDER = [...DATE_BASED_STYLES, ...FORWARD_STYLES, ...MOMENTUM_STYLES];
 const WEEKDAY_OPTIONS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const DEFAULT_RANDOM_SEED = 25823952204;
 
@@ -424,7 +426,7 @@ function showStatus(el, msg, type){
 }
 function hideStatus(el){ el.className='status-bar'; el.textContent=''; }
 
-function scheduleRun(){ clearTimeout(runDebounceTimer); runDebounceTimer=setTimeout(runSimulation,400); }
+function scheduleRun(){ /* no-op – simulation is manual via ▶ Simulate */ }
 function sanitizeSeed(v){
   const n = Number(v);
   if(!Number.isFinite(n)) return DEFAULT_RANDOM_SEED;
@@ -589,6 +591,7 @@ function addSecurity(cfg){
     type: cfg.type, ticker: cfg.ticker||'', name: cfg.name||cfg.ticker||'Custom',
     amount: 500, style: 'monthly-date', dayOrDate: 1,
     returnPct: 8, stdPct: 15,
+    momentumPct: 5, momentumEOM: true,
     priceData: null, loaded: false, open: true,
     ...cfg
   };
@@ -614,6 +617,8 @@ function renderSecList(){
     card.className='sec-card';
     const dataBased=DATE_BASED_STYLES.map(s=>renderStyleOpt(sec,s)).join('');
     const forward=FORWARD_STYLES.map(s=>renderStyleOpt(sec,s)).join('');
+    const momentumHtml=MOMENTUM_STYLES.map(s=>renderStyleOpt(sec,s)).join('');
+    const isMomentum=MOMENTUM_STYLES.includes(sec.style);
     card.innerHTML=`
       <div class="sec-header" data-id="${sec.id}">
         <span class="color-dot" style="background:${cssVar(sec.colorVar)}"></span>
@@ -649,6 +654,21 @@ function renderSecList(){
           </div>
           <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:8px 0 4px;padding-bottom:3px;border-bottom:1px solid var(--border)">Forward-Looking <span class="tip-icon warn" data-tip="⚠️ For demonstration only. These strategies use prices within the period to pick the buy date — they require future knowledge and cannot be replicated in real life.">!</span></div>
           <div class="radio-group" style="margin-top:4px">${forward}</div>
+          <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent2);margin:8px 0 4px;padding-bottom:3px;border-bottom:1px solid var(--border)">Momentum</div>
+          <div class="radio-group" style="margin-top:4px">${momentumHtml}</div>
+          <div id="secMomRow${sec.id}" style="${isMomentum?'':'display:none'}">
+            <div style="padding:6px 0 2px">
+              <div class="slider-head" style="margin-bottom:4px">
+                <span style="font-size:.8rem;color:var(--muted);font-weight:700">Threshold</span>
+                <span id="secMomPctVal${sec.id}" class="slider-value">${sec.momentumPct}%</span>
+              </div>
+              <input type="range" id="secMomPct${sec.id}" min="1" max="50" step="1" value="${sec.momentumPct}" style="width:100%;accent-color:var(--accent);cursor:pointer"/>
+            </div>
+            <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);cursor:pointer;padding:2px 0 6px">
+              <input type="checkbox" id="secMomEOM${sec.id}" ${sec.momentumEOM?'checked':''} style="accent-color:var(--accent);cursor:pointer;width:14px;height:14px;flex-shrink:0"/>
+              Invest at EOM if target not reached
+            </label>
+          </div>
         </div>
         <button class="sec-del" id="secDel${sec.id}" style="margin-top:8px">🗑 Remove</button>
       </div>`;
@@ -684,8 +704,10 @@ function renderSecList(){
         r.closest('.radio-opt').classList.add('selected');
         sec.style=r.value;
         const dayRow=$(`secDayRow${sec.id}`);
+        const momRow=$(`secMomRow${sec.id}`);
         sec.dayOrDate=1;
         dayRow.style.display=showDayRow(sec.style)?'':'none';
+        if(momRow) momRow.style.display=MOMENTUM_STYLES.includes(sec.style)?'':'none';
         if(showDayRow(sec.style)){
           $(`secDayLabel${sec.id}`).textContent=sec.style==='monthly-date'?'Day of month':'Day of week';
           const old=dayRow.querySelector('input[type=number],select');
@@ -697,6 +719,20 @@ function renderSecList(){
       });
     });
     wireDayInput(sec);
+    // Momentum controls
+    const momPctEl=$(`secMomPct${sec.id}`);
+    const momPctValEl=$(`secMomPctVal${sec.id}`);
+    const momEOMEl=$(`secMomEOM${sec.id}`);
+    if(momPctEl){
+      momPctEl.addEventListener('input',e=>{
+        sec.momentumPct=parseInt(e.target.value)||5;
+        if(momPctValEl) momPctValEl.textContent=sec.momentumPct+'%';
+        scheduleRun();
+      });
+    }
+    if(momEOMEl){
+      momEOMEl.addEventListener('change',e=>{ sec.momentumEOM=e.target.checked; scheduleRun(); });
+    }
   });
 }
 
@@ -724,7 +760,8 @@ function renderDaySelector(sec){ return renderDaySelectorInner(sec); }
 
 function styleLabel(s){
   return {'monthly-date':'Monthly (Fixed Date)','monthly-top':'Monthly (Top)','monthly-bottom':'Monthly (Bottom)',
-          'weekly-day':'Weekly (Fixed Day)','weekly-top':'Weekly (Top)','weekly-bottom':'Weekly (Bottom)'}[s]||s;
+          'weekly-day':'Weekly (Fixed Day)','weekly-top':'Weekly (Top)','weekly-bottom':'Weekly (Bottom)',
+          'momentum-peak':'Buy the Peak','momentum-dip':'Buy the Dip'}[s]||s;
 }
 function styleDesc(s){
   return {'monthly-date':'Buy on a specific day each month.',
@@ -732,7 +769,9 @@ function styleDesc(s){
           'monthly-bottom':'Buy on the lowest price day of the month.',
           'weekly-day':'Buy on a chosen weekday each week.',
           'weekly-top':'Buy on the peak price day of the week.',
-          'weekly-bottom':'Buy on the lowest price day of the week.'}[s]||'';
+          'weekly-bottom':'Buy on the lowest price day of the week.',
+          'momentum-peak':'Invest after an upside of X% from month start.',
+          'momentum-dip':'Invest after a downside of X% from month start.'}[s]||'';
 }
 function showDayRow(s){ return s==='monthly-date'||s==='weekly-day'; }
 
@@ -800,7 +839,7 @@ $('randomSeed').addEventListener('input',e=>{
 })();
 
 /* ─── SIMULATION ENGINE ─── */
-function getInvestmentDates(priceData, style, dayOrDate){
+function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentumEOM=true){
   const {dates, prices} = priceData;
   const dateIndex = {};
   dates.forEach((d,i)=>dateIndex[d]=i);
@@ -887,6 +926,23 @@ function getInvestmentDates(priceData, style, dayOrDate){
       idxs.forEach(i=>{ if(prices[i]<prices[best]) best=i; });
       result.push(best);
     });
+  } else if(style==='momentum-peak'||style==='momentum-dip'){
+    const months={};
+    dates.forEach((d,i)=>{ const ym=d.slice(0,7); if(!months[ym])months[ym]=[]; months[ym].push(i); });
+    const threshold=(momentumPct||5)/100;
+    Object.values(months).forEach(idxs=>{
+      const refPrice=prices[idxs[0]];
+      let invested=false;
+      for(const i of idxs){
+        const p=prices[i];
+        if(style==='momentum-peak'&&p>=refPrice*(1+threshold)){
+          result.push(i); invested=true; break;
+        } else if(style==='momentum-dip'&&p<=refPrice*(1-threshold)){
+          result.push(i); invested=true; break;
+        }
+      }
+      if(!invested&&momentumEOM) result.push(idxs[idxs.length-1]);
+    });
   }
 
   // Remove duplicates, sort
@@ -895,7 +951,7 @@ function getInvestmentDates(priceData, style, dayOrDate){
 
 function simulateSecurity(sec){
   const {dates, prices} = sec.priceData;
-  const investIdxs = getInvestmentDates(sec.priceData, sec.style, sec.dayOrDate);
+  const investIdxs = getInvestmentDates(sec.priceData, sec.style, sec.dayOrDate, sec.momentumPct, sec.momentumEOM);
   const investSet = new Set(investIdxs);
 
   let totalUnits=0, totalDeposited=0;
@@ -1218,6 +1274,9 @@ $('themeToggle').addEventListener('click',()=>{
   renderSecList();
 });
 
+/* ─── SIMULATE BUTTON ─── */
+$('simBtn').addEventListener('click', runSimulation);
+
 /* ─── RESET ─── */
 $('resetBtn').addEventListener('click',()=>{
   securities=[]; simResults=[]; latestRows=[];
@@ -1238,7 +1297,7 @@ $('resetBtn').addEventListener('click',()=>{
   $('randomSeed').value=DEFAULT_RANDOM_SEED;
   hideStatus($('fetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
   initializeDefaultSecurities();
-  scheduleRun();
+  runSimulation();
 });
 
 /* ─── DOWNLOAD CSV (Detailed Breakdown of active tab) ─── */
@@ -1313,7 +1372,7 @@ function initializeDefaultSecurities(){
 }
 
 initializeDefaultSecurities();
-scheduleRun();
+runSimulation();
 
 })();
 </script>
