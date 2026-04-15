@@ -249,7 +249,7 @@ body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
           </label>
         </div>
         <div id="tickerInputRow" style="display:none;margin-top:6px">
-          <input class="txt-input" id="tickerInput" placeholder="e.g. AAPL, SPY, BTC-USD" style="text-transform:uppercase;width:100%" />
+          <input class="txt-input" id="tickerInput" placeholder="e.g. AAPL, SPY, AAA.AX" style="text-transform:uppercase;width:100%" />
         </div>
         <button class="btn-primary" id="addSecBtn" style="margin-top:8px;width:100%">+ Add Security</button>
         <div class="status-bar" id="fetchStatus"></div>
@@ -686,7 +686,7 @@ function renderSecList(){
             </div>
             <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);cursor:pointer;padding:2px 0 6px">
               <input type="checkbox" id="secMomEOM${sec.id}" ${sec.momentumEOM?'checked':''} style="accent-color:var(--accent);cursor:pointer;width:14px;height:14px;flex-shrink:0"/>
-              Invest at EOM if target not reached
+              Invest at End of Month if target not reached
             </label>
           </div>
           <!-- NOTE: Forward-Looking must always remain at the bottom when new Investment Styles are added -->
