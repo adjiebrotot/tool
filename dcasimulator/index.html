@@ -427,6 +427,12 @@ let secIdCounter = 0;
 let runDebounceTimer = null;
 let currentRandomSeed = DEFAULT_RANDOM_SEED;
 
+/* ─── PRICE CACHE ─── */
+// Keyed by ticker. Stores the widest date range ever fetched so simulations
+// can filter from memory without re-fetching (only expand when needed).
+let priceCache = {};
+// { 'AAPL': { dates: [...], prices: [...], cachedStart: 'YYYY-MM-DD', cachedEnd: 'YYYY-MM-DD' } }
+
 /* ─── HELPERS ─── */
 const $ = id => document.getElementById(id);
 function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
@@ -794,19 +800,50 @@ function styleDesc(s){
 function showDayRow(s){ return s==='monthly-date'||s==='weekly-day'; }
 
 /* ─── FETCH TICKER DATA ─── */
+
+/* ─── PRICE CACHE HELPERS ─── */
+// Ensures priceCache[ticker] covers [requestedStart, requestedEnd].
+// Fetches only when the cache is absent or the range must be expanded.
+// Returns true on success, throws on failure.
+async function ensureTickerCached(ticker, requestedStart, requestedEnd){
+  const entry = priceCache[ticker];
+  if(entry && entry.cachedStart <= requestedStart && entry.cachedEnd >= requestedEnd){
+    return; // Cache already covers the full requested range — no fetch needed
+  }
+  // Expand to cover both the existing cached range (if any) and the new request
+  const fetchStart = entry && entry.cachedStart < requestedStart ? entry.cachedStart : requestedStart;
+  const fetchEnd   = entry && entry.cachedEnd   > requestedEnd   ? entry.cachedEnd   : requestedEnd;
+  const data = await fetchYahooFinance(ticker, fetchStart, fetchEnd);
+  if(!data.dates.length) throw new Error('No price data in range');
+  priceCache[ticker] = {
+    dates: data.dates, prices: data.prices,
+    cachedStart: data.dates[0], cachedEnd: data.dates[data.dates.length - 1]
+  };
+}
+
+// Returns a {dates, prices} slice from the cache filtered to [startDate, endDate].
+function getCachedPriceSlice(ticker, startDate, endDate){
+  const entry = priceCache[ticker];
+  if(!entry) return null;
+  const si = entry.dates.findIndex(d => d >= startDate);
+  const ei = entry.dates.findLastIndex(d => d <= endDate);
+  if(si < 0 || ei < 0 || si > ei) return null;
+  return { dates: entry.dates.slice(si, ei + 1), prices: entry.prices.slice(si, ei + 1) };
+}
+
+/* ─── FETCH TICKER DATA (for manual "Add Security" flow) ─── */
 async function loadTickerData(sec, startDate, endDate){
   const statusEl = $(`secLoadStatus${sec.id}`);
   showStatus($('fetchStatus'),'Fetching '+sec.ticker+'...','loading');
   try {
-    const data = await fetchYahooFinance(sec.ticker, startDate, endDate);
-    sec.priceData = data;
+    await ensureTickerCached(sec.ticker, startDate, endDate);
     sec.loaded = true;
+    const entry = priceCache[sec.ticker];
     if(statusEl){ statusEl.className='status-bar status-ok'; statusEl.textContent='✓ Loaded'; }
-    showStatus($('fetchStatus'), sec.ticker+' loaded: '+data.dates.length+' trading days','ok');
+    showStatus($('fetchStatus'), sec.ticker+' cached: '+entry.dates.length+' trading days','ok');
     return true;
   } catch(e){
     sec.loaded = false;
-    sec.priceData = null;
     if(statusEl){ statusEl.className='status-bar status-error'; statusEl.textContent='✗ Failed'; }
     showStatus($('fetchStatus'),'Failed to load '+sec.ticker+': '+e.message,'error');
     return false;
@@ -822,9 +859,8 @@ $('addSecBtn').addEventListener('click', async()=>{
   if(type === 'ticker'){
     const ticker = $('tickerInput').value.trim().toUpperCase();
     if(!ticker){ showStatus($('fetchStatus'),'Please enter a ticker symbol.','error'); return; }
-    if(securities.find(s=>s.ticker===ticker&&s.type==='ticker')){
-      showStatus($('fetchStatus'),ticker+' already added.','error'); return;
-    }
+    // Same ticker can appear multiple times (different strategies on the same security).
+    // Price data is shared via priceCache, so no duplicate-data cost.
     const sec = addSecurity({type:'ticker', ticker, name: name||ticker, colorHex});
     $('newSecName').value=''; $('tickerInput').value='';
     const sd=$('startDate').value||'2020-01-01';
@@ -1036,7 +1072,11 @@ async function runSimulation(){
 
   showStatus($('fetchStatus'),'Preparing simulation...','loading');
 
-  // Generate price data for custom securities
+  // Prepare price data for every security.
+  // Custom: regenerate GBM for the requested range (cheap, deterministic).
+  // Ticker: slice from priceCache if the range is already covered; fetch only when
+  //   the cache is missing or the range must be expanded. Never re-fetch for a
+  //   narrower range — the data is already in memory.
   for(const sec of securities){
     if(sec.type==='custom'){
       const secSeed = deriveSeed(currentRandomSeed, `${sec.name}|${sec.returnPct}|${sec.stdPct}|${sec.amount}|${sec.style}|${sec.dayOrDate}`);
@@ -1045,8 +1085,24 @@ async function runSimulation(){
       sec.loaded=true;
     } else {
       // Always reload ticker data so the selected date range is respected
-      await loadTickerData(sec, startDate, endDate);
-      if(!sec.priceData){ showWarning('Could not load data for '+sec.ticker+'. Skipping.'); continue; }
+      // Fetch only when the cache doesn't cover the requested range
+      const statusEl = $(`secLoadStatus${sec.id}`);
+      const needsFetch = !priceCache[sec.ticker] ||
+        priceCache[sec.ticker].cachedStart > startDate ||
+        priceCache[sec.ticker].cachedEnd   < endDate;
+      if(needsFetch) showStatus($('fetchStatus'),'Fetching '+sec.ticker+'...','loading');
+      try {
+        await ensureTickerCached(sec.ticker, startDate, endDate);
+      } catch(e){
+        showWarning('Could not load data for '+sec.ticker+': '+e.message);
+        if(statusEl){ statusEl.className='status-bar status-error'; statusEl.textContent='✗ Failed'; }
+        continue;
+      }
+      const slice = getCachedPriceSlice(sec.ticker, startDate, endDate);
+      if(!slice){ showWarning('No data in selected range for '+sec.ticker+'.'); continue; }
+      sec.priceData = slice;
+      sec.loaded = true;
+      if(statusEl){ statusEl.className='status-bar status-ok'; statusEl.textContent='✓ Loaded'; }
     }
   }
 
@@ -1311,7 +1367,7 @@ $('simBtn').addEventListener('click', runSimulation);
 
 /* ─── RESET ─── */
 $('resetBtn').addEventListener('click',()=>{
-  securities=[]; simResults=[]; latestRows=[];
+  securities=[]; simResults=[]; latestRows=[]; priceCache={};
   secIdCounter=0;
   currentCurrencySymbol='$';
   currentRandomSeed=DEFAULT_RANDOM_SEED;
