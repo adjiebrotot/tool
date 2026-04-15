@@ -292,6 +292,7 @@ body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
 
   <div class="warning" id="mainWarning"></div>
   <div class="btn-row">
+    <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
     <button class="btn-secondary" id="resetBtn" style="flex:1">↺ Reset</button>
   </div>
 </aside>
@@ -425,7 +426,7 @@ function showStatus(el, msg, type){
 }
 function hideStatus(el){ el.className='status-bar'; el.textContent=''; }
 
-function scheduleRun(){ clearTimeout(runDebounceTimer); runDebounceTimer=setTimeout(runSimulation,400); }
+function scheduleRun(){ /* no-op – simulation is manual via ▶ Simulate */ }
 function sanitizeSeed(v){
   const n = Number(v);
   if(!Number.isFinite(n)) return DEFAULT_RANDOM_SEED;
@@ -1273,6 +1274,9 @@ $('themeToggle').addEventListener('click',()=>{
   renderSecList();
 });
 
+/* ─── SIMULATE BUTTON ─── */
+$('simBtn').addEventListener('click', runSimulation);
+
 /* ─── RESET ─── */
 $('resetBtn').addEventListener('click',()=>{
   securities=[]; simResults=[]; latestRows=[];
@@ -1293,7 +1297,7 @@ $('resetBtn').addEventListener('click',()=>{
   $('randomSeed').value=DEFAULT_RANDOM_SEED;
   hideStatus($('fetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
   initializeDefaultSecurities();
-  scheduleRun();
+  runSimulation();
 });
 
 /* ─── DOWNLOAD CSV (Detailed Breakdown of active tab) ─── */
@@ -1368,7 +1372,7 @@ function initializeDefaultSecurities(){
 }
 
 initializeDefaultSecurities();
-scheduleRun();
+runSimulation();
 
 })();
 </script>
