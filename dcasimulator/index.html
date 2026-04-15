@@ -432,6 +432,7 @@ let currentRandomSeed = DEFAULT_RANDOM_SEED;
 // can filter from memory without re-fetching (only expand when needed).
 let priceCache = {};
 // { 'AAPL': { dates: [...], prices: [...], cachedStart: 'YYYY-MM-DD', cachedEnd: 'YYYY-MM-DD' } }
+let tickerFetchInFlight = {};
 
 /* ─── HELPERS ─── */
 const $ = id => document.getElementById(id);
@@ -806,24 +807,46 @@ function showDayRow(s){ return s==='monthly-date'||s==='weekly-day'; }
 // Fetches only when the cache is absent or the range must be expanded.
 // Returns true on success, throws on failure.
 async function ensureTickerCached(ticker, requestedStart, requestedEnd){
-  const entry = priceCache[ticker];
-  if(entry && entry.cachedStart <= requestedStart && entry.cachedEnd >= requestedEnd){
+  const tk = String(ticker||'').trim().toUpperCase();
+  if(!tk) throw new Error('Invalid ticker');
+  const entry = priceCache[tk];
+  if(entry && entry.coverageStart <= requestedStart && entry.coverageEnd >= requestedEnd){
     return; // Cache already covers the full requested range — no fetch needed
   }
-  // Expand to cover both the existing cached range (if any) and the new request
-  const fetchStart = entry && entry.cachedStart < requestedStart ? entry.cachedStart : requestedStart;
-  const fetchEnd   = entry && entry.cachedEnd   > requestedEnd   ? entry.cachedEnd   : requestedEnd;
-  const data = await fetchYahooFinance(ticker, fetchStart, fetchEnd);
-  if(!data.dates.length) throw new Error('No price data in range');
-  priceCache[ticker] = {
-    dates: data.dates, prices: data.prices,
-    cachedStart: data.dates[0], cachedEnd: data.dates[data.dates.length - 1]
-  };
+  if(tickerFetchInFlight[tk]){
+    await tickerFetchInFlight[tk];
+    return;
+  }
+  tickerFetchInFlight[tk] = (async()=>{
+    const latestEntry = priceCache[tk];
+    if(latestEntry && latestEntry.coverageStart <= requestedStart && latestEntry.coverageEnd >= requestedEnd){
+      return;
+    }
+    // Expand to cover both the existing requested range (if any) and the new request.
+    const fetchStart = latestEntry ? (latestEntry.coverageStart < requestedStart ? latestEntry.coverageStart : requestedStart) : requestedStart;
+    const fetchEnd   = latestEntry ? (latestEntry.coverageEnd   > requestedEnd   ? latestEntry.coverageEnd   : requestedEnd)   : requestedEnd;
+    const data = await fetchYahooFinance(tk, fetchStart, fetchEnd);
+    if(!data.dates.length) throw new Error('No price data in range');
+    priceCache[tk] = {
+      dates: data.dates,
+      prices: data.prices,
+      cachedStart: data.dates[0],
+      cachedEnd: data.dates[data.dates.length - 1],
+      coverageStart: fetchStart,
+      coverageEnd: fetchEnd
+    };
+  })();
+  try{
+    await tickerFetchInFlight[tk];
+  } finally {
+    delete tickerFetchInFlight[tk];
+  }
 }
 
 // Returns a {dates, prices} slice from the cache filtered to [startDate, endDate].
 function getCachedPriceSlice(ticker, startDate, endDate){
-  const entry = priceCache[ticker];
+  const tk = String(ticker||'').trim().toUpperCase();
+  const entry = priceCache[tk];
   if(!entry) return null;
   const si = entry.dates.findIndex(d => d >= startDate);
   const ei = entry.dates.findLastIndex(d => d <= endDate);
@@ -831,14 +854,21 @@ function getCachedPriceSlice(ticker, startDate, endDate){
   return { dates: entry.dates.slice(si, ei + 1), prices: entry.prices.slice(si, ei + 1) };
 }
 
+function isTickerRangeCovered(ticker, startDate, endDate){
+  const tk = String(ticker||'').trim().toUpperCase();
+  const entry = priceCache[tk];
+  return !!(entry && entry.coverageStart <= startDate && entry.coverageEnd >= endDate);
+}
+
 /* ─── FETCH TICKER DATA (for manual "Add Security" flow) ─── */
 async function loadTickerData(sec, startDate, endDate){
   const statusEl = $(`secLoadStatus${sec.id}`);
-  showStatus($('fetchStatus'),'Fetching '+sec.ticker+'...','loading');
+  const covered = isTickerRangeCovered(sec.ticker, startDate, endDate);
+  showStatus($('fetchStatus'), (covered?'Using cached ':'Fetching ')+sec.ticker+'...','loading');
   try {
     await ensureTickerCached(sec.ticker, startDate, endDate);
     sec.loaded = true;
-    const entry = priceCache[sec.ticker];
+    const entry = priceCache[String(sec.ticker).trim().toUpperCase()];
     if(statusEl){ statusEl.className='status-bar status-ok'; statusEl.textContent='✓ Loaded'; }
     showStatus($('fetchStatus'), sec.ticker+' cached: '+entry.dates.length+' trading days','ok');
     return true;
@@ -1072,11 +1102,27 @@ async function runSimulation(){
 
   showStatus($('fetchStatus'),'Preparing simulation...','loading');
 
+  // Reset stale data before rebuilding this run.
+  securities.forEach(sec => { sec.priceData = null; sec.loaded = false; });
+
+  // Ensure ticker data once per unique ticker.
+  const uniqueTickers = [...new Set(securities
+    .filter(sec => sec.type==='ticker')
+    .map(sec => String(sec.ticker||'').trim().toUpperCase())
+    .filter(Boolean))];
+  for(const ticker of uniqueTickers){
+    const needsFetch = !isTickerRangeCovered(ticker, startDate, endDate);
+    if(needsFetch) showStatus($('fetchStatus'),'Fetching '+ticker+'...','loading');
+    try {
+      await ensureTickerCached(ticker, startDate, endDate);
+    } catch(e){
+      showWarning('Could not load data for '+ticker+': '+e.message);
+    }
+  }
+
   // Prepare price data for every security.
   // Custom: regenerate GBM for the requested range (cheap, deterministic).
-  // Ticker: slice from priceCache if the range is already covered; fetch only when
-  //   the cache is missing or the range must be expanded. Never re-fetch for a
-  //   narrower range — the data is already in memory.
+  // Ticker: assign cached slice for the selected range.
   for(const sec of securities){
     if(sec.type==='custom'){
       const secSeed = deriveSeed(currentRandomSeed, `${sec.name}|${sec.returnPct}|${sec.stdPct}|${sec.amount}|${sec.style}|${sec.dayOrDate}`);
@@ -1084,20 +1130,7 @@ async function runSimulation(){
       sec.priceData = generateGBMPrices(startDate, endDate, sec.returnPct, sec.stdPct, 100, secRng);
       sec.loaded=true;
     } else {
-      // Always reload ticker data so the selected date range is respected
-      // Fetch only when the cache doesn't cover the requested range
       const statusEl = $(`secLoadStatus${sec.id}`);
-      const needsFetch = !priceCache[sec.ticker] ||
-        priceCache[sec.ticker].cachedStart > startDate ||
-        priceCache[sec.ticker].cachedEnd   < endDate;
-      if(needsFetch) showStatus($('fetchStatus'),'Fetching '+sec.ticker+'...','loading');
-      try {
-        await ensureTickerCached(sec.ticker, startDate, endDate);
-      } catch(e){
-        showWarning('Could not load data for '+sec.ticker+': '+e.message);
-        if(statusEl){ statusEl.className='status-bar status-error'; statusEl.textContent='✗ Failed'; }
-        continue;
-      }
       const slice = getCachedPriceSlice(sec.ticker, startDate, endDate);
       if(!slice){ showWarning('No data in selected range for '+sec.ticker+'.'); continue; }
       sec.priceData = slice;
@@ -1367,7 +1400,7 @@ $('simBtn').addEventListener('click', runSimulation);
 
 /* ─── RESET ─── */
 $('resetBtn').addEventListener('click',()=>{
-  securities=[]; simResults=[]; latestRows=[]; priceCache={};
+  securities=[]; simResults=[]; latestRows=[]; priceCache={}; tickerFetchInFlight={};
   secIdCounter=0;
   currentCurrencySymbol='$';
   currentRandomSeed=DEFAULT_RANDOM_SEED;
