@@ -279,7 +279,7 @@ body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
     <div class="field-row">
       <div class="field-label">Simulation Seed</div>
       <input class="num-input" id="randomSeed" type="number" min="0" step="1" value="25823952204" />
-      <div class="field-sub">Used for custom security randomness when Return and Std Dev are defined.</div>
+      <div class="field-sub">Used for custom security randomness when Return and Standard Deviation are defined.</div>
     </div>
 
     <div class="section-label">Date Range</div>
@@ -647,7 +647,7 @@ function renderSecList(){
           <input class="num-input" id="secReturn${sec.id}" type="number" min="-50" max="200" step="0.5" value="${sec.returnPct}" style="max-width:80px"/>
         </div>
         <div class="sec-row">
-          <label>Std Dev (%) <span class="tip-icon" data-tip="Annual volatility (standard deviation). Higher values produce more volatile simulated paths.">?</span></label>
+          <label>Standard deviation (%) <span class="tip-icon" data-tip="Annual volatility (standard deviation). Higher values produce more volatile simulated paths.">?</span></label>
           <input class="num-input" id="secStd${sec.id}" type="number" min="0" max="200" step="0.5" value="${sec.stdPct}" style="max-width:80px"/>
         </div>`:
         `<div class="sec-row" style="align-items:center">
