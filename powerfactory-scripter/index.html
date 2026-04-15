@@ -518,8 +518,8 @@
   }
   .tt:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* ── COPY TOAST ──────────────────────────────────────────────────── */
-  #copy-toast {
+  /* ── TOASTS ──────────────────────────────────────────────────────── */
+  .toast {
     position: fixed;
     bottom: 24px;
     right: 24px;
@@ -535,7 +535,7 @@
     pointer-events: none;
     z-index: 999;
   }
-  #copy-toast.show { opacity: 1; transform: translateY(0); }
+  .toast.show { opacity: 1; transform: translateY(0); }
 
   /* ── OUTPUT ROWS WITH CONDITIONAL FIELDS ─────────────────────────── */
   .output-row-extra {
@@ -774,8 +774,10 @@
   </div>
 </header>
 
-<!-- TOAST -->
-<div id="copy-toast">Copied to clipboard!</div>
+<!-- TOASTS -->
+<div id="copy-toast" class="toast">Copied to clipboard!</div>
+<div id="generate-toast" class="toast">Code generated!</div>
+<div id="import-toast" class="toast">JSON imported!</div>
 
 <!-- MAIN LAYOUT -->
 <div class="layout">
@@ -3264,6 +3266,7 @@ function generateCode() {
   const codeEl = preEl.querySelector('code') || preEl;
   preEl.innerHTML = `<code class="language-python">${escapeHtml(finalCode)}</code>`;
   hljs.highlightElement(preEl.querySelector('code'));
+  showToast('generate-toast');
 }
 
 function escapeHtml(str) {
@@ -3275,6 +3278,16 @@ function escapeHtml(str) {
     .replace(/'/g,'&#39;');
 }
 
+
+function showToast(toastId) {
+  const allToasts = document.querySelectorAll('.toast');
+  allToasts.forEach(t => t.classList.remove('show'));
+  const toast = document.getElementById(toastId);
+  if (!toast) return;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
 /* ================================================================
    COPY / DOWNLOAD
 ================================================================ */
@@ -3282,9 +3295,7 @@ function copyCode() {
   const code = window._generatedCode;
   if (!code) { alert('Generate code first.'); return; }
   navigator.clipboard.writeText(code).then(() => {
-    const toast = document.getElementById('copy-toast');
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2000);
+    showToast('copy-toast');
   });
 }
 
@@ -3345,6 +3356,7 @@ function importConfigJSON(event) {
       const cfg = JSON.parse(e.target.result);
       loadConfig(cfg);
       refreshLiveWarnings();
+      showToast('import-toast');
     } catch(err) {
       alert('Invalid JSON file: ' + err.message);
     }
