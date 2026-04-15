@@ -486,19 +486,19 @@ h3{font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;
   <!-- KPI CARDS -->
   <section class="metrics">
     <div class="metric card">
+      <div class="label">Initial Cash <span class="tip-icon" data-tip="The starting cash used in both scenarios. If left blank in inputs, this is auto-calculated from down payment + setup requirements (and RTB needs when enabled).">?</span></div>
+      <div class="value" id="kpiInitialCash">—</div>
+      <div class="sub">Starting capital at Year 0</div>
+    </div>
+    <div class="metric card">
+      <div class="label">Yearly Housing Budget <span class="tip-icon" data-tip="The monthly housing budget range used across the modeled years, shown from minimum to maximum (e.g., $1k–$5k).">?</span></div>
+      <div class="value" id="kpiBudgetRange">—</div>
+      <div class="sub">Min–max monthly budget over horizon</div>
+    </div>
+    <div class="metric card">
       <div class="label">Breakeven Year <span class="tip-icon" data-tip="The first year when the Buy scenario's net equity (house equity + cash) overtakes the pure Rent scenario's invested savings. Before this year, renting produces higher net wealth.">?</span></div>
       <div class="value" id="kpiBreakeven">—</div>
       <div class="sub">When owning net equity overtakes renting</div>
-    </div>
-    <div class="metric card">
-      <div class="label">Own Net Equity (Final) <span class="tip-icon" data-tip="Total net wealth for the Buy scenario at the end of the time horizon: property value minus remaining mortgage, plus any accumulated liquid cash savings.">?</span></div>
-      <div class="value" id="kpiOwnEquity">—</div>
-      <div class="sub">House equity + cash at year end</div>
-    </div>
-    <div class="metric card">
-      <div class="label">Rent Net Equity (Final) <span class="tip-icon" data-tip="Total net wealth for the pure Rent scenario at the end of the time horizon: the invested savings portfolio (initial down payment equivalent + monthly surpluses compounded at the risk-free rate).">?</span></div>
-      <div class="value" id="kpiRentEquity">—</div>
-      <div class="sub">Invested savings at year end</div>
     </div>
     <div class="metric card">
       <div class="label">Equity Difference <span class="tip-icon" data-tip="Own Net Equity minus Rent Net Equity at the final year. Positive (green) means buying wins; negative (red) means renting & investing wins over the chosen time horizon.">?</span></div>
@@ -1483,11 +1483,18 @@ function renderChart(rows){
 
 /* ── KPIs ── */
 function updateKPIs(state){
-  const {breakeven,summary,mPayment,monthlyBudget,rentMonthly0,initialCashUsed,ownCashStart,renterStartCapital} = state;
+  const {breakeven,summary,rows,mPayment,monthlyBudget,rentMonthly0,initialCashUsed,ownCashStart,renterStartCapital} = state;
+  $('kpiInitialCash').textContent = fmt.currency(initialCashUsed, true);
+  const monthlyBudgets = (rows||[]).slice(1).map(r=>Number(r.yearlyBudget||0)).filter(v=>Number.isFinite(v) && v>0);
+  if(monthlyBudgets.length){
+    const minBudget = Math.min(...monthlyBudgets);
+    const maxBudget = Math.max(...monthlyBudgets);
+    $('kpiBudgetRange').textContent = `${fmt.currency(minBudget, true)}–${fmt.currency(maxBudget, true)}`;
+  } else {
+    $('kpiBudgetRange').textContent = '—';
+  }
   $('kpiBreakeven').textContent = breakeven ? `Year ${breakeven}` : '—';
   $('kpiBreakeven').style.color = breakeven ? cssVar('--accent') : cssVar('--muted');
-  $('kpiOwnEquity').textContent = fmt.currency(summary.ownNetEquity, true);
-  $('kpiRentEquity').textContent= fmt.currency(summary.rentNetEquity, true);
   const diff = summary.diff;
   $('kpiDiff').textContent = (diff>=0?'+':'')+fmt.currency(diff, true);
   $('kpiDiff').style.color = diff>=0 ? cssVar('--accent2') : cssVar('--accent3');
