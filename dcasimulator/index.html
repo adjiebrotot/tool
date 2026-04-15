@@ -26,8 +26,8 @@ body.light {
   --line-a:#1d4ed8; --line-b:#b91c1c; --line-c:#15803d; --line-d:#b45309;
   --line-e:#7c3aed; --line-f:#0891b2;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',Inter,system-ui,sans-serif;color:var(--text);background:var(--bg);transition:background .25s,color .25s;min-height:100vh}
+*{box-sizing:border-box;margin:0;padding:0;min-width:0}
+body{font-family:'DM Sans',Inter,system-ui,sans-serif;color:var(--text);background:var(--bg);transition:background .25s,color .25s;min-height:100vh;overflow-x:hidden}
 .container{max-width:1500px;margin:0 auto;padding:24px}
 .card{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
 .header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
@@ -38,7 +38,7 @@ p,.muted{color:var(--muted);line-height:1.55}
 .layout{display:grid;grid-template-columns:380px 1fr;gap:18px}
 .controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
 .controls::-webkit-scrollbar{width:0;height:0}
-.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;background:var(--card-bg)}
+.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;background:var(--panel)}
 .ctrl-tab{padding:12px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
 .ctrl-panel{display:none;padding:14px 16px 18px}
@@ -176,6 +176,7 @@ body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
   .layout,.bottom{grid-template-columns:1fr}
   .controls{position:static;max-height:none}
   .canvas-wrap{height:340px}
+  .metrics{grid-template-columns:repeat(2,1fr)}
   .summary-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:900px){
@@ -183,11 +184,19 @@ body.light .warning{background:rgba(245,158,11,.08);color:#92400e}
   .container{padding:16px}
 }
 @media(max-width:600px){
-  .header-left h1{font-size:1.4rem}
-  .container{padding:12px}
+  .header-left h1{font-size:1.35rem}
+  .container{padding:10px}
   .summary-grid{grid-template-columns:1fr 1fr}
+  .metrics{grid-template-columns:1fr 1fr}
   .btn-row{flex-direction:column}
-  .ctrl-tabs{flex-wrap:wrap}
+  .ctrl-tab{flex:1}
+  .radio-opt{min-width:0;flex:1 1 100%}
+  .sec-row{flex-wrap:wrap}
+  .sec-row label{min-width:0;width:100%}
+  .sec-row .num-input,.sec-row .txt-input{flex:1 1 auto;max-width:100%!important}
+  .canvas-wrap{height:280px}
+  .table-wrap{font-size:.78rem}
+  th,td{padding:6px 5px}
 }
 .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -540,6 +549,7 @@ function getColor(idx){ return LINE_COLORS[idx % LINE_COLORS.length]; }
 function addSecurity(cfg){
   const id = ++secIdCounter;
   const colorIdx = securities.length % LINE_COLORS.length;
+  securities.forEach(s => { s.open = false; });
   const sec = {
     id, colorVar: getColor(colorIdx), colorName: COLOR_NAMES[colorIdx],
     type: cfg.type, ticker: cfg.ticker||'', name: cfg.name||cfg.ticker||'Custom',
@@ -582,7 +592,9 @@ function renderSecList(){
         <div class="sec-row">
           <label>Return % p.a. <span class="tip-icon" data-tip="Expected annual return used to generate a simulated price path via Geometric Brownian Motion.">?</span></label>
           <input class="num-input" id="secReturn${sec.id}" type="number" min="-50" max="200" step="0.5" value="${sec.returnPct}" style="max-width:80px"/>
-          <label style="min-width:46px">Std Dev% <span class="tip-icon" data-tip="Annual volatility (standard deviation). Higher values produce more volatile simulated paths.">?</span></label>
+        </div>
+        <div class="sec-row">
+          <label>Std Dev% <span class="tip-icon" data-tip="Annual volatility (standard deviation). Higher values produce more volatile simulated paths.">?</span></label>
           <input class="num-input" id="secStd${sec.id}" type="number" min="0" max="200" step="0.5" value="${sec.stdPct}" style="max-width:80px"/>
         </div>`:
         `<div class="sec-row" style="align-items:center">
