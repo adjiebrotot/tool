@@ -1212,7 +1212,7 @@ function updatePriceChart(){
         afterBody(items){ if(items.length) $('priceHoverBox').textContent=`${items[0].label}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.num(i.parsed.y,2)}%`).join('  |  '); }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
-    scales:{ x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:(v,i)=>allDates[i]?.slice(0,7)||''},grid:{color:gridColor}},
+    scales:{ x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
               y:{ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
   };}
 
@@ -1271,7 +1271,7 @@ function updateEquityChart(){
         afterBody(items){ if(items.length) $('equityHoverBox').textContent=`${items[0].label}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  '); }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
-    scales:{ x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:(v,i)=>allDates[i]?.slice(0,7)||''},grid:{color:gridColor}},
+    scales:{ x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
               y:{ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
   };}
 
