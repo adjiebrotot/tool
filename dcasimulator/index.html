@@ -62,6 +62,7 @@ body.light .num-input option,body.light .txt-input option{background:#ffffff;col
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:12px 16px 16px;border-top:1px solid var(--border)}
 .btn-primary{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.88rem;transition:opacity .15s;font-family:inherit}
 .btn-primary:hover{opacity:.85}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
 .btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.88rem;transition:border-color .15s;font-family:inherit}
 .btn-secondary:hover{border-color:var(--accent)}
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
@@ -1100,6 +1101,11 @@ async function runSimulation(){
   const endDate=$('endDate').value;
   if(!startDate||!endDate){ showWarning('Please set start and end dates.'); return; }
 
+  const simBtn=$('simBtn');
+  simBtn.disabled=true;
+  simBtn.innerHTML='<span class="spinner"></span>Running…';
+
+  try{
   showStatus($('fetchStatus'),'Preparing simulation...','loading');
 
   // Reset stale data before rebuilding this run.
@@ -1176,6 +1182,10 @@ async function runSimulation(){
   updatePriceChart();
   updateEquityChart();
   updateTables();
+  } finally {
+    simBtn.disabled=false;
+    simBtn.innerHTML='▶ Simulate';
+  }
 }
 
 /* ─── PRICE CHART ─── */
@@ -1219,6 +1229,7 @@ function updatePriceChart(){
   if(priceChartInstance){
     priceChartInstance.data.labels=allDates; priceChartInstance.data.datasets=datasets;
     priceChartInstance.options.scales.x.ticks.color=mutedColor; priceChartInstance.options.scales.x.grid.color=gridColor;
+    priceChartInstance.options.scales.x.ticks.callback=v=>allDates[Number(v)]?.slice(0,7)||'';
     priceChartInstance.options.scales.y.ticks.color=mutedColor; priceChartInstance.options.scales.y.grid.color=gridColor;
     priceChartInstance.update('none');
   } else {
@@ -1278,6 +1289,7 @@ function updateEquityChart(){
   if(equityChartInstance){
     equityChartInstance.data.labels=allDates; equityChartInstance.data.datasets=datasets;
     equityChartInstance.options.scales.x.ticks.color=mutedColor; equityChartInstance.options.scales.x.grid.color=gridColor;
+    equityChartInstance.options.scales.x.ticks.callback=v=>allDates[Number(v)]?.slice(0,7)||'';
     equityChartInstance.options.scales.y.ticks.color=mutedColor; equityChartInstance.options.scales.y.grid.color=gridColor;
     equityChartInstance.options.scales.y.ticks.callback=yCallback;
     equityChartInstance.update('none');
