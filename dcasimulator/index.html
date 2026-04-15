@@ -1196,19 +1196,31 @@ function updatePriceChart(){
   const hiddenSeries=new Set();
   const gridColor=cssVar('--border'), mutedColor=cssVar('--muted'), textColor=cssVar('--text');
 
-  const datasets=simResults.map((res,idx)=>{
+  // Deduplicate by ticker: for fetched securities show one line per unique ticker symbol.
+  const seenTickers=new Set();
+  const uniqueResults=simResults.filter(res=>{
+    const key=res.sec.type==='ticker' ? res.sec.ticker.toUpperCase() : null;
+    if(key===null) return true; // custom assets always shown
+    if(seenTickers.has(key)) return false;
+    seenTickers.add(key);
+    return true;
+  });
+
+  const datasets=uniqueResults.map((res,idx)=>{
     const first=res.dailyRows[0]?.price||1;
     const color=getSecColor(res.sec);
+    // For ticker securities use the ticker symbol as the label, not the scenario name
+    const label=res.sec.type==='ticker' ? res.sec.ticker.toUpperCase() : res.sec.name;
     const item=document.createElement('div');
     item.className='legend-item';
-    item.innerHTML=`<span class="dot" style="background:${color}"></span><span>${res.sec.name}</span>`;
+    item.innerHTML=`<span class="dot" style="background:${color}"></span><span>${label}</span>`;
     item.addEventListener('click',()=>{
       if(hiddenSeries.has(idx)) hiddenSeries.delete(idx); else hiddenSeries.add(idx);
       item.classList.toggle('hidden',hiddenSeries.has(idx));
       if(priceChartInstance){ priceChartInstance.setDatasetVisibility(idx,!hiddenSeries.has(idx)); priceChartInstance.update(); }
     });
     legendEl.appendChild(item);
-    return { label:res.sec.name, data:res.dailyRows.map(r=>r.price/first*100),
+    return { label, data:res.dailyRows.map(r=>r.price/first*100),
       borderColor:color, backgroundColor:color+'22', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.2, fill:false };
   });
 
