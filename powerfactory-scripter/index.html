@@ -863,7 +863,7 @@
       </div>
       <div class="section-body">
         <div class="info-box" id="input-info-box">
-          Define each parameter to vary. <strong>Step Size</strong> = increment value (not number of steps). For <strong>Optimisation</strong> mode, bounds define the search space (step not used). For <strong>Custom</strong> mode, values come from the scenario file (bounds and step not used). Wildcards in <strong>Object</strong> (for example <code>*.ElmDsl</code> or any <code>*</code>) are supported in all modes and apply the same value to all matched objects. In Brute Force/Optimisation, enable <strong>Permutate</strong> to independently vary each matched object — warning: this grows combinations exponentially.
+          Define each parameter to vary. <strong>Step Size</strong> = increment value (not number of steps). For <strong>Optimisation</strong> mode, bounds define the search space (step not used). For <strong>Custom</strong> mode, values come from the scenario file's 3-row header columns (bounds and step not used); you can add extra columns in the scenario file to control additional objects. Wildcards in <strong>Object</strong> (for example <code>*.ElmDsl</code> or any <code>*</code>) are supported in all modes and apply the same value to all matched objects. In Brute Force/Optimisation, enable <strong>Permutate</strong> to independently vary each matched object — warning: this grows combinations exponentially.
         </div>
         <div class="dyn-table-wrapper">
           <table class="dyn-table" id="input-table">
@@ -897,19 +897,20 @@
       </div>
       <div class="section-body">
         <div class="info-box">
-          Each <strong>row</strong> in the spreadsheet is one scenario.<br/>
-          The first column is <code>Scenario</code> (scenario number/label).<br/>
-          Each subsequent <strong>column</strong> header is the <strong>Name</strong> you defined for each input variable (e.g. <code>K_droop</code>).<br/>
-          Wildcard object queries (e.g. <code>*.ElmSym</code>) <strong>are</strong> supported — the scenario value is applied to <em>all</em> matched objects simultaneously (no permutation).<br/>
-          You can also append extra columns in the format <code>ElementName.ElmType.attribute</code> (e.g. <code>WFController.ElmDsl.K_droop</code>) to set any individual object attribute per scenario row.<br/>
-          The sheet name is always <code>Sheet1</code> (the template generates exactly one sheet).<br/>
-          Click <strong>Download Template</strong> to get a pre-filled template based on your input variable names, then add optional object-attribute columns as needed.
+          The spreadsheet uses a <strong>3-row header</strong> system followed by data rows (one scenario per row).<br/>
+          <strong>Row 1 — Variable name:</strong> label cell (<code>Variable name</code>), then one column per variable (e.g. <code>voltage</code>, <code>K_droop</code>).<br/>
+          <strong>Row 2 — Object:</strong> label cell (<code>Object</code>), then the PowerFactory object query for each variable (e.g. <code>Grid.ElmTerm</code>, <code>WFController.ElmDsl</code>).<br/>
+          <strong>Row 3 — Attribute:</strong> label cell (<code>Attribute</code>), then the attribute name to set on each object (e.g. <code>unom</code>, <code>K_droop</code>).<br/>
+          <strong>Rows 4 + — Data:</strong> each row is one scenario; the first cell is the scenario label, then numeric values for each variable column.<br/>
+          Wildcard object queries (e.g. <code>*.ElmSym</code>) <strong>are</strong> supported — the value is applied to <em>all</em> matched objects simultaneously.<br/>
+          To add extra variables beyond those defined in the Input Variables tab, simply add a new column and fill in all three header rows.<br/>
+          The sheet name is always <code>Sheet1</code>. Click <strong>Download Template</strong> to get a pre-filled template based on your input variables.
         </div>
         <div class="btn-row" style="margin-top:0;margin-bottom:10px;">
           <button class="btn btn-ghost btn-xs" onclick="downloadCustomTemplate()">⬇ Download Template (.xlsx)</button>
         </div>
         <div class="form-row">
-          <label>Scenario File Path <span class="tt" data-tip="Full path to the Excel (.xlsx) file containing your scenario table. Use Download Template to get a pre-filled header row. Each data row is one simulation scenario. Besides declared input-variable columns, you can add optional columns named ElementName.ElmType.attribute to set arbitrary object attributes.">?</span></label>
+          <label>Scenario File Path <span class="tt" data-tip="Full path to the Excel (.xlsx) file containing your scenario table. The file uses a 3-row header (Variable name / Object / Attribute) followed by data rows. Use Download Template to get a pre-filled template. Add extra columns to set additional object attributes per scenario.">?</span></label>
           <input type="text" id="scenario-file-path" placeholder="C:\scenarios\my_scenarios.xlsx" />
         </div>
       </div>
@@ -1724,7 +1725,7 @@ function validateConfig(cfg) {
   if (init.problemType === 'custom') {
     if (!cfg.customMode.scenarioFilePath) errors.push('Custom mode: Scenario file path is required.');
     // Wildcard inputs ARE supported in Custom mode: the same scenario value is applied to all
-    // matched objects. Users can permutate manually via ElementName.ElmType.attribute columns.
+    // matched objects. Extra objects can be controlled by adding more columns to the spreadsheet.
   }
 
   return errors;
@@ -2034,29 +2035,6 @@ def get_pf_objects(app, object_query):
     if not objects:
         raise ValueError(f"No objects found for query: {object_query}")
     return list(objects)
-
-
-CUSTOM_COLUMN_PATTERN = re.compile(r"^(.+)\\.(Elm\\w+)\\.(.+)$")
-
-
-def parse_custom_object_attribute_column(column_name):
-    """
-    Parse scenario column names of the form:
-      ElementName.ElmType.attribute
-    Returns (object_query, attribute_name) or None.
-    """
-    match = CUSTOM_COLUMN_PATTERN.match(str(column_name).strip())
-    if not match:
-        return None
-    object_name, elm_type, attribute_name = match.groups()
-    return f"{object_name}.{elm_type}", attribute_name
-
-
-def resolve_pf_object_cached(app, object_query, object_cache):
-    """Resolve PF object once and reuse via cache."""
-    if object_query not in object_cache:
-        object_cache[object_query] = get_single_pf_object(app, object_query)
-    return object_cache[object_query]
 
 
 def build_range(lower, upper, step, dtype_name="float"):
@@ -2599,34 +2577,36 @@ function buildInputSpecs(cfg) {
 
   if (problemType === 'custom') {
     const fp = cfg.customMode.scenarioFilePath || 'SCENARIO_FILE_PATH_HERE';
-    code += `# Custom mode: load scenario file
-# Column headers: "Scenario" (first column), then each input variable name.
-# Wildcard object queries (e.g. *.ElmSym) are supported: the scenario value is
-# applied to all matched objects simultaneously (no permutation in custom mode).
-# Optional extra columns for per-object control:
-#   ElementName.ElmType.attribute
-# Example:
-#   WFController.ElmDsl.K_droop
-# Sheet name is always "Sheet1" (template generates a single sheet)
+    code += `# Custom mode: load scenario file (3-row header format)
+# Row 1 — Variable name: label cell ("Variable name"), then one name per variable column.
+# Row 2 — Object:        label cell ("Object"), then the PF object query per column.
+# Row 3 — Attribute:     label cell ("Attribute"), then the attribute name per column.
+# Rows 4+ are data rows (one scenario per row; first cell is the scenario label).
+# Wildcard object queries (e.g. *.ElmSym) are supported: the value is applied to all
+# matched objects simultaneously. Add extra columns to control additional objects.
+# Sheet name is always "Sheet1" (template generates a single sheet).
 scenario_file_path = r"${fp}"
-scenario_df = pd.read_excel(scenario_file_path, sheet_name="Sheet1")
-# Alternative for CSV: scenario_df = pd.read_csv(scenario_file_path)
+_raw_scenario_df = pd.read_excel(scenario_file_path, sheet_name="Sheet1", header=None)
 
-# Resolve all relevant PowerFactory objects for each input mapping key
-input_objects = {}
-custom_column_object_cache = {}
-custom_object_attribute_columns = []
-for i, spec in enumerate(input_specs):
-    input_objects[i] = get_pf_objects(app, spec["object_query"])
-for column_name in scenario_df.columns:
-    parsed = parse_custom_object_attribute_column(column_name)
-    if parsed:
-        object_query, attribute_name = parsed
-        custom_object_attribute_columns.append({
-            "column_name": column_name,
-            "object_query": object_query,
-            "attribute_name": attribute_name
-        })
+# Build column specs from the 3 header rows (skip column 0 which holds row labels)
+_col_specs = []
+for _ci in range(1, _raw_scenario_df.shape[1]):
+    _var_name  = str(_raw_scenario_df.iloc[0, _ci]).strip()
+    _obj_query = str(_raw_scenario_df.iloc[1, _ci]).strip()
+    _attr_name = str(_raw_scenario_df.iloc[2, _ci]).strip()
+    if _var_name and _obj_query and _attr_name and _var_name.lower() not in ("nan", "none"):
+        _col_specs.append({"name": _var_name, "object_query": _obj_query, "attribute": _attr_name})
+
+# Data rows start at row index 3; use variable names as column headers
+scenario_df = _raw_scenario_df.iloc[3:].reset_index(drop=True)
+scenario_df.columns = list(_raw_scenario_df.iloc[0])
+
+# Resolve all PowerFactory objects referenced by the column specs (cached)
+_col_object_cache = {}
+for _spec in _col_specs:
+    _oq = _spec["object_query"]
+    if _oq not in _col_object_cache:
+        _col_object_cache[_oq] = get_pf_objects(app, _oq)
 
 `;
   } else {
@@ -2896,13 +2876,13 @@ for _i, _spec in enumerate(input_specs):
     pre += `
 # Cache initial attribute values — restored to original after each simulation run
 _input_restore_list = []
-for _i, _spec in enumerate(input_specs):
-    for _obj in input_objects[_i]:
+for _spec in _col_specs:
+    for _obj in _col_object_cache[_spec["object_query"]]:
         try:
-            _orig_val = _obj.GetAttribute(_spec["variable"])
+            _orig_val = _obj.GetAttribute(_spec["attribute"])
         except Exception:
             _orig_val = None
-        _input_restore_list.append((_obj, _spec["variable"], _orig_val))
+        _input_restore_list.append((_obj, _spec["attribute"], _orig_val))
 `;
     if (hasBar) {
       pre += `\n${wrapperStart}${indentOS}for _, scenario_row in tqdm(scenario_df.iterrows(), total=len(scenario_df), desc="Scenarios"):\n`;
@@ -2912,30 +2892,18 @@ for _i, _spec in enumerate(input_specs):
     pre += `${indent}try:\n`;
     pre += `${indent}    iteration_count += 1\n`;
     pre += `${indent}    row = {}\n\n`;
-    pre += `${indent}    for i, spec in enumerate(input_specs):\n`;
-    pre += `${indent}        value = scenario_row[spec["name"]]\n`;
-    pre += `${indent}        for obj in input_objects[i]:\n`;
-    pre += `${indent}            setattr(obj, spec["variable"], value)\n`;
-    pre += `${indent}        if len(input_objects[i]) == 1:\n`;
-    pre += `${indent}            row[spec["name"]] = value\n`;
-    pre += `${indent}        else:\n`;
-    pre += `${indent}            for obj in input_objects[i]:\n`;
-    pre += `${indent}                row[f"{spec['name']} {obj.loc_name}"] = value\n\n`;
-    pre += `${indent}    for custom_col in custom_object_attribute_columns:\n`;
-    pre += `${indent}        column_name = custom_col["column_name"]\n`;
-    pre += `${indent}        object_query = custom_col["object_query"]\n`;
-    pre += `${indent}        attribute_name = custom_col["attribute_name"]\n`;
-    pre += `${indent}        column_value = scenario_row[column_name]\n`;
-    pre += `${indent}        if pd.isna(column_value):\n`;
+    pre += `${indent}    for _spec in _col_specs:\n`;
+    pre += `${indent}        _value = scenario_row[_spec["name"]]\n`;
+    pre += `${indent}        if pd.isna(_value):\n`;
     pre += `${indent}            continue\n`;
-    pre += `${indent}        try:\n`;
-    pre += `${indent}            target_obj = resolve_pf_object_cached(app, object_query, custom_column_object_cache)\n`;
-    pre += `${indent}        except Exception as exc:\n`;
-    pre += `${indent}            raise RuntimeError(f"Custom scenario column '{column_name}': object lookup failed for '{object_query}' ({exc})") from exc\n`;
-    pre += `${indent}        try:\n`;
-    pre += `${indent}            setattr(target_obj, attribute_name, column_value)\n`;
-    pre += `${indent}        except Exception as exc:\n`;
-    pre += `${indent}            raise RuntimeError(f"Custom scenario column '{column_name}': failed to set attribute '{attribute_name}' on '{object_query}' to value '{column_value}' ({exc})") from exc\n\n`;
+    pre += `${indent}        _objs = _col_object_cache[_spec["object_query"]]\n`;
+    pre += `${indent}        for _obj in _objs:\n`;
+    pre += `${indent}            setattr(_obj, _spec["attribute"], _value)\n`;
+    pre += `${indent}        if len(_objs) == 1:\n`;
+    pre += `${indent}            row[_spec["name"]] = _value\n`;
+    pre += `${indent}        else:\n`;
+    pre += `${indent}            for _obj in _objs:\n`;
+    pre += `${indent}                row[f"{_spec['name']} {_obj.loc_name}"] = _value\n\n`;
     pre += `${indent}    ${runCall}\n\n`;
     pre += `${indent}    for spec in output_specs:\n`;
     pre += `${indent}        if spec["type"] == "attribute":\n`;
@@ -3318,23 +3286,39 @@ function downloadCustomTemplate() {
     alert('Add input variables (with Object and Variable filled) first.');
     return;
   }
-  // Column headers: "Scenario" first, then each input variable name.
-  // Users can append additional ElementName.ElmType.attribute columns manually.
-  const headers = ['Scenario', ...validInputs.map((iv, i) => iv.name || `input_${i}`)];
-  // Pre-fill 4 scenario rows
+  // 3-row header system:
+  //   Row 1: "Variable name" | var_name_1 | var_name_2 | ...
+  //   Row 2: "Object"        | obj_query_1 | obj_query_2 | ...
+  //   Row 3: "Attribute"     | attribute_1 | attribute_2 | ...
+  //   Rows 4+: scenario label | value | value | ...
+  const varNameRow  = ['Variable name', ...validInputs.map((iv, i) => iv.name || `input_${i}`)];
+  const objectRow   = ['Object',        ...validInputs.map(iv => iv.object_query || '')];
+  const attributeRow= ['Attribute',     ...validInputs.map(iv => iv.variable || '')];
+  // Pre-fill 4 scenario data rows
   const dataRows = [1, 2, 3, 4].map(n => [n, ...validInputs.map(() => '')]);
+  const allRows = [varNameRow, objectRow, attributeRow, ...dataRows];
 
   if (typeof XLSX !== 'undefined') {
-    const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
-    ws['!cols'] = headers.map(h => ({ wch: Math.max(String(h).length + 4, 12) }));
+    const ws = XLSX.utils.aoa_to_sheet(allRows);
+    // Column widths based on widest value in each column
+    const numCols = varNameRow.length;
+    ws['!cols'] = Array.from({ length: numCols }, (_, ci) => {
+      const maxLen = allRows.reduce((m, r) => Math.max(m, String(r[ci] || '').length), 0);
+      return { wch: Math.max(maxLen + 4, 14) };
+    });
+    // Bold the 3 header rows
+    for (let ri = 0; ri < 3; ri++) {
+      for (let ci = 0; ci < numCols; ci++) {
+        const cellAddr = XLSX.utils.encode_cell({ r: ri, c: ci });
+        if (ws[cellAddr]) ws[cellAddr].s = { font: { bold: true } };
+      }
+    }
     const wb = XLSX.utils.book_new();
-    const sheetName = 'Sheet1';
-    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, 'scenario_template.xlsx');
   } else {
     // CSV fallback
-    const rows = [headers, ...dataRows];
-    const csvContent = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const csvContent = allRows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
     download(csvContent, 'scenario_template.csv', 'text/csv');
   }
 }
