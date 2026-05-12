@@ -46,7 +46,7 @@ h2{font-size:1.1rem;font-weight:700;margin-bottom:10px}
 h3{font-size:.82rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
 p,.muted{color:var(--muted);line-height:1.55}
 .layout{display:grid;grid-template-columns:380px 1fr;gap:18px}
-.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 40px);display:flex;flex-direction:column}
+.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;height:calc(100vh - 40px);display:flex;flex-direction:column}
 .ctrl-scroll{flex:1 1 0;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;min-height:0}
 .ctrl-scroll::-webkit-scrollbar{width:0;height:0}
 .ctrl-tabs{display:flex;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;background:var(--panel)}
@@ -190,7 +190,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 .detail-csv-wrap{display:flex;justify-content:flex-end}
 @media(max-width:1100px){
   .layout,.bottom{grid-template-columns:1fr}
-  .controls{position:static;max-height:none;overflow:visible}
+  .controls{position:static;height:auto;overflow:visible}
   .ctrl-scroll{flex:0 0 auto;overflow:visible}
   .canvas-wrap{height:340px}
   .metrics{grid-template-columns:repeat(2,1fr)}
