@@ -46,8 +46,9 @@ h2{font-size:1.1rem;font-weight:700;margin-bottom:10px}
 h3{font-size:.82rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
 p,.muted{color:var(--muted);line-height:1.55}
 .layout{display:grid;grid-template-columns:380px 1fr;gap:18px}
-.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
-.controls::-webkit-scrollbar{width:0;height:0}
+.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 40px);display:flex;flex-direction:column}
+.ctrl-scroll{flex:1 1 0;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;min-height:0}
+.ctrl-scroll::-webkit-scrollbar{width:0;height:0}
 .ctrl-tabs{display:flex;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;background:var(--panel)}
 .ctrl-tab{flex:1 1 0;padding:12px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
@@ -242,6 +243,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 
 <!-- SIDEBAR CONTROLS -->
 <aside class="controls card">
+  <div class="ctrl-scroll">
   <div class="ctrl-tabs">
     <button class="ctrl-tab active" data-tab="securities">📦 Securities</button>
     <button class="ctrl-tab" data-tab="settings">⚙️ Settings</button>
@@ -341,13 +343,11 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
         <div class="field-sub">Upper bound of threshold sweep.</div>
       </div>
     </div>
-    <div style="padding:10px 0 4px">
-      <button class="btn-primary" id="runSensBtn" style="width:100%">🔬 Run Sensitivity</button>
-      <div class="status-bar" id="sensStatus"></div>
-    </div>
+    <div class="status-bar" id="sensStatus" style="margin-top:8px"></div>
   </div>
 
   <div class="warning" id="mainWarning"></div>
+  </div><!-- /ctrl-scroll -->
   <div class="btn-row">
     <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
     <button class="btn-secondary" id="resetBtn" style="flex:1">↺ Reset</button>
@@ -508,6 +508,8 @@ function showStatus(el, msg, type){
 function hideStatus(el){ el.className='status-bar'; el.textContent=''; }
 
 function scheduleRun(){ /* no-op – simulation is manual via ▶ Simulate */ }
+function getActiveTab(){ const t=document.querySelector('.ctrl-tab.active'); return t?t.dataset.tab:'securities'; }
+function updateSimBtn(){ const b=$('simBtn'); if(!b)return; b.textContent=getActiveTab()==='sensitivity'?'🔬 Analyse':'▶ Simulate'; }
 function sanitizeSeed(v){
   const n = Number(v);
   if(!Number.isFinite(n)) return DEFAULT_RANDOM_SEED;
@@ -1275,7 +1277,7 @@ async function runSimulation(){
   updateTables();
   } finally {
     simBtn.disabled=false;
-    simBtn.innerHTML='▶ Simulate';
+    updateSimBtn();
   }
 }
 
@@ -1511,8 +1513,11 @@ $('themeToggle').addEventListener('click',()=>{
   renderSecList();
 });
 
-/* ─── SIMULATE BUTTON ─── */
-$('simBtn').addEventListener('click', runSimulation);
+/* ─── SIMULATE / ANALYSE BUTTON ─── */
+$('simBtn').addEventListener('click', ()=>{
+  if(getActiveTab()==='sensitivity') runSensitivityAnalysis();
+  else runSimulation();
+});
 
 /* ─── RESET ─── */
 $('resetBtn').addEventListener('click',()=>{
@@ -1664,9 +1669,9 @@ async function runSensitivityAnalysis(){
 
   const startDate=$('startDate').value||isoDate(new Date(Date.now()-5*365*24*3600*1000));
   const endDate=$('endDate').value||isoDate(new Date());
-  const runSensBtn=$('runSensBtn');
-  runSensBtn.disabled=true;
-  runSensBtn.innerHTML='<span class="spinner"></span>Analysing…';
+  const simBtn=$('simBtn');
+  simBtn.disabled=true;
+  simBtn.innerHTML='<span class="spinner"></span>Analysing…';
   showStatus($('sensStatus'),'Preparing price data...','loading');
 
   try{
@@ -1718,8 +1723,8 @@ async function runSensitivityAnalysis(){
     renderSensitivityChart(sec, labels, values, subtitle);
     hideStatus($('sensStatus'));
   } finally {
-    runSensBtn.disabled=false;
-    runSensBtn.innerHTML='🔬 Run Sensitivity';
+    simBtn.disabled=false;
+    updateSimBtn();
   }
 }
 
@@ -1786,7 +1791,6 @@ function renderSensitivityChart(sec, labels, values, subtitle){
 }
 
 $('sensSecurity').addEventListener('change', updateSensStyleInfo);
-$('runSensBtn').addEventListener('click', runSensitivityAnalysis);
 
 /* ─── CTRL TABS ─── */
 document.querySelectorAll('.ctrl-tab').forEach(btn=>{
@@ -1795,6 +1799,7 @@ document.querySelectorAll('.ctrl-tab').forEach(btn=>{
     document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
     $('tab-'+btn.dataset.tab).classList.add('active');
+    updateSimBtn();
   });
 });
 
