@@ -46,8 +46,9 @@ h2{font-size:1.1rem;font-weight:700;margin-bottom:10px}
 h3{font-size:.82rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
 p,.muted{color:var(--muted);line-height:1.55}
 .layout{display:grid;grid-template-columns:380px 1fr;gap:18px}
-.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
-.controls::-webkit-scrollbar{width:0;height:0}
+.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 40px);display:flex;flex-direction:column}
+.ctrl-scroll{flex:1 1 0;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;min-height:0}
+.ctrl-scroll::-webkit-scrollbar{width:0;height:0}
 .ctrl-tabs{display:flex;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;background:var(--panel)}
 .ctrl-tab{flex:1 1 0;padding:12px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
@@ -219,6 +220,8 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 }
 .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
+.sens-style-info{color:var(--muted);font-size:.78rem;line-height:1.4;margin-top:5px;padding:7px 9px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px}
+.sens-best-label{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);display:block;margin-top:2px}
 </style>
 </head>
 <body>
@@ -240,9 +243,11 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 
 <!-- SIDEBAR CONTROLS -->
 <aside class="controls card">
+  <div class="ctrl-scroll">
   <div class="ctrl-tabs">
     <button class="ctrl-tab active" data-tab="securities">📦 Securities</button>
     <button class="ctrl-tab" data-tab="settings">⚙️ Settings</button>
+    <button class="ctrl-tab" data-tab="sensitivity">🔬 Sensitivity</button>
   </div>
 
   <!-- SECURITIES TAB -->
@@ -316,7 +321,33 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
     </div>
   </div>
 
+  <!-- SENSITIVITY TAB -->
+  <div class="ctrl-panel" id="tab-sensitivity">
+    <div class="section-label" style="margin-top:0">Sensitivity Analysis</div>
+    <div class="field-row" style="border-top:none;padding-top:0">
+      <div class="field-label">Security to Analyse</div>
+      <select class="txt-input" id="sensSecurity">
+        <option value="">— Add securities first —</option>
+      </select>
+      <div class="sens-style-info" id="sensStyleInfo" style="display:none"></div>
+    </div>
+    <div id="sensThresholdRange" style="display:none">
+      <div class="field-row">
+        <div class="field-label">Start Value (%)</div>
+        <input class="num-input" id="sensThreshStart" type="number" min="1" max="49" step="1" value="1"/>
+        <div class="field-sub">Lower bound of threshold sweep.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">End Value (%)</div>
+        <input class="num-input" id="sensThreshEnd" type="number" min="2" max="50" step="1" value="20"/>
+        <div class="field-sub">Upper bound of threshold sweep.</div>
+      </div>
+    </div>
+    <div class="status-bar" id="sensStatus" style="margin-top:8px"></div>
+  </div>
+
   <div class="warning" id="mainWarning"></div>
+  </div><!-- /ctrl-scroll -->
   <div class="btn-row">
     <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
     <button class="btn-secondary" id="resetBtn" style="flex:1">↺ Reset</button>
@@ -398,6 +429,19 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
     </div>
   </section>
 
+
+  <!-- SENSITIVITY CHART -->
+  <section class="chart-card card" id="sensitivitySection" style="display:none;margin-bottom:18px">
+    <div class="section-title">
+      <div>
+        <h2>🔬 Sensitivity Analysis</h2>
+        <p id="sensChartSubtitle" style="font-size:.82rem;color:var(--muted);margin-top:2px"></p>
+      </div>
+    </div>
+    <div class="canvas-wrap" style="height:370px"><canvas id="sensCanvas"></canvas></div>
+    <div class="hover-box" id="sensHoverBox">Hover a bar to inspect the value.</div>
+  </section>
+
 </main>
 </section><!-- /layout -->
 </div><!-- /container -->
@@ -438,6 +482,7 @@ let simResults = [];
 let latestRows = [];
 let priceChartInstance = null;
 let equityChartInstance = null;
+let sensitivityChartInstance = null;
 let activeDetailSec = 0;
 let showDeposited = true;
 let currentCurrencySymbol = '$';
@@ -463,6 +508,8 @@ function showStatus(el, msg, type){
 function hideStatus(el){ el.className='status-bar'; el.textContent=''; }
 
 function scheduleRun(){ /* no-op – simulation is manual via ▶ Simulate */ }
+function getActiveTab(){ const t=document.querySelector('.ctrl-tab.active'); return t?t.dataset.tab:'securities'; }
+function updateSimBtn(){ const b=$('simBtn'); if(!b)return; b.textContent=getActiveTab()==='sensitivity'?'🔬 Analyse':'▶ Simulate'; }
 function sanitizeSeed(v){
   const n = Number(v);
   if(!Number.isFinite(n)) return DEFAULT_RANDOM_SEED;
@@ -555,28 +602,45 @@ async function fetchWithTimeout(url, timeoutMs=15000){
   }
 }
 
-async function fetchYahooFinance(ticker, startDate, endDate){
+async function fetchYahooFinance(ticker, startDate, endDate, onAttempt=null){
   const start=Math.floor(new Date(startDate).getTime()/1000);
   const end=Math.floor(new Date(endDate).getTime()/1000+86400);
-  const cacheBuster=isoDate(new Date()); // daily cache-bust: proxies like allorigins.win cache by URL, so a stale period2 response would clip recent data
-  const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?period1=${start}&period2=${end}&interval=1d&events=history&_cb=${cacheBuster}`;
+  const cacheBuster=isoDate(new Date());
+  const yfParams=`period1=${start}&period2=${end}&interval=1d&events=history&_cb=${cacheBuster}`;
+  const yf1=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?${yfParams}`;
+  const yf2=`https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?${yfParams}`;
   const proxyCandidates = [
     {
-      name: 'allorigins-raw',
-      url: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-      parse: async resp => await resp.json()
+      name: 'allorigins-raw/q1',
+      url: `https://api.allorigins.win/raw?url=${encodeURIComponent(yf1)}`,
+      parse: async resp => resp.json()
     },
     {
-      name: 'allorigins-get',
-      url: `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+      name: 'corsproxy-io/q1',
+      url: `https://corsproxy.io/?url=${encodeURIComponent(yf1)}`,
+      parse: async resp => resp.json()
+    },
+    {
+      name: 'allorigins-raw/q2',
+      url: `https://api.allorigins.win/raw?url=${encodeURIComponent(yf2)}`,
+      parse: async resp => resp.json()
+    },
+    {
+      name: 'corsproxy-io/q2',
+      url: `https://corsproxy.io/?url=${encodeURIComponent(yf2)}`,
+      parse: async resp => resp.json()
+    },
+    {
+      name: 'allorigins-get/q1',
+      url: `https://api.allorigins.win/get?url=${encodeURIComponent(yf1)}`,
       parse: async resp => {
         const wrapper = await resp.json();
         return JSON.parse(wrapper.contents);
       }
     },
     {
-      name: 'jina-ai-read',
-      url: `https://r.jina.ai/http://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?period1=${start}&period2=${end}&interval=1d&events=history&_cb=${cacheBuster}`,
+      name: 'jina-ai/q1',
+      url: `https://r.jina.ai/http://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?${yfParams}`,
       parse: async resp => {
         const txt = await resp.text();
         const jsonStart = txt.indexOf('{');
@@ -587,9 +651,12 @@ async function fetchYahooFinance(ticker, startDate, endDate){
 
   let data = null;
   let lastError = null;
-  for(const candidate of proxyCandidates){
+  const total = proxyCandidates.length;
+  for(let i=0; i<total; i++){
+    const candidate = proxyCandidates[i];
+    if(onAttempt) onAttempt(i+1, total, candidate.name);
     try{
-      const resp = await fetchWithTimeout(candidate.url, 15000);
+      const resp = await fetchWithTimeout(candidate.url, 12000);
       if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
       data = await candidate.parse(resp);
       if(data?.chart?.result?.[0]) break;
@@ -778,6 +845,7 @@ function renderSecList(){
   // Update color picker default to the next available slot
   const cp=$('newSecColor');
   if(cp) cp.value = LINE_COLOR_HEX[securities.length % LINE_COLOR_HEX.length];
+  updateSensSecurityDropdown();
 }
 
 function renderStyleOpt(sec,s){
@@ -825,7 +893,7 @@ function showDayRow(s){ return s==='monthly-date'||s==='weekly-day'; }
 // Ensures priceCache[ticker] covers [requestedStart, requestedEnd].
 // Fetches only when the cache is absent or the range must be expanded.
 // Returns true on success, throws on failure.
-async function ensureTickerCached(ticker, requestedStart, requestedEnd){
+async function ensureTickerCached(ticker, requestedStart, requestedEnd, onAttempt=null){
   const tk = String(ticker||'').trim().toUpperCase();
   if(!tk) throw new Error('Invalid ticker');
   const entry = priceCache[tk];
@@ -841,10 +909,9 @@ async function ensureTickerCached(ticker, requestedStart, requestedEnd){
     if(latestEntry && latestEntry.coverageStart <= requestedStart && latestEntry.coverageEnd >= requestedEnd){
       return;
     }
-    // Expand to cover both the existing requested range (if any) and the new request.
     const fetchStart = latestEntry ? (latestEntry.coverageStart < requestedStart ? latestEntry.coverageStart : requestedStart) : requestedStart;
     const fetchEnd   = latestEntry ? (latestEntry.coverageEnd   > requestedEnd   ? latestEntry.coverageEnd   : requestedEnd)   : requestedEnd;
-    const data = await fetchYahooFinance(tk, fetchStart, fetchEnd);
+    const data = await fetchYahooFinance(tk, fetchStart, fetchEnd, onAttempt);
     if(!data.dates.length) throw new Error('No price data in range');
     priceCache[tk] = {
       dates: data.dates,
@@ -883,9 +950,15 @@ function isTickerRangeCovered(ticker, startDate, endDate){
 async function loadTickerData(sec, startDate, endDate){
   const statusEl = $(`secLoadStatus${sec.id}`);
   const covered = isTickerRangeCovered(sec.ticker, startDate, endDate);
-  showStatus($('fetchStatus'), (covered?'Using cached ':'Fetching ')+sec.ticker+'...','loading');
+  if(covered){
+    showStatus($('fetchStatus'), 'Using cached '+sec.ticker+'...','loading');
+  } else {
+    showStatus($('fetchStatus'), 'Fetching '+sec.ticker+'...','loading');
+  }
   try {
-    await ensureTickerCached(sec.ticker, startDate, endDate);
+    await ensureTickerCached(sec.ticker, startDate, endDate, (attempt, total) => {
+      showStatus($('fetchStatus'), `Fetching ${sec.ticker}... (${attempt}/${total})`,'loading');
+    });
     sec.loaded = true;
     const entry = priceCache[String(sec.ticker).trim().toUpperCase()];
     if(statusEl){ statusEl.className='status-bar status-ok'; statusEl.textContent='✓ Loaded'; }
@@ -1138,7 +1211,9 @@ async function runSimulation(){
     const needsFetch = !isTickerRangeCovered(ticker, startDate, endDate);
     if(needsFetch) showStatus($('fetchStatus'),'Fetching '+ticker+'...','loading');
     try {
-      await ensureTickerCached(ticker, startDate, endDate);
+      await ensureTickerCached(ticker, startDate, endDate, (attempt, total) => {
+        showStatus($('fetchStatus'), `Fetching ${ticker}... (${attempt}/${total})`,'loading');
+      });
     } catch(e){
       showWarning('Could not load data for '+ticker+': '+e.message);
     }
@@ -1202,7 +1277,7 @@ async function runSimulation(){
   updateTables();
   } finally {
     simBtn.disabled=false;
-    simBtn.innerHTML='▶ Simulate';
+    updateSimBtn();
   }
 }
 
@@ -1434,11 +1509,15 @@ $('themeToggle').addEventListener('click',()=>{
   document.body.classList.toggle('light');
   $('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';
   if(simResults.length){ updatePriceChart(); updateEquityChart(); }
+  if(sensitivityChartInstance){ sensitivityChartInstance.destroy(); sensitivityChartInstance=null; }
   renderSecList();
 });
 
-/* ─── SIMULATE BUTTON ─── */
-$('simBtn').addEventListener('click', runSimulation);
+/* ─── SIMULATE / ANALYSE BUTTON ─── */
+$('simBtn').addEventListener('click', ()=>{
+  if(getActiveTab()==='sensitivity') runSensitivityAnalysis();
+  else runSimulation();
+});
 
 /* ─── RESET ─── */
 $('resetBtn').addEventListener('click',()=>{
@@ -1448,6 +1527,8 @@ $('resetBtn').addEventListener('click',()=>{
   currentRandomSeed=DEFAULT_RANDOM_SEED;
   if(priceChartInstance){ priceChartInstance.destroy(); priceChartInstance=null; }
   if(equityChartInstance){ equityChartInstance.destroy(); equityChartInstance=null; }
+  if(sensitivityChartInstance){ sensitivityChartInstance.destroy(); sensitivityChartInstance=null; }
+  $('sensitivitySection').style.display='none';
   renderSecList();
   $('summaryGrid').innerHTML='';
   $('milestoneBody').innerHTML='<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">Add securities to see milestones.</td></tr>';
@@ -1518,6 +1599,199 @@ function hideWarning(){ const w=$('mainWarning'); w.style.display='none'; }
   function hide(){tt.style.display='none';}
 })();
 
+/* ─── SENSITIVITY ANALYSIS ─── */
+function updateSensSecurityDropdown(){
+  const sel=$('sensSecurity');
+  if(!sel) return;
+  const prevId=sel.value;
+  sel.innerHTML='';
+  if(!securities.length){
+    sel.innerHTML='<option value="">— Add securities first —</option>';
+    const si=$('sensStyleInfo'); if(si) si.style.display='none';
+    const tr=$('sensThresholdRange'); if(tr) tr.style.display='none';
+    return;
+  }
+  securities.forEach(sec=>{
+    const opt=document.createElement('option');
+    opt.value=sec.id;
+    opt.textContent=sec.name+' ('+styleLabel(sec.style)+')';
+    sel.appendChild(opt);
+  });
+  if(prevId && securities.find(s=>s.id==prevId)) sel.value=prevId;
+  updateSensStyleInfo();
+}
+
+function updateSensStyleInfo(){
+  const sel=$('sensSecurity');
+  const infoEl=$('sensStyleInfo');
+  const threshEl=$('sensThresholdRange');
+  if(!sel||!sel.value){ if(infoEl)infoEl.style.display='none'; if(threshEl)threshEl.style.display='none'; return; }
+  const sec=securities.find(s=>s.id==sel.value);
+  if(!sec){ if(infoEl)infoEl.style.display='none'; if(threshEl)threshEl.style.display='none'; return; }
+  const style=sec.style;
+  const isMomentum=MOMENTUM_STYLES.includes(style);
+  if(style==='monthly-date'){
+    infoEl.textContent='Sweeps Day of Month (1 – 28) and shows final portfolio value for each day.';
+    infoEl.style.display=''; threshEl.style.display='none';
+  } else if(style==='weekly-day'){
+    infoEl.textContent='Sweeps Day of Week (Monday – Friday) and shows final portfolio value for each day.';
+    infoEl.style.display=''; threshEl.style.display='none';
+  } else if(isMomentum){
+    infoEl.textContent='Sweeps Threshold (%) across the Start–End range and shows final portfolio value for each level.';
+    infoEl.style.display=''; threshEl.style.display='';
+  } else {
+    infoEl.textContent='Sensitivity is not applicable for "'+styleLabel(style)+'". Use Monthly (Fixed Date), Weekly (Fixed Day), Buy the Peak, or Buy the Dip.';
+    infoEl.style.display=''; threshEl.style.display='none';
+  }
+}
+
+function calcFinalEquityForParams(priceData, style, dayOrDate, momentumPct, momentumEOM, amount){
+  const idxs=getInvestmentDates(priceData, style, dayOrDate, momentumPct, momentumEOM);
+  if(!idxs.length) return 0;
+  let units=0;
+  idxs.forEach(i=>{ units+=amount/priceData.prices[i]; });
+  return units*priceData.prices[priceData.prices.length-1];
+}
+
+async function runSensitivityAnalysis(){
+  const sel=$('sensSecurity');
+  if(!sel||!sel.value){ showStatus($('sensStatus'),'Select a security first.','error'); return; }
+  const sec=securities.find(s=>s.id==sel.value);
+  if(!sec){ showStatus($('sensStatus'),'Security not found.','error'); return; }
+
+  const style=sec.style;
+  const isMomentum=MOMENTUM_STYLES.includes(style);
+  const isWeekly=style==='weekly-day';
+  const isMonthly=style==='monthly-date';
+  if(!isMomentum&&!isWeekly&&!isMonthly){
+    showStatus($('sensStatus'),'Sensitivity not applicable for "'+styleLabel(style)+'".','error'); return;
+  }
+
+  const startDate=$('startDate').value||isoDate(new Date(Date.now()-5*365*24*3600*1000));
+  const endDate=$('endDate').value||isoDate(new Date());
+  const simBtn=$('simBtn');
+  simBtn.disabled=true;
+  simBtn.innerHTML='<span class="spinner"></span>Analysing…';
+  showStatus($('sensStatus'),'Preparing price data...','loading');
+
+  try{
+    let priceData;
+    if(sec.type==='ticker'){
+      try{
+        await ensureTickerCached(sec.ticker, startDate, endDate, (attempt, total)=>{
+          showStatus($('sensStatus'),`Fetching ${sec.ticker}... (${attempt}/${total})`,'loading');
+        });
+        priceData=getCachedPriceSlice(sec.ticker, startDate, endDate);
+        if(!priceData) throw new Error('No data in selected range');
+      }catch(e){
+        showStatus($('sensStatus'),'Failed to load '+sec.ticker+': '+e.message,'error'); return;
+      }
+    } else {
+      const secSeed=deriveSeed(currentRandomSeed,`${sec.name}|${sec.returnPct}|${sec.stdPct}|${sec.amount}|${sec.style}|${sec.dayOrDate}`);
+      const secRng=createSeededRng(secSeed);
+      priceData=generateGBMPrices(startDate, endDate, sec.returnPct, sec.stdPct, 100, secRng);
+    }
+
+    if(!priceData||!priceData.prices.length){ showStatus($('sensStatus'),'No price data available.','error'); return; }
+    showStatus($('sensStatus'),'Running analysis...','loading');
+
+    const labels=[], values=[];
+    if(isMonthly){
+      for(let d=1;d<=28;d++){
+        labels.push('Day '+d);
+        values.push(calcFinalEquityForParams(priceData, style, d, sec.momentumPct, sec.momentumEOM, sec.amount));
+      }
+    } else if(isWeekly){
+      const dayNames=['Mon','Tue','Wed','Thu','Fri'];
+      for(let d=1;d<=5;d++){
+        labels.push(dayNames[d-1]);
+        values.push(calcFinalEquityForParams(priceData, style, d, sec.momentumPct, sec.momentumEOM, sec.amount));
+      }
+    } else if(isMomentum){
+      const sv=Math.max(1,parseInt($('sensThreshStart').value)||1);
+      const ev=Math.min(50,parseInt($('sensThreshEnd').value)||20);
+      if(sv>=ev){ showStatus($('sensStatus'),'Start Value must be less than End Value.','error'); return; }
+      for(let t=sv;t<=ev;t++){
+        labels.push(t+'%');
+        values.push(calcFinalEquityForParams(priceData, style, sec.dayOrDate, t, sec.momentumEOM, sec.amount));
+      }
+    }
+
+    if(!labels.length){ showStatus($('sensStatus'),'No data to display.','error'); return; }
+
+    const subtitle=sec.name+' — '+styleLabel(style)+'  |  '+startDate+' → '+endDate;
+    renderSensitivityChart(sec, labels, values, subtitle);
+    hideStatus($('sensStatus'));
+  } finally {
+    simBtn.disabled=false;
+    updateSimBtn();
+  }
+}
+
+function renderSensitivityChart(sec, labels, values, subtitle){
+  const section=$('sensitivitySection');
+  section.style.display='';
+  $('sensChartSubtitle').textContent=subtitle;
+
+  const color=getSecColor(sec);
+  const gridColor=cssVar('--chart-grid');
+  const mutedColor=cssVar('--chart-text');
+  const textColor=cssVar('--text');
+  const maxVal=Math.max(...values);
+  const bgColors=values.map(v=>Math.abs(v-maxVal)<0.01?color+'EE':color+'55');
+  const borderColors=values.map(v=>Math.abs(v-maxVal)<0.01?color:color+'99');
+
+  const dataset={
+    label:'Final Portfolio Value',
+    data:values,
+    backgroundColor:bgColors,
+    borderColor:borderColors,
+    borderWidth:1.5,
+    borderRadius:5
+  };
+
+  const yTickCb=val=>fmt.currency(val,true);
+
+  if(sensitivityChartInstance){
+    sensitivityChartInstance.data.labels=labels;
+    sensitivityChartInstance.data.datasets=[dataset];
+    sensitivityChartInstance.options.scales.x.ticks.color=mutedColor;
+    sensitivityChartInstance.options.scales.x.grid.color=gridColor;
+    sensitivityChartInstance.options.scales.y.ticks.color=mutedColor;
+    sensitivityChartInstance.options.scales.y.grid.color=gridColor;
+    sensitivityChartInstance.options.scales.y.ticks.callback=yTickCb;
+    sensitivityChartInstance.update();
+  } else {
+    sensitivityChartInstance=new Chart($('sensCanvas'),{
+      type:'bar',
+      data:{labels,datasets:[dataset]},
+      options:{
+        responsive:true, maintainAspectRatio:false, animation:{duration:400},
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            callbacks:{
+              label:ctx=>'  Final Value: '+fmt.currency(ctx.parsed.y),
+              afterBody:items=>{ if(items.length) $('sensHoverBox').textContent=items[0].label+': '+fmt.currency(items[0].parsed.y); }
+            },
+            backgroundColor:cssVar('--panel')||'#11172a',
+            titleColor:textColor, bodyColor:mutedColor,
+            borderColor:gridColor, borderWidth:1, padding:10
+          }
+        },
+        scales:{
+          x:{ticks:{color:mutedColor,font:{family:'inherit',size:11}},grid:{color:gridColor}},
+          y:{ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yTickCb},grid:{color:gridColor},beginAtZero:false}
+        }
+      }
+    });
+  }
+  // scroll into view
+  section.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+$('sensSecurity').addEventListener('change', updateSensStyleInfo);
+
 /* ─── CTRL TABS ─── */
 document.querySelectorAll('.ctrl-tab').forEach(btn=>{
   btn.addEventListener('click',()=>{
@@ -1525,6 +1799,7 @@ document.querySelectorAll('.ctrl-tab').forEach(btn=>{
     document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
     $('tab-'+btn.dataset.tab).classList.add('active');
+    updateSimBtn();
   });
 });
 
