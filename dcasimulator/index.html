@@ -824,6 +824,7 @@ function renderSecList(){
           dayRow.insertAdjacentHTML('beforeend', renderDaySelectorInner(sec));
           wireDayInput(sec);
         }
+        updateSensSecurityDropdown();
         scheduleRun();
       });
     });
