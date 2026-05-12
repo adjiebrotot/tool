@@ -151,8 +151,8 @@
     .page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-xl)}
     .page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:0.9rem}
     .page-footer-info p:last-child{margin-bottom:0}
-    .visitor-counter{margin-top:12px;font-size:0.75rem;color:var(--muted);opacity:0.7;display:flex;justify-content:center}
-    .visitor-counter a{color:inherit;text-decoration:none}
+    .visitor-counter{position:fixed;left:12px;bottom:12px;z-index:1000;font-size:0.75rem;color:var(--muted);opacity:0.7;display:flex;justify-content:flex-start;align-items:center;pointer-events:none}
+    .visitor-counter a{display:none}
     @media(max-width:900px){.layout,.bottom,.metrics{grid-template-columns:1fr}.controls{position:static}.canvas-wrap{height:380px!important}.summary-grid{grid-template-columns:repeat(2,1fr)}.header{flex-direction:column;gap:10px;padding:16px 18px}.container{padding:16px}}
     @media(max-width:600px){h1{font-size:1.35rem}.container{padding:10px}.summary-grid{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:1fr}.btn-row{flex-direction:column}.header{padding:14px 16px}}
   </style>
