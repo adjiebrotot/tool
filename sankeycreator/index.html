@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sankey Diagram Creator</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0F1728; --bg-subtle:#111C2F; --panel:#162033; --panel-raised:#1C2942;
+  --text:#EAF1FF; --muted:#A8B6CF; --text-inv:#0F1728; --border:#2C3A52;
+  --accent:#8DBBFF; --accent-strong:#B3D1FF; --accent2:#8FCDBD; --accent3:#F1C0D0;
+  --positive:#0052CC; --negative:#E63939; --positive-em:#7FB2FF; --negative-em:#FF8B8B;
+  --positive-bg:#10284D; --negative-bg:#4A1C1C;
+  --positive-border:#2D67C7; --negative-border:#C85F5F;
+  --success-bg:#103529; --success-text:#9BE7B4;
+  --error-bg:#4A1D26; --error-text:#FFB3BA;
+  --warning-bg:#4A3412; --warning-text:#FFD28C;
+  --info-bg:#132E56; --info-text:#A8C9FF;
+  --input-bg:rgba(255,255,255,0.06); --card-bg:rgba(255,255,255,0.03);
+  --shadow:0 2px 16px rgba(120,160,220,0.12); --shadow-lg:0 4px 32px rgba(120,160,220,0.18);
+  --value-highlight:#8DBBFF; --radius:14px;
+}
+body.light {
+  --bg:#F0F4FF; --bg-subtle:#F8FBFF; --panel:#FFFFFF; --panel-raised:#FFFFFF;
+  --text:#2D3436; --muted:#7F8C8D; --text-inv:#FFFFFF; --border:#E0E6F0;
+  --accent:#5A91E8; --accent-strong:#3A71C8; --accent2:#4A9E87; --accent3:#C46A7E;
+  --positive-em:#0052CC; --negative-em:#E63939;
+  --positive-bg:#EAF2FF; --negative-bg:#FDECEC;
+  --positive-border:#8FB5FF; --negative-border:#F3A5A5;
+  --success-bg:#C8F7C5; --success-text:#1A4A18;
+  --error-bg:#FFD6D6; --error-text:#7A0010;
+  --warning-bg:#FFF0D9; --warning-text:#7A4A00;
+  --info-bg:#EAF2FF; --info-text:#174A9C;
+  --input-bg:rgba(0,0,0,0.04); --card-bg:rgba(255,255,255,0.92);
+  --shadow:0 2px 16px rgba(60,80,120,0.09); --shadow-lg:0 4px 32px rgba(60,80,120,0.13);
+  --value-highlight:#3A71C8;
+}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.5;color:var(--text);background:var(--bg);transition:background .25s,color .25s;overflow-x:hidden}
+.container{max-width:1560px;margin:0 auto;padding:20px 24px}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+h1{margin:0 0 3px;font-size:1.65rem;font-weight:800;letter-spacing:-.02em}
+h2{margin:0 0 10px;font-size:1.1rem;font-weight:700}
+p,.muted{color:var(--muted);margin:0}
+code{font-family:'DM Mono',monospace;background:var(--input-bg);padding:1px 5px;border-radius:4px;font-size:.85em;border:1px solid var(--border)}
+
+/* ─── HEADER ─── */
+.header{padding:18px 26px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.header-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
+
+/* ─── LAYOUT ─── */
+.layout{display:grid;grid-template-columns:400px 1fr;gap:16px;align-items:start}
+
+/* ─── SIDEBAR ─── */
+.controls{padding:0;position:sticky;top:14px;align-self:start;display:flex;flex-direction:column;overflow:hidden;max-height:calc(100vh - 28px)}
+.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.ctrl-tab{flex:1;padding:10px 4px;text-align:center;font-weight:700;font-size:.8rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 150ms;font-family:inherit;white-space:nowrap}
+.ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
+.ctrl-panel{display:none;padding:12px 14px 14px;flex-direction:column;gap:10px;overflow-y:auto;flex:1;min-height:0}
+.ctrl-panel.active{display:flex}
+
+/* ─── ROW EDITOR ─── */
+.rows-scroll{display:flex;flex-direction:column;gap:5px;overflow-y:auto;flex:1;min-height:0;padding-right:2px}
+.rows-scroll::-webkit-scrollbar{width:4px}
+.rows-scroll::-webkit-scrollbar-track{background:transparent}
+.rows-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.row-item{display:grid;grid-template-columns:1fr 14px 1fr 88px 36px 26px;gap:3px;align-items:center;padding:5px 7px;background:var(--input-bg);border-radius:8px;border:1px solid var(--border);transition:border-color 150ms}
+.row-item:hover{border-color:var(--accent)}
+.row-item input[type=text]{background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;padding:2px 3px;width:100%}
+.row-item input::placeholder{color:var(--muted);opacity:.5}
+.arrow-sep{color:var(--muted);text-align:center;font-size:.8rem;user-select:none}
+.color-cell{position:relative;display:flex;align-items:center}
+.row-color{width:30px;height:26px;border:1px solid var(--border);border-radius:6px;padding:2px;background:var(--input-bg);cursor:pointer;display:block}
+.color-clear{position:absolute;top:-5px;right:-5px;width:14px;height:14px;border-radius:50%;background:var(--panel-raised);border:1px solid var(--border);cursor:pointer;font-size:9px;color:var(--muted);display:none;align-items:center;justify-content:center;line-height:1;z-index:2}
+.color-cell.has-color .color-clear{display:flex}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:2px;border-radius:4px;transition:color 150ms,background 150ms;display:flex;align-items:center;justify-content:center}
+.del-btn:hover{color:var(--negative-em);background:var(--negative-bg)}
+.add-row-btn{flex-shrink:0;padding:7px;background:var(--input-bg);border:1px dashed var(--border);border-radius:8px;color:var(--muted);font-size:.83rem;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit;text-align:center}
+.add-row-btn:hover{border-color:var(--accent);color:var(--accent)}
+.rem-badge{font-size:.7rem;color:var(--warning-text);background:var(--warning-bg);border-radius:999px;padding:1px 5px;white-space:nowrap;font-family:'DM Mono',monospace;display:none;margin-top:2px;text-align:center}
+.row-extra{grid-column:1/-1;display:flex;justify-content:flex-end}
+
+/* ─── TEXTAREA TAB ─── */
+textarea{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;padding:10px 12px;resize:vertical;outline:none;transition:border-color 150ms;line-height:1.65;tab-size:2}
+textarea:focus{border-color:var(--accent)}
+.status-ok{color:var(--success-text);font-size:.78rem;font-weight:600}
+.status-err{color:var(--error-text);font-size:.78rem;font-weight:600}
+
+/* ─── CSV TAB ─── */
+.csv-drop{border:2px dashed var(--border);border-radius:10px;padding:28px 16px;text-align:center;cursor:pointer;transition:all 150ms;color:var(--muted)}
+.csv-drop:hover,.csv-drop.dragover{border-color:var(--accent);color:var(--text);background:var(--input-bg)}
+.csv-icon{font-size:2rem;margin-bottom:5px}
+.csv-browse{color:var(--accent);cursor:pointer;text-decoration:underline}
+.help{color:var(--muted);font-size:.81rem;line-height:1.5}
+
+/* ─── STYLE TAB ─── */
+.sblock{padding:9px 0 11px;border-top:1px solid var(--border)}
+.sblock:first-child{border-top:none;padding-top:0}
+.shead{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:5px}
+.slabel{font-weight:700;font-size:.87rem}
+.sval{color:var(--value-highlight);font-weight:700;font-family:'DM Mono',monospace;font-size:.83rem}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;margin:0}
+.radio-grp{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.radio-opt{display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 10px;border-radius:999px;border:1px solid var(--border);font-size:.8rem;font-weight:600;color:var(--muted);transition:all 150ms;background:var(--input-bg);user-select:none}
+.radio-opt:has(input:checked){border-color:var(--accent);color:var(--accent);background:rgba(141,187,255,.08)}
+.radio-opt input{display:none}
+select.sel-in{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.86rem;padding:6px 10px;outline:none;cursor:pointer;transition:border-color 150ms;margin-top:4px}
+select.sel-in:focus{border-color:var(--accent)}
+option{background:var(--panel)}
+
+/* ─── BUTTONS ─── */
+.btn-row{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0}
+.btn-sec{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-weight:700;font-size:.86rem;cursor:pointer;transition:border-color 150ms,transform 100ms;font-family:inherit}
+.btn-sec:hover{border-color:var(--accent)}
+.btn-sec:active{transform:scale(.97)}
+.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:7px 13px;font-size:.83rem;font-weight:600;cursor:pointer;transition:all 150ms;white-space:nowrap;font-family:inherit}
+.btn-theme:hover{border-color:var(--accent);color:var(--text)}
+.btn-export{background:var(--input-bg);color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-weight:600;font-size:.79rem;cursor:pointer;transition:all 150ms;font-family:inherit;white-space:nowrap}
+.btn-export:hover{border-color:var(--accent);color:var(--text)}
+.btn-export:active{transform:scale(.97)}
+/* Toggle switch */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.toggle-wrap{display:inline-flex;align-items:center;cursor:pointer;flex-shrink:0}
+.toggle-wrap input{display:none}
+.toggle-track{width:34px;height:19px;background:var(--border);border-radius:999px;position:relative;transition:background 200ms;flex-shrink:0}
+.toggle-track::after{content:'';position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;transition:transform 200ms;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.toggle-wrap input:checked+.toggle-track{background:var(--accent)}
+.toggle-wrap input:checked+.toggle-track::after{transform:translateX(15px)}
+
+/* ─── MAIN CONTENT ─── */
+main{display:flex;flex-direction:column;gap:13px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+.metric{padding:13px 15px}
+.metric .label{color:var(--muted);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.metric .value{font-family:'DM Mono',monospace;font-size:1.5rem;font-weight:700;letter-spacing:-.01em}
+.chart-card{padding:16px 18px}
+.chart-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.svg-wrap{width:100%;position:relative}
+#sankeySvg{width:100%;display:block;overflow:visible}
+.empty-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:var(--muted);font-weight:600;pointer-events:none;text-align:center;padding:20px}
+.error-banner{background:var(--error-bg);color:var(--error-text);border:1px solid var(--negative-border);border-radius:8px;padding:6px 12px;font-size:.81rem;font-weight:600}
+.tooltip{position:fixed;background:var(--panel-raised);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:.83rem;pointer-events:none;opacity:0;transition:opacity 150ms;z-index:200;max-width:220px;box-shadow:var(--shadow-lg)}
+.tooltip.show{opacity:1}
+.tt-title{font-weight:700;margin-bottom:3px;font-size:.86rem}
+.tt-val{font-family:'DM Mono',monospace;color:var(--accent);font-weight:700;font-size:1rem}
+.tt-row{color:var(--muted);font-size:.78rem;margin-top:1px}
+.tt-row b{color:var(--text)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1100px){.layout{grid-template-columns:1fr}.controls{position:static;max-height:none}.metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.container{padding:10px}.header{flex-direction:column;align-items:flex-start;padding:14px}.metrics{grid-template-columns:1fr 1fr}h1{font-size:1.25rem}.chart-head{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <section class="header card">
+    <div>
+      <h1>🌊 Sankey Diagram Creator</h1>
+      <p>Visualise flow between nodes · Live preview · 3 input methods · Customisable colours</p>
+    </div>
+    <div class="header-right">
+      <button id="themeToggle" class="btn-theme">☀️ Light</button>
+    </div>
+  </section>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="controls card">
+      <div class="ctrl-tabs">
+        <button class="ctrl-tab active" data-tab="editor">✏️ Editor</button>
+        <button class="ctrl-tab" data-tab="text">📝 Text</button>
+        <button class="ctrl-tab" data-tab="csv">📁 CSV</button>
+        <button class="ctrl-tab" data-tab="style">🎨 Style</button>
+      </div>
+
+      <!-- ── EDITOR TAB ── -->
+      <div class="ctrl-panel active" id="tab-editor">
+        <div class="help" style="flex-shrink:0">Each row defines a flow from <b>Source</b> → <b>Target</b> with a <b>Value</b>. Use <code>remaining</code> to auto-fill the leftovers.</div>
+        <div class="rows-scroll" id="rowsContainer"></div>
+        <button class="add-row-btn" id="addRowBtn">＋ Add Flow</button>
+      </div>
+
+      <!-- ── TEXT TAB ── -->
+      <div class="ctrl-panel" id="tab-text">
+        <div class="help" style="flex-shrink:0">
+          Format: <code>source,target,value[,color]</code><br>
+          Use <code>remaining</code> as value to auto-calculate the leftover flow from a node.
+        </div>
+        <textarea id="textInput" rows="18" spellcheck="false"
+          placeholder="source,target,value,color&#10;Dubai,Applications,3&#10;Applications,Hired,5,#8FCDBD&#10;Applications,Declined,remaining,#FF8B8B"></textarea>
+        <div id="textStatus" style="flex-shrink:0"></div>
+      </div>
+
+      <!-- ── CSV TAB ── -->
+      <div class="ctrl-panel" id="tab-csv">
+        <div class="csv-drop" id="csvDrop">
+          <div class="csv-icon">📂</div>
+          <div>Drop a CSV file here or<br><label for="csvFile" class="csv-browse">browse to upload</label></div>
+          <input type="file" id="csvFile" accept=".csv,.txt" style="display:none"/>
+        </div>
+        <div class="help">CSV columns: <code>source</code>, <code>target</code>, <code>value</code>, <code>color</code> (optional). A header row is auto-detected.</div>
+        <button id="downloadTemplate" class="btn-sec" style="width:100%">⬇ Download CSV Template</button>
+        <div id="csvStatus"></div>
+      </div>
+
+      <!-- ── STYLE TAB ── -->
+      <div class="ctrl-panel" id="tab-style">
+        <div class="sblock">
+          <div class="slabel" style="margin-bottom:6px">Node Alignment</div>
+          <div class="radio-grp">
+            <label class="radio-opt"><input type="radio" name="align" value="justify" checked>Justify</label>
+            <label class="radio-opt"><input type="radio" name="align" value="left">Left</label>
+            <label class="radio-opt"><input type="radio" name="align" value="right">Right</label>
+            <label class="radio-opt"><input type="radio" name="align" value="center">Center</label>
+          </div>
+        </div>
+        <div class="sblock">
+          <div class="shead"><span class="slabel">Node Padding</span><span class="sval" id="vPad">20</span></div>
+          <input type="range" id="sPad" min="2" max="60" step="2" value="20">
+        </div>
+        <div class="sblock">
+          <div class="shead"><span class="slabel">Node Width</span><span class="sval" id="vNW">18px</span></div>
+          <input type="range" id="sNW" min="4" max="48" step="2" value="18">
+        </div>
+        <div class="sblock">
+          <div class="shead"><span class="slabel">Link Opacity</span><span class="sval" id="vOp">42%</span></div>
+          <input type="range" id="sOp" min="5" max="95" step="5" value="42">
+        </div>
+        <div class="sblock">
+          <div class="shead"><span class="slabel">Diagram Height</span><span class="sval" id="vH">520px</span></div>
+          <input type="range" id="sH" min="280" max="1400" step="20" value="520">
+        </div>
+        <div class="sblock">
+          <div class="slabel" style="margin-bottom:4px">Color Scheme</div>
+          <select class="sel-in" id="sColor">
+            <option value="tableau">Tableau 10</option>
+            <option value="d3cat">D3 Category 10</option>
+            <option value="pastel">Pastel (Design System)</option>
+            <option value="vivid">Vivid</option>
+            <option value="cool">Cool Blues</option>
+            <option value="warm">Warm Tones</option>
+          </select>
+        </div>
+        <div class="sblock">
+          <div class="slabel" style="margin-bottom:4px">Label Position</div>
+          <select class="sel-in" id="sLabel">
+            <option value="auto">Auto (adaptive)</option>
+            <option value="outside">Always Outside</option>
+            <option value="inside">Inside Nodes</option>
+          </select>
+        </div>
+        <div class="sblock">
+          <div class="slabel" style="margin-bottom:4px">Link Colour Style</div>
+          <select class="sel-in" id="sLinkStyle">
+            <option value="gradient">Gradient (source → target)</option>
+            <option value="source">Source node colour</option>
+            <option value="target">Target node colour</option>
+          </select>
+        </div>
+        <div class="sblock">
+          <div class="toggle-row">
+            <span class="slabel">Label Background Box</span>
+            <label class="toggle-wrap"><input type="checkbox" id="sLabelBox" checked><span class="toggle-track"></span></label>
+          </div>
+          <div class="help" style="margin-top:4px">Semi-transparent pill behind each label for legibility against busy flows.</div>
+        </div>
+        <div class="sblock">
+          <div class="slabel" style="margin-bottom:4px">Iterations (layout quality)</div>
+          <select class="sel-in" id="sIter">
+            <option value="6">Fast (6)</option>
+            <option value="32" selected>Normal (32)</option>
+            <option value="64">High (64)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Btn Row -->
+      <div class="btn-row">
+        <button class="btn-sec" id="resetBtn" style="flex:1">↺ Reset</button>
+        <button class="btn-sec" id="clearBtn" style="flex:1">✕ Clear All</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main>
+      <section class="metrics">
+        <div class="metric card"><div class="label">Nodes</div><div class="value" id="kNodes">—</div></div>
+        <div class="metric card"><div class="label">Links</div><div class="value" id="kLinks">—</div></div>
+        <div class="metric card"><div class="label">Total Inflow</div><div class="value" id="kFlow">—</div></div>
+        <div class="metric card"><div class="label">Layers</div><div class="value" id="kDepth">—</div></div>
+      </section>
+
+      <section class="chart-card card">
+        <div class="chart-head">
+          <h2 style="margin:0">Flow Diagram</h2>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <div id="errBanner" style="display:none" class="error-banner"></div>
+            <button id="exportSvgBtn" class="btn-export">⬇ SVG</button>
+            <button id="exportPngBtn" class="btn-export">⬇ PNG</button>
+          </div>
+        </div>
+        <div class="svg-wrap" id="svgWrap">
+          <svg id="sankeySvg"></svg>
+          <div class="empty-state" id="emptyState">
+            <div style="font-size:2.4rem">🌊</div>
+            <div>Add flows to see your Sankey diagram</div>
+            <div class="muted" style="font-size:.84rem">Use the Editor on the left, paste data in the Text tab,<br>or upload a CSV file</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div id="tooltip" class="tooltip"></div>
+
+<script>
+(function(){
+'use strict';
+
+// ═══════════════════════════════════════════════
+//  PALETTES
+// ═══════════════════════════════════════════════
+const PALETTES = {
+  tableau:['#4E79A7','#F28E2B','#E15759','#76B7B2','#59A14F','#EDC948','#B07AA1','#FF9DA7','#9C755F','#BAB0AC'],
+  d3cat:  ['#1F77B4','#FF7F0E','#2CA02C','#D62728','#9467BD','#8C564B','#E377C2','#7F7F7F','#BCBD22','#17BECF'],
+  pastel: ['#8DBBFF','#FF8B8B','#8FCDBD','#F1C0D0','#FFD28C','#B5A8FF','#A8E6CF','#F9C74F','#C9F0D1','#FFB3BA'],
+  vivid:  ['#E63946','#2A9D8F','#E9C46A','#F4A261','#264653','#A8DADC','#457B9D','#6A0572','#F77F00','#7B2D8B'],
+  cool:   ['#08519C','#3182BD','#6BAED6','#9ECAE1','#C6DBEF','#238B45','#41AB5D','#74C476','#A1D99B','#C7E9C0'],
+  warm:   ['#D73027','#F46D43','#FDAE61','#FEE08B','#7FBC41','#4393C3','#F4A582','#D6604D','#FFEDA0','#FEB24C'],
+};
+
+// ═══════════════════════════════════════════════
+//  DEFAULTS
+// ═══════════════════════════════════════════════
+const DEFAULT_ROWS = [
+  {source:'Website',     target:'Homepage',    value:'1000',      color:''},
+  {source:'Website',     target:'Other Pages', value:'500',       color:''},
+  {source:'Homepage',    target:'Sign Up',     value:'300',       color:''},
+  {source:'Homepage',    target:'Bounce',      value:'remaining', color:'#FF8B8B'},
+  {source:'Other Pages', target:'Sign Up',     value:'100',       color:''},
+  {source:'Other Pages', target:'Bounce',      value:'remaining', color:'#FF8B8B'},
+  {source:'Sign Up',     target:'Converted',   value:'180',       color:'#8FCDBD'},
+  {source:'Sign Up',     target:'Dropped',     value:'remaining', color:''},
+];
+const DEFAULT_S = {align:'justify',pad:20,nw:18,op:42,h:520,scheme:'tableau',label:'auto',linkStyle:'gradient',iter:32,labelBox:true};
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let rows = clone(DEFAULT_ROWS);
+let S    = clone(DEFAULT_S);
+
+function clone(x){ return JSON.parse(JSON.stringify(x)); }
+
+// ═══════════════════════════════════════════════
+//  DOM
+// ═══════════════════════════════════════════════
+const $  = id => document.getElementById(id);
+const svgEl       = $('sankeySvg');
+const tip         = $('tooltip');
+const rowsCont    = $('rowsContainer');
+const txtIn       = $('textInput');
+const errBanner   = $('errBanner');
+const emptyState  = $('emptyState');
+
+// ═══════════════════════════════════════════════
+//  UTILITIES
+// ═══════════════════════════════════════════════
+function nodeColor(name){
+  const pal = PALETTES[S.scheme] || PALETTES.tableau;
+  let h = 5381;
+  for(let i=0;i<name.length;i++) h=((h<<5)+h)+name.charCodeAt(i)|0;
+  return pal[Math.abs(h) % pal.length];
+}
+
+function fmtNum(v){
+  if(v==null||isNaN(v)) return '—';
+  if(v>=1e9) return (v/1e9).toFixed(2).replace(/\.?0+$/,'')+'B';
+  if(v>=1e6) return (v/1e6).toFixed(2).replace(/\.?0+$/,'')+'M';
+  if(v>=1e3) return (v/1e3).toFixed(1).replace(/\.?0+$/,'')+'K';
+  return Number(v).toLocaleString('en-AU',{maximumFractionDigits:2});
+}
+
+function hex(c){ return /^#[0-9A-Fa-f]{3,8}$/.test(c); }
+
+function cssVar(name){
+  return getComputedStyle(document.body).getPropertyValue(name).trim();
+}
+
+// ═══════════════════════════════════════════════
+//  RESOLVE "remaining"
+// ═══════════════════════════════════════════════
+function resolveRows(rawRows){
+  // Pass 1: accumulate explicit incoming / outgoing
+  const incoming  = {};
+  const explOut   = {};
+  const remSrcs   = {};
+
+  rawRows.forEach(r=>{
+    const s = (r.source||'').trim();
+    const t = (r.target||'').trim();
+    if(!s||!t||s===t) return;
+    const vStr = (r.value+'').trim().toLowerCase();
+    if(vStr==='remaining'){
+      remSrcs[s] = (remSrcs[s]||0)+1;
+    } else {
+      const v = parseFloat(r.value);
+      if(!isNaN(v)&&v>0){
+        incoming[t] = (incoming[t]||0)+v;
+        explOut[s]  = (explOut[s] ||0)+v;
+      }
+    }
+  });
+
+  // Pass 2: resolve
+  const out = [];
+  rawRows.forEach(r=>{
+    const s = (r.source||'').trim();
+    const t = (r.target||'').trim();
+    if(!s||!t||s===t) return;
+    const vStr = (r.value+'').trim().toLowerCase();
+    if(vStr==='remaining'){
+      const count  = remSrcs[s]||1;
+      const avail  = (incoming[s]||0)-(explOut[s]||0);
+      const val    = Math.max(0, avail/count);
+      out.push({...r, source:s, target:t, resolvedValue:val, wasRemaining:true});
+    } else {
+      const v = parseFloat(r.value);
+      if(!isNaN(v)&&v>0) out.push({...r, source:s, target:t, resolvedValue:v, wasRemaining:false});
+    }
+  });
+  return out;
+}
+
+// ═══════════════════════════════════════════════
+//  BUILD SANKEY INPUT DATA
+// ═══════════════════════════════════════════════
+function buildData(resolved){
+  // Merge duplicate source→target
+  const linkMap = new Map();
+  resolved.forEach(r=>{
+    const k = `${r.source}\x00${r.target}`;
+    if(linkMap.has(k)){
+      const ex = linkMap.get(k);
+      ex.resolvedValue += r.resolvedValue;
+      if(!ex.color && r.color) ex.color = r.color;
+    } else {
+      linkMap.set(k, {...r});
+    }
+  });
+  const dedupe = [...linkMap.values()].filter(r=>r.resolvedValue>0);
+
+  const names = [...new Set(dedupe.flatMap(r=>[r.source,r.target]))];
+
+  return {
+    nodes: names.map(name=>({name})),
+    // d3-sankey with nodeId(d=>d.name) expects source/target to be name strings, NOT indices
+    links: dedupe.map(r=>({
+      source:      r.source,
+      target:      r.target,
+      value:       r.resolvedValue,
+      customColor: r.color && hex(r.color) ? r.color : null,
+      _src:        r.source,
+      _tgt:        r.target,
+    })),
+  };
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER SANKEY
+// ═══════════════════════════════════════════════
+let renderTimer = null;
+function scheduleRender(){ clearTimeout(renderTimer); renderTimer=setTimeout(doRender,40); }
+
+function doRender(){
+  const resolved = resolveRows(rows);
+  updateRemBadges(resolved);
+
+  // Clear error
+  errBanner.style.display='none';
+  d3.select(svgEl).selectAll('*').remove();
+
+  if(!resolved.length){
+    emptyState.style.display='flex';
+    setKPIs(0,0,0,0);
+    return;
+  }
+  emptyState.style.display='none';
+
+  let data;
+  try{ data = buildData(resolved); }
+  catch(e){ showErr('Data error: '+e.message); return; }
+
+  const wrap = $('svgWrap');
+  const W = Math.max(400, wrap.clientWidth||800);
+  const H = S.h;
+  const mL=130, mR=140, mT=10, mB=16;
+
+  svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svgEl.setAttribute('height', H);
+
+  const alignMap = {justify:d3.sankeyJustify,left:d3.sankeyLeft,right:d3.sankeyRight,center:d3.sankeyCenter};
+
+  let graph;
+  try{
+    const gen = d3.sankey()
+      .nodeId(d=>d.name)
+      .nodeAlign(alignMap[S.align]||d3.sankeyJustify)
+      .nodeWidth(S.nw)
+      .nodePadding(S.pad)
+      .iterations(S.iter)
+      .extent([[mL,mT],[W-mR,H-mB]]);
+    graph = gen({
+      nodes: data.nodes.map(d=>({...d})),
+      links: data.links.map(d=>({...d})),
+    });
+  } catch(e){
+    showErr('Layout error: '+(e.message||'Check for cycles or duplicate paths'));
+    return;
+  }
+
+  const svg  = d3.select(svgEl);
+  const defs = svg.append('defs');
+  const op   = S.op/100;
+
+  // Build gradients
+  graph.links.forEach((lk,i)=>{
+    const sc = (lk.customColor&&S.linkStyle!=='gradient') ? lk.customColor : nodeColor(lk.source.name);
+    const tc = nodeColor(lk.target.name);
+    if(S.linkStyle==='gradient'){
+      const g = defs.append('linearGradient')
+        .attr('id',`lg${i}`)
+        .attr('gradientUnits','userSpaceOnUse')
+        .attr('x1',lk.source.x1).attr('x2',lk.target.x0);
+      g.append('stop').attr('offset','0%').attr('stop-color',lk.customColor||sc).attr('stop-opacity',Math.min(op+0.1,0.95));
+      g.append('stop').attr('offset','100%').attr('stop-color',tc).attr('stop-opacity',op);
+    }
+  });
+
+  // ── LINKS ──
+  const linkG = svg.append('g');
+  linkG.selectAll('path')
+    .data(graph.links)
+    .join('path')
+      .attr('d', d3.sankeyLinkHorizontal())
+      .attr('fill','none')
+      .attr('stroke',(d,i)=>{
+        if(d.customColor&&S.linkStyle!=='gradient') return d.customColor;
+        if(S.linkStyle==='gradient') return `url(#lg${i})`;
+        if(S.linkStyle==='source')   return nodeColor(d.source.name);
+        return nodeColor(d.target.name);
+      })
+      .attr('stroke-opacity', op)
+      .attr('stroke-width', d=>Math.max(1,d.width))
+      .style('cursor','default')
+      .on('mouseenter', function(ev,d){
+        d3.select(this).attr('stroke-opacity',Math.min(op+0.28,0.95));
+        const pct = d.source.value>0 ? (d.value/d.source.value*100).toFixed(1)+'%' : '—';
+        showTip(ev,
+          `${d._src} → ${d._tgt}`,
+          fmtNum(d.value),
+          `${pct} of source · target total: ${fmtNum(d.target.value)}`
+        );
+      })
+      .on('mousemove', moveTip)
+      .on('mouseleave', function(ev,d){
+        d3.select(this).attr('stroke-opacity',op);
+        hideTip();
+      });
+
+  // ── NODES ──
+  const nodeG = svg.append('g');
+  const nodeGroups = nodeG.selectAll('g')
+    .data(graph.nodes)
+    .join('g')
+    .style('cursor','default');
+
+  nodeGroups.append('rect')
+    .attr('x',d=>d.x0).attr('y',d=>d.y0)
+    .attr('width',d=>d.x1-d.x0).attr('height',d=>d.y1-d.y0)
+    .attr('fill',d=>nodeColor(d.name))
+    .attr('rx',3).attr('ry',3)
+    .on('mouseenter',(ev,d)=>{
+      const inV  = d.targetLinks.reduce((s,l)=>s+l.value,0);
+      const outV = d.sourceLinks.reduce((s,l)=>s+l.value,0);
+      const lines = [];
+      if(inV>0)  lines.push(`In: <b>${fmtNum(inV)}</b>`);
+      if(outV>0) lines.push(`Out: <b>${fmtNum(outV)}</b>`);
+      if(!inV&&!outV) lines.push(`Value: <b>${fmtNum(d.value)}</b>`);
+      showTip(ev, d.name, fmtNum(d.value), lines.join(' · '));
+    })
+    .on('mousemove', moveTip)
+    .on('mouseleave', hideTip);
+
+  // ── LABELS ──
+  const isLight = document.body.classList.contains('light');
+  // Read directly from body so body.light overrides are respected
+  const textColor  = cssVar('--text')  || (isLight ? '#2D3436'  : '#EAF1FF');
+  const mutedColor = cssVar('--muted') || (isLight ? '#7F8C8D'  : '#A8B6CF');
+  // Label box background — design-system alpha consistent with --card-bg intent
+  const boxBg = isLight ? 'rgba(240,244,255,0.84)' : 'rgba(15,23,40,0.78)';
+
+  nodeGroups.each(function(d){
+    const grp   = d3.select(this);
+    const nodeH = d.y1 - d.y0;
+    const midY  = (d.y0+d.y1)/2;
+    const onLeft= d.x0 < W/2;
+
+    const isInside = S.label==='inside' || (S.label==='auto' && nodeH>36);
+    const valOffset = 14;
+    let tx, anchor, nameColor, valColor, nameSize;
+
+    if(isInside){
+      tx=((d.x0+d.x1)/2); anchor='middle';
+      nameColor='rgba(255,255,255,0.95)';
+      valColor ='rgba(255,255,255,0.70)';
+      nameSize = Math.min(12, nodeH*0.38);
+    } else if(S.label==='outside' || (S.label==='auto' && !onLeft)){
+      tx=d.x0-7; anchor='end';
+      nameColor=textColor; valColor=mutedColor; nameSize=12;
+    } else {
+      tx=d.x1+7; anchor='start';
+      nameColor=textColor; valColor=mutedColor; nameSize=12;
+    }
+
+    const nameEl = grp.append('text')
+      .attr('x',tx).attr('y',midY)
+      .attr('text-anchor',anchor)
+      .attr('dominant-baseline','middle')
+      .attr('fill',nameColor)
+      .attr('font-family','DM Sans,system-ui,sans-serif')
+      .attr('font-size',nameSize)
+      .attr('font-weight','700')
+      .text(d.name)
+      .style('pointer-events','none');
+
+    let valEl = null;
+    if(nodeH>18){
+      valEl = grp.append('text')
+        .attr('x',tx).attr('y',midY+valOffset)
+        .attr('text-anchor',anchor)
+        .attr('dominant-baseline','middle')
+        .attr('fill',valColor)
+        .attr('font-family','DM Mono,monospace')
+        .attr('font-size', Math.min(11, nameSize-1))
+        .attr('font-weight','400')
+        .text(fmtNum(d.value))
+        .style('pointer-events','none');
+    }
+
+    // ── Label background box (toggleable in Style tab) ──
+    if(S.labelBox && !isInside){
+      try{
+        const pad = 5;
+        const nb  = nameEl.node().getBBox();
+        const vb  = valEl ? valEl.node().getBBox() : nb;
+        const bx  = Math.min(nb.x, vb.x) - pad;
+        const by  = nb.y - pad;
+        const bw  = Math.max(nb.x+nb.width, vb.x+vb.width) - Math.min(nb.x,vb.x) + pad*2;
+        const bh  = (valEl ? vb.y+vb.height : nb.y+nb.height) - nb.y + pad*2;
+        grp.insert('rect','text')
+          .attr('x',bx).attr('y',by)
+          .attr('width',Math.max(0,bw)).attr('height',Math.max(0,bh))
+          .attr('rx',4).attr('ry',4)
+          .attr('fill',boxBg)
+          .attr('class','label-bg')
+          .style('pointer-events','none');
+      } catch(e){}
+    }
+  });
+
+  // ── KPIs ──
+  const roots   = graph.nodes.filter(n=>n.targetLinks.length===0);
+  const inflow  = roots.reduce((s,n)=>s+n.value,0);
+  const maxDepth= Math.max(...graph.nodes.map(n=>n.depth||0));
+  setKPIs(graph.nodes.length, graph.links.length, inflow, maxDepth+1);
+}
+
+// ═══════════════════════════════════════════════
+//  TOOLTIP
+// ═══════════════════════════════════════════════
+function showTip(ev, title, val, sub){
+  tip.innerHTML = `<div class="tt-title">${title}</div><div class="tt-val">${val}</div>${sub?`<div class="tt-row">${sub}</div>`:''}`;
+  tip.classList.add('show');
+  moveTip(ev);
+}
+function moveTip(ev){
+  const pad=14, tw=tip.offsetWidth||210, th=tip.offsetHeight||80;
+  let x=ev.clientX+pad, y=ev.clientY-10;
+  if(x+tw>window.innerWidth-8)  x=ev.clientX-tw-pad;
+  if(y+th>window.innerHeight-8) y=ev.clientY-th-pad;
+  tip.style.left=x+'px'; tip.style.top=y+'px';
+}
+function hideTip(){ tip.classList.remove('show'); }
+
+function showErr(msg){
+  errBanner.textContent='⚠ '+msg;
+  errBanner.style.display='block';
+  emptyState.style.display='none';
+}
+
+function setKPIs(n,l,f,d){
+  $('kNodes').textContent = n||'—';
+  $('kLinks').textContent = l||'—';
+  $('kFlow').textContent  = f?fmtNum(f):'—';
+  $('kDepth').textContent = d||'—';
+}
+
+// ═══════════════════════════════════════════════
+//  REMAINING BADGES
+// ═══════════════════════════════════════════════
+function updateRemBadges(resolved){
+  // Hide all badges first
+  rowsCont.querySelectorAll('.rem-badge').forEach(b=>{ b.style.display='none'; b.textContent=''; });
+  // Show & populate the resolved ones
+  resolved.forEach(r=>{
+    if(!r.wasRemaining) return;
+    rowsCont.querySelectorAll('.rem-badge').forEach(b=>{
+      if(b.dataset.src===r.source && b.dataset.tgt===r.target){
+        b.textContent = '= '+fmtNum(r.resolvedValue);
+        b.style.display = 'inline-block';
+      }
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  EDITOR TAB – BUILD UI ROWS
+// ═══════════════════════════════════════════════
+function buildEditorRows(){
+  rowsCont.innerHTML='';
+  rows.forEach((r,i)=> rowsCont.appendChild(makeRowEl(r,i)));
+}
+
+function makeRowEl(r, i){
+  const wrap = document.createElement('div');
+  wrap.className='row-item';
+  wrap.dataset.idx=i;
+
+  const srcIn = inp('text', r.source, 'Source', 'row-src');
+  const tgtIn = inp('text', r.target, 'Target', 'row-tgt');
+  const valIn = inp('text', r.value,  'Value or "remaining"', 'row-val val-input');
+  const hasC  = r.color && hex(r.color);
+
+  // Color cell
+  const colorCell = document.createElement('div');
+  colorCell.className = 'color-cell'+(hasC?' has-color':'');
+
+  const colorPick = document.createElement('input');
+  colorPick.type='color'; colorPick.className='row-color';
+  colorPick.value = hasC ? r.color : '#8DBBFF';
+
+  const clearBtn = document.createElement('button');
+  clearBtn.className='color-clear'; clearBtn.title='Remove custom colour'; clearBtn.textContent='×';
+
+  colorCell.appendChild(colorPick);
+  colorCell.appendChild(clearBtn);
+
+  // Overlay to show "auto" state
+  if(!hasC){
+    colorPick.style.opacity='0.35';
+    colorPick.title='Click to set custom colour';
+  }
+
+  const arrowEl = document.createElement('span');
+  arrowEl.className='arrow-sep'; arrowEl.textContent='→';
+
+  const delBtn = document.createElement('button');
+  delBtn.className='del-btn'; delBtn.title='Remove row'; delBtn.innerHTML='✕';
+
+  wrap.appendChild(srcIn);
+  wrap.appendChild(arrowEl);
+  wrap.appendChild(tgtIn);
+  wrap.appendChild(valIn);
+  wrap.appendChild(colorCell);
+  wrap.appendChild(delBtn);
+
+  // Remaining badge — always present so updateRemBadges can find it
+  const isRem = (r.value+'').trim().toLowerCase()==='remaining';
+  const extra = document.createElement('div');
+  extra.className='row-extra';
+  const badge = document.createElement('span');
+  badge.className='rem-badge';
+  badge.dataset.src = r.source;
+  badge.dataset.tgt = r.target;
+  badge.style.display = isRem ? 'inline-block' : 'none';
+  extra.appendChild(badge);
+  wrap.appendChild(extra);
+
+  // Events
+  [srcIn,tgtIn,valIn].forEach(el=>{
+    el.addEventListener('input', ()=>{ readFromEditor(); syncText(); scheduleRender(); });
+  });
+
+  colorPick.addEventListener('input', ()=>{
+    const c = colorPick.value;
+    rows[i].color = c;
+    colorCell.classList.add('has-color');
+    colorPick.style.opacity='1';
+    colorPick.title='';
+    syncText();
+    scheduleRender();
+  });
+
+  clearBtn.addEventListener('click', ()=>{
+    rows[i].color='';
+    colorCell.classList.remove('has-color');
+    colorPick.style.opacity='0.35';
+    colorPick.title='Click to set custom colour';
+    syncText();
+    scheduleRender();
+  });
+
+  delBtn.addEventListener('click', ()=>{
+    rows.splice(i,1);
+    buildEditorRows();
+    syncText();
+    scheduleRender();
+  });
+
+  return wrap;
+}
+
+function inp(type, val, ph, cls){
+  const el = document.createElement('input');
+  el.type=type; el.value=val||''; el.placeholder=ph; el.className=cls||'';
+  return el;
+}
+
+function readFromEditor(){
+  const items = rowsCont.querySelectorAll('.row-item');
+  items.forEach((item,i)=>{
+    if(!rows[i]) rows[i]={source:'',target:'',value:'',color:''};
+    rows[i].source = item.querySelector('.row-src').value.trim();
+    rows[i].target = item.querySelector('.row-tgt').value.trim();
+    rows[i].value  = item.querySelector('.row-val').value.trim();
+    // Sync badge key and visibility without a full DOM rebuild
+    const badge = item.querySelector('.rem-badge');
+    if(badge){
+      badge.dataset.src = rows[i].source;
+      badge.dataset.tgt = rows[i].target;
+      const isNowRem = rows[i].value.trim().toLowerCase() === 'remaining';
+      badge.style.display = isNowRem ? 'inline-block' : 'none';
+      if(!isNowRem) badge.textContent = '';
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  TEXT TAB SYNC
+// ═══════════════════════════════════════════════
+function rowsToText(rr){
+  return rr.map(r=>{
+    const parts = [r.source, r.target, r.value];
+    if(r.color && hex(r.color)) parts.push(r.color);
+    return parts.join(',');
+  }).join('\n');
+}
+
+function syncText(){
+  txtIn.value = rowsToText(rows);
+}
+
+function parseText(text){
+  const lines = text.split('\n').map(l=>l.trim()).filter(l=>l&&!l.startsWith('#'));
+  const result=[];
+  const errs=[];
+  lines.forEach((line,li)=>{
+    const parts = line.split(',').map(p=>p.trim());
+    if(parts.length<3){ errs.push(`Line ${li+1}: needs at least source,target,value`); return; }
+    const [source,target,value,...rest]=parts;
+    const color = rest.find(p=>hex(p))||'';
+    result.push({source,target,value,color});
+  });
+  return {rows:result, errors:errs};
+}
+
+let textTimer=null;
+txtIn.addEventListener('input',()=>{
+  clearTimeout(textTimer);
+  $('textStatus').innerHTML='';
+  textTimer=setTimeout(()=>{
+    const {rows:parsed, errors} = parseText(txtIn.value);
+    if(errors.length){
+      $('textStatus').innerHTML=`<span class="status-err">⚠ ${errors[0]}</span>`;
+    } else {
+      $('textStatus').innerHTML=`<span class="status-ok">✓ ${parsed.length} row${parsed.length!==1?'s':''}</span>`;
+    }
+    rows = parsed;
+    buildEditorRows();
+    scheduleRender();
+  }, 300);
+});
+
+// ═══════════════════════════════════════════════
+//  CSV
+// ═══════════════════════════════════════════════
+function parseCSV(text){
+  const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  if(!lines.length) return [];
+  // Detect header
+  const first = lines[0].toLowerCase();
+  const hasHeader = first.includes('source')||first.includes('target')||first.includes('from')||first.includes('to');
+  const dataLines = hasHeader ? lines.slice(1) : lines;
+  return dataLines.map(line=>{
+    const parts = line.split(',').map(p=>p.replace(/^["']|["']$/g,'').trim());
+    const [source='',target='',value='',...rest]=parts;
+    const color = rest.find(p=>hex(p))||'';
+    return {source,target,value,color};
+  }).filter(r=>r.source&&r.target&&r.value);
+}
+
+function handleFile(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const parsed = parseCSV(e.target.result);
+    if(!parsed.length){
+      $('csvStatus').innerHTML='<span class="status-err">⚠ No valid rows found</span>';
+      return;
+    }
+    rows = parsed;
+    buildEditorRows();
+    syncText();
+    scheduleRender();
+    $('csvStatus').innerHTML=`<span class="status-ok">✓ Loaded ${parsed.length} rows from ${file.name}</span>`;
+  };
+  reader.readAsText(file);
+}
+
+$('csvFile').addEventListener('change', e=>handleFile(e.target.files[0]));
+
+const csvDrop = $('csvDrop');
+csvDrop.addEventListener('dragover', e=>{e.preventDefault();csvDrop.classList.add('dragover');});
+csvDrop.addEventListener('dragleave',()=>csvDrop.classList.remove('dragover'));
+csvDrop.addEventListener('drop', e=>{
+  e.preventDefault(); csvDrop.classList.remove('dragover');
+  handleFile(e.dataTransfer.files[0]);
+});
+csvDrop.addEventListener('click', ()=>$('csvFile').click());
+
+$('downloadTemplate').addEventListener('click',()=>{
+  const tpl = `source,target,value,color
+Website,Homepage,1000,
+Website,Other Pages,500,
+Homepage,Sign Up,300,
+Homepage,Bounce,remaining,#FF8B8B
+Other Pages,Sign Up,100,
+Other Pages,Bounce,remaining,#FF8B8B
+Sign Up,Converted,180,#8FCDBD
+Sign Up,Dropped,remaining,`;
+  const blob=new Blob([tpl],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='sankey_template.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+// ═══════════════════════════════════════════════
+//  ADD ROW
+// ═══════════════════════════════════════════════
+$('addRowBtn').addEventListener('click',()=>{
+  rows.push({source:'',target:'',value:'',color:''});
+  buildEditorRows();
+  syncText();
+  const last = rowsCont.lastElementChild;
+  if(last){ last.scrollIntoView({behavior:'smooth',block:'nearest'}); last.querySelector('.row-src').focus(); }
+});
+
+// ═══════════════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════════════
+document.querySelectorAll('.ctrl-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.ctrl-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    $('tab-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab==='text'){
+      // Reflect any editor changes into the textarea
+      syncText();
+    }
+    if(btn.dataset.tab==='editor'){
+      // Flush any in-flight text debounce so editor shows latest text changes
+      clearTimeout(textTimer);
+      const {rows:parsed} = parseText(txtIn.value);
+      if(parsed.length){ rows = parsed; }
+      buildEditorRows();
+    }
+  });
+});
+
+// ═══════════════════════════════════════════════
+//  STYLE CONTROLS
+// ═══════════════════════════════════════════════
+function bindSlider(id, valId, key, fmt, onInput){
+  const el=$('s'+id), vEl=$(valId);
+  el.addEventListener('input',()=>{
+    S[key]=parseFloat(el.value);
+    if(vEl) vEl.textContent=fmt(el.value);
+    onInput&&onInput();
+    scheduleRender();
+  });
+}
+bindSlider('Pad','vPad','pad', v=>v,    null);
+bindSlider('NW', 'vNW', 'nw',  v=>v+'px', null);
+bindSlider('Op', 'vOp', 'op',  v=>v+'%',  null);
+bindSlider('H',  'vH',  'h',   v=>v+'px', null);
+
+$('sColor').addEventListener('change',()=>{ S.scheme=$('sColor').value; scheduleRender(); });
+$('sLabel').addEventListener('change',()=>{ S.label=$('sLabel').value;  scheduleRender(); });
+$('sLinkStyle').addEventListener('change',()=>{ S.linkStyle=$('sLinkStyle').value; scheduleRender(); });
+$('sIter').addEventListener('change',()=>{ S.iter=parseInt($('sIter').value); scheduleRender(); });
+
+document.querySelectorAll('input[name="align"]').forEach(r=>{
+  r.addEventListener('change',()=>{ S.align=r.value; scheduleRender(); });
+});
+
+// ═══════════════════════════════════════════════
+//  RESET / CLEAR
+// ═══════════════════════════════════════════════
+$('resetBtn').addEventListener('click',()=>{
+  rows = clone(DEFAULT_ROWS);
+  S    = clone(DEFAULT_S);
+  // Sync style controls
+  $('sPad').value=S.pad; $('vPad').textContent=S.pad;
+  $('sNW').value=S.nw;   $('vNW').textContent=S.nw+'px';
+  $('sOp').value=S.op;   $('vOp').textContent=S.op+'%';
+  $('sH').value=S.h;     $('vH').textContent=S.h+'px';
+  $('sColor').value=S.scheme;
+  $('sLabel').value=S.label;
+  $('sLinkStyle').value=S.linkStyle;
+  $('sIter').value=S.iter;
+  document.querySelector(`input[name="align"][value="${S.align}"]`).checked=true;
+  buildEditorRows();
+  syncText();
+  scheduleRender();
+});
+
+$('clearBtn').addEventListener('click',()=>{
+  rows=[{source:'',target:'',value:'',color:''}];
+  buildEditorRows();
+  syncText();
+  scheduleRender();
+});
+
+// ═══════════════════════════════════════════════
+//  THEME TOGGLE
+// ═══════════════════════════════════════════════
+$('themeToggle').addEventListener('click',()=>{
+  document.body.classList.toggle('light');
+  $('themeToggle').textContent = document.body.classList.contains('light') ? '🌙 Dark' : '☀️ Light';
+  scheduleRender();
+});
+
+// ═══════════════════════════════════════════════
+//  EXPORT
+// ═══════════════════════════════════════════════
+// Produce an export-ready clone: black text, white label boxes (for transparent bg)
+function exportCloneXml(){
+  const clone = svgEl.cloneNode(true);
+  clone.querySelectorAll('text').forEach(t => t.setAttribute('fill','#1a1a1a'));
+  clone.querySelectorAll('.label-bg').forEach(r => r.setAttribute('fill','rgba(255,255,255,0.88)'));
+  return new XMLSerializer().serializeToString(clone);
+}
+
+$('exportSvgBtn').addEventListener('click',()=>{
+  if(!graph) return;
+  const xml  = exportCloneXml();
+  const blob = new Blob([xml],{type:'image/svg+xml'});
+  const a    = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sankey.svg';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+$('exportPngBtn').addEventListener('click',()=>{
+  if(!graph) return;
+  const W  = svgEl.viewBox.baseVal.width  || 800;
+  const H  = svgEl.viewBox.baseVal.height || S.h;
+  const xml    = exportCloneXml();
+  const svgB64 = 'data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(xml)));
+  const img    = new Image();
+  img.onload = ()=>{
+    const canvas = document.createElement('canvas');
+    canvas.width = W*2; canvas.height = H*2;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(2,2);
+    // No fillRect → transparent background; only the Sankey is drawn
+    ctx.drawImage(img,0,0,W,H);
+    const a=document.createElement('a');
+    a.href=canvas.toDataURL('image/png');
+    a.download='sankey.png';
+    a.click();
+  };
+  img.src=svgB64;
+});
+
+// ═══════════════════════════════════════════════
+//  RESIZE OBSERVER
+// ═══════════════════════════════════════════════
+const ro = new ResizeObserver(()=>scheduleRender());
+ro.observe($('svgWrap'));
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+buildEditorRows();
+syncText();
+scheduleRender();
+
+})();
+</script>
+</body>
+</html>
