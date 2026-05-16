@@ -335,13 +335,18 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
     <div id="sensThresholdRange" style="display:none">
       <div class="field-row">
         <div class="field-label">Start Value (%)</div>
-        <input class="num-input" id="sensThreshStart" type="number" min="1" max="49" step="1" value="1"/>
+        <input class="num-input" id="sensThreshStart" type="number" min="0.1" max="49.9" step="0.1" value="1"/>
         <div class="field-sub">Lower bound of threshold sweep.</div>
       </div>
       <div class="field-row">
         <div class="field-label">End Value (%)</div>
-        <input class="num-input" id="sensThreshEnd" type="number" min="2" max="50" step="1" value="20"/>
+        <input class="num-input" id="sensThreshEnd" type="number" min="0.2" max="50" step="0.1" value="20"/>
         <div class="field-sub">Upper bound of threshold sweep.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Step (%)</div>
+        <input class="num-input" id="sensThreshStep" type="number" min="0.1" max="10" step="0.1" value="1"/>
+        <div class="field-sub">Increment between threshold values.</div>
       </div>
     </div>
     <div class="status-bar" id="sensStatus" style="margin-top:8px"></div>
@@ -766,9 +771,9 @@ function renderSecList(){
             <div style="padding:6px 0 2px">
               <div class="slider-head" style="margin-bottom:4px">
                 <span style="font-size:.8rem;color:var(--muted);font-weight:700">Threshold</span>
-                <span id="secMomPctVal${sec.id}" class="slider-value">${sec.momentumPct}%</span>
+                <span id="secMomPctVal${sec.id}" class="slider-value">${(+sec.momentumPct).toFixed(1)}%</span>
               </div>
-              <input type="range" id="secMomPct${sec.id}" min="1" max="50" step="1" value="${sec.momentumPct}" style="width:100%;accent-color:var(--accent);cursor:pointer"/>
+              <input type="range" id="secMomPct${sec.id}" min="0.1" max="50" step="0.1" value="${sec.momentumPct}" style="width:100%;accent-color:var(--accent);cursor:pointer"/>
             </div>
             <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);cursor:pointer;padding:2px 0 6px">
               <input type="checkbox" id="secMomEOM${sec.id}" ${sec.momentumEOM?'checked':''} style="accent-color:var(--accent);cursor:pointer;width:14px;height:14px;flex-shrink:0"/>
@@ -835,8 +840,8 @@ function renderSecList(){
     const momEOMEl=$(`secMomEOM${sec.id}`);
     if(momPctEl){
       momPctEl.addEventListener('input',e=>{
-        sec.momentumPct=parseInt(e.target.value)||5;
-        if(momPctValEl) momPctValEl.textContent=sec.momentumPct+'%';
+        sec.momentumPct=parseFloat(e.target.value)||5;
+        if(momPctValEl) momPctValEl.textContent=(+sec.momentumPct).toFixed(1)+'%';
         scheduleRun();
       });
     }
@@ -1710,10 +1715,13 @@ async function runSensitivityAnalysis(){
         values.push(calcFinalEquityForParams(priceData, style, d, sec.momentumPct, sec.momentumEOM, sec.amount));
       }
     } else if(isMomentum){
-      const sv=Math.max(1,parseInt($('sensThreshStart').value)||1);
-      const ev=Math.min(50,parseInt($('sensThreshEnd').value)||20);
+      const sv=Math.max(0.1,parseFloat($('sensThreshStart').value)||1);
+      const ev=Math.min(50,parseFloat($('sensThreshEnd').value)||20);
+      const step=Math.max(0.1,parseFloat($('sensThreshStep').value)||1);
       if(sv>=ev){ showStatus($('sensStatus'),'Start Value must be less than End Value.','error'); return; }
-      for(let t=sv;t<=ev;t++){
+      const numSteps=Math.round((ev-sv)/step);
+      for(let i=0;i<=numSteps;i++){
+        const t=Math.round((sv+i*step)*10)/10;
         labels.push(t+'%');
         values.push(calcFinalEquityForParams(priceData, style, sec.dayOrDate, t, sec.momentumEOM, sec.amount));
       }
