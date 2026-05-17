@@ -1222,9 +1222,66 @@
 /* ================================================================
    TOOLTIP HELPER
 ================================================================ */
-function tip(text) {
-  return `<span class="tt" data-tip="${text.replace(/"/g, '&quot;')}">?</span>`;
+function tip(text, id = '') {
+  const idAttr = id ? ` id="${id}"` : '';
+  return `<span class="tt"${idAttr} data-tip="${text.replace(/"/g, '&quot;')}">?</span>`;
 }
+
+/* ================================================================
+   DYNAMIC TOOLTIP HELPERS & TEXT MAPS
+================================================================ */
+function setTip(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.setAttribute('data-tip', text);
+}
+
+const TIP_PROBLEM_TYPE = {
+  brute_force:  'Runs every combination of input values. Total runs = product of all step counts.',
+  optimisation: 'Uses a search algorithm to find the best input combination. Configure algorithm below.',
+  custom:       'Reads input values row-by-row from an Excel file. Download the template for the required format.',
+};
+const TIP_STUDY_TYPE = {
+  steady_state: 'Runs a load flow (ElmLdf) each iteration. Timeseries outputs are not available.',
+  dynamic_rms:  'Runs an RMS simulation (ComSim) each iteration. Enables timeseries outputs.',
+  dynamic_emt:  'Runs an EMT simulation (ComSim) each iteration. Enables timeseries outputs.',
+  harmonic:     'Runs a harmonic/frequency sweep (ComHlf) each iteration.',
+};
+const TIP_CODING_STYLE = {
+  python_file: 'Wraps all code in main() for clean script execution.',
+  notebook:    'Organises code into labelled cells for Jupyter or VS Code notebooks.',
+};
+const TIP_MAX_ITER = {
+  placeholder:            'Not used in placeholder mode — fill in your own search loop.',
+  scipy_nelder_mead:      'Max function evaluations. 50–200 is typical for local methods.',
+  scipy_powell:           'Max function evaluations. 50–200 is typical for local methods.',
+  scipy_lbfgsb:           'Max function evaluations. 50–200 is typical for local methods.',
+  scipy_slsqp:            'Max function evaluations. 50–200 is typical for local methods.',
+  scipy_cobyla:           'Max function evaluations. 50–200 is typical for local methods.',
+  differential_evolution: 'Max generations × population. 100–500 is typical for global search.',
+  gp_minimize:            'Acquisition calls. 30–100 is usually sufficient for expensive objectives.',
+};
+const TIP_OUTPUT_TYPE = {
+  attribute:          'Read a single value after solving via obj.GetAttribute().',
+  timeseries:         'Extract a scalar metric from a time signal (dynamic study only).',
+  custom_calculation: 'Calls a user-defined Python function using other variable values.',
+};
+const TIP_OUTPUT_OBJ = {
+  attribute:  'Object query for GetCalcRelevantObjects() (e.g. Grid.ElmTerm).',
+  timeseries: 'Element name as shown in the ElmRes export header (e.g. HV_Bus — no path or class suffix).',
+};
+const TIP_OUTPUT_ATTR = {
+  attribute:  'Result variable key for GetAttribute() (e.g. m:u1, c:loading, m:P).',
+  timeseries: 'Variable key from PF result variable browser (e.g. m:u1, m:I:bus1).',
+};
+const TIP_METRIC = {
+  maximum:          'Peak value of the signal over the full simulation window.',
+  minimum:          'Trough value of the signal over the full simulation window.',
+  mean:             'Time-averaged value across the simulation window.',
+  median:           'Median value across the simulation window.',
+  first_time_above: 'First time the signal rises above the threshold.',
+  first_time_below: 'First time the signal falls below the threshold.',
+  time_settle:      'Time until the signal stays within ±band of the reference for the full hold duration.',
+};
 
 /* ================================================================
    GLOBAL STATE — output variable counter, ace editors map
@@ -1248,6 +1305,11 @@ function toggleSection(id) {
 ================================================================ */
 function onProblemTypeChange() {
   const pt = document.getElementById('problem-type').value;
+  // Update dynamic tooltips
+  setTip('tt-problem-type', TIP_PROBLEM_TYPE[pt] || '');
+  const isOpt = pt === 'optimisation';
+  setTip('tt-lb', isOpt ? 'Lower boundary of the search space for this variable.' : 'Start of the swept range (inclusive).');
+  setTip('tt-ub', isOpt ? 'Upper boundary of the search space for this variable.' : 'End of the swept range (inclusive).');
   // Custom section
   document.getElementById('sec-custom').classList.toggle('cond-hidden', pt !== 'custom');
   // Optimisation section
@@ -1266,6 +1328,7 @@ function onProblemTypeChange() {
 
 function onStudyTypeChange() {
   const st = document.getElementById('study-type').value;
+  setTip('tt-study-type', TIP_STUDY_TYPE[st] || '');
   const isDynamic = st === 'dynamic_rms' || st === 'dynamic_emt';
   document.getElementById('row-tstop').style.display = isDynamic ? 'grid' : 'none';
   if (st === 'dynamic_emt') document.getElementById('tstop').value = 0.25;
@@ -1274,6 +1337,11 @@ function onStudyTypeChange() {
   refreshLiveWarnings();
 }
 
+
+function onCodingStyleChange() {
+  const cs = document.getElementById('coding-style').value;
+  setTip('tt-coding-style', TIP_CODING_STYLE[cs] || '');
+}
 
 function onSaveIntermediateChange() {
   const checked = document.getElementById('save-intermediate').checked;
@@ -1523,6 +1591,8 @@ function updateAlgorithmUI() {
   // Update tooltip for the algorithm ? badge
   const tipEl = document.querySelector('#sec-optim [data-alg-tip]');
   if (tipEl) tipEl.setAttribute('data-tip', ALGORITHM_TIPS[alg] || '');
+  // Update Max Iterations tooltip
+  setTip('tt-max-iter', TIP_MAX_ITER[alg] || '');
 }
 
 /* ================================================================
@@ -1869,17 +1939,17 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
         <option value="timeseries" ${type==='timeseries'?'selected':''}>Timeseries</option>
         <option value="custom_calculation" ${type==='custom_calculation'?'selected':''}>Custom Calculation</option>
       </select>
-      ${tip('Scalar: read a scalar after solving via obj.GetAttribute. Timeseries: extract a metric from ElmRes (dynamic only). Custom Calculation: define your own Python function referencing other variable names.')}
+      ${tip(TIP_OUTPUT_TYPE[type] || TIP_OUTPUT_TYPE.attribute, `${id}-tt-type`)}
       <input type="text" id="${id}-name" value="${data.name||''}" placeholder="Output var name"
         style="flex:1;font-size:12px;padding:3px 8px;min-width:80px;" oninput="onOutputNameChange()" />
-      ${tip('Unique Python identifier for this output. Cannot share a name with any input variable or another output variable. Used as the column header in the results CSV.')}
+      ${tip('Python identifier for this output. Must be unique across all inputs and outputs.')}
       <button class="btn btn-ghost btn-icon btn-xs" title="Collapse" onclick="toggleOutputVar('${id}')" id="${id}-toggle" style="font-size:14px;flex-shrink:0;">▾</button>
       <button class="btn btn-remove btn-xs" onclick="removeOutputVar('${id}')">✕</button>
     </div>
     <div class="output-var-body" id="${id}-body">
       <!-- OBJECT (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-obj">
-        <label>Object ${tip('For Scalar: PowerFactory object query passed to GetCalcRelevantObjects() (e.g. Grid.ElmTerm). For Timeseries: the loc_name of the element exactly as it appears in the ElmRes CSV header row 0 — typically just the element name without path or class suffix (e.g. "HV_Bus" not "Grid\\HV_Bus.ElmTerm"). The tool strips any .ElmXxx class suffix from both this field and the CSV header automatically.')}</label>
+        <label>Object ${tip(isTs ? TIP_OUTPUT_OBJ.timeseries : TIP_OUTPUT_OBJ.attribute, `${id}-tt-obj`)}</label>
         <div id="${id}-obj-attribute-wrap" class="${isTs?'cond-hidden':''}">
           <input type="text" id="${id}-obj" value="${isTs ? '' : (data.object_query||'')}" placeholder="Element.ElmType" autocomplete="off" oninput="onOutputObjectInput('${id}')" />
         </div>
@@ -1889,25 +1959,25 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       </div>
       <!-- ATTRIBUTE (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-var">
-        <label>Attribute ${tip('For Scalar: attribute name read via obj.GetAttribute() (e.g. m:u1, c:loading, m:P). For Timeseries: the PowerFactory variable key exactly as used in GetAttribute() and the PF result variable browser (e.g. m:u1, c:loading, m:I:bus1). PowerFactory writes this key in the second CSV header row — do NOT use the descriptive label shown in PF dialogs.')}</label>
+        <label>Attribute ${tip(isTs ? TIP_OUTPUT_ATTR.timeseries : TIP_OUTPUT_ATTR.attribute, `${id}-tt-attr`)}</label>
         <input type="text" id="${id}-var" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" />
       </div>
       <!-- METRIC (hidden for single_attribute and custom_calculation) -->
       <div class="form-row ${(isAttr||isCust)?'cond-hidden':''}" id="${id}-row-metric">
-        <label>Metric ${tip('Scalar metric to extract from the timeseries signal. Computed from the parsed ElmRes CSV export data.')}</label>
+        <label>Metric ${tip(TIP_METRIC[metric] || TIP_METRIC.maximum, `${id}-tt-metric`)}</label>
         <select id="${id}-metric" onchange="onMetricChange('${id}')">
           ${metricOptions}
         </select>
       </div>
       <!-- THRESHOLD -->
       <div class="form-row ${!showThresh?'cond-hidden':''}" id="${id}-row-threshold">
-        <label>Threshold ${tip('Numeric threshold for first_time metrics. first_time_above/below returns the first time the signal crosses the threshold.')}</label>
+        <label>Threshold ${tip('Value the signal must cross (first_time_above) or drop below (first_time_below).')}</label>
         <input type="number" id="${id}-threshold" value="${data.threshold||''}" step="any" placeholder="0.9" />
       </div>
       <!-- SETTLE PARAMS -->
       <div class="${!showSettle?'cond-hidden':''}" id="${id}-row-settle">
         <div class="form-row">
-          <label>Settle Band ${tip('Half-width of the ±band around the Reference Value. The signal must stay within [ref - band, ref + band] for the entire Hold Time to be considered settled.')}</label>
+          <label>Settle Band ${tip('Half-width of the ±band: signal must stay in [ref−band, ref+band] for the full hold time.')}</label>
           <input type="number" id="${id}-settle-band" value="${data.settle_band||''}" step="any" placeholder="0.05" />
         </div>
         <div class="form-row">
