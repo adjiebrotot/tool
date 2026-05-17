@@ -1,0 +1,700 @@
+{
+  "result_vars": {
+    "dynamic_emt": {
+      "c": [
+        {
+          "var": "c:Phi",
+          "unit": "deg",
+          "desc": "Voltage angle",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:dphi",
+          "unit": "rad",
+          "desc": "dphi",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:dwlim",
+          "unit": "rad/s",
+          "desc": "dwlim",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:dwmax",
+          "unit": "rad/s",
+          "desc": "Upper angular frequency deviation limit",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:dwmin",
+          "unit": "rad/s",
+          "desc": "Lower angular frequency deviation limit",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:frnom",
+          "unit": "Hz",
+          "desc": "Nominal frequency",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:hpi",
+          "unit": "rad/s",
+          "desc": "Nominal angular frequency",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:umin",
+          "unit": "p.u.",
+          "desc": "Blocking voltage",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:valpha_in",
+          "unit": "p.u.",
+          "desc": "Voltage input, alpha-component",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:vbeta_in",
+          "unit": "p.u.",
+          "desc": "Voltage input, beta-component",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:vd",
+          "unit": "p.u.",
+          "desc": "vd",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:vq",
+          "unit": "p.u.",
+          "desc": "vq",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ],
+      "s": [
+        {
+          "var": "s:Fmeas",
+          "unit": "Hz",
+          "desc": "OUT",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:cosphi",
+          "unit": "OUT",
+          "desc": "cos(phi)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:fmeas",
+          "unit": "p.u.",
+          "desc": "OUT",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:sinphi",
+          "unit": "OUT",
+          "desc": "sin(phi)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:u_a",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:u_b",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:u_c",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:umag",
+          "unit": "p.u.",
+          "desc": "SIGS",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:xphi",
+          "unit": "rad",
+          "desc": "STATE",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:xphi:dt",
+          "unit": "rad/s",
+          "desc": "d/dt",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:xpi",
+          "unit": "STATE",
+          "desc": "State variable (PI-controller)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:xpi:dt",
+          "unit": "/s",
+          "desc": "d/dt",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    },
+    "dynamic_rms": {
+      "c": [
+        {
+          "var": "c:Phi",
+          "unit": "deg",
+          "desc": "Voltage angle"
+        },
+        {
+          "var": "c:dphi",
+          "unit": "rad",
+          "desc": "dphi"
+        },
+        {
+          "var": "c:dwlim",
+          "unit": "rad/s",
+          "desc": "dwlim"
+        },
+        {
+          "var": "c:dwmax",
+          "unit": "rad/s",
+          "desc": "Upper angular frequency deviation limit"
+        },
+        {
+          "var": "c:dwmin",
+          "unit": "rad/s",
+          "desc": "Lower angular frequency deviation limit"
+        },
+        {
+          "var": "c:frnom",
+          "unit": "Hz",
+          "desc": "Nominal frequency"
+        },
+        {
+          "var": "c:hpi",
+          "unit": "rad/s",
+          "desc": "Nominal angular frequency"
+        },
+        {
+          "var": "c:umin",
+          "unit": "p.u.",
+          "desc": "Blocking voltage"
+        },
+        {
+          "var": "c:vd",
+          "unit": "p.u.",
+          "desc": "vd"
+        },
+        {
+          "var": "c:vq",
+          "unit": "p.u.",
+          "desc": "vq"
+        }
+      ],
+      "s": [
+        {
+          "var": "s:Fmeas",
+          "unit": "Hz",
+          "desc": "OUT"
+        },
+        {
+          "var": "s:cosphi",
+          "unit": "OUT",
+          "desc": "cos(phi)"
+        },
+        {
+          "var": "s:fmeas",
+          "unit": "p.u.",
+          "desc": "OUT"
+        },
+        {
+          "var": "s:fref",
+          "unit": "p.u.",
+          "desc": "IN"
+        },
+        {
+          "var": "s:phiref",
+          "unit": "rad",
+          "desc": "STATE",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:phiref:dt",
+          "unit": "rad/s",
+          "desc": "d/dt",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:sinphi",
+          "unit": "OUT",
+          "desc": "sin(phi)"
+        },
+        {
+          "var": "s:uI",
+          "unit": "p.u.",
+          "desc": "IN"
+        },
+        {
+          "var": "s:uI_A",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:uI_B",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:uI_C",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:uR",
+          "unit": "p.u.",
+          "desc": "IN"
+        },
+        {
+          "var": "s:uR_A",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:uR_B",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:uR_C",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:umag",
+          "unit": "p.u.",
+          "desc": "SIGS"
+        },
+        {
+          "var": "s:xphi",
+          "unit": "rad",
+          "desc": "STATE"
+        },
+        {
+          "var": "s:xphi:dt",
+          "unit": "rad/s",
+          "desc": "d/dt"
+        },
+        {
+          "var": "s:xpi",
+          "unit": "STATE",
+          "desc": "State variable (PI-controller)"
+        },
+        {
+          "var": "s:xpi:dt",
+          "unit": "/s",
+          "desc": "d/dt"
+        }
+      ]
+    },
+    "modal_analysis": {
+      "c": [
+        {
+          "var": "c:Phi",
+          "unit": "deg",
+          "desc": "Voltage angle"
+        },
+        {
+          "var": "c:dphi",
+          "unit": "rad",
+          "desc": "dphi"
+        },
+        {
+          "var": "c:dwlim",
+          "unit": "rad/s",
+          "desc": "dwlim"
+        },
+        {
+          "var": "c:dwmax",
+          "unit": "rad/s",
+          "desc": "Upper angular frequency deviation limit"
+        },
+        {
+          "var": "c:dwmin",
+          "unit": "rad/s",
+          "desc": "Lower angular frequency deviation limit"
+        },
+        {
+          "var": "c:frnom",
+          "unit": "Hz",
+          "desc": "Nominal frequency"
+        },
+        {
+          "var": "c:hpi",
+          "unit": "rad/s",
+          "desc": "Nominal angular frequency"
+        },
+        {
+          "var": "c:umin",
+          "unit": "p.u.",
+          "desc": "Blocking voltage"
+        },
+        {
+          "var": "c:vd",
+          "unit": "p.u.",
+          "desc": "vd"
+        },
+        {
+          "var": "c:vq",
+          "unit": "p.u.",
+          "desc": "vq"
+        }
+      ],
+      "s": [
+        {
+          "var": "s:Fmeas",
+          "unit": "Hz",
+          "desc": "OUT"
+        },
+        {
+          "var": "s:cosphi",
+          "unit": "OUT",
+          "desc": "cos(phi)"
+        },
+        {
+          "var": "s:fmeas",
+          "unit": "p.u.",
+          "desc": "OUT"
+        },
+        {
+          "var": "s:fref",
+          "unit": "p.u.",
+          "desc": "IN"
+        },
+        {
+          "var": "s:phiref",
+          "unit": "rad",
+          "desc": "STATE",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:phiref:dt",
+          "unit": "rad/s",
+          "desc": "d/dt",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:sinphi",
+          "unit": "OUT",
+          "desc": "sin(phi)"
+        },
+        {
+          "var": "s:uI",
+          "unit": "p.u.",
+          "desc": "IN"
+        },
+        {
+          "var": "s:uI_A",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:uI_B",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:uI_C",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:uR",
+          "unit": "p.u.",
+          "desc": "IN"
+        },
+        {
+          "var": "s:uR_A",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:uR_B",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:uR_C",
+          "unit": "p.u.",
+          "desc": "IN",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:umag",
+          "unit": "p.u.",
+          "desc": "SIGS"
+        },
+        {
+          "var": "s:xphi",
+          "unit": "rad",
+          "desc": "STATE"
+        },
+        {
+          "var": "s:xphi:dt",
+          "unit": "rad/s",
+          "desc": "d/dt"
+        },
+        {
+          "var": "s:xpi",
+          "unit": "STATE",
+          "desc": "State variable (PI-controller)"
+        },
+        {
+          "var": "s:xpi:dt",
+          "unit": "/s",
+          "desc": "d/dt"
+        }
+      ]
+    }
+  },
+  "params": {
+    "b": [
+      {
+        "var": "b:loc_name",
+        "unit": "Name",
+        "desc": "Name"
+      }
+    ],
+    "e": [
+      {
+        "var": "e:Ki",
+        "unit": "PI integration gain",
+        "desc": "PI integration gain"
+      },
+      {
+        "var": "e:Kp",
+        "unit": "PI proportional gain",
+        "desc": "PI proportional gain"
+      },
+      {
+        "var": "e:Ksogi",
+        "unit": "SOGI proportional gain",
+        "desc": "SOGI proportional gain"
+      },
+      {
+        "var": "e:T1",
+        "unit": "ms",
+        "desc": "Low-pass filter time constant"
+      },
+      {
+        "var": "e:bw",
+        "unit": "rad/s",
+        "desc": "Bandwidth"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "Characteristic Name",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "Data source",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:fmax",
+        "unit": "p.u.",
+        "desc": "Upper frequency limit"
+      },
+      {
+        "var": "e:fmin",
+        "unit": "p.u.",
+        "desc": "Lower frequency limit"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "Foreign Key",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:gnrl_modby",
+        "unit": "Object modified by",
+        "desc": "Object modified by"
+      },
+      {
+        "var": "e:gnrl_modif",
+        "unit": "Object modified",
+        "desc": "Object modified"
+      },
+      {
+        "var": "e:iAstabint",
+        "unit": "A-stable integration algorithm",
+        "desc": "A-stable integration algorithm"
+      },
+      {
+        "var": "e:i_block",
+        "unit": "Voltage dependent blocking",
+        "desc": "Voltage dependent blocking"
+      },
+      {
+        "var": "e:i_dw",
+        "unit": "Set the angular frequency deviation to zero when blocked",
+        "desc": "Set the angular frequency deviation to zero when blocked"
+      },
+      {
+        "var": "e:i_model",
+        "unit": "PLL based on",
+        "desc": "PLL based on"
+      },
+      {
+        "var": "e:i_norm",
+        "unit": "Input voltage normalisation",
+        "desc": "Input voltage normalisation"
+      },
+      {
+        "var": "e:i_notch",
+        "unit": "Notch filter for oscillations at double nominal angular frequency",
+        "desc": "Notch filter for oscillations at double nominal angular frequency"
+      },
+      {
+        "var": "e:loc_name",
+        "unit": "Name",
+        "desc": "Name"
+      },
+      {
+        "var": "e:measuredPh",
+        "unit": "Measured phase",
+        "desc": "Measured phase"
+      },
+      {
+        "var": "e:nphase",
+        "unit": "No. of phases",
+        "desc": "No. of phases"
+      },
+      {
+        "var": "e:outserv",
+        "unit": "Out of Service",
+        "desc": "Out of Service"
+      },
+      {
+        "var": "e:pbusbar",
+        "unit": "StaBar,ElmTerm,StaCubic",
+        "desc": "Measurement point"
+      },
+      {
+        "var": "e:umin",
+        "unit": "p.u.",
+        "desc": "Blocking voltage"
+      }
+    ],
+    "r": [
+      {
+        "var": "r:pbusbar",
+        "unit": "StaBar,ElmTerm,StaCubic",
+        "desc": "Measurement point"
+      }
+    ]
+  }
+}

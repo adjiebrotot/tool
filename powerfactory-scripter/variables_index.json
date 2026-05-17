@@ -1,0 +1,2942 @@
+{
+  "ElmArea": {
+    "file": "variables/ElmArea.json",
+    "size_kb": 92,
+    "study_groups": {}
+  },
+  "ElmAsm": {
+    "file": "variables/ElmAsm.json",
+    "size_kb": 851,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN",
+        "m:I0x3:bus1n:busN",
+        "m:I1:busN",
+        "m:I1:bus1n:busN",
+        "m:I1P:busN",
+        "m:I1P:bus1n:busN"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD0:bus1n:busN",
+        "m:HD1:busN",
+        "m:HD1:bus1n:busN",
+        "m:HD2:busN",
+        "m:HD2:bus1n:busN",
+        "m:HD:bus1:busN:Ph"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkIpload:bus1n:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0_30:busN",
+        "m:I0_30:bus1n:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ]
+    }
+  },
+  "ElmAsmsc": {
+    "file": "variables/ElmAsmsc.json",
+    "size_kb": 520,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "dynamic_emt": [
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN",
+        "m:I:bus1:busN:Ph",
+        "m:P:busN"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD1:busN",
+        "m:HD2:busN",
+        "m:HD:bus1:busN:Ph",
+        "m:HF:busN",
+        "m:HF0:busN",
+        "m:HF1:busN"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0ks:busN",
+        "m:I0x3:busN",
+        "m:I0x3ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0_30:busN",
+        "m:I0_i:busN",
+        "m:I0_m:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ]
+    }
+  },
+  "ElmBoundary": {
+    "file": "variables/ElmBoundary.json",
+    "size_kb": 16,
+    "study_groups": {}
+  },
+  "ElmCoup": {
+    "file": "variables/ElmCoup.json",
+    "size_kb": 503,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN",
+        "m:I:bus1:busN:Ph",
+        "m:I:bus2:busN:Ph",
+        "m:P:bus1:busN:Ph"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD1:busN",
+        "m:HD2:busN",
+        "m:HD:bus1:busN:Ph",
+        "m:HD:bus2:busN:Ph",
+        "m:HF:busN",
+        "m:HF0:busN"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0ks:busN",
+        "m:I0x3:busN",
+        "m:I0x3ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0_30:busN",
+        "m:I0_i:busN",
+        "m:I0_m:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ]
+    }
+  },
+  "ElmGenstat": {
+    "file": "variables/ElmGenstat.json",
+    "size_kb": 832,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN",
+        "m:I0x3:bus1n:busN",
+        "m:I1:busN",
+        "m:I1:bus1n:busN",
+        "m:I1P:busN",
+        "m:I1P:bus1n:busN"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD0:bus1n:busN",
+        "m:HD1:busN",
+        "m:HD1:bus1n:busN",
+        "m:HD2:busN",
+        "m:HD2:bus1n:busN",
+        "m:HD:bus1:busN:Ph"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkIpload:bus1n:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0_30:busN",
+        "m:I0_30:bus1n:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ]
+    }
+  },
+  "ElmIac": {
+    "file": "variables/ElmIac.json",
+    "size_kb": 422,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN",
+        "m:I:bus1:busN:Ph",
+        "m:P:bus1:busN:Ph",
+        "m:Psum:busN"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD1:busN",
+        "m:HD2:busN",
+        "m:HD:bus1:busN:Ph",
+        "m:HF:busN",
+        "m:HF0:busN",
+        "m:HF1:busN"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0ks:busN",
+        "m:I0x3:busN",
+        "m:I0x3ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0_30:busN",
+        "m:I0_i:busN",
+        "m:I0_m:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ]
+    }
+  },
+  "ElmLne": {
+    "file": "variables/ElmLne.json",
+    "size_kb": 568,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN",
+        "m:I:bus1:busN:Ph",
+        "m:I:bus2:busN:Ph",
+        "m:P:bus1:busN:Ph"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD1:busN",
+        "m:HD2:busN",
+        "m:HD:bus1:busN:Ph",
+        "m:HD:bus2:busN:Ph",
+        "m:HF:busN",
+        "m:HF0:busN"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0ks:busN",
+        "m:I0x3:busN",
+        "m:I0x3ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0_30:busN",
+        "m:I0_i:busN",
+        "m:I0_m:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ]
+    }
+  },
+  "ElmLod": {
+    "file": "variables/ElmLod.json",
+    "size_kb": 540,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN",
+        "m:I:bus1:busN:Ph",
+        "m:P:bus1:busN:Ph",
+        "m:Psum:busN"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD1:busN",
+        "m:HD2:busN",
+        "m:HD:bus1:busN:Ph",
+        "m:HF:busN",
+        "m:HF0:busN",
+        "m:HF1:busN"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0ks:busN",
+        "m:I0x3:busN",
+        "m:I0x3ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0_30:busN",
+        "m:I0_i:busN",
+        "m:I0_m:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ]
+    }
+  },
+  "ElmLodlv": {
+    "file": "variables/ElmLodlv.json",
+    "size_kb": 503,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN",
+        "m:I:bus1:busN:Ph",
+        "m:P:bus1:busN:Ph",
+        "m:Psum:busN"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD1:busN",
+        "m:HD2:busN",
+        "m:HD:bus1:busN:Ph",
+        "m:HF:busN",
+        "m:HF0:busN",
+        "m:HF1:busN"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0ks:busN",
+        "m:I0x3:busN",
+        "m:I0x3ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0_30:busN",
+        "m:I0_i:busN",
+        "m:I0_m:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ]
+    }
+  },
+  "ElmLodmv": {
+    "file": "variables/ElmLodmv.json",
+    "size_kb": 540,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN",
+        "m:I:bus1:busN:Ph",
+        "m:P:bus1:busN:Ph",
+        "m:Psum:busN"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD1:busN",
+        "m:HD2:busN",
+        "m:HD:bus1:busN:Ph",
+        "m:HF:busN",
+        "m:HF0:busN",
+        "m:HF1:busN"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0ks:busN",
+        "m:I0x3:busN",
+        "m:I0x3ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0_30:busN",
+        "m:I0_i:busN",
+        "m:I0_m:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ]
+    }
+  },
+  "ElmPvsys": {
+    "file": "variables/ElmPvsys.json",
+    "size_kb": 833,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN",
+        "m:I0x3:bus1n:busN",
+        "m:I1:busN",
+        "m:I1:bus1n:busN",
+        "m:I1P:busN",
+        "m:I1P:bus1n:busN"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD0:bus1n:busN",
+        "m:HD1:busN",
+        "m:HD1:bus1n:busN",
+        "m:HD2:busN",
+        "m:HD2:bus1n:busN",
+        "m:HD:bus1:busN:Ph"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkIpload:bus1n:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0_30:busN",
+        "m:I0_30:bus1n:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ]
+    }
+  },
+  "ElmSecctrl": {
+    "file": "variables/ElmSecctrl.json",
+    "size_kb": 15,
+    "study_groups": {}
+  },
+  "ElmShnt": {
+    "file": "variables/ElmShnt.json",
+    "size_kb": 874,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN",
+        "m:I0x3:bus1n:busN",
+        "m:I1:busN",
+        "m:I1:bus1n:busN",
+        "m:I1P:busN",
+        "m:I1P:bus1n:busN"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD0:bus1n:busN",
+        "m:HD1:busN",
+        "m:HD1:bus1n:busN",
+        "m:HD2:busN",
+        "m:HD2:bus1n:busN",
+        "m:HD:bus1:busN:Ph"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkIpload:bus1n:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0_30:busN",
+        "m:I0_30:bus1n:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ]
+    }
+  },
+  "ElmSind": {
+    "file": "variables/ElmSind.json",
+    "size_kb": 547,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN",
+        "m:I:bus1:busN:Ph",
+        "m:I:bus2:busN:Ph",
+        "m:P:bus1:busN:Ph"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD1:busN",
+        "m:HD2:busN",
+        "m:HD:bus1:busN:Ph",
+        "m:HD:bus2:busN:Ph",
+        "m:HF:busN",
+        "m:HF0:busN"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0ks:busN",
+        "m:I0x3:busN",
+        "m:I0x3ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0_30:busN",
+        "m:I0_i:busN",
+        "m:I0_m:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ]
+    }
+  },
+  "ElmStactrl": {
+    "file": "variables/ElmStactrl.json",
+    "size_kb": 23,
+    "study_groups": {}
+  },
+  "ElmSym": {
+    "file": "variables/ElmSym.json",
+    "size_kb": 883,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN",
+        "m:I0x3:bus1n:busN",
+        "m:I1:busN",
+        "m:I1:bus1n:busN",
+        "m:I1P:busN",
+        "m:I1P:bus1n:busN"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD0:bus1n:busN",
+        "m:HD1:busN",
+        "m:HD1:bus1n:busN",
+        "m:HD2:busN",
+        "m:HD2:bus1n:busN",
+        "m:HD:bus1:busN:Ph"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkIpload:bus1n:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0_30:busN",
+        "m:I0_30:bus1n:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:Brkload:bus1n:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus1n:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0:bus1n:busN",
+        "m:I0x3:busN"
+      ]
+    }
+  },
+  "ElmTerm": {
+    "file": "variables/ElmTerm.json",
+    "size_kb": 170,
+    "study_groups": {
+      "contingency": [
+        "m:Imax",
+        "m:ImaxPh:Ph",
+        "m:LossPdown",
+        "m:LossPdownload",
+        "m:LossPdownnoload",
+        "m:LossQdown",
+        "m:LossQdownload",
+        "m:LossQdownnoload"
+      ],
+      "dynamic_emt": [
+        "m:Inshc",
+        "m:Ishc:Ph",
+        "m:U:Ph",
+        "m:U0",
+        "m:U0x3",
+        "m:U1",
+        "m:U1l",
+        "m:Ul:Ph"
+      ],
+      "dynamic_rms": [
+        "m:Inshc",
+        "m:Ishc:Ph",
+        "m:Pcomp",
+        "m:Pflow",
+        "m:Pgen",
+        "m:Pload",
+        "m:Pmax",
+        "m:Pmot"
+      ],
+      "frequency_sweep": [
+        "m:HD:Ph",
+        "m:HD0",
+        "m:HD1",
+        "m:HD2",
+        "m:HF:Ph",
+        "m:HF0",
+        "m:HF1",
+        "m:HF2"
+      ],
+      "load_flow": [
+        "m:Imax",
+        "m:ImaxPh:Ph",
+        "m:LossPdown",
+        "m:LossPdownload",
+        "m:LossPdownnoload",
+        "m:LossQdown",
+        "m:LossQdownload",
+        "m:LossQdownnoload"
+      ],
+      "load_flow_dc": [
+        "m:Pcomp",
+        "m:Pflow",
+        "m:Pgen",
+        "m:Pload",
+        "m:Pmax",
+        "m:Pmot",
+        "m:Pnet",
+        "m:U"
+      ],
+      "modal_analysis": [
+        "m:Inshc",
+        "m:Ishc:Ph",
+        "m:U:Ph",
+        "m:U0",
+        "m:U0x3",
+        "m:U1",
+        "m:U1l",
+        "m:U2"
+      ],
+      "opf": [
+        "m:Imax",
+        "m:ImaxPh:Ph",
+        "m:LossPdown",
+        "m:LossPdownload",
+        "m:LossPdownnoload",
+        "m:LossQdown",
+        "m:LossQdownload",
+        "m:LossQdownnoload"
+      ],
+      "quasi_dynamic": [
+        "m:Imax",
+        "m:ImaxPh:Ph",
+        "m:LossPdown",
+        "m:LossPdownload",
+        "m:LossPdownnoload",
+        "m:LossQdown",
+        "m:LossQdownload",
+        "m:LossQdownnoload"
+      ],
+      "short_circuit": [
+        "m:I:Ph",
+        "m:I0",
+        "m:I0s",
+        "m:I0x3",
+        "m:I0x3s",
+        "m:I1",
+        "m:I1s",
+        "m:I2"
+      ],
+      "short_circuit_ansi": [
+        "m:I:Ph",
+        "m:I0",
+        "m:I0_30",
+        "m:I0_i",
+        "m:I0_m",
+        "m:I0x3",
+        "m:I0x3_30",
+        "m:I0x3_i"
+      ],
+      "short_circuit_dc": [
+        "m:Ik",
+        "m:Ik_t",
+        "m:Leq",
+        "m:RR",
+        "m:Req",
+        "m:Tn",
+        "m:Uf",
+        "m:Upref"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0",
+        "m:Ib",
+        "m:Ikd",
+        "m:Ikds",
+        "m:Ikdss",
+        "m:Ikss",
+        "m:Skss",
+        "m:Tdc"
+      ],
+      "state_estimation": [
+        "m:Imax",
+        "m:ImaxPh:Ph",
+        "m:LossPdown",
+        "m:LossPdownload",
+        "m:LossPdownnoload",
+        "m:LossQdown",
+        "m:LossQdownload",
+        "m:LossQdownnoload"
+      ]
+    }
+  },
+  "ElmTr2": {
+    "file": "variables/ElmTr2.json",
+    "size_kb": 1376,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph",
+        "m:BrkloadPh:buslv:Ph",
+        "m:BrkloadPh:buslvn:Ph"
+      ],
+      "dynamic_emt": [
+        "m:I0:bushv",
+        "m:I0:bushvn",
+        "m:I0:buslv",
+        "m:I0:buslvn",
+        "m:I0x3:bushv",
+        "m:I0x3:bushvn",
+        "m:I0x3:buslv",
+        "m:I0x3:buslvn"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph",
+        "m:BrkloadPh:buslv:Ph",
+        "m:BrkloadPh:buslvn:Ph"
+      ],
+      "frequency_sweep": [
+        "m:HD0:bushv",
+        "m:HD0:bushvn",
+        "m:HD0:buslv",
+        "m:HD0:buslvn",
+        "m:HD1:bushv",
+        "m:HD1:bushvn",
+        "m:HD1:buslv",
+        "m:HD1:buslvn"
+      ],
+      "load_flow": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph",
+        "m:BrkloadPh:buslv:Ph",
+        "m:BrkloadPh:buslvn:Ph"
+      ],
+      "load_flow_dc": [
+        "m:P:bushv",
+        "m:P:buslv",
+        "m:Q:bushv",
+        "m:Q:buslv"
+      ],
+      "modal_analysis": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph",
+        "m:BrkloadPh:buslv:Ph",
+        "m:BrkloadPh:buslvn:Ph"
+      ],
+      "opf": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph",
+        "m:BrkloadPh:buslv:Ph",
+        "m:BrkloadPh:buslvn:Ph"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph",
+        "m:BrkloadPh:buslv:Ph",
+        "m:BrkloadPh:buslvn:Ph"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:bushv:Ph",
+        "m:BrkIbload:buslv:Ph",
+        "m:BrkIpload:bushv:Ph",
+        "m:BrkIpload:bushvn:Ph",
+        "m:BrkIpload:buslv:Ph",
+        "m:BrkIpload:buslvn:Ph",
+        "m:BrkmaxIb:bushv:Ph",
+        "m:BrkmaxIb:buslv:Ph"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:bushv:Ph",
+        "m:BrkIbload:buslv:Ph",
+        "m:BrkIpload:bushv:Ph",
+        "m:BrkIpload:buslv:Ph",
+        "m:BrkmaxIb:bushv:Ph",
+        "m:BrkmaxIb:buslv:Ph",
+        "m:I0:bushv",
+        "m:I0:bushvn"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:bushv",
+        "m:Ik:buslv",
+        "m:Ipref:bushv",
+        "m:Ipref:buslv",
+        "m:Tfct:bushv",
+        "m:Tfct:buslv",
+        "m:Uf:bushv",
+        "m:Uf:buslv"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:bushv",
+        "m:I0:buslv",
+        "m:Ib:bushv",
+        "m:Ib:buslv",
+        "m:Ikd:bushv",
+        "m:Ikd:buslv",
+        "m:Ikds:bushv",
+        "m:Ikds:buslv"
+      ],
+      "state_estimation": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph",
+        "m:BrkloadPh:buslv:Ph",
+        "m:BrkloadPh:buslvn:Ph"
+      ]
+    }
+  },
+  "ElmTr3": {
+    "file": "variables/ElmTr3.json",
+    "size_kb": 2117,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:Brkload:busmv:Ph",
+        "m:Brkload:busmvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph"
+      ],
+      "dynamic_emt": [
+        "m:I0:bushv",
+        "m:I0:bushvn",
+        "m:I0:buslv",
+        "m:I0:buslvn",
+        "m:I0:busmv",
+        "m:I0:busmvn",
+        "m:I0x3:bushv",
+        "m:I0x3:bushvn"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:Brkload:busmv:Ph",
+        "m:Brkload:busmvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph"
+      ],
+      "frequency_sweep": [
+        "m:HD0:bushv",
+        "m:HD0:bushvn",
+        "m:HD0:buslv",
+        "m:HD0:buslvn",
+        "m:HD0:busmv",
+        "m:HD0:busmvn",
+        "m:HD1:bushv",
+        "m:HD1:bushvn"
+      ],
+      "load_flow": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:Brkload:busmv:Ph",
+        "m:Brkload:busmvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph"
+      ],
+      "load_flow_dc": [
+        "m:P:bushv",
+        "m:P:buslv",
+        "m:P:busmv",
+        "m:Q:bushv",
+        "m:Q:buslv",
+        "m:Q:busmv"
+      ],
+      "modal_analysis": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:Brkload:busmv:Ph",
+        "m:Brkload:busmvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph"
+      ],
+      "opf": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:Brkload:busmv:Ph",
+        "m:Brkload:busmvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:Brkload:busmv:Ph",
+        "m:Brkload:busmvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:bushv:Ph",
+        "m:BrkIbload:buslv:Ph",
+        "m:BrkIbload:busmv:Ph",
+        "m:BrkIpload:bushv:Ph",
+        "m:BrkIpload:bushvn:Ph",
+        "m:BrkIpload:buslv:Ph",
+        "m:BrkIpload:buslvn:Ph",
+        "m:BrkIpload:busmv:Ph"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:bushv:Ph",
+        "m:BrkIbload:buslv:Ph",
+        "m:BrkIbload:busmv:Ph",
+        "m:BrkIpload:bushv:Ph",
+        "m:BrkIpload:buslv:Ph",
+        "m:BrkIpload:busmv:Ph",
+        "m:BrkmaxIb:bushv:Ph",
+        "m:BrkmaxIb:buslv:Ph"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:bushv",
+        "m:Ik:buslv",
+        "m:Ik:busmv",
+        "m:Ipref:bushv",
+        "m:Ipref:buslv",
+        "m:Ipref:busmv",
+        "m:Tfct:bushv",
+        "m:Tfct:buslv"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:bushv",
+        "m:I0:buslv",
+        "m:I0:busmv",
+        "m:Ib:bushv",
+        "m:Ib:buslv",
+        "m:Ib:busmv",
+        "m:Ikd:bushv",
+        "m:Ikd:buslv"
+      ],
+      "state_estimation": [
+        "m:Brkload:bushv:Ph",
+        "m:Brkload:bushvn:Ph",
+        "m:Brkload:buslv:Ph",
+        "m:Brkload:buslvn:Ph",
+        "m:Brkload:busmv:Ph",
+        "m:Brkload:busmvn:Ph",
+        "m:BrkloadPh:bushv:Ph",
+        "m:BrkloadPh:bushvn:Ph"
+      ]
+    }
+  },
+  "ElmVac": {
+    "file": "variables/ElmVac.json",
+    "size_kb": 445,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN",
+        "m:I:bus1:busN:Ph",
+        "m:P:bus1:busN:Ph",
+        "m:Psum:busN"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD1:busN",
+        "m:HD2:busN",
+        "m:HD:bus1:busN:Ph",
+        "m:HF:busN",
+        "m:HF0:busN",
+        "m:HF1:busN"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0ks:busN",
+        "m:I0x3:busN",
+        "m:I0x3ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0_30:busN",
+        "m:I0_i:busN",
+        "m:I0_m:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ]
+    }
+  },
+  "ElmVsc": {
+    "file": "variables/ElmVsc.json",
+    "size_kb": 947,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdm:Ph",
+        "m:Brkload:busdp:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdm:Ph",
+        "m:BrkloadPh:busdp:Ph",
+        "m:I0:busac",
+        "m:I0:busdm"
+      ],
+      "dynamic_emt": [
+        "m:I0:busac",
+        "m:I0:busdm",
+        "m:I0:busdp",
+        "m:I0x3:busac",
+        "m:I0x3:busdm",
+        "m:I0x3:busdp",
+        "m:I1:busac",
+        "m:I1:busdm"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdm:Ph",
+        "m:Brkload:busdp:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdm:Ph",
+        "m:BrkloadPh:busdp:Ph",
+        "m:I0:busac",
+        "m:I0:busdm"
+      ],
+      "frequency_sweep": [
+        "m:HD0:busac",
+        "m:HD0:busdm",
+        "m:HD0:busdp",
+        "m:HD1:busac",
+        "m:HD1:busdm",
+        "m:HD1:busdp",
+        "m:HD2:busac",
+        "m:HD2:busdm"
+      ],
+      "load_flow": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdm:Ph",
+        "m:Brkload:busdp:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdm:Ph",
+        "m:BrkloadPh:busdp:Ph",
+        "m:I0:busac",
+        "m:I0:busdm"
+      ],
+      "load_flow_dc": [
+        "m:P:busac",
+        "m:P:busdm",
+        "m:P:busdp",
+        "m:Q:busac",
+        "m:Q:busdm",
+        "m:Q:busdp"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdm:Ph",
+        "m:Brkload:busdp:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdm:Ph",
+        "m:BrkloadPh:busdp:Ph",
+        "m:I0:busac",
+        "m:I0:busdm"
+      ],
+      "opf": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdm:Ph",
+        "m:Brkload:busdp:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdm:Ph",
+        "m:BrkloadPh:busdp:Ph",
+        "m:I0:busac",
+        "m:I0:busdm"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdm:Ph",
+        "m:Brkload:busdp:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdm:Ph",
+        "m:BrkloadPh:busdp:Ph",
+        "m:I0:busac",
+        "m:I0:busdm"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busac:Ph",
+        "m:BrkIbload:busdm:Ph",
+        "m:BrkIbload:busdp:Ph",
+        "m:BrkIpload:busac:Ph",
+        "m:BrkIpload:busdm:Ph",
+        "m:BrkIpload:busdp:Ph",
+        "m:BrkmaxIb:busac:Ph",
+        "m:BrkmaxIb:busdm:Ph"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busac:Ph",
+        "m:BrkIbload:busdm:Ph",
+        "m:BrkIbload:busdp:Ph",
+        "m:BrkIpload:busac:Ph",
+        "m:BrkIpload:busdm:Ph",
+        "m:BrkIpload:busdp:Ph",
+        "m:BrkmaxIb:busac:Ph",
+        "m:BrkmaxIb:busdm:Ph"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busac",
+        "m:Ik:busdm",
+        "m:Ik:busdp",
+        "m:Ipref:busac",
+        "m:Ipref:busdm",
+        "m:Ipref:busdp",
+        "m:Tfct:busac",
+        "m:Tfct:busdm"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busac",
+        "m:I0:busdm",
+        "m:I0:busdp",
+        "m:Ib:busac",
+        "m:Ib:busdm",
+        "m:Ib:busdp",
+        "m:Ikd:busac",
+        "m:Ikd:busdm"
+      ],
+      "state_estimation": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdm:Ph",
+        "m:Brkload:busdp:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdm:Ph",
+        "m:BrkloadPh:busdp:Ph",
+        "m:I0:busac",
+        "m:I0:busdm"
+      ]
+    }
+  },
+  "ElmVscmono": {
+    "file": "variables/ElmVscmono.json",
+    "size_kb": 667,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdc:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdc:Ph",
+        "m:I0:busac",
+        "m:I0:busdc",
+        "m:I0x3:busac",
+        "m:I0x3:busdc"
+      ],
+      "dynamic_emt": [
+        "m:I0:busac",
+        "m:I0:busdc",
+        "m:I0x3:busac",
+        "m:I0x3:busdc",
+        "m:I1:busac",
+        "m:I1:busdc",
+        "m:I1P:busac",
+        "m:I1P:busdc"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdc:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdc:Ph",
+        "m:I0:busac",
+        "m:I0:busdc",
+        "m:I0x3:busac",
+        "m:I0x3:busdc"
+      ],
+      "frequency_sweep": [
+        "m:HD0:busac",
+        "m:HD0:busdc",
+        "m:HD1:busac",
+        "m:HD1:busdc",
+        "m:HD2:busac",
+        "m:HD2:busdc",
+        "m:HD:busac:Ph",
+        "m:HD:busdc"
+      ],
+      "load_flow": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdc:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdc:Ph",
+        "m:I0:busac",
+        "m:I0:busdc",
+        "m:I0x3:busac",
+        "m:I0x3:busdc"
+      ],
+      "load_flow_dc": [
+        "m:P:busac",
+        "m:P:busdc",
+        "m:Q:busac",
+        "m:Q:busdc"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdc:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdc:Ph",
+        "m:I0:busac",
+        "m:I0:busdc",
+        "m:I0x3:busac",
+        "m:I0x3:busdc"
+      ],
+      "opf": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdc:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdc:Ph",
+        "m:I0:busac",
+        "m:I0:busdc",
+        "m:I0x3:busac",
+        "m:I0x3:busdc"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdc:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdc:Ph",
+        "m:I0:busac",
+        "m:I0:busdc",
+        "m:I0x3:busac",
+        "m:I0x3:busdc"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busac:Ph",
+        "m:BrkIbload:busdc:Ph",
+        "m:BrkIpload:busac:Ph",
+        "m:BrkIpload:busdc:Ph",
+        "m:BrkmaxIb:busac:Ph",
+        "m:BrkmaxIb:busdc:Ph",
+        "m:I0:busac",
+        "m:I0:busdc"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busac:Ph",
+        "m:BrkIbload:busdc:Ph",
+        "m:BrkIpload:busac:Ph",
+        "m:BrkIpload:busdc:Ph",
+        "m:BrkmaxIb:busac:Ph",
+        "m:BrkmaxIb:busdc:Ph",
+        "m:I0:busac",
+        "m:I0:busdc"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busac",
+        "m:Ik:busdc",
+        "m:Ipref:busac",
+        "m:Ipref:busdc",
+        "m:Tfct:busac",
+        "m:Tfct:busdc",
+        "m:Uf:busac",
+        "m:Uf:busdc"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busac",
+        "m:I0:busdc",
+        "m:Ib:busac",
+        "m:Ib:busdc",
+        "m:Ikd:busac",
+        "m:Ikd:busdc",
+        "m:Ikds:busac",
+        "m:Ikds:busdc"
+      ],
+      "state_estimation": [
+        "m:Brkload:busac:Ph",
+        "m:Brkload:busdc:Ph",
+        "m:BrkloadPh:busac:Ph",
+        "m:BrkloadPh:busdc:Ph",
+        "m:I0:busac",
+        "m:I0:busdc",
+        "m:I0x3:busac",
+        "m:I0x3:busdc"
+      ]
+    }
+  },
+  "ElmXnet": {
+    "file": "variables/ElmXnet.json",
+    "size_kb": 499,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN",
+        "m:I:bus1:busN:Ph",
+        "m:P:bus1:busN:Ph",
+        "m:Psum:busN"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD1:busN",
+        "m:HD2:busN",
+        "m:HD:bus1:busN:Ph",
+        "m:HF:busN",
+        "m:HF0:busN",
+        "m:HF1:busN"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0ks:busN",
+        "m:I0x3:busN",
+        "m:I0x3ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0_30:busN",
+        "m:I0_i:busN",
+        "m:I0_m:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN"
+      ]
+    }
+  },
+  "ElmZone": {
+    "file": "variables/ElmZone.json",
+    "size_kb": 92,
+    "study_groups": {}
+  },
+  "ElmZpu": {
+    "file": "variables/ElmZpu.json",
+    "size_kb": 627,
+    "study_groups": {
+      "contingency": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "dynamic_emt": [
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN",
+        "m:I1Q:busN",
+        "m:I:bus1:busN:Ph",
+        "m:I:bus2:busN:Ph",
+        "m:P:bus1:busN:Ph"
+      ],
+      "dynamic_rms": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "frequency_sweep": [
+        "m:HD:busN",
+        "m:HD0:busN",
+        "m:HD1:busN",
+        "m:HD2:busN",
+        "m:HD:bus1:busN:Ph",
+        "m:HD:bus2:busN:Ph",
+        "m:HF:busN",
+        "m:HF0:busN"
+      ],
+      "load_flow": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN"
+      ],
+      "modal_analysis": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "opf": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "quasi_dynamic": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ],
+      "short_circuit": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0ks:busN",
+        "m:I0x3:busN",
+        "m:I0x3ks:busN"
+      ],
+      "short_circuit_ansi": [
+        "m:BrkIbload:busN:Ph",
+        "m:BrkIpload:busN:Ph",
+        "m:BrkmaxIb:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0_30:busN",
+        "m:I0_i:busN",
+        "m:I0_m:busN"
+      ],
+      "short_circuit_dc": [
+        "m:Ik:busN",
+        "m:Ipref:busN",
+        "m:Tfct:busN",
+        "m:Uf:busN",
+        "m:Upref:busN"
+      ],
+      "short_circuit_iec61363": [
+        "m:I0:busN",
+        "m:Ib:busN",
+        "m:Ikd:busN",
+        "m:Ikds:busN",
+        "m:Ikdss:busN",
+        "m:Ikss:busN",
+        "m:Skss:busN",
+        "m:Tdc:busN"
+      ],
+      "state_estimation": [
+        "m:Brkload:busN:Ph",
+        "m:BrkloadPh:bus1:busN:Ph",
+        "m:BrkloadPh:bus2:busN:Ph",
+        "m:I:busN",
+        "m:I0:busN",
+        "m:I0x3:busN",
+        "m:I1:busN",
+        "m:I1P:busN"
+      ]
+    }
+  },
+  "StaPll": {
+    "file": "variables/StaPll.json",
+    "size_kb": 14,
+    "study_groups": {}
+  }
+}

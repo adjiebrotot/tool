@@ -1,0 +1,3627 @@
+{
+  "result_vars": {
+    "contingency": {
+      "c": [
+        {
+          "var": "c:CompP",
+          "unit": "MW",
+          "desc": "Compensation (Losses)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:CompQ",
+          "unit": "Mvar",
+          "desc": "Compensation, C",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ComprQ",
+          "unit": "Mvar",
+          "desc": "Compensation, L",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ConnMvar_max",
+          "unit": "Mvar",
+          "desc": "Connected MVAR Capacity (max)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ConnMvar_min",
+          "unit": "Mvar",
+          "desc": "Connected MVAR Capacity (min)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ExportP",
+          "unit": "MW",
+          "desc": "Export, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ExportQ",
+          "unit": "Mvar",
+          "desc": "Export, Reactive Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:GenP",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:GenPdiff",
+          "unit": "MW",
+          "desc": "Generators, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:GenPdisp",
+          "unit": "MW",
+          "desc": "Generators, Dispatch Active Power"
+        },
+        {
+          "var": "c:GenPmism",
+          "unit": "MW",
+          "desc": "Generators, difference between actual and dispatched active power"
+        },
+        {
+          "var": "c:GenPnom",
+          "unit": "MW",
+          "desc": "Generators, Nominal Active Power"
+        },
+        {
+          "var": "c:GenPspinres",
+          "unit": "MW",
+          "desc": "Generators, difference between maximum and actual active power"
+        },
+        {
+          "var": "c:GenQ",
+          "unit": "Mvar",
+          "desc": "Generators, Reactive Power"
+        },
+        {
+          "var": "c:GenQdiff",
+          "unit": "Mvar",
+          "desc": "Generators, difference between nominal and actual reactive power"
+        },
+        {
+          "var": "c:GenQnom",
+          "unit": "Mvar",
+          "desc": "Generators, Nominal Reactive Power"
+        },
+        {
+          "var": "c:GenQspinres",
+          "unit": "Mvar",
+          "desc": "Generators, difference between maximum and actual reactive power"
+        },
+        {
+          "var": "c:GenS",
+          "unit": "MVA",
+          "desc": "Generators, Apparent Power"
+        },
+        {
+          "var": "c:GenSnom",
+          "unit": "MVA",
+          "desc": "Generators, Nominal Apparent Power"
+        },
+        {
+          "var": "c:Gencos",
+          "unit": "Generators, Power Factor",
+          "desc": "Generators, Power Factor"
+        },
+        {
+          "var": "c:Gencosnom",
+          "unit": "Generators, Nominal Power Factor",
+          "desc": "Generators, Nominal Power Factor"
+        },
+        {
+          "var": "c:ImportP",
+          "unit": "MW",
+          "desc": "Import, Active Power"
+        },
+        {
+          "var": "c:ImportQ",
+          "unit": "Mvar",
+          "desc": "Import, Reactive Power"
+        },
+        {
+          "var": "c:InterP",
+          "unit": "MW",
+          "desc": "Interchange Flow, Active Power"
+        },
+        {
+          "var": "c:InterQ",
+          "unit": "Mvar",
+          "desc": "Interchange Flow, Reactive Power"
+        },
+        {
+          "var": "c:LoadP",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:LoadPdem",
+          "unit": "MW",
+          "desc": "Loads, Active Power Demand"
+        },
+        {
+          "var": "c:LoadPdiff",
+          "unit": "MW",
+          "desc": "Loads, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:LoadPmism",
+          "unit": "MW",
+          "desc": "Loads, difference between actual active power and demand"
+        },
+        {
+          "var": "c:LoadPnom",
+          "unit": "MW",
+          "desc": "Loads, Nominal Active Power"
+        },
+        {
+          "var": "c:LoadQ",
+          "unit": "Mvar",
+          "desc": "Loads, Reactive Power"
+        },
+        {
+          "var": "c:LoadQdiff",
+          "unit": "Mvar",
+          "desc": "Loads, difference between nominal and actual reactive power"
+        },
+        {
+          "var": "c:LoadQnom",
+          "unit": "Mvar",
+          "desc": "Loads, Nominal Reactive Power"
+        },
+        {
+          "var": "c:LoadS",
+          "unit": "MVA",
+          "desc": "Loads, Apparent Power"
+        },
+        {
+          "var": "c:LoadSnom",
+          "unit": "MVA",
+          "desc": "Loads, Nominal Apparent Power"
+        },
+        {
+          "var": "c:Loadcos",
+          "unit": "Loads, Power Factor",
+          "desc": "Loads, Power Factor"
+        },
+        {
+          "var": "c:Loadcosnom",
+          "unit": "Loads, Nominal Power Factor",
+          "desc": "Loads, Nominal Power Factor"
+        },
+        {
+          "var": "c:LossP",
+          "unit": "MW",
+          "desc": "Losses, Active Power"
+        },
+        {
+          "var": "c:LossPld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power"
+        },
+        {
+          "var": "c:LossPnld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPnldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPnldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power"
+        },
+        {
+          "var": "c:LossQ",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossQld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossQnld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQnldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQnldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power"
+        },
+        {
+          "var": "c:Maxloading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:MotP",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:MotQ",
+          "unit": "Mvar",
+          "desc": "Motor Loads, Reactive Power"
+        },
+        {
+          "var": "c:MotS",
+          "unit": "MVA",
+          "desc": "Motor Loads, Apparent Power"
+        },
+        {
+          "var": "c:Motcos",
+          "unit": "Motor Loads, Power Factor",
+          "desc": "Motor Loads, Power Factor"
+        },
+        {
+          "var": "c:NetP",
+          "unit": "MW",
+          "desc": "External Networks, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NetQ",
+          "unit": "Mvar",
+          "desc": "External Networks, Reactive Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NetS",
+          "unit": "MVA",
+          "desc": "External Networks, Apparent Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:Netcos",
+          "unit": "External Networks, Power Factor",
+          "desc": "External Networks, Power Factor",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrGenQMax",
+          "unit": "Number of generators above their maximum reactive power limit",
+          "desc": "Number of generators above their maximum reactive power limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrGenQMin",
+          "unit": "Number of generators below their minimum reactive power limit",
+          "desc": "Number of generators below their minimum reactive power limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrOvlBranch",
+          "unit": "Number of overloaded branch components",
+          "desc": "Number of overloaded branch components",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrTermMax",
+          "unit": "Number of terminals above their maximum voltage limit",
+          "desc": "Number of terminals above their maximum voltage limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrTermMin",
+          "unit": "Number of terminals below their minimum voltage limit",
+          "desc": "Number of terminals below their minimum voltage limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:Q_shgain",
+          "unit": "Mvar",
+          "desc": "Reactive Power Shunt Gain"
+        },
+        {
+          "var": "c:RSC_Lag",
+          "unit": "Mvar",
+          "desc": "Spare Reactive Capacity Lag"
+        },
+        {
+          "var": "c:RSC_Lead",
+          "unit": "Mvar",
+          "desc": "Spare Reactive Capacity Lead"
+        },
+        {
+          "var": "c:RUC_Lag",
+          "unit": "Mvar",
+          "desc": "Used Reactive Capacity Lag"
+        },
+        {
+          "var": "c:RUC_Lead",
+          "unit": "Mvar",
+          "desc": "Used Reactive Capacity Lead"
+        },
+        {
+          "var": "c:SupP",
+          "unit": "MW",
+          "desc": "Supplied Demand"
+        },
+        {
+          "var": "c:TotLoadP",
+          "unit": "MW",
+          "desc": "Total Load, Active Power"
+        },
+        {
+          "var": "c:TotLoadQ",
+          "unit": "Mvar",
+          "desc": "Total Load, Reactive Power"
+        },
+        {
+          "var": "c:TotLoadS",
+          "unit": "MVA",
+          "desc": "Total Load, Apparent Power"
+        },
+        {
+          "var": "c:TotLoadcos",
+          "unit": "Total Load, Power Factor",
+          "desc": "Total Load, Power Factor"
+        },
+        {
+          "var": "c:TotP",
+          "unit": "MW",
+          "desc": "Total Demand"
+        },
+        {
+          "var": "c:TotconsP",
+          "unit": "MW",
+          "desc": "Total Consumption, Active Power"
+        },
+        {
+          "var": "c:TotconsQ",
+          "unit": "Mvar",
+          "desc": "Total Consumption, Reactive Power"
+        },
+        {
+          "var": "c:TotgenP",
+          "unit": "MW",
+          "desc": "Total Generation, Active Power"
+        },
+        {
+          "var": "c:TotgenQ",
+          "unit": "Mvar",
+          "desc": "Total Generation, Reactive Power"
+        },
+        {
+          "var": "c:UnsupP",
+          "unit": "MW",
+          "desc": "Unsupplied Demand"
+        },
+        {
+          "var": "c:cst_disp",
+          "unit": "USD/h",
+          "desc": "Total Production Costs"
+        },
+        {
+          "var": "c:n_areas",
+          "unit": "Number of Connected Areas",
+          "desc": "Number of Connected Areas"
+        },
+        {
+          "var": "c:n_asm",
+          "unit": "No. of asyn. Machines",
+          "desc": "No. of asyn. Machines"
+        },
+        {
+          "var": "c:n_bar",
+          "unit": "No. of Busbars",
+          "desc": "No. of Busbars"
+        },
+        {
+          "var": "c:n_cust",
+          "unit": "No. of Customers",
+          "desc": "No. of Customers"
+        },
+        {
+          "var": "c:n_ele",
+          "unit": "Number of Elements",
+          "desc": "Number of Elements"
+        },
+        {
+          "var": "c:n_lne",
+          "unit": "No. of Lines",
+          "desc": "No. of Lines"
+        },
+        {
+          "var": "c:n_lod",
+          "unit": "No. of Loads",
+          "desc": "No. of Loads"
+        },
+        {
+          "var": "c:n_pvs",
+          "unit": "No. of PV Systems",
+          "desc": "No. of PV Systems"
+        },
+        {
+          "var": "c:n_stg",
+          "unit": "No. of Static Generators",
+          "desc": "No. of Static Generators"
+        },
+        {
+          "var": "c:n_sym",
+          "unit": "No. of syn. Machines",
+          "desc": "No. of syn. Machines"
+        },
+        {
+          "var": "c:n_term",
+          "unit": "No. of Terminals",
+          "desc": "No. of Terminals"
+        },
+        {
+          "var": "c:n_volt",
+          "unit": "Number of Voltage Levels",
+          "desc": "Number of Voltage Levels"
+        },
+        {
+          "var": "c:umax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals"
+        },
+        {
+          "var": "c:umin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals"
+        },
+        {
+          "var": "c:uphtmax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:uphtmin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    },
+    "dynamic_emt": {
+      "c": [
+        {
+          "var": "c:Pcomp",
+          "unit": "MW",
+          "desc": "Compensation (Losses)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Pgen",
+          "unit": "MW",
+          "desc": "Generators, Active Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Pinter",
+          "unit": "MW",
+          "desc": "Interchange Flow, Active Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Pload",
+          "unit": "MW",
+          "desc": "Loads, Active Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ploss",
+          "unit": "MW",
+          "desc": "Losses, Active Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Pmot",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Pnet",
+          "unit": "MW",
+          "desc": "External Networks, Active Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Pres",
+          "unit": "MW",
+          "desc": "Available Reserve",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Pt",
+          "unit": "MW",
+          "desc": "Turbine Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qcomp",
+          "unit": "Mvar",
+          "desc": "Compensation, C",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qcompr",
+          "unit": "Mvar",
+          "desc": "Compensation, L",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qgen",
+          "unit": "Mvar",
+          "desc": "Generators, Reactive Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qinter",
+          "unit": "Mvar",
+          "desc": "Interchange Flow, Reactive Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qload",
+          "unit": "Mvar",
+          "desc": "Loads, Reactive Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qloss",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qmot",
+          "unit": "Mvar",
+          "desc": "Motor Loads, Reactive Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qnet",
+          "unit": "Mvar",
+          "desc": "External Networks, Reactive Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Sgen",
+          "unit": "MVA",
+          "desc": "Generators, Apparent Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Sload",
+          "unit": "MVA",
+          "desc": "Loads, Apparent Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Smot",
+          "unit": "MVA",
+          "desc": "Motor Loads, Apparent Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Snet",
+          "unit": "MVA",
+          "desc": "External Networks, Apparent Power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:cosgen",
+          "unit": "Generators, Power Factor",
+          "desc": "Generators, Power Factor",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:cosload",
+          "unit": "Loads, Power Factor",
+          "desc": "Loads, Power Factor",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:cosmot",
+          "unit": "Motor Loads, Power Factor",
+          "desc": "Motor Loads, Power Factor",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:cosnet",
+          "unit": "External Networks, Power Factor",
+          "desc": "External Networks, Power Factor",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    },
+    "dynamic_rms": {
+      "c": [
+        {
+          "var": "c:ExportP",
+          "unit": "MW",
+          "desc": "Export, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:GenP",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:GenPdiff",
+          "unit": "MW",
+          "desc": "Generators, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:GenPdisp",
+          "unit": "MW",
+          "desc": "Generators, Dispatch Active Power"
+        },
+        {
+          "var": "c:GenPmism",
+          "unit": "MW",
+          "desc": "Generators, difference between actual and dispatched active power"
+        },
+        {
+          "var": "c:GenPnom",
+          "unit": "MW",
+          "desc": "Generators, Nominal Active Power"
+        },
+        {
+          "var": "c:GenPspinres",
+          "unit": "MW",
+          "desc": "Generators, difference between maximum and actual active power"
+        },
+        {
+          "var": "c:ImportP",
+          "unit": "MW",
+          "desc": "Import, Active Power"
+        },
+        {
+          "var": "c:InterP",
+          "unit": "MW",
+          "desc": "Interchange Flow, Active Power"
+        },
+        {
+          "var": "c:LoadP",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:LoadPdem",
+          "unit": "MW",
+          "desc": "Loads, Active Power Demand"
+        },
+        {
+          "var": "c:LoadPdiff",
+          "unit": "MW",
+          "desc": "Loads, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:LoadPmism",
+          "unit": "MW",
+          "desc": "Loads, difference between actual active power and demand"
+        },
+        {
+          "var": "c:LoadPnom",
+          "unit": "MW",
+          "desc": "Loads, Nominal Active Power"
+        },
+        {
+          "var": "c:Maxloading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:MotP",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:NetP",
+          "unit": "MW",
+          "desc": "External Networks, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrOvlBranch",
+          "unit": "Number of overloaded branch components",
+          "desc": "Number of overloaded branch components",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:Pcomp",
+          "unit": "MW",
+          "desc": "Compensation (Losses)"
+        },
+        {
+          "var": "c:Pgen",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:Pinter",
+          "unit": "MW",
+          "desc": "Interchange Flow, Active Power"
+        },
+        {
+          "var": "c:Pload",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:Ploss",
+          "unit": "MW",
+          "desc": "Losses, Active Power"
+        },
+        {
+          "var": "c:Pmot",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:Pnet",
+          "unit": "MW",
+          "desc": "External Networks, Active Power"
+        },
+        {
+          "var": "c:Pres",
+          "unit": "MW",
+          "desc": "Available-Reserve"
+        },
+        {
+          "var": "c:Pt",
+          "unit": "MW",
+          "desc": "Turbine Power"
+        },
+        {
+          "var": "c:Qcomp",
+          "unit": "Mvar",
+          "desc": "Compensation, C"
+        },
+        {
+          "var": "c:Qcompr",
+          "unit": "Mvar",
+          "desc": "Compensation, L"
+        },
+        {
+          "var": "c:Qgen",
+          "unit": "Mvar",
+          "desc": "Generators, Reactive Power"
+        },
+        {
+          "var": "c:Qinter",
+          "unit": "Mvar",
+          "desc": "Interchange Flow, Reactive Power"
+        },
+        {
+          "var": "c:Qload",
+          "unit": "Mvar",
+          "desc": "Loads, Reactive Power"
+        },
+        {
+          "var": "c:Qloss",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power"
+        },
+        {
+          "var": "c:Qmot",
+          "unit": "Mvar",
+          "desc": "Motor Loads, Reactive Power"
+        },
+        {
+          "var": "c:Qnet",
+          "unit": "Mvar",
+          "desc": "External Networks, Reactive Power"
+        },
+        {
+          "var": "c:Sgen",
+          "unit": "MVA",
+          "desc": "Generators, Apparent Power"
+        },
+        {
+          "var": "c:Sload",
+          "unit": "MVA",
+          "desc": "Loads, Apparent Power"
+        },
+        {
+          "var": "c:Smot",
+          "unit": "MVA",
+          "desc": "Motor Loads, Apparent Power"
+        },
+        {
+          "var": "c:Snet",
+          "unit": "MVA",
+          "desc": "External Networks, Apparent Power"
+        },
+        {
+          "var": "c:SupP",
+          "unit": "MW",
+          "desc": "Supplied Demand"
+        },
+        {
+          "var": "c:TotLoadP",
+          "unit": "MW",
+          "desc": "Total Load, Active Power"
+        },
+        {
+          "var": "c:TotP",
+          "unit": "MW",
+          "desc": "Total Demand"
+        },
+        {
+          "var": "c:TotconsP",
+          "unit": "MW",
+          "desc": "Total Consumption, Active Power"
+        },
+        {
+          "var": "c:TotgenP",
+          "unit": "MW",
+          "desc": "Total Generation, Active Power"
+        },
+        {
+          "var": "c:UnsupP",
+          "unit": "MW",
+          "desc": "Unsupplied Demand"
+        },
+        {
+          "var": "c:cosgen",
+          "unit": "Generators, Power Factor",
+          "desc": "Generators, Power Factor"
+        },
+        {
+          "var": "c:cosload",
+          "unit": "Loads, Power Factor",
+          "desc": "Loads, Power Factor"
+        },
+        {
+          "var": "c:cosmot",
+          "unit": "Motor Loads, Power Factor",
+          "desc": "Motor Loads, Power Factor"
+        },
+        {
+          "var": "c:cosnet",
+          "unit": "External Networks, Power Factor",
+          "desc": "External Networks, Power Factor"
+        },
+        {
+          "var": "c:cst_disp",
+          "unit": "USD/h",
+          "desc": "Total Production Costs"
+        },
+        {
+          "var": "c:n_areas",
+          "unit": "Number of Connected Areas",
+          "desc": "Number of Connected Areas"
+        },
+        {
+          "var": "c:n_asm",
+          "unit": "No. of asyn. Machines",
+          "desc": "No. of asyn. Machines"
+        },
+        {
+          "var": "c:n_bar",
+          "unit": "No. of Busbars",
+          "desc": "No. of Busbars"
+        },
+        {
+          "var": "c:n_cust",
+          "unit": "Number of Customers",
+          "desc": "Number of Customers"
+        },
+        {
+          "var": "c:n_ele",
+          "unit": "Number of Elements",
+          "desc": "Number of Elements"
+        },
+        {
+          "var": "c:n_lne",
+          "unit": "No. of Lines",
+          "desc": "No. of Lines"
+        },
+        {
+          "var": "c:n_lod",
+          "unit": "No. of Loads",
+          "desc": "No. of Loads"
+        },
+        {
+          "var": "c:n_pvs",
+          "unit": "No. of PV Systems",
+          "desc": "No. of PV Systems"
+        },
+        {
+          "var": "c:n_stg",
+          "unit": "No. of Static Generators",
+          "desc": "No. of Static Generators"
+        },
+        {
+          "var": "c:n_sym",
+          "unit": "No. of syn. Machines",
+          "desc": "No. of syn. Machines"
+        },
+        {
+          "var": "c:n_term",
+          "unit": "No. of Terminals",
+          "desc": "No. of Terminals"
+        },
+        {
+          "var": "c:n_volt",
+          "unit": "Number of Voltage Levels",
+          "desc": "Number of Voltage Levels"
+        }
+      ]
+    },
+    "load_flow": {
+      "c": [
+        {
+          "var": "c:CompP",
+          "unit": "MW",
+          "desc": "Compensation (Losses)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:CompQ",
+          "unit": "Mvar",
+          "desc": "Compensation, C",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ComprQ",
+          "unit": "Mvar",
+          "desc": "Compensation, L",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ConnMvar_max",
+          "unit": "Mvar",
+          "desc": "Connected MVAR Capacity (max)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ConnMvar_min",
+          "unit": "Mvar",
+          "desc": "Connected MVAR Capacity (min)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ExportP",
+          "unit": "MW",
+          "desc": "Export, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ExportQ",
+          "unit": "Mvar",
+          "desc": "Export, Reactive Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:GenP",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:GenPdiff",
+          "unit": "MW",
+          "desc": "Generators, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:GenPdisp",
+          "unit": "MW",
+          "desc": "Generators, Dispatch Active Power"
+        },
+        {
+          "var": "c:GenPmism",
+          "unit": "MW",
+          "desc": "Generators, difference between actual and dispatched active power"
+        },
+        {
+          "var": "c:GenPnom",
+          "unit": "MW",
+          "desc": "Generators, Nominal Active Power"
+        },
+        {
+          "var": "c:GenPspinres",
+          "unit": "MW",
+          "desc": "Generators, difference between maximum and actual active power"
+        },
+        {
+          "var": "c:GenQ",
+          "unit": "Mvar",
+          "desc": "Generators, Reactive Power"
+        },
+        {
+          "var": "c:GenQdiff",
+          "unit": "Mvar",
+          "desc": "Generators, difference between nominal and actual reactive power"
+        },
+        {
+          "var": "c:GenQnom",
+          "unit": "Mvar",
+          "desc": "Generators, Nominal Reactive Power"
+        },
+        {
+          "var": "c:GenQspinres",
+          "unit": "Mvar",
+          "desc": "Generators, difference between maximum and actual reactive power"
+        },
+        {
+          "var": "c:GenS",
+          "unit": "MVA",
+          "desc": "Generators, Apparent Power"
+        },
+        {
+          "var": "c:GenSnom",
+          "unit": "MVA",
+          "desc": "Generators, Nominal Apparent Power"
+        },
+        {
+          "var": "c:Gencos",
+          "unit": "Generators, Power Factor",
+          "desc": "Generators, Power Factor"
+        },
+        {
+          "var": "c:Gencosnom",
+          "unit": "Generators, Nominal Power Factor",
+          "desc": "Generators, Nominal Power Factor"
+        },
+        {
+          "var": "c:ImportP",
+          "unit": "MW",
+          "desc": "Import, Active Power"
+        },
+        {
+          "var": "c:ImportQ",
+          "unit": "Mvar",
+          "desc": "Import, Reactive Power"
+        },
+        {
+          "var": "c:InterP",
+          "unit": "MW",
+          "desc": "Interchange Flow, Active Power"
+        },
+        {
+          "var": "c:InterQ",
+          "unit": "Mvar",
+          "desc": "Interchange Flow, Reactive Power"
+        },
+        {
+          "var": "c:LoadP",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:LoadPdem",
+          "unit": "MW",
+          "desc": "Loads, Active Power Demand"
+        },
+        {
+          "var": "c:LoadPdiff",
+          "unit": "MW",
+          "desc": "Loads, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:LoadPmism",
+          "unit": "MW",
+          "desc": "Loads, difference between actual active power and demand"
+        },
+        {
+          "var": "c:LoadPnom",
+          "unit": "MW",
+          "desc": "Loads, Nominal Active Power"
+        },
+        {
+          "var": "c:LoadQ",
+          "unit": "Mvar",
+          "desc": "Loads, Reactive Power"
+        },
+        {
+          "var": "c:LoadQdiff",
+          "unit": "Mvar",
+          "desc": "Loads, difference between nominal and actual reactive power"
+        },
+        {
+          "var": "c:LoadQnom",
+          "unit": "Mvar",
+          "desc": "Loads, Nominal Reactive Power"
+        },
+        {
+          "var": "c:LoadS",
+          "unit": "MVA",
+          "desc": "Loads, Apparent Power"
+        },
+        {
+          "var": "c:LoadSnom",
+          "unit": "MVA",
+          "desc": "Loads, Nominal Apparent Power"
+        },
+        {
+          "var": "c:Loadcos",
+          "unit": "Loads, Power Factor",
+          "desc": "Loads, Power Factor"
+        },
+        {
+          "var": "c:Loadcosnom",
+          "unit": "Loads, Nominal Power Factor",
+          "desc": "Loads, Nominal Power Factor"
+        },
+        {
+          "var": "c:LossP",
+          "unit": "MW",
+          "desc": "Losses, Active Power"
+        },
+        {
+          "var": "c:LossPld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power"
+        },
+        {
+          "var": "c:LossPnld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPnldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPnldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power"
+        },
+        {
+          "var": "c:LossQ",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossQld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossQnld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQnldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQnldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power"
+        },
+        {
+          "var": "c:Maxloading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:MotP",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:MotQ",
+          "unit": "Mvar",
+          "desc": "Motor Loads, Reactive Power"
+        },
+        {
+          "var": "c:MotS",
+          "unit": "MVA",
+          "desc": "Motor Loads, Apparent Power"
+        },
+        {
+          "var": "c:Motcos",
+          "unit": "Motor Loads, Power Factor",
+          "desc": "Motor Loads, Power Factor"
+        },
+        {
+          "var": "c:NetP",
+          "unit": "MW",
+          "desc": "External Networks, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NetQ",
+          "unit": "Mvar",
+          "desc": "External Networks, Reactive Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NetS",
+          "unit": "MVA",
+          "desc": "External Networks, Apparent Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:Netcos",
+          "unit": "External Networks, Power Factor",
+          "desc": "External Networks, Power Factor",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrGenQMax",
+          "unit": "Number of generators above their maximum reactive power limit",
+          "desc": "Number of generators above their maximum reactive power limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrGenQMin",
+          "unit": "Number of generators below their minimum reactive power limit",
+          "desc": "Number of generators below their minimum reactive power limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrOvlBranch",
+          "unit": "Number of overloaded branch components",
+          "desc": "Number of overloaded branch components",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrTermMax",
+          "unit": "Number of terminals above their maximum voltage limit",
+          "desc": "Number of terminals above their maximum voltage limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrTermMin",
+          "unit": "Number of terminals below their minimum voltage limit",
+          "desc": "Number of terminals below their minimum voltage limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:Q_shgain",
+          "unit": "Mvar",
+          "desc": "Reactive Power Shunt Gain"
+        },
+        {
+          "var": "c:RSC_Lag",
+          "unit": "Mvar",
+          "desc": "Spare Reactive Capacity Lag"
+        },
+        {
+          "var": "c:RSC_Lead",
+          "unit": "Mvar",
+          "desc": "Spare Reactive Capacity Lead"
+        },
+        {
+          "var": "c:RUC_Lag",
+          "unit": "Mvar",
+          "desc": "Used Reactive Capacity Lag"
+        },
+        {
+          "var": "c:RUC_Lead",
+          "unit": "Mvar",
+          "desc": "Used Reactive Capacity Lead"
+        },
+        {
+          "var": "c:SupP",
+          "unit": "MW",
+          "desc": "Supplied Demand"
+        },
+        {
+          "var": "c:TotLoadP",
+          "unit": "MW",
+          "desc": "Total Load, Active Power"
+        },
+        {
+          "var": "c:TotLoadQ",
+          "unit": "Mvar",
+          "desc": "Total Load, Reactive Power"
+        },
+        {
+          "var": "c:TotLoadS",
+          "unit": "MVA",
+          "desc": "Total Load, Apparent Power"
+        },
+        {
+          "var": "c:TotLoadcos",
+          "unit": "Total Load, Power Factor",
+          "desc": "Total Load, Power Factor"
+        },
+        {
+          "var": "c:TotP",
+          "unit": "MW",
+          "desc": "Total Demand"
+        },
+        {
+          "var": "c:TotconsP",
+          "unit": "MW",
+          "desc": "Total Consumption, Active Power"
+        },
+        {
+          "var": "c:TotconsQ",
+          "unit": "Mvar",
+          "desc": "Total Consumption, Reactive Power"
+        },
+        {
+          "var": "c:TotgenP",
+          "unit": "MW",
+          "desc": "Total Generation, Active Power"
+        },
+        {
+          "var": "c:TotgenQ",
+          "unit": "Mvar",
+          "desc": "Total Generation, Reactive Power"
+        },
+        {
+          "var": "c:UnsupP",
+          "unit": "MW",
+          "desc": "Unsupplied Demand"
+        },
+        {
+          "var": "c:cst_disp",
+          "unit": "USD/h",
+          "desc": "Total Production Costs"
+        },
+        {
+          "var": "c:n_areas",
+          "unit": "Number of Connected Areas",
+          "desc": "Number of Connected Areas"
+        },
+        {
+          "var": "c:n_asm",
+          "unit": "No. of asyn. Machines",
+          "desc": "No. of asyn. Machines"
+        },
+        {
+          "var": "c:n_bar",
+          "unit": "No. of Busbars",
+          "desc": "No. of Busbars"
+        },
+        {
+          "var": "c:n_cust",
+          "unit": "No. of Customers",
+          "desc": "No. of Customers"
+        },
+        {
+          "var": "c:n_ele",
+          "unit": "Number of Elements",
+          "desc": "Number of Elements"
+        },
+        {
+          "var": "c:n_lne",
+          "unit": "No. of Lines",
+          "desc": "No. of Lines"
+        },
+        {
+          "var": "c:n_lod",
+          "unit": "No. of Loads",
+          "desc": "No. of Loads"
+        },
+        {
+          "var": "c:n_pvs",
+          "unit": "No. of PV Systems",
+          "desc": "No. of PV Systems"
+        },
+        {
+          "var": "c:n_stg",
+          "unit": "No. of Static Generators",
+          "desc": "No. of Static Generators"
+        },
+        {
+          "var": "c:n_sym",
+          "unit": "No. of syn. Machines",
+          "desc": "No. of syn. Machines"
+        },
+        {
+          "var": "c:n_term",
+          "unit": "No. of Terminals",
+          "desc": "No. of Terminals"
+        },
+        {
+          "var": "c:n_volt",
+          "unit": "Number of Voltage Levels",
+          "desc": "Number of Voltage Levels"
+        },
+        {
+          "var": "c:umax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals"
+        },
+        {
+          "var": "c:umin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals"
+        },
+        {
+          "var": "c:uphtmax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:uphtmin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    },
+    "load_flow_dc": {
+      "c": [
+        {
+          "var": "c:ExportP",
+          "unit": "MW",
+          "desc": "Export, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:GenP",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:GenPdiff",
+          "unit": "MW",
+          "desc": "Generators, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:GenPdisp",
+          "unit": "MW",
+          "desc": "Generators, Dispatch Active Power"
+        },
+        {
+          "var": "c:GenPmism",
+          "unit": "MW",
+          "desc": "Generators, difference between actual and dispatched active power"
+        },
+        {
+          "var": "c:GenPnom",
+          "unit": "MW",
+          "desc": "Generators, Nominal Active Power"
+        },
+        {
+          "var": "c:GenPspinres",
+          "unit": "MW",
+          "desc": "Generators, difference between maximum and actual active power"
+        },
+        {
+          "var": "c:ImportP",
+          "unit": "MW",
+          "desc": "Import, Active Power"
+        },
+        {
+          "var": "c:InterP",
+          "unit": "MW",
+          "desc": "Interchange Flow, Active Power"
+        },
+        {
+          "var": "c:LoadP",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:LoadPdem",
+          "unit": "MW",
+          "desc": "Loads, Active Power Demand"
+        },
+        {
+          "var": "c:LoadPdiff",
+          "unit": "MW",
+          "desc": "Loads, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:LoadPmism",
+          "unit": "MW",
+          "desc": "Loads, difference between actual active power and demand"
+        },
+        {
+          "var": "c:LoadPnom",
+          "unit": "MW",
+          "desc": "Loads, Nominal Active Power"
+        },
+        {
+          "var": "c:Maxloading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:MotP",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:NetP",
+          "unit": "MW",
+          "desc": "External Networks, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrOvlBranch",
+          "unit": "Number of overloaded branch components",
+          "desc": "Number of overloaded branch components",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:SupP",
+          "unit": "MW",
+          "desc": "Supplied Demand"
+        },
+        {
+          "var": "c:TotLoadP",
+          "unit": "MW",
+          "desc": "Total Load, Active Power"
+        },
+        {
+          "var": "c:TotP",
+          "unit": "MW",
+          "desc": "Total Demand"
+        },
+        {
+          "var": "c:TotconsP",
+          "unit": "MW",
+          "desc": "Total Consumption, Active Power"
+        },
+        {
+          "var": "c:TotgenP",
+          "unit": "MW",
+          "desc": "Total Generation, Active Power"
+        },
+        {
+          "var": "c:UnsupP",
+          "unit": "MW",
+          "desc": "Unsupplied Demand"
+        },
+        {
+          "var": "c:cst_disp",
+          "unit": "USD/h",
+          "desc": "Total Production Costs"
+        },
+        {
+          "var": "c:n_areas",
+          "unit": "Number of Connected Areas",
+          "desc": "Number of Connected Areas"
+        },
+        {
+          "var": "c:n_asm",
+          "unit": "No. of asyn. Machines",
+          "desc": "No. of asyn. Machines"
+        },
+        {
+          "var": "c:n_bar",
+          "unit": "No. of Busbars",
+          "desc": "No. of Busbars"
+        },
+        {
+          "var": "c:n_cust",
+          "unit": "Number of Customers",
+          "desc": "Number of Customers"
+        },
+        {
+          "var": "c:n_ele",
+          "unit": "Number of Elements",
+          "desc": "Number of Elements"
+        },
+        {
+          "var": "c:n_lne",
+          "unit": "No. of Lines",
+          "desc": "No. of Lines"
+        },
+        {
+          "var": "c:n_lod",
+          "unit": "No. of Loads",
+          "desc": "No. of Loads"
+        },
+        {
+          "var": "c:n_pvs",
+          "unit": "No. of PV Systems",
+          "desc": "No. of PV Systems"
+        },
+        {
+          "var": "c:n_stg",
+          "unit": "No. of Static Generators",
+          "desc": "No. of Static Generators"
+        },
+        {
+          "var": "c:n_sym",
+          "unit": "No. of syn. Machines",
+          "desc": "No. of syn. Machines"
+        },
+        {
+          "var": "c:n_term",
+          "unit": "No. of Terminals",
+          "desc": "No. of Terminals"
+        },
+        {
+          "var": "c:n_volt",
+          "unit": "Number of Voltage Levels",
+          "desc": "Number of Voltage Levels"
+        }
+      ]
+    },
+    "modal_analysis": {
+      "c": [
+        {
+          "var": "c:Pcomp",
+          "unit": "MW",
+          "desc": "Compensation (Losses)"
+        },
+        {
+          "var": "c:Pgen",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:Pinter",
+          "unit": "MW",
+          "desc": "Interchange Flow, Active Power"
+        },
+        {
+          "var": "c:Pload",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:Ploss",
+          "unit": "MW",
+          "desc": "Losses, Active Power"
+        },
+        {
+          "var": "c:Pmot",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:Pnet",
+          "unit": "MW",
+          "desc": "External Networks, Active Power"
+        },
+        {
+          "var": "c:Pres",
+          "unit": "MW",
+          "desc": "Available-Reserve"
+        },
+        {
+          "var": "c:Pt",
+          "unit": "MW",
+          "desc": "Turbine Power"
+        },
+        {
+          "var": "c:Qcomp",
+          "unit": "Mvar",
+          "desc": "Compensation, C"
+        },
+        {
+          "var": "c:Qcompr",
+          "unit": "Mvar",
+          "desc": "Compensation, L"
+        },
+        {
+          "var": "c:Qgen",
+          "unit": "Mvar",
+          "desc": "Generators, Reactive Power"
+        },
+        {
+          "var": "c:Qinter",
+          "unit": "Mvar",
+          "desc": "Interchange Flow, Reactive Power"
+        },
+        {
+          "var": "c:Qload",
+          "unit": "Mvar",
+          "desc": "Loads, Reactive Power"
+        },
+        {
+          "var": "c:Qloss",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power"
+        },
+        {
+          "var": "c:Qmot",
+          "unit": "Mvar",
+          "desc": "Motor Loads, Reactive Power"
+        },
+        {
+          "var": "c:Qnet",
+          "unit": "Mvar",
+          "desc": "External Networks, Reactive Power"
+        },
+        {
+          "var": "c:Sgen",
+          "unit": "MVA",
+          "desc": "Generators, Apparent Power"
+        },
+        {
+          "var": "c:Sload",
+          "unit": "MVA",
+          "desc": "Loads, Apparent Power"
+        },
+        {
+          "var": "c:Smot",
+          "unit": "MVA",
+          "desc": "Motor Loads, Apparent Power"
+        },
+        {
+          "var": "c:Snet",
+          "unit": "MVA",
+          "desc": "External Networks, Apparent Power"
+        },
+        {
+          "var": "c:cosgen",
+          "unit": "Generators, Power Factor",
+          "desc": "Generators, Power Factor"
+        },
+        {
+          "var": "c:cosload",
+          "unit": "Loads, Power Factor",
+          "desc": "Loads, Power Factor"
+        },
+        {
+          "var": "c:cosmot",
+          "unit": "Motor Loads, Power Factor",
+          "desc": "Motor Loads, Power Factor"
+        },
+        {
+          "var": "c:cosnet",
+          "unit": "External Networks, Power Factor",
+          "desc": "External Networks, Power Factor"
+        }
+      ]
+    },
+    "opf": {
+      "c": [
+        {
+          "var": "c:CompP",
+          "unit": "MW",
+          "desc": "Compensation (Losses)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:CompQ",
+          "unit": "Mvar",
+          "desc": "Compensation, C",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ComprQ",
+          "unit": "Mvar",
+          "desc": "Compensation, L",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ConnMvar_max",
+          "unit": "Mvar",
+          "desc": "Connected MVAR Capacity (max)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ConnMvar_min",
+          "unit": "Mvar",
+          "desc": "Connected MVAR Capacity (min)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ExportP",
+          "unit": "MW",
+          "desc": "Export, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ExportQ",
+          "unit": "Mvar",
+          "desc": "Export, Reactive Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:GenP",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:GenPdiff",
+          "unit": "MW",
+          "desc": "Generators, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:GenPdisp",
+          "unit": "MW",
+          "desc": "Generators, Dispatch Active Power"
+        },
+        {
+          "var": "c:GenPmism",
+          "unit": "MW",
+          "desc": "Generators, difference between actual and dispatched active power"
+        },
+        {
+          "var": "c:GenPnom",
+          "unit": "MW",
+          "desc": "Generators, Nominal Active Power"
+        },
+        {
+          "var": "c:GenPspinres",
+          "unit": "MW",
+          "desc": "Generators, difference between maximum and actual active power"
+        },
+        {
+          "var": "c:GenQ",
+          "unit": "Mvar",
+          "desc": "Generators, Reactive Power"
+        },
+        {
+          "var": "c:GenQdiff",
+          "unit": "Mvar",
+          "desc": "Generators, difference between nominal and actual reactive power"
+        },
+        {
+          "var": "c:GenQnom",
+          "unit": "Mvar",
+          "desc": "Generators, Nominal Reactive Power"
+        },
+        {
+          "var": "c:GenQspinres",
+          "unit": "Mvar",
+          "desc": "Generators, difference between maximum and actual reactive power"
+        },
+        {
+          "var": "c:GenS",
+          "unit": "MVA",
+          "desc": "Generators, Apparent Power"
+        },
+        {
+          "var": "c:GenSnom",
+          "unit": "MVA",
+          "desc": "Generators, Nominal Apparent Power"
+        },
+        {
+          "var": "c:Gencos",
+          "unit": "Generators, Power Factor",
+          "desc": "Generators, Power Factor"
+        },
+        {
+          "var": "c:Gencosnom",
+          "unit": "Generators, Nominal Power Factor",
+          "desc": "Generators, Nominal Power Factor"
+        },
+        {
+          "var": "c:ImportP",
+          "unit": "MW",
+          "desc": "Import, Active Power"
+        },
+        {
+          "var": "c:ImportQ",
+          "unit": "Mvar",
+          "desc": "Import, Reactive Power"
+        },
+        {
+          "var": "c:InterP",
+          "unit": "MW",
+          "desc": "Interchange Flow, Active Power"
+        },
+        {
+          "var": "c:InterQ",
+          "unit": "Mvar",
+          "desc": "Interchange Flow, Reactive Power"
+        },
+        {
+          "var": "c:LoadP",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:LoadPdem",
+          "unit": "MW",
+          "desc": "Loads, Active Power Demand"
+        },
+        {
+          "var": "c:LoadPdiff",
+          "unit": "MW",
+          "desc": "Loads, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:LoadPmism",
+          "unit": "MW",
+          "desc": "Loads, difference between actual active power and demand"
+        },
+        {
+          "var": "c:LoadPnom",
+          "unit": "MW",
+          "desc": "Loads, Nominal Active Power"
+        },
+        {
+          "var": "c:LoadQ",
+          "unit": "Mvar",
+          "desc": "Loads, Reactive Power"
+        },
+        {
+          "var": "c:LoadQdiff",
+          "unit": "Mvar",
+          "desc": "Loads, difference between nominal and actual reactive power"
+        },
+        {
+          "var": "c:LoadQnom",
+          "unit": "Mvar",
+          "desc": "Loads, Nominal Reactive Power"
+        },
+        {
+          "var": "c:LoadS",
+          "unit": "MVA",
+          "desc": "Loads, Apparent Power"
+        },
+        {
+          "var": "c:LoadSnom",
+          "unit": "MVA",
+          "desc": "Loads, Nominal Apparent Power"
+        },
+        {
+          "var": "c:Loadcos",
+          "unit": "Loads, Power Factor",
+          "desc": "Loads, Power Factor"
+        },
+        {
+          "var": "c:Loadcosnom",
+          "unit": "Loads, Nominal Power Factor",
+          "desc": "Loads, Nominal Power Factor"
+        },
+        {
+          "var": "c:LossP",
+          "unit": "MW",
+          "desc": "Losses, Active Power"
+        },
+        {
+          "var": "c:LossPld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power"
+        },
+        {
+          "var": "c:LossPnld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPnldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPnldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power"
+        },
+        {
+          "var": "c:LossQ",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossQld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossQnld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQnldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQnldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power"
+        },
+        {
+          "var": "c:Maxloading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:MotP",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:MotQ",
+          "unit": "Mvar",
+          "desc": "Motor Loads, Reactive Power"
+        },
+        {
+          "var": "c:MotS",
+          "unit": "MVA",
+          "desc": "Motor Loads, Apparent Power"
+        },
+        {
+          "var": "c:Motcos",
+          "unit": "Motor Loads, Power Factor",
+          "desc": "Motor Loads, Power Factor"
+        },
+        {
+          "var": "c:NetP",
+          "unit": "MW",
+          "desc": "External Networks, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NetQ",
+          "unit": "Mvar",
+          "desc": "External Networks, Reactive Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NetS",
+          "unit": "MVA",
+          "desc": "External Networks, Apparent Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:Netcos",
+          "unit": "External Networks, Power Factor",
+          "desc": "External Networks, Power Factor",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrGenQMax",
+          "unit": "Number of generators above their maximum reactive power limit",
+          "desc": "Number of generators above their maximum reactive power limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrGenQMin",
+          "unit": "Number of generators below their minimum reactive power limit",
+          "desc": "Number of generators below their minimum reactive power limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrOvlBranch",
+          "unit": "Number of overloaded branch components",
+          "desc": "Number of overloaded branch components",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrTermMax",
+          "unit": "Number of terminals above their maximum voltage limit",
+          "desc": "Number of terminals above their maximum voltage limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrTermMin",
+          "unit": "Number of terminals below their minimum voltage limit",
+          "desc": "Number of terminals below their minimum voltage limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:Q_shgain",
+          "unit": "Mvar",
+          "desc": "Reactive Power Shunt Gain"
+        },
+        {
+          "var": "c:RSC_Lag",
+          "unit": "Mvar",
+          "desc": "Spare Reactive Capacity Lag"
+        },
+        {
+          "var": "c:RSC_Lead",
+          "unit": "Mvar",
+          "desc": "Spare Reactive Capacity Lead"
+        },
+        {
+          "var": "c:RUC_Lag",
+          "unit": "Mvar",
+          "desc": "Used Reactive Capacity Lag"
+        },
+        {
+          "var": "c:RUC_Lead",
+          "unit": "Mvar",
+          "desc": "Used Reactive Capacity Lead"
+        },
+        {
+          "var": "c:SupP",
+          "unit": "MW",
+          "desc": "Supplied Demand"
+        },
+        {
+          "var": "c:TotLoadP",
+          "unit": "MW",
+          "desc": "Total Load, Active Power"
+        },
+        {
+          "var": "c:TotLoadQ",
+          "unit": "Mvar",
+          "desc": "Total Load, Reactive Power"
+        },
+        {
+          "var": "c:TotLoadS",
+          "unit": "MVA",
+          "desc": "Total Load, Apparent Power"
+        },
+        {
+          "var": "c:TotLoadcos",
+          "unit": "Total Load, Power Factor",
+          "desc": "Total Load, Power Factor"
+        },
+        {
+          "var": "c:TotP",
+          "unit": "MW",
+          "desc": "Total Demand"
+        },
+        {
+          "var": "c:TotconsP",
+          "unit": "MW",
+          "desc": "Total Consumption, Active Power"
+        },
+        {
+          "var": "c:TotconsQ",
+          "unit": "Mvar",
+          "desc": "Total Consumption, Reactive Power"
+        },
+        {
+          "var": "c:TotgenP",
+          "unit": "MW",
+          "desc": "Total Generation, Active Power"
+        },
+        {
+          "var": "c:TotgenQ",
+          "unit": "Mvar",
+          "desc": "Total Generation, Reactive Power"
+        },
+        {
+          "var": "c:UnsupP",
+          "unit": "MW",
+          "desc": "Unsupplied Demand"
+        },
+        {
+          "var": "c:cst_disp",
+          "unit": "USD/h",
+          "desc": "Total Production Costs"
+        },
+        {
+          "var": "c:n_areas",
+          "unit": "Number of Connected Areas",
+          "desc": "Number of Connected Areas"
+        },
+        {
+          "var": "c:n_asm",
+          "unit": "No. of asyn. Machines",
+          "desc": "No. of asyn. Machines"
+        },
+        {
+          "var": "c:n_bar",
+          "unit": "No. of Busbars",
+          "desc": "No. of Busbars"
+        },
+        {
+          "var": "c:n_cust",
+          "unit": "No. of Customers",
+          "desc": "No. of Customers"
+        },
+        {
+          "var": "c:n_ele",
+          "unit": "Number of Elements",
+          "desc": "Number of Elements"
+        },
+        {
+          "var": "c:n_lne",
+          "unit": "No. of Lines",
+          "desc": "No. of Lines"
+        },
+        {
+          "var": "c:n_lod",
+          "unit": "No. of Loads",
+          "desc": "No. of Loads"
+        },
+        {
+          "var": "c:n_pvs",
+          "unit": "No. of PV Systems",
+          "desc": "No. of PV Systems"
+        },
+        {
+          "var": "c:n_stg",
+          "unit": "No. of Static Generators",
+          "desc": "No. of Static Generators"
+        },
+        {
+          "var": "c:n_sym",
+          "unit": "No. of syn. Machines",
+          "desc": "No. of syn. Machines"
+        },
+        {
+          "var": "c:n_term",
+          "unit": "No. of Terminals",
+          "desc": "No. of Terminals"
+        },
+        {
+          "var": "c:n_volt",
+          "unit": "Number of Voltage Levels",
+          "desc": "Number of Voltage Levels"
+        },
+        {
+          "var": "c:umax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals"
+        },
+        {
+          "var": "c:umin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals"
+        },
+        {
+          "var": "c:uphtmax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:uphtmin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    },
+    "quasi_dynamic": {
+      "c": [
+        {
+          "var": "c:CompP",
+          "unit": "MW",
+          "desc": "Compensation (Losses)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:CompQ",
+          "unit": "Mvar",
+          "desc": "Compensation, C",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ComprQ",
+          "unit": "Mvar",
+          "desc": "Compensation, L",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ConnMvar_max",
+          "unit": "Mvar",
+          "desc": "Connected MVAR Capacity (max)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ConnMvar_min",
+          "unit": "Mvar",
+          "desc": "Connected MVAR Capacity (min)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ExportP",
+          "unit": "MW",
+          "desc": "Export, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ExportQ",
+          "unit": "Mvar",
+          "desc": "Export, Reactive Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:GenP",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:GenPdiff",
+          "unit": "MW",
+          "desc": "Generators, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:GenPdisp",
+          "unit": "MW",
+          "desc": "Generators, Dispatch Active Power"
+        },
+        {
+          "var": "c:GenPmism",
+          "unit": "MW",
+          "desc": "Generators, difference between actual and dispatched active power"
+        },
+        {
+          "var": "c:GenPnom",
+          "unit": "MW",
+          "desc": "Generators, Nominal Active Power"
+        },
+        {
+          "var": "c:GenPspinres",
+          "unit": "MW",
+          "desc": "Generators, difference between maximum and actual active power"
+        },
+        {
+          "var": "c:GenQ",
+          "unit": "Mvar",
+          "desc": "Generators, Reactive Power"
+        },
+        {
+          "var": "c:GenQdiff",
+          "unit": "Mvar",
+          "desc": "Generators, difference between nominal and actual reactive power"
+        },
+        {
+          "var": "c:GenQnom",
+          "unit": "Mvar",
+          "desc": "Generators, Nominal Reactive Power"
+        },
+        {
+          "var": "c:GenQspinres",
+          "unit": "Mvar",
+          "desc": "Generators, difference between maximum and actual reactive power"
+        },
+        {
+          "var": "c:GenS",
+          "unit": "MVA",
+          "desc": "Generators, Apparent Power"
+        },
+        {
+          "var": "c:GenSnom",
+          "unit": "MVA",
+          "desc": "Generators, Nominal Apparent Power"
+        },
+        {
+          "var": "c:Gencos",
+          "unit": "Generators, Power Factor",
+          "desc": "Generators, Power Factor"
+        },
+        {
+          "var": "c:Gencosnom",
+          "unit": "Generators, Nominal Power Factor",
+          "desc": "Generators, Nominal Power Factor"
+        },
+        {
+          "var": "c:ImportP",
+          "unit": "MW",
+          "desc": "Import, Active Power"
+        },
+        {
+          "var": "c:ImportQ",
+          "unit": "Mvar",
+          "desc": "Import, Reactive Power"
+        },
+        {
+          "var": "c:InterP",
+          "unit": "MW",
+          "desc": "Interchange Flow, Active Power"
+        },
+        {
+          "var": "c:InterQ",
+          "unit": "Mvar",
+          "desc": "Interchange Flow, Reactive Power"
+        },
+        {
+          "var": "c:LoadP",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:LoadPdem",
+          "unit": "MW",
+          "desc": "Loads, Active Power Demand"
+        },
+        {
+          "var": "c:LoadPdiff",
+          "unit": "MW",
+          "desc": "Loads, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:LoadPmism",
+          "unit": "MW",
+          "desc": "Loads, difference between actual active power and demand"
+        },
+        {
+          "var": "c:LoadPnom",
+          "unit": "MW",
+          "desc": "Loads, Nominal Active Power"
+        },
+        {
+          "var": "c:LoadQ",
+          "unit": "Mvar",
+          "desc": "Loads, Reactive Power"
+        },
+        {
+          "var": "c:LoadQdiff",
+          "unit": "Mvar",
+          "desc": "Loads, difference between nominal and actual reactive power"
+        },
+        {
+          "var": "c:LoadQnom",
+          "unit": "Mvar",
+          "desc": "Loads, Nominal Reactive Power"
+        },
+        {
+          "var": "c:LoadS",
+          "unit": "MVA",
+          "desc": "Loads, Apparent Power"
+        },
+        {
+          "var": "c:LoadSnom",
+          "unit": "MVA",
+          "desc": "Loads, Nominal Apparent Power"
+        },
+        {
+          "var": "c:Loadcos",
+          "unit": "Loads, Power Factor",
+          "desc": "Loads, Power Factor"
+        },
+        {
+          "var": "c:Loadcosnom",
+          "unit": "Loads, Nominal Power Factor",
+          "desc": "Loads, Nominal Power Factor"
+        },
+        {
+          "var": "c:LossP",
+          "unit": "MW",
+          "desc": "Losses, Active Power"
+        },
+        {
+          "var": "c:LossPld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power"
+        },
+        {
+          "var": "c:LossPnld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPnldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPnldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power"
+        },
+        {
+          "var": "c:LossQ",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossQld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossQnld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQnldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQnldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power"
+        },
+        {
+          "var": "c:Maxloading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:MotP",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:MotQ",
+          "unit": "Mvar",
+          "desc": "Motor Loads, Reactive Power"
+        },
+        {
+          "var": "c:MotS",
+          "unit": "MVA",
+          "desc": "Motor Loads, Apparent Power"
+        },
+        {
+          "var": "c:Motcos",
+          "unit": "Motor Loads, Power Factor",
+          "desc": "Motor Loads, Power Factor"
+        },
+        {
+          "var": "c:NetP",
+          "unit": "MW",
+          "desc": "External Networks, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NetQ",
+          "unit": "Mvar",
+          "desc": "External Networks, Reactive Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NetS",
+          "unit": "MVA",
+          "desc": "External Networks, Apparent Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:Netcos",
+          "unit": "External Networks, Power Factor",
+          "desc": "External Networks, Power Factor",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrGenQMax",
+          "unit": "Number of generators above their maximum reactive power limit",
+          "desc": "Number of generators above their maximum reactive power limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrGenQMin",
+          "unit": "Number of generators below their minimum reactive power limit",
+          "desc": "Number of generators below their minimum reactive power limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrOvlBranch",
+          "unit": "Number of overloaded branch components",
+          "desc": "Number of overloaded branch components",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrTermMax",
+          "unit": "Number of terminals above their maximum voltage limit",
+          "desc": "Number of terminals above their maximum voltage limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrTermMin",
+          "unit": "Number of terminals below their minimum voltage limit",
+          "desc": "Number of terminals below their minimum voltage limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:Q_shgain",
+          "unit": "Mvar",
+          "desc": "Reactive Power Shunt Gain"
+        },
+        {
+          "var": "c:RSC_Lag",
+          "unit": "Mvar",
+          "desc": "Spare Reactive Capacity Lag"
+        },
+        {
+          "var": "c:RSC_Lead",
+          "unit": "Mvar",
+          "desc": "Spare Reactive Capacity Lead"
+        },
+        {
+          "var": "c:RUC_Lag",
+          "unit": "Mvar",
+          "desc": "Used Reactive Capacity Lag"
+        },
+        {
+          "var": "c:RUC_Lead",
+          "unit": "Mvar",
+          "desc": "Used Reactive Capacity Lead"
+        },
+        {
+          "var": "c:SupP",
+          "unit": "MW",
+          "desc": "Supplied Demand"
+        },
+        {
+          "var": "c:TotLoadP",
+          "unit": "MW",
+          "desc": "Total Load, Active Power"
+        },
+        {
+          "var": "c:TotLoadQ",
+          "unit": "Mvar",
+          "desc": "Total Load, Reactive Power"
+        },
+        {
+          "var": "c:TotLoadS",
+          "unit": "MVA",
+          "desc": "Total Load, Apparent Power"
+        },
+        {
+          "var": "c:TotLoadcos",
+          "unit": "Total Load, Power Factor",
+          "desc": "Total Load, Power Factor"
+        },
+        {
+          "var": "c:TotP",
+          "unit": "MW",
+          "desc": "Total Demand"
+        },
+        {
+          "var": "c:TotconsP",
+          "unit": "MW",
+          "desc": "Total Consumption, Active Power"
+        },
+        {
+          "var": "c:TotconsQ",
+          "unit": "Mvar",
+          "desc": "Total Consumption, Reactive Power"
+        },
+        {
+          "var": "c:TotgenP",
+          "unit": "MW",
+          "desc": "Total Generation, Active Power"
+        },
+        {
+          "var": "c:TotgenQ",
+          "unit": "Mvar",
+          "desc": "Total Generation, Reactive Power"
+        },
+        {
+          "var": "c:UnsupP",
+          "unit": "MW",
+          "desc": "Unsupplied Demand"
+        },
+        {
+          "var": "c:cst_disp",
+          "unit": "USD/h",
+          "desc": "Total Production Costs"
+        },
+        {
+          "var": "c:n_areas",
+          "unit": "Number of Connected Areas",
+          "desc": "Number of Connected Areas"
+        },
+        {
+          "var": "c:n_asm",
+          "unit": "No. of asyn. Machines",
+          "desc": "No. of asyn. Machines"
+        },
+        {
+          "var": "c:n_bar",
+          "unit": "No. of Busbars",
+          "desc": "No. of Busbars"
+        },
+        {
+          "var": "c:n_cust",
+          "unit": "No. of Customers",
+          "desc": "No. of Customers"
+        },
+        {
+          "var": "c:n_ele",
+          "unit": "Number of Elements",
+          "desc": "Number of Elements"
+        },
+        {
+          "var": "c:n_lne",
+          "unit": "No. of Lines",
+          "desc": "No. of Lines"
+        },
+        {
+          "var": "c:n_lod",
+          "unit": "No. of Loads",
+          "desc": "No. of Loads"
+        },
+        {
+          "var": "c:n_pvs",
+          "unit": "No. of PV Systems",
+          "desc": "No. of PV Systems"
+        },
+        {
+          "var": "c:n_stg",
+          "unit": "No. of Static Generators",
+          "desc": "No. of Static Generators"
+        },
+        {
+          "var": "c:n_sym",
+          "unit": "No. of syn. Machines",
+          "desc": "No. of syn. Machines"
+        },
+        {
+          "var": "c:n_term",
+          "unit": "No. of Terminals",
+          "desc": "No. of Terminals"
+        },
+        {
+          "var": "c:n_volt",
+          "unit": "Number of Voltage Levels",
+          "desc": "Number of Voltage Levels"
+        },
+        {
+          "var": "c:umax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals"
+        },
+        {
+          "var": "c:umin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals"
+        },
+        {
+          "var": "c:uphtmax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:uphtmin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    },
+    "state_estimation": {
+      "c": [
+        {
+          "var": "c:CompP",
+          "unit": "MW",
+          "desc": "Compensation (Losses)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:CompQ",
+          "unit": "Mvar",
+          "desc": "Compensation, C",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ComprQ",
+          "unit": "Mvar",
+          "desc": "Compensation, L",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ConnMvar_max",
+          "unit": "Mvar",
+          "desc": "Connected MVAR Capacity (max)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ConnMvar_min",
+          "unit": "Mvar",
+          "desc": "Connected MVAR Capacity (min)",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ExportP",
+          "unit": "MW",
+          "desc": "Export, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:ExportQ",
+          "unit": "Mvar",
+          "desc": "Export, Reactive Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:GenP",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:GenPdiff",
+          "unit": "MW",
+          "desc": "Generators, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:GenPdisp",
+          "unit": "MW",
+          "desc": "Generators, Dispatch Active Power"
+        },
+        {
+          "var": "c:GenPmism",
+          "unit": "MW",
+          "desc": "Generators, difference between actual and dispatched active power"
+        },
+        {
+          "var": "c:GenPnom",
+          "unit": "MW",
+          "desc": "Generators, Nominal Active Power"
+        },
+        {
+          "var": "c:GenPspinres",
+          "unit": "MW",
+          "desc": "Generators, difference between maximum and actual active power"
+        },
+        {
+          "var": "c:GenQ",
+          "unit": "Mvar",
+          "desc": "Generators, Reactive Power"
+        },
+        {
+          "var": "c:GenQdiff",
+          "unit": "Mvar",
+          "desc": "Generators, difference between nominal and actual reactive power"
+        },
+        {
+          "var": "c:GenQnom",
+          "unit": "Mvar",
+          "desc": "Generators, Nominal Reactive Power"
+        },
+        {
+          "var": "c:GenQspinres",
+          "unit": "Mvar",
+          "desc": "Generators, difference between maximum and actual reactive power"
+        },
+        {
+          "var": "c:GenS",
+          "unit": "MVA",
+          "desc": "Generators, Apparent Power"
+        },
+        {
+          "var": "c:GenSnom",
+          "unit": "MVA",
+          "desc": "Generators, Nominal Apparent Power"
+        },
+        {
+          "var": "c:Gencos",
+          "unit": "Generators, Power Factor",
+          "desc": "Generators, Power Factor"
+        },
+        {
+          "var": "c:Gencosnom",
+          "unit": "Generators, Nominal Power Factor",
+          "desc": "Generators, Nominal Power Factor"
+        },
+        {
+          "var": "c:ImportP",
+          "unit": "MW",
+          "desc": "Import, Active Power"
+        },
+        {
+          "var": "c:ImportQ",
+          "unit": "Mvar",
+          "desc": "Import, Reactive Power"
+        },
+        {
+          "var": "c:InterP",
+          "unit": "MW",
+          "desc": "Interchange Flow, Active Power"
+        },
+        {
+          "var": "c:InterQ",
+          "unit": "Mvar",
+          "desc": "Interchange Flow, Reactive Power"
+        },
+        {
+          "var": "c:LoadP",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:LoadPdem",
+          "unit": "MW",
+          "desc": "Loads, Active Power Demand"
+        },
+        {
+          "var": "c:LoadPdiff",
+          "unit": "MW",
+          "desc": "Loads, difference between nominal and actual active power"
+        },
+        {
+          "var": "c:LoadPmism",
+          "unit": "MW",
+          "desc": "Loads, difference between actual active power and demand"
+        },
+        {
+          "var": "c:LoadPnom",
+          "unit": "MW",
+          "desc": "Loads, Nominal Active Power"
+        },
+        {
+          "var": "c:LoadQ",
+          "unit": "Mvar",
+          "desc": "Loads, Reactive Power"
+        },
+        {
+          "var": "c:LoadQdiff",
+          "unit": "Mvar",
+          "desc": "Loads, difference between nominal and actual reactive power"
+        },
+        {
+          "var": "c:LoadQnom",
+          "unit": "Mvar",
+          "desc": "Loads, Nominal Reactive Power"
+        },
+        {
+          "var": "c:LoadS",
+          "unit": "MVA",
+          "desc": "Loads, Apparent Power"
+        },
+        {
+          "var": "c:LoadSnom",
+          "unit": "MVA",
+          "desc": "Loads, Nominal Apparent Power"
+        },
+        {
+          "var": "c:Loadcos",
+          "unit": "Loads, Power Factor",
+          "desc": "Loads, Power Factor"
+        },
+        {
+          "var": "c:Loadcosnom",
+          "unit": "Loads, Nominal Power Factor",
+          "desc": "Loads, Nominal Power Factor"
+        },
+        {
+          "var": "c:LossP",
+          "unit": "MW",
+          "desc": "Losses, Active Power"
+        },
+        {
+          "var": "c:LossPld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossPlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power"
+        },
+        {
+          "var": "c:LossPnld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPnldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPnldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossPtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power"
+        },
+        {
+          "var": "c:LossQ",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossQld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossQlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossQnld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQnldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQnldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossQtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power"
+        },
+        {
+          "var": "c:Maxloading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:MotP",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:MotQ",
+          "unit": "Mvar",
+          "desc": "Motor Loads, Reactive Power"
+        },
+        {
+          "var": "c:MotS",
+          "unit": "MVA",
+          "desc": "Motor Loads, Apparent Power"
+        },
+        {
+          "var": "c:Motcos",
+          "unit": "Motor Loads, Power Factor",
+          "desc": "Motor Loads, Power Factor"
+        },
+        {
+          "var": "c:NetP",
+          "unit": "MW",
+          "desc": "External Networks, Active Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NetQ",
+          "unit": "Mvar",
+          "desc": "External Networks, Reactive Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NetS",
+          "unit": "MVA",
+          "desc": "External Networks, Apparent Power",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:Netcos",
+          "unit": "External Networks, Power Factor",
+          "desc": "External Networks, Power Factor",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrGenQMax",
+          "unit": "Number of generators above their maximum reactive power limit",
+          "desc": "Number of generators above their maximum reactive power limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrGenQMin",
+          "unit": "Number of generators below their minimum reactive power limit",
+          "desc": "Number of generators below their minimum reactive power limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrOvlBranch",
+          "unit": "Number of overloaded branch components",
+          "desc": "Number of overloaded branch components",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrTermMax",
+          "unit": "Number of terminals above their maximum voltage limit",
+          "desc": "Number of terminals above their maximum voltage limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:NrTermMin",
+          "unit": "Number of terminals below their minimum voltage limit",
+          "desc": "Number of terminals below their minimum voltage limit",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:Q_shgain",
+          "unit": "Mvar",
+          "desc": "Reactive Power Shunt Gain"
+        },
+        {
+          "var": "c:RSC_Lag",
+          "unit": "Mvar",
+          "desc": "Spare Reactive Capacity Lag"
+        },
+        {
+          "var": "c:RSC_Lead",
+          "unit": "Mvar",
+          "desc": "Spare Reactive Capacity Lead"
+        },
+        {
+          "var": "c:RUC_Lag",
+          "unit": "Mvar",
+          "desc": "Used Reactive Capacity Lag"
+        },
+        {
+          "var": "c:RUC_Lead",
+          "unit": "Mvar",
+          "desc": "Used Reactive Capacity Lead"
+        },
+        {
+          "var": "c:SupP",
+          "unit": "MW",
+          "desc": "Supplied Demand"
+        },
+        {
+          "var": "c:TotLoadP",
+          "unit": "MW",
+          "desc": "Total Load, Active Power"
+        },
+        {
+          "var": "c:TotLoadQ",
+          "unit": "Mvar",
+          "desc": "Total Load, Reactive Power"
+        },
+        {
+          "var": "c:TotLoadS",
+          "unit": "MVA",
+          "desc": "Total Load, Apparent Power"
+        },
+        {
+          "var": "c:TotLoadcos",
+          "unit": "Total Load, Power Factor",
+          "desc": "Total Load, Power Factor"
+        },
+        {
+          "var": "c:TotP",
+          "unit": "MW",
+          "desc": "Total Demand"
+        },
+        {
+          "var": "c:TotconsP",
+          "unit": "MW",
+          "desc": "Total Consumption, Active Power"
+        },
+        {
+          "var": "c:TotconsQ",
+          "unit": "Mvar",
+          "desc": "Total Consumption, Reactive Power"
+        },
+        {
+          "var": "c:TotgenP",
+          "unit": "MW",
+          "desc": "Total Generation, Active Power"
+        },
+        {
+          "var": "c:TotgenQ",
+          "unit": "Mvar",
+          "desc": "Total Generation, Reactive Power"
+        },
+        {
+          "var": "c:UnsupP",
+          "unit": "MW",
+          "desc": "Unsupplied Demand"
+        },
+        {
+          "var": "c:cst_disp",
+          "unit": "USD/h",
+          "desc": "Total Production Costs"
+        },
+        {
+          "var": "c:n_areas",
+          "unit": "Number of Connected Areas",
+          "desc": "Number of Connected Areas"
+        },
+        {
+          "var": "c:n_asm",
+          "unit": "No. of asyn. Machines",
+          "desc": "No. of asyn. Machines"
+        },
+        {
+          "var": "c:n_bar",
+          "unit": "No. of Busbars",
+          "desc": "No. of Busbars"
+        },
+        {
+          "var": "c:n_cust",
+          "unit": "No. of Customers",
+          "desc": "No. of Customers"
+        },
+        {
+          "var": "c:n_ele",
+          "unit": "Number of Elements",
+          "desc": "Number of Elements"
+        },
+        {
+          "var": "c:n_lne",
+          "unit": "No. of Lines",
+          "desc": "No. of Lines"
+        },
+        {
+          "var": "c:n_lod",
+          "unit": "No. of Loads",
+          "desc": "No. of Loads"
+        },
+        {
+          "var": "c:n_pvs",
+          "unit": "No. of PV Systems",
+          "desc": "No. of PV Systems"
+        },
+        {
+          "var": "c:n_stg",
+          "unit": "No. of Static Generators",
+          "desc": "No. of Static Generators"
+        },
+        {
+          "var": "c:n_sym",
+          "unit": "No. of syn. Machines",
+          "desc": "No. of syn. Machines"
+        },
+        {
+          "var": "c:n_term",
+          "unit": "No. of Terminals",
+          "desc": "No. of Terminals"
+        },
+        {
+          "var": "c:n_volt",
+          "unit": "Number of Voltage Levels",
+          "desc": "Number of Voltage Levels"
+        },
+        {
+          "var": "c:umax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals"
+        },
+        {
+          "var": "c:umin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals"
+        },
+        {
+          "var": "c:uphtmax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:uphtmin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    }
+  },
+  "params": {
+    "b": [
+      {
+        "var": "b:loc_name",
+        "unit": "Name",
+        "desc": "Name"
+      },
+      {
+        "var": "b:n_areas",
+        "unit": "Number of Areas",
+        "desc": "Number of Areas"
+      },
+      {
+        "var": "b:n_ele",
+        "unit": "Number of Elements",
+        "desc": "Number of Elements"
+      }
+    ],
+    "e": [
+      {
+        "var": "e:InterPset",
+        "unit": "MW",
+        "desc": "Scheduled Active Power Interchange"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "Modified by",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "Modified",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "Status",
+        "desc": "Status"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "Characteristic Name",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:cimRdfId",
+        "unit": "RDF ID",
+        "desc": "RDF ID"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "Data source",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:desc",
+        "unit": "Description",
+        "desc": "Description"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "Foreign Key",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:gnrl_modby",
+        "unit": "Object modified by",
+        "desc": "Object modified by"
+      },
+      {
+        "var": "e:gnrl_modif",
+        "unit": "Object modified",
+        "desc": "Object modified"
+      },
+      {
+        "var": "e:iInterChg",
+        "unit": "Consider Interchange Schedule",
+        "desc": "Consider Interchange Schedule"
+      },
+      {
+        "var": "e:icolor",
+        "unit": "Colour",
+        "desc": "Colour"
+      },
+      {
+        "var": "e:isConsSpinReserve",
+        "unit": "Min. spinning reserve constraint",
+        "desc": "Min. spinning reserve constraint"
+      },
+      {
+        "var": "e:loc_name",
+        "unit": "Name",
+        "desc": "Name"
+      },
+      {
+        "var": "e:spinReserve",
+        "unit": "MW",
+        "desc": "Spinning reserve"
+      }
+    ]
+  }
+}
