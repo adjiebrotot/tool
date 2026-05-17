@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Sankey Diagram Creator</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E🌊%3C/text%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -24,6 +25,7 @@
   --value-highlight:#8DBBFF; --radius:14px;
 }
 body.light {
+  --flow-heading:#000000;
   --bg:#F0F4FF; --bg-subtle:#F8FBFF; --panel:#FFFFFF; --panel-raised:#FFFFFF;
   --text:#2D3436; --muted:#7F8C8D; --text-inv:#FFFFFF; --border:#E0E6F0;
   --accent:#5A91E8; --accent-strong:#3A71C8; --accent2:#4A9E87; --accent3:#C46A7E;
@@ -138,6 +140,7 @@ main{display:flex;flex-direction:column;gap:13px}
 .metric .value{font-family:'DM Mono',monospace;font-size:1.5rem;font-weight:700;letter-spacing:-.01em}
 .chart-card{padding:16px 18px}
 .chart-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.chart-head h2{color:var(--flow-heading,var(--text));}
 .svg-wrap{width:100%;position:relative}
 #sankeySvg{width:100%;display:block;overflow:visible}
 .empty-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:var(--muted);font-weight:600;pointer-events:none;text-align:center;padding:20px}
