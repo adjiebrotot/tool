@@ -921,23 +921,23 @@
       </div>
       <div class="section-body">
         <div class="form-row">
-          <label>API Path <span class="tt" data-tip="Full path to the PowerFactory Python API folder, e.g. C:\Program Files\DIgSILENT\PowerFactory 2022 SP1\Python\3.8. This folder must contain the powerfactory.pyd (Windows) or powerfactory.so (Linux) module that is appended to sys.path.">?</span></label>
+          <label>API Path <span class="tt" data-tip="Path to the PF Python API folder containing powerfactory.pyd (Windows) or .so (Linux).">?</span></label>
           <div>
             <input type="text" id="pf-api-path" placeholder="C:\Program Files\DIgSILENT\PowerFactory 2022 SP1\Python\3.8" />
           </div>
         </div>
         <div class="form-row">
-          <label>Username <span class="tt" data-tip="Your DIgSILENT PowerFactory login username. Passed directly to pf.GetApplication(username) to connect in Engine Mode. Leave blank only if single-user mode is configured.">?</span></label>
+          <label>Username <span class="tt" data-tip="PowerFactory login username passed to GetApplication(). Leave blank only if single-user mode is configured.">?</span></label>
           <input type="text" id="pf-username" placeholder="USERNAME_HERE" />
         </div>
         <div class="form-row">
-          <label>Output Directory <span class="tt" data-tip="Root folder where all results are saved. Subfolders /graph and /raw are auto-created for timeseries PNG graphs and raw CSV exports respectively. Summary results go in the root as Run_YYYYMMDD.csv.">?</span></label>
+          <label>Output Directory <span class="tt" data-tip="Root folder for results. Subfolders /graph and /raw are auto-created if timeseries outputs are used.">?</span></label>
           <div>
             <input type="text" id="output-dir" placeholder="C:\Users\user\results" />
           </div>
         </div>
         <div class="form-row">
-          <label>Problem Type <span class="tt" data-tip="How input values are chosen each run: Brute Force exhausts every combination, Optimisation uses a search algorithm, Custom reads row-by-row from an Excel file.">?</span></label>
+          <label>Problem Type <span class="tt" id="tt-problem-type" data-tip="Runs every combination of input values. Total runs = product of all step counts.">?</span></label>
           <select id="problem-type" onchange="onProblemTypeChange()">
             <option value="brute_force">Brute Force</option>
             <option value="optimisation">Optimisation</option>
@@ -945,7 +945,7 @@
           </select>
         </div>
         <div class="form-row">
-          <label>Study Type <span class="tt" data-tip="The PowerFactory calculation to run each iteration. Timeseries outputs require a Dynamic study type.">?</span></label>
+          <label>Study Type <span class="tt" id="tt-study-type" data-tip="Runs a load flow (ElmLdf) each iteration. Timeseries outputs are not available.">?</span></label>
           <select id="study-type" onchange="onStudyTypeChange()">
             <option value="steady_state">Steady State</option>
             <option value="dynamic_rms">Dynamic RMS</option>
@@ -954,14 +954,14 @@
           </select>
         </div>
         <div class="form-row" id="row-tstop" style="display:none">
-          <label>Stop Time (s) <span class="tt" data-tip="Simulation end time in seconds. Sets ComSim.tstop before execution. Default 20 s for RMS; 0.25 s for EMT is typical for fast transients.">?</span></label>
+          <label>Stop Time (s) <span class="tt" data-tip="Simulation end time in seconds (ComSim.tstop). 20 s for RMS; 0.25 s typical for EMT.">?</span></label>
           <div>
             <input type="number" id="tstop" value="20" step="0.01" min="0" />
           </div>
         </div>
         <div class="form-row">
-          <label>Coding Style <span class="tt" data-tip="Python File: wraps everything in a main() function for clean script execution. Notebook Style: organises code into labelled cell blocks so each section can be run independently in Jupyter/VS Code notebooks.">?</span></label>
-          <select id="coding-style">
+          <label>Coding Style <span class="tt" id="tt-coding-style" data-tip="Wraps all code in main() for clean script execution.">?</span></label>
+          <select id="coding-style" onchange="onCodingStyleChange()">
             <option value="python_file">Python File</option>
             <option value="notebook">Notebook Style</option>
           </select>
@@ -992,13 +992,13 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Name <span class="tt" data-tip="Unique Python identifier for this variable — used as the column header in results.">?</span></th>
-                <th>Object <span class="tt" data-tip="PowerFactory object query (e.g. Generator.ElmSym, *.ElmDsl). Wildcards match multiple objects.">?</span></th>
-                <th>Attribute <span class="tt" data-tip="Parameter to write before each simulation via SetAttribute() (e.g. pgini, usetp, K_droop). Must be writable.">?</span></th>
-                <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tt" data-tip="Start of range (Brute Force) or lower search boundary (Optimisation).">?</span></th>
-                <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tt" data-tip="End of range inclusive (Brute Force) or upper search boundary (Optimisation).">?</span></th>
-                <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tt" data-tip="Increment between values in Brute Force mode. E.g. 0–10 step 0.5 → [0, 0.5, 1.0, …, 10].">?</span></th>
-                <th class="col-permutate">Permutate <span class="tt" data-tip="For wildcard queries: vary each matched object independently (all combinations). Warning: M values × N objects → M^N runs.">?</span></th>
+                <th>Name <span class="tt" data-tip="Python identifier used as the column header in the results CSV.">?</span></th>
+                <th>Object <span class="tt" data-tip="PF object query (e.g. Generator.ElmSym, *.ElmDsl). Wildcards match all objects of that class.">?</span></th>
+                <th>Attribute <span class="tt" data-tip="Writable PF parameter to set via SetAttribute() before each run (e.g. pgini, usetp).">?</span></th>
+                <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tt" id="tt-lb" data-tip="Start of the swept range (inclusive).">?</span></th>
+                <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tt" id="tt-ub" data-tip="End of the swept range (inclusive).">?</span></th>
+                <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tt" data-tip="Increment between values. E.g. lb=0, ub=10, step=0.5 → [0, 0.5, …, 10].">?</span></th>
+                <th class="col-permutate">Permutate <span class="tt" data-tip="Vary each matched object independently. Warning: M steps × N objects → M^N runs.">?</span></th>
                 <th></th>
               </tr>
             </thead>
@@ -1033,7 +1033,7 @@
           <button class="btn btn-ghost btn-xs" onclick="downloadCustomTemplate()">⬇ Download Template (.xlsx)</button>
         </div>
         <div class="form-row">
-          <label>Scenario File Path <span class="tt" data-tip="Full path to the Excel (.xlsx) file containing your scenario table. The file uses a 3-row header (Variable name / Object / Attribute) followed by data rows. Use Download Template to get a pre-filled template. Add extra columns to set additional object attributes per scenario.">?</span></label>
+          <label>Scenario File Path <span class="tt" data-tip="Path to the Excel scenario file (.xlsx). Download the template above for the required 3-row header format.">?</span></label>
           <input type="text" id="scenario-file-path" placeholder="C:\scenarios\my_scenarios.xlsx" />
         </div>
       </div>
@@ -1071,14 +1071,14 @@
       </div>
       <div class="section-body">
         <div class="form-row">
-          <label>Sense <span class="tt" data-tip="Whether to minimise or maximise the objective. Maximise negates the value internally (all scipy algorithms are minimisers).">?</span></label>
+          <label>Sense <span class="tt" data-tip="Maximise negates the objective internally — all scipy algorithms are minimisers.">?</span></label>
           <select id="optim-sense">
             <option value="minimise">Minimise</option>
             <option value="maximise">Maximise</option>
           </select>
         </div>
         <div class="form-row">
-          <label>Objective <span class="tt" data-tip="The output variable to optimise. Must be a Scalar type — define it first in the Output Variables section.">?</span></label>
+          <label>Objective <span class="tt" data-tip="Scalar output variable to optimise. Must be defined first in the Output Variables section.">?</span></label>
           <div>
             <select id="optim-objective">
               <option value="">— select output variable —</option>
@@ -1087,25 +1087,27 @@
         </div>
         <div class="form-row">
           <label>Algorithm <span class="tt" data-alg-tip data-tip="">?</span></label>
-          <select id="optim-algorithm" onchange="updateAlgorithmUI()">
-            <option value="placeholder">Manual (Placeholder)</option>
-            <option value="scipy_nelder_mead">Nelder-Mead — Simplex (scipy)</option>
-            <option value="scipy_powell">Powell — Directional Set (scipy)</option>
-            <option value="scipy_lbfgsb">L-BFGS-B — Quasi-Newton (scipy)</option>
-            <option value="scipy_slsqp">SLSQP — Sequential Least Squares (scipy)</option>
-            <option value="scipy_cobyla">COBYLA — Constraint Approximation (scipy)</option>
-            <option value="differential_evolution">Differential Evolution — Global (scipy)</option>
-            <option value="gp_minimize">Bayesian Optimisation (scikit-optimize)</option>
-          </select>
-          <a id="optim-algorithm-doc" href="#" target="_blank" rel="noopener noreferrer"
-             style="font-size:11px;margin-left:6px;color:var(--accent);white-space:nowrap;display:none;">Doc ↗</a>
+          <div style="display:flex;align-items:center;gap:6px;min-width:0;">
+            <select id="optim-algorithm" onchange="updateAlgorithmUI()" style="flex:1;min-width:0;">
+              <option value="placeholder">Manual (Placeholder)</option>
+              <option value="scipy_nelder_mead">Nelder-Mead — Simplex (scipy)</option>
+              <option value="scipy_powell">Powell — Directional Set (scipy)</option>
+              <option value="scipy_lbfgsb">L-BFGS-B — Quasi-Newton (scipy)</option>
+              <option value="scipy_slsqp">SLSQP — Sequential Least Squares (scipy)</option>
+              <option value="scipy_cobyla">COBYLA — Constraint Approximation (scipy)</option>
+              <option value="differential_evolution">Differential Evolution — Global (scipy)</option>
+              <option value="gp_minimize">Bayesian Optimisation (scikit-optimize)</option>
+            </select>
+            <a id="optim-algorithm-doc" href="#" target="_blank" rel="noopener noreferrer"
+               style="font-size:11px;color:var(--accent);white-space:nowrap;display:none;flex-shrink:0;">Doc ↗</a>
+          </div>
         </div>
         <div class="form-row">
-          <label>Max Iterations <span class="tt" data-tip="Maximum function evaluations. More iterations improve quality but increase runtime. Typical: 50–200 for local methods, 100–500 for global/Bayesian.">?</span></label>
+          <label>Max Iterations <span class="tt" id="tt-max-iter" data-tip="Max function evaluations. 50–200 is typical for local methods.">?</span></label>
           <input type="number" id="optim-max-iter" value="50" min="1" />
         </div>
         <hr class="divider" />
-        <div class="sub-label">Constraints <span class="tt" data-tip="Soft constraints: violations add a 1e6 penalty to the objective rather than hard-stopping the search. E.g. voltage >= 0.95 pu.">?</span></div>
+        <div class="sub-label">Constraints <span class="tt" data-tip="Violations add a large penalty to the objective (soft constraint). Hard bounds are set via input variable bounds.">?</span></div>
         <div class="dyn-table-wrapper">
           <table class="dyn-table" id="constraint-table">
             <thead>
@@ -1134,26 +1136,26 @@
       <div class="section-body">
         <div class="checkbox-row">
           <input type="checkbox" id="iterate-study-cases" />
-          <label for="iterate-study-cases">Iterate through study cases <span class="tt" data-tip="Loop over every study case found in the active project (project.GetContents('Study Cases')). Each study case is activated before the parameter sweep begins. Useful for N-1 contingency analysis across multiple system states.">?</span></label>
+          <label for="iterate-study-cases">Iterate through study cases <span class="tt" data-tip="Activate each study case before running the sweep. Useful for N-1 contingency analysis.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="iterate-operating-scenarios" />
-          <label for="iterate-operating-scenarios">Iterate through operating scenarios <span class="tt" data-tip="Loop over every operating scenario in the active project. Each scenario is activated (scenario.Activate()) before running. Combines with study case iteration if both are checked.">?</span></label>
+          <label for="iterate-operating-scenarios">Iterate through operating scenarios <span class="tt" data-tip="Activate each operating scenario before running. Combines with study case iteration.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="use-progress-bar" checked />
-          <label for="use-progress-bar">Use progress bar (tqdm) <span class="tt" data-tip="Wrap the main loop with tqdm to show a live progress bar and ETA in the console. Requires: pip install tqdm. Disable if running in an environment that does not support ANSI terminal output.">?</span></label>
+          <label for="use-progress-bar">Use progress bar (tqdm) <span class="tt" data-tip="Show live progress and ETA via tqdm. Requires pip install tqdm.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="open-pf-window" />
-          <label for="open-pf-window">Open PowerFactory window <span class="tt" data-tip="Call app.Show() to make the PowerFactory GUI visible while the script runs. Useful during development and debugging. Call app.Hide() (default) for faster headless batch execution.">?</span></label>
+          <label for="open-pf-window">Open PowerFactory window <span class="tt" data-tip="Show the PF GUI (app.Show()) while running. Default is headless (app.Hide()) for speed.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="save-intermediate" onchange="onSaveIntermediateChange()" />
-          <label for="save-intermediate">Save intermediate results every X minutes <span class="tt" data-tip="Periodically flush partial results to a timestamped CSV during long runs. Prevents total data loss if the script crashes or PowerFactory locks up mid-sweep. Files are saved to the root output directory.">?</span></label>
+          <label for="save-intermediate">Save intermediate results every X minutes <span class="tt" data-tip="Flush partial results to CSV periodically. Prevents total data loss on crash or lockup.">?</span></label>
         </div>
         <div id="row-save-interval" class="form-row cond-hidden">
-          <label>Interval (min) <span class="tt" data-tip="How often to write the intermediate CSV. Lower values reduce data loss but add minor I/O overhead. Recommended: 10–30 min for multi-hour runs.">?</span></label>
+          <label>Interval (min) <span class="tt" data-tip="Save interval in minutes. 10–30 min recommended for multi-hour runs.">?</span></label>
           <input type="number" id="save-interval-minutes" value="30" min="1" />
         </div>
       </div>
@@ -1222,9 +1224,66 @@
 /* ================================================================
    TOOLTIP HELPER
 ================================================================ */
-function tip(text) {
-  return `<span class="tt" data-tip="${text.replace(/"/g, '&quot;')}">?</span>`;
+function tip(text, id = '') {
+  const idAttr = id ? ` id="${id}"` : '';
+  return `<span class="tt"${idAttr} data-tip="${text.replace(/"/g, '&quot;')}">?</span>`;
 }
+
+/* ================================================================
+   DYNAMIC TOOLTIP HELPERS & TEXT MAPS
+================================================================ */
+function setTip(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.setAttribute('data-tip', text);
+}
+
+const TIP_PROBLEM_TYPE = {
+  brute_force:  'Runs every combination of input values. Total runs = product of all step counts.',
+  optimisation: 'Uses a search algorithm to find the best input combination. Configure algorithm below.',
+  custom:       'Reads input values row-by-row from an Excel file. Download the template for the required format.',
+};
+const TIP_STUDY_TYPE = {
+  steady_state: 'Runs a load flow (ElmLdf) each iteration. Timeseries outputs are not available.',
+  dynamic_rms:  'Runs an RMS simulation (ComSim) each iteration. Enables timeseries outputs.',
+  dynamic_emt:  'Runs an EMT simulation (ComSim) each iteration. Enables timeseries outputs.',
+  harmonic:     'Runs a harmonic/frequency sweep (ComHlf) each iteration.',
+};
+const TIP_CODING_STYLE = {
+  python_file: 'Wraps all code in main() for clean script execution.',
+  notebook:    'Organises code into labelled cells for Jupyter or VS Code notebooks.',
+};
+const TIP_MAX_ITER = {
+  placeholder:            'Not used in placeholder mode — fill in your own search loop.',
+  scipy_nelder_mead:      'Max function evaluations. 50–200 is typical for local methods.',
+  scipy_powell:           'Max function evaluations. 50–200 is typical for local methods.',
+  scipy_lbfgsb:           'Max function evaluations. 50–200 is typical for local methods.',
+  scipy_slsqp:            'Max function evaluations. 50–200 is typical for local methods.',
+  scipy_cobyla:           'Max function evaluations. 50–200 is typical for local methods.',
+  differential_evolution: 'Max generations × population. 100–500 is typical for global search.',
+  gp_minimize:            'Acquisition calls. 30–100 is usually sufficient for expensive objectives.',
+};
+const TIP_OUTPUT_TYPE = {
+  attribute:          'Read a single value after solving via obj.GetAttribute().',
+  timeseries:         'Extract a scalar metric from a time signal (dynamic study only).',
+  custom_calculation: 'Calls a user-defined Python function using other variable values.',
+};
+const TIP_OUTPUT_OBJ = {
+  attribute:  'Object query for GetCalcRelevantObjects() (e.g. Grid.ElmTerm).',
+  timeseries: 'Element name as shown in the ElmRes export header (e.g. HV_Bus — no path or class suffix).',
+};
+const TIP_OUTPUT_ATTR = {
+  attribute:  'Result variable key for GetAttribute() (e.g. m:u1, c:loading, m:P).',
+  timeseries: 'Variable key from PF result variable browser (e.g. m:u1, m:I:bus1).',
+};
+const TIP_METRIC = {
+  maximum:          'Peak value of the signal over the full simulation window.',
+  minimum:          'Trough value of the signal over the full simulation window.',
+  mean:             'Time-averaged value across the simulation window.',
+  median:           'Median value across the simulation window.',
+  first_time_above: 'First time the signal rises above the threshold.',
+  first_time_below: 'First time the signal falls below the threshold.',
+  time_settle:      'Time until the signal stays within ±band of the reference for the full hold duration.',
+};
 
 /* ================================================================
    GLOBAL STATE — output variable counter, ace editors map
@@ -1248,6 +1307,11 @@ function toggleSection(id) {
 ================================================================ */
 function onProblemTypeChange() {
   const pt = document.getElementById('problem-type').value;
+  // Update dynamic tooltips
+  setTip('tt-problem-type', TIP_PROBLEM_TYPE[pt] || '');
+  const isOpt = pt === 'optimisation';
+  setTip('tt-lb', isOpt ? 'Lower boundary of the search space for this variable.' : 'Start of the swept range (inclusive).');
+  setTip('tt-ub', isOpt ? 'Upper boundary of the search space for this variable.' : 'End of the swept range (inclusive).');
   // Custom section
   document.getElementById('sec-custom').classList.toggle('cond-hidden', pt !== 'custom');
   // Optimisation section
@@ -1266,6 +1330,7 @@ function onProblemTypeChange() {
 
 function onStudyTypeChange() {
   const st = document.getElementById('study-type').value;
+  setTip('tt-study-type', TIP_STUDY_TYPE[st] || '');
   const isDynamic = st === 'dynamic_rms' || st === 'dynamic_emt';
   document.getElementById('row-tstop').style.display = isDynamic ? 'grid' : 'none';
   if (st === 'dynamic_emt') document.getElementById('tstop').value = 0.25;
@@ -1274,6 +1339,11 @@ function onStudyTypeChange() {
   refreshLiveWarnings();
 }
 
+
+function onCodingStyleChange() {
+  const cs = document.getElementById('coding-style').value;
+  setTip('tt-coding-style', TIP_CODING_STYLE[cs] || '');
+}
 
 function onSaveIntermediateChange() {
   const checked = document.getElementById('save-intermediate').checked;
@@ -1523,6 +1593,8 @@ function updateAlgorithmUI() {
   // Update tooltip for the algorithm ? badge
   const tipEl = document.querySelector('#sec-optim [data-alg-tip]');
   if (tipEl) tipEl.setAttribute('data-tip', ALGORITHM_TIPS[alg] || '');
+  // Update Max Iterations tooltip
+  setTip('tt-max-iter', TIP_MAX_ITER[alg] || '');
 }
 
 /* ================================================================
@@ -1869,17 +1941,17 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
         <option value="timeseries" ${type==='timeseries'?'selected':''}>Timeseries</option>
         <option value="custom_calculation" ${type==='custom_calculation'?'selected':''}>Custom Calculation</option>
       </select>
-      ${tip('Scalar: read a scalar after solving via obj.GetAttribute. Timeseries: extract a metric from ElmRes (dynamic only). Custom Calculation: define your own Python function referencing other variable names.')}
+      ${tip(TIP_OUTPUT_TYPE[type] || TIP_OUTPUT_TYPE.attribute, `${id}-tt-type`)}
       <input type="text" id="${id}-name" value="${data.name||''}" placeholder="Output var name"
         style="flex:1;font-size:12px;padding:3px 8px;min-width:80px;" oninput="onOutputNameChange()" />
-      ${tip('Unique Python identifier for this output. Cannot share a name with any input variable or another output variable. Used as the column header in the results CSV.')}
+      ${tip('Python identifier for this output. Must be unique across all inputs and outputs.')}
       <button class="btn btn-ghost btn-icon btn-xs" title="Collapse" onclick="toggleOutputVar('${id}')" id="${id}-toggle" style="font-size:14px;flex-shrink:0;">▾</button>
       <button class="btn btn-remove btn-xs" onclick="removeOutputVar('${id}')">✕</button>
     </div>
     <div class="output-var-body" id="${id}-body">
       <!-- OBJECT (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-obj">
-        <label>Object ${tip('For Scalar: PowerFactory object query passed to GetCalcRelevantObjects() (e.g. Grid.ElmTerm). For Timeseries: the loc_name of the element exactly as it appears in the ElmRes CSV header row 0 — typically just the element name without path or class suffix (e.g. "HV_Bus" not "Grid\\HV_Bus.ElmTerm"). The tool strips any .ElmXxx class suffix from both this field and the CSV header automatically.')}</label>
+        <label>Object ${tip(isTs ? TIP_OUTPUT_OBJ.timeseries : TIP_OUTPUT_OBJ.attribute, `${id}-tt-obj`)}</label>
         <div id="${id}-obj-attribute-wrap" class="${isTs?'cond-hidden':''}">
           <input type="text" id="${id}-obj" value="${isTs ? '' : (data.object_query||'')}" placeholder="Element.ElmType" autocomplete="off" oninput="onOutputObjectInput('${id}')" />
         </div>
@@ -1889,33 +1961,33 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       </div>
       <!-- ATTRIBUTE (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-var">
-        <label>Attribute ${tip('For Scalar: attribute name read via obj.GetAttribute() (e.g. m:u1, c:loading, m:P). For Timeseries: the PowerFactory variable key exactly as used in GetAttribute() and the PF result variable browser (e.g. m:u1, c:loading, m:I:bus1). PowerFactory writes this key in the second CSV header row — do NOT use the descriptive label shown in PF dialogs.')}</label>
+        <label>Attribute ${tip(isTs ? TIP_OUTPUT_ATTR.timeseries : TIP_OUTPUT_ATTR.attribute, `${id}-tt-attr`)}</label>
         <input type="text" id="${id}-var" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" />
       </div>
       <!-- METRIC (hidden for single_attribute and custom_calculation) -->
       <div class="form-row ${(isAttr||isCust)?'cond-hidden':''}" id="${id}-row-metric">
-        <label>Metric ${tip('Scalar metric to extract from the timeseries signal. Computed from the parsed ElmRes CSV export data.')}</label>
+        <label>Metric ${tip(TIP_METRIC[metric] || TIP_METRIC.maximum, `${id}-tt-metric`)}</label>
         <select id="${id}-metric" onchange="onMetricChange('${id}')">
           ${metricOptions}
         </select>
       </div>
       <!-- THRESHOLD -->
       <div class="form-row ${!showThresh?'cond-hidden':''}" id="${id}-row-threshold">
-        <label>Threshold ${tip('Numeric threshold for first_time metrics. first_time_above/below returns the first time the signal crosses the threshold.')}</label>
+        <label>Threshold ${tip('Value the signal must cross (first_time_above) or drop below (first_time_below).')}</label>
         <input type="number" id="${id}-threshold" value="${data.threshold||''}" step="any" placeholder="0.9" />
       </div>
       <!-- SETTLE PARAMS -->
       <div class="${!showSettle?'cond-hidden':''}" id="${id}-row-settle">
         <div class="form-row">
-          <label>Settle Band ${tip('Half-width of the ±band around the Reference Value. The signal must stay within [ref - band, ref + band] for the entire Hold Time to be considered settled.')}</label>
+          <label>Settle Band ${tip('Half-width of the ±band: signal must stay in [ref−band, ref+band] for the full hold time.')}</label>
           <input type="number" id="${id}-settle-band" value="${data.settle_band||''}" step="any" placeholder="0.05" />
         </div>
         <div class="form-row">
-          <label>Hold Time (s) ${tip('Minimum continuous duration (in seconds) that the signal must remain within the settle band before the settling time is declared.')}</label>
+          <label>Hold Time (s) ${tip('Minimum duration (s) the signal must remain inside the settle band.')}</label>
           <input type="number" id="${id}-settle-hold" value="${data.settle_hold_time||''}" step="any" placeholder="0.5" />
         </div>
         <div class="form-row">
-          <label>Reference Value ${tip('Target steady-state value (e.g. 1.0 pu for voltage). The settle band is centered on this value: [ref − band, ref + band].')}</label>
+          <label>Reference Value ${tip('Target steady-state value. Settle band = [ref−band, ref+band].')}</label>
           <input type="number" id="${id}-settle-ref" value="${data.settle_reference_value||''}" step="any" placeholder="1.0" />
         </div>
       </div>
@@ -1923,19 +1995,19 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       <div class="${!isTs?'cond-hidden':''}" id="${id}-row-output-graph">
         <div class="checkbox-row" style="margin-top:4px;">
           <input type="checkbox" id="${id}-output-graph" ${data.output_graph?'checked':''} />
-          <label for="${id}-output-graph">Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>) ${tip('Generates a matplotlib Time vs variable line plot for each scenario and saves it as a .png in the graph/ subfolder of your output directory. Requires matplotlib (pip install matplotlib).')}</label>
+          <label for="${id}-output-graph">Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>) ${tip('Save a matplotlib time-vs-variable plot per scenario. Requires pip install matplotlib.')}</label>
         </div>
       </div>
       <!-- OUTPUT RAW CSV (timeseries only) -->
       <div class="${!isTs?'cond-hidden':''}" id="${id}-row-output-raw">
         <div class="checkbox-row" style="margin-bottom:4px;">
           <input type="checkbox" id="${id}-output-raw" ${data.output_raw_csv?'checked':''} />
-          <label for="${id}-output-raw">Output raw data (time vs variable, saved as .csv in <code>{output_dir}/raw</code>) ${tip('Saves the full time-series column (time_s, variable_name) as a CSV file for each scenario in the raw/ subfolder. Useful for post-processing or importing into other tools.')}</label>
+          <label for="${id}-output-raw">Output raw data (time vs variable, saved as .csv in <code>{output_dir}/raw</code>) ${tip('Save the full time-series as .csv per scenario in {output_dir}/raw/ for post-processing.')}</label>
         </div>
       </div>
       <!-- CUSTOM FUNCTION -->
       <div class="${!isCust?'cond-hidden':''}" id="${id}-row-custom-fn">
-        <div class="sub-label" style="margin-top:8px;">Custom Function (must return exactly one scalar) ${tip('Define a Python function whose arguments are names of Input Variables or other Output Variables. The generator extracts argument values from the result row and calls this function automatically after each simulation.')}</div>
+        <div class="sub-label" style="margin-top:8px;">Custom Function (must return exactly one scalar) ${tip('Python function whose arguments are names of other defined input or output variables.')}</div>
         <div class="hint" style="margin-bottom:6px;">Arguments must be names of defined <strong>Input Variables</strong> or other <strong>Output Variables</strong>.</div>
         <div class="ace-editor-container">
           <div class="ace-editor" id="${id}-ace"></div>
@@ -1975,12 +2047,18 @@ function onOutputTypeChange(id) {
   document.getElementById(`${id}-row-threshold`)?.classList.toggle('cond-hidden', !showThresh);
   document.getElementById(`${id}-row-settle`)?.classList.toggle('cond-hidden', !showSettle);
 
+  // Update dynamic tooltips for this output var
+  setTip(`${id}-tt-type`, TIP_OUTPUT_TYPE[type] || '');
+  setTip(`${id}-tt-obj`, TIP_OUTPUT_OBJ[type] || TIP_OUTPUT_OBJ.attribute);
+  setTip(`${id}-tt-attr`, TIP_OUTPUT_ATTR[type] || TIP_OUTPUT_ATTR.attribute);
+
   if (document.getElementById('problem-type').value === 'optimisation') refreshObjectiveDropdown();
   refreshLiveWarnings();
 }
 
 function onMetricChange(id) {
   const metric = document.getElementById(`${id}-metric`)?.value || '';
+  setTip(`${id}-tt-metric`, TIP_METRIC[metric] || '');
   const showThresh = THRESHOLD_METRICS.includes(metric);
   const showSettle = metric === 'time_settle';
   document.getElementById(`${id}-row-threshold`)?.classList.toggle('cond-hidden', !showThresh);
