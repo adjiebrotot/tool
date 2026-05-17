@@ -937,7 +937,7 @@
           </div>
         </div>
         <div class="form-row">
-          <label>Problem Type <span class="tt" data-tip="Brute Force: iterate every combination of input value ranges. Optimisation: use a search algorithm to find the best input values. Custom: load input values row-by-row from an Excel scenario file.">?</span></label>
+          <label>Problem Type <span class="tt" data-tip="How input values are chosen each run: Brute Force exhausts every combination, Optimisation uses a search algorithm, Custom reads row-by-row from an Excel file.">?</span></label>
           <select id="problem-type" onchange="onProblemTypeChange()">
             <option value="brute_force">Brute Force</option>
             <option value="optimisation">Optimisation</option>
@@ -945,7 +945,7 @@
           </select>
         </div>
         <div class="form-row">
-          <label>Study Type <span class="tt" data-tip="Steady State: load flow via ComLdf. Dynamic RMS: RMS simulation via ComInc+ComSim. Dynamic EMT: EMT simulation via ComInc (iopt_sim=ins)+ComSim. Harmonic: harmonic load flow via ComHldf. Timeseries outputs require a dynamic study type.">?</span></label>
+          <label>Study Type <span class="tt" data-tip="The PowerFactory calculation to run each iteration. Timeseries outputs require a Dynamic study type.">?</span></label>
           <select id="study-type" onchange="onStudyTypeChange()">
             <option value="steady_state">Steady State</option>
             <option value="dynamic_rms">Dynamic RMS</option>
@@ -977,13 +977,14 @@
       </div>
       <div class="section-body">
         <div class="info-box" id="input-info-box">
-          <span id="input-info-brief">PF objects set via <code>SetAttribute()</code> before each run. Object: <code>GetCalcRelevantObjects()</code> query (e.g. <code>WFCtrl.ElmDsl</code>, <code>*.ElmSym</code>).</span>
+          <span id="input-info-brief">Set PowerFactory object parameters before each simulation. Enter the object using its PF path and class (e.g. <code>Generator.ElmSym</code>) and the parameter to modify (e.g. <code>pgini</code>).</span>
           <button class="info-more-toggle" onclick="toggleInfoExtra('input-info-extra', this)">More ▾</button>
           <div class="info-extra" id="input-info-extra">
-            <strong>Brute Force:</strong> Step Size = increment (not number of steps); all combinations are iterated.<br/>
-            <strong>Optimisation:</strong> Bounds define the search space; step not used.<br/>
-            <strong>Custom:</strong> Values come from a scenario Excel file (bounds and step not used).<br/>
-            Wildcards (<code>*.ElmDsl</code>) match multiple objects — same value applied to all. Enable <strong>Permutate</strong> to independently vary each matched object (warning: grows M<sup>N</sup>).
+            <code>GetCalcRelevantObjects()</code> resolves the object query; <code>SetAttribute()</code> writes the value before each run.<br/>
+            <strong>Brute Force:</strong> Step Size is the increment (not number of steps); every combination is iterated.<br/>
+            <strong>Optimisation:</strong> Bounds define the search space; step is unused.<br/>
+            <strong>Custom:</strong> Values come from a scenario Excel file (bounds and step are unused).<br/>
+            Wildcards (e.g. <code>*.ElmDsl</code>) match multiple objects — same value applied to all. Enable <strong>Permutate</strong> to vary each independently (warning: M values × N objects → M<sup>N</sup> runs).
           </div>
         </div>
         <div class="dyn-table-wrapper">
@@ -991,13 +992,13 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Name <span class="tt" data-tip="Python identifier for this input. Used as the column header in results and as the variable name in generated code. Must be unique across ALL input and output variables.">?</span></th>
-                <th>Object <span class="tt" data-tip="PowerFactory object query passed to GetCalcRelevantObjects(). Examples: WFController.ElmDsl, Generator1.ElmSym, *.ElmDsl. Any query containing '*' is treated as a wildcard and may match multiple objects. In all modes, the same value is applied to all matched objects per iteration. Use Permutate (Brute Force/Optimisation only) to independently vary each object.">?</span></th>
-                <th>Attribute <span class="tt" data-tip="Attribute name on the PowerFactory object to SET before each simulation. Examples: K_droop, pgini, usetp. Must be a writable parameter of that object class (check the PF Equipment Model Library).">?</span></th>
-                <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tt" data-tip="Minimum value for this parameter. Used by Brute Force (start of range) and Optimisation (lower search boundary).">?</span></th>
-                <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tt" data-tip="Maximum value for this parameter. Used by Brute Force (end of range, inclusive) and Optimisation (upper search boundary).">?</span></th>
-                <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tt" data-tip="Increment between values in Brute Force mode. E.g. lower=0, upper=10, step=0.5 generates [0, 0.5, 1.0, …, 10.0]. Integer detection: if all three bounds/step are whole numbers, dtype=int is used.">?</span></th>
-                <th class="col-permutate">Permutate <span class="tt" data-tip="Only applies to wildcard object queries (e.g. *.ElmTerm). When checked, each matched object independently iterates through the full value range — all combinations are generated. WARNING: M values and N objects produces M^N simulations, which can be extremely large. Leave unchecked to apply the same value to all matched objects simultaneously. Not available in Custom mode.">?</span></th>
+                <th>Name <span class="tt" data-tip="Unique Python identifier for this variable — used as the column header in results.">?</span></th>
+                <th>Object <span class="tt" data-tip="PowerFactory object query (e.g. Generator.ElmSym, *.ElmDsl). Wildcards match multiple objects.">?</span></th>
+                <th>Attribute <span class="tt" data-tip="Parameter to write before each simulation via SetAttribute() (e.g. pgini, usetp, K_droop). Must be writable.">?</span></th>
+                <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tt" data-tip="Start of range (Brute Force) or lower search boundary (Optimisation).">?</span></th>
+                <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tt" data-tip="End of range inclusive (Brute Force) or upper search boundary (Optimisation).">?</span></th>
+                <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tt" data-tip="Increment between values in Brute Force mode. E.g. 0–10 step 0.5 → [0, 0.5, 1.0, …, 10].">?</span></th>
+                <th class="col-permutate">Permutate <span class="tt" data-tip="For wildcard queries: vary each matched object independently (all combinations). Warning: M values × N objects → M^N runs.">?</span></th>
                 <th></th>
               </tr>
             </thead>
@@ -1046,12 +1047,13 @@
       </div>
       <div class="section-body">
         <div class="info-box">
-          <strong>Scalar</strong>: <code>obj.GetAttribute()</code> after solving. <strong>Timeseries</strong>: scalar metric from ElmRes (dynamic only). <strong>Custom</strong>: user-defined Python function.
+          <span>Read results from PowerFactory after each simulation. <strong>Scalar</strong> reads a single value from any object; <strong>Timeseries</strong> captures a signal over time (dynamic studies only); <strong>Custom</strong> lets you write your own Python calculation.</span>
           <button class="info-more-toggle" onclick="toggleInfoExtra('output-info-extra', this)">More ▾</button>
           <div class="info-extra" id="output-info-extra">
-            All variable names must be unique across inputs and outputs.<br/>
-            <strong>Timeseries</strong> outputs require a Dynamic RMS or EMT study type. The attribute field uses the PF variable key (e.g. <code>m:u1</code>, <code>c:loading</code>) — same as the result variable browser.<br/>
-            <strong>Custom Calculation</strong> function arguments must be names of other defined input or output variables.
+            <strong>Scalar</strong> uses <code>obj.GetAttribute()</code> on static result variables (e.g. <code>m:u1</code>, <code>c:loading</code>) after solving — check the PF result variable browser for available keys.<br/>
+            <strong>Timeseries</strong> requires a Dynamic RMS or EMT study type. Use the PF variable key (e.g. <code>m:u1</code>, <code>m:I:bus1</code>) — same as the result variable browser, not the descriptive label.<br/>
+            <strong>Custom Calculation</strong> arguments must be names of other defined Input or Output Variables.<br/>
+            All variable names must be unique across inputs and outputs.
           </div>
         </div>
         <div id="output-vars-container"></div>
@@ -1069,14 +1071,14 @@
       </div>
       <div class="section-body">
         <div class="form-row">
-          <label>Sense <span class="tt" data-tip="Whether to minimise or maximise the objective output variable. For maximise, the generated code negates the value before passing it to the algorithm (standard convention for minimisers).">?</span></label>
+          <label>Sense <span class="tt" data-tip="Whether to minimise or maximise the objective. Maximise negates the value internally (all scipy algorithms are minimisers).">?</span></label>
           <select id="optim-sense">
             <option value="minimise">Minimise</option>
             <option value="maximise">Maximise</option>
           </select>
         </div>
         <div class="form-row">
-          <label>Objective <span class="tt" data-tip="The output variable whose scalar value the algorithm optimises. Must be a single numeric scalar — not a timeseries raw or graph output. Define it first in the Output Variables section.">?</span></label>
+          <label>Objective <span class="tt" data-tip="The output variable to optimise. Must be a Scalar type — define it first in the Output Variables section.">?</span></label>
           <div>
             <select id="optim-objective">
               <option value="">— select output variable —</option>
@@ -1084,20 +1086,26 @@
           </div>
         </div>
         <div class="form-row">
-          <label>Algorithm <span class="tt" data-tip="Placeholder: manual wiring — wire up evaluate_one_case() yourself. scipy_minimize: gradient-based L-BFGS-B (local). differential_evolution: global stochastic search (scipy). gp_minimize: Bayesian optimisation via scikit-optimize (pip install scikit-optimize).">?</span></label>
-          <select id="optim-algorithm">
-            <option value="placeholder">Placeholder (manual)</option>
-            <option value="scipy_minimize">scipy_minimize</option>
-            <option value="differential_evolution">differential_evolution</option>
-            <option value="gp_minimize">gp_minimize</option>
+          <label>Algorithm <span class="tt" data-alg-tip data-tip="">?</span></label>
+          <select id="optim-algorithm" onchange="updateAlgorithmUI()">
+            <option value="placeholder">Manual (Placeholder)</option>
+            <option value="scipy_nelder_mead">Nelder-Mead — Simplex (scipy)</option>
+            <option value="scipy_powell">Powell — Directional Set (scipy)</option>
+            <option value="scipy_lbfgsb">L-BFGS-B — Quasi-Newton (scipy)</option>
+            <option value="scipy_slsqp">SLSQP — Sequential Least Squares (scipy)</option>
+            <option value="scipy_cobyla">COBYLA — Constraint Approximation (scipy)</option>
+            <option value="differential_evolution">Differential Evolution — Global (scipy)</option>
+            <option value="gp_minimize">Bayesian Optimisation (scikit-optimize)</option>
           </select>
+          <a id="optim-algorithm-doc" href="#" target="_blank" rel="noopener noreferrer"
+             style="font-size:11px;margin-left:6px;color:var(--accent);white-space:nowrap;display:none;">Doc ↗</a>
         </div>
         <div class="form-row">
-          <label>Max Iterations <span class="tt" data-tip="Maximum number of algorithm iterations / function evaluations. More iterations improve solution quality but increase runtime. Typical values: 50–200 for gradient-based, 100–500 for evolutionary/Bayesian.">?</span></label>
+          <label>Max Iterations <span class="tt" data-tip="Maximum function evaluations. More iterations improve quality but increase runtime. Typical: 50–200 for local methods, 100–500 for global/Bayesian.">?</span></label>
           <input type="number" id="optim-max-iter" value="50" min="1" />
         </div>
         <hr class="divider" />
-        <div class="sub-label">Constraints <span class="tt" data-tip="Soft inequality constraints. Violations are penalised by adding 1e6 to the objective value — they do not hard-stop the algorithm. Add constraints for outputs that must satisfy a bound (e.g. voltage >= 0.95 pu).">?</span></div>
+        <div class="sub-label">Constraints <span class="tt" data-tip="Soft constraints: violations add a 1e6 penalty to the objective rather than hard-stopping the search. E.g. voltage >= 0.95 pu.">?</span></div>
         <div class="dyn-table-wrapper">
           <table class="dyn-table" id="constraint-table">
             <thead>
@@ -1457,6 +1465,56 @@ function escHtml(s) {
 }
 
 /* ================================================================
+   ALGORITHM METADATA & UI
+================================================================ */
+const SCIPY_DOC_BASE = 'https://docs.scipy.org/doc/scipy/reference/';
+const DIFEV_DOC_URL  = 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.differential_evolution.html';
+const SKOPT_GP_URL   = 'https://scikit-optimize.github.io/stable/modules/generated/skopt.gp_minimize.html';
+
+const ALGORITHM_META = {
+  'placeholder':             { label: 'Manual (Placeholder)',                     doc: null,                         method: null,          bounds: false, pyImport: '' },
+  'scipy_nelder_mead':       { label: 'Nelder-Mead — Simplex (scipy)',            doc: 'optimize.minimize-neldermead', method: 'Nelder-Mead', bounds: false, pyImport: 'from scipy.optimize import minimize' },
+  'scipy_powell':            { label: 'Powell — Directional Set (scipy)',          doc: 'optimize.minimize-powell',     method: 'Powell',      bounds: true,  pyImport: 'from scipy.optimize import minimize' },
+  'scipy_lbfgsb':           { label: 'L-BFGS-B — Quasi-Newton (scipy)',           doc: 'optimize.minimize-lbfgsb',     method: 'L-BFGS-B',   bounds: true,  pyImport: 'from scipy.optimize import minimize' },
+  'scipy_slsqp':            { label: 'SLSQP — Sequential Least Squares (scipy)',  doc: 'optimize.minimize-slsqp',      method: 'SLSQP',       bounds: true,  pyImport: 'from scipy.optimize import minimize' },
+  'scipy_cobyla':           { label: 'COBYLA — Constraint Approximation (scipy)', doc: 'optimize.minimize-cobyla',     method: 'COBYLA',      bounds: false, pyImport: 'from scipy.optimize import minimize' },
+  'differential_evolution': { label: 'Differential Evolution — Global (scipy)',   doc: null,                         method: null,          bounds: true,  pyImport: 'from scipy.optimize import differential_evolution' },
+  'gp_minimize':            { label: 'Bayesian Optimisation (scikit-optimize)',   doc: null,                         method: null,          bounds: true,  pyImport: 'from skopt import gp_minimize\nfrom skopt.space import Real\nfrom skopt.utils import use_named_args' },
+};
+
+const ALGORITHM_TIPS = {
+  'placeholder':             'Wire up evaluate_one_case() yourself — the generated code creates the evaluation function but leaves the search loop for you to fill in.',
+  'scipy_nelder_mead':       'Nelder-Mead simplex — gradient-free local search. No derivatives needed. Does not natively support bounds; works best for unconstrained problems.',
+  'scipy_powell':            "Powell's directional-set method — gradient-free local search with bounds support. Efficient for smooth low-dimensional problems.",
+  'scipy_lbfgsb':           'L-BFGS-B — quasi-Newton method with bounds. Numerically approximates the gradient. Fast convergence near the optimum for smooth objectives.',
+  'scipy_slsqp':            'SLSQP — Sequential Least Squares Programming. Supports bounds and constraints. Numerically approximates the gradient.',
+  'scipy_cobyla':           'COBYLA — gradient-free constrained optimisation via linear approximations. Define bounds as inequality constraints rather than using the bounds field.',
+  'differential_evolution': 'Differential Evolution — global stochastic search across the full bounds. Robust to local minima but requires more function evaluations. Seed fixed for reproducibility.',
+  'gp_minimize':            'Bayesian Optimisation — builds a surrogate model of the objective to minimise expensive evaluations. Best when each simulation run is costly. Requires: pip install scikit-optimize.',
+};
+
+function updateAlgorithmUI() {
+  const alg  = document.getElementById('optim-algorithm')?.value;
+  if (!alg) return;
+  const meta = ALGORITHM_META[alg] || {};
+  const link = document.getElementById('optim-algorithm-doc');
+
+  // Update doc link visibility and href
+  let url = null;
+  if (meta.doc)                              url = SCIPY_DOC_BASE + meta.doc + '.html';
+  else if (alg === 'differential_evolution') url = DIFEV_DOC_URL;
+  else if (alg === 'gp_minimize')            url = SKOPT_GP_URL;
+  if (link) {
+    link.style.display = url ? 'inline' : 'none';
+    if (url) link.href = url;
+  }
+
+  // Update tooltip for the algorithm ? badge
+  const tipEl = document.querySelector('#sec-optim [data-alg-tip]');
+  if (tipEl) tipEl.setAttribute('data-tip', ALGORITHM_TIPS[alg] || '');
+}
+
+/* ================================================================
    SUGGESTION LOGIC
 ================================================================ */
 const ALL_ELM_CLASSES = [
@@ -1464,7 +1522,7 @@ const ALL_ELM_CLASSES = [
   'ElmCabsys','ElmComp','ElmCoup','ElmDsl','ElmFeeder','ElmFile','ElmFilter',
   'ElmGenstat','ElmGndswt','ElmIac','ElmLne','ElmLnesec','ElmNec','ElmNet',
   'ElmPvsys','ElmRelay','ElmRes','ElmShnt','ElmStactrl','ElmSubstat','ElmSvs',
-  'ElmSym','ElmTerm','ElmTr2','ElmTr3','ElmTr4','ElmTrfstat','ElmVac',
+  'ElmSym','ElmTerm','ElmTr2','ElmTr3','ElmTrfstat','ElmVac',
   'ElmVoltreg','ElmXnet','ElmZone','ElmZpu','StaPll'
 ];
 
@@ -1482,7 +1540,8 @@ function getObjectSuggestions(typed) {
   ALL_ELM_CLASSES.forEach(cls => {
     if (!classPart || cls.toLowerCase().startsWith(classPart)) {
       const full = namePart ? `${namePart}.${cls}` : cls;
-      results.push({ var: full, desc: cls + ' element', unit: '' });
+      const desc = PF_REF.index?.[cls]?.desc || cls;
+      results.push({ var: full, desc, unit: '' });
     }
   });
 
@@ -1491,8 +1550,10 @@ function getObjectSuggestions(typed) {
     ALL_ELM_CLASSES.forEach(cls => {
       if (cls.toLowerCase().startsWith(classPart)) {
         const wc = `*.${cls}`;
-        if (!results.find(r => r.var === wc))
-          results.push({ var: wc, desc: `All ${cls} objects (wildcard)`, unit: '' });
+        if (!results.find(r => r.var === wc)) {
+          const desc = PF_REF.index?.[cls]?.desc || cls;
+          results.push({ var: wc, desc: `All ${desc} objects (wildcard)`, unit: '' });
+        }
       }
     });
   }
@@ -1675,8 +1736,8 @@ function addInputRow(data = {}) {
   tr.innerHTML = `
     <td style="color:var(--muted);font-family:var(--mono);font-size:11px;vertical-align:middle">${rowNum}</td>
     <td><input type="text" id="iv-name-${idx}" value="${data.name||''}" placeholder="Var name" /></td>
-    <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" oninput="onInputObjectQueryChange(${idx})" onchange="onInputObjectQueryChange(${idx})" /></td>
-    <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" /></td>
+    <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" autocomplete="off" oninput="onInputObjectQueryChange(${idx})" onchange="onInputObjectQueryChange(${idx})" /></td>
+    <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" /></td>
     <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" /></td>
     <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" /></td>
     <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" /></td>
@@ -1737,7 +1798,7 @@ const KNOWN_ELM_OBJECT_TYPES = new Set([
   'ElmCabsys','ElmComp','ElmCoup','ElmDsl','ElmFeeder','ElmFile','ElmFilter',
   'ElmGenstat','ElmGndswt','ElmLne','ElmLnesec','ElmNec','ElmNet','ElmPvsys',
   'ElmRelay','ElmRes','ElmShnt','ElmStactrl','ElmSubstat','ElmSvs','ElmSym',
-  'ElmTerm','ElmTr2','ElmTr3','ElmTr4','ElmTrfstat','ElmVac','ElmVoltreg',
+  'ElmTerm','ElmTr2','ElmTr3','ElmTrfstat','ElmVac','ElmVoltreg',
   'ElmXnet','ElmZone'
 ]);
 
@@ -1809,16 +1870,16 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-obj">
         <label>Object ${tip('For Scalar: PowerFactory object query passed to GetCalcRelevantObjects() (e.g. Grid.ElmTerm). For Timeseries: the loc_name of the element exactly as it appears in the ElmRes CSV header row 0 — typically just the element name without path or class suffix (e.g. "HV_Bus" not "Grid\\HV_Bus.ElmTerm"). The tool strips any .ElmXxx class suffix from both this field and the CSV header automatically.')}</label>
         <div id="${id}-obj-attribute-wrap" class="${isTs?'cond-hidden':''}">
-          <input type="text" id="${id}-obj" value="${isTs ? '' : (data.object_query||'')}" placeholder="Element.ElmType" oninput="onOutputObjectInput('${id}')" />
+          <input type="text" id="${id}-obj" value="${isTs ? '' : (data.object_query||'')}" placeholder="Element.ElmType" autocomplete="off" oninput="onOutputObjectInput('${id}')" />
         </div>
         <div id="${id}-obj-timeseries-wrap" class="${isTs?'':'cond-hidden'}" style="display:flex;align-items:center;">
-          <input type="text" id="${id}-obj-prefix" value="${tsObjVal}" placeholder="Grid.ElmTerm" oninput="onOutputObjectInput('${id}')" />
+          <input type="text" id="${id}-obj-prefix" value="${tsObjVal}" placeholder="Grid.ElmTerm" autocomplete="off" oninput="onOutputObjectInput('${id}')" />
         </div>
       </div>
       <!-- ATTRIBUTE (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-var">
         <label>Attribute ${tip('For Scalar: attribute name read via obj.GetAttribute() (e.g. m:u1, c:loading, m:P). For Timeseries: the PowerFactory variable key exactly as used in GetAttribute() and the PF result variable browser (e.g. m:u1, c:loading, m:I:bus1). PowerFactory writes this key in the second CSV header row — do NOT use the descriptive label shown in PF dialogs.')}</label>
-        <input type="text" id="${id}-var" value="${data.variable||''}" placeholder="Attribute name" />
+        <input type="text" id="${id}-var" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" />
       </div>
       <!-- METRIC (hidden for single_attribute and custom_calculation) -->
       <div class="form-row ${(isAttr||isCust)?'cond-hidden':''}" id="${id}-row-metric">
@@ -2140,10 +2201,13 @@ function loadConfig(cfg) {
 
   const opt = cfg.optimisation || {};
   document.getElementById('optim-sense').value       = opt.sense || 'minimise';
-  document.getElementById('optim-algorithm').value   = opt.algorithm || 'placeholder';
+  let algVal = opt.algorithm || 'placeholder';
+  if (algVal === 'scipy_minimize') algVal = 'scipy_lbfgsb'; // legacy key migration
+  document.getElementById('optim-algorithm').value   = algVal;
   document.getElementById('optim-max-iter').value    = opt.maxIterations || 50;
   refreshObjectiveDropdown();
   document.getElementById('optim-objective').value   = opt.objectiveOutputName || '';
+  updateAlgorithmUI();
 
   document.getElementById('constraint-tbody').innerHTML = '';
   constraintCounter = 0;
@@ -2414,13 +2478,7 @@ function buildImports(cfg) {
   let optimImports = '';
   if (init.problemType === 'optimisation') {
     const alg = cfg.optimisation.algorithm;
-    if (alg === 'scipy_minimize') {
-      optimImports = 'from scipy.optimize import minimize';
-    } else if (alg === 'differential_evolution') {
-      optimImports = 'from scipy.optimize import differential_evolution';
-    } else if (alg === 'gp_minimize') {
-      optimImports = 'from skopt import gp_minimize\nfrom skopt.space import Real, Integer\nfrom skopt.utils import use_named_args';
-    }
+    optimImports = (ALGORITHM_META[alg] || {}).pyImport || '';
   }
 
   const matplotlibImport = hasOutputGraph
@@ -3633,7 +3691,9 @@ def evaluate_one_case(param_values):
       pre += `result = differential_evolution(de_objective, effective_bounds, maxiter=${maxIter}, seed=42)\n`;
       pre += `safe_print(f"Optimisation complete. Best value: {result.fun}")\n`;
 
-    } else if (alg === 'scipy_minimize') {
+    } else if (alg.startsWith('scipy_')) {
+      const scipyMethod = (ALGORITHM_META[alg] || {}).method || 'L-BFGS-B';
+      const useBounds   = (ALGORITHM_META[alg] || {}).bounds !== false;
       pre += `def minimize_objective(param_values):\n`;
       pre += `    row = evaluate_one_case(list(param_values))\n`;
       pre += `    objective_value = row["${objName}"]\n`;
@@ -3641,7 +3701,11 @@ def evaluate_one_case(param_values):
       pre += returnLine + '\n\n';
       pre += `# x0 and bounds are built from effective_bounds (accounts for permutate expansion)\n`;
       pre += `x0 = [(b[0] + b[1]) / 2 for b in effective_bounds]\n`;
-      pre += `result = minimize(minimize_objective, x0, bounds=effective_bounds, options={"maxiter": ${maxIter}})\n`;
+      if (useBounds) {
+        pre += `result = minimize(minimize_objective, x0, method='${scipyMethod}', bounds=effective_bounds, options={"maxiter": ${maxIter}})\n`;
+      } else {
+        pre += `result = minimize(minimize_objective, x0, method='${scipyMethod}', options={"maxiter": ${maxIter}})\n`;
+      }
       pre += `safe_print(f"Optimisation complete. Best value: {result.fun}")\n`;
 
     } else {
@@ -4032,6 +4096,7 @@ function toggleInfoExtra(extraId, btn) {
   addOutputVar({ type: 'attribute', name: 'Bus_voltage', object_query: 'Grid.ElmTerm', variable: 'm:u' });
   onProblemTypeChange();
   onStudyTypeChange();
+  updateAlgorithmUI();
   document.addEventListener('input', () => refreshLiveWarnings());
   document.addEventListener('change', () => refreshLiveWarnings());
   refreshLiveWarnings();
