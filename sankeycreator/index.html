@@ -630,10 +630,11 @@ function doRender(){
   // ── LABELS ──
   const isLight = document.body.classList.contains('light');
   // Read directly from body so body.light overrides are respected
-  const textColor  = cssVar('--text')  || (isLight ? '#2D3436'  : '#EAF1FF');
-  const mutedColor = cssVar('--muted') || (isLight ? '#7F8C8D'  : '#A8B6CF');
+  const textColor  = isLight ? '#000000' : (cssVar('--text')  || '#EAF1FF');
+  const mutedColor = isLight ? '#000000' : (cssVar('--muted') || '#A8B6CF');
   // Label box background — design-system alpha consistent with --card-bg intent
-  const boxBg = isLight ? 'rgba(240,244,255,0.84)' : 'rgba(15,23,40,0.78)';
+  const boxBg = isLight ? 'rgba(255,255,255,0.96)' : 'rgba(15,23,40,0.78)';
+  const boxStroke = isLight ? 'rgba(0,0,0,0.24)' : 'rgba(234,241,255,0.18)';
 
   nodeGroups.each(function(d){
     const grp   = d3.select(this);
@@ -698,6 +699,8 @@ function doRender(){
           .attr('width',Math.max(0,bw)).attr('height',Math.max(0,bh))
           .attr('rx',4).attr('ry',4)
           .attr('fill',boxBg)
+          .attr('stroke',boxStroke)
+          .attr('stroke-width',1)
           .attr('class','label-bg')
           .style('pointer-events','none');
       } catch(e){}
