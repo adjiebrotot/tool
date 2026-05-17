@@ -135,6 +135,12 @@ select option{background:var(--panel);color:var(--text)}
 /* SEPARATOR */
 hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
 
+/* FOOTER */
+.page-footer{max-width:1440px;margin:0 auto;padding:0 24px 24px}
+.page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px}
+.page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:.9rem}
+.page-footer-info p:last-child{margin-bottom:0}
+
 /* RESPONSIVE */
 @media(max-width:1100px){
   .layout{grid-template-columns:1fr}
@@ -280,6 +286,17 @@ hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
 
   </div><!-- /layout -->
 </div><!-- /container -->
+
+<footer class="page-footer">
+  <section class="page-footer-info">
+    <p>
+      <strong>Disclaimer:</strong> This tool is provided on an "as is" and "as available" basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any decisions.
+    </p>
+    <p>
+      If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you're interested, confused, or would like help learning how to use the tool, feel free to email me as well 🙂
+    </p>
+  </section>
+</footer>
 
 <script>
 // ─── STATE ────────────────────────────────────────────────────────────────────
