@@ -118,15 +118,18 @@
 
   /* ── LAYOUT ──────────────────────────────────────────────────────── */
   .layout {
-    display: grid;
-    grid-template-columns: minmax(320px, 44%) minmax(0, 1fr);
+    display: flex;
+    flex-direction: row;
     gap: 0;
-    align-items: start;
+    align-items: stretch;
     flex: 1;
     min-height: 0;
     overflow: visible;
   }
   .left-pane {
+    width: 44%;
+    min-width: 280px;
+    flex-shrink: 0;
     position: sticky;
     top: 72px;
     align-self: start;
@@ -137,11 +140,38 @@
     border-right: 1px solid var(--border);
   }
   .right-pane {
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     background: var(--surface);
     overflow: hidden;
   }
+  /* ── PANE RESIZER ────────────────────────────────────────────── */
+  .pane-resizer {
+    width: 5px;
+    flex-shrink: 0;
+    background: var(--border);
+    cursor: col-resize;
+    transition: background 0.2s;
+    position: relative;
+    z-index: 10;
+  }
+  .pane-resizer:hover, .pane-resizer.dragging { background: var(--accent); }
+  .pane-resizer::after {
+    content: '⋮';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .pane-resizer:hover::after { opacity: 1; }
 
   /* ── SECTION CARDS ───────────────────────────────────────────────── */
   .section-card {
@@ -574,12 +604,39 @@
     background: #132E56;
     border: 1px solid rgba(141,187,255,0.25);
     border-radius: var(--radius);
-    padding: 8px 12px;
+    padding: 7px 11px;
     font-size: 11.5px;
     color: #A8C9FF;
     line-height: 1.5;
     margin-bottom: 10px;
   }
+  .info-box .info-more-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    margin-left: 4px;
+    text-decoration: none;
+    border: none;
+    background: none;
+    padding: 0;
+    font-family: var(--sans);
+  }
+  .info-box .info-more-toggle:hover { opacity: 0.8; }
+  .info-box .info-extra {
+    display: none;
+    margin-top: 6px;
+    border-top: 1px solid rgba(141,187,255,0.15);
+    padding-top: 6px;
+    font-size: 11px;
+    line-height: 1.55;
+    color: #8BABD4;
+  }
+  .info-box .info-extra.open { display: block; }
 
   /* ── OUTPUT VAR CONTAINER ────────────────────────────────────────── */
   .output-var-item {
@@ -634,6 +691,66 @@
   .app-footer a:hover { text-decoration: underline; }
 
   /* ── MOBILE RESPONSIVE ──────────────────────────────────────────── */
+  /* ── REFERENCE DATA BADGE ───────────────────────────────────── */
+  .ref-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    margin-left: auto;
+  }
+  .ref-badge.loaded  { background: rgba(143,205,189,0.15); color: var(--accent2); border-color: rgba(143,205,189,0.3); }
+  .ref-badge.offline { background: rgba(255,210,140,0.12); color: var(--warn);    border-color: rgba(255,210,140,0.3); }
+  .ref-badge.loading { background: rgba(141,187,255,0.10); color: var(--muted);   border-color: rgba(141,187,255,0.2); }
+
+  /* ── COMBOBOX DROPDOWN ───────────────────────────────────────── */
+  .pf-combo-wrap {
+    position: relative;
+    width: 100%;
+  }
+  .pf-combo-wrap input { width: 100%; }
+  /* Dropdown is portalled to <body> — position:fixed set via JS */
+  .pf-combo-drop {
+    position: fixed;
+    z-index: 99999;
+    background: #1C2942;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.55);
+    max-height: 240px;
+    overflow-y: auto;
+    font-size: 12px;
+    display: none;
+    min-width: 200px;   /* always at least 200 px */
+  }
+  .pf-combo-item {
+    display: flex;
+    flex-direction: column;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(44,58,82,0.5);
+    gap: 1px;
+    transition: background 0.1s;
+    white-space: nowrap;
+  }
+  .pf-combo-item:last-child { border-bottom: none; }
+  .pf-combo-item:hover,
+  .pf-combo-item.active { background: rgba(141,187,255,0.13); }
+  .pf-combo-item .item-var {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 11.5px;
+  }
+  .pf-combo-item .item-meta {
+    font-size: 10.5px;
+    color: var(--muted);
+  }
+  .pf-combo-item .item-unit { font-size: 10px; color: var(--accent2); }
+
   @media (max-width: 768px) {
     /* Hard-stop horizontal overflow at the root */
     html {
@@ -682,6 +799,7 @@
       height: auto;
       overflow: visible;
     }
+    .pane-resizer { display: none; }
 
     /* Left pane: natural height, clamp width */
     .left-pane {
@@ -767,6 +885,7 @@
       <div class="header-subtitle">Help you automate PF simulations.</div>
     </div>
   </div>
+  <span class="ref-badge loading" id="ref-data-badge" title="Place variables.json and element_params.json in the same folder as index.html to enable smart attribute suggestions.">⏳ Loading DB…</span>
 </header>
 
 <!-- TOASTS -->
@@ -780,7 +899,7 @@
   <!-- ============================================================
        LEFT PANE — all input forms
   ============================================================ -->
-  <div class="left-pane">
+  <div class="left-pane" id="left-pane">
 
     <!-- Validation errors -->
     <div id="validation-errors">
@@ -858,7 +977,14 @@
       </div>
       <div class="section-body">
         <div class="info-box" id="input-info-box">
-          Define each parameter to vary. <strong>Step Size</strong> = increment value (not number of steps). For <strong>Optimisation</strong> mode, bounds define the search space (step not used). For <strong>Custom</strong> mode, values come from the scenario file's 3-row header columns (bounds and step not used); you can add extra columns in the scenario file to control additional objects. Wildcards in <strong>Object</strong> (for example <code>*.ElmDsl</code> or any <code>*</code>) are supported in all modes and apply the same value to all matched objects. In Brute Force/Optimisation, enable <strong>Permutate</strong> to independently vary each matched object — warning: this grows combinations exponentially.
+          <span id="input-info-brief">PF objects set via <code>SetAttribute()</code> before each run. Object: <code>GetCalcRelevantObjects()</code> query (e.g. <code>WFCtrl.ElmDsl</code>, <code>*.ElmSym</code>).</span>
+          <button class="info-more-toggle" onclick="toggleInfoExtra('input-info-extra', this)">More ▾</button>
+          <div class="info-extra" id="input-info-extra">
+            <strong>Brute Force:</strong> Step Size = increment (not number of steps); all combinations are iterated.<br/>
+            <strong>Optimisation:</strong> Bounds define the search space; step not used.<br/>
+            <strong>Custom:</strong> Values come from a scenario Excel file (bounds and step not used).<br/>
+            Wildcards (<code>*.ElmDsl</code>) match multiple objects — same value applied to all. Enable <strong>Permutate</strong> to independently vary each matched object (warning: grows M<sup>N</sup>).
+          </div>
         </div>
         <div class="dyn-table-wrapper">
           <table class="dyn-table" id="input-table">
@@ -892,14 +1018,15 @@
       </div>
       <div class="section-body">
         <div class="info-box">
-          The spreadsheet uses a <strong>3-row header</strong> system followed by data rows (one scenario per row).<br/>
-          <strong>Row 1 — Variable name:</strong> label cell (<code>Variable name</code>), then one column per variable (e.g. <code>voltage</code>, <code>K_droop</code>).<br/>
-          <strong>Row 2 — Object:</strong> label cell (<code>Object</code>), then the PowerFactory object query for each variable (e.g. <code>Grid.ElmTerm</code>, <code>WFController.ElmDsl</code>).<br/>
-          <strong>Row 3 — Attribute:</strong> label cell (<code>Attribute</code>), then the attribute name to set on each object (e.g. <code>unom</code>, <code>K_droop</code>).<br/>
-          <strong>Rows 4 + — Data:</strong> each row is one scenario; the first cell is the scenario label, then numeric values for each variable column.<br/>
-          Wildcard object queries (e.g. <code>*.ElmSym</code>) <strong>are</strong> supported — the value is applied to <em>all</em> matched objects simultaneously.<br/>
-          To add extra variables beyond those defined in the Input Variables tab, simply add a new column and fill in all three header rows.<br/>
-          The sheet name is always <code>Sheet1</code>. Click <strong>Download Template</strong> to get a pre-filled template based on your input variables.
+          Excel scenario file with a <strong>3-row header</strong> (Variable name / Object / Attribute) + one data row per scenario.
+          <button class="info-more-toggle" onclick="toggleInfoExtra('custom-info-extra', this)">More ▾</button>
+          <div class="info-extra" id="custom-info-extra">
+            <strong>Row 1 — Variable name:</strong> label cell <code>Variable name</code>, then one name per column.<br/>
+            <strong>Row 2 — Object:</strong> label cell <code>Object</code>, then PF query per column (e.g. <code>Grid.ElmTerm</code>).<br/>
+            <strong>Row 3 — Attribute:</strong> label cell <code>Attribute</code>, then attribute name per column.<br/>
+            <strong>Rows 4+ — Data:</strong> first cell = scenario label, then numeric values.<br/>
+            Wildcard queries (e.g. <code>*.ElmSym</code>) apply the value to all matched objects simultaneously. Sheet name must be <code>Sheet1</code>.
+          </div>
         </div>
         <div class="btn-row" style="margin-top:0;margin-bottom:10px;">
           <button class="btn btn-ghost btn-xs" onclick="downloadCustomTemplate()">⬇ Download Template (.xlsx)</button>
@@ -919,10 +1046,13 @@
       </div>
       <div class="section-body">
         <div class="info-box">
-          <strong>Scalar</strong>: read a scalar result attribute from a PF element after solving (obj.GetAttribute).<br/>
-          <strong>Timeseries</strong>: extract a scalar metric from the dynamic result file (ElmRes). Requires a dynamic study type.<br/>
-          <strong>Custom Calculation</strong>: user-defined Python function that can reference other input/output variable values.<br/>
-          Variable names must be unique across <em>all</em> input and output variables.
+          <strong>Scalar</strong>: <code>obj.GetAttribute()</code> after solving. <strong>Timeseries</strong>: scalar metric from ElmRes (dynamic only). <strong>Custom</strong>: user-defined Python function.
+          <button class="info-more-toggle" onclick="toggleInfoExtra('output-info-extra', this)">More ▾</button>
+          <div class="info-extra" id="output-info-extra">
+            All variable names must be unique across inputs and outputs.<br/>
+            <strong>Timeseries</strong> outputs require a Dynamic RMS or EMT study type. The attribute field uses the PF variable key (e.g. <code>m:u1</code>, <code>c:loading</code>) — same as the result variable browser.<br/>
+            <strong>Custom Calculation</strong> function arguments must be names of other defined input or output variables.
+          </div>
         </div>
         <div id="output-vars-container"></div>
         <div class="btn-row">
@@ -1022,6 +1152,9 @@
     </div>
 
   </div><!-- end left-pane -->
+
+  <!-- PANE RESIZER — drag to adjust left/right width -->
+  <div class="pane-resizer" id="pane-resizer" title="Drag to resize"></div>
 
   <!-- ============================================================
        RIGHT PANE — code preview + controls
@@ -1129,6 +1262,406 @@ function onSaveIntermediateChange() {
 }
 
 /* ================================================================
+   REFERENCE DATA — loaded from variables_index.json + element_params.json
+   on startup. Individual variables/ElmXxx.json files are lazy-loaded
+   on demand the first time a user focuses the Attribute field for
+   that element class.
+
+   Deploy alongside index.html:
+     variables_index.json      (68 KB  — gateway index, loaded on startup)
+     variables/                (folder — lazy-loaded per element class)
+     element_params.json       (512 KB — input param suggestions, loaded on startup)
+================================================================ */
+const PF_REF = {
+  index:    null,   // variables_index.json  →  {ElmXxx: {file, study_groups}}
+  params:   null,   // element_params.json   →  {ElmXxx: [{var,unit,desc},...]}
+  varFiles: {},     // cache: ElmXxx → full variables/ElmXxx.json data
+  loading:  new Set(), // classes currently being fetched
+};
+
+// Map HTML study-type → variables/ElmXxx.json result_vars key
+const STUDY_TYPE_KEY = {
+  steady_state: 'load_flow',
+  harmonic:     'frequency_sweep',
+  dynamic_rms:  'dynamic_rms',
+  dynamic_emt:  'dynamic_emt',   // full file HAS dynamic_emt (unlike curated variables.json)
+};
+
+async function fetchReferenceData() {
+  const badge = document.getElementById('ref-data-badge');
+  try {
+    const [idxRes, paramsRes] = await Promise.all([
+      fetch('variables_index.json').catch(() => null),
+      fetch('element_params.json').catch(() => null),
+    ]);
+    if (idxRes    && idxRes.ok)    PF_REF.index  = await idxRes.json();
+    if (paramsRes && paramsRes.ok) PF_REF.params = await paramsRes.json();
+
+    const loaded = !!(PF_REF.index || PF_REF.params);
+    if (badge) {
+      badge.textContent = loaded ? '⚡ Variable DB loaded' : '⚠ Variable DB offline';
+      badge.className   = `ref-badge ${loaded ? 'loaded' : 'offline'}`;
+      badge.title = loaded
+        ? 'Smart autocomplete active. Full variable lists load on demand per element class.'
+        : 'Deploy variables_index.json, variables/ folder, and element_params.json alongside index.html to enable smart autocomplete.';
+    }
+  } catch (e) {
+    if (badge) { badge.textContent = '⚠ Variable DB offline'; badge.className = 'ref-badge offline'; }
+    console.warn('PF reference data not loaded:', e.message);
+  }
+}
+
+/**
+ * Lazy-load variables/ElmXxx.json for a given class.
+ * Returns the cached data if already loaded, or triggers a background fetch.
+ * The onLoaded callback is called once the data is available.
+ */
+async function fetchElmClassVars(elmClass, onLoaded) {
+  if (!PF_REF.index || !PF_REF.index[elmClass]) return;
+  if (PF_REF.varFiles[elmClass]) { if (onLoaded) onLoaded(PF_REF.varFiles[elmClass]); return; }
+  if (PF_REF.loading.has(elmClass)) return; // already in-flight
+
+  PF_REF.loading.add(elmClass);
+  try {
+    const filePath = PF_REF.index[elmClass].file; // e.g. "variables/ElmTerm.json"
+    const res = await fetch(filePath);
+    if (res.ok) {
+      PF_REF.varFiles[elmClass] = await res.json();
+      if (onLoaded) onLoaded(PF_REF.varFiles[elmClass]);
+    }
+  } catch (e) {
+    console.warn(`Could not load ${elmClass} variable data:`, e.message);
+  } finally {
+    PF_REF.loading.delete(elmClass);
+  }
+}
+
+/* ================================================================
+   COMBOBOX — portal-based: dropdown appended to <body> with position:fixed
+   so it escapes dyn-table-wrapper and output-var-body overflow:hidden
+================================================================ */
+class PFComboBox {
+  constructor(inputEl, getSuggestions, onPick) {
+    this.input  = inputEl;
+    this.getSuggestions = getSuggestions;
+    this.onPick = onPick || null;
+    this.drop   = null;
+    this.active = -1;
+    this.items  = [];
+    this._scrollHandler = () => { if (this.drop.style.display !== 'none') this._position(); };
+    this._build();
+  }
+
+  _build() {
+    const wrap = document.createElement('div');
+    wrap.className = 'pf-combo-wrap';
+    this.input.parentNode.insertBefore(wrap, this.input);
+    wrap.appendChild(this.input);
+
+    // Portal: append to body so it's never clipped by any ancestor
+    this.drop = document.createElement('div');
+    this.drop.className = 'pf-combo-drop';
+    document.body.appendChild(this.drop);
+
+    this.input.addEventListener('input',   () => this._refresh());
+    this.input.addEventListener('focus',   () => this._refresh());
+    this.input.addEventListener('keydown', e  => this._keydown(e));
+    this.input.addEventListener('blur',    () => setTimeout(() => this._close(), 160));
+    window.addEventListener('scroll', this._scrollHandler, true);
+    window.addEventListener('resize', this._scrollHandler);
+  }
+
+  _position() {
+    const r = this.input.getBoundingClientRect();
+    const dropW = Math.max(r.width, 270);
+    const left  = Math.min(r.left, window.innerWidth - dropW - 8);
+    this.drop.style.left     = `${Math.max(4, left)}px`;
+    this.drop.style.minWidth = `${r.width}px`;
+    this.drop.style.width    = `${dropW}px`;
+    const below = window.innerHeight - r.bottom;
+    if (below >= 160 || below >= r.top) {
+      this.drop.style.top    = `${r.bottom + 3}px`;
+      this.drop.style.bottom = 'auto';
+    } else {
+      this.drop.style.top    = 'auto';
+      this.drop.style.bottom = `${window.innerHeight - r.top + 3}px`;
+    }
+  }
+
+  _refresh() {
+    const suggestions = this.getSuggestions(this.input.value);
+    this.items = suggestions.slice(0, 35);
+    this.active = -1;
+    if (this.items.length === 0) { this._close(); return; }
+
+    this.drop.innerHTML = '';
+    this.items.forEach((item, i) => {
+      const el = document.createElement('div');
+      el.className = 'pf-combo-item';
+      const unit = item.unit ? `<span class="item-unit"> · ${item.unit}</span>` : '';
+      const desc = item.desc ? `<span class="item-meta">${escHtml(item.desc)}${unit}</span>` : '';
+      el.innerHTML = `<span class="item-var">${escHtml(item.var)}</span>${desc}`;
+      el.addEventListener('mousedown', e => { e.preventDefault(); this._pick(i); });
+      this.drop.appendChild(el);
+    });
+    this._position();
+    this.drop.style.display = 'block';
+  }
+
+  _close() {
+    this.drop.style.display = 'none';
+    this.active = -1;
+  }
+
+  _keydown(e) {
+    const open = this.drop.style.display !== 'none';
+    if (e.key === 'ArrowDown') {
+      if (!open) { this._refresh(); return; }
+      this.active = Math.min(this.active + 1, this.items.length - 1);
+      this._highlight(); e.preventDefault();
+    } else if (e.key === 'ArrowUp') {
+      this.active = Math.max(this.active - 1, -1);
+      this._highlight(); e.preventDefault();
+    } else if (e.key === 'Enter' && this.active >= 0 && open) {
+      this._pick(this.active); e.preventDefault();
+    } else if (e.key === 'Escape') {
+      this._close();
+    }
+  }
+
+  _highlight() {
+    Array.from(this.drop.children).forEach((el, i) =>
+      el.classList.toggle('active', i === this.active));
+    if (this.active >= 0)
+      this.drop.children[this.active]?.scrollIntoView({ block: 'nearest' });
+  }
+
+  _pick(i) {
+    const item = this.items[i];
+    if (!item) return;
+    this.input.value = item.var;
+    this.input.dispatchEvent(new Event('input', { bubbles: true }));
+    this._close();
+    if (this.onPick) this.onPick(item);
+  }
+
+  destroy() {
+    window.removeEventListener('scroll', this._scrollHandler, true);
+    window.removeEventListener('resize', this._scrollHandler);
+    if (this.drop?.parentNode) this.drop.parentNode.removeChild(this.drop);
+  }
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ================================================================
+   SUGGESTION LOGIC
+================================================================ */
+const ALL_ELM_CLASSES = [
+  'ElmArea','ElmAsm','ElmAsmsc','ElmBbone','ElmBmu','ElmBoundary','ElmBranch',
+  'ElmCabsys','ElmComp','ElmCoup','ElmDsl','ElmFeeder','ElmFile','ElmFilter',
+  'ElmGenstat','ElmGndswt','ElmIac','ElmLne','ElmLnesec','ElmNec','ElmNet',
+  'ElmPvsys','ElmRelay','ElmRes','ElmShnt','ElmStactrl','ElmSubstat','ElmSvs',
+  'ElmSym','ElmTerm','ElmTr2','ElmTr3','ElmTr4','ElmTrfstat','ElmVac',
+  'ElmVoltreg','ElmXnet','ElmZone','ElmZpu','StaPll'
+];
+
+// Suggest Object query strings like "Grid.ElmTerm", "*.ElmDsl" etc.
+function getObjectSuggestions(typed) {
+  const q = (typed || '').trim();
+  const dotIdx = q.lastIndexOf('.');
+  // Everything before (and including) the last dot is the name prefix
+  const namePart  = dotIdx >= 0 ? q.slice(0, dotIdx) : (q || '');
+  const classPart = dotIdx >= 0 ? q.slice(dotIdx + 1).toLowerCase() : '';
+
+  const results = [];
+
+  // Suggest Name.ElmXxx for matching classes
+  ALL_ELM_CLASSES.forEach(cls => {
+    if (!classPart || cls.toLowerCase().startsWith(classPart)) {
+      const full = namePart ? `${namePart}.${cls}` : cls;
+      results.push({ var: full, desc: cls + ' element', unit: '' });
+    }
+  });
+
+  // Also suggest wildcard variants when user typed something after a dot
+  if (classPart) {
+    ALL_ELM_CLASSES.forEach(cls => {
+      if (cls.toLowerCase().startsWith(classPart)) {
+        const wc = `*.${cls}`;
+        if (!results.find(r => r.var === wc))
+          results.push({ var: wc, desc: `All ${cls} objects (wildcard)`, unit: '' });
+      }
+    });
+  }
+
+  return results.slice(0, 35);
+}
+
+// Extract ElmXxx class from an object query like "Grid.ElmTerm" → "ElmTerm"
+function extractElmClass(objectQuery) {
+  if (!objectQuery) return null;
+  const m = objectQuery.match(/\.(Elm[A-Za-z0-9]+|Sta[A-Za-z0-9]+)\s*$/);
+  return m ? m[1] : null;
+}
+
+// Common direct Python attributes (no prefix, for input variables / SetAttribute)
+const DIRECT_PY_ATTRS = [
+  { var: 'outserv',    desc: 'Out of service flag (0 = in, 1 = out)',    unit: '' },
+  { var: 'loc_name',   desc: 'Object name string',                        unit: '' },
+  { var: 'pgini',      desc: 'Active power setpoint',                     unit: 'MW' },
+  { var: 'qgini',      desc: 'Reactive power setpoint',                   unit: 'Mvar' },
+  { var: 'Pmax_a',     desc: 'Active power upper limit',                  unit: 'MW' },
+  { var: 'Pmin_a',     desc: 'Active power lower limit',                  unit: 'MW' },
+  { var: 'scale0',     desc: 'Scaling factor (load / gen)',               unit: '' },
+  { var: 'coslini',    desc: 'Power factor setpoint (lagging)',           unit: '' },
+  { var: 'usetp',      desc: 'Voltage setpoint (pu)',                     unit: 'pu' },
+  { var: 'phtech',     desc: 'Phase technology',                          unit: '' },
+  { var: 'nphase',     desc: 'Number of phases',                          unit: '' },
+  { var: 'Tstart',     desc: 'Start time',                               unit: 's' },
+  { var: 'Tstop',      desc: 'Stop time',                                unit: 's' },
+];
+
+// INPUT variable attribute suggestions — e: params + direct Python attrs
+function getInputAttrSuggestions(typed, elmClass) {
+  const q = (typed || '').toLowerCase();
+  const results = [];
+  const seen = new Set();
+  const addItem = item => {
+    if (!seen.has(item.var)) {
+      seen.add(item.var);
+      results.push({ var: item.var, desc: item.desc || '', unit: item.unit || '' });
+    }
+  };
+
+  // Primary: element_params.json  (e: prefix — rated/input params, pre-loaded)
+  if (PF_REF.params && elmClass && PF_REF.params[elmClass]) {
+    PF_REF.params[elmClass].forEach(item => {
+      if (item.var.startsWith('e:')) {
+        if (!q || item.var.toLowerCase().includes(q) || (item.desc || '').toLowerCase().includes(q))
+          addItem(item);
+      }
+    });
+  }
+
+  // Supplement: lazy-loaded full variables/ElmXxx.json params section
+  if (PF_REF.varFiles[elmClass]) {
+    const fullParams = PF_REF.varFiles[elmClass].params || {};
+    Object.values(fullParams).flat().forEach(item => {
+      if (!q || item.var.toLowerCase().includes(q) || (item.desc || '').toLowerCase().includes(q))
+        addItem(item);
+    });
+  } else if (elmClass) {
+    fetchElmClassVars(elmClass, null); // trigger background load; next open will be richer
+  }
+
+  // Always include direct Python attrs (no prefix — elm.pgini, elm.outserv, etc.)
+  DIRECT_PY_ATTRS.forEach(a => {
+    if (!q || a.var.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q))
+      addItem(a);
+  });
+
+  return results.slice(0, 50);
+}
+
+// OUTPUT variable attribute suggestions — result variables (m:, c:, s:, n:)
+// from lazy-loaded variables/ElmXxx.json, filtered by current study type.
+// Falls back to var names in the index while the full file is loading.
+function getOutputAttrSuggestions(typed, elmClass, comboInstance) {
+  const q = (typed || '').toLowerCase();
+  const stVal  = document.getElementById('study-type')?.value || 'steady_state';
+  const jsonKey = STUDY_TYPE_KEY[stVal] || 'load_flow';
+  const results = [];
+  const seen = new Set();
+  const addItem = item => {
+    if (!seen.has(item.var)) {
+      seen.add(item.var);
+      results.push({ var: item.var, desc: item.desc || '', unit: item.unit || '' });
+    }
+  };
+
+  if (elmClass) {
+    if (PF_REF.varFiles[elmClass]) {
+      // Full rich data available
+      const studyVars = PF_REF.varFiles[elmClass].result_vars?.[jsonKey]
+                     || PF_REF.varFiles[elmClass].result_vars?.['load_flow']
+                     || {};
+      Object.values(studyVars).flat().forEach(item => {
+        if (!q || item.var.toLowerCase().includes(q) || (item.desc || '').toLowerCase().includes(q))
+          addItem(item);
+      });
+    } else {
+      // Fallback: show var names from index while full file loads in background
+      const indexVars = PF_REF.index?.[elmClass]?.study_groups?.[jsonKey]
+                     || PF_REF.index?.[elmClass]?.study_groups?.['load_flow']
+                     || [];
+      indexVars.forEach(varName => {
+        if (!q || varName.toLowerCase().includes(q))
+          addItem({ var: varName, desc: '(loading full list…)', unit: '' });
+      });
+      // Trigger load; re-open dropdown when data arrives so user sees descriptions
+      fetchElmClassVars(elmClass, () => { if (comboInstance) comboInstance._refresh(); });
+    }
+  }
+
+  // Fallback hardcoded common outputs when no class detected or DB not available
+  if (results.length === 0) {
+    const common = [
+      { var: 'm:u1',       desc: 'Voltage magnitude (pu)',              unit: 'pu'  },
+      { var: 'm:phiu',     desc: 'Voltage angle',                       unit: 'deg' },
+      { var: 'm:Psum',     desc: 'Total active power injection',         unit: 'MW'  },
+      { var: 'm:Qsum',     desc: 'Total reactive power injection',       unit: 'Mvar'},
+      { var: 'm:P',        desc: 'Active power',                         unit: 'MW'  },
+      { var: 'm:Q',        desc: 'Reactive power',                       unit: 'Mvar'},
+      { var: 'm:I1',       desc: 'Positive-sequence current magnitude',  unit: 'kA'  },
+      { var: 'c:loading',  desc: 'Element loading',                      unit: '%'   },
+      { var: 'm:Ikss',     desc: 'Short-circuit current (sym)',          unit: 'kA'  },
+      { var: 's:speed',    desc: 'Rotor speed (dynamic)',                unit: 'pu'  },
+      { var: 'm:cosphi',   desc: 'Power factor',                         unit: ''    },
+    ];
+    common.forEach(c => {
+      if (!q || c.var.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q))
+        addItem(c);
+    });
+  }
+  return results.slice(0, 60);
+}
+
+/* ================================================================
+   ATTACH COMBOBOXES — called after each row/card is inserted into DOM
+================================================================ */
+function attachInputComboBoxes(idx) {
+  const objInput  = document.getElementById(`iv-obj-${idx}`);
+  const attrInput = document.getElementById(`iv-var-${idx}`);
+  if (!objInput || !attrInput) return;
+
+  new PFComboBox(objInput, typed => getObjectSuggestions(typed));
+
+  new PFComboBox(attrInput, typed => {
+    const elmClass = extractElmClass(objInput.value);
+    return getInputAttrSuggestions(typed, elmClass);
+  });
+}
+
+function attachOutputComboBoxes(id) {
+  const objInput    = document.getElementById(`${id}-obj`);
+  const objPfxInput = document.getElementById(`${id}-obj-prefix`);
+  const attrInput   = document.getElementById(`${id}-var`);
+
+  const getElmClass = () => extractElmClass(
+    (objInput?.value || objPfxInput?.value || '').trim()
+  );
+
+  if (objInput)    new PFComboBox(objInput,    typed => getObjectSuggestions(typed));
+  if (objPfxInput) new PFComboBox(objPfxInput, typed => getObjectSuggestions(typed));
+  if (attrInput) {
+    const combo = new PFComboBox(attrInput, typed => getOutputAttrSuggestions(typed, getElmClass(), combo));
+  }
+}
+
+/* ================================================================
    INPUT VARIABLE TABLE
 ================================================================ */
 let inputRowCounter = 0;
@@ -1154,6 +1687,7 @@ function addInputRow(data = {}) {
   `;
   tbody.appendChild(tr);
   syncPermutateCheckboxForRow(idx);
+  attachInputComboBoxes(idx);
 }
 
 function removeRow(id) {
@@ -1225,6 +1759,8 @@ function addOutputVar(data = {}) {
   if (type === 'custom_calculation') {
     initAceEditor(id, data.customFn || '');
   }
+  // Attach comboboxes for object + attribute fields
+  attachOutputComboBoxes(id);
   // refresh objective dropdown
   if (document.getElementById('problem-type').value === 'optimisation') {
     refreshObjectiveDropdown();
@@ -1271,7 +1807,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
     <div class="output-var-body" id="${id}-body">
       <!-- OBJECT (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-obj">
-        <label>Object ${tip('For Scalar: PowerFactory object query passed to GetCalcRelevantObjects() (e.g. Grid.ElmTerm). For Timeseries: the object name as it appears in the ElmRes export header row (e.g. "Grid" or "Grid.ElmTerm"). The .ElmXxx class suffix is stripped automatically during matching.')}</label>
+        <label>Object ${tip('For Scalar: PowerFactory object query passed to GetCalcRelevantObjects() (e.g. Grid.ElmTerm). For Timeseries: the loc_name of the element exactly as it appears in the ElmRes CSV header row 0 — typically just the element name without path or class suffix (e.g. "HV_Bus" not "Grid\\HV_Bus.ElmTerm"). The tool strips any .ElmXxx class suffix from both this field and the CSV header automatically.')}</label>
         <div id="${id}-obj-attribute-wrap" class="${isTs?'cond-hidden':''}">
           <input type="text" id="${id}-obj" value="${isTs ? '' : (data.object_query||'')}" placeholder="Element.ElmType" oninput="onOutputObjectInput('${id}')" />
         </div>
@@ -1281,7 +1817,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       </div>
       <!-- ATTRIBUTE (hidden for custom_calculation) -->
       <div class="form-row ${isCust?'cond-hidden':''}" id="${id}-row-var">
-        <label>Attribute ${tip('For Scalar: attribute name read via obj.GetAttribute() (e.g. m:THD, c:loading). For Timeseries: the attribute column header exactly as it appears in the ElmRes export (e.g. "u1, Magnitude/Terminal i in p.u." or "Positive-Sequence Current, Magnitude/Terminal i in kA").')}</label>
+        <label>Attribute ${tip('For Scalar: attribute name read via obj.GetAttribute() (e.g. m:u1, c:loading, m:P). For Timeseries: the PowerFactory variable key exactly as used in GetAttribute() and the PF result variable browser (e.g. m:u1, c:loading, m:I:bus1). PowerFactory writes this key in the second CSV header row — do NOT use the descriptive label shown in PF dialogs.')}</label>
         <input type="text" id="${id}-var" value="${data.variable||''}" placeholder="Attribute name" />
       </div>
       <!-- METRIC (hidden for single_attribute and custom_calculation) -->
@@ -2123,7 +2659,9 @@ function buildStudyHelper(cfg) {
     comSim = app.GetFromStudyCase("ComSim")
     comSim.tstop = tstop
 
+    app.EchoOff()         # Required: suppresses ComInc console flood
     comInc.Execute()
+    app.EchoOn()
     comSim.Execute()
 `;
   } else if (st === 'dynamic_emt') {
@@ -2138,7 +2676,9 @@ function buildStudyHelper(cfg) {
     comSim = app.GetFromStudyCase("ComSim")
     comSim.tstop = tstop
 
+    app.EchoOff()         # Required: suppresses ComInc console flood
     comInc.Execute()
+    app.EchoOn()
     comSim.Execute()
 `;
   }
@@ -2162,20 +2702,29 @@ function buildElmResHelpers(cfg) {
 #   5. _load_elmres_data(app)            — convenience: temp export + parse + delete
 
 def _export_elmres_to_csv(app, csv_path):
-    """Export all ElmRes result data to a CSV file using ComRes."""
-    res = app.GetCalcRelevantObjects("*.ElmRes")[0]
-    export = app.GetFromStudyCase("*.ComRes")
-    export.iopt_exp = 6    # export format: CSV
-    export.iopt_csel = 0   # export all variables
-    export.iopt_tsel = 0   # export all time steps
-    export.pResult = res
-    export.f_name = csv_path
+    """Export all ElmRes result data to a CSV file using ComRes.
+
+    Uses GetFromStudyCase() — the correct API for study-case-bound objects.
+    'All calculations.ElmRes' is the default result object name in every study case.
+    """
+    res    = app.GetFromStudyCase("All calculations.ElmRes")
+    export = app.GetFromStudyCase("ComRes")
+    export.iopt_exp  = 6    # export format: CSV with time column
+    export.iopt_sep  = 1    # use system locale separators
+    export.iopt_csel = 0    # export all variables
+    export.iopt_tsel = 0    # export full time range
+    export.pResult   = res
+    export.f_name    = csv_path
     export.Execute()
 
 
 def _strip_elm_class(name):
-    """Strip trailing .ElmXxx object-class suffix (e.g. .ElmTerm, .ElmLne)."""
-    return re.sub(r'\\.[A-Z][a-zA-Z0-9]{2,}$', '', name.strip())
+    """Strip trailing PowerFactory class suffix (e.g. .ElmTerm, .ElmLne, .ComRes).
+
+    Only strips suffixes that match known PF class prefixes (Elm, Com, Sta, Int, Evt)
+    so that user-defined object names like 'Generator.Unit' are left intact.
+    """
+    return re.sub(r'\\.(Elm|Com|Sta|Int|Evt)[A-Za-z0-9]+$', '', name.strip())
 
 
 def _strip_dedup_suffix(name):
@@ -2803,12 +3352,12 @@ for _i, _spec in enumerate(input_specs):
     pre += `${indent}        spec = input_specs[spec_idx]\n`;
     pre += `${indent}        if target_obj is not None:\n`;
     pre += `${indent}            # Permutate: this slot controls one specific object\n`;
-    pre += `${indent}            setattr(target_obj, spec["variable"], value)\n`;
+    pre += `${indent}            target_obj.SetAttribute(spec["variable"], value)\n`;
     pre += `${indent}            current_inputs[f"{spec['name']} {target_obj.loc_name}"] = value\n`;
     pre += `${indent}        else:\n`;
     pre += `${indent}            # Non-permutate: apply same value to all matched objects\n`;
     pre += `${indent}            for obj in input_objects[spec_idx]:\n`;
-    pre += `${indent}                setattr(obj, spec["variable"], value)\n`;
+    pre += `${indent}                obj.SetAttribute(spec["variable"], value)\n`;
     pre += `${indent}            if len(input_objects[spec_idx]) == 1:\n`;
     pre += `${indent}                current_inputs[spec["name"]] = value\n`;
     pre += `${indent}            else:\n`;
@@ -2888,7 +3437,7 @@ for _spec in _col_specs:
     pre += `${indent}            continue\n`;
     pre += `${indent}        _objs = _col_object_cache[_spec["object_query"]]\n`;
     pre += `${indent}        for _obj in _objs:\n`;
-    pre += `${indent}            setattr(_obj, _spec["attribute"], _value)\n`;
+    pre += `${indent}            _obj.SetAttribute(_spec["attribute"], _value)\n`;
     pre += `${indent}        if len(_objs) == 1:\n`;
     pre += `${indent}            row[_spec["name"]] = _value\n`;
     pre += `${indent}        else:\n`;
@@ -2995,12 +3544,12 @@ def evaluate_one_case(param_values):
         spec = input_specs[spec_idx]
         if target_obj is not None:
             # Permutate: this slot controls one specific matched object
-            setattr(target_obj, spec["variable"], value)
+            target_obj.SetAttribute(spec["variable"], value)
             row[f"{spec['name']} {target_obj.loc_name}"] = value
         else:
             # Non-permutate: apply same value to all matched objects
             for obj in input_objects[spec_idx]:
-                setattr(obj, spec["variable"], value)
+                obj.SetAttribute(spec["variable"], value)
             if len(input_objects[spec_idx]) == 1:
                 row[spec["name"]] = value
             else:
@@ -3424,9 +3973,61 @@ function resetForm() {
 })();
 
 /* ================================================================
+   INFO BOX — collapsible extra detail
+================================================================ */
+function toggleInfoExtra(extraId, btn) {
+  const el = document.getElementById(extraId);
+  if (!el) return;
+  const open = el.classList.toggle('open');
+  btn.textContent = open ? 'Less ▴' : 'More ▾';
+}
+
+/* ================================================================
+   PANE RESIZER — drag handle between left and right panes
+================================================================ */
+(function initPaneResizer() {
+  const resizer  = document.getElementById('pane-resizer');
+  const leftPane = document.getElementById('left-pane');
+  if (!resizer || !leftPane) return;
+
+  let startX = 0, startW = 0;
+
+  resizer.addEventListener('mousedown', e => {
+    startX = e.clientX;
+    startW = leftPane.offsetWidth;
+    resizer.classList.add('dragging');
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = 'col-resize';
+    document.addEventListener('mousemove', onDrag);
+    document.addEventListener('mouseup', onUp);
+    e.preventDefault();
+  });
+
+  function onDrag(e) {
+    const newW = startW + (e.clientX - startX);
+    const min  = 260;
+    const max  = Math.floor(window.innerWidth * 0.72);
+    leftPane.style.width    = `${Math.max(min, Math.min(max, newW))}px`;
+    leftPane.style.minWidth = '0';
+    leftPane.style.maxWidth = 'none';
+    leftPane.style.flexShrink = '0';
+  }
+
+  function onUp() {
+    resizer.classList.remove('dragging');
+    document.body.style.userSelect = '';
+    document.body.style.cursor = '';
+    document.removeEventListener('mousemove', onDrag);
+    document.removeEventListener('mouseup', onUp);
+  }
+})();
+
+/* ================================================================
    INIT — add default rows on load
 ================================================================ */
 (function init() {
+  // Kick off reference data fetch (comboboxes degrade gracefully if files absent)
+  fetchReferenceData();
   addInputRow({ name: 'WFController_kdroop', object_query: 'WFController.ElmDsl', variable: 'K_droop', lower: 0, upper: 10, step: 0.5 });
   addOutputVar({ type: 'attribute', name: 'Bus_voltage', object_query: 'Grid.ElmTerm', variable: 'm:u' });
   onProblemTypeChange();
