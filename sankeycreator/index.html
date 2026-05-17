@@ -299,12 +299,12 @@ main{display:flex;flex-direction:column;gap:13px}
       <section class="chart-card card">
         <div class="chart-head">
           <h2 style="margin:0">Flow Diagram</h2>
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-            <div id="errBanner" style="display:none" class="error-banner"></div>
+          <div style="display:flex;gap:6px;align-items:center">
             <button id="exportSvgBtn" class="btn-export">⬇ SVG</button>
             <button id="exportPngBtn" class="btn-export">⬇ PNG</button>
           </div>
         </div>
+        <div id="errBanner" style="display:none;margin-bottom:10px" class="error-banner"></div>
         <div class="svg-wrap" id="svgWrap">
           <svg id="sankeySvg"></svg>
           <div class="empty-state" id="emptyState">
@@ -443,7 +443,7 @@ function resolveRows(rawRows){
 //  BUILD SANKEY INPUT DATA
 // ═══════════════════════════════════════════════
 function buildData(resolved){
-  // Merge duplicate source→target
+  // Merge duplicate source→target pairs
   const linkMap = new Map();
   resolved.forEach(r=>{
     const k = `${r.source}\x00${r.target}`;
@@ -457,14 +457,17 @@ function buildData(resolved){
   });
   const dedupe = [...linkMap.values()].filter(r=>r.resolvedValue>0);
 
-  const names = [...new Set(dedupe.flatMap(r=>[r.source,r.target]))];
+  // Build a stable ordered node list and a name→index map
+  const names   = [...new Set(dedupe.flatMap(r=>[r.source,r.target]))];
+  const nodeIdx = new Map(names.map((n,i)=>[n,i]));
 
   return {
+    // Nodes: just {name}; d3-sankey default nodeId uses array index
     nodes: names.map(name=>({name})),
-    // d3-sankey with nodeId(d=>d.name) expects source/target to be name strings, NOT indices
+    // Links: numeric indices — the canonical d3-sankey format
     links: dedupe.map(r=>({
-      source:      r.source,
-      target:      r.target,
+      source:      nodeIdx.get(r.source),
+      target:      nodeIdx.get(r.target),
       value:       r.resolvedValue,
       customColor: r.color && hex(r.color) ? r.color : null,
       _src:        r.source,
@@ -477,9 +480,11 @@ function buildData(resolved){
 //  RENDER SANKEY
 // ═══════════════════════════════════════════════
 let renderTimer = null;
+let graph = null; // module-scope so export functions can check it
 function scheduleRender(){ clearTimeout(renderTimer); renderTimer=setTimeout(doRender,40); }
 
 function doRender(){
+  graph = null; // reset on each render
   const resolved = resolveRows(rows);
   updateRemBadges(resolved);
 
@@ -508,16 +513,16 @@ function doRender(){
 
   const alignMap = {justify:d3.sankeyJustify,left:d3.sankeyLeft,right:d3.sankeyRight,center:d3.sankeyCenter};
 
-  let graph;
+  let graphResult;
   try{
     const gen = d3.sankey()
-      .nodeId(d=>d.name)
+      // No .nodeId() — use the default (d,i)=>i so numeric indices in links match
       .nodeAlign(alignMap[S.align]||d3.sankeyJustify)
       .nodeWidth(S.nw)
       .nodePadding(S.pad)
       .iterations(S.iter)
       .extent([[mL,mT],[W-mR,H-mB]]);
-    graph = gen({
+    graphResult = gen({
       nodes: data.nodes.map(d=>({...d})),
       links: data.links.map(d=>({...d})),
     });
@@ -525,6 +530,7 @@ function doRender(){
     showErr('Layout error: '+(e.message||'Check for cycles or duplicate paths'));
     return;
   }
+  graph = graphResult;
 
   const svg  = d3.select(svgEl);
   const defs = svg.append('defs');
@@ -1019,6 +1025,7 @@ $('sColor').addEventListener('change',()=>{ S.scheme=$('sColor').value; schedule
 $('sLabel').addEventListener('change',()=>{ S.label=$('sLabel').value;  scheduleRender(); });
 $('sLinkStyle').addEventListener('change',()=>{ S.linkStyle=$('sLinkStyle').value; scheduleRender(); });
 $('sIter').addEventListener('change',()=>{ S.iter=parseInt($('sIter').value); scheduleRender(); });
+$('sLabelBox').addEventListener('change',()=>{ S.labelBox=$('sLabelBox').checked; scheduleRender(); });
 
 document.querySelectorAll('input[name="align"]').forEach(r=>{
   r.addEventListener('change',()=>{ S.align=r.value; scheduleRender(); });
@@ -1030,15 +1037,16 @@ document.querySelectorAll('input[name="align"]').forEach(r=>{
 $('resetBtn').addEventListener('click',()=>{
   rows = clone(DEFAULT_ROWS);
   S    = clone(DEFAULT_S);
-  // Sync style controls
-  $('sPad').value=S.pad; $('vPad').textContent=S.pad;
-  $('sNW').value=S.nw;   $('vNW').textContent=S.nw+'px';
-  $('sOp').value=S.op;   $('vOp').textContent=S.op+'%';
-  $('sH').value=S.h;     $('vH').textContent=S.h+'px';
+  // Sync all style controls back to defaults
+  $('sPad').value=S.pad;       $('vPad').textContent=S.pad;
+  $('sNW').value=S.nw;         $('vNW').textContent=S.nw+'px';
+  $('sOp').value=S.op;         $('vOp').textContent=S.op+'%';
+  $('sH').value=S.h;           $('vH').textContent=S.h+'px';
   $('sColor').value=S.scheme;
   $('sLabel').value=S.label;
   $('sLinkStyle').value=S.linkStyle;
   $('sIter').value=S.iter;
+  $('sLabelBox').checked=S.labelBox;
   document.querySelector(`input[name="align"][value="${S.align}"]`).checked=true;
   buildEditorRows();
   syncText();
