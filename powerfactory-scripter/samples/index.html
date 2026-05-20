@@ -44,20 +44,26 @@
   header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    height: 56px;
+    padding: 8px 24px 10px;
     display: flex;
-    align-items: center;
-    gap: 16px;
+    align-items: flex-end;
+    gap: 12px;
     position: sticky;
     top: 0;
     z-index: 100;
   }
   .header-left {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
     min-width: 0;
+  }
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
   }
   .header-text { min-width: 0; }
   .header-title {
@@ -78,8 +84,8 @@
     justify-content: center;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 6px 10px;
-    font-size: 12px;
+    padding: 3px 8px;
+    font-size: 11px;
     font-weight: 600;
     color: var(--text);
     background: var(--bg);
@@ -564,8 +570,9 @@
 
   /* ── MOBILE ──────────────────────────────────────────────────────── */
   @media (max-width: 768px) {
-    header { padding: 8px 12px; height: auto; }
-    .header-left { gap: 8px; }
+    header { padding: 8px 12px; align-items: flex-start; }
+    .header-left { gap: 6px; }
+    .header-nav { gap: 6px; }
     main { padding: 20px 14px 40px; }
     .page-hero h1 { font-size: 18px; }
     .form-row { grid-template-columns: 1fr; }
@@ -581,8 +588,10 @@
 <!-- HEADER -->
 <header>
   <div class="header-left">
-    <a class="back-link" href="https://tool.adjiebrotots.com/" target="_self" rel="noopener">← Other Tools</a>
-    <a class="back-link" href="../" rel="noopener">Back to Scripter</a>
+    <div class="header-nav">
+      <a class="back-link" href="https://tool.adjiebrotots.com/" target="_self" rel="noopener">← Other Tools</a>
+      <a class="back-link" href="../" rel="noopener">Back to Scripter</a>
+    </div>
     <div class="header-text">
       <div class="header-title">⚡ PowerFactory Scripter</div>
       <div class="header-subtitle">Samples &amp; Guides</div>
@@ -610,10 +619,10 @@
     </div>
     <div class="section-body" id="sample-1-body">
 
-      <!-- ① Objective -->
+      <!-- 1 Objective -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">①</span> Objective
+          <span class="step-badge">1</span> Objective
         </div>
         <p class="objective-text">
           A system with a high concentration of inductive motors is causing the bus voltage to sag below acceptable
@@ -622,10 +631,10 @@
         </p>
       </div>
 
-      <!-- ② Assumptions -->
+      <!-- 2 Assumptions -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">②</span> Assumptions
+          <span class="step-badge">2</span> Assumptions
         </div>
         <ul class="assumption-list">
           <li>Monitored bus element: <code>MainBus.ElmTerm</code></li>
@@ -635,10 +644,10 @@
         </ul>
       </div>
 
-      <!-- ③ What to Input -->
+      <!-- 3 What to Input -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">③</span> What to Input
+          <span class="step-badge">3</span> What to Input
         </div>
         <div class="readonly-fields">
 
@@ -764,10 +773,10 @@
     </div>
     <div class="section-body" id="sample-2-body">
 
-      <!-- ① Objective -->
+      <!-- 1 Objective -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">①</span> Objective
+          <span class="step-badge">1</span> Objective
         </div>
         <p class="objective-text">
           The system Total Harmonic Distortion (THD) exceeds the permissible limit. The goal is to find the optimal
@@ -776,10 +785,10 @@
         </p>
       </div>
 
-      <!-- ② Assumptions -->
+      <!-- 2 Assumptions -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">②</span> Assumptions
+          <span class="step-badge">2</span> Assumptions
         </div>
         <ul class="assumption-list">
           <li>Filter element: <code>Filter.ElmFilter</code></li>
@@ -789,10 +798,10 @@
         </ul>
       </div>
 
-      <!-- ③ What to Input -->
+      <!-- 3 What to Input -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">③</span> What to Input
+          <span class="step-badge">3</span> What to Input
         </div>
         <div class="readonly-fields">
 
