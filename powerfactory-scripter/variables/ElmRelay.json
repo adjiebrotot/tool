@@ -1,0 +1,346 @@
+{
+  "result_vars": {
+    "load_flow": {
+      "c": [
+        {
+          "var": "c:yout",
+          "unit": "s",
+          "desc": "Tripping Time"
+        },
+        {
+          "var": "c:Imax",
+          "unit": "kA",
+          "desc": "Maximum Current"
+        }
+      ]
+    },
+    "short_circuit": {
+      "c": [
+        {
+          "var": "c:yout",
+          "unit": "s",
+          "desc": "Tripping Time"
+        },
+        {
+          "var": "c:Imax",
+          "unit": "kA",
+          "desc": "Maximum Current"
+        }
+      ]
+    },
+    "dynamic_rms": {
+      "c": [
+        {
+          "var": "c:yout",
+          "unit": "",
+          "desc": "Tripping"
+        },
+        {
+          "var": "c:Ttrip",
+          "unit": "s",
+          "desc": "Tripping Time"
+        }
+      ]
+    },
+    "dynamic_emt": {
+      "c": [
+        {
+          "var": "c:yout",
+          "unit": "",
+          "desc": "Tripping",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ttrip",
+          "unit": "s",
+          "desc": "Tripping Time",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:fnom",
+          "unit": "Hz",
+          "desc": "Nominal Frequency",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    },
+    "modal_analysis": {
+      "c": [
+        {
+          "var": "c:yout",
+          "unit": "",
+          "desc": "Tripping"
+        },
+        {
+          "var": "c:Ttrip",
+          "unit": "s",
+          "desc": "Tripping Time"
+        }
+      ]
+    },
+    "basic": {
+      "b": [
+        {
+          "var": "b:Inom",
+          "unit": "sec.A",
+          "desc": "Nominal Current"
+        },
+        {
+          "var": "b:Unom",
+          "unit": "sec.V",
+          "desc": "Nominal Voltage"
+        },
+        {
+          "var": "b:loc_name",
+          "unit": "",
+          "desc": "Name"
+        }
+      ]
+    }
+  },
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:sernum",
+        "unit": "",
+        "desc": "Serial Number"
+      },
+      {
+        "var": "e:commissionDate",
+        "unit": "",
+        "desc": "Commissioning Date"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:outserv",
+        "unit": "",
+        "desc": "Out of Service"
+      },
+      {
+        "var": "e:constr",
+        "unit": "",
+        "desc": "Year of Construction"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:dev_no",
+        "unit": "",
+        "desc": "Device Number"
+      },
+      {
+        "var": "e:application",
+        "unit": "",
+        "desc": "Application"
+      },
+      {
+        "var": "e:phfaultmini",
+        "unit": "kA",
+        "desc": "Min. phase fault current"
+      },
+      {
+        "var": "e:phfaultmaxi",
+        "unit": "kA",
+        "desc": "Max. phase fault current"
+      },
+      {
+        "var": "e:efaultmini",
+        "unit": "kA",
+        "desc": "Min. earth fault current"
+      },
+      {
+        "var": "e:efaultmaxi",
+        "unit": "kA",
+        "desc": "Max. earth fault current"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:fold_id",
+        "unit": "",
+        "desc": "In Folder"
+      },
+      {
+        "var": "e:typ_id",
+        "unit": "TypRelay",
+        "desc": "Relay Type"
+      },
+      {
+        "var": "e:doc_id",
+        "unit": "",
+        "desc": "Additional Data"
+      },
+      {
+        "var": "e:pOwner",
+        "unit": "ElmOwner",
+        "desc": "Owner"
+      },
+      {
+        "var": "e:pOperator",
+        "unit": "ElmOperator",
+        "desc": "Operator"
+      },
+      {
+        "var": "e:pReference",
+        "unit": "ElmTerm,StaCubic",
+        "desc": "Reference"
+      },
+      {
+        "var": "e:contents",
+        "unit": "",
+        "desc": "Contents"
+      },
+      {
+        "var": "e:cpHeadFold",
+        "unit": "",
+        "desc": "Head Folder"
+      },
+      {
+        "var": "e:cpGrid",
+        "unit": "ElmNet",
+        "desc": "Grid"
+      },
+      {
+        "var": "e:cpSite",
+        "unit": "ElmSite",
+        "desc": "Site"
+      },
+      {
+        "var": "e:cpSubstat",
+        "unit": "ElmSubstat,ElmTrfstat",
+        "desc": "Substation"
+      },
+      {
+        "var": "e:cDisplayName",
+        "unit": "",
+        "desc": "Display Name"
+      },
+      {
+        "var": "e:pdiselm",
+        "unit": "Rel*,Elm*,Sta*,IntRef",
+        "desc": "Net Elements"
+      },
+      {
+        "var": "e:cn_bus",
+        "unit": "ElmTerm",
+        "desc": "Busbar"
+      },
+      {
+        "var": "e:cbranch",
+        "unit": "Elm*,RelFuse,StaSua*",
+        "desc": "Branch"
+      },
+      {
+        "var": "e:cctprim",
+        "unit": "A",
+        "desc": "CT Primary"
+      },
+      {
+        "var": "e:cctsec",
+        "unit": "A",
+        "desc": "CT Secondary"
+      },
+      {
+        "var": "e:cvtprim",
+        "unit": "V",
+        "desc": "VT Primary"
+      },
+      {
+        "var": "e:cvtsec",
+        "unit": "V",
+        "desc": "VT Secondary"
+      },
+      {
+        "var": "e:cpCt",
+        "unit": "StaCt*,StaCombi",
+        "desc": "Current Transformer"
+      },
+      {
+        "var": "e:cpVt",
+        "unit": "StaVt*,StaCombi",
+        "desc": "Voltage Transformer"
+      },
+      {
+        "var": "e:ccategory",
+        "unit": "",
+        "desc": "Main function"
+      },
+      {
+        "var": "e:ccat_curr",
+        "unit": "",
+        "desc": "Overcurrent"
+      },
+      {
+        "var": "e:ccat_dist",
+        "unit": "",
+        "desc": "Distance"
+      },
+      {
+        "var": "e:ccat_diff",
+        "unit": "",
+        "desc": "Differential"
+      },
+      {
+        "var": "e:ccat_volt",
+        "unit": "",
+        "desc": "Voltage"
+      },
+      {
+        "var": "e:ccat_freq",
+        "unit": "",
+        "desc": "Frequency"
+      },
+      {
+        "var": "e:ccat_dir",
+        "unit": "",
+        "desc": "Directional"
+      },
+      {
+        "var": "e:cpShc",
+        "unit": "ComShc",
+        "desc": "Short-circuit command"
+      }
+    ]
+  }
+}

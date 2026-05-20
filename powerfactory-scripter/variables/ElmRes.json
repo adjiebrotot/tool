@@ -1,0 +1,1539 @@
+{
+  "result_vars": {
+    "dynamic_rms": {
+      "c": [
+        {
+          "var": "c:ready",
+          "unit": "",
+          "desc": "Ready-Signal"
+        },
+        {
+          "var": "c:monitorFreq",
+          "unit": "Hz",
+          "desc": "Time between recordings"
+        }
+      ],
+      "s": [
+        {
+          "var": "s:writeTime",
+          "unit": "",
+          "desc": "Write Time"
+        }
+      ]
+    },
+    "dynamic_emt": {
+      "c": [
+        {
+          "var": "c:ready",
+          "unit": "",
+          "desc": "Ready-Signal",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:monitorFreq",
+          "unit": "Hz",
+          "desc": "Time between recordings",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ],
+      "s": [
+        {
+          "var": "s:writeTime",
+          "unit": "",
+          "desc": "Write Time",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    },
+    "modal_analysis": {
+      "c": [
+        {
+          "var": "c:ready",
+          "unit": "",
+          "desc": "Ready-Signal"
+        },
+        {
+          "var": "c:monitorFreq",
+          "unit": "Hz",
+          "desc": "Time between recordings"
+        }
+      ],
+      "s": [
+        {
+          "var": "s:writeTime",
+          "unit": "",
+          "desc": "Write Time"
+        }
+      ]
+    },
+    "basic": {
+      "b": [
+        {
+          "var": "b:loc_name",
+          "unit": "",
+          "desc": "Name"
+        },
+        {
+          "var": "b:i_obj",
+          "unit": "",
+          "desc": "Object index"
+        },
+        {
+          "var": "b:violation",
+          "unit": "",
+          "desc": "Restoration with violations"
+        },
+        {
+          "var": "b:nrActions",
+          "unit": "",
+          "desc": "Number of switching actions"
+        },
+        {
+          "var": "b:interruptedPower",
+          "unit": "MW",
+          "desc": "Interrupted power"
+        },
+        {
+          "var": "b:restoredPower",
+          "unit": "MW",
+          "desc": "Restored power"
+        },
+        {
+          "var": "b:interruptedCust",
+          "unit": "",
+          "desc": "Interrupted customers"
+        },
+        {
+          "var": "b:restoredCust",
+          "unit": "",
+          "desc": "Restored customers"
+        },
+        {
+          "var": "b:eigno",
+          "unit": "",
+          "desc": "Mode index"
+        },
+        {
+          "var": "b:eigvalr",
+          "unit": "1/s",
+          "desc": "Mode, Real Part"
+        },
+        {
+          "var": "b:eigvali",
+          "unit": "rad/s",
+          "desc": "Mode, Imaginary Part"
+        },
+        {
+          "var": "b:sigma",
+          "unit": "1/s",
+          "desc": "Damping"
+        },
+        {
+          "var": "b:Tp",
+          "unit": "s",
+          "desc": "Period"
+        },
+        {
+          "var": "b:ratio",
+          "unit": "",
+          "desc": "Ratio"
+        },
+        {
+          "var": "b:frequ",
+          "unit": "Hz",
+          "desc": "Frequency"
+        },
+        {
+          "var": "b:index",
+          "unit": "",
+          "desc": "Index"
+        },
+        {
+          "var": "b:feeder",
+          "unit": "",
+          "desc": "Total Hosting Feeder(s)"
+        },
+        {
+          "var": "b:node",
+          "unit": "",
+          "desc": "Total Hosting Node(s)"
+        },
+        {
+          "var": "b:iconn",
+          "unit": "",
+          "desc": "Connection type"
+        },
+        {
+          "var": "b:pmax",
+          "unit": "MW",
+          "desc": "Max. hosting power"
+        },
+        {
+          "var": "b:pmin",
+          "unit": "MW",
+          "desc": "Min. hosting power"
+        },
+        {
+          "var": "b:pavg",
+          "unit": "MW",
+          "desc": "Average hosting power"
+        },
+        {
+          "var": "b:eval",
+          "unit": "",
+          "desc": "Evaluation"
+        },
+        {
+          "var": "b:iter",
+          "unit": "",
+          "desc": "Iteration"
+        },
+        {
+          "var": "b:failedCalc",
+          "unit": "",
+          "desc": "Failed calculation"
+        },
+        {
+          "var": "b:objectiveValue",
+          "unit": "",
+          "desc": "Objective function value"
+        },
+        {
+          "var": "b:iterBestObjective",
+          "unit": "",
+          "desc": " Iteration with best objective value"
+        },
+        {
+          "var": "b:evalBestObjective",
+          "unit": "",
+          "desc": " Evaluation with best objective value"
+        },
+        {
+          "var": "b:bestObjective",
+          "unit": "",
+          "desc": "Best objective function value"
+        },
+        {
+          "var": "b:tnow",
+          "unit": "s",
+          "desc": "Time"
+        },
+        {
+          "var": "b:treal",
+          "unit": "",
+          "desc": "Realtime"
+        },
+        {
+          "var": "b:isOptimalLoc",
+          "unit": "",
+          "desc": "Detected as optimal location for a recloser"
+        },
+        {
+          "var": "b:contrBeforeEns",
+          "unit": "MWh/a",
+          "desc": "Contribution to ENS without reclosing functionality"
+        },
+        {
+          "var": "b:contrAfterEns",
+          "unit": "MWh/a",
+          "desc": "Contributions to ENS with reclosing functionality"
+        },
+        {
+          "var": "b:contrBeforeEic",
+          "unit": "USD/a",
+          "desc": "Contribution to EIC without reclosing functionality"
+        },
+        {
+          "var": "b:contrAfterEic",
+          "unit": "USD/a",
+          "desc": "Contributions to EIC with reclosing functionality"
+        },
+        {
+          "var": "b:contrBeforeSaidi",
+          "unit": "h/Ca",
+          "desc": "Contribution to SAIDI without reclosing functionality"
+        },
+        {
+          "var": "b:contrAfterSaidi",
+          "unit": "h/Ca",
+          "desc": "Contributions to SAIDI with reclosing functionality"
+        },
+        {
+          "var": "b:contrBeforeMaifi",
+          "unit": "1/Ca",
+          "desc": "Contribution to MAIFI without reclosing functionality"
+        },
+        {
+          "var": "b:contrAfterMaifi",
+          "unit": "1/Ca",
+          "desc": "Contributions to MAIFI with reclosing functionality"
+        },
+        {
+          "var": "b:calcmethod",
+          "unit": "",
+          "desc": "Calculation method"
+        },
+        {
+          "var": "b:calctype",
+          "unit": "",
+          "desc": "Calculation type"
+        },
+        {
+          "var": "b:calcres",
+          "unit": "",
+          "desc": "Calculation result"
+        },
+        {
+          "var": "b:optemp",
+          "unit": "degC",
+          "desc": "Operating temperature"
+        },
+        {
+          "var": "b:wspeed",
+          "unit": "m/s",
+          "desc": "Wind speed"
+        },
+        {
+          "var": "b:prob",
+          "unit": "%",
+          "desc": "Probability"
+        },
+        {
+          "var": "b:cprob",
+          "unit": "%",
+          "desc": "Cumulative probability"
+        },
+        {
+          "var": "b:currency",
+          "unit": "",
+          "desc": "Currency"
+        },
+        {
+          "var": "b:objid",
+          "unit": "",
+          "desc": "Object ID"
+        },
+        {
+          "var": "b:olobjid",
+          "unit": "",
+          "desc": "Overloaded object ID"
+        },
+        {
+          "var": "b:pnom",
+          "unit": "MW",
+          "desc": "Rated power"
+        },
+        {
+          "var": "b:pinst",
+          "unit": "MW",
+          "desc": "Installed power"
+        },
+        {
+          "var": "b:scaleA",
+          "unit": "m/s",
+          "desc": "Scale factor, A"
+        },
+        {
+          "var": "b:shapeK",
+          "unit": "",
+          "desc": "Shape factor, k"
+        },
+        {
+          "var": "b:vavg",
+          "unit": "m/s",
+          "desc": "Average wind speed"
+        },
+        {
+          "var": "b:qmc",
+          "unit": "",
+          "desc": "Quasi-Monte-Carlo"
+        },
+        {
+          "var": "b:ftariff",
+          "unit": "USD/kWh",
+          "desc": "Feed-in tariff"
+        },
+        {
+          "var": "b:ctariff",
+          "unit": "USD/kWh",
+          "desc": "Consumer tariff"
+        },
+        {
+          "var": "b:Hour",
+          "unit": "h",
+          "desc": "Year hour"
+        },
+        {
+          "var": "b:ucttime",
+          "unit": "s",
+          "desc": "Time"
+        },
+        {
+          "var": "b:cnfLvlUp",
+          "unit": "%",
+          "desc": "Confidence interval (upper bound)"
+        },
+        {
+          "var": "b:cnfLvlLo",
+          "unit": "%",
+          "desc": "Confidence interval (lower bound)"
+        },
+        {
+          "var": "b:sample",
+          "unit": "",
+          "desc": "Sample"
+        },
+        {
+          "var": "b:number",
+          "unit": "",
+          "desc": "Number"
+        },
+        {
+          "var": "b:inoconv",
+          "unit": "",
+          "desc": "Load flow did not converge"
+        },
+        {
+          "var": "b:iShcFail",
+          "unit": "",
+          "desc": "Short-Circuit Calculation failed"
+        },
+        {
+          "var": "b:iShcAtLine",
+          "unit": "",
+          "desc": "Short-Circuit at Line"
+        },
+        {
+          "var": "b:pos",
+          "unit": "km",
+          "desc": "Distance"
+        },
+        {
+          "var": "b:posX",
+          "unit": "Ohm",
+          "desc": "Distance"
+        },
+        {
+          "var": "b:posZ",
+          "unit": "Ohm",
+          "desc": "Distance"
+        },
+        {
+          "var": "b:objIndex",
+          "unit": "",
+          "desc": "Object index"
+        },
+        {
+          "var": "b:sideIndex",
+          "unit": "",
+          "desc": "Side"
+        },
+        {
+          "var": "b:relPos",
+          "unit": "km",
+          "desc": "Position on element"
+        },
+        {
+          "var": "b:numRngDrawsInit",
+          "unit": "",
+          "desc": "Number of initial random number generator draws"
+        },
+        {
+          "var": "b:method",
+          "unit": "",
+          "desc": "Calculation method of Probabilistic Analysis"
+        },
+        {
+          "var": "b:calcAnalysed",
+          "unit": "",
+          "desc": "Analysed command type"
+        },
+        {
+          "var": "b:comMethod",
+          "unit": "",
+          "desc": "Calculation method of analysed command"
+        },
+        {
+          "var": "b:numSamplesExec",
+          "unit": "",
+          "desc": "Number of iterations"
+        },
+        {
+          "var": "b:failures",
+          "unit": "",
+          "desc": "Number of failed iterations"
+        },
+        {
+          "var": "b:numRngDraws",
+          "unit": "",
+          "desc": "Number of calls of the random number generator"
+        },
+        {
+          "var": "b:seed",
+          "unit": "",
+          "desc": "Used seed for random number generation"
+        },
+        {
+          "var": "b:considerCorrelations",
+          "unit": "",
+          "desc": "Distribution correlations considered"
+        },
+        {
+          "var": "b:loadingLimit",
+          "unit": "",
+          "desc": "Loading recording limit"
+        },
+        {
+          "var": "b:minVLimit",
+          "unit": "",
+          "desc": "Minimum voltage recording limit"
+        },
+        {
+          "var": "b:maxVLimit",
+          "unit": "",
+          "desc": "Maximum voltage recording limit"
+        },
+        {
+          "var": "b:maxDropLimit",
+          "unit": "",
+          "desc": "Maximum feeder voltage drop recording limit"
+        },
+        {
+          "var": "b:maxRiseLimit",
+          "unit": "",
+          "desc": "Minimum feeder voltage rise recording limit"
+        },
+        {
+          "var": "b:complyConstraints",
+          "unit": "",
+          "desc": "Partial restoration to comply with constraints"
+        },
+        {
+          "var": "b:calcFail",
+          "unit": "",
+          "desc": "Calculation failed."
+        },
+        {
+          "var": "b:studyBBvoltage",
+          "unit": "p.u.",
+          "desc": "Voltage at study Busbar"
+        },
+        {
+          "var": "b:totDemand",
+          "unit": "MW",
+          "desc": "Active Power of scaled loads"
+        },
+        {
+          "var": "b:from",
+          "unit": "",
+          "desc": "Exchange from"
+        },
+        {
+          "var": "b:to",
+          "unit": "",
+          "desc": "Exchange to"
+        },
+        {
+          "var": "b:scen",
+          "unit": "",
+          "desc": "Active Operation Scenario"
+        },
+        {
+          "var": "b:calcmod",
+          "unit": "",
+          "desc": "Calculation mode"
+        },
+        {
+          "var": "b:outid",
+          "unit": "",
+          "desc": "Contingency Case Index"
+        },
+        {
+          "var": "b:errbs",
+          "unit": "",
+          "desc": "Error for bus equations"
+        },
+        {
+          "var": "b:errfi",
+          "unit": "",
+          "desc": "Error for network model equations"
+        },
+        {
+          "var": "b:errgrd",
+          "unit": "",
+          "desc": "Error for dynamic model equations"
+        },
+        {
+          "var": "b:errdxs",
+          "unit": "",
+          "desc": "Error for A-stable dynamic model equations"
+        },
+        {
+          "var": "b:errdxi",
+          "unit": "",
+          "desc": "Error for network state equations"
+        },
+        {
+          "var": "b:itrgr",
+          "unit": "",
+          "desc": "Number of inner-loop iterations for network model equations"
+        },
+        {
+          "var": "b:ipjac",
+          "unit": "",
+          "desc": "Number of Jacobian matrix updates for network model equations"
+        },
+        {
+          "var": "b:icjac",
+          "unit": "",
+          "desc": "Number of network Jacobian matrix factorisations"
+        },
+        {
+          "var": "b:icadm",
+          "unit": "",
+          "desc": "Number of admittance computations"
+        },
+        {
+          "var": "b:numNonZerosLU",
+          "unit": "",
+          "desc": "Number of entries in factorisation"
+        },
+        {
+          "var": "b:ibvec",
+          "unit": "",
+          "desc": "Number of evaluations for network model equation mismatches"
+        },
+        {
+          "var": "b:ibchk",
+          "unit": "",
+          "desc": "Number of convergence checks for network model equations"
+        },
+        {
+          "var": "b:itreq",
+          "unit": "",
+          "desc": "Number of whole system iterations"
+        },
+        {
+          "var": "b:itevt",
+          "unit": "",
+          "desc": "Number of repeat event loops"
+        },
+        {
+          "var": "b:itevtmin",
+          "unit": "",
+          "desc": "Number of reschedule event loops"
+        },
+        {
+          "var": "b:itout",
+          "unit": "",
+          "desc": "Number of outer-loop iterations for network model equations"
+        },
+        {
+          "var": "b:itrstgrd",
+          "unit": "",
+          "desc": "Number of inner-loop iterations for dynamic model equations"
+        },
+        {
+          "var": "b:ijgrd",
+          "unit": "",
+          "desc": "Number of Jacobian matrix factorisations for dynamic model equations"
+        },
+        {
+          "var": "b:itoutgrd",
+          "unit": "",
+          "desc": "Number of outer-loop iterations for dynamic model equations"
+        },
+        {
+          "var": "b:ierremt",
+          "unit": "",
+          "desc": "Integration error for dynamic model equations (EMT)"
+        },
+        {
+          "var": "b:ierrgrd",
+          "unit": "",
+          "desc": "Integration error for dynamic model equations (GRD)"
+        },
+        {
+          "var": "b:ierremtadapt",
+          "unit": "",
+          "desc": "Integration error for dynamic model equations used for the automatic step size adaptation (EMT)"
+        },
+        {
+          "var": "b:ierrgrdadapt",
+          "unit": "",
+          "desc": "Integration error for dynamic model equations used for the automatic step size adaptation (GRD)"
+        },
+        {
+          "var": "b:dtemt",
+          "unit": "",
+          "desc": "Integration step size for dynamic model equations (EMT)"
+        },
+        {
+          "var": "b:dtgrd",
+          "unit": "",
+          "desc": "Integration step size for dynamic model equations (GRD)"
+        },
+        {
+          "var": "b:dtint",
+          "unit": "",
+          "desc": "Interruption step"
+        },
+        {
+          "var": "b:dtset",
+          "unit": "",
+          "desc": "Default step"
+        },
+        {
+          "var": "b:warnA",
+          "unit": "",
+          "desc": "Number of type-A warnings"
+        },
+        {
+          "var": "b:warnB",
+          "unit": "",
+          "desc": "Number of type-B warnings"
+        },
+        {
+          "var": "b:warnC",
+          "unit": "",
+          "desc": "Number of type-C warnings"
+        },
+        {
+          "var": "b:ierrthd",
+          "unit": "",
+          "desc": "Maximum error in the EMT to RMS transformation during co-simulation"
+        },
+        {
+          "var": "b:ierrunb",
+          "unit": "",
+          "desc": "Maximum unbalance factor during co-simulation"
+        },
+        {
+          "var": "b:i_eul",
+          "unit": "",
+          "desc": "Integration formula restoration index"
+        },
+        {
+          "var": "b:fnow",
+          "unit": "Hz",
+          "desc": "Frequency"
+        },
+        {
+          "var": "b:ifnow",
+          "unit": "",
+          "desc": "Harmonic Order"
+        },
+        {
+          "var": "b:df",
+          "unit": "Hz",
+          "desc": "Frequency step size (harmonics)"
+        },
+        {
+          "var": "b:ierrhmc",
+          "unit": "",
+          "desc": "Prediction error (harmonics)"
+        },
+        {
+          "var": "b:ierrgnrl",
+          "unit": "",
+          "desc": "Prediction error (ComStep)"
+        },
+        {
+          "var": "b:step",
+          "unit": "",
+          "desc": "Step size (ComStep)"
+        },
+        {
+          "var": "b:dcase",
+          "unit": "",
+          "desc": "Case"
+        },
+        {
+          "var": "b:identObjective",
+          "unit": "",
+          "desc": "Objective function value for parameter identification"
+        },
+        {
+          "var": "b:stepDtact",
+          "unit": "",
+          "desc": "Step size"
+        },
+        {
+          "var": "b:stepDtDefault",
+          "unit": "",
+          "desc": "Default step size"
+        },
+        {
+          "var": "b:stepAlpha",
+          "unit": "",
+          "desc": "Damping factor"
+        },
+        {
+          "var": "b:stepType",
+          "unit": "",
+          "desc": "Simulation step type"
+        },
+        {
+          "var": "b:level",
+          "unit": "",
+          "desc": "Level"
+        },
+        {
+          "var": "b:bbfail",
+          "unit": "",
+          "desc": "Busbar failure"
+        },
+        {
+          "var": "b:tmphase",
+          "unit": "min",
+          "desc": "Time Phase"
+        },
+        {
+          "var": "b:outer",
+          "unit": "",
+          "desc": "Number of outer loops"
+        },
+        {
+          "var": "b:iterTotal",
+          "unit": "",
+          "desc": "Total number of (inner) iterations"
+        },
+        {
+          "var": "b:iter1",
+          "unit": "",
+          "desc": "Number of iterations for outer loop 1"
+        },
+        {
+          "var": "b:iter2",
+          "unit": "",
+          "desc": "Number of iterations for outer loop 2"
+        },
+        {
+          "var": "b:iter3",
+          "unit": "",
+          "desc": "Number of iterations for outer loop 3"
+        },
+        {
+          "var": "b:iter4",
+          "unit": "",
+          "desc": "Number of iterations for outer loop 4"
+        },
+        {
+          "var": "b:iter5",
+          "unit": "",
+          "desc": "Number of iterations for outer loop 5"
+        },
+        {
+          "var": "b:isLinear",
+          "unit": "",
+          "desc": "Calculated using linearised method"
+        },
+        {
+          "var": "b:isIslanding",
+          "unit": "",
+          "desc": "Causes islanding"
+        },
+        {
+          "var": "b:isBlackout",
+          "unit": "",
+          "desc": "Causes blackout"
+        },
+        {
+          "var": "b:isSubstSplit",
+          "unit": "",
+          "desc": "Causes substation split or merge"
+        },
+        {
+          "var": "b:nrOfLostLoads",
+          "unit": "",
+          "desc": "Number of loads lost"
+        },
+        {
+          "var": "b:nrOfLostGens",
+          "unit": "",
+          "desc": "Number of generators lost"
+        },
+        {
+          "var": "b:lostPLoad",
+          "unit": "",
+          "desc": "Load lost in MW"
+        },
+        {
+          "var": "b:lostPGeneration",
+          "unit": "",
+          "desc": "Generation lost in MW"
+        },
+        {
+          "var": "b:lostQLoad",
+          "unit": "",
+          "desc": "Load lost in Mvar"
+        },
+        {
+          "var": "b:lostQGeneration",
+          "unit": "",
+          "desc": "Generation lost in Mvar"
+        },
+        {
+          "var": "b:asynchOfNextBB",
+          "unit": "deg",
+          "desc": "Max. asynchronism of busbars next to the fault"
+        },
+        {
+          "var": "b:asynchBB1",
+          "unit": "",
+          "desc": "Max. asynchronism - busbar 1"
+        },
+        {
+          "var": "b:asynchBB2",
+          "unit": "",
+          "desc": "Max. asynchronism - busbar 2"
+        },
+        {
+          "var": "b:nrUnsolvedCnt",
+          "unit": "",
+          "desc": "Number of unsolved contingencies"
+        },
+        {
+          "var": "b:nrProcessedCnt",
+          "unit": "",
+          "desc": "Number of processed contingencies"
+        },
+        {
+          "var": "b:nrInactiveCnt",
+          "unit": "",
+          "desc": "Number of inactive contingencies"
+        },
+        {
+          "var": "b:nrEarthCnt",
+          "unit": "",
+          "desc": "Number of contingencies causing grounding"
+        },
+        {
+          "var": "b:nrCntIslanding",
+          "unit": "",
+          "desc": "Number of contingencies causing islanding"
+        },
+        {
+          "var": "b:nrCntBlackout",
+          "unit": "",
+          "desc": "Number of contingencies causing blackouts"
+        },
+        {
+          "var": "b:nrCntSubSplit",
+          "unit": "",
+          "desc": "Number of contingencies causing substation split or merge"
+        },
+        {
+          "var": "b:nrCntLostLoad",
+          "unit": "",
+          "desc": "Number of contingencies causing loss of load"
+        },
+        {
+          "var": "b:nrCntLostGen",
+          "unit": "",
+          "desc": "Number of contingencies causing loss of generation"
+        },
+        {
+          "var": "b:casenum",
+          "unit": "",
+          "desc": "Case"
+        },
+        {
+          "var": "b:ldfmethod",
+          "unit": "",
+          "desc": "Load Flow Calculation"
+        },
+        {
+          "var": "b:noconv",
+          "unit": "",
+          "desc": "Load flow calculation failed."
+        },
+        {
+          "var": "b:isCalcSucc",
+          "unit": "",
+          "desc": "Calculation successful."
+        },
+        {
+          "var": "b:isContUc",
+          "unit": "",
+          "desc": "Contingencies considered"
+        },
+        {
+          "var": "b:isLinearCont",
+          "unit": "",
+          "desc": "Linearised contingency analysis method used"
+        },
+        {
+          "var": "b:calcPeriod",
+          "unit": "",
+          "desc": "Time period"
+        },
+        {
+          "var": "b:stepSize",
+          "unit": "",
+          "desc": "Step Size"
+        },
+        {
+          "var": "b:objective",
+          "unit": "",
+          "desc": "Objective Function"
+        },
+        {
+          "var": "b:isMinVREcurt",
+          "unit": "",
+          "desc": "Minimise curtailment of renewable energy sources (VREs)"
+        },
+        {
+          "var": "b:isMinLoadshed",
+          "unit": "",
+          "desc": "Minimise load shedding"
+        },
+        {
+          "var": "b:isMinNetRemAct",
+          "unit": "",
+          "desc": "Minimise network-based remedial actions"
+        },
+        {
+          "var": "b:isMinStartUpShutDownCosts",
+          "unit": "",
+          "desc": "Minimise generator start-up/shut-down costs"
+        },
+        {
+          "var": "b:isMinOperatingCosts",
+          "unit": "",
+          "desc": "Minimise generator operating costs"
+        },
+        {
+          "var": "b:isMinRedispCosts",
+          "unit": "",
+          "desc": "Minimise generator redispatch costs"
+        },
+        {
+          "var": "b:isCtrlP",
+          "unit": "",
+          "desc": "Active power dispatch"
+        },
+        {
+          "var": "b:isCtrlTap",
+          "unit": "",
+          "desc": "Transformer tap positions"
+        },
+        {
+          "var": "b:isCtrlLdShed",
+          "unit": "",
+          "desc": "Load shedding"
+        },
+        {
+          "var": "b:isCtrlQ",
+          "unit": "",
+          "desc": "Reactive power dispatch"
+        },
+        {
+          "var": "b:isCtrlShunt",
+          "unit": "",
+          "desc": "Switchable shunts"
+        },
+        {
+          "var": "b:isCtrlVRE",
+          "unit": "",
+          "desc": "Allow curtailment of variable renewable energy sources (VREs)"
+        },
+        {
+          "var": "b:isCtrlHvDc",
+          "unit": "",
+          "desc": "HVDC active/reactive power controls"
+        },
+        {
+          "var": "b:isRoundDiscreteCtrls",
+          "unit": "",
+          "desc": "Round discrete controls"
+        },
+        {
+          "var": "b:isLimP",
+          "unit": "",
+          "desc": "Active power limits"
+        },
+        {
+          "var": "b:isLimTap",
+          "unit": "",
+          "desc": "Transformer tap limits"
+        },
+        {
+          "var": "b:isLimLdShed",
+          "unit": "",
+          "desc": "Load shedding limits"
+        },
+        {
+          "var": "b:isLimQ",
+          "unit": "",
+          "desc": "Reactive power limits"
+        },
+        {
+          "var": "b:isLimShunt",
+          "unit": "",
+          "desc": "Shunt tap limits"
+        },
+        {
+          "var": "b:isConstrLoading",
+          "unit": "",
+          "desc": "Max. branch flows (max. loading)"
+        },
+        {
+          "var": "b:isConstrBoundary",
+          "unit": "",
+          "desc": "Boundary flow constraints"
+        },
+        {
+          "var": "b:isConstrVoltage",
+          "unit": "",
+          "desc": "Voltage limits of busbars/terminals"
+        },
+        {
+          "var": "b:isConstrRamp",
+          "unit": "",
+          "desc": "Ramp rate constraints"
+        },
+        {
+          "var": "b:isConstrMinUpDownTime",
+          "unit": "",
+          "desc": "Minimum up-/down-times"
+        },
+        {
+          "var": "b:isConstrSpinReserve",
+          "unit": "",
+          "desc": "Spinning reserve of regions"
+        },
+        {
+          "var": "b:isCheckOptSolution",
+          "unit": "",
+          "desc": "Calculate and record load flow results with optimal controls"
+        },
+        {
+          "var": "b:recordCtrlVarsOpt",
+          "unit": "",
+          "desc": "All optimal control variables recorded"
+        },
+        {
+          "var": "b:recordCnstrVarsOpt",
+          "unit": "",
+          "desc": "All constraint results (after optimisation) recorded"
+        },
+        {
+          "var": "b:recordRedispResPerStep",
+          "unit": "",
+          "desc": "Redispatch results per study time additionally recorded"
+        },
+        {
+          "var": "b:isWriteElmResCont",
+          "unit": "",
+          "desc": "Contingency results recorded"
+        },
+        {
+          "var": "b:recordCnstrVarsOrg",
+          "unit": "",
+          "desc": "All constraint results (before optimisation) additionally recorded"
+        },
+        {
+          "var": "b:isPlanedOutages",
+          "unit": "",
+          "desc": "Planned outages"
+        },
+        {
+          "var": "b:isRollingHorizonAlgo",
+          "unit": "",
+          "desc": "Restrict simultaneous optimisation period"
+        },
+        {
+          "var": "b:numStudyTimesHorizon",
+          "unit": "",
+          "desc": "Number of study times"
+        },
+        {
+          "var": "b:numOverlapHorizon",
+          "unit": "",
+          "desc": "Number of overlapping study times with next period"
+        },
+        {
+          "var": "b:maxAllowedConstrError",
+          "unit": "%",
+          "desc": "Max. acceptable error for constraints"
+        },
+        {
+          "var": "b:minEff_dP",
+          "unit": "%",
+          "desc": "Min. Generator effectiveness"
+        },
+        {
+          "var": "b:minEff_dTap",
+          "unit": "%",
+          "desc": "Min. Transformer effectiveness"
+        },
+        {
+          "var": "b:isFilterPowerConstr",
+          "unit": "",
+          "desc": "Constraint filter for power flow constraints"
+        },
+        {
+          "var": "b:powerConstrMarginGeneral",
+          "unit": "%",
+          "desc": "Active constraint margin"
+        },
+        {
+          "var": "b:powerConstrMarginLazy",
+          "unit": "%",
+          "desc": "Lazy constraint margin"
+        },
+        {
+          "var": "b:powerConstrMarginCallback",
+          "unit": "%",
+          "desc": "Low priority constraint margin"
+        },
+        {
+          "var": "b:isFilterVoltConstr",
+          "unit": "",
+          "desc": "Constraint filter for voltage constraints"
+        },
+        {
+          "var": "b:voltConstrMarginGeneral",
+          "unit": "p.u.",
+          "desc": "Active constraint margin"
+        },
+        {
+          "var": "b:voltConstrMarginLazy",
+          "unit": "p.u.",
+          "desc": "Lazy constraint margin"
+        },
+        {
+          "var": "b:voltConstrMarginCallback",
+          "unit": "p.u.",
+          "desc": "Low priority constraint margin"
+        },
+        {
+          "var": "b:penaltySoftConstr",
+          "unit": "",
+          "desc": "Penalty factor for soft constraints"
+        },
+        {
+          "var": "b:isParallel",
+          "unit": "",
+          "desc": "Parallel contingency computation"
+        },
+        {
+          "var": "b:minNumCnt4Parallel",
+          "unit": "",
+          "desc": "Minimum number of contingencies"
+        },
+        {
+          "var": "b:isAllowCurativeCtrl",
+          "unit": "",
+          "desc": "Curative controls allowed"
+        }
+      ]
+    }
+  },
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:FileType",
+        "unit": "",
+        "desc": "File type"
+      },
+      {
+        "var": "e:calTp",
+        "unit": "",
+        "desc": "Default for"
+      },
+      {
+        "var": "e:calTpSub",
+        "unit": "",
+        "desc": "Method"
+      },
+      {
+        "var": "e:calTpTop",
+        "unit": "",
+        "desc": "Usage"
+      },
+      {
+        "var": "e:cab_meth",
+        "unit": "",
+        "desc": "Method"
+      },
+      {
+        "var": "e:host_meth",
+        "unit": "",
+        "desc": "Method"
+      },
+      {
+        "var": "e:df_meth",
+        "unit": "",
+        "desc": "Method"
+      },
+      {
+        "var": "e:powpark_meth",
+        "unit": "",
+        "desc": "Method"
+      },
+      {
+        "var": "e:powpark_sub",
+        "unit": "",
+        "desc": "Sub-result"
+      },
+      {
+        "var": "e:dbCalculationRunId",
+        "unit": "",
+        "desc": "Calculation Run"
+      },
+      {
+        "var": "e:trg_pre",
+        "unit": "s",
+        "desc": "Pre-"
+      },
+      {
+        "var": "e:trg_post",
+        "unit": "s",
+        "desc": "Post-"
+      },
+      {
+        "var": "e:trg_pmax",
+        "unit": "s",
+        "desc": "Max."
+      },
+      {
+        "var": "e:monitorStep",
+        "unit": "s",
+        "desc": "Sample period"
+      },
+      {
+        "var": "e:cnttime",
+        "unit": "",
+        "desc": "Study time"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:cases",
+        "unit": "",
+        "desc": "Cases"
+      },
+      {
+        "var": "e:header",
+        "unit": "",
+        "desc": "Headlines"
+      },
+      {
+        "var": "e:dbOdbcSettings",
+        "unit": "SetDatabase",
+        "desc": "Database settings"
+      },
+      {
+        "var": "e:cFilename",
+        "unit": "",
+        "desc": "File name"
+      },
+      {
+        "var": "e:cnumcont",
+        "unit": "",
+        "desc": "Number of contingencies"
+      },
+      {
+        "var": "e:ctimeph",
+        "unit": "",
+        "desc": "Number of time phases"
+      },
+      {
+        "var": "e:ctricnt",
+        "unit": "",
+        "desc": "Points of time"
+      },
+      {
+        "var": "e:cnumrow",
+        "unit": "",
+        "desc": "Number of rows"
+      },
+      {
+        "var": "e:ctotrow",
+        "unit": "",
+        "desc": "Total number of rows"
+      },
+      {
+        "var": "e:cnumHmOd",
+        "unit": "",
+        "desc": "Number of Harmonic Orders"
+      },
+      {
+        "var": "e:cnumCase",
+        "unit": "",
+        "desc": "Number of cases"
+      },
+      {
+        "var": "e:cnumFrq",
+        "unit": "",
+        "desc": "Number of frequencies"
+      },
+      {
+        "var": "e:cnumEigen",
+        "unit": "",
+        "desc": "Number of eigenvalues"
+      },
+      {
+        "var": "e:cnumFFT",
+        "unit": "",
+        "desc": "Number of harmonic orders"
+      },
+      {
+        "var": "e:fileSize",
+        "unit": "",
+        "desc": "File size"
+      },
+      {
+        "var": "e:cnumfiles",
+        "unit": "",
+        "desc": "Number of result files"
+      },
+      {
+        "var": "e:csteps",
+        "unit": "",
+        "desc": "Average step size"
+      },
+      {
+        "var": "e:cFFTstep",
+        "unit": "",
+        "desc": "Step size"
+      },
+      {
+        "var": "e:avgStep",
+        "unit": "",
+        "desc": "Average step size"
+      },
+      {
+        "var": "e:unit",
+        "unit": "",
+        "desc": "Unit"
+      },
+      {
+        "var": "e:cLdfMethod",
+        "unit": "",
+        "desc": "Load Flow method"
+      },
+      {
+        "var": "e:cPosStep",
+        "unit": "",
+        "desc": "Average position step size"
+      },
+      {
+        "var": "e:cvars",
+        "unit": "",
+        "desc": "Number of variables"
+      },
+      {
+        "var": "e:cFlowNum",
+        "unit": "",
+        "desc": "Number of flowgates"
+      },
+      {
+        "var": "e:cOpScenNum",
+        "unit": "",
+        "desc": "Number of operation scenarios"
+      },
+      {
+        "var": "e:cAllRegNum",
+        "unit": "",
+        "desc": "Number of transactions"
+      },
+      {
+        "var": "e:calTpSwp",
+        "unit": "",
+        "desc": "Method"
+      },
+      {
+        "var": "e:calTpShc",
+        "unit": "",
+        "desc": "Fault Type"
+      },
+      {
+        "var": "e:calTpSto",
+        "unit": "",
+        "desc": "Method"
+      },
+      {
+        "var": "e:calTpStoCom",
+        "unit": "",
+        "desc": "Command"
+      },
+      {
+        "var": "e:calTpStoLdfMethod",
+        "unit": "",
+        "desc": "Load Flow method"
+      },
+      {
+        "var": "e:calTpHrmMethod",
+        "unit": "",
+        "desc": "Load Flow method"
+      },
+      {
+        "var": "e:calTpFlowDecomp",
+        "unit": "",
+        "desc": "Method"
+      },
+      {
+        "var": "e:calTpStoOpfMethod",
+        "unit": "",
+        "desc": "Optimisation method"
+      },
+      {
+        "var": "e:calTpStoSimMethod",
+        "unit": "",
+        "desc": "Simulation type"
+      },
+      {
+        "var": "e:cContingency",
+        "unit": "",
+        "desc": "Contingency"
+      },
+      {
+        "var": "e:cFnom",
+        "unit": "Hz",
+        "desc": "Nominal Frequency"
+      },
+      {
+        "var": "e:cOrigCurve",
+        "unit": "",
+        "desc": "Analysed curve"
+      },
+      {
+        "var": "e:cStudyBus",
+        "unit": "",
+        "desc": "Study Bus"
+      },
+      {
+        "var": "e:cActivePower",
+        "unit": "",
+        "desc": "Active Power"
+      },
+      {
+        "var": "e:calTpCoord",
+        "unit": "",
+        "desc": "Usage"
+      },
+      {
+        "var": "e:monitorFreq",
+        "unit": "Hz",
+        "desc": "Frequency"
+      }
+    ]
+  }
+}

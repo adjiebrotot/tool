@@ -1,0 +1,567 @@
+{
+  "result_vars": {},
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:sernum",
+        "unit": "",
+        "desc": "Serial Number"
+      },
+      {
+        "var": "e:commissionDate",
+        "unit": "",
+        "desc": "Commissioning Date"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:meth",
+        "unit": "",
+        "desc": "Reference method"
+      },
+      {
+        "var": "e:meth_vde",
+        "unit": "",
+        "desc": "Reference method"
+      },
+      {
+        "var": "e:meth_bs",
+        "unit": "",
+        "desc": "Reference method"
+      },
+      {
+        "var": "e:meth_nfc",
+        "unit": "",
+        "desc": "Reference method"
+      },
+      {
+        "var": "e:meth_nfcmv",
+        "unit": "",
+        "desc": "Reference method"
+      },
+      {
+        "var": "e:iopt_dir",
+        "unit": "",
+        "desc": "Arrangement"
+      },
+      {
+        "var": "e:iopt_ord",
+        "unit": "",
+        "desc": "Cable formation"
+      },
+      {
+        "var": "e:inAir",
+        "unit": "",
+        "desc": "Laying"
+      },
+      {
+        "var": "e:constr",
+        "unit": "",
+        "desc": "Year of Construction"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:iperfect",
+        "unit": "",
+        "desc": "Ideal component"
+      },
+      {
+        "var": "e:dryingoutavoid",
+        "unit": "",
+        "desc": "Soil drying-out avoided"
+      },
+      {
+        "var": "e:iopt_engine",
+        "unit": "",
+        "desc": "Cables for powering mobile gear with drum winding"
+      },
+      {
+        "var": "e:iopt_turns",
+        "unit": "",
+        "desc": "Drum winding with multiple turns"
+      },
+      {
+        "var": "e:v2dratiovde",
+        "unit": "",
+        "desc": "Height-diameter ratio"
+      },
+      {
+        "var": "e:v2dratiodctvde",
+        "unit": "",
+        "desc": "Height-duct diameter ratio"
+      },
+      {
+        "var": "e:v2dratioIec",
+        "unit": "",
+        "desc": "Height-diameter ratio"
+      },
+      {
+        "var": "e:v2dratiodctIec",
+        "unit": "",
+        "desc": "Height-duct diameter ratio"
+      },
+      {
+        "var": "e:surfdist",
+        "unit": "",
+        "desc": "Surface distance"
+      },
+      {
+        "var": "e:surfdistIec",
+        "unit": "",
+        "desc": "Surface distance"
+      },
+      {
+        "var": "e:layingArr",
+        "unit": "",
+        "desc": "Laying arrangement"
+      },
+      {
+        "var": "e:layingArr502",
+        "unit": "",
+        "desc": "Laying arrangement"
+      },
+      {
+        "var": "e:arrangevde",
+        "unit": "",
+        "desc": "Arrangement"
+      },
+      {
+        "var": "e:formatvde",
+        "unit": "",
+        "desc": "Cable formation"
+      },
+      {
+        "var": "e:npara",
+        "unit": "",
+        "desc": "Number of grouped cables (laid together)"
+      },
+      {
+        "var": "e:asys",
+        "unit": "",
+        "desc": "Clearance"
+      },
+      {
+        "var": "e:cbusage",
+        "unit": "",
+        "desc": "Usage"
+      },
+      {
+        "var": "e:cabspacing",
+        "unit": "",
+        "desc": "Spacing"
+      },
+      {
+        "var": "e:iecspacing",
+        "unit": "",
+        "desc": "Spacing"
+      },
+      {
+        "var": "e:trays",
+        "unit": "",
+        "desc": "Number of trays"
+      },
+      {
+        "var": "e:ducts",
+        "unit": "",
+        "desc": "Number of ducts"
+      },
+      {
+        "var": "e:vducts",
+        "unit": "",
+        "desc": "Number of vertical ducts"
+      },
+      {
+        "var": "e:hducts",
+        "unit": "",
+        "desc": "Number of horizontal ducts"
+      },
+      {
+        "var": "e:specBurialCnfg",
+        "unit": "",
+        "desc": "Special burial conditions"
+      },
+      {
+        "var": "e:iopt_grp",
+        "unit": "",
+        "desc": "Grouping"
+      },
+      {
+        "var": "e:soiltyp",
+        "unit": "",
+        "desc": "Soil type"
+      },
+      {
+        "var": "e:maxPara",
+        "unit": "",
+        "desc": "Maximum number of grouped cables"
+      },
+      {
+        "var": "e:cb_expsun",
+        "unit": "",
+        "desc": "Exposed to direct sunlight"
+      },
+      {
+        "var": "e:protCheck",
+        "unit": "",
+        "desc": "Protection assessment"
+      },
+      {
+        "var": "e:dline",
+        "unit": "km",
+        "desc": "Length"
+      },
+      {
+        "var": "e:fline",
+        "unit": "",
+        "desc": "Derating Factor"
+      },
+      {
+        "var": "e:index",
+        "unit": "",
+        "desc": "Index"
+      },
+      {
+        "var": "e:Top",
+        "unit": "degC",
+        "desc": "Operating Temperature"
+      },
+      {
+        "var": "e:Imaxlim",
+        "unit": "kA",
+        "desc": "Max. permissible current"
+      },
+      {
+        "var": "e:loadfactor",
+        "unit": "",
+        "desc": "Load factor (lf)"
+      },
+      {
+        "var": "e:solar_rad",
+        "unit": "W/m^2",
+        "desc": "Solar radiation intensity"
+      },
+      {
+        "var": "e:windvelocity",
+        "unit": "m/s",
+        "desc": "Wind velocity"
+      },
+      {
+        "var": "e:soilThermRes",
+        "unit": "K.m/W",
+        "desc": "Soil thermal resistivity"
+      },
+      {
+        "var": "e:occupCoeff",
+        "unit": "",
+        "desc": "Occupation coefficient"
+      },
+      {
+        "var": "e:alpha",
+        "unit": "mm^2/s",
+        "desc": "Medium diffusivity"
+      },
+      {
+        "var": "e:mediumTemp",
+        "unit": "degC",
+        "desc": "Medium mean temperature"
+      },
+      {
+        "var": "e:soilThermResdry",
+        "unit": "K.m/W",
+        "desc": "Dry soil thermal resistivity"
+      },
+      {
+        "var": "e:thetaX",
+        "unit": "degC",
+        "desc": "Critical temperature of soil, θx"
+      },
+      {
+        "var": "e:thd",
+        "unit": "%",
+        "desc": "Third harmonic content"
+      },
+      {
+        "var": "e:temp_env",
+        "unit": "degC",
+        "desc": "Ambient temperature"
+      },
+      {
+        "var": "e:fk2",
+        "unit": "",
+        "desc": "Fusing current factor k2"
+      },
+      {
+        "var": "e:cbsp",
+        "unit": "",
+        "desc": "Set point"
+      },
+      {
+        "var": "e:if_depth",
+        "unit": "m",
+        "desc": "Burial depth"
+      },
+      {
+        "var": "e:installCost",
+        "unit": "USD/km",
+        "desc": "Installation costs"
+      },
+      {
+        "var": "e:userDefCur",
+        "unit": "A",
+        "desc": "Current"
+      },
+      {
+        "var": "e:userDefPF",
+        "unit": "",
+        "desc": "Power factor"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:typ_id",
+        "unit": "TypLne,TypTow,TypCabsys",
+        "desc": "Type"
+      },
+      {
+        "var": "e:doc_id",
+        "unit": "",
+        "desc": "Additional Data"
+      },
+      {
+        "var": "e:pOwner",
+        "unit": "ElmOwner",
+        "desc": "Owner"
+      },
+      {
+        "var": "e:pOperator",
+        "unit": "ElmOperator",
+        "desc": "Operator"
+      },
+      {
+        "var": "e:pRating",
+        "unit": "IntThrating",
+        "desc": "Thermal Rating"
+      },
+      {
+        "var": "e:pStoch",
+        "unit": "StoTyplne",
+        "desc": "Element model"
+      },
+      {
+        "var": "e:cpMeteostat",
+        "unit": "ElmMeteostat",
+        "desc": "Meteo Station"
+      },
+      {
+        "var": "e:txt_typ",
+        "unit": "",
+        "desc": "Type of Line"
+      },
+      {
+        "var": "e:rellen",
+        "unit": "km",
+        "desc": "Start of Section"
+      },
+      {
+        "var": "e:R1",
+        "unit": "Ohm",
+        "desc": "Pos. Seq. Resistance, R1"
+      },
+      {
+        "var": "e:X1",
+        "unit": "Ohm",
+        "desc": "Pos. Seq. Reactance, X1"
+      },
+      {
+        "var": "e:Z1",
+        "unit": "Ohm",
+        "desc": "Pos. Seq. Impedance, Z1"
+      },
+      {
+        "var": "e:phiz1",
+        "unit": "deg",
+        "desc": "Pos. Seq. Impedance, Angle"
+      },
+      {
+        "var": "e:R0",
+        "unit": "Ohm",
+        "desc": "Zero Seq. Resistance, R0"
+      },
+      {
+        "var": "e:X0",
+        "unit": "Ohm",
+        "desc": "Zero Seq. Reactance, X0"
+      },
+      {
+        "var": "e:Ice",
+        "unit": "A",
+        "desc": "Earth-Fault Current, Ice"
+      },
+      {
+        "var": "e:Inom",
+        "unit": "kA",
+        "desc": "Nominal Current"
+      },
+      {
+        "var": "e:Inom_a",
+        "unit": "kA",
+        "desc": "Nominal Current (act.)"
+      },
+      {
+        "var": "e:Irated",
+        "unit": "kA",
+        "desc": "Rated Current"
+      },
+      {
+        "var": "e:Unom",
+        "unit": "kV",
+        "desc": "Rated Voltage"
+      },
+      {
+        "var": "e:B1",
+        "unit": "uS",
+        "desc": "Susceptance B1"
+      },
+      {
+        "var": "e:C1",
+        "unit": "uF",
+        "desc": "Capacitance C1"
+      },
+      {
+        "var": "e:C0",
+        "unit": "uF",
+        "desc": "Capacitance C0"
+      },
+      {
+        "var": "e:CCEarFr",
+        "unit": "1/a",
+        "desc": "Frequency of single earth faults"
+      },
+      {
+        "var": "e:CCEarRepMu",
+        "unit": "h",
+        "desc": "Repair duration"
+      },
+      {
+        "var": "e:CCEarProb",
+        "unit": "%",
+        "desc": "Conditional probability of a second earth fault"
+      },
+      {
+        "var": "e:FOR1",
+        "unit": "1/a",
+        "desc": "Forced Outage Rate"
+      },
+      {
+        "var": "e:FOE",
+        "unit": "h/a",
+        "desc": "Forced Outage Expectancy"
+      },
+      {
+        "var": "e:FOD",
+        "unit": "h",
+        "desc": "Forced Outage Duration"
+      },
+      {
+        "var": "e:pTypStoch",
+        "unit": "StoTyplne",
+        "desc": "Type model"
+      },
+      {
+        "var": "e:trans_ff",
+        "unit": "1/a",
+        "desc": "Transient Fault Frequency"
+      },
+      {
+        "var": "e:crosssec",
+        "unit": "mm^2",
+        "desc": "Cross section"
+      },
+      {
+        "var": "e:cGrpVde",
+        "unit": "",
+        "desc": "Bunched on the wall, on surface, embedded or enclosed"
+      },
+      {
+        "var": "e:cGrpIec",
+        "unit": "",
+        "desc": "Bunched on the wall, on surface, embedded or enclosed"
+      },
+      {
+        "var": "e:cthetaX",
+        "unit": "degC",
+        "desc": "Must be >"
+      },
+      {
+        "var": "e:condMat",
+        "unit": "",
+        "desc": "Conductor material"
+      },
+      {
+        "var": "e:isoMat",
+        "unit": "",
+        "desc": "Insulation material"
+      },
+      {
+        "var": "e:shMat",
+        "unit": "",
+        "desc": "Sheath insulation"
+      },
+      {
+        "var": "e:armTyp",
+        "unit": "",
+        "desc": "Armour type"
+      },
+      {
+        "var": "e:nCond",
+        "unit": "",
+        "desc": "Number of conductors"
+      },
+      {
+        "var": "e:ctmax",
+        "unit": "degC",
+        "desc": "Max.operating temperature"
+      },
+      {
+        "var": "e:cithr",
+        "unit": "A",
+        "desc": "Rated Short-Time (1s) Current (Conductor)"
+      }
+    ]
+  }
+}

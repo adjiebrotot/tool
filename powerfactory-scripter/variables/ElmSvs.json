@@ -731,154 +731,114 @@
       ],
       "c": [
         {
-          "var": "c:z",
+          "var": "c:ymin",
           "unit": "p.u.",
-          "desc": "Shunt-Impedance"
+          "desc": "Minimum susceptance"
         },
         {
-          "var": "c:cn",
+          "var": "c:ymax",
+          "unit": "p.u.",
+          "desc": "Maximum susceptance"
+        },
+        {
+          "var": "c:Qmin",
+          "unit": "Mvar",
+          "desc": "Qmin(L)"
+        },
+        {
+          "var": "c:Qmax",
+          "unit": "Mvar",
+          "desc": "Qmax(C)"
+        },
+        {
+          "var": "c:Qsparelead",
+          "unit": "Mvar",
+          "desc": "Q spare lead"
+        },
+        {
+          "var": "c:Qsparelag",
+          "unit": "Mvar",
+          "desc": "Q spare lag"
+        },
+        {
+          "var": "c:nxcap",
           "unit": "",
-          "desc": "Connection Mode"
+          "desc": "Max. number of capacitors"
         },
         {
-          "var": "c:frnom",
-          "unit": "Hz",
-          "desc": "Nominal Frequency"
-        },
-        {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal Angular Frequency"
-        },
-        {
-          "var": "c:rs",
+          "var": "c:usetp",
           "unit": "p.u.",
-          "desc": "Rs"
+          "desc": "Voltage setpoint"
         },
         {
-          "var": "c:gp",
+          "var": "c:uctrl",
           "unit": "p.u.",
-          "desc": "Gp"
+          "desc": "Internal"
         },
         {
-          "var": "c:xl",
+          "var": "c:qsetp",
           "unit": "p.u.",
-          "desc": "Xl"
+          "desc": "Reactive power setpoint"
         },
         {
-          "var": "c:bc1",
-          "unit": "p.u.",
-          "desc": "Bc1"
-        },
-        {
-          "var": "c:bc2",
-          "unit": "p.u.",
-          "desc": "Bc2"
-        },
-        {
-          "var": "c:uc1",
-          "unit": "p.u.",
-          "desc": "Voltage across C1"
-        },
-        {
-          "var": "c:uc2",
-          "unit": "p.u.",
-          "desc": "Voltage across C2"
-        },
-        {
-          "var": "c:uc",
-          "unit": "p.u.",
-          "desc": "Voltage across C1 and C2"
-        },
-        {
-          "var": "c:url",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:urp",
-          "unit": "p.u.",
-          "desc": "Voltage across Rp"
-        },
-        {
-          "var": "c:IL",
-          "unit": "A",
-          "desc": "Current through Inductor L"
-        },
-        {
-          "var": "c:IC",
-          "unit": "A",
-          "desc": "Current through C2"
-        },
-        {
-          "var": "c:IRp",
-          "unit": "A",
-          "desc": "Current through Rp"
-        },
-        {
-          "var": "c:PRp",
-          "unit": "kW",
-          "desc": "Losses in Rp"
-        },
-        {
-          "var": "c:PL",
-          "unit": "kW",
-          "desc": "Losses in Inductor (Rs)"
-        },
-        {
-          "var": "c:Uc1",
-          "unit": "kV",
-          "desc": "Voltage across C1"
-        },
-        {
-          "var": "c:Uc2",
-          "unit": "kV",
-          "desc": "Voltage across C2"
-        },
-        {
-          "var": "c:Uc",
-          "unit": "kV",
-          "desc": "Voltage across C1 and C2"
-        },
-        {
-          "var": "c:Url",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Urp",
-          "unit": "kV",
-          "desc": "Voltage across Rp"
-        },
-        {
-          "var": "c:ncapa",
+          "var": "c:i_ctrl",
           "unit": "",
-          "desc": "Number of Stages in Parallel"
+          "desc": "Control mode"
         },
         {
-          "var": "c:acost",
-          "unit": "",
-          "desc": "Annual Cost"
+          "var": "c:ysvs",
+          "unit": "p.u.",
+          "desc": "Actual susceptance"
         },
         {
-          "var": "c:ncapx",
+          "var": "c:qtcr",
+          "unit": "Mvar",
+          "desc": "TCR reactive power"
+        },
+        {
+          "var": "c:Kq",
+          "unit": "p.u.",
+          "desc": "Reactive power participation"
+        },
+        {
+          "var": "c:Qdmeas",
+          "unit": "Mvar",
+          "desc": "Q(measured) for droop"
+        },
+        {
+          "var": "c:Qdroop",
+          "unit": "Mvar/p.u.",
+          "desc": "Droop"
+        },
+        {
+          "var": "c:nfixcap",
           "unit": "",
-          "desc": "Max. No. of Steps"
+          "desc": "Number of capacitors"
+        },
+        {
+          "var": "c:Qfixcap",
+          "unit": "Mvar",
+          "desc": "Q per capacitor unit"
+        },
+        {
+          "var": "c:qfix",
+          "unit": "p.u.",
+          "desc": "Q in MSC"
+        },
+        {
+          "var": "c:i_ylim",
+          "unit": "",
+          "desc": "Susceptance limit reached"
+        },
+        {
+          "var": "c:iudeadbmode",
+          "unit": "",
+          "desc": "Voltage deadband mode"
         },
         {
           "var": "c:nCtrlIter",
           "unit": "",
           "desc": "No. of CTRL-iterations"
-        },
-        {
-          "var": "c:Tctrl",
-          "unit": "",
-          "desc": "Controller Time Constant"
-        },
-        {
-          "var": "c:Kctrl",
-          "unit": "p.u./%",
-          "desc": "Controller Sensitivity dq/dv"
         },
         {
           "var": "c:Ploss",
@@ -911,221 +871,136 @@
           "desc": "Reactive-Losses (no load)"
         },
         {
-          "var": "c:b0",
-          "unit": "p.u.",
-          "desc": "sigmaC"
+          "var": "c:nncap",
+          "unit": "",
+          "desc": "Act. number of capacitors"
         },
         {
-          "var": "c:bc",
-          "unit": "p.u.",
-          "desc": "Bc"
+          "var": "c:iop",
+          "unit": "",
+          "desc": "Flag"
         },
         {
-          "var": "c:gpc",
-          "unit": "p.u.",
-          "desc": "Gp(C)"
+          "var": "c:qtsc",
+          "unit": "Mvar",
+          "desc": "TSC reactive power"
+        },
+        {
+          "var": "c:nncap_AB",
+          "unit": "",
+          "desc": "Act. number of capacitors, AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:nncap_BC",
+          "unit": "",
+          "desc": "Act. number of capacitors, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:nncap_CA",
+          "unit": "",
+          "desc": "Act. number of capacitors, CA",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:qtcr_AB",
+          "unit": "Mvar",
+          "desc": "TCR reactive power, AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:qtcr_BC",
+          "unit": "Mvar",
+          "desc": "TCR reactive power, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:qtcr_CA",
+          "unit": "Mvar",
+          "desc": "TCR reactive power, CA",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:qtsc_AB",
+          "unit": "Mvar",
+          "desc": "TSC reactive power, AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:qtsc_BC",
+          "unit": "Mvar",
+          "desc": "TSC reactive power, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:qtsc_CA",
+          "unit": "Mvar",
+          "desc": "TSC reactive power, CA",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:iconn",
+          "unit": "",
+          "desc": "Connection mode",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ivcop",
+          "unit": "",
+          "desc": "Phase",
+          "availability": [
+            "unbal"
+          ]
         },
         {
           "var": "c:y0",
           "unit": "p.u.",
-          "desc": "Zero Sequence Admittance",
+          "desc": "Zero sequence susceptance",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:ze",
-          "unit": "p.u.",
-          "desc": "Grounding Impedance",
+          "var": "c:i_ylim_AB",
+          "unit": "",
+          "desc": "Susceptance (A-B) limit reached",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:uc1ph",
-          "unit": "p.u.",
-          "desc": "Voltage across Capacitor C1(Phase Value)",
-          "suffix": ":Ph",
+          "var": "c:i_ylim_BC",
+          "unit": "",
+          "desc": "Susceptance (B-C) limit reached",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:uc2ph",
-          "unit": "p.u.",
-          "desc": "Voltage across Capacitor C2(Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ucph",
-          "unit": "p.u.",
-          "desc": "Voltage across C1 and C2(Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ucph",
-          "unit": "p.u.",
-          "desc": "Voltage across Capacitor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urlph",
-          "unit": "p.u.",
-          "desc": "Voltage across Rs-L (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urlph",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urpph",
-          "unit": "p.u.",
-          "desc": "Voltage across Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ILph",
-          "unit": "A",
-          "desc": "Current through Inductor L (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ILph",
-          "unit": "A",
-          "desc": "Current through Inductor L (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ICph",
-          "unit": "A",
-          "desc": "Current through C2 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ICph",
-          "unit": "A",
-          "desc": "Current through Capacitor C (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:IRpph",
-          "unit": "A",
-          "desc": "Current through Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:IRpph",
-          "unit": "A",
-          "desc": "Current through Rp (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ustar",
-          "unit": "kV",
-          "desc": "Star-Point Voltage",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uc1ph",
-          "unit": "kV",
-          "desc": "Voltage across Capacitor C1(Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uc2ph",
-          "unit": "kV",
-          "desc": "Voltage across Capacitor C2(Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ucph",
-          "unit": "kV",
-          "desc": "Voltage across C1 and C2(Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ucph",
-          "unit": "kV",
-          "desc": "Voltage across Capacitor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urlph",
-          "unit": "kV",
-          "desc": "Voltage across Rs-L (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urlph",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urpph",
-          "unit": "kV",
-          "desc": "Voltage across Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:z0",
-          "unit": "p.u.",
-          "desc": "Zero Sequence Impedance",
+          "var": "c:i_ylim_CA",
+          "unit": "",
+          "desc": "Susceptance (C-A) limit reached",
           "availability": [
             "unbal"
           ]
@@ -1678,9 +1553,28 @@
       ],
       "s": [
         {
-          "var": "s:ncapain",
-          "unit": "",
-          "desc": "Number of Stages in Parallel, input"
+          "var": "s:ysvs_AB",
+          "unit": "p.u.",
+          "desc": "Actual susceptance, AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:ysvs_BC",
+          "unit": "p.u.",
+          "desc": "Actual susceptance, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:ysvs_CA",
+          "unit": "p.u.",
+          "desc": "Actual susceptance, CA",
+          "availability": [
+            "unbal"
+          ]
         }
       ]
     },
@@ -2394,721 +2288,117 @@
       ],
       "c": [
         {
-          "var": "c:z",
-          "unit": "p.u.",
-          "desc": "Shunt-Impedance"
-        },
-        {
-          "var": "c:cn",
+          "var": "c:nfixcap",
           "unit": "",
-          "desc": "Connection Mode"
+          "desc": "Number of capacitors"
         },
         {
-          "var": "c:frnom",
-          "unit": "Hz",
-          "desc": "Nominal Frequency"
+          "var": "c:Qfixcap",
+          "unit": "Mvar",
+          "desc": "Q per capacitor unit"
         },
         {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal Angular Frequency"
-        },
-        {
-          "var": "c:rs",
+          "var": "c:qfix",
           "unit": "p.u.",
-          "desc": "Rs"
+          "desc": "Q in MSC"
         },
         {
-          "var": "c:gp",
+          "var": "c:ytsc",
           "unit": "p.u.",
-          "desc": "Gp"
+          "desc": "TSC susceptance"
         },
         {
-          "var": "c:xl",
+          "var": "c:ytcr",
           "unit": "p.u.",
-          "desc": "Xl"
+          "desc": "TCR susceptance"
         },
         {
-          "var": "c:uc1",
+          "var": "c:Itcr_AB",
+          "unit": "kA",
+          "desc": "TCR current, AB"
+        },
+        {
+          "var": "c:Itcr_BC",
+          "unit": "kA",
+          "desc": "TCR current, BC"
+        },
+        {
+          "var": "c:Itcr_CA",
+          "unit": "kA",
+          "desc": "TCR current, CA"
+        },
+        {
+          "var": "c:phiItcr_AB",
+          "unit": "deg",
+          "desc": "TCR current, phase angle, AB"
+        },
+        {
+          "var": "c:phiItcr_BC",
+          "unit": "deg",
+          "desc": "TCR current, phase angle, BC"
+        },
+        {
+          "var": "c:phiItcr_CA",
+          "unit": "deg",
+          "desc": "TCR current, phase angle, CA"
+        },
+        {
+          "var": "c:i1",
           "unit": "p.u.",
-          "desc": "Voltage across C1"
+          "desc": "Harmonic current (TCR)"
         },
         {
-          "var": "c:uc2",
+          "var": "c:ytsc_AB",
           "unit": "p.u.",
-          "desc": "Voltage across C2"
-        },
-        {
-          "var": "c:uc",
-          "unit": "p.u.",
-          "desc": "Voltage across C1 and C2"
-        },
-        {
-          "var": "c:url",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:urp",
-          "unit": "p.u.",
-          "desc": "Voltage across Rp"
-        },
-        {
-          "var": "c:IL",
-          "unit": "A",
-          "desc": "Current through Inductor L"
-        },
-        {
-          "var": "c:IC",
-          "unit": "A",
-          "desc": "Current through C2"
-        },
-        {
-          "var": "c:IRp",
-          "unit": "A",
-          "desc": "Current through Rp"
-        },
-        {
-          "var": "c:PRp",
-          "unit": "kW",
-          "desc": "Losses in Rp"
-        },
-        {
-          "var": "c:PL",
-          "unit": "kW",
-          "desc": "Losses in Inductor (Rs)"
-        },
-        {
-          "var": "c:Uc1",
-          "unit": "kV",
-          "desc": "Voltage across C1"
-        },
-        {
-          "var": "c:Uc2",
-          "unit": "kV",
-          "desc": "Voltage across C2"
-        },
-        {
-          "var": "c:Uc",
-          "unit": "kV",
-          "desc": "Voltage across C1 and C2"
-        },
-        {
-          "var": "c:Url",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Urp",
-          "unit": "kV",
-          "desc": "Voltage across Rp"
-        },
-        {
-          "var": "c:ncapa",
-          "unit": "",
-          "desc": "Number of Stages in Parallel"
-        },
-        {
-          "var": "c:b0",
-          "unit": "p.u.",
-          "desc": "Susceptance to Ground"
-        },
-        {
-          "var": "c:uha_c1",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (arith.) across C1"
-        },
-        {
-          "var": "c:uhrms_c1",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (RMS) across C1"
-        },
-        {
-          "var": "c:ut_c1",
-          "unit": "p.u.",
-          "desc": "Total Voltage (u_fn+uhrms) across C1"
-        },
-        {
-          "var": "c:ufn_c1",
-          "unit": "p.u.",
-          "desc": "Fundamental Frequency Voltage across C1"
-        },
-        {
-          "var": "c:uha_c2",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (arith.) across C2"
-        },
-        {
-          "var": "c:uhrms_c2",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (RMS) across C2"
-        },
-        {
-          "var": "c:ut_c2",
-          "unit": "p.u.",
-          "desc": "Total Voltage (u_fn+uhrms) across C2"
-        },
-        {
-          "var": "c:ufn_c2",
-          "unit": "p.u.",
-          "desc": "Fundamental Frequency Voltage across C2"
-        },
-        {
-          "var": "c:uha_c",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (arith.) across C1 and C2"
-        },
-        {
-          "var": "c:uhrms_c",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (RMS) across C1 and C2"
-        },
-        {
-          "var": "c:ut_c",
-          "unit": "p.u.",
-          "desc": "Total Voltage (u_fn+uhrms) across C1 and C2"
-        },
-        {
-          "var": "c:ufn_c",
-          "unit": "p.u.",
-          "desc": "Fundamental Frequency Voltage across C1 and C2"
-        },
-        {
-          "var": "c:uha_rl",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (arith.) across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:uhrms_rl",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (rms) across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:ut_rl",
-          "unit": "p.u.",
-          "desc": "Total Voltage (u_fn+uhrms) across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Ihrms_L",
-          "unit": "A",
-          "desc": "Harmonic Current (rms) through Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Irms_L",
-          "unit": "A",
-          "desc": "RMS Value of Current through Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Ihrms_Rp",
-          "unit": "A",
-          "desc": "Harmonic Current (rms) through Rp"
-        },
-        {
-          "var": "c:Irms_Rp",
-          "unit": "A",
-          "desc": "RMS Value of Current through Rp"
-        },
-        {
-          "var": "c:Ph_Rp",
-          "unit": "kW",
-          "desc": "Harmonic Losses of Rp"
-        },
-        {
-          "var": "c:Pt_Rp",
-          "unit": "kW",
-          "desc": "Total Losses of Rp"
-        },
-        {
-          "var": "c:Ph_L",
-          "unit": "kW",
-          "desc": "Harmonic Losses of Inductor (Rs)"
-        },
-        {
-          "var": "c:Pt_L",
-          "unit": "kW",
-          "desc": "Total Losses of Inductor"
-        },
-        {
-          "var": "c:ufn_rl",
-          "unit": "p.u.",
-          "desc": "Fundamental Frequency Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Ifn_Rp",
-          "unit": "A",
-          "desc": "Fundamental Frequency Current through Rp"
-        },
-        {
-          "var": "c:Ifn_L",
-          "unit": "A",
-          "desc": "Fundamental Frequency Current through Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Pfn_L",
-          "unit": "kW",
-          "desc": "Fundamental Frequency Losses of Inductor"
-        },
-        {
-          "var": "c:Pfn_Rp",
-          "unit": "kW",
-          "desc": "Fundamental Frequency Losses of Rp"
-        },
-        {
-          "var": "c:Ifn_c",
-          "unit": "A",
-          "desc": "Fundamental Frequency Current through Capacitor C2"
-        },
-        {
-          "var": "c:Ihrms_c",
-          "unit": "A",
-          "desc": "Harmonic Current (rms) through Capacitor C2"
-        },
-        {
-          "var": "c:Irms_c",
-          "unit": "A",
-          "desc": "RMS Value of Current through Capacitor C2"
-        },
-        {
-          "var": "c:C1",
-          "unit": "uF",
-          "desc": "Auxiliary Capacitance C1"
-        },
-        {
-          "var": "c:C2",
-          "unit": "uF",
-          "desc": "Main Capacitance C2"
-        },
-        {
-          "var": "c:L",
-          "unit": "mH",
-          "desc": "Inductance L"
-        },
-        {
-          "var": "c:Rp",
-          "unit": "Ohm",
-          "desc": "Parallel-Resistance Rp"
-        },
-        {
-          "var": "c:Rs",
-          "unit": "Ohm",
-          "desc": "Resistance Rs"
-        },
-        {
-          "var": "c:Uha_c1",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (arith.) across C1"
-        },
-        {
-          "var": "c:Uhrms_c1",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (RMS) across C1"
-        },
-        {
-          "var": "c:Ut_c1",
-          "unit": "kV",
-          "desc": "Total Voltage (U_fn+Uhrms) across C1"
-        },
-        {
-          "var": "c:Ufn_c1",
-          "unit": "kV",
-          "desc": "Fundamental Frequency Voltage across C1"
-        },
-        {
-          "var": "c:Uha_c2",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (arith.) across C2"
-        },
-        {
-          "var": "c:Uhrms_c2",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (RMS) across C2"
-        },
-        {
-          "var": "c:Ut_c2",
-          "unit": "kV",
-          "desc": "Total Voltage (U_fn+Uhrms) across C2"
-        },
-        {
-          "var": "c:Ufn_c2",
-          "unit": "kV",
-          "desc": "Fundamental Frequency Voltage across C2"
-        },
-        {
-          "var": "c:Uha_c",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (arith.) across C1 and C2"
-        },
-        {
-          "var": "c:Uhrms_c",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (RMS) across C1 and C2"
-        },
-        {
-          "var": "c:Ut_c",
-          "unit": "kV",
-          "desc": "Total Voltage (U_fn+Uhrms) across C1 and C2"
-        },
-        {
-          "var": "c:Ufn_c",
-          "unit": "kV",
-          "desc": "Fundamental Frequency Voltage across C1 and C2"
-        },
-        {
-          "var": "c:Uha_rl",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (arith.) across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Uhrms_rl",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (rms) across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Ut_rl",
-          "unit": "kV",
-          "desc": "Total Voltage (U_fn+Uhrms) across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Ufn_rl",
-          "unit": "kV",
-          "desc": "Fundamental Frequency Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:bc",
-          "unit": "p.u.",
-          "desc": "Bc"
-        },
-        {
-          "var": "c:gpc",
-          "unit": "p.u.",
-          "desc": "Gp(C)"
-        },
-        {
-          "var": "c:C",
-          "unit": "uF",
-          "desc": "Capacitance C"
-        },
-        {
-          "var": "c:y0",
-          "unit": "p.u.",
-          "desc": "Zero Sequence Admittance",
+          "desc": "TSC susceptance, AB",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:ze",
+          "var": "c:ytsc_BC",
           "unit": "p.u.",
-          "desc": "Grounding Impedance",
+          "desc": "TSC susceptance, BC",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:uc1ph",
+          "var": "c:ytsc_CA",
           "unit": "p.u.",
-          "desc": "Voltage across C1 (Phase Value)",
-          "suffix": ":Ph",
+          "desc": "TSC susceptance, CA",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:uc2ph",
+          "var": "c:ytcr_AB",
           "unit": "p.u.",
-          "desc": "Voltage across C2 (Phase Value)",
-          "suffix": ":Ph",
+          "desc": "TCR susceptance, AB",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:ucph",
+          "var": "c:ytcr_BC",
           "unit": "p.u.",
-          "desc": "uc1",
-          "suffix": ":Ph",
+          "desc": "TCR susceptance, BC",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:ucph",
+          "var": "c:ytcr_CA",
           "unit": "p.u.",
-          "desc": "Voltage across Capacitor (Phase Value)",
+          "desc": "TCR susceptance, CA",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:urlph",
+          "var": "c:i_abc",
           "unit": "p.u.",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urlph",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urpph",
-          "unit": "p.u.",
-          "desc": "Voltage across Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ILph",
-          "unit": "A",
-          "desc": "Current through Inductor (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ILph",
-          "unit": "A",
-          "desc": "Current through Inductor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ICph",
-          "unit": "A",
-          "desc": "Current through C2 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ICph",
-          "unit": "A",
-          "desc": "Current through Capacitor C(Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:IRpph",
-          "unit": "A",
-          "desc": "Current through Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:IRpph",
-          "unit": "A",
-          "desc": "Current through Rp (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ustar",
-          "unit": "kV",
-          "desc": "Star-Point Voltage",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uc1ph",
-          "unit": "kV",
-          "desc": "Voltage across C1 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uc2ph",
-          "unit": "kV",
-          "desc": "Voltage across C2 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ucph",
-          "unit": "kV",
-          "desc": "Url",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ucph",
-          "unit": "kV",
-          "desc": "Voltage across Capacitor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urlph",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urlph",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urpph",
-          "unit": "kV",
-          "desc": "Voltage across Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ncapx",
-          "unit": "",
-          "desc": "Max. No. of Steps",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:i_earth",
-          "unit": "",
-          "desc": "Internal",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uhaph_c1",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ufnph_c1",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uhaph_c2",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ufnph_c2",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uhaph_c",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uhaph_c",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ufnph_c",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ufnph_c",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uhaph_rl",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uhaph_rl",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ufnph_rl",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ufnph_rl",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:z0",
-          "unit": "p.u.",
-          "desc": "Zero Sequence Impedance",
+          "desc": "Harmonic currents (TCR)",
           "availability": [
             "unbal"
           ]
@@ -5156,106 +4446,143 @@
       ],
       "c": [
         {
-          "var": "c:z",
+          "var": "c:ymin",
           "unit": "p.u.",
-          "desc": "Shunt-Impedance"
+          "desc": "Minimum susceptance"
         },
         {
-          "var": "c:cn",
-          "unit": "",
-          "desc": "Connection Mode"
-        },
-        {
-          "var": "c:frnom",
-          "unit": "Hz",
-          "desc": "Nominal Frequency"
-        },
-        {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal Angular Frequency"
-        },
-        {
-          "var": "c:ncapa",
-          "unit": "",
-          "desc": "Number of Stages in Parallel"
-        },
-        {
-          "var": "c:ncapx",
-          "unit": "",
-          "desc": "Max. No. of Steps"
-        },
-        {
-          "var": "c:b0",
+          "var": "c:ymax",
           "unit": "p.u.",
-          "desc": "sigmaC"
+          "desc": "Maximum susceptance"
         },
         {
-          "var": "c:shtype",
+          "var": "c:nxcap",
           "unit": "",
-          "desc": "Type"
+          "desc": "Max. number of capacitors"
         },
         {
-          "var": "c:L",
-          "unit": "H",
-          "desc": "Inductance"
+          "var": "c:ysvs",
+          "unit": "p.u.",
+          "desc": "Actual susceptance"
         },
         {
-          "var": "c:Rs",
-          "unit": "Ohm",
-          "desc": "Series-Resistance"
-        },
-        {
-          "var": "c:Qmax",
+          "var": "c:qtcr",
           "unit": "Mvar",
-          "desc": "Max. Rated Reactive Power"
+          "desc": "TCR reactive power"
         },
         {
-          "var": "c:C",
-          "unit": "F",
-          "desc": "Capacitance"
+          "var": "c:Qdroop",
+          "unit": "Mvar/p.u.",
+          "desc": "Droop"
         },
         {
-          "var": "c:Gp",
-          "unit": "S",
-          "desc": "Parallel-Conductance"
-        },
-        {
-          "var": "c:y0",
-          "unit": "p.u.",
-          "desc": "Zero Sequence Admittance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ze",
-          "unit": "p.u.",
-          "desc": "Grounding Impedance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ustar",
-          "unit": "kV",
-          "desc": "Star-Point Voltage",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:i_earth",
+          "var": "c:nfixcap",
           "unit": "",
-          "desc": "Internal",
+          "desc": "Number of capacitors"
+        },
+        {
+          "var": "c:Qfixcap",
+          "unit": "Mvar",
+          "desc": "Q per capacitor unit"
+        },
+        {
+          "var": "c:qfix",
+          "unit": "p.u.",
+          "desc": "Q in MSC"
+        },
+        {
+          "var": "c:qtsc",
+          "unit": "Mvar",
+          "desc": "TSC reactive power"
+        },
+        {
+          "var": "c:qmin",
+          "unit": "Mvar",
+          "desc": "TSC, Q per capacitor (<0)"
+        },
+        {
+          "var": "c:qmax",
+          "unit": "Mvar",
+          "desc": "TCR, Q of reactance (>0)"
+        },
+        {
+          "var": "c:ytsc",
+          "unit": "p.u.",
+          "desc": "TSC susceptance"
+        },
+        {
+          "var": "c:ytcr",
+          "unit": "p.u.",
+          "desc": "TCR susceptance"
+        },
+        {
+          "var": "c:ysvs_AB",
+          "unit": "p.u.",
+          "desc": "Actual susceptance, AB",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:z0",
+          "var": "c:ysvs_BC",
           "unit": "p.u.",
-          "desc": "Zero Sequence Impedance",
+          "desc": "Actual susceptance, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ysvs_CA",
+          "unit": "p.u.",
+          "desc": "Actual susceptance, CA",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ytsc_AB",
+          "unit": "p.u.",
+          "desc": "TSC susceptance, AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ytsc_BC",
+          "unit": "p.u.",
+          "desc": "TSC susceptance, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ytsc_CA",
+          "unit": "p.u.",
+          "desc": "TSC susceptance, CA",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ytcr_AB",
+          "unit": "p.u.",
+          "desc": "TCR susceptance, AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ytcr_BC",
+          "unit": "p.u.",
+          "desc": "TCR susceptance, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ytcr_CA",
+          "unit": "p.u.",
+          "desc": "TCR susceptance, CA",
           "availability": [
             "unbal"
           ]
@@ -5739,34 +5066,111 @@
       ],
       "s": [
         {
-          "var": "s:u_r",
+          "var": "s:gatea",
+          "unit": "deg",
+          "desc": "Firing angle"
+        },
+        {
+          "var": "s:nncap",
+          "unit": "",
+          "desc": "Act. number of capacitors"
+        },
+        {
+          "var": "s:bsvs",
           "unit": "p.u.",
-          "desc": "Voltage, Real Part"
+          "desc": "Susceptance"
         },
         {
-          "var": "s:u_i",
+          "var": "s:cur1r",
           "unit": "p.u.",
-          "desc": "Voltage, Imaginary Part"
+          "desc": "Positive-sequence current, real part"
         },
         {
-          "var": "s:i_r",
+          "var": "s:cur1i",
           "unit": "p.u.",
-          "desc": "Current, Real Part"
+          "desc": "Positive-sequence current, imaginary part"
         },
         {
-          "var": "s:i_i",
+          "var": "s:cur1",
           "unit": "p.u.",
-          "desc": "Current, Imaginary Part"
+          "desc": "Positive-sequence current, magnitude"
         },
         {
-          "var": "s:IRL",
-          "unit": "kA",
-          "desc": "Current through Inductance"
+          "var": "s:Q1",
+          "unit": "Mvar",
+          "desc": "Positive-sequence, reactive power"
         },
         {
-          "var": "s:UC",
-          "unit": "kV",
-          "desc": "Voltage at Capacitance"
+          "var": "s:gatea_AB",
+          "unit": "deg",
+          "desc": "Firing angle, AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:gatea_BC",
+          "unit": "deg",
+          "desc": "Firing angle, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:gatea_CA",
+          "unit": "deg",
+          "desc": "Firing angle, CA",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:nncap_AB",
+          "unit": "",
+          "desc": "Act. number of capacitors, AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:nncap_BC",
+          "unit": "",
+          "desc": "Act. number of capacitors, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:nncap_CA",
+          "unit": "",
+          "desc": "Act. number of capacitors, CA",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:bsvs_AB",
+          "unit": "p.u.",
+          "desc": "Susceptance, AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:bsvs_BC",
+          "unit": "p.u.",
+          "desc": "Susceptance, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:bsvs_CA",
+          "unit": "p.u.",
+          "desc": "Susceptance, CA",
+          "availability": [
+            "unbal"
+          ]
         }
       ]
     },
@@ -6063,9 +5467,113 @@
       ],
       "c": [
         {
-          "var": "c:cn",
+          "var": "c:nxcap",
           "unit": "",
-          "desc": "Connection Mode",
+          "desc": "Max. number of capacitors",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qdroop",
+          "unit": "Mvar/p.u.",
+          "desc": "Droop",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:nfixcap",
+          "unit": "",
+          "desc": "Number of capacitors",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qfixcap",
+          "unit": "Mvar",
+          "desc": "Q per capacitor unit",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:qfix",
+          "unit": "p.u.",
+          "desc": "Q in MSC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:qmin",
+          "unit": "Mvar",
+          "desc": "TSC, Q per capacitor (<0)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:qmax",
+          "unit": "Mvar",
+          "desc": "TCR, Q of reactance (>0)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:btcr_AB",
+          "unit": "p.u.",
+          "desc": "Equ. 1/TCR inductance, AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:btcr_BC",
+          "unit": "p.u.",
+          "desc": "Equ.1/TCR inductance, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:btcr_CA",
+          "unit": "p.u.",
+          "desc": "Equ.1/TCR inductance, CA",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:btcr",
+          "unit": "p.u.",
+          "desc": "1/TCR inductance",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ctsc_AB",
+          "unit": "p.u.",
+          "desc": "TSC capacitance, AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ctsc_BC",
+          "unit": "p.u.",
+          "desc": "TSC capacitance, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ctsc_CA",
+          "unit": "p.u.",
+          "desc": "TSC capacitance, CA",
           "availability": [
             "unbal"
           ]
@@ -6073,7 +5581,7 @@
         {
           "var": "c:frnom",
           "unit": "Hz",
-          "desc": "Nominal Frequency",
+          "desc": "Frequency",
           "availability": [
             "unbal"
           ]
@@ -6081,389 +5589,55 @@
         {
           "var": "c:hpi",
           "unit": "rad/s",
-          "desc": "Nominal Angular Frequency",
+          "desc": "Angular frequency",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:rs",
-          "unit": "p.u.",
-          "desc": "Series-Resistance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:gp",
-          "unit": "p.u.",
-          "desc": "Parallel-Resistance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:uc1ph",
-          "unit": "p.u.",
-          "desc": "Voltage across C1 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:uc2ph",
-          "unit": "p.u.",
-          "desc": "Voltage across C2 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ucph",
-          "unit": "p.u.",
-          "desc": "Uc1ph",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ucph",
-          "unit": "p.u.",
-          "desc": "Voltage across Capacitor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urlph",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urlph",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urpph",
-          "unit": "p.u.",
-          "desc": "Voltage across Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ILph",
-          "unit": "A",
-          "desc": "Current through Inductor L (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ILph",
-          "unit": "A",
-          "desc": "Current through Inductor L (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ICph",
-          "unit": "A",
-          "desc": "Current through Capacitor C2 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ICph",
-          "unit": "A",
-          "desc": "Current through Capacitor C (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:IRpph",
-          "unit": "A",
-          "desc": "Current through Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:IRpph",
-          "unit": "A",
-          "desc": "Current through Rp (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ustar",
-          "unit": "kV",
-          "desc": "Star-Point Voltage",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uc1ph",
-          "unit": "kV",
-          "desc": "Voltage across Capacitor C1(Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uc2ph",
-          "unit": "kV",
-          "desc": "Voltage across Capacitor C2(Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ucph",
-          "unit": "kV",
-          "desc": "Voltage across C1 and C2(Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ucph",
-          "unit": "kV",
-          "desc": "Voltage across Capacitor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urlph",
-          "unit": "kV",
-          "desc": "Voltage across Rs-L (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urlph",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urpph",
-          "unit": "kV",
-          "desc": "Voltage across Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ncapa",
+          "var": "c:nnc_AB",
           "unit": "",
-          "desc": "Number of Stages in Parallel",
+          "desc": "Act. number of capacitors, AB",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:ncapx",
+          "var": "c:nnc_BC",
           "unit": "",
-          "desc": "Max. No. of Steps",
+          "desc": "Act. number of capacitors, BC",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:i_earth",
+          "var": "c:nnc_CA",
           "unit": "",
-          "desc": "Internal",
+          "desc": "Act. number of capacitors, CA",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:l",
+          "var": "c:cfix_AB",
           "unit": "p.u.",
-          "desc": "Inductance",
+          "desc": "MSC capacitance, AB",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:c",
+          "var": "c:cfix_BC",
           "unit": "p.u.",
-          "desc": "Capacitance",
+          "desc": "MSC capacitance, BC",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:le",
+          "var": "c:cfix_CA",
           "unit": "p.u.",
-          "desc": "Grounding Inductance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:re",
-          "unit": "p.u.",
-          "desc": "Grounding Resistance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:c0",
-          "unit": "p.u.",
-          "desc": "Parasitic Capacitance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:c1",
-          "unit": "p.u.",
-          "desc": "Capacitance C1",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:c2",
-          "unit": "p.u.",
-          "desc": "Capacitance C2",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Unom",
-          "unit": "kV",
-          "desc": "Nominal Voltage",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Snom",
-          "unit": "MVA",
-          "desc": "Nominal Power",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:shtype",
-          "unit": "",
-          "desc": "Type",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:iRL",
-          "unit": "p.u.",
-          "desc": "Current through Inductance",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:iRL",
-          "unit": "p.u.",
-          "desc": "Current through Inductance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:L",
-          "unit": "H",
-          "desc": "Inductance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Rs",
-          "unit": "Ohm",
-          "desc": "Series-Resistance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Qmax",
-          "unit": "Mvar",
-          "desc": "Max. Rated Reactive Power",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:rs0",
-          "unit": "p.u.",
-          "desc": "Zero Sequence Series-Resistance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:l0",
-          "unit": "p.u.",
-          "desc": "Zero Sequence Inductance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:physt",
-          "unit": "kW",
-          "desc": "Hysteresis losses at rated operation",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:C",
-          "unit": "F",
-          "desc": "Capacitance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Gp",
-          "unit": "S",
-          "desc": "Parallel-Conductance",
+          "desc": "MSC capacitance, CA",
           "availability": [
             "unbal"
           ]
@@ -6725,137 +5899,209 @@
       ],
       "s": [
         {
-          "var": "s:psil_d",
+          "var": "s:gatea",
+          "unit": "deg",
+          "desc": "Firing angle",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:nncap",
           "unit": "p.u.",
-          "desc": "Flux, alpha-component",
+          "desc": "Act. number of capacitors",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:psil_q",
+          "var": "s:gatea_AB",
+          "unit": "deg",
+          "desc": "Firing angle, AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:gatea_BC",
+          "unit": "deg",
+          "desc": "Firing angle, BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:gatea_CA",
+          "unit": "deg",
+          "desc": "Firing angle, CA",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:nncap_AB",
           "unit": "p.u.",
-          "desc": "Flux, beta-component",
+          "desc": "Act. number of capacitors, AB",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:psil_0",
+          "var": "s:nncap_BC",
           "unit": "p.u.",
-          "desc": "Flux, gamma-component",
+          "desc": "Act. number of capacitors, BC",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC1_a",
+          "var": "s:nncap_CA",
           "unit": "p.u.",
-          "desc": "Voltage C1, Phase a",
+          "desc": "Act. number of capacitors, CA",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC1_b",
+          "var": "s:cur1r",
           "unit": "p.u.",
-          "desc": "Voltage C1, Phase b",
+          "desc": "Positive-sequence current, real part",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC1_c",
+          "var": "s:cur1i",
           "unit": "p.u.",
-          "desc": "Voltage C1, Phase c",
+          "desc": "Positive-sequence current, imaginary part",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC2_a",
+          "var": "s:cur1",
           "unit": "p.u.",
-          "desc": "Voltage C2, Phase a",
+          "desc": "Positive-sequence current, magnitude",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC2_b",
+          "var": "s:Q1",
+          "unit": "Mvar",
+          "desc": "Positive-sequence, reactive power",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:Fmeas",
+          "unit": "Hz",
+          "desc": "Frequency",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:cosphiref",
+          "unit": "",
+          "desc": "Reference angle (cos)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:iL_AB",
           "unit": "p.u.",
-          "desc": "Voltage C2, Phase b",
+          "desc": "TCR current, AB",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC2_c",
+          "var": "s:iL_BC",
           "unit": "p.u.",
-          "desc": "Voltage C2, Phase c",
+          "desc": "TCR current, BC",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:psil_a",
+          "var": "s:iL_CA",
           "unit": "p.u.",
-          "desc": "Flux, Phase a",
+          "desc": "TCR current, CA",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:psil_b",
+          "var": "s:iC_AB",
           "unit": "p.u.",
-          "desc": "Flux, Phase b",
+          "desc": "TSC current, AB",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:psil_c",
+          "var": "s:iC_BC",
           "unit": "p.u.",
-          "desc": "Flux, Phase c",
+          "desc": "TSC current, BC",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC_a",
+          "var": "s:iC_CA",
           "unit": "p.u.",
-          "desc": "Voltage at Capacitance, Phase a",
+          "desc": "TSC current, CA",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC_b",
+          "var": "s:iQ_AB",
           "unit": "p.u.",
-          "desc": "Voltage at Capacitance, Phase b",
+          "desc": "MSC current, AB",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC_c",
+          "var": "s:iQ_BC",
           "unit": "p.u.",
-          "desc": "Voltage at Capacitance, Phase c",
+          "desc": "MSC current, BC",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:IRL",
-          "unit": "kA",
-          "desc": "Current through Inductance",
+          "var": "s:iQ_CA",
+          "unit": "p.u.",
+          "desc": "MSC current, CA",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:UC",
-          "unit": "kV",
-          "desc": "Voltage at Capacitance",
+          "var": "s:phi_AB",
+          "unit": "rad",
+          "desc": "Voltage angle, phase AB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:phi_BC",
+          "unit": "rad",
+          "desc": "Voltage angle, phase BC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:phi_CA",
+          "unit": "rad",
+          "desc": "Voltage angle, phase CA",
           "availability": [
             "unbal"
           ]
@@ -6865,101 +6111,111 @@
     "modal_analysis": {
       "c": [
         {
-          "var": "c:z",
+          "var": "c:ymin",
           "unit": "p.u.",
-          "desc": "Shunt-Impedance"
+          "desc": "Minimum susceptance"
         },
         {
-          "var": "c:cn",
-          "unit": "",
-          "desc": "Connection Mode"
-        },
-        {
-          "var": "c:frnom",
-          "unit": "Hz",
-          "desc": "Nominal Frequency"
-        },
-        {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal Angular Frequency"
-        },
-        {
-          "var": "c:ncapa",
-          "unit": "",
-          "desc": "Number of Stages in Parallel"
-        },
-        {
-          "var": "c:ncapx",
-          "unit": "",
-          "desc": "Max. No. of Steps"
-        },
-        {
-          "var": "c:b0",
+          "var": "c:ymax",
           "unit": "p.u.",
-          "desc": "sigmaC"
+          "desc": "Maximum susceptance"
         },
         {
-          "var": "c:shtype",
+          "var": "c:nxcap",
           "unit": "",
-          "desc": "Type"
+          "desc": "Max. number of capacitors"
         },
         {
-          "var": "c:L",
-          "unit": "H",
-          "desc": "Inductance"
+          "var": "c:ysvs",
+          "unit": "p.u.",
+          "desc": "Actual susceptance"
         },
         {
-          "var": "c:Rs",
-          "unit": "Ohm",
-          "desc": "Series-Resistance"
-        },
-        {
-          "var": "c:Qmax",
+          "var": "c:qtcr",
           "unit": "Mvar",
-          "desc": "Max. Rated Reactive Power"
+          "desc": "TCR reactive power"
         },
         {
-          "var": "c:C",
-          "unit": "F",
-          "desc": "Capacitance"
+          "var": "c:Qdroop",
+          "unit": "Mvar/p.u.",
+          "desc": "Droop"
         },
         {
-          "var": "c:Gp",
-          "unit": "S",
-          "desc": "Parallel-Conductance"
+          "var": "c:nfixcap",
+          "unit": "",
+          "desc": "Number of capacitors"
+        },
+        {
+          "var": "c:Qfixcap",
+          "unit": "Mvar",
+          "desc": "Q per capacitor unit"
+        },
+        {
+          "var": "c:qfix",
+          "unit": "p.u.",
+          "desc": "Q in MSC"
+        },
+        {
+          "var": "c:qtsc",
+          "unit": "Mvar",
+          "desc": "TSC reactive power"
+        },
+        {
+          "var": "c:qmin",
+          "unit": "Mvar",
+          "desc": "TSC, Q per capacitor (<0)"
+        },
+        {
+          "var": "c:qmax",
+          "unit": "Mvar",
+          "desc": "TCR, Q of reactance (>0)"
+        },
+        {
+          "var": "c:ytsc",
+          "unit": "p.u.",
+          "desc": "TSC susceptance"
+        },
+        {
+          "var": "c:ytcr",
+          "unit": "p.u.",
+          "desc": "TCR susceptance"
         }
       ],
       "s": [
         {
-          "var": "s:u_r",
+          "var": "s:gatea",
+          "unit": "deg",
+          "desc": "Firing angle"
+        },
+        {
+          "var": "s:nncap",
+          "unit": "",
+          "desc": "Act. number of capacitors"
+        },
+        {
+          "var": "s:bsvs",
           "unit": "p.u.",
-          "desc": "Voltage, Real Part"
+          "desc": "Susceptance"
         },
         {
-          "var": "s:u_i",
+          "var": "s:cur1r",
           "unit": "p.u.",
-          "desc": "Voltage, Imaginary Part"
+          "desc": "Positive-sequence current, real part"
         },
         {
-          "var": "s:i_r",
+          "var": "s:cur1i",
           "unit": "p.u.",
-          "desc": "Current, Real Part"
+          "desc": "Positive-sequence current, imaginary part"
         },
         {
-          "var": "s:i_i",
+          "var": "s:cur1",
           "unit": "p.u.",
-          "desc": "Current, Imaginary Part"
+          "desc": "Positive-sequence current, magnitude"
         },
         {
-          "var": "s:IRL",
-          "unit": "kA",
-          "desc": "Current through Inductance"
-        },
-        {
-          "var": "s:UC",
-          "unit": "kV",
-          "desc": "Voltage at Capacitance"
+          "var": "s:Q1",
+          "unit": "Mvar",
+          "desc": "Positive-sequence, reactive power"
         }
       ]
     },
@@ -7226,154 +6482,114 @@
       ],
       "c": [
         {
-          "var": "c:z",
+          "var": "c:ymin",
           "unit": "p.u.",
-          "desc": "Shunt-Impedance"
+          "desc": "Minimum susceptance"
         },
         {
-          "var": "c:cn",
+          "var": "c:ymax",
+          "unit": "p.u.",
+          "desc": "Maximum susceptance"
+        },
+        {
+          "var": "c:Qmin",
+          "unit": "Mvar",
+          "desc": "Qmin(L)"
+        },
+        {
+          "var": "c:Qmax",
+          "unit": "Mvar",
+          "desc": "Qmax(C)"
+        },
+        {
+          "var": "c:Qsparelead",
+          "unit": "Mvar",
+          "desc": "Q spare lead"
+        },
+        {
+          "var": "c:Qsparelag",
+          "unit": "Mvar",
+          "desc": "Q spare lag"
+        },
+        {
+          "var": "c:nxcap",
           "unit": "",
-          "desc": "Connection Mode"
+          "desc": "Max. number of capacitors"
         },
         {
-          "var": "c:frnom",
-          "unit": "Hz",
-          "desc": "Nominal Frequency"
-        },
-        {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal Angular Frequency"
-        },
-        {
-          "var": "c:rs",
+          "var": "c:usetp",
           "unit": "p.u.",
-          "desc": "Rs"
+          "desc": "Voltage setpoint"
         },
         {
-          "var": "c:gp",
+          "var": "c:uctrl",
           "unit": "p.u.",
-          "desc": "Gp"
+          "desc": "Internal"
         },
         {
-          "var": "c:xl",
+          "var": "c:qsetp",
           "unit": "p.u.",
-          "desc": "Xl"
+          "desc": "Reactive power setpoint"
         },
         {
-          "var": "c:bc1",
-          "unit": "p.u.",
-          "desc": "Bc1"
-        },
-        {
-          "var": "c:bc2",
-          "unit": "p.u.",
-          "desc": "Bc2"
-        },
-        {
-          "var": "c:uc1",
-          "unit": "p.u.",
-          "desc": "Voltage across C1"
-        },
-        {
-          "var": "c:uc2",
-          "unit": "p.u.",
-          "desc": "Voltage across C2"
-        },
-        {
-          "var": "c:uc",
-          "unit": "p.u.",
-          "desc": "Voltage across C1 and C2"
-        },
-        {
-          "var": "c:url",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:urp",
-          "unit": "p.u.",
-          "desc": "Voltage across Rp"
-        },
-        {
-          "var": "c:IL",
-          "unit": "A",
-          "desc": "Current through Inductor L"
-        },
-        {
-          "var": "c:IC",
-          "unit": "A",
-          "desc": "Current through C2"
-        },
-        {
-          "var": "c:IRp",
-          "unit": "A",
-          "desc": "Current through Rp"
-        },
-        {
-          "var": "c:PRp",
-          "unit": "kW",
-          "desc": "Losses in Rp"
-        },
-        {
-          "var": "c:PL",
-          "unit": "kW",
-          "desc": "Losses in Inductor (Rs)"
-        },
-        {
-          "var": "c:Uc1",
-          "unit": "kV",
-          "desc": "Voltage across C1"
-        },
-        {
-          "var": "c:Uc2",
-          "unit": "kV",
-          "desc": "Voltage across C2"
-        },
-        {
-          "var": "c:Uc",
-          "unit": "kV",
-          "desc": "Voltage across C1 and C2"
-        },
-        {
-          "var": "c:Url",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Urp",
-          "unit": "kV",
-          "desc": "Voltage across Rp"
-        },
-        {
-          "var": "c:ncapa",
+          "var": "c:i_ctrl",
           "unit": "",
-          "desc": "Number of Stages in Parallel"
+          "desc": "Control mode"
         },
         {
-          "var": "c:acost",
-          "unit": "",
-          "desc": "Annual Cost"
+          "var": "c:ysvs",
+          "unit": "p.u.",
+          "desc": "Actual susceptance"
         },
         {
-          "var": "c:ncapx",
+          "var": "c:qtcr",
+          "unit": "Mvar",
+          "desc": "TCR reactive power"
+        },
+        {
+          "var": "c:Kq",
+          "unit": "p.u.",
+          "desc": "Reactive power participation"
+        },
+        {
+          "var": "c:Qdmeas",
+          "unit": "Mvar",
+          "desc": "Q(measured) for droop"
+        },
+        {
+          "var": "c:Qdroop",
+          "unit": "Mvar/p.u.",
+          "desc": "Droop"
+        },
+        {
+          "var": "c:nfixcap",
           "unit": "",
-          "desc": "Max. No. of Steps"
+          "desc": "Number of capacitors"
+        },
+        {
+          "var": "c:Qfixcap",
+          "unit": "Mvar",
+          "desc": "Q per capacitor unit"
+        },
+        {
+          "var": "c:qfix",
+          "unit": "p.u.",
+          "desc": "Q in MSC"
+        },
+        {
+          "var": "c:i_ylim",
+          "unit": "",
+          "desc": "Susceptance limit reached"
+        },
+        {
+          "var": "c:iudeadbmode",
+          "unit": "",
+          "desc": "Voltage deadband mode"
         },
         {
           "var": "c:nCtrlIter",
           "unit": "",
           "desc": "No. of CTRL-iterations"
-        },
-        {
-          "var": "c:Tctrl",
-          "unit": "",
-          "desc": "Controller Time Constant"
-        },
-        {
-          "var": "c:Kctrl",
-          "unit": "p.u./%",
-          "desc": "Controller Sensitivity dq/dv"
         },
         {
           "var": "c:Ploss",
@@ -7406,34 +6622,24 @@
           "desc": "Reactive-Losses (no load)"
         },
         {
-          "var": "c:b0",
-          "unit": "p.u.",
-          "desc": "sigmaC"
-        },
-        {
-          "var": "c:ncapaTarget",
+          "var": "c:nncap",
           "unit": "",
-          "desc": "Number of Stages in Parallel - target value"
+          "desc": "Act. number of capacitors"
         },
         {
-          "var": "c:totPenaltyCosts",
-          "unit": "USD",
-          "desc": "Total penalty costs"
-        },
-        {
-          "var": "c:totTapDeviation",
+          "var": "c:iop",
           "unit": "",
-          "desc": "Total tap deviation"
+          "desc": "Flag"
         },
         {
-          "var": "c:bc",
-          "unit": "p.u.",
-          "desc": "Bc"
+          "var": "c:qtsc",
+          "unit": "Mvar",
+          "desc": "TSC reactive power"
         },
         {
-          "var": "c:gpc",
-          "unit": "p.u.",
-          "desc": "Gp(C)"
+          "var": "c:Qtarget",
+          "unit": "Mvar",
+          "desc": "Q target value"
         }
       ],
       "n": [
@@ -7700,11 +6906,6 @@
         "desc": "Data source"
       },
       {
-        "var": "e:imldc",
-        "unit": "",
-        "desc": "Control Mode"
-      },
-      {
         "var": "e:sernum",
         "unit": "",
         "desc": "Serial Number"
@@ -7725,144 +6926,74 @@
         "desc": "Modified by"
       },
       {
-        "var": "e:mode_inp",
-        "unit": "",
-        "desc": "Input Mode"
-      },
-      {
         "var": "e:outserv",
         "unit": "",
         "desc": "Out of Service"
       },
       {
-        "var": "e:iintgnd",
+        "var": "e:nxcap",
         "unit": "",
-        "desc": "N-Connection"
+        "desc": "Max. number of capacitors"
       },
       {
-        "var": "e:ilcph",
+        "var": "e:nncap",
+        "unit": "",
+        "desc": "Act. number of capacitors"
+      },
+      {
+        "var": "e:nfixcap",
+        "unit": "",
+        "desc": "Number of capacitors"
+      },
+      {
+        "var": "e:ictsv",
+        "unit": "",
+        "desc": "Reactive power as control"
+      },
+      {
+        "var": "e:iOPFCQmin",
+        "unit": "",
+        "desc": "Min. react. power limit"
+      },
+      {
+        "var": "e:iOPFCQmax",
+        "unit": "",
+        "desc": "Max. react. power limit"
+      },
+      {
+        "var": "e:ivcop",
         "unit": "",
         "desc": "Phase"
       },
       {
-        "var": "e:iQorient",
+        "var": "e:i_ctrl",
         "unit": "",
-        "desc": "Orientation"
+        "desc": "Control mode"
       },
       {
-        "var": "e:ncapx",
+        "var": "e:i_sctrl",
         "unit": "",
-        "desc": "Max. No. of Steps"
+        "desc": "Balanced/Unbalanced control"
       },
       {
-        "var": "e:ncapa",
+        "var": "e:i_rem",
         "unit": "",
-        "desc": "Act. No. of Step"
+        "desc": "Remote control"
       },
       {
-        "var": "e:shtype",
+        "var": "e:i_det",
         "unit": "",
-        "desc": "Shunt Type"
+        "desc": "TCR model"
       },
       {
-        "var": "e:i_opt",
+        "var": "e:i_droop",
         "unit": "",
-        "desc": "Use Controller for OPF optimisation"
+        "desc": "Enable droop"
       },
       {
-        "var": "e:i_optCont",
+        "var": "e:i_udeadb",
         "unit": "",
-        "desc": "Control Mode"
-      },
-      {
-        "var": "e:isCtrlShnt",
-        "unit": "",
-        "desc": "Tap Control for Unit Commitment"
-      },
-      {
-        "var": "e:isCtrlShntCont",
-        "unit": "",
-        "desc": "Control Mode"
-      },
-      {
-        "var": "e:ctrlUsage",
-        "unit": "",
-        "desc": "Tap Changer"
-      },
-      {
-        "var": "e:curativeLim",
-        "unit": "",
-        "desc": "Max. curative tap deviation"
-      },
-      {
-        "var": "e:isAllowSwitching",
-        "unit": "",
-        "desc": "Allow control to be switched on/off"
-      },
-      {
-        "var": "e:minTap",
-        "unit": "",
-        "desc": "Min. No. of Steps"
-      },
-      {
-        "var": "e:itrmt",
-        "unit": "",
-        "desc": "Type"
-      },
-      {
-        "var": "e:iFinalSlope",
-        "unit": "",
-        "desc": "Set final slope (peak values)"
-      },
-      {
-        "var": "e:ksat",
-        "unit": "",
-        "desc": "Saturation Exponent"
-      },
-      {
-        "var": "e:iLimb",
-        "unit": "",
-        "desc": "Core"
-      },
-      {
-        "var": "e:iInterPol",
-        "unit": "",
-        "desc": "Interpolation"
-      },
-      {
-        "var": "e:iFit",
-        "unit": "",
-        "desc": "Data fitting"
-      },
-      {
-        "var": "e:iHyster",
-        "unit": "",
-        "desc": "Model"
-      },
-      {
-        "var": "e:iResFlux",
-        "unit": "",
-        "desc": "Residual flux"
-      },
-      {
-        "var": "e:systp",
-        "unit": "",
-        "desc": "System Type"
-      },
-      {
-        "var": "e:iZeConfig",
-        "unit": "",
-        "desc": "Configuration"
-      },
-      {
-        "var": "e:iswitch",
-        "unit": "",
-        "desc": "Switchable"
-      },
-      {
-        "var": "e:i_cont",
-        "unit": "",
-        "desc": "Tap Changer"
+        "desc": "Voltage deadband"
       },
       {
         "var": "e:constr",
@@ -7875,19 +7006,29 @@
         "desc": "Status"
       },
       {
-        "var": "e:i_rem",
+        "var": "e:icurref",
         "unit": "",
-        "desc": "Remote Control"
+        "desc": "Harmonic currents referred to"
       },
       {
-        "var": "e:pf_recap_mx",
+        "var": "e:i_int",
         "unit": "",
-        "desc": "Power Factor"
+        "desc": "Ideal SVS"
       },
       {
-        "var": "e:pf_recap_mn",
+        "var": "e:maxorder",
         "unit": "",
-        "desc": "Power Factor"
+        "desc": "Maximum harmonic order"
+      },
+      {
+        "var": "e:iAstabint",
+        "unit": "",
+        "desc": "A-stable integration algorithm"
+      },
+      {
+        "var": "e:i_qini",
+        "unit": "",
+        "desc": "Estimate reactive power"
       },
       {
         "var": "e:uset_mode",
@@ -7895,244 +7036,59 @@
         "desc": "Setpoint"
       },
       {
-        "var": "e:iIntTapCtrl",
-        "unit": "",
-        "desc": "Use Integrated Tap Controller"
-      },
-      {
-        "var": "e:iTaps",
-        "unit": "",
-        "desc": "According to Measurement Report"
-      },
-      {
-        "var": "e:iperfect",
-        "unit": "",
-        "desc": "Ideal component"
-      },
-      {
-        "var": "e:ushnm",
-        "unit": "kV",
-        "desc": "Rated Voltage"
-      },
-      {
-        "var": "e:qcapn",
+        "var": "e:qmax",
         "unit": "Mvar",
-        "desc": "Rated Reactive Power, C"
+        "desc": "Q of reactance (>0)"
       },
       {
-        "var": "e:qtotn",
+        "var": "e:qmin",
         "unit": "Mvar",
-        "desc": "Rated Reactive Power, L-C"
+        "desc": "Q per capacitor (<0)"
       },
       {
-        "var": "e:cucap",
-        "unit": "A",
-        "desc": "Rated Current, C"
+        "var": "e:tcrmax",
+        "unit": "Mvar",
+        "desc": "Max. limit"
       },
       {
-        "var": "e:cutot",
-        "unit": "A",
-        "desc": "Rated Current, L-C"
+        "var": "e:Qfixcap",
+        "unit": "Mvar",
+        "desc": "Q per capacitor (<0)"
       },
       {
-        "var": "e:bcap",
-        "unit": "uS",
-        "desc": "Susceptance"
+        "var": "e:usetp",
+        "unit": "p.u.",
+        "desc": "Voltage setpoint"
       },
       {
-        "var": "e:ccap",
-        "unit": "uF",
-        "desc": "Capacitance"
+        "var": "e:tcrqact",
+        "unit": "Mvar",
+        "desc": "Act. value of TCR"
       },
       {
-        "var": "e:c1",
-        "unit": "uF",
-        "desc": "Capacitance C1"
+        "var": "e:qsetp",
+        "unit": "Mvar",
+        "desc": "Q Setpoint"
       },
       {
-        "var": "e:c2",
-        "unit": "uF",
-        "desc": "Capacitance C2"
+        "var": "e:Qdroop",
+        "unit": "Mvar/p.u.",
+        "desc": "Droop"
       },
       {
-        "var": "e:pgrad",
+        "var": "e:Srated",
+        "unit": "Mvar",
+        "desc": "Rated reactive power"
+      },
+      {
+        "var": "e:udeadbup",
         "unit": "%",
-        "desc": "Degree"
+        "desc": "Upper voltage limit"
       },
       {
-        "var": "e:fres",
-        "unit": "Hz",
-        "desc": "Resonant Frequency"
-      },
-      {
-        "var": "e:nres",
-        "unit": "",
-        "desc": "Tuning Order"
-      },
-      {
-        "var": "e:qrean",
-        "unit": "Mvar",
-        "desc": "Rated Reactive Power, L"
-      },
-      {
-        "var": "e:curea",
-        "unit": "A",
-        "desc": "Rated Current, L"
-      },
-      {
-        "var": "e:xrea",
-        "unit": "Ohm",
-        "desc": "Reactance"
-      },
-      {
-        "var": "e:rlrea",
-        "unit": "mH",
-        "desc": "Inductance"
-      },
-      {
-        "var": "e:grea",
-        "unit": "",
-        "desc": "Quality Factor (at fn)"
-      },
-      {
-        "var": "e:greaf0",
-        "unit": "",
-        "desc": "Quality Factor (at fr)"
-      },
-      {
-        "var": "e:rrea",
-        "unit": "Ohm",
-        "desc": "Resistance"
-      },
-      {
-        "var": "e:rpara",
-        "unit": "Ohm",
-        "desc": "Parallel Resistance"
-      },
-      {
-        "var": "e:tandc",
-        "unit": "",
-        "desc": "Loss Factor, tan(delta)"
-      },
-      {
-        "var": "e:gparac",
-        "unit": "uS",
-        "desc": "Parallel Conductance"
-      },
-      {
-        "var": "e:psi0",
-        "unit": "p.u.",
-        "desc": "Knee Flux"
-      },
-      {
-        "var": "e:xmair",
-        "unit": "p.u.",
-        "desc": "Saturated Reactance"
-      },
-      {
-        "var": "e:smoothfac",
+        "var": "e:udeadblow",
         "unit": "%",
-        "desc": "Smoothing Factor"
-      },
-      {
-        "var": "e:Lwidth",
-        "unit": "%",
-        "desc": "Loop width"
-      },
-      {
-        "var": "e:PsiresA",
-        "unit": "p.u.",
-        "desc": "Residual flux, ph. A"
-      },
-      {
-        "var": "e:PsiresB",
-        "unit": "p.u.",
-        "desc": "Residual flux, ph. B"
-      },
-      {
-        "var": "e:PsiresC",
-        "unit": "p.u.",
-        "desc": "Residual flux, ph. C"
-      },
-      {
-        "var": "e:Bg",
-        "unit": "nS",
-        "desc": "Susceptance to Ground"
-      },
-      {
-        "var": "e:Xe",
-        "unit": "Ohm",
-        "desc": "Reactance, Xe"
-      },
-      {
-        "var": "e:Re",
-        "unit": "Ohm",
-        "desc": "Resistance, Re"
-      },
-      {
-        "var": "e:X0toX1",
-        "unit": "",
-        "desc": "X0/X1 ratio"
-      },
-      {
-        "var": "e:R0toR1",
-        "unit": "",
-        "desc": "R0/R1 ratio"
-      },
-      {
-        "var": "e:B0toB1",
-        "unit": "",
-        "desc": "B0/B1 ratio"
-      },
-      {
-        "var": "e:G0toG1",
-        "unit": "",
-        "desc": "G0/G1 ratio"
-      },
-      {
-        "var": "e:acost",
-        "unit": "USD/a",
-        "desc": "Annual Cost"
-      },
-      {
-        "var": "e:Tctrl",
-        "unit": "s",
-        "desc": "Controller Time Constant"
-      },
-      {
-        "var": "e:Kctrl",
-        "unit": "p.u./%",
-        "desc": "Controller Sensitivity dq/dv"
-      },
-      {
-        "var": "e:usetp_mx",
-        "unit": "p.u.",
-        "desc": "Upper Voltage Limit"
-      },
-      {
-        "var": "e:usetp_mn",
-        "unit": "p.u.",
-        "desc": "Lower Voltage Limit"
-      },
-      {
-        "var": "e:qsetp_mx",
-        "unit": "Mvar",
-        "desc": "Upper Reactive Power Limit"
-      },
-      {
-        "var": "e:qsetp_mn",
-        "unit": "Mvar",
-        "desc": "Lower Reactive Power Limit"
-      },
-      {
-        "var": "e:pfsetp_mx",
-        "unit": "",
-        "desc": "Upper Power Factor Limit"
-      },
-      {
-        "var": "e:pfsetp_mn",
-        "unit": "",
-        "desc": "Lower Power Factor Limit"
+        "desc": "Lower voltage limit"
       },
       {
         "var": "e:GPSlat",
@@ -8145,54 +7101,9 @@
         "desc": "Longitude / Easting"
       },
       {
-        "var": "e:penaltyCosts",
-        "unit": "USD",
-        "desc": "Penalty costs per tap deviation"
-      },
-      {
-        "var": "e:curativeCosts",
-        "unit": "USD",
-        "desc": "Costs per curative tap deviation"
-      },
-      {
-        "var": "e:switchOnCosts",
-        "unit": "USD",
-        "desc": "Switch-on costs"
-      },
-      {
-        "var": "e:switchOffCosts",
-        "unit": "USD",
-        "desc": "Switch-off costs"
-      },
-      {
         "var": "e:appr_modif",
         "unit": "",
         "desc": "Modified"
-      },
-      {
-        "var": "e:satcur",
-        "unit": "p.u.",
-        "desc": "Current (peak)"
-      },
-      {
-        "var": "e:satflux",
-        "unit": "p.u.",
-        "desc": "Flux (peak)"
-      },
-      {
-        "var": "e:satcue",
-        "unit": "%",
-        "desc": "Current (RMS)"
-      },
-      {
-        "var": "e:satvol",
-        "unit": "p.u.",
-        "desc": "Voltage (RMS)"
-      },
-      {
-        "var": "e:mTaps",
-        "unit": "",
-        "desc": "Measurement Report"
       },
       {
         "var": "e:cimRdfId",
@@ -8207,7 +7118,7 @@
       {
         "var": "e:sOpComment",
         "unit": "",
-        "desc": "Operator Comment"
+        "desc": "Operator comment"
       },
       {
         "var": "e:fold_id",
@@ -8220,54 +7131,19 @@
         "desc": "Terminal"
       },
       {
-        "var": "e:bus1n",
-        "unit": "StaCubic",
-        "desc": "Neutral"
+        "var": "e:p_rem",
+        "unit": "StaBar*,ElmTerm*",
+        "desc": "Controlled node"
       },
       {
-        "var": "e:fcharL",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "L(f)"
+        "var": "e:p_cub",
+        "unit": "StaCubic,ElmBoundary",
+        "desc": "Control Q at"
       },
       {
-        "var": "e:fcharR",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "Rs(f)"
-      },
-      {
-        "var": "e:fcharC",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "C(f)"
-      },
-      {
-        "var": "e:fcharL0",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "L0(f)"
-      },
-      {
-        "var": "e:fcharR0",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "Rs0(f)"
-      },
-      {
-        "var": "e:fcharC0",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "C0(f)"
-      },
-      {
-        "var": "e:fcharC1",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "C1(f)"
-      },
-      {
-        "var": "e:fcharC2",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "C2(f)"
-      },
-      {
-        "var": "e:fcharRp",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "Rp(f)"
+        "var": "e:pQmeas",
+        "unit": "StaCubic,ElmBoundary",
+        "desc": "Q measured at"
       },
       {
         "var": "e:doc_id",
@@ -8285,19 +7161,14 @@
         "desc": "Operator"
       },
       {
-        "var": "e:p_rem",
-        "unit": "StaBar,ElmTerm",
-        "desc": "Controlled Node"
+        "var": "e:phmc",
+        "unit": "TypHmccur,TypHmcopcur",
+        "desc": "Harmonic currents (TCR)"
       },
       {
-        "var": "e:p_cub",
-        "unit": "StaCubic,ElmBoundary",
-        "desc": "Q Controlled at"
-      },
-      {
-        "var": "e:pStoch",
-        "unit": "StoTyptrf",
-        "desc": "Element model"
+        "var": "e:pSubModel",
+        "unit": "ElmSubmodel",
+        "desc": "Submodel"
       },
       {
         "var": "e:cpHeadFold",
@@ -8308,11 +7179,6 @@
         "var": "e:bus1_bar",
         "unit": "",
         "desc": "Terminal"
-      },
-      {
-        "var": "e:bus1n_bar",
-        "unit": "",
-        "desc": "Neutral"
       },
       {
         "var": "e:cpGrid",
@@ -8425,109 +7291,69 @@
         "desc": "Supplying Substation"
       },
       {
-        "var": "e:cgnd",
-        "unit": "",
-        "desc": "Star Point"
-      },
-      {
-        "var": "e:ctech",
-        "unit": "",
-        "desc": "Technology"
-      },
-      {
-        "var": "e:harmPgeL",
-        "unit": "mH",
-        "desc": "Inductance"
-      },
-      {
-        "var": "e:harmPgeR",
-        "unit": "Ohm",
-        "desc": "Resistance"
-      },
-      {
-        "var": "e:harmPgeC",
-        "unit": "uF",
-        "desc": "Capacitance"
-      },
-      {
-        "var": "e:harmPgeL0",
-        "unit": "mH",
-        "desc": "Zero-sequence Ind."
-      },
-      {
-        "var": "e:harmPgeR0",
-        "unit": "Ohm",
-        "desc": "Zero-sequence Res."
-      },
-      {
-        "var": "e:harmPgeC0",
-        "unit": "uF",
-        "desc": "Zero-sequence Cap."
-      },
-      {
-        "var": "e:harmPgeC1",
-        "unit": "uF",
-        "desc": "Capacitance 1"
-      },
-      {
-        "var": "e:harmPgeC2",
-        "unit": "uF",
-        "desc": "Capacitance 2"
-      },
-      {
-        "var": "e:harmPgeRp",
-        "unit": "Ohm",
-        "desc": "Parallel Resistance"
-      },
-      {
-        "var": "e:xreapu",
+        "var": "e:copfVolt1",
         "unit": "p.u.",
-        "desc": "Linear Reactance"
+        "desc": "Voltage"
       },
       {
-        "var": "e:cPsiresC",
+        "var": "e:copfVolt2",
         "unit": "p.u.",
-        "desc": "Residual flux, ph. C"
+        "desc": "Voltage"
       },
       {
-        "var": "e:aFrolich",
+        "var": "e:copfVolt3",
+        "unit": "p.u.",
+        "desc": "Voltage"
+      },
+      {
+        "var": "e:copfQmin1",
+        "unit": "Mvar",
+        "desc": "Min. react. power limit at 0.9 p.u."
+      },
+      {
+        "var": "e:copfQmin2",
+        "unit": "Mvar",
+        "desc": "Min. react. power limit at 1 p.u."
+      },
+      {
+        "var": "e:copfQmin3",
+        "unit": "Mvar",
+        "desc": "Min. react. power limit at 1.1 p.u."
+      },
+      {
+        "var": "e:copfQmax1",
+        "unit": "Mvar",
+        "desc": "Max. react. power limit at 0.9 p.u."
+      },
+      {
+        "var": "e:copfQmax2",
+        "unit": "Mvar",
+        "desc": "Max. react. power limit at 1 p.u."
+      },
+      {
+        "var": "e:copfQmax3",
+        "unit": "Mvar",
+        "desc": "Max. react. power limit at 1.1 p.u."
+      },
+      {
+        "var": "e:ddroop",
+        "unit": "%",
+        "desc": "Droop"
+      },
+      {
+        "var": "e:cTypHmc",
         "unit": "",
-        "desc": "Frolich equation coefficient a"
+        "desc": "Type of harmonic sources"
       },
       {
-        "var": "e:bFrolich",
-        "unit": "",
-        "desc": "Frolich equation coefficient b"
-      },
-      {
-        "var": "e:cFrolich",
-        "unit": "",
-        "desc": "Frolich equation coefficient c"
-      },
-      {
-        "var": "e:xsatFrolich",
-        "unit": "",
-        "desc": "Frolich equation saturated reactance (p.u.)"
-      },
-      {
-        "var": "e:mseFrolich",
-        "unit": "",
-        "desc": "Frolich equation, mean squared error"
-      },
-      {
-        "var": "e:cpCtrlNode",
-        "unit": "ElmTerm",
-        "desc": "Target Node"
+        "var": "e:Irated",
+        "unit": "kA",
+        "desc": "Rated Current"
       },
       {
         "var": "e:c_pstac",
         "unit": "ElmStactrl",
-        "desc": "External Station Controller"
-      },
-      {
-        "var": "e:c_pctrl",
-        "unit": "ElmShntctrl",
-        "desc": "Shunt Controller"
+        "desc": "External station controller"
       },
       {
         "var": "e:qdslCtrl",
@@ -8535,44 +7361,34 @@
         "desc": "Quasi-Dynamic Model"
       },
       {
-        "var": "e:Qmax",
+        "var": "e:c_pmod",
+        "unit": "ElmComp",
+        "desc": "Model"
+      },
+      {
+        "var": "e:Inom",
+        "unit": "kA",
+        "desc": "Nominal Current"
+      },
+      {
+        "var": "e:cpCtrlNode",
+        "unit": "ElmTerm",
+        "desc": "Target node"
+      },
+      {
+        "var": "e:Uctrl",
+        "unit": "kV",
+        "desc": "Target voltage"
+      },
+      {
+        "var": "e:Qmin_a",
         "unit": "Mvar",
-        "desc": "Max. Rated Reactive Power"
+        "desc": "Qmin(L)"
       },
       {
-        "var": "e:Qact",
+        "var": "e:Qmax_a",
         "unit": "Mvar",
-        "desc": "Actual Reactive Power"
-      },
-      {
-        "var": "e:FOR1",
-        "unit": "1/a",
-        "desc": "Forced Outage Rate"
-      },
-      {
-        "var": "e:FOE",
-        "unit": "h/a",
-        "desc": "Forced Outage Expectancy"
-      },
-      {
-        "var": "e:FOD",
-        "unit": "h",
-        "desc": "Forced Outage Duration"
-      },
-      {
-        "var": "e:CCEarFr",
-        "unit": "1/a",
-        "desc": "Frequency of single earth faults"
-      },
-      {
-        "var": "e:CCEarRepMu",
-        "unit": "h",
-        "desc": "Repair duration"
-      },
-      {
-        "var": "e:CCEarProb",
-        "unit": "%",
-        "desc": "Conditional probability of a second earth fault"
+        "desc": "Qmax(C)"
       }
     ]
   }

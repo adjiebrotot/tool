@@ -1,0 +1,160 @@
+{
+  "result_vars": {
+    "dynamic_rms": {
+      "c": [
+        {
+          "var": "c:isMatlab",
+          "unit": "",
+          "desc": "MATLAB"
+        },
+        {
+          "var": "c:fMatlab",
+          "unit": "",
+          "desc": "M-file"
+        }
+      ]
+    },
+    "dynamic_emt": {
+      "c": [
+        {
+          "var": "c:isMatlab",
+          "unit": "",
+          "desc": "MATLAB",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:fMatlab",
+          "unit": "",
+          "desc": "M-file",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    },
+    "modal_analysis": {
+      "c": [
+        {
+          "var": "c:isMatlab",
+          "unit": "",
+          "desc": "MATLAB"
+        },
+        {
+          "var": "c:fMatlab",
+          "unit": "",
+          "desc": "M-file"
+        }
+      ]
+    },
+    "basic": {
+      "b": [
+        {
+          "var": "b:loc_name",
+          "unit": "",
+          "desc": "Name"
+        }
+      ]
+    }
+  },
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:outserv",
+        "unit": "",
+        "desc": "Out of Service"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:iAstabint",
+        "unit": "",
+        "desc": "A-stable integration algorithm (only for RMS Simulation)"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:params",
+        "unit": "",
+        "desc": "Parameter"
+      },
+      {
+        "var": "e:matrix",
+        "unit": "",
+        "desc": "Characteristics"
+      },
+      {
+        "var": "e:matrix2",
+        "unit": "",
+        "desc": "Two Dimensional Characteristics"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:signal",
+        "unit": "",
+        "desc": "Signal Name"
+      },
+      {
+        "var": "e:typ_id",
+        "unit": "BlkDef*",
+        "desc": "Type"
+      },
+      {
+        "var": "e:pelm",
+        "unit": "Elm*,Sta*,IntRef",
+        "desc": "Net Element"
+      },
+      {
+        "var": "e:parameterNames",
+        "unit": "",
+        "desc": "Parameter Names"
+      },
+      {
+        "var": "e:oarrmat",
+        "unit": "IntMat",
+        "desc": "Array/Matrix"
+      },
+      {
+        "var": "e:configScript",
+        "unit": "ComDpl",
+        "desc": "Configuration Script"
+      }
+    ]
+  }
+}

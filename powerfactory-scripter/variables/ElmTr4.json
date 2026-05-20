@@ -731,139 +731,139 @@
       ],
       "c": [
         {
-          "var": "c:z",
-          "unit": "p.u.",
-          "desc": "Shunt-Impedance"
+          "var": "c:loading_hv0",
+          "unit": "%",
+          "desc": "Loading (HV)"
         },
         {
-          "var": "c:cn",
+          "var": "c:loading_lv1",
+          "unit": "%",
+          "desc": "Loading (LV1)"
+        },
+        {
+          "var": "c:loading_lv2",
+          "unit": "%",
+          "desc": "Loading (LV2)"
+        },
+        {
+          "var": "c:loading_lv3",
+          "unit": "%",
+          "desc": "Loading (LV3)"
+        },
+        {
+          "var": "c:loading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:maxload",
+          "unit": "%",
+          "desc": "Max. Loading"
+        },
+        {
+          "var": "c:ntap_h0",
           "unit": "",
-          "desc": "Connection Mode"
+          "desc": "Current Tap Position (HV)"
         },
         {
-          "var": "c:frnom",
-          "unit": "Hz",
-          "desc": "Nominal Frequency"
-        },
-        {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal Angular Frequency"
-        },
-        {
-          "var": "c:rs",
-          "unit": "p.u.",
-          "desc": "Rs"
-        },
-        {
-          "var": "c:gp",
-          "unit": "p.u.",
-          "desc": "Gp"
-        },
-        {
-          "var": "c:xl",
-          "unit": "p.u.",
-          "desc": "Xl"
-        },
-        {
-          "var": "c:bc1",
-          "unit": "p.u.",
-          "desc": "Bc1"
-        },
-        {
-          "var": "c:bc2",
-          "unit": "p.u.",
-          "desc": "Bc2"
-        },
-        {
-          "var": "c:uc1",
-          "unit": "p.u.",
-          "desc": "Voltage across C1"
-        },
-        {
-          "var": "c:uc2",
-          "unit": "p.u.",
-          "desc": "Voltage across C2"
-        },
-        {
-          "var": "c:uc",
-          "unit": "p.u.",
-          "desc": "Voltage across C1 and C2"
-        },
-        {
-          "var": "c:url",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:urp",
-          "unit": "p.u.",
-          "desc": "Voltage across Rp"
-        },
-        {
-          "var": "c:IL",
-          "unit": "A",
-          "desc": "Current through Inductor L"
-        },
-        {
-          "var": "c:IC",
-          "unit": "A",
-          "desc": "Current through C2"
-        },
-        {
-          "var": "c:IRp",
-          "unit": "A",
-          "desc": "Current through Rp"
-        },
-        {
-          "var": "c:PRp",
-          "unit": "kW",
-          "desc": "Losses in Rp"
-        },
-        {
-          "var": "c:PL",
-          "unit": "kW",
-          "desc": "Losses in Inductor (Rs)"
-        },
-        {
-          "var": "c:Uc1",
-          "unit": "kV",
-          "desc": "Voltage across C1"
-        },
-        {
-          "var": "c:Uc2",
-          "unit": "kV",
-          "desc": "Voltage across C2"
-        },
-        {
-          "var": "c:Uc",
-          "unit": "kV",
-          "desc": "Voltage across C1 and C2"
-        },
-        {
-          "var": "c:Url",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Urp",
-          "unit": "kV",
-          "desc": "Voltage across Rp"
-        },
-        {
-          "var": "c:ncapa",
+          "var": "c:ntap_l1",
           "unit": "",
-          "desc": "Number of Stages in Parallel"
+          "desc": "Current Tap Position (LV1)"
         },
         {
-          "var": "c:acost",
+          "var": "c:ntap_l2",
           "unit": "",
-          "desc": "Annual Cost"
+          "desc": "Current Tap Position (LV2)"
         },
         {
-          "var": "c:ncapx",
+          "var": "c:ntap_l3",
           "unit": "",
-          "desc": "Max. No. of Steps"
+          "desc": "Current Tap Position (LV3)"
+        },
+        {
+          "var": "c:nntap_int_h0",
+          "unit": "",
+          "desc": "Tap (HV), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l1",
+          "unit": "",
+          "desc": "Tap (LV1), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l2",
+          "unit": "",
+          "desc": "Tap (LV2), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l3",
+          "unit": "",
+          "desc": "Tap (LV3), relative Position"
+        },
+        {
+          "var": "c:z_h0",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (HV)"
+        },
+        {
+          "var": "c:z_l1",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV1)"
+        },
+        {
+          "var": "c:z_l2",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV2)"
+        },
+        {
+          "var": "c:z_l3",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV3)"
+        },
+        {
+          "var": "c:z_i",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (i)"
+        },
+        {
+          "var": "c:z_j",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (j)"
+        },
+        {
+          "var": "c:ym",
+          "unit": "p.u.",
+          "desc": "Magnetising Admittance"
+        },
+        {
+          "var": "c:t_h0",
+          "unit": "",
+          "desc": "Complex Winding Ratio (HV/S)"
+        },
+        {
+          "var": "c:t_l1",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV1/S)"
+        },
+        {
+          "var": "c:t_l2",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV2/S)"
+        },
+        {
+          "var": "c:t_l3",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV3/S)"
+        },
+        {
+          "var": "c:i_uplim",
+          "unit": "",
+          "desc": "Tap at Maximum"
+        },
+        {
+          "var": "c:i_lowlim",
+          "unit": "",
+          "desc": "Tap at Minimum"
         },
         {
           "var": "c:nCtrlIter",
@@ -871,14 +871,29 @@
           "desc": "No. of CTRL-iterations"
         },
         {
-          "var": "c:Tctrl",
+          "var": "c:itrcn",
           "unit": "",
-          "desc": "Controller Time Constant"
+          "desc": "Flag f. auto. Tap"
         },
         {
-          "var": "c:Kctrl",
-          "unit": "p.u./%",
-          "desc": "Controller Sensitivity dq/dv"
+          "var": "c:imagloc",
+          "unit": "",
+          "desc": "Position of Magn.ind."
+        },
+        {
+          "var": "c:um_1",
+          "unit": "",
+          "desc": "Magnetising Flux"
+        },
+        {
+          "var": "c:Gmload",
+          "unit": "kW",
+          "desc": "Iron Losses"
+        },
+        {
+          "var": "c:Xmload",
+          "unit": "kvar",
+          "desc": "Magnetising Losses"
         },
         {
           "var": "c:Ploss",
@@ -911,221 +926,359 @@
           "desc": "Reactive-Losses (no load)"
         },
         {
-          "var": "c:b0",
+          "var": "c:Pmeas",
+          "unit": "MW",
+          "desc": "Measured active power"
+        },
+        {
+          "var": "c:i_fixedtap",
+          "unit": "",
+          "desc": "Flag"
+        },
+        {
+          "var": "c:isat",
+          "unit": "",
+          "desc": "Saturated Model"
+        },
+        {
+          "var": "c:Inom_HV0",
+          "unit": "kA",
+          "desc": "Nominal Current (HV-Side)"
+        },
+        {
+          "var": "c:Inom_LV1",
+          "unit": "kA",
+          "desc": "Nominal Current (LV1-Side)"
+        },
+        {
+          "var": "c:Inom_LV2",
+          "unit": "kA",
+          "desc": "Nominal Current (LV2-Side)"
+        },
+        {
+          "var": "c:Inom_LV3",
+          "unit": "kA",
+          "desc": "Nominal Current (LV3-Side)"
+        },
+        {
+          "var": "c:maxloadpu",
           "unit": "p.u.",
-          "desc": "sigmaC"
+          "desc": "Max. Loading"
         },
         {
-          "var": "c:bc",
+          "var": "c:dphiu_h0l1",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (1-2)"
+        },
+        {
+          "var": "c:dphiu_h0l2",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (1-3)"
+        },
+        {
+          "var": "c:dphiu_h0l3",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (1-4)"
+        },
+        {
+          "var": "c:dphiu_l1l2",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (2-3)"
+        },
+        {
+          "var": "c:dphiu_l1l3",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (2-4)"
+        },
+        {
+          "var": "c:dphiu_l2l3",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (3-4)"
+        },
+        {
+          "var": "c:z0_h0",
           "unit": "p.u.",
-          "desc": "Bc"
+          "desc": "0-Seq. Short-Circuit Imp (HV)",
+          "availability": [
+            "unbal"
+          ]
         },
         {
-          "var": "c:gpc",
+          "var": "c:z0_l1",
           "unit": "p.u.",
-          "desc": "Gp(C)"
+          "desc": "0-Seq. Short-Circuit Imp (LV1)",
+          "availability": [
+            "unbal"
+          ]
         },
         {
-          "var": "c:y0",
+          "var": "c:z0_l2",
           "unit": "p.u.",
-          "desc": "Zero Sequence Admittance",
+          "desc": "0-Seq. Short-Circuit Imp (LV2)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:ze",
+          "var": "c:z0_l3",
           "unit": "p.u.",
-          "desc": "Grounding Impedance",
+          "desc": "0-Seq. Short-Circuit Imp (LV3)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:uc1ph",
+          "var": "c:z0_i",
           "unit": "p.u.",
-          "desc": "Voltage across Capacitor C1(Phase Value)",
-          "suffix": ":Ph",
+          "desc": "0-Seq. Short-Circuit Imp (i)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:uc2ph",
+          "var": "c:z0_j",
           "unit": "p.u.",
-          "desc": "Voltage across Capacitor C2(Phase Value)",
-          "suffix": ":Ph",
+          "desc": "0-Seq. Short-Circuit Imp (j)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:ucph",
+          "var": "c:ze0_h0",
           "unit": "p.u.",
-          "desc": "Voltage across C1 and C2(Phase Value)",
-          "suffix": ":Ph",
+          "desc": "Earth Impedance (HV)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:ucph",
+          "var": "c:ze0_l1",
           "unit": "p.u.",
-          "desc": "Voltage across Capacitor (Phase Value)",
+          "desc": "Earth Impedance (LV1)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:urlph",
+          "var": "c:ze0_l2",
           "unit": "p.u.",
-          "desc": "Voltage across Rs-L (Phase Value)",
-          "suffix": ":Ph",
+          "desc": "Earth Impedance (LV2)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:urlph",
+          "var": "c:ze0_l3",
           "unit": "p.u.",
-          "desc": "Voltage across Inductor (Phase Value)",
+          "desc": "Earth Impedance (LV3)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:urpph",
+          "var": "c:ym0",
           "unit": "p.u.",
-          "desc": "Voltage across Rp (Phase Value)",
-          "suffix": ":Ph",
+          "desc": "0-Seq. Magn. Admitt.",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:ILph",
-          "unit": "A",
-          "desc": "Current through Inductor L (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ILph",
-          "unit": "A",
-          "desc": "Current through Inductor L (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ICph",
-          "unit": "A",
-          "desc": "Current through C2 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ICph",
-          "unit": "A",
-          "desc": "Current through Capacitor C (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:IRpph",
-          "unit": "A",
-          "desc": "Current through Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:IRpph",
-          "unit": "A",
-          "desc": "Current through Rp (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ustar",
+          "var": "c:Ustar_h0",
           "unit": "kV",
-          "desc": "Star-Point Voltage",
+          "desc": "Star-Point Voltage (HV)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:Uc1ph",
+          "var": "c:Ustar_l1",
           "unit": "kV",
-          "desc": "Voltage across Capacitor C1(Phase Value)",
-          "suffix": ":Ph",
+          "desc": "Star-Point Voltage (LV1)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:Uc2ph",
+          "var": "c:Ustar_l2",
           "unit": "kV",
-          "desc": "Voltage across Capacitor C2(Phase Value)",
-          "suffix": ":Ph",
+          "desc": "Star-Point Voltage (LV2)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:Ucph",
+          "var": "c:Ustar_l3",
           "unit": "kV",
-          "desc": "Voltage across C1 and C2(Phase Value)",
-          "suffix": ":Ph",
+          "desc": "Star-Point Voltage (LV3)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:Ucph",
-          "unit": "kV",
-          "desc": "Voltage across Capacitor (Phase Value)",
+          "var": "c:Istar_h0",
+          "unit": "kA",
+          "desc": "Star-Point Current (HV)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:Urlph",
-          "unit": "kV",
-          "desc": "Voltage across Rs-L (Phase Value)",
-          "suffix": ":Ph",
+          "var": "c:Istar_l1",
+          "unit": "kA",
+          "desc": "Star-Point Current (LV1)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:Urlph",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Phase Value)",
+          "var": "c:Istar_l2",
+          "unit": "kA",
+          "desc": "Star-Point Current (LV2)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:Urpph",
-          "unit": "kV",
-          "desc": "Voltage across Rp (Phase Value)",
-          "suffix": ":Ph",
+          "var": "c:Istar_l3",
+          "unit": "kA",
+          "desc": "Star-Point Current (LV3)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:z0",
+          "var": "c:i0_h0",
           "unit": "p.u.",
-          "desc": "Zero Sequence Impedance",
+          "desc": "0-Current in Delta-Winding (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:i0_l1",
+          "unit": "p.u.",
+          "desc": "0-Current in Delta-Winding (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:i0_l2",
+          "unit": "p.u.",
+          "desc": "0-Current in Delta-Winding (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:i0_l3",
+          "unit": "p.u.",
+          "desc": "0-Current in Delta-Winding (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:um_2",
+          "unit": "p.u.",
+          "desc": "Magnetising Flux (Imaginary Part)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:um_0",
+          "unit": "p.u.",
+          "desc": "Magnetising Flux (0-Sequence)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I0Delta_h0",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I0Delta_l1",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I0Delta_l2",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I0Delta_l3",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:loading_st",
+          "unit": "%",
+          "desc": "Short Term Loading",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:dphiu_h0l11",
+          "unit": "deg",
+          "desc": "Positive Sequence Voltage Drop Angle (HV-LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:dphiu_h0l21",
+          "unit": "deg",
+          "desc": "Positive Sequence Voltage Drop Angle (HV-LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:dphiu_h0l31",
+          "unit": "deg",
+          "desc": "Positive Sequence Voltage Drop Angle (HV-LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:dphiu_l1l21",
+          "unit": "deg",
+          "desc": "Positive Sequence Voltage Drop Angle (LV1-LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:dphiu_l1l31",
+          "unit": "deg",
+          "desc": "Positive Sequence Voltage Drop Angle (LV1-LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:dphiu_l2l31",
+          "unit": "deg",
+          "desc": "Positive Sequence Voltage Drop Angle (LV2-LV3)",
           "availability": [
             "unbal"
           ]
@@ -1678,9 +1831,88 @@
       ],
       "s": [
         {
-          "var": "s:ncapain",
+          "var": "s:nt_in_hv0",
           "unit": "",
-          "desc": "Number of Stages in Parallel, input"
+          "desc": "Tap Position (HV), Input"
+        },
+        {
+          "var": "s:nt_in_lv1",
+          "unit": "",
+          "desc": "Tap Position (LV1), Input"
+        },
+        {
+          "var": "s:nt_in_lv2",
+          "unit": "",
+          "desc": "Tap Position (LV2), Input"
+        },
+        {
+          "var": "s:nt_in_lv3",
+          "unit": "",
+          "desc": "Tap Position (LV3), Input"
+        },
+        {
+          "var": "s:I0rDelta_hv0",
+          "unit": "kA",
+          "desc": "Circulating current in HV-Delta-Winding, Real Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0rDelta_lv1",
+          "unit": "kA",
+          "desc": "Circulating current in LV1-Delta-Winding, Real Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0rDelta_lv2",
+          "unit": "kA",
+          "desc": "Circulating current in LV2-Delta-Winding, Real Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0rDelta_lv3",
+          "unit": "kA",
+          "desc": "Circulating current in LV3-Delta-Winding, Real Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0iDelta_hv0",
+          "unit": "kA",
+          "desc": "Circulating current in HV-Delta-Winding, Imaginary Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0iDelta_lv1",
+          "unit": "kA",
+          "desc": "Circulating current in LV1-Delta-Winding, Imaginary Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0iDelta_lv2",
+          "unit": "kA",
+          "desc": "Circulating current in LV2-Delta-Winding, Imaginary Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0iDelta_lv3",
+          "unit": "kA",
+          "desc": "Circulating current in LV3-Delta-Winding, Imaginary Part",
+          "availability": [
+            "unbal"
+          ]
         }
       ]
     },
@@ -1697,6 +1929,173 @@
           "unit": "Mvar",
           "desc": "Reactive Power",
           "suffix": ":busN"
+        }
+      ],
+      "c": [
+        {
+          "var": "c:loading_hv0",
+          "unit": "%",
+          "desc": "Loading (HV)"
+        },
+        {
+          "var": "c:loading_lv1",
+          "unit": "%",
+          "desc": "Loading (LV1)"
+        },
+        {
+          "var": "c:loading_lv2",
+          "unit": "%",
+          "desc": "Loading (LV2)"
+        },
+        {
+          "var": "c:loading_lv3",
+          "unit": "%",
+          "desc": "Loading (LV3)"
+        },
+        {
+          "var": "c:loading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:maxload",
+          "unit": "%",
+          "desc": "Max. Loading"
+        },
+        {
+          "var": "c:ntap_h0",
+          "unit": "",
+          "desc": "Current Tap Position (HV)"
+        },
+        {
+          "var": "c:ntap_l1",
+          "unit": "",
+          "desc": "Current Tap Position (LV1)"
+        },
+        {
+          "var": "c:ntap_l2",
+          "unit": "",
+          "desc": "Current Tap Position (LV2)"
+        },
+        {
+          "var": "c:ntap_l3",
+          "unit": "",
+          "desc": "Current Tap Position (LV3)"
+        },
+        {
+          "var": "c:nntap_int_h0",
+          "unit": "",
+          "desc": "Tap (HV), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l1",
+          "unit": "",
+          "desc": "Tap (LV1), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l2",
+          "unit": "",
+          "desc": "Tap (LV2), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l3",
+          "unit": "",
+          "desc": "Tap (LV3), relative Position"
+        },
+        {
+          "var": "c:z_h0",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (HV)"
+        },
+        {
+          "var": "c:z_l1",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV1)"
+        },
+        {
+          "var": "c:z_l2",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV2)"
+        },
+        {
+          "var": "c:z_l3",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV3)"
+        },
+        {
+          "var": "c:z_i",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (i)"
+        },
+        {
+          "var": "c:z_j",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (j)"
+        },
+        {
+          "var": "c:t_h0",
+          "unit": "",
+          "desc": "Complex Winding Ratio (HV/S)"
+        },
+        {
+          "var": "c:t_l1",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV1/S)"
+        },
+        {
+          "var": "c:t_l2",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV2/S)"
+        },
+        {
+          "var": "c:t_l3",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV3/S)"
+        },
+        {
+          "var": "c:Ploss",
+          "unit": "MW",
+          "desc": "Losses (total)"
+        },
+        {
+          "var": "c:Qloss",
+          "unit": "Mvar",
+          "desc": "Reactive-Losses (total)"
+        },
+        {
+          "var": "c:maxloadpu",
+          "unit": "p.u.",
+          "desc": "Max. Loading"
+        },
+        {
+          "var": "c:dphiu_h0l1",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (1-2)"
+        },
+        {
+          "var": "c:dphiu_h0l2",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (1-3)"
+        },
+        {
+          "var": "c:dphiu_h0l3",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (1-4)"
+        },
+        {
+          "var": "c:dphiu_l1l2",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (2-3)"
+        },
+        {
+          "var": "c:dphiu_l1l3",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (2-4)"
+        },
+        {
+          "var": "c:dphiu_l2l3",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (3-4)"
         }
       ],
       "n": [
@@ -1777,6 +2176,28 @@
           "unit": "MW",
           "desc": "Power Flow, Active Power",
           "suffix": ":busN"
+        }
+      ],
+      "s": [
+        {
+          "var": "s:nt_in_hv0",
+          "unit": "",
+          "desc": "Tap Position (HV), Input"
+        },
+        {
+          "var": "s:nt_in_lv1",
+          "unit": "",
+          "desc": "Tap Position (LV1), Input"
+        },
+        {
+          "var": "s:nt_in_lv2",
+          "unit": "",
+          "desc": "Tap Position (LV2), Input"
+        },
+        {
+          "var": "s:nt_in_lv3",
+          "unit": "",
+          "desc": "Tap Position (LV3), Input"
         }
       ]
     },
@@ -2394,721 +2815,307 @@
       ],
       "c": [
         {
-          "var": "c:z",
-          "unit": "p.u.",
-          "desc": "Shunt-Impedance"
-        },
-        {
-          "var": "c:cn",
+          "var": "c:ntpmn",
           "unit": "",
-          "desc": "Connection Mode"
+          "desc": "Minimum Tap Position",
+          "suffix": ":Ph"
         },
         {
-          "var": "c:frnom",
-          "unit": "Hz",
-          "desc": "Nominal Frequency"
-        },
-        {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal Angular Frequency"
-        },
-        {
-          "var": "c:rs",
-          "unit": "p.u.",
-          "desc": "Rs"
-        },
-        {
-          "var": "c:gp",
-          "unit": "p.u.",
-          "desc": "Gp"
-        },
-        {
-          "var": "c:xl",
-          "unit": "p.u.",
-          "desc": "Xl"
-        },
-        {
-          "var": "c:uc1",
-          "unit": "p.u.",
-          "desc": "Voltage across C1"
-        },
-        {
-          "var": "c:uc2",
-          "unit": "p.u.",
-          "desc": "Voltage across C2"
-        },
-        {
-          "var": "c:uc",
-          "unit": "p.u.",
-          "desc": "Voltage across C1 and C2"
-        },
-        {
-          "var": "c:url",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:urp",
-          "unit": "p.u.",
-          "desc": "Voltage across Rp"
-        },
-        {
-          "var": "c:IL",
-          "unit": "A",
-          "desc": "Current through Inductor L"
-        },
-        {
-          "var": "c:IC",
-          "unit": "A",
-          "desc": "Current through C2"
-        },
-        {
-          "var": "c:IRp",
-          "unit": "A",
-          "desc": "Current through Rp"
-        },
-        {
-          "var": "c:PRp",
-          "unit": "kW",
-          "desc": "Losses in Rp"
-        },
-        {
-          "var": "c:PL",
-          "unit": "kW",
-          "desc": "Losses in Inductor (Rs)"
-        },
-        {
-          "var": "c:Uc1",
-          "unit": "kV",
-          "desc": "Voltage across C1"
-        },
-        {
-          "var": "c:Uc2",
-          "unit": "kV",
-          "desc": "Voltage across C2"
-        },
-        {
-          "var": "c:Uc",
-          "unit": "kV",
-          "desc": "Voltage across C1 and C2"
-        },
-        {
-          "var": "c:Url",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Urp",
-          "unit": "kV",
-          "desc": "Voltage across Rp"
-        },
-        {
-          "var": "c:ncapa",
+          "var": "c:ntpmx",
           "unit": "",
-          "desc": "Number of Stages in Parallel"
+          "desc": "Maximum Tap Position",
+          "suffix": ":Ph"
         },
         {
-          "var": "c:b0",
-          "unit": "p.u.",
-          "desc": "Susceptance to Ground"
-        },
-        {
-          "var": "c:uha_c1",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (arith.) across C1"
-        },
-        {
-          "var": "c:uhrms_c1",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (RMS) across C1"
-        },
-        {
-          "var": "c:ut_c1",
-          "unit": "p.u.",
-          "desc": "Total Voltage (u_fn+uhrms) across C1"
-        },
-        {
-          "var": "c:ufn_c1",
-          "unit": "p.u.",
-          "desc": "Fundamental Frequency Voltage across C1"
-        },
-        {
-          "var": "c:uha_c2",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (arith.) across C2"
-        },
-        {
-          "var": "c:uhrms_c2",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (RMS) across C2"
-        },
-        {
-          "var": "c:ut_c2",
-          "unit": "p.u.",
-          "desc": "Total Voltage (u_fn+uhrms) across C2"
-        },
-        {
-          "var": "c:ufn_c2",
-          "unit": "p.u.",
-          "desc": "Fundamental Frequency Voltage across C2"
-        },
-        {
-          "var": "c:uha_c",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (arith.) across C1 and C2"
-        },
-        {
-          "var": "c:uhrms_c",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (RMS) across C1 and C2"
-        },
-        {
-          "var": "c:ut_c",
-          "unit": "p.u.",
-          "desc": "Total Voltage (u_fn+uhrms) across C1 and C2"
-        },
-        {
-          "var": "c:ufn_c",
-          "unit": "p.u.",
-          "desc": "Fundamental Frequency Voltage across C1 and C2"
-        },
-        {
-          "var": "c:uha_rl",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (arith.) across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:uhrms_rl",
-          "unit": "p.u.",
-          "desc": "Harmonic Voltage (rms) across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:ut_rl",
-          "unit": "p.u.",
-          "desc": "Total Voltage (u_fn+uhrms) across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Ihrms_L",
-          "unit": "A",
-          "desc": "Harmonic Current (rms) through Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Irms_L",
-          "unit": "A",
-          "desc": "RMS Value of Current through Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Ihrms_Rp",
-          "unit": "A",
-          "desc": "Harmonic Current (rms) through Rp"
-        },
-        {
-          "var": "c:Irms_Rp",
-          "unit": "A",
-          "desc": "RMS Value of Current through Rp"
-        },
-        {
-          "var": "c:Ph_Rp",
-          "unit": "kW",
-          "desc": "Harmonic Losses of Rp"
-        },
-        {
-          "var": "c:Pt_Rp",
-          "unit": "kW",
-          "desc": "Total Losses of Rp"
-        },
-        {
-          "var": "c:Ph_L",
-          "unit": "kW",
-          "desc": "Harmonic Losses of Inductor (Rs)"
-        },
-        {
-          "var": "c:Pt_L",
-          "unit": "kW",
-          "desc": "Total Losses of Inductor"
-        },
-        {
-          "var": "c:ufn_rl",
-          "unit": "p.u.",
-          "desc": "Fundamental Frequency Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Ifn_Rp",
-          "unit": "A",
-          "desc": "Fundamental Frequency Current through Rp"
-        },
-        {
-          "var": "c:Ifn_L",
-          "unit": "A",
-          "desc": "Fundamental Frequency Current through Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Pfn_L",
-          "unit": "kW",
-          "desc": "Fundamental Frequency Losses of Inductor"
-        },
-        {
-          "var": "c:Pfn_Rp",
-          "unit": "kW",
-          "desc": "Fundamental Frequency Losses of Rp"
-        },
-        {
-          "var": "c:Ifn_c",
-          "unit": "A",
-          "desc": "Fundamental Frequency Current through Capacitor C2"
-        },
-        {
-          "var": "c:Ihrms_c",
-          "unit": "A",
-          "desc": "Harmonic Current (rms) through Capacitor C2"
-        },
-        {
-          "var": "c:Irms_c",
-          "unit": "A",
-          "desc": "RMS Value of Current through Capacitor C2"
-        },
-        {
-          "var": "c:C1",
-          "unit": "uF",
-          "desc": "Auxiliary Capacitance C1"
-        },
-        {
-          "var": "c:C2",
-          "unit": "uF",
-          "desc": "Main Capacitance C2"
-        },
-        {
-          "var": "c:L",
-          "unit": "mH",
-          "desc": "Inductance L"
-        },
-        {
-          "var": "c:Rp",
-          "unit": "Ohm",
-          "desc": "Parallel-Resistance Rp"
-        },
-        {
-          "var": "c:Rs",
-          "unit": "Ohm",
-          "desc": "Resistance Rs"
-        },
-        {
-          "var": "c:Uha_c1",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (arith.) across C1"
-        },
-        {
-          "var": "c:Uhrms_c1",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (RMS) across C1"
-        },
-        {
-          "var": "c:Ut_c1",
-          "unit": "kV",
-          "desc": "Total Voltage (U_fn+Uhrms) across C1"
-        },
-        {
-          "var": "c:Ufn_c1",
-          "unit": "kV",
-          "desc": "Fundamental Frequency Voltage across C1"
-        },
-        {
-          "var": "c:Uha_c2",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (arith.) across C2"
-        },
-        {
-          "var": "c:Uhrms_c2",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (RMS) across C2"
-        },
-        {
-          "var": "c:Ut_c2",
-          "unit": "kV",
-          "desc": "Total Voltage (U_fn+Uhrms) across C2"
-        },
-        {
-          "var": "c:Ufn_c2",
-          "unit": "kV",
-          "desc": "Fundamental Frequency Voltage across C2"
-        },
-        {
-          "var": "c:Uha_c",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (arith.) across C1 and C2"
-        },
-        {
-          "var": "c:Uhrms_c",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (RMS) across C1 and C2"
-        },
-        {
-          "var": "c:Ut_c",
-          "unit": "kV",
-          "desc": "Total Voltage (U_fn+Uhrms) across C1 and C2"
-        },
-        {
-          "var": "c:Ufn_c",
-          "unit": "kV",
-          "desc": "Fundamental Frequency Voltage across C1 and C2"
-        },
-        {
-          "var": "c:Uha_rl",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (arith.) across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Uhrms_rl",
-          "unit": "kV",
-          "desc": "Harmonic Voltage (rms) across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Ut_rl",
-          "unit": "kV",
-          "desc": "Total Voltage (U_fn+Uhrms) across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Ufn_rl",
-          "unit": "kV",
-          "desc": "Fundamental Frequency Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:bc",
-          "unit": "p.u.",
-          "desc": "Bc"
-        },
-        {
-          "var": "c:gpc",
-          "unit": "p.u.",
-          "desc": "Gp(C)"
-        },
-        {
-          "var": "c:C",
-          "unit": "uF",
-          "desc": "Capacitance C"
-        },
-        {
-          "var": "c:y0",
-          "unit": "p.u.",
-          "desc": "Zero Sequence Admittance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ze",
-          "unit": "p.u.",
-          "desc": "Grounding Impedance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:uc1ph",
-          "unit": "p.u.",
-          "desc": "Voltage across C1 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:uc2ph",
-          "unit": "p.u.",
-          "desc": "Voltage across C2 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ucph",
-          "unit": "p.u.",
-          "desc": "uc1",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ucph",
-          "unit": "p.u.",
-          "desc": "Voltage across Capacitor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urlph",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urlph",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urpph",
-          "unit": "p.u.",
-          "desc": "Voltage across Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ILph",
-          "unit": "A",
-          "desc": "Current through Inductor (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ILph",
-          "unit": "A",
-          "desc": "Current through Inductor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ICph",
-          "unit": "A",
-          "desc": "Current through C2 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ICph",
-          "unit": "A",
-          "desc": "Current through Capacitor C(Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:IRpph",
-          "unit": "A",
-          "desc": "Current through Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:IRpph",
-          "unit": "A",
-          "desc": "Current through Rp (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ustar",
-          "unit": "kV",
-          "desc": "Star-Point Voltage",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uc1ph",
-          "unit": "kV",
-          "desc": "Voltage across C1 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uc2ph",
-          "unit": "kV",
-          "desc": "Voltage across C2 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ucph",
-          "unit": "kV",
-          "desc": "Url",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ucph",
-          "unit": "kV",
-          "desc": "Voltage across Capacitor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urlph",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urlph",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urpph",
-          "unit": "kV",
-          "desc": "Voltage across Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ncapx",
+          "var": "c:nntap0",
           "unit": "",
-          "desc": "Max. No. of Steps",
-          "availability": [
-            "unbal"
-          ]
+          "desc": "Neutral Position",
+          "suffix": ":Ph"
         },
         {
-          "var": "c:i_earth",
+          "var": "c:ntagrd",
           "unit": "",
-          "desc": "Internal",
-          "availability": [
-            "unbal"
-          ]
+          "desc": "Phase Shift",
+          "suffix": ":Ph"
         },
         {
-          "var": "c:Uhaph_c1",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ufnph_c1",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uhaph_c2",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ufnph_c2",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uhaph_c",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uhaph_c",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ufnph_c",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ufnph_c",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uhaph_rl",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uhaph_rl",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ufnph_rl",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ufnph_rl",
-          "unit": "kV",
-          "desc": "sigmaC",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:z0",
+          "var": "c:z_h0",
           "unit": "p.u.",
-          "desc": "Zero Sequence Impedance",
+          "desc": "Short Circuit Impedance (HV)"
+        },
+        {
+          "var": "c:z_l1",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV1)"
+        },
+        {
+          "var": "c:z_l2",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV2)"
+        },
+        {
+          "var": "c:z_l3",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV3)"
+        },
+        {
+          "var": "c:z_i",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (i)"
+        },
+        {
+          "var": "c:z_j",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (j)"
+        },
+        {
+          "var": "c:pT",
+          "unit": "%",
+          "desc": "Range of Voltage Adjustment",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "c:Kt_h0l1",
+          "unit": "",
+          "desc": "VDE/IEC Correction Factor, HV-LV1"
+        },
+        {
+          "var": "c:Kt_h0l2",
+          "unit": "",
+          "desc": "VDE/IEC Correction Factor, HV-LV2"
+        },
+        {
+          "var": "c:Kt_h0l3",
+          "unit": "",
+          "desc": "VDE/IEC Correction Factor, HV-LV3"
+        },
+        {
+          "var": "c:Kt_l1l2",
+          "unit": "",
+          "desc": "VDE/IEC Correction Factor, LV1-LV2"
+        },
+        {
+          "var": "c:Kt_l1l3",
+          "unit": "",
+          "desc": "VDE/IEC Correction Factor, LV1-LV3"
+        },
+        {
+          "var": "c:Kt_l2l3",
+          "unit": "",
+          "desc": "VDE/IEC Correction Factor, LV2-LV3"
+        },
+        {
+          "var": "c:z0_h0",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Imp (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:z0_l1",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Imp (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:z0_l2",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Imp (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:z0_l3",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Imp (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:z0_i",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Imp (i)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:z0_j",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Imp (j)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ze0_h0",
+          "unit": "p.u.",
+          "desc": "Earth Impedance (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ze0_l1",
+          "unit": "p.u.",
+          "desc": "Earth Impedance (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ze0_l2",
+          "unit": "p.u.",
+          "desc": "Earth Impedance (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ze0_l3",
+          "unit": "p.u.",
+          "desc": "Earth Impedance (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ym0",
+          "unit": "p.u.",
+          "desc": "0-Seq. Magn. Admitt.",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ustar_h0",
+          "unit": "kV",
+          "desc": "Star-Point Voltage (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ustar_l1",
+          "unit": "kV",
+          "desc": "Star-Point Voltage (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ustar_l2",
+          "unit": "kV",
+          "desc": "Star-Point Voltage (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ustar_l3",
+          "unit": "kV",
+          "desc": "Star-Point Voltage (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Istar_h0",
+          "unit": "kA",
+          "desc": "Star-Point Current (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Istar_l1",
+          "unit": "kA",
+          "desc": "Star-Point Current (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Istar_l2",
+          "unit": "kA",
+          "desc": "Star-Point Current (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Istar_l3",
+          "unit": "kA",
+          "desc": "Star-Point Current (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:i0_h0",
+          "unit": "p.u.",
+          "desc": "0-Current in Delta-Winding (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:i0_l1",
+          "unit": "p.u.",
+          "desc": "0-Current in Delta-Winding (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:i0_l2",
+          "unit": "p.u.",
+          "desc": "0-Current in Delta-Winding (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:i0_l3",
+          "unit": "p.u.",
+          "desc": "0-Current in Delta-Winding (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I0Delta_h0",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I0Delta_l1",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I0Delta_l2",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I0Delta_l3",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
           "availability": [
             "unbal"
           ]
@@ -4441,6 +4448,72 @@
             "unbal"
           ]
         }
+      ],
+      "s": [
+        {
+          "var": "s:I0rDelta_hv0",
+          "unit": "kA",
+          "desc": "Circulating current in HV-Delta-Winding, Real Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0rDelta_lv1",
+          "unit": "kA",
+          "desc": "Circulating current in LV1-Delta-Winding, Real Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0rDelta_lv2",
+          "unit": "kA",
+          "desc": "Circulating current in LV2-Delta-Winding, Real Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0rDelta_lv3",
+          "unit": "kA",
+          "desc": "Circulating current in LV3-Delta-Winding, Real Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0iDelta_hv0",
+          "unit": "kA",
+          "desc": "Circulating current in HV-Delta-Winding, Imaginary Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0iDelta_lv1",
+          "unit": "kA",
+          "desc": "Circulating current in LV1-Delta-Winding, Imaginary Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0iDelta_lv2",
+          "unit": "kA",
+          "desc": "Circulating current in LV2-Delta-Winding, Imaginary Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0iDelta_lv3",
+          "unit": "kA",
+          "desc": "Circulating current in LV3-Delta-Winding, Imaginary Part",
+          "availability": [
+            "unbal"
+          ]
+        }
       ]
     },
     "dynamic_rms": {
@@ -5156,106 +5229,393 @@
       ],
       "c": [
         {
-          "var": "c:z",
+          "var": "c:loading_hv0",
+          "unit": "%",
+          "desc": "Loading (HV)"
+        },
+        {
+          "var": "c:loading_lv1",
+          "unit": "%",
+          "desc": "Loading (LV1)"
+        },
+        {
+          "var": "c:loading_lv2",
+          "unit": "%",
+          "desc": "Loading (LV2)"
+        },
+        {
+          "var": "c:loading_lv3",
+          "unit": "%",
+          "desc": "Loading (LV3)"
+        },
+        {
+          "var": "c:loading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:ntap_h0",
+          "unit": "",
+          "desc": "Current Tap Position (HV)"
+        },
+        {
+          "var": "c:ntap_l1",
+          "unit": "",
+          "desc": "Current Tap Position (LV1)"
+        },
+        {
+          "var": "c:ntap_l2",
+          "unit": "",
+          "desc": "Current Tap Position (LV2)"
+        },
+        {
+          "var": "c:ntap_l3",
+          "unit": "",
+          "desc": "Current Tap Position (LV3)"
+        },
+        {
+          "var": "c:nntap_int_h0",
+          "unit": "",
+          "desc": "Tap (HV), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l1",
+          "unit": "",
+          "desc": "Tap (LV1), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l2",
+          "unit": "",
+          "desc": "Tap (LV2), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l3",
+          "unit": "",
+          "desc": "Tap (LV3), relative Position"
+        },
+        {
+          "var": "c:z_h0",
           "unit": "p.u.",
-          "desc": "Shunt-Impedance"
+          "desc": "Short Circuit Impedance (HV)"
         },
         {
-          "var": "c:cn",
-          "unit": "",
-          "desc": "Connection Mode"
-        },
-        {
-          "var": "c:frnom",
-          "unit": "Hz",
-          "desc": "Nominal Frequency"
-        },
-        {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal Angular Frequency"
-        },
-        {
-          "var": "c:ncapa",
-          "unit": "",
-          "desc": "Number of Stages in Parallel"
-        },
-        {
-          "var": "c:ncapx",
-          "unit": "",
-          "desc": "Max. No. of Steps"
-        },
-        {
-          "var": "c:b0",
+          "var": "c:z_l1",
           "unit": "p.u.",
-          "desc": "sigmaC"
+          "desc": "Short Circuit Impedance (LV1)"
         },
         {
-          "var": "c:shtype",
-          "unit": "",
-          "desc": "Type"
-        },
-        {
-          "var": "c:L",
-          "unit": "H",
-          "desc": "Inductance"
-        },
-        {
-          "var": "c:Rs",
-          "unit": "Ohm",
-          "desc": "Series-Resistance"
-        },
-        {
-          "var": "c:Qmax",
-          "unit": "Mvar",
-          "desc": "Max. Rated Reactive Power"
-        },
-        {
-          "var": "c:C",
-          "unit": "F",
-          "desc": "Capacitance"
-        },
-        {
-          "var": "c:Gp",
-          "unit": "S",
-          "desc": "Parallel-Conductance"
-        },
-        {
-          "var": "c:y0",
+          "var": "c:z_l2",
           "unit": "p.u.",
-          "desc": "Zero Sequence Admittance",
+          "desc": "Short Circuit Impedance (LV2)"
+        },
+        {
+          "var": "c:z_l3",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV3)"
+        },
+        {
+          "var": "c:z_i",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (i)"
+        },
+        {
+          "var": "c:z_j",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (j)"
+        },
+        {
+          "var": "c:ym",
+          "unit": "p.u.",
+          "desc": "Magnetising Admittance"
+        },
+        {
+          "var": "c:t_h0",
+          "unit": "",
+          "desc": "Complex Winding Ratio (HV/S)"
+        },
+        {
+          "var": "c:t_l1",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV1/S)"
+        },
+        {
+          "var": "c:t_l2",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV2/S)"
+        },
+        {
+          "var": "c:t_l3",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV3/S)"
+        },
+        {
+          "var": "c:imagloc",
+          "unit": "",
+          "desc": "Position of Magn.ind."
+        },
+        {
+          "var": "c:um_1",
+          "unit": "",
+          "desc": "Magnetising Flux"
+        },
+        {
+          "var": "c:isat",
+          "unit": "",
+          "desc": "Saturated Model"
+        },
+        {
+          "var": "c:Inom_HV0",
+          "unit": "kA",
+          "desc": "Nominal Current (HV-Side)"
+        },
+        {
+          "var": "c:Inom_LV1",
+          "unit": "kA",
+          "desc": "Nominal Current (LV1-Side)"
+        },
+        {
+          "var": "c:Inom_LV2",
+          "unit": "kA",
+          "desc": "Nominal Current (LV2-Side)"
+        },
+        {
+          "var": "c:Inom_LV3",
+          "unit": "kA",
+          "desc": "Nominal Current (LV3-Side)"
+        },
+        {
+          "var": "c:iAutoTap",
+          "unit": "",
+          "desc": "Controller Mode"
+        },
+        {
+          "var": "c:z0_h0",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Imp (HV)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:ze",
+          "var": "c:z0_l1",
           "unit": "p.u.",
-          "desc": "Grounding Impedance",
+          "desc": "0-Seq. Short-Circuit Imp (LV1)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:Ustar",
+          "var": "c:z0_l2",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Imp (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:z0_l3",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Imp (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:z0_i",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Imp (i)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:z0_j",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Imp (j)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ze0_h0",
+          "unit": "p.u.",
+          "desc": "Earth Impedance (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ze0_l1",
+          "unit": "p.u.",
+          "desc": "Earth Impedance (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ze0_l2",
+          "unit": "p.u.",
+          "desc": "Earth Impedance (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ze0_l3",
+          "unit": "p.u.",
+          "desc": "Earth Impedance (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ym0",
+          "unit": "p.u.",
+          "desc": "0-Seq. Magn. Admitt.",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ustar_h0",
           "unit": "kV",
-          "desc": "Star-Point Voltage",
+          "desc": "Star-Point Voltage (HV)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:i_earth",
-          "unit": "",
-          "desc": "Internal",
+          "var": "c:Ustar_l1",
+          "unit": "kV",
+          "desc": "Star-Point Voltage (LV1)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:z0",
+          "var": "c:Ustar_l2",
+          "unit": "kV",
+          "desc": "Star-Point Voltage (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ustar_l3",
+          "unit": "kV",
+          "desc": "Star-Point Voltage (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Istar_h0",
+          "unit": "kA",
+          "desc": "Star-Point Current (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Istar_l1",
+          "unit": "kA",
+          "desc": "Star-Point Current (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Istar_l2",
+          "unit": "kA",
+          "desc": "Star-Point Current (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Istar_l3",
+          "unit": "kA",
+          "desc": "Star-Point Current (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:i0_h0",
           "unit": "p.u.",
-          "desc": "Zero Sequence Impedance",
+          "desc": "0-Current in Delta-Winding (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:i0_l1",
+          "unit": "p.u.",
+          "desc": "0-Current in Delta-Winding (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:i0_l2",
+          "unit": "p.u.",
+          "desc": "0-Current in Delta-Winding (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:i0_l3",
+          "unit": "p.u.",
+          "desc": "0-Current in Delta-Winding (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:um_2",
+          "unit": "p.u.",
+          "desc": "Magnetising Flux (Imaginary Part)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:um_0",
+          "unit": "p.u.",
+          "desc": "Magnetising Flux (0-Sequence)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I0Delta_h0",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I0Delta_l1",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I0Delta_l2",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I0Delta_l3",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
           "availability": [
             "unbal"
           ]
@@ -5739,34 +6099,88 @@
       ],
       "s": [
         {
-          "var": "s:u_r",
-          "unit": "p.u.",
-          "desc": "Voltage, Real Part"
+          "var": "s:nntapin_h0",
+          "unit": "",
+          "desc": "Tap (HV), Controller Input"
         },
         {
-          "var": "s:u_i",
-          "unit": "p.u.",
-          "desc": "Voltage, Imaginary Part"
+          "var": "s:nntapin_l1",
+          "unit": "",
+          "desc": "Tap (LV1), Controller Input"
         },
         {
-          "var": "s:i_r",
-          "unit": "p.u.",
-          "desc": "Current, Real Part"
+          "var": "s:nntapin_l2",
+          "unit": "",
+          "desc": "Tap (LV2), Controller Input"
         },
         {
-          "var": "s:i_i",
-          "unit": "p.u.",
-          "desc": "Current, Imaginary Part"
+          "var": "s:nntapin_l3",
+          "unit": "",
+          "desc": "Tap (LV3), Controller Input"
         },
         {
-          "var": "s:IRL",
+          "var": "s:I0rDelta_hv0",
           "unit": "kA",
-          "desc": "Current through Inductance"
+          "desc": "Circulating current in HV-Delta-Winding, Real Part",
+          "availability": [
+            "unbal"
+          ]
         },
         {
-          "var": "s:UC",
-          "unit": "kV",
-          "desc": "Voltage at Capacitance"
+          "var": "s:I0rDelta_lv1",
+          "unit": "kA",
+          "desc": "Circulating current in LV1-Delta-Winding, Real Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0rDelta_lv2",
+          "unit": "kA",
+          "desc": "Circulating current in LV2-Delta-Winding, Real Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0rDelta_lv3",
+          "unit": "kA",
+          "desc": "Circulating current in LV3-Delta-Winding, Real Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0iDelta_hv0",
+          "unit": "kA",
+          "desc": "Circulating current in HV-Delta-Winding, Imaginary Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0iDelta_lv1",
+          "unit": "kA",
+          "desc": "Circulating current in LV1-Delta-Winding, Imaginary Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0iDelta_lv2",
+          "unit": "kA",
+          "desc": "Circulating current in LV2-Delta-Winding, Imaginary Part",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0iDelta_lv3",
+          "unit": "kA",
+          "desc": "Circulating current in LV3-Delta-Winding, Imaginary Part",
+          "availability": [
+            "unbal"
+          ]
         }
       ]
     },
@@ -6063,17 +6477,457 @@
       ],
       "c": [
         {
-          "var": "c:cn",
+          "var": "c:ntap_h0",
           "unit": "",
-          "desc": "Connection Mode",
+          "desc": "Current Tap Position (HV)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:frnom",
-          "unit": "Hz",
-          "desc": "Nominal Frequency",
+          "var": "c:ntap_l1",
+          "unit": "",
+          "desc": "Current Tap Position (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ntap_l2",
+          "unit": "",
+          "desc": "Current Tap Position (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ntap_l3",
+          "unit": "",
+          "desc": "Current Tap Position (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:nntap_int_h0",
+          "unit": "",
+          "desc": "Tap (HV), relative Position",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:nntap_int_l1",
+          "unit": "",
+          "desc": "Tap (LV1), relative Position",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:nntap_int_l2",
+          "unit": "",
+          "desc": "Tap (LV2), relative Position",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:nntap_int_l3",
+          "unit": "",
+          "desc": "Tap (LV3), relative Position",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:t_h0",
+          "unit": "",
+          "desc": "Complex Winding Ratio (HV/S)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:t_l1",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV1/S)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:t_l2",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV2/S)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:t_l3",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV3/S)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:imagloc",
+          "unit": "",
+          "desc": "Position of Magn.ind.",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ustar_h0",
+          "unit": "kV",
+          "desc": "Star-Point Voltage (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ustar_l1",
+          "unit": "kV",
+          "desc": "Star-Point Voltage (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ustar_l2",
+          "unit": "kV",
+          "desc": "Star-Point Voltage (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ustar_l3",
+          "unit": "kV",
+          "desc": "Star-Point Voltage (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Istar_h0",
+          "unit": "kA",
+          "desc": "Star-Point Current (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Istar_l1",
+          "unit": "kA",
+          "desc": "Star-Point Current (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Istar_l2",
+          "unit": "kA",
+          "desc": "Star-Point Current (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Istar_l3",
+          "unit": "kA",
+          "desc": "Star-Point Current (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:r_h0",
+          "unit": "p.u.",
+          "desc": "Short Circuit Resistance (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:r_l1",
+          "unit": "p.u.",
+          "desc": "Short Circuit Resistance (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:r_l2",
+          "unit": "p.u.",
+          "desc": "Short Circuit Resistance (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:r_l3",
+          "unit": "p.u.",
+          "desc": "Short Circuit Resistance (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:r_i",
+          "unit": "p.u.",
+          "desc": "Short Circuit Resistance (i)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:r_j",
+          "unit": "p.u.",
+          "desc": "Short Circuit Resistance (j)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:l_h0",
+          "unit": "p.u.",
+          "desc": "Short Circuit Inductance (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:l_l1",
+          "unit": "p.u.",
+          "desc": "Short Circuit Inductance (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:l_l2",
+          "unit": "p.u.",
+          "desc": "Short Circuit Inductance (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:l_l3",
+          "unit": "p.u.",
+          "desc": "Short Circuit Inductance (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:l_i",
+          "unit": "p.u.",
+          "desc": "Short Circuit Inductance (i)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:l_j",
+          "unit": "p.u.",
+          "desc": "Short Circuit Inductance (j)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:bm",
+          "unit": "p.u.",
+          "desc": "Magnetising Inductance",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:gm",
+          "unit": "p.u.",
+          "desc": "Magnetising Conductance",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:r0_h0",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Res. (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:r0_l1",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Res. (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:r0_l2",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Res. (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:r0_l3",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Res. (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:r0_i",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Res. (i)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:r0_j",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Res. (j)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:l0_h0",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Ind. (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:l0_l1",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Ind. (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:l0_l2",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Ind. (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:l0_l3",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Ind. (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:l0_i",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Ind. (i)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:l0_j",
+          "unit": "p.u.",
+          "desc": "0-Seq. Short-Circuit Ind. (j)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:re0_h0",
+          "unit": "p.u.",
+          "desc": "Earth Resistance (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:re0_l1",
+          "unit": "p.u.",
+          "desc": "Earth Resistance (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:re0_l2",
+          "unit": "p.u.",
+          "desc": "Earth Resistance (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:re0_l3",
+          "unit": "p.u.",
+          "desc": "Earth Resistance (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:le0_h0",
+          "unit": "p.u.",
+          "desc": "Earth Inductance (HV)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:le0_l1",
+          "unit": "p.u.",
+          "desc": "Earth Inductance (LV1)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:le0_l2",
+          "unit": "p.u.",
+          "desc": "Earth Inductance (LV2)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:le0_l3",
+          "unit": "p.u.",
+          "desc": "Earth Inductance (LV3)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:bm0",
+          "unit": "p.u.",
+          "desc": "0-Seq. Magn. Inductance",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:rm0",
+          "unit": "p.u.",
+          "desc": "0-Seq. Magn. Resistance",
           "availability": [
             "unbal"
           ]
@@ -6081,365 +6935,39 @@
         {
           "var": "c:hpi",
           "unit": "rad/s",
-          "desc": "Nominal Angular Frequency",
+          "desc": "Angular frequency",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:rs",
-          "unit": "p.u.",
-          "desc": "Series-Resistance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:gp",
-          "unit": "p.u.",
-          "desc": "Parallel-Resistance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:uc1ph",
-          "unit": "p.u.",
-          "desc": "Voltage across C1 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:uc2ph",
-          "unit": "p.u.",
-          "desc": "Voltage across C2 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ucph",
-          "unit": "p.u.",
-          "desc": "Uc1ph",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ucph",
-          "unit": "p.u.",
-          "desc": "Voltage across Capacitor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urlph",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urlph",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:urpph",
-          "unit": "p.u.",
-          "desc": "Voltage across Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ILph",
-          "unit": "A",
-          "desc": "Current through Inductor L (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ILph",
-          "unit": "A",
-          "desc": "Current through Inductor L (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ICph",
-          "unit": "A",
-          "desc": "Current through Capacitor C2 (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ICph",
-          "unit": "A",
-          "desc": "Current through Capacitor C (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:IRpph",
-          "unit": "A",
-          "desc": "Current through Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:IRpph",
-          "unit": "A",
-          "desc": "Current through Rp (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ustar",
-          "unit": "kV",
-          "desc": "Star-Point Voltage",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uc1ph",
-          "unit": "kV",
-          "desc": "Voltage across Capacitor C1(Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Uc2ph",
-          "unit": "kV",
-          "desc": "Voltage across Capacitor C2(Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ucph",
-          "unit": "kV",
-          "desc": "Voltage across C1 and C2(Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Ucph",
-          "unit": "kV",
-          "desc": "Voltage across Capacitor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urlph",
-          "unit": "kV",
-          "desc": "Voltage across Rs-L (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urlph",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Phase Value)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Urpph",
-          "unit": "kV",
-          "desc": "Voltage across Rp (Phase Value)",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:ncapa",
+          "var": "c:i_sat",
           "unit": "",
-          "desc": "Number of Stages in Parallel",
+          "desc": "Saturated Model",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:ncapx",
-          "unit": "",
-          "desc": "Max. No. of Steps",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:i_earth",
-          "unit": "",
-          "desc": "Internal",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:l",
+          "var": "c:im_a",
           "unit": "p.u.",
-          "desc": "Inductance",
+          "desc": "Magnetising Current, Phase a",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:c",
+          "var": "c:im_b",
           "unit": "p.u.",
-          "desc": "Capacitance",
+          "desc": "Magnetising Current, Phase b",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:le",
+          "var": "c:im_c",
           "unit": "p.u.",
-          "desc": "Grounding Inductance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:re",
-          "unit": "p.u.",
-          "desc": "Grounding Resistance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:c0",
-          "unit": "p.u.",
-          "desc": "Parasitic Capacitance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:c1",
-          "unit": "p.u.",
-          "desc": "Capacitance C1",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:c2",
-          "unit": "p.u.",
-          "desc": "Capacitance C2",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Unom",
-          "unit": "kV",
-          "desc": "Nominal Voltage",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Snom",
-          "unit": "MVA",
-          "desc": "Nominal Power",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:shtype",
-          "unit": "",
-          "desc": "Type",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:iRL",
-          "unit": "p.u.",
-          "desc": "Current through Inductance",
-          "suffix": ":Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:iRL",
-          "unit": "p.u.",
-          "desc": "Current through Inductance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:L",
-          "unit": "H",
-          "desc": "Inductance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Rs",
-          "unit": "Ohm",
-          "desc": "Series-Resistance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Qmax",
-          "unit": "Mvar",
-          "desc": "Max. Rated Reactive Power",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:rs0",
-          "unit": "p.u.",
-          "desc": "Zero Sequence Series-Resistance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:l0",
-          "unit": "p.u.",
-          "desc": "Zero Sequence Inductance",
+          "desc": "Magnetising Current, Phase c",
           "availability": [
             "unbal"
           ]
@@ -6448,22 +6976,6 @@
           "var": "c:physt",
           "unit": "kW",
           "desc": "Hysteresis losses at rated operation",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:C",
-          "unit": "F",
-          "desc": "Capacitance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Gp",
-          "unit": "S",
-          "desc": "Parallel-Conductance",
           "availability": [
             "unbal"
           ]
@@ -6725,137 +7237,145 @@
       ],
       "s": [
         {
-          "var": "s:psil_d",
-          "unit": "p.u.",
-          "desc": "Flux, alpha-component",
+          "var": "s:nntapin_h0",
+          "unit": "",
+          "desc": "Tap (HV), Controller Input",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:psil_q",
-          "unit": "p.u.",
-          "desc": "Flux, beta-component",
+          "var": "s:nntapin_l1",
+          "unit": "",
+          "desc": "Tap (LV1), Controller Input",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:psil_0",
-          "unit": "p.u.",
-          "desc": "Flux, gamma-component",
+          "var": "s:nntapin_l2",
+          "unit": "",
+          "desc": "Tap (LV2), Controller Input",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC1_a",
-          "unit": "p.u.",
-          "desc": "Voltage C1, Phase a",
+          "var": "s:nntapin_l3",
+          "unit": "",
+          "desc": "Tap (LV3), Controller Input",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC1_b",
+          "var": "s:i0_h0",
           "unit": "p.u.",
-          "desc": "Voltage C1, Phase b",
+          "desc": "0-Current in Delta-Winding (HV)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC1_c",
+          "var": "s:i0_l1",
           "unit": "p.u.",
-          "desc": "Voltage C1, Phase c",
+          "desc": "0-Current in Delta-Winding (LV1)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC2_a",
+          "var": "s:i0_l2",
           "unit": "p.u.",
-          "desc": "Voltage C2, Phase a",
+          "desc": "0-Current in Delta-Winding (LV2)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC2_b",
+          "var": "s:i0_l3",
           "unit": "p.u.",
-          "desc": "Voltage C2, Phase b",
+          "desc": "0-Current in Delta-Winding (LV3)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:uC2_c",
+          "var": "s:psim_r",
           "unit": "p.u.",
-          "desc": "Voltage C2, Phase c",
+          "desc": "Magnetising Flux (Real Part)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:psil_a",
+          "var": "s:psim_i",
           "unit": "p.u.",
-          "desc": "Flux, Phase a",
+          "desc": "Magnetising Flux (Imaginary Part)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:psil_b",
+          "var": "s:psim_0",
           "unit": "p.u.",
-          "desc": "Flux, Phase b",
+          "desc": "Magnetising Flux (0-Sequence)",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:psil_c",
-          "unit": "p.u.",
-          "desc": "Flux, Phase c",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:uC_a",
-          "unit": "p.u.",
-          "desc": "Voltage at Capacitance, Phase a",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:uC_b",
-          "unit": "p.u.",
-          "desc": "Voltage at Capacitance, Phase b",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:uC_c",
-          "unit": "p.u.",
-          "desc": "Voltage at Capacitance, Phase c",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:IRL",
+          "var": "s:I0Delta_h0",
           "unit": "kA",
-          "desc": "Current through Inductance",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "s:UC",
-          "unit": "kV",
-          "desc": "Voltage at Capacitance",
+          "var": "s:I0Delta_l1",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0Delta_l2",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:I0Delta_l3",
+          "unit": "kA",
+          "desc": "Circulating current in Delta-Winding, Magnitude",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:psim_a",
+          "unit": "p.u.",
+          "desc": "Magnetising Flux",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:psim_b",
+          "unit": "p.u.",
+          "desc": "Magnetising Flux",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:psim_c",
+          "unit": "p.u.",
+          "desc": "Magnetising Flux",
           "availability": [
             "unbal"
           ]
@@ -6865,101 +7385,186 @@
     "modal_analysis": {
       "c": [
         {
-          "var": "c:z",
+          "var": "c:loading_hv0",
+          "unit": "%",
+          "desc": "Loading (HV)"
+        },
+        {
+          "var": "c:loading_lv1",
+          "unit": "%",
+          "desc": "Loading (LV1)"
+        },
+        {
+          "var": "c:loading_lv2",
+          "unit": "%",
+          "desc": "Loading (LV2)"
+        },
+        {
+          "var": "c:loading_lv3",
+          "unit": "%",
+          "desc": "Loading (LV3)"
+        },
+        {
+          "var": "c:loading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:ntap_h0",
+          "unit": "",
+          "desc": "Current Tap Position (HV)"
+        },
+        {
+          "var": "c:ntap_l1",
+          "unit": "",
+          "desc": "Current Tap Position (LV1)"
+        },
+        {
+          "var": "c:ntap_l2",
+          "unit": "",
+          "desc": "Current Tap Position (LV2)"
+        },
+        {
+          "var": "c:ntap_l3",
+          "unit": "",
+          "desc": "Current Tap Position (LV3)"
+        },
+        {
+          "var": "c:nntap_int_h0",
+          "unit": "",
+          "desc": "Tap (HV), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l1",
+          "unit": "",
+          "desc": "Tap (LV1), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l2",
+          "unit": "",
+          "desc": "Tap (LV2), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l3",
+          "unit": "",
+          "desc": "Tap (LV3), relative Position"
+        },
+        {
+          "var": "c:z_h0",
           "unit": "p.u.",
-          "desc": "Shunt-Impedance"
+          "desc": "Short Circuit Impedance (HV)"
         },
         {
-          "var": "c:cn",
-          "unit": "",
-          "desc": "Connection Mode"
-        },
-        {
-          "var": "c:frnom",
-          "unit": "Hz",
-          "desc": "Nominal Frequency"
-        },
-        {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal Angular Frequency"
-        },
-        {
-          "var": "c:ncapa",
-          "unit": "",
-          "desc": "Number of Stages in Parallel"
-        },
-        {
-          "var": "c:ncapx",
-          "unit": "",
-          "desc": "Max. No. of Steps"
-        },
-        {
-          "var": "c:b0",
+          "var": "c:z_l1",
           "unit": "p.u.",
-          "desc": "sigmaC"
+          "desc": "Short Circuit Impedance (LV1)"
         },
         {
-          "var": "c:shtype",
+          "var": "c:z_l2",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV2)"
+        },
+        {
+          "var": "c:z_l3",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV3)"
+        },
+        {
+          "var": "c:z_i",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (i)"
+        },
+        {
+          "var": "c:z_j",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (j)"
+        },
+        {
+          "var": "c:ym",
+          "unit": "p.u.",
+          "desc": "Magnetising Admittance"
+        },
+        {
+          "var": "c:t_h0",
           "unit": "",
-          "desc": "Type"
+          "desc": "Complex Winding Ratio (HV/S)"
         },
         {
-          "var": "c:L",
-          "unit": "H",
-          "desc": "Inductance"
+          "var": "c:t_l1",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV1/S)"
         },
         {
-          "var": "c:Rs",
-          "unit": "Ohm",
-          "desc": "Series-Resistance"
+          "var": "c:t_l2",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV2/S)"
         },
         {
-          "var": "c:Qmax",
-          "unit": "Mvar",
-          "desc": "Max. Rated Reactive Power"
+          "var": "c:t_l3",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV3/S)"
         },
         {
-          "var": "c:C",
-          "unit": "F",
-          "desc": "Capacitance"
+          "var": "c:imagloc",
+          "unit": "",
+          "desc": "Position of Magn.ind."
         },
         {
-          "var": "c:Gp",
-          "unit": "S",
-          "desc": "Parallel-Conductance"
+          "var": "c:um_1",
+          "unit": "",
+          "desc": "Magnetising Flux"
+        },
+        {
+          "var": "c:isat",
+          "unit": "",
+          "desc": "Saturated Model"
+        },
+        {
+          "var": "c:Inom_HV0",
+          "unit": "kA",
+          "desc": "Nominal Current (HV-Side)"
+        },
+        {
+          "var": "c:Inom_LV1",
+          "unit": "kA",
+          "desc": "Nominal Current (LV1-Side)"
+        },
+        {
+          "var": "c:Inom_LV2",
+          "unit": "kA",
+          "desc": "Nominal Current (LV2-Side)"
+        },
+        {
+          "var": "c:Inom_LV3",
+          "unit": "kA",
+          "desc": "Nominal Current (LV3-Side)"
+        },
+        {
+          "var": "c:iAutoTap",
+          "unit": "",
+          "desc": "Controller Mode"
         }
       ],
       "s": [
         {
-          "var": "s:u_r",
-          "unit": "p.u.",
-          "desc": "Voltage, Real Part"
+          "var": "s:nntapin_h0",
+          "unit": "",
+          "desc": "Tap (HV), Controller Input"
         },
         {
-          "var": "s:u_i",
-          "unit": "p.u.",
-          "desc": "Voltage, Imaginary Part"
+          "var": "s:nntapin_l1",
+          "unit": "",
+          "desc": "Tap (LV1), Controller Input"
         },
         {
-          "var": "s:i_r",
-          "unit": "p.u.",
-          "desc": "Current, Real Part"
+          "var": "s:nntapin_l2",
+          "unit": "",
+          "desc": "Tap (LV2), Controller Input"
         },
         {
-          "var": "s:i_i",
-          "unit": "p.u.",
-          "desc": "Current, Imaginary Part"
-        },
-        {
-          "var": "s:IRL",
-          "unit": "kA",
-          "desc": "Current through Inductance"
-        },
-        {
-          "var": "s:UC",
-          "unit": "kV",
-          "desc": "Voltage at Capacitance"
+          "var": "s:nntapin_l3",
+          "unit": "",
+          "desc": "Tap (LV3), Controller Input"
         }
       ]
     },
@@ -7226,139 +7831,139 @@
       ],
       "c": [
         {
-          "var": "c:z",
-          "unit": "p.u.",
-          "desc": "Shunt-Impedance"
+          "var": "c:loading_hv0",
+          "unit": "%",
+          "desc": "Loading (HV)"
         },
         {
-          "var": "c:cn",
+          "var": "c:loading_lv1",
+          "unit": "%",
+          "desc": "Loading (LV1)"
+        },
+        {
+          "var": "c:loading_lv2",
+          "unit": "%",
+          "desc": "Loading (LV2)"
+        },
+        {
+          "var": "c:loading_lv3",
+          "unit": "%",
+          "desc": "Loading (LV3)"
+        },
+        {
+          "var": "c:loading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:maxload",
+          "unit": "%",
+          "desc": "Max. Loading"
+        },
+        {
+          "var": "c:ntap_h0",
           "unit": "",
-          "desc": "Connection Mode"
+          "desc": "Current Tap Position (HV)"
         },
         {
-          "var": "c:frnom",
-          "unit": "Hz",
-          "desc": "Nominal Frequency"
-        },
-        {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal Angular Frequency"
-        },
-        {
-          "var": "c:rs",
-          "unit": "p.u.",
-          "desc": "Rs"
-        },
-        {
-          "var": "c:gp",
-          "unit": "p.u.",
-          "desc": "Gp"
-        },
-        {
-          "var": "c:xl",
-          "unit": "p.u.",
-          "desc": "Xl"
-        },
-        {
-          "var": "c:bc1",
-          "unit": "p.u.",
-          "desc": "Bc1"
-        },
-        {
-          "var": "c:bc2",
-          "unit": "p.u.",
-          "desc": "Bc2"
-        },
-        {
-          "var": "c:uc1",
-          "unit": "p.u.",
-          "desc": "Voltage across C1"
-        },
-        {
-          "var": "c:uc2",
-          "unit": "p.u.",
-          "desc": "Voltage across C2"
-        },
-        {
-          "var": "c:uc",
-          "unit": "p.u.",
-          "desc": "Voltage across C1 and C2"
-        },
-        {
-          "var": "c:url",
-          "unit": "p.u.",
-          "desc": "Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:urp",
-          "unit": "p.u.",
-          "desc": "Voltage across Rp"
-        },
-        {
-          "var": "c:IL",
-          "unit": "A",
-          "desc": "Current through Inductor L"
-        },
-        {
-          "var": "c:IC",
-          "unit": "A",
-          "desc": "Current through C2"
-        },
-        {
-          "var": "c:IRp",
-          "unit": "A",
-          "desc": "Current through Rp"
-        },
-        {
-          "var": "c:PRp",
-          "unit": "kW",
-          "desc": "Losses in Rp"
-        },
-        {
-          "var": "c:PL",
-          "unit": "kW",
-          "desc": "Losses in Inductor (Rs)"
-        },
-        {
-          "var": "c:Uc1",
-          "unit": "kV",
-          "desc": "Voltage across C1"
-        },
-        {
-          "var": "c:Uc2",
-          "unit": "kV",
-          "desc": "Voltage across C2"
-        },
-        {
-          "var": "c:Uc",
-          "unit": "kV",
-          "desc": "Voltage across C1 and C2"
-        },
-        {
-          "var": "c:Url",
-          "unit": "kV",
-          "desc": "Voltage across Inductor (Rs-L)"
-        },
-        {
-          "var": "c:Urp",
-          "unit": "kV",
-          "desc": "Voltage across Rp"
-        },
-        {
-          "var": "c:ncapa",
+          "var": "c:ntap_l1",
           "unit": "",
-          "desc": "Number of Stages in Parallel"
+          "desc": "Current Tap Position (LV1)"
         },
         {
-          "var": "c:acost",
+          "var": "c:ntap_l2",
           "unit": "",
-          "desc": "Annual Cost"
+          "desc": "Current Tap Position (LV2)"
         },
         {
-          "var": "c:ncapx",
+          "var": "c:ntap_l3",
           "unit": "",
-          "desc": "Max. No. of Steps"
+          "desc": "Current Tap Position (LV3)"
+        },
+        {
+          "var": "c:nntap_int_h0",
+          "unit": "",
+          "desc": "Tap (HV), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l1",
+          "unit": "",
+          "desc": "Tap (LV1), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l2",
+          "unit": "",
+          "desc": "Tap (LV2), relative Position"
+        },
+        {
+          "var": "c:nntap_int_l3",
+          "unit": "",
+          "desc": "Tap (LV3), relative Position"
+        },
+        {
+          "var": "c:z_h0",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (HV)"
+        },
+        {
+          "var": "c:z_l1",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV1)"
+        },
+        {
+          "var": "c:z_l2",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV2)"
+        },
+        {
+          "var": "c:z_l3",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (LV3)"
+        },
+        {
+          "var": "c:z_i",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (i)"
+        },
+        {
+          "var": "c:z_j",
+          "unit": "p.u.",
+          "desc": "Short Circuit Impedance (j)"
+        },
+        {
+          "var": "c:ym",
+          "unit": "p.u.",
+          "desc": "Magnetising Admittance"
+        },
+        {
+          "var": "c:t_h0",
+          "unit": "",
+          "desc": "Complex Winding Ratio (HV/S)"
+        },
+        {
+          "var": "c:t_l1",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV1/S)"
+        },
+        {
+          "var": "c:t_l2",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV2/S)"
+        },
+        {
+          "var": "c:t_l3",
+          "unit": "",
+          "desc": "Complex Winding Ratio (LV3/S)"
+        },
+        {
+          "var": "c:i_uplim",
+          "unit": "",
+          "desc": "Tap at Maximum"
+        },
+        {
+          "var": "c:i_lowlim",
+          "unit": "",
+          "desc": "Tap at Minimum"
         },
         {
           "var": "c:nCtrlIter",
@@ -7366,14 +7971,29 @@
           "desc": "No. of CTRL-iterations"
         },
         {
-          "var": "c:Tctrl",
+          "var": "c:itrcn",
           "unit": "",
-          "desc": "Controller Time Constant"
+          "desc": "Flag f. auto. Tap"
         },
         {
-          "var": "c:Kctrl",
-          "unit": "p.u./%",
-          "desc": "Controller Sensitivity dq/dv"
+          "var": "c:imagloc",
+          "unit": "",
+          "desc": "Position of Magn.ind."
+        },
+        {
+          "var": "c:um_1",
+          "unit": "",
+          "desc": "Magnetising Flux"
+        },
+        {
+          "var": "c:Gmload",
+          "unit": "kW",
+          "desc": "Iron Losses"
+        },
+        {
+          "var": "c:Xmload",
+          "unit": "kvar",
+          "desc": "Magnetising Losses"
         },
         {
           "var": "c:Ploss",
@@ -7406,14 +8026,94 @@
           "desc": "Reactive-Losses (no load)"
         },
         {
-          "var": "c:b0",
-          "unit": "p.u.",
-          "desc": "sigmaC"
+          "var": "c:Pmeas",
+          "unit": "MW",
+          "desc": "Measured active power"
         },
         {
-          "var": "c:ncapaTarget",
+          "var": "c:i_fixedtap",
           "unit": "",
-          "desc": "Number of Stages in Parallel - target value"
+          "desc": "Flag"
+        },
+        {
+          "var": "c:isat",
+          "unit": "",
+          "desc": "Saturated Model"
+        },
+        {
+          "var": "c:Inom_HV0",
+          "unit": "kA",
+          "desc": "Nominal Current (HV-Side)"
+        },
+        {
+          "var": "c:Inom_LV1",
+          "unit": "kA",
+          "desc": "Nominal Current (LV1-Side)"
+        },
+        {
+          "var": "c:Inom_LV2",
+          "unit": "kA",
+          "desc": "Nominal Current (LV2-Side)"
+        },
+        {
+          "var": "c:Inom_LV3",
+          "unit": "kA",
+          "desc": "Nominal Current (LV3-Side)"
+        },
+        {
+          "var": "c:maxloadpu",
+          "unit": "p.u.",
+          "desc": "Max. Loading"
+        },
+        {
+          "var": "c:dphiu_h0l1",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (1-2)"
+        },
+        {
+          "var": "c:dphiu_h0l2",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (1-3)"
+        },
+        {
+          "var": "c:dphiu_h0l3",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (1-4)"
+        },
+        {
+          "var": "c:dphiu_l1l2",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (2-3)"
+        },
+        {
+          "var": "c:dphiu_l1l3",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (2-4)"
+        },
+        {
+          "var": "c:dphiu_l2l3",
+          "unit": "deg",
+          "desc": "Voltage Drop Angle (3-4)"
+        },
+        {
+          "var": "c:tapHvTarget",
+          "unit": "",
+          "desc": "Tap - target value (HV)"
+        },
+        {
+          "var": "c:tapLv1Target",
+          "unit": "",
+          "desc": "Tap - target value (LV1)"
+        },
+        {
+          "var": "c:tapLv2Target",
+          "unit": "",
+          "desc": "Tap - target value (LV2)"
+        },
+        {
+          "var": "c:tapLv3Target",
+          "unit": "",
+          "desc": "Tap - target value (LV3)"
         },
         {
           "var": "c:totPenaltyCosts",
@@ -7426,14 +8126,44 @@
           "desc": "Total tap deviation"
         },
         {
-          "var": "c:bc",
-          "unit": "p.u.",
-          "desc": "Bc"
+          "var": "c:totPenaltyCostsHV",
+          "unit": "USD",
+          "desc": "Total penalty costs (HV)"
         },
         {
-          "var": "c:gpc",
-          "unit": "p.u.",
-          "desc": "Gp(C)"
+          "var": "c:totPenaltyCostsLV1",
+          "unit": "USD",
+          "desc": "Total penalty costs (LV1)"
+        },
+        {
+          "var": "c:totPenaltyCostsLV2",
+          "unit": "USD",
+          "desc": "Total penalty costs (LV2)"
+        },
+        {
+          "var": "c:totPenaltyCostsLV3",
+          "unit": "USD",
+          "desc": "Total penalty costs (LV3)"
+        },
+        {
+          "var": "c:totTapDeviationHV",
+          "unit": "",
+          "desc": "Total tap deviation (HV)"
+        },
+        {
+          "var": "c:totTapDeviationLV1",
+          "unit": "",
+          "desc": "Total tap deviation (LV1)"
+        },
+        {
+          "var": "c:totTapDeviationLV2",
+          "unit": "",
+          "desc": "Total tap deviation (LV2)"
+        },
+        {
+          "var": "c:totTapDeviationLV3",
+          "unit": "",
+          "desc": "Total tap deviation (LV3)"
         }
       ],
       "n": [
@@ -7673,6 +8403,49 @@
           "var": "b:loc_name",
           "unit": "",
           "desc": "Name"
+        },
+        {
+          "var": "b:trangle_h0",
+          "unit": "",
+          "desc": "Rel.Phase Displacement"
+        },
+        {
+          "var": "b:trangle_l1",
+          "unit": "",
+          "desc": "Rel.Phase Displacement"
+        },
+        {
+          "var": "b:trangle_l2",
+          "unit": "",
+          "desc": "Rel.Phase Displacement"
+        },
+        {
+          "var": "b:trangle_l3",
+          "unit": "",
+          "desc": "Rel.Phase Displacement"
+        },
+        {
+          "var": "b:itrcn",
+          "unit": "",
+          "desc": "Automatic Tap-Changer on/off",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "b:icont",
+          "unit": "",
+          "desc": "Continuous Tap",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "b:iExtCtrl",
+          "unit": "",
+          "desc": "External Controlled",
+          "suffix": ":Ph"
+        },
+        {
+          "var": "b:isat",
+          "unit": "",
+          "desc": "Saturated Model"
         }
       ]
     }
@@ -7710,11 +8483,6 @@
         "desc": "Serial Number"
       },
       {
-        "var": "e:manuf",
-        "unit": "",
-        "desc": "Manufacturer"
-      },
-      {
         "var": "e:commissionDate",
         "unit": "",
         "desc": "Commissioning Date"
@@ -7725,19 +8493,39 @@
         "desc": "Modified by"
       },
       {
-        "var": "e:mode_inp",
-        "unit": "",
-        "desc": "Input Mode"
-      },
-      {
         "var": "e:outserv",
         "unit": "",
         "desc": "Out of Service"
       },
       {
-        "var": "e:iintgnd",
+        "var": "e:iZoneBus",
         "unit": "",
-        "desc": "N-Connection"
+        "desc": "Zone"
+      },
+      {
+        "var": "e:iAreaBus",
+        "unit": "",
+        "desc": "Area"
+      },
+      {
+        "var": "e:lossAssign",
+        "unit": "",
+        "desc": "Loss assignment"
+      },
+      {
+        "var": "e:nt4nm",
+        "unit": "",
+        "desc": "parallel Transformers"
+      },
+      {
+        "var": "e:ntrcn",
+        "unit": "",
+        "desc": "Automatic Tap Changing"
+      },
+      {
+        "var": "e:ictrlside",
+        "unit": "",
+        "desc": "Controller for tap at"
       },
       {
         "var": "e:ilcph",
@@ -7745,124 +8533,99 @@
         "desc": "Phase"
       },
       {
-        "var": "e:iQorient",
+        "var": "e:t4ldc",
         "unit": "",
-        "desc": "Orientation"
+        "desc": "Controlled Node is at"
       },
       {
-        "var": "e:ncapx",
+        "var": "e:ntap_h0",
         "unit": "",
-        "desc": "Max. No. of Steps"
+        "desc": "Act. Position"
       },
       {
-        "var": "e:ncapa",
+        "var": "e:ntap_l1",
         "unit": "",
-        "desc": "Act. No. of Step"
+        "desc": "Act. Position"
       },
       {
-        "var": "e:shtype",
+        "var": "e:ntap_l2",
         "unit": "",
-        "desc": "Shunt Type"
+        "desc": "Act. Position"
       },
       {
-        "var": "e:i_opt",
+        "var": "e:ntap_l3",
         "unit": "",
-        "desc": "Use Controller for OPF optimisation"
+        "desc": "Act. Position"
       },
       {
-        "var": "e:i_optCont",
+        "var": "e:optaplimit",
         "unit": "",
-        "desc": "Control Mode"
+        "desc": "Operational limits for tap changer"
       },
       {
-        "var": "e:isCtrlShnt",
+        "var": "e:optapmin_h0",
         "unit": "",
-        "desc": "Tap Control for Unit Commitment"
+        "desc": "Minimum Position"
       },
       {
-        "var": "e:isCtrlShntCont",
+        "var": "e:optapmax_h0",
         "unit": "",
-        "desc": "Control Mode"
+        "desc": "Maximum Position"
       },
       {
-        "var": "e:ctrlUsage",
+        "var": "e:optapmin_l1",
         "unit": "",
-        "desc": "Tap Changer"
+        "desc": "Minimum Position"
       },
       {
-        "var": "e:curativeLim",
+        "var": "e:optapmax_l1",
         "unit": "",
-        "desc": "Max. curative tap deviation"
+        "desc": "Maximum Position"
       },
       {
-        "var": "e:isAllowSwitching",
+        "var": "e:optapmin_l2",
         "unit": "",
-        "desc": "Allow control to be switched on/off"
+        "desc": "Minimum Position"
       },
       {
-        "var": "e:minTap",
+        "var": "e:optapmax_l2",
         "unit": "",
-        "desc": "Min. No. of Steps"
+        "desc": "Maximum Position"
       },
       {
-        "var": "e:itrmt",
+        "var": "e:optapmin_l3",
         "unit": "",
-        "desc": "Type"
+        "desc": "Minimum Position"
       },
       {
-        "var": "e:iFinalSlope",
+        "var": "e:optapmax_l3",
         "unit": "",
-        "desc": "Set final slope (peak values)"
+        "desc": "Maximum Position"
       },
       {
-        "var": "e:ksat",
+        "var": "e:i_rem",
         "unit": "",
-        "desc": "Saturation Exponent"
-      },
-      {
-        "var": "e:iLimb",
-        "unit": "",
-        "desc": "Core"
-      },
-      {
-        "var": "e:iInterPol",
-        "unit": "",
-        "desc": "Interpolation"
-      },
-      {
-        "var": "e:iFit",
-        "unit": "",
-        "desc": "Data fitting"
-      },
-      {
-        "var": "e:iHyster",
-        "unit": "",
-        "desc": "Model"
-      },
-      {
-        "var": "e:iResFlux",
-        "unit": "",
-        "desc": "Residual flux"
-      },
-      {
-        "var": "e:systp",
-        "unit": "",
-        "desc": "System Type"
-      },
-      {
-        "var": "e:iZeConfig",
-        "unit": "",
-        "desc": "Configuration"
-      },
-      {
-        "var": "e:iswitch",
-        "unit": "",
-        "desc": "Switchable"
+        "desc": "Remote Control"
       },
       {
         "var": "e:i_cont",
         "unit": "",
         "desc": "Tap Changer"
+      },
+      {
+        "var": "e:uset_mode",
+        "unit": "",
+        "desc": "Setpoint"
+      },
+      {
+        "var": "e:iPpart",
+        "unit": "",
+        "desc": "Active power participation"
+      },
+      {
+        "var": "e:ifc",
+        "unit": "",
+        "desc": "Forced Cooling Enabled"
       },
       {
         "var": "e:constr",
@@ -7875,24 +8638,229 @@
         "desc": "Status"
       },
       {
-        "var": "e:i_rem",
+        "var": "e:iperfect",
         "unit": "",
-        "desc": "Remote Control"
+        "desc": "Ideal component"
       },
       {
-        "var": "e:pf_recap_mx",
+        "var": "e:i_tapopt_hv0",
         "unit": "",
-        "desc": "Power Factor"
+        "desc": "Tap Position HV-Side"
       },
       {
-        "var": "e:pf_recap_mn",
+        "var": "e:i_tapopt_lv1",
         "unit": "",
-        "desc": "Power Factor"
+        "desc": "Tap Position LV1-Side"
       },
       {
-        "var": "e:uset_mode",
+        "var": "e:i_tapopt_lv2",
         "unit": "",
-        "desc": "Setpoint"
+        "desc": "Tap Position LV2-Side"
+      },
+      {
+        "var": "e:i_tapopt_lv3",
+        "unit": "",
+        "desc": "Tap Position LV3-Side"
+      },
+      {
+        "var": "e:i_tapoptCont_hv0",
+        "unit": "",
+        "desc": "Control Mode HV-Side"
+      },
+      {
+        "var": "e:i_tapoptCont_lv1",
+        "unit": "",
+        "desc": "Control Mode LV1-Side"
+      },
+      {
+        "var": "e:i_tapoptCont_lv2",
+        "unit": "",
+        "desc": "Control Mode LV2-Side"
+      },
+      {
+        "var": "e:i_tapoptCont_lv3",
+        "unit": "",
+        "desc": "Control Mode LV3-Side"
+      },
+      {
+        "var": "e:ionlyPre",
+        "unit": "",
+        "desc": "Optimise in DC OPF"
+      },
+      {
+        "var": "e:iOPFCload",
+        "unit": "",
+        "desc": "Max. loading constraint"
+      },
+      {
+        "var": "e:isCtrlTapLV1",
+        "unit": "",
+        "desc": "Tap Position LV1-Side"
+      },
+      {
+        "var": "e:isCtrlTapLV2",
+        "unit": "",
+        "desc": "Tap Position LV2-Side"
+      },
+      {
+        "var": "e:isCtrlTapLV3",
+        "unit": "",
+        "desc": "Tap Position LV3-Side"
+      },
+      {
+        "var": "e:isCtrlTapHV",
+        "unit": "",
+        "desc": "Tap Position HV-Side"
+      },
+      {
+        "var": "e:isCtrlTapLV1Cont",
+        "unit": "",
+        "desc": "Control Mode"
+      },
+      {
+        "var": "e:isCtrlTapLV2Cont",
+        "unit": "",
+        "desc": "Control Mode"
+      },
+      {
+        "var": "e:isCtrlTapLV3Cont",
+        "unit": "",
+        "desc": "Control Mode"
+      },
+      {
+        "var": "e:isCtrlTapHVCont",
+        "unit": "",
+        "desc": "Control Mode"
+      },
+      {
+        "var": "e:isConstrLoading",
+        "unit": "",
+        "desc": "Max. loading constraint for Unit Commitment"
+      },
+      {
+        "var": "e:isMaxLoadSoftNlin",
+        "unit": "",
+        "desc": "Penalty costs for soft constraints"
+      },
+      {
+        "var": "e:allowOutDistFacFilt",
+        "unit": "",
+        "desc": "Allow filtering by outage distribution factor"
+      },
+      {
+        "var": "e:allowMarginFilt",
+        "unit": "",
+        "desc": "Allow filtering by constraint margin"
+      },
+      {
+        "var": "e:allowCntConstrFilt",
+        "unit": "",
+        "desc": "Allow contingency filtering by number of critical constraints"
+      },
+      {
+        "var": "e:isSepCntConstrType",
+        "unit": "",
+        "desc": "Separate constraint type"
+      },
+      {
+        "var": "e:cntConstrType",
+        "unit": "",
+        "desc": "Contingency-constraint type"
+      },
+      {
+        "var": "e:isSepCntMaxAllowedLoading",
+        "unit": "",
+        "desc": "Separate max. allowed loading"
+      },
+      {
+        "var": "e:ctrlUsageHV",
+        "unit": "",
+        "desc": "Tap Position HV-Side"
+      },
+      {
+        "var": "e:curativeLimHV",
+        "unit": "",
+        "desc": "Max. curative tap deviation (HV)"
+      },
+      {
+        "var": "e:ctrlUsageLV1",
+        "unit": "",
+        "desc": "Tap Position LV1-Side"
+      },
+      {
+        "var": "e:curativeLimLV1",
+        "unit": "",
+        "desc": "Max. curative tap deviation (LV1)"
+      },
+      {
+        "var": "e:ctrlUsageLV2",
+        "unit": "",
+        "desc": "Tap Position LV2-Side"
+      },
+      {
+        "var": "e:curativeLimLV2",
+        "unit": "",
+        "desc": "Max. curative tap deviation (LV2)"
+      },
+      {
+        "var": "e:ctrlUsageLV3",
+        "unit": "",
+        "desc": "Tap Position LV3-Side"
+      },
+      {
+        "var": "e:curativeLimLV3",
+        "unit": "",
+        "desc": "Max. curative tap deviation (LV3)"
+      },
+      {
+        "var": "e:isConstrLoadingPlacement",
+        "unit": "",
+        "desc": "Max. loading constraint for Optimal Equipment Placement"
+      },
+      {
+        "var": "e:isCtrlTapLV1Placement",
+        "unit": "",
+        "desc": "Tap Position LV1-Side"
+      },
+      {
+        "var": "e:isCtrlTapLV2Placement",
+        "unit": "",
+        "desc": "Tap Position LV2-Side"
+      },
+      {
+        "var": "e:isCtrlTapLV3Placement",
+        "unit": "",
+        "desc": "Tap Position LV3-Side"
+      },
+      {
+        "var": "e:isCtrlTapHVPlacement",
+        "unit": "",
+        "desc": "Tap Position HV-Side"
+      },
+      {
+        "var": "e:ildc",
+        "unit": "",
+        "desc": "Compensation"
+      },
+      {
+        "var": "e:i_tapini_hv0",
+        "unit": "",
+        "desc": "Estimate Tap Position HV-Side"
+      },
+      {
+        "var": "e:i_tapini_lv1",
+        "unit": "",
+        "desc": "Estimate Tap Position LV1-Side"
+      },
+      {
+        "var": "e:i_tapini_lv2",
+        "unit": "",
+        "desc": "Estimate Tap Position LV2-Side"
+      },
+      {
+        "var": "e:i_tapini_lv3",
+        "unit": "",
+        "desc": "Estimate Tap Position LV3-Side"
       },
       {
         "var": "e:iIntTapCtrl",
@@ -7900,199 +8868,79 @@
         "desc": "Use Integrated Tap Controller"
       },
       {
-        "var": "e:iTaps",
+        "var": "e:icomp",
         "unit": "",
-        "desc": "According to Measurement Report"
+        "desc": "Compounding"
       },
       {
-        "var": "e:iperfect",
+        "var": "e:iwinding",
         "unit": "",
-        "desc": "Ideal component"
+        "desc": "Create Curve for"
       },
       {
-        "var": "e:ushnm",
-        "unit": "kV",
-        "desc": "Rated Voltage"
+        "var": "e:ifrqft",
+        "unit": "",
+        "desc": "Frequent Fault ( >10(5)/lifetime, Category II(III) )"
       },
       {
-        "var": "e:qcapn",
+        "var": "e:iansish",
+        "unit": "",
+        "desc": "ANSI Curve Shift"
+      },
+      {
+        "var": "e:drawInr",
+        "unit": "",
+        "desc": "Draw Inrush Current"
+      },
+      {
+        "var": "e:fr_coldload",
+        "unit": "",
+        "desc": "Cold Load Curve"
+      },
+      {
+        "var": "e:iAstabint",
+        "unit": "",
+        "desc": "A-stable integration algorithm"
+      },
+      {
+        "var": "e:iResFlux",
+        "unit": "",
+        "desc": "Residual flux"
+      },
+      {
+        "var": "e:usetp",
+        "unit": "p.u.",
+        "desc": "Voltage Setpoint"
+      },
+      {
+        "var": "e:psetp",
+        "unit": "MW",
+        "desc": "Active Power Setpoint"
+      },
+      {
+        "var": "e:qsetp",
         "unit": "Mvar",
-        "desc": "Rated Reactive Power, C"
+        "desc": "Reactive Power Setpoint"
       },
       {
-        "var": "e:qtotn",
-        "unit": "Mvar",
-        "desc": "Rated Reactive Power, L-C"
-      },
-      {
-        "var": "e:cucap",
-        "unit": "A",
-        "desc": "Rated Current, C"
-      },
-      {
-        "var": "e:cutot",
-        "unit": "A",
-        "desc": "Rated Current, L-C"
-      },
-      {
-        "var": "e:bcap",
-        "unit": "uS",
-        "desc": "Susceptance"
-      },
-      {
-        "var": "e:ccap",
-        "unit": "uF",
-        "desc": "Capacitance"
-      },
-      {
-        "var": "e:c1",
-        "unit": "uF",
-        "desc": "Capacitance C1"
-      },
-      {
-        "var": "e:c2",
-        "unit": "uF",
-        "desc": "Capacitance C2"
-      },
-      {
-        "var": "e:pgrad",
-        "unit": "%",
-        "desc": "Degree"
-      },
-      {
-        "var": "e:fres",
-        "unit": "Hz",
-        "desc": "Resonant Frequency"
-      },
-      {
-        "var": "e:nres",
+        "var": "e:ratfac_h0",
         "unit": "",
-        "desc": "Tuning Order"
+        "desc": "HV-Side"
       },
       {
-        "var": "e:qrean",
-        "unit": "Mvar",
-        "desc": "Rated Reactive Power, L"
-      },
-      {
-        "var": "e:curea",
-        "unit": "A",
-        "desc": "Rated Current, L"
-      },
-      {
-        "var": "e:xrea",
-        "unit": "Ohm",
-        "desc": "Reactance"
-      },
-      {
-        "var": "e:rlrea",
-        "unit": "mH",
-        "desc": "Inductance"
-      },
-      {
-        "var": "e:grea",
+        "var": "e:ratfac_l1",
         "unit": "",
-        "desc": "Quality Factor (at fn)"
+        "desc": "LV1-Side"
       },
       {
-        "var": "e:greaf0",
+        "var": "e:ratfac_l2",
         "unit": "",
-        "desc": "Quality Factor (at fr)"
+        "desc": "LV2-Side"
       },
       {
-        "var": "e:rrea",
-        "unit": "Ohm",
-        "desc": "Resistance"
-      },
-      {
-        "var": "e:rpara",
-        "unit": "Ohm",
-        "desc": "Parallel Resistance"
-      },
-      {
-        "var": "e:tandc",
+        "var": "e:ratfac_l3",
         "unit": "",
-        "desc": "Loss Factor, tan(delta)"
-      },
-      {
-        "var": "e:gparac",
-        "unit": "uS",
-        "desc": "Parallel Conductance"
-      },
-      {
-        "var": "e:psi0",
-        "unit": "p.u.",
-        "desc": "Knee Flux"
-      },
-      {
-        "var": "e:xmair",
-        "unit": "p.u.",
-        "desc": "Saturated Reactance"
-      },
-      {
-        "var": "e:smoothfac",
-        "unit": "%",
-        "desc": "Smoothing Factor"
-      },
-      {
-        "var": "e:Lwidth",
-        "unit": "%",
-        "desc": "Loop width"
-      },
-      {
-        "var": "e:PsiresA",
-        "unit": "p.u.",
-        "desc": "Residual flux, ph. A"
-      },
-      {
-        "var": "e:PsiresB",
-        "unit": "p.u.",
-        "desc": "Residual flux, ph. B"
-      },
-      {
-        "var": "e:PsiresC",
-        "unit": "p.u.",
-        "desc": "Residual flux, ph. C"
-      },
-      {
-        "var": "e:Bg",
-        "unit": "nS",
-        "desc": "Susceptance to Ground"
-      },
-      {
-        "var": "e:Xe",
-        "unit": "Ohm",
-        "desc": "Reactance, Xe"
-      },
-      {
-        "var": "e:Re",
-        "unit": "Ohm",
-        "desc": "Resistance, Re"
-      },
-      {
-        "var": "e:X0toX1",
-        "unit": "",
-        "desc": "X0/X1 ratio"
-      },
-      {
-        "var": "e:R0toR1",
-        "unit": "",
-        "desc": "R0/R1 ratio"
-      },
-      {
-        "var": "e:B0toB1",
-        "unit": "",
-        "desc": "B0/B1 ratio"
-      },
-      {
-        "var": "e:G0toG1",
-        "unit": "",
-        "desc": "G0/G1 ratio"
-      },
-      {
-        "var": "e:acost",
-        "unit": "USD/a",
-        "desc": "Annual Cost"
+        "desc": "LV3-Side"
       },
       {
         "var": "e:Tctrl",
@@ -8100,39 +8948,119 @@
         "desc": "Controller Time Constant"
       },
       {
-        "var": "e:Kctrl",
-        "unit": "p.u./%",
-        "desc": "Controller Sensitivity dq/dv"
+        "var": "e:Kqctrl",
+        "unit": "tap/Mvar",
+        "desc": "Controller Sensitivity dtap/dQ"
       },
       {
-        "var": "e:usetp_mx",
+        "var": "e:Kpctrl",
+        "unit": "tap/MW",
+        "desc": "Controller Sensitivity dtap/dP"
+      },
+      {
+        "var": "e:usp_up",
         "unit": "p.u.",
-        "desc": "Upper Voltage Limit"
+        "desc": "Upper Voltage Bound"
       },
       {
-        "var": "e:usetp_mn",
+        "var": "e:usp_low",
         "unit": "p.u.",
-        "desc": "Lower Voltage Limit"
+        "desc": "Lower Voltage Bound"
       },
       {
-        "var": "e:qsetp_mx",
+        "var": "e:psp_up",
+        "unit": "MW",
+        "desc": "Upper Active Power Bound"
+      },
+      {
+        "var": "e:psp_low",
+        "unit": "MW",
+        "desc": "Lower Active Power Bound"
+      },
+      {
+        "var": "e:qsp_up",
         "unit": "Mvar",
-        "desc": "Upper Reactive Power Limit"
+        "desc": "Upper Reactive Power Bound"
       },
       {
-        "var": "e:qsetp_mn",
+        "var": "e:Ptolerance",
+        "unit": "MW",
+        "desc": "Tolerance (+/-)"
+      },
+      {
+        "var": "e:qsp_low",
         "unit": "Mvar",
-        "desc": "Lower Reactive Power Limit"
+        "desc": "Lower Reactive Power Bound"
       },
       {
-        "var": "e:pfsetp_mx",
+        "var": "e:Kpart",
         "unit": "",
-        "desc": "Upper Power Factor Limit"
+        "desc": "Participation factor"
       },
       {
-        "var": "e:pfsetp_mn",
-        "unit": "",
-        "desc": "Lower Power Factor Limit"
+        "var": "e:re0hv0",
+        "unit": "Ohm",
+        "desc": "Resistance, Re"
+      },
+      {
+        "var": "e:re0lv1",
+        "unit": "Ohm",
+        "desc": "Resistance, Re"
+      },
+      {
+        "var": "e:re0lv2",
+        "unit": "Ohm",
+        "desc": "Resistance, Re"
+      },
+      {
+        "var": "e:re0lv3",
+        "unit": "Ohm",
+        "desc": "Resistance, Re"
+      },
+      {
+        "var": "e:xe0hv0",
+        "unit": "Ohm",
+        "desc": "Reactance, Xe"
+      },
+      {
+        "var": "e:xe0lv1",
+        "unit": "Ohm",
+        "desc": "Reactance, Xe"
+      },
+      {
+        "var": "e:xe0lv2",
+        "unit": "Ohm",
+        "desc": "Reactance, Xe"
+      },
+      {
+        "var": "e:xe0lv3",
+        "unit": "Ohm",
+        "desc": "Reactance, Xe"
+      },
+      {
+        "var": "e:maxload",
+        "unit": "%",
+        "desc": "Max. loading"
+      },
+      {
+        "var": "e:Vtolerance",
+        "unit": "%",
+        "desc": "Tolerance (+/-)"
+      },
+      {
+        "var": "e:PsiresA",
+        "unit": "p.u.",
+        "desc": "Phase A"
+      },
+      {
+        "var": "e:PsiresB",
+        "unit": "p.u.",
+        "desc": "Phase B"
+      },
+      {
+        "var": "e:PsiresC",
+        "unit": "p.u.",
+        "desc": "Phase C"
       },
       {
         "var": "e:GPSlat",
@@ -8145,6 +9073,21 @@
         "desc": "Longitude / Easting"
       },
       {
+        "var": "e:scalingFacSoftConstrOpf",
+        "unit": "",
+        "desc": "Weighting factor for soft constraint penalty"
+      },
+      {
+        "var": "e:scalingFacSoftConstrCost",
+        "unit": "",
+        "desc": "Cost scaling factor"
+      },
+      {
+        "var": "e:cntMaxAllowedLoading",
+        "unit": "%",
+        "desc": "Max. allowed loading in Contingencies"
+      },
+      {
         "var": "e:penaltyCosts",
         "unit": "USD",
         "desc": "Penalty costs per tap deviation"
@@ -8155,14 +9098,29 @@
         "desc": "Costs per curative tap deviation"
       },
       {
-        "var": "e:switchOnCosts",
-        "unit": "USD",
-        "desc": "Switch-on costs"
+        "var": "e:dpl1",
+        "unit": "",
+        "desc": "dpl1"
       },
       {
-        "var": "e:switchOffCosts",
-        "unit": "USD",
-        "desc": "Switch-off costs"
+        "var": "e:dpl2",
+        "unit": "",
+        "desc": "dpl2"
+      },
+      {
+        "var": "e:dpl3",
+        "unit": "",
+        "desc": "dpl3"
+      },
+      {
+        "var": "e:dpl4",
+        "unit": "",
+        "desc": "dpl4"
+      },
+      {
+        "var": "e:dpl5",
+        "unit": "",
+        "desc": "dpl5"
       },
       {
         "var": "e:appr_modif",
@@ -8170,29 +9128,9 @@
         "desc": "Modified"
       },
       {
-        "var": "e:satcur",
-        "unit": "p.u.",
-        "desc": "Current (peak)"
-      },
-      {
-        "var": "e:satflux",
-        "unit": "p.u.",
-        "desc": "Flux (peak)"
-      },
-      {
-        "var": "e:satcue",
-        "unit": "%",
-        "desc": "Current (RMS)"
-      },
-      {
-        "var": "e:satvol",
-        "unit": "p.u.",
-        "desc": "Voltage (RMS)"
-      },
-      {
-        "var": "e:mTaps",
+        "var": "e:input_cl",
         "unit": "",
-        "desc": "Measurement Report"
+        "desc": "Values"
       },
       {
         "var": "e:cimRdfId",
@@ -8215,59 +9153,49 @@
         "desc": "In Folder"
       },
       {
-        "var": "e:bus1",
+        "var": "e:typ_id",
+        "unit": "TypTr4",
+        "desc": "Type"
+      },
+      {
+        "var": "e:bush0",
         "unit": "StaCubic",
-        "desc": "Terminal"
+        "desc": "HV-Side"
       },
       {
-        "var": "e:bus1n",
+        "var": "e:busl1",
         "unit": "StaCubic",
-        "desc": "Neutral"
+        "desc": "LV1-Side"
       },
       {
-        "var": "e:fcharL",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "L(f)"
+        "var": "e:busl2",
+        "unit": "StaCubic",
+        "desc": "LV2-Side"
       },
       {
-        "var": "e:fcharR",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "Rs(f)"
+        "var": "e:busl3",
+        "unit": "StaCubic",
+        "desc": "LV3-Side"
       },
       {
-        "var": "e:fcharC",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "C(f)"
+        "var": "e:p_rem",
+        "unit": "StaBar,ElmTerm",
+        "desc": "Controlled Node"
       },
       {
-        "var": "e:fcharL0",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "L0(f)"
+        "var": "e:p_cub",
+        "unit": "StaCubic",
+        "desc": "Controlled Branch (Cubicle)"
       },
       {
-        "var": "e:fcharR0",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "Rs0(f)"
+        "var": "e:tapctrl",
+        "unit": "ElmTr4,ElmTr2",
+        "desc": "Tap Controller"
       },
       {
-        "var": "e:fcharC0",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "C0(f)"
-      },
-      {
-        "var": "e:fcharC1",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "C1(f)"
-      },
-      {
-        "var": "e:fcharC2",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "C2(f)"
-      },
-      {
-        "var": "e:fcharRp",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "Rp(f)"
+        "var": "e:p_pmeas",
+        "unit": "StaCubic*,ElmBoundary",
+        "desc": "P measured at"
       },
       {
         "var": "e:doc_id",
@@ -8285,19 +9213,39 @@
         "desc": "Operator"
       },
       {
-        "var": "e:p_rem",
-        "unit": "StaBar,ElmTerm",
-        "desc": "Controlled Node"
-      },
-      {
-        "var": "e:p_cub",
-        "unit": "StaCubic,ElmBoundary",
-        "desc": "Q Controlled at"
-      },
-      {
         "var": "e:pStoch",
         "unit": "StoTyptrf",
         "desc": "Element model"
+      },
+      {
+        "var": "e:pldc",
+        "unit": "StaLdc",
+        "desc": "External LDC"
+      },
+      {
+        "var": "e:pVccurve",
+        "unit": "IntVctrlcurve",
+        "desc": "V-Control-Curve"
+      },
+      {
+        "var": "e:pRating_hv0",
+        "unit": "IntThrating",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:pRating_lv1",
+        "unit": "IntThrating",
+        "desc": "LV1-Side"
+      },
+      {
+        "var": "e:pRating_lv2",
+        "unit": "IntThrating",
+        "desc": "LV2-Side"
+      },
+      {
+        "var": "e:pRating_lv3",
+        "unit": "IntThrating",
+        "desc": "LV3-Side"
       },
       {
         "var": "e:cpHeadFold",
@@ -8305,14 +9253,24 @@
         "desc": "Head Folder"
       },
       {
-        "var": "e:bus1_bar",
+        "var": "e:bush0_bar",
         "unit": "",
-        "desc": "Terminal"
+        "desc": "HV-Side"
       },
       {
-        "var": "e:bus1n_bar",
+        "var": "e:busl1_bar",
         "unit": "",
-        "desc": "Neutral"
+        "desc": "LV1-Side"
+      },
+      {
+        "var": "e:busl2_bar",
+        "unit": "",
+        "desc": "LV2-Side"
+      },
+      {
+        "var": "e:busl3_bar",
+        "unit": "",
+        "desc": "LV3-Side"
       },
       {
         "var": "e:cpGrid",
@@ -8425,94 +9383,44 @@
         "desc": "Supplying Substation"
       },
       {
-        "var": "e:cgnd",
-        "unit": "",
-        "desc": "Star Point"
+        "var": "e:Snom_h0",
+        "unit": "MVA",
+        "desc": "HV-Side, Nominal Power"
       },
       {
-        "var": "e:ctech",
-        "unit": "",
-        "desc": "Technology"
+        "var": "e:Snom_l1",
+        "unit": "MVA",
+        "desc": "LV1-Side, Nominal Power"
       },
       {
-        "var": "e:harmPgeL",
-        "unit": "mH",
-        "desc": "Inductance"
+        "var": "e:Snom_l2",
+        "unit": "MVA",
+        "desc": "LV2-Side, Nominal Power"
       },
       {
-        "var": "e:harmPgeR",
-        "unit": "Ohm",
-        "desc": "Resistance"
+        "var": "e:Snom_l3",
+        "unit": "MVA",
+        "desc": "LV3-Side, Nominal Power"
       },
       {
-        "var": "e:harmPgeC",
-        "unit": "uF",
-        "desc": "Capacitance"
+        "var": "e:Snom_h0_a",
+        "unit": "MVA",
+        "desc": "HV-Side, Nom.Power (act.)"
       },
       {
-        "var": "e:harmPgeL0",
-        "unit": "mH",
-        "desc": "Zero-sequence Ind."
+        "var": "e:Snom_l1_a",
+        "unit": "MVA",
+        "desc": "LV1-Side, Nom.Power (act.)"
       },
       {
-        "var": "e:harmPgeR0",
-        "unit": "Ohm",
-        "desc": "Zero-sequence Res."
+        "var": "e:Snom_l2_a",
+        "unit": "MVA",
+        "desc": "LV2-Side, Nom.Power (act.)"
       },
       {
-        "var": "e:harmPgeC0",
-        "unit": "uF",
-        "desc": "Zero-sequence Cap."
-      },
-      {
-        "var": "e:harmPgeC1",
-        "unit": "uF",
-        "desc": "Capacitance 1"
-      },
-      {
-        "var": "e:harmPgeC2",
-        "unit": "uF",
-        "desc": "Capacitance 2"
-      },
-      {
-        "var": "e:harmPgeRp",
-        "unit": "Ohm",
-        "desc": "Parallel Resistance"
-      },
-      {
-        "var": "e:xreapu",
-        "unit": "p.u.",
-        "desc": "Linear Reactance"
-      },
-      {
-        "var": "e:cPsiresC",
-        "unit": "p.u.",
-        "desc": "Residual flux, ph. C"
-      },
-      {
-        "var": "e:aFrolich",
-        "unit": "",
-        "desc": "Frolich equation coefficient a"
-      },
-      {
-        "var": "e:bFrolich",
-        "unit": "",
-        "desc": "Frolich equation coefficient b"
-      },
-      {
-        "var": "e:cFrolich",
-        "unit": "",
-        "desc": "Frolich equation coefficient c"
-      },
-      {
-        "var": "e:xsatFrolich",
-        "unit": "",
-        "desc": "Frolich equation saturated reactance (p.u.)"
-      },
-      {
-        "var": "e:mseFrolich",
-        "unit": "",
-        "desc": "Frolich equation, mean squared error"
+        "var": "e:Snom_l3_a",
+        "unit": "MVA",
+        "desc": "LV3-Side, Nom.Power (act.)"
       },
       {
         "var": "e:cpCtrlNode",
@@ -8520,29 +9428,64 @@
         "desc": "Target Node"
       },
       {
-        "var": "e:c_pstac",
-        "unit": "ElmStactrl",
-        "desc": "External Station Controller"
+        "var": "e:cgnd_hv0",
+        "unit": "",
+        "desc": "Star Point"
       },
       {
-        "var": "e:c_pctrl",
-        "unit": "ElmShntctrl",
-        "desc": "Shunt Controller"
+        "var": "e:cgnd_lv1",
+        "unit": "",
+        "desc": "Star Point"
       },
       {
-        "var": "e:qdslCtrl",
-        "unit": "ElmQdsl",
-        "desc": "Quasi-Dynamic Model"
+        "var": "e:cgnd_lv2",
+        "unit": "",
+        "desc": "Star Point"
       },
       {
-        "var": "e:Qmax",
-        "unit": "Mvar",
-        "desc": "Max. Rated Reactive Power"
+        "var": "e:cgnd_lv3",
+        "unit": "",
+        "desc": "Star Point"
       },
       {
-        "var": "e:Qact",
-        "unit": "Mvar",
-        "desc": "Actual Reactive Power"
+        "var": "e:cpeter_hv0",
+        "unit": "",
+        "desc": "Petersen Coil"
+      },
+      {
+        "var": "e:cpeter_lv1",
+        "unit": "",
+        "desc": "Petersen Coil"
+      },
+      {
+        "var": "e:cpeter_lv2",
+        "unit": "",
+        "desc": "Petersen Coil"
+      },
+      {
+        "var": "e:cpeter_lv3",
+        "unit": "",
+        "desc": "Petersen Coil"
+      },
+      {
+        "var": "e:pT_hv0",
+        "unit": "",
+        "desc": "Voltage Range"
+      },
+      {
+        "var": "e:pT_lv1",
+        "unit": "",
+        "desc": "Voltage Range"
+      },
+      {
+        "var": "e:pT_lv2",
+        "unit": "",
+        "desc": "Voltage Range"
+      },
+      {
+        "var": "e:pT_lv3",
+        "unit": "",
+        "desc": "Voltage Range"
       },
       {
         "var": "e:FOR1",
@@ -8560,6 +9503,11 @@
         "desc": "Forced Outage Duration"
       },
       {
+        "var": "e:pTypStoch",
+        "unit": "StoTyptrf",
+        "desc": "Type model"
+      },
+      {
         "var": "e:CCEarFr",
         "unit": "1/a",
         "desc": "Frequency of single earth faults"
@@ -8573,6 +9521,386 @@
         "var": "e:CCEarProb",
         "unit": "%",
         "desc": "Conditional probability of a second earth fault"
+      },
+      {
+        "var": "e:cCtrlTapLV1ContOpf",
+        "unit": "",
+        "desc": "Control Mode"
+      },
+      {
+        "var": "e:cCtrlTapLV2ContOpf",
+        "unit": "",
+        "desc": "Control Mode"
+      },
+      {
+        "var": "e:cCtrlTapLV3ContOpf",
+        "unit": "",
+        "desc": "Control Mode"
+      },
+      {
+        "var": "e:cCtrlTapHVContOpf",
+        "unit": "",
+        "desc": "Control Mode"
+      },
+      {
+        "var": "e:cOptOnlyPre",
+        "unit": "",
+        "desc": "Optimise in DC OPF"
+      },
+      {
+        "var": "e:cCtrlTapLV1Cont",
+        "unit": "",
+        "desc": "Control Mode"
+      },
+      {
+        "var": "e:cCtrlTapLV2Cont",
+        "unit": "",
+        "desc": "Control Mode"
+      },
+      {
+        "var": "e:cCtrlTapLV3Cont",
+        "unit": "",
+        "desc": "Control Mode"
+      },
+      {
+        "var": "e:cCtrlTapHVCont",
+        "unit": "",
+        "desc": "Control Mode"
+      },
+      {
+        "var": "e:cAllowOutDistFacFilt",
+        "unit": "",
+        "desc": "Allow filtering by outage distribution factor"
+      },
+      {
+        "var": "e:cAllowMarginFilt",
+        "unit": "",
+        "desc": "Allow filtering by constraint margin"
+      },
+      {
+        "var": "e:cAllowCntConstrFilt",
+        "unit": "",
+        "desc": "Allow contingency filtering by number of critical constraints"
+      },
+      {
+        "var": "e:cIsSepCntConstrType",
+        "unit": "",
+        "desc": "Separate constraint type"
+      },
+      {
+        "var": "e:cIsSepCntMaxAllowedLoading",
+        "unit": "",
+        "desc": "Separate max. allowed loading"
+      },
+      {
+        "var": "e:cCtrlUsageHV",
+        "unit": "",
+        "desc": "Tap Position HV-Side"
+      },
+      {
+        "var": "e:cCtrlUsageLV1",
+        "unit": "",
+        "desc": "Tap Position LV1-Side"
+      },
+      {
+        "var": "e:cCtrlUsageLV2",
+        "unit": "",
+        "desc": "Tap Position LV2-Side"
+      },
+      {
+        "var": "e:cCtrlUsageLV3",
+        "unit": "",
+        "desc": "Tap Position LV3-Side"
+      },
+      {
+        "var": "e:rSbasepu_h0l1",
+        "unit": "p.u.",
+        "desc": "r(HV-LV1) (Sbase)"
+      },
+      {
+        "var": "e:rSbasepu_h0l2",
+        "unit": "p.u.",
+        "desc": "r(HV-LV2) (Sbase)"
+      },
+      {
+        "var": "e:rSbasepu_h0l3",
+        "unit": "p.u.",
+        "desc": "r(HV-LV3) (Sbase)"
+      },
+      {
+        "var": "e:rSbasepu_l1l2",
+        "unit": "p.u.",
+        "desc": "r(LV1-LV2) (Sbase)"
+      },
+      {
+        "var": "e:rSbasepu_l1l3",
+        "unit": "p.u.",
+        "desc": "r(LV1-LV3) (Sbase)"
+      },
+      {
+        "var": "e:rSbasepu_l2l3",
+        "unit": "p.u.",
+        "desc": "r(LV2-LV3) (Sbase)"
+      },
+      {
+        "var": "e:xSbasepu_h0l1",
+        "unit": "p.u.",
+        "desc": "x(HV-LV1) (Sbase)"
+      },
+      {
+        "var": "e:xSbasepu_h0l2",
+        "unit": "p.u.",
+        "desc": "x(HV-LV2) (Sbase)"
+      },
+      {
+        "var": "e:xSbasepu_h0l3",
+        "unit": "p.u.",
+        "desc": "x(HV-LV3) (Sbase)"
+      },
+      {
+        "var": "e:xSbasepu_l1l2",
+        "unit": "p.u.",
+        "desc": "x(LV1-LV2) (Sbase)"
+      },
+      {
+        "var": "e:xSbasepu_l1l3",
+        "unit": "p.u.",
+        "desc": "x(LV1-LV3) (Sbase)"
+      },
+      {
+        "var": "e:xSbasepu_l2l3",
+        "unit": "p.u.",
+        "desc": "x(LV2-LV3) (Sbase)"
+      },
+      {
+        "var": "e:rSbasepu_hv0",
+        "unit": "p.u.",
+        "desc": "r(HV) (Sbase)"
+      },
+      {
+        "var": "e:rSbasepu_lv1",
+        "unit": "p.u.",
+        "desc": "r(LV1) (Sbase)"
+      },
+      {
+        "var": "e:rSbasepu_lv2",
+        "unit": "p.u.",
+        "desc": "r(LV2) (Sbase)"
+      },
+      {
+        "var": "e:rSbasepu_lv3",
+        "unit": "p.u.",
+        "desc": "r(LV3) (Sbase)"
+      },
+      {
+        "var": "e:rSbasepu_i",
+        "unit": "p.u.",
+        "desc": "r(i) (Sbase)"
+      },
+      {
+        "var": "e:rSbasepu_j",
+        "unit": "p.u.",
+        "desc": "r(j) (Sbase)"
+      },
+      {
+        "var": "e:xSbasepu_hv0",
+        "unit": "p.u.",
+        "desc": "x(HV) (Sbase)"
+      },
+      {
+        "var": "e:xSbasepu_lv1",
+        "unit": "p.u.",
+        "desc": "x(LV1) (Sbase)"
+      },
+      {
+        "var": "e:xSbasepu_lv2",
+        "unit": "p.u.",
+        "desc": "x(LV2) (Sbase)"
+      },
+      {
+        "var": "e:xSbasepu_lv3",
+        "unit": "p.u.",
+        "desc": "x(LV3) (Sbase)"
+      },
+      {
+        "var": "e:xSbasepu_i",
+        "unit": "p.u.",
+        "desc": "x(i) (Sbase)"
+      },
+      {
+        "var": "e:xSbasepu_j",
+        "unit": "p.u.",
+        "desc": "x(j) (Sbase)"
+      },
+      {
+        "var": "e:bSbasepu",
+        "unit": "p.u.",
+        "desc": "b (Sbase)"
+      },
+      {
+        "var": "e:r0Sbasepu_h0l1",
+        "unit": "p.u.",
+        "desc": "r0(HV-LV1) (Sbase)"
+      },
+      {
+        "var": "e:r0Sbasepu_h0l2",
+        "unit": "p.u.",
+        "desc": "r0(HV-LV2) (Sbase)"
+      },
+      {
+        "var": "e:r0Sbasepu_h0l3",
+        "unit": "p.u.",
+        "desc": "r0(HV-LV3) (Sbase)"
+      },
+      {
+        "var": "e:r0Sbasepu_l1l2",
+        "unit": "p.u.",
+        "desc": "r0(LV1-LV2) (Sbase)"
+      },
+      {
+        "var": "e:r0Sbasepu_l1l3",
+        "unit": "p.u.",
+        "desc": "r0(LV1-LV3) (Sbase)"
+      },
+      {
+        "var": "e:r0Sbasepu_l2l3",
+        "unit": "p.u.",
+        "desc": "r0(LV2-LV3) (Sbase)"
+      },
+      {
+        "var": "e:x0Sbasepu_h0l1",
+        "unit": "p.u.",
+        "desc": "x0(HV-LV1) (Sbase)"
+      },
+      {
+        "var": "e:x0Sbasepu_h0l2",
+        "unit": "p.u.",
+        "desc": "x0(HV-LV2) (Sbase)"
+      },
+      {
+        "var": "e:x0Sbasepu_h0l3",
+        "unit": "p.u.",
+        "desc": "x0(HV-LV3) (Sbase)"
+      },
+      {
+        "var": "e:x0Sbasepu_l1l2",
+        "unit": "p.u.",
+        "desc": "x0(LV1-LV2) (Sbase)"
+      },
+      {
+        "var": "e:x0Sbasepu_l1l3",
+        "unit": "p.u.",
+        "desc": "x0(LV1-LV3) (Sbase)"
+      },
+      {
+        "var": "e:x0Sbasepu_l2l3",
+        "unit": "p.u.",
+        "desc": "x0(LV2-LV3) (Sbase)"
+      },
+      {
+        "var": "e:r0Sbasepu_hv0",
+        "unit": "p.u.",
+        "desc": "r0(HV) (Sbase)"
+      },
+      {
+        "var": "e:r0Sbasepu_lv1",
+        "unit": "p.u.",
+        "desc": "r0(LV1) (Sbase)"
+      },
+      {
+        "var": "e:r0Sbasepu_lv2",
+        "unit": "p.u.",
+        "desc": "r0(LV2) (Sbase)"
+      },
+      {
+        "var": "e:r0Sbasepu_lv3",
+        "unit": "p.u.",
+        "desc": "r0(LV3) (Sbase)"
+      },
+      {
+        "var": "e:x0Sbasepu_hv0",
+        "unit": "p.u.",
+        "desc": "x0(HV) (Sbase)"
+      },
+      {
+        "var": "e:x0Sbasepu_lv1",
+        "unit": "p.u.",
+        "desc": "x0(LV1) (Sbase)"
+      },
+      {
+        "var": "e:x0Sbasepu_lv2",
+        "unit": "p.u.",
+        "desc": "x0(LV2) (Sbase)"
+      },
+      {
+        "var": "e:x0Sbasepu_lv3",
+        "unit": "p.u.",
+        "desc": "x0(LV3) (Sbase)"
+      },
+      {
+        "var": "e:Inom_h0_a",
+        "unit": "kA",
+        "desc": "HV-Side, Nominal Current (act.)"
+      },
+      {
+        "var": "e:Inom_l1_a",
+        "unit": "kA",
+        "desc": "LV1-Side, Nominal Current (act.)"
+      },
+      {
+        "var": "e:Inom_l2_a",
+        "unit": "kA",
+        "desc": "LV2-Side, Nominal Current (act.)"
+      },
+      {
+        "var": "e:Inom_l3_a",
+        "unit": "kA",
+        "desc": "LV3-Side, Nominal Current (act.)"
+      },
+      {
+        "var": "e:Inom_h0",
+        "unit": "kA",
+        "desc": "HV-Side, Nominal Current"
+      },
+      {
+        "var": "e:Inom_l1",
+        "unit": "kA",
+        "desc": "LV1-Side, Nominal Current"
+      },
+      {
+        "var": "e:Inom_l2",
+        "unit": "kA",
+        "desc": "LV2-Side, Nominal Current"
+      },
+      {
+        "var": "e:Inom_l3",
+        "unit": "kA",
+        "desc": "LV3-Side, Nominal Current"
+      },
+      {
+        "var": "e:c_pstac",
+        "unit": "ElmStactrl",
+        "desc": "External Station Controller"
+      },
+      {
+        "var": "e:c_ptapc",
+        "unit": "ElmTapctrl",
+        "desc": "External Tap Controller"
+      },
+      {
+        "var": "e:c_plcc",
+        "unit": "StaLdc",
+        "desc": "External LCC Controller"
+      },
+      {
+        "var": "e:qdslCtrl",
+        "unit": "ElmQdsl",
+        "desc": "Quasi-Dynamic Model"
+      },
+      {
+        "var": "e:cPsiresC",
+        "unit": "p.u.",
+        "desc": "Phase C"
       }
     ]
   }

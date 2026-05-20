@@ -1,0 +1,1094 @@
+{
+  "result_vars": {
+    "load_flow": {
+      "c": [
+        {
+          "var": "c:f_name_abs",
+          "unit": "",
+          "desc": "Filename"
+        },
+        {
+          "var": "c:ncol",
+          "unit": "",
+          "desc": "Number of Columns in file"
+        },
+        {
+          "var": "c:preTrigger",
+          "unit": "",
+          "desc": "Pre-trigger-time"
+        },
+        {
+          "var": "c:icolv",
+          "unit": "",
+          "desc": "Column number for each Output"
+        },
+        {
+          "var": "c:afacv",
+          "unit": "",
+          "desc": "Conversion Factor a"
+        },
+        {
+          "var": "c:bfacv",
+          "unit": "",
+          "desc": "Conversion Factor b"
+        },
+        {
+          "var": "c:primv",
+          "unit": "",
+          "desc": "P or S"
+        },
+        {
+          "var": "c:approx",
+          "unit": "",
+          "desc": "Approximation"
+        },
+        {
+          "var": "c:eofReached",
+          "unit": "",
+          "desc": "End of file reached"
+        },
+        {
+          "var": "c:tini",
+          "unit": "",
+          "desc": "Time Index"
+        },
+        {
+          "var": "c:iopt_tini",
+          "unit": "",
+          "desc": "Use study case time for loadflow initialisation"
+        }
+      ],
+      "s": [
+        {
+          "var": "s:y1",
+          "unit": "",
+          "desc": "Measurement value 1"
+        },
+        {
+          "var": "s:y2",
+          "unit": "",
+          "desc": "Measurement value 2"
+        },
+        {
+          "var": "s:y3",
+          "unit": "",
+          "desc": "Measurement value 3"
+        },
+        {
+          "var": "s:y4",
+          "unit": "",
+          "desc": "Measurement value 4"
+        },
+        {
+          "var": "s:y5",
+          "unit": "",
+          "desc": "Measurement value 5"
+        },
+        {
+          "var": "s:y6",
+          "unit": "",
+          "desc": "Measurement value 6"
+        },
+        {
+          "var": "s:y7",
+          "unit": "",
+          "desc": "Measurement value 7"
+        },
+        {
+          "var": "s:y8",
+          "unit": "",
+          "desc": "Measurement value 8"
+        },
+        {
+          "var": "s:y9",
+          "unit": "",
+          "desc": "Measurement value 9"
+        },
+        {
+          "var": "s:y10",
+          "unit": "",
+          "desc": "Measurement value 10"
+        },
+        {
+          "var": "s:y11",
+          "unit": "",
+          "desc": "Measurement value 11"
+        },
+        {
+          "var": "s:y12",
+          "unit": "",
+          "desc": "Measurement value 12"
+        },
+        {
+          "var": "s:y13",
+          "unit": "",
+          "desc": "Measurement value 13"
+        },
+        {
+          "var": "s:y14",
+          "unit": "",
+          "desc": "Measurement value 14"
+        },
+        {
+          "var": "s:y15",
+          "unit": "",
+          "desc": "Measurement value 15"
+        },
+        {
+          "var": "s:y16",
+          "unit": "",
+          "desc": "Measurement value 16"
+        },
+        {
+          "var": "s:y17",
+          "unit": "",
+          "desc": "Measurement value 17"
+        },
+        {
+          "var": "s:y18",
+          "unit": "",
+          "desc": "Measurement value 18"
+        },
+        {
+          "var": "s:y19",
+          "unit": "",
+          "desc": "Measurement value 19"
+        },
+        {
+          "var": "s:y20",
+          "unit": "",
+          "desc": "Measurement value 20"
+        },
+        {
+          "var": "s:y21",
+          "unit": "",
+          "desc": "Measurement value 21"
+        },
+        {
+          "var": "s:y22",
+          "unit": "",
+          "desc": "Measurement value 22"
+        },
+        {
+          "var": "s:y23",
+          "unit": "",
+          "desc": "Measurement value 23"
+        },
+        {
+          "var": "s:y24",
+          "unit": "",
+          "desc": "Measurement value 24"
+        }
+      ]
+    },
+    "load_flow_dc": {
+      "c": [
+        {
+          "var": "c:f_name_abs",
+          "unit": "",
+          "desc": "Filename"
+        },
+        {
+          "var": "c:ncol",
+          "unit": "",
+          "desc": "Number of Columns in file"
+        },
+        {
+          "var": "c:preTrigger",
+          "unit": "",
+          "desc": "Pre-trigger-time"
+        },
+        {
+          "var": "c:icolv",
+          "unit": "",
+          "desc": "Column number for each Output"
+        },
+        {
+          "var": "c:afacv",
+          "unit": "",
+          "desc": "Conversion Factor a"
+        },
+        {
+          "var": "c:bfacv",
+          "unit": "",
+          "desc": "Conversion Factor b"
+        },
+        {
+          "var": "c:primv",
+          "unit": "",
+          "desc": "P or S"
+        },
+        {
+          "var": "c:approx",
+          "unit": "",
+          "desc": "Approximation"
+        },
+        {
+          "var": "c:eofReached",
+          "unit": "",
+          "desc": "End of file reached"
+        },
+        {
+          "var": "c:tini",
+          "unit": "",
+          "desc": "Time Index"
+        },
+        {
+          "var": "c:iopt_tini",
+          "unit": "",
+          "desc": "Use study case time for loadflow initialisation"
+        }
+      ],
+      "s": [
+        {
+          "var": "s:y1",
+          "unit": "",
+          "desc": "Measurement value 1"
+        },
+        {
+          "var": "s:y2",
+          "unit": "",
+          "desc": "Measurement value 2"
+        },
+        {
+          "var": "s:y3",
+          "unit": "",
+          "desc": "Measurement value 3"
+        },
+        {
+          "var": "s:y4",
+          "unit": "",
+          "desc": "Measurement value 4"
+        },
+        {
+          "var": "s:y5",
+          "unit": "",
+          "desc": "Measurement value 5"
+        },
+        {
+          "var": "s:y6",
+          "unit": "",
+          "desc": "Measurement value 6"
+        },
+        {
+          "var": "s:y7",
+          "unit": "",
+          "desc": "Measurement value 7"
+        },
+        {
+          "var": "s:y8",
+          "unit": "",
+          "desc": "Measurement value 8"
+        },
+        {
+          "var": "s:y9",
+          "unit": "",
+          "desc": "Measurement value 9"
+        },
+        {
+          "var": "s:y10",
+          "unit": "",
+          "desc": "Measurement value 10"
+        },
+        {
+          "var": "s:y11",
+          "unit": "",
+          "desc": "Measurement value 11"
+        },
+        {
+          "var": "s:y12",
+          "unit": "",
+          "desc": "Measurement value 12"
+        },
+        {
+          "var": "s:y13",
+          "unit": "",
+          "desc": "Measurement value 13"
+        },
+        {
+          "var": "s:y14",
+          "unit": "",
+          "desc": "Measurement value 14"
+        },
+        {
+          "var": "s:y15",
+          "unit": "",
+          "desc": "Measurement value 15"
+        },
+        {
+          "var": "s:y16",
+          "unit": "",
+          "desc": "Measurement value 16"
+        },
+        {
+          "var": "s:y17",
+          "unit": "",
+          "desc": "Measurement value 17"
+        },
+        {
+          "var": "s:y18",
+          "unit": "",
+          "desc": "Measurement value 18"
+        },
+        {
+          "var": "s:y19",
+          "unit": "",
+          "desc": "Measurement value 19"
+        },
+        {
+          "var": "s:y20",
+          "unit": "",
+          "desc": "Measurement value 20"
+        },
+        {
+          "var": "s:y21",
+          "unit": "",
+          "desc": "Measurement value 21"
+        },
+        {
+          "var": "s:y22",
+          "unit": "",
+          "desc": "Measurement value 22"
+        },
+        {
+          "var": "s:y23",
+          "unit": "",
+          "desc": "Measurement value 23"
+        },
+        {
+          "var": "s:y24",
+          "unit": "",
+          "desc": "Measurement value 24"
+        }
+      ]
+    },
+    "dynamic_rms": {
+      "c": [
+        {
+          "var": "c:f_name_abs",
+          "unit": "",
+          "desc": "Filename"
+        },
+        {
+          "var": "c:ncol",
+          "unit": "",
+          "desc": "Number of Columns in file"
+        },
+        {
+          "var": "c:preTrigger",
+          "unit": "",
+          "desc": "Pre-trigger-time"
+        },
+        {
+          "var": "c:icolv",
+          "unit": "",
+          "desc": "Column number for each Output"
+        },
+        {
+          "var": "c:afacv",
+          "unit": "",
+          "desc": "Conversion Factor a"
+        },
+        {
+          "var": "c:bfacv",
+          "unit": "",
+          "desc": "Conversion Factor b"
+        },
+        {
+          "var": "c:primv",
+          "unit": "",
+          "desc": "P or S"
+        },
+        {
+          "var": "c:approx",
+          "unit": "",
+          "desc": "Approximation"
+        },
+        {
+          "var": "c:eofReached",
+          "unit": "",
+          "desc": "End of file reached"
+        },
+        {
+          "var": "c:updateMeas",
+          "unit": "",
+          "desc": "Update Measurement File"
+        }
+      ],
+      "s": [
+        {
+          "var": "s:y1",
+          "unit": "",
+          "desc": "Measurement value 1"
+        },
+        {
+          "var": "s:y2",
+          "unit": "",
+          "desc": "Measurement value 2"
+        },
+        {
+          "var": "s:y3",
+          "unit": "",
+          "desc": "Measurement value 3"
+        },
+        {
+          "var": "s:y4",
+          "unit": "",
+          "desc": "Measurement value 4"
+        },
+        {
+          "var": "s:y5",
+          "unit": "",
+          "desc": "Measurement value 5"
+        },
+        {
+          "var": "s:y6",
+          "unit": "",
+          "desc": "Measurement value 6"
+        },
+        {
+          "var": "s:y7",
+          "unit": "",
+          "desc": "Measurement value 7"
+        },
+        {
+          "var": "s:y8",
+          "unit": "",
+          "desc": "Measurement value 8"
+        },
+        {
+          "var": "s:y9",
+          "unit": "",
+          "desc": "Measurement value 9"
+        },
+        {
+          "var": "s:y10",
+          "unit": "",
+          "desc": "Measurement value 10"
+        },
+        {
+          "var": "s:y11",
+          "unit": "",
+          "desc": "Measurement value 11"
+        },
+        {
+          "var": "s:y12",
+          "unit": "",
+          "desc": "Measurement value 12"
+        },
+        {
+          "var": "s:y13",
+          "unit": "",
+          "desc": "Measurement value 13"
+        },
+        {
+          "var": "s:y14",
+          "unit": "",
+          "desc": "Measurement value 14"
+        },
+        {
+          "var": "s:y15",
+          "unit": "",
+          "desc": "Measurement value 15"
+        },
+        {
+          "var": "s:y16",
+          "unit": "",
+          "desc": "Measurement value 16"
+        },
+        {
+          "var": "s:y17",
+          "unit": "",
+          "desc": "Measurement value 17"
+        },
+        {
+          "var": "s:y18",
+          "unit": "",
+          "desc": "Measurement value 18"
+        },
+        {
+          "var": "s:y19",
+          "unit": "",
+          "desc": "Measurement value 19"
+        },
+        {
+          "var": "s:y20",
+          "unit": "",
+          "desc": "Measurement value 20"
+        },
+        {
+          "var": "s:y21",
+          "unit": "",
+          "desc": "Measurement value 21"
+        },
+        {
+          "var": "s:y22",
+          "unit": "",
+          "desc": "Measurement value 22"
+        },
+        {
+          "var": "s:y23",
+          "unit": "",
+          "desc": "Measurement value 23"
+        },
+        {
+          "var": "s:y24",
+          "unit": "",
+          "desc": "Measurement value 24"
+        }
+      ]
+    },
+    "dynamic_emt": {
+      "c": [
+        {
+          "var": "c:f_name_abs",
+          "unit": "",
+          "desc": "Filename",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ncol",
+          "unit": "",
+          "desc": "Number of Columns in file",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:preTrigger",
+          "unit": "",
+          "desc": "Pre-trigger-time",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:icolv",
+          "unit": "",
+          "desc": "Column number for each Output",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:afacv",
+          "unit": "",
+          "desc": "Conversion Factor a",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:bfacv",
+          "unit": "",
+          "desc": "Conversion Factor b",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:primv",
+          "unit": "",
+          "desc": "P or S",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:approx",
+          "unit": "",
+          "desc": "Approximation",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:eofReached",
+          "unit": "",
+          "desc": "End of file reached",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:updateMeas",
+          "unit": "",
+          "desc": "Update Measurement File",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ],
+      "s": [
+        {
+          "var": "s:y1",
+          "unit": "",
+          "desc": "Measurement value 1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y2",
+          "unit": "",
+          "desc": "Measurement value 2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y3",
+          "unit": "",
+          "desc": "Measurement value 3",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y4",
+          "unit": "",
+          "desc": "Measurement value 4",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y5",
+          "unit": "",
+          "desc": "Measurement value 5",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y6",
+          "unit": "",
+          "desc": "Measurement value 6",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y7",
+          "unit": "",
+          "desc": "Measurement value 7",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y8",
+          "unit": "",
+          "desc": "Measurement value 8",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y9",
+          "unit": "",
+          "desc": "Measurement value 9",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y10",
+          "unit": "",
+          "desc": "Measurement value 10",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y11",
+          "unit": "",
+          "desc": "Measurement value 11",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y12",
+          "unit": "",
+          "desc": "Measurement value 12",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y13",
+          "unit": "",
+          "desc": "Measurement value 13",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y14",
+          "unit": "",
+          "desc": "Measurement value 14",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y15",
+          "unit": "",
+          "desc": "Measurement value 15",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y16",
+          "unit": "",
+          "desc": "Measurement value 16",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y17",
+          "unit": "",
+          "desc": "Measurement value 17",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y18",
+          "unit": "",
+          "desc": "Measurement value 18",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y19",
+          "unit": "",
+          "desc": "Measurement value 19",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y20",
+          "unit": "",
+          "desc": "Measurement value 20",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y21",
+          "unit": "",
+          "desc": "Measurement value 21",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y22",
+          "unit": "",
+          "desc": "Measurement value 22",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y23",
+          "unit": "",
+          "desc": "Measurement value 23",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "s:y24",
+          "unit": "",
+          "desc": "Measurement value 24",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    },
+    "modal_analysis": {
+      "c": [
+        {
+          "var": "c:f_name_abs",
+          "unit": "",
+          "desc": "Filename"
+        },
+        {
+          "var": "c:ncol",
+          "unit": "",
+          "desc": "Number of Columns in file"
+        },
+        {
+          "var": "c:preTrigger",
+          "unit": "",
+          "desc": "Pre-trigger-time"
+        },
+        {
+          "var": "c:icolv",
+          "unit": "",
+          "desc": "Column number for each Output"
+        },
+        {
+          "var": "c:afacv",
+          "unit": "",
+          "desc": "Conversion Factor a"
+        },
+        {
+          "var": "c:bfacv",
+          "unit": "",
+          "desc": "Conversion Factor b"
+        },
+        {
+          "var": "c:primv",
+          "unit": "",
+          "desc": "P or S"
+        },
+        {
+          "var": "c:approx",
+          "unit": "",
+          "desc": "Approximation"
+        },
+        {
+          "var": "c:eofReached",
+          "unit": "",
+          "desc": "End of file reached"
+        },
+        {
+          "var": "c:updateMeas",
+          "unit": "",
+          "desc": "Update Measurement File"
+        }
+      ],
+      "s": [
+        {
+          "var": "s:y1",
+          "unit": "",
+          "desc": "Measurement value 1"
+        },
+        {
+          "var": "s:y2",
+          "unit": "",
+          "desc": "Measurement value 2"
+        },
+        {
+          "var": "s:y3",
+          "unit": "",
+          "desc": "Measurement value 3"
+        },
+        {
+          "var": "s:y4",
+          "unit": "",
+          "desc": "Measurement value 4"
+        },
+        {
+          "var": "s:y5",
+          "unit": "",
+          "desc": "Measurement value 5"
+        },
+        {
+          "var": "s:y6",
+          "unit": "",
+          "desc": "Measurement value 6"
+        },
+        {
+          "var": "s:y7",
+          "unit": "",
+          "desc": "Measurement value 7"
+        },
+        {
+          "var": "s:y8",
+          "unit": "",
+          "desc": "Measurement value 8"
+        },
+        {
+          "var": "s:y9",
+          "unit": "",
+          "desc": "Measurement value 9"
+        },
+        {
+          "var": "s:y10",
+          "unit": "",
+          "desc": "Measurement value 10"
+        },
+        {
+          "var": "s:y11",
+          "unit": "",
+          "desc": "Measurement value 11"
+        },
+        {
+          "var": "s:y12",
+          "unit": "",
+          "desc": "Measurement value 12"
+        },
+        {
+          "var": "s:y13",
+          "unit": "",
+          "desc": "Measurement value 13"
+        },
+        {
+          "var": "s:y14",
+          "unit": "",
+          "desc": "Measurement value 14"
+        },
+        {
+          "var": "s:y15",
+          "unit": "",
+          "desc": "Measurement value 15"
+        },
+        {
+          "var": "s:y16",
+          "unit": "",
+          "desc": "Measurement value 16"
+        },
+        {
+          "var": "s:y17",
+          "unit": "",
+          "desc": "Measurement value 17"
+        },
+        {
+          "var": "s:y18",
+          "unit": "",
+          "desc": "Measurement value 18"
+        },
+        {
+          "var": "s:y19",
+          "unit": "",
+          "desc": "Measurement value 19"
+        },
+        {
+          "var": "s:y20",
+          "unit": "",
+          "desc": "Measurement value 20"
+        },
+        {
+          "var": "s:y21",
+          "unit": "",
+          "desc": "Measurement value 21"
+        },
+        {
+          "var": "s:y22",
+          "unit": "",
+          "desc": "Measurement value 22"
+        },
+        {
+          "var": "s:y23",
+          "unit": "",
+          "desc": "Measurement value 23"
+        },
+        {
+          "var": "s:y24",
+          "unit": "",
+          "desc": "Measurement value 24"
+        }
+      ]
+    },
+    "basic": {
+      "b": [
+        {
+          "var": "b:loc_name",
+          "unit": "",
+          "desc": "Name"
+        },
+        {
+          "var": "b:f_name_abs",
+          "unit": "",
+          "desc": "Filename"
+        },
+        {
+          "var": "b:approx",
+          "unit": "",
+          "desc": "Approximation"
+        }
+      ]
+    }
+  },
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:f_name",
+        "unit": "",
+        "desc": "Filename"
+      },
+      {
+        "var": "e:prim",
+        "unit": "",
+        "desc": "P or S"
+      },
+      {
+        "var": "e:outserv",
+        "unit": "",
+        "desc": "Out of Service"
+      },
+      {
+        "var": "e:iopt_imp",
+        "unit": "",
+        "desc": "Import from"
+      },
+      {
+        "var": "e:approx",
+        "unit": "",
+        "desc": "Approximation"
+      },
+      {
+        "var": "e:iopt_tini",
+        "unit": "",
+        "desc": "Load Flow Time"
+      },
+      {
+        "var": "e:icol",
+        "unit": "",
+        "desc": "Column j"
+      },
+      {
+        "var": "e:tini",
+        "unit": "s",
+        "desc": "Load Flow Time"
+      },
+      {
+        "var": "e:afac",
+        "unit": "",
+        "desc": "Factor a"
+      },
+      {
+        "var": "e:bfac",
+        "unit": "",
+        "desc": "Factor b"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:results",
+        "unit": "ElmRes",
+        "desc": "Results"
+      },
+      {
+        "var": "e:object",
+        "unit": "",
+        "desc": "Element"
+      },
+      {
+        "var": "e:variable",
+        "unit": "",
+        "desc": "Variable"
+      }
+    ]
+  }
+}

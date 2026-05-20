@@ -1,0 +1,1503 @@
+{
+  "result_vars": {
+    "load_flow": {
+      "c": [
+        {
+          "var": "c:Pset",
+          "unit": "MW",
+          "desc": "Active Power Measurement"
+        },
+        {
+          "var": "c:Iset",
+          "unit": "kA",
+          "desc": "Current Measurement"
+        },
+        {
+          "var": "c:Sset",
+          "unit": "MVA",
+          "desc": "Apparent Power Measurement"
+        },
+        {
+          "var": "c:Qset",
+          "unit": "Mvar",
+          "desc": "Reactive Power Measurement"
+        },
+        {
+          "var": "c:cosphiset",
+          "unit": "",
+          "desc": "Power Factor Measurement"
+        },
+        {
+          "var": "c:scale",
+          "unit": "p.u.",
+          "desc": "Scale Factor"
+        },
+        {
+          "var": "c:scalephi",
+          "unit": "rad",
+          "desc": "Power Angle"
+        },
+        {
+          "var": "c:Pin",
+          "unit": "MW",
+          "desc": "Infeed, Active Power"
+        },
+        {
+          "var": "c:Qin",
+          "unit": "Mvar",
+          "desc": "Infeed, Reactive Power"
+        },
+        {
+          "var": "c:Sin",
+          "unit": "MVA",
+          "desc": "Infeed, Apparent Power"
+        },
+        {
+          "var": "c:cosphiin",
+          "unit": "",
+          "desc": "Infeed, Power Factor"
+        },
+        {
+          "var": "c:Pinsum",
+          "unit": "MW",
+          "desc": "Total Active Power, Infeed"
+        },
+        {
+          "var": "c:Qinsum",
+          "unit": "Mvar",
+          "desc": "Total Reactive Power, Infeed"
+        },
+        {
+          "var": "c:Sinsum",
+          "unit": "MVA",
+          "desc": "Total Apparent Power, Infeed"
+        },
+        {
+          "var": "c:cosphiinsum",
+          "unit": "",
+          "desc": "Total Power Factor, Infeed"
+        },
+        {
+          "var": "c:Ppv",
+          "unit": "MW",
+          "desc": "PV Generation"
+        },
+        {
+          "var": "c:Iin",
+          "unit": "kA",
+          "desc": "Input Current, Magnitude"
+        },
+        {
+          "var": "c:icon",
+          "unit": "",
+          "desc": "Connected"
+        },
+        {
+          "var": "c:maxlen",
+          "unit": "",
+          "desc": "Maximum Length"
+        },
+        {
+          "var": "c:zonescale",
+          "unit": "",
+          "desc": "Zone Scale Factor"
+        },
+        {
+          "var": "c:delP",
+          "unit": "MW",
+          "desc": "Active Power, Deviation from Measurement"
+        },
+        {
+          "var": "c:delI",
+          "unit": "kA",
+          "desc": "Current, Deviation from Measurement"
+        },
+        {
+          "var": "c:delS",
+          "unit": "MVA",
+          "desc": "Apparent Power, Deviation from Measurement"
+        },
+        {
+          "var": "c:delSet",
+          "unit": "%",
+          "desc": "Deviation from Measurement"
+        },
+        {
+          "var": "c:GenP",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:GenQ",
+          "unit": "Mvar",
+          "desc": "Generators, Reactive Power"
+        },
+        {
+          "var": "c:GenS",
+          "unit": "MVA",
+          "desc": "Generators, Apparent Power"
+        },
+        {
+          "var": "c:Gencos",
+          "unit": "",
+          "desc": "Generators, Power Factor"
+        },
+        {
+          "var": "c:Qcomp",
+          "unit": "Mvar",
+          "desc": "Compensation, C"
+        },
+        {
+          "var": "c:Qcompr",
+          "unit": "Mvar",
+          "desc": "Compensation, L"
+        },
+        {
+          "var": "c:Pcomp",
+          "unit": "MW",
+          "desc": "Compensation (Losses)"
+        },
+        {
+          "var": "c:Pld",
+          "unit": "MW",
+          "desc": "Total Load, Active Power"
+        },
+        {
+          "var": "c:Qld",
+          "unit": "Mvar",
+          "desc": "Total Load, Reactive Power"
+        },
+        {
+          "var": "c:Sld",
+          "unit": "MVA",
+          "desc": "Total Load, Apparent Power"
+        },
+        {
+          "var": "c:cosld",
+          "unit": "",
+          "desc": "Total Load, Power Factor"
+        },
+        {
+          "var": "c:LoadP",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:MotP",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:LossP",
+          "unit": "MW",
+          "desc": "Losses, Active Power"
+        },
+        {
+          "var": "c:LossPrel",
+          "unit": "%",
+          "desc": "Losses related to Infeed"
+        },
+        {
+          "var": "c:LossQ",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossPld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossQld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossPnld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossQnld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossPlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power"
+        },
+        {
+          "var": "c:LossQlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossPldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossQldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossPnldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossQnldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossPtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power"
+        },
+        {
+          "var": "c:LossQtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossPldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossQldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossPnldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossQnldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:Maxloading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:umin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals"
+        },
+        {
+          "var": "c:Umin",
+          "unit": "kV",
+          "desc": "Minimum Voltage"
+        },
+        {
+          "var": "c:Ulmin",
+          "unit": "kV",
+          "desc": "Minimum Voltage (Line-Line)"
+        },
+        {
+          "var": "c:umax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals"
+        },
+        {
+          "var": "c:Umax",
+          "unit": "kV",
+          "desc": "Maximum Voltage"
+        },
+        {
+          "var": "c:Ulmax",
+          "unit": "kV",
+          "desc": "Maximum Voltage (Line-Line)"
+        },
+        {
+          "var": "c:dumaxdrop",
+          "unit": "%",
+          "desc": "Max. Voltage Drop"
+        },
+        {
+          "var": "c:dumaxrise",
+          "unit": "%",
+          "desc": "Max. Voltage Rise"
+        },
+        {
+          "var": "c:NrOvlBranch",
+          "unit": "",
+          "desc": "Number of overloaded branch components"
+        },
+        {
+          "var": "c:NrTermMin",
+          "unit": "",
+          "desc": "Number of terminals below their minimum voltage limit"
+        },
+        {
+          "var": "c:NrTermMax",
+          "unit": "",
+          "desc": "Number of terminals above their maximum voltage limit"
+        },
+        {
+          "var": "c:Ulin",
+          "unit": "kV",
+          "desc": "Voltage (Line-Line), Infeed"
+        },
+        {
+          "var": "c:Psetr",
+          "unit": "MW",
+          "desc": "Active Power Measurement, ph. 1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Psets",
+          "unit": "MW",
+          "desc": "Active Power Measurement, ph. 2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Psett",
+          "unit": "MW",
+          "desc": "Active Power Measurement, ph. 3",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Isetr",
+          "unit": "kA",
+          "desc": "Current Measurement, ph. 1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Isets",
+          "unit": "kA",
+          "desc": "Current Measurement, ph. 2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Isett",
+          "unit": "kA",
+          "desc": "Current Measurement, ph. 3",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ssetr",
+          "unit": "MVA",
+          "desc": "Apparent Power Measurement, ph. 1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ssets",
+          "unit": "MVA",
+          "desc": "Apparent Power Measurement, ph. 2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ssett",
+          "unit": "MVA",
+          "desc": "Apparent Power Measurement, ph. 3",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qsetr",
+          "unit": "Mvar",
+          "desc": "Reactive Power Measurement, ph. 1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qsets",
+          "unit": "Mvar",
+          "desc": "Reactive Power Measurement, ph. 2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qsett",
+          "unit": "Mvar",
+          "desc": "Reactive Power Measurement, ph. 3",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:cosphisetr",
+          "unit": "",
+          "desc": "Power Factor Measurement, ph. 1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:cosphisets",
+          "unit": "",
+          "desc": "Power Factor Measurement, ph. 2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:cosphisett",
+          "unit": "",
+          "desc": "Power Factor Measurement, ph. 3",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:pf_recapset",
+          "unit": "T",
+          "desc": "cos(phi)(ind,cap)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:pf_recapsetr",
+          "unit": "P",
+          "desc": "cos(phi)(ind,cap), ph. 1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:pf_recapsets",
+          "unit": "P",
+          "desc": "cos(phi)(ind,cap), ph. 2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:pf_recapsett",
+          "unit": "P",
+          "desc": "cos(phi)(ind,cap), ph. 3",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:scale1r",
+          "unit": "",
+          "desc": "Feeder load scaling, control 1, ph. 1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:scale1s",
+          "unit": "",
+          "desc": "Feeder load scaling, control 1, ph. 2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:scale1t",
+          "unit": "",
+          "desc": "Feeder load scaling, control 1, ph. 3",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:scale2r",
+          "unit": "",
+          "desc": "Feeder load scaling, control 2, ph. 1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:scale2s",
+          "unit": "",
+          "desc": "Feeder load scaling, control 2, ph. 2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:scale2t",
+          "unit": "",
+          "desc": "Feeder load scaling, control 2, ph. 3",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Pin",
+          "unit": "MW",
+          "desc": "Infeed, Active Power",
+          "suffix": ":Ph",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Qin",
+          "unit": "Mvar",
+          "desc": "Infeed, Reactive Power",
+          "suffix": ":Ph",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Sin",
+          "unit": "MVA",
+          "desc": "Infeed, Apparent Power",
+          "suffix": ":Ph",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:cosphiin",
+          "unit": "",
+          "desc": "Infeed, Power Factor",
+          "suffix": ":Ph",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Iin",
+          "unit": "kA",
+          "desc": "Input Current, Magnitude",
+          "suffix": ":Ph",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Iavg",
+          "unit": "kA",
+          "desc": "Input Current, Magnitude, Average",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ulmin",
+          "unit": "p.u.",
+          "desc": "Minimum Voltage (Line-Line)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:ulmax",
+          "unit": "p.u.",
+          "desc": "Maximum Voltage (Line-Line)",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:maxUnbFacU",
+          "unit": "%",
+          "desc": "Maximum voltage unbalance factor",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:avgUnbFacU",
+          "unit": "%",
+          "desc": "Average voltage unbalance factor",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:maxUnbFacI",
+          "unit": "%",
+          "desc": "Maximum current unbalance factor",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:avgUnbFacI",
+          "unit": "%",
+          "desc": "Average current unbalance factor",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:maxUnbFacS",
+          "unit": "%",
+          "desc": "Maximum power unbalance factor",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:avgUnbFacS",
+          "unit": "%",
+          "desc": "Average power unbalance factor",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:fedUnbFacI",
+          "unit": "%",
+          "desc": "Current unbalance factor on feeding branch",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:fedUnbFacS",
+          "unit": "%",
+          "desc": "Power unbalance factor on feeding branch",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:uphtmin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:uphtmax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    },
+    "load_flow_dc": {
+      "c": [
+        {
+          "var": "c:Pset",
+          "unit": "MW",
+          "desc": "Active Power Measurement"
+        },
+        {
+          "var": "c:scale",
+          "unit": "p.u.",
+          "desc": "Scale Factor"
+        },
+        {
+          "var": "c:Pin",
+          "unit": "MW",
+          "desc": "Infeed, Active Power"
+        },
+        {
+          "var": "c:Pinsum",
+          "unit": "MW",
+          "desc": "Total Active Power, Infeed"
+        },
+        {
+          "var": "c:Ppv",
+          "unit": "MW",
+          "desc": "PV Generation"
+        },
+        {
+          "var": "c:icon",
+          "unit": "",
+          "desc": "Connected"
+        },
+        {
+          "var": "c:maxlen",
+          "unit": "",
+          "desc": "Maximum Length"
+        },
+        {
+          "var": "c:zonescale",
+          "unit": "",
+          "desc": "Zone Scale Factor"
+        },
+        {
+          "var": "c:delP",
+          "unit": "MW",
+          "desc": "Active Power, Deviation from Measurement"
+        },
+        {
+          "var": "c:delSet",
+          "unit": "%",
+          "desc": "Deviation from Measurement"
+        },
+        {
+          "var": "c:GenP",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:Pld",
+          "unit": "MW",
+          "desc": "Total Load, Active Power"
+        },
+        {
+          "var": "c:LoadP",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:Maxloading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:NrOvlBranch",
+          "unit": "",
+          "desc": "Number of overloaded branch components"
+        }
+      ]
+    },
+    "opf": {
+      "c": [
+        {
+          "var": "c:Pset",
+          "unit": "MW",
+          "desc": "Active Power Measurement"
+        },
+        {
+          "var": "c:Iset",
+          "unit": "kA",
+          "desc": "Current Measurement"
+        },
+        {
+          "var": "c:Sset",
+          "unit": "MVA",
+          "desc": "Apparent Power Measurement"
+        },
+        {
+          "var": "c:Qset",
+          "unit": "Mvar",
+          "desc": "Reactive Power Measurement"
+        },
+        {
+          "var": "c:cosphiset",
+          "unit": "",
+          "desc": "Power Factor Measurement"
+        },
+        {
+          "var": "c:scale",
+          "unit": "p.u.",
+          "desc": "Scale Factor"
+        },
+        {
+          "var": "c:scalephi",
+          "unit": "rad",
+          "desc": "Power Angle"
+        },
+        {
+          "var": "c:Pin",
+          "unit": "MW",
+          "desc": "Infeed, Active Power"
+        },
+        {
+          "var": "c:Qin",
+          "unit": "Mvar",
+          "desc": "Infeed, Reactive Power"
+        },
+        {
+          "var": "c:Sin",
+          "unit": "MVA",
+          "desc": "Infeed, Apparent Power"
+        },
+        {
+          "var": "c:cosphiin",
+          "unit": "",
+          "desc": "Infeed, Power Factor"
+        },
+        {
+          "var": "c:Pinsum",
+          "unit": "MW",
+          "desc": "Total Active Power, Infeed"
+        },
+        {
+          "var": "c:Qinsum",
+          "unit": "Mvar",
+          "desc": "Total Reactive Power, Infeed"
+        },
+        {
+          "var": "c:Sinsum",
+          "unit": "MVA",
+          "desc": "Total Apparent Power, Infeed"
+        },
+        {
+          "var": "c:cosphiinsum",
+          "unit": "",
+          "desc": "Total Power Factor, Infeed"
+        },
+        {
+          "var": "c:Ppv",
+          "unit": "MW",
+          "desc": "PV Generation"
+        },
+        {
+          "var": "c:Iin",
+          "unit": "kA",
+          "desc": "Input Current, Magnitude"
+        },
+        {
+          "var": "c:icon",
+          "unit": "",
+          "desc": "Connected"
+        },
+        {
+          "var": "c:maxlen",
+          "unit": "",
+          "desc": "Maximum Length"
+        },
+        {
+          "var": "c:zonescale",
+          "unit": "",
+          "desc": "Zone Scale Factor"
+        },
+        {
+          "var": "c:delP",
+          "unit": "MW",
+          "desc": "Active Power, Deviation from Measurement"
+        },
+        {
+          "var": "c:delI",
+          "unit": "kA",
+          "desc": "Current, Deviation from Measurement"
+        },
+        {
+          "var": "c:delS",
+          "unit": "MVA",
+          "desc": "Apparent Power, Deviation from Measurement"
+        },
+        {
+          "var": "c:delSet",
+          "unit": "%",
+          "desc": "Deviation from Measurement"
+        },
+        {
+          "var": "c:GenP",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:GenQ",
+          "unit": "Mvar",
+          "desc": "Generators, Reactive Power"
+        },
+        {
+          "var": "c:GenS",
+          "unit": "MVA",
+          "desc": "Generators, Apparent Power"
+        },
+        {
+          "var": "c:Gencos",
+          "unit": "",
+          "desc": "Generators, Power Factor"
+        },
+        {
+          "var": "c:Qcomp",
+          "unit": "Mvar",
+          "desc": "Compensation, C"
+        },
+        {
+          "var": "c:Qcompr",
+          "unit": "Mvar",
+          "desc": "Compensation, L"
+        },
+        {
+          "var": "c:Pcomp",
+          "unit": "MW",
+          "desc": "Compensation (Losses)"
+        },
+        {
+          "var": "c:Pld",
+          "unit": "MW",
+          "desc": "Total Load, Active Power"
+        },
+        {
+          "var": "c:Qld",
+          "unit": "Mvar",
+          "desc": "Total Load, Reactive Power"
+        },
+        {
+          "var": "c:Sld",
+          "unit": "MVA",
+          "desc": "Total Load, Apparent Power"
+        },
+        {
+          "var": "c:cosld",
+          "unit": "",
+          "desc": "Total Load, Power Factor"
+        },
+        {
+          "var": "c:LoadP",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:MotP",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:LossP",
+          "unit": "MW",
+          "desc": "Losses, Active Power"
+        },
+        {
+          "var": "c:LossPrel",
+          "unit": "%",
+          "desc": "Losses related to Infeed"
+        },
+        {
+          "var": "c:LossQ",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossPld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossQld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossPnld",
+          "unit": "MW",
+          "desc": "Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossQnld",
+          "unit": "Mvar",
+          "desc": "Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossPlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power"
+        },
+        {
+          "var": "c:LossQlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossPldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossQldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossPnldlne",
+          "unit": "MW",
+          "desc": "Line Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossQnldlne",
+          "unit": "Mvar",
+          "desc": "Line Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:LossPtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power"
+        },
+        {
+          "var": "c:LossQtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power"
+        },
+        {
+          "var": "c:LossPldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (load)"
+        },
+        {
+          "var": "c:LossQldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (load)"
+        },
+        {
+          "var": "c:LossPnldtrf",
+          "unit": "MW",
+          "desc": "Transformer Losses, Active Power (no load)"
+        },
+        {
+          "var": "c:LossQnldtrf",
+          "unit": "Mvar",
+          "desc": "Transformer Losses, Reactive Power (no load)"
+        },
+        {
+          "var": "c:Maxloading",
+          "unit": "%",
+          "desc": "Maximum Loading"
+        },
+        {
+          "var": "c:umin",
+          "unit": "p.u.",
+          "desc": "Minimum voltage of all terminals"
+        },
+        {
+          "var": "c:Umin",
+          "unit": "kV",
+          "desc": "Minimum Voltage"
+        },
+        {
+          "var": "c:Ulmin",
+          "unit": "kV",
+          "desc": "Minimum Voltage (Line-Line)"
+        },
+        {
+          "var": "c:umax",
+          "unit": "p.u.",
+          "desc": "Maximum voltage of all terminals"
+        },
+        {
+          "var": "c:Umax",
+          "unit": "kV",
+          "desc": "Maximum Voltage"
+        },
+        {
+          "var": "c:Ulmax",
+          "unit": "kV",
+          "desc": "Maximum Voltage (Line-Line)"
+        },
+        {
+          "var": "c:dumaxdrop",
+          "unit": "%",
+          "desc": "Max. Voltage Drop"
+        },
+        {
+          "var": "c:dumaxrise",
+          "unit": "%",
+          "desc": "Max. Voltage Rise"
+        },
+        {
+          "var": "c:NrOvlBranch",
+          "unit": "",
+          "desc": "Number of overloaded branch components"
+        },
+        {
+          "var": "c:NrTermMin",
+          "unit": "",
+          "desc": "Number of terminals below their minimum voltage limit"
+        },
+        {
+          "var": "c:NrTermMax",
+          "unit": "",
+          "desc": "Number of terminals above their maximum voltage limit"
+        },
+        {
+          "var": "c:Ulin",
+          "unit": "kV",
+          "desc": "Voltage (Line-Line), Infeed"
+        }
+      ]
+    },
+    "basic": {
+      "b": [
+        {
+          "var": "b:loc_name",
+          "unit": "",
+          "desc": "Name"
+        },
+        {
+          "var": "b:icolor",
+          "unit": "",
+          "desc": "Colour"
+        },
+        {
+          "var": "b:dist",
+          "unit": "km",
+          "desc": "Distance from infeed"
+        },
+        {
+          "var": "b:dist1",
+          "unit": "km",
+          "desc": "Distance from infeed (maxmin)"
+        }
+      ]
+    }
+  },
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:outserv",
+        "unit": "",
+        "desc": "Out of Service"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:icolor",
+        "unit": "",
+        "desc": "Colour"
+      },
+      {
+        "var": "e:irVolt",
+        "unit": "",
+        "desc": "Terminate feeder when encountering higher voltage levels"
+      },
+      {
+        "var": "e:ilVolt",
+        "unit": "",
+        "desc": "Terminate feeder when encountering lower voltage levels"
+      },
+      {
+        "var": "e:scalePhaseWise",
+        "unit": "",
+        "desc": "Phasewise scaling"
+      },
+      {
+        "var": "e:i_scale",
+        "unit": "",
+        "desc": "First setpoint"
+      },
+      {
+        "var": "e:i_scalepf",
+        "unit": "",
+        "desc": "Second setpoint"
+      },
+      {
+        "var": "e:pf_recapset",
+        "unit": "",
+        "desc": "Power Factor"
+      },
+      {
+        "var": "e:pf_recapsetr",
+        "unit": "",
+        "desc": "Power Factor, ph. 1"
+      },
+      {
+        "var": "e:pf_recapsets",
+        "unit": "",
+        "desc": "Power Factor, ph. 2"
+      },
+      {
+        "var": "e:pf_recapsett",
+        "unit": "",
+        "desc": "Power Factor, ph. 3"
+      },
+      {
+        "var": "e:operRadial",
+        "unit": "",
+        "desc": "Feeder is supposed to be operated radially."
+      },
+      {
+        "var": "e:maxVrise",
+        "unit": "%",
+        "desc": "Maximum allowed Voltage Rise"
+      },
+      {
+        "var": "e:maxVdrop",
+        "unit": "%",
+        "desc": "Maximum allowed Voltage Drop"
+      },
+      {
+        "var": "e:GPSlat",
+        "unit": "deg",
+        "desc": "Latitude / Northing"
+      },
+      {
+        "var": "e:GPSlon",
+        "unit": "deg",
+        "desc": "Longitude / Easting"
+      },
+      {
+        "var": "e:Iset",
+        "unit": "kA",
+        "desc": "Current"
+      },
+      {
+        "var": "e:Isetr",
+        "unit": "kA",
+        "desc": "Current, ph. 1"
+      },
+      {
+        "var": "e:Isets",
+        "unit": "kA",
+        "desc": "Current, ph. 2"
+      },
+      {
+        "var": "e:Isett",
+        "unit": "kA",
+        "desc": "Current, ph. 3"
+      },
+      {
+        "var": "e:Pset",
+        "unit": "MW",
+        "desc": "Active Power"
+      },
+      {
+        "var": "e:Psetr",
+        "unit": "MW",
+        "desc": "Active Power, ph. 1"
+      },
+      {
+        "var": "e:Psets",
+        "unit": "MW",
+        "desc": "Active Power, ph. 2"
+      },
+      {
+        "var": "e:Psett",
+        "unit": "MW",
+        "desc": "Active Power, ph. 3"
+      },
+      {
+        "var": "e:Sset",
+        "unit": "MVA",
+        "desc": "Apparent Power"
+      },
+      {
+        "var": "e:Ssetr",
+        "unit": "MVA",
+        "desc": "Apparent Power, ph. 1"
+      },
+      {
+        "var": "e:Ssets",
+        "unit": "MVA",
+        "desc": "Apparent Power, ph. 2"
+      },
+      {
+        "var": "e:Ssett",
+        "unit": "MVA",
+        "desc": "Apparent Power, ph. 3"
+      },
+      {
+        "var": "e:scale0",
+        "unit": "",
+        "desc": "Scaling Factor"
+      },
+      {
+        "var": "e:scale10r",
+        "unit": "",
+        "desc": "Scaling Factor, ph. 1"
+      },
+      {
+        "var": "e:scale10s",
+        "unit": "",
+        "desc": "Scaling Factor, ph. 2"
+      },
+      {
+        "var": "e:scale10t",
+        "unit": "",
+        "desc": "Scaling Factor, ph. 3"
+      },
+      {
+        "var": "e:Qset",
+        "unit": "Mvar",
+        "desc": "Reactive Power"
+      },
+      {
+        "var": "e:Qsetr",
+        "unit": "Mvar",
+        "desc": "Reactive Power, ph. 1"
+      },
+      {
+        "var": "e:Qsets",
+        "unit": "Mvar",
+        "desc": "Reactive Power, ph. 2"
+      },
+      {
+        "var": "e:Qsett",
+        "unit": "Mvar",
+        "desc": "Reactive Power, ph. 3"
+      },
+      {
+        "var": "e:cosphiset",
+        "unit": "",
+        "desc": "Power Factor, cos(phi)"
+      },
+      {
+        "var": "e:cosphisetr",
+        "unit": "",
+        "desc": "Power Factor, cos(phi), ph. 1"
+      },
+      {
+        "var": "e:cosphisets",
+        "unit": "",
+        "desc": "Power Factor, cos(phi), ph. 2"
+      },
+      {
+        "var": "e:cosphisett",
+        "unit": "",
+        "desc": "Power Factor, cos(phi), ph. 3"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:cimRdfId",
+        "unit": "",
+        "desc": "RDF ID"
+      },
+      {
+        "var": "e:obj_id",
+        "unit": "StaCubic*",
+        "desc": "Cubicle"
+      },
+      {
+        "var": "e:cpZone",
+        "unit": "ElmZone",
+        "desc": "Zone"
+      },
+      {
+        "var": "e:cPhaseWise",
+        "unit": "",
+        "desc": "Phasewise input"
+      },
+      {
+        "var": "e:ciorient",
+        "unit": "",
+        "desc": "Orientation"
+      },
+      {
+        "var": "e:ciConn",
+        "unit": "",
+        "desc": "Connected"
+      },
+      {
+        "var": "e:cn_bus",
+        "unit": "ElmTerm",
+        "desc": "Busbar"
+      },
+      {
+        "var": "e:cbranch",
+        "unit": "Elm*,RelFuse,StaSua*",
+        "desc": "Branch"
+      },
+      {
+        "var": "e:ciRadial",
+        "unit": "",
+        "desc": "Radial"
+      },
+      {
+        "var": "e:n_bar",
+        "unit": "",
+        "desc": "No. of Busbars"
+      },
+      {
+        "var": "e:n_term",
+        "unit": "",
+        "desc": "No. of Terminals"
+      },
+      {
+        "var": "e:n_lne",
+        "unit": "",
+        "desc": "No. of Lines"
+      },
+      {
+        "var": "e:n_2wt",
+        "unit": "",
+        "desc": "No. of 2-w Trfs."
+      },
+      {
+        "var": "e:n_3wt",
+        "unit": "",
+        "desc": "No. of 3-w Trfs."
+      },
+      {
+        "var": "e:n_4wt",
+        "unit": "",
+        "desc": "No. of 4-w Trfs."
+      },
+      {
+        "var": "e:n_sym",
+        "unit": "",
+        "desc": "No. of syn. Machines"
+      },
+      {
+        "var": "e:n_asm",
+        "unit": "",
+        "desc": "No. of asyn. Machines"
+      },
+      {
+        "var": "e:n_stg",
+        "unit": "",
+        "desc": "No. of Static Generators"
+      },
+      {
+        "var": "e:n_pvs",
+        "unit": "",
+        "desc": "No. of PV Systems"
+      },
+      {
+        "var": "e:n_lod",
+        "unit": "",
+        "desc": "No. of Loads"
+      },
+      {
+        "var": "e:n_cust",
+        "unit": "",
+        "desc": "Total number of customers"
+      }
+    ]
+  }
+}

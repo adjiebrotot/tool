@@ -1,0 +1,524 @@
+{
+  "result_vars": {
+    "load_flow": {
+      "c": [
+        {
+          "var": "c:Ptotgen",
+          "unit": "MW",
+          "desc": "Total Generation, Active Power"
+        },
+        {
+          "var": "c:Qtotgen",
+          "unit": "Mvar",
+          "desc": "Total Generation, Reactive Power"
+        },
+        {
+          "var": "c:Ptotcons",
+          "unit": "MW",
+          "desc": "Total Consumption, Active Power"
+        },
+        {
+          "var": "c:Qtotcons",
+          "unit": "Mvar",
+          "desc": "Total Consumption, Reactive Power"
+        },
+        {
+          "var": "c:Pgen",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:Qgen",
+          "unit": "Mvar",
+          "desc": "Generators, Reactive Power"
+        },
+        {
+          "var": "c:Sgen",
+          "unit": "MVA",
+          "desc": "Generators, Apparent Power"
+        },
+        {
+          "var": "c:cosgen",
+          "unit": "",
+          "desc": "Generators, Power Factor"
+        },
+        {
+          "var": "c:Pmot",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:Qmot",
+          "unit": "Mvar",
+          "desc": "Motor Loads, Reactive Power"
+        },
+        {
+          "var": "c:Smot",
+          "unit": "MVA",
+          "desc": "Motor Loads, Apparent Power"
+        },
+        {
+          "var": "c:cosmot",
+          "unit": "",
+          "desc": "Motor Loads, Power Factor"
+        },
+        {
+          "var": "c:Pload",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:Qload",
+          "unit": "Mvar",
+          "desc": "Loads, Reactive Power"
+        },
+        {
+          "var": "c:Sload",
+          "unit": "MVA",
+          "desc": "Loads, Apparent Power"
+        },
+        {
+          "var": "c:cosload",
+          "unit": "",
+          "desc": "Loads, Power Factor"
+        },
+        {
+          "var": "c:Qcomp",
+          "unit": "Mvar",
+          "desc": "Compensation, C"
+        },
+        {
+          "var": "c:Qcompr",
+          "unit": "Mvar",
+          "desc": "Compensation, L"
+        },
+        {
+          "var": "c:Pnet",
+          "unit": "MW",
+          "desc": "External Networks, Active Power"
+        },
+        {
+          "var": "c:Qnet",
+          "unit": "Mvar",
+          "desc": "External Networks, Reactive Power"
+        },
+        {
+          "var": "c:Snet",
+          "unit": "MVA",
+          "desc": "External Networks, Apparent Power"
+        },
+        {
+          "var": "c:cosnet",
+          "unit": "",
+          "desc": "External Networks, Power Factor"
+        },
+        {
+          "var": "c:umax",
+          "unit": "p.u.",
+          "desc": "Maximum Voltage"
+        },
+        {
+          "var": "c:umin",
+          "unit": "p.u.",
+          "desc": "Minimum Voltage"
+        },
+        {
+          "var": "c:equiAreas",
+          "unit": "",
+          "desc": "Number of equipotential areas"
+        }
+      ]
+    },
+    "load_flow_dc": {
+      "c": [
+        {
+          "var": "c:Ptotgen",
+          "unit": "MW",
+          "desc": "Total Generation, Active Power"
+        },
+        {
+          "var": "c:Ptotcons",
+          "unit": "MW",
+          "desc": "Total Consumption, Active Power"
+        },
+        {
+          "var": "c:Pgen",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:Pmot",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:Pload",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:Pnet",
+          "unit": "MW",
+          "desc": "External Networks, Active Power"
+        },
+        {
+          "var": "c:equiAreas",
+          "unit": "",
+          "desc": "Number of equipotential areas"
+        }
+      ]
+    },
+    "opf": {
+      "c": [
+        {
+          "var": "c:Ptotgen",
+          "unit": "MW",
+          "desc": "Total Generation, Active Power"
+        },
+        {
+          "var": "c:Qtotgen",
+          "unit": "Mvar",
+          "desc": "Total Generation, Reactive Power"
+        },
+        {
+          "var": "c:Ptotcons",
+          "unit": "MW",
+          "desc": "Total Consumption, Active Power"
+        },
+        {
+          "var": "c:Qtotcons",
+          "unit": "Mvar",
+          "desc": "Total Consumption, Reactive Power"
+        },
+        {
+          "var": "c:Pgen",
+          "unit": "MW",
+          "desc": "Generators, Active Power"
+        },
+        {
+          "var": "c:Qgen",
+          "unit": "Mvar",
+          "desc": "Generators, Reactive Power"
+        },
+        {
+          "var": "c:Sgen",
+          "unit": "MVA",
+          "desc": "Generators, Apparent Power"
+        },
+        {
+          "var": "c:cosgen",
+          "unit": "",
+          "desc": "Generators, Power Factor"
+        },
+        {
+          "var": "c:Pmot",
+          "unit": "MW",
+          "desc": "Motor Loads, Active Power"
+        },
+        {
+          "var": "c:Qmot",
+          "unit": "Mvar",
+          "desc": "Motor Loads, Reactive Power"
+        },
+        {
+          "var": "c:Smot",
+          "unit": "MVA",
+          "desc": "Motor Loads, Apparent Power"
+        },
+        {
+          "var": "c:cosmot",
+          "unit": "",
+          "desc": "Motor Loads, Power Factor"
+        },
+        {
+          "var": "c:Pload",
+          "unit": "MW",
+          "desc": "Loads, Active Power"
+        },
+        {
+          "var": "c:Qload",
+          "unit": "Mvar",
+          "desc": "Loads, Reactive Power"
+        },
+        {
+          "var": "c:Sload",
+          "unit": "MVA",
+          "desc": "Loads, Apparent Power"
+        },
+        {
+          "var": "c:cosload",
+          "unit": "",
+          "desc": "Loads, Power Factor"
+        },
+        {
+          "var": "c:Qcomp",
+          "unit": "Mvar",
+          "desc": "Compensation, C"
+        },
+        {
+          "var": "c:Qcompr",
+          "unit": "Mvar",
+          "desc": "Compensation, L"
+        },
+        {
+          "var": "c:Pnet",
+          "unit": "MW",
+          "desc": "External Networks, Active Power"
+        },
+        {
+          "var": "c:Qnet",
+          "unit": "Mvar",
+          "desc": "External Networks, Reactive Power"
+        },
+        {
+          "var": "c:Snet",
+          "unit": "MVA",
+          "desc": "External Networks, Apparent Power"
+        },
+        {
+          "var": "c:cosnet",
+          "unit": "",
+          "desc": "External Networks, Power Factor"
+        },
+        {
+          "var": "c:umax",
+          "unit": "p.u.",
+          "desc": "Maximum Voltage"
+        },
+        {
+          "var": "c:umin",
+          "unit": "p.u.",
+          "desc": "Minimum Voltage"
+        },
+        {
+          "var": "c:equiAreas",
+          "unit": "",
+          "desc": "Number of equipotential areas"
+        }
+      ]
+    },
+    "basic": {
+      "b": [
+        {
+          "var": "b:loc_name",
+          "unit": "",
+          "desc": "Name"
+        }
+      ]
+    }
+  },
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:sShort",
+        "unit": "",
+        "desc": "Short Name"
+      },
+      {
+        "var": "e:sType",
+        "unit": "",
+        "desc": "Type"
+      },
+      {
+        "var": "e:Electrodes",
+        "unit": "",
+        "desc": "Electrode configuration"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:icolor",
+        "unit": "",
+        "desc": "Colour"
+      },
+      {
+        "var": "e:constr",
+        "unit": "",
+        "desc": "Year of Construction"
+      },
+      {
+        "var": "e:iBoxed",
+        "unit": "",
+        "desc": "Enclosure"
+      },
+      {
+        "var": "e:DcBoxType",
+        "unit": "",
+        "desc": "Enclosure type"
+      },
+      {
+        "var": "e:GPSlat",
+        "unit": "deg",
+        "desc": "Latitude / Northing"
+      },
+      {
+        "var": "e:GPSlon",
+        "unit": "deg",
+        "desc": "Longitude / Easting"
+      },
+      {
+        "var": "e:AccessTime",
+        "unit": "min",
+        "desc": "First manual switch action after the fault"
+      },
+      {
+        "var": "e:LocAccTime",
+        "unit": "min",
+        "desc": "After a switch action in another substation"
+      },
+      {
+        "var": "e:CondGap",
+        "unit": "mm",
+        "desc": "Conductor gap"
+      },
+      {
+        "var": "e:Xfactor",
+        "unit": "",
+        "desc": "Distance factor"
+      },
+      {
+        "var": "e:WorkDist",
+        "unit": "mm",
+        "desc": "Working distance"
+      },
+      {
+        "var": "e:BoxWidth",
+        "unit": "mm",
+        "desc": "Width"
+      },
+      {
+        "var": "e:BoxHeight",
+        "unit": "mm",
+        "desc": "Height"
+      },
+      {
+        "var": "e:BoxDepth",
+        "unit": "mm",
+        "desc": "Depth"
+      },
+      {
+        "var": "e:arcLength",
+        "unit": "mm",
+        "desc": "Arc length"
+      },
+      {
+        "var": "e:nFactor",
+        "unit": "",
+        "desc": "Statistical correction"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:cimRdfId",
+        "unit": "",
+        "desc": "RDF ID"
+      },
+      {
+        "var": "e:pRA",
+        "unit": "IntRunarrange",
+        "desc": "Running Arrangement"
+      },
+      {
+        "var": "e:pSwSc",
+        "unit": "IntSwitching",
+        "desc": "Active Rules"
+      },
+      {
+        "var": "e:pOwner",
+        "unit": "ElmOwner",
+        "desc": "Default Owner"
+      },
+      {
+        "var": "e:pOperator",
+        "unit": "ElmOperator",
+        "desc": "Default Operator"
+      },
+      {
+        "var": "e:pDiagram",
+        "unit": "IntGrfnet",
+        "desc": "Diagram"
+      },
+      {
+        "var": "e:stoLoad",
+        "unit": "IntDistribution",
+        "desc": "Distribution Curve"
+      },
+      {
+        "var": "e:contents",
+        "unit": "",
+        "desc": "Contents"
+      },
+      {
+        "var": "e:cpMeteostat",
+        "unit": "ElmMeteostat",
+        "desc": "Meteo. Station"
+      },
+      {
+        "var": "e:isRaActive",
+        "unit": "",
+        "desc": "Running arrangement active"
+      },
+      {
+        "var": "e:cUnom",
+        "unit": "kV",
+        "desc": "Nominal Voltage"
+      },
+      {
+        "var": "e:cpZone",
+        "unit": "ElmZone",
+        "desc": "Default Zone"
+      },
+      {
+        "var": "e:cpArea",
+        "unit": "ElmArea",
+        "desc": "Default Area"
+      },
+      {
+        "var": "e:logf_freq",
+        "unit": "1/a",
+        "desc": "Loss of grid frequency"
+      },
+      {
+        "var": "e:logf_year",
+        "unit": "a",
+        "desc": "Time period between loss of grid events"
+      }
+    ]
+  }
+}

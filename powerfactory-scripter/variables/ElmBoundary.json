@@ -1,86 +1,26 @@
 {
   "result_vars": {
-    "contingency": {
-      "c": [
-        {
-          "var": "c:ExportP",
-          "unit": "MW",
-          "desc": "Export, Active Power",
-          "suffix": ":Ph"
-        },
-        {
-          "var": "c:ExportQ",
-          "unit": "Mvar",
-          "desc": "Export, Reactive Power",
-          "suffix": ":Ph"
-        },
-        {
-          "var": "c:ImportP",
-          "unit": "MW",
-          "desc": "Import, Active Power"
-        },
-        {
-          "var": "c:ImportQ",
-          "unit": "Mvar",
-          "desc": "Import, Reactive Power"
-        },
-        {
-          "var": "c:Pinter",
-          "unit": "MW",
-          "desc": "Active Power Interchange"
-        },
-        {
-          "var": "c:Qinter",
-          "unit": "Mvar",
-          "desc": "Reactive Power Interchange"
-        }
-      ]
-    },
-    "dynamic_rms": {
-      "c": [
-        {
-          "var": "c:ExportP",
-          "unit": "MW",
-          "desc": "Export, Active Power",
-          "suffix": ":Ph"
-        },
-        {
-          "var": "c:ImportP",
-          "unit": "MW",
-          "desc": "Import, Active Power"
-        },
-        {
-          "var": "c:Pinter",
-          "unit": "MW",
-          "desc": "Active Power Interchange"
-        }
-      ],
-      "s": [
-        {
-          "var": "s:Pinter",
-          "unit": "MW",
-          "desc": "OUT"
-        },
-        {
-          "var": "s:Qinter",
-          "unit": "Mvar",
-          "desc": "OUT"
-        }
-      ]
-    },
     "load_flow": {
       "c": [
         {
+          "var": "c:Pinter",
+          "unit": "MW",
+          "desc": "Active Power Interchange"
+        },
+        {
+          "var": "c:Qinter",
+          "unit": "Mvar",
+          "desc": "Reactive Power Interchange"
+        },
+        {
           "var": "c:ExportP",
           "unit": "MW",
-          "desc": "Export, Active Power",
-          "suffix": ":Ph"
+          "desc": "Export, Active Power"
         },
         {
           "var": "c:ExportQ",
           "unit": "Mvar",
-          "desc": "Export, Reactive Power",
-          "suffix": ":Ph"
+          "desc": "Export, Reactive Power"
         },
         {
           "var": "c:ImportP",
@@ -91,36 +31,39 @@
           "var": "c:ImportQ",
           "unit": "Mvar",
           "desc": "Import, Reactive Power"
-        },
-        {
-          "var": "c:Pinter",
-          "unit": "MW",
-          "desc": "Active Power Interchange"
-        },
-        {
-          "var": "c:Qinter",
-          "unit": "Mvar",
-          "desc": "Reactive Power Interchange"
         }
       ]
     },
     "load_flow_dc": {
       "c": [
         {
+          "var": "c:Pinter",
+          "unit": "MW",
+          "desc": "Active Power Interchange"
+        },
+        {
           "var": "c:ExportP",
           "unit": "MW",
-          "desc": "Export, Active Power",
-          "suffix": ":Ph"
+          "desc": "Export, Active Power"
         },
         {
           "var": "c:ImportP",
           "unit": "MW",
           "desc": "Import, Active Power"
-        },
+        }
+      ]
+    },
+    "dynamic_rms": {
+      "s": [
         {
-          "var": "c:Pinter",
+          "var": "s:Pinter",
           "unit": "MW",
           "desc": "Active Power Interchange"
+        },
+        {
+          "var": "s:Qinter",
+          "unit": "Mvar",
+          "desc": "Reactive Power Interchange"
         }
       ]
     },
@@ -129,28 +72,36 @@
         {
           "var": "s:Pinter",
           "unit": "MW",
-          "desc": "OUT"
+          "desc": "Active Power Interchange"
         },
         {
           "var": "s:Qinter",
           "unit": "Mvar",
-          "desc": "OUT"
+          "desc": "Reactive Power Interchange"
         }
       ]
     },
     "opf": {
       "c": [
         {
+          "var": "c:Pinter",
+          "unit": "MW",
+          "desc": "Active Power Interchange"
+        },
+        {
+          "var": "c:Qinter",
+          "unit": "Mvar",
+          "desc": "Reactive Power Interchange"
+        },
+        {
           "var": "c:ExportP",
           "unit": "MW",
-          "desc": "Export, Active Power",
-          "suffix": ":Ph"
+          "desc": "Export, Active Power"
         },
         {
           "var": "c:ExportQ",
           "unit": "Mvar",
-          "desc": "Export, Reactive Power",
-          "suffix": ":Ph"
+          "desc": "Export, Reactive Power"
         },
         {
           "var": "c:ImportP",
@@ -161,16 +112,6 @@
           "var": "c:ImportQ",
           "unit": "Mvar",
           "desc": "Import, Reactive Power"
-        },
-        {
-          "var": "c:Pinter",
-          "unit": "MW",
-          "desc": "Active Power Interchange"
-        },
-        {
-          "var": "c:Qinter",
-          "unit": "Mvar",
-          "desc": "Reactive Power Interchange"
         },
         {
           "var": "c:psummax",
@@ -194,397 +135,247 @@
         }
       ]
     },
-    "quasi_dynamic": {
-      "c": [
+    "basic": {
+      "b": [
         {
-          "var": "c:ExportP",
-          "unit": "MW",
-          "desc": "Export, Active Power",
-          "suffix": ":Ph"
-        },
-        {
-          "var": "c:ExportQ",
-          "unit": "Mvar",
-          "desc": "Export, Reactive Power",
-          "suffix": ":Ph"
-        },
-        {
-          "var": "c:ImportP",
-          "unit": "MW",
-          "desc": "Import, Active Power"
-        },
-        {
-          "var": "c:ImportQ",
-          "unit": "Mvar",
-          "desc": "Import, Reactive Power"
-        },
-        {
-          "var": "c:Pinter",
-          "unit": "MW",
-          "desc": "Active Power Interchange"
-        },
-        {
-          "var": "c:Qinter",
-          "unit": "Mvar",
-          "desc": "Reactive Power Interchange"
-        }
-      ]
-    },
-    "state_estimation": {
-      "c": [
-        {
-          "var": "c:ExportP",
-          "unit": "MW",
-          "desc": "Export, Active Power",
-          "suffix": ":Ph"
-        },
-        {
-          "var": "c:ExportQ",
-          "unit": "Mvar",
-          "desc": "Export, Reactive Power",
-          "suffix": ":Ph"
-        },
-        {
-          "var": "c:ImportP",
-          "unit": "MW",
-          "desc": "Import, Active Power"
-        },
-        {
-          "var": "c:ImportQ",
-          "unit": "Mvar",
-          "desc": "Import, Reactive Power"
-        },
-        {
-          "var": "c:Pinter",
-          "unit": "MW",
-          "desc": "Active Power Interchange"
-        },
-        {
-          "var": "c:Qinter",
-          "unit": "Mvar",
-          "desc": "Reactive Power Interchange"
+          "var": "b:loc_name",
+          "unit": "",
+          "desc": "Name"
         }
       ]
     }
   },
   "params": {
-    "b": [
-      {
-        "var": "b:loc_name",
-        "unit": "Name",
-        "desc": "Name"
-      }
-    ],
     "e": [
       {
-        "var": "e:InterPset",
-        "unit": "MW",
-        "desc": "Scheduled Active Power Interchange"
-      },
-      {
-        "var": "e:PlimDecrease",
-        "unit": "MW",
-        "desc": "Max. active boundary flow decrease"
-      },
-      {
-        "var": "e:PlimIncrease",
-        "unit": "MW",
-        "desc": "Max. active boundary flow increase"
-      },
-      {
-        "var": "e:QlimDecrease",
-        "unit": "Mvar",
-        "desc": "Max. reactive boundary flow decrease"
-      },
-      {
-        "var": "e:QlimIncrease",
-        "unit": "Mvar",
-        "desc": "Max. reactive boundary flow increase"
-      },
-      {
-        "var": "e:allowCntConstrFiltP",
-        "unit": "Allow contingency filtering by number of critical constraints",
-        "desc": "Allow contingency filtering by number of critical constraints"
-      },
-      {
-        "var": "e:allowCntConstrFiltQ",
-        "unit": "Allow contingency filtering by number of critical constraints",
-        "desc": "Allow contingency filtering by number of critical constraints"
-      },
-      {
-        "var": "e:allowMarginFiltP",
-        "unit": "Allow filtering by constraint margin",
-        "desc": "Allow filtering by constraint margin"
-      },
-      {
-        "var": "e:allowMarginFiltQ",
-        "unit": "Allow filtering by constraint margin",
-        "desc": "Allow filtering by constraint margin"
-      },
-      {
-        "var": "e:appr_modby",
-        "unit": "Modified by",
-        "desc": "Modified by"
-      },
-      {
-        "var": "e:appr_modif",
-        "unit": "Modified",
-        "desc": "Modified"
-      },
-      {
-        "var": "e:appr_status",
-        "unit": "Status",
-        "desc": "Status"
-      },
-      {
-        "var": "e:branches",
-        "unit": "Branch",
-        "desc": "Branch"
-      },
-      {
-        "var": "e:buses",
-        "unit": "Busbar",
-        "desc": "Busbar"
-      },
-      {
-        "var": "e:cAllowCntConstrFilt",
-        "unit": "Allow contingency filtering by number of critical constraints",
-        "desc": "Allow contingency filtering by number of critical constraints"
-      },
-      {
-        "var": "e:cAllowMarginFilt",
-        "unit": "Allow filtering by constraint margin",
-        "desc": "Allow filtering by constraint margin"
-      },
-      {
-        "var": "e:cIsSepCntConstrType",
-        "unit": "Separate constraint type for contingencies",
-        "desc": "Separate constraint type for contingencies"
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
       },
       {
         "var": "e:chr_name",
-        "unit": "Characteristic Name",
+        "unit": "",
         "desc": "Characteristic Name"
       },
       {
-        "var": "e:ciorient",
-        "unit": "Orientation",
-        "desc": "Orientation"
-      },
-      {
-        "var": "e:cntConstrTypeP",
-        "unit": "Contingency-constraint type",
-        "desc": "Contingency-constraint type"
-      },
-      {
-        "var": "e:cntConstrTypeQ",
-        "unit": "Contingency-constraint type",
-        "desc": "Contingency-constraint type"
-      },
-      {
-        "var": "e:commissionDate",
-        "unit": "Commissioning Date",
-        "desc": "Commissioning Date"
-      },
-      {
-        "var": "e:constr",
-        "unit": "Year of Construction",
-        "desc": "Year of Construction"
-      },
-      {
-        "var": "e:cubicles",
-        "unit": "StaCubic",
-        "desc": "Boundary Cubicle"
-      },
-      {
-        "var": "e:dat_src",
-        "unit": "Data source",
-        "desc": "Data source"
-      },
-      {
-        "var": "e:desc",
-        "unit": "Description",
-        "desc": "Description"
-      },
-      {
-        "var": "e:doc_id",
-        "unit": "Additional Data",
-        "desc": "Additional Data"
-      },
-      {
         "var": "e:for_name",
-        "unit": "Foreign Key",
+        "unit": "",
         "desc": "Foreign Key"
       },
       {
-        "var": "e:gnrl_modby",
-        "unit": "Object modified by",
-        "desc": "Object modified by"
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
       },
       {
-        "var": "e:gnrl_modif",
-        "unit": "Object modified",
-        "desc": "Object modified"
+        "var": "e:sernum",
+        "unit": "",
+        "desc": "Serial Number"
       },
       {
-        "var": "e:headfold",
-        "unit": "Head Folder",
-        "desc": "Head Folder"
+        "var": "e:manuf",
+        "unit": "",
+        "desc": "Manufacturer"
       },
       {
-        "var": "e:iInterChg",
-        "unit": "Consider Interchange Schedule",
-        "desc": "Consider Interchange Schedule"
+        "var": "e:commissionDate",
+        "unit": "",
+        "desc": "Commissioning Date"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:outserv",
+        "unit": "",
+        "desc": "Out of Service"
+      },
+      {
+        "var": "e:icolor",
+        "unit": "",
+        "desc": "Colour"
+      },
+      {
+        "var": "e:iSwitchStates",
+        "unit": "",
+        "desc": "Topological search"
       },
       {
         "var": "e:iNeutral",
-        "unit": "Topological search: consider neutral wire connections",
-        "desc": "Topological search: consider neutral wire connections"
+        "unit": "",
+        "desc": "Topological search"
+      },
+      {
+        "var": "e:iInterChg",
+        "unit": "",
+        "desc": "Consider Interchange Schedule"
       },
       {
         "var": "e:iOPFCpsummax",
-        "unit": "Max. Active Boundary Flow",
+        "unit": "",
         "desc": "Max. Active Boundary Flow"
       },
       {
         "var": "e:iOPFCpsummin",
-        "unit": "Min. Active Boundary Flow",
+        "unit": "",
         "desc": "Min. Active Boundary Flow"
       },
       {
+        "var": "e:isSoftPConstr",
+        "unit": "",
+        "desc": "Soft constraint (AC OPF only)"
+      },
+      {
         "var": "e:iOPFCqsummax",
-        "unit": "Max. Reactive Boundary Flow",
+        "unit": "",
         "desc": "Max. Reactive Boundary Flow"
       },
       {
         "var": "e:iOPFCqsummin",
-        "unit": "Min. Reactive Boundary Flow",
+        "unit": "",
         "desc": "Min. Reactive Boundary Flow"
       },
       {
-        "var": "e:iSwitchStates",
-        "unit": "Topological search: Stop at open breakers",
-        "desc": "Topological search: Stop at open breakers"
-      },
-      {
-        "var": "e:icolor",
-        "unit": "Colour",
-        "desc": "Colour"
-      },
-      {
-        "var": "e:isLimDecreaseP",
-        "unit": "Max. decrease",
-        "desc": "Max. decrease"
-      },
-      {
-        "var": "e:isLimDecreaseQ",
-        "unit": "Max. decrease",
-        "desc": "Max. decrease"
-      },
-      {
-        "var": "e:isLimIncreaseP",
-        "unit": "Max. increase",
-        "desc": "Max. increase"
-      },
-      {
-        "var": "e:isLimIncreaseQ",
-        "unit": "Max. increase",
-        "desc": "Max. increase"
-      },
-      {
-        "var": "e:isLimPmax",
-        "unit": "Max.",
-        "desc": "Max."
-      },
-      {
-        "var": "e:isLimPmin",
-        "unit": "Min.",
-        "desc": "Min."
-      },
-      {
-        "var": "e:isLimQmax",
-        "unit": "Max.",
-        "desc": "Max."
-      },
-      {
-        "var": "e:isLimQmin",
-        "unit": "Min.",
-        "desc": "Min."
-      },
-      {
-        "var": "e:isMaxLoadSoftNlinP",
-        "unit": "Penalty costs for soft constraints",
-        "desc": "Penalty costs for soft constraints"
-      },
-      {
-        "var": "e:isMaxLoadSoftNlinQ",
-        "unit": "Penalty costs for soft constraints",
-        "desc": "Penalty costs for soft constraints"
+        "var": "e:isSoftQConstr",
+        "unit": "",
+        "desc": "Soft constraint (AC OPF only)"
       },
       {
         "var": "e:isPlimsRel",
-        "unit": "Active power limits for Unit Commitment",
+        "unit": "",
         "desc": "Active power limits for Unit Commitment"
       },
       {
         "var": "e:isQlimsRel",
-        "unit": "Reactive power limits for Unit Commitment",
+        "unit": "",
         "desc": "Reactive power limits for Unit Commitment"
       },
       {
-        "var": "e:isSepCntConstrTypeP",
-        "unit": "Separate constraint type for contingencies",
-        "desc": "Separate constraint type for contingencies"
+        "var": "e:isLimPmax",
+        "unit": "",
+        "desc": "Max."
       },
       {
-        "var": "e:isSepCntConstrTypeQ",
-        "unit": "Separate constraint type for contingencies",
-        "desc": "Separate constraint type for contingencies"
+        "var": "e:isLimPmin",
+        "unit": "",
+        "desc": "Min."
       },
       {
-        "var": "e:isSoftPConstr",
-        "unit": "Soft constraint (AC OPF only)",
-        "desc": "Soft constraint (AC OPF only)"
+        "var": "e:isLimQmax",
+        "unit": "",
+        "desc": "Max."
+      },
+      {
+        "var": "e:isLimQmin",
+        "unit": "",
+        "desc": "Min."
+      },
+      {
+        "var": "e:isLimIncreaseP",
+        "unit": "",
+        "desc": "Max. increase"
+      },
+      {
+        "var": "e:isLimDecreaseP",
+        "unit": "",
+        "desc": "Max. decrease"
+      },
+      {
+        "var": "e:isLimIncreaseQ",
+        "unit": "",
+        "desc": "Max. increase"
+      },
+      {
+        "var": "e:isLimDecreaseQ",
+        "unit": "",
+        "desc": "Max. decrease"
       },
       {
         "var": "e:isSoftPConstrUC",
-        "unit": "Soft constraint",
+        "unit": "",
         "desc": "Soft constraint"
-      },
-      {
-        "var": "e:isSoftQConstr",
-        "unit": "Soft constraint (AC OPF only)",
-        "desc": "Soft constraint (AC OPF only)"
       },
       {
         "var": "e:isSoftQConstrUC",
-        "unit": "Soft constraint",
+        "unit": "",
         "desc": "Soft constraint"
       },
       {
-        "var": "e:loc_name",
-        "unit": "Name",
-        "desc": "Name"
+        "var": "e:allowOutDistFacFiltP",
+        "unit": "",
+        "desc": "Allow filtering by outage distribution factor"
       },
       {
-        "var": "e:manuf",
-        "unit": "Manufacturer",
-        "desc": "Manufacturer"
+        "var": "e:allowMarginFiltP",
+        "unit": "",
+        "desc": "Allow filtering by constraint margin"
       },
       {
-        "var": "e:outserv",
-        "unit": "Out of Service",
-        "desc": "Out of Service"
+        "var": "e:allowCntConstrFiltP",
+        "unit": "",
+        "desc": "Allow contingency filtering by number of critical constraints"
       },
       {
-        "var": "e:pOperator",
-        "unit": "ElmOperator",
-        "desc": "Operator"
+        "var": "e:allowOutDistFacFiltQ",
+        "unit": "",
+        "desc": "Allow filtering by outage distribution factor"
       },
       {
-        "var": "e:pOwner",
-        "unit": "ElmOwner",
-        "desc": "Owner"
+        "var": "e:allowMarginFiltQ",
+        "unit": "",
+        "desc": "Allow filtering by constraint margin"
+      },
+      {
+        "var": "e:allowCntConstrFiltQ",
+        "unit": "",
+        "desc": "Allow contingency filtering by number of critical constraints"
+      },
+      {
+        "var": "e:isSepCntConstrTypeP",
+        "unit": "",
+        "desc": "Separate constraint type for contingencies"
+      },
+      {
+        "var": "e:cntConstrTypeP",
+        "unit": "",
+        "desc": "Contingency-constraint type"
+      },
+      {
+        "var": "e:isSepCntConstrTypeQ",
+        "unit": "",
+        "desc": "Separate constraint type for contingencies"
+      },
+      {
+        "var": "e:cntConstrTypeQ",
+        "unit": "",
+        "desc": "Contingency-constraint type"
+      },
+      {
+        "var": "e:isMaxLoadSoftNlinP",
+        "unit": "",
+        "desc": "Penalty costs for soft constraints"
+      },
+      {
+        "var": "e:isMaxLoadSoftNlinQ",
+        "unit": "",
+        "desc": "Penalty costs for soft constraints"
+      },
+      {
+        "var": "e:constr",
+        "unit": "",
+        "desc": "Year of Construction"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:InterPset",
+        "unit": "MW",
+        "desc": "Scheduled Active Power Interchange"
       },
       {
         "var": "e:psummax",
@@ -607,66 +398,114 @@
         "desc": "Min. Total Reactive Power Limit"
       },
       {
-        "var": "e:scalingFacSoftConstrCostP",
-        "unit": "Cost scaling factor",
-        "desc": "Cost scaling factor"
-      },
-      {
-        "var": "e:scalingFacSoftConstrCostQ",
-        "unit": "Cost scaling factor",
-        "desc": "Cost scaling factor"
-      },
-      {
         "var": "e:scalingFacSoftConstrOpfP",
-        "unit": "Weighting factor for soft constraint penalty",
+        "unit": "",
         "desc": "Weighting factor for soft constraint penalty"
       },
       {
         "var": "e:scalingFacSoftConstrOpfQ",
-        "unit": "Weighting factor for soft constraint penalty",
+        "unit": "",
         "desc": "Weighting factor for soft constraint penalty"
       },
       {
-        "var": "e:sernum",
-        "unit": "Serial Number",
-        "desc": "Serial Number"
-      }
-    ],
-    "r": [
-      {
-        "var": "r:branches",
-        "unit": "Branch",
-        "desc": "Branch"
+        "var": "e:PlimIncrease",
+        "unit": "MW",
+        "desc": "Max. active boundary flow increase"
       },
       {
-        "var": "r:buses",
-        "unit": "Busbar",
-        "desc": "Busbar"
+        "var": "e:PlimDecrease",
+        "unit": "MW",
+        "desc": "Max. active boundary flow decrease"
       },
       {
-        "var": "r:cubicles",
-        "unit": "StaCubic",
-        "desc": "Boundary Cubicle"
+        "var": "e:QlimIncrease",
+        "unit": "Mvar",
+        "desc": "Max. reactive boundary flow increase"
       },
       {
-        "var": "r:doc_id",
-        "unit": "Additional Data",
+        "var": "e:QlimDecrease",
+        "unit": "Mvar",
+        "desc": "Max. reactive boundary flow decrease"
+      },
+      {
+        "var": "e:scalingFacSoftConstrCostP",
+        "unit": "",
+        "desc": "Cost scaling factor"
+      },
+      {
+        "var": "e:scalingFacSoftConstrCostQ",
+        "unit": "",
+        "desc": "Cost scaling factor"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:doc_id",
+        "unit": "",
         "desc": "Additional Data"
       },
       {
-        "var": "r:headfold",
-        "unit": "Head Folder",
-        "desc": "Head Folder"
+        "var": "e:pOwner",
+        "unit": "ElmOwner",
+        "desc": "Owner"
       },
       {
-        "var": "r:pOperator",
+        "var": "e:pOperator",
         "unit": "ElmOperator",
         "desc": "Operator"
       },
       {
-        "var": "r:pOwner",
-        "unit": "ElmOwner",
-        "desc": "Owner"
+        "var": "e:cubicles",
+        "unit": "StaCubic",
+        "desc": "Boundary Cubicle"
+      },
+      {
+        "var": "e:ciorient",
+        "unit": "",
+        "desc": "Orientation"
+      },
+      {
+        "var": "e:headfold",
+        "unit": "",
+        "desc": "Head Folder"
+      },
+      {
+        "var": "e:branches",
+        "unit": "Elm*,RelFuse,StaSua*",
+        "desc": "Branch"
+      },
+      {
+        "var": "e:buses",
+        "unit": "ElmTerm",
+        "desc": "Busbar"
+      },
+      {
+        "var": "e:cAllowOutDistFacFilt",
+        "unit": "",
+        "desc": "Allow filtering by outage distribution factor"
+      },
+      {
+        "var": "e:cAllowMarginFilt",
+        "unit": "",
+        "desc": "Allow filtering by constraint margin"
+      },
+      {
+        "var": "e:cAllowCntConstrFilt",
+        "unit": "",
+        "desc": "Allow contingency filtering by number of critical constraints"
+      },
+      {
+        "var": "e:cIsSepCntConstrType",
+        "unit": "",
+        "desc": "Separate constraint type for contingencies"
       }
     ]
   }

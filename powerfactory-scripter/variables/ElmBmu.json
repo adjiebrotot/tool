@@ -1,0 +1,690 @@
+{
+  "result_vars": {
+    "load_flow": {
+      "c": [
+        {
+          "var": "c:Psum",
+          "unit": "MW",
+          "desc": "Total Active Power"
+        },
+        {
+          "var": "c:Qsum",
+          "unit": "Mvar",
+          "desc": "Total Reactive Power"
+        },
+        {
+          "var": "c:cst_disp",
+          "unit": "USD/h",
+          "desc": "Total operating costs"
+        },
+        {
+          "var": "c:Pmin",
+          "unit": "MW",
+          "desc": "Lower limit of active power"
+        },
+        {
+          "var": "c:Pmax",
+          "unit": "MW",
+          "desc": "Upper limit of active power"
+        },
+        {
+          "var": "c:Qmin",
+          "unit": "Mvar",
+          "desc": "Lower limit of reactive power"
+        },
+        {
+          "var": "c:Qmax",
+          "unit": "Mvar",
+          "desc": "Upper limit of reactive power"
+        }
+      ]
+    },
+    "load_flow_dc": {
+      "c": [
+        {
+          "var": "c:Psum",
+          "unit": "MW",
+          "desc": "Total Active Power"
+        },
+        {
+          "var": "c:cst_disp",
+          "unit": "USD/h",
+          "desc": "Total operating costs"
+        },
+        {
+          "var": "c:Pmin",
+          "unit": "MW",
+          "desc": "Lower limit of active power"
+        },
+        {
+          "var": "c:Pmax",
+          "unit": "MW",
+          "desc": "Upper limit of active power"
+        }
+      ]
+    },
+    "basic": {
+      "b": [
+        {
+          "var": "b:loc_name",
+          "unit": "",
+          "desc": "Name"
+        }
+      ]
+    }
+  },
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:outserv",
+        "unit": "",
+        "desc": "Out of Service"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:iAdjustQ",
+        "unit": "",
+        "desc": "Adjust Reactive Power accordingly"
+      },
+      {
+        "var": "e:distr_mod",
+        "unit": "",
+        "desc": "Distribution Mode"
+      },
+      {
+        "var": "e:priority",
+        "unit": "",
+        "desc": "Virtual Power Plant, Merit Order"
+      },
+      {
+        "var": "e:plantUsage",
+        "unit": "",
+        "desc": "Power plant usage"
+      },
+      {
+        "var": "e:isCtrlP",
+        "unit": "",
+        "desc": "Active power"
+      },
+      {
+        "var": "e:isCtrlQ",
+        "unit": "",
+        "desc": "Reactive power"
+      },
+      {
+        "var": "e:isMustRunUC",
+        "unit": "",
+        "desc": "Must run"
+      },
+      {
+        "var": "e:ctrlUsageP",
+        "unit": "",
+        "desc": "Active Power"
+      },
+      {
+        "var": "e:ctrlUsageQ",
+        "unit": "",
+        "desc": "Reactive Power"
+      },
+      {
+        "var": "e:isBmuPlims",
+        "unit": "",
+        "desc": "Active power operational limits"
+      },
+      {
+        "var": "e:isLimPmax",
+        "unit": "",
+        "desc": "Max."
+      },
+      {
+        "var": "e:isLimPmin",
+        "unit": "",
+        "desc": "Min."
+      },
+      {
+        "var": "e:isBmuQlims",
+        "unit": "",
+        "desc": "Reactive power operational limits"
+      },
+      {
+        "var": "e:isLimQmax",
+        "unit": "",
+        "desc": "Max."
+      },
+      {
+        "var": "e:isLimQmin",
+        "unit": "",
+        "desc": "Min."
+      },
+      {
+        "var": "e:consumMode",
+        "unit": "",
+        "desc": "Separate consumption mode"
+      },
+      {
+        "var": "e:isConsCostOp",
+        "unit": "",
+        "desc": "Operating costs"
+      },
+      {
+        "var": "e:discMethCostOp",
+        "unit": "",
+        "desc": "Piecewise linearisation for LP"
+      },
+      {
+        "var": "e:numBreakpointsCostOp",
+        "unit": "",
+        "desc": "Number of breakpoints"
+      },
+      {
+        "var": "e:isConsCostsRedispatch",
+        "unit": "",
+        "desc": "Additional redispatch costs"
+      },
+      {
+        "var": "e:isConsStartUpCost",
+        "unit": "",
+        "desc": "Start-up costs"
+      },
+      {
+        "var": "e:isConsShutDownCost",
+        "unit": "",
+        "desc": "Shut-down costs"
+      },
+      {
+        "var": "e:isConstrRamp",
+        "unit": "",
+        "desc": "Ramp rate constraints"
+      },
+      {
+        "var": "e:isConstrUpDown",
+        "unit": "",
+        "desc": "Start-up/shut-down time constraints"
+      },
+      {
+        "var": "e:isDiscreteCtrlP",
+        "unit": "",
+        "desc": "Restriction to discrete active power values"
+      },
+      {
+        "var": "e:isPcurrAllowed",
+        "unit": "",
+        "desc": "Allow current active power value"
+      },
+      {
+        "var": "e:isBmuCurtailCosts",
+        "unit": "",
+        "desc": "Costs for curtailment"
+      },
+      {
+        "var": "e:iInterPol",
+        "unit": "",
+        "desc": "Approximation"
+      },
+      {
+        "var": "e:polyDegree",
+        "unit": "",
+        "desc": "Polynomial degree"
+      },
+      {
+        "var": "e:powerDistrMethod",
+        "unit": "",
+        "desc": "Power distribution"
+      },
+      {
+        "var": "e:isRespectLims",
+        "unit": "",
+        "desc": "Respect individual operational machine limits"
+      },
+      {
+        "var": "e:Ptot",
+        "unit": "MW",
+        "desc": "Active Power Setpoint"
+      },
+      {
+        "var": "e:Pmin",
+        "unit": "MW",
+        "desc": "Min."
+      },
+      {
+        "var": "e:Pmax",
+        "unit": "MW",
+        "desc": "Max."
+      },
+      {
+        "var": "e:Qmin",
+        "unit": "Mvar",
+        "desc": "Min."
+      },
+      {
+        "var": "e:Qmax",
+        "unit": "Mvar",
+        "desc": "Max."
+      },
+      {
+        "var": "e:smoothfac",
+        "unit": "%",
+        "desc": "Smoothing factor"
+      },
+      {
+        "var": "e:PminConsum",
+        "unit": "MW",
+        "desc": "Min."
+      },
+      {
+        "var": "e:PmaxConsum",
+        "unit": "MW",
+        "desc": "Max."
+      },
+      {
+        "var": "e:costCurtailment",
+        "unit": "USD/MWh",
+        "desc": "Costs for curtailment"
+      },
+      {
+        "var": "e:penaltyCosts",
+        "unit": "USD/MWh",
+        "desc": "Penalty costs"
+      },
+      {
+        "var": "e:fixedCosts",
+        "unit": "USD/h",
+        "desc": "Fixed costs"
+      },
+      {
+        "var": "e:consumCosts",
+        "unit": "USD/MWh",
+        "desc": "Consumption costs"
+      },
+      {
+        "var": "e:costRedispatchUp",
+        "unit": "USD/MWh",
+        "desc": "Upward active power redispatch costs"
+      },
+      {
+        "var": "e:costRedispatchDown",
+        "unit": "USD/MWh",
+        "desc": "Downward active power redispatch costs"
+      },
+      {
+        "var": "e:costRedispatchQ",
+        "unit": "USD/Mvarh",
+        "desc": "Redispatch costs for reactive power change"
+      },
+      {
+        "var": "e:cost_up",
+        "unit": "USD",
+        "desc": "Warm-start costs"
+      },
+      {
+        "var": "e:costColdStart",
+        "unit": "USD",
+        "desc": "Cold-start costs"
+      },
+      {
+        "var": "e:coldStartTime",
+        "unit": "h",
+        "desc": "Cold-start time"
+      },
+      {
+        "var": "e:costShutDown",
+        "unit": "USD",
+        "desc": "Shut-down costs"
+      },
+      {
+        "var": "e:limRampUp",
+        "unit": "MW/h",
+        "desc": "Ramp-up limit"
+      },
+      {
+        "var": "e:limRampDown",
+        "unit": "MW/h",
+        "desc": "Ramp-down limit"
+      },
+      {
+        "var": "e:limRampStartUp",
+        "unit": "MW",
+        "desc": "Start-up ramp limit"
+      },
+      {
+        "var": "e:limRampShutDown",
+        "unit": "MW",
+        "desc": "Shut-down ramp limit"
+      },
+      {
+        "var": "e:minUpTime",
+        "unit": "h",
+        "desc": "Minimum up-time"
+      },
+      {
+        "var": "e:minDownTime",
+        "unit": "h",
+        "desc": "Minimum down-time"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:vecBreakpointsP",
+        "unit": "MW",
+        "desc": "Power"
+      },
+      {
+        "var": "e:vecStartUpTimes",
+        "unit": ">=h",
+        "desc": "Down-time"
+      },
+      {
+        "var": "e:vecStartUpCosts",
+        "unit": "USD",
+        "desc": "Start-up costs"
+      },
+      {
+        "var": "e:vecDiscreteCtrlPvals",
+        "unit": "%",
+        "desc": "Valid active power values"
+      },
+      {
+        "var": "e:cpower",
+        "unit": "MW",
+        "desc": "Power"
+      },
+      {
+        "var": "e:ccost",
+        "unit": "USD/h",
+        "desc": "Costs"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:pOpCostCurve",
+        "unit": "IntCostcurvegen",
+        "desc": "Generator cost curve"
+      },
+      {
+        "var": "e:contents",
+        "unit": "",
+        "desc": "Scripts"
+      },
+      {
+        "var": "e:cNumDispMachAutoDisp",
+        "unit": "",
+        "desc": "Number of dispatchable machines"
+      },
+      {
+        "var": "e:cNumFixedMachAutoDisp",
+        "unit": "",
+        "desc": "Number of non-dispatchable machines"
+      },
+      {
+        "var": "e:cNumMachQds",
+        "unit": "",
+        "desc": "Number of machines for storage model"
+      },
+      {
+        "var": "e:cNumCtrlsUc",
+        "unit": "",
+        "desc": "Number of controllable machines"
+      },
+      {
+        "var": "e:Psum",
+        "unit": "MW",
+        "desc": "Max. Active Power Sum"
+      },
+      {
+        "var": "e:PsumAct",
+        "unit": "MW",
+        "desc": "Actual Active Power Sum"
+      },
+      {
+        "var": "e:machines_disp",
+        "unit": "",
+        "desc": "Dispatchable Machines"
+      },
+      {
+        "var": "e:fixed",
+        "unit": "",
+        "desc": "Must run"
+      },
+      {
+        "var": "e:merit_order",
+        "unit": "",
+        "desc": "Merit Order"
+      },
+      {
+        "var": "e:machines_fix",
+        "unit": "",
+        "desc": "Non-Dispatchable Machines"
+      },
+      {
+        "var": "e:available_fix",
+        "unit": "",
+        "desc": "Available"
+      },
+      {
+        "var": "e:cStorage",
+        "unit": "ElmStorage",
+        "desc": "Storage model"
+      },
+      {
+        "var": "e:cCurativeLimPSum",
+        "unit": "MW",
+        "desc": "Max. curative active power deviation"
+      },
+      {
+        "var": "e:cCurativeLimQSum",
+        "unit": "Mvar",
+        "desc": "Max. curative reactive power deviation"
+      },
+      {
+        "var": "e:cWeightedCurativeCostsP",
+        "unit": "USD/MVAh",
+        "desc": "Weighted costs sum for curative active power deviation"
+      },
+      {
+        "var": "e:cWeightedCurativeCostsQ",
+        "unit": "USD/MVAh",
+        "desc": "Weighted costs sum for curative reactive power deviation"
+      },
+      {
+        "var": "e:cPsumMin",
+        "unit": "MW",
+        "desc": "Min."
+      },
+      {
+        "var": "e:cPsumMax",
+        "unit": "MW",
+        "desc": "Max."
+      },
+      {
+        "var": "e:cQsumMin",
+        "unit": "Mvar",
+        "desc": "Min."
+      },
+      {
+        "var": "e:cQsumMax",
+        "unit": "Mvar",
+        "desc": "Max."
+      },
+      {
+        "var": "e:cPsumMinConsum",
+        "unit": "MW",
+        "desc": "Min."
+      },
+      {
+        "var": "e:cPsumMaxConsum",
+        "unit": "MW",
+        "desc": "Max."
+      },
+      {
+        "var": "e:avgCostsUc",
+        "unit": "USD/MWh",
+        "desc": "Average costs"
+      },
+      {
+        "var": "e:cfixedCosts",
+        "unit": "USD/h",
+        "desc": "Fixed costs"
+      },
+      {
+        "var": "e:cPenaltyCostWeightSum",
+        "unit": "USD/MWh",
+        "desc": "Penalty costs"
+      },
+      {
+        "var": "e:cFixedCostSum",
+        "unit": "USD/h",
+        "desc": "Fixed costs"
+      },
+      {
+        "var": "e:cConsumWeightCostSum",
+        "unit": "USD/MWh",
+        "desc": "Consumption costs"
+      },
+      {
+        "var": "e:cSumCostCurtailment",
+        "unit": "USD/MWh",
+        "desc": "Costs for curtailment"
+      },
+      {
+        "var": "e:cSumCostRedispUp",
+        "unit": "USD/MWh",
+        "desc": "Upward active power redispatch costs"
+      },
+      {
+        "var": "e:cSumCostRedispDown",
+        "unit": "USD/MWh",
+        "desc": "Downward active power redispatch costs"
+      },
+      {
+        "var": "e:cSumCostRedispQ",
+        "unit": "USD/Mvarh",
+        "desc": "Redispatch costs for reactive power change"
+      },
+      {
+        "var": "e:cCostShutDownSum",
+        "unit": "USD",
+        "desc": "Shut-down costs"
+      },
+      {
+        "var": "e:cLimRampUpSum",
+        "unit": "MW/h",
+        "desc": "Ramp-up limit"
+      },
+      {
+        "var": "e:cLimRampDownSum",
+        "unit": "MW/h",
+        "desc": "Ramp-down limit"
+      },
+      {
+        "var": "e:cLimRampStartUpSum",
+        "unit": "MW",
+        "desc": "Start-up ramp limit"
+      },
+      {
+        "var": "e:cLimRampShutDownSum",
+        "unit": "MW",
+        "desc": "Shut-down ramp limit"
+      },
+      {
+        "var": "e:cMinUpTimeMach",
+        "unit": "h",
+        "desc": "Minimum up-time"
+      },
+      {
+        "var": "e:cMinDownTimeMach",
+        "unit": "h",
+        "desc": "Minimum down-time"
+      },
+      {
+        "var": "e:cDiscMethCostOp",
+        "unit": "",
+        "desc": "Piecewise linearisation for LP"
+      },
+      {
+        "var": "e:cPratedSum",
+        "unit": "MW",
+        "desc": "Pr(rated)"
+      },
+      {
+        "var": "e:cPowerDistrMethod",
+        "unit": "",
+        "desc": "Power distribution"
+      },
+      {
+        "var": "e:colMachine",
+        "unit": "",
+        "desc": "Machine"
+      },
+      {
+        "var": "e:colCtrlP",
+        "unit": "",
+        "desc": "Active power\ncontrol"
+      },
+      {
+        "var": "e:colCtrlQ",
+        "unit": "",
+        "desc": "Reactive power\ncontrol"
+      },
+      {
+        "var": "e:colNomPower",
+        "unit": "MVA",
+        "desc": "Rated Power"
+      },
+      {
+        "var": "e:colPrated",
+        "unit": "MW",
+        "desc": "Rated Active Power"
+      },
+      {
+        "var": "e:colGenShiftKey",
+        "unit": "%",
+        "desc": "Generation\nshift key"
+      },
+      {
+        "var": "e:colGenUsageBmu",
+        "unit": "",
+        "desc": "Generator\nusage"
+      },
+      {
+        "var": "e:colCtrlFixedToLdfVal",
+        "unit": "",
+        "desc": "Fix controls to \nLoad Flow values"
+      }
+    ]
+  }
+}

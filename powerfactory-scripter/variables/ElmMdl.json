@@ -1,0 +1,187 @@
+{
+  "result_vars": {},
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:outserv",
+        "unit": "",
+        "desc": "Out of Service"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:iAstabint",
+        "unit": "",
+        "desc": "A-stable integration algorithm (only for RMS Simulation)"
+      },
+      {
+        "var": "e:clockSampling",
+        "unit": "",
+        "desc": "Sampling options"
+      },
+      {
+        "var": "e:outputsDelayed",
+        "unit": "",
+        "desc": "Additional delay of outputs by one sampling period"
+      },
+      {
+        "var": "e:fmuType",
+        "unit": "",
+        "desc": "FMU Type"
+      },
+      {
+        "var": "e:fmuCsSampling",
+        "unit": "",
+        "desc": "Sampling options"
+      },
+      {
+        "var": "e:fmuCSOutputsDelayed",
+        "unit": "",
+        "desc": "Additional delay of outputs by one sampling period"
+      },
+      {
+        "var": "e:clockPeriod",
+        "unit": "s",
+        "desc": "Sampling period"
+      },
+      {
+        "var": "e:clockRate",
+        "unit": "Hz",
+        "desc": "Sampling rate"
+      },
+      {
+        "var": "e:fmuCsPeriod",
+        "unit": "s",
+        "desc": "Sampling period"
+      },
+      {
+        "var": "e:fmuCsRate",
+        "unit": "Hz",
+        "desc": "Sampling rate"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:typ_id",
+        "unit": "TypMdl*",
+        "desc": "Type"
+      },
+      {
+        "var": "e:arrayObject",
+        "unit": "IntMat",
+        "desc": "Array/Matrix"
+      },
+      {
+        "var": "e:configScript",
+        "unit": "ComDpl",
+        "desc": "Configuration Script"
+      },
+      {
+        "var": "e:parameterNames",
+        "unit": "",
+        "desc": "Parameter Names"
+      },
+      {
+        "var": "e:attrname",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:attrvalue",
+        "unit": "",
+        "desc": "Value"
+      },
+      {
+        "var": "e:cattrDesc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:cattrUnit",
+        "unit": "",
+        "desc": "Unit"
+      },
+      {
+        "var": "e:carrayDesc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:carrayUnit",
+        "unit": "",
+        "desc": "Unit"
+      },
+      {
+        "var": "e:cMin",
+        "unit": "",
+        "desc": "Min"
+      },
+      {
+        "var": "e:cMax",
+        "unit": "",
+        "desc": "Max"
+      },
+      {
+        "var": "e:carrayName",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:cfmuType",
+        "unit": "",
+        "desc": "FMU Type"
+      },
+      {
+        "var": "e:cdefaultPeriod",
+        "unit": "",
+        "desc": "Default sampling period"
+      },
+      {
+        "var": "e:cdefaultRate",
+        "unit": "",
+        "desc": "Default sampling rate"
+      },
+      {
+        "var": "e:cmodelInformation",
+        "unit": "",
+        "desc": "Model Information"
+      }
+    ]
+  }
+}

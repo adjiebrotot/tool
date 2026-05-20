@@ -1,0 +1,67 @@
+{
+  "result_vars": {
+    "basic": {
+      "b": [
+        {
+          "var": "b:loc_name",
+          "unit": "",
+          "desc": "Name"
+        }
+      ]
+    }
+  },
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:outserv",
+        "unit": "",
+        "desc": "Out of Service"
+      },
+      {
+        "var": "e:pBbStart",
+        "unit": "ElmFeeder",
+        "desc": "Start"
+      },
+      {
+        "var": "e:pBbEnd",
+        "unit": "ElmFeeder,ElmTerm",
+        "desc": "End"
+      },
+      {
+        "var": "e:cTieOpen",
+        "unit": "ElmCoup,StaSwitch",
+        "desc": "Tie Open Point"
+      },
+      {
+        "var": "e:cBbLength",
+        "unit": "km",
+        "desc": "Length of Backbone"
+      },
+      {
+        "var": "e:cBbFOR",
+        "unit": "1/a",
+        "desc": "Forced outage rate of Backbone"
+      },
+      {
+        "var": "e:cMeanCs",
+        "unit": "mm^2",
+        "desc": "Mean cross section"
+      },
+      {
+        "var": "e:cMinCs",
+        "unit": "mm^2",
+        "desc": "Minimum cross section on Backbone"
+      },
+      {
+        "var": "e:cBbOrder",
+        "unit": "",
+        "desc": "Order"
+      }
+    ]
+  }
+}

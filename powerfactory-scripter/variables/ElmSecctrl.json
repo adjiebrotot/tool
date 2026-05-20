@@ -1,113 +1,33 @@
 {
   "result_vars": {
-    "contingency": {
-      "c": [
-        {
-          "var": "c:PExch",
-          "unit": "MW",
-          "desc": "Power Exchange"
-        },
-        {
-          "var": "c:PctrlLim",
-          "unit": "MW",
-          "desc": "Controller Output Limit"
-        },
-        {
-          "var": "c:i_modus",
-          "unit": "Control Mode 0=phi 1=p",
-          "desc": "Control Mode 0=phi 1=p"
-        },
-        {
-          "var": "c:i_phase",
-          "unit": "Controlled Phase",
-          "desc": "Controlled Phase",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:imode",
-          "unit": "Control Mode",
-          "desc": "Control Mode"
-        },
-        {
-          "var": "c:phiu",
-          "unit": "rad",
-          "desc": "Phase Angle"
-        },
-        {
-          "var": "c:pini",
-          "unit": "MW",
-          "desc": "Active Power Setpoint"
-        },
-        {
-          "var": "c:rembar",
-          "unit": "Controlled Busbar",
-          "desc": "Controlled Busbar"
-        }
-      ],
-      "s": [
-        {
-          "var": "s:dpsco",
-          "unit": "MW",
-          "desc": "OUT"
-        },
-        {
-          "var": "s:pset",
-          "unit": "MW",
-          "desc": "IN"
-        }
-      ]
-    },
-    "dynamic_rms": {
-      "c": [
-        {
-          "var": "c:PExch",
-          "unit": "MW",
-          "desc": "Power Exchange"
-        },
-        {
-          "var": "c:PctrlLim",
-          "unit": "MW",
-          "desc": "Controller Output Limit"
-        },
-        {
-          "var": "c:i_modus",
-          "unit": "Control Mode 0=phi 1=p",
-          "desc": "Control Mode 0=phi 1=p"
-        },
-        {
-          "var": "c:imode",
-          "unit": "Control Mode",
-          "desc": "Control Mode"
-        },
-        {
-          "var": "c:phiu",
-          "unit": "rad",
-          "desc": "Phase Angle"
-        },
-        {
-          "var": "c:pini",
-          "unit": "MW",
-          "desc": "Active Power Setpoint"
-        },
-        {
-          "var": "c:rembar",
-          "unit": "Controlled Busbar",
-          "desc": "Controlled Busbar"
-        }
-      ],
-      "s": [
-        {
-          "var": "s:dpsco",
-          "unit": "MW",
-          "desc": "OUT"
-        }
-      ]
-    },
     "load_flow": {
       "c": [
         {
+          "var": "c:rembar",
+          "unit": "",
+          "desc": "Controlled Busbar"
+        },
+        {
+          "var": "c:pini",
+          "unit": "MW",
+          "desc": "Active Power Setpoint"
+        },
+        {
+          "var": "c:imode",
+          "unit": "",
+          "desc": "Control Mode"
+        },
+        {
+          "var": "c:i_modus",
+          "unit": "",
+          "desc": "Control Mode 0=phi 1=p"
+        },
+        {
+          "var": "c:phiu",
+          "unit": "rad",
+          "desc": "Phase Angle"
+        },
+        {
           "var": "c:PExch",
           "unit": "MW",
           "desc": "Power Exchange"
@@ -118,55 +38,60 @@
           "desc": "Controller Output Limit"
         },
         {
-          "var": "c:i_modus",
-          "unit": "Control Mode 0=phi 1=p",
-          "desc": "Control Mode 0=phi 1=p"
+          "var": "c:nCtrlIter",
+          "unit": "",
+          "desc": "No. of CTRL-iterations"
         },
         {
           "var": "c:i_phase",
-          "unit": "Controlled Phase",
+          "unit": "",
           "desc": "Controlled Phase",
           "availability": [
             "unbal"
           ]
-        },
-        {
-          "var": "c:imode",
-          "unit": "Control Mode",
-          "desc": "Control Mode"
-        },
-        {
-          "var": "c:phiu",
-          "unit": "rad",
-          "desc": "Phase Angle"
-        },
-        {
-          "var": "c:pini",
-          "unit": "MW",
-          "desc": "Active Power Setpoint"
-        },
-        {
-          "var": "c:rembar",
-          "unit": "Controlled Busbar",
-          "desc": "Controlled Busbar"
         }
       ],
       "s": [
         {
-          "var": "s:dpsco",
-          "unit": "MW",
-          "desc": "OUT"
-        },
-        {
           "var": "s:pset",
           "unit": "MW",
-          "desc": "IN"
+          "desc": "Active Power Setpoint"
+        },
+        {
+          "var": "s:dpsco",
+          "unit": "MW",
+          "desc": "Controller Output"
         }
       ]
     },
     "load_flow_dc": {
       "c": [
         {
+          "var": "c:rembar",
+          "unit": "",
+          "desc": "Controlled Busbar"
+        },
+        {
+          "var": "c:pini",
+          "unit": "MW",
+          "desc": "Active Power Setpoint"
+        },
+        {
+          "var": "c:imode",
+          "unit": "",
+          "desc": "Control Mode"
+        },
+        {
+          "var": "c:i_modus",
+          "unit": "",
+          "desc": "Control Mode 0=phi 1=p"
+        },
+        {
+          "var": "c:phiu",
+          "unit": "rad",
+          "desc": "Phase Angle"
+        },
+        {
           "var": "c:PExch",
           "unit": "MW",
           "desc": "Power Exchange"
@@ -175,44 +100,44 @@
           "var": "c:PctrlLim",
           "unit": "MW",
           "desc": "Controller Output Limit"
-        },
-        {
-          "var": "c:i_modus",
-          "unit": "Control Mode 0=phi 1=p",
-          "desc": "Control Mode 0=phi 1=p"
-        },
-        {
-          "var": "c:imode",
-          "unit": "Control Mode",
-          "desc": "Control Mode"
-        },
-        {
-          "var": "c:phiu",
-          "unit": "rad",
-          "desc": "Phase Angle"
-        },
-        {
-          "var": "c:pini",
-          "unit": "MW",
-          "desc": "Active Power Setpoint"
-        },
-        {
-          "var": "c:rembar",
-          "unit": "Controlled Busbar",
-          "desc": "Controlled Busbar"
         }
       ],
       "s": [
         {
           "var": "s:dpsco",
           "unit": "MW",
-          "desc": "OUT"
+          "desc": "Controller Output"
         }
       ]
     },
     "opf": {
       "c": [
         {
+          "var": "c:rembar",
+          "unit": "",
+          "desc": "Controlled Busbar"
+        },
+        {
+          "var": "c:pini",
+          "unit": "MW",
+          "desc": "Active Power Setpoint"
+        },
+        {
+          "var": "c:imode",
+          "unit": "",
+          "desc": "Control Mode"
+        },
+        {
+          "var": "c:i_modus",
+          "unit": "",
+          "desc": "Control Mode 0=phi 1=p"
+        },
+        {
+          "var": "c:phiu",
+          "unit": "rad",
+          "desc": "Phase Angle"
+        },
+        {
           "var": "c:PExch",
           "unit": "MW",
           "desc": "Power Exchange"
@@ -223,374 +148,108 @@
           "desc": "Controller Output Limit"
         },
         {
-          "var": "c:i_modus",
-          "unit": "Control Mode 0=phi 1=p",
-          "desc": "Control Mode 0=phi 1=p"
-        },
-        {
-          "var": "c:i_phase",
-          "unit": "Controlled Phase",
-          "desc": "Controlled Phase",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:imode",
-          "unit": "Control Mode",
-          "desc": "Control Mode"
-        },
-        {
-          "var": "c:phiu",
-          "unit": "rad",
-          "desc": "Phase Angle"
-        },
-        {
-          "var": "c:pini",
-          "unit": "MW",
-          "desc": "Active Power Setpoint"
-        },
-        {
-          "var": "c:rembar",
-          "unit": "Controlled Busbar",
-          "desc": "Controlled Busbar"
-        }
-      ],
-      "s": [
-        {
-          "var": "s:dpsco",
-          "unit": "MW",
-          "desc": "OUT"
-        },
-        {
-          "var": "s:pset",
-          "unit": "MW",
-          "desc": "IN"
+          "var": "c:nCtrlIter",
+          "unit": "",
+          "desc": "No. of CTRL-iterations"
         }
       ]
     },
-    "quasi_dynamic": {
-      "c": [
+    "basic": {
+      "b": [
         {
-          "var": "c:PExch",
-          "unit": "MW",
-          "desc": "Power Exchange"
+          "var": "b:loc_name",
+          "unit": "",
+          "desc": "Name"
         },
         {
-          "var": "c:PctrlLim",
-          "unit": "MW",
-          "desc": "Controller Output Limit"
+          "var": "b:n_sym",
+          "unit": "",
+          "desc": "Number of Machines"
         },
         {
-          "var": "c:i_modus",
-          "unit": "Control Mode 0=phi 1=p",
+          "var": "b:i_modus",
+          "unit": "",
           "desc": "Control Mode 0=phi 1=p"
         },
         {
-          "var": "c:i_phase",
-          "unit": "Controlled Phase",
-          "desc": "Controlled Phase",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:imode",
-          "unit": "Control Mode",
-          "desc": "Control Mode"
-        },
-        {
-          "var": "c:phiu",
-          "unit": "rad",
-          "desc": "Phase Angle"
-        },
-        {
-          "var": "c:pini",
-          "unit": "MW",
-          "desc": "Active Power Setpoint"
-        },
-        {
-          "var": "c:rembar",
-          "unit": "Controlled Busbar",
-          "desc": "Controlled Busbar"
-        }
-      ],
-      "s": [
-        {
-          "var": "s:dpsco",
-          "unit": "MW",
-          "desc": "OUT"
-        },
-        {
-          "var": "s:pset",
-          "unit": "MW",
-          "desc": "IN"
-        }
-      ]
-    },
-    "state_estimation": {
-      "c": [
-        {
-          "var": "c:PExch",
-          "unit": "MW",
-          "desc": "Power Exchange"
-        },
-        {
-          "var": "c:PctrlLim",
-          "unit": "MW",
-          "desc": "Controller Output Limit"
-        },
-        {
-          "var": "c:i_modus",
-          "unit": "Control Mode 0=phi 1=p",
-          "desc": "Control Mode 0=phi 1=p"
-        },
-        {
-          "var": "c:i_phase",
-          "unit": "Controlled Phase",
-          "desc": "Controlled Phase",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:imode",
-          "unit": "Control Mode",
-          "desc": "Control Mode"
-        },
-        {
-          "var": "c:phiu",
-          "unit": "rad",
-          "desc": "Phase Angle"
-        },
-        {
-          "var": "c:pini",
-          "unit": "MW",
-          "desc": "Active Power Setpoint"
-        },
-        {
-          "var": "c:rembar",
-          "unit": "Controlled Busbar",
-          "desc": "Controlled Busbar"
-        }
-      ],
-      "s": [
-        {
-          "var": "s:dpsco",
-          "unit": "MW",
-          "desc": "OUT"
-        },
-        {
-          "var": "s:pset",
-          "unit": "MW",
-          "desc": "IN"
+          "var": "b:i_net",
+          "unit": "",
+          "desc": "Control Area Exchange"
         }
       ]
     }
   },
   "params": {
-    "b": [
+    "e": [
       {
-        "var": "b:i_modus",
-        "unit": "Control Mode 0=phi 1=p",
-        "desc": "Control Mode 0=phi 1=p"
-      },
-      {
-        "var": "b:i_net",
-        "unit": "Control Area Exchange",
-        "desc": "Control Area Exchange"
-      },
-      {
-        "var": "b:loc_name",
-        "unit": "Name",
+        "var": "e:loc_name",
+        "unit": "",
         "desc": "Name"
       },
       {
-        "var": "b:n_sym",
-        "unit": "Number of Machines",
-        "desc": "Number of Machines"
-      }
-    ],
-    "e": [
-      {
-        "var": "e:Kpf",
-        "unit": "MW/Hz",
-        "desc": "Frequency Bias"
-      },
-      {
-        "var": "e:Pexmax",
-        "unit": "MW",
-        "desc": "Maximum Power Interchange"
-      },
-      {
-        "var": "e:appr_modby",
-        "unit": "Modified by",
-        "desc": "Modified by"
-      },
-      {
-        "var": "e:appr_modif",
-        "unit": "Modified",
-        "desc": "Modified"
-      },
-      {
-        "var": "e:appr_status",
-        "unit": "Status",
-        "desc": "Status"
-      },
-      {
-        "var": "e:cDisplayName",
-        "unit": "Display Name",
-        "desc": "Display Name"
-      },
-      {
         "var": "e:chr_name",
-        "unit": "Characteristic Name",
+        "unit": "",
         "desc": "Characteristic Name"
       },
       {
-        "var": "e:cimRdfId",
-        "unit": "RDF ID",
-        "desc": "RDF ID"
-      },
-      {
-        "var": "e:cmo",
-        "unit": "Merit Order",
-        "desc": "Merit Order"
-      },
-      {
-        "var": "e:commissionDate",
-        "unit": "Commissioning Date",
-        "desc": "Commissioning Date"
-      },
-      {
-        "var": "e:constr",
-        "unit": "Year of Construction",
-        "desc": "Year of Construction"
-      },
-      {
-        "var": "e:cpBranch",
-        "unit": "Branch",
-        "desc": "Branch"
-      },
-      {
-        "var": "e:cpGrid",
-        "unit": "Grid",
-        "desc": "Grid"
-      },
-      {
-        "var": "e:cpHeadFold",
-        "unit": "Head Folder",
-        "desc": "Head Folder"
-      },
-      {
-        "var": "e:cpOperator",
-        "unit": "Operator",
-        "desc": "Operator"
-      },
-      {
-        "var": "e:cpOwner",
-        "unit": "Owner",
-        "desc": "Owner"
-      },
-      {
-        "var": "e:cpSite",
-        "unit": "Site",
-        "desc": "Site"
-      },
-      {
-        "var": "e:cpSubstat",
-        "unit": "Substation",
-        "desc": "Substation"
-      },
-      {
-        "var": "e:cvpp",
-        "unit": "%",
-        "desc": "Active Power Percentage"
-      },
-      {
-        "var": "e:dReserve",
-        "unit": "MW",
-        "desc": "Minimum Control Reserve"
-      },
-      {
-        "var": "e:dat_src",
-        "unit": "Data source",
-        "desc": "Data source"
-      },
-      {
-        "var": "e:desc",
-        "unit": "Description",
-        "desc": "Description"
-      },
-      {
-        "var": "e:doc_id",
-        "unit": "Additional Data",
-        "desc": "Additional Data"
-      },
-      {
-        "var": "e:fold_id",
-        "unit": "In Folder",
-        "desc": "In Folder"
-      },
-      {
         "var": "e:for_name",
-        "unit": "Foreign Key",
+        "unit": "",
         "desc": "Foreign Key"
       },
       {
-        "var": "e:gnrl_modby",
-        "unit": "Object modified by",
-        "desc": "Object modified by"
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
       },
       {
-        "var": "e:gnrl_modif",
-        "unit": "Object modified",
-        "desc": "Object modified"
+        "var": "e:sernum",
+        "unit": "",
+        "desc": "Serial Number"
+      },
+      {
+        "var": "e:manuf",
+        "unit": "",
+        "desc": "Manufacturer"
+      },
+      {
+        "var": "e:commissionDate",
+        "unit": "",
+        "desc": "Commissioning Date"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:outserv",
+        "unit": "",
+        "desc": "Out of Service"
       },
       {
         "var": "e:i_net",
-        "unit": "Control Mode",
+        "unit": "",
         "desc": "Control Mode"
       },
       {
         "var": "e:iexchange",
-        "unit": "Exchange for",
+        "unit": "",
         "desc": "Exchange for"
       },
       {
         "var": "e:imode",
-        "unit": "Active Power Distribution",
+        "unit": "",
         "desc": "Active Power Distribution"
       },
       {
-        "var": "e:loc_name",
-        "unit": "Name",
-        "desc": "Name"
+        "var": "e:constr",
+        "unit": "",
+        "desc": "Year of Construction"
       },
       {
-        "var": "e:manuf",
-        "unit": "Manufacturer",
-        "desc": "Manufacturer"
-      },
-      {
-        "var": "e:outserv",
-        "unit": "Out of Service",
-        "desc": "Out of Service"
-      },
-      {
-        "var": "e:pOperator",
-        "unit": "ElmOperator",
-        "desc": "Operator"
-      },
-      {
-        "var": "e:pOwner",
-        "unit": "ElmOwner",
-        "desc": "Owner"
-      },
-      {
-        "var": "e:pPmeas",
-        "unit": "ElmBoundary,ElmArea,ElmZone",
-        "desc": "Boundary/Zone/Area"
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
       },
       {
         "var": "e:psetp",
@@ -598,14 +257,39 @@
         "desc": "Power Setpoint"
       },
       {
-        "var": "e:psym",
-        "unit": "ElmSym,ElmGenstat,ElmVscmono,ElmVsc,ElmVac,ElmXnet,ElmPvsys",
-        "desc": "Machines"
+        "var": "e:dReserve",
+        "unit": "MW",
+        "desc": "Minimum Control Reserve"
       },
       {
-        "var": "e:qdslCtrl",
-        "unit": "Quasi-Dynamic Model",
-        "desc": "Quasi-Dynamic Model"
+        "var": "e:Pexmax",
+        "unit": "MW",
+        "desc": "Maximum Power Interchange"
+      },
+      {
+        "var": "e:Kpf",
+        "unit": "MW/Hz",
+        "desc": "Frequency Bias"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:cimRdfId",
+        "unit": "",
+        "desc": "RDF ID"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:fold_id",
+        "unit": "",
+        "desc": "In Folder"
       },
       {
         "var": "e:rembar",
@@ -613,86 +297,84 @@
         "desc": "Busbar for Frequency Measurement"
       },
       {
-        "var": "e:sernum",
-        "unit": "Serial Number",
-        "desc": "Serial Number"
-      }
-    ],
-    "r": [
-      {
-        "var": "r:cpBranch",
-        "unit": "Branch",
-        "desc": "Branch"
-      },
-      {
-        "var": "r:cpGrid",
-        "unit": "Grid",
-        "desc": "Grid"
-      },
-      {
-        "var": "r:cpHeadFold",
-        "unit": "Head Folder",
-        "desc": "Head Folder"
-      },
-      {
-        "var": "r:cpOperator",
-        "unit": "Operator",
-        "desc": "Operator"
-      },
-      {
-        "var": "r:cpOwner",
-        "unit": "Owner",
-        "desc": "Owner"
-      },
-      {
-        "var": "r:cpSite",
-        "unit": "Site",
-        "desc": "Site"
-      },
-      {
-        "var": "r:cpSubstat",
-        "unit": "Substation",
-        "desc": "Substation"
-      },
-      {
-        "var": "r:doc_id",
-        "unit": "Additional Data",
-        "desc": "Additional Data"
-      },
-      {
-        "var": "r:fold_id",
-        "unit": "In Folder",
-        "desc": "In Folder"
-      },
-      {
-        "var": "r:pOperator",
-        "unit": "ElmOperator",
-        "desc": "Operator"
-      },
-      {
-        "var": "r:pOwner",
-        "unit": "ElmOwner",
-        "desc": "Owner"
-      },
-      {
-        "var": "r:pPmeas",
+        "var": "e:pPmeas",
         "unit": "ElmBoundary,ElmArea,ElmZone",
         "desc": "Boundary/Zone/Area"
       },
       {
-        "var": "r:psym",
+        "var": "e:doc_id",
+        "unit": "",
+        "desc": "Additional Data"
+      },
+      {
+        "var": "e:pOwner",
+        "unit": "ElmOwner",
+        "desc": "Owner"
+      },
+      {
+        "var": "e:pOperator",
+        "unit": "ElmOperator",
+        "desc": "Operator"
+      },
+      {
+        "var": "e:psym",
         "unit": "ElmSym,ElmGenstat,ElmVscmono,ElmVsc,ElmVac,ElmXnet,ElmPvsys",
         "desc": "Machines"
       },
       {
-        "var": "r:qdslCtrl",
-        "unit": "Quasi-Dynamic Model",
-        "desc": "Quasi-Dynamic Model"
+        "var": "e:cpHeadFold",
+        "unit": "",
+        "desc": "Head Folder"
       },
       {
-        "var": "r:rembar",
-        "unit": "StaBar*,ElmTerm*",
-        "desc": "Busbar for Frequency Measurement"
+        "var": "e:cpGrid",
+        "unit": "ElmNet",
+        "desc": "Grid"
+      },
+      {
+        "var": "e:cpOwner",
+        "unit": "ElmOwner",
+        "desc": "Owner"
+      },
+      {
+        "var": "e:cpOperator",
+        "unit": "ElmOperator",
+        "desc": "Operator"
+      },
+      {
+        "var": "e:cpBranch",
+        "unit": "ElmBranch",
+        "desc": "Branch"
+      },
+      {
+        "var": "e:cpSite",
+        "unit": "ElmSite",
+        "desc": "Site"
+      },
+      {
+        "var": "e:cpSubstat",
+        "unit": "ElmSubstat,ElmTrfstat",
+        "desc": "Substation"
+      },
+      {
+        "var": "e:cDisplayName",
+        "unit": "",
+        "desc": "Display Name"
+      },
+      {
+        "var": "e:cvpp",
+        "unit": "%",
+        "desc": "Active Power Percentage"
+      },
+      {
+        "var": "e:cmo",
+        "unit": "",
+        "desc": "Merit Order"
+      },
+      {
+        "var": "e:qdslCtrl",
+        "unit": "ElmQdsl",
+        "desc": "Quasi-Dynamic Model"
       }
     ]
   }

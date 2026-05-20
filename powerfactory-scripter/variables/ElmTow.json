@@ -1,0 +1,1200 @@
+{
+  "result_vars": {
+    "load_flow": {
+      "c": [
+        {
+          "var": "c:zline",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        },
+        {
+          "var": "c:rlinedc",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:glinedc",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:yZline",
+          "unit": "S",
+          "desc": "Inversion of impedance matrix"
+        },
+        {
+          "var": "c:frnom",
+          "unit": "Hz",
+          "desc": "Nominal frequency"
+        },
+        {
+          "var": "c:frnomDC",
+          "unit": "Hz",
+          "desc": "Nominal frequency, DC"
+        },
+        {
+          "var": "c:hpi",
+          "unit": "rad/s",
+          "desc": "Nominal angular frequency"
+        },
+        {
+          "var": "c:rline",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:gline",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:rline_1",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:gline_1",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:rline_2",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:gline_2",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:zline_1",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline_1",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        },
+        {
+          "var": "c:zline_2",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline_2",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        }
+      ]
+    },
+    "short_circuit": {
+      "c": [
+        {
+          "var": "c:zline",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        },
+        {
+          "var": "c:rlinedc",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:glinedc",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:yZline",
+          "unit": "S",
+          "desc": "Inversion of impedance matrix"
+        },
+        {
+          "var": "c:frnom",
+          "unit": "Hz",
+          "desc": "Nominal frequency"
+        },
+        {
+          "var": "c:frnomDC",
+          "unit": "Hz",
+          "desc": "Nominal frequency"
+        },
+        {
+          "var": "c:hpi",
+          "unit": "rad/s",
+          "desc": "Nominal angular frequency"
+        },
+        {
+          "var": "c:zline_1",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline_1",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        },
+        {
+          "var": "c:zline_2",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline_2",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        }
+      ]
+    },
+    "dynamic_rms": {
+      "c": [
+        {
+          "var": "c:zline",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        },
+        {
+          "var": "c:rlinedc",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:glinedc",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:yZline",
+          "unit": "S",
+          "desc": "Inversion of impedance matrix"
+        },
+        {
+          "var": "c:frnom",
+          "unit": "Hz",
+          "desc": "Nominal frequency"
+        },
+        {
+          "var": "c:frnomDC",
+          "unit": "Hz",
+          "desc": "Nominal frequency, DC"
+        },
+        {
+          "var": "c:hpi",
+          "unit": "rad/s",
+          "desc": "Nominal angular frequency"
+        },
+        {
+          "var": "c:llinedc",
+          "unit": "H",
+          "desc": "Inductance"
+        },
+        {
+          "var": "c:clinedc",
+          "unit": "F",
+          "desc": "Line Capacitance"
+        },
+        {
+          "var": "c:rline",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:lline",
+          "unit": "H",
+          "desc": "Inductance matrix"
+        },
+        {
+          "var": "c:gline",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:cline",
+          "unit": "F",
+          "desc": "Capacitance matrix"
+        },
+        {
+          "var": "c:Rs1",
+          "unit": "Ohm",
+          "desc": "Resistance 1"
+        },
+        {
+          "var": "c:Ls1",
+          "unit": "H",
+          "desc": "Inductance 1"
+        },
+        {
+          "var": "c:Rs2",
+          "unit": "Ohm",
+          "desc": "Resistance 2"
+        },
+        {
+          "var": "c:Ls2",
+          "unit": "H",
+          "desc": "Inductance 2"
+        },
+        {
+          "var": "c:Rsm",
+          "unit": "Ohm",
+          "desc": "Resistance 1-2"
+        },
+        {
+          "var": "c:Lsm",
+          "unit": "H",
+          "desc": "Inductance 1-2"
+        },
+        {
+          "var": "c:glne",
+          "unit": "S",
+          "desc": "Shunt conductance"
+        },
+        {
+          "var": "c:clne",
+          "unit": "F",
+          "desc": "Shunt capacitance"
+        },
+        {
+          "var": "c:rline_1",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:gline_1",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:rline_2",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:gline_2",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:zline_1",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline_1",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        },
+        {
+          "var": "c:zline_2",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline_2",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        }
+      ]
+    },
+    "dynamic_emt": {
+      "c": [
+        {
+          "var": "c:yline",
+          "unit": "S",
+          "desc": "Admittance matrix",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:frnom",
+          "unit": "Hz",
+          "desc": "Nominal frequency",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:frnomDC",
+          "unit": "Hz",
+          "desc": "Nominal frequency, DC",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:hpi",
+          "unit": "rad/s",
+          "desc": "Nominal angular frequency",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:rline",
+          "unit": "Ohm",
+          "desc": "Resistance matrix",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:lline",
+          "unit": "H",
+          "desc": "Inductance matrix",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:gline",
+          "unit": "S",
+          "desc": "Conductance matrix",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:cline",
+          "unit": "F",
+          "desc": "Capacitance matrix",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:U1m",
+          "unit": "kV",
+          "desc": "Vector of Modal Voltages, bus1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:U2m",
+          "unit": "kV",
+          "desc": "Vector of Modal Voltages, bus2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I1m",
+          "unit": "kA",
+          "desc": "Vector of Modal Currents, bus1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:I2m",
+          "unit": "kA",
+          "desc": "Vector of Modal Currents, bus2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Rs1",
+          "unit": "Ohm",
+          "desc": "Resistance 1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ls1",
+          "unit": "H",
+          "desc": "Inductance 1",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Rs2",
+          "unit": "Ohm",
+          "desc": "Resistance 2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Ls2",
+          "unit": "H",
+          "desc": "Inductance 2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Rsm",
+          "unit": "Ohm",
+          "desc": "Resistance 1-2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:Lsm",
+          "unit": "H",
+          "desc": "Inductance 1-2",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:glne",
+          "unit": "S",
+          "desc": "Shunt conductance",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:clne",
+          "unit": "F",
+          "desc": "Shunt capacitance",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:rline_1",
+          "unit": "Ohm",
+          "desc": "Resistance matrix",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:gline_1",
+          "unit": "S",
+          "desc": "Conductance matrix",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:rline_2",
+          "unit": "Ohm",
+          "desc": "Resistance matrix",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:gline_2",
+          "unit": "S",
+          "desc": "Conductance matrix",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:lline_1",
+          "unit": "H",
+          "desc": "Inductance matrix",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:lline_2",
+          "unit": "H",
+          "desc": "Inductance matrix",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:cline_1",
+          "unit": "F",
+          "desc": "Capacitance matrix",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
+          "var": "c:cline_2",
+          "unit": "F",
+          "desc": "Capacitance matrix",
+          "availability": [
+            "unbal"
+          ]
+        }
+      ]
+    },
+    "modal_analysis": {
+      "c": [
+        {
+          "var": "c:zline",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        },
+        {
+          "var": "c:rlinedc",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:glinedc",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:yZline",
+          "unit": "S",
+          "desc": "Inversion of impedance matrix"
+        },
+        {
+          "var": "c:frnom",
+          "unit": "Hz",
+          "desc": "Nominal frequency"
+        },
+        {
+          "var": "c:frnomDC",
+          "unit": "Hz",
+          "desc": "Nominal frequency, DC"
+        },
+        {
+          "var": "c:hpi",
+          "unit": "rad/s",
+          "desc": "Nominal angular frequency"
+        },
+        {
+          "var": "c:llinedc",
+          "unit": "H",
+          "desc": "Inductance"
+        },
+        {
+          "var": "c:clinedc",
+          "unit": "F",
+          "desc": "Line Capacitance"
+        },
+        {
+          "var": "c:rline",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:lline",
+          "unit": "H",
+          "desc": "Inductance matrix"
+        },
+        {
+          "var": "c:gline",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:cline",
+          "unit": "F",
+          "desc": "Capacitance matrix"
+        },
+        {
+          "var": "c:Rs1",
+          "unit": "Ohm",
+          "desc": "Resistance 1"
+        },
+        {
+          "var": "c:Ls1",
+          "unit": "H",
+          "desc": "Inductance 1"
+        },
+        {
+          "var": "c:Rs2",
+          "unit": "Ohm",
+          "desc": "Resistance 2"
+        },
+        {
+          "var": "c:Ls2",
+          "unit": "H",
+          "desc": "Inductance 2"
+        },
+        {
+          "var": "c:Rsm",
+          "unit": "Ohm",
+          "desc": "Resistance 1-2"
+        },
+        {
+          "var": "c:Lsm",
+          "unit": "H",
+          "desc": "Inductance 1-2"
+        },
+        {
+          "var": "c:glne",
+          "unit": "S",
+          "desc": "Shunt conductance"
+        },
+        {
+          "var": "c:clne",
+          "unit": "F",
+          "desc": "Shunt capacitance"
+        },
+        {
+          "var": "c:rline_1",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:gline_1",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:rline_2",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:gline_2",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:zline_1",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline_1",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        },
+        {
+          "var": "c:zline_2",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline_2",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        }
+      ]
+    },
+    "opf": {
+      "c": [
+        {
+          "var": "c:zline",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        },
+        {
+          "var": "c:rlinedc",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:glinedc",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:yZline",
+          "unit": "S",
+          "desc": "Inversion of impedance matrix"
+        },
+        {
+          "var": "c:frnom",
+          "unit": "Hz",
+          "desc": "Nominal frequency"
+        },
+        {
+          "var": "c:frnomDC",
+          "unit": "Hz",
+          "desc": "Nominal frequency, DC"
+        },
+        {
+          "var": "c:hpi",
+          "unit": "rad/s",
+          "desc": "Nominal angular frequency"
+        },
+        {
+          "var": "c:rline",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:gline",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:rline_1",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:gline_1",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:rline_2",
+          "unit": "Ohm",
+          "desc": "Resistance matrix"
+        },
+        {
+          "var": "c:gline_2",
+          "unit": "S",
+          "desc": "Conductance matrix"
+        },
+        {
+          "var": "c:zline_1",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline_1",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        },
+        {
+          "var": "c:zline_2",
+          "unit": "Ohm",
+          "desc": "Impedance matrix"
+        },
+        {
+          "var": "c:yline_2",
+          "unit": "S",
+          "desc": "Admittance matrix"
+        }
+      ]
+    },
+    "basic": {
+      "b": [
+        {
+          "var": "b:loc_name",
+          "unit": "",
+          "desc": "Name"
+        }
+      ]
+    }
+  },
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:outserv",
+        "unit": "",
+        "desc": "Out of Service"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:earthReturn",
+        "unit": "",
+        "desc": "Earth return formula"
+      },
+      {
+        "var": "e:iTransMode",
+        "unit": "",
+        "desc": "Transposition"
+      },
+      {
+        "var": "e:i_dist",
+        "unit": "",
+        "desc": "Line Model"
+      },
+      {
+        "var": "e:c_dist",
+        "unit": "",
+        "desc": "Distributed Parameter"
+      },
+      {
+        "var": "e:c_lumped",
+        "unit": "",
+        "desc": "Lumped Parameter (PI)"
+      },
+      {
+        "var": "e:i_const_rms",
+        "unit": "",
+        "desc": "Travelling wave"
+      },
+      {
+        "var": "e:lossModel_rms",
+        "unit": "",
+        "desc": "Loss model"
+      },
+      {
+        "var": "e:iopt_tem_rms",
+        "unit": "",
+        "desc": "Temperature dependency"
+      },
+      {
+        "var": "e:i_model",
+        "unit": "",
+        "desc": "Distributed parameter line model"
+      },
+      {
+        "var": "e:lossModel_emt",
+        "unit": "",
+        "desc": "Loss model"
+      },
+      {
+        "var": "e:iterVFZ",
+        "unit": "",
+        "desc": "Max. number of iterations"
+      },
+      {
+        "var": "e:iterVFA",
+        "unit": "",
+        "desc": "Max. number of iterations"
+      },
+      {
+        "var": "e:polesVFZ",
+        "unit": "",
+        "desc": "Max. number of poles"
+      },
+      {
+        "var": "e:polesVFA",
+        "unit": "",
+        "desc": "Max. number of poles"
+      },
+      {
+        "var": "e:outputPoles",
+        "unit": "",
+        "desc": "Output poles"
+      },
+      {
+        "var": "e:dcCorr",
+        "unit": "",
+        "desc": "Apply DC correction"
+      },
+      {
+        "var": "e:tuneDelays",
+        "unit": "",
+        "desc": "Fine-tune delays"
+      },
+      {
+        "var": "e:methodVFZ",
+        "unit": "",
+        "desc": "Number of poles"
+      },
+      {
+        "var": "e:methodVFA",
+        "unit": "",
+        "desc": "Number of poles"
+      },
+      {
+        "var": "e:fd_model",
+        "unit": "",
+        "desc": "Line Model"
+      },
+      {
+        "var": "e:fd_fit",
+        "unit": "",
+        "desc": "Fit"
+      },
+      {
+        "var": "e:iopt_tem",
+        "unit": "",
+        "desc": "Temperature Dependency"
+      },
+      {
+        "var": "e:freqDepPiModel",
+        "unit": "",
+        "desc": "Lumped parameter line model"
+      },
+      {
+        "var": "e:numStates",
+        "unit": "",
+        "desc": "Max. model order"
+      },
+      {
+        "var": "e:modelPiSec",
+        "unit": "",
+        "desc": "Circuit configuration"
+      },
+      {
+        "var": "e:fittingMethod",
+        "unit": "",
+        "desc": "Fitting method"
+      },
+      {
+        "var": "e:numPiSec",
+        "unit": "",
+        "desc": "Number of cascaded PI sections"
+      },
+      {
+        "var": "e:rearth",
+        "unit": "Ohm*m",
+        "desc": "Earth resistivity"
+      },
+      {
+        "var": "e:gshunt",
+        "unit": "uS/km",
+        "desc": "Shunt conductance"
+      },
+      {
+        "var": "e:fmin",
+        "unit": "Hz",
+        "desc": "Min. Frequency of Parameter Fitting"
+      },
+      {
+        "var": "e:fmax",
+        "unit": "Hz",
+        "desc": "Max. Frequency of Parameter Fitting"
+      },
+      {
+        "var": "e:ftau",
+        "unit": "Hz",
+        "desc": "Frequency for Parameter Approximation"
+      },
+      {
+        "var": "e:tolBode",
+        "unit": "%",
+        "desc": "Tolerance for Bode Approximation"
+      },
+      {
+        "var": "e:maxErrVFY",
+        "unit": "S",
+        "desc": "RMS error"
+      },
+      {
+        "var": "e:maxErrVFZ",
+        "unit": "Ohm",
+        "desc": "RMS error"
+      },
+      {
+        "var": "e:maxErrVFA",
+        "unit": "",
+        "desc": "RMS error"
+      },
+      {
+        "var": "e:stMarginZ",
+        "unit": "",
+        "desc": "Stability margin"
+      },
+      {
+        "var": "e:stMarginA",
+        "unit": "",
+        "desc": "Stability margin"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:towdist",
+        "unit": "m",
+        "desc": "Distance"
+      },
+      {
+        "var": "e:sag_e",
+        "unit": "m",
+        "desc": "Max.Sag"
+      },
+      {
+        "var": "e:dpolar",
+        "unit": "",
+        "desc": "Polarity"
+      },
+      {
+        "var": "e:sag_c",
+        "unit": "m",
+        "desc": "Max.Sag"
+      },
+      {
+        "var": "e:dphasing",
+        "unit": "",
+        "desc": "Phasing"
+      },
+      {
+        "var": "e:pzs",
+        "unit": "Ohm",
+        "desc": "Surge Impedance"
+      },
+      {
+        "var": "e:adc",
+        "unit": "p.u.",
+        "desc": "Wave Propagation, DC"
+      },
+      {
+        "var": "e:tmat",
+        "unit": "",
+        "desc": "Transformation Matrix Tv"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:pRoute",
+        "unit": "ElmRoute",
+        "desc": "Route"
+      },
+      {
+        "var": "e:pGeo",
+        "unit": "TypTow,TypGeo",
+        "desc": "Type"
+      },
+      {
+        "var": "e:plines",
+        "unit": "ElmLne,ElmLneroute",
+        "desc": "Circuit"
+      },
+      {
+        "var": "e:ngeo",
+        "unit": "",
+        "desc": "Number of overhead line systems"
+      },
+      {
+        "var": "e:cCon_e",
+        "unit": "TypCon",
+        "desc": "Type"
+      },
+      {
+        "var": "e:cCon_c",
+        "unit": "TypCon",
+        "desc": "Type"
+      },
+      {
+        "var": "e:ctransp",
+        "unit": "",
+        "desc": "Transposition"
+      },
+      {
+        "var": "e:desc_c",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:ci_model",
+        "unit": "",
+        "desc": "Distributed parameter line model"
+      },
+      {
+        "var": "e:cdisp_mode",
+        "unit": "",
+        "desc": "Display Data for Mode"
+      },
+      {
+        "var": "e:cdisp_col",
+        "unit": "",
+        "desc": "Display data for phase matrix index"
+      },
+      {
+        "var": "e:cdisp_row",
+        "unit": "",
+        "desc": "Display data for phase matrix row"
+      },
+      {
+        "var": "e:cdisp_eig",
+        "unit": "",
+        "desc": "Display data for eigenvalue"
+      },
+      {
+        "var": "e:c_pz",
+        "unit": "",
+        "desc": "Z, N° Poles/Zeros"
+      },
+      {
+        "var": "e:c_pa",
+        "unit": "",
+        "desc": "A, N° Poles"
+      },
+      {
+        "var": "e:c_za",
+        "unit": "",
+        "desc": "A, N° Zeros"
+      },
+      {
+        "var": "e:c_pzs",
+        "unit": "Ohm",
+        "desc": "Surge Impedance, HF"
+      },
+      {
+        "var": "e:c_adc",
+        "unit": "p.u.",
+        "desc": "Wave Propagation, DC"
+      },
+      {
+        "var": "e:c_pTa",
+        "unit": "us",
+        "desc": "Travel Time"
+      },
+      {
+        "var": "e:c_paULM",
+        "unit": "",
+        "desc": "A, Number of poles"
+      },
+      {
+        "var": "e:c_aAtDC",
+        "unit": "p.u.",
+        "desc": "Wave propagation, DC"
+      },
+      {
+        "var": "e:c_pTad",
+        "unit": "us",
+        "desc": "Travel Time"
+      },
+      {
+        "var": "e:c_pTadULM",
+        "unit": "us",
+        "desc": "Travel time"
+      },
+      {
+        "var": "e:c_freqDepPiModel",
+        "unit": "",
+        "desc": "Lumped parameter line model"
+      }
+    ]
+  }
+}

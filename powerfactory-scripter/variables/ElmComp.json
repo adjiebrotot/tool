@@ -1,0 +1,72 @@
+{
+  "result_vars": {},
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:outserv",
+        "unit": "",
+        "desc": "Out of Service"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:typ_id",
+        "unit": "BlkDef,BlkFrame",
+        "desc": "Frame"
+      },
+      {
+        "var": "e:pblk",
+        "unit": "BlkSlot",
+        "desc": "Slots"
+      },
+      {
+        "var": "e:pelm",
+        "unit": "Elm*,Sta*,IntRef,IntVecobj",
+        "desc": "Net Elements"
+      },
+      {
+        "var": "e:contents",
+        "unit": "",
+        "desc": "Contents"
+      }
+    ]
+  }
+}

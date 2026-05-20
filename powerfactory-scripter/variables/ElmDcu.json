@@ -731,29 +731,19 @@
       ],
       "c": [
         {
+          "var": "c:Unom",
+          "unit": "kV",
+          "desc": "Nominal Voltage"
+        },
+        {
           "var": "c:uini",
           "unit": "p.u.",
           "desc": "Voltage"
         },
         {
-          "var": "c:phiu",
-          "unit": "rad",
-          "desc": "Voltage Angle"
-        },
-        {
-          "var": "c:Kpf",
-          "unit": "MW/Hz",
-          "desc": "Primary Frequency Bias"
-        },
-        {
-          "var": "c:Ksf",
-          "unit": "MW/Hz",
-          "desc": "Secondary Frequency Bias"
-        },
-        {
-          "var": "c:Kp",
-          "unit": "",
-          "desc": "Secondary Factor"
+          "var": "c:ri",
+          "unit": "p.u.",
+          "desc": "Internal Resistance"
         },
         {
           "var": "c:iRefElement",
@@ -789,22 +779,6 @@
           "var": "c:Qlossnld",
           "unit": "Mvar",
           "desc": "Reactive-Losses (no load)"
-        },
-        {
-          "var": "c:uini0",
-          "unit": "",
-          "desc": "0-Sequ. Voltage",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:uini2",
-          "unit": "",
-          "desc": "2-Sequ. Voltage",
-          "availability": [
-            "unbal"
-          ]
         }
       ],
       "n": [
@@ -1037,73 +1011,10 @@
           "suffix": ":busN"
         },
         {
-          "var": "n:ur",
-          "unit": "p.u.",
-          "desc": "Line-Ground Voltage, Real Part",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:ui",
-          "unit": "p.u.",
-          "desc": "Line-Ground Voltage, Imaginary Part",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:u",
-          "unit": "p.u.",
-          "desc": "Line-Ground Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:upc",
-          "unit": "%",
-          "desc": "Line-Ground Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:du",
-          "unit": "%",
-          "desc": "Voltage Deviation",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:U",
-          "unit": "kV",
-          "desc": "Line-Ground Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:phiu",
-          "unit": "deg",
-          "desc": "Line-Ground Voltage, Angle",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
           "var": "n:ul",
           "unit": "p.u.",
           "desc": "Line-Line Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -1112,16 +1023,7 @@
           "var": "n:ulpc",
           "unit": "%",
           "desc": "Line-Line Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Ul",
-          "unit": "kV",
-          "desc": "Line-Line Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -1130,7 +1032,7 @@
           "var": "n:phiul",
           "unit": "deg",
           "desc": "Line-Line Voltage, Angle",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -1238,7 +1140,7 @@
           "var": "n:uln",
           "unit": "p.u.",
           "desc": "Line-Neutral Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -1247,7 +1149,7 @@
           "var": "n:Uln",
           "unit": "kV",
           "desc": "Line-Neutral Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -1256,7 +1158,7 @@
           "var": "n:phiuln",
           "unit": "deg",
           "desc": "Line-Neutral Voltage, Angle",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -1292,7 +1194,7 @@
           "var": "n:upht",
           "unit": "p.u.",
           "desc": "Phase Technology dependent Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -1301,7 +1203,7 @@
           "var": "n:Upht",
           "unit": "kV",
           "desc": "Phase Technology dependent Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -1354,54 +1256,9 @@
       ],
       "s": [
         {
-          "var": "s:U_A",
-          "unit": "kV",
-          "desc": "Voltage, Magnitude, Phase a"
-        },
-        {
-          "var": "s:U_B",
-          "unit": "kV",
-          "desc": "Voltage, Magnitude, Phase b"
-        },
-        {
-          "var": "s:U_C",
-          "unit": "kV",
-          "desc": "Voltage, Magnitude, Phase c"
-        },
-        {
-          "var": "s:phiu_B",
-          "unit": "deg",
-          "desc": "Voltage, Angle, Phase b"
-        },
-        {
-          "var": "s:phiu_C",
-          "unit": "deg",
-          "desc": "Voltage, Angle, Phase c"
-        },
-        {
-          "var": "s:u0",
+          "var": "s:uset",
           "unit": "p.u.",
-          "desc": "Voltage-Input"
-        },
-        {
-          "var": "s:Ul0",
-          "unit": "kV",
-          "desc": "Voltage-Input (Line-Line)"
-        },
-        {
-          "var": "s:dphiu",
-          "unit": "rad",
-          "desc": "Voltage Angle Input"
-        },
-        {
-          "var": "s:dFin",
-          "unit": "Hz",
-          "desc": "Frequency Deviation"
-        },
-        {
-          "var": "s:dF",
-          "unit": "Hz",
-          "desc": "Frequency Deviation Output"
+          "desc": "Voltage-Setpoint"
         }
       ]
     },
@@ -1422,19 +1279,9 @@
       ],
       "c": [
         {
-          "var": "c:phiu",
-          "unit": "rad",
-          "desc": "Voltage Angle"
-        },
-        {
-          "var": "c:Kpf",
-          "unit": "MW/Hz",
-          "desc": "Primary Frequency Bias"
-        },
-        {
-          "var": "c:Ksf",
-          "unit": "MW/Hz",
-          "desc": "Secondary Frequency Bias"
+          "var": "c:ri",
+          "unit": "p.u.",
+          "desc": "Internal Resistance"
         },
         {
           "var": "c:iRefElement",
@@ -1450,6 +1297,11 @@
           "var": "c:Qloss",
           "unit": "Mvar",
           "desc": "Reactive-Losses (total)"
+        },
+        {
+          "var": "c:uset",
+          "unit": "p.u.",
+          "desc": "Voltage-Setpoint"
         }
       ],
       "n": [
@@ -1530,18 +1382,6 @@
           "unit": "MW",
           "desc": "Power Flow, Active Power",
           "suffix": ":busN"
-        }
-      ],
-      "s": [
-        {
-          "var": "s:dFin",
-          "unit": "Hz",
-          "desc": "Frequency Deviation"
-        },
-        {
-          "var": "s:dF",
-          "unit": "Hz",
-          "desc": "Frequency Deviation Output"
         }
       ]
     },
@@ -2157,112 +1997,6 @@
           ]
         }
       ],
-      "c": [
-        {
-          "var": "c:uini",
-          "unit": "p.u.",
-          "desc": "Voltage"
-        },
-        {
-          "var": "c:phiu",
-          "unit": "rad",
-          "desc": "Voltage Angle"
-        },
-        {
-          "var": "c:R",
-          "unit": "Ohm",
-          "desc": "Resistance"
-        },
-        {
-          "var": "c:X",
-          "unit": "Ohm",
-          "desc": "Reactance"
-        },
-        {
-          "var": "c:Z",
-          "unit": "Ohm",
-          "desc": "Impedance"
-        },
-        {
-          "var": "c:G",
-          "unit": "MW",
-          "desc": "Load Conductance"
-        },
-        {
-          "var": "c:B",
-          "unit": "Mvar",
-          "desc": "Load Susceptance"
-        },
-        {
-          "var": "c:Y",
-          "unit": "MVA",
-          "desc": "Load Admittance"
-        },
-        {
-          "var": "c:uini0",
-          "unit": "p.u.",
-          "desc": "0-Sequ. Voltage",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:uini2",
-          "unit": "p.u.",
-          "desc": "2-Sequ. Voltage",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:R1",
-          "unit": "Ohm",
-          "desc": "Resistance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:X1",
-          "unit": "Ohm",
-          "desc": "Reactance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Z1",
-          "unit": "Ohm",
-          "desc": "Impedance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:G1",
-          "unit": "MW",
-          "desc": "Load Conductance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:B1",
-          "unit": "Mvar",
-          "desc": "Load Susceptance",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:Y1",
-          "unit": "MVA",
-          "desc": "Load Admittance",
-          "availability": [
-            "unbal"
-          ]
-        }
-      ],
       "n": [
         {
           "var": "n:ur",
@@ -2565,73 +2299,10 @@
           "suffix": ":busN"
         },
         {
-          "var": "n:ur",
-          "unit": "p.u.",
-          "desc": "Line-Ground Voltage, Real Part",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:ui",
-          "unit": "p.u.",
-          "desc": "Line-Ground Voltage, Imaginary Part",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:u",
-          "unit": "p.u.",
-          "desc": "Line-Ground Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:upc",
-          "unit": "%",
-          "desc": "Line-Ground Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:du",
-          "unit": "%",
-          "desc": "Voltage Deviation",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:U",
-          "unit": "kV",
-          "desc": "Line-Ground Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:phiu",
-          "unit": "deg",
-          "desc": "Line-Ground Voltage, Angle",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
           "var": "n:ul",
           "unit": "p.u.",
           "desc": "Line-Line Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -2640,16 +2311,7 @@
           "var": "n:ulpc",
           "unit": "%",
           "desc": "Line-Line Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Ul",
-          "unit": "kV",
-          "desc": "Line-Line Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -2658,7 +2320,7 @@
           "var": "n:phiul",
           "unit": "deg",
           "desc": "Line-Line Voltage, Angle",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -2766,7 +2428,7 @@
           "var": "n:uln",
           "unit": "p.u.",
           "desc": "Line-Neutral Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -2775,7 +2437,7 @@
           "var": "n:Uln",
           "unit": "kV",
           "desc": "Line-Neutral Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -2784,7 +2446,7 @@
           "var": "n:phiuln",
           "unit": "deg",
           "desc": "Line-Neutral Voltage, Angle",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -2820,7 +2482,7 @@
           "var": "n:upht",
           "unit": "p.u.",
           "desc": "Phase Technology dependent Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -2829,43 +2491,7 @@
           "var": "n:Upht",
           "unit": "kV",
           "desc": "Phase Technology dependent Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Ikss",
-          "unit": "kA",
-          "desc": "Initial Short-Circuit Current",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:I",
-          "unit": "kA",
-          "desc": "Short-Circuit Current",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:phii",
-          "unit": "deg",
-          "desc": "Phase Current, Angle",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Skss",
-          "unit": "MVA",
-          "desc": "Initial Short-Circuit Power",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -2874,43 +2500,7 @@
           "var": "n:Skssx3",
           "unit": "MVA",
           "desc": "3*Initial Short-Circuit Power",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:ip",
-          "unit": "kA",
-          "desc": "Peak Short-Circuit Current",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Ib",
-          "unit": "kA",
-          "desc": "Short-Circuit Breaking Current",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Sb",
-          "unit": "MVA",
-          "desc": "Short-Circuit Breaking Power",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Ith",
-          "unit": "kA",
-          "desc": "Thermal equivalent Short-Circuit Current",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -3150,46 +2740,10 @@
           ]
         },
         {
-          "var": "n:R",
-          "unit": "Ohm",
-          "desc": "Network Resistance, Line-Ground",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:X",
-          "unit": "Ohm",
-          "desc": "Network Reactance, Line-Ground",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Z",
-          "unit": "Ohm",
-          "desc": "Network Impedance, Line-Ground",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:phiz",
-          "unit": "deg",
-          "desc": "Angle of Network Impedance, Line-Ground",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
           "var": "n:Rl",
           "unit": "Ohm",
           "desc": "Network Resistance, Line-Line",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -3198,7 +2752,7 @@
           "var": "n:Xl",
           "unit": "Ohm",
           "desc": "Network Reactance, Line-Line",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -3207,7 +2761,7 @@
           "var": "n:Zl",
           "unit": "Ohm",
           "desc": "Network Impedance, Line-Line",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -3216,7 +2770,7 @@
           "var": "n:phizl",
           "unit": "deg",
           "desc": "Angle of Network Impedance, Line-Line",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -3225,7 +2779,7 @@
           "var": "n:Rln",
           "unit": "Ohm",
           "desc": "Network Resistance, Line-Neutral",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -3234,7 +2788,7 @@
           "var": "n:Xln",
           "unit": "Ohm",
           "desc": "Network Reactance, Line-Neutral",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -3243,7 +2797,7 @@
           "var": "n:Zln",
           "unit": "Ohm",
           "desc": "Network Impedance, Line-Neutral",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -3252,7 +2806,7 @@
           "var": "n:phizln",
           "unit": "deg",
           "desc": "Angle of Network Impedance, Line-Neutral",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -3297,7 +2851,7 @@
           "var": "n:eff",
           "unit": "",
           "desc": "Earth Fault Factor",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -3393,78 +2947,6 @@
           ]
         },
         {
-          "var": "n:urpref",
-          "unit": "p.u.",
-          "desc": "Pre-fault Voltage, Real Part",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:uipref",
-          "unit": "p.u.",
-          "desc": "Pre-fault Voltage, Imaginary Part",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:upref",
-          "unit": "p.u.",
-          "desc": "Pre-fault Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:uprefpc",
-          "unit": "%",
-          "desc": "Pre-fault Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Upref",
-          "unit": "kV",
-          "desc": "Line-Ground Pre-fault Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Ulpref",
-          "unit": "kV",
-          "desc": "Line-Line Pre-fault Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:phiupref",
-          "unit": "deg",
-          "desc": "Pre-fault Voltage, Angle",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:phiui",
-          "unit": "deg",
-          "desc": "Angle between Voltage and Current",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
           "var": "n:phiu1i1",
           "unit": "deg",
           "desc": "Angle between Voltage and Current in positive sequence system",
@@ -3487,15 +2969,6 @@
           "unit": "deg",
           "desc": "Angle between Voltage and Current in zero-sequence system",
           "suffix": ":busN",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Ik",
-          "unit": "kA",
-          "desc": "Steady-State Short-Circuit Current",
-          "suffix": ":busN:Ph",
           "availability": [
             "unbal"
           ]
@@ -4305,25 +3778,19 @@
       ],
       "c": [
         {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal-Angular-Frequency"
+          "var": "c:Unom",
+          "unit": "kV",
+          "desc": "Nominal Voltage"
         },
         {
-          "var": "c:uini0",
-          "unit": "",
-          "desc": "0-Sequ. Voltage",
-          "availability": [
-            "unbal"
-          ]
+          "var": "c:ri",
+          "unit": "p.u.",
+          "desc": "Internal Resistance"
         },
         {
-          "var": "c:uini2",
-          "unit": "",
-          "desc": "2-Sequ. Voltage",
-          "availability": [
-            "unbal"
-          ]
+          "var": "c:li",
+          "unit": "p.u.",
+          "desc": "Internal Inductance"
         }
       ],
       "n": [
@@ -4460,73 +3927,10 @@
           "suffix": ":busN"
         },
         {
-          "var": "n:ur",
-          "unit": "p.u.",
-          "desc": "Line-Ground Voltage, Real Part",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:ui",
-          "unit": "p.u.",
-          "desc": "Line-Ground Voltage, Imaginary Part",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:u",
-          "unit": "p.u.",
-          "desc": "Line-Ground Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:upc",
-          "unit": "%",
-          "desc": "Line-Ground Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:du",
-          "unit": "%",
-          "desc": "Voltage Deviation",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:U",
-          "unit": "kV",
-          "desc": "Line-Ground Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:phiu",
-          "unit": "deg",
-          "desc": "Line-Ground Voltage, Angle",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
           "var": "n:ul",
           "unit": "p.u.",
           "desc": "Line-Line Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -4535,16 +3939,7 @@
           "var": "n:ulpc",
           "unit": "%",
           "desc": "Line-Line Voltage, Magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Ul",
-          "unit": "kV",
-          "desc": "Line-Line Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -4553,7 +3948,7 @@
           "var": "n:phiul",
           "unit": "deg",
           "desc": "Line-Line Voltage, Angle",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -4661,7 +4056,7 @@
           "var": "n:uln",
           "unit": "p.u.",
           "desc": "Line-Neutral Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -4670,7 +4065,7 @@
           "var": "n:Uln",
           "unit": "kV",
           "desc": "Line-Neutral Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -4679,7 +4074,7 @@
           "var": "n:phiuln",
           "unit": "deg",
           "desc": "Line-Neutral Voltage, Angle",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -4715,7 +4110,7 @@
           "var": "n:upht",
           "unit": "p.u.",
           "desc": "Phase Technology dependent Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -4724,7 +4119,7 @@
           "var": "n:Upht",
           "unit": "kV",
           "desc": "Phase Technology dependent Voltage, Magnitude",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -4748,24 +4143,6 @@
           ]
         },
         {
-          "var": "n:ishc",
-          "unit": "p.u.",
-          "desc": "Short-Circuit Current, magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:Ishc",
-          "unit": "kA",
-          "desc": "Short-Circuit Current, magnitude",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
           "var": "n:inshc",
           "unit": "p.u.",
           "desc": "Neutral Short-Circuit Current, magnitude",
@@ -4782,117 +4159,13 @@
           "availability": [
             "unbal"
           ]
-        },
-        {
-          "var": "n:ishcr",
-          "unit": "p.u.",
-          "desc": "Short-Circuit Current, real",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "n:ishci",
-          "unit": "p.u.",
-          "desc": "Short-Circuit Current, imag",
-          "suffix": ":busN:Ph",
-          "availability": [
-            "unbal"
-          ]
         }
       ],
       "s": [
         {
-          "var": "s:U_A",
-          "unit": "kV",
-          "desc": "Voltage, Magnitude, Phase a"
-        },
-        {
-          "var": "s:U_B",
-          "unit": "kV",
-          "desc": "Voltage, Magnitude, Phase b"
-        },
-        {
-          "var": "s:U_C",
-          "unit": "kV",
-          "desc": "Voltage, Magnitude, Phase c"
-        },
-        {
-          "var": "s:phiu_B",
-          "unit": "deg",
-          "desc": "Voltage, Angle, Phase b"
-        },
-        {
-          "var": "s:phiu_C",
-          "unit": "deg",
-          "desc": "Voltage, Angle, Phase c"
-        },
-        {
-          "var": "s:xspeed",
+          "var": "s:uset",
           "unit": "p.u.",
-          "desc": "Frequency"
-        },
-        {
-          "var": "s:fref",
-          "unit": "p.u.",
-          "desc": "Reference Frequency"
-        },
-        {
-          "var": "s:U1",
-          "unit": "kV",
-          "desc": "Voltage-Input"
-        },
-        {
-          "var": "s:phiu1",
-          "unit": "deg",
-          "desc": "Voltage-Angle"
-        },
-        {
-          "var": "s:u0",
-          "unit": "p.u.",
-          "desc": "Voltage-Input"
-        },
-        {
-          "var": "s:Ul0",
-          "unit": "kV",
-          "desc": "Voltage-Input (Line-Line)"
-        },
-        {
-          "var": "s:dphiu",
-          "unit": "rad",
-          "desc": "Additional Angle"
-        },
-        {
-          "var": "s:f0",
-          "unit": "p.u.",
-          "desc": "Frequency-Input"
-        },
-        {
-          "var": "s:F0Hz",
-          "unit": "Hz",
-          "desc": "Frequency-Input"
-        },
-        {
-          "var": "s:phiu",
-          "unit": "rad",
-          "desc": "Voltage-Angle"
-        },
-        {
-          "var": "s:phiu_A",
-          "unit": "deg",
-          "desc": "Voltage, Angle, Phase a",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:Ui",
-          "unit": "kV",
-          "desc": "Voltage (Line-Earth), Magnitude",
-          "availability": [
-            "unbal"
-          ]
+          "desc": "Voltage-Setpoint"
         }
       ]
     },
@@ -5189,41 +4462,25 @@
       ],
       "c": [
         {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal-Angular-Frequency",
+          "var": "c:Unom",
+          "unit": "kV",
+          "desc": "Nominal Voltage",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:uini0",
-          "unit": "",
-          "desc": "0-Sequ. Voltage",
+          "var": "c:ri",
+          "unit": "p.u.",
+          "desc": "Internal Resistance",
           "availability": [
             "unbal"
           ]
         },
         {
-          "var": "c:uini2",
-          "unit": "",
-          "desc": "2-Sequ. Voltage",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:phiini0",
-          "unit": "rad",
-          "desc": "0-Sequ. Voltage, Angle",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "c:phiini2",
-          "unit": "rad",
-          "desc": "2-Sequ. Voltage, Angle",
+          "var": "c:li",
+          "unit": "p.u.",
+          "desc": "Internal Inductance",
           "availability": [
             "unbal"
           ]
@@ -5234,7 +4491,7 @@
           "var": "n:u",
           "unit": "p.u.",
           "desc": "Phase Voltage",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -5243,7 +4500,7 @@
           "var": "n:upc",
           "unit": "%",
           "desc": "Phase Voltage",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -5252,7 +4509,7 @@
           "var": "n:U",
           "unit": "kV",
           "desc": "Phase Voltage",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -5261,7 +4518,7 @@
           "var": "n:ul",
           "unit": "p.u.",
           "desc": "Line-Line Voltage",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -5270,7 +4527,7 @@
           "var": "n:ulpc",
           "unit": "%",
           "desc": "Line-Line Voltage",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -5279,7 +4536,7 @@
           "var": "n:Ul",
           "unit": "kV",
           "desc": "Line-Line Voltage",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -5378,7 +4635,7 @@
           "var": "n:uln",
           "unit": "p.u.",
           "desc": "Line-Neutral Voltage",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -5387,7 +4644,7 @@
           "var": "n:Uln",
           "unit": "kV",
           "desc": "Line-Neutral Voltage",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -5414,7 +4671,7 @@
           "var": "n:ishc",
           "unit": "p.u.",
           "desc": "Short-Circuit Current",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -5423,7 +4680,7 @@
           "var": "n:Ishc",
           "unit": "kA",
           "desc": "Short-Circuit Current",
-          "suffix": ":busN:Ph",
+          "suffix": ":busN",
           "availability": [
             "unbal"
           ]
@@ -5485,97 +4742,9 @@
       ],
       "s": [
         {
-          "var": "s:U_A",
-          "unit": "kV",
-          "desc": "Voltage, Magnitude, Phase a",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:U_B",
-          "unit": "kV",
-          "desc": "Voltage, Magnitude, Phase b",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:U_C",
-          "unit": "kV",
-          "desc": "Voltage, Magnitude, Phase c",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:xspeed",
+          "var": "s:uset",
           "unit": "p.u.",
-          "desc": "Speed",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:phiuRef",
-          "unit": "rad",
-          "desc": "Voltage - Angle Reference",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:u0",
-          "unit": "p.u.",
-          "desc": "Voltage-Input",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:Ul0",
-          "unit": "kV",
-          "desc": "Voltage-Input (Line-Line)",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:dphiu",
-          "unit": "rad",
-          "desc": "Additional Angle",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:f0",
-          "unit": "p.u.",
-          "desc": "Frequency-Input",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:F0Hz",
-          "unit": "Hz",
-          "desc": "Frequency-Input",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:phiu",
-          "unit": "rad",
-          "desc": "Voltage-Angle",
-          "availability": [
-            "unbal"
-          ]
-        },
-        {
-          "var": "s:Ui",
-          "unit": "kV",
-          "desc": "Voltage-Input (Line-Earth)",
+          "desc": "Voltage-Setpoint",
           "availability": [
             "unbal"
           ]
@@ -5585,86 +4754,26 @@
     "modal_analysis": {
       "c": [
         {
-          "var": "c:hpi",
-          "unit": "rad/s",
-          "desc": "Nominal-Angular-Frequency"
+          "var": "c:Unom",
+          "unit": "kV",
+          "desc": "Nominal Voltage"
+        },
+        {
+          "var": "c:ri",
+          "unit": "p.u.",
+          "desc": "Internal Resistance"
+        },
+        {
+          "var": "c:li",
+          "unit": "p.u.",
+          "desc": "Internal Inductance"
         }
       ],
       "s": [
         {
-          "var": "s:U_A",
-          "unit": "kV",
-          "desc": "Voltage, Magnitude, Phase a"
-        },
-        {
-          "var": "s:U_B",
-          "unit": "kV",
-          "desc": "Voltage, Magnitude, Phase b"
-        },
-        {
-          "var": "s:U_C",
-          "unit": "kV",
-          "desc": "Voltage, Magnitude, Phase c"
-        },
-        {
-          "var": "s:phiu_B",
-          "unit": "deg",
-          "desc": "Voltage, Angle, Phase b"
-        },
-        {
-          "var": "s:phiu_C",
-          "unit": "deg",
-          "desc": "Voltage, Angle, Phase c"
-        },
-        {
-          "var": "s:xspeed",
+          "var": "s:uset",
           "unit": "p.u.",
-          "desc": "Frequency"
-        },
-        {
-          "var": "s:fref",
-          "unit": "p.u.",
-          "desc": "Reference Frequency"
-        },
-        {
-          "var": "s:U1",
-          "unit": "kV",
-          "desc": "Voltage-Input"
-        },
-        {
-          "var": "s:phiu1",
-          "unit": "deg",
-          "desc": "Voltage-Angle"
-        },
-        {
-          "var": "s:u0",
-          "unit": "p.u.",
-          "desc": "Voltage-Input"
-        },
-        {
-          "var": "s:Ul0",
-          "unit": "kV",
-          "desc": "Voltage-Input (Line-Line)"
-        },
-        {
-          "var": "s:dphiu",
-          "unit": "rad",
-          "desc": "Additional Angle"
-        },
-        {
-          "var": "s:f0",
-          "unit": "p.u.",
-          "desc": "Frequency-Input"
-        },
-        {
-          "var": "s:F0Hz",
-          "unit": "Hz",
-          "desc": "Frequency-Input"
-        },
-        {
-          "var": "s:phiu",
-          "unit": "rad",
-          "desc": "Voltage-Angle"
+          "desc": "Voltage-Setpoint"
         }
       ]
     },
@@ -5931,29 +5040,19 @@
       ],
       "c": [
         {
+          "var": "c:Unom",
+          "unit": "kV",
+          "desc": "Nominal Voltage"
+        },
+        {
           "var": "c:uini",
           "unit": "p.u.",
           "desc": "Voltage"
         },
         {
-          "var": "c:phiu",
-          "unit": "rad",
-          "desc": "Voltage Angle"
-        },
-        {
-          "var": "c:Kpf",
-          "unit": "MW/Hz",
-          "desc": "Primary Frequency Bias"
-        },
-        {
-          "var": "c:Ksf",
-          "unit": "MW/Hz",
-          "desc": "Secondary Frequency Bias"
-        },
-        {
-          "var": "c:Kp",
-          "unit": "",
-          "desc": "Secondary Factor"
+          "var": "c:ri",
+          "unit": "p.u.",
+          "desc": "Internal Resistance"
         },
         {
           "var": "c:iRefElement",
@@ -6280,59 +5379,9 @@
         "desc": "Out of Service"
       },
       {
-        "var": "e:iPossibleSlack",
+        "var": "e:iopt_ushc",
         "unit": "",
-        "desc": "Slack Priority"
-      },
-      {
-        "var": "e:iztreqz",
-        "unit": "",
-        "desc": "Transient = Subtransient Impedance"
-      },
-      {
-        "var": "e:iFreZ",
-        "unit": "",
-        "desc": "Use Frequency Related Impedance for X/R Ratio Calculation"
-      },
-      {
-        "var": "e:itype",
-        "unit": "",
-        "desc": "Type"
-      },
-      {
-        "var": "e:chaInputOpt",
-        "unit": "",
-        "desc": "Defined for"
-      },
-      {
-        "var": "e:nphase",
-        "unit": "",
-        "desc": "No. of Phases"
-      },
-      {
-        "var": "e:iAstabint",
-        "unit": "",
-        "desc": "A-stable integration algorithm"
-      },
-      {
-        "var": "e:leadUinput",
-        "unit": "",
-        "desc": "Voltage input"
-      },
-      {
-        "var": "e:leadUinputEMT",
-        "unit": "",
-        "desc": "Voltage input"
-      },
-      {
-        "var": "e:leadFinput",
-        "unit": "",
-        "desc": "Frequency input"
-      },
-      {
-        "var": "e:cosimModel",
-        "unit": "",
-        "desc": "Used for Co-simulation"
+        "desc": "Short-Circuit Model"
       },
       {
         "var": "e:constr",
@@ -6345,104 +5394,89 @@
         "desc": "Status"
       },
       {
-        "var": "e:iHmcType",
+        "var": "e:cellnum",
         "unit": "",
-        "desc": "Type of Harmonic Voltages"
+        "desc": "Number of Cells"
+      },
+      {
+        "var": "e:iDischarDef",
+        "unit": "",
+        "desc": "Discharged battery impedance is known"
+      },
+      {
+        "var": "e:frmbatres",
+        "unit": "",
+        "desc": "Battery resistance"
+      },
+      {
+        "var": "e:frmbatind",
+        "unit": "",
+        "desc": "Battery inductance"
+      },
+      {
+        "var": "e:iAstabint",
+        "unit": "",
+        "desc": "A-stable integration algorithm"
+      },
+      {
+        "var": "e:iNoShcContr",
+        "unit": "",
+        "desc": "No Short-Circuit Contribution"
       },
       {
         "var": "e:Unom",
         "unit": "kV",
-        "desc": "Line-Line"
+        "desc": "Nominal Voltage"
       },
       {
-        "var": "e:usetp",
+        "var": "e:uset",
         "unit": "p.u.",
-        "desc": "Voltage, Magnitude"
+        "desc": "Voltage Setpoint"
       },
       {
-        "var": "e:phisetp",
-        "unit": "deg",
-        "desc": "Voltage, Angle"
+        "var": "e:Ri",
+        "unit": "Ohm",
+        "desc": "Internal Resistance"
       },
       {
-        "var": "e:usetp2",
-        "unit": "p.u.",
-        "desc": "Voltage, Magnitude"
+        "var": "e:Li",
+        "unit": "mH",
+        "desc": "Internal Inductance"
       },
       {
-        "var": "e:phisetp2",
-        "unit": "deg",
-        "desc": "Voltage, Angle"
+        "var": "e:cellvolt",
+        "unit": "V",
+        "desc": "Cell Nominal Voltage"
       },
       {
-        "var": "e:usetp0",
-        "unit": "p.u.",
-        "desc": "Voltage, Magnitude"
+        "var": "e:cellreschr",
+        "unit": "Ohm",
+        "desc": "Resistance per Cell"
       },
       {
-        "var": "e:phisetp0",
-        "unit": "deg",
-        "desc": "Voltage, Angle"
+        "var": "e:cellindchr",
+        "unit": "mH",
+        "desc": "Inductance per Cell"
       },
       {
-        "var": "e:dudf",
-        "unit": "p.u./Hz",
-        "desc": "Spectral Density of Voltage Magnitude"
+        "var": "e:cellresdis",
+        "unit": "Ohm",
+        "desc": "Resistance per Cell"
       },
       {
-        "var": "e:dphidf",
-        "unit": "deg/Hz",
-        "desc": "Spectral Density of Voltage Angle"
+        "var": "e:cellinddis",
+        "unit": "mH",
+        "desc": "Inductance per Cell"
       },
       {
-        "var": "e:Kpf",
-        "unit": "MW/Hz",
-        "desc": "Prim. Frequency Bias"
-      },
-      {
-        "var": "e:Ksf",
-        "unit": "MW/Hz",
-        "desc": "Sec. Frequency Bias"
-      },
-      {
-        "var": "e:P1hrm",
-        "unit": "MW",
-        "desc": "Active power"
-      },
-      {
-        "var": "e:Q1hrm",
-        "unit": "Mvar",
-        "desc": "Reactive power"
-      },
-      {
-        "var": "e:u1hrm",
-        "unit": "p.u.",
-        "desc": "Positive sequence voltage"
-      },
-      {
-        "var": "e:curpreld",
-        "unit": "kA",
-        "desc": "Current"
-      },
-      {
-        "var": "e:cospreld",
+        "var": "e:batcoeff",
         "unit": "",
-        "desc": "Power Factor"
+        "desc": "Open-Circuit Battery Factor"
       },
       {
-        "var": "e:Ikd",
-        "unit": "kA",
-        "desc": "Ikd"
-      },
-      {
-        "var": "e:tdss",
-        "unit": "s",
-        "desc": "Td''"
-      },
-      {
-        "var": "e:tds",
-        "unit": "s",
-        "desc": "Td'"
+        "var": "e:batcoeffmin",
+        "unit": "",
+        "desc": "Open-Circuit Battery Factor"
       },
       {
         "var": "e:GPSlat",
@@ -6455,154 +5489,9 @@
         "desc": "Longitude / Easting"
       },
       {
-        "var": "e:R1",
-        "unit": "Ohm",
-        "desc": "Resistance, R1"
-      },
-      {
-        "var": "e:X1",
-        "unit": "Ohm",
-        "desc": "Reactance, X1"
-      },
-      {
-        "var": "e:R1s",
-        "unit": "Ohm",
-        "desc": "Resistance, R1s"
-      },
-      {
-        "var": "e:X1s",
-        "unit": "Ohm",
-        "desc": "Reactance, X1s"
-      },
-      {
-        "var": "e:R0",
-        "unit": "Ohm",
-        "desc": "Resistance, R0"
-      },
-      {
-        "var": "e:X0",
-        "unit": "Ohm",
-        "desc": "Reactance, X0"
-      },
-      {
-        "var": "e:R2",
-        "unit": "Ohm",
-        "desc": "Resistance, R2"
-      },
-      {
-        "var": "e:X2",
-        "unit": "Ohm",
-        "desc": "Reactance, X2"
-      },
-      {
-        "var": "e:Pgen",
-        "unit": "MW",
-        "desc": "Active Power"
-      },
-      {
-        "var": "e:Qgen",
-        "unit": "Mvar",
-        "desc": "Reactive Power"
-      },
-      {
-        "var": "e:Pload",
-        "unit": "MW",
-        "desc": "Active Power"
-      },
-      {
-        "var": "e:Qload",
-        "unit": "Mvar",
-        "desc": "Reactive Power"
-      },
-      {
-        "var": "e:Pzload",
-        "unit": "MW",
-        "desc": "Active Power"
-      },
-      {
-        "var": "e:Qzload",
-        "unit": "Mvar",
-        "desc": "Reactive Power"
-      },
-      {
-        "var": "e:Rext",
-        "unit": "Ohm",
-        "desc": "Resistance"
-      },
-      {
-        "var": "e:Xext",
-        "unit": "Ohm",
-        "desc": "Reactance"
-      },
-      {
-        "var": "e:phiSlackRef",
-        "unit": "rad",
-        "desc": "Initial rotor angle"
-      },
-      {
-        "var": "e:phiiniRef",
-        "unit": "rad",
-        "desc": "Initial angle of bus voltage"
-      },
-      {
         "var": "e:appr_modif",
         "unit": "",
         "desc": "Modified"
-      },
-      {
-        "var": "e:ifreqs",
-        "unit": "",
-        "desc": "Harm. Order"
-      },
-      {
-        "var": "e:u1_mag",
-        "unit": "p.u.",
-        "desc": "u1, Mag."
-      },
-      {
-        "var": "e:u1_phase",
-        "unit": "deg",
-        "desc": "u1, Ang."
-      },
-      {
-        "var": "e:u2_mag",
-        "unit": "p.u.",
-        "desc": "u2, Mag."
-      },
-      {
-        "var": "e:u2_phase",
-        "unit": "deg",
-        "desc": "u2, Ang."
-      },
-      {
-        "var": "e:u0_mag",
-        "unit": "p.u.",
-        "desc": "u0, Mag."
-      },
-      {
-        "var": "e:u0_phase",
-        "unit": "deg",
-        "desc": "u0, Ang."
-      },
-      {
-        "var": "e:umag_iec1",
-        "unit": "p.u.",
-        "desc": "U_h"
-      },
-      {
-        "var": "e:ifreqs_iec2",
-        "unit": "",
-        "desc": "Harm. Order"
-      },
-      {
-        "var": "e:umag_iec2",
-        "unit": "p.u.",
-        "desc": "U_h"
-      },
-      {
-        "var": "e:matZ",
-        "unit": "Ohm",
-        "desc": "Frequency related impedances (Positive, Negative and Zero sequence)"
       },
       {
         "var": "e:cimRdfId",
@@ -6623,81 +5512,6 @@
         "var": "e:bus1",
         "unit": "StaCubic",
         "desc": "Terminal"
-      },
-      {
-        "var": "e:fchardu",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "Frequency Dependency"
-      },
-      {
-        "var": "e:fchardphi",
-        "unit": "ChaPol,ChaVec,ChaMat",
-        "desc": "Frequency Dependency"
-      },
-      {
-        "var": "e:p_phictrl",
-        "unit": "ElmLdfctrl*",
-        "desc": "Angle Control"
-      },
-      {
-        "var": "e:p_uctrl",
-        "unit": "ElmLdfctrl*",
-        "desc": "Voltage Control"
-      },
-      {
-        "var": "e:contbar",
-        "unit": "ElmTerm",
-        "desc": "Controlled Node"
-      },
-      {
-        "var": "e:phmc",
-        "unit": "TypHmcvolt,TypHmcopvolt",
-        "desc": "Harmonic Voltages"
-      },
-      {
-        "var": "e:fcharR1",
-        "unit": "ChaPol,ChaVec,ChaMat,ChaOpfreq",
-        "desc": "R1(f)"
-      },
-      {
-        "var": "e:fcharL1",
-        "unit": "ChaPol,ChaVec,ChaMat,ChaOpfreq",
-        "desc": "L1(f)"
-      },
-      {
-        "var": "e:fcharR0",
-        "unit": "ChaPol,ChaVec,ChaMat,ChaOpfreq",
-        "desc": "R0(f)"
-      },
-      {
-        "var": "e:fcharL0",
-        "unit": "ChaPol,ChaVec,ChaMat,ChaOpfreq",
-        "desc": "L0(f)"
-      },
-      {
-        "var": "e:fcharR2",
-        "unit": "ChaPol,ChaVec,ChaMat,ChaOpfreq",
-        "desc": "R2(f)"
-      },
-      {
-        "var": "e:fcharL2",
-        "unit": "ChaPol,ChaVec,ChaMat,ChaOpfreq",
-        "desc": "L2(f)"
-      },
-      {
-        "var": "e:fcharX1",
-        "unit": "ChaPol,ChaVec,ChaMat,ChaOpfreq",
-        "desc": "X1(f)"
-      },
-      {
-        "var": "e:fcharX0",
-        "unit": "ChaPol,ChaVec,ChaMat,ChaOpfreq",
-        "desc": "X0(f)"
-      },
-      {
-        "var": "e:fcharX2",
-        "unit": "ChaPol,ChaVec,ChaMat,ChaOpfreq",
-        "desc": "X2(f)"
       },
       {
         "var": "e:doc_id",
@@ -6835,39 +5649,14 @@
         "desc": "Supplying Substation"
       },
       {
-        "var": "e:Unnom",
-        "unit": "kV",
-        "desc": "Line-Ground"
+        "var": "e:cbatrat",
+        "unit": "Ah",
+        "desc": "Battery rating (8-hour rate)"
       },
       {
-        "var": "e:cfreqs",
-        "unit": "Hz",
-        "desc": "Frequency"
-      },
-      {
-        "var": "e:cTypHmc",
+        "var": "e:battp",
         "unit": "",
-        "desc": "Type of harmonic sources"
-      },
-      {
-        "var": "e:L1",
-        "unit": "mH",
-        "desc": "Inductance, L1"
-      },
-      {
-        "var": "e:L0",
-        "unit": "mH",
-        "desc": "Inductance, L0"
-      },
-      {
-        "var": "e:L2",
-        "unit": "mH",
-        "desc": "Inductance, L2"
-      },
-      {
-        "var": "e:c_psecc",
-        "unit": "ElmSecctrl",
-        "desc": "Ext. Secondary Controller"
+        "desc": "Time to peak(5 Tau)"
       },
       {
         "var": "e:qdslCtrl",

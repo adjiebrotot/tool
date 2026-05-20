@@ -8,14 +8,19 @@
           "desc": "Number of Elements"
         },
         {
-          "var": "c:n_zones",
+          "var": "c:n_area",
           "unit": "",
-          "desc": "Number of Connected Zones"
+          "desc": "Number of Connected Grids"
         },
         {
           "var": "c:n_volt",
           "unit": "",
           "desc": "Number of Voltage Levels"
+        },
+        {
+          "var": "c:n_sta",
+          "unit": "",
+          "desc": "No. of Substations"
         },
         {
           "var": "c:n_bar",
@@ -31,6 +36,21 @@
           "var": "c:n_lne",
           "unit": "",
           "desc": "No. of Lines"
+        },
+        {
+          "var": "c:n_2wt",
+          "unit": "",
+          "desc": "No. of 2-w Trfs."
+        },
+        {
+          "var": "c:n_3wt",
+          "unit": "",
+          "desc": "No. of 3-w Trfs."
+        },
+        {
+          "var": "c:n_4wt",
+          "unit": "",
+          "desc": "No. of 4-w Trfs."
         },
         {
           "var": "c:n_sym",
@@ -58,9 +78,34 @@
           "desc": "No. of Loads"
         },
         {
-          "var": "c:n_cust",
+          "var": "c:n_svs",
           "unit": "",
-          "desc": "No. of Customers"
+          "desc": "No. of SVS"
+        },
+        {
+          "var": "c:n_statcom",
+          "unit": "",
+          "desc": "No. of STATCOM"
+        },
+        {
+          "var": "c:n_shnt",
+          "unit": "",
+          "desc": "No. of Shunts/Filters"
+        },
+        {
+          "var": "c:n_other",
+          "unit": "",
+          "desc": "No. of Other Elements"
+        },
+        {
+          "var": "c:n_iso",
+          "unit": "",
+          "desc": "No. of Isolated Areas"
+        },
+        {
+          "var": "c:n_isooff",
+          "unit": "",
+          "desc": "No. of Unsupplied Isolated Areas"
         },
         {
           "var": "c:TotgenP",
@@ -403,6 +448,31 @@
           "desc": "Supplied Demand"
         },
         {
+          "var": "c:isummary",
+          "unit": "",
+          "desc": "Flag for Summary Grid"
+        },
+        {
+          "var": "c:n_cust",
+          "unit": "",
+          "desc": "Number of Customers"
+        },
+        {
+          "var": "c:n_cunsup",
+          "unit": "",
+          "desc": "Number of unsupplied Customers"
+        },
+        {
+          "var": "c:n_unsup",
+          "unit": "",
+          "desc": "Number of unsupplied Loads"
+        },
+        {
+          "var": "c:ptot",
+          "unit": "MW",
+          "desc": "Total Area Exchange Power"
+        },
+        {
           "var": "c:ExportP",
           "unit": "MW",
           "desc": "Export, Active Power"
@@ -426,41 +496,6 @@
           "var": "c:cst_disp",
           "unit": "USD/h",
           "desc": "Total Production Costs"
-        },
-        {
-          "var": "c:RUC_Lead",
-          "unit": "Mvar",
-          "desc": "Used Reactive Capacity Lead"
-        },
-        {
-          "var": "c:RUC_Lag",
-          "unit": "Mvar",
-          "desc": "Used Reactive Capacity Lag"
-        },
-        {
-          "var": "c:RSC_Lead",
-          "unit": "Mvar",
-          "desc": "Spare Reactive Capacity Lead"
-        },
-        {
-          "var": "c:RSC_Lag",
-          "unit": "Mvar",
-          "desc": "Spare Reactive Capacity Lag"
-        },
-        {
-          "var": "c:Q_shgain",
-          "unit": "Mvar",
-          "desc": "Reactive Power Shunt Gain"
-        },
-        {
-          "var": "c:ConnMvar_max",
-          "unit": "Mvar",
-          "desc": "Connected MVAR Capacity (max)"
-        },
-        {
-          "var": "c:ConnMvar_min",
-          "unit": "Mvar",
-          "desc": "Connected MVAR Capacity (min)"
         },
         {
           "var": "c:NrOvlBranch",
@@ -528,14 +563,19 @@
           "desc": "Number of Elements"
         },
         {
-          "var": "c:n_zones",
+          "var": "c:n_area",
           "unit": "",
-          "desc": "Number of Connected Zones"
+          "desc": "Number of Connected Grids"
         },
         {
           "var": "c:n_volt",
           "unit": "",
           "desc": "Number of Voltage Levels"
+        },
+        {
+          "var": "c:n_sta",
+          "unit": "",
+          "desc": "No. of Substations"
         },
         {
           "var": "c:n_bar",
@@ -551,6 +591,21 @@
           "var": "c:n_lne",
           "unit": "",
           "desc": "No. of Lines"
+        },
+        {
+          "var": "c:n_2wt",
+          "unit": "",
+          "desc": "No. of 2-w Trfs."
+        },
+        {
+          "var": "c:n_3wt",
+          "unit": "",
+          "desc": "No. of 3-w Trfs."
+        },
+        {
+          "var": "c:n_4wt",
+          "unit": "",
+          "desc": "No. of 4-w Trfs."
         },
         {
           "var": "c:n_sym",
@@ -578,9 +633,34 @@
           "desc": "No. of Loads"
         },
         {
-          "var": "c:n_cust",
+          "var": "c:n_svs",
           "unit": "",
-          "desc": "Number of Customers"
+          "desc": "No. of SVS"
+        },
+        {
+          "var": "c:n_statcom",
+          "unit": "",
+          "desc": "No. of STATCOM"
+        },
+        {
+          "var": "c:n_shnt",
+          "unit": "",
+          "desc": "No. of Shunts/Filters"
+        },
+        {
+          "var": "c:n_other",
+          "unit": "",
+          "desc": "No. of Other Elements"
+        },
+        {
+          "var": "c:n_iso",
+          "unit": "",
+          "desc": "No. of Isolated Areas"
+        },
+        {
+          "var": "c:n_isooff",
+          "unit": "",
+          "desc": "No. of Unsupplied Isolated Areas"
         },
         {
           "var": "c:TotgenP",
@@ -681,6 +761,31 @@
           "var": "c:SupP",
           "unit": "MW",
           "desc": "Supplied Demand"
+        },
+        {
+          "var": "c:isummary",
+          "unit": "",
+          "desc": "Flag for Summary Grid"
+        },
+        {
+          "var": "c:n_cust",
+          "unit": "",
+          "desc": "Number of Customers"
+        },
+        {
+          "var": "c:n_cunsup",
+          "unit": "",
+          "desc": "Number of unsupplied Customers"
+        },
+        {
+          "var": "c:n_unsup",
+          "unit": "",
+          "desc": "Number of unsupplied Loads"
+        },
+        {
+          "var": "c:ptot",
+          "unit": "MW",
+          "desc": "Total Area Exchange Power"
         },
         {
           "var": "c:ExportP",
@@ -825,6 +930,11 @@
           "var": "c:Qloss",
           "unit": "Mvar",
           "desc": "Losses, Reactive Power"
+        },
+        {
+          "var": "c:isummary",
+          "unit": "",
+          "desc": "Flag for Summary Grid"
         },
         {
           "var": "c:Pt",
@@ -1025,6 +1135,14 @@
           ]
         },
         {
+          "var": "c:isummary",
+          "unit": "",
+          "desc": "Flag for Summary Grid",
+          "availability": [
+            "unbal"
+          ]
+        },
+        {
           "var": "c:Pt",
           "unit": "MW",
           "desc": "Turbine Power",
@@ -1160,6 +1278,11 @@
           "desc": "Losses, Reactive Power"
         },
         {
+          "var": "c:isummary",
+          "unit": "",
+          "desc": "Flag for Summary Grid"
+        },
+        {
           "var": "c:Pt",
           "unit": "MW",
           "desc": "Turbine Power"
@@ -1179,14 +1302,19 @@
           "desc": "Number of Elements"
         },
         {
-          "var": "c:n_zones",
+          "var": "c:n_area",
           "unit": "",
-          "desc": "Number of Connected Zones"
+          "desc": "Number of Connected Grids"
         },
         {
           "var": "c:n_volt",
           "unit": "",
           "desc": "Number of Voltage Levels"
+        },
+        {
+          "var": "c:n_sta",
+          "unit": "",
+          "desc": "No. of Substations"
         },
         {
           "var": "c:n_bar",
@@ -1202,6 +1330,21 @@
           "var": "c:n_lne",
           "unit": "",
           "desc": "No. of Lines"
+        },
+        {
+          "var": "c:n_2wt",
+          "unit": "",
+          "desc": "No. of 2-w Trfs."
+        },
+        {
+          "var": "c:n_3wt",
+          "unit": "",
+          "desc": "No. of 3-w Trfs."
+        },
+        {
+          "var": "c:n_4wt",
+          "unit": "",
+          "desc": "No. of 4-w Trfs."
         },
         {
           "var": "c:n_sym",
@@ -1229,9 +1372,34 @@
           "desc": "No. of Loads"
         },
         {
-          "var": "c:n_cust",
+          "var": "c:n_svs",
           "unit": "",
-          "desc": "No. of Customers"
+          "desc": "No. of SVS"
+        },
+        {
+          "var": "c:n_statcom",
+          "unit": "",
+          "desc": "No. of STATCOM"
+        },
+        {
+          "var": "c:n_shnt",
+          "unit": "",
+          "desc": "No. of Shunts/Filters"
+        },
+        {
+          "var": "c:n_other",
+          "unit": "",
+          "desc": "No. of Other Elements"
+        },
+        {
+          "var": "c:n_iso",
+          "unit": "",
+          "desc": "No. of Isolated Areas"
+        },
+        {
+          "var": "c:n_isooff",
+          "unit": "",
+          "desc": "No. of Unsupplied Isolated Areas"
         },
         {
           "var": "c:TotgenP",
@@ -1574,6 +1742,31 @@
           "desc": "Supplied Demand"
         },
         {
+          "var": "c:isummary",
+          "unit": "",
+          "desc": "Flag for Summary Grid"
+        },
+        {
+          "var": "c:n_cust",
+          "unit": "",
+          "desc": "Number of Customers"
+        },
+        {
+          "var": "c:n_cunsup",
+          "unit": "",
+          "desc": "Number of unsupplied Customers"
+        },
+        {
+          "var": "c:n_unsup",
+          "unit": "",
+          "desc": "Number of unsupplied Loads"
+        },
+        {
+          "var": "c:ptot",
+          "unit": "MW",
+          "desc": "Total Area Exchange Power"
+        },
+        {
           "var": "c:ExportP",
           "unit": "MW",
           "desc": "Export, Active Power"
@@ -1597,41 +1790,6 @@
           "var": "c:cst_disp",
           "unit": "USD/h",
           "desc": "Total Production Costs"
-        },
-        {
-          "var": "c:RUC_Lead",
-          "unit": "Mvar",
-          "desc": "Used Reactive Capacity Lead"
-        },
-        {
-          "var": "c:RUC_Lag",
-          "unit": "Mvar",
-          "desc": "Used Reactive Capacity Lag"
-        },
-        {
-          "var": "c:RSC_Lead",
-          "unit": "Mvar",
-          "desc": "Spare Reactive Capacity Lead"
-        },
-        {
-          "var": "c:RSC_Lag",
-          "unit": "Mvar",
-          "desc": "Spare Reactive Capacity Lag"
-        },
-        {
-          "var": "c:Q_shgain",
-          "unit": "Mvar",
-          "desc": "Reactive Power Shunt Gain"
-        },
-        {
-          "var": "c:ConnMvar_max",
-          "unit": "Mvar",
-          "desc": "Connected MVAR Capacity (max)"
-        },
-        {
-          "var": "c:ConnMvar_min",
-          "unit": "Mvar",
-          "desc": "Connected MVAR Capacity (min)"
         },
         {
           "var": "c:NrOvlBranch",
@@ -1672,6 +1830,11 @@
           "var": "c:umax",
           "unit": "p.u.",
           "desc": "Maximum voltage of all terminals"
+        },
+        {
+          "var": "c:QtargetDelta",
+          "unit": "Mvar",
+          "desc": "Total deviation from Q target values"
         }
       ]
     },
@@ -1688,19 +1851,14 @@
           "desc": "Number of Elements"
         },
         {
-          "var": "b:n_zones",
+          "var": "b:n_area",
           "unit": "",
-          "desc": "Number of Connected Zones"
+          "desc": "Number of Connected Grids"
         },
         {
-          "var": "b:scale",
+          "var": "b:frnom",
           "unit": "",
-          "desc": "Load Scaling Factor"
-        },
-        {
-          "var": "b:scaleWind",
-          "unit": "",
-          "desc": "Wind Generation Scaling Factor"
+          "desc": "Nominal Frequency"
         }
       ]
     }
@@ -1738,6 +1896,11 @@
         "desc": "Status"
       },
       {
+        "var": "e:fictborder",
+        "unit": "",
+        "desc": "Fictitious border grid"
+      },
+      {
         "var": "e:icolor",
         "unit": "",
         "desc": "Colour"
@@ -1753,14 +1916,9 @@
         "desc": "Min. spinning reserve constraint"
       },
       {
-        "var": "e:curscale",
-        "unit": "",
-        "desc": "Load Scaling Factor"
-      },
-      {
-        "var": "e:windscale",
-        "unit": "",
-        "desc": "Wind Generation Scaling Factor"
+        "var": "e:frnom",
+        "unit": "Hz",
+        "desc": "Nominal Frequency"
       },
       {
         "var": "e:InterPset",
@@ -1786,6 +1944,21 @@
         "var": "e:desc",
         "unit": "",
         "desc": "Description"
+      },
+      {
+        "var": "e:owner",
+        "unit": "",
+        "desc": "Owner"
+      },
+      {
+        "var": "e:pDiagram",
+        "unit": "IntGrfnet",
+        "desc": "Diagram"
+      },
+      {
+        "var": "e:contents",
+        "unit": "",
+        "desc": "Contents"
       }
     ]
   }
