@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Samples &amp; Guides — PowerFactory Scripter</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg:          #0F1728;
+    --surface:     #162033;
+    --card:        #1C2942;
+    --border:      #2C3A52;
+    --accent:      #8DBBFF;
+    --accent2:     #8FCDBD;
+    --danger:      #FF8B8B;
+    --warn:        #FFD28C;
+    --text:        #EAF1FF;
+    --muted:       #A8B6CF;
+    --label:       #A8B6CF;
+    --mono:        'DM Mono', monospace;
+    --sans:        'DM Sans', sans-serif;
+    --radius:      10px;
+    --radius-card: 14px;
+    --shadow:      0 2px 16px rgba(120,160,220,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ─────────────────────────────────────────────────────── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .header-text { min-width: 0; }
+  .header-title {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .header-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--bg);
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .back-link:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── MAIN CONTENT ────────────────────────────────────────────────── */
+  main {
+    flex: 1;
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+
+  /* ── PAGE HERO ───────────────────────────────────────────────────── */
+  .page-hero {
+    margin-bottom: 32px;
+  }
+  .page-hero h1 {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.03em;
+    margin-bottom: 8px;
+  }
+  .page-hero p {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 640px;
+  }
+
+  /* ── SECTION CARDS ───────────────────────────────────────────────── */
+  .section-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    overflow: visible;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    cursor: pointer;
+    user-select: none;
+  }
+  .section-header.collapsed {
+    border-bottom: none;
+    border-radius: var(--radius-card);
+  }
+  .section-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+  .toggle-icon {
+    color: var(--muted);
+    font-size: 12px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .section-header.collapsed .toggle-icon { transform: rotate(-90deg); }
+  .section-body { padding: 20px; }
+  .section-body.hidden { display: none; }
+
+  /* Sample number badge */
+  .sample-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    background: rgba(141,187,255,0.12);
+    border: 1px solid rgba(141,187,255,0.25);
+    border-radius: 6px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+  }
+
+  /* ── SUB-SECTIONS ────────────────────────────────────────────────── */
+  .sub-section {
+    margin-bottom: 24px;
+  }
+  .sub-section:last-child { margin-bottom: 0; }
+  .sub-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(141,187,255,0.12);
+    border: 1px solid rgba(141,187,255,0.28);
+    font-size: 12px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .prefilled-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--accent2);
+    background: rgba(143,205,189,0.12);
+    border: 1px solid rgba(143,205,189,0.3);
+    border-radius: 5px;
+    padding: 1px 6px;
+    text-transform: uppercase;
+  }
+
+  /* ── OBJECTIVE / ASSUMPTION TEXT ─────────────────────────────────── */
+  .objective-text {
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .assumption-list {
+    list-style: none;
+    padding: 0;
+  }
+  .assumption-list li {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.65;
+    padding: 3px 0 3px 18px;
+    position: relative;
+  }
+  .assumption-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+  }
+  .assumption-list code {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(141,187,255,0.1);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+
+  /* ── READ-ONLY FIELDS ────────────────────────────────────────────── */
+  .readonly-fields {
+    pointer-events: none;
+  }
+  .readonly-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin: 16px 0 8px;
+  }
+  .readonly-group-title:first-child { margin-top: 0; }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    align-items: start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  label {
+    font-size: 12px;
+    color: var(--label);
+    padding-top: 7px;
+    font-weight: 500;
+  }
+  input[type="text"],
+  input[type="number"],
+  select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 6px 10px;
+    width: 100%;
+    opacity: 0.85;
+    cursor: not-allowed;
+    outline: none;
+  }
+  input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--accent);
+  }
+  select option { background: var(--card); }
+
+  /* ── DYNAMIC TABLES ──────────────────────────────────────────────── */
+  .dyn-table-wrapper { overflow-x: auto; }
+  .dyn-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 500px;
+  }
+  .dyn-table th {
+    background: var(--surface);
+    color: var(--label);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .dyn-table td {
+    padding: 5px 4px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  .dyn-table tbody tr:last-child td { border-bottom: none; }
+  .dyn-table td input,
+  .dyn-table td select {
+    padding: 5px 6px;
+    font-size: 12px;
+    width: 100%;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  /* ── OUTPUT VAR CARD ─────────────────────────────────────────────── */
+  .output-var-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .output-var-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .ov-type-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent2);
+    background: rgba(143,205,189,0.12);
+    border: 1px solid rgba(143,205,189,0.3);
+    border-radius: 5px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+  }
+  .output-var-body { padding: 10px 12px; }
+
+  /* ── STEPS ───────────────────────────────────────────────────────── */
+  .steps-section {
+    background: rgba(141,187,255,0.04);
+    border: 1px solid rgba(141,187,255,0.12);
+    border-radius: var(--radius);
+    padding: 14px 16px !important;
+  }
+  .steps-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .step-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 5px 0;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .step-row .step-badge { margin-top: 1px; flex-shrink: 0; }
+  .step-row strong { color: var(--accent); }
+  .step-row code {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(141,187,255,0.1);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+  .step-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  /* ── EXPECTED OUTPUT ─────────────────────────────────────────────── */
+  .output-preview {
+    background: #0B1120;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent2);
+    line-height: 1.8;
+    overflow-x: auto;
+    margin: 10px 0;
+    white-space: pre;
+  }
+  .hint {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .hint code {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--accent);
+    background: rgba(141,187,255,0.1);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+
+  /* ── FAQ ─────────────────────────────────────────────────────────── */
+  .faq-list { margin-top: 4px; }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+  }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-question {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 4px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+    transition: color 0.15s;
+  }
+  .faq-question:hover { color: var(--accent); }
+  .faq-toggle {
+    color: var(--muted);
+    font-size: 12px;
+    margin-left: auto;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .faq-question.open .faq-toggle { transform: rotate(180deg); }
+  .faq-answer {
+    display: none;
+    padding: 0 4px 16px;
+  }
+  .faq-answer.open { display: block; }
+  .faq-answer p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+  .faq-answer p:last-child { margin-bottom: 0; }
+  .faq-answer code {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(141,187,255,0.1);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+  .faq-answer strong { color: var(--text); font-weight: 600; }
+
+  .faq-pro-tip {
+    background: rgba(143,205,189,0.08);
+    border: 1px solid rgba(143,205,189,0.2);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-top: 12px;
+    font-size: 12.5px;
+    color: var(--accent2);
+    line-height: 1.6;
+  }
+  .faq-pro-tip strong { color: var(--accent2); font-weight: 700; }
+  .faq-pro-tip code {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--accent2);
+    background: rgba(143,205,189,0.15);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+
+  .faq-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 12.5px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .faq-table th {
+    background: var(--surface);
+    color: var(--label);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 6px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .faq-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .faq-table tbody tr:last-child td { border-bottom: none; }
+  .faq-table td:first-child {
+    color: var(--text);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .faq-table td code {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--accent);
+    background: rgba(141,187,255,0.1);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+
+  /* ── FOOTER ──────────────────────────────────────────────────────── */
+  .app-footer {
+    border-top: 1px solid var(--border);
+    padding: 10px 20px 12px;
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+  .app-footer p {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 5px;
+  }
+  .app-footer a { color: var(--accent); text-decoration: none; }
+  .app-footer a:hover { text-decoration: underline; }
+
+  /* ── SCROLLBAR ───────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* ── MOBILE ──────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    header { padding: 8px 12px; height: auto; }
+    .header-left { gap: 8px; }
+    main { padding: 20px 14px 40px; }
+    .page-hero h1 { font-size: 18px; }
+    .form-row { grid-template-columns: 1fr; }
+    .form-row label { padding-top: 0; padding-bottom: 2px; }
+    .dyn-table-wrapper { overflow-x: auto; }
+    .dyn-table { min-width: 420px; }
+    .faq-table { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-left">
+    <a class="back-link" href="../" rel="noopener">← Back to Tool</a>
+    <div class="header-text">
+      <div class="header-title">⚡ PowerFactory Scripter</div>
+      <div class="header-subtitle">Samples &amp; Guides</div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main>
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <h1>Samples &amp; Guides</h1>
+    <p>Worked examples showing how to configure the tool for common power systems studies. All form fields below are pre-filled and read-only — use them as a reference when setting up your own script.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SAMPLE 01 · CAPACITOR BANK SIZING
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-card" id="sample-1">
+    <div class="section-header" onclick="toggleSection('sample-1')">
+      <span class="sample-num">01</span>
+      <h3>Capacitor Bank Sizing — Voltage Regulation</h3>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body" id="sample-1-body">
+
+      <!-- ① Objective -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">①</span> Objective
+        </div>
+        <p class="objective-text">
+          A system with a high concentration of inductive motors is causing the bus voltage to sag below acceptable
+          limits. The goal is to find the minimum reactive power (MVAr) of a shunt capacitor that restores the bus
+          voltage within the standard operating range of 0.9–1.1 p.u.
+        </p>
+      </div>
+
+      <!-- ② Assumptions -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">②</span> Assumptions
+        </div>
+        <ul class="assumption-list">
+          <li>Monitored bus element: <code>MainBus.ElmTerm</code></li>
+          <li>Capacitor element: <code>Capacitor.ElmShnt</code></li>
+          <li>Reactive power sweep: 0 – 10 MVAr in 0.5 MVAr steps</li>
+          <li>Voltage standard: 0.9 – 1.1 p.u.</li>
+        </ul>
+      </div>
+
+      <!-- ③ What to Input -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">③</span> What to Input
+          <span class="prefilled-badge">Pre-filled</span>
+        </div>
+        <div class="readonly-fields">
+
+          <div class="readonly-group-title">Initialisation</div>
+          <div class="form-row">
+            <label>Problem Type</label>
+            <select disabled>
+              <option>Brute Force</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Study Type</label>
+            <select disabled>
+              <option>Steady State</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Coding Style</label>
+            <select disabled>
+              <option>Python File</option>
+            </select>
+          </div>
+
+          <div class="readonly-group-title">Input Variables</div>
+          <div class="dyn-table-wrapper">
+            <table class="dyn-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Object</th>
+                  <th>Attribute</th>
+                  <th>Lower</th>
+                  <th>Upper</th>
+                  <th>Step</th>
+                  <th>Permutate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="text" readonly value="Q_cap" /></td>
+                  <td><input type="text" readonly value="Capacitor.ElmShnt" /></td>
+                  <td><input type="text" readonly value="qtotin" /></td>
+                  <td><input type="number" readonly value="0" /></td>
+                  <td><input type="number" readonly value="10" /></td>
+                  <td><input type="number" readonly value="0.5" /></td>
+                  <td><input type="checkbox" checked disabled /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="readonly-group-title">Output Variables</div>
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Scalar</span>
+              <input type="text" readonly value="bus_voltage" style="max-width:150px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row">
+                <label>Object</label>
+                <input type="text" readonly value="MainBus.ElmTerm" />
+              </div>
+              <div class="form-row">
+                <label>Attribute</label>
+                <input type="text" readonly value="m:u" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Steps ④ ⑤ ⑥ -->
+      <div class="sub-section steps-section">
+        <div class="steps-title">Steps</div>
+        <div class="step-row">
+          <span class="step-badge">④</span>
+          <span>Click <strong>⚡ Generate Code</strong> in the tool.</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">⑤</span>
+          <span>Click <strong>Copy</strong> (or download as <code>.py</code>).</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">⑥</span>
+          <div>
+            <div>Paste the code into your Python environment and run it.</div>
+            <div class="step-note">Make sure PowerFactory is installed and the API path is configured correctly.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ⑦ Expected Output -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">⑦</span> Expected Output
+        </div>
+        <p class="hint">The script writes a CSV file to your output directory, e.g. <code>results.csv</code>:</p>
+        <pre class="output-preview">Q_cap,bus_voltage
+0.0,0.873
+0.5,0.891
+1.0,0.908
+1.5,0.925
+2.0,0.943
+2.5,0.961
+3.0,1.024
+3.5,1.041
+...</pre>
+        <p class="hint">Open the CSV in Excel or Python (pandas) to plot voltage vs. capacitor size and identify the minimum capacitor rating that satisfies your voltage standard.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SAMPLE 02 · HARMONIC FILTER SIZING
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-card" id="sample-2">
+    <div class="section-header" onclick="toggleSection('sample-2')">
+      <span class="sample-num">02</span>
+      <h3>Harmonic Filter Sizing — THD Minimisation</h3>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body" id="sample-2-body">
+
+      <!-- ① Objective -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">①</span> Objective
+        </div>
+        <p class="objective-text">
+          The system Total Harmonic Distortion (THD) exceeds the permissible limit. The goal is to find the optimal
+          capacitance, inductance, and resistance of a passive harmonic filter that minimises THD, subject to a
+          maximum resistance constraint.
+        </p>
+      </div>
+
+      <!-- ② Assumptions -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">②</span> Assumptions
+        </div>
+        <ul class="assumption-list">
+          <li>Filter element: <code>Filter.ElmFilter</code></li>
+          <li>Parameters to optimise: capacitance (<code>capa</code>), inductance (<code>rrea</code>), resistance (<code>rres</code>)</li>
+          <li>Target: minimise THD — verify result manually against your standard (e.g. &lt; 3%)</li>
+          <li>Constraint: resistance ≤ 0.05 Ω</li>
+        </ul>
+      </div>
+
+      <!-- ③ What to Input -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">③</span> What to Input
+          <span class="prefilled-badge">Pre-filled</span>
+        </div>
+        <div class="readonly-fields">
+
+          <div class="readonly-group-title">Initialisation</div>
+          <div class="form-row">
+            <label>Problem Type</label>
+            <select disabled>
+              <option>Optimisation</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Study Type</label>
+            <select disabled>
+              <option>Harmonic</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Coding Style</label>
+            <select disabled>
+              <option>Python File</option>
+            </select>
+          </div>
+
+          <div class="readonly-group-title">Input Variables</div>
+          <div class="dyn-table-wrapper">
+            <table class="dyn-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Object</th>
+                  <th>Attribute</th>
+                  <th>Lower</th>
+                  <th>Upper</th>
+                  <th>Step</th>
+                  <th>Permutate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="text" readonly value="C_f" /></td>
+                  <td><input type="text" readonly value="Filter.ElmFilter" /></td>
+                  <td><input type="text" readonly value="capa" /></td>
+                  <td><input type="text" readonly value="1e-6" /></td>
+                  <td><input type="text" readonly value="1e-3" /></td>
+                  <td><input type="text" readonly value="—" /></td>
+                  <td><input type="checkbox" disabled /></td>
+                </tr>
+                <tr>
+                  <td><input type="text" readonly value="L_f" /></td>
+                  <td><input type="text" readonly value="Filter.ElmFilter" /></td>
+                  <td><input type="text" readonly value="rrea" /></td>
+                  <td><input type="text" readonly value="1e-4" /></td>
+                  <td><input type="text" readonly value="1e-1" /></td>
+                  <td><input type="text" readonly value="—" /></td>
+                  <td><input type="checkbox" disabled /></td>
+                </tr>
+                <tr>
+                  <td><input type="text" readonly value="R_f" /></td>
+                  <td><input type="text" readonly value="Filter.ElmFilter" /></td>
+                  <td><input type="text" readonly value="rres" /></td>
+                  <td><input type="text" readonly value="0.001" /></td>
+                  <td><input type="text" readonly value="0.1" /></td>
+                  <td><input type="text" readonly value="—" /></td>
+                  <td><input type="checkbox" disabled /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="readonly-group-title">Output Variables</div>
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Scalar</span>
+              <input type="text" readonly value="thd" style="max-width:120px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row">
+                <label>Object</label>
+                <input type="text" readonly value="MainBus.ElmTerm" />
+              </div>
+              <div class="form-row">
+                <label>Attribute</label>
+                <input type="text" readonly value="m:THD" />
+              </div>
+            </div>
+          </div>
+
+          <div class="readonly-group-title">Optimisation Settings</div>
+          <div class="form-row">
+            <label>Sense</label>
+            <select disabled>
+              <option>Minimise</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Objective</label>
+            <input type="text" readonly value="thd" />
+          </div>
+          <div class="form-row">
+            <label>Algorithm</label>
+            <select disabled>
+              <option>Bayesian</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Max Iterations</label>
+            <input type="number" readonly value="100" />
+          </div>
+
+          <div class="readonly-group-title">Constraints</div>
+          <div class="dyn-table-wrapper">
+            <table class="dyn-table" style="min-width:300px">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Operator</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="text" readonly value="R_f" /></td>
+                  <td>
+                    <select disabled style="min-width:54px">
+                      <option>≤</option>
+                    </select>
+                  </td>
+                  <td><input type="number" readonly value="0.05" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Steps ④ ⑤ ⑥ -->
+      <div class="sub-section steps-section">
+        <div class="steps-title">Steps</div>
+        <div class="step-row">
+          <span class="step-badge">④</span>
+          <span>Click <strong>⚡ Generate Code</strong> in the tool.</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">⑤</span>
+          <span>Click <strong>Copy</strong> (or download as <code>.py</code>).</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">⑥</span>
+          <div>
+            <div>Paste the code into your Python environment and run it.</div>
+            <div class="step-note">Bayesian optimisation may take a few minutes. Progress is printed to the console if <em>Use progress bar</em> is enabled.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ⑦ Expected Output -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">⑦</span> Expected Output
+        </div>
+        <p class="hint">The script prints the best parameters found by the optimiser:</p>
+        <pre class="output-preview">Optimisation complete.
+Best parameters:
+  C_f (capa) = 4.72e-04
+  L_f (rrea) = 1.23e-02
+  R_f (rres) = 0.038
+Best objective (thd) = 2.61</pre>
+        <p class="hint">Verify the THD value against your standard (e.g. &lt; 3%) manually. The script does not enforce the limit — it only minimises THD within the parameter bounds and constraints you provide.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       FAQ
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-card" id="faq">
+    <div class="section-header" onclick="toggleSection('faq')">
+      <h3>Frequently Asked Questions</h3>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body" id="faq-body">
+      <div class="faq-list">
+
+        <!-- Q1 · API Path -->
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            How do I find the API Path?
+            <span class="faq-toggle">▾</span>
+          </div>
+          <div class="faq-answer">
+            <p>The API Path points to the PowerFactory Python API folder — not the main executable. It is located inside a <code>Python</code> subfolder of your PowerFactory installation, with a sub-folder for each available Python version. For example:</p>
+            <p><code>C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.10\</code></p>
+            <p>Choose the sub-folder that matches the Python version you are using to run your script.</p>
+          </div>
+        </div>
+
+        <!-- Q2 · Permutate -->
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            When should I use Permutate?
+            <span class="faq-toggle">▾</span>
+          </div>
+          <div class="faq-answer">
+            <p>Enable <strong>Permutate</strong> on an input variable when you want the script to sweep that variable across all combinations with other permutated variables (full factorial / grid search). Disable it to vary the variable independently — for example, as a Bayesian optimisation parameter. Leave it unchecked for optimisation problems; the algorithm handles the search automatically.</p>
+            <div class="faq-pro-tip">
+              <strong>Pro tip:</strong> Permutate works well for binary variables. For example, in a contingency analysis the <code>outserv</code> parameter is either <code>0</code> (in service) or <code>1</code> (out of service). Setting Lower&nbsp;=&nbsp;0, Upper&nbsp;=&nbsp;1, Step&nbsp;=&nbsp;1 with Permutate enabled keeps the combination count manageable while covering all switching states.
+            </div>
+          </div>
+        </div>
+
+        <!-- Q3 · Study Types -->
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            What does each Study Type do?
+            <span class="faq-toggle">▾</span>
+          </div>
+          <div class="faq-answer">
+            <table class="faq-table">
+              <thead>
+                <tr>
+                  <th>Study Type</th>
+                  <th>PF Command</th>
+                  <th>Use When</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Steady State</td>
+                  <td>Load Flow (<code>ldf</code>)</td>
+                  <td>Checking voltages, currents, and loading under normal operating conditions</td>
+                </tr>
+                <tr>
+                  <td>Dynamic RMS</td>
+                  <td>RMS simulation (<code>rms</code>)</td>
+                  <td>Fault response, generator dynamics, protection studies</td>
+                </tr>
+                <tr>
+                  <td>Dynamic EMT</td>
+                  <td>EMT simulation (<code>emt</code>)</td>
+                  <td>Switching transients, power electronics, detailed waveforms</td>
+                </tr>
+                <tr>
+                  <td>Harmonic</td>
+                  <td>Harmonic load flow (<code>hdf</code>)</td>
+                  <td>THD analysis, filter sizing, harmonic propagation</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Q4 · Python vs Notebook -->
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            Python File vs. Notebook — which should I use?
+            <span class="faq-toggle">▾</span>
+          </div>
+          <div class="faq-answer">
+            <p><strong>Python File (<code>.py</code>):</strong> Best for production use, scheduled runs, or when you want to import the script as a module. Run from the terminal or your IDE.</p>
+            <p><strong>Notebook (<code>.ipynb</code>):</strong> Best for exploratory work, step-by-step debugging, or when you want inline plots and tables alongside the code. Open in Jupyter.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="app-footer">
+  <p>
+    <strong>Disclaimer:</strong> This tool is provided on an "as is" and "as available" basis, free of charge,
+    without any representations or warranties of any kind. Any outputs, results, or decisions made using this tool
+    are solely the responsibility of the user.
+  </p>
+  <p>
+    Questions or feedback? Email <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>.
+  </p>
+  <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
+    <img src="../../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+    <div style="display:flex;align-items:center;gap:10px">
+      <img src="../../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+      <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <img src="../../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+      <span style="color:var(--muted);font-size:0.85rem">Made in Australia by Indonesian engineer.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleSection(id) {
+  const card = document.getElementById(id);
+  const header = card.querySelector('.section-header');
+  const body = card.querySelector('.section-body');
+  if (!body) return;
+  const collapsed = header.classList.contains('collapsed');
+  if (collapsed) {
+    header.classList.remove('collapsed');
+    body.classList.remove('hidden');
+  } else {
+    header.classList.add('collapsed');
+    body.classList.add('hidden');
+  }
+}
+
+function toggleFaq(questionEl) {
+  const answer = questionEl.nextElementSibling;
+  const open = answer.classList.contains('open');
+  if (open) {
+    answer.classList.remove('open');
+    questionEl.classList.remove('open');
+  } else {
+    answer.classList.add('open');
+    questionEl.classList.add('open');
+  }
+}
+</script>
+
+</body>
+</html>
