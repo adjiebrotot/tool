@@ -1651,61 +1651,29 @@ function extractElmClass(objectQuery) {
   return m ? m[1] : null;
 }
 
-// Common direct Python attributes (no prefix, for input variables / SetAttribute)
-const DIRECT_PY_ATTRS = [
-  { var: 'outserv',    desc: 'Out of service flag (0 = in, 1 = out)',    unit: '' },
-  { var: 'loc_name',   desc: 'Object name string',                        unit: '' },
-  { var: 'pgini',      desc: 'Active power setpoint',                     unit: 'MW' },
-  { var: 'qgini',      desc: 'Reactive power setpoint',                   unit: 'Mvar' },
-  { var: 'Pmax_a',     desc: 'Active power upper limit',                  unit: 'MW' },
-  { var: 'Pmin_a',     desc: 'Active power lower limit',                  unit: 'MW' },
-  { var: 'scale0',     desc: 'Scaling factor (load / gen)',               unit: '' },
-  { var: 'coslini',    desc: 'Power factor setpoint (lagging)',           unit: '' },
-  { var: 'usetp',      desc: 'Voltage setpoint (pu)',                     unit: 'pu' },
-  { var: 'phtech',     desc: 'Phase technology',                          unit: '' },
-  { var: 'nphase',     desc: 'Number of phases',                          unit: '' },
-  { var: 'Tstart',     desc: 'Start time',                               unit: 's' },
-  { var: 'Tstop',      desc: 'Stop time',                                unit: 's' },
-];
-
-// INPUT variable attribute suggestions — e: params + direct Python attrs
+// INPUT variable attribute suggestions — class-scoped params from element_params.json
 function getInputAttrSuggestions(typed, elmClass) {
   const q = (typed || '').toLowerCase();
   const results = [];
   const seen = new Set();
   const addItem = item => {
-    if (!seen.has(item.var)) {
-      seen.add(item.var);
-      results.push({ var: item.var, desc: item.desc || '', unit: item.unit || '' });
-    }
+    const key = String(item.var || '').toLowerCase();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    results.push({ var: item.var || '', desc: item.desc || '', unit: item.unit || '' });
   };
 
-  // Primary: element_params.json  (e: prefix — rated/input params, pre-loaded)
+  // Source: element_params.json class-specific input params (typically e:*)
   if (PF_REF.params && elmClass && PF_REF.params[elmClass]) {
     PF_REF.params[elmClass].forEach(item => {
-      if (item.var.startsWith('e:')) {
-        if (!q || item.var.toLowerCase().includes(q) || (item.desc || '').toLowerCase().includes(q))
-          addItem(item);
-      }
+      const raw = String(item.var || '').toLowerCase();
+      const desc = (item.desc || '').toLowerCase();
+      if (!q || raw.includes(q) || desc.includes(q)) addItem(item);
     });
   }
 
-  // Supplement: lazy-loaded full variables/ElmXxx.json params section
-  if (PF_REF.varFiles[elmClass]) {
-    const fullParams = PF_REF.varFiles[elmClass].params || {};
-    Object.values(fullParams).flat().forEach(item => {
-      if (!q || item.var.toLowerCase().includes(q) || (item.desc || '').toLowerCase().includes(q))
-        addItem(item);
-    });
-  } else if (elmClass) {
-    fetchElmClassVars(elmClass, null); // trigger background load; next open will be richer
-  }
-
-  // Always include direct Python attrs (no prefix — elm.pgini, elm.outserv, etc.)
-  DIRECT_PY_ATTRS.forEach(a => {
-    if (!q || a.var.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q))
-      addItem(a);
-  });
+  // Keep lazy-loading variables for other features, but input suggestions are element_params-based.
+  if (elmClass && !PF_REF.varFiles[elmClass]) fetchElmClassVars(elmClass, null);
 
   return results.slice(0, 50);
 }
