@@ -595,7 +595,7 @@
   <!-- HERO -->
   <div class="page-hero">
     <h1>Samples &amp; Guides</h1>
-    <p>Worked examples showing how to configure the tool for common power systems studies. All form fields below are pre-filled and read-only — use them as a reference when setting up your own script.</p>
+    <p>Worked examples showing how to configure the tool for common power systems studies. All form fields below are pre-filled and read-only. Use them as a reference when setting up your own script.</p>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════════
@@ -638,7 +638,6 @@
       <div class="sub-section">
         <div class="sub-section-title">
           <span class="step-badge">③</span> What to Input
-          <span class="prefilled-badge">Pre-filled</span>
         </div>
         <div class="readonly-fields">
 
@@ -784,7 +783,7 @@
         <ul class="assumption-list">
           <li>Filter element: <code>Filter.ElmFilter</code></li>
           <li>Parameters to optimise: capacitance (<code>capa</code>), inductance (<code>rrea</code>), resistance (<code>rres</code>)</li>
-          <li>Target: minimise THD — verify result manually against your standard (e.g. &lt; 3%)</li>
+          <li>Target: minimise THD. Verify result manually against your standard (e.g. &lt; 3%)</li>
           <li>Constraint: resistance ≤ 0.05 Ω</li>
         </ul>
       </div>
@@ -793,7 +792,6 @@
       <div class="sub-section">
         <div class="sub-section-title">
           <span class="step-badge">③</span> What to Input
-          <span class="prefilled-badge">Pre-filled</span>
         </div>
         <div class="readonly-fields">
 
@@ -962,7 +960,7 @@ Best parameters:
   L_f (rrea) = 1.23e-02
   R_f (rres) = 0.038
 Best objective (thd) = 2.61</pre>
-        <p class="hint">Verify the THD value against your standard (e.g. &lt; 3%) manually. The script does not enforce the limit — it only minimises THD within the parameter bounds and constraints you provide.</p>
+        <p class="hint">Verify the THD value against your standard (e.g. &lt; 3%) manually. The script does not enforce the limit; it only minimises THD within the parameter bounds and constraints you provide.</p>
       </div>
 
     </div>
@@ -986,7 +984,7 @@ Best objective (thd) = 2.61</pre>
             <span class="faq-toggle">▾</span>
           </div>
           <div class="faq-answer">
-            <p>The API Path points to the PowerFactory Python API folder — not the main executable. It is located inside a <code>Python</code> subfolder of your PowerFactory installation, with a sub-folder for each available Python version. For example:</p>
+            <p>The API Path points to the PowerFactory Python API folder. It is located inside a <code>Python</code> subfolder of your PowerFactory installation, with a sub-folder for each available Python version. For example:</p>
             <p><code>C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.10\</code></p>
             <p>Choose the sub-folder that matches the Python version you are using to run your script.</p>
           </div>
@@ -1018,29 +1016,29 @@ Best objective (thd) = 2.61</pre>
                 <tr>
                   <th>Study Type</th>
                   <th>PF Command</th>
-                  <th>Use When</th>
+                  <th>Use to Analyse ...</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>Steady State</td>
                   <td>Load Flow (<code>ldf</code>)</td>
-                  <td>Checking voltages, currents, and loading under normal operating conditions</td>
+                  <td>Steady state voltages, currents, loading, etc</td>
                 </tr>
                 <tr>
                   <td>Dynamic RMS</td>
                   <td>RMS simulation (<code>rms</code>)</td>
-                  <td>Fault response, generator dynamics, protection studies</td>
+                  <td>Fault response, generator dynamics, inverter dynamics, etc</td>
                 </tr>
                 <tr>
                   <td>Dynamic EMT</td>
                   <td>EMT simulation (<code>emt</code>)</td>
-                  <td>Switching transients, power electronics, detailed waveforms</td>
+                  <td>Switching transients, power electronics, detailed waveforms, etc</td>
                 </tr>
                 <tr>
                   <td>Harmonic</td>
                   <td>Harmonic load flow (<code>hdf</code>)</td>
-                  <td>THD analysis, filter sizing, harmonic propagation</td>
+                  <td>Total harmonic distortion (THD), individual harmonics, etc</td>
                 </tr>
               </tbody>
             </table>
