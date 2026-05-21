@@ -976,6 +976,246 @@ Best objective (thd) = 2.61</pre>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════════
+       SAMPLE 03 · N-1 LINE CONTINGENCY ANALYSIS
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-card" id="sample-3">
+    <div class="section-header" onclick="toggleSection('sample-3')">
+      <span class="sample-num">03</span>
+      <h3>N-1 Line Contingency — Steady-State Security Assessment</h3>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body" id="sample-3-body">
+
+      <!-- 1 Objective -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">1</span> Objective
+        </div>
+        <p class="objective-text">
+          Determine whether removing any single line from service (an N-1 contingency) causes a bus voltage or
+          line loading violation. This sample demonstrates two key tool features: the wildcard object query
+          (<code>*.ElmLne</code>), which automatically targets every transmission line in the network without
+          naming them individually, and Custom Calculation outputs, which classify each simulation result
+          into a human-readable flag — all within the generated script.
+        </p>
+      </div>
+
+      <!-- 2 Assumptions -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">2</span> Assumptions
+        </div>
+        <ul class="assumption-list">
+          <li>All transmission lines swept via wildcard: <code>*.ElmLne</code></li>
+          <li>Monitored bus: <code>MainBus.ElmTerm</code></li>
+          <li>Representative line monitored for overload: <code>CriticalLine.ElmLne</code></li>
+          <li>Voltage flag: <code>Under</code> if bus voltage &lt; 0.9 p.u., <code>Over</code> if &gt; 1.1 p.u., <code>OK</code> otherwise</li>
+          <li>Overload flag: <code>True</code> if line loading &gt; 100%</li>
+        </ul>
+      </div>
+
+      <!-- 3 Input Variables — Wildcards & Permutate -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">3</span> Input Variables — Wildcards &amp; Permutate
+        </div>
+        <p class="objective-text" style="margin-bottom:10px;">
+          Instead of naming every line individually, the object query <code>*.ElmLne</code> tells the tool
+          to find all line elements in the network at runtime. You do not need to know their names in advance —
+          PowerFactory resolves them when the script runs.
+        </p>
+        <p class="objective-text" style="margin-bottom:10px;">
+          Enabling <strong>Permutate</strong> takes this further: rather than applying the same value to all
+          matched lines at once, the tool creates one independent control slot per line. Each slot sweeps
+          the <code>outserv</code> attribute between 0&nbsp;(in service) and 1&nbsp;(out of service),
+          and the brute force loop runs every combination of those on/off states. With 4 lines that is
+          2<sup>4</sup>&nbsp;=&nbsp;16 load flows, covering the base case, all N-1 outages, all N-2 outages,
+          and so on.
+        </p>
+        <p class="objective-text" style="margin-bottom:16px;">
+          For a pure N-1 study, filter the exported CSV to rows where exactly one <code>outserv</code>
+          column equals&nbsp;1. Each of those columns is named after the corresponding line's
+          <code>loc_name</code>, so the filtering logic in pandas is straightforward.
+        </p>
+        <div class="readonly-fields">
+          <div class="readonly-group-title">Initialisation</div>
+          <div class="form-row">
+            <label>Problem Type</label>
+            <select disabled><option>Brute Force</option></select>
+          </div>
+          <div class="form-row">
+            <label>Study Type</label>
+            <select disabled><option>Steady State</option></select>
+          </div>
+          <div class="form-row">
+            <label>Coding Style</label>
+            <select disabled><option>Python File</option></select>
+          </div>
+          <div class="readonly-group-title">Input Variables</div>
+          <div class="dyn-table-wrapper">
+            <table class="dyn-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Object</th>
+                  <th>Attribute</th>
+                  <th>Lower</th>
+                  <th>Upper</th>
+                  <th>Step</th>
+                  <th>Permutate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="text" readonly value="outserv" /></td>
+                  <td><input type="text" readonly value="*.ElmLne" /></td>
+                  <td><input type="text" readonly value="outserv" /></td>
+                  <td><input type="number" readonly value="0" /></td>
+                  <td><input type="number" readonly value="1" /></td>
+                  <td><input type="number" readonly value="1" /></td>
+                  <td><input type="checkbox" checked disabled /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Output Variables — Custom Calculations -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">4</span> Output Variables — Custom Calculations
+        </div>
+        <p class="objective-text" style="margin-bottom:10px;">
+          The two Scalar outputs read raw numbers straight from PowerFactory after each load flow —
+          bus voltage in p.u. and line loading in %. They tell you the measured value but not whether it
+          is within acceptable limits.
+        </p>
+        <p class="objective-text" style="margin-bottom:10px;">
+          Custom Calculations close that gap. Each one is a small Python function that runs immediately
+          after the load flow, receives other output (or input) variable values as arguments by name,
+          and returns a derived result that lands as its own column in the CSV. The argument names
+          must match the names of other defined variables exactly — that is how the tool wires
+          the values through automatically.
+        </p>
+        <p class="objective-text" style="margin-bottom:16px;">
+          Here, <code>voltage_flag</code> takes <code>bus_voltage</code> and returns
+          <code>"Under"</code>, <code>"Over"</code>, or <code>"OK"</code>. The <code>overload</code>
+          function takes <code>line_loading</code> and returns <code>True</code> or <code>False</code>.
+          Both run in every iteration — no extra code is needed.
+        </p>
+        <div class="readonly-fields">
+          <div class="readonly-group-title">Output Variables</div>
+
+          <!-- bus_voltage -->
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Scalar</span>
+              <input type="text" readonly value="bus_voltage" style="max-width:150px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row">
+                <label>Object</label>
+                <input type="text" readonly value="MainBus.ElmTerm" />
+              </div>
+              <div class="form-row">
+                <label>Attribute</label>
+                <input type="text" readonly value="m:u" />
+              </div>
+            </div>
+          </div>
+
+          <!-- line_loading -->
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Scalar</span>
+              <input type="text" readonly value="line_loading" style="max-width:150px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row">
+                <label>Object</label>
+                <input type="text" readonly value="CriticalLine.ElmLne" />
+              </div>
+              <div class="form-row">
+                <label>Attribute</label>
+                <input type="text" readonly value="c:loading" />
+              </div>
+            </div>
+          </div>
+
+          <!-- voltage_flag -->
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge" style="color:var(--warn);background:rgba(255,210,140,0.1);border-color:rgba(255,210,140,0.3);">Custom Calculation</span>
+              <input type="text" readonly value="voltage_flag" style="max-width:150px" />
+            </div>
+            <div class="output-var-body">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Custom Function</div>
+              <pre class="output-preview" style="margin:0;font-size:12px;line-height:1.7;color:var(--accent);">def voltage_flag(bus_voltage):
+    if bus_voltage &lt; 0.9:
+        return "Under"
+    elif bus_voltage &gt; 1.1:
+        return "Over"
+    return "OK"</pre>
+            </div>
+          </div>
+
+          <!-- overload -->
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge" style="color:var(--warn);background:rgba(255,210,140,0.1);border-color:rgba(255,210,140,0.3);">Custom Calculation</span>
+              <input type="text" readonly value="overload" style="max-width:150px" />
+            </div>
+            <div class="output-var-body">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Custom Function</div>
+              <pre class="output-preview" style="margin:0;font-size:12px;line-height:1.7;color:var(--accent);">def overload(line_loading):
+    return line_loading &gt; 100.0</pre>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Steps 5 6 7 -->
+      <div class="sub-section steps-section">
+        <div class="steps-title">Running the Code</div>
+        <div class="step-row">
+          <span class="step-badge">5</span>
+          <span>Click <strong>⚡ Generate Code</strong> in the tool.</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">6</span>
+          <span>Click <strong>Copy</strong> (or download as <code>.py</code>).</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">7</span>
+          <div>
+            <div>Paste the code into your Python environment and run it.</div>
+            <div class="step-note">The script runs one load flow per switching combination. With 4 lines this is 2<sup>4</sup>&nbsp;=&nbsp;16 runs; with more lines the count grows exponentially. For large networks, consider using the Custom scenario mode to specify only the exact N-1 contingencies you need.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8 Expected Output -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">8</span> Expected Output
+        </div>
+        <p class="hint">The script writes a CSV with one row per load flow run. The <code>outserv</code> input columns are expanded automatically by the wildcard — one column per matched line, named after each line's <code>loc_name</code>. The <code>voltage_flag</code> and <code>overload</code> columns are computed by the Custom Calculation functions:</p>
+        <pre class="output-preview">outserv Line_A,outserv Line_B,outserv Line_C,outserv Line_D,bus_voltage,line_loading,voltage_flag,overload
+0,0,0,0,1.023,42.1,OK,False
+1,0,0,0,0.887,65.3,Under,False
+0,1,0,0,1.012,88.7,OK,False
+0,0,1,0,1.098,55.2,OK,False
+0,0,0,1,0.991,112.4,OK,True
+...</pre>
+        <p class="hint">To isolate pure N-1 results in pandas, filter to rows where exactly one <code>outserv</code> column equals&nbsp;1. Any row where <code>voltage_flag</code> is not <code>"OK"</code>, or <code>overload</code> is <code>True</code>, identifies a contingency that violates an operating limit.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
        FAQ
   ═══════════════════════════════════════════════════════════════ -->
   <div class="section-card" id="faq">
