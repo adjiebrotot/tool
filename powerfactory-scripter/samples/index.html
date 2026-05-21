@@ -995,8 +995,7 @@ Best objective (thd) = 2.61</pre>
           Determine whether removing any single line from service (an N-1 contingency) causes a bus voltage or
           line loading violation. This sample demonstrates two key tool features: the wildcard object query
           (<code>*.ElmLne</code>), which automatically targets every transmission line in the network without
-          naming them individually, and Custom Calculation outputs, which classify each simulation result
-          into a human-readable flag — all within the generated script.
+          naming them individually, and Custom Calculation outputs, which classify each simulation result.          
         </p>
       </div>
 
@@ -1017,7 +1016,7 @@ Best objective (thd) = 2.61</pre>
       <!-- 3 Input Variables — Wildcards & Permutate -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">3</span> Input Variables — Wildcards &amp; Permutate
+          <span class="step-badge">3</span> Input Variables
         </div>
         <p class="objective-text" style="margin-bottom:10px;">
           Instead of naming every line individually, the object query <code>*.ElmLne</code> tells the tool
@@ -1081,10 +1080,10 @@ Best objective (thd) = 2.61</pre>
         </div>
       </div>
 
-      <!-- 4 Output Variables — Custom Calculations -->
+      <!-- 4 Output Variables -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">4</span> Output Variables — Custom Calculations
+          <span class="step-badge">4</span> Output Variables
         </div>
         <p class="objective-text" style="margin-bottom:10px;">
           The two Scalar outputs read raw numbers straight from PowerFactory after each load flow —
@@ -1095,14 +1094,13 @@ Best objective (thd) = 2.61</pre>
           Custom Calculations close that gap. Each one is a small Python function that runs immediately
           after the load flow, receives other output (or input) variable values as arguments by name,
           and returns a derived result that lands as its own column in the CSV. The argument names
-          must match the names of other defined variables exactly — that is how the tool wires
-          the values through automatically.
+          must match the names of other defined variables exactly.
         </p>
         <p class="objective-text" style="margin-bottom:16px;">
           Here, <code>voltage_flag</code> takes <code>bus_voltage</code> and returns
           <code>"Under"</code>, <code>"Over"</code>, or <code>"OK"</code>. The <code>overload</code>
           function takes <code>line_loading</code> and returns <code>True</code> or <code>False</code>.
-          Both run in every iteration — no extra code is needed.
+          Both run in every iteration.
         </p>
         <div class="readonly-fields">
           <div class="readonly-group-title">Output Variables</div>
@@ -1201,7 +1199,7 @@ Best objective (thd) = 2.61</pre>
         <div class="sub-section-title">
           <span class="step-badge">8</span> Expected Output
         </div>
-        <p class="hint">The script writes a CSV with one row per load flow run. The <code>outserv</code> input columns are expanded automatically by the wildcard — one column per matched line, named after each line's <code>loc_name</code>. The <code>voltage_flag</code> and <code>overload</code> columns are computed by the Custom Calculation functions:</p>
+        <p class="hint">The script writes a CSV with one row per load flow run. The <code>outserv</code> input columns are expanded automatically by the wildcard: one column per matched line, named after each line's <code>loc_name</code>. The <code>voltage_flag</code> and <code>overload</code> columns are computed by the Custom Calculation functions:</p>
         <pre class="output-preview">outserv Line_A,outserv Line_B,outserv Line_C,outserv Line_D,bus_voltage,line_loading,voltage_flag,overload
 0,0,0,0,1.023,42.1,OK,False
 1,0,0,0,0.887,65.3,Under,False
@@ -1246,7 +1244,7 @@ Best objective (thd) = 2.61</pre>
             <span class="faq-toggle">▾</span>
           </div>
           <div class="faq-answer">
-            <p>Enable <strong>Permutate</strong> on an input variable when you want the script to sweep that variable across all combinations with other permutated variables (full factorial / grid search). Disable it to vary the variable independently — for example, as a Bayesian optimisation parameter. Leave it unchecked for optimisation problems; the algorithm handles the search automatically.</p>
+            <p>Enable <strong>Permutate</strong> on an input variable when you want the script to sweep that variable across all combinations with other permutated variables (full factorial / grid search). Disable it to vary the variable independently. For example, as a Bayesian optimisation parameter. Leave it unchecked for optimisation problems; the algorithm handles the search automatically.</p>
             <div class="faq-pro-tip">
               <strong>Pro tip:</strong> Permutate works well for binary variables. For example, in a contingency analysis the <code>outserv</code> parameter is either <code>0</code> (in service) or <code>1</code> (out of service). Setting Lower&nbsp;=&nbsp;0, Upper&nbsp;=&nbsp;1, Step&nbsp;=&nbsp;1 with Permutate enabled keeps the combination count manageable while covering all switching states.
             </div>
