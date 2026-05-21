@@ -993,10 +993,10 @@ Best objective (thd) = 2.61</pre>
         </div>
         <p class="objective-text">
           Determine whether removing any single line from service (an N-1 contingency) causes a bus voltage or
-          line loading violation. This sample demonstrates the wildcard object query (<code>*.ElmLne</code>),
-          which automatically targets every transmission line in the network without naming them one by one.
-          Custom Calculation outputs then flag each result as an undervoltage, overvoltage, or overload
-          violation — showing how post-processing logic can be embedded directly in the generated script.
+          line loading violation. This sample demonstrates two key tool features: the wildcard object query
+          (<code>*.ElmLne</code>), which automatically targets every transmission line in the network without
+          naming them individually, and Custom Calculation outputs, which classify each simulation result
+          into a human-readable flag — all within the generated script.
         </p>
       </div>
 
@@ -1009,17 +1009,65 @@ Best objective (thd) = 2.61</pre>
           <li>All transmission lines swept via wildcard: <code>*.ElmLne</code></li>
           <li>Monitored bus: <code>MainBus.ElmTerm</code></li>
           <li>Representative line monitored for overload: <code>CriticalLine.ElmLne</code></li>
-          <li>Undervoltage limit: bus voltage &lt; 0.9 p.u.</li>
-          <li>Overvoltage limit: bus voltage &gt; 1.1 p.u.</li>
-          <li>Overload limit: line loading &gt; 100%</li>
-          <li>With <strong>Permutate</strong> enabled, the brute force sweep produces all N-k switching combinations (2<sup>N</sup> runs for N lines). For a pure N-1 study, filter the exported CSV to rows where exactly one <code>outserv</code> column equals 1.</li>
+          <li>Voltage flag: <code>Under</code> if bus voltage &lt; 0.9 p.u., <code>Over</code> if &gt; 1.1 p.u., <code>OK</code> otherwise</li>
+          <li>Overload flag: <code>True</code> if line loading &gt; 100%</li>
         </ul>
       </div>
 
-      <!-- 3 What to Input -->
+      <!-- 3 Wildcards & Permutate -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">3</span> What to Input
+          <span class="step-badge">3</span> How Wildcards &amp; Permutate Work Here
+        </div>
+        <p class="objective-text" style="margin-bottom:10px;">
+          Instead of naming every line individually, the object query <code>*.ElmLne</code> tells the tool
+          to find all line elements in the network at runtime. You do not need to know their names in advance —
+          PowerFactory resolves them when the script runs.
+        </p>
+        <p class="objective-text" style="margin-bottom:10px;">
+          When <strong>Permutate</strong> is also enabled, the tool goes further: it creates one independent
+          control slot per matched line. Each slot sweeps the <code>outserv</code> attribute between
+          0&nbsp;(in service) and 1&nbsp;(out of service). The brute force loop then runs every
+          combination of those on/off states — so if your network has 4 lines you get
+          2<sup>4</sup>&nbsp;=&nbsp;16 load flows, covering the base case, all N-1 outages, all N-2
+          outages, and so on.
+        </p>
+        <p class="objective-text">
+          For a pure N-1 analysis, you only care about the rows where exactly one line is out.
+          The exported CSV includes one <code>outserv</code> column per line (named after each line's
+          <code>loc_name</code>), so filtering in pandas is straightforward:
+          keep rows where the sum of all <code>outserv</code> columns equals&nbsp;1.
+        </p>
+      </div>
+
+      <!-- 4 Custom Calculations -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">4</span> How Custom Calculations Work Here
+        </div>
+        <p class="objective-text" style="margin-bottom:10px;">
+          Scalar outputs read raw numbers from PowerFactory — bus voltage in p.u., line loading in %.
+          On their own they tell you the measured value but not whether it is acceptable.
+          Custom Calculations let you write a small Python function that runs immediately after each
+          load flow, receives those raw values as arguments, and returns a derived result that
+          lands as its own column in the CSV.
+        </p>
+        <p class="objective-text" style="margin-bottom:10px;">
+          Here, <code>voltage_flag</code> takes <code>bus_voltage</code> and returns the string
+          <code>"Under"</code>, <code>"Over"</code>, or <code>"OK"</code> depending on where the
+          voltage sits relative to the 0.9–1.1&nbsp;p.u. band. The <code>overload</code> function
+          takes <code>line_loading</code> and returns <code>True</code> or <code>False</code>.
+        </p>
+        <p class="objective-text">
+          The function argument names must match the names of other defined Input or Output Variables
+          exactly — that is how the tool knows which values to pass in. No extra wiring is needed.
+        </p>
+      </div>
+
+      <!-- 5 What to Input -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">5</span> What to Input
         </div>
         <div class="readonly-fields">
 
@@ -1109,29 +1157,20 @@ Best objective (thd) = 2.61</pre>
             </div>
           </div>
 
-          <!-- undervoltage -->
+          <!-- voltage_flag -->
           <div class="output-var-item">
             <div class="output-var-header">
               <span class="ov-type-badge" style="color:var(--warn);background:rgba(255,210,140,0.1);border-color:rgba(255,210,140,0.3);">Custom Calculation</span>
-              <input type="text" readonly value="undervoltage" style="max-width:150px" />
+              <input type="text" readonly value="voltage_flag" style="max-width:150px" />
             </div>
             <div class="output-var-body">
               <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Custom Function</div>
-              <pre class="output-preview" style="margin:0;font-size:12px;line-height:1.7;color:var(--accent);">def undervoltage(bus_voltage):
-    return bus_voltage &lt; 0.9</pre>
-            </div>
-          </div>
-
-          <!-- overvoltage -->
-          <div class="output-var-item">
-            <div class="output-var-header">
-              <span class="ov-type-badge" style="color:var(--warn);background:rgba(255,210,140,0.1);border-color:rgba(255,210,140,0.3);">Custom Calculation</span>
-              <input type="text" readonly value="overvoltage" style="max-width:150px" />
-            </div>
-            <div class="output-var-body">
-              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Custom Function</div>
-              <pre class="output-preview" style="margin:0;font-size:12px;line-height:1.7;color:var(--accent);">def overvoltage(bus_voltage):
-    return bus_voltage &gt; 1.1</pre>
+              <pre class="output-preview" style="margin:0;font-size:12px;line-height:1.7;color:var(--accent);">def voltage_flag(bus_voltage):
+    if bus_voltage &lt; 0.9:
+        return "Under"
+    elif bus_voltage &gt; 1.1:
+        return "Over"
+    return "OK"</pre>
             </div>
           </div>
 
@@ -1151,19 +1190,19 @@ Best objective (thd) = 2.61</pre>
         </div>
       </div>
 
-      <!-- Steps 4 5 6 -->
+      <!-- Steps 6 7 8 -->
       <div class="sub-section steps-section">
         <div class="steps-title">Running the Code</div>
         <div class="step-row">
-          <span class="step-badge">4</span>
+          <span class="step-badge">6</span>
           <span>Click <strong>⚡ Generate Code</strong> in the tool.</span>
         </div>
         <div class="step-row">
-          <span class="step-badge">5</span>
+          <span class="step-badge">7</span>
           <span>Click <strong>Copy</strong> (or download as <code>.py</code>).</span>
         </div>
         <div class="step-row">
-          <span class="step-badge">6</span>
+          <span class="step-badge">8</span>
           <div>
             <div>Paste the code into your Python environment and run it.</div>
             <div class="step-note">The script runs one load flow per switching combination. With 4 lines this is 2<sup>4</sup>&nbsp;=&nbsp;16 runs; with more lines the count grows exponentially. For large networks, consider using the Custom scenario mode to specify only the exact N-1 contingencies you need.</div>
@@ -1171,20 +1210,20 @@ Best objective (thd) = 2.61</pre>
         </div>
       </div>
 
-      <!-- 7 Expected Output -->
+      <!-- 9 Expected Output -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">7</span> Expected Output
+          <span class="step-badge">9</span> Expected Output
         </div>
-        <p class="hint">The script writes a CSV with one row per load flow run. The <code>outserv</code> input columns are expanded automatically by the wildcard — one column per matched line, named after each line's <code>loc_name</code>:</p>
-        <pre class="output-preview">outserv Line_A,outserv Line_B,outserv Line_C,outserv Line_D,bus_voltage,line_loading,undervoltage,overvoltage,overload
-0,0,0,0,1.023,42.1,False,False,False
-1,0,0,0,0.887,65.3,True,False,False
-0,1,0,0,1.012,88.7,False,False,False
-0,0,1,0,1.103,55.2,False,False,False
-0,0,0,1,0.991,112.4,False,False,True
+        <p class="hint">The script writes a CSV with one row per load flow run. The <code>outserv</code> input columns are expanded automatically by the wildcard — one column per matched line, named after each line's <code>loc_name</code>. The <code>voltage_flag</code> and <code>overload</code> columns are computed by the Custom Calculation functions:</p>
+        <pre class="output-preview">outserv Line_A,outserv Line_B,outserv Line_C,outserv Line_D,bus_voltage,line_loading,voltage_flag,overload
+0,0,0,0,1.023,42.1,OK,False
+1,0,0,0,0.887,65.3,Under,False
+0,1,0,0,1.012,88.7,OK,False
+0,0,1,0,1.098,55.2,OK,False
+0,0,0,1,0.991,112.4,OK,True
 ...</pre>
-        <p class="hint">To isolate pure N-1 results in pandas, filter to rows where exactly one <code>outserv</code> column equals&nbsp;1. Any row with <code>undervoltage</code>, <code>overvoltage</code>, or <code>overload</code> equal to <code>True</code> identifies a contingency that violates an operating limit.</p>
+        <p class="hint">To isolate pure N-1 results in pandas, filter to rows where exactly one <code>outserv</code> column equals&nbsp;1. Any row where <code>voltage_flag</code> is not <code>"OK"</code>, or <code>overload</code> is <code>True</code>, identifies a contingency that violates an operating limit.</p>
       </div>
 
     </div>
