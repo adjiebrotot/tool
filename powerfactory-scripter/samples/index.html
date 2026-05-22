@@ -681,7 +681,6 @@
                   <th>Lower</th>
                   <th>Upper</th>
                   <th>Step</th>
-                  <th>Permutate</th>
                 </tr>
               </thead>
               <tbody>
@@ -692,7 +691,6 @@
                   <td><input type="number" readonly value="0" /></td>
                   <td><input type="number" readonly value="10" /></td>
                   <td><input type="number" readonly value="0.5" /></td>
-                  <td><input type="checkbox" checked disabled /></td>
                 </tr>
               </tbody>
             </table>
@@ -835,7 +833,6 @@
                   <th>Lower</th>
                   <th>Upper</th>
                   <th>Step</th>
-                  <th>Permutate</th>
                 </tr>
               </thead>
               <tbody>
@@ -846,7 +843,6 @@
                   <td><input type="text" readonly value="1e-6" /></td>
                   <td><input type="text" readonly value="1e-3" /></td>
                   <td><input type="text" readonly value="—" /></td>
-                  <td><input type="checkbox" disabled /></td>
                 </tr>
                 <tr>
                   <td><input type="text" readonly value="L_f" /></td>
@@ -855,7 +851,6 @@
                   <td><input type="text" readonly value="1e-4" /></td>
                   <td><input type="text" readonly value="1e-1" /></td>
                   <td><input type="text" readonly value="—" /></td>
-                  <td><input type="checkbox" disabled /></td>
                 </tr>
                 <tr>
                   <td><input type="text" readonly value="R_f" /></td>
@@ -864,7 +859,6 @@
                   <td><input type="text" readonly value="0.001" /></td>
                   <td><input type="text" readonly value="0.1" /></td>
                   <td><input type="text" readonly value="—" /></td>
-                  <td><input type="checkbox" disabled /></td>
                 </tr>
               </tbody>
             </table>
@@ -999,21 +993,7 @@ Best objective (thd) = 2.61</pre>
           </div>
         </div>
 
-        <!-- Q2 · Permutate -->
-        <div class="faq-item">
-          <div class="faq-question" onclick="toggleFaq(this)">
-            When should I use Permutate?
-            <span class="faq-toggle">▾</span>
-          </div>
-          <div class="faq-answer">
-            <p>Enable <strong>Permutate</strong> on an input variable when you want the script to sweep that variable across all combinations with other permutated variables (full factorial / grid search). Disable it to vary the variable independently. For example, as a Bayesian optimisation parameter. Leave it unchecked for optimisation problems; the algorithm handles the search automatically.</p>
-            <div class="faq-pro-tip">
-              <strong>Pro tip:</strong> Permutate works well for binary variables such as <code>outserv</code> (0 = in service, 1 = out of service). Be aware that permutating N lines produces 2<sup>N</sup> combinations: the base case, all N-1 outages, all N-2 outages, and so on. If you only need N-1 coverage, use <strong>Custom</strong> mode instead and define one scenario row per outage. This keeps the run count at N&nbsp;+&nbsp;1 regardless of network size.
-            </div>
-          </div>
-        </div>
-
-        <!-- Q3 · Study Types -->
+        <!-- Q2 · Study Types -->
         <div class="faq-item">
           <div class="faq-question" onclick="toggleFaq(this)">
             What does each Study Type do?

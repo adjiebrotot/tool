@@ -685,7 +685,6 @@
   .input-table-hide-step .col-step { display: none; }
   .input-table-hide-bounds .col-lb,
   .input-table-hide-bounds .col-ub  { display: none; }
-  .input-table-hide-permutate .col-permutate { display: none; }
 
   /* ── APP FOOTER ──────────────────────────────────────────────── */
   .app-footer {
@@ -1014,7 +1013,7 @@
             <strong>Brute Force:</strong> Step Size is the increment (not number of steps); every combination is iterated.<br/>
             <strong>Optimisation:</strong> Bounds define the search space; step is unused.<br/>
             <strong>Custom:</strong> Values come from a scenario Excel file (bounds and step are unused).<br/>
-            Wildcards (e.g. <code>*.ElmDsl</code>) match multiple objects — same value applied to all. Enable <strong>Permutate</strong> to vary each independently (warning: M values × N objects → M<sup>N</sup> runs).
+            Wildcards (e.g. <code>*.ElmDsl</code>) match multiple objects — the same value is applied to all matched objects.
           </div>
         </div>
         <div class="dyn-table-wrapper">
@@ -1028,7 +1027,6 @@
                 <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tt" id="tt-lb" data-tip="Start of the swept range (inclusive).">?</span></th>
                 <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tt" id="tt-ub" data-tip="End of the swept range (inclusive).">?</span></th>
                 <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tt" data-tip="Increment between values. E.g. lb=0, ub=10, step=0.5 → [0, 0.5, …, 10].">?</span></th>
-                <th class="col-permutate">Permutate <span class="tt" data-tip="Vary each matched object independently. Warning: M steps × N objects → M^N runs.">?</span></th>
                 <th></th>
               </tr>
             </thead>
@@ -1351,11 +1349,9 @@ function onProblemTypeChange() {
   if (pt === 'optimisation') refreshObjectiveDropdown();
   // Toggle input table column visibility
   const table = document.getElementById('input-table');
-  // Optimisation: hide step size only; Custom: hide step + bounds + permutate
+  // Optimisation: hide step size only; Custom: hide step + bounds
   table.classList.toggle('input-table-hide-step', pt === 'optimisation' || pt === 'custom');
   table.classList.toggle('input-table-hide-bounds', pt === 'custom');
-  table.classList.toggle('input-table-hide-permutate', pt === 'custom');
-  syncPermutateCheckboxes();
 }
 
 function onStudyTypeChange() {
@@ -1817,18 +1813,16 @@ function addInputRow(data = {}) {
   tr.innerHTML = `
     <td style="color:var(--muted);font-family:var(--mono);font-size:11px;vertical-align:middle">${rowNum}</td>
     <td><input type="text" id="iv-name-${idx}" value="${data.name||''}" placeholder="Var name" /></td>
-    <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" autocomplete="off" oninput="onInputObjectQueryChange(${idx})" onchange="onInputObjectQueryChange(${idx})" /></td>
+    <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" autocomplete="off" /></td>
     <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" /></td>
     <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" /></td>
     <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" /></td>
     <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" /></td>
-    <td class="col-permutate" style="text-align:center;vertical-align:middle"><input type="checkbox" id="iv-perm-${idx}" ${data.permutate ? 'checked' : ''} /></td>
     <td class="td-action">
       <button class="btn btn-remove btn-icon" title="Remove" onclick="removeRow('input-row-${idx}')">✕</button>
     </td>
   `;
   tbody.appendChild(tr);
-  syncPermutateCheckboxForRow(idx);
   attachInputComboBoxes(idx);
 }
 
@@ -1853,14 +1847,12 @@ function getInputRows() {
     const rawName = document.getElementById(`iv-name-${idx}`)?.value?.trim() || '';
     const name = rawName || `input_${i}`;
     const objectQuery = document.getElementById(`iv-obj-${idx}`)?.value?.trim() || '';
-    const allowPermutate = problemType !== 'custom' && isWildcardObjectQuery(objectQuery);
     return {
       name,
       object_query: objectQuery,
       variable:     document.getElementById(`iv-var-${idx}`)?.value?.trim() || '',
       lower, upper, step,
       dtype: inferDtype(lower, upper, step),
-      permutate: allowPermutate && (document.getElementById(`iv-perm-${idx}`)?.checked || false),
     };
   });
 }
@@ -2231,35 +2223,6 @@ function readConfig() {
       saveIntermediateMinutes:  document.getElementById('save-interval-minutes').value.trim(),
     }
   };
-}
-
-function isWildcardObjectQuery(objectQuery) {
-  const query = (objectQuery || '').trim();
-  if (!query) return false;
-  return query.startsWith('*.') || query.includes('*');
-}
-
-function syncPermutateCheckboxForRow(idx) {
-  const objectInput = document.getElementById(`iv-obj-${idx}`);
-  const permutateInput = document.getElementById(`iv-perm-${idx}`);
-  if (!objectInput || !permutateInput) return;
-  const problemType = document.getElementById('problem-type')?.value;
-  const hasWildcard = isWildcardObjectQuery(objectInput.value);
-  const shouldDisable = !hasWildcard || problemType === 'custom';
-  permutateInput.disabled = shouldDisable;
-  if (shouldDisable) permutateInput.checked = false;
-}
-
-function syncPermutateCheckboxes() {
-  const rows = document.querySelectorAll('#input-tbody tr');
-  rows.forEach(tr => {
-    const idx = tr.id.replace('input-row-', '');
-    syncPermutateCheckboxForRow(idx);
-  });
-}
-
-function onInputObjectQueryChange(idx) {
-  syncPermutateCheckboxForRow(idx);
 }
 
 /* ================================================================
@@ -3243,7 +3206,6 @@ function buildInputSpecs(cfg) {
         "variable":     "${iv.variable}"
     },\n`;
     } else {
-      const isWild = isWildcardObjectQuery(iv.object_query);
       code += `    {
         "name":         "${name}",
         "object_query": "${iv.object_query}",
@@ -3251,9 +3213,7 @@ function buildInputSpecs(cfg) {
         "lower":        ${iv.lower || 0},
         "upper":        ${iv.upper || 1},
         "step":         ${iv.step || 1},
-        "dtype":        "${iv.dtype || 'float'}",
-        "permutate":    ${iv.permutate && isWild ? 'True' : 'False'},
-        "is_wildcard":  ${isWild ? 'True' : 'False'}
+        "dtype":        "${iv.dtype || 'float'}"
     },\n`;
     }
   });
@@ -3458,19 +3418,7 @@ last_save_time = time.time()
   // ─── BRUTE FORCE ──────────────────────────────────────────────────
   if (pt === 'brute_force') {
     pre += `
-# Expand permutate+wildcard specs: each matched object becomes an independent slot
-effective_ranges = []
-effective_spec_map = []  # list of (spec_index, target_obj_or_None)
-for i, spec in enumerate(input_specs):
-    if spec.get("permutate") and spec.get("is_wildcard") and len(input_objects[i]) > 1:
-        for obj in input_objects[i]:
-            effective_ranges.append(input_ranges[i])
-            effective_spec_map.append((i, obj))
-    else:
-        effective_ranges.append(input_ranges[i])
-        effective_spec_map.append((i, None))  # None = apply value to all matched objects
-
-all_combinations = list(itertools.product(*effective_ranges))
+all_combinations = list(itertools.product(*input_ranges.values()))
 `;
     // Cache initial attribute values once, before all loops
     pre += `
@@ -3492,22 +3440,15 @@ for _i, _spec in enumerate(input_specs):
     pre += `${indent}try:\n`;
     pre += `${indent}    iteration_count += 1\n`;
     pre += `${indent}    current_inputs = {}\n`;
-    pre += `${indent}    for slot_idx, value in enumerate(combo):\n`;
-    pre += `${indent}        spec_idx, target_obj = effective_spec_map[slot_idx]\n`;
+    pre += `${indent}    for spec_idx, value in enumerate(combo):\n`;
     pre += `${indent}        spec = input_specs[spec_idx]\n`;
-    pre += `${indent}        if target_obj is not None:\n`;
-    pre += `${indent}            # Permutate: this slot controls one specific object\n`;
-    pre += `${indent}            target_obj.SetAttribute(spec["variable"], value)\n`;
-    pre += `${indent}            current_inputs[f"{spec['name']} {target_obj.loc_name}"] = value\n`;
+    pre += `${indent}        for obj in input_objects[spec_idx]:\n`;
+    pre += `${indent}            obj.SetAttribute(spec["variable"], value)\n`;
+    pre += `${indent}        if len(input_objects[spec_idx]) == 1:\n`;
+    pre += `${indent}            current_inputs[spec["name"]] = value\n`;
     pre += `${indent}        else:\n`;
-    pre += `${indent}            # Non-permutate: apply same value to all matched objects\n`;
     pre += `${indent}            for obj in input_objects[spec_idx]:\n`;
-    pre += `${indent}                obj.SetAttribute(spec["variable"], value)\n`;
-    pre += `${indent}            if len(input_objects[spec_idx]) == 1:\n`;
-    pre += `${indent}                current_inputs[spec["name"]] = value\n`;
-    pre += `${indent}            else:\n`;
-    pre += `${indent}                for obj in input_objects[spec_idx]:\n`;
-    pre += `${indent}                    current_inputs[f"{spec['name']} {obj.loc_name}"] = value\n\n`;
+    pre += `${indent}                current_inputs[f"{spec['name']} {obj.loc_name}"] = value\n\n`;
     pre += `${indent}    ${runCall}\n\n`;
     pre += `${indent}    row = {}\n`;
     pre += `${indent}    row.update(current_inputs)\n\n`;
@@ -3656,17 +3597,7 @@ for _spec in _col_specs:
       : '    return objective_value_adjusted';
 
     pre += `
-# Build effective parameter space (expands permutate+wildcard specs per object)
-effective_spec_map = []  # list of (spec_index, target_obj_or_None)
-effective_bounds = []    # list of (lower, upper) for each effective slot
-for i, spec in enumerate(input_specs):
-    if spec.get("permutate") and spec.get("is_wildcard") and len(input_objects[i]) > 1:
-        for obj in input_objects[i]:
-            effective_spec_map.append((i, obj))
-            effective_bounds.append((float(spec["lower"]), float(spec["upper"])))
-    else:
-        effective_spec_map.append((i, None))
-        effective_bounds.append((float(spec["lower"]), float(spec["upper"])))
+effective_bounds = [(float(spec["lower"]), float(spec["upper"])) for spec in input_specs]
 
 # Cache initial attribute values — restored after each evaluate_one_case call
 _input_restore_list = []
@@ -3684,22 +3615,15 @@ def evaluate_one_case(param_values):
     iteration_count += 1
     row = {}
 
-    for slot_idx, value in enumerate(param_values):
-        spec_idx, target_obj = effective_spec_map[slot_idx]
+    for spec_idx, value in enumerate(param_values):
         spec = input_specs[spec_idx]
-        if target_obj is not None:
-            # Permutate: this slot controls one specific matched object
-            target_obj.SetAttribute(spec["variable"], value)
-            row[f"{spec['name']} {target_obj.loc_name}"] = value
+        for obj in input_objects[spec_idx]:
+            obj.SetAttribute(spec["variable"], value)
+        if len(input_objects[spec_idx]) == 1:
+            row[spec["name"]] = value
         else:
-            # Non-permutate: apply same value to all matched objects
             for obj in input_objects[spec_idx]:
-                obj.SetAttribute(spec["variable"], value)
-            if len(input_objects[spec_idx]) == 1:
-                row[spec["name"]] = value
-            else:
-                for obj in input_objects[spec_idx]:
-                    row[f"{spec['name']} {obj.loc_name}"] = value
+                row[f"{spec['name']} {obj.loc_name}"] = value
 
     ${runCall}
 
@@ -3749,18 +3673,15 @@ def evaluate_one_case(param_values):
 `;
 
     if (alg === 'gp_minimize') {
-      // Build skopt space dynamically from effective_spec_map (supports permutate expansion)
-      pre += `# Gaussian Process search space (built at runtime to support permutate expansion)\n`;
       pre += `space = []\n`;
-      pre += `for slot_idx, (spec_idx, _) in enumerate(effective_spec_map):\n`;
-      pre += `    spec = input_specs[spec_idx]\n`;
+      pre += `for spec_idx, spec in enumerate(input_specs):\n`;
       pre += `    if spec["dtype"] == "int":\n`;
-      pre += `        space.append(Integer(int(spec["lower"]), int(spec["upper"]), name=f"slot_{slot_idx}"))\n`;
+      pre += `        space.append(Integer(int(spec["lower"]), int(spec["upper"]), name=f"slot_{spec_idx}"))\n`;
       pre += `    else:\n`;
-      pre += `        space.append(Real(float(spec["lower"]), float(spec["upper"]), name=f"slot_{slot_idx}"))\n\n`;
+      pre += `        space.append(Real(float(spec["lower"]), float(spec["upper"]), name=f"slot_{spec_idx}"))\n\n`;
 
       pre += `@use_named_args(space)\ndef objective(**params):\n`;
-      pre += `    ordered_values = [params[f"slot_{i}"] for i in range(len(effective_spec_map))]\n`;
+      pre += `    ordered_values = [params[f"slot_{i}"] for i in range(len(input_specs))]\n`;
       pre += `    row = evaluate_one_case(ordered_values)\n\n`;
       pre += `    objective_value = row["${objName}"]\n`;
       pre += penaltyLines + '\n';
@@ -3774,7 +3695,6 @@ def evaluate_one_case(param_values):
       pre += `    objective_value = row["${objName}"]\n`;
       pre += penaltyLines + '\n';
       pre += returnLine + '\n\n';
-      pre += `# effective_bounds is built above and accounts for permutate expansion\n`;
       pre += `result = differential_evolution(de_objective, effective_bounds, maxiter=${maxIter}, seed=42)\n`;
       pre += `safe_print(f"Optimisation complete. Best value: {result.fun}")\n`;
 
@@ -3786,7 +3706,6 @@ def evaluate_one_case(param_values):
       pre += `    objective_value = row["${objName}"]\n`;
       pre += penaltyLines + '\n';
       pre += returnLine + '\n\n';
-      pre += `# x0 and bounds are built from effective_bounds (accounts for permutate expansion)\n`;
       pre += `x0 = [(b[0] + b[1]) / 2 for b in effective_bounds]\n`;
       if (useBounds) {
         pre += `result = minimize(minimize_objective, x0, method='${scipyMethod}', bounds=effective_bounds, options={"maxiter": ${maxIter}})\n`;
@@ -3799,8 +3718,7 @@ def evaluate_one_case(param_values):
       // Placeholder
       pre += `# TODO: Replace with your preferred optimisation algorithm\n`;
       pre += `# Current selection: Placeholder — wire up evaluate_one_case manually.\n`;
-      pre += `# Example: call evaluate_one_case([val0, val1, ...]) for each effective slot\n`;
-      pre += `# (effective_spec_map length = number of decision variables after permutate expansion).\n`;
+      pre += `# Example: call evaluate_one_case([val0, val1, ...]) for each input variable slot\n`;
     }
   }
 
