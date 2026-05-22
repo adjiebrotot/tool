@@ -2730,15 +2730,17 @@ def get_event_objects(app, object_query):
     """
     Resolve an event object from the Simulation Events folder.
     object_query format: "EventName.EvtShc" or "EventName.EvtSwitch" etc.
-    Returns a list with the matching event object, or empty list if not found.
+    Returns a list with the matching event object.
+    Raises ValueError if the folder or object cannot be found.
     """
-    evt_folder = app.GetFromStudyCase("Simulation Events/Fault.IntEvt")
-    if not evt_folder:
-        safe_print(f"[WARN] Could not find Simulation Events folder for query: {object_query!r}")
-        return []
+    study_case = app.GetActiveStudyCase()
+    folders = study_case.GetContents("Simulation Events.IntEvt")
+    if not folders:
+        raise ValueError(f"Could not find 'Simulation Events' folder in active study case (query: {object_query!r})")
+    evt_folder = folders[0]
     results = evt_folder.GetContents(object_query)
     if not results:
-        safe_print(f"[WARN] No event found matching {object_query!r} in Simulation Events folder.")
+        raise ValueError(f"No event found matching {object_query!r} in Simulation Events folder.")
     return results
 
 
@@ -2747,7 +2749,6 @@ def get_input_objects(app, object_query):
     Route object resolution to either the event folder (EvtXxx classes)
     or GetCalcRelevantObjects (ElmXxx / StaXxx classes).
     """
-    import re
     m = re.search(r'\\.(Evt[A-Za-z0-9]+)\\s*$', object_query)
     if m:
         return get_event_objects(app, object_query)
@@ -2763,8 +2764,9 @@ def _build_ts_monitor_list(app, output_specs):
     for spec in output_specs:
         if spec.get("type") != "timeseries":
             continue
-        objs = get_pf_objects(app, spec["object_query"])
-        if not objs:
+        try:
+            objs = get_pf_objects(app, spec["object_query"])
+        except ValueError:
             safe_print(f"[WARN] No object found for timeseries spec {spec['name']!r}: {spec['object_query']!r}")
             continue
         monitor_list.append((objs[0], spec["variable"]))
@@ -2796,12 +2798,12 @@ def ensure_elmres_variables(app, res_obj, monitor_list):
         obj = res_obj.GetObject(col)
         var = res_obj.GetVariable(col)
         if obj is not None and var:
-            existing.add((id(obj), var))
+            existing.add((obj.GetFullName(), var))
     res_obj.Release()
 
     # Add any missing variables
     for elm, varname in monitor_list:
-        if (id(elm), varname) not in existing:
+        if (elm.GetFullName(), varname) not in existing:
             err = res_obj.AddVariable(elm, varname)
             if err == 0:
                 added.append((elm, varname))
@@ -2970,10 +2972,11 @@ def _read_elmres_inmemory(app, output_specs):
     for spec in output_specs:
         if spec.get("type") != "timeseries":
             continue
-        objs = get_pf_objects(app, spec["object_query"])
-        if not objs:
+        try:
+            objs = get_pf_objects(app, spec["object_query"])
+        except ValueError:
             safe_print(f"[WARN] No object found for timeseries output {spec['name']!r}")
-            ts_data[spec["name"]] = []
+            ts_data[spec["name"]] = [float('nan')] * n_rows
             continue
         col = res.FindColumn(objs[0], spec["variable"])
         if col < 0:
@@ -3185,9 +3188,8 @@ def save_timeseries_raw_csv(time_values, ts_data, spec, row, raw_dir, context_la
     safe_name = safe_name.replace(" ", "_").replace("(", "").replace(")", "").replace("/", "-")
     raw_filename = f"{safe_name}_{timestamp_string()}.csv"
     raw_path = os.path.join(raw_dir, raw_filename)
-    import csv as _csv
     with open(raw_path, "w", newline="") as f:
-        writer = _csv.writer(f)
+        writer = csv.writer(f)
         writer.writerow(["time_s", spec["variable"]])
         for t, v in zip(time_values, col_data):
             writer.writerow([t, v])
@@ -3303,14 +3305,10 @@ _col_object_cache = {}
 for _spec in _col_specs:
     _oq = _spec["object_query"]
     if _oq not in _col_object_cache:
-        _col_object_cache[_oq] = get_pf_objects(app, _oq)
+        _col_object_cache[_oq] = get_input_objects(app, _oq)
 
 `;
   } else {
-    const st = cfg.initialisation.studyType;
-    const isDynamic = st === 'dynamic_rms' || st === 'dynamic_emt';
-    const hasTs = cfg.outputVariables.some(o => o.type === 'timeseries');
-
     code += `# Resolve PowerFactory objects and build value ranges
 input_objects = {}
 input_ranges = {}
@@ -3320,28 +3318,6 @@ for i, spec in enumerate(input_specs):
     input_ranges[i] = build_range(spec["lower"], spec["upper"], spec["step"], spec["dtype"])
 
 `;
-
-    if (isDynamic && hasTs) {
-      code += `# ============================================================
-# SECTION: ElmRes Variable Pre-Check
-# ============================================================
-# Ensure all timeseries output variables are registered in ElmRes
-# before ComInc runs. Variables added here only take effect from
-# the first ComInc.Execute() call in the loop below.
-_pf_res = app.GetFromStudyCase("ElmRes")
-_ts_monitor = _build_ts_monitor_list(app, output_specs)
-if _ts_monitor:
-    _newly_added = ensure_elmres_variables(app, _pf_res, _ts_monitor)
-    if _newly_added:
-        safe_print(
-            f"[ElmRes] {len(_newly_added)} variable(s) added — "
-            f"active from first ComInc run."
-        )
-    else:
-        safe_print("[ElmRes] All timeseries variables already registered.")
-
-`;
-    }
   }
 
   return code;
@@ -3491,6 +3467,30 @@ success_count = 0
 failed_count = 0
 last_save_time = time.time()
 `;
+
+  const isDynamic = cfg.initialisation.studyType === 'dynamic_rms' || cfg.initialisation.studyType === 'dynamic_emt';
+  if (isDynamic && hasTs && pt !== 'custom') {
+    pre += `
+# ============================================================
+# SECTION: ElmRes Variable Pre-Check
+# ============================================================
+# Ensure all timeseries output variables are registered in ElmRes
+# before ComInc runs. Variables added here only take effect from
+# the first ComInc.Execute() call in the loop below.
+_pf_res = app.GetFromStudyCase("ElmRes")
+_ts_monitor = _build_ts_monitor_list(app, output_specs)
+if _ts_monitor:
+    _newly_added = ensure_elmres_variables(app, _pf_res, _ts_monitor)
+    if _newly_added:
+        safe_print(
+            f"[ElmRes] {len(_newly_added)} variable(s) added — "
+            f"active from first ComInc run."
+        )
+    else:
+        safe_print("[ElmRes] All timeseries variables already registered.")
+
+`;
+  }
 
   // ─── BRUTE FORCE ──────────────────────────────────────────────────
   if (pt === 'brute_force') {
