@@ -129,7 +129,7 @@ select.tb-control {
 /* ── BMC GRID ────────────────────────────────── */
 .bmc-grid {
   display:grid; grid-template-columns:repeat(10,1fr); grid-template-rows:1fr 1fr .52fr;
-  width:100%; height:100%; min-width:900px; min-height:540px;
+  width:100%; height:100%; min-width:900px; min-height:540px; position:relative;
 }
 .bmc-key-partners    { grid-column:1/3;  grid-row:1/3; background:var(--bmc-kp); }
 .bmc-key-activities  { grid-column:3/5;  grid-row:1/2; background:var(--bmc-ka); }
@@ -143,14 +143,20 @@ select.tb-control {
 
 /* ── VPC LAYOUT ──────────────────────────────── */
 .vpc-container {
-  display:grid; grid-template-columns:1fr 1fr;
+  display:grid; grid-template-columns:1fr 5px 1fr;
   width:100%; height:100%; min-width:900px; min-height:540px;
 }
-/* LEFT: 3 stacked rows */
+/* LEFT: 3 stacked rows with resizer slots */
 .vpc-left {
-  display:grid; grid-template-rows:1fr 1fr 1fr;
-  position:relative; border-right:2px solid var(--border);
+  display:grid; grid-template-rows:1fr 5px 1fr 5px 1fr;
+  position:relative;
 }
+/* Column resizer between left and right panels */
+.vpc-col-resizer {
+  background:var(--border); cursor:col-resize; z-index:30;
+  transition:background .2s;
+}
+.vpc-col-resizer:hover, .vpc-col-resizer.dragging { background:var(--accent); }
 .vpc-left::before {
   content:'VALUE MAP'; position:absolute; top:50%; left:-36px;
   transform:translateY(-50%) rotate(-90deg);
@@ -171,7 +177,7 @@ select.tb-control {
 /* RIGHT: circle wrapper */
 .vpc-right {
   display:flex; align-items:center; justify-content:center;
-  padding:24px; overflow:hidden; position:relative;
+  padding:24px; overflow:visible; position:relative;
 }
 .vpc-right::before {
   content:'CUSTOMER PROFILE'; position:absolute; top:50%; right:-54px;
@@ -179,12 +185,43 @@ select.tb-control {
   font-size:.6rem; font-weight:800; letter-spacing:.14em;
   color:var(--muted); opacity:.55; pointer-events:none; white-space:nowrap;
 }
+/* Host positions both circle-wrap (clipped bg) and items-overlay (overflow:visible) */
+.vpc-circle-host {
+  position:relative; flex-shrink:0;
+}
 .vpc-circle-wrap {
   /* size set by JS via sizeVPCCircle() */
   position:relative; border-radius:50%; overflow:hidden;
   border:2px solid var(--border); box-shadow:var(--shadow);
-  flex-shrink:0;
+  width:100%; height:100%;
 }
+/* Overlay for text items — sits above circle, overflow visible so items can poke out */
+.vpc-items-overlay {
+  position:absolute; inset:0; overflow:visible; pointer-events:none; z-index:20;
+}
+.vpc-overlay-section {
+  position:absolute; overflow:visible; pointer-events:none;
+}
+.vpc-overlay-section .cell-body {
+  position:absolute; inset:0; height:100% !important;
+  overflow:visible !important; pointer-events:auto;
+}
+/* Match circle section geometry */
+.vpc-gains-overlay           { top:0;   left:0;   width:50%; height:50%; }
+.vpc-customer-jobs-overlay   { top:0;   left:50%; width:50%; height:100%; }
+.vpc-pains-overlay           { top:50%; left:0;   width:50%; height:50%; }
+
+/* ── ROW RESIZERS ─────────────────────────── */
+.vpc-row-resizer {
+  background:var(--border); cursor:row-resize; z-index:30;
+  transition:background .2s;
+}
+.vpc-row-resizer:hover, .vpc-row-resizer.dragging { background:var(--accent); }
+.bmc-row-resizer {
+  position:absolute; left:0; right:0; height:5px; transform:translateY(-2px);
+  background:transparent; cursor:row-resize; z-index:50; transition:background .2s;
+}
+.bmc-row-resizer:hover, .bmc-row-resizer.dragging { background:rgba(141,187,255,.4); }
 
 /* ── CIRCLE SECTIONS (absolute within vpc-circle-wrap) ── */
 /* Override canvas-cell position:relative */
@@ -493,6 +530,7 @@ const S = {
   canvasType:'bmc', canvasName:'Untitled Canvas',
   isDirty:false, sections:{}, selectedItem:null,
   defaultFontSize:13, nextId:1,
+  cellSizes:{ bmc:[1,1,0.52], vpc:[1,1,1], vpcColFrac:0.5 },
 };
 function mkSections(t){ const out={};(t==='bmc'?BMC:VPC).forEach(s=>out[s.id]=[]); return out; }
 function curSecs(){ return S.canvasType==='bmc'?BMC:VPC; }
@@ -513,17 +551,31 @@ function renderBMC(container){
   const g = document.createElement('div');
   g.className='bmc-grid'; g.id='theCanvas';
   BMC.forEach(s=>g.appendChild(makeCell(s)));
+  [0,1].forEach(row=>{
+    const rz=document.createElement('div');
+    rz.className='bmc-row-resizer'; rz.dataset.row=row;
+    g.appendChild(rz);
+  });
   container.appendChild(g);
+  requestAnimationFrame(()=>{ applyBMCRowHeights(g); setupBMCRowResizers(g); });
 }
 
 function renderVPC(container){
   const vpc = document.createElement('div');
   vpc.className='vpc-container'; vpc.id='theCanvas';
 
-  // Left: 3 stacked rows
+  // Left: 3 stacked rows with drag-resize handles between them
   const left = document.createElement('div');
   left.className='vpc-left';
-  VPC.filter(s=>s.side==='left').forEach(s=>left.appendChild(makeCell(s)));
+  const leftSecs=VPC.filter(s=>s.side==='left');
+  leftSecs.forEach((s,i)=>{
+    left.appendChild(makeCell(s));
+    if(i<leftSecs.length-1){
+      const rz=document.createElement('div');
+      rz.className='vpc-row-resizer'; rz.dataset.row=i;
+      left.appendChild(rz);
+    }
+  });
 
   // Connector arrow (decorative)
   const conn = document.createElement('div');
@@ -533,35 +585,215 @@ function renderVPC(container){
   </svg>`;
   left.appendChild(conn);
 
-  // Right: circle with 3 absolute sections
+  // Right: host containing circle-wrap (clipped bg) + items-overlay (overflow:visible)
   const right = document.createElement('div');
   right.className='vpc-right';
+
+  const host = document.createElement('div');
+  host.className='vpc-circle-host'; host.id='vpcCircleHost';
+
   const cw = document.createElement('div');
   cw.className='vpc-circle-wrap'; cw.id='vpcCircle';
+
+  const overlay = document.createElement('div');
+  overlay.className='vpc-items-overlay'; overlay.id='vpcItemsOverlay';
+
   VPC.filter(s=>s.side==='right').forEach(s=>{
-    const cell = makeCell(s);
-    cw.appendChild(cell);
+    // Background cell in cw — colored section + header only, no interactive body
+    const bgCell=document.createElement('div');
+    bgCell.className=`canvas-cell ${s.cls}`; bgCell.dataset.sectionId=s.id;
+    const hd=document.createElement('div'); hd.className='cell-hd';
+    hd.innerHTML=`<span class="cell-title">${s.label}</span><span class="cell-icon">${s.icon}</span>`;
+    bgCell.appendChild(hd);
+    cw.appendChild(bgCell);
+
+    // Overlay section — text items live here, overflow:visible so they can poke outside circle
+    const osec=document.createElement('div');
+    osec.className=`vpc-overlay-section ${s.cls}-overlay`;
+
+    const body=document.createElement('div');
+    body.className='cell-body'; body.dataset.sectionId=s.id;
+    const hint=document.createElement('div');
+    hint.className='add-hint'; hint.textContent='+ dbl-click to add';
+    body.appendChild(hint);
+
+    (S.sections[s.id]||[]).forEach(item=>body.appendChild(makeItemEl(s.id,item)));
+
+    body.addEventListener('dblclick',e=>{
+      if(e.target.closest('.text-item')) return;
+      const r=body.getBoundingClientRect();
+      addItem(s.id,Math.max(4,e.clientX-r.left-55),Math.max(4,e.clientY-r.top-14),body);
+    });
+    body.addEventListener('click',e=>{ if(!e.target.closest('.text-item')) deselectAll(); });
+
+    osec.appendChild(body);
+    overlay.appendChild(osec);
   });
-  right.appendChild(cw);
+
+  host.appendChild(cw);
+  host.appendChild(overlay);
+  right.appendChild(host);
+
+  // Column resizer between left and right panels
+  const colRz=document.createElement('div');
+  colRz.className='vpc-col-resizer'; colRz.id='vpcColResizer';
 
   vpc.appendChild(left);
+  vpc.appendChild(colRz);
   vpc.appendChild(right);
   container.appendChild(vpc);
 
-  // Size circle via JS after layout
-  requestAnimationFrame(()=>{ sizeVPCCircle(); });
+  requestAnimationFrame(()=>{
+    applyVPCColWidths(vpc);
+    sizeVPCCircle();
+    applyVPCLeftRowHeights(left);
+    setupVPCRowResizers(left);
+    setupVPCColResizer(vpc, colRz);
+  });
 }
 
-/* Size the VPC circle to fit within its container without overflow */
+/* Size the VPC circle host (and its children cw + overlay) */
 function sizeVPCCircle(){
   const right = document.querySelector('.vpc-right');
+  const host  = document.getElementById('vpcCircleHost');
   const cw    = document.getElementById('vpcCircle');
   if(!right||!cw) return;
   const pw = right.clientWidth - 48;   // padding 24px each side
   const ph = right.clientHeight - 48;
   const sz = Math.max(Math.min(pw, ph), 180);
+  if(host){ host.style.width=sz+'px'; host.style.height=sz+'px'; }
   cw.style.width  = sz+'px';
   cw.style.height = sz+'px';
+}
+
+/* ══ COLUMN + ROW SIZE HELPERS ══════════════════════ */
+function applyVPCColWidths(vpc){
+  if(!vpc) vpc=document.getElementById('theCanvas');
+  if(!vpc||!vpc.classList.contains('vpc-container')) return;
+  const totalW=vpc.clientWidth;
+  const resizerW=5;
+  const availW=Math.max(totalW-resizerW,300);
+  const frac=Math.max(0.2,Math.min(0.8,S.cellSizes.vpcColFrac));
+  const leftW=Math.round(frac*availW);
+  const rightW=availW-leftW;
+  vpc.style.gridTemplateColumns=`${leftW}px ${resizerW}px ${rightW}px`;
+}
+
+function setupVPCColResizer(vpc, rz){
+  let startX, startFrac;
+  rz.addEventListener('mousedown',e=>{
+    startX=e.clientX; startFrac=S.cellSizes.vpcColFrac;
+    rz.classList.add('dragging');
+    document.body.style.userSelect='none'; document.body.style.cursor='col-resize';
+    const onMove=ev=>{
+      const dx=ev.clientX-startX;
+      const availW=Math.max(vpc.clientWidth-5,300);
+      S.cellSizes.vpcColFrac=Math.max(0.2,Math.min(0.8,startFrac+dx/availW));
+      applyVPCColWidths(vpc);
+      sizeVPCCircle();
+      markDirty();
+    };
+    const onUp=()=>{
+      rz.classList.remove('dragging');
+      document.body.style.userSelect=''; document.body.style.cursor='';
+      document.removeEventListener('mousemove',onMove);
+      document.removeEventListener('mouseup',onUp);
+    };
+    document.addEventListener('mousemove',onMove);
+    document.addEventListener('mouseup',onUp);
+    e.preventDefault(); e.stopPropagation();
+  });
+}
+
+/* ══ ROW HEIGHT HELPERS ══════════════════════════════ */
+function applyVPCLeftRowHeights(left){
+  if(!left) left=document.querySelector('.vpc-left');
+  if(!left) return;
+  const totalH=left.clientHeight;
+  const resizerH=5;
+  const availH=Math.max(totalH-2*resizerH,60);
+  const [f1,f2,f3]=S.cellSizes.vpc;
+  const sum=f1+f2+f3;
+  const h1=Math.round((f1/sum)*availH);
+  const h2=Math.round((f2/sum)*availH);
+  const h3=availH-h1-h2;
+  left.style.gridTemplateRows=`${h1}px ${resizerH}px ${h2}px ${resizerH}px ${h3}px`;
+}
+
+function applyBMCRowHeights(grid){
+  if(!grid) grid=document.getElementById('theCanvas');
+  if(!grid||!grid.classList.contains('bmc-grid')) return;
+  const totalH=grid.clientHeight;
+  if(totalH<=0) return;
+  const [f1,f2,f3]=S.cellSizes.bmc;
+  const sum=f1+f2+f3;
+  const h1=Math.round((f1/sum)*totalH);
+  const h2=Math.round((f2/sum)*totalH);
+  const h3=totalH-h1-h2;
+  grid.style.gridTemplateRows=`${h1}px ${h2}px ${h3}px`;
+  grid.querySelectorAll('.bmc-row-resizer').forEach(rz=>{
+    rz.style.top=(parseInt(rz.dataset.row)===0?h1:h1+h2)+'px';
+  });
+}
+
+function setupVPCRowResizers(left){
+  left.querySelectorAll('.vpc-row-resizer').forEach(rz=>{
+    const rowIdx=parseInt(rz.dataset.row);
+    let startY,f0,f1,f2;
+    rz.addEventListener('mousedown',e=>{
+      startY=e.clientY; [f0,f1,f2]=[...S.cellSizes.vpc];
+      rz.classList.add('dragging');
+      document.body.style.userSelect='none'; document.body.style.cursor='row-resize';
+      const onMove=ev=>{
+        const dy=ev.clientY-startY;
+        const availH=Math.max(left.clientHeight-10,60);
+        const sum=f0+f1+f2;
+        const delta=(dy/availH)*sum;
+        if(rowIdx===0) S.cellSizes.vpc=[Math.max(0.1,f0+delta),Math.max(0.1,f1-delta),f2];
+        else           S.cellSizes.vpc=[f0,Math.max(0.1,f1+delta),Math.max(0.1,f2-delta)];
+        applyVPCLeftRowHeights(left); markDirty();
+      };
+      const onUp=()=>{
+        rz.classList.remove('dragging');
+        document.body.style.userSelect=''; document.body.style.cursor='';
+        document.removeEventListener('mousemove',onMove);
+        document.removeEventListener('mouseup',onUp);
+      };
+      document.addEventListener('mousemove',onMove);
+      document.addEventListener('mouseup',onUp);
+      e.preventDefault(); e.stopPropagation();
+    });
+  });
+}
+
+function setupBMCRowResizers(grid){
+  grid.querySelectorAll('.bmc-row-resizer').forEach(rz=>{
+    const rowIdx=parseInt(rz.dataset.row);
+    let startY,f0,f1,f2;
+    rz.addEventListener('mousedown',e=>{
+      startY=e.clientY; [f0,f1,f2]=[...S.cellSizes.bmc];
+      rz.classList.add('dragging');
+      document.body.style.userSelect='none'; document.body.style.cursor='row-resize';
+      const onMove=ev=>{
+        const dy=ev.clientY-startY;
+        const totalH=grid.clientHeight;
+        const sum=f0+f1+f2;
+        const delta=(dy/totalH)*sum;
+        if(rowIdx===0) S.cellSizes.bmc=[Math.max(0.1,f0+delta),Math.max(0.1,f1-delta),f2];
+        else           S.cellSizes.bmc=[f0,Math.max(0.1,f1+delta),Math.max(0.1,f2-delta)];
+        applyBMCRowHeights(grid); markDirty();
+      };
+      const onUp=()=>{
+        rz.classList.remove('dragging');
+        document.body.style.userSelect=''; document.body.style.cursor='';
+        document.removeEventListener('mousemove',onMove);
+        document.removeEventListener('mouseup',onUp);
+      };
+      document.addEventListener('mousemove',onMove);
+      document.addEventListener('mouseup',onUp);
+      e.preventDefault(); e.stopPropagation();
+    });
+  });
 }
 
 /* ══ CELL FACTORY ════════════════════════════════════ */
@@ -809,24 +1041,22 @@ document.getElementById('confirmCancel').addEventListener('click',()=>{
   document.getElementById('confirmOverlay').classList.remove('open'); if(_cancel)_cancel();
 });
 
-/* ══ EXPORT PNG — always in light mode ═══════════════ */
+/* ══ EXPORT PNG — always light mode, transparent background ══ */
 document.getElementById('savePngBtn').addEventListener('click', async()=>{
   deselectAll();
   const canvas=document.getElementById('theCanvas');
   if(!canvas) return;
 
-  // Switch to light mode for export regardless of current theme
   const wasLight=document.body.classList.contains('light');
-  if(!wasLight){ document.body.classList.add('light'); await new Promise(r=>setTimeout(r,280)); }
+  if(!wasLight){ document.body.classList.add('light'); await new Promise(r=>setTimeout(r,300)); }
 
   document.getElementById('exportOverlay').classList.add('open');
   try {
     await new Promise(r=>setTimeout(r,60));
     const result=await html2canvas(canvas,{
-      backgroundColor:null,  // transparent background
+      backgroundColor:null,
       scale:2, useCORS:true, logging:false, allowTaint:true, removeContainer:true,
     });
-    if(!wasLight) document.body.classList.remove('light');
     const link=document.createElement('a');
     const safe=(S.canvasName||'canvas').replace(/[^a-z0-9\-_ ]/gi,'').trim()||'canvas';
     link.download=safe+'-'+S.canvasType+'.png';
@@ -835,16 +1065,16 @@ document.getElementById('savePngBtn').addEventListener('click', async()=>{
     showToast('PNG saved ✓','success'); markClean();
   } catch(err){
     console.error(err);
-    if(!wasLight) document.body.classList.remove('light');
     showToast('PNG export failed','error');
   } finally {
+    if(!wasLight) document.body.classList.remove('light');
     document.getElementById('exportOverlay').classList.remove('open');
   }
 });
 
 /* ══ EXPORT JSON ═════════════════════════════════════ */
 document.getElementById('saveJsonBtn').addEventListener('click',()=>{
-  const data={'canvas-name':S.canvasName,'canvas-type':S.canvasType};
+  const data={'canvas-name':S.canvasName,'canvas-type':S.canvasType,'cell-sizes':S.cellSizes};
   curSecs().forEach(sec=>{
     data[sec.id]=(S.sections[sec.id]||[]).map(item=>({
       value: item.value,
@@ -882,6 +1112,15 @@ function doLoad(data){
     S.sections=mkSections(type); S.nextId=1;
     document.getElementById('canvasTypeSelect').value=type;
     document.getElementById('canvasNameInput').value=S.canvasName;
+    const cs=data['cell-sizes'];
+    if(cs){
+      const ok3=(a)=>Array.isArray(a)&&a.length===3&&a.every(n=>typeof n==='number'&&n>0);
+      S.cellSizes={
+        bmc: ok3(cs.bmc)?cs.bmc:[1,1,0.52],
+        vpc: ok3(cs.vpc)?cs.vpc:[1,1,1],
+        vpcColFrac: (typeof cs.vpcColFrac==='number'&&cs.vpcColFrac>0&&cs.vpcColFrac<1)?cs.vpcColFrac:0.5,
+      };
+    }
     const secs=type==='bmc'?BMC:VPC;
     secs.forEach(sec=>{
       const raw=data[sec.id];
@@ -921,7 +1160,17 @@ document.addEventListener('click',e=>{
 });
 
 /* ══ RESIZE ══════════════════════════════════════════ */
-const ro=new ResizeObserver(()=>{ if(S.canvasType==='vpc') sizeVPCCircle(); });
+const ro=new ResizeObserver(()=>{
+  if(S.canvasType==='vpc'){
+    const vpc=document.getElementById('theCanvas');
+    if(vpc) applyVPCColWidths(vpc);
+    sizeVPCCircle();
+    const left=document.querySelector('.vpc-left');
+    if(left) applyVPCLeftRowHeights(left);
+  } else {
+    applyBMCRowHeights();
+  }
+});
 ro.observe(document.getElementById('canvasWrapper'));
 
 /* ══ TOAST ═══════════════════════════════════════════ */
