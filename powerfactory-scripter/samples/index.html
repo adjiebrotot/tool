@@ -970,6 +970,256 @@ Best objective (thd) = 2.61</pre>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════════
+       SAMPLE 03 · SYNCHRONOUS CONDENSER SIZING
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-card" id="sample-3">
+    <div class="section-header" onclick="toggleSection('sample-3')">
+      <span class="sample-num">03</span>
+      <h3>Synchronous Condenser Sizing — Fault Ride-Through &amp; Inertial Response</h3>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body" id="sample-3-body">
+
+      <!-- 1 Objective -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">1</span> Objective
+        </div>
+        <p class="objective-text">
+          A grid-connected synchronous condenser must be sized to satisfy two dynamic criteria
+          simultaneously: (1) <strong>Fault Ride-Through (FRT)</strong> — the machine must stay in
+          synchronism and provide continuous reactive current support throughout a major fault without
+          pole-slipping; and (2) <strong>Inertial Response</strong> — the rotating mass must be large
+          enough to limit the frequency nadir to an acceptable level following the sudden loss of a
+          generator. The script sweeps the number of parallel condenser units and records the
+          worst-case dynamic response for each size, automatically identifying the minimum
+          installation that meets both criteria.
+        </p>
+      </div>
+
+      <!-- 2 Assumptions -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">2</span> Assumptions
+        </div>
+        <ul class="assumption-list">
+          <li>Synchronous condenser element: <code>SynCon.ElmSym</code></li>
+          <li>Monitored bus: <code>MainBus.ElmTerm</code></li>
+          <li>3-phase fault event pre-configured in the PowerFactory study case dynamic event list (applied at t&nbsp;=&nbsp;1&nbsp;s, cleared at t&nbsp;=&nbsp;1.15&nbsp;s)</li>
+          <li>Simulation window: 0–30 s (fault application, clearing, and full post-fault recovery)</li>
+          <li>FRT pass criterion: <code>bus_voltage_nadir ≥ 0.85 p.u.</code> and <code>out_of_step = 0</code></li>
+          <li>Inertia pass criterion: <code>rotor_speed_min ≥ 0.97 p.u.</code> (≥ 48.5 Hz on a 50 Hz base)</li>
+          <li>Combined pass/fail evaluated automatically by the <code>sizing_ok</code> custom calculation output</li>
+        </ul>
+      </div>
+
+      <!-- 3 What to Input -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">3</span> What to Input
+        </div>
+        <div class="readonly-fields">
+
+          <div class="readonly-group-title">Initialisation</div>
+          <div class="form-row">
+            <label>Problem Type</label>
+            <select disabled><option>Brute Force</option></select>
+          </div>
+          <div class="form-row">
+            <label>Study Type</label>
+            <select disabled><option>Dynamic RMS</option></select>
+          </div>
+          <div class="form-row">
+            <label>Stop Time (s)</label>
+            <input type="number" readonly value="30" />
+          </div>
+          <div class="form-row">
+            <label>Coding Style</label>
+            <select disabled><option>Python File</option></select>
+          </div>
+
+          <div class="readonly-group-title">Input Variables</div>
+          <div class="dyn-table-wrapper">
+            <table class="dyn-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Object</th>
+                  <th>Attribute</th>
+                  <th>Lower</th>
+                  <th>Upper</th>
+                  <th>Step</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="text" readonly value="ngnum" /></td>
+                  <td><input type="text" readonly value="SynCon.ElmSym" /></td>
+                  <td><input type="text" readonly value="ngnum" /></td>
+                  <td><input type="number" readonly value="1" /></td>
+                  <td><input type="number" readonly value="10" /></td>
+                  <td><input type="number" readonly value="1" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="readonly-group-title">Output Variables</div>
+
+          <!-- Output 1: bus_voltage_nadir -->
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="bus_voltage_nadir" style="max-width:180px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row">
+                <label>Object</label>
+                <input type="text" readonly value="MainBus.ElmTerm" />
+              </div>
+              <div class="form-row">
+                <label>Attribute</label>
+                <input type="text" readonly value="m:u" />
+              </div>
+              <div class="form-row">
+                <label>Metric</label>
+                <select disabled><option>Minimum</option></select>
+              </div>
+              <div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent2);">
+                <input type="checkbox" checked disabled style="accent-color:var(--accent2);" />
+                Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>)
+              </div>
+            </div>
+          </div>
+
+          <!-- Output 2: synccon_q_peak -->
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="synccon_q_peak" style="max-width:180px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row">
+                <label>Object</label>
+                <input type="text" readonly value="SynCon.ElmSym" />
+              </div>
+              <div class="form-row">
+                <label>Attribute</label>
+                <input type="text" readonly value="m:Q" />
+              </div>
+              <div class="form-row">
+                <label>Metric</label>
+                <select disabled><option>Maximum</option></select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Output 3: rotor_speed_min -->
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="rotor_speed_min" style="max-width:180px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row">
+                <label>Object</label>
+                <input type="text" readonly value="SynCon.ElmSym" />
+              </div>
+              <div class="form-row">
+                <label>Attribute</label>
+                <input type="text" readonly value="s:speed" />
+              </div>
+              <div class="form-row">
+                <label>Metric</label>
+                <select disabled><option>Minimum</option></select>
+              </div>
+              <div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent2);">
+                <input type="checkbox" checked disabled style="accent-color:var(--accent2);" />
+                Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>)
+              </div>
+            </div>
+          </div>
+
+          <!-- Output 4: out_of_step -->
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="out_of_step" style="max-width:180px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row">
+                <label>Object</label>
+                <input type="text" readonly value="SynCon.ElmSym" />
+              </div>
+              <div class="form-row">
+                <label>Attribute</label>
+                <input type="text" readonly value="s:outofstep" />
+              </div>
+              <div class="form-row">
+                <label>Metric</label>
+                <select disabled><option>Maximum</option></select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Output 5: sizing_ok (Custom Calculation) -->
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Custom</span>
+              <input type="text" readonly value="sizing_ok" style="max-width:120px" />
+            </div>
+            <div class="output-var-body">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;">Custom Function</div>
+              <pre style="background:#0B1120;border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-family:var(--mono);font-size:12px;color:var(--accent);line-height:1.7;margin:0;overflow-x:auto;">def sizing_ok(bus_voltage_nadir, rotor_speed_min, out_of_step):
+    return bus_voltage_nadir >= 0.85 and rotor_speed_min >= 0.97 and out_of_step == 0</pre>
+              <p class="hint" style="margin-top:8px;">Arguments must match names of other defined input or output variables. Returns <code>True</code> if all sizing criteria pass, <code>False</code> otherwise.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Steps 4 5 6 -->
+      <div class="sub-section steps-section">
+        <div class="steps-title">Running the Code</div>
+        <div class="step-row">
+          <span class="step-badge">4</span>
+          <span>Click <strong>⚡ Generate Code</strong> in the tool.</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">5</span>
+          <span>Click <strong>Copy</strong> (or download as <code>.py</code>).</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">6</span>
+          <div>
+            <div>Paste the code into your Python environment and run it.</div>
+            <div class="step-note">Ensure the 3-phase fault event is defined in the PowerFactory study case before running. Each RMS simulation covers 30 s — expect the full sweep (10 runs) to take several minutes.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7 Expected Output -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">7</span> Expected Output
+        </div>
+        <p class="hint">The script writes a summary CSV to your output directory, e.g. <code>results.csv</code>:</p>
+        <pre class="output-preview">ngnum,bus_voltage_nadir,synccon_q_peak,rotor_speed_min,out_of_step,sizing_ok
+1,0.71,47.3,0.961,1,False
+2,0.74,94.1,0.966,1,False
+3,0.76,140.8,0.970,0,False
+4,0.79,187.2,0.973,0,True
+5,0.82,233.6,0.976,0,True
+...
+10,0.91,466.1,0.984,0,True</pre>
+        <p class="hint">The minimum passing size is the first row where <code>sizing_ok = True</code> — here, <strong>4 parallel units</strong>. Time-domain waveform plots for <code>bus_voltage_nadir</code> and <code>rotor_speed_min</code> are saved as <code>.png</code> files in <code>{output_dir}/graph/</code> for each scenario.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
        FAQ
   ═══════════════════════════════════════════════════════════════ -->
   <div class="section-card" id="faq">
