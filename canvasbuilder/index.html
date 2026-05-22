@@ -143,14 +143,20 @@ select.tb-control {
 
 /* ── VPC LAYOUT ──────────────────────────────── */
 .vpc-container {
-  display:grid; grid-template-columns:1fr 1fr;
+  display:grid; grid-template-columns:1fr 5px 1fr;
   width:100%; height:100%; min-width:900px; min-height:540px;
 }
 /* LEFT: 3 stacked rows with resizer slots */
 .vpc-left {
   display:grid; grid-template-rows:1fr 5px 1fr 5px 1fr;
-  position:relative; border-right:2px solid var(--border);
+  position:relative;
 }
+/* Column resizer between left and right panels */
+.vpc-col-resizer {
+  background:var(--border); cursor:col-resize; z-index:30;
+  transition:background .2s;
+}
+.vpc-col-resizer:hover, .vpc-col-resizer.dragging { background:var(--accent); }
 .vpc-left::before {
   content:'VALUE MAP'; position:absolute; top:50%; left:-36px;
   transform:translateY(-50%) rotate(-90deg);
@@ -524,7 +530,7 @@ const S = {
   canvasType:'bmc', canvasName:'Untitled Canvas',
   isDirty:false, sections:{}, selectedItem:null,
   defaultFontSize:13, nextId:1,
-  cellSizes:{ bmc:[1,1,0.52], vpc:[1,1,1] },
+  cellSizes:{ bmc:[1,1,0.52], vpc:[1,1,1], vpcColFrac:0.5 },
 };
 function mkSections(t){ const out={};(t==='bmc'?BMC:VPC).forEach(s=>out[s.id]=[]); return out; }
 function curSecs(){ return S.canvasType==='bmc'?BMC:VPC; }
@@ -627,14 +633,22 @@ function renderVPC(container){
   host.appendChild(cw);
   host.appendChild(overlay);
   right.appendChild(host);
+
+  // Column resizer between left and right panels
+  const colRz=document.createElement('div');
+  colRz.className='vpc-col-resizer'; colRz.id='vpcColResizer';
+
   vpc.appendChild(left);
+  vpc.appendChild(colRz);
   vpc.appendChild(right);
   container.appendChild(vpc);
 
   requestAnimationFrame(()=>{
+    applyVPCColWidths(vpc);
     sizeVPCCircle();
     applyVPCLeftRowHeights(left);
     setupVPCRowResizers(left);
+    setupVPCColResizer(vpc, colRz);
   });
 }
 
@@ -650,6 +664,45 @@ function sizeVPCCircle(){
   if(host){ host.style.width=sz+'px'; host.style.height=sz+'px'; }
   cw.style.width  = sz+'px';
   cw.style.height = sz+'px';
+}
+
+/* ══ COLUMN + ROW SIZE HELPERS ══════════════════════ */
+function applyVPCColWidths(vpc){
+  if(!vpc) vpc=document.getElementById('theCanvas');
+  if(!vpc||!vpc.classList.contains('vpc-container')) return;
+  const totalW=vpc.clientWidth;
+  const resizerW=5;
+  const availW=Math.max(totalW-resizerW,300);
+  const frac=Math.max(0.2,Math.min(0.8,S.cellSizes.vpcColFrac));
+  const leftW=Math.round(frac*availW);
+  const rightW=availW-leftW;
+  vpc.style.gridTemplateColumns=`${leftW}px ${resizerW}px ${rightW}px`;
+}
+
+function setupVPCColResizer(vpc, rz){
+  let startX, startFrac;
+  rz.addEventListener('mousedown',e=>{
+    startX=e.clientX; startFrac=S.cellSizes.vpcColFrac;
+    rz.classList.add('dragging');
+    document.body.style.userSelect='none'; document.body.style.cursor='col-resize';
+    const onMove=ev=>{
+      const dx=ev.clientX-startX;
+      const availW=Math.max(vpc.clientWidth-5,300);
+      S.cellSizes.vpcColFrac=Math.max(0.2,Math.min(0.8,startFrac+dx/availW));
+      applyVPCColWidths(vpc);
+      sizeVPCCircle();
+      markDirty();
+    };
+    const onUp=()=>{
+      rz.classList.remove('dragging');
+      document.body.style.userSelect=''; document.body.style.cursor='';
+      document.removeEventListener('mousemove',onMove);
+      document.removeEventListener('mouseup',onUp);
+    };
+    document.addEventListener('mousemove',onMove);
+    document.addEventListener('mouseup',onUp);
+    e.preventDefault(); e.stopPropagation();
+  });
 }
 
 /* ══ ROW HEIGHT HELPERS ══════════════════════════════ */
@@ -1065,6 +1118,7 @@ function doLoad(data){
       S.cellSizes={
         bmc: ok3(cs.bmc)?cs.bmc:[1,1,0.52],
         vpc: ok3(cs.vpc)?cs.vpc:[1,1,1],
+        vpcColFrac: (typeof cs.vpcColFrac==='number'&&cs.vpcColFrac>0&&cs.vpcColFrac<1)?cs.vpcColFrac:0.5,
       };
     }
     const secs=type==='bmc'?BMC:VPC;
@@ -1108,6 +1162,8 @@ document.addEventListener('click',e=>{
 /* ══ RESIZE ══════════════════════════════════════════ */
 const ro=new ResizeObserver(()=>{
   if(S.canvasType==='vpc'){
+    const vpc=document.getElementById('theCanvas');
+    if(vpc) applyVPCColWidths(vpc);
     sizeVPCCircle();
     const left=document.querySelector('.vpc-left');
     if(left) applyVPCLeftRowHeights(left);
