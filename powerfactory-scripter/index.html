@@ -1635,17 +1635,38 @@ const ALL_ELM_CLASSES = [
   'ElmVoltreg','ElmXnet','ElmZone','ElmZpu','StaPll'
 ];
 
-// Suggest Object query strings like "Grid.ElmTerm", "*.ElmDsl" etc.
-function getObjectSuggestions(typed) {
+// Event classes — resolved from Simulation Events/Fault.IntEvt, not GetCalcRelevantObjects
+const ALL_EVT_CLASSES = ['EvtShc','EvtSwitch','EvtLod','EvtSym','EvtParam','EvtGen'];
+
+const EVT_PARAMS = {
+  'EvtShc': [
+    { var: 'p_target', unit: 'Elm*', desc: 'Target element (bus, line, or transformer where the fault is applied)' },
+    { var: 'time',     unit: 's',    desc: 'Event time in seconds' },
+    { var: 'i_shc',    unit: '',     desc: 'Fault type: 0=3-phase, 1=single-phase A-E, 2=two-phase A-B, 3=two-phase A-B-E, 4=clear fault' },
+    { var: 'R_f',      unit: 'Ohm',  desc: 'Fault resistance (0 = bolted fault)' },
+    { var: 'X_f',      unit: 'Ohm',  desc: 'Fault reactance (usually 0 for a bolted fault)' },
+    { var: 'i_p2pflt', unit: '',     desc: 'Phase-to-phase fault flag (0=no, 1=yes)' },
+    { var: 'loc_name', unit: '',     desc: 'Name of the event object' }
+  ],
+  'EvtSwitch': [
+    { var: 'p_target', unit: 'Elm*', desc: 'Target element (line, coupler, or transformer to switch)' },
+    { var: 'time',     unit: 's',    desc: 'Event time in seconds' },
+    { var: 'i_switch', unit: '',     desc: 'Switching action: 0=open (trip), 1=close (reclose)' },
+    { var: 'loc_name', unit: '',     desc: 'Name of the event object' }
+  ]
+};
+
+// Suggest Object query strings like "Grid.ElmTerm", "*.ElmDsl", "Fault_ON.EvtShc" etc.
+// includeEvents=true for Input Variables, false for Output Variables
+function getObjectSuggestions(typed, includeEvents = true) {
   const q = (typed || '').trim();
   const dotIdx = q.lastIndexOf('.');
-  // Everything before (and including) the last dot is the name prefix
   const namePart  = dotIdx >= 0 ? q.slice(0, dotIdx) : (q || '');
   const classPart = dotIdx >= 0 ? q.slice(dotIdx + 1).toLowerCase() : '';
 
   const results = [];
 
-  // Suggest Name.ElmXxx for matching classes
+  // Suggest Name.ElmXxx for matching element classes
   ALL_ELM_CLASSES.forEach(cls => {
     if (!classPart || cls.toLowerCase().startsWith(classPart)) {
       const full = namePart ? `${namePart}.${cls}` : cls;
@@ -1653,6 +1674,16 @@ function getObjectSuggestions(typed) {
       results.push({ var: full, desc, unit: '' });
     }
   });
+
+  // Suggest Name.EvtXxx for event classes (input variables only)
+  if (includeEvents) {
+    ALL_EVT_CLASSES.forEach(cls => {
+      if (!classPart || cls.toLowerCase().startsWith(classPart)) {
+        const full = namePart ? `${namePart}.${cls}` : cls;
+        results.push({ var: full, desc: `Simulation event — ${cls}`, unit: 'event' });
+      }
+    });
+  }
 
   // Also suggest wildcard variants when user typed something after a dot
   if (classPart) {
@@ -1667,17 +1698,26 @@ function getObjectSuggestions(typed) {
     });
   }
 
-  return results.slice(0, 35);
+  return results.slice(0, 40);
 }
 
-// Extract ElmXxx class from an object query like "Grid.ElmTerm" → "ElmTerm"
-function extractElmClass(objectQuery) {
+// Extract PF class from an object query: "Grid.ElmTerm" → "ElmTerm", "Fault.EvtShc" → "EvtShc"
+function extractPfClass(objectQuery) {
   if (!objectQuery) return null;
-  const m = objectQuery.match(/\.(Elm[A-Za-z0-9]+|Sta[A-Za-z0-9]+)\s*$/);
+  const m = objectQuery.match(/\.(Elm[A-Za-z0-9]+|Sta[A-Za-z0-9]+|Evt[A-Za-z0-9]+)\s*$/);
   return m ? m[1] : null;
+}
+// Legacy alias — keeps all existing callers working without change
+const extractElmClass = extractPfClass;
+
+// Returns true when the object query refers to a simulation event class
+function isEventClass(objectQuery) {
+  const cls = extractPfClass(objectQuery || '');
+  return cls ? cls.startsWith('Evt') : false;
 }
 
 // INPUT variable attribute suggestions — class-scoped params from element_params.json
+// or EVT_PARAMS for event classes (EvtShc, EvtSwitch, etc.)
 function getInputAttrSuggestions(typed, elmClass) {
   const q = (typed || '').toLowerCase();
   const results = [];
@@ -1689,6 +1729,17 @@ function getInputAttrSuggestions(typed, elmClass) {
     results.push({ var: item.var || '', desc: item.desc || '', unit: item.unit || '' });
   };
 
+  // —— Event class: return EVT_PARAMS entries (direct attributes, no e: prefix) ——
+  if (elmClass && elmClass.startsWith('Evt')) {
+    const evtParams = EVT_PARAMS[elmClass] || [];
+    evtParams.forEach(item => {
+      const raw = String(item.var || '').toLowerCase();
+      const desc = (item.desc || '').toLowerCase();
+      if (!q || raw.includes(q) || desc.includes(q)) addItem(item);
+    });
+    return results;
+  }
+
   // Source: element_params.json class-specific input params (typically e:*)
   if (PF_REF.params && elmClass && PF_REF.params[elmClass]) {
     PF_REF.params[elmClass].forEach(item => {
@@ -1698,7 +1749,6 @@ function getInputAttrSuggestions(typed, elmClass) {
     });
   }
 
-  // Keep lazy-loading variables for other features, but input suggestions are element_params-based.
   if (elmClass && !PF_REF.varFiles[elmClass]) fetchElmClassVars(elmClass, null);
 
   return results.slice(0, 50);
@@ -1775,11 +1825,12 @@ function attachInputComboBoxes(idx) {
   const attrInput = document.getElementById(`iv-var-${idx}`);
   if (!objInput || !attrInput) return;
 
-  new PFComboBox(objInput, typed => getObjectSuggestions(typed));
+  // Input variables include events — pass includeEvents=true
+  new PFComboBox(objInput, typed => getObjectSuggestions(typed, true));
 
   new PFComboBox(attrInput, typed => {
-    const elmClass = extractElmClass(objInput.value);
-    return getInputAttrSuggestions(typed, elmClass);
+    const pfClass = extractPfClass(objInput.value);
+    return getInputAttrSuggestions(typed, pfClass);
   });
 }
 
@@ -1788,12 +1839,12 @@ function attachOutputComboBoxes(id) {
   const objPfxInput = document.getElementById(`${id}-obj-prefix`);
   const attrInput   = document.getElementById(`${id}-var`);
 
-  const getElmClass = () => extractElmClass(
+  const getElmClass = () => extractPfClass(
     (objInput?.value || objPfxInput?.value || '').trim()
   );
 
-  if (objInput)    new PFComboBox(objInput,    typed => getObjectSuggestions(typed));
-  if (objPfxInput) new PFComboBox(objPfxInput, typed => getObjectSuggestions(typed));
+  if (objInput)    new PFComboBox(objInput,    typed => getObjectSuggestions(typed, false));
+  if (objPfxInput) new PFComboBox(objPfxInput, typed => getObjectSuggestions(typed, false));
   if (attrInput) {
     const combo = new PFComboBox(attrInput, typed => getOutputAttrSuggestions(typed, getElmClass(), combo));
   }
@@ -2425,22 +2476,26 @@ function validateCustomCalcWarnings(cfg) {
 
 function buildObjectTypeWarnings(cfg) {
   const warnings = [];
-  const checkObjectQuery = (objectQuery, label) => {
+  const checkObjectQuery = (objectQuery, label, allowEvt = false) => {
     if (!objectQuery) return;
     const objectType = objectQuery.trim().split('.').pop();
-    if (!objectType || !objectType.startsWith('Elm')) {
-      warnings.push(`${label}: Object "${objectQuery}" should end with a PowerFactory object type (e.g., ".ElmTerm", ".ElmDsl").`);
+    const isElm = objectType && objectType.startsWith('Elm');
+    const isSta = objectType && objectType.startsWith('Sta');
+    const isEvt = objectType && objectType.startsWith('Evt');
+    if (!objectType || (!isElm && !isSta && !(allowEvt && isEvt))) {
+      const evtHint = allowEvt ? ', ".EvtShc", ".EvtSwitch"' : '';
+      warnings.push(`${label}: Object "${objectQuery}" should end with a PowerFactory object type (e.g., ".ElmTerm", ".ElmDsl"${evtHint}).`);
       return;
     }
-    if (!KNOWN_ELM_OBJECT_TYPES.has(objectType)) {
+    if (isElm && !KNOWN_ELM_OBJECT_TYPES.has(objectType)) {
       warnings.push(`${label}: Object type "${objectType}" is not recognised from the PowerFactory API reference. Check for typos.`);
     }
   };
 
-  cfg.inputVariables.forEach((iv, i) => checkObjectQuery(iv.object_query, `Input variable #${i + 1}`));
+  cfg.inputVariables.forEach((iv, i) => checkObjectQuery(iv.object_query, `Input variable #${i + 1}`, true));
   cfg.outputVariables.forEach((ov, i) => {
     if (ov.type === 'custom_calculation') return;
-    checkObjectQuery(ov.object_query, `Output variable #${i + 1} "${ov.name || '(unnamed)'}"`);
+    checkObjectQuery(ov.object_query, `Output variable #${i + 1} "${ov.name || '(unnamed)'}"`, false);
   });
 
   return warnings;
@@ -2671,6 +2726,96 @@ def get_pf_objects(app, object_query):
     return list(objects)
 
 
+def get_event_objects(app, object_query):
+    """
+    Resolve an event object from the Simulation Events folder.
+    object_query format: "EventName.EvtShc" or "EventName.EvtSwitch" etc.
+    Returns a list with the matching event object.
+    Raises ValueError if the folder or object cannot be found.
+    """
+    study_case = app.GetActiveStudyCase()
+    folders = study_case.GetContents("Simulation Events.IntEvt")
+    if not folders:
+        raise ValueError(f"Could not find 'Simulation Events' folder in active study case (query: {object_query!r})")
+    evt_folder = folders[0]
+    results = evt_folder.GetContents(object_query)
+    if not results:
+        raise ValueError(f"No event found matching {object_query!r} in Simulation Events folder.")
+    return results
+
+
+def get_input_objects(app, object_query):
+    """
+    Route object resolution to either the event folder (EvtXxx classes)
+    or GetCalcRelevantObjects (ElmXxx / StaXxx classes).
+    """
+    m = re.search(r'\\.(Evt[A-Za-z0-9]+)\\s*$', object_query)
+    if m:
+        return get_event_objects(app, object_query)
+    return get_pf_objects(app, object_query)
+
+
+def _build_ts_monitor_list(app, output_specs):
+    """
+    Build a list of (element_object, variable_name) tuples for all
+    timeseries output specs. Used by ensure_elmres_variables().
+    """
+    monitor_list = []
+    for spec in output_specs:
+        if spec.get("type") != "timeseries":
+            continue
+        try:
+            objs = get_pf_objects(app, spec["object_query"])
+        except ValueError:
+            safe_print(f"[WARN] No object found for timeseries spec {spec['name']!r}: {spec['object_query']!r}")
+            continue
+        monitor_list.append((objs[0], spec["variable"]))
+    return monitor_list
+
+
+def ensure_elmres_variables(app, res_obj, monitor_list):
+    """
+    Ensure all (element, variable) pairs are registered in the ElmRes result object.
+    Must be called BEFORE ComInc.Execute(). Any newly added variables only take
+    effect from the next ComInc run.
+
+    Args:
+        app          : PowerFactory application object
+        res_obj      : ElmRes object (from app.GetFromStudyCase("ElmRes"))
+        monitor_list : list of (element_object, variable_name_str) tuples
+                       e.g. [(bus_obj, "m:u1"), (line_obj, "m:I"), ...]
+
+    Returns:
+        list of (element, varname) pairs that were newly added
+    """
+    added = []
+
+    # Inspect already-registered columns
+    res_obj.Load()
+    n_cols = res_obj.GetNumberOfColumns()
+    existing = set()
+    for col in range(n_cols):
+        obj = res_obj.GetObject(col)
+        var = res_obj.GetVariable(col)
+        if obj is not None and var:
+            existing.add((obj.GetFullName(), var))
+    res_obj.Release()
+
+    # Add any missing variables
+    for elm, varname in monitor_list:
+        if (elm.GetFullName(), varname) not in existing:
+            err = res_obj.AddVariable(elm, varname)
+            if err == 0:
+                added.append((elm, varname))
+                app.PrintInfo(f"[ElmRes] Added variable '{varname}' for '{elm.loc_name}'")
+            else:
+                app.PrintWarn(
+                    f"[ElmRes] FAILED to add '{varname}' for '{elm.loc_name}' "
+                    f"— check element class and variable name"
+                )
+    return added
+
+
 def build_range(lower, upper, step, dtype_name="float"):
     """Build a list of values from lower to upper with given step (increment value)."""
     if dtype_name == "int":
@@ -2801,138 +2946,51 @@ function buildElmResHelpers(cfg) {
 
   return `
 # ── ELMRES / TIMESERIES HELPERS ─────────────────────────────────
-# ElmRes results are exported to CSV via ComRes, then parsed in Python.
+# ElmRes results are read directly in-memory via the PF API.
 # Workflow per simulation run:
-#   1. _export_elmres_to_csv(app, path)  — export all ElmRes data to CSV
-#   2. _parse_elmres_csv(path)           — parse into (time_values, columns)
-#   3. _find_elmres_column(columns, ...) — locate a specific variable column
-#   4. calculate_timeseries_metric(...)  — compute scalar from the column
-#   5. _load_elmres_data(app)            — convenience: temp export + parse + delete
+#   1. ensure_elmres_variables() — called ONCE before ComInc (registers variables)
+#   2. _read_elmres_inmemory()   — called per run: Load → FindColumn → GetValue → Release
+#   3. extract_timeseries_outputs() — compute scalar metrics from the in-memory data
+#   4. calculate_timeseries_metric() — compute a single scalar metric from time/data
 
-def _export_elmres_to_csv(app, csv_path):
-    """Export all ElmRes result data to a CSV file using ComRes.
-
-    Uses GetFromStudyCase() — the correct API for study-case-bound objects.
-    'All calculations.ElmRes' is the default result object name in every study case.
+def _read_elmres_inmemory(app, output_specs):
     """
-    res    = app.GetFromStudyCase("All calculations.ElmRes")
-    export = app.GetFromStudyCase("ComRes")
-    export.iopt_exp  = 6    # export format: CSV with time column
-    export.iopt_sep  = 1    # use system locale separators
-    export.iopt_csel = 0    # export all variables
-    export.iopt_tsel = 0    # export full time range
-    export.pResult   = res
-    export.f_name    = csv_path
-    export.Execute()
+    Read all timeseries output variables directly from the in-memory ElmRes result object.
+    Returns (time_values, ts_data) where:
+        time_values : list of float  — simulation time steps (seconds)
+        ts_data     : dict           — {spec_name: [float, ...]} one entry per timeseries spec
 
-
-def _strip_elm_class(name):
-    """Strip trailing PowerFactory class suffix (e.g. .ElmTerm, .ElmLne, .ComRes).
-
-    Only strips suffixes that match known PF class prefixes (Elm, Com, Sta, Int, Evt)
-    so that user-defined object names like 'Generator.Unit' are left intact.
+    Uses PATTERN 6: res.Load() -> res.FindColumn() -> res.GetValue() -> res.Release()
     """
-    return re.sub(r'\\.(Elm|Com|Sta|Int|Evt)[A-Za-z0-9]+$', '', name.strip())
+    res = app.GetFromStudyCase("ElmRes")
+    res.Load()
 
+    n_rows = res.GetNumberOfRows()
+    time_values = [res.GetValue(0, row)[1] for row in range(n_rows)]
 
-def _strip_dedup_suffix(name):
-    """Strip trailing numeric dedup suffix added by the exporter (.1, .2, ...)."""
-    return re.sub(r'\\.\\d+$', '', name)
-
-
-def _parse_elmres_csv(csv_path):
-    """
-    Parse a ComRes-exported ElmRes CSV file.
-
-    CSV layout (typically tab-separated):
-      Row 0: "All calculations"  ObjA            ObjA.1          ObjB  ...
-      Row 1: "Time in s"        attr_for_ObjA   attr_for_ObjA1  attr  ...
-      Row 2+: numeric data rows
-
-    Object names in row 0 may carry a numeric dedup suffix (.1, .2, ...) when
-    the same element appears more than once; these are kept on parse and only
-    stripped during column lookup.  Any .ElmXxx class suffix is stripped here.
-
-    Returns
-    -------
-    time_values : list[float]
-    columns     : list[dict]  with keys 'obj', 'attr', 'values'
-    """
-    import csv as _csv
-    with open(csv_path, newline='', encoding='utf-8-sig') as f:
-        raw = f.read()
-    try:
-        dialect = _csv.Sniffer().sniff(raw[:4096], delimiters='\\t,;')
-        delim = dialect.delimiter
-    except Exception:
-        delim = '\\t'
-    rows = list(_csv.reader(raw.splitlines(), delimiter=delim))
-    if len(rows) < 2:
-        return [], []
-
-    obj_row  = rows[0]   # "All calculations", ObjA, ObjA.1, ...
-    attr_row = rows[1]   # "Time in s", attr1, attr2, ...
-
-    columns = []
-    for c in range(1, len(obj_row)):
-        obj_name  = _strip_elm_class(obj_row[c].strip())
-        attr_name = attr_row[c].strip() if c < len(attr_row) else ''
-        columns.append({"obj": obj_name, "attr": attr_name, "values": []})
-
-    time_values = []
-    for data_row in rows[2:]:
-        if not data_row or not data_row[0].strip():
+    ts_data = {}
+    for spec in output_specs:
+        if spec.get("type") != "timeseries":
             continue
         try:
-            time_values.append(float(data_row[0]))
+            objs = get_pf_objects(app, spec["object_query"])
         except ValueError:
+            safe_print(f"[WARN] No object found for timeseries output {spec['name']!r}")
+            ts_data[spec["name"]] = [float('nan')] * n_rows
             continue
-        for c, col in enumerate(columns):
-            try:
-                col["values"].append(float(data_row[c + 1]))
-            except (ValueError, IndexError):
-                col["values"].append(float("nan"))
+        col = res.FindColumn(objs[0], spec["variable"])
+        if col < 0:
+            safe_print(
+                f"[WARN] Variable '{spec['variable']}' not found in ElmRes for "
+                f"'{spec['name']}' ({spec['object_query']}). "
+                f"Check ensure_elmres_variables() was called before ComInc."
+            )
+            ts_data[spec["name"]] = [float('nan')] * n_rows
+        else:
+            ts_data[spec["name"]] = [res.GetValue(col, row)[1] for row in range(n_rows)]
 
-    return time_values, columns
-
-
-def _find_elmres_column(columns, obj_query, attr_name):
-    """
-    Find the first column matching obj_query and attr_name.
-
-    obj_query may include an .ElmXxx class suffix (stripped before matching).
-    Numeric dedup suffixes (.1, .2, ...) in the CSV are stripped for the base
-    object comparison, so "POC Line_Aggregated" matches the column whose header
-    is "POC Line_Aggregated", "POC Line_Aggregated.1", etc., disambiguated by
-    the attribute name.
-
-    Returns the matching column dict, or None if not found.
-    """
-    target_obj  = _strip_elm_class(obj_query.strip())
-    target_attr = attr_name.strip()
-    for col in columns:
-        col_base = _strip_dedup_suffix(col["obj"])
-        if col_base == target_obj and col["attr"] == target_attr:
-            return col
-    return None
-
-
-def _load_elmres_data(app):
-    """
-    Export ElmRes to a temporary CSV, parse it, delete the temp file,
-    and return (time_values, columns).  Call once per simulation run.
-    """
-    import tempfile, os as _os
-    tmp_fd, tmp_path = tempfile.mkstemp(suffix=".csv")
-    _os.close(tmp_fd)
-    try:
-        _export_elmres_to_csv(app, tmp_path)
-        return _parse_elmres_csv(tmp_path)
-    finally:
-        try:
-            _os.remove(tmp_path)
-        except OSError:
-            pass
+    res.Release()
+    return time_values, ts_data
 
 
 def calculate_timeseries_metric(time_values, data_values, metric, threshold=None,
@@ -3009,45 +3067,36 @@ def calculate_timeseries_metric(time_values, data_values, metric, threshold=None
     return {"value": float("nan")}
 
 
-def extract_timeseries_outputs(elmres_time, elmres_cols, output_specs):
+def extract_timeseries_outputs(time_values, ts_data, output_specs):
     """
-    Extract scalar metrics for all timeseries output specs from pre-parsed
-    ElmRes data (obtained via _load_elmres_data).
-
-    Parameters
-    ----------
-    elmres_time  : list[float]  — time axis
-    elmres_cols  : list[dict]   — columns list (each has 'obj', 'attr', 'values')
-    output_specs : list[dict]   — the output_specs list
-
-    Returns
-    -------
-    dict  — {spec_name_value: scalar, spec_name_time: scalar, ...}
+    Compute scalar metrics from in-memory timeseries data.
+    Args:
+        time_values  : list of float — simulation time steps
+        ts_data      : dict — {spec_name: [float, ...]}
+        output_specs : list of output spec dicts
+    Returns:
+        dict — {spec_name: metric_value}
     """
-    timeseries_results = {}
-    ts_specs = [s for s in output_specs if s["type"] == "timeseries"]
-    if not ts_specs:
-        return timeseries_results
-
-    for spec in ts_specs:
-        col = _find_elmres_column(elmres_cols, spec["object_query"], spec["variable"])
-        if col is None:
-            safe_print(f"Timeseries column not found for '{spec['name']}': "
-                       f"object='{spec['object_query']}' attr='{spec['variable']}'")
-            timeseries_results[f'{spec["name"]}_value'] = float("nan")
+    results = {}
+    for spec in output_specs:
+        if spec.get("type") != "timeseries":
             continue
-
+        col_data = ts_data.get(spec["name"])
+        if not col_data:
+            safe_print(f"[WARN] No timeseries data for output '{spec['name']}'")
+            results[spec["name"]] = float('nan')
+            continue
         metric_result = calculate_timeseries_metric(
-            elmres_time, col["values"], spec["metric"],
+            time_values, col_data,
+            spec.get("metric", "maximum"),
             threshold=spec.get("threshold"),
             settle_band=spec.get("settle_band"),
             settle_hold_time=spec.get("settle_hold_time"),
             settle_reference_value=spec.get("settle_reference_value")
         )
-        for key, val in metric_result.items():
-            timeseries_results[f'{spec["name"]}_{key}'] = val
-
-    return timeseries_results
+        metric_val = metric_result.get("value", metric_result.get("time", float("nan")))
+        results[spec["name"]] = metric_val
+    return results
 
 `;
 }
@@ -3059,39 +3108,38 @@ function buildTimeseriesGraphHelper(cfg) {
 
   return `
 # ── TIMESERIES GRAPH HELPER ──────────────────────────────────────
-def plot_timeseries_graph(elmres_time, elmres_cols, spec, row, graph_dir, context_title_parts):
+def save_timeseries_graph(time_values, ts_data, spec, row, graph_dir, context_label_parts):
     """
     Plot timeseries data (Time vs variable) and save as .png in graph_dir.
 
     Parameters
     ----------
-    elmres_time         : list[float]  — time axis from _load_elmres_data()
-    elmres_cols         : list[dict]   — columns from _load_elmres_data()
+    time_values         : list[float]  — time axis from _read_elmres_inmemory()
+    ts_data             : dict         — {spec_name: [float, ...]} from _read_elmres_inmemory()
     spec                : dict         — one entry from output_specs (type="timeseries")
     row                 : dict         — current result row (for input value labels)
     graph_dir           : str          — destination directory
-    context_title_parts : list[str]    — prefixed to the chart title
+    context_label_parts : list[str]    — prefixed to the chart title
     """
-    col = _find_elmres_column(elmres_cols, spec["object_query"], spec["variable"])
-    if col is None:
-        safe_print(f"Graph skipped: column not found for '{spec['name']}'")
+    col_data = ts_data.get(spec["name"])
+    if not col_data:
+        safe_print(f"[WARN] Graph skipped for '{spec['name']}' — no data available.")
         return
 
-    data_values = col["values"]
-    title_parts = list(context_title_parts)
+    title_parts = list(context_label_parts)
     for s in input_specs:
         title_parts.append(f"{s['name']}={row.get(s['name'], '?')}")
     title_parts.append(spec["name"])
     title = " | ".join(title_parts)
 
     plt.figure(figsize=(10, 6))
-    plt.plot(elmres_time, data_values)
+    plt.plot(time_values, col_data)
     plt.title(title, fontsize=9)
     plt.xlabel("Time (s)")
     plt.ylabel(spec["name"])
     plt.grid(True)
     plt.tight_layout()
-    label_parts = list(context_title_parts)
+    label_parts = list(context_label_parts)
     for s in input_specs:
         val = row.get(s["name"], "x")
         label_parts.append(f"{s['name']}_{val}")
@@ -3114,19 +3162,23 @@ function buildRawCsvHelper(cfg) {
 
   return `
 # ── TIMESERIES RAW CSV HELPER ────────────────────────────────────
-def save_timeseries_raw_csv(elmres_time, col_data, spec, row, raw_dir, context_label_parts):
+def save_timeseries_raw_csv(time_values, ts_data, spec, row, raw_dir, context_label_parts):
     """
     Save one timeseries column (time_s + variable) as a CSV in raw_dir.
 
     Parameters
     ----------
-    elmres_time         : list[float]  — time axis from _load_elmres_data()
-    col_data            : dict         — column dict with 'values' key
+    time_values         : list[float]  — time axis from _read_elmres_inmemory()
+    ts_data             : dict         — {spec_name: [float, ...]} from _read_elmres_inmemory()
     spec                : dict         — one entry from output_specs
     row                 : dict         — current result row (for filename labels)
     raw_dir             : str          — destination directory
     context_label_parts : list[str]    — prepended to the filename
     """
+    col_data = ts_data.get(spec["name"])
+    if not col_data:
+        safe_print(f"[WARN] Raw CSV skipped for '{spec['name']}' — no data available.")
+        return
     label_parts = list(context_label_parts)
     for s in input_specs:
         val = row.get(s["name"], "x")
@@ -3136,8 +3188,11 @@ def save_timeseries_raw_csv(elmres_time, col_data, spec, row, raw_dir, context_l
     safe_name = safe_name.replace(" ", "_").replace("(", "").replace(")", "").replace("/", "-")
     raw_filename = f"{safe_name}_{timestamp_string()}.csv"
     raw_path = os.path.join(raw_dir, raw_filename)
-    raw_df = pd.DataFrame({"time_s": elmres_time, spec["name"]: col_data["values"]})
-    raw_df.to_csv(raw_path, index=False)
+    with open(raw_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["time_s", spec["variable"]])
+        for t, v in zip(time_values, col_data):
+            writer.writerow([t, v])
     safe_print(f"Raw CSV saved: {raw_path}")
 
 `;
@@ -3250,7 +3305,7 @@ _col_object_cache = {}
 for _spec in _col_specs:
     _oq = _spec["object_query"]
     if _oq not in _col_object_cache:
-        _col_object_cache[_oq] = get_pf_objects(app, _oq)
+        _col_object_cache[_oq] = get_input_objects(app, _oq)
 
 `;
   } else {
@@ -3259,7 +3314,7 @@ input_objects = {}
 input_ranges = {}
 
 for i, spec in enumerate(input_specs):
-    input_objects[i] = get_pf_objects(app, spec["object_query"])
+    input_objects[i] = get_input_objects(app, spec["object_query"])
     input_ranges[i] = build_range(spec["lower"], spec["upper"], spec["step"], spec["dtype"])
 
 `;
@@ -3339,11 +3394,11 @@ function buildGraphCalls(cfg, indent, hasIterSC, hasIterOS) {
   if (graphVars.length === 0) return '';
 
   let code = `\n${indent}    # Timeseries graphs (saved to graph_dir)\n`;
-  code += `${indent}    _ctx_parts = []\n`;
-  if (hasIterSC) code += `${indent}    _ctx_parts.append(study_case.loc_name)\n`;
-  if (hasIterOS) code += `${indent}    _ctx_parts.append(op_scenario.loc_name)\n`;
-  code += `${indent}    for _gspec in [s for s in output_specs if s["type"] == "timeseries" and s.get("output_graph")]:\n`;
-  code += `${indent}        plot_timeseries_graph(_elmres_time, _elmres_cols, _gspec, row, graph_dir, _ctx_parts)\n`;
+  code += `${indent}    _raw_ctx = []\n`;
+  if (hasIterSC) code += `${indent}    _raw_ctx.append(study_case.loc_name)\n`;
+  if (hasIterOS) code += `${indent}    _raw_ctx.append(op_scenario.loc_name)\n`;
+  code += `${indent}    for _rspec in [s for s in output_specs if s["type"] == "timeseries" and s.get("output_graph")]:\n`;
+  code += `${indent}        save_timeseries_graph(_ts_time, _ts_data, _rspec, row, graph_dir, _raw_ctx)\n`;
   return code;
 }
 
@@ -3357,9 +3412,7 @@ function buildRawCsvCalls(cfg, indent, hasIterSC, hasIterOS) {
   if (hasIterSC) code += `${indent}    _raw_ctx.append(study_case.loc_name)\n`;
   if (hasIterOS) code += `${indent}    _raw_ctx.append(op_scenario.loc_name)\n`;
   code += `${indent}    for _rspec in [s for s in output_specs if s["type"] == "timeseries" and s.get("output_raw_csv")]:\n`;
-  code += `${indent}        _rcol = _find_elmres_column(_elmres_cols, _rspec["object_query"], _rspec["variable"])\n`;
-  code += `${indent}        if _rcol is not None:\n`;
-  code += `${indent}            save_timeseries_raw_csv(_elmres_time, _rcol, _rspec, row, raw_dir, _raw_ctx)\n`;
+  code += `${indent}        save_timeseries_raw_csv(_ts_time, _ts_data, _rspec, row, raw_dir, _raw_ctx)\n`;
   return code;
 }
 
@@ -3415,6 +3468,30 @@ failed_count = 0
 last_save_time = time.time()
 `;
 
+  const isDynamic = cfg.initialisation.studyType === 'dynamic_rms' || cfg.initialisation.studyType === 'dynamic_emt';
+  if (isDynamic && hasTs && pt !== 'custom') {
+    pre += `
+# ============================================================
+# SECTION: ElmRes Variable Pre-Check
+# ============================================================
+# Ensure all timeseries output variables are registered in ElmRes
+# before ComInc runs. Variables added here only take effect from
+# the first ComInc.Execute() call in the loop below.
+_pf_res = app.GetFromStudyCase("ElmRes")
+_ts_monitor = _build_ts_monitor_list(app, output_specs)
+if _ts_monitor:
+    _newly_added = ensure_elmres_variables(app, _pf_res, _ts_monitor)
+    if _newly_added:
+        safe_print(
+            f"[ElmRes] {len(_newly_added)} variable(s) added — "
+            f"active from first ComInc run."
+        )
+    else:
+        safe_print("[ElmRes] All timeseries variables already registered.")
+
+`;
+  }
+
   // ─── BRUTE FORCE ──────────────────────────────────────────────────
   if (pt === 'brute_force') {
     pre += `
@@ -3461,9 +3538,9 @@ for _i, _spec in enumerate(input_specs):
     pre += `${indent}            else:\n`;
     pre += `${indent}                row[spec["name"]] = _attr_val\n`;
     if (hasTs) {
-      pre += `\n${indent}    # Export ElmRes to CSV and parse (once per simulation run)\n`;
-      pre += `${indent}    _elmres_time, _elmres_cols = _load_elmres_data(app)\n`;
-      pre += `${indent}    row.update(extract_timeseries_outputs(_elmres_time, _elmres_cols, output_specs))\n`;
+      pre += `\n${indent}    # Read ElmRes in-memory (once per simulation run)\n`;
+      pre += `${indent}    _ts_time, _ts_data = _read_elmres_inmemory(app, output_specs)\n`;
+      pre += `${indent}    row.update(extract_timeseries_outputs(_ts_time, _ts_data, output_specs))\n`;
     }
     if (hasCust) {
       pre += `\n${indent}    # Custom calculation outputs\n`;
@@ -3538,9 +3615,9 @@ for _spec in _col_specs:
     pre += `${indent}            else:\n`;
     pre += `${indent}                row[spec["name"]] = _attr_val\n`;
     if (hasTs) {
-      pre += `\n${indent}    # Export ElmRes to CSV and parse (once per simulation run)\n`;
-      pre += `${indent}    _elmres_time, _elmres_cols = _load_elmres_data(app)\n`;
-      pre += `${indent}    row.update(extract_timeseries_outputs(_elmres_time, _elmres_cols, output_specs))\n`;
+      pre += `\n${indent}    # Read ElmRes in-memory (once per simulation run)\n`;
+      pre += `${indent}    _ts_time, _ts_data = _read_elmres_inmemory(app, output_specs)\n`;
+      pre += `${indent}    row.update(extract_timeseries_outputs(_ts_time, _ts_data, output_specs))\n`;
     }
     if (hasCust) {
       pre += `${indent}    row.update(evaluate_custom_calculations(row))\n`;
@@ -3637,9 +3714,9 @@ def evaluate_one_case(param_values):
 `;
     if (hasTs) {
       pre += `
-    # Export ElmRes to CSV and parse (once per simulation run)
-    _elmres_time, _elmres_cols = _load_elmres_data(app)
-    row.update(extract_timeseries_outputs(_elmres_time, _elmres_cols, output_specs))
+    # Read ElmRes in-memory (once per simulation run)
+    _ts_time, _ts_data = _read_elmres_inmemory(app, output_specs)
+    row.update(extract_timeseries_outputs(_ts_time, _ts_data, output_specs))
 `;
     }
     if (hasCust) {
@@ -3648,17 +3725,15 @@ def evaluate_one_case(param_values):
     if (hasGraph) {
       // In optimisation mode there is no study/op scenario iteration context
       pre += `\n    # Timeseries graphs (saved to graph_dir)\n`;
-      pre += `    _ctx_parts = []\n`;
-      pre += `    for _gspec in [s for s in output_specs if s["type"] == "timeseries" and s.get("output_graph")]:\n`;
-      pre += `        plot_timeseries_graph(_elmres_time, _elmres_cols, _gspec, row, graph_dir, _ctx_parts)\n`;
+      pre += `    _raw_ctx = []\n`;
+      pre += `    for _rspec in [s for s in output_specs if s["type"] == "timeseries" and s.get("output_graph")]:\n`;
+      pre += `        save_timeseries_graph(_ts_time, _ts_data, _rspec, row, graph_dir, _raw_ctx)\n`;
     }
     if (hasRaw) {
       pre += `\n    # Timeseries raw CSV (saved to raw_dir)\n`;
       pre += `    _raw_ctx = []\n`;
       pre += `    for _rspec in [s for s in output_specs if s["type"] == "timeseries" and s.get("output_raw_csv")]:\n`;
-      pre += `        _rcol = _find_elmres_column(_elmres_cols, _rspec["object_query"], _rspec["variable"])\n`;
-      pre += `        if _rcol is not None:\n`;
-      pre += `            save_timeseries_raw_csv(_elmres_time, _rcol, _rspec, row, raw_dir, _raw_ctx)\n`;
+      pre += `        save_timeseries_raw_csv(_ts_time, _ts_data, _rspec, row, raw_dir, _raw_ctx)\n`;
     }
     pre += `
     # Restore input attributes to their initial values
