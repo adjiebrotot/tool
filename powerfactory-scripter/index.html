@@ -3418,7 +3418,7 @@ last_save_time = time.time()
   // ─── BRUTE FORCE ──────────────────────────────────────────────────
   if (pt === 'brute_force') {
     pre += `
-all_combinations = list(itertools.product(*input_ranges))
+all_combinations = list(itertools.product(*input_ranges.values()))
 `;
     // Cache initial attribute values once, before all loops
     pre += `
