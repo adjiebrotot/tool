@@ -1,0 +1,32 @@
+{
+  "params": [
+    {
+      "var": "p_target",
+      "unit": "Elm*",
+      "desc": "Target element (line, coupler, or transformer to switch)"
+    },
+    {
+      "var": "time",
+      "unit": "s",
+      "desc": "Event time in seconds"
+    },
+    {
+      "var": "i_switch",
+      "unit": "",
+      "desc": "Switching action: 0=open (trip), 1=close (reclose)"
+    },
+    {
+      "var": "loc_name",
+      "unit": "",
+      "desc": "Name of the event object"
+    }
+  ],
+  "notes": {
+    "i_switch_codes": {
+      "0": "Open (trip the element)",
+      "1": "Close (reconnect the element)"
+    },
+    "resolution": "Resolved from app.GetFromStudyCase(\"Simulation Events/Fault.IntEvt\").GetContents(\"<name>.EvtSwitch\")",
+    "attribute_prefix": "None — use SetAttribute(\"time\", value) directly, no e: or m: prefix"
+  }
+}
