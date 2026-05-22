@@ -1,0 +1,50 @@
+{
+  "params": [
+    {
+      "var": "p_target",
+      "unit": "Elm*",
+      "desc": "Target element (bus, line, or transformer where the fault is applied)"
+    },
+    {
+      "var": "time",
+      "unit": "s",
+      "desc": "Event time in seconds"
+    },
+    {
+      "var": "i_shc",
+      "unit": "",
+      "desc": "Fault type: 0=3-phase, 1=single-phase A-E, 2=two-phase A-B, 3=two-phase A-B-E, 4=clear fault"
+    },
+    {
+      "var": "R_f",
+      "unit": "Ohm",
+      "desc": "Fault resistance (0 = bolted fault)"
+    },
+    {
+      "var": "X_f",
+      "unit": "Ohm",
+      "desc": "Fault reactance (usually 0 for a bolted fault)"
+    },
+    {
+      "var": "i_p2pflt",
+      "unit": "",
+      "desc": "Phase-to-phase fault flag (0=no, 1=yes)"
+    },
+    {
+      "var": "loc_name",
+      "unit": "",
+      "desc": "Name of the event object"
+    }
+  ],
+  "notes": {
+    "i_shc_codes": {
+      "0": "Three-phase (3ph)",
+      "1": "Single-phase to earth (A-E)",
+      "2": "Two-phase (A-B)",
+      "3": "Two-phase to earth (A-B-E)",
+      "4": "Clear fault (always use this to terminate a fault)"
+    },
+    "resolution": "Resolved from app.GetFromStudyCase(\"Simulation Events/Fault.IntEvt\").GetContents(\"<name>.EvtShc\")",
+    "attribute_prefix": "None — use SetAttribute(\"time\", value) directly, no e: or m: prefix"
+  }
+}
