@@ -2536,7 +2536,8 @@ function validateConfig(cfg) {
   if (!init.studyType)   errors.push('Study type is required.');
   if (!init.codingStyle) errors.push('Coding style is required.');
 
-  if (cfg.inputVariables.length === 0)  errors.push('At least one input variable is required.');
+  if (init.problemType !== 'contingency' && cfg.inputVariables.length === 0)
+    errors.push('At least one input variable is required.');
   if (cfg.outputVariables.length === 0) errors.push('At least one output variable is required.');
 
   // ── Duplicate name detection across inputs AND outputs ────────────
@@ -2788,6 +2789,8 @@ function buildImports(cfg) {
     optimImports = (ALGORITHM_META[alg] || {}).pyImport || '';
   }
 
+  const fnmatchImport = init.problemType === 'contingency' ? 'import fnmatch\n' : '';
+
   const matplotlibImport = hasOutputGraph
     ? 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\n'
     : '';
@@ -2807,7 +2810,7 @@ sys.path.append(r"${apiPath}")
 import powerfactory as pf
 import pandas as pd
 import numpy as np
-${matplotlibImport}${tqdmImport ? tqdmImport + '\n' : ''}${optimImports ? optimImports + '\n' : ''}`;
+${matplotlibImport}${tqdmImport ? tqdmImport + '\n' : ''}${optimImports ? optimImports + '\n' : ''}${fnmatchImport}`;
 }
 
 // ── PREPARATION (app connection, project listing) ─────────────
@@ -3868,7 +3871,7 @@ for _spec in _col_specs:
     const contN     = parseInt(cfg.contingencyMode.contingencyN || '1', 10);
     const combine   = cfg.contingencyMode.combineTypes || false;
 
-    let groupCode = `\n# ── CONTINGENCY SETUP ────────────────────────────────────────────\nimport itertools\nimport fnmatch\n\n_contingency_groups = {}\n`;
+    let groupCode = `\n# ── CONTINGENCY SETUP ────────────────────────────────────────────\n_contingency_groups = {}\n`;
     contTypes.forEach((t, gi) => {
       const filterExpr = buildContingencyFilterExpr(t.filterAttr, t.filterOp, t.filterVal);
       if (filterExpr) {
@@ -3888,13 +3891,6 @@ for _spec in _col_specs:
     }
 
     pre += groupCode;
-    pre += `
-results_df = pd.DataFrame()
-iteration_count = 0
-success_count = 0
-failed_count = 0
-last_save_time = time.time()
-`;
 
     const baseCaseRowParts = Array.from({length: contN}, (_, k) => `"Contingent Element ${k+1}": "Base Case"`).join(', ');
 
