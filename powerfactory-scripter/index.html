@@ -1111,9 +1111,9 @@
             <option value="2">N-2</option>
           </select>
         </div>
-        <div class="form-row cond-hidden" id="row-contingency-combine">
-          <label>Combine element types <span class="tt" data-tip="When checked, N-2 pairs are formed across different element types (e.g. line × generator). When unchecked, only same-type pairs (line × line).">?</span></label>
+        <div class="checkbox-row cond-hidden" id="row-contingency-combine" style="margin-top:4px;">
           <input type="checkbox" id="contingency-combine" />
+          <label for="contingency-combine">Combine element types <span class="tt" data-tip="When checked, N-2 pairs are formed across different element types (e.g. line × generator). When unchecked, only same-type pairs (line × line).">?</span></label>
         </div>
       </div>
     </div>
@@ -1396,13 +1396,15 @@ function addContingencyRow(data) {
   const tbody = document.getElementById('contingency-tbody');
   const tr = document.createElement('tr');
   tr.id = `cont-row-${idx}`;
-  const opOptions = ['>=','<=','==','!=','>','<'].map(op =>
+  const filterAttr = String(data.filterAttr || '');
+  const allowedOps = getAllowedContingencyFilterOps(filterAttr);
+  const opOptions = allowedOps.map(op =>
     `<option value="${op}"${(data.filterOp||'>=')===op?' selected':''}>${op==='=='?'=':op==='!='?'≠':op}</option>`
   ).join('');
   tr.innerHTML = `
     <td style="text-align:center;color:var(--muted);font-size:12px;">${idx}</td>
     <td><input type="text" id="cont-query-${idx}" value="${(data.query||'*.ElmLne').replace(/"/g,'&quot;')}" placeholder="*.ElmLne" oninput="onContingencyQueryChange(${idx})" style="min-width:120px;" /></td>
-    <td><input type="text" id="cont-filter-attr-${idx}" value="${(data.filterAttr||'').replace(/"/g,'&quot;')}" placeholder="e.g. e:Unom" style="min-width:100px;" /></td>
+    <td><input type="text" id="cont-filter-attr-${idx}" value="${filterAttr.replace(/"/g,'&quot;')}" placeholder="e.g. e:Unom" oninput="onContingencyFilterAttrChange(${idx})" style="min-width:100px;" /></td>
     <td><select id="cont-filter-op-${idx}" style="width:56px;">${opOptions}</select></td>
     <td><input type="text" id="cont-filter-val-${idx}" value="${(data.filterVal||'').replace(/"/g,'&quot;')}" placeholder="e.g. 66 or North*" style="min-width:100px;" /></td>
     <td><button class="btn btn-ghost btn-xs" id="cont-remove-${idx}" onclick="removeContingencyRow(${idx})" style="padding:2px 6px;">✕</button></td>
@@ -1417,6 +1419,7 @@ function addContingencyRow(data) {
     const m = q.match(/\.([A-Za-z][A-Za-z0-9]+)(?:\s*$)/);
     return getContingencyFilterAttrSuggestions(typed, m ? m[1] : null);
   });
+  onContingencyFilterAttrChange(idx);
   updateContingencyRemoveButtons();
   onContingencyNChange();
 }
@@ -1436,6 +1439,22 @@ function updateContingencyRemoveButtons() {
   });
 }
 
+
+function getAllowedContingencyFilterOps(filterAttr) {
+  return isInputAttrBlacklisted(filterAttr) ? ['==', '!='] : ['>=', '<=', '==', '!=', '>', '<'];
+}
+
+function onContingencyFilterAttrChange(idx) {
+  const attr = (document.getElementById(`cont-filter-attr-${idx}`)?.value || '').trim();
+  const opSel = document.getElementById(`cont-filter-op-${idx}`);
+  if (!opSel) return;
+  const prev = opSel.value || '==';
+  const allowedOps = getAllowedContingencyFilterOps(attr);
+  opSel.innerHTML = allowedOps.map(op =>
+    `<option value="${op}">${op==='=='?'=':op==='!='?'≠':op}</option>`
+  ).join('');
+  opSel.value = allowedOps.includes(prev) ? prev : allowedOps[0];
+}
 function onContingencyQueryChange(idx) {
   // no-op for now; combobox already handles suggestions
 }
