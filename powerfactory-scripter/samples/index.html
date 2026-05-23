@@ -1250,11 +1250,9 @@ Best objective (thd) = 2.61</pre>
           <span class="step-badge">2</span> Assumptions
         </div>
         <ul class="assumption-list">
-          <li>Element query <code>*.ElmLne</code> resolves all lines in the active network at runtime</li>
-          <li>Study Type is fixed to Steady State; each contingency runs one load flow</li>
-          <li>A base case (all elements in service) is always the first run</li>
-          <li>Non-converged rows retain the contingency identifier but leave output columns empty</li>
-          <li>Scales automatically: add lines to the network, get more runs with no code changes</li>
+          <li>N-1 contingency mode will be used</li>
+          <li>Only lines above 66 kV will be considered</li>
+          <li>Bus voltage and line loading of all buses and lines will be monitored</li>
         </ul>
       </div>
 
@@ -1297,9 +1295,9 @@ Best objective (thd) = 2.61</pre>
                 <tr>
                   <td style="text-align:center;color:var(--muted);font-size:12px;">1</td>
                   <td><input type="text" readonly value="*.ElmLne" /></td>
-                  <td><input type="text" readonly value="" placeholder="(none)" /></td>
+                  <td><input type="text" readonly value="e:Unom" /></td>
                   <td><select disabled><option>>=</option></select></td>
-                  <td><input type="text" readonly value="" placeholder="(none)" /></td>
+                  <td><input type="text" readonly value="66" /></td>
                 </tr>
               </tbody>
             </table>
@@ -1309,12 +1307,6 @@ Best objective (thd) = 2.61</pre>
             <select disabled><option>N-1</option></select>
           </div>
         </div>
-        <p class="hint" style="margin-top:8px;">
-          To restrict contingencies to high-voltage lines only, set Filter Attribute to
-          <code>e:Unom</code>, Operator to <code>≥</code>, and Filter Value to <code>66</code>.
-          To match lines by name pattern, use Filter Attribute <code>loc_name</code>, Operator
-          <code>=</code>, and a wildcard value such as <code>North*</code> (case-insensitive).
-        </p>
       </div>
 
       <!-- 4 Output Variables -->
@@ -1365,7 +1357,7 @@ Best objective (thd) = 2.61</pre>
           <span class="step-badge">7</span>
           <div>
             <div>Paste the code into your Python environment and run it.</div>
-            <div class="step-note">The script runs one load flow per line plus the base case. For a 50-line network this is 51 runs, no Excel file or code changes needed regardless of network size.</div>
+            <div class="step-note">The script runs one load flow per line plus the base case. No Excel file or code changes needed regardless of network size.</div>
           </div>
         </div>
       </div>
