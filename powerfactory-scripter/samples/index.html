@@ -1331,7 +1331,7 @@ Best objective (thd) = 2.61</pre>
           <div class="output-var-item">
             <div class="output-var-header">
               <span class="ov-type-badge">Scalar</span>
-              <input type="text" readonly value="line_loading" style="max-width:150px" />
+              <input type="text" readonly value="loading" style="max-width:150px" />
             </div>
             <div class="output-var-body">
               <div class="form-row"><label>Object</label><input type="text" readonly value="*.ElmLne" /></div>
@@ -1367,8 +1367,8 @@ Best objective (thd) = 2.61</pre>
         <div class="sub-section-title">
           <span class="step-badge">8</span> Expected Output
         </div>
-        <p class="hint">The script writes a summary CSV to your output directory, e.g. <code>results.csv</code>. The first two columns identify the contingency and its convergence status; subsequent columns are the output values, each named after the element's <code>loc_name</code>:</p>
-        <pre class="output-preview">Contingent Element 1,Converge?,Bus_HV1,Bus_HV2,Bus_HV3,Line_A,Line_B,Line_C,Line_D
+        <p class="hint">The script writes a summary CSV to your output directory, e.g. <code>results.csv</code>. The first two columns identify the contingency and its convergence status; subsequent columns are the output values, each prefixed with the variable name and the element's <code>loc_name</code> (e.g. <code>bus_voltage_Bus_HV1</code>, <code>loading_Line_A</code>):</p>
+        <pre class="output-preview">Contingent Element 1,Converge?,bus_voltage_Bus_HV1,bus_voltage_Bus_HV2,bus_voltage_Bus_HV3,loading_Line_A,loading_Line_B,loading_Line_C,loading_Line_D
 Base Case,True,1.023,0.998,1.005,42.1,38.5,65.3,71.2
 Line_A,True,0.887,1.012,0.995,65.3,88.7,45.2,80.5
 Line_B,True,1.012,0.889,1.003,88.7,55.2,40.1,75.3

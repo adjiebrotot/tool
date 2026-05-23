@@ -3883,7 +3883,8 @@ for _i, _spec in enumerate(input_specs):
     pre += `${indent}        if spec["type"] == "attribute":\n`;
     pre += `${indent}            _attr_val = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
     pre += `${indent}            if isinstance(_attr_val, dict):\n`;
-    pre += `${indent}                row.update(_attr_val)\n`;
+    pre += `${indent}                for _loc, _val in _attr_val.items():\n`;
+    pre += `${indent}                    row[f"{spec['name']}_{_loc}"] = _val\n`;
     pre += `${indent}            else:\n`;
     pre += `${indent}                row[spec["name"]] = _attr_val\n`;
     if (hasTs) {
@@ -3961,7 +3962,8 @@ for _spec in _col_specs:
     pre += `${indent}        if spec["type"] == "attribute":\n`;
     pre += `${indent}            _attr_val = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
     pre += `${indent}            if isinstance(_attr_val, dict):\n`;
-    pre += `${indent}                row.update(_attr_val)\n`;
+    pre += `${indent}                for _loc, _val in _attr_val.items():\n`;
+    pre += `${indent}                    row[f"{spec['name']}_{_loc}"] = _val\n`;
     pre += `${indent}            else:\n`;
     pre += `${indent}                row[spec["name"]] = _attr_val\n`;
     if (hasTs) {
@@ -4037,7 +4039,8 @@ for _spec in _col_specs:
     pre += `${indentOS}            if spec["type"] == "attribute":\n`;
     pre += `${indentOS}                _v = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
     pre += `${indentOS}                if isinstance(_v, dict):\n`;
-    pre += `${indentOS}                    row.update(_v)\n`;
+    pre += `${indentOS}                    for _loc, _val in _v.items():\n`;
+    pre += `${indentOS}                        row[f"{spec['name']}_{_loc}"] = _val\n`;
     pre += `${indentOS}                else:\n`;
     pre += `${indentOS}                    row[spec["name"]] = _v\n`;
     if (hasCust) {
@@ -4066,7 +4069,8 @@ for _spec in _col_specs:
     pre += `${indentOS}                if spec["type"] == "attribute":\n`;
     pre += `${indentOS}                    _v = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
     pre += `${indentOS}                    if isinstance(_v, dict):\n`;
-    pre += `${indentOS}                        row.update(_v)\n`;
+    pre += `${indentOS}                        for _loc, _val in _v.items():\n`;
+    pre += `${indentOS}                            row[f"{spec['name']}_{_loc}"] = _val\n`;
     pre += `${indentOS}                    else:\n`;
     pre += `${indentOS}                        row[spec["name"]] = _v\n`;
     if (hasCust) {
@@ -4151,7 +4155,8 @@ def evaluate_one_case(param_values):
         if spec["type"] == "attribute":
             _attr_val = extract_attribute_output(app, spec["object_query"], spec["variable"])
             if isinstance(_attr_val, dict):
-                row.update(_attr_val)
+                for _loc, _val in _attr_val.items():
+                    row[f"{spec['name']}_{_loc}"] = _val
             else:
                 row[spec["name"]] = _attr_val
 `;
