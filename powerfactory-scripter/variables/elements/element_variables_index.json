@@ -1,0 +1,3399 @@
+{
+  "ElmArea": {
+    "file": "variables/elements/ElmArea.json",
+    "size_kb": 43,
+    "study_groups": {
+      "load_flow": [
+        "c:n_ele",
+        "c:n_areas",
+        "c:n_volt",
+        "c:n_bar",
+        "c:n_term",
+        "c:n_lne",
+        "c:n_sym",
+        "c:n_asm"
+      ],
+      "load_flow_dc": [
+        "c:n_ele",
+        "c:n_areas",
+        "c:n_volt",
+        "c:n_bar",
+        "c:n_term",
+        "c:n_lne",
+        "c:n_sym",
+        "c:n_asm"
+      ],
+      "dynamic_rms": [
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen",
+        "c:Pmot",
+        "c:Qmot",
+        "c:Smot",
+        "c:cosmot"
+      ],
+      "dynamic_emt": [
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen",
+        "c:Pmot",
+        "c:Qmot",
+        "c:Smot",
+        "c:cosmot"
+      ],
+      "modal_analysis": [
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen",
+        "c:Pmot",
+        "c:Qmot",
+        "c:Smot",
+        "c:cosmot"
+      ],
+      "opf": [
+        "c:n_ele",
+        "c:n_areas",
+        "c:n_volt",
+        "c:n_bar",
+        "c:n_term",
+        "c:n_lne",
+        "c:n_sym",
+        "c:n_asm"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:n_ele",
+        "b:n_areas"
+      ]
+    }
+  },
+  "ElmAsm": {
+    "file": "variables/elements/ElmAsm.json",
+    "size_kb": 249,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:cosn",
+        "c:p",
+        "c:sgnn",
+        "c:Pnom",
+        "c:loading",
+        "c:i_con"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:cosn",
+        "c:p",
+        "c:rstr",
+        "c:xstr",
+        "c:rrtrA",
+        "c:xrtrA",
+        "c:xm",
+        "c:speedn"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:i_mot",
+        "b:iWindGen"
+      ]
+    }
+  },
+  "ElmAsmsc": {
+    "file": "variables/elements/ElmAsmsc.json",
+    "size_kb": 191,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:cosn",
+        "c:p",
+        "c:sgnn",
+        "c:Pnom",
+        "c:loading",
+        "c:i_mot"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:cosn",
+        "c:p",
+        "c:rstr",
+        "c:xstr",
+        "c:rrtrA",
+        "c:rrtrB",
+        "c:xrtrA",
+        "c:xrtrB"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:i_mot",
+        "b:iWindGen"
+      ]
+    }
+  },
+  "ElmBbone": {
+    "file": "variables/elements/ElmBbone.json",
+    "size_kb": 1,
+    "study_groups": {
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmBmu": {
+    "file": "variables/elements/ElmBmu.json",
+    "size_kb": 15,
+    "study_groups": {
+      "load_flow": [
+        "c:Psum",
+        "c:Qsum",
+        "c:cst_disp",
+        "c:Pmin",
+        "c:Pmax",
+        "c:Qmin",
+        "c:Qmax"
+      ],
+      "load_flow_dc": [
+        "c:Psum",
+        "c:cst_disp",
+        "c:Pmin",
+        "c:Pmax"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmBoundary": {
+    "file": "variables/elements/ElmBoundary.json",
+    "size_kb": 12,
+    "study_groups": {
+      "load_flow": [
+        "c:Pinter",
+        "c:Qinter",
+        "c:ExportP",
+        "c:ExportQ",
+        "c:ImportP",
+        "c:ImportQ"
+      ],
+      "load_flow_dc": [
+        "c:Pinter",
+        "c:ExportP",
+        "c:ImportP"
+      ],
+      "dynamic_rms": [
+        "s:Pinter",
+        "s:Qinter"
+      ],
+      "modal_analysis": [
+        "s:Pinter",
+        "s:Qinter"
+      ],
+      "opf": [
+        "c:Pinter",
+        "c:Qinter",
+        "c:ExportP",
+        "c:ExportQ",
+        "c:ImportP",
+        "c:ImportQ",
+        "c:psummax",
+        "c:psummin"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmBranch": {
+    "file": "variables/elements/ElmBranch.json",
+    "size_kb": 152,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:loading",
+        "c:bayloading",
+        "c:dphiu",
+        "c:Ploss",
+        "c:Qloss",
+        "n:u:busN"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmCabsys": {
+    "file": "variables/elements/ElmCabsys.json",
+    "size_kb": 24,
+    "study_groups": {
+      "load_flow": [
+        "c:zline",
+        "c:yline",
+        "c:rlinedc",
+        "c:glinedc",
+        "c:yZline",
+        "c:frnom",
+        "c:frnomDC",
+        "c:hpi"
+      ],
+      "short_circuit": [
+        "c:zline",
+        "c:yline",
+        "c:rlinedc",
+        "c:glinedc",
+        "c:yZline",
+        "c:frnom",
+        "c:frnomDC",
+        "c:hpi"
+      ],
+      "dynamic_rms": [
+        "c:zline",
+        "c:yline",
+        "c:rlinedc",
+        "c:glinedc",
+        "c:yZline",
+        "c:frnom",
+        "c:frnomDC",
+        "c:hpi"
+      ],
+      "dynamic_emt": [
+        "c:yline",
+        "c:frnom",
+        "c:frnomDC",
+        "c:hpi",
+        "c:rline",
+        "c:lline",
+        "c:gline",
+        "c:cline"
+      ],
+      "modal_analysis": [
+        "c:zline",
+        "c:yline",
+        "c:rlinedc",
+        "c:glinedc",
+        "c:yZline",
+        "c:frnom",
+        "c:frnomDC",
+        "c:hpi"
+      ],
+      "opf": [
+        "c:zline",
+        "c:yline",
+        "c:rlinedc",
+        "c:glinedc",
+        "c:yZline",
+        "c:frnom",
+        "c:frnomDC",
+        "c:hpi"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmComp": {
+    "file": "variables/elements/ElmComp.json",
+    "size_kb": 1,
+    "study_groups": {}
+  },
+  "ElmCoup": {
+    "file": "variables/elements/ElmCoup.json",
+    "size_kb": 159,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:R_on",
+        "c:X_on",
+        "c:on_off",
+        "c:Inom",
+        "c:loading",
+        "c:maxload"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:input",
+        "c:R_on",
+        "c:X_on",
+        "c:Inom",
+        "c:loading",
+        "c:t_open",
+        "c:i_ctrl",
+        "c:closed"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmDcu": {
+    "file": "variables/elements/ElmDcu.json",
+    "size_kb": 137,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:ri",
+        "c:iRefElement",
+        "c:Ploss",
+        "c:Qloss",
+        "c:uset",
+        "n:u:busN"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:Unom",
+        "c:ri",
+        "c:li",
+        "s:uset"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmDsl": {
+    "file": "variables/elements/ElmDsl.json",
+    "size_kb": 3,
+    "study_groups": {
+      "dynamic_rms": [
+        "c:isMatlab",
+        "c:fMatlab"
+      ],
+      "dynamic_emt": [
+        "c:isMatlab",
+        "c:fMatlab"
+      ],
+      "modal_analysis": [
+        "c:isMatlab",
+        "c:fMatlab"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmFeeder": {
+    "file": "variables/elements/ElmFeeder.json",
+    "size_kb": 35,
+    "study_groups": {
+      "load_flow": [
+        "c:Pset",
+        "c:Iset",
+        "c:Sset",
+        "c:Qset",
+        "c:cosphiset",
+        "c:scale",
+        "c:scalephi",
+        "c:Pin"
+      ],
+      "load_flow_dc": [
+        "c:Pset",
+        "c:scale",
+        "c:Pin",
+        "c:Pinsum",
+        "c:Ppv",
+        "c:icon",
+        "c:maxlen",
+        "c:zonescale"
+      ],
+      "opf": [
+        "c:Pset",
+        "c:Iset",
+        "c:Sset",
+        "c:Qset",
+        "c:cosphiset",
+        "c:scale",
+        "c:scalephi",
+        "c:Pin"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:icolor",
+        "b:dist",
+        "b:dist1"
+      ]
+    }
+  },
+  "ElmFile": {
+    "file": "variables/elements/ElmFile.json",
+    "size_kb": 24,
+    "study_groups": {
+      "load_flow": [
+        "c:f_name_abs",
+        "c:ncol",
+        "c:preTrigger",
+        "c:icolv",
+        "c:afacv",
+        "c:bfacv",
+        "c:primv",
+        "c:approx"
+      ],
+      "load_flow_dc": [
+        "c:f_name_abs",
+        "c:ncol",
+        "c:preTrigger",
+        "c:icolv",
+        "c:afacv",
+        "c:bfacv",
+        "c:primv",
+        "c:approx"
+      ],
+      "dynamic_rms": [
+        "c:f_name_abs",
+        "c:ncol",
+        "c:preTrigger",
+        "c:icolv",
+        "c:afacv",
+        "c:bfacv",
+        "c:primv",
+        "c:approx"
+      ],
+      "dynamic_emt": [
+        "c:f_name_abs",
+        "c:ncol",
+        "c:preTrigger",
+        "c:icolv",
+        "c:afacv",
+        "c:bfacv",
+        "c:primv",
+        "c:approx"
+      ],
+      "modal_analysis": [
+        "c:f_name_abs",
+        "c:ncol",
+        "c:preTrigger",
+        "c:icolv",
+        "c:afacv",
+        "c:bfacv",
+        "c:primv",
+        "c:approx"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:f_name_abs",
+        "b:approx"
+      ]
+    }
+  },
+  "ElmFilter": {
+    "file": "variables/elements/ElmFilter.json",
+    "size_kb": 237,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "n:u:busN",
+        "n:upc:busN",
+        "n:U:busN",
+        "n:phiu:busN",
+        "n:phiurel:busN",
+        "n:Ul:busN"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:z",
+        "c:cn",
+        "c:frnom",
+        "c:hpi"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmGenstat": {
+    "file": "variables/elements/ElmGenstat.json",
+    "size_kb": 203,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:sgnn",
+        "c:cosn",
+        "c:p",
+        "c:Pnom",
+        "c:phiini",
+        "c:loading"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:sgnn",
+        "c:cosn",
+        "c:umin",
+        "c:pf_recap",
+        "c:hpi",
+        "c:phiu",
+        "s:Pext",
+        "s:Qext"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:iWindGen",
+        "b:sgnn"
+      ]
+    }
+  },
+  "ElmGndswt": {
+    "file": "variables/elements/ElmGndswt.json",
+    "size_kb": 156,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "n:u:busN",
+        "n:upc:busN",
+        "n:U:busN",
+        "n:phiu:busN",
+        "n:phiurel:busN",
+        "n:Ul:busN"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:ron",
+        "c:xon",
+        "c:input",
+        "c:Ron",
+        "c:Lon"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:Ron",
+        "b:Xon",
+        "b:Lon"
+      ]
+    }
+  },
+  "ElmLne": {
+    "file": "variables/elements/ElmLne.json",
+    "size_kb": 218,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:zline",
+        "c:yline",
+        "c:frnom",
+        "c:hpi",
+        "c:loading",
+        "c:maxload"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:zline",
+        "c:yline",
+        "c:frnom",
+        "c:hpi",
+        "c:loading",
+        "c:Cload",
+        "c:Gload",
+        "c:Losses"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:i_ohl",
+        "b:dline",
+        "b:fline",
+        "b:np_a0",
+        "b:np_a1",
+        "b:np_a2",
+        "b:nz_a0"
+      ]
+    }
+  },
+  "ElmLnesec": {
+    "file": "variables/elements/ElmLnesec.json",
+    "size_kb": 12,
+    "study_groups": {}
+  },
+  "ElmMdl": {
+    "file": "variables/elements/ElmMdl.json",
+    "size_kb": 4,
+    "study_groups": {}
+  },
+  "ElmNec": {
+    "file": "variables/elements/ElmNec.json",
+    "size_kb": 145,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "n:u:busN",
+        "n:upc:busN",
+        "n:U:busN",
+        "n:phiu:busN",
+        "n:phiurel:busN",
+        "n:Ul:busN"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmNet": {
+    "file": "variables/elements/ElmNet.json",
+    "size_kb": 48,
+    "study_groups": {
+      "load_flow": [
+        "c:n_ele",
+        "c:n_area",
+        "c:n_volt",
+        "c:n_sta",
+        "c:n_bar",
+        "c:n_term",
+        "c:n_lne",
+        "c:n_2wt"
+      ],
+      "load_flow_dc": [
+        "c:n_ele",
+        "c:n_area",
+        "c:n_volt",
+        "c:n_sta",
+        "c:n_bar",
+        "c:n_term",
+        "c:n_lne",
+        "c:n_2wt"
+      ],
+      "dynamic_rms": [
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen",
+        "c:Pmot",
+        "c:Qmot",
+        "c:Smot",
+        "c:cosmot"
+      ],
+      "dynamic_emt": [
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen",
+        "c:Pmot",
+        "c:Qmot",
+        "c:Smot",
+        "c:cosmot"
+      ],
+      "modal_analysis": [
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen",
+        "c:Pmot",
+        "c:Qmot",
+        "c:Smot",
+        "c:cosmot"
+      ],
+      "opf": [
+        "c:n_ele",
+        "c:n_area",
+        "c:n_volt",
+        "c:n_sta",
+        "c:n_bar",
+        "c:n_term",
+        "c:n_lne",
+        "c:n_2wt"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:n_ele",
+        "b:n_area",
+        "b:frnom"
+      ]
+    }
+  },
+  "ElmPvsys": {
+    "file": "variables/elements/ElmPvsys.json",
+    "size_kb": 205,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:sgnn",
+        "c:cosn",
+        "c:p",
+        "c:Pnom",
+        "c:phiini",
+        "c:loading"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:sgnn",
+        "c:cosn",
+        "c:umin",
+        "c:pf_recap",
+        "c:hpi",
+        "c:phiu",
+        "s:Pext",
+        "s:Qext"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:iWindGen",
+        "b:sgnn"
+      ]
+    }
+  },
+  "ElmRecmono": {
+    "file": "variables/elements/ElmRecmono.json",
+    "size_kb": 181,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:Pset",
+        "c:Iset",
+        "c:mode",
+        "c:bstp",
+        "c:i_diode",
+        "c:dphi"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:Xd",
+        "c:mode",
+        "c:alphamrd",
+        "c:alphaxrd",
+        "c:gammamrd",
+        "c:gammaxrd",
+        "c:tapmin",
+        "c:tapmax"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmRelay": {
+    "file": "variables/elements/ElmRelay.json",
+    "size_kb": 7,
+    "study_groups": {
+      "load_flow": [
+        "c:yout",
+        "c:Imax"
+      ],
+      "short_circuit": [
+        "c:yout",
+        "c:Imax"
+      ],
+      "dynamic_rms": [
+        "c:yout",
+        "c:Ttrip"
+      ],
+      "dynamic_emt": [
+        "c:yout",
+        "c:Ttrip",
+        "c:fnom"
+      ],
+      "modal_analysis": [
+        "c:yout",
+        "c:Ttrip"
+      ],
+      "basic": [
+        "b:Inom",
+        "b:Unom",
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmRes": {
+    "file": "variables/elements/ElmRes.json",
+    "size_kb": 37,
+    "study_groups": {
+      "dynamic_rms": [
+        "c:ready",
+        "c:monitorFreq",
+        "s:writeTime"
+      ],
+      "dynamic_emt": [
+        "c:ready",
+        "c:monitorFreq",
+        "s:writeTime"
+      ],
+      "modal_analysis": [
+        "c:ready",
+        "c:monitorFreq",
+        "s:writeTime"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:i_obj",
+        "b:violation",
+        "b:nrActions",
+        "b:interruptedPower",
+        "b:restoredPower",
+        "b:interruptedCust",
+        "b:restoredCust"
+      ]
+    }
+  },
+  "ElmShnt": {
+    "file": "variables/elements/ElmShnt.json",
+    "size_kb": 205,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "n:u:busN",
+        "n:upc:busN",
+        "n:U:busN",
+        "n:phiu:busN",
+        "n:phiurel:busN",
+        "n:Ul:busN"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:z",
+        "c:cn",
+        "c:frnom",
+        "c:hpi",
+        "c:ncapa",
+        "c:ncapx",
+        "c:b0",
+        "c:shtype"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmStactrl": {
+    "file": "variables/elements/ElmStactrl.json",
+    "size_kb": 13,
+    "study_groups": {
+      "load_flow": [
+        "c:rembar",
+        "c:uini",
+        "c:qset",
+        "c:qres",
+        "c:imode",
+        "c:i_ctrl",
+        "c:qini",
+        "c:Qdmeas"
+      ],
+      "opf": [
+        "c:rembar",
+        "c:uini",
+        "c:qset",
+        "c:qres",
+        "c:imode",
+        "c:i_ctrl",
+        "c:qini",
+        "c:Qdmeas"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:n_q",
+        "b:n_sym",
+        "b:i_ctrl"
+      ]
+    }
+  },
+  "ElmSubstat": {
+    "file": "variables/elements/ElmSubstat.json",
+    "size_kb": 12,
+    "study_groups": {
+      "load_flow": [
+        "c:Ptotgen",
+        "c:Qtotgen",
+        "c:Ptotcons",
+        "c:Qtotcons",
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen"
+      ],
+      "load_flow_dc": [
+        "c:Ptotgen",
+        "c:Ptotcons",
+        "c:Pgen",
+        "c:Pmot",
+        "c:Pload",
+        "c:Pnet",
+        "c:equiAreas"
+      ],
+      "opf": [
+        "c:Ptotgen",
+        "c:Qtotgen",
+        "c:Ptotcons",
+        "c:Qtotcons",
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmSvs": {
+    "file": "variables/elements/ElmSvs.json",
+    "size_kb": 177,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "n:u:busN",
+        "n:upc:busN",
+        "n:U:busN",
+        "n:phiu:busN",
+        "n:phiurel:busN",
+        "n:Ul:busN"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:ymin",
+        "c:ymax",
+        "c:nxcap",
+        "c:ysvs",
+        "c:qtcr",
+        "c:Qdroop",
+        "c:nfixcap",
+        "c:Qfixcap"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmSym": {
+    "file": "variables/elements/ElmSym.json",
+    "size_kb": 251,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:p",
+        "c:sgnn",
+        "c:cosn",
+        "c:Pnom",
+        "c:phiini",
+        "c:loading"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:sgnn",
+        "c:cosn",
+        "c:c2",
+        "c:loading",
+        "c:Qmin",
+        "c:Qmax",
+        "c:Pmax",
+        "c:ud"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:sgnn",
+        "b:i_spin",
+        "b:i_mot",
+        "b:iWindGen",
+        "b:Kf",
+        "b:ipsu"
+      ]
+    }
+  },
+  "ElmTerm": {
+    "file": "variables/elements/ElmTerm.json",
+    "size_kb": 86,
+    "study_groups": {
+      "load_flow": [
+        "m:ur",
+        "m:ui",
+        "m:u",
+        "m:upc",
+        "m:du",
+        "m:U",
+        "m:phiu",
+        "m:phiurel"
+      ],
+      "load_flow_dc": [
+        "m:u",
+        "m:upc",
+        "m:U",
+        "m:phiu",
+        "m:phiurel",
+        "m:Ul",
+        "m:u1",
+        "m:Pgen"
+      ],
+      "short_circuit": [
+        "m:ur",
+        "m:ui",
+        "m:u",
+        "m:upc",
+        "m:du",
+        "m:U",
+        "m:phiu",
+        "m:Ul"
+      ],
+      "dynamic_rms": [
+        "m:ur",
+        "m:ui",
+        "m:u",
+        "m:upc",
+        "m:du",
+        "m:U",
+        "m:phiu",
+        "m:phiurel"
+      ],
+      "dynamic_emt": [
+        "m:u:Ph",
+        "m:upc:Ph",
+        "m:U:Ph",
+        "m:ul:Ph",
+        "m:ulpc:Ph",
+        "m:Ul:Ph",
+        "m:u0",
+        "m:U0"
+      ],
+      "opf": [
+        "m:ur",
+        "m:ui",
+        "m:u",
+        "m:upc",
+        "m:du",
+        "m:U",
+        "m:phiu",
+        "m:phiurel"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:nphase",
+        "b:index",
+        "b:ur",
+        "b:ui",
+        "b:ursym",
+        "b:uisym",
+        "b:unom"
+      ]
+    }
+  },
+  "ElmTow": {
+    "file": "variables/elements/ElmTow.json",
+    "size_kb": 26,
+    "study_groups": {
+      "load_flow": [
+        "c:zline",
+        "c:yline",
+        "c:rlinedc",
+        "c:glinedc",
+        "c:yZline",
+        "c:frnom",
+        "c:frnomDC",
+        "c:hpi"
+      ],
+      "short_circuit": [
+        "c:zline",
+        "c:yline",
+        "c:rlinedc",
+        "c:glinedc",
+        "c:yZline",
+        "c:frnom",
+        "c:frnomDC",
+        "c:hpi"
+      ],
+      "dynamic_rms": [
+        "c:zline",
+        "c:yline",
+        "c:rlinedc",
+        "c:glinedc",
+        "c:yZline",
+        "c:frnom",
+        "c:frnomDC",
+        "c:hpi"
+      ],
+      "dynamic_emt": [
+        "c:yline",
+        "c:frnom",
+        "c:frnomDC",
+        "c:hpi",
+        "c:rline",
+        "c:lline",
+        "c:gline",
+        "c:cline"
+      ],
+      "modal_analysis": [
+        "c:zline",
+        "c:yline",
+        "c:rlinedc",
+        "c:glinedc",
+        "c:yZline",
+        "c:frnom",
+        "c:frnomDC",
+        "c:hpi"
+      ],
+      "opf": [
+        "c:zline",
+        "c:yline",
+        "c:rlinedc",
+        "c:glinedc",
+        "c:yZline",
+        "c:frnom",
+        "c:frnomDC",
+        "c:hpi"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmTr2": {
+    "file": "variables/elements/ElmTr2.json",
+    "size_kb": 214,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:loading_h",
+        "c:loading_l",
+        "c:loading",
+        "c:maxload",
+        "c:nntap",
+        "c:ntpmn"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:loading_h",
+        "c:loading_l",
+        "c:loading",
+        "c:nntap",
+        "c:nntap_int",
+        "c:ntpmn",
+        "c:ntpmx",
+        "c:dut"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:Kf",
+        "b:Ugn",
+        "b:ipsu",
+        "b:nt2ag",
+        "b:ntrcn",
+        "b:i_cont",
+        "b:iExtCtrl"
+      ]
+    }
+  },
+  "ElmTr3": {
+    "file": "variables/elements/ElmTr3.json",
+    "size_kb": 239,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:loading_h",
+        "c:loading_m",
+        "c:loading_l",
+        "c:loading",
+        "c:maxload",
+        "c:n3tap_h"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:loading_h",
+        "c:loading_m",
+        "c:loading_l",
+        "c:loading",
+        "c:n3tap_h",
+        "c:n3tap_m",
+        "c:n3tap_l",
+        "c:nntap_int_h"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:nt2ag",
+        "b:ntrcn",
+        "b:i_cont",
+        "b:itrcn:Ph",
+        "b:icont:Ph",
+        "b:iExtCtrl:Ph",
+        "b:isat"
+      ]
+    }
+  },
+  "ElmTr4": {
+    "file": "variables/elements/ElmTr4.json",
+    "size_kb": 238,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:loading_hv0",
+        "c:loading_lv1",
+        "c:loading_lv2",
+        "c:loading_lv3",
+        "c:loading",
+        "c:maxload"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:loading_hv0",
+        "c:loading_lv1",
+        "c:loading_lv2",
+        "c:loading_lv3",
+        "c:loading",
+        "c:ntap_h0",
+        "c:ntap_l1",
+        "c:ntap_l2"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:trangle_h0",
+        "b:trangle_l1",
+        "b:trangle_l2",
+        "b:trangle_l3",
+        "b:itrcn:Ph",
+        "b:icont:Ph",
+        "b:iExtCtrl:Ph"
+      ]
+    }
+  },
+  "ElmTrain": {
+    "file": "variables/elements/ElmTrain.json",
+    "size_kb": 146,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "n:u:busN",
+        "n:upc:busN",
+        "n:U:busN",
+        "n:phiu:busN",
+        "n:phiurel:busN",
+        "n:Ul:busN"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmTrb": {
+    "file": "variables/elements/ElmTrb.json",
+    "size_kb": 162,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:loading_h",
+        "c:loading_l",
+        "c:loading",
+        "c:maxload",
+        "c:ratfac",
+        "c:snom"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:loading_h",
+        "c:loading_l",
+        "c:loading",
+        "c:ratfac",
+        "c:snom",
+        "c:zshv",
+        "c:zslv",
+        "c:ym"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:nt2ag"
+      ]
+    }
+  },
+  "ElmTrfstat": {
+    "file": "variables/elements/ElmTrfstat.json",
+    "size_kb": 15,
+    "study_groups": {
+      "load_flow": [
+        "c:Ptotgen",
+        "c:Qtotgen",
+        "c:Ptotcons",
+        "c:Qtotcons",
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen"
+      ],
+      "load_flow_dc": [
+        "c:Ptotgen",
+        "c:Ptotcons",
+        "c:Pgen",
+        "c:Pmot",
+        "c:Pload",
+        "c:Pnet",
+        "c:phiu",
+        "c:Pload_fup"
+      ],
+      "opf": [
+        "c:Ptotgen",
+        "c:Qtotgen",
+        "c:Ptotcons",
+        "c:Qtotcons",
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmTrmult": {
+    "file": "variables/elements/ElmTrmult.json",
+    "size_kb": 173,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:loading_w",
+        "c:loading",
+        "c:maxload",
+        "c:tapRatio",
+        "c:ntap",
+        "c:ntap_int"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:loading_w",
+        "c:loading",
+        "c:ratfact",
+        "c:um_1",
+        "c:ym",
+        "c:tapRatio",
+        "c:ntap",
+        "c:ntap_int"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmVac": {
+    "file": "variables/elements/ElmVac.json",
+    "size_kb": 165,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:phiu",
+        "c:Kpf",
+        "c:Ksf",
+        "c:iRefElement",
+        "c:Ploss",
+        "c:Qloss"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:hpi",
+        "s:U_A",
+        "s:U_B",
+        "s:U_C",
+        "s:phiu_B",
+        "s:phiu_C",
+        "s:xspeed",
+        "s:fref"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmVoltreg": {
+    "file": "variables/elements/ElmVoltreg.json",
+    "size_kb": 172,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:loading",
+        "c:maxload",
+        "c:ntpmin",
+        "c:ntpmax",
+        "c:dut",
+        "c:ratfac"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:loading",
+        "c:ntpmin",
+        "c:ntpmax",
+        "c:dut",
+        "c:ratfac",
+        "c:snom",
+        "c:zs",
+        "c:Tctrl"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:ntrcn",
+        "b:i_cont"
+      ]
+    }
+  },
+  "ElmVscmono": {
+    "file": "variables/elements/ElmVscmono.json",
+    "size_kb": 215,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:i_acdc",
+        "c:pini",
+        "c:Pmin",
+        "c:Pmax",
+        "c:i_plim",
+        "c:Kpf"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:hpi",
+        "c:Pm",
+        "c:snomn",
+        "c:K0",
+        "c:DCPoleLosses",
+        "c:Pmd_ctrl",
+        "c:Pmq_ctrl",
+        "c:i_acdc"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:iWindGen"
+      ]
+    }
+  },
+  "ElmXnet": {
+    "file": "variables/elements/ElmXnet.json",
+    "size_kb": 202,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:p",
+        "c:cosn",
+        "c:uini",
+        "c:iPowerOn",
+        "c:Pdisp",
+        "c:Kf"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:sgnn",
+        "c:c2",
+        "c:Te",
+        "c:TD",
+        "c:Tx",
+        "c:TQ",
+        "c:Tag",
+        "c:xme"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmZone": {
+    "file": "variables/elements/ElmZone.json",
+    "size_kb": 44,
+    "study_groups": {
+      "load_flow": [
+        "c:n_ele",
+        "c:n_zones",
+        "c:n_volt",
+        "c:n_bar",
+        "c:n_term",
+        "c:n_lne",
+        "c:n_sym",
+        "c:n_asm"
+      ],
+      "load_flow_dc": [
+        "c:n_ele",
+        "c:n_zones",
+        "c:n_volt",
+        "c:n_bar",
+        "c:n_term",
+        "c:n_lne",
+        "c:n_sym",
+        "c:n_asm"
+      ],
+      "dynamic_rms": [
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen",
+        "c:Pmot",
+        "c:Qmot",
+        "c:Smot",
+        "c:cosmot"
+      ],
+      "dynamic_emt": [
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen",
+        "c:Pmot",
+        "c:Qmot",
+        "c:Smot",
+        "c:cosmot"
+      ],
+      "modal_analysis": [
+        "c:Pgen",
+        "c:Qgen",
+        "c:Sgen",
+        "c:cosgen",
+        "c:Pmot",
+        "c:Qmot",
+        "c:Smot",
+        "c:cosmot"
+      ],
+      "opf": [
+        "c:n_ele",
+        "c:n_zones",
+        "c:n_volt",
+        "c:n_bar",
+        "c:n_term",
+        "c:n_lne",
+        "c:n_sym",
+        "c:n_asm"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:n_ele",
+        "b:n_zones",
+        "b:scale",
+        "b:scaleWind"
+      ]
+    }
+  },
+  "ElmHvdcbi": {
+    "file": "variables/elements/ElmHvdcbi.json",
+    "size_kb": 0,
+    "study_groups": {}
+  },
+  "ElmHvdcvsc": {
+    "file": "variables/elements/ElmHvdcvsc.json",
+    "size_kb": 0,
+    "study_groups": {}
+  },
+  "ElmIac": {
+    "file": "variables/elements/ElmIac.json",
+    "size_kb": 157,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "n:u:busN",
+        "n:upc:busN",
+        "n:U:busN",
+        "n:phiu:busN",
+        "n:phiurel:busN",
+        "n:Ul:busN"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:Ir",
+        "c:isetp",
+        "c:cosini",
+        "c:hpi",
+        "c:G1",
+        "c:C1",
+        "s:i0",
+        "s:I0"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmLod": {
+    "file": "variables/elements/ElmLod.json",
+    "size_kb": 213,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:pini",
+        "c:scale0",
+        "c:ncust",
+        "c:i_rem",
+        "c:zonescale",
+        "c:iRefElement"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:hpi",
+        "c:pini",
+        "c:lodst_l",
+        "c:loddy_l",
+        "c:kpf",
+        "c:kqf",
+        "c:t1",
+        "c:sd0"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmLodlv": {
+    "file": "variables/elements/ElmLodlv.json",
+    "size_kb": 173,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:ncust",
+        "c:scale0",
+        "c:zonescale",
+        "c:Pmism",
+        "c:Ploss",
+        "c:Qloss"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmLodmv": {
+    "file": "variables/elements/ElmLodmv.json",
+    "size_kb": 183,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:ncust",
+        "c:scale0",
+        "c:zonescale",
+        "c:gscale",
+        "c:tempscFac",
+        "c:Ploss"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "s:Pext",
+        "s:Qext",
+        "s:igen",
+        "s:phiuigen"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmSecctrl": {
+    "file": "variables/elements/ElmSecctrl.json",
+    "size_kb": 8,
+    "study_groups": {
+      "load_flow": [
+        "c:rembar",
+        "c:pini",
+        "c:imode",
+        "c:i_modus",
+        "c:phiu",
+        "c:PExch",
+        "c:PctrlLim",
+        "c:nCtrlIter"
+      ],
+      "load_flow_dc": [
+        "c:rembar",
+        "c:pini",
+        "c:imode",
+        "c:i_modus",
+        "c:phiu",
+        "c:PExch",
+        "c:PctrlLim",
+        "s:dpsco"
+      ],
+      "opf": [
+        "c:rembar",
+        "c:pini",
+        "c:imode",
+        "c:i_modus",
+        "c:phiu",
+        "c:PExch",
+        "c:PctrlLim",
+        "c:nCtrlIter"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:n_sym",
+        "b:i_modus",
+        "b:i_net"
+      ]
+    }
+  },
+  "ElmSind": {
+    "file": "variables/elements/ElmSind.json",
+    "size_kb": 163,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:R",
+        "c:loading",
+        "c:maxload",
+        "c:dphiu",
+        "c:Ploss",
+        "c:Qloss"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:R",
+        "c:L",
+        "c:loading",
+        "c:Inom",
+        "c:Zind_1",
+        "s:Rin",
+        "s:Xin",
+        "s:Lin"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name"
+      ]
+    }
+  },
+  "ElmVsc": {
+    "file": "variables/elements/ElmVsc.json",
+    "size_kb": 215,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:i_acdc",
+        "c:pini",
+        "c:Pmin",
+        "c:Pmax",
+        "c:i_plim",
+        "c:Kpf"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:hpi",
+        "c:Pm",
+        "c:snomn",
+        "c:K0",
+        "c:DCPoleLosses",
+        "c:Pmd_ctrl",
+        "c:Pmq_ctrl",
+        "c:i_acdc"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:iWindGen"
+      ]
+    }
+  },
+  "ElmWind": {
+    "file": "variables/elements/ElmWind.json",
+    "size_kb": 0,
+    "study_groups": {}
+  },
+  "ElmZpu": {
+    "file": "variables/elements/ElmZpu.json",
+    "size_kb": 166,
+    "study_groups": {
+      "load_flow": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "load_flow_dc": [
+        "m:P:busN",
+        "m:Q:busN",
+        "c:z1_ij",
+        "c:z1_ji",
+        "c:loading",
+        "c:ratfac",
+        "c:dphiu",
+        "c:Ploss"
+      ],
+      "short_circuit": [
+        "m:I:busN",
+        "m:phii:busN",
+        "m:i1:busN",
+        "m:I1:busN",
+        "m:phii1:busN",
+        "m:P:busN",
+        "m:Q:busN",
+        "m:i1P:busN"
+      ],
+      "dynamic_rms": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "dynamic_emt": [
+        "m:u0:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN",
+        "m:inet:busN:Ph"
+      ],
+      "modal_analysis": [
+        "c:z1_ij",
+        "c:z1_ji",
+        "c:y1_ij",
+        "c:y1_ji",
+        "c:loading",
+        "c:ratfac",
+        "c:Inom_i",
+        "c:Inom_j"
+      ],
+      "opf": [
+        "m:urnet:busN",
+        "m:uinet:busN",
+        "m:u1r:busN",
+        "m:u1i:busN",
+        "m:u1:busN",
+        "m:U1:busN",
+        "m:U1l:busN",
+        "m:phiu1:busN"
+      ],
+      "basic": [
+        "b:loc_name",
+        "b:nphshift",
+        "b:uratio",
+        "b:addang"
+      ]
+    }
+  }
+}

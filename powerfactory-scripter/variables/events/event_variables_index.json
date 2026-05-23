@@ -1,6 +1,6 @@
 {
   "EvtShc": {
-    "file": "variables\\EvtShc.json",
+    "file": "variables/events/EvtShc.json",
     "size_kb": 2,
     "params": [
       "e:outserv",
@@ -14,7 +14,7 @@
     ]
   },
   "EvtSwitch": {
-    "file": "variables\\EvtSwitch.json",
+    "file": "variables/events/EvtSwitch.json",
     "size_kb": 3,
     "params": [
       "e:outserv",
@@ -28,7 +28,7 @@
     ]
   },
   "EvtLod": {
-    "file": "variables\\EvtLod.json",
+    "file": "variables/events/EvtLod.json",
     "size_kb": 2,
     "params": [
       "e:outserv",
@@ -42,7 +42,7 @@
     ]
   },
   "EvtSym": {
-    "file": "variables\\EvtSym.json",
+    "file": "variables/events/EvtSym.json",
     "size_kb": 1,
     "params": [
       "e:outserv",
@@ -56,7 +56,7 @@
     ]
   },
   "EvtGen": {
-    "file": "variables\\EvtGen.json",
+    "file": "variables/events/EvtGen.json",
     "size_kb": 1,
     "params": [
       "e:outserv",
@@ -70,7 +70,7 @@
     ]
   },
   "EvtParam": {
-    "file": "variables\\EvtParam.json",
+    "file": "variables/events/EvtParam.json",
     "size_kb": 2,
     "params": [
       "e:variable",
@@ -84,7 +84,7 @@
     ]
   },
   "EvtTap": {
-    "file": "variables\\EvtTap.json",
+    "file": "variables/events/EvtTap.json",
     "size_kb": 1,
     "params": [
       "e:outserv",
@@ -98,7 +98,7 @@
     ]
   },
   "EvtOutage": {
-    "file": "variables\\EvtOutage.json",
+    "file": "variables/events/EvtOutage.json",
     "size_kb": 1,
     "params": [
       "e:outserv",
