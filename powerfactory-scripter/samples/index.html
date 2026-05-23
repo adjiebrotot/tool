@@ -745,15 +745,15 @@
           <span class="step-badge">7</span> Expected Output
         </div>
         <p class="hint">The script writes a CSV file to your output directory, e.g. <code>results.csv</code>:</p>
-        <pre class="output-preview">Q_cap,bus_voltage
-0.0,0.873
-0.5,0.891
-1.0,0.908
-1.5,0.925
-2.0,0.943
-2.5,0.961
-3.0,1.024
-3.5,1.041
+        <pre class="output-preview">Q_cap,Converge?,bus_voltage
+0.0,True,0.873
+0.5,True,0.891
+1.0,True,0.908
+1.5,True,0.925
+2.0,True,0.943
+2.5,True,0.961
+3.0,True,1.024
+3.5,True,1.041
 ...</pre>
         <p class="hint">Open the CSV in Excel or Python (pandas) to plot voltage vs. capacitor size and identify the minimum capacitor rating that satisfies your voltage standard.</p>
       </div>
@@ -1268,12 +1268,12 @@ Best objective (thd) = 2.61</pre>
           <span class="step-badge">9</span> Expected Output
         </div>
         <p class="hint">The script writes a CSV with one row per scenario. Input columns show the scenario values; wildcard output columns are named after each element's <code>loc_name</code>. The <code>any_overload</code> column is computed by the Custom Calculation:</p>
-        <pre class="output-preview">Line_A_outserv,Line_B_outserv,Line_C_outserv,Line_D_outserv,Bus_HV1,Bus_HV2,Bus_HV3,Line_A,Line_B,Line_C,Line_D,any_overload
-0,0,0,0,1.023,0.998,1.005,42.1,38.5,65.3,71.2,False
-1,0,0,0,0.887,1.012,0.995,65.3,88.7,45.2,80.5,False
-0,1,0,0,1.012,0.889,1.003,88.7,55.2,40.1,75.3,False
-0,0,1,0,1.098,1.001,1.004,55.2,67.3,112.4,68.9,True
-0,0,0,1,0.991,1.003,0.998,48.6,71.9,82.3,95.1,False</pre>
+        <pre class="output-preview">Line_A_outserv,Line_B_outserv,Line_C_outserv,Line_D_outserv,Converge?,Bus_HV1,Bus_HV2,Bus_HV3,Line_A,Line_B,Line_C,Line_D,any_overload
+0,0,0,0,True,1.023,0.998,1.005,42.1,38.5,65.3,71.2,False
+1,0,0,0,True,0.887,1.012,0.995,65.3,88.7,45.2,80.5,False
+0,1,0,0,True,1.012,0.889,1.003,88.7,55.2,40.1,75.3,False
+0,0,1,0,True,1.098,1.001,1.004,55.2,67.3,112.4,68.9,True
+0,0,0,1,True,0.991,1.003,0.998,48.6,71.9,82.3,95.1,False</pre>
         <p class="hint">Each row is a defined N-1 contingency; no filtering is needed. For voltage violations, filter the bus columns directly in pandas or add a similar custom function referencing the bus <code>loc_name</code> values.</p>
       </div>
 
