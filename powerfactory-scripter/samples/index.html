@@ -1205,14 +1205,14 @@ Best objective (thd) = 2.61</pre>
           <span class="step-badge">7</span> Expected Output
         </div>
         <p class="hint">The script writes a summary CSV to your output directory, e.g. <code>results.csv</code>:</p>
-        <pre class="output-preview">ngnum,bus_voltage_nadir,synccon_q_peak,rotor_speed_min,out_of_step,sizing_ok
-1,0.71,47.3,0.961,1,False
-2,0.74,94.1,0.966,1,False
-3,0.76,140.8,0.970,0,False
-4,0.79,187.2,0.973,0,True
-5,0.82,233.6,0.976,0,True
+        <pre class="output-preview">ngnum,Converge?,bus_voltage_nadir,synccon_q_peak,rotor_speed_min,out_of_step,sizing_ok
+1,True,0.71,47.3,0.961,1,False
+2,True,0.74,94.1,0.966,1,False
+3,True,0.76,140.8,0.970,0,False
+4,True,0.79,187.2,0.973,0,True
+5,True,0.82,233.6,0.976,0,True
 ...
-10,0.91,466.1,0.984,0,True</pre>
+10,True,0.91,466.1,0.984,0,True</pre>
         <p class="hint">The minimum passing size is the first row where <code>sizing_ok = True</code> — here, <strong>4 parallel units</strong>. Time-domain waveform plots for <code>bus_voltage_nadir</code> and <code>rotor_speed_min</code> are saved as <code>.png</code> files in <code>{output_dir}/graph/</code> for each scenario.</p>
       </div>
 
@@ -1298,7 +1298,7 @@ Best objective (thd) = 2.61</pre>
                   <td style="text-align:center;color:var(--muted);font-size:12px;">1</td>
                   <td><input type="text" readonly value="*.ElmLne" /></td>
                   <td><input type="text" readonly value="" placeholder="(none)" /></td>
-                  <td><select disabled><option>≥</option></select></td>
+                  <td><select disabled><option>>=</option></select></td>
                   <td><input type="text" readonly value="" placeholder="(none)" /></td>
                 </tr>
               </tbody>
