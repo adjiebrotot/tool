@@ -16,34 +16,29 @@
       "desc": "Absolute"
     },
     {
-      "var": "e:i_shc",
+      "var": "e:opt_evt",
       "unit": "",
-      "desc": "Fault Type"
+      "desc": "Type of Event"
     },
     {
-      "var": "e:i_p2psc",
+      "var": "e:iopt_src",
       "unit": "",
-      "desc": "Phases"
+      "desc": "Source"
     },
     {
-      "var": "e:i_pspgf",
+      "var": "e:iopt_type",
       "unit": "",
-      "desc": "Phase"
+      "desc": "Event of Load"
     },
     {
-      "var": "e:i_p2pgf",
+      "var": "e:iopt_load",
       "unit": "",
-      "desc": "Phases"
+      "desc": "Event for"
     },
     {
-      "var": "e:ZfaultInp",
+      "var": "e:iStage",
       "unit": "",
-      "desc": "Input"
-    },
-    {
-      "var": "e:i_clearShc",
-      "unit": "",
-      "desc": "Clear Short-Circuit"
+      "desc": "Stage"
     },
     {
       "var": "e:time",
@@ -51,24 +46,29 @@
       "desc": "Absolute"
     },
     {
-      "var": "e:R_f",
-      "unit": "Ohm",
-      "desc": "Resistance"
-    },
-    {
-      "var": "e:X_f",
-      "unit": "Ohm",
-      "desc": "Reactance"
-    },
-    {
-      "var": "e:L_f",
-      "unit": "mH",
-      "desc": "Inductance"
-    },
-    {
-      "var": "e:shcLocation",
+      "var": "e:dP",
       "unit": "%",
-      "desc": "Fault Location"
+      "desc": "Active Power"
+    },
+    {
+      "var": "e:dQ",
+      "unit": "%",
+      "desc": "Reactive Power"
+    },
+    {
+      "var": "e:newP",
+      "unit": "%Pnom.",
+      "desc": "Active Power"
+    },
+    {
+      "var": "e:newQ",
+      "unit": "%Qnom.",
+      "desc": "Reactive Power"
+    },
+    {
+      "var": "e:t_ramp",
+      "unit": "s",
+      "desc": "Ramp Duration"
     },
     {
       "var": "e:tDateTime",
@@ -77,13 +77,18 @@
     },
     {
       "var": "e:p_target",
-      "unit": "",
-      "desc": "Object"
+      "unit": "ElmLod*,SetSelect",
+      "desc": "Load"
     },
     {
       "var": "e:p_from",
       "unit": "Elm*",
       "desc": "Event defined by"
+    },
+    {
+      "var": "e:contents",
+      "unit": "",
+      "desc": "Loads"
     },
     {
       "var": "e:dtime",
@@ -116,29 +121,14 @@
       "desc": "Now"
     },
     {
-      "var": "e:Z_f",
-      "unit": "Ohm",
-      "desc": "Impedance"
+      "var": "e:cAbsP",
+      "unit": "MW",
+      "desc": "Active Power"
     },
     {
-      "var": "e:ang_f",
-      "unit": "deg",
-      "desc": "Angle"
-    },
-    {
-      "var": "e:X2R_f",
-      "unit": "",
-      "desc": "X/R ratio"
-    },
-    {
-      "var": "e:R2X_f",
-      "unit": "",
-      "desc": "R/X ratio"
-    },
-    {
-      "var": "e:effectedLne",
-      "unit": "ElmLne",
-      "desc": "Affected line"
+      "var": "e:cAbsQ",
+      "unit": "Mvar",
+      "desc": "Reactive Power"
     }
   ]
 }

@@ -1,0 +1,89 @@
+{
+  "e": [
+    {
+      "var": "e:variable",
+      "unit": "",
+      "desc": "Name of Variable"
+    },
+    {
+      "var": "e:value",
+      "unit": "",
+      "desc": "New Value"
+    },
+    {
+      "var": "e:outserv",
+      "unit": "",
+      "desc": "Out of Service"
+    },
+    {
+      "var": "e:mtime",
+      "unit": "min",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:hrtime",
+      "unit": "h",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:i_sysmat",
+      "unit": "",
+      "desc": "Recompute system matrix"
+    },
+    {
+      "var": "e:eventHandling",
+      "unit": "",
+      "desc": "Event handling"
+    },
+    {
+      "var": "e:time",
+      "unit": "s",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:tDateTime",
+      "unit": "",
+      "desc": "Execution Time"
+    },
+    {
+      "var": "e:p_target",
+      "unit": "Elm*,Rel*,Sta*,SetSelect",
+      "desc": "Element"
+    },
+    {
+      "var": "e:p_from",
+      "unit": "Elm*,Rel*,Sta*",
+      "desc": "Event defined by"
+    },
+    {
+      "var": "e:dtime",
+      "unit": "s",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:tact",
+      "unit": "s",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dmtime",
+      "unit": "min",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:mtact",
+      "unit": "min",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dhrtime",
+      "unit": "h",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:hrtact",
+      "unit": "h",
+      "desc": "Now"
+    }
+  ]
+}

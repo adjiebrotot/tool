@@ -1,0 +1,114 @@
+{
+  "EvtShc": {
+    "file": "variables\\EvtShc.json",
+    "size_kb": 2,
+    "params": [
+      "e:outserv",
+      "e:mtime",
+      "e:hrtime",
+      "e:i_shc",
+      "e:i_p2psc",
+      "e:i_pspgf",
+      "e:i_p2pgf",
+      "e:ZfaultInp"
+    ]
+  },
+  "EvtSwitch": {
+    "file": "variables\\EvtSwitch.json",
+    "size_kb": 3,
+    "params": [
+      "e:outserv",
+      "e:mtime",
+      "e:hrtime",
+      "e:i_switch",
+      "e:i_allph",
+      "e:i_a",
+      "e:i_b",
+      "e:i_c"
+    ]
+  },
+  "EvtLod": {
+    "file": "variables\\EvtLod.json",
+    "size_kb": 2,
+    "params": [
+      "e:outserv",
+      "e:mtime",
+      "e:hrtime",
+      "e:opt_evt",
+      "e:iopt_src",
+      "e:iopt_type",
+      "e:iopt_load",
+      "e:iStage"
+    ]
+  },
+  "EvtSym": {
+    "file": "variables\\EvtSym.json",
+    "size_kb": 1,
+    "params": [
+      "e:outserv",
+      "e:mtime",
+      "e:hrtime",
+      "e:outNgnum",
+      "e:time",
+      "e:addmt",
+      "e:newS",
+      "e:tDateTime"
+    ]
+  },
+  "EvtGen": {
+    "file": "variables\\EvtGen.json",
+    "size_kb": 1,
+    "params": [
+      "e:outserv",
+      "e:mtime",
+      "e:hrtime",
+      "e:powerChange",
+      "e:time",
+      "e:dP",
+      "e:dQ",
+      "e:tDateTime"
+    ]
+  },
+  "EvtParam": {
+    "file": "variables\\EvtParam.json",
+    "size_kb": 2,
+    "params": [
+      "e:variable",
+      "e:value",
+      "e:outserv",
+      "e:mtime",
+      "e:hrtime",
+      "e:i_sysmat",
+      "e:eventHandling",
+      "e:time"
+    ]
+  },
+  "EvtTap": {
+    "file": "variables\\EvtTap.json",
+    "size_kb": 1,
+    "params": [
+      "e:outserv",
+      "e:mtime",
+      "e:hrtime",
+      "e:i_tap",
+      "e:ntap",
+      "e:bus",
+      "e:time",
+      "e:tDateTime"
+    ]
+  },
+  "EvtOutage": {
+    "file": "variables\\EvtOutage.json",
+    "size_kb": 1,
+    "params": [
+      "e:outserv",
+      "e:mtime",
+      "e:hrtime",
+      "e:i_what",
+      "e:time",
+      "e:tDateTime",
+      "e:p_target",
+      "e:p_from"
+    ]
+  }
+}

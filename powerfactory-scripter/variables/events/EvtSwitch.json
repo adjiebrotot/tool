@@ -1,32 +1,164 @@
 {
-  "params": [
+  "e": [
     {
-      "var": "p_target",
-      "unit": "Elm*",
-      "desc": "Target element (line, coupler, or transformer to switch)"
+      "var": "e:outserv",
+      "unit": "",
+      "desc": "Out of Service"
     },
     {
-      "var": "time",
+      "var": "e:mtime",
+      "unit": "min",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:hrtime",
+      "unit": "h",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:i_switch",
+      "unit": "",
+      "desc": "Action"
+    },
+    {
+      "var": "e:i_allph",
+      "unit": "",
+      "desc": "All phases"
+    },
+    {
+      "var": "e:i_a",
+      "unit": "",
+      "desc": "Phase a"
+    },
+    {
+      "var": "e:i_b",
+      "unit": "",
+      "desc": "Phase b"
+    },
+    {
+      "var": "e:i_c",
+      "unit": "",
+      "desc": "Phase c"
+    },
+    {
+      "var": "e:i_n",
+      "unit": "",
+      "desc": "Neutral"
+    },
+    {
+      "var": "e:i_inst",
+      "unit": "",
+      "desc": "Trigger closing at"
+    },
+    {
+      "var": "e:i_phase",
+      "unit": "",
+      "desc": "Trigger on phase"
+    },
+    {
+      "var": "e:i_open",
+      "unit": "",
+      "desc": "Trigger opening at"
+    },
+    {
+      "var": "e:i_scheme",
+      "unit": "",
+      "desc": "Scheme"
+    },
+    {
+      "var": "e:ctrl_type",
+      "unit": "",
+      "desc": "Used in Step"
+    },
+    {
+      "var": "e:i_halfw",
+      "unit": "",
+      "desc": "Consider half wave"
+    },
+    {
+      "var": "e:i_larlow",
+      "unit": "",
+      "desc": "Larger or lower than threshold"
+    },
+    {
+      "var": "e:time",
       "unit": "s",
-      "desc": "Event time in seconds"
+      "desc": "Absolute"
     },
     {
-      "var": "i_switch",
-      "unit": "",
-      "desc": "Switching action: 0=open (trip), 1=close (reclose)"
+      "var": "e:v_lim",
+      "unit": "p.u.",
+      "desc": "Amplitude threshold"
     },
     {
-      "var": "loc_name",
+      "var": "e:d_2ndph",
+      "unit": "ms",
+      "desc": "Second phase trigger"
+    },
+    {
+      "var": "e:d_3rdph",
+      "unit": "ms",
+      "desc": "Third phase trigger"
+    },
+    {
+      "var": "e:d_nph",
+      "unit": "ms",
+      "desc": "Neutral delay"
+    },
+    {
+      "var": "e:tDateTime",
       "unit": "",
-      "desc": "Name of the event object"
+      "desc": "Execution Time"
+    },
+    {
+      "var": "e:p_target",
+      "unit": "StaSwitch,StaCubic,RelFuse,Elm*",
+      "desc": "Breaker or Element"
+    },
+    {
+      "var": "e:p_from",
+      "unit": "Elm*",
+      "desc": "Event defined by"
+    },
+    {
+      "var": "e:dtime",
+      "unit": "s",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:tact",
+      "unit": "s",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dmtime",
+      "unit": "min",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:mtact",
+      "unit": "min",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dhrtime",
+      "unit": "h",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:hrtact",
+      "unit": "h",
+      "desc": "Now"
+    },
+    {
+      "var": "e:Ilim",
+      "unit": "A",
+      "desc": "Current threshold (abs.)"
+    },
+    {
+      "var": "e:Ulim",
+      "unit": "kV",
+      "desc": "Voltage threshold (abs.)"
     }
-  ],
-  "notes": {
-    "i_switch_codes": {
-      "0": "Open (trip the element)",
-      "1": "Close (reconnect the element)"
-    },
-    "resolution": "Resolved from app.GetFromStudyCase(\"Simulation Events/Fault.IntEvt\").GetContents(\"<name>.EvtSwitch\")",
-    "attribute_prefix": "None — use SetAttribute(\"time\", value) directly, no e: or m: prefix"
-  }
+  ]
 }

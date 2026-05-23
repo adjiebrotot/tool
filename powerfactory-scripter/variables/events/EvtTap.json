@@ -1,0 +1,84 @@
+{
+  "e": [
+    {
+      "var": "e:outserv",
+      "unit": "",
+      "desc": "Out of Service"
+    },
+    {
+      "var": "e:mtime",
+      "unit": "min",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:hrtime",
+      "unit": "h",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:i_tap",
+      "unit": "",
+      "desc": "Tap Action"
+    },
+    {
+      "var": "e:ntap",
+      "unit": "",
+      "desc": "Tap"
+    },
+    {
+      "var": "e:bus",
+      "unit": "",
+      "desc": "for Tap at"
+    },
+    {
+      "var": "e:time",
+      "unit": "s",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:tDateTime",
+      "unit": "",
+      "desc": "Execution Time"
+    },
+    {
+      "var": "e:p_target",
+      "unit": "ElmShnt,ElmTr2,ElmTr2n,ElmTr3,ElmTr4,ElmTrmult,ElmVoltreg",
+      "desc": "Shunt or Transformer"
+    },
+    {
+      "var": "e:p_from",
+      "unit": "Elm*",
+      "desc": "Event defined by"
+    },
+    {
+      "var": "e:dtime",
+      "unit": "s",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:tact",
+      "unit": "s",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dmtime",
+      "unit": "min",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:mtact",
+      "unit": "min",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dhrtime",
+      "unit": "h",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:hrtact",
+      "unit": "h",
+      "desc": "Now"
+    }
+  ]
+}
