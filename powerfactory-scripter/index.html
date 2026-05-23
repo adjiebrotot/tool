@@ -971,6 +971,7 @@
             <option value="brute_force">Brute Force</option>
             <option value="optimisation">Optimisation</option>
             <option value="custom">Custom</option>
+            <option value="contingency">Contingency</option>
           </select>
         </div>
         <div class="form-row">
@@ -1063,6 +1064,56 @@
         <div class="form-row">
           <label>Scenario File Path <span class="tt" data-tip="Path to the Excel scenario file (.xlsx). Download the template above for the required 3-row header format.">?</span></label>
           <input type="text" id="scenario-file-path" placeholder="C:\scenarios\my_scenarios.xlsx" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: CONTINGENCY CONFIG ──────────────────────────── -->
+    <div class="section-card cond-hidden" id="sec-contingency">
+      <div class="section-header" onclick="toggleSection('sec-contingency')">
+        <h3>Contingency Config</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="info-box">
+          Specify one or more wildcard element queries. The script resolves all matching objects at runtime, then iterates through each contingency (N-1: one element tripped; N-2: two elements tripped simultaneously). A base case (all in service) is always included as the first run.
+          <button class="info-more-toggle" onclick="toggleInfoExtra('contingency-info-extra', this)">More ▾</button>
+          <div class="info-extra" id="contingency-info-extra">
+            <strong>Element Query:</strong> wildcard PF query (e.g. <code>*.ElmLne</code>, <code>*.ElmSym</code>).<br/>
+            <strong>Filter Attribute:</strong> optional attribute to filter resolved objects (e.g. <code>e:Unom</code>, <code>loc_name</code>).<br/>
+            <strong>Filter Value:</strong> numeric (e.g. <code>66</code>), plain string, or wildcard string (e.g. <code>North*</code> — case-insensitive glob).<br/>
+            <strong>N-2 / Combine:</strong> when unchecked, pairs are formed within each element type only (line × line, generator × generator). When checked, pairs cross element types too.<br/>
+            The <code>outserv</code> attribute (1 = out, 0 = in) is always used and restored in a <code>finally</code> block after each run.
+          </div>
+        </div>
+        <div class="dyn-table-wrapper">
+          <table class="dyn-table" id="contingency-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Element Query <span class="tt" data-tip="Wildcard PF query — all matching objects become contingency candidates (e.g. *.ElmLne).">?</span></th>
+                <th>Filter Attribute <span class="tt" data-tip="Optional attribute to filter candidates (e.g. e:Unom, loc_name).">?</span></th>
+                <th>Op <span class="tt" data-tip="Comparison operator for the filter.">?</span></th>
+                <th>Filter Value <span class="tt" data-tip="Numeric (66), plain string, or wildcard string (North* — case-insensitive).">?</span></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="contingency-tbody"></tbody>
+          </table>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-xs" onclick="addContingencyRow()">+ Add Element Type</button>
+        </div>
+        <div class="form-row" style="margin-top:12px;">
+          <label>Contingency Type <span class="tt" data-tip="N-1: one element tripped per run. N-2: two elements tripped simultaneously per run.">?</span></label>
+          <select id="contingency-n" onchange="onContingencyNChange()">
+            <option value="1">N-1</option>
+            <option value="2">N-2</option>
+          </select>
+        </div>
+        <div class="form-row cond-hidden" id="row-contingency-combine">
+          <label>Combine element types <span class="tt" data-tip="When checked, N-2 pairs are formed across different element types (e.g. line × generator). When unchecked, only same-type pairs (line × line).">?</span></label>
+          <input type="checkbox" id="contingency-combine" />
         </div>
       </div>
     </div>
@@ -1269,6 +1320,7 @@ const TIP_PROBLEM_TYPE = {
   brute_force:  'Runs every combination of input values. Total runs = product of all step counts.',
   optimisation: 'Uses a search algorithm to find the best input combination. Configure algorithm below.',
   custom:       'Reads input values row-by-row from an Excel file. Download the template for the required format.',
+  contingency:  'Takes each matched element out-of-service one at a time (N-1) or in pairs (N-2). No Excel file needed — wildcards are resolved at runtime. Study Type is locked to Steady State.',
 };
 const TIP_STUDY_TYPE = {
   steady_state: 'Runs a load flow (ElmLdf) each iteration. Timeseries outputs are not available.',
@@ -1333,8 +1385,137 @@ function toggleSection(id) {
 /* ================================================================
    REACTIVE UI UPDATES
 ================================================================ */
+/* ================================================================
+   CONTINGENCY CONFIG — dynamic element type rows
+================================================================ */
+let contingencyRowCounter = 0;
+
+function addContingencyRow(data) {
+  data = data || {};
+  const idx = ++contingencyRowCounter;
+  const tbody = document.getElementById('contingency-tbody');
+  const tr = document.createElement('tr');
+  tr.id = `cont-row-${idx}`;
+  const opOptions = ['>=','<=','==','!=','>','<'].map(op =>
+    `<option value="${op}"${(data.filterOp||'>=')===op?' selected':''}>${op==='=='?'=':op==='!='?'≠':op}</option>`
+  ).join('');
+  tr.innerHTML = `
+    <td style="text-align:center;color:var(--muted);font-size:12px;">${idx}</td>
+    <td><input type="text" id="cont-query-${idx}" value="${(data.query||'*.ElmLne').replace(/"/g,'&quot;')}" placeholder="*.ElmLne" oninput="onContingencyQueryChange(${idx})" style="min-width:120px;" /></td>
+    <td><input type="text" id="cont-filter-attr-${idx}" value="${(data.filterAttr||'').replace(/"/g,'&quot;')}" placeholder="e.g. e:Unom" style="min-width:100px;" /></td>
+    <td><select id="cont-filter-op-${idx}" style="width:56px;">${opOptions}</select></td>
+    <td><input type="text" id="cont-filter-val-${idx}" value="${(data.filterVal||'').replace(/"/g,'&quot;')}" placeholder="e.g. 66 or North*" style="min-width:100px;" /></td>
+    <td><button class="btn btn-ghost btn-xs" id="cont-remove-${idx}" onclick="removeContingencyRow(${idx})" style="padding:2px 6px;">✕</button></td>
+  `;
+  tbody.appendChild(tr);
+  // Attach comboboxes
+  const queryInput = document.getElementById(`cont-query-${idx}`);
+  new PFComboBox(queryInput, typed => getObjectSuggestions(typed));
+  const filterAttrInput = document.getElementById(`cont-filter-attr-${idx}`);
+  new PFComboBox(filterAttrInput, typed => {
+    const q = document.getElementById(`cont-query-${idx}`)?.value || '';
+    const m = q.match(/\.([A-Za-z][A-Za-z0-9]+)(?:\s*$)/);
+    return getContingencyFilterAttrSuggestions(typed, m ? m[1] : null);
+  });
+  updateContingencyRemoveButtons();
+  onContingencyNChange();
+}
+
+function removeContingencyRow(idx) {
+  const row = document.getElementById(`cont-row-${idx}`);
+  if (row) row.remove();
+  updateContingencyRemoveButtons();
+  onContingencyNChange();
+}
+
+function updateContingencyRemoveButtons() {
+  const rows = document.querySelectorAll('#contingency-tbody tr');
+  rows.forEach(tr => {
+    const btn = tr.querySelector('button');
+    if (btn) btn.style.visibility = rows.length <= 1 ? 'hidden' : '';
+  });
+}
+
+function onContingencyQueryChange(idx) {
+  // no-op for now; combobox already handles suggestions
+}
+
+function onContingencyNChange() {
+  const n = document.getElementById('contingency-n')?.value;
+  const rows = document.querySelectorAll('#contingency-tbody tr');
+  const showCombine = n === '2' && rows.length > 1;
+  document.getElementById('row-contingency-combine')?.classList.toggle('cond-hidden', !showCombine);
+}
+
+function getContingencyElementTypes() {
+  const rows = document.querySelectorAll('#contingency-tbody tr');
+  const result = [];
+  rows.forEach(tr => {
+    const idx = tr.id.replace('cont-row-', '');
+    const query     = (document.getElementById(`cont-query-${idx}`)?.value || '').trim();
+    const filterAttr= (document.getElementById(`cont-filter-attr-${idx}`)?.value || '').trim();
+    const filterOp  = document.getElementById(`cont-filter-op-${idx}`)?.value || '>=';
+    const filterVal = (document.getElementById(`cont-filter-val-${idx}`)?.value || '').trim();
+    if (query) result.push({ query, filterAttr, filterOp, filterVal });
+  });
+  return result;
+}
+
+function getContingencyFilterAttrSuggestions(typed, elmClass) {
+  const q = (typed || '').toLowerCase();
+  const seen = new Set();
+  const results = [];
+  const addItem = item => {
+    const key = String(item.var || '').toLowerCase();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    results.push({ var: item.var, desc: item.desc || '', unit: item.unit || '' });
+  };
+  // element_params entries (same as input attr suggestions)
+  if (PF_REF.params && elmClass && PF_REF.params[elmClass]) {
+    PF_REF.params[elmClass].forEach(item => {
+      const raw = String(item.var || '').toLowerCase();
+      const desc = (item.desc || '').toLowerCase();
+      if (!q || raw.includes(q) || desc.includes(q)) addItem(item);
+    });
+  }
+  // System / identity attributes always available for filtering
+  const SYSTEM_ATTRS = [
+    { var: 'loc_name',   desc: 'Element name (supports wildcard strings)', unit: '' },
+    { var: 'outserv',    desc: 'Out of service flag (0 = in, 1 = out)',    unit: '' },
+    { var: 'e:Unom',     desc: 'Nominal voltage',                          unit: 'kV' },
+    { var: 'e:Un',       desc: 'Rated voltage',                            unit: 'kV' },
+    { var: 'e:Inom',     desc: 'Rated current',                            unit: 'kA' },
+    { var: 'fold_id',    desc: 'Parent folder reference',                  unit: '' },
+    { var: 'cpSite',     desc: 'Site assignment',                          unit: '' },
+    { var: 'e:cimRdfId', desc: 'CIM RDF identifier',                       unit: '' },
+  ];
+  SYSTEM_ATTRS.forEach(item => {
+    const raw = item.var.toLowerCase();
+    const desc = item.desc.toLowerCase();
+    if (!q || raw.includes(q) || desc.includes(q)) addItem(item);
+  });
+  return results.slice(0, 50);
+}
+
+function buildContingencyFilterExpr(filterAttr, filterOp, filterVal) {
+  if (!filterAttr || filterVal === '') return null;
+  const numVal = parseFloat(filterVal);
+  if (!isNaN(numVal) && String(filterVal).trim() !== '') {
+    return `o.GetAttribute("${filterAttr}") ${filterOp} ${numVal}`;
+  }
+  const cleaned = filterVal.replace(/^["']|["']$/g, '');
+  if (cleaned.includes('*') || cleaned.includes('?')) {
+    const pat = cleaned.toLowerCase().replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    return `fnmatch.fnmatch(str(o.GetAttribute("${filterAttr}") or "").lower(), "${pat}")`;
+  }
+  const strVal = cleaned.toLowerCase().replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  return `str(o.GetAttribute("${filterAttr}") or "").lower() ${filterOp} "${strVal}"`;
+}
+
 function onProblemTypeChange() {
   const pt = document.getElementById('problem-type').value;
+  const isCont = pt === 'contingency';
   // Update dynamic tooltips
   setTip('tt-problem-type', TIP_PROBLEM_TYPE[pt] || '');
   const isOpt = pt === 'optimisation';
@@ -1344,7 +1525,19 @@ function onProblemTypeChange() {
   document.getElementById('sec-custom').classList.toggle('cond-hidden', pt !== 'custom');
   // Optimisation section
   document.getElementById('sec-optim').classList.toggle('cond-hidden', pt !== 'optimisation');
-  // Update badge
+  // Contingency section
+  document.getElementById('sec-contingency').classList.toggle('cond-hidden', !isCont);
+  // Hide input variables section in contingency mode (element query drives the loop)
+  document.getElementById('sec-inputs').classList.toggle('cond-hidden', isCont);
+  // Lock study type to steady state for contingency
+  const stSelect = document.getElementById('study-type');
+  if (isCont) {
+    stSelect.value = 'steady_state';
+    stSelect.disabled = true;
+    onStudyTypeChange();
+  } else {
+    stSelect.disabled = false;
+  }
   // Refresh objective dropdown when switching to optimisation
   if (pt === 'optimisation') refreshObjectiveDropdown();
   // Toggle input table column visibility
@@ -2360,6 +2553,11 @@ function readConfig() {
     customMode: {
       scenarioFilePath: document.getElementById('scenario-file-path').value.trim(),
     },
+    contingencyMode: {
+      elementTypes:  getContingencyElementTypes(),
+      contingencyN:  document.getElementById('contingency-n')?.value || '1',
+      combineTypes:  document.getElementById('contingency-combine')?.checked || false,
+    },
     additionalConfig: {
       iterateStudyCases:        document.getElementById('iterate-study-cases').checked,
       iterateOperatingScenarios:document.getElementById('iterate-operating-scenarios').checked,
@@ -2412,6 +2610,19 @@ function loadConfig(cfg) {
   const cm = cfg.customMode || {};
   document.getElementById('scenario-file-path').value  = cm.scenarioFilePath || '';
 
+  const cont = cfg.contingencyMode || {};
+  document.getElementById('contingency-tbody').innerHTML = '';
+  contingencyRowCounter = 0;
+  const contTypes = cont.elementTypes && cont.elementTypes.length > 0
+    ? cont.elementTypes
+    : [{ query: '*.ElmLne', filterAttr: '', filterOp: '>=', filterVal: '' }];
+  contTypes.forEach(et => addContingencyRow(et));
+  const contNEl = document.getElementById('contingency-n');
+  if (contNEl) contNEl.value = cont.contingencyN || '1';
+  const contCombEl = document.getElementById('contingency-combine');
+  if (contCombEl) contCombEl.checked = !!cont.combineTypes;
+  onContingencyNChange();
+
   const ac = cfg.additionalConfig || {};
   document.getElementById('iterate-study-cases').checked         = !!ac.iterateStudyCases;
   document.getElementById('iterate-operating-scenarios').checked = !!ac.iterateOperatingScenarios;
@@ -2435,7 +2646,8 @@ function validateConfig(cfg) {
   if (!init.studyType)   errors.push('Study type is required.');
   if (!init.codingStyle) errors.push('Coding style is required.');
 
-  if (cfg.inputVariables.length === 0)  errors.push('At least one input variable is required.');
+  if (init.problemType !== 'contingency' && cfg.inputVariables.length === 0)
+    errors.push('At least one input variable is required.');
   if (cfg.outputVariables.length === 0) errors.push('At least one output variable is required.');
 
   // ── Duplicate name detection across inputs AND outputs ────────────
@@ -2512,6 +2724,16 @@ function validateConfig(cfg) {
     if (!cfg.customMode.scenarioFilePath) errors.push('Custom mode: Scenario file path is required.');
     // Wildcard inputs ARE supported in Custom mode: the same scenario value is applied to all
     // matched objects. Extra objects can be controlled by adding more columns to the spreadsheet.
+  }
+
+  if (init.problemType === 'contingency') {
+    const types = cfg.contingencyMode.elementTypes || [];
+    if (types.length === 0 || !types.some(t => t.query))
+      errors.push('Contingency: at least one element query is required (e.g. *.ElmLne).');
+    types.forEach((t, i) => {
+      if (t.filterAttr && (t.filterVal === '' || t.filterVal === null || t.filterVal === undefined))
+        errors.push(`Contingency element type ${i + 1}: filter value is required when a filter attribute is set.`);
+    });
   }
 
   return errors;
@@ -2681,6 +2903,8 @@ function buildImports(cfg) {
     optimImports = (ALGORITHM_META[alg] || {}).pyImport || '';
   }
 
+  const fnmatchImport = init.problemType === 'contingency' ? 'import fnmatch\n' : '';
+
   const matplotlibImport = hasOutputGraph
     ? 'import matplotlib\nmatplotlib.use("Agg")\nimport matplotlib.pyplot as plt\n'
     : '';
@@ -2700,7 +2924,7 @@ sys.path.append(r"${apiPath}")
 import powerfactory as pf
 import pandas as pd
 import numpy as np
-${matplotlibImport}${tqdmImport ? tqdmImport + '\n' : ''}${optimImports ? optimImports + '\n' : ''}`;
+${matplotlibImport}${tqdmImport ? tqdmImport + '\n' : ''}${optimImports ? optimImports + '\n' : ''}${fnmatchImport}`;
 }
 
 // ── PREPARATION (app connection, project listing) ─────────────
@@ -2985,19 +3209,21 @@ function buildStudyHelper(cfg) {
 
   if (st === 'steady_state') {
     code += `def run_study_steady_state(app):
-    """Execute a load flow using ComLdf."""
+    """Execute a load flow using ComLdf. Returns True if converged."""
     cmd = app.GetFromStudyCase("ComLdf")
-    cmd.Execute()
+    err = cmd.Execute()
+    return err == 0
 `;
   } else if (st === 'harmonic') {
     code += `def run_study_harmonic(app):
-    """Execute a harmonic load flow using ComHldf."""
+    """Execute a harmonic load flow using ComHldf. Returns True if converged."""
     cmd = app.GetFromStudyCase("ComHldf")
-    cmd.Execute()
+    err = cmd.Execute()
+    return err == 0
 `;
   } else if (st === 'dynamic_rms') {
     code += `def run_study_dynamic_rms(app, tstop=${tstop}):
-    """Execute a dynamic RMS simulation using ComInc + ComSim."""
+    """Execute a dynamic RMS simulation using ComInc + ComSim. Returns True if initial conditions converged."""
     output_window = app.GetOutputWindow()
     output_window.Clear()
 
@@ -3010,11 +3236,13 @@ function buildStudyHelper(cfg) {
     app.EchoOff()         # Required: suppresses ComInc console flood
     comInc.Execute()
     app.EchoOn()
+    converged = comInc.ZeroDerivative() == 1  # 1 = converged; 0 = derivatives not at zero
     comSim.Execute()
+    return converged
 `;
   } else if (st === 'dynamic_emt') {
     code += `def run_study_dynamic_emt(app, tstop=${tstop}):
-    """Execute a dynamic EMT simulation using ComInc (iopt_sim='ins') + ComSim."""
+    """Execute a dynamic EMT simulation using ComInc (iopt_sim='ins') + ComSim. Returns True if initial conditions converged."""
     output_window = app.GetOutputWindow()
     output_window.Clear()
 
@@ -3027,7 +3255,9 @@ function buildStudyHelper(cfg) {
     app.EchoOff()         # Required: suppresses ComInc console flood
     comInc.Execute()
     app.EchoOn()
+    converged = comInc.ZeroDerivative() == 1  # 1 = converged; 0 = derivatives not at zero
     comSim.Execute()
+    return converged
 `;
   }
 
@@ -3345,6 +3575,10 @@ function buildInputSpecs(cfg) {
   const inputs = cfg.inputVariables;
   const problemType = cfg.initialisation.problemType;
 
+  if (problemType === 'contingency') {
+    return '\n# ── CONTINGENCY MODE — element loop drives the run, no input_specs ──\n';
+  }
+
   let code = '\n# ── INPUT SPECS ─────────────────────────────────────────────────\n';
   code += 'input_specs = [\n';
   inputs.forEach((iv, i) => {
@@ -3476,11 +3710,11 @@ ensure_output_dir(output_dir)
 function buildRunStudyCall(cfg) {
   const st = cfg.initialisation.studyType;
   const tstop = cfg.initialisation.tstop || '20';
-  if (st === 'steady_state') return 'run_study_steady_state(app)';
-  if (st === 'harmonic')     return 'run_study_harmonic(app)';
-  if (st === 'dynamic_rms')  return `run_study_dynamic_rms(app, tstop=${tstop})`;
-  if (st === 'dynamic_emt')  return `run_study_dynamic_emt(app, tstop=${tstop})`;
-  return 'run_study_steady_state(app)';
+  if (st === 'steady_state') return '_converged = run_study_steady_state(app)';
+  if (st === 'harmonic')     return '_converged = run_study_harmonic(app)';
+  if (st === 'dynamic_rms')  return `_converged = run_study_dynamic_rms(app, tstop=${tstop})`;
+  if (st === 'dynamic_emt')  return `_converged = run_study_dynamic_emt(app, tstop=${tstop})`;
+  return '_converged = run_study_steady_state(app)';
 }
 
 // ── GRAPH CALLS INLINE ────────────────────────────────────────
@@ -3623,7 +3857,8 @@ for _i, _spec in enumerate(input_specs):
     pre += `${indent}                current_inputs[f"{spec['name']} {obj.loc_name}"] = value\n\n`;
     pre += `${indent}    ${runCall}\n\n`;
     pre += `${indent}    row = {}\n`;
-    pre += `${indent}    row.update(current_inputs)\n\n`;
+    pre += `${indent}    row.update(current_inputs)\n`;
+    pre += `${indent}    row["Converge?"] = _converged\n\n`;
     pre += `${indent}    # Attribute outputs\n`;
     pre += `${indent}    for spec in output_specs:\n`;
     pre += `${indent}        if spec["type"] == "attribute":\n`;
@@ -3701,7 +3936,8 @@ for _spec in _col_specs:
     pre += `${indent}        else:\n`;
     pre += `${indent}            for _obj in _objs:\n`;
     pre += `${indent}                row[f"{_spec['name']} {_obj.loc_name}"] = _value\n\n`;
-    pre += `${indent}    ${runCall}\n\n`;
+    pre += `${indent}    ${runCall}\n`;
+    pre += `${indent}    row["Converge?"] = _converged\n\n`;
     pre += `${indent}    for spec in output_specs:\n`;
     pre += `${indent}        if spec["type"] == "attribute":\n`;
     pre += `${indent}            _attr_val = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
@@ -3739,6 +3975,96 @@ for _spec in _col_specs:
     pre += `${indent}    results_df = pd.concat([results_df, pd.DataFrame([error_row])], ignore_index=True)\n`;
     if (hasSave) {
       pre += `\n${indent}last_save_time = save_intermediate_results(results_df, output_dir, "intermediate", last_save_time, ${intervalMin})\n`;
+    }
+    pre += `\n${wrapperEnd}`;
+  }
+
+  // ─── CONTINGENCY ──────────────────────────────────────────────────
+  else if (pt === 'contingency') {
+    const contTypes = cfg.contingencyMode.elementTypes || [];
+    const contN     = parseInt(cfg.contingencyMode.contingencyN || '1', 10);
+    const combine   = cfg.contingencyMode.combineTypes || false;
+
+    let groupCode = `\n# ── CONTINGENCY SETUP ────────────────────────────────────────────\n_contingency_groups = {}\n`;
+    contTypes.forEach((t, gi) => {
+      const filterExpr = buildContingencyFilterExpr(t.filterAttr, t.filterOp, t.filterVal);
+      if (filterExpr) {
+        groupCode += `_raw_${gi} = get_pf_objects(app, "${t.query}")\n`;
+        groupCode += `_contingency_groups["${t.query}"] = [o for o in _raw_${gi} if ${filterExpr}]\n`;
+      } else {
+        groupCode += `_contingency_groups["${t.query}"] = get_pf_objects(app, "${t.query}")\n`;
+      }
+    });
+
+    if (contN === 1) {
+      groupCode += `\n_all_contingency_elements = [o for grp in _contingency_groups.values() for o in grp]\ncontingencies = [(obj,) for obj in _all_contingency_elements]\n`;
+    } else if (combine) {
+      groupCode += `\n_all_contingency_elements = [o for grp in _contingency_groups.values() for o in grp]\ncontingencies = list(itertools.combinations(_all_contingency_elements, ${contN}))\n`;
+    } else {
+      groupCode += `\n# N-${contN} without cross-type combination — pairs within same element type only\ncontingencies = []\nfor _grp in _contingency_groups.values():\n    contingencies.extend(itertools.combinations(_grp, ${contN}))\n`;
+    }
+
+    pre += groupCode;
+
+    const baseCaseRowParts = Array.from({length: contN}, (_, k) => `"Contingent Element ${k+1}": "Base Case"`).join(', ');
+
+    pre += `\n${wrapperStart}${indentOS}# ── Base Case (all elements in service) ─────────────────────────\n`;
+    pre += `${indentOS}try:\n`;
+    pre += `${indentOS}    iteration_count += 1\n`;
+    pre += `${indentOS}    _converged = run_study_steady_state(app)\n`;
+    pre += `${indentOS}    row = {${baseCaseRowParts}, "Converge?": _converged}\n`;
+    pre += `${indentOS}    for spec in output_specs:\n`;
+    pre += `${indentOS}        if spec["type"] == "attribute":\n`;
+    pre += `${indentOS}            _v = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    pre += `${indentOS}            if isinstance(_v, dict):\n`;
+    pre += `${indentOS}                row.update(_v)\n`;
+    pre += `${indentOS}            else:\n`;
+    pre += `${indentOS}                row[spec["name"]] = _v\n`;
+    if (hasCust) {
+      pre += `${indentOS}    row.update(evaluate_custom_calculations(row))\n`;
+    }
+    pre += `${indentOS}    results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)\n`;
+    pre += `${indentOS}    success_count += 1\n`;
+    pre += `${indentOS}except Exception:\n`;
+    pre += `${indentOS}    failed_count += 1\n`;
+    pre += `${indentOS}    results_df = pd.concat([results_df, pd.DataFrame([{${baseCaseRowParts}, "error": traceback.format_exc()}])], ignore_index=True)\n`;
+
+    const loopVar = hasBar ? `tqdm(contingencies, desc="Contingency")` : `contingencies`;
+    pre += `\n${indentOS}# ── N-${contN} Loop ─────────────────────────────────────────────────\n`;
+    pre += `${indentOS}for contingency_tuple in ${loopVar}:\n`;
+    pre += `${indentOS}    try:\n`;
+    pre += `${indentOS}        iteration_count += 1\n`;
+    pre += `${indentOS}        for _elem in contingency_tuple:\n`;
+    pre += `${indentOS}            _elem.SetAttribute("outserv", 1)\n`;
+    pre += `${indentOS}        _converged = run_study_steady_state(app)\n`;
+    pre += `${indentOS}        row = {}\n`;
+    pre += `${indentOS}        for _ci, _elem in enumerate(contingency_tuple, start=1):\n`;
+    pre += `${indentOS}            row[f"Contingent Element {_ci}"] = _elem.loc_name\n`;
+    pre += `${indentOS}        row["Converge?"] = _converged\n`;
+    pre += `${indentOS}        for spec in output_specs:\n`;
+    pre += `${indentOS}            if spec["type"] == "attribute":\n`;
+    pre += `${indentOS}                _v = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    pre += `${indentOS}                if isinstance(_v, dict):\n`;
+    pre += `${indentOS}                    row.update(_v)\n`;
+    pre += `${indentOS}                else:\n`;
+    pre += `${indentOS}                    row[spec["name"]] = _v\n`;
+    if (hasCust) {
+      pre += `${indentOS}        row.update(evaluate_custom_calculations(row))\n`;
+    }
+    pre += `${indentOS}        results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)\n`;
+    pre += `${indentOS}        success_count += 1\n`;
+    pre += `${indentOS}    except Exception:\n`;
+    pre += `${indentOS}        failed_count += 1\n`;
+    pre += `${indentOS}        _err_row = {}\n`;
+    pre += `${indentOS}        for _ci, _elem in enumerate(contingency_tuple, start=1):\n`;
+    pre += `${indentOS}            _err_row[f"Contingent Element {_ci}"] = _elem.loc_name\n`;
+    pre += `${indentOS}        _err_row["error"] = traceback.format_exc()\n`;
+    pre += `${indentOS}        results_df = pd.concat([results_df, pd.DataFrame([_err_row])], ignore_index=True)\n`;
+    pre += `${indentOS}    finally:\n`;
+    pre += `${indentOS}        for _elem in contingency_tuple:\n`;
+    pre += `${indentOS}            _elem.SetAttribute("outserv", 0)\n`;
+    if (hasSave) {
+      pre += `\n${indentOS}    last_save_time = save_intermediate_results(results_df, output_dir, "intermediate", last_save_time, ${intervalMin})\n`;
     }
     pre += `\n${wrapperEnd}`;
   }
@@ -3798,6 +4124,7 @@ def evaluate_one_case(param_values):
                 row[f"{spec['name']} {obj.loc_name}"] = value
 
     ${runCall}
+    row["Converge?"] = _converged
 
     for spec in output_specs:
         if spec["type"] == "attribute":
@@ -4138,6 +4465,7 @@ function resetForm() {
     outputVariables: [],
     optimisation: { sense:'minimise', objectiveOutputName:'', algorithm:'placeholder', maxIterations:50, constraints:[] },
     customMode: { scenarioFilePath:'' },
+    contingencyMode: { elementTypes:[{ query:'*.ElmLne', filterAttr:'', filterOp:'>=', filterVal:'' }], contingencyN:'1', combineTypes:false },
     additionalConfig: { iterateStudyCases:false, iterateOperatingScenarios:false, useProgressBar:true, openPowerFactoryWindow:false, saveIntermediateEnabled:false, saveIntermediateMinutes:30 }
   });
   window._generatedCode = '';
@@ -4269,6 +4597,7 @@ function toggleInfoExtra(extraId, btn) {
   fetchReferenceData();
   addInputRow({ name: 'Q_gen', object_query: 'Gen.ElmSym', variable: 'e:qgini', lower: -50, upper: 50, step: 5 });
   addOutputVar({ type: 'attribute', name: 'Bus_voltage', object_query: 'Grid.ElmTerm', variable: 'm:u' });
+  addContingencyRow({ query: '*.ElmLne' });
   onProblemTypeChange();
   onStudyTypeChange();
   updateAlgorithmUI();
