@@ -1502,6 +1502,17 @@ function toggleSection(id) {
   }
 }
 
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.section-card').forEach((card) => {
+    const header = card.querySelector('.section-header');
+    const body = card.querySelector('.section-body');
+    if (!header || !body) return;
+    header.classList.add('collapsed');
+    body.classList.add('hidden');
+  });
+});
+
 function toggleFaq(questionEl) {
   const answer = questionEl.nextElementSibling;
   const open = answer.classList.contains('open');
