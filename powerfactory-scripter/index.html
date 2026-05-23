@@ -1006,7 +1006,7 @@
       </div>
       <div class="section-body">
         <div class="info-box" id="input-info-box">
-          <span id="input-info-brief">Set PowerFactory object parameters before each simulation. Enter the object using its PF path and class (e.g. <code>Generator.ElmSym</code>) and the parameter to modify (e.g. <code>pgini</code>).</span>
+          <span id="input-info-brief">Set PowerFactory object parameters before each simulation. Enter the object using its PF path and class (e.g. <code>Gen.ElmSym</code>) and the parameter to modify (e.g. <code>e:qgini</code>).</span>
           <button class="info-more-toggle" onclick="toggleInfoExtra('input-info-extra', this)">More ▾</button>
           <div class="info-extra" id="input-info-extra">
             <code>GetCalcRelevantObjects()</code> resolves the object query; <code>SetAttribute()</code> writes the value before each run.<br/>
@@ -1022,8 +1022,8 @@
               <tr>
                 <th>#</th>
                 <th>Name <span class="tt" data-tip="Python identifier used as the column header in the results CSV.">?</span></th>
-                <th>Object <span class="tt" data-tip="PF object query (e.g. Generator.ElmSym, *.ElmDsl). Wildcards match all objects of that class.">?</span></th>
-                <th>Attribute <span class="tt" data-tip="Writable PF parameter to set via SetAttribute() before each run (e.g. pgini, usetp).">?</span></th>
+                <th>Object <span class="tt" data-tip="PF object query (e.g. Gen.ElmSym, *.ElmDsl). Wildcards match all objects of that class.">?</span></th>
+                <th>Attribute <span class="tt" data-tip="Writable numeric/boolean PF parameter to set via SetAttribute() before each run (e.g. e:qgini, e:usetp).">?</span></th>
                 <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tt" id="tt-lb" data-tip="Start of the swept range (inclusive).">?</span></th>
                 <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tt" id="tt-ub" data-tip="End of the swept range (inclusive).">?</span></th>
                 <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tt" data-tip="Increment between values. E.g. lb=0, ub=10, step=0.5 → [0, 0.5, …, 10].">?</span></th>
@@ -1388,8 +1388,9 @@ function onSaveIntermediateChange() {
      element_params.json       (512 KB — input param suggestions, loaded on startup)
 ================================================================ */
 const PF_REF = {
-  index:    null,   // variables_index.json  →  {ElmXxx: {file, study_groups}}
+  index:    null,   // variables/elements/element_variables_index.json → {ElmXxx: {file, study_groups}}
   params:   null,   // element_params.json   →  {ElmXxx: [{var,unit,desc},...]}
+  evtIndex: null,   // variables/events/event_variables_index.json → {EvtXxx: {file, params}}
   varFiles: {},     // cache: ElmXxx → full variables/ElmXxx.json data
   loading:  new Set(), // classes currently being fetched
 };
@@ -1405,12 +1406,14 @@ const STUDY_TYPE_KEY = {
 async function fetchReferenceData() {
   const badge = document.getElementById('ref-data-badge');
   try {
-    const [idxRes, paramsRes] = await Promise.all([
-      fetch('variables_index.json').catch(() => null),
+    const [idxRes, paramsRes, evtIdxRes] = await Promise.all([
+      fetch('variables/elements/element_variables_index.json').catch(() => null),
       fetch('element_params.json').catch(() => null),
+      fetch('variables/events/event_variables_index.json').catch(() => null),
     ]);
-    if (idxRes    && idxRes.ok)    PF_REF.index  = await idxRes.json();
-    if (paramsRes && paramsRes.ok) PF_REF.params = await paramsRes.json();
+    if (idxRes    && idxRes.ok)    PF_REF.index     = await idxRes.json();
+    if (paramsRes && paramsRes.ok) PF_REF.params    = await paramsRes.json();
+    if (evtIdxRes && evtIdxRes.ok) PF_REF.evtIndex  = await evtIdxRes.json();
 
     const loaded = !!(PF_REF.index || PF_REF.params);
     if (badge) {
@@ -1418,7 +1421,7 @@ async function fetchReferenceData() {
       badge.className   = `ref-badge ${loaded ? 'loaded' : 'offline'}`;
       badge.title = loaded
         ? 'Smart autocomplete active. Full variable lists load on demand per element class.'
-        : 'Deploy variables_index.json, variables/ folder, and element_params.json alongside index.html to enable smart autocomplete.';
+        : 'Deploy variables/elements/element_variables_index.json, variables/ folder, and element_params.json alongside index.html to enable smart autocomplete.';
     }
   } catch (e) {
     if (badge) { badge.textContent = '⚠ Variable DB offline'; badge.className = 'ref-badge offline'; }
@@ -1636,7 +1639,7 @@ const ALL_ELM_CLASSES = [
 ];
 
 // Event classes — resolved from Simulation Events/Fault.IntEvt, not GetCalcRelevantObjects
-const ALL_EVT_CLASSES = ['EvtShc','EvtSwitch','EvtLod','EvtSym','EvtParam','EvtGen'];
+const ALL_EVT_CLASSES = ['EvtShc','EvtSwitch','EvtLod','EvtSym','EvtParam','EvtGen','EvtTap','EvtOutage'];
 
 const EVT_PARAMS = {
   'EvtShc': [
@@ -1646,14 +1649,79 @@ const EVT_PARAMS = {
     { var: 'R_f',      unit: 'Ohm',  desc: 'Fault resistance (0 = bolted fault)' },
     { var: 'X_f',      unit: 'Ohm',  desc: 'Fault reactance (usually 0 for a bolted fault)' },
     { var: 'i_p2pflt', unit: '',     desc: 'Phase-to-phase fault flag (0=no, 1=yes)' },
-    { var: 'loc_name', unit: '',     desc: 'Name of the event object' }
+    { var: 'outserv',  unit: '',     desc: 'Out of service (0=active, 1=inactive)' },
+    { var: 'mtime',    unit: 'min',  desc: 'Event time (absolute, minutes)' },
+    { var: 'hrtime',   unit: 'h',    desc: 'Event time (absolute, hours)' },
   ],
   'EvtSwitch': [
     { var: 'p_target', unit: 'Elm*', desc: 'Target element (line, coupler, or transformer to switch)' },
     { var: 'time',     unit: 's',    desc: 'Event time in seconds' },
     { var: 'i_switch', unit: '',     desc: 'Switching action: 0=open (trip), 1=close (reclose)' },
-    { var: 'loc_name', unit: '',     desc: 'Name of the event object' }
-  ]
+    { var: 'i_allph',  unit: '',     desc: 'Apply to all phases (0=no, 1=yes)' },
+    { var: 'i_a',      unit: '',     desc: 'Phase A switching flag' },
+    { var: 'i_b',      unit: '',     desc: 'Phase B switching flag' },
+    { var: 'i_c',      unit: '',     desc: 'Phase C switching flag' },
+    { var: 'outserv',  unit: '',     desc: 'Out of service (0=active, 1=inactive)' },
+    { var: 'mtime',    unit: 'min',  desc: 'Event time (absolute, minutes)' },
+    { var: 'hrtime',   unit: 'h',    desc: 'Event time (absolute, hours)' },
+  ],
+  'EvtGen': [
+    { var: 'time',        unit: 's',    desc: 'Event time in seconds' },
+    { var: 'dP',          unit: 'MW',   desc: 'Active power change' },
+    { var: 'dQ',          unit: 'Mvar', desc: 'Reactive power change' },
+    { var: 'powerChange', unit: '',     desc: 'Change type flag' },
+    { var: 'outserv',     unit: '',     desc: 'Out of service (0=active, 1=inactive)' },
+    { var: 'mtime',       unit: 'min',  desc: 'Event time (absolute, minutes)' },
+    { var: 'hrtime',      unit: 'h',    desc: 'Event time (absolute, hours)' },
+  ],
+  'EvtLod': [
+    { var: 'time',      unit: 's',  desc: 'Event time in seconds' },
+    { var: 'opt_evt',   unit: '',   desc: 'Type of event' },
+    { var: 'iopt_src',  unit: '',   desc: 'Source option' },
+    { var: 'iopt_type', unit: '',   desc: 'Event of load type' },
+    { var: 'iopt_load', unit: '',   desc: 'Event for load option' },
+    { var: 'iStage',    unit: '',   desc: 'Stage number' },
+    { var: 'outserv',   unit: '',   desc: 'Out of service (0=active, 1=inactive)' },
+    { var: 'mtime',     unit: 'min',desc: 'Event time (absolute, minutes)' },
+    { var: 'hrtime',    unit: 'h',  desc: 'Event time (absolute, hours)' },
+  ],
+  'EvtSym': [
+    { var: 'time',     unit: 's',     desc: 'Event time in seconds' },
+    { var: 'outNgnum', unit: '',      desc: 'Machine on outage (unit number)' },
+    { var: 'addmt',    unit: 'p.u.', desc: 'Additional torque' },
+    { var: 'newS',     unit: '%sgn', desc: 'New maximal apparent power' },
+    { var: 'outserv',  unit: '',      desc: 'Out of service (0=active, 1=inactive)' },
+    { var: 'mtime',    unit: 'min',   desc: 'Event time (absolute, minutes)' },
+    { var: 'hrtime',   unit: 'h',     desc: 'Event time (absolute, hours)' },
+  ],
+  'EvtParam': [
+    { var: 'variable',       unit: '',  desc: 'Name of the variable to change (string)' },
+    { var: 'value',          unit: '',  desc: 'New value for the variable' },
+    { var: 'time',           unit: 's', desc: 'Event time in seconds' },
+    { var: 'i_sysmat',       unit: '',  desc: 'Recompute system matrix (0=no, 1=yes)' },
+    { var: 'eventHandling',  unit: '',  desc: 'Event handling mode' },
+    { var: 'outserv',        unit: '',  desc: 'Out of service (0=active, 1=inactive)' },
+    { var: 'mtime',          unit: 'min',desc: 'Event time (absolute, minutes)' },
+    { var: 'hrtime',         unit: 'h', desc: 'Event time (absolute, hours)' },
+  ],
+  'EvtTap': [
+    { var: 'time',   unit: 's',   desc: 'Event time in seconds' },
+    { var: 'i_tap',  unit: '',    desc: 'Tap action type' },
+    { var: 'ntap',   unit: '',    desc: 'Tap position' },
+    { var: 'bus',    unit: '',    desc: 'Tap at busbar (0=HV, 1=LV)' },
+    { var: 'outserv',unit: '',    desc: 'Out of service (0=active, 1=inactive)' },
+    { var: 'mtime',  unit: 'min', desc: 'Event time (absolute, minutes)' },
+    { var: 'hrtime', unit: 'h',   desc: 'Event time (absolute, hours)' },
+  ],
+  'EvtOutage': [
+    { var: 'time',     unit: 's',    desc: 'Event time in seconds' },
+    { var: 'i_what',   unit: '',     desc: 'Type of outage event' },
+    { var: 'p_target', unit: 'Elm*', desc: 'Target element for outage' },
+    { var: 'p_from',   unit: 'Elm*', desc: 'Event defined by element' },
+    { var: 'outserv',  unit: '',     desc: 'Out of service (0=active, 1=inactive)' },
+    { var: 'mtime',    unit: 'min',  desc: 'Event time (absolute, minutes)' },
+    { var: 'hrtime',   unit: 'h',    desc: 'Event time (absolute, hours)' },
+  ],
 };
 
 // Suggest Object query strings like "Grid.ElmTerm", "*.ElmDsl", "Fault_ON.EvtShc" etc.
@@ -1718,6 +1786,32 @@ function isEventClass(objectQuery) {
 
 // INPUT variable attribute suggestions — class-scoped params from element_params.json
 // or EVT_PARAMS for event classes (EvtShc, EvtSwitch, etc.)
+// Attributes that are strings, object references, or metadata — not numerically iterable
+const INPUT_ATTR_BLACKLIST = new Set([
+  // Identification / naming (strings)
+  'loc_name', 'chr_name', 'for_name', 'dat_src', 'appr_modby', 'desc', 'desc_c',
+  'cimRdfId', 'sernum', 'commissionDate', 'sShort', 'attrname',
+  // File / path (strings)
+  'f_name', 'f_name_abs', 'cFilename', 'cDisplayName',
+  // Node / station names (strings)
+  'NodeName', 'UcteNodeName', 'cStatName', 'cTimezone',
+  // Tags / signals (strings)
+  'ctag', 'ctagtot', 'tag', 'signal', 'carrayName', 'carrayDesc', 'cattrDesc',
+  'parameterNames',
+  // Approval / workflow metadata (not design parameters)
+  'appr_modif', 'appr_status', 'appr_celeby', 'appr_devby',
+  // Object / folder references
+  'fold_id', 'cContingency',
+]);
+
+function isInputAttrBlacklisted(varStr) {
+  const attr = (varStr || '').split(':').pop();
+  if (INPUT_ATTR_BLACKLIST.has(attr)) return true;
+  // Object reference terminals (_bar suffix) are not numeric scalars
+  if (attr.endsWith('_bar')) return true;
+  return false;
+}
+
 function getInputAttrSuggestions(typed, elmClass) {
   const q = (typed || '').toLowerCase();
   const results = [];
@@ -1725,6 +1819,7 @@ function getInputAttrSuggestions(typed, elmClass) {
   const addItem = item => {
     const key = String(item.var || '').toLowerCase();
     if (!key || seen.has(key)) return;
+    if (isInputAttrBlacklisted(item.var)) return;
     seen.add(key);
     results.push({ var: item.var || '', desc: item.desc || '', unit: item.unit || '' });
   };
@@ -4172,7 +4267,7 @@ function toggleInfoExtra(extraId, btn) {
 (function init() {
   // Kick off reference data fetch (comboboxes degrade gracefully if files absent)
   fetchReferenceData();
-  addInputRow({ name: 'WFController_kdroop', object_query: 'WFController.ElmDsl', variable: 'K_droop', lower: 0, upper: 10, step: 0.5 });
+  addInputRow({ name: 'Q_gen', object_query: 'Gen.ElmSym', variable: 'e:qgini', lower: -50, upper: 50, step: 5 });
   addOutputVar({ type: 'attribute', name: 'Bus_voltage', object_query: 'Grid.ElmTerm', variable: 'm:u' });
   onProblemTypeChange();
   onStudyTypeChange();
