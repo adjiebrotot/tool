@@ -1959,8 +1959,8 @@ function addInputRow(data = {}) {
   tr.innerHTML = `
     <td style="color:var(--muted);font-family:var(--mono);font-size:11px;vertical-align:middle">${rowNum}</td>
     <td><input type="text" id="iv-name-${idx}" value="${data.name||''}" placeholder="Var name" /></td>
-    <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Gen.ElmSym" autocomplete="off" /></td>
-    <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="e:qgini" autocomplete="off" /></td>
+    <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" autocomplete="off" /></td>
+    <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" /></td>
     <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" /></td>
     <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" /></td>
     <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" /></td>
@@ -4267,7 +4267,7 @@ function toggleInfoExtra(extraId, btn) {
 (function init() {
   // Kick off reference data fetch (comboboxes degrade gracefully if files absent)
   fetchReferenceData();
-  addInputRow({ name: 'WFController_kdroop', object_query: 'WFController.ElmDsl', variable: 'K_droop', lower: 0, upper: 10, step: 0.5 });
+  addInputRow({ name: 'Q_gen', object_query: 'Gen.ElmSym', variable: 'e:qgini', lower: -50, upper: 50, step: 5 });
   addOutputVar({ type: 'attribute', name: 'Bus_voltage', object_query: 'Grid.ElmTerm', variable: 'm:u' });
   onProblemTypeChange();
   onStudyTypeChange();
