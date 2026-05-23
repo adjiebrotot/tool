@@ -1205,14 +1205,14 @@ Best objective (thd) = 2.61</pre>
           <span class="step-badge">7</span> Expected Output
         </div>
         <p class="hint">The script writes a summary CSV to your output directory, e.g. <code>results.csv</code>:</p>
-        <pre class="output-preview">ngnum,bus_voltage_nadir,synccon_q_peak,rotor_speed_min,out_of_step,sizing_ok
-1,0.71,47.3,0.961,1,False
-2,0.74,94.1,0.966,1,False
-3,0.76,140.8,0.970,0,False
-4,0.79,187.2,0.973,0,True
-5,0.82,233.6,0.976,0,True
+        <pre class="output-preview">ngnum,Converge?,bus_voltage_nadir,synccon_q_peak,rotor_speed_min,out_of_step,sizing_ok
+1,True,0.71,47.3,0.961,1,False
+2,True,0.74,94.1,0.966,1,False
+3,True,0.76,140.8,0.970,0,False
+4,True,0.79,187.2,0.973,0,True
+5,True,0.82,233.6,0.976,0,True
 ...
-10,0.91,466.1,0.984,0,True</pre>
+10,True,0.91,466.1,0.984,0,True</pre>
         <p class="hint">The minimum passing size is the first row where <code>sizing_ok = True</code> — here, <strong>4 parallel units</strong>. Time-domain waveform plots for <code>bus_voltage_nadir</code> and <code>rotor_speed_min</code> are saved as <code>.png</code> files in <code>{output_dir}/graph/</code> for each scenario.</p>
       </div>
 
@@ -1236,25 +1236,25 @@ Best objective (thd) = 2.61</pre>
           <span class="step-badge">1</span> Objective
         </div>
         <p class="objective-text">
-          Perform the same N-1 line contingency assessment as Sample 03, but using the new
-          <strong>Contingency</strong> problem type instead of Custom mode + Excel file.
-          A single wildcard query <code>*.ElmLne</code> resolves all lines at runtime — no manual
-          enumeration and no spreadsheet required. The script automatically runs a base case
-          followed by one load flow per line, recording convergence status alongside every result.
+          Assess the steady-state impact of losing any single line in the network.
+          The <strong>Contingency</strong> problem type resolves all matching lines at runtime via
+          a wildcard query, with no manual enumeration or spreadsheet required.
+          The script runs a base case followed by one load flow per line, recording bus voltages
+          and line loadings alongside convergence status for every scenario.
         </p>
       </div>
 
-      <!-- 2 Comparison with Sample 03 -->
+      <!-- 2 Assumptions -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">2</span> How This Differs from Sample 03
+          <span class="step-badge">2</span> Assumptions
         </div>
         <ul class="assumption-list">
-          <li><strong>No Excel file</strong> — element queries are resolved by PowerFactory at runtime</li>
-          <li><strong>Scales automatically</strong> — add 100 lines to the network, get 101 runs with no code changes</li>
-          <li><strong>Convergence column</strong> — a <code>Converge?</code> column is always written; non-converged rows have empty output columns</li>
-          <li><strong>Study Type locked</strong> — Contingency mode forces Steady State (load flow)</li>
-          <li>Output variables and Custom Calculation are identical to Sample 03</li>
+          <li>Element query <code>*.ElmLne</code> resolves all lines in the active network at runtime</li>
+          <li>Study Type is fixed to Steady State; each contingency runs one load flow</li>
+          <li>A base case (all elements in service) is always the first run</li>
+          <li>Non-converged rows retain the contingency identifier but leave output columns empty</li>
+          <li>Scales automatically: add lines to the network, get more runs with no code changes</li>
         </ul>
       </div>
 
@@ -1275,7 +1275,7 @@ Best objective (thd) = 2.61</pre>
           </div>
           <div class="form-row">
             <label>Study Type</label>
-            <select disabled><option>Steady State (locked)</option></select>
+            <select disabled><option>Steady State</option></select>
           </div>
           <div class="form-row">
             <label>Coding Style</label>
@@ -1298,7 +1298,7 @@ Best objective (thd) = 2.61</pre>
                   <td style="text-align:center;color:var(--muted);font-size:12px;">1</td>
                   <td><input type="text" readonly value="*.ElmLne" /></td>
                   <td><input type="text" readonly value="" placeholder="(none)" /></td>
-                  <td><select disabled><option>≥</option></select></td>
+                  <td><select disabled><option>>=</option></select></td>
                   <td><input type="text" readonly value="" placeholder="(none)" /></td>
                 </tr>
               </tbody>
@@ -1322,11 +1322,6 @@ Best objective (thd) = 2.61</pre>
         <div class="sub-section-title">
           <span class="step-badge">4</span> Output Variables
         </div>
-        <p class="objective-text" style="margin-bottom:16px;">
-          Identical to Sample 03. The wildcard outputs and Custom Calculation work the same way;
-          the only addition is the <code>Converge?</code> column that the tool always inserts
-          automatically in Contingency mode.
-        </p>
         <div class="readonly-fields">
           <div class="readonly-group-title">Output Variables</div>
 
@@ -1352,24 +1347,7 @@ Best objective (thd) = 2.61</pre>
             </div>
           </div>
 
-          <div class="output-var-item">
-            <div class="output-var-header">
-              <span class="ov-type-badge" style="color:var(--warn);background:rgba(255,210,140,0.1);border-color:rgba(255,210,140,0.3);">Custom Calculation</span>
-              <input type="text" readonly value="any_overload" style="max-width:150px" />
-            </div>
-            <div class="output-var-body">
-              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Custom Function</div>
-              <pre class="output-preview" style="margin:0;font-size:12px;line-height:1.7;color:var(--accent);">def any_overload(Line_A, Line_B, Line_C, Line_D):
-    vals = [v for v in [Line_A, Line_B, Line_C, Line_D] if v is not None]
-    return any(v &gt; 100.0 for v in vals)</pre>
-            </div>
-          </div>
         </div>
-        <p class="hint" style="margin-top:8px;">
-          Custom Calculation arguments must match the <code>loc_name</code> of each line as it
-          appears in the result row. Replace <code>Line_A</code> … <code>Line_D</code> with the
-          actual element names in your network.
-        </p>
       </div>
 
       <!-- 5 Running -->
@@ -1387,7 +1365,7 @@ Best objective (thd) = 2.61</pre>
           <span class="step-badge">7</span>
           <div>
             <div>Paste the code into your Python environment and run it.</div>
-            <div class="step-note">The script runs one load flow per line plus the base case. For a 50-line network this is 51 runs — no Excel file or code changes needed regardless of network size.</div>
+            <div class="step-note">The script runs one load flow per line plus the base case. For a 50-line network this is 51 runs, no Excel file or code changes needed regardless of network size.</div>
           </div>
         </div>
       </div>
@@ -1397,14 +1375,14 @@ Best objective (thd) = 2.61</pre>
         <div class="sub-section-title">
           <span class="step-badge">8</span> Expected Output
         </div>
-        <p class="hint">The CSV now has <code>Contingent Element 1</code> and <code>Converge?</code> as leading columns, followed by the wildcard output columns named after each element's <code>loc_name</code>:</p>
-        <pre class="output-preview">Contingent Element 1,Converge?,Bus_HV1,Bus_HV2,Bus_HV3,Line_A,Line_B,Line_C,Line_D,any_overload
-Base Case,True,1.023,0.998,1.005,42.1,38.5,65.3,71.2,False
-Line_A,True,0.887,1.012,0.995,65.3,88.7,45.2,80.5,False
-Line_B,True,1.012,0.889,1.003,88.7,55.2,40.1,75.3,False
+        <p class="hint">The script writes a summary CSV to your output directory, e.g. <code>results.csv</code>. The first two columns identify the contingency and its convergence status; subsequent columns are the output values, each named after the element's <code>loc_name</code>:</p>
+        <pre class="output-preview">Contingent Element 1,Converge?,Bus_HV1,Bus_HV2,Bus_HV3,Line_A,Line_B,Line_C,Line_D
+Base Case,True,1.023,0.998,1.005,42.1,38.5,65.3,71.2
+Line_A,True,0.887,1.012,0.995,65.3,88.7,45.2,80.5
+Line_B,True,1.012,0.889,1.003,88.7,55.2,40.1,75.3
 Line_C,False,,,,,,,,
-Line_D,True,0.991,1.003,0.998,48.6,71.9,82.3,95.1,False</pre>
-        <p class="hint"><code>Converge? = False</code> for Line_C indicates the load flow did not converge with that line tripped — the row is still recorded but output columns are empty. Output values are only written when convergence succeeds.</p>
+Line_D,True,0.991,1.003,0.998,48.6,71.9,82.3,95.1</pre>
+        <p class="hint"><code>Converge? = False</code> for Line_C indicates the load flow did not converge with that line tripped. The row is still recorded but output columns are left empty.</p>
       </div>
 
     </div>
