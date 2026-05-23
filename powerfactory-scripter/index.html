@@ -4013,15 +4013,16 @@ for _spec in _col_specs:
     pre += `${indentOS}    iteration_count += 1\n`;
     pre += `${indentOS}    _converged = run_study_steady_state(app)\n`;
     pre += `${indentOS}    row = {${baseCaseRowParts}, "Converge?": _converged}\n`;
-    pre += `${indentOS}    for spec in output_specs:\n`;
-    pre += `${indentOS}        if spec["type"] == "attribute":\n`;
-    pre += `${indentOS}            _v = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
-    pre += `${indentOS}            if isinstance(_v, dict):\n`;
-    pre += `${indentOS}                row.update(_v)\n`;
-    pre += `${indentOS}            else:\n`;
-    pre += `${indentOS}                row[spec["name"]] = _v\n`;
+    pre += `${indentOS}    if _converged:\n`;
+    pre += `${indentOS}        for spec in output_specs:\n`;
+    pre += `${indentOS}            if spec["type"] == "attribute":\n`;
+    pre += `${indentOS}                _v = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    pre += `${indentOS}                if isinstance(_v, dict):\n`;
+    pre += `${indentOS}                    row.update(_v)\n`;
+    pre += `${indentOS}                else:\n`;
+    pre += `${indentOS}                    row[spec["name"]] = _v\n`;
     if (hasCust) {
-      pre += `${indentOS}    row.update(evaluate_custom_calculations(row))\n`;
+      pre += `${indentOS}        row.update(evaluate_custom_calculations(row))\n`;
     }
     pre += `${indentOS}    results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)\n`;
     pre += `${indentOS}    success_count += 1\n`;
@@ -4041,15 +4042,16 @@ for _spec in _col_specs:
     pre += `${indentOS}        for _ci, _elem in enumerate(contingency_tuple, start=1):\n`;
     pre += `${indentOS}            row[f"Contingent Element {_ci}"] = _elem.loc_name\n`;
     pre += `${indentOS}        row["Converge?"] = _converged\n`;
-    pre += `${indentOS}        for spec in output_specs:\n`;
-    pre += `${indentOS}            if spec["type"] == "attribute":\n`;
-    pre += `${indentOS}                _v = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
-    pre += `${indentOS}                if isinstance(_v, dict):\n`;
-    pre += `${indentOS}                    row.update(_v)\n`;
-    pre += `${indentOS}                else:\n`;
-    pre += `${indentOS}                    row[spec["name"]] = _v\n`;
+    pre += `${indentOS}        if _converged:\n`;
+    pre += `${indentOS}            for spec in output_specs:\n`;
+    pre += `${indentOS}                if spec["type"] == "attribute":\n`;
+    pre += `${indentOS}                    _v = extract_attribute_output(app, spec["object_query"], spec["variable"])\n`;
+    pre += `${indentOS}                    if isinstance(_v, dict):\n`;
+    pre += `${indentOS}                        row.update(_v)\n`;
+    pre += `${indentOS}                    else:\n`;
+    pre += `${indentOS}                        row[spec["name"]] = _v\n`;
     if (hasCust) {
-      pre += `${indentOS}        row.update(evaluate_custom_calculations(row))\n`;
+      pre += `${indentOS}            row.update(evaluate_custom_calculations(row))\n`;
     }
     pre += `${indentOS}        results_df = pd.concat([results_df, pd.DataFrame([row])], ignore_index=True)\n`;
     pre += `${indentOS}        success_count += 1\n`;
