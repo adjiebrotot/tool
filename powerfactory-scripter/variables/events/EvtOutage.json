@@ -1,0 +1,74 @@
+{
+  "e": [
+    {
+      "var": "e:outserv",
+      "unit": "",
+      "desc": "Out of Service"
+    },
+    {
+      "var": "e:mtime",
+      "unit": "min",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:hrtime",
+      "unit": "h",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:i_what",
+      "unit": "",
+      "desc": "Type of Outage Event"
+    },
+    {
+      "var": "e:time",
+      "unit": "s",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:tDateTime",
+      "unit": "",
+      "desc": "Execution Time"
+    },
+    {
+      "var": "e:p_target",
+      "unit": "Elm*",
+      "desc": "Element"
+    },
+    {
+      "var": "e:p_from",
+      "unit": "Elm*",
+      "desc": "Event defined by"
+    },
+    {
+      "var": "e:dtime",
+      "unit": "s",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:tact",
+      "unit": "s",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dmtime",
+      "unit": "min",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:mtact",
+      "unit": "min",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dhrtime",
+      "unit": "h",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:hrtact",
+      "unit": "h",
+      "desc": "Now"
+    }
+  ]
+}

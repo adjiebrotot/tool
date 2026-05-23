@@ -1,0 +1,134 @@
+{
+  "e": [
+    {
+      "var": "e:outserv",
+      "unit": "",
+      "desc": "Out of Service"
+    },
+    {
+      "var": "e:mtime",
+      "unit": "min",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:hrtime",
+      "unit": "h",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:opt_evt",
+      "unit": "",
+      "desc": "Type of Event"
+    },
+    {
+      "var": "e:iopt_src",
+      "unit": "",
+      "desc": "Source"
+    },
+    {
+      "var": "e:iopt_type",
+      "unit": "",
+      "desc": "Event of Load"
+    },
+    {
+      "var": "e:iopt_load",
+      "unit": "",
+      "desc": "Event for"
+    },
+    {
+      "var": "e:iStage",
+      "unit": "",
+      "desc": "Stage"
+    },
+    {
+      "var": "e:time",
+      "unit": "s",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:dP",
+      "unit": "%",
+      "desc": "Active Power"
+    },
+    {
+      "var": "e:dQ",
+      "unit": "%",
+      "desc": "Reactive Power"
+    },
+    {
+      "var": "e:newP",
+      "unit": "%Pnom.",
+      "desc": "Active Power"
+    },
+    {
+      "var": "e:newQ",
+      "unit": "%Qnom.",
+      "desc": "Reactive Power"
+    },
+    {
+      "var": "e:t_ramp",
+      "unit": "s",
+      "desc": "Ramp Duration"
+    },
+    {
+      "var": "e:tDateTime",
+      "unit": "",
+      "desc": "Execution Time"
+    },
+    {
+      "var": "e:p_target",
+      "unit": "ElmLod*,SetSelect",
+      "desc": "Load"
+    },
+    {
+      "var": "e:p_from",
+      "unit": "Elm*",
+      "desc": "Event defined by"
+    },
+    {
+      "var": "e:contents",
+      "unit": "",
+      "desc": "Loads"
+    },
+    {
+      "var": "e:dtime",
+      "unit": "s",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:tact",
+      "unit": "s",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dmtime",
+      "unit": "min",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:mtact",
+      "unit": "min",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dhrtime",
+      "unit": "h",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:hrtact",
+      "unit": "h",
+      "desc": "Now"
+    },
+    {
+      "var": "e:cAbsP",
+      "unit": "MW",
+      "desc": "Active Power"
+    },
+    {
+      "var": "e:cAbsQ",
+      "unit": "Mvar",
+      "desc": "Reactive Power"
+    }
+  ]
+}

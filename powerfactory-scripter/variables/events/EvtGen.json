@@ -1,0 +1,84 @@
+{
+  "e": [
+    {
+      "var": "e:outserv",
+      "unit": "",
+      "desc": "Out of Service"
+    },
+    {
+      "var": "e:mtime",
+      "unit": "min",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:hrtime",
+      "unit": "h",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:powerChange",
+      "unit": "",
+      "desc": "Change power"
+    },
+    {
+      "var": "e:time",
+      "unit": "s",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:dP",
+      "unit": "MW",
+      "desc": "Active Power"
+    },
+    {
+      "var": "e:dQ",
+      "unit": "Mvar",
+      "desc": "Reactive Power"
+    },
+    {
+      "var": "e:tDateTime",
+      "unit": "",
+      "desc": "Execution Time"
+    },
+    {
+      "var": "e:p_target",
+      "unit": "ElmSym,ElmXnet,ElmGenstat,ElmAsm,ElmPvsys,ElmVac,ElmVsc*,ElmRec*,ElmHvdclcc",
+      "desc": "Element"
+    },
+    {
+      "var": "e:p_from",
+      "unit": "Elm*",
+      "desc": "Event defined by"
+    },
+    {
+      "var": "e:dtime",
+      "unit": "s",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:tact",
+      "unit": "s",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dmtime",
+      "unit": "min",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:mtact",
+      "unit": "min",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dhrtime",
+      "unit": "h",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:hrtact",
+      "unit": "h",
+      "desc": "Now"
+    }
+  ]
+}

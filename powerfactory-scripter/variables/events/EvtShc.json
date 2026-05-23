@@ -1,0 +1,144 @@
+{
+  "e": [
+    {
+      "var": "e:outserv",
+      "unit": "",
+      "desc": "Out of Service"
+    },
+    {
+      "var": "e:mtime",
+      "unit": "min",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:hrtime",
+      "unit": "h",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:i_shc",
+      "unit": "",
+      "desc": "Fault Type"
+    },
+    {
+      "var": "e:i_p2psc",
+      "unit": "",
+      "desc": "Phases"
+    },
+    {
+      "var": "e:i_pspgf",
+      "unit": "",
+      "desc": "Phase"
+    },
+    {
+      "var": "e:i_p2pgf",
+      "unit": "",
+      "desc": "Phases"
+    },
+    {
+      "var": "e:ZfaultInp",
+      "unit": "",
+      "desc": "Input"
+    },
+    {
+      "var": "e:i_clearShc",
+      "unit": "",
+      "desc": "Clear Short-Circuit"
+    },
+    {
+      "var": "e:time",
+      "unit": "s",
+      "desc": "Absolute"
+    },
+    {
+      "var": "e:R_f",
+      "unit": "Ohm",
+      "desc": "Resistance"
+    },
+    {
+      "var": "e:X_f",
+      "unit": "Ohm",
+      "desc": "Reactance"
+    },
+    {
+      "var": "e:L_f",
+      "unit": "mH",
+      "desc": "Inductance"
+    },
+    {
+      "var": "e:shcLocation",
+      "unit": "%",
+      "desc": "Fault Location"
+    },
+    {
+      "var": "e:tDateTime",
+      "unit": "",
+      "desc": "Execution Time"
+    },
+    {
+      "var": "e:p_target",
+      "unit": "",
+      "desc": "Object"
+    },
+    {
+      "var": "e:p_from",
+      "unit": "Elm*",
+      "desc": "Event defined by"
+    },
+    {
+      "var": "e:dtime",
+      "unit": "s",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:tact",
+      "unit": "s",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dmtime",
+      "unit": "min",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:mtact",
+      "unit": "min",
+      "desc": "Now"
+    },
+    {
+      "var": "e:dhrtime",
+      "unit": "h",
+      "desc": "Relative"
+    },
+    {
+      "var": "e:hrtact",
+      "unit": "h",
+      "desc": "Now"
+    },
+    {
+      "var": "e:Z_f",
+      "unit": "Ohm",
+      "desc": "Impedance"
+    },
+    {
+      "var": "e:ang_f",
+      "unit": "deg",
+      "desc": "Angle"
+    },
+    {
+      "var": "e:X2R_f",
+      "unit": "",
+      "desc": "X/R ratio"
+    },
+    {
+      "var": "e:R2X_f",
+      "unit": "",
+      "desc": "R/X ratio"
+    },
+    {
+      "var": "e:effectedLne",
+      "unit": "ElmLne",
+      "desc": "Affected line"
+    }
+  ]
+}
