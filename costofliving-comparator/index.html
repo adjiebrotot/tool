@@ -193,11 +193,11 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
     <span class="toggle-label">As part of my expenses</span>
     <div class="seg-group" id="housingGroup">
       <button class="seg-btn active" data-val="include">Include housing</button>
-      <button class="seg-btn" data-val="exclude">Housing is provided</button>
+      <button class="seg-btn" data-val="exclude">Exclude housing</button>
     </div>
     <div class="tip-wrap">
       <span class="tip-icon">?</span>
-      <div class="tip-box"><strong>Include housing:</strong> Rent/mortgage is your personal expense — uses full cost-of-living index.<br><br><strong>Housing is provided:</strong> Your housing is paid by another party (e.g. employer relocation) — uses non-housing COLI index for comparison.</div>
+      <div class="tip-box"><strong>Include housing:</strong> Rent/mortgage is your personal expense.<br><br><strong>Housing is provided:</strong> Your housing is paid by another party (e.g. employer relocation).</div>
     </div>
   </div>
 </section>
@@ -455,7 +455,7 @@ const CATS=[
   {id:'water',label:'💧 Water',index:'water',tip:'Water & sewage bills'},
   {id:'gas_util',label:'🔥 Gas',index:'gas_util',tip:'Gas utility bills'},
   {id:'fuel',label:'⛽ Fuel',index:'fuel',tip:'Vehicle fuel costs (petrol/diesel)'},
-  {id:'other',label:'🌐 Other',index:'coli_no_housing',tip:'General living expenses — uses overall non-housing COLI index'},
+  {id:'other',label:'🌐 Other',index:'coli_no_housing',tip:'General living expenses'},
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -531,7 +531,7 @@ function renderSimpleSave(area,from,to){
       <div class="field-row">
         <div class="field-label">
           Est. Monthly Expenses
-          <div class="tip-wrap"><span class="tip-icon">?</span><div class="tip-box">Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing COLI'} index ratio between cities. Data updated ${META_COL}.</div></div>
+          <div class="tip-wrap"><span class="tip-icon">?</span><div class="tip-box">Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio between cities. Data updated ${META_COL}.</div></div>
         </div>
         <div class="sav-block neutral">
           <div class="sav-val mono">${fmtC(te,tc)}</div>
@@ -657,7 +657,7 @@ function renderSimpleEarn(area,from,to){
       <div class="field-row">
         <div class="field-label">
           Est. Monthly Expenses
-          <div class="tip-wrap"><span class="tip-icon">?</span><div class="tip-box">Estimated using ${S.housing==='include'?'full COLI':'non-housing COLI'} index ratio. Data updated ${META_COL}.</div></div>
+          <div class="tip-wrap"><span class="tip-icon">?</span><div class="tip-box">Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio. Data updated ${META_COL}.</div></div>
         </div>
         <div class="sav-block neutral">
           <div class="sav-val mono">${fmtC(te,tc)}</div>
