@@ -1,0 +1,659 @@
+{
+  "metadata": {
+    "updated_on": "2026-05-22",
+    "updated_by": "adjiebrotot",
+    "licence": "GNU-GPL"
+  },
+  "data": [
+    {
+      "country": "Bermuda",
+      "currency": "BMD",
+      "usd_rate": 1
+    },
+    {
+      "country": "Switzerland",
+      "currency": "CHF",
+      "usd_rate": 0.7847
+    },
+    {
+      "country": "United States",
+      "currency": "USD",
+      "usd_rate": 1.0
+    },
+    {
+      "country": "Cayman Islands",
+      "currency": "KYD",
+      "usd_rate": 0.8333
+    },
+    {
+      "country": "Bahamas",
+      "currency": "BSD",
+      "usd_rate": 1
+    },
+    {
+      "country": "Norway",
+      "currency": "NOK",
+      "usd_rate": 9.27
+    },
+    {
+      "country": "Australia",
+      "currency": "AUD",
+      "usd_rate": 1.4
+    },
+    {
+      "country": "Jersey",
+      "currency": "GBP",
+      "usd_rate": 0.7446
+    },
+    {
+      "country": "Singapore",
+      "currency": "SGD",
+      "usd_rate": 1.28
+    },
+    {
+      "country": "Denmark",
+      "currency": "DKK",
+      "usd_rate": 6.44
+    },
+    {
+      "country": "Iceland",
+      "currency": "ISK",
+      "usd_rate": 123.76
+    },
+    {
+      "country": "Israel",
+      "currency": "ILS",
+      "usd_rate": 2.9
+    },
+    {
+      "country": "South Korea",
+      "currency": "KRW",
+      "usd_rate": 1521.03
+    },
+    {
+      "country": "Lebanon",
+      "currency": "LBP",
+      "usd_rate": 89500.01
+    },
+    {
+      "country": "Finland",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Ireland",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "France",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Canada",
+      "currency": "CAD",
+      "usd_rate": 1.38
+    },
+    {
+      "country": "Netherlands",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "United Kingdom",
+      "currency": "GBP",
+      "usd_rate": 0.7446
+    },
+    {
+      "country": "Hong Kong (China)",
+      "currency": "HKD",
+      "usd_rate": 7.83
+    },
+    {
+      "country": "Luxembourg",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Italy",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Germany",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Japan",
+      "currency": "JPY",
+      "usd_rate": 159.15
+    },
+    {
+      "country": "Puerto Rico",
+      "currency": "USD",
+      "usd_rate": 1.0
+    },
+    {
+      "country": "Sweden",
+      "currency": "SEK",
+      "usd_rate": 9.36
+    },
+    {
+      "country": "Malta",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Austria",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Belgium",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Spain",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Estonia",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "China",
+      "currency": "CNY",
+      "usd_rate": 6.8
+    },
+    {
+      "country": "Uruguay",
+      "currency": "UYU",
+      "usd_rate": 39.97
+    },
+    {
+      "country": "Qatar",
+      "currency": "QAR",
+      "usd_rate": 3.64
+    },
+    {
+      "country": "Saudi Arabia",
+      "currency": "SAR",
+      "usd_rate": 3.75
+    },
+    {
+      "country": "Greece",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Taiwan (China)",
+      "currency": "TWD",
+      "usd_rate": 31.5
+    },
+    {
+      "country": "Palestine",
+      "currency": "ILS",
+      "usd_rate": 2.9
+    },
+    {
+      "country": "Iran",
+      "currency": "IRR",
+      "usd_rate": 1323042.2
+    },
+    {
+      "country": "Jamaica",
+      "currency": "JMD",
+      "usd_rate": 157.01
+    },
+    {
+      "country": "Trinidad And Tobago",
+      "currency": "TTD",
+      "usd_rate": 6.72
+    },
+    {
+      "country": "United Arab Emirates",
+      "currency": "AED",
+      "usd_rate": 3.67
+    },
+    {
+      "country": "Maldives",
+      "currency": "MVR",
+      "usd_rate": 15.46
+    },
+    {
+      "country": "Czech Republic",
+      "currency": "CZK",
+      "usd_rate": 20.93
+    },
+    {
+      "country": "Latvia",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Slovenia",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Cuba",
+      "currency": "CUP",
+      "usd_rate": 24
+    },
+    {
+      "country": "Slovakia",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Lithuania",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Thailand",
+      "currency": "THB",
+      "usd_rate": 32.67
+    },
+    {
+      "country": "Bahrain",
+      "currency": "BHD",
+      "usd_rate": 0.376
+    },
+    {
+      "country": "Costa Rica",
+      "currency": "CRC",
+      "usd_rate": 453.18
+    },
+    {
+      "country": "Dominican Republic",
+      "currency": "DOP",
+      "usd_rate": 59.01
+    },
+    {
+      "country": "Russia",
+      "currency": "RUB",
+      "usd_rate": 71.55
+    },
+    {
+      "country": "Oman",
+      "currency": "OMR",
+      "usd_rate": 0.3851
+    },
+    {
+      "country": "Panama",
+      "currency": "PAB",
+      "usd_rate": 1.0
+    },
+    {
+      "country": "Jordan",
+      "currency": "JOD",
+      "usd_rate": 0.71
+    },
+    {
+      "country": "Portugal",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Poland",
+      "currency": "PLN",
+      "usd_rate": 3.65
+    },
+    {
+      "country": "Romania",
+      "currency": "RON",
+      "usd_rate": 4.52
+    },
+    {
+      "country": "Bulgaria",
+      "currency": "BGN",
+      "usd_rate": 1.67
+    },
+    {
+      "country": "Philippines",
+      "currency": "PHP",
+      "usd_rate": 61.62
+    },
+    {
+      "country": "Croatia",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Hungary",
+      "currency": "HUF",
+      "usd_rate": 309.11
+    },
+    {
+      "country": "Cyprus",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Montenegro",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "Kosovo (Disputed Territory)",
+      "currency": "EUR",
+      "usd_rate": 0.8619
+    },
+    {
+      "country": "El Salvador",
+      "currency": "USD",
+      "usd_rate": 1.0
+    },
+    {
+      "country": "Malaysia",
+      "currency": "MYR",
+      "usd_rate": 3.97
+    },
+    {
+      "country": "Albania",
+      "currency": "ALL",
+      "usd_rate": 82.36
+    },
+    {
+      "country": "Serbia",
+      "currency": "RSD",
+      "usd_rate": 101.18
+    },
+    {
+      "country": "North Macedonia",
+      "currency": "MKD",
+      "usd_rate": 53.13
+    },
+    {
+      "country": "Belarus",
+      "currency": "BYN",
+      "usd_rate": 2.74
+    },
+    {
+      "country": "Zimbabwe",
+      "currency": "ZWL",
+      "usd_rate": 65834.69
+    },
+    {
+      "country": "Vietnam",
+      "currency": "VND",
+      "usd_rate": 26350.0
+    },
+    {
+      "country": "Bosnia And Herzegovina",
+      "currency": "BAM",
+      "usd_rate": 1.69
+    },
+    {
+      "country": "Ecuador",
+      "currency": "USD",
+      "usd_rate": 1.0
+    },
+    {
+      "country": "South Africa",
+      "currency": "ZAR",
+      "usd_rate": 16.48
+    },
+    {
+      "country": "Mexico",
+      "currency": "MXN",
+      "usd_rate": 17.33
+    },
+    {
+      "country": "Armenia",
+      "currency": "AMD",
+      "usd_rate": 367.97
+    },
+    {
+      "country": "Georgia",
+      "currency": "GEL",
+      "usd_rate": 2.68
+    },
+    {
+      "country": "Brazil",
+      "currency": "BRL",
+      "usd_rate": 5.04
+    },
+    {
+      "country": "Senegal",
+      "currency": "XOF",
+      "usd_rate": 565.35
+    },
+    {
+      "country": "Kuwait",
+      "currency": "KWD",
+      "usd_rate": 0.3097
+    },
+    {
+      "country": "Guyana",
+      "currency": "GYD",
+      "usd_rate": 208.98
+    },
+    {
+      "country": "Ivory Coast",
+      "currency": "XOF",
+      "usd_rate": 565.35
+    },
+    {
+      "country": "Ethiopia",
+      "currency": "ETB",
+      "usd_rate": 161.26
+    },
+    {
+      "country": "Chile",
+      "currency": "CLP",
+      "usd_rate": 901.43
+    },
+    {
+      "country": "Cambodia",
+      "currency": "KHR",
+      "usd_rate": 4020.0
+    },
+    {
+      "country": "Argentina",
+      "currency": "ARS",
+      "usd_rate": 1401.09
+    },
+    {
+      "country": "Algeria",
+      "currency": "DZD",
+      "usd_rate": 132.85
+    },
+    {
+      "country": "Indonesia",
+      "currency": "IDR",
+      "usd_rate": 17717.0
+    },
+    {
+      "country": "Kazakhstan",
+      "currency": "KZT",
+      "usd_rate": 471.35
+    },
+    {
+      "country": "Ukraine",
+      "currency": "UAH",
+      "usd_rate": 44.36
+    },
+    {
+      "country": "Azerbaijan",
+      "currency": "AZN",
+      "usd_rate": 1.7
+    },
+    {
+      "country": "Rwanda",
+      "currency": "RWF",
+      "usd_rate": 1463.35
+    },
+    {
+      "country": "Tanzania",
+      "currency": "TZS",
+      "usd_rate": 2613.0
+    },
+    {
+      "country": "Turkey",
+      "currency": "TRY",
+      "usd_rate": 45.71
+    },
+    {
+      "country": "Tunisia",
+      "currency": "TND",
+      "usd_rate": 2.91
+    },
+    {
+      "country": "Bangladesh",
+      "currency": "BDT",
+      "usd_rate": 122.64
+    },
+    {
+      "country": "Paraguay",
+      "currency": "PYG",
+      "usd_rate": 6088.93
+    },
+    {
+      "country": "Syria",
+      "currency": "SYP",
+      "usd_rate": 110.53
+    },
+    {
+      "country": "Uzbekistan",
+      "currency": "UZS",
+      "usd_rate": 11979.64
+    },
+    {
+      "country": "Ghana",
+      "currency": "GHS",
+      "usd_rate": 11.6
+    },
+    {
+      "country": "Sri Lanka",
+      "currency": "LKR",
+      "usd_rate": 330.0
+    },
+    {
+      "country": "India",
+      "currency": "INR",
+      "usd_rate": 95.65
+    },
+    {
+      "country": "Nepal",
+      "currency": "NPR",
+      "usd_rate": 153.28
+    },
+    {
+      "country": "Libya",
+      "currency": "LYD",
+      "usd_rate": 6.37
+    },
+    {
+      "country": "Kyrgyzstan",
+      "currency": "KGS",
+      "usd_rate": 87.45
+    },
+    {
+      "country": "Colombia",
+      "currency": "COP",
+      "usd_rate": 3686.4
+    },
+    {
+      "country": "Egypt",
+      "currency": "EGP",
+      "usd_rate": 52.92
+    },
+    {
+      "country": "Pakistan",
+      "currency": "PKR",
+      "usd_rate": 278.35
+    },
+    {
+      "country": "Uganda",
+      "currency": "UGX",
+      "usd_rate": 3781.8
+    },
+    {
+      "country": "Kenya",
+      "currency": "KES",
+      "usd_rate": 129.74
+    },
+    {
+      "country": "Bolivia",
+      "currency": "BOB",
+      "usd_rate": 6.91
+    },
+    {
+      "country": "Namibia",
+      "currency": "NAD",
+      "usd_rate": 16.45
+    },
+    {
+      "country": "Morocco",
+      "currency": "MAD",
+      "usd_rate": 9.21
+    },
+    {
+      "country": "Moldova",
+      "currency": "MDL",
+      "usd_rate": 17.27
+    },
+    {
+      "country": "Mongolia",
+      "currency": "MNT",
+      "usd_rate": 3579.32
+    },
+    {
+      "country": "Iraq",
+      "currency": "IQD",
+      "usd_rate": 1310.52
+    },
+    {
+      "country": "Sudan",
+      "currency": "SDG",
+      "usd_rate": 601.5
+    },
+    {
+      "country": "Myanmar",
+      "currency": "MMK",
+      "usd_rate": 2098.68
+    },
+    {
+      "country": "Botswana",
+      "currency": "BWP",
+      "usd_rate": 13.18
+    },
+    {
+      "country": "Fiji",
+      "currency": "FJD",
+      "usd_rate": 2.21
+    },
+    {
+      "country": "Peru",
+      "currency": "PEN",
+      "usd_rate": 3.42
+    },
+    {
+      "country": "Nigeria",
+      "currency": "NGN",
+      "usd_rate": 1372.05
+    },
+    {
+      "country": "Guatemala",
+      "currency": "GTQ",
+      "usd_rate": 7.62
+    },
+    {
+      "country": "Ajara",
+      "currency": "GEL",
+      "usd_rate": 2.68
+    },
+    {
+      "country": "Macao (China)",
+      "currency": "MOP",
+      "usd_rate": 8.07
+    }
+  ]
+}

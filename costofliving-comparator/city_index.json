@@ -1,0 +1,2752 @@
+[
+  {
+    "city": "Hamilton",
+    "country": "Bermuda",
+    "currency": "BMD"
+  },
+  {
+    "city": "Basel",
+    "country": "Switzerland",
+    "currency": "CHF"
+  },
+  {
+    "city": "Zurich",
+    "country": "Switzerland",
+    "currency": "CHF"
+  },
+  {
+    "city": "Lausanne",
+    "country": "Switzerland",
+    "currency": "CHF"
+  },
+  {
+    "city": "Zug",
+    "country": "Switzerland",
+    "currency": "CHF"
+  },
+  {
+    "city": "Bern",
+    "country": "Switzerland",
+    "currency": "CHF"
+  },
+  {
+    "city": "Santa Barbara, CA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Geneva",
+    "country": "Switzerland",
+    "currency": "CHF"
+  },
+  {
+    "city": "George Town",
+    "country": "Cayman Islands",
+    "currency": "KYD"
+  },
+  {
+    "city": "Honolulu, HI",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "New York, NY",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "San Francisco, CA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Nassau",
+    "country": "Bahamas",
+    "currency": "BSD"
+  },
+  {
+    "city": "Oslo",
+    "country": "Norway",
+    "currency": "NOK"
+  },
+  {
+    "city": "Seattle, WA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Stavanger",
+    "country": "Norway",
+    "currency": "NOK"
+  },
+  {
+    "city": "Oakland, CA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Adelaide",
+    "country": "Australia",
+    "currency": "AUD"
+  },
+  {
+    "city": "Bergen",
+    "country": "Norway",
+    "currency": "NOK"
+  },
+  {
+    "city": "Anchorage, AK",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Canberra",
+    "country": "Australia",
+    "currency": "AUD"
+  },
+  {
+    "city": "Saint Helier",
+    "country": "Jersey",
+    "currency": "GBP"
+  },
+  {
+    "city": "Singapore",
+    "country": "Singapore",
+    "currency": "SGD"
+  },
+  {
+    "city": "Trondheim",
+    "country": "Norway",
+    "currency": "NOK"
+  },
+  {
+    "city": "Tromso",
+    "country": "Norway",
+    "currency": "NOK"
+  },
+  {
+    "city": "Boston, MA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Odense",
+    "country": "Denmark",
+    "currency": "DKK"
+  },
+  {
+    "city": "Reykjavik",
+    "country": "Iceland",
+    "currency": "ISK"
+  },
+  {
+    "city": "Sacramento, CA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Brisbane",
+    "country": "Australia",
+    "currency": "AUD"
+  },
+  {
+    "city": "Washington, DC",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Sydney",
+    "country": "Australia",
+    "currency": "AUD"
+  },
+  {
+    "city": "Copenhagen",
+    "country": "Denmark",
+    "currency": "DKK"
+  },
+  {
+    "city": "San Jose, CA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Irvine, CA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "San Diego, CA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Portland, OR",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Perth",
+    "country": "Australia",
+    "currency": "AUD"
+  },
+  {
+    "city": "Nashville, TN",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Miami, FL",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Denver, CO",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Ramat Gan",
+    "country": "Israel",
+    "currency": "ILS"
+  },
+  {
+    "city": "Arhus",
+    "country": "Denmark",
+    "currency": "DKK"
+  },
+  {
+    "city": "Melbourne",
+    "country": "Australia",
+    "currency": "AUD"
+  },
+  {
+    "city": "Tel Aviv-Yafo",
+    "country": "Israel",
+    "currency": "ILS"
+  },
+  {
+    "city": "Seoul",
+    "country": "South Korea",
+    "currency": "KRW"
+  },
+  {
+    "city": "Netanya",
+    "country": "Israel",
+    "currency": "ILS"
+  },
+  {
+    "city": "Raleigh, NC",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "New Orleans, LA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Beirut",
+    "country": "Lebanon",
+    "currency": "LBP"
+  },
+  {
+    "city": "Philadelphia, PA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Espoo",
+    "country": "Finland",
+    "currency": "EUR"
+  },
+  {
+    "city": "Los Angeles, CA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Chicago, IL",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Buffalo, NY",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Auckland",
+    "country": "New Zealand",
+    "currency": "NZD"
+  },
+  {
+    "city": "Charlotte, NC",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Wellington",
+    "country": "New Zealand",
+    "currency": "NZD"
+  },
+  {
+    "city": "Pittsburgh, PA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Dublin",
+    "country": "Ireland",
+    "currency": "EUR"
+  },
+  {
+    "city": "Nice",
+    "country": "France",
+    "currency": "EUR"
+  },
+  {
+    "city": "Aalborg",
+    "country": "Denmark",
+    "currency": "DKK"
+  },
+  {
+    "city": "Cleveland, OH",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Dallas, TX",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Paris",
+    "country": "France",
+    "currency": "EUR"
+  },
+  {
+    "city": "Victoria",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Petah Tikva",
+    "country": "Israel",
+    "currency": "ILS"
+  },
+  {
+    "city": "Haarlem",
+    "country": "Netherlands",
+    "currency": "EUR"
+  },
+  {
+    "city": "Baltimore, MD",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Tampa, FL",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Long Beach, CA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "London",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Omaha, NE",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Haifa",
+    "country": "Israel",
+    "currency": "ILS"
+  },
+  {
+    "city": "Hong Kong",
+    "country": "Hong Kong (China)",
+    "currency": "HKD"
+  },
+  {
+    "city": "Nanaimo, BC",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Indianapolis, IN",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Utrecht",
+    "country": "Netherlands",
+    "currency": "EUR"
+  },
+  {
+    "city": "Luxembourg",
+    "country": "Luxembourg",
+    "currency": "EUR"
+  },
+  {
+    "city": "Birmingham, AL",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Fort Worth, TX",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Lyon",
+    "country": "France",
+    "currency": "EUR"
+  },
+  {
+    "city": "Minneapolis, MN",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Jerusalem",
+    "country": "Israel",
+    "currency": "ILS"
+  },
+  {
+    "city": "Phoenix, AZ",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Austin, TX",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Milan",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Chattanooga, TN",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Toronto",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Munich",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Atlanta, GA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Nijmegen",
+    "country": "Netherlands",
+    "currency": "EUR"
+  },
+  {
+    "city": "Fort Lauderdale, FL",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Columbus, OH",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Detroit, MI",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Vancouver",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Spokane, WA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Las Vegas, NV",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Calgary",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Tokyo",
+    "country": "Japan",
+    "currency": "JPY"
+  },
+  {
+    "city": "Reno, NV",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Colorado Springs, CO",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "San Juan",
+    "country": "Puerto Rico",
+    "currency": "USD"
+  },
+  {
+    "city": "Boise, ID",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Orlando, FL",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Fresno, CA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Madison, WI",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Breda",
+    "country": "Netherlands",
+    "currency": "EUR"
+  },
+  {
+    "city": "Stockholm",
+    "country": "Sweden",
+    "currency": "SEK"
+  },
+  {
+    "city": "Hamburg",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Hobart",
+    "country": "Australia",
+    "currency": "AUD"
+  },
+  {
+    "city": "Milwaukee, WI",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Maastricht",
+    "country": "Netherlands",
+    "currency": "EUR"
+  },
+  {
+    "city": "Amsterdam",
+    "country": "Netherlands",
+    "currency": "EUR"
+  },
+  {
+    "city": "Oulu",
+    "country": "Finland",
+    "currency": "EUR"
+  },
+  {
+    "city": "Albuquerque, NM",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Oklahoma City, OK",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Markham",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Turku",
+    "country": "Finland",
+    "currency": "EUR"
+  },
+  {
+    "city": "Valletta",
+    "country": "Malta",
+    "currency": "EUR"
+  },
+  {
+    "city": "Groningen",
+    "country": "Netherlands",
+    "currency": "EUR"
+  },
+  {
+    "city": "Frankfurt",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Edmonton",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Cambridge",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Kamloops",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Innsbruck",
+    "country": "Austria",
+    "currency": "EUR"
+  },
+  {
+    "city": "Berlin",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Fredericton",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Houston, TX",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Guildford",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Macao",
+    "country": "Macao (China)",
+    "currency": "MOP"
+  },
+  {
+    "city": "Jacksonville, FL",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Galway",
+    "country": "Ireland",
+    "currency": "EUR"
+  },
+  {
+    "city": "Antwerp",
+    "country": "Belgium",
+    "currency": "EUR"
+  },
+  {
+    "city": "Brussels",
+    "country": "Belgium",
+    "currency": "EUR"
+  },
+  {
+    "city": "Toulouse",
+    "country": "France",
+    "currency": "EUR"
+  },
+  {
+    "city": "Helsinki",
+    "country": "Finland",
+    "currency": "EUR"
+  },
+  {
+    "city": "Gold Coast",
+    "country": "Australia",
+    "currency": "AUD"
+  },
+  {
+    "city": "Ottawa",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Cork",
+    "country": "Ireland",
+    "currency": "EUR"
+  },
+  {
+    "city": "Quebec City",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Eindhoven",
+    "country": "Netherlands",
+    "currency": "EUR"
+  },
+  {
+    "city": "Hamilton",
+    "country": "New Zealand",
+    "currency": "NZD"
+  },
+  {
+    "city": "Marseille",
+    "country": "France",
+    "currency": "EUR"
+  },
+  {
+    "city": "Kansas City, MO",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Tucson, AZ",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Halifax",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Graz",
+    "country": "Austria",
+    "currency": "EUR"
+  },
+  {
+    "city": "Dusseldorf",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Hamilton",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Christchurch",
+    "country": "New Zealand",
+    "currency": "NZD"
+  },
+  {
+    "city": "Grenoble",
+    "country": "France",
+    "currency": "EUR"
+  },
+  {
+    "city": "Rotterdam",
+    "country": "Netherlands",
+    "currency": "EUR"
+  },
+  {
+    "city": "Saint Louis, MO",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Brighton",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "San Antonio, TX",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Salzburg",
+    "country": "Austria",
+    "currency": "EUR"
+  },
+  {
+    "city": "Leuven",
+    "country": "Belgium",
+    "currency": "EUR"
+  },
+  {
+    "city": "Florence",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Red Deer",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Bonn",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Saskatoon",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Rome",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Linz",
+    "country": "Austria",
+    "currency": "EUR"
+  },
+  {
+    "city": "Surrey",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Nantes",
+    "country": "France",
+    "currency": "EUR"
+  },
+  {
+    "city": "Freiburg im Breisgau",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "London",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Heidelberg",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Gent",
+    "country": "Belgium",
+    "currency": "EUR"
+  },
+  {
+    "city": "Reading",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Richmond, VA",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Bologna",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Winnipeg",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Cologne",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Louisville, KY",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Nagoya",
+    "country": "Japan",
+    "currency": "JPY"
+  },
+  {
+    "city": "Kitchener",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Sliema",
+    "country": "Malta",
+    "currency": "EUR"
+  },
+  {
+    "city": "Parma",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Montreal",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Bristol",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Limerick",
+    "country": "Ireland",
+    "currency": "EUR"
+  },
+  {
+    "city": "Karlsruhe",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Oxford",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Genoa",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Mannheim",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Delft",
+    "country": "Netherlands",
+    "currency": "EUR"
+  },
+  {
+    "city": "Bergamo",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Mississauga",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Salt Lake City, UT",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Trento",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Dortmund",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Dubai",
+    "country": "United Arab Emirates",
+    "currency": "AED"
+  },
+  {
+    "city": "Trieste",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Lund",
+    "country": "Sweden",
+    "currency": "SEK"
+  },
+  {
+    "city": "Memphis, TN",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Stuttgart",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Kelowna",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Kingston",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Tulsa, OK",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Osaka",
+    "country": "Japan",
+    "currency": "JPY"
+  },
+  {
+    "city": "Brescia",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Uppsala",
+    "country": "Sweden",
+    "currency": "SEK"
+  },
+  {
+    "city": "Enschede",
+    "country": "Netherlands",
+    "currency": "EUR"
+  },
+  {
+    "city": "Manchester",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Cincinnati, OH",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Brampton",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "St.Catharines",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Larnaca",
+    "country": "Cyprus",
+    "currency": "EUR"
+  },
+  {
+    "city": "Liverpool",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Treviso",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Tampere",
+    "country": "Finland",
+    "currency": "EUR"
+  },
+  {
+    "city": "Bremen",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Bournemouth",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Glasgow",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Malmo",
+    "country": "Sweden",
+    "currency": "SEK"
+  },
+  {
+    "city": "Padova",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "The Hague (Den Haag)",
+    "country": "Netherlands",
+    "currency": "EUR"
+  },
+  {
+    "city": "Nottingham",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Plymouth",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Lille",
+    "country": "France",
+    "currency": "EUR"
+  },
+  {
+    "city": "Regina",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Leeds",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Gothenburg",
+    "country": "Sweden",
+    "currency": "SEK"
+  },
+  {
+    "city": "Hanover",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Cagliari",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Vienna",
+    "country": "Austria",
+    "currency": "EUR"
+  },
+  {
+    "city": "Bari",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Belfast",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Windsor",
+    "country": "Canada",
+    "currency": "CAD"
+  },
+  {
+    "city": "Derby",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Turin",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Verona",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Edinburgh",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Leipzig",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Newcastle upon Tyne",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Norwich",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Nuremberg",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Limassol",
+    "country": "Cyprus",
+    "currency": "EUR"
+  },
+  {
+    "city": "Southampton",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Essen",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Knoxville, TN",
+    "country": "United States",
+    "currency": "USD"
+  },
+  {
+    "city": "Al Khobar",
+    "country": "Saudi Arabia",
+    "currency": "SAR"
+  },
+  {
+    "city": "Exeter",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Sheffield",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Athens",
+    "country": "Greece",
+    "currency": "EUR"
+  },
+  {
+    "city": "Tallinn",
+    "country": "Estonia",
+    "currency": "EUR"
+  },
+  {
+    "city": "Suzhou",
+    "country": "China",
+    "currency": "CNY"
+  },
+  {
+    "city": "Aachen",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Montevideo",
+    "country": "Uruguay",
+    "currency": "UYU"
+  },
+  {
+    "city": "Portsmouth",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Cardiff",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Doha",
+    "country": "Qatar",
+    "currency": "QAR"
+  },
+  {
+    "city": "Coventry",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Barcelona",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Birmingham",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Aberdeen",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Dresden",
+    "country": "Germany",
+    "currency": "EUR"
+  },
+  {
+    "city": "Dundee",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Taipei",
+    "country": "Taiwan (China)",
+    "currency": "TWD"
+  },
+  {
+    "city": "Naples",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Preston",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Ramallah",
+    "country": "Palestine",
+    "currency": "ILS"
+  },
+  {
+    "city": "Bilbao",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Leicester",
+    "country": "United Kingdom",
+    "currency": "GBP"
+  },
+  {
+    "city": "Shiraz",
+    "country": "Iran",
+    "currency": "IRR"
+  },
+  {
+    "city": "Kingston",
+    "country": "Jamaica",
+    "currency": "JMD"
+  },
+  {
+    "city": "New Taipei City",
+    "country": "Taiwan (China)",
+    "currency": "TWD"
+  },
+  {
+    "city": "Port of Spain",
+    "country": "Trinidad And Tobago",
+    "currency": "TTD"
+  },
+  {
+    "city": "Palermo",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Thessaloniki",
+    "country": "Greece",
+    "currency": "EUR"
+  },
+  {
+    "city": "Abu Dhabi",
+    "country": "United Arab Emirates",
+    "currency": "AED"
+  },
+  {
+    "city": "Nicosia",
+    "country": "Cyprus",
+    "currency": "EUR"
+  },
+  {
+    "city": "Male",
+    "country": "Maldives",
+    "currency": "MVR"
+  },
+  {
+    "city": "Prague",
+    "country": "Czech Republic",
+    "currency": "CZK"
+  },
+  {
+    "city": "Riga",
+    "country": "Latvia",
+    "currency": "EUR"
+  },
+  {
+    "city": "Madrid",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Ljubljana",
+    "country": "Slovenia",
+    "currency": "EUR"
+  },
+  {
+    "city": "Palma de Mallorca",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Havana",
+    "country": "Cuba",
+    "currency": "CUP"
+  },
+  {
+    "city": "Heraklion",
+    "country": "Greece",
+    "currency": "EUR"
+  },
+  {
+    "city": "Riyadh",
+    "country": "Saudi Arabia",
+    "currency": "SAR"
+  },
+  {
+    "city": "Catania",
+    "country": "Italy",
+    "currency": "EUR"
+  },
+  {
+    "city": "Zadar",
+    "country": "Croatia",
+    "currency": "EUR"
+  },
+  {
+    "city": "Larissa",
+    "country": "Greece",
+    "currency": "EUR"
+  },
+  {
+    "city": "Tartu",
+    "country": "Estonia",
+    "currency": "EUR"
+  },
+  {
+    "city": "Jeddah (Jiddah)",
+    "country": "Saudi Arabia",
+    "currency": "SAR"
+  },
+  {
+    "city": "Lisbon",
+    "country": "Portugal",
+    "currency": "EUR"
+  },
+  {
+    "city": "Vilnius",
+    "country": "Lithuania",
+    "currency": "EUR"
+  },
+  {
+    "city": "Dubrovnik",
+    "country": "Croatia",
+    "currency": "EUR"
+  },
+  {
+    "city": "Valencia",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Pamplona",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Zagreb",
+    "country": "Croatia",
+    "currency": "EUR"
+  },
+  {
+    "city": "Bangkok",
+    "country": "Thailand",
+    "currency": "THB"
+  },
+  {
+    "city": "Manama",
+    "country": "Bahrain",
+    "currency": "BHD"
+  },
+  {
+    "city": "Oviedo",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Bratislava",
+    "country": "Slovakia",
+    "currency": "EUR"
+  },
+  {
+    "city": "San Jose",
+    "country": "Costa Rica",
+    "currency": "CRC"
+  },
+  {
+    "city": "Alicante",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Seville (Sevilla)",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Granada",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Santo Domingo",
+    "country": "Dominican Republic",
+    "currency": "DOP"
+  },
+  {
+    "city": "Paphos",
+    "country": "Cyprus",
+    "currency": "EUR"
+  },
+  {
+    "city": "Malaga",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Vladivostok",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Muscat",
+    "country": "Oman",
+    "currency": "OMR"
+  },
+  {
+    "city": "Kaohsiung",
+    "country": "Taiwan (China)",
+    "currency": "TWD"
+  },
+  {
+    "city": "Panama City",
+    "country": "Panama",
+    "currency": "PAB"
+  },
+  {
+    "city": "Brno",
+    "country": "Czech Republic",
+    "currency": "CZK"
+  },
+  {
+    "city": "Kaunas",
+    "country": "Lithuania",
+    "currency": "EUR"
+  },
+  {
+    "city": "Ad Dammam",
+    "country": "Saudi Arabia",
+    "currency": "SAR"
+  },
+  {
+    "city": "Amman",
+    "country": "Jordan",
+    "currency": "JOD"
+  },
+  {
+    "city": "Porto",
+    "country": "Portugal",
+    "currency": "EUR"
+  },
+  {
+    "city": "Ostrava",
+    "country": "Czech Republic",
+    "currency": "CZK"
+  },
+  {
+    "city": "Shanghai",
+    "country": "China",
+    "currency": "CNY"
+  },
+  {
+    "city": "Olomouc",
+    "country": "Czech Republic",
+    "currency": "CZK"
+  },
+  {
+    "city": "Plzen",
+    "country": "Czech Republic",
+    "currency": "CZK"
+  },
+  {
+    "city": "Maribor",
+    "country": "Slovenia",
+    "currency": "EUR"
+  },
+  {
+    "city": "Beijing",
+    "country": "China",
+    "currency": "CNY"
+  },
+  {
+    "city": "Santiago",
+    "country": "Chile",
+    "currency": "CLP"
+  },
+  {
+    "city": "Phnom Penh",
+    "country": "Cambodia",
+    "currency": "KHR"
+  },
+  {
+    "city": "Cascais",
+    "country": "Portugal",
+    "currency": "EUR"
+  },
+  {
+    "city": "Las Palmas de Gran Canaria",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Dakar",
+    "country": "Senegal",
+    "currency": "XOF"
+  },
+  {
+    "city": "Kuwait City",
+    "country": "Kuwait",
+    "currency": "KWD"
+  },
+  {
+    "city": "Budapest",
+    "country": "Hungary",
+    "currency": "HUF"
+  },
+  {
+    "city": "Georgetown",
+    "country": "Guyana",
+    "currency": "GYD"
+  },
+  {
+    "city": "Moscow",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Santa Cruz de Tenerife",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Murcia",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Kosice",
+    "country": "Slovakia",
+    "currency": "EUR"
+  },
+  {
+    "city": "Sharjah",
+    "country": "United Arab Emirates",
+    "currency": "AED"
+  },
+  {
+    "city": "Rijeka",
+    "country": "Croatia",
+    "currency": "EUR"
+  },
+  {
+    "city": "Sofia",
+    "country": "Bulgaria",
+    "currency": "BGN"
+  },
+  {
+    "city": "Funchal",
+    "country": "Portugal",
+    "currency": "EUR"
+  },
+  {
+    "city": "Makati",
+    "country": "Philippines",
+    "currency": "PHP"
+  },
+  {
+    "city": "Zaragoza (Saragossa)",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Split",
+    "country": "Croatia",
+    "currency": "EUR"
+  },
+  {
+    "city": "Klaipeda",
+    "country": "Lithuania",
+    "currency": "EUR"
+  },
+  {
+    "city": "Saint Petersburg",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "San Salvador",
+    "country": "El Salvador",
+    "currency": "USD"
+  },
+  {
+    "city": "Shenzhen",
+    "country": "China",
+    "currency": "CNY"
+  },
+  {
+    "city": "Vigo",
+    "country": "Spain",
+    "currency": "EUR"
+  },
+  {
+    "city": "Warsaw",
+    "country": "Poland",
+    "currency": "PLN"
+  },
+  {
+    "city": "Coimbra",
+    "country": "Portugal",
+    "currency": "EUR"
+  },
+  {
+    "city": "Guatemala City",
+    "country": "Guatemala",
+    "currency": "GTQ"
+  },
+  {
+    "city": "Bucharest",
+    "country": "Romania",
+    "currency": "RON"
+  },
+  {
+    "city": "Phuket",
+    "country": "Thailand",
+    "currency": "THB"
+  },
+  {
+    "city": "Abidjan",
+    "country": "Ivory Coast",
+    "currency": "XOF"
+  },
+  {
+    "city": "Aveiro",
+    "country": "Portugal",
+    "currency": "EUR"
+  },
+  {
+    "city": "Addis Ababa",
+    "country": "Ethiopia",
+    "currency": "ETB"
+  },
+  {
+    "city": "Leiria",
+    "country": "Portugal",
+    "currency": "EUR"
+  },
+  {
+    "city": "Monterrey",
+    "country": "Mexico",
+    "currency": "MXN"
+  },
+  {
+    "city": "Braga",
+    "country": "Portugal",
+    "currency": "EUR"
+  },
+  {
+    "city": "Caracas",
+    "country": "Venezuela",
+    "currency": "VES"
+  },
+  {
+    "city": "Belgrade",
+    "country": "Serbia",
+    "currency": "RSD"
+  },
+  {
+    "city": "Yekaterinburg",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Budva",
+    "country": "Montenegro",
+    "currency": "EUR"
+  },
+  {
+    "city": "Yerevan",
+    "country": "Armenia",
+    "currency": "AMD"
+  },
+  {
+    "city": "Tijuana",
+    "country": "Mexico",
+    "currency": "MXN"
+  },
+  {
+    "city": "Tbilisi",
+    "country": "Georgia",
+    "currency": "GEL"
+  },
+  {
+    "city": "Sao Paulo",
+    "country": "Brazil",
+    "currency": "BRL"
+  },
+  {
+    "city": "Hangzhou",
+    "country": "China",
+    "currency": "CNY"
+  },
+  {
+    "city": "Novosibirsk",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Osijek",
+    "country": "Croatia",
+    "currency": "EUR"
+  },
+  {
+    "city": "Mexico City",
+    "country": "Mexico",
+    "currency": "MXN"
+  },
+  {
+    "city": "Cluj-Napoca",
+    "country": "Romania",
+    "currency": "RON"
+  },
+  {
+    "city": "Harare",
+    "country": "Zimbabwe",
+    "currency": "ZWL"
+  },
+  {
+    "city": "Krakow (Cracow)",
+    "country": "Poland",
+    "currency": "PLN"
+  },
+  {
+    "city": "Wroclaw",
+    "country": "Poland",
+    "currency": "PLN"
+  },
+  {
+    "city": "Ajman",
+    "country": "United Arab Emirates",
+    "currency": "AED"
+  },
+  {
+    "city": "Constanta",
+    "country": "Romania",
+    "currency": "RON"
+  },
+  {
+    "city": "Quezon City",
+    "country": "Philippines",
+    "currency": "PHP"
+  },
+  {
+    "city": "Kazan",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Gdynia",
+    "country": "Poland",
+    "currency": "PLN"
+  },
+  {
+    "city": "Szeged",
+    "country": "Hungary",
+    "currency": "HUF"
+  },
+  {
+    "city": "Pattaya",
+    "country": "Thailand",
+    "currency": "THB"
+  },
+  {
+    "city": "Johannesburg",
+    "country": "South Africa",
+    "currency": "ZAR"
+  },
+  {
+    "city": "Cancun",
+    "country": "Mexico",
+    "currency": "MXN"
+  },
+  {
+    "city": "Tirana",
+    "country": "Albania",
+    "currency": "ALL"
+  },
+  {
+    "city": "Varna",
+    "country": "Bulgaria",
+    "currency": "BGN"
+  },
+  {
+    "city": "Puebla",
+    "country": "Mexico",
+    "currency": "MXN"
+  },
+  {
+    "city": "Kuching",
+    "country": "Malaysia",
+    "currency": "MYR"
+  },
+  {
+    "city": "Krasnodar",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Gdansk",
+    "country": "Poland",
+    "currency": "PLN"
+  },
+  {
+    "city": "Katowice",
+    "country": "Poland",
+    "currency": "PLN"
+  },
+  {
+    "city": "Merida",
+    "country": "Mexico",
+    "currency": "MXN"
+  },
+  {
+    "city": "Kaliningrad",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Voronezh",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Brasov",
+    "country": "Romania",
+    "currency": "RON"
+  },
+  {
+    "city": "Podgorica",
+    "country": "Montenegro",
+    "currency": "EUR"
+  },
+  {
+    "city": "Guangzhou",
+    "country": "China",
+    "currency": "CNY"
+  },
+  {
+    "city": "Sarajevo",
+    "country": "Bosnia And Herzegovina",
+    "currency": "BAM"
+  },
+  {
+    "city": "Rio de Janeiro",
+    "country": "Brazil",
+    "currency": "BRL"
+  },
+  {
+    "city": "Guayaquil",
+    "country": "Ecuador",
+    "currency": "USD"
+  },
+  {
+    "city": "Samara",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Chiang Mai",
+    "country": "Thailand",
+    "currency": "THB"
+  },
+  {
+    "city": "Brasilia",
+    "country": "Brazil",
+    "currency": "BRL"
+  },
+  {
+    "city": "Chengdu",
+    "country": "China",
+    "currency": "CNY"
+  },
+  {
+    "city": "Bialystok",
+    "country": "Poland",
+    "currency": "PLN"
+  },
+  {
+    "city": "Kuala Lumpur",
+    "country": "Malaysia",
+    "currency": "MYR"
+  },
+  {
+    "city": "Nizhny Novgorod",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Lagos",
+    "country": "Nigeria",
+    "currency": "NGN"
+  },
+  {
+    "city": "Manila",
+    "country": "Philippines",
+    "currency": "PHP"
+  },
+  {
+    "city": "Plovdiv",
+    "country": "Bulgaria",
+    "currency": "BGN"
+  },
+  {
+    "city": "Szczecin",
+    "country": "Poland",
+    "currency": "PLN"
+  },
+  {
+    "city": "Queretaro (Santiago de Querétaro)",
+    "country": "Mexico",
+    "currency": "MXN"
+  },
+  {
+    "city": "Guadalajara",
+    "country": "Mexico",
+    "currency": "MXN"
+  },
+  {
+    "city": "Cuenca",
+    "country": "Ecuador",
+    "currency": "USD"
+  },
+  {
+    "city": "Perm",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Poznan",
+    "country": "Poland",
+    "currency": "PLN"
+  },
+  {
+    "city": "Gaborone",
+    "country": "Botswana",
+    "currency": "BWP"
+  },
+  {
+    "city": "Pretoria",
+    "country": "South Africa",
+    "currency": "ZAR"
+  },
+  {
+    "city": "Puerto Vallarta",
+    "country": "Mexico",
+    "currency": "MXN"
+  },
+  {
+    "city": "Novi Sad",
+    "country": "Serbia",
+    "currency": "RSD"
+  },
+  {
+    "city": "Ufa",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Burgas",
+    "country": "Bulgaria",
+    "currency": "BGN"
+  },
+  {
+    "city": "Oradea",
+    "country": "Romania",
+    "currency": "RON"
+  },
+  {
+    "city": "Ho Chi Minh City",
+    "country": "Vietnam",
+    "currency": "VND"
+  },
+  {
+    "city": "Skopje",
+    "country": "North Macedonia",
+    "currency": "MKD"
+  },
+  {
+    "city": "Minsk",
+    "country": "Belarus",
+    "currency": "BYN"
+  },
+  {
+    "city": "Rostov-na-donu",
+    "country": "Russia",
+    "currency": "RUB"
+  },
+  {
+    "city": "Cape Town",
+    "country": "South Africa",
+    "currency": "ZAR"
+  },
+  {
+    "city": "Khartoum",
+    "country": "Sudan",
+    "currency": "SDG"
+  },
+  {
+    "city": "Cebu",
+    "country": "Philippines",
+    "currency": "PHP"
+  },
+  {
+    "city": "Lodz",
+    "country": "Poland",
+    "currency": "PLN"
+  },
+  {
+    "city": "Timisoara",
+    "country": "Romania",
+    "currency": "RON"
+  },
+  {
+    "city": "Campinas",
+    "country": "Brazil",
+    "currency": "BRL"
+  },
+  {
+    "city": "Florianopolis",
+    "country": "Brazil",
+    "currency": "BRL"
+  },
+  {
+    "city": "Durban",
+    "country": "South Africa",
+    "currency": "ZAR"
+  },
+  {
+    "city": "Iasi",
+    "country": "Romania",
+    "currency": "RON"
+  },
+  {
+    "city": "Penang",
+    "country": "Malaysia",
+    "currency": "MYR"
+  },
+  {
+    "city": "Yangon",
+    "country": "Myanmar",
+    "currency": "MMK"
+  },
+  {
+    "city": "Debrecen",
+    "country": "Hungary",
+    "currency": "HUF"
+  },
+  {
+    "city": "Banja Luka",
+    "country": "Bosnia And Herzegovina",
+    "currency": "BAM"
+  },
+  {
+    "city": "Nanjing",
+    "country": "China",
+    "currency": "CNY"
+  },
+  {
+    "city": "Porto Alegre",
+    "country": "Brazil",
+    "currency": "BRL"
+  },
+  {
+    "city": "Lima",
+    "country": "Peru",
+    "currency": "PEN"
+  },
+  {
+    "city": "Hanoi",
+    "country": "Vietnam",
+    "currency": "VND"
+  },
+  {
+    "city": "Suva",
+    "country": "Fiji",
+    "currency": "FJD"
+  },
+  {
+    "city": "Bursa",
+    "country": "Turkey",
+    "currency": "TRY"
+  },
+  {
+    "city": "Quito",
+    "country": "Ecuador",
+    "currency": "USD"
+  },
+  {
+    "city": "Petaling Jaya",
+    "country": "Malaysia",
+    "currency": "MYR"
+  },
+  {
+    "city": "Istanbul",
+    "country": "Turkey",
+    "currency": "TRY"
+  },
+  {
+    "city": "Tuzla",
+    "country": "Bosnia And Herzegovina",
+    "currency": "BAM"
+  },
+  {
+    "city": "Craiova",
+    "country": "Romania",
+    "currency": "RON"
+  },
+  {
+    "city": "Lublin",
+    "country": "Poland",
+    "currency": "PLN"
+  },
+  {
+    "city": "Sao Jose dos Campos",
+    "country": "Brazil",
+    "currency": "BRL"
+  },
+  {
+    "city": "Belo Horizonte",
+    "country": "Brazil",
+    "currency": "BRL"
+  },
+  {
+    "city": "Jakarta",
+    "country": "Indonesia",
+    "currency": "IDR"
+  },
+  {
+    "city": "Batumi",
+    "country": "Ajara",
+    "currency": "GEL"
+  },
+  {
+    "city": "Erbil (Irbil)",
+    "country": "Iraq",
+    "currency": "IQD"
+  },
+  {
+    "city": "Curitiba",
+    "country": "Brazil",
+    "currency": "BRL"
+  },
+  {
+    "city": "Sibiu",
+    "country": "Romania",
+    "currency": "RON"
+  },
+  {
+    "city": "Nairobi",
+    "country": "Kenya",
+    "currency": "KES"
+  },
+  {
+    "city": "Recife",
+    "country": "Brazil",
+    "currency": "BRL"
+  },
+  {
+    "city": "La Paz",
+    "country": "Bolivia",
+    "currency": "BOB"
+  },
+  {
+    "city": "Windhoek",
+    "country": "Namibia",
+    "currency": "NAD"
+  },
+  {
+    "city": "Marrakech",
+    "country": "Morocco",
+    "currency": "MAD"
+  },
+  {
+    "city": "Chisinau",
+    "country": "Moldova",
+    "currency": "MDL"
+  },
+  {
+    "city": "Nis",
+    "country": "Serbia",
+    "currency": "RSD"
+  },
+  {
+    "city": "Casablanca",
+    "country": "Morocco",
+    "currency": "MAD"
+  },
+  {
+    "city": "Santa Cruz",
+    "country": "Bolivia",
+    "currency": "BOB"
+  },
+  {
+    "city": "Kampala",
+    "country": "Uganda",
+    "currency": "UGX"
+  },
+  {
+    "city": "Qingdao",
+    "country": "China",
+    "currency": "CNY"
+  },
+  {
+    "city": "Tehran",
+    "country": "Iran",
+    "currency": "IRR"
+  },
+  {
+    "city": "Rabat",
+    "country": "Morocco",
+    "currency": "MAD"
+  },
+  {
+    "city": "Fortaleza",
+    "country": "Brazil",
+    "currency": "BRL"
+  },
+  {
+    "city": "Baghdad",
+    "country": "Iraq",
+    "currency": "IQD"
+  },
+  {
+    "city": "Ulaanbaatar",
+    "country": "Mongolia",
+    "currency": "MNT"
+  },
+  {
+    "city": "Isfahan (Esfahan)",
+    "country": "Iran",
+    "currency": "IRR"
+  },
+  {
+    "city": "Buenos Aires",
+    "country": "Argentina",
+    "currency": "ARS"
+  },
+  {
+    "city": "Algiers",
+    "country": "Algeria",
+    "currency": "DZD"
+  },
+  {
+    "city": "Bandung",
+    "country": "Indonesia",
+    "currency": "IDR"
+  },
+  {
+    "city": "Almaty",
+    "country": "Kazakhstan",
+    "currency": "KZT"
+  },
+  {
+    "city": "Kiev (Kyiv)",
+    "country": "Ukraine",
+    "currency": "UAH"
+  },
+  {
+    "city": "Baku",
+    "country": "Azerbaijan",
+    "currency": "AZN"
+  },
+  {
+    "city": "Kigali",
+    "country": "Rwanda",
+    "currency": "RWF"
+  },
+  {
+    "city": "Dar es Salaam",
+    "country": "Tanzania",
+    "currency": "TZS"
+  },
+  {
+    "city": "Kayseri",
+    "country": "Turkey",
+    "currency": "TRY"
+  },
+  {
+    "city": "Tunis",
+    "country": "Tunisia",
+    "currency": "TND"
+  },
+  {
+    "city": "Dhaka",
+    "country": "Bangladesh",
+    "currency": "BDT"
+  },
+  {
+    "city": "Surabaya",
+    "country": "Indonesia",
+    "currency": "IDR"
+  },
+  {
+    "city": "Pristina",
+    "country": "Kosovo (Disputed Territory)",
+    "currency": "EUR"
+  },
+  {
+    "city": "Asuncion",
+    "country": "Paraguay",
+    "currency": "PYG"
+  },
+  {
+    "city": "Izmir",
+    "country": "Turkey",
+    "currency": "TRY"
+  },
+  {
+    "city": "Damascus",
+    "country": "Syria",
+    "currency": "SYP"
+  },
+  {
+    "city": "Agadir",
+    "country": "Morocco",
+    "currency": "MAD"
+  },
+  {
+    "city": "Astana (Nur-Sultan)",
+    "country": "Kazakhstan",
+    "currency": "KZT"
+  },
+  {
+    "city": "Antalya",
+    "country": "Turkey",
+    "currency": "TRY"
+  },
+  {
+    "city": "Tangier",
+    "country": "Morocco",
+    "currency": "MAD"
+  },
+  {
+    "city": "Ankara",
+    "country": "Turkey",
+    "currency": "TRY"
+  },
+  {
+    "city": "Tashkent",
+    "country": "Uzbekistan",
+    "currency": "UZS"
+  },
+  {
+    "city": "Accra",
+    "country": "Ghana",
+    "currency": "GHS"
+  },
+  {
+    "city": "Mersin",
+    "country": "Turkey",
+    "currency": "TRY"
+  },
+  {
+    "city": "Colombo",
+    "country": "Sri Lanka",
+    "currency": "LKR"
+  },
+  {
+    "city": "Mashhad",
+    "country": "Iran",
+    "currency": "IRR"
+  },
+  {
+    "city": "Eskisehir",
+    "country": "Turkey",
+    "currency": "TRY"
+  },
+  {
+    "city": "Oran",
+    "country": "Algeria",
+    "currency": "DZD"
+  },
+  {
+    "city": "Gurgaon",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Kathmandu",
+    "country": "Nepal",
+    "currency": "NPR"
+  },
+  {
+    "city": "Dnipro",
+    "country": "Ukraine",
+    "currency": "UAH"
+  },
+  {
+    "city": "Kocaeli",
+    "country": "Turkey",
+    "currency": "TRY"
+  },
+  {
+    "city": "Tripoli",
+    "country": "Libya",
+    "currency": "LYD"
+  },
+  {
+    "city": "Odessa (Odesa)",
+    "country": "Ukraine",
+    "currency": "UAH"
+  },
+  {
+    "city": "Bishkek",
+    "country": "Kyrgyzstan",
+    "currency": "KGS"
+  },
+  {
+    "city": "Noida",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Chittagong",
+    "country": "Bangladesh",
+    "currency": "BDT"
+  },
+  {
+    "city": "Lviv",
+    "country": "Ukraine",
+    "currency": "UAH"
+  },
+  {
+    "city": "Mumbai",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Bangalore",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Hyderabad",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Delhi",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Navi Mumbai",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Medellin",
+    "country": "Colombia",
+    "currency": "COP"
+  },
+  {
+    "city": "Kharkiv",
+    "country": "Ukraine",
+    "currency": "UAH"
+  },
+  {
+    "city": "Adana",
+    "country": "Turkey",
+    "currency": "TRY"
+  },
+  {
+    "city": "Cartagena",
+    "country": "Colombia",
+    "currency": "COP"
+  },
+  {
+    "city": "Bogota",
+    "country": "Colombia",
+    "currency": "COP"
+  },
+  {
+    "city": "Konya",
+    "country": "Turkey",
+    "currency": "TRY"
+  },
+  {
+    "city": "Pune",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Ahmedabad",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Guwahati",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Chandigarh",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Cali",
+    "country": "Colombia",
+    "currency": "COP"
+  },
+  {
+    "city": "Patna",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Barranquilla",
+    "country": "Colombia",
+    "currency": "COP"
+  },
+  {
+    "city": "Chennai",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Jaipur",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Lucknow (Lakhnau)",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Bhubaneswar",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Vadodara",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Kolkata",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Cairo",
+    "country": "Egypt",
+    "currency": "EGP"
+  },
+  {
+    "city": "Indore",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Kochi",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Coimbatore",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Thiruvananthapuram",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Bhopal",
+    "country": "India",
+    "currency": "INR"
+  },
+  {
+    "city": "Lahore",
+    "country": "Pakistan",
+    "currency": "PKR"
+  },
+  {
+    "city": "Karachi",
+    "country": "Pakistan",
+    "currency": "PKR"
+  },
+  {
+    "city": "Islamabad",
+    "country": "Pakistan",
+    "currency": "PKR"
+  },
+  {
+    "city": "Bucaramanga",
+    "country": "Colombia",
+    "currency": "COP"
+  },
+  {
+    "city": "Alexandria",
+    "country": "Egypt",
+    "currency": "EGP"
+  },
+  {
+    "city": "Giza",
+    "country": "Egypt",
+    "currency": "EGP"
+  },
+  {
+    "city": "Rawalpindi",
+    "country": "Pakistan",
+    "currency": "PKR"
+  },
+  {
+    "city": "Faisalabad",
+    "country": "Pakistan",
+    "currency": "PKR"
+  },
+  {
+    "city": "Multan",
+    "country": "Pakistan",
+    "currency": "PKR"
+  },
+  {
+    "city": "Peshawar",
+    "country": "Pakistan",
+    "currency": "PKR"
+  }
+]
