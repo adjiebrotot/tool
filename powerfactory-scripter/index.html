@@ -3310,7 +3310,7 @@ def _read_elmres_inmemory(app, output_specs):
     res.Load()
 
     n_rows = res.GetNumberOfRows()
-    time_values = [res.GetValue(0, row)[1] for row in range(n_rows)]
+    time_values = [res.GetValue(row, 0)[1] for row in range(n_rows)]
 
     ts_data = {}
     for spec in output_specs:
@@ -3331,7 +3331,7 @@ def _read_elmres_inmemory(app, output_specs):
             )
             ts_data[spec["name"]] = [float('nan')] * n_rows
         else:
-            ts_data[spec["name"]] = [res.GetValue(col, row)[1] for row in range(n_rows)]
+            ts_data[spec["name"]] = [res.GetValue(row, col)[1] for row in range(n_rows)]
 
     res.Release()
     return time_values, ts_data
