@@ -151,11 +151,7 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
 <section class="header card">
   <div>
     <h1>🌏 Cost of Living Comparator</h1>
-    <p class="muted">Compare cost of living across 550+ cities. All indices are relative to Perth, Australia&nbsp;(=&nbsp;100). Currency rates updated May 2026.</p>
-  </div>
-  <div style="text-align:right;font-size:0.77rem;color:var(--muted);white-space:nowrap;">
-    <div>📅 Data: May 2026</div>
-    <div>© adjiebrotot · GNU-GPL</div>
+    <p class="muted">Compare cost of living across 500+ cities.</p>
   </div>
 </section>
 
@@ -422,7 +418,6 @@ function renderSimpleSave(area,from,to){
         <div class="sav-block neutral">
           <div class="sav-val mono">${fmtC(te,tc)}</div>
           ${cc(te,tc,fc)}
-          <div class="sav-ratio">Approximation · data updated May 2026</div>
         </div>
       </div>
       <div class="field-row">
@@ -537,7 +532,6 @@ function renderSimpleEarn(area,from,to){
         <div class="sav-block neutral">
           <div class="sav-val mono">${fmtC(te,tc)}</div>
           ${cc(te,tc,fc)}
-          <div class="sav-ratio">Approximation · data updated May 2026</div>
         </div>
       </div>
       <div class="field-row">
@@ -712,13 +706,13 @@ ${goalHtml}
     </thead>
     <tbody>
       <tr class="salary-tr">
-        <td class="cat-td" style="font-weight:700;">💰 Net Income</td>
+        <td class="cat-td" style="font-weight:700;">💵 Net Income</td>
         ${salFrom}${salTos}
         <td></td>
       </tr>
       ${expRows}
       <tr class="savings-tr">
-        <td class="cat-td">💾 Savings</td>
+        <td class="cat-td">💰 Savings</td>
         ${savFrom}${savTos}
         <td></td>
       </tr>
@@ -727,7 +721,6 @@ ${goalHtml}
 </div>
 <div style="margin-top:12px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;">
   <button class="btn-add" id="addRowBtn">+ Add expense row</button>
-  <span class="util-note">⚡ Utilities index = 50% electricity + 20% water + 30% gas &nbsp;|&nbsp; Edit any destination cell to override the estimate</span>
 </div>`;
 }
 
