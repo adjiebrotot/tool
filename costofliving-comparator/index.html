@@ -394,6 +394,7 @@ function getIdx(city, key){
   if(key==='fuel')return city.fuel||100;
   if(key==='coli_no_housing')return city.coli_no_housing||100;
   if(key==='coli_with_housing')return city.coli_with_housing||100;
+  if(key==='currency_only')return 100;
   return 100;
 }
 
@@ -468,6 +469,8 @@ const CATS=[
   {id:'water',label:'💧 Water',index:'water',tip:'Water & sewage bills'},
   {id:'gas_util',label:'🔥 Gas',index:'gas_util',tip:'Gas utility bills'},
   {id:'fuel',label:'⛽ Fuel',index:'fuel',tip:'Vehicle fuel costs (petrol/diesel)'},
+  {id:'remittance',label:'💸 Remittance',index:'currency_only',tip:'International money transfers — the amount is fixed globally; only the exchange rate applies when comparing cities.'},
+  {id:'intl_travel',label:'✈️ International Travel',index:'currency_only',tip:'International travel costs (e.g. flights booked abroad) — price is fixed globally; only the exchange rate applies when comparing cities.'},
   {id:'other',label:'🌐 Other',index:'coli_no_housing',tip:'General living expenses'},
 ];
 
@@ -806,7 +809,6 @@ function buildDetailHTML(fromCity,toCities){
             placeholder="${calc>0?Math.round(calc):'0'}"
             title="Edit to override estimate"
             style="width:90px;${isOv?'background:var(--override-bg);border-color:var(--override-border);':''}"/>
-          ${isOv?'<span class="override-badge">override</span>':''}
         </div>
         ${!isOv&&fromCity&&tc?`<div class="sub-num" style="text-align:right;margin-top:2px;">≈ ${fmtC(convertCurr(calc,tc.currency,fc),fc)}</div>`:''}
       </td>`;
@@ -874,7 +876,8 @@ ${goalHtml}
       </tr>
     </tbody>
   </table>
-</div>`;
+</div>
+<div class="util-note" style="margin-top:8px;">Data in cells with <span style="display:inline-block;padding:1px 6px;background:var(--override-bg);border:1px solid var(--override-border);border-radius:3px;font-size:0.75rem;font-family:'DM Mono',monospace;">yellow background</span> has been manually overridden. Clear the field to revert to the calculated estimate.</div>`;
 }
 
 function calcExp(fromAmt,fromCity,toCity,indexKey){
