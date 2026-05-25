@@ -59,7 +59,10 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;font-size:0.88rem;}
 .city-picker{position:relative;}
 .city-search{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:0.9rem;font-family:inherit;color:var(--text);outline:none;transition:border-color 150ms;}
 .city-search:focus{border-color:var(--accent-strong);}
-.city-search.has-value{border-color:var(--accent-strong);background:var(--positive-bg);}
+.city-search.has-value{border-color:var(--accent-strong);background:var(--positive-bg);padding-right:28px;}
+.city-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:1rem;line-height:1;padding:2px 3px;display:none;z-index:1;}
+.city-clear:hover{color:var(--text);}
+.city-search.has-value~.city-clear{display:block;}
 .city-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--panel);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);max-height:220px;overflow-y:auto;z-index:200;display:none;}
 .city-dropdown.open{display:block;}
 .city-opt{padding:7px 12px;font-size:0.86rem;cursor:pointer;border-bottom:1px solid var(--border);transition:background 100ms;}
@@ -409,7 +412,17 @@ function buildCityPicker(containerId, currentKey, onSelect){
   if(current){input.value=cityDisplay(current);input.classList.add('has-value');}
   const drop = document.createElement('div');
   drop.className='city-dropdown';
-  wrap.innerHTML=''; wrap.appendChild(input); wrap.appendChild(drop);
+  const btnClear=document.createElement('button');
+  btnClear.type='button'; btnClear.className='city-clear'; btnClear.textContent='×';
+  btnClear.setAttribute('tabindex','-1'); btnClear.setAttribute('aria-label','Clear');
+  btnClear.addEventListener('mousedown',e=>{
+    e.preventDefault();
+    input.value=''; input.classList.remove('has-value');
+    drop.classList.remove('open');
+    onSelect(null);
+    input.focus();
+  });
+  wrap.innerHTML=''; wrap.appendChild(input); wrap.appendChild(btnClear); wrap.appendChild(drop);
 
   let focusIdx=-1;
   function renderDrop(q){
