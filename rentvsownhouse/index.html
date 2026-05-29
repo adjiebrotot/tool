@@ -271,7 +271,6 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-label">Currency Symbol</div>
       <select class="num-input" id="currencySymbol" style="cursor:pointer;">
         <option value="$" selected>$ — Dollar</option>
-        <option value="S$">S$ — Singapore Dollar</option>
         <option value="€">€ — Euro</option>
         <option value="£">£ — Pound</option>
         <option value="¥">¥ — Yen / Yuan</option>
@@ -737,7 +736,7 @@ const CITY_PRESETS = {
     // BSD on S$1.8M: 1%×180k+2%×180k+3%×640k+4%×500k+5%×300k = S$59,600 + legal ~S$4,000 + valuation ~S$1,400 = S$65,000
     // Mortgage: 2.5% blended (current 2-yr fixed ~1.75% from DBS/OCBC/UOB, resets to floating; SORA-based long-run avg ~2.5%). MAS LTV max 75% → 25% down.
     // ABSD: 0% for Singapore Citizens buying first property (IRAS 2025). Rent: S$5,000/mo (RCR/inner 2BR; Rentify.sg 2025: S$4,500–5,500). RPPI: 4.5% conservative (20-yr CAGR ~6.4%, EdgeProp). RFR: 3.5% (SSB/T-bills).
-    currencySymbol: 'S$',
+    currencySymbol: '$',
     propertyPrice: 1800000,
     downPaymentPct: 25,
     mortgageRate: 2.5,
