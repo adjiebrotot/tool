@@ -660,8 +660,8 @@ function doRender(){
 
     if(isInside){
       tx=((d.x0+d.x1)/2); anchor='middle';
-      nameColor='rgba(255,255,255,0.95)';
-      valColor ='rgba(255,255,255,0.70)';
+      nameColor= isLight ? 'rgba(0,0,0,0.85)'   : 'rgba(255,255,255,0.95)';
+      valColor = isLight ? 'rgba(0,0,0,0.60)'   : 'rgba(255,255,255,0.70)';
       nameSize = Math.min(12, nodeH*0.38);
     } else if(S.label==='outside' || (S.label==='auto' && !onLeft)){
       tx=d.x0-7; anchor='end';
