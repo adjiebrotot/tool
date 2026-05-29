@@ -374,14 +374,17 @@ const PALETTES = {
 //  DEFAULTS
 // ═══════════════════════════════════════════════
 const DEFAULT_ROWS = [
-  {source:'Website',     target:'Homepage',    value:'1000',      color:''},
-  {source:'Website',     target:'Other Pages', value:'500',       color:''},
-  {source:'Homepage',    target:'Sign Up',     value:'300',       color:''},
-  {source:'Homepage',    target:'Bounce',      value:'remaining', color:'#FF8B8B'},
-  {source:'Other Pages', target:'Sign Up',     value:'100',       color:''},
-  {source:'Other Pages', target:'Bounce',      value:'remaining', color:'#FF8B8B'},
-  {source:'Sign Up',     target:'Converted',   value:'180',       color:'#8FCDBD'},
-  {source:'Sign Up',     target:'Dropped',     value:'remaining', color:''},
+  {source:'Husband Income',  target:'Family Income', value:'5000', color:'#6BA5D7'},
+  {source:'Wife Income',     target:'Family Income', value:'4000', color:'#82C4A0'},
+  {source:'Family Income',   target:'Housing',       value:'2200', color:''},
+  {source:'Family Income',   target:'Food',          value:'900',  color:''},
+  {source:'Family Income',   target:'Transport',     value:'600',  color:''},
+  {source:'Family Income',   target:'Savings',       value:'1500', color:'#8FCDBD'},
+  {source:'Family Income',   target:'Leisure',       value:'remaining', color:''},
+  {source:'Housing',         target:'Mortgage',      value:'1600', color:''},
+  {source:'Housing',         target:'Utilities',     value:'remaining', color:''},
+  {source:'Savings',         target:'Emergency Fund',value:'500',  color:'#8FCDBD'},
+  {source:'Savings',         target:'Investments',   value:'remaining', color:'#6BA5D7'},
 ];
 const DEFAULT_S = {align:'justify',pad:20,nw:18,op:42,h:520,scheme:'tableau',label:'auto',linkStyle:'gradient',iter:32,labelBox:true};
 
@@ -660,8 +663,8 @@ function doRender(){
 
     if(isInside){
       tx=((d.x0+d.x1)/2); anchor='middle';
-      nameColor='rgba(255,255,255,0.95)';
-      valColor ='rgba(255,255,255,0.70)';
+      nameColor= isLight ? 'rgba(0,0,0,0.85)'   : 'rgba(255,255,255,0.95)';
+      valColor = isLight ? 'rgba(0,0,0,0.60)'   : 'rgba(255,255,255,0.70)';
       nameSize = Math.min(12, nodeH*0.38);
     } else if(S.label==='outside' || (S.label==='auto' && !onLeft)){
       tx=d.x0-7; anchor='end';
