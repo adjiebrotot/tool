@@ -35,7 +35,9 @@
 .th-group{text-align:center;font-size:.78rem;font-weight:600;letter-spacing:normal;text-transform:none;color:var(--muted);background:var(--panel);}
 th[rowspan]{vertical-align:middle;}
 /* Global Tooltip */
-#globalTooltip{position:fixed;z-index:99999;pointer-events:none;max-width:260px;background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:var(--radius-lg);padding:9px 12px;font-size:.8rem;line-height:1.45;color:var(--text);box-shadow:var(--shadow-lg);opacity:0;transition:opacity var(--motion-fast);display:none;}
+#globalTooltip{position:fixed;z-index:99999;pointer-events:none;max-width:270px;background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:var(--radius-lg);padding:9px 12px;font-size:.8rem;line-height:1.5;color:var(--text);box-shadow:var(--shadow-lg);opacity:0;transition:opacity var(--motion-fast);display:none;}
+#globalTooltip strong{color:var(--accent-strong);font-weight:700;}
+#globalTooltip br{display:block;margin-top:5px;content:'';}
 #globalTooltip.visible{display:block;opacity:1;}
 #globalTooltip .tt-arrow{position:absolute;bottom:-7px;width:12px;height:7px;overflow:hidden;transform:translateX(-50%);}
 #globalTooltip .tt-arrow::before{content:'';display:block;width:10px;height:10px;background:var(--panel);border:1px solid var(--border);transform:rotate(45deg) translate(-3px,-3px);}
@@ -278,7 +280,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     </div>
     <div class="section-label">Cash</div>
     <div class="field-row">
-      <div class="field-label">Risk-Free Rate <span class="tip-icon" data-tip="The annual return earned on any uninvested cash — surplus above rent or mortgage, and any leftover initial cash. Could be a HYSA, term deposit, ETFs, or bonds. Both scenarios compound idle cash at this rate.">?</span></div>
+      <div class="field-label">Risk-Free Rate <span class="tip-icon" data-tip="The annual return earned on any uninvested cash: surplus above rent or mortgage, and any leftover initial cash. Could be a HYSA, term deposit, ETFs, or bonds. Both scenarios compound idle cash at this rate.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="riskFreeRateVal">4.50%</span>
@@ -287,7 +289,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="help">Rate at which surplus cash (not used for rent/mortgage) compounds annually.</div>
     </div>
     <div class="field-row">
-      <div class="field-label">Initial Cash <span class="tip-icon" data-tip="Your total cash available right now. This funds the down payment + setup costs for the Buy scenario. Any leftover is invested at the risk-free rate from day one. The Rent scenario invests the full amount from day one. If left blank, it defaults to exactly down payment + setup cost — no surplus, no shortfall.">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;">(optional)</span></div>
+      <div class="field-label">Initial Cash <span class="tip-icon" data-tip="Your total cash available right now. This funds the down payment + setup costs for the Buy scenario. Any leftover is invested at the risk-free rate from day one. The Rent scenario invests the full amount from day one. If left blank, it defaults to exactly down payment + setup cost (no surplus, no shortfall).">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;">(optional)</span></div>
       <input class="num-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" value=""/>
       <div class="field-sub" id="initialCashSub">Defaults to down payment + setup cost. Any excess is invested at the risk-free rate.</div>
       <div class="warning" id="initialCashWarn" style="display:none;margin-top:6px;"></div>
@@ -298,7 +300,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-sub">If 0, auto-set to the higher of rent or mortgage payment. Leftover invested at risk-free rate.</div>
     </div>
     <div class="field-row" id="budgetIncreaseRow" style="display:none;">
-      <div class="field-label">Budget Annual Increase <span class="tip-icon" data-tip="The rate at which your monthly housing budget grows each year — only applies when a manual budget is set above. Use this to model wage growth, CPI adjustments, or property-linked cost increases. The budget compounds at this rate annually, growing the surplus (or shrinking the shortfall) over time.">?</span></div>
+      <div class="field-label">Budget Annual Increase <span class="tip-icon" data-tip="The rate at which your monthly housing budget grows each year. Only applies when a manual budget is set above. Use this to model wage growth, CPI adjustments, or property-linked cost increases. The budget compounds at this rate annually, growing the surplus (or shrinking the shortfall) over time.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="monthlyBudgetIncreaseVal">0.00%</span>
@@ -344,7 +346,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-sub">Purchase price of the property.</div>
     </div>
     <div class="field-row">
-      <div class="field-label">Down Payment <span class="tip-icon" data-tip="The percentage of the property price paid upfront as a deposit. Set to 100% to model an all-cash purchase (no mortgage). Try different values — 20% isn't always optimal. The renter equivalent invests this same amount instead.">?</span></div>
+      <div class="field-label">Down Payment <span class="tip-icon" data-tip="The percentage of the property price paid upfront as a deposit. Set to 100% to model an all-cash purchase (no mortgage). Try different values; 20% isn&#39;t always optimal. The renter equivalent invests this same amount instead.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% of property price</span>
         <span class="slider-value" id="downPaymentPctVal">20%</span>
@@ -354,7 +356,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     </div>
     <div class="section-label">Mortgage</div>
     <div class="field-row">
-      <div class="field-label">Mortgage Type <span class="tip-icon" data-tip="Principal & Interest: each payment reduces both interest and loan balance, building equity faster. Interest Only: payments cover only interest, principal stays unchanged until term ends — lower monthly payments but no equity build from repayments.">?</span></div>
+      <div class="field-label">Mortgage Type <span class="tip-icon" data-tip="&lt;strong&gt;Principal &amp; Interest:&lt;/strong&gt; each payment reduces both interest and loan balance, building equity faster.&lt;br&gt;&lt;strong&gt;Interest Only:&lt;/strong&gt; payments cover only interest; principal stays unchanged until term ends. Lower monthly payments but no equity built from repayments.">?</span></div>
       <div class="radio-group">
         <label class="radio-opt selected" id="radioPI">
           <input type="radio" name="mortgageType" value="pi" checked/>
@@ -366,7 +368,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
         </label>
       </div>
       <div class="toggle-row" style="margin-top:8px;padding-top:8px;padding-bottom:0;">
-        <span class="toggle-label">Cost = Interest Only <span class="tip-icon" data-tip="When ON: Accumulated Cost counts only interest + ongoing (money truly lost — principal repayment builds equity). <br>When OFF: full mortgage payment + ongoing are treated as outgoing costs.">?</span></span>
+        <span class="toggle-label">Cost = Interest Only <span class="tip-icon" data-tip="&lt;strong&gt;ON:&lt;/strong&gt; Accumulated Cost counts only interest + ongoing (money truly lost; principal repayment builds equity).&lt;br&gt;&lt;strong&gt;OFF:&lt;/strong&gt; Full mortgage payment + ongoing are treated as outgoing costs.">?</span></span>
         <label class="toggle-switch">
           <input type="checkbox" id="costInterestOnly" checked/>
           <div class="toggle-track"><div class="toggle-knob"></div></div>
@@ -374,7 +376,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label">Mortgage Rate <span class="tip-icon" data-tip="The annual interest rate charged on the mortgage. This determines the monthly repayment amount. For P&I loans, higher rates mean more interest and slower equity build. For IO loans, it directly sets the monthly payment.">?</span></div>
+      <div class="field-label">Mortgage Rate <span class="tip-icon" data-tip="The annual interest rate charged on the mortgage. This determines the monthly repayment amount.&lt;br&gt;&lt;strong&gt;P&amp;I:&lt;/strong&gt; higher rates mean more interest and slower equity build.&lt;br&gt;&lt;strong&gt;IO:&lt;/strong&gt; rate directly sets the monthly payment.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="mortgageRateVal">6.00%</span>
@@ -391,7 +393,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     </div>
     <div class="section-label">Property Growth</div>
     <div class="field-row">
-      <div class="field-label">House Price Growth (RPPI) <span class="tip-icon" data-tip="The Residential Property Price Index annual growth rate — how much the property appreciates each year. This drives house equity growth and the future purchase price in the Rent-Then-Buy scenario. Use the CAGR calculator below to derive this from historical data.">?</span></div>
+      <div class="field-label">House Price Growth (RPPI) <span class="tip-icon" data-tip="The Residential Property Price Index annual growth rate: how much the property appreciates each year. This drives house equity growth and the future purchase price in the Rent-Then-Buy scenario. Use the CAGR calculator below to derive this from historical data.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a. CAGR</span>
         <span class="slider-value" id="houseGrowthVal">5.00%</span>
@@ -452,7 +454,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-sub">Council rates, insurance, maintenance, lawn, etc.</div>
     </div>
     <div class="field-row" id="ownOngoingInflationRow">
-      <div class="field-label">Own Ongoing Cost Inflation <span class="tip-icon" data-tip="Annual rate at which fixed-dollar ongoing ownership costs increase. Applies only when 'Fixed $ amount' is selected — % of property value already grows with house appreciation.">?</span></div>
+      <div class="field-label">Own Ongoing Cost Inflation <span class="tip-icon" data-tip="Annual rate at which fixed-dollar ongoing ownership costs increase. Applies only when &#39;Fixed $ amount&#39; is selected; % of property value already grows with house appreciation.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="ownOngoingInflationVal">0.00%</span>
@@ -504,7 +506,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-sub">Contents insurance, extra costs renters bear (no council rates, no maintenance).</div>
     </div>
     <div class="field-row" id="rentOngoingInflationRow">
-      <div class="field-label">Rent Ongoing Cost Inflation <span class="tip-icon" data-tip="Annual rate at which fixed-dollar renting ongoing costs increase. Applies only when 'Fixed $ amount' is selected — % of annual rent already grows with rent inflation.">?</span></div>
+      <div class="field-label">Rent Ongoing Cost Inflation <span class="tip-icon" data-tip="Annual rate at which fixed-dollar renting ongoing costs increase. Applies only when &#39;Fixed $ amount&#39; is selected; % of annual rent already grows with rent inflation.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="rentOngoingInflationVal">0.00%</span>
@@ -2176,7 +2178,7 @@ $('cagrRows').addEventListener('blur',(e)=>{
     if(!icon){ hide(); return; }
     const tip = icon.getAttribute('data-tip');
     if(!tip){ hide(); return; }
-    ttText.textContent = tip;
+    ttText.innerHTML = tip;
     tt.classList.remove('flip-below');
     tt.classList.add('visible');
     tt.style.display = 'block';
