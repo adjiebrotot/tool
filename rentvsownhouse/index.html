@@ -35,7 +35,9 @@
 .th-group{text-align:center;font-size:.78rem;font-weight:600;letter-spacing:normal;text-transform:none;color:var(--muted);background:var(--panel);}
 th[rowspan]{vertical-align:middle;}
 /* Global Tooltip */
-#globalTooltip{position:fixed;z-index:99999;pointer-events:none;max-width:260px;background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:var(--radius-lg);padding:9px 12px;font-size:.8rem;line-height:1.45;color:var(--text);box-shadow:var(--shadow-lg);opacity:0;transition:opacity var(--motion-fast);display:none;}
+#globalTooltip{position:fixed;z-index:99999;pointer-events:none;max-width:270px;background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:var(--radius-lg);padding:9px 12px;font-size:.8rem;line-height:1.5;color:var(--text);box-shadow:var(--shadow-lg);opacity:0;transition:opacity var(--motion-fast);display:none;}
+#globalTooltip strong{color:var(--accent-strong);font-weight:700;}
+#globalTooltip br{display:block;margin-top:5px;content:'';}
 #globalTooltip.visible{display:block;opacity:1;}
 #globalTooltip .tt-arrow{position:absolute;bottom:-7px;width:12px;height:7px;overflow:hidden;transform:translateX(-50%);}
 #globalTooltip .tt-arrow::before{content:'';display:block;width:10px;height:10px;background:var(--panel);border:1px solid var(--border);transform:rotate(45deg) translate(-3px,-3px);}
@@ -221,6 +223,12 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
   .btn-row{flex-direction:column;}
   .header{padding:14px 16px;}
 }
+.quick-start-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.quick-start-label{font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;}
+.quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
+.quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
 </style>
 </head>
 <body class="light">
@@ -241,6 +249,16 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
 <!-- LAYOUT -->
 <section class="layout">
 <aside class="controls card">
+  <div class="quick-start-row">
+    <span class="quick-start-label">⚡ Quick Start <span class="tip-icon" data-tip="Prefill with quick assumption, assuming median price for two-bedroom apartment in the city centre or inner suburbs">?</span></span>
+    <div class="quick-start-btns">
+      <button class="quick-start-btn" data-city="perth">Perth, AU</button>
+      <button class="quick-start-btn" data-city="melbourne">Melbourne, AU</button>
+      <button class="quick-start-btn" data-city="singapore">Singapore</button>
+      <button class="quick-start-btn" data-city="kualalumpur">Kuala Lumpur, MY</button>
+      <button class="quick-start-btn" data-city="jakarta">Jakarta, ID</button>
+    </div>
+  </div>
   <div class="ctrl-tabs">
     <button class="ctrl-tab active" data-tab="general">🌐 General</button>
     <button class="ctrl-tab" data-tab="own">🏡 Own</button>
@@ -264,7 +282,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     </div>
     <div class="section-label">Cash</div>
     <div class="field-row">
-      <div class="field-label">Risk-Free Rate <span class="tip-icon" data-tip="The annual return earned on any uninvested cash — surplus above rent or mortgage, and any leftover initial cash. Could be a HYSA, term deposit, ETFs, or bonds. Both scenarios compound idle cash at this rate.">?</span></div>
+      <div class="field-label">Risk-Free Rate <span class="tip-icon" data-tip="The annual return earned on any uninvested cash: surplus above rent or mortgage, and any leftover initial cash. Could be a HYSA, term deposit, ETFs, or bonds. Both scenarios compound idle cash at this rate.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="riskFreeRateVal">4.50%</span>
@@ -273,7 +291,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="help">Rate at which surplus cash (not used for rent/mortgage) compounds annually.</div>
     </div>
     <div class="field-row">
-      <div class="field-label">Initial Cash <span class="tip-icon" data-tip="Your total cash available right now. This funds the down payment + setup costs for the Buy scenario. Any leftover is invested at the risk-free rate from day one. The Rent scenario invests the full amount from day one. If left blank, it defaults to exactly down payment + setup cost — no surplus, no shortfall.">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;">(optional)</span></div>
+      <div class="field-label">Initial Cash <span class="tip-icon" data-tip="Your total cash available right now. This funds the down payment + setup costs for the Buy scenario. Any leftover is invested at the risk-free rate from day one. The Rent scenario invests the full amount from day one. If left blank, it defaults to exactly down payment + setup cost (no surplus, no shortfall).">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;">(optional)</span></div>
       <input class="num-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" value=""/>
       <div class="field-sub" id="initialCashSub">Defaults to down payment + setup cost. Any excess is invested at the risk-free rate.</div>
       <div class="warning" id="initialCashWarn" style="display:none;margin-top:6px;"></div>
@@ -284,7 +302,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-sub">If 0, auto-set to the higher of rent or mortgage payment. Leftover invested at risk-free rate.</div>
     </div>
     <div class="field-row" id="budgetIncreaseRow" style="display:none;">
-      <div class="field-label">Budget Annual Increase <span class="tip-icon" data-tip="The rate at which your monthly housing budget grows each year — only applies when a manual budget is set above. Use this to model wage growth, CPI adjustments, or property-linked cost increases. The budget compounds at this rate annually, growing the surplus (or shrinking the shortfall) over time.">?</span></div>
+      <div class="field-label">Budget Annual Increase <span class="tip-icon" data-tip="The rate at which your monthly housing budget grows each year. Only applies when a manual budget is set above. Use this to model wage growth, CPI adjustments, or property-linked cost increases. The budget compounds at this rate annually, growing the surplus (or shrinking the shortfall) over time.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="monthlyBudgetIncreaseVal">0.00%</span>
@@ -330,7 +348,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-sub">Purchase price of the property.</div>
     </div>
     <div class="field-row">
-      <div class="field-label">Down Payment <span class="tip-icon" data-tip="The percentage of the property price paid upfront as a deposit. Set to 100% to model an all-cash purchase (no mortgage). Try different values — 20% isn't always optimal. The renter equivalent invests this same amount instead.">?</span></div>
+      <div class="field-label">Down Payment <span class="tip-icon" data-tip="The percentage of the property price paid upfront as a deposit. Set to 100% to model an all-cash purchase (no mortgage). Try different values; 20% isn&#39;t always optimal. The renter equivalent invests this same amount instead.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% of property price</span>
         <span class="slider-value" id="downPaymentPctVal">20%</span>
@@ -340,7 +358,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     </div>
     <div class="section-label">Mortgage</div>
     <div class="field-row">
-      <div class="field-label">Mortgage Type <span class="tip-icon" data-tip="Principal & Interest: each payment reduces both interest and loan balance, building equity faster. Interest Only: payments cover only interest, principal stays unchanged until term ends — lower monthly payments but no equity build from repayments.">?</span></div>
+      <div class="field-label">Mortgage Type <span class="tip-icon" data-tip="&lt;strong&gt;Principal &amp; Interest:&lt;/strong&gt; each payment reduces both interest and loan balance, building equity faster.&lt;br&gt;&lt;strong&gt;Interest Only:&lt;/strong&gt; payments cover only interest; principal stays unchanged until term ends. Lower monthly payments but no equity built from repayments.">?</span></div>
       <div class="radio-group">
         <label class="radio-opt selected" id="radioPI">
           <input type="radio" name="mortgageType" value="pi" checked/>
@@ -352,7 +370,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
         </label>
       </div>
       <div class="toggle-row" style="margin-top:8px;padding-top:8px;padding-bottom:0;">
-        <span class="toggle-label">Cost = Interest Only <span class="tip-icon" data-tip="When ON: Accumulated Cost counts only interest + ongoing (money truly lost — principal repayment builds equity). <br>When OFF: full mortgage payment + ongoing are treated as outgoing costs.">?</span></span>
+        <span class="toggle-label">Cost = Interest Only <span class="tip-icon" data-tip="&lt;strong&gt;ON:&lt;/strong&gt; Accumulated Cost counts only interest + ongoing (money truly lost; principal repayment builds equity).&lt;br&gt;&lt;strong&gt;OFF:&lt;/strong&gt; Full mortgage payment + ongoing are treated as outgoing costs.">?</span></span>
         <label class="toggle-switch">
           <input type="checkbox" id="costInterestOnly" checked/>
           <div class="toggle-track"><div class="toggle-knob"></div></div>
@@ -360,7 +378,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label">Mortgage Rate <span class="tip-icon" data-tip="The annual interest rate charged on the mortgage. This determines the monthly repayment amount. For P&I loans, higher rates mean more interest and slower equity build. For IO loans, it directly sets the monthly payment.">?</span></div>
+      <div class="field-label">Mortgage Rate <span class="tip-icon" data-tip="The annual interest rate charged on the mortgage. This determines the monthly repayment amount.&lt;br&gt;&lt;strong&gt;P&amp;I:&lt;/strong&gt; higher rates mean more interest and slower equity build.&lt;br&gt;&lt;strong&gt;IO:&lt;/strong&gt; rate directly sets the monthly payment.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="mortgageRateVal">6.00%</span>
@@ -377,7 +395,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     </div>
     <div class="section-label">Property Growth</div>
     <div class="field-row">
-      <div class="field-label">House Price Growth (RPPI) <span class="tip-icon" data-tip="The Residential Property Price Index annual growth rate — how much the property appreciates each year. This drives house equity growth and the future purchase price in the Rent-Then-Buy scenario. Use the CAGR calculator below to derive this from historical data.">?</span></div>
+      <div class="field-label">House Price Growth (RPPI) <span class="tip-icon" data-tip="The Residential Property Price Index annual growth rate: how much the property appreciates each year. This drives house equity growth and the future purchase price in the Rent-Then-Buy scenario. Use the CAGR calculator below to derive this from historical data.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a. CAGR</span>
         <span class="slider-value" id="houseGrowthVal">5.00%</span>
@@ -438,7 +456,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-sub">Council rates, insurance, maintenance, lawn, etc.</div>
     </div>
     <div class="field-row" id="ownOngoingInflationRow">
-      <div class="field-label">Own Ongoing Cost Inflation <span class="tip-icon" data-tip="Annual rate at which fixed-dollar ongoing ownership costs increase. Applies only when 'Fixed $ amount' is selected — % of property value already grows with house appreciation.">?</span></div>
+      <div class="field-label">Own Ongoing Cost Inflation <span class="tip-icon" data-tip="Annual rate at which fixed-dollar ongoing ownership costs increase. Applies only when &#39;Fixed $ amount&#39; is selected; % of property value already grows with house appreciation.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="ownOngoingInflationVal">0.00%</span>
@@ -490,7 +508,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-sub">Contents insurance, extra costs renters bear (no council rates, no maintenance).</div>
     </div>
     <div class="field-row" id="rentOngoingInflationRow">
-      <div class="field-label">Rent Ongoing Cost Inflation <span class="tip-icon" data-tip="Annual rate at which fixed-dollar renting ongoing costs increase. Applies only when 'Fixed $ amount' is selected — % of annual rent already grows with rent inflation.">?</span></div>
+      <div class="field-label">Rent Ongoing Cost Inflation <span class="tip-icon" data-tip="Annual rate at which fixed-dollar renting ongoing costs increase. Applies only when &#39;Fixed $ amount&#39; is selected; % of annual rent already grows with rent inflation.">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="rentOngoingInflationVal">0.00%</span>
@@ -638,6 +656,181 @@ const DEFAULTS = {
   rtbBuyYear: 5,
   monthlyBudgetIncrease: 0,
   currencySymbol: '$',
+};
+
+/* ── CITY PRESETS ──
+   Values sourced from: REIWA (Perth), Urban Property Australia (Melbourne), Databoks/BI (Jakarta)
+   Property prices: median 2BR apartment, city centre or inner suburbs, 2024–2025.
+   Perth stamp duty: WA general rate ($360k–$725k bracket). Melbourne stamp duty: VIC general rate.
+   Jakarta setup: BPHTB 5% + PPAT/notary ~1% + bank/admin fees. Mortgage: typical KPR floating rate.
+*/
+const CITY_PRESETS = {
+  perth: {
+    // Perth, WA: ~$750k for 2BR in city centre/inner suburbs (Subiaco, East Perth, Northbridge, West Perth, Mt Lawley)
+    // WA stamp duty on $750k (>$725k bracket): $28,453 + 5.15%×$25k = $29,741 + legal ~$2,500 + misc ~$260 = ~$32,500
+    // Mortgage: Big-4 owner-occ P&I variable ~6.1% (CBA 6.09%). Rent: $700/week inner Perth (REIWA 2025). RPPI: 20-yr unit CAGR ~4.5%.
+    currencySymbol: '$',
+    propertyPrice: 750000,
+    downPaymentPct: 20,
+    mortgageRate: 6.1,
+    mortgageTerm: 30,
+    houseGrowth: 4.5,
+    setupCost: 32500,
+    setupCostType: 'dollar',
+    ownOngoingCost: 8500,
+    ownOngoingCostFreq: 'yearly',
+    ownOngoingCostType: 'dollar',
+    ownOngoingInflation: 2.5,
+    rentAmount: 700,
+    rentFreq: 'weekly',
+    rentInflation: 3.5,
+    rentOngoingCost: 1500,
+    rentOngoingCostFreq: 'yearly',
+    rentOngoingCostType: 'dollar',
+    rentOngoingInflation: 2.5,
+    riskFreeRate: 4.5,
+    horizon: 30,
+    monthlyBudget: 0,
+    monthlyBudgetIncrease: 0,
+    mortgageType: 'pi',
+    costInterestOnly: true,
+    rtbEnabled: false,
+    rtbBuyYear: 5,
+    initialCash: 0,
+  },
+  melbourne: {
+    // Melbourne, VIC: ~$800k for 2BR in city centre/inner suburbs (Richmond, Fitzroy, South Yarra, Carlton, Prahran)
+    // VIC stamp duty on $800k (general rate): $2,870 + 6%×$670k = $43,070 + legal ~$2,500 = ~$45,500 (PPR concession doesn't apply >$550k)
+    // Mortgage: Big-4 owner-occ P&I variable ~6.1%. Rent: $620/week inner Melbourne (Urban Property Australia Q1 2025). RPPI: 10-yr unit CAGR ~3%.
+    currencySymbol: '$',
+    propertyPrice: 800000,
+    downPaymentPct: 20,
+    mortgageRate: 6.1,
+    mortgageTerm: 30,
+    houseGrowth: 3.0,
+    setupCost: 45500,
+    setupCostType: 'dollar',
+    ownOngoingCost: 9500,
+    ownOngoingCostFreq: 'yearly',
+    ownOngoingCostType: 'dollar',
+    ownOngoingInflation: 2.5,
+    rentAmount: 620,
+    rentFreq: 'weekly',
+    rentInflation: 3.0,
+    rentOngoingCost: 1500,
+    rentOngoingCostFreq: 'yearly',
+    rentOngoingCostType: 'dollar',
+    rentOngoingInflation: 2.5,
+    riskFreeRate: 4.5,
+    horizon: 30,
+    monthlyBudget: 0,
+    monthlyBudgetIncrease: 0,
+    mortgageType: 'pi',
+    costInterestOnly: true,
+    rtbEnabled: false,
+    rtbBuyYear: 5,
+    initialCash: 0,
+  },
+  singapore: {
+    // Singapore: ~S$1.8M for 2BR private condo in RCR/inner suburb (iqrate.io Q1 2025: RCR median ~S$1,896 PSF; Bamboo Routes 2BR avg)
+    // BSD on S$1.8M: 1%×180k+2%×180k+3%×640k+4%×500k+5%×300k = S$59,600 + legal ~S$4,000 + valuation ~S$1,400 = S$65,000
+    // Mortgage: 2.5% blended (current 2-yr fixed ~1.75% from DBS/OCBC/UOB, resets to floating; SORA-based long-run avg ~2.5%). MAS LTV max 75% → 25% down.
+    // ABSD: 0% for Singapore Citizens buying first property (IRAS 2025). Rent: S$5,000/mo (RCR/inner 2BR; Rentify.sg 2025: S$4,500–5,500). RPPI: 4.5% conservative (20-yr CAGR ~6.4%, EdgeProp). RFR: 3.5% (SSB/T-bills).
+    currencySymbol: '$',
+    propertyPrice: 1800000,
+    downPaymentPct: 25,
+    mortgageRate: 2.5,
+    mortgageTerm: 30,
+    houseGrowth: 4.5,
+    setupCost: 65000,
+    setupCostType: 'dollar',
+    ownOngoingCost: 7000,
+    ownOngoingCostFreq: 'yearly',
+    ownOngoingCostType: 'dollar',
+    ownOngoingInflation: 3.0,
+    rentAmount: 5000,
+    rentFreq: 'monthly',
+    rentInflation: 3.0,
+    rentOngoingCost: 1500,
+    rentOngoingCostFreq: 'yearly',
+    rentOngoingCostType: 'dollar',
+    rentOngoingInflation: 2.5,
+    riskFreeRate: 3.5,
+    horizon: 30,
+    monthlyBudget: 0,
+    monthlyBudgetIncrease: 0,
+    mortgageType: 'pi',
+    costInterestOnly: true,
+    rtbEnabled: false,
+    rtbBuyYear: 5,
+    initialCash: 0,
+  },
+  kualalumpur: {
+    // Kuala Lumpur: ~RM 1.0M for 2BR condo in Mont Kiara/Bangsar/KLCC inner suburb (Bamboo Routes 2026: RM 900k–1.3M for prime areas)
+    // MOT stamp duty on RM 1.0M: 1%×100k+2%×400k+3%×500k = RM 24,000 + loan agreement stamp duty (0.5%×900k) RM 4,500 + legal ~RM 11,500 = RM 40,000
+    // Mortgage: 4.3% (OPR 2.75% cut Jul 2025; SBR 2.75% + spread ~1.55%; Maybank 4.25–4.40%, CIMB 4.30–4.35%, PropCashflow 2026). Max LTV 90% → 10% down.
+    // Rent: RM 4,000/mo (Mont Kiara/Bangsar 2BR; Bamboo Routes KL 2026: RM 3,800–4,500). RPPI: 3.0% (EdgeProp.my 20-yr data; post-2015 oversupply). RFR: 3.5% (MY FD/ASB).
+    currencySymbol: 'RM',
+    propertyPrice: 1000000,
+    downPaymentPct: 10,
+    mortgageRate: 4.3,
+    mortgageTerm: 30,
+    houseGrowth: 3.0,
+    setupCost: 40000,
+    setupCostType: 'dollar',
+    ownOngoingCost: 8000,
+    ownOngoingCostFreq: 'yearly',
+    ownOngoingCostType: 'dollar',
+    ownOngoingInflation: 3.0,
+    rentAmount: 4000,
+    rentFreq: 'monthly',
+    rentInflation: 3.0,
+    rentOngoingCost: 1500,
+    rentOngoingCostFreq: 'yearly',
+    rentOngoingCostType: 'dollar',
+    rentOngoingInflation: 2.5,
+    riskFreeRate: 3.5,
+    horizon: 30,
+    monthlyBudget: 0,
+    monthlyBudgetIncrease: 0,
+    mortgageType: 'pi',
+    costInterestOnly: true,
+    rtbEnabled: false,
+    rtbBuyYear: 5,
+    initialCash: 0,
+  },
+  jakarta: {
+    // Jakarta, ID: ~Rp 2B median 2BR inner suburb/central; setup: BPHTB 5%×(2B-80M) ≈ Rp 96M + PPAT/notary Rp 18M + fees Rp 6M = Rp 120M
+    // KPR rate: avg SBDK major banks ~9.25–9.5% (Databoks May 2025; BCA 9.37%, BNI 9.10%). Term: 20yr typical. Rent: ~Rp 12M/mo (city-wide 2BR avg ~Rp 12.6M). RFR: IDR time deposit ~5% (BI rate 4.75%).
+    currencySymbol: 'Rp',
+    propertyPrice: 2000000000,
+    downPaymentPct: 20,
+    mortgageRate: 9.5,
+    mortgageTerm: 20,
+    houseGrowth: 5.5,
+    setupCost: 120000000,
+    setupCostType: 'dollar',
+    ownOngoingCost: 21000000,
+    ownOngoingCostFreq: 'yearly',
+    ownOngoingCostType: 'dollar',
+    ownOngoingInflation: 3.5,
+    rentAmount: 12000000,
+    rentFreq: 'monthly',
+    rentInflation: 4.0,
+    rentOngoingCost: 3000000,
+    rentOngoingCostFreq: 'yearly',
+    rentOngoingCostType: 'dollar',
+    rentOngoingInflation: 3.5,
+    riskFreeRate: 5.0,
+    horizon: 20,
+    monthlyBudget: 0,
+    monthlyBudgetIncrease: 0,
+    mortgageType: 'pi',
+    costInterestOnly: true,
+    rtbEnabled: false,
+    rtbBuyYear: 5,
+    initialCash: 0,
+  },
 };
 
 let S = JSON.parse(JSON.stringify(DEFAULTS));
@@ -1785,6 +1978,48 @@ function resetAll(){
   rerender();
 }
 
+/* ── APPLY CITY PRESET ── */
+function applyPreset(cityKey){
+  const p = CITY_PRESETS[cityKey];
+  if(!p) return;
+
+  currentCurrencySymbol = p.currencySymbol;
+  $('currencySymbol').value      = p.currencySymbol;
+  $('propertyPrice').value       = formatMoneyValue(p.propertyPrice);
+  $('downPaymentPct').value      = p.downPaymentPct;
+  $('monthlyBudget').value       = formatMoneyValue(p.monthlyBudget);
+  $('riskFreeRate').value        = p.riskFreeRate;
+  $('horizon').value             = p.horizon;
+  $('mortgageRate').value        = p.mortgageRate;
+  $('mortgageTerm').value        = p.mortgageTerm;
+  $('houseGrowth').value         = p.houseGrowth;
+  $('setupCost').value           = formatMoneyValue(p.setupCost);
+  $('setupCostType').value       = p.setupCostType;
+  $('ownOngoingCost').value      = formatMoneyValue(p.ownOngoingCost);
+  $('ownOngoingCostFreq').value  = p.ownOngoingCostFreq;
+  $('ownOngoingCostType').value  = p.ownOngoingCostType;
+  $('ownOngoingInflation').value = p.ownOngoingInflation;
+  $('rentAmount').value          = formatMoneyValue(p.rentAmount);
+  $('rentFreq').value            = p.rentFreq;
+  $('rentInflation').value       = p.rentInflation;
+  $('rentOngoingCost').value     = formatMoneyValue(p.rentOngoingCost);
+  $('rentOngoingCostFreq').value = p.rentOngoingCostFreq;
+  $('rentOngoingCostType').value = p.rentOngoingCostType;
+  $('rentOngoingInflation').value= p.rentOngoingInflation;
+  $('initialCash').value         = '';
+  $('costInterestOnly').checked  = p.costInterestOnly;
+  $('rtbEnabled').checked        = p.rtbEnabled;
+  $('rtbBuyYear').value          = p.rtbBuyYear;
+  $('monthlyBudgetIncrease').value = p.monthlyBudgetIncrease;
+  document.querySelectorAll('input[name="mortgageType"]').forEach(r=>{ r.checked = r.value===p.mortgageType; });
+  $('radioPI').classList.toggle('selected', p.mortgageType==='pi');
+  $('radioIO').classList.toggle('selected', p.mortgageType==='io');
+
+  document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.city===cityKey));
+  updateCagrToolVisibility(false);
+  rerender();
+}
+
 /* ── CSV ── */
 function downloadCsv(){
   const na='';
@@ -1963,7 +2198,8 @@ document.querySelectorAll('.graph-btn').forEach(btn=>{
   });
 });
 
-$('resetBtn').addEventListener('click', resetAll);
+$('resetBtn').addEventListener('click', ()=>{ document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active')); resetAll(); });
+document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.addEventListener('click', ()=>applyPreset(btn.dataset.city)));
 $('downloadBtn').addEventListener('click', downloadCsv);
 $('chartResetZoom').addEventListener('click',()=>{ if(chartInstance) chartInstance.resetZoom(); });
 $('themeToggle').addEventListener('click',()=>{
@@ -2012,7 +2248,7 @@ $('cagrRows').addEventListener('blur',(e)=>{
     if(!icon){ hide(); return; }
     const tip = icon.getAttribute('data-tip');
     if(!tip){ hide(); return; }
-    ttText.textContent = tip;
+    ttText.innerHTML = tip;
     tt.classList.remove('flip-below');
     tt.classList.add('visible');
     tt.style.display = 'block';
