@@ -254,6 +254,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     <div class="quick-start-btns">
       <button class="quick-start-btn" data-city="perth">Perth, AU</button>
       <button class="quick-start-btn" data-city="melbourne">Melbourne, AU</button>
+      <button class="quick-start-btn" data-city="sydney">Sydney, AU</button>
       <button class="quick-start-btn" data-city="singapore">Singapore</button>
       <button class="quick-start-btn" data-city="kualalumpur">Kuala Lumpur, MY</button>
       <button class="quick-start-btn" data-city="jakarta">Jakarta, ID</button>
@@ -659,10 +660,10 @@ const DEFAULTS = {
 };
 
 /* ── CITY PRESETS ──
-   Values sourced from: REIWA (Perth), Urban Property Australia (Melbourne), Databoks/BI (Jakarta)
+   Values sourced from: REIWA (Perth), Urban Property Australia (Melbourne), Domain/CoreLogic (Sydney), Databoks/BI (Jakarta)
    Property prices: median 2BR apartment, city centre or inner suburbs, 2024–2025.
    Perth stamp duty: WA general rate ($360k–$725k bracket). Melbourne stamp duty: VIC general rate.
-   Jakarta setup: BPHTB 5% + PPAT/notary ~1% + bank/admin fees. Mortgage: typical KPR floating rate.
+   Sydney stamp duty: NSW general rate ($372k–$1.24M bracket). Jakarta setup: BPHTB 5% + PPAT/notary ~1% + bank/admin fees. Mortgage: typical KPR floating rate.
 */
 const CITY_PRESETS = {
   perth: {
@@ -717,6 +718,39 @@ const CITY_PRESETS = {
     rentAmount: 620,
     rentFreq: 'weekly',
     rentInflation: 3.0,
+    rentOngoingCost: 1500,
+    rentOngoingCostFreq: 'yearly',
+    rentOngoingCostType: 'dollar',
+    rentOngoingInflation: 2.5,
+    riskFreeRate: 4.5,
+    horizon: 30,
+    monthlyBudget: 0,
+    monthlyBudgetIncrease: 0,
+    mortgageType: 'pi',
+    costInterestOnly: true,
+    rtbEnabled: false,
+    rtbBuyYear: 5,
+    initialCash: 0,
+  },
+  sydney: {
+    // Sydney, NSW: ~$1.05M for 2BR in city centre/inner suburbs (Surry Hills, Pyrmont, Newtown, Glebe, Redfern)
+    // NSW transfer duty on $1.05M ($372k–$1.24M bracket): $11,152 + 4.5%×$678k = $41,662 + legal ~$2,500 = ~$44,200
+    // Mortgage: Big-4 owner-occ P&I variable ~6.1%. Rent: $750/week inner Sydney (Domain 2025). RPPI: 20-yr unit CAGR ~3.5% (units ~doubled over 20 yrs).
+    currencySymbol: '$',
+    propertyPrice: 1050000,
+    downPaymentPct: 20,
+    mortgageRate: 6.1,
+    mortgageTerm: 30,
+    houseGrowth: 3.5,
+    setupCost: 44200,
+    setupCostType: 'dollar',
+    ownOngoingCost: 11000,
+    ownOngoingCostFreq: 'yearly',
+    ownOngoingCostType: 'dollar',
+    ownOngoingInflation: 2.5,
+    rentAmount: 750,
+    rentFreq: 'weekly',
+    rentInflation: 3.5,
     rentOngoingCost: 1500,
     rentOngoingCostFreq: 'yearly',
     rentOngoingCostType: 'dollar',
