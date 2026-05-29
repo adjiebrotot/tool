@@ -662,22 +662,23 @@ const DEFAULTS = {
 */
 const CITY_PRESETS = {
   perth: {
-    // Perth, WA: ~$580k median 2BR inner suburb (REIWA Sep 2025); WA stamp duty on $580k ≈ $21,565 + legal ~$2,500 + misc ~$935 = $25,000
-    // Mortgage: Big-4 owner-occ P&I variable ~6.1% (CBA 6.09%). Rent: $650/week inner Perth (REIWA 2025). RPPI: 20-yr unit CAGR ~4.5%.
+    // Perth, WA: ~$750k for 2BR in city centre/inner suburbs (Subiaco, East Perth, Northbridge, West Perth, Mt Lawley)
+    // WA stamp duty on $750k (>$725k bracket): $28,453 + 5.15%×$25k = $29,741 + legal ~$2,500 + misc ~$260 = ~$32,500
+    // Mortgage: Big-4 owner-occ P&I variable ~6.1% (CBA 6.09%). Rent: $700/week inner Perth (REIWA 2025). RPPI: 20-yr unit CAGR ~4.5%.
     currencySymbol: '$',
-    propertyPrice: 580000,
+    propertyPrice: 750000,
     downPaymentPct: 20,
     mortgageRate: 6.1,
     mortgageTerm: 30,
     houseGrowth: 4.5,
-    setupCost: 25000,
+    setupCost: 32500,
     setupCostType: 'dollar',
     ownOngoingCost: 8500,
     ownOngoingCostFreq: 'yearly',
     ownOngoingCostType: 'dollar',
     ownOngoingInflation: 2.5,
-    rentAmount: 2800,
-    rentFreq: 'monthly',
+    rentAmount: 700,
+    rentFreq: 'weekly',
     rentInflation: 3.5,
     rentOngoingCost: 1500,
     rentOngoingCostFreq: 'yearly',
@@ -694,22 +695,23 @@ const CITY_PRESETS = {
     initialCash: 0,
   },
   melbourne: {
-    // Melbourne, VIC: ~$635k median 2BR inner suburb (Urban Property Australia Q4 2025); VIC stamp duty on $635k ≈ $33,170 + legal ~$2,500 = $36,000 (general rate, PPR concession doesn't apply >$550k)
-    // Mortgage: Big-4 owner-occ P&I variable ~6.1%. Rent: $600/week inner Melbourne (Urban Property Australia Q1 2025). RPPI: 10-yr unit CAGR ~3%.
+    // Melbourne, VIC: ~$800k for 2BR in city centre/inner suburbs (Richmond, Fitzroy, South Yarra, Carlton, Prahran)
+    // VIC stamp duty on $800k (general rate): $2,870 + 6%×$670k = $43,070 + legal ~$2,500 = ~$45,500 (PPR concession doesn't apply >$550k)
+    // Mortgage: Big-4 owner-occ P&I variable ~6.1%. Rent: $620/week inner Melbourne (Urban Property Australia Q1 2025). RPPI: 10-yr unit CAGR ~3%.
     currencySymbol: '$',
-    propertyPrice: 635000,
+    propertyPrice: 800000,
     downPaymentPct: 20,
     mortgageRate: 6.1,
     mortgageTerm: 30,
     houseGrowth: 3.0,
-    setupCost: 36000,
+    setupCost: 45500,
     setupCostType: 'dollar',
     ownOngoingCost: 9500,
     ownOngoingCostFreq: 'yearly',
     ownOngoingCostType: 'dollar',
     ownOngoingInflation: 2.5,
-    rentAmount: 2600,
-    rentFreq: 'monthly',
+    rentAmount: 620,
+    rentFreq: 'weekly',
     rentInflation: 3.0,
     rentOngoingCost: 1500,
     rentOngoingCostFreq: 'yearly',
