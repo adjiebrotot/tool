@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>WEM Constraint Equation Checker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+/* ── Tokens ── */
+:root{
+  --bg:#0F1728;--bg2:#111C2F;--panel:#162033;--raised:#1C2942;
+  --txt:#EAF1FF;--muted:#A8B6CF;--inv:#0F1728;--bdr:#2C3A52;
+  --acc:#8DBBFF;--acc2:#8FCDBD;--acc3:#F1C0D0;
+  --pos:#7FB2FF;--neg:#FF8B8B;
+  --ok-bg:#103529;--ok-txt:#9BE7B4;
+  --er-bg:#4A1D26;--er-txt:#FFB3BA;
+  --wn-bg:#4A3412;--wn-txt:#FFD28C;
+  --in-bg:#132E56;--in-txt:#A8C9FF;
+  --inp:rgba(255,255,255,.06);--sh:0 2px 16px rgba(120,160,220,.12);
+  /* LHS term colours — chosen for colorblind contrast */
+  --ce:#8DBBFF; --ce-bg:rgba(141,187,255,.12); --ce-b:rgba(141,187,255,.4);
+  --cr:#6DD5C8; --cr-bg:rgba(109,213,200,.11); --cr-b:rgba(109,213,200,.4);
+  --cl:#F4A4C0; --cl-bg:rgba(244,164,192,.11); --cl-b:rgba(244,164,192,.4);
+  /* RHS term colours */
+  --cR:#C4B5FD; --cR-bg:rgba(196,181,253,.12); --cR-b:rgba(196,181,253,.4);
+  --cL:#FDE68A; --cL-bg:rgba(253,230,138,.12); --cL-b:rgba(253,230,138,.4);
+  --cO:#A8B6CF; --cO-bg:rgba(168,182,207,.12); --cO-b:rgba(168,182,207,.4);
+}
+body.light{
+  --bg:#F0F4FF;--bg2:#F8FBFF;--panel:#FFF;--raised:#FFF;
+  --txt:#2D3436;--muted:#7F8C8D;--inv:#FFF;--bdr:#E0E6F0;
+  --acc:#4A7FD4;--pos:#2563EB;--neg:#DC2626;
+  --ok-bg:#D1F5E0;--ok-txt:#1A5E35;--er-bg:#FFE0E0;--er-txt:#8B1A1A;
+  --wn-bg:#FFF4D9;--wn-txt:#7A4A00;--in-bg:#E8F0FF;--in-txt:#174A9C;
+  --ce:#2563EB;--ce-bg:rgba(37,99,235,.08);--ce-b:rgba(37,99,235,.35);
+  --cr:#0D7A70;--cr-bg:rgba(13,122,112,.08);--cr-b:rgba(13,122,112,.35);
+  --cl:#C2185B;--cl-bg:rgba(194,24,91,.08); --cl-b:rgba(194,24,91,.35);
+  --cR:#6B21A8;--cR-bg:rgba(107,33,168,.08);--cR-b:rgba(107,33,168,.35);
+  --cL:#B45309;--cL-bg:rgba(180,83,9,.08);  --cL-b:rgba(180,83,9,.35);
+  --cO:#475569;--cO-bg:rgba(71,85,105,.08); --cO-b:rgba(71,85,105,.35);
+}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.5;
+  color:var(--txt);background:var(--bg);transition:background .25s,color .25s}
+.mono{font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1540px;margin:0 auto;padding:18px 22px;display:flex;flex-direction:column;gap:14px}
+.card{background:rgba(255,255,255,.03);border:1px solid var(--bdr);border-radius:14px;box-shadow:var(--sh)}
+body.light .card{background:rgba(255,255,255,.9)}
+
+/* ── Header ── */
+.hdr{padding:16px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.hdr h1{margin:0 0 2px;font-size:1.5rem;font-weight:800;letter-spacing:-.02em}
+.hdr p{margin:0;color:var(--muted);font-size:.82rem}
+.hdr-r{display:flex;gap:8px}
+
+/* ── Toolbar ── */
+.toolbar{padding:0;overflow:hidden}
+.tb-row{display:flex;align-items:stretch;flex-wrap:wrap;border-bottom:1px solid var(--bdr)}
+.tg{padding:12px 16px;display:flex;flex-direction:column;gap:6px;border-right:1px solid var(--bdr)}
+.tg:last-child{border-right:none;justify-content:center;align-items:center;margin-left:auto}
+.tg-lbl{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);white-space:nowrap}
+.tg-r{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.upload-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;
+  background:var(--inp);border:1px solid var(--bdr);border-radius:8px;
+  cursor:pointer;font-size:.83rem;font-weight:600;color:var(--txt);white-space:nowrap;
+  transition:border-color .15s;font-family:inherit}
+.upload-btn:hover{border-color:var(--acc)}
+.upload-btn input[type=file]{display:none}
+.fname{font-size:.74rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px}
+input[type=number],input[type=text],select{
+  background:var(--inp);border:1px solid var(--bdr);border-radius:8px;
+  padding:7px 10px;color:var(--txt);font-size:.83rem;font-family:inherit;
+  transition:border-color .15s;outline:none}
+input:focus,select:focus{border-color:var(--acc)}
+select option{background:var(--panel);color:var(--txt)}
+.hint{font-size:.72rem;color:var(--muted);line-height:1.3}
+.chk-row{display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer}
+.chk-row input{accent-color:var(--acc);cursor:pointer;margin:0}
+/* Status bar */
+.tb-status{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px;
+  background:rgba(0,0,0,.12);align-items:center}
+body.light .tb-status{background:rgba(0,0,0,.04)}
+.sp{display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:600;
+  padding:3px 9px;border-radius:999px;white-space:nowrap}
+.sp.ok {background:var(--ok-bg);color:var(--ok-txt)}
+.sp.er {background:var(--er-bg);color:var(--er-txt)}
+.sp.wn {background:var(--wn-bg);color:var(--wn-txt)}
+.sp.in {background:var(--in-bg);color:var(--in-txt)}
+.sp .d{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.fallback-inp{font-size:.74rem;color:var(--wn-txt);cursor:pointer;text-decoration:underline;margin-left:4px}
+/* Buttons */
+.btn-p{background:var(--acc);color:var(--inv);border:none;border-radius:10px;
+  padding:9px 22px;font-weight:700;font-size:.88rem;cursor:pointer;transition:opacity .15s;
+  font-family:inherit;white-space:nowrap}
+.btn-p:hover{opacity:.88}
+.btn-s{background:var(--inp);color:var(--txt);border:1px solid var(--bdr);border-radius:10px;
+  padding:7px 13px;font-weight:600;font-size:.82rem;cursor:pointer;transition:border-color .15s;
+  font-family:inherit;white-space:nowrap}
+.btn-s:hover{border-color:var(--acc)}
+.btn-t{background:var(--inp);border:1px solid var(--bdr);color:var(--muted);border-radius:10px;
+  padding:7px 13px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;
+  font-family:inherit;white-space:nowrap}
+.btn-t:hover{border-color:var(--acc);color:var(--txt)}
+.badge{border-radius:999px;padding:2px 9px;font-size:.71rem;font-weight:700;display:inline-block}
+.b-ok {background:var(--ok-bg);color:var(--ok-txt)}
+.b-er {background:var(--er-bg);color:var(--er-txt)}
+
+/* ── KPIs ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.metric{padding:14px 18px}
+.metric .lbl{color:var(--muted);font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.metric .val{font-family:'DM Mono',monospace;font-size:1.6rem;font-weight:700;letter-spacing:-.01em}
+.metric .sub{font-size:.75rem;color:var(--muted);margin-top:2px}
+
+/* ── Banner ── */
+.banner{padding:11px 18px;border-radius:12px;display:flex;align-items:center;gap:10px;
+  font-weight:600;font-size:.9rem;flex-wrap:wrap}
+.banner.ok  {background:var(--ok-bg);color:var(--ok-txt);border:1px solid rgba(155,231,180,.2)}
+.banner.viol{background:var(--er-bg);color:var(--er-txt);border:1px solid rgba(255,179,186,.2)}
+.banner.idle{background:var(--in-bg);color:var(--in-txt);border:1px solid rgba(168,201,255,.2)}
+
+/* ── Legend — two groups ── */
+.legend{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:9px 14px;
+  background:var(--inp);border:1px solid var(--bdr);border-radius:10px}
+.lg-grp{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lg-grp-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--muted);margin-right:2px;white-space:nowrap}
+.lg-sep{width:1px;height:22px;background:var(--bdr);flex-shrink:0}
+.lg-item{display:flex;align-items:center;gap:5px;font-size:.75rem;color:var(--muted)}
+/* Colorblind swatches: square + symbol */
+.lg-sw{width:16px;height:16px;border-radius:4px;border:1.5px solid;display:inline-flex;
+  align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0}
+.lg-sw.energy  {background:var(--ce-bg);border-color:var(--ce-b);color:var(--ce)}
+.lg-sw.regRaise{background:var(--cr-bg);border-color:var(--cr-b);color:var(--cr)}
+.lg-sw.regLower{background:var(--cl-bg);border-color:var(--cl-b);color:var(--cl)}
+.lg-sw.rating  {background:var(--cR-bg);border-color:var(--cR-b);color:var(--cR)}
+.lg-sw.load    {background:var(--cL-bg);border-color:var(--cL-b);color:var(--cL)}
+.lg-sw.offset  {background:var(--cO-bg);border-color:var(--cO-b);color:var(--cO)}
+
+/* ── Results table ── */
+.res-card{padding:0;overflow:hidden}
+.res-hd{padding:11px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;gap:8px}
+.res-hd h2{margin:0;font-size:.95rem;font-weight:700}
+.fbar{padding:7px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fbar label{font-size:.78rem;color:var(--muted);font-weight:600}
+.fbar input{padding:5px 9px;font-size:.8rem;width:220px}
+.tbl-wrap{overflow-x:auto;max-height:68vh;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{position:sticky;top:0;z-index:2;background:var(--panel);color:var(--muted);
+  font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;
+  padding:8px 12px;border-bottom:1px solid var(--bdr);white-space:nowrap}
+td{padding:8px 12px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr.dr:hover td{background:rgba(141,187,255,.04)}
+tr.dr.viol td{background:rgba(74,28,28,.2)}
+tr.dr.viol:hover td{background:rgba(74,28,28,.35)}
+tr.xr td{padding:0;background:var(--bg2)}
+.idx{color:var(--muted);font-family:'DM Mono',monospace;font-size:.75rem;text-align:right;width:34px}
+.idc{font-family:'DM Mono',monospace;font-size:.75rem;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.elc{font-size:.8rem;font-weight:600;white-space:nowrap}
+.lrc{font-family:'DM Mono',monospace;white-space:nowrap;font-size:.83rem;text-align:center}
+.lrc .op{color:var(--muted);margin:0 3px}
+.lrc.viol .lv{color:var(--neg);font-weight:700}
+.lrc.viol .rv{color:var(--neg)}
+.lrc.ok   .lv{color:var(--pos)}
+.lrc.ok   .rv{color:var(--pos)}
+.mgc{font-family:'DM Mono',monospace;font-size:.8rem;text-align:right;white-space:nowrap}
+.mgc.neg{color:var(--neg)} .mgc.pos{color:var(--pos)}
+.xbtn{background:transparent;border:1px solid var(--bdr);border-radius:6px;padding:3px 9px;
+  cursor:pointer;font-size:.75rem;color:var(--muted);font-family:inherit;transition:all .15s;white-space:nowrap}
+.xbtn:hover{border-color:var(--acc);color:var(--txt)}
+.xbtn.open{border-color:var(--acc);color:var(--acc)}
+
+/* ── Equation panel ── */
+.eq-panel{padding:13px 18px 16px;display:none}
+.eq-panel.open{display:block}
+.eq-sec{margin-bottom:10px}
+.eq-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
+.eq-terms{display:flex;flex-wrap:wrap;gap:3px;align-items:center;line-height:2.1}
+.eq-tot{font-size:.79rem;font-family:'DM Mono',monospace;color:var(--muted);margin-top:5px;
+  padding:4px 10px;border-radius:6px;background:var(--inp);display:inline-block}
+.eq-opr{font-size:1.15rem;font-weight:800;text-align:center;margin:3px 0;color:var(--acc)}
+/* Term chips */
+.tc{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:5px;
+  font-family:'DM Mono',monospace;font-size:.72rem;white-space:nowrap;border:1.5px solid}
+.tc.energy  {color:var(--ce);background:var(--ce-bg);border-color:var(--ce-b)}
+.tc.regRaise{color:var(--cr);background:var(--cr-bg);border-color:var(--cr-b)}
+.tc.regLower{color:var(--cl);background:var(--cl-bg);border-color:var(--cl-b)}
+.tc.rating  {color:var(--cR);background:var(--cR-bg);border-color:var(--cR-b)}
+.tc.load    {color:var(--cL);background:var(--cL-bg);border-color:var(--cL-b)}
+.tc.offset  {color:var(--cO);background:var(--cO-bg);border-color:var(--cO-b)}
+.tc.unknown {color:var(--muted);background:var(--inp);border-color:var(--bdr)}
+.tc-sym{font-size:.65rem;opacity:.8;margin-right:1px}
+.tc-c{opacity:.65;font-size:.67rem}
+.tc-v{opacity:.6;font-size:.67rem}
+.tsign{font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);margin:0 1px}
+.miss-note{display:flex;align-items:center;gap:6px;font-size:.75rem;padding:5px 10px;
+  border-radius:7px;background:var(--wn-bg);color:var(--wn-txt);margin-bottom:8px}
+
+/* ── Collapsible passed section ── */
+.sec-tog{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;
+  cursor:pointer;font-weight:600;font-size:.87rem;user-select:none;transition:background .15s}
+.sec-tog:hover{background:var(--inp)}
+.arr{transition:transform .2s;font-size:.71rem;color:var(--muted)}
+.sec-tog.open .arr{transform:rotate(180deg)}
+.col-body{display:none}
+.col-body.open{display:block}
+
+/* ── Empty state ── */
+.empty{padding:48px 24px;text-align:center;color:var(--muted)}
+.empty .ico{font-size:2.3rem;margin-bottom:10px}
+.empty h2{margin:0 0 6px;font-size:1.05rem;font-weight:700;color:var(--txt)}
+.empty p{margin:0;font-size:.86rem;max-width:360px;margin:0 auto}
+
+@media(max-width:960px){
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .tb-row{flex-direction:column}
+  .tg{border-right:none;border-bottom:1px solid var(--bdr)}
+  .tg:last-child{border-bottom:none;margin-left:0;align-items:flex-start}
+}
+@media(max-width:600px){
+  .wrap{padding:10px 12px}
+  .metrics{grid-template-columns:1fr 1fr}
+  .hdr h1{font-size:1.25rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<section class="hdr card">
+  <div>
+    <h1>⚡ WEM Constraint Equation Checker</h1>
+    <p>Western Australian Electricity Market · Real-time constraint violation detector</p>
+  </div>
+  <div class="hdr-r">
+    <button id="dlBtn" class="btn-s" style="display:none">📥 Export CSV</button>
+    <button id="themeBtn" class="btn-t">☀️ Light</button>
+  </div>
+</section>
+
+<!-- TOOLBAR (no sidebar) -->
+<section class="toolbar card">
+  <div class="tb-row">
+
+    <div class="tg" style="min-width:190px">
+      <span class="tg-lbl">1 · Dispatch File</span>
+      <div class="tg-r">
+        <label class="upload-btn">📊 Upload XLSX
+          <input type="file" id="xlsxInput" accept=".xlsx,.xls"/>
+        </label>
+      </div>
+      <span class="fname" id="xlsxName">No file loaded — drag &amp; drop anywhere</span>
+    </div>
+
+    <div class="tg" style="min-width:155px">
+      <span class="tg-lbl">2 · Demand Forecast</span>
+      <div class="tg-r">
+        <input type="number" id="demandInp" value="1500" min="0" max="6000" step="1" style="width:90px"/>
+        <span style="font-size:.8rem;color:var(--muted)">MW</span>
+      </div>
+      <span class="hint">RHS load scaling term</span>
+    </div>
+
+    <div class="tg" style="flex:1;min-width:260px">
+      <span class="tg-lbl">3 · Contingency</span>
+      <div class="tg-r">
+        <input type="text" id="contSearch" placeholder="Filter…" style="width:100px"/>
+        <select id="contSel" style="flex:1;min-width:140px"></select>
+      </div>
+      <span class="hint" id="contCount">—</span>
+    </div>
+
+    <div class="tg" style="min-width:185px;justify-content:center">
+      <span class="tg-lbl">Options</span>
+      <label class="chk-row">
+        <input type="checkbox" id="activeOnly" checked/>
+        Active constraint set only
+      </label>
+      <span class="hint">Rows with a Constraint Set ID</span>
+    </div>
+
+    <div class="tg" style="min-width:110px;border-right:none">
+      <button class="btn-p" id="checkBtn">⚡ Check</button>
+    </div>
+
+  </div>
+  <div class="tb-status" id="statusBar">
+    <span class="sp in" id="spCsv"><span class="d"></span>Loading constraints…</span>
+    <span class="sp in" id="spGen"><span class="d"></span>Loading generator data…</span>
+    <span class="sp in" id="spXlsx"><span class="d"></span>Awaiting dispatch XLSX</span>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<div id="resultsArea" style="display:none;display:flex;flex-direction:column;gap:14px">
+
+  <!-- KPIs -->
+  <div class="metrics">
+    <div class="metric card">
+      <div class="lbl">Power Balance Check</div>
+      <div class="val mono" id="kpiBalance">—</div>
+      <div class="sub" id="kpiBalanceSub">Gen vs demand mismatch</div>
+    </div>
+    <div class="metric card">
+      <div class="lbl">Violations Found</div>
+      <div class="val" id="kpiViol" style="color:var(--neg)">—</div>
+      <div class="sub">LHS &gt; RHS</div>
+    </div>
+    <div class="metric card">
+      <div class="lbl">Pass Rate</div>
+      <div class="val" id="kpiPass" style="color:var(--pos)">—</div>
+      <div class="sub" id="kpiTotal">— constraints checked</div>
+    </div>
+    <div class="metric card">
+      <div class="lbl">Worst Margin</div>
+      <div class="val mono" id="kpiWorst" style="color:var(--neg)">—</div>
+      <div class="sub" id="kpiContLbl">—</div>
+    </div>
+  </div>
+
+  <!-- Banner -->
+  <div id="banner" class="banner idle">⌛ Evaluating…</div>
+
+  <!-- Legend — two groups -->
+  <div class="legend">
+    <div class="lg-grp">
+      <span class="lg-grp-lbl">LHS:</span>
+      <span class="lg-item"><span class="lg-sw energy">●</span>Energy dispatch</span>
+      <span class="lg-item"><span class="lg-sw regRaise">▲</span>Reg Raise</span>
+      <span class="lg-item"><span class="lg-sw regLower">▼</span>Reg Lower</span>
+    </div>
+    <span class="lg-sep"></span>
+    <div class="lg-grp">
+      <span class="lg-grp-lbl">RHS:</span>
+      <span class="lg-item"><span class="lg-sw rating">⬡</span>Line Rating</span>
+      <span class="lg-item"><span class="lg-sw load">≈</span>Load Term</span>
+      <span class="lg-item"><span class="lg-sw offset">±</span>Offset</span>
+    </div>
+  </div>
+
+  <!-- VIOLATED table -->
+  <div class="res-card card">
+    <div class="res-hd">
+      <h2>⚠️ Violated Constraints</h2>
+      <span class="badge b-er" id="violBadge">0</span>
+    </div>
+    <div class="fbar">
+      <label>Filter:</label>
+      <input type="text" id="violFilter" placeholder="Search ID or element…"/>
+    </div>
+    <div class="tbl-wrap">
+      <table><thead><tr>
+        <th class="idx">#</th>
+        <th style="text-align:left;min-width:220px">Constraint Equation ID</th>
+        <th style="text-align:left">Monitored Element</th>
+        <th style="text-align:center">LHS ≤ RHS (MW)</th>
+        <th style="text-align:right">Margin (MW)</th>
+        <th style="text-align:center">Details</th>
+      </tr></thead>
+      <tbody id="violBody"></tbody></table>
+      <div id="violEmpty" class="empty" style="display:none">
+        <div class="ico">✅</div><h2>No Violations</h2>
+        <p>All constraints satisfied for this contingency and demand.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASSED table (collapsible) -->
+  <div class="res-card card">
+    <div class="sec-tog" id="passToggle">
+      <span>✅ Passed Constraints <span class="badge b-ok" id="passBadge" style="margin-left:6px">0</span></span>
+      <span class="arr">▼</span>
+    </div>
+    <div class="col-body" id="passBody">
+      <div class="fbar">
+        <label>Filter:</label>
+        <input type="text" id="passFilter" placeholder="Search ID or element…"/>
+      </div>
+      <div class="tbl-wrap" style="max-height:400px">
+        <table><thead><tr>
+          <th class="idx">#</th>
+          <th style="text-align:left;min-width:220px">Constraint Equation ID</th>
+          <th style="text-align:left">Monitored Element</th>
+          <th style="text-align:center">LHS ≤ RHS (MW)</th>
+          <th style="text-align:right">Margin (MW)</th>
+          <th style="text-align:center">Details</th>
+        </tr></thead>
+        <tbody id="passBody2"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Empty state -->
+<div id="emptyState" class="empty card" style="padding:52px 24px">
+  <div class="ico">📋</div>
+  <h2>Ready to Check</h2>
+  <p>Upload a dispatch XLSX, confirm the demand forecast, choose a contingency, then click <strong>⚡ Check</strong>.</p>
+</div>
+
+</div><!-- /wrap -->
+<script>
+(function(){'use strict';
+/* ═══ STATE ═══════════════════════════════════════════════════════ */
+let csvRows=null, lhsMap={}, rhsMap={}, genDataMap={}, results=[], demand=1500;
+let csvOk=false, genOk=false, xlsxOk=false;
+
+/* ═══ DOM ═════════════════════════════════════════════════════════ */
+const $=id=>document.getElementById(id);
+const E={
+  xlsxInput:$('xlsxInput'), xlsxName:$('xlsxName'),
+  demandInp:$('demandInp'), contSearch:$('contSearch'),
+  contSel:$('contSel'), contCount:$('contCount'),
+  activeOnly:$('activeOnly'), checkBtn:$('checkBtn'),
+  resultsArea:$('resultsArea'), emptyState:$('emptyState'), dlBtn:$('dlBtn'),
+  spCsv:$('spCsv'), spGen:$('spGen'), spXlsx:$('spXlsx'),
+  kpiBalance:$('kpiBalance'), kpiBalanceSub:$('kpiBalanceSub'),
+  kpiViol:$('kpiViol'), kpiPass:$('kpiPass'), kpiTotal:$('kpiTotal'),
+  kpiWorst:$('kpiWorst'), kpiContLbl:$('kpiContLbl'),
+  banner:$('banner'), violBadge:$('violBadge'), passBadge:$('passBadge'),
+  violBody:$('violBody'), passBody2:$('passBody2'), violEmpty:$('violEmpty'),
+  violFilter:$('violFilter'), passFilter:$('passFilter'),
+  passToggle:$('passToggle'), passBodyEl:$('passBody'),
+  themeBtn:$('themeBtn'),
+};
+
+/* ═══ HELPERS ═════════════════════════════════════════════════════ */
+const f2=v=>(+v||0).toFixed(2);
+const f4=v=>(+v||0).toFixed(4);
+const sgn=v=>(v>=0?'+':'−')+f2(Math.abs(v));
+function pill(el,cls,html){el.className='sp '+cls;el.innerHTML='<span class="d"></span>'+html;}
+
+/* ═══ CSV — Constraint Equations ══════════════════════════════════ */
+async function fetchCsv(){
+  pill(E.spCsv,'in','Loading constraints…');
+  try{
+    const r=await fetch('./Constraint_Equations.csv');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    parseCsv(await r.text());
+  }catch(e){
+    pill(E.spCsv,'wn','CSV not auto-loaded — ');
+    const lbl=document.createElement('label');
+    lbl.className='fallback-inp'; lbl.textContent='📁 Upload CSV';
+    const inp=document.createElement('input');
+    inp.type='file'; inp.accept='.csv'; inp.style.display='none';
+    inp.onchange=ev=>{if(!ev.target.files[0])return;
+      const fr=new FileReader(); fr.onload=fe=>parseCsv(fe.target.result);
+      fr.readAsText(ev.target.files[0]);};
+    lbl.appendChild(inp); E.spCsv.appendChild(lbl);
+  }
+}
+function parseCsv(txt){
+  Papa.parse(txt,{header:true,skipEmptyLines:true,complete:r=>{
+    csvRows=dedupe(r.data); csvOk=true;
+    pill(E.spCsv,'ok',`✓ ${csvRows.length} unique constraints`);
+    buildContingencyDd();
+  },error:e=>pill(E.spCsv,'er','CSV error: '+e.message)});
+}
+function dedupe(rows){
+  const m={};
+  for(const r of rows){const id=r['Constraint Equation ID'];const v=parseInt(r['Constraint Equation Version'])||0;if(!m[id]||v>m[id]._v)m[id]={...r,_v:v};}
+  return Object.values(m);
+}
+
+/* ═══ Generator Data ══════════════════════════════════════════════ */
+async function fetchGenData(){
+  pill(E.spGen,'in','Loading generator data…');
+  try{
+    const r=await fetch('./Generator_Data.csv');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    parseGenData(await r.text());
+  }catch(e){
+    pill(E.spGen,'wn','Generator_Data.csv not found — ');
+    const lbl=document.createElement('label');
+    lbl.className='fallback-inp'; lbl.textContent='📁 Upload Generator_Data.csv';
+    const inp=document.createElement('input');
+    inp.type='file'; inp.accept='.csv'; inp.style.display='none';
+    inp.onchange=ev=>{if(!ev.target.files[0])return;
+      const fr=new FileReader(); fr.onload=fe=>parseGenData(fe.target.result);
+      fr.readAsText(ev.target.files[0]);};
+    lbl.appendChild(inp); E.spGen.appendChild(lbl);
+  }
+}
+function parseGenData(txt){
+  Papa.parse(txt,{header:true,skipEmptyLines:true,complete:r=>{
+    genDataMap={};
+    for(const row of r.data){
+      if(!row.Parameter) continue;
+      genDataMap[row.Parameter.trim()]={min:parseFloat(row.Min)||0,max:parseFloat(row.Max)||0};
+    }
+    genOk=true;
+    pill(E.spGen,'ok',`✓ ${Object.keys(genDataMap).length} generator limits loaded`);
+  },error:e=>pill(E.spGen,'er','Gen data error: '+e.message)});
+}
+
+/* ═══ XLSX ════════════════════════════════════════════════════════ */
+function handleXlsx(file){
+  const fr=new FileReader();
+  fr.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      buildMaps(wb); xlsxOk=true;
+      E.xlsxName.textContent=file.name;
+      pill(E.spXlsx,'ok',`✓ ${Object.keys(lhsMap).length} generator dispatches loaded`);
+      const dk='forecast.energy-forecastOperationalDemand-expected';
+      if(rhsMap[dk]!==undefined){demand=rhsMap[dk];E.demandInp.value=demand;}
+    }catch(err){pill(E.spXlsx,'er','XLSX error: '+err.message);}
+  };
+  fr.readAsBinaryString(file);
+}
+function buildMaps(wb){
+  lhsMap={}; rhsMap={};
+  if(wb.Sheets['LHS'])
+    for(const r of XLSX.utils.sheet_to_json(wb.Sheets['LHS']))
+      if(r.Parameter){const v=parseFloat(r.Value);if(!isNaN(v))lhsMap[String(r.Parameter).trim()]=v;}
+  if(wb.Sheets['RHS'])
+    for(const r of XLSX.utils.sheet_to_json(wb.Sheets['RHS']))
+      if(r.Parameter){const v=parseFloat(r.Value);if(!isNaN(v))rhsMap[String(r.Parameter).trim()]=v;}
+}
+
+/* ═══ CONTINGENCY DROPDOWN ════════════════════════════════════════ */
+function buildContingencyDd(){
+  const onlyAct=E.activeOnly.checked;
+  const pool=onlyAct?csvRows.filter(r=>r['Constraint Set ID']&&r['Constraint Set ID']!=''):csvRows;
+  const counts={};
+  for(const r of pool){const c=(r['Contingency']||'').trim()||'NIL';counts[c]=(counts[c]||0)+1;}
+  const sorted=Object.keys(counts).sort((a,b)=>a==='NIL'?-1:b==='NIL'?1:a.localeCompare(b));
+  const q=E.contSearch.value.toLowerCase(), cur=E.contSel.value||'NIL';
+  E.contSel.innerHTML='';
+  let shown=0;
+  for(const c of sorted){
+    if(q&&!c.toLowerCase().includes(q)) continue;
+    const o=document.createElement('option');
+    o.value=c; o.textContent=`${c}  (${counts[c]})`;
+    if(c===cur) o.selected=true;
+    E.contSel.appendChild(o); shown++;
+  }
+  if(!E.contSel.value&&E.contSel.options[0]) E.contSel.options[0].selected=true;
+  const sel=E.contSel.value;
+  E.contCount.textContent=`${shown} contingencies · ${counts[sel]||0} constraints for "${sel}"`;
+}
+
+/* ═══ GENERATOR VALUE LOOKUP ══════════════════════════════════════
+   Reg Raise = Max − dispatch   (clamped ≥ 0)
+   Reg Lower = dispatch − Min   (clamped ≥ 0)
+════════════════════════════════════════════════════════════════════ */
+function getVal(gen, ptNorm){
+  const disp=lhsMap[gen];
+  const gd=genDataMap[gen];
+  if(ptNorm==='energy'){
+    if(disp!==undefined) return{val:disp,src:'lhs'};
+    const nd=`${gen}.energy.sentOut`;
+    if(rhsMap[nd]!==undefined) return{val:rhsMap[nd],src:'rhs-nd'};
+    return{val:0,src:'default'};
+  }
+  if(ptNorm==='regulationraise'){
+    if(disp!==undefined&&gd) return{val:Math.max(0,gd.max-disp),src:'calc'};
+    if(disp!==undefined)     return{val:0,src:'default'};
+    return{val:0,src:'default'};
+  }
+  if(ptNorm==='regulationlower'){
+    if(disp!==undefined&&gd) return{val:Math.max(0,disp-gd.min),src:'calc'};
+    if(disp!==undefined)     return{val:0,src:'default'};
+    return{val:0,src:'default'};
+  }
+  return{val:0,src:'default'};
+}
+
+/* ═══ EVALUATION ══════════════════════════════════════════════════ */
+const RX=/^([+-])\s*([+-]?[\d.]+)\s+x\s+(\w+)\.(energy|regulationRaise|regulationLower)\.setpoint/i;
+
+function evalLHS(formula){
+  if(!formula) return{total:0,terms:[],missing:false};
+  let total=0,missing=false; const terms=[];
+  for(const raw of formula.split('\t')){
+    const m=raw.trim().match(RX); if(!m) continue;
+    const outer=m[1]==='-'?-1:1, coeff=outer*parseFloat(m[2]);
+    const gen=m[3], ptOrig=m[4], ptNorm=ptOrig.toLowerCase();
+    const info=getVal(gen,ptNorm);
+    if(info.src==='default') missing=true;
+    const contrib=coeff*info.val; total+=contrib;
+    terms.push({coeff,gen,ptOrig,ptNorm,val:info.val,src:info.src,contrib});
+  }
+  return{total,terms,missing};
+}
+
+function evalRHS(script,dem){
+  const info={rMVA:0,ls:0,lc:0,off:0,total:0};
+  if(!script) return info;
+  for(const line of script.split('\n')){
+    const cl=line.split('#')[0].trim().replace(/[,)]+$/,'');
+    if(!cl||cl.startsWith('def ')||cl==='return (') continue;
+    if(cl.includes('terms[')){
+      const m=cl.match(/([+-]?\s*[\d.]+)\s*\*/);
+      if(m) info.ls=parseFloat(m[1].replace(/\s/g,''))||0;
+    } else if(/[\d.]+\s*\*[\s\d.]+\*[\s\d.]+\*[\s\d.]+\/[\s\d.]+/.test(cl)){
+      const m=cl.match(/([+-]?\s*[\d.]+)\s*\*\s*([\d.]+)\s*\*\s*([\d.]+)\s*\*\s*([\d.]+)\s*\/\s*([\d.]+)/);
+      if(m) info.rMVA=parseFloat(m[1])*parseFloat(m[2])*parseFloat(m[3])*parseFloat(m[4])/parseFloat(m[5]);
+    } else {
+      const m=cl.match(/^([+-]?\s*[\d.]+)$/);
+      if(m) info.off=parseFloat(m[1].replace(/\s/g,''))||0;
+    }
+  }
+  info.lc=info.ls*dem; info.total=info.rMVA+info.lc+info.off;
+  return info;
+}
+
+function runCheck(){
+  if(!csvRows||!xlsxOk){alert('Please load constraint equations and upload a dispatch XLSX first.');return;}
+  demand=parseFloat(E.demandInp.value)||1500;
+  const sel=E.contSel.value||'NIL', onlyAct=E.activeOnly.checked;
+  let pool=csvRows.filter(r=>(r['Contingency']||'').trim()===sel);
+  if(onlyAct) pool=pool.filter(r=>r['Constraint Set ID']&&r['Constraint Set ID']!='');
+  results=pool.map(row=>{
+    const lhs=evalLHS(row['Left Hand Side']);
+    const rhs=evalRHS(row['Right Hand Side Script'],demand);
+    const op=(row['Equation Operator']||'').toLowerCase();
+    const violated=op.includes('less')?lhs.total>rhs.total:lhs.total<rhs.total;
+    const margin=rhs.total-lhs.total;
+    return{id:row['Constraint Equation ID'],monitored:row['Monitored Element'],
+           cont:sel,lhs,rhs,violated,margin,row};
+  });
+  results.sort((a,b)=>a.margin-b.margin);
+  render(sel);
+}
+
+/* ═══ RENDER ══════════════════════════════════════════════════════ */
+function render(label){
+  E.emptyState.style.display='none';
+  E.resultsArea.style.display='flex';
+  E.dlBtn.style.display='inline-block';
+  const viol=results.filter(r=>r.violated), pass=results.filter(r=>!r.violated);
+  const worst=viol.length?Math.min(...viol.map(r=>r.margin)):null;
+  // Power Balance KPI
+  const totalGen=Object.values(lhsMap).reduce((a,b)=>a+b,0);
+  const mismatch=totalGen-demand;
+  const pct=demand?Math.abs(mismatch/demand*100):0;
+  const balColor=pct<3?'var(--pos)':pct<10?'var(--wn-txt)':'var(--neg)';
+  E.kpiBalance.textContent=(mismatch>=0?'+':'')+f2(mismatch)+' MW';
+  E.kpiBalance.style.color=balColor;
+  E.kpiBalanceSub.textContent=`Gen ${totalGen.toFixed(0)} MW | Load ${demand.toFixed(0)} MW`;
+  // Other KPIs
+  E.kpiViol.textContent=viol.length;
+  E.kpiPass.textContent=results.length?((pass.length/results.length*100).toFixed(1)+'%'):'—';
+  E.kpiTotal.textContent=`${results.length} constraints checked`;
+  E.kpiWorst.textContent=worst!==null?f2(worst)+' MW':'—';
+  E.kpiContLbl.textContent=`Contingency: ${label}`;
+  // Banner
+  if(viol.length===0){E.banner.className='banner ok';E.banner.innerHTML=`✅ All <strong>${results.length}</strong> constraints satisfied for "<strong>${label}</strong>".`;}
+  else{E.banner.className='banner viol';E.banner.innerHTML=`⚠️ The Dispatch violates <strong>${viol.length}</strong> of <strong>${results.length}</strong> Constraint Equations for "<strong>${label}</strong>".`;}
+  E.violBadge.textContent=viol.length;
+  E.passBadge.textContent=pass.length;
+  E.violEmpty.style.display=viol.length?'none':'block';
+  buildTable('viol',viol,E.violBody);
+  buildTable('pass',pass,E.passBody2);
+}
+
+function buildTable(pfx,rows,tbody){
+  tbody.innerHTML='';
+  const frag=document.createDocumentFragment();
+  rows.forEach((r,i)=>{
+    const dr=document.createElement('tr');
+    dr.className='dr'+(r.violated?' viol':'');
+    dr.innerHTML=buildRow(r,i+1,pfx);
+    frag.appendChild(dr);
+    const xr=document.createElement('tr'); xr.className='xr';
+    const td=document.createElement('td'); td.colSpan=6;
+    const panel=document.createElement('div');
+    panel.className='eq-panel'; panel.id=`panel-${pfx}-${i}`;
+    panel.innerHTML=buildPanel(r); td.appendChild(panel); xr.appendChild(td);
+    frag.appendChild(xr);
+  });
+  tbody.appendChild(frag);
+}
+
+function buildRow(r,idx,pfx){
+  const lf=f2(r.lhs.total), rf=f2(r.rhs.total);
+  const op=r.violated?'&gt;':'≤', cls=r.violated?'viol':'ok';
+  const mCls=r.margin<0?'neg':'pos';
+  const badge=r.violated?'<span class="badge b-er">⚠ VIOLATED</span>':'<span class="badge b-ok">✓ OK</span>';
+  const mw=r.lhs.missing?'<span title="Some values defaulted to 0" style="color:var(--wn-txt);font-size:.67rem"> ⚠</span>':'';
+  return `<td class="idx">${idx}</td>
+    <td><span class="idc mono" title="${r.id}">${r.id}</span></td>
+    <td class="elc">${r.monitored||'—'}</td>
+    <td class="lrc ${cls}"><span class="lv">${lf}${mw}</span><span class="op">${op}</span><span class="rv">${rf}</span></td>
+    <td class="mgc ${mCls}">${sgn(r.margin)}</td>
+    <td style="text-align:center">${badge} <button class="xbtn" data-p="${pfx}" data-i="${idx-1}" style="margin-left:5px">▶ Show</button></td>`;
+}
+
+/* ── Equation Panel ── */
+function buildPanel(r){
+  const miss=r.lhs.missing?'<div class="miss-note">⚠ Some generator setpoints not found — values defaulted to 0 MW.</div>':'';
+  const opTxt=r.violated?`<span style="color:var(--neg)">&#62; VIOLATED</span>`:'≤';
+  return `${miss}
+<div class="eq-sec"><div class="eq-lbl">LHS — Generator Dispatch Sensitivity Terms</div>
+  <div class="eq-terms">${buildLhsHtml(r.lhs.terms)}</div>
+  <div class="eq-tot">Σ LHS = ${f4(r.lhs.total)} MW</div>
+</div>
+<div class="eq-opr">${opTxt}</div>
+<div class="eq-sec"><div class="eq-lbl">RHS — Thermal Limit</div>
+  <div class="eq-terms">${buildRhsHtml(r.rhs)}</div>
+  <div class="eq-tot">Σ RHS = ${f4(r.rhs.total)} MW</div>
+</div>
+<div style="margin-top:8px;font-size:.72rem;color:var(--muted)">
+  Constraint: <em>${r.id}</em> · Monitored: <em>${r.monitored||'—'}</em> · Demand: ${(+E.demandInp.value||1500).toFixed(0)} MW
+</div>`;
+}
+
+const SYM={energy:'●',regulationraise:'▲',regulationlower:'▼'};
+const TAG={energy:'Energy',regulationraise:'Reg↑',regulationlower:'Reg↓'};
+function termCls(pt){return pt==='energy'?'energy':pt==='regulationraise'?'regRaise':'regLower';}
+
+function buildLhsHtml(terms){
+  if(!terms.length) return '<span style="color:var(--muted)">No terms parsed</span>';
+  return terms.map(t=>{
+    const cls=termCls(t.ptNorm), sign=t.coeff>=0?'+':'−';
+    const sym=SYM[t.ptNorm]||'?', tag=TAG[t.ptNorm]||t.ptNorm;
+    const valStr=t.src==='default'
+      ?`<span class="tc-v" style="color:var(--wn-txt)">(missing)</span>`
+      :`<span class="tc-v">=&thinsp;${f2(t.val)}</span>`;
+    return `<span class="tsign">${sign}</span>`+
+      `<span class="tc ${cls}" title="${t.gen}.${t.ptOrig}.setpoint = ${f2(t.val)} MW">`+
+      `<span class="tc-sym">${sym}</span><span class="tc-c">${Math.abs(t.coeff).toFixed(4)}×</span>${t.gen}<span style="opacity:.6;font-size:.65rem;margin-left:2px">[${tag}]</span>${valStr}</span>`;
+  }).join(' ');
+}
+
+function buildRhsHtml(rhs){
+  const parts=[];
+  if(rhs.rMVA!==0)
+    parts.push(`<span class="tc rating"><span class="tc-sym">⬡</span>${f2(rhs.rMVA)} MW<span style="opacity:.6;font-size:.65rem;margin-left:2px">[Rating]</span></span>`);
+  if(rhs.ls!==0){
+    const s=rhs.lc>=0?'+':'−';
+    parts.push(`<span class="tsign">${s}</span><span class="tc load"><span class="tc-sym">≈</span><span class="tc-c">${Math.abs(rhs.ls).toFixed(4)}×</span>demand<span style="opacity:.6;font-size:.65rem;margin-left:2px">[Load]</span><span class="tc-v">=&thinsp;${f2(Math.abs(rhs.lc))}</span></span>`);
+  }
+  if(rhs.off!==0){
+    const s=rhs.off>=0?'+':'−';
+    parts.push(`<span class="tsign">${s}</span><span class="tc offset"><span class="tc-sym">±</span>${Math.abs(rhs.off).toFixed(4)}<span style="opacity:.6;font-size:.65rem;margin-left:2px">[Offset]</span></span>`);
+  }
+  return parts.length?parts.join(' '):'<span style="color:var(--muted)">Could not parse RHS script</span>';
+}
+
+/* ═══ TABLE FILTER ════════════════════════════════════════════════ */
+function filterTable(tbody,q){
+  tbody.querySelectorAll('tr.dr').forEach(row=>{
+    const show=!q||row.textContent.toLowerCase().includes(q.toLowerCase());
+    row.style.display=show?'':'none';
+    const xr=row.nextElementSibling;
+    if(xr&&xr.classList.contains('xr')) xr.style.display=show?'':'none';
+  });
+}
+
+/* ═══ EXPORT ══════════════════════════════════════════════════════ */
+function exportCsv(){
+  if(!results.length) return;
+  const hdr=['Status','Contingency','Constraint Equation ID','Monitored Element','LHS (MW)','RHS (MW)','Margin (MW)'];
+  const rows=results.map(r=>[r.violated?'VIOLATED':'OK',r.cont,`"${r.id}"`,`"${r.monitored||''}"`,f4(r.lhs.total),f4(r.rhs.total),f4(r.margin)].join(','));
+  const blob=new Blob([[hdr.join(','),...rows].join('\n')],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download='constraint_check.csv';
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+
+/* ═══ EVENTS ══════════════════════════════════════════════════════ */
+E.xlsxInput.onchange=e=>{if(e.target.files[0]) handleXlsx(e.target.files[0]);};
+document.addEventListener('dragover',e=>e.preventDefault());
+document.addEventListener('drop',e=>{
+  e.preventDefault();
+  const f=Array.from(e.dataTransfer.files).find(f=>/\.xlsx?$/i.test(f.name));
+  if(f) handleXlsx(f);
+});
+E.contSearch.oninput=()=>{if(csvOk) buildContingencyDd();};
+E.activeOnly.onchange=()=>{if(csvOk) buildContingencyDd();};
+E.contSel.onchange=()=>{
+  const pool=E.activeOnly.checked?csvRows.filter(r=>r['Constraint Set ID']&&r['Constraint Set ID']!=''):csvRows;
+  const cnt=pool.filter(r=>(r['Contingency']||'').trim()===E.contSel.value).length;
+  E.contCount.textContent=`${cnt} constraints for "${E.contSel.value}"`;
+};
+E.checkBtn.onclick=runCheck;
+// Expand rows
+document.addEventListener('click',e=>{
+  const btn=e.target.closest('.xbtn'); if(!btn) return;
+  const panel=document.getElementById(`panel-${btn.dataset.p}-${btn.dataset.i}`); if(!panel) return;
+  const open=panel.classList.toggle('open');
+  btn.textContent=open?'▼ Hide':'▶ Show'; btn.classList.toggle('open',open);
+});
+// Passed section toggle
+E.passToggle.onclick=()=>{
+  E.passToggle.classList.toggle('open');
+  E.passBodyEl.classList.toggle('open');
+  E.passToggle.querySelector('.arr').textContent=E.passBodyEl.classList.contains('open')?'▲':'▼';
+};
+E.violFilter.oninput=()=>filterTable(E.violBody,E.violFilter.value);
+E.passFilter.oninput=()=>filterTable(E.passBody2,E.passFilter.value);
+E.themeBtn.onclick=()=>{
+  document.body.classList.toggle('light');
+  E.themeBtn.textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';
+};
+E.dlBtn.onclick=exportCsv;
+
+/* ═══ INIT ════════════════════════════════════════════════════════ */
+Promise.all([fetchCsv(), fetchGenData()]);
+})();
+</script>
+</body>
+</html>
