@@ -103,7 +103,8 @@ textarea:focus{border-color:var(--accent)}
 .sblock:first-child{border-top:none;padding-top:0}
 .shead{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:5px}
 .slabel{font-weight:700;font-size:.87rem}
-.sval{color:var(--value-highlight);font-weight:700;font-family:'DM Mono',monospace;font-size:.83rem}
+.sval{color:var(--value-highlight);font-weight:700;font-family:'DM Mono',monospace;font-size:.83rem;cursor:text;}
+.slider-val-edit{display:none;width:4.5em;background:transparent;border:none;border-bottom:1.5px solid var(--accent);color:var(--value-highlight);font-weight:700;font-size:.83rem;font-family:'DM Mono',monospace;text-align:right;outline:none;padding:0 1px;}
 input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;margin:0}
 .radio-grp{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
 .radio-opt{display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 10px;border-radius:999px;border:1px solid var(--border);font-size:.8rem;font-weight:600;color:var(--muted);transition:all 150ms;background:var(--input-bg);user-select:none}
@@ -1158,6 +1159,33 @@ ro.observe($('svgWrap'));
 // ═══════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════
+// Slider editable
+function makeSliderEditable(valSpan,rangeEl){
+  if(!valSpan||!rangeEl)return;
+  const inp=document.createElement('input');
+  inp.type='text';inp.className='slider-val-edit';
+  valSpan.parentNode.insertBefore(inp,valSpan.nextSibling);
+  valSpan.addEventListener('click',()=>{
+    inp.value=parseFloat(rangeEl.value);
+    valSpan.style.display='none';inp.style.display='inline';
+    inp.focus();inp.select();
+  });
+  function commit(){
+    const raw=parseFloat(inp.value);
+    if(!isNaN(raw)){
+      const mn=parseFloat(rangeEl.min),mx=parseFloat(rangeEl.max),st=parseFloat(rangeEl.step)||1;
+      const v=+(Math.round(Math.min(mx,Math.max(mn,raw))/st)*st).toFixed(10);
+      rangeEl.value=v;
+      rangeEl.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+    inp.style.display='none';valSpan.style.display='';
+  }
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}else if(e.key==='Escape'){inp.value='';commit();}});
+}
+[['sPad','vPad'],['sNW','vNW'],['sOp','vOp'],['sH','vH']
+].forEach(([rid,vid])=>makeSliderEditable($(vid),$(rid)));
+
 buildEditorRows();
 syncText();
 scheduleRender();
