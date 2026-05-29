@@ -254,6 +254,8 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     <div class="quick-start-btns">
       <button class="quick-start-btn" data-city="perth">Perth, AU</button>
       <button class="quick-start-btn" data-city="melbourne">Melbourne, AU</button>
+      <button class="quick-start-btn" data-city="singapore">Singapore</button>
+      <button class="quick-start-btn" data-city="kualalumpur">Kuala Lumpur, MY</button>
       <button class="quick-start-btn" data-city="jakarta">Jakarta, ID</button>
     </div>
   </div>
@@ -269,6 +271,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-label">Currency Symbol</div>
       <select class="num-input" id="currencySymbol" style="cursor:pointer;">
         <option value="$" selected>$ — Dollar</option>
+        <option value="S$">S$ — Singapore Dollar</option>
         <option value="€">€ — Euro</option>
         <option value="£">£ — Pound</option>
         <option value="¥">¥ — Yen / Yuan</option>
@@ -720,6 +723,74 @@ const CITY_PRESETS = {
     rentOngoingCostType: 'dollar',
     rentOngoingInflation: 2.5,
     riskFreeRate: 4.5,
+    horizon: 30,
+    monthlyBudget: 0,
+    monthlyBudgetIncrease: 0,
+    mortgageType: 'pi',
+    costInterestOnly: true,
+    rtbEnabled: false,
+    rtbBuyYear: 5,
+    initialCash: 0,
+  },
+  singapore: {
+    // Singapore: ~S$1.8M for 2BR private condo in RCR/inner suburb (iqrate.io Q1 2025: RCR median ~S$1,896 PSF; Bamboo Routes 2BR avg)
+    // BSD on S$1.8M: 1%×180k+2%×180k+3%×640k+4%×500k+5%×300k = S$59,600 + legal ~S$4,000 + valuation ~S$1,400 = S$65,000
+    // Mortgage: 2.5% blended (current 2-yr fixed ~1.75% from DBS/OCBC/UOB, resets to floating; SORA-based long-run avg ~2.5%). MAS LTV max 75% → 25% down.
+    // ABSD: 0% for Singapore Citizens buying first property (IRAS 2025). Rent: S$5,000/mo (RCR/inner 2BR; Rentify.sg 2025: S$4,500–5,500). RPPI: 4.5% conservative (20-yr CAGR ~6.4%, EdgeProp). RFR: 3.5% (SSB/T-bills).
+    currencySymbol: 'S$',
+    propertyPrice: 1800000,
+    downPaymentPct: 25,
+    mortgageRate: 2.5,
+    mortgageTerm: 30,
+    houseGrowth: 4.5,
+    setupCost: 65000,
+    setupCostType: 'dollar',
+    ownOngoingCost: 7000,
+    ownOngoingCostFreq: 'yearly',
+    ownOngoingCostType: 'dollar',
+    ownOngoingInflation: 3.0,
+    rentAmount: 5000,
+    rentFreq: 'monthly',
+    rentInflation: 3.0,
+    rentOngoingCost: 1500,
+    rentOngoingCostFreq: 'yearly',
+    rentOngoingCostType: 'dollar',
+    rentOngoingInflation: 2.5,
+    riskFreeRate: 3.5,
+    horizon: 30,
+    monthlyBudget: 0,
+    monthlyBudgetIncrease: 0,
+    mortgageType: 'pi',
+    costInterestOnly: true,
+    rtbEnabled: false,
+    rtbBuyYear: 5,
+    initialCash: 0,
+  },
+  kualalumpur: {
+    // Kuala Lumpur: ~RM 1.0M for 2BR condo in Mont Kiara/Bangsar/KLCC inner suburb (Bamboo Routes 2026: RM 900k–1.3M for prime areas)
+    // MOT stamp duty on RM 1.0M: 1%×100k+2%×400k+3%×500k = RM 24,000 + loan agreement stamp duty (0.5%×900k) RM 4,500 + legal ~RM 11,500 = RM 40,000
+    // Mortgage: 4.3% (OPR 2.75% cut Jul 2025; SBR 2.75% + spread ~1.55%; Maybank 4.25–4.40%, CIMB 4.30–4.35%, PropCashflow 2026). Max LTV 90% → 10% down.
+    // Rent: RM 4,000/mo (Mont Kiara/Bangsar 2BR; Bamboo Routes KL 2026: RM 3,800–4,500). RPPI: 3.0% (EdgeProp.my 20-yr data; post-2015 oversupply). RFR: 3.5% (MY FD/ASB).
+    currencySymbol: 'RM',
+    propertyPrice: 1000000,
+    downPaymentPct: 10,
+    mortgageRate: 4.3,
+    mortgageTerm: 30,
+    houseGrowth: 3.0,
+    setupCost: 40000,
+    setupCostType: 'dollar',
+    ownOngoingCost: 8000,
+    ownOngoingCostFreq: 'yearly',
+    ownOngoingCostType: 'dollar',
+    ownOngoingInflation: 3.0,
+    rentAmount: 4000,
+    rentFreq: 'monthly',
+    rentInflation: 3.0,
+    rentOngoingCost: 1500,
+    rentOngoingCostFreq: 'yearly',
+    rentOngoingCostType: 'dollar',
+    rentOngoingInflation: 2.5,
+    riskFreeRate: 3.5,
     horizon: 30,
     monthlyBudget: 0,
     monthlyBudgetIncrease: 0,
