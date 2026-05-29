@@ -221,6 +221,12 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
   .btn-row{flex-direction:column;}
   .header{padding:14px 16px;}
 }
+.quick-start-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.quick-start-label{font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;}
+.quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
+.quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
 </style>
 </head>
 <body class="light">
@@ -241,6 +247,14 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
 <!-- LAYOUT -->
 <section class="layout">
 <aside class="controls card">
+  <div class="quick-start-row">
+    <span class="quick-start-label">⚡ Quick Start <span class="tip-icon" data-tip="Prefill with quick assumption, assuming median price for two-bedroom apartment in the city centre or inner suburbs">?</span></span>
+    <div class="quick-start-btns">
+      <button class="quick-start-btn" data-city="perth">Perth, AU</button>
+      <button class="quick-start-btn" data-city="melbourne">Melbourne, AU</button>
+      <button class="quick-start-btn" data-city="jakarta">Jakarta, ID</button>
+    </div>
+  </div>
   <div class="ctrl-tabs">
     <button class="ctrl-tab active" data-tab="general">🌐 General</button>
     <button class="ctrl-tab" data-tab="own">🏡 Own</button>
@@ -638,6 +652,111 @@ const DEFAULTS = {
   rtbBuyYear: 5,
   monthlyBudgetIncrease: 0,
   currencySymbol: '$',
+};
+
+/* ── CITY PRESETS ──
+   Values sourced from: REIWA (Perth), Urban Property Australia (Melbourne), Databoks/BI (Jakarta)
+   Property prices: median 2BR apartment, city centre or inner suburbs, 2024–2025.
+   Perth stamp duty: WA general rate ($360k–$725k bracket). Melbourne stamp duty: VIC general rate.
+   Jakarta setup: BPHTB 5% + PPAT/notary ~1% + bank/admin fees. Mortgage: typical KPR floating rate.
+*/
+const CITY_PRESETS = {
+  perth: {
+    // Perth, WA: ~$580k median 2BR inner suburb (REIWA Sep 2025); WA stamp duty on $580k ≈ $21,565 + legal ~$2,500 + misc ~$935 = $25,000
+    // Mortgage: Big-4 owner-occ P&I variable ~6.1% (CBA 6.09%). Rent: $650/week inner Perth (REIWA 2025). RPPI: 20-yr unit CAGR ~4.5%.
+    currencySymbol: '$',
+    propertyPrice: 580000,
+    downPaymentPct: 20,
+    mortgageRate: 6.1,
+    mortgageTerm: 30,
+    houseGrowth: 4.5,
+    setupCost: 25000,
+    setupCostType: 'dollar',
+    ownOngoingCost: 8500,
+    ownOngoingCostFreq: 'yearly',
+    ownOngoingCostType: 'dollar',
+    ownOngoingInflation: 2.5,
+    rentAmount: 2800,
+    rentFreq: 'monthly',
+    rentInflation: 3.5,
+    rentOngoingCost: 1500,
+    rentOngoingCostFreq: 'yearly',
+    rentOngoingCostType: 'dollar',
+    rentOngoingInflation: 2.5,
+    riskFreeRate: 4.5,
+    horizon: 30,
+    monthlyBudget: 0,
+    monthlyBudgetIncrease: 0,
+    mortgageType: 'pi',
+    costInterestOnly: true,
+    rtbEnabled: false,
+    rtbBuyYear: 5,
+    initialCash: 0,
+  },
+  melbourne: {
+    // Melbourne, VIC: ~$635k median 2BR inner suburb (Urban Property Australia Q4 2025); VIC stamp duty on $635k ≈ $33,170 + legal ~$2,500 = $36,000 (general rate, PPR concession doesn't apply >$550k)
+    // Mortgage: Big-4 owner-occ P&I variable ~6.1%. Rent: $600/week inner Melbourne (Urban Property Australia Q1 2025). RPPI: 10-yr unit CAGR ~3%.
+    currencySymbol: '$',
+    propertyPrice: 635000,
+    downPaymentPct: 20,
+    mortgageRate: 6.1,
+    mortgageTerm: 30,
+    houseGrowth: 3.0,
+    setupCost: 36000,
+    setupCostType: 'dollar',
+    ownOngoingCost: 9500,
+    ownOngoingCostFreq: 'yearly',
+    ownOngoingCostType: 'dollar',
+    ownOngoingInflation: 2.5,
+    rentAmount: 2600,
+    rentFreq: 'monthly',
+    rentInflation: 3.0,
+    rentOngoingCost: 1500,
+    rentOngoingCostFreq: 'yearly',
+    rentOngoingCostType: 'dollar',
+    rentOngoingInflation: 2.5,
+    riskFreeRate: 4.5,
+    horizon: 30,
+    monthlyBudget: 0,
+    monthlyBudgetIncrease: 0,
+    mortgageType: 'pi',
+    costInterestOnly: true,
+    rtbEnabled: false,
+    rtbBuyYear: 5,
+    initialCash: 0,
+  },
+  jakarta: {
+    // Jakarta, ID: ~Rp 2B median 2BR inner suburb/central; setup: BPHTB 5%×(2B-80M) ≈ Rp 96M + PPAT/notary Rp 18M + fees Rp 6M = Rp 120M
+    // KPR rate: avg SBDK major banks ~9.25–9.5% (Databoks May 2025; BCA 9.37%, BNI 9.10%). Term: 20yr typical. Rent: ~Rp 12M/mo (city-wide 2BR avg ~Rp 12.6M). RFR: IDR time deposit ~5% (BI rate 4.75%).
+    currencySymbol: 'Rp',
+    propertyPrice: 2000000000,
+    downPaymentPct: 20,
+    mortgageRate: 9.5,
+    mortgageTerm: 20,
+    houseGrowth: 5.5,
+    setupCost: 120000000,
+    setupCostType: 'dollar',
+    ownOngoingCost: 21000000,
+    ownOngoingCostFreq: 'yearly',
+    ownOngoingCostType: 'dollar',
+    ownOngoingInflation: 3.5,
+    rentAmount: 12000000,
+    rentFreq: 'monthly',
+    rentInflation: 4.0,
+    rentOngoingCost: 3000000,
+    rentOngoingCostFreq: 'yearly',
+    rentOngoingCostType: 'dollar',
+    rentOngoingInflation: 3.5,
+    riskFreeRate: 5.0,
+    horizon: 20,
+    monthlyBudget: 0,
+    monthlyBudgetIncrease: 0,
+    mortgageType: 'pi',
+    costInterestOnly: true,
+    rtbEnabled: false,
+    rtbBuyYear: 5,
+    initialCash: 0,
+  },
 };
 
 let S = JSON.parse(JSON.stringify(DEFAULTS));
@@ -1785,6 +1904,48 @@ function resetAll(){
   rerender();
 }
 
+/* ── APPLY CITY PRESET ── */
+function applyPreset(cityKey){
+  const p = CITY_PRESETS[cityKey];
+  if(!p) return;
+
+  currentCurrencySymbol = p.currencySymbol;
+  $('currencySymbol').value      = p.currencySymbol;
+  $('propertyPrice').value       = formatMoneyValue(p.propertyPrice);
+  $('downPaymentPct').value      = p.downPaymentPct;
+  $('monthlyBudget').value       = formatMoneyValue(p.monthlyBudget);
+  $('riskFreeRate').value        = p.riskFreeRate;
+  $('horizon').value             = p.horizon;
+  $('mortgageRate').value        = p.mortgageRate;
+  $('mortgageTerm').value        = p.mortgageTerm;
+  $('houseGrowth').value         = p.houseGrowth;
+  $('setupCost').value           = formatMoneyValue(p.setupCost);
+  $('setupCostType').value       = p.setupCostType;
+  $('ownOngoingCost').value      = formatMoneyValue(p.ownOngoingCost);
+  $('ownOngoingCostFreq').value  = p.ownOngoingCostFreq;
+  $('ownOngoingCostType').value  = p.ownOngoingCostType;
+  $('ownOngoingInflation').value = p.ownOngoingInflation;
+  $('rentAmount').value          = formatMoneyValue(p.rentAmount);
+  $('rentFreq').value            = p.rentFreq;
+  $('rentInflation').value       = p.rentInflation;
+  $('rentOngoingCost').value     = formatMoneyValue(p.rentOngoingCost);
+  $('rentOngoingCostFreq').value = p.rentOngoingCostFreq;
+  $('rentOngoingCostType').value = p.rentOngoingCostType;
+  $('rentOngoingInflation').value= p.rentOngoingInflation;
+  $('initialCash').value         = '';
+  $('costInterestOnly').checked  = p.costInterestOnly;
+  $('rtbEnabled').checked        = p.rtbEnabled;
+  $('rtbBuyYear').value          = p.rtbBuyYear;
+  $('monthlyBudgetIncrease').value = p.monthlyBudgetIncrease;
+  document.querySelectorAll('input[name="mortgageType"]').forEach(r=>{ r.checked = r.value===p.mortgageType; });
+  $('radioPI').classList.toggle('selected', p.mortgageType==='pi');
+  $('radioIO').classList.toggle('selected', p.mortgageType==='io');
+
+  document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.city===cityKey));
+  updateCagrToolVisibility(false);
+  rerender();
+}
+
 /* ── CSV ── */
 function downloadCsv(){
   const na='';
@@ -1963,7 +2124,8 @@ document.querySelectorAll('.graph-btn').forEach(btn=>{
   });
 });
 
-$('resetBtn').addEventListener('click', resetAll);
+$('resetBtn').addEventListener('click', ()=>{ document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active')); resetAll(); });
+document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.addEventListener('click', ()=>applyPreset(btn.dataset.city)));
 $('downloadBtn').addEventListener('click', downloadCsv);
 $('chartResetZoom').addEventListener('click',()=>{ if(chartInstance) chartInstance.resetZoom(); });
 $('themeToggle').addEventListener('click',()=>{
