@@ -45,6 +45,7 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 
 /* Controls bar */
 .controls-bar{padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.ctrl-row{display:flex;align-items:center;gap:8px;}
 .controls-label{font-size:.8rem;font-weight:700;color:var(--muted);white-space:nowrap;}
 .ctrl-select{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;font-family:inherit;padding:6px 10px;outline:none;cursor:pointer;transition:border-color var(--motion-fast);}
 .ctrl-select:focus{border-color:var(--accent);}
@@ -126,9 +127,13 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 
 @media(max-width:600px){
   .container{padding:10px 12px;}
-  .header{padding:14px 16px;}
+  .header{flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px;}
   .header-left h1{font-size:1.25rem;}
-  .controls-bar{gap:10px;}
+  .header-right{flex-wrap:nowrap;}
+  .header-right .btn-theme{flex:1;text-align:center;justify-content:center;}
+  .controls-bar{flex-direction:column;align-items:stretch;gap:10px;}
+  .ctrl-row{justify-content:space-between;flex-wrap:wrap;}
+  .controls-bar #downloadCSVBtn{margin-left:0!important;align-self:flex-start;}
 }
 </style>
 </head>
@@ -149,25 +154,29 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 
 <!-- CONTROLS BAR -->
 <div class="controls-bar card">
-  <span class="controls-label">Currency:</span>
-  <select class="ctrl-select" id="currencySelect">
-    <option value="$">$ — Dollar</option>
-    <option value="€">€ — Euro</option>
-    <option value="£">£ — Pound</option>
-    <option value="¥">¥ — Yen / Yuan</option>
-    <option value="₩">₩ — Won</option>
-    <option value="₱">₱ — Peso</option>
-    <option value="Rp">Rp — Rupiah</option>
-    <option value="RM">RM — Ringgit</option>
-    <option value="฿">฿ — Baht</option>
-  </select>
-  <span class="controls-label">Metric:</span>
-  <div class="seg-group" id="metricGroup">
-    <button class="seg-btn active" data-metric="netEquity">Net Equity</button>
-    <button class="seg-btn" data-metric="cash">Liquid Cash</button>
-    <button class="seg-btn" data-metric="cost">Accum. Cost</button>
+  <div class="ctrl-row">
+    <span class="controls-label">Currency:</span>
+    <select class="ctrl-select" id="currencySelect">
+      <option value="$">$ — Dollar</option>
+      <option value="€">€ — Euro</option>
+      <option value="£">£ — Pound</option>
+      <option value="¥">¥ — Yen / Yuan</option>
+      <option value="₩">₩ — Won</option>
+      <option value="₱">₱ — Peso</option>
+      <option value="Rp">Rp — Rupiah</option>
+      <option value="RM">RM — Ringgit</option>
+      <option value="฿">฿ — Baht</option>
+    </select>
   </div>
-  <div class="year-wrap">
+  <div class="ctrl-row">
+    <span class="controls-label">Metric:</span>
+    <div class="seg-group" id="metricGroup">
+      <button class="seg-btn active" data-metric="netEquity">Net Equity</button>
+      <button class="seg-btn" data-metric="cash">Liquid Cash</button>
+      <button class="seg-btn" data-metric="cost">Accum. Cost</button>
+    </div>
+  </div>
+  <div class="ctrl-row year-wrap">
     <span class="controls-label">At Year:</span>
     <input type="number" class="year-input" id="yearInput" min="1" max="60" value="30"/>
     <span class="year-hint">(clamped to each scenario's horizon)</span>
