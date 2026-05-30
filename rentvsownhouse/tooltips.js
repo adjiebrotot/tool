@@ -1,6 +1,6 @@
 // Shared tooltip definitions for the Rent vs Own calculator.
 // Used by both rentvsownhouse/index.html and rentvsownhouse/sensitivity/index.html.
-var RVO_TIPS = {
+var RVO_TIPS_EN = {
   propertyPrice:        "The current market purchase price of the property being modelled. This is the starting value for house equity and mortgage calculations.",
   downPaymentPct:       "The percentage of the property price paid upfront as a deposit. Set to 100% to model an all-cash purchase (no mortgage). Try different values; 20% isn't always optimal. The renter equivalent invests this same amount instead.",
   mortgageType:         "<strong>Principal &amp; Interest:</strong> each payment reduces both interest and loan balance, building equity faster.<br><strong>Interest Only:</strong> payments cover only interest; principal stays unchanged until term ends. Lower monthly payments but no equity built from repayments.",
@@ -22,3 +22,27 @@ var RVO_TIPS = {
   horizon:              "Number of years to project the scenario. Longer horizons allow property compounding and mortgage payoff effects to fully materialise. Up to 100 years supported.",
   rtbEnabled:           "Model a third scenario where you rent for X years, then buy the property at the then-current market price. This helps compare the optimal timing of entry into property ownership.",
 };
+var RVO_TIPS_ID = {
+  propertyPrice:        "Harga beli properti yang dimodelkan saat ini. Ini adalah nilai awal untuk perhitungan nilai bersih properti dan KPR.",
+  downPaymentPct:       "Persentase harga properti yang dibayar di muka sebagai uang muka. Atur ke 100% untuk memodelkan pembelian tunai (tanpa KPR). Coba nilai berbeda; 20% tidak selalu optimal. Penyewa menginvestasikan jumlah yang sama sebagai gantinya.",
+  mortgageType:         "<strong>Pokok &amp; Bunga:</strong> setiap cicilan mengurangi bunga dan saldo pinjaman, ekuitas bertambah lebih cepat.<br><strong>Bunga Saja:</strong> cicilan hanya menutup bunga; pokok tidak berubah hingga akhir jangka waktu. Cicilan bulanan lebih rendah namun tidak ada ekuitas dari cicilan.",
+  costInterestOnly:     "<strong>AKTIF:</strong> Biaya Kumulatif hanya menghitung bunga + biaya rutin (uang yang benar-benar hilang; cicilan pokok membangun ekuitas).<br><strong>NONAKTIF:</strong> Seluruh cicilan KPR + biaya rutin dihitung sebagai pengeluaran.",
+  mortgageRate:         "Suku bunga tahunan yang dikenakan pada KPR. Ini menentukan jumlah cicilan bulanan.<br><strong>P&amp;I:</strong> suku bunga lebih tinggi berarti lebih banyak bunga dan ekuitas tumbuh lebih lambat.<br><strong>IO:</strong> suku bunga langsung menentukan cicilan bulanan.",
+  mortgageTerm:         "Total jumlah tahun pelunasan pinjaman. Jangka waktu lebih panjang berarti cicilan bulanan lebih rendah namun total bunga lebih besar. Setelah pinjaman lunas, seluruh anggaran bulanan menjadi surplus tabungan.",
+  houseGrowth:          "Tingkat pertumbuhan tahunan Indeks Harga Properti Residensial (RPPI): seberapa banyak properti mengalami apresiasi setiap tahun. Ini mendorong pertumbuhan nilai bersih properti dan harga beli masa depan dalam skenario Sewa Dulu, Beli Kemudian. Gunakan kalkulator CAGR di bawah untuk menghitung dari data historis.",
+  setupCost:            "Biaya satu kali saat pembelian properti — termasuk BPHTB, biaya notaris/PPAT, inspeksi, dan biaya transaksi lainnya. Dibayar dari tabungan (tidak ditambahkan ke pinjaman) dan mengurangi modal awal yang dapat diinvestasikan.",
+  ownOngoingCost:       "Biaya rutin tahunan kepemilikan properti di luar KPR: PBB, asuransi gedung, perawatan, iuran pengelola, pajak, dll. Dapat dimasukkan sebagai jumlah tetap atau % dari nilai properti saat ini.",
+  ownOngoingInflation:  "Tingkat kenaikan tahunan biaya kepemilikan tetap. Hanya berlaku saat 'Jumlah Tetap' dipilih; % dari nilai properti sudah tumbuh seiring apresiasi rumah.",
+  rentAmount:           "Pembayaran sewa mingguan, bulanan, atau tahunan saat ini. Ini adalah nilai dasar yang naik setiap tahun sesuai Kenaikan Sewa Tahunan. Penyewa menginvestasikan sisa anggaran di atas biaya sewa.",
+  rentInflation:        "Tingkat kenaikan sewa per tahun. Secara historis, kenaikan sewa biasanya mengikuti CPI atau sedikit di atasnya. Kenaikan sewa yang lebih tinggi mengikis surplus bulanan penyewa lebih cepat.",
+  rentOngoingCost:      "Biaya tambahan yang ditanggung penyewa di luar sewa pokok: asuransi isi rumah, asuransi penyewa, biaya koneksi utilitas, dll. Berbeda dengan pemilik, penyewa tidak membayar PBB atau perawatan gedung — sehingga umumnya jauh lebih rendah.",
+  rentOngoingInflation: "Tingkat kenaikan tahunan biaya menyewa tetap. Hanya berlaku saat 'Jumlah Tetap' dipilih; % dari sewa tahunan sudah tumbuh seiring kenaikan sewa.",
+  riskFreeRate:         "Return tahunan atas kas yang tidak terpakai: surplus di atas sewa atau KPR, dan sisa modal awal. Bisa berupa deposito, obligasi, reksa dana pasar uang, atau ETF. Kedua skenario mengenakan return ini pada kas menganggur.",
+  initialCash:          "Total kas yang tersedia saat ini. Untuk skenario Beli, ini membiayai Uang Muka (DP) + biaya awal pembelian. Sisa diinvestasikan pada suku bunga bebas risiko mulai hari pertama. Skenario Sewa menginvestasikan seluruh jumlah dari hari pertama. Jika dikosongkan, default ke tepat Uang Muka (DP) + biaya awal pembelian.",
+  monthlyBudget:        "Total kas bulanan yang tersedia untuk biaya perumahan. Jika dikosongkan, otomatis disesuaikan dengan cicilan KPR atau biaya sewa tertinggi setiap tahun. Sisa di atas biaya aktual diinvestasikan pada suku bunga bebas risiko.",
+  monthlyBudgetIncrease:"Tingkat pertumbuhan anggaran perumahan bulanan per tahun. Hanya berlaku saat anggaran manual ditetapkan di atas. Gunakan untuk memodelkan kenaikan gaji, penyesuaian CPI, atau kenaikan biaya terkait properti.",
+  horizon:              "Jumlah tahun proyeksi skenario. Jangka waktu lebih panjang memungkinkan efek compounding properti dan pelunasan KPR terlihat sepenuhnya. Mendukung hingga 100 tahun.",
+  rtbEnabled:           "Modelkan skenario ketiga di mana Anda menyewa selama X tahun, lalu membeli properti pada harga pasar saat itu. Ini membantu membandingkan waktu optimal untuk masuk ke kepemilikan properti.",
+};
+// RVO_TIPS returns EN by default; pages switch to ID via RVO_TIPS_ID when needed
+var RVO_TIPS = RVO_TIPS_EN;

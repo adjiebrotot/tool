@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Rent vs Own — Sensitivity Tool</title>
+<style>.abbr-hint{text-decoration:underline dotted;cursor:help;text-underline-offset:2px;}</style>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
 <script src="../tooltips.js"></script>
 <script src="../footer.js"></script>
@@ -150,11 +151,12 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 <!-- HEADER -->
 <section class="header card">
   <div class="header-left">
-    <h1>🏠 Rent vs Own — Sensitivity Tool</h1>
-    <p>Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.</p>
+    <h1 data-i18n="sensTitle">🏠 Rent vs Own — Sensitivity Tool</h1>
+    <p data-i18n="sensSubtitle">Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.</p>
   </div>
   <div class="header-right">
-    <a href="../" class="btn-theme">← Back</a>
+    <a href="../" class="btn-theme btn-back" data-i18n="btnBack">← Back</a>
+    <button id="langToggle" class="btn-theme">ID</button>
     <button class="btn-theme" id="themeToggle">🌙 Dark</button>
   </div>
 </section>
@@ -162,7 +164,7 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 <!-- CONTROLS BAR -->
 <div class="controls-bar card">
   <div class="ctrl-row">
-    <span class="controls-label">Currency:</span>
+    <span class="controls-label" data-i18n="labelCurrency">Currency:</span>
     <select class="ctrl-select" id="currencySelect">
       <option value="$">$ — Dollar</option>
       <option value="€">€ — Euro</option>
@@ -176,19 +178,19 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
     </select>
   </div>
   <div class="ctrl-row">
-    <span class="controls-label">Metric:</span>
+    <span class="controls-label" data-i18n="labelMetric">Metric:</span>
     <div class="seg-group" id="metricGroup">
-      <button class="seg-btn active" data-metric="netEquity">Net Equity</button>
-      <button class="seg-btn" data-metric="cash">Liquid Cash</button>
-      <button class="seg-btn" data-metric="cost">Accum. Cost</button>
+      <button class="seg-btn active" data-metric="netEquity" data-i18n="metricNetEquity">Net Equity</button>
+      <button class="seg-btn" data-metric="cash" data-i18n="metricLiquidCash">Liquid Cash</button>
+      <button class="seg-btn" data-metric="cost" data-i18n="metricAccumCost">Accum. Cost</button>
     </div>
   </div>
   <div class="ctrl-row year-wrap">
-    <span class="controls-label">At Year:</span>
+    <span class="controls-label" data-i18n="labelAtYear">At Year:</span>
     <input type="number" class="year-input" id="yearInput" min="1" max="60" value="30"/>
-    <span class="year-hint">(clamped to each scenario's horizon)</span>
+    <span class="year-hint" data-i18n="yearHint">(clamped to each scenario's horizon)</span>
   </div>
-  <button class="btn-theme" id="downloadCSVBtn" style="margin-left:auto;">⬇ CSV</button>
+  <button class="btn-theme" id="downloadCSVBtn" style="margin-left:auto;" data-i18n="btnCSV">⬇ CSV</button>
 </div>
 
 <!-- SENSITIVITY TABLE -->
@@ -210,40 +212,202 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 (function(){
 'use strict';
 
-var T = window.RVO_TIPS || {};
+var Tips = window.RVO_TIPS || {};
+
+/* ── i18n ── */
+let lang = 'en';
+const LANG_SENS = {
+  en: {
+    sensTitle: '🏠 Rent vs Own — Sensitivity Tool',
+    sensSubtitle: 'Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.',
+    btnBack: '← Back',
+    labelCurrency: 'Currency:',
+    labelMetric: 'Metric:',
+    labelAtYear: 'At Year:',
+    yearHint: "(clamped to each scenario's horizon)",
+    btnCSV: '⬇ CSV',
+    metricNetEquity: 'Net Equity',
+    metricLiquidCash: 'Liquid Cash',
+    metricAccumCost: 'Accum. Cost',
+    tableHeaderParam: 'Parameter',
+    tableHeaderUnit: 'Unit',
+    btnAddScenario: '+ Scenario',
+    scenPlaceholder: 'Scenario',
+    cappedAt: (n) => `capped at yr ${n}`,
+    ownOutputLabel: (ml) => `🏠 Own — ${ml}`,
+    rentOutputLabel: (ml) => `💰 Rent — ${ml}`,
+    deltaLabel: 'Δ Own − Rent',
+    boolEnabled: 'Enabled',
+    dupTitle: 'Duplicate',
+    removeTitle: 'Remove',
+    sepGeneral: '🌐 General',
+    sepOwn: '🏡 Own — Property & Mortgage',
+    sepRent: '🏢 Rent — Rental Payments & Costs',
+    pHorizon: 'Horizon',
+    pRiskFreeRate: 'Risk-Free Rate',
+    pInitialCash: 'Initial Cash',
+    pMonthlyBudget: 'Monthly Housing Budget',
+    pMonthlyBudgetIncrease: 'Budget Annual Increase',
+    pPropertyPrice: 'Property Price',
+    pDownPaymentPct: 'Down Payment',
+    pMortgageType: 'Mortgage Type',
+    pMortgageRate: 'Mortgage Rate',
+    pMortgageTerm: 'Mortgage Term',
+    pHouseGrowth: 'House Growth (RPPI)',
+    pSetupCost: 'Setup Cost',
+    pSetupCostType: 'Setup Cost Type',
+    pOwnOngoingCost: 'Ongoing Cost (Own)',
+    pOwnOngoingCostFreq: 'Own Cost Frequency',
+    pOwnOngoingCostType: 'Own Cost Type',
+    pOwnOngoingInflation: 'Own Cost Inflation',
+    pCostInterestOnly: 'Cost = Interest Only',
+    pRentAmount: 'Rent Amount',
+    pRentFreq: 'Rent Frequency',
+    pRentInflation: 'Rent Inflation',
+    pRentOngoingCost: 'Ongoing Cost (Rent)',
+    pRentOngoingCostFreq: 'Rent Cost Frequency',
+    pRentOngoingCostType: 'Rent Cost Type',
+    pRentOngoingInflation: 'Rent Cost Inflation',
+    uYrs: 'yrs',
+    uPctPa: '% p.a.',
+    uAuto: '0 = auto',
+    uPctOfPrice: '% of price',
+    uPctPaCagr: '% p.a. CAGR',
+    optPI: 'P&I — Principal & Interest',
+    optIO: 'IO — Interest Only',
+    optFixedAmount: 'Fixed amount ($)',
+    optPctPropertyPrice: '% of property price',
+    optYearly: 'Yearly',
+    optMonthly: 'Monthly',
+    optWeekly: 'Weekly',
+    optFixedDollar: 'Fixed $ amount',
+    optPctPropertyValue: '% of property value',
+    optPctAnnualRent: '% of annual rent',
+    pctOfRent: '% of rent',
+    pctOfValue: '% of value',
+  },
+  id: {
+    sensTitle: '🏠 Rent vs Own — Alat Analisis Sensitivitas',
+    sensSubtitle: 'Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti — membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.',
+    btnBack: '← Kembali',
+    labelCurrency: 'Mata Uang:',
+    labelMetric: 'Metrik:',
+    labelAtYear: 'Pada Tahun:',
+    yearHint: '(dibatasi oleh jangka waktu masing-masing skenario)',
+    btnCSV: '⬇ CSV',
+    metricNetEquity: 'Kekayaan Bersih',
+    metricLiquidCash: 'Uang Tunai',
+    metricAccumCost: 'Biaya Kumulatif',
+    tableHeaderParam: 'Parameter',
+    tableHeaderUnit: 'Unit',
+    btnAddScenario: '+ Skenario',
+    scenPlaceholder: 'Skenario',
+    cappedAt: (n) => `dipotong di thn ${n}`,
+    ownOutputLabel: (ml) => `🏠 Beli — ${ml}`,
+    rentOutputLabel: (ml) => `💰 Sewa — ${ml}`,
+    deltaLabel: 'Δ Beli − Sewa',
+    boolEnabled: 'Aktif',
+    dupTitle: 'Duplikat',
+    removeTitle: 'Hapus',
+    sepGeneral: '🌐 Umum',
+    sepOwn: '🏡 Beli — Properti & KPR',
+    sepRent: '🏢 Sewa — Pembayaran & Biaya',
+    pHorizon: 'Jangka Waktu',
+    pRiskFreeRate: 'Suku Bunga Bebas Risiko',
+    pInitialCash: 'Modal Awal',
+    pMonthlyBudget: 'Anggaran Rumah Bulanan',
+    pMonthlyBudgetIncrease: 'Kenaikan Anggaran Tahunan',
+    pPropertyPrice: 'Harga Properti',
+    pDownPaymentPct: 'Uang Muka (DP)',
+    pMortgageType: 'Tipe KPR',
+    pMortgageRate: 'Bunga KPR',
+    pMortgageTerm: 'Jangka Waktu KPR',
+    pHouseGrowth: 'Kenaikan Harga Properti (RPPI)',
+    pSetupCost: 'Biaya Awal Pembelian',
+    pSetupCostType: 'Tipe Biaya Awal',
+    pOwnOngoingCost: 'Biaya Rutin (Beli)',
+    pOwnOngoingCostFreq: 'Frekuensi Biaya Rutin Beli',
+    pOwnOngoingCostType: 'Tipe Biaya Rutin Beli',
+    pOwnOngoingInflation: 'Inflasi Biaya Rutin Beli',
+    pCostInterestOnly: 'Biaya = Bunga Saja',
+    pRentAmount: 'Biaya Sewa',
+    pRentFreq: 'Frekuensi Sewa',
+    pRentInflation: 'Kenaikan Sewa Tahunan',
+    pRentOngoingCost: 'Biaya Rutin (Sewa)',
+    pRentOngoingCostFreq: 'Frekuensi Biaya Rutin Sewa',
+    pRentOngoingCostType: 'Tipe Biaya Rutin Sewa',
+    pRentOngoingInflation: 'Inflasi Biaya Rutin Sewa',
+    uYrs: 'thn',
+    uPctPa: '%/thn',
+    uAuto: '0 = otomatis',
+    uPctOfPrice: '% dari harga',
+    uPctPaCagr: '%/thn CAGR',
+    optPI: 'P&I — Pokok & Bunga',
+    optIO: 'IO — Bunga Saja',
+    optFixedAmount: 'Jumlah Tetap ($)',
+    optPctPropertyPrice: '% dari harga properti',
+    optYearly: 'Tahunan',
+    optMonthly: 'Bulanan',
+    optWeekly: 'Mingguan',
+    optFixedDollar: 'Jumlah Tetap',
+    optPctPropertyValue: '% dari nilai properti',
+    optPctAnnualRent: '% dari sewa tahunan',
+    pctOfRent: '% dari sewa',
+    pctOfValue: '% dari nilai',
+  }
+};
+function T(key){ return LANG_SENS[lang][key] !== undefined ? LANG_SENS[lang][key] : (LANG_SENS.en[key] !== undefined ? LANG_SENS.en[key] : key); }
+
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.dataset.i18n;
+    const val = LANG_SENS[lang][key];
+    if(val !== undefined && typeof val === 'string') el.textContent = val;
+  });
+  const lt = document.getElementById('langToggle');
+  if(lt) lt.textContent = lang === 'en' ? 'ID' : 'EN';
+  /* switch tooltip text for data-tip-key elements based on language */
+  const tips = (lang === 'id' && window.RVO_TIPS_ID) ? RVO_TIPS_ID : (window.RVO_TIPS_EN || window.RVO_TIPS);
+  if(tips){
+    document.querySelectorAll('[data-tip-key]').forEach(function(el){
+      var k = el.getAttribute('data-tip-key');
+      if(tips[k]) el.setAttribute('data-tip', tips[k]);
+    });
+  }
+}
 
 /* ── PARAMS (grouped with sep dividers) ── */
 const PARAMS = [
-  {type:'sep', label:'🌐 General'},
-  {key:'horizon',              label:'Horizon',                    type:'integer',  unit:'yrs',         min:1,   max:60,  step:1,    tip:T.horizon},
-  {key:'riskFreeRate',         label:'Risk-Free Rate',             type:'percent',  unit:'% p.a.',      min:0,   max:25,  step:0.05, tip:T.riskFreeRate},
-  {key:'initialCash',          label:'Initial Cash',               type:'currency', unit:'0 = auto',    min:0,            step:10000,tip:T.initialCash},
-  {key:'monthlyBudget',        label:'Monthly Housing Budget',     type:'currency', unit:'0 = auto',    min:0,            step:100,  tip:T.monthlyBudget},
-  {key:'monthlyBudgetIncrease',label:'Budget Annual Increase',     type:'percent',  unit:'% p.a.',      min:0,   max:25,  step:0.1,  tip:T.monthlyBudgetIncrease},
+  {type:'sep', sepKey:'sepGeneral'},
+  {key:'horizon',              labelKey:'pHorizon',              type:'integer',  unitKey:'uYrs',        min:1,   max:60,  step:1,    tip:'horizon'},
+  {key:'riskFreeRate',         labelKey:'pRiskFreeRate',         type:'percent',  unitKey:'uPctPa',      min:0,   max:25,  step:0.05, tip:'riskFreeRate'},
+  {key:'initialCash',          labelKey:'pInitialCash',          type:'currency', unitKey:'uAuto',       min:0,            step:10000,tip:'initialCash'},
+  {key:'monthlyBudget',        labelKey:'pMonthlyBudget',        type:'currency', unitKey:'uAuto',       min:0,            step:100,  tip:'monthlyBudget'},
+  {key:'monthlyBudgetIncrease',labelKey:'pMonthlyBudgetIncrease',type:'percent',  unitKey:'uPctPa',      min:0,   max:25,  step:0.1,  tip:'monthlyBudgetIncrease'},
 
-  {type:'sep', label:'🏡 Own — Property & Mortgage'},
-  {key:'propertyPrice',        label:'Property Price',             type:'currency',                     min:50000,        step:10000,tip:T.propertyPrice},
-  {key:'downPaymentPct',       label:'Down Payment',               type:'percent',  unit:'% of price',  min:0,   max:99,  step:0.5,  tip:T.downPaymentPct},
-  {key:'mortgageType',         label:'Mortgage Type',              type:'select',   options:[{v:'pi',l:'P&I — Principal & Interest'},{v:'io',l:'IO — Interest Only'}], tip:T.mortgageType},
-  {key:'mortgageRate',         label:'Mortgage Rate',              type:'percent',  unit:'% p.a.',      min:0,   max:25,  step:0.05, tip:T.mortgageRate},
-  {key:'mortgageTerm',         label:'Mortgage Term',              type:'integer',  unit:'yrs',         min:1,   max:40,  step:1,    tip:T.mortgageTerm},
-  {key:'houseGrowth',          label:'House Growth (RPPI)',        type:'percent',  unit:'% p.a. CAGR', min:-10, max:30,  step:0.1,  tip:T.houseGrowth},
-  {key:'setupCost',            label:'Setup Cost',                 type:'currency',                     min:0,            step:500,  tip:T.setupCost},
-  {key:'setupCostType',        label:'Setup Cost Type',            type:'select',   options:[{v:'dollar',l:'Fixed amount ($)'},{v:'pct',l:'% of property price'}], tip:T.setupCost},
-  {key:'ownOngoingCost',       label:'Ongoing Cost (Own)',         type:'currency',                     min:0,            step:100,  tip:T.ownOngoingCost, subgroup:'own-cost'},
-  {key:'ownOngoingCostFreq',   label:'Own Cost Frequency',         type:'select',   options:[{v:'yearly',l:'Yearly'},{v:'monthly',l:'Monthly'},{v:'weekly',l:'Weekly'}], subgroup:'own-cost'},
-  {key:'ownOngoingCostType',   label:'Own Cost Type',              type:'select',   options:[{v:'dollar',l:'Fixed $ amount'},{v:'pct',l:'% of property value'}], subgroup:'own-cost'},
-  {key:'ownOngoingInflation',  label:'Own Cost Inflation',         type:'percent',  unit:'% p.a.',      min:0,   max:15,  step:0.1,  tip:T.ownOngoingInflation},
-  {key:'costInterestOnly',     label:'Cost = Interest Only',       type:'boolean',                                                   tip:T.costInterestOnly},
+  {type:'sep', sepKey:'sepOwn'},
+  {key:'propertyPrice',        labelKey:'pPropertyPrice',        type:'currency',                        min:50000,        step:10000,tip:'propertyPrice'},
+  {key:'downPaymentPct',       labelKey:'pDownPaymentPct',       type:'percent',  unitKey:'uPctOfPrice', min:0,   max:99,  step:0.5,  tip:'downPaymentPct'},
+  {key:'mortgageType',         labelKey:'pMortgageType',         type:'select',   options:[{v:'pi',lk:'optPI'},{v:'io',lk:'optIO'}], tip:'mortgageType'},
+  {key:'mortgageRate',         labelKey:'pMortgageRate',         type:'percent',  unitKey:'uPctPa',      min:0,   max:25,  step:0.05, tip:'mortgageRate'},
+  {key:'mortgageTerm',         labelKey:'pMortgageTerm',         type:'integer',  unitKey:'uYrs',        min:1,   max:40,  step:1,    tip:'mortgageTerm'},
+  {key:'houseGrowth',          labelKey:'pHouseGrowth',          type:'percent',  unitKey:'uPctPaCagr',  min:-10, max:30,  step:0.1,  tip:'houseGrowth'},
+  {key:'setupCost',            labelKey:'pSetupCost',            type:'currency',                        min:0,            step:500,  tip:'setupCost'},
+  {key:'setupCostType',        labelKey:'pSetupCostType',        type:'select',   options:[{v:'dollar',lk:'optFixedAmount'},{v:'pct',lk:'optPctPropertyPrice'}], tip:'setupCost'},
+  {key:'ownOngoingCost',       labelKey:'pOwnOngoingCost',       type:'currency',                        min:0,            step:100,  tip:'ownOngoingCost', subgroup:'own-cost'},
+  {key:'ownOngoingCostFreq',   labelKey:'pOwnOngoingCostFreq',   type:'select',   options:[{v:'yearly',lk:'optYearly'},{v:'monthly',lk:'optMonthly'},{v:'weekly',lk:'optWeekly'}], subgroup:'own-cost'},
+  {key:'ownOngoingCostType',   labelKey:'pOwnOngoingCostType',   type:'select',   options:[{v:'dollar',lk:'optFixedDollar'},{v:'pct',lk:'optPctPropertyValue'}], subgroup:'own-cost'},
+  {key:'ownOngoingInflation',  labelKey:'pOwnOngoingInflation',  type:'percent',  unitKey:'uPctPa',      min:0,   max:15,  step:0.1,  tip:'ownOngoingInflation'},
+  {key:'costInterestOnly',     labelKey:'pCostInterestOnly',     type:'boolean',                                                      tip:'costInterestOnly'},
 
-  {type:'sep', label:'🏢 Rent — Rental Payments & Costs'},
-  {key:'rentAmount',           label:'Rent Amount',                type:'currency',                     min:0,            step:50,   tip:T.rentAmount},
-  {key:'rentFreq',             label:'Rent Frequency',             type:'select',   options:[{v:'monthly',l:'Monthly'},{v:'weekly',l:'Weekly'},{v:'yearly',l:'Yearly'}]},
-  {key:'rentInflation',        label:'Rent Inflation',             type:'percent',  unit:'% p.a.',      min:-5,  max:25,  step:0.1,  tip:T.rentInflation},
-  {key:'rentOngoingCost',      label:'Ongoing Cost (Rent)',        type:'currency',                     min:0,            step:100,  tip:T.rentOngoingCost, subgroup:'rent-cost'},
-  {key:'rentOngoingCostFreq',  label:'Rent Cost Frequency',        type:'select',   options:[{v:'yearly',l:'Yearly'},{v:'monthly',l:'Monthly'},{v:'weekly',l:'Weekly'}], subgroup:'rent-cost'},
-  {key:'rentOngoingCostType',  label:'Rent Cost Type',             type:'select',   options:[{v:'dollar',l:'Fixed $ amount'},{v:'pct',l:'% of annual rent'}], subgroup:'rent-cost'},
-  {key:'rentOngoingInflation', label:'Rent Cost Inflation',        type:'percent',  unit:'% p.a.',      min:0,   max:15,  step:0.1,  tip:T.rentOngoingInflation},
+  {type:'sep', sepKey:'sepRent'},
+  {key:'rentAmount',           labelKey:'pRentAmount',           type:'currency',                        min:0,            step:50,   tip:'rentAmount'},
+  {key:'rentFreq',             labelKey:'pRentFreq',             type:'select',   options:[{v:'monthly',lk:'optMonthly'},{v:'weekly',lk:'optWeekly'},{v:'yearly',lk:'optYearly'}]},
+  {key:'rentInflation',        labelKey:'pRentInflation',        type:'percent',  unitKey:'uPctPa',      min:-5,  max:25,  step:0.1,  tip:'rentInflation'},
+  {key:'rentOngoingCost',      labelKey:'pRentOngoingCost',      type:'currency',                        min:0,            step:100,  tip:'rentOngoingCost', subgroup:'rent-cost'},
+  {key:'rentOngoingCostFreq',  labelKey:'pRentOngoingCostFreq',  type:'select',   options:[{v:'yearly',lk:'optYearly'},{v:'monthly',lk:'optMonthly'},{v:'weekly',lk:'optWeekly'}], subgroup:'rent-cost'},
+  {key:'rentOngoingCostType',  labelKey:'pRentOngoingCostType',  type:'select',   options:[{v:'dollar',lk:'optFixedDollar'},{v:'pct',lk:'optPctAnnualRent'}], subgroup:'rent-cost'},
+  {key:'rentOngoingInflation', labelKey:'pRentOngoingInflation', type:'percent',  unitKey:'uPctPa',      min:0,   max:15,  step:0.1,  tip:'rentOngoingInflation'},
 ];
 
 const DEFAULT_SCENARIO = {
@@ -456,7 +620,7 @@ function computeModel(S){
 
 /* ── HELPERS ── */
 function metricLabel(){
-  return metric==='netEquity' ? 'Net Equity' : metric==='cash' ? 'Liquid Cash' : 'Accum. Cost';
+  return metric==='netEquity' ? T('metricNetEquity') : metric==='cash' ? T('metricLiquidCash') : T('metricAccumCost');
 }
 function getMetricValues(i){
   const res = scenarioResults[i];
@@ -486,13 +650,13 @@ function removeScenario(i){
 /* ── BUILD TABLE ── */
 function unitForParam(p){
   if(p.type==='currency') return symOf(scenarios[0]) || '$';
-  if(p.type==='percent') return p.unit || '%';
-  return p.unit || '';
+  if(p.type==='percent') return p.unitKey ? T(p.unitKey) : (p.unit || '%');
+  return p.unitKey ? T(p.unitKey) : (p.unit || '');
 }
 
 function getOngoingCostUnit(sc, costKey){
-  if(costKey==='rentOngoingCost') return sc.rentOngoingCostType==='pct' ? '% of rent' : symOf(sc);
-  if(costKey==='ownOngoingCost')  return sc.ownOngoingCostType==='pct'  ? '% of value' : symOf(sc);
+  if(costKey==='rentOngoingCost') return sc.rentOngoingCostType==='pct' ? T('pctOfRent') : symOf(sc);
+  if(costKey==='ownOngoingCost')  return sc.ownOngoingCostType==='pct'  ? T('pctOfValue') : symOf(sc);
   return symOf(sc);
 }
 
@@ -504,11 +668,11 @@ function buildTableHTML(){
     const clamped = Math.min(viewYear, sc.horizon||30);
     return `<th class="scen-th"><div class="scen-header-cell">
       <div class="scen-header-actions">
-        <input class="scen-name-input" data-si="${i}" value="${escHtml(sc.name)}" placeholder="Scenario ${i+1}"/>
-        <button class="btn-dupe" data-si="${i}" title="Duplicate">⧉</button>
-        ${n>1?`<button class="btn-remove rmv-scen" data-si="${i}" title="Remove">✕</button>`:''}
+        <input class="scen-name-input" data-si="${i}" value="${escHtml(sc.name)}" placeholder="${T('scenPlaceholder')} ${i+1}"/>
+        <button class="btn-dupe" data-si="${i}" title="${T('dupTitle')}">⧉</button>
+        ${n>1?`<button class="btn-remove rmv-scen" data-si="${i}" title="${T('removeTitle')}">✕</button>`:''}
       </div>
-      ${clamped<viewYear?`<span class="scen-header-sub">capped at yr ${clamped}</span>`:''}
+      ${clamped<viewYear?`<span class="scen-header-sub">${T('cappedAt')(clamped)}</span>`:''}
     </div></th>`;
   }).join('');
 
@@ -516,10 +680,12 @@ function buildTableHTML(){
   const isDynamicUnit = key => key==='rentOngoingCost' || key==='ownOngoingCost';
   PARAMS.forEach((p,pi)=>{
     if(p.type==='sep'){
-      bodyHtml += `<tr class="group-sep-tr"><td colspan="${colCount}">${p.label}</td></tr>`;
+      bodyHtml += `<tr class="group-sep-tr"><td colspan="${colCount}">${T(p.sepKey)}</td></tr>`;
       return;
     }
-    const tipHtml = p.tip ? `<span class="tip-icon" data-tip="${escAttr(p.tip)}">?</span>` : '';
+    const tipTips = (lang==='id'&&window.RVO_TIPS_ID)?RVO_TIPS_ID:(window.RVO_TIPS_EN||window.RVO_TIPS||{});
+    const tipText = p.tip ? tipTips[p.tip] : '';
+    const tipHtml = tipText ? `<span class="tip-icon" data-tip-key="${escAttr(p.tip)}" data-tip="${escAttr(tipText)}">?</span>` : '';
 
     const prevP = PARAMS[pi-1], nextP = PARAMS[pi+1];
     const isFirst = p.subgroup && (!prevP || prevP.subgroup!==p.subgroup || prevP.type==='sep');
@@ -533,10 +699,10 @@ function buildTableHTML(){
     const tds = scenarios.map((sc,i)=>{
       let inp = '';
       if(p.type==='select'){
-        const opts = (p.options||[]).map(o=>`<option value="${escAttr(o.v)}"${sc[p.key]===o.v?' selected':''}>${escHtml(o.l)}</option>`).join('');
+        const opts = (p.options||[]).map(o=>`<option value="${escAttr(o.v)}"${sc[p.key]===o.v?' selected':''}>${escHtml(o.lk ? T(o.lk) : o.l)}</option>`).join('');
         inp = `<select class="param-select" data-si="${i}" data-key="${p.key}">${opts}</select>`;
       } else if(p.type==='boolean'){
-        inp = `<div class="param-bool-wrap"><input type="checkbox" class="param-bool" data-si="${i}" data-key="${p.key}"${sc[p.key]!==false?' checked':''}/><span class="param-bool-label">Enabled</span></div>`;
+        inp = `<div class="param-bool-wrap"><input type="checkbox" class="param-bool" data-si="${i}" data-key="${p.key}"${sc[p.key]!==false?' checked':''}/><span class="param-bool-label">${T('boolEnabled')}</span></div>`;
       } else {
         inp = `<input class="param-input" type="text" inputmode="numeric" data-si="${i}" data-key="${p.key}" data-ptype="${p.type}" value="${escAttr(fmtInputVal(sc[p.key], p.type))}"/>`;
       }
@@ -550,7 +716,7 @@ function buildTableHTML(){
       ? `<td class="unit-td"></td>`
       : `<td class="unit-td">${escHtml(unitForParam(p))}</td>`;
 
-    bodyHtml += `<tr${rowClass?' class="'+rowClass+'"':''}><td class="label-td">${escHtml(p.label)}${tipHtml}</td>${unitCell}${tds}<td style="border:1px solid var(--border);background:var(--input-bg);"></td></tr>`;
+    bodyHtml += `<tr${rowClass?' class="'+rowClass+'"':''}><td class="label-td">${escHtml(T(p.labelKey))}${tipHtml}</td>${unitCell}${tds}<td style="border:1px solid var(--border);background:var(--input-bg);"></td></tr>`;
   });
 
   const emptyTd = `<td style="border:1px solid var(--border);background:var(--input-bg);"></td>`;
@@ -560,14 +726,14 @@ function buildTableHTML(){
   const deltaTds= scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return `<td class="scen-td num-td">—</td>`; const d=v.own-v.rent; return `<td class="scen-td num-td ${deltaColor(d)}">${d>=0?'+':''}${fmtCurrency(d,symOf(scenarios[i]))}</td>`; }).join('');
 
   return `<table class="dt"><thead><tr>
-    <th class="label-td">Parameter</th><th class="unit-th">Unit</th>${thScens}
-    <th style="white-space:nowrap;vertical-align:middle;"><button class="btn-add" id="addScenBtn">+ Scenario</button></th>
+    <th class="label-td">${T('tableHeaderParam')}</th><th class="unit-th">${T('tableHeaderUnit')}</th>${thScens}
+    <th style="white-space:nowrap;vertical-align:middle;"><button class="btn-add" id="addScenBtn">${T('btnAddScenario')}</button></th>
   </tr></thead><tbody>
     ${bodyHtml}
     <tr class="sep-tr"><td colspan="${colCount}"></td></tr>
-    <tr class="out-own"><td class="label-td">🏠 Own — ${ml}</td><td class="unit-td"></td>${ownTds}${emptyTd}</tr>
-    <tr class="out-rent"><td class="label-td">💰 Rent — ${ml}</td><td class="unit-td"></td>${rentTds}${emptyTd}</tr>
-    <tr class="out-delta"><td class="label-td">Δ Own − Rent</td><td class="unit-td"></td>${deltaTds}${emptyTd}</tr>
+    <tr class="out-own"><td class="label-td">${T('ownOutputLabel')(ml)}</td><td class="unit-td"></td>${ownTds}${emptyTd}</tr>
+    <tr class="out-rent"><td class="label-td">${T('rentOutputLabel')(ml)}</td><td class="unit-td"></td>${rentTds}${emptyTd}</tr>
+    <tr class="out-delta"><td class="label-td">${T('deltaLabel')}</td><td class="unit-td"></td>${deltaTds}${emptyTd}</tr>
   </tbody></table>`;
 }
 
@@ -576,8 +742,8 @@ function rerenderOutputOnly(){
   const wrap = document.getElementById('tableWrap');
   if(!wrap) return;
   const ml = metricLabel();
-  const ol = wrap.querySelector('tr.out-own .label-td');   if(ol) ol.textContent = '🏠 Own — '+ml;
-  const rl = wrap.querySelector('tr.out-rent .label-td');  if(rl) rl.textContent = '💰 Rent — '+ml;
+  const ol = wrap.querySelector('tr.out-own .label-td');   if(ol) ol.textContent = T('ownOutputLabel')(ml);
+  const rl = wrap.querySelector('tr.out-rent .label-td');  if(rl) rl.textContent = T('rentOutputLabel')(ml);
   const oTds = wrap.querySelectorAll('tr.out-own td.scen-td');
   const rTds = wrap.querySelectorAll('tr.out-rent td.scen-td');
   const dTds = wrap.querySelectorAll('tr.out-delta td.scen-td');
@@ -607,10 +773,10 @@ function rerender(){
 function downloadCSV(){
   const esc = v => '"'+String(v).replace(/"/g,'""')+'"';
   const lines = [];
-  lines.push([esc('Parameter'), esc('Unit'), ...scenarios.map(sc=>esc(sc.name))].join(','));
+  lines.push([esc(T('tableHeaderParam')), esc(T('tableHeaderUnit')), ...scenarios.map(sc=>esc(sc.name))].join(','));
   PARAMS.forEach(p=>{
     if(p.type==='sep') return;
-    lines.push([esc(p.label), esc(unitForParam(p)), ...scenarios.map(sc=>{
+    lines.push([esc(T(p.labelKey)), esc(unitForParam(p)), ...scenarios.map(sc=>{
       if(p.type==='boolean') return esc(sc[p.key]!==false?'Yes':'No');
       if(p.type==='select')  return esc(sc[p.key]||'');
       return esc(sc[p.key]??0);
@@ -618,9 +784,9 @@ function downloadCSV(){
   });
   lines.push('');
   const ml = metricLabel();
-  lines.push([esc('Own — '+ml),    ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.own!==null?fmtCurrency(v.own,symOf(scenarios[i])):'—'); })].join(','));
-  lines.push([esc('Rent — '+ml),   ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.rent!==null?fmtCurrency(v.rent,symOf(scenarios[i])):'—'); })].join(','));
-  lines.push([esc('Δ Own − Rent'), ...scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return esc('—'); const d=v.own-v.rent; return esc((d>=0?'+':'')+fmtCurrency(d,symOf(scenarios[i]))); })].join(','));
+  lines.push([esc(T('ownOutputLabel')(ml)),  ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.own!==null?fmtCurrency(v.own,symOf(scenarios[i])):'—'); })].join(','));
+  lines.push([esc(T('rentOutputLabel')(ml)), ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.rent!==null?fmtCurrency(v.rent,symOf(scenarios[i])):'—'); })].join(','));
+  lines.push([esc(T('deltaLabel')),          ...scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return esc('—'); const d=v.own-v.rent; return esc((d>=0?'+':'')+fmtCurrency(d,symOf(scenarios[i]))); })].join(','));
 
   const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a');
@@ -710,7 +876,7 @@ function updateClampNote(si){
   let sub = cell.querySelector('.scen-header-sub');
   if(clamped < viewYear){
     if(!sub){ sub=document.createElement('span'); sub.className='scen-header-sub'; cell.appendChild(sub); }
-    sub.textContent = 'capped at yr '+clamped;
+    sub.textContent = T('cappedAt')(clamped);
   } else if(sub) sub.remove();
 }
 
@@ -750,12 +916,19 @@ function updateClampNote(si){
 
 /* ── INIT ── */
 document.addEventListener('DOMContentLoaded', ()=>{
+  applyLang();
   rerender();
 
   const themeBtn = document.getElementById('themeToggle');
   themeBtn.addEventListener('click', ()=>{
     document.body.classList.toggle('light');
     themeBtn.textContent = document.body.classList.contains('light') ? '🌙 Dark' : '☀️ Light';
+  });
+
+  document.getElementById('langToggle').addEventListener('click', ()=>{
+    lang = lang === 'en' ? 'id' : 'en';
+    applyLang();
+    rerender();
   });
 
   document.getElementById('currencySelect').addEventListener('change', e=>{
