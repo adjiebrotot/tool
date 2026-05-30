@@ -9,7 +9,7 @@
     var style = document.createElement('style');
     style.id = 'rvo-footer-styles';
     style.textContent = [
-      '.page-footer{margin:0 auto;padding:0 0 24px;}',
+      '.page-footer{max-width:1600px;margin:0 auto;padding:0 24px 24px;}',
       '.page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;}',
       '.page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:.9rem;}',
       '.page-footer-info p:last-child{margin-bottom:0;}',
