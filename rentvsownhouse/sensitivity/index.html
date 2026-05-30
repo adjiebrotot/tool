@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Sensitivity Analysis — Rent vs Own</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+<script src="../tooltips.js"></script>
+<script src="../footer.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
 :root {
@@ -108,9 +110,8 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 .tip-box{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:9px;padding:8px 12px;font-size:.78rem;color:var(--text);width:240px;white-space:normal;box-shadow:var(--shadow-lg);z-index:300;font-weight:400;text-transform:none;letter-spacing:normal;line-height:1.5;}
 .tip-wrap:hover .tip-box{display:block;}
 
-/* Footer */
-.page-footer{margin-top:18px;padding:14px 18px;border:1px solid var(--border);border-radius:var(--radius-xl);background:var(--card-bg);}
-.page-footer p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.6;}
+/* Footer — styling provided by footer.js */
+.page-footer{margin-top:18px;}
 
 @media(max-width:600px){
   .container{padding:10px 12px;}
@@ -157,30 +158,32 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
   </div>
 </section>
 
-<div class="page-footer">
-  <p>Results use the same calculation engine as the main Rent vs Own page. Ongoing costs are yearly dollar amounts; rent is monthly. All scenarios use P&amp;I mortgage, no rent-then-buy.</p>
-</div>
-
 </div><!-- /container -->
+
+<footer class="page-footer">
+  <section class="page-footer-info" id="siteFooterContent"></section>
+</footer>
+<script>renderRVOFooter('../../logos/');</script>
 
 <script>
 (function(){
 'use strict';
 
 /* ── PARAMS ── */
+var T = window.RVO_TIPS || {};
 const PARAMS = [
-  {key:'propertyPrice',  label:'Property Price',        type:'currency', min:50000, step:10000, tip:'Purchase price of the property'},
-  {key:'downPaymentPct', label:'Down Payment',           type:'percent',  min:0, max:99, step:0.5, tip:'Percentage of property price paid upfront'},
-  {key:'mortgageRate',   label:'Mortgage Rate',          type:'percent',  min:0, max:25, step:0.05, tip:'Annual mortgage interest rate (%)'},
-  {key:'mortgageTerm',   label:'Mortgage Term',          type:'integer',  min:1, max:40, step:1, unit:'yrs', tip:'Amortisation period in years'},
-  {key:'riskFreeRate',   label:'Risk-Free Rate',         type:'percent',  min:0, max:25, step:0.05, tip:'Annual return on idle invested cash (%)'},
-  {key:'houseGrowth',    label:'House Growth Rate',      type:'percent',  min:-10, max:30, step:0.1, tip:'Annual property price appreciation (%)'},
-  {key:'horizon',        label:'Horizon',                type:'integer',  min:1, max:60, step:1, unit:'yrs', tip:'Number of years to model'},
-  {key:'rentAmount',     label:'Monthly Rent',           type:'currency', min:0, step:50, tip:'Base monthly rent payment'},
-  {key:'rentInflation',  label:'Rent Inflation',         type:'percent',  min:-5, max:25, step:0.1, tip:'Annual rent increase (%)'},
-  {key:'ownOngoingCost', label:'Own Ongoing Cost',       type:'currency', min:0, step:100, unit:'/yr', tip:'Annual council rates, insurance, maintenance'},
-  {key:'rentOngoingCost',label:'Rent Ongoing Cost',      type:'currency', min:0, step:100, unit:'/yr', tip:'Annual renter insurance, utilities, etc.'},
-  {key:'setupCost',      label:'Setup Cost',             type:'currency', min:0, step:500, tip:'Stamp duty, legal fees, inspection costs'},
+  {key:'propertyPrice',  label:'Property Price',        type:'currency', min:50000, step:10000, tip:T.propertyPrice},
+  {key:'downPaymentPct', label:'Down Payment',           type:'percent',  min:0, max:99, step:0.5, tip:T.downPaymentPct},
+  {key:'mortgageRate',   label:'Mortgage Rate',          type:'percent',  min:0, max:25, step:0.05, tip:T.mortgageRate},
+  {key:'mortgageTerm',   label:'Mortgage Term',          type:'integer',  min:1, max:40, step:1, unit:'yrs', tip:T.mortgageTerm},
+  {key:'riskFreeRate',   label:'Risk-Free Rate',         type:'percent',  min:0, max:25, step:0.05, tip:T.riskFreeRate},
+  {key:'houseGrowth',    label:'House Growth Rate',      type:'percent',  min:-10, max:30, step:0.1, tip:T.houseGrowth},
+  {key:'horizon',        label:'Horizon',                type:'integer',  min:1, max:60, step:1, unit:'yrs', tip:T.horizon},
+  {key:'rentAmount',     label:'Monthly Rent',           type:'currency', min:0, step:50, tip:T.rentAmount},
+  {key:'rentInflation',  label:'Rent Inflation',         type:'percent',  min:-5, max:25, step:0.1, tip:T.rentInflation},
+  {key:'ownOngoingCost', label:'Own Ongoing Cost',       type:'currency', min:0, step:100, unit:'/yr', tip:T.ownOngoingCost},
+  {key:'rentOngoingCost',label:'Rent Ongoing Cost',      type:'currency', min:0, step:100, unit:'/yr', tip:T.rentOngoingCost},
+  {key:'setupCost',      label:'Setup Cost',             type:'currency', min:0, step:500, tip:T.setupCost},
 ];
 
 const DEFAULT_SCENARIO = {

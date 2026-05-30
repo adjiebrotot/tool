@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Rent vs Own — Property Scenario Explorer</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+<script src="tooltips.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
@@ -284,7 +285,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     </div>
     <div class="section-label">Cash</div>
     <div class="field-row">
-      <div class="field-label">Risk-Free Rate <span class="tip-icon" data-tip="The annual return earned on any uninvested cash: surplus above rent or mortgage, and any leftover initial cash. Could be a HYSA, term deposit, ETFs, or bonds. Both scenarios compound idle cash at this rate.">?</span></div>
+      <div class="field-label">Risk-Free Rate <span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="riskFreeRateVal">4.50%</span>
@@ -293,18 +294,18 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="help">Rate at which surplus cash (not used for rent/mortgage) compounds annually.</div>
     </div>
     <div class="field-row">
-      <div class="field-label">Initial Cash <span class="tip-icon" data-tip="Your total cash available right now. This funds the down payment + setup costs for the Buy scenario. Any leftover is invested at the risk-free rate from day one. The Rent scenario invests the full amount from day one. If left blank, it defaults to exactly down payment + setup cost (no surplus, no shortfall).">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;">(optional)</span></div>
+      <div class="field-label">Initial Cash <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;">(optional)</span></div>
       <input class="num-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" value=""/>
       <div class="field-sub" id="initialCashSub">Defaults to down payment + setup cost. Any excess is invested at the risk-free rate.</div>
       <div class="warning" id="initialCashWarn" style="display:none;margin-top:6px;"></div>
     </div>
     <div class="field-row">
-      <div class="field-label">Monthly Housing Budget <span class="tip-icon" data-tip="The total monthly cash available for housing costs. If left blank, it's auto-set to the higher of rent or mortgage payment each year. Any surplus above actual costs is invested at the risk-free rate.">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;">(optional)</span></div>
+      <div class="field-label">Monthly Housing Budget <span class="tip-icon" data-tip-key="monthlyBudget">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;">(optional)</span></div>
       <input class="num-input money-input" id="monthlyBudget" type="text" inputmode="numeric" data-money="true" value="0"/>
       <div class="field-sub">If 0, auto-set to the higher of rent or mortgage payment. Leftover invested at risk-free rate.</div>
     </div>
     <div class="field-row" id="budgetIncreaseRow" style="display:none;">
-      <div class="field-label">Budget Annual Increase <span class="tip-icon" data-tip="The rate at which your monthly housing budget grows each year. Only applies when a manual budget is set above. Use this to model wage growth, CPI adjustments, or property-linked cost increases. The budget compounds at this rate annually, growing the surplus (or shrinking the shortfall) over time.">?</span></div>
+      <div class="field-label">Budget Annual Increase <span class="tip-icon" data-tip-key="monthlyBudgetIncrease">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="monthlyBudgetIncreaseVal">0.00%</span>
@@ -313,7 +314,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="help">Budget grows from <span id="budgetIncreaseBase" style="color:var(--gold);font-weight:700;">—</span> at this rate each year.</div>
     </div>
     <div class="field-row">
-      <div class="field-label">Time Horizon <span class="tip-icon" data-tip="Number of years to project the scenario. Longer horizons allow property compounding and mortgage payoff effects to fully materialise. Up to 100 years supported.">?</span></div>
+      <div class="field-label">Time Horizon <span class="tip-icon" data-tip-key="horizon">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">years</span>
         <span class="slider-value" id="horizonVal">30 yrs</span>
@@ -322,7 +323,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     </div>
     <div class="section-label">Rent-Then-Buy Scenario</div>
     <div class="toggle-row">
-      <span class="toggle-label">Enable Rent-Then-Buy <span class="tip-icon" data-tip="Model a third scenario where you rent for X years, then buy the property at the then-current market price. This helps compare the optimal timing of entry into property ownership.">?</span></span>
+      <span class="toggle-label">Enable Rent-Then-Buy <span class="tip-icon" data-tip-key="rtbEnabled">?</span></span>
       <label class="toggle-switch" id="rtbToggleWrap">
         <input type="checkbox" id="rtbEnabled"/>
         <div class="toggle-track"><div class="toggle-knob"></div></div>
@@ -345,12 +346,12 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
   <div class="ctrl-panel" id="tab-own">
     <div class="section-label">Property</div>
     <div class="field-row" style="border-top:none;padding-top:0;">
-      <div class="field-label">Property Price <span class="tip-icon" data-tip="The current market purchase price of the property being modelled. This is the starting value for house equity and mortgage calculations.">?</span></div>
+      <div class="field-label">Property Price <span class="tip-icon" data-tip-key="propertyPrice">?</span></div>
       <input class="num-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
       <div class="field-sub">Purchase price of the property.</div>
     </div>
     <div class="field-row">
-      <div class="field-label">Down Payment <span class="tip-icon" data-tip="The percentage of the property price paid upfront as a deposit. Set to 100% to model an all-cash purchase (no mortgage). Try different values; 20% isn&#39;t always optimal. The renter equivalent invests this same amount instead.">?</span></div>
+      <div class="field-label">Down Payment <span class="tip-icon" data-tip-key="downPaymentPct">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% of property price</span>
         <span class="slider-value" id="downPaymentPctVal">20%</span>
@@ -360,7 +361,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     </div>
     <div class="section-label">Mortgage</div>
     <div class="field-row">
-      <div class="field-label">Mortgage Type <span class="tip-icon" data-tip="&lt;strong&gt;Principal &amp; Interest:&lt;/strong&gt; each payment reduces both interest and loan balance, building equity faster.&lt;br&gt;&lt;strong&gt;Interest Only:&lt;/strong&gt; payments cover only interest; principal stays unchanged until term ends. Lower monthly payments but no equity built from repayments.">?</span></div>
+      <div class="field-label">Mortgage Type <span class="tip-icon" data-tip-key="mortgageType">?</span></div>
       <div class="radio-group">
         <label class="radio-opt selected" id="radioPI">
           <input type="radio" name="mortgageType" value="pi" checked/>
@@ -372,7 +373,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
         </label>
       </div>
       <div class="toggle-row" style="margin-top:8px;padding-top:8px;padding-bottom:0;">
-        <span class="toggle-label">Cost = Interest Only <span class="tip-icon" data-tip="&lt;strong&gt;ON:&lt;/strong&gt; Accumulated Cost counts only interest + ongoing (money truly lost; principal repayment builds equity).&lt;br&gt;&lt;strong&gt;OFF:&lt;/strong&gt; Full mortgage payment + ongoing are treated as outgoing costs.">?</span></span>
+        <span class="toggle-label">Cost = Interest Only <span class="tip-icon" data-tip-key="costInterestOnly">?</span></span>
         <label class="toggle-switch">
           <input type="checkbox" id="costInterestOnly" checked/>
           <div class="toggle-track"><div class="toggle-knob"></div></div>
@@ -380,7 +381,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label">Mortgage Rate <span class="tip-icon" data-tip="The annual interest rate charged on the mortgage. This determines the monthly repayment amount.&lt;br&gt;&lt;strong&gt;P&amp;I:&lt;/strong&gt; higher rates mean more interest and slower equity build.&lt;br&gt;&lt;strong&gt;IO:&lt;/strong&gt; rate directly sets the monthly payment.">?</span></div>
+      <div class="field-label">Mortgage Rate <span class="tip-icon" data-tip-key="mortgageRate">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="mortgageRateVal">6.00%</span>
@@ -388,7 +389,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <input type="range" id="mortgageRate" min="0" max="25" step="0.1" value="6"/>
     </div>
     <div class="field-row">
-      <div class="field-label">Mortgage Term <span class="tip-icon" data-tip="The total number of years over which the loan is amortised. A longer term means lower monthly payments but more total interest paid. Once the loan is fully repaid, the entire monthly budget becomes surplus savings.">?</span></div>
+      <div class="field-label">Mortgage Term <span class="tip-icon" data-tip-key="mortgageTerm">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">years</span>
         <span class="slider-value" id="mortgageTermVal">30 yrs</span>
@@ -397,7 +398,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     </div>
     <div class="section-label">Property Growth</div>
     <div class="field-row">
-      <div class="field-label">House Price Growth (RPPI) <span class="tip-icon" data-tip="The Residential Property Price Index annual growth rate: how much the property appreciates each year. This drives house equity growth and the future purchase price in the Rent-Then-Buy scenario. Use the CAGR calculator below to derive this from historical data.">?</span></div>
+      <div class="field-label">House Price Growth (RPPI) <span class="tip-icon" data-tip-key="houseGrowth">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a. CAGR</span>
         <span class="slider-value" id="houseGrowthVal">5.00%</span>
@@ -431,7 +432,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     </div>
     <div class="section-label">Costs of Owning</div>
     <div class="field-row">
-      <div class="field-label">Setup Cost (Stamp Duty, Legal, etc.) <span class="tip-icon" data-tip="One-time upfront costs when purchasing the property — includes stamp duty, conveyancing, building inspection, and other transaction fees. Paid from savings (not added to the loan) and reduces the renter's initial investable capital.">?</span></div>
+      <div class="field-label">Setup Cost (Stamp Duty, Legal, etc.) <span class="tip-icon" data-tip-key="setupCost">?</span></div>
       <div class="input-row">
         <input class="num-input money-input" id="setupCost" type="text" inputmode="numeric" data-money="true" value="32,000"/>
         <select id="setupCostType">
@@ -442,7 +443,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-sub">One-time cost at purchase (added to initial outlay, not loan).</div>
     </div>
     <div class="field-row">
-      <div class="field-label">Ongoing Costs of Owning <span class="tip-icon" data-tip="Annual recurring costs of owning the property beyond the mortgage: council rates, building insurance, maintenance, strata levies, land tax, lawn care, etc. Can be entered as a fixed dollar amount or as a % of current property value.">?</span></div>
+      <div class="field-label">Ongoing Costs of Owning <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
       <div class="input-row">
         <input class="num-input money-input" id="ownOngoingCost" type="text" inputmode="numeric" data-money="true" value="6,000"/>
         <select id="ownOngoingCostFreq">
@@ -458,7 +459,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-sub">Council rates, insurance, maintenance, lawn, etc.</div>
     </div>
     <div class="field-row" id="ownOngoingInflationRow">
-      <div class="field-label">Own Ongoing Cost Inflation <span class="tip-icon" data-tip="Annual rate at which fixed-dollar ongoing ownership costs increase. Applies only when &#39;Fixed $ amount&#39; is selected; % of property value already grows with house appreciation.">?</span></div>
+      <div class="field-label">Own Ongoing Cost Inflation <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="ownOngoingInflationVal">0.00%</span>
@@ -472,7 +473,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
   <div class="ctrl-panel" id="tab-rent">
     <div class="section-label">Rental Payments</div>
     <div class="field-row">
-      <div class="field-label">Rent Amount <span class="tip-icon" data-tip="The current weekly, monthly, or yearly rent payment. This is the base figure that grows each year at the Rent Inflation rate. The renter invests any monthly budget surplus above this rent amount.">?</span></div>
+      <div class="field-label">Rent Amount <span class="tip-icon" data-tip-key="rentAmount">?</span></div>
       <div class="input-row">
         <input class="num-input money-input" id="rentAmount" type="text" inputmode="numeric" data-money="true" value="2,800"/>
         <select id="rentFreq">
@@ -484,7 +485,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-sub">Rent = <span id="rentMonthlyDisplay" style="color:var(--gold);font-weight:700;">$2,800/mo</span></div>
     </div>
     <div class="field-row">
-      <div class="field-label">Rent Inflation <span class="tip-icon" data-tip="The annual rate at which rent increases each year. Historical rent inflation has typically tracked general CPI or slightly above. Higher rent inflation erodes the renter's monthly surplus faster over time.">?</span></div>
+      <div class="field-label">Rent Inflation <span class="tip-icon" data-tip-key="rentInflation">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="rentInflationVal">3.00%</span>
@@ -494,7 +495,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
     </div>
     <div class="section-label">Costs of Renting</div>
     <div class="field-row">
-      <div class="field-label">Ongoing Costs of Renting <span class="tip-icon" data-tip="Extra costs the renter bears beyond the base rent: contents insurance, renters' insurance, utility connection fees, etc. Unlike owners, renters don't pay council rates or building maintenance — so this is typically much lower than the own scenario.">?</span></div>
+      <div class="field-label">Ongoing Costs of Renting <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
       <div class="input-row">
         <input class="num-input money-input" id="rentOngoingCost" type="text" inputmode="numeric" data-money="true" value="1,200"/>
         <select id="rentOngoingCostFreq">
@@ -510,7 +511,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="field-sub">Contents insurance, extra costs renters bear (no council rates, no maintenance).</div>
     </div>
     <div class="field-row" id="rentOngoingInflationRow">
-      <div class="field-label">Rent Ongoing Cost Inflation <span class="tip-icon" data-tip="Annual rate at which fixed-dollar renting ongoing costs increase. Applies only when &#39;Fixed $ amount&#39; is selected; % of annual rent already grows with rent inflation.">?</span></div>
+      <div class="field-label">Rent Ongoing Cost Inflation <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)">% p.a.</span>
         <span class="slider-value" id="rentOngoingInflationVal">0.00%</span>
@@ -550,6 +551,12 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
       <div class="sub">Own minus Rent at final year</div>
     </div>
   </section>
+
+  <!-- SENSITIVITY LINK -->
+  <div style="margin-bottom:14px;padding:11px 18px;background:rgba(141,187,255,.07);border:1px solid var(--border);border-radius:var(--radius-xl);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+    <span style="font-size:.85rem;color:var(--muted);">Power user? Compare multiple scenarios side-by-side — e.g. mortgage rate 5% vs 6% vs 7%.</span>
+    <a href="sensitivity/index.html" style="color:var(--accent);font-size:.85rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">📊 Sensitivity Analysis →</a>
+  </div>
 
   <!-- CHART -->
   <section class="chart-card card">
@@ -603,26 +610,10 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
 </section>
 </div>
 <footer class="page-footer">
-  <section class="page-footer-info">
-    <p>
-      <strong>Disclaimer:</strong> This tool is provided on an “as is” and “as available” basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any decisions.
-    </p>
-    <p>
-      If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you’re interested, confused, or would like help learning how to use the tool, feel free to email me as well 🙂
-    </p>
-    <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
-      <img src="../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
-      <div style="display:flex;align-items:center;gap:10px">
-        <img src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <img src="../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-        <span style="color:var(--muted);font-size:0.85rem">Made in Australia by Indonesian engineer.</span>
-      </div>
-    </div>
-  </section>
+  <section class="page-footer-info" id="siteFooterContent"></section>
 </footer>
+<script src="footer.js"></script>
+<script>renderRVOFooter(‘../logos/’);</script>
 
 <script>
 (function(){
@@ -2364,6 +2355,13 @@ function makeSliderEditable(valSpan,rangeEl){
 ].forEach(([rid,vid])=>makeSliderEditable($(vid),$(rid)));
 
 /* ── INIT ── */
+// Populate data-tip from centralised RVO_TIPS (tooltips.js)
+if(window.RVO_TIPS){
+  document.querySelectorAll('[data-tip-key]').forEach(function(el){
+    var k=el.getAttribute('data-tip-key');
+    if(RVO_TIPS[k]) el.setAttribute('data-tip', RVO_TIPS[k]);
+  });
+}
 syncMoneyInputs();
 syncCagrDeleteButtons();
 updateCagrToolVisibility(false);
