@@ -95,6 +95,13 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 /* Output separator */
 .dt tr.sep-tr td{padding:0;border-top:2px dashed var(--accent);border-bottom:none;border-left:1px solid var(--border);border-right:1px solid var(--border);height:2px;}
 
+/* Subgroup rows */
+.dt tr.subgroup-row td{background:var(--panel-raised);}
+.dt tr.subgroup-row td.label-td{padding-left:26px;}
+.dt tr.subgroup-first td{border-top:1.5px solid var(--accent);}
+.dt tr.subgroup-last td{border-bottom:1.5px solid var(--accent);}
+.ongoing-unit{display:block;font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px;}
+
 /* Output rows */
 .dt tr.out-own td{background:var(--data-pos-bg);font-weight:700;}
 .dt tr.out-rent td{background:rgba(143,205,189,.18);font-weight:700;}
@@ -223,9 +230,9 @@ const PARAMS = [
   {key:'houseGrowth',          label:'House Growth (RPPI)',        type:'percent',  unit:'% p.a. CAGR', min:-10, max:30,  step:0.1,  tip:T.houseGrowth},
   {key:'setupCost',            label:'Setup Cost',                 type:'currency',                     min:0,            step:500,  tip:T.setupCost},
   {key:'setupCostType',        label:'Setup Cost Type',            type:'select',   options:[{v:'dollar',l:'Fixed amount ($)'},{v:'pct',l:'% of property price'}], tip:T.setupCost},
-  {key:'ownOngoingCost',       label:'Ongoing Cost (Own)',         type:'currency',                     min:0,            step:100,  tip:T.ownOngoingCost},
-  {key:'ownOngoingCostFreq',   label:'Own Cost Frequency',         type:'select',   options:[{v:'yearly',l:'Yearly'},{v:'monthly',l:'Monthly'},{v:'weekly',l:'Weekly'}]},
-  {key:'ownOngoingCostType',   label:'Own Cost Type',              type:'select',   options:[{v:'dollar',l:'Fixed $ amount'},{v:'pct',l:'% of property value'}]},
+  {key:'ownOngoingCost',       label:'Ongoing Cost (Own)',         type:'currency',                     min:0,            step:100,  tip:T.ownOngoingCost, subgroup:'own-cost'},
+  {key:'ownOngoingCostFreq',   label:'Own Cost Frequency',         type:'select',   options:[{v:'yearly',l:'Yearly'},{v:'monthly',l:'Monthly'},{v:'weekly',l:'Weekly'}], subgroup:'own-cost'},
+  {key:'ownOngoingCostType',   label:'Own Cost Type',              type:'select',   options:[{v:'dollar',l:'Fixed $ amount'},{v:'pct',l:'% of property value'}], subgroup:'own-cost'},
   {key:'ownOngoingInflation',  label:'Own Cost Inflation',         type:'percent',  unit:'% p.a.',      min:0,   max:15,  step:0.1,  tip:T.ownOngoingInflation},
   {key:'costInterestOnly',     label:'Cost = Interest Only',       type:'boolean',                                                   tip:T.costInterestOnly},
 
@@ -233,9 +240,9 @@ const PARAMS = [
   {key:'rentAmount',           label:'Rent Amount',                type:'currency',                     min:0,            step:50,   tip:T.rentAmount},
   {key:'rentFreq',             label:'Rent Frequency',             type:'select',   options:[{v:'monthly',l:'Monthly'},{v:'weekly',l:'Weekly'},{v:'yearly',l:'Yearly'}]},
   {key:'rentInflation',        label:'Rent Inflation',             type:'percent',  unit:'% p.a.',      min:-5,  max:25,  step:0.1,  tip:T.rentInflation},
-  {key:'rentOngoingCost',      label:'Ongoing Cost (Rent)',        type:'currency',                     min:0,            step:100,  tip:T.rentOngoingCost},
-  {key:'rentOngoingCostFreq',  label:'Rent Cost Frequency',        type:'select',   options:[{v:'yearly',l:'Yearly'},{v:'monthly',l:'Monthly'},{v:'weekly',l:'Weekly'}]},
-  {key:'rentOngoingCostType',  label:'Rent Cost Type',             type:'select',   options:[{v:'dollar',l:'Fixed $ amount'},{v:'pct',l:'% of annual rent'}]},
+  {key:'rentOngoingCost',      label:'Ongoing Cost (Rent)',        type:'currency',                     min:0,            step:100,  tip:T.rentOngoingCost, subgroup:'rent-cost'},
+  {key:'rentOngoingCostFreq',  label:'Rent Cost Frequency',        type:'select',   options:[{v:'yearly',l:'Yearly'},{v:'monthly',l:'Monthly'},{v:'weekly',l:'Weekly'}], subgroup:'rent-cost'},
+  {key:'rentOngoingCostType',  label:'Rent Cost Type',             type:'select',   options:[{v:'dollar',l:'Fixed $ amount'},{v:'pct',l:'% of annual rent'}], subgroup:'rent-cost'},
   {key:'rentOngoingInflation', label:'Rent Cost Inflation',        type:'percent',  unit:'% p.a.',      min:0,   max:15,  step:0.1,  tip:T.rentOngoingInflation},
 ];
 
@@ -483,6 +490,12 @@ function unitForParam(p){
   return p.unit || '';
 }
 
+function getOngoingCostUnit(sc, costKey){
+  if(costKey==='rentOngoingCost') return sc.rentOngoingCostType==='pct' ? '% of rent' : symOf(sc);
+  if(costKey==='ownOngoingCost')  return sc.ownOngoingCostType==='pct'  ? '% of value' : symOf(sc);
+  return symOf(sc);
+}
+
 function buildTableHTML(){
   const n = scenarios.length;
   const colCount = n + 3;
@@ -500,12 +513,22 @@ function buildTableHTML(){
   }).join('');
 
   let bodyHtml = '';
-  PARAMS.forEach(p=>{
+  const isDynamicUnit = key => key==='rentOngoingCost' || key==='ownOngoingCost';
+  PARAMS.forEach((p,pi)=>{
     if(p.type==='sep'){
       bodyHtml += `<tr class="group-sep-tr"><td colspan="${colCount}">${p.label}</td></tr>`;
       return;
     }
     const tipHtml = p.tip ? `<span class="tip-icon" data-tip="${escAttr(p.tip)}">?</span>` : '';
+
+    const prevP = PARAMS[pi-1], nextP = PARAMS[pi+1];
+    const isFirst = p.subgroup && (!prevP || prevP.subgroup!==p.subgroup || prevP.type==='sep');
+    const isLast  = p.subgroup && (!nextP || nextP.subgroup!==p.subgroup);
+    const rowClass = [
+      p.subgroup ? 'subgroup-row' : '',
+      isFirst ? 'subgroup-first' : '',
+      isLast  ? 'subgroup-last'  : '',
+    ].filter(Boolean).join(' ');
 
     const tds = scenarios.map((sc,i)=>{
       let inp = '';
@@ -517,10 +540,17 @@ function buildTableHTML(){
       } else {
         inp = `<input class="param-input" type="text" inputmode="numeric" data-si="${i}" data-key="${p.key}" data-ptype="${p.type}" value="${escAttr(fmtInputVal(sc[p.key], p.type))}"/>`;
       }
+      if(isDynamicUnit(p.key)){
+        inp += `<span class="ongoing-unit" data-si="${i}" data-cost-key="${p.key}">${escHtml(getOngoingCostUnit(sc, p.key))}</span>`;
+      }
       return `<td class="scen-td">${inp}</td>`;
     }).join('');
 
-    bodyHtml += `<tr><td class="label-td">${escHtml(p.label)}${tipHtml}</td><td class="unit-td">${escHtml(unitForParam(p))}</td>${tds}<td style="border:1px solid var(--border);background:var(--input-bg);"></td></tr>`;
+    const unitCell = isDynamicUnit(p.key)
+      ? `<td class="unit-td"></td>`
+      : `<td class="unit-td">${escHtml(unitForParam(p))}</td>`;
+
+    bodyHtml += `<tr${rowClass?' class="'+rowClass+'"':''}><td class="label-td">${escHtml(p.label)}${tipHtml}</td>${unitCell}${tds}<td style="border:1px solid var(--border);background:var(--input-bg);"></td></tr>`;
   });
 
   const emptyTd = `<td style="border:1px solid var(--border);background:var(--input-bg);"></td>`;
@@ -633,8 +663,14 @@ function wireEvents(){
 
   document.querySelectorAll('.param-select').forEach(el=>{
     el.addEventListener('change', e=>{
-      const si = +e.target.dataset.si;
-      scenarios[si][e.target.dataset.key] = e.target.value;
+      const si = +e.target.dataset.si, key = e.target.dataset.key;
+      scenarios[si][key] = e.target.value;
+      if(key==='rentOngoingCostType' || key==='ownOngoingCostType'){
+        const costKey = key==='rentOngoingCostType' ? 'rentOngoingCost' : 'ownOngoingCost';
+        document.querySelectorAll(`.ongoing-unit[data-si="${si}"][data-cost-key="${costKey}"]`).forEach(span=>{
+          span.textContent = getOngoingCostUnit(scenarios[si], costKey);
+        });
+      }
       try{ scenarioResults[si] = computeModel(buildStateObj(scenarios[si])); }catch(err){}
       rerenderOutputOnly();
     });
