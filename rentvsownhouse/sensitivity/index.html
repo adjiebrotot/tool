@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>🏠 Rent vs Own — Sensitivity Tool</title>
+<title>Rent vs Own — Sensitivity Tool</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
 <script src="../tooltips.js"></script>
 <script src="../footer.js"></script>
@@ -68,6 +68,8 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .dt td{padding:7px 9px;border:1px solid var(--border);vertical-align:middle;}
 .dt .num-td{font-family:'DM Mono',monospace;text-align:right;}
 .dt .label-td{font-weight:600;min-width:200px;white-space:nowrap;color:var(--text);background:var(--input-bg);}
+.dt .unit-td{min-width:90px;white-space:nowrap;color:var(--muted);background:var(--input-bg);font-family:'DM Mono',monospace;font-size:.74rem;}
+.dt .unit-th{min-width:90px;}
 .dt .scen-th{min-width:185px;text-align:center;}
 .dt .scen-td{min-width:185px;}
 
@@ -108,7 +110,6 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 .param-bool-wrap{display:flex;align-items:center;gap:7px;padding:3px 0;}
 .param-bool{width:15px;height:15px;cursor:pointer;accent-color:var(--accent);flex-shrink:0;}
 .param-bool-label{font-size:.78rem;color:var(--muted);}
-.param-unit{font-size:.7rem;color:var(--muted);margin-top:2px;font-family:'DM Mono',monospace;}
 
 /* Global tooltip */
 #globalTooltip{position:fixed;z-index:99999;pointer-events:none;max-width:270px;background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:var(--radius-lg);padding:9px 12px;font-size:.8rem;line-height:1.5;color:var(--text);box-shadow:var(--shadow-lg);opacity:0;transition:opacity var(--motion-fast);display:none;}
@@ -137,8 +138,8 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 <!-- HEADER -->
 <section class="header card">
   <div class="header-left">
-    <h1>🏠 Rent vs Own</h1>
-    <p>Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time (Sensitivity Tool)</p>
+    <h1>🏠 Rent vs Own — Sensitivity Tool</h1>
+    <p>Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.</p>
   </div>
   <div class="header-right">
     <a href="../" class="btn-theme">← Back</a>
@@ -155,6 +156,7 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
     <option value="£">£ — Pound</option>
     <option value="¥">¥ — Yen / Yuan</option>
     <option value="₩">₩ — Won</option>
+    <option value="₱">₱ — Peso</option>
     <option value="Rp">Rp — Rupiah</option>
     <option value="RM">RM — Ringgit</option>
     <option value="฿">฿ — Baht</option>
@@ -466,8 +468,15 @@ function removeScenario(i){
 }
 
 /* ── BUILD TABLE ── */
+function unitForParam(p){
+  if(p.type==='currency') return symOf(scenarios[0]) || '$';
+  if(p.type==='percent') return p.unit || '%';
+  return p.unit || '';
+}
+
 function buildTableHTML(){
   const n = scenarios.length;
+  const colCount = n + 3;
 
   const thScens = scenarios.map((sc,i)=>{
     const clamped = Math.min(viewYear, sc.horizon||30);
@@ -484,13 +493,12 @@ function buildTableHTML(){
   let bodyHtml = '';
   PARAMS.forEach(p=>{
     if(p.type==='sep'){
-      bodyHtml += `<tr class="group-sep-tr"><td colspan="${n+2}">${p.label}</td></tr>`;
+      bodyHtml += `<tr class="group-sep-tr"><td colspan="${colCount}">${p.label}</td></tr>`;
       return;
     }
     const tipHtml = p.tip ? `<span class="tip-icon" data-tip="${escAttr(p.tip)}">?</span>` : '';
 
     const tds = scenarios.map((sc,i)=>{
-      const s = symOf(sc);
       let inp = '';
       if(p.type==='select'){
         const opts = (p.options||[]).map(o=>`<option value="${escAttr(o.v)}"${sc[p.key]===o.v?' selected':''}>${escHtml(o.l)}</option>`).join('');
@@ -498,14 +506,12 @@ function buildTableHTML(){
       } else if(p.type==='boolean'){
         inp = `<div class="param-bool-wrap"><input type="checkbox" class="param-bool" data-si="${i}" data-key="${p.key}"${sc[p.key]!==false?' checked':''}/><span class="param-bool-label">Enabled</span></div>`;
       } else {
-        const unit = p.type==='currency' ? s : (p.unit || (p.type==='percent'?'%':''));
         inp = `<input class="param-input" type="text" inputmode="numeric" data-si="${i}" data-key="${p.key}" data-ptype="${p.type}" value="${escAttr(fmtInputVal(sc[p.key], p.type))}"/>`;
-        if(unit) inp += `<div class="param-unit">${escHtml(unit)}</div>`;
       }
       return `<td class="scen-td">${inp}</td>`;
     }).join('');
 
-    bodyHtml += `<tr><td class="label-td">${escHtml(p.label)}${tipHtml}</td>${tds}<td style="border:1px solid var(--border);background:var(--input-bg);"></td></tr>`;
+    bodyHtml += `<tr><td class="label-td">${escHtml(p.label)}${tipHtml}</td><td class="unit-td">${escHtml(unitForParam(p))}</td>${tds}<td style="border:1px solid var(--border);background:var(--input-bg);"></td></tr>`;
   });
 
   const emptyTd = `<td style="border:1px solid var(--border);background:var(--input-bg);"></td>`;
@@ -515,14 +521,14 @@ function buildTableHTML(){
   const deltaTds= scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return `<td class="scen-td num-td">—</td>`; const d=v.own-v.rent; return `<td class="scen-td num-td ${deltaColor(d)}">${d>=0?'+':''}${fmtCurrency(d,symOf(scenarios[i]))}</td>`; }).join('');
 
   return `<table class="dt"><thead><tr>
-    <th class="label-td">Parameter</th>${thScens}
+    <th class="label-td">Parameter</th><th class="unit-th">Unit</th>${thScens}
     <th style="white-space:nowrap;vertical-align:middle;"><button class="btn-add" id="addScenBtn">+ Scenario</button></th>
   </tr></thead><tbody>
     ${bodyHtml}
-    <tr class="sep-tr"><td colspan="${n+2}"></td></tr>
-    <tr class="out-own"><td class="label-td">🏠 Own — ${ml}</td>${ownTds}${emptyTd}</tr>
-    <tr class="out-rent"><td class="label-td">💰 Rent — ${ml}</td>${rentTds}${emptyTd}</tr>
-    <tr class="out-delta"><td class="label-td">Δ Own − Rent</td>${deltaTds}${emptyTd}</tr>
+    <tr class="sep-tr"><td colspan="${colCount}"></td></tr>
+    <tr class="out-own"><td class="label-td">🏠 Own — ${ml}</td><td class="unit-td"></td>${ownTds}${emptyTd}</tr>
+    <tr class="out-rent"><td class="label-td">💰 Rent — ${ml}</td><td class="unit-td"></td>${rentTds}${emptyTd}</tr>
+    <tr class="out-delta"><td class="label-td">Δ Own − Rent</td><td class="unit-td"></td>${deltaTds}${emptyTd}</tr>
   </tbody></table>`;
 }
 
@@ -533,9 +539,9 @@ function rerenderOutputOnly(){
   const ml = metricLabel();
   const ol = wrap.querySelector('tr.out-own .label-td');   if(ol) ol.textContent = '🏠 Own — '+ml;
   const rl = wrap.querySelector('tr.out-rent .label-td');  if(rl) rl.textContent = '💰 Rent — '+ml;
-  const oTds = wrap.querySelectorAll('tr.out-own td:not(.label-td)');
-  const rTds = wrap.querySelectorAll('tr.out-rent td:not(.label-td)');
-  const dTds = wrap.querySelectorAll('tr.out-delta td:not(.label-td)');
+  const oTds = wrap.querySelectorAll('tr.out-own td.scen-td');
+  const rTds = wrap.querySelectorAll('tr.out-rent td.scen-td');
+  const dTds = wrap.querySelectorAll('tr.out-delta td.scen-td');
   scenarios.forEach((sc,i)=>{
     const v = getMetricValues(i), s = symOf(sc);
     if(oTds[i]) oTds[i].textContent = v.own!==null  ? fmtCurrency(v.own, s)  : '—';
@@ -562,10 +568,10 @@ function rerender(){
 function downloadCSV(){
   const esc = v => '"'+String(v).replace(/"/g,'""')+'"';
   const lines = [];
-  lines.push([esc('Parameter'), ...scenarios.map(sc=>esc(sc.name))].join(','));
+  lines.push([esc('Parameter'), esc('Unit'), ...scenarios.map(sc=>esc(sc.name))].join(','));
   PARAMS.forEach(p=>{
     if(p.type==='sep') return;
-    lines.push([esc(p.label), ...scenarios.map(sc=>{
+    lines.push([esc(p.label), esc(unitForParam(p)), ...scenarios.map(sc=>{
       if(p.type==='boolean') return esc(sc[p.key]!==false?'Yes':'No');
       if(p.type==='select')  return esc(sc[p.key]||'');
       return esc(sc[p.key]??0);
