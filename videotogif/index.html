@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Video2GIF Converter</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8E%AC%3C/text%3E%3C/svg%3E">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
   :root {
@@ -427,6 +428,28 @@
   .btn-download:hover { opacity: 0.82; }
   body.light .btn-download { color: #fff; }
 
+  /* Warning hint */
+  .warn-hint {
+    display: none;
+    color: #FFCA7A;
+    font-size: 0.74rem;
+    margin-top: 3px;
+    line-height: 1.35;
+  }
+  .warn-hint.visible { display: block; }
+
+  /* Page footer */
+  .page-footer { flex-shrink: 0; padding: 0 20px 16px; }
+  .page-footer-info {
+    padding: 14px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .page-footer-info p { margin: 0 0 10px; color: var(--muted); line-height: 1.55; font-size: 0.82rem; }
+  .page-footer-info p:last-child { margin-bottom: 0; }
+  .page-footer-info a { color: var(--accent); text-decoration: underline; text-underline-offset: 0.14em; }
+
   /* Responsive */
   @media (max-width: 900px) {
     #workspace.active { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
@@ -443,6 +466,7 @@
     <div class="logo">Video<span>2</span>GIF Converter</div>
     <div class="tagline">Convert Video to GIF, as the name suggest.</div>
   </div>
+  <a href="https://tool.adjiebrotots.com/" class="btn-theme">← Other Tools</a>
   <button class="btn-theme" id="themeToggle">☀️ Light</button>
 </header>
 
@@ -474,16 +498,18 @@
           <span class="slider-label">Width</span>
           <span class="slider-value" id="widthVal">480 px</span>
         </div>
-        <input type="range" id="widthSlider" min="120" max="960" step="8" value="480">
+        <input type="range" id="widthSlider" min="120" max="3840" step="8" value="480">
         <div class="help">Height is auto-calculated from source aspect ratio.</div>
+        <div class="warn-hint" id="widthWarn">⚠ Above Full HD (1920 px) — conversion will be significantly slower.</div>
       </div>
       <div class="slider-block">
         <div class="slider-head">
           <span class="slider-label">Frame Rate</span>
           <span class="slider-value" id="fpsVal">12 fps</span>
         </div>
-        <input type="range" id="fpsSlider" min="4" max="30" step="1" value="12">
+        <input type="range" id="fpsSlider" min="4" max="60" step="1" value="12">
         <div class="help">More fps = smoother animation, larger file size.</div>
+        <div class="warn-hint" id="fpsWarn">⚠ Above 24 fps — conversion will be significantly slower.</div>
       </div>
     </div>
 
@@ -604,6 +630,17 @@
 
   </main>
 </div><!-- #workspace -->
+
+<footer class="page-footer">
+  <section class="page-footer-info">
+    <p>
+      <strong>Disclaimer:</strong> This tool is provided on an "as is" and "as available" basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user.
+    </p>
+    <p>
+      If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. Interested, confused, or just want to say hi? Feel free to email as well 🙂
+    </p>
+  </section>
+</footer>
 
 <script>
 (function () {
@@ -992,8 +1029,8 @@
   const fileInput    = $('fileInput');
   const workspace    = $('workspace');
   const video        = $('video');
-  const widthSlider  = $('widthSlider');  const widthVal  = $('widthVal');
-  const fpsSlider    = $('fpsSlider');    const fpsVal    = $('fpsVal');
+  const widthSlider  = $('widthSlider');  const widthVal  = $('widthVal');  const widthWarn = $('widthWarn');
+  const fpsSlider    = $('fpsSlider');    const fpsVal    = $('fpsVal');    const fpsWarn   = $('fpsWarn');
   const qualSlider   = $('qualSlider');   const qualVal   = $('qualVal');
   const loopCheck    = $('loopCheck');    const reverseCheck = $('reverseCheck');
   const playBtn      = $('playBtn');
@@ -1057,6 +1094,12 @@
       S.duration = video.duration;
       S.inPoint  = 0;
       S.outPoint = video.duration;
+      // Default width to the video's native width, capped at 3840
+      const nativeW = Math.min(video.videoWidth || 480, 3840);
+      S.width = nativeW;
+      widthSlider.value = nativeW;
+      widthVal.textContent = nativeW + ' px';
+      widthWarn.classList.toggle('visible', nativeW > 1920);
       dropZone.style.display = 'none';
       workspace.classList.add('active');
       gifOutput.classList.remove('visible');
@@ -1188,12 +1231,14 @@
   widthSlider.addEventListener('input', () => {
     S.width = +widthSlider.value;
     widthVal.textContent = S.width + ' px';
+    widthWarn.classList.toggle('visible', S.width > 1920);
     updateMetrics();
   });
 
   fpsSlider.addEventListener('input', () => {
     S.fps = +fpsSlider.value;
     fpsVal.textContent = S.fps + ' fps';
+    fpsWarn.classList.toggle('visible', S.fps > 24);
     updateMetrics();
   });
 
