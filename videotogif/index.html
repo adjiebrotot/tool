@@ -905,8 +905,8 @@
     out.wb(0); // GIF sub-block terminator
   }
 
-  // ── Assemble GIF89a ──
-  function buildGIF(frames, w, h, { delay, loop, samplefac, dither }) {
+  // ── Assemble GIF89a (async — yields between frames to keep the browser responsive) ──
+  async function buildGIF(frames, w, h, { delay, loop, samplefac, dither }, onProgress) {
     const out = new ByteStream();
 
     // Header + Logical Screen Descriptor
@@ -922,7 +922,9 @@
       out.wb(3); out.wb(1); out.ws(0); out.wb(0);
     }
 
-    for (const rgba of frames) {
+    for (let fi = 0; fi < frames.length; fi++) {
+      const rgba = frames[fi];
+
       // --- Bayer pre-dither (adds ordered noise before quantization) ---
       if (dither === 'bayer') {
         const bm = [[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
@@ -994,6 +996,11 @@
 
       // --- Image Data (LZW compressed) ---
       lzwEncode(indexed, 8, out);
+
+      // Yield to the browser after every frame so the UI stays responsive
+      // and the browser's "Not Responding" watchdog is not triggered.
+      await new Promise(r => setTimeout(r, 0));
+      if (onProgress) onProgress(fi + 1, frames.length);
     }
 
     out.wb(0x3B); // GIF trailer
@@ -1070,7 +1077,7 @@
   }
 
   function getHeight()      { return video.videoWidth ? Math.round(S.width * video.videoHeight / video.videoWidth) : Math.round(S.width * 9/16); }
-  function getTotalFrames() { return Math.max(1, Math.min(120, Math.floor((S.outPoint - S.inPoint) * S.fps / S.speed))); }
+  function getTotalFrames() { return Math.max(1, Math.floor((S.outPoint - S.inPoint) / S.speed * S.fps)); }
   function getDelay()       { return Math.max(2, Math.round(100 / S.fps)); }
 
   function setStatus(msg, type) {
@@ -1359,11 +1366,14 @@
       setProgress(78);
       await new Promise(r => setTimeout(r, 12)); // let status render
 
-      const gifData = buildGIF(result, w, h, {
+      const gifData = await buildGIF(result, w, h, {
         delay:     getDelay(),
         loop:      S.loop,
         samplefac: QUAL_SF[S.quality - 1],
         dither:    S.dither,
+      }, (done, total) => {
+        setProgress(78 + (done / total) * 22);
+        setStatus(`Encoding frame ${done} / ${total}…`);
       });
 
       setProgress(100);
