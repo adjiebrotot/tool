@@ -1,0 +1,129 @@
+{
+  "initialisation": {
+    "powerfactoryApiPath": "",
+    "username": "",
+    "outputDir": "",
+    "problemType": "brute_force",
+    "studyType": "dynamic_rms",
+    "codingStyle": "python_file",
+    "tstop": "30"
+  },
+  "inputVariables": [
+    {
+      "name": "ngnum",
+      "object_query": "SynCon.ElmSym",
+      "variable": "ngnum",
+      "lower": "1",
+      "upper": "10",
+      "step": "1",
+      "dtype": "int"
+    }
+  ],
+  "outputVariables": [
+    {
+      "id": "ov-0",
+      "type": "timeseries",
+      "name": "bus_voltage_nadir",
+      "object_query": "MainBus.ElmTerm",
+      "variable": "m:u",
+      "metric": "minimum",
+      "threshold": "",
+      "settle_band": "",
+      "settle_hold_time": "",
+      "settle_reference_value": "",
+      "customFn": "",
+      "output_graph": true,
+      "output_raw_csv": false
+    },
+    {
+      "id": "ov-1",
+      "type": "timeseries",
+      "name": "synccon_q_peak",
+      "object_query": "SynCon.ElmSym",
+      "variable": "m:Q",
+      "metric": "maximum",
+      "threshold": "",
+      "settle_band": "",
+      "settle_hold_time": "",
+      "settle_reference_value": "",
+      "customFn": "",
+      "output_graph": false,
+      "output_raw_csv": false
+    },
+    {
+      "id": "ov-2",
+      "type": "timeseries",
+      "name": "rotor_speed_min",
+      "object_query": "SynCon.ElmSym",
+      "variable": "s:speed",
+      "metric": "minimum",
+      "threshold": "",
+      "settle_band": "",
+      "settle_hold_time": "",
+      "settle_reference_value": "",
+      "customFn": "",
+      "output_graph": true,
+      "output_raw_csv": false
+    },
+    {
+      "id": "ov-3",
+      "type": "timeseries",
+      "name": "out_of_step",
+      "object_query": "SynCon.ElmSym",
+      "variable": "s:outofstep",
+      "metric": "maximum",
+      "threshold": "",
+      "settle_band": "",
+      "settle_hold_time": "",
+      "settle_reference_value": "",
+      "customFn": "",
+      "output_graph": false,
+      "output_raw_csv": false
+    },
+    {
+      "id": "ov-4",
+      "type": "custom_calculation",
+      "name": "sizing_ok",
+      "object_query": "",
+      "variable": "",
+      "metric": "maximum",
+      "threshold": "",
+      "settle_band": "",
+      "settle_hold_time": "",
+      "settle_reference_value": "",
+      "customFn": "def sizing_ok(bus_voltage_nadir, rotor_speed_min, out_of_step):\n    return bus_voltage_nadir >= 0.85 and rotor_speed_min >= 0.97 and out_of_step == 0",
+      "output_graph": false,
+      "output_raw_csv": false
+    }
+  ],
+  "optimisation": {
+    "sense": "minimise",
+    "objectiveOutputName": "",
+    "algorithm": "placeholder",
+    "maxIterations": 50,
+    "constraints": []
+  },
+  "customMode": {
+    "scenarioFilePath": ""
+  },
+  "contingencyMode": {
+    "elementTypes": [
+      {
+        "query": "",
+        "filterAttr": "",
+        "filterOp": ">=",
+        "filterVal": ""
+      }
+    ],
+    "contingencyN": "1",
+    "combineTypes": false
+  },
+  "additionalConfig": {
+    "iterateStudyCases": false,
+    "iterateOperatingScenarios": false,
+    "useProgressBar": true,
+    "openPowerFactoryWindow": false,
+    "saveIntermediateEnabled": false,
+    "saveIntermediateMinutes": 30
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "initialisation": {
+    "powerfactoryApiPath": "",
+    "username": "",
+    "outputDir": "",
+    "problemType": "brute_force",
+    "studyType": "steady_state",
+    "codingStyle": "python_file",
+    "tstop": "20"
+  },
+  "inputVariables": [
+    {
+      "name": "Q_cap",
+      "object_query": "Cap.ElmShnt",
+      "variable": "qtotin",
+      "lower": "0",
+      "upper": "10",
+      "step": "0.5",
+      "dtype": "float"
+    }
+  ],
+  "outputVariables": [
+    {
+      "id": "ov-0",
+      "type": "attribute",
+      "name": "bus_voltage",
+      "object_query": "MainBus.ElmTerm",
+      "variable": "m:u",
+      "metric": "maximum",
+      "threshold": "",
+      "settle_band": "",
+      "settle_hold_time": "",
+      "settle_reference_value": "",
+      "customFn": "",
+      "output_graph": false,
+      "output_raw_csv": false
+    }
+  ],
+  "optimisation": {
+    "sense": "minimise",
+    "objectiveOutputName": "",
+    "algorithm": "placeholder",
+    "maxIterations": 50,
+    "constraints": []
+  },
+  "customMode": {
+    "scenarioFilePath": ""
+  },
+  "contingencyMode": {
+    "elementTypes": [
+      {
+        "query": "",
+        "filterAttr": "",
+        "filterOp": ">=",
+        "filterVal": ""
+      }
+    ],
+    "contingencyN": "1",
+    "combineTypes": false
+  },
+  "additionalConfig": {
+    "iterateStudyCases": false,
+    "iterateOperatingScenarios": false,
+    "useProgressBar": true,
+    "openPowerFactoryWindow": false,
+    "saveIntermediateEnabled": false,
+    "saveIntermediateMinutes": 30
+  }
+}
