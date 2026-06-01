@@ -95,6 +95,24 @@
   }
   .back-link:hover { border-color: var(--accent); color: var(--accent); }
 
+  .dl-json-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid rgba(143,205,189,0.35);
+    border-radius: var(--radius);
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent2);
+    background: rgba(143,205,189,0.08);
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .dl-json-link:hover { border-color: var(--accent2); background: rgba(143,205,189,0.16); }
+
   /* ── MAIN CONTENT ────────────────────────────────────────────────── */
   main {
     flex: 1;
@@ -614,6 +632,7 @@
     <div class="section-header" onclick="toggleSection('sample-1')">
       <span class="sample-num">01</span>
       <h3>Capacitor Bank Sizing — Voltage Regulation</h3>
+      <a class="dl-json-link" href="sample-01-capacitor-bank-sizing.json" download onclick="event.stopPropagation()">↓ JSON</a>
       <span class="toggle-icon">▾</span>
     </div>
     <div class="section-body" id="sample-1-body">
@@ -766,6 +785,7 @@
     <div class="section-header" onclick="toggleSection('sample-2')">
       <span class="sample-num">02</span>
       <h3>Harmonic Filter Sizing — THD Minimisation</h3>
+      <a class="dl-json-link" href="sample-02-harmonic-filter-sizing.json" download onclick="event.stopPropagation()">↓ JSON</a>
       <span class="toggle-icon">▾</span>
     </div>
     <div class="section-body" id="sample-2-body">
@@ -976,6 +996,7 @@ Best objective (thd) = 2.61</pre>
     <div class="section-header" onclick="toggleSection('sample-3')">
       <span class="sample-num">03</span>
       <h3>Synchronous Condenser Sizing — Fault Ride-Through &amp; Inertial Response</h3>
+      <a class="dl-json-link" href="sample-03-synchronous-condenser-sizing.json" download onclick="event.stopPropagation()">↓ JSON</a>
       <span class="toggle-icon">▾</span>
     </div>
     <div class="section-body" id="sample-3-body">
@@ -1226,6 +1247,7 @@ Best objective (thd) = 2.61</pre>
     <div class="section-header" onclick="toggleSection('sample-4')">
       <span class="sample-num">04</span>
       <h3>N-1 Line Contingency — Wildcard Approach</h3>
+      <a class="dl-json-link" href="sample-04-n1-line-contingency.json" download onclick="event.stopPropagation()">↓ JSON</a>
       <span class="toggle-icon">▾</span>
     </div>
     <div class="section-body" id="sample-4-body">
