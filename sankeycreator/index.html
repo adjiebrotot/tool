@@ -142,8 +142,8 @@ main{display:flex;flex-direction:column;gap:13px}
 .chart-card{padding:16px 18px}
 .chart-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
 .chart-head h2{color:var(--flow-heading,var(--text));}
-.svg-wrap{width:100%;position:relative}
-#sankeySvg{width:100%;display:block;overflow:visible}
+.svg-wrap{width:100%;position:relative;overflow-x:auto;-webkit-overflow-scrolling:touch}
+#sankeySvg{display:block;overflow:visible}
 .empty-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:var(--muted);font-weight:600;pointer-events:none;text-align:center;padding:20px}
 .error-banner{background:var(--error-bg);color:var(--error-text);border:1px solid var(--negative-border);border-radius:8px;padding:6px 12px;font-size:.81rem;font-weight:600}
 .tooltip{position:fixed;background:var(--panel-raised);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:.83rem;pointer-events:none;opacity:0;transition:opacity 150ms;z-index:200;max-width:220px;box-shadow:var(--shadow-lg)}
@@ -518,6 +518,7 @@ function buildData(resolved){
 // ═══════════════════════════════════════════════
 let renderTimer = null;
 let graph = null; // module-scope so export functions can check it
+let sankeyGen = null;
 function scheduleRender(){ clearTimeout(renderTimer); renderTimer=setTimeout(doRender,40); }
 
 function doRender(){
@@ -541,11 +542,12 @@ function doRender(){
   catch(e){ showErr('Data error: '+e.message); return; }
 
   const wrap = $('svgWrap');
-  const W = Math.max(400, wrap.clientWidth||800);
+  const W = Math.max(600, wrap.clientWidth||800);
   const H = S.h;
   const mL=130, mR=140, mT=10, mB=16;
 
   svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svgEl.setAttribute('width', W);
   svgEl.setAttribute('height', H);
 
   const alignMap = {justify:d3.sankeyJustify,left:d3.sankeyLeft,right:d3.sankeyRight,center:d3.sankeyCenter};
@@ -559,6 +561,7 @@ function doRender(){
       .nodePadding(S.pad)
       .iterations(S.iter)
       .extent([[mL,mT],[W-mR,H-mB]]);
+    sankeyGen = gen;
     graphResult = gen({
       nodes: data.nodes.map(d=>({...d})),
       links: data.links.map(d=>({...d})),
@@ -623,9 +626,10 @@ function doRender(){
   const nodeGroups = nodeG.selectAll('g')
     .data(graph.nodes)
     .join('g')
-    .style('cursor','default');
+    .style('cursor','grab');
 
   nodeGroups.append('rect')
+    .attr('class','node-rect')
     .attr('x',d=>d.x0).attr('y',d=>d.y0)
     .attr('width',d=>d.x1-d.x0).attr('height',d=>d.y1-d.y0)
     .attr('fill',d=>nodeColor(d.name))
@@ -676,6 +680,7 @@ function doRender(){
 
     const nameEl = grp.append('text')
       .attr('x',tx).attr('y',midY)
+      .attr('data-dy',0)
       .attr('text-anchor',anchor)
       .attr('dominant-baseline','middle')
       .attr('fill',nameColor)
@@ -689,6 +694,7 @@ function doRender(){
     if(nodeH>18){
       valEl = grp.append('text')
         .attr('x',tx).attr('y',midY+valOffset)
+        .attr('data-dy',valOffset)
         .attr('text-anchor',anchor)
         .attr('dominant-baseline','middle')
         .attr('fill',valColor)
@@ -711,6 +717,7 @@ function doRender(){
         const bh  = (valEl ? vb.y+vb.height : nb.y+nb.height) - nb.y + pad*2;
         grp.insert('rect','text')
           .attr('x',bx).attr('y',by)
+          .attr('data-dy', by - midY)
           .attr('width',Math.max(0,bw)).attr('height',Math.max(0,bh))
           .attr('rx',4).attr('ry',4)
           .attr('fill',boxBg)
@@ -721,6 +728,28 @@ function doRender(){
       } catch(e){}
     }
   });
+
+  // ── DRAG ──
+  const nodeDrag = d3.drag()
+    .on('start', function(event, d) {
+      d3.select(this).raise().style('cursor','grabbing');
+    })
+    .on('drag', function(event, d) {
+      const nodeH = d.y1 - d.y0;
+      d.y0 = Math.max(mT, Math.min(H - mB - nodeH, d.y0 + event.dy));
+      d.y1 = d.y0 + nodeH;
+      sankeyGen.update(graph);
+      const g = d3.select(this);
+      const midY = (d.y0 + d.y1) / 2;
+      g.select('.node-rect').attr('y', d.y0);
+      g.selectAll('text').attr('y', function() { return midY + (+d3.select(this).attr('data-dy') || 0); });
+      g.select('.label-bg').attr('y', function() { return midY + (+d3.select(this).attr('data-dy') || 0); });
+      linkG.selectAll('path').attr('d', d3.sankeyLinkHorizontal());
+    })
+    .on('end', function(event, d) {
+      d3.select(this).style('cursor','grab');
+    });
+  nodeGroups.call(nodeDrag).style('touch-action','none');
 
   // ── KPIs ──
   const roots   = graph.nodes.filter(n=>n.targetLinks.length===0);
