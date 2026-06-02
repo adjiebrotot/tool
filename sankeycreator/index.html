@@ -63,27 +63,34 @@ code{font-family:'DM Mono',monospace;background:var(--input-bg);padding:1px 5px;
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
 .ctrl-panel{display:none;padding:12px 14px 14px;flex-direction:column;gap:10px;overflow-y:auto;flex:1;min-height:0}
 .ctrl-panel.active{display:flex}
+#tab-data{overflow-y:hidden;padding-bottom:6px}
 
-/* ─── ROW EDITOR ─── */
-.rows-scroll{display:flex;flex-direction:column;gap:5px;overflow-y:auto;flex:1;min-height:0;padding-right:2px}
-.rows-scroll::-webkit-scrollbar{width:4px}
-.rows-scroll::-webkit-scrollbar-track{background:transparent}
-.rows-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-.row-item{display:grid;grid-template-columns:1fr 14px 1fr 88px 36px 26px;gap:3px;align-items:center;padding:5px 7px;background:var(--input-bg);border-radius:8px;border:1px solid var(--border);transition:border-color 150ms}
-.row-item:hover{border-color:var(--accent)}
-.row-item input[type=text]{background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;padding:2px 3px;width:100%}
-.row-item input::placeholder{color:var(--muted);opacity:.5}
-.arrow-sep{color:var(--muted);text-align:center;font-size:.8rem;user-select:none}
-.color-cell{position:relative;display:flex;align-items:center}
-.row-color{width:30px;height:26px;border:1px solid var(--border);border-radius:6px;padding:2px;background:var(--input-bg);cursor:pointer;display:block}
-.color-clear{position:absolute;top:-5px;right:-5px;width:14px;height:14px;border-radius:50%;background:var(--panel-raised);border:1px solid var(--border);cursor:pointer;font-size:9px;color:var(--muted);display:none;align-items:center;justify-content:center;line-height:1;z-index:2}
-.color-cell.has-color .color-clear{display:flex}
-.del-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:2px;border-radius:4px;transition:color 150ms,background 150ms;display:flex;align-items:center;justify-content:center}
-.del-btn:hover{color:var(--negative-em);background:var(--negative-bg)}
-.add-row-btn{flex-shrink:0;padding:7px;background:var(--input-bg);border:1px dashed var(--border);border-radius:8px;color:var(--muted);font-size:.83rem;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit;text-align:center}
-.add-row-btn:hover{border-color:var(--accent);color:var(--accent)}
-.rem-badge{font-size:.7rem;color:var(--warning-text);background:var(--warning-bg);border-radius:999px;padding:1px 5px;white-space:nowrap;font-family:'DM Mono',monospace;display:none;margin-top:2px;text-align:center}
-.row-extra{grid-column:1/-1;display:flex;justify-content:flex-end}
+/* ─── DATA SUB-TABS ─── */
+.data-sub-tabs{display:flex;gap:5px;flex-shrink:0}
+.data-sub-tab{padding:4px 14px;font-weight:700;font-size:.78rem;cursor:pointer;color:var(--muted);background:var(--input-bg);border:1px solid var(--border);border-radius:999px;font-family:inherit;transition:all 150ms;white-space:nowrap}
+.data-sub-tab.active{color:var(--accent);border-color:var(--accent);background:rgba(141,187,255,.08)}
+.data-sub-panel{display:none;flex-direction:column;gap:8px;min-height:0;flex:1;overflow:hidden}
+.data-sub-panel.active{display:flex}
+
+/* ─── EDITOR TABLE ─── */
+.editor-table-wrap{overflow-y:auto;flex:1;min-height:0;border:1px solid var(--border);border-radius:8px}
+.editor-table-wrap::-webkit-scrollbar{width:4px}
+.editor-table-wrap::-webkit-scrollbar-track{background:transparent}
+.editor-table-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.editor-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.editor-table th{position:sticky;top:0;background:var(--panel-raised);font-weight:700;font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:6px 7px;border-bottom:2px solid var(--border);text-align:left;z-index:1}
+.editor-table .th-amt{text-align:right;padding-right:5px}
+.editor-table td{padding:2px 3px;border-bottom:1px solid var(--border);vertical-align:top}
+.editor-table tbody tr:last-child td{border-bottom:none}
+.editor-table tbody tr:hover td{background:var(--input-bg)}
+.editor-table .td-color{width:36px;text-align:center;vertical-align:middle}
+.editor-table .td-del{width:28px;text-align:center;vertical-align:middle}
+.editor-table .td-amt{text-align:right;vertical-align:top}
+.tc-inp{width:100%;background:transparent;border:none;outline:none;resize:none;overflow:hidden;font-size:.8rem;color:var(--text);padding:3px 2px;min-height:26px;line-height:1.5;font-family:'DM Sans',system-ui,sans-serif;display:block}
+.tc-inp::placeholder{color:var(--muted);opacity:.5}
+.tc-amt{text-align:right;color:var(--value-highlight);font-weight:700;font-family:'DM Mono',monospace;min-height:26px;padding:3px 4px 3px 2px}
+.td-amt-cell{display:flex;flex-direction:column;align-items:flex-end}
+.rem-badge{font-size:.7rem;color:var(--warning-text);background:var(--warning-bg);border-radius:999px;padding:1px 5px;white-space:nowrap;font-family:'DM Mono',monospace;display:none;margin-top:1px;text-align:right}
 
 /* ─── TEXTAREA TAB ─── */
 textarea{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;padding:10px 12px;resize:vertical;outline:none;transition:border-color 150ms;line-height:1.65;tab-size:2}
@@ -115,8 +122,8 @@ select.sel-in:focus{border-color:var(--accent)}
 option{background:var(--panel)}
 
 /* ─── BUTTONS ─── */
-.btn-row{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0}
-.btn-sec{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-weight:700;font-size:.86rem;cursor:pointer;transition:border-color 150ms,transform 100ms;font-family:inherit}
+.btn-row{display:flex;gap:6px;padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0}
+.btn-sec{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 10px;font-weight:700;font-size:.82rem;cursor:pointer;transition:border-color 150ms,transform 100ms;font-family:inherit;white-space:nowrap}
 .btn-sec:hover{border-color:var(--accent)}
 .btn-sec:active{transform:scale(.97)}
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:7px 13px;font-size:.83rem;font-weight:600;cursor:pointer;transition:all 150ms;white-space:nowrap;font-family:inherit}
@@ -124,6 +131,15 @@ option{background:var(--panel)}
 .btn-export{background:var(--input-bg);color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-weight:600;font-size:.79rem;cursor:pointer;transition:all 150ms;font-family:inherit;white-space:nowrap}
 .btn-export:hover{border-color:var(--accent);color:var(--text)}
 .btn-export:active{transform:scale(.97)}
+.add-row-btn{flex-shrink:0;padding:7px;background:var(--input-bg);border:1px dashed var(--border);border-radius:8px;color:var(--muted);font-size:.83rem;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit;text-align:center}
+.add-row-btn:hover{border-color:var(--accent);color:var(--accent)}
+/* Color cell (shared) */
+.color-cell{position:relative;display:flex;align-items:center}
+.row-color{width:26px;height:24px;border:1px solid var(--border);border-radius:5px;padding:2px;background:var(--input-bg);cursor:pointer;display:block}
+.color-clear{position:absolute;top:-5px;right:-5px;width:14px;height:14px;border-radius:50%;background:var(--panel-raised);border:1px solid var(--border);cursor:pointer;font-size:9px;color:var(--muted);display:none;align-items:center;justify-content:center;line-height:1;z-index:2}
+.color-cell.has-color .color-clear{display:flex}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:2px;border-radius:4px;transition:color 150ms,background 150ms;display:flex;align-items:center;justify-content:center}
+.del-btn:hover{color:var(--negative-em);background:var(--negative-bg)}
 /* Toggle switch */
 .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .toggle-wrap{display:inline-flex;align-items:center;cursor:pointer;flex-shrink:0}
@@ -185,44 +201,76 @@ main{display:flex;flex-direction:column;gap:13px}
     <!-- SIDEBAR -->
     <aside class="controls card">
       <div class="ctrl-tabs">
-        <button class="ctrl-tab active" data-tab="editor">✏️ Editor</button>
-        <button class="ctrl-tab" data-tab="text">📝 Text</button>
-        <button class="ctrl-tab" data-tab="csv">📁 CSV</button>
+        <button class="ctrl-tab active" data-tab="data">🗃 Data</button>
         <button class="ctrl-tab" data-tab="style">🎨 Style</button>
       </div>
 
-      <!-- ── EDITOR TAB ── -->
-      <div class="ctrl-panel active" id="tab-editor">
-        <div class="help" style="flex-shrink:0">Each row defines a flow from <b>Source</b> → <b>Target</b> with a <b>Value</b>. Use <code>remaining</code> to auto-fill the leftovers.</div>
-        <div class="rows-scroll" id="rowsContainer"></div>
-        <button class="add-row-btn" id="addRowBtn">＋ Add Flow</button>
-      </div>
+      <!-- ── DATA TAB ── -->
+      <div class="ctrl-panel active" id="tab-data">
 
-      <!-- ── TEXT TAB ── -->
-      <div class="ctrl-panel" id="tab-text">
-        <div class="help" style="flex-shrink:0">
-          Format: <code>source,target,value[,color]</code><br>
-          Use <code>remaining</code> as value to auto-calculate the leftover flow from a node.
+        <!-- Sub-tabs -->
+        <div class="data-sub-tabs" style="flex-shrink:0">
+          <button class="data-sub-tab active" data-sub="table">Table</button>
+          <button class="data-sub-tab" data-sub="text">Text</button>
+          <button class="data-sub-tab" data-sub="csv">CSV</button>
         </div>
-        <textarea id="textInput" rows="18" spellcheck="false"
-          placeholder="source,target,value,color&#10;Dubai,Applications,3&#10;Applications,Hired,5,#8FCDBD&#10;Applications,Declined,remaining,#FF8B8B"></textarea>
-        <div id="textStatus" style="flex-shrink:0"></div>
-      </div>
 
-      <!-- ── CSV TAB ── -->
-      <div class="ctrl-panel" id="tab-csv">
-        <div class="csv-drop" id="csvDrop">
-          <div class="csv-icon">📂</div>
-          <div>Drop a CSV file here or<br><label for="csvFile" class="csv-browse">browse to upload</label></div>
-          <input type="file" id="csvFile" accept=".csv,.txt" style="display:none"/>
+        <!-- ── TABLE sub-panel ── -->
+        <div class="data-sub-panel active" id="sub-table">
+          <div class="help" style="flex-shrink:0">Each row defines a flow from <b>Source → Target</b> with a <b>Value</b>. Use <code>remaining</code> to auto-fill the leftovers.</div>
+          <div class="editor-table-wrap" id="tableWrap">
+            <table class="editor-table">
+              <thead>
+                <tr>
+                  <th>From</th>
+                  <th>To</th>
+                  <th class="th-amt">Amount (current)</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+          <button class="add-row-btn" id="addRowBtn" style="flex-shrink:0">＋ Add Flow</button>
         </div>
-        <div class="help">CSV columns: <code>source</code>, <code>target</code>, <code>value</code>, <code>color</code> (optional). A header row is auto-detected.</div>
-        <button id="downloadTemplate" class="btn-sec" style="width:100%">⬇ Download CSV Template</button>
-        <div id="csvStatus"></div>
-      </div>
+
+        <!-- ── TEXT sub-panel ── -->
+        <div class="data-sub-panel" id="sub-text">
+          <div class="help" style="flex-shrink:0">
+            Format: <code>source,target,value[,color]</code><br>
+            Use <code>remaining</code> as value to auto-calculate the leftover flow from a node.
+          </div>
+          <textarea id="textInput" rows="18" spellcheck="false"
+            placeholder="source,target,value,color&#10;Dubai,Applications,3&#10;Applications,Hired,5,#8FCDBD&#10;Applications,Declined,remaining,#FF8B8B"></textarea>
+          <div id="textStatus" style="flex-shrink:0"></div>
+        </div>
+
+        <!-- ── CSV sub-panel ── -->
+        <div class="data-sub-panel" id="sub-csv">
+          <div class="csv-drop" id="csvDrop">
+            <div class="csv-icon">📂</div>
+            <div>Drop a CSV file here or<br><label for="csvFile" class="csv-browse">browse to upload</label></div>
+            <input type="file" id="csvFile" accept=".csv,.txt" style="display:none"/>
+          </div>
+          <div class="help">CSV columns: <code>source</code>, <code>target</code>, <code>value</code>, <code>color</code> (optional). A header row is auto-detected.</div>
+          <button id="downloadTemplate" class="btn-sec" style="width:100%">⬇ Download CSV Template</button>
+          <div id="csvStatus"></div>
+        </div>
+
+      </div><!-- end tab-data -->
 
       <!-- ── STYLE TAB ── -->
       <div class="ctrl-panel" id="tab-style">
+        <div class="sblock">
+          <div class="slabel" style="margin-bottom:4px">Value Display</div>
+          <div class="radio-grp">
+            <label class="radio-opt"><input type="radio" name="valueMode" value="nominal" checked>Nominal</label>
+            <label class="radio-opt"><input type="radio" name="valueMode" value="percent">% of Max</label>
+            <label class="radio-opt"><input type="radio" name="valueMode" value="none">None</label>
+          </div>
+          <div class="help" style="margin-top:4px">Nominal = actual values · % of Max = share of the node with highest total · None = hide values</div>
+        </div>
         <div class="sblock">
           <div class="slabel" style="margin-bottom:6px">Node Alignment</div>
           <div class="radio-grp">
@@ -295,7 +343,8 @@ main{display:flex;flex-direction:column;gap:13px}
       <!-- Btn Row -->
       <div class="btn-row">
         <button class="btn-sec" id="resetBtn" style="flex:1">↺ Reset</button>
-        <button class="btn-sec" id="clearBtn" style="flex:1">✕ Clear All</button>
+        <button class="btn-sec" id="clearBtn" style="flex:1">✕ Clear</button>
+        <button class="btn-sec" id="downloadCsvBtn" style="flex:1">⬇ CSV</button>
       </div>
     </aside>
 
@@ -322,7 +371,7 @@ main{display:flex;flex-direction:column;gap:13px}
           <div class="empty-state" id="emptyState">
             <div style="font-size:2.4rem">🌊</div>
             <div>Add flows to see your Sankey diagram</div>
-            <div class="muted" style="font-size:.84rem">Use the Editor on the left, paste data in the Text tab,<br>or upload a CSV file</div>
+            <div class="muted" style="font-size:.84rem">Use the Table on the left, paste data in the Text tab,<br>or upload a CSV file</div>
           </div>
         </div>
       </section>
@@ -386,7 +435,7 @@ const DEFAULT_ROWS = [
   {source:'Savings',         target:'Emergency Fund',value:'500',  color:'#8FCDBD'},
   {source:'Savings',         target:'Investments',   value:'remaining', color:'#6BA5D7'},
 ];
-const DEFAULT_S = {align:'justify',pad:20,nw:18,op:42,h:520,scheme:'tableau',label:'auto',linkStyle:'gradient',iter:32,labelBox:false};
+const DEFAULT_S = {align:'justify',pad:20,nw:18,op:42,h:520,scheme:'tableau',label:'auto',linkStyle:'gradient',iter:32,labelBox:false,valueMode:'nominal'};
 
 // ═══════════════════════════════════════════════
 //  STATE
@@ -400,12 +449,12 @@ function clone(x){ return JSON.parse(JSON.stringify(x)); }
 //  DOM
 // ═══════════════════════════════════════════════
 const $  = id => document.getElementById(id);
-const svgEl       = $('sankeySvg');
-const tip         = $('tooltip');
-const rowsCont    = $('rowsContainer');
-const txtIn       = $('textInput');
-const errBanner   = $('errBanner');
-const emptyState  = $('emptyState');
+const svgEl      = $('sankeySvg');
+const tip        = $('tooltip');
+const tableBody  = $('tableBody');
+const txtIn      = $('textInput');
+const errBanner  = $('errBanner');
+const emptyState = $('emptyState');
 
 // ═══════════════════════════════════════════════
 //  UTILITIES
@@ -431,11 +480,15 @@ function cssVar(name){
   return getComputedStyle(document.body).getPropertyValue(name).trim();
 }
 
+function autoResize(ta){
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
 // ═══════════════════════════════════════════════
 //  RESOLVE "remaining"
 // ═══════════════════════════════════════════════
 function resolveRows(rawRows){
-  // Pass 1: accumulate explicit incoming / outgoing
   const incoming  = {};
   const explOut   = {};
   const remSrcs   = {};
@@ -456,7 +509,6 @@ function resolveRows(rawRows){
     }
   });
 
-  // Pass 2: resolve
   const out = [];
   rawRows.forEach(r=>{
     const s = (r.source||'').trim();
@@ -480,7 +532,6 @@ function resolveRows(rawRows){
 //  BUILD SANKEY INPUT DATA
 // ═══════════════════════════════════════════════
 function buildData(resolved){
-  // Merge duplicate source→target pairs
   const linkMap = new Map();
   resolved.forEach(r=>{
     const k = `${r.source}\x00${r.target}`;
@@ -494,14 +545,11 @@ function buildData(resolved){
   });
   const dedupe = [...linkMap.values()].filter(r=>r.resolvedValue>0);
 
-  // Build a stable ordered node list and a name→index map
   const names   = [...new Set(dedupe.flatMap(r=>[r.source,r.target]))];
   const nodeIdx = new Map(names.map((n,i)=>[n,i]));
 
   return {
-    // Nodes: just {name}; d3-sankey default nodeId uses array index
     nodes: names.map(name=>({name})),
-    // Links: numeric indices — the canonical d3-sankey format
     links: dedupe.map(r=>({
       source:      nodeIdx.get(r.source),
       target:      nodeIdx.get(r.target),
@@ -517,16 +565,15 @@ function buildData(resolved){
 //  RENDER SANKEY
 // ═══════════════════════════════════════════════
 let renderTimer = null;
-let graph = null; // module-scope so export functions can check it
+let graph = null;
 let sankeyGen = null;
 function scheduleRender(){ clearTimeout(renderTimer); renderTimer=setTimeout(doRender,40); }
 
 function doRender(){
-  graph = null; // reset on each render
+  graph = null;
   const resolved = resolveRows(rows);
   updateRemBadges(resolved);
 
-  // Clear error
   errBanner.style.display='none';
   d3.select(svgEl).selectAll('*').remove();
 
@@ -540,6 +587,17 @@ function doRender(){
   let data;
   try{ data = buildData(resolved); }
   catch(e){ showErr('Data error: '+e.message); return; }
+
+  // Build node color override: source node name → first custom color from its outgoing links
+  const nodeColorOverride = {};
+  data.links.forEach(lk=>{
+    if(lk.customColor && !(lk._src in nodeColorOverride)){
+      nodeColorOverride[lk._src] = lk.customColor;
+    }
+  });
+  function effNodeColor(name){
+    return nodeColorOverride[name] || nodeColor(name);
+  }
 
   const wrap = $('svgWrap');
   const W = Math.max(600, wrap.clientWidth||800);
@@ -555,7 +613,6 @@ function doRender(){
   let graphResult;
   try{
     const gen = d3.sankey()
-      // No .nodeId() — use the default (d,i)=>i so numeric indices in links match
       .nodeAlign(alignMap[S.align]||d3.sankeyJustify)
       .nodeWidth(S.nw)
       .nodePadding(S.pad)
@@ -576,10 +633,13 @@ function doRender(){
   const defs = svg.append('defs');
   const op   = S.op/100;
 
+  // Max node value (used for % display mode)
+  const maxNodeValue = Math.max(...graph.nodes.map(n=>n.value));
+
   // Build gradients
   graph.links.forEach((lk,i)=>{
-    const sc = (lk.customColor&&S.linkStyle!=='gradient') ? lk.customColor : nodeColor(lk.source.name);
-    const tc = nodeColor(lk.target.name);
+    const sc = effNodeColor(lk.source.name);
+    const tc = effNodeColor(lk.target.name);
     if(S.linkStyle==='gradient'){
       const g = defs.append('linearGradient')
         .attr('id',`lg${i}`)
@@ -600,8 +660,8 @@ function doRender(){
       .attr('stroke',(d,i)=>{
         if(d.customColor&&S.linkStyle!=='gradient') return d.customColor;
         if(S.linkStyle==='gradient') return `url(#lg${i})`;
-        if(S.linkStyle==='source')   return nodeColor(d.source.name);
-        return nodeColor(d.target.name);
+        if(S.linkStyle==='source')   return effNodeColor(d.source.name);
+        return effNodeColor(d.target.name);
       })
       .attr('stroke-opacity', op)
       .attr('stroke-width', d=>Math.max(1,d.width))
@@ -632,7 +692,7 @@ function doRender(){
     .attr('class','node-rect')
     .attr('x',d=>d.x0).attr('y',d=>d.y0)
     .attr('width',d=>d.x1-d.x0).attr('height',d=>d.y1-d.y0)
-    .attr('fill',d=>nodeColor(d.name))
+    .attr('fill',d=>effNodeColor(d.name))
     .attr('rx',3).attr('ry',3)
     .on('mouseenter',(ev,d)=>{
       const inV  = d.targetLinks.reduce((s,l)=>s+l.value,0);
@@ -647,8 +707,7 @@ function doRender(){
     .on('mouseleave', hideTip);
 
   // ── LABELS ──
-  // Shared label renderer — called at render time and on each drag event
-  function renderNodeLabel(grp, d) {
+  function renderNodeLabel(grp, d){
     grp.selectAll('text').remove();
     grp.selectAll('.label-bg').remove();
     const nodeH  = d.y1 - d.y0;
@@ -685,8 +744,15 @@ function doRender(){
       .attr('font-weight', '700')
       .text(d.name)
       .style('pointer-events', 'none');
+
     let valEl = null;
-    if (nodeH > 18) {
+    if (nodeH > 18 && S.valueMode !== 'none') {
+      let valText;
+      if (S.valueMode === 'percent') {
+        valText = maxNodeValue > 0 ? (d.value / maxNodeValue * 100).toFixed(1) + '%' : '—';
+      } else {
+        valText = fmtNum(d.value);
+      }
       valEl = grp.append('text')
         .attr('x', tx).attr('y', midY + valOffset)
         .attr('data-dy', valOffset)
@@ -696,7 +762,7 @@ function doRender(){
         .attr('font-family', 'DM Mono,monospace')
         .attr('font-size', Math.min(11, nameSize - 1))
         .attr('font-weight', '400')
-        .text(fmtNum(d.value))
+        .text(valText)
         .style('pointer-events', 'none');
     }
     if (S.labelBox && !isInside) {
@@ -721,7 +787,7 @@ function doRender(){
   }
   nodeGroups.each(function(d) { renderNodeLabel(d3.select(this), d); });
 
-  // ── DRAG (vertical + horizontal) ──
+  // ── DRAG ──
   const nodeDrag = d3.drag()
     .on('start', function(event, d) {
       d3.select(this).raise().style('cursor', 'grabbing');
@@ -791,12 +857,10 @@ function setKPIs(n,l,f,d){
 //  REMAINING BADGES
 // ═══════════════════════════════════════════════
 function updateRemBadges(resolved){
-  // Hide all badges first
-  rowsCont.querySelectorAll('.rem-badge').forEach(b=>{ b.style.display='none'; b.textContent=''; });
-  // Show & populate the resolved ones
+  tableBody.querySelectorAll('.rem-badge').forEach(b=>{ b.style.display='none'; b.textContent=''; });
   resolved.forEach(r=>{
     if(!r.wasRemaining) return;
-    rowsCont.querySelectorAll('.rem-badge').forEach(b=>{
+    tableBody.querySelectorAll('.rem-badge').forEach(b=>{
       if(b.dataset.src===r.source && b.dataset.tgt===r.target){
         b.textContent = '= '+fmtNum(r.resolvedValue);
         b.style.display = 'inline-block';
@@ -806,117 +870,135 @@ function updateRemBadges(resolved){
 }
 
 // ═══════════════════════════════════════════════
-//  EDITOR TAB – BUILD UI ROWS
+//  TABLE EDITOR – BUILD UI ROWS
 // ═══════════════════════════════════════════════
-function buildEditorRows(){
-  rowsCont.innerHTML='';
-  rows.forEach((r,i)=> rowsCont.appendChild(makeRowEl(r,i)));
+function buildTableRows(){
+  tableBody.innerHTML = '';
+  rows.forEach((r,i) => tableBody.appendChild(makeTableRow(r,i)));
 }
 
-function makeRowEl(r, i){
-  const wrap = document.createElement('div');
-  wrap.className='row-item';
-  wrap.dataset.idx=i;
+function makeTableRow(r, i){
+  const tr = document.createElement('tr');
+  tr.dataset.idx = i;
 
-  const srcIn = inp('text', r.source, 'Source', 'row-src');
-  const tgtIn = inp('text', r.target, 'Target', 'row-tgt');
-  const valIn = inp('text', r.value,  'Value or "remaining"', 'row-val val-input');
-  const hasC  = r.color && hex(r.color);
+  // From cell
+  const tdFrom = document.createElement('td');
+  const taFrom = document.createElement('textarea');
+  taFrom.className = 'tc-inp tc-from';
+  taFrom.value = r.source || '';
+  taFrom.rows = 1;
+  taFrom.placeholder = 'Source';
+  tdFrom.appendChild(taFrom);
+  tr.appendChild(tdFrom);
+
+  // To cell
+  const tdTo = document.createElement('td');
+  const taTo = document.createElement('textarea');
+  taTo.className = 'tc-inp tc-to';
+  taTo.value = r.target || '';
+  taTo.rows = 1;
+  taTo.placeholder = 'Target';
+  tdTo.appendChild(taTo);
+  tr.appendChild(tdTo);
+
+  // Amount cell (with rem-badge)
+  const tdAmt = document.createElement('td');
+  tdAmt.className = 'td-amt';
+  const amtWrap = document.createElement('div');
+  amtWrap.className = 'td-amt-cell';
+  const inpAmt = document.createElement('input');
+  inpAmt.type = 'text';
+  inpAmt.className = 'tc-inp tc-amt';
+  inpAmt.value = r.value || '';
+  inpAmt.placeholder = 'Value';
+  const badge = document.createElement('span');
+  badge.className = 'rem-badge';
+  badge.dataset.src = r.source || '';
+  badge.dataset.tgt = r.target || '';
+  const isRem = (r.value+'').trim().toLowerCase() === 'remaining';
+  badge.style.display = isRem ? 'inline-block' : 'none';
+  amtWrap.appendChild(inpAmt);
+  amtWrap.appendChild(badge);
+  tdAmt.appendChild(amtWrap);
+  tr.appendChild(tdAmt);
 
   // Color cell
+  const hasC = r.color && hex(r.color);
+  const tdColor = document.createElement('td');
+  tdColor.className = 'td-color';
   const colorCell = document.createElement('div');
-  colorCell.className = 'color-cell'+(hasC?' has-color':'');
-
+  colorCell.className = 'color-cell' + (hasC ? ' has-color' : '');
   const colorPick = document.createElement('input');
-  colorPick.type='color'; colorPick.className='row-color';
+  colorPick.type = 'color';
+  colorPick.className = 'row-color';
   colorPick.value = hasC ? r.color : '#8DBBFF';
-
+  if(!hasC){ colorPick.style.opacity='0.35'; colorPick.title='Click to set custom colour'; }
   const clearBtn = document.createElement('button');
-  clearBtn.className='color-clear'; clearBtn.title='Remove custom colour'; clearBtn.textContent='×';
-
+  clearBtn.className = 'color-clear';
+  clearBtn.title = 'Remove custom colour';
+  clearBtn.textContent = '×';
   colorCell.appendChild(colorPick);
   colorCell.appendChild(clearBtn);
+  tdColor.appendChild(colorCell);
+  tr.appendChild(tdColor);
 
-  // Overlay to show "auto" state
-  if(!hasC){
-    colorPick.style.opacity='0.35';
-    colorPick.title='Click to set custom colour';
-  }
-
-  const arrowEl = document.createElement('span');
-  arrowEl.className='arrow-sep'; arrowEl.textContent='→';
-
+  // Del cell
+  const tdDel = document.createElement('td');
+  tdDel.className = 'td-del';
   const delBtn = document.createElement('button');
-  delBtn.className='del-btn'; delBtn.title='Remove row'; delBtn.innerHTML='✕';
+  delBtn.className = 'del-btn';
+  delBtn.title = 'Remove row';
+  delBtn.innerHTML = '✕';
+  tdDel.appendChild(delBtn);
+  tr.appendChild(tdDel);
 
-  wrap.appendChild(srcIn);
-  wrap.appendChild(arrowEl);
-  wrap.appendChild(tgtIn);
-  wrap.appendChild(valIn);
-  wrap.appendChild(colorCell);
-  wrap.appendChild(delBtn);
-
-  // Remaining badge — always present so updateRemBadges can find it
-  const isRem = (r.value+'').trim().toLowerCase()==='remaining';
-  const extra = document.createElement('div');
-  extra.className='row-extra';
-  const badge = document.createElement('span');
-  badge.className='rem-badge';
-  badge.dataset.src = r.source;
-  badge.dataset.tgt = r.target;
-  badge.style.display = isRem ? 'inline-block' : 'none';
-  extra.appendChild(badge);
-  wrap.appendChild(extra);
+  // Auto-resize textareas on init
+  requestAnimationFrame(()=>{ autoResize(taFrom); autoResize(taTo); });
 
   // Events
-  [srcIn,tgtIn,valIn].forEach(el=>{
-    el.addEventListener('input', ()=>{ readFromEditor(); syncText(); scheduleRender(); });
+  [taFrom, taTo].forEach(ta=>{
+    ta.addEventListener('input', ()=>{
+      autoResize(ta);
+      readFromEditor(); syncText(); scheduleRender();
+    });
+  });
+
+  inpAmt.addEventListener('input', ()=>{
+    readFromEditor(); syncText(); scheduleRender();
   });
 
   colorPick.addEventListener('input', ()=>{
-    const c = colorPick.value;
-    rows[i].color = c;
+    rows[i].color = colorPick.value;
     colorCell.classList.add('has-color');
-    colorPick.style.opacity='1';
-    colorPick.title='';
-    syncText();
-    scheduleRender();
+    colorPick.style.opacity = '1';
+    colorPick.title = '';
+    syncText(); scheduleRender();
   });
 
   clearBtn.addEventListener('click', ()=>{
-    rows[i].color='';
+    rows[i].color = '';
     colorCell.classList.remove('has-color');
-    colorPick.style.opacity='0.35';
-    colorPick.title='Click to set custom colour';
-    syncText();
-    scheduleRender();
+    colorPick.style.opacity = '0.35';
+    colorPick.title = 'Click to set custom colour';
+    syncText(); scheduleRender();
   });
 
   delBtn.addEventListener('click', ()=>{
-    rows.splice(i,1);
-    buildEditorRows();
-    syncText();
-    scheduleRender();
+    rows.splice(i, 1);
+    buildTableRows(); syncText(); scheduleRender();
   });
 
-  return wrap;
-}
-
-function inp(type, val, ph, cls){
-  const el = document.createElement('input');
-  el.type=type; el.value=val||''; el.placeholder=ph; el.className=cls||'';
-  return el;
+  return tr;
 }
 
 function readFromEditor(){
-  const items = rowsCont.querySelectorAll('.row-item');
-  items.forEach((item,i)=>{
-    if(!rows[i]) rows[i]={source:'',target:'',value:'',color:''};
-    rows[i].source = item.querySelector('.row-src').value.trim();
-    rows[i].target = item.querySelector('.row-tgt').value.trim();
-    rows[i].value  = item.querySelector('.row-val').value.trim();
-    // Sync badge key and visibility without a full DOM rebuild
-    const badge = item.querySelector('.rem-badge');
+  const trs = tableBody.querySelectorAll('tr[data-idx]');
+  trs.forEach((tr, i)=>{
+    if(!rows[i]) rows[i] = {source:'',target:'',value:'',color:''};
+    rows[i].source = tr.querySelector('.tc-from').value.trim();
+    rows[i].target = tr.querySelector('.tc-to').value.trim();
+    rows[i].value  = tr.querySelector('.tc-amt').value.trim();
+    const badge = tr.querySelector('.rem-badge');
     if(badge){
       badge.dataset.src = rows[i].source;
       badge.dataset.tgt = rows[i].target;
@@ -968,7 +1050,7 @@ txtIn.addEventListener('input',()=>{
       $('textStatus').innerHTML=`<span class="status-ok">✓ ${parsed.length} row${parsed.length!==1?'s':''}</span>`;
     }
     rows = parsed;
-    buildEditorRows();
+    buildTableRows();
     scheduleRender();
   }, 300);
 });
@@ -979,7 +1061,6 @@ txtIn.addEventListener('input',()=>{
 function parseCSV(text){
   const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
   if(!lines.length) return [];
-  // Detect header
   const first = lines[0].toLowerCase();
   const hasHeader = first.includes('source')||first.includes('target')||first.includes('from')||first.includes('to');
   const dataLines = hasHeader ? lines.slice(1) : lines;
@@ -1001,7 +1082,7 @@ function handleFile(file){
       return;
     }
     rows = parsed;
-    buildEditorRows();
+    buildTableRows();
     syncText();
     scheduleRender();
     $('csvStatus').innerHTML=`<span class="status-ok">✓ Loaded ${parsed.length} rows from ${file.name}</span>`;
@@ -1038,15 +1119,36 @@ Sign Up,Dropped,remaining,`;
   URL.revokeObjectURL(a.href);
 });
 
+// ─── Download current work as CSV ───
+$('downloadCsvBtn').addEventListener('click',()=>{
+  const header = 'source,target,value,color';
+  const dataRows = rows.map(r=>{
+    const color = r.color && hex(r.color) ? r.color : '';
+    // Wrap fields containing commas in quotes
+    const esc = v => (v+'').includes(',') ? `"${v}"` : v;
+    return [esc(r.source), esc(r.target), esc(r.value), color].join(',');
+  }).join('\n');
+  const csv = header + '\n' + dataRows;
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sankey_data.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
 // ═══════════════════════════════════════════════
 //  ADD ROW
 // ═══════════════════════════════════════════════
 $('addRowBtn').addEventListener('click',()=>{
   rows.push({source:'',target:'',value:'',color:''});
-  buildEditorRows();
+  buildTableRows();
   syncText();
-  const last = rowsCont.lastElementChild;
-  if(last){ last.scrollIntoView({behavior:'smooth',block:'nearest'}); last.querySelector('.row-src').focus(); }
+  const last = tableBody.lastElementChild;
+  if(last){
+    last.scrollIntoView({behavior:'smooth',block:'nearest'});
+    last.querySelector('.tc-from').focus();
+  }
 });
 
 // ═══════════════════════════════════════════════
@@ -1058,16 +1160,26 @@ document.querySelectorAll('.ctrl-tab').forEach(btn=>{
     document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
     $('tab-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab==='text'){
-      // Reflect any editor changes into the textarea
+  });
+});
+
+// ─── Data sub-tabs ───
+document.querySelectorAll('.data-sub-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const sub = btn.dataset.sub;
+    document.querySelectorAll('.data-sub-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.data-sub-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    $('sub-'+sub).classList.add('active');
+
+    if(sub === 'text'){
       syncText();
     }
-    if(btn.dataset.tab==='editor'){
-      // Flush any in-flight text debounce so editor shows latest text changes
+    if(sub === 'table'){
       clearTimeout(textTimer);
       const {rows:parsed} = parseText(txtIn.value);
       if(parsed.length){ rows = parsed; }
-      buildEditorRows();
+      buildTableRows();
     }
   });
 });
@@ -1099,13 +1211,16 @@ document.querySelectorAll('input[name="align"]').forEach(r=>{
   r.addEventListener('change',()=>{ S.align=r.value; scheduleRender(); });
 });
 
+document.querySelectorAll('input[name="valueMode"]').forEach(r=>{
+  r.addEventListener('change',()=>{ S.valueMode=r.value; scheduleRender(); });
+});
+
 // ═══════════════════════════════════════════════
 //  RESET / CLEAR
 // ═══════════════════════════════════════════════
 $('resetBtn').addEventListener('click',()=>{
   rows = clone(DEFAULT_ROWS);
   S    = clone(DEFAULT_S);
-  // Sync all style controls back to defaults
   $('sPad').value=S.pad;       $('vPad').textContent=S.pad;
   $('sNW').value=S.nw;         $('vNW').textContent=S.nw+'px';
   $('sOp').value=S.op;         $('vOp').textContent=S.op+'%';
@@ -1116,14 +1231,15 @@ $('resetBtn').addEventListener('click',()=>{
   $('sIter').value=S.iter;
   $('sLabelBox').checked=S.labelBox;
   document.querySelector(`input[name="align"][value="${S.align}"]`).checked=true;
-  buildEditorRows();
+  document.querySelector(`input[name="valueMode"][value="${S.valueMode}"]`).checked=true;
+  buildTableRows();
   syncText();
   scheduleRender();
 });
 
 $('clearBtn').addEventListener('click',()=>{
   rows=[{source:'',target:'',value:'',color:''}];
-  buildEditorRows();
+  buildTableRows();
   syncText();
   scheduleRender();
 });
@@ -1140,7 +1256,6 @@ $('themeToggle').addEventListener('click',()=>{
 // ═══════════════════════════════════════════════
 //  EXPORT
 // ═══════════════════════════════════════════════
-// Produce an export-ready clone: black text, white label boxes (for transparent bg)
 function exportCloneXml(){
   const clone = svgEl.cloneNode(true);
   clone.querySelectorAll('text').forEach(t => t.setAttribute('fill','#1a1a1a'));
@@ -1171,7 +1286,6 @@ $('exportPngBtn').addEventListener('click',()=>{
     canvas.width = W*2; canvas.height = H*2;
     const ctx = canvas.getContext('2d');
     ctx.scale(2,2);
-    // No fillRect → transparent background; only the Sankey is drawn
     ctx.drawImage(img,0,0,W,H);
     const a=document.createElement('a');
     a.href=canvas.toDataURL('image/png');
@@ -1190,7 +1304,6 @@ ro.observe($('svgWrap'));
 // ═══════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════
-// Slider editable
 function makeSliderEditable(valSpan,rangeEl){
   if(!valSpan||!rangeEl)return;
   const inp=document.createElement('input');
@@ -1217,7 +1330,7 @@ function makeSliderEditable(valSpan,rangeEl){
 [['sPad','vPad'],['sNW','vNW'],['sOp','vOp'],['sH','vH']
 ].forEach(([rid,vid])=>makeSliderEditable($(vid),$(rid)));
 
-buildEditorRows();
+buildTableRows();
 syncText();
 scheduleRender();
 
