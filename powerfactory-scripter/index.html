@@ -3248,7 +3248,9 @@ def save_intermediate_results(df, output_dir, prefix, last_save_time, interval_m
     if current_time - last_save_time >= interval_minutes * 60:
         filename = f"{prefix}_{timestamp_string()}.csv"
         full_path = os.path.join(output_dir, filename)
-        df.to_csv(full_path, index=False)
+        with open(full_path, "w", newline="") as _int_f:
+            _int_f.write("# Made using tool.adjiebrotots.com/powerfactory-scripter\n")
+            df.to_csv(_int_f, index=False)
         safe_print(f"Intermediate results saved: {full_path}")
         return current_time
     return last_save_time
@@ -3567,6 +3569,8 @@ def save_timeseries_graph(time_values, ts_data, spec, row, graph_dir, context_la
     safe_name = safe_name.replace(" ", "_").replace("(", "").replace(")", "").replace("/", "-")
     graph_filename = f"{safe_name}_{timestamp_string()}.png"
     graph_path = os.path.join(graph_dir, graph_filename)
+    plt.figtext(0.99, 0.01, 'Ⓐ Made using tool.adjiebrotots.com/powerfactory-scripter',
+                ha='right', va='bottom', fontsize=7, alpha=0.25, color='#333333')
     plt.savefig(graph_path)
     plt.close()
     safe_print(f"Graph saved: {graph_path}")
@@ -3609,6 +3613,7 @@ def save_timeseries_raw_csv(time_values, ts_data, spec, row, raw_dir, context_la
     raw_path = os.path.join(raw_dir, raw_filename)
     with open(raw_path, "w", newline="") as f:
         writer = csv.writer(f)
+        writer.writerow(["# Made using tool.adjiebrotots.com/powerfactory-scripter"])
         writer.writerow(["time_s", spec["variable"]])
         for t, v in zip(time_values, col_data):
             writer.writerow([t, v])
@@ -4328,7 +4333,9 @@ function buildOutputExport(cfg) {
   return `
 # ── OUTPUT EXPORT ─────────────────────────────────────────────────
 final_output_path = os.path.join(output_dir, f"Run{timestamp_string()}.csv")
-results_df.to_csv(final_output_path, index=False)
+with open(final_output_path, "w", newline="") as _out_f:
+    _out_f.write("# Made using tool.adjiebrotots.com/powerfactory-scripter\n")
+    results_df.to_csv(_out_f, index=False)
 
 print("Run complete.")
 print(f"Final output: {final_output_path}")
@@ -4475,7 +4482,8 @@ function copyCode() {
 
 function downloadPy() {
   if (!window._generatedCode) { alert('Generate code first.'); return; }
-  download(window._generatedCode, 'powerfactory_script.py', 'text/plain');
+  const marked = '# Made using tool.adjiebrotots.com/powerfactory-scripter\n' + window._generatedCode;
+  download(marked, 'powerfactory_script.py', 'text/plain');
 }
 
 function download(content, filename, type) {

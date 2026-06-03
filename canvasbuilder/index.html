@@ -1132,6 +1132,15 @@ document.getElementById('savePngBtn').addEventListener('click', async()=>{
     const link=document.createElement('a');
     const safe=(S.canvasName||'canvas').replace(/[^a-z0-9\-_ ]/gi,'').trim()||'canvas';
     link.download=safe+'-'+S.canvasType+'.png';
+    const wCtx=result.getContext('2d');
+    wCtx.save();
+    wCtx.globalAlpha=0.22;
+    wCtx.font='500 11px "DM Sans",sans-serif';
+    wCtx.fillStyle='#1a1a1a';
+    wCtx.textAlign='right';
+    wCtx.textBaseline='bottom';
+    wCtx.fillText('Ⓐ Made using tool.adjiebrotots.com/canvasbuilder',result.width-12,result.height-12);
+    wCtx.restore();
     link.href=result.toDataURL('image/png');
     link.click();
     showToast('PNG saved ✓','success'); markClean();
@@ -1146,7 +1155,7 @@ document.getElementById('savePngBtn').addEventListener('click', async()=>{
 
 /* ══ EXPORT JSON ═════════════════════════════════════ */
 document.getElementById('saveJsonBtn').addEventListener('click',()=>{
-  const data={'canvas-name':S.canvasName,'canvas-type':S.canvasType,'cell-sizes':S.cellSizes};
+  const data={'canvas-name':S.canvasName,'canvas-type':S.canvasType,'cell-sizes':S.cellSizes,'_source':'tool.adjiebrotots.com/canvasbuilder'};
   curSecs().forEach(sec=>{
     data[sec.id]=(S.sections[sec.id]||[]).map(item=>({
       value: item.value,

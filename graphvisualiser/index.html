@@ -706,11 +706,18 @@ function renderChart() {
 }
 
 // ─── SAVE PNG ─────────────────────────────────────────────────────────────────
-document.getElementById('savePng').onclick = () => {
+document.getElementById('savePng').onclick = async () => {
   const title = document.getElementById('chartTitle').value || 'graph';
-  Plotly.downloadImage('plotDiv', {
+  const wmAnnotation = {
+    xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom',
+    showarrow:false, text:'Ⓐ Made using tool.adjiebrotots.com/graphvisualiser',
+    font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' },
+  };
+  await Plotly.relayout('plotDiv', { annotations:[wmAnnotation] });
+  await Plotly.downloadImage('plotDiv', {
     format:'png', filename:title.replace(/\s+/g,'_'), scale:2, width:1440, height:760
   });
+  await Plotly.relayout('plotDiv', { annotations:[] });
 };
 
 // ─── UI HELPERS ───────────────────────────────────────────────────────────────

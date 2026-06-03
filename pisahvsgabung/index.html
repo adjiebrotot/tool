@@ -383,6 +383,7 @@
           <button class="tab-btn" data-scenario="gabung" data-i18n="tabGabung">Gabung Harta Detail</button>
         </div>
         <div class="csv-btn-row">
+          <button class="btn-secondary" id="pngBtn" type="button">⬇ PNG</button>
           <button class="btn-secondary" id="downloadBtn" type="button">⬇ CSV</button>
         </div>
         <div class="table-wrap" id="detailTable"></div>
@@ -794,6 +795,7 @@ const els = {
   husbandDeductionInput: $('husbandDeductionInput'),
   wifeDeductionInput: $('wifeDeductionInput'),
   resetBtn: $('resetBtn'),
+  pngBtn: $('pngBtn'),
   downloadBtn: $('downloadBtn'),
   bracketsContainer: $('bracketsContainer'),
   ptkpBase: $('ptkpBase'),
@@ -1335,6 +1337,34 @@ function buildBracketEditor(){
   });
 }
 
+/* ── PNG ── */
+function downloadChartPng(canvasId, filename) {
+  const src = document.getElementById(canvasId);
+  if(!src) return;
+  const tmp = document.createElement('canvas');
+  tmp.width = src.width; tmp.height = src.height;
+  const ctx = tmp.getContext('2d');
+  ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
+  ctx.fillRect(0, 0, tmp.width, tmp.height);
+  ctx.drawImage(src, 0, 0);
+  ctx.save();
+  ctx.globalAlpha = 0.22;
+  ctx.font = '500 11px "DM Sans",sans-serif';
+  ctx.fillStyle = '#1a1a1a';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/pisahvsgabung', tmp.width - 12, tmp.height - 12);
+  ctx.restore();
+  const a = document.createElement('a');
+  a.href = tmp.toDataURL('image/png');
+  a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+els.pngBtn.addEventListener('click', () => {
+  downloadChartPng('chartCanvas', 'pisah_vs_gabung_chart1.png');
+  downloadChartPng('chartCanvas2', 'pisah_vs_gabung_chart2.png');
+});
+
 /* ── CSV ── */
 function downloadCsv(){
   if(!latestRows.length)return;
@@ -1343,7 +1373,7 @@ function downloadCsv(){
     const w=Math.abs(r.diff)<1000?'Same':r.diff>0?'Pisah':'Gabung';
     return [r.salary,r.husbandGross,r.wifeGross,r.totalDeduction,r.netIncome,r.ptkpH,r.ptkpW,r.taxableH,r.taxableW,r.taxH,r.taxW,r.pisahTax,r.ptkpGabung,r.taxableGabung,r.gabungTax,r.diff,w,(r.pisahRate*100).toFixed(2)+'%',(r.gabungRate*100).toFixed(2)+'%'].join(',');
   });
-  const csv=[h.join(','),...lines].join('\n');
+  const csv='# Made using tool.adjiebrotots.com/pisahvsgabung\n'+[h.join(','),...lines].join('\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');a.href=url;a.download='pisah_vs_gabung_harta.csv';

@@ -604,6 +604,7 @@ abbr.abbr-hint{text-decoration:underline dotted;cursor:help;text-underline-offse
         <button class="tab-btn" id="rtbTableTab" data-table="rtb" style="display:none;" data-i18n="tabRTBCashflow">🔄 Rent-Then-Buy Cashflow</button>
       </div>
       <div class="tab-row">
+        <button class="btn-secondary" id="pngBtn" type="button">⬇ PNG</button>
         <button class="btn-secondary" id="downloadBtn" type="button" data-i18n="btnCSV">⬇ CSV</button>
       </div>
     </div>
@@ -2495,6 +2496,31 @@ function applyPreset(cityKey){
   rerender();
 }
 
+/* ── PNG ── */
+function downloadChartPng() {
+  const src = document.getElementById('chartCanvas');
+  if(!src) return;
+  const tmp = document.createElement('canvas');
+  tmp.width = src.width; tmp.height = src.height;
+  const ctx = tmp.getContext('2d');
+  ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
+  ctx.fillRect(0, 0, tmp.width, tmp.height);
+  ctx.drawImage(src, 0, 0);
+  ctx.save();
+  ctx.globalAlpha = 0.22;
+  ctx.font = '500 11px "DM Sans",sans-serif';
+  ctx.fillStyle = '#1a1a1a';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/rentvsownhouse', tmp.width - 12, tmp.height - 12);
+  ctx.restore();
+  const a = document.createElement('a');
+  a.href = tmp.toDataURL('image/png');
+  a.download = 'rent_vs_own_chart.png';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+$('pngBtn').addEventListener('click', downloadChartPng);
+
 /* ── CSV ── */
 function downloadCsv(){
   const na='';
@@ -2562,7 +2588,7 @@ function downloadCsv(){
     });
     filename='rent_then_buy_cashflow.csv';
   } else { return; }
-  const csv=[headers.join(','),...lines].join('\n');
+  const csv='# Made using tool.adjiebrotots.com/rentvsownhouse\n'+[headers.join(','),...lines].join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
   a.download=filename; document.body.appendChild(a); a.click(); a.remove();
