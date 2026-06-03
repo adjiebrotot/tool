@@ -215,7 +215,7 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 var Tips = window.RVO_TIPS || {};
 
 /* ── i18n ── */
-let lang = 'en';
+let lang = localStorage.getItem('pf-lang') === 'id' ? 'id' : 'en';
 const LANG_SENS = {
   en: {
     sensTitle: '🏠 Rent vs Own — Sensitivity Tool',
@@ -930,6 +930,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   document.getElementById('langToggle').addEventListener('click', ()=>{
     lang = lang === 'en' ? 'id' : 'en';
+    localStorage.setItem('pf-lang', lang);
     applyLang();
     rerender();
   });

@@ -622,7 +622,7 @@ abbr.abbr-hint{text-decoration:underline dotted;cursor:help;text-underline-offse
 "use strict";
 
 /* ── i18n ── */
-let lang = 'en';
+let lang = localStorage.getItem('pf-lang') === 'id' ? 'id' : 'en';
 const LANG = {
   en: {
     /* header */
@@ -2688,6 +2688,7 @@ $('themeToggle').addEventListener('click',()=>{
 if(localStorage.getItem('pf-theme')==='dark'){document.body.classList.remove('light');$('themeToggle').textContent='☀️ Light';}
 $('langToggle').addEventListener('click',()=>{
   lang = lang === 'en' ? 'id' : 'en';
+  localStorage.setItem('pf-lang', lang);
   applyLang();
   if(chartInstance){ chartInstance.destroy(); chartInstance=null; }
   rerender();
