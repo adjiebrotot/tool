@@ -1433,7 +1433,7 @@ function updateEquityChart(){
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
     scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
-              y:{title:{display:true,text:'Portfolio Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
+              y:{title:{display:true,text:'Portfolio Value ('+currentCurrencySymbol+')',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
   };}
 
   if(equityChartInstance){
@@ -1444,6 +1444,7 @@ function updateEquityChart(){
     equityChartInstance.options.scales.y.ticks.color=mutedColor; equityChartInstance.options.scales.y.grid.color=gridColor;
     equityChartInstance.options.scales.y.ticks.callback=yCallback;
     equityChartInstance.options.scales.y.title.color=mutedColor;
+    equityChartInstance.options.scales.y.title.text='Portfolio Value ('+currentCurrencySymbol+')';
     equityChartInstance.update('none');
     // re-apply deposited visibility
     datasets.forEach((ds,i)=>{ if(ds._type==='deposit') equityChartInstance.setDatasetVisibility(i,showDeposited); });
@@ -1592,34 +1593,101 @@ $('resetBtn').addEventListener('click',()=>{
 });
 
 /* ─── DOWNLOAD CHART PNG ─── */
-function downloadChartPng(canvasId, filename) {
+function downloadChartPng(canvasId, filename, chartTitle, legendId) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
   const OUT = 3;
+  const chartW = Math.round(src.width / dpr * OUT);
+  const chartH = Math.round(src.height / dpr * OUT);
+  const isLight = document.body.classList.contains('light');
+  const bgColor = isLight ? '#ffffff' : '#0F1728';
+  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const FONT = '"DM Sans", sans-serif';
+
+  // Collect visible legend items from HTML legend element
+  const legendItems = [];
+  if(legendId){
+    const legendEl = document.getElementById(legendId);
+    if(legendEl){
+      legendEl.querySelectorAll('.legend-item:not(.hidden)').forEach(item => {
+        const dot = item.querySelector('.dot');
+        const label = item.textContent.trim();
+        const color = dot ? window.getComputedStyle(dot).backgroundColor : '#888888';
+        if(label) legendItems.push({ label, color });
+      });
+    }
+  }
+
+  const titleFontPx = Math.round(14 * OUT);
+  const legendFontPx = Math.round(11 * OUT);
+  const titleH = chartTitle ? Math.round(40 * OUT) : 0;
+  const legendH = legendItems.length ? Math.round(34 * OUT) : 0;
+
   const tmp = document.createElement('canvas');
-  tmp.width = Math.round(src.width / dpr * OUT);
-  tmp.height = Math.round(src.height / dpr * OUT);
+  tmp.width = chartW;
+  tmp.height = chartH + titleH + legendH;
   const ctx = tmp.getContext('2d');
-  ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
+
+  ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, tmp.width, tmp.height);
-  ctx.drawImage(src, 0, 0, tmp.width, tmp.height);
+
+  if(chartTitle){
+    ctx.font = `700 ${titleFontPx}px ${FONT}`;
+    ctx.fillStyle = fgColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(chartTitle, tmp.width / 2, titleH / 2);
+  }
+
+  ctx.drawImage(src, 0, titleH, chartW, chartH);
+
+  if(legendItems.length){
+    const ly = titleH + chartH;
+    const dotR = Math.round(5 * OUT);
+    const gap = Math.round(7 * OUT);
+    const pad = Math.round(20 * OUT);
+    ctx.font = `500 ${legendFontPx}px ${FONT}`;
+    ctx.textBaseline = 'middle';
+    let totalW = 0;
+    legendItems.forEach((item, i) => {
+      totalW += dotR * 2 + gap + ctx.measureText(item.label).width + (i < legendItems.length - 1 ? pad : 0);
+    });
+    let x = Math.max(Math.round(16 * OUT), (tmp.width - totalW) / 2);
+    const cy = ly + legendH / 2;
+    legendItems.forEach(item => {
+      ctx.fillStyle = item.color;
+      ctx.beginPath();
+      ctx.arc(x + dotR, cy, dotR, 0, Math.PI * 2);
+      ctx.fill();
+      x += dotR * 2 + gap;
+      ctx.fillStyle = fgColor;
+      ctx.textAlign = 'left';
+      ctx.fillText(item.label, x, cy);
+      x += ctx.measureText(item.label).width + pad;
+    });
+  }
+
   ctx.save();
   ctx.globalAlpha = 0.22;
-  ctx.font = `500 ${Math.round(11 * OUT)}px "DM Sans",sans-serif`;
+  ctx.font = `500 ${Math.round(11 * OUT)}px ${FONT}`;
   ctx.fillStyle = '#1a1a1a';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'bottom';
-  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/dcasimulator', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
+  ctx.fillText('Ⓐ tool.adjiebrotots.com', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
   ctx.restore();
+
   const a = document.createElement('a');
   a.href = tmp.toDataURL('image/png');
   a.download = filename;
   document.body.appendChild(a); a.click(); a.remove();
 }
-$('pricePngBtn').addEventListener('click', () => downloadChartPng('priceCanvas', 'dca_price_chart.png'));
-$('equityPngBtn').addEventListener('click', () => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png'));
-$('sensPngBtn').addEventListener('click', () => downloadChartPng('sensCanvas', 'dca_sensitivity_chart.png'));
+$('pricePngBtn').addEventListener('click', () => downloadChartPng('priceCanvas', 'dca_price_chart.png', 'DCA Scenario Explorer — Security Prices (Normalised to 100)', 'priceLegend'));
+$('equityPngBtn').addEventListener('click', () => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend'));
+$('sensPngBtn').addEventListener('click', () => {
+  const subtitle = document.getElementById('sensChartSubtitle')?.textContent || 'Sensitivity Analysis';
+  downloadChartPng('sensCanvas', 'dca_sensitivity_chart.png', 'DCA Sensitivity Analysis — ' + subtitle, null);
+});
 
 /* ─── DOWNLOAD CSV (Detailed Breakdown of active tab) ─── */
 $('downloadBtn').addEventListener('click',()=>{
@@ -1841,6 +1909,7 @@ function renderSensitivityChart(sec, labels, values, subtitle){
     sensitivityChartInstance.options.scales.y.ticks.color=mutedColor;
     sensitivityChartInstance.options.scales.y.grid.color=gridColor;
     sensitivityChartInstance.options.scales.y.title.color=mutedColor;
+    sensitivityChartInstance.options.scales.y.title.text='Final Portfolio Value ('+currentCurrencySymbol+')';
     sensitivityChartInstance.options.scales.y.ticks.callback=yTickCb;
     sensitivityChartInstance.update();
   } else {
@@ -1863,7 +1932,7 @@ function renderSensitivityChart(sec, labels, values, subtitle){
         },
         scales:{
           x:{title:{display:true,text:'Scenario Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11}},grid:{color:gridColor}},
-          y:{title:{display:true,text:'Final Portfolio Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yTickCb},grid:{color:gridColor},beginAtZero:false}
+          y:{title:{display:true,text:'Final Portfolio Value ('+currentCurrencySymbol+')',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yTickCb},grid:{color:gridColor},beginAtZero:false}
         }
       }
     });

@@ -921,40 +921,115 @@ $('downloadBtn').addEventListener('click',()=>{
 });
 
 /* ─── DOWNLOAD CHART PNG ─── */
-function downloadChartJsPng(canvasId, filename) {
+function downloadChartJsPng(canvasId, filename, chartTitle, legendId) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
   const OUT = 3;
+  const chartW = Math.round(src.width / dpr * OUT);
+  const chartH = Math.round(src.height / dpr * OUT);
+  const isLight = document.body.classList.contains('light');
+  const bgColor = isLight ? '#ffffff' : '#0F1728';
+  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const FONT = '"DM Sans", sans-serif';
+
+  const legendItems = [];
+  if(legendId){
+    const legendEl = document.getElementById(legendId);
+    if(legendEl){
+      legendEl.querySelectorAll('.legend-item:not(.hidden)').forEach(item => {
+        const dot = item.querySelector('.dot');
+        const label = item.textContent.trim();
+        const color = dot ? window.getComputedStyle(dot).backgroundColor : '#888888';
+        if(label) legendItems.push({ label, color });
+      });
+    }
+  }
+
+  const titleFontPx = Math.round(14 * OUT);
+  const legendFontPx = Math.round(11 * OUT);
+  const titleH = chartTitle ? Math.round(40 * OUT) : 0;
+  const legendH = legendItems.length ? Math.round(34 * OUT) : 0;
+
   const tmp = document.createElement('canvas');
-  tmp.width = Math.round(src.width / dpr * OUT);
-  tmp.height = Math.round(src.height / dpr * OUT);
+  tmp.width = chartW;
+  tmp.height = chartH + titleH + legendH;
   const ctx = tmp.getContext('2d');
-  ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
+
+  ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, tmp.width, tmp.height);
-  ctx.drawImage(src, 0, 0, tmp.width, tmp.height);
+
+  if(chartTitle){
+    ctx.font = `700 ${titleFontPx}px ${FONT}`;
+    ctx.fillStyle = fgColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(chartTitle, tmp.width / 2, titleH / 2);
+  }
+
+  ctx.drawImage(src, 0, titleH, chartW, chartH);
+
+  if(legendItems.length){
+    const ly = titleH + chartH;
+    const dotR = Math.round(5 * OUT);
+    const gap = Math.round(7 * OUT);
+    const pad = Math.round(20 * OUT);
+    ctx.font = `500 ${legendFontPx}px ${FONT}`;
+    ctx.textBaseline = 'middle';
+    let totalW = 0;
+    legendItems.forEach((item, i) => {
+      totalW += dotR * 2 + gap + ctx.measureText(item.label).width + (i < legendItems.length - 1 ? pad : 0);
+    });
+    let x = Math.max(Math.round(16 * OUT), (tmp.width - totalW) / 2);
+    const cy = ly + legendH / 2;
+    legendItems.forEach(item => {
+      ctx.fillStyle = item.color;
+      ctx.beginPath();
+      ctx.arc(x + dotR, cy, dotR, 0, Math.PI * 2);
+      ctx.fill();
+      x += dotR * 2 + gap;
+      ctx.fillStyle = fgColor;
+      ctx.textAlign = 'left';
+      ctx.fillText(item.label, x, cy);
+      x += ctx.measureText(item.label).width + pad;
+    });
+  }
+
   ctx.save();
   ctx.globalAlpha = 0.22;
-  ctx.font = `500 ${Math.round(11 * OUT)}px "DM Sans",sans-serif`;
+  ctx.font = `500 ${Math.round(11 * OUT)}px ${FONT}`;
   ctx.fillStyle = '#1a1a1a';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'bottom';
-  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/financingvscash', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
+  ctx.fillText('Ⓐ tool.adjiebrotots.com', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
   ctx.restore();
+
   const a = document.createElement('a');
   a.href = tmp.toDataURL('image/png');
   a.download = filename;
   document.body.appendChild(a); a.click(); a.remove();
 }
-$('chartPngBtn').addEventListener('click', () => downloadChartJsPng('chartCanvas', 'financing_wealth_chart.png'));
-$('sens2dPngBtn').addEventListener('click', () => downloadChartJsPng('sensCanvas', 'financing_sensitivity_2d.png'));
+$('chartPngBtn').addEventListener('click', () => {
+  const title = document.getElementById('chartTitle')?.textContent || 'Finance vs Cash Purchase';
+  downloadChartJsPng('chartCanvas', 'financing_wealth_chart.png', title, 'chartLegend');
+});
+$('sens2dPngBtn').addEventListener('click', () => {
+  const title = document.getElementById('sens2dTitle')?.textContent || 'Finance vs Cash — 2D Sensitivity';
+  downloadChartJsPng('sensCanvas', 'financing_sensitivity_2d.png', title, 'sensLegend');
+});
 $('sens3dPngBtn').addEventListener('click', async () => {
+  const title3d = document.getElementById('sens3dTitle')?.textContent || 'Finance vs Cash — 3D Sensitivity Surface';
+  const titleAnnotation = {
+    xref:'paper', yref:'paper', x:0.5, y:1.06, xanchor:'center', yanchor:'bottom',
+    showarrow:false, text:`<b>${title3d}</b>`,
+    font:{ size:14, color:document.body.classList.contains('light')?'#2D3436':'#EAF1FF', family:'DM Sans, sans-serif' },
+  };
   const wmAnnotation = {
     xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom',
-    showarrow:false, text:'Ⓐ Made using tool.adjiebrotots.com/financingvscash',
+    showarrow:false, text:'Ⓐ tool.adjiebrotots.com',
     font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' },
   };
-  await Plotly.relayout('plotly3d', { annotations:[wmAnnotation] });
+  await Plotly.relayout('plotly3d', { annotations:[titleAnnotation, wmAnnotation] });
   await Plotly.downloadImage('plotly3d', { format:'png', filename:'financing_sensitivity_3d', scale:3 });
   await Plotly.relayout('plotly3d', { annotations:[] });
 });

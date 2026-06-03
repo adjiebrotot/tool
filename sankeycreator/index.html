@@ -359,8 +359,8 @@ main{display:flex;flex-direction:column;gap:13px}
 
       <section class="chart-card card">
         <div class="chart-head">
-          <h2 style="margin:0">Flow Diagram</h2>
-          <div style="display:flex;gap:6px;align-items:center">
+          <input id="diagramTitle" type="text" placeholder="Diagram title (shown in export)" style="flex:1;min-width:0;font-weight:600;font-size:.9rem;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;padding:6px 10px;outline:none;transition:border-color 150ms;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"/>
+          <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
             <button id="exportSvgBtn" class="btn-export">⬇ SVG</button>
             <button id="exportPngBtn" class="btn-export">⬇ PNG</button>
           </div>
@@ -1256,6 +1256,25 @@ function exportCloneXml(){
   clone.querySelectorAll('.label-bg').forEach(r => r.setAttribute('fill','rgba(255,255,255,0.88)'));
   const W = svgEl.viewBox.baseVal.width || 800;
   const H = svgEl.viewBox.baseVal.height || S.h;
+  const titleText = (document.getElementById('diagramTitle')?.value || '').trim();
+  const TITLE_H = titleText ? 36 : 0;
+
+  // Expand viewBox to accommodate title at top and watermark at bottom
+  clone.setAttribute('viewBox', `0 ${-TITLE_H} ${W} ${H + TITLE_H}`);
+  clone.setAttribute('height', H + TITLE_H);
+
+  if(titleText){
+    const titleEl = document.createElementNS('http://www.w3.org/2000/svg','text');
+    titleEl.setAttribute('x', W / 2); titleEl.setAttribute('y', -10);
+    titleEl.setAttribute('text-anchor','middle');
+    titleEl.setAttribute('font-family','DM Sans, sans-serif');
+    titleEl.setAttribute('font-size','16');
+    titleEl.setAttribute('font-weight','700');
+    titleEl.setAttribute('fill','#1a1a1a');
+    titleEl.textContent = titleText;
+    clone.insertBefore(titleEl, clone.firstChild);
+  }
+
   const wm = document.createElementNS('http://www.w3.org/2000/svg','text');
   wm.setAttribute('x', W - 12); wm.setAttribute('y', H - 10);
   wm.setAttribute('text-anchor','end');
@@ -1263,7 +1282,7 @@ function exportCloneXml(){
   wm.setAttribute('font-size','11');
   wm.setAttribute('fill','#1a1a1a');
   wm.setAttribute('opacity','0.22');
-  wm.textContent = 'Ⓐ Made using tool.adjiebrotots.com/sankeycreator';
+  wm.textContent = 'Ⓐ tool.adjiebrotots.com';
   clone.appendChild(wm);
   return new XMLSerializer().serializeToString(clone);
 }
@@ -1284,21 +1303,27 @@ $('exportPngBtn').addEventListener('click',()=>{
   const W  = svgEl.viewBox.baseVal.width  || 800;
   const H  = svgEl.viewBox.baseVal.height || S.h;
   const xml    = exportCloneXml();
+  // exportCloneXml already includes title in viewBox expansion — render the full exported SVG
   const svgB64 = 'data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(xml)));
+  const titleText = (document.getElementById('diagramTitle')?.value || '').trim();
+  const TITLE_H = titleText ? 36 : 0;
+  const TOTAL_H = H + TITLE_H;
   const img    = new Image();
   img.onload = ()=>{
     const canvas = document.createElement('canvas');
-    canvas.width = W*3; canvas.height = H*3;
+    canvas.width = W*3; canvas.height = TOTAL_H*3;
     const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.scale(3,3);
-    ctx.drawImage(img,0,0,W,H);
+    ctx.drawImage(img,0,0,W,TOTAL_H);
     ctx.save();
     ctx.globalAlpha=0.22;
     ctx.font='500 11px "DM Sans",sans-serif';
     ctx.fillStyle='#1a1a1a';
     ctx.textAlign='right';
     ctx.textBaseline='bottom';
-    ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/sankeycreator',W-6,H-5);
+    ctx.fillText('Ⓐ tool.adjiebrotots.com',W-6,TOTAL_H-5);
     ctx.restore();
     const a=document.createElement('a');
     a.href=canvas.toDataURL('image/png');
