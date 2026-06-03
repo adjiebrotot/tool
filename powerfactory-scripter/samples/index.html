@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Samples &amp; Guides — PowerFactory Scripter</title>
+<title>Samples &amp; Guides | PowerFactory Scripter</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap');
@@ -358,7 +358,7 @@
     position: relative;
   }
   .assumption-list li::before {
-    content: '—';
+    content: '-';
     position: absolute;
     left: 0;
     color: var(--muted);
@@ -735,7 +735,7 @@
   <div class="section-card" id="sample-1">
     <div class="section-header" onclick="toggleSection('sample-1')">
       <span class="sample-num">01</span>
-      <h3>Capacitor Bank Sizing — Voltage Regulation</h3>
+      <h3>Capacitor Bank Sizing: Voltage Regulation</h3>
       <a class="dl-json-link" href="json-samples/sample-01-capacitor-bank-sizing.json" download onclick="event.stopPropagation()">↓ JSON</a>
       <span class="toggle-icon">▾</span>
     </div>
@@ -888,7 +888,7 @@
   <div class="section-card" id="sample-2">
     <div class="section-header" onclick="toggleSection('sample-2')">
       <span class="sample-num">02</span>
-      <h3>Harmonic Filter Sizing — THD Minimisation</h3>
+      <h3>Harmonic Filter Sizing: THD Minimisation</h3>
       <a class="dl-json-link" href="json-samples/sample-02-harmonic-filter-sizing.json" download onclick="event.stopPropagation()">↓ JSON</a>
       <span class="toggle-icon">▾</span>
     </div>
@@ -966,7 +966,7 @@
                   <td><input type="text" readonly value="capa" /></td>
                   <td><input type="text" readonly value="1e-6" /></td>
                   <td><input type="text" readonly value="1e-3" /></td>
-                  <td><input type="text" readonly value="—" /></td>
+                  <td><input type="text" readonly value="N/A" /></td>
                 </tr>
                 <tr>
                   <td><input type="text" readonly value="L_f" /></td>
@@ -974,7 +974,7 @@
                   <td><input type="text" readonly value="rrea" /></td>
                   <td><input type="text" readonly value="1e-4" /></td>
                   <td><input type="text" readonly value="1e-1" /></td>
-                  <td><input type="text" readonly value="—" /></td>
+                  <td><input type="text" readonly value="N/A" /></td>
                 </tr>
                 <tr>
                   <td><input type="text" readonly value="R_f" /></td>
@@ -982,7 +982,7 @@
                   <td><input type="text" readonly value="rres" /></td>
                   <td><input type="text" readonly value="0.001" /></td>
                   <td><input type="text" readonly value="0.1" /></td>
-                  <td><input type="text" readonly value="—" /></td>
+                  <td><input type="text" readonly value="N/A" /></td>
                 </tr>
               </tbody>
             </table>
@@ -1099,7 +1099,7 @@ Best objective (thd) = 2.61</pre>
   <div class="section-card" id="sample-3">
     <div class="section-header" onclick="toggleSection('sample-3')">
       <span class="sample-num">03</span>
-      <h3>Synchronous Condenser Sizing — Fault Ride-Through &amp; Inertial Response</h3>
+      <h3>Synchronous Condenser Sizing: Fault Ride-Through &amp; Inertial Response</h3>
       <a class="dl-json-link" href="json-samples/sample-03-synchronous-condenser-sizing.json" download onclick="event.stopPropagation()">↓ JSON</a>
       <span class="toggle-icon">▾</span>
     </div>
@@ -1112,9 +1112,9 @@ Best objective (thd) = 2.61</pre>
         </div>
         <p class="objective-text">
           A grid-connected synchronous condenser must be sized to satisfy two dynamic criteria
-          simultaneously: (1) <strong>Fault Ride-Through (FRT)</strong> — the machine must stay in
+          simultaneously: (1) <strong>Fault Ride-Through (FRT)</strong>, where the machine must stay in
           synchronism and provide continuous reactive current support throughout a major fault without
-          pole-slipping; and (2) <strong>Inertial Response</strong> — the rotating mass must be large
+          pole-slipping; and (2) <strong>Inertial Response</strong>, where the rotating mass must be large
           enough to limit the frequency nadir to an acceptable level following the sudden loss of a
           generator. The script sweeps the number of parallel condenser units and records the
           worst-case dynamic response for each size, automatically identifying the minimum
@@ -1319,7 +1319,7 @@ Best objective (thd) = 2.61</pre>
           <span class="step-badge">6</span>
           <div>
             <div>Paste the code into your Python environment and run it.</div>
-            <div class="step-note">Ensure the 3-phase fault event is defined in the PowerFactory study case before running. Each RMS simulation covers 30 s — expect the full sweep (10 runs) to take several minutes.</div>
+            <div class="step-note">Ensure the 3-phase fault event is defined in the PowerFactory study case before running. Each RMS simulation covers 30 s, so expect the full sweep (10 runs) to take several minutes.</div>
           </div>
         </div>
       </div>
@@ -1338,19 +1338,19 @@ Best objective (thd) = 2.61</pre>
 5,True,0.82,233.6,0.976,0,True
 ...
 10,True,0.91,466.1,0.984,0,True</pre>
-        <p class="hint">The minimum passing size is the first row where <code>sizing_ok = True</code> — here, <strong>4 parallel units</strong>. Time-domain waveform plots for <code>bus_voltage_nadir</code> and <code>rotor_speed_min</code> are saved as <code>.png</code> files in <code>{output_dir}/graph/</code> for each scenario.</p>
+        <p class="hint">The minimum passing size is the first row where <code>sizing_ok = True</code>; here, that is <strong>4 parallel units</strong>. Time-domain waveform plots for <code>bus_voltage_nadir</code> and <code>rotor_speed_min</code> are saved as <code>.png</code> files in <code>{output_dir}/graph/</code> for each scenario.</p>
       </div>
 
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════════
-       SAMPLE 04 · N-1 LINE CONTINGENCY — WILDCARD APPROACH
+       SAMPLE 04 · N-1 LINE CONTINGENCY: WILDCARD APPROACH
   ═══════════════════════════════════════════════════════════════ -->
   <div class="section-card" id="sample-4">
     <div class="section-header" onclick="toggleSection('sample-4')">
       <span class="sample-num">04</span>
-      <h3>N-1 Line Contingency — Wildcard Approach</h3>
+      <h3>N-1 Line Contingency: Wildcard Approach</h3>
       <a class="dl-json-link" href="json-samples/sample-04-n1-line-contingency.json" download onclick="event.stopPropagation()">↓ JSON</a>
       <span class="toggle-icon">▾</span>
     </div>
@@ -1389,7 +1389,7 @@ Best objective (thd) = 2.61</pre>
         </div>
         <p class="objective-text" style="margin-bottom:10px;">
           Select <strong>Contingency</strong> as the Problem Type. The Input Variables section is
-          hidden — the Contingency Config section replaces it.
+          hidden because the Contingency Config section replaces it.
         </p>
         <div class="readonly-fields">
           <div class="readonly-group-title">Initialisation</div>
@@ -1574,7 +1574,7 @@ Line_D,True,0.991,1.003,0.998,48.6,71.9,82.3,95.1</pre>
         <!-- Q4 · Python vs Notebook -->
         <div class="faq-item">
           <div class="faq-question" onclick="toggleFaq(this)">
-            Python File vs. Notebook — which should I use?
+            Python File vs. Notebook: which should I use?
             <span class="faq-toggle">▾</span>
           </div>
           <div class="faq-answer">
@@ -1603,7 +1603,7 @@ Line_D,True,0.991,1.003,0.998,48.6,71.9,82.3,95.1</pre>
     <img src="../../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
     <div style="display:flex;align-items:center;gap:10px">
       <img src="../../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-      <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
+      <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <img src="../../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
@@ -1647,7 +1647,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.section-card').forEach((card) => {
     const header = card.querySelector('.section-header');
     const body = card.querySelector('.section-body');
-    if (!header || !body) return;
+    if (!header || !body || card.id === 'faq') return;
     header.classList.add('collapsed');
     body.classList.add('hidden');
   });
