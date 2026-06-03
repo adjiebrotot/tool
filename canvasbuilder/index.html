@@ -36,7 +36,7 @@
   --vpc-pr:rgba(241,192,208,.09); --vpc-gains:rgba(143,205,189,.09);
   --vpc-jobs:rgba(141,187,255,.09); --vpc-pains:rgba(241,192,208,.09);
 }
-body.light {
+body.light, .export-light-theme {
   --bg:#EFF3FC; --bg-subtle:#F8FBFF;
   --panel:#FFFFFF; --panel-raised:#FFFFFF;
   --text:#1A2236; --muted:#6B7A99; --text-inv:#FFFFFF;
@@ -279,7 +279,7 @@ select.tb-control {
   background:rgba(255,255,255,.03); flex-shrink:0;
   pointer-events:none; user-select:none;
 }
-body.light .cell-hd { background:rgba(0,0,0,.02); }
+body.light .cell-hd, .export-light-theme .cell-hd { background:rgba(0,0,0,.02); }
 .cell-title { font-size:.67rem; font-weight:800; text-transform:uppercase;
   letter-spacing:.09em; color:var(--muted); line-height:1.2; }
 .cell-icon  { font-size:.9rem; opacity:.5; }
@@ -300,10 +300,10 @@ body.light .cell-hd { background:rgba(0,0,0,.02); }
 }
 .text-item:hover { border-color:var(--accent);
   box-shadow:0 0 0 2px rgba(141,187,255,.15),var(--shadow-sm); }
-body.light .text-item:hover { box-shadow:0 0 0 2px rgba(75,142,240,.18),var(--shadow-sm); }
+body.light .text-item:hover, .export-light-theme .text-item:hover { box-shadow:0 0 0 2px rgba(75,142,240,.18),var(--shadow-sm); }
 .text-item.selected { border-color:var(--accent-strong); z-index:20;
   box-shadow:0 0 0 3px rgba(141,187,255,.22),var(--shadow); }
-body.light .text-item.selected { box-shadow:0 0 0 3px rgba(45,111,217,.2),var(--shadow); }
+body.light .text-item.selected, .export-light-theme .text-item.selected { box-shadow:0 0 0 3px rgba(45,111,217,.2),var(--shadow); }
 .text-item.dragging { opacity:.82; box-shadow:var(--shadow-lg); z-index:100; cursor:grabbing !important; }
 .drag-handle {
   color:var(--muted); font-size:11px; cursor:grab; flex-shrink:0; margin-top:1px;
@@ -1119,15 +1119,17 @@ document.getElementById('savePngBtn').addEventListener('click', async()=>{
   const canvas=document.getElementById('theCanvas');
   if(!canvas) return;
 
-  const wasLight=document.body.classList.contains('light');
-  if(!wasLight){ document.body.classList.add('light'); await new Promise(r=>setTimeout(r,300)); }
-
   document.getElementById('exportOverlay').classList.add('open');
   try {
     await new Promise(r=>setTimeout(r,60));
     const result=await html2canvas(canvas,{
       backgroundColor:null,
       scale:2, useCORS:true, logging:false, allowTaint:true, removeContainer:true,
+      onclone:clonedDoc=>{
+        clonedDoc.body.classList.add('light');
+        const clonedCanvas=clonedDoc.getElementById('theCanvas');
+        if(clonedCanvas) clonedCanvas.classList.add('export-light-theme');
+      },
     });
     const link=document.createElement('a');
     const safe=(S.canvasName||'canvas').replace(/[^a-z0-9\-_ ]/gi,'').trim()||'canvas';
@@ -1139,7 +1141,6 @@ document.getElementById('savePngBtn').addEventListener('click', async()=>{
     console.error(err);
     showToast('PNG export failed','error');
   } finally {
-    if(!wasLight) document.body.classList.remove('light');
     document.getElementById('exportOverlay').classList.remove('open');
   }
 });
