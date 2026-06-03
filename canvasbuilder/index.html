@@ -1137,11 +1137,11 @@ document.getElementById('savePngBtn').addEventListener('click', async()=>{
     const wCtx=result.getContext('2d');
     wCtx.save();
     wCtx.globalAlpha=0.22;
-    wCtx.font='500 11px "DM Sans",sans-serif';
+    wCtx.font='500 33px "DM Sans",sans-serif';
     wCtx.fillStyle='#1a1a1a';
     wCtx.textAlign='right';
     wCtx.textBaseline='bottom';
-    wCtx.fillText('Ⓐ Made using tool.adjiebrotots.com/canvasbuilder',result.width-12,result.height-12);
+    wCtx.fillText('Ⓐ Made using tool.adjiebrotots.com/canvasbuilder',result.width-36,result.height-36);
     wCtx.restore();
     link.href=result.toDataURL('image/png');
     link.click();

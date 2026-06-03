@@ -715,7 +715,7 @@ document.getElementById('savePng').onclick = async () => {
   };
   await Plotly.relayout('plotDiv', { annotations:[wmAnnotation] });
   await Plotly.downloadImage('plotDiv', {
-    format:'png', filename:title.replace(/\s+/g,'_'), scale:2, width:1440, height:760
+    format:'png', filename:title.replace(/\s+/g,'_'), scale:3, width:1440, height:760
   });
   await Plotly.relayout('plotDiv', { annotations:[] });
 };

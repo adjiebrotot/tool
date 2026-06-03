@@ -1288,9 +1288,9 @@ $('exportPngBtn').addEventListener('click',()=>{
   const img    = new Image();
   img.onload = ()=>{
     const canvas = document.createElement('canvas');
-    canvas.width = W*2; canvas.height = H*2;
+    canvas.width = W*3; canvas.height = H*3;
     const ctx = canvas.getContext('2d');
-    ctx.scale(2,2);
+    ctx.scale(3,3);
     ctx.drawImage(img,0,0,W,H);
     ctx.save();
     ctx.globalAlpha=0.22;
