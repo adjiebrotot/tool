@@ -215,7 +215,7 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 var Tips = window.RVO_TIPS || {};
 
 /* ── i18n ── */
-let lang = 'en';
+let lang = localStorage.getItem('pf-lang') === 'id' ? 'id' : 'en';
 const LANG_SENS = {
   en: {
     sensTitle: '🏠 Rent vs Own — Sensitivity Tool',
@@ -920,13 +920,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
   rerender();
 
   const themeBtn = document.getElementById('themeToggle');
+  // Apply persisted theme on load (body defaults to light; remove class if stored dark)
+  if(localStorage.getItem('pf-theme')==='dark'){document.body.classList.remove('light');themeBtn.textContent='☀️ Light';}
   themeBtn.addEventListener('click', ()=>{
     document.body.classList.toggle('light');
     themeBtn.textContent = document.body.classList.contains('light') ? '🌙 Dark' : '☀️ Light';
+    localStorage.setItem('pf-theme', document.body.classList.contains('light') ? 'light' : 'dark');
   });
 
   document.getElementById('langToggle').addEventListener('click', ()=>{
     lang = lang === 'en' ? 'id' : 'en';
+    localStorage.setItem('pf-lang', lang);
     applyLang();
     rerender();
   });
