@@ -2680,9 +2680,12 @@ $('chartResetZoom').addEventListener('click',()=>{ if(chartInstance) chartInstan
 $('themeToggle').addEventListener('click',()=>{
   document.body.classList.toggle('light');
   $('themeToggle').textContent = document.body.classList.contains('light') ? '🌙 Dark' : '☀️ Light';
+  localStorage.setItem('pf-theme', document.body.classList.contains('light') ? 'light' : 'dark');
   syncDetailHeaderLayout();
   if(latestRows.length) renderChart(latestRows);
 });
+// Apply persisted theme on load (body defaults to light; remove class if stored dark)
+if(localStorage.getItem('pf-theme')==='dark'){document.body.classList.remove('light');$('themeToggle').textContent='☀️ Light';}
 $('langToggle').addEventListener('click',()=>{
   lang = lang === 'en' ? 'id' : 'en';
   applyLang();
