@@ -27,6 +27,99 @@
     --shadow:      0 2px 16px rgba(120,160,220,0.12);
   }
 
+  body.light {
+    --bg:          #F0F4FF;
+    --surface:     #FFFFFF;
+    --card:        #FFFFFF;
+    --border:      #E0E6F0;
+    --accent:      #5A91E8;
+    --accent2:     #2E9E7A;
+    --danger:      #E63939;
+    --warn:        #B45309;
+    --text:        #2D3436;
+    --muted:       #7F8C8D;
+    --label:       #7F8C8D;
+    --shadow:      0 2px 16px rgba(120,160,220,0.10);
+  }
+
+  /* Light mode overrides for hardcoded dark values */
+  body.light .output-preview {
+    background: #F0F4FF;
+    color: #2E9E7A;
+  }
+  body.light .assumption-list code,
+  body.light .step-row code,
+  body.light .hint code,
+  body.light .faq-answer code,
+  body.light .faq-table td code {
+    background: rgba(90,145,232,0.10);
+    color: var(--accent);
+  }
+  body.light .steps-section {
+    background: rgba(90,145,232,0.05);
+    border-color: rgba(90,145,232,0.15);
+  }
+  body.light .step-badge {
+    background: rgba(90,145,232,0.12);
+    border-color: rgba(90,145,232,0.28);
+    color: var(--accent);
+  }
+  body.light .sample-num {
+    background: rgba(90,145,232,0.12);
+    border-color: rgba(90,145,232,0.25);
+    color: var(--accent);
+  }
+  body.light .prefilled-badge {
+    background: rgba(46,158,122,0.12);
+    border-color: rgba(46,158,122,0.30);
+    color: var(--accent2);
+  }
+  body.light .faq-pro-tip {
+    background: rgba(46,158,122,0.08);
+    border-color: rgba(46,158,122,0.20);
+    color: var(--accent2);
+  }
+  body.light .faq-pro-tip code {
+    background: rgba(46,158,122,0.15);
+    color: var(--accent2);
+  }
+  body.light .ov-type-badge {
+    background: rgba(46,158,122,0.12);
+    border-color: rgba(46,158,122,0.30);
+    color: var(--accent2);
+  }
+  body.light .dl-json-link {
+    background: rgba(46,158,122,0.08);
+    border-color: rgba(46,158,122,0.35);
+    color: var(--accent2);
+  }
+  body.light .dl-json-link:hover {
+    background: rgba(46,158,122,0.16);
+    border-color: var(--accent2);
+  }
+
+  /* Theme toggle button */
+  .btn-theme {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    background: var(--bg);
+    cursor: pointer;
+    font-family: var(--sans);
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+  .btn-theme:hover {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
@@ -38,6 +131,7 @@
     line-height: 1.5;
     display: flex;
     flex-direction: column;
+    transition: background 0.25s, color 0.25s;
   }
 
   /* ── HEADER ─────────────────────────────────────────────────────── */
@@ -47,10 +141,17 @@
     padding: 8px 24px 10px;
     display: flex;
     align-items: flex-end;
+    justify-content: space-between;
     gap: 12px;
     position: sticky;
     top: 0;
     z-index: 100;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
   }
   .header-left {
     display: flex;
@@ -613,6 +714,9 @@
     <div class="header-nav">
       <a class="back-link" href="../" rel="noopener">Back to Scripter</a>
     </div>
+  </div>
+  <div class="header-right">
+    <button class="btn-theme" id="themeToggle">☀️ Light</button>
   </div>
 </header>
 
@@ -1509,6 +1613,20 @@ Line_D,True,0.991,1.003,0.998,48.6,71.9,82.3,95.1</pre>
 </footer>
 
 <script>
+(function initTheme() {
+  const btn = document.getElementById('themeToggle');
+  const apply = (light) => {
+    document.body.classList.toggle('light', light);
+    btn.textContent = light ? '🌙 Dark' : '☀️ Light';
+  };
+  apply(localStorage.getItem('pf-theme') === 'light');
+  btn.addEventListener('click', () => {
+    const next = !document.body.classList.contains('light');
+    apply(next);
+    localStorage.setItem('pf-theme', next ? 'light' : 'dark');
+  });
+})();
+
 function toggleSection(id) {
   const card = document.getElementById(id);
   const header = card.querySelector('.section-header');
