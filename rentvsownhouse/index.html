@@ -570,6 +570,7 @@ abbr.abbr-hint{text-decoration:underline dotted;cursor:help;text-underline-offse
         <button class="graph-btn" data-graph="cash" id="graphCash" data-i18n="btnLiquidCash">Liquid Cash</button>
         <button class="graph-btn" data-graph="cost" id="graphCost" data-i18n="btnAccumCost">Accum. Cost</button>
         <button class="btn-secondary" id="pngBtn" style="font-size:.78rem;padding:5px 11px;">⬇ PNG</button>
+        <button class="btn-secondary" id="svgBtn" style="font-size:.78rem;padding:5px 11px;">⬇ SVG</button>
         <button class="btn-secondary" id="chartResetZoom" style="font-size:.78rem;padding:5px 11px;" data-i18n="btnZoom">⟳ Zoom</button>
       </div>
     </div>
@@ -2080,6 +2081,8 @@ function getGraphSeries(){
 function renderChart(rows){
   const series = getGraphSeries();
   buildLegend(series);
+  const sym = $('currencySymbol').value || '$';
+  const yAxisTitle = activeGraph==='netEquity' ? `Net Equity (${sym})` : activeGraph==='cash' ? `Liquid Cash (${sym})` : `Accumulated Cost (${sym})`;
   // Use integer year numbers for labels — must be plain numbers, not strings
   const labels   = rows.map(r=> (typeof r.year === 'number' && isFinite(r.year)) ? r.year : 0);
   const rtbBuyYearIdx = S.rtbEnabled ? labels.indexOf(S.rtbBuyYear) : -1;
@@ -2157,7 +2160,7 @@ function renderChart(rows){
       },
       scales:{
         x:{title:{display:true,text:'Year',color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,maxTicksLimit:12,font:{family:"'DM Mono', monospace",size:11},callback:xTickCallback},grid:{color:g}},
-        y:{title:{display:true,text:'Value',color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,font:{family:"'DM Mono', monospace",size:11},callback:v=>fmt.currency(v,true)},grid:{color:g}},
+        y:{title:{display:true,text:yAxisTitle,color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,font:{family:"'DM Mono', monospace",size:11},callback:v=>fmt.currency(v,true)},grid:{color:g}},
       },
     },
   };
@@ -2172,6 +2175,7 @@ function renderChart(rows){
     chartInstance.options.scales.y.ticks.color=m;
     chartInstance.options.scales.y.grid.color=g;
     chartInstance.options.scales.y.title.color=m;
+    chartInstance.options.scales.y.title.text=yAxisTitle;
     chartInstance.options.plugins.tooltip.backgroundColor=cssVar('--panel')||'#162033';
     chartInstance.options.plugins.tooltip.titleColor=t;
     chartInstance.options.plugins.tooltip.bodyColor=m;
@@ -2504,27 +2508,154 @@ function downloadChartPng() {
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
   const OUT = 3;
+  const chartW = Math.round(src.width / dpr * OUT);
+  const chartH = Math.round(src.height / dpr * OUT);
+  const isLight = document.body.classList.contains('light');
+  const bgColor = isLight ? '#ffffff' : '#0F1728';
+  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const FONT = '"DM Sans", sans-serif';
+
+  // Determine chart title from active graph mode
+  const chartTitleMap = {netEquity:'Rent vs Own — Net Equity Over Time', cash:'Rent vs Own — Liquid Cash Over Time', cost:'Rent vs Own — Accumulated Cost Over Time'};
+  const chartTitle = chartTitleMap[activeGraph] || 'Rent vs Own — Financial Comparison';
+
+  // Build legend items directly from series data for reliability
+  const legendItems = getGraphSeries().map(s => ({
+    label: s.label,
+    color: s.key && s.key.includes('RTB') ? cssVar('--line-rtb-own') : cssVar(s.colorVar),
+  }));
+
+  const titleFontPx = Math.round(14 * OUT);
+  const legendFontPx = Math.round(11 * OUT);
+  const titleH = Math.round(40 * OUT);
+  const legendH = legendItems.length ? Math.round(34 * OUT) : 0;
+
   const tmp = document.createElement('canvas');
-  tmp.width = Math.round(src.width / dpr * OUT);
-  tmp.height = Math.round(src.height / dpr * OUT);
+  tmp.width = chartW;
+  tmp.height = chartH + titleH + legendH;
   const ctx = tmp.getContext('2d');
-  ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
+
+  ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, tmp.width, tmp.height);
-  ctx.drawImage(src, 0, 0, tmp.width, tmp.height);
+
+  ctx.font = `700 ${titleFontPx}px ${FONT}`;
+  ctx.fillStyle = fgColor;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(chartTitle, tmp.width / 2, titleH / 2);
+
+  ctx.drawImage(src, 0, titleH, chartW, chartH);
+
+  if(legendItems.length){
+    const ly = titleH + chartH;
+    const dotR = Math.round(5 * OUT);
+    const gap = Math.round(7 * OUT);
+    const pad = Math.round(20 * OUT);
+    ctx.font = `500 ${legendFontPx}px ${FONT}`;
+    ctx.textBaseline = 'middle';
+    let totalW = 0;
+    legendItems.forEach((item, i) => {
+      totalW += dotR * 2 + gap + ctx.measureText(item.label).width + (i < legendItems.length - 1 ? pad : 0);
+    });
+    let x = Math.max(Math.round(16 * OUT), (tmp.width - totalW) / 2);
+    const cy = ly + legendH / 2;
+    legendItems.forEach(item => {
+      ctx.fillStyle = item.color;
+      ctx.beginPath();
+      ctx.arc(x + dotR, cy, dotR, 0, Math.PI * 2);
+      ctx.fill();
+      x += dotR * 2 + gap;
+      ctx.fillStyle = fgColor;
+      ctx.textAlign = 'left';
+      ctx.fillText(item.label, x, cy);
+      x += ctx.measureText(item.label).width + pad;
+    });
+  }
+
   ctx.save();
   ctx.globalAlpha = 0.22;
-  ctx.font = `500 ${Math.round(11 * OUT)}px "DM Sans",sans-serif`;
+  ctx.font = `500 ${Math.round(11 * OUT)}px ${FONT}`;
   ctx.fillStyle = '#1a1a1a';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'bottom';
-  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/rentvsownhouse', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
+  ctx.fillText('Ⓐ tool.adjiebrotots.com', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
   ctx.restore();
+
   const a = document.createElement('a');
   a.href = tmp.toDataURL('image/png');
   a.download = 'rent_vs_own_chart.png';
   document.body.appendChild(a); a.click(); a.remove();
 }
+function downloadChartSvg() {
+  const src = document.getElementById('chartCanvas');
+  if(!src) return;
+  const dpr = window.devicePixelRatio || 1;
+  const chartW = Math.round(src.width / dpr);
+  const chartH = Math.round(src.height / dpr);
+  const isLight = document.body.classList.contains('light');
+  const bgColor = isLight ? '#ffffff' : '#0F1728';
+  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const FONT = 'DM Sans, sans-serif';
+  const chartTitleMap = {netEquity:'Rent vs Own — Net Equity Over Time', cash:'Rent vs Own — Liquid Cash Over Time', cost:'Rent vs Own — Accumulated Cost Over Time'};
+  const chartTitle = chartTitleMap[activeGraph] || 'Rent vs Own — Financial Comparison';
+  const legendItems = getGraphSeries().map(s => ({
+    label: s.label,
+    color: s.key && s.key.includes('RTB') ? cssVar('--line-rtb-own') : cssVar(s.colorVar),
+  }));
+  const titleH = 40;
+  const legendH = legendItems.length ? 34 : 0;
+  const svgW = chartW, svgH = chartH + titleH + legendH;
+  const NS = 'http://www.w3.org/2000/svg', xl = 'http://www.w3.org/1999/xlink';
+  const svg = document.createElementNS(NS,'svg');
+  svg.setAttribute('xmlns',NS); svg.setAttribute('xmlns:xlink',xl);
+  svg.setAttribute('width',svgW); svg.setAttribute('height',svgH);
+  svg.setAttribute('viewBox',`0 0 ${svgW} ${svgH}`);
+  const bgRect = document.createElementNS(NS,'rect');
+  bgRect.setAttribute('width',svgW); bgRect.setAttribute('height',svgH); bgRect.setAttribute('fill',bgColor);
+  svg.appendChild(bgRect);
+  const t = document.createElementNS(NS,'text');
+  t.setAttribute('x',svgW/2); t.setAttribute('y',titleH/2);
+  t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','middle');
+  t.setAttribute('font-family',FONT); t.setAttribute('font-size','14'); t.setAttribute('font-weight','700'); t.setAttribute('fill',fgColor);
+  t.textContent = chartTitle; svg.appendChild(t);
+  const img = document.createElementNS(NS,'image');
+  img.setAttribute('x',0); img.setAttribute('y',titleH);
+  img.setAttribute('width',chartW); img.setAttribute('height',chartH);
+  img.setAttributeNS(xl,'href',src.toDataURL('image/png'));
+  svg.appendChild(img);
+  if(legendItems.length){
+    const dotR=5, gap=7, pad=20;
+    const cy = titleH + chartH + legendH/2;
+    const mc = document.createElement('canvas').getContext('2d');
+    mc.font = '500 11px DM Sans, sans-serif';
+    const totalW = legendItems.reduce((s,item,i) => s + dotR*2 + gap + mc.measureText(item.label).width + (i<legendItems.length-1?pad:0), 0);
+    let x = Math.max(16, (svgW - totalW) / 2);
+    legendItems.forEach(item => {
+      const c = document.createElementNS(NS,'circle');
+      c.setAttribute('cx',x+dotR); c.setAttribute('cy',cy); c.setAttribute('r',dotR); c.setAttribute('fill',item.color);
+      svg.appendChild(c); x += dotR*2 + gap;
+      const lt = document.createElementNS(NS,'text');
+      lt.setAttribute('x',x); lt.setAttribute('y',cy);
+      lt.setAttribute('dominant-baseline','middle'); lt.setAttribute('font-family',FONT);
+      lt.setAttribute('font-size','11'); lt.setAttribute('font-weight','500'); lt.setAttribute('fill',fgColor);
+      lt.textContent = item.label; svg.appendChild(lt);
+      x += mc.measureText(item.label).width + pad;
+    });
+  }
+  const wm = document.createElementNS(NS,'text');
+  wm.setAttribute('x',svgW-12); wm.setAttribute('y',svgH-12);
+  wm.setAttribute('text-anchor','end'); wm.setAttribute('dominant-baseline','auto');
+  wm.setAttribute('font-family',FONT); wm.setAttribute('font-size','11');
+  wm.setAttribute('font-weight','500'); wm.setAttribute('fill','#1a1a1a'); wm.setAttribute('opacity','0.22');
+  wm.textContent = 'Ⓐ tool.adjiebrotots.com'; svg.appendChild(wm);
+  const xml = '<?xml version="1.0" encoding="utf-8"?>\n' + new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([xml],{type:'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='rent_vs_own_chart.svg';
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
 $('pngBtn').addEventListener('click', downloadChartPng);
+$('svgBtn').addEventListener('click', downloadChartSvg);
 
 /* ── CSV ── */
 function downloadCsv(){

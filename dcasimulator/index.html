@@ -368,6 +368,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
       <h2>Security Prices <span style="color:var(--muted);font-size:.85rem;font-weight:400">(normalised to 100)</span></h2>
       <div class="chart-actions">
         <button class="btn-secondary" id="pricePngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
+        <button class="btn-secondary" id="priceSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
         <button class="btn-secondary" id="priceResetZoom" style="font-size:.8rem;padding:5px 11px">⟳ Reset Zoom</button>
       </div>
     </div>
@@ -391,6 +392,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
           </div>
         </label>
         <button class="btn-secondary" id="equityPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
+        <button class="btn-secondary" id="equitySvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
         <button class="btn-secondary" id="equityResetZoom" style="font-size:.8rem;padding:5px 11px">⟳ Reset Zoom</button>
       </div>
     </div>
@@ -446,6 +448,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
       </div>
       <div class="chart-actions">
         <button class="btn-secondary" id="sensPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
+        <button class="btn-secondary" id="sensSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
       </div>
     </div>
     <div class="canvas-wrap" style="height:370px"><canvas id="sensCanvas"></canvas></div>
@@ -1433,7 +1436,7 @@ function updateEquityChart(){
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
     scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
-              y:{title:{display:true,text:'Portfolio Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
+              y:{title:{display:true,text:'Portfolio Value ('+currentCurrencySymbol+')',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
   };}
 
   if(equityChartInstance){
@@ -1444,6 +1447,7 @@ function updateEquityChart(){
     equityChartInstance.options.scales.y.ticks.color=mutedColor; equityChartInstance.options.scales.y.grid.color=gridColor;
     equityChartInstance.options.scales.y.ticks.callback=yCallback;
     equityChartInstance.options.scales.y.title.color=mutedColor;
+    equityChartInstance.options.scales.y.title.text='Portfolio Value ('+currentCurrencySymbol+')';
     equityChartInstance.update('none');
     // re-apply deposited visibility
     datasets.forEach((ds,i)=>{ if(ds._type==='deposit') equityChartInstance.setDatasetVisibility(i,showDeposited); });
@@ -1592,34 +1596,183 @@ $('resetBtn').addEventListener('click',()=>{
 });
 
 /* ─── DOWNLOAD CHART PNG ─── */
-function downloadChartPng(canvasId, filename) {
+function downloadChartPng(canvasId, filename, chartTitle, legendId) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
   const OUT = 3;
+  const chartW = Math.round(src.width / dpr * OUT);
+  const chartH = Math.round(src.height / dpr * OUT);
+  const isLight = document.body.classList.contains('light');
+  const bgColor = isLight ? '#ffffff' : '#0F1728';
+  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const FONT = '"DM Sans", sans-serif';
+
+  // Collect visible legend items from HTML legend element
+  const legendItems = [];
+  if(legendId){
+    const legendEl = document.getElementById(legendId);
+    if(legendEl){
+      legendEl.querySelectorAll('.legend-item:not(.hidden)').forEach(item => {
+        const dot = item.querySelector('.dot');
+        const label = item.textContent.trim();
+        const color = dot ? window.getComputedStyle(dot).backgroundColor : '#888888';
+        if(label) legendItems.push({ label, color });
+      });
+    }
+  }
+
+  const titleFontPx = Math.round(14 * OUT);
+  const legendFontPx = Math.round(11 * OUT);
+  const titleH = chartTitle ? Math.round(40 * OUT) : 0;
+  const legendH = legendItems.length ? Math.round(34 * OUT) : 0;
+
   const tmp = document.createElement('canvas');
-  tmp.width = Math.round(src.width / dpr * OUT);
-  tmp.height = Math.round(src.height / dpr * OUT);
+  tmp.width = chartW;
+  tmp.height = chartH + titleH + legendH;
   const ctx = tmp.getContext('2d');
-  ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
+
+  ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, tmp.width, tmp.height);
-  ctx.drawImage(src, 0, 0, tmp.width, tmp.height);
+
+  if(chartTitle){
+    ctx.font = `700 ${titleFontPx}px ${FONT}`;
+    ctx.fillStyle = fgColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(chartTitle, tmp.width / 2, titleH / 2);
+  }
+
+  ctx.drawImage(src, 0, titleH, chartW, chartH);
+
+  if(legendItems.length){
+    const ly = titleH + chartH;
+    const dotR = Math.round(5 * OUT);
+    const gap = Math.round(7 * OUT);
+    const pad = Math.round(20 * OUT);
+    ctx.font = `500 ${legendFontPx}px ${FONT}`;
+    ctx.textBaseline = 'middle';
+    let totalW = 0;
+    legendItems.forEach((item, i) => {
+      totalW += dotR * 2 + gap + ctx.measureText(item.label).width + (i < legendItems.length - 1 ? pad : 0);
+    });
+    let x = Math.max(Math.round(16 * OUT), (tmp.width - totalW) / 2);
+    const cy = ly + legendH / 2;
+    legendItems.forEach(item => {
+      ctx.fillStyle = item.color;
+      ctx.beginPath();
+      ctx.arc(x + dotR, cy, dotR, 0, Math.PI * 2);
+      ctx.fill();
+      x += dotR * 2 + gap;
+      ctx.fillStyle = fgColor;
+      ctx.textAlign = 'left';
+      ctx.fillText(item.label, x, cy);
+      x += ctx.measureText(item.label).width + pad;
+    });
+  }
+
   ctx.save();
   ctx.globalAlpha = 0.22;
-  ctx.font = `500 ${Math.round(11 * OUT)}px "DM Sans",sans-serif`;
+  ctx.font = `500 ${Math.round(11 * OUT)}px ${FONT}`;
   ctx.fillStyle = '#1a1a1a';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'bottom';
-  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/dcasimulator', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
+  ctx.fillText('Ⓐ tool.adjiebrotots.com', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
   ctx.restore();
+
   const a = document.createElement('a');
   a.href = tmp.toDataURL('image/png');
   a.download = filename;
   document.body.appendChild(a); a.click(); a.remove();
 }
-$('pricePngBtn').addEventListener('click', () => downloadChartPng('priceCanvas', 'dca_price_chart.png'));
-$('equityPngBtn').addEventListener('click', () => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png'));
-$('sensPngBtn').addEventListener('click', () => downloadChartPng('sensCanvas', 'dca_sensitivity_chart.png'));
+function downloadChartSvg(canvasId, filename, chartTitle, legendId, legendItemsOverride) {
+  const src = document.getElementById(canvasId);
+  if(!src) return;
+  const dpr = window.devicePixelRatio || 1;
+  const chartW = Math.round(src.width / dpr);
+  const chartH = Math.round(src.height / dpr);
+  const isLight = document.body.classList.contains('light');
+  const bgColor = isLight ? '#ffffff' : '#0F1728';
+  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const FONT = 'DM Sans, sans-serif';
+  const legendItems = legendItemsOverride ? legendItemsOverride.slice() : [];
+  if(!legendItemsOverride && legendId){
+    const legendEl = document.getElementById(legendId);
+    if(legendEl){
+      legendEl.querySelectorAll('.legend-item:not(.hidden)').forEach(item => {
+        const dot = item.querySelector('.dot');
+        const label = item.textContent.trim();
+        const color = dot ? window.getComputedStyle(dot).backgroundColor : '#888888';
+        if(label) legendItems.push({ label, color });
+      });
+    }
+  }
+  const titleH = chartTitle ? 40 : 0;
+  const legendH = legendItems.length ? 34 : 0;
+  const svgW = chartW, svgH = chartH + titleH + legendH;
+  const NS = 'http://www.w3.org/2000/svg', xl = 'http://www.w3.org/1999/xlink';
+  const svg = document.createElementNS(NS,'svg');
+  svg.setAttribute('xmlns',NS); svg.setAttribute('xmlns:xlink',xl);
+  svg.setAttribute('width',svgW); svg.setAttribute('height',svgH);
+  svg.setAttribute('viewBox',`0 0 ${svgW} ${svgH}`);
+  const bgRect = document.createElementNS(NS,'rect');
+  bgRect.setAttribute('width',svgW); bgRect.setAttribute('height',svgH); bgRect.setAttribute('fill',bgColor);
+  svg.appendChild(bgRect);
+  if(chartTitle){
+    const t = document.createElementNS(NS,'text');
+    t.setAttribute('x',svgW/2); t.setAttribute('y',titleH/2);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','middle');
+    t.setAttribute('font-family',FONT); t.setAttribute('font-size','14'); t.setAttribute('font-weight','700'); t.setAttribute('fill',fgColor);
+    t.textContent = chartTitle; svg.appendChild(t);
+  }
+  const img = document.createElementNS(NS,'image');
+  img.setAttribute('x',0); img.setAttribute('y',titleH);
+  img.setAttribute('width',chartW); img.setAttribute('height',chartH);
+  img.setAttributeNS(xl,'href',src.toDataURL('image/png'));
+  svg.appendChild(img);
+  if(legendItems.length){
+    const dotR=5, gap=7, pad=20;
+    const cy = titleH + chartH + legendH/2;
+    const mc = document.createElement('canvas').getContext('2d');
+    mc.font = '500 11px DM Sans, sans-serif';
+    const totalW = legendItems.reduce((s,item,i) => s + dotR*2 + gap + mc.measureText(item.label).width + (i<legendItems.length-1?pad:0), 0);
+    let x = Math.max(16, (svgW - totalW) / 2);
+    legendItems.forEach(item => {
+      const c = document.createElementNS(NS,'circle');
+      c.setAttribute('cx',x+dotR); c.setAttribute('cy',cy); c.setAttribute('r',dotR); c.setAttribute('fill',item.color);
+      svg.appendChild(c); x += dotR*2 + gap;
+      const lt = document.createElementNS(NS,'text');
+      lt.setAttribute('x',x); lt.setAttribute('y',cy);
+      lt.setAttribute('dominant-baseline','middle'); lt.setAttribute('font-family',FONT);
+      lt.setAttribute('font-size','11'); lt.setAttribute('font-weight','500'); lt.setAttribute('fill',fgColor);
+      lt.textContent = item.label; svg.appendChild(lt);
+      x += mc.measureText(item.label).width + pad;
+    });
+  }
+  const wm = document.createElementNS(NS,'text');
+  wm.setAttribute('x',svgW-12); wm.setAttribute('y',svgH-12);
+  wm.setAttribute('text-anchor','end'); wm.setAttribute('dominant-baseline','auto');
+  wm.setAttribute('font-family',FONT); wm.setAttribute('font-size','11');
+  wm.setAttribute('font-weight','500'); wm.setAttribute('fill','#1a1a1a'); wm.setAttribute('opacity','0.22');
+  wm.textContent = 'Ⓐ tool.adjiebrotots.com'; svg.appendChild(wm);
+  const xml = '<?xml version="1.0" encoding="utf-8"?>\n' + new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([xml],{type:'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+$('pricePngBtn').addEventListener('click', () => downloadChartPng('priceCanvas', 'dca_price_chart.png', 'DCA Scenario Explorer — Security Prices (Normalised to 100)', 'priceLegend'));
+$('equityPngBtn').addEventListener('click', () => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend'));
+$('sensPngBtn').addEventListener('click', () => {
+  const subtitle = document.getElementById('sensChartSubtitle')?.textContent || 'Sensitivity Analysis';
+  downloadChartPng('sensCanvas', 'dca_sensitivity_chart.png', 'DCA Sensitivity Analysis — ' + subtitle, null);
+});
+$('priceSvgBtn').addEventListener('click', () => downloadChartSvg('priceCanvas', 'dca_price_chart.svg', 'DCA Scenario Explorer — Security Prices (Normalised to 100)', 'priceLegend'));
+$('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend'));
+$('sensSvgBtn').addEventListener('click', () => {
+  const subtitle = document.getElementById('sensChartSubtitle')?.textContent || 'Sensitivity Analysis';
+  downloadChartSvg('sensCanvas', 'dca_sensitivity_chart.svg', 'DCA Sensitivity Analysis — ' + subtitle, null);
+});
 
 /* ─── DOWNLOAD CSV (Detailed Breakdown of active tab) ─── */
 $('downloadBtn').addEventListener('click',()=>{
@@ -1841,6 +1994,7 @@ function renderSensitivityChart(sec, labels, values, subtitle){
     sensitivityChartInstance.options.scales.y.ticks.color=mutedColor;
     sensitivityChartInstance.options.scales.y.grid.color=gridColor;
     sensitivityChartInstance.options.scales.y.title.color=mutedColor;
+    sensitivityChartInstance.options.scales.y.title.text='Final Portfolio Value ('+currentCurrencySymbol+')';
     sensitivityChartInstance.options.scales.y.ticks.callback=yTickCb;
     sensitivityChartInstance.update();
   } else {
@@ -1863,7 +2017,7 @@ function renderSensitivityChart(sec, labels, values, subtitle){
         },
         scales:{
           x:{title:{display:true,text:'Scenario Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11}},grid:{color:gridColor}},
-          y:{title:{display:true,text:'Final Portfolio Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yTickCb},grid:{color:gridColor},beginAtZero:false}
+          y:{title:{display:true,text:'Final Portfolio Value ('+currentCurrencySymbol+')',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yTickCb},grid:{color:gridColor},beginAtZero:false}
         }
       }
     });

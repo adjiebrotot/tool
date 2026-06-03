@@ -343,6 +343,7 @@
           <h2 style="margin:0;" data-i18n="chart1Title">Total Tax by Household Salary</h2>
           <div style="display:flex;gap:6px;">
             <button class="btn-secondary" id="chart1PngBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ PNG</button>
+            <button class="btn-secondary" id="chart1SvgBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ SVG</button>
             <button class="btn-secondary" id="chartResetZoom" style="font-size:0.8rem;padding:6px 12px;" data-i18n="resetZoom">⟳ Reset zoom</button>
           </div>
         </div>
@@ -359,6 +360,7 @@
           <h2 style="margin:0;" data-i18n="chart2Title">Tax Difference (Gabung − Pisah)</h2>
           <div style="display:flex;gap:6px;">
             <button class="btn-secondary" id="chart2PngBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ PNG</button>
+            <button class="btn-secondary" id="chart2SvgBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ SVG</button>
             <button class="btn-secondary" id="chartResetZoom2" style="font-size:0.8rem;padding:6px 12px;" data-i18n="resetZoom">⟳ Reset zoom</button>
           </div>
         </div>
@@ -801,7 +803,9 @@ const els = {
   wifeDeductionInput: $('wifeDeductionInput'),
   resetBtn: $('resetBtn'),
   chart1PngBtn: $('chart1PngBtn'),
+  chart1SvgBtn: $('chart1SvgBtn'),
   chart2PngBtn: $('chart2PngBtn'),
+  chart2SvgBtn: $('chart2SvgBtn'),
   downloadBtn: $('downloadBtn'),
   bracketsContainer: $('bracketsContainer'),
   ptkpBase: $('ptkpBase'),
@@ -1060,7 +1064,7 @@ function renderDiffChart(rows){
         zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:0.08},pinch:{enabled:true},mode:'x'}},
       },
       scales:{
-        x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{size:11},callback:(v,i)=>fmt.salaryLabel(labels[i])},grid:{color:gridColor}},
+        x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{size:11},callback:(v,i)=>fmt.salaryLabel(labels[i])},grid:{color:gridColor},title:{display:true,text:T('chart1XTitle'),color:mutedColor}},
         y:{ticks:{color:mutedColor,font:{size:11},callback:v=>fmt.idr(v,true)},grid:{color:gridColor},title:{display:true,text:T('chart2YTitle'),color:mutedColor}},
       }
     }
@@ -1068,6 +1072,7 @@ function renderDiffChart(rows){
   if(chartInstance2){
     chartInstance2.data.labels=labels;chartInstance2.data.datasets=config.data.datasets;
     chartInstance2.options.scales.x.ticks.color=mutedColor;chartInstance2.options.scales.x.grid.color=gridColor;
+    chartInstance2.options.scales.x.title.text=T('chart1XTitle');
     chartInstance2.options.scales.y.ticks.color=mutedColor;chartInstance2.options.scales.y.grid.color=gridColor;
     chartInstance2.options.scales.y.title.text=T('chart2YTitle');
     chartInstance2.update('none');
@@ -1344,33 +1349,174 @@ function buildBracketEditor(){
 }
 
 /* ── PNG ── */
-function downloadChartPng(canvasId, filename) {
+function downloadChartPng(canvasId, filename, chartTitle, legendId) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
   const OUT = 3;
+  const chartW = Math.round(src.width / dpr * OUT);
+  const chartH = Math.round(src.height / dpr * OUT);
+  const isLight = document.body.classList.contains('light');
+  const bgColor = isLight ? '#ffffff' : '#0F1728';
+  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const FONT = '"DM Sans", sans-serif';
+
+  const legendItems = [];
+  if(legendId){
+    const legendEl = document.getElementById(legendId);
+    if(legendEl){
+      legendEl.querySelectorAll('.legend-item:not(.hidden)').forEach(item => {
+        const dot = item.querySelector('.dot');
+        const label = item.textContent.trim();
+        const color = dot ? window.getComputedStyle(dot).backgroundColor : '#888888';
+        if(label) legendItems.push({ label, color });
+      });
+    }
+  }
+
+  const titleFontPx = Math.round(14 * OUT);
+  const legendFontPx = Math.round(11 * OUT);
+  const titleH = chartTitle ? Math.round(40 * OUT) : 0;
+  const legendH = legendItems.length ? Math.round(34 * OUT) : 0;
+
   const tmp = document.createElement('canvas');
-  tmp.width = Math.round(src.width / dpr * OUT);
-  tmp.height = Math.round(src.height / dpr * OUT);
+  tmp.width = chartW;
+  tmp.height = chartH + titleH + legendH;
   const ctx = tmp.getContext('2d');
-  ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
+
+  ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, tmp.width, tmp.height);
-  ctx.drawImage(src, 0, 0, tmp.width, tmp.height);
+
+  if(chartTitle){
+    ctx.font = `700 ${titleFontPx}px ${FONT}`;
+    ctx.fillStyle = fgColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(chartTitle, tmp.width / 2, titleH / 2);
+  }
+
+  ctx.drawImage(src, 0, titleH, chartW, chartH);
+
+  if(legendItems.length){
+    const ly = titleH + chartH;
+    const dotR = Math.round(5 * OUT);
+    const gap = Math.round(7 * OUT);
+    const pad = Math.round(20 * OUT);
+    ctx.font = `500 ${legendFontPx}px ${FONT}`;
+    ctx.textBaseline = 'middle';
+    let totalW = 0;
+    legendItems.forEach((item, i) => {
+      totalW += dotR * 2 + gap + ctx.measureText(item.label).width + (i < legendItems.length - 1 ? pad : 0);
+    });
+    let x = Math.max(Math.round(16 * OUT), (tmp.width - totalW) / 2);
+    const cy = ly + legendH / 2;
+    legendItems.forEach(item => {
+      ctx.fillStyle = item.color;
+      ctx.beginPath();
+      ctx.arc(x + dotR, cy, dotR, 0, Math.PI * 2);
+      ctx.fill();
+      x += dotR * 2 + gap;
+      ctx.fillStyle = fgColor;
+      ctx.textAlign = 'left';
+      ctx.fillText(item.label, x, cy);
+      x += ctx.measureText(item.label).width + pad;
+    });
+  }
+
   ctx.save();
   ctx.globalAlpha = 0.22;
-  ctx.font = `500 ${Math.round(11 * OUT)}px "DM Sans",sans-serif`;
+  ctx.font = `500 ${Math.round(11 * OUT)}px ${FONT}`;
   ctx.fillStyle = '#1a1a1a';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'bottom';
-  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/pisahvsgabung', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
+  ctx.fillText('Ⓐ tool.adjiebrotots.com', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
   ctx.restore();
+
   const a = document.createElement('a');
   a.href = tmp.toDataURL('image/png');
   a.download = filename;
   document.body.appendChild(a); a.click(); a.remove();
 }
-els.chart1PngBtn.addEventListener('click', () => downloadChartPng('chartCanvas', 'pisah_vs_gabung_chart1.png'));
-els.chart2PngBtn.addEventListener('click', () => downloadChartPng('chartCanvas2', 'pisah_vs_gabung_chart2.png'));
+function downloadChartSvg(canvasId, filename, chartTitle, legendId) {
+  const src = document.getElementById(canvasId);
+  if(!src) return;
+  const dpr = window.devicePixelRatio || 1;
+  const chartW = Math.round(src.width / dpr);
+  const chartH = Math.round(src.height / dpr);
+  const isLight = document.body.classList.contains('light');
+  const bgColor = isLight ? '#ffffff' : '#0F1728';
+  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const FONT = 'DM Sans, sans-serif';
+  const legendItems = [];
+  if(legendId){
+    const legendEl = document.getElementById(legendId);
+    if(legendEl){
+      legendEl.querySelectorAll('.legend-item:not(.hidden)').forEach(item => {
+        const dot = item.querySelector('.dot');
+        const label = item.textContent.trim();
+        const color = dot ? window.getComputedStyle(dot).backgroundColor : '#888888';
+        if(label) legendItems.push({ label, color });
+      });
+    }
+  }
+  const titleH = chartTitle ? 40 : 0;
+  const legendH = legendItems.length ? 34 : 0;
+  const svgW = chartW, svgH = chartH + titleH + legendH;
+  const NS = 'http://www.w3.org/2000/svg', xl = 'http://www.w3.org/1999/xlink';
+  const svg = document.createElementNS(NS,'svg');
+  svg.setAttribute('xmlns',NS); svg.setAttribute('xmlns:xlink',xl);
+  svg.setAttribute('width',svgW); svg.setAttribute('height',svgH);
+  svg.setAttribute('viewBox',`0 0 ${svgW} ${svgH}`);
+  const bgRect = document.createElementNS(NS,'rect');
+  bgRect.setAttribute('width',svgW); bgRect.setAttribute('height',svgH); bgRect.setAttribute('fill',bgColor);
+  svg.appendChild(bgRect);
+  if(chartTitle){
+    const t = document.createElementNS(NS,'text');
+    t.setAttribute('x',svgW/2); t.setAttribute('y',titleH/2);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','middle');
+    t.setAttribute('font-family',FONT); t.setAttribute('font-size','14'); t.setAttribute('font-weight','700'); t.setAttribute('fill',fgColor);
+    t.textContent = chartTitle; svg.appendChild(t);
+  }
+  const img = document.createElementNS(NS,'image');
+  img.setAttribute('x',0); img.setAttribute('y',titleH);
+  img.setAttribute('width',chartW); img.setAttribute('height',chartH);
+  img.setAttributeNS(xl,'href',src.toDataURL('image/png'));
+  svg.appendChild(img);
+  if(legendItems.length){
+    const dotR=5, gap=7, pad=20;
+    const cy = titleH + chartH + legendH/2;
+    const mc = document.createElement('canvas').getContext('2d');
+    mc.font = '500 11px DM Sans, sans-serif';
+    const totalW = legendItems.reduce((s,item,i) => s + dotR*2 + gap + mc.measureText(item.label).width + (i<legendItems.length-1?pad:0), 0);
+    let x = Math.max(16, (svgW - totalW) / 2);
+    legendItems.forEach(item => {
+      const c = document.createElementNS(NS,'circle');
+      c.setAttribute('cx',x+dotR); c.setAttribute('cy',cy); c.setAttribute('r',dotR); c.setAttribute('fill',item.color);
+      svg.appendChild(c); x += dotR*2 + gap;
+      const lt = document.createElementNS(NS,'text');
+      lt.setAttribute('x',x); lt.setAttribute('y',cy);
+      lt.setAttribute('dominant-baseline','middle'); lt.setAttribute('font-family',FONT);
+      lt.setAttribute('font-size','11'); lt.setAttribute('font-weight','500'); lt.setAttribute('fill',fgColor);
+      lt.textContent = item.label; svg.appendChild(lt);
+      x += mc.measureText(item.label).width + pad;
+    });
+  }
+  const wm = document.createElementNS(NS,'text');
+  wm.setAttribute('x',svgW-12); wm.setAttribute('y',svgH-12);
+  wm.setAttribute('text-anchor','end'); wm.setAttribute('dominant-baseline','auto');
+  wm.setAttribute('font-family',FONT); wm.setAttribute('font-size','11');
+  wm.setAttribute('font-weight','500'); wm.setAttribute('fill','#1a1a1a'); wm.setAttribute('opacity','0.22');
+  wm.textContent = 'Ⓐ tool.adjiebrotots.com'; svg.appendChild(wm);
+  const xml = '<?xml version="1.0" encoding="utf-8"?>\n' + new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([xml],{type:'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+els.chart1PngBtn.addEventListener('click', () => downloadChartPng('chartCanvas', 'pisah_vs_gabung_chart1.png', T('chart1Title'), 'chartLegend'));
+els.chart2PngBtn.addEventListener('click', () => downloadChartPng('chartCanvas2', 'pisah_vs_gabung_chart2.png', T('chart2Title'), 'chartLegend2'));
+els.chart1SvgBtn.addEventListener('click', () => downloadChartSvg('chartCanvas', 'pisah_vs_gabung_chart1.svg', T('chart1Title'), 'chartLegend'));
+els.chart2SvgBtn.addEventListener('click', () => downloadChartSvg('chartCanvas2', 'pisah_vs_gabung_chart2.svg', T('chart2Title'), 'chartLegend2'));
 
 /* ── CSV ── */
 function downloadCsv(){
