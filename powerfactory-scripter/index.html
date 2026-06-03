@@ -10,7 +10,7 @@
 <!-- SheetJS for xlsx template download in custom mode -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <!-- Highlight.js for code preview -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+<link id="hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <style>
   /* =====================================================================
@@ -481,6 +481,8 @@
     white-space: pre;
     overflow-x: auto;
   }
+  body.light #code-preview-wrapper { background: #F5F7FA; }
+  body.light #code-preview { background: #F5F7FA !important; }
   #code-preview code {
     font-family: inherit;
     background: none !important;
@@ -1027,17 +1029,17 @@
         <div class="form-row">
           <label>API Path <span class="tt" data-tip="Path to the PF Python API folder containing powerfactory.pyd (Windows) or .so (Linux).">?</span></label>
           <div>
-            <input type="text" id="pf-api-path" placeholder="C:\Program Files\DIgSILENT\PowerFactory 2022 SP1\Python\3.8" />
+            <input type="text" id="pf-api-path" placeholder="C:\Program Files\DIgSILENT\PowerFactory 2022 SP1\Python\3.8" autocomplete="off" />
           </div>
         </div>
         <div class="form-row">
           <label>Username <span class="tt" data-tip="PowerFactory login username passed to GetApplication(). Leave blank only if single-user mode is configured.">?</span></label>
-          <input type="text" id="pf-username" placeholder="USERNAME_HERE" />
+          <input type="text" id="pf-username" placeholder="USERNAME_HERE" autocomplete="off" />
         </div>
         <div class="form-row">
           <label>Output Directory <span class="tt" data-tip="Root folder for results. Subfolders /graph and /raw are auto-created if timeseries outputs are used.">?</span></label>
           <div>
-            <input type="text" id="output-dir" placeholder="C:\Users\user\results" />
+            <input type="text" id="output-dir" placeholder="C:\Users\user\results" autocomplete="off" />
           </div>
         </div>
         <div class="form-row">
@@ -1061,7 +1063,7 @@
         <div class="form-row" id="row-tstop" style="display:none">
           <label>Stop Time (s) <span class="tt" data-tip="Simulation end time in seconds (ComSim.tstop). 20 s for RMS; 0.25 s typical for EMT.">?</span></label>
           <div>
-            <input type="number" id="tstop" value="20" step="0.01" min="0" />
+            <input type="number" id="tstop" value="20" step="0.01" min="0" autocomplete="off" />
           </div>
         </div>
         <div class="form-row">
@@ -1138,7 +1140,7 @@
         </div>
         <div class="form-row">
           <label>Scenario File Path <span class="tt" data-tip="Path to the Excel scenario file (.xlsx). Download the template above for the required 3-row header format.">?</span></label>
-          <input type="text" id="scenario-file-path" placeholder="C:\scenarios\my_scenarios.xlsx" />
+          <input type="text" id="scenario-file-path" placeholder="C:\scenarios\my_scenarios.xlsx" autocomplete="off" />
         </div>
       </div>
     </div>
@@ -1258,7 +1260,7 @@
         </div>
         <div class="form-row">
           <label>Max Iterations <span class="tt" id="tt-max-iter" data-tip="Max function evaluations. 50–200 is typical for local methods.">?</span></label>
-          <input type="number" id="optim-max-iter" value="50" min="1" />
+          <input type="number" id="optim-max-iter" value="50" min="1" autocomplete="off" />
         </div>
         <hr class="divider" />
         <div class="sub-label">Constraints <span class="tt" data-tip="Violations add a large penalty to the objective (soft constraint). Hard bounds are set via input variable bounds.">?</span></div>
@@ -1310,7 +1312,7 @@
         </div>
         <div id="row-save-interval" class="form-row cond-hidden">
           <label>Interval (min) <span class="tt" data-tip="Save interval in minutes. 10–30 min recommended for multi-hour runs.">?</span></label>
-          <input type="number" id="save-interval-minutes" value="30" min="1" />
+          <input type="number" id="save-interval-minutes" value="30" min="1" autocomplete="off" />
         </div>
       </div>
     </div>
@@ -1478,10 +1480,10 @@ function addContingencyRow(data) {
   ).join('');
   tr.innerHTML = `
     <td style="text-align:center;color:var(--muted);font-size:12px;">${idx}</td>
-    <td><input type="text" id="cont-query-${idx}" value="${(data.query||'*.ElmLne').replace(/"/g,'&quot;')}" placeholder="*.ElmLne" oninput="onContingencyQueryChange(${idx})" style="min-width:120px;" /></td>
-    <td><input type="text" id="cont-filter-attr-${idx}" value="${filterAttr.replace(/"/g,'&quot;')}" placeholder="e.g. e:Unom" oninput="onContingencyFilterAttrChange(${idx})" style="min-width:100px;" /></td>
+    <td><input type="text" id="cont-query-${idx}" value="${(data.query||'*.ElmLne').replace(/"/g,'&quot;')}" placeholder="*.ElmLne" oninput="onContingencyQueryChange(${idx})" style="min-width:120px;" autocomplete="off" /></td>
+    <td><input type="text" id="cont-filter-attr-${idx}" value="${filterAttr.replace(/"/g,'&quot;')}" placeholder="e.g. e:Unom" oninput="onContingencyFilterAttrChange(${idx})" style="min-width:100px;" autocomplete="off" /></td>
     <td><select id="cont-filter-op-${idx}" style="width:56px;">${opOptions}</select></td>
-    <td><input type="text" id="cont-filter-val-${idx}" value="${(data.filterVal||'').replace(/"/g,'&quot;')}" placeholder="e.g. 66 or North*" style="min-width:100px;" /></td>
+    <td><input type="text" id="cont-filter-val-${idx}" value="${(data.filterVal||'').replace(/"/g,'&quot;')}" placeholder="e.g. 66 or North*" style="min-width:100px;" autocomplete="off" /></td>
     <td><button class="btn btn-ghost btn-xs" id="cont-remove-${idx}" onclick="removeContingencyRow(${idx})" style="padding:2px 6px;">✕</button></td>
   `;
   tbody.appendChild(tr);
@@ -2245,12 +2247,12 @@ function addInputRow(data = {}) {
   const rowNum = tbody.querySelectorAll('tr').length + 1;
   tr.innerHTML = `
     <td style="color:var(--muted);font-family:var(--mono);font-size:11px;vertical-align:middle">${rowNum}</td>
-    <td><input type="text" id="iv-name-${idx}" value="${data.name||''}" placeholder="Var name" /></td>
+    <td><input type="text" id="iv-name-${idx}" value="${data.name||''}" placeholder="Var name" autocomplete="off" /></td>
     <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" autocomplete="off" /></td>
     <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" /></td>
-    <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" /></td>
-    <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" /></td>
-    <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" /></td>
+    <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" autocomplete="off" /></td>
+    <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" autocomplete="off" /></td>
+    <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" autocomplete="off" /></td>
     <td class="td-action">
       <button class="btn btn-remove btn-icon" title="Remove" onclick="removeRow('input-row-${idx}')">✕</button>
     </td>
@@ -2366,7 +2368,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       </select>
       ${tip(TIP_OUTPUT_TYPE[type] || TIP_OUTPUT_TYPE.attribute, `${id}-tt-type`)}
       <input type="text" id="${id}-name" value="${data.name||''}" placeholder="Output var name"
-        style="flex:1;font-size:12px;padding:3px 8px;min-width:80px;" oninput="onOutputNameChange()" />
+        style="flex:1;font-size:12px;padding:3px 8px;min-width:80px;" oninput="onOutputNameChange()" autocomplete="off" />
       ${tip('Python identifier for this output. Must be unique across all inputs and outputs.')}
       <button class="btn btn-ghost btn-icon btn-xs" title="Collapse" onclick="toggleOutputVar('${id}')" id="${id}-toggle" style="font-size:14px;flex-shrink:0;">▾</button>
       <button class="btn btn-remove btn-xs" onclick="removeOutputVar('${id}')">✕</button>
@@ -2397,21 +2399,21 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       <!-- THRESHOLD -->
       <div class="form-row ${!showThresh?'cond-hidden':''}" id="${id}-row-threshold">
         <label>Threshold ${tip('Value the signal must cross (first_time_above) or drop below (first_time_below).')}</label>
-        <input type="number" id="${id}-threshold" value="${data.threshold||''}" step="any" placeholder="0.9" />
+        <input type="number" id="${id}-threshold" value="${data.threshold||''}" step="any" placeholder="0.9" autocomplete="off" />
       </div>
       <!-- SETTLE PARAMS -->
       <div class="${!showSettle?'cond-hidden':''}" id="${id}-row-settle">
         <div class="form-row">
           <label>Settle Band ${tip('Half-width of the ±band: signal must stay in [ref−band, ref+band] for the full hold time.')}</label>
-          <input type="number" id="${id}-settle-band" value="${data.settle_band||''}" step="any" placeholder="0.05" />
+          <input type="number" id="${id}-settle-band" value="${data.settle_band||''}" step="any" placeholder="0.05" autocomplete="off" />
         </div>
         <div class="form-row">
           <label>Hold Time (s) ${tip('Minimum duration (s) the signal must remain inside the settle band.')}</label>
-          <input type="number" id="${id}-settle-hold" value="${data.settle_hold_time||''}" step="any" placeholder="0.5" />
+          <input type="number" id="${id}-settle-hold" value="${data.settle_hold_time||''}" step="any" placeholder="0.5" autocomplete="off" />
         </div>
         <div class="form-row">
           <label>Reference Value ${tip('Target steady-state value. Settle band = [ref−band, ref+band].')}</label>
-          <input type="number" id="${id}-settle-ref" value="${data.settle_reference_value||''}" step="any" placeholder="1.0" />
+          <input type="number" id="${id}-settle-ref" value="${data.settle_reference_value||''}" step="any" placeholder="1.0" autocomplete="off" />
         </div>
       </div>
       <!-- OUTPUT GRAPH (timeseries only) -->
@@ -2586,7 +2588,7 @@ function addConstraint(data = {}) {
         <option value="==" ${data.operator==='=='?'selected':''}>==</option>
       </select>
     </td>
-    <td><input type="number" id="con-val-${idx}" value="${data.value||''}" step="any" placeholder="0.95" /></td>
+    <td><input type="number" id="con-val-${idx}" value="${data.value||''}" step="any" placeholder="0.95" autocomplete="off" /></td>
     <td class="td-action">
       <button class="btn btn-remove btn-icon" onclick="removeRow('con-row-${idx}')">✕</button>
     </td>
@@ -4703,9 +4705,13 @@ function toggleInfoExtra(extraId, btn) {
 ================================================================ */
 (function initTheme() {
   const btn = document.getElementById('themeToggle');
+  const hljsTheme = document.getElementById('hljs-theme');
+  const HLJS_DARK  = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css';
+  const HLJS_LIGHT = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css';
   const apply = (light) => {
     document.body.classList.toggle('light', light);
     btn.textContent = light ? '🌙 Dark' : '☀️ Light';
+    hljsTheme.href = light ? HLJS_LIGHT : HLJS_DARK;
   };
   apply(localStorage.getItem('pf-theme') === 'light');
   btn.addEventListener('click', () => {
