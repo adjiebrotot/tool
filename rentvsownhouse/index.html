@@ -569,6 +569,7 @@ abbr.abbr-hint{text-decoration:underline dotted;cursor:help;text-underline-offse
         <button class="graph-btn active" data-graph="netEquity" id="graphNetEquity" data-i18n="btnNetEquity">Net Equity</button>
         <button class="graph-btn" data-graph="cash" id="graphCash" data-i18n="btnLiquidCash">Liquid Cash</button>
         <button class="graph-btn" data-graph="cost" id="graphCost" data-i18n="btnAccumCost">Accum. Cost</button>
+        <button class="btn-secondary" id="pngBtn" style="font-size:.78rem;padding:5px 11px;">⬇ PNG</button>
         <button class="btn-secondary" id="chartResetZoom" style="font-size:.78rem;padding:5px 11px;" data-i18n="btnZoom">⟳ Zoom</button>
       </div>
     </div>
@@ -604,7 +605,6 @@ abbr.abbr-hint{text-decoration:underline dotted;cursor:help;text-underline-offse
         <button class="tab-btn" id="rtbTableTab" data-table="rtb" style="display:none;" data-i18n="tabRTBCashflow">🔄 Rent-Then-Buy Cashflow</button>
       </div>
       <div class="tab-row">
-        <button class="btn-secondary" id="pngBtn" type="button">⬇ PNG</button>
         <button class="btn-secondary" id="downloadBtn" type="button" data-i18n="btnCSV">⬇ CSV</button>
       </div>
     </div>
@@ -2156,8 +2156,8 @@ function renderChart(rows){
         },
       },
       scales:{
-        x:{ticks:{color:m,maxTicksLimit:12,font:{family:"'DM Mono', monospace",size:11},callback:xTickCallback},grid:{color:g}},
-        y:{ticks:{color:m,font:{family:"'DM Mono', monospace",size:11},callback:v=>fmt.currency(v,true)},grid:{color:g}},
+        x:{title:{display:true,text:'Year',color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,maxTicksLimit:12,font:{family:"'DM Mono', monospace",size:11},callback:xTickCallback},grid:{color:g}},
+        y:{title:{display:true,text:'Value',color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,font:{family:"'DM Mono', monospace",size:11},callback:v=>fmt.currency(v,true)},grid:{color:g}},
       },
     },
   };
@@ -2168,8 +2168,10 @@ function renderChart(rows){
     chartInstance.options.scales.x.ticks.color=m;
     chartInstance.options.scales.x.ticks.callback=xTickCallback;
     chartInstance.options.scales.x.grid.color=g;
+    chartInstance.options.scales.x.title.color=m;
     chartInstance.options.scales.y.ticks.color=m;
     chartInstance.options.scales.y.grid.color=g;
+    chartInstance.options.scales.y.title.color=m;
     chartInstance.options.plugins.tooltip.backgroundColor=cssVar('--panel')||'#162033';
     chartInstance.options.plugins.tooltip.titleColor=t;
     chartInstance.options.plugins.tooltip.bodyColor=m;
@@ -2500,19 +2502,22 @@ function applyPreset(cityKey){
 function downloadChartPng() {
   const src = document.getElementById('chartCanvas');
   if(!src) return;
+  const dpr = window.devicePixelRatio || 1;
+  const OUT = 3;
   const tmp = document.createElement('canvas');
-  tmp.width = src.width; tmp.height = src.height;
+  tmp.width = Math.round(src.width / dpr * OUT);
+  tmp.height = Math.round(src.height / dpr * OUT);
   const ctx = tmp.getContext('2d');
   ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
   ctx.fillRect(0, 0, tmp.width, tmp.height);
-  ctx.drawImage(src, 0, 0);
+  ctx.drawImage(src, 0, 0, tmp.width, tmp.height);
   ctx.save();
   ctx.globalAlpha = 0.22;
-  ctx.font = '500 11px "DM Sans",sans-serif';
+  ctx.font = `500 ${Math.round(11 * OUT)}px "DM Sans",sans-serif`;
   ctx.fillStyle = '#1a1a1a';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'bottom';
-  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/rentvsownhouse', tmp.width - 12, tmp.height - 12);
+  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/rentvsownhouse', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
   ctx.restore();
   const a = document.createElement('a');
   a.href = tmp.toDataURL('image/png');

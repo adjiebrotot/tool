@@ -1127,7 +1127,7 @@ document.getElementById('savePngBtn').addEventListener('click', async()=>{
     await new Promise(r=>setTimeout(r,60));
     const result=await html2canvas(canvas,{
       backgroundColor:null,
-      scale:2, useCORS:true, logging:false, allowTaint:true, removeContainer:true,
+      scale:3, useCORS:true, logging:false, allowTaint:true, removeContainer:true,
     });
     const link=document.createElement('a');
     const safe=(S.canvasName||'canvas').replace(/[^a-z0-9\-_ ]/gi,'').trim()||'canvas';
@@ -1135,11 +1135,11 @@ document.getElementById('savePngBtn').addEventListener('click', async()=>{
     const wCtx=result.getContext('2d');
     wCtx.save();
     wCtx.globalAlpha=0.22;
-    wCtx.font='500 11px "DM Sans",sans-serif';
+    wCtx.font='500 33px "DM Sans",sans-serif';
     wCtx.fillStyle='#1a1a1a';
     wCtx.textAlign='right';
     wCtx.textBaseline='bottom';
-    wCtx.fillText('Ⓐ Made using tool.adjiebrotots.com/canvasbuilder',result.width-12,result.height-12);
+    wCtx.fillText('Ⓐ Made using tool.adjiebrotots.com/canvasbuilder',result.width-36,result.height-36);
     wCtx.restore();
     link.href=result.toDataURL('image/png');
     link.click();

@@ -1370,15 +1370,17 @@ function updatePriceChart(){
         afterBody(items){ if(items.length) $('priceHoverBox').textContent=`${items[0].label}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.num(i.parsed.y,2)}%`).join('  |  '); }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
-    scales:{ x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
-              y:{ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
+    scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
+              y:{title:{display:true,text:'Normalised Price (base 100)',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
   };}
 
   if(priceChartInstance){
     priceChartInstance.data.labels=allDates; priceChartInstance.data.datasets=datasets;
     priceChartInstance.options.scales.x.ticks.color=mutedColor; priceChartInstance.options.scales.x.grid.color=gridColor;
     priceChartInstance.options.scales.x.ticks.callback=v=>allDates[Number(v)]?.slice(0,7)||'';
+    priceChartInstance.options.scales.x.title.color=mutedColor;
     priceChartInstance.options.scales.y.ticks.color=mutedColor; priceChartInstance.options.scales.y.grid.color=gridColor;
+    priceChartInstance.options.scales.y.title.color=mutedColor;
     priceChartInstance.update('none');
   } else {
     priceChartInstance=new Chart($('priceCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildPriceOpts()});
@@ -1430,16 +1432,18 @@ function updateEquityChart(){
         afterBody(items){ if(items.length) $('equityHoverBox').textContent=`${items[0].label}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  '); }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
-    scales:{ x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
-              y:{ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
+    scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
+              y:{title:{display:true,text:'Portfolio Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
   };}
 
   if(equityChartInstance){
     equityChartInstance.data.labels=allDates; equityChartInstance.data.datasets=datasets;
     equityChartInstance.options.scales.x.ticks.color=mutedColor; equityChartInstance.options.scales.x.grid.color=gridColor;
     equityChartInstance.options.scales.x.ticks.callback=v=>allDates[Number(v)]?.slice(0,7)||'';
+    equityChartInstance.options.scales.x.title.color=mutedColor;
     equityChartInstance.options.scales.y.ticks.color=mutedColor; equityChartInstance.options.scales.y.grid.color=gridColor;
     equityChartInstance.options.scales.y.ticks.callback=yCallback;
+    equityChartInstance.options.scales.y.title.color=mutedColor;
     equityChartInstance.update('none');
     // re-apply deposited visibility
     datasets.forEach((ds,i)=>{ if(ds._type==='deposit') equityChartInstance.setDatasetVisibility(i,showDeposited); });
@@ -1591,19 +1595,22 @@ $('resetBtn').addEventListener('click',()=>{
 function downloadChartPng(canvasId, filename) {
   const src = document.getElementById(canvasId);
   if(!src) return;
+  const dpr = window.devicePixelRatio || 1;
+  const OUT = 3;
   const tmp = document.createElement('canvas');
-  tmp.width = src.width; tmp.height = src.height;
+  tmp.width = Math.round(src.width / dpr * OUT);
+  tmp.height = Math.round(src.height / dpr * OUT);
   const ctx = tmp.getContext('2d');
   ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
   ctx.fillRect(0, 0, tmp.width, tmp.height);
-  ctx.drawImage(src, 0, 0);
+  ctx.drawImage(src, 0, 0, tmp.width, tmp.height);
   ctx.save();
   ctx.globalAlpha = 0.22;
-  ctx.font = '500 11px "DM Sans",sans-serif';
+  ctx.font = `500 ${Math.round(11 * OUT)}px "DM Sans",sans-serif`;
   ctx.fillStyle = '#1a1a1a';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'bottom';
-  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/dcasimulator', tmp.width - 12, tmp.height - 12);
+  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/dcasimulator', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
   ctx.restore();
   const a = document.createElement('a');
   a.href = tmp.toDataURL('image/png');
@@ -1830,8 +1837,10 @@ function renderSensitivityChart(sec, labels, values, subtitle){
     sensitivityChartInstance.data.datasets=[dataset];
     sensitivityChartInstance.options.scales.x.ticks.color=mutedColor;
     sensitivityChartInstance.options.scales.x.grid.color=gridColor;
+    sensitivityChartInstance.options.scales.x.title.color=mutedColor;
     sensitivityChartInstance.options.scales.y.ticks.color=mutedColor;
     sensitivityChartInstance.options.scales.y.grid.color=gridColor;
+    sensitivityChartInstance.options.scales.y.title.color=mutedColor;
     sensitivityChartInstance.options.scales.y.ticks.callback=yTickCb;
     sensitivityChartInstance.update();
   } else {
@@ -1853,8 +1862,8 @@ function renderSensitivityChart(sec, labels, values, subtitle){
           }
         },
         scales:{
-          x:{ticks:{color:mutedColor,font:{family:'inherit',size:11}},grid:{color:gridColor}},
-          y:{ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yTickCb},grid:{color:gridColor},beginAtZero:false}
+          x:{title:{display:true,text:'Scenario Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11}},grid:{color:gridColor}},
+          y:{title:{display:true,text:'Final Portfolio Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yTickCb},grid:{color:gridColor},beginAtZero:false}
         }
       }
     });

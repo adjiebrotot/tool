@@ -1347,19 +1347,22 @@ function buildBracketEditor(){
 function downloadChartPng(canvasId, filename) {
   const src = document.getElementById(canvasId);
   if(!src) return;
+  const dpr = window.devicePixelRatio || 1;
+  const OUT = 3;
   const tmp = document.createElement('canvas');
-  tmp.width = src.width; tmp.height = src.height;
+  tmp.width = Math.round(src.width / dpr * OUT);
+  tmp.height = Math.round(src.height / dpr * OUT);
   const ctx = tmp.getContext('2d');
   ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
   ctx.fillRect(0, 0, tmp.width, tmp.height);
-  ctx.drawImage(src, 0, 0);
+  ctx.drawImage(src, 0, 0, tmp.width, tmp.height);
   ctx.save();
   ctx.globalAlpha = 0.22;
-  ctx.font = '500 11px "DM Sans",sans-serif';
+  ctx.font = `500 ${Math.round(11 * OUT)}px "DM Sans",sans-serif`;
   ctx.fillStyle = '#1a1a1a';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'bottom';
-  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/pisahvsgabung', tmp.width - 12, tmp.height - 12);
+  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/pisahvsgabung', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
   ctx.restore();
   const a = document.createElement('a');
   a.href = tmp.toDataURL('image/png');
