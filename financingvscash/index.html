@@ -310,7 +310,10 @@ body.light #globalTooltip::after{border-top-color:#FFFFFF;}
   <section class="chart-card card">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
       <h2 id="chartTitle" style="margin:0;">Ending Wealth Over Time</h2>
-      <button class="btn-secondary btn-sm" id="chartResetZoom">⟳ Reset zoom</button>
+      <div style="display:flex;gap:6px;">
+        <button class="btn-secondary btn-sm" id="chartPngBtn">⬇ PNG</button>
+        <button class="btn-secondary btn-sm" id="chartResetZoom">⟳ Reset zoom</button>
+      </div>
     </div>
     <div class="legend" id="chartLegend"></div>
     <div class="canvas-wrap"><canvas id="chartCanvas"></canvas></div>
@@ -319,13 +322,19 @@ body.light #globalTooltip::after{border-top-color:#FFFFFF;}
   <section class="chart-card card" id="sens2dSection" style="display:none;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
       <h2 id="sens2dTitle" style="margin:0;">2D Sensitivity</h2>
-      <button class="btn-secondary btn-sm" id="sensResetZoom">⟳ Reset zoom</button>
+      <div style="display:flex;gap:6px;">
+        <button class="btn-secondary btn-sm" id="sens2dPngBtn">⬇ PNG</button>
+        <button class="btn-secondary btn-sm" id="sensResetZoom">⟳ Reset zoom</button>
+      </div>
     </div>
     <div class="legend" id="sensLegend"></div>
     <div class="canvas-wrap"><canvas id="sensCanvas"></canvas></div>
   </section>
   <section class="chart-card card" id="sens3dSection" style="display:none;">
-    <h2 id="sens3dTitle" style="margin:0 0 12px;">3D Sensitivity Surface</h2>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+      <h2 id="sens3dTitle" style="margin:0;">3D Sensitivity Surface</h2>
+      <button class="btn-secondary btn-sm" id="sens3dPngBtn">⬇ PNG</button>
+    </div>
     <div class="surface-wrap" id="plotly3d"></div>
   </section>
   <section class="detail-section card">
@@ -899,7 +908,7 @@ $('downloadBtn').addEventListener('click',()=>{
     [...tr.querySelectorAll('th,td')].map(cell=>esc(cell.textContent.trim())).join(',')
   );
   if(!rows.length)return;
-  const csv=rows.join('\n');
+  const csv='# Made using tool.adjiebrotots.com/financingvscash\n'+rows.join('\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
@@ -909,6 +918,42 @@ $('downloadBtn').addEventListener('click',()=>{
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+});
+
+/* ─── DOWNLOAD CHART PNG ─── */
+function downloadChartJsPng(canvasId, filename) {
+  const src = document.getElementById(canvasId);
+  if(!src) return;
+  const tmp = document.createElement('canvas');
+  tmp.width = src.width; tmp.height = src.height;
+  const ctx = tmp.getContext('2d');
+  ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
+  ctx.fillRect(0, 0, tmp.width, tmp.height);
+  ctx.drawImage(src, 0, 0);
+  ctx.save();
+  ctx.globalAlpha = 0.22;
+  ctx.font = '500 11px "DM Sans",sans-serif';
+  ctx.fillStyle = '#1a1a1a';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/financingvscash', tmp.width - 12, tmp.height - 12);
+  ctx.restore();
+  const a = document.createElement('a');
+  a.href = tmp.toDataURL('image/png');
+  a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+$('chartPngBtn').addEventListener('click', () => downloadChartJsPng('chartCanvas', 'financing_wealth_chart.png'));
+$('sens2dPngBtn').addEventListener('click', () => downloadChartJsPng('sensCanvas', 'financing_sensitivity_2d.png'));
+$('sens3dPngBtn').addEventListener('click', async () => {
+  const wmAnnotation = {
+    xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom',
+    showarrow:false, text:'Ⓐ Made using tool.adjiebrotots.com/financingvscash',
+    font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' },
+  };
+  await Plotly.relayout('plotly3d', { annotations:[wmAnnotation] });
+  await Plotly.downloadImage('plotly3d', { format:'png', filename:'financing_sensitivity_3d', scale:2 });
+  await Plotly.relayout('plotly3d', { annotations:[] });
 });
 
 /* ─── Global Tooltip ─── */

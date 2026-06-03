@@ -341,7 +341,10 @@
       <section class="chart-card card" style="margin-bottom:18px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
           <h2 style="margin:0;" data-i18n="chart1Title">Total Tax by Household Salary</h2>
-          <button class="btn-secondary" id="chartResetZoom" style="font-size:0.8rem;padding:6px 12px;" data-i18n="resetZoom">⟳ Reset zoom</button>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-secondary" id="chart1PngBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ PNG</button>
+            <button class="btn-secondary" id="chartResetZoom" style="font-size:0.8rem;padding:6px 12px;" data-i18n="resetZoom">⟳ Reset zoom</button>
+          </div>
         </div>
         <p class="muted" style="font-size:0.84rem;margin-top:4px;" data-i18n="chart1Sub">Shows total tax payable across salary range. The gap between lines = tax savings.</p>
         <div class="legend" id="chartLegend"></div>
@@ -354,7 +357,10 @@
       <section class="chart-card card" style="margin-bottom:18px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
           <h2 style="margin:0;" data-i18n="chart2Title">Tax Difference (Gabung − Pisah)</h2>
-          <button class="btn-secondary" id="chartResetZoom2" style="font-size:0.8rem;padding:6px 12px;" data-i18n="resetZoom">⟳ Reset zoom</button>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-secondary" id="chart2PngBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ PNG</button>
+            <button class="btn-secondary" id="chartResetZoom2" style="font-size:0.8rem;padding:6px 12px;" data-i18n="resetZoom">⟳ Reset zoom</button>
+          </div>
         </div>
         <p class="muted" style="font-size:0.84rem;margin-top:4px;" data-i18n="chart2Sub">Positive = Gabung Harta pays more (Pisah Harta wins). Negative = Gabung Harta pays less (Gabung Harta wins).</p>
         <div class="legend" id="chartLegend2"></div>
@@ -794,6 +800,8 @@ const els = {
   husbandDeductionInput: $('husbandDeductionInput'),
   wifeDeductionInput: $('wifeDeductionInput'),
   resetBtn: $('resetBtn'),
+  chart1PngBtn: $('chart1PngBtn'),
+  chart2PngBtn: $('chart2PngBtn'),
   downloadBtn: $('downloadBtn'),
   bracketsContainer: $('bracketsContainer'),
   ptkpBase: $('ptkpBase'),
@@ -1335,6 +1343,32 @@ function buildBracketEditor(){
   });
 }
 
+/* ── PNG ── */
+function downloadChartPng(canvasId, filename) {
+  const src = document.getElementById(canvasId);
+  if(!src) return;
+  const tmp = document.createElement('canvas');
+  tmp.width = src.width; tmp.height = src.height;
+  const ctx = tmp.getContext('2d');
+  ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
+  ctx.fillRect(0, 0, tmp.width, tmp.height);
+  ctx.drawImage(src, 0, 0);
+  ctx.save();
+  ctx.globalAlpha = 0.22;
+  ctx.font = '500 11px "DM Sans",sans-serif';
+  ctx.fillStyle = '#1a1a1a';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/pisahvsgabung', tmp.width - 12, tmp.height - 12);
+  ctx.restore();
+  const a = document.createElement('a');
+  a.href = tmp.toDataURL('image/png');
+  a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+els.chart1PngBtn.addEventListener('click', () => downloadChartPng('chartCanvas', 'pisah_vs_gabung_chart1.png'));
+els.chart2PngBtn.addEventListener('click', () => downloadChartPng('chartCanvas2', 'pisah_vs_gabung_chart2.png'));
+
 /* ── CSV ── */
 function downloadCsv(){
   if(!latestRows.length)return;
@@ -1343,7 +1377,7 @@ function downloadCsv(){
     const w=Math.abs(r.diff)<1000?'Same':r.diff>0?'Pisah':'Gabung';
     return [r.salary,r.husbandGross,r.wifeGross,r.totalDeduction,r.netIncome,r.ptkpH,r.ptkpW,r.taxableH,r.taxableW,r.taxH,r.taxW,r.pisahTax,r.ptkpGabung,r.taxableGabung,r.gabungTax,r.diff,w,(r.pisahRate*100).toFixed(2)+'%',(r.gabungRate*100).toFixed(2)+'%'].join(',');
   });
-  const csv=[h.join(','),...lines].join('\n');
+  const csv='# Made using tool.adjiebrotots.com/pisahvsgabung\n'+[h.join(','),...lines].join('\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');a.href=url;a.download='pisah_vs_gabung_harta.csv';

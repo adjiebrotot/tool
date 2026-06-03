@@ -367,6 +367,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
     <div class="section-title">
       <h2>Security Prices <span style="color:var(--muted);font-size:.85rem;font-weight:400">(normalised to 100)</span></h2>
       <div class="chart-actions">
+        <button class="btn-secondary" id="pricePngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
         <button class="btn-secondary" id="priceResetZoom" style="font-size:.8rem;padding:5px 11px">⟳ Reset Zoom</button>
       </div>
     </div>
@@ -389,6 +390,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
             <div class="toggle-track"><div class="toggle-knob"></div></div>
           </div>
         </label>
+        <button class="btn-secondary" id="equityPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
         <button class="btn-secondary" id="equityResetZoom" style="font-size:.8rem;padding:5px 11px">⟳ Reset Zoom</button>
       </div>
     </div>
@@ -441,6 +443,9 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
       <div>
         <h2>🔬 Sensitivity Analysis</h2>
         <p id="sensChartSubtitle" style="font-size:.82rem;color:var(--muted);margin-top:2px"></p>
+      </div>
+      <div class="chart-actions">
+        <button class="btn-secondary" id="sensPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
       </div>
     </div>
     <div class="canvas-wrap" style="height:370px"><canvas id="sensCanvas"></canvas></div>
@@ -1582,6 +1587,33 @@ $('resetBtn').addEventListener('click',()=>{
   runSimulation();
 });
 
+/* ─── DOWNLOAD CHART PNG ─── */
+function downloadChartPng(canvasId, filename) {
+  const src = document.getElementById(canvasId);
+  if(!src) return;
+  const tmp = document.createElement('canvas');
+  tmp.width = src.width; tmp.height = src.height;
+  const ctx = tmp.getContext('2d');
+  ctx.fillStyle = document.body.classList.contains('light') ? '#ffffff' : '#0F1728';
+  ctx.fillRect(0, 0, tmp.width, tmp.height);
+  ctx.drawImage(src, 0, 0);
+  ctx.save();
+  ctx.globalAlpha = 0.22;
+  ctx.font = '500 11px "DM Sans",sans-serif';
+  ctx.fillStyle = '#1a1a1a';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/dcasimulator', tmp.width - 12, tmp.height - 12);
+  ctx.restore();
+  const a = document.createElement('a');
+  a.href = tmp.toDataURL('image/png');
+  a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+$('pricePngBtn').addEventListener('click', () => downloadChartPng('priceCanvas', 'dca_price_chart.png'));
+$('equityPngBtn').addEventListener('click', () => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png'));
+$('sensPngBtn').addEventListener('click', () => downloadChartPng('sensCanvas', 'dca_sensitivity_chart.png'));
+
 /* ─── DOWNLOAD CSV (Detailed Breakdown of active tab) ─── */
 $('downloadBtn').addEventListener('click',()=>{
   if(!simResults.length){ showWarning('Run simulation first.'); return; }
@@ -1590,7 +1622,7 @@ $('downloadBtn').addEventListener('click',()=>{
   const headers=['Date','Price','Amount_Invested','Units_Added','Total_Units','Equity','Return_Pct'];
   const lines=res.investRows.map(r=>[r.date,r.price.toFixed(4),r.amountInvested.toFixed(2),
     r.unitsAdded.toFixed(6),r.totalUnits.toFixed(6),r.equity.toFixed(2),r.returnPct.toFixed(2)].join(','));
-  const csv=[headers.join(','),...lines].join('\n');
+  const csv='# Made using tool.adjiebrotots.com/dcasimulator\n'+[headers.join(','),...lines].join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
   a.download=`dca_${res.sec.name.replace(/[^a-z0-9]/gi,'_')}.csv`;

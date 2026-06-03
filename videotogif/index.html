@@ -1340,6 +1340,18 @@
       const srcTime = S.inPoint + i * S.speed / S.fps;
       await seekTo(srcTime);
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const _wmFs = Math.max(10, Math.floor(canvas.height * 0.028));
+      ctx.save();
+      ctx.globalAlpha = 0.35;
+      ctx.font = `500 ${_wmFs}px "DM Mono",monospace`;
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'bottom';
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#000000';
+      ctx.strokeText('Ⓐ Made using tool.adjiebrotots.com/videotogif', canvas.width - 8, canvas.height - 6);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/videotogif', canvas.width - 8, canvas.height - 6);
+      ctx.restore();
       const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
       result.push(new Uint8ClampedArray(id.data));
 
