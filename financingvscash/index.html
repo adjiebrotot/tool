@@ -312,6 +312,7 @@ body.light #globalTooltip::after{border-top-color:#FFFFFF;}
       <h2 id="chartTitle" style="margin:0;">Ending Wealth Over Time</h2>
       <div style="display:flex;gap:6px;">
         <button class="btn-secondary btn-sm" id="chartPngBtn">⬇ PNG</button>
+        <button class="btn-secondary btn-sm" id="chartSvgBtn">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="chartResetZoom">⟳ Reset zoom</button>
       </div>
     </div>
@@ -324,6 +325,7 @@ body.light #globalTooltip::after{border-top-color:#FFFFFF;}
       <h2 id="sens2dTitle" style="margin:0;">2D Sensitivity</h2>
       <div style="display:flex;gap:6px;">
         <button class="btn-secondary btn-sm" id="sens2dPngBtn">⬇ PNG</button>
+        <button class="btn-secondary btn-sm" id="sens2dSvgBtn">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="sensResetZoom">⟳ Reset zoom</button>
       </div>
     </div>
@@ -334,6 +336,7 @@ body.light #globalTooltip::after{border-top-color:#FFFFFF;}
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
       <h2 id="sens3dTitle" style="margin:0;">3D Sensitivity Surface</h2>
       <button class="btn-secondary btn-sm" id="sens3dPngBtn">⬇ PNG</button>
+      <button class="btn-secondary btn-sm" id="sens3dSvgBtn">⬇ SVG</button>
     </div>
     <div class="surface-wrap" id="plotly3d"></div>
   </section>
@@ -1009,6 +1012,82 @@ function downloadChartJsPng(canvasId, filename, chartTitle, legendId) {
   a.download = filename;
   document.body.appendChild(a); a.click(); a.remove();
 }
+function downloadChartJsSvg(canvasId, filename, chartTitle, legendId) {
+  const src = document.getElementById(canvasId);
+  if(!src) return;
+  const dpr = window.devicePixelRatio || 1;
+  const chartW = Math.round(src.width / dpr);
+  const chartH = Math.round(src.height / dpr);
+  const isLight = document.body.classList.contains('light');
+  const bgColor = isLight ? '#ffffff' : '#0F1728';
+  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const FONT = 'DM Sans, sans-serif';
+  const legendItems = [];
+  if(legendId){
+    const legendEl = document.getElementById(legendId);
+    if(legendEl){
+      legendEl.querySelectorAll('.legend-item:not(.hidden)').forEach(item => {
+        const dot = item.querySelector('.dot');
+        const label = item.textContent.trim();
+        const color = dot ? window.getComputedStyle(dot).backgroundColor : '#888888';
+        if(label) legendItems.push({ label, color });
+      });
+    }
+  }
+  const titleH = chartTitle ? 40 : 0;
+  const legendH = legendItems.length ? 34 : 0;
+  const svgW = chartW, svgH = chartH + titleH + legendH;
+  const NS = 'http://www.w3.org/2000/svg', xl = 'http://www.w3.org/1999/xlink';
+  const svg = document.createElementNS(NS,'svg');
+  svg.setAttribute('xmlns',NS); svg.setAttribute('xmlns:xlink',xl);
+  svg.setAttribute('width',svgW); svg.setAttribute('height',svgH);
+  svg.setAttribute('viewBox',`0 0 ${svgW} ${svgH}`);
+  const bgRect = document.createElementNS(NS,'rect');
+  bgRect.setAttribute('width',svgW); bgRect.setAttribute('height',svgH); bgRect.setAttribute('fill',bgColor);
+  svg.appendChild(bgRect);
+  if(chartTitle){
+    const t = document.createElementNS(NS,'text');
+    t.setAttribute('x',svgW/2); t.setAttribute('y',titleH/2);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','middle');
+    t.setAttribute('font-family',FONT); t.setAttribute('font-size','14'); t.setAttribute('font-weight','700'); t.setAttribute('fill',fgColor);
+    t.textContent = chartTitle; svg.appendChild(t);
+  }
+  const img = document.createElementNS(NS,'image');
+  img.setAttribute('x',0); img.setAttribute('y',titleH);
+  img.setAttribute('width',chartW); img.setAttribute('height',chartH);
+  img.setAttributeNS(xl,'href',src.toDataURL('image/png'));
+  svg.appendChild(img);
+  if(legendItems.length){
+    const dotR=5, gap=7, pad=20;
+    const cy = titleH + chartH + legendH/2;
+    const mc = document.createElement('canvas').getContext('2d');
+    mc.font = '500 11px DM Sans, sans-serif';
+    const totalW = legendItems.reduce((s,item,i) => s + dotR*2 + gap + mc.measureText(item.label).width + (i<legendItems.length-1?pad:0), 0);
+    let x = Math.max(16, (svgW - totalW) / 2);
+    legendItems.forEach(item => {
+      const c = document.createElementNS(NS,'circle');
+      c.setAttribute('cx',x+dotR); c.setAttribute('cy',cy); c.setAttribute('r',dotR); c.setAttribute('fill',item.color);
+      svg.appendChild(c); x += dotR*2 + gap;
+      const lt = document.createElementNS(NS,'text');
+      lt.setAttribute('x',x); lt.setAttribute('y',cy);
+      lt.setAttribute('dominant-baseline','middle'); lt.setAttribute('font-family',FONT);
+      lt.setAttribute('font-size','11'); lt.setAttribute('font-weight','500'); lt.setAttribute('fill',fgColor);
+      lt.textContent = item.label; svg.appendChild(lt);
+      x += mc.measureText(item.label).width + pad;
+    });
+  }
+  const wm = document.createElementNS(NS,'text');
+  wm.setAttribute('x',svgW-12); wm.setAttribute('y',svgH-12);
+  wm.setAttribute('text-anchor','end'); wm.setAttribute('dominant-baseline','auto');
+  wm.setAttribute('font-family',FONT); wm.setAttribute('font-size','11');
+  wm.setAttribute('font-weight','500'); wm.setAttribute('fill','#1a1a1a'); wm.setAttribute('opacity','0.22');
+  wm.textContent = 'Ⓐ tool.adjiebrotots.com'; svg.appendChild(wm);
+  const xml = '<?xml version="1.0" encoding="utf-8"?>\n' + new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([xml],{type:'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
 $('chartPngBtn').addEventListener('click', () => {
   const title = document.getElementById('chartTitle')?.textContent || 'Finance vs Cash Purchase';
   downloadChartJsPng('chartCanvas', 'financing_wealth_chart.png', title, 'chartLegend');
@@ -1031,6 +1110,30 @@ $('sens3dPngBtn').addEventListener('click', async () => {
   };
   await Plotly.relayout('plotly3d', { annotations:[titleAnnotation, wmAnnotation] });
   await Plotly.downloadImage('plotly3d', { format:'png', filename:'financing_sensitivity_3d', scale:3 });
+  await Plotly.relayout('plotly3d', { annotations:[] });
+});
+$('chartSvgBtn').addEventListener('click', () => {
+  const title = document.getElementById('chartTitle')?.textContent || 'Finance vs Cash Purchase';
+  downloadChartJsSvg('chartCanvas', 'financing_wealth_chart.svg', title, 'chartLegend');
+});
+$('sens2dSvgBtn').addEventListener('click', () => {
+  const title = document.getElementById('sens2dTitle')?.textContent || 'Finance vs Cash — 2D Sensitivity';
+  downloadChartJsSvg('sensCanvas', 'financing_sensitivity_2d.svg', title, 'sensLegend');
+});
+$('sens3dSvgBtn').addEventListener('click', async () => {
+  const title3d = document.getElementById('sens3dTitle')?.textContent || 'Finance vs Cash — 3D Sensitivity Surface';
+  const titleAnnotation = {
+    xref:'paper', yref:'paper', x:0.5, y:1.06, xanchor:'center', yanchor:'bottom',
+    showarrow:false, text:`<b>${title3d}</b>`,
+    font:{ size:14, color:document.body.classList.contains('light')?'#2D3436':'#EAF1FF', family:'DM Sans, sans-serif' },
+  };
+  const wmAnnotation = {
+    xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom',
+    showarrow:false, text:'Ⓐ tool.adjiebrotots.com',
+    font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' },
+  };
+  await Plotly.relayout('plotly3d', { annotations:[titleAnnotation, wmAnnotation] });
+  await Plotly.downloadImage('plotly3d', { format:'svg', filename:'financing_sensitivity_3d' });
   await Plotly.relayout('plotly3d', { annotations:[] });
 });
 
