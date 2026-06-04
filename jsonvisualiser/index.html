@@ -955,16 +955,13 @@ $('downloadPngBtn').addEventListener('click', async () => {
   if(!parsedData) return;
   btn.disabled = true; btn.textContent = '⏳ Rendering...';
 
-  const isDark = document.body.classList.contains('dark');
-  const bg = isDark ? '#0F1728' : '#F0F4FF';
-
   // Reset transform temporarily so html2canvas captures the full untransformed content
   const savedTransform = canvasEl.style.transform;
   canvasEl.style.transform = 'translate(0,0) scale(1)';
 
   try {
     const result = await html2canvas(canvasEl, {
-      backgroundColor: bg,
+      backgroundColor: null,
       scale: 2,
       useCORS: true,
       logging: false,
@@ -976,10 +973,12 @@ $('downloadPngBtn').addEventListener('click', async () => {
 
     const ctx = result.getContext('2d');
     ctx.save();
-    ctx.globalAlpha = 0.22;
     ctx.font = `500 ${Math.round(11 * 2)}px 'DM Sans', sans-serif`;
-    ctx.fillStyle = isDark ? '#ffffff' : '#1a1a1a';
     ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(255,255,255,0.70)';
+    ctx.strokeText('Ⓐ tool.adjiebrotots.com', result.width - 24, result.height - 24);
+    ctx.fillStyle = 'rgba(26,26,26,0.45)';
     ctx.fillText('Ⓐ tool.adjiebrotots.com', result.width - 24, result.height - 24);
     ctx.restore();
 
@@ -1008,7 +1007,6 @@ $('downloadSvgBtn').addEventListener('click', () => {
   setTimeout(() => {
     try {
       const isDark = document.body.classList.contains('dark');
-      const bg          = isDark ? '#0F1728'  : '#F0F4FF';
       const fg          = isDark ? '#EAF1FF'  : '#2D3436';
       const panelBg     = isDark ? '#1C2942'  : '#FFFFFF';
       const borderColor = isDark ? '#2C3A52'  : '#E0E6F0';
@@ -1023,20 +1021,21 @@ $('downloadSvgBtn').addEventListener('click', () => {
       svg.setAttribute('xmlns', NS); svg.setAttribute('width', svgW); svg.setAttribute('height', svgH);
       svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
 
-      const bgR = document.createElementNS(NS, 'rect');
-      bgR.setAttribute('width', svgW); bgR.setAttribute('height', svgH); bgR.setAttribute('fill', bg);
-      svg.appendChild(bgR);
-
       const treeRootEl = $('treeRoot');
       const offsetX = canvasRect.left;
       const offsetY = canvasRect.top;
 
-      // Connector lines (drawn below nodes)
+      // Connector lines (drawn below nodes). Match the CSS connectors exactly:
+      // .tj-children::before is at the children container's left edge, and
+      // each direct child .tj-item::before spans from that edge to the child node.
       treeRootEl.querySelectorAll('.tj-children').forEach(childrenEl => {
         if(childrenEl.style.display === 'none') return;
         const cr = childrenEl.getBoundingClientRect();
-        const lineX = cr.left - offsetX + 24;
-        const childNodes = [...childrenEl.querySelectorAll(':scope > .tj-item > .tj-node')];
+        const lineX = cr.left - offsetX;
+        const childNodes = [...childrenEl.children]
+          .filter(child => child.classList.contains('tj-item'))
+          .map(child => [...child.children].find(grandchild => grandchild.classList.contains('tj-node')))
+          .filter(Boolean);
         if(childNodes.length < 1) return;
         const fr = childNodes[0].getBoundingClientRect();
         const lr = childNodes[childNodes.length - 1].getBoundingClientRect();
@@ -1096,8 +1095,12 @@ $('downloadSvgBtn').addEventListener('click', () => {
       wm.setAttribute('x', svgW - 12); wm.setAttribute('y', svgH - 12);
       wm.setAttribute('text-anchor', 'end'); wm.setAttribute('dominant-baseline', 'auto');
       wm.setAttribute('font-family', 'DM Sans, sans-serif'); wm.setAttribute('font-size', '11');
-      wm.setAttribute('opacity', '0.22');
-      wm.setAttribute('fill', isDark ? '#ffffff' : '#1a1a1a');
+      wm.setAttribute('stroke', '#ffffff');
+      wm.setAttribute('stroke-width', '3');
+      wm.setAttribute('stroke-opacity', '0.70');
+      wm.setAttribute('paint-order', 'stroke');
+      wm.setAttribute('fill', '#1a1a1a');
+      wm.setAttribute('fill-opacity', '0.45');
       wm.textContent = 'Ⓐ tool.adjiebrotots.com';
       svg.appendChild(wm);
 
