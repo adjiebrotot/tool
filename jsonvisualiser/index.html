@@ -126,16 +126,16 @@ input::placeholder{color:var(--muted)}
 .download-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 
 /* ─── MAIN PANEL ────────────────────────────────────────────────────────────── */
-.main-panel{overflow:visible;min-height:400px;display:flex;flex-direction:column}
+.main-panel{overflow:hidden;min-height:400px;display:flex;flex-direction:column;min-width:0}
 .tree-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0}
 .tree-header-title{font-weight:700;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;max-width:260px}
 .tree-header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0}
 
-/* Viewport: grows with the rendered tree while still capturing pointer events for pan/zoom */
-.tree-viewport{position:relative;overflow:visible;flex:1 0 auto;min-height:320px;cursor:grab;user-select:none;-webkit-user-select:none}
+/* Viewport: clips the transformed tree so panned/zoomed visuals never overlap neighbouring panels. */
+.tree-viewport{position:relative;overflow:hidden;flex:1 0 auto;min-height:320px;cursor:grab;user-select:none;-webkit-user-select:none;overscroll-behavior:contain;touch-action:none}
 .tree-viewport.panning{cursor:grabbing}
 
-/* Canvas: the element that gets CSS transform applied. Keep it in normal flow so expanded nodes increase viewport height. */
+/* Canvas: the element that gets CSS transform applied. The viewport above is the clipping boundary. */
 .tree-canvas{position:relative;top:0;left:0;transform-origin:0 0;padding:24px;will-change:transform}
 
 /* Zoom controls */
