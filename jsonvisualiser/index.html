@@ -111,7 +111,7 @@ input::placeholder{color:var(--muted)}
 .url-row input{flex:1;min-width:0}
 
 /* ─── STATUS MESSAGES ───────────────────────────────────────────────────────── */
-.status-msg{padding:10px 14px;border-radius:10px;font-size:.85rem;font-weight:500;display:none}
+.status-msg{padding:10px 14px;border-radius:10px;font-size:.85rem;font-weight:500;display:none;overflow-wrap:break-word;word-break:break-word;min-width:0}
 .status-msg.visible{display:block}
 .status-success{background:var(--success-bg);color:var(--success-text)}
 .status-error{background:var(--error-bg);color:var(--error-text)}
@@ -119,9 +119,9 @@ input::placeholder{color:var(--muted)}
 .status-loading{background:var(--info-bg);color:var(--info-text)}
 
 /* ─── FILE INFO ─────────────────────────────────────────────────────────────── */
-.info-grid{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.82rem}
+.info-grid{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.82rem;min-width:0}
 .info-label{color:var(--muted);font-weight:600;white-space:nowrap}
-.info-value{font-family:'DM Mono',monospace;font-size:.80rem;word-break:break-all}
+.info-value{font-family:'DM Mono',monospace;font-size:.80rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 
 /* ─── CONTROLS ──────────────────────────────────────────────────────────────── */
 .controls-row{display:flex;gap:8px;flex-wrap:wrap}
@@ -129,11 +129,29 @@ input::placeholder{color:var(--muted)}
 
 /* ─── MAIN PANEL ────────────────────────────────────────────────────────────── */
 .main-panel{overflow:hidden;min-height:400px;display:flex;flex-direction:column}
-.tree-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0}
-.tree-header-title{font-weight:700;font-size:.9rem}
-.tree-scroll{overflow:auto;flex:1;padding:20px}
-.tree-scroll::-webkit-scrollbar{width:6px;height:6px}
-.tree-scroll::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:4px}
+.tree-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0}
+.tree-header-title{font-weight:700;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;max-width:260px}
+.tree-header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0}
+
+/* Viewport: clips the canvas, captures pointer events for pan/zoom */
+.tree-viewport{position:relative;overflow:hidden;flex:1;min-height:320px;cursor:grab;user-select:none;-webkit-user-select:none}
+.tree-viewport.panning{cursor:grabbing}
+
+/* Canvas: the element that gets CSS transform applied */
+.tree-canvas{position:absolute;top:0;left:0;transform-origin:0 0;padding:24px;will-change:transform}
+
+/* Zoom controls */
+.zoom-controls{display:flex;align-items:center;gap:4px}
+.btn-zoom{background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:6px;width:28px;height:28px;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 150ms;font-family:inherit;flex-shrink:0}
+.btn-zoom:hover{border-color:var(--accent);color:var(--accent)}
+.zoom-level{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);min-width:42px;text-align:center;cursor:pointer}
+.zoom-level:hover{color:var(--accent)}
+.btn-zoom-fit{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:0 8px;height:28px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.btn-zoom-fit:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Subtle navigation hint */
+.nav-hint{position:absolute;bottom:10px;right:12px;font-size:.72rem;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:4px 10px;pointer-events:none;transition:opacity .6s;opacity:.75}
+.nav-hint.fade{opacity:0}
 
 /* ─── EMPTY STATE ───────────────────────────────────────────────────────────── */
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;color:var(--muted);flex:1}
@@ -312,12 +330,23 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
       <!-- Tree header (shown after load) -->
       <div class="tree-header" id="treeHeader" style="display:none">
         <div class="tree-header-title" id="treeHeaderTitle">tree</div>
-        <div style="font-size:.78rem;color:var(--muted)" id="treeHeaderMeta"></div>
+        <div class="tree-header-right">
+          <div style="font-size:.78rem;color:var(--muted)" id="treeHeaderMeta"></div>
+          <div class="zoom-controls">
+            <button class="btn-zoom" id="zoomOutBtn" title="Zoom out (−)">−</button>
+            <span class="zoom-level" id="zoomLevel" title="Click to reset zoom">100%</span>
+            <button class="btn-zoom" id="zoomInBtn" title="Zoom in (+)">+</button>
+            <button class="btn-zoom-fit" id="zoomFitBtn" title="Reset view">⊡ Reset</button>
+          </div>
+        </div>
       </div>
 
-      <!-- Tree content -->
-      <div class="tree-scroll" id="treeScroll" style="display:none">
-        <div class="tj-root" id="treeRoot"></div>
+      <!-- Tree viewport + canvas -->
+      <div class="tree-viewport" id="treeViewport" style="display:none">
+        <div class="tree-canvas" id="treeCanvas">
+          <div class="tj-root" id="treeRoot"></div>
+        </div>
+        <div class="nav-hint" id="navHint">Drag to pan &nbsp;·&nbsp; Scroll to zoom</div>
       </div>
 
     </main><!-- /main -->
@@ -465,7 +494,7 @@ function showLoading(msg='Parsing JSON...'){
   $('loadingOverlay').classList.add('visible');
   $('loadingText').textContent = msg;
   $('treeHeader').style.display = 'none';
-  $('treeScroll').style.display = 'none';
+  $('treeViewport').style.display = 'none';
 }
 
 function showError(msg){
@@ -499,7 +528,7 @@ function renderTree(data, name, size, byteLen){
   // Hide loading, show tree
   $('loadingOverlay').classList.remove('visible');
   $('treeHeader').style.display = 'flex';
-  $('treeScroll').style.display = 'block';
+  $('treeViewport').style.display = 'block';
 
   // Compute stats (fast, capped)
   const type = getType(data);
@@ -516,7 +545,7 @@ function renderTree(data, name, size, byteLen){
   // Show file info panel
   $('fileInfoSection').style.display = 'block';
   $('fileInfoGrid').innerHTML = `
-    <span class="info-label">File</span><span class="info-value">${escHtml(name)}</span>
+    <span class="info-label">File</span><span class="info-value" title="${escHtml(name)}">${escHtml(name)}</span>
     <span class="info-label">Size</span><span class="info-value">${formatBytes(byteLen)}</span>
     <span class="info-label">Root type</span><span class="info-value">${type}</span>
     <span class="info-label">Top keys</span><span class="info-value">${topCount}</span>
@@ -538,6 +567,9 @@ function renderTree(data, name, size, byteLen){
     const rootNodeEl = root.querySelector('.tj-node');
     if(rootNodeEl) rootNodeEl.click();
   }
+
+  // Reset pan/zoom to home position
+  resetView();
 
   hideStatus();
   showStatus('statusSuccess', `Loaded ${name} (${formatBytes(byteLen)})`);
@@ -782,7 +814,7 @@ $('clearBtn').addEventListener('click', () => {
   parsedData = null;
   $('treeRoot').innerHTML = '';
   $('treeHeader').style.display = 'none';
-  $('treeScroll').style.display = 'none';
+  $('treeViewport').style.display = 'none';
   $('emptyState').style.display = 'flex';
   $('fileInfoSection').style.display = 'none';
   $('controlsCard').style.display = 'none';
@@ -795,209 +827,295 @@ function escHtml(str){
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ─── PAN / ZOOM ENGINE ───────────────────────────────────────────────────────
+const VP_MIN = 0.1, VP_MAX = 4;
+const vp = { x: 24, y: 24, scale: 1, dragging: false, lastX: 0, lastY: 0,
+              pinchDist: 0, pinchMidX: 0, pinchMidY: 0 };
+
+const vpEl     = $('treeViewport');
+const canvasEl = $('treeCanvas');
+const zoomLevelEl = $('zoomLevel');
+
+function applyVP(){
+  canvasEl.style.transform = `translate(${vp.x}px,${vp.y}px) scale(${vp.scale})`;
+  zoomLevelEl.textContent = Math.round(vp.scale * 100) + '%';
+}
+
+function resetView(){
+  vp.x = 24; vp.y = 24; vp.scale = 1;
+  applyVP();
+  showNavHint();
+}
+
+function zoomAt(cx, cy, factor){
+  const newScale = Math.max(VP_MIN, Math.min(VP_MAX, vp.scale * factor));
+  const f = newScale / vp.scale;
+  vp.x = cx - (cx - vp.x) * f;
+  vp.y = cy - (cy - vp.y) * f;
+  vp.scale = newScale;
+  applyVP();
+}
+
+// Nav hint (fades out after 3s of inactivity)
+let hintTimer;
+function showNavHint(){
+  const h = $('navHint');
+  h.classList.remove('fade');
+  clearTimeout(hintTimer);
+  hintTimer = setTimeout(() => h.classList.add('fade'), 3000);
+}
+
+// Mouse drag
+vpEl.addEventListener('mousedown', (e) => {
+  if(e.button !== 0) return;
+  vp.dragging = true; vp.lastX = e.clientX; vp.lastY = e.clientY;
+  vpEl.classList.add('panning');
+  e.preventDefault();
+});
+window.addEventListener('mousemove', (e) => {
+  if(!vp.dragging) return;
+  vp.x += e.clientX - vp.lastX;
+  vp.y += e.clientY - vp.lastY;
+  vp.lastX = e.clientX; vp.lastY = e.clientY;
+  applyVP();
+});
+window.addEventListener('mouseup', () => {
+  vp.dragging = false;
+  vpEl.classList.remove('panning');
+});
+
+// Scroll-wheel zoom (toward cursor)
+vpEl.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const r = vpEl.getBoundingClientRect();
+  const cx = e.clientX - r.left;
+  const cy = e.clientY - r.top;
+  const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+  zoomAt(cx, cy, factor);
+}, { passive: false });
+
+// Touch pan + pinch-to-zoom
+vpEl.addEventListener('touchstart', (e) => {
+  if(e.touches.length === 1){
+    vp.lastX = e.touches[0].clientX;
+    vp.lastY = e.touches[0].clientY;
+  } else if(e.touches.length === 2){
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    vp.pinchDist  = Math.hypot(dx, dy);
+    vp.pinchMidX  = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    vp.pinchMidY  = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+  }
+  e.preventDefault();
+}, { passive: false });
+
+vpEl.addEventListener('touchmove', (e) => {
+  if(e.touches.length === 1){
+    vp.x += e.touches[0].clientX - vp.lastX;
+    vp.y += e.touches[0].clientY - vp.lastY;
+    vp.lastX = e.touches[0].clientX;
+    vp.lastY = e.touches[0].clientY;
+    applyVP();
+  } else if(e.touches.length === 2){
+    const dx   = e.touches[0].clientX - e.touches[1].clientX;
+    const dy   = e.touches[0].clientY - e.touches[1].clientY;
+    const dist = Math.hypot(dx, dy);
+    const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    const r    = vpEl.getBoundingClientRect();
+    zoomAt(midX - r.left, midY - r.top, dist / vp.pinchDist);
+    vp.pinchDist = dist;
+    // Also pan with pinch midpoint movement
+    vp.x += midX - vp.pinchMidX;
+    vp.y += midY - vp.pinchMidY;
+    vp.pinchMidX = midX; vp.pinchMidY = midY;
+    applyVP();
+  }
+  e.preventDefault();
+}, { passive: false });
+
+// Zoom buttons
+$('zoomInBtn').addEventListener('click',  () => { const r = vpEl.getBoundingClientRect(); zoomAt(r.width/2, r.height/2, 1.25); });
+$('zoomOutBtn').addEventListener('click', () => { const r = vpEl.getBoundingClientRect(); zoomAt(r.width/2, r.height/2, 1/1.25); });
+$('zoomFitBtn').addEventListener('click', resetView);
+$('zoomLevel').addEventListener('click',  resetView);
+
+// Keyboard shortcuts (when viewport focused)
+window.addEventListener('keydown', (e) => {
+  if(!parsedData) return;
+  if(e.target.tagName === 'INPUT') return;
+  if(e.key === '=' || e.key === '+') { const r = vpEl.getBoundingClientRect(); zoomAt(r.width/2, r.height/2, 1.25); e.preventDefault(); }
+  if(e.key === '-')                  { const r = vpEl.getBoundingClientRect(); zoomAt(r.width/2, r.height/2, 1/1.25); e.preventDefault(); }
+  if(e.key === '0')                  { resetView(); e.preventDefault(); }
+});
+
 // ─── DOWNLOAD PNG ────────────────────────────────────────────────────────────
 $('downloadPngBtn').addEventListener('click', async () => {
   const btn = $('downloadPngBtn');
-  const treeEl = $('treeRoot');
-  if(!treeEl || !parsedData){ return; }
-
-  btn.disabled = true;
-  btn.textContent = '⏳ Rendering...';
+  if(!parsedData) return;
+  btn.disabled = true; btn.textContent = '⏳ Rendering...';
 
   const isDark = document.body.classList.contains('dark');
   const bg = isDark ? '#0F1728' : '#F0F4FF';
 
-  // Temporarily expand scroll container for full capture
-  const scrollEl = $('treeScroll');
-  const origOF = scrollEl.style.overflow;
-  scrollEl.style.overflow = 'visible';
+  // Reset transform temporarily so html2canvas captures the full untransformed content
+  const savedTransform = canvasEl.style.transform;
+  canvasEl.style.transform = 'translate(0,0) scale(1)';
 
   try {
-    const canvas = await html2canvas(scrollEl, {
+    const result = await html2canvas(canvasEl, {
       backgroundColor: bg,
       scale: 2,
       useCORS: true,
       logging: false,
       scrollX: 0,
       scrollY: -window.scrollY,
-      windowWidth: scrollEl.scrollWidth + 200,
-      windowHeight: scrollEl.scrollHeight + 200,
     });
 
-    scrollEl.style.overflow = origOF;
+    canvasEl.style.transform = savedTransform;
 
-    // Watermark
-    const ctx = canvas.getContext('2d');
+    const ctx = result.getContext('2d');
     ctx.save();
     ctx.globalAlpha = 0.22;
     ctx.font = `500 ${Math.round(11 * 2)}px 'DM Sans', sans-serif`;
     ctx.fillStyle = isDark ? '#ffffff' : '#1a1a1a';
-    ctx.textAlign = 'right';
-    ctx.textBaseline = 'bottom';
-    ctx.fillText('Ⓐ tool.adjiebrotots.com', canvas.width - 24, canvas.height - 24);
+    ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+    ctx.fillText('Ⓐ tool.adjiebrotots.com', result.width - 24, result.height - 24);
     ctx.restore();
 
     const a = document.createElement('a');
-    a.href = canvas.toDataURL('image/png');
-    const fname = currentFileName.replace(/\.[^.]+$/, '') || 'json-tree';
-    a.download = fname + '-tree.png';
+    a.href = result.toDataURL('image/png');
+    a.download = (currentFileName.replace(/\.[^.]+$/, '') || 'json-tree') + '-tree.png';
     document.body.appendChild(a); a.click(); a.remove();
   } catch(err) {
-    scrollEl.style.overflow = origOF;
+    canvasEl.style.transform = savedTransform;
     alert('PNG export failed: ' + err.message);
   }
 
-  btn.disabled = false;
-  btn.textContent = '⬇ PNG';
+  btn.disabled = false; btn.textContent = '⬇ PNG';
 });
 
 // ─── DOWNLOAD SVG ────────────────────────────────────────────────────────────
 $('downloadSvgBtn').addEventListener('click', () => {
-  const scrollEl = $('treeScroll');
-  if(!scrollEl || !parsedData) return;
-
+  if(!parsedData) return;
   const btn = $('downloadSvgBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Building...';
+  btn.disabled = true; btn.textContent = '⏳ Building...';
+
+  // Reset transform temporarily so getBoundingClientRect gives un-scaled positions
+  const savedTransform = canvasEl.style.transform;
+  canvasEl.style.transform = 'translate(0,0) scale(1)';
 
   setTimeout(() => {
     try {
       const isDark = document.body.classList.contains('dark');
-      const bg = isDark ? '#0F1728' : '#F0F4FF';
-      const fg = isDark ? '#EAF1FF' : '#2D3436';
-      const borderColor = isDark ? '#2C3A52' : '#E0E6F0';
-      const panelBg = isDark ? '#1C2942' : '#FFFFFF';
-      const mutedColor = isDark ? '#A8B6CF' : '#7F8C8D';
-      const accentColor = isDark ? '#8DBBFF' : '#5A91E8';
+      const bg          = isDark ? '#0F1728'  : '#F0F4FF';
+      const fg          = isDark ? '#EAF1FF'  : '#2D3436';
+      const panelBg     = isDark ? '#1C2942'  : '#FFFFFF';
+      const borderColor = isDark ? '#2C3A52'  : '#E0E6F0';
       const connectorColor = isDark ? '#2C3A52' : '#C8D4E8';
 
       const NS = 'http://www.w3.org/2000/svg';
-      const scrollRect = scrollEl.getBoundingClientRect();
-      const svgW = scrollEl.scrollWidth + 40;
-      const svgH = scrollEl.scrollHeight + 40;
+      const canvasRect = canvasEl.getBoundingClientRect();
+      const svgW = canvasEl.scrollWidth  + 48;
+      const svgH = canvasEl.scrollHeight + 48;
 
       const svg = document.createElementNS(NS, 'svg');
-      svg.setAttribute('xmlns', NS);
-      svg.setAttribute('width', svgW);
-      svg.setAttribute('height', svgH);
+      svg.setAttribute('xmlns', NS); svg.setAttribute('width', svgW); svg.setAttribute('height', svgH);
       svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
-      svg.setAttribute('font-family', 'DM Mono, monospace');
-      svg.setAttribute('font-size', '12');
 
-      // Background
-      const bgRect = document.createElementNS(NS, 'rect');
-      bgRect.setAttribute('width', svgW); bgRect.setAttribute('height', svgH);
-      bgRect.setAttribute('fill', bg);
-      svg.appendChild(bgRect);
+      const bgR = document.createElementNS(NS, 'rect');
+      bgR.setAttribute('width', svgW); bgR.setAttribute('height', svgH); bgR.setAttribute('fill', bg);
+      svg.appendChild(bgR);
 
-      // Walk all visible .tj-node and .tj-children elements
       const treeRootEl = $('treeRoot');
-      const treeRootRect = treeRootEl.getBoundingClientRect();
-      const offsetX = scrollEl.scrollLeft - scrollRect.left + treeRootRect.left + 20;
-      const offsetY = scrollEl.scrollTop - scrollRect.top + treeRootRect.top + 20;
+      const offsetX = canvasRect.left;
+      const offsetY = canvasRect.top;
 
-      // Draw connector lines first (below nodes)
+      // Connector lines (drawn below nodes)
       treeRootEl.querySelectorAll('.tj-children').forEach(childrenEl => {
         if(childrenEl.style.display === 'none') return;
         const cr = childrenEl.getBoundingClientRect();
-        const lineX = cr.left - scrollRect.left + scrollEl.scrollLeft - offsetX + 20;
-        const firstChild = childrenEl.querySelector(':scope > .tj-item > .tj-node');
-        const lastChild = [...childrenEl.querySelectorAll(':scope > .tj-item > .tj-node')].pop();
-        if(!firstChild || !lastChild) return;
-        const fr = firstChild.getBoundingClientRect();
-        const lr = lastChild.getBoundingClientRect();
-        const y1 = fr.top - scrollRect.top + scrollEl.scrollTop - offsetY + fr.height/2;
-        const y2 = lr.top - scrollRect.top + scrollEl.scrollTop - offsetY + lr.height/2;
+        const lineX = cr.left - offsetX + 24;
+        const childNodes = [...childrenEl.querySelectorAll(':scope > .tj-item > .tj-node')];
+        if(childNodes.length < 1) return;
+        const fr = childNodes[0].getBoundingClientRect();
+        const lr = childNodes[childNodes.length - 1].getBoundingClientRect();
+        const y1 = fr.top - offsetY + fr.height / 2;
+        const y2 = lr.top - offsetY + lr.height / 2;
         if(y1 < y2){
-          const vLine = document.createElementNS(NS, 'line');
-          vLine.setAttribute('x1', lineX); vLine.setAttribute('y1', y1);
-          vLine.setAttribute('x2', lineX); vLine.setAttribute('y2', y2);
-          vLine.setAttribute('stroke', connectorColor); vLine.setAttribute('stroke-width', '1');
-          svg.appendChild(vLine);
+          const vl = document.createElementNS(NS, 'line');
+          vl.setAttribute('x1', lineX); vl.setAttribute('y1', y1);
+          vl.setAttribute('x2', lineX); vl.setAttribute('y2', y2);
+          vl.setAttribute('stroke', connectorColor); vl.setAttribute('stroke-width', '1');
+          svg.appendChild(vl);
         }
-
-        childrenEl.querySelectorAll(':scope > .tj-item > .tj-node').forEach(nodeEl => {
+        childNodes.forEach(nodeEl => {
           const nr = nodeEl.getBoundingClientRect();
-          const nx = nr.left - scrollRect.left + scrollEl.scrollLeft - offsetX;
-          const ny = nr.top - scrollRect.top + scrollEl.scrollTop - offsetY + nr.height/2;
-          const hLine = document.createElementNS(NS, 'line');
-          hLine.setAttribute('x1', lineX); hLine.setAttribute('y1', ny);
-          hLine.setAttribute('x2', nx); hLine.setAttribute('y2', ny);
-          hLine.setAttribute('stroke', connectorColor); hLine.setAttribute('stroke-width', '1');
-          svg.appendChild(hLine);
+          const nx = nr.left - offsetX;
+          const ny = nr.top  - offsetY + nr.height / 2;
+          const hl = document.createElementNS(NS, 'line');
+          hl.setAttribute('x1', lineX); hl.setAttribute('y1', ny);
+          hl.setAttribute('x2', nx);    hl.setAttribute('y2', ny);
+          hl.setAttribute('stroke', connectorColor); hl.setAttribute('stroke-width', '1');
+          svg.appendChild(hl);
         });
       });
 
-      // Draw nodes
+      // Node boxes + text
       treeRootEl.querySelectorAll('.tj-node').forEach(nodeEl => {
         const nr = nodeEl.getBoundingClientRect();
-        const x = nr.left - scrollRect.left + scrollEl.scrollLeft - offsetX;
-        const y = nr.top - scrollRect.top + scrollEl.scrollTop - offsetY;
-        const w = nr.width; const h = nr.height;
-
-        // Determine border color from computed style
+        const x = nr.left - offsetX; const y = nr.top - offsetY;
         const cs = window.getComputedStyle(nodeEl);
-        const nodeBorderColor = cs.borderColor || borderColor;
+        const box = document.createElementNS(NS, 'rect');
+        box.setAttribute('x', x); box.setAttribute('y', y);
+        box.setAttribute('width', nr.width); box.setAttribute('height', nr.height);
+        box.setAttribute('rx', '8'); box.setAttribute('fill', panelBg);
+        box.setAttribute('stroke', cs.borderColor || borderColor);
+        svg.appendChild(box);
 
-        const rect = document.createElementNS(NS, 'rect');
-        rect.setAttribute('x', x); rect.setAttribute('y', y);
-        rect.setAttribute('width', w); rect.setAttribute('height', h);
-        rect.setAttribute('rx', '8'); rect.setAttribute('ry', '8');
-        rect.setAttribute('fill', panelBg);
-        rect.setAttribute('stroke', nodeBorderColor);
-        svg.appendChild(rect);
-
-        // Text content
-        const text = document.createElementNS(NS, 'text');
-        text.setAttribute('x', x + 10);
-        text.setAttribute('y', y + h/2);
-        text.setAttribute('dominant-baseline', 'middle');
-        text.setAttribute('fill', fg);
-        text.setAttribute('font-size', '11');
-
-        // Get text content cleanly
-        const keyEl = nodeEl.querySelector('.node-key');
-        const colonEl = nodeEl.querySelector('.node-colon');
+        const keyEl   = nodeEl.querySelector('.node-key');
         const badgeEl = nodeEl.querySelector('.node-badge');
-        const valEl = nodeEl.querySelector('.node-value');
+        const valEl   = nodeEl.querySelector('.node-value');
+        let txt = '';
+        if(keyEl)   txt += keyEl.textContent + ': ';
+        if(badgeEl) txt += badgeEl.textContent;
+        if(valEl)   txt += valEl.textContent.slice(0, 60);
 
-        let textContent = '';
-        if(keyEl) textContent += keyEl.textContent;
-        if(colonEl) textContent += ': ';
-        if(badgeEl) textContent += badgeEl.textContent;
-        if(valEl) textContent += valEl.textContent.slice(0, 60);
-
-        text.textContent = textContent;
-        svg.appendChild(text);
+        const t = document.createElementNS(NS, 'text');
+        t.setAttribute('x', x + 10); t.setAttribute('y', y + nr.height / 2);
+        t.setAttribute('dominant-baseline', 'middle');
+        t.setAttribute('font-family', 'DM Mono, monospace');
+        t.setAttribute('font-size', '11');
+        t.setAttribute('fill', fg);
+        t.textContent = txt;
+        svg.appendChild(t);
       });
 
       // Watermark
       const wm = document.createElementNS(NS, 'text');
-      wm.setAttribute('x', svgW - 12);
-      wm.setAttribute('y', svgH - 12);
-      wm.setAttribute('text-anchor', 'end');
-      wm.setAttribute('dominant-baseline', 'auto');
-      wm.setAttribute('font-family', 'DM Sans, sans-serif');
-      wm.setAttribute('font-size', '11');
+      wm.setAttribute('x', svgW - 12); wm.setAttribute('y', svgH - 12);
+      wm.setAttribute('text-anchor', 'end'); wm.setAttribute('dominant-baseline', 'auto');
+      wm.setAttribute('font-family', 'DM Sans, sans-serif'); wm.setAttribute('font-size', '11');
       wm.setAttribute('opacity', '0.22');
       wm.setAttribute('fill', isDark ? '#ffffff' : '#1a1a1a');
       wm.textContent = 'Ⓐ tool.adjiebrotots.com';
       svg.appendChild(wm);
 
-      const xml = new XMLSerializer().serializeToString(svg);
+      canvasEl.style.transform = savedTransform;
+
+      const xml  = new XMLSerializer().serializeToString(svg);
       const blob = new Blob([xml], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
       a.href = url;
-      const fname = currentFileName.replace(/\.[^.]+$/, '') || 'json-tree';
-      a.download = fname + '-tree.svg';
+      a.download = (currentFileName.replace(/\.[^.]+$/, '') || 'json-tree') + '-tree.svg';
       document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
     } catch(err) {
+      canvasEl.style.transform = savedTransform;
       alert('SVG export failed: ' + err.message);
     }
-    btn.disabled = false;
-    btn.textContent = '⬇ SVG';
+    btn.disabled = false; btn.textContent = '⬇ SVG';
   }, 30);
 });
 </script>
