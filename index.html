@@ -871,6 +871,38 @@
           data-status="Active"
           data-domain="Visualisation"
           data-geography="Universal"
+          data-tags="Graphing"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-top">
+            <div class="tool-title-group">
+              <h3 itemprop="name">🗂️ JSON Visualiser</h3>
+              <p itemprop="abstract">Upload or link any JSON file and explore it as an interactive, lazily-loaded tree.</p>
+            </div>
+            <span class="status-badge status-active">Active</span>
+          </div>
+
+          <p class="tool-description" itemprop="description">
+            Raw JSON is unreadable at scale. Upload a file or paste a URL, and this tool renders the structure as a collapsible tree. Lazy loading handles files with thousands of nested items without freezing the browser. Expand nodes one at a time, paginate large arrays, and export the visible tree as PNG or SVG.
+          </p>
+
+          <ul class="tool-tags" aria-label="Categories">
+            <li>Visualisation</li>
+            <li>Universal</li>
+            <li>Graphing</li>
+          </ul>
+
+          <div class="tool-footer">
+            <a class="tool-link" href="https://tool.adjiebrotots.com/jsonvisualiser/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Visualisation"
+          data-geography="Universal"
           data-tags="Brainstorming Tool"
           itemscope
           itemtype="https://schema.org/WebApplication"
@@ -1072,9 +1104,12 @@
         geographyFilter.appendChild(option);
       });
 
+      const domainOrder = { 'Engineering': 0, 'Finance': 1, 'Visualisation': 2 };
       cards.sort((a, b) => {
-        const domainCompare = a.dataset.domain.localeCompare(b.dataset.domain);
-        if (domainCompare !== 0) return domainCompare;
+        const da = a.dataset.domain, db = b.dataset.domain;
+        const oa = domainOrder[da] !== undefined ? domainOrder[da] : 99;
+        const ob = domainOrder[db] !== undefined ? domainOrder[db] : 99;
+        if (oa !== ob) return oa - ob;
         return a.querySelector('h3').textContent.localeCompare(b.querySelector('h3').textContent);
       }).forEach(card => {
         card.parentElement.appendChild(card);

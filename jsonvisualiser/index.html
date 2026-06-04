@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>JSON Visualiser</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%97%82%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ─── DESIGN TOKENS ────────────────────────────────────────────────────────── */
+:root {
+  --bg:#F0F4FF;--bg-subtle:#F8FBFF;--panel:#FFFFFF;--panel-raised:#FFFFFF;
+  --text:#2D3436;--muted:#7F8C8D;--text-inv:#FFFFFF;--border:#E0E6F0;--border-strong:#C8D4E8;
+  --accent:#5A91E8;--accent-strong:#3A71C8;--accent2:#2E9E7A;--accent3:#E63939;
+  --input-bg:rgba(0,0,0,0.04);--card-bg:rgba(255,255,255,0.85);
+  --shadow:0 2px 16px rgba(120,160,220,0.10);--shadow-lg:0 4px 32px rgba(120,160,220,0.14);
+  --node-obj-text:#1a5fb4;--node-obj-bg:#ddeeff;--node-obj-border:#99c1f1;
+  --node-arr-text:#7c5100;--node-arr-bg:#fff3cc;--node-arr-border:#f6c54d;
+  --node-str-text:#1e7e44;
+  --node-num-text:#1a5fb4;
+  --node-bool-text:#813d9c;
+  --node-null-text:#7F8C8D;
+  --node-bg:var(--panel-raised);
+  --connector:#C8D4E8;
+  --success-bg:#d4f7d4;--success-text:#1b4d1b;
+  --error-bg:#fde8e8;--error-text:#8a1414;
+  --info-bg:#e6f0ff;--info-text:#1a3f8f;
+}
+body.dark {
+  --bg:#0F1728;--bg-subtle:#111C2F;--panel:#162033;--panel-raised:#1C2942;
+  --text:#EAF1FF;--muted:#A8B6CF;--text-inv:#0F1728;--border:#2C3A52;--border-strong:#3d5070;
+  --accent:#8DBBFF;--accent-strong:#B3D1FF;--accent2:#8FCDBD;--accent3:#F1C0D0;
+  --input-bg:rgba(255,255,255,0.06);--card-bg:rgba(255,255,255,0.03);
+  --shadow:0 2px 16px rgba(120,160,220,0.12);--shadow-lg:0 4px 32px rgba(120,160,220,0.18);
+  --node-obj-text:#8DBBFF;--node-obj-bg:#0e1e3a;--node-obj-border:#1e3d6e;
+  --node-arr-text:#FFD28C;--node-arr-bg:#2a1e00;--node-arr-border:#6b4f00;
+  --node-str-text:#8FCDBD;
+  --node-num-text:#B3D1FF;
+  --node-bool-text:#F1C0D0;
+  --node-null-text:#A8B6CF;
+  --node-bg:var(--panel-raised);
+  --connector:#2C3A52;
+  --success-bg:#103529;--success-text:#9BE7B4;
+  --error-bg:#4A1D26;--error-text:#FFB3BA;
+  --info-bg:#132E56;--info-text:#A8C9FF;
+}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.5;color:var(--text);background:var(--bg);transition:background .25s,color .25s;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* ─── LAYOUT ────────────────────────────────────────────────────────────────── */
+.container{max-width:1440px;margin:0 auto;padding:20px 24px}
+.layout{display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start;margin-top:16px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+
+/* ─── CARD ──────────────────────────────────────────────────────────────────── */
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+
+/* ─── HEADER ────────────────────────────────────────────────────────────────── */
+.header{padding:18px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.header-left h1{margin:0 0 2px;font-size:1.75rem;font-weight:800;letter-spacing:-.02em}
+.header-left p{color:var(--muted);margin:0;font-size:.88rem}
+.header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* ─── BUTTONS ───────────────────────────────────────────────────────────────── */
+.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all 150ms;white-space:nowrap;font-family:inherit}
+.btn-theme:hover{border-color:var(--accent);color:var(--text)}
+.btn-back{display:inline-flex;align-items:center;text-decoration:none}
+.btn-primary{background:var(--accent);color:var(--text-inv);border:none;border-radius:10px;padding:9px 16px;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity 150ms,transform 150ms;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary:hover{opacity:.88}
+.btn-primary:active{transform:scale(.97)}
+.btn-primary:disabled{opacity:.38;cursor:not-allowed}
+.btn-secondary{background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.btn-secondary:active{transform:scale(.97)}
+.btn-secondary:disabled{opacity:.38;cursor:not-allowed}
+.btn-danger{background:var(--error-bg);border:1px solid var(--error-text);color:var(--error-text);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-danger:hover{opacity:.85}
+
+/* ─── SIDEBAR ───────────────────────────────────────────────────────────────── */
+.sidebar{display:flex;flex-direction:column;gap:12px;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.sidebar-section{padding:16px 18px}
+.sidebar-section + .sidebar-section{border-top:1px solid var(--border)}
+.section-title{font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin:0 0 12px}
+.field-group{margin-bottom:14px}
+.field-group:last-child{margin-bottom:0}
+.field-group label{display:block;font-weight:600;font-size:.88rem;margin-bottom:6px}
+
+/* ─── INPUTS ────────────────────────────────────────────────────────────────── */
+input[type=text],input[type=url]{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:.85rem;outline:none;transition:border-color 150ms}
+input[type=text]:focus,input[type=url]:focus{border-color:var(--accent)}
+input::placeholder{color:var(--muted)}
+
+/* ─── DROP ZONE ─────────────────────────────────────────────────────────────── */
+.drop-zone{border:2px dashed var(--border-strong);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all 200ms;background:var(--input-bg)}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--accent);background:rgba(90,145,232,0.06)}
+.drop-zone-icon{font-size:2rem;margin-bottom:8px;display:block}
+.drop-zone-text{font-size:.88rem;color:var(--muted);line-height:1.5}
+.drop-zone-text strong{color:var(--accent);cursor:pointer}
+#fileInput{display:none}
+
+/* ─── DIVIDER ───────────────────────────────────────────────────────────────── */
+.or-divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:var(--muted);font-size:.82rem;font-weight:600}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ─── URL FETCH ─────────────────────────────────────────────────────────────── */
+.url-row{display:flex;gap:8px}
+.url-row input{flex:1;min-width:0}
+
+/* ─── STATUS MESSAGES ───────────────────────────────────────────────────────── */
+.status-msg{padding:10px 14px;border-radius:10px;font-size:.85rem;font-weight:500;display:none}
+.status-msg.visible{display:block}
+.status-success{background:var(--success-bg);color:var(--success-text)}
+.status-error{background:var(--error-bg);color:var(--error-text)}
+.status-info{background:var(--info-bg);color:var(--info-text)}
+.status-loading{background:var(--info-bg);color:var(--info-text)}
+
+/* ─── FILE INFO ─────────────────────────────────────────────────────────────── */
+.info-grid{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.82rem}
+.info-label{color:var(--muted);font-weight:600;white-space:nowrap}
+.info-value{font-family:'DM Mono',monospace;font-size:.80rem;word-break:break-all}
+
+/* ─── CONTROLS ──────────────────────────────────────────────────────────────── */
+.controls-row{display:flex;gap:8px;flex-wrap:wrap}
+.download-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+/* ─── MAIN PANEL ────────────────────────────────────────────────────────────── */
+.main-panel{overflow:hidden;min-height:400px;display:flex;flex-direction:column}
+.tree-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0}
+.tree-header-title{font-weight:700;font-size:.9rem}
+.tree-scroll{overflow:auto;flex:1;padding:20px}
+.tree-scroll::-webkit-scrollbar{width:6px;height:6px}
+.tree-scroll::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:4px}
+
+/* ─── EMPTY STATE ───────────────────────────────────────────────────────────── */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;color:var(--muted);flex:1}
+.empty-icon{font-size:3rem;margin-bottom:16px;opacity:.5}
+.empty-title{font-size:1.1rem;font-weight:700;margin:0 0 8px;color:var(--text)}
+.empty-subtitle{font-size:.88rem;max-width:340px;line-height:1.6}
+
+/* ─── TREE NODES ────────────────────────────────────────────────────────────── */
+.tj-root{display:inline-flex;flex-direction:row;align-items:flex-start;min-width:100%}
+.tj-item{display:flex;flex-direction:row;align-items:flex-start;position:relative}
+.tj-node{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border:1px solid var(--border);border-radius:8px;background:var(--node-bg);font-family:'DM Mono',monospace;font-size:.80rem;cursor:default;white-space:nowrap;min-height:30px;transition:border-color 150ms,background 150ms;flex-shrink:0;user-select:none}
+.tj-node.expandable{cursor:pointer}
+.tj-node.expandable:hover{border-color:var(--accent);background:rgba(90,145,232,0.06)}
+body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
+.tj-node.is-expanded{border-color:var(--accent)}
+
+/* Type-specific node styles */
+.tj-node.tj-object .node-badge{color:var(--node-obj-text);background:var(--node-obj-bg);border-color:var(--node-obj-border)}
+.tj-node.tj-array .node-badge{color:var(--node-arr-text);background:var(--node-arr-bg);border-color:var(--node-arr-border)}
+.tj-node.tj-string .node-value{color:var(--node-str-text)}
+.tj-node.tj-number .node-value{color:var(--node-num-text)}
+.tj-node.tj-boolean .node-value{color:var(--node-bool-text)}
+.tj-node.tj-null .node-value{color:var(--node-null-text)}
+
+/* Key label */
+.node-key{color:var(--text);font-weight:600}
+.node-colon{color:var(--muted)}
+
+/* Type badge (for object/array) */
+.node-badge{padding:2px 6px;border-radius:5px;font-size:.75rem;font-weight:700;border:1px solid;line-height:1.2;flex-shrink:0}
+
+/* Primitive value */
+.node-value{color:var(--muted);max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.node-value.expandable-str{cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
+.node-value.expandable-str:hover{text-decoration-style:solid}
+
+/* Expand/collapse toggle */
+.node-toggle{color:var(--muted);font-size:.7rem;flex-shrink:0;transition:transform 150ms}
+.tj-node.is-expanded .node-toggle{transform:rotate(90deg)}
+
+/* Link icon for expandable (shown when count > 0) */
+.node-link-icon{color:var(--muted);font-size:.7rem;opacity:.6}
+
+/* ─── CHILDREN COLUMN ───────────────────────────────────────────────────────── */
+.tj-children{display:flex;flex-direction:column;gap:5px;position:relative;padding-left:22px;margin-left:5px}
+/* Vertical connecting bar */
+.tj-children::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:1px;background:var(--connector)}
+/* Horizontal connector for each child item */
+.tj-children > .tj-item{position:relative}
+.tj-children > .tj-item::before{content:'';position:absolute;left:-22px;top:14px;width:22px;height:1px;background:var(--connector)}
+
+/* ─── PAGINATION ROW ────────────────────────────────────────────────────────── */
+.pagination-row{display:flex;gap:6px;flex-wrap:wrap;padding:4px 0;align-items:center;margin-top:2px}
+.btn-page{background:var(--input-bg);border:1px solid var(--border-strong);color:var(--accent);border-radius:6px;padding:3px 9px;font-size:.76rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 150ms;white-space:nowrap}
+.btn-page:hover{background:var(--accent);color:var(--text-inv);border-color:var(--accent)}
+.pagination-count{font-size:.75rem;color:var(--muted);font-family:'DM Mono',monospace}
+
+/* ─── FOOTER ────────────────────────────────────────────────────────────────── */
+.page-footer{max-width:1440px;margin:0 auto;padding:0 24px 24px}
+.page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px}
+.page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:.9rem}
+.page-footer-info p:last-child{margin-bottom:0}
+
+/* ─── LOADING OVERLAY ───────────────────────────────────────────────────────── */
+.loading-overlay{display:none;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:16px;flex:1}
+.loading-overlay.visible{display:flex}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:var(--muted);font-size:.9rem}
+
+/* ─── RESPONSIVE ────────────────────────────────────────────────────────────── */
+@media(max-width:900px){
+  .sidebar{position:static;max-height:none}
+  .tree-scroll{min-height:300px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header card">
+    <div class="header-left">
+      <h1>🗂️ JSON Visualiser</h1>
+      <p>Upload or paste a URL to explore any JSON as an interactive tree.</p>
+    </div>
+    <div class="header-right">
+      <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
+      <button class="btn-theme" id="themeToggle">🌙 Dark</button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="card">
+
+        <!-- INPUT SECTION -->
+        <div class="sidebar-section">
+          <div class="section-title">Load JSON</div>
+
+          <!-- Drop zone -->
+          <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload JSON file">
+            <span class="drop-zone-icon">🗂️</span>
+            <div class="drop-zone-text">
+              Drop a JSON file here, or <strong id="browseBtn">click to browse</strong>
+            </div>
+          </div>
+          <input type="file" id="fileInput" accept=".json,application/json,text/plain">
+
+          <div class="or-divider">or</div>
+
+          <!-- URL fetch -->
+          <div class="field-group">
+            <label for="urlInput">Fetch from URL</label>
+            <div class="url-row">
+              <input type="url" id="urlInput" placeholder="https://example.com/data.json">
+              <button class="btn-primary" id="fetchBtn">Fetch</button>
+            </div>
+          </div>
+
+          <!-- Status messages -->
+          <div class="status-msg status-loading" id="statusLoading">
+            <span id="statusLoadingText">Parsing JSON...</span>
+          </div>
+          <div class="status-msg status-success" id="statusSuccess"></div>
+          <div class="status-msg status-error" id="statusError"></div>
+        </div>
+
+        <!-- FILE INFO (shown after load) -->
+        <div class="sidebar-section" id="fileInfoSection" style="display:none">
+          <div class="section-title">File Info</div>
+          <div class="info-grid" id="fileInfoGrid"></div>
+        </div>
+
+      </div>
+
+      <!-- CONTROLS (shown after load) -->
+      <div class="card" id="controlsCard" style="display:none">
+        <div class="sidebar-section">
+          <div class="section-title">Controls</div>
+          <div class="controls-row">
+            <button class="btn-secondary" id="collapseAllBtn" style="flex:1">⊟ Collapse All</button>
+            <button class="btn-danger" id="clearBtn">✕ Clear</button>
+          </div>
+          <div class="download-row">
+            <button class="btn-secondary" id="downloadPngBtn" style="flex:1" disabled>⬇ PNG</button>
+            <button class="btn-secondary" id="downloadSvgBtn" style="flex:1" disabled>⬇ SVG</button>
+          </div>
+          <div class="status-msg status-info" id="downloadNote" style="margin-top:10px">
+            Expand nodes first, then download the visible tree.
+          </div>
+        </div>
+      </div>
+
+    </aside><!-- /sidebar -->
+
+    <!-- MAIN PANEL -->
+    <main class="main-panel card" id="mainPanel">
+
+      <!-- Empty state -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🗂️</div>
+        <div class="empty-title">No JSON loaded</div>
+        <div class="empty-subtitle">Upload a file or fetch from a URL to see the interactive tree.</div>
+      </div>
+
+      <!-- Loading state -->
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Parsing JSON...</div>
+      </div>
+
+      <!-- Tree header (shown after load) -->
+      <div class="tree-header" id="treeHeader" style="display:none">
+        <div class="tree-header-title" id="treeHeaderTitle">tree</div>
+        <div style="font-size:.78rem;color:var(--muted)" id="treeHeaderMeta"></div>
+      </div>
+
+      <!-- Tree content -->
+      <div class="tree-scroll" id="treeScroll" style="display:none">
+        <div class="tj-root" id="treeRoot"></div>
+      </div>
+
+    </main><!-- /main -->
+
+  </div><!-- /layout -->
+
+</div><!-- /container -->
+
+<footer class="page-footer">
+  <section class="page-footer-info">
+    <div style="display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
+      <img src="../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Made in Australia by Indonesian engineer.</span>
+      </div>
+    </div>
+  </section>
+</footer>
+
+<script>
+'use strict';
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let parsedData = null;
+let currentFileName = '';
+let currentFileSize = 0;
+let nodeIdCounter = 0;
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+function $(id){ return document.getElementById(id); }
+
+function getType(val){
+  if(val === null) return 'null';
+  if(Array.isArray(val)) return 'array';
+  return typeof val;
+}
+function isPrimitive(type){ return type==='string'||type==='number'||type==='boolean'||type==='null'; }
+
+function formatBytes(b){
+  if(b < 1024) return b+' B';
+  if(b < 1024*1024) return (b/1024).toFixed(1)+' KB';
+  return (b/(1024*1024)).toFixed(2)+' MB';
+}
+
+function countDepth(val, d=0){
+  if(d > 20) return d; // cap for perf
+  if(val === null || typeof val !== 'object') return d;
+  const children = Array.isArray(val) ? val.slice(0,5) : Object.values(val).slice(0,10);
+  return children.reduce((max, c) => Math.max(max, countDepth(c, d+1)), d);
+}
+
+function countNodes(val, d=0){
+  if(d > 8) return 1; // cap recursion for perf
+  if(val === null || typeof val !== 'object') return 1;
+  const entries = Array.isArray(val) ? val.slice(0,100) : Object.values(val).slice(0,100);
+  return 1 + entries.reduce((s,c) => s + countNodes(c, d+1), 0);
+}
+
+// ─── STATUS HELPERS ──────────────────────────────────────────────────────────
+function showStatus(id, msg){
+  ['statusLoading','statusSuccess','statusError'].forEach(s => {
+    const el = $(s);
+    el.classList.remove('visible');
+    el.textContent = '';
+  });
+  const el = $(id);
+  if(el){ el.textContent = msg; el.classList.add('visible'); }
+}
+function hideStatus(){
+  ['statusLoading','statusSuccess','statusError'].forEach(s => {
+    $(s).classList.remove('visible');
+  });
+}
+
+// ─── THEME TOGGLE ────────────────────────────────────────────────────────────
+const themeBtn = $('themeToggle');
+themeBtn.addEventListener('click', () => {
+  const isDark = document.body.classList.toggle('dark');
+  themeBtn.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+  localStorage.setItem('jv-theme', isDark ? 'dark' : 'light');
+});
+(function initTheme(){
+  const saved = localStorage.getItem('jv-theme');
+  if(saved === 'dark'){ document.body.classList.add('dark'); themeBtn.textContent = '☀️ Light'; }
+})();
+
+// ─── DROP ZONE & FILE INPUT ──────────────────────────────────────────────────
+const dropZone = $('dropZone');
+const fileInput = $('fileInput');
+
+$('browseBtn').addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' ') fileInput.click(); });
+
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if(file) loadFile(file);
+});
+
+fileInput.addEventListener('change', () => {
+  if(fileInput.files[0]) loadFile(fileInput.files[0]);
+  fileInput.value = '';
+});
+
+function loadFile(file){
+  currentFileName = file.name;
+  currentFileSize = file.size;
+  showLoading('Reading file...');
+  const reader = new FileReader();
+  reader.onload = (e) => handleRawJSON(e.target.result, file.name, file.size);
+  reader.onerror = () => showError('Failed to read file.');
+  reader.readAsText(file);
+}
+
+// ─── URL FETCH ───────────────────────────────────────────────────────────────
+$('fetchBtn').addEventListener('click', () => {
+  const url = $('urlInput').value.trim();
+  if(!url){ showStatus('statusError','Please enter a URL.'); return; }
+  showLoading('Fetching...');
+  fetch(url)
+    .then(r => {
+      if(!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.text();
+    })
+    .then(text => {
+      const name = url.split('/').pop().split('?')[0] || 'fetched.json';
+      handleRawJSON(text, name, text.length);
+    })
+    .catch(err => showError('Fetch failed: ' + err.message + '. Check CORS headers on the target server.'));
+});
+
+$('urlInput').addEventListener('keydown', (e) => { if(e.key==='Enter') $('fetchBtn').click(); });
+
+// ─── LOADING / ERROR STATES ──────────────────────────────────────────────────
+function showLoading(msg='Parsing JSON...'){
+  $('emptyState').style.display = 'none';
+  $('loadingOverlay').classList.add('visible');
+  $('loadingText').textContent = msg;
+  $('treeHeader').style.display = 'none';
+  $('treeScroll').style.display = 'none';
+}
+
+function showError(msg){
+  $('loadingOverlay').classList.remove('visible');
+  $('emptyState').style.display = 'flex';
+  showStatus('statusError', msg);
+}
+
+// ─── MAIN ENTRY ──────────────────────────────────────────────────────────────
+function handleRawJSON(text, name, size){
+  // Defer parse so loading UI renders first
+  setTimeout(() => {
+    try {
+      const data = JSON.parse(text);
+      parsedData = data;
+      currentFileName = name;
+      currentFileSize = size;
+      renderTree(data, name, size, text.length);
+    } catch(err) {
+      showError('Invalid JSON: ' + err.message);
+    }
+  }, 30);
+}
+
+// ─── RENDER TREE ─────────────────────────────────────────────────────────────
+function renderTree(data, name, size, byteLen){
+  nodeIdCounter = 0;
+  const root = $('treeRoot');
+  root.innerHTML = '';
+
+  // Hide loading, show tree
+  $('loadingOverlay').classList.remove('visible');
+  $('treeHeader').style.display = 'flex';
+  $('treeScroll').style.display = 'block';
+
+  // Compute stats (fast, capped)
+  const type = getType(data);
+  const depth = countDepth(data);
+  const topCount = type === 'array' ? data.length : (type === 'object' ? Object.keys(data).length : 0);
+
+  // Update header
+  $('treeHeaderTitle').textContent = name;
+  $('treeHeaderMeta').textContent =
+    formatBytes(byteLen) + ' · ' +
+    (type === 'array' ? `[${topCount}]` : type === 'object' ? `{${topCount}}` : type) +
+    ' · depth ~' + depth;
+
+  // Show file info panel
+  $('fileInfoSection').style.display = 'block';
+  $('fileInfoGrid').innerHTML = `
+    <span class="info-label">File</span><span class="info-value">${escHtml(name)}</span>
+    <span class="info-label">Size</span><span class="info-value">${formatBytes(byteLen)}</span>
+    <span class="info-label">Root type</span><span class="info-value">${type}</span>
+    <span class="info-label">Top keys</span><span class="info-value">${topCount}</span>
+    <span class="info-label">Est. depth</span><span class="info-value">${depth}</span>
+  `;
+
+  // Show controls
+  $('controlsCard').style.display = 'block';
+  $('downloadPngBtn').disabled = false;
+  $('downloadSvgBtn').disabled = false;
+  $('downloadNote').classList.add('visible');
+
+  // Render root node
+  const desc = createDescriptor(data, null);
+  renderNode(desc, root);
+
+  // Auto-expand root if it has children
+  if(!isPrimitive(desc.type) && desc.childCount > 0){
+    const rootNodeEl = root.querySelector('.tj-node');
+    if(rootNodeEl) rootNodeEl.click();
+  }
+
+  hideStatus();
+  showStatus('statusSuccess', `Loaded ${name} (${formatBytes(byteLen)})`);
+}
+
+// ─── DESCRIPTOR FACTORY ──────────────────────────────────────────────────────
+function createDescriptor(value, key){
+  const type = getType(value);
+  const desc = {
+    id: nodeIdCounter++,
+    key: key !== null && key !== undefined ? String(key) : null,
+    type,
+    rawRef: value,
+    childCount: type === 'array' ? value.length : (type === 'object' ? Object.keys(value).length : 0),
+    childKeys: type === 'object' ? Object.keys(value) : null,
+    renderedCount: 0,
+    expanded: false,
+    containerEl: null,   // set when first expanded
+  };
+  return desc;
+}
+
+// ─── RENDER NODE ─────────────────────────────────────────────────────────────
+function renderNode(desc, parentEl){
+  const item = document.createElement('div');
+  item.className = 'tj-item';
+
+  const node = document.createElement('div');
+  node.className = `tj-node tj-${desc.type}`;
+  node.setAttribute('role', 'button');
+  node.setAttribute('tabindex', '0');
+
+  // Key label
+  if(desc.key !== null){
+    const keySpan = document.createElement('span');
+    keySpan.className = 'node-key';
+    keySpan.textContent = desc.key;
+    node.appendChild(keySpan);
+    const colon = document.createElement('span');
+    colon.className = 'node-colon';
+    colon.textContent = ':';
+    node.appendChild(colon);
+  }
+
+  if(isPrimitive(desc.type)){
+    // Primitive value
+    const rawVal = desc.type === 'null' ? 'null' : JSON.stringify(desc.rawRef);
+    const valSpan = document.createElement('span');
+    valSpan.className = 'node-value';
+    if(desc.type === 'string' && desc.rawRef.length > 120){
+      valSpan.textContent = JSON.stringify(desc.rawRef.slice(0,120)) + '…';
+      valSpan.className += ' expandable-str';
+      valSpan.title = 'Click to expand';
+      let expanded = false;
+      valSpan.addEventListener('click', (e) => {
+        e.stopPropagation();
+        expanded = !expanded;
+        valSpan.textContent = expanded ? JSON.stringify(desc.rawRef) : JSON.stringify(desc.rawRef.slice(0,120)) + '…';
+      });
+    } else {
+      valSpan.textContent = rawVal;
+    }
+    node.appendChild(valSpan);
+  } else {
+    // Object or array: show badge + optional toggle
+    const badge = document.createElement('span');
+    badge.className = 'node-badge';
+    badge.textContent = desc.type === 'array' ? `[${desc.childCount}]` : `{${desc.childCount}}`;
+    node.appendChild(badge);
+
+    if(desc.childCount > 0){
+      const toggle = document.createElement('span');
+      toggle.className = 'node-toggle';
+      toggle.textContent = '▶';
+      node.appendChild(toggle);
+      node.classList.add('expandable');
+
+      // Children container (lazy)
+      const childrenEl = document.createElement('div');
+      childrenEl.className = 'tj-children';
+      childrenEl.style.display = 'none';
+      desc.containerEl = childrenEl;
+      item.appendChild(node);
+      item.appendChild(childrenEl);
+
+      node.addEventListener('click', () => toggleNode(desc, node, childrenEl));
+      node.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleNode(desc, node, childrenEl); }
+      });
+      parentEl.appendChild(item);
+      return;
+    }
+  }
+
+  item.appendChild(node);
+  parentEl.appendChild(item);
+}
+
+// ─── TOGGLE NODE ─────────────────────────────────────────────────────────────
+function toggleNode(desc, nodeEl, childrenEl){
+  if(desc.expanded){
+    desc.expanded = false;
+    childrenEl.style.display = 'none';
+    nodeEl.classList.remove('is-expanded');
+  } else {
+    desc.expanded = true;
+    childrenEl.style.display = 'flex';
+    nodeEl.classList.add('is-expanded');
+    if(desc.renderedCount === 0){
+      if(desc.type === 'object') renderObjectChildren(desc, childrenEl);
+      else renderArrayChunk(desc, childrenEl, 5);
+    }
+  }
+}
+
+// ─── RENDER OBJECT CHILDREN ──────────────────────────────────────────────────
+function renderObjectChildren(desc, containerEl){
+  const keys = desc.childKeys;
+  const FIRST = Math.min(5, keys.length);
+  for(let i = 0; i < FIRST; i++){
+    const child = createDescriptor(desc.rawRef[keys[i]], keys[i]);
+    renderNode(child, containerEl);
+  }
+  desc.renderedCount = FIRST;
+  if(keys.length > FIRST) updateObjectPagination(desc, containerEl);
+}
+
+function updateObjectPagination(desc, containerEl){
+  const existing = containerEl.querySelector('.pagination-row');
+  if(existing) existing.remove();
+  const remaining = desc.childKeys.length - desc.renderedCount;
+  if(remaining <= 0) return;
+
+  const row = document.createElement('div');
+  row.className = 'pagination-row';
+
+  getPageButtonConfigs(remaining).forEach(({ label, count }) => {
+    const btn = makePageBtn(label, () => {
+      const actual = count === -1 ? remaining : count;
+      if(count === -1 && remaining > 500){
+        if(!confirm(`Render all ${remaining} remaining items? This may be slow.`)) return;
+      }
+      const keys = desc.childKeys;
+      const start = desc.renderedCount;
+      const end = Math.min(start + actual, keys.length);
+      for(let i = start; i < end; i++){
+        const child = createDescriptor(desc.rawRef[keys[i]], keys[i]);
+        renderNode(child, containerEl);
+      }
+      desc.renderedCount = end;
+      updateObjectPagination(desc, containerEl);
+    });
+    row.appendChild(btn);
+  });
+
+  const countLabel = document.createElement('span');
+  countLabel.className = 'pagination-count';
+  countLabel.textContent = `${desc.renderedCount}/${desc.childKeys.length} keys`;
+  row.appendChild(countLabel);
+  containerEl.appendChild(row);
+}
+
+// ─── RENDER ARRAY CHUNK ──────────────────────────────────────────────────────
+function renderArrayChunk(desc, containerEl, count){
+  const start = desc.renderedCount;
+  const end = Math.min(start + count, desc.childCount);
+  for(let i = start; i < end; i++){
+    const child = createDescriptor(desc.rawRef[i], i);
+    renderNode(child, containerEl);
+  }
+  desc.renderedCount = end;
+  updateArrayPagination(desc, containerEl);
+}
+
+function updateArrayPagination(desc, containerEl){
+  const existing = containerEl.querySelector('.pagination-row');
+  if(existing) existing.remove();
+  const remaining = desc.childCount - desc.renderedCount;
+  if(remaining <= 0) return;
+
+  const row = document.createElement('div');
+  row.className = 'pagination-row';
+
+  getPageButtonConfigs(remaining).forEach(({ label, count }) => {
+    const btn = makePageBtn(label, () => {
+      const actual = count === -1 ? remaining : count;
+      if(count === -1 && remaining > 500){
+        if(!confirm(`Render all ${remaining} remaining items? This may be slow.`)) return;
+      }
+      renderArrayChunk(desc, containerEl, actual);
+    });
+    row.appendChild(btn);
+  });
+
+  const countLabel = document.createElement('span');
+  countLabel.className = 'pagination-count';
+  countLabel.textContent = `${desc.renderedCount}/${desc.childCount} items`;
+  row.appendChild(countLabel);
+  containerEl.appendChild(row);
+}
+
+// ─── ADAPTIVE PAGE BUTTON CONFIGS ────────────────────────────────────────────
+function getPageButtonConfigs(remaining){
+  if(remaining > 100) return [
+    { label: 'Next 10', count: 10 },
+    { label: 'Next 50', count: 50 },
+    { label: `All (${remaining})`, count: -1 },
+  ];
+  if(remaining > 20) return [
+    { label: 'Next 10', count: 10 },
+    { label: 'Next 20', count: 20 },
+    { label: `All (${remaining})`, count: -1 },
+  ];
+  if(remaining > 10) return [
+    { label: 'Next 5', count: 5 },
+    { label: 'Next 10', count: 10 },
+    { label: `All (${remaining})`, count: -1 },
+  ];
+  if(remaining > 5) return [
+    { label: 'Next 5', count: 5 },
+    { label: `All (${remaining})`, count: -1 },
+  ];
+  return [{ label: `All (${remaining})`, count: -1 }];
+}
+
+function makePageBtn(label, handler){
+  const btn = document.createElement('button');
+  btn.className = 'btn-page';
+  btn.textContent = label;
+  btn.addEventListener('click', (e) => { e.stopPropagation(); handler(); });
+  return btn;
+}
+
+// ─── COLLAPSE ALL ────────────────────────────────────────────────────────────
+$('collapseAllBtn').addEventListener('click', () => {
+  $('treeRoot').querySelectorAll('.tj-node.is-expanded').forEach(nodeEl => {
+    nodeEl.click();
+  });
+});
+
+$('clearBtn').addEventListener('click', () => {
+  parsedData = null;
+  $('treeRoot').innerHTML = '';
+  $('treeHeader').style.display = 'none';
+  $('treeScroll').style.display = 'none';
+  $('emptyState').style.display = 'flex';
+  $('fileInfoSection').style.display = 'none';
+  $('controlsCard').style.display = 'none';
+  $('downloadNote').classList.remove('visible');
+  hideStatus();
+});
+
+// ─── ESCAPE HTML ─────────────────────────────────────────────────────────────
+function escHtml(str){
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── DOWNLOAD PNG ────────────────────────────────────────────────────────────
+$('downloadPngBtn').addEventListener('click', async () => {
+  const btn = $('downloadPngBtn');
+  const treeEl = $('treeRoot');
+  if(!treeEl || !parsedData){ return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Rendering...';
+
+  const isDark = document.body.classList.contains('dark');
+  const bg = isDark ? '#0F1728' : '#F0F4FF';
+
+  // Temporarily expand scroll container for full capture
+  const scrollEl = $('treeScroll');
+  const origOF = scrollEl.style.overflow;
+  scrollEl.style.overflow = 'visible';
+
+  try {
+    const canvas = await html2canvas(scrollEl, {
+      backgroundColor: bg,
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      scrollX: 0,
+      scrollY: -window.scrollY,
+      windowWidth: scrollEl.scrollWidth + 200,
+      windowHeight: scrollEl.scrollHeight + 200,
+    });
+
+    scrollEl.style.overflow = origOF;
+
+    // Watermark
+    const ctx = canvas.getContext('2d');
+    ctx.save();
+    ctx.globalAlpha = 0.22;
+    ctx.font = `500 ${Math.round(11 * 2)}px 'DM Sans', sans-serif`;
+    ctx.fillStyle = isDark ? '#ffffff' : '#1a1a1a';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('Ⓐ tool.adjiebrotots.com', canvas.width - 24, canvas.height - 24);
+    ctx.restore();
+
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    const fname = currentFileName.replace(/\.[^.]+$/, '') || 'json-tree';
+    a.download = fname + '-tree.png';
+    document.body.appendChild(a); a.click(); a.remove();
+  } catch(err) {
+    scrollEl.style.overflow = origOF;
+    alert('PNG export failed: ' + err.message);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '⬇ PNG';
+});
+
+// ─── DOWNLOAD SVG ────────────────────────────────────────────────────────────
+$('downloadSvgBtn').addEventListener('click', () => {
+  const scrollEl = $('treeScroll');
+  if(!scrollEl || !parsedData) return;
+
+  const btn = $('downloadSvgBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Building...';
+
+  setTimeout(() => {
+    try {
+      const isDark = document.body.classList.contains('dark');
+      const bg = isDark ? '#0F1728' : '#F0F4FF';
+      const fg = isDark ? '#EAF1FF' : '#2D3436';
+      const borderColor = isDark ? '#2C3A52' : '#E0E6F0';
+      const panelBg = isDark ? '#1C2942' : '#FFFFFF';
+      const mutedColor = isDark ? '#A8B6CF' : '#7F8C8D';
+      const accentColor = isDark ? '#8DBBFF' : '#5A91E8';
+      const connectorColor = isDark ? '#2C3A52' : '#C8D4E8';
+
+      const NS = 'http://www.w3.org/2000/svg';
+      const scrollRect = scrollEl.getBoundingClientRect();
+      const svgW = scrollEl.scrollWidth + 40;
+      const svgH = scrollEl.scrollHeight + 40;
+
+      const svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('xmlns', NS);
+      svg.setAttribute('width', svgW);
+      svg.setAttribute('height', svgH);
+      svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+      svg.setAttribute('font-family', 'DM Mono, monospace');
+      svg.setAttribute('font-size', '12');
+
+      // Background
+      const bgRect = document.createElementNS(NS, 'rect');
+      bgRect.setAttribute('width', svgW); bgRect.setAttribute('height', svgH);
+      bgRect.setAttribute('fill', bg);
+      svg.appendChild(bgRect);
+
+      // Walk all visible .tj-node and .tj-children elements
+      const treeRootEl = $('treeRoot');
+      const treeRootRect = treeRootEl.getBoundingClientRect();
+      const offsetX = scrollEl.scrollLeft - scrollRect.left + treeRootRect.left + 20;
+      const offsetY = scrollEl.scrollTop - scrollRect.top + treeRootRect.top + 20;
+
+      // Draw connector lines first (below nodes)
+      treeRootEl.querySelectorAll('.tj-children').forEach(childrenEl => {
+        if(childrenEl.style.display === 'none') return;
+        const cr = childrenEl.getBoundingClientRect();
+        const lineX = cr.left - scrollRect.left + scrollEl.scrollLeft - offsetX + 20;
+        const firstChild = childrenEl.querySelector(':scope > .tj-item > .tj-node');
+        const lastChild = [...childrenEl.querySelectorAll(':scope > .tj-item > .tj-node')].pop();
+        if(!firstChild || !lastChild) return;
+        const fr = firstChild.getBoundingClientRect();
+        const lr = lastChild.getBoundingClientRect();
+        const y1 = fr.top - scrollRect.top + scrollEl.scrollTop - offsetY + fr.height/2;
+        const y2 = lr.top - scrollRect.top + scrollEl.scrollTop - offsetY + lr.height/2;
+        if(y1 < y2){
+          const vLine = document.createElementNS(NS, 'line');
+          vLine.setAttribute('x1', lineX); vLine.setAttribute('y1', y1);
+          vLine.setAttribute('x2', lineX); vLine.setAttribute('y2', y2);
+          vLine.setAttribute('stroke', connectorColor); vLine.setAttribute('stroke-width', '1');
+          svg.appendChild(vLine);
+        }
+
+        childrenEl.querySelectorAll(':scope > .tj-item > .tj-node').forEach(nodeEl => {
+          const nr = nodeEl.getBoundingClientRect();
+          const nx = nr.left - scrollRect.left + scrollEl.scrollLeft - offsetX;
+          const ny = nr.top - scrollRect.top + scrollEl.scrollTop - offsetY + nr.height/2;
+          const hLine = document.createElementNS(NS, 'line');
+          hLine.setAttribute('x1', lineX); hLine.setAttribute('y1', ny);
+          hLine.setAttribute('x2', nx); hLine.setAttribute('y2', ny);
+          hLine.setAttribute('stroke', connectorColor); hLine.setAttribute('stroke-width', '1');
+          svg.appendChild(hLine);
+        });
+      });
+
+      // Draw nodes
+      treeRootEl.querySelectorAll('.tj-node').forEach(nodeEl => {
+        const nr = nodeEl.getBoundingClientRect();
+        const x = nr.left - scrollRect.left + scrollEl.scrollLeft - offsetX;
+        const y = nr.top - scrollRect.top + scrollEl.scrollTop - offsetY;
+        const w = nr.width; const h = nr.height;
+
+        // Determine border color from computed style
+        const cs = window.getComputedStyle(nodeEl);
+        const nodeBorderColor = cs.borderColor || borderColor;
+
+        const rect = document.createElementNS(NS, 'rect');
+        rect.setAttribute('x', x); rect.setAttribute('y', y);
+        rect.setAttribute('width', w); rect.setAttribute('height', h);
+        rect.setAttribute('rx', '8'); rect.setAttribute('ry', '8');
+        rect.setAttribute('fill', panelBg);
+        rect.setAttribute('stroke', nodeBorderColor);
+        svg.appendChild(rect);
+
+        // Text content
+        const text = document.createElementNS(NS, 'text');
+        text.setAttribute('x', x + 10);
+        text.setAttribute('y', y + h/2);
+        text.setAttribute('dominant-baseline', 'middle');
+        text.setAttribute('fill', fg);
+        text.setAttribute('font-size', '11');
+
+        // Get text content cleanly
+        const keyEl = nodeEl.querySelector('.node-key');
+        const colonEl = nodeEl.querySelector('.node-colon');
+        const badgeEl = nodeEl.querySelector('.node-badge');
+        const valEl = nodeEl.querySelector('.node-value');
+
+        let textContent = '';
+        if(keyEl) textContent += keyEl.textContent;
+        if(colonEl) textContent += ': ';
+        if(badgeEl) textContent += badgeEl.textContent;
+        if(valEl) textContent += valEl.textContent.slice(0, 60);
+
+        text.textContent = textContent;
+        svg.appendChild(text);
+      });
+
+      // Watermark
+      const wm = document.createElementNS(NS, 'text');
+      wm.setAttribute('x', svgW - 12);
+      wm.setAttribute('y', svgH - 12);
+      wm.setAttribute('text-anchor', 'end');
+      wm.setAttribute('dominant-baseline', 'auto');
+      wm.setAttribute('font-family', 'DM Sans, sans-serif');
+      wm.setAttribute('font-size', '11');
+      wm.setAttribute('opacity', '0.22');
+      wm.setAttribute('fill', isDark ? '#ffffff' : '#1a1a1a');
+      wm.textContent = 'Ⓐ tool.adjiebrotots.com';
+      svg.appendChild(wm);
+
+      const xml = new XMLSerializer().serializeToString(svg);
+      const blob = new Blob([xml], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const fname = currentFileName.replace(/\.[^.]+$/, '') || 'json-tree';
+      a.download = fname + '-tree.svg';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    } catch(err) {
+      alert('SVG export failed: ' + err.message);
+    }
+    btn.disabled = false;
+    btn.textContent = '⬇ SVG';
+  }, 30);
+});
+</script>
+
+</body>
+</html>
