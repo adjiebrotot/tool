@@ -206,6 +206,7 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
 .btn-page{background:var(--input-bg);border:1px solid var(--border-strong);color:var(--accent);border-radius:6px;padding:3px 9px;font-size:.76rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 150ms;white-space:nowrap}
 .btn-page:hover{background:var(--accent);color:var(--text-inv);border-color:var(--accent)}
 .pagination-count{font-size:.75rem;color:var(--muted);font-family:'DM Mono',monospace}
+.export-more-placeholder{padding:3px 2px;font-size:.76rem;color:var(--muted);font-family:'DM Mono',monospace;opacity:.75}
 
 /* ─── FOOTER ────────────────────────────────────────────────────────────────── */
 .page-footer{max-width:1440px;margin:0 auto;padding:0 24px 24px}
@@ -868,7 +869,10 @@ vpEl.addEventListener('mousedown', (e) => {
   if(e.button !== 0) return;
   vp.dragging = true; vp.lastX = e.clientX; vp.lastY = e.clientY;
   vpEl.classList.add('panning');
-  e.preventDefault();
+  // Don't preventDefault on interactive elements — doing so suppresses their click events
+  if(!e.target.closest('.tj-node, .btn-page, .expandable-str')) {
+    e.preventDefault();
+  }
 });
 window.addEventListener('mousemove', (e) => {
   if(!vp.dragging) return;
@@ -947,11 +951,39 @@ window.addEventListener('keydown', (e) => {
   if(e.key === '0')                  { resetView(); e.preventDefault(); }
 });
 
+// ─── EXPORT HELPERS ──────────────────────────────────────────────────────────
+// Replaces visible pagination button rows with a static "… N more" placeholder.
+// Returns a restore function that puts the original rows back (event listeners intact).
+function preparePaginationForExport() {
+  const restores = [];
+  document.querySelectorAll('.tj-children .pagination-row').forEach(row => {
+    // Skip if the parent children container is collapsed
+    const parent = row.closest('.tj-children');
+    if(parent && parent.style.display === 'none') return;
+    const countEl = row.querySelector('.pagination-count');
+    if(!countEl) return;
+    const match = countEl.textContent.match(/(\d+)\/(\d+)/);
+    if(!match) return;
+    const remaining = parseInt(match[2]) - parseInt(match[1]);
+    if(remaining <= 0) return;
+
+    const placeholder = document.createElement('div');
+    placeholder.className = 'export-more-placeholder';
+    placeholder.textContent = `… ${remaining} more`;
+    row.parentNode.insertBefore(placeholder, row);
+    row.style.display = 'none';
+    restores.push(() => { row.style.display = ''; placeholder.remove(); });
+  });
+  return restores;
+}
+
 // ─── DOWNLOAD PNG ────────────────────────────────────────────────────────────
 $('downloadPngBtn').addEventListener('click', async () => {
   const btn = $('downloadPngBtn');
   if(!parsedData) return;
   btn.disabled = true; btn.textContent = '⏳ Rendering...';
+
+  const restores = preparePaginationForExport();
 
   // Reset transform temporarily so html2canvas captures the full untransformed content
   const savedTransform = canvasEl.style.transform;
@@ -968,6 +1000,7 @@ $('downloadPngBtn').addEventListener('click', async () => {
     });
 
     canvasEl.style.transform = savedTransform;
+    restores.forEach(fn => fn());
 
     const ctx = result.getContext('2d');
     ctx.save();
@@ -986,6 +1019,7 @@ $('downloadPngBtn').addEventListener('click', async () => {
     document.body.appendChild(a); a.click(); a.remove();
   } catch(err) {
     canvasEl.style.transform = savedTransform;
+    restores.forEach(fn => fn());
     alert('PNG export failed: ' + err.message);
   }
 
@@ -997,6 +1031,8 @@ $('downloadSvgBtn').addEventListener('click', () => {
   if(!parsedData) return;
   const btn = $('downloadSvgBtn');
   btn.disabled = true; btn.textContent = '⏳ Building...';
+
+  const svgRestores = preparePaginationForExport();
 
   // Reset transform temporarily so getBoundingClientRect gives un-scaled positions
   const savedTransform = canvasEl.style.transform;
@@ -1088,6 +1124,22 @@ $('downloadSvgBtn').addEventListener('click', () => {
         svg.appendChild(t);
       });
 
+      // "… N more" placeholders for truncated pagination
+      treeRootEl.querySelectorAll('.export-more-placeholder').forEach(ph => {
+        const pr = ph.getBoundingClientRect();
+        if(pr.width === 0) return;
+        const pt = document.createElementNS(NS, 'text');
+        pt.setAttribute('x', pr.left - offsetX + 8);
+        pt.setAttribute('y', pr.top - offsetY + pr.height / 2);
+        pt.setAttribute('dominant-baseline', 'middle');
+        pt.setAttribute('font-family', 'DM Mono, monospace');
+        pt.setAttribute('font-size', '11');
+        pt.setAttribute('fill', fg);
+        pt.setAttribute('opacity', '0.6');
+        pt.textContent = ph.textContent;
+        svg.appendChild(pt);
+      });
+
       // Watermark
       const wm = document.createElementNS(NS, 'text');
       wm.setAttribute('x', svgW - 12); wm.setAttribute('y', svgH - 12);
@@ -1103,6 +1155,7 @@ $('downloadSvgBtn').addEventListener('click', () => {
       svg.appendChild(wm);
 
       canvasEl.style.transform = savedTransform;
+      svgRestores.forEach(fn => fn());
 
       const xml  = new XMLSerializer().serializeToString(svg);
       const blob = new Blob([xml], { type: 'image/svg+xml' });
@@ -1114,6 +1167,7 @@ $('downloadSvgBtn').addEventListener('click', () => {
       URL.revokeObjectURL(url);
     } catch(err) {
       canvasEl.style.transform = savedTransform;
+      svgRestores.forEach(fn => fn());
       alert('SVG export failed: ' + err.message);
     }
     btn.disabled = false; btn.textContent = '⬇ SVG';
