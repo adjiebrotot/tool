@@ -450,6 +450,7 @@ body.light .text-item.selected, .export-light-theme .text-item.selected { box-sh
   <div class="dirty-dot" id="dirtyDot" title="Unsaved changes"></div>
   <div class="divider"></div>
   <button class="btn btn-primary" id="savePngBtn">⬇ PNG</button>
+  <button class="btn btn-primary" id="copyPngBtn" title="Copy PNG to clipboard">⧉</button>
   <button class="btn btn-green"   id="saveJsonBtn">💾 Save</button>
   <button class="btn"             id="loadJsonBtn">📂 Load</button>
   <div class="divider"></div>
@@ -1114,41 +1115,66 @@ document.getElementById('confirmCancel').addEventListener('click',()=>{
 });
 
 /* ══ EXPORT PNG — always light mode, transparent background ══ */
-document.getElementById('savePngBtn').addEventListener('click', async()=>{
+async function renderCanvasBuilderPng() {
   deselectAll();
   const canvas=document.getElementById('theCanvas');
-  if(!canvas) return;
+  if(!canvas) return null;
 
+  await new Promise(r=>setTimeout(r,60));
+  const result=await html2canvas(canvas,{
+    backgroundColor:null,
+    scale:2, useCORS:true, logging:false, allowTaint:true, removeContainer:true,
+    onclone:clonedDoc=>{
+      clonedDoc.body.classList.add('light');
+      const clonedCanvas=clonedDoc.getElementById('theCanvas');
+      if(clonedCanvas) clonedCanvas.classList.add('export-light-theme');
+    },
+  });
+  const wCtx=result.getContext('2d');
+  wCtx.save();
+  wCtx.globalAlpha=0.22;
+  wCtx.font='500 33px "DM Sans",sans-serif';
+  wCtx.fillStyle='#1a1a1a';
+  wCtx.textAlign='right';
+  wCtx.textBaseline='bottom';
+  wCtx.fillText('Ⓐ Made using tool.adjiebrotots.com/canvasbuilder',result.width-36,result.height-36);
+  wCtx.restore();
+  return result;
+}
+async function copyCanvasPngToClipboard(canvas) {
+  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  if(!blob) throw new Error('Could not create PNG blob.');
+  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+}
+document.getElementById('savePngBtn').addEventListener('click', async()=>{
   document.getElementById('exportOverlay').classList.add('open');
   try {
-    await new Promise(r=>setTimeout(r,60));
-    const result=await html2canvas(canvas,{
-      backgroundColor:null,
-      scale:2, useCORS:true, logging:false, allowTaint:true, removeContainer:true,
-      onclone:clonedDoc=>{
-        clonedDoc.body.classList.add('light');
-        const clonedCanvas=clonedDoc.getElementById('theCanvas');
-        if(clonedCanvas) clonedCanvas.classList.add('export-light-theme');
-      },
-    });
+    const result=await renderCanvasBuilderPng();
+    if(!result) return;
     const link=document.createElement('a');
     const safe=(S.canvasName||'canvas').replace(/[^a-z0-9\-_ ]/gi,'').trim()||'canvas';
     link.download=safe+'-'+S.canvasType+'.png';
-    const wCtx=result.getContext('2d');
-    wCtx.save();
-    wCtx.globalAlpha=0.22;
-    wCtx.font='500 33px "DM Sans",sans-serif';
-    wCtx.fillStyle='#1a1a1a';
-    wCtx.textAlign='right';
-    wCtx.textBaseline='bottom';
-    wCtx.fillText('Ⓐ Made using tool.adjiebrotots.com/canvasbuilder',result.width-36,result.height-36);
-    wCtx.restore();
     link.href=result.toDataURL('image/png');
     link.click();
     showToast('PNG saved ✓','success'); markClean();
   } catch(err){
     console.error(err);
     showToast('PNG export failed','error');
+  } finally {
+    document.getElementById('exportOverlay').classList.remove('open');
+  }
+});
+document.getElementById('copyPngBtn').addEventListener('click', async()=>{
+  document.getElementById('exportOverlay').classList.add('open');
+  try {
+    const result=await renderCanvasBuilderPng();
+    if(!result) return;
+    await copyCanvasPngToClipboard(result);
+    showToast('PNG copied ✓','success'); markClean();
+  } catch(err){
+    console.error(err);
+    showToast('PNG copy failed','error');
   } finally {
     document.getElementById('exportOverlay').classList.remove('open');
   }

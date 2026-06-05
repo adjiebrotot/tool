@@ -570,6 +570,7 @@ abbr.abbr-hint{text-decoration:underline dotted;cursor:help;text-underline-offse
         <button class="graph-btn" data-graph="cash" id="graphCash" data-i18n="btnLiquidCash">Liquid Cash</button>
         <button class="graph-btn" data-graph="cost" id="graphCost" data-i18n="btnAccumCost">Accum. Cost</button>
         <button class="btn-secondary" id="pngBtn" style="font-size:.78rem;padding:5px 11px;">⬇ PNG</button>
+        <button class="btn-secondary" id="copyPngBtn" style="font-size:.78rem;padding:5px 11px;" title="Copy PNG to clipboard">⧉</button>
         <button class="btn-secondary" id="svgBtn" style="font-size:.78rem;padding:5px 11px;">⬇ SVG</button>
         <button class="btn-secondary" id="chartResetZoom" style="font-size:.78rem;padding:5px 11px;" data-i18n="btnZoom">⟳ Zoom</button>
       </div>
@@ -2503,7 +2504,7 @@ function applyPreset(cityKey){
 }
 
 /* ── PNG ── */
-function downloadChartPng() {
+function buildChartPngCanvas(shouldDownload = true) {
   const src = document.getElementById('chartCanvas');
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
@@ -2581,10 +2582,24 @@ function downloadChartPng() {
   ctx.fillText('Ⓐ tool.adjiebrotots.com', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
   ctx.restore();
 
-  const a = document.createElement('a');
-  a.href = tmp.toDataURL('image/png');
-  a.download = 'rent_vs_own_chart.png';
-  document.body.appendChild(a); a.click(); a.remove();
+  if(shouldDownload){
+    const a = document.createElement('a');
+    a.href = tmp.toDataURL('image/png');
+    a.download = 'rent_vs_own_chart.png';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  return tmp;
+}
+function downloadChartPng() { buildChartPngCanvas(true); }
+async function copyCanvasPngToClipboard(canvas) {
+  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  if(!blob) throw new Error('Could not create PNG blob.');
+  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+}
+async function copyChartPng() {
+  try { await copyCanvasPngToClipboard(buildChartPngCanvas(false)); alert('PNG copied to clipboard.'); }
+  catch(err){ alert('PNG copy failed: ' + err.message); }
 }
 function downloadChartSvg() {
   const src = document.getElementById('chartCanvas');
@@ -2655,6 +2670,7 @@ function downloadChartSvg() {
   document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
 $('pngBtn').addEventListener('click', downloadChartPng);
+$('copyPngBtn').addEventListener('click', copyChartPng);
 $('svgBtn').addEventListener('click', downloadChartSvg);
 
 /* ── CSV ── */

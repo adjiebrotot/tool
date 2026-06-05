@@ -343,6 +343,7 @@
           <h2 style="margin:0;" data-i18n="chart1Title">Total Tax by Household Salary</h2>
           <div style="display:flex;gap:6px;">
             <button class="btn-secondary" id="chart1PngBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ PNG</button>
+            <button class="btn-secondary" id="chart1CopyPngBtn" style="font-size:0.8rem;padding:6px 12px;" title="Copy PNG to clipboard">⧉</button>
             <button class="btn-secondary" id="chart1SvgBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ SVG</button>
             <button class="btn-secondary" id="chartResetZoom" style="font-size:0.8rem;padding:6px 12px;" data-i18n="resetZoom">⟳ Reset zoom</button>
           </div>
@@ -360,6 +361,7 @@
           <h2 style="margin:0;" data-i18n="chart2Title">Tax Difference (Gabung − Pisah)</h2>
           <div style="display:flex;gap:6px;">
             <button class="btn-secondary" id="chart2PngBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ PNG</button>
+            <button class="btn-secondary" id="chart2CopyPngBtn" style="font-size:0.8rem;padding:6px 12px;" title="Copy PNG to clipboard">⧉</button>
             <button class="btn-secondary" id="chart2SvgBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ SVG</button>
             <button class="btn-secondary" id="chartResetZoom2" style="font-size:0.8rem;padding:6px 12px;" data-i18n="resetZoom">⟳ Reset zoom</button>
           </div>
@@ -803,8 +805,10 @@ const els = {
   wifeDeductionInput: $('wifeDeductionInput'),
   resetBtn: $('resetBtn'),
   chart1PngBtn: $('chart1PngBtn'),
+  chart1CopyPngBtn: $('chart1CopyPngBtn'),
   chart1SvgBtn: $('chart1SvgBtn'),
   chart2PngBtn: $('chart2PngBtn'),
+  chart2CopyPngBtn: $('chart2CopyPngBtn'),
   chart2SvgBtn: $('chart2SvgBtn'),
   downloadBtn: $('downloadBtn'),
   bracketsContainer: $('bracketsContainer'),
@@ -1349,7 +1353,7 @@ function buildBracketEditor(){
 }
 
 /* ── PNG ── */
-function downloadChartPng(canvasId, filename, chartTitle, legendId) {
+function downloadChartPng(canvasId, filename, chartTitle, legendId, shouldDownload = true) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
@@ -1432,11 +1436,21 @@ function downloadChartPng(canvasId, filename, chartTitle, legendId) {
   ctx.fillText('Ⓐ tool.adjiebrotots.com', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
   ctx.restore();
 
-  const a = document.createElement('a');
-  a.href = tmp.toDataURL('image/png');
-  a.download = filename;
-  document.body.appendChild(a); a.click(); a.remove();
+  if(shouldDownload){
+    const a = document.createElement('a');
+    a.href = tmp.toDataURL('image/png');
+    a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  return tmp;
 }
+async function copyCanvasPngToClipboard(canvas) {
+  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  if(!blob) throw new Error('Could not create PNG blob.');
+  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+}
+
 function downloadChartSvg(canvasId, filename, chartTitle, legendId) {
   const src = document.getElementById(canvasId);
   if(!src) return;
@@ -1514,7 +1528,15 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId) {
   document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
 els.chart1PngBtn.addEventListener('click', () => downloadChartPng('chartCanvas', 'pisah_vs_gabung_chart1.png', T('chart1Title'), 'chartLegend'));
+els.chart1CopyPngBtn.addEventListener('click', async () => {
+  try { await copyCanvasPngToClipboard(downloadChartPng('chartCanvas', 'pisah_vs_gabung_chart1.png', T('chart1Title'), 'chartLegend', false)); alert('PNG copied to clipboard.'); }
+  catch(err){ alert('PNG copy failed: ' + err.message); }
+});
 els.chart2PngBtn.addEventListener('click', () => downloadChartPng('chartCanvas2', 'pisah_vs_gabung_chart2.png', T('chart2Title'), 'chartLegend2'));
+els.chart2CopyPngBtn.addEventListener('click', async () => {
+  try { await copyCanvasPngToClipboard(downloadChartPng('chartCanvas2', 'pisah_vs_gabung_chart2.png', T('chart2Title'), 'chartLegend2', false)); alert('PNG copied to clipboard.'); }
+  catch(err){ alert('PNG copy failed: ' + err.message); }
+});
 els.chart1SvgBtn.addEventListener('click', () => downloadChartSvg('chartCanvas', 'pisah_vs_gabung_chart1.svg', T('chart1Title'), 'chartLegend'));
 els.chart2SvgBtn.addEventListener('click', () => downloadChartSvg('chartCanvas2', 'pisah_vs_gabung_chart2.svg', T('chart2Title'), 'chartLegend2'));
 

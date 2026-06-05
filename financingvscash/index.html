@@ -312,6 +312,7 @@ body.light #globalTooltip::after{border-top-color:#FFFFFF;}
       <h2 id="chartTitle" style="margin:0;">Ending Wealth Over Time</h2>
       <div style="display:flex;gap:6px;">
         <button class="btn-secondary btn-sm" id="chartPngBtn">⬇ PNG</button>
+        <button class="btn-secondary btn-sm" id="chartCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
         <button class="btn-secondary btn-sm" id="chartSvgBtn">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="chartResetZoom">⟳ Reset zoom</button>
       </div>
@@ -325,6 +326,7 @@ body.light #globalTooltip::after{border-top-color:#FFFFFF;}
       <h2 id="sens2dTitle" style="margin:0;">2D Sensitivity</h2>
       <div style="display:flex;gap:6px;">
         <button class="btn-secondary btn-sm" id="sens2dPngBtn">⬇ PNG</button>
+        <button class="btn-secondary btn-sm" id="sens2dCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
         <button class="btn-secondary btn-sm" id="sens2dSvgBtn">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="sensResetZoom">⟳ Reset zoom</button>
       </div>
@@ -336,6 +338,7 @@ body.light #globalTooltip::after{border-top-color:#FFFFFF;}
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
       <h2 id="sens3dTitle" style="margin:0;">3D Sensitivity Surface</h2>
       <button class="btn-secondary btn-sm" id="sens3dPngBtn">⬇ PNG</button>
+      <button class="btn-secondary btn-sm" id="sens3dCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
       <button class="btn-secondary btn-sm" id="sens3dSvgBtn">⬇ SVG</button>
     </div>
     <div class="surface-wrap" id="plotly3d"></div>
@@ -924,7 +927,7 @@ $('downloadBtn').addEventListener('click',()=>{
 });
 
 /* ─── DOWNLOAD CHART PNG ─── */
-function downloadChartJsPng(canvasId, filename, chartTitle, legendId) {
+function downloadChartJsPng(canvasId, filename, chartTitle, legendId, shouldDownload = true) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
@@ -1007,11 +1010,21 @@ function downloadChartJsPng(canvasId, filename, chartTitle, legendId) {
   ctx.fillText('Ⓐ tool.adjiebrotots.com', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
   ctx.restore();
 
-  const a = document.createElement('a');
-  a.href = tmp.toDataURL('image/png');
-  a.download = filename;
-  document.body.appendChild(a); a.click(); a.remove();
+  if(shouldDownload){
+    const a = document.createElement('a');
+    a.href = tmp.toDataURL('image/png');
+    a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  return tmp;
 }
+async function copyCanvasPngToClipboard(canvas) {
+  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  if(!blob) throw new Error('Could not create PNG blob.');
+  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+}
+
 function downloadChartJsSvg(canvasId, filename, chartTitle, legendId) {
   const src = document.getElementById(canvasId);
   if(!src) return;
@@ -1096,7 +1109,7 @@ $('sens2dPngBtn').addEventListener('click', () => {
   const title = document.getElementById('sens2dTitle')?.textContent || 'Finance vs Cash — 2D Sensitivity';
   downloadChartJsPng('sensCanvas', 'financing_sensitivity_2d.png', title, 'sensLegend');
 });
-$('sens3dPngBtn').addEventListener('click', async () => {
+async function withSens3dPngAnnotations(callback) {
   const title3d = document.getElementById('sens3dTitle')?.textContent || 'Finance vs Cash — 3D Sensitivity Surface';
   const titleAnnotation = {
     xref:'paper', yref:'paper', x:0.5, y:1.06, xanchor:'center', yanchor:'bottom',
@@ -1109,8 +1122,31 @@ $('sens3dPngBtn').addEventListener('click', async () => {
     font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' },
   };
   await Plotly.relayout('plotly3d', { annotations:[titleAnnotation, wmAnnotation] });
-  await Plotly.downloadImage('plotly3d', { format:'png', filename:'financing_sensitivity_3d', scale:3 });
-  await Plotly.relayout('plotly3d', { annotations:[] });
+  try { return await callback(); }
+  finally { await Plotly.relayout('plotly3d', { annotations:[] }); }
+}
+$('sens3dPngBtn').addEventListener('click', async () => {
+  await withSens3dPngAnnotations(() => Plotly.downloadImage('plotly3d', { format:'png', filename:'financing_sensitivity_3d', scale:3 }));
+});
+async function copyPlotlyPngToClipboard(plotId, options) {
+  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
+  const dataUrl = await Plotly.toImage(plotId, options);
+  const blob = await (await fetch(dataUrl)).blob();
+  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+}
+$('chartCopyPngBtn').addEventListener('click', async () => {
+  const title = document.getElementById('chartTitle')?.textContent || 'Finance vs Cash Purchase';
+  try { await copyCanvasPngToClipboard(downloadChartJsPng('chartCanvas', 'financing_wealth_chart.png', title, 'chartLegend', false)); alert('PNG copied to clipboard.'); }
+  catch(err){ alert('PNG copy failed: ' + err.message); }
+});
+$('sens2dCopyPngBtn').addEventListener('click', async () => {
+  const title = document.getElementById('sens2dTitle')?.textContent || 'Finance vs Cash — 2D Sensitivity';
+  try { await copyCanvasPngToClipboard(downloadChartJsPng('sensCanvas', 'financing_sensitivity_2d.png', title, 'sensLegend', false)); alert('PNG copied to clipboard.'); }
+  catch(err){ alert('PNG copy failed: ' + err.message); }
+});
+$('sens3dCopyPngBtn').addEventListener('click', async () => {
+  try { await withSens3dPngAnnotations(() => copyPlotlyPngToClipboard('plotly3d', { format:'png', scale:3 })); alert('PNG copied to clipboard.'); }
+  catch(err){ alert('PNG copy failed: ' + err.message); }
 });
 $('chartSvgBtn').addEventListener('click', () => {
   const title = document.getElementById('chartTitle')?.textContent || 'Finance vs Cash Purchase';

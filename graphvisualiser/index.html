@@ -273,7 +273,10 @@ hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
           <div id="statusBadge"><span class="badge badge-info">Awaiting data</span></div>
         </div>
         <!-- Save PNG lives here, top-right of chart -->
-        <button class="btn-secondary" id="savePng" style="display:none">⬇ PNG</button>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn-secondary" id="savePng" style="display:none">⬇ PNG</button>
+          <button class="btn-secondary" id="copyPng" style="display:none" title="Copy PNG to clipboard">⧉</button>
+        </div>
       </div>
 
       <div class="info-row" id="infoRow" style="display:none"></div>
@@ -600,6 +603,7 @@ function renderChart() {
   document.getElementById('emptyState').style.display = 'none';
   document.getElementById('plotDiv').style.display    = 'block';
   document.getElementById('savePng').style.display    = 'inline-flex';
+  document.getElementById('copyPng').style.display    = 'inline-flex';
 
   const isLight  = document.body.classList.contains('light');
   const paperBg  = 'rgba(0,0,0,0)';
@@ -706,18 +710,35 @@ function renderChart() {
 }
 
 // ─── SAVE PNG ─────────────────────────────────────────────────────────────────
-document.getElementById('savePng').onclick = async () => {
-  const title = document.getElementById('chartTitle').value || 'graph';
+async function withPngWatermark(callback) {
   const wmAnnotation = {
     xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom',
     showarrow:false, text:'Ⓐ Made using tool.adjiebrotots.com/graphvisualiser',
     font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' },
   };
   await Plotly.relayout('plotDiv', { annotations:[wmAnnotation] });
-  await Plotly.downloadImage('plotDiv', {
+  try { return await callback(); }
+  finally { await Plotly.relayout('plotDiv', { annotations:[] }); }
+}
+async function copyPlotlyPngToClipboard(plotId, options) {
+  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
+  const dataUrl = await Plotly.toImage(plotId, options);
+  const blob = await (await fetch(dataUrl)).blob();
+  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+}
+document.getElementById('savePng').onclick = async () => {
+  const title = document.getElementById('chartTitle').value || 'graph';
+  await withPngWatermark(() => Plotly.downloadImage('plotDiv', {
     format:'png', filename:title.replace(/\s+/g,'_'), scale:3, width:1440, height:760
-  });
-  await Plotly.relayout('plotDiv', { annotations:[] });
+  }));
+};
+document.getElementById('copyPng').onclick = async () => {
+  try {
+    await withPngWatermark(() => copyPlotlyPngToClipboard('plotDiv', {
+      format:'png', scale:3, width:1440, height:760
+    }));
+    setStatus('PNG copied', 'success');
+  } catch(err) { setStatus('PNG copy failed: ' + err.message, 'error'); }
 };
 
 // ─── UI HELPERS ───────────────────────────────────────────────────────────────
