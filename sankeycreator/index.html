@@ -217,7 +217,7 @@ main{display:flex;flex-direction:column;gap:13px}
 
         <!-- ── TABLE sub-panel ── -->
         <div class="data-sub-panel active" id="sub-table">
-          <div class="help" style="flex-shrink:0">Each row defines a flow from <b>Source → Target</b> with a <b>Value</b>. Use <code>remaining</code> to auto-fill the leftovers.</div>
+          <div class="help" style="flex-shrink:0">Each row defines a flow from <b>Source → Target</b> with a <b>Value</b>. Use <code>remaining</code> to auto-fill the leftovers. Use <code>|</code> in labels to add line breaks.</div>
           <div class="editor-table-wrap" id="tableWrap">
             <table class="editor-table">
               <thead>
@@ -239,7 +239,7 @@ main{display:flex;flex-direction:column;gap:13px}
         <div class="data-sub-panel" id="sub-text">
           <div class="help" style="flex-shrink:0">
             Format: <code>source,target,value[,color]</code><br>
-            Use <code>remaining</code> as value to auto-calculate the leftover flow from a node.
+            Use <code>remaining</code> as value to auto-calculate the leftover flow from a node. Use <code>|</code> in labels to add line breaks.
           </div>
           <textarea id="textInput" rows="18" spellcheck="false"
             placeholder="source,target,value,color&#10;Dubai,Applications,3&#10;Applications,Hired,5,#8FCDBD&#10;Applications,Declined,remaining,#FF8B8B"></textarea>
@@ -472,6 +472,20 @@ function hex(c){ return /^#[0-9A-Fa-f]{3,8}$/.test(c); }
 
 function cssVar(name){
   return getComputedStyle(document.body).getPropertyValue(name).trim();
+}
+
+function labelLines(label){
+  const lines = String(label ?? '').split('|').map(line=>line.trim());
+  return lines.length ? lines : [''];
+}
+
+function appendMultilineText(textEl, lines, x, lineHeight){
+  lines.forEach((line, i)=>{
+    textEl.append('tspan')
+      .attr('x', x)
+      .attr('dy', i === 0 ? 0 : lineHeight)
+      .text(line);
+  });
 }
 
 function autoResize(ta){
@@ -727,17 +741,20 @@ function doRender(){
       tx = d.x1 + 7; anchor = 'start';
       nameColor = textColor; valColor = mutedColor; nameSize = 12;
     }
+    const lines = labelLines(d.name);
+    const nameLineHeight = Math.max(13, nameSize * 1.15);
+    const nameStartDy = -((lines.length - 1) * nameLineHeight) / 2;
     const nameEl = grp.append('text')
-      .attr('x', tx).attr('y', midY)
-      .attr('data-dy', 0)
+      .attr('x', tx).attr('y', midY + nameStartDy)
+      .attr('data-dy', nameStartDy)
       .attr('text-anchor', anchor)
       .attr('dominant-baseline', 'middle')
       .attr('fill', nameColor)
       .attr('font-family', 'DM Sans,system-ui,sans-serif')
       .attr('font-size', nameSize)
       .attr('font-weight', '700')
-      .text(d.name)
       .style('pointer-events', 'none');
+    appendMultilineText(nameEl, lines, tx, nameLineHeight);
 
     let valEl = null;
     if (nodeH > 18 && S.valueMode !== 'none') {
@@ -747,9 +764,10 @@ function doRender(){
       } else {
         valText = fmtNum(d.value);
       }
+      const valueDy = nameStartDy + ((lines.length - 1) * nameLineHeight) + valOffset;
       valEl = grp.append('text')
-        .attr('x', tx).attr('y', midY + valOffset)
-        .attr('data-dy', valOffset)
+        .attr('x', tx).attr('y', midY + valueDy)
+        .attr('data-dy', valueDy)
         .attr('text-anchor', anchor)
         .attr('dominant-baseline', 'middle')
         .attr('fill', valColor)
