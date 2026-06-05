@@ -908,7 +908,11 @@ vpEl.addEventListener('touchstart', (e) => {
     vp.pinchMidX  = (e.touches[0].clientX + e.touches[1].clientX) / 2;
     vp.pinchMidY  = (e.touches[0].clientY + e.touches[1].clientY) / 2;
   }
-  e.preventDefault();
+  // Don't preventDefault for single-finger taps on interactive elements —
+  // it would suppress the synthesised click event on mobile.
+  if(e.touches.length !== 1 || !e.target.closest('.tj-node, .btn-page, .expandable-str')) {
+    e.preventDefault();
+  }
 }, { passive: false });
 
 vpEl.addEventListener('touchmove', (e) => {
