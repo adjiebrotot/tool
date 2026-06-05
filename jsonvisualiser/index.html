@@ -195,8 +195,10 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
 
 /* ─── CHILDREN COLUMN ───────────────────────────────────────────────────────── */
 .tj-children{display:flex;flex-direction:column;gap:5px;position:relative;padding-left:22px;margin-left:5px}
-/* Vertical connecting bar */
-.tj-children::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:1px;background:var(--connector)}
+/* Vertical connecting bar: each non-last item draws a segment from its node
+   centre down to the next sibling's node centre (top:14px + gap:5px + 14px = bottom:-19px).
+   The last item gets nothing, so the line never overshoots its node. */
+.tj-children > .tj-item:not(:last-child)::after{content:'';position:absolute;left:-22px;top:14px;bottom:-19px;width:1px;background:var(--connector)}
 /* Horizontal connector for each child item */
 .tj-children > .tj-item{position:relative}
 .tj-children > .tj-item::before{content:'';position:absolute;left:-22px;top:14px;width:22px;height:1px;background:var(--connector)}
@@ -1063,9 +1065,8 @@ $('downloadSvgBtn').addEventListener('click', () => {
       const offsetX = canvasRect.left;
       const offsetY = canvasRect.top;
 
-      // Connector lines (drawn below nodes). Match the CSS connectors exactly:
-      // .tj-children::before is at the children container's left edge, and
-      // each direct child .tj-item::before spans from that edge to the child node.
+      // Connector lines (drawn below nodes). Vertical bar spans from first to last
+      // child node centre; each child gets a horizontal line from the bar to its node.
       treeRootEl.querySelectorAll('.tj-children').forEach(childrenEl => {
         if(childrenEl.style.display === 'none') return;
         const cr = childrenEl.getBoundingClientRect();
