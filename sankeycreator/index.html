@@ -363,6 +363,7 @@ main{display:flex;flex-direction:column;gap:13px}
           <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
             <button id="exportSvgBtn" class="btn-export">⬇ SVG</button>
             <button id="exportPngBtn" class="btn-export">⬇ PNG</button>
+            <button id="copyPngBtn" class="btn-export" title="Copy PNG to clipboard">⧉</button>
           </div>
         </div>
         <div id="errBanner" style="display:none;margin-bottom:10px" class="error-banner"></div>
@@ -1316,8 +1317,8 @@ $('exportSvgBtn').addEventListener('click',()=>{
   URL.revokeObjectURL(a.href);
 });
 
-$('exportPngBtn').addEventListener('click',()=>{
-  if(!graph) return;
+function renderSankeyPngCanvas() {
+  if(!graph) return Promise.resolve(null);
   const W  = svgEl.viewBox.baseVal.width  || 800;
   const H  = svgEl.viewBox.baseVal.height || S.h;
   const xml    = exportCloneXml();
@@ -1326,29 +1327,51 @@ $('exportPngBtn').addEventListener('click',()=>{
   const titleText = (document.getElementById('diagramTitle')?.value || '').trim();
   const TITLE_H = titleText ? 36 : 0;
   const TOTAL_H = H + TITLE_H;
-  const img    = new Image();
-  img.onload = ()=>{
-    const canvas = document.createElement('canvas');
-    canvas.width = W*3; canvas.height = TOTAL_H*3;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.scale(3,3);
-    ctx.drawImage(img,0,0,W,TOTAL_H);
-    ctx.save();
-    ctx.globalAlpha=0.22;
-    ctx.font='500 11px "DM Sans",sans-serif';
-    ctx.fillStyle='#1a1a1a';
-    ctx.textAlign='right';
-    ctx.textBaseline='bottom';
-    ctx.fillText('Ⓐ tool.adjiebrotots.com',W-6,TOTAL_H-5);
-    ctx.restore();
-    const a=document.createElement('a');
-    a.href=canvas.toDataURL('image/png');
-    a.download='sankey.png';
-    a.click();
-  };
-  img.src=svgB64;
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = ()=>{
+      const canvas = document.createElement('canvas');
+      canvas.width = W*3; canvas.height = TOTAL_H*3;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.scale(3,3);
+      ctx.drawImage(img,0,0,W,TOTAL_H);
+      ctx.save();
+      ctx.globalAlpha=0.22;
+      ctx.font='500 11px "DM Sans",sans-serif';
+      ctx.fillStyle='#1a1a1a';
+      ctx.textAlign='right';
+      ctx.textBaseline='bottom';
+      ctx.fillText('Ⓐ tool.adjiebrotots.com',W-6,TOTAL_H-5);
+      ctx.restore();
+      resolve(canvas);
+    };
+    img.onerror = () => reject(new Error('Could not render PNG.'));
+    img.src=svgB64;
+  });
+}
+async function copyCanvasPngToClipboard(canvas) {
+  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  if(!blob) throw new Error('Could not create PNG blob.');
+  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+}
+$('exportPngBtn').addEventListener('click', async()=>{
+  const canvas = await renderSankeyPngCanvas();
+  if(!canvas) return;
+  const a=document.createElement('a');
+  a.href=canvas.toDataURL('image/png');
+  a.download='sankey.png';
+  a.click();
+});
+$('copyPngBtn').addEventListener('click', async()=>{
+  try {
+    const canvas = await renderSankeyPngCanvas();
+    if(!canvas) return;
+    await copyCanvasPngToClipboard(canvas);
+    alert('PNG copied to clipboard.');
+  } catch(err) { alert('PNG copy failed: ' + err.message); }
 });
 
 // ═══════════════════════════════════════════════

@@ -302,6 +302,7 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
           </div>
           <div class="download-row">
             <button class="btn-secondary" id="downloadPngBtn" style="flex:1" disabled>⬇ PNG</button>
+            <button class="btn-secondary" id="copyPngBtn" style="flex:1" disabled title="Copy PNG to clipboard">⧉</button>
             <button class="btn-secondary" id="downloadSvgBtn" style="flex:1" disabled>⬇ SVG</button>
           </div>
           <div class="status-msg status-info" id="downloadNote" style="margin-top:10px">
@@ -556,6 +557,7 @@ function renderTree(data, name, size, byteLen){
   // Show controls
   $('controlsCard').style.display = 'block';
   $('downloadPngBtn').disabled = false;
+  $('copyPngBtn').disabled = false;
   $('downloadSvgBtn').disabled = false;
   $('downloadNote').classList.add('visible');
 
@@ -984,11 +986,7 @@ function preparePaginationForExport() {
 }
 
 // ─── DOWNLOAD PNG ────────────────────────────────────────────────────────────
-$('downloadPngBtn').addEventListener('click', async () => {
-  const btn = $('downloadPngBtn');
-  if(!parsedData) return;
-  btn.disabled = true; btn.textContent = '⏳ Rendering...';
-
+async function renderTreePngCanvas() {
   const restores = preparePaginationForExport();
 
   // Reset transform temporarily so html2canvas captures the full untransformed content
@@ -1005,9 +1003,6 @@ $('downloadPngBtn').addEventListener('click', async () => {
       scrollY: -window.scrollY,
     });
 
-    canvasEl.style.transform = savedTransform;
-    restores.forEach(fn => fn());
-
     const ctx = result.getContext('2d');
     ctx.save();
     ctx.font = `500 ${Math.round(11 * 2)}px 'DM Sans', sans-serif`;
@@ -1018,18 +1013,40 @@ $('downloadPngBtn').addEventListener('click', async () => {
     ctx.fillStyle = 'rgba(26,26,26,0.45)';
     ctx.fillText('Ⓐ tool.adjiebrotots.com', result.width - 24, result.height - 24);
     ctx.restore();
-
+    return result;
+  } finally {
+    canvasEl.style.transform = savedTransform;
+    restores.forEach(fn => fn());
+  }
+}
+async function copyCanvasPngToClipboard(canvas) {
+  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  if(!blob) throw new Error('Could not create PNG blob.');
+  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+}
+$('downloadPngBtn').addEventListener('click', async () => {
+  const btn = $('downloadPngBtn');
+  if(!parsedData) return;
+  btn.disabled = true; btn.textContent = '⏳ Rendering...';
+  try {
+    const result = await renderTreePngCanvas();
     const a = document.createElement('a');
     a.href = result.toDataURL('image/png');
     a.download = (currentFileName.replace(/\.[^.]+$/, '') || 'json-tree') + '-tree.png';
     document.body.appendChild(a); a.click(); a.remove();
   } catch(err) {
-    canvasEl.style.transform = savedTransform;
-    restores.forEach(fn => fn());
     alert('PNG export failed: ' + err.message);
   }
-
   btn.disabled = false; btn.textContent = '⬇ PNG';
+});
+$('copyPngBtn').addEventListener('click', async () => {
+  const btn = $('copyPngBtn');
+  if(!parsedData) return;
+  btn.disabled = true; btn.textContent = '⏳';
+  try { await copyCanvasPngToClipboard(await renderTreePngCanvas()); alert('PNG copied to clipboard.'); }
+  catch(err){ alert('PNG copy failed: ' + err.message); }
+  btn.disabled = false; btn.textContent = '⧉';
 });
 
 // ─── DOWNLOAD SVG ────────────────────────────────────────────────────────────

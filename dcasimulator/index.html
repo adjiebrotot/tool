@@ -368,6 +368,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
       <h2>Security Prices <span style="color:var(--muted);font-size:.85rem;font-weight:400">(normalised to 100)</span></h2>
       <div class="chart-actions">
         <button class="btn-secondary" id="pricePngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
+        <button class="btn-secondary" id="priceCopyPngBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
         <button class="btn-secondary" id="priceSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
         <button class="btn-secondary" id="priceResetZoom" style="font-size:.8rem;padding:5px 11px">⟳ Reset Zoom</button>
       </div>
@@ -392,6 +393,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
           </div>
         </label>
         <button class="btn-secondary" id="equityPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
+        <button class="btn-secondary" id="equityCopyPngBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
         <button class="btn-secondary" id="equitySvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
         <button class="btn-secondary" id="equityResetZoom" style="font-size:.8rem;padding:5px 11px">⟳ Reset Zoom</button>
       </div>
@@ -448,6 +450,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
       </div>
       <div class="chart-actions">
         <button class="btn-secondary" id="sensPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
+        <button class="btn-secondary" id="sensCopyPngBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
         <button class="btn-secondary" id="sensSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
       </div>
     </div>
@@ -1596,7 +1599,7 @@ $('resetBtn').addEventListener('click',()=>{
 });
 
 /* ─── DOWNLOAD CHART PNG ─── */
-function downloadChartPng(canvasId, filename, chartTitle, legendId) {
+function downloadChartPng(canvasId, filename, chartTitle, legendId, shouldDownload = true) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
@@ -1680,11 +1683,21 @@ function downloadChartPng(canvasId, filename, chartTitle, legendId) {
   ctx.fillText('Ⓐ tool.adjiebrotots.com', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
   ctx.restore();
 
-  const a = document.createElement('a');
-  a.href = tmp.toDataURL('image/png');
-  a.download = filename;
-  document.body.appendChild(a); a.click(); a.remove();
+  if(shouldDownload){
+    const a = document.createElement('a');
+    a.href = tmp.toDataURL('image/png');
+    a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  return tmp;
 }
+async function copyCanvasPngToClipboard(canvas) {
+  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  if(!blob) throw new Error('Could not create PNG blob.');
+  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+}
+
 function downloadChartSvg(canvasId, filename, chartTitle, legendId, legendItemsOverride) {
   const src = document.getElementById(canvasId);
   if(!src) return;
@@ -1762,10 +1775,23 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId, legendItemsO
   document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
 $('pricePngBtn').addEventListener('click', () => downloadChartPng('priceCanvas', 'dca_price_chart.png', 'DCA Scenario Explorer — Security Prices (Normalised to 100)', 'priceLegend'));
+$('priceCopyPngBtn').addEventListener('click', async () => {
+  try { await copyCanvasPngToClipboard(downloadChartPng('priceCanvas', 'dca_price_chart.png', 'DCA Scenario Explorer — Security Prices (Normalised to 100)', 'priceLegend', false)); alert('PNG copied to clipboard.'); }
+  catch(err){ alert('PNG copy failed: ' + err.message); }
+});
 $('equityPngBtn').addEventListener('click', () => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend'));
+$('equityCopyPngBtn').addEventListener('click', async () => {
+  try { await copyCanvasPngToClipboard(downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend', false)); alert('PNG copied to clipboard.'); }
+  catch(err){ alert('PNG copy failed: ' + err.message); }
+});
 $('sensPngBtn').addEventListener('click', () => {
   const subtitle = document.getElementById('sensChartSubtitle')?.textContent || 'Sensitivity Analysis';
   downloadChartPng('sensCanvas', 'dca_sensitivity_chart.png', 'DCA Sensitivity Analysis — ' + subtitle, null);
+});
+$('sensCopyPngBtn').addEventListener('click', async () => {
+  const subtitle = document.getElementById('sensChartSubtitle')?.textContent || 'Sensitivity Analysis';
+  try { await copyCanvasPngToClipboard(downloadChartPng('sensCanvas', 'dca_sensitivity_chart.png', 'DCA Sensitivity Analysis — ' + subtitle, null, false)); alert('PNG copied to clipboard.'); }
+  catch(err){ alert('PNG copy failed: ' + err.message); }
 });
 $('priceSvgBtn').addEventListener('click', () => downloadChartSvg('priceCanvas', 'dca_price_chart.svg', 'DCA Scenario Explorer — Security Prices (Normalised to 100)', 'priceLegend'));
 $('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend'));
