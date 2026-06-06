@@ -9,6 +9,8 @@
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0f172a">
   <link rel="canonical" href="https://tool.adjiebrotots.com/">
+  <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+  <link rel="alternate" type="text/markdown" href="https://tool.adjiebrotots.com/llms.txt" title="LLM-readable guide to Adjie Brotot Tools">
   <link rel="icon" href="https://www.adjiebrotots.com/favicon.ico">
 
   <meta property="og:type" content="website">
@@ -512,9 +514,16 @@
     "@type": "CollectionPage",
     "name": "Adjie Brotot Tools",
     "url": "https://tool.adjiebrotots.com/",
-    "description": "Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.",
+    "description": "A collection of practical browser-based tools for finance, tax, property, engineering, data visualisation, and productivity decisions.",
     "inLanguage": "en",
-    "about": ["Finance", "Tax", "Property", "Superannuation"],
+    "about": [
+      "Finance",
+      "Tax",
+      "Property",
+      "Engineering",
+      "Data visualisation",
+      "Productivity"
+    ],
     "mainEntity": {
       "@type": "ItemList",
       "itemListElement": [
@@ -523,10 +532,12 @@
           "position": 1,
           "item": {
             "@type": "WebApplication",
-            "name": "Pisah vs Gabung",
-            "url": "https://tool.adjiebrotots.com/pisahvsgabung/",
-            "description": "Compare Indonesian personal income tax under separate filing (Pisah Harta) vs joint filing (Gabung Harta).",
-            "applicationCategory": "FinanceApplication"
+            "name": "PowerFactory Scripter",
+            "url": "https://tool.adjiebrotots.com/powerfactory-scripter/",
+            "description": "Generate DIgSILENT PowerFactory Python automation scripts for common power-system study workflows.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true
           }
         },
         {
@@ -534,10 +545,12 @@
           "position": 2,
           "item": {
             "@type": "WebApplication",
-            "name": "Finance vs Cash",
-            "url": "https://tool.adjiebrotots.com/financingvscash/",
-            "description": "Compare paying in full versus financing and investing unused cash at the risk-free rate.",
-            "applicationCategory": "FinanceApplication"
+            "name": "Pisah vs Gabung",
+            "url": "https://tool.adjiebrotots.com/pisahvsgabung/",
+            "description": "Compare Indonesian PPh 21 personal income tax under separate and joint filing scenarios.",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true
           }
         },
         {
@@ -545,10 +558,12 @@
           "position": 3,
           "item": {
             "@type": "WebApplication",
-            "name": "Rent vs Own Home",
-            "url": "https://tool.adjiebrotots.com/rentvsownhouse/",
-            "description": "Model the long-term financial outcome of renting vs buying property, comparing cash, equity, and net wealth over time.",
-            "applicationCategory": "FinanceApplication"
+            "name": "Finance vs Cash",
+            "url": "https://tool.adjiebrotots.com/financingvscash/",
+            "description": "Compare paying cash versus financing a purchase while investing unused cash to evaluate total financial outcomes.",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true
           }
         },
         {
@@ -556,9 +571,116 @@
           "position": 4,
           "item": {
             "@type": "WebApplication",
-            "name": "Superannuation DASP Simulator",
-            "description": "Compare Australian superannuation salary sacrifice to assess whether it’s worthwhile when DASP applies.",
-            "applicationCategory": "FinanceApplication"
+            "name": "Rent vs Own Home",
+            "url": "https://tool.adjiebrotots.com/rentvsownhouse/",
+            "description": "Model renting versus buying property over time by comparing cash, equity, and net wealth scenarios.",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "item": {
+            "@type": "WebApplication",
+            "name": "DCA Scenario Explorer",
+            "url": "https://tool.adjiebrotots.com/dcasimulator/",
+            "description": "Compare dollar-cost averaging strategies across securities using market data or custom assumptions.",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 6,
+          "item": {
+            "@type": "WebApplication",
+            "name": "Graph Visualiser",
+            "url": "https://tool.adjiebrotots.com/graphvisualiser/",
+            "description": "Upload CSV or spreadsheet data and create interactive charts and graphs in your browser without coding.",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 7,
+          "item": {
+            "@type": "WebApplication",
+            "name": "Sankey Diagram Creator",
+            "url": "https://tool.adjiebrotots.com/sankeycreator/",
+            "description": "Create polished Sankey flow diagrams from manual inputs or CSV data and export them as SVG or PNG.",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 8,
+          "item": {
+            "@type": "WebApplication",
+            "name": "JSON Visualiser",
+            "url": "https://tool.adjiebrotots.com/jsonvisualiser/",
+            "description": "Upload or link JSON data and explore large nested structures as an interactive, lazily loaded tree.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 9,
+          "item": {
+            "@type": "WebApplication",
+            "name": "Canvas Builder",
+            "url": "https://tool.adjiebrotots.com/canvasbuilder/",
+            "description": "Build and export strategy frameworks like Business Model Canvas and Value Proposition Canvas directly in your browser.",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 10,
+          "item": {
+            "@type": "WebApplication",
+            "name": "Cost of Living Comparator",
+            "url": "https://tool.adjiebrotots.com/costofliving-comparator/",
+            "description": "Compare living costs across cities to understand how far your salary goes before relocating or negotiating pay.",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 11,
+          "item": {
+            "@type": "WebApplication",
+            "name": "Video to GIF Converter",
+            "url": "https://tool.adjiebrotots.com/videotogif/",
+            "description": "Convert video clips into animated GIFs entirely in your browser with no upload or account required.",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 12,
+          "item": {
+            "@type": "WebApplication",
+            "name": "WEM Constraint Equation Checker",
+            "url": "https://tool.adjiebrotots.com/wemconstraint-checker/",
+            "description": "Check Western Australia WEM constraint equations against generator and constraint data in your browser.",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true
           }
         }
       ]
