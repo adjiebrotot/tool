@@ -32,7 +32,7 @@
   "inLanguage": "en"
 }
 </script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
+<link rel="icon" href="../logos/logo.ico">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
@@ -515,6 +515,12 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 <script>
 (function(){
 'use strict';
+// Watermark logo (logos/logo.svg), preloaded for use in canvas/SVG exports
+const WM_LOGO_SRC = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY4MCA2ODAiIHJvbGU9ImltZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8dGl0bGU+QXJjaGVkIEEgTG9nbzwvdGl0bGU+CiAgPGRlc2M+QSBzbGVlayB3aGl0ZSBsZXR0ZXIgQSB3aG9zZSBsZWdzIGZvbGxvdyB0aGUgY2lyY2xlIGN1cnZhdHVyZSwgc3Bhbm5pbmcgODAlIG9mIHRoZSBjaXJjbGUgaGVpZ2h0PC9kZXNjPgoKICA8Y2lyY2xlIGN4PSIzNDAiIGN5PSIzNDAiIHI9IjMwMCIgZmlsbD0iIzAwNTJjYyIvPgoKICA8IS0tIExlZnQgbGVnOiAxMTPCsCB0byAyNDXCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSAyNDIsNTcwIEEgMjUwLDI1MCAwIDAgMSAyMzQsMTEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIFRvcCBhcmNoOiAyNDXCsCB0byAyOTXCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSAyMzQsMTEzIEEgMjUwLDI1MCAwIDAgMSA0NDYsMTEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIFJpZ2h0IGxlZzogMjk1wrAgdG8gNjfCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSA0NDYsMTEzIEEgMjUwLDI1MCAwIDAgMSA0MzgsNTcwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIENyb3NzYmFyIC0tPgogIDxsaW5lIHgxPSIxMTMiIHkxPSIzNTQiIHgyPSI1NjciIHkyPSIzNTQiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNDIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
+const wmLogoImg = new Image();
+wmLogoImg.src = WM_LOGO_SRC;
+const _wmMeasureCtx = document.createElement('canvas').getContext('2d');
+function measureWmText(text, font){ _wmMeasureCtx.font = font; return _wmMeasureCtx.measureText(text).width; }
 
 /* ─── CONSTANTS ─── */
 const LINE_COLORS     = ['--line-a','--line-b','--line-c','--line-d','--line-e','--line-f'];
@@ -1708,7 +1714,17 @@ function downloadChartPng(canvasId, filename, chartTitle, legendId, shouldDownlo
   ctx.fillStyle = '#1a1a1a';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'bottom';
-  ctx.fillText('Ⓐ tool.adjiebrotots.com', tmp.width - Math.round(12 * OUT), tmp.height - Math.round(12 * OUT));
+  {
+    const wmText = 'tool.adjiebrotots.com/dcasimulator';
+    const wmX = tmp.width - Math.round(12 * OUT);
+    const wmY = tmp.height - Math.round(12 * OUT);
+    const wmTextW = ctx.measureText(wmText).width;
+    const wmLogoSize = Math.round(13 * OUT);
+    if(wmLogoImg.complete && wmLogoImg.naturalWidth){
+      ctx.drawImage(wmLogoImg, wmX - wmTextW - Math.round(4 * OUT) - wmLogoSize, wmY - wmLogoSize + Math.round(2 * OUT), wmLogoSize, wmLogoSize);
+    }
+    ctx.fillText(wmText, wmX, wmY);
+  }
   ctx.restore();
 
   if(shouldDownload){
@@ -1795,7 +1811,18 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId, legendItemsO
   wm.setAttribute('text-anchor','end'); wm.setAttribute('dominant-baseline','auto');
   wm.setAttribute('font-family',FONT); wm.setAttribute('font-size','11');
   wm.setAttribute('font-weight','500'); wm.setAttribute('fill','#1a1a1a'); wm.setAttribute('opacity','0.22');
-  wm.textContent = 'Ⓐ tool.adjiebrotots.com'; svg.appendChild(wm);
+  wm.textContent = 'tool.adjiebrotots.com/dcasimulator'; svg.appendChild(wm);
+  const wmLogoSize = 13;
+  const wmTextW = measureWmText(wm.textContent, '500 11px ' + FONT);
+  const wmLogo = document.createElementNS(NS,'image');
+  wmLogo.setAttribute('href', WM_LOGO_SRC);
+  wmLogo.setAttributeNS('http://www.w3.org/1999/xlink','href', WM_LOGO_SRC);
+  wmLogo.setAttribute('width', wmLogoSize);
+  wmLogo.setAttribute('height', wmLogoSize);
+  wmLogo.setAttribute('x', svgW - 12 - wmTextW - 4 - wmLogoSize);
+  wmLogo.setAttribute('y', svgH - 12 - wmLogoSize + 2);
+  wmLogo.setAttribute('opacity', '0.22');
+  svg.appendChild(wmLogo);
   const xml = '<?xml version="1.0" encoding="utf-8"?>\n' + new XMLSerializer().serializeToString(svg);
   const blob = new Blob([xml],{type:'image/svg+xml;charset=utf-8'});
   const url = URL.createObjectURL(blob);

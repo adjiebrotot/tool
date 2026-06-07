@@ -32,7 +32,7 @@
   "inLanguage": "en"
 }
 </script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+<link rel="icon" href="../logos/logo.ico">
 <!-- Ace.js for Python syntax highlighting in custom function editors -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js"></script>
 <!-- SheetJS for xlsx template download in custom mode -->
@@ -3599,7 +3599,7 @@ def save_timeseries_graph(time_values, ts_data, spec, row, graph_dir, context_la
     safe_name = safe_name.replace(" ", "_").replace("(", "").replace(")", "").replace("/", "-")
     graph_filename = f"{safe_name}_{timestamp_string()}.png"
     graph_path = os.path.join(graph_dir, graph_filename)
-    plt.figtext(0.99, 0.01, 'Ⓐ Made using tool.adjiebrotots.com/powerfactory-scripter',
+    plt.figtext(0.99, 0.01, 'Made using tool.adjiebrotots.com/powerfactory-scripter',
                 ha='right', va='bottom', fontsize=7, alpha=0.25, color='#333333')
     plt.savefig(graph_path)
     plt.close()
