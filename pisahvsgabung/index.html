@@ -32,7 +32,7 @@
   "inLanguage": "en"
 }
 </script>
-  <link rel="icon" href="../logos/logo.ico">
+  <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1468,7 +1468,7 @@ function downloadChartPng(canvasId, filename, chartTitle, legendId, shouldDownlo
   ctx.textAlign = 'right';
   ctx.textBaseline = 'bottom';
   {
-    const wmText = 'tool.adjiebrotots.com/pisahvsgabung';
+    const wmText = 'Made using tool.adjiebrotots.com/pisahvsgabung';
     const wmX = tmp.width - Math.round(12 * OUT);
     const wmY = tmp.height - Math.round(12 * OUT);
     const wmTextW = ctx.measureText(wmText).width;
@@ -1564,7 +1564,7 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId) {
   wm.setAttribute('text-anchor','end'); wm.setAttribute('dominant-baseline','auto');
   wm.setAttribute('font-family',FONT); wm.setAttribute('font-size','11');
   wm.setAttribute('font-weight','500'); wm.setAttribute('fill','#1a1a1a'); wm.setAttribute('opacity','0.22');
-  wm.textContent = 'tool.adjiebrotots.com/pisahvsgabung'; svg.appendChild(wm);
+  wm.textContent = 'Made using tool.adjiebrotots.com/pisahvsgabung'; svg.appendChild(wm);
   const wmLogoSize = 13;
   const wmTextW = measureWmText(wm.textContent, '500 11px ' + FONT);
   const wmLogo = document.createElementNS(NS,'image');

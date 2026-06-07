@@ -32,7 +32,7 @@
   "inLanguage": "en"
 }
 </script>
-<link rel="icon" href="../logos/logo.ico">
+<link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -1042,7 +1042,7 @@ async function renderTreePngCanvas() {
     ctx.font = `500 ${Math.round(11 * 2)}px 'DM Sans', sans-serif`;
     ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
     ctx.lineWidth = 3;
-    const wmText = 'tool.adjiebrotots.com/jsonvisualiser';
+    const wmText = 'Made using tool.adjiebrotots.com/jsonvisualiser';
     const wmX = result.width - 24, wmY = result.height - 24;
     const wmTextW = ctx.measureText(wmText).width;
     const wmLogoSize = Math.round(13 * 2);
@@ -1217,7 +1217,7 @@ $('downloadSvgBtn').addEventListener('click', () => {
       wm.setAttribute('paint-order', 'stroke');
       wm.setAttribute('fill', '#1a1a1a');
       wm.setAttribute('fill-opacity', '0.45');
-      wm.textContent = 'tool.adjiebrotots.com/jsonvisualiser';
+      wm.textContent = 'Made using tool.adjiebrotots.com/jsonvisualiser';
       svg.appendChild(wm);
       const wmLogoSize = 13;
       const wmTextW = measureWmText(wm.textContent, '500 11px DM Sans, sans-serif');
