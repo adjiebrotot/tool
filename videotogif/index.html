@@ -32,7 +32,7 @@
   "inLanguage": "en"
 }
 </script>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8E%AC%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="../logos/logo.ico">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
   :root {
@@ -680,6 +680,10 @@
 <script>
 (function () {
   'use strict';
+  // Watermark logo (logos/logo.svg), preloaded for use in canvas exports
+  const WM_LOGO_SRC = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY4MCA2ODAiIHJvbGU9ImltZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8dGl0bGU+QXJjaGVkIEEgTG9nbzwvdGl0bGU+CiAgPGRlc2M+QSBzbGVlayB3aGl0ZSBsZXR0ZXIgQSB3aG9zZSBsZWdzIGZvbGxvdyB0aGUgY2lyY2xlIGN1cnZhdHVyZSwgc3Bhbm5pbmcgODAlIG9mIHRoZSBjaXJjbGUgaGVpZ2h0PC9kZXNjPgoKICA8Y2lyY2xlIGN4PSIzNDAiIGN5PSIzNDAiIHI9IjMwMCIgZmlsbD0iIzAwNTJjYyIvPgoKICA8IS0tIExlZnQgbGVnOiAxMTPCsCB0byAyNDXCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSAyNDIsNTcwIEEgMjUwLDI1MCAwIDAgMSAyMzQsMTEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIFRvcCBhcmNoOiAyNDXCsCB0byAyOTXCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSAyMzQsMTEzIEEgMjUwLDI1MCAwIDAgMSA0NDYsMTEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIFJpZ2h0IGxlZzogMjk1wrAgdG8gNjfCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSA0NDYsMTEzIEEgMjUwLDI1MCAwIDAgMSA0MzgsNTcwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIENyb3NzYmFyIC0tPgogIDxsaW5lIHgxPSIxMTMiIHkxPSIzNTQiIHgyPSI1NjciIHkyPSIzNTQiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNDIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
+  const wmLogoImg = new Image();
+  wmLogoImg.src = WM_LOGO_SRC;
 
   // ============================================================
   // PART 1: PURE JS GIF ENCODER
@@ -1375,10 +1379,17 @@
       ctx.textAlign = 'right';
       ctx.textBaseline = 'bottom';
       ctx.lineWidth = 2;
+      const _wmText = 'Made using tool.adjiebrotots.com/videotogif';
+      const _wmX = canvas.width - 8, _wmY = canvas.height - 6;
+      const _wmTextW = ctx.measureText(_wmText).width;
+      const _wmLogoSize = Math.round(_wmFs * 1.3);
+      if(wmLogoImg.complete && wmLogoImg.naturalWidth){
+        ctx.drawImage(wmLogoImg, _wmX - _wmTextW - Math.round(_wmFs * 0.4) - _wmLogoSize, _wmY - _wmLogoSize + Math.round(_wmFs * 0.15), _wmLogoSize, _wmLogoSize);
+      }
       ctx.strokeStyle = '#000000';
-      ctx.strokeText('Ⓐ Made using tool.adjiebrotots.com/videotogif', canvas.width - 8, canvas.height - 6);
+      ctx.strokeText(_wmText, _wmX, _wmY);
       ctx.fillStyle = '#ffffff';
-      ctx.fillText('Ⓐ Made using tool.adjiebrotots.com/videotogif', canvas.width - 8, canvas.height - 6);
+      ctx.fillText(_wmText, _wmX, _wmY);
       ctx.restore();
       const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
       result.push(new Uint8ClampedArray(id.data));

@@ -32,7 +32,7 @@
   "inLanguage": "en"
 }
 </script>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E🌊%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="../logos/logo.ico">
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -429,6 +429,11 @@ main{display:flex;flex-direction:column;gap:13px}
 <script>
 (function(){
 'use strict';
+
+// Watermark logo (logos/logo.svg), preloaded for use in canvas/SVG exports
+const WM_LOGO_SRC = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY4MCA2ODAiIHJvbGU9ImltZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8dGl0bGU+QXJjaGVkIEEgTG9nbzwvdGl0bGU+CiAgPGRlc2M+QSBzbGVlayB3aGl0ZSBsZXR0ZXIgQSB3aG9zZSBsZWdzIGZvbGxvdyB0aGUgY2lyY2xlIGN1cnZhdHVyZSwgc3Bhbm5pbmcgODAlIG9mIHRoZSBjaXJjbGUgaGVpZ2h0PC9kZXNjPgoKICA8Y2lyY2xlIGN4PSIzNDAiIGN5PSIzNDAiIHI9IjMwMCIgZmlsbD0iIzAwNTJjYyIvPgoKICA8IS0tIExlZnQgbGVnOiAxMTPCsCB0byAyNDXCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSAyNDIsNTcwIEEgMjUwLDI1MCAwIDAgMSAyMzQsMTEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIFRvcCBhcmNoOiAyNDXCsCB0byAyOTXCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSAyMzQsMTEzIEEgMjUwLDI1MCAwIDAgMSA0NDYsMTEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIFJpZ2h0IGxlZzogMjk1wrAgdG8gNjfCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSA0NDYsMTEzIEEgMjUwLDI1MCAwIDAgMSA0MzgsNTcwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIENyb3NzYmFyIC0tPgogIDxsaW5lIHgxPSIxMTMiIHkxPSIzNTQiIHgyPSI1NjciIHkyPSIzNTQiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNDIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
+const _wmMeasureCtx = document.createElement('canvas').getContext('2d');
+function measureWmText(text, font){ _wmMeasureCtx.font = font; return _wmMeasureCtx.measureText(text).width; }
 
 // ═══════════════════════════════════════════════
 //  PALETTES
@@ -1329,8 +1334,19 @@ function exportCloneXml(){
   wm.setAttribute('font-size','11');
   wm.setAttribute('fill','#1a1a1a');
   wm.setAttribute('opacity','0.22');
-  wm.textContent = 'Ⓐ tool.adjiebrotots.com';
+  wm.textContent = 'tool.adjiebrotots.com/sankeycreator';
   clone.appendChild(wm);
+  const wmLogoSize = 13;
+  const wmTextW = measureWmText(wm.textContent, '11px DM Sans, sans-serif');
+  const wmLogo = document.createElementNS('http://www.w3.org/2000/svg','image');
+  wmLogo.setAttribute('href', WM_LOGO_SRC);
+  wmLogo.setAttributeNS('http://www.w3.org/1999/xlink','href', WM_LOGO_SRC);
+  wmLogo.setAttribute('width', wmLogoSize);
+  wmLogo.setAttribute('height', wmLogoSize);
+  wmLogo.setAttribute('x', W - 12 - wmTextW - 4 - wmLogoSize);
+  wmLogo.setAttribute('y', H - 10 - wmLogoSize + 2);
+  wmLogo.setAttribute('opacity', '0.22');
+  clone.appendChild(wmLogo);
   return new XMLSerializer().serializeToString(clone);
 }
 
@@ -1365,14 +1381,6 @@ function renderSankeyPngCanvas() {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.scale(3,3);
       ctx.drawImage(img,0,0,W,TOTAL_H);
-      ctx.save();
-      ctx.globalAlpha=0.22;
-      ctx.font='500 11px "DM Sans",sans-serif';
-      ctx.fillStyle='#1a1a1a';
-      ctx.textAlign='right';
-      ctx.textBaseline='bottom';
-      ctx.fillText('Ⓐ tool.adjiebrotots.com',W-6,TOTAL_H-5);
-      ctx.restore();
       resolve(canvas);
     };
     img.onerror = () => reject(new Error('Could not render PNG.'));

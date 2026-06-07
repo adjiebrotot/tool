@@ -32,7 +32,7 @@
   "inLanguage": "en"
 }
 </script>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%97%82%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="../logos/logo.ico">
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -403,6 +403,12 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
 
 <script>
 'use strict';
+// Watermark logo (logos/logo.svg), preloaded for use in canvas/SVG exports
+const WM_LOGO_SRC = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY4MCA2ODAiIHJvbGU9ImltZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8dGl0bGU+QXJjaGVkIEEgTG9nbzwvdGl0bGU+CiAgPGRlc2M+QSBzbGVlayB3aGl0ZSBsZXR0ZXIgQSB3aG9zZSBsZWdzIGZvbGxvdyB0aGUgY2lyY2xlIGN1cnZhdHVyZSwgc3Bhbm5pbmcgODAlIG9mIHRoZSBjaXJjbGUgaGVpZ2h0PC9kZXNjPgoKICA8Y2lyY2xlIGN4PSIzNDAiIGN5PSIzNDAiIHI9IjMwMCIgZmlsbD0iIzAwNTJjYyIvPgoKICA8IS0tIExlZnQgbGVnOiAxMTPCsCB0byAyNDXCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSAyNDIsNTcwIEEgMjUwLDI1MCAwIDAgMSAyMzQsMTEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIFRvcCBhcmNoOiAyNDXCsCB0byAyOTXCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSAyMzQsMTEzIEEgMjUwLDI1MCAwIDAgMSA0NDYsMTEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIFJpZ2h0IGxlZzogMjk1wrAgdG8gNjfCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSA0NDYsMTEzIEEgMjUwLDI1MCAwIDAgMSA0MzgsNTcwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIENyb3NzYmFyIC0tPgogIDxsaW5lIHgxPSIxMTMiIHkxPSIzNTQiIHgyPSI1NjciIHkyPSIzNTQiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNDIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
+const wmLogoImg = new Image();
+wmLogoImg.src = WM_LOGO_SRC;
+const _wmMeasureCtx = document.createElement('canvas').getContext('2d');
+function measureWmText(text, font){ _wmMeasureCtx.font = font; return _wmMeasureCtx.measureText(text).width; }
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let parsedData = null;
 let currentFileName = '';
@@ -1036,10 +1042,20 @@ async function renderTreePngCanvas() {
     ctx.font = `500 ${Math.round(11 * 2)}px 'DM Sans', sans-serif`;
     ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
     ctx.lineWidth = 3;
+    const wmText = 'tool.adjiebrotots.com/jsonvisualiser';
+    const wmX = result.width - 24, wmY = result.height - 24;
+    const wmTextW = ctx.measureText(wmText).width;
+    const wmLogoSize = Math.round(13 * 2);
+    if(wmLogoImg.complete && wmLogoImg.naturalWidth){
+      ctx.save();
+      ctx.globalAlpha = 0.45;
+      ctx.drawImage(wmLogoImg, wmX - wmTextW - 8 - wmLogoSize, wmY - wmLogoSize + 4, wmLogoSize, wmLogoSize);
+      ctx.restore();
+    }
     ctx.strokeStyle = 'rgba(255,255,255,0.70)';
-    ctx.strokeText('Ⓐ tool.adjiebrotots.com', result.width - 24, result.height - 24);
+    ctx.strokeText(wmText, wmX, wmY);
     ctx.fillStyle = 'rgba(26,26,26,0.45)';
-    ctx.fillText('Ⓐ tool.adjiebrotots.com', result.width - 24, result.height - 24);
+    ctx.fillText(wmText, wmX, wmY);
     ctx.restore();
     return result;
   } finally {
@@ -1201,8 +1217,19 @@ $('downloadSvgBtn').addEventListener('click', () => {
       wm.setAttribute('paint-order', 'stroke');
       wm.setAttribute('fill', '#1a1a1a');
       wm.setAttribute('fill-opacity', '0.45');
-      wm.textContent = 'Ⓐ tool.adjiebrotots.com';
+      wm.textContent = 'tool.adjiebrotots.com/jsonvisualiser';
       svg.appendChild(wm);
+      const wmLogoSize = 13;
+      const wmTextW = measureWmText(wm.textContent, '500 11px DM Sans, sans-serif');
+      const wmLogo = document.createElementNS(NS, 'image');
+      wmLogo.setAttribute('href', WM_LOGO_SRC);
+      wmLogo.setAttributeNS('http://www.w3.org/1999/xlink', 'href', WM_LOGO_SRC);
+      wmLogo.setAttribute('width', wmLogoSize);
+      wmLogo.setAttribute('height', wmLogoSize);
+      wmLogo.setAttribute('x', svgW - 12 - wmTextW - 4 - wmLogoSize);
+      wmLogo.setAttribute('y', svgH - 12 - wmLogoSize + 2);
+      wmLogo.setAttribute('opacity', '0.45');
+      svg.appendChild(wmLogo);
 
       canvasEl.style.transform = savedTransform;
       svgRestores.forEach(fn => fn());
