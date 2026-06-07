@@ -32,7 +32,7 @@
   "inLanguage": "en"
 }
 </script>
-<link rel="icon" href="../logos/logo.ico">
+<link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
@@ -1046,7 +1046,7 @@ function downloadChartJsPng(canvasId, filename, chartTitle, legendId, shouldDown
   ctx.textAlign = 'right';
   ctx.textBaseline = 'bottom';
   {
-    const wmText = 'tool.adjiebrotots.com/financingvscash';
+    const wmText = 'Made using tool.adjiebrotots.com/financingvscash';
     const wmX = tmp.width - Math.round(12 * OUT);
     const wmY = tmp.height - Math.round(12 * OUT);
     const wmTextW = ctx.measureText(wmText).width;
@@ -1142,7 +1142,7 @@ function downloadChartJsSvg(canvasId, filename, chartTitle, legendId) {
   wm.setAttribute('text-anchor','end'); wm.setAttribute('dominant-baseline','auto');
   wm.setAttribute('font-family',FONT); wm.setAttribute('font-size','11');
   wm.setAttribute('font-weight','500'); wm.setAttribute('fill','#1a1a1a'); wm.setAttribute('opacity','0.22');
-  wm.textContent = 'tool.adjiebrotots.com/financingvscash'; svg.appendChild(wm);
+  wm.textContent = 'Made using tool.adjiebrotots.com/financingvscash'; svg.appendChild(wm);
   const wmLogoSize = 13;
   const wmTextW = measureWmText(wm.textContent, '500 11px ' + FONT);
   const wmLogo = document.createElementNS(NS,'image');
@@ -1177,7 +1177,7 @@ async function withSens3dPngAnnotations(callback) {
   };
   const wmAnnotation = {
     xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom',
-    showarrow:false, text:'tool.adjiebrotots.com/financingvscash',
+    showarrow:false, text:'Made using tool.adjiebrotots.com/financingvscash',
     font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' },
   };
   await Plotly.relayout('plotly3d', { annotations:[titleAnnotation, wmAnnotation], images:[wmPlotlyImage()] });
@@ -1224,7 +1224,7 @@ $('sens3dSvgBtn').addEventListener('click', async () => {
   };
   const wmAnnotation = {
     xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom',
-    showarrow:false, text:'tool.adjiebrotots.com/financingvscash',
+    showarrow:false, text:'Made using tool.adjiebrotots.com/financingvscash',
     font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' },
   };
   await Plotly.relayout('plotly3d', { annotations:[titleAnnotation, wmAnnotation], images:[wmPlotlyImage()] });
