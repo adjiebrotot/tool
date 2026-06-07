@@ -325,6 +325,7 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
         <div class="sidebar-section">
           <div class="section-title">Controls</div>
           <div class="controls-row">
+            <button class="btn-secondary" id="expandAllBtn" style="flex:1">⊞ Expand All</button>
             <button class="btn-secondary" id="collapseAllBtn" style="flex:1">⊟ Collapse All</button>
             <button class="btn-danger" id="clearBtn">✕ Clear</button>
           </div>
@@ -405,6 +406,7 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
 'use strict';
 // Watermark logo (logos/logo.svg), preloaded for use in canvas/SVG exports
 const WM_LOGO_SRC = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY4MCA2ODAiIHJvbGU9ImltZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8dGl0bGU+QXJjaGVkIEEgTG9nbzwvdGl0bGU+CiAgPGRlc2M+QSBzbGVlayB3aGl0ZSBsZXR0ZXIgQSB3aG9zZSBsZWdzIGZvbGxvdyB0aGUgY2lyY2xlIGN1cnZhdHVyZSwgc3Bhbm5pbmcgODAlIG9mIHRoZSBjaXJjbGUgaGVpZ2h0PC9kZXNjPgoKICA8Y2lyY2xlIGN4PSIzNDAiIGN5PSIzNDAiIHI9IjMwMCIgZmlsbD0iIzAwNTJjYyIvPgoKICA8IS0tIExlZnQgbGVnOiAxMTPCsCB0byAyNDXCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSAyNDIsNTcwIEEgMjUwLDI1MCAwIDAgMSAyMzQsMTEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIFRvcCBhcmNoOiAyNDXCsCB0byAyOTXCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSAyMzQsMTEzIEEgMjUwLDI1MCAwIDAgMSA0NDYsMTEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIFJpZ2h0IGxlZzogMjk1wrAgdG8gNjfCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSA0NDYsMTEzIEEgMjUwLDI1MCAwIDAgMSA0MzgsNTcwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIENyb3NzYmFyIC0tPgogIDxsaW5lIHgxPSIxMTMiIHkxPSIzNTQiIHgyPSI1NjciIHkyPSIzNTQiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNDIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
+const EXPORT_WATERMARK_TEXT = 'Made using tool.adjiebrotots.com/jsonvisualiser';
 const wmLogoImg = new Image();
 wmLogoImg.src = WM_LOGO_SRC;
 const _wmMeasureCtx = document.createElement('canvas').getContext('2d');
@@ -414,6 +416,7 @@ let parsedData = null;
 let currentFileName = '';
 let currentFileSize = 0;
 let nodeIdCounter = 0;
+let rootDescriptor = null;
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
 function $(id){ return document.getElementById(id); }
@@ -558,6 +561,7 @@ function handleRawJSON(text, name, size){
 // ─── RENDER TREE ─────────────────────────────────────────────────────────────
 function renderTree(data, name, size, byteLen){
   nodeIdCounter = 0;
+  rootDescriptor = null;
   const root = $('treeRoot');
   root.innerHTML = '';
 
@@ -597,6 +601,7 @@ function renderTree(data, name, size, byteLen){
 
   // Render root node
   const desc = createDescriptor(data, null);
+  rootDescriptor = desc;
   renderNode(desc, root);
 
   // Auto-expand root if it has children
@@ -625,6 +630,8 @@ function createDescriptor(value, key){
     renderedCount: 0,
     expanded: false,
     containerEl: null,   // set when first expanded
+    nodeEl: null,
+    childDescriptors: [],
   };
   return desc;
 }
@@ -636,6 +643,7 @@ function renderNode(desc, parentEl){
 
   const node = document.createElement('div');
   node.className = `tj-node tj-${desc.type}`;
+  desc.nodeEl = node;
   node.setAttribute('role', 'button');
   node.setAttribute('tabindex', '0');
 
@@ -728,6 +736,7 @@ function renderObjectChildren(desc, containerEl){
   const FIRST = Math.min(5, keys.length);
   for(let i = 0; i < FIRST; i++){
     const child = createDescriptor(desc.rawRef[keys[i]], keys[i]);
+    desc.childDescriptors.push(child);
     renderNode(child, containerEl);
   }
   desc.renderedCount = FIRST;
@@ -754,6 +763,7 @@ function updateObjectPagination(desc, containerEl){
       const end = Math.min(start + actual, keys.length);
       for(let i = start; i < end; i++){
         const child = createDescriptor(desc.rawRef[keys[i]], keys[i]);
+        desc.childDescriptors.push(child);
         renderNode(child, containerEl);
       }
       desc.renderedCount = end;
@@ -775,6 +785,7 @@ function renderArrayChunk(desc, containerEl, count){
   const end = Math.min(start + count, desc.childCount);
   for(let i = start; i < end; i++){
     const child = createDescriptor(desc.rawRef[i], i);
+    desc.childDescriptors.push(child);
     renderNode(child, containerEl);
   }
   desc.renderedCount = end;
@@ -840,7 +851,84 @@ function makePageBtn(label, handler){
   return btn;
 }
 
-// ─── COLLAPSE ALL ────────────────────────────────────────────────────────────
+// ─── EXPAND / COLLAPSE ALL ──────────────────────────────────────────────────
+const EXPAND_ALL_WARN_NODE_LIMIT = 2500;
+const EXPAND_ALL_WARN_BYTE_LIMIT = 1024 * 1024;
+
+function estimateNodeCountForExpandAll(value, limit = EXPAND_ALL_WARN_NODE_LIMIT + 1){
+  const stack = [value];
+  let count = 0;
+  while(stack.length){
+    const current = stack.pop();
+    count++;
+    if(count >= limit) return count;
+    if(current && typeof current === 'object'){
+      if(Array.isArray(current)){
+        for(let i = current.length - 1; i >= 0; i--) stack.push(current[i]);
+      } else {
+        const values = Object.values(current);
+        for(let i = values.length - 1; i >= 0; i--) stack.push(values[i]);
+      }
+    }
+  }
+  return count;
+}
+
+function renderAllMissingChildren(desc){
+  if(isPrimitive(desc.type) || desc.childCount === 0 || !desc.containerEl) return;
+  const pagination = desc.containerEl.querySelector(':scope > .pagination-row');
+  if(pagination) pagination.remove();
+
+  if(desc.type === 'object'){
+    const keys = desc.childKeys;
+    for(let i = desc.renderedCount; i < keys.length; i++){
+      const child = createDescriptor(desc.rawRef[keys[i]], keys[i]);
+      desc.childDescriptors.push(child);
+      renderNode(child, desc.containerEl);
+    }
+    desc.renderedCount = keys.length;
+  } else if(desc.type === 'array'){
+    for(let i = desc.renderedCount; i < desc.childCount; i++){
+      const child = createDescriptor(desc.rawRef[i], i);
+      desc.childDescriptors.push(child);
+      renderNode(child, desc.containerEl);
+    }
+    desc.renderedCount = desc.childCount;
+  }
+}
+
+function expandDescriptorAndChildren(desc){
+  if(isPrimitive(desc.type) || desc.childCount === 0) return;
+  desc.expanded = true;
+  if(desc.containerEl) desc.containerEl.style.display = 'flex';
+  if(desc.nodeEl) desc.nodeEl.classList.add('is-expanded');
+  renderAllMissingChildren(desc);
+  desc.childDescriptors.forEach(expandDescriptorAndChildren);
+}
+
+$('expandAllBtn').addEventListener('click', () => {
+  if(!parsedData || !rootDescriptor) return;
+  const estimatedNodes = estimateNodeCountForExpandAll(parsedData);
+  const isTooBig = estimatedNodes > EXPAND_ALL_WARN_NODE_LIMIT || currentFileSize > EXPAND_ALL_WARN_BYTE_LIMIT;
+  if(isTooBig){
+    const nodeText = estimatedNodes > EXPAND_ALL_WARN_NODE_LIMIT ? `${EXPAND_ALL_WARN_NODE_LIMIT}+` : estimatedNodes;
+    const sizeText = currentFileSize ? ` (${formatBytes(currentFileSize)})` : '';
+    if(!confirm(`This JSON is large${sizeText}. Expanding all may render ${nodeText} nodes and can slow or freeze the browser. Continue?`)) return;
+  }
+  const btn = $('expandAllBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Expanding...';
+  setTimeout(() => {
+    try {
+      expandDescriptorAndChildren(rootDescriptor);
+      resetView();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '⊞ Expand All';
+    }
+  }, 20);
+});
+
 $('collapseAllBtn').addEventListener('click', () => {
   $('treeRoot').querySelectorAll('.tj-node.is-expanded').forEach(nodeEl => {
     nodeEl.click();
@@ -849,6 +937,7 @@ $('collapseAllBtn').addEventListener('click', () => {
 
 $('clearBtn').addEventListener('click', () => {
   parsedData = null;
+  rootDescriptor = null;
   $('treeRoot').innerHTML = '';
   $('treeHeader').style.display = 'none';
   $('treeViewport').style.display = 'none';
@@ -1019,6 +1108,47 @@ function preparePaginationForExport() {
   return restores;
 }
 
+
+function addWatermarkToPngCanvas(sourceCanvas){
+  const scale = 2;
+  const footerH = 36 * scale;
+  const sidePad = 12 * scale;
+  const wmLogoSize = 13 * scale;
+  const fontPx = 11 * scale;
+  const measure = document.createElement('canvas').getContext('2d');
+  measure.font = `500 ${fontPx}px 'DM Sans', sans-serif`;
+  const wmTextW = measure.measureText(EXPORT_WATERMARK_TEXT).width;
+  const minWidth = Math.ceil(sidePad * 2 + wmLogoSize + 8 * scale + wmTextW);
+
+  const output = document.createElement('canvas');
+  output.width = Math.max(sourceCanvas.width, minWidth);
+  output.height = sourceCanvas.height + footerH;
+
+  const ctx = output.getContext('2d');
+  ctx.clearRect(0, 0, output.width, output.height);
+  ctx.drawImage(sourceCanvas, 0, 0);
+
+  const wmX = output.width - sidePad;
+  const wmY = output.height - 10 * scale;
+  ctx.save();
+  ctx.font = `500 ${fontPx}px 'DM Sans', sans-serif`;
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.lineWidth = 3 * scale;
+  if(wmLogoImg.complete && wmLogoImg.naturalWidth){
+    ctx.save();
+    ctx.globalAlpha = 0.45;
+    ctx.drawImage(wmLogoImg, wmX - wmTextW - 4 * scale - wmLogoSize, wmY - wmLogoSize + 2 * scale, wmLogoSize, wmLogoSize);
+    ctx.restore();
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+  ctx.strokeText(EXPORT_WATERMARK_TEXT, wmX, wmY);
+  ctx.fillStyle = 'rgba(26,26,26,0.55)';
+  ctx.fillText(EXPORT_WATERMARK_TEXT, wmX, wmY);
+  ctx.restore();
+  return output;
+}
+
 // ─── DOWNLOAD PNG ────────────────────────────────────────────────────────────
 async function renderTreePngCanvas() {
   const restores = preparePaginationForExport();
@@ -1037,27 +1167,7 @@ async function renderTreePngCanvas() {
       scrollY: -window.scrollY,
     });
 
-    const ctx = result.getContext('2d');
-    ctx.save();
-    ctx.font = `500 ${Math.round(11 * 2)}px 'DM Sans', sans-serif`;
-    ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
-    ctx.lineWidth = 3;
-    const wmText = 'Made using tool.adjiebrotots.com/jsonvisualiser';
-    const wmX = result.width - 24, wmY = result.height - 24;
-    const wmTextW = ctx.measureText(wmText).width;
-    const wmLogoSize = Math.round(13 * 2);
-    if(wmLogoImg.complete && wmLogoImg.naturalWidth){
-      ctx.save();
-      ctx.globalAlpha = 0.45;
-      ctx.drawImage(wmLogoImg, wmX - wmTextW - 8 - wmLogoSize, wmY - wmLogoSize + 4, wmLogoSize, wmLogoSize);
-      ctx.restore();
-    }
-    ctx.strokeStyle = 'rgba(255,255,255,0.70)';
-    ctx.strokeText(wmText, wmX, wmY);
-    ctx.fillStyle = 'rgba(26,26,26,0.45)';
-    ctx.fillText(wmText, wmX, wmY);
-    ctx.restore();
-    return result;
+    return addWatermarkToPngCanvas(result);
   } finally {
     canvasEl.style.transform = savedTransform;
     restores.forEach(fn => fn());
@@ -1090,7 +1200,7 @@ $('copyPngBtn').addEventListener('click', async () => {
   btn.disabled = true; btn.textContent = '⏳';
   try { await copyCanvasPngToClipboard(await renderTreePngCanvas()); alert('PNG copied to clipboard.'); }
   catch(err){ alert('PNG copy failed: ' + err.message); }
-  btn.disabled = false; btn.textContent = '⧉';
+  btn.disabled = false; btn.textContent = '⧉ PNG';
 });
 
 // ─── DOWNLOAD SVG ────────────────────────────────────────────────────────────
@@ -1217,7 +1327,7 @@ $('downloadSvgBtn').addEventListener('click', () => {
       wm.setAttribute('paint-order', 'stroke');
       wm.setAttribute('fill', '#1a1a1a');
       wm.setAttribute('fill-opacity', '0.45');
-      wm.textContent = 'Made using tool.adjiebrotots.com/jsonvisualiser';
+      wm.textContent = EXPORT_WATERMARK_TEXT;
       svg.appendChild(wm);
       const wmLogoSize = 13;
       const wmTextW = measureWmText(wm.textContent, '500 11px DM Sans, sans-serif');
