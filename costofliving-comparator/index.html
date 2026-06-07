@@ -192,8 +192,8 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
 .page-footer-info a{color:var(--accent-strong);}
 
 /* Responsive */
-@media(max-width:900px){.compare-cols{grid-template-columns:1fr;} .city-row-card{flex-direction:column;} .arrow-sep{display:none;}}
-@media(max-width:600px){h1{font-size:1.3rem;} .container{padding:12px;} .mode-card,.analysis-card{padding:14px 14px;}}
+@media(max-width:900px){.compare-cols{grid-template-columns:1fr;} .city-row-card{flex-direction:column;} .city-row-card .city-block{min-width:0;max-width:100%;width:100%;} .arrow-sep{display:none;}}
+@media(max-width:600px){h1{font-size:1.3rem;} .container{padding:12px;} .mode-card,.analysis-card,.city-row-card{padding:14px 14px;}}
 </style>
 </head>
 <body>
@@ -234,7 +234,7 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
     </div>
     <div class="tip-wrap">
       <span class="tip-icon">?</span>
-      <div class="tip-box"><strong>Include housing:</strong> Rent/mortgage is your personal expense.<br><br><strong>Housing is provided:</strong> Your housing is paid by another party (e.g. employer relocation).</div>
+      <div class="tip-box"><strong>Include housing:</strong> Rent/mortgage is counted in your expenses.<br><br><strong>Exclude housing:</strong> Housing costs are excluded from the comparison (e.g. housing is provided by employer).</div>
     </div>
   </div>
 </section>
@@ -251,6 +251,9 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
     <div class="city-picker" id="toPicker"></div>
   </div>
 </section>
+
+<!-- SIMPLE FX CARD (shown when both cities selected & currencies differ) -->
+<div id="simpleFxCard" class="city-row-card card" style="display:none;"></div>
 
 <!-- ANALYSIS AREA -->
 <div id="analysisArea">
@@ -349,10 +352,12 @@ const S = {
   mode: 'simple', goal: 'save', housing: 'include', savingsTarget: 'ratio',
   fromKey: '', toKey: '',
   fromSalary: 0, toSalary: 0, fromExpense: 0,
+  customFxSimple: null,      // null = use DB; number = fromCurr per 1 toCurr (e.g. IDR per AUD)
   // Detailed
   detailFromKey: '', detailToCities: [], detailToSalaries: [],
   detailFromSalary: 0,
   detailRows: [{catId:'rent', fromAmount:0, overrides:{}}],
+  customFxDetailed: [],      // per-destination: null = use DB; number = fromCurr per 1 destCurr
 };
 
 // ═══════════════════════════════════════════════════════════
@@ -403,12 +408,24 @@ function cityDisplay(c){return c.city+', '+c.country;}
 
 function getRate(curr){return RATES[curr]||1;}
 
+// Returns number of fromCurr per 1 toCurr using DB rates (DST/SRC notation)
+function getDefaultFxRate(fromCurr, toCurr){
+  const fr=getRate(fromCurr), tr=getRate(toCurr);
+  if(!tr)return 0;
+  return fr/tr;
+}
+
 // Convert expense from one city to another
-function convertExpense(amount, fromCity, toCity, indexKey){
+// customRate: fromCurr per toCurr (null = use DB)
+function convertExpense(amount, fromCity, toCity, indexKey, customRate){
   if(!amount||!fromCity||!toCity)return 0;
-  const fr=getRate(fromCity.currency), tr=getRate(toCity.currency);
   const fi=getIdx(fromCity,indexKey), ti=getIdx(toCity,indexKey);
-  if(!fr||!tr||!fi||!ti)return 0;
+  if(!fi||!ti)return 0;
+  if(customRate!=null&&customRate>0){
+    return amount/customRate*(ti/fi);
+  }
+  const fr=getRate(fromCity.currency), tr=getRate(toCity.currency);
+  if(!fr||!tr)return 0;
   return amount/fr*(ti/fi)*tr;
 }
 
@@ -519,13 +536,46 @@ function render(){
   const area=document.getElementById('analysisArea');
   if(S.mode==='simple'){
     const from=getCity(S.fromKey), to=getCity(S.toKey);
+    renderSimpleFxSection(from,to);
     if(!from||!to){
       area.innerHTML=`<div class="card placeholder"><div class="icon">🗺️</div><div>Select a <strong>From</strong> and <strong>To</strong> city above to begin your analysis.</div></div>`;
       return;
     }
     S.goal==='save'?renderSimpleSave(area,from,to):renderSimpleEarn(area,from,to);
   } else {
+    const fxCard=document.getElementById('simpleFxCard');
+    if(fxCard)fxCard.style.display='none';
     renderDetailed(area);
+  }
+}
+
+function renderSimpleFxSection(from,to){
+  const card=document.getElementById('simpleFxCard');
+  if(!card)return;
+  if(!from||!to||from.currency===to.currency){card.style.display='none';return;}
+  const fc=from.currency, tc=to.currency;
+  const defRate=getDefaultFxRate(fc,tc);
+  const defFmt=defRate?fmtN(defRate,2):'—';
+  card.style.display='flex';
+  card.innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%;">
+      <span style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;">Custom FX Rate</span>
+      <span style="font-size:0.88rem;white-space:nowrap;">1&nbsp;<strong>${tc}</strong>&nbsp;=</span>
+      <input type="text" inputmode="decimal" class="num-input" id="simpleFxInput"
+        value="${S.customFxSimple!=null?S.customFxSimple:''}"
+        placeholder="${defFmt}"
+        style="width:130px;"/>
+      <span style="font-size:0.88rem;font-family:'DM Mono',monospace;white-space:nowrap;"><strong>${fc}</strong></span>
+      <span style="font-size:0.78rem;color:var(--muted);white-space:nowrap;">(DB default: ${defFmt}&nbsp;${fc})</span>
+    </div>`;
+  const inp=document.getElementById('simpleFxInput');
+  if(inp){
+    inp.addEventListener('input',()=>{
+      const raw=String(inp.value).replace(/,/g,'').trim();
+      const v=parseFloat(raw);
+      S.customFxSimple=(isFinite(v)&&v>0)?v:null;
+    });
+    inp.addEventListener('blur',()=>{render();});
   }
 }
 
@@ -538,12 +588,17 @@ function renderSimpleSave(area,from,to){
   const fs=S.fromSalary||0, fe=S.fromExpense||0, ts=S.toSalary||0;
   const ck=coliKey();
   const fi=from[ck]||100, ti=to[ck]||100;
-  const te=fe?fe/fr*(ti/fi)*tr:0;
+  // Custom FX: S.customFxSimple = fromCurr per 1 toCurr (e.g. IDR per AUD)
+  const cfx=S.customFxSimple;
+  const fromToMult=cfx&&cfx>0?(1/cfx):(tr/fr);  // FC→TC multiplier
+  const toFromMult=cfx&&cfx>0?cfx:(fr/tr);        // TC→FC multiplier
+  const te=fe?fe*fromToMult*(ti/fi):0;
   const fSav=fs-fe, tSav=ts-te;
   const fRatio=fs>0?fSav/fs*100:0, tRatio=ts>0?tSav/ts*100:0;
 
-  // Cross-currency display
-  const cc=(a,c1,c2)=>c1!==c2?`<div class="field-approx">≈ ${fmtC(convertCurr(a,c1,c2),c2)}</div>`:'';
+  // Cross-currency display (uses custom FX if set)
+  const xc=(a,c1,c2)=>{if(c1===c2)return a;return(c1===fc)?a*fromToMult:a*toFromMult;};
+  const cc=(a,c1,c2)=>c1!==c2?`<div class="field-approx">≈ ${fmtC(xc(a,c1,c2),c2)}</div>`:'';
 
   area.innerHTML=`
 <section class="analysis-card card">
@@ -647,19 +702,23 @@ function renderSimpleEarn(area,from,to){
   const fs=S.fromSalary||0, fe=S.fromExpense||0;
   const ck=coliKey();
   const fi=from[ck]||100, ti=to[ck]||100;
+  const cfx=S.customFxSimple;
+  const fromToMult=cfx&&cfx>0?(1/cfx):(tr/fr);
+  const toFromMult=cfx&&cfx>0?cfx:(fr/tr);
   const fSav=fs-fe, fRatio=fs>0?fSav/fs:0;
-  const te=fe?fe/fr*(ti/fi)*tr:0;
+  const te=fe?fe*fromToMult*(ti/fi):0;
 
   let toReq=0,toSav=0,toRatio=0;
   if(S.savingsTarget==='ratio'){
     if(fRatio<1)toReq=te/(1-fRatio); else toReq=te*2;
     toSav=toReq-te; toRatio=toReq>0?toSav/toReq*100:0;
   } else {
-    const fSavInTo=fr&&tr?fSav/fr*tr:0;
+    const fSavInTo=fSav*fromToMult;
     toReq=te+fSavInTo; toSav=toReq-te; toRatio=toReq>0?toSav/toReq*100:0;
   }
 
-  const cc=(a,c1,c2)=>c1!==c2?`<div class="field-approx">≈ ${fmtC(convertCurr(a,c1,c2),c2)}</div>`:'';
+  const xc=(a,c1,c2)=>{if(c1===c2)return a;return(c1===fc)?a*fromToMult:a*toFromMult;};
+  const cc=(a,c1,c2)=>c1!==c2?`<div class="field-approx">≈ ${fmtC(xc(a,c1,c2),c2)}</div>`:'';
   const fRatPct=fRatio*100;
 
   area.innerHTML=`
@@ -744,11 +803,14 @@ function renderSimpleEarn(area,from,to){
 
 function buildEarnSummary(from,to,fc,tc,fr,tr,toReq,fSav,fRatPct,toRatio){
   if(!S.fromSalary)return'Enter your current salary and expenses to calculate what you need to earn in '+to.city+'.';
-  const cross=fc!==tc?' (≈ '+fmtC(convertCurr(toReq,tc,fc),fc)+')':'';
+  const cfx=S.customFxSimple;
+  const fromToMult=cfx&&cfx>0?(1/cfx):(tr/fr);
+  const toFromMult=cfx&&cfx>0?cfx:(fr/tr);
+  const cross=fc!==tc?' (≈ '+fmtC(toReq*toFromMult,fc)+')':'';
   if(S.savingsTarget==='ratio'){
     return`To maintain the same <strong>${fmtP(fRatPct)}</strong> savings ratio in <strong>${to.city}</strong>, you need a net monthly salary of <strong>${fmtC(toReq,tc)}</strong>${cross}.`;
   } else {
-    const fSavInTo=convertCurr(fSav,fc,tc);
+    const fSavInTo=fSav*fromToMult;
     const cross2=fc!==tc?' (≈ '+fmtC(fSav,fc)+')':'';
     return`To maintain the same nominal savings of <strong>${fmtC(fSavInTo,tc)}</strong>${cross2} in <strong>${to.city}</strong>, you need a net monthly salary of <strong>${fmtC(toReq,tc)}</strong>${cross}.`;
   }
@@ -782,14 +844,33 @@ function buildDetailHTML(fromCity,toCities){
     <div class="sub-num" style="margin-top:3px;">${fc}</div>
   </th>`;
 
-  let thTos=toCities.map((tc,i)=>`<th class="city-th">
+  let thTos=toCities.map((tc,i)=>{
+    const destCurr=tcs[i];
+    const defFx=tc&&fromCity&&destCurr!==fc?fmtN(getDefaultFxRate(fc,destCurr),2):'';
+    const curCustomFx=S.customFxDetailed[i]??null;
+    const fxRow=(tc&&fromCity&&destCurr!==fc)?`
+      <div style="margin-top:5px;padding-top:5px;border-top:1px dashed var(--border);">
+        <div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;">FX Rate (custom)</div>
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+          <span style="font-size:0.75rem;white-space:nowrap;">1&nbsp;<strong>${destCurr}</strong>&nbsp;=</span>
+          <input type="text" inputmode="decimal" class="num-input dt-fx-inp" data-ci="${i}"
+            value="${curCustomFx!=null?curCustomFx:''}"
+            placeholder="${defFx}"
+            style="width:80px;padding:4px 6px;font-size:0.78rem;"/>
+          <span style="font-size:0.75rem;font-family:'DM Mono',monospace;"><strong>${fc}</strong></span>
+        </div>
+        <div style="font-size:0.65rem;color:var(--muted);margin-top:2px;">DB default: ${defFx} ${fc}</div>
+      </div>`:'';
+    return`<th class="city-th">
     <div style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:6px;">
       <span>🏁 DESTINATION ${i+1}</span>
       <button class="btn-remove rmv-city-btn" data-ci="${i}" title="Remove destination">✕</button>
     </div>
     <div class="city-picker" id="dtToPicker${i}" style="min-width:140px;"></div>
-    <div class="sub-num" style="margin-top:3px;">${tcs[i]}</div>
-  </th>`).join('');
+    <div class="sub-num" style="margin-top:3px;">${destCurr}</div>
+    ${fxRow}
+  </th>`;
+  }).join('');
 
   let thAdd=`<th><button class="btn-add" id="addCityBtn">+ City</button></th>`;
 
@@ -833,8 +914,10 @@ function buildDetailHTML(fromCity,toCities){
       if(!tc||!fromCity){cols+=`<td class="num-td">—</td>`;return;}
       const ovKey=`${ri}_${ci}`;
       const isOv=row.overrides&&(ovKey in row.overrides);
-      const calc=calcExp(fv,fromCity,tc,cat.index);
+      const cfxCi=S.customFxDetailed[ci]??null;
+      const calc=calcExp(fv,fromCity,tc,cat.index,cfxCi);
       const dispVal=isOv?row.overrides[ovKey]:calc;
+      const backToFc=cfxCi&&cfxCi>0?calc*cfxCi:convertCurr(calc,tc.currency,fc);
       cols+=`<td class="num-td ${isOv?'overridden':''}">
         <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">
           <span class="curr-tag" style="font-size:0.73rem;">${tc.currency}</span>
@@ -844,7 +927,7 @@ function buildDetailHTML(fromCity,toCities){
             title="Edit to override estimate"
             style="width:90px;${isOv?'background:var(--override-bg);border-color:var(--override-border);':''}"/>
         </div>
-        ${!isOv&&fromCity&&tc?`<div class="sub-num" style="text-align:right;margin-top:2px;">≈ ${fmtC(convertCurr(calc,tc.currency,fc),fc)}</div>`:''}
+        ${!isOv&&fromCity&&tc?`<div class="sub-num" style="text-align:right;margin-top:2px;">≈ ${fmtC(backToFc,fc)}</div>`:''}
       </td>`;
     });
 
@@ -863,11 +946,12 @@ function buildDetailHTML(fromCity,toCities){
   let savTos=toCities.map((tc,ci)=>{
     if(!tc)return`<td class="num-td">—</td>`;
     const curr=tc.currency;
+    const customFx=S.customFxDetailed[ci]??null;
     const totExp=S.detailRows.reduce((s,row,ri)=>{
       const ovKey=`${ri}_${ci}`;
       if(row.overrides&&(ovKey in row.overrides))return s+(row.overrides[ovKey]||0);
       const cat=CATS.find(c=>c.id===row.catId)||CATS[0];
-      return s+calcExp(row.fromAmount||0,fromCity,tc,cat.index);
+      return s+calcExp(row.fromAmount||0,fromCity,tc,cat.index,customFx);
     },0);
     let toSal=S.detailToSalaries[ci]||0;
     if(S.goal==='earn')toSal=calcReqSal(ci,fromCity,tc);
@@ -914,18 +998,19 @@ ${goalHtml}
 <div class="util-note" style="margin-top:8px;">Data in cells with <span style="display:inline-block;padding:1px 6px;background:var(--override-bg);border:1px solid var(--override-border);border-radius:3px;font-size:0.75rem;font-family:'DM Mono',monospace;">yellow background</span> has been manually overridden. Clear the field to revert to the calculated estimate.</div>`;
 }
 
-function calcExp(fromAmt,fromCity,toCity,indexKey){
+function calcExp(fromAmt,fromCity,toCity,indexKey,customRate){
   if(!fromAmt||!fromCity||!toCity)return 0;
-  return convertExpense(fromAmt,fromCity,toCity,indexKey);
+  return convertExpense(fromAmt,fromCity,toCity,indexKey,customRate??null);
 }
 
 function calcReqSal(ci,fromCity,toCity){
   if(!fromCity||!toCity)return 0;
+  const customFx=S.customFxDetailed[ci]??null;
   const totToExp=S.detailRows.reduce((s,row,ri)=>{
     const ovKey=`${ri}_${ci}`;
     if(row.overrides&&(ovKey in row.overrides))return s+(row.overrides[ovKey]||0);
     const cat=CATS.find(c=>c.id===row.catId)||CATS[0];
-    return s+calcExp(row.fromAmount||0,fromCity,toCity,cat.index);
+    return s+calcExp(row.fromAmount||0,fromCity,toCity,cat.index,customFx);
   },0);
   const totFromExp=S.detailRows.reduce((s,r)=>s+(r.fromAmount||0),0);
   const fSav=(S.detailFromSalary||0)-totFromExp;
@@ -934,7 +1019,7 @@ function calcReqSal(ci,fromCity,toCity){
     return fRat<1?totToExp/(1-fRat):totToExp*2;
   } else {
     const fr=getRate(fromCity.currency), tr=getRate(toCity.currency);
-    const fSavInTo=fr&&tr?fSav/fr*tr:0;
+    const fSavInTo=customFx&&customFx>0 ? fSav/customFx : (fr&&tr?fSav/fr*tr:0);
     return totToExp+fSavInTo;
   }
 }
@@ -947,7 +1032,7 @@ function wireDetail(fromCity,toCities){
   toCities.forEach((_,i)=>{
     const pickerId=`dtToPicker${i}`;
     if(document.getElementById(pickerId)){
-      buildCityPicker(pickerId,S.detailToCities[i],key=>{S.detailToCities[i]=key;renderDetailArea();});
+      buildCityPicker(pickerId,S.detailToCities[i],key=>{S.detailToCities[i]=key;S.customFxDetailed[i]=null;renderDetailArea();});
     }
   });
 
@@ -959,7 +1044,7 @@ function wireDetail(fromCity,toCities){
   document.querySelectorAll('.rmv-city-btn').forEach(btn=>{
     btn.addEventListener('click',()=>{
       const ci=+btn.dataset.ci;
-      S.detailToCities.splice(ci,1); S.detailToSalaries.splice(ci,1);
+      S.detailToCities.splice(ci,1); S.detailToSalaries.splice(ci,1); S.customFxDetailed.splice(ci,1);
       S.detailRows.forEach(r=>{const nb={};Object.entries(r.overrides||{}).forEach(([k,v])=>{const[ri,oci]=k.split('_').map(Number);if(oci!==ci)nb[`${ri}_${oci>ci?oci-1:oci}`]=v;});r.overrides=nb;});
       renderDetailArea();
     });
@@ -1000,6 +1085,17 @@ function wireDetail(fromCity,toCities){
       renderDetailArea();
     });
     inp.addEventListener('blur', e => { formatMoneyInput(e.target); });
+  });
+
+  // FX rate inputs (per destination)
+  document.querySelectorAll('.dt-fx-inp').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const ci=+inp.dataset.ci;
+      const raw=String(inp.value).replace(/,/g,'').trim();
+      const v=parseFloat(raw);
+      S.customFxDetailed[ci]=(isFinite(v)&&v>0)?v:null;
+    });
+    inp.addEventListener('blur',()=>{renderDetailArea();});
   });
 
   // From salary
@@ -1060,8 +1156,8 @@ function init(){
   S.fromKey=''; S.toKey='';
   S.detailFromKey=''; S.detailToCities=[''];
 
-  buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;render();});
-  buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;render();});
+  buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
+  buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
 
   wireGlobalToggles();
   render();
