@@ -230,6 +230,7 @@ body.light .warning{background:#FFF0D9;border-color:#F5D08A;color:#7A4A00;}
 .chart-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .graph-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:all var(--motion-fast);letter-spacing:.01em;}
 .graph-btn.active{border-color:var(--accent);color:var(--text);background:rgba(139,184,248,.12);}
+.chart-export-btn{flex:0 0 auto;min-width:52px;padding:6px 10px;font-size:.68rem;line-height:1;white-space:nowrap;text-align:center;}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:.86rem;}
 .legend-item{display:flex;align-items:center;gap:7px;}
 .dot{width:11px;height:11px;border-radius:999px;flex-shrink:0;}
@@ -641,10 +642,10 @@ abbr.abbr-hint{text-decoration:underline dotted;cursor:help;text-underline-offse
         <button class="graph-btn active" data-graph="netEquity" id="graphNetEquity" data-i18n="btnNetEquity">Net Equity</button>
         <button class="graph-btn" data-graph="cash" id="graphCash" data-i18n="btnLiquidCash">Liquid Cash</button>
         <button class="graph-btn" data-graph="cost" id="graphCost" data-i18n="btnAccumCost">Accum. Cost</button>
-        <button class="btn-secondary" id="pngBtn" style="font-size:.78rem;padding:5px 11px;">⬇ PNG</button>
-        <button class="btn-secondary" id="copyPngBtn" style="font-size:.78rem;padding:5px 11px;" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary" id="svgBtn" style="font-size:.78rem;padding:5px 11px;">⬇ SVG</button>
-        <button class="btn-secondary" id="chartResetZoom" style="font-size:.78rem;padding:5px 11px;" data-i18n="btnZoom">⟳</button>
+        <button class="btn-secondary chart-export-btn" id="svgBtn">⬇ SVG</button>
+        <button class="btn-secondary chart-export-btn" id="pngBtn">⬇ PNG</button>
+        <button class="btn-secondary chart-export-btn" id="copyPngBtn" title="Copy PNG to clipboard">⧉</button>
+        <button class="btn-secondary chart-export-btn" id="chartResetZoom" data-i18n="btnZoom">⟳</button>
       </div>
     </div>
     <div class="legend" id="chartLegend"></div>
