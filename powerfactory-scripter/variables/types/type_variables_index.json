@@ -1,0 +1,167 @@
+{
+  "TypSym": {
+    "file": "variables\\TypSym.json",
+    "size_kb": 15,
+    "study_groups": {},
+    "params": [
+      "e:loc_name",
+      "e:chr_name",
+      "e:for_name",
+      "e:dat_src",
+      "e:model_inp",
+      "e:manuf",
+      "e:appr_modby",
+      "e:iner_inp"
+    ]
+  },
+  "TypAsm": {
+    "file": "variables\\TypAsm.json",
+    "size_kb": 6,
+    "study_groups": {},
+    "params": [
+      "e:loc_name",
+      "e:chr_name",
+      "e:for_name",
+      "e:dat_src",
+      "e:manuf",
+      "e:appr_modby",
+      "e:nppol",
+      "e:nkutp"
+    ]
+  },
+  "TypTr2": {
+    "file": "variables\\TypTr2.json",
+    "size_kb": 16,
+    "study_groups": {},
+    "params": [
+      "e:loc_name",
+      "e:chr_name",
+      "e:for_name",
+      "e:dat_src",
+      "e:tr2cn_h",
+      "e:tr2cn_l",
+      "e:ansiclass",
+      "e:manuf"
+    ]
+  },
+  "TypTr3": {
+    "file": "variables\\TypTr3.json",
+    "size_kb": 22,
+    "study_groups": {},
+    "params": [
+      "e:loc_name",
+      "e:chr_name",
+      "e:for_name",
+      "e:dat_src",
+      "e:tr3cn_h",
+      "e:tr3cn_m",
+      "e:tr3cn_l",
+      "e:ansiclass"
+    ]
+  },
+  "TypTr4": {
+    "file": "variables\\TypTr4.json",
+    "size_kb": 44,
+    "study_groups": {},
+    "params": [
+      "e:loc_name",
+      "e:chr_name",
+      "e:for_name",
+      "e:dat_src",
+      "e:trcon_h0",
+      "e:trcon_l1",
+      "e:trcon_l2",
+      "e:trcon_l3"
+    ]
+  },
+  "TypLne": {
+    "file": "variables\\TypLne.json",
+    "size_kb": 8,
+    "study_groups": {},
+    "params": [
+      "e:loc_name",
+      "e:chr_name",
+      "e:for_name",
+      "e:dat_src",
+      "e:mlei",
+      "e:manuf",
+      "e:appr_modby",
+      "e:iopt_cnd"
+    ]
+  },
+  "TypTow": {
+    "file": "variables\\TypTow.json",
+    "size_kb": 6,
+    "study_groups": {},
+    "params": [
+      "e:loc_name",
+      "e:chr_name",
+      "e:for_name",
+      "e:dat_src",
+      "e:manuf",
+      "e:appr_modby",
+      "e:nlcir",
+      "e:nlear"
+    ]
+  },
+  "TypGeo": {
+    "file": "variables\\TypGeo.json",
+    "size_kb": 2,
+    "study_groups": {},
+    "params": [
+      "e:loc_name",
+      "e:chr_name",
+      "e:for_name",
+      "e:dat_src",
+      "e:manuf",
+      "e:appr_modby",
+      "e:appr_status",
+      "e:appr_modif"
+    ]
+  },
+  "TypLod": {
+    "file": "variables\\TypLod.json",
+    "size_kb": 5,
+    "study_groups": {},
+    "params": [
+      "e:loc_name",
+      "e:chr_name",
+      "e:for_name",
+      "e:dat_src",
+      "e:manuf",
+      "e:appr_modby",
+      "e:lodst",
+      "e:systp"
+    ]
+  },
+  "TypLodlv": {
+    "file": "variables\\TypLodlv.json",
+    "size_kb": 3,
+    "study_groups": {},
+    "params": [
+      "e:loc_name",
+      "e:chr_name",
+      "e:for_name",
+      "e:dat_src",
+      "e:manuf",
+      "e:appr_modby",
+      "e:iLodTyp",
+      "e:appr_status"
+    ]
+  },
+  "TypSwitch": {
+    "file": "variables\\TypSwitch.json",
+    "size_kb": 5,
+    "study_groups": {},
+    "params": [
+      "e:loc_name",
+      "e:chr_name",
+      "e:for_name",
+      "e:dat_src",
+      "e:manuf",
+      "e:appr_modby",
+      "e:appr_status",
+      "e:iType"
+    ]
+  }
+}

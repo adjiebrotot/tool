@@ -1,0 +1,782 @@
+{
+  "result_vars": {},
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:tr2cn_h",
+        "unit": "",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:tr2cn_l",
+        "unit": "",
+        "desc": "LV-Side"
+      },
+      {
+        "var": "e:ansiclass",
+        "unit": "",
+        "desc": "Class"
+      },
+      {
+        "var": "e:manuf",
+        "unit": "",
+        "desc": "Manufacturer"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:ntpmx",
+        "unit": "",
+        "desc": "Maximum Position"
+      },
+      {
+        "var": "e:ntpmn",
+        "unit": "",
+        "desc": "Minimum Position"
+      },
+      {
+        "var": "e:nntap0",
+        "unit": "",
+        "desc": "Neutral Position"
+      },
+      {
+        "var": "e:itapch",
+        "unit": "",
+        "desc": "Tap Changer 1"
+      },
+      {
+        "var": "e:itapch2",
+        "unit": "",
+        "desc": "Tap Changer 2"
+      },
+      {
+        "var": "e:ntpmx2",
+        "unit": "",
+        "desc": "Maximum Position"
+      },
+      {
+        "var": "e:ntpmn2",
+        "unit": "",
+        "desc": "Minimum Position"
+      },
+      {
+        "var": "e:nntap02",
+        "unit": "",
+        "desc": "Neutral Position"
+      },
+      {
+        "var": "e:tap_side2",
+        "unit": "",
+        "desc": "at Side"
+      },
+      {
+        "var": "e:tapchtype2",
+        "unit": "",
+        "desc": "Type"
+      },
+      {
+        "var": "e:iTapLoading",
+        "unit": "",
+        "desc": "Configuration"
+      },
+      {
+        "var": "e:nt2ph",
+        "unit": "",
+        "desc": "Technology"
+      },
+      {
+        "var": "e:iIntDelta",
+        "unit": "",
+        "desc": "Internal Delta Winding"
+      },
+      {
+        "var": "e:itrmt",
+        "unit": "",
+        "desc": "Type"
+      },
+      {
+        "var": "e:iFinalSlope",
+        "unit": "",
+        "desc": "Set final slope (peak values)"
+      },
+      {
+        "var": "e:ksat",
+        "unit": "",
+        "desc": "Saturation Exponent"
+      },
+      {
+        "var": "e:iLimb",
+        "unit": "",
+        "desc": "Core"
+      },
+      {
+        "var": "e:iInterPol",
+        "unit": "",
+        "desc": "Interpolation"
+      },
+      {
+        "var": "e:iFit",
+        "unit": "",
+        "desc": "Data fitting"
+      },
+      {
+        "var": "e:iHyster",
+        "unit": "",
+        "desc": "Model"
+      },
+      {
+        "var": "e:itrtype",
+        "unit": "",
+        "desc": "Transformer Type"
+      },
+      {
+        "var": "e:tap_side",
+        "unit": "",
+        "desc": "at Side"
+      },
+      {
+        "var": "e:tapchtype",
+        "unit": "",
+        "desc": "Type"
+      },
+      {
+        "var": "e:oltc",
+        "unit": "",
+        "desc": "On-load Tap Changer"
+      },
+      {
+        "var": "e:oltc2",
+        "unit": "",
+        "desc": "On-load Tap Changer 2"
+      },
+      {
+        "var": "e:itapzdep",
+        "unit": "",
+        "desc": "Tap dependent impedance for tap changer 1"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:itrldf",
+        "unit": "",
+        "desc": "Type"
+      },
+      {
+        "var": "e:iIntPola",
+        "unit": "",
+        "desc": "Interpolation"
+      },
+      {
+        "var": "e:itratioadpt",
+        "unit": "",
+        "desc": "Transformer Ratio Adaptation"
+      },
+      {
+        "var": "e:strn",
+        "unit": "MVA",
+        "desc": "Rated Power"
+      },
+      {
+        "var": "e:utrn_h",
+        "unit": "kV",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:utrn_l",
+        "unit": "kV",
+        "desc": "LV-Side"
+      },
+      {
+        "var": "e:uktr",
+        "unit": "%",
+        "desc": "Short-Circuit Voltage uk"
+      },
+      {
+        "var": "e:pcutr",
+        "unit": "kW",
+        "desc": "Copper Losses"
+      },
+      {
+        "var": "e:curmg",
+        "unit": "%",
+        "desc": "No Load Current"
+      },
+      {
+        "var": "e:dutap",
+        "unit": "%",
+        "desc": "Additional voltage per tap"
+      },
+      {
+        "var": "e:phitr",
+        "unit": "deg",
+        "desc": "Phase of du"
+      },
+      {
+        "var": "e:dphitap",
+        "unit": "deg",
+        "desc": "Additional angle per tap"
+      },
+      {
+        "var": "e:dutap2",
+        "unit": "%",
+        "desc": "Additional voltage per tap"
+      },
+      {
+        "var": "e:phitr2",
+        "unit": "deg",
+        "desc": "Phase of du"
+      },
+      {
+        "var": "e:dphitap2",
+        "unit": "deg",
+        "desc": "Additional angle per Tap"
+      },
+      {
+        "var": "e:uk0_hlo",
+        "unit": "%",
+        "desc": "HV-SHC-Voltage uk0 (LV open)"
+      },
+      {
+        "var": "e:ur0_hlo",
+        "unit": "%",
+        "desc": "HV-SHC-Voltage Re(uk0) (LV open)"
+      },
+      {
+        "var": "e:uk0_lho",
+        "unit": "%",
+        "desc": "LV-SHC-Voltage uk0 (HV open)"
+      },
+      {
+        "var": "e:ur0_lho",
+        "unit": "%",
+        "desc": "LV-SHC-Voltage Re(uk0) (HV open)"
+      },
+      {
+        "var": "e:uk0_hls",
+        "unit": "%",
+        "desc": "HV-SHC-Voltage uk0 (LV short-circuit)"
+      },
+      {
+        "var": "e:ur0_hls",
+        "unit": "%",
+        "desc": "HV-SHC-Voltage Re(uk0) (LV short-circuit)"
+      },
+      {
+        "var": "e:uk0tr",
+        "unit": "%",
+        "desc": "Short-Circuit Voltage uk0"
+      },
+      {
+        "var": "e:ur0tr",
+        "unit": "%",
+        "desc": "SHC-Voltage (Re(uk0)) uk0r"
+      },
+      {
+        "var": "e:nt2ag",
+        "unit": "*30deg",
+        "desc": "Phase Shift"
+      },
+      {
+        "var": "e:itrdl",
+        "unit": "",
+        "desc": "x,Pos.Seq. HV-Side"
+      },
+      {
+        "var": "e:itrdr",
+        "unit": "",
+        "desc": "r,Pos.Seq. HV-Side"
+      },
+      {
+        "var": "e:psi0",
+        "unit": "p.u.",
+        "desc": "Knee Flux"
+      },
+      {
+        "var": "e:xmlin",
+        "unit": "p.u.",
+        "desc": "Linear Reactance"
+      },
+      {
+        "var": "e:xmair",
+        "unit": "p.u.",
+        "desc": "Saturated Reactance"
+      },
+      {
+        "var": "e:smoothfac",
+        "unit": "%",
+        "desc": "Smoothing Factor"
+      },
+      {
+        "var": "e:Lwidth",
+        "unit": "%",
+        "desc": "Loop width"
+      },
+      {
+        "var": "e:itrdl0",
+        "unit": "",
+        "desc": "x0, Zero.Seq. HV-Side"
+      },
+      {
+        "var": "e:itrdr0",
+        "unit": "",
+        "desc": "r0, Zero.Seq. HV-Side"
+      },
+      {
+        "var": "e:zx0hl_n",
+        "unit": "",
+        "desc": "Mag. Impedance/uk0"
+      },
+      {
+        "var": "e:rtox0_n",
+        "unit": "",
+        "desc": "Mag. R/X"
+      },
+      {
+        "var": "e:pict1",
+        "unit": "p.u.",
+        "desc": "Ratio Ip/In (1)"
+      },
+      {
+        "var": "e:pitt1",
+        "unit": "s",
+        "desc": "Max. Time (1)"
+      },
+      {
+        "var": "e:pict2",
+        "unit": "p.u.",
+        "desc": "Ratio Ip/In (2)"
+      },
+      {
+        "var": "e:pitt2",
+        "unit": "s",
+        "desc": "Max. Time (2)"
+      },
+      {
+        "var": "e:frnom",
+        "unit": "Hz",
+        "desc": "Nominal Frequency"
+      },
+      {
+        "var": "e:pfe",
+        "unit": "kW",
+        "desc": "No Load Losses"
+      },
+      {
+        "var": "e:strnfc",
+        "unit": "MVA",
+        "desc": "Rated Power (forced cooling)"
+      },
+      {
+        "var": "e:uktmn",
+        "unit": "%",
+        "desc": "uk (min. tap)"
+      },
+      {
+        "var": "e:pcutmn",
+        "unit": "kW",
+        "desc": "Pcu (min. tap)"
+      },
+      {
+        "var": "e:uktmx",
+        "unit": "%",
+        "desc": "uk (max. tap)"
+      },
+      {
+        "var": "e:pcutmx",
+        "unit": "kW",
+        "desc": "Pcu (max. tap)"
+      },
+      {
+        "var": "e:uk0tmn",
+        "unit": "%",
+        "desc": "uk0 (min. tap)"
+      },
+      {
+        "var": "e:uk0rtmn",
+        "unit": "%",
+        "desc": "Re(uk0) (min. tap)"
+      },
+      {
+        "var": "e:uk0tmx",
+        "unit": "%",
+        "desc": "uk0 (max. tap)"
+      },
+      {
+        "var": "e:uk0rtmx",
+        "unit": "%",
+        "desc": "Re(uk0) (max. tap)"
+      },
+      {
+        "var": "e:smoothf",
+        "unit": "%",
+        "desc": "Smoothing Factor"
+      },
+      {
+        "var": "e:eddypc",
+        "unit": "",
+        "desc": "Ratio"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:satcur",
+        "unit": "p.u.",
+        "desc": "Current (peak)"
+      },
+      {
+        "var": "e:satflux",
+        "unit": "p.u.",
+        "desc": "Flux (peak)"
+      },
+      {
+        "var": "e:satcue",
+        "unit": "%",
+        "desc": "Current (RMS)"
+      },
+      {
+        "var": "e:satvol",
+        "unit": "p.u.",
+        "desc": "Voltage (RMS)"
+      },
+      {
+        "var": "e:typemetadata_version",
+        "unit": "",
+        "desc": "Version"
+      },
+      {
+        "var": "e:typemetadata_key",
+        "unit": "",
+        "desc": "Type Key"
+      },
+      {
+        "var": "e:typemetadata_changeLog",
+        "unit": "",
+        "desc": "Change Log"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:doc_id",
+        "unit": "",
+        "desc": "Additional Data"
+      },
+      {
+        "var": "e:pStoch",
+        "unit": "StoTyptrf",
+        "desc": "Stochastic model"
+      },
+      {
+        "var": "e:fcharl1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f)"
+      },
+      {
+        "var": "e:fcharr1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f)"
+      },
+      {
+        "var": "e:fcharl0",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f)"
+      },
+      {
+        "var": "e:fcharr0",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f)"
+      },
+      {
+        "var": "e:fcharbm",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "1/lm(f)"
+      },
+      {
+        "var": "e:fchargm",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "gm(f)"
+      },
+      {
+        "var": "e:uktrr",
+        "unit": "%",
+        "desc": "SHC-Voltage (Re(uk)) ukr"
+      },
+      {
+        "var": "e:xtor",
+        "unit": "",
+        "desc": "Ratio X/R"
+      },
+      {
+        "var": "e:r1pu",
+        "unit": "p.u.",
+        "desc": "Resistance r1"
+      },
+      {
+        "var": "e:x1pu",
+        "unit": "p.u.",
+        "desc": "Reactance x1"
+      },
+      {
+        "var": "e:l1pu",
+        "unit": "p.u.",
+        "desc": "Inductance l1"
+      },
+      {
+        "var": "e:xtr0_hlo",
+        "unit": "",
+        "desc": "HV-Ratio X0/R0 (LV open)"
+      },
+      {
+        "var": "e:xtr0_lho",
+        "unit": "",
+        "desc": "LV-Ratio X0/R0 (HV open)"
+      },
+      {
+        "var": "e:xtr0_hls",
+        "unit": "",
+        "desc": "HV-Ratio X0/R0 (LV short-circuit)"
+      },
+      {
+        "var": "e:r0pu_hlo",
+        "unit": "p.u.",
+        "desc": "HV-Resistance r0 (LV open)"
+      },
+      {
+        "var": "e:r0pu_lho",
+        "unit": "p.u.",
+        "desc": "LV-Resistance r0 (HV open)"
+      },
+      {
+        "var": "e:r0pu_hls",
+        "unit": "p.u.",
+        "desc": "HV-Resistance r0 (LV short-circuit)"
+      },
+      {
+        "var": "e:x0pu_hlo",
+        "unit": "p.u.",
+        "desc": "HV-Reactance x0 (LV open)"
+      },
+      {
+        "var": "e:x0pu_lho",
+        "unit": "p.u.",
+        "desc": "LV-Reactance x0 (HV open)"
+      },
+      {
+        "var": "e:x0pu_hls",
+        "unit": "p.u.",
+        "desc": "HV-Reactance x0 (LV short-circuit)"
+      },
+      {
+        "var": "e:x0tor0",
+        "unit": "",
+        "desc": "Ratio X0/R0"
+      },
+      {
+        "var": "e:r0pu",
+        "unit": "p.u.",
+        "desc": "Resistance r0"
+      },
+      {
+        "var": "e:x0pu",
+        "unit": "p.u.",
+        "desc": "Reactance x0"
+      },
+      {
+        "var": "e:l0pu",
+        "unit": "p.u.",
+        "desc": "Inductance l0"
+      },
+      {
+        "var": "e:uk0delta",
+        "unit": "%",
+        "desc": "Delta Winding, uk0"
+      },
+      {
+        "var": "e:ur0delta",
+        "unit": "%",
+        "desc": "Delta Winding, Re(uk0)"
+      },
+      {
+        "var": "e:x0delta",
+        "unit": "p.u.",
+        "desc": "Delta Winding, x0"
+      },
+      {
+        "var": "e:r0delta",
+        "unit": "p.u.",
+        "desc": "Delta Winding, r0"
+      },
+      {
+        "var": "e:x0tor0delta",
+        "unit": "",
+        "desc": "Delta Winding, X0/R0"
+      },
+      {
+        "var": "e:itrdl0_lv",
+        "unit": "",
+        "desc": "x0, Zero.Seq. LV-Side"
+      },
+      {
+        "var": "e:itrdr0_lv",
+        "unit": "",
+        "desc": "r0, Zero.Seq. LV-Side"
+      },
+      {
+        "var": "e:aFrolich",
+        "unit": "",
+        "desc": "Frolich equation coefficient a"
+      },
+      {
+        "var": "e:bFrolich",
+        "unit": "",
+        "desc": "Frolich equation coefficient b"
+      },
+      {
+        "var": "e:cFrolich",
+        "unit": "",
+        "desc": "Frolich equation coefficient c"
+      },
+      {
+        "var": "e:xsatFrolich",
+        "unit": "",
+        "desc": "Frolich equation saturated reactance (p.u.)"
+      },
+      {
+        "var": "e:mseFrolich",
+        "unit": "",
+        "desc": "Frolich equation, mean squared error"
+      },
+      {
+        "var": "e:itrdl_lv",
+        "unit": "",
+        "desc": "x,Pos.Seq. LV-Side"
+      },
+      {
+        "var": "e:itrdr_lv",
+        "unit": "",
+        "desc": "r,Pos.Seq. LV-Side"
+      },
+      {
+        "var": "e:bm1",
+        "unit": "p.u.",
+        "desc": "1/lm"
+      },
+      {
+        "var": "e:gm1",
+        "unit": "p.u.",
+        "desc": "gm"
+      },
+      {
+        "var": "e:ukrtmn",
+        "unit": "%",
+        "desc": "Re(uk) (min. tap)"
+      },
+      {
+        "var": "e:ukrtmx",
+        "unit": "%",
+        "desc": "Re(uk) (max. tap)"
+      },
+      {
+        "var": "e:xtortmx",
+        "unit": "",
+        "desc": "X/R (max. tap)"
+      },
+      {
+        "var": "e:xtortmn",
+        "unit": "",
+        "desc": "X/R (min. tap)"
+      },
+      {
+        "var": "e:r1putmx",
+        "unit": "p.u.",
+        "desc": "r1 (max. tap)"
+      },
+      {
+        "var": "e:r1putmn",
+        "unit": "p.u.",
+        "desc": "r1 (min. tap)"
+      },
+      {
+        "var": "e:x1putmx",
+        "unit": "p.u.",
+        "desc": "x1 (max. tap)"
+      },
+      {
+        "var": "e:x1putmn",
+        "unit": "p.u.",
+        "desc": "x1 (min. tap)"
+      },
+      {
+        "var": "e:x0tor0tmx",
+        "unit": "",
+        "desc": "X0/R0 (max. tap)"
+      },
+      {
+        "var": "e:x0tor0tmn",
+        "unit": "",
+        "desc": "X0/R0 (min. tap)"
+      },
+      {
+        "var": "e:r0putmx",
+        "unit": "p.u.",
+        "desc": "r0 (max. tap)"
+      },
+      {
+        "var": "e:r0putmn",
+        "unit": "p.u.",
+        "desc": "r0 (min. tap)"
+      },
+      {
+        "var": "e:x0putmx",
+        "unit": "p.u.",
+        "desc": "x0 (max. tap)"
+      },
+      {
+        "var": "e:x0putmn",
+        "unit": "p.u.",
+        "desc": "x0 (min. tap)"
+      },
+      {
+        "var": "e:vecgrp",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:pT",
+        "unit": "",
+        "desc": "Voltage Range"
+      }
+    ]
+  }
+}

@@ -1,0 +1,387 @@
+{
+  "result_vars": {},
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:mlei",
+        "unit": "",
+        "desc": "Conductor material"
+      },
+      {
+        "var": "e:manuf",
+        "unit": "",
+        "desc": "Manufacturer"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:iopt_cnd",
+        "unit": "",
+        "desc": "Cable cores"
+      },
+      {
+        "var": "e:nlnph",
+        "unit": "",
+        "desc": "Phases"
+      },
+      {
+        "var": "e:imiso",
+        "unit": "",
+        "desc": "Insulation material"
+      },
+      {
+        "var": "e:systp",
+        "unit": "",
+        "desc": "System Type"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:avail",
+        "unit": "",
+        "desc": "Availability"
+      },
+      {
+        "var": "e:nneutral",
+        "unit": "",
+        "desc": "Number of Neutrals"
+      },
+      {
+        "var": "e:fr_sheath",
+        "unit": "",
+        "desc": "With sheath"
+      },
+      {
+        "var": "e:shins",
+        "unit": "",
+        "desc": "Sheath insulation material"
+      },
+      {
+        "var": "e:shtyp",
+        "unit": "",
+        "desc": "Sheath type"
+      },
+      {
+        "var": "e:touchExp",
+        "unit": "",
+        "desc": "Exposed to touch"
+      },
+      {
+        "var": "e:cscreen",
+        "unit": "",
+        "desc": "Radial cable screen"
+      },
+      {
+        "var": "e:rectancond",
+        "unit": "",
+        "desc": "Rectangular Conductor"
+      },
+      {
+        "var": "e:uline",
+        "unit": "kV",
+        "desc": "Rated Voltage"
+      },
+      {
+        "var": "e:sline",
+        "unit": "kA",
+        "desc": "Rated Current"
+      },
+      {
+        "var": "e:picln",
+        "unit": "p.u.",
+        "desc": "Ratio Ip/In"
+      },
+      {
+        "var": "e:pitln",
+        "unit": "s",
+        "desc": "Maximum Time"
+      },
+      {
+        "var": "e:rline",
+        "unit": "Ohm/km",
+        "desc": "AC-Resistance R'(20°C)"
+      },
+      {
+        "var": "e:tmax",
+        "unit": "degC",
+        "desc": "Max. Operating Temperature"
+      },
+      {
+        "var": "e:rline_tmax",
+        "unit": "Ohm/km",
+        "desc": "AC-Resistance R' at max. operating temperature"
+      },
+      {
+        "var": "e:alpha",
+        "unit": "1/K",
+        "desc": "Temperature Coefficient"
+      },
+      {
+        "var": "e:xline",
+        "unit": "Ohm/km",
+        "desc": "Reactance X'"
+      },
+      {
+        "var": "e:rtemp",
+        "unit": "degC",
+        "desc": "Max. End Temperature"
+      },
+      {
+        "var": "e:bline",
+        "unit": "uS/km",
+        "desc": "Susceptance B'"
+      },
+      {
+        "var": "e:lline",
+        "unit": "mH/km",
+        "desc": "Inductance L'"
+      },
+      {
+        "var": "e:cline",
+        "unit": "uF/km",
+        "desc": "Capacitance C'"
+      },
+      {
+        "var": "e:gline",
+        "unit": "uS/km",
+        "desc": "Conductance G'"
+      },
+      {
+        "var": "e:tline",
+        "unit": "",
+        "desc": "Ins. Factor"
+      },
+      {
+        "var": "e:rline0",
+        "unit": "Ohm/km",
+        "desc": "AC-Resistance R0'"
+      },
+      {
+        "var": "e:xline0",
+        "unit": "Ohm/km",
+        "desc": "Reactance X0'"
+      },
+      {
+        "var": "e:lline0",
+        "unit": "mH/km",
+        "desc": "Inductance L0'"
+      },
+      {
+        "var": "e:bline0",
+        "unit": "uS/km",
+        "desc": "Susceptance B0'"
+      },
+      {
+        "var": "e:cline0",
+        "unit": "uF/km",
+        "desc": "Capacitance C0'"
+      },
+      {
+        "var": "e:gline0",
+        "unit": "uS/km",
+        "desc": "Conductance G0'"
+      },
+      {
+        "var": "e:tline0",
+        "unit": "",
+        "desc": "Ins. Factor"
+      },
+      {
+        "var": "e:Ices",
+        "unit": "A/km",
+        "desc": "Earth-Fault Current"
+      },
+      {
+        "var": "e:qurs",
+        "unit": "mm^2",
+        "desc": "Nominal cross section"
+      },
+      {
+        "var": "e:qursn",
+        "unit": "mm^2",
+        "desc": "Neutral conductor cross section"
+      },
+      {
+        "var": "e:InomAir",
+        "unit": "kA",
+        "desc": "Rated Current (in air)"
+      },
+      {
+        "var": "e:Ithr",
+        "unit": "kA",
+        "desc": "Rated Short-Time (1s) Current (Conductor)"
+      },
+      {
+        "var": "e:frnom",
+        "unit": "Hz",
+        "desc": "Nominal Frequency"
+      },
+      {
+        "var": "e:lcost",
+        "unit": "USD/km",
+        "desc": "Line type cost"
+      },
+      {
+        "var": "e:rnline",
+        "unit": "Ohm/km",
+        "desc": "AC-Resistance Rn'"
+      },
+      {
+        "var": "e:xnline",
+        "unit": "Ohm/km",
+        "desc": "Reactance Xn'"
+      },
+      {
+        "var": "e:bnline",
+        "unit": "uS/km",
+        "desc": "Susceptance Bn'"
+      },
+      {
+        "var": "e:rpnline",
+        "unit": "Ohm/km",
+        "desc": "AC-Resistance Rpn'"
+      },
+      {
+        "var": "e:xpnline",
+        "unit": "Ohm/km",
+        "desc": "Reactance Xpn'"
+      },
+      {
+        "var": "e:bpnline",
+        "unit": "uS/km",
+        "desc": "Susceptance Bpn'"
+      },
+      {
+        "var": "e:side_b",
+        "unit": "mm",
+        "desc": "Height (b)"
+      },
+      {
+        "var": "e:side_d",
+        "unit": "mm",
+        "desc": "Width (d)"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:typemetadata_version",
+        "unit": "",
+        "desc": "Version"
+      },
+      {
+        "var": "e:typemetadata_key",
+        "unit": "",
+        "desc": "Type Key"
+      },
+      {
+        "var": "e:typemetadata_changeLog",
+        "unit": "",
+        "desc": "Change Log"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:doc_id",
+        "unit": "",
+        "desc": "Additional Data"
+      },
+      {
+        "var": "e:fcharL1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "L1'(f)"
+      },
+      {
+        "var": "e:fcharR1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "R1'(AC)(f)"
+      },
+      {
+        "var": "e:fcharC1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "C1'(f)"
+      },
+      {
+        "var": "e:fcharL0",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "L0'(f)"
+      },
+      {
+        "var": "e:fcharR0",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "R0'(AC)(f)"
+      },
+      {
+        "var": "e:fcharC0",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "C0'(f)"
+      },
+      {
+        "var": "e:pStoch",
+        "unit": "StoTyplne",
+        "desc": "Stochastic model"
+      },
+      {
+        "var": "e:cohl_",
+        "unit": "",
+        "desc": "Cable / OHL"
+      },
+      {
+        "var": "e:lnline",
+        "unit": "mH/km",
+        "desc": "Inductance Ln'"
+      },
+      {
+        "var": "e:cnline",
+        "unit": "uF/km",
+        "desc": "Capacitance Cn'"
+      },
+      {
+        "var": "e:lpnline",
+        "unit": "mH/km",
+        "desc": "Inductance Lpn'"
+      },
+      {
+        "var": "e:cpnline",
+        "unit": "uF/km",
+        "desc": "Capacitance Cpn'"
+      },
+      {
+        "var": "e:carmour",
+        "unit": "",
+        "desc": "Armoured cable"
+      }
+    ]
+  }
+}

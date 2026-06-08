@@ -1,0 +1,1077 @@
+{
+  "result_vars": {},
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:tr3cn_h",
+        "unit": "",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:tr3cn_m",
+        "unit": "",
+        "desc": "MV-Side"
+      },
+      {
+        "var": "e:tr3cn_l",
+        "unit": "",
+        "desc": "LV-Side"
+      },
+      {
+        "var": "e:ansiclass",
+        "unit": "",
+        "desc": "Class"
+      },
+      {
+        "var": "e:manuf",
+        "unit": "",
+        "desc": "Manufacturer"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:n3tmn_h",
+        "unit": "",
+        "desc": "Min. Position"
+      },
+      {
+        "var": "e:n3tmn_m",
+        "unit": "",
+        "desc": "Min. Position"
+      },
+      {
+        "var": "e:n3tmn_l",
+        "unit": "",
+        "desc": "Min. Position"
+      },
+      {
+        "var": "e:n3tmx_h",
+        "unit": "",
+        "desc": "Max. Position"
+      },
+      {
+        "var": "e:n3tmx_m",
+        "unit": "",
+        "desc": "Max. Position"
+      },
+      {
+        "var": "e:n3tmx_l",
+        "unit": "",
+        "desc": "Max. Position"
+      },
+      {
+        "var": "e:n3tp0_h",
+        "unit": "",
+        "desc": "Neutral Position"
+      },
+      {
+        "var": "e:n3tp0_m",
+        "unit": "",
+        "desc": "Neutral Position"
+      },
+      {
+        "var": "e:n3tp0_l",
+        "unit": "",
+        "desc": "Neutral Position"
+      },
+      {
+        "var": "e:i3loc",
+        "unit": "",
+        "desc": "Position"
+      },
+      {
+        "var": "e:i30lc",
+        "unit": "",
+        "desc": "Position"
+      },
+      {
+        "var": "e:nt3ph",
+        "unit": "",
+        "desc": "Technology"
+      },
+      {
+        "var": "e:itrmt",
+        "unit": "",
+        "desc": "Type"
+      },
+      {
+        "var": "e:itrtype",
+        "unit": "",
+        "desc": "Transformer Type"
+      },
+      {
+        "var": "e:itapos",
+        "unit": "",
+        "desc": "Tap Modelled at"
+      },
+      {
+        "var": "e:oltc_h",
+        "unit": "",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:oltc_m",
+        "unit": "",
+        "desc": "MV-Side"
+      },
+      {
+        "var": "e:oltc_l",
+        "unit": "",
+        "desc": "LV-Side"
+      },
+      {
+        "var": "e:itapzdep",
+        "unit": "",
+        "desc": "Tap dependent impedance"
+      },
+      {
+        "var": "e:itapzside",
+        "unit": "",
+        "desc": "for Tap at"
+      },
+      {
+        "var": "e:iTapLoading",
+        "unit": "",
+        "desc": "Configuration"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:itrldf",
+        "unit": "",
+        "desc": "Type"
+      },
+      {
+        "var": "e:iIntPola",
+        "unit": "",
+        "desc": "Interpolation"
+      },
+      {
+        "var": "e:itratioadpt",
+        "unit": "",
+        "desc": "Transformer Ratio Adaptation"
+      },
+      {
+        "var": "e:iFinalSlope",
+        "unit": "",
+        "desc": "Set final slope (peak values)"
+      },
+      {
+        "var": "e:ksat",
+        "unit": "",
+        "desc": "Saturation Exponent"
+      },
+      {
+        "var": "e:iLimb",
+        "unit": "",
+        "desc": "Core"
+      },
+      {
+        "var": "e:iInterPol",
+        "unit": "",
+        "desc": "Interpolation"
+      },
+      {
+        "var": "e:iFit",
+        "unit": "",
+        "desc": "Data fitting"
+      },
+      {
+        "var": "e:iHyster",
+        "unit": "",
+        "desc": "Model"
+      },
+      {
+        "var": "e:strn3_h",
+        "unit": "MVA",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:strn3_m",
+        "unit": "MVA",
+        "desc": "MV-Side"
+      },
+      {
+        "var": "e:strn3_l",
+        "unit": "MVA",
+        "desc": "LV-Side"
+      },
+      {
+        "var": "e:utrn3_h",
+        "unit": "kV",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:utrn3_m",
+        "unit": "kV",
+        "desc": "MV-Side"
+      },
+      {
+        "var": "e:utrn3_l",
+        "unit": "kV",
+        "desc": "LV-Side"
+      },
+      {
+        "var": "e:uktr3_h",
+        "unit": "%",
+        "desc": "HV-MV"
+      },
+      {
+        "var": "e:uktr3_m",
+        "unit": "%",
+        "desc": "MV-LV"
+      },
+      {
+        "var": "e:uktr3_l",
+        "unit": "%",
+        "desc": "LV-HV"
+      },
+      {
+        "var": "e:pcut3_h",
+        "unit": "kW",
+        "desc": "HV-MV"
+      },
+      {
+        "var": "e:pcut3_m",
+        "unit": "kW",
+        "desc": "MV-LV"
+      },
+      {
+        "var": "e:pcut3_l",
+        "unit": "kW",
+        "desc": "LV-HV"
+      },
+      {
+        "var": "e:curm3",
+        "unit": "%",
+        "desc": "No Load Current"
+      },
+      {
+        "var": "e:cr0m3",
+        "unit": "%",
+        "desc": "No Load Current"
+      },
+      {
+        "var": "e:du3tp_h",
+        "unit": "%",
+        "desc": "Add. voltage per tap"
+      },
+      {
+        "var": "e:du3tp_m",
+        "unit": "%",
+        "desc": "Add. voltage per tap"
+      },
+      {
+        "var": "e:du3tp_l",
+        "unit": "%",
+        "desc": "Add. voltage per tap"
+      },
+      {
+        "var": "e:ph3tr_h",
+        "unit": "deg",
+        "desc": "Phase of du"
+      },
+      {
+        "var": "e:ph3tr_m",
+        "unit": "deg",
+        "desc": "Phase of du"
+      },
+      {
+        "var": "e:ph3tr_l",
+        "unit": "deg",
+        "desc": "Phase of du"
+      },
+      {
+        "var": "e:uk0hm",
+        "unit": "%",
+        "desc": "HV-MV"
+      },
+      {
+        "var": "e:uk0ml",
+        "unit": "%",
+        "desc": "MV-LV"
+      },
+      {
+        "var": "e:uk0hl",
+        "unit": "%",
+        "desc": "LV-HV"
+      },
+      {
+        "var": "e:ur0hm",
+        "unit": "%",
+        "desc": "HV-MV"
+      },
+      {
+        "var": "e:ur0ml",
+        "unit": "%",
+        "desc": "MV-LV"
+      },
+      {
+        "var": "e:ur0hl",
+        "unit": "%",
+        "desc": "LV-HV"
+      },
+      {
+        "var": "e:nt3ag_h",
+        "unit": "*30deg",
+        "desc": "Phase Shift"
+      },
+      {
+        "var": "e:nt3ag_m",
+        "unit": "*30deg",
+        "desc": "Phase Shift"
+      },
+      {
+        "var": "e:pict3",
+        "unit": "p.u.",
+        "desc": "Ratio Ip/In (1)"
+      },
+      {
+        "var": "e:pitt3",
+        "unit": "s",
+        "desc": "Max. Time (1)"
+      },
+      {
+        "var": "e:pict4",
+        "unit": "p.u.",
+        "desc": "Ratio Ip/In (2)"
+      },
+      {
+        "var": "e:pitt4",
+        "unit": "s",
+        "desc": "Max. Time (2)"
+      },
+      {
+        "var": "e:pfe",
+        "unit": "kW",
+        "desc": "No Load Losses"
+      },
+      {
+        "var": "e:rtox0_n",
+        "unit": "",
+        "desc": "Mag. R/X"
+      },
+      {
+        "var": "e:nt3ag_l",
+        "unit": "*30deg",
+        "desc": "Phase Shift"
+      },
+      {
+        "var": "e:snfc_h",
+        "unit": "MVA",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:snfc_m",
+        "unit": "MVA",
+        "desc": "MV-Side"
+      },
+      {
+        "var": "e:snfc_l",
+        "unit": "MVA",
+        "desc": "LV-Side"
+      },
+      {
+        "var": "e:uktr3mn_h",
+        "unit": "%",
+        "desc": "uk(HV-MV)(min. tap)"
+      },
+      {
+        "var": "e:uktr3mn_m",
+        "unit": "%",
+        "desc": "uk(MV-LV)(min. tap)"
+      },
+      {
+        "var": "e:uktr3mn_l",
+        "unit": "%",
+        "desc": "uk(LV-HV)(min. tap)"
+      },
+      {
+        "var": "e:pcut3mn_h",
+        "unit": "kW",
+        "desc": "Pcu(HV-MV)(min. tap)"
+      },
+      {
+        "var": "e:pcut3mn_m",
+        "unit": "kW",
+        "desc": "Pcu(MV-LV)(min. tap)"
+      },
+      {
+        "var": "e:pcut3mn_l",
+        "unit": "kW",
+        "desc": "Pcu(LV-HV)(min. tap)"
+      },
+      {
+        "var": "e:uktr3mx_h",
+        "unit": "%",
+        "desc": "uk(HV-MV)(max. tap)"
+      },
+      {
+        "var": "e:uktr3mx_m",
+        "unit": "%",
+        "desc": "uk(MV-LV)(max. tap)"
+      },
+      {
+        "var": "e:uktr3mx_l",
+        "unit": "%",
+        "desc": "uk(LV-HV)(max. tap)"
+      },
+      {
+        "var": "e:pcut3mx_h",
+        "unit": "kW",
+        "desc": "Pcu(HV-MV)(max. tap)"
+      },
+      {
+        "var": "e:pcut3mx_m",
+        "unit": "kW",
+        "desc": "Pcu(MV-LV)(max. tap)"
+      },
+      {
+        "var": "e:pcut3mx_l",
+        "unit": "kW",
+        "desc": "Pcu(LV-HV)(max. tap)"
+      },
+      {
+        "var": "e:uk0mnhm",
+        "unit": "%",
+        "desc": "uk0(HV-MV)(min. tap)"
+      },
+      {
+        "var": "e:uk0mnml",
+        "unit": "%",
+        "desc": "uk0(MV-LV)(min. tap)"
+      },
+      {
+        "var": "e:uk0mnhl",
+        "unit": "%",
+        "desc": "uk0(LV-HV)(min. tap)"
+      },
+      {
+        "var": "e:ur0mnhm",
+        "unit": "%",
+        "desc": "Re(uk0)(HV-MV)(min. tap)"
+      },
+      {
+        "var": "e:ur0mnml",
+        "unit": "%",
+        "desc": "Re(uk0)(MV-LV)(min. tap)"
+      },
+      {
+        "var": "e:ur0mnhl",
+        "unit": "%",
+        "desc": "Re(uk0)(LV-HV)(min. tap)"
+      },
+      {
+        "var": "e:uk0mxhm",
+        "unit": "%",
+        "desc": "uk0(HV-MV)(max. tap)"
+      },
+      {
+        "var": "e:uk0mxml",
+        "unit": "%",
+        "desc": "uk0(MV-LV)(max. tap)"
+      },
+      {
+        "var": "e:uk0mxhl",
+        "unit": "%",
+        "desc": "uk0(LV-HV)(max. tap)"
+      },
+      {
+        "var": "e:ur0mxhm",
+        "unit": "%",
+        "desc": "Re(uk0)(HV-MV)(max. tap)"
+      },
+      {
+        "var": "e:ur0mxml",
+        "unit": "%",
+        "desc": "Re(uk0)(MV-LV)(max. tap)"
+      },
+      {
+        "var": "e:ur0mxhl",
+        "unit": "%",
+        "desc": "Re(uk0)(LV-HV)(max. tap)"
+      },
+      {
+        "var": "e:smoothf",
+        "unit": "%",
+        "desc": "Smoothing Factor"
+      },
+      {
+        "var": "e:psi0",
+        "unit": "p.u.",
+        "desc": "Knee Flux"
+      },
+      {
+        "var": "e:x3lin",
+        "unit": "p.u.",
+        "desc": "Linear Reactance"
+      },
+      {
+        "var": "e:x3air",
+        "unit": "p.u.",
+        "desc": "Saturated Reactance"
+      },
+      {
+        "var": "e:smoothfac",
+        "unit": "%",
+        "desc": "Smoothing Factor"
+      },
+      {
+        "var": "e:Lwidth",
+        "unit": "%",
+        "desc": "Loop width"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:satcue",
+        "unit": "%",
+        "desc": "Current (RMS)"
+      },
+      {
+        "var": "e:satvol",
+        "unit": "p.u.",
+        "desc": "Voltage (RMS)"
+      },
+      {
+        "var": "e:satcur",
+        "unit": "p.u.",
+        "desc": "Current (peak)"
+      },
+      {
+        "var": "e:satflux",
+        "unit": "p.u.",
+        "desc": "Flux (peak)"
+      },
+      {
+        "var": "e:typemetadata_version",
+        "unit": "",
+        "desc": "Version"
+      },
+      {
+        "var": "e:typemetadata_key",
+        "unit": "",
+        "desc": "Type Key"
+      },
+      {
+        "var": "e:typemetadata_changeLog",
+        "unit": "",
+        "desc": "Change Log"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:doc_id",
+        "unit": "",
+        "desc": "Additional Data"
+      },
+      {
+        "var": "e:pStoch",
+        "unit": "StoTyptrf",
+        "desc": "Stochastic model"
+      },
+      {
+        "var": "e:fcharl1_h",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) HV-MV"
+      },
+      {
+        "var": "e:fcharr1_h",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) HV-MV"
+      },
+      {
+        "var": "e:fcharl0_h",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) HV-MV"
+      },
+      {
+        "var": "e:fcharr0_h",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) HV-MV"
+      },
+      {
+        "var": "e:fcharl1_m",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) MV-LV"
+      },
+      {
+        "var": "e:fcharr1_m",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) MV-LV"
+      },
+      {
+        "var": "e:fcharl0_m",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) MV-LV"
+      },
+      {
+        "var": "e:fcharr0_m",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) MV-LV"
+      },
+      {
+        "var": "e:fcharl1_l",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) LV-HV"
+      },
+      {
+        "var": "e:fcharr1_l",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) LV-HV"
+      },
+      {
+        "var": "e:fcharl0_l",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) LV-HV"
+      },
+      {
+        "var": "e:fcharr0_l",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) LV-HV"
+      },
+      {
+        "var": "e:fcharbm",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "1/lm(f)"
+      },
+      {
+        "var": "e:fchargm",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "gm(f)"
+      },
+      {
+        "var": "e:uktrr3_h",
+        "unit": "%",
+        "desc": "HV-MV"
+      },
+      {
+        "var": "e:uktrr3_m",
+        "unit": "%",
+        "desc": "MV-LV"
+      },
+      {
+        "var": "e:uktrr3_l",
+        "unit": "%",
+        "desc": "LV-HV"
+      },
+      {
+        "var": "e:xtor3_h",
+        "unit": "",
+        "desc": "HV-MV"
+      },
+      {
+        "var": "e:xtor3_m",
+        "unit": "",
+        "desc": "MV-LV"
+      },
+      {
+        "var": "e:xtor3_l",
+        "unit": "",
+        "desc": "LV-HV"
+      },
+      {
+        "var": "e:r1pu_h",
+        "unit": "p.u.",
+        "desc": "HV-MV"
+      },
+      {
+        "var": "e:r1pu_m",
+        "unit": "p.u.",
+        "desc": "MV-LV"
+      },
+      {
+        "var": "e:r1pu_l",
+        "unit": "p.u.",
+        "desc": "LV-HV"
+      },
+      {
+        "var": "e:x1pu_h",
+        "unit": "p.u.",
+        "desc": "HV-MV"
+      },
+      {
+        "var": "e:x1pu_m",
+        "unit": "p.u.",
+        "desc": "MV-LV"
+      },
+      {
+        "var": "e:x1pu_l",
+        "unit": "p.u.",
+        "desc": "LV-HV"
+      },
+      {
+        "var": "e:l1pu_h",
+        "unit": "p.u.",
+        "desc": "Inductance l1, HV-MV"
+      },
+      {
+        "var": "e:l1pu_m",
+        "unit": "p.u.",
+        "desc": "Inductance l1, MV-LV"
+      },
+      {
+        "var": "e:l1pu_l",
+        "unit": "p.u.",
+        "desc": "Inductance l1, LV-HV"
+      },
+      {
+        "var": "e:xtr0hm",
+        "unit": "",
+        "desc": "HV-MV"
+      },
+      {
+        "var": "e:xtr0ml",
+        "unit": "",
+        "desc": "MV-LV"
+      },
+      {
+        "var": "e:xtr0hl",
+        "unit": "",
+        "desc": "LV-HV"
+      },
+      {
+        "var": "e:r0puhm",
+        "unit": "p.u.",
+        "desc": "HV-MV"
+      },
+      {
+        "var": "e:r0puml",
+        "unit": "p.u.",
+        "desc": "MV-LV"
+      },
+      {
+        "var": "e:r0puhl",
+        "unit": "p.u.",
+        "desc": "LV-HV"
+      },
+      {
+        "var": "e:x0puhm",
+        "unit": "p.u.",
+        "desc": "HV-MV"
+      },
+      {
+        "var": "e:x0puml",
+        "unit": "p.u.",
+        "desc": "MV-LV"
+      },
+      {
+        "var": "e:x0puhl",
+        "unit": "p.u.",
+        "desc": "LV-HV"
+      },
+      {
+        "var": "e:l0puhm",
+        "unit": "p.u.",
+        "desc": "Inductance l0, HV-MV"
+      },
+      {
+        "var": "e:l0puml",
+        "unit": "p.u.",
+        "desc": "Inductance l0, MV-LV"
+      },
+      {
+        "var": "e:l0puhl",
+        "unit": "p.u.",
+        "desc": "Inductance l0, LV-HV"
+      },
+      {
+        "var": "e:bm1",
+        "unit": "p.u.",
+        "desc": "1/lm"
+      },
+      {
+        "var": "e:gm1",
+        "unit": "p.u.",
+        "desc": "gm"
+      },
+      {
+        "var": "e:uktrr3mn_h",
+        "unit": "%",
+        "desc": "Re(uk)(HV-MV) (min. tap)"
+      },
+      {
+        "var": "e:uktrr3mn_m",
+        "unit": "%",
+        "desc": "Re(uk)(MV-LV) (min. tap)"
+      },
+      {
+        "var": "e:uktrr3mn_l",
+        "unit": "%",
+        "desc": "Re(uk)(LV-HV) (min. tap)"
+      },
+      {
+        "var": "e:xtor3mn_h",
+        "unit": "",
+        "desc": "X/R (HV-MV)(min. tap)"
+      },
+      {
+        "var": "e:xtor3mn_m",
+        "unit": "",
+        "desc": "X/R (MV-LV)(min. tap)"
+      },
+      {
+        "var": "e:xtor3mn_l",
+        "unit": "",
+        "desc": "X/R (LV-HV)(min. tap)"
+      },
+      {
+        "var": "e:r1putmn_h",
+        "unit": "p.u.",
+        "desc": "r1(HV-MV) (min. tap)"
+      },
+      {
+        "var": "e:r1putmn_m",
+        "unit": "p.u.",
+        "desc": "r1(MV-LV) (min. tap)"
+      },
+      {
+        "var": "e:r1putmn_l",
+        "unit": "p.u.",
+        "desc": "r1(LV-HV) (min. tap)"
+      },
+      {
+        "var": "e:x1putmn_h",
+        "unit": "p.u.",
+        "desc": "x1(HV-MV) (min. tap)"
+      },
+      {
+        "var": "e:x1putmn_m",
+        "unit": "p.u.",
+        "desc": "x1(MV-LV) (min. tap)"
+      },
+      {
+        "var": "e:x1putmn_l",
+        "unit": "p.u.",
+        "desc": "x1(LV-HV) (min. tap)"
+      },
+      {
+        "var": "e:uktrr3mx_h",
+        "unit": "%",
+        "desc": "Re(uk)(HV-MV) (max. tap)"
+      },
+      {
+        "var": "e:uktrr3mx_m",
+        "unit": "%",
+        "desc": "Re(uk)(MV-LV) (max. tap)"
+      },
+      {
+        "var": "e:uktrr3mx_l",
+        "unit": "%",
+        "desc": "Re(uk)(LV-HV) (max. tap)"
+      },
+      {
+        "var": "e:xtor3mx_h",
+        "unit": "",
+        "desc": "X/R (HV-MV)(max. tap)"
+      },
+      {
+        "var": "e:xtor3mx_m",
+        "unit": "",
+        "desc": "X/R (MV-LV)(max. tap)"
+      },
+      {
+        "var": "e:xtor3mx_l",
+        "unit": "",
+        "desc": "X/R (LV-HV)(max. tap)"
+      },
+      {
+        "var": "e:r1putmx_h",
+        "unit": "p.u.",
+        "desc": "r1(HV-MV) (max. tap)"
+      },
+      {
+        "var": "e:r1putmx_m",
+        "unit": "p.u.",
+        "desc": "r1(MV-LV) (max. tap)"
+      },
+      {
+        "var": "e:r1putmx_l",
+        "unit": "p.u.",
+        "desc": "r1(LV-HV) (max. tap)"
+      },
+      {
+        "var": "e:x1putmx_h",
+        "unit": "p.u.",
+        "desc": "x1(HV-MV) (max. tap)"
+      },
+      {
+        "var": "e:x1putmx_m",
+        "unit": "p.u.",
+        "desc": "x1(MV-LV) (max. tap)"
+      },
+      {
+        "var": "e:x1putmx_l",
+        "unit": "p.u.",
+        "desc": "x1(LV-HV) (max. tap)"
+      },
+      {
+        "var": "e:xtr0mnhm",
+        "unit": "",
+        "desc": "X0/R0 (HV-MV)(min. tap)"
+      },
+      {
+        "var": "e:xtr0mnml",
+        "unit": "",
+        "desc": "X0/R0 (MV-LV)(min. tap)"
+      },
+      {
+        "var": "e:xtr0mnhl",
+        "unit": "",
+        "desc": "X0/R0 (LV-HV)(min. tap)"
+      },
+      {
+        "var": "e:r0pumnhm",
+        "unit": "p.u.",
+        "desc": "r0(HV-MV) (min. tap)"
+      },
+      {
+        "var": "e:r0pumnml",
+        "unit": "p.u.",
+        "desc": "r0(MV-LV) (min. tap)"
+      },
+      {
+        "var": "e:r0pumnhl",
+        "unit": "p.u.",
+        "desc": "r0(LV-HV) (min. tap)"
+      },
+      {
+        "var": "e:x0pumnhm",
+        "unit": "p.u.",
+        "desc": "x0(HV-MV) (min. tap)"
+      },
+      {
+        "var": "e:x0pumnml",
+        "unit": "p.u.",
+        "desc": "x0(MV-LV) (min. tap)"
+      },
+      {
+        "var": "e:x0pumnhl",
+        "unit": "p.u.",
+        "desc": "x0(LV-HV) (min. tap)"
+      },
+      {
+        "var": "e:xtr0mxhm",
+        "unit": "",
+        "desc": "X0/R0 (HV-MV)(max. tap)"
+      },
+      {
+        "var": "e:xtr0mxml",
+        "unit": "",
+        "desc": "X0/R0 (MV-LV)(max. tap)"
+      },
+      {
+        "var": "e:xtr0mxhl",
+        "unit": "",
+        "desc": "X0/R0 (LV-HV)(max. tap)"
+      },
+      {
+        "var": "e:r0pumxhm",
+        "unit": "p.u.",
+        "desc": "r0(HV-MV) (max. tap)"
+      },
+      {
+        "var": "e:r0pumxml",
+        "unit": "p.u.",
+        "desc": "r0(MV-LV) (max. tap)"
+      },
+      {
+        "var": "e:r0pumxhl",
+        "unit": "p.u.",
+        "desc": "r0(LV-HV) (max. tap)"
+      },
+      {
+        "var": "e:x0pumxhm",
+        "unit": "p.u.",
+        "desc": "x0(HV-MV) (max. tap)"
+      },
+      {
+        "var": "e:x0pumxml",
+        "unit": "p.u.",
+        "desc": "x0(MV-LV) (max. tap)"
+      },
+      {
+        "var": "e:x0pumxhl",
+        "unit": "p.u.",
+        "desc": "x0(LV-HV) (max. tap)"
+      },
+      {
+        "var": "e:vecgrp",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:aFrolich",
+        "unit": "",
+        "desc": "Frolich equation coefficient a"
+      },
+      {
+        "var": "e:bFrolich",
+        "unit": "",
+        "desc": "Frolich equation coefficient b"
+      },
+      {
+        "var": "e:cFrolich",
+        "unit": "",
+        "desc": "Frolich equation coefficient c"
+      },
+      {
+        "var": "e:xsatFrolich",
+        "unit": "",
+        "desc": "Frolich equation saturated reactance (p.u.)"
+      },
+      {
+        "var": "e:mseFrolich",
+        "unit": "",
+        "desc": "Frolich equation, mean squared error"
+      },
+      {
+        "var": "e:pT_h",
+        "unit": "",
+        "desc": "Voltage Range"
+      },
+      {
+        "var": "e:pT_m",
+        "unit": "",
+        "desc": "Voltage Range"
+      },
+      {
+        "var": "e:pT_l",
+        "unit": "",
+        "desc": "Voltage Range"
+      }
+    ]
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "result_vars": {},
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:manuf",
+        "unit": "",
+        "desc": "Manufacturer"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:xy_e",
+        "unit": "m",
+        "desc": "Coordinates Earth Wires"
+      },
+      {
+        "var": "e:typemetadata_version",
+        "unit": "",
+        "desc": "Version"
+      },
+      {
+        "var": "e:typemetadata_key",
+        "unit": "",
+        "desc": "Type Key"
+      },
+      {
+        "var": "e:typemetadata_changeLog",
+        "unit": "",
+        "desc": "Change Log"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:desc_c",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:doc_id",
+        "unit": "",
+        "desc": "Additional Data"
+      },
+      {
+        "var": "e:nlcir",
+        "unit": "",
+        "desc": "Number of Line Circuits"
+      },
+      {
+        "var": "e:nlear",
+        "unit": "",
+        "desc": "Number of Earth Wires"
+      },
+      {
+        "var": "e:nphas",
+        "unit": "",
+        "desc": "Num. of Phases"
+      },
+      {
+        "var": "e:xy_cc",
+        "unit": "m",
+        "desc": "Coordinates of Line Circuits"
+      }
+    ]
+  }
+}

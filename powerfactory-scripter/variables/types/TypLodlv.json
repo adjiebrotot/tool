@@ -1,0 +1,137 @@
+{
+  "result_vars": {},
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:manuf",
+        "unit": "",
+        "desc": "Manufacturer"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:iLodTyp",
+        "unit": "",
+        "desc": "Load model"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:Smax",
+        "unit": "kVA",
+        "desc": "Max. Load per Customer"
+      },
+      {
+        "var": "e:cosphi",
+        "unit": "",
+        "desc": "Power Factor"
+      },
+      {
+        "var": "e:ginf",
+        "unit": "",
+        "desc": "Coincidence Factor ginf"
+      },
+      {
+        "var": "e:aP",
+        "unit": "",
+        "desc": "Coefficient aP"
+      },
+      {
+        "var": "e:bP",
+        "unit": "",
+        "desc": "Coefficient bP"
+      },
+      {
+        "var": "e:aQ",
+        "unit": "",
+        "desc": "Coefficient aQ"
+      },
+      {
+        "var": "e:bQ",
+        "unit": "",
+        "desc": "Coefficient bQ"
+      },
+      {
+        "var": "e:eP",
+        "unit": "",
+        "desc": "Exponent eP"
+      },
+      {
+        "var": "e:eQ",
+        "unit": "",
+        "desc": "Exponent eQ"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:typemetadata_version",
+        "unit": "",
+        "desc": "Version"
+      },
+      {
+        "var": "e:typemetadata_key",
+        "unit": "",
+        "desc": "Type Key"
+      },
+      {
+        "var": "e:typemetadata_changeLog",
+        "unit": "",
+        "desc": "Change Log"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:pCoincDef",
+        "unit": "IntCoincdef",
+        "desc": "Coincidence definition"
+      },
+      {
+        "var": "e:doc_id",
+        "unit": "",
+        "desc": "Additional Data"
+      },
+      {
+        "var": "e:cP",
+        "unit": "",
+        "desc": "Coefficient cP"
+      },
+      {
+        "var": "e:cQ",
+        "unit": "",
+        "desc": "Coefficient cQ"
+      }
+    ]
+  }
+}

@@ -1,0 +1,2052 @@
+{
+  "result_vars": {},
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:trcon_h0",
+        "unit": "",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:trcon_l1",
+        "unit": "",
+        "desc": "LV1-Side"
+      },
+      {
+        "var": "e:trcon_l2",
+        "unit": "",
+        "desc": "LV2-Side"
+      },
+      {
+        "var": "e:trcon_l3",
+        "unit": "",
+        "desc": "LV3-Side"
+      },
+      {
+        "var": "e:ansiclass",
+        "unit": "",
+        "desc": "Class"
+      },
+      {
+        "var": "e:manuf",
+        "unit": "",
+        "desc": "Manufacturer"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:ntapmin_h0",
+        "unit": "",
+        "desc": "Min. Position"
+      },
+      {
+        "var": "e:ntapmin_l1",
+        "unit": "",
+        "desc": "Min. Position"
+      },
+      {
+        "var": "e:ntapmin_l2",
+        "unit": "",
+        "desc": "Min. Position"
+      },
+      {
+        "var": "e:ntapmin_l3",
+        "unit": "",
+        "desc": "Min. Position"
+      },
+      {
+        "var": "e:ntapmax_h0",
+        "unit": "",
+        "desc": "Max. Position"
+      },
+      {
+        "var": "e:ntapmax_l1",
+        "unit": "",
+        "desc": "Max. Position"
+      },
+      {
+        "var": "e:ntapmax_l2",
+        "unit": "",
+        "desc": "Max. Position"
+      },
+      {
+        "var": "e:ntapmax_l3",
+        "unit": "",
+        "desc": "Max. Position"
+      },
+      {
+        "var": "e:ntapneu_h0",
+        "unit": "",
+        "desc": "Neutral Position"
+      },
+      {
+        "var": "e:ntapneu_l1",
+        "unit": "",
+        "desc": "Neutral Position"
+      },
+      {
+        "var": "e:ntapneu_l2",
+        "unit": "",
+        "desc": "Neutral Position"
+      },
+      {
+        "var": "e:ntapneu_l3",
+        "unit": "",
+        "desc": "Neutral Position"
+      },
+      {
+        "var": "e:i_auto",
+        "unit": "",
+        "desc": "Autotransformer"
+      },
+      {
+        "var": "e:imagloc",
+        "unit": "",
+        "desc": "Position"
+      },
+      {
+        "var": "e:itrmt",
+        "unit": "",
+        "desc": "Type"
+      },
+      {
+        "var": "e:itrtype",
+        "unit": "",
+        "desc": "Transformer Type"
+      },
+      {
+        "var": "e:iTapLoading",
+        "unit": "",
+        "desc": "Configuration"
+      },
+      {
+        "var": "e:oltc_h0",
+        "unit": "",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:oltc_l1",
+        "unit": "",
+        "desc": "LV1-Side"
+      },
+      {
+        "var": "e:oltc_l2",
+        "unit": "",
+        "desc": "LV2-Side"
+      },
+      {
+        "var": "e:oltc_l3",
+        "unit": "",
+        "desc": "LV3-Side"
+      },
+      {
+        "var": "e:useKt",
+        "unit": "",
+        "desc": "Use impedance correction factors"
+      },
+      {
+        "var": "e:itapzdep",
+        "unit": "",
+        "desc": "Tap dependent impedance"
+      },
+      {
+        "var": "e:itapzside",
+        "unit": "",
+        "desc": "for Tap at"
+      },
+      {
+        "var": "e:inputData",
+        "unit": "",
+        "desc": "Input data"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:itrldf",
+        "unit": "",
+        "desc": "Type"
+      },
+      {
+        "var": "e:iIntPola",
+        "unit": "",
+        "desc": "Interpolation"
+      },
+      {
+        "var": "e:iFinalSlope",
+        "unit": "",
+        "desc": "Set final slope (peak values)"
+      },
+      {
+        "var": "e:ksat",
+        "unit": "",
+        "desc": "Saturation Exponent"
+      },
+      {
+        "var": "e:iLimb",
+        "unit": "",
+        "desc": "Core"
+      },
+      {
+        "var": "e:iInterPol",
+        "unit": "",
+        "desc": "Interpolation"
+      },
+      {
+        "var": "e:iFit",
+        "unit": "",
+        "desc": "Data fitting"
+      },
+      {
+        "var": "e:iHyster",
+        "unit": "",
+        "desc": "Model"
+      },
+      {
+        "var": "e:sn_h0",
+        "unit": "MVA",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:sn_l1",
+        "unit": "MVA",
+        "desc": "LV1-Side"
+      },
+      {
+        "var": "e:sn_l2",
+        "unit": "MVA",
+        "desc": "LV2-Side"
+      },
+      {
+        "var": "e:sn_l3",
+        "unit": "MVA",
+        "desc": "LV3-Side"
+      },
+      {
+        "var": "e:un_h0",
+        "unit": "kV",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:un_l1",
+        "unit": "kV",
+        "desc": "LV1-Side"
+      },
+      {
+        "var": "e:un_l2",
+        "unit": "kV",
+        "desc": "LV2-Side"
+      },
+      {
+        "var": "e:un_l3",
+        "unit": "kV",
+        "desc": "LV3-Side"
+      },
+      {
+        "var": "e:uk_h0l1",
+        "unit": "%",
+        "desc": "HV-LV1"
+      },
+      {
+        "var": "e:uk_h0l2",
+        "unit": "%",
+        "desc": "HV-LV2"
+      },
+      {
+        "var": "e:uk_h0l3",
+        "unit": "%",
+        "desc": "HV-LV3"
+      },
+      {
+        "var": "e:uk_l1l2",
+        "unit": "%",
+        "desc": "LV1-LV2"
+      },
+      {
+        "var": "e:uk_l1l3",
+        "unit": "%",
+        "desc": "LV1-LV3"
+      },
+      {
+        "var": "e:uk_l2l3",
+        "unit": "%",
+        "desc": "LV2-LV3"
+      },
+      {
+        "var": "e:pcu_h0l1",
+        "unit": "kW",
+        "desc": "HV-LV1"
+      },
+      {
+        "var": "e:pcu_h0l2",
+        "unit": "kW",
+        "desc": "HV-LV2"
+      },
+      {
+        "var": "e:pcu_h0l3",
+        "unit": "kW",
+        "desc": "HV-LV3"
+      },
+      {
+        "var": "e:pcu_l1l2",
+        "unit": "kW",
+        "desc": "LV1-LV2"
+      },
+      {
+        "var": "e:pcu_l1l3",
+        "unit": "kW",
+        "desc": "LV1-LV3"
+      },
+      {
+        "var": "e:pcu_l2l3",
+        "unit": "kW",
+        "desc": "LV2-LV3"
+      },
+      {
+        "var": "e:uk_h0",
+        "unit": "%",
+        "desc": "HV"
+      },
+      {
+        "var": "e:uk_l1",
+        "unit": "%",
+        "desc": "LV1"
+      },
+      {
+        "var": "e:uk_l2",
+        "unit": "%",
+        "desc": "LV2"
+      },
+      {
+        "var": "e:uk_l3",
+        "unit": "%",
+        "desc": "LV3"
+      },
+      {
+        "var": "e:pcu_h0",
+        "unit": "kW",
+        "desc": "HV"
+      },
+      {
+        "var": "e:pcu_l1",
+        "unit": "kW",
+        "desc": "LV1"
+      },
+      {
+        "var": "e:pcu_l2",
+        "unit": "kW",
+        "desc": "LV2"
+      },
+      {
+        "var": "e:pcu_l3",
+        "unit": "kW",
+        "desc": "LV3"
+      },
+      {
+        "var": "e:curmag",
+        "unit": "%",
+        "desc": "No Load Current"
+      },
+      {
+        "var": "e:cur0mag",
+        "unit": "%",
+        "desc": "No Load Current"
+      },
+      {
+        "var": "e:dutap_h0",
+        "unit": "%",
+        "desc": "Add. voltage per tap"
+      },
+      {
+        "var": "e:dutap_l1",
+        "unit": "%",
+        "desc": "Add. voltage per tap"
+      },
+      {
+        "var": "e:dutap_l2",
+        "unit": "%",
+        "desc": "Add. voltage per tap"
+      },
+      {
+        "var": "e:dutap_l3",
+        "unit": "%",
+        "desc": "Add. voltage per tap"
+      },
+      {
+        "var": "e:phitr_h0",
+        "unit": "deg",
+        "desc": "Phase of du"
+      },
+      {
+        "var": "e:phitr_l1",
+        "unit": "deg",
+        "desc": "Phase of du"
+      },
+      {
+        "var": "e:phitr_l2",
+        "unit": "deg",
+        "desc": "Phase of du"
+      },
+      {
+        "var": "e:phitr_l3",
+        "unit": "deg",
+        "desc": "Phase of du"
+      },
+      {
+        "var": "e:uk0_h0l1",
+        "unit": "%",
+        "desc": "HV-LV1"
+      },
+      {
+        "var": "e:uk0_h0l2",
+        "unit": "%",
+        "desc": "HV-LV2"
+      },
+      {
+        "var": "e:uk0_h0l3",
+        "unit": "%",
+        "desc": "HV-LV3"
+      },
+      {
+        "var": "e:uk0_l1l2",
+        "unit": "%",
+        "desc": "LV1-LV2"
+      },
+      {
+        "var": "e:uk0_l1l3",
+        "unit": "%",
+        "desc": "LV1-LV3"
+      },
+      {
+        "var": "e:uk0_l2l3",
+        "unit": "%",
+        "desc": "LV2-LV3"
+      },
+      {
+        "var": "e:ukr0_h0l1",
+        "unit": "%",
+        "desc": "HV-LV1"
+      },
+      {
+        "var": "e:ukr0_h0l2",
+        "unit": "%",
+        "desc": "HV-LV2"
+      },
+      {
+        "var": "e:ukr0_h0l3",
+        "unit": "%",
+        "desc": "HV-LV3"
+      },
+      {
+        "var": "e:ukr0_l1l2",
+        "unit": "%",
+        "desc": "LV1-LV2"
+      },
+      {
+        "var": "e:ukr0_l1l3",
+        "unit": "%",
+        "desc": "LV1-LV3"
+      },
+      {
+        "var": "e:ukr0_l2l3",
+        "unit": "%",
+        "desc": "LV2-LV3"
+      },
+      {
+        "var": "e:uk0_h0",
+        "unit": "%",
+        "desc": "HV"
+      },
+      {
+        "var": "e:uk0_l1",
+        "unit": "%",
+        "desc": "LV1"
+      },
+      {
+        "var": "e:uk0_l2",
+        "unit": "%",
+        "desc": "LV2"
+      },
+      {
+        "var": "e:uk0_l3",
+        "unit": "%",
+        "desc": "LV3"
+      },
+      {
+        "var": "e:ukr0_h0",
+        "unit": "%",
+        "desc": "HV"
+      },
+      {
+        "var": "e:ukr0_l1",
+        "unit": "%",
+        "desc": "LV1"
+      },
+      {
+        "var": "e:ukr0_l2",
+        "unit": "%",
+        "desc": "LV2"
+      },
+      {
+        "var": "e:ukr0_l3",
+        "unit": "%",
+        "desc": "LV3"
+      },
+      {
+        "var": "e:trangle_h0",
+        "unit": "*30deg",
+        "desc": "Phase Shift"
+      },
+      {
+        "var": "e:trangle_l1",
+        "unit": "*30deg",
+        "desc": "Phase Shift"
+      },
+      {
+        "var": "e:trangle_l2",
+        "unit": "*30deg",
+        "desc": "Phase Shift"
+      },
+      {
+        "var": "e:trangle_l3",
+        "unit": "*30deg",
+        "desc": "Phase Shift"
+      },
+      {
+        "var": "e:pict3",
+        "unit": "p.u.",
+        "desc": "Ratio Ip/In (1)"
+      },
+      {
+        "var": "e:pitt3",
+        "unit": "s",
+        "desc": "Max. Time (1)"
+      },
+      {
+        "var": "e:pict4",
+        "unit": "p.u.",
+        "desc": "Ratio Ip/In (2)"
+      },
+      {
+        "var": "e:pitt4",
+        "unit": "s",
+        "desc": "Max. Time (2)"
+      },
+      {
+        "var": "e:pfe",
+        "unit": "kW",
+        "desc": "No Load Losses"
+      },
+      {
+        "var": "e:rtox0_n",
+        "unit": "",
+        "desc": "Mag. R/X"
+      },
+      {
+        "var": "e:snfc_h",
+        "unit": "MVA",
+        "desc": "HV-Side"
+      },
+      {
+        "var": "e:snfc_m",
+        "unit": "MVA",
+        "desc": "MV-Side"
+      },
+      {
+        "var": "e:snfc_l",
+        "unit": "MVA",
+        "desc": "LV-Side"
+      },
+      {
+        "var": "e:uktapmin_h0l1",
+        "unit": "%",
+        "desc": "uk(HV-LV1)(min. tap)"
+      },
+      {
+        "var": "e:uktapmin_h0l2",
+        "unit": "%",
+        "desc": "uk(HV-LV2)(min. tap)"
+      },
+      {
+        "var": "e:uktapmin_h0l3",
+        "unit": "%",
+        "desc": "uk(HV-LV3)(min. tap)"
+      },
+      {
+        "var": "e:uktapmin_l1l2",
+        "unit": "%",
+        "desc": "uk(LV1-LV2)(min. tap)"
+      },
+      {
+        "var": "e:uktapmin_l1l3",
+        "unit": "%",
+        "desc": "uk(LV1-LV3)(min. tap)"
+      },
+      {
+        "var": "e:uktapmin_l2l3",
+        "unit": "%",
+        "desc": "uk(LV2-LV3)(min. tap)"
+      },
+      {
+        "var": "e:pcutapmin_h0l1",
+        "unit": "kW",
+        "desc": "Pcu(HV-LV1)(min. tap)"
+      },
+      {
+        "var": "e:pcutapmin_h0l2",
+        "unit": "kW",
+        "desc": "Pcu(HV-LV2)(min. tap)"
+      },
+      {
+        "var": "e:pcutapmin_h0l3",
+        "unit": "kW",
+        "desc": "Pcu(HV-LV3)(min. tap)"
+      },
+      {
+        "var": "e:pcutapmin_l1l2",
+        "unit": "kW",
+        "desc": "Pcu(LV1-LV2)(min. tap)"
+      },
+      {
+        "var": "e:pcutapmin_l1l3",
+        "unit": "kW",
+        "desc": "Pcu(LV1-LV3)(min. tap)"
+      },
+      {
+        "var": "e:pcutapmin_l2l3",
+        "unit": "kW",
+        "desc": "Pcu(LV2-LV3)(min. tap)"
+      },
+      {
+        "var": "e:uktapmax_h0l1",
+        "unit": "%",
+        "desc": "uk(HV-LV1)(max. tap)"
+      },
+      {
+        "var": "e:uktapmax_h0l2",
+        "unit": "%",
+        "desc": "uk(HV-LV2)(max. tap)"
+      },
+      {
+        "var": "e:uktapmax_h0l3",
+        "unit": "%",
+        "desc": "uk(HV-LV3)(max. tap)"
+      },
+      {
+        "var": "e:uktapmax_l1l2",
+        "unit": "%",
+        "desc": "uk(LV1-LV2)(max. tap)"
+      },
+      {
+        "var": "e:uktapmax_l1l3",
+        "unit": "%",
+        "desc": "uk(LV1-LV3)(max. tap)"
+      },
+      {
+        "var": "e:uktapmax_l2l3",
+        "unit": "%",
+        "desc": "uk(LV2-LV3)(max. tap)"
+      },
+      {
+        "var": "e:pcutapmax_h0l1",
+        "unit": "kW",
+        "desc": "Pcu(HV-LV1)(max. tap)"
+      },
+      {
+        "var": "e:pcutapmax_h0l2",
+        "unit": "kW",
+        "desc": "Pcu(HV-LV2)(max. tap)"
+      },
+      {
+        "var": "e:pcutapmax_h0l3",
+        "unit": "kW",
+        "desc": "Pcu(HV-LV3)(max. tap)"
+      },
+      {
+        "var": "e:pcutapmax_l1l2",
+        "unit": "kW",
+        "desc": "Pcu(LV1-LV2)(max. tap)"
+      },
+      {
+        "var": "e:pcutapmax_l1l3",
+        "unit": "kW",
+        "desc": "Pcu(LV1-LV3)(max. tap)"
+      },
+      {
+        "var": "e:pcutapmax_l2l3",
+        "unit": "kW",
+        "desc": "Pcu(LV2-LV3)(max. tap)"
+      },
+      {
+        "var": "e:uk0tapmin_h0l1",
+        "unit": "%",
+        "desc": "uk01(HV-LV1)(min. tap)"
+      },
+      {
+        "var": "e:uk0tapmin_h0l2",
+        "unit": "%",
+        "desc": "uk01(HV-LV2)(min. tap)"
+      },
+      {
+        "var": "e:uk0tapmin_h0l3",
+        "unit": "%",
+        "desc": "uk01(HV-LV3)(min. tap)"
+      },
+      {
+        "var": "e:uk0tapmin_l1l2",
+        "unit": "%",
+        "desc": "uk0(LV1-LV2)(min. tap)"
+      },
+      {
+        "var": "e:uk0tapmin_l1l3",
+        "unit": "%",
+        "desc": "uk0(LV1-LV3)(min. tap)"
+      },
+      {
+        "var": "e:uk0tapmin_l2l3",
+        "unit": "%",
+        "desc": "uk0(LV2-LV3)(min. tap)"
+      },
+      {
+        "var": "e:ukr0tapmin_h0l1",
+        "unit": "%",
+        "desc": "Re(uk0)(HV-LV1)(min. tap)"
+      },
+      {
+        "var": "e:ukr0tapmin_h0l2",
+        "unit": "%",
+        "desc": "Re(uk0)(HV-LV2)(min. tap)"
+      },
+      {
+        "var": "e:ukr0tapmin_h0l3",
+        "unit": "%",
+        "desc": "Re(uk0)(HV-LV3)(min. tap)"
+      },
+      {
+        "var": "e:ukr0tapmin_l1l2",
+        "unit": "%",
+        "desc": "Re(uk0)(LV1-LV2)(min. tap)"
+      },
+      {
+        "var": "e:ukr0tapmin_l1l3",
+        "unit": "%",
+        "desc": "Re(uk0)(LV1-LV3)(min. tap)"
+      },
+      {
+        "var": "e:ukr0tapmin_l2l3",
+        "unit": "%",
+        "desc": "Re(uk0)(LV2-LV3)(min. tap)"
+      },
+      {
+        "var": "e:uk0tapmax_h0l1",
+        "unit": "%",
+        "desc": "uk0(HV-LV1)(max. tap)"
+      },
+      {
+        "var": "e:uk0tapmax_h0l2",
+        "unit": "%",
+        "desc": "uk0(HV-LV2)(max. tap)"
+      },
+      {
+        "var": "e:uk0tapmax_h0l3",
+        "unit": "%",
+        "desc": "uk0(HV-LV3)(max. tap)"
+      },
+      {
+        "var": "e:uk0tapmax_l1l2",
+        "unit": "%",
+        "desc": "uk0(LV1-LV2)(max. tap)"
+      },
+      {
+        "var": "e:uk0tapmax_l1l3",
+        "unit": "%",
+        "desc": "uk0(LV1-LV3)(max. tap)"
+      },
+      {
+        "var": "e:uk0tapmax_l2l3",
+        "unit": "%",
+        "desc": "uk0(LV2-LV3)(max. tap)"
+      },
+      {
+        "var": "e:ukr0tapmax_h0l1",
+        "unit": "%",
+        "desc": "Re(uk0)(HV-LV1)(max. tap)"
+      },
+      {
+        "var": "e:ukr0tapmax_h0l2",
+        "unit": "%",
+        "desc": "Re(uk0)(HV-LV2)(max. tap)"
+      },
+      {
+        "var": "e:ukr0tapmax_h0l3",
+        "unit": "%",
+        "desc": "Re(uk0)(HV-LV3)(max. tap)"
+      },
+      {
+        "var": "e:ukr0tapmax_l1l2",
+        "unit": "%",
+        "desc": "Re(uk0)(LV1-LV2)(max. tap)"
+      },
+      {
+        "var": "e:ukr0tapmax_l1l3",
+        "unit": "%",
+        "desc": "Re(uk0)(LV1-LV3)(max. tap)"
+      },
+      {
+        "var": "e:ukr0tapmax_l2l3",
+        "unit": "%",
+        "desc": "Re(uk0)(LV2-LV3)(max. tap)"
+      },
+      {
+        "var": "e:smoothf",
+        "unit": "%",
+        "desc": "Smoothing Factor"
+      },
+      {
+        "var": "e:psi0",
+        "unit": "p.u.",
+        "desc": "Knee Flux"
+      },
+      {
+        "var": "e:x4lin",
+        "unit": "p.u.",
+        "desc": "Linear Reactance"
+      },
+      {
+        "var": "e:x4air",
+        "unit": "p.u.",
+        "desc": "Saturated Reactance"
+      },
+      {
+        "var": "e:smoothfac",
+        "unit": "%",
+        "desc": "Smoothing Factor"
+      },
+      {
+        "var": "e:Lwidth",
+        "unit": "%",
+        "desc": "Loop width"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:satcue",
+        "unit": "%",
+        "desc": "Current (RMS)"
+      },
+      {
+        "var": "e:satvol",
+        "unit": "p.u.",
+        "desc": "Voltage (RMS)"
+      },
+      {
+        "var": "e:satcur",
+        "unit": "p.u.",
+        "desc": "Current (peak)"
+      },
+      {
+        "var": "e:satflux",
+        "unit": "p.u.",
+        "desc": "Flux (peak)"
+      },
+      {
+        "var": "e:typemetadata_version",
+        "unit": "",
+        "desc": "Version"
+      },
+      {
+        "var": "e:typemetadata_key",
+        "unit": "",
+        "desc": "Type Key"
+      },
+      {
+        "var": "e:typemetadata_changeLog",
+        "unit": "",
+        "desc": "Change Log"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:doc_id",
+        "unit": "",
+        "desc": "Additional Data"
+      },
+      {
+        "var": "e:pStoch",
+        "unit": "StoTyptrf",
+        "desc": "Stochastic model"
+      },
+      {
+        "var": "e:fcharl1_h0l1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) HV-LV1"
+      },
+      {
+        "var": "e:fcharr1_h0l1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) HV-LV1"
+      },
+      {
+        "var": "e:fcharl0_h0l1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) HV-LV1"
+      },
+      {
+        "var": "e:fcharr0_h0l1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) HV-LV1"
+      },
+      {
+        "var": "e:fcharl1_h0l2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) HV-LV2"
+      },
+      {
+        "var": "e:fcharr1_h0l2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) HV-LV2"
+      },
+      {
+        "var": "e:fcharl0_h0l2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) HV-LV2"
+      },
+      {
+        "var": "e:fcharr0_h0l2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) HV-LV2"
+      },
+      {
+        "var": "e:fcharl1_h0l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) HV-LV3"
+      },
+      {
+        "var": "e:fcharr1_h0l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) HV-LV3"
+      },
+      {
+        "var": "e:fcharl0_h0l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) HV-LV3"
+      },
+      {
+        "var": "e:fcharr0_h0l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) HV-LV3"
+      },
+      {
+        "var": "e:fcharl1_l1l2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) LV1-LV2"
+      },
+      {
+        "var": "e:fcharr1_l1l2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) LV1-LV2"
+      },
+      {
+        "var": "e:fcharl0_l1l2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) LV1-LV2"
+      },
+      {
+        "var": "e:fcharr0_l1l2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) LV1-LV2"
+      },
+      {
+        "var": "e:fcharl1_l1l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) LV1-LV3"
+      },
+      {
+        "var": "e:fcharr1_l1l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) LV1-LV3"
+      },
+      {
+        "var": "e:fcharl0_l1l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) LV1-LV3"
+      },
+      {
+        "var": "e:fcharr0_l1l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) LV1-LV3"
+      },
+      {
+        "var": "e:fcharl1_l2l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) LV2-LV3"
+      },
+      {
+        "var": "e:fcharr1_l2l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) LV2-LV3"
+      },
+      {
+        "var": "e:fcharl0_l2l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) LV2-LV3"
+      },
+      {
+        "var": "e:fcharr0_l2l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) LV2-LV3"
+      },
+      {
+        "var": "e:fcharl1_h0",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) HV"
+      },
+      {
+        "var": "e:fcharr1_h0",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) HV"
+      },
+      {
+        "var": "e:fcharl0_h0",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) HV"
+      },
+      {
+        "var": "e:fcharr0_h0",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) HV"
+      },
+      {
+        "var": "e:fcharl1_l1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) LV1"
+      },
+      {
+        "var": "e:fcharr1_l1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) LV1"
+      },
+      {
+        "var": "e:fcharl0_l1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) LV1"
+      },
+      {
+        "var": "e:fcharr0_l1",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) LV1"
+      },
+      {
+        "var": "e:fcharl1_l2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) LV2"
+      },
+      {
+        "var": "e:fcharr1_l2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) LV2"
+      },
+      {
+        "var": "e:fcharl0_l2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) LV2"
+      },
+      {
+        "var": "e:fcharr0_l2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) LV2"
+      },
+      {
+        "var": "e:fcharl1_l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l1(f) LV3"
+      },
+      {
+        "var": "e:fcharr1_l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r1(f) LV3"
+      },
+      {
+        "var": "e:fcharl0_l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f) LV3"
+      },
+      {
+        "var": "e:fcharr0_l3",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f) LV3"
+      },
+      {
+        "var": "e:fcharbm",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "1/lm(f)"
+      },
+      {
+        "var": "e:fchargm",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "gm(f)"
+      },
+      {
+        "var": "e:ukr_h0l1",
+        "unit": "%",
+        "desc": "HV-LV1"
+      },
+      {
+        "var": "e:ukr_h0l2",
+        "unit": "%",
+        "desc": "HV-LV2"
+      },
+      {
+        "var": "e:ukr_h0l3",
+        "unit": "%",
+        "desc": "HV-LV3"
+      },
+      {
+        "var": "e:ukr_l1l2",
+        "unit": "%",
+        "desc": "LV1-LV2"
+      },
+      {
+        "var": "e:ukr_l1l3",
+        "unit": "%",
+        "desc": "LV1-LV3"
+      },
+      {
+        "var": "e:ukr_l2l3",
+        "unit": "%",
+        "desc": "LV2-LV3"
+      },
+      {
+        "var": "e:xtor_h0l1",
+        "unit": "",
+        "desc": "HV-LV1"
+      },
+      {
+        "var": "e:xtor_h0l2",
+        "unit": "",
+        "desc": "HV-LV2"
+      },
+      {
+        "var": "e:xtor_h0l3",
+        "unit": "",
+        "desc": "HV-LV3"
+      },
+      {
+        "var": "e:xtor_l1l2",
+        "unit": "",
+        "desc": "LV1-LV2"
+      },
+      {
+        "var": "e:xtor_l1l3",
+        "unit": "",
+        "desc": "LV1-LV3"
+      },
+      {
+        "var": "e:xtor_l2l3",
+        "unit": "",
+        "desc": "LV2-LV3"
+      },
+      {
+        "var": "e:r1pu_h0l1",
+        "unit": "p.u.",
+        "desc": "HV-LV1"
+      },
+      {
+        "var": "e:r1pu_h0l2",
+        "unit": "p.u.",
+        "desc": "HV-LV2"
+      },
+      {
+        "var": "e:r1pu_h0l3",
+        "unit": "p.u.",
+        "desc": "HV-LV3"
+      },
+      {
+        "var": "e:r1pu_l1l2",
+        "unit": "p.u.",
+        "desc": "LV1-LV2"
+      },
+      {
+        "var": "e:r1pu_l1l3",
+        "unit": "p.u.",
+        "desc": "LV1-LV3"
+      },
+      {
+        "var": "e:r1pu_l2l3",
+        "unit": "p.u.",
+        "desc": "LV2-LV3"
+      },
+      {
+        "var": "e:x1pu_h0l1",
+        "unit": "p.u.",
+        "desc": "HV-LV1"
+      },
+      {
+        "var": "e:x1pu_h0l2",
+        "unit": "p.u.",
+        "desc": "HV-LV2"
+      },
+      {
+        "var": "e:x1pu_h0l3",
+        "unit": "p.u.",
+        "desc": "HV-LV3"
+      },
+      {
+        "var": "e:x1pu_l1l2",
+        "unit": "p.u.",
+        "desc": "LV1-LV2"
+      },
+      {
+        "var": "e:x1pu_l1l3",
+        "unit": "p.u.",
+        "desc": "LV1-LV3"
+      },
+      {
+        "var": "e:x1pu_l2l3",
+        "unit": "p.u.",
+        "desc": "LV2-LV3"
+      },
+      {
+        "var": "e:l1pu_h0l1",
+        "unit": "p.u.",
+        "desc": "Inductance l1, HV-LV1"
+      },
+      {
+        "var": "e:l1pu_h0l2",
+        "unit": "p.u.",
+        "desc": "Inductance l1, HV-LV2"
+      },
+      {
+        "var": "e:l1pu_h0l3",
+        "unit": "p.u.",
+        "desc": "Inductance l1, HV-LV3"
+      },
+      {
+        "var": "e:l1pu_l1l2",
+        "unit": "p.u.",
+        "desc": "Inductance l1, LV1-LV2"
+      },
+      {
+        "var": "e:l1pu_l1l3",
+        "unit": "p.u.",
+        "desc": "Inductance l1, LV1-LV3"
+      },
+      {
+        "var": "e:l1pu_l2l3",
+        "unit": "p.u.",
+        "desc": "Inductance l1, LV2-LV3"
+      },
+      {
+        "var": "e:ukr_h0",
+        "unit": "%",
+        "desc": "HV"
+      },
+      {
+        "var": "e:ukr_l1",
+        "unit": "%",
+        "desc": "LV1"
+      },
+      {
+        "var": "e:ukr_l2",
+        "unit": "%",
+        "desc": "LV2"
+      },
+      {
+        "var": "e:ukr_l3",
+        "unit": "%",
+        "desc": "LV3"
+      },
+      {
+        "var": "e:xtor_h0",
+        "unit": "",
+        "desc": "HV"
+      },
+      {
+        "var": "e:xtor_l1",
+        "unit": "",
+        "desc": "LV1"
+      },
+      {
+        "var": "e:xtor_l2",
+        "unit": "",
+        "desc": "LV2"
+      },
+      {
+        "var": "e:xtor_l3",
+        "unit": "",
+        "desc": "LV3"
+      },
+      {
+        "var": "e:r1pu_h0",
+        "unit": "p.u.",
+        "desc": "HV"
+      },
+      {
+        "var": "e:r1pu_l1",
+        "unit": "p.u.",
+        "desc": "LV1"
+      },
+      {
+        "var": "e:r1pu_l2",
+        "unit": "p.u.",
+        "desc": "LV2"
+      },
+      {
+        "var": "e:r1pu_l3",
+        "unit": "p.u.",
+        "desc": "LV3"
+      },
+      {
+        "var": "e:x1pu_h0",
+        "unit": "p.u.",
+        "desc": "HV"
+      },
+      {
+        "var": "e:x1pu_l1",
+        "unit": "p.u.",
+        "desc": "LV1"
+      },
+      {
+        "var": "e:x1pu_l2",
+        "unit": "p.u.",
+        "desc": "LV2"
+      },
+      {
+        "var": "e:x1pu_l3",
+        "unit": "p.u.",
+        "desc": "LV3"
+      },
+      {
+        "var": "e:l1pu_h0",
+        "unit": "p.u.",
+        "desc": "Inductance l1, HV"
+      },
+      {
+        "var": "e:l1pu_l1",
+        "unit": "p.u.",
+        "desc": "Inductance l1, LV1"
+      },
+      {
+        "var": "e:l1pu_l2",
+        "unit": "p.u.",
+        "desc": "Inductance l1, LV2"
+      },
+      {
+        "var": "e:l1pu_l3",
+        "unit": "p.u.",
+        "desc": "Inductance l1, LV3"
+      },
+      {
+        "var": "e:bm1",
+        "unit": "p.u.",
+        "desc": "1/lm"
+      },
+      {
+        "var": "e:xtor0_h0l1",
+        "unit": "",
+        "desc": "HV-LV1"
+      },
+      {
+        "var": "e:xtor0_h0l2",
+        "unit": "",
+        "desc": "HV-LV2"
+      },
+      {
+        "var": "e:xtor0_h0l3",
+        "unit": "",
+        "desc": "HV-LV3"
+      },
+      {
+        "var": "e:xtor0_l1l2",
+        "unit": "",
+        "desc": "LV1-LV2"
+      },
+      {
+        "var": "e:xtor0_l1l3",
+        "unit": "",
+        "desc": "LV1-LV3"
+      },
+      {
+        "var": "e:xtor0_l2l3",
+        "unit": "",
+        "desc": "LV2-LV3"
+      },
+      {
+        "var": "e:r0pu_h0l1",
+        "unit": "p.u.",
+        "desc": "HV-LV1"
+      },
+      {
+        "var": "e:r0pu_h0l2",
+        "unit": "p.u.",
+        "desc": "HV-LV2"
+      },
+      {
+        "var": "e:r0pu_h0l3",
+        "unit": "p.u.",
+        "desc": "HV-LV3"
+      },
+      {
+        "var": "e:r0pu_l1l2",
+        "unit": "p.u.",
+        "desc": "LV1-LV2"
+      },
+      {
+        "var": "e:r0pu_l1l3",
+        "unit": "p.u.",
+        "desc": "LV1-LV3"
+      },
+      {
+        "var": "e:r0pu_l2l3",
+        "unit": "p.u.",
+        "desc": "LV2-LV3"
+      },
+      {
+        "var": "e:x0pu_h0l1",
+        "unit": "p.u.",
+        "desc": "HV-LV1"
+      },
+      {
+        "var": "e:x0pu_h0l2",
+        "unit": "p.u.",
+        "desc": "HV-LV2"
+      },
+      {
+        "var": "e:x0pu_h0l3",
+        "unit": "p.u.",
+        "desc": "HV-LV3"
+      },
+      {
+        "var": "e:x0pu_l1l2",
+        "unit": "p.u.",
+        "desc": "LV1-LV2"
+      },
+      {
+        "var": "e:x0pu_l1l3",
+        "unit": "p.u.",
+        "desc": "LV1-LV3"
+      },
+      {
+        "var": "e:x0pu_l2l3",
+        "unit": "p.u.",
+        "desc": "LV2-LV3"
+      },
+      {
+        "var": "e:l0pu_h0l1",
+        "unit": "p.u.",
+        "desc": "Inductance l0, HV-LV1"
+      },
+      {
+        "var": "e:l0pu_h0l2",
+        "unit": "p.u.",
+        "desc": "Inductance l0, HV-LV2"
+      },
+      {
+        "var": "e:l0pu_h0l3",
+        "unit": "p.u.",
+        "desc": "Inductance l0, HV-LV3"
+      },
+      {
+        "var": "e:l0pu_l1l2",
+        "unit": "p.u.",
+        "desc": "Inductance l0, LV1-LV2"
+      },
+      {
+        "var": "e:l0pu_l1l3",
+        "unit": "p.u.",
+        "desc": "Inductance l0, LV1-LV3"
+      },
+      {
+        "var": "e:l0pu_l2l3",
+        "unit": "p.u.",
+        "desc": "Inductance l0, LV2-LV3"
+      },
+      {
+        "var": "e:xtor0_h0",
+        "unit": "",
+        "desc": "HV"
+      },
+      {
+        "var": "e:xtor0_l1",
+        "unit": "",
+        "desc": "LV1"
+      },
+      {
+        "var": "e:xtor0_l2",
+        "unit": "",
+        "desc": "LV2"
+      },
+      {
+        "var": "e:xtor0_l3",
+        "unit": "",
+        "desc": "LV3"
+      },
+      {
+        "var": "e:r0pu_h0",
+        "unit": "p.u.",
+        "desc": "HV"
+      },
+      {
+        "var": "e:r0pu_l1",
+        "unit": "p.u.",
+        "desc": "LV1"
+      },
+      {
+        "var": "e:r0pu_l2",
+        "unit": "p.u.",
+        "desc": "LV2"
+      },
+      {
+        "var": "e:r0pu_l3",
+        "unit": "p.u.",
+        "desc": "LV3"
+      },
+      {
+        "var": "e:x0pu_h0",
+        "unit": "p.u.",
+        "desc": "HV"
+      },
+      {
+        "var": "e:x0pu_l1",
+        "unit": "p.u.",
+        "desc": "LV1"
+      },
+      {
+        "var": "e:x0pu_l2",
+        "unit": "p.u.",
+        "desc": "LV2"
+      },
+      {
+        "var": "e:x0pu_l3",
+        "unit": "p.u.",
+        "desc": "LV3"
+      },
+      {
+        "var": "e:l0pu_h0",
+        "unit": "p.u.",
+        "desc": "Inductance l0, HV"
+      },
+      {
+        "var": "e:l0pu_l1",
+        "unit": "p.u.",
+        "desc": "Inductance l0, LV1"
+      },
+      {
+        "var": "e:l0pu_l2",
+        "unit": "p.u.",
+        "desc": "Inductance l0, LV2"
+      },
+      {
+        "var": "e:l0pu_l3",
+        "unit": "p.u.",
+        "desc": "Inductance l0, LV3"
+      },
+      {
+        "var": "e:gm1",
+        "unit": "p.u.",
+        "desc": "gm"
+      },
+      {
+        "var": "e:ukrtapmin_h0l1",
+        "unit": "%",
+        "desc": "Re(uk)(HV-LV1) (min. tap)"
+      },
+      {
+        "var": "e:ukrtapmin_h0l2",
+        "unit": "%",
+        "desc": "Re(uk)(HV-LV2) (min. tap)"
+      },
+      {
+        "var": "e:ukrtapmin_h0l3",
+        "unit": "%",
+        "desc": "Re(uk)(HV-LV3) (min. tap)"
+      },
+      {
+        "var": "e:ukrtapmin_l1l2",
+        "unit": "%",
+        "desc": "Re(uk)(LV1-LV2) (min. tap)"
+      },
+      {
+        "var": "e:ukrtapmin_l1l3",
+        "unit": "%",
+        "desc": "Re(uk)(LV1-LV3) (min. tap)"
+      },
+      {
+        "var": "e:ukrtapmin_l2l3",
+        "unit": "%",
+        "desc": "Re(uk)(LV2-LV3) (min. tap)"
+      },
+      {
+        "var": "e:xtortapmin_h0l1",
+        "unit": "",
+        "desc": "X/R (HV-LV1)(min. tap)"
+      },
+      {
+        "var": "e:xtortapmin_h0l2",
+        "unit": "",
+        "desc": "X/R (HV-LV2)(min. tap)"
+      },
+      {
+        "var": "e:xtortapmin_h0l3",
+        "unit": "",
+        "desc": "X/R (HV-LV3)(min. tap)"
+      },
+      {
+        "var": "e:xtortapmin_l1l2",
+        "unit": "",
+        "desc": "X/R (LV1-LV2)(min. tap)"
+      },
+      {
+        "var": "e:xtortapmin_l1l3",
+        "unit": "",
+        "desc": "X/R (LV1-LV3)(min. tap)"
+      },
+      {
+        "var": "e:xtortapmin_l2l3",
+        "unit": "",
+        "desc": "X/R (LV2-LV3)(min. tap)"
+      },
+      {
+        "var": "e:r1putapmin_h0l1",
+        "unit": "p.u.",
+        "desc": "r1(HV-LV1) (min. tap)"
+      },
+      {
+        "var": "e:r1putapmin_h0l2",
+        "unit": "p.u.",
+        "desc": "r1(HV-LV2) (min. tap)"
+      },
+      {
+        "var": "e:r1putapmin_h0l3",
+        "unit": "p.u.",
+        "desc": "r1(HV-LV3) (min. tap)"
+      },
+      {
+        "var": "e:r1putapmin_l1l2",
+        "unit": "p.u.",
+        "desc": "r1(LV1-LV2) (min. tap)"
+      },
+      {
+        "var": "e:r1putapmin_l1l3",
+        "unit": "p.u.",
+        "desc": "r1(LV1-LV3) (min. tap)"
+      },
+      {
+        "var": "e:r1putapmin_l2l3",
+        "unit": "p.u.",
+        "desc": "r1(LV2-LV3) (min. tap)"
+      },
+      {
+        "var": "e:x1putapmin_h0l1",
+        "unit": "p.u.",
+        "desc": "x1(HV-LV1)(min. tap)"
+      },
+      {
+        "var": "e:x1putapmin_h0l2",
+        "unit": "p.u.",
+        "desc": "x1(HV-LV2)(min. tap)"
+      },
+      {
+        "var": "e:x1putapmin_h0l3",
+        "unit": "p.u.",
+        "desc": "x1(HV-LV3)(min. tap)"
+      },
+      {
+        "var": "e:x1putapmin_l1l2",
+        "unit": "p.u.",
+        "desc": "x1(LV1-LV2)(min. tap)"
+      },
+      {
+        "var": "e:x1putapmin_l1l3",
+        "unit": "p.u.",
+        "desc": "x1(LV1-LV3)(min. tap)"
+      },
+      {
+        "var": "e:x1putapmin_l2l3",
+        "unit": "p.u.",
+        "desc": "x1(LV2-LV3)(min. tap)"
+      },
+      {
+        "var": "e:ukrtapmax_h0l1",
+        "unit": "%",
+        "desc": "Re(uk)(HV-LV1)(max. tap)"
+      },
+      {
+        "var": "e:ukrtapmax_h0l2",
+        "unit": "%",
+        "desc": "Re(uk)(HV-LV2)(max. tap)"
+      },
+      {
+        "var": "e:ukrtapmax_h0l3",
+        "unit": "%",
+        "desc": "Re(uk)(HV-LV3)(max. tap)"
+      },
+      {
+        "var": "e:ukrtapmax_l1l2",
+        "unit": "%",
+        "desc": "Re(uk)(LV1-LV2)(max. tap)"
+      },
+      {
+        "var": "e:ukrtapmax_l1l3",
+        "unit": "%",
+        "desc": "Re(uk)(LV1-LV3)(max. tap)"
+      },
+      {
+        "var": "e:ukrtapmax_l2l3",
+        "unit": "%",
+        "desc": "Re(uk)(LV2-LV3)(max. tap)"
+      },
+      {
+        "var": "e:xtortapmax_h0l1",
+        "unit": "",
+        "desc": "X/R (HV-LV1)(max. tap)"
+      },
+      {
+        "var": "e:xtortapmax_h0l2",
+        "unit": "",
+        "desc": "X/R (HV-LV2)(max. tap)"
+      },
+      {
+        "var": "e:xtortapmax_h0l3",
+        "unit": "",
+        "desc": "X/R (HV-LV3)(max. tap)"
+      },
+      {
+        "var": "e:xtortapmax_l1l2",
+        "unit": "",
+        "desc": "X/R (LV1-LV2)(max. tap)"
+      },
+      {
+        "var": "e:xtortapmax_l1l3",
+        "unit": "",
+        "desc": "X/R (LV1-LV3)(max. tap)"
+      },
+      {
+        "var": "e:xtortapmax_l2l3",
+        "unit": "",
+        "desc": "X/R (LV2-LV3)(max. tap)"
+      },
+      {
+        "var": "e:r1putapmax_h0l1",
+        "unit": "p.u.",
+        "desc": "r1(HV-LV1) (max. tap)"
+      },
+      {
+        "var": "e:r1putapmax_h0l2",
+        "unit": "p.u.",
+        "desc": "r1(HV-LV2) (max. tap)"
+      },
+      {
+        "var": "e:r1putapmax_h0l3",
+        "unit": "p.u.",
+        "desc": "r1(HV-LV3) (max. tap)"
+      },
+      {
+        "var": "e:r1putapmax_l1l2",
+        "unit": "p.u.",
+        "desc": "r1(LV1-LV2) (max. tap)"
+      },
+      {
+        "var": "e:r1putapmax_l1l3",
+        "unit": "p.u.",
+        "desc": "r1(LV1-LV3) (max. tap)"
+      },
+      {
+        "var": "e:r1putapmax_l2l3",
+        "unit": "p.u.",
+        "desc": "r1(LV2-LV3) (max. tap)"
+      },
+      {
+        "var": "e:x1putapmax_h0l1",
+        "unit": "p.u.",
+        "desc": "x1(HV-LV1)(max. tap)"
+      },
+      {
+        "var": "e:x1putapmax_h0l2",
+        "unit": "p.u.",
+        "desc": "x1(HV-LV2)(max. tap)"
+      },
+      {
+        "var": "e:x1putapmax_h0l3",
+        "unit": "p.u.",
+        "desc": "x1(HV-LV3)(max. tap)"
+      },
+      {
+        "var": "e:x1putapmax_l1l2",
+        "unit": "p.u.",
+        "desc": "x1(LV1-LV2)(max. tap)"
+      },
+      {
+        "var": "e:x1putapmax_l1l3",
+        "unit": "p.u.",
+        "desc": "x1(LV1-LV3)(max. tap)"
+      },
+      {
+        "var": "e:x1putapmax_l2l3",
+        "unit": "p.u.",
+        "desc": "x1(LV2-LV3)(max. tap)"
+      },
+      {
+        "var": "e:xtor0tapmin_h0l1",
+        "unit": "",
+        "desc": "X0/R0 (HV-LV1)(min. tap)"
+      },
+      {
+        "var": "e:xtor0tapmin_h0l2",
+        "unit": "",
+        "desc": "X0/R0 (HV-LV2)(min. tap)"
+      },
+      {
+        "var": "e:xtor0tapmin_h0l3",
+        "unit": "",
+        "desc": "X0/R0 (HV-LV3)(min. tap)"
+      },
+      {
+        "var": "e:xtor0tapmin_l1l2",
+        "unit": "",
+        "desc": "X0/R0 (LV1-LV2)(min. tap)"
+      },
+      {
+        "var": "e:xtor0tapmin_l1l3",
+        "unit": "",
+        "desc": "X0/R0 (LV1-LV3)(min. tap)"
+      },
+      {
+        "var": "e:xtor0tapmin_l2l3",
+        "unit": "",
+        "desc": "X0/R0 (LV2-LV3)(min. tap)"
+      },
+      {
+        "var": "e:r0putapmin_h0l1",
+        "unit": "p.u.",
+        "desc": "r0(HV-LV1) (min. tap)"
+      },
+      {
+        "var": "e:r0putapmin_h0l2",
+        "unit": "p.u.",
+        "desc": "r0(HV-LV2) (min. tap)"
+      },
+      {
+        "var": "e:r0putapmin_h0l3",
+        "unit": "p.u.",
+        "desc": "r0(HV-LV3) (min. tap)"
+      },
+      {
+        "var": "e:r0putapmin_l1l2",
+        "unit": "p.u.",
+        "desc": "r0(LV1-LV2) (min. tap)"
+      },
+      {
+        "var": "e:r0putapmin_l1l3",
+        "unit": "p.u.",
+        "desc": "r0(LV1-LV3) (min. tap)"
+      },
+      {
+        "var": "e:r0putapmin_l2l3",
+        "unit": "p.u.",
+        "desc": "r0(LV2-LV3) (min. tap)"
+      },
+      {
+        "var": "e:x0putapmin_h0l1",
+        "unit": "p.u.",
+        "desc": "x0(HV-LV1) (min. tap)"
+      },
+      {
+        "var": "e:x0putapmin_h0l2",
+        "unit": "p.u.",
+        "desc": "x0(HV-LV2) (min. tap)"
+      },
+      {
+        "var": "e:x0putapmin_h0l3",
+        "unit": "p.u.",
+        "desc": "x0(HV-LV3) (min. tap)"
+      },
+      {
+        "var": "e:x0putapmin_l1l2",
+        "unit": "p.u.",
+        "desc": "x0(LV1-LV2) (min. tap)"
+      },
+      {
+        "var": "e:x0putapmin_l1l3",
+        "unit": "p.u.",
+        "desc": "x0(LV1-LV3) (min. tap)"
+      },
+      {
+        "var": "e:x0putapmin_l2l3",
+        "unit": "p.u.",
+        "desc": "x0(LV2-LV3) (min. tap)"
+      },
+      {
+        "var": "e:xtor0tapmax_h0l1",
+        "unit": "",
+        "desc": "X0/R0 (HV-LV1)(max. tap)"
+      },
+      {
+        "var": "e:xtor0tapmax_h0l2",
+        "unit": "",
+        "desc": "X0/R0 (HV-LV2)(max. tap)"
+      },
+      {
+        "var": "e:xtor0tapmax_h0l3",
+        "unit": "",
+        "desc": "X0/R0 (HV-LV3)(max. tap)"
+      },
+      {
+        "var": "e:xtor0tapmax_l1l2",
+        "unit": "",
+        "desc": "X0/R0 (LV1-LV2)(max. tap)"
+      },
+      {
+        "var": "e:xtor0tapmax_l1l3",
+        "unit": "",
+        "desc": "X0/R0 (LV1-LV3)(max. tap)"
+      },
+      {
+        "var": "e:xtor0tapmax_l2l3",
+        "unit": "",
+        "desc": "X0/R0 (LV2-LV3)(max. tap)"
+      },
+      {
+        "var": "e:r0putapmax_h0l1",
+        "unit": "p.u.",
+        "desc": "r0(HV-LV1) (max. tap)"
+      },
+      {
+        "var": "e:r0putapmax_h0l2",
+        "unit": "p.u.",
+        "desc": "r0(HV-LV2) (max. tap)"
+      },
+      {
+        "var": "e:r0putapmax_h0l3",
+        "unit": "p.u.",
+        "desc": "r0(HV-LV3) (max. tap)"
+      },
+      {
+        "var": "e:r0putapmax_l1l2",
+        "unit": "p.u.",
+        "desc": "r0(LV1-LV2) (max. tap)"
+      },
+      {
+        "var": "e:r0putapmax_l1l3",
+        "unit": "p.u.",
+        "desc": "r0(LV1-LV3) (max. tap)"
+      },
+      {
+        "var": "e:r0putapmax_l2l3",
+        "unit": "p.u.",
+        "desc": "r0(LV2-LV3) (max. tap)"
+      },
+      {
+        "var": "e:x0putapmax_h0l1",
+        "unit": "p.u.",
+        "desc": "x0(HV-LV1) (max. tap)"
+      },
+      {
+        "var": "e:x0putapmax_h0l2",
+        "unit": "p.u.",
+        "desc": "x0(HV-LV2) (max. tap)"
+      },
+      {
+        "var": "e:x0putapmax_h0l3",
+        "unit": "p.u.",
+        "desc": "x0(HV-LV3) (max. tap)"
+      },
+      {
+        "var": "e:x0putapmax_l1l2",
+        "unit": "p.u.",
+        "desc": "x0(LV1-LV2) (max. tap)"
+      },
+      {
+        "var": "e:x0putapmax_l1l3",
+        "unit": "p.u.",
+        "desc": "x0(LV1-LV3) (max. tap)"
+      },
+      {
+        "var": "e:x0putapmax_l2l3",
+        "unit": "p.u.",
+        "desc": "x0(LV2-LV3) (max. tap)"
+      },
+      {
+        "var": "e:vecgrp",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:aFrolich",
+        "unit": "",
+        "desc": "Frolich equation coefficient a"
+      },
+      {
+        "var": "e:bFrolich",
+        "unit": "",
+        "desc": "Frolich equation coefficient b"
+      },
+      {
+        "var": "e:cFrolich",
+        "unit": "",
+        "desc": "Frolich equation coefficient c"
+      },
+      {
+        "var": "e:xsatFrolich",
+        "unit": "",
+        "desc": "Frolich equation saturated reactance (p.u.)"
+      },
+      {
+        "var": "e:mseFrolich",
+        "unit": "",
+        "desc": "Frolich equation, mean squared error"
+      },
+      {
+        "var": "e:pT_0",
+        "unit": "",
+        "desc": "Voltage Range"
+      },
+      {
+        "var": "e:pT_1",
+        "unit": "",
+        "desc": "Voltage Range"
+      },
+      {
+        "var": "e:pT_2",
+        "unit": "",
+        "desc": "Voltage Range"
+      },
+      {
+        "var": "e:pT_3",
+        "unit": "",
+        "desc": "Voltage Range"
+      }
+    ]
+  }
+}

@@ -1,0 +1,247 @@
+{
+  "result_vars": {},
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:manuf",
+        "unit": "",
+        "desc": "Manufacturer"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:iType",
+        "unit": "",
+        "desc": "Type"
+      },
+      {
+        "var": "e:iStdTest",
+        "unit": "",
+        "desc": "Testing Standard"
+      },
+      {
+        "var": "e:ioptclose",
+        "unit": "",
+        "desc": "Close & Latch Current"
+      },
+      {
+        "var": "e:iComplRat",
+        "unit": "",
+        "desc": "Complete Ratings"
+      },
+      {
+        "var": "e:iInterPol",
+        "unit": "",
+        "desc": "Interpolation"
+      },
+      {
+        "var": "e:Inom",
+        "unit": "kA",
+        "desc": "Rated Current"
+      },
+      {
+        "var": "e:Ibnom",
+        "unit": "kA",
+        "desc": "Rated Breaking Current"
+      },
+      {
+        "var": "e:Ipnom",
+        "unit": "kA",
+        "desc": "Peak Short-Circuit Current"
+      },
+      {
+        "var": "e:R_on",
+        "unit": "Ohm",
+        "desc": "On-Resistance"
+      },
+      {
+        "var": "e:X_on",
+        "unit": "Ohm",
+        "desc": "On-Reactance"
+      },
+      {
+        "var": "e:t_open",
+        "unit": "s",
+        "desc": "Breaker opening time"
+      },
+      {
+        "var": "e:Ishcansi",
+        "unit": "kA",
+        "desc": "Rated Short-Circuit Current (at max. Voltage)"
+      },
+      {
+        "var": "e:Kfactor",
+        "unit": "",
+        "desc": "Voltage Range Factor, K"
+      },
+      {
+        "var": "e:Imaxclose",
+        "unit": "kA",
+        "desc": "Max. Close & Latch Current"
+      },
+      {
+        "var": "e:Imaxclosep",
+        "unit": "kA",
+        "desc": "Max. Close & Latch Current (peak)"
+      },
+      {
+        "var": "e:TestXtoR",
+        "unit": "",
+        "desc": "Test X/R Ratio"
+      },
+      {
+        "var": "e:Tcycles",
+        "unit": "cycles",
+        "desc": "Interrupting Time"
+      },
+      {
+        "var": "e:Umax",
+        "unit": "kV",
+        "desc": "Max. Voltage"
+      },
+      {
+        "var": "e:ipnom3p",
+        "unit": "kA",
+        "desc": "Three Phase Initial Peak"
+      },
+      {
+        "var": "e:ipnom1p",
+        "unit": "kA",
+        "desc": "Single Phase Initial Peak"
+      },
+      {
+        "var": "e:ibpnom3p",
+        "unit": "kA",
+        "desc": "Three Phase Peak Break"
+      },
+      {
+        "var": "e:ibpnom1p",
+        "unit": "kA",
+        "desc": "Single Phase Peak Break"
+      },
+      {
+        "var": "e:Ibnom3p",
+        "unit": "kA",
+        "desc": "Three Phase RMS Break"
+      },
+      {
+        "var": "e:Ibnom1p",
+        "unit": "kA",
+        "desc": "Single Phase RMS Break"
+      },
+      {
+        "var": "e:DCTimeConst",
+        "unit": "ms",
+        "desc": "DC Time Constant"
+      },
+      {
+        "var": "e:smoothfac",
+        "unit": "%",
+        "desc": "Smoothing Factor"
+      },
+      {
+        "var": "e:Ccdc",
+        "unit": "uF",
+        "desc": "Cc"
+      },
+      {
+        "var": "e:Lcdc",
+        "unit": "mH",
+        "desc": "Lc"
+      },
+      {
+        "var": "e:Rcdc",
+        "unit": "Ohm",
+        "desc": "Rc"
+      },
+      {
+        "var": "e:Ucinit",
+        "unit": "kV",
+        "desc": "Initial Voltage, C"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:time_Env",
+        "unit": "us",
+        "desc": "Time"
+      },
+      {
+        "var": "e:v_Env",
+        "unit": "kV",
+        "desc": "Voltage"
+      },
+      {
+        "var": "e:Im",
+        "unit": "kA",
+        "desc": "Current"
+      },
+      {
+        "var": "e:Vm",
+        "unit": "p.u.",
+        "desc": "Voltage"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:typemetadata_version",
+        "unit": "",
+        "desc": "Version"
+      },
+      {
+        "var": "e:typemetadata_key",
+        "unit": "",
+        "desc": "Type Key"
+      },
+      {
+        "var": "e:typemetadata_changeLog",
+        "unit": "",
+        "desc": "Change Log"
+      },
+      {
+        "var": "e:doc_id",
+        "unit": "",
+        "desc": "Additional Data"
+      },
+      {
+        "var": "e:Imaxint",
+        "unit": "kA",
+        "desc": "Max. Interrupting Current"
+      }
+    ]
+  }
+}

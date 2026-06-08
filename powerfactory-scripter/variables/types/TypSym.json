@@ -1,0 +1,747 @@
+{
+  "result_vars": {},
+  "params": {
+    "e": [
+      {
+        "var": "e:loc_name",
+        "unit": "",
+        "desc": "Name"
+      },
+      {
+        "var": "e:chr_name",
+        "unit": "",
+        "desc": "Characteristic Name"
+      },
+      {
+        "var": "e:for_name",
+        "unit": "",
+        "desc": "Foreign Key"
+      },
+      {
+        "var": "e:dat_src",
+        "unit": "",
+        "desc": "Data source"
+      },
+      {
+        "var": "e:model_inp",
+        "unit": "",
+        "desc": "Model"
+      },
+      {
+        "var": "e:manuf",
+        "unit": "",
+        "desc": "Manufacturer"
+      },
+      {
+        "var": "e:appr_modby",
+        "unit": "",
+        "desc": "Modified by"
+      },
+      {
+        "var": "e:iner_inp",
+        "unit": "",
+        "desc": "Input mode"
+      },
+      {
+        "var": "e:i_condenser",
+        "unit": "",
+        "desc": "Used as condenser"
+      },
+      {
+        "var": "e:iTdcManual",
+        "unit": "",
+        "desc": "Enter Tdc manually"
+      },
+      {
+        "var": "e:iamort",
+        "unit": "",
+        "desc": "with amortisseur windings"
+      },
+      {
+        "var": "e:iusesat",
+        "unit": "",
+        "desc": "Use saturated value"
+      },
+      {
+        "var": "e:satur",
+        "unit": "",
+        "desc": "Machine type IEC909/IEC60909"
+      },
+      {
+        "var": "e:iturbo",
+        "unit": "",
+        "desc": "Rotor type"
+      },
+      {
+        "var": "e:iuseXdk",
+        "unit": "",
+        "desc": "Ik\" instead of reactances"
+      },
+      {
+        "var": "e:nphase",
+        "unit": "",
+        "desc": "No. of phases"
+      },
+      {
+        "var": "e:nslty",
+        "unit": "",
+        "desc": "Connection"
+      },
+      {
+        "var": "e:i_trans",
+        "unit": "",
+        "desc": "Use frequency transfer functions"
+      },
+      {
+        "var": "e:i_xl",
+        "unit": "",
+        "desc": "xl is current dependent"
+      },
+      {
+        "var": "e:iopt_data",
+        "unit": "",
+        "desc": "Input parameters"
+      },
+      {
+        "var": "e:appr_status",
+        "unit": "",
+        "desc": "Status"
+      },
+      {
+        "var": "e:i_speedD",
+        "unit": "",
+        "desc": "Speed deviation based on"
+      },
+      {
+        "var": "e:polepairs",
+        "unit": "",
+        "desc": "No. of pole pairs"
+      },
+      {
+        "var": "e:isat",
+        "unit": "",
+        "desc": "Main flux saturation"
+      },
+      {
+        "var": "e:isatSalient",
+        "unit": "",
+        "desc": "Saturation"
+      },
+      {
+        "var": "e:i_extModel",
+        "unit": "",
+        "desc": "Model"
+      },
+      {
+        "var": "e:i_exactConv",
+        "unit": "",
+        "desc": "Exact conversion of time constants"
+      },
+      {
+        "var": "e:i_xme2",
+        "unit": "",
+        "desc": "Consider negative sequence torque"
+      },
+      {
+        "var": "e:i_speedVar",
+        "unit": "",
+        "desc": "Effect of speed variation"
+      },
+      {
+        "var": "e:sgn",
+        "unit": "MVA",
+        "desc": "Rated apparent power"
+      },
+      {
+        "var": "e:ugn",
+        "unit": "kV",
+        "desc": "Rated voltage"
+      },
+      {
+        "var": "e:cosn",
+        "unit": "",
+        "desc": "Rated power factor"
+      },
+      {
+        "var": "e:tag",
+        "unit": "s",
+        "desc": "Acceleration time const. Tag (rated to Pgn)"
+      },
+      {
+        "var": "e:tds",
+        "unit": "s",
+        "desc": "Td'"
+      },
+      {
+        "var": "e:tqs",
+        "unit": "s",
+        "desc": "Tq'"
+      },
+      {
+        "var": "e:tdss",
+        "unit": "s",
+        "desc": "Td''"
+      },
+      {
+        "var": "e:Tdc",
+        "unit": "s",
+        "desc": "Tdc"
+      },
+      {
+        "var": "e:tqss",
+        "unit": "s",
+        "desc": "Tq''"
+      },
+      {
+        "var": "e:Ikd",
+        "unit": "p.u.",
+        "desc": "Ikd"
+      },
+      {
+        "var": "e:xd",
+        "unit": "p.u.",
+        "desc": "xd"
+      },
+      {
+        "var": "e:xds",
+        "unit": "p.u.",
+        "desc": "xd'"
+      },
+      {
+        "var": "e:xdss",
+        "unit": "p.u.",
+        "desc": "xd''"
+      },
+      {
+        "var": "e:xq",
+        "unit": "p.u.",
+        "desc": "xq"
+      },
+      {
+        "var": "e:xqs",
+        "unit": "p.u.",
+        "desc": "xq'"
+      },
+      {
+        "var": "e:xqss",
+        "unit": "p.u.",
+        "desc": "xq''"
+      },
+      {
+        "var": "e:xdsat",
+        "unit": "p.u.",
+        "desc": "Reciprocal of short-circuit ratio (xdsat)"
+      },
+      {
+        "var": "e:xdsss",
+        "unit": "p.u.",
+        "desc": "saturated value xd''sat"
+      },
+      {
+        "var": "e:xtor",
+        "unit": "",
+        "desc": "Ratio X/R"
+      },
+      {
+        "var": "e:rstr",
+        "unit": "p.u.",
+        "desc": "rstr"
+      },
+      {
+        "var": "e:x2sy",
+        "unit": "p.u.",
+        "desc": "Reactance x2"
+      },
+      {
+        "var": "e:r2sy",
+        "unit": "p.u.",
+        "desc": "Resistance r2"
+      },
+      {
+        "var": "e:x0sy",
+        "unit": "p.u.",
+        "desc": "Reactance x0"
+      },
+      {
+        "var": "e:r0sy",
+        "unit": "p.u.",
+        "desc": "Resistance r0"
+      },
+      {
+        "var": "e:q_min",
+        "unit": "p.u.",
+        "desc": "Minimum value"
+      },
+      {
+        "var": "e:q_max",
+        "unit": "p.u.",
+        "desc": "Maximum value"
+      },
+      {
+        "var": "e:Q_min",
+        "unit": "Mvar",
+        "desc": "Minimum value"
+      },
+      {
+        "var": "e:Q_max",
+        "unit": "Mvar",
+        "desc": "Maximum value"
+      },
+      {
+        "var": "e:curk",
+        "unit": "kA",
+        "desc": "3-phase Ik\""
+      },
+      {
+        "var": "e:curk1p",
+        "unit": "kA",
+        "desc": "1-phase Ik\""
+      },
+      {
+        "var": "e:curk2p",
+        "unit": "kA",
+        "desc": "2-phase Ik\""
+      },
+      {
+        "var": "e:tds0",
+        "unit": "s",
+        "desc": "Td0'"
+      },
+      {
+        "var": "e:tqs0",
+        "unit": "s",
+        "desc": "Tq0'"
+      },
+      {
+        "var": "e:tdss0",
+        "unit": "s",
+        "desc": "Td0''"
+      },
+      {
+        "var": "e:tqss0",
+        "unit": "s",
+        "desc": "Tq0''"
+      },
+      {
+        "var": "e:depSmoothFac",
+        "unit": "%",
+        "desc": "Dependency curve smoothing factor"
+      },
+      {
+        "var": "e:slipmin",
+        "unit": "%",
+        "desc": "Minimum slip"
+      },
+      {
+        "var": "e:frequ",
+        "unit": "Hz",
+        "desc": "Nominal frequency"
+      },
+      {
+        "var": "e:sg10",
+        "unit": "p.u.",
+        "desc": "SG10"
+      },
+      {
+        "var": "e:sg12",
+        "unit": "p.u.",
+        "desc": "SG12"
+      },
+      {
+        "var": "e:smoothFac",
+        "unit": "%",
+        "desc": "Smoothing factor"
+      },
+      {
+        "var": "e:sg10q",
+        "unit": "p.u.",
+        "desc": "SG10 q-axis"
+      },
+      {
+        "var": "e:sg12q",
+        "unit": "p.u.",
+        "desc": "SG12 q-axis"
+      },
+      {
+        "var": "e:iinrush",
+        "unit": "p.u.",
+        "desc": "Ratio Ip/In"
+      },
+      {
+        "var": "e:Tinrush",
+        "unit": "s",
+        "desc": "Max. time"
+      },
+      {
+        "var": "e:Tcold",
+        "unit": "s",
+        "desc": "Cold"
+      },
+      {
+        "var": "e:Thot",
+        "unit": "s",
+        "desc": "Hot"
+      },
+      {
+        "var": "e:xstr",
+        "unit": "p.u.",
+        "desc": "xstr"
+      },
+      {
+        "var": "e:xl",
+        "unit": "p.u.",
+        "desc": "xl"
+      },
+      {
+        "var": "e:xrl",
+        "unit": "p.u.",
+        "desc": "xrld"
+      },
+      {
+        "var": "e:xrlq",
+        "unit": "p.u.",
+        "desc": "xrlq"
+      },
+      {
+        "var": "e:kw",
+        "unit": "p.u.",
+        "desc": "kw"
+      },
+      {
+        "var": "e:xad",
+        "unit": "p.u.",
+        "desc": "xad"
+      },
+      {
+        "var": "e:xaq",
+        "unit": "p.u.",
+        "desc": "xaq"
+      },
+      {
+        "var": "e:xrl2d",
+        "unit": "p.u.",
+        "desc": "xrl2d"
+      },
+      {
+        "var": "e:x1d",
+        "unit": "p.u.",
+        "desc": "x1d"
+      },
+      {
+        "var": "e:r1d",
+        "unit": "p.u.",
+        "desc": "r1d"
+      },
+      {
+        "var": "e:x2d",
+        "unit": "p.u.",
+        "desc": "x2d"
+      },
+      {
+        "var": "e:r2d",
+        "unit": "p.u.",
+        "desc": "r2d"
+      },
+      {
+        "var": "e:xfd",
+        "unit": "p.u.",
+        "desc": "xfd"
+      },
+      {
+        "var": "e:rfd",
+        "unit": "p.u.",
+        "desc": "rfd"
+      },
+      {
+        "var": "e:x1q",
+        "unit": "p.u.",
+        "desc": "x1q"
+      },
+      {
+        "var": "e:r1q",
+        "unit": "p.u.",
+        "desc": "r1q"
+      },
+      {
+        "var": "e:x2q",
+        "unit": "p.u.",
+        "desc": "x2q"
+      },
+      {
+        "var": "e:r2q",
+        "unit": "p.u.",
+        "desc": "r2q"
+      },
+      {
+        "var": "e:x3q",
+        "unit": "p.u.",
+        "desc": "x3q"
+      },
+      {
+        "var": "e:r3q",
+        "unit": "p.u.",
+        "desc": "r3q"
+      },
+      {
+        "var": "e:t1d",
+        "unit": "s",
+        "desc": "t1d"
+      },
+      {
+        "var": "e:t2d",
+        "unit": "s",
+        "desc": "t2d"
+      },
+      {
+        "var": "e:t3d",
+        "unit": "s",
+        "desc": "t3d"
+      },
+      {
+        "var": "e:t4d",
+        "unit": "s",
+        "desc": "t4d"
+      },
+      {
+        "var": "e:t5d",
+        "unit": "s",
+        "desc": "t5d"
+      },
+      {
+        "var": "e:t6d",
+        "unit": "s",
+        "desc": "t6d"
+      },
+      {
+        "var": "e:t7d",
+        "unit": "s",
+        "desc": "t7d"
+      },
+      {
+        "var": "e:t8d",
+        "unit": "s",
+        "desc": "t8d"
+      },
+      {
+        "var": "e:t1q",
+        "unit": "s",
+        "desc": "t1q"
+      },
+      {
+        "var": "e:t2q",
+        "unit": "s",
+        "desc": "t2q"
+      },
+      {
+        "var": "e:t3q",
+        "unit": "s",
+        "desc": "t3q"
+      },
+      {
+        "var": "e:t4q",
+        "unit": "s",
+        "desc": "t4q"
+      },
+      {
+        "var": "e:t5q",
+        "unit": "s",
+        "desc": "t5q"
+      },
+      {
+        "var": "e:t6q",
+        "unit": "s",
+        "desc": "t6q"
+      },
+      {
+        "var": "e:x1dc",
+        "unit": "p.u.",
+        "desc": "x1dc"
+      },
+      {
+        "var": "e:x1de",
+        "unit": "p.u.",
+        "desc": "x1de"
+      },
+      {
+        "var": "e:r1de",
+        "unit": "p.u.",
+        "desc": "r1de"
+      },
+      {
+        "var": "e:xfde",
+        "unit": "p.u.",
+        "desc": "xfde"
+      },
+      {
+        "var": "e:rfde",
+        "unit": "p.u.",
+        "desc": "rfde"
+      },
+      {
+        "var": "e:x1qc",
+        "unit": "p.u.",
+        "desc": "x1qc"
+      },
+      {
+        "var": "e:x1qe",
+        "unit": "p.u.",
+        "desc": "x1qe"
+      },
+      {
+        "var": "e:r1qe",
+        "unit": "p.u.",
+        "desc": "r1qe"
+      },
+      {
+        "var": "e:psim",
+        "unit": "p.u.",
+        "desc": "Rotor flux"
+      },
+      {
+        "var": "e:dpu",
+        "unit": "",
+        "desc": "Turbine shaft friction torque coefficient"
+      },
+      {
+        "var": "e:dpe",
+        "unit": "",
+        "desc": "Damping torque coefficient based on power"
+      },
+      {
+        "var": "e:dkd",
+        "unit": "",
+        "desc": "Damping torque coefficient"
+      },
+      {
+        "var": "e:appr_modif",
+        "unit": "",
+        "desc": "Modified"
+      },
+      {
+        "var": "e:curTab",
+        "unit": "p.u.",
+        "desc": "Current"
+      },
+      {
+        "var": "e:xlTab",
+        "unit": "p.u.",
+        "desc": "xl"
+      },
+      {
+        "var": "e:satv",
+        "unit": "p.u.",
+        "desc": "Term. voltage"
+      },
+      {
+        "var": "e:satse",
+        "unit": "p.u.",
+        "desc": "SG(u)"
+      },
+      {
+        "var": "e:satvq",
+        "unit": "p.u.",
+        "desc": "Term. voltage"
+      },
+      {
+        "var": "e:satseq",
+        "unit": "p.u.",
+        "desc": "SG(u)"
+      },
+      {
+        "var": "e:typemetadata_version",
+        "unit": "",
+        "desc": "Version"
+      },
+      {
+        "var": "e:typemetadata_key",
+        "unit": "",
+        "desc": "Type Key"
+      },
+      {
+        "var": "e:typemetadata_changeLog",
+        "unit": "",
+        "desc": "Change Log"
+      },
+      {
+        "var": "e:desc",
+        "unit": "",
+        "desc": "Description"
+      },
+      {
+        "var": "e:fcharrstr",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "rs(f)"
+      },
+      {
+        "var": "e:fcharlss",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l''(f)"
+      },
+      {
+        "var": "e:fcharr2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r2(f)"
+      },
+      {
+        "var": "e:fcharl2",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l2(f)"
+      },
+      {
+        "var": "e:fcharr0",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "r0(f)"
+      },
+      {
+        "var": "e:fcharl0",
+        "unit": "ChaPol,ChaVec,ChaMat",
+        "desc": "l0(f)"
+      },
+      {
+        "var": "e:doc_id",
+        "unit": "",
+        "desc": "Additional Data"
+      },
+      {
+        "var": "e:cTdc",
+        "unit": "s",
+        "desc": "Tdc"
+      },
+      {
+        "var": "e:tags",
+        "unit": "s",
+        "desc": "Acceleration time const. Tag (rated to Sgn)"
+      },
+      {
+        "var": "e:h",
+        "unit": "s",
+        "desc": "Inertia constant H (rated to Sgn)"
+      },
+      {
+        "var": "e:lss",
+        "unit": "p.u.",
+        "desc": "l''"
+      },
+      {
+        "var": "e:hpn",
+        "unit": "s",
+        "desc": "Inertia constant H (rated to Pgn)"
+      },
+      {
+        "var": "e:J",
+        "unit": "kgm^2",
+        "desc": "Moment of inertia J"
+      },
+      {
+        "var": "e:ifd",
+        "unit": "%",
+        "desc": "ie"
+      },
+      {
+        "var": "e:ifdq",
+        "unit": "%",
+        "desc": "ie"
+      }
+    ]
+  }
+}
