@@ -1,0 +1,6294 @@
+{
+  "TypAsm": [
+    {
+      "var": "e:loc_name",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:chr_name",
+      "unit": "",
+      "desc": "Characteristic Name"
+    },
+    {
+      "var": "e:for_name",
+      "unit": "",
+      "desc": "Foreign Key"
+    },
+    {
+      "var": "e:dat_src",
+      "unit": "",
+      "desc": "Data source"
+    },
+    {
+      "var": "e:manuf",
+      "unit": "",
+      "desc": "Manufacturer"
+    },
+    {
+      "var": "e:appr_modby",
+      "unit": "",
+      "desc": "Modified by"
+    },
+    {
+      "var": "e:nppol",
+      "unit": "",
+      "desc": "No of Pole Pairs"
+    },
+    {
+      "var": "e:nkutp",
+      "unit": "",
+      "desc": "Curve Type"
+    },
+    {
+      "var": "e:nslty",
+      "unit": "",
+      "desc": "Connection"
+    },
+    {
+      "var": "e:i_x1stb",
+      "unit": "",
+      "desc": "Stator Reactance Char."
+    },
+    {
+      "var": "e:i_x2stb",
+      "unit": "",
+      "desc": "Rotor Reactance Char."
+    },
+    {
+      "var": "e:i_rrttb",
+      "unit": "",
+      "desc": "Rotor Resistance Char."
+    },
+    {
+      "var": "e:i_mode",
+      "unit": "",
+      "desc": "Input Mode"
+    },
+    {
+      "var": "e:i_trans",
+      "unit": "",
+      "desc": "Consider Transient Parameter"
+    },
+    {
+      "var": "e:iansitp",
+      "unit": "",
+      "desc": "ANSI Type"
+    },
+    {
+      "var": "e:appr_status",
+      "unit": "",
+      "desc": "Status"
+    },
+    {
+      "var": "e:sgn",
+      "unit": "kVA",
+      "desc": "Rated Apparent Power"
+    },
+    {
+      "var": "e:ugn",
+      "unit": "kV",
+      "desc": "Rated Voltage"
+    },
+    {
+      "var": "e:cosn",
+      "unit": "",
+      "desc": "Rated Power Factor"
+    },
+    {
+      "var": "e:aiazn",
+      "unit": "p.u.",
+      "desc": "Locked Rotor Current (Ilr/In)"
+    },
+    {
+      "var": "e:tag",
+      "unit": "s",
+      "desc": "Acc. Time Constant"
+    },
+    {
+      "var": "e:xm",
+      "unit": "p.u.",
+      "desc": "Mag. Reactance"
+    },
+    {
+      "var": "e:rtox",
+      "unit": "",
+      "desc": "Ratio R/X"
+    },
+    {
+      "var": "e:xtor",
+      "unit": "",
+      "desc": "Ratio X/R"
+    },
+    {
+      "var": "e:xdss",
+      "unit": "p.u.",
+      "desc": "Locked Rotor Reactance"
+    },
+    {
+      "var": "e:rstr",
+      "unit": "p.u.",
+      "desc": "Stator Resistance"
+    },
+    {
+      "var": "e:rrtr",
+      "unit": "p.u.",
+      "desc": "x1smn"
+    },
+    {
+      "var": "e:x1s",
+      "unit": "p.u.",
+      "desc": "x1smx"
+    },
+    {
+      "var": "e:x2s",
+      "unit": "p.u.",
+      "desc": "x2smn"
+    },
+    {
+      "var": "e:x1smn",
+      "unit": "p.u.",
+      "desc": "Imin"
+    },
+    {
+      "var": "e:x1smx",
+      "unit": "p.u.",
+      "desc": "Imax"
+    },
+    {
+      "var": "e:x2smn",
+      "unit": "p.u.",
+      "desc": "Imin"
+    },
+    {
+      "var": "e:x2smx",
+      "unit": "p.u.",
+      "desc": "Imax"
+    },
+    {
+      "var": "e:frequ",
+      "unit": "Hz",
+      "desc": "Nominal Frequency"
+    },
+    {
+      "var": "e:pgn",
+      "unit": "kW",
+      "desc": "Rated Mechanical Power"
+    },
+    {
+      "var": "e:anend",
+      "unit": "rpm",
+      "desc": "Rated Speed"
+    },
+    {
+      "var": "e:aslkp",
+      "unit": "",
+      "desc": "Slip at Stalling Point"
+    },
+    {
+      "var": "e:asstl",
+      "unit": "",
+      "desc": "Slip at Saddle Point"
+    },
+    {
+      "var": "e:amazn",
+      "unit": "p.u.",
+      "desc": "Locked Rotor Torque"
+    },
+    {
+      "var": "e:amkzn",
+      "unit": "p.u.",
+      "desc": "Torque at Stalling Point"
+    },
+    {
+      "var": "e:amstl",
+      "unit": "p.u.",
+      "desc": "Torque at Saddle Point"
+    },
+    {
+      "var": "e:coazn",
+      "unit": "p.u.",
+      "desc": "Power Factor at Locked Rotor/rated power factor"
+    },
+    {
+      "var": "e:effic",
+      "unit": "%",
+      "desc": "Efficiency at rated Operation"
+    },
+    {
+      "var": "e:iinrush",
+      "unit": "p.u.",
+      "desc": "Ratio Ip/In"
+    },
+    {
+      "var": "e:Tinrush",
+      "unit": "s",
+      "desc": "Max. Time"
+    },
+    {
+      "var": "e:Tcold",
+      "unit": "s",
+      "desc": "Cold"
+    },
+    {
+      "var": "e:Thot",
+      "unit": "s",
+      "desc": "Hot"
+    },
+    {
+      "var": "e:rrttb",
+      "unit": "p.u.",
+      "desc": "Rotor Resistance"
+    },
+    {
+      "var": "e:x1stb",
+      "unit": "p.u.",
+      "desc": "Stator Reactance"
+    },
+    {
+      "var": "e:x2stb",
+      "unit": "p.u.",
+      "desc": "Rotor Reactance"
+    },
+    {
+      "var": "e:appr_modif",
+      "unit": "",
+      "desc": "Modified"
+    },
+    {
+      "var": "e:typemetadata_version",
+      "unit": "",
+      "desc": "Version"
+    },
+    {
+      "var": "e:typemetadata_key",
+      "unit": "",
+      "desc": "Type Key"
+    },
+    {
+      "var": "e:typemetadata_changeLog",
+      "unit": "",
+      "desc": "Change Log"
+    },
+    {
+      "var": "e:desc",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:fcharrstr",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "Stator Resistance Rs(f)"
+    },
+    {
+      "var": "e:fcharlss",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "Inductance L''(f)"
+    },
+    {
+      "var": "e:doc_id",
+      "unit": "",
+      "desc": "Additional Data"
+    },
+    {
+      "var": "e:cansitp",
+      "unit": "",
+      "desc": "ANSI Type"
+    },
+    {
+      "var": "e:chp",
+      "unit": "hp",
+      "desc": "Power"
+    }
+  ],
+  "TypGeo": [
+    {
+      "var": "e:loc_name",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:chr_name",
+      "unit": "",
+      "desc": "Characteristic Name"
+    },
+    {
+      "var": "e:for_name",
+      "unit": "",
+      "desc": "Foreign Key"
+    },
+    {
+      "var": "e:dat_src",
+      "unit": "",
+      "desc": "Data source"
+    },
+    {
+      "var": "e:manuf",
+      "unit": "",
+      "desc": "Manufacturer"
+    },
+    {
+      "var": "e:appr_modby",
+      "unit": "",
+      "desc": "Modified by"
+    },
+    {
+      "var": "e:appr_status",
+      "unit": "",
+      "desc": "Status"
+    },
+    {
+      "var": "e:appr_modif",
+      "unit": "",
+      "desc": "Modified"
+    },
+    {
+      "var": "e:xy_e",
+      "unit": "m",
+      "desc": "Coordinates Earth Wires"
+    },
+    {
+      "var": "e:typemetadata_version",
+      "unit": "",
+      "desc": "Version"
+    },
+    {
+      "var": "e:typemetadata_key",
+      "unit": "",
+      "desc": "Type Key"
+    },
+    {
+      "var": "e:typemetadata_changeLog",
+      "unit": "",
+      "desc": "Change Log"
+    },
+    {
+      "var": "e:desc",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:desc_c",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:doc_id",
+      "unit": "",
+      "desc": "Additional Data"
+    },
+    {
+      "var": "e:nlcir",
+      "unit": "",
+      "desc": "Number of Line Circuits"
+    },
+    {
+      "var": "e:nlear",
+      "unit": "",
+      "desc": "Number of Earth Wires"
+    },
+    {
+      "var": "e:nphas",
+      "unit": "",
+      "desc": "Num. of Phases"
+    },
+    {
+      "var": "e:xy_cc",
+      "unit": "m",
+      "desc": "Coordinates of Line Circuits"
+    }
+  ],
+  "TypLne": [
+    {
+      "var": "e:loc_name",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:chr_name",
+      "unit": "",
+      "desc": "Characteristic Name"
+    },
+    {
+      "var": "e:for_name",
+      "unit": "",
+      "desc": "Foreign Key"
+    },
+    {
+      "var": "e:dat_src",
+      "unit": "",
+      "desc": "Data source"
+    },
+    {
+      "var": "e:mlei",
+      "unit": "",
+      "desc": "Conductor material"
+    },
+    {
+      "var": "e:manuf",
+      "unit": "",
+      "desc": "Manufacturer"
+    },
+    {
+      "var": "e:appr_modby",
+      "unit": "",
+      "desc": "Modified by"
+    },
+    {
+      "var": "e:iopt_cnd",
+      "unit": "",
+      "desc": "Cable cores"
+    },
+    {
+      "var": "e:nlnph",
+      "unit": "",
+      "desc": "Phases"
+    },
+    {
+      "var": "e:imiso",
+      "unit": "",
+      "desc": "Insulation material"
+    },
+    {
+      "var": "e:systp",
+      "unit": "",
+      "desc": "System Type"
+    },
+    {
+      "var": "e:appr_status",
+      "unit": "",
+      "desc": "Status"
+    },
+    {
+      "var": "e:avail",
+      "unit": "",
+      "desc": "Availability"
+    },
+    {
+      "var": "e:nneutral",
+      "unit": "",
+      "desc": "Number of Neutrals"
+    },
+    {
+      "var": "e:fr_sheath",
+      "unit": "",
+      "desc": "With sheath"
+    },
+    {
+      "var": "e:shins",
+      "unit": "",
+      "desc": "Sheath insulation material"
+    },
+    {
+      "var": "e:shtyp",
+      "unit": "",
+      "desc": "Sheath type"
+    },
+    {
+      "var": "e:touchExp",
+      "unit": "",
+      "desc": "Exposed to touch"
+    },
+    {
+      "var": "e:cscreen",
+      "unit": "",
+      "desc": "Radial cable screen"
+    },
+    {
+      "var": "e:rectancond",
+      "unit": "",
+      "desc": "Rectangular Conductor"
+    },
+    {
+      "var": "e:uline",
+      "unit": "kV",
+      "desc": "Rated Voltage"
+    },
+    {
+      "var": "e:sline",
+      "unit": "kA",
+      "desc": "Rated Current"
+    },
+    {
+      "var": "e:picln",
+      "unit": "p.u.",
+      "desc": "Ratio Ip/In"
+    },
+    {
+      "var": "e:pitln",
+      "unit": "s",
+      "desc": "Maximum Time"
+    },
+    {
+      "var": "e:rline",
+      "unit": "Ohm/km",
+      "desc": "AC-Resistance R'(20\u00b0C)"
+    },
+    {
+      "var": "e:tmax",
+      "unit": "degC",
+      "desc": "Max. Operating Temperature"
+    },
+    {
+      "var": "e:rline_tmax",
+      "unit": "Ohm/km",
+      "desc": "AC-Resistance R' at max. operating temperature"
+    },
+    {
+      "var": "e:alpha",
+      "unit": "1/K",
+      "desc": "Temperature Coefficient"
+    },
+    {
+      "var": "e:xline",
+      "unit": "Ohm/km",
+      "desc": "Reactance X'"
+    },
+    {
+      "var": "e:rtemp",
+      "unit": "degC",
+      "desc": "Max. End Temperature"
+    },
+    {
+      "var": "e:bline",
+      "unit": "uS/km",
+      "desc": "Susceptance B'"
+    },
+    {
+      "var": "e:lline",
+      "unit": "mH/km",
+      "desc": "Inductance L'"
+    },
+    {
+      "var": "e:cline",
+      "unit": "uF/km",
+      "desc": "Capacitance C'"
+    },
+    {
+      "var": "e:gline",
+      "unit": "uS/km",
+      "desc": "Conductance G'"
+    },
+    {
+      "var": "e:tline",
+      "unit": "",
+      "desc": "Ins. Factor"
+    },
+    {
+      "var": "e:rline0",
+      "unit": "Ohm/km",
+      "desc": "AC-Resistance R0'"
+    },
+    {
+      "var": "e:xline0",
+      "unit": "Ohm/km",
+      "desc": "Reactance X0'"
+    },
+    {
+      "var": "e:lline0",
+      "unit": "mH/km",
+      "desc": "Inductance L0'"
+    },
+    {
+      "var": "e:bline0",
+      "unit": "uS/km",
+      "desc": "Susceptance B0'"
+    },
+    {
+      "var": "e:cline0",
+      "unit": "uF/km",
+      "desc": "Capacitance C0'"
+    },
+    {
+      "var": "e:gline0",
+      "unit": "uS/km",
+      "desc": "Conductance G0'"
+    },
+    {
+      "var": "e:tline0",
+      "unit": "",
+      "desc": "Ins. Factor"
+    },
+    {
+      "var": "e:Ices",
+      "unit": "A/km",
+      "desc": "Earth-Fault Current"
+    },
+    {
+      "var": "e:qurs",
+      "unit": "mm^2",
+      "desc": "Nominal cross section"
+    },
+    {
+      "var": "e:qursn",
+      "unit": "mm^2",
+      "desc": "Neutral conductor cross section"
+    },
+    {
+      "var": "e:InomAir",
+      "unit": "kA",
+      "desc": "Rated Current (in air)"
+    },
+    {
+      "var": "e:Ithr",
+      "unit": "kA",
+      "desc": "Rated Short-Time (1s) Current (Conductor)"
+    },
+    {
+      "var": "e:frnom",
+      "unit": "Hz",
+      "desc": "Nominal Frequency"
+    },
+    {
+      "var": "e:lcost",
+      "unit": "USD/km",
+      "desc": "Line type cost"
+    },
+    {
+      "var": "e:rnline",
+      "unit": "Ohm/km",
+      "desc": "AC-Resistance Rn'"
+    },
+    {
+      "var": "e:xnline",
+      "unit": "Ohm/km",
+      "desc": "Reactance Xn'"
+    },
+    {
+      "var": "e:bnline",
+      "unit": "uS/km",
+      "desc": "Susceptance Bn'"
+    },
+    {
+      "var": "e:rpnline",
+      "unit": "Ohm/km",
+      "desc": "AC-Resistance Rpn'"
+    },
+    {
+      "var": "e:xpnline",
+      "unit": "Ohm/km",
+      "desc": "Reactance Xpn'"
+    },
+    {
+      "var": "e:bpnline",
+      "unit": "uS/km",
+      "desc": "Susceptance Bpn'"
+    },
+    {
+      "var": "e:side_b",
+      "unit": "mm",
+      "desc": "Height (b)"
+    },
+    {
+      "var": "e:side_d",
+      "unit": "mm",
+      "desc": "Width (d)"
+    },
+    {
+      "var": "e:appr_modif",
+      "unit": "",
+      "desc": "Modified"
+    },
+    {
+      "var": "e:typemetadata_version",
+      "unit": "",
+      "desc": "Version"
+    },
+    {
+      "var": "e:typemetadata_key",
+      "unit": "",
+      "desc": "Type Key"
+    },
+    {
+      "var": "e:typemetadata_changeLog",
+      "unit": "",
+      "desc": "Change Log"
+    },
+    {
+      "var": "e:desc",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:doc_id",
+      "unit": "",
+      "desc": "Additional Data"
+    },
+    {
+      "var": "e:fcharL1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "L1'(f)"
+    },
+    {
+      "var": "e:fcharR1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "R1'(AC)(f)"
+    },
+    {
+      "var": "e:fcharC1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "C1'(f)"
+    },
+    {
+      "var": "e:fcharL0",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "L0'(f)"
+    },
+    {
+      "var": "e:fcharR0",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "R0'(AC)(f)"
+    },
+    {
+      "var": "e:fcharC0",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "C0'(f)"
+    },
+    {
+      "var": "e:pStoch",
+      "unit": "StoTyplne",
+      "desc": "Stochastic model"
+    },
+    {
+      "var": "e:cohl_",
+      "unit": "",
+      "desc": "Cable / OHL"
+    },
+    {
+      "var": "e:lnline",
+      "unit": "mH/km",
+      "desc": "Inductance Ln'"
+    },
+    {
+      "var": "e:cnline",
+      "unit": "uF/km",
+      "desc": "Capacitance Cn'"
+    },
+    {
+      "var": "e:lpnline",
+      "unit": "mH/km",
+      "desc": "Inductance Lpn'"
+    },
+    {
+      "var": "e:cpnline",
+      "unit": "uF/km",
+      "desc": "Capacitance Cpn'"
+    },
+    {
+      "var": "e:carmour",
+      "unit": "",
+      "desc": "Armoured cable"
+    }
+  ],
+  "TypLod": [
+    {
+      "var": "e:loc_name",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:chr_name",
+      "unit": "",
+      "desc": "Characteristic Name"
+    },
+    {
+      "var": "e:for_name",
+      "unit": "",
+      "desc": "Foreign Key"
+    },
+    {
+      "var": "e:dat_src",
+      "unit": "",
+      "desc": "Data source"
+    },
+    {
+      "var": "e:manuf",
+      "unit": "",
+      "desc": "Manufacturer"
+    },
+    {
+      "var": "e:appr_modby",
+      "unit": "",
+      "desc": "Modified by"
+    },
+    {
+      "var": "e:lodst",
+      "unit": "%",
+      "desc": "Static (const Z)"
+    },
+    {
+      "var": "e:systp",
+      "unit": "",
+      "desc": "System type"
+    },
+    {
+      "var": "e:emtRLCSig",
+      "unit": "",
+      "desc": "Variable resistance, inductance and capacitance via input signals"
+    },
+    {
+      "var": "e:appr_status",
+      "unit": "",
+      "desc": "Status"
+    },
+    {
+      "var": "e:i_nln",
+      "unit": "",
+      "desc": "Model dependence"
+    },
+    {
+      "var": "e:i_pure",
+      "unit": "",
+      "desc": "Load model"
+    },
+    {
+      "var": "e:i_csrc",
+      "unit": "",
+      "desc": "Load model"
+    },
+    {
+      "var": "e:kpf",
+      "unit": "%/%",
+      "desc": "Coefficient kpf"
+    },
+    {
+      "var": "e:tpf",
+      "unit": "s",
+      "desc": "P frequency dep."
+    },
+    {
+      "var": "e:tpu",
+      "unit": "s",
+      "desc": "P voltage dep."
+    },
+    {
+      "var": "e:kqf",
+      "unit": "%/%",
+      "desc": "Coefficient kqf"
+    },
+    {
+      "var": "e:tqf",
+      "unit": "s",
+      "desc": "Q frequency dep."
+    },
+    {
+      "var": "e:tqu",
+      "unit": "s",
+      "desc": "Q voltage dep."
+    },
+    {
+      "var": "e:t1",
+      "unit": "s",
+      "desc": "Delay"
+    },
+    {
+      "var": "e:pgrd",
+      "unit": "%",
+      "desc": "QL/QC"
+    },
+    {
+      "var": "e:pfc",
+      "unit": "%",
+      "desc": "Power factor correction"
+    },
+    {
+      "var": "e:kpu0",
+      "unit": "",
+      "desc": "Exponent e_aP"
+    },
+    {
+      "var": "e:kpu1",
+      "unit": "",
+      "desc": "Exponent e_bP"
+    },
+    {
+      "var": "e:kpu",
+      "unit": "",
+      "desc": "Exponent e_cP"
+    },
+    {
+      "var": "e:kqu0",
+      "unit": "",
+      "desc": "Exponent e_aQ"
+    },
+    {
+      "var": "e:kqu1",
+      "unit": "",
+      "desc": "Exponent e_bQ"
+    },
+    {
+      "var": "e:kqu",
+      "unit": "",
+      "desc": "Exponent e_cQ"
+    },
+    {
+      "var": "e:aP",
+      "unit": "",
+      "desc": "Coefficient aP"
+    },
+    {
+      "var": "e:bP",
+      "unit": "",
+      "desc": "Coefficient bP"
+    },
+    {
+      "var": "e:aQ",
+      "unit": "",
+      "desc": "Coefficient aQ"
+    },
+    {
+      "var": "e:bQ",
+      "unit": "",
+      "desc": "Coefficient bQ"
+    },
+    {
+      "var": "e:udmax",
+      "unit": "p.u.",
+      "desc": "Upper"
+    },
+    {
+      "var": "e:udmin",
+      "unit": "p.u.",
+      "desc": "Lower"
+    },
+    {
+      "var": "e:Prp",
+      "unit": "%",
+      "desc": "Static portion"
+    },
+    {
+      "var": "e:appr_modif",
+      "unit": "",
+      "desc": "Modified"
+    },
+    {
+      "var": "e:typemetadata_version",
+      "unit": "",
+      "desc": "Version"
+    },
+    {
+      "var": "e:typemetadata_key",
+      "unit": "",
+      "desc": "Type Key"
+    },
+    {
+      "var": "e:typemetadata_changeLog",
+      "unit": "",
+      "desc": "Change Log"
+    },
+    {
+      "var": "e:desc",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:doc_id",
+      "unit": "",
+      "desc": "Additional Data"
+    },
+    {
+      "var": "e:loddy",
+      "unit": "%",
+      "desc": "Dynamic"
+    },
+    {
+      "var": "e:qcq",
+      "unit": "%",
+      "desc": "QC/Q"
+    },
+    {
+      "var": "e:phtech",
+      "unit": "",
+      "desc": "Technology"
+    },
+    {
+      "var": "e:cP",
+      "unit": "",
+      "desc": "Coefficient cP"
+    },
+    {
+      "var": "e:cQ",
+      "unit": "",
+      "desc": "Coefficient cQ"
+    },
+    {
+      "var": "e:clodst",
+      "unit": "%",
+      "desc": "Static (const z)"
+    },
+    {
+      "var": "e:cloddy",
+      "unit": "%",
+      "desc": "Dynamic"
+    }
+  ],
+  "TypLodlv": [
+    {
+      "var": "e:loc_name",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:chr_name",
+      "unit": "",
+      "desc": "Characteristic Name"
+    },
+    {
+      "var": "e:for_name",
+      "unit": "",
+      "desc": "Foreign Key"
+    },
+    {
+      "var": "e:dat_src",
+      "unit": "",
+      "desc": "Data source"
+    },
+    {
+      "var": "e:manuf",
+      "unit": "",
+      "desc": "Manufacturer"
+    },
+    {
+      "var": "e:appr_modby",
+      "unit": "",
+      "desc": "Modified by"
+    },
+    {
+      "var": "e:iLodTyp",
+      "unit": "",
+      "desc": "Load model"
+    },
+    {
+      "var": "e:appr_status",
+      "unit": "",
+      "desc": "Status"
+    },
+    {
+      "var": "e:Smax",
+      "unit": "kVA",
+      "desc": "Max. Load per Customer"
+    },
+    {
+      "var": "e:cosphi",
+      "unit": "",
+      "desc": "Power Factor"
+    },
+    {
+      "var": "e:ginf",
+      "unit": "",
+      "desc": "Coincidence Factor ginf"
+    },
+    {
+      "var": "e:aP",
+      "unit": "",
+      "desc": "Coefficient aP"
+    },
+    {
+      "var": "e:bP",
+      "unit": "",
+      "desc": "Coefficient bP"
+    },
+    {
+      "var": "e:aQ",
+      "unit": "",
+      "desc": "Coefficient aQ"
+    },
+    {
+      "var": "e:bQ",
+      "unit": "",
+      "desc": "Coefficient bQ"
+    },
+    {
+      "var": "e:eP",
+      "unit": "",
+      "desc": "Exponent eP"
+    },
+    {
+      "var": "e:eQ",
+      "unit": "",
+      "desc": "Exponent eQ"
+    },
+    {
+      "var": "e:appr_modif",
+      "unit": "",
+      "desc": "Modified"
+    },
+    {
+      "var": "e:typemetadata_version",
+      "unit": "",
+      "desc": "Version"
+    },
+    {
+      "var": "e:typemetadata_key",
+      "unit": "",
+      "desc": "Type Key"
+    },
+    {
+      "var": "e:typemetadata_changeLog",
+      "unit": "",
+      "desc": "Change Log"
+    },
+    {
+      "var": "e:desc",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:pCoincDef",
+      "unit": "IntCoincdef",
+      "desc": "Coincidence definition"
+    },
+    {
+      "var": "e:doc_id",
+      "unit": "",
+      "desc": "Additional Data"
+    },
+    {
+      "var": "e:cP",
+      "unit": "",
+      "desc": "Coefficient cP"
+    },
+    {
+      "var": "e:cQ",
+      "unit": "",
+      "desc": "Coefficient cQ"
+    }
+  ],
+  "TypSwitch": [
+    {
+      "var": "e:loc_name",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:chr_name",
+      "unit": "",
+      "desc": "Characteristic Name"
+    },
+    {
+      "var": "e:for_name",
+      "unit": "",
+      "desc": "Foreign Key"
+    },
+    {
+      "var": "e:dat_src",
+      "unit": "",
+      "desc": "Data source"
+    },
+    {
+      "var": "e:manuf",
+      "unit": "",
+      "desc": "Manufacturer"
+    },
+    {
+      "var": "e:appr_modby",
+      "unit": "",
+      "desc": "Modified by"
+    },
+    {
+      "var": "e:appr_status",
+      "unit": "",
+      "desc": "Status"
+    },
+    {
+      "var": "e:iType",
+      "unit": "",
+      "desc": "Type"
+    },
+    {
+      "var": "e:iStdTest",
+      "unit": "",
+      "desc": "Testing Standard"
+    },
+    {
+      "var": "e:ioptclose",
+      "unit": "",
+      "desc": "Close & Latch Current"
+    },
+    {
+      "var": "e:iComplRat",
+      "unit": "",
+      "desc": "Complete Ratings"
+    },
+    {
+      "var": "e:iInterPol",
+      "unit": "",
+      "desc": "Interpolation"
+    },
+    {
+      "var": "e:Inom",
+      "unit": "kA",
+      "desc": "Rated Current"
+    },
+    {
+      "var": "e:Ibnom",
+      "unit": "kA",
+      "desc": "Rated Breaking Current"
+    },
+    {
+      "var": "e:Ipnom",
+      "unit": "kA",
+      "desc": "Peak Short-Circuit Current"
+    },
+    {
+      "var": "e:R_on",
+      "unit": "Ohm",
+      "desc": "On-Resistance"
+    },
+    {
+      "var": "e:X_on",
+      "unit": "Ohm",
+      "desc": "On-Reactance"
+    },
+    {
+      "var": "e:t_open",
+      "unit": "s",
+      "desc": "Breaker opening time"
+    },
+    {
+      "var": "e:Ishcansi",
+      "unit": "kA",
+      "desc": "Rated Short-Circuit Current (at max. Voltage)"
+    },
+    {
+      "var": "e:Kfactor",
+      "unit": "",
+      "desc": "Voltage Range Factor, K"
+    },
+    {
+      "var": "e:Imaxclose",
+      "unit": "kA",
+      "desc": "Max. Close & Latch Current"
+    },
+    {
+      "var": "e:Imaxclosep",
+      "unit": "kA",
+      "desc": "Max. Close & Latch Current (peak)"
+    },
+    {
+      "var": "e:TestXtoR",
+      "unit": "",
+      "desc": "Test X/R Ratio"
+    },
+    {
+      "var": "e:Tcycles",
+      "unit": "cycles",
+      "desc": "Interrupting Time"
+    },
+    {
+      "var": "e:Umax",
+      "unit": "kV",
+      "desc": "Max. Voltage"
+    },
+    {
+      "var": "e:ipnom3p",
+      "unit": "kA",
+      "desc": "Three Phase Initial Peak"
+    },
+    {
+      "var": "e:ipnom1p",
+      "unit": "kA",
+      "desc": "Single Phase Initial Peak"
+    },
+    {
+      "var": "e:ibpnom3p",
+      "unit": "kA",
+      "desc": "Three Phase Peak Break"
+    },
+    {
+      "var": "e:ibpnom1p",
+      "unit": "kA",
+      "desc": "Single Phase Peak Break"
+    },
+    {
+      "var": "e:Ibnom3p",
+      "unit": "kA",
+      "desc": "Three Phase RMS Break"
+    },
+    {
+      "var": "e:Ibnom1p",
+      "unit": "kA",
+      "desc": "Single Phase RMS Break"
+    },
+    {
+      "var": "e:DCTimeConst",
+      "unit": "ms",
+      "desc": "DC Time Constant"
+    },
+    {
+      "var": "e:smoothfac",
+      "unit": "%",
+      "desc": "Smoothing Factor"
+    },
+    {
+      "var": "e:Ccdc",
+      "unit": "uF",
+      "desc": "Cc"
+    },
+    {
+      "var": "e:Lcdc",
+      "unit": "mH",
+      "desc": "Lc"
+    },
+    {
+      "var": "e:Rcdc",
+      "unit": "Ohm",
+      "desc": "Rc"
+    },
+    {
+      "var": "e:Ucinit",
+      "unit": "kV",
+      "desc": "Initial Voltage, C"
+    },
+    {
+      "var": "e:appr_modif",
+      "unit": "",
+      "desc": "Modified"
+    },
+    {
+      "var": "e:time_Env",
+      "unit": "us",
+      "desc": "Time"
+    },
+    {
+      "var": "e:v_Env",
+      "unit": "kV",
+      "desc": "Voltage"
+    },
+    {
+      "var": "e:Im",
+      "unit": "kA",
+      "desc": "Current"
+    },
+    {
+      "var": "e:Vm",
+      "unit": "p.u.",
+      "desc": "Voltage"
+    },
+    {
+      "var": "e:desc",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:typemetadata_version",
+      "unit": "",
+      "desc": "Version"
+    },
+    {
+      "var": "e:typemetadata_key",
+      "unit": "",
+      "desc": "Type Key"
+    },
+    {
+      "var": "e:typemetadata_changeLog",
+      "unit": "",
+      "desc": "Change Log"
+    },
+    {
+      "var": "e:doc_id",
+      "unit": "",
+      "desc": "Additional Data"
+    },
+    {
+      "var": "e:Imaxint",
+      "unit": "kA",
+      "desc": "Max. Interrupting Current"
+    }
+  ],
+  "TypSym": [
+    {
+      "var": "e:loc_name",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:chr_name",
+      "unit": "",
+      "desc": "Characteristic Name"
+    },
+    {
+      "var": "e:for_name",
+      "unit": "",
+      "desc": "Foreign Key"
+    },
+    {
+      "var": "e:dat_src",
+      "unit": "",
+      "desc": "Data source"
+    },
+    {
+      "var": "e:model_inp",
+      "unit": "",
+      "desc": "Model"
+    },
+    {
+      "var": "e:manuf",
+      "unit": "",
+      "desc": "Manufacturer"
+    },
+    {
+      "var": "e:appr_modby",
+      "unit": "",
+      "desc": "Modified by"
+    },
+    {
+      "var": "e:iner_inp",
+      "unit": "",
+      "desc": "Input mode"
+    },
+    {
+      "var": "e:i_condenser",
+      "unit": "",
+      "desc": "Used as condenser"
+    },
+    {
+      "var": "e:iTdcManual",
+      "unit": "",
+      "desc": "Enter Tdc manually"
+    },
+    {
+      "var": "e:iamort",
+      "unit": "",
+      "desc": "with amortisseur windings"
+    },
+    {
+      "var": "e:iusesat",
+      "unit": "",
+      "desc": "Use saturated value"
+    },
+    {
+      "var": "e:satur",
+      "unit": "",
+      "desc": "Machine type IEC909/IEC60909"
+    },
+    {
+      "var": "e:iturbo",
+      "unit": "",
+      "desc": "Rotor type"
+    },
+    {
+      "var": "e:iuseXdk",
+      "unit": "",
+      "desc": "Ik\" instead of reactances"
+    },
+    {
+      "var": "e:nphase",
+      "unit": "",
+      "desc": "No. of phases"
+    },
+    {
+      "var": "e:nslty",
+      "unit": "",
+      "desc": "Connection"
+    },
+    {
+      "var": "e:i_trans",
+      "unit": "",
+      "desc": "Use frequency transfer functions"
+    },
+    {
+      "var": "e:i_xl",
+      "unit": "",
+      "desc": "xl is current dependent"
+    },
+    {
+      "var": "e:iopt_data",
+      "unit": "",
+      "desc": "Input parameters"
+    },
+    {
+      "var": "e:appr_status",
+      "unit": "",
+      "desc": "Status"
+    },
+    {
+      "var": "e:i_speedD",
+      "unit": "",
+      "desc": "Speed deviation based on"
+    },
+    {
+      "var": "e:polepairs",
+      "unit": "",
+      "desc": "No. of pole pairs"
+    },
+    {
+      "var": "e:isat",
+      "unit": "",
+      "desc": "Main flux saturation"
+    },
+    {
+      "var": "e:isatSalient",
+      "unit": "",
+      "desc": "Saturation"
+    },
+    {
+      "var": "e:i_extModel",
+      "unit": "",
+      "desc": "Model"
+    },
+    {
+      "var": "e:i_exactConv",
+      "unit": "",
+      "desc": "Exact conversion of time constants"
+    },
+    {
+      "var": "e:i_xme2",
+      "unit": "",
+      "desc": "Consider negative sequence torque"
+    },
+    {
+      "var": "e:i_speedVar",
+      "unit": "",
+      "desc": "Effect of speed variation"
+    },
+    {
+      "var": "e:sgn",
+      "unit": "MVA",
+      "desc": "Rated apparent power"
+    },
+    {
+      "var": "e:ugn",
+      "unit": "kV",
+      "desc": "Rated voltage"
+    },
+    {
+      "var": "e:cosn",
+      "unit": "",
+      "desc": "Rated power factor"
+    },
+    {
+      "var": "e:tag",
+      "unit": "s",
+      "desc": "Acceleration time const. Tag (rated to Pgn)"
+    },
+    {
+      "var": "e:tds",
+      "unit": "s",
+      "desc": "Td'"
+    },
+    {
+      "var": "e:tqs",
+      "unit": "s",
+      "desc": "Tq'"
+    },
+    {
+      "var": "e:tdss",
+      "unit": "s",
+      "desc": "Td''"
+    },
+    {
+      "var": "e:Tdc",
+      "unit": "s",
+      "desc": "Tdc"
+    },
+    {
+      "var": "e:tqss",
+      "unit": "s",
+      "desc": "Tq''"
+    },
+    {
+      "var": "e:Ikd",
+      "unit": "p.u.",
+      "desc": "Ikd"
+    },
+    {
+      "var": "e:xd",
+      "unit": "p.u.",
+      "desc": "xd"
+    },
+    {
+      "var": "e:xds",
+      "unit": "p.u.",
+      "desc": "xd'"
+    },
+    {
+      "var": "e:xdss",
+      "unit": "p.u.",
+      "desc": "xd''"
+    },
+    {
+      "var": "e:xq",
+      "unit": "p.u.",
+      "desc": "xq"
+    },
+    {
+      "var": "e:xqs",
+      "unit": "p.u.",
+      "desc": "xq'"
+    },
+    {
+      "var": "e:xqss",
+      "unit": "p.u.",
+      "desc": "xq''"
+    },
+    {
+      "var": "e:xdsat",
+      "unit": "p.u.",
+      "desc": "Reciprocal of short-circuit ratio (xdsat)"
+    },
+    {
+      "var": "e:xdsss",
+      "unit": "p.u.",
+      "desc": "saturated value xd''sat"
+    },
+    {
+      "var": "e:xtor",
+      "unit": "",
+      "desc": "Ratio X/R"
+    },
+    {
+      "var": "e:rstr",
+      "unit": "p.u.",
+      "desc": "rstr"
+    },
+    {
+      "var": "e:x2sy",
+      "unit": "p.u.",
+      "desc": "Reactance x2"
+    },
+    {
+      "var": "e:r2sy",
+      "unit": "p.u.",
+      "desc": "Resistance r2"
+    },
+    {
+      "var": "e:x0sy",
+      "unit": "p.u.",
+      "desc": "Reactance x0"
+    },
+    {
+      "var": "e:r0sy",
+      "unit": "p.u.",
+      "desc": "Resistance r0"
+    },
+    {
+      "var": "e:q_min",
+      "unit": "p.u.",
+      "desc": "Minimum value"
+    },
+    {
+      "var": "e:q_max",
+      "unit": "p.u.",
+      "desc": "Maximum value"
+    },
+    {
+      "var": "e:Q_min",
+      "unit": "Mvar",
+      "desc": "Minimum value"
+    },
+    {
+      "var": "e:Q_max",
+      "unit": "Mvar",
+      "desc": "Maximum value"
+    },
+    {
+      "var": "e:curk",
+      "unit": "kA",
+      "desc": "3-phase Ik\""
+    },
+    {
+      "var": "e:curk1p",
+      "unit": "kA",
+      "desc": "1-phase Ik\""
+    },
+    {
+      "var": "e:curk2p",
+      "unit": "kA",
+      "desc": "2-phase Ik\""
+    },
+    {
+      "var": "e:tds0",
+      "unit": "s",
+      "desc": "Td0'"
+    },
+    {
+      "var": "e:tqs0",
+      "unit": "s",
+      "desc": "Tq0'"
+    },
+    {
+      "var": "e:tdss0",
+      "unit": "s",
+      "desc": "Td0''"
+    },
+    {
+      "var": "e:tqss0",
+      "unit": "s",
+      "desc": "Tq0''"
+    },
+    {
+      "var": "e:depSmoothFac",
+      "unit": "%",
+      "desc": "Dependency curve smoothing factor"
+    },
+    {
+      "var": "e:slipmin",
+      "unit": "%",
+      "desc": "Minimum slip"
+    },
+    {
+      "var": "e:frequ",
+      "unit": "Hz",
+      "desc": "Nominal frequency"
+    },
+    {
+      "var": "e:sg10",
+      "unit": "p.u.",
+      "desc": "SG10"
+    },
+    {
+      "var": "e:sg12",
+      "unit": "p.u.",
+      "desc": "SG12"
+    },
+    {
+      "var": "e:smoothFac",
+      "unit": "%",
+      "desc": "Smoothing factor"
+    },
+    {
+      "var": "e:sg10q",
+      "unit": "p.u.",
+      "desc": "SG10 q-axis"
+    },
+    {
+      "var": "e:sg12q",
+      "unit": "p.u.",
+      "desc": "SG12 q-axis"
+    },
+    {
+      "var": "e:iinrush",
+      "unit": "p.u.",
+      "desc": "Ratio Ip/In"
+    },
+    {
+      "var": "e:Tinrush",
+      "unit": "s",
+      "desc": "Max. time"
+    },
+    {
+      "var": "e:Tcold",
+      "unit": "s",
+      "desc": "Cold"
+    },
+    {
+      "var": "e:Thot",
+      "unit": "s",
+      "desc": "Hot"
+    },
+    {
+      "var": "e:xstr",
+      "unit": "p.u.",
+      "desc": "xstr"
+    },
+    {
+      "var": "e:xl",
+      "unit": "p.u.",
+      "desc": "xl"
+    },
+    {
+      "var": "e:xrl",
+      "unit": "p.u.",
+      "desc": "xrld"
+    },
+    {
+      "var": "e:xrlq",
+      "unit": "p.u.",
+      "desc": "xrlq"
+    },
+    {
+      "var": "e:kw",
+      "unit": "p.u.",
+      "desc": "kw"
+    },
+    {
+      "var": "e:xad",
+      "unit": "p.u.",
+      "desc": "xad"
+    },
+    {
+      "var": "e:xaq",
+      "unit": "p.u.",
+      "desc": "xaq"
+    },
+    {
+      "var": "e:xrl2d",
+      "unit": "p.u.",
+      "desc": "xrl2d"
+    },
+    {
+      "var": "e:x1d",
+      "unit": "p.u.",
+      "desc": "x1d"
+    },
+    {
+      "var": "e:r1d",
+      "unit": "p.u.",
+      "desc": "r1d"
+    },
+    {
+      "var": "e:x2d",
+      "unit": "p.u.",
+      "desc": "x2d"
+    },
+    {
+      "var": "e:r2d",
+      "unit": "p.u.",
+      "desc": "r2d"
+    },
+    {
+      "var": "e:xfd",
+      "unit": "p.u.",
+      "desc": "xfd"
+    },
+    {
+      "var": "e:rfd",
+      "unit": "p.u.",
+      "desc": "rfd"
+    },
+    {
+      "var": "e:x1q",
+      "unit": "p.u.",
+      "desc": "x1q"
+    },
+    {
+      "var": "e:r1q",
+      "unit": "p.u.",
+      "desc": "r1q"
+    },
+    {
+      "var": "e:x2q",
+      "unit": "p.u.",
+      "desc": "x2q"
+    },
+    {
+      "var": "e:r2q",
+      "unit": "p.u.",
+      "desc": "r2q"
+    },
+    {
+      "var": "e:x3q",
+      "unit": "p.u.",
+      "desc": "x3q"
+    },
+    {
+      "var": "e:r3q",
+      "unit": "p.u.",
+      "desc": "r3q"
+    },
+    {
+      "var": "e:t1d",
+      "unit": "s",
+      "desc": "t1d"
+    },
+    {
+      "var": "e:t2d",
+      "unit": "s",
+      "desc": "t2d"
+    },
+    {
+      "var": "e:t3d",
+      "unit": "s",
+      "desc": "t3d"
+    },
+    {
+      "var": "e:t4d",
+      "unit": "s",
+      "desc": "t4d"
+    },
+    {
+      "var": "e:t5d",
+      "unit": "s",
+      "desc": "t5d"
+    },
+    {
+      "var": "e:t6d",
+      "unit": "s",
+      "desc": "t6d"
+    },
+    {
+      "var": "e:t7d",
+      "unit": "s",
+      "desc": "t7d"
+    },
+    {
+      "var": "e:t8d",
+      "unit": "s",
+      "desc": "t8d"
+    },
+    {
+      "var": "e:t1q",
+      "unit": "s",
+      "desc": "t1q"
+    },
+    {
+      "var": "e:t2q",
+      "unit": "s",
+      "desc": "t2q"
+    },
+    {
+      "var": "e:t3q",
+      "unit": "s",
+      "desc": "t3q"
+    },
+    {
+      "var": "e:t4q",
+      "unit": "s",
+      "desc": "t4q"
+    },
+    {
+      "var": "e:t5q",
+      "unit": "s",
+      "desc": "t5q"
+    },
+    {
+      "var": "e:t6q",
+      "unit": "s",
+      "desc": "t6q"
+    },
+    {
+      "var": "e:x1dc",
+      "unit": "p.u.",
+      "desc": "x1dc"
+    },
+    {
+      "var": "e:x1de",
+      "unit": "p.u.",
+      "desc": "x1de"
+    },
+    {
+      "var": "e:r1de",
+      "unit": "p.u.",
+      "desc": "r1de"
+    },
+    {
+      "var": "e:xfde",
+      "unit": "p.u.",
+      "desc": "xfde"
+    },
+    {
+      "var": "e:rfde",
+      "unit": "p.u.",
+      "desc": "rfde"
+    },
+    {
+      "var": "e:x1qc",
+      "unit": "p.u.",
+      "desc": "x1qc"
+    },
+    {
+      "var": "e:x1qe",
+      "unit": "p.u.",
+      "desc": "x1qe"
+    },
+    {
+      "var": "e:r1qe",
+      "unit": "p.u.",
+      "desc": "r1qe"
+    },
+    {
+      "var": "e:psim",
+      "unit": "p.u.",
+      "desc": "Rotor flux"
+    },
+    {
+      "var": "e:dpu",
+      "unit": "",
+      "desc": "Turbine shaft friction torque coefficient"
+    },
+    {
+      "var": "e:dpe",
+      "unit": "",
+      "desc": "Damping torque coefficient based on power"
+    },
+    {
+      "var": "e:dkd",
+      "unit": "",
+      "desc": "Damping torque coefficient"
+    },
+    {
+      "var": "e:appr_modif",
+      "unit": "",
+      "desc": "Modified"
+    },
+    {
+      "var": "e:curTab",
+      "unit": "p.u.",
+      "desc": "Current"
+    },
+    {
+      "var": "e:xlTab",
+      "unit": "p.u.",
+      "desc": "xl"
+    },
+    {
+      "var": "e:satv",
+      "unit": "p.u.",
+      "desc": "Term. voltage"
+    },
+    {
+      "var": "e:satse",
+      "unit": "p.u.",
+      "desc": "SG(u)"
+    },
+    {
+      "var": "e:satvq",
+      "unit": "p.u.",
+      "desc": "Term. voltage"
+    },
+    {
+      "var": "e:satseq",
+      "unit": "p.u.",
+      "desc": "SG(u)"
+    },
+    {
+      "var": "e:typemetadata_version",
+      "unit": "",
+      "desc": "Version"
+    },
+    {
+      "var": "e:typemetadata_key",
+      "unit": "",
+      "desc": "Type Key"
+    },
+    {
+      "var": "e:typemetadata_changeLog",
+      "unit": "",
+      "desc": "Change Log"
+    },
+    {
+      "var": "e:desc",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:fcharrstr",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "rs(f)"
+    },
+    {
+      "var": "e:fcharlss",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l''(f)"
+    },
+    {
+      "var": "e:fcharr2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r2(f)"
+    },
+    {
+      "var": "e:fcharl2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l2(f)"
+    },
+    {
+      "var": "e:fcharr0",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f)"
+    },
+    {
+      "var": "e:fcharl0",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f)"
+    },
+    {
+      "var": "e:doc_id",
+      "unit": "",
+      "desc": "Additional Data"
+    },
+    {
+      "var": "e:cTdc",
+      "unit": "s",
+      "desc": "Tdc"
+    },
+    {
+      "var": "e:tags",
+      "unit": "s",
+      "desc": "Acceleration time const. Tag (rated to Sgn)"
+    },
+    {
+      "var": "e:h",
+      "unit": "s",
+      "desc": "Inertia constant H (rated to Sgn)"
+    },
+    {
+      "var": "e:lss",
+      "unit": "p.u.",
+      "desc": "l''"
+    },
+    {
+      "var": "e:hpn",
+      "unit": "s",
+      "desc": "Inertia constant H (rated to Pgn)"
+    },
+    {
+      "var": "e:J",
+      "unit": "kgm^2",
+      "desc": "Moment of inertia J"
+    },
+    {
+      "var": "e:ifd",
+      "unit": "%",
+      "desc": "ie"
+    },
+    {
+      "var": "e:ifdq",
+      "unit": "%",
+      "desc": "ie"
+    }
+  ],
+  "TypTow": [
+    {
+      "var": "e:loc_name",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:chr_name",
+      "unit": "",
+      "desc": "Characteristic Name"
+    },
+    {
+      "var": "e:for_name",
+      "unit": "",
+      "desc": "Foreign Key"
+    },
+    {
+      "var": "e:dat_src",
+      "unit": "",
+      "desc": "Data source"
+    },
+    {
+      "var": "e:manuf",
+      "unit": "",
+      "desc": "Manufacturer"
+    },
+    {
+      "var": "e:appr_modby",
+      "unit": "",
+      "desc": "Modified by"
+    },
+    {
+      "var": "e:nlcir",
+      "unit": "",
+      "desc": "Number of Line Circuits"
+    },
+    {
+      "var": "e:nlear",
+      "unit": "",
+      "desc": "Number of Earth Wires"
+    },
+    {
+      "var": "e:earthReturn",
+      "unit": "",
+      "desc": "Earth return formula"
+    },
+    {
+      "var": "e:systp",
+      "unit": "",
+      "desc": "System Type"
+    },
+    {
+      "var": "e:i_mode",
+      "unit": "",
+      "desc": "Input Mode"
+    },
+    {
+      "var": "e:iTransMode",
+      "unit": "",
+      "desc": "Transposition"
+    },
+    {
+      "var": "e:appr_status",
+      "unit": "",
+      "desc": "Status"
+    },
+    {
+      "var": "e:gearth",
+      "unit": "uS/cm",
+      "desc": "Earth conductivity"
+    },
+    {
+      "var": "e:rearth",
+      "unit": "Ohm*m",
+      "desc": "Earth resistivity"
+    },
+    {
+      "var": "e:gshunt",
+      "unit": "uS/km",
+      "desc": "Shunt conductance"
+    },
+    {
+      "var": "e:frnom",
+      "unit": "Hz",
+      "desc": "Nominal Frequency"
+    },
+    {
+      "var": "e:frnomdc",
+      "unit": "Hz",
+      "desc": "Nominal Frequency (DC)"
+    },
+    {
+      "var": "e:appr_modif",
+      "unit": "",
+      "desc": "Modified"
+    },
+    {
+      "var": "e:nphas",
+      "unit": "",
+      "desc": "Num. of Phases"
+    },
+    {
+      "var": "e:systpCct",
+      "unit": "",
+      "desc": "System Type"
+    },
+    {
+      "var": "e:xy_e",
+      "unit": "m",
+      "desc": "Coordinate of Earth Conductors"
+    },
+    {
+      "var": "e:xy_c",
+      "unit": "m",
+      "desc": "Coordinate of Line Circuits"
+    },
+    {
+      "var": "e:R_c",
+      "unit": "Ohm/km",
+      "desc": "Matrix of Resistances R_ij"
+    },
+    {
+      "var": "e:X_c",
+      "unit": "Ohm/km",
+      "desc": "Matrix of Reactances X_ij"
+    },
+    {
+      "var": "e:R_c0",
+      "unit": "Ohm/km",
+      "desc": "Matrix of 0-Sequence-Resistances R_ij_0"
+    },
+    {
+      "var": "e:X_c0",
+      "unit": "Ohm/km",
+      "desc": "Matrix of 0-Sequence-Reactances X_ij_0"
+    },
+    {
+      "var": "e:R_c1",
+      "unit": "Ohm/km",
+      "desc": "Matrix of 1-Sequence-Resistances R_ij_1"
+    },
+    {
+      "var": "e:X_c1",
+      "unit": "Ohm/km",
+      "desc": "Matrix of 1-Sequence-Reactances X_ij_1"
+    },
+    {
+      "var": "e:L_c",
+      "unit": "H/km",
+      "desc": "Matrix of Inductances L_ij"
+    },
+    {
+      "var": "e:L_c0",
+      "unit": "H/km",
+      "desc": "Matrix of 0-Sequence-Inductances L_ij_0"
+    },
+    {
+      "var": "e:L_c1",
+      "unit": "H/km",
+      "desc": "Matrix of 1-Sequence-Inductances L_ij_1"
+    },
+    {
+      "var": "e:G_c",
+      "unit": "uS/km",
+      "desc": "Matrix of Conductances G_ij"
+    },
+    {
+      "var": "e:B_c",
+      "unit": "uS/km",
+      "desc": "Matrix of Susceptances B_ij"
+    },
+    {
+      "var": "e:G_c0",
+      "unit": "uS/km",
+      "desc": "Matrix of 0-Sequence-Conductances G_ij_0"
+    },
+    {
+      "var": "e:B_c0",
+      "unit": "uS/km",
+      "desc": "Matrix of 0-Sequence-Susceptances B_ij_0"
+    },
+    {
+      "var": "e:G_c1",
+      "unit": "uS/km",
+      "desc": "Matrix of 1-Sequence-Conductances G_ij_1"
+    },
+    {
+      "var": "e:B_c1",
+      "unit": "uS/km",
+      "desc": "Matrix of 1-Sequence-Susceptances B_ij_1"
+    },
+    {
+      "var": "e:C_c",
+      "unit": "uF/km",
+      "desc": "Matrix of Capacitances C_ij"
+    },
+    {
+      "var": "e:C_c0",
+      "unit": "uF/km",
+      "desc": "Matrix of 0-Sequence-Capacitances C_ij_0"
+    },
+    {
+      "var": "e:C_c1",
+      "unit": "uF/km",
+      "desc": "Matrix of 1-Sequence-Capacitances C_ij_1"
+    },
+    {
+      "var": "e:typemetadata_version",
+      "unit": "",
+      "desc": "Version"
+    },
+    {
+      "var": "e:typemetadata_key",
+      "unit": "",
+      "desc": "Type Key"
+    },
+    {
+      "var": "e:typemetadata_changeLog",
+      "unit": "",
+      "desc": "Change Log"
+    },
+    {
+      "var": "e:desc",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:desc_c",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:doc_id",
+      "unit": "",
+      "desc": "Additional Data"
+    },
+    {
+      "var": "e:pStoch",
+      "unit": "StoTyplne",
+      "desc": "Stochastic model"
+    },
+    {
+      "var": "e:pcond_e",
+      "unit": "TypCon",
+      "desc": "Conductor Types"
+    },
+    {
+      "var": "e:pcond_c",
+      "unit": "TypCon",
+      "desc": "Conductor Types"
+    },
+    {
+      "var": "e:cktrto",
+      "unit": "",
+      "desc": "Transposition"
+    }
+  ],
+  "TypTr2": [
+    {
+      "var": "e:loc_name",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:chr_name",
+      "unit": "",
+      "desc": "Characteristic Name"
+    },
+    {
+      "var": "e:for_name",
+      "unit": "",
+      "desc": "Foreign Key"
+    },
+    {
+      "var": "e:dat_src",
+      "unit": "",
+      "desc": "Data source"
+    },
+    {
+      "var": "e:tr2cn_h",
+      "unit": "",
+      "desc": "HV-Side"
+    },
+    {
+      "var": "e:tr2cn_l",
+      "unit": "",
+      "desc": "LV-Side"
+    },
+    {
+      "var": "e:ansiclass",
+      "unit": "",
+      "desc": "Class"
+    },
+    {
+      "var": "e:manuf",
+      "unit": "",
+      "desc": "Manufacturer"
+    },
+    {
+      "var": "e:appr_modby",
+      "unit": "",
+      "desc": "Modified by"
+    },
+    {
+      "var": "e:ntpmx",
+      "unit": "",
+      "desc": "Maximum Position"
+    },
+    {
+      "var": "e:ntpmn",
+      "unit": "",
+      "desc": "Minimum Position"
+    },
+    {
+      "var": "e:nntap0",
+      "unit": "",
+      "desc": "Neutral Position"
+    },
+    {
+      "var": "e:itapch",
+      "unit": "",
+      "desc": "Tap Changer 1"
+    },
+    {
+      "var": "e:itapch2",
+      "unit": "",
+      "desc": "Tap Changer 2"
+    },
+    {
+      "var": "e:ntpmx2",
+      "unit": "",
+      "desc": "Maximum Position"
+    },
+    {
+      "var": "e:ntpmn2",
+      "unit": "",
+      "desc": "Minimum Position"
+    },
+    {
+      "var": "e:nntap02",
+      "unit": "",
+      "desc": "Neutral Position"
+    },
+    {
+      "var": "e:tap_side2",
+      "unit": "",
+      "desc": "at Side"
+    },
+    {
+      "var": "e:tapchtype2",
+      "unit": "",
+      "desc": "Type"
+    },
+    {
+      "var": "e:iTapLoading",
+      "unit": "",
+      "desc": "Configuration"
+    },
+    {
+      "var": "e:nt2ph",
+      "unit": "",
+      "desc": "Technology"
+    },
+    {
+      "var": "e:iIntDelta",
+      "unit": "",
+      "desc": "Internal Delta Winding"
+    },
+    {
+      "var": "e:itrmt",
+      "unit": "",
+      "desc": "Type"
+    },
+    {
+      "var": "e:iFinalSlope",
+      "unit": "",
+      "desc": "Set final slope (peak values)"
+    },
+    {
+      "var": "e:ksat",
+      "unit": "",
+      "desc": "Saturation Exponent"
+    },
+    {
+      "var": "e:iLimb",
+      "unit": "",
+      "desc": "Core"
+    },
+    {
+      "var": "e:iInterPol",
+      "unit": "",
+      "desc": "Interpolation"
+    },
+    {
+      "var": "e:iFit",
+      "unit": "",
+      "desc": "Data fitting"
+    },
+    {
+      "var": "e:iHyster",
+      "unit": "",
+      "desc": "Model"
+    },
+    {
+      "var": "e:itrtype",
+      "unit": "",
+      "desc": "Transformer Type"
+    },
+    {
+      "var": "e:tap_side",
+      "unit": "",
+      "desc": "at Side"
+    },
+    {
+      "var": "e:tapchtype",
+      "unit": "",
+      "desc": "Type"
+    },
+    {
+      "var": "e:oltc",
+      "unit": "",
+      "desc": "On-load Tap Changer"
+    },
+    {
+      "var": "e:oltc2",
+      "unit": "",
+      "desc": "On-load Tap Changer 2"
+    },
+    {
+      "var": "e:itapzdep",
+      "unit": "",
+      "desc": "Tap dependent impedance for tap changer 1"
+    },
+    {
+      "var": "e:appr_status",
+      "unit": "",
+      "desc": "Status"
+    },
+    {
+      "var": "e:itrldf",
+      "unit": "",
+      "desc": "Type"
+    },
+    {
+      "var": "e:iIntPola",
+      "unit": "",
+      "desc": "Interpolation"
+    },
+    {
+      "var": "e:itratioadpt",
+      "unit": "",
+      "desc": "Transformer Ratio Adaptation"
+    },
+    {
+      "var": "e:strn",
+      "unit": "MVA",
+      "desc": "Rated Power"
+    },
+    {
+      "var": "e:utrn_h",
+      "unit": "kV",
+      "desc": "HV-Side"
+    },
+    {
+      "var": "e:utrn_l",
+      "unit": "kV",
+      "desc": "LV-Side"
+    },
+    {
+      "var": "e:uktr",
+      "unit": "%",
+      "desc": "Short-Circuit Voltage uk"
+    },
+    {
+      "var": "e:pcutr",
+      "unit": "kW",
+      "desc": "Copper Losses"
+    },
+    {
+      "var": "e:curmg",
+      "unit": "%",
+      "desc": "No Load Current"
+    },
+    {
+      "var": "e:dutap",
+      "unit": "%",
+      "desc": "Additional voltage per tap"
+    },
+    {
+      "var": "e:phitr",
+      "unit": "deg",
+      "desc": "Phase of du"
+    },
+    {
+      "var": "e:dphitap",
+      "unit": "deg",
+      "desc": "Additional angle per tap"
+    },
+    {
+      "var": "e:dutap2",
+      "unit": "%",
+      "desc": "Additional voltage per tap"
+    },
+    {
+      "var": "e:phitr2",
+      "unit": "deg",
+      "desc": "Phase of du"
+    },
+    {
+      "var": "e:dphitap2",
+      "unit": "deg",
+      "desc": "Additional angle per Tap"
+    },
+    {
+      "var": "e:uk0_hlo",
+      "unit": "%",
+      "desc": "HV-SHC-Voltage uk0 (LV open)"
+    },
+    {
+      "var": "e:ur0_hlo",
+      "unit": "%",
+      "desc": "HV-SHC-Voltage Re(uk0) (LV open)"
+    },
+    {
+      "var": "e:uk0_lho",
+      "unit": "%",
+      "desc": "LV-SHC-Voltage uk0 (HV open)"
+    },
+    {
+      "var": "e:ur0_lho",
+      "unit": "%",
+      "desc": "LV-SHC-Voltage Re(uk0) (HV open)"
+    },
+    {
+      "var": "e:uk0_hls",
+      "unit": "%",
+      "desc": "HV-SHC-Voltage uk0 (LV short-circuit)"
+    },
+    {
+      "var": "e:ur0_hls",
+      "unit": "%",
+      "desc": "HV-SHC-Voltage Re(uk0) (LV short-circuit)"
+    },
+    {
+      "var": "e:uk0tr",
+      "unit": "%",
+      "desc": "Short-Circuit Voltage uk0"
+    },
+    {
+      "var": "e:ur0tr",
+      "unit": "%",
+      "desc": "SHC-Voltage (Re(uk0)) uk0r"
+    },
+    {
+      "var": "e:nt2ag",
+      "unit": "*30deg",
+      "desc": "Phase Shift"
+    },
+    {
+      "var": "e:itrdl",
+      "unit": "",
+      "desc": "x,Pos.Seq. HV-Side"
+    },
+    {
+      "var": "e:itrdr",
+      "unit": "",
+      "desc": "r,Pos.Seq. HV-Side"
+    },
+    {
+      "var": "e:psi0",
+      "unit": "p.u.",
+      "desc": "Knee Flux"
+    },
+    {
+      "var": "e:xmlin",
+      "unit": "p.u.",
+      "desc": "Linear Reactance"
+    },
+    {
+      "var": "e:xmair",
+      "unit": "p.u.",
+      "desc": "Saturated Reactance"
+    },
+    {
+      "var": "e:smoothfac",
+      "unit": "%",
+      "desc": "Smoothing Factor"
+    },
+    {
+      "var": "e:Lwidth",
+      "unit": "%",
+      "desc": "Loop width"
+    },
+    {
+      "var": "e:itrdl0",
+      "unit": "",
+      "desc": "x0, Zero.Seq. HV-Side"
+    },
+    {
+      "var": "e:itrdr0",
+      "unit": "",
+      "desc": "r0, Zero.Seq. HV-Side"
+    },
+    {
+      "var": "e:zx0hl_n",
+      "unit": "",
+      "desc": "Mag. Impedance/uk0"
+    },
+    {
+      "var": "e:rtox0_n",
+      "unit": "",
+      "desc": "Mag. R/X"
+    },
+    {
+      "var": "e:pict1",
+      "unit": "p.u.",
+      "desc": "Ratio Ip/In (1)"
+    },
+    {
+      "var": "e:pitt1",
+      "unit": "s",
+      "desc": "Max. Time (1)"
+    },
+    {
+      "var": "e:pict2",
+      "unit": "p.u.",
+      "desc": "Ratio Ip/In (2)"
+    },
+    {
+      "var": "e:pitt2",
+      "unit": "s",
+      "desc": "Max. Time (2)"
+    },
+    {
+      "var": "e:frnom",
+      "unit": "Hz",
+      "desc": "Nominal Frequency"
+    },
+    {
+      "var": "e:pfe",
+      "unit": "kW",
+      "desc": "No Load Losses"
+    },
+    {
+      "var": "e:strnfc",
+      "unit": "MVA",
+      "desc": "Rated Power (forced cooling)"
+    },
+    {
+      "var": "e:uktmn",
+      "unit": "%",
+      "desc": "uk (min. tap)"
+    },
+    {
+      "var": "e:pcutmn",
+      "unit": "kW",
+      "desc": "Pcu (min. tap)"
+    },
+    {
+      "var": "e:uktmx",
+      "unit": "%",
+      "desc": "uk (max. tap)"
+    },
+    {
+      "var": "e:pcutmx",
+      "unit": "kW",
+      "desc": "Pcu (max. tap)"
+    },
+    {
+      "var": "e:uk0tmn",
+      "unit": "%",
+      "desc": "uk0 (min. tap)"
+    },
+    {
+      "var": "e:uk0rtmn",
+      "unit": "%",
+      "desc": "Re(uk0) (min. tap)"
+    },
+    {
+      "var": "e:uk0tmx",
+      "unit": "%",
+      "desc": "uk0 (max. tap)"
+    },
+    {
+      "var": "e:uk0rtmx",
+      "unit": "%",
+      "desc": "Re(uk0) (max. tap)"
+    },
+    {
+      "var": "e:smoothf",
+      "unit": "%",
+      "desc": "Smoothing Factor"
+    },
+    {
+      "var": "e:eddypc",
+      "unit": "",
+      "desc": "Ratio"
+    },
+    {
+      "var": "e:appr_modif",
+      "unit": "",
+      "desc": "Modified"
+    },
+    {
+      "var": "e:satcur",
+      "unit": "p.u.",
+      "desc": "Current (peak)"
+    },
+    {
+      "var": "e:satflux",
+      "unit": "p.u.",
+      "desc": "Flux (peak)"
+    },
+    {
+      "var": "e:satcue",
+      "unit": "%",
+      "desc": "Current (RMS)"
+    },
+    {
+      "var": "e:satvol",
+      "unit": "p.u.",
+      "desc": "Voltage (RMS)"
+    },
+    {
+      "var": "e:typemetadata_version",
+      "unit": "",
+      "desc": "Version"
+    },
+    {
+      "var": "e:typemetadata_key",
+      "unit": "",
+      "desc": "Type Key"
+    },
+    {
+      "var": "e:typemetadata_changeLog",
+      "unit": "",
+      "desc": "Change Log"
+    },
+    {
+      "var": "e:desc",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:doc_id",
+      "unit": "",
+      "desc": "Additional Data"
+    },
+    {
+      "var": "e:pStoch",
+      "unit": "StoTyptrf",
+      "desc": "Stochastic model"
+    },
+    {
+      "var": "e:fcharl1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f)"
+    },
+    {
+      "var": "e:fcharr1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f)"
+    },
+    {
+      "var": "e:fcharl0",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f)"
+    },
+    {
+      "var": "e:fcharr0",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f)"
+    },
+    {
+      "var": "e:fcharbm",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "1/lm(f)"
+    },
+    {
+      "var": "e:fchargm",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "gm(f)"
+    },
+    {
+      "var": "e:uktrr",
+      "unit": "%",
+      "desc": "SHC-Voltage (Re(uk)) ukr"
+    },
+    {
+      "var": "e:xtor",
+      "unit": "",
+      "desc": "Ratio X/R"
+    },
+    {
+      "var": "e:r1pu",
+      "unit": "p.u.",
+      "desc": "Resistance r1"
+    },
+    {
+      "var": "e:x1pu",
+      "unit": "p.u.",
+      "desc": "Reactance x1"
+    },
+    {
+      "var": "e:l1pu",
+      "unit": "p.u.",
+      "desc": "Inductance l1"
+    },
+    {
+      "var": "e:xtr0_hlo",
+      "unit": "",
+      "desc": "HV-Ratio X0/R0 (LV open)"
+    },
+    {
+      "var": "e:xtr0_lho",
+      "unit": "",
+      "desc": "LV-Ratio X0/R0 (HV open)"
+    },
+    {
+      "var": "e:xtr0_hls",
+      "unit": "",
+      "desc": "HV-Ratio X0/R0 (LV short-circuit)"
+    },
+    {
+      "var": "e:r0pu_hlo",
+      "unit": "p.u.",
+      "desc": "HV-Resistance r0 (LV open)"
+    },
+    {
+      "var": "e:r0pu_lho",
+      "unit": "p.u.",
+      "desc": "LV-Resistance r0 (HV open)"
+    },
+    {
+      "var": "e:r0pu_hls",
+      "unit": "p.u.",
+      "desc": "HV-Resistance r0 (LV short-circuit)"
+    },
+    {
+      "var": "e:x0pu_hlo",
+      "unit": "p.u.",
+      "desc": "HV-Reactance x0 (LV open)"
+    },
+    {
+      "var": "e:x0pu_lho",
+      "unit": "p.u.",
+      "desc": "LV-Reactance x0 (HV open)"
+    },
+    {
+      "var": "e:x0pu_hls",
+      "unit": "p.u.",
+      "desc": "HV-Reactance x0 (LV short-circuit)"
+    },
+    {
+      "var": "e:x0tor0",
+      "unit": "",
+      "desc": "Ratio X0/R0"
+    },
+    {
+      "var": "e:r0pu",
+      "unit": "p.u.",
+      "desc": "Resistance r0"
+    },
+    {
+      "var": "e:x0pu",
+      "unit": "p.u.",
+      "desc": "Reactance x0"
+    },
+    {
+      "var": "e:l0pu",
+      "unit": "p.u.",
+      "desc": "Inductance l0"
+    },
+    {
+      "var": "e:uk0delta",
+      "unit": "%",
+      "desc": "Delta Winding, uk0"
+    },
+    {
+      "var": "e:ur0delta",
+      "unit": "%",
+      "desc": "Delta Winding, Re(uk0)"
+    },
+    {
+      "var": "e:x0delta",
+      "unit": "p.u.",
+      "desc": "Delta Winding, x0"
+    },
+    {
+      "var": "e:r0delta",
+      "unit": "p.u.",
+      "desc": "Delta Winding, r0"
+    },
+    {
+      "var": "e:x0tor0delta",
+      "unit": "",
+      "desc": "Delta Winding, X0/R0"
+    },
+    {
+      "var": "e:itrdl0_lv",
+      "unit": "",
+      "desc": "x0, Zero.Seq. LV-Side"
+    },
+    {
+      "var": "e:itrdr0_lv",
+      "unit": "",
+      "desc": "r0, Zero.Seq. LV-Side"
+    },
+    {
+      "var": "e:aFrolich",
+      "unit": "",
+      "desc": "Frolich equation coefficient a"
+    },
+    {
+      "var": "e:bFrolich",
+      "unit": "",
+      "desc": "Frolich equation coefficient b"
+    },
+    {
+      "var": "e:cFrolich",
+      "unit": "",
+      "desc": "Frolich equation coefficient c"
+    },
+    {
+      "var": "e:xsatFrolich",
+      "unit": "",
+      "desc": "Frolich equation saturated reactance (p.u.)"
+    },
+    {
+      "var": "e:mseFrolich",
+      "unit": "",
+      "desc": "Frolich equation, mean squared error"
+    },
+    {
+      "var": "e:itrdl_lv",
+      "unit": "",
+      "desc": "x,Pos.Seq. LV-Side"
+    },
+    {
+      "var": "e:itrdr_lv",
+      "unit": "",
+      "desc": "r,Pos.Seq. LV-Side"
+    },
+    {
+      "var": "e:bm1",
+      "unit": "p.u.",
+      "desc": "1/lm"
+    },
+    {
+      "var": "e:gm1",
+      "unit": "p.u.",
+      "desc": "gm"
+    },
+    {
+      "var": "e:ukrtmn",
+      "unit": "%",
+      "desc": "Re(uk) (min. tap)"
+    },
+    {
+      "var": "e:ukrtmx",
+      "unit": "%",
+      "desc": "Re(uk) (max. tap)"
+    },
+    {
+      "var": "e:xtortmx",
+      "unit": "",
+      "desc": "X/R (max. tap)"
+    },
+    {
+      "var": "e:xtortmn",
+      "unit": "",
+      "desc": "X/R (min. tap)"
+    },
+    {
+      "var": "e:r1putmx",
+      "unit": "p.u.",
+      "desc": "r1 (max. tap)"
+    },
+    {
+      "var": "e:r1putmn",
+      "unit": "p.u.",
+      "desc": "r1 (min. tap)"
+    },
+    {
+      "var": "e:x1putmx",
+      "unit": "p.u.",
+      "desc": "x1 (max. tap)"
+    },
+    {
+      "var": "e:x1putmn",
+      "unit": "p.u.",
+      "desc": "x1 (min. tap)"
+    },
+    {
+      "var": "e:x0tor0tmx",
+      "unit": "",
+      "desc": "X0/R0 (max. tap)"
+    },
+    {
+      "var": "e:x0tor0tmn",
+      "unit": "",
+      "desc": "X0/R0 (min. tap)"
+    },
+    {
+      "var": "e:r0putmx",
+      "unit": "p.u.",
+      "desc": "r0 (max. tap)"
+    },
+    {
+      "var": "e:r0putmn",
+      "unit": "p.u.",
+      "desc": "r0 (min. tap)"
+    },
+    {
+      "var": "e:x0putmx",
+      "unit": "p.u.",
+      "desc": "x0 (max. tap)"
+    },
+    {
+      "var": "e:x0putmn",
+      "unit": "p.u.",
+      "desc": "x0 (min. tap)"
+    },
+    {
+      "var": "e:vecgrp",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:pT",
+      "unit": "",
+      "desc": "Voltage Range"
+    }
+  ],
+  "TypTr3": [
+    {
+      "var": "e:loc_name",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:chr_name",
+      "unit": "",
+      "desc": "Characteristic Name"
+    },
+    {
+      "var": "e:for_name",
+      "unit": "",
+      "desc": "Foreign Key"
+    },
+    {
+      "var": "e:dat_src",
+      "unit": "",
+      "desc": "Data source"
+    },
+    {
+      "var": "e:tr3cn_h",
+      "unit": "",
+      "desc": "HV-Side"
+    },
+    {
+      "var": "e:tr3cn_m",
+      "unit": "",
+      "desc": "MV-Side"
+    },
+    {
+      "var": "e:tr3cn_l",
+      "unit": "",
+      "desc": "LV-Side"
+    },
+    {
+      "var": "e:ansiclass",
+      "unit": "",
+      "desc": "Class"
+    },
+    {
+      "var": "e:manuf",
+      "unit": "",
+      "desc": "Manufacturer"
+    },
+    {
+      "var": "e:appr_modby",
+      "unit": "",
+      "desc": "Modified by"
+    },
+    {
+      "var": "e:n3tmn_h",
+      "unit": "",
+      "desc": "Min. Position"
+    },
+    {
+      "var": "e:n3tmn_m",
+      "unit": "",
+      "desc": "Min. Position"
+    },
+    {
+      "var": "e:n3tmn_l",
+      "unit": "",
+      "desc": "Min. Position"
+    },
+    {
+      "var": "e:n3tmx_h",
+      "unit": "",
+      "desc": "Max. Position"
+    },
+    {
+      "var": "e:n3tmx_m",
+      "unit": "",
+      "desc": "Max. Position"
+    },
+    {
+      "var": "e:n3tmx_l",
+      "unit": "",
+      "desc": "Max. Position"
+    },
+    {
+      "var": "e:n3tp0_h",
+      "unit": "",
+      "desc": "Neutral Position"
+    },
+    {
+      "var": "e:n3tp0_m",
+      "unit": "",
+      "desc": "Neutral Position"
+    },
+    {
+      "var": "e:n3tp0_l",
+      "unit": "",
+      "desc": "Neutral Position"
+    },
+    {
+      "var": "e:i3loc",
+      "unit": "",
+      "desc": "Position"
+    },
+    {
+      "var": "e:i30lc",
+      "unit": "",
+      "desc": "Position"
+    },
+    {
+      "var": "e:nt3ph",
+      "unit": "",
+      "desc": "Technology"
+    },
+    {
+      "var": "e:itrmt",
+      "unit": "",
+      "desc": "Type"
+    },
+    {
+      "var": "e:itrtype",
+      "unit": "",
+      "desc": "Transformer Type"
+    },
+    {
+      "var": "e:itapos",
+      "unit": "",
+      "desc": "Tap Modelled at"
+    },
+    {
+      "var": "e:oltc_h",
+      "unit": "",
+      "desc": "HV-Side"
+    },
+    {
+      "var": "e:oltc_m",
+      "unit": "",
+      "desc": "MV-Side"
+    },
+    {
+      "var": "e:oltc_l",
+      "unit": "",
+      "desc": "LV-Side"
+    },
+    {
+      "var": "e:itapzdep",
+      "unit": "",
+      "desc": "Tap dependent impedance"
+    },
+    {
+      "var": "e:itapzside",
+      "unit": "",
+      "desc": "for Tap at"
+    },
+    {
+      "var": "e:iTapLoading",
+      "unit": "",
+      "desc": "Configuration"
+    },
+    {
+      "var": "e:appr_status",
+      "unit": "",
+      "desc": "Status"
+    },
+    {
+      "var": "e:itrldf",
+      "unit": "",
+      "desc": "Type"
+    },
+    {
+      "var": "e:iIntPola",
+      "unit": "",
+      "desc": "Interpolation"
+    },
+    {
+      "var": "e:itratioadpt",
+      "unit": "",
+      "desc": "Transformer Ratio Adaptation"
+    },
+    {
+      "var": "e:iFinalSlope",
+      "unit": "",
+      "desc": "Set final slope (peak values)"
+    },
+    {
+      "var": "e:ksat",
+      "unit": "",
+      "desc": "Saturation Exponent"
+    },
+    {
+      "var": "e:iLimb",
+      "unit": "",
+      "desc": "Core"
+    },
+    {
+      "var": "e:iInterPol",
+      "unit": "",
+      "desc": "Interpolation"
+    },
+    {
+      "var": "e:iFit",
+      "unit": "",
+      "desc": "Data fitting"
+    },
+    {
+      "var": "e:iHyster",
+      "unit": "",
+      "desc": "Model"
+    },
+    {
+      "var": "e:strn3_h",
+      "unit": "MVA",
+      "desc": "HV-Side"
+    },
+    {
+      "var": "e:strn3_m",
+      "unit": "MVA",
+      "desc": "MV-Side"
+    },
+    {
+      "var": "e:strn3_l",
+      "unit": "MVA",
+      "desc": "LV-Side"
+    },
+    {
+      "var": "e:utrn3_h",
+      "unit": "kV",
+      "desc": "HV-Side"
+    },
+    {
+      "var": "e:utrn3_m",
+      "unit": "kV",
+      "desc": "MV-Side"
+    },
+    {
+      "var": "e:utrn3_l",
+      "unit": "kV",
+      "desc": "LV-Side"
+    },
+    {
+      "var": "e:uktr3_h",
+      "unit": "%",
+      "desc": "HV-MV"
+    },
+    {
+      "var": "e:uktr3_m",
+      "unit": "%",
+      "desc": "MV-LV"
+    },
+    {
+      "var": "e:uktr3_l",
+      "unit": "%",
+      "desc": "LV-HV"
+    },
+    {
+      "var": "e:pcut3_h",
+      "unit": "kW",
+      "desc": "HV-MV"
+    },
+    {
+      "var": "e:pcut3_m",
+      "unit": "kW",
+      "desc": "MV-LV"
+    },
+    {
+      "var": "e:pcut3_l",
+      "unit": "kW",
+      "desc": "LV-HV"
+    },
+    {
+      "var": "e:curm3",
+      "unit": "%",
+      "desc": "No Load Current"
+    },
+    {
+      "var": "e:cr0m3",
+      "unit": "%",
+      "desc": "No Load Current"
+    },
+    {
+      "var": "e:du3tp_h",
+      "unit": "%",
+      "desc": "Add. voltage per tap"
+    },
+    {
+      "var": "e:du3tp_m",
+      "unit": "%",
+      "desc": "Add. voltage per tap"
+    },
+    {
+      "var": "e:du3tp_l",
+      "unit": "%",
+      "desc": "Add. voltage per tap"
+    },
+    {
+      "var": "e:ph3tr_h",
+      "unit": "deg",
+      "desc": "Phase of du"
+    },
+    {
+      "var": "e:ph3tr_m",
+      "unit": "deg",
+      "desc": "Phase of du"
+    },
+    {
+      "var": "e:ph3tr_l",
+      "unit": "deg",
+      "desc": "Phase of du"
+    },
+    {
+      "var": "e:uk0hm",
+      "unit": "%",
+      "desc": "HV-MV"
+    },
+    {
+      "var": "e:uk0ml",
+      "unit": "%",
+      "desc": "MV-LV"
+    },
+    {
+      "var": "e:uk0hl",
+      "unit": "%",
+      "desc": "LV-HV"
+    },
+    {
+      "var": "e:ur0hm",
+      "unit": "%",
+      "desc": "HV-MV"
+    },
+    {
+      "var": "e:ur0ml",
+      "unit": "%",
+      "desc": "MV-LV"
+    },
+    {
+      "var": "e:ur0hl",
+      "unit": "%",
+      "desc": "LV-HV"
+    },
+    {
+      "var": "e:nt3ag_h",
+      "unit": "*30deg",
+      "desc": "Phase Shift"
+    },
+    {
+      "var": "e:nt3ag_m",
+      "unit": "*30deg",
+      "desc": "Phase Shift"
+    },
+    {
+      "var": "e:pict3",
+      "unit": "p.u.",
+      "desc": "Ratio Ip/In (1)"
+    },
+    {
+      "var": "e:pitt3",
+      "unit": "s",
+      "desc": "Max. Time (1)"
+    },
+    {
+      "var": "e:pict4",
+      "unit": "p.u.",
+      "desc": "Ratio Ip/In (2)"
+    },
+    {
+      "var": "e:pitt4",
+      "unit": "s",
+      "desc": "Max. Time (2)"
+    },
+    {
+      "var": "e:pfe",
+      "unit": "kW",
+      "desc": "No Load Losses"
+    },
+    {
+      "var": "e:rtox0_n",
+      "unit": "",
+      "desc": "Mag. R/X"
+    },
+    {
+      "var": "e:nt3ag_l",
+      "unit": "*30deg",
+      "desc": "Phase Shift"
+    },
+    {
+      "var": "e:snfc_h",
+      "unit": "MVA",
+      "desc": "HV-Side"
+    },
+    {
+      "var": "e:snfc_m",
+      "unit": "MVA",
+      "desc": "MV-Side"
+    },
+    {
+      "var": "e:snfc_l",
+      "unit": "MVA",
+      "desc": "LV-Side"
+    },
+    {
+      "var": "e:uktr3mn_h",
+      "unit": "%",
+      "desc": "uk(HV-MV)(min. tap)"
+    },
+    {
+      "var": "e:uktr3mn_m",
+      "unit": "%",
+      "desc": "uk(MV-LV)(min. tap)"
+    },
+    {
+      "var": "e:uktr3mn_l",
+      "unit": "%",
+      "desc": "uk(LV-HV)(min. tap)"
+    },
+    {
+      "var": "e:pcut3mn_h",
+      "unit": "kW",
+      "desc": "Pcu(HV-MV)(min. tap)"
+    },
+    {
+      "var": "e:pcut3mn_m",
+      "unit": "kW",
+      "desc": "Pcu(MV-LV)(min. tap)"
+    },
+    {
+      "var": "e:pcut3mn_l",
+      "unit": "kW",
+      "desc": "Pcu(LV-HV)(min. tap)"
+    },
+    {
+      "var": "e:uktr3mx_h",
+      "unit": "%",
+      "desc": "uk(HV-MV)(max. tap)"
+    },
+    {
+      "var": "e:uktr3mx_m",
+      "unit": "%",
+      "desc": "uk(MV-LV)(max. tap)"
+    },
+    {
+      "var": "e:uktr3mx_l",
+      "unit": "%",
+      "desc": "uk(LV-HV)(max. tap)"
+    },
+    {
+      "var": "e:pcut3mx_h",
+      "unit": "kW",
+      "desc": "Pcu(HV-MV)(max. tap)"
+    },
+    {
+      "var": "e:pcut3mx_m",
+      "unit": "kW",
+      "desc": "Pcu(MV-LV)(max. tap)"
+    },
+    {
+      "var": "e:pcut3mx_l",
+      "unit": "kW",
+      "desc": "Pcu(LV-HV)(max. tap)"
+    },
+    {
+      "var": "e:uk0mnhm",
+      "unit": "%",
+      "desc": "uk0(HV-MV)(min. tap)"
+    },
+    {
+      "var": "e:uk0mnml",
+      "unit": "%",
+      "desc": "uk0(MV-LV)(min. tap)"
+    },
+    {
+      "var": "e:uk0mnhl",
+      "unit": "%",
+      "desc": "uk0(LV-HV)(min. tap)"
+    },
+    {
+      "var": "e:ur0mnhm",
+      "unit": "%",
+      "desc": "Re(uk0)(HV-MV)(min. tap)"
+    },
+    {
+      "var": "e:ur0mnml",
+      "unit": "%",
+      "desc": "Re(uk0)(MV-LV)(min. tap)"
+    },
+    {
+      "var": "e:ur0mnhl",
+      "unit": "%",
+      "desc": "Re(uk0)(LV-HV)(min. tap)"
+    },
+    {
+      "var": "e:uk0mxhm",
+      "unit": "%",
+      "desc": "uk0(HV-MV)(max. tap)"
+    },
+    {
+      "var": "e:uk0mxml",
+      "unit": "%",
+      "desc": "uk0(MV-LV)(max. tap)"
+    },
+    {
+      "var": "e:uk0mxhl",
+      "unit": "%",
+      "desc": "uk0(LV-HV)(max. tap)"
+    },
+    {
+      "var": "e:ur0mxhm",
+      "unit": "%",
+      "desc": "Re(uk0)(HV-MV)(max. tap)"
+    },
+    {
+      "var": "e:ur0mxml",
+      "unit": "%",
+      "desc": "Re(uk0)(MV-LV)(max. tap)"
+    },
+    {
+      "var": "e:ur0mxhl",
+      "unit": "%",
+      "desc": "Re(uk0)(LV-HV)(max. tap)"
+    },
+    {
+      "var": "e:smoothf",
+      "unit": "%",
+      "desc": "Smoothing Factor"
+    },
+    {
+      "var": "e:psi0",
+      "unit": "p.u.",
+      "desc": "Knee Flux"
+    },
+    {
+      "var": "e:x3lin",
+      "unit": "p.u.",
+      "desc": "Linear Reactance"
+    },
+    {
+      "var": "e:x3air",
+      "unit": "p.u.",
+      "desc": "Saturated Reactance"
+    },
+    {
+      "var": "e:smoothfac",
+      "unit": "%",
+      "desc": "Smoothing Factor"
+    },
+    {
+      "var": "e:Lwidth",
+      "unit": "%",
+      "desc": "Loop width"
+    },
+    {
+      "var": "e:appr_modif",
+      "unit": "",
+      "desc": "Modified"
+    },
+    {
+      "var": "e:satcue",
+      "unit": "%",
+      "desc": "Current (RMS)"
+    },
+    {
+      "var": "e:satvol",
+      "unit": "p.u.",
+      "desc": "Voltage (RMS)"
+    },
+    {
+      "var": "e:satcur",
+      "unit": "p.u.",
+      "desc": "Current (peak)"
+    },
+    {
+      "var": "e:satflux",
+      "unit": "p.u.",
+      "desc": "Flux (peak)"
+    },
+    {
+      "var": "e:typemetadata_version",
+      "unit": "",
+      "desc": "Version"
+    },
+    {
+      "var": "e:typemetadata_key",
+      "unit": "",
+      "desc": "Type Key"
+    },
+    {
+      "var": "e:typemetadata_changeLog",
+      "unit": "",
+      "desc": "Change Log"
+    },
+    {
+      "var": "e:desc",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:doc_id",
+      "unit": "",
+      "desc": "Additional Data"
+    },
+    {
+      "var": "e:pStoch",
+      "unit": "StoTyptrf",
+      "desc": "Stochastic model"
+    },
+    {
+      "var": "e:fcharl1_h",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) HV-MV"
+    },
+    {
+      "var": "e:fcharr1_h",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) HV-MV"
+    },
+    {
+      "var": "e:fcharl0_h",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) HV-MV"
+    },
+    {
+      "var": "e:fcharr0_h",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) HV-MV"
+    },
+    {
+      "var": "e:fcharl1_m",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) MV-LV"
+    },
+    {
+      "var": "e:fcharr1_m",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) MV-LV"
+    },
+    {
+      "var": "e:fcharl0_m",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) MV-LV"
+    },
+    {
+      "var": "e:fcharr0_m",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) MV-LV"
+    },
+    {
+      "var": "e:fcharl1_l",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) LV-HV"
+    },
+    {
+      "var": "e:fcharr1_l",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) LV-HV"
+    },
+    {
+      "var": "e:fcharl0_l",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) LV-HV"
+    },
+    {
+      "var": "e:fcharr0_l",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) LV-HV"
+    },
+    {
+      "var": "e:fcharbm",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "1/lm(f)"
+    },
+    {
+      "var": "e:fchargm",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "gm(f)"
+    },
+    {
+      "var": "e:uktrr3_h",
+      "unit": "%",
+      "desc": "HV-MV"
+    },
+    {
+      "var": "e:uktrr3_m",
+      "unit": "%",
+      "desc": "MV-LV"
+    },
+    {
+      "var": "e:uktrr3_l",
+      "unit": "%",
+      "desc": "LV-HV"
+    },
+    {
+      "var": "e:xtor3_h",
+      "unit": "",
+      "desc": "HV-MV"
+    },
+    {
+      "var": "e:xtor3_m",
+      "unit": "",
+      "desc": "MV-LV"
+    },
+    {
+      "var": "e:xtor3_l",
+      "unit": "",
+      "desc": "LV-HV"
+    },
+    {
+      "var": "e:r1pu_h",
+      "unit": "p.u.",
+      "desc": "HV-MV"
+    },
+    {
+      "var": "e:r1pu_m",
+      "unit": "p.u.",
+      "desc": "MV-LV"
+    },
+    {
+      "var": "e:r1pu_l",
+      "unit": "p.u.",
+      "desc": "LV-HV"
+    },
+    {
+      "var": "e:x1pu_h",
+      "unit": "p.u.",
+      "desc": "HV-MV"
+    },
+    {
+      "var": "e:x1pu_m",
+      "unit": "p.u.",
+      "desc": "MV-LV"
+    },
+    {
+      "var": "e:x1pu_l",
+      "unit": "p.u.",
+      "desc": "LV-HV"
+    },
+    {
+      "var": "e:l1pu_h",
+      "unit": "p.u.",
+      "desc": "Inductance l1, HV-MV"
+    },
+    {
+      "var": "e:l1pu_m",
+      "unit": "p.u.",
+      "desc": "Inductance l1, MV-LV"
+    },
+    {
+      "var": "e:l1pu_l",
+      "unit": "p.u.",
+      "desc": "Inductance l1, LV-HV"
+    },
+    {
+      "var": "e:xtr0hm",
+      "unit": "",
+      "desc": "HV-MV"
+    },
+    {
+      "var": "e:xtr0ml",
+      "unit": "",
+      "desc": "MV-LV"
+    },
+    {
+      "var": "e:xtr0hl",
+      "unit": "",
+      "desc": "LV-HV"
+    },
+    {
+      "var": "e:r0puhm",
+      "unit": "p.u.",
+      "desc": "HV-MV"
+    },
+    {
+      "var": "e:r0puml",
+      "unit": "p.u.",
+      "desc": "MV-LV"
+    },
+    {
+      "var": "e:r0puhl",
+      "unit": "p.u.",
+      "desc": "LV-HV"
+    },
+    {
+      "var": "e:x0puhm",
+      "unit": "p.u.",
+      "desc": "HV-MV"
+    },
+    {
+      "var": "e:x0puml",
+      "unit": "p.u.",
+      "desc": "MV-LV"
+    },
+    {
+      "var": "e:x0puhl",
+      "unit": "p.u.",
+      "desc": "LV-HV"
+    },
+    {
+      "var": "e:l0puhm",
+      "unit": "p.u.",
+      "desc": "Inductance l0, HV-MV"
+    },
+    {
+      "var": "e:l0puml",
+      "unit": "p.u.",
+      "desc": "Inductance l0, MV-LV"
+    },
+    {
+      "var": "e:l0puhl",
+      "unit": "p.u.",
+      "desc": "Inductance l0, LV-HV"
+    },
+    {
+      "var": "e:bm1",
+      "unit": "p.u.",
+      "desc": "1/lm"
+    },
+    {
+      "var": "e:gm1",
+      "unit": "p.u.",
+      "desc": "gm"
+    },
+    {
+      "var": "e:uktrr3mn_h",
+      "unit": "%",
+      "desc": "Re(uk)(HV-MV) (min. tap)"
+    },
+    {
+      "var": "e:uktrr3mn_m",
+      "unit": "%",
+      "desc": "Re(uk)(MV-LV) (min. tap)"
+    },
+    {
+      "var": "e:uktrr3mn_l",
+      "unit": "%",
+      "desc": "Re(uk)(LV-HV) (min. tap)"
+    },
+    {
+      "var": "e:xtor3mn_h",
+      "unit": "",
+      "desc": "X/R (HV-MV)(min. tap)"
+    },
+    {
+      "var": "e:xtor3mn_m",
+      "unit": "",
+      "desc": "X/R (MV-LV)(min. tap)"
+    },
+    {
+      "var": "e:xtor3mn_l",
+      "unit": "",
+      "desc": "X/R (LV-HV)(min. tap)"
+    },
+    {
+      "var": "e:r1putmn_h",
+      "unit": "p.u.",
+      "desc": "r1(HV-MV) (min. tap)"
+    },
+    {
+      "var": "e:r1putmn_m",
+      "unit": "p.u.",
+      "desc": "r1(MV-LV) (min. tap)"
+    },
+    {
+      "var": "e:r1putmn_l",
+      "unit": "p.u.",
+      "desc": "r1(LV-HV) (min. tap)"
+    },
+    {
+      "var": "e:x1putmn_h",
+      "unit": "p.u.",
+      "desc": "x1(HV-MV) (min. tap)"
+    },
+    {
+      "var": "e:x1putmn_m",
+      "unit": "p.u.",
+      "desc": "x1(MV-LV) (min. tap)"
+    },
+    {
+      "var": "e:x1putmn_l",
+      "unit": "p.u.",
+      "desc": "x1(LV-HV) (min. tap)"
+    },
+    {
+      "var": "e:uktrr3mx_h",
+      "unit": "%",
+      "desc": "Re(uk)(HV-MV) (max. tap)"
+    },
+    {
+      "var": "e:uktrr3mx_m",
+      "unit": "%",
+      "desc": "Re(uk)(MV-LV) (max. tap)"
+    },
+    {
+      "var": "e:uktrr3mx_l",
+      "unit": "%",
+      "desc": "Re(uk)(LV-HV) (max. tap)"
+    },
+    {
+      "var": "e:xtor3mx_h",
+      "unit": "",
+      "desc": "X/R (HV-MV)(max. tap)"
+    },
+    {
+      "var": "e:xtor3mx_m",
+      "unit": "",
+      "desc": "X/R (MV-LV)(max. tap)"
+    },
+    {
+      "var": "e:xtor3mx_l",
+      "unit": "",
+      "desc": "X/R (LV-HV)(max. tap)"
+    },
+    {
+      "var": "e:r1putmx_h",
+      "unit": "p.u.",
+      "desc": "r1(HV-MV) (max. tap)"
+    },
+    {
+      "var": "e:r1putmx_m",
+      "unit": "p.u.",
+      "desc": "r1(MV-LV) (max. tap)"
+    },
+    {
+      "var": "e:r1putmx_l",
+      "unit": "p.u.",
+      "desc": "r1(LV-HV) (max. tap)"
+    },
+    {
+      "var": "e:x1putmx_h",
+      "unit": "p.u.",
+      "desc": "x1(HV-MV) (max. tap)"
+    },
+    {
+      "var": "e:x1putmx_m",
+      "unit": "p.u.",
+      "desc": "x1(MV-LV) (max. tap)"
+    },
+    {
+      "var": "e:x1putmx_l",
+      "unit": "p.u.",
+      "desc": "x1(LV-HV) (max. tap)"
+    },
+    {
+      "var": "e:xtr0mnhm",
+      "unit": "",
+      "desc": "X0/R0 (HV-MV)(min. tap)"
+    },
+    {
+      "var": "e:xtr0mnml",
+      "unit": "",
+      "desc": "X0/R0 (MV-LV)(min. tap)"
+    },
+    {
+      "var": "e:xtr0mnhl",
+      "unit": "",
+      "desc": "X0/R0 (LV-HV)(min. tap)"
+    },
+    {
+      "var": "e:r0pumnhm",
+      "unit": "p.u.",
+      "desc": "r0(HV-MV) (min. tap)"
+    },
+    {
+      "var": "e:r0pumnml",
+      "unit": "p.u.",
+      "desc": "r0(MV-LV) (min. tap)"
+    },
+    {
+      "var": "e:r0pumnhl",
+      "unit": "p.u.",
+      "desc": "r0(LV-HV) (min. tap)"
+    },
+    {
+      "var": "e:x0pumnhm",
+      "unit": "p.u.",
+      "desc": "x0(HV-MV) (min. tap)"
+    },
+    {
+      "var": "e:x0pumnml",
+      "unit": "p.u.",
+      "desc": "x0(MV-LV) (min. tap)"
+    },
+    {
+      "var": "e:x0pumnhl",
+      "unit": "p.u.",
+      "desc": "x0(LV-HV) (min. tap)"
+    },
+    {
+      "var": "e:xtr0mxhm",
+      "unit": "",
+      "desc": "X0/R0 (HV-MV)(max. tap)"
+    },
+    {
+      "var": "e:xtr0mxml",
+      "unit": "",
+      "desc": "X0/R0 (MV-LV)(max. tap)"
+    },
+    {
+      "var": "e:xtr0mxhl",
+      "unit": "",
+      "desc": "X0/R0 (LV-HV)(max. tap)"
+    },
+    {
+      "var": "e:r0pumxhm",
+      "unit": "p.u.",
+      "desc": "r0(HV-MV) (max. tap)"
+    },
+    {
+      "var": "e:r0pumxml",
+      "unit": "p.u.",
+      "desc": "r0(MV-LV) (max. tap)"
+    },
+    {
+      "var": "e:r0pumxhl",
+      "unit": "p.u.",
+      "desc": "r0(LV-HV) (max. tap)"
+    },
+    {
+      "var": "e:x0pumxhm",
+      "unit": "p.u.",
+      "desc": "x0(HV-MV) (max. tap)"
+    },
+    {
+      "var": "e:x0pumxml",
+      "unit": "p.u.",
+      "desc": "x0(MV-LV) (max. tap)"
+    },
+    {
+      "var": "e:x0pumxhl",
+      "unit": "p.u.",
+      "desc": "x0(LV-HV) (max. tap)"
+    },
+    {
+      "var": "e:vecgrp",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:aFrolich",
+      "unit": "",
+      "desc": "Frolich equation coefficient a"
+    },
+    {
+      "var": "e:bFrolich",
+      "unit": "",
+      "desc": "Frolich equation coefficient b"
+    },
+    {
+      "var": "e:cFrolich",
+      "unit": "",
+      "desc": "Frolich equation coefficient c"
+    },
+    {
+      "var": "e:xsatFrolich",
+      "unit": "",
+      "desc": "Frolich equation saturated reactance (p.u.)"
+    },
+    {
+      "var": "e:mseFrolich",
+      "unit": "",
+      "desc": "Frolich equation, mean squared error"
+    },
+    {
+      "var": "e:pT_h",
+      "unit": "",
+      "desc": "Voltage Range"
+    },
+    {
+      "var": "e:pT_m",
+      "unit": "",
+      "desc": "Voltage Range"
+    },
+    {
+      "var": "e:pT_l",
+      "unit": "",
+      "desc": "Voltage Range"
+    }
+  ],
+  "TypTr4": [
+    {
+      "var": "e:loc_name",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:chr_name",
+      "unit": "",
+      "desc": "Characteristic Name"
+    },
+    {
+      "var": "e:for_name",
+      "unit": "",
+      "desc": "Foreign Key"
+    },
+    {
+      "var": "e:dat_src",
+      "unit": "",
+      "desc": "Data source"
+    },
+    {
+      "var": "e:trcon_h0",
+      "unit": "",
+      "desc": "HV-Side"
+    },
+    {
+      "var": "e:trcon_l1",
+      "unit": "",
+      "desc": "LV1-Side"
+    },
+    {
+      "var": "e:trcon_l2",
+      "unit": "",
+      "desc": "LV2-Side"
+    },
+    {
+      "var": "e:trcon_l3",
+      "unit": "",
+      "desc": "LV3-Side"
+    },
+    {
+      "var": "e:ansiclass",
+      "unit": "",
+      "desc": "Class"
+    },
+    {
+      "var": "e:manuf",
+      "unit": "",
+      "desc": "Manufacturer"
+    },
+    {
+      "var": "e:appr_modby",
+      "unit": "",
+      "desc": "Modified by"
+    },
+    {
+      "var": "e:ntapmin_h0",
+      "unit": "",
+      "desc": "Min. Position"
+    },
+    {
+      "var": "e:ntapmin_l1",
+      "unit": "",
+      "desc": "Min. Position"
+    },
+    {
+      "var": "e:ntapmin_l2",
+      "unit": "",
+      "desc": "Min. Position"
+    },
+    {
+      "var": "e:ntapmin_l3",
+      "unit": "",
+      "desc": "Min. Position"
+    },
+    {
+      "var": "e:ntapmax_h0",
+      "unit": "",
+      "desc": "Max. Position"
+    },
+    {
+      "var": "e:ntapmax_l1",
+      "unit": "",
+      "desc": "Max. Position"
+    },
+    {
+      "var": "e:ntapmax_l2",
+      "unit": "",
+      "desc": "Max. Position"
+    },
+    {
+      "var": "e:ntapmax_l3",
+      "unit": "",
+      "desc": "Max. Position"
+    },
+    {
+      "var": "e:ntapneu_h0",
+      "unit": "",
+      "desc": "Neutral Position"
+    },
+    {
+      "var": "e:ntapneu_l1",
+      "unit": "",
+      "desc": "Neutral Position"
+    },
+    {
+      "var": "e:ntapneu_l2",
+      "unit": "",
+      "desc": "Neutral Position"
+    },
+    {
+      "var": "e:ntapneu_l3",
+      "unit": "",
+      "desc": "Neutral Position"
+    },
+    {
+      "var": "e:i_auto",
+      "unit": "",
+      "desc": "Autotransformer"
+    },
+    {
+      "var": "e:imagloc",
+      "unit": "",
+      "desc": "Position"
+    },
+    {
+      "var": "e:itrmt",
+      "unit": "",
+      "desc": "Type"
+    },
+    {
+      "var": "e:itrtype",
+      "unit": "",
+      "desc": "Transformer Type"
+    },
+    {
+      "var": "e:iTapLoading",
+      "unit": "",
+      "desc": "Configuration"
+    },
+    {
+      "var": "e:oltc_h0",
+      "unit": "",
+      "desc": "HV-Side"
+    },
+    {
+      "var": "e:oltc_l1",
+      "unit": "",
+      "desc": "LV1-Side"
+    },
+    {
+      "var": "e:oltc_l2",
+      "unit": "",
+      "desc": "LV2-Side"
+    },
+    {
+      "var": "e:oltc_l3",
+      "unit": "",
+      "desc": "LV3-Side"
+    },
+    {
+      "var": "e:useKt",
+      "unit": "",
+      "desc": "Use impedance correction factors"
+    },
+    {
+      "var": "e:itapzdep",
+      "unit": "",
+      "desc": "Tap dependent impedance"
+    },
+    {
+      "var": "e:itapzside",
+      "unit": "",
+      "desc": "for Tap at"
+    },
+    {
+      "var": "e:inputData",
+      "unit": "",
+      "desc": "Input data"
+    },
+    {
+      "var": "e:appr_status",
+      "unit": "",
+      "desc": "Status"
+    },
+    {
+      "var": "e:itrldf",
+      "unit": "",
+      "desc": "Type"
+    },
+    {
+      "var": "e:iIntPola",
+      "unit": "",
+      "desc": "Interpolation"
+    },
+    {
+      "var": "e:iFinalSlope",
+      "unit": "",
+      "desc": "Set final slope (peak values)"
+    },
+    {
+      "var": "e:ksat",
+      "unit": "",
+      "desc": "Saturation Exponent"
+    },
+    {
+      "var": "e:iLimb",
+      "unit": "",
+      "desc": "Core"
+    },
+    {
+      "var": "e:iInterPol",
+      "unit": "",
+      "desc": "Interpolation"
+    },
+    {
+      "var": "e:iFit",
+      "unit": "",
+      "desc": "Data fitting"
+    },
+    {
+      "var": "e:iHyster",
+      "unit": "",
+      "desc": "Model"
+    },
+    {
+      "var": "e:sn_h0",
+      "unit": "MVA",
+      "desc": "HV-Side"
+    },
+    {
+      "var": "e:sn_l1",
+      "unit": "MVA",
+      "desc": "LV1-Side"
+    },
+    {
+      "var": "e:sn_l2",
+      "unit": "MVA",
+      "desc": "LV2-Side"
+    },
+    {
+      "var": "e:sn_l3",
+      "unit": "MVA",
+      "desc": "LV3-Side"
+    },
+    {
+      "var": "e:un_h0",
+      "unit": "kV",
+      "desc": "HV-Side"
+    },
+    {
+      "var": "e:un_l1",
+      "unit": "kV",
+      "desc": "LV1-Side"
+    },
+    {
+      "var": "e:un_l2",
+      "unit": "kV",
+      "desc": "LV2-Side"
+    },
+    {
+      "var": "e:un_l3",
+      "unit": "kV",
+      "desc": "LV3-Side"
+    },
+    {
+      "var": "e:uk_h0l1",
+      "unit": "%",
+      "desc": "HV-LV1"
+    },
+    {
+      "var": "e:uk_h0l2",
+      "unit": "%",
+      "desc": "HV-LV2"
+    },
+    {
+      "var": "e:uk_h0l3",
+      "unit": "%",
+      "desc": "HV-LV3"
+    },
+    {
+      "var": "e:uk_l1l2",
+      "unit": "%",
+      "desc": "LV1-LV2"
+    },
+    {
+      "var": "e:uk_l1l3",
+      "unit": "%",
+      "desc": "LV1-LV3"
+    },
+    {
+      "var": "e:uk_l2l3",
+      "unit": "%",
+      "desc": "LV2-LV3"
+    },
+    {
+      "var": "e:pcu_h0l1",
+      "unit": "kW",
+      "desc": "HV-LV1"
+    },
+    {
+      "var": "e:pcu_h0l2",
+      "unit": "kW",
+      "desc": "HV-LV2"
+    },
+    {
+      "var": "e:pcu_h0l3",
+      "unit": "kW",
+      "desc": "HV-LV3"
+    },
+    {
+      "var": "e:pcu_l1l2",
+      "unit": "kW",
+      "desc": "LV1-LV2"
+    },
+    {
+      "var": "e:pcu_l1l3",
+      "unit": "kW",
+      "desc": "LV1-LV3"
+    },
+    {
+      "var": "e:pcu_l2l3",
+      "unit": "kW",
+      "desc": "LV2-LV3"
+    },
+    {
+      "var": "e:uk_h0",
+      "unit": "%",
+      "desc": "HV"
+    },
+    {
+      "var": "e:uk_l1",
+      "unit": "%",
+      "desc": "LV1"
+    },
+    {
+      "var": "e:uk_l2",
+      "unit": "%",
+      "desc": "LV2"
+    },
+    {
+      "var": "e:uk_l3",
+      "unit": "%",
+      "desc": "LV3"
+    },
+    {
+      "var": "e:pcu_h0",
+      "unit": "kW",
+      "desc": "HV"
+    },
+    {
+      "var": "e:pcu_l1",
+      "unit": "kW",
+      "desc": "LV1"
+    },
+    {
+      "var": "e:pcu_l2",
+      "unit": "kW",
+      "desc": "LV2"
+    },
+    {
+      "var": "e:pcu_l3",
+      "unit": "kW",
+      "desc": "LV3"
+    },
+    {
+      "var": "e:curmag",
+      "unit": "%",
+      "desc": "No Load Current"
+    },
+    {
+      "var": "e:cur0mag",
+      "unit": "%",
+      "desc": "No Load Current"
+    },
+    {
+      "var": "e:dutap_h0",
+      "unit": "%",
+      "desc": "Add. voltage per tap"
+    },
+    {
+      "var": "e:dutap_l1",
+      "unit": "%",
+      "desc": "Add. voltage per tap"
+    },
+    {
+      "var": "e:dutap_l2",
+      "unit": "%",
+      "desc": "Add. voltage per tap"
+    },
+    {
+      "var": "e:dutap_l3",
+      "unit": "%",
+      "desc": "Add. voltage per tap"
+    },
+    {
+      "var": "e:phitr_h0",
+      "unit": "deg",
+      "desc": "Phase of du"
+    },
+    {
+      "var": "e:phitr_l1",
+      "unit": "deg",
+      "desc": "Phase of du"
+    },
+    {
+      "var": "e:phitr_l2",
+      "unit": "deg",
+      "desc": "Phase of du"
+    },
+    {
+      "var": "e:phitr_l3",
+      "unit": "deg",
+      "desc": "Phase of du"
+    },
+    {
+      "var": "e:uk0_h0l1",
+      "unit": "%",
+      "desc": "HV-LV1"
+    },
+    {
+      "var": "e:uk0_h0l2",
+      "unit": "%",
+      "desc": "HV-LV2"
+    },
+    {
+      "var": "e:uk0_h0l3",
+      "unit": "%",
+      "desc": "HV-LV3"
+    },
+    {
+      "var": "e:uk0_l1l2",
+      "unit": "%",
+      "desc": "LV1-LV2"
+    },
+    {
+      "var": "e:uk0_l1l3",
+      "unit": "%",
+      "desc": "LV1-LV3"
+    },
+    {
+      "var": "e:uk0_l2l3",
+      "unit": "%",
+      "desc": "LV2-LV3"
+    },
+    {
+      "var": "e:ukr0_h0l1",
+      "unit": "%",
+      "desc": "HV-LV1"
+    },
+    {
+      "var": "e:ukr0_h0l2",
+      "unit": "%",
+      "desc": "HV-LV2"
+    },
+    {
+      "var": "e:ukr0_h0l3",
+      "unit": "%",
+      "desc": "HV-LV3"
+    },
+    {
+      "var": "e:ukr0_l1l2",
+      "unit": "%",
+      "desc": "LV1-LV2"
+    },
+    {
+      "var": "e:ukr0_l1l3",
+      "unit": "%",
+      "desc": "LV1-LV3"
+    },
+    {
+      "var": "e:ukr0_l2l3",
+      "unit": "%",
+      "desc": "LV2-LV3"
+    },
+    {
+      "var": "e:uk0_h0",
+      "unit": "%",
+      "desc": "HV"
+    },
+    {
+      "var": "e:uk0_l1",
+      "unit": "%",
+      "desc": "LV1"
+    },
+    {
+      "var": "e:uk0_l2",
+      "unit": "%",
+      "desc": "LV2"
+    },
+    {
+      "var": "e:uk0_l3",
+      "unit": "%",
+      "desc": "LV3"
+    },
+    {
+      "var": "e:ukr0_h0",
+      "unit": "%",
+      "desc": "HV"
+    },
+    {
+      "var": "e:ukr0_l1",
+      "unit": "%",
+      "desc": "LV1"
+    },
+    {
+      "var": "e:ukr0_l2",
+      "unit": "%",
+      "desc": "LV2"
+    },
+    {
+      "var": "e:ukr0_l3",
+      "unit": "%",
+      "desc": "LV3"
+    },
+    {
+      "var": "e:trangle_h0",
+      "unit": "*30deg",
+      "desc": "Phase Shift"
+    },
+    {
+      "var": "e:trangle_l1",
+      "unit": "*30deg",
+      "desc": "Phase Shift"
+    },
+    {
+      "var": "e:trangle_l2",
+      "unit": "*30deg",
+      "desc": "Phase Shift"
+    },
+    {
+      "var": "e:trangle_l3",
+      "unit": "*30deg",
+      "desc": "Phase Shift"
+    },
+    {
+      "var": "e:pict3",
+      "unit": "p.u.",
+      "desc": "Ratio Ip/In (1)"
+    },
+    {
+      "var": "e:pitt3",
+      "unit": "s",
+      "desc": "Max. Time (1)"
+    },
+    {
+      "var": "e:pict4",
+      "unit": "p.u.",
+      "desc": "Ratio Ip/In (2)"
+    },
+    {
+      "var": "e:pitt4",
+      "unit": "s",
+      "desc": "Max. Time (2)"
+    },
+    {
+      "var": "e:pfe",
+      "unit": "kW",
+      "desc": "No Load Losses"
+    },
+    {
+      "var": "e:rtox0_n",
+      "unit": "",
+      "desc": "Mag. R/X"
+    },
+    {
+      "var": "e:snfc_h",
+      "unit": "MVA",
+      "desc": "HV-Side"
+    },
+    {
+      "var": "e:snfc_m",
+      "unit": "MVA",
+      "desc": "MV-Side"
+    },
+    {
+      "var": "e:snfc_l",
+      "unit": "MVA",
+      "desc": "LV-Side"
+    },
+    {
+      "var": "e:uktapmin_h0l1",
+      "unit": "%",
+      "desc": "uk(HV-LV1)(min. tap)"
+    },
+    {
+      "var": "e:uktapmin_h0l2",
+      "unit": "%",
+      "desc": "uk(HV-LV2)(min. tap)"
+    },
+    {
+      "var": "e:uktapmin_h0l3",
+      "unit": "%",
+      "desc": "uk(HV-LV3)(min. tap)"
+    },
+    {
+      "var": "e:uktapmin_l1l2",
+      "unit": "%",
+      "desc": "uk(LV1-LV2)(min. tap)"
+    },
+    {
+      "var": "e:uktapmin_l1l3",
+      "unit": "%",
+      "desc": "uk(LV1-LV3)(min. tap)"
+    },
+    {
+      "var": "e:uktapmin_l2l3",
+      "unit": "%",
+      "desc": "uk(LV2-LV3)(min. tap)"
+    },
+    {
+      "var": "e:pcutapmin_h0l1",
+      "unit": "kW",
+      "desc": "Pcu(HV-LV1)(min. tap)"
+    },
+    {
+      "var": "e:pcutapmin_h0l2",
+      "unit": "kW",
+      "desc": "Pcu(HV-LV2)(min. tap)"
+    },
+    {
+      "var": "e:pcutapmin_h0l3",
+      "unit": "kW",
+      "desc": "Pcu(HV-LV3)(min. tap)"
+    },
+    {
+      "var": "e:pcutapmin_l1l2",
+      "unit": "kW",
+      "desc": "Pcu(LV1-LV2)(min. tap)"
+    },
+    {
+      "var": "e:pcutapmin_l1l3",
+      "unit": "kW",
+      "desc": "Pcu(LV1-LV3)(min. tap)"
+    },
+    {
+      "var": "e:pcutapmin_l2l3",
+      "unit": "kW",
+      "desc": "Pcu(LV2-LV3)(min. tap)"
+    },
+    {
+      "var": "e:uktapmax_h0l1",
+      "unit": "%",
+      "desc": "uk(HV-LV1)(max. tap)"
+    },
+    {
+      "var": "e:uktapmax_h0l2",
+      "unit": "%",
+      "desc": "uk(HV-LV2)(max. tap)"
+    },
+    {
+      "var": "e:uktapmax_h0l3",
+      "unit": "%",
+      "desc": "uk(HV-LV3)(max. tap)"
+    },
+    {
+      "var": "e:uktapmax_l1l2",
+      "unit": "%",
+      "desc": "uk(LV1-LV2)(max. tap)"
+    },
+    {
+      "var": "e:uktapmax_l1l3",
+      "unit": "%",
+      "desc": "uk(LV1-LV3)(max. tap)"
+    },
+    {
+      "var": "e:uktapmax_l2l3",
+      "unit": "%",
+      "desc": "uk(LV2-LV3)(max. tap)"
+    },
+    {
+      "var": "e:pcutapmax_h0l1",
+      "unit": "kW",
+      "desc": "Pcu(HV-LV1)(max. tap)"
+    },
+    {
+      "var": "e:pcutapmax_h0l2",
+      "unit": "kW",
+      "desc": "Pcu(HV-LV2)(max. tap)"
+    },
+    {
+      "var": "e:pcutapmax_h0l3",
+      "unit": "kW",
+      "desc": "Pcu(HV-LV3)(max. tap)"
+    },
+    {
+      "var": "e:pcutapmax_l1l2",
+      "unit": "kW",
+      "desc": "Pcu(LV1-LV2)(max. tap)"
+    },
+    {
+      "var": "e:pcutapmax_l1l3",
+      "unit": "kW",
+      "desc": "Pcu(LV1-LV3)(max. tap)"
+    },
+    {
+      "var": "e:pcutapmax_l2l3",
+      "unit": "kW",
+      "desc": "Pcu(LV2-LV3)(max. tap)"
+    },
+    {
+      "var": "e:uk0tapmin_h0l1",
+      "unit": "%",
+      "desc": "uk01(HV-LV1)(min. tap)"
+    },
+    {
+      "var": "e:uk0tapmin_h0l2",
+      "unit": "%",
+      "desc": "uk01(HV-LV2)(min. tap)"
+    },
+    {
+      "var": "e:uk0tapmin_h0l3",
+      "unit": "%",
+      "desc": "uk01(HV-LV3)(min. tap)"
+    },
+    {
+      "var": "e:uk0tapmin_l1l2",
+      "unit": "%",
+      "desc": "uk0(LV1-LV2)(min. tap)"
+    },
+    {
+      "var": "e:uk0tapmin_l1l3",
+      "unit": "%",
+      "desc": "uk0(LV1-LV3)(min. tap)"
+    },
+    {
+      "var": "e:uk0tapmin_l2l3",
+      "unit": "%",
+      "desc": "uk0(LV2-LV3)(min. tap)"
+    },
+    {
+      "var": "e:ukr0tapmin_h0l1",
+      "unit": "%",
+      "desc": "Re(uk0)(HV-LV1)(min. tap)"
+    },
+    {
+      "var": "e:ukr0tapmin_h0l2",
+      "unit": "%",
+      "desc": "Re(uk0)(HV-LV2)(min. tap)"
+    },
+    {
+      "var": "e:ukr0tapmin_h0l3",
+      "unit": "%",
+      "desc": "Re(uk0)(HV-LV3)(min. tap)"
+    },
+    {
+      "var": "e:ukr0tapmin_l1l2",
+      "unit": "%",
+      "desc": "Re(uk0)(LV1-LV2)(min. tap)"
+    },
+    {
+      "var": "e:ukr0tapmin_l1l3",
+      "unit": "%",
+      "desc": "Re(uk0)(LV1-LV3)(min. tap)"
+    },
+    {
+      "var": "e:ukr0tapmin_l2l3",
+      "unit": "%",
+      "desc": "Re(uk0)(LV2-LV3)(min. tap)"
+    },
+    {
+      "var": "e:uk0tapmax_h0l1",
+      "unit": "%",
+      "desc": "uk0(HV-LV1)(max. tap)"
+    },
+    {
+      "var": "e:uk0tapmax_h0l2",
+      "unit": "%",
+      "desc": "uk0(HV-LV2)(max. tap)"
+    },
+    {
+      "var": "e:uk0tapmax_h0l3",
+      "unit": "%",
+      "desc": "uk0(HV-LV3)(max. tap)"
+    },
+    {
+      "var": "e:uk0tapmax_l1l2",
+      "unit": "%",
+      "desc": "uk0(LV1-LV2)(max. tap)"
+    },
+    {
+      "var": "e:uk0tapmax_l1l3",
+      "unit": "%",
+      "desc": "uk0(LV1-LV3)(max. tap)"
+    },
+    {
+      "var": "e:uk0tapmax_l2l3",
+      "unit": "%",
+      "desc": "uk0(LV2-LV3)(max. tap)"
+    },
+    {
+      "var": "e:ukr0tapmax_h0l1",
+      "unit": "%",
+      "desc": "Re(uk0)(HV-LV1)(max. tap)"
+    },
+    {
+      "var": "e:ukr0tapmax_h0l2",
+      "unit": "%",
+      "desc": "Re(uk0)(HV-LV2)(max. tap)"
+    },
+    {
+      "var": "e:ukr0tapmax_h0l3",
+      "unit": "%",
+      "desc": "Re(uk0)(HV-LV3)(max. tap)"
+    },
+    {
+      "var": "e:ukr0tapmax_l1l2",
+      "unit": "%",
+      "desc": "Re(uk0)(LV1-LV2)(max. tap)"
+    },
+    {
+      "var": "e:ukr0tapmax_l1l3",
+      "unit": "%",
+      "desc": "Re(uk0)(LV1-LV3)(max. tap)"
+    },
+    {
+      "var": "e:ukr0tapmax_l2l3",
+      "unit": "%",
+      "desc": "Re(uk0)(LV2-LV3)(max. tap)"
+    },
+    {
+      "var": "e:smoothf",
+      "unit": "%",
+      "desc": "Smoothing Factor"
+    },
+    {
+      "var": "e:psi0",
+      "unit": "p.u.",
+      "desc": "Knee Flux"
+    },
+    {
+      "var": "e:x4lin",
+      "unit": "p.u.",
+      "desc": "Linear Reactance"
+    },
+    {
+      "var": "e:x4air",
+      "unit": "p.u.",
+      "desc": "Saturated Reactance"
+    },
+    {
+      "var": "e:smoothfac",
+      "unit": "%",
+      "desc": "Smoothing Factor"
+    },
+    {
+      "var": "e:Lwidth",
+      "unit": "%",
+      "desc": "Loop width"
+    },
+    {
+      "var": "e:appr_modif",
+      "unit": "",
+      "desc": "Modified"
+    },
+    {
+      "var": "e:satcue",
+      "unit": "%",
+      "desc": "Current (RMS)"
+    },
+    {
+      "var": "e:satvol",
+      "unit": "p.u.",
+      "desc": "Voltage (RMS)"
+    },
+    {
+      "var": "e:satcur",
+      "unit": "p.u.",
+      "desc": "Current (peak)"
+    },
+    {
+      "var": "e:satflux",
+      "unit": "p.u.",
+      "desc": "Flux (peak)"
+    },
+    {
+      "var": "e:typemetadata_version",
+      "unit": "",
+      "desc": "Version"
+    },
+    {
+      "var": "e:typemetadata_key",
+      "unit": "",
+      "desc": "Type Key"
+    },
+    {
+      "var": "e:typemetadata_changeLog",
+      "unit": "",
+      "desc": "Change Log"
+    },
+    {
+      "var": "e:desc",
+      "unit": "",
+      "desc": "Description"
+    },
+    {
+      "var": "e:doc_id",
+      "unit": "",
+      "desc": "Additional Data"
+    },
+    {
+      "var": "e:pStoch",
+      "unit": "StoTyptrf",
+      "desc": "Stochastic model"
+    },
+    {
+      "var": "e:fcharl1_h0l1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) HV-LV1"
+    },
+    {
+      "var": "e:fcharr1_h0l1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) HV-LV1"
+    },
+    {
+      "var": "e:fcharl0_h0l1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) HV-LV1"
+    },
+    {
+      "var": "e:fcharr0_h0l1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) HV-LV1"
+    },
+    {
+      "var": "e:fcharl1_h0l2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) HV-LV2"
+    },
+    {
+      "var": "e:fcharr1_h0l2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) HV-LV2"
+    },
+    {
+      "var": "e:fcharl0_h0l2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) HV-LV2"
+    },
+    {
+      "var": "e:fcharr0_h0l2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) HV-LV2"
+    },
+    {
+      "var": "e:fcharl1_h0l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) HV-LV3"
+    },
+    {
+      "var": "e:fcharr1_h0l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) HV-LV3"
+    },
+    {
+      "var": "e:fcharl0_h0l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) HV-LV3"
+    },
+    {
+      "var": "e:fcharr0_h0l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) HV-LV3"
+    },
+    {
+      "var": "e:fcharl1_l1l2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) LV1-LV2"
+    },
+    {
+      "var": "e:fcharr1_l1l2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) LV1-LV2"
+    },
+    {
+      "var": "e:fcharl0_l1l2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) LV1-LV2"
+    },
+    {
+      "var": "e:fcharr0_l1l2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) LV1-LV2"
+    },
+    {
+      "var": "e:fcharl1_l1l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) LV1-LV3"
+    },
+    {
+      "var": "e:fcharr1_l1l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) LV1-LV3"
+    },
+    {
+      "var": "e:fcharl0_l1l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) LV1-LV3"
+    },
+    {
+      "var": "e:fcharr0_l1l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) LV1-LV3"
+    },
+    {
+      "var": "e:fcharl1_l2l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) LV2-LV3"
+    },
+    {
+      "var": "e:fcharr1_l2l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) LV2-LV3"
+    },
+    {
+      "var": "e:fcharl0_l2l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) LV2-LV3"
+    },
+    {
+      "var": "e:fcharr0_l2l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) LV2-LV3"
+    },
+    {
+      "var": "e:fcharl1_h0",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) HV"
+    },
+    {
+      "var": "e:fcharr1_h0",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) HV"
+    },
+    {
+      "var": "e:fcharl0_h0",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) HV"
+    },
+    {
+      "var": "e:fcharr0_h0",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) HV"
+    },
+    {
+      "var": "e:fcharl1_l1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) LV1"
+    },
+    {
+      "var": "e:fcharr1_l1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) LV1"
+    },
+    {
+      "var": "e:fcharl0_l1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) LV1"
+    },
+    {
+      "var": "e:fcharr0_l1",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) LV1"
+    },
+    {
+      "var": "e:fcharl1_l2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) LV2"
+    },
+    {
+      "var": "e:fcharr1_l2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) LV2"
+    },
+    {
+      "var": "e:fcharl0_l2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) LV2"
+    },
+    {
+      "var": "e:fcharr0_l2",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) LV2"
+    },
+    {
+      "var": "e:fcharl1_l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l1(f) LV3"
+    },
+    {
+      "var": "e:fcharr1_l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r1(f) LV3"
+    },
+    {
+      "var": "e:fcharl0_l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "l0(f) LV3"
+    },
+    {
+      "var": "e:fcharr0_l3",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "r0(f) LV3"
+    },
+    {
+      "var": "e:fcharbm",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "1/lm(f)"
+    },
+    {
+      "var": "e:fchargm",
+      "unit": "ChaPol,ChaVec,ChaMat",
+      "desc": "gm(f)"
+    },
+    {
+      "var": "e:ukr_h0l1",
+      "unit": "%",
+      "desc": "HV-LV1"
+    },
+    {
+      "var": "e:ukr_h0l2",
+      "unit": "%",
+      "desc": "HV-LV2"
+    },
+    {
+      "var": "e:ukr_h0l3",
+      "unit": "%",
+      "desc": "HV-LV3"
+    },
+    {
+      "var": "e:ukr_l1l2",
+      "unit": "%",
+      "desc": "LV1-LV2"
+    },
+    {
+      "var": "e:ukr_l1l3",
+      "unit": "%",
+      "desc": "LV1-LV3"
+    },
+    {
+      "var": "e:ukr_l2l3",
+      "unit": "%",
+      "desc": "LV2-LV3"
+    },
+    {
+      "var": "e:xtor_h0l1",
+      "unit": "",
+      "desc": "HV-LV1"
+    },
+    {
+      "var": "e:xtor_h0l2",
+      "unit": "",
+      "desc": "HV-LV2"
+    },
+    {
+      "var": "e:xtor_h0l3",
+      "unit": "",
+      "desc": "HV-LV3"
+    },
+    {
+      "var": "e:xtor_l1l2",
+      "unit": "",
+      "desc": "LV1-LV2"
+    },
+    {
+      "var": "e:xtor_l1l3",
+      "unit": "",
+      "desc": "LV1-LV3"
+    },
+    {
+      "var": "e:xtor_l2l3",
+      "unit": "",
+      "desc": "LV2-LV3"
+    },
+    {
+      "var": "e:r1pu_h0l1",
+      "unit": "p.u.",
+      "desc": "HV-LV1"
+    },
+    {
+      "var": "e:r1pu_h0l2",
+      "unit": "p.u.",
+      "desc": "HV-LV2"
+    },
+    {
+      "var": "e:r1pu_h0l3",
+      "unit": "p.u.",
+      "desc": "HV-LV3"
+    },
+    {
+      "var": "e:r1pu_l1l2",
+      "unit": "p.u.",
+      "desc": "LV1-LV2"
+    },
+    {
+      "var": "e:r1pu_l1l3",
+      "unit": "p.u.",
+      "desc": "LV1-LV3"
+    },
+    {
+      "var": "e:r1pu_l2l3",
+      "unit": "p.u.",
+      "desc": "LV2-LV3"
+    },
+    {
+      "var": "e:x1pu_h0l1",
+      "unit": "p.u.",
+      "desc": "HV-LV1"
+    },
+    {
+      "var": "e:x1pu_h0l2",
+      "unit": "p.u.",
+      "desc": "HV-LV2"
+    },
+    {
+      "var": "e:x1pu_h0l3",
+      "unit": "p.u.",
+      "desc": "HV-LV3"
+    },
+    {
+      "var": "e:x1pu_l1l2",
+      "unit": "p.u.",
+      "desc": "LV1-LV2"
+    },
+    {
+      "var": "e:x1pu_l1l3",
+      "unit": "p.u.",
+      "desc": "LV1-LV3"
+    },
+    {
+      "var": "e:x1pu_l2l3",
+      "unit": "p.u.",
+      "desc": "LV2-LV3"
+    },
+    {
+      "var": "e:l1pu_h0l1",
+      "unit": "p.u.",
+      "desc": "Inductance l1, HV-LV1"
+    },
+    {
+      "var": "e:l1pu_h0l2",
+      "unit": "p.u.",
+      "desc": "Inductance l1, HV-LV2"
+    },
+    {
+      "var": "e:l1pu_h0l3",
+      "unit": "p.u.",
+      "desc": "Inductance l1, HV-LV3"
+    },
+    {
+      "var": "e:l1pu_l1l2",
+      "unit": "p.u.",
+      "desc": "Inductance l1, LV1-LV2"
+    },
+    {
+      "var": "e:l1pu_l1l3",
+      "unit": "p.u.",
+      "desc": "Inductance l1, LV1-LV3"
+    },
+    {
+      "var": "e:l1pu_l2l3",
+      "unit": "p.u.",
+      "desc": "Inductance l1, LV2-LV3"
+    },
+    {
+      "var": "e:ukr_h0",
+      "unit": "%",
+      "desc": "HV"
+    },
+    {
+      "var": "e:ukr_l1",
+      "unit": "%",
+      "desc": "LV1"
+    },
+    {
+      "var": "e:ukr_l2",
+      "unit": "%",
+      "desc": "LV2"
+    },
+    {
+      "var": "e:ukr_l3",
+      "unit": "%",
+      "desc": "LV3"
+    },
+    {
+      "var": "e:xtor_h0",
+      "unit": "",
+      "desc": "HV"
+    },
+    {
+      "var": "e:xtor_l1",
+      "unit": "",
+      "desc": "LV1"
+    },
+    {
+      "var": "e:xtor_l2",
+      "unit": "",
+      "desc": "LV2"
+    },
+    {
+      "var": "e:xtor_l3",
+      "unit": "",
+      "desc": "LV3"
+    },
+    {
+      "var": "e:r1pu_h0",
+      "unit": "p.u.",
+      "desc": "HV"
+    },
+    {
+      "var": "e:r1pu_l1",
+      "unit": "p.u.",
+      "desc": "LV1"
+    },
+    {
+      "var": "e:r1pu_l2",
+      "unit": "p.u.",
+      "desc": "LV2"
+    },
+    {
+      "var": "e:r1pu_l3",
+      "unit": "p.u.",
+      "desc": "LV3"
+    },
+    {
+      "var": "e:x1pu_h0",
+      "unit": "p.u.",
+      "desc": "HV"
+    },
+    {
+      "var": "e:x1pu_l1",
+      "unit": "p.u.",
+      "desc": "LV1"
+    },
+    {
+      "var": "e:x1pu_l2",
+      "unit": "p.u.",
+      "desc": "LV2"
+    },
+    {
+      "var": "e:x1pu_l3",
+      "unit": "p.u.",
+      "desc": "LV3"
+    },
+    {
+      "var": "e:l1pu_h0",
+      "unit": "p.u.",
+      "desc": "Inductance l1, HV"
+    },
+    {
+      "var": "e:l1pu_l1",
+      "unit": "p.u.",
+      "desc": "Inductance l1, LV1"
+    },
+    {
+      "var": "e:l1pu_l2",
+      "unit": "p.u.",
+      "desc": "Inductance l1, LV2"
+    },
+    {
+      "var": "e:l1pu_l3",
+      "unit": "p.u.",
+      "desc": "Inductance l1, LV3"
+    },
+    {
+      "var": "e:bm1",
+      "unit": "p.u.",
+      "desc": "1/lm"
+    },
+    {
+      "var": "e:xtor0_h0l1",
+      "unit": "",
+      "desc": "HV-LV1"
+    },
+    {
+      "var": "e:xtor0_h0l2",
+      "unit": "",
+      "desc": "HV-LV2"
+    },
+    {
+      "var": "e:xtor0_h0l3",
+      "unit": "",
+      "desc": "HV-LV3"
+    },
+    {
+      "var": "e:xtor0_l1l2",
+      "unit": "",
+      "desc": "LV1-LV2"
+    },
+    {
+      "var": "e:xtor0_l1l3",
+      "unit": "",
+      "desc": "LV1-LV3"
+    },
+    {
+      "var": "e:xtor0_l2l3",
+      "unit": "",
+      "desc": "LV2-LV3"
+    },
+    {
+      "var": "e:r0pu_h0l1",
+      "unit": "p.u.",
+      "desc": "HV-LV1"
+    },
+    {
+      "var": "e:r0pu_h0l2",
+      "unit": "p.u.",
+      "desc": "HV-LV2"
+    },
+    {
+      "var": "e:r0pu_h0l3",
+      "unit": "p.u.",
+      "desc": "HV-LV3"
+    },
+    {
+      "var": "e:r0pu_l1l2",
+      "unit": "p.u.",
+      "desc": "LV1-LV2"
+    },
+    {
+      "var": "e:r0pu_l1l3",
+      "unit": "p.u.",
+      "desc": "LV1-LV3"
+    },
+    {
+      "var": "e:r0pu_l2l3",
+      "unit": "p.u.",
+      "desc": "LV2-LV3"
+    },
+    {
+      "var": "e:x0pu_h0l1",
+      "unit": "p.u.",
+      "desc": "HV-LV1"
+    },
+    {
+      "var": "e:x0pu_h0l2",
+      "unit": "p.u.",
+      "desc": "HV-LV2"
+    },
+    {
+      "var": "e:x0pu_h0l3",
+      "unit": "p.u.",
+      "desc": "HV-LV3"
+    },
+    {
+      "var": "e:x0pu_l1l2",
+      "unit": "p.u.",
+      "desc": "LV1-LV2"
+    },
+    {
+      "var": "e:x0pu_l1l3",
+      "unit": "p.u.",
+      "desc": "LV1-LV3"
+    },
+    {
+      "var": "e:x0pu_l2l3",
+      "unit": "p.u.",
+      "desc": "LV2-LV3"
+    },
+    {
+      "var": "e:l0pu_h0l1",
+      "unit": "p.u.",
+      "desc": "Inductance l0, HV-LV1"
+    },
+    {
+      "var": "e:l0pu_h0l2",
+      "unit": "p.u.",
+      "desc": "Inductance l0, HV-LV2"
+    },
+    {
+      "var": "e:l0pu_h0l3",
+      "unit": "p.u.",
+      "desc": "Inductance l0, HV-LV3"
+    },
+    {
+      "var": "e:l0pu_l1l2",
+      "unit": "p.u.",
+      "desc": "Inductance l0, LV1-LV2"
+    },
+    {
+      "var": "e:l0pu_l1l3",
+      "unit": "p.u.",
+      "desc": "Inductance l0, LV1-LV3"
+    },
+    {
+      "var": "e:l0pu_l2l3",
+      "unit": "p.u.",
+      "desc": "Inductance l0, LV2-LV3"
+    },
+    {
+      "var": "e:xtor0_h0",
+      "unit": "",
+      "desc": "HV"
+    },
+    {
+      "var": "e:xtor0_l1",
+      "unit": "",
+      "desc": "LV1"
+    },
+    {
+      "var": "e:xtor0_l2",
+      "unit": "",
+      "desc": "LV2"
+    },
+    {
+      "var": "e:xtor0_l3",
+      "unit": "",
+      "desc": "LV3"
+    },
+    {
+      "var": "e:r0pu_h0",
+      "unit": "p.u.",
+      "desc": "HV"
+    },
+    {
+      "var": "e:r0pu_l1",
+      "unit": "p.u.",
+      "desc": "LV1"
+    },
+    {
+      "var": "e:r0pu_l2",
+      "unit": "p.u.",
+      "desc": "LV2"
+    },
+    {
+      "var": "e:r0pu_l3",
+      "unit": "p.u.",
+      "desc": "LV3"
+    },
+    {
+      "var": "e:x0pu_h0",
+      "unit": "p.u.",
+      "desc": "HV"
+    },
+    {
+      "var": "e:x0pu_l1",
+      "unit": "p.u.",
+      "desc": "LV1"
+    },
+    {
+      "var": "e:x0pu_l2",
+      "unit": "p.u.",
+      "desc": "LV2"
+    },
+    {
+      "var": "e:x0pu_l3",
+      "unit": "p.u.",
+      "desc": "LV3"
+    },
+    {
+      "var": "e:l0pu_h0",
+      "unit": "p.u.",
+      "desc": "Inductance l0, HV"
+    },
+    {
+      "var": "e:l0pu_l1",
+      "unit": "p.u.",
+      "desc": "Inductance l0, LV1"
+    },
+    {
+      "var": "e:l0pu_l2",
+      "unit": "p.u.",
+      "desc": "Inductance l0, LV2"
+    },
+    {
+      "var": "e:l0pu_l3",
+      "unit": "p.u.",
+      "desc": "Inductance l0, LV3"
+    },
+    {
+      "var": "e:gm1",
+      "unit": "p.u.",
+      "desc": "gm"
+    },
+    {
+      "var": "e:ukrtapmin_h0l1",
+      "unit": "%",
+      "desc": "Re(uk)(HV-LV1) (min. tap)"
+    },
+    {
+      "var": "e:ukrtapmin_h0l2",
+      "unit": "%",
+      "desc": "Re(uk)(HV-LV2) (min. tap)"
+    },
+    {
+      "var": "e:ukrtapmin_h0l3",
+      "unit": "%",
+      "desc": "Re(uk)(HV-LV3) (min. tap)"
+    },
+    {
+      "var": "e:ukrtapmin_l1l2",
+      "unit": "%",
+      "desc": "Re(uk)(LV1-LV2) (min. tap)"
+    },
+    {
+      "var": "e:ukrtapmin_l1l3",
+      "unit": "%",
+      "desc": "Re(uk)(LV1-LV3) (min. tap)"
+    },
+    {
+      "var": "e:ukrtapmin_l2l3",
+      "unit": "%",
+      "desc": "Re(uk)(LV2-LV3) (min. tap)"
+    },
+    {
+      "var": "e:xtortapmin_h0l1",
+      "unit": "",
+      "desc": "X/R (HV-LV1)(min. tap)"
+    },
+    {
+      "var": "e:xtortapmin_h0l2",
+      "unit": "",
+      "desc": "X/R (HV-LV2)(min. tap)"
+    },
+    {
+      "var": "e:xtortapmin_h0l3",
+      "unit": "",
+      "desc": "X/R (HV-LV3)(min. tap)"
+    },
+    {
+      "var": "e:xtortapmin_l1l2",
+      "unit": "",
+      "desc": "X/R (LV1-LV2)(min. tap)"
+    },
+    {
+      "var": "e:xtortapmin_l1l3",
+      "unit": "",
+      "desc": "X/R (LV1-LV3)(min. tap)"
+    },
+    {
+      "var": "e:xtortapmin_l2l3",
+      "unit": "",
+      "desc": "X/R (LV2-LV3)(min. tap)"
+    },
+    {
+      "var": "e:r1putapmin_h0l1",
+      "unit": "p.u.",
+      "desc": "r1(HV-LV1) (min. tap)"
+    },
+    {
+      "var": "e:r1putapmin_h0l2",
+      "unit": "p.u.",
+      "desc": "r1(HV-LV2) (min. tap)"
+    },
+    {
+      "var": "e:r1putapmin_h0l3",
+      "unit": "p.u.",
+      "desc": "r1(HV-LV3) (min. tap)"
+    },
+    {
+      "var": "e:r1putapmin_l1l2",
+      "unit": "p.u.",
+      "desc": "r1(LV1-LV2) (min. tap)"
+    },
+    {
+      "var": "e:r1putapmin_l1l3",
+      "unit": "p.u.",
+      "desc": "r1(LV1-LV3) (min. tap)"
+    },
+    {
+      "var": "e:r1putapmin_l2l3",
+      "unit": "p.u.",
+      "desc": "r1(LV2-LV3) (min. tap)"
+    },
+    {
+      "var": "e:x1putapmin_h0l1",
+      "unit": "p.u.",
+      "desc": "x1(HV-LV1)(min. tap)"
+    },
+    {
+      "var": "e:x1putapmin_h0l2",
+      "unit": "p.u.",
+      "desc": "x1(HV-LV2)(min. tap)"
+    },
+    {
+      "var": "e:x1putapmin_h0l3",
+      "unit": "p.u.",
+      "desc": "x1(HV-LV3)(min. tap)"
+    },
+    {
+      "var": "e:x1putapmin_l1l2",
+      "unit": "p.u.",
+      "desc": "x1(LV1-LV2)(min. tap)"
+    },
+    {
+      "var": "e:x1putapmin_l1l3",
+      "unit": "p.u.",
+      "desc": "x1(LV1-LV3)(min. tap)"
+    },
+    {
+      "var": "e:x1putapmin_l2l3",
+      "unit": "p.u.",
+      "desc": "x1(LV2-LV3)(min. tap)"
+    },
+    {
+      "var": "e:ukrtapmax_h0l1",
+      "unit": "%",
+      "desc": "Re(uk)(HV-LV1)(max. tap)"
+    },
+    {
+      "var": "e:ukrtapmax_h0l2",
+      "unit": "%",
+      "desc": "Re(uk)(HV-LV2)(max. tap)"
+    },
+    {
+      "var": "e:ukrtapmax_h0l3",
+      "unit": "%",
+      "desc": "Re(uk)(HV-LV3)(max. tap)"
+    },
+    {
+      "var": "e:ukrtapmax_l1l2",
+      "unit": "%",
+      "desc": "Re(uk)(LV1-LV2)(max. tap)"
+    },
+    {
+      "var": "e:ukrtapmax_l1l3",
+      "unit": "%",
+      "desc": "Re(uk)(LV1-LV3)(max. tap)"
+    },
+    {
+      "var": "e:ukrtapmax_l2l3",
+      "unit": "%",
+      "desc": "Re(uk)(LV2-LV3)(max. tap)"
+    },
+    {
+      "var": "e:xtortapmax_h0l1",
+      "unit": "",
+      "desc": "X/R (HV-LV1)(max. tap)"
+    },
+    {
+      "var": "e:xtortapmax_h0l2",
+      "unit": "",
+      "desc": "X/R (HV-LV2)(max. tap)"
+    },
+    {
+      "var": "e:xtortapmax_h0l3",
+      "unit": "",
+      "desc": "X/R (HV-LV3)(max. tap)"
+    },
+    {
+      "var": "e:xtortapmax_l1l2",
+      "unit": "",
+      "desc": "X/R (LV1-LV2)(max. tap)"
+    },
+    {
+      "var": "e:xtortapmax_l1l3",
+      "unit": "",
+      "desc": "X/R (LV1-LV3)(max. tap)"
+    },
+    {
+      "var": "e:xtortapmax_l2l3",
+      "unit": "",
+      "desc": "X/R (LV2-LV3)(max. tap)"
+    },
+    {
+      "var": "e:r1putapmax_h0l1",
+      "unit": "p.u.",
+      "desc": "r1(HV-LV1) (max. tap)"
+    },
+    {
+      "var": "e:r1putapmax_h0l2",
+      "unit": "p.u.",
+      "desc": "r1(HV-LV2) (max. tap)"
+    },
+    {
+      "var": "e:r1putapmax_h0l3",
+      "unit": "p.u.",
+      "desc": "r1(HV-LV3) (max. tap)"
+    },
+    {
+      "var": "e:r1putapmax_l1l2",
+      "unit": "p.u.",
+      "desc": "r1(LV1-LV2) (max. tap)"
+    },
+    {
+      "var": "e:r1putapmax_l1l3",
+      "unit": "p.u.",
+      "desc": "r1(LV1-LV3) (max. tap)"
+    },
+    {
+      "var": "e:r1putapmax_l2l3",
+      "unit": "p.u.",
+      "desc": "r1(LV2-LV3) (max. tap)"
+    },
+    {
+      "var": "e:x1putapmax_h0l1",
+      "unit": "p.u.",
+      "desc": "x1(HV-LV1)(max. tap)"
+    },
+    {
+      "var": "e:x1putapmax_h0l2",
+      "unit": "p.u.",
+      "desc": "x1(HV-LV2)(max. tap)"
+    },
+    {
+      "var": "e:x1putapmax_h0l3",
+      "unit": "p.u.",
+      "desc": "x1(HV-LV3)(max. tap)"
+    },
+    {
+      "var": "e:x1putapmax_l1l2",
+      "unit": "p.u.",
+      "desc": "x1(LV1-LV2)(max. tap)"
+    },
+    {
+      "var": "e:x1putapmax_l1l3",
+      "unit": "p.u.",
+      "desc": "x1(LV1-LV3)(max. tap)"
+    },
+    {
+      "var": "e:x1putapmax_l2l3",
+      "unit": "p.u.",
+      "desc": "x1(LV2-LV3)(max. tap)"
+    },
+    {
+      "var": "e:xtor0tapmin_h0l1",
+      "unit": "",
+      "desc": "X0/R0 (HV-LV1)(min. tap)"
+    },
+    {
+      "var": "e:xtor0tapmin_h0l2",
+      "unit": "",
+      "desc": "X0/R0 (HV-LV2)(min. tap)"
+    },
+    {
+      "var": "e:xtor0tapmin_h0l3",
+      "unit": "",
+      "desc": "X0/R0 (HV-LV3)(min. tap)"
+    },
+    {
+      "var": "e:xtor0tapmin_l1l2",
+      "unit": "",
+      "desc": "X0/R0 (LV1-LV2)(min. tap)"
+    },
+    {
+      "var": "e:xtor0tapmin_l1l3",
+      "unit": "",
+      "desc": "X0/R0 (LV1-LV3)(min. tap)"
+    },
+    {
+      "var": "e:xtor0tapmin_l2l3",
+      "unit": "",
+      "desc": "X0/R0 (LV2-LV3)(min. tap)"
+    },
+    {
+      "var": "e:r0putapmin_h0l1",
+      "unit": "p.u.",
+      "desc": "r0(HV-LV1) (min. tap)"
+    },
+    {
+      "var": "e:r0putapmin_h0l2",
+      "unit": "p.u.",
+      "desc": "r0(HV-LV2) (min. tap)"
+    },
+    {
+      "var": "e:r0putapmin_h0l3",
+      "unit": "p.u.",
+      "desc": "r0(HV-LV3) (min. tap)"
+    },
+    {
+      "var": "e:r0putapmin_l1l2",
+      "unit": "p.u.",
+      "desc": "r0(LV1-LV2) (min. tap)"
+    },
+    {
+      "var": "e:r0putapmin_l1l3",
+      "unit": "p.u.",
+      "desc": "r0(LV1-LV3) (min. tap)"
+    },
+    {
+      "var": "e:r0putapmin_l2l3",
+      "unit": "p.u.",
+      "desc": "r0(LV2-LV3) (min. tap)"
+    },
+    {
+      "var": "e:x0putapmin_h0l1",
+      "unit": "p.u.",
+      "desc": "x0(HV-LV1) (min. tap)"
+    },
+    {
+      "var": "e:x0putapmin_h0l2",
+      "unit": "p.u.",
+      "desc": "x0(HV-LV2) (min. tap)"
+    },
+    {
+      "var": "e:x0putapmin_h0l3",
+      "unit": "p.u.",
+      "desc": "x0(HV-LV3) (min. tap)"
+    },
+    {
+      "var": "e:x0putapmin_l1l2",
+      "unit": "p.u.",
+      "desc": "x0(LV1-LV2) (min. tap)"
+    },
+    {
+      "var": "e:x0putapmin_l1l3",
+      "unit": "p.u.",
+      "desc": "x0(LV1-LV3) (min. tap)"
+    },
+    {
+      "var": "e:x0putapmin_l2l3",
+      "unit": "p.u.",
+      "desc": "x0(LV2-LV3) (min. tap)"
+    },
+    {
+      "var": "e:xtor0tapmax_h0l1",
+      "unit": "",
+      "desc": "X0/R0 (HV-LV1)(max. tap)"
+    },
+    {
+      "var": "e:xtor0tapmax_h0l2",
+      "unit": "",
+      "desc": "X0/R0 (HV-LV2)(max. tap)"
+    },
+    {
+      "var": "e:xtor0tapmax_h0l3",
+      "unit": "",
+      "desc": "X0/R0 (HV-LV3)(max. tap)"
+    },
+    {
+      "var": "e:xtor0tapmax_l1l2",
+      "unit": "",
+      "desc": "X0/R0 (LV1-LV2)(max. tap)"
+    },
+    {
+      "var": "e:xtor0tapmax_l1l3",
+      "unit": "",
+      "desc": "X0/R0 (LV1-LV3)(max. tap)"
+    },
+    {
+      "var": "e:xtor0tapmax_l2l3",
+      "unit": "",
+      "desc": "X0/R0 (LV2-LV3)(max. tap)"
+    },
+    {
+      "var": "e:r0putapmax_h0l1",
+      "unit": "p.u.",
+      "desc": "r0(HV-LV1) (max. tap)"
+    },
+    {
+      "var": "e:r0putapmax_h0l2",
+      "unit": "p.u.",
+      "desc": "r0(HV-LV2) (max. tap)"
+    },
+    {
+      "var": "e:r0putapmax_h0l3",
+      "unit": "p.u.",
+      "desc": "r0(HV-LV3) (max. tap)"
+    },
+    {
+      "var": "e:r0putapmax_l1l2",
+      "unit": "p.u.",
+      "desc": "r0(LV1-LV2) (max. tap)"
+    },
+    {
+      "var": "e:r0putapmax_l1l3",
+      "unit": "p.u.",
+      "desc": "r0(LV1-LV3) (max. tap)"
+    },
+    {
+      "var": "e:r0putapmax_l2l3",
+      "unit": "p.u.",
+      "desc": "r0(LV2-LV3) (max. tap)"
+    },
+    {
+      "var": "e:x0putapmax_h0l1",
+      "unit": "p.u.",
+      "desc": "x0(HV-LV1) (max. tap)"
+    },
+    {
+      "var": "e:x0putapmax_h0l2",
+      "unit": "p.u.",
+      "desc": "x0(HV-LV2) (max. tap)"
+    },
+    {
+      "var": "e:x0putapmax_h0l3",
+      "unit": "p.u.",
+      "desc": "x0(HV-LV3) (max. tap)"
+    },
+    {
+      "var": "e:x0putapmax_l1l2",
+      "unit": "p.u.",
+      "desc": "x0(LV1-LV2) (max. tap)"
+    },
+    {
+      "var": "e:x0putapmax_l1l3",
+      "unit": "p.u.",
+      "desc": "x0(LV1-LV3) (max. tap)"
+    },
+    {
+      "var": "e:x0putapmax_l2l3",
+      "unit": "p.u.",
+      "desc": "x0(LV2-LV3) (max. tap)"
+    },
+    {
+      "var": "e:vecgrp",
+      "unit": "",
+      "desc": "Name"
+    },
+    {
+      "var": "e:aFrolich",
+      "unit": "",
+      "desc": "Frolich equation coefficient a"
+    },
+    {
+      "var": "e:bFrolich",
+      "unit": "",
+      "desc": "Frolich equation coefficient b"
+    },
+    {
+      "var": "e:cFrolich",
+      "unit": "",
+      "desc": "Frolich equation coefficient c"
+    },
+    {
+      "var": "e:xsatFrolich",
+      "unit": "",
+      "desc": "Frolich equation saturated reactance (p.u.)"
+    },
+    {
+      "var": "e:mseFrolich",
+      "unit": "",
+      "desc": "Frolich equation, mean squared error"
+    },
+    {
+      "var": "e:pT_0",
+      "unit": "",
+      "desc": "Voltage Range"
+    },
+    {
+      "var": "e:pT_1",
+      "unit": "",
+      "desc": "Voltage Range"
+    },
+    {
+      "var": "e:pT_2",
+      "unit": "",
+      "desc": "Voltage Range"
+    },
+    {
+      "var": "e:pT_3",
+      "unit": "",
+      "desc": "Voltage Range"
+    }
+  ]
+}

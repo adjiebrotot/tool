@@ -1013,7 +1013,7 @@
       <a class="back-link" href="https://tool.adjiebrotots.com/" target="_self" rel="noopener">← Other Tools</a>
       <button class="btn-theme" id="themeToggle">☀️ Light</button>
     </div>
-    <span class="ref-badge loading" id="ref-data-badge" title="Place variables.json and element_params.json in the same folder as index.html to enable smart attribute suggestions.">⏳ Loading DB…</span>
+    <span class="ref-badge loading" id="ref-data-badge" title="Place variables.json, element_params.json, and type_params.json in the same folder as index.html to enable smart attribute suggestions.">⏳ Loading DB…</span>
   </div>
 </header>
 
@@ -1703,13 +1703,19 @@ function onSaveIntermediateChange() {
      variables_index.json      (68 KB  — gateway index, loaded on startup)
      variables/                (folder — lazy-loaded per element class)
      element_params.json       (512 KB — input param suggestions, loaded on startup)
+     variables/types/          (folder — lazy-loaded per type class, e.g. TypLod, TypTr2)
+     type_params.json          (input param suggestions for TypXxx classes, loaded on startup)
 ================================================================ */
 const PF_REF = {
   index:    null,   // variables/elements/element_variables_index.json → {ElmXxx: {file, study_groups}}
   params:   null,   // element_params.json   →  {ElmXxx: [{var,unit,desc},...]}
   evtIndex: null,   // variables/events/event_variables_index.json → {EvtXxx: {file, params}}
+  typIndex: null,   // variables/types/type_variables_index.json → {TypXxx: {file, params}}
+  typParams: null,  // type_params.json      →  {TypXxx: [{var,unit,desc},...]}
   varFiles: {},     // cache: ElmXxx → full variables/ElmXxx.json data
+  typFiles: {},     // cache: TypXxx → full variables/types/TypXxx.json data
   loading:  new Set(), // classes currently being fetched
+  typLoading: new Set(), // type classes currently being fetched
 };
 
 // Map HTML study-type → variables/ElmXxx.json result_vars key
@@ -1723,22 +1729,26 @@ const STUDY_TYPE_KEY = {
 async function fetchReferenceData() {
   const badge = document.getElementById('ref-data-badge');
   try {
-    const [idxRes, paramsRes, evtIdxRes] = await Promise.all([
+    const [idxRes, paramsRes, evtIdxRes, typIdxRes, typParamsRes] = await Promise.all([
       fetch('variables/elements/element_variables_index.json').catch(() => null),
       fetch('element_params.json').catch(() => null),
       fetch('variables/events/event_variables_index.json').catch(() => null),
+      fetch('variables/types/type_variables_index.json').catch(() => null),
+      fetch('type_params.json').catch(() => null),
     ]);
     if (idxRes    && idxRes.ok)    PF_REF.index     = await idxRes.json();
     if (paramsRes && paramsRes.ok) PF_REF.params    = await paramsRes.json();
     if (evtIdxRes && evtIdxRes.ok) PF_REF.evtIndex  = await evtIdxRes.json();
+    if (typIdxRes && typIdxRes.ok) PF_REF.typIndex  = await typIdxRes.json();
+    if (typParamsRes && typParamsRes.ok) PF_REF.typParams = await typParamsRes.json();
 
     const loaded = !!(PF_REF.index || PF_REF.params);
     if (badge) {
       badge.textContent = loaded ? '⚡ Variable DB loaded' : '⚠ Variable DB offline';
       badge.className   = `ref-badge ${loaded ? 'loaded' : 'offline'}`;
       badge.title = loaded
-        ? 'Smart autocomplete active. Full variable lists load on demand per element class.'
-        : 'Deploy variables/elements/element_variables_index.json, variables/ folder, and element_params.json alongside index.html to enable smart autocomplete.';
+        ? 'Smart autocomplete active. Full variable/parameter lists load on demand per element and type class.'
+        : 'Deploy variables/elements/element_variables_index.json, variables/types/type_variables_index.json, variables/ folder, element_params.json, and type_params.json alongside index.html to enable smart autocomplete.';
     }
   } catch (e) {
     if (badge) { badge.textContent = '⚠ Variable DB offline'; badge.className = 'ref-badge offline'; }
@@ -1768,6 +1778,31 @@ async function fetchElmClassVars(elmClass, onLoaded) {
     console.warn(`Could not load ${elmClass} variable data:`, e.message);
   } finally {
     PF_REF.loading.delete(elmClass);
+  }
+}
+
+/**
+ * Lazy-load variables/types/TypXxx.json for a given type class (TypLod, TypTr2, ...).
+ * Mirrors fetchElmClassVars — type objects expose only static "e:" parameters
+ * (no study-group result variables), which can be used as input iteration variables.
+ */
+async function fetchTypClassVars(typClass, onLoaded) {
+  if (!PF_REF.typIndex || !PF_REF.typIndex[typClass]) return;
+  if (PF_REF.typFiles[typClass]) { if (onLoaded) onLoaded(PF_REF.typFiles[typClass]); return; }
+  if (PF_REF.typLoading.has(typClass)) return; // already in-flight
+
+  PF_REF.typLoading.add(typClass);
+  try {
+    const filePath = PF_REF.typIndex[typClass].file; // e.g. "variables/types/TypLod.json"
+    const res = await fetch(filePath);
+    if (res.ok) {
+      PF_REF.typFiles[typClass] = await res.json();
+      if (onLoaded) onLoaded(PF_REF.typFiles[typClass]);
+    }
+  } catch (e) {
+    console.warn(`Could not load ${typClass} variable data:`, e.message);
+  } finally {
+    PF_REF.typLoading.delete(typClass);
   }
 }
 
@@ -1948,11 +1983,19 @@ function updateAlgorithmUI() {
 ================================================================ */
 const ALL_ELM_CLASSES = [
   'ElmArea','ElmAsm','ElmAsmsc','ElmBbone','ElmBmu','ElmBoundary','ElmBranch',
-  'ElmCabsys','ElmComp','ElmCoup','ElmDsl','ElmFeeder','ElmFile','ElmFilter',
-  'ElmGenstat','ElmGndswt','ElmIac','ElmLne','ElmLnesec','ElmNec','ElmNet',
-  'ElmPvsys','ElmRelay','ElmRes','ElmShnt','ElmStactrl','ElmSubstat','ElmSvs',
-  'ElmSym','ElmTerm','ElmTr2','ElmTr3','ElmTrfstat','ElmVac',
-  'ElmVoltreg','ElmXnet','ElmZone','ElmZpu','StaPll'
+  'ElmCabsys','ElmComp','ElmCoup','ElmDcu','ElmDsl','ElmFeeder','ElmFile','ElmFilter',
+  'ElmGenstat','ElmGndswt','ElmHvdcbi','ElmHvdcvsc','ElmIac','ElmLne','ElmLnesec',
+  'ElmLod','ElmLodlv','ElmLodmv','ElmMdl','ElmNec','ElmNet','ElmPvsys','ElmRecmono',
+  'ElmRelay','ElmRes','ElmSecctrl','ElmShnt','ElmSind','ElmStactrl','ElmSubstat',
+  'ElmSvs','ElmSym','ElmTerm','ElmTow','ElmTr2','ElmTr3','ElmTr4','ElmTrain',
+  'ElmTrb','ElmTrfstat','ElmTrmult','ElmVac','ElmVoltreg','ElmVsc','ElmVscmono',
+  'ElmWind','ElmXnet','ElmZone','ElmZpu','StaPll'
+];
+
+// Type classes (TypXxx) — referenced via "<element>.typ_id" for parameter iteration
+const ALL_TYP_CLASSES = [
+  'TypAsm','TypGeo','TypLne','TypLod','TypLodlv','TypSwitch',
+  'TypSym','TypTow','TypTr2','TypTr3','TypTr4'
 ];
 
 // Event classes — resolved from Simulation Events/Fault.IntEvt, not GetCalcRelevantObjects
@@ -2060,6 +2103,16 @@ function getObjectSuggestions(typed, includeEvents = true) {
     }
   });
 
+  // Suggest Name.<Elm>.typ_id.TypXxx for type classes — type objects are reached
+  // through an element's type reference (typ_id), not GetCalcRelevantObjects directly,
+  // so their static parameters (e.g. TypLod, TypTr2) can still drive input iterations.
+  ALL_TYP_CLASSES.forEach(cls => {
+    if (!classPart || cls.toLowerCase().startsWith(classPart)) {
+      const full = namePart ? `${namePart}.typ_id.${cls}` : `typ_id.${cls}`;
+      results.push({ var: full, desc: `Type parameters — ${cls} (via typ_id)`, unit: 'type' });
+    }
+  });
+
   // Suggest Name.EvtXxx for event classes (input variables only)
   if (includeEvents) {
     ALL_EVT_CLASSES.forEach(cls => {
@@ -2089,7 +2142,7 @@ function getObjectSuggestions(typed, includeEvents = true) {
 // Extract PF class from an object query: "Grid.ElmTerm" → "ElmTerm", "Fault.EvtShc" → "EvtShc"
 function extractPfClass(objectQuery) {
   if (!objectQuery) return null;
-  const m = objectQuery.match(/\.(Elm[A-Za-z0-9]+|Sta[A-Za-z0-9]+|Evt[A-Za-z0-9]+)\s*$/);
+  const m = objectQuery.match(/\.(Elm[A-Za-z0-9]+|Sta[A-Za-z0-9]+|Evt[A-Za-z0-9]+|Typ[A-Za-z0-9]+)\s*$/);
   return m ? m[1] : null;
 }
 // Legacy alias — keeps all existing callers working without change
@@ -2152,6 +2205,19 @@ function getInputAttrSuggestions(typed, elmClass) {
     return results;
   }
 
+  // —— Type class: static "e:" parameters from type_params.json (e.g. TypLod, TypTr2) ——
+  if (elmClass && elmClass.startsWith('Typ')) {
+    if (PF_REF.typParams && PF_REF.typParams[elmClass]) {
+      PF_REF.typParams[elmClass].forEach(item => {
+        const raw = String(item.var || '').toLowerCase();
+        const desc = (item.desc || '').toLowerCase();
+        if (!q || raw.includes(q) || desc.includes(q)) addItem(item);
+      });
+    }
+    if (!PF_REF.typFiles[elmClass]) fetchTypClassVars(elmClass, null);
+    return results.slice(0, 50);
+  }
+
   // Source: element_params.json class-specific input params (typically e:*)
   if (PF_REF.params && elmClass && PF_REF.params[elmClass]) {
     PF_REF.params[elmClass].forEach(item => {
@@ -2181,6 +2247,18 @@ function getOutputAttrSuggestions(typed, elmClass, comboInstance) {
       results.push({ var: item.var, desc: item.desc || '', unit: item.unit || '' });
     }
   };
+
+  if (elmClass && elmClass.startsWith('Typ')) {
+    // Type objects expose only static "e:" parameters — no study-group result vars
+    if (PF_REF.typParams && PF_REF.typParams[elmClass]) {
+      PF_REF.typParams[elmClass].forEach(item => {
+        if (!q || item.var.toLowerCase().includes(q) || (item.desc || '').toLowerCase().includes(q))
+          addItem(item);
+      });
+    }
+    if (!PF_REF.typFiles[elmClass]) fetchTypClassVars(elmClass, () => { if (comboInstance) comboInstance._refresh(); });
+    return results.slice(0, 60);
+  }
 
   if (elmClass) {
     if (PF_REF.varFiles[elmClass]) {
@@ -2331,12 +2409,29 @@ const THRESHOLD_METRICS = ['first_time_above','first_time_below'];
 const SETTLE_METRICS = ['time_settle'];
 const KNOWN_ELM_OBJECT_TYPES = new Set([
   'ElmArea','ElmAsm','ElmAsmsc','ElmBbone','ElmBmu','ElmBoundary','ElmBranch',
-  'ElmCabsys','ElmComp','ElmCoup','ElmDsl','ElmFeeder','ElmFile','ElmFilter',
-  'ElmGenstat','ElmGndswt','ElmLne','ElmLnesec','ElmNec','ElmNet','ElmPvsys',
-  'ElmRelay','ElmRes','ElmShnt','ElmStactrl','ElmSubstat','ElmSvs','ElmSym',
-  'ElmTerm','ElmTr2','ElmTr3','ElmTrfstat','ElmVac','ElmVoltreg',
-  'ElmXnet','ElmZone'
+  'ElmCabsys','ElmComp','ElmCoup','ElmDcu','ElmDsl','ElmFeeder','ElmFile','ElmFilter',
+  'ElmGenstat','ElmGndswt','ElmHvdcbi','ElmHvdcvsc','ElmIac','ElmLne','ElmLnesec',
+  'ElmLod','ElmLodlv','ElmLodmv','ElmMdl','ElmNec','ElmNet','ElmPvsys','ElmRecmono',
+  'ElmRelay','ElmRes','ElmSecctrl','ElmShnt','ElmSind','ElmStactrl','ElmSubstat',
+  'ElmSvs','ElmSym','ElmTerm','ElmTow','ElmTr2','ElmTr3','ElmTr4','ElmTrain',
+  'ElmTrb','ElmTrfstat','ElmTrmult','ElmVac','ElmVoltreg','ElmVsc','ElmVscmono',
+  'ElmWind','ElmXnet','ElmZone','ElmZpu'
 ]);
+
+// Falls back to KNOWN_ELM_OBJECT_TYPES when the live reference index isn't loaded yet,
+// so newly added element classes (e.g. via element_variables_index.json) are recognised
+// without needing this set to be kept in lockstep.
+function isKnownElmObjectType(objectType) {
+  if (PF_REF.index && Object.prototype.hasOwnProperty.call(PF_REF.index, objectType)) return true;
+  return KNOWN_ELM_OBJECT_TYPES.has(objectType);
+}
+
+const KNOWN_TYP_OBJECT_TYPES = new Set(ALL_TYP_CLASSES);
+
+function isKnownTypObjectType(objectType) {
+  if (PF_REF.typIndex && Object.prototype.hasOwnProperty.call(PF_REF.typIndex, objectType)) return true;
+  return KNOWN_TYP_OBJECT_TYPES.has(objectType);
+}
 
 function metricLabel(m) {
   return m.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -2923,12 +3018,16 @@ function buildObjectTypeWarnings(cfg) {
     const isElm = objectType && objectType.startsWith('Elm');
     const isSta = objectType && objectType.startsWith('Sta');
     const isEvt = objectType && objectType.startsWith('Evt');
-    if (!objectType || (!isElm && !isSta && !(allowEvt && isEvt))) {
+    const isTyp = objectType && objectType.startsWith('Typ');
+    if (!objectType || (!isElm && !isSta && !isTyp && !(allowEvt && isEvt))) {
       const evtHint = allowEvt ? ', ".EvtShc", ".EvtSwitch"' : '';
       warnings.push(`${label}: Object "${objectQuery}" should end with a PowerFactory object type (e.g., ".ElmTerm", ".ElmDsl"${evtHint}).`);
       return;
     }
-    if (isElm && !KNOWN_ELM_OBJECT_TYPES.has(objectType)) {
+    if (isElm && !isKnownElmObjectType(objectType)) {
+      warnings.push(`${label}: Object type "${objectType}" is not recognised from the PowerFactory API reference. Check for typos.`);
+    }
+    if (isTyp && !isKnownTypObjectType(objectType)) {
       warnings.push(`${label}: Object type "${objectType}" is not recognised from the PowerFactory API reference. Check for typos.`);
     }
   };
@@ -3279,7 +3378,7 @@ def save_intermediate_results(df, output_dir, prefix, last_save_time, interval_m
         filename = f"{prefix}_{timestamp_string()}.csv"
         full_path = os.path.join(output_dir, filename)
         with open(full_path, "w", newline="") as _int_f:
-            _int_f.write("# Made using tool.adjiebrotots.com/powerfactory-scripter\n")
+            _int_f.write("# Made using tool.adjiebrotots.com/powerfactory-scripter\\n")
             df.to_csv(_int_f, index=False)
         safe_print(f"Intermediate results saved: {full_path}")
         return current_time
@@ -4364,7 +4463,7 @@ function buildOutputExport(cfg) {
 # ── OUTPUT EXPORT ─────────────────────────────────────────────────
 final_output_path = os.path.join(output_dir, f"Run{timestamp_string()}.csv")
 with open(final_output_path, "w", newline="") as _out_f:
-    _out_f.write("# Made using tool.adjiebrotots.com/powerfactory-scripter\n")
+    _out_f.write("# Made using tool.adjiebrotots.com/powerfactory-scripter\\n")
     results_df.to_csv(_out_f, index=False)
 
 print("Run complete.")

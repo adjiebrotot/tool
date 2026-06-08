@@ -1,6 +1,6 @@
 {
   "TypSym": {
-    "file": "variables\\TypSym.json",
+    "file": "variables/types/TypSym.json",
     "size_kb": 15,
     "study_groups": {},
     "params": [
@@ -15,7 +15,7 @@
     ]
   },
   "TypAsm": {
-    "file": "variables\\TypAsm.json",
+    "file": "variables/types/TypAsm.json",
     "size_kb": 6,
     "study_groups": {},
     "params": [
@@ -30,7 +30,7 @@
     ]
   },
   "TypTr2": {
-    "file": "variables\\TypTr2.json",
+    "file": "variables/types/TypTr2.json",
     "size_kb": 16,
     "study_groups": {},
     "params": [
@@ -45,7 +45,7 @@
     ]
   },
   "TypTr3": {
-    "file": "variables\\TypTr3.json",
+    "file": "variables/types/TypTr3.json",
     "size_kb": 22,
     "study_groups": {},
     "params": [
@@ -60,7 +60,7 @@
     ]
   },
   "TypTr4": {
-    "file": "variables\\TypTr4.json",
+    "file": "variables/types/TypTr4.json",
     "size_kb": 44,
     "study_groups": {},
     "params": [
@@ -75,7 +75,7 @@
     ]
   },
   "TypLne": {
-    "file": "variables\\TypLne.json",
+    "file": "variables/types/TypLne.json",
     "size_kb": 8,
     "study_groups": {},
     "params": [
@@ -90,7 +90,7 @@
     ]
   },
   "TypTow": {
-    "file": "variables\\TypTow.json",
+    "file": "variables/types/TypTow.json",
     "size_kb": 6,
     "study_groups": {},
     "params": [
@@ -105,7 +105,7 @@
     ]
   },
   "TypGeo": {
-    "file": "variables\\TypGeo.json",
+    "file": "variables/types/TypGeo.json",
     "size_kb": 2,
     "study_groups": {},
     "params": [
@@ -120,7 +120,7 @@
     ]
   },
   "TypLod": {
-    "file": "variables\\TypLod.json",
+    "file": "variables/types/TypLod.json",
     "size_kb": 5,
     "study_groups": {},
     "params": [
@@ -135,7 +135,7 @@
     ]
   },
   "TypLodlv": {
-    "file": "variables\\TypLodlv.json",
+    "file": "variables/types/TypLodlv.json",
     "size_kb": 3,
     "study_groups": {},
     "params": [
@@ -150,7 +150,7 @@
     ]
   },
   "TypSwitch": {
-    "file": "variables\\TypSwitch.json",
+    "file": "variables/types/TypSwitch.json",
     "size_kb": 5,
     "study_groups": {},
     "params": [
