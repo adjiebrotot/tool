@@ -207,6 +207,10 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
 /* Key label */
 .node-key{color:var(--text);font-weight:600}
 .node-colon{color:var(--muted)}
+.node-preview{display:inline-flex;align-items:center;gap:5px;margin-left:2px}
+.node-preview-key{color:var(--text);font-weight:600}
+.node-preview-value{color:var(--node-str-text);max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.node-key-colon[hidden],.node-preview[hidden]{display:none}
 
 /* Type badge (for object/array) */
 .node-badge{padding:2px 6px;border-radius:5px;font-size:.75rem;font-weight:700;border:1px solid;line-height:1.2;flex-shrink:0}
@@ -438,6 +442,78 @@ function getType(val){
   return typeof val;
 }
 function isPrimitive(type){ return type==='string'||type==='number'||type==='boolean'||type==='null'; }
+function hasIndexKey(key){ return key !== null && /^\d+$/.test(String(key)); }
+
+function formatPreviewValue(value, type){
+  if(type === 'string'){
+    const preview = value.length > 80 ? value.slice(0, 80) + '…' : value;
+    return JSON.stringify(preview);
+  }
+  if(type === 'number' || type === 'boolean' || type === 'null') return JSON.stringify(value);
+  if(type === 'array') return `[${value.length}]`;
+  if(type === 'object') return `{${Object.keys(value).length}}`;
+  return String(value);
+}
+
+function getBranchPreview(desc){
+  // Numeric/indexed object nodes are the only branches that lack their own
+  // meaningful label. Give those collapsed nodes context by borrowing the first
+  // child entry, but keep named branches (e.g. ElmPvsys) unchanged.
+  if(!hasIndexKey(desc.key) || desc.type !== 'object' || desc.rawRef === null) return null;
+  const firstKey = desc.childKeys && desc.childKeys[0];
+  if(firstKey === undefined) return null;
+  const firstValue = desc.rawRef[firstKey];
+  return { key: firstKey, value: formatPreviewValue(firstValue, getType(firstValue)) };
+}
+
+function appendBranchPreview(node, preview){
+  if(!preview) return null;
+  const wrapper = document.createElement('span');
+  wrapper.className = 'node-preview';
+
+  const keySpan = document.createElement('span');
+  keySpan.className = 'node-preview-key';
+  keySpan.textContent = preview.key;
+  wrapper.appendChild(keySpan);
+
+  const colon = document.createElement('span');
+  colon.className = 'node-colon';
+  colon.textContent = ':';
+  wrapper.appendChild(colon);
+
+  const valueSpan = document.createElement('span');
+  valueSpan.className = 'node-preview-value';
+  valueSpan.textContent = preview.value;
+  wrapper.appendChild(valueSpan);
+
+  node.appendChild(wrapper);
+  return wrapper;
+}
+
+function syncBranchPreviewState(nodeEl){
+  if(!nodeEl.classList.contains('has-preview')) return;
+  const isExpanded = nodeEl.classList.contains('is-expanded');
+  const previewEl = nodeEl.querySelector('.node-preview');
+  const colonEl = nodeEl.querySelector('.node-key-colon');
+  if(previewEl) previewEl.hidden = isExpanded;
+  if(colonEl) colonEl.hidden = !isExpanded;
+}
+
+function syncBranchPreviewStates(rootEl = document){
+  rootEl.querySelectorAll('.tj-node.has-preview').forEach(syncBranchPreviewState);
+}
+
+function getVisibleNodeText(nodeEl){
+  return [...nodeEl.childNodes].reduce((parts, child) => {
+    if(child.nodeType === Node.TEXT_NODE) return parts + child.textContent;
+    if(child.nodeType !== Node.ELEMENT_NODE) return parts;
+    if(child.hidden) return parts;
+    const style = window.getComputedStyle(child);
+    if(style.display === 'none' || style.visibility === 'hidden') return parts;
+    if(child.classList.contains('node-toggle')) return parts;
+    return parts + child.textContent;
+  }, '').replace(/\s+/g, ' ').trim();
+}
 
 function formatBytes(b){
   if(b < 1024) return b+' B';
@@ -670,6 +746,9 @@ function renderNode(desc, parentEl){
   node.setAttribute('role', 'button');
   node.setAttribute('tabindex', '0');
 
+  const branchPreview = getBranchPreview(desc);
+  if(branchPreview) node.classList.add('has-preview');
+
   // Key label
   if(desc.key !== null){
     const keySpan = document.createElement('span');
@@ -677,7 +756,7 @@ function renderNode(desc, parentEl){
     keySpan.textContent = desc.key;
     node.appendChild(keySpan);
     const colon = document.createElement('span');
-    colon.className = 'node-colon';
+    colon.className = branchPreview ? 'node-colon node-key-colon' : 'node-colon';
     colon.textContent = ':';
     node.appendChild(colon);
   }
@@ -702,7 +781,10 @@ function renderNode(desc, parentEl){
     }
     node.appendChild(valSpan);
   } else {
-    // Object or array: show badge + optional toggle
+    // Object or array: show a useful first-entry preview for unnamed array branches,
+    // then badge + optional toggle.
+    appendBranchPreview(node, branchPreview);
+    syncBranchPreviewState(node);
     const badge = document.createElement('span');
     badge.className = 'node-badge';
     badge.textContent = desc.type === 'array' ? `[${desc.childCount}]` : `{${desc.childCount}}`;
@@ -742,10 +824,12 @@ function toggleNode(desc, nodeEl, childrenEl){
     desc.expanded = false;
     childrenEl.style.display = 'none';
     nodeEl.classList.remove('is-expanded');
+    syncBranchPreviewState(nodeEl);
   } else {
     desc.expanded = true;
     childrenEl.style.display = 'flex';
     nodeEl.classList.add('is-expanded');
+    syncBranchPreviewState(nodeEl);
     if(desc.renderedCount === 0){
       if(desc.type === 'object') renderObjectChildren(desc, childrenEl);
       else renderArrayChunk(desc, childrenEl, 5);
@@ -1174,6 +1258,7 @@ function addWatermarkToPngCanvas(sourceCanvas){
 
 // ─── DOWNLOAD PNG ────────────────────────────────────────────────────────────
 async function renderTreePngCanvas() {
+  syncBranchPreviewStates($('treeRoot'));
   const restores = preparePaginationForExport();
 
   // Reset transform temporarily so html2canvas captures the full untransformed content
@@ -1232,6 +1317,7 @@ $('downloadSvgBtn').addEventListener('click', () => {
   const btn = $('downloadSvgBtn');
   btn.disabled = true; btn.textContent = '⏳ Building...';
 
+  syncBranchPreviewStates($('treeRoot'));
   const svgRestores = preparePaginationForExport();
 
   // Reset transform temporarily so getBoundingClientRect gives un-scaled positions
@@ -1305,13 +1391,7 @@ $('downloadSvgBtn').addEventListener('click', () => {
         box.setAttribute('stroke', cs.borderColor || borderColor);
         svg.appendChild(box);
 
-        const keyEl   = nodeEl.querySelector('.node-key');
-        const badgeEl = nodeEl.querySelector('.node-badge');
-        const valEl   = nodeEl.querySelector('.node-value');
-        let txt = '';
-        if(keyEl)   txt += keyEl.textContent + ': ';
-        if(badgeEl) txt += badgeEl.textContent;
-        if(valEl)   txt += valEl.textContent.slice(0, 60);
+        const txt = getVisibleNodeText(nodeEl).slice(0, 90);
 
         const t = document.createElementNS(NS, 'text');
         t.setAttribute('x', x + 10); t.setAttribute('y', y + nr.height / 2);
