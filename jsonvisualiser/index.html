@@ -115,6 +115,19 @@ a{color:inherit;text-decoration:none}
 .field-group{margin-bottom:14px}
 .field-group:last-child{margin-bottom:0}
 .field-group label{display:block;font-weight:600;font-size:.88rem;margin-bottom:6px}
+.load-method{margin-bottom:14px}
+.load-method:last-child{margin-bottom:0}
+.load-method-header{display:none;width:100%;align-items:center;justify-content:space-between;gap:10px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font:inherit;font-size:.88rem;font-weight:700;text-align:left;cursor:pointer;transition:border-color 150ms,background 150ms}
+.load-method-header:hover{border-color:var(--accent)}
+.load-method-header::after{content:'▸';color:var(--muted);font-size:.75rem;transition:transform 150ms}
+.load-method.active .load-method-header::after{transform:rotate(90deg)}
+.load-method-kicker{font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-right:4px}
+.load-method.active .load-method-header{border-color:var(--accent);background:rgba(90,145,232,0.08)}
+.load-method.active .load-method-kicker{color:var(--accent)}
+.load-inputs.has-selection .load-method-header{display:flex}
+.load-inputs.has-selection .or-divider{display:none}
+.load-inputs.has-selection .load-method:not(.active) .method-body{display:none}
+.load-inputs.has-selection .load-method.active .method-body{margin-top:10px}
 
 /* ─── INPUTS ────────────────────────────────────────────────────────────────── */
 input[type=text],input[type=url],textarea{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:.85rem;outline:none;transition:border-color 150ms}
@@ -290,32 +303,51 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
         <div class="sidebar-section">
           <div class="section-title">Load JSON</div>
 
-          <!-- Drop zone -->
-          <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload JSON file">
-            <span class="drop-zone-icon">🗂️</span>
-            <div class="drop-zone-text">
-              Drop a JSON file here, or <strong id="browseBtn">click to browse</strong>
+          <div class="load-inputs" id="loadInputs">
+            <!-- Drop zone -->
+            <div class="load-method" data-load-method="file">
+              <button class="load-method-header" type="button" data-method-toggle="file">
+                <span><span class="load-method-kicker">Method</span>Drop JSON file</span>
+              </button>
+              <div class="method-body">
+                <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload JSON file">
+                  <span class="drop-zone-icon">🗂️</span>
+                  <div class="drop-zone-text">
+                    Drop a JSON file here, or <strong id="browseBtn">click to browse</strong>
+                  </div>
+                </div>
+                <input type="file" id="fileInput" accept=".json,application/json,text/plain">
+              </div>
             </div>
-          </div>
-          <input type="file" id="fileInput" accept=".json,application/json,text/plain">
 
-          <div class="or-divider">or</div>
+            <div class="or-divider">or</div>
 
-          <!-- Direct JSON paste -->
-          <div class="field-group">
-            <label for="jsonTextInput">Paste JSON text</label>
-            <textarea id="jsonTextInput" placeholder='{&quot;example&quot;: true}' spellcheck="false"></textarea>
-            <button class="btn-primary btn-full" id="loadTextBtn">Load JSON</button>
-          </div>
+            <!-- Direct JSON paste -->
+            <div class="load-method" data-load-method="paste">
+              <button class="load-method-header" type="button" data-method-toggle="paste">
+                <span><span class="load-method-kicker">Method</span>Paste JSON text</span>
+              </button>
+              <div class="method-body field-group">
+                <label for="jsonTextInput">Paste JSON text</label>
+                <textarea id="jsonTextInput" placeholder='{&quot;example&quot;: true}' spellcheck="false"></textarea>
+                <button class="btn-primary btn-full" id="loadTextBtn">Load JSON</button>
+              </div>
+            </div>
 
-          <div class="or-divider">or</div>
+            <div class="or-divider">or</div>
 
-          <!-- URL fetch -->
-          <div class="field-group">
-            <label for="urlInput">Fetch from URL</label>
-            <div class="url-row">
-              <input type="url" id="urlInput" placeholder="https://example.com/data.json">
-              <button class="btn-primary" id="fetchBtn">Fetch</button>
+            <!-- URL fetch -->
+            <div class="load-method" data-load-method="url">
+              <button class="load-method-header" type="button" data-method-toggle="url">
+                <span><span class="load-method-kicker">Method</span>Fetch from URL</span>
+              </button>
+              <div class="method-body field-group">
+                <label for="urlInput">Fetch from URL</label>
+                <div class="url-row">
+                  <input type="url" id="urlInput" placeholder="https://example.com/data.json">
+                  <button class="btn-primary" id="fetchBtn">Fetch</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -435,6 +467,20 @@ let rootDescriptor = null;
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
 function $(id){ return document.getElementById(id); }
+
+function setLoadMethodMode(activeMethod){
+  const inputs = $('loadInputs');
+  if(!inputs) return;
+  inputs.classList.toggle('has-selection', Boolean(activeMethod));
+  inputs.querySelectorAll('.load-method').forEach(section => {
+    section.classList.toggle('active', section.dataset.loadMethod === activeMethod);
+  });
+}
+
+function expandLoadMethod(method){
+  if(!method) return;
+  setLoadMethodMode(method);
+}
 
 function getType(val){
   if(val === null) return 'null';
@@ -567,6 +613,10 @@ themeBtn.addEventListener('click', () => {
 const dropZone = $('dropZone');
 const fileInput = $('fileInput');
 
+document.querySelectorAll('[data-method-toggle]').forEach(btn => {
+  btn.addEventListener('click', () => expandLoadMethod(btn.dataset.methodToggle));
+});
+
 $('browseBtn').addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
 dropZone.addEventListener('click', () => fileInput.click());
 dropZone.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' ') fileInput.click(); });
@@ -590,7 +640,7 @@ function loadFile(file){
   currentFileSize = file.size;
   showLoading('Reading file...');
   const reader = new FileReader();
-  reader.onload = (e) => handleRawJSON(e.target.result, file.name, file.size);
+  reader.onload = (e) => handleRawJSON(e.target.result, file.name, file.size, 'file');
   reader.onerror = () => showError('Failed to read file.');
   reader.readAsText(file);
 }
@@ -607,7 +657,7 @@ $('fetchBtn').addEventListener('click', () => {
     })
     .then(text => {
       const name = url.split('/').pop().split('?')[0] || 'fetched.json';
-      handleRawJSON(text, name, text.length);
+      handleRawJSON(text, name, text.length, 'url');
     })
     .catch(err => showError('Fetch failed: ' + err.message + '. Check CORS headers on the target server.'));
 });
@@ -619,7 +669,7 @@ $('loadTextBtn').addEventListener('click', () => {
   const text = $('jsonTextInput').value.trim();
   if(!text){ showStatus('statusError','Please paste JSON text.'); return; }
   showLoading('Parsing pasted JSON...');
-  handleRawJSON(text, 'pasted-json.json', text.length);
+  handleRawJSON(text, 'pasted-json.json', text.length, 'paste');
 });
 
 $('jsonTextInput').addEventListener('keydown', (e) => {
@@ -642,7 +692,7 @@ function showError(msg){
 }
 
 // ─── MAIN ENTRY ──────────────────────────────────────────────────────────────
-function handleRawJSON(text, name, size){
+function handleRawJSON(text, name, size, loadMethod){
   // Defer parse so loading UI renders first
   setTimeout(() => {
     try {
@@ -650,7 +700,7 @@ function handleRawJSON(text, name, size){
       parsedData = data;
       currentFileName = name;
       currentFileSize = size;
-      renderTree(data, name, size, text.length);
+      renderTree(data, name, size, text.length, loadMethod);
     } catch(err) {
       showError('Invalid JSON: ' + err.message);
     }
@@ -658,7 +708,7 @@ function handleRawJSON(text, name, size){
 }
 
 // ─── RENDER TREE ─────────────────────────────────────────────────────────────
-function renderTree(data, name, size, byteLen){
+function renderTree(data, name, size, byteLen, loadMethod){
   nodeIdCounter = 0;
   rootDescriptor = null;
   const root = $('treeRoot');
@@ -697,6 +747,9 @@ function renderTree(data, name, size, byteLen){
   $('copyPngBtn').disabled = false;
   $('downloadSvgBtn').disabled = false;
   $('downloadNote').classList.add('visible');
+
+  // Keep the successful load method expanded and collapse the unused inputs.
+  setLoadMethodMode(loadMethod);
 
   // Render root node
   const desc = createDescriptor(data, null);
@@ -1052,6 +1105,7 @@ $('clearBtn').addEventListener('click', () => {
   $('fileInfoSection').style.display = 'none';
   $('controlsCard').style.display = 'none';
   $('downloadNote').classList.remove('visible');
+  setLoadMethodMode(null);
   hideStatus();
 });
 
