@@ -3260,8 +3260,24 @@ def get_single_pf_object(app, object_query):
 
 def get_pf_objects(app, object_query):
     """Resolve all PowerFactory objects matching a query (supports wildcards).
+
+    Object queries ending in ".typ_id.TypXxx" are chained: the base element(s)
+    are resolved via GetCalcRelevantObjects, then each is followed through its
+    assigned type object via obj.GetAttribute("typ_id") — e.g.
+    "Line Name.ElmLne.typ_id.TypLne" resolves to the TypLne object(s) so that
+    type parameters (e.g. "e:rline") can be read/written directly.
+
     Returns a list; for exact-match queries this is a single-element list.
     """
+    m = re.match(r'^(.*)\.typ_id\.Typ[A-Za-z0-9]+$', object_query)
+    if m:
+        base_objects = app.GetCalcRelevantObjects(m.group(1))
+        if not base_objects:
+            raise ValueError(f"No objects found for query: {object_query}")
+        type_objects = [t for t in (o.GetAttribute("typ_id") for o in base_objects) if t is not None]
+        if not type_objects:
+            raise ValueError(f"No type object (typ_id) assigned for query: {object_query}")
+        return type_objects
     objects = app.GetCalcRelevantObjects(object_query)
     if not objects:
         raise ValueError(f"No objects found for query: {object_query}")
