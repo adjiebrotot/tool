@@ -96,6 +96,7 @@ a{color:inherit;text-decoration:none}
 .btn-theme:hover{border-color:var(--accent);color:var(--text)}
 .btn-back{display:inline-flex;align-items:center;text-decoration:none}
 .btn-primary{background:var(--accent);color:var(--text-inv);border:none;border-radius:10px;padding:9px 16px;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity 150ms,transform 150ms;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-full{width:100%;margin-top:8px}
 .btn-primary:hover{opacity:.88}
 .btn-primary:active{transform:scale(.97)}
 .btn-primary:disabled{opacity:.38;cursor:not-allowed}
@@ -116,9 +117,10 @@ a{color:inherit;text-decoration:none}
 .field-group label{display:block;font-weight:600;font-size:.88rem;margin-bottom:6px}
 
 /* ─── INPUTS ────────────────────────────────────────────────────────────────── */
-input[type=text],input[type=url]{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:.85rem;outline:none;transition:border-color 150ms}
-input[type=text]:focus,input[type=url]:focus{border-color:var(--accent)}
-input::placeholder{color:var(--muted)}
+input[type=text],input[type=url],textarea{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:.85rem;outline:none;transition:border-color 150ms}
+input[type=text]:focus,input[type=url]:focus,textarea:focus{border-color:var(--accent)}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+textarea{min-height:120px;resize:vertical;line-height:1.45}
 
 /* ─── DROP ZONE ─────────────────────────────────────────────────────────────── */
 .drop-zone{border:2px dashed var(--border-strong);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all 200ms;background:var(--input-bg)}
@@ -266,7 +268,7 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
   <div class="header card">
     <div class="header-left">
       <h1>🗂️ JSON Visualiser</h1>
-      <p>Upload or paste a URL to explore any JSON as an interactive tree.</p>
+      <p>Upload, paste, or fetch JSON to explore it as an interactive tree.</p>
     </div>
     <div class="header-right">
       <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
@@ -292,6 +294,15 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
             </div>
           </div>
           <input type="file" id="fileInput" accept=".json,application/json,text/plain">
+
+          <div class="or-divider">or</div>
+
+          <!-- Direct JSON paste -->
+          <div class="field-group">
+            <label for="jsonTextInput">Paste JSON text</label>
+            <textarea id="jsonTextInput" placeholder='{&quot;example&quot;: true}' spellcheck="false"></textarea>
+            <button class="btn-primary btn-full" id="loadTextBtn">Load JSON</button>
+          </div>
 
           <div class="or-divider">or</div>
 
@@ -349,7 +360,7 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
       <div class="empty-state" id="emptyState">
         <div class="empty-icon">🗂️</div>
         <div class="empty-title">No JSON loaded</div>
-        <div class="empty-subtitle">Upload a file or fetch from a URL to see the interactive tree.</div>
+        <div class="empty-subtitle">Upload a file, paste JSON text, or fetch from a URL to see the interactive tree.</div>
       </div>
 
       <!-- Loading state -->
@@ -526,6 +537,18 @@ $('fetchBtn').addEventListener('click', () => {
 });
 
 $('urlInput').addEventListener('keydown', (e) => { if(e.key==='Enter') $('fetchBtn').click(); });
+
+// ─── DIRECT JSON PASTE ───────────────────────────────────────────────────────
+$('loadTextBtn').addEventListener('click', () => {
+  const text = $('jsonTextInput').value.trim();
+  if(!text){ showStatus('statusError','Please paste JSON text.'); return; }
+  showLoading('Parsing pasted JSON...');
+  handleRawJSON(text, 'pasted-json.json', text.length);
+});
+
+$('jsonTextInput').addEventListener('keydown', (e) => {
+  if((e.ctrlKey || e.metaKey) && e.key === 'Enter') $('loadTextBtn').click();
+});
 
 // ─── LOADING / ERROR STATES ──────────────────────────────────────────────────
 function showLoading(msg='Parsing JSON...'){
