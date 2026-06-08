@@ -210,8 +210,7 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
 .node-preview{display:inline-flex;align-items:center;gap:5px;margin-left:2px}
 .node-preview-key{color:var(--text);font-weight:600}
 .node-preview-value{color:var(--node-str-text);max-width:220px;overflow:hidden;text-overflow:ellipsis}
-.tj-node.has-preview:not(.is-expanded) > .node-key-colon{display:none}
-.tj-node.has-preview.is-expanded > .node-preview{display:none}
+.node-key-colon[hidden],.node-preview[hidden]{display:none}
 
 /* Type badge (for object/array) */
 .node-badge{padding:2px 6px;border-radius:5px;font-size:.75rem;font-weight:700;border:1px solid;line-height:1.2;flex-shrink:0}
@@ -468,7 +467,7 @@ function getBranchPreview(desc){
 }
 
 function appendBranchPreview(node, preview){
-  if(!preview) return;
+  if(!preview) return null;
   const wrapper = document.createElement('span');
   wrapper.className = 'node-preview';
 
@@ -488,12 +487,27 @@ function appendBranchPreview(node, preview){
   wrapper.appendChild(valueSpan);
 
   node.appendChild(wrapper);
+  return wrapper;
+}
+
+function syncBranchPreviewState(nodeEl){
+  if(!nodeEl.classList.contains('has-preview')) return;
+  const isExpanded = nodeEl.classList.contains('is-expanded');
+  const previewEl = nodeEl.querySelector('.node-preview');
+  const colonEl = nodeEl.querySelector('.node-key-colon');
+  if(previewEl) previewEl.hidden = isExpanded;
+  if(colonEl) colonEl.hidden = !isExpanded;
+}
+
+function syncBranchPreviewStates(rootEl = document){
+  rootEl.querySelectorAll('.tj-node.has-preview').forEach(syncBranchPreviewState);
 }
 
 function getVisibleNodeText(nodeEl){
   return [...nodeEl.childNodes].reduce((parts, child) => {
     if(child.nodeType === Node.TEXT_NODE) return parts + child.textContent;
     if(child.nodeType !== Node.ELEMENT_NODE) return parts;
+    if(child.hidden) return parts;
     const style = window.getComputedStyle(child);
     if(style.display === 'none' || style.visibility === 'hidden') return parts;
     if(child.classList.contains('node-toggle')) return parts;
@@ -770,6 +784,7 @@ function renderNode(desc, parentEl){
     // Object or array: show a useful first-entry preview for unnamed array branches,
     // then badge + optional toggle.
     appendBranchPreview(node, branchPreview);
+    syncBranchPreviewState(node);
     const badge = document.createElement('span');
     badge.className = 'node-badge';
     badge.textContent = desc.type === 'array' ? `[${desc.childCount}]` : `{${desc.childCount}}`;
@@ -809,10 +824,12 @@ function toggleNode(desc, nodeEl, childrenEl){
     desc.expanded = false;
     childrenEl.style.display = 'none';
     nodeEl.classList.remove('is-expanded');
+    syncBranchPreviewState(nodeEl);
   } else {
     desc.expanded = true;
     childrenEl.style.display = 'flex';
     nodeEl.classList.add('is-expanded');
+    syncBranchPreviewState(nodeEl);
     if(desc.renderedCount === 0){
       if(desc.type === 'object') renderObjectChildren(desc, childrenEl);
       else renderArrayChunk(desc, childrenEl, 5);
@@ -1241,6 +1258,7 @@ function addWatermarkToPngCanvas(sourceCanvas){
 
 // ─── DOWNLOAD PNG ────────────────────────────────────────────────────────────
 async function renderTreePngCanvas() {
+  syncBranchPreviewStates($('treeRoot'));
   const restores = preparePaginationForExport();
 
   // Reset transform temporarily so html2canvas captures the full untransformed content
@@ -1299,6 +1317,7 @@ $('downloadSvgBtn').addEventListener('click', () => {
   const btn = $('downloadSvgBtn');
   btn.disabled = true; btn.textContent = '⏳ Building...';
 
+  syncBranchPreviewStates($('treeRoot'));
   const svgRestores = preparePaginationForExport();
 
   // Reset transform temporarily so getBoundingClientRect gives un-scaled positions
