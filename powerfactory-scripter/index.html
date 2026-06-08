@@ -1992,7 +1992,7 @@ const ALL_ELM_CLASSES = [
   'ElmWind','ElmXnet','ElmZone','ElmZpu','StaPll'
 ];
 
-// Type classes (TypXxx) — referenced via "<element>.typ_id" for parameter iteration
+// Type classes (TypXxx) — resolved directly by name from the equipment library
 const ALL_TYP_CLASSES = [
   'TypAsm','TypGeo','TypLne','TypLod','TypLodlv','TypSwitch',
   'TypSym','TypTow','TypTr2','TypTr3','TypTr4'
@@ -2103,13 +2103,14 @@ function getObjectSuggestions(typed, includeEvents = true) {
     }
   });
 
-  // Suggest Name.<Elm>.typ_id.TypXxx for type classes — type objects are reached
-  // through an element's type reference (typ_id), not GetCalcRelevantObjects directly,
-  // so their static parameters (e.g. TypLod, TypTr2) can still drive input iterations.
+  // Suggest Name.TypXxx for type classes — type objects live in the project's
+  // equipment library and are resolved directly by name via GetProjectFolder("equip"),
+  // so their static parameters (e.g. TypLod, TypTr2) can drive input/output iterations.
   ALL_TYP_CLASSES.forEach(cls => {
     if (!classPart || cls.toLowerCase().startsWith(classPart)) {
-      const full = namePart ? `${namePart}.typ_id.${cls}` : `typ_id.${cls}`;
-      results.push({ var: full, desc: `Type parameters — ${cls} (via typ_id)`, unit: 'type' });
+      const full = namePart ? `${namePart}.${cls}` : cls;
+      const desc = PF_REF.typIndex?.[cls]?.desc || cls;
+      results.push({ var: full, desc: `${desc} (equipment type library)`, unit: '' });
     }
   });
 
@@ -3258,26 +3259,32 @@ def get_single_pf_object(app, object_query):
     return objects[0]
 
 
+def get_type_objects(app, object_query):
+    """
+    Resolve a type object (TypXxx) directly from the project's equipment
+    library — type objects live under the "equip" project folder, not in
+    GetCalcRelevantObjects' result set.
+
+    object_query format: "Type Name.TypLne", "Type Name.TypLod", etc.
+    """
+    equip_folder = app.GetProjectFolder("equip")
+    if equip_folder is None:
+        raise ValueError(f"Could not find the equipment ('equip') project folder (query: {object_query!r})")
+    results = equip_folder.GetContents(object_query, 1)
+    if not results:
+        raise ValueError(f"No type object found matching {object_query!r} in the equipment library.")
+    return results
+
+
 def get_pf_objects(app, object_query):
     """Resolve all PowerFactory objects matching a query (supports wildcards).
-
-    Object queries ending in ".typ_id.TypXxx" are chained: the base element(s)
-    are resolved via GetCalcRelevantObjects, then each is followed through its
-    assigned type object via obj.GetAttribute("typ_id") — e.g.
-    "Line Name.ElmLne.typ_id.TypLne" resolves to the TypLne object(s) so that
-    type parameters (e.g. "e:rline") can be read/written directly.
-
+    Type queries (object_query ending in ".TypXxx") are routed to the
+    equipment library via get_type_objects(); everything else is resolved
+    via GetCalcRelevantObjects.
     Returns a list; for exact-match queries this is a single-element list.
     """
-    m = re.match(r'^(.*)\.typ_id\.Typ[A-Za-z0-9]+$', object_query)
-    if m:
-        base_objects = app.GetCalcRelevantObjects(m.group(1))
-        if not base_objects:
-            raise ValueError(f"No objects found for query: {object_query}")
-        type_objects = [t for t in (o.GetAttribute("typ_id") for o in base_objects) if t is not None]
-        if not type_objects:
-            raise ValueError(f"No type object (typ_id) assigned for query: {object_query}")
-        return type_objects
+    if re.search(r'\.Typ[A-Za-z0-9]+\s*$', object_query):
+        return get_type_objects(app, object_query)
     objects = app.GetCalcRelevantObjects(object_query)
     if not objects:
         raise ValueError(f"No objects found for query: {object_query}")
