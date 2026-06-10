@@ -809,6 +809,15 @@ function readInputs(){
   S.monthlyBudgetIncrease = parseFloatSafe($('monthlyBudgetIncrease').value, 0);
   S.currencySymbol  = $('currencySymbol').value || '$';
   currentCurrencySymbol = S.currencySymbol;
+  updateCurrencyPrefixes();
+}
+
+function updateCurrencyPrefixes(){
+  const sym = moneySymbol();
+  ['initialCashPrefix','monthlyBudgetPrefix','propertyPricePrefix','setupCostPrefix','ownOngoingCostPrefix','rentAmountPrefix','rentOngoingCostPrefix'].forEach(id=>{
+    const el = $(id);
+    if(el) el.textContent = sym;
+  });
 }
 
 function refreshLabels(){
@@ -2167,7 +2176,10 @@ function buildCagrRow(year='', price=''){
     <input type="text" inputmode="numeric" placeholder="Price e.g. 450,000" class="cagr-price money-input" data-money="true" value="${price}"/>
     <button class="cagr-btn delete cagr-delete" type="button">${T('btnDelete')}</button>
   `;
-  formatMoneyInput(row.querySelector('.cagr-price'));
+  const priceEl = row.querySelector('.cagr-price');
+  formatMoneyInput(priceEl);
+  priceEl.addEventListener('input', ()=>{ SharedFmt.liveFormat(priceEl, {maxDecimals:2}); });
+  priceEl.addEventListener('blur', ()=>{ formatMoneyInput(priceEl); rerender(); });
   return row;
 }
 function calcCAGR(){
@@ -2216,6 +2228,7 @@ $('rtbEnabled').addEventListener('change', rerender);
 $('costInterestOnly').addEventListener('change', rerender);
 
 document.querySelectorAll('[data-money="true"]').forEach(el=>{
+  el.addEventListener('input', ()=>{ SharedFmt.liveFormat(el, {maxDecimals:2}); });
   el.addEventListener('blur', ()=>{ formatMoneyInput(el); rerender(); });
 });
 

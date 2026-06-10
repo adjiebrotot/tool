@@ -37,7 +37,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .field-row:first-of-type{border-top:none}
 .field-label{font-weight:700;font-size:.88rem}
 .field-sub{color:var(--muted);font-size:.78rem;line-height:1.35;margin-top:2px}
-.num-input,.txt-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:.88rem;font-weight:600;padding:7px 10px;width:100%;outline:none;transition:border-color .15s;font-family:'DM Mono',monospace}
+.num-input,.txt-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:.88rem;font-weight:600;padding:7px 10px;width:100%;outline:none;transition:border-color .15s;font-family:'DM Sans',sans-serif}
 .num-input:focus,.txt-input:focus{border-color:var(--accent)}
 select.txt-input{cursor:pointer}
 .num-input option,.txt-input option{background:#1a2340;color:#e8eefc}

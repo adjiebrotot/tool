@@ -97,17 +97,20 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .field-row:first-of-type{border-top:none;}
 .field-label{font-weight:700;font-size:.9rem;}
 .field-sub{color:var(--muted);font-size:.8rem;line-height:1.35;margin-top:2px;}
-.num-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Mono',monospace;font-size:.92rem;font-weight:600;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);}
+.num-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);font-variant-numeric:tabular-nums;}
 .num-input:focus{border-color:var(--accent);background:var(--panel);}
 
 /* ============================================================
-   CURRENCY INPUT
+   CURRENCY INPUT (canonical number-input style — prefix/suffix wrap)
    ============================================================ */
 .currency-wrap{position:relative;}
 .currency-wrap .prefix{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;font-size:.88rem;pointer-events:none;}
-.currency-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Mono',monospace;font-size:.92rem;font-weight:600;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);font-variant-numeric:tabular-nums;}
+.currency-wrap .suffix{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;font-size:.88rem;pointer-events:none;}
+.currency-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);font-variant-numeric:tabular-nums;}
 .currency-input:focus{border-color:var(--accent);background:var(--panel);}
 .currency-wrap .currency-input{padding-left:32px;}
+.currency-wrap .currency-input.has-suffix{padding-left:13px;padding-right:42px;}
+.currency-wrap .prefix~.currency-input.has-suffix{padding-left:32px;}
 
 /* ============================================================
    SELECT / DROPDOWN

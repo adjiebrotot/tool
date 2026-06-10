@@ -45,7 +45,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .num-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-size:.9rem;font-weight:500;padding:10px 13px;width:100%;outline:none;transition:border-color var(--motion-fast);}
 .num-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,184,248,.15);}
 .input-row{display:flex;gap:8px;align-items:center;}
-.input-row .num-input{flex:1;}
+.input-row .num-input,.input-row .currency-wrap{flex:1;}
 .input-row select{background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-size:.88rem;font-weight:500;padding:10px 13px;outline:none;cursor:pointer;transition:border-color var(--motion-fast);}
 select{background:var(--panel)!important;color:var(--text)!important;border:1.5px solid var(--border);border-radius:var(--radius-md);outline:none;}
 select:focus{border-color:var(--accent);}
