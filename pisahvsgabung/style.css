@@ -38,9 +38,6 @@
     .field-sub{color:var(--muted);font-size:12px;line-height:1.4;margin-top:2px}
     .num-input,.currency-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;padding:10px 13px;width:100%;outline:none;transition:border-color 150ms}
     .num-input:focus,.currency-input:focus{border-color:var(--accent);background:var(--panel)}
-    .currency-wrap{position:relative}
-    .currency-wrap .prefix{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;font-size:0.88rem;pointer-events:none}
-    .currency-wrap .currency-input{padding-left:32px;font-variant-numeric:tabular-nums}
     select.num-input{appearance:auto;cursor:pointer}
     .num-input option{background:#1a2340;color:#e8eefc}
     body.light .num-input option{background:#ffffff;color:#1a2340}

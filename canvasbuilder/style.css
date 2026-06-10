@@ -85,7 +85,7 @@ select.tb-control {
 .btn-primary:hover { opacity:.88; border-color:var(--accent-strong); }
 .btn-green { background:var(--accent2); border-color:var(--accent2); color:#fff; }
 .btn-green:hover { opacity:.88; }
-.dirty-dot { width:7px; height:7px; background:var(--accent3); border-radius:50%;
+.dirty-dot { width:7px; height:7px; background:var(--negative-em); border-radius:50%;
   display:none; flex-shrink:0; }
 .dirty-dot.visible { display:block; }
 

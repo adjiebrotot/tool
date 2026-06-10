@@ -6,7 +6,7 @@
    ────────────────────────────────────────────────────────────────────────── */
 body.light {
   --bg:#F0F4FF;--panel:#FFFFFF;--panel-raised:#FFFFFF;--text:#2D3436;--muted:#7F8C8D;--border:#E0E6F0;
-  --accent:#5A91E8;--accent-strong:#3A71C8;--accent2:#2E9E7A;--accent3:#E63939;--gold:#B45309;
+  --accent:#5A91E8;--accent-strong:#3A71C8;--accent2:#2E9E7A;--accent3:#FFD6E0;--gold:#B45309;
   --input-bg:rgba(0,0,0,0.04);--card-bg:rgba(255,255,255,0.85);--bg-subtle:#F8FBFF;--text-inv:#FFFFFF;
   --shadow:0 2px 16px rgba(120,160,220,0.12);
   --shadow-sm:0 1px 8px rgba(120,160,220,0.08);
@@ -20,12 +20,12 @@ body.light {
   --data-neg:var(--negative);--data-neg-em:var(--negative-em);--data-neg-bg:var(--negative-bg);--data-neg-border:var(--negative-border);
   /* Status/feedback colours */
   --success-bg:#C8F7C5;--success-text:#1A4A18;
-  --error-bg:#FFE0E5;--error-text:#801428;
+  --error-bg:#FFB3BA;--error-text:#4A1018;
   --warning-bg:#FFF0D9;--warning-text:#7A4A00;
   --info-bg:#EAF2FF;--info-text:#174A9C;--info-border:#8FB5FF;
   /* Chart tokens (light) — dedicated per spec, NOT text.secondary */
   --chart-text:#4A5A6A;--chart-grid:#C8D4E8;
   /* Chart line colours */
-  --line-a:#1D4ED8;--line-b:#C0392B;--line-c:#1A7A5A;--line-d:#B45309;--line-e:#9B59B6;
-  --line-rtb-rent:#C0392B;--line-rtb-own:#1D4ED8;
+  --line-a:#5A91E8;--line-b:#E63939;--line-c:#4A9E87;--line-d:#C46A7E;--line-e:#9B59B6;
+  --line-rtb-rent:#E63939;--line-rtb-own:#5A91E8;
 }

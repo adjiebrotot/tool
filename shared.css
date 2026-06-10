@@ -101,6 +101,15 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .num-input:focus{border-color:var(--accent);background:var(--panel);}
 
 /* ============================================================
+   CURRENCY INPUT
+   ============================================================ */
+.currency-wrap{position:relative;}
+.currency-wrap .prefix{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;font-size:.88rem;pointer-events:none;}
+.currency-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Mono',monospace;font-size:.92rem;font-weight:600;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);font-variant-numeric:tabular-nums;}
+.currency-input:focus{border-color:var(--accent);background:var(--panel);}
+.currency-wrap .currency-input{padding-left:32px;}
+
+/* ============================================================
    SELECT / DROPDOWN
    ============================================================ */
 .sel-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:inherit;font-size:.92rem;font-weight:600;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23A8B6CF'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
@@ -176,7 +185,7 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
 table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.88rem;}
 th,td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}
 th:first-child,td:first-child{text-align:left;white-space:normal;font-family:'DM Sans',sans-serif;}
-th{color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+th{color:var(--muted);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
 .table-wrap{overflow:auto;max-height:400px;}
 tr:hover td{background:rgba(141,187,255,0.04);}
 body.light tr:hover td{background:rgba(90,145,232,0.04);}

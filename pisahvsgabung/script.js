@@ -289,16 +289,6 @@ function applyLang() {
   $('langToggle').textContent = lang === 'en' ? 'ID' : 'EN';
 }
 
-/* ── Currency input formatting ── */
-function formatCurrencyInput(el) {
-  const raw = el.value.replace(/[^0-9]/g, '');
-  const num = parseInt(raw) || 0;
-  el.value = num === 0 ? '0' : num.toLocaleString('en-US');
-}
-function parseCurrencyInput(el) {
-  return parseInt(el.value.replace(/[^0-9]/g, '')) || 0;
-}
-
 /* ── Formatters ── */
 const fmt = {
   idr(v, compact=false){
@@ -414,10 +404,10 @@ function readInputs(){
   S.ptkpDependent = parseInt(els.ptkpDependent.value.replace(/[^0-9]/g,''))||PTKP_DEPENDENT_DEFAULT;
 
   if (S.inputMode === 'individual') {
-    S.husbandSalary = Math.max(0, parseCurrencyInput(els.husbandSalaryInput));
-    S.wifeSalary = Math.max(0, parseCurrencyInput(els.wifeSalaryInput));
-    S.husbandDeduction = Math.max(0, parseCurrencyInput(els.husbandDeductionInput));
-    S.wifeDeduction = Math.max(0, parseCurrencyInput(els.wifeDeductionInput));
+    S.husbandSalary = Math.max(0, SharedFmt.parseFormatted(els.husbandSalaryInput.value));
+    S.wifeSalary = Math.max(0, SharedFmt.parseFormatted(els.wifeSalaryInput.value));
+    S.husbandDeduction = Math.max(0, SharedFmt.parseFormatted(els.husbandDeductionInput.value));
+    S.wifeDeduction = Math.max(0, SharedFmt.parseFormatted(els.wifeDeductionInput.value));
     S.totalSalary = S.husbandSalary + S.wifeSalary;
     S.deduction = S.husbandDeduction + S.wifeDeduction;
     S.splitPct = S.totalSalary > 0 ? Math.round((S.wifeSalary / S.totalSalary) * 100) : 50;
@@ -425,10 +415,10 @@ function readInputs(){
     $('splitDerivedLabel').textContent = (S.totalSalary > 0 ? (S.wifeSalary/S.totalSalary*100).toFixed(1) : '50.0') + '%';
   } else {
     S.splitPct = Math.max(0,Math.min(100,parseFloat(els.splitPct.value)||0));
-    S.totalSalary = Math.max(0, parseCurrencyInput(els.totalSalaryInput));
+    S.totalSalary = Math.max(0, SharedFmt.parseFormatted(els.totalSalaryInput.value));
     S.husbandDeduction = 0;
     S.wifeDeduction = 0;
-    S.deduction = Math.max(0, parseCurrencyInput(els.deductionInput));
+    S.deduction = Math.max(0, SharedFmt.parseFormatted(els.deductionInput.value));
   }
 }
 
@@ -1163,19 +1153,7 @@ function downloadCsv(){
 });
 
 [els.totalSalaryInput, els.deductionInput, els.husbandSalaryInput, els.wifeSalaryInput, els.husbandDeductionInput, els.wifeDeductionInput].forEach(el=>{
-  el.addEventListener('input',function(){
-    const pos=this.selectionStart;
-    const oldLen=this.value.length;
-    formatCurrencyInput(this);
-    const newLen=this.value.length;
-    const newPos=Math.max(0,pos+(newLen-oldLen));
-    this.setSelectionRange(newPos,newPos);
-    rerender();
-  });
-  el.addEventListener('blur',function(){
-    formatCurrencyInput(this);
-    rerender();
-  });
+  SharedFmt.attachCurrencyInput(el, {maxDecimals:0, onChange: rerender});
 });
 
 [els.ptkpBase, els.ptkpMarried, els.ptkpSpouse, els.ptkpDependent].forEach(el=>{
