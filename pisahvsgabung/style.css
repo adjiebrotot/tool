@@ -1,18 +1,11 @@
     :root {
       --secondary:#8FCDBD;--accent3:#E63939;--accent3-em:#FF8B8B;
-      --positive:#0052CC;--positive-em:#7FB2FF;--positive-bg:#10284D;--positive-border:#2D67C7;
-      --negative:#E63939;--negative-em:#FF8B8B;--negative-bg:#4A1C1C;--negative-border:#C85F5F;
-      --input-bg:#1C2942;
-      --info-bg:#132E56;--info-text:#A8C9FF;--warn-bg:#4A3412;--warn-text:#FFD28C;
+      --warn-bg:var(--warning-bg);--warn-text:var(--warning-text);
     }
     body.light {
       --accent:#8BB8F8;--accent-strong:#5A91E8;
       --secondary:#B8E0D2;--accent3-em:#E63939;
-      --positive:#0052CC;--positive-em:#0052CC;--positive-bg:#EAF2FF;--positive-border:#8FB5FF;
-      --negative:#E63939;--negative-em:#E63939;--negative-bg:#FDECEC;--negative-border:#F3A5A5;
-      --gold:#7A4A00;
       --line-a:#5A91E8;--line-b:#E63939;--line-c:#2E8B6E;--line-d:#7A4A00;
-      --info-bg:#EAF2FF;--info-text:#174A9C;--warn-bg:#FFF0D9;--warn-text:#7A4A00;
     }
     *{box-sizing:border-box;min-width:0}
     body{margin:0;font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.5;color:var(--text);background:var(--bg);transition:background 250ms,color 250ms;overflow-x:hidden}
@@ -118,8 +111,6 @@
     .position-row .pos-val{font-weight:600;font-family:'DM Mono',monospace}
     .tbl-group-header{text-align:center}
     .page-footer{max-width:1400px;margin:0 auto;padding:0 24px 24px}
-    .page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-xl)}
-    .page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:0.9rem}
     .page-footer-info p:last-child{margin-bottom:0}
     @media(max-width:900px){.layout,.bottom,.metrics{grid-template-columns:1fr}.controls{position:static}.canvas-wrap{height:380px!important}.summary-grid{grid-template-columns:repeat(2,1fr)}.header{flex-direction:column;gap:10px;padding:16px 18px}.container{padding:16px}}
     @media(max-width:600px){h1{font-size:1.35rem}.container{padding:10px}.summary-grid{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:1fr}.btn-row{flex-direction:column}.header{padding:14px 16px}}

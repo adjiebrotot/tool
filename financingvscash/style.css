@@ -1,13 +1,10 @@
 :root{
   --input-bg:rgba(28,41,66,0.7);
   --line-f:#B3D1FF;
-  --positive:#7FB2FF;--negative:#FF8B8B;
 }
 body.light{
   --accent2:#3aaa86;
-  --gold:#b07a00;
   --line-a:#5A91E8;--line-b:#E63939;--line-c:#3aaa86;--line-d:#b07a00;--line-e:#c45e7a;--line-f:#0052CC;
-  --positive:#0052CC;--negative:#E63939;
 }
 *{box-sizing:border-box;min-width:0;}
 body{margin:0;overflow-x:hidden;font-family:'DM Sans',system-ui,sans-serif;color:var(--text);background:var(--bg);transition:background .25s,color .25s;}
@@ -111,8 +108,6 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 .mode-tab{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:8px 16px;color:var(--muted);font-weight:700;font-size:.82rem;cursor:pointer;transition:all .15s;font-family:inherit;}
 .mode-tab.active{color:var(--text);border-color:var(--accent);background:rgba(141,187,255,.1);}
 .page-footer{max-width:1400px;margin:0 auto;padding:0 24px 24px;}
-.page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;}
-.page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:.9rem;}
 .page-footer-info p:last-child{margin-bottom:0;}
 /* Tooltip styles */
 .tip-wrap{display:inline-flex;align-items:center;gap:4px;}

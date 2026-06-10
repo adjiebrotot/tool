@@ -259,7 +259,7 @@ function rerender(){
   // KPIs
   if(allNeg||!bestResult){$('kpiBest').textContent='Cash Purchase';$('kpiBest').style.color=cssVar('--accent2');$('kpiBestSub').textContent=valid.length?'No financing scenario beats paying cash.':'Add scenarios to compare.';}
   else{$('kpiBest').textContent=bestResult.name;$('kpiBest').style.color=cssVar(bestResult.colorVar);$('kpiBestSub').textContent='Based on '+$('optTarget').selectedOptions[0].text.toLowerCase()+'.';}
-  if(bestResult){const nb=bestResult.netBenefit;$('kpiNetBenefit').textContent=fmt.currency(nb,true);$('kpiNetBenefit').style.color=nb>=0?cssVar('--positive'):cssVar('--negative');$('kpiNetSub').textContent=nb>=0?'Financing is more wealth-efficient':'Cash purchase preserves more wealth';$('kpiInterest').textContent=fmt.currency(bestResult.totalInterest,true);$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent=fmt.currencyExact(bestResult.payment)+'/'+freqLabel(bestResult.freq);}
+  if(bestResult){const nb=bestResult.netBenefit;$('kpiNetBenefit').textContent=fmt.currency(nb,true);$('kpiNetBenefit').style.color=nb>=0?cssVar('--positive-em'):cssVar('--negative-em');$('kpiNetSub').textContent=nb>=0?'Financing is more wealth-efficient':'Cash purchase preserves more wealth';$('kpiInterest').textContent=fmt.currency(bestResult.totalInterest,true);$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent=fmt.currencyExact(bestResult.payment)+'/'+freqLabel(bestResult.freq);}
   else{$('kpiNetBenefit').textContent='—';$('kpiNetBenefit').style.color=cssVar('--text');$('kpiNetSub').textContent='';$('kpiInterest').textContent='—';$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent='';}
   $('kpiCashWealth').textContent=fmt.currency(cashBase.endWealth,true);$('kpiCashWealth').style.color=cssVar('--text');$('kpiCashSub').textContent=`After ${maxTerm.toFixed(1)} yr at ${fmt.pct(riskFreeRate/100)} risk-free`;
 
@@ -322,9 +322,9 @@ function renderComparisonTable(results){
     ['Total Interest Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalInterest)],['Total Fees Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalFee)],
     ['Total Financing Cost',fmt.currency(0),r=>fmt.currencyExact(r.totalFinanceCost)],['Total Out-of-Pocket',fmt.currency(pc),r=>fmt.currencyExact(r.totalOOP)],
     ['Ending Wealth',r=>fmt.currencyExact(r.cashBaseWealth),r=>fmt.currencyExact(r.endWealth)],
-    ['Net Benefit vs Cash','Baseline',r=>{const v=r.netBenefit;return`<span style="color:${v>=0?cssVar('--positive'):cssVar('--negative')};font-weight:700">${fmt.currencyExact(v)}</span>`;}],
+    ['Net Benefit vs Cash','Baseline',r=>{const v=r.netBenefit;return`<span style="color:${v>=0?cssVar('--positive-em'):cssVar('--negative-em')};font-weight:700">${fmt.currencyExact(v)}</span>`;}],
   ];
-  if(inflOn)rows.push(['Inflation-Adj Net Benefit','Baseline',r=>{if(!r.inflAdj||r.inflAdj.netBenefitReal===undefined)return'—';const v=r.inflAdj.netBenefitReal;return`<span style="color:${v>=0?cssVar('--positive'):cssVar('--negative')};font-weight:700">${fmt.currencyExact(v)}</span>`;}]);
+  if(inflOn)rows.push(['Inflation-Adj Net Benefit','Baseline',r=>{if(!r.inflAdj||r.inflAdj.netBenefitReal===undefined)return'—';const v=r.inflAdj.netBenefitReal;return`<span style="color:${v>=0?cssVar('--positive-em'):cssVar('--negative-em')};font-weight:700">${fmt.currencyExact(v)}</span>`;}]);
   rows.forEach(([label,cashVal,fn])=>{
     const cv=typeof cashVal==='function'?cashVal(valid[0]):cashVal;
     h+=`<tr><td>${label}</td><td>${cv}</td>`;valid.forEach(r=>{h+='<td>'+fn(r)+'</td>';});h+='</tr>';

@@ -1,0 +1,207 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Shared Design System — common, theme-independent components
+   Built on top of dark.css / light.css tokens.
+   Included by tools via <link rel="stylesheet" href="../shared.css">
+   (after dark.css and light.css, before the tool's own style.css)
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Spinner keyframes */
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Global tooltip */
+#globalTooltip{position:fixed;z-index:99999;pointer-events:none;max-width:270px;background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:var(--radius-lg);padding:9px 12px;font-size:.8rem;line-height:1.5;color:var(--text);box-shadow:var(--shadow-lg);opacity:0;transition:opacity var(--motion-fast);display:none;}
+#globalTooltip strong{color:var(--accent-strong);font-weight:700;}
+#globalTooltip br{display:block;margin-top:5px;content:'';}
+#globalTooltip.visible{display:block;opacity:1;}
+#globalTooltip .tt-arrow{position:absolute;bottom:-7px;width:12px;height:7px;overflow:hidden;transform:translateX(-50%);}
+#globalTooltip .tt-arrow::before{content:'';display:block;width:10px;height:10px;background:var(--panel);border:1px solid var(--border);transform:rotate(45deg) translate(-3px,-3px);}
+#globalTooltip.flip-below .tt-arrow{bottom:auto;top:-7px;}
+#globalTooltip.flip-below .tt-arrow::before{transform:rotate(45deg) translate(3px,3px);}
+
+/* Toggle switch */
+.toggle-switch{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:var(--input-bg);border:1px solid var(--border);border-radius:999px;cursor:pointer;transition:background var(--motion-base);}
+.toggle-switch input:checked+.toggle-track{background:var(--accent);border-color:var(--accent);}
+.toggle-track .toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform var(--motion-base);}
+.toggle-switch input:checked+.toggle-track .toggle-knob{transform:translateX(18px);}
+
+/* Page footer info card */
+.page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;}
+.page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:.9rem;}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;min-width:0;}
+body{margin:0;font-family:'DM Sans',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.5;color:var(--text);background:var(--bg);transition:background var(--transition-base),color var(--transition-base);overflow-x:hidden;}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1{margin:0 0 8px;font-size:2rem;font-weight:800;letter-spacing:-0.02em;}
+h2{margin:0 0 10px;font-size:1.15rem;font-weight:700;}
+h3{margin:0 0 8px;font-size:.75rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+p,.muted{color:var(--muted);line-height:1.5;margin:0;}
+.mono{font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.container{max-width:1400px;margin:0 auto;padding:24px;}
+.layout{display:grid;grid-template-columns:360px 1fr;gap:18px;}
+.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;}
+
+/* ============================================================
+   CARD / PANEL
+   ============================================================ */
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow);}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow);}
+.panel-raised{background:var(--panel-raised);border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow-lg);}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;}
+
+/* ============================================================
+   DARK / LIGHT TOGGLE BUTTON
+   ============================================================ */
+.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:var(--radius-md);padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all var(--transition-fast);white-space:nowrap;font-family:inherit;}
+.btn-theme:hover{border-color:var(--accent);color:var(--text);}
+
+/* ============================================================
+   CONTROL PANEL — TABS
+   ============================================================ */
+.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);}
+.ctrl-tab{flex:1;padding:13px 10px;text-align:center;font-weight:700;font-size:.88rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all var(--transition-fast);font-family:inherit;}
+.ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent);}
+.ctrl-panel{display:none;padding:16px 18px 20px;}
+.ctrl-panel.active{display:block;}
+
+/* ============================================================
+   SLIDER BLOCK
+   ============================================================ */
+.slider-block{padding:12px 0 16px;border-top:1px solid var(--border);}
+.slider-block:first-of-type{border-top:none;padding-top:4px;}
+.slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:7px;}
+.slider-label{font-weight:700;font-size:.9rem;}
+.slider-value{color:var(--accent);font-weight:700;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.9rem;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+.help{color:var(--muted);font-size:.82rem;margin-top:5px;line-height:1.4;}
+
+/* ============================================================
+   FIELD ROW / NUMBER INPUT
+   ============================================================ */
+.field-row{display:flex;flex-direction:column;gap:5px;padding:10px 0 14px;border-top:1px solid var(--border);}
+.field-row:first-of-type{border-top:none;}
+.field-label{font-weight:700;font-size:.9rem;}
+.field-sub{color:var(--muted);font-size:.8rem;line-height:1.35;margin-top:2px;}
+.num-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Mono',monospace;font-size:.92rem;font-weight:600;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);}
+.num-input:focus{border-color:var(--accent);background:var(--panel);}
+
+/* ============================================================
+   SELECT / DROPDOWN
+   ============================================================ */
+.sel-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:inherit;font-size:.92rem;font-weight:600;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23A8B6CF'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.sel-input:focus{border-color:var(--accent);}
+/* CRITICAL: hard-code option colours — browsers ignore CSS variables on <option> */
+.sel-input option{background:#162033;color:#EAF1FF;}
+body.light .sel-input option{background:#ffffff;color:#2D3436;}
+
+/* ============================================================
+   RADIO GROUP
+   ============================================================ */
+.radio-group{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+.radio-opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);cursor:pointer;transition:border-color var(--transition-fast);}
+.radio-opt:hover{border-color:var(--accent2);}
+.radio-opt.selected{border-color:var(--accent);background:rgba(139,184,248,0.08);}
+body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
+.radio-opt input[type=radio]{margin-top:2px;accent-color:var(--accent);flex-shrink:0;}
+.radio-opt-text{font-size:.82rem;line-height:1.45;color:var(--muted);}
+.radio-opt-text strong{color:var(--text);font-weight:700;display:block;margin-bottom:2px;font-size:.88rem;}
+
+/* ============================================================
+   WARNING BANNER
+   ============================================================ */
+.warning{margin:0 18px 14px;padding:10px 13px;border-radius:var(--radius-md);background:var(--warning-bg);border:1px solid rgba(255,210,140,0.3);color:var(--warning-text);display:none;font-size:.84rem;line-height:1.5;}
+.warning.visible{display:block;}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px 18px;border-top:1px solid var(--border);}
+.btn-primary{background:var(--accent);color:var(--text-inv);border:none;border-radius:var(--radius-md);padding:11px 22px;font-weight:700;font-size:.9rem;cursor:pointer;transition:opacity var(--transition-fast),transform var(--transition-fast);font-family:inherit;letter-spacing:.01em;}
+.btn-primary:hover{opacity:.88;}
+.btn-primary:active{transform:scale(.97);}
+.btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:11px 22px;font-weight:700;font-size:.9rem;cursor:pointer;transition:border-color var(--transition-fast);font-family:inherit;}
+.btn-secondary:hover{border-color:var(--accent);}
+.btn-secondary:active{transform:scale(.97);}
+
+/* ============================================================
+   KPI CARDS
+   ============================================================ */
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px;}
+.metric{padding:12px 14px;min-height:82px;}
+.metric .label{color:var(--muted);font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.metric .value{font-family:'DM Mono',monospace;font-size:1.5rem;font-weight:700;letter-spacing:-0.01em;font-variant-numeric:tabular-nums;}
+
+/* ============================================================
+   SUMMARY TILE GRID
+   ============================================================ */
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;}
+.tile{padding:14px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-xl);}
+.tile .label{color:var(--muted);font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;line-height:1.3;}
+.tile .value{font-family:'DM Mono',monospace;font-size:1.05rem;font-weight:700;font-variant-numeric:tabular-nums;}
+
+/* ============================================================
+   DIRECTIONAL DELTA BADGES
+   ============================================================ */
+.delta{font-family:'DM Mono',monospace;font-weight:700;font-size:.88rem;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--radius-pill);font-variant-numeric:tabular-nums;}
+.delta.positive{color:var(--positive-em);background:var(--positive-bg);border:1px solid var(--positive-border);}
+.delta.negative{color:var(--negative-em);background:var(--negative-bg);border:1px solid var(--negative-border);}
+
+/* ============================================================
+   STATUS BADGES
+   ============================================================ */
+.badge{border-radius:var(--radius-pill);padding:2px 8px;font-size:.75rem;font-weight:700;display:inline-block;}
+.badge-success{background:var(--success-bg);color:var(--success-text);}
+.badge-error{background:var(--error-bg);color:var(--error-text);}
+.badge-warning{background:var(--warning-bg);color:var(--warning-text);}
+.badge-info{background:var(--info-bg);color:var(--info-text);}
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.88rem;}
+th,td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}
+th:first-child,td:first-child{text-align:left;white-space:normal;font-family:'DM Sans',sans-serif;}
+th{color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.table-wrap{overflow:auto;max-height:400px;}
+tr:hover td{background:rgba(141,187,255,0.04);}
+body.light tr:hover td{background:rgba(90,145,232,0.04);}
+
+/* ============================================================
+   CHART CANVAS WRAPPER
+   ============================================================ */
+.canvas-wrap{position:relative;width:100%;height:380px;}
+
+/* ============================================================
+   RESPONSIVE BREAKPOINTS
+   ============================================================ */
+@media(max-width:1100px){
+  .layout,.bottom,.metrics{grid-template-columns:1fr;}
+  .controls{position:static;}
+  .canvas-wrap{height:380px!important;}
+  .summary-grid{grid-template-columns:repeat(2,1fr);}
+  .header{flex-direction:column;gap:10px;padding:16px 18px;}
+  .container{padding:16px;}
+}
+@media(max-width:600px){
+  h1{font-size:1.35rem;}
+  .container{padding:10px;}
+  .summary-grid{grid-template-columns:1fr 1fr;}
+  .metrics{grid-template-columns:1fr;}
+  .btn-row{flex-direction:column;}
+  .header{padding:14px 16px;}
+}

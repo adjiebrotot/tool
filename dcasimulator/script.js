@@ -1032,7 +1032,7 @@ function updateTables(){
     simResults.forEach(res=>{
       const d=res.dailyRows[idx]||res.dailyRows[res.dailyRows.length-1];
       const roi=d.totalDeposited>0?(d.equity-d.totalDeposited)/d.totalDeposited:0;
-      row+=`<td>${fmt.currency(d.equity,true)}</td><td style="color:${roi>=0?'var(--positive)':'var(--negative)'}">${fmt.pct(roi)}</td>`;
+      row+=`<td>${fmt.currency(d.equity,true)}</td><td style="color:${roi>=0?'var(--positive-em)':'var(--negative-em)'}">${fmt.pct(roi)}</td>`;
     });
     tbody.innerHTML+=`<tr>${row}</tr>`;
   });
@@ -1063,7 +1063,7 @@ function renderDetailTable(idx){
   const tbody=$('detailBody');
   tbody.innerHTML='';
   res.investRows.forEach(r=>{
-    const color=r.returnPct>=0?'var(--positive)':'var(--negative)';
+    const color=r.returnPct>=0?'var(--positive-em)':'var(--negative-em)';
     tbody.innerHTML+=`<tr>
       <td>${r.date}</td>
       <td>${fmt.currency(r.price)}</td>

@@ -2,14 +2,9 @@
    DESIGN TOKENS — Scenario Explorer System
    ══════════════════════════════════════════════ */
 :root {
-  --bg-subtle: #111C2F;
-  --text-inv: #0F1728;
   --accent3: #F1C0D0; --accent4: #FFD28C;
   --input-bg: rgba(255,255,255,0.06);
   --card-bg:  rgba(255,255,255,0.03);
-  --success-bg:#103529; --success-text:#9BE7B4;
-  --warning-bg:#4A3412; --warning-text:#FFD28C;
-  --error-bg:  #4A1D26; --error-text:  #FFB3BA;
   --bmc-kp: rgba(141,187,255,.06); --bmc-ka: rgba(143,205,189,.06);
   --bmc-kr: rgba(143,205,189,.04); --bmc-vp: rgba(255,210,140,.08);
   --bmc-cr: rgba(241,192,208,.06); --bmc-ch: rgba(241,192,208,.04);
@@ -20,9 +15,9 @@
   --vpc-jobs:rgba(141,187,255,.09); --vpc-pains:rgba(241,192,208,.09);
 }
 body.light, .export-light-theme {
-  --bg:#EFF3FC; --bg-subtle:#F8FBFF;
+  --bg:#EFF3FC;
   --panel:#FFFFFF; --panel-raised:#FFFFFF;
-  --text:#1A2236; --muted:#6B7A99; --text-inv:#FFFFFF;
+  --text:#1A2236; --muted:#6B7A99;
   --border:#DDE4F2;
   --accent:#4B8EF0; --accent-strong:#2D6FD9;
   --accent2:#3BA88A; --accent3:#C46A7E; --accent4:#C07A20;
@@ -33,7 +28,6 @@ body.light, .export-light-theme {
   --shadow-lg:0 4px 32px rgba(60,100,200,.15);
   --success-bg:#D4F4E0; --success-text:#145A2A;
   --warning-bg:#FFF0D4; --warning-text:#7A4800;
-  --error-bg:#FFE0E5;   --error-text:#801428;
   --bmc-kp:rgba(75,142,240,.06); --bmc-ka:rgba(59,168,138,.06);
   --bmc-kr:rgba(59,168,138,.04); --bmc-vp:rgba(192,122,32,.07);
   --bmc-cr:rgba(196,106,126,.06); --bmc-ch:rgba(196,106,126,.04);
@@ -390,7 +384,6 @@ body.light .text-item.selected, .export-light-theme .text-item.selected { box-sh
 .spinner-ring { width:28px; height:28px; border:3px solid rgba(141,187,255,.2);
   border-top-color:var(--accent); border-radius:50%;
   animation:spin .7s linear infinite; }
-@keyframes spin { to{transform:rotate(360deg)} }
 
 /* ── SCROLL HINT (mobile) ────────────────────── */
 .scroll-hint {
