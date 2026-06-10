@@ -148,8 +148,6 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
 
 /* Footer */
 .page-footer{max-width:1280px;margin:0 auto;padding:0 24px 24px;}
-.page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;}
-.page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:.9rem;}
 .page-footer-info p:last-child{margin-bottom:0;}
 .page-footer-info a{color:var(--accent-strong);}
 

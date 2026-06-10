@@ -1,0 +1,31 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Shared Design System — common, theme-independent components
+   Built on top of dark.css / light.css tokens.
+   Included by tools via <link rel="stylesheet" href="../shared.css">
+   (after dark.css and light.css, before the tool's own style.css)
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Spinner keyframes */
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Global tooltip */
+#globalTooltip{position:fixed;z-index:99999;pointer-events:none;max-width:270px;background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:var(--radius-lg);padding:9px 12px;font-size:.8rem;line-height:1.5;color:var(--text);box-shadow:var(--shadow-lg);opacity:0;transition:opacity var(--motion-fast);display:none;}
+#globalTooltip strong{color:var(--accent-strong);font-weight:700;}
+#globalTooltip br{display:block;margin-top:5px;content:'';}
+#globalTooltip.visible{display:block;opacity:1;}
+#globalTooltip .tt-arrow{position:absolute;bottom:-7px;width:12px;height:7px;overflow:hidden;transform:translateX(-50%);}
+#globalTooltip .tt-arrow::before{content:'';display:block;width:10px;height:10px;background:var(--panel);border:1px solid var(--border);transform:rotate(45deg) translate(-3px,-3px);}
+#globalTooltip.flip-below .tt-arrow{bottom:auto;top:-7px;}
+#globalTooltip.flip-below .tt-arrow::before{transform:rotate(45deg) translate(3px,3px);}
+
+/* Toggle switch */
+.toggle-switch{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:var(--input-bg);border:1px solid var(--border);border-radius:999px;cursor:pointer;transition:background var(--motion-base);}
+.toggle-switch input:checked+.toggle-track{background:var(--accent);border-color:var(--accent);}
+.toggle-track .toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform var(--motion-base);}
+.toggle-switch input:checked+.toggle-track .toggle-knob{transform:translateX(18px);}
+
+/* Page footer info card */
+.page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;}
+.page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:.9rem;}

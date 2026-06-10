@@ -1,15 +1,9 @@
   :root {
-    --bg-subtle:    #111C2F;
     --input-bg:     rgba(255,255,255,0.06);
     --card-bg:      rgba(255,255,255,0.03);
     --value-hi:     #8DBBFF;
-    --success-bg:   #103529;
-    --success-text: #9BE7B4;
-    --error-bg:     #4A1D26;
-    --error-text:   #FFB3BA;
   }
   body.light {
-    --bg-subtle:    #F8FBFF;
     --muted:        #6B7A8D;
     --border:       #D8E2F0;
     --accent:       #4A7ED8;

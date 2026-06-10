@@ -7,7 +7,7 @@
 body.light {
   --bg:#F0F4FF;--panel:#FFFFFF;--panel-raised:#FFFFFF;--text:#2D3436;--muted:#7F8C8D;--border:#E0E6F0;
   --accent:#5A91E8;--accent-strong:#3A71C8;--accent2:#2E9E7A;--accent3:#E63939;--gold:#B45309;
-  --input-bg:#F8FBFF;--card-bg:#FFFFFF;
+  --input-bg:#F8FBFF;--card-bg:#FFFFFF;--bg-subtle:#F8FBFF;--text-inv:#FFFFFF;
   --shadow:0 2px 16px rgba(120,160,220,0.12);
   --shadow-sm:0 1px 8px rgba(120,160,220,0.08);
   --shadow-lg:0 4px 32px rgba(120,160,220,0.18);
@@ -15,6 +15,11 @@ body.light {
   --data-pos:#0052CC;--data-pos-em:#0052CC;--data-neg:#E63939;--data-neg-em:#E63939;
   --data-pos-bg:#EAF2FF;--data-neg-bg:#FDECEC;
   --data-pos-border:#8FB5FF;--data-neg-border:#F3A5A5;
+  /* Status/feedback colours */
+  --success-bg:#C8F7C5;--success-text:#1A4A18;
+  --error-bg:#FFE0E5;--error-text:#801428;
+  --warning-bg:#FFF0D9;--warning-text:#7A4A00;
+  --info-bg:#EAF2FF;--info-text:#174A9C;--info-border:#8FB5FF;
   /* Chart tokens (light) — dedicated per spec, NOT text.secondary */
   --chart-text:#4A5A6A;--chart-grid:#C8D4E8;
   /* Chart line colours */
