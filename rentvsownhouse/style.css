@@ -66,7 +66,7 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 .cagr-row input:focus{border-color:var(--accent);}
 .cagr-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 12px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity var(--motion-fast);}
 .cagr-btn:hover{opacity:.85;}
-.cagr-btn.delete{background:transparent;color:var(--accent3);border:1px solid var(--data-neg-border);padding-inline:10px;}
+.cagr-btn.delete{background:transparent;color:var(--negative-em);border:1px solid var(--data-neg-border);padding-inline:10px;}
 .cagr-btn.delete:disabled{opacity:.45;cursor:not-allowed;}
 .cagr-result{color:var(--accent2);font-size:.82rem;font-weight:700;line-height:1.4;min-height:1.2em;font-family:'DM Mono',monospace;}
 @media(max-width:520px){

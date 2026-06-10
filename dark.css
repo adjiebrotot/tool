@@ -26,7 +26,7 @@
   /* Chart tokens (dark) */
   --chart-text:#A8B6CF;--chart-grid:#2C3A52;
   /* Chart line colours */
-  --line-a:#8DBBFF;--line-b:#FF8B8B;--line-c:#8FCDBD;--line-d:#FFD28C;--line-e:#F1C0D0;
+  --line-a:#8DBBFF;--line-b:#FF8B8B;--line-c:#8FCDBD;--line-d:#F1C0D0;--line-e:#FFD28C;
   --line-rtb-rent:#FF8B8B;--line-rtb-own:#8DBBFF;
   /* Motion */
   --motion-fast:150ms;--motion-base:250ms;--motion-slow:400ms;
