@@ -762,6 +762,8 @@ const INPUT_ATTR_BLACKLIST = new Set([
   // Tags / signals (strings)
   'ctag', 'ctagtot', 'tag', 'signal', 'carrayName', 'carrayDesc', 'cattrDesc',
   'parameterNames',
+  // Type (TypXxx) descriptive / non-numeric attributes (strings or mode selectors)
+  'manuf', 'model_inp', 'iner_inp', 'vecgrp',
   // Approval / workflow metadata (not design parameters)
   'appr_modif', 'appr_status', 'appr_celeby', 'appr_devby',
   // Object / folder references
@@ -846,11 +848,23 @@ function getOutputAttrSuggestions(typed, elmClass, comboInstance) {
     // Type objects expose only static "e:" parameters — no study-group result vars
     if (PF_REF.typParams && PF_REF.typParams[elmClass]) {
       PF_REF.typParams[elmClass].forEach(item => {
+        if (isInputAttrBlacklisted(item.var)) return;
         if (!q || item.var.toLowerCase().includes(q) || (item.desc || '').toLowerCase().includes(q))
           addItem(item);
       });
     }
     if (!PF_REF.typFiles[elmClass]) fetchTypClassVars(elmClass, () => { if (comboInstance) comboInstance._refresh(); });
+    return results.slice(0, 60);
+  }
+
+  if (elmClass && elmClass.startsWith('Evt')) {
+    // Event objects expose only their direct attributes — no study-group result vars
+    const evtParams = EVT_PARAMS[elmClass] || [];
+    evtParams.forEach(item => {
+      if (isInputAttrBlacklisted(item.var)) return;
+      if (!q || item.var.toLowerCase().includes(q) || (item.desc || '').toLowerCase().includes(q))
+        addItem(item);
+    });
     return results.slice(0, 60);
   }
 
