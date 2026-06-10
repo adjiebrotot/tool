@@ -35,12 +35,13 @@
     latex: true,
     code: true,
     diagram: true,
-    toc: true
+    toc: true,
+    editing: false
   };
 
   // ── Element refs ──
   let mdBody, docScroll, workspace, dropZone, fileInput, themeToggle,
-      pdfStage, overlay, overlayMsg, hljsLight, hljsDark;
+      pdfStage, overlay, overlayMsg, hljsLight, hljsDark, editToggle, mdEditor;
 
   /* ────────────────────────────────────────────────────────────────
      THEME
@@ -427,7 +428,7 @@
       img.src = WM_LOGO_SRC;
       img.alt = '';
       const span = document.createElement('span');
-      span.textContent = 'Made using Markdown2PDF · tool.adjiebrotots.com';
+      span.textContent = 'Made using tool.adjiebrotots.com/mdtopdf';
       wm.appendChild(img);
       wm.appendChild(span);
       pages[i].appendChild(wm);
@@ -440,6 +441,7 @@
 
   let afterPrintBound = null;
   async function downloadPDF() {
+    if (state.editing) setEditing(false);
     if (!state.text) return;
     showOverlay('Laying out pages…');
     const wasDark = !document.body.classList.contains('light');
@@ -475,10 +477,30 @@
   }
 
   /* ────────────────────────────────────────────────────────────────
+     EDIT / VIEW TOGGLE
+     ──────────────────────────────────────────────────────────────── */
+  function setEditing(on) {
+    state.editing = on;
+    docScroll.classList.toggle('editing', on);
+    if (on) {
+      mdEditor.value = state.text;
+      editToggle.textContent = '👁 Preview';
+      mdEditor.focus();
+    } else {
+      state.text = mdEditor.value;
+      editToggle.textContent = '✏️ Edit';
+      render();
+    }
+  }
+
+  /* ────────────────────────────────────────────────────────────────
      FILE LOADING
      ──────────────────────────────────────────────────────────────── */
   function loadText(text) {
     state.text = text;
+    state.editing = false;
+    docScroll.classList.remove('editing');
+    editToggle.textContent = '✏️ Edit';
     workspace.classList.add('active');
     dropZone.style.display = 'none';
     render();
@@ -607,6 +629,8 @@
     overlayMsg  = document.getElementById('pdfOverlayMsg');
     hljsLight   = document.getElementById('hljsLight');
     hljsDark    = document.getElementById('hljsDark');
+    editToggle  = document.getElementById('editToggleBtn');
+    mdEditor    = document.getElementById('mdEditor');
 
     if (typeof marked !== 'undefined') marked.setOptions({ gfm: true });
     if (typeof mermaid !== 'undefined') {
@@ -639,11 +663,17 @@
 
     document.getElementById('newFileBtn').addEventListener('click', () => {
       state.text = '';
+      state.editing = false;
+      docScroll.classList.remove('editing');
+      editToggle.textContent = '✏️ Edit';
+      mdEditor.value = '';
       mdBody.innerHTML = '';
       workspace.classList.remove('active');
       dropZone.style.display = '';
       fileInput.value = '';
     });
+
+    editToggle.addEventListener('click', () => setEditing(!state.editing));
 
     document.getElementById('downloadBtn').addEventListener('click', downloadPDF);
 
