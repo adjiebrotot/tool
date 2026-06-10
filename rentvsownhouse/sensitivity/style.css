@@ -28,7 +28,7 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 
 /* Year input */
 .year-wrap{display:flex;align-items:center;gap:8px;}
-.year-input{width:4.5em;background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.85rem;font-family:'DM Mono',monospace;padding:6px 8px;text-align:center;outline:none;}
+.year-input{width:4.5em;background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.85rem;font-family:'DM Sans',sans-serif;font-variant-numeric:tabular-nums;padding:6px 8px;text-align:center;outline:none;}
 .year-input:focus{border-color:var(--accent);}
 .year-hint{font-size:.75rem;color:var(--muted);}
 
@@ -81,7 +81,7 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 .neg-val{color:var(--data-neg-em);}
 
 /* Param inputs */
-.param-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;font-family:'DM Mono',monospace;padding:5px 8px;width:100%;min-width:100px;transition:border-color var(--motion-fast);}
+.param-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;font-family:'DM Sans',sans-serif;font-variant-numeric:tabular-nums;padding:5px 8px;width:100%;min-width:100px;transition:border-color var(--motion-fast);}
 .param-input:focus{outline:none;border-color:var(--accent);}
 .param-select{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;font-family:inherit;padding:5px 8px;width:100%;cursor:pointer;outline:none;transition:border-color var(--motion-fast);}
 .param-select:focus{border-color:var(--accent);}

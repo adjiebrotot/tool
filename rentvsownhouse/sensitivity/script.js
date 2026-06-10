@@ -596,6 +596,9 @@ function wireEvents(){
       const val = scenarios[+e.target.dataset.si][e.target.dataset.key];
       e.target.value = String(val ?? '').replace(/,/g,'');
     });
+    el.addEventListener('input', e=>{
+      if(e.target.dataset.ptype==='currency') SharedFmt.liveFormat(e.target,{maxDecimals:0});
+    });
     el.addEventListener('blur', e=>{
       const si = +e.target.dataset.si, key = e.target.dataset.key, ptype = e.target.dataset.ptype;
       const p = PARAMS.find(x=>x.key===key);
