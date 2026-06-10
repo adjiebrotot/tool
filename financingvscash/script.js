@@ -828,39 +828,6 @@ $('sens3dSvgBtn').addEventListener('click', async () => {
   await Plotly.relayout('plotly3d', { annotations:[], images:[] });
 });
 
-/* ─── Global Tooltip ─── */
-(function(){
-  const tip=document.getElementById('globalTooltip');
-  let hideTimer=null;
-  document.addEventListener('mouseover',e=>{
-    const icon=e.target.closest('[data-tip]');
-    if(!icon){return;}
-    clearTimeout(hideTimer);
-    tip.textContent=icon.dataset.tip;
-    tip.classList.add('visible');
-    const r=icon.getBoundingClientRect();
-    const tw=220, margin=8;
-    // Position above the icon, centred
-    let left=r.left+r.width/2-tw/2;
-    let top=r.top-tip.offsetHeight-margin;
-    // Clamp horizontally within viewport
-    left=Math.max(margin,Math.min(left,window.innerWidth-tw-margin));
-    // If would go above viewport, show below instead
-    if(top<margin){top=r.bottom+margin;tip.style.setProperty('--arrow-top','true');}
-    else{tip.style.removeProperty('--arrow-top');}
-    tip.style.left=left+'px';
-    tip.style.top=top+'px';
-    // Update arrow horizontal position to point at icon
-    const arrowLeft=r.left+r.width/2-left;
-    tip.style.setProperty('--arrow-left',Math.max(16,Math.min(arrowLeft,tw-16))+'px');
-  });
-  document.addEventListener('mouseout',e=>{
-    const icon=e.target.closest('[data-tip]');
-    if(!icon)return;
-    hideTimer=setTimeout(()=>tip.classList.remove('visible'),80);
-  });
-})();
-
 /* ─── Slider Editable ─── */
 function makeSliderEditable(valSpan,rangeEl){
   if(!valSpan||!rangeEl)return;

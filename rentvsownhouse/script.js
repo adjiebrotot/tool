@@ -2314,69 +2314,6 @@ $('cagrRows').addEventListener('blur',(e)=>{
   formatMoneyInput(input);
 }, true);
 
-/* ── GLOBAL TOOLTIP ── */
-(function initTooltip(){
-  const tt = document.createElement('div');
-  tt.id = 'globalTooltip';
-  tt.innerHTML = '<div class="tt-text"></div><div class="tt-arrow"></div>';
-  document.body.appendChild(tt);
-  const ttText = tt.querySelector('.tt-text');
-  const ttArrow = tt.querySelector('.tt-arrow');
-  const PAD = 8;
-
-  document.addEventListener('mouseover', e=>{
-    const icon = e.target.closest('[data-tip]');
-    if(!icon){ hide(); return; }
-    const tip = icon.getAttribute('data-tip');
-    if(!tip){ hide(); return; }
-    ttText.innerHTML = tip;
-    tt.classList.remove('flip-below');
-    tt.classList.add('visible');
-    tt.style.display = 'block';
-    tt.style.opacity = '0';
-
-    // Position
-    const rect = icon.getBoundingClientRect();
-    const ttW = tt.offsetWidth;
-    const ttH = tt.offsetHeight;
-    const iconCX = rect.left + rect.width/2;
-
-    // Default: above the icon
-    let top = rect.top - ttH - 10;
-    let left = iconCX - ttW/2;
-
-    // Flip below if clips top
-    let flipped = false;
-    if(top < PAD){
-      top = rect.bottom + 10;
-      flipped = true;
-      tt.classList.add('flip-below');
-    }
-
-    // Clamp left/right
-    left = Math.max(PAD, Math.min(left, window.innerWidth - ttW - PAD));
-
-    // Clamp top
-    top = Math.max(PAD, Math.min(top, window.innerHeight - ttH - PAD));
-
-    tt.style.left = left+'px';
-    tt.style.top  = top+'px';
-    tt.style.opacity = '1';
-
-    // Arrow X position: point at icon center, clamped within bubble
-    const arrowX = Math.max(10, Math.min(iconCX - left, ttW - 10));
-    ttArrow.style.left = arrowX+'px';
-  });
-
-  document.addEventListener('mouseout', e=>{
-    const icon = e.target.closest('[data-tip]');
-    if(!icon) return;
-    if(!e.relatedTarget || !icon.contains(e.relatedTarget)) hide();
-  });
-
-  function hide(){ tt.classList.remove('visible'); tt.style.display='none'; }
-})();
-
 /* ── SLIDER EDITABLE ── */
 function makeSliderEditable(valSpan,rangeEl){
   if(!valSpan||!rangeEl)return;

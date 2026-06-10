@@ -348,7 +348,7 @@ function renderSimpleSave(area,from,to){
       <div class="field-row">
         <div class="field-label">
           Est. Monthly Expenses
-          <div class="tip-wrap"><span class="tip-icon">?</span><div class="tip-box">Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio between cities. Data updated ${META_COL}.</div></div>
+          <span class="tip-icon" data-tip="Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio between cities. Data updated ${META_COL}.">?</span>
         </div>
         <div class="sav-block neutral">
           <div class="sav-val mono">${fmtC(te,tc)}</div>
@@ -478,7 +478,7 @@ function renderSimpleEarn(area,from,to){
       <div class="field-row">
         <div class="field-label">
           Est. Monthly Expenses
-          <div class="tip-wrap"><span class="tip-icon">?</span><div class="tip-box">Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio. Data updated ${META_COL}.</div></div>
+          <span class="tip-icon" data-tip="Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio. Data updated ${META_COL}.">?</span>
         </div>
         <div class="sav-block neutral">
           <div class="sav-val mono">${fmtC(te,tc)}</div>
@@ -617,7 +617,7 @@ function buildDetailHTML(fromCity,toCities){
     let cols=`<td class="cat-td">
       <div style="display:flex;align-items:center;gap:6px;">
         <select class="cat-sel" data-ri="${ri}">${CATS.map(c=>`<option value="${c.id}" ${c.id===row.catId?'selected':''}>${c.label}</option>`).join('')}</select>
-        <div class="tip-wrap"><span class="tip-icon">?</span><div class="tip-box">${cat.tip}</div></div>
+        <span class="tip-icon" data-tip="${cat.tip}">?</span>
       </div>
     </td>
     <td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="numeric" class="num-input dt-from-exp" data-ri="${ri}" value="${formatMoneyValue(fv)||''}" placeholder="0" style="width:110px;"/></div></td>`;

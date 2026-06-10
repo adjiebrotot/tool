@@ -109,15 +109,6 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 .mode-tab.active{color:var(--text);border-color:var(--accent);background:rgba(141,187,255,.1);}
 .page-footer{max-width:1400px;margin:0 auto;padding:0 24px 24px;}
 .page-footer-info p:last-child{margin-bottom:0;}
-/* Tooltip styles */
-.tip-wrap{display:inline-flex;align-items:center;gap:4px;}
-.tip-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--input-bg);border:1px solid var(--border);color:var(--muted);font-size:10px;font-weight:700;cursor:help;flex-shrink:0;line-height:1;font-style:normal;}
-.tip-icon:hover{border-color:var(--accent);color:var(--accent);}
-#globalTooltip{position:fixed;z-index:99999;background:#1C2942;border:1px solid var(--accent);border-radius:10px;padding:8px 12px;font-size:.78rem;color:#EAF1FF;line-height:1.5;width:220px;box-shadow:0 4px 20px rgba(0,0,0,.4);pointer-events:none;opacity:0;transition:opacity .15s;white-space:normal;text-align:left;font-weight:400;}
-body.light #globalTooltip{background:#FFFFFF;color:#2D3436;border-color:var(--accent);box-shadow:0 4px 20px rgba(120,160,220,.2);}
-#globalTooltip.visible{opacity:1;}
-#globalTooltip::after{content:'';position:absolute;top:100%;left:var(--arrow-left,50%);transform:translateX(-50%);border:6px solid transparent;border-top-color:#1C2942;}
-body.light #globalTooltip::after{border-top-color:#FFFFFF;}
 /* Metric card tooltip */
 .metric .label{display:flex;align-items:center;gap:5px;}
 @media(max-width:900px){
