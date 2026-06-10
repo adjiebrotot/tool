@@ -38,12 +38,6 @@
   }
   body.light #validation-warnings h4 { color: #7A4A00; }
   body.light #validation-warnings ul li { color: #7A4A00; }
-  body.light #globalTooltip {
-    background: var(--card);
-  }
-  body.light #globalTooltip .tt-arrow::before {
-    background: var(--card);
-  }
   body.light .info-box {
     background: #EAF2FF;
     border-color: rgba(90,145,232,0.30);
@@ -553,45 +547,7 @@
   ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
   /* ── TOOLTIPS ────────────────────────────────────────────────────── */
-  #globalTooltip {
-    position: fixed;
-    z-index: 99999;
-    pointer-events: none;
-    max-width: 260px;
-    background: #1C2942;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 9px 12px;
-    font-size: 11px;
-    line-height: 1.5;
-    color: var(--text);
-    box-shadow: 0 4px 32px rgba(120,160,220,0.18);
-    opacity: 0;
-    transition: opacity .12s;
-    display: none;
-  }
-  #globalTooltip.visible { display: block; opacity: 1; }
-  #globalTooltip .tt-arrow {
-    position: absolute;
-    bottom: -7px;
-    width: 12px;
-    height: 7px;
-    overflow: hidden;
-    transform: translateX(-50%);
-  }
-  #globalTooltip .tt-arrow::before {
-    content: '';
-    display: block;
-    width: 10px;
-    height: 10px;
-    background: #1C2942;
-    border: 1px solid var(--border);
-    transform: rotate(45deg) translate(-3px,-3px);
-  }
-  #globalTooltip.flip-below .tt-arrow { bottom: auto; top: -7px; }
-  #globalTooltip.flip-below .tt-arrow::before {
-    transform: rotate(45deg) translate(3px,3px);
-  }
+  /* #globalTooltip styling provided by shared.css */
 
   .tt {
     display: inline-flex;

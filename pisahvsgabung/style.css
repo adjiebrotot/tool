@@ -1,6 +1,5 @@
     :root {
       --secondary:#8FCDBD;--accent3:#E63939;--accent3-em:#FF8B8B;
-      --input-bg:#1C2942;
       --warn-bg:var(--warning-bg);--warn-text:var(--warning-text);
     }
     body.light {

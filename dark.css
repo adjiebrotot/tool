@@ -6,18 +6,18 @@
 :root {
   --bg:#0F1728;--panel:#162033;--panel-raised:#1C2942;--text:#EAF1FF;--muted:#A8B6CF;--border:#2C3A52;
   --accent:#8DBBFF;--accent-strong:#B3D1FF;--accent2:#8FCDBD;--accent3:#FF8B8B;--gold:#FFD28C;
-  --input-bg:#111C2F;--card-bg:#162033;--bg-subtle:#111C2F;--text-inv:#0F1728;
+  --input-bg:rgba(255,255,255,0.06);--card-bg:rgba(255,255,255,0.03);--bg-subtle:#111C2F;--text-inv:#0F1728;
   --shadow:0 2px 16px rgba(120,160,220,0.12);
   --shadow-sm:0 1px 8px rgba(120,160,220,0.08);
   --shadow-lg:0 4px 32px rgba(120,160,220,0.18);
   --radius-sm:8px;--radius-md:10px;--radius-lg:12px;--radius-xl:14px;--radius-2xl:20px;--radius-pill:999px;
-  /* Data semantic colours — unchanged per spec */
-  --data-pos:#0052CC;--data-pos-em:#7FB2FF;--data-neg:#E63939;--data-neg-em:#FF8B8B;
-  --data-pos-bg:#10284D;--data-neg-bg:#4A1C1C;
-  --data-pos-border:#2D67C7;--data-neg-border:#C85F5F;
-  /* Aliases for tools using positive/negative naming */
-  --positive:var(--data-pos);--positive-em:var(--data-pos-em);--positive-bg:var(--data-pos-bg);--positive-border:var(--data-pos-border);
-  --negative:var(--data-neg);--negative-em:var(--data-neg-em);--negative-bg:var(--data-neg-bg);--negative-border:var(--data-neg-border);
+  /* Directional data colours — canonical naming per Generic Soft UI Design System */
+  --positive:#0052CC;--positive-em:#7FB2FF;--negative:#E63939;--negative-em:#FF8B8B;
+  --positive-bg:#10284D;--negative-bg:#4A1C1C;
+  --positive-border:#2D67C7;--negative-border:#C85F5F;
+  /* Aliases for legacy data-pos/data-neg naming */
+  --data-pos:var(--positive);--data-pos-em:var(--positive-em);--data-pos-bg:var(--positive-bg);--data-pos-border:var(--positive-border);
+  --data-neg:var(--negative);--data-neg-em:var(--negative-em);--data-neg-bg:var(--negative-bg);--data-neg-border:var(--negative-border);
   /* Status/feedback colours */
   --success-bg:#103529;--success-text:#9BE7B4;
   --error-bg:#4A1D26;--error-text:#FFB3BA;
@@ -30,4 +30,5 @@
   --line-rtb-rent:#FF8B8B;--line-rtb-own:#8DBBFF;
   /* Motion */
   --motion-fast:150ms;--motion-base:250ms;--motion-slow:400ms;
+  --transition-fast:var(--motion-fast);--transition-base:var(--motion-base);
 }
