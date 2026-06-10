@@ -44,7 +44,6 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
-<div id="globalTooltip"></div>
 <div class="container">
 <section class="header card">
   <div>
@@ -81,12 +80,18 @@
     </div>
     <div class="field-row">
       <div class="field-label"><span class="tip-wrap">Purchase Cost <i class="tip-icon" data-tip="The total price of the asset or item being purchased (e.g. a car, equipment, or property).">?</i></span></div>
-      <input class="num-input fmt-num" id="purchaseCost" type="text" inputmode="decimal" value="50,000"/>
+      <div class="currency-wrap">
+        <span class="prefix" id="purchaseCostPrefix">$</span>
+        <input class="currency-input fmt-num" id="purchaseCost" type="text" inputmode="decimal" value="50,000"/>
+      </div>
       <div class="field-sub">Total price of the item being purchased.</div>
     </div>
     <div class="field-row">
       <div class="field-label"><span class="tip-wrap">Available Cash <i class="tip-icon" data-tip="How much cash you have on hand. Must be at least equal to the purchase cost — financing something you cannot fully afford upfront is not modelled.">?</i></span></div>
-      <input class="num-input fmt-num" id="availableCash" type="text" inputmode="decimal" value="50,000"/>
+      <div class="currency-wrap">
+        <span class="prefix" id="availableCashPrefix">$</span>
+        <input class="currency-input fmt-num" id="availableCash" type="text" inputmode="decimal" value="50,000"/>
+      </div>
       <div class="field-sub">Cash on hand. Must be ≥ purchase cost to run the simulation.</div>
     </div>
     <div class="slider-block">
@@ -261,6 +266,7 @@
   </section>
 </footer>
 
+<script src="../shared.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

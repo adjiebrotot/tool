@@ -809,6 +809,15 @@ function readInputs(){
   S.monthlyBudgetIncrease = parseFloatSafe($('monthlyBudgetIncrease').value, 0);
   S.currencySymbol  = $('currencySymbol').value || '$';
   currentCurrencySymbol = S.currencySymbol;
+  updateCurrencyPrefixes();
+}
+
+function updateCurrencyPrefixes(){
+  const sym = moneySymbol();
+  ['initialCashPrefix','monthlyBudgetPrefix','propertyPricePrefix','setupCostPrefix','ownOngoingCostPrefix','rentAmountPrefix','rentOngoingCostPrefix'].forEach(id=>{
+    const el = $(id);
+    if(el) el.textContent = sym;
+  });
 }
 
 function refreshLabels(){
@@ -2167,7 +2176,10 @@ function buildCagrRow(year='', price=''){
     <input type="text" inputmode="numeric" placeholder="Price e.g. 450,000" class="cagr-price money-input" data-money="true" value="${price}"/>
     <button class="cagr-btn delete cagr-delete" type="button">${T('btnDelete')}</button>
   `;
-  formatMoneyInput(row.querySelector('.cagr-price'));
+  const priceEl = row.querySelector('.cagr-price');
+  formatMoneyInput(priceEl);
+  priceEl.addEventListener('input', ()=>{ SharedFmt.liveFormat(priceEl, {maxDecimals:2}); });
+  priceEl.addEventListener('blur', ()=>{ formatMoneyInput(priceEl); rerender(); });
   return row;
 }
 function calcCAGR(){
@@ -2216,6 +2228,7 @@ $('rtbEnabled').addEventListener('change', rerender);
 $('costInterestOnly').addEventListener('change', rerender);
 
 document.querySelectorAll('[data-money="true"]').forEach(el=>{
+  el.addEventListener('input', ()=>{ SharedFmt.liveFormat(el, {maxDecimals:2}); });
   el.addEventListener('blur', ()=>{ formatMoneyInput(el); rerender(); });
 });
 
@@ -2300,69 +2313,6 @@ $('cagrRows').addEventListener('blur',(e)=>{
   if(!input) return;
   formatMoneyInput(input);
 }, true);
-
-/* ── GLOBAL TOOLTIP ── */
-(function initTooltip(){
-  const tt = document.createElement('div');
-  tt.id = 'globalTooltip';
-  tt.innerHTML = '<div class="tt-text"></div><div class="tt-arrow"></div>';
-  document.body.appendChild(tt);
-  const ttText = tt.querySelector('.tt-text');
-  const ttArrow = tt.querySelector('.tt-arrow');
-  const PAD = 8;
-
-  document.addEventListener('mouseover', e=>{
-    const icon = e.target.closest('[data-tip]');
-    if(!icon){ hide(); return; }
-    const tip = icon.getAttribute('data-tip');
-    if(!tip){ hide(); return; }
-    ttText.innerHTML = tip;
-    tt.classList.remove('flip-below');
-    tt.classList.add('visible');
-    tt.style.display = 'block';
-    tt.style.opacity = '0';
-
-    // Position
-    const rect = icon.getBoundingClientRect();
-    const ttW = tt.offsetWidth;
-    const ttH = tt.offsetHeight;
-    const iconCX = rect.left + rect.width/2;
-
-    // Default: above the icon
-    let top = rect.top - ttH - 10;
-    let left = iconCX - ttW/2;
-
-    // Flip below if clips top
-    let flipped = false;
-    if(top < PAD){
-      top = rect.bottom + 10;
-      flipped = true;
-      tt.classList.add('flip-below');
-    }
-
-    // Clamp left/right
-    left = Math.max(PAD, Math.min(left, window.innerWidth - ttW - PAD));
-
-    // Clamp top
-    top = Math.max(PAD, Math.min(top, window.innerHeight - ttH - PAD));
-
-    tt.style.left = left+'px';
-    tt.style.top  = top+'px';
-    tt.style.opacity = '1';
-
-    // Arrow X position: point at icon center, clamped within bubble
-    const arrowX = Math.max(10, Math.min(iconCX - left, ttW - 10));
-    ttArrow.style.left = arrowX+'px';
-  });
-
-  document.addEventListener('mouseout', e=>{
-    const icon = e.target.closest('[data-tip]');
-    if(!icon) return;
-    if(!e.relatedTarget || !icon.contains(e.relatedTarget)) hide();
-  });
-
-  function hide(){ tt.classList.remove('visible'); tt.style.display='none'; }
-})();
 
 /* ── SLIDER EDITABLE ── */
 function makeSliderEditable(valSpan,rangeEl){

@@ -70,7 +70,8 @@ input[type=number]:focus{border-color:var(--accent-strong);}
   background: var(--input-bg); border: 1px solid var(--border);
   border-radius: 9px; color: var(--text); font-size: 0.9rem;
   font-weight: 500; padding: 8px 10px; width: 100%; outline: none;
-  transition: border-color 150ms; font-family: 'DM Mono', monospace;
+  transition: border-color 150ms; font-family: 'DM Sans', sans-serif;
+  font-variant-numeric: tabular-nums;
 }
 .num-input:focus { border-color: var(--accent-strong); }
 
@@ -86,8 +87,9 @@ select{background:var(--input-bg);border:1px solid var(--border);border-radius:9
 .col-sub{font-size:0.8rem;color:var(--muted);margin-bottom:14px;font-family:'DM Mono',monospace;}
 .field-row{display:block;margin-bottom:13px;padding:0;border-top:none;}
 .field-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
-.input-wrap{display:flex;align-items:center;gap:6px;}
-.curr-tag{font-family:'DM Mono',monospace;font-size:0.78rem;font-weight:700;color:var(--accent-strong);min-width:36px;flex-shrink:0;}
+.input-wrap{position:relative;}
+.curr-tag{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:700;color:var(--accent-strong);pointer-events:none;}
+.input-wrap .num-input{padding-left:42px;}
 .field-approx{font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--muted);margin-top:3px;}
 
 /* Savings block */
@@ -103,12 +105,6 @@ select{background:var(--input-bg);border:1px solid var(--border);border-radius:9
 
 /* Summary box */
 .summary-box{margin-top:16px;padding:14px 18px;background:var(--info-bg);border:1px solid var(--info-border);border-radius:11px;font-size:0.88rem;line-height:1.7;color:var(--info-text);}
-
-/* Tooltip */
-.tip-wrap{position:relative;display:inline-flex;align-items:center;cursor:help;}
-.tip-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--input-bg);border:1px solid var(--border);font-size:0.65rem;color:var(--muted);flex-shrink:0;}
-.tip-box{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:9px 13px;font-size:0.79rem;color:var(--text);width:260px;white-space:normal;box-shadow:var(--shadow-lg);z-index:300;font-weight:400;text-transform:none;letter-spacing:normal;line-height:1.5;}
-.tip-wrap:hover .tip-box{display:block;}
 
 /* Detail table */
 .detail-scroll{overflow-x:auto;}

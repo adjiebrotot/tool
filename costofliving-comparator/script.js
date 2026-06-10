@@ -348,7 +348,7 @@ function renderSimpleSave(area,from,to){
       <div class="field-row">
         <div class="field-label">
           Est. Monthly Expenses
-          <div class="tip-wrap"><span class="tip-icon">?</span><div class="tip-box">Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio between cities. Data updated ${META_COL}.</div></div>
+          <span class="tip-icon" data-tip="Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio between cities. Data updated ${META_COL}.">?</span>
         </div>
         <div class="sav-block neutral">
           <div class="sav-val mono">${fmtC(te,tc)}</div>
@@ -370,17 +370,17 @@ function renderSimpleSave(area,from,to){
 
   const fsEl = document.getElementById('ss_fs');
   if(fsEl) {
-    fsEl.addEventListener('input', e => { S.fromSalary = parseNum(e.target.value); });
+    fsEl.addEventListener('input', e => { SharedFmt.liveFormat(e.target,{maxDecimals:0}); S.fromSalary = parseNum(e.target.value); });
     fsEl.addEventListener('blur', e => { formatMoneyInput(e.target); render(); });
   }
   const feEl = document.getElementById('ss_fe');
   if(feEl) {
-    feEl.addEventListener('input', e => { S.fromExpense = parseNum(e.target.value); });
+    feEl.addEventListener('input', e => { SharedFmt.liveFormat(e.target,{maxDecimals:0}); S.fromExpense = parseNum(e.target.value); });
     feEl.addEventListener('blur', e => { formatMoneyInput(e.target); render(); });
   }
   const tsEl = document.getElementById('ss_ts');
   if(tsEl) {
-    tsEl.addEventListener('input', e => { S.toSalary = parseNum(e.target.value); });
+    tsEl.addEventListener('input', e => { SharedFmt.liveFormat(e.target,{maxDecimals:0}); S.toSalary = parseNum(e.target.value); });
     tsEl.addEventListener('blur', e => { formatMoneyInput(e.target); render(); });
   }
 }
@@ -478,7 +478,7 @@ function renderSimpleEarn(area,from,to){
       <div class="field-row">
         <div class="field-label">
           Est. Monthly Expenses
-          <div class="tip-wrap"><span class="tip-icon">?</span><div class="tip-box">Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio. Data updated ${META_COL}.</div></div>
+          <span class="tip-icon" data-tip="Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio. Data updated ${META_COL}.">?</span>
         </div>
         <div class="sav-block neutral">
           <div class="sav-val mono">${fmtC(te,tc)}</div>
@@ -500,12 +500,12 @@ function renderSimpleEarn(area,from,to){
 
   const sefsEl = document.getElementById('se_fs');
   if(sefsEl) {
-    sefsEl.addEventListener('input', e => { S.fromSalary = parseNum(e.target.value); });
+    sefsEl.addEventListener('input', e => { SharedFmt.liveFormat(e.target,{maxDecimals:0}); S.fromSalary = parseNum(e.target.value); });
     sefsEl.addEventListener('blur', e => { formatMoneyInput(e.target); render(); });
   }
   const sefeEl = document.getElementById('se_fe');
   if(sefeEl) {
-    sefeEl.addEventListener('input', e => { S.fromExpense = parseNum(e.target.value); });
+    sefeEl.addEventListener('input', e => { SharedFmt.liveFormat(e.target,{maxDecimals:0}); S.fromExpense = parseNum(e.target.value); });
     sefeEl.addEventListener('blur', e => { formatMoneyInput(e.target); render(); });
   }
   document.getElementById('targetGroup').querySelectorAll('.seg-btn').forEach(btn=>{
@@ -617,7 +617,7 @@ function buildDetailHTML(fromCity,toCities){
     let cols=`<td class="cat-td">
       <div style="display:flex;align-items:center;gap:6px;">
         <select class="cat-sel" data-ri="${ri}">${CATS.map(c=>`<option value="${c.id}" ${c.id===row.catId?'selected':''}>${c.label}</option>`).join('')}</select>
-        <div class="tip-wrap"><span class="tip-icon">?</span><div class="tip-box">${cat.tip}</div></div>
+        <span class="tip-icon" data-tip="${cat.tip}">?</span>
       </div>
     </td>
     <td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="numeric" class="num-input dt-from-exp" data-ri="${ri}" value="${formatMoneyValue(fv)||''}" placeholder="0" style="width:110px;"/></div></td>`;
@@ -781,12 +781,13 @@ function wireDetail(fromCity,toCities){
 
   // From expense inputs
   document.querySelectorAll('.dt-from-exp').forEach(inp=>{
-    inp.addEventListener('input', () => { S.detailRows[+inp.dataset.ri].fromAmount = parseNum(inp.value); });
+    inp.addEventListener('input', () => { SharedFmt.liveFormat(inp,{maxDecimals:0}); S.detailRows[+inp.dataset.ri].fromAmount = parseNum(inp.value); });
     inp.addEventListener('blur', e => { formatMoneyInput(e.target); renderDetailArea(); });
   });
 
   // To expense inputs (override)
   document.querySelectorAll('.dt-to-exp').forEach(inp=>{
+    inp.addEventListener('input',()=>{ SharedFmt.liveFormat(inp,{maxDecimals:0}); });
     inp.addEventListener('change',()=>{
       const ri=+inp.dataset.ri, ci=+inp.dataset.ci;
       const key=`${ri}_${ci}`;
@@ -813,13 +814,13 @@ function wireDetail(fromCity,toCities){
   // From salary
   const dtfs=document.getElementById('dt_fs');
   if(dtfs) {
-    dtfs.addEventListener('input', () => { S.detailFromSalary = parseNum(dtfs.value); });
+    dtfs.addEventListener('input', () => { SharedFmt.liveFormat(dtfs,{maxDecimals:0}); S.detailFromSalary = parseNum(dtfs.value); });
     dtfs.addEventListener('blur', e => { formatMoneyInput(e.target); renderDetailArea(); });
   }
 
   // To salaries
   document.querySelectorAll('.dt-to-sal').forEach(inp=>{
-    inp.addEventListener('input', () => { S.detailToSalaries[+inp.dataset.ci] = parseNum(inp.value); });
+    inp.addEventListener('input', () => { SharedFmt.liveFormat(inp,{maxDecimals:0}); S.detailToSalaries[+inp.dataset.ci] = parseNum(inp.value); });
     inp.addEventListener('blur', e => { formatMoneyInput(e.target); renderDetailArea(); });
   });
 

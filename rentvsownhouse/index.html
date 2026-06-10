@@ -156,13 +156,19 @@
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelInitialCash">Initial Cash</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(optional)</span></div>
-      <input class="num-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" value=""/>
+      <div class="currency-wrap">
+        <span class="prefix" id="initialCashPrefix">$</span>
+        <input class="currency-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" value=""/>
+      </div>
       <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Defaults to down payment + setup cost. Any excess is invested at the risk-free rate.</div>
       <div class="warning" id="initialCashWarn" style="display:none;margin-top:6px;"></div>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelMonthlyBudget">Monthly Housing Budget</span> <span class="tip-icon" data-tip-key="monthlyBudget">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(optional)</span></div>
-      <input class="num-input money-input" id="monthlyBudget" type="text" inputmode="numeric" data-money="true" value="0"/>
+      <div class="currency-wrap">
+        <span class="prefix" id="monthlyBudgetPrefix">$</span>
+        <input class="currency-input money-input" id="monthlyBudget" type="text" inputmode="numeric" data-money="true" value="0"/>
+      </div>
       <div class="field-sub" data-i18n="subMonthlyBudget">If 0, auto-set to the higher of rent or mortgage payment. Leftover invested at risk-free rate.</div>
     </div>
     <div class="field-row" id="budgetIncreaseRow" style="display:none;">
@@ -208,7 +214,10 @@
     <div class="section-label" data-i18n="sectionProperty">Property</div>
     <div class="field-row" style="border-top:none;padding-top:0;">
       <div class="field-label"><span data-i18n="labelPropertyPrice">Property Price</span> <span class="tip-icon" data-tip-key="propertyPrice">?</span></div>
-      <input class="num-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
+      <div class="currency-wrap">
+        <span class="prefix" id="propertyPricePrefix">$</span>
+        <input class="currency-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
+      </div>
       <div class="field-sub" data-i18n="subPropertyPrice">Purchase price of the property.</div>
     </div>
     <div class="field-row">
@@ -295,7 +304,10 @@
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelSetupCost">Setup Cost (Stamp Duty, Legal, etc.)</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
       <div class="input-row">
-        <input class="num-input money-input" id="setupCost" type="text" inputmode="numeric" data-money="true" value="32,000"/>
+        <div class="currency-wrap">
+          <span class="prefix" id="setupCostPrefix">$</span>
+          <input class="currency-input money-input" id="setupCost" type="text" inputmode="numeric" data-money="true" value="32,000"/>
+        </div>
         <select id="setupCostType">
           <option value="dollar" data-i18n-opt="optDollar">$</option>
           <option value="pct">%</option>
@@ -306,7 +318,10 @@
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelOwnOngoing">Ongoing Costs of Owning</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
       <div class="input-row">
-        <input class="num-input money-input" id="ownOngoingCost" type="text" inputmode="numeric" data-money="true" value="6,000"/>
+        <div class="currency-wrap">
+          <span class="prefix" id="ownOngoingCostPrefix">$</span>
+          <input class="currency-input money-input" id="ownOngoingCost" type="text" inputmode="numeric" data-money="true" value="6,000"/>
+        </div>
         <select id="ownOngoingCostFreq">
           <option value="yearly" data-i18n-opt="optYearly">Yearly</option>
           <option value="monthly" data-i18n-opt="optMonthly">Monthly</option>
@@ -336,7 +351,10 @@
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelRentAmount">Rent Amount</span> <span class="tip-icon" data-tip-key="rentAmount">?</span></div>
       <div class="input-row">
-        <input class="num-input money-input" id="rentAmount" type="text" inputmode="numeric" data-money="true" value="2,800"/>
+        <div class="currency-wrap">
+          <span class="prefix" id="rentAmountPrefix">$</span>
+          <input class="currency-input money-input" id="rentAmount" type="text" inputmode="numeric" data-money="true" value="2,800"/>
+        </div>
         <select id="rentFreq">
           <option value="monthly" data-i18n-opt="optMonthly">Monthly</option>
           <option value="weekly" data-i18n-opt="optWeekly">Weekly</option>
@@ -358,7 +376,10 @@
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelRentOngoing">Ongoing Costs of Renting</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
       <div class="input-row">
-        <input class="num-input money-input" id="rentOngoingCost" type="text" inputmode="numeric" data-money="true" value="1,200"/>
+        <div class="currency-wrap">
+          <span class="prefix" id="rentOngoingCostPrefix">$</span>
+          <input class="currency-input money-input" id="rentOngoingCost" type="text" inputmode="numeric" data-money="true" value="1,200"/>
+        </div>
         <select id="rentOngoingCostFreq">
           <option value="yearly" data-i18n-opt="optYearly">Yearly</option>
           <option value="monthly" data-i18n-opt="optMonthly">Monthly</option>
@@ -472,6 +493,7 @@
 </div>
 <script>renderRVOFooter('../logos/');</script>
 
+<script src="../shared.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

@@ -37,7 +37,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .field-row:first-of-type{border-top:none}
 .field-label{font-weight:700;font-size:.88rem}
 .field-sub{color:var(--muted);font-size:.78rem;line-height:1.35;margin-top:2px}
-.num-input,.txt-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:.88rem;font-weight:600;padding:7px 10px;width:100%;outline:none;transition:border-color .15s;font-family:'DM Mono',monospace}
+.num-input,.txt-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:.88rem;font-weight:600;padding:7px 10px;width:100%;outline:none;transition:border-color .15s;font-family:'DM Sans',sans-serif}
 .num-input:focus,.txt-input:focus{border-color:var(--accent)}
 select.txt-input{cursor:pointer}
 .num-input option,.txt-input option{background:#1a2340;color:#e8eefc}
@@ -114,10 +114,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 .status-loading{background:#132E56;border:1px solid rgba(141,187,255,.25);color:#A8C9FF;display:block}
 .status-error{background:#4A1D26;border:1px solid rgba(255,139,139,.25);color:#FFB3BA;display:block}
 .status-ok{background:#103529;border:1px solid rgba(143,205,189,.25);color:#9BE7B4;display:block}
-.tip-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:rgba(168,180,212,.18);color:var(--muted);font-size:.7rem;font-weight:800;cursor:default;margin-left:5px;flex-shrink:0;vertical-align:middle;line-height:1;border:1px solid var(--border)}
-.tip-icon:hover{border-color:var(--accent);color:var(--accent)}
-.tip-icon.warn{background:rgba(245,158,11,.18);color:var(--gold);border-color:rgba(245,158,11,.3)}
-.tip-icon.warn:hover{border-color:var(--gold)}
+/* .tip-icon / .tip-icon.warn now provided by shared.css */
 /* Toggle switch */
 .toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0 0}
 .toggle-label{font-weight:700;font-size:.88rem;flex:1}
