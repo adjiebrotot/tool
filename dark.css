@@ -1,0 +1,25 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Shared Design System — DARK theme tokens
+   Generic Soft UI Design System (dark, default)
+   Included by all tools via <link rel="stylesheet" href="../dark.css">
+   ────────────────────────────────────────────────────────────────────────── */
+:root {
+  --bg:#0F1728;--panel:#162033;--panel-raised:#1C2942;--text:#EAF1FF;--muted:#A8B6CF;--border:#2C3A52;
+  --accent:#8DBBFF;--accent-strong:#B3D1FF;--accent2:#8FCDBD;--accent3:#FF8B8B;--gold:#FFD28C;
+  --input-bg:#111C2F;--card-bg:#162033;
+  --shadow:0 2px 16px rgba(120,160,220,0.12);
+  --shadow-sm:0 1px 8px rgba(120,160,220,0.08);
+  --shadow-lg:0 4px 32px rgba(120,160,220,0.18);
+  --radius-sm:8px;--radius-md:10px;--radius-lg:12px;--radius-xl:14px;--radius-2xl:20px;--radius-pill:999px;
+  /* Data semantic colours — unchanged per spec */
+  --data-pos:#0052CC;--data-pos-em:#7FB2FF;--data-neg:#E63939;--data-neg-em:#FF8B8B;
+  --data-pos-bg:#10284D;--data-neg-bg:#4A1C1C;
+  --data-pos-border:#2D67C7;--data-neg-border:#C85F5F;
+  /* Chart tokens (dark) */
+  --chart-text:#A8B6CF;--chart-grid:#2C3A52;
+  /* Chart line colours */
+  --line-a:#8DBBFF;--line-b:#FF8B8B;--line-c:#8FCDBD;--line-d:#FFD28C;--line-e:#F1C0D0;
+  --line-rtb-rent:#FF8B8B;--line-rtb-own:#8DBBFF;
+  /* Motion */
+  --motion-fast:150ms;--motion-base:250ms;--motion-slow:400ms;
+}
