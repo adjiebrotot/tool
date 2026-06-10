@@ -3,6 +3,19 @@
    Built on top of dark.css / light.css tokens.
    Included by tools via <link rel="stylesheet" href="../shared.css">
    (after dark.css and light.css, before the tool's own style.css)
+
+   FORM FIELD CLASSES — use these for any new tool's inputs:
+     .field-row / .field-label / .field-sub  — labelled field wrapper
+     .num-input      — numeric text input (DM Sans, tabular-nums)
+     .txt-input      — free-text input (DM Sans)
+     .sel-input      — <select> dropdown (DM Sans, custom chevron)
+     .currency-wrap  — wraps a .currency-input with .prefix/.suffix
+                        unit labels (e.g. "Rp" prefix, "%" suffix)
+     input[type=range] / .slider-block / .slider-head /
+       .slider-label / .slider-value — sliders
+   For live thousand-separator formatting on numeric/currency inputs,
+   use SharedFmt.attachCurrencyInput / SharedFmt.liveFormat from
+   shared.js (see <script src="../shared.js"></script>).
    ────────────────────────────────────────────────────────────────────────── */
 
 /* Spinner keyframes */
@@ -99,6 +112,13 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .field-sub{color:var(--muted);font-size:.8rem;line-height:1.35;margin-top:2px;}
 .num-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);font-variant-numeric:tabular-nums;}
 .num-input:focus{border-color:var(--accent);background:var(--panel);}
+
+/* ============================================================
+   TEXT INPUT (canonical free-text field — same chrome as .num-input)
+   ============================================================ */
+.txt-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);}
+.txt-input:focus{border-color:var(--accent);background:var(--panel);}
+.txt-input::placeholder{color:var(--muted);}
 
 /* ============================================================
    CURRENCY INPUT (canonical number-input style — prefix/suffix wrap)
