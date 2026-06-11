@@ -1,7 +1,7 @@
 # Design Reference
 
 This file documents the **Generic Soft UI Design System** used across tools in this repo
-(e.g. `dcasimulator`, `rentvsownhouse`, `financingvscash`).
+(e.g. `dcasimulator`, `rentvsownhouse`, `financingvscash`, `costofliving-comparator`).
 
 Fonts: **DM Sans** (sans-serif) + **DM Mono** (monospace).
 Tokens live in `dark.css` (default) and `light.css` (applied via `body.light`).
@@ -418,6 +418,222 @@ const value = SharedFmt.parseFormatted(document.getElementById('startingValue').
 body.light .sel-input option { background: #ffffff;  color: #2D3436; }
 ```
 
+### Segmented Control Group (`.seg-group`)
+
+A group of mutually-exclusive toggle buttons styled as a single segmented control.
+Used in `costofliving-comparator` for "Simple/Detailed", "Save/Earn", etc.
+
+```html
+<div class="toggle-row">
+  <span class="toggle-label">I want to do it</span>
+  <div class="seg-group" id="modeGroup">
+    <button class="seg-btn active" data-val="simple">Simple</button>
+    <button class="seg-btn" data-val="detailed">Detailed</button>
+  </div>
+</div>
+```
+
+```css
+.seg-group {
+  display: inline-flex;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  gap: 2px;
+}
+.seg-btn {
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  padding: 5px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 140ms;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.seg-btn.active { background: var(--accent-strong); color: #fff; box-shadow: var(--shadow-sm); }
+.seg-btn:hover:not(.active) { color: var(--text); }
+```
+
+```js
+// Wire up segmented control
+document.querySelectorAll('[data-val]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const group = btn.closest('.seg-group');
+    group.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // Dispatch custom event or call handler
+    group.dispatchEvent(new CustomEvent('change', { detail: { value: btn.dataset.val } }));
+  });
+});
+```
+
+### Searchable Combobox / City Picker (`.city-picker`)
+
+A fully custom searchable dropdown used in `costofliving-comparator` for city selection.
+Features live search, clear button, and keyboard support.
+
+#### HTML
+
+```html
+<div class="city-block">
+  <label>📍 From city</label>
+  <div class="city-picker" id="fromPicker">
+    <input class="city-search" type="text" placeholder="Search cities…" autocomplete="off" />
+    <button class="city-clear" aria-label="Clear selection">✕</button>
+    <div class="city-dropdown">
+      <!-- Options populated by JS -->
+      <div class="city-opt">
+        <div>New York</div>
+        <div class="opt-sub">United States</div>
+      </div>
+      <div class="city-opt">
+        <div>Sydney</div>
+        <div class="opt-sub">Australia</div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+#### CSS
+
+```css
+/* Container & search input */
+.city-picker { position: relative; }
+.city-search {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text);
+  outline: none;
+  transition: border-color 150ms;
+}
+.city-search:focus { border-color: var(--accent-strong); }
+
+/* When a value is selected, highlight the input */
+.city-search.has-value { border-color: var(--accent-strong); background: var(--positive-bg); padding-right: 28px; }
+
+/* Clear button (✕) */
+.city-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 2px 3px;
+  display: none;
+  z-index: 1;
+}
+.city-clear:hover { color: var(--text); }
+.city-search.has-value ~ .city-clear { display: block; }
+
+/* Dropdown menu */
+.city-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 200;
+  display: none;
+}
+.city-dropdown.open { display: block; }
+
+/* Individual option */
+.city-opt {
+  padding: 7px 12px;
+  font-size: 0.86rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background 100ms;
+}
+.city-opt:last-child { border-bottom: none; }
+.city-opt:hover, .city-opt.focused { background: var(--positive-bg); color: var(--positive-em); }
+
+/* Subtitle (e.g. country) */
+.city-opt .opt-sub { font-size: 0.75rem; color: var(--muted); }
+```
+
+#### JavaScript (Pattern)
+
+```js
+const cities = [
+  { name: 'New York', sub: 'United States', value: 'nyc' },
+  { name: 'Sydney', sub: 'Australia', value: 'syd' },
+  { name: 'London', sub: 'United Kingdom', value: 'lon' },
+  // ...
+];
+
+const picker = document.getElementById('fromPicker');
+const search = picker.querySelector('.city-search');
+const dropdown = picker.querySelector('.city-dropdown');
+const clearBtn = picker.querySelector('.city-clear');
+let selectedValue = null;
+
+function renderOptions(filter = '') {
+  dropdown.innerHTML = cities
+    .filter(c => c.name.toLowerCase().includes(filter.toLowerCase()))
+    .map(c => `
+      <div class="city-opt" data-value="${c.value}">
+        <div>${c.name}</div>
+        <div class="opt-sub">${c.sub}</div>
+      </div>
+    `).join('');
+
+  picker.querySelectorAll('.city-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      selectedValue = opt.dataset.value;
+      search.value = cities.find(c => c.value === selectedValue).name;
+      search.classList.add('has-value');
+      dropdown.classList.remove('open');
+    });
+  });
+}
+
+search.addEventListener('input', (e) => {
+  renderOptions(e.target.value);
+  dropdown.classList.add('open');
+});
+
+search.addEventListener('focus', () => {
+  renderOptions(search.value);
+  dropdown.classList.add('open');
+});
+
+document.addEventListener('click', (e) => {
+  if (!picker.contains(e.target)) dropdown.classList.remove('open');
+});
+
+clearBtn.addEventListener('click', () => {
+  search.value = '';
+  selectedValue = null;
+  search.classList.remove('has-value');
+  dropdown.classList.remove('open');
+  renderOptions();
+});
+
+renderOptions();
+```
+
 ### Radio Group (mutually exclusive options)
 
 ```html
@@ -549,10 +765,13 @@ body.light .radio-opt.selected { background: rgba(139,184,248,0.10); }
 
 ---
 
-## Tooltips (`shared.css` + `shared.js`)
+## Tooltips
 
-Add a `#globalTooltip` container is auto-created by `shared.js`. To trigger a tooltip on any element,
-add `data-tip` with HTML content:
+### Global Tooltip (Dynamic, triggered by `data-tip`)
+
+Auto-created by `shared.js`. Appears on hover, positioned intelligently to avoid viewport edges.
+
+#### HTML
 
 ```html
 <span class="tip-wrap">
@@ -561,7 +780,53 @@ add `data-tip` with HTML content:
 </span>
 ```
 
+#### CSS (from `shared.css`)
+
 ```css
+/* Global tooltip container */
+#globalTooltip {
+  position: fixed;
+  z-index: 99999;
+  pointer-events: none;
+  max-width: 270px;
+  background: var(--panel-raised, var(--panel));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 9px 12px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transition: opacity var(--motion-fast);
+  display: none;
+}
+#globalTooltip strong { color: var(--accent-strong); font-weight: 700; }
+#globalTooltip br { display: block; margin-top: 5px; content: ''; }
+#globalTooltip.visible { display: block; opacity: 1; }
+
+/* Arrow pointer */
+#globalTooltip .tt-arrow {
+  position: absolute;
+  bottom: -7px;
+  width: 12px;
+  height: 7px;
+  overflow: hidden;
+  transform: translateX(-50%);
+}
+#globalTooltip .tt-arrow::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  transform: rotate(45deg) translate(-3px, -3px);
+}
+#globalTooltip.flip-below .tt-arrow { bottom: auto; top: -7px; }
+#globalTooltip.flip-below .tt-arrow::before { transform: rotate(45deg) translate(3px, 3px); }
+
+/* Trigger icon */
 .tip-wrap { position: relative; display: inline-flex; align-items: center; gap: 4px; cursor: help; }
 .tip-icon {
   display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px;
@@ -573,9 +838,53 @@ add `data-tip` with HTML content:
 .tip-icon.warn:hover { border-color: var(--gold); }
 ```
 
+#### JavaScript (from `shared.js`)
+
 ```js
-// shared.js auto-initialises the global tooltip on DOMContentLoaded
+// Auto-initialized by shared.js on DOMContentLoaded
 SharedTooltip.init();
+```
+
+### Static Inline Tooltip (Alternative: `.tip-box`)
+
+For static, always-visible tooltips (no hover required). Used in `costofliving-comparator`.
+
+#### HTML
+
+```html
+<div class="tip-wrap">
+  <span class="tip-icon">?</span>
+  <div class="tip-box">
+    <strong>Include housing:</strong> Rent/mortgage is counted in your expenses.<br><br>
+    <strong>Exclude housing:</strong> Housing costs are excluded from the comparison.
+  </div>
+</div>
+```
+
+#### CSS
+
+```css
+.tip-wrap { position: relative; display: inline-flex; align-items: center; gap: 4px; }
+
+.tip-box {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 8px;
+  background: var(--panel-raised, var(--panel));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 10px 12px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text);
+  box-shadow: var(--shadow-lg);
+  width: 240px;
+  pointer-events: auto;
+  z-index: 100;
+}
+.tip-box strong { color: var(--accent-strong); font-weight: 700; }
+.tip-box br { display: block; margin-top: 5px; content: ''; }
 ```
 
 ---
