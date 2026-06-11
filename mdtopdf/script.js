@@ -197,22 +197,24 @@
     return ctx.content.scrollHeight > ctx.contentH;
   }
 
-  // Measure the natural (unconstrained) rendered width of a table by cloning
-  // it into an offscreen, unconstrained container.
-  function measureNaturalWidth(table) {
+  // Does this table overflow `maxWidth`? We clone it into an offscreen probe
+  // constrained to exactly `maxWidth`, mirroring the real page, and check
+  // whether the table is forced wider than that (its min-content exceeds the
+  // available width even with full text wrapping). This is deterministic —
+  // measuring "natural width" inside a shrink-to-fit container is not, because
+  // browsers resolve a width:100% table's percentage against such a container
+  // inconsistently.
+  function tableOverflows(table, maxWidth) {
     const probe = document.createElement('div');
-    probe.style.position = 'absolute';
-    probe.style.visibility = 'hidden';
-    probe.style.left = '-99999px';
-    probe.style.top = '0';
-    probe.style.width = 'max-content';
     probe.className = 'md-body';
+    probe.style.cssText =
+      'position:absolute;visibility:hidden;left:-99999px;top:0;width:' + maxWidth + 'px';
     const clone = table.cloneNode(true);
     probe.appendChild(clone);
     document.body.appendChild(probe);
-    const w = clone.scrollWidth;
+    const exceeds = clone.scrollWidth > maxWidth + 1;
     document.body.removeChild(probe);
-    return w;
+    return exceeds;
   }
 
   // Shrink a table's font size and cell padding (in place) until it fits
@@ -221,8 +223,8 @@
     let fontSize = 0.92;
     let padX = 12;
     let padY = 8;
-    const minFont = 0.6;
-    while (measureNaturalWidth(table) > maxWidth && fontSize > minFont) {
+    const minFont = 0.55;
+    while (tableOverflows(table, maxWidth) && fontSize > minFont) {
       fontSize = Math.round((fontSize - 0.05) * 100) / 100;
       padX = Math.max(3, padX - 1);
       padY = Math.max(2, padY - 0.5);
@@ -398,7 +400,7 @@
   // landscape, then resumes normal (portrait) flow afterwards.
   function placeWideTable(table) {
     const moved = peelTrailingHeadings();
-    if (measureNaturalWidth(table) > LANDSCAPE_CONTENT_W) {
+    if (tableOverflows(table, LANDSCAPE_CONTENT_W)) {
       shrinkTableToFit(table, LANDSCAPE_CONTENT_W);
     }
     // Drop the current page if it ended up empty (e.g. the table is the
@@ -413,7 +415,7 @@
   }
 
   function placeBlock(node) {
-    if (node.tagName === 'TABLE' && measureNaturalWidth(node) > CONTENT_W) {
+    if (node.tagName === 'TABLE' && tableOverflows(node, CONTENT_W)) {
       return placeWideTable(node);
     }
     if (ctx.content.childElementCount === 0) {
