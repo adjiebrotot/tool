@@ -20,10 +20,15 @@
   // ── Page geometry (px @96dpi ≈ A4) ──
   const PAGE_W = 794;            // 210mm
   const PAGE_H = 1123;           // 297mm
+  const PAD_X  = 64;
   const PAD_Y  = 72;
   // Conservative content height — leaves a little slack so margin-collapse /
   // sub-pixel rounding never bleeds into a phantom extra page.
   const CONTENT_H = PAGE_H - PAD_Y * 2 - 14;
+  const CONTENT_W = PAGE_W - PAD_X * 2;
+  // Landscape page geometry — used for wide tables that don't fit a portrait page.
+  const LANDSCAPE_CONTENT_W = PAGE_H - PAD_X * 2;
+  const LANDSCAPE_CONTENT_H = PAGE_W - PAD_Y * 2 - 14;
   // Minimum vertical room that must remain after a heading for it to stay on a
   // page. If less than this is left, the heading is pushed to the next page so
   // it is never stranded alone at the bottom (requirement 3).
@@ -173,9 +178,13 @@
      ──────────────────────────────────────────────────────────────── */
   const ctx = { content: null };
 
-  function newPage() {
+  function newPage(landscape) {
+    if (landscape === undefined) landscape = !!ctx.landscape;
+    ctx.landscape = landscape;
+    ctx.contentH = landscape ? LANDSCAPE_CONTENT_H : CONTENT_H;
+    ctx.contentW = landscape ? LANDSCAPE_CONTENT_W : CONTENT_W;
     const page = document.createElement('div');
-    page.className = 'pdf-page';
+    page.className = 'pdf-page' + (landscape ? ' landscape' : '');
     const content = document.createElement('div');
     content.className = 'pdf-page-content md-body';
     page.appendChild(content);
@@ -185,7 +194,43 @@
   }
 
   function overflowing() {
-    return ctx.content.scrollHeight > CONTENT_H;
+    return ctx.content.scrollHeight > ctx.contentH;
+  }
+
+  // Measure the natural (unconstrained) rendered width of a table by cloning
+  // it into an offscreen, unconstrained container.
+  function measureNaturalWidth(table) {
+    const probe = document.createElement('div');
+    probe.style.position = 'absolute';
+    probe.style.visibility = 'hidden';
+    probe.style.left = '-99999px';
+    probe.style.top = '0';
+    probe.style.width = 'max-content';
+    probe.className = 'md-body';
+    const clone = table.cloneNode(true);
+    probe.appendChild(clone);
+    document.body.appendChild(probe);
+    const w = clone.scrollWidth;
+    document.body.removeChild(probe);
+    return w;
+  }
+
+  // Shrink a table's font size and cell padding (in place) until it fits
+  // within maxWidth, or until a minimum readable size is reached.
+  function shrinkTableToFit(table, maxWidth) {
+    let fontSize = 0.92;
+    let padX = 12;
+    let padY = 8;
+    const minFont = 0.6;
+    while (measureNaturalWidth(table) > maxWidth && fontSize > minFont) {
+      fontSize = Math.round((fontSize - 0.05) * 100) / 100;
+      padX = Math.max(3, padX - 1);
+      padY = Math.max(2, padY - 0.5);
+      table.style.fontSize = fontSize + 'rem';
+      table.querySelectorAll('th,td').forEach(c => {
+        c.style.padding = padY + 'px ' + padX + 'px';
+      });
+    }
   }
 
   function isHeading(node) {
@@ -347,7 +392,30 @@
     return true;
   }
 
+  // Place a table that is too wide for the current (portrait) page. Moves
+  // any heading(s) immediately preceding it onto a dedicated landscape page,
+  // shrinking the table's font/padding first if it's still too wide even in
+  // landscape, then resumes normal (portrait) flow afterwards.
+  function placeWideTable(table) {
+    const moved = peelTrailingHeadings();
+    if (measureNaturalWidth(table) > LANDSCAPE_CONTENT_W) {
+      shrinkTableToFit(table, LANDSCAPE_CONTENT_W);
+    }
+    // Drop the current page if it ended up empty (e.g. the table is the
+    // very first block) so we don't leave a blank portrait page behind.
+    if (ctx.content.childElementCount === 0) {
+      pdfStage.removeChild(ctx.content.parentElement);
+    }
+    newPage(true);
+    moved.forEach(h => ctx.content.appendChild(h));
+    placeOnEmpty(table);
+    newPage(false);
+  }
+
   function placeBlock(node) {
+    if (node.tagName === 'TABLE' && measureNaturalWidth(node) > CONTENT_W) {
+      return placeWideTable(node);
+    }
     if (ctx.content.childElementCount === 0) {
       placeOnEmpty(node);
       return;
