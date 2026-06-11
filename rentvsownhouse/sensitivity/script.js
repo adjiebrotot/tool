@@ -230,7 +230,7 @@ const DEFAULT_SCENARIO = {
 };
 
 /* ── STATE ── */
-let scenarios = [Object.assign({}, DEFAULT_SCENARIO)];
+let scenarios = [Object.assign({}, DEFAULT_SCENARIO), Object.assign({}, DEFAULT_SCENARIO, {name:'Scenario 1'})];
 let metric = 'netEquity';
 let viewYear = 30;
 let scenarioResults = [];
@@ -671,40 +671,6 @@ function updateClampNote(si){
     sub.textContent = T('cappedAt')(clamped);
   } else if(sub) sub.remove();
 }
-
-/* ── GLOBAL TOOLTIP ── */
-(function(){
-  const tt = document.getElementById('globalTooltip');
-  const ttText = tt.querySelector('.tt-text');
-  const ttArrow = tt.querySelector('.tt-arrow');
-  const PAD = 8;
-  function hide(){ tt.classList.remove('visible'); tt.style.display='none'; }
-
-  document.addEventListener('mouseover', e=>{
-    const icon = e.target.closest('[data-tip]');
-    if(!icon){ hide(); return; }
-    const tip = icon.getAttribute('data-tip');
-    if(!tip){ hide(); return; }
-    ttText.innerHTML = tip;
-    tt.classList.remove('flip-below');
-    tt.style.display='block'; tt.style.opacity='0'; tt.classList.add('visible');
-
-    const rect = icon.getBoundingClientRect();
-    const ttW = tt.offsetWidth, ttH = tt.offsetHeight;
-    const cx = rect.left + rect.width/2;
-    let top = rect.top - ttH - 10, left = cx - ttW/2;
-    if(top < PAD){ top = rect.bottom+10; tt.classList.add('flip-below'); }
-    left = Math.max(PAD, Math.min(left, window.innerWidth-ttW-PAD));
-    top  = Math.max(PAD, Math.min(top,  window.innerHeight-ttH-PAD));
-    tt.style.left = left+'px'; tt.style.top = top+'px'; tt.style.opacity='1';
-    ttArrow.style.left = Math.max(10, Math.min(cx-left, ttW-10))+'px';
-  });
-
-  document.addEventListener('mouseout', e=>{
-    const icon = e.target.closest('[data-tip]');
-    if(icon && (!e.relatedTarget || !icon.contains(e.relatedTarget))) hide();
-  });
-})();
 
 /* ── INIT ── */
 document.addEventListener('DOMContentLoaded', ()=>{
