@@ -57,6 +57,15 @@ const LANG = {
     labelCostInterestOnly: 'Cost = Interest Only',
     labelMortgageRate: 'Mortgage Rate',
     labelMortgageTerm: 'Mortgage Term',
+    labelMortgageMode: 'Mortgage Mode',
+    segSimple: 'Simple',
+    segDetailed: 'Detailed',
+    labelRateSchedule: 'Mortgage Rate Schedule',
+    btnAddPeriod: '+ Add Period',
+    optFixed: 'Fixed',
+    optFloating: 'Floating',
+    labelYr: 'Yr',
+    helpRateSchedule: 'Periods always cover years 1 to the mortgage term — the last period extends automatically. Floating periods show a min–max band on the chart; lines use the band midpoint.',
     sectionPropertyGrowth: 'Property Growth',
     labelHouseGrowth: 'House Price Growth (RPPI)',
     helpRPPIRate: 'Residential Property Price Index annual growth rate.',
@@ -150,6 +159,7 @@ const LANG = {
     cagrEndYearError: 'End year must be after start year.',
     /* table headers */
     thYear: 'Year',
+    thRate: 'Rate',
     thCashPosition: 'Cash Position',
     thMortgagePosition: 'Mortgage Position',
     thFinancialPosition: 'Financial Position',
@@ -231,6 +241,15 @@ const LANG = {
     labelCostInterestOnly: 'Biaya = Bunga Saja',
     labelMortgageRate: 'Bunga KPR',
     labelMortgageTerm: 'Jangka Waktu KPR',
+    labelMortgageMode: 'Mode KPR',
+    segSimple: 'Sederhana',
+    segDetailed: 'Rinci',
+    labelRateSchedule: 'Jadwal Bunga KPR',
+    btnAddPeriod: '+ Tambah Periode',
+    optFixed: 'Tetap',
+    optFloating: 'Mengambang',
+    labelYr: 'Thn',
+    helpRateSchedule: 'Periode selalu mencakup tahun 1 hingga akhir jangka waktu KPR — periode terakhir diperpanjang otomatis. Periode mengambang menampilkan pita min–maks pada grafik; garis menggunakan titik tengah pita.',
     sectionPropertyGrowth: 'Pertumbuhan Properti',
     labelHouseGrowth: 'Kenaikan Harga Properti (RPPI)',
     helpRPPIRate: 'Tingkat pertumbuhan tahunan Indeks Harga Properti Residensial.',
@@ -324,6 +343,7 @@ const LANG = {
     cagrEndYearError: 'Tahun akhir harus setelah tahun awal.',
     /* table headers */
     thYear: 'Tahun',
+    thRate: 'Bunga',
     thCashPosition: 'Posisi Kas',
     thMortgagePosition: 'Posisi KPR',
     thFinancialPosition: 'Posisi Keuangan',
@@ -485,6 +505,8 @@ const DEFAULTS = {
   rtbBuyYear: 5,
   monthlyBudgetIncrease: 0,
   currencySymbol: '$',
+  mortgageMode: 'simple',
+  ratePeriods: null,
 };
 
 /* ── CITY PRESETS ──
@@ -698,6 +720,7 @@ const CITY_PRESETS = {
 let S = JSON.parse(JSON.stringify(DEFAULTS));
 let latestRows = [];
 let cachedRtbRows = null;
+let latestHasBand = false;
 let activeTable = 'own';
 let activeGraph = 'netEquity';
 let chartInstance = null;
@@ -778,6 +801,79 @@ function calcMonthlyMortgage(principal, annualRate, termYears, type){
   return principal*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
 }
 
+/* ── DETAILED MORTGAGE RATE SCHEDULE ──
+   periods: ordered, consecutive [{toYear, type:'fixed'|'floating', rate, rateMin, rateMax}].
+   Normalised to [{from, to, min, max}] covering mortgage years 1..term —
+   the last period is always extended/clamped to end exactly at the term. */
+function normalizeRatePeriods(periods, term, fallbackRate){
+  const out = [];
+  let from = 1;
+  if(Array.isArray(periods)){
+    for(let i=0; i<periods.length && from<=term; i++){
+      const p = periods[i];
+      let to = Math.round(Number(p.toYear)||0);
+      to = Math.min(term, Math.max(from, to));
+      if(i === periods.length-1) to = term;
+      let min, max;
+      if(p.type==='floating'){
+        const a = Number(p.rateMin)||0, b = Number(p.rateMax)||0;
+        min = Math.min(a,b); max = Math.max(a,b);
+      } else {
+        min = max = Number(p.rate)||0;
+      }
+      out.push({from, to, min, max});
+      from = to+1;
+    }
+  }
+  if(!out.length) out.push({from:1, to:term, min:fallbackRate, max:fallbackRate});
+  out[out.length-1].to = term;
+  return out;
+}
+function rateBandForMortgageYear(norm, my){
+  for(let i=0;i<norm.length;i++){ if(my>=norm[i].from && my<=norm[i].to) return norm[i]; }
+  return norm[norm.length-1];
+}
+function rateFromBand(band, variant){
+  return variant==='low' ? band.min : variant==='high' ? band.max : (band.min+band.max)/2;
+}
+/* Per-mortgage-year schedule of {rate, r12, monthlyPayment, principalStart, principalEnd}.
+   When the rate changes, the P&I payment is re-amortised over the remaining term on the
+   outstanding balance (standard variable-rate mortgage accounting). IO loans pay
+   principal × period rate; past the term they keep paying at the last period's rate
+   while the principal is still outstanding (matches existing IO behaviour). */
+function buildMortgageSchedule(loan, term, type, years, norm, variant){
+  const sched = [];
+  let principal = loan;
+  for(let my=1; my<=years; my++){
+    const band = rateBandForMortgageYear(norm, Math.min(my, term));
+    const rate = rateFromBand(band, variant);
+    const r12 = rate/100/12;
+    let pay = 0;
+    if(principal > 1e-2){
+      if(type==='io') pay = principal * r12;
+      else if(my <= term) pay = calcMonthlyMortgage(principal, rate, term - my + 1, 'pi');
+    }
+    const principalStart = principal;
+    if(type!=='io' && pay > 0){
+      for(let m=0;m<12;m++){
+        if(principal <= 1e-2){ principal = 0; break; }
+        const intr = principal * r12;
+        principal = Math.max(0, principal - Math.min(pay - intr, principal));
+      }
+    }
+    sched.push({rate, r12, monthlyPayment: pay, principalStart, principalEnd: principal});
+  }
+  return sched;
+}
+function getOwnRateNorm(){
+  if(S.mortgageMode !== 'detailed') return [{from:1, to:S.mortgageTerm, min:S.mortgageRate, max:S.mortgageRate}];
+  return normalizeRatePeriods(S.ratePeriods, S.mortgageTerm, S.mortgageRate);
+}
+function scheduleHasFloat(){
+  if(S.mortgageMode !== 'detailed') return false;
+  return getOwnRateNorm().some(p => p.max - p.min > 1e-9);
+}
+
 /* ── READ INPUTS ── */
 function readInputs(){
   S.propertyPrice   = Math.max(50000, parseNum($('propertyPrice').value)||DEFAULTS.propertyPrice);
@@ -808,6 +904,14 @@ function readInputs(){
   S.rtbBuyYear      = parseIntSafe($('rtbBuyYear').value, DEFAULTS.rtbBuyYear);
   S.monthlyBudgetIncrease = parseFloatSafe($('monthlyBudgetIncrease').value, 0);
   S.currencySymbol  = $('currencySymbol').value || '$';
+  // Simple mode: always P&I, cost = interest only (their controls are hidden)
+  if(S.mortgageMode !== 'detailed'){
+    S.mortgageType = 'pi';
+    S.costInterestOnly = true;
+  } else {
+    // Capture any in-progress edits to the rate schedule
+    if(document.querySelector('#ratePeriodRows .rate-period-row')) readRatePeriodsFromDOM();
+  }
   currentCurrencySymbol = S.currencySymbol;
   updateCurrencyPrefixes();
 }
@@ -828,6 +932,7 @@ function refreshLabels(){
   $('horizonVal').textContent        = S.horizon+T('yrsSuffix');
   $('mortgageRateVal').textContent        = S.mortgageRate.toFixed(2)+'%';
   $('mortgageTermVal').textContent        = S.mortgageTerm+T('yrsSuffix');
+  if(S.mortgageMode === 'detailed') syncRatePeriodLabels();
   $('houseGrowthVal').textContent         = S.houseGrowth.toFixed(2)+'%';
   $('rentInflationVal').textContent       = S.rentInflation.toFixed(2)+'%';
   $('ownOngoingInflationVal').textContent = S.ownOngoingInflation.toFixed(2)+'%';
@@ -897,7 +1002,8 @@ function refreshLabels(){
 }
 
 /* ── MODEL ── */
-function computeModel(){
+function computeModel(variant){
+  variant = variant || 'mid';
   const P  = S.propertyPrice;
   const dp = P * S.downPaymentPct/100;
   const loan = P - dp;
@@ -906,8 +1012,13 @@ function computeModel(){
   // Setup cost
   const setupCostDollar = S.setupCostType==='pct' ? P*S.setupCost/100 : S.setupCost;
 
-  // Monthly mortgage payment (Buy scenario, from day 0)
-  const mPayment = calcMonthlyMortgage(loan, S.mortgageRate, S.mortgageTerm, S.mortgageType);
+  // Mortgage rate schedule (Buy scenario, loan starts day 0).
+  // Simple mode = single fixed-rate period; detailed mode = user-defined periods.
+  const rateNorm = getOwnRateNorm();
+  const schedYears = Math.max(S.horizon, 1);
+  const ownSched = buildMortgageSchedule(loan, S.mortgageTerm, S.mortgageType, schedYears, rateNorm, variant);
+  const ownPayAt = yr => ownSched[Math.min(Math.max(yr,1), ownSched.length)-1].monthlyPayment;
+  const mPayment = ownPayAt(1);
 
   // Monthly rent (year 0)
   const rentMonthly0 = toMonthly(S.rentAmount, S.rentFreq);
@@ -929,9 +1040,10 @@ function computeModel(){
     : 0;
   const rtbDP0        = rtbEnabled ? rtbPropPrice0 * S.downPaymentPct/100 : 0;
   const rtbLoan0      = rtbEnabled ? Math.max(0, rtbPropPrice0 - rtbDP0) : 0;
-  const rtbMPayment0  = rtbEnabled
-    ? calcMonthlyMortgage(rtbLoan0, S.mortgageRate, S.mortgageTerm, S.mortgageType)
-    : 0;
+  // RTB schedule is indexed by mortgage year (year 1 = first year after purchase)
+  const rtbSched0     = rtbEnabled
+    ? buildMortgageSchedule(rtbLoan0, S.mortgageTerm, S.mortgageType, schedYears, rateNorm, variant)
+    : null;
 
   function ownRequiredMonthly(year){
     const propValueAtYearStart = P * Math.pow(1+h, Math.max(0, year-1));
@@ -942,12 +1054,7 @@ function computeModel(){
       ownOngoingYearly *= Math.pow(1 + S.ownOngoingInflation/100, year-1);
     }
     const ownOngoingMonthly = ownOngoingYearly / 12;
-    const ownMortgageMonthly = (
-      S.mortgageType==='pi'
-        ? (year <= S.mortgageTerm ? mPayment : 0)
-        : (loan > 0 ? mPayment : 0)
-    );
-    return ownMortgageMonthly + ownOngoingMonthly;
+    return ownPayAt(year) + ownOngoingMonthly;
   }
 
   function rentRequiredMonthly(year){
@@ -973,11 +1080,9 @@ function computeModel(){
     }
     const ownOngoingMonthly = ownOngoingYearly / 12;
     const yearsOwned = year - buyYear;
-    const rtbMortgageMonthly = (
-      S.mortgageType==='pi'
-        ? ((yearsOwned >= 1 && yearsOwned <= S.mortgageTerm) ? rtbMPayment0 : 0)
-        : (rtbLoan0 > 0 ? rtbMPayment0 : 0)
-    );
+    const rtbMortgageMonthly = yearsOwned >= 1
+      ? rtbSched0[Math.min(yearsOwned, rtbSched0.length)-1].monthlyPayment
+      : 0;
     return rtbMortgageMonthly + ownOngoingMonthly;
   }
 
@@ -1046,10 +1151,14 @@ function computeModel(){
     initialCashUsed, ownCashStart, renterStartCapital,
   });
 
-  const r12 = S.mortgageRate/100/12;
   const rfm = Math.pow(1+rfr, 1/12)-1; // monthly risk-free
 
   for(let yr=1; yr<=S.horizon; yr++){
+    // Mortgage rate & payment for this year (re-amortised when the rate changes)
+    const yrSched = ownSched[yr-1];
+    const mPayYr  = yrSched.monthlyPayment;
+    const r12     = yrSched.r12;
+
     // Rent for this year (inflates each year)
     const currentRentMonthly = rentMonthly0 * Math.pow(1+ri, yr-1);
 
@@ -1090,7 +1199,7 @@ function computeModel(){
 
     for(let m=0; m<12; m++){
       const hasMortgage   = ownPrincipal > 1e-2;
-      const mMortgage     = hasMortgage ? mPayment : 0;
+      const mMortgage     = hasMortgage ? mPayYr : 0;
       const mOwnCost      = mMortgage + ownOngoingMonthly;   // true monthly cost of owning
       const mRentCost     = currentRentMonthly + rentOngoingMonthly; // true monthly cost of renting
 
@@ -1105,7 +1214,7 @@ function computeModel(){
       if(hasMortgage){
         mInterestThisMonth  = ownPrincipal * r12;
         const principalPart = S.mortgageType==='pi'
-          ? Math.min(mPayment - mInterestThisMonth, ownPrincipal)
+          ? Math.min(mPayYr - mInterestThisMonth, ownPrincipal)
           : 0;
         yearInterest     += mInterestThisMonth;
         ownPrincipal      = Math.max(0, ownPrincipal - principalPart);
@@ -1150,7 +1259,8 @@ function computeModel(){
       year:yr,
       ownPropValue, ownPrincipal, ownCash,
       ownHouseEquity, ownNetEquity, ownAccumCost, ownAccumInterest,
-      ownMortgagePayment: mPayment*12,
+      ownMortgagePayment: mPayYr*12,
+      ownRateYr: yrSched.rate,
       ownYearInterest: yearInterest,
       ownYearPrincipal: Math.max(0, ownYearMortPmt - yearInterest),
       ownBegCash, ownYearBudget, ownYearCost, ownYearSurplus,
@@ -1181,13 +1291,19 @@ function computeModel(){
   // ── RENT-THEN-BUY SCENARIO ──
   let rtbRows = null;
   if(S.rtbEnabled){
-    rtbRows = computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, initialCashUsed, getAutoMonthlyBudgetForYear);
+    rtbRows = computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, initialCashUsed, getAutoMonthlyBudgetForYear, rtbSched0);
   }
+
+  // Range of in-term payments (varies under a detailed rate schedule)
+  const inTermPays = ownSched.slice(0, Math.min(S.mortgageTerm, ownSched.length))
+    .map(s=>s.monthlyPayment).filter(p=>p>0);
+  const mPaymentMin = inTermPays.length ? Math.min(...inTermPays) : 0;
+  const mPaymentMax = inTermPays.length ? Math.max(...inTermPays) : 0;
 
   const last = rows[rows.length-1];
   return {
     rows, breakeven,
-    monthlyBudget, mPayment, rentMonthly0,
+    monthlyBudget, mPayment, mPaymentMin, mPaymentMax, rentMonthly0,
     rtbRows,
     initialCashUsed, ownCashStart, renterStartCapital,
     summary:{
@@ -1212,13 +1328,12 @@ function computeModel(){
      - New mortgage on remaining principal at same rate/term.
      - From buyYear onward, cashflows mirror "own" but starting from the new property price.
 */
-function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, initialCashUsed, getAutoMonthlyBudgetForYear){
+function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, initialCashUsed, getAutoMonthlyBudgetForYear, rtbSched){
   const P0  = S.propertyPrice;
   const h   = S.houseGrowth/100;
   const ri  = S.rentInflation/100;
   const rfr = S.riskFreeRate/100;
   const rfm = Math.pow(1+rfr, 1/12)-1;
-  const r12 = S.mortgageRate/100/12;
   const buyYear = S.rtbBuyYear;
 
   // RTB renter starts with initialCashUsed (same as pure rent scenario)
@@ -1301,10 +1416,11 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
         rtbCash2 = rtbCash - cashSpent; // leftover cash/shortfall after purchase
         rtbAccumCost += rtbSetupCostAtBuy;            // only setup is a true cost
 
-        // Loan = property price − DP (standard mortgage, same rate and term)
+        // Loan = property price − DP (standard mortgage, same rate schedule and term,
+        // with the schedule indexed from the purchase year)
         rtbPrincipal = Math.max(0, rtbPropValueAtBuy - rtbDPAtBuy);
         rtbPropValue = rtbPropValueAtBuy;
-        rtbMPayment  = calcMonthlyMortgage(rtbPrincipal, S.mortgageRate, S.mortgageTerm, S.mortgageType);
+        rtbMPayment  = rtbSched.length ? rtbSched[0].monthlyPayment : 0;
 
         // Net Equity = house equity (propValue − loan) + remaining cash
         // Drop vs pre-buy = only the setup cost (DP converts from liquid cash to house equity)
@@ -1359,20 +1475,26 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
       }
       const ownOngoingMonthly = ownOngoingYearly / 12;
 
+      // Mortgage year (1 = first year after purchase) → schedule rate & payment
+      const rtbMY    = yr - buyYear;
+      const rtbSYr   = rtbSched[Math.min(rtbMY, rtbSched.length)-1];
+      const rtbPayYr = rtbSYr.monthlyPayment;
+      const rtbR12   = rtbSYr.r12;
+
       const rtbBegCashP2 = rtbCash2;
       let rtbYearInterest = 0, rtbYearPrincipal = 0;
       let rtbYearBudget2 = 0, rtbYearCost2 = 0;
       let rtbYearInterestInc2 = 0, rtbYearOngoing2 = 0, rtbYearMortPmt2 = 0;
       for(let m=0; m<12; m++){
         const hasMortgage = rtbPrincipal > 1e-2;
-        const mMortgage   = hasMortgage ? rtbMPayment : 0;
+        const mMortgage   = hasMortgage ? rtbPayYr : 0;
         const mOwnCost    = mMortgage + ownOngoingMonthly;
 
         let rtbInterest = 0, rtbPrincipalPaid = 0;
         if(hasMortgage){
-          rtbInterest      = rtbPrincipal * r12;
+          rtbInterest      = rtbPrincipal * rtbR12;
           rtbPrincipalPaid = S.mortgageType==='pi'
-            ? Math.min(rtbMPayment - rtbInterest, rtbPrincipal)
+            ? Math.min(rtbPayYr - rtbInterest, rtbPrincipal)
             : 0;
           rtbPrincipal     = Math.max(0, rtbPrincipal - rtbPrincipalPaid);
           rtbAccumInterest += rtbInterest;
@@ -1407,7 +1529,8 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
         rtbPropValue, rtbPrincipal, rtbCash:0, rtbCash2,
         rtbHouseEquity, rtbNetEquity,
         rtbAccumCost, rtbAccumInterest,
-        rtbMortgagePayment: rtbMPayment*12,
+        rtbMortgagePayment: rtbPayYr*12,
+        rtbRateYr: rtbSYr.rate,
         rtbYearInterest, rtbYearPrincipal,
         rtbYearSurplus: rtbYearSurplus2,
         rtbBegCash: rtbBegCashP2, rtbYearBudget: rtbYearBudget2, rtbYearCost: rtbYearCost2,
@@ -1524,6 +1647,33 @@ function renderChart(rows){
       tension:0.3, fill:false,
     };
   });
+  datasets.forEach((d,i)=>{ d.rvoKey = series[i].key; });
+
+  // Floating-rate band: shaded min–max range per series (appended last so it draws
+  // beneath the lines — Chart.js paints datasets from last to first).
+  if(latestHasBand){
+    series.forEach(s=>{
+      const loKey = s.key+'Low', hiKey = s.key+'High';
+      if(!rows.some(r=> r[loKey]!==undefined && r[hiKey]!==undefined)) return;
+      const maxDiff = rows.reduce((mx,r)=>Math.max(mx, Math.abs((r[hiKey]??0)-(r[loKey]??0))), 0);
+      if(maxDiff <= 0.5) return;
+      const color = (s.key && s.key.includes('RTB')) ? cssVar('--line-rtb-own') : cssVar(s.colorVar);
+      datasets.push({
+        label: s.label+' (band)',
+        data: rows.map(r=>r[hiKey]??0),
+        borderColor:'transparent', backgroundColor:'transparent',
+        pointRadius:0, pointHoverRadius:0, borderWidth:0,
+        tension:0.3, fill:false, isBand:true,
+      });
+      datasets.push({
+        label: s.label+' (band)',
+        data: rows.map(r=>r[loKey]??0),
+        borderColor:'transparent', backgroundColor: color+'30',
+        pointRadius:0, pointHoverRadius:0, borderWidth:0,
+        tension:0.3, fill:'-1', isBand:true,
+      });
+    });
+  }
 
   // Callback references chart's own live labels — avoids stale closure on update
   const xTickCallback = function(val, i){
@@ -1540,9 +1690,22 @@ function renderChart(rows){
       plugins:{
         legend:{display:false},
         tooltip:{
+          filter: item => !item.dataset.isBand,
           callbacks:{
             title: ctx=>`${T('chartTooltipYear')}${ctx[0].label}`,
-            label: ctx=>`  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y,true)}`,
+            label: ctx=>{
+              let txt = `  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y,true)}`;
+              const k = ctx.dataset.rvoKey;
+              if(k && latestHasBand){
+                const row = latestRows[ctx.dataIndex];
+                if(row && row[k+'Low']!==undefined && row[k+'High']!==undefined && Math.abs(row[k+'High']-row[k+'Low'])>0.5){
+                  const a = Math.min(row[k+'Low'], row[k+'High']);
+                  const b = Math.max(row[k+'Low'], row[k+'High']);
+                  txt += ` (${fmt.currency(a,true)} – ${fmt.currency(b,true)})`;
+                }
+              }
+              return txt;
+            },
           },
           backgroundColor:cssVar('--panel')||'#162033',
           titleColor:t, bodyColor:m, borderColor:cssVar('--border'), borderWidth:1, padding:10,
@@ -1615,15 +1778,19 @@ function updateKPIs(state){
 
 /* ── SUMMARY TILES ── */
 function updateSummary(state){
-  const {summary,mPayment,rentMonthly0,monthlyBudget,initialCashUsed,ownCashStart,renterStartCapital} = state;
+  const {summary,mPayment,mPaymentMin,mPaymentMax,rentMonthly0,monthlyBudget,initialCashUsed,ownCashStart,renterStartCapital} = state;
   const yrs = S.horizon;
+  // Payments vary over the term under a detailed rate schedule → show the range
+  const mPayTxt = (mPaymentMax - mPaymentMin) > 0.5
+    ? `${fmt.currency(mPaymentMin,true)}–${fmt.currency(mPaymentMax,true)}${T('perMo')}`
+    : `${fmt.currency(mPayment)}${T('perMo')}`;
 
   $('ownSummary').innerHTML = `
     <div class="tile"><div class="label">${T('tileNetEquity')} (${T('thYear')} ${yrs})</div><div class="value ${summary.ownNetEquity>=0?'pos':'neg'}">${fmt.currency(summary.ownNetEquity,true)}</div></div>
     <div class="tile"><div class="label">${T('tileAccumCost')} (${T('thYear')} ${yrs})</div><div class="value neg">${fmt.currency(summary.ownAccumCost,true)}</div></div>
     <div class="tile"><div class="label">${T('tileHouseEquity')} (${T('thYear')} ${yrs})</div><div class="value pos">${fmt.currency(summary.ownHouseEquity,true)}</div></div>
     <div class="tile"><div class="label">${T('tileLiquidCash')} (${T('thYear')} ${yrs})</div><div class="value">${fmt.currency(summary.ownCash,true)}</div></div>
-    <div class="tile"><div class="label">${T('tileMonthlyMortgage')}</div><div class="value">${fmt.currency(mPayment)}${T('perMo')}</div></div>
+    <div class="tile"><div class="label">${T('tileMonthlyMortgage')}</div><div class="value">${mPayTxt}</div></div>
     <div class="tile"><div class="label">${T('tilePrincipalRemaining')} (${T('thYear')} ${yrs})</div><div class="value">${fmt.currency(state.rows[state.rows.length-1].ownPrincipal,true)}</div></div>
   `;
 
@@ -1650,17 +1817,18 @@ function updateDetailTable(rows, rtbRows){
       <tr>
         <th rowspan="2" class="th-sep-right">${T('thYear')}</th>
         <th colspan="8" class="th-group th-sep-right">${T('thCashPosition')}</th>
-        <th colspan="3" class="th-group th-sep-right">${T('thMortgagePosition')}</th>
+        <th colspan="4" class="th-group th-sep-right">${T('thMortgagePosition')}</th>
         <th colspan="2" class="th-group">${T('thFinancialPosition')}</th>
       </tr>
       <tr>
         <th>${T('thBegCash')}</th><th>${T('thAnnBudget')}</th><th>${T('thPrincipalExp')}</th><th>${T('thInterestExp')}</th><th>${T('thOngoingExp')}</th><th>${T('thInterestInc')}</th><th>${T('thSurplus')}</th><th class="th-sep-right">${T('thEndCash')}</th>
-        <th>${T('thPropValue')}</th><th>${T('thPrincipalLeft')}</th><th class="th-sep-right">${T('thHouseEquity')}</th>
+        <th>${T('thRate')}</th><th>${T('thPropValue')}</th><th>${T('thPrincipalLeft')}</th><th class="th-sep-right">${T('thHouseEquity')}</th>
         <th>${T('thNetEquity')}</th><th>${T('thAccumCost')}</th>
       </tr>
     </thead><tbody>`;
     rows.forEach(r=>{
       const y0 = r.year===0;
+      const hasLoanYr = !y0 && ((r.ownYearInterest||0)>0 || (r.ownYearPrincipal||0)>0);
       html+=`<tr>
         <td class="td-sep-right">${r.year}</td>
         <td>${y0?na:c(r.ownBegCash||0)}</td>
@@ -1671,6 +1839,7 @@ function updateDetailTable(rows, rtbRows){
         <td style="color:${pos}">${y0?na:c(r.ownYearInterestInc||0)}</td>
         <td style="color:var(--gold)">${y0?na:c(r.ownYearSurplus||0)}</td>
         <td class="td-sep-right">${c(r.ownCash)}</td>
+        <td>${hasLoanYr && r.ownRateYr!==undefined ? r.ownRateYr.toFixed(2)+'%' : na}</td>
         <td>${c(r.ownPropValue)}</td>
         <td>${c(r.ownPrincipal)}</td>
         <td class="td-sep-right" style="color:${pos}">${c(r.ownHouseEquity)}</td>
@@ -1713,12 +1882,12 @@ function updateDetailTable(rows, rtbRows){
         <th rowspan="2" class="th-sep-right">${T('thYear')}</th>
         <th rowspan="2" class="th-sep-right">${T('thPhase')}</th>
         <th colspan="9" class="th-group th-sep-right">${T('thCashPosition')}</th>
-        <th colspan="3" class="th-group th-sep-right">${T('thMortgagePosition')}</th>
+        <th colspan="4" class="th-group th-sep-right">${T('thMortgagePosition')}</th>
         <th colspan="2" class="th-group">${T('thFinancialPosition')}</th>
       </tr>
       <tr>
         <th>${T('thBegCash')}</th><th>${T('thAnnBudget')}</th><th>${T('thTotalExp')}</th><th>${T('thPrincipalExp')}</th><th>${T('thInterestExp')}</th><th>${T('thOngoingExp')}</th><th>${T('thInterestInc')}</th><th>${T('thSurplus')}</th><th class="th-sep-right">${T('thEndCash')}</th>
-        <th>${T('thPropValue')}</th><th>${T('thPrincipalLeft')}</th><th class="th-sep-right">${T('thHouseEquity')}</th>
+        <th>${T('thRate')}</th><th>${T('thPropValue')}</th><th>${T('thPrincipalLeft')}</th><th class="th-sep-right">${T('thHouseEquity')}</th>
         <th>${T('thNetEquity')}</th><th>${T('thAccumCost')}</th>
       </tr>
     </thead><tbody>`;
@@ -1729,6 +1898,7 @@ function updateDetailTable(rows, rtbRows){
       const cash = r.phase==='rent' ? r.rtbCash||0 : r.rtbCash2||0;
       // Total expense = principal + interest + ongoing (for both renting and owning)
       const rtbTotalExp = (r.rtbYearPrincipal||0) + (r.rtbYearInterest||0) + (r.rtbYearOngoing||0);
+      const rtbHasLoanYr = isOwning && r.rtbRateYr!==undefined && ((r.rtbYearInterest||0)>0 || (r.rtbYearPrincipal||0)>0);
       html+=`<tr>
         <td class="td-sep-right">${r.year}</td>
         <td class="td-sep-right">${phaseLabel}</td>
@@ -1741,6 +1911,7 @@ function updateDetailTable(rows, rtbRows){
         <td style="color:${pos}">${y0?na:c(r.rtbYearInterestInc||0)}</td>
         <td style="color:var(--gold)">${y0?na:c(r.rtbYearSurplus||0)}</td>
         <td class="td-sep-right">${c(cash)}</td>
+        <td>${rtbHasLoanYr ? r.rtbRateYr.toFixed(2)+'%' : na}</td>
         <td>${y0||!isOwning?na:c(r.rtbPropValue||0)}</td>
         <td>${y0||!isOwning?na:c(r.rtbPrincipal||0)}</td>
         <td class="td-sep-right" style="color:${pos}">${y0||!isOwning?na:c(r.rtbHouseEquity||0)}</td>
@@ -1784,7 +1955,7 @@ function updateRTBSummary(state){
 function rerender(){
   readInputs();
   refreshLabels();
-  const state = computeModel();
+  const state = computeModel('mid');
   latestRows = state.rows;
   cachedRtbRows = state.rtbRows ? state.rtbRows.rows : null;
 
@@ -1802,6 +1973,31 @@ function rerender(){
         });
       }
       return r;
+    });
+  }
+
+  // Floating-rate band: simulate the full model at the min and max rate paths
+  latestHasBand = scheduleHasFloat();
+  if(latestHasBand){
+    const lowState  = computeModel('low');
+    const highState = computeModel('high');
+    const bandKeys  = ['netEquityOwn','cashOwn','costOwn','netEquityRent','cashRent','costRent'];
+    const lowRtbByYear = {}, highRtbByYear = {};
+    if(lowState.rtbRows)  lowState.rtbRows.rows.forEach(r=>{ lowRtbByYear[r.year]=r; });
+    if(highState.rtbRows) highState.rtbRows.rows.forEach(r=>{ highRtbByYear[r.year]=r; });
+    latestRows = latestRows.map((r,i)=>{
+      const o = Object.assign({}, r);
+      bandKeys.forEach(k=>{
+        o[k+'Low']  = lowState.rows[i][k];
+        o[k+'High'] = highState.rows[i][k];
+      });
+      const lo = lowRtbByYear[r.year], hi = highRtbByYear[r.year];
+      if(lo && hi){
+        ['netEquityRTB','cashRTB','costRTB'].forEach(k=>{
+          o[k+'Low'] = lo[k]; o[k+'High'] = hi[k];
+        });
+      }
+      return o;
     });
   }
 
@@ -1850,6 +2046,8 @@ function resetAll(){
   $('monthlyBudgetIncrease').value = DEFAULTS.monthlyBudgetIncrease;
   document.querySelector('input[name="mortgageType"][value="pi"]').checked=true;
   $('radioPI').classList.add('selected'); $('radioIO').classList.remove('selected');
+  updateMortgageModeUI();
+  renderRatePeriodRows();
   updateCagrToolVisibility(false);
   rerender();
 }
@@ -1890,6 +2088,11 @@ function applyPreset(cityKey){
   document.querySelectorAll('input[name="mortgageType"]').forEach(r=>{ r.checked = r.value===p.mortgageType; });
   $('radioPI').classList.toggle('selected', p.mortgageType==='pi');
   $('radioIO').classList.toggle('selected', p.mortgageType==='io');
+  // City presets use the simple single-rate mortgage
+  S.mortgageMode = 'simple';
+  S.ratePeriods = null;
+  updateMortgageModeUI();
+  renderRatePeriodRows();
 
   document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.city===cityKey));
   updateCagrToolVisibility(false);
@@ -2093,8 +2296,11 @@ function downloadCsv(){
   let headers,lines,filename;
   if(activeTable==='own'){
     if(!latestRows.length) return;
-    headers=['Year','Beg_Cash','Ann_Budget','Principal_Exp','Interest_Exp','Ongoing_Exp','Interest_Inc','Surplus','End_Cash','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
-    lines=latestRows.map(r=>{const y0=r.year===0;return[
+    headers=['Year','Beg_Cash','Ann_Budget','Principal_Exp','Interest_Exp','Ongoing_Exp','Interest_Inc','Surplus','End_Cash','Rate_Pct','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
+    lines=latestRows.map(r=>{
+      const y0=r.year===0;
+      const hasLoanYr = !y0 && ((r.ownYearInterest||0)>0 || (r.ownYearPrincipal||0)>0);
+      return[
       r.year,
       y0?na:(r.ownBegCash||0).toFixed(0),
       y0?na:(r.ownYearBudget||0).toFixed(0),
@@ -2104,6 +2310,7 @@ function downloadCsv(){
       y0?na:(r.ownYearInterestInc||0).toFixed(0),
       y0?na:(r.ownYearSurplus||0).toFixed(0),
       (r.ownCash||0).toFixed(0),
+      (hasLoanYr && r.ownRateYr!==undefined)?r.ownRateYr.toFixed(2):na,
       (r.ownPropValue||0).toFixed(0),
       (r.ownPrincipal||0).toFixed(0),
       (r.ownHouseEquity||0).toFixed(0),
@@ -2129,11 +2336,12 @@ function downloadCsv(){
     filename='rent_cashflow.csv';
   } else if(activeTable==='rtb'){
     if(!cachedRtbRows||!cachedRtbRows.length) return;
-    headers=['Year','Phase','Beg_Cash','Ann_Budget','Total_Exp','Principal_Exp','Interest_Exp','Ongoing_Exp','Interest_Inc','Surplus','End_Cash','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
+    headers=['Year','Phase','Beg_Cash','Ann_Budget','Total_Exp','Principal_Exp','Interest_Exp','Ongoing_Exp','Interest_Inc','Surplus','End_Cash','Rate_Pct','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
     lines=cachedRtbRows.map(r=>{
       const y0=r.year===0, own=r.phase!=='rent';
       const cash=r.phase==='rent'?r.rtbCash||0:r.rtbCash2||0;
       const tot=(r.rtbYearPrincipal||0)+(r.rtbYearInterest||0)+(r.rtbYearOngoing||0);
+      const rtbHasLoanYr = own && r.rtbRateYr!==undefined && ((r.rtbYearInterest||0)>0 || (r.rtbYearPrincipal||0)>0);
       return[
         r.year, r.phase,
         y0?na:(r.rtbBegCash||0).toFixed(0),
@@ -2145,6 +2353,7 @@ function downloadCsv(){
         y0?na:(r.rtbYearInterestInc||0).toFixed(0),
         y0?na:(r.rtbYearSurplus||0).toFixed(0),
         cash.toFixed(0),
+        rtbHasLoanYr?r.rtbRateYr.toFixed(2):na,
         (y0||!own)?na:(r.rtbPropValue||0).toFixed(0),
         (y0||!own)?na:(r.rtbPrincipal||0).toFixed(0),
         (y0||!own)?na:(r.rtbHouseEquity||0).toFixed(0),
@@ -2158,6 +2367,141 @@ function downloadCsv(){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
   a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ── DETAILED MORTGAGE MODE UI ── */
+// Default rate periods derived from the current single rate + term, used the
+// first time a user switches to detailed mode.
+function defaultRatePeriods(){
+  const term = S.mortgageTerm;
+  if(term <= 5){
+    return [{toYear:term, type:'fixed', rate:S.mortgageRate, rateMin:S.mortgageRate, rateMax:S.mortgageRate+3}];
+  }
+  return [
+    {toYear:5,    type:'fixed',    rate:S.mortgageRate,     rateMin:S.mortgageRate, rateMax:S.mortgageRate},
+    {toYear:term, type:'floating', rate:S.mortgageRate+1.5, rateMin:S.mortgageRate, rateMax:S.mortgageRate+3},
+  ];
+}
+
+function updateMortgageModeUI(){
+  const detailed = S.mortgageMode === 'detailed';
+  document.querySelectorAll('#mortgageModeGroup .seg-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.val === (detailed ? 'detailed' : 'simple'));
+  });
+  // Detailed-only controls
+  $('mortgageTypeRow').style.display = detailed ? '' : 'none';
+  $('rateScheduleRow').style.display = detailed ? '' : 'none';
+  // The single-rate slider is only used in simple mode
+  $('mortgageRateRow').style.display = detailed ? 'none' : '';
+}
+
+// Build the editable list of rate periods from S.ratePeriods.
+function renderRatePeriodRows(){
+  const wrap = $('ratePeriodRows');
+  if(!wrap) return;
+  if(!Array.isArray(S.ratePeriods) || !S.ratePeriods.length){
+    S.ratePeriods = defaultRatePeriods();
+  }
+  wrap.innerHTML = '';
+  S.ratePeriods.forEach((p,idx)=>{
+    wrap.appendChild(buildRatePeriodRow(p, idx));
+  });
+  syncRatePeriodLabels();
+}
+
+function buildRatePeriodRow(p, idx){
+  const row = document.createElement('div');
+  row.className = 'rate-period-row';
+  row.dataset.idx = idx;
+  const isLast = idx === S.ratePeriods.length-1;
+  const floating = p.type === 'floating';
+  row.innerHTML = `
+    <div class="rp-head">
+      <span class="rp-years">${T('labelYr')} <b class="rp-from">–</b>–<b class="rp-to-lbl">–</b></span>
+      <select class="rp-type">
+        <option value="fixed"${!floating?' selected':''}>${T('optFixed')}</option>
+        <option value="floating"${floating?' selected':''}>${T('optFloating')}</option>
+      </select>
+      ${isLast ? '' : `<input type="number" class="rp-to" min="1" step="1" value="${p.toYear}" title="${T('labelMortgageTerm')}"/>`}
+      <button type="button" class="cagr-btn delete rp-delete" ${S.ratePeriods.length<=1?'disabled':''}>${T('btnDelete')}</button>
+    </div>
+    <div class="rp-rates">
+      <span class="rp-fixed-wrap" style="${floating?'display:none':''}">
+        <input type="number" class="rp-rate" min="0" max="40" step="0.01" value="${(p.rate??0)}"/>
+        <span class="rp-unit">${T('unitPctPa')}</span>
+      </span>
+      <span class="rp-float-wrap" style="${floating?'':'display:none'}">
+        <input type="number" class="rp-min" min="0" max="40" step="0.01" value="${(p.rateMin??0)}"/>
+        <span class="rp-dash">–</span>
+        <input type="number" class="rp-max" min="0" max="40" step="0.01" value="${(p.rateMax??0)}"/>
+        <span class="rp-unit">${T('unitPctPa')}</span>
+      </span>
+    </div>`;
+  return row;
+}
+
+// Read the editable rows back into S.ratePeriods.
+function readRatePeriodsFromDOM(){
+  const rows = Array.from(document.querySelectorAll('#ratePeriodRows .rate-period-row'));
+  const out = [];
+  rows.forEach((row,i)=>{
+    const type = row.querySelector('.rp-type').value;
+    const toEl = row.querySelector('.rp-to');
+    const toYear = toEl ? (parseIntSafe(toEl.value, S.mortgageTerm)) : S.mortgageTerm;
+    const rate = parseFloatSafe(row.querySelector('.rp-rate')?.value, 0);
+    const rateMin = parseFloatSafe(row.querySelector('.rp-min')?.value, 0);
+    const rateMax = parseFloatSafe(row.querySelector('.rp-max')?.value, 0);
+    out.push({toYear, type, rate, rateMin, rateMax});
+  });
+  S.ratePeriods = out;
+}
+
+// Recompute the "Yr X–Y" labels and disabled state shown on each period.
+function syncRatePeriodLabels(){
+  const wrap = $('ratePeriodRows');
+  if(!wrap) return;
+  const rows = Array.from(wrap.querySelectorAll('.rate-period-row'));
+  const term = S.mortgageTerm;
+  let from = 1;
+  rows.forEach((row,i)=>{
+    const isLast = i === rows.length-1;
+    const toEl = row.querySelector('.rp-to');
+    let to;
+    if(isLast){ to = term; }
+    else {
+      to = parseIntSafe(toEl?.value, from);
+      to = Math.min(term, Math.max(from, to));
+    }
+    const fromB = row.querySelector('.rp-from');
+    const toB   = row.querySelector('.rp-to-lbl');
+    if(fromB) fromB.textContent = from;
+    if(toB)   toB.textContent = to;
+    // Periods that start beyond the term are inactive
+    row.classList.toggle('rp-beyond', from > term);
+    from = to+1;
+  });
+}
+
+function addRatePeriod(){
+  readRatePeriodsFromDOM();
+  const last = S.ratePeriods[S.ratePeriods.length-1] || {toYear:S.mortgageTerm, type:'fixed', rate:S.mortgageRate, rateMin:S.mortgageRate, rateMax:S.mortgageRate};
+  // Insert a new period before the (auto-extending) last one, splitting the range.
+  const prevTo = S.ratePeriods.length>=2 ? S.ratePeriods[S.ratePeriods.length-2].toYear : 0;
+  const mid = Math.min(S.mortgageTerm-1, Math.max(prevTo+1, Math.round((prevTo + S.mortgageTerm)/2)));
+  S.ratePeriods.splice(S.ratePeriods.length-1, 0, {
+    toYear: mid, type:'fixed',
+    rate:last.rate||S.mortgageRate, rateMin:last.rateMin||S.mortgageRate, rateMax:last.rateMax||S.mortgageRate,
+  });
+  renderRatePeriodRows();
+  rerender();
+}
+
+function deleteRatePeriod(idx){
+  readRatePeriodsFromDOM();
+  if(S.ratePeriods.length <= 1) return;
+  S.ratePeriods.splice(idx,1);
+  renderRatePeriodRows();
+  rerender();
 }
 
 /* ── CAGR CALCULATOR ── */
@@ -2240,6 +2584,47 @@ document.querySelectorAll('input[name="mortgageType"]').forEach(r=>{
   });
 });
 
+// Mortgage mode segmented control (Simple / Detailed)
+document.querySelectorAll('#mortgageModeGroup .seg-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const mode = btn.dataset.val;
+    if(mode === S.mortgageMode) return;
+    S.mortgageMode = mode;
+    if(mode === 'detailed' && (!Array.isArray(S.ratePeriods) || !S.ratePeriods.length)){
+      S.ratePeriods = defaultRatePeriods();
+    }
+    updateMortgageModeUI();
+    if(mode === 'detailed') renderRatePeriodRows();
+    rerender();
+  });
+});
+
+// Rate schedule: add a period
+$('addRatePeriod').addEventListener('click', addRatePeriod);
+
+// Rate schedule: edit / delete / change type (event delegation)
+$('ratePeriodRows').addEventListener('click',(e)=>{
+  const del = e.target.closest('.rp-delete');
+  if(del){
+    const row = del.closest('.rate-period-row');
+    deleteRatePeriod(parseInt(row.dataset.idx));
+  }
+});
+$('ratePeriodRows').addEventListener('change',(e)=>{
+  if(e.target.classList.contains('rp-type')){
+    // Toggle fixed/floating inputs for this row, then recompute
+    const row = e.target.closest('.rate-period-row');
+    const floating = e.target.value === 'floating';
+    row.querySelector('.rp-fixed-wrap').style.display = floating ? 'none' : '';
+    row.querySelector('.rp-float-wrap').style.display = floating ? '' : 'none';
+  }
+  rerender();
+});
+$('ratePeriodRows').addEventListener('input',(e)=>{
+  if(e.target.classList.contains('rp-to')) syncRatePeriodLabels();
+  rerender();
+});
+
 document.querySelectorAll('.ctrl-tab').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.ctrl-tab').forEach(b=>b.classList.remove('active'));
@@ -2286,6 +2671,7 @@ $('langToggle').addEventListener('click',()=>{
   lang = lang === 'en' ? 'id' : 'en';
   localStorage.setItem('pf-lang', lang);
   applyLang();
+  if(S.mortgageMode === 'detailed'){ readRatePeriodsFromDOM(); renderRatePeriodRows(); }
   if(chartInstance){ chartInstance.destroy(); chartInstance=null; }
   rerender();
 });
@@ -2358,6 +2744,7 @@ applyLang();
 syncMoneyInputs();
 syncCagrDeleteButtons();
 updateCagrToolVisibility(false);
+updateMortgageModeUI();
 rerender();
 
 })();

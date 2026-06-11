@@ -231,6 +231,13 @@
     </div>
     <div class="section-label" data-i18n="sectionMortgage">Mortgage</div>
     <div class="field-row">
+      <div class="field-label"><span data-i18n="labelMortgageMode">Mortgage Mode</span> <span class="tip-icon" data-tip-key="mortgageMode">?</span></div>
+      <div class="seg-group" id="mortgageModeGroup">
+        <button type="button" class="seg-btn active" data-val="simple" data-i18n="segSimple">Simple</button>
+        <button type="button" class="seg-btn" data-val="detailed" data-i18n="segDetailed">Detailed</button>
+      </div>
+    </div>
+    <div class="field-row" id="mortgageTypeRow" style="display:none;">
       <div class="field-label"><span data-i18n="labelMortgageType">Mortgage Type</span> <span class="tip-icon" data-tip-key="mortgageType">?</span></div>
       <div class="radio-group">
         <label class="radio-opt selected" id="radioPI">
@@ -250,7 +257,7 @@
         </label>
       </div>
     </div>
-    <div class="field-row">
+    <div class="field-row" id="mortgageRateRow">
       <div class="field-label"><span data-i18n="labelMortgageRate">Mortgage Rate</span> <span class="tip-icon" data-tip-key="mortgageRate">?</span></div>
       <div class="slider-head" style="margin-bottom:4px;">
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
@@ -265,6 +272,14 @@
         <span class="slider-value" id="mortgageTermVal">30 yrs</span>
       </div>
       <input type="range" id="mortgageTerm" min="5" max="50" step="1" value="30"/>
+    </div>
+    <div class="field-row" id="rateScheduleRow" style="display:none;">
+      <div class="field-label"><span data-i18n="labelRateSchedule">Mortgage Rate Schedule</span> <span class="tip-icon" data-tip-key="rateSchedule">?</span></div>
+      <div class="rate-periods" id="ratePeriodRows"></div>
+      <div class="rate-schedule-actions">
+        <button class="cagr-btn" id="addRatePeriod" type="button" data-i18n="btnAddPeriod">+ Add Period</button>
+      </div>
+      <div class="field-sub" data-i18n="helpRateSchedule">Periods always cover years 1 to the mortgage term — the last period extends automatically. Floating periods show a min–max band on the chart; lines use the band midpoint.</div>
     </div>
     <div class="section-label" data-i18n="sectionPropertyGrowth">Property Growth</div>
     <div class="field-row">
