@@ -26,9 +26,6 @@
   // sub-pixel rounding never bleeds into a phantom extra page.
   const CONTENT_H = PAGE_H - PAD_Y * 2 - 14;
   const CONTENT_W = PAGE_W - PAD_X * 2;
-  // Landscape page geometry — used for wide tables that don't fit a portrait page.
-  const LANDSCAPE_CONTENT_W = PAGE_H - PAD_X * 2;
-  const LANDSCAPE_CONTENT_H = PAGE_W - PAD_Y * 2 - 14;
   // Minimum vertical room that must remain after a heading for it to stay on a
   // page. If less than this is left, the heading is pushed to the next page so
   // it is never stranded alone at the bottom (requirement 3).
@@ -178,13 +175,9 @@
      ──────────────────────────────────────────────────────────────── */
   const ctx = { content: null };
 
-  function newPage(landscape) {
-    if (landscape === undefined) landscape = !!ctx.landscape;
-    ctx.landscape = landscape;
-    ctx.contentH = landscape ? LANDSCAPE_CONTENT_H : CONTENT_H;
-    ctx.contentW = landscape ? LANDSCAPE_CONTENT_W : CONTENT_W;
+  function newPage() {
     const page = document.createElement('div');
-    page.className = 'pdf-page' + (landscape ? ' landscape' : '');
+    page.className = 'pdf-page';
     const content = document.createElement('div');
     content.className = 'pdf-page-content md-body';
     page.appendChild(content);
@@ -194,7 +187,7 @@
   }
 
   function overflowing() {
-    return ctx.content.scrollHeight > ctx.contentH;
+    return ctx.content.scrollHeight > CONTENT_H;
   }
 
   // Does this table overflow `maxWidth`? We clone it into an offscreen probe
@@ -394,29 +387,11 @@
     return true;
   }
 
-  // Place a table that is too wide for the current (portrait) page. Moves
-  // any heading(s) immediately preceding it onto a dedicated landscape page,
-  // shrinking the table's font/padding first if it's still too wide even in
-  // landscape, then resumes normal (portrait) flow afterwards.
-  function placeWideTable(table) {
-    const moved = peelTrailingHeadings();
-    if (tableOverflows(table, LANDSCAPE_CONTENT_W)) {
-      shrinkTableToFit(table, LANDSCAPE_CONTENT_W);
-    }
-    // Drop the current page if it ended up empty (e.g. the table is the
-    // very first block) so we don't leave a blank portrait page behind.
-    if (ctx.content.childElementCount === 0) {
-      pdfStage.removeChild(ctx.content.parentElement);
-    }
-    newPage(true);
-    moved.forEach(h => ctx.content.appendChild(h));
-    placeOnEmpty(table);
-    newPage(false);
-  }
-
   function placeBlock(node) {
+    // Tables wider than the page get their font size and cell padding
+    // shrunk in place until they fit within the page width.
     if (node.tagName === 'TABLE' && tableOverflows(node, CONTENT_W)) {
-      return placeWideTable(node);
+      shrinkTableToFit(node, CONTENT_W);
     }
     if (ctx.content.childElementCount === 0) {
       placeOnEmpty(node);
