@@ -297,6 +297,13 @@ body {
   overflow: hidden;
   box-sizing: border-box;
 }
+/* Landscape pages — used for tables too wide to fit a portrait page. */
+.pdf-page.landscape {
+  width: 1123px;
+  min-height: 794px;
+  height: 794px;
+  page: landscape;
+}
 .pdf-page-content { position: relative; z-index: 1; }
 .pdf-watermark {
   position: absolute;
@@ -370,6 +377,7 @@ body {
    PRINT  — ALWAYS LIGHT, paginated pages only
    ============================================================ */
 @page { size: 794px 1123px; margin: 0; }
+@page landscape { size: 1123px 794px; margin: 0; }
 
 @media print {
   html, body { height: auto; background: #ffffff !important; }
