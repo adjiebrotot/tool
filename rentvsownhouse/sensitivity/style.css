@@ -92,6 +92,37 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 .tip-icon{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:var(--input-bg);border:1px solid var(--border);font-size:.65rem;color:var(--muted);flex-shrink:0;cursor:help;margin-left:3px;vertical-align:middle;}
 .tip-icon:hover{border-color:var(--accent);color:var(--accent);}
 
+/* Section mode rows (Simple/Detailed toggles that apply to all scenarios) */
+.dt tr.mode-tr td.mode-td{background:var(--panel-raised);}
+.mode-seg{vertical-align:middle;}
+.mode-seg .seg-btn{padding:5px 16px;font-size:.76rem;}
+
+/* Detailed cells: mortgage rate periods & cost items */
+.dt td.detail-td{background:var(--panel-raised);}
+.dcell{display:flex;flex-direction:column;gap:5px;}
+.dcell-line{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.dcell-yrs{font-size:.72rem;font-weight:700;color:var(--muted);font-family:'DM Mono',monospace;white-space:nowrap;}
+.dcell-beyond{opacity:.45;}
+.mini-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.78rem;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;padding:4px 6px;width:4.2em;text-align:right;outline:none;transition:border-color var(--motion-fast);}
+.mini-input:focus{border-color:var(--accent);}
+.mini-input.mini-amt{flex:1;min-width:5.5em;width:auto;}
+.mini-select{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.74rem;font-family:inherit;padding:4px 5px;cursor:pointer;outline:none;max-width:11em;transition:border-color var(--motion-fast);}
+.mini-select:focus{border-color:var(--accent);}
+.mini-unit{font-size:.7rem;color:var(--muted);white-space:nowrap;}
+.rp-dash{color:var(--muted);font-size:.78rem;}
+
+/* Inactive (unused) cells — darkened to preserve table integrity while showing
+   which inputs are actually considered for each scenario */
+.dt td.inactive-td{
+  background:repeating-linear-gradient(45deg, var(--bg) 0 7px, var(--input-bg) 7px 14px);
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+/* Per-scenario add buttons for periods / cost items */
+.dt td.add-td{background:var(--panel-raised);}
+.add-td .btn-add{width:100%;font-size:.74rem;padding:4px 8px;}
+
 /* Footer */
 .page-footer{margin-top:18px;}
 

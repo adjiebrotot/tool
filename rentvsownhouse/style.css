@@ -82,6 +82,22 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 .rp-unit{font-size:.78rem;color:var(--muted);}
 .rate-schedule-actions{display:flex;gap:8px;margin-top:8px;}
 .rate-schedule-actions .cagr-btn{flex:1;}
+/* Detailed cost item lists (Costs of Owning / Renting) */
+.cost-items{display:grid;gap:8px;margin-top:6px;}
+.cost-item-row{background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 10px;display:grid;gap:7px;}
+.ci-head{display:flex;align-items:center;gap:7px;}
+.ci-name{flex:1;min-width:0;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;padding:6px 8px;outline:none;transition:border-color var(--motion-fast);}
+.ci-name:focus{border-color:var(--accent);}
+.ci-delete{padding:5px 9px;font-size:.75rem;flex-shrink:0;}
+.ci-line{display:flex;align-items:center;gap:7px;}
+.ci-line .currency-wrap{flex:1;min-width:0;}
+.ci-line .currency-input{width:100%;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px 6px 32px;outline:none;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
+.ci-line .currency-input:focus{border-color:var(--accent);}
+.ci-line select{flex-shrink:0;max-width:55%;font-size:.8rem;padding:6px 8px;cursor:pointer;}
+.ci-infl-wrap{justify-content:flex-start;}
+.ci-infl-label{font-size:.78rem;color:var(--muted);}
+.ci-infl{width:5.2em;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px;outline:none;text-align:right;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
+.ci-infl:focus{border-color:var(--accent);}
 .cagr-box{background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px;margin-top:8px;display:grid;gap:10px;}
 #cagrRows{display:grid;gap:8px;}
 .cagr-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr) auto;gap:8px;align-items:center;}
