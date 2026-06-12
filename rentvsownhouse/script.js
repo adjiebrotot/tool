@@ -9,13 +9,13 @@ const _wmMeasureCtx = document.createElement('canvas').getContext('2d');
 function measureWmText(text, font){ _wmMeasureCtx.font = font; return _wmMeasureCtx.measureText(text).width; }
 
 /* ── i18n ── */
-let lang = localStorage.getItem('pf-lang') === 'id' ? 'id' : 'en';
+let lang = (window.DEFAULT_LANG === 'id') ? 'id' : 'en';
 const LANG = {
   en: {
     /* header */
     subtitle: 'Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.',
     btnBack: '← Other Tools',
-    sensitivityHtml: 'Power user? Compare multiple scenarios side-by-side with our <a href="sensitivity/" style="color:var(--accent);font-weight:700;text-decoration:none;">Sensitivity Analysis Tool</a>.',
+    sensitivityHtml: 'Power user? Compare multiple scenarios side-by-side with our <a href="/rentvsownhouse/sensitivity/" style="color:var(--accent);font-weight:700;text-decoration:none;">Sensitivity Analysis Tool</a>.',
     /* sidebar */
     quickStartLabel: '⚡ Quick Start',
     quickStartTip: 'Prefill with quick assumption, assuming median price for two-bedroom apartment in the city centre or inner suburbs',
@@ -213,7 +213,7 @@ const LANG = {
     /* header */
     subtitle: 'Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti — membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.',
     btnBack: '← Other Tools',
-    sensitivityHtml: 'Power user? Bandingkan beberapa skenario secara berdampingan dengan <a href="sensitivity/" style="color:var(--accent);font-weight:700;text-decoration:none;">Alat Analisis Sensitivitas</a> kami.',
+    sensitivityHtml: 'Power user? Bandingkan beberapa skenario secara berdampingan dengan <a href="/rentvsownhouse/sensitivity/" style="color:var(--accent);font-weight:700;text-decoration:none;">Alat Analisis Sensitivitas</a> kami.',
     /* sidebar */
     quickStartLabel: '⚡ Mulai Cepat',
     quickStartTip: 'Isi otomatis dengan asumsi cepat berdasarkan harga median apartemen 2 kamar di pusat kota atau pinggiran kota',
@@ -446,9 +446,6 @@ function applyLang(){
   /* quick start label */
   const qsl = document.querySelector('[data-i18n="quickStartLabel"]');
   if(qsl){ qsl.textContent = T('quickStartLabel'); }
-  /* toggle button */
-  const lt = document.getElementById('langToggle');
-  if(lt) lt.textContent = lang === 'en' ? 'ID' : 'EN';
   /* CAGR show/hide button — preserve current show state */
   const cagrBtn = document.getElementById('cagrToolToggle');
   if(cagrBtn){
@@ -2879,16 +2876,6 @@ $('themeToggle').addEventListener('click',()=>{
 });
 // Apply persisted theme on load (body defaults to light; remove class if stored dark)
 if(localStorage.getItem('pf-theme')==='dark'){document.body.classList.remove('light');$('themeToggle').textContent='☀️ Light';}
-$('langToggle').addEventListener('click',()=>{
-  lang = lang === 'en' ? 'id' : 'en';
-  localStorage.setItem('pf-lang', lang);
-  applyLang();
-  if(S.mortgageMode === 'detailed'){ readRatePeriodsFromDOM(); renderRatePeriodRows(); }
-  if(S.ownCostsMode === 'detailed'){ readCostItemsFromDOM('ownSetup'); readCostItemsFromDOM('ownOngoing'); renderCostItemRows('ownSetup'); renderCostItemRows('ownOngoing'); }
-  if(S.rentCostsMode === 'detailed'){ readCostItemsFromDOM('rentOngoing'); renderCostItemRows('rentOngoing'); }
-  if(chartInstance){ chartInstance.destroy(); chartInstance=null; }
-  rerender();
-});
 window.addEventListener('resize', syncDetailHeaderLayout);
 $('chartCanvas').addEventListener('mouseleave',()=>{ $('hoverBox').textContent='Hover over the chart to inspect a year.'; });
 $('cagrCalc').addEventListener('click', calcCAGR);

@@ -1,6 +1,14 @@
 User-agent: *
 Allow: /
 
+# Search engine crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+# AI / LLM crawlers — content is intended to be indexed and cited
 User-agent: OAI-SearchBot
 Allow: /
 
@@ -10,17 +18,40 @@ Allow: /
 User-agent: GPTBot
 Allow: /
 
-User-agent: Googlebot
-Allow: /
-
 User-agent: Google-Extended
 Allow: /
 
 User-agent: PerplexityBot
 Allow: /
 
+User-agent: Perplexity-User
+Allow: /
+
 User-agent: ClaudeBot
 Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+# LLM-readable site guide: https://tool.adjiebrotots.com/llms.txt
 
 Sitemap: https://tool.adjiebrotots.com/sitemap.xml
 Host: tool.adjiebrotots.com
