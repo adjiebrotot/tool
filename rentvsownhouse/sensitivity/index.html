@@ -7,6 +7,9 @@
 <meta name="description" content="Run sensitivity analysis on rent-versus-own assumptions to see which variables affect property outcomes most.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/">
+<link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/">
+<link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/">
+<link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
 
 <meta property="og:type" content="website">
@@ -14,6 +17,8 @@
 <meta property="og:description" content="Run sensitivity analysis on rent-versus-own assumptions to see which variables affect property outcomes most.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Rent vs Own Sensitivity Tool">
@@ -29,7 +34,46 @@
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
-  "inLanguage": "en"
+  "inLanguage": ["en", "id"],
+  "alternateName": ["Rent vs Buy Sensitivity Analysis", "Property Scenario Comparison Tool", "Multi-Scenario Rent vs Own Calculator"],
+  "keywords": "rent vs own sensitivity, rent vs buy scenarios, property assumption comparison, sensitivity analysis, sewa vs beli rumah analisis sensitivitas",
+  "featureList": [
+    "Compare multiple rent-vs-own scenarios side by side in one table",
+    "Test how each assumption — price growth, mortgage rate, rent inflation, costs — changes the outcome",
+    "Available in English and Indonesian (Bahasa Indonesia) at https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/",
+    "All calculations run locally in the browser — your financial data never leaves your device",
+    "Free CSV export with no paywall"
+  ],
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "Rent vs Own Property Scenario Explorer",
+    "url": "https://tool.adjiebrotots.com/rentvsownhouse/"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "inLanguage": "en",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does the Rent vs Own Sensitivity Tool do?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It compares several rent-versus-own scenarios side by side so you can see which assumptions — property price growth, mortgage rate, rent inflation, ongoing costs — move net equity, liquid cash, or accumulated cost the most. Free at https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is it different from the main Rent vs Own calculator?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The main calculator models one scenario in depth; the sensitivity tool lines up multiple scenarios in a single table to compare assumptions at a chosen year and metric."
+      }
+    }
+  ]
 }
 </script>
 <style>.abbr-hint{text-decoration:underline dotted;cursor:help;text-underline-offset:2px;}</style>
@@ -52,7 +96,7 @@
   </div>
   <div class="header-right">
     <a href="../" class="btn-theme btn-back" data-i18n="btnBack">← Back</a>
-    <button id="langToggle" class="btn-theme">ID</button>
+    <a id="langToggle" class="btn-theme" href="id/" hreflang="id" lang="id" title="Versi Bahasa Indonesia">ID</a>
     <button class="btn-theme" id="themeToggle">🌙 Dark</button>
   </div>
 </section>

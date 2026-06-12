@@ -213,7 +213,7 @@ const LANG = {
     /* header */
     subtitle: 'Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti — membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.',
     btnBack: '← Other Tools',
-    sensitivityHtml: 'Power user? Bandingkan beberapa skenario secara berdampingan dengan <a href="/rentvsownhouse/sensitivity/" style="color:var(--accent);font-weight:700;text-decoration:none;">Alat Analisis Sensitivitas</a> kami.',
+    sensitivityHtml: 'Power user? Bandingkan beberapa skenario secara berdampingan dengan <a href="/rentvsownhouse/sensitivity/id/" style="color:var(--accent);font-weight:700;text-decoration:none;">Alat Analisis Sensitivitas</a> kami.',
     /* sidebar */
     quickStartLabel: '⚡ Mulai Cepat',
     quickStartTip: 'Isi otomatis dengan asumsi cepat berdasarkan harga median apartemen 2 kamar di pusat kota atau pinggiran kota',

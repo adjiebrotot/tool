@@ -93,9 +93,21 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/</loc>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/</loc>
+    <lastmod>2026-06-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/sankeycreator/</loc>
