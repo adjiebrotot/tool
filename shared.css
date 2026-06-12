@@ -89,6 +89,7 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;}
    ============================================================ */
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:var(--radius-md);padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all var(--transition-fast);white-space:nowrap;font-family:inherit;}
 .btn-theme:hover{border-color:var(--accent);color:var(--text);}
+a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 
 /* ============================================================
    CONTROL PANEL — TABS

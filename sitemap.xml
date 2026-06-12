@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://tool.adjiebrotots.com/canvasbuilder/</loc>
     <lastmod>2026-06-06</lastmod>
@@ -32,7 +33,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/</loc>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -44,9 +45,21 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/</loc>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/pisahvsgabung/id/</loc>
+    <lastmod>2026-06-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/powerfactory-scripter/</loc>
@@ -62,9 +75,21 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/</loc>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/rentvsownhouse/id/</loc>
+    <lastmod>2026-06-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/</loc>

@@ -263,7 +263,7 @@ const LANG = {
   }
 };
 
-let lang = 'en';
+let lang = (window.DEFAULT_LANG === 'id') ? 'id' : 'en';
 function T(key){ return LANG[lang][key] || LANG['en'][key] || key; }
 
 function applyLang() {
@@ -285,8 +285,6 @@ function applyLang() {
   $('bracketColFrom').textContent = T('bracketFrom');
   $('bracketColTo').innerHTML = T('bracketToHtml');
   $('bracketColRate').textContent = T('bracketRate');
-  // Lang toggle label
-  $('langToggle').textContent = lang === 'en' ? 'ID' : 'EN';
 }
 
 /* ── Formatters ── */
@@ -1200,14 +1198,6 @@ $('themeToggle').addEventListener('click',()=>{
     if(chartInstance2){chartInstance2.destroy();chartInstance2=null;}
     rerender();
   }
-});
-
-$('langToggle').addEventListener('click',()=>{
-  lang = lang === 'en' ? 'id' : 'en';
-  applyLang();
-  if(chartInstance){chartInstance.destroy();chartInstance=null;}
-  if(chartInstance2){chartInstance2.destroy();chartInstance2=null;}
-  rerender();
 });
 
 $('chartResetZoom').addEventListener('click',()=>{if(chartInstance)chartInstance.resetZoom();});
