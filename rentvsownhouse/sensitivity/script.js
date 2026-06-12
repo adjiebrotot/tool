@@ -24,8 +24,17 @@ const LANG_SENS = {
     scenPlaceholder: 'Scenario',
     cappedAt: (n) => `capped at yr ${n}`,
     ownOutputLabel: (ml) => `🏠 Own — ${ml}`,
-    rentOutputLabel: (ml) => `💰 Rent — ${ml}`,
+    rentOutputLabel: (ml) => `🏢 Rent — ${ml}`,
     deltaLabel: 'Δ Own − Rent',
+    actionsLabel: 'Per-scenario',
+    dlOwnTitle: 'Download Own cashflow (CSV)',
+    dlRentTitle: 'Download Rent cashflow (CSV)',
+    chartBtnTitle: 'Show comparison chart',
+    chartCompare: 'Comparison',
+    closeTitle: 'Close',
+    chartHoverHint: 'Hover over the chart to inspect a year.',
+    seriesOwn: 'Own',
+    seriesRent: 'Rent',
     boolEnabled: 'Enabled',
     dupTitle: 'Duplicate',
     removeTitle: 'Remove',
@@ -115,8 +124,17 @@ const LANG_SENS = {
     scenPlaceholder: 'Skenario',
     cappedAt: (n) => `dipotong di thn ${n}`,
     ownOutputLabel: (ml) => `🏠 Beli — ${ml}`,
-    rentOutputLabel: (ml) => `💰 Sewa — ${ml}`,
+    rentOutputLabel: (ml) => `🏢 Sewa — ${ml}`,
     deltaLabel: 'Δ Beli − Sewa',
+    actionsLabel: 'Per-skenario',
+    dlOwnTitle: 'Unduh arus kas Beli (CSV)',
+    dlRentTitle: 'Unduh arus kas Sewa (CSV)',
+    chartBtnTitle: 'Tampilkan grafik perbandingan',
+    chartCompare: 'Perbandingan',
+    closeTitle: 'Tutup',
+    chartHoverHint: 'Arahkan kursor ke grafik untuk memeriksa suatu tahun.',
+    seriesOwn: 'Beli',
+    seriesRent: 'Sewa',
     boolEnabled: 'Aktif',
     dupTitle: 'Duplikat',
     removeTitle: 'Hapus',
@@ -318,6 +336,13 @@ function fmtCurrency(v, sym){
 }
 
 function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+const cssVar = n => getComputedStyle(document.body).getPropertyValue(n).trim();
+// Strip pictographic icons/emojis (and the now-orphaned spacing) for CSV output.
+function stripIcons(s){
+  return String(s||'')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu, '')
+    .replace(/\s{2,}/g, ' ').trim();
+}
 function escAttr(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 /* ── COMPUTE ENGINE ──
@@ -518,8 +543,8 @@ function computeModel(S){
 
   rows.push({ year:0, ownPropValue, ownPrincipal, ownCash,
     ownHouseEquity:ownPropValue-ownPrincipal, ownNetEquity:ownPropValue-ownPrincipal+ownCash,
-    ownAccumCost:setupCostDollar, ownAccumInterest:0,
-    rentCash, rentNetEquity:rentCash, rentAccumCost:0 });
+    ownAccumCost:setupCostDollar, ownAccumInterest:0, ownMortgagePayment:0,
+    rentCash, rentNetEquity:rentCash, rentAccumCost:0, rentRent:rentMonthly0*12 });
 
   const rfm = Math.pow(1+rfr,1/12)-1;
 
@@ -531,40 +556,60 @@ function computeModel(S){
     const oom = ownOngoingYearlyAt(S, yr, ownPropValue) / 12;
     const rom = rentOngoingYearlyAt(S, yr, curRent) / 12;
 
+    // Per-year cashflow tracking (mirrors the main tool so the shared CSV
+    // builders see an identical row schema).
+    const ownBegCash = ownCash, rentBegCash = rentCash;
     let yearInterest = 0;
+    let ownYearBudget = 0, ownYearMortPmt = 0;
+    let ownYearOngoingPart = 0, rentYearOngoingPart = 0;
+    let ownYearInterestInc = 0, rentYearInterestInc = 0;
+    let rentYearCost = 0;
     for(let m=0; m<12; m++){
       const hasMort = ownPrincipal > 1e-2;
       const mMort   = hasMort ? mPayYr : 0;
       const mOwnCost  = mMort + oom;
       const mRentCost = curRent + rom;
       const mBudget = getMonthlyBudget(yr);
+      ownYearBudget += mBudget;
       let mInt = 0;
       if(hasMort){
         mInt = ownPrincipal * r12;
         const prin = S.mortgageType==='pi' ? Math.min(mPayYr-mInt, ownPrincipal) : 0;
         yearInterest += mInt; ownPrincipal = Math.max(0, ownPrincipal-prin); ownAccumInterest += mInt;
       }
+      ownYearMortPmt += mMort;
+      ownYearInterestInc  += ownCash  * rfm;
+      rentYearInterestInc += rentCash * rfm;
       const ownSurplus  = mBudget - mOwnCost;
       const rentSurplus = mBudget - mRentCost;
       ownCash  = ownCash  * (1+rfm) + ownSurplus;
       rentCash = rentCash * (1+rfm) + rentSurplus;
+      ownYearOngoingPart  += oom;
+      rentYearOngoingPart += rom;
       ownAccumCost  += S.costInterestOnly ? mInt+oom : mOwnCost;
       rentAccumCost += mRentCost;
+      rentYearCost  += mRentCost;
     }
+    const ownYearSurplus  = ownYearBudget - ownYearMortPmt - ownYearOngoingPart;
+    const rentYearSurplus = ownYearBudget - rentYearCost;
     ownPropValue *= (1+h);
     const ownHouseEquity = ownPropValue - ownPrincipal;
     rows.push({ year:yr, ownPropValue, ownPrincipal, ownCash,
       ownHouseEquity, ownNetEquity:ownHouseEquity+ownCash, ownAccumCost, ownAccumInterest,
       ownYearInterest:yearInterest, ownRateYr:yrSched.rate, ownMortgagePayment:mPayYr*12,
-      rentCash, rentNetEquity:rentCash, rentAccumCost });
+      ownYearPrincipal: Math.max(0, ownYearMortPmt - yearInterest),
+      ownBegCash, ownYearBudget, ownYearSurplus, ownYearOngoing: ownYearOngoingPart, ownYearInterestInc,
+      rentCash, rentNetEquity:rentCash, rentAccumCost, rentRent: curRent*12,
+      rentBegCash, rentYearSurplus, rentYearOngoing: rentYearOngoingPart, rentYearInterestInc });
   }
   return { rows, initialCashUsed, ownCashStart, renterStart };
 }
 
 /* ── HELPERS ── */
-function metricLabel(){
-  return metric==='netEquity' ? T('metricNetEquity') : metric==='cash' ? T('metricLiquidCash') : T('metricAccumCost');
+function metricLabelOf(met){
+  return met==='netEquity' ? T('metricNetEquity') : met==='cash' ? T('metricLiquidCash') : T('metricAccumCost');
 }
+function metricLabel(){ return metricLabelOf(metric); }
 function getMetricValues(i){
   const res = scenarioResults[i];
   if(!res || !res.rows) return {own:null,rent:null};
@@ -868,6 +913,14 @@ function buildTableHTML(){
   const rentTds = scenarios.map((_,i)=>{ const v=getMetricValues(i); return `<td class="scen-td num-td">${v.rent!==null?fmtCurrency(v.rent,symOf(scenarios[i])):'—'}</td>`; }).join('');
   const deltaTds= scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return `<td class="scen-td num-td">—</td>`; const d=v.own-v.rent; return `<td class="scen-td num-td ${deltaColor(d)}">${d>=0?'+':''}${fmtCurrency(d,symOf(scenarios[i]))}</td>`; }).join('');
 
+  const actionTds = scenarios.map((_,i)=>`<td class="scen-td action-td">
+      <div class="scen-actions">
+        <button class="btn-scen-action dl-own" data-si="${i}" title="${escAttr(T('dlOwnTitle'))}">⬇<span class="logo-own">🏠</span></button>
+        <button class="btn-scen-action dl-rent" data-si="${i}" title="${escAttr(T('dlRentTitle'))}">⬇<span class="logo-rent">🏢</span></button>
+        <button class="btn-scen-action show-chart" data-si="${i}" title="${escAttr(T('chartBtnTitle'))}">📈</button>
+      </div>
+    </td>`).join('');
+
   return `<table class="dt"><thead><tr>
     <th class="label-td">${T('tableHeaderParam')}</th><th class="unit-th">${T('tableHeaderUnit')}</th>${thScens}
     <th style="white-space:nowrap;vertical-align:middle;"><button class="btn-add" id="addScenBtn">${T('btnAddScenario')}</button></th>
@@ -877,6 +930,7 @@ function buildTableHTML(){
     <tr class="out-own"><td class="label-td">${T('ownOutputLabel')(ml)}</td><td class="unit-td"></td>${ownTds}${emptyTd}</tr>
     <tr class="out-rent"><td class="label-td">${T('rentOutputLabel')(ml)}</td><td class="unit-td"></td>${rentTds}${emptyTd}</tr>
     <tr class="out-delta"><td class="label-td">${T('deltaLabel')}</td><td class="unit-td"></td>${deltaTds}${emptyTd}</tr>
+    <tr class="out-actions"><td class="label-td">${T('actionsLabel')}</td><td class="unit-td"></td>${actionTds}${emptyTd}</tr>
   </tbody></table>`;
 }
 
@@ -965,9 +1019,9 @@ function downloadCSV(){
   });
   lines.push('');
   const ml = metricLabel();
-  lines.push([esc(T('ownOutputLabel')(ml)),  ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.own!==null?fmtCurrency(v.own,symOf(scenarios[i])):'—'); })].join(','));
-  lines.push([esc(T('rentOutputLabel')(ml)), ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.rent!==null?fmtCurrency(v.rent,symOf(scenarios[i])):'—'); })].join(','));
-  lines.push([esc(T('deltaLabel')),          ...scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return esc('—'); const d=v.own-v.rent; return esc((d>=0?'+':'')+fmtCurrency(d,symOf(scenarios[i]))); })].join(','));
+  lines.push([esc(stripIcons(T('ownOutputLabel')(ml))),  ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.own!==null?fmtCurrency(v.own,symOf(scenarios[i])):'—'); })].join(','));
+  lines.push([esc(stripIcons(T('rentOutputLabel')(ml))), ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.rent!==null?fmtCurrency(v.rent,symOf(scenarios[i])):'—'); })].join(','));
+  lines.push([esc(stripIcons(T('deltaLabel'))),          ...scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return esc('—'); const d=v.own-v.rent; return esc((d>=0?'+':'')+fmtCurrency(d,symOf(scenarios[i]))); })].join(','));
 
   const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a');
@@ -975,6 +1029,126 @@ function downloadCSV(){
   a.download = 'rent-vs-own-sensitivity.csv';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
+}
+
+/* ── PER-SCENARIO CASHFLOW CSV (shared with the main tool via RVOExport) ── */
+function scenarioSlug(si){
+  const s = String(scenarios[si].name || ('scenario_'+(si+1)))
+    .replace(/[^a-z0-9]+/gi,'_').replace(/^_+|_+$/g,'').toLowerCase();
+  return s || ('scenario_'+(si+1));
+}
+function downloadScenarioCashflow(si, which){
+  const res = scenarioResults[si];
+  if(!res || !res.rows || !res.rows.length || !global_RVOExport()) return;
+  const slug = scenarioSlug(si);
+  if(which==='own')  RVOExport.downloadCSV(`${slug}_own_cashflow.csv`,  RVOExport.ownCashflowCSV(res.rows));
+  else               RVOExport.downloadCSV(`${slug}_rent_cashflow.csv`, RVOExport.rentCashflowCSV(res.rows));
+}
+function global_RVOExport(){ return typeof RVOExport !== 'undefined' && RVOExport; }
+
+/* ── SCENARIO COMPARISON CHART POPUP ── */
+let chartModal = { el:null, chart:null, si:0, met:'netEquity' };
+
+function scenarioChartData(si, met){
+  const res = scenarioResults[si];
+  const rows = (res && res.rows) ? res.rows : [];
+  const ownKey  = met==='netEquity' ? 'ownNetEquity'  : met==='cash' ? 'ownCash'  : 'ownAccumCost';
+  const rentKey = met==='netEquity' ? 'rentNetEquity' : met==='cash' ? 'rentCash' : 'rentAccumCost';
+  return {
+    labels: rows.map(r=>r.year),
+    series: [
+      {label:T('seriesOwn'),  data:rows.map(r=>r[ownKey]||0),  color:cssVar('--line-a')},
+      {label:T('seriesRent'), data:rows.map(r=>r[rentKey]||0), color:cssVar('--line-b')},
+    ],
+  };
+}
+function chartModalTitle(){
+  return `${scenarios[chartModal.si].name||T('scenPlaceholder')} — ${metricLabelOf(chartModal.met)}`;
+}
+function chartModalLegendItems(){
+  return [
+    {label:T('seriesOwn'),  color:cssVar('--line-a')},
+    {label:T('seriesRent'), color:cssVar('--line-b')},
+  ];
+}
+function buildChartModal(){
+  if(chartModal.el) return chartModal.el;
+  const overlay = document.createElement('div');
+  overlay.className = 'chart-modal-overlay';
+  overlay.innerHTML = `
+    <div class="chart-modal card" role="dialog" aria-modal="true">
+      <div class="chart-header">
+        <h2 class="chart-modal-title"></h2>
+        <div class="chart-controls">
+          <button class="graph-btn cm-met" data-met="netEquity">${T('metricNetEquity')}</button>
+          <button class="graph-btn cm-met" data-met="cash">${T('metricLiquidCash')}</button>
+          <button class="graph-btn cm-met" data-met="cost">${T('metricAccumCost')}</button>
+          <button class="btn-secondary chart-export-btn" data-act="svg">⬇ SVG</button>
+          <button class="btn-secondary chart-export-btn" data-act="png">⬇ PNG</button>
+          <button class="btn-secondary chart-export-btn" data-act="copy" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary chart-export-btn" data-act="reset">⟳</button>
+          <button class="btn-secondary chart-export-btn cm-close" data-act="close" title="${escAttr(T('closeTitle'))}">✕</button>
+        </div>
+      </div>
+      <div class="legend cm-legend"></div>
+      <div class="canvas-wrap"><canvas class="cm-canvas"></canvas></div>
+      <div class="hover-box">${escHtml(T('chartHoverHint'))}</div>
+    </div>`;
+  document.body.appendChild(overlay);
+  chartModal.el = overlay;
+
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) closeChartModal(); });
+  overlay.querySelectorAll('.cm-met').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ chartModal.met = btn.dataset.met; renderChartModal(); });
+  });
+  overlay.querySelectorAll('[data-act]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const act = btn.dataset.act;
+      const canvas = overlay.querySelector('.cm-canvas');
+      const meta = {title:chartModalTitle(), legendItems:chartModalLegendItems()};
+      if(act==='close') closeChartModal();
+      else if(act==='reset'){ if(chartModal.chart && chartModal.chart.resetZoom) chartModal.chart.resetZoom(); }
+      else if(act==='png')  RVOExport.exportChartPNG(canvas, Object.assign({}, meta, {filename:`${scenarioSlug(chartModal.si)}_${chartModal.met}_chart.png`, download:true}));
+      else if(act==='svg')  RVOExport.exportChartSVG(canvas, Object.assign({}, meta, {filename:`${scenarioSlug(chartModal.si)}_${chartModal.met}_chart.svg`}));
+      else if(act==='copy') RVOExport.copyChartPNG(canvas, meta).then(()=>alert('PNG copied to clipboard.')).catch(err=>alert('PNG copy failed: '+err.message));
+    });
+  });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && chartModal.el && chartModal.el.classList.contains('open')) closeChartModal(); });
+  return overlay;
+}
+function renderChartModal(){
+  const overlay = chartModal.el;
+  if(!overlay) return;
+  overlay.querySelector('.chart-modal-title').textContent = chartModalTitle();
+  overlay.querySelectorAll('.cm-met').forEach(b=>b.classList.toggle('active', b.dataset.met===chartModal.met));
+  // Legend dots
+  const legendEl = overlay.querySelector('.cm-legend');
+  legendEl.innerHTML = chartModalLegendItems().map(it=>
+    `<div class="legend-item"><span class="dot" style="background:${it.color}"></span><span>${escHtml(it.label)}</span></div>`).join('');
+  // (Re)build the chart
+  const data = scenarioChartData(chartModal.si, chartModal.met);
+  const sym = symOf(scenarios[chartModal.si]);
+  const canvas = overlay.querySelector('.cm-canvas');
+  if(chartModal.chart){ chartModal.chart.destroy(); chartModal.chart = null; }
+  chartModal.chart = RVOExport.renderComparisonChart(canvas, {
+    labels: data.labels, series: data.series, sym,
+    yAxisTitle: `${metricLabelOf(chartModal.met)} (${sym})`,
+  });
+}
+function openChartModal(si){
+  if(!global_RVOExport() || !window.Chart){ return; }
+  buildChartModal();
+  chartModal.si = si;
+  chartModal.met = metric; // open on the metric currently selected in the table
+  chartModal.el.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderChartModal();
+}
+function closeChartModal(){
+  if(!chartModal.el) return;
+  chartModal.el.classList.remove('open');
+  document.body.style.overflow = '';
+  if(chartModal.chart){ chartModal.chart.destroy(); chartModal.chart = null; }
 }
 
 /* ── WIRE EVENTS ── */
@@ -1183,6 +1357,17 @@ function wireEvents(){
       scenarios.splice(si+1, 0, clone);
       rerender();
     });
+  });
+
+  // Per-scenario actions: download Own/Rent cashflow + show comparison chart
+  document.querySelectorAll('.btn-scen-action.dl-own').forEach(btn=>{
+    btn.addEventListener('click', ()=> downloadScenarioCashflow(+btn.dataset.si, 'own'));
+  });
+  document.querySelectorAll('.btn-scen-action.dl-rent').forEach(btn=>{
+    btn.addEventListener('click', ()=> downloadScenarioCashflow(+btn.dataset.si, 'rent'));
+  });
+  document.querySelectorAll('.btn-scen-action.show-chart').forEach(btn=>{
+    btn.addEventListener('click', ()=> openChartModal(+btn.dataset.si));
   });
 }
 
