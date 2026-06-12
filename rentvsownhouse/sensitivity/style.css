@@ -123,6 +123,46 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 .dt td.add-td{background:var(--panel-raised);}
 .add-td .btn-add{width:100%;font-size:.74rem;padding:4px 8px;}
 
+/* ── Per-scenario action row (download Own/Rent cashflow + chart) ── */
+tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
+.action-td{text-align:center;}
+.scen-actions{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;}
+.btn-scen-action{
+  background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  color:var(--text);font-size:.9rem;line-height:1;padding:5px 8px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:1px;transition:border-color var(--motion-fast),background var(--motion-fast);
+}
+.btn-scen-action:hover{border-color:var(--accent);background:rgba(139,184,248,.12);}
+.btn-scen-action:active{transform:scale(.95);}
+.btn-scen-action .logo-own,.btn-scen-action .logo-rent{font-size:.92rem;}
+
+/* ── Scenario comparison chart popup ── */
+.chart-modal-overlay{
+  position:fixed;inset:0;z-index:1000;display:none;
+  align-items:center;justify-content:center;padding:18px;
+  background:rgba(7,12,24,.62);backdrop-filter:blur(2px);
+}
+.chart-modal-overlay.open{display:flex;}
+.chart-modal{
+  width:min(960px,100%);max-height:92vh;overflow:auto;
+  padding:20px;box-shadow:0 18px 60px rgba(0,0,0,.45);
+}
+.chart-modal .chart-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.chart-modal .chart-header h2{font-size:1.05rem;margin:0;}
+.chart-modal .chart-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.chart-modal .graph-btn{
+  background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);
+  color:var(--muted);padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;
+  transition:all var(--motion-fast);letter-spacing:.01em;
+}
+.chart-modal .graph-btn.active{border-color:var(--accent);color:var(--text);background:rgba(139,184,248,.12);}
+.chart-modal .chart-export-btn{flex:0 0 auto;min-width:48px;padding:6px 10px;font-size:.68rem;line-height:1;white-space:nowrap;text-align:center;font-weight:600;}
+.chart-modal .cm-close{min-width:38px;font-size:.8rem;}
+.chart-modal .legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:.86rem;}
+.chart-modal .legend-item{display:flex;align-items:center;gap:7px;}
+.chart-modal .dot{width:11px;height:11px;border-radius:999px;flex-shrink:0;}
+.chart-modal .hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:20px;}
+
 /* Footer */
 .page-footer{margin-top:18px;}
 

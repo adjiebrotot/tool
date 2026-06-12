@@ -1,13 +1,6 @@
 (function(){
 "use strict";
 
-// Watermark logo (logos/logo.svg), preloaded for use in canvas/SVG exports
-const WM_LOGO_SRC = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDY4MCA2ODAiIHJvbGU9ImltZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8dGl0bGU+QXJjaGVkIEEgTG9nbzwvdGl0bGU+CiAgPGRlc2M+QSBzbGVlayB3aGl0ZSBsZXR0ZXIgQSB3aG9zZSBsZWdzIGZvbGxvdyB0aGUgY2lyY2xlIGN1cnZhdHVyZSwgc3Bhbm5pbmcgODAlIG9mIHRoZSBjaXJjbGUgaGVpZ2h0PC9kZXNjPgoKICA8Y2lyY2xlIGN4PSIzNDAiIGN5PSIzNDAiIHI9IjMwMCIgZmlsbD0iIzAwNTJjYyIvPgoKICA8IS0tIExlZnQgbGVnOiAxMTPCsCB0byAyNDXCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSAyNDIsNTcwIEEgMjUwLDI1MCAwIDAgMSAyMzQsMTEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIFRvcCBhcmNoOiAyNDXCsCB0byAyOTXCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSAyMzQsMTEzIEEgMjUwLDI1MCAwIDAgMSA0NDYsMTEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIFJpZ2h0IGxlZzogMjk1wrAgdG8gNjfCsCBjbG9ja3dpc2Ugb24gcj0yNTAgLS0+CiAgPHBhdGggZD0iTSA0NDYsMTEzIEEgMjUwLDI1MCAwIDAgMSA0MzgsNTcwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQ2IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPgoKICA8IS0tIENyb3NzYmFyIC0tPgogIDxsaW5lIHgxPSIxMTMiIHkxPSIzNTQiIHgyPSI1NjciIHkyPSIzNTQiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNDIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
-const wmLogoImg = new Image();
-wmLogoImg.src = WM_LOGO_SRC;
-const _wmMeasureCtx = document.createElement('canvas').getContext('2d');
-function measureWmText(text, font){ _wmMeasureCtx.font = font; return _wmMeasureCtx.measureText(text).width; }
-
 /* ── i18n ── */
 let lang = (window.DEFAULT_LANG === 'id') ? 'id' : 'en';
 const LANG = {
@@ -2142,273 +2135,56 @@ function applyPreset(cityKey){
 }
 
 /* ── PNG ── */
-function buildChartPngCanvas(shouldDownload = true) {
-  const src = document.getElementById('chartCanvas');
-  if(!src) return;
-  const dpr = window.devicePixelRatio || 1;
-  const OUT = 3;
-  const chartW = Math.round(src.width / dpr * OUT);
-  const chartH = Math.round(src.height / dpr * OUT);
-  const isLight = document.body.classList.contains('light');
-  const bgColor = isLight ? '#ffffff' : '#0F1728';
-  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
-  const FONT = '"DM Sans", sans-serif';
-
-  // Determine chart title from active graph mode
+// Title + legend metadata for the current chart view, shared by the PNG/SVG/copy
+// exporters. The heavy lifting (canvas/SVG composition, watermark) lives in the
+// shared RVOExport module so the main tool and sensitivity tool export identically.
+function chartExportMeta(){
   const chartTitleMap = {netEquity:'Rent vs Own — Net Equity Over Time', cash:'Rent vs Own — Liquid Cash Over Time', cost:'Rent vs Own — Accumulated Cost Over Time'};
-  const chartTitle = chartTitleMap[activeGraph] || 'Rent vs Own — Financial Comparison';
-
-  // Build legend items directly from series data for reliability
-  const legendItems = getGraphSeries().map(s => ({
-    label: s.label,
-    color: s.key && s.key.includes('RTB') ? cssVar('--line-rtb-own') : cssVar(s.colorVar),
-  }));
-
-  const titleFontPx = Math.round(14 * OUT);
-  const legendFontPx = Math.round(11 * OUT);
-  const titleH = Math.round(40 * OUT);
-  const legendH = legendItems.length ? Math.round(34 * OUT) : 0;
-
-  const tmp = document.createElement('canvas');
-  tmp.width = chartW;
-  tmp.height = chartH + titleH + legendH;
-  const ctx = tmp.getContext('2d');
-
-  ctx.fillStyle = bgColor;
-  ctx.fillRect(0, 0, tmp.width, tmp.height);
-
-  ctx.font = `700 ${titleFontPx}px ${FONT}`;
-  ctx.fillStyle = fgColor;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(chartTitle, tmp.width / 2, titleH / 2);
-
-  ctx.drawImage(src, 0, titleH, chartW, chartH);
-
-  if(legendItems.length){
-    const ly = titleH + chartH;
-    const dotR = Math.round(5 * OUT);
-    const gap = Math.round(7 * OUT);
-    const pad = Math.round(20 * OUT);
-    ctx.font = `500 ${legendFontPx}px ${FONT}`;
-    ctx.textBaseline = 'middle';
-    let totalW = 0;
-    legendItems.forEach((item, i) => {
-      totalW += dotR * 2 + gap + ctx.measureText(item.label).width + (i < legendItems.length - 1 ? pad : 0);
-    });
-    let x = Math.max(Math.round(16 * OUT), (tmp.width - totalW) / 2);
-    const cy = ly + legendH / 2;
-    legendItems.forEach(item => {
-      ctx.fillStyle = item.color;
-      ctx.beginPath();
-      ctx.arc(x + dotR, cy, dotR, 0, Math.PI * 2);
-      ctx.fill();
-      x += dotR * 2 + gap;
-      ctx.fillStyle = fgColor;
-      ctx.textAlign = 'left';
-      ctx.fillText(item.label, x, cy);
-      x += ctx.measureText(item.label).width + pad;
-    });
-  }
-
-  ctx.save();
-  ctx.globalAlpha = 0.22;
-  ctx.font = `500 ${Math.round(11 * OUT)}px ${FONT}`;
-  ctx.fillStyle = '#1a1a1a';
-  ctx.textAlign = 'right';
-  ctx.textBaseline = 'bottom';
-  {
-    const wmText = 'Made using tool.adjiebrotots.com/rentvsownhouse';
-    const wmX = tmp.width - Math.round(12 * OUT);
-    const wmY = tmp.height - Math.round(12 * OUT);
-    const wmTextW = ctx.measureText(wmText).width;
-    const wmLogoSize = Math.round(13 * OUT);
-    if(wmLogoImg.complete && wmLogoImg.naturalWidth){
-      ctx.drawImage(wmLogoImg, wmX - wmTextW - Math.round(4 * OUT) - wmLogoSize, wmY - wmLogoSize + Math.round(2 * OUT), wmLogoSize, wmLogoSize);
-    }
-    ctx.fillText(wmText, wmX, wmY);
-  }
-  ctx.restore();
-
-  if(shouldDownload){
-    const a = document.createElement('a');
-    a.href = tmp.toDataURL('image/png');
-    a.download = 'rent_vs_own_chart.png';
-    document.body.appendChild(a); a.click(); a.remove();
-  }
-  return tmp;
+  return {
+    title: chartTitleMap[activeGraph] || 'Rent vs Own — Financial Comparison',
+    legendItems: getGraphSeries().map(s => ({
+      label: s.label,
+      color: s.key && s.key.includes('RTB') ? cssVar('--line-rtb-own') : cssVar(s.colorVar),
+    })),
+  };
 }
-function downloadChartPng() { buildChartPngCanvas(true); }
-async function copyCanvasPngToClipboard(canvas) {
-  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-  if(!blob) throw new Error('Could not create PNG blob.');
-  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+function downloadChartPng() {
+  const src = document.getElementById('chartCanvas');
+  const m = chartExportMeta();
+  RVOExport.exportChartPNG(src, {title:m.title, legendItems:m.legendItems, filename:'rent_vs_own_chart.png', download:true});
 }
 async function copyChartPng() {
-  try { await copyCanvasPngToClipboard(buildChartPngCanvas(false)); alert('PNG copied to clipboard.'); }
-  catch(err){ alert('PNG copy failed: ' + err.message); }
+  try {
+    const src = document.getElementById('chartCanvas');
+    const m = chartExportMeta();
+    await RVOExport.copyChartPNG(src, {title:m.title, legendItems:m.legendItems});
+    alert('PNG copied to clipboard.');
+  } catch(err){ alert('PNG copy failed: ' + err.message); }
 }
 function downloadChartSvg() {
   const src = document.getElementById('chartCanvas');
-  if(!src) return;
-  const dpr = window.devicePixelRatio || 1;
-  const chartW = Math.round(src.width / dpr);
-  const chartH = Math.round(src.height / dpr);
-  const isLight = document.body.classList.contains('light');
-  const bgColor = isLight ? '#ffffff' : '#0F1728';
-  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
-  const FONT = 'DM Sans, sans-serif';
-  const chartTitleMap = {netEquity:'Rent vs Own — Net Equity Over Time', cash:'Rent vs Own — Liquid Cash Over Time', cost:'Rent vs Own — Accumulated Cost Over Time'};
-  const chartTitle = chartTitleMap[activeGraph] || 'Rent vs Own — Financial Comparison';
-  const legendItems = getGraphSeries().map(s => ({
-    label: s.label,
-    color: s.key && s.key.includes('RTB') ? cssVar('--line-rtb-own') : cssVar(s.colorVar),
-  }));
-  const titleH = 40;
-  const legendH = legendItems.length ? 34 : 0;
-  const svgW = chartW, svgH = chartH + titleH + legendH;
-  const NS = 'http://www.w3.org/2000/svg', xl = 'http://www.w3.org/1999/xlink';
-  const svg = document.createElementNS(NS,'svg');
-  svg.setAttribute('xmlns',NS); svg.setAttribute('xmlns:xlink',xl);
-  svg.setAttribute('width',svgW); svg.setAttribute('height',svgH);
-  svg.setAttribute('viewBox',`0 0 ${svgW} ${svgH}`);
-  const bgRect = document.createElementNS(NS,'rect');
-  bgRect.setAttribute('width',svgW); bgRect.setAttribute('height',svgH); bgRect.setAttribute('fill',bgColor);
-  svg.appendChild(bgRect);
-  const t = document.createElementNS(NS,'text');
-  t.setAttribute('x',svgW/2); t.setAttribute('y',titleH/2);
-  t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','middle');
-  t.setAttribute('font-family',FONT); t.setAttribute('font-size','14'); t.setAttribute('font-weight','700'); t.setAttribute('fill',fgColor);
-  t.textContent = chartTitle; svg.appendChild(t);
-  const img = document.createElementNS(NS,'image');
-  img.setAttribute('x',0); img.setAttribute('y',titleH);
-  img.setAttribute('width',chartW); img.setAttribute('height',chartH);
-  img.setAttributeNS(xl,'href',src.toDataURL('image/png'));
-  svg.appendChild(img);
-  if(legendItems.length){
-    const dotR=5, gap=7, pad=20;
-    const cy = titleH + chartH + legendH/2;
-    const mc = document.createElement('canvas').getContext('2d');
-    mc.font = '500 11px DM Sans, sans-serif';
-    const totalW = legendItems.reduce((s,item,i) => s + dotR*2 + gap + mc.measureText(item.label).width + (i<legendItems.length-1?pad:0), 0);
-    let x = Math.max(16, (svgW - totalW) / 2);
-    legendItems.forEach(item => {
-      const c = document.createElementNS(NS,'circle');
-      c.setAttribute('cx',x+dotR); c.setAttribute('cy',cy); c.setAttribute('r',dotR); c.setAttribute('fill',item.color);
-      svg.appendChild(c); x += dotR*2 + gap;
-      const lt = document.createElementNS(NS,'text');
-      lt.setAttribute('x',x); lt.setAttribute('y',cy);
-      lt.setAttribute('dominant-baseline','middle'); lt.setAttribute('font-family',FONT);
-      lt.setAttribute('font-size','11'); lt.setAttribute('font-weight','500'); lt.setAttribute('fill',fgColor);
-      lt.textContent = item.label; svg.appendChild(lt);
-      x += mc.measureText(item.label).width + pad;
-    });
-  }
-  const wm = document.createElementNS(NS,'text');
-  wm.setAttribute('x',svgW-12); wm.setAttribute('y',svgH-12);
-  wm.setAttribute('text-anchor','end'); wm.setAttribute('dominant-baseline','auto');
-  wm.setAttribute('font-family',FONT); wm.setAttribute('font-size','11');
-  wm.setAttribute('font-weight','500'); wm.setAttribute('fill','#1a1a1a'); wm.setAttribute('opacity','0.22');
-  wm.textContent = 'Made using tool.adjiebrotots.com/rentvsownhouse'; svg.appendChild(wm);
-  const wmLogoSize = 13;
-  const wmTextW = measureWmText(wm.textContent, '500 11px ' + FONT);
-  const wmLogo = document.createElementNS(NS,'image');
-  wmLogo.setAttribute('href', WM_LOGO_SRC);
-  wmLogo.setAttributeNS('http://www.w3.org/1999/xlink','href', WM_LOGO_SRC);
-  wmLogo.setAttribute('width', wmLogoSize);
-  wmLogo.setAttribute('height', wmLogoSize);
-  wmLogo.setAttribute('x', svgW - 12 - wmTextW - 4 - wmLogoSize);
-  wmLogo.setAttribute('y', svgH - 12 - wmLogoSize + 2);
-  wmLogo.setAttribute('opacity', '0.22');
-  svg.appendChild(wmLogo);
-  const xml = '<?xml version="1.0" encoding="utf-8"?>\n' + new XMLSerializer().serializeToString(svg);
-  const blob = new Blob([xml],{type:'image/svg+xml;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download='rent_vs_own_chart.svg';
-  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  const m = chartExportMeta();
+  RVOExport.exportChartSVG(src, {title:m.title, legendItems:m.legendItems, filename:'rent_vs_own_chart.svg'});
 }
 $('pngBtn').addEventListener('click', downloadChartPng);
 $('copyPngBtn').addEventListener('click', copyChartPng);
 $('svgBtn').addEventListener('click', downloadChartSvg);
 
-/* ── CSV ── */
+/* ── CSV ── (built by the shared RVOExport module so the main tool and the
+   sensitivity tool emit byte-identical cashflow CSVs) */
 function downloadCsv(){
-  const na='';
-  let headers,lines,filename;
+  let csv, filename;
   if(activeTable==='own'){
     if(!latestRows.length) return;
-    headers=['Year','Beg_Cash','Ann_Budget','Principal_Exp','Interest_Exp','Ongoing_Exp','Interest_Inc','Surplus','End_Cash','Rate_Pct','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
-    lines=latestRows.map(r=>{
-      const y0=r.year===0;
-      const hasLoanYr = !y0 && ((r.ownYearInterest||0)>0 || (r.ownYearPrincipal||0)>0);
-      return[
-      r.year,
-      y0?na:(r.ownBegCash||0).toFixed(0),
-      y0?na:(r.ownYearBudget||0).toFixed(0),
-      y0?na:(r.ownYearPrincipal||0).toFixed(0),
-      y0?na:(r.ownYearInterest||0).toFixed(0),
-      y0?na:(r.ownYearOngoing||0).toFixed(0),
-      y0?na:(r.ownYearInterestInc||0).toFixed(0),
-      y0?na:(r.ownYearSurplus||0).toFixed(0),
-      (r.ownCash||0).toFixed(0),
-      (hasLoanYr && r.ownRateYr!==undefined)?r.ownRateYr.toFixed(2):na,
-      (r.ownPropValue||0).toFixed(0),
-      (r.ownPrincipal||0).toFixed(0),
-      (r.ownHouseEquity||0).toFixed(0),
-      (r.ownNetEquity||0).toFixed(0),
-      (r.ownAccumCost||0).toFixed(0),
-    ].join(',');});
-    filename='own_cashflow.csv';
+    csv = RVOExport.ownCashflowCSV(latestRows); filename='own_cashflow.csv';
   } else if(activeTable==='rent'){
     if(!latestRows.length) return;
-    headers=['Year','Beg_Cash','Ann_Budget','Rent_Exp','Ongoing_Exp','Interest_Inc','Surplus','End_Cash','Net_Equity','Accum_Cost'];
-    lines=latestRows.map(r=>{const y0=r.year===0;return[
-      r.year,
-      y0?na:(r.rentBegCash||0).toFixed(0),
-      y0?na:(r.ownYearBudget||0).toFixed(0),
-      y0?na:(r.rentRent||0).toFixed(0),
-      y0?na:(r.rentYearOngoing||0).toFixed(0),
-      y0?na:(r.rentYearInterestInc||0).toFixed(0),
-      y0?na:(r.rentYearSurplus||0).toFixed(0),
-      (r.rentCash||0).toFixed(0),
-      (r.rentNetEquity||0).toFixed(0),
-      y0?na:(r.rentAccumCost||0).toFixed(0),
-    ].join(',');});
-    filename='rent_cashflow.csv';
+    csv = RVOExport.rentCashflowCSV(latestRows); filename='rent_cashflow.csv';
   } else if(activeTable==='rtb'){
     if(!cachedRtbRows||!cachedRtbRows.length) return;
-    headers=['Year','Phase','Beg_Cash','Ann_Budget','Total_Exp','Principal_Exp','Interest_Exp','Ongoing_Exp','Interest_Inc','Surplus','End_Cash','Rate_Pct','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
-    lines=cachedRtbRows.map(r=>{
-      const y0=r.year===0, own=r.phase!=='rent';
-      const cash=r.phase==='rent'?r.rtbCash||0:r.rtbCash2||0;
-      const tot=(r.rtbYearPrincipal||0)+(r.rtbYearInterest||0)+(r.rtbYearOngoing||0);
-      const rtbHasLoanYr = own && r.rtbRateYr!==undefined && ((r.rtbYearInterest||0)>0 || (r.rtbYearPrincipal||0)>0);
-      return[
-        r.year, r.phase,
-        y0?na:(r.rtbBegCash||0).toFixed(0),
-        y0?na:(r.rtbYearBudget||0).toFixed(0),
-        y0?na:tot.toFixed(0),
-        (y0||!own)?na:(r.rtbYearPrincipal||0).toFixed(0),
-        (y0||!own)?na:(r.rtbYearInterest||0).toFixed(0),
-        y0?na:(r.rtbYearOngoing||0).toFixed(0),
-        y0?na:(r.rtbYearInterestInc||0).toFixed(0),
-        y0?na:(r.rtbYearSurplus||0).toFixed(0),
-        cash.toFixed(0),
-        rtbHasLoanYr?r.rtbRateYr.toFixed(2):na,
-        (y0||!own)?na:(r.rtbPropValue||0).toFixed(0),
-        (y0||!own)?na:(r.rtbPrincipal||0).toFixed(0),
-        (y0||!own)?na:(r.rtbHouseEquity||0).toFixed(0),
-        (r.rtbNetEquity||0).toFixed(0),
-        y0?na:(r.rtbAccumCost||0).toFixed(0),
-      ].join(',');
-    });
-    filename='rent_then_buy_cashflow.csv';
+    csv = RVOExport.rtbCashflowCSV(cachedRtbRows); filename='rent_then_buy_cashflow.csv';
   } else { return; }
-  const csv='# Made using tool.adjiebrotots.com/rentvsownhouse\n'+[headers.join(','),...lines].join('\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
-  a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+  RVOExport.downloadCSV(filename, csv);
 }
 
 /* ── DETAILED MORTGAGE MODE UI ── */
