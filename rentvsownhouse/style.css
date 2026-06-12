@@ -58,6 +58,30 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 .radio-opt input[type=radio]{margin-top:2px;accent-color:var(--accent);flex-shrink:0;}
 .radio-opt-text{font-size:.82rem;line-height:1.45;color:var(--muted);}
 .radio-opt-text strong{color:var(--text);font-weight:700;display:block;margin-bottom:2px;font-size:.86rem;}
+/* Segmented control (Simple / Detailed mortgage mode) */
+.seg-group{display:flex;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;margin-top:4px;}
+.seg-btn{flex:1;background:transparent;border:none;border-radius:7px;padding:7px 14px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;}
+.seg-btn.active{background:var(--accent);color:#fff;}
+.seg-btn:hover:not(.active){color:var(--text);}
+/* Mortgage rate schedule (detailed mode) */
+.rate-periods{display:grid;gap:8px;margin-top:6px;}
+.rate-period-row{background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 10px;display:grid;gap:7px;}
+.rate-period-row.rp-beyond{opacity:.45;}
+.rp-head{display:flex;align-items:center;gap:7px;}
+.rp-years{font-size:.8rem;font-weight:600;color:var(--muted);white-space:nowrap;}
+.rp-years b{color:var(--text);font-family:'DM Mono',monospace;font-weight:600;}
+.rp-head select{flex:1;min-width:0;font-size:.8rem;padding:6px 8px;cursor:pointer;}
+.rate-period-row input[type=number]{background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px;outline:none;text-align:right;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
+.rate-period-row input[type=number]:focus{border-color:var(--accent);}
+.rp-head .rp-to{width:4.4em;flex-shrink:0;}
+.rp-delete{padding:5px 9px;font-size:.75rem;flex-shrink:0;}
+.rp-rates{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.rp-fixed-wrap,.rp-float-wrap{display:inline-flex;align-items:center;gap:6px;}
+.rp-rates input{width:5.2em;}
+.rp-dash{color:var(--muted);}
+.rp-unit{font-size:.78rem;color:var(--muted);}
+.rate-schedule-actions{display:flex;gap:8px;margin-top:8px;}
+.rate-schedule-actions .cagr-btn{flex:1;}
 .cagr-box{background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px;margin-top:8px;display:grid;gap:10px;}
 #cagrRows{display:grid;gap:8px;}
 .cagr-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr) auto;gap:8px;align-items:center;}
