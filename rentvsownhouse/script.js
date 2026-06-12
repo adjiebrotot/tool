@@ -77,6 +77,20 @@ const LANG = {
     btnCalcCAGR: 'Calc CAGR →',
     helpCagrPairs: 'Enter year & price pairs — CAGR will be applied to the House Price Growth slider above.',
     sectionCostsOwning: 'Costs of Owning',
+    labelCostsMode: 'Costs Mode',
+    labelSetupCosts: 'Setup Costs',
+    labelOngoingCostsList: 'Ongoing Costs',
+    btnAddSetupCost: '+ Add Setup Cost',
+    btnAddOngoingCost: '+ Add Ongoing Cost',
+    phCostName: 'Name (optional)',
+    optPerYear: 'per year',
+    optPerMonth: 'per month',
+    optPerWeek: 'per week',
+    optPctBuyPrice: '% of buy price',
+    labelInflation: 'Inflation',
+    helpSetupCostsDetailed: 'One-time costs at purchase. % items are computed on the buy price at purchase time (incl. Rent-Then-Buy).',
+    helpOwnCostsDetailed: 'Fixed amounts grow at their own inflation rate; % items track the property value.',
+    helpRentCostsDetailed: 'Fixed amounts grow at their own inflation rate; % items track the annual rent.',
     labelSetupCost: 'Setup Cost (Stamp Duty, Legal, etc.)',
     optDollar: '$',
     helpSetupCost: 'One-time cost at purchase (added to initial outlay, not loan).',
@@ -261,6 +275,20 @@ const LANG = {
     btnCalcCAGR: 'Hitung CAGR →',
     helpCagrPairs: 'Masukkan pasangan tahun & harga — CAGR akan diterapkan pada slider Kenaikan Harga Properti di atas.',
     sectionCostsOwning: 'Biaya Kepemilikan',
+    labelCostsMode: 'Mode Biaya',
+    labelSetupCosts: 'Biaya Awal Pembelian',
+    labelOngoingCostsList: 'Biaya Rutin',
+    btnAddSetupCost: '+ Tambah Biaya Awal',
+    btnAddOngoingCost: '+ Tambah Biaya Rutin',
+    phCostName: 'Nama (opsional)',
+    optPerYear: 'per tahun',
+    optPerMonth: 'per bulan',
+    optPerWeek: 'per minggu',
+    optPctBuyPrice: '% dari harga beli',
+    labelInflation: 'Inflasi',
+    helpSetupCostsDetailed: 'Biaya satu kali saat pembelian. Item % dihitung dari harga beli pada saat transaksi (termasuk Sewa Dulu, Beli Kemudian).',
+    helpOwnCostsDetailed: 'Jumlah tetap tumbuh sesuai inflasinya masing-masing; item % mengikuti nilai properti.',
+    helpRentCostsDetailed: 'Jumlah tetap tumbuh sesuai inflasinya masing-masing; item % mengikuti sewa tahunan.',
     labelSetupCost: 'Biaya Awal Pembelian (BPHTB, Notaris, dll.)',
     optDollar: '$',
     helpSetupCost: 'Biaya satu kali saat pembelian (ditambahkan ke modal awal, bukan pinjaman).',
@@ -507,6 +535,11 @@ const DEFAULTS = {
   currencySymbol: '$',
   mortgageMode: 'simple',
   ratePeriods: null,
+  ownCostsMode: 'simple',
+  rentCostsMode: 'simple',
+  ownSetupCosts: null,
+  ownOngoingCosts: null,
+  rentOngoingCosts: null,
 };
 
 /* ── CITY PRESETS ──
@@ -874,6 +907,49 @@ function scheduleHasFloat(){
   return getOwnRateNorm().some(p => p.max - p.min > 1e-9);
 }
 
+/* ── COST ITEMS (Costs of Owning / Renting — simple & detailed modes) ──
+   Detailed mode stores lists of cost items; simple mode is normalised to a
+   single-item list so the engine has exactly one code path.
+   Setup item basis:   'fixed' ($ at purchase) | 'pct' (% of buy price at purchase time).
+   Ongoing item basis: 'weekly'|'monthly'|'yearly' ($ amount, inflated p.a. by its
+   own inflation rate) | 'pct' (own: % of property value; rent: % of annual rent). */
+function getOwnSetupItems(){
+  if(S.ownCostsMode==='detailed' && Array.isArray(S.ownSetupCosts) && S.ownSetupCosts.length) return S.ownSetupCosts;
+  return [{amount:S.setupCost, basis:S.setupCostType==='pct' ? 'pct' : 'fixed'}];
+}
+function getOwnOngoingItems(){
+  if(S.ownCostsMode==='detailed' && Array.isArray(S.ownOngoingCosts) && S.ownOngoingCosts.length) return S.ownOngoingCosts;
+  return [{amount:S.ownOngoingCost, basis:S.ownOngoingCostType==='pct' ? 'pct' : S.ownOngoingCostFreq, inflation:S.ownOngoingInflation}];
+}
+function getRentOngoingItems(){
+  if(S.rentCostsMode==='detailed' && Array.isArray(S.rentOngoingCosts) && S.rentOngoingCosts.length) return S.rentOngoingCosts;
+  return [{amount:S.rentOngoingCost, basis:S.rentOngoingCostType==='pct' ? 'pct' : S.rentOngoingCostFreq, inflation:S.rentOngoingInflation}];
+}
+// Total one-time setup cost for a purchase at `price` (% items scale with price).
+function setupCostTotal(price){
+  return getOwnSetupItems().reduce((t,it)=>{
+    const amt = Number(it.amount)||0;
+    return t + (it.basis==='pct' ? price*amt/100 : amt);
+  }, 0);
+}
+// Yearly ongoing cost of owning for year `yr`, given the property value at the
+// start of that year (% items track the value; $ items inflate from year 1).
+function ownOngoingYearlyAt(yr, propValue){
+  return getOwnOngoingItems().reduce((t,it)=>{
+    const amt = Number(it.amount)||0;
+    if(it.basis==='pct') return t + propValue*amt/100;
+    return t + toYearly(amt, it.basis) * Math.pow(1+(Number(it.inflation)||0)/100, yr-1);
+  }, 0);
+}
+// Yearly ongoing cost of renting for year `yr`, given that year's monthly rent.
+function rentOngoingYearlyAt(yr, rentMonthly){
+  return getRentOngoingItems().reduce((t,it)=>{
+    const amt = Number(it.amount)||0;
+    if(it.basis==='pct') return t + rentMonthly*12*amt/100;
+    return t + toYearly(amt, it.basis) * Math.pow(1+(Number(it.inflation)||0)/100, yr-1);
+  }, 0);
+}
+
 /* ── READ INPUTS ── */
 function readInputs(){
   S.propertyPrice   = Math.max(50000, parseNum($('propertyPrice').value)||DEFAULTS.propertyPrice);
@@ -912,6 +988,14 @@ function readInputs(){
     // Capture any in-progress edits to the rate schedule
     if(document.querySelector('#ratePeriodRows .rate-period-row')) readRatePeriodsFromDOM();
   }
+  // Capture any in-progress edits to detailed cost item lists
+  if(S.ownCostsMode==='detailed'){
+    if(document.querySelector('#ownSetupCostRows .cost-item-row'))   readCostItemsFromDOM('ownSetup');
+    if(document.querySelector('#ownOngoingCostRows .cost-item-row')) readCostItemsFromDOM('ownOngoing');
+  }
+  if(S.rentCostsMode==='detailed'){
+    if(document.querySelector('#rentOngoingCostRows .cost-item-row')) readCostItemsFromDOM('rentOngoing');
+  }
   currentCurrencySymbol = S.currencySymbol;
   updateCurrencyPrefixes();
 }
@@ -921,6 +1005,12 @@ function updateCurrencyPrefixes(){
   ['initialCashPrefix','monthlyBudgetPrefix','propertyPricePrefix','setupCostPrefix','ownOngoingCostPrefix','rentAmountPrefix','rentOngoingCostPrefix'].forEach(id=>{
     const el = $(id);
     if(el) el.textContent = sym;
+  });
+  // Dynamic cost-item rows: $ items show the currency symbol, % items show %
+  document.querySelectorAll('.cost-item-row').forEach(row=>{
+    const pre = row.querySelector('.prefix');
+    const basis = row.querySelector('.ci-basis')?.value;
+    if(pre) pre.textContent = basis==='pct' ? '%' : sym;
   });
 }
 
@@ -960,7 +1050,7 @@ function refreshLabels(){
   }
 
   // Initial cash: compute required and show live feedback
-  const setupCostDollarUI = S.setupCostType==='pct' ? S.propertyPrice*S.setupCost/100 : S.setupCost;
+  const setupCostDollarUI = setupCostTotal(S.propertyPrice);
   const dpDollar = S.propertyPrice * S.downPaymentPct/100;
   const required = dpDollar + setupCostDollarUI;
   const cashWarn = $('initialCashWarn');
@@ -981,16 +1071,14 @@ function refreshLabels(){
     cashWarn.style.display='none';
     // Show auto initialCash: may be higher if RTB future purchase exceeds current required
     const rtbPriceUI = S.rtbEnabled ? (S.propertyPrice * Math.pow(1+S.houseGrowth/100, S.rtbBuyYear)) : 0;
-    const rtbSetupUI = S.rtbEnabled ? (S.setupCostType==='pct' ? rtbPriceUI*S.setupCost/100 : S.setupCost) : 0;
+    const rtbSetupUI = S.rtbEnabled ? setupCostTotal(rtbPriceUI) : 0;
     const rtbDPUI    = S.rtbEnabled ? rtbPriceUI * S.downPaymentPct/100 : 0;
     const rtbFutReq  = rtbDPUI + rtbSetupUI;
     const pvRTB      = (S.rtbEnabled && (1+S.riskFreeRate/100) > 0)
       ? rtbFutReq / Math.pow(1+S.riskFreeRate/100, S.rtbBuyYear)
       : rtbFutReq;
     const rentMonthlyUI     = toMonthly(S.rentAmount, S.rentFreq);
-    const rentOngoingUI     = S.rentOngoingCostType==='pct'
-      ? rentMonthlyUI * 12 * S.rentOngoingCost/100   // % of annual rent
-      : toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
+    const rentOngoingUI     = rentOngoingYearlyAt(1, rentMonthlyUI);
     const rentFirstYearUI   = rentMonthlyUI * 12 + rentOngoingUI;
     const autoIC = Math.max(required, rentFirstYearUI, pvRTB);
     if(S.rtbEnabled && pvRTB > required){
@@ -1009,8 +1097,8 @@ function computeModel(variant){
   const loan = P - dp;
   const rfr  = S.riskFreeRate/100;
 
-  // Setup cost
-  const setupCostDollar = S.setupCostType==='pct' ? P*S.setupCost/100 : S.setupCost;
+  // Setup cost (sum of all setup items — simple mode is a single item)
+  const setupCostDollar = setupCostTotal(P);
 
   // Mortgage rate schedule (Buy scenario, loan starts day 0).
   // Simple mode = single fixed-rate period; detailed mode = user-defined periods.
@@ -1024,9 +1112,7 @@ function computeModel(variant){
   const rentMonthly0 = toMonthly(S.rentAmount, S.rentFreq);
 
   // ── Year-1 ongoing costs (needed for auto-budget baseline) ──
-  const rentOngoingYearly0 = S.rentOngoingCostType==='pct'
-    ? rentMonthly0 * 12 * S.rentOngoingCost/100   // % of annual rent (not property value)
-    : toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
+  const rentOngoingYearly0 = rentOngoingYearlyAt(1, rentMonthly0);
 
   // ── Pre-calculate RTB mortgage (if RTB enabled) ──
   // RTB property price at buyYear, DP%, setup cost, loan, and monthly payment
@@ -1035,9 +1121,7 @@ function computeModel(variant){
   const h            = S.houseGrowth/100;
   const ri           = S.rentInflation/100;
   const rtbPropPrice0 = rtbEnabled ? P * Math.pow(1+h, buyYear) : 0;
-  const rtbSetup0     = rtbEnabled
-    ? (S.setupCostType==='pct' ? rtbPropPrice0 * S.setupCost/100 : S.setupCost)
-    : 0;
+  const rtbSetup0     = rtbEnabled ? setupCostTotal(rtbPropPrice0) : 0;
   const rtbDP0        = rtbEnabled ? rtbPropPrice0 * S.downPaymentPct/100 : 0;
   const rtbLoan0      = rtbEnabled ? Math.max(0, rtbPropPrice0 - rtbDP0) : 0;
   // RTB schedule is indexed by mortgage year (year 1 = first year after purchase)
@@ -1047,38 +1131,20 @@ function computeModel(variant){
 
   function ownRequiredMonthly(year){
     const propValueAtYearStart = P * Math.pow(1+h, Math.max(0, year-1));
-    let ownOngoingYearly = toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
-    if(S.ownOngoingCostType==='pct'){
-      ownOngoingYearly = propValueAtYearStart * S.ownOngoingCost/100;
-    } else {
-      ownOngoingYearly *= Math.pow(1 + S.ownOngoingInflation/100, year-1);
-    }
-    const ownOngoingMonthly = ownOngoingYearly / 12;
+    const ownOngoingMonthly = ownOngoingYearlyAt(year, propValueAtYearStart) / 12;
     return ownPayAt(year) + ownOngoingMonthly;
   }
 
   function rentRequiredMonthly(year){
     const currentRentMonthly = rentMonthly0 * Math.pow(1+ri, year-1);
-    let rentOngoingYearly = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
-    if(S.rentOngoingCostType==='pct'){
-      rentOngoingYearly = currentRentMonthly * 12 * S.rentOngoingCost/100;
-    } else {
-      rentOngoingYearly *= Math.pow(1 + S.rentOngoingInflation/100, year-1);
-    }
-    return currentRentMonthly + (rentOngoingYearly / 12);
+    return currentRentMonthly + (rentOngoingYearlyAt(year, currentRentMonthly) / 12);
   }
 
   function rtbRequiredMonthly(year){
     if(!rtbEnabled) return 0;
     if(year <= buyYear) return rentRequiredMonthly(year);
     const propValueAtYearStart = P * Math.pow(1+h, Math.max(0, year-1));
-    let ownOngoingYearly = toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
-    if(S.ownOngoingCostType==='pct'){
-      ownOngoingYearly = propValueAtYearStart * S.ownOngoingCost/100;
-    } else {
-      ownOngoingYearly *= Math.pow(1 + S.ownOngoingInflation/100, year-1);
-    }
-    const ownOngoingMonthly = ownOngoingYearly / 12;
+    const ownOngoingMonthly = ownOngoingYearlyAt(year, propValueAtYearStart) / 12;
     const yearsOwned = year - buyYear;
     const rtbMortgageMonthly = yearsOwned >= 1
       ? rtbSched0[Math.min(yearsOwned, rtbSched0.length)-1].monthlyPayment
@@ -1163,21 +1229,8 @@ function computeModel(variant){
     const currentRentMonthly = rentMonthly0 * Math.pow(1+ri, yr-1);
 
     // Ongoing costs — monthly equivalent; own uses PREVIOUS year prop value (before appreciation)
-    let ownOngoingYearly = toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
-    if(S.ownOngoingCostType==='pct'){
-      ownOngoingYearly = ownPropValue * S.ownOngoingCost/100;
-    } else {
-      ownOngoingYearly *= Math.pow(1 + S.ownOngoingInflation/100, yr-1);
-    }
-    const ownOngoingMonthly = ownOngoingYearly / 12;
-
-    let rentOngoingYearly = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
-    if(S.rentOngoingCostType==='pct'){
-      rentOngoingYearly = currentRentMonthly * 12 * S.rentOngoingCost/100; // % of annual rent
-    } else {
-      rentOngoingYearly *= Math.pow(1 + S.rentOngoingInflation/100, yr-1);
-    }
-    const rentOngoingMonthly = rentOngoingYearly / 12;
+    const ownOngoingMonthly  = ownOngoingYearlyAt(yr, ownPropValue) / 12;
+    const rentOngoingMonthly = rentOngoingYearlyAt(yr, currentRentMonthly) / 12;
 
     // Manual budget for this year (grows p.a. only if manually set)
     const manualMonthlyBudget = budgetIsManual
@@ -1369,13 +1422,7 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
 
     if(yr <= buyYear){
       // ─── Phase 1: still renting ───
-      let rentOngoingYearly = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
-      if(S.rentOngoingCostType==='pct'){
-        rentOngoingYearly = currentRentMonthly * 12 * S.rentOngoingCost/100;
-      } else {
-        rentOngoingYearly *= Math.pow(1 + S.rentOngoingInflation/100, yr-1);
-      }
-      const rentOngoingMonthly = rentOngoingYearly / 12;
+      const rentOngoingMonthly = rentOngoingYearlyAt(yr, currentRentMonthly) / 12;
 
       const rtbBegCashP1 = rtbCash;
       let rtbP1YearSurplus = 0;
@@ -1403,9 +1450,7 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
         // ─── TRANSITION: BUY AT END OF buyYear via standard mortgage ───
         // Property price has grown for buyYear years at RPPI
         rtbPropValueAtBuy = P0 * Math.pow(1+h, buyYear);
-        rtbSetupCostAtBuy = S.setupCostType==='pct'
-          ? rtbPropValueAtBuy * S.setupCost/100
-          : S.setupCost;
+        rtbSetupCostAtBuy = setupCostTotal(rtbPropValueAtBuy);
 
         // Down payment = same % as configured, applied to the new (higher) property price
         const rtbDPAtBuy = rtbPropValueAtBuy * S.downPaymentPct / 100;
@@ -1467,13 +1512,7 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
 
     } else {
       // ─── Phase 2: now owning (post-buy) ───
-      let ownOngoingYearly = toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
-      if(S.ownOngoingCostType==='pct'){
-        ownOngoingYearly = rtbPropValue * S.ownOngoingCost/100;
-      } else {
-        ownOngoingYearly *= Math.pow(1 + S.ownOngoingInflation/100, yr-1);
-      }
-      const ownOngoingMonthly = ownOngoingYearly / 12;
+      const ownOngoingMonthly = ownOngoingYearlyAt(yr, rtbPropValue) / 12;
 
       // Mortgage year (1 = first year after purchase) → schedule rate & payment
       const rtbMY    = yr - buyYear;
@@ -1763,10 +1802,9 @@ function updateKPIs(state){
 
   const warn = $('warningBanner');
   if(S.monthlyBudget > 0){
-    // Rough year-1 ongoing costs for warning purposes
-    const setupCostDollarWarn = S.setupCostType==='pct' ? S.propertyPrice*S.setupCost/100 : S.setupCost;
-    const ownOngoingWarn = (toYearly(S.ownOngoingCost, S.ownOngoingCostFreq))/12;
-    const rentOngoingWarn = (toYearly(S.rentOngoingCost, S.rentOngoingCostFreq))/12;
+    // Year-1 ongoing costs for warning purposes
+    const ownOngoingWarn  = ownOngoingYearlyAt(1, S.propertyPrice)/12;
+    const rentOngoingWarn = rentOngoingYearlyAt(1, rentMonthly0)/12;
     const ownTotalWarn  = mPayment + ownOngoingWarn;
     const rentTotalWarn = rentMonthly0 + rentOngoingWarn;
     if(monthlyBudget < ownTotalWarn && monthlyBudget < rentTotalWarn){
@@ -2048,6 +2086,7 @@ function resetAll(){
   $('radioPI').classList.add('selected'); $('radioIO').classList.remove('selected');
   updateMortgageModeUI();
   renderRatePeriodRows();
+  updateCostsModeUI();
   updateCagrToolVisibility(false);
   rerender();
 }
@@ -2088,11 +2127,17 @@ function applyPreset(cityKey){
   document.querySelectorAll('input[name="mortgageType"]').forEach(r=>{ r.checked = r.value===p.mortgageType; });
   $('radioPI').classList.toggle('selected', p.mortgageType==='pi');
   $('radioIO').classList.toggle('selected', p.mortgageType==='io');
-  // City presets use the simple single-rate mortgage
+  // City presets use the simple single-rate mortgage and simple costs
   S.mortgageMode = 'simple';
   S.ratePeriods = null;
+  S.ownCostsMode = 'simple';
+  S.rentCostsMode = 'simple';
+  S.ownSetupCosts = null;
+  S.ownOngoingCosts = null;
+  S.rentOngoingCosts = null;
   updateMortgageModeUI();
   renderRatePeriodRows();
+  updateCostsModeUI();
 
   document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.city===cityKey));
   updateCagrToolVisibility(false);
@@ -2504,6 +2549,149 @@ function deleteRatePeriod(idx){
   rerender();
 }
 
+/* ── DETAILED COSTS MODE UI ── */
+// Config for the three editable cost lists. kind 'setup' items have basis
+// fixed|pct; 'ongoing' items have basis weekly|monthly|yearly|pct + inflation.
+const COST_LISTS = {
+  ownSetup:    {rowsId:'ownSetupCostRows',   stateKey:'ownSetupCosts',   kind:'setup',   pctKey:'optPctBuyPrice'},
+  ownOngoing:  {rowsId:'ownOngoingCostRows', stateKey:'ownOngoingCosts', kind:'ongoing', pctKey:'optPctPropertyValue'},
+  rentOngoing: {rowsId:'rentOngoingCostRows',stateKey:'rentOngoingCosts',kind:'ongoing', pctKey:'optPctAnnualRent'},
+};
+
+// Seed detailed lists from the current simple inputs the first time the user
+// switches modes, so results are identical at the moment of switching.
+function defaultCostItems(key){
+  if(key==='ownSetup')   return [{name:'', amount:S.setupCost, basis:S.setupCostType==='pct'?'pct':'fixed'}];
+  if(key==='ownOngoing') return [{name:'', amount:S.ownOngoingCost, basis:S.ownOngoingCostType==='pct'?'pct':S.ownOngoingCostFreq, inflation:S.ownOngoingInflation}];
+  return [{name:'', amount:S.rentOngoingCost, basis:S.rentOngoingCostType==='pct'?'pct':S.rentOngoingCostFreq, inflation:S.rentOngoingInflation}];
+}
+
+function ensureDetailedCostLists(side){
+  const keys = side==='own' ? ['ownSetup','ownOngoing'] : ['rentOngoing'];
+  keys.forEach(key=>{
+    const sk = COST_LISTS[key].stateKey;
+    if(!Array.isArray(S[sk]) || !S[sk].length) S[sk] = defaultCostItems(key);
+  });
+}
+
+function updateCostsModeUI(){
+  const ownDetailed  = S.ownCostsMode === 'detailed';
+  const rentDetailed = S.rentCostsMode === 'detailed';
+  document.querySelectorAll('#ownCostsModeGroup .seg-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.val === (ownDetailed ? 'detailed' : 'simple'));
+  });
+  document.querySelectorAll('#rentCostsModeGroup .seg-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.val === (rentDetailed ? 'detailed' : 'simple'));
+  });
+  $('ownCostsSimple').style.display    = ownDetailed ? 'none' : '';
+  $('ownCostsDetailed').style.display  = ownDetailed ? '' : 'none';
+  $('rentCostsSimple').style.display   = rentDetailed ? 'none' : '';
+  $('rentCostsDetailed').style.display = rentDetailed ? '' : 'none';
+}
+
+function buildCostItemRow(key, item, idx, count){
+  const cfg = COST_LISTS[key];
+  const row = document.createElement('div');
+  row.className = 'cost-item-row';
+  row.dataset.idx = idx;
+  const isPct = item.basis === 'pct';
+  const sym = moneySymbol();
+  const basisOpts = cfg.kind === 'setup'
+    ? [['fixed', sym], ['pct', T(cfg.pctKey)]]
+    : [['yearly', T('optPerYear')], ['monthly', T('optPerMonth')], ['weekly', T('optPerWeek')], ['pct', T(cfg.pctKey)]];
+  const optsHtml = basisOpts.map(([v,l])=>`<option value="${v}"${item.basis===v?' selected':''}>${l}</option>`).join('');
+  const inflHtml = cfg.kind === 'ongoing' ? `
+    <div class="ci-line ci-infl-wrap" style="${isPct?'display:none':''}">
+      <span class="ci-infl-label">${T('labelInflation')}</span>
+      <input type="number" class="ci-infl" min="0" max="30" step="0.1" value="${Number(item.inflation)||0}"/>
+      <span class="rp-unit">${T('unitPctPa')}</span>
+    </div>` : '';
+  row.innerHTML = `
+    <div class="ci-head">
+      <input type="text" class="ci-name" placeholder="${T('phCostName')}" value="${String(item.name||'').replace(/"/g,'&quot;')}"/>
+      <button type="button" class="cagr-btn delete ci-delete" ${count<=1?'disabled':''}>${T('btnDelete')}</button>
+    </div>
+    <div class="ci-line">
+      <div class="currency-wrap">
+        <span class="prefix">${isPct?'%':sym}</span>
+        <input class="currency-input money-input ci-amount" type="text" inputmode="numeric" value="${formatMoneyValue(item.amount||0)}"/>
+      </div>
+      <select class="ci-basis">${optsHtml}</select>
+    </div>${inflHtml}`;
+  return row;
+}
+
+function renderCostItemRows(key){
+  const cfg = COST_LISTS[key];
+  const wrap = $(cfg.rowsId);
+  if(!wrap) return;
+  if(!Array.isArray(S[cfg.stateKey]) || !S[cfg.stateKey].length) S[cfg.stateKey] = defaultCostItems(key);
+  wrap.innerHTML = '';
+  S[cfg.stateKey].forEach((item,idx)=>{
+    wrap.appendChild(buildCostItemRow(key, item, idx, S[cfg.stateKey].length));
+  });
+}
+
+function readCostItemsFromDOM(key){
+  const cfg = COST_LISTS[key];
+  const rows = Array.from(document.querySelectorAll('#'+cfg.rowsId+' .cost-item-row'));
+  if(!rows.length) return;
+  S[cfg.stateKey] = rows.map(row=>{
+    const item = {
+      name:   row.querySelector('.ci-name')?.value || '',
+      amount: Math.max(0, parseNum(row.querySelector('.ci-amount')?.value)),
+      basis:  row.querySelector('.ci-basis')?.value || (cfg.kind==='setup'?'fixed':'yearly'),
+    };
+    if(cfg.kind === 'ongoing') item.inflation = Math.max(0, parseFloatSafe(row.querySelector('.ci-infl')?.value, 0));
+    return item;
+  });
+}
+
+function addCostItem(key){
+  const cfg = COST_LISTS[key];
+  readCostItemsFromDOM(key);
+  if(!Array.isArray(S[cfg.stateKey])) S[cfg.stateKey] = defaultCostItems(key);
+  S[cfg.stateKey].push(cfg.kind==='setup'
+    ? {name:'', amount:0, basis:'fixed'}
+    : {name:'', amount:0, basis:'yearly', inflation:0});
+  renderCostItemRows(key);
+  rerender();
+}
+
+function wireCostListEvents(key){
+  const cfg = COST_LISTS[key];
+  const wrap = $(cfg.rowsId);
+  if(!wrap) return;
+  wrap.addEventListener('click', e=>{
+    const del = e.target.closest('.ci-delete');
+    if(!del) return;
+    readCostItemsFromDOM(key);
+    const idx = parseInt(del.closest('.cost-item-row').dataset.idx);
+    if(S[cfg.stateKey].length <= 1) return;
+    S[cfg.stateKey].splice(idx,1);
+    renderCostItemRows(key);
+    rerender();
+  });
+  wrap.addEventListener('change', e=>{
+    if(e.target.classList.contains('ci-basis')){
+      const row = e.target.closest('.cost-item-row');
+      const pct = e.target.value === 'pct';
+      const pre = row.querySelector('.prefix');
+      if(pre) pre.textContent = pct ? '%' : moneySymbol();
+      const infl = row.querySelector('.ci-infl-wrap');
+      if(infl) infl.style.display = pct ? 'none' : '';
+    }
+    rerender();
+  });
+  wrap.addEventListener('input', e=>{
+    if(e.target.classList.contains('ci-amount')) SharedFmt.liveFormat(e.target, {maxDecimals:2});
+    rerender();
+  });
+  wrap.addEventListener('blur', e=>{
+    if(e.target.classList && e.target.classList.contains('ci-amount')) formatMoneyInput(e.target);
+  }, true);
+}
+
 /* ── CAGR CALCULATOR ── */
 function syncCagrDeleteButtons(){
   const rows = document.querySelectorAll('#cagrRows .cagr-row');
@@ -2599,6 +2787,30 @@ document.querySelectorAll('#mortgageModeGroup .seg-btn').forEach(btn=>{
   });
 });
 
+// Costs mode segmented controls (Simple / Detailed)
+[['ownCostsModeGroup','ownCostsMode','own'],['rentCostsModeGroup','rentCostsMode','rent']].forEach(([groupId, modeKey, side])=>{
+  document.querySelectorAll('#'+groupId+' .seg-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const mode = btn.dataset.val;
+      if(mode === S[modeKey]) return;
+      S[modeKey] = mode;
+      if(mode === 'detailed'){
+        ensureDetailedCostLists(side);
+        if(side==='own'){ renderCostItemRows('ownSetup'); renderCostItemRows('ownOngoing'); }
+        else { renderCostItemRows('rentOngoing'); }
+      }
+      updateCostsModeUI();
+      rerender();
+    });
+  });
+});
+
+// Detailed costs: add items
+$('addOwnSetupCost').addEventListener('click', ()=>addCostItem('ownSetup'));
+$('addOwnOngoingCost').addEventListener('click', ()=>addCostItem('ownOngoing'));
+$('addRentOngoingCost').addEventListener('click', ()=>addCostItem('rentOngoing'));
+Object.keys(COST_LISTS).forEach(wireCostListEvents);
+
 // Rate schedule: add a period
 $('addRatePeriod').addEventListener('click', addRatePeriod);
 
@@ -2672,6 +2884,8 @@ $('langToggle').addEventListener('click',()=>{
   localStorage.setItem('pf-lang', lang);
   applyLang();
   if(S.mortgageMode === 'detailed'){ readRatePeriodsFromDOM(); renderRatePeriodRows(); }
+  if(S.ownCostsMode === 'detailed'){ readCostItemsFromDOM('ownSetup'); readCostItemsFromDOM('ownOngoing'); renderCostItemRows('ownSetup'); renderCostItemRows('ownOngoing'); }
+  if(S.rentCostsMode === 'detailed'){ readCostItemsFromDOM('rentOngoing'); renderCostItemRows('rentOngoing'); }
   if(chartInstance){ chartInstance.destroy(); chartInstance=null; }
   rerender();
 });
@@ -2745,6 +2959,7 @@ syncMoneyInputs();
 syncCagrDeleteButtons();
 updateCagrToolVisibility(false);
 updateMortgageModeUI();
+updateCostsModeUI();
 rerender();
 
 })();

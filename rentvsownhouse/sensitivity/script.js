@@ -57,6 +57,28 @@ const LANG_SENS = {
     pRentOngoingCostFreq: 'Rent Cost Frequency',
     pRentOngoingCostType: 'Rent Cost Type',
     pRentOngoingInflation: 'Rent Cost Inflation',
+    pMortgageMode: 'Mortgage Mode',
+    pOwnCostsMode: 'Own Costs Mode',
+    pRentCostsMode: 'Rent Costs Mode',
+    segSimple: 'Simple',
+    segDetailed: 'Detailed',
+    pRatePeriodN: (k) => `Rate Period ${k}`,
+    pSetupCostN: (k) => `Setup Cost ${k}`,
+    pOwnOngoingN: (k) => `Own Ongoing Cost ${k}`,
+    pRentOngoingN: (k) => `Rent Ongoing Cost ${k}`,
+    btnAddPeriod: '+ Rate Period',
+    btnAddSetupCost: '+ Setup Cost',
+    btnAddOngoingCost: '+ Ongoing Cost',
+    optFixed: 'Fixed',
+    optFloating: 'Floating',
+    uYr: 'Yr',
+    uToYr: 'to yr',
+    lblInfl: 'infl.',
+    optPerYear: '/ yr',
+    optPerMonth: '/ mo',
+    optPerWeek: '/ wk',
+    optPctBuyPrice: '% of buy price',
+    notUsed: 'not used in this scenario',
     uYrs: 'yrs',
     uPctPa: '% p.a.',
     uAuto: '0 = auto',
@@ -126,6 +148,28 @@ const LANG_SENS = {
     pRentOngoingCostFreq: 'Frekuensi Biaya Rutin Sewa',
     pRentOngoingCostType: 'Tipe Biaya Rutin Sewa',
     pRentOngoingInflation: 'Inflasi Biaya Rutin Sewa',
+    pMortgageMode: 'Mode KPR',
+    pOwnCostsMode: 'Mode Biaya Beli',
+    pRentCostsMode: 'Mode Biaya Sewa',
+    segSimple: 'Sederhana',
+    segDetailed: 'Rinci',
+    pRatePeriodN: (k) => `Periode Bunga ${k}`,
+    pSetupCostN: (k) => `Biaya Awal ${k}`,
+    pOwnOngoingN: (k) => `Biaya Rutin Beli ${k}`,
+    pRentOngoingN: (k) => `Biaya Rutin Sewa ${k}`,
+    btnAddPeriod: '+ Periode Bunga',
+    btnAddSetupCost: '+ Biaya Awal',
+    btnAddOngoingCost: '+ Biaya Rutin',
+    optFixed: 'Tetap',
+    optFloating: 'Mengambang',
+    uYr: 'Thn',
+    uToYr: 's.d. thn',
+    lblInfl: 'infl.',
+    optPerYear: '/ thn',
+    optPerMonth: '/ bln',
+    optPerWeek: '/ mgg',
+    optPctBuyPrice: '% dari harga beli',
+    notUsed: 'tidak dipakai di skenario ini',
     uYrs: 'thn',
     uPctPa: '%/thn',
     uAuto: '0 = otomatis',
@@ -165,16 +209,13 @@ function applyLang(){
   }
 }
 
-/* ── PARAMS (grouped with sep dividers) ── */
+/* ── PARAMS (metadata for simple-mode rows) ── */
 const PARAMS = [
-  {type:'sep', sepKey:'sepGeneral'},
   {key:'horizon',              labelKey:'pHorizon',              type:'integer',  unitKey:'uYrs',        min:1,   max:60,  step:1,    tip:'horizon'},
   {key:'riskFreeRate',         labelKey:'pRiskFreeRate',         type:'percent',  unitKey:'uPctPa',      min:0,   max:25,  step:0.05, tip:'riskFreeRate'},
   {key:'initialCash',          labelKey:'pInitialCash',          type:'currency', unitKey:'uAuto',       min:0,            step:10000,tip:'initialCash'},
   {key:'monthlyBudget',        labelKey:'pMonthlyBudget',        type:'currency', unitKey:'uAuto',       min:0,            step:100,  tip:'monthlyBudget'},
   {key:'monthlyBudgetIncrease',labelKey:'pMonthlyBudgetIncrease',type:'percent',  unitKey:'uPctPa',      min:0,   max:25,  step:0.1,  tip:'monthlyBudgetIncrease'},
-
-  {type:'sep', sepKey:'sepOwn'},
   {key:'propertyPrice',        labelKey:'pPropertyPrice',        type:'currency',                        min:50000,        step:10000,tip:'propertyPrice'},
   {key:'downPaymentPct',       labelKey:'pDownPaymentPct',       type:'percent',  unitKey:'uPctOfPrice', min:0,   max:99,  step:0.5,  tip:'downPaymentPct'},
   {key:'mortgageType',         labelKey:'pMortgageType',         type:'select',   options:[{v:'pi',lk:'optPI'},{v:'io',lk:'optIO'}], tip:'mortgageType'},
@@ -188,8 +229,6 @@ const PARAMS = [
   {key:'ownOngoingCostType',   labelKey:'pOwnOngoingCostType',   type:'select',   options:[{v:'dollar',lk:'optFixedDollar'},{v:'pct',lk:'optPctPropertyValue'}], subgroup:'own-cost'},
   {key:'ownOngoingInflation',  labelKey:'pOwnOngoingInflation',  type:'percent',  unitKey:'uPctPa',      min:0,   max:15,  step:0.1,  tip:'ownOngoingInflation'},
   {key:'costInterestOnly',     labelKey:'pCostInterestOnly',     type:'boolean',                                                      tip:'costInterestOnly'},
-
-  {type:'sep', sepKey:'sepRent'},
   {key:'rentAmount',           labelKey:'pRentAmount',           type:'currency',                        min:0,            step:50,   tip:'rentAmount'},
   {key:'rentFreq',             labelKey:'pRentFreq',             type:'select',   options:[{v:'monthly',lk:'optMonthly'},{v:'weekly',lk:'optWeekly'},{v:'yearly',lk:'optYearly'}]},
   {key:'rentInflation',        labelKey:'pRentInflation',        type:'percent',  unitKey:'uPctPa',      min:-5,  max:25,  step:0.1,  tip:'rentInflation'},
@@ -198,6 +237,8 @@ const PARAMS = [
   {key:'rentOngoingCostType',  labelKey:'pRentOngoingCostType',  type:'select',   options:[{v:'dollar',lk:'optFixedDollar'},{v:'pct',lk:'optPctAnnualRent'}], subgroup:'rent-cost'},
   {key:'rentOngoingInflation', labelKey:'pRentOngoingInflation', type:'percent',  unitKey:'uPctPa',      min:0,   max:15,  step:0.1,  tip:'rentOngoingInflation'},
 ];
+const PARAM_MAP = {};
+PARAMS.forEach(p=>{ PARAM_MAP[p.key] = p; });
 
 const DEFAULT_SCENARIO = {
   name: 'Base Case',
@@ -227,13 +268,20 @@ const DEFAULT_SCENARIO = {
   monthlyBudget: 0,
   monthlyBudgetIncrease: 0,
   currencySymbol: '$',
+  ratePeriods: null,
+  ownSetupCosts: null,
+  ownOngoingCosts: null,
+  rentOngoingCosts: null,
 };
 
 /* ── STATE ── */
-let scenarios = [Object.assign({}, DEFAULT_SCENARIO), Object.assign({}, DEFAULT_SCENARIO, {name:'Scenario 1'})];
+const cloneScenario = sc => JSON.parse(JSON.stringify(sc));
+let scenarios = [cloneScenario(DEFAULT_SCENARIO), Object.assign(cloneScenario(DEFAULT_SCENARIO), {name:'Scenario 1'})];
 let metric = 'netEquity';
 let viewYear = 30;
 let scenarioResults = [];
+// Section-level Simple/Detailed modes — apply to ALL scenarios
+let modes = { mortgageMode:'simple', ownCostsMode:'simple', rentCostsMode:'simple' };
 
 /* ── UTILITIES ── */
 function parseNum(val){
@@ -274,7 +322,9 @@ function fmtCurrency(v, sym){
 function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escAttr(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-/* ── COMPUTE ENGINE ── */
+/* ── COMPUTE ENGINE ──
+   Ported from the main tool (../script.js) so that identical inputs produce
+   identical results. Pure functions of the state object built by buildStateObj. */
 function calcMonthlyMortgage(principal, annualRate, termYears, type){
   const r = annualRate/100/12, n = termYears*12;
   if(type==='io') return principal*r;
@@ -282,11 +332,115 @@ function calcMonthlyMortgage(principal, annualRate, termYears, type){
   return principal*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
 }
 
+/* Detailed mortgage rate schedule: ordered, consecutive periods
+   [{toYear, type:'fixed'|'floating', rate, rateMin, rateMax}] normalised to
+   [{from, to, min, max}] covering years 1..term (last period auto-extends).
+   Floating periods are evaluated at the band midpoint. */
+function normalizeRatePeriods(periods, term, fallbackRate){
+  const out = [];
+  let from = 1;
+  if(Array.isArray(periods)){
+    for(let i=0; i<periods.length && from<=term; i++){
+      const p = periods[i];
+      let to = Math.round(Number(p.toYear)||0);
+      to = Math.min(term, Math.max(from, to));
+      if(i === periods.length-1) to = term;
+      let min, max;
+      if(p.type==='floating'){
+        const a = Number(p.rateMin)||0, b = Number(p.rateMax)||0;
+        min = Math.min(a,b); max = Math.max(a,b);
+      } else {
+        min = max = Number(p.rate)||0;
+      }
+      out.push({from, to, min, max});
+      from = to+1;
+    }
+  }
+  if(!out.length) out.push({from:1, to:term, min:fallbackRate, max:fallbackRate});
+  out[out.length-1].to = term;
+  return out;
+}
+function rateBandForMortgageYear(norm, my){
+  for(let i=0;i<norm.length;i++){ if(my>=norm[i].from && my<=norm[i].to) return norm[i]; }
+  return norm[norm.length-1];
+}
+/* Per-mortgage-year schedule of {rate, r12, monthlyPayment, principalStart, principalEnd}.
+   When the rate changes, the P&I payment is re-amortised over the remaining term
+   on the outstanding balance (standard variable-rate mortgage accounting). */
+function buildMortgageSchedule(loan, term, type, years, norm){
+  const sched = [];
+  let principal = loan;
+  for(let my=1; my<=years; my++){
+    const band = rateBandForMortgageYear(norm, Math.min(my, term));
+    const rate = (band.min+band.max)/2;
+    const r12 = rate/100/12;
+    let pay = 0;
+    if(principal > 1e-2){
+      if(type==='io') pay = principal * r12;
+      else if(my <= term) pay = calcMonthlyMortgage(principal, rate, term - my + 1, 'pi');
+    }
+    const principalStart = principal;
+    if(type!=='io' && pay > 0){
+      for(let m=0;m<12;m++){
+        if(principal <= 1e-2){ principal = 0; break; }
+        const intr = principal * r12;
+        principal = Math.max(0, principal - Math.min(pay - intr, principal));
+      }
+    }
+    sched.push({rate, r12, monthlyPayment: pay, principalStart, principalEnd: principal});
+  }
+  return sched;
+}
+function getRateNorm(S){
+  if(S.mortgageMode !== 'detailed') return [{from:1, to:S.mortgageTerm, min:S.mortgageRate, max:S.mortgageRate}];
+  return normalizeRatePeriods(S.ratePeriods, S.mortgageTerm, S.mortgageRate);
+}
+
+/* Cost items (simple ↔ detailed): simple mode is normalised to a single-item
+   list so the engine has exactly one code path.
+   Setup basis:   'fixed' ($) | 'pct' (% of buy price).
+   Ongoing basis: 'weekly'|'monthly'|'yearly' ($ inflated p.a.) |
+                  'pct' (own: % of property value; rent: % of annual rent). */
+function getOwnSetupItems(S){
+  if(S.ownCostsMode==='detailed' && Array.isArray(S.ownSetupCosts) && S.ownSetupCosts.length) return S.ownSetupCosts;
+  return [{amount:S.setupCost, basis:S.setupCostType==='pct' ? 'pct' : 'fixed'}];
+}
+function getOwnOngoingItems(S){
+  if(S.ownCostsMode==='detailed' && Array.isArray(S.ownOngoingCosts) && S.ownOngoingCosts.length) return S.ownOngoingCosts;
+  return [{amount:S.ownOngoingCost, basis:S.ownOngoingCostType==='pct' ? 'pct' : S.ownOngoingCostFreq, inflation:S.ownOngoingInflation}];
+}
+function getRentOngoingItems(S){
+  if(S.rentCostsMode==='detailed' && Array.isArray(S.rentOngoingCosts) && S.rentOngoingCosts.length) return S.rentOngoingCosts;
+  return [{amount:S.rentOngoingCost, basis:S.rentOngoingCostType==='pct' ? 'pct' : S.rentOngoingCostFreq, inflation:S.rentOngoingInflation}];
+}
+function setupCostTotal(S, price){
+  return getOwnSetupItems(S).reduce((t,it)=>{
+    const amt = Number(it.amount)||0;
+    return t + (it.basis==='pct' ? price*amt/100 : amt);
+  }, 0);
+}
+function ownOngoingYearlyAt(S, yr, propValue){
+  return getOwnOngoingItems(S).reduce((t,it)=>{
+    const amt = Number(it.amount)||0;
+    if(it.basis==='pct') return t + propValue*amt/100;
+    return t + toYearly(amt, it.basis) * Math.pow(1+(Number(it.inflation)||0)/100, yr-1);
+  }, 0);
+}
+function rentOngoingYearlyAt(S, yr, rentMonthly){
+  return getRentOngoingItems(S).reduce((t,it)=>{
+    const amt = Number(it.amount)||0;
+    if(it.basis==='pct') return t + rentMonthly*12*amt/100;
+    return t + toYearly(amt, it.basis) * Math.pow(1+(Number(it.inflation)||0)/100, yr-1);
+  }, 0);
+}
+
 function buildStateObj(sc){
+  const mortgageDetailed = modes.mortgageMode === 'detailed';
   return {
     propertyPrice:       Math.max(50000, sc.propertyPrice || 800000),
     downPaymentPct:      sc.downPaymentPct ?? 20,
-    mortgageType:        sc.mortgageType || 'pi',
+    // Simple mortgage mode mirrors the main tool: always P&I, cost = interest only
+    mortgageType:        mortgageDetailed ? (sc.mortgageType || 'pi') : 'pi',
     mortgageRate:        sc.mortgageRate ?? 6.0,
     mortgageTerm:        sc.mortgageTerm ?? 30,
     riskFreeRate:        sc.riskFreeRate ?? 4.5,
@@ -298,7 +452,7 @@ function buildStateObj(sc){
     ownOngoingCostFreq:  sc.ownOngoingCostFreq || 'yearly',
     ownOngoingCostType:  sc.ownOngoingCostType || 'dollar',
     ownOngoingInflation: sc.ownOngoingInflation ?? 0,
-    costInterestOnly:    sc.costInterestOnly !== false,
+    costInterestOnly:    mortgageDetailed ? sc.costInterestOnly !== false : true,
     rentAmount:          Math.max(0, sc.rentAmount || 0),
     rentFreq:            sc.rentFreq || 'monthly',
     rentInflation:       sc.rentInflation ?? 3.0,
@@ -310,6 +464,13 @@ function buildStateObj(sc){
     monthlyBudget:       sc.monthlyBudget || 0,
     monthlyBudgetIncrease: sc.monthlyBudgetIncrease || 0,
     currencySymbol:      sc.currencySymbol || '$',
+    mortgageMode:        modes.mortgageMode,
+    ratePeriods:         sc.ratePeriods || null,
+    ownCostsMode:        modes.ownCostsMode,
+    ownSetupCosts:       sc.ownSetupCosts || null,
+    ownOngoingCosts:     sc.ownOngoingCosts || null,
+    rentCostsMode:       modes.rentCostsMode,
+    rentOngoingCosts:    sc.rentOngoingCosts || null,
   };
 }
 
@@ -321,27 +482,22 @@ function computeModel(S){
   const h    = S.houseGrowth/100;
   const ri   = S.rentInflation/100;
 
-  const setupCostDollar = S.setupCostType==='pct' ? P*S.setupCost/100 : S.setupCost;
-  const mPayment = calcMonthlyMortgage(loan, S.mortgageRate, S.mortgageTerm, S.mortgageType);
+  const setupCostDollar = setupCostTotal(S, P);
+  const rateNorm = getRateNorm(S);
+  const schedYears = Math.max(S.horizon, 1);
+  const sched = buildMortgageSchedule(loan, S.mortgageTerm, S.mortgageType, schedYears, rateNorm);
+  const payAt = yr => sched[Math.min(Math.max(yr,1), sched.length)-1].monthlyPayment;
   const rentMonthly0 = toMonthly(S.rentAmount, S.rentFreq);
-  const rentOngoingYearly0 = S.rentOngoingCostType==='pct'
-    ? rentMonthly0*12*S.rentOngoingCost/100
-    : toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
+  const rentOngoingYearly0 = rentOngoingYearlyAt(S, 1, rentMonthly0);
 
   function ownRequiredMonthly(yr){
     const propVal = P * Math.pow(1+h, Math.max(0,yr-1));
-    let oo = toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
-    if(S.ownOngoingCostType==='pct') oo = propVal*S.ownOngoingCost/100;
-    else oo *= Math.pow(1+S.ownOngoingInflation/100, yr-1);
-    const mort = S.mortgageType==='pi' ? (yr<=S.mortgageTerm?mPayment:0) : (loan>0?mPayment:0);
-    return mort + oo/12;
+    const ownOngoingMonthly = ownOngoingYearlyAt(S, yr, propVal) / 12;
+    return payAt(yr) + ownOngoingMonthly;
   }
   function rentRequiredMonthly(yr){
     const cur = rentMonthly0 * Math.pow(1+ri, yr-1);
-    let ro = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
-    if(S.rentOngoingCostType==='pct') ro = cur*12*S.rentOngoingCost/100;
-    else ro *= Math.pow(1+S.rentOngoingInflation/100, yr-1);
-    return cur + ro/12;
+    return cur + (rentOngoingYearlyAt(S, yr, cur) / 12);
   }
 
   const budgetIsManual = S.monthlyBudget > 0;
@@ -367,42 +523,42 @@ function computeModel(S){
     ownAccumCost:setupCostDollar, ownAccumInterest:0,
     rentCash, rentNetEquity:rentCash, rentAccumCost:0 });
 
-  const r12 = S.mortgageRate/100/12;
   const rfm = Math.pow(1+rfr,1/12)-1;
 
   for(let yr=1; yr<=S.horizon; yr++){
+    const yrSched = sched[yr-1];
+    const mPayYr  = yrSched.monthlyPayment;
+    const r12     = yrSched.r12;
     const curRent = rentMonthly0 * Math.pow(1+ri, yr-1);
-    let oo = toYearly(S.ownOngoingCost, S.ownOngoingCostFreq);
-    if(S.ownOngoingCostType==='pct') oo = ownPropValue*S.ownOngoingCost/100;
-    else oo *= Math.pow(1+S.ownOngoingInflation/100, yr-1);
-    const oom = oo/12;
-
-    let ro = toYearly(S.rentOngoingCost, S.rentOngoingCostFreq);
-    if(S.rentOngoingCostType==='pct') ro = curRent*12*S.rentOngoingCost/100;
-    else ro *= Math.pow(1+S.rentOngoingInflation/100, yr-1);
-    const rom = ro/12;
+    const oom = ownOngoingYearlyAt(S, yr, ownPropValue) / 12;
+    const rom = rentOngoingYearlyAt(S, yr, curRent) / 12;
 
     let yearInterest = 0;
     for(let m=0; m<12; m++){
       const hasMort = ownPrincipal > 1e-2;
-      const mMort   = hasMort ? mPayment : 0;
+      const mMort   = hasMort ? mPayYr : 0;
+      const mOwnCost  = mMort + oom;
+      const mRentCost = curRent + rom;
       const mBudget = getMonthlyBudget(yr);
       let mInt = 0;
       if(hasMort){
         mInt = ownPrincipal * r12;
-        const prin = S.mortgageType==='pi' ? Math.min(mPayment-mInt, ownPrincipal) : 0;
+        const prin = S.mortgageType==='pi' ? Math.min(mPayYr-mInt, ownPrincipal) : 0;
         yearInterest += mInt; ownPrincipal = Math.max(0, ownPrincipal-prin); ownAccumInterest += mInt;
       }
-      ownCash  = ownCash  * (1+rfm) + (mBudget - mMort - oom);
-      rentCash = rentCash * (1+rfm) + (mBudget - curRent - rom);
-      ownAccumCost  += S.costInterestOnly ? mInt+oom : mMort+oom;
-      rentAccumCost += curRent + rom;
+      const ownSurplus  = mBudget - mOwnCost;
+      const rentSurplus = mBudget - mRentCost;
+      ownCash  = ownCash  * (1+rfm) + ownSurplus;
+      rentCash = rentCash * (1+rfm) + rentSurplus;
+      ownAccumCost  += S.costInterestOnly ? mInt+oom : mOwnCost;
+      rentAccumCost += mRentCost;
     }
     ownPropValue *= (1+h);
     const ownHouseEquity = ownPropValue - ownPrincipal;
     rows.push({ year:yr, ownPropValue, ownPrincipal, ownCash,
       ownHouseEquity, ownNetEquity:ownHouseEquity+ownCash, ownAccumCost, ownAccumInterest,
-      ownYearInterest:yearInterest, rentCash, rentNetEquity:rentCash, rentAccumCost });
+      ownYearInterest:yearInterest, ownRateYr:yrSched.rate, ownMortgagePayment:mPayYr*12,
+      rentCash, rentNetEquity:rentCash, rentAccumCost });
   }
   return { rows, initialCashUsed, ownCashStart, renterStart };
 }
@@ -424,9 +580,62 @@ function getMetricValues(i){
 function deltaColor(d){ return metric==='cost' ? (d>0?'neg-val':'pos-val') : (d>=0?'pos-val':'neg-val'); }
 const symOf = sc => (sc && sc.currencySymbol) || '$';
 
+/* ── DETAILED MODE: per-scenario list seeding & helpers ── */
+function seedRatePeriods(sc){
+  if(!Array.isArray(sc.ratePeriods) || !sc.ratePeriods.length){
+    const r = sc.mortgageRate ?? 6.0;
+    sc.ratePeriods = [{toYear: sc.mortgageTerm ?? 30, type:'fixed', rate:r, rateMin:r, rateMax:r}];
+  }
+}
+function seedOwnCostItems(sc){
+  if(!Array.isArray(sc.ownSetupCosts) || !sc.ownSetupCosts.length){
+    sc.ownSetupCosts = [{amount:sc.setupCost ?? 0, basis:sc.setupCostType==='pct'?'pct':'fixed'}];
+  }
+  if(!Array.isArray(sc.ownOngoingCosts) || !sc.ownOngoingCosts.length){
+    sc.ownOngoingCosts = [{amount:sc.ownOngoingCost ?? 0, basis:sc.ownOngoingCostType==='pct'?'pct':(sc.ownOngoingCostFreq||'yearly'), inflation:sc.ownOngoingInflation ?? 0}];
+  }
+}
+function seedRentCostItems(sc){
+  if(!Array.isArray(sc.rentOngoingCosts) || !sc.rentOngoingCosts.length){
+    sc.rentOngoingCosts = [{amount:sc.rentOngoingCost ?? 0, basis:sc.rentOngoingCostType==='pct'?'pct':(sc.rentOngoingCostFreq||'yearly'), inflation:sc.rentOngoingInflation ?? 0}];
+  }
+}
+function seedDetailedLists(modeKey){
+  scenarios.forEach(sc=>{
+    if(modeKey==='mortgageMode')  seedRatePeriods(sc);
+    if(modeKey==='ownCostsMode')  seedOwnCostItems(sc);
+    if(modeKey==='rentCostsMode') seedRentCostItems(sc);
+  });
+}
+// Display ranges (Yr from–to) for a scenario's rate periods; last extends to term.
+function periodRanges(list, term){
+  const out = [];
+  let from = 1;
+  (list||[]).forEach((p,i)=>{
+    let to;
+    if(i === list.length-1) to = term;
+    else to = Math.min(term, Math.max(from, Math.round(Number(p.toYear)||from)));
+    out.push({from, to});
+    from = to + 1;
+  });
+  return out;
+}
+function addRatePeriodTo(sc){
+  seedRatePeriods(sc);
+  const term = sc.mortgageTerm ?? 30;
+  const list = sc.ratePeriods;
+  const last = list[list.length-1];
+  const prevTo = list.length>=2 ? (Math.round(Number(list[list.length-2].toYear))||0) : 0;
+  const mid = Math.min(term-1, Math.max(prevTo+1, Math.round((prevTo + term)/2)));
+  list.splice(list.length-1, 0, {
+    toYear: mid, type:'fixed',
+    rate: Number(last.rate)||6, rateMin: Number(last.rateMin)||6, rateMax: Number(last.rateMax)||6,
+  });
+}
+
 /* ── SCENARIO MANAGEMENT ── */
 function addScenario(){
-  const clone = Object.assign({}, scenarios[scenarios.length-1]);
+  const clone = cloneScenario(scenarios[scenarios.length-1]);
   clone.name = 'Scenario '+(scenarios.length+1);
   scenarios.push(clone);
   rerender();
@@ -449,6 +658,120 @@ function getOngoingCostUnit(sc, costKey){
   return symOf(sc);
 }
 
+/* The render-row list: which table rows exist given the current modes and the
+   max list lengths across scenarios. Scenarios with fewer periods/cost items
+   than the max get darkened inactive cells to preserve table integrity. */
+function buildRenderRows(){
+  const rows = [];
+  const P = key => ({type:'param', p:PARAM_MAP[key]});
+  rows.push({type:'sep', sepKey:'sepGeneral'});
+  ['horizon','riskFreeRate','initialCash','monthlyBudget','monthlyBudgetIncrease'].forEach(k=>rows.push(P(k)));
+
+  rows.push({type:'sep', sepKey:'sepOwn'});
+  ['propertyPrice','downPaymentPct'].forEach(k=>rows.push(P(k)));
+  rows.push({type:'mode', modeKey:'mortgageMode', labelKey:'pMortgageMode', tip:'mortgageMode'});
+  if(modes.mortgageMode==='detailed') rows.push(P('mortgageType'));
+  rows.push(P('mortgageTerm'));
+  if(modes.mortgageMode==='simple'){
+    rows.push(P('mortgageRate'));
+  } else {
+    const maxP = Math.max(1, ...scenarios.map(sc=>(sc.ratePeriods||[]).length));
+    for(let k=0;k<maxP;k++) rows.push({type:'period', idx:k, subgroup:'rate-periods', first:k===0});
+    rows.push({type:'addPeriod', subgroup:'rate-periods', last:true});
+    rows.push(P('costInterestOnly'));
+  }
+  rows.push(P('houseGrowth'));
+  rows.push({type:'mode', modeKey:'ownCostsMode', labelKey:'pOwnCostsMode', tip:'ownCostsMode'});
+  if(modes.ownCostsMode==='simple'){
+    ['setupCost','setupCostType','ownOngoingCost','ownOngoingCostFreq','ownOngoingCostType','ownOngoingInflation'].forEach(k=>rows.push(P(k)));
+  } else {
+    const maxS = Math.max(1, ...scenarios.map(sc=>(sc.ownSetupCosts||[]).length));
+    for(let k=0;k<maxS;k++) rows.push({type:'cost', listKey:'ownSetupCosts', kind:'setup', idx:k, labelFn:'pSetupCostN', subgroup:'own-setup', first:k===0});
+    rows.push({type:'addCost', listKey:'ownSetupCosts', btnKey:'btnAddSetupCost', subgroup:'own-setup', last:true});
+    const maxO = Math.max(1, ...scenarios.map(sc=>(sc.ownOngoingCosts||[]).length));
+    for(let k=0;k<maxO;k++) rows.push({type:'cost', listKey:'ownOngoingCosts', kind:'ongoing', idx:k, labelFn:'pOwnOngoingN', subgroup:'own-ongoing', first:k===0});
+    rows.push({type:'addCost', listKey:'ownOngoingCosts', btnKey:'btnAddOngoingCost', subgroup:'own-ongoing', last:true});
+  }
+
+  rows.push({type:'sep', sepKey:'sepRent'});
+  ['rentAmount','rentFreq','rentInflation'].forEach(k=>rows.push(P(k)));
+  rows.push({type:'mode', modeKey:'rentCostsMode', labelKey:'pRentCostsMode', tip:'rentCostsMode'});
+  if(modes.rentCostsMode==='simple'){
+    ['rentOngoingCost','rentOngoingCostFreq','rentOngoingCostType','rentOngoingInflation'].forEach(k=>rows.push(P(k)));
+  } else {
+    const maxR = Math.max(1, ...scenarios.map(sc=>(sc.rentOngoingCosts||[]).length));
+    for(let k=0;k<maxR;k++) rows.push({type:'cost', listKey:'rentOngoingCosts', kind:'ongoing', idx:k, labelFn:'pRentOngoingN', subgroup:'rent-ongoing', first:k===0});
+    rows.push({type:'addCost', listKey:'rentOngoingCosts', btnKey:'btnAddOngoingCost', subgroup:'rent-ongoing', last:true});
+  }
+  return rows;
+}
+
+function tipHtmlFor(tipKey){
+  if(!tipKey) return '';
+  const tipTips = (lang==='id'&&window.RVO_TIPS_ID)?RVO_TIPS_ID:(window.RVO_TIPS_EN||window.RVO_TIPS||{});
+  const tipText = tipTips[tipKey] || '';
+  return tipText ? `<span class="tip-icon" data-tip-key="${escAttr(tipKey)}" data-tip="${escAttr(tipText)}">?</span>` : '';
+}
+
+const INACTIVE_TD = () => `<td class="scen-td inactive-td" title="${escAttr(T('notUsed'))}"></td>`;
+
+function periodCellHTML(sc, si, k){
+  const list = sc.ratePeriods || [];
+  if(k >= list.length) return INACTIVE_TD();
+  const p = list[k];
+  const term = sc.mortgageTerm ?? 30;
+  const ranges = periodRanges(list, term);
+  const {from, to} = ranges[k];
+  const isLast = k === list.length-1;
+  const floating = p.type === 'floating';
+  const beyond = from > term;
+  const ratesHtml = floating
+    ? `<input class="mini-input rp-min" data-si="${si}" data-idx="${k}" type="text" inputmode="decimal" value="${Number(p.rateMin)||0}"/><span class="rp-dash">–</span><input class="mini-input rp-max" data-si="${si}" data-idx="${k}" type="text" inputmode="decimal" value="${Number(p.rateMax)||0}"/><span class="mini-unit">${T('uPctPa')}</span>`
+    : `<input class="mini-input rp-rate" data-si="${si}" data-idx="${k}" type="text" inputmode="decimal" value="${Number(p.rate)||0}"/><span class="mini-unit">${T('uPctPa')}</span>`;
+  return `<td class="scen-td detail-td">
+    <div class="dcell${beyond?' dcell-beyond':''}">
+      <div class="dcell-line">
+        <span class="dcell-yrs">${T('uYr')} ${from}–${to}</span>
+        <select class="mini-select rp-type" data-si="${si}" data-idx="${k}">
+          <option value="fixed"${!floating?' selected':''}>${T('optFixed')}</option>
+          <option value="floating"${floating?' selected':''}>${T('optFloating')}</option>
+        </select>
+        ${isLast?'':`<span class="mini-unit">${T('uToYr')}</span><input class="mini-input rp-to" data-si="${si}" data-idx="${k}" type="text" inputmode="numeric" value="${Math.round(Number(p.toYear)||to)}"/>`}
+        ${list.length>1?`<button class="btn-remove rp-del" data-si="${si}" data-idx="${k}" title="${T('removeTitle')}">✕</button>`:''}
+      </div>
+      <div class="dcell-line">${ratesHtml}</div>
+    </div>
+  </td>`;
+}
+
+function costCellHTML(sc, si, listKey, kind, k){
+  const list = sc[listKey] || [];
+  if(k >= list.length) return INACTIVE_TD();
+  const it = list[k];
+  const isPct = it.basis === 'pct';
+  const sym = symOf(sc);
+  const pctLabel = listKey==='ownSetupCosts' ? T('optPctBuyPrice')
+    : listKey==='ownOngoingCosts' ? T('optPctPropertyValue') : T('optPctAnnualRent');
+  const basisOpts = kind==='setup'
+    ? [['fixed', sym], ['pct', pctLabel]]
+    : [['yearly', sym+' '+T('optPerYear')], ['monthly', sym+' '+T('optPerMonth')], ['weekly', sym+' '+T('optPerWeek')], ['pct', pctLabel]];
+  const optsHtml = basisOpts.map(([v,l])=>`<option value="${v}"${it.basis===v?' selected':''}>${escHtml(l)}</option>`).join('');
+  const amtVal = isPct ? String(Number(it.amount)||0) : addCommas(Number(it.amount)||0);
+  const inflHtml = (kind==='ongoing' && !isPct)
+    ? `<div class="dcell-line"><span class="mini-unit">${T('lblInfl')}</span><input class="mini-input ci-infl" data-si="${si}" data-list="${listKey}" data-idx="${k}" type="text" inputmode="decimal" value="${Number(it.inflation)||0}"/><span class="mini-unit">${T('uPctPa')}</span></div>`
+    : '';
+  return `<td class="scen-td detail-td">
+    <div class="dcell">
+      <div class="dcell-line">
+        <input class="mini-input mini-amt ci-amt" data-si="${si}" data-list="${listKey}" data-idx="${k}" type="text" inputmode="numeric" value="${escAttr(amtVal)}"/>
+        <select class="mini-select ci-basis" data-si="${si}" data-list="${listKey}" data-idx="${k}">${optsHtml}</select>
+        ${list.length>1?`<button class="btn-remove ci-del" data-si="${si}" data-list="${listKey}" data-idx="${k}" title="${T('removeTitle')}">✕</button>`:''}
+      </div>
+      ${inflHtml}
+    </div>
+  </td>`;
+}
+
 function buildTableHTML(){
   const n = scenarios.length;
   const colCount = n + 3;
@@ -465,26 +788,59 @@ function buildTableHTML(){
     </div></th>`;
   }).join('');
 
+  const renderRows = buildRenderRows();
   let bodyHtml = '';
-  const isDynamicUnit = key => key==='rentOngoingCost' || key==='ownOngoingCost';
-  PARAMS.forEach((p,pi)=>{
-    if(p.type==='sep'){
-      bodyHtml += `<tr class="group-sep-tr"><td colspan="${colCount}">${T(p.sepKey)}</td></tr>`;
+  renderRows.forEach((r,ri)=>{
+    if(r.type==='sep'){
+      bodyHtml += `<tr class="group-sep-tr"><td colspan="${colCount}">${T(r.sepKey)}</td></tr>`;
       return;
     }
-    const tipTips = (lang==='id'&&window.RVO_TIPS_ID)?RVO_TIPS_ID:(window.RVO_TIPS_EN||window.RVO_TIPS||{});
-    const tipText = p.tip ? tipTips[p.tip] : '';
-    const tipHtml = tipText ? `<span class="tip-icon" data-tip-key="${escAttr(p.tip)}" data-tip="${escAttr(tipText)}">?</span>` : '';
-
-    const prevP = PARAMS[pi-1], nextP = PARAMS[pi+1];
-    const isFirst = p.subgroup && (!prevP || prevP.subgroup!==p.subgroup || prevP.type==='sep');
-    const isLast  = p.subgroup && (!nextP || nextP.subgroup!==p.subgroup);
+    const prevR = renderRows[ri-1], nextR = renderRows[ri+1];
+    const sub = r.subgroup || (r.type==='param' ? r.p.subgroup : null);
+    const isFirst = sub && (r.first || !prevR || (prevR.subgroup||((prevR.type==='param'&&prevR.p.subgroup)||null))!==sub);
+    const isLast  = sub && (r.last  || !nextR || (nextR.subgroup||((nextR.type==='param'&&nextR.p.subgroup)||null))!==sub);
     const rowClass = [
-      p.subgroup ? 'subgroup-row' : '',
+      sub ? 'subgroup-row' : '',
       isFirst ? 'subgroup-first' : '',
       isLast  ? 'subgroup-last'  : '',
     ].filter(Boolean).join(' ');
+    const trOpen = `<tr${rowClass?' class="'+rowClass+'"':''}>`;
+    const trailTd = `<td style="border:1px solid var(--border);background:var(--input-bg);"></td>`;
 
+    if(r.type==='mode'){
+      const cur = modes[r.modeKey];
+      const seg = `<div class="seg-group mode-seg" data-mode-key="${r.modeKey}">
+        <button class="seg-btn${cur==='simple'?' active':''}" data-val="simple">${T('segSimple')}</button>
+        <button class="seg-btn${cur==='detailed'?' active':''}" data-val="detailed">${T('segDetailed')}</button>
+      </div>`;
+      bodyHtml += `<tr class="mode-tr"><td class="label-td">${escHtml(T(r.labelKey))}${tipHtmlFor(r.tip)}</td><td class="unit-td"></td><td class="scen-td mode-td" colspan="${n}">${seg}</td>${trailTd}</tr>`;
+      return;
+    }
+    if(r.type==='period'){
+      const tds = scenarios.map((sc,i)=>periodCellHTML(sc,i,r.idx)).join('');
+      bodyHtml += `${trOpen}<td class="label-td">${escHtml(T('pRatePeriodN')(r.idx+1))}${r.idx===0?tipHtmlFor('rateSchedule'):''}</td><td class="unit-td"></td>${tds}${trailTd}</tr>`;
+      return;
+    }
+    if(r.type==='addPeriod'){
+      const tds = scenarios.map((sc,i)=>`<td class="scen-td add-td"><button class="btn-add add-period-btn" data-si="${i}">${T('btnAddPeriod')}</button></td>`).join('');
+      bodyHtml += `${trOpen}<td class="label-td"></td><td class="unit-td"></td>${tds}${trailTd}</tr>`;
+      return;
+    }
+    if(r.type==='cost'){
+      const tds = scenarios.map((sc,i)=>costCellHTML(sc,i,r.listKey,r.kind,r.idx)).join('');
+      const tip = r.idx===0 ? tipHtmlFor(r.listKey==='ownSetupCosts'?'setupCost':r.listKey==='ownOngoingCosts'?'ownOngoingCost':'rentOngoingCost') : '';
+      bodyHtml += `${trOpen}<td class="label-td">${escHtml(T(r.labelFn)(r.idx+1))}${tip}</td><td class="unit-td"></td>${tds}${trailTd}</tr>`;
+      return;
+    }
+    if(r.type==='addCost'){
+      const tds = scenarios.map((sc,i)=>`<td class="scen-td add-td"><button class="btn-add add-cost-btn" data-si="${i}" data-list="${r.listKey}">${T(r.btnKey)}</button></td>`).join('');
+      bodyHtml += `${trOpen}<td class="label-td"></td><td class="unit-td"></td>${tds}${trailTd}</tr>`;
+      return;
+    }
+
+    // r.type==='param'
+    const p = r.p;
+    const isDynamicUnit = key => key==='rentOngoingCost' || key==='ownOngoingCost';
     const tds = scenarios.map((sc,i)=>{
       let inp = '';
       if(p.type==='select'){
@@ -505,7 +861,7 @@ function buildTableHTML(){
       ? `<td class="unit-td"></td>`
       : `<td class="unit-td">${escHtml(unitForParam(p))}</td>`;
 
-    bodyHtml += `<tr${rowClass?' class="'+rowClass+'"':''}><td class="label-td">${escHtml(T(p.labelKey))}${tipHtml}</td>${unitCell}${tds}<td style="border:1px solid var(--border);background:var(--input-bg);"></td></tr>`;
+    bodyHtml += `${trOpen}<td class="label-td">${escHtml(T(p.labelKey))}${tipHtmlFor(p.tip)}</td>${unitCell}${tds}${trailTd}</tr>`;
   });
 
   const emptyTd = `<td style="border:1px solid var(--border);background:var(--input-bg);"></td>`;
@@ -549,6 +905,10 @@ function rerenderOutputOnly(){
   });
 }
 
+function recomputeScenario(si){
+  try{ scenarioResults[si] = computeModel(buildStateObj(scenarios[si])); }catch(err){ console.error(err); }
+}
+
 /* ── RERENDER ── */
 function rerender(){
   scenarioResults = scenarios.map(sc=>{ try{ return computeModel(buildStateObj(sc)); }catch(e){ console.error(e); return null; } });
@@ -559,12 +919,46 @@ function rerender(){
 }
 
 /* ── CSV DOWNLOAD ── */
+function describePeriod(sc, k){
+  const list = sc.ratePeriods || [];
+  if(k >= list.length) return '';
+  const p = list[k];
+  const r = periodRanges(list, sc.mortgageTerm ?? 30)[k];
+  return p.type==='floating'
+    ? `floating yr ${r.from}-${r.to} @ ${Number(p.rateMin)||0}-${Number(p.rateMax)||0}%`
+    : `fixed yr ${r.from}-${r.to} @ ${Number(p.rate)||0}%`;
+}
+function describeCostItem(sc, listKey, kind, k){
+  const list = sc[listKey] || [];
+  if(k >= list.length) return '';
+  const it = list[k];
+  const amt = Number(it.amount)||0;
+  if(it.basis==='pct'){
+    const of = listKey==='ownSetupCosts' ? 'of buy price' : listKey==='ownOngoingCosts' ? 'of property value' : 'of annual rent';
+    return `${amt}% ${of}`;
+  }
+  if(kind==='setup') return `${amt} fixed`;
+  return `${amt} ${it.basis} (+${Number(it.inflation)||0}%/yr)`;
+}
 function downloadCSV(){
   const esc = v => '"'+String(v).replace(/"/g,'""')+'"';
   const lines = [];
   lines.push([esc(T('tableHeaderParam')), esc(T('tableHeaderUnit')), ...scenarios.map(sc=>esc(sc.name))].join(','));
-  PARAMS.forEach(p=>{
-    if(p.type==='sep') return;
+  buildRenderRows().forEach(r=>{
+    if(r.type==='sep' || r.type==='addPeriod' || r.type==='addCost') return;
+    if(r.type==='mode'){
+      lines.push([esc(T(r.labelKey)), esc(''), ...scenarios.map(()=>esc(modes[r.modeKey]))].join(','));
+      return;
+    }
+    if(r.type==='period'){
+      lines.push([esc(T('pRatePeriodN')(r.idx+1)), esc(''), ...scenarios.map(sc=>esc(describePeriod(sc, r.idx)))].join(','));
+      return;
+    }
+    if(r.type==='cost'){
+      lines.push([esc(T(r.labelFn)(r.idx+1)), esc(''), ...scenarios.map(sc=>esc(describeCostItem(sc, r.listKey, r.kind, r.idx)))].join(','));
+      return;
+    }
+    const p = r.p;
     lines.push([esc(T(p.labelKey)), esc(unitForParam(p)), ...scenarios.map(sc=>{
       if(p.type==='boolean') return esc(sc[p.key]!==false?'Yes':'No');
       if(p.type==='select')  return esc(sc[p.key]||'');
@@ -601,7 +995,7 @@ function wireEvents(){
     });
     el.addEventListener('blur', e=>{
       const si = +e.target.dataset.si, key = e.target.dataset.key, ptype = e.target.dataset.ptype;
-      const p = PARAMS.find(x=>x.key===key);
+      const p = PARAM_MAP[key];
       if(!p) return;
       let val = ptype==='integer' ? parseIntSafe(e.target.value, scenarios[si][key]) : parseFloatSafe(e.target.value, scenarios[si][key]);
       if(p.min!=null) val = Math.max(p.min, val);
@@ -612,7 +1006,12 @@ function wireEvents(){
         const maxH = Math.max(...scenarios.map(s=>s.horizon||1));
         document.getElementById('yearInput').max = maxH;
       }
-      try{ scenarioResults[si] = computeModel(buildStateObj(scenarios[si])); }catch(err){}
+      recomputeScenario(si);
+      if(key==='mortgageTerm' && modes.mortgageMode==='detailed'){
+        // Year ranges of the rate periods depend on the term — rebuild
+        rerender();
+        return;
+      }
       rerenderOutputOnly();
       updateClampNote(si);
     });
@@ -629,7 +1028,7 @@ function wireEvents(){
           span.textContent = getOngoingCostUnit(scenarios[si], costKey);
         });
       }
-      try{ scenarioResults[si] = computeModel(buildStateObj(scenarios[si])); }catch(err){}
+      recomputeScenario(si);
       rerenderOutputOnly();
     });
   });
@@ -638,8 +1037,136 @@ function wireEvents(){
     el.addEventListener('change', e=>{
       const si = +e.target.dataset.si;
       scenarios[si][e.target.dataset.key] = e.target.checked;
-      try{ scenarioResults[si] = computeModel(buildStateObj(scenarios[si])); }catch(err){}
+      recomputeScenario(si);
       rerenderOutputOnly();
+    });
+  });
+
+  // Section mode toggles (apply to all scenarios)
+  document.querySelectorAll('.mode-seg .seg-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const modeKey = btn.closest('.mode-seg').dataset.modeKey;
+      const val = btn.dataset.val;
+      if(modes[modeKey] === val) return;
+      modes[modeKey] = val;
+      if(val === 'detailed') seedDetailedLists(modeKey);
+      rerender();
+    });
+  });
+
+  // Detailed mortgage: rate period controls
+  const periodOf = el => scenarios[+el.dataset.si].ratePeriods[+el.dataset.idx];
+  document.querySelectorAll('.rp-type').forEach(el=>{
+    el.addEventListener('change', e=>{
+      const p = periodOf(e.target);
+      p.type = e.target.value;
+      if(p.type==='floating' && (Number(p.rateMax)||0) <= (Number(p.rateMin)||0)){
+        p.rateMin = Number(p.rate)||0; p.rateMax = (Number(p.rate)||0)+2;
+      }
+      recomputeScenario(+e.target.dataset.si);
+      rerender();
+    });
+  });
+  document.querySelectorAll('.rp-to').forEach(el=>{
+    const commit = e=>{
+      const si = +e.target.dataset.si;
+      const p = periodOf(e.target);
+      p.toYear = Math.max(1, parseIntSafe(e.target.value, p.toYear));
+      recomputeScenario(si);
+      rerender();
+    };
+    el.addEventListener('blur', commit);
+    el.addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
+  });
+  [['rp-rate','rate'],['rp-min','rateMin'],['rp-max','rateMax']].forEach(([cls,field])=>{
+    document.querySelectorAll('.'+cls).forEach(el=>{
+      el.addEventListener('blur', e=>{
+        const si = +e.target.dataset.si;
+        const p = periodOf(e.target);
+        p[field] = Math.max(0, parseFloatSafe(e.target.value, p[field]||0));
+        e.target.value = p[field];
+        recomputeScenario(si);
+        rerenderOutputOnly();
+      });
+      el.addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
+    });
+  });
+  document.querySelectorAll('.rp-del').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const si = +el.dataset.si, idx = +el.dataset.idx;
+      const list = scenarios[si].ratePeriods;
+      if(!list || list.length<=1) return;
+      list.splice(idx,1);
+      recomputeScenario(si);
+      rerender();
+    });
+  });
+  document.querySelectorAll('.add-period-btn').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const si = +el.dataset.si;
+      addRatePeriodTo(scenarios[si]);
+      recomputeScenario(si);
+      rerender();
+    });
+  });
+
+  // Detailed costs: per-item controls
+  const costItemOf = el => scenarios[+el.dataset.si][el.dataset.list][+el.dataset.idx];
+  document.querySelectorAll('.ci-amt').forEach(el=>{
+    el.addEventListener('focus', e=>{ e.target.value = String(e.target.value).replace(/,/g,''); });
+    el.addEventListener('input', e=>{
+      const it = costItemOf(e.target);
+      if(it.basis!=='pct') SharedFmt.liveFormat(e.target,{maxDecimals:2});
+    });
+    el.addEventListener('blur', e=>{
+      const si = +e.target.dataset.si;
+      const it = costItemOf(e.target);
+      it.amount = Math.max(0, parseNum(e.target.value));
+      e.target.value = it.basis==='pct' ? String(it.amount) : addCommas(it.amount);
+      recomputeScenario(si);
+      rerenderOutputOnly();
+    });
+    el.addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
+  });
+  document.querySelectorAll('.ci-basis').forEach(el=>{
+    el.addEventListener('change', e=>{
+      const si = +e.target.dataset.si;
+      const it = costItemOf(e.target);
+      it.basis = e.target.value;
+      recomputeScenario(si);
+      rerender(); // inflation input visibility depends on basis
+    });
+  });
+  document.querySelectorAll('.ci-infl').forEach(el=>{
+    el.addEventListener('blur', e=>{
+      const si = +e.target.dataset.si;
+      const it = costItemOf(e.target);
+      it.inflation = Math.max(0, parseFloatSafe(e.target.value, it.inflation||0));
+      e.target.value = it.inflation;
+      recomputeScenario(si);
+      rerenderOutputOnly();
+    });
+    el.addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
+  });
+  document.querySelectorAll('.ci-del').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const si = +el.dataset.si, idx = +el.dataset.idx;
+      const list = scenarios[si][el.dataset.list];
+      if(!list || list.length<=1) return;
+      list.splice(idx,1);
+      recomputeScenario(si);
+      rerender();
+    });
+  });
+  document.querySelectorAll('.add-cost-btn').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const si = +el.dataset.si, listKey = el.dataset.list;
+      const sc = scenarios[si];
+      if(listKey==='ownSetupCosts'){ seedOwnCostItems(sc); sc.ownSetupCosts.push({amount:0, basis:'fixed'}); }
+      else if(listKey==='ownOngoingCosts'){ seedOwnCostItems(sc); sc.ownOngoingCosts.push({amount:0, basis:'yearly', inflation:0}); }
+      else { seedRentCostItems(sc); sc.rentOngoingCosts.push({amount:0, basis:'yearly', inflation:0}); }
+      recomputeScenario(si);
+      rerender();
     });
   });
 
@@ -653,7 +1180,7 @@ function wireEvents(){
   document.querySelectorAll('.btn-dupe').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const si = +btn.dataset.si;
-      const clone = Object.assign({}, scenarios[si]);
+      const clone = cloneScenario(scenarios[si]);
       clone.name = scenarios[si].name+' (copy)';
       scenarios.splice(si+1, 0, clone);
       rerender();
