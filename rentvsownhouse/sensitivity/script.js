@@ -7,7 +7,7 @@ var Tips = window.RVO_TIPS || {};
 let lang = (window.DEFAULT_LANG === 'id') ? 'id' : 'en';
 const LANG_SENS = {
   en: {
-    sensTitle: '🏠 Rent vs Own — Sensitivity Tool',
+    sensTitle: 'Rent vs Own — Sensitivity Tool',
     sensSubtitle: 'Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.',
     btnBack: '← Back',
     labelCurrency: 'Currency:',
@@ -107,7 +107,7 @@ const LANG_SENS = {
     pctOfValue: '% of value',
   },
   id: {
-    sensTitle: '🏠 Rent vs Own — Sensitivity Tool',
+    sensTitle: 'Rent vs Own — Sensitivity Tool',
     sensSubtitle: 'Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti — membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.',
     btnBack: '← Kembali',
     labelCurrency: 'Mata Uang:',
