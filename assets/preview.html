@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Icon preview — Adjie Brotools</title>
+  <style>
+    body { margin: 0; padding: 2rem; font-family: system-ui, sans-serif; background: #F0F4FF; color: #2D3436; }
+    h1 { font-size: 1.3rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+    .cell { background: #fff; border: 1px solid #E0E6F0; border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 0.9rem; }
+    .cell img { width: 28px; height: 28px; }
+    .cell .big img { width: 64px; height: 64px; }
+    .name { font-size: 0.85rem; font-weight: 600; }
+    .dark { background: #0f172a; color: #e2e8f0; padding: 1rem; border-radius: 12px; margin-top: 2rem; }
+    .dark .cell { background: #1e293b; border-color: #334155; }
+  </style>
+</head>
+<body>
+  <h1>Tool icons — small (28px) + large (64px)</h1>
+  <div class="grid" id="grid"></div>
+  <div class="dark">
+    <h1>On dark background</h1>
+    <div class="grid" id="gridDark"></div>
+  </div>
+  <script>
+    const icons = [
+      'mdtopdf', 'powerfactory-scripter', 'pisahvsgabung', 'financingvscash',
+      'rentvsownhouse', 'dcasimulator', 'graphvisualiser', 'sankeycreator',
+      'jsonvisualiser', 'canvasbuilder', 'costofliving-comparator', 'videotogif',
+      'superannuation-dasp', 'wemconstraint-checker'
+    ];
+    for (const target of ['grid', 'gridDark']) {
+      const grid = document.getElementById(target);
+      for (const name of icons) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.innerHTML = `<img src="${name}.svg" alt=""><span class="big"><img src="${name}.svg" alt=""></span><span class="name">${name}</span>`;
+        grid.appendChild(cell);
+      }
+    }
+  </script>
+</body>
+</html>
