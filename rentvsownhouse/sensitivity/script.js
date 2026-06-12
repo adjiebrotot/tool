@@ -4,7 +4,7 @@
 var Tips = window.RVO_TIPS || {};
 
 /* ── i18n ── */
-let lang = localStorage.getItem('pf-lang') === 'id' ? 'id' : 'en';
+let lang = (window.DEFAULT_LANG === 'id') ? 'id' : 'en';
 const LANG_SENS = {
   en: {
     sensTitle: '🏠 Rent vs Own — Sensitivity Tool',
@@ -197,8 +197,6 @@ function applyLang(){
     const val = LANG_SENS[lang][key];
     if(val !== undefined && typeof val === 'string') el.textContent = val;
   });
-  const lt = document.getElementById('langToggle');
-  if(lt) lt.textContent = lang === 'en' ? 'ID' : 'EN';
   /* switch tooltip text for data-tip-key elements based on language */
   const tips = (lang === 'id' && window.RVO_TIPS_ID) ? RVO_TIPS_ID : (window.RVO_TIPS_EN || window.RVO_TIPS);
   if(tips){
@@ -1211,13 +1209,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     document.body.classList.toggle('light');
     themeBtn.textContent = document.body.classList.contains('light') ? '🌙 Dark' : '☀️ Light';
     localStorage.setItem('pf-theme', document.body.classList.contains('light') ? 'light' : 'dark');
-  });
-
-  document.getElementById('langToggle').addEventListener('click', ()=>{
-    lang = lang === 'en' ? 'id' : 'en';
-    localStorage.setItem('pf-lang', lang);
-    applyLang();
-    rerender();
   });
 
   document.getElementById('currencySelect').addEventListener('change', e=>{

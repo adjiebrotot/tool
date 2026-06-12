@@ -119,13 +119,77 @@ const TOOLS = [
     ],
     htmlSpecials: [{ id: 'sensitivityLinkDiv', key: 'sensitivityHtml' }],
   },
+  {
+    dir: 'rentvsownhouse/sensitivity',
+    langVar: 'LANG_SENS',
+    title: 'Sewa vs Beli Rumah — Alat Analisis Sensitivitas',
+    description: 'Jalankan analisis sensitivitas pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi hasil properti.',
+    ogTitle: 'Alat Analisis Sensitivitas Sewa vs Beli Rumah',
+    ogDescription: 'Jalankan analisis sensitivitas pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi hasil properti.',
+    sameDirAssets: ['script.js', 'style.css'],
+    extraReplacements: [
+      ["renderRVOFooter('../../logos/')", "renderRVOFooter('../../../logos/')"],
+      ['<a href="../../" class="btn-theme btn-back" data-i18n="btnBack">', '<a href="../../id/" class="btn-theme btn-back" data-i18n="btnBack">'],
+    ],
+    ldJson: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: 'Alat Analisis Sensitivitas Sewa vs Beli Rumah',
+        url: 'https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/',
+        description: 'Jalankan analisis sensitivitas pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi hasil properti.',
+        applicationCategory: 'FinanceApplication',
+        operatingSystem: 'Any',
+        isAccessibleForFree: true,
+        inLanguage: 'id',
+        alternateName: ['Analisis Sensitivitas Sewa vs Beli', 'Perbandingan Skenario Properti', 'Kalkulator Multi-Skenario Sewa vs Beli'],
+        keywords: 'analisis sensitivitas sewa vs beli, skenario sewa vs beli rumah, perbandingan asumsi properti, simulasi KPR vs sewa',
+        featureList: [
+          'Bandingkan beberapa skenario sewa vs beli secara berdampingan dalam satu tabel',
+          'Uji bagaimana setiap asumsi — kenaikan harga, bunga KPR, inflasi sewa, biaya — mengubah hasilnya',
+          'Tersedia dalam bahasa Indonesia dan Inggris',
+          'Semua perhitungan berjalan lokal di browser — data keuangan Anda tidak pernah meninggalkan perangkat',
+          'Ekspor CSV gratis tanpa paywall',
+        ],
+        isPartOf: {
+          '@type': 'WebApplication',
+          name: 'Simulasi Sewa vs Beli Rumah',
+          url: 'https://tool.adjiebrotots.com/rentvsownhouse/id/',
+        },
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        inLanguage: 'id',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'Apa fungsi Alat Analisis Sensitivitas Sewa vs Beli Rumah?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Alat ini membandingkan beberapa skenario sewa vs beli secara berdampingan sehingga Anda bisa melihat asumsi mana — kenaikan harga properti, bunga KPR, inflasi sewa, biaya rutin — yang paling memengaruhi kekayaan bersih, uang tunai, atau biaya kumulatif. Gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Apa bedanya dengan kalkulator Sewa vs Beli Rumah utama?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Kalkulator utama memodelkan satu skenario secara mendalam; alat sensitivitas menyusun beberapa skenario dalam satu tabel untuk membandingkan asumsi pada tahun dan metrik yang dipilih.',
+            },
+          },
+        ],
+      },
+    ],
+    htmlSpecials: [],
+  },
 ];
 
-// Extract the `const LANG = {...}` object literal from a script source using a
-// quote-aware brace matcher, then evaluate it.
-function extractLang(src) {
-  const start = src.indexOf('const LANG = {');
-  if (start < 0) throw new Error('const LANG not found');
+// Extract the `const <varName> = {...}` object literal from a script source
+// using a quote-aware brace matcher, then evaluate it.
+function extractLang(src, varName = 'LANG') {
+  const start = src.indexOf(`const ${varName} = {`);
+  if (start < 0) throw new Error(`const ${varName} not found`);
   let i = src.indexOf('{', start);
   let depth = 0, inStr = null, esc = false;
   for (; i < src.length; i++) {
@@ -152,7 +216,7 @@ const escapeText = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace
 function bake(tool) {
   const toolDir = join(ROOT, tool.dir);
   let html = readFileSync(join(toolDir, 'index.html'), 'utf8');
-  const lang = extractLang(readFileSync(join(toolDir, 'script.js'), 'utf8'));
+  const lang = extractLang(readFileSync(join(toolDir, 'script.js'), 'utf8'), tool.langVar);
   const id = lang.id;
   if (!id) throw new Error(`${tool.dir}: LANG.id missing`);
   const base = `https://tool.adjiebrotots.com/${tool.dir}/`;
