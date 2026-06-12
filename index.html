@@ -152,6 +152,71 @@
       font-size: clamp(1rem, 1.7vw, 1.15rem);
     }
 
+    h1 .brand-b {
+      background: linear-gradient(115deg, var(--accent) 0%, var(--accent-strong) 55%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+
+    .hero-tagline {
+      margin: 0;
+      max-width: 68ch;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 1.9vw, 1.3rem);
+      font-weight: 500;
+      min-height: 1.6em;
+    }
+
+    .typewriter {
+      display: inline-flex;
+      align-items: baseline;
+      white-space: nowrap;
+    }
+
+    .type-text {
+      font-weight: 600;
+      color: var(--accent-strong);
+      transition: color var(--motion-fast);
+    }
+
+    .type-text.is-highlight {
+      color: var(--data-pos);
+      font-weight: 800;
+    }
+
+    .type-caret {
+      display: inline-block;
+      width: 2px;
+      align-self: stretch;
+      min-height: 1.05em;
+      margin-left: 3px;
+      background: var(--accent-strong);
+      border-radius: 1px;
+      animation: caret-blink 1s steps(1) infinite;
+    }
+
+    @keyframes caret-blink {
+      50% { opacity: 0; }
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .type-caret { animation: none; }
+    }
+
     .hero-meta {
       display: flex;
       flex-wrap: wrap;
@@ -843,8 +908,11 @@
   <header class="site-header">
     <div class="container hero">
       <div class="hero-card">
-        <h1 itemprop="headline">Adjie Brotools</h1>
-        <p itemprop="description">
+        <h1 itemprop="headline"><span class="brand-a">Adjie</span> <span class="brand-b">Brotools</span></h1>
+        <p class="hero-tagline" aria-hidden="true">
+          Help you with <span class="typewriter"><span id="typeText" class="type-text"></span><span class="type-caret"></span></span>
+        </p>
+        <p class="visually-hidden" itemprop="description">
           Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.
         </p>
       </div>
@@ -1365,6 +1433,63 @@
   </footer>
 
   <script>
+    (function () {
+      const el = document.getElementById('typeText');
+      if (!el) return;
+
+      // Build the rotating word list from each tool's domain + tags,
+      // excluding geography tags (separate attribute) and "others".
+      const EXCLUDE = new Set(['other', 'others']);
+      const words = [];
+      const seen = new Set();
+      document.querySelectorAll('.tool-card').forEach(card => {
+        const raw = [card.dataset.domain || '', card.dataset.tags || ''].join(',');
+        raw.split(',').forEach(part => {
+          const label = part.trim();
+          const key = label.toLowerCase();
+          if (!label || EXCLUDE.has(key) || seen.has(key)) return;
+          seen.add(key);
+          words.push({ text: key, highlight: false });
+        });
+      });
+      // "everyday work" always present, styled to stand out.
+      words.push({ text: 'everyday work', highlight: true });
+
+      function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+      }
+      shuffle(words);
+
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) {
+        el.textContent = 'everyday work';
+        el.classList.add('is-highlight');
+      } else {
+        let wi = 0, ci = 0, deleting = false;
+        const TYPE = 65, ERASE = 32, HOLD = 1400, GAP = 280;
+        (function tick() {
+          const word = words[wi];
+          el.classList.toggle('is-highlight', !!word.highlight);
+          el.textContent = word.text.slice(0, ci);
+          if (!deleting) {
+            if (ci < word.text.length) { ci++; setTimeout(tick, TYPE); }
+            else { deleting = true; setTimeout(tick, HOLD); }
+          } else {
+            if (ci > 0) { ci--; setTimeout(tick, ERASE); }
+            else {
+              deleting = false;
+              wi++;
+              if (wi >= words.length) { shuffle(words); wi = 0; }
+              setTimeout(tick, GAP);
+            }
+          }
+        })();
+      }
+    })();
+
     (function () {
       const cards = Array.from(document.querySelectorAll('.tool-card'));
       const statusFilter = document.getElementById('statusFilter');
