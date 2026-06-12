@@ -170,34 +170,30 @@
     }
 
     .typewriter {
-      display: inline;
       white-space: nowrap;
     }
 
     .type-text {
       font-weight: 600;
       color: var(--accent-strong);
+      border-right: 2px solid var(--accent-strong);
+      padding-right: 3px;
       transition: color var(--motion-fast);
+      animation: caret-blink 1s steps(1) infinite;
     }
 
     .type-text.is-highlight {
       color: var(--data-pos);
       font-weight: 800;
-    }
-
-    .type-caret {
-      display: inline-block;
-      width: 2px;
-      height: 1.05em;
-      vertical-align: -0.15em;
-      margin-left: 3px;
-      background: var(--accent-strong);
-      border-radius: 1px;
-      animation: caret-blink 1s steps(1) infinite;
+      border-right-color: var(--data-pos);
     }
 
     @keyframes caret-blink {
-      50% { opacity: 0; }
+      50% { border-right-color: transparent; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .type-text { animation: none; }
     }
 
     .visually-hidden {
@@ -212,9 +208,6 @@
       border: 0;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .type-caret { animation: none; }
-    }
 
     .hero-meta {
       display: flex;
@@ -909,7 +902,7 @@
       <div class="hero-card">
         <h1 itemprop="headline"><span class="brand-a">Adjie</span> <span class="brand-b">Brotools</span></h1>
         <p class="hero-tagline" aria-hidden="true">
-          Help you with <span class="typewriter"><span id="typeText" class="type-text"></span><span class="type-caret"></span></span>
+          Help you with <span class="typewriter"><span id="typeText" class="type-text"></span></span>
         </p>
         <p class="visually-hidden" itemprop="description">
           Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.
