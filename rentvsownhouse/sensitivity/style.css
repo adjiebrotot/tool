@@ -14,7 +14,7 @@ body{margin:0;font-family:'DM Sans',system-ui,-apple-system,sans-serif;color:var
 a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 
 /* Controls bar */
-.controls-bar{padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.controls-bar{padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:50;}
 .ctrl-row{display:flex;align-items:center;gap:8px;}
 .controls-label{font-size:.8rem;font-weight:700;color:var(--muted);white-space:nowrap;}
 .ctrl-select{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;font-family:inherit;padding:6px 10px;outline:none;cursor:pointer;transition:border-color var(--motion-fast);}
@@ -93,7 +93,7 @@ body.light .dt tr.out-rent td{background:#E8F7F3;}
 .tip-icon:hover{border-color:var(--accent);color:var(--accent);}
 
 /* Section mode rows (Simple/Detailed toggles that apply to all scenarios) */
-.dt tr.mode-tr td.mode-td{background:var(--panel-raised);}
+.dt tr.mode-tr td.mode-td{background:var(--panel-raised);text-align:left;}
 .mode-seg{vertical-align:middle;}
 .mode-seg .seg-btn{padding:5px 16px;font-size:.76rem;}
 
