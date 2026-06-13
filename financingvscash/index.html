@@ -237,10 +237,10 @@
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
       <h2 id="chartTitle" style="margin:0;">Ending Wealth Over Time</h2>
       <div style="display:flex;gap:6px;">
+        <button class="btn-secondary btn-sm" id="chartSvgBtn">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="chartPngBtn">⬇ PNG</button>
         <button class="btn-secondary btn-sm" id="chartCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary btn-sm" id="chartSvgBtn">⬇ SVG</button>
-        <button class="btn-secondary btn-sm" id="chartResetZoom">⟳ Reset zoom</button>
+        <button class="btn-secondary btn-sm" id="chartResetZoom" title="Reset zoom">⟳</button>
       </div>
     </div>
     <div class="legend" id="chartLegend"></div>
@@ -251,10 +251,10 @@
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
       <h2 id="sens2dTitle" style="margin:0;">2D Sensitivity</h2>
       <div style="display:flex;gap:6px;">
+        <button class="btn-secondary btn-sm" id="sens2dSvgBtn">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="sens2dPngBtn">⬇ PNG</button>
         <button class="btn-secondary btn-sm" id="sens2dCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary btn-sm" id="sens2dSvgBtn">⬇ SVG</button>
-        <button class="btn-secondary btn-sm" id="sensResetZoom">⟳ Reset zoom</button>
+        <button class="btn-secondary btn-sm" id="sensResetZoom" title="Reset zoom">⟳</button>
       </div>
     </div>
     <div class="legend" id="sensLegend"></div>
@@ -263,9 +263,9 @@
   <section class="chart-card card" id="sens3dSection" style="display:none;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
       <h2 id="sens3dTitle" style="margin:0;">3D Sensitivity Surface</h2>
+      <button class="btn-secondary btn-sm" id="sens3dSvgBtn">⬇ SVG</button>
       <button class="btn-secondary btn-sm" id="sens3dPngBtn">⬇ PNG</button>
       <button class="btn-secondary btn-sm" id="sens3dCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
-      <button class="btn-secondary btn-sm" id="sens3dSvgBtn">⬇ SVG</button>
     </div>
     <div class="surface-wrap" id="plotly3d"></div>
   </section>
