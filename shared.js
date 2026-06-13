@@ -82,25 +82,30 @@
     var ttText = tt.querySelector('.tt-text');
     var ttArrow = tt.querySelector('.tt-arrow');
     var PAD = 8;
+    var activeIcon = null;
 
     function hide(){
+      activeIcon = null;
       tt.classList.remove('visible');
       tt.style.display = 'none';
     }
 
-    document.addEventListener('mouseover', function(e){
-      var icon = e.target.closest('[data-tip]');
-      if (!icon) { hide(); return; }
-      var tip = icon.getAttribute('data-tip');
-      if (!tip) { hide(); return; }
+    // Position the tooltip against the currently-hovered icon. Called on
+    // hover and re-called on scroll/resize so the bubble stays glued to the
+    // trigger instead of drifting when the page moves underneath it.
+    function position(){
+      if (!activeIcon || !activeIcon.isConnected) { hide(); return; }
 
-      ttText.innerHTML = tip;
       tt.classList.remove('flip-below');
-      tt.classList.add('visible');
-      tt.style.display = 'block';
-      tt.style.opacity = '0';
 
-      var rect = icon.getBoundingClientRect();
+      var rect = activeIcon.getBoundingClientRect();
+      // If the trigger has scrolled out of view, hide rather than float.
+      if (rect.bottom < 0 || rect.top > window.innerHeight ||
+          rect.right < 0 || rect.left > window.innerWidth) {
+        tt.style.opacity = '0';
+        return;
+      }
+
       var ttW = tt.offsetWidth;
       var ttH = tt.offsetHeight;
       var iconCX = rect.left + rect.width / 2;
@@ -122,12 +127,34 @@
 
       var arrowX = Math.max(10, Math.min(iconCX - left, ttW - 10));
       ttArrow.style.left = arrowX + 'px';
+    }
+
+    document.addEventListener('mouseover', function(e){
+      var icon = e.target.closest('[data-tip]');
+      if (!icon) { hide(); return; }
+      var tip = icon.getAttribute('data-tip');
+      if (!tip) { hide(); return; }
+
+      activeIcon = icon;
+      ttText.innerHTML = tip;
+      tt.classList.add('visible');
+      tt.style.display = 'block';
+      tt.style.opacity = '0';
+      position();
     });
 
     document.addEventListener('mouseout', function(e){
       var icon = e.target.closest('[data-tip]');
       if (!icon) return;
       if (!e.relatedTarget || !icon.contains(e.relatedTarget)) hide();
+    });
+
+    // Keep the bubble anchored to its trigger as the page scrolls or resizes.
+    window.addEventListener('scroll', function(){
+      if (activeIcon) position();
+    }, true);
+    window.addEventListener('resize', function(){
+      if (activeIcon) position();
     });
   }
 

@@ -87,6 +87,16 @@ function fmtC(v,curr,compact=false){
   return sign+curr+' '+fmtN(abs);
 }
 function fmtP(v,d=1){return isFinite(v)?v.toFixed(d)+'%':'—';}
+// Format an FX rate so it always carries meaningful precision. Large rates
+// (e.g. 1 AUD = 10,800 IDR) show 2 decimals; sub-1 rates (e.g. 1 IDR =
+// 0.000055 AUD) expand the decimals so at least 2 significant figures survive
+// instead of collapsing to "0.00".
+function fmtFx(v){
+  if(!isFinite(v)||v===null||v<=0)return'—';
+  if(v>=1)return fmtN(v,2);
+  const d=Math.min(12,Math.max(2,-Math.floor(Math.log10(v))+1));
+  return Number(v).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:d});
+}
 
 // ═══════════════════════════════════════════════════════════
 // NUMBER INPUT HELPERS
@@ -267,7 +277,7 @@ function renderSimpleFxSection(from,to){
   if(!from||!to||from.currency===to.currency){card.style.display='none';return;}
   const fc=from.currency, tc=to.currency;
   const defRate=getDefaultFxRate(fc,tc);
-  const defFmt=defRate?fmtN(defRate,2):'—';
+  const defFmt=defRate?fmtFx(defRate):'—';
   card.style.display='flex';
   card.innerHTML=`
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%;">
@@ -574,7 +584,7 @@ function buildDetailHTML(fromCity,toCities){
   let fxTos=toCities.map((tc,i)=>{
     const destCurr=tcs[i];
     if(!tc||!fromCity||destCurr===fc)return`<td class="num-td"></td>`;
-    const defFx=fmtN(getDefaultFxRate(fc,destCurr),2);
+    const defFx=fmtFx(getDefaultFxRate(fc,destCurr));
     const curCustomFx=S.customFxDetailed[i]??null;
     return`<td class="num-td">
       <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;flex-wrap:wrap;">

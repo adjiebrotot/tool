@@ -547,28 +547,7 @@
   ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
   /* ── TOOLTIPS ────────────────────────────────────────────────────── */
-  /* #globalTooltip styling provided by shared.css */
-
-  .tt {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 14px;
-    height: 14px;
-    background: rgba(168,182,207,0.15);
-    color: var(--muted);
-    border-radius: 50%;
-    font-size: 9px;
-    font-weight: 700;
-    font-family: var(--sans);
-    cursor: help;
-    flex-shrink: 0;
-    border: 1px solid rgba(168,182,207,0.30);
-    position: relative;
-    vertical-align: middle;
-    margin-left: 4px;
-  }
-  .tt:hover { border-color: var(--accent); color: var(--accent); }
+  /* Trigger icon (.tip-icon) and #globalTooltip styling provided by shared.css */
 
   /* ── TOASTS ──────────────────────────────────────────────────────── */
   .toast {

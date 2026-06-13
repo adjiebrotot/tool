@@ -173,23 +173,23 @@
       </div>
       <div class="section-body">
         <div class="form-row">
-          <label>API Path <span class="tt" data-tip="Path to the PF Python API folder containing powerfactory.pyd (Windows) or .so (Linux).">?</span></label>
+          <label>API Path <span class="tip-icon" data-tip="Path to the PF Python API folder containing powerfactory.pyd (Windows) or .so (Linux).">?</span></label>
           <div>
             <input type="text" id="pf-api-path" placeholder="C:\Program Files\DIgSILENT\PowerFactory 2022 SP1\Python\3.8" autocomplete="off" />
           </div>
         </div>
         <div class="form-row">
-          <label>Username <span class="tt" data-tip="PowerFactory login username passed to GetApplication(). Leave blank only if single-user mode is configured.">?</span></label>
+          <label>Username <span class="tip-icon" data-tip="PowerFactory login username passed to GetApplication(). Leave blank only if single-user mode is configured.">?</span></label>
           <input type="text" id="pf-username" placeholder="USERNAME_HERE" autocomplete="off" />
         </div>
         <div class="form-row">
-          <label>Output Directory <span class="tt" data-tip="Root folder for results. Subfolders /graph and /raw are auto-created if timeseries outputs are used.">?</span></label>
+          <label>Output Directory <span class="tip-icon" data-tip="Root folder for results. Subfolders /graph and /raw are auto-created if timeseries outputs are used.">?</span></label>
           <div>
             <input type="text" id="output-dir" placeholder="C:\Users\user\results" autocomplete="off" />
           </div>
         </div>
         <div class="form-row">
-          <label>Problem Type <span class="tt" id="tt-problem-type" data-tip="Runs every combination of input values. Total runs = product of all step counts.">?</span></label>
+          <label>Problem Type <span class="tip-icon" id="tt-problem-type" data-tip="Runs every combination of input values. Total runs = product of all step counts.">?</span></label>
           <select id="problem-type" onchange="onProblemTypeChange()">
             <option value="brute_force">Brute Force</option>
             <option value="optimisation">Optimisation</option>
@@ -198,7 +198,7 @@
           </select>
         </div>
         <div class="form-row">
-          <label>Study Type <span class="tt" id="tt-study-type" data-tip="Runs a load flow (ElmLdf) each iteration. Timeseries outputs are not available.">?</span></label>
+          <label>Study Type <span class="tip-icon" id="tt-study-type" data-tip="Runs a load flow (ElmLdf) each iteration. Timeseries outputs are not available.">?</span></label>
           <select id="study-type" onchange="onStudyTypeChange()">
             <option value="steady_state">Steady State</option>
             <option value="dynamic_rms">Dynamic RMS</option>
@@ -207,13 +207,13 @@
           </select>
         </div>
         <div class="form-row" id="row-tstop" style="display:none">
-          <label>Stop Time (s) <span class="tt" data-tip="Simulation end time in seconds (ComSim.tstop). 20 s for RMS; 0.25 s typical for EMT.">?</span></label>
+          <label>Stop Time (s) <span class="tip-icon" data-tip="Simulation end time in seconds (ComSim.tstop). 20 s for RMS; 0.25 s typical for EMT.">?</span></label>
           <div>
             <input type="number" id="tstop" value="20" step="0.01" min="0" autocomplete="off" />
           </div>
         </div>
         <div class="form-row">
-          <label>Coding Style <span class="tt" id="tt-coding-style" data-tip="Wraps all code in main() for clean script execution.">?</span></label>
+          <label>Coding Style <span class="tip-icon" id="tt-coding-style" data-tip="Wraps all code in main() for clean script execution.">?</span></label>
           <select id="coding-style" onchange="onCodingStyleChange()">
             <option value="python_file">Python File</option>
             <option value="notebook">Notebook Style</option>
@@ -245,12 +245,12 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Name <span class="tt" data-tip="Python identifier used as the column header in the results CSV.">?</span></th>
-                <th>Object <span class="tt" data-tip="PF object query (e.g. Gen.ElmSym, *.ElmDsl). Wildcards match all objects of that class.">?</span></th>
-                <th>Attribute <span class="tt" data-tip="Writable numeric/boolean PF parameter to set via SetAttribute() before each run (e.g. e:qgini, e:usetp).">?</span></th>
-                <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tt" id="tt-lb" data-tip="Start of the swept range (inclusive).">?</span></th>
-                <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tt" id="tt-ub" data-tip="End of the swept range (inclusive).">?</span></th>
-                <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tt" data-tip="Increment between values. E.g. lb=0, ub=10, step=0.5 → [0, 0.5, …, 10].">?</span></th>
+                <th>Name <span class="tip-icon" data-tip="Python identifier used as the column header in the results CSV.">?</span></th>
+                <th>Object <span class="tip-icon" data-tip="PF object query (e.g. Gen.ElmSym, *.ElmDsl). Wildcards match all objects of that class.">?</span></th>
+                <th>Attribute <span class="tip-icon" data-tip="Writable numeric/boolean PF parameter to set via SetAttribute() before each run (e.g. e:qgini, e:usetp).">?</span></th>
+                <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tip-icon" id="tt-lb" data-tip="Start of the swept range (inclusive).">?</span></th>
+                <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tip-icon" id="tt-ub" data-tip="End of the swept range (inclusive).">?</span></th>
+                <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tip-icon" data-tip="Increment between values. E.g. lb=0, ub=10, step=0.5 → [0, 0.5, …, 10].">?</span></th>
                 <th></th>
               </tr>
             </thead>
@@ -285,7 +285,7 @@
           <button class="btn btn-ghost btn-xs" onclick="downloadCustomTemplate()">⬇ Download Template (.xlsx)</button>
         </div>
         <div class="form-row">
-          <label>Scenario File Path <span class="tt" data-tip="Path to the Excel scenario file (.xlsx). Download the template above for the required 3-row header format.">?</span></label>
+          <label>Scenario File Path <span class="tip-icon" data-tip="Path to the Excel scenario file (.xlsx). Download the template above for the required 3-row header format.">?</span></label>
           <input type="text" id="scenario-file-path" placeholder="C:\scenarios\my_scenarios.xlsx" autocomplete="off" />
         </div>
       </div>
@@ -314,10 +314,10 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Element Query <span class="tt" data-tip="Wildcard PF query — all matching objects become contingency candidates (e.g. *.ElmLne).">?</span></th>
-                <th>Filter Attribute <span class="tt" data-tip="Optional attribute to filter candidates (e.g. e:Unom, loc_name).">?</span></th>
-                <th>Op <span class="tt" data-tip="Comparison operator for the filter.">?</span></th>
-                <th>Filter Value <span class="tt" data-tip="Numeric (66), plain string, or wildcard string (North* — case-insensitive).">?</span></th>
+                <th>Element Query <span class="tip-icon" data-tip="Wildcard PF query — all matching objects become contingency candidates (e.g. *.ElmLne).">?</span></th>
+                <th>Filter Attribute <span class="tip-icon" data-tip="Optional attribute to filter candidates (e.g. e:Unom, loc_name).">?</span></th>
+                <th>Op <span class="tip-icon" data-tip="Comparison operator for the filter.">?</span></th>
+                <th>Filter Value <span class="tip-icon" data-tip="Numeric (66), plain string, or wildcard string (North* — case-insensitive).">?</span></th>
                 <th></th>
               </tr>
             </thead>
@@ -328,7 +328,7 @@
           <button class="btn btn-ghost btn-xs" onclick="addContingencyRow()">+ Add Element Type</button>
         </div>
         <div class="form-row" style="margin-top:12px;">
-          <label>Contingency Type <span class="tt" data-tip="N-1: one element tripped per run. N-2: two elements tripped simultaneously per run.">?</span></label>
+          <label>Contingency Type <span class="tip-icon" data-tip="N-1: one element tripped per run. N-2: two elements tripped simultaneously per run.">?</span></label>
           <select id="contingency-n" onchange="onContingencyNChange()">
             <option value="1">N-1</option>
             <option value="2">N-2</option>
@@ -336,7 +336,7 @@
         </div>
         <div class="checkbox-row cond-hidden" id="row-contingency-combine" style="margin-top:4px;">
           <input type="checkbox" id="contingency-combine" />
-          <label for="contingency-combine">Combine element types <span class="tt" data-tip="When checked, N-2 pairs are formed across different element types (e.g. line × generator). When unchecked, only same-type pairs (line × line).">?</span></label>
+          <label for="contingency-combine">Combine element types <span class="tip-icon" data-tip="When checked, N-2 pairs are formed across different element types (e.g. line × generator). When unchecked, only same-type pairs (line × line).">?</span></label>
         </div>
       </div>
     </div>
@@ -373,14 +373,14 @@
       </div>
       <div class="section-body">
         <div class="form-row">
-          <label>Sense <span class="tt" data-tip="Maximise negates the objective internally — all scipy algorithms are minimisers.">?</span></label>
+          <label>Sense <span class="tip-icon" data-tip="Maximise negates the objective internally — all scipy algorithms are minimisers.">?</span></label>
           <select id="optim-sense">
             <option value="minimise">Minimise</option>
             <option value="maximise">Maximise</option>
           </select>
         </div>
         <div class="form-row">
-          <label>Objective <span class="tt" data-tip="Scalar output variable to optimise. Must be defined first in the Output Variables section.">?</span></label>
+          <label>Objective <span class="tip-icon" data-tip="Scalar output variable to optimise. Must be defined first in the Output Variables section.">?</span></label>
           <div>
             <select id="optim-objective">
               <option value="">— select output variable —</option>
@@ -388,7 +388,7 @@
           </div>
         </div>
         <div class="form-row">
-          <label>Algorithm <span class="tt" data-alg-tip data-tip="">?</span></label>
+          <label>Algorithm <span class="tip-icon" data-alg-tip data-tip="">?</span></label>
           <div style="display:flex;align-items:center;gap:6px;min-width:0;">
             <select id="optim-algorithm" onchange="updateAlgorithmUI()" style="flex:1;min-width:0;">
               <option value="placeholder">Manual (Placeholder)</option>
@@ -405,11 +405,11 @@
           </div>
         </div>
         <div class="form-row">
-          <label>Max Iterations <span class="tt" id="tt-max-iter" data-tip="Max function evaluations. 50–200 is typical for local methods.">?</span></label>
+          <label>Max Iterations <span class="tip-icon" id="tt-max-iter" data-tip="Max function evaluations. 50–200 is typical for local methods.">?</span></label>
           <input type="number" id="optim-max-iter" value="50" min="1" autocomplete="off" />
         </div>
         <hr class="divider" />
-        <div class="sub-label">Constraints <span class="tt" data-tip="Violations add a large penalty to the objective (soft constraint). Hard bounds are set via input variable bounds.">?</span></div>
+        <div class="sub-label">Constraints <span class="tip-icon" data-tip="Violations add a large penalty to the objective (soft constraint). Hard bounds are set via input variable bounds.">?</span></div>
         <div class="dyn-table-wrapper">
           <table class="dyn-table" id="constraint-table">
             <thead>
@@ -438,26 +438,26 @@
       <div class="section-body">
         <div class="checkbox-row">
           <input type="checkbox" id="iterate-study-cases" />
-          <label for="iterate-study-cases">Iterate through study cases <span class="tt" data-tip="Activate each study case before running the sweep. Useful for N-1 contingency analysis.">?</span></label>
+          <label for="iterate-study-cases">Iterate through study cases <span class="tip-icon" data-tip="Activate each study case before running the sweep. Useful for N-1 contingency analysis.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="iterate-operating-scenarios" />
-          <label for="iterate-operating-scenarios">Iterate through operating scenarios <span class="tt" data-tip="Activate each operating scenario before running. Combines with study case iteration.">?</span></label>
+          <label for="iterate-operating-scenarios">Iterate through operating scenarios <span class="tip-icon" data-tip="Activate each operating scenario before running. Combines with study case iteration.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="use-progress-bar" checked />
-          <label for="use-progress-bar">Use progress bar (tqdm) <span class="tt" data-tip="Show live progress and ETA via tqdm. Requires pip install tqdm.">?</span></label>
+          <label for="use-progress-bar">Use progress bar (tqdm) <span class="tip-icon" data-tip="Show live progress and ETA via tqdm. Requires pip install tqdm.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="open-pf-window" />
-          <label for="open-pf-window">Open PowerFactory window <span class="tt" data-tip="Show the PF GUI (app.Show()) while running. Default is headless (app.Hide()) for speed.">?</span></label>
+          <label for="open-pf-window">Open PowerFactory window <span class="tip-icon" data-tip="Show the PF GUI (app.Show()) while running. Default is headless (app.Hide()) for speed.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="save-intermediate" onchange="onSaveIntermediateChange()" />
-          <label for="save-intermediate">Save intermediate results every X minutes <span class="tt" data-tip="Flush partial results to CSV periodically. Prevents total data loss on crash or lockup.">?</span></label>
+          <label for="save-intermediate">Save intermediate results every X minutes <span class="tip-icon" data-tip="Flush partial results to CSV periodically. Prevents total data loss on crash or lockup.">?</span></label>
         </div>
         <div id="row-save-interval" class="form-row cond-hidden">
-          <label>Interval (min) <span class="tt" data-tip="Save interval in minutes. 10–30 min recommended for multi-hour runs.">?</span></label>
+          <label>Interval (min) <span class="tip-icon" data-tip="Save interval in minutes. 10–30 min recommended for multi-hour runs.">?</span></label>
           <input type="number" id="save-interval-minutes" value="30" min="1" autocomplete="off" />
         </div>
       </div>

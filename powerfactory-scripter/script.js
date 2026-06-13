@@ -3,7 +3,7 @@
 ================================================================ */
 function tip(text, id = '') {
   const idAttr = id ? ` id="${id}"` : '';
-  return `<span class="tt"${idAttr} data-tip="${text.replace(/"/g, '&quot;')}">?</span>`;
+  return `<span class="tip-icon"${idAttr} data-tip="${text.replace(/"/g, '&quot;')}">?</span>`;
 }
 
 /* ================================================================
