@@ -192,7 +192,7 @@ function buildCityPicker(containerId, currentKey, onSelect){
   function renderDrop(q){
     const lq=q.toLowerCase();
     const filtered=CITIES.filter(c=>c.city.toLowerCase().includes(lq)||c.country.toLowerCase().includes(lq)||c.currency.toLowerCase().includes(lq)).slice(0,60);
-    drop.innerHTML=filtered.map((c,i)=>`<div class="city-opt" data-key="${cityKey(c)}" data-idx="${i}"><strong>${c.city}</strong>, ${c.country} <span class="opt-sub">${c.currency}</span></div>`).join('');
+    drop.innerHTML=filtered.map((c,i)=>`<div class="city-opt" data-key="${cityKey(c)}" data-idx="${i}"><strong>${c.city}</strong>, ${c.country}</div>`).join('');
     focusIdx=-1;
     drop.querySelectorAll('.city-opt').forEach(el=>{
       el.addEventListener('mousedown',e=>{
@@ -278,7 +278,7 @@ function renderSimpleFxSection(from,to){
         placeholder="${defFmt}"
         style="width:130px;"/>
       <span style="font-size:0.88rem;font-family:'DM Mono',monospace;white-space:nowrap;"><strong>${fc}</strong></span>
-      <span style="font-size:0.78rem;color:var(--muted);white-space:nowrap;">(DB default: ${defFmt}&nbsp;${fc})</span>
+      <span style="font-size:0.78rem;color:var(--muted);white-space:nowrap;">Default: ${defFmt}&nbsp;${fc}</span>
     </div>`;
   const inp=document.getElementById('simpleFxInput');
   if(inp){
@@ -558,21 +558,6 @@ function buildDetailHTML(fromCity,toCities){
 
   let thTos=toCities.map((tc,i)=>{
     const destCurr=tcs[i];
-    const defFx=tc&&fromCity&&destCurr!==fc?fmtN(getDefaultFxRate(fc,destCurr),2):'';
-    const curCustomFx=S.customFxDetailed[i]??null;
-    const fxRow=(tc&&fromCity&&destCurr!==fc)?`
-      <div style="margin-top:5px;padding-top:5px;border-top:1px dashed var(--border);">
-        <div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;">FX Rate (custom)</div>
-        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
-          <span style="font-size:0.75rem;white-space:nowrap;">1&nbsp;<strong>${destCurr}</strong>&nbsp;=</span>
-          <input type="text" inputmode="decimal" class="num-input dt-fx-inp" data-ci="${i}"
-            value="${curCustomFx!=null?curCustomFx:''}"
-            placeholder="${defFx}"
-            style="width:80px;padding:4px 6px;font-size:0.78rem;"/>
-          <span style="font-size:0.75rem;font-family:'DM Mono',monospace;"><strong>${fc}</strong></span>
-        </div>
-        <div style="font-size:0.65rem;color:var(--muted);margin-top:2px;">DB default: ${defFx} ${fc}</div>
-      </div>`:'';
     return`<th class="city-th">
     <div style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:6px;">
       <span>🏁 DESTINATION ${i+1}</span>
@@ -580,8 +565,28 @@ function buildDetailHTML(fromCity,toCities){
     </div>
     <div class="city-picker" id="dtToPicker${i}" style="min-width:140px;"></div>
     <div class="sub-num" style="margin-top:3px;">${destCurr}</div>
-    ${fxRow}
   </th>`;
+  }).join('');
+
+  // FX Rate row (custom) — one cell per destination; empty when not needed
+  const anyFx=toCities.some((tc,i)=>tc&&fromCity&&tcs[i]!==fc);
+  let fxFrom=`<td></td>`;
+  let fxTos=toCities.map((tc,i)=>{
+    const destCurr=tcs[i];
+    if(!tc||!fromCity||destCurr===fc)return`<td class="num-td"></td>`;
+    const defFx=fmtN(getDefaultFxRate(fc,destCurr),2);
+    const curCustomFx=S.customFxDetailed[i]??null;
+    return`<td class="num-td">
+      <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;flex-wrap:wrap;">
+        <span style="font-size:0.75rem;white-space:nowrap;">1&nbsp;<strong>${destCurr}</strong>&nbsp;=</span>
+        <input type="text" inputmode="decimal" class="num-input dt-fx-inp" data-ci="${i}"
+          value="${curCustomFx!=null?curCustomFx:''}"
+          placeholder="${defFx}"
+          style="width:80px;padding:4px 6px;font-size:0.78rem;"/>
+        <span style="font-size:0.75rem;font-family:'DM Mono',monospace;"><strong>${fc}</strong></span>
+      </div>
+      <div class="sub-num" style="text-align:right;margin-top:2px;">Default: ${defFx} ${fc}</div>
+    </td>`;
   }).join('');
 
   let thAdd=`<th><button class="btn-add" id="addCityBtn">+ City</button></th>`;
@@ -693,6 +698,11 @@ ${goalHtml}
         ${salFrom}${salTos}
         <td></td>
       </tr>
+      ${anyFx?`<tr class="fx-tr">
+        <td class="cat-td">💱 FX Rate (custom)</td>
+        ${fxFrom}${fxTos}
+        <td></td>
+      </tr>`:''}
       ${expRows}
       <tr>
         <td colspan="${3 + toCities.length}" style="padding:6px 8px;border-top:1px dashed var(--border);">
