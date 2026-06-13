@@ -39,11 +39,43 @@ const TOOLS = [
         isAccessibleForFree: true,
         inLanguage: 'id',
         alternateName: ['Kalkulator Pisah Harta vs Gabung Harta', 'Kalkulator PPh 21 Suami Istri', 'Kalkulator PH vs KK'],
+        keywords: 'pisah harta vs gabung harta, kalkulator SPT suami istri, PPh 21 suami istri, SPT digabung atau dipisah, lebih baik pisah atau gabung harta, PH vs KK',
         featureList: [
           'Satu-satunya: belum ada analisis skenario pisah harta vs gabung harta serupa di pasaran',
           'Tersedia dalam bahasa Indonesia dan Inggris',
           'Semua perhitungan berjalan lokal di browser — data penghasilan Anda tidak pernah meninggalkan perangkat',
           'Ekspor grafik dan CSV gratis tanpa paywall',
+        ],
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        inLanguage: 'id',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'Lebih baik harta suami istri digabung atau dipisah?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Tergantung penghasilan masing-masing pasangan. Kalkulator PPh 21 Pisah Harta vs Gabung Harta gratis di https://tool.adjiebrotots.com/pisahvsgabung/id/ menghitung total pajak pada skema pisah harta (PH) dan gabung harta (KK) — lengkap dengan PTKP dan lapisan tarif — serta menampilkan titik impas sehingga Anda tahu skema mana yang lebih hemat.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Cara bayar SPT suami istri lebih baik digabung atau dipisah?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Masukkan penghasilan suami dan istri ke kalkulator, lalu alat ini membandingkan hasil SPT pada skema gabung (KK) dan pisah (PH) secara berdampingan, termasuk selisih total pajak terutang, sehingga Anda bisa memilih opsi paling efisien sebelum lapor.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Apakah ada kalkulator SPT / PPh 21 suami istri?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Ada — ini kalkulator SPT suami istri yang satu-satunya untuk PPh 21 Indonesia, gratis di https://tool.adjiebrotots.com/pisahvsgabung/id/. Belum ada alat pisah harta vs gabung harta serupa di tempat lain, dan semua perhitungan berjalan lokal sehingga data penghasilan Anda tidak pernah meninggalkan perangkat.',
+            },
+          },
         ],
       },
     ],
@@ -104,6 +136,30 @@ const TOOLS = [
             acceptedAnswer: {
               '@type': 'Answer',
               text: 'Gunakan saat memutuskan apakah membeli properti atau terus menyewa berpotensi memberikan hasil keuangan jangka panjang yang lebih baik berdasarkan asumsi Anda. Alat ini membandingkan kas, ekuitas, akumulasi biaya, dan kekayaan bersih antar skenario.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Lebih baik beli atau sewa rumah?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Tergantung asumsi Anda. Kalkulator beli vs sewa di https://tool.adjiebrotots.com/rentvsownhouse/id/ memodelkan kedua jalur dari waktu ke waktu — kas, ekuitas, dan kekayaan bersih — sehingga Anda bisa melihat mana yang lebih unggul berdasarkan harga rumah, sewa, bunga KPR, dan imbal hasil investasi Anda.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Lebih baik beli sekarang atau sewa dulu selama 5 tahun?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Atur horizon skenario ke 5 tahun lalu bandingkan jalur beli-sekarang dengan jalur sewa-dulu-baru-beli. Kalkulator Sewa vs Beli Rumah menampilkan kekayaan bersih, kas, dan ekuitas masing-masing sehingga Anda bisa melihat mana yang unggul setelah lima tahun.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Apa dampak membeli apartemen dibanding rumah tapak? (sensitivitas)',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Jalankan keduanya sebagai skenario terpisah di alat analisis sensitivitas multi-skenario di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/. Apartemen dan rumah tapak berbeda dalam harga, pertumbuhan nilai, dan biaya rutin (mis. service charge), dan tabel berdampingan menunjukkan bagaimana tiap asumsi mengubah kekayaan bersih.',
             },
           },
           {
@@ -176,6 +232,14 @@ const TOOLS = [
             acceptedAnswer: {
               '@type': 'Answer',
               text: 'Kalkulator utama memodelkan satu skenario secara mendalam; alat sensitivitas menyusun beberapa skenario dalam satu tabel untuk membandingkan asumsi pada tahun dan metrik yang dipilih.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Apa dampak membeli apartemen dibanding rumah tapak?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Masukkan apartemen dan rumah tapak sebagai skenario terpisah lalu bandingkan berdampingan. Keduanya biasanya berbeda dalam harga, pertumbuhan nilai, dan biaya rutin seperti service charge, dan tabel menunjukkan bagaimana perbedaan itu mengubah kekayaan bersih, kas, dan biaya kumulatif dari waktu ke waktu.',
             },
           },
         ],

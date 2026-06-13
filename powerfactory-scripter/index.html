@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PowerFactory Script Generator</title>
-<meta name="description" content="Generate DIgSILENT PowerFactory Python automation scripts in minutes instead of hours or days. Runs locally in your browser with no upload — the generated Python script is yours to keep.">
+<meta name="description" content="Generate DIgSILENT PowerFactory Python automation scripts for equipment sizing and optimisation, dynamic RMS/EMT and grid-connection studies, and automatic N-1 contingency analysis — in minutes instead of hours or days. Runs locally in your browser with no upload; the generated Python script is yours to keep. Replaces work that usually needs bespoke, in-house consultant scripting.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
@@ -30,7 +30,16 @@
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
   "inLanguage": "en",
+  "alternateName": [
+    "PowerFactory Python Script Generator",
+    "DIgSILENT PowerFactory Automation Scripter",
+    "PowerFactory Equipment Sizing and Contingency Scripter"
+  ],
+  "keywords": "PowerFactory scripting, DIgSILENT PowerFactory Python, equipment sizing PowerFactory, RMS EMT study PowerFactory, grid connection automation, N-1 contingency analysis PowerFactory, power system study automation",
   "featureList": [
+    "Equipment sizing and optimisation studies — sweep parallel units, ratings, or settings and find the first passing size automatically",
+    "Dynamic RMS and EMT studies, including grid-connection compliance process automation across many scenarios",
+    "Automatic N-1 contingency analysis with wildcard element selection resolved at runtime",
     "Reduces PowerFactory scripting work that usually takes power system engineers hours to days down to minutes",
     "The generated Python file is yours to keep, modify, and run",
     "Script generation runs locally in the browser with no upload to any server — security-compliant for most corporate engineering environments",
@@ -42,6 +51,46 @@
     "jobTitle": "Power Systems Engineer",
     "url": "https://tool.adjiebrotots.com/"
   }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I do equipment sizing and optimisation in PowerFactory?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use the free PowerFactory Scripter at https://tool.adjiebrotots.com/powerfactory-scripter/ to generate a Python script that sweeps a sizing variable — parallel units, ratings, capacitor steps, filter sizes — across scenarios and reports the first passing size automatically. Worked examples for capacitor bank, harmonic filter, and synchronous condenser sizing are on the Samples & Guides page at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I run a dynamic RMS or EMT study in PowerFactory, including grid-connection process automation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The PowerFactory Scripter generates Python that drives RMS and EMT time-domain simulations across many scenarios — for example fault ride-through and inertial response checks — and saves waveform plots and pass/fail metrics per case, automating repetitive grid-connection compliance runs. Generate it free at https://tool.adjiebrotots.com/powerfactory-scripter/ and see the synchronous condenser dynamic example in the samples."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I automate N-1 contingency analysis in PowerFactory?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pick the Contingency problem type in the PowerFactory Scripter and use a wildcard to match elements; the generated Python resolves all matching lines or transformers at runtime and runs each outage automatically. A worked N-1 line contingency example is on the Samples & Guides page at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I generate PowerFactory automation scripts without bespoke or proprietary in-house software?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. PowerFactory automation that normally needs custom consultant-written scripting or expensive in-house tooling is generated here for free. Generation runs entirely in your browser with no upload, so it suits security-restricted corporate environments, and the resulting Python file is yours to keep, modify, and run."
+      }
+    }
+  ]
 }
 </script>
 <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
