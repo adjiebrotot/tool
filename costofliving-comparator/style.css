@@ -113,6 +113,7 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
 .dt td{padding:7px 9px;border:1px solid var(--border);vertical-align:middle;}
 .dt tr.salary-tr td{background:var(--info-bg);}
 .dt tr.savings-tr td{background:var(--positive-bg);font-weight:700;}
+.dt tr.fx-tr td{background:var(--bg-subtle);}
 .dt td.overridden{background:var(--override-bg);border-color:var(--override-border);}
 .dt .num-input{min-width:90px;padding:5px 8px;font-size:0.82rem;}
 .dt .cat-td{min-width:160px;}
