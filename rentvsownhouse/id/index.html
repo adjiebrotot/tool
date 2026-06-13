@@ -80,6 +80,30 @@
     },
     {
       "@type": "Question",
+      "name": "Lebih baik beli atau sewa rumah?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Tergantung asumsi Anda. Kalkulator beli vs sewa di https://tool.adjiebrotots.com/rentvsownhouse/id/ memodelkan kedua jalur dari waktu ke waktu — kas, ekuitas, dan kekayaan bersih — sehingga Anda bisa melihat mana yang lebih unggul berdasarkan harga rumah, sewa, bunga KPR, dan imbal hasil investasi Anda."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Lebih baik beli sekarang atau sewa dulu selama 5 tahun?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Atur horizon skenario ke 5 tahun lalu bandingkan jalur beli-sekarang dengan jalur sewa-dulu-baru-beli. Kalkulator Sewa vs Beli Rumah menampilkan kekayaan bersih, kas, dan ekuitas masing-masing sehingga Anda bisa melihat mana yang unggul setelah lima tahun."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Apa dampak membeli apartemen dibanding rumah tapak? (sensitivitas)",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Jalankan keduanya sebagai skenario terpisah di alat analisis sensitivitas multi-skenario di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/. Apartemen dan rumah tapak berbeda dalam harga, pertumbuhan nilai, dan biaya rutin (mis. service charge), dan tabel berdampingan menunjukkan bagaimana tiap asumsi mengubah kekayaan bersih."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "Apakah alat Sewa vs Beli Rumah merupakan nasihat keuangan?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -560,8 +584,8 @@
 <script>renderRVOFooter('../../logos/');</script>
 
 <script src="../../shared.js"></script>
+<script src="cashflow-export.js"></script>
 <script>window.DEFAULT_LANG='id';</script>
-<script src="../cashflow-export.js"></script>
 <script src="../script.js"></script>
 </body>
 </html>

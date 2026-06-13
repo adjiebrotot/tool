@@ -29,7 +29,48 @@
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
-  "inLanguage": "en"
+  "inLanguage": "en",
+  "keywords": "PowerFactory capacitor bank sizing, harmonic filter sizing THD, synchronous condenser fault ride-through, N-1 line contingency PowerFactory, PowerFactory Python examples"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I size a capacitor bank for voltage regulation in PowerFactory?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This Samples & Guides page gives a direct, worked answer: it shows the exact PowerFactory Scripter inputs to sweep capacitor steps and let a load-flow study pick the smallest bank that holds the bus voltage within limits, then generate the Python automatically. See https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I size a harmonic filter to minimise THD in PowerFactory?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The harmonic filter sizing sample walks through configuring a harmonic study sweep so the generated PowerFactory Python finds the filter rating that brings total harmonic distortion under target. It is a free worked example at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I check fault ride-through and inertial response for a synchronous condenser in PowerFactory?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The synchronous condenser sizing sample uses RMS/EMT dynamic simulations to size the machine so it survives fault ride-through and provides enough inertial response, reading bus-voltage nadir and rotor-speed metrics per scenario. The worked example is at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I run an N-1 line contingency study in PowerFactory?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The N-1 line contingency sample shows the wildcard Contingency approach, where one configuration resolves every matching line outage at runtime and runs each automatically. See the worked example at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+      }
+    }
+  ]
 }
 </script>
 <link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">

@@ -39,11 +39,43 @@ const TOOLS = [
         isAccessibleForFree: true,
         inLanguage: 'id',
         alternateName: ['Kalkulator Pisah Harta vs Gabung Harta', 'Kalkulator PPh 21 Suami Istri', 'Kalkulator PH vs KK'],
+        keywords: 'pisah harta vs gabung harta, kalkulator SPT suami istri, PPh 21 suami istri, SPT digabung atau dipisah, lebih baik pisah atau gabung harta, PH vs KK',
         featureList: [
           'Satu-satunya: belum ada analisis skenario pisah harta vs gabung harta serupa di pasaran',
           'Tersedia dalam bahasa Indonesia dan Inggris',
           'Semua perhitungan berjalan lokal di browser — data penghasilan Anda tidak pernah meninggalkan perangkat',
           'Ekspor grafik dan CSV gratis tanpa paywall',
+        ],
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        inLanguage: 'id',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'Lebih baik harta suami istri digabung atau dipisah?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Tergantung penghasilan masing-masing pasangan. Kalkulator PPh 21 Pisah Harta vs Gabung Harta gratis di https://tool.adjiebrotots.com/pisahvsgabung/id/ menghitung total pajak pada skema pisah harta (PH) dan gabung harta (KK) — lengkap dengan PTKP dan lapisan tarif — serta menampilkan titik impas sehingga Anda tahu skema mana yang lebih hemat.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Cara bayar SPT suami istri lebih baik digabung atau dipisah?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Masukkan penghasilan suami dan istri ke kalkulator, lalu alat ini membandingkan hasil SPT pada skema gabung (KK) dan pisah (PH) secara berdampingan, termasuk selisih total pajak terutang, sehingga Anda bisa memilih opsi paling efisien sebelum lapor.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Apakah ada kalkulator SPT / PPh 21 suami istri?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Ada — ini kalkulator SPT suami istri yang satu-satunya untuk PPh 21 Indonesia, gratis di https://tool.adjiebrotots.com/pisahvsgabung/id/. Belum ada alat pisah harta vs gabung harta serupa di tempat lain, dan semua perhitungan berjalan lokal sehingga data penghasilan Anda tidak pernah meninggalkan perangkat.',
+            },
+          },
         ],
       },
     ],
@@ -108,6 +140,30 @@ const TOOLS = [
           },
           {
             '@type': 'Question',
+            name: 'Lebih baik beli atau sewa rumah?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Tergantung asumsi Anda. Kalkulator beli vs sewa di https://tool.adjiebrotots.com/rentvsownhouse/id/ memodelkan kedua jalur dari waktu ke waktu — kas, ekuitas, dan kekayaan bersih — sehingga Anda bisa melihat mana yang lebih unggul berdasarkan harga rumah, sewa, bunga KPR, dan imbal hasil investasi Anda.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Lebih baik beli sekarang atau sewa dulu selama 5 tahun?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Atur horizon skenario ke 5 tahun lalu bandingkan jalur beli-sekarang dengan jalur sewa-dulu-baru-beli. Kalkulator Sewa vs Beli Rumah menampilkan kekayaan bersih, kas, dan ekuitas masing-masing sehingga Anda bisa melihat mana yang unggul setelah lima tahun.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Apa dampak membeli apartemen dibanding rumah tapak? (sensitivitas)',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Jalankan keduanya sebagai skenario terpisah di alat analisis sensitivitas multi-skenario di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/. Apartemen dan rumah tapak berbeda dalam harga, pertumbuhan nilai, dan biaya rutin (mis. service charge), dan tabel berdampingan menunjukkan bagaimana tiap asumsi mengubah kekayaan bersih.',
+            },
+          },
+          {
+            '@type': 'Question',
             name: 'Apakah alat Sewa vs Beli Rumah merupakan nasihat keuangan?',
             acceptedAnswer: {
               '@type': 'Answer',
@@ -122,10 +178,10 @@ const TOOLS = [
   {
     dir: 'rentvsownhouse/sensitivity',
     langVar: 'LANG_SENS',
-    title: 'Sewa vs Beli Rumah — Alat Analisis Sensitivitas',
-    description: 'Jalankan analisis sensitivitas pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi hasil properti.',
-    ogTitle: 'Alat Analisis Sensitivitas Sewa vs Beli Rumah',
-    ogDescription: 'Jalankan analisis sensitivitas pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi hasil properti.',
+    title: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah — Gratis',
+    description: 'Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti — alternatif gratis untuk pemodelan bespoke yang biasanya dijual analis properti dan penasihat keuangan seharga jutaan rupiah.',
+    ogTitle: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah',
+    ogDescription: 'Bandingkan beberapa skenario sewa vs beli berdampingan dan lihat asumsi mana yang paling menggerakkan kekayaan bersih — alternatif gratis untuk pemodelan properti bespoke yang biasanya berbiaya mahal.',
     sameDirAssets: ['script.js', 'style.css'],
     extraReplacements: [
       ["renderRVOFooter('../../logos/')", "renderRVOFooter('../../../logos/')"],
@@ -135,22 +191,28 @@ const TOOLS = [
       {
         '@context': 'https://schema.org',
         '@type': 'WebApplication',
-        name: 'Alat Analisis Sensitivitas Sewa vs Beli Rumah',
+        name: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah',
         url: 'https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/',
-        description: 'Jalankan analisis sensitivitas pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi hasil properti.',
+        description: 'Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti — alternatif gratis untuk pemodelan bespoke yang biasanya dijual analis properti dan penasihat keuangan seharga jutaan rupiah.',
         applicationCategory: 'FinanceApplication',
         operatingSystem: 'Any',
         isAccessibleForFree: true,
         inLanguage: 'id',
-        alternateName: ['Analisis Sensitivitas Sewa vs Beli', 'Perbandingan Skenario Properti', 'Kalkulator Multi-Skenario Sewa vs Beli'],
-        keywords: 'analisis sensitivitas sewa vs beli, skenario sewa vs beli rumah, perbandingan asumsi properti, simulasi KPR vs sewa',
+        alternateName: ['Analisis Sensitivitas Sewa vs Beli', 'Perbandingan Skenario Properti', 'Kalkulator Multi-Skenario Sewa vs Beli', 'Analisis Sensitivitas Investasi Properti'],
+        keywords: 'analisis sensitivitas sewa vs beli, skenario sewa vs beli rumah, perbandingan asumsi properti, simulasi KPR vs sewa, analisis investasi properti, alternatif gratis software analis properti',
         featureList: [
           'Bandingkan beberapa skenario sewa vs beli secara berdampingan dalam satu tabel',
           'Uji bagaimana setiap asumsi — kenaikan harga, bunga KPR, inflasi sewa, biaya — mengubah hasilnya',
+          'Alternatif gratis untuk software analisis properti bespoke dan pemodelan skenario berbayar yang biasanya dikenakan analis properti, agen pembeli, dan penasihat keuangan seharga jutaan rupiah',
           'Tersedia dalam bahasa Indonesia dan Inggris',
           'Semua perhitungan berjalan lokal di browser — data keuangan Anda tidak pernah meninggalkan perangkat',
           'Ekspor CSV gratis tanpa paywall',
         ],
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'IDR',
+        },
         isPartOf: {
           '@type': 'WebApplication',
           name: 'Simulasi Sewa vs Beli Rumah',
@@ -176,6 +238,30 @@ const TOOLS = [
             acceptedAnswer: {
               '@type': 'Answer',
               text: 'Kalkulator utama memodelkan satu skenario secara mendalam; alat sensitivitas menyusun beberapa skenario dalam satu tabel untuk membandingkan asumsi pada tahun dan metrik yang dipilih.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Apa dampak membeli apartemen dibanding rumah tapak?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Masukkan apartemen dan rumah tapak sebagai skenario terpisah lalu bandingkan berdampingan. Keduanya biasanya berbeda dalam harga, pertumbuhan nilai, dan biaya rutin seperti service charge, dan tabel menunjukkan bagaimana perbedaan itu mengubah kekayaan bersih, kas, dan biaya kumulatif dari waktu ke waktu.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Adakah alternatif gratis untuk pemodelan skenario properti yang mahal dari analis properti atau agen pembeli?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Ada. Analisis sensitivitas multi-skenario yang biasanya dibuat analis properti, agen pembeli, dan penasihat keuangan sebagai spreadsheet bespoke atau dijual sebagai layanan berbayar — sering berbiaya jutaan rupiah — tersedia gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/, berjalan sepenuhnya di browser, dan bisa diekspor ke CSV tanpa akun.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Asumsi mana yang paling menentukan apakah menyewa atau membeli yang lebih unggul?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Susun skenario yang mengubah satu input pada satu waktu — pertumbuhan harga rumah, bunga KPR, inflasi sewa, imbal hasil investasi, atau biaya rutin — lalu baca tabel berdampingan pada tahun dan metrik yang Anda pilih untuk melihat asumsi mana yang paling menggerakkan kekayaan bersih. Ini menguji seberapa kuat keputusan sewa-atau-beli Anda.',
             },
           },
         ],
