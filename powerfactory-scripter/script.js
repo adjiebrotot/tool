@@ -519,7 +519,7 @@ const ALGORITHM_META = {
   'scipy_slsqp':            { label: 'SLSQP — Sequential Least Squares (scipy)',  doc: 'optimize.minimize-slsqp',      method: 'SLSQP',       bounds: true,  pyImport: 'from scipy.optimize import minimize' },
   'scipy_cobyla':           { label: 'COBYLA — Constraint Approximation (scipy)', doc: 'optimize.minimize-cobyla',     method: 'COBYLA',      bounds: false, pyImport: 'from scipy.optimize import minimize' },
   'differential_evolution': { label: 'Differential Evolution — Global (scipy)',   doc: null,                         method: null,          bounds: true,  pyImport: 'from scipy.optimize import differential_evolution' },
-  'gp_minimize':            { label: 'Bayesian Optimisation (scikit-optimize)',   doc: null,                         method: null,          bounds: true,  pyImport: 'from skopt import gp_minimize\nfrom skopt.space import Real\nfrom skopt.utils import use_named_args' },
+  'gp_minimize':            { label: 'Bayesian Optimisation (scikit-optimize)',   doc: null,                         method: null,          bounds: true,  pyImport: 'from skopt import gp_minimize\nfrom skopt.space import Real, Integer\nfrom skopt.utils import use_named_args' },
 };
 
 const ALGORITHM_TIPS = {

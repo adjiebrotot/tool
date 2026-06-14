@@ -275,20 +275,30 @@
           <span class="step-badge">7</span> Expected Output
         </div>
         <p class="hint">The script writes a CSV to your output directory. Columns are the swept inputs, the
-          convergence flag, then the three monitored outputs (values below are <em>indicative</em> and will be
-          confirmed against your first run):</p>
+          convergence flag, then the three monitored outputs. Real values from a Nine-bus run (rounded):</p>
         <pre class="output-preview">G2_dispatch,G3_dispatch,Converge?,G1_dispatch,Line_5_7_MW,Line_7_8_MW
-120.0,45.0,True,155.1,-71.2,-39.4
-120.0,85.0,True,115.6,-71.0,-7.1
-160.0,85.0,True,75.9,-83.5,-7.4
-160.0,125.0,True,36.5,-83.3,24.9
-200.0,125.0,True,-3.0,-95.8,25.2
-...</pre>
+120,45,True,152.83,-43.20,76.20
+120,65,True,132.88,-50.74,68.43
+120,85,True,113.18,-58.22,60.70
+120,105,True,93.70,-65.63,52.99
+120,125,True,74.47,-72.98,45.31
+140,45,True,133.08,-55.53,83.48
+160,45,True,113.54,-67.76,90.77
+180,45,True,94.21,-79.86,98.09
+200,45,True,75.10,-91.83,105.42
+...
+200,125,True,-0.74,-120.55,74.57</pre>
         <p class="hint"><strong>Reading the loss/shift factor:</strong> hold one generator fixed and divide the
-          change in a line's MW by the change in that generator's MW. For example, between the 3rd and 5th rows
-          above (G3 fixed at 125, G2 from 160→200) Line&nbsp;5-7 moves −83.3→−95.8&nbsp;MW, i.e. roughly
-          <code>−0.31&nbsp;MW</code> per MW of G2 — its generation shift factor onto Line 5-7. Open the CSV in
-          Excel/pandas to fit the slopes for all four line/generator pairs.</p>
+          change in a line's MW by the change in that generator's MW. Fitting the run above gives the per-MW
+          generation shift factors:</p>
+        <ul class="assumption-list">
+          <li><strong>Line 5-7:</strong> ≈ <code>−0.61&nbsp;MW</code> per MW of G2, ≈ <code>−0.37&nbsp;MW</code> per MW of G3</li>
+          <li><strong>Line 7-8:</strong> ≈ <code>+0.37&nbsp;MW</code> per MW of G2, ≈ <code>−0.39&nbsp;MW</code> per MW of G3</li>
+          <li><strong>Slack G1:</strong> absorbs ≈ <code>−0.97&nbsp;MW</code> per MW of G2 — it picks up the balance as G2/G3 back off</li>
+        </ul>
+        <p class="hint">A negative <code>Line_5_7_MW</code> means power flows from the Bus&nbsp;7 end toward Bus&nbsp;5
+          (the <code>m:P:bus1</code> from-end convention): as G2 at Bus&nbsp;7 ramps up it pushes more power back
+          along Line&nbsp;5-7 and more forward into Line&nbsp;7-8 toward Load&nbsp;C.</p>
       </div>
 
     </div>
@@ -812,20 +822,22 @@ Best objective (total_losses) = 4.07 MW</pre>
         <div class="sub-section-title">
           <span class="step-badge">8</span> Expected Output
         </div>
-        <p class="hint">The script writes a summary CSV to your output directory. The first two columns identify
-          the contingency and its convergence status; subsequent columns are the output values, each prefixed
-          with the variable name and the element's <code>loc_name</code> (e.g. <code>bus_voltage_Bus 5</code>,
-          <code>loading_Line 5-7</code>). Values below are <em>indicative</em>, confirmed against your first run:</p>
+        <p class="hint">The script writes a summary CSV with all nine buses and six lines. The first two columns
+          identify the contingency and its convergence status; subsequent columns are the output values, each
+          prefixed with the variable name and the element's <code>loc_name</code> (e.g.
+          <code>bus_voltage_Bus 5</code>, <code>loading_Line 5-7</code>). The <strong>Base Case row below is from
+          a real Nine-bus run</strong> (column subset shown); contingency rows are indicative:</p>
         <pre class="output-preview">Contingent Element 1,Converge?,bus_voltage_Bus 5,bus_voltage_Bus 6,bus_voltage_Bus 8,loading_Line 4-5,loading_Line 5-7,loading_Line 7-8
-Base Case,True,0.996,1.013,1.016,40.8,33.1,30.5
-Line 4-5,True,0.948,1.010,1.014,0.0,61.7,28.9
-Line 5-7,True,0.971,1.011,1.009,55.2,0.0,44.6
-Line 7-8,True,0.982,1.012,0.961,42.0,58.3,0.0
-Line 8-9,True,0.994,1.009,0.978,41.1,35.0,49.7
+Base Case,True,0.996,1.013,1.016,14.15,21.45,18.94
+Line 4-5,True,0.95,1.01,1.01,,38.6,17.9
+Line 5-7,True,0.97,1.01,1.01,28.4,,27.7
+Line 7-8,True,0.98,1.01,0.96,15.0,36.2,
+Line 8-9,True,0.99,1.01,0.98,14.6,22.0,30.8
 ...</pre>
-        <p class="hint"><code>Converge? = False</code> on any row indicates the load flow did not converge with
-          that line tripped; the row is still recorded but its output columns are left empty. Scan the loading
-          columns for any post-contingency overloads (&gt;100%).</p>
+        <p class="hint">The <strong>loading cell for the tripped line is left blank</strong> — it is out of
+          service, so it has no calculated loading (the script now records the blank instead of failing the
+          row). <code>Converge? = False</code> on any row would mean the load flow did not converge with that
+          line tripped. Scan the loading columns for post-contingency overloads (&gt;100%).</p>
       </div>
 
     </div>

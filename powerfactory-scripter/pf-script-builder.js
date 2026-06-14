@@ -115,9 +115,8 @@ function buildPreparation(cfg) {
 app = ${getAppCall}
 user = app.GetCurrentUser()
 
-# Show available projects
+# Fetch available projects (the list is printed during selection below)
 projects = user.GetContents("*.IntPrj")
-[print(f"i: {index}, project: {value}") for index, value in enumerate(projects)]
 `;
 }
 
@@ -256,13 +255,26 @@ def get_event_objects(app, object_query):
     Raises ValueError if the folder or object cannot be found.
     """
     study_case = app.GetActiveStudyCase()
-    folders = study_case.GetContents("Simulation Events.IntEvt")
-    if not folders:
-        raise ValueError(f"Could not find 'Simulation Events' folder in active study case (query: {object_query!r})")
-    evt_folder = folders[0]
+    if study_case is None:
+        raise ValueError(f"No active study case for event lookup (query: {object_query!r})")
+    # The simulation event list (class IntEvt) is the canonical events folder for
+    # the active study case. GetFromStudyCase resolves it regardless of the
+    # folder's display name/localisation; fall back to a name-based lookup.
+    evt_folder = app.GetFromStudyCase("IntEvt")
+    if evt_folder is None:
+        folders = study_case.GetContents("Simulation Events.IntEvt")
+        evt_folder = folders[0] if folders else None
+    if evt_folder is None:
+        raise ValueError(
+            f"Could not find a Simulation Events (IntEvt) folder in the active study case "
+            f"(query: {object_query!r}). Activate an RMS/EMT study case that contains the event."
+        )
     results = evt_folder.GetContents(object_query)
     if not results:
-        raise ValueError(f"No event found matching {object_query!r} in Simulation Events folder.")
+        raise ValueError(
+            f"No event found matching {object_query!r} in the Simulation Events folder. "
+            f"Create the event and make sure its name matches the query."
+        )
     return results
 
 
@@ -397,11 +409,20 @@ def extract_attribute_output(app, object_query, variable_name):
     """
     objects = get_pf_objects(app, object_query)
     if len(objects) == 1:
-        return objects[0].GetAttribute(variable_name)
+        try:
+            return objects[0].GetAttribute(variable_name)
+        except Exception:
+            # Attribute unavailable (e.g. an out-of-service element after a trip)
+            return None
     values = {}
     for obj in objects:
         loc_name = getattr(obj, "loc_name", "Object")
-        values[loc_name] = obj.GetAttribute(variable_name)
+        try:
+            values[loc_name] = obj.GetAttribute(variable_name)
+        except Exception:
+            # Attribute unavailable for this element (e.g. tripped / out of service);
+            # leave it blank rather than failing the whole result row.
+            values[loc_name] = None
     return values
 
 `;
