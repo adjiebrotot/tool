@@ -269,7 +269,14 @@ def get_event_objects(app, object_query):
             f"Could not find a Simulation Events (IntEvt) folder in the active study case "
             f"(query: {object_query!r}). Activate an RMS/EMT study case that contains the event."
         )
-    results = evt_folder.GetContents(object_query)
+    # Recursive search (recursive=1) so events nested in sub-folders of the
+    # event list (e.g. "Simulation Events/Fault") are still found.
+    results = evt_folder.GetContents(object_query, 1)
+    if not results:
+        # Fall back to a recursive search of the whole study case — handles
+        # events that live outside the IntEvt folder returned above, or in a
+        # differently named / additional event list.
+        results = study_case.GetContents(object_query, 1)
     if not results:
         raise ValueError(
             f"No event found matching {object_query!r} in the Simulation Events folder. "
@@ -1337,6 +1344,12 @@ for _spec in _col_specs:
       ? '    return -(objective_value_adjusted)'
       : '    return objective_value_adjusted';
 
+    // In Python-file style the whole body is wrapped in main(), so
+    // iteration_count / results_df are locals of main() and the nested
+    // evaluate_one_case must reach them via `nonlocal`. In notebook style the
+    // body runs at module level, so they are true globals and need `global`.
+    const counterScope = cfg.initialisation.codingStyle === 'notebook' ? 'global' : 'nonlocal';
+
     pre += `
 effective_bounds = [(float(spec["lower"]), float(spec["upper"])) for spec in input_specs]
 
@@ -1352,7 +1365,7 @@ for _i, _spec in enumerate(input_specs):
 
 
 def evaluate_one_case(param_values):
-    global iteration_count, results_df
+    ${counterScope} iteration_count, results_df
     iteration_count += 1
     row = {}
 
