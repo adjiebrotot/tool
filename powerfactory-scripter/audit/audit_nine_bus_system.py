@@ -328,43 +328,61 @@ def phase1():
     def cp_study_cases():
         proj = STATE["project"]
         root = proj.GetContents("Study Cases")
-        by_name = root[0].GetContents() if root else []
-        # robust cross-check
+        raw = list(root[0].GetContents()) if root else []   # what the tool returns
+        cases = [o for o in raw if o.GetClassName() == "IntCase"]
+        others = [(o.loc_name, o.GetClassName()) for o in raw
+                  if o.GetClassName() != "IntCase"]
         try:
             folder = app.GetProjectFolder("study")
-            by_folder = folder.GetContents("*.IntCase") if folder else []
+            by_folder = list(folder.GetContents("*.IntCase")) if folder else []
         except Exception as e:                   # noqa: BLE001
             by_folder = []
             info(f"GetProjectFolder('study') raised {type(e).__name__}: {e}")
-        STATE["study_cases"] = list(by_name) or list(by_folder)
-        names = [s.loc_name for s in STATE["study_cases"]]
-        info(f"study cases: {names}")
+        STATE["study_cases"] = cases or by_folder    # IntCase-only for the audit
+        STATE["study_cases_raw"] = raw               # unfiltered, like the tool
+        info(f"IntCase study cases: {[c.loc_name for c in STATE['study_cases']]}")
+        if others:
+            info(f"non-IntCase children in 'Study Cases': {others}")
         if not root:
             raise Warn("project.GetContents('Study Cases') returned EMPTY — the tool's "
                        f"get_study_cases() helper would find nothing. "
                        f"GetProjectFolder('study') found {len(by_folder)}. "
                        f"Folder name may be localized/renamed.")
-        if len(by_name) != len(by_folder) and by_folder:
-            raise Warn(f"name-based folder lookup ({len(by_name)}) != "
-                       f"GetProjectFolder('study') ({len(by_folder)})")
-        return f"{len(by_name)} study case(s) via name-folder lookup"
+        if others:
+            raise Warn(f"'Study Cases' folder also holds NON-IntCase object(s) {others}. "
+                       f"The tool's get_study_cases() does project.GetContents(...) "
+                       f"UNFILTERED, so iterateStudyCases would call .Activate() on these "
+                       f"and fail (that is the CP 1.5 error). Fix: filter to '*.IntCase'.")
+        return f"{len(cases)} IntCase(s); {len(others)} non-IntCase child(ren)"
 
     run("1.4", "get_study_cases", "project.GetContents('Study Cases')", cp_study_cases)
 
     # --- 1.5  Activate a study case  (mirrors study_case.Activate()) -------
     def cp_activate_sc():
-        scs = STATE.get("study_cases") or []
+        scs = STATE.get("study_cases") or []      # IntCase-only now
         if not scs:
-            raise Skip("no study cases to activate")
-        target = app.GetActiveStudyCase() or scs[0]
-        err = target.Activate()
-        if err:
-            raise RuntimeError(f"study_case.Activate() err={err}")
+            raise Skip("no IntCase study cases to activate")
         active = app.GetActiveStudyCase()
-        if active is None:
-            raise RuntimeError("GetActiveStudyCase() is None after Activate()")
-        STATE["study_case"] = active
-        return f"active study case = '{active.loc_name}'"
+        active_fn = active.GetFullName() if active is not None else None
+        # Pick a case that is NOT currently active, to genuinely test switching.
+        target = next((sc for sc in scs if sc.GetFullName() != active_fn), scs[0])
+        err = target.Activate()
+        got = app.GetActiveStudyCase()
+        STATE["study_case"] = got
+        # restore the originally-active case so PHASE 4 runs the load-flow case
+        if STATE.get("orig_sc") is not None:
+            STATE["orig_sc"].Activate()
+        if err != 0:
+            raise Warn(f"study_case.Activate() returned err={err} for '{target.loc_name}' "
+                       f"(GetActiveStudyCase now='{getattr(got,'loc_name',None)}'). Often a "
+                       f"benign 'already active' code — switching otherwise works (CP 7.0 "
+                       f"activates a different case fine). The original FAIL came from "
+                       f"trying to .Activate() the non-IntCase 'Task Automation' object.")
+        if got is None or got.GetFullName() != target.GetFullName():
+            raise Warn(f"Activate('{target.loc_name}') OK but GetActiveStudyCase()="
+                       f"'{getattr(got,'loc_name',None)}'")
+        return (f"switched to '{target.loc_name}' (err={err}), "
+                f"restored '{getattr(STATE.get('orig_sc'),'loc_name',None)}'")
 
     run("1.5", "get_study_cases", "study_case.Activate() + GetActiveStudyCase()", cp_activate_sc)
 
@@ -860,100 +878,189 @@ def phase7():
     if not run("7.6", "run_study_dynamic_rms", "ComSim.Execute()", cp_comsim):
         return True
 
-    # --- 7.7  In-memory read (mirrors _read_elmres_inmemory) ---------------
-    #   Load -> GetNumberOfRows -> GetValue(row,0)[1] (time)
-    #        -> FindColumn(obj,var) -> GetValue(row,col)[1] -> Release
-    def cp_read_inmemory():
+    # --- 7.7  ElmRes structure dump (object/variable per column) -----------
+    #   This is the diagnostic the v1 audit lacked: it prints the full column
+    #   map and probes several rows, so we can SEE which column is really the
+    #   time axis instead of assuming column 0.
+    def cp_dump_structure():
         res = STATE["res"]
         g = STATE["rms_gen"]
         var = STATE["rms_var"]
         res.Load()
         try:
             nrow = res.GetNumberOfRows()
-            time_vals = [res.GetValue(r, 0)[1] for r in range(nrow)]
-            col = res.FindColumn(g, var)
-            if col < 0:
-                raise RuntimeError(f"FindColumn(gen,'{var}') = {col} (<0): variable not "
-                                   f"in ElmRes. ensure_elmres_variables must run BEFORE "
-                                   f"ComInc — check AddVariable (CP 7.4).")
-            data = [res.GetValue(r, col)[1] for r in range(nrow)]
+            ncol = res.GetNumberOfColumns()
+            STATE["nrow"] = nrow
+            sfcol = res.FindColumn(g, var)
+            STATE["sfcol"] = sfcol
+            info(f"GetNumberOfRows={nrow}, GetNumberOfColumns={ncol}, "
+                 f"FindColumn(gen,'{var}')={sfcol}")
+            if sfcol < 0:
+                raise RuntimeError(f"FindColumn(gen,'{var}')={sfcol} (<0) — the monitored "
+                                   f"variable is missing; AddVariable (CP 7.4) must run "
+                                   f"BEFORE ComInc.")
+            cap = min(ncol, 60)
+            info("  --- column map (col | class | object | variable) ---")
+            for c in range(cap):
+                obj = res.GetObject(c)
+                cls = obj.GetClassName() if obj is not None else None
+                ln = getattr(obj, "loc_name", None)
+                info(f"   {c:>3} | {str(cls):>10} | {str(ln):<22} | {res.GetVariable(c)}")
+            if ncol > cap:
+                info(f"   ... ({ncol - cap} more columns not shown)")
+            # Probe a handful of rows for col 0 (tool's assumed time) + s:firel.
+            probe = sorted(set([0, 1, 2, nrow // 2, nrow - 1])) if nrow else []
+            info("  --- row probes (does GetValue respect the row index?) ---")
+            for r in probe:
+                info(f"   row {r:>5}: GetValue(r,0)={res.GetValue(r, 0)!r}   "
+                     f"GetValue(r,{sfcol})={res.GetValue(r, sfcol)!r}")
+            # Some PF builds expose the time axis at column index -1.
+            try:
+                info(f"   GetValue(0,-1)={res.GetValue(0,-1)!r}  "
+                     f"GetValue({nrow-1},-1)={res.GetValue(nrow-1,-1)!r}")
+            except Exception as e:                   # noqa: BLE001
+                info(f"   GetValue(row,-1) raised {type(e).__name__}: {e}")
         finally:
             res.Release()
-        STATE["ts_time"], STATE["ts_data"] = time_vals, data
-        # validate the time axis the tool relies on
-        mono = all(time_vals[i] <= time_vals[i + 1] for i in range(len(time_vals) - 1))
-        info(f"rows={nrow}; t[0]={fmt(time_vals[0],4)} t[-1]={fmt(time_vals[-1],4)} s; "
-             f"monotonic={mono}; col('{var}')={col}")
-        info(f"  {var} sample: first={fmt(data[0],4)} last={fmt(data[-1],4)} "
-             f"min={fmt(min(data),4)} max={fmt(max(data),4)}")
         if nrow < 2:
             raise Warn(f"only {nrow} result row(s) — simulation produced no time series")
-        if not mono:
-            raise Warn("time column (col 0) is not monotonic — output-step assumption off")
-        if len(data) != nrow:
-            raise RuntimeError("data length != number of rows")
-        return f"Load/FindColumn/GetValue/Release OK; {nrow} rows, t_end={fmt(time_vals[-1],3)}s"
-    if not run("7.7", "_read_elmres_inmemory", "ElmRes Load/FindColumn/GetValue/Release", cp_read_inmemory):
+        return f"dumped {min(ncol,60)}/{ncol} columns + {len(probe)} row probes"
+    if not run("7.7", "_read_elmres_inmemory", "ElmRes structure + column-map dump", cp_dump_structure):
         return True
 
-    # --- 7.8  GetValue return-shape assumption ([1] indexing) --------------
+    # --- 7.7b  GetValue return-shape ([1] indexing) ------------------------
     def cp_getvalue_shape():
         res = STATE["res"]
         res.Load()
         try:
-            ret = res.GetValue(0, 0)
+            ret = res.GetValue(0, STATE.get("sfcol", 0))
         finally:
             res.Release()
-        info(f"res.GetValue(0,0) -> {ret!r}  (type {type(ret).__name__})")
-        is_tuple = isinstance(ret, (tuple, list))
-        if not is_tuple:
-            raise Warn("GetValue() did NOT return a (errorCode, value) tuple in this "
-                       "build — the generated code's `GetValue(...)[1]` indexing would "
-                       "break. Reported so the generator can be adjusted.")
-        try:
-            v = ret[1]
-            float(v)
-        except Exception as e:                      # noqa: BLE001
-            raise Warn(f"GetValue()[1] is not numeric ({e})")
-        return f"GetValue returns 2-tuple; [1]={fmt(ret[1],4)} (generator's [1] is valid)"
-    run("7.8", "_read_elmres_inmemory", "GetValue (errorCode,value) tuple shape", cp_getvalue_shape)
+        info(f"GetValue(...) -> {ret!r}  (type {type(ret).__name__})")
+        if not isinstance(ret, (tuple, list)):
+            raise Warn("GetValue() did NOT return a 2-element (errorCode, value) "
+                       "sequence — the generated `GetValue(...)[1]` would break.")
+        float(ret[1])
+        return f"returns 2-element {type(ret).__name__}; [1]={fmt(ret[1],4)} (the [1] index is valid)"
+    run("7.7b", "_read_elmres_inmemory", "GetValue (errorCode,value) shape", cp_getvalue_shape)
 
-    # --- 7.9  Metric computation (mirrors calculate_timeseries_metric) -----
-    #   Plus the native ElmRes Find{Max,Min}InColumn the README also lists.
+    # --- 7.8  Time-axis strategy comparison (THE crux) ---------------------
+    #   The generator reads time as GetValue(row, 0)[1]. Here we compare that
+    #   against other ways to obtain time and confirm which one yields a real
+    #   0 -> tstop ramp on this build/result.
+    def cp_time_axis():
+        res = STATE["res"]
+        res.Load()
+        try:
+            nrow = res.GetNumberOfRows()
+            ncol = res.GetNumberOfColumns()
+            # Candidate (label, column-index passed straight to GetValue).
+            cands = [("A GetValue(row,0)  [tool]", 0),
+                     ("B GetValue(row,-1)", -1)]
+            tnow_col = next((c for c in range(ncol)
+                             if res.GetVariable(c) in ("b:tnow", "s:tnow", "t")), None)
+            if tnow_col is not None:
+                cands.append((f"C col {tnow_col} (var 'b:tnow')", tnow_col))
+            # D: auto-scan for a column that rises from ~0 (a time ramp).
+            best = None
+            for c in range(ncol):
+                try:
+                    a = res.GetValue(0, c)[1]
+                    b = res.GetValue(nrow - 1, c)[1]
+                except Exception:                    # noqa: BLE001
+                    continue
+                if (b - a) > 1e-6 and abs(a) <= 1e-3 + 0.02 * abs(b):
+                    if best is None or (b - a) > best[1]:
+                        best = (c, b - a)
+            if best is not None and best[0] != tnow_col:
+                cands.append((f"D col {best[0]} (auto-detected ramp)", best[0]))
+            # Assess each candidate.
+            sub = max(1, nrow // 50)
+            results = []
+            for label, idx in cands:
+                try:
+                    v0 = res.GetValue(0, idx)[1]
+                    vl = res.GetValue(nrow - 1, idx)[1]
+                    sample = [res.GetValue(i, idx)[1] for i in range(0, nrow, sub)]
+                    nondec = all(sample[k] <= sample[k + 1] for k in range(len(sample) - 1))
+                    const = abs(vl - v0) < 1e-9
+                    results.append(dict(label=label, idx=idx, ok=True,
+                                        v0=v0, vl=vl, nondec=nondec, const=const))
+                except Exception as e:               # noqa: BLE001
+                    results.append(dict(label=label, idx=idx, ok=False,
+                                        err=f"{type(e).__name__}: {e}"))
+        finally:
+            res.Release()
+        valid = []
+        for r in results:
+            if not r["ok"]:
+                info(f"  {r['label']:<32} -> ERROR {r['err']}")
+                continue
+            tag = "CONSTANT(!)" if r["const"] else ("ramp" if r["nondec"] else "non-monotonic")
+            info(f"  {r['label']:<32} -> v0={fmt(r['v0'],4)} vend={fmt(r['vl'],4)} [{tag}]")
+            if r["nondec"] and not r["const"]:
+                valid.append(r)
+        A = next((r for r in results if r["idx"] == 0), None)
+        tool_ok = bool(A and A["ok"] and A["nondec"] and not A["const"])
+        STATE["time_colidx"] = 0 if tool_ok else (valid[0]["idx"] if valid else 0)
+        if tool_ok:
+            return "tool's GetValue(row,0) IS a valid 0->tstop ramp (column 0 = time)"
+        if valid:
+            reason = "CONSTANT" if (A and A.get("const")) else "NOT a monotonic ramp"
+            raise Warn(f"tool's time read GetValue(row,0) is {reason} "
+                       f"(v0={fmt(A.get('v0'),4)} vend={fmt(A.get('vl'),4)}) — column 0 is "
+                       f"NOT the time axis on this build. A valid time axis IS available via "
+                       f"[{valid[0]['label'].strip()}]. _read_elmres_inmemory therefore "
+                       f"mislabels the time vector: VALUE metrics (max/min/mean/rms/final) "
+                       f"stay correct, but time-based metrics (first_time_above/below, "
+                       f"time_settle) and graph/raw-CSV x-axes are WRONG until the generator "
+                       f"reads time from the correct column.")
+        raise Warn("no valid 0->tstop ramp found via GetValue(row,0)/(row,-1), a 'b:tnow' "
+                   "column, or auto-scan — inspect the CP 7.7 column dump manually.")
+    run("7.8", "_read_elmres_inmemory", "Time-axis strategy comparison", cp_time_axis)
+
+    # --- 7.9  Metrics (mirrors calculate_timeseries_metric) ----------------
+    #   Computes value metrics (time-independent) + shows the time-of-max under
+    #   BOTH the tool's column 0 and the detected-correct time column, plus the
+    #   native ElmRes Find{Max,Min}InColumn the README lists.
     def cp_metrics():
-        t = STATE.get("ts_time")
-        d = STATE.get("ts_data")
-        if not t or not d:
-            raise Skip("no timeseries data from CP 7.7")
-        pairs = [(tt, vv) for tt, vv in zip(t, d) if vv == vv]   # drop NaN
-        vals = [v for _, v in pairs]
-        py_max = max(vals)
-        py_min = min(vals)
-        py_final = vals[-1]
-        py_mean = sum(vals) / len(vals)
-        py_rms = (sum(v * v for v in vals) / len(vals)) ** 0.5
-        info(f"pure-Python metrics: max={fmt(py_max)} min={fmt(py_min)} "
-             f"final={fmt(py_final)} mean={fmt(py_mean)} rms={fmt(py_rms)}")
-        # Native ElmRes max/min (README §9/§15 claim these return tuples)
-        native_note = "native Find{Max,Min}InColumn not tested"
         res = STATE["res"]
         g = STATE["rms_gen"]
         var = STATE["rms_var"]
+        idx = STATE.get("time_colidx", 0)
         res.Load()
         try:
-            col = res.FindColumn(g, var)
-            mx = res.FindMaxInColumn(col)
-            mn = res.FindMinInColumn(col)
-        except Exception as e:                       # noqa: BLE001
-            mx = mn = None
-            native_note = f"FindMaxInColumn/FindMinInColumn raised {type(e).__name__}: {e}"
+            nrow = res.GetNumberOfRows()
+            sfcol = res.FindColumn(g, var)
+            data = [res.GetValue(r, sfcol)[1] for r in range(nrow)]
+            t_tool = [res.GetValue(r, 0)[1] for r in range(nrow)]
+            t_good = [res.GetValue(r, idx)[1] for r in range(nrow)]
+            try:
+                mx = res.FindMaxInColumn(sfcol)
+                mn = res.FindMinInColumn(sfcol)
+                native_note = "native Find{Max,Min}InColumn OK"
+            except Exception as e:                   # noqa: BLE001
+                mx = mn = None
+                native_note = f"Find{{Max,Min}}InColumn raised {type(e).__name__}: {e}"
         finally:
             res.Release()
+        vals = [v for v in data if v == v]           # drop NaN
+        py_max, py_min, py_final = max(vals), min(vals), vals[-1]
+        py_mean = sum(vals) / len(vals)
+        py_rms = (sum(v * v for v in vals) / len(vals)) ** 0.5
+        info(f"VALUE metrics (time-independent, always correct): max={fmt(py_max)} "
+             f"min={fmt(py_min)} final={fmt(py_final)} mean={fmt(py_mean)} rms={fmt(py_rms)}")
+        imax = data.index(py_max)
+        info(f"time@max: tool col0 -> {fmt(t_tool[imax],4)} s   |   "
+             f"corrected col {idx} -> {fmt(t_good[imax],4)} s")
         if mx is not None:
             info(f"native FindMaxInColumn={mx!r}  FindMinInColumn={mn!r}")
-            native_note = "native Find{Max,Min}InColumn OK"
-        return f"metrics computed; {native_note}"
-    run("7.9", "calculate_timeseries_metric", "scalar metrics + native max/min", cp_metrics)
+        if idx != 0 and abs(t_good[imax] - t_tool[imax]) > 1e-6:
+            raise Warn(f"time-of-max differs: tool would report {fmt(t_tool[imax],4)} s, "
+                       f"true time is {fmt(t_good[imax],4)} s — confirms time-based metrics "
+                       f"are wrong with the current column-0 assumption. (Value metrics OK.)")
+        return f"value metrics OK; {native_note}; time column used = {idx}"
+    run("7.9", "calculate_timeseries_metric", "value metrics + time@max (tool vs corrected)", cp_metrics)
 
     # --- 7.10  Result validity flags ---------------------------------------
     def cp_valid():
