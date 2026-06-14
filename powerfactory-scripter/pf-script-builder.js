@@ -1173,6 +1173,10 @@ for _spec in _col_specs:
     pre += `${indent}        _value = scenario_row[_spec["name"]]\n`;
     pre += `${indent}        if pd.isna(_value):\n`;
     pre += `${indent}            continue\n`;
+    pre += `${indent}        # pandas hands back numpy scalars (e.g. numpy.int64); PowerFactory's\n`;
+    pre += `${indent}        # SetAttribute only accepts native Python numbers, so unwrap them.\n`;
+    pre += `${indent}        if hasattr(_value, "item"):\n`;
+    pre += `${indent}            _value = _value.item()\n`;
     pre += `${indent}        _objs = _col_object_cache[_spec["object_query"]]\n`;
     pre += `${indent}        for _obj in _objs:\n`;
     pre += `${indent}            _obj.SetAttribute(_spec["attribute"], _value)\n`;
@@ -1371,6 +1375,10 @@ def evaluate_one_case(param_values):
 
     for spec_idx, value in enumerate(param_values):
         spec = input_specs[spec_idx]
+        # Optimisers (e.g. skopt) hand back numpy scalars such as numpy.int64 /
+        # numpy.float64. PowerFactory's SetAttribute only accepts native Python
+        # numbers ("not a 'double' object" otherwise), so coerce by declared dtype.
+        value = int(value) if spec["dtype"] == "int" else float(value)
         for obj in input_objects[spec_idx]:
             obj.SetAttribute(spec["variable"], value)
         if len(input_objects[spec_idx]) == 1:

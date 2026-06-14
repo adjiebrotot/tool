@@ -40,7 +40,7 @@
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
   "inLanguage": "en",
-  "keywords": "PowerFactory transmission loss factor, generation shift factor, minimum system losses Bayesian optimisation, frequency nadir short circuit, N-1 line contingency Nine-bus System, PowerFactory Python examples"
+  "keywords": "PowerFactory transmission loss factor, generation shift factor, minimum system losses Bayesian optimisation, rotor angle stability critical clearing time, N-1 line contingency Nine-bus System, PowerFactory Python examples"
 }
 </script>
 <script type="application/ld+json">
@@ -66,10 +66,10 @@
     },
     {
       "@type": "Question",
-      "name": "How do I calculate the frequency nadir after a short circuit in PowerFactory?",
+      "name": "How do I find the critical fault-clearing time for rotor angle stability in PowerFactory?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The frequency-nadir sample sweeps a three-phase short circuit along Line 5-7 (0-100% of its length) with an RMS simulation at each position and reads the minimum rotor speed across the generators to report the system frequency nadir in Hz. The worked example is at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+        "text": "The rotor-angle-stability sample sweeps the fault-clearing time of a breaker Switch Event from 0.1 s to 1 s, running an RMS simulation at each value and tracking the relative rotor angle (c:firel) of G2 and G3. A custom verdict flags the system Not Stable when a machine slips a pole (rotor angle above +170 degrees and below -170 degrees), so the last clearing time that stays Stable is the critical clearing time. The worked example is at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
       }
     },
     {
@@ -267,12 +267,19 @@
             <div class="step-note">A 5×5 dispatch grid runs 25 load flows. The slack machine balances each case automatically.</div>
           </div>
         </div>
+        <div class="step-row">
+          <span class="step-badge">7</span>
+          <div>
+            <div>When prompted, select the <strong>project</strong> and <strong>study case</strong> to run against.</div>
+            <div class="step-note">If you have more than one project loaded, enter the index of <strong>Nine-bus System</strong>; then choose the <strong>01- Load Flow</strong> study case (and the operating scenario, if asked). A single project / study case is selected automatically.</div>
+          </div>
+        </div>
       </div>
 
-      <!-- 7 Expected Output -->
+      <!-- 8 Expected Output -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">7</span> Expected Output
+          <span class="step-badge">8</span> Expected Output
         </div>
         <p class="hint">The script writes a CSV to your output directory. Columns are the swept inputs, the
           convergence flag, then the three monitored outputs. Real values from a Nine-bus run (rounded):</p>
@@ -460,12 +467,19 @@
             <div class="step-note">Bayesian optimisation runs 60 load flows. Progress prints to the console if <em>Use progress bar</em> is enabled.</div>
           </div>
         </div>
+        <div class="step-row">
+          <span class="step-badge">7</span>
+          <div>
+            <div>When prompted, select the <strong>project</strong> and <strong>study case</strong> to run against.</div>
+            <div class="step-note">If you have more than one project loaded, enter the index of <strong>Nine-bus System</strong>; then choose the <strong>01- Load Flow</strong> study case (and the operating scenario, if asked). A single project / study case is selected automatically.</div>
+          </div>
+        </div>
       </div>
 
-      <!-- 7 Expected Output -->
+      <!-- 8 Expected Output -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">7</span> Expected Output
+          <span class="step-badge">8</span> Expected Output
         </div>
         <p class="hint">The script prints the best dispatch found and writes every evaluation to the CSV
           (values below are <em>indicative</em>, confirmed against your first run):</p>
@@ -484,13 +498,13 @@ Best objective (total_losses) = 4.07 MW</pre>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════════
-       SAMPLE 03 · FREQUENCY NADIR vs FAULT LOCATION
+       SAMPLE 03 · ROTOR ANGLE STABILITY vs FAULT-CLEARING TIME
   ═══════════════════════════════════════════════════════════════ -->
   <div class="section-card" id="sample-3">
     <div class="section-header" onclick="toggleSection('sample-3')">
       <span class="sample-num">03</span>
-      <h3>Frequency Nadir: Short Circuit Swept Along a Line</h3>
-      <a class="dl-json-link" href="json-samples/sample-03-frequency-nadir.json" download onclick="event.stopPropagation()">↓ JSON</a>
+      <h3>Rotor Angle Stability: Critical Fault-Clearing Time</h3>
+      <a class="dl-json-link" href="json-samples/sample-03-rotor-angle-stability.json" download onclick="event.stopPropagation()">↓ JSON</a>
       <span class="toggle-icon">▾</span>
     </div>
     <div class="section-body" id="sample-3-body">
@@ -501,11 +515,12 @@ Best objective (total_losses) = 4.07 MW</pre>
           <span class="step-badge">1</span> Objective
         </div>
         <p class="objective-text">
-          Apply a three-phase short circuit and sweep its position along <strong>Line 7-8</strong> (0–100% of
-          the line length), running an RMS simulation at each position to find the <strong>system frequency
-          nadir</strong>. The nadir is taken as the minimum generator rotor speed across <code>G1</code>,
-          <code>G2</code> and <code>G3</code>, converted to Hz on the 60&nbsp;Hz base. The result shows how
-          fault position influences the worst-case frequency dip.
+          Apply a three-phase fault and clear it by opening a circuit breaker after a fixed delay, then sweep
+          that <strong>fault-clearing time</strong> from 0.1&nbsp;s to 1&nbsp;s and run an RMS simulation at each
+          value. For every clearing time, track the relative rotor angle (<code>c:firel</code>, referred to the
+          reference machine) of <code>G2</code> and <code>G3</code>. When the fault is cleared too late a machine
+          loses synchronism and its rotor angle swings right through ±180°, so the <strong>critical clearing
+          time</strong> is the longest delay the system survives before a generator slips a pole.
         </p>
       </div>
 
@@ -515,11 +530,12 @@ Best objective (total_losses) = 4.07 MW</pre>
           <span class="step-badge">2</span> Assumptions
         </div>
         <ul class="assumption-list">
-          <li>Short-circuit event: <code>Short-Circuit.EvtShc</code> in the active RMS study case's simulation event list (here the IntEvt folder named <code>Simulation Events/Fault</code>); the script resolves it via <code>GetFromStudyCase("IntEvt")</code> regardless of that folder name</li>
-          <li>The event targets <code>Line 7-8</code> and is applied at t&nbsp;=&nbsp;1&nbsp;s (3-phase, zero fault impedance)</li>
-          <li>Fault position swept via <code>e:shcLocation</code> = 0–100&nbsp;% in 25&nbsp;% steps (the position along Line 7-8)</li>
-          <li>Frequency proxy: generator rotor speed <code>s:speed</code> (p.u.); nadir&nbsp;Hz = min&nbsp;speed&nbsp;×&nbsp;60</li>
-          <li>Simulation window: 0–10&nbsp;s; classical generator models per the reference</li>
+          <li>Study case: <code>02- Five Cycles Classical SG Model</code> (RMS, classical synchronous-machine models)</li>
+          <li>The fault is cleared by opening a breaker via the <code>Switch Event.EvtSwitch</code> in the study case's simulation event list</li>
+          <li>Fault-clearing time = the event's absolute time <code>e:time</code>, swept 0.1–1.0&nbsp;s in 0.1&nbsp;s steps (10 RMS runs)</li>
+          <li>Monitored machines: <code>G2.ElmSym</code> (Bus 2), <code>G3.ElmSym</code> (Bus 3); relative rotor angle <code>c:firel</code> in degrees, referred to the reference machine <code>G1</code> (Bus 1)</li>
+          <li>Stability criterion: a machine is out of step when its rotor angle reaches a maximum &gt;&nbsp;170° <em>and</em> a minimum &lt;&nbsp;−170° (a full pole slip)</li>
+          <li>Simulation window: 0–10&nbsp;s</li>
         </ul>
       </div>
 
@@ -563,12 +579,12 @@ Best objective (total_losses) = 4.07 MW</pre>
               </thead>
               <tbody>
                 <tr>
-                  <td><input type="text" readonly value="fault_location_pct" /></td>
-                  <td><input type="text" readonly value="Short-Circuit.EvtShc" /></td>
-                  <td><input type="text" readonly value="e:shcLocation" /></td>
-                  <td><input type="number" readonly value="0" /></td>
-                  <td><input type="number" readonly value="100" /></td>
-                  <td><input type="number" readonly value="25" /></td>
+                  <td><input type="text" readonly value="fault_clearing_time" /></td>
+                  <td><input type="text" readonly value="Switch Event.EvtSwitch" /></td>
+                  <td><input type="text" readonly value="e:time" /></td>
+                  <td><input type="number" readonly value="0.1" /></td>
+                  <td><input type="number" readonly value="1" /></td>
+                  <td><input type="number" readonly value="0.1" /></td>
                 </tr>
               </tbody>
             </table>
@@ -579,36 +595,12 @@ Best objective (total_losses) = 4.07 MW</pre>
           <div class="output-var-item">
             <div class="output-var-header">
               <span class="ov-type-badge">Timeseries</span>
-              <input type="text" readonly value="nadir_speed_G1" style="max-width:180px" />
-            </div>
-            <div class="output-var-body">
-              <div class="form-row"><label>Object</label><input type="text" readonly value="G1.ElmSym" /></div>
-              <div class="form-row"><label>Attribute</label><input type="text" readonly value="s:speed" /></div>
-              <div class="form-row"><label>Metric</label><select disabled><option>Minimum</option></select></div>
-            </div>
-          </div>
-
-          <div class="output-var-item">
-            <div class="output-var-header">
-              <span class="ov-type-badge">Timeseries</span>
-              <input type="text" readonly value="nadir_speed_G2" style="max-width:180px" />
+              <input type="text" readonly value="G2_rotor_angle_max" style="max-width:200px" />
             </div>
             <div class="output-var-body">
               <div class="form-row"><label>Object</label><input type="text" readonly value="G2.ElmSym" /></div>
-              <div class="form-row"><label>Attribute</label><input type="text" readonly value="s:speed" /></div>
-              <div class="form-row"><label>Metric</label><select disabled><option>Minimum</option></select></div>
-            </div>
-          </div>
-
-          <div class="output-var-item">
-            <div class="output-var-header">
-              <span class="ov-type-badge">Timeseries</span>
-              <input type="text" readonly value="nadir_speed_G3" style="max-width:180px" />
-            </div>
-            <div class="output-var-body">
-              <div class="form-row"><label>Object</label><input type="text" readonly value="G3.ElmSym" /></div>
-              <div class="form-row"><label>Attribute</label><input type="text" readonly value="s:speed" /></div>
-              <div class="form-row"><label>Metric</label><select disabled><option>Minimum</option></select></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="c:firel" /></div>
+              <div class="form-row"><label>Metric</label><select disabled><option>Maximum</option></select></div>
               <div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent2);">
                 <input type="checkbox" checked disabled style="accent-color:var(--accent2);" />
                 Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>)
@@ -618,14 +610,63 @@ Best objective (total_losses) = 4.07 MW</pre>
 
           <div class="output-var-item">
             <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="G2_rotor_angle_min" style="max-width:200px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row"><label>Object</label><input type="text" readonly value="G2.ElmSym" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="c:firel" /></div>
+              <div class="form-row"><label>Metric</label><select disabled><option>Minimum</option></select></div>
+            </div>
+          </div>
+
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="G3_rotor_angle_max" style="max-width:200px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row"><label>Object</label><input type="text" readonly value="G3.ElmSym" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="c:firel" /></div>
+              <div class="form-row"><label>Metric</label><select disabled><option>Maximum</option></select></div>
+              <div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent2);">
+                <input type="checkbox" checked disabled style="accent-color:var(--accent2);" />
+                Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>)
+              </div>
+            </div>
+          </div>
+
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="G3_rotor_angle_min" style="max-width:200px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row"><label>Object</label><input type="text" readonly value="G3.ElmSym" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="c:firel" /></div>
+              <div class="form-row"><label>Metric</label><select disabled><option>Minimum</option></select></div>
+            </div>
+          </div>
+
+          <p class="hint" style="margin:4px 0 14px;">The graph is only enabled on the two <strong>Maximum</strong>
+            outputs: maximum and minimum read the <em>same</em> <code>c:firel</code> trace, so a single Time-vs-angle
+            PNG per machine captures both — checking it on the minimum outputs too would just duplicate the plot.</p>
+
+          <div class="output-var-item">
+            <div class="output-var-header">
               <span class="ov-type-badge">Custom</span>
-              <input type="text" readonly value="system_nadir_hz" style="max-width:160px" />
+              <input type="text" readonly value="stability_verdict" style="max-width:180px" />
             </div>
             <div class="output-var-body">
               <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;">Custom Function</div>
-              <pre style="background:#0B1120;border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-family:var(--mono);font-size:12px;color:var(--accent);line-height:1.7;margin:0;overflow-x:auto;">def system_nadir_hz(nadir_speed_G1, nadir_speed_G2, nadir_speed_G3):
-    return min(nadir_speed_G1, nadir_speed_G2, nadir_speed_G3) * 60.0</pre>
-              <p class="hint" style="margin-top:8px;">Arguments must match the names of the three speed outputs above. Returns the lowest rotor speed across the machines, scaled to Hz — the system frequency nadir for that fault position.</p>
+              <pre style="background:#0B1120;border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-family:var(--mono);font-size:12px;color:var(--accent);line-height:1.7;margin:0;overflow-x:auto;">def stability_verdict(G2_rotor_angle_max, G2_rotor_angle_min, G3_rotor_angle_max, G3_rotor_angle_min):
+    g2_lost = G2_rotor_angle_max &gt; 170 and G2_rotor_angle_min &lt; -170
+    g3_lost = G3_rotor_angle_max &gt; 170 and G3_rotor_angle_min &lt; -170
+    return "Not Stable" if (g2_lost or g3_lost) else "Stable"</pre>
+              <p class="hint" style="margin-top:8px;">Arguments must match the names of the four rotor-angle outputs
+                above. A machine that slips a pole swings its relative rotor angle past +170° on one side and below
+                −170° on the other, so the verdict returns <code>Not Stable</code> the moment either generator hits
+                both extremes.</p>
             </div>
           </div>
 
@@ -647,28 +688,32 @@ Best objective (total_losses) = 4.07 MW</pre>
           <span class="step-badge">6</span>
           <div>
             <div>Paste the code into your Python environment and run it.</div>
-            <div class="step-note">Ensure a three-phase short-circuit event exists in the active RMS study case and that its name matches the Object query. Five RMS runs (one per fault position) take a couple of minutes.</div>
+            <div class="step-note">Ensure a breaker Switch Event named <code>Switch Event</code> exists in the active RMS study case. Ten RMS runs (one per clearing time) take a few minutes.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">7</span>
+          <div>
+            <div>When prompted, select the <strong>project</strong> and <strong>study case</strong> to run against.</div>
+            <div class="step-note">If you have more than one project loaded, enter the index of <strong>Nine-bus System</strong>; then choose the <strong>02- Five Cycles Classical SG Model</strong> study case (and the operating scenario, if asked). A single project / study case is selected automatically.</div>
           </div>
         </div>
       </div>
 
-      <!-- 7 Expected Output -->
+      <!-- 8 Expected Output -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">7</span> Expected Output
+          <span class="step-badge">8</span> Expected Output
         </div>
-        <p class="hint">The script writes a summary CSV (values below are <em>indicative</em>, confirmed against
-          your first run); rotor speeds are in p.u. and <code>system_nadir_hz</code> in Hz:</p>
-        <pre class="output-preview">fault_location_pct,Converge?,nadir_speed_G1,nadir_speed_G2,nadir_speed_G3,system_nadir_hz
-0.0,True,0.9979,0.9971,0.9963,59.778
-25.0,True,0.9981,0.9974,0.9966,59.796
-50.0,True,0.9984,0.9978,0.9971,59.826
-75.0,True,0.9987,0.9982,0.9976,59.856
-100.0,True,0.9990,0.9986,0.9981,59.886</pre>
-        <p class="hint">The lowest <code>system_nadir_hz</code> identifies the most severe fault position — for a
-          fault on Line 7-8, 0% is the Bus&nbsp;7 end and 100% the Bus&nbsp;8 end. Time-domain rotor-speed plots
-          for <code>nadir_speed_G3</code> are saved as <code>.png</code> in <code>{output_dir}/graph/</code> for
-          each position.</p>
+        <p class="hint">The script writes a summary CSV: the swept clearing time, the convergence flag, the
+          maximum/minimum <code>c:firel</code> of each machine (degrees), and the <code>stability_verdict</code>
+          string. Time-domain rotor-angle plots for <code>G2</code> and <code>G3</code> are saved as
+          <code>.png</code> in <code>{output_dir}/graph/</code> for each clearing time.</p>
+        <pre class="output-preview">fault_clearing_time,Converge?,G2_rotor_angle_max,G2_rotor_angle_min,G3_rotor_angle_max,G3_rotor_angle_min,stability_verdict
+(awaiting first-run results)</pre>
+        <p class="hint">As the clearing time increases, the rotor-angle swings grow until a machine slips a pole and
+          the verdict flips from <code>Stable</code> to <code>Not Stable</code>. The last clearing time that still
+          reads <code>Stable</code> is the system's critical clearing time for this fault.</p>
       </div>
 
     </div>
@@ -816,12 +861,19 @@ Best objective (total_losses) = 4.07 MW</pre>
             <div class="step-note">The script runs one load flow per line plus the base case. No Excel file or code changes needed regardless of network size.</div>
           </div>
         </div>
+        <div class="step-row">
+          <span class="step-badge">8</span>
+          <div>
+            <div>When prompted, select the <strong>project</strong> and <strong>study case</strong> to run against.</div>
+            <div class="step-note">If you have more than one project loaded, enter the index of <strong>Nine-bus System</strong>; then choose the <strong>01- Load Flow</strong> study case (and the operating scenario, if asked). A single project / study case is selected automatically.</div>
+          </div>
+        </div>
       </div>
 
-      <!-- 6 Expected Output -->
+      <!-- 9 Expected Output -->
       <div class="sub-section">
         <div class="sub-section-title">
-          <span class="step-badge">8</span> Expected Output
+          <span class="step-badge">9</span> Expected Output
         </div>
         <p class="hint">The script writes a summary CSV with all nine buses and six lines. The first two columns
           identify the contingency and its convergence status; subsequent columns are the output values, each
