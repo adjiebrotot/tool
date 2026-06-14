@@ -344,7 +344,7 @@
         <ul class="assumption-list">
           <li>Slack machine: <code>G1.ElmSym</code> — balances each candidate dispatch</li>
           <li>Optimised variables: <code>G2.ElmSym</code> / <code>G3.ElmSym</code> <code>pgini</code></li>
-          <li>Objective: minimise total active losses = <code>*.ElmNet</code> <code>c:LossP</code> (single grid → scalar)</li>
+          <li>Objective: minimise total active losses = <code>*.ElmNet</code> <code>c:LossP</code> (summed across every matched grid)</li>
           <li>Bounds: G2 50–160&nbsp;MW, G3 20–105&nbsp;MW (within machine ratings)</li>
           <li>Loads constant; base-case total losses ≈ 4.64&nbsp;MW (sum of line losses in the reference)</li>
           <li>Algorithm: Bayesian (<code>gp_minimize</code>), 60 evaluations</li>
@@ -708,12 +708,39 @@ Best objective (total_losses) = 4.07 MW</pre>
         <p class="hint">The script writes a summary CSV: the swept clearing time, the convergence flag, the
           maximum/minimum <code>c:firel</code> of each machine (degrees), and the <code>stability_verdict</code>
           string. Time-domain rotor-angle plots for <code>G2</code> and <code>G3</code> are saved as
-          <code>.png</code> in <code>{output_dir}/graph/</code> for each clearing time.</p>
+          <code>.png</code> in <code>{output_dir}/graph/</code> for each clearing time. Real values from a
+          Nine-bus run (rounded):</p>
         <pre class="output-preview">fault_clearing_time,Converge?,G2_rotor_angle_max,G2_rotor_angle_min,G3_rotor_angle_max,G3_rotor_angle_min,stability_verdict
-(awaiting first-run results)</pre>
-        <p class="hint">As the clearing time increases, the rotor-angle swings grow until a machine slips a pole and
-          the verdict flips from <code>Stable</code> to <code>Not Stable</code>. The last clearing time that still
-          reads <code>Stable</code> is the system's critical clearing time for this fault.</p>
+0.1,True,87.94,2.19,61.12,2.15,Stable
+0.2,True,179.99,-179.99,179.99,-179.97,Not Stable
+0.3,True,180.00,-180.00,179.98,-180.00,Not Stable
+0.4,True,180.00,-179.98,123.11,-41.33,Not Stable
+0.5,True,179.99,-179.99,113.39,-40.68,Not Stable
+0.6,True,179.99,-179.99,179.99,-179.98,Not Stable
+0.7,True,179.99,-180.00,180.00,-179.97,Not Stable
+0.8,True,179.97,-179.99,179.99,-179.99,Not Stable
+0.9,True,179.99,-179.97,179.95,-179.97,Not Stable
+1.0,True,179.99,-180.00,179.98,-180.00,Not Stable</pre>
+        <p class="hint">The system survives a <strong>0.1&nbsp;s</strong> clearing time — both machines swing and
+          settle (G2 peaks at ≈88°, G3 at ≈61°) — but by <strong>0.2&nbsp;s</strong> the rotor angles run away to
+          ±180°, so the <strong>critical clearing time lies between 0.1&nbsp;s and 0.2&nbsp;s</strong>. Note the
+          0.4–0.5&nbsp;s rows: only <code>G2</code> slips a pole (max ≈180°, min ≈−180°) while <code>G3</code>
+          stays in step (within ±170°) — the verdict still reads <code>Not Stable</code> because the criterion
+          flags the system the moment <em>any</em> machine loses synchronism.</p>
+
+        <div class="graph-figure-row">
+          <figure class="graph-figure">
+            <img src="assets/sample-03-rotor-angle-stable.png" alt="G2 rotor angle vs time at a 0.1 s fault-clearing time — damped oscillation that settles (stable)" loading="lazy" />
+            <figcaption><code>fault_clearing_time = 0.1&nbsp;s</code> — <strong>Stable</strong>: G2's rotor angle swings then damps back toward its pre-fault value.</figcaption>
+          </figure>
+          <figure class="graph-figure">
+            <img src="assets/sample-03-rotor-angle-unstable.png" alt="G2 rotor angle vs time at a 1.0 s fault-clearing time — angle runs away and saturates at ±180 degrees (unstable)" loading="lazy" />
+            <figcaption><code>fault_clearing_time = 1.0&nbsp;s</code> — <strong>Not Stable</strong>: G2 slips poles, its rotor angle wrapping continuously through ±180°.</figcaption>
+          </figure>
+        </div>
+        <p class="hint">These two PNGs are the <code>G2_rotor_angle_max</code> plots the script saves to
+          <code>{output_dir}/graph/</code> — one per clearing time. The contrast between the damped swing and the
+          runaway saturation is the visual signature of the critical clearing time being crossed.</p>
       </div>
 
     </div>
