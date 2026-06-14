@@ -137,8 +137,8 @@
         </div>
         <p class="objective-text">
           On the Nine-bus System, quantify how each generator's MW output affects the active-power flow on
-          <strong>Line 5-7</strong> and <strong>Line 7-8</strong> — the generation-shift (transmission loss)
-          factors. Because <code>G1</code> is the slack machine, its dispatch is set by the load flow, so we
+          <strong>Line 5-7</strong> and <strong>Line 7-8</strong>, also known as the generation-shift
+          (transmission loss) factors. Because <code>G1</code> is the slack machine, its dispatch is set by the load flow, so we
           sweep the two dispatchable machines <code>G2</code> and <code>G3</code> and record the resulting
           <code>G1</code> output alongside the two line flows. The change in each line's MW per 1&nbsp;MW of
           <code>G2</code> or <code>G3</code> is read directly from the slope of the resulting table.
@@ -151,9 +151,9 @@
           <span class="step-badge">2</span> Assumptions
         </div>
         <ul class="assumption-list">
-          <li>Slack machine: <code>G1.ElmSym</code> (Bus 1) — its dispatch is the balancing <em>output</em>, not an input</li>
+          <li>Slack machine: <code>G1.ElmSym</code> (Bus 1); its dispatch is the balancing <em>output</em>, not an input</li>
           <li>Dispatchable generators: <code>G2.ElmSym</code> (Bus 2), <code>G3.ElmSym</code> (Bus 3); swept via <code>pgini</code></li>
-          <li>Monitored lines: <code>Line 5-7.ElmLne</code>, <code>Line 7-8.ElmLne</code> — active power at the from-end (<code>m:P:bus1</code>)</li>
+          <li>Monitored lines: <code>Line 5-7.ElmLne</code>, <code>Line 7-8.ElmLne</code>, active power at the from-end (<code>m:P:bus1</code>)</li>
           <li>System: 230&nbsp;kV, 60&nbsp;Hz; base-case dispatch G2&nbsp;=&nbsp;163&nbsp;MW, G3&nbsp;=&nbsp;85&nbsp;MW (G1&nbsp;≈&nbsp;71.6&nbsp;MW)</li>
           <li>Loads held constant: Load&nbsp;A&nbsp;125&nbsp;MW (Bus 5), Load&nbsp;B&nbsp;90&nbsp;MW (Bus 6), Load&nbsp;C&nbsp;100&nbsp;MW (Bus 8)</li>
         </ul>
@@ -301,7 +301,7 @@
         <ul class="assumption-list">
           <li><strong>Line 5-7:</strong> ≈ <code>−0.61&nbsp;MW</code> per MW of G2, ≈ <code>−0.37&nbsp;MW</code> per MW of G3</li>
           <li><strong>Line 7-8:</strong> ≈ <code>+0.37&nbsp;MW</code> per MW of G2, ≈ <code>−0.39&nbsp;MW</code> per MW of G3</li>
-          <li><strong>Slack G1:</strong> absorbs ≈ <code>−0.97&nbsp;MW</code> per MW of G2 — it picks up the balance as G2/G3 back off</li>
+          <li><strong>Slack G1:</strong> absorbs ≈ <code>−0.97&nbsp;MW</code> per MW of G2; it picks up the balance as G2/G3 back off</li>
         </ul>
         <p class="hint">A negative <code>Line_5_7_MW</code> means power flows from the Bus&nbsp;7 end toward Bus&nbsp;5
           (the <code>m:P:bus1</code> from-end convention): as G2 at Bus&nbsp;7 ramps up it pushes more power back
@@ -342,7 +342,7 @@
           <span class="step-badge">2</span> Assumptions
         </div>
         <ul class="assumption-list">
-          <li>Slack machine: <code>G1.ElmSym</code> — balances each candidate dispatch</li>
+          <li>Slack machine: <code>G1.ElmSym</code>, balances each candidate dispatch</li>
           <li>Optimised variables: <code>G2.ElmSym</code> / <code>G3.ElmSym</code> <code>pgini</code></li>
           <li>Objective: minimise total active losses = <code>*.ElmNet</code> <code>c:LossP</code> (summed across every matched grid)</li>
           <li>Bounds: G2 50–160&nbsp;MW, G3 20–105&nbsp;MW (within machine ratings)</li>
@@ -482,9 +482,9 @@
           <span class="step-badge">8</span> Expected Output
         </div>
         <p class="hint">The script prints the best objective value and writes every evaluation to the CSV.
-          Note that <code>*.ElmNet</code> matched <strong>two</strong> grids — the real
+          Note that <code>*.ElmNet</code> matched <strong>two</strong> grids (the real
           <code>Nine-bus System</code> grid and PowerFactory's auto-generated <code>Summary Grid</code>, which
-          reports the same <code>c:LossP</code> — so the objective is their <em>sum</em> (≈&nbsp;2× the physical
+          reports the same <code>c:LossP</code>), so the objective is their <em>sum</em> (≈&nbsp;2× the physical
           loss). This rescales the printed value but not <em>where</em> the minimum sits. Real values from a
           60-evaluation Nine-bus run (rounded):</p>
         <pre class="output-preview">[objective] 'total_losses' matched 2 columns; using their sum.
@@ -504,10 +504,10 @@ G2_dispatch,G3_dispatch,Converge?,total_losses_Nine-bus System,total_losses_Summ
           <strong>G3&nbsp;≈&nbsp;72&nbsp;MW</strong> (slack <code>G1</code> settling ≈&nbsp;159.7&nbsp;MW), driving
           the per-grid total loss down to <strong>≈&nbsp;2.67&nbsp;MW</strong> from the base-case
           ≈&nbsp;4.64&nbsp;MW. The printed best value (<code>5.3461</code>) is that 2.67&nbsp;MW counted across both
-          matched grids — to read the single-grid figure directly, target one grid (e.g.
+          matched grids. To read the single-grid figure directly, target one grid (e.g.
           <code>Nine-bus System.ElmNet</code>) instead of the wildcard. The full evaluation history in the CSV lets
           you plot loss vs. dispatch and confirm the minimum; the optimiser does not enforce generator or thermal
-          limits beyond the bounds you set — verify the result is physical.</p>
+          limits beyond the bounds you set, so verify the result is physical.</p>
       </div>
 
     </div>
@@ -666,7 +666,7 @@ G2_dispatch,G3_dispatch,Converge?,total_losses_Nine-bus System,total_losses_Summ
 
           <p class="hint" style="margin:4px 0 14px;">The graph is only enabled on the two <strong>Maximum</strong>
             outputs: maximum and minimum read the <em>same</em> <code>c:firel</code> trace, so a single Time-vs-angle
-            PNG per machine captures both — checking it on the minimum outputs too would just duplicate the plot.</p>
+            PNG per machine captures both, so checking it on the minimum outputs too would just duplicate the plot.</p>
 
           <div class="output-var-item">
             <div class="output-var-header">
@@ -737,25 +737,25 @@ G2_dispatch,G3_dispatch,Converge?,total_losses_Nine-bus System,total_losses_Summ
 0.8,True,179.97,-179.99,179.99,-179.99,Not Stable
 0.9,True,179.99,-179.97,179.95,-179.97,Not Stable
 1.0,True,179.99,-180.00,179.98,-180.00,Not Stable</pre>
-        <p class="hint">The system survives a <strong>0.1&nbsp;s</strong> clearing time — both machines swing and
-          settle (G2 peaks at ≈88°, G3 at ≈61°) — but by <strong>0.2&nbsp;s</strong> the rotor angles run away to
+        <p class="hint">The system survives a <strong>0.1&nbsp;s</strong> clearing time: both machines swing and
+          settle (G2 peaks at ≈88°, G3 at ≈61°), but by <strong>0.2&nbsp;s</strong> the rotor angles run away to
           ±180°, so the <strong>critical clearing time lies between 0.1&nbsp;s and 0.2&nbsp;s</strong>. Note the
           0.4–0.5&nbsp;s rows: only <code>G2</code> slips a pole (max ≈180°, min ≈−180°) while <code>G3</code>
-          stays in step (within ±170°) — the verdict still reads <code>Not Stable</code> because the criterion
+          stays in step (within ±170°), yet the verdict still reads <code>Not Stable</code> because the criterion
           flags the system the moment <em>any</em> machine loses synchronism.</p>
 
         <div class="graph-figure-row">
           <figure class="graph-figure">
-            <img src="assets/sample-03-rotor-angle-stable.png" alt="G2 rotor angle vs time at a 0.1 s fault-clearing time — damped oscillation that settles (stable)" loading="lazy" />
-            <figcaption><code>fault_clearing_time = 0.1&nbsp;s</code> — <strong>Stable</strong>: G2's rotor angle swings then damps back toward its pre-fault value.</figcaption>
+            <img src="assets/sample-03-rotor-angle-stable.png" alt="G2 rotor angle vs time at a 0.1 s fault-clearing time, damped oscillation that settles (stable)" loading="lazy" />
+            <figcaption><code>fault_clearing_time = 0.1&nbsp;s</code>, <strong>Stable</strong>: G2's rotor angle swings then damps back toward its pre-fault value.</figcaption>
           </figure>
           <figure class="graph-figure">
-            <img src="assets/sample-03-rotor-angle-unstable.png" alt="G2 rotor angle vs time at a 1.0 s fault-clearing time — angle runs away and saturates at ±180 degrees (unstable)" loading="lazy" />
-            <figcaption><code>fault_clearing_time = 1.0&nbsp;s</code> — <strong>Not Stable</strong>: G2 slips poles, its rotor angle wrapping continuously through ±180°.</figcaption>
+            <img src="assets/sample-03-rotor-angle-unstable.png" alt="G2 rotor angle vs time at a 1.0 s fault-clearing time, angle runs away and saturates at ±180 degrees (unstable)" loading="lazy" />
+            <figcaption><code>fault_clearing_time = 1.0&nbsp;s</code>, <strong>Not Stable</strong>: G2 slips poles, its rotor angle wrapping continuously through ±180°.</figcaption>
           </figure>
         </div>
         <p class="hint">These two PNGs are the <code>G2_rotor_angle_max</code> plots the script saves to
-          <code>{output_dir}/graph/</code> — one per clearing time. The contrast between the damped swing and the
+          <code>{output_dir}/graph/</code>, one per clearing time. The contrast between the damped swing and the
           runaway saturation is the visual signature of the critical clearing time being crossed.</p>
       </div>
 
@@ -969,6 +969,7 @@ Line 4-5,True,0.839,1.020,0.989,,40.29,8.34</pre>
             <span class="faq-toggle">▾</span>
           </div>
           <div class="faq-answer">
+            <div class="faq-table-wrapper">
             <table class="faq-table">
               <thead>
                 <tr>
@@ -995,11 +996,12 @@ Line 4-5,True,0.839,1.020,0.989,,40.29,8.34</pre>
                 </tr>
                 <tr>
                   <td>Harmonic</td>
-                  <td>Harmonic load flow (<code>hdf</code>)</td>
+                  <td>Harmonic load flow (<code>hldf</code>)</td>
                   <td>Total harmonic distortion (THD), individual harmonics, etc</td>
                 </tr>
               </tbody>
             </table>
+            </div>
           </div>
         </div>
 
