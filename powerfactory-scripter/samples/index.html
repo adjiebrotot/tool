@@ -501,7 +501,7 @@ Best objective (total_losses) = 4.07 MW</pre>
           <span class="step-badge">1</span> Objective
         </div>
         <p class="objective-text">
-          Apply a three-phase short circuit and sweep its position along <strong>Line 5-7</strong> (0–100% of
+          Apply a three-phase short circuit and sweep its position along <strong>Line 7-8</strong> (0–100% of
           the line length), running an RMS simulation at each position to find the <strong>system frequency
           nadir</strong>. The nadir is taken as the minimum generator rotor speed across <code>G1</code>,
           <code>G2</code> and <code>G3</code>, converted to Hz on the 60&nbsp;Hz base. The result shows how
@@ -515,9 +515,9 @@ Best objective (total_losses) = 4.07 MW</pre>
           <span class="step-badge">2</span> Assumptions
         </div>
         <ul class="assumption-list">
-          <li>Short-circuit event: <code>Short-Circuit.EvtShc</code> in the active RMS study case's <em>Simulation Events</em> folder — rename the query to match your event's <code>loc_name</code></li>
-          <li>Fault position swept via <code>e:shcLocation</code> = 0–100&nbsp;% in 25&nbsp;% steps (the position along the faulted line)</li>
-          <li>Fault applied at the event's <code>e:time</code>, cleared by tripping Line 5-7 (as in the reference's <em>Five-Cycles-Fault</em> case)</li>
+          <li>Short-circuit event: <code>Short-Circuit.EvtShc</code> in the active RMS study case's simulation event list (here the IntEvt folder named <code>Simulation Events/Fault</code>); the script resolves it via <code>GetFromStudyCase("IntEvt")</code> regardless of that folder name</li>
+          <li>The event targets <code>Line 7-8</code> and is applied at t&nbsp;=&nbsp;1&nbsp;s (3-phase, zero fault impedance)</li>
+          <li>Fault position swept via <code>e:shcLocation</code> = 0–100&nbsp;% in 25&nbsp;% steps (the position along Line 7-8)</li>
           <li>Frequency proxy: generator rotor speed <code>s:speed</code> (p.u.); nadir&nbsp;Hz = min&nbsp;speed&nbsp;×&nbsp;60</li>
           <li>Simulation window: 0–10&nbsp;s; classical generator models per the reference</li>
         </ul>
@@ -665,9 +665,10 @@ Best objective (total_losses) = 4.07 MW</pre>
 50.0,True,0.9984,0.9978,0.9971,59.826
 75.0,True,0.9987,0.9982,0.9976,59.856
 100.0,True,0.9990,0.9986,0.9981,59.886</pre>
-        <p class="hint">The lowest <code>system_nadir_hz</code> identifies the most severe fault position — here a
-          fault nearest Bus&nbsp;5 (0%). Time-domain rotor-speed plots for <code>nadir_speed_G3</code> are saved
-          as <code>.png</code> in <code>{output_dir}/graph/</code> for each position.</p>
+        <p class="hint">The lowest <code>system_nadir_hz</code> identifies the most severe fault position — for a
+          fault on Line 7-8, 0% is the Bus&nbsp;7 end and 100% the Bus&nbsp;8 end. Time-domain rotor-speed plots
+          for <code>nadir_speed_G3</code> are saved as <code>.png</code> in <code>{output_dir}/graph/</code> for
+          each position.</p>
       </div>
 
     </div>
