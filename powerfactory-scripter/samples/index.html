@@ -481,17 +481,33 @@
         <div class="sub-section-title">
           <span class="step-badge">8</span> Expected Output
         </div>
-        <p class="hint">The script prints the best dispatch found and writes every evaluation to the CSV
-          (values below are <em>indicative</em>, confirmed against your first run):</p>
-        <pre class="output-preview">Optimisation complete. Best value: 4.07
-Best dispatch:
-  G2_dispatch (pgini) = 138.4 MW
-  G3_dispatch (pgini) = 96.7 MW
-Resulting G1_dispatch  = 81.2 MW
-Best objective (total_losses) = 4.07 MW</pre>
-        <p class="hint">Compare the optimised loss against the base-case ≈&nbsp;4.64&nbsp;MW. The full evaluation
-          history in the CSV lets you plot loss vs. dispatch and confirm the minimum. The optimiser does not
-          enforce generator or thermal limits beyond the bounds you set — verify the result is physical.</p>
+        <p class="hint">The script prints the best objective value and writes every evaluation to the CSV.
+          Note that <code>*.ElmNet</code> matched <strong>two</strong> grids — the real
+          <code>Nine-bus System</code> grid and PowerFactory's auto-generated <code>Summary Grid</code>, which
+          reports the same <code>c:LossP</code> — so the objective is their <em>sum</em> (≈&nbsp;2× the physical
+          loss). This rescales the printed value but not <em>where</em> the minimum sits. Real values from a
+          60-evaluation Nine-bus run (rounded):</p>
+        <pre class="output-preview">[objective] 'total_losses' matched 2 columns; using their sum.
+... (one line per evaluation)
+Optimisation complete. Best value: 5.3461
+
+# Run{timestamp}.csv (selected rows)
+G2_dispatch,G3_dispatch,Converge?,total_losses_Nine-bus System,total_losses_Summary Grid,G1_dispatch
+138,36,True,3.0313,3.0313,144.03
+159,72,True,4.0488,4.0488,88.05
+99,28,True,3.0991,3.0991,191.10
+97,74,True,2.7062,2.7062,146.71
+88,70,True,2.6740,2.6740,159.67
+89,71,True,2.6734,2.6734,157.67
+88,72,True,2.6731,2.6731,159.67   &lt;- best dispatch</pre>
+        <p class="hint">The optimiser converges on <strong>G2&nbsp;≈&nbsp;88&nbsp;MW</strong>,
+          <strong>G3&nbsp;≈&nbsp;72&nbsp;MW</strong> (slack <code>G1</code> settling ≈&nbsp;159.7&nbsp;MW), driving
+          the per-grid total loss down to <strong>≈&nbsp;2.67&nbsp;MW</strong> from the base-case
+          ≈&nbsp;4.64&nbsp;MW. The printed best value (<code>5.3461</code>) is that 2.67&nbsp;MW counted across both
+          matched grids — to read the single-grid figure directly, target one grid (e.g.
+          <code>Nine-bus System.ElmNet</code>) instead of the wildcard. The full evaluation history in the CSV lets
+          you plot loss vs. dispatch and confirm the minimum; the optimiser does not enforce generator or thermal
+          limits beyond the bounds you set — verify the result is physical.</p>
       </div>
 
     </div>
