@@ -1432,6 +1432,30 @@ def evaluate_one_case(param_values):
     return row
 
 
+def resolve_objective_value(row, name):
+    """Return the scalar objective value from a result row.
+
+    When the objective output's query matched more than one PowerFactory
+    object, evaluate_one_case writes one "<name>_<loc_name>" column per match
+    instead of a single "<name>" column (e.g. "*.ElmNet" on a model with more
+    than one grid). In that case the matching columns are summed, which is the
+    right aggregate for a total quantity such as system losses.
+    """
+    if name in row:
+        return row[name]
+    parts = [v for k, v in row.items()
+             if (k == name or k.startswith(name + "_"))
+             and isinstance(v, (int, float)) and not isinstance(v, bool) and v == v]
+    if not parts:
+        raise KeyError(
+            f"Objective '{name}' not found in the result row. "
+            f"Available columns: {list(row.keys())}"
+        )
+    if len(parts) > 1:
+        safe_print(f"[objective] '{name}' matched {len(parts)} columns; using their sum.")
+    return sum(parts)
+
+
 `;
 
     if (alg === 'gp_minimize') {
@@ -1445,7 +1469,7 @@ def evaluate_one_case(param_values):
       pre += `@use_named_args(space)\ndef objective(**params):\n`;
       pre += `    ordered_values = [params[f"slot_{i}"] for i in range(len(input_specs))]\n`;
       pre += `    row = evaluate_one_case(ordered_values)\n\n`;
-      pre += `    objective_value = row["${objName}"]\n`;
+      pre += `    objective_value = resolve_objective_value(row, "${objName}")\n`;
       pre += penaltyLines + '\n';
       pre += returnLine + '\n\n';
       pre += `result = gp_minimize(objective, space, n_calls=${maxIter}, random_state=42)\n`;
@@ -1454,7 +1478,7 @@ def evaluate_one_case(param_values):
     } else if (alg === 'differential_evolution') {
       pre += `def de_objective(param_values):\n`;
       pre += `    row = evaluate_one_case(list(param_values))\n`;
-      pre += `    objective_value = row["${objName}"]\n`;
+      pre += `    objective_value = resolve_objective_value(row, "${objName}")\n`;
       pre += penaltyLines + '\n';
       pre += returnLine + '\n\n';
       pre += `result = differential_evolution(de_objective, effective_bounds, maxiter=${maxIter}, seed=42)\n`;
@@ -1465,7 +1489,7 @@ def evaluate_one_case(param_values):
       const useBounds   = (ALGORITHM_META[alg] || {}).bounds !== false;
       pre += `def minimize_objective(param_values):\n`;
       pre += `    row = evaluate_one_case(list(param_values))\n`;
-      pre += `    objective_value = row["${objName}"]\n`;
+      pre += `    objective_value = resolve_objective_value(row, "${objName}")\n`;
       pre += penaltyLines + '\n';
       pre += returnLine + '\n\n';
       pre += `x0 = [(b[0] + b[1]) / 2 for b in effective_bounds]\n`;
