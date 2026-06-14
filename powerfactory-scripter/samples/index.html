@@ -826,8 +826,7 @@ Best objective (total_losses) = 4.07 MW</pre>
         <p class="hint">The script writes a summary CSV with all nine buses and six lines. The first two columns
           identify the contingency and its convergence status; subsequent columns are the output values, each
           prefixed with the variable name and the element's <code>loc_name</code> (e.g.
-          <code>bus_voltage_Bus 5</code>, <code>loading_Line 5-7</code>). <strong>Every row below is from a real
-          Nine-bus run</strong> (column subset shown, values rounded):</p>
+          <code>bus_voltage_Bus 5</code>, <code>loading_Line 5-7</code>):</p>
         <pre class="output-preview">Contingent Element 1,Converge?,bus_voltage_Bus 5,bus_voltage_Bus 6,bus_voltage_Bus 8,loading_Line 4-5,loading_Line 5-7,loading_Line 7-8
 Base Case,True,0.996,1.013,1.016,14.15,21.45,18.94
 Line 5-7,True,0.938,0.975,1.001,36.03,,40.33
@@ -836,9 +835,7 @@ Line 8-9,True,0.990,1.009,0.978,18.87,15.74,27.19
 Line 6-9,True,0.968,0.964,1.005,14.04,36.40,6.34
 Line 4-6,True,0.999,0.942,1.006,20.01,13.88,27.30
 Line 4-5,True,0.839,1.020,0.989,,40.29,8.34</pre>
-        <p class="hint">The <strong>loading cell for the tripped line is left blank</strong> — it is out of
-          service, so it has no calculated loading (the script now records the blank instead of failing the
-          row). <code>Converge? = False</code> on any row would mean the load flow did not converge with that
+        <p class="hint"><code>Converge? = False</code> on any row would mean the load flow did not converge with that
           line tripped. Scan the loading columns for post-contingency overloads (&gt;100%).</p>
       </div>
 
