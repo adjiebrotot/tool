@@ -57,7 +57,7 @@
         "query": "*.ElmLne",
         "filterAttr": "e:Unom",
         "filterOp": ">=",
-        "filterVal": "66"
+        "filterVal": "220"
       }
     ],
     "contingencyN": "1",

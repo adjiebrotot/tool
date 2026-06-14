@@ -40,7 +40,7 @@
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
   "inLanguage": "en",
-  "keywords": "PowerFactory capacitor bank sizing, harmonic filter sizing THD, synchronous condenser fault ride-through, N-1 line contingency PowerFactory, PowerFactory Python examples"
+  "keywords": "PowerFactory transmission loss factor, generation shift factor, minimum system losses Bayesian optimisation, frequency nadir short circuit, N-1 line contingency Nine-bus System, PowerFactory Python examples"
 }
 </script>
 <script type="application/ld+json">
@@ -50,26 +50,26 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "How do I size a capacitor bank for voltage regulation in PowerFactory?",
+      "name": "How do I compute transmission loss / generation shift factors in PowerFactory?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "This Samples & Guides page gives a direct, worked answer: it shows the exact PowerFactory Scripter inputs to sweep capacitor steps and let a load-flow study pick the smallest bank that holds the bus voltage within limits, then generate the Python automatically. See https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+        "text": "This worked example on the IEEE Nine-bus System sweeps the dispatchable generators G2 and G3 with a brute-force load flow and records the resulting Line 5-7 and Line 7-8 MW flows, so the change in each line per 1 MW of generation (the generation shift / transmission loss factor) is read straight from the table. See https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
       }
     },
     {
       "@type": "Question",
-      "name": "How do I size a harmonic filter to minimise THD in PowerFactory?",
+      "name": "How do I minimise system losses by re-dispatching generators in PowerFactory?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The harmonic filter sizing sample walks through configuring a harmonic study sweep so the generated PowerFactory Python finds the filter rating that brings total harmonic distortion under target. It is a free worked example at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+        "text": "The minimum-loss sample uses a Bayesian optimiser to search the G2/G3 active-power dispatch that minimises total network losses (grid ElmNet c:LossP), letting the slack machine G1 balance the system. It is a free worked example at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
       }
     },
     {
       "@type": "Question",
-      "name": "How do I check fault ride-through and inertial response for a synchronous condenser in PowerFactory?",
+      "name": "How do I calculate the frequency nadir after a short circuit in PowerFactory?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The synchronous condenser sizing sample uses RMS/EMT dynamic simulations to size the machine so it survives fault ride-through and provides enough inertial response, reading bus-voltage nadir and rotor-speed metrics per scenario. The worked example is at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+        "text": "The frequency-nadir sample sweeps a three-phase short circuit along Line 5-7 (0-100% of its length) with an RMS simulation at each position and reads the minimum rotor speed across the generators to report the system frequency nadir in Hz. The worked example is at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
       }
     },
     {
@@ -77,7 +77,7 @@
       "name": "How do I run an N-1 line contingency study in PowerFactory?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The N-1 line contingency sample shows the wildcard Contingency approach, where one configuration resolves every matching line outage at runtime and runs each automatically. See the worked example at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+        "text": "The N-1 line contingency sample shows the wildcard Contingency approach on the Nine-bus System, where one configuration resolves every matching line outage at runtime and runs each automatically. See the worked example at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
       }
     }
   ]
@@ -113,17 +113,19 @@
   <!-- HERO -->
   <div class="page-hero">
     <h1>Samples &amp; Guides</h1>
-    <p>Worked examples showing how to configure the tool for common power systems studies. </p>
+    <p>Worked examples showing how to configure the tool for common power-system studies, all built on
+       PowerFactory's bundled <strong>Nine-bus System</strong> demo (Anderson &amp; Fouad; 9 buses, 3 generators,
+       6 lines, 230&nbsp;kV / 60&nbsp;Hz).</p>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════════
-       SAMPLE 01 · CAPACITOR BANK SIZING
+       SAMPLE 01 · TRANSMISSION LOSS FACTOR
   ═══════════════════════════════════════════════════════════════ -->
   <div class="section-card" id="sample-1">
     <div class="section-header" onclick="toggleSection('sample-1')">
       <span class="sample-num">01</span>
-      <h3>Capacitor Bank Sizing: Voltage Regulation</h3>
-      <a class="dl-json-link" href="json-samples/sample-01-capacitor-bank-sizing.json" download onclick="event.stopPropagation()">↓ JSON</a>
+      <h3>Transmission Loss Factor: Generation Shift to Line 5-7 &amp; 7-8</h3>
+      <a class="dl-json-link" href="json-samples/sample-01-transmission-loss-factor.json" download onclick="event.stopPropagation()">↓ JSON</a>
       <span class="toggle-icon">▾</span>
     </div>
     <div class="section-body" id="sample-1-body">
@@ -134,9 +136,12 @@
           <span class="step-badge">1</span> Objective
         </div>
         <p class="objective-text">
-          A system with a high concentration of inductive motors is causing the bus voltage to sag below acceptable
-          limits. The goal is to find the minimum reactive power (MVAr) of a shunt capacitor that restores the bus
-          voltage within the standard operating range of 0.9–1.1 p.u.
+          On the Nine-bus System, quantify how each generator's MW output affects the active-power flow on
+          <strong>Line 5-7</strong> and <strong>Line 7-8</strong> — the generation-shift (transmission loss)
+          factors. Because <code>G1</code> is the slack machine, its dispatch is set by the load flow, so we
+          sweep the two dispatchable machines <code>G2</code> and <code>G3</code> and record the resulting
+          <code>G1</code> output alongside the two line flows. The change in each line's MW per 1&nbsp;MW of
+          <code>G2</code> or <code>G3</code> is read directly from the slope of the resulting table.
         </p>
       </div>
 
@@ -146,382 +151,11 @@
           <span class="step-badge">2</span> Assumptions
         </div>
         <ul class="assumption-list">
-          <li>Monitored bus element: <code>MainBus.ElmTerm</code></li>
-          <li>Capacitor element: <code>Cap.ElmShnt</code></li>
-          <li>Reactive power sweep: 0 – 10 MVAr in 0.5 MVAr steps</li>
-          <li>Voltage standard: 0.9 – 1.1 p.u.</li>
-        </ul>
-      </div>
-
-      <!-- 3 What to Input -->
-      <div class="sub-section">
-        <div class="sub-section-title">
-          <span class="step-badge">3</span> What to Input
-        </div>
-        <div class="readonly-fields">
-
-          <div class="readonly-group-title">Initialisation</div>
-          <div class="form-row">
-            <label>Problem Type</label>
-            <select disabled>
-              <option>Brute Force</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label>Study Type</label>
-            <select disabled>
-              <option>Steady State</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label>Coding Style</label>
-            <select disabled>
-              <option>Python File</option>
-            </select>
-          </div>
-
-          <div class="readonly-group-title">Input Variables</div>
-          <div class="dyn-table-wrapper">
-            <table class="dyn-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Object</th>
-                  <th>Attribute</th>
-                  <th>Lower</th>
-                  <th>Upper</th>
-                  <th>Step</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><input type="text" readonly value="Q_cap" /></td>
-                  <td><input type="text" readonly value="Cap.ElmShnt" /></td>
-                  <td><input type="text" readonly value="qtotin" /></td>
-                  <td><input type="number" readonly value="0" /></td>
-                  <td><input type="number" readonly value="10" /></td>
-                  <td><input type="number" readonly value="0.5" /></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="readonly-group-title">Output Variables</div>
-          <div class="output-var-item">
-            <div class="output-var-header">
-              <span class="ov-type-badge">Scalar</span>
-              <input type="text" readonly value="bus_voltage" style="max-width:150px" />
-            </div>
-            <div class="output-var-body">
-              <div class="form-row">
-                <label>Object</label>
-                <input type="text" readonly value="MainBus.ElmTerm" />
-              </div>
-              <div class="form-row">
-                <label>Attribute</label>
-                <input type="text" readonly value="m:u" />
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Steps 4 5 6 -->
-      <div class="sub-section steps-section">
-        <div class="steps-title">Running the Code</div>
-        <div class="step-row">
-          <span class="step-badge">4</span>
-          <span>Click <strong>⚡ Generate Code</strong> in the tool.</span>
-        </div>
-        <div class="step-row">
-          <span class="step-badge">5</span>
-          <span>Click <strong>Copy</strong> (or download as <code>.py</code>).</span>
-        </div>
-        <div class="step-row">
-          <span class="step-badge">6</span>
-          <div>
-            <div>Paste the code into your Python environment and run it.</div>
-            <div class="step-note">Make sure PowerFactory is installed and the API path is configured correctly.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 7 Expected Output -->
-      <div class="sub-section">
-        <div class="sub-section-title">
-          <span class="step-badge">7</span> Expected Output
-        </div>
-        <p class="hint">The script writes a CSV file to your output directory, e.g. <code>results.csv</code>:</p>
-        <pre class="output-preview">Q_cap,Converge?,bus_voltage
-0.0,True,0.873
-0.5,True,0.891
-1.0,True,0.908
-1.5,True,0.925
-2.0,True,0.943
-2.5,True,0.961
-3.0,True,1.024
-3.5,True,1.041
-...</pre>
-        <p class="hint">Open the CSV in Excel or Python (pandas) to plot voltage vs. capacitor size and identify the minimum capacitor rating that satisfies your voltage standard.</p>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       SAMPLE 02 · HARMONIC FILTER SIZING
-  ═══════════════════════════════════════════════════════════════ -->
-  <div class="section-card" id="sample-2">
-    <div class="section-header" onclick="toggleSection('sample-2')">
-      <span class="sample-num">02</span>
-      <h3>Harmonic Filter Sizing: THD Minimisation</h3>
-      <a class="dl-json-link" href="json-samples/sample-02-harmonic-filter-sizing.json" download onclick="event.stopPropagation()">↓ JSON</a>
-      <span class="toggle-icon">▾</span>
-    </div>
-    <div class="section-body" id="sample-2-body">
-
-      <!-- 1 Objective -->
-      <div class="sub-section">
-        <div class="sub-section-title">
-          <span class="step-badge">1</span> Objective
-        </div>
-        <p class="objective-text">
-          The system Total Harmonic Distortion (THD) exceeds the permissible limit. The goal is to find the optimal
-          capacitance, inductance, and resistance of a passive harmonic filter that minimises THD, subject to a
-          maximum resistance constraint.
-        </p>
-      </div>
-
-      <!-- 2 Assumptions -->
-      <div class="sub-section">
-        <div class="sub-section-title">
-          <span class="step-badge">2</span> Assumptions
-        </div>
-        <ul class="assumption-list">
-          <li>Filter element: <code>Filter.ElmFilter</code></li>
-          <li>Parameters to optimise: capacitance (<code>capa</code>), inductance (<code>rrea</code>), resistance (<code>rres</code>)</li>
-          <li>Target: minimise THD. Verify result manually against your standard (e.g. &lt; 3%)</li>
-          <li>Constraint: resistance ≤ 0.05 Ω</li>
-        </ul>
-      </div>
-
-      <!-- 3 What to Input -->
-      <div class="sub-section">
-        <div class="sub-section-title">
-          <span class="step-badge">3</span> What to Input
-        </div>
-        <div class="readonly-fields">
-
-          <div class="readonly-group-title">Initialisation</div>
-          <div class="form-row">
-            <label>Problem Type</label>
-            <select disabled>
-              <option>Optimisation</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label>Study Type</label>
-            <select disabled>
-              <option>Harmonic</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label>Coding Style</label>
-            <select disabled>
-              <option>Python File</option>
-            </select>
-          </div>
-
-          <div class="readonly-group-title">Input Variables</div>
-          <div class="dyn-table-wrapper">
-            <table class="dyn-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Object</th>
-                  <th>Attribute</th>
-                  <th>Lower</th>
-                  <th>Upper</th>
-                  <th>Step</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><input type="text" readonly value="C_f" /></td>
-                  <td><input type="text" readonly value="Filter.ElmFilter" /></td>
-                  <td><input type="text" readonly value="capa" /></td>
-                  <td><input type="text" readonly value="1e-6" /></td>
-                  <td><input type="text" readonly value="1e-3" /></td>
-                  <td><input type="text" readonly value="N/A" /></td>
-                </tr>
-                <tr>
-                  <td><input type="text" readonly value="L_f" /></td>
-                  <td><input type="text" readonly value="Filter.ElmFilter" /></td>
-                  <td><input type="text" readonly value="rrea" /></td>
-                  <td><input type="text" readonly value="1e-4" /></td>
-                  <td><input type="text" readonly value="1e-1" /></td>
-                  <td><input type="text" readonly value="N/A" /></td>
-                </tr>
-                <tr>
-                  <td><input type="text" readonly value="R_f" /></td>
-                  <td><input type="text" readonly value="Filter.ElmFilter" /></td>
-                  <td><input type="text" readonly value="rres" /></td>
-                  <td><input type="text" readonly value="0.001" /></td>
-                  <td><input type="text" readonly value="0.1" /></td>
-                  <td><input type="text" readonly value="N/A" /></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="readonly-group-title">Output Variables</div>
-          <div class="output-var-item">
-            <div class="output-var-header">
-              <span class="ov-type-badge">Scalar</span>
-              <input type="text" readonly value="thd" style="max-width:120px" />
-            </div>
-            <div class="output-var-body">
-              <div class="form-row">
-                <label>Object</label>
-                <input type="text" readonly value="MainBus.ElmTerm" />
-              </div>
-              <div class="form-row">
-                <label>Attribute</label>
-                <input type="text" readonly value="m:THD" />
-              </div>
-            </div>
-          </div>
-
-          <div class="readonly-group-title">Optimisation Settings</div>
-          <div class="form-row">
-            <label>Sense</label>
-            <select disabled>
-              <option>Minimise</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label>Objective</label>
-            <input type="text" readonly value="thd" />
-          </div>
-          <div class="form-row">
-            <label>Algorithm</label>
-            <select disabled>
-              <option>Bayesian</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label>Max Iterations</label>
-            <input type="number" readonly value="100" />
-          </div>
-
-          <div class="readonly-group-title">Constraints</div>
-          <div class="dyn-table-wrapper">
-            <table class="dyn-table" style="min-width:300px">
-              <thead>
-                <tr>
-                  <th>Variable</th>
-                  <th>Operator</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><input type="text" readonly value="R_f" /></td>
-                  <td>
-                    <select disabled style="min-width:54px">
-                      <option>≤</option>
-                    </select>
-                  </td>
-                  <td><input type="number" readonly value="0.05" /></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Steps 4 5 6 -->
-      <div class="sub-section steps-section">
-        <div class="steps-title">Running the Code</div>
-        <div class="step-row">
-          <span class="step-badge">4</span>
-          <span>Click <strong>⚡ Generate Code</strong> in the tool.</span>
-        </div>
-        <div class="step-row">
-          <span class="step-badge">5</span>
-          <span>Click <strong>Copy</strong> (or download as <code>.py</code>).</span>
-        </div>
-        <div class="step-row">
-          <span class="step-badge">6</span>
-          <div>
-            <div>Paste the code into your Python environment and run it.</div>
-            <div class="step-note">Bayesian optimisation may take a few minutes. Progress is printed to the console if <em>Use progress bar</em> is enabled.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 7 Expected Output -->
-      <div class="sub-section">
-        <div class="sub-section-title">
-          <span class="step-badge">7</span> Expected Output
-        </div>
-        <p class="hint">The script prints the best parameters found by the optimiser:</p>
-        <pre class="output-preview">Optimisation complete.
-Best parameters:
-  C_f (capa) = 4.72e-04
-  L_f (rrea) = 1.23e-02
-  R_f (rres) = 0.038
-Best objective (thd) = 2.61</pre>
-        <p class="hint">Verify the THD value against your standard (e.g. &lt; 3%) manually. The script does not enforce the limit; it only minimises THD within the parameter bounds and constraints you provide. You may modify the code to do this automatically.</p>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       SAMPLE 03 · SYNCHRONOUS CONDENSER SIZING
-  ═══════════════════════════════════════════════════════════════ -->
-  <div class="section-card" id="sample-3">
-    <div class="section-header" onclick="toggleSection('sample-3')">
-      <span class="sample-num">03</span>
-      <h3>Synchronous Condenser Sizing: Fault Ride-Through &amp; Inertial Response</h3>
-      <a class="dl-json-link" href="json-samples/sample-03-synchronous-condenser-sizing.json" download onclick="event.stopPropagation()">↓ JSON</a>
-      <span class="toggle-icon">▾</span>
-    </div>
-    <div class="section-body" id="sample-3-body">
-
-      <!-- 1 Objective -->
-      <div class="sub-section">
-        <div class="sub-section-title">
-          <span class="step-badge">1</span> Objective
-        </div>
-        <p class="objective-text">
-          A grid-connected synchronous condenser must be sized to satisfy two dynamic criteria
-          simultaneously: (1) <strong>Fault Ride-Through (FRT)</strong>, where the machine must stay in
-          synchronism and provide continuous reactive current support throughout a major fault without
-          pole-slipping; and (2) <strong>Inertial Response</strong>, where the rotating mass must be large
-          enough to limit the frequency nadir to an acceptable level following the sudden loss of a
-          generator. The script sweeps the number of parallel condenser units and records the
-          worst-case dynamic response for each size, automatically identifying the minimum
-          installation that meets both criteria.
-        </p>
-      </div>
-
-      <!-- 2 Assumptions -->
-      <div class="sub-section">
-        <div class="sub-section-title">
-          <span class="step-badge">2</span> Assumptions
-        </div>
-        <ul class="assumption-list">
-          <li>Synchronous condenser element: <code>SynCon.ElmSym</code></li>
-          <li>Monitored bus: <code>MainBus.ElmTerm</code></li>
-          <li>3-phase fault event pre-configured in the PowerFactory study case dynamic event list (applied at t&nbsp;=&nbsp;1&nbsp;s, cleared at t&nbsp;=&nbsp;1.15&nbsp;s)</li>
-          <li>Simulation window: 0–30 s (fault application, clearing, and full post-fault recovery)</li>
-          <li>FRT pass criterion: <code>bus_voltage_nadir ≥ 0.85 p.u.</code> and <code>out_of_step = 0</code></li>
-          <li>Inertia pass criterion: <code>rotor_speed_min ≥ 0.97 p.u.</code> (≥ 48.5 Hz on a 50 Hz base)</li>
-          <li>Combined pass/fail evaluated automatically by the <code>sizing_ok</code> custom calculation output</li>
+          <li>Slack machine: <code>G1.ElmSym</code> (Bus 1) — its dispatch is the balancing <em>output</em>, not an input</li>
+          <li>Dispatchable generators: <code>G2.ElmSym</code> (Bus 2), <code>G3.ElmSym</code> (Bus 3); swept via <code>pgini</code></li>
+          <li>Monitored lines: <code>Line 5-7.ElmLne</code>, <code>Line 7-8.ElmLne</code> — active power at the from-end (<code>m:P:bus1</code>)</li>
+          <li>System: 230&nbsp;kV, 60&nbsp;Hz; base-case dispatch G2&nbsp;=&nbsp;163&nbsp;MW, G3&nbsp;=&nbsp;85&nbsp;MW (G1&nbsp;≈&nbsp;71.6&nbsp;MW)</li>
+          <li>Loads held constant: Load&nbsp;A&nbsp;125&nbsp;MW (Bus 5), Load&nbsp;B&nbsp;90&nbsp;MW (Bus 6), Load&nbsp;C&nbsp;100&nbsp;MW (Bus 8)</li>
         </ul>
       </div>
 
@@ -539,11 +173,7 @@ Best objective (thd) = 2.61</pre>
           </div>
           <div class="form-row">
             <label>Study Type</label>
-            <select disabled><option>Dynamic RMS</option></select>
-          </div>
-          <div class="form-row">
-            <label>Stop Time (s)</label>
-            <input type="number" readonly value="30" />
+            <select disabled><option>Steady State</option></select>
           </div>
           <div class="form-row">
             <label>Coding Style</label>
@@ -565,126 +195,54 @@ Best objective (thd) = 2.61</pre>
               </thead>
               <tbody>
                 <tr>
-                  <td><input type="text" readonly value="ngnum" /></td>
-                  <td><input type="text" readonly value="SynCon.ElmSym" /></td>
-                  <td><input type="text" readonly value="ngnum" /></td>
-                  <td><input type="number" readonly value="1" /></td>
-                  <td><input type="number" readonly value="10" /></td>
-                  <td><input type="number" readonly value="1" /></td>
+                  <td><input type="text" readonly value="G2_dispatch" /></td>
+                  <td><input type="text" readonly value="G2.ElmSym" /></td>
+                  <td><input type="text" readonly value="pgini" /></td>
+                  <td><input type="number" readonly value="120" /></td>
+                  <td><input type="number" readonly value="200" /></td>
+                  <td><input type="number" readonly value="20" /></td>
+                </tr>
+                <tr>
+                  <td><input type="text" readonly value="G3_dispatch" /></td>
+                  <td><input type="text" readonly value="G3.ElmSym" /></td>
+                  <td><input type="text" readonly value="pgini" /></td>
+                  <td><input type="number" readonly value="45" /></td>
+                  <td><input type="number" readonly value="125" /></td>
+                  <td><input type="number" readonly value="20" /></td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           <div class="readonly-group-title">Output Variables</div>
-
-          <!-- Output 1: bus_voltage_nadir -->
           <div class="output-var-item">
             <div class="output-var-header">
-              <span class="ov-type-badge">Timeseries</span>
-              <input type="text" readonly value="bus_voltage_nadir" style="max-width:180px" />
+              <span class="ov-type-badge">Scalar</span>
+              <input type="text" readonly value="G1_dispatch" style="max-width:160px" />
             </div>
             <div class="output-var-body">
-              <div class="form-row">
-                <label>Object</label>
-                <input type="text" readonly value="MainBus.ElmTerm" />
-              </div>
-              <div class="form-row">
-                <label>Attribute</label>
-                <input type="text" readonly value="m:u" />
-              </div>
-              <div class="form-row">
-                <label>Metric</label>
-                <select disabled><option>Minimum</option></select>
-              </div>
-              <div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent2);">
-                <input type="checkbox" checked disabled style="accent-color:var(--accent2);" />
-                Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>)
-              </div>
+              <div class="form-row"><label>Object</label><input type="text" readonly value="G1.ElmSym" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="m:P:bus1" /></div>
             </div>
           </div>
-
-          <!-- Output 2: synccon_q_peak -->
           <div class="output-var-item">
             <div class="output-var-header">
-              <span class="ov-type-badge">Timeseries</span>
-              <input type="text" readonly value="synccon_q_peak" style="max-width:180px" />
+              <span class="ov-type-badge">Scalar</span>
+              <input type="text" readonly value="Line_5_7_MW" style="max-width:160px" />
             </div>
             <div class="output-var-body">
-              <div class="form-row">
-                <label>Object</label>
-                <input type="text" readonly value="SynCon.ElmSym" />
-              </div>
-              <div class="form-row">
-                <label>Attribute</label>
-                <input type="text" readonly value="m:Q" />
-              </div>
-              <div class="form-row">
-                <label>Metric</label>
-                <select disabled><option>Maximum</option></select>
-              </div>
+              <div class="form-row"><label>Object</label><input type="text" readonly value="Line 5-7.ElmLne" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="m:P:bus1" /></div>
             </div>
           </div>
-
-          <!-- Output 3: rotor_speed_min -->
           <div class="output-var-item">
             <div class="output-var-header">
-              <span class="ov-type-badge">Timeseries</span>
-              <input type="text" readonly value="rotor_speed_min" style="max-width:180px" />
+              <span class="ov-type-badge">Scalar</span>
+              <input type="text" readonly value="Line_7_8_MW" style="max-width:160px" />
             </div>
             <div class="output-var-body">
-              <div class="form-row">
-                <label>Object</label>
-                <input type="text" readonly value="SynCon.ElmSym" />
-              </div>
-              <div class="form-row">
-                <label>Attribute</label>
-                <input type="text" readonly value="s:speed" />
-              </div>
-              <div class="form-row">
-                <label>Metric</label>
-                <select disabled><option>Minimum</option></select>
-              </div>
-              <div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent2);">
-                <input type="checkbox" checked disabled style="accent-color:var(--accent2);" />
-                Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>)
-              </div>
-            </div>
-          </div>
-
-          <!-- Output 4: out_of_step -->
-          <div class="output-var-item">
-            <div class="output-var-header">
-              <span class="ov-type-badge">Timeseries</span>
-              <input type="text" readonly value="out_of_step" style="max-width:180px" />
-            </div>
-            <div class="output-var-body">
-              <div class="form-row">
-                <label>Object</label>
-                <input type="text" readonly value="SynCon.ElmSym" />
-              </div>
-              <div class="form-row">
-                <label>Attribute</label>
-                <input type="text" readonly value="s:outofstep" />
-              </div>
-              <div class="form-row">
-                <label>Metric</label>
-                <select disabled><option>Maximum</option></select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Output 5: sizing_ok (Custom Calculation) -->
-          <div class="output-var-item">
-            <div class="output-var-header">
-              <span class="ov-type-badge">Custom</span>
-              <input type="text" readonly value="sizing_ok" style="max-width:120px" />
-            </div>
-            <div class="output-var-body">
-              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;">Custom Function</div>
-              <pre style="background:#0B1120;border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-family:var(--mono);font-size:12px;color:var(--accent);line-height:1.7;margin:0;overflow-x:auto;">def sizing_ok(bus_voltage_nadir, rotor_speed_min, out_of_step):
-    return bus_voltage_nadir >= 0.85 and rotor_speed_min >= 0.97 and out_of_step == 0</pre>
-              <p class="hint" style="margin-top:8px;">Arguments must match names of other defined input or output variables. Returns <code>True</code> if all sizing criteria pass, <code>False</code> otherwise.</p>
+              <div class="form-row"><label>Object</label><input type="text" readonly value="Line 7-8.ElmLne" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="m:P:bus1" /></div>
             </div>
           </div>
 
@@ -706,7 +264,7 @@ Best objective (thd) = 2.61</pre>
           <span class="step-badge">6</span>
           <div>
             <div>Paste the code into your Python environment and run it.</div>
-            <div class="step-note">Ensure the 3-phase fault event is defined in the PowerFactory study case before running. Each RMS simulation covers 30 s, so expect the full sweep (10 runs) to take several minutes.</div>
+            <div class="step-note">A 5×5 dispatch grid runs 25 load flows. The slack machine balances each case automatically.</div>
           </div>
         </div>
       </div>
@@ -716,16 +274,390 @@ Best objective (thd) = 2.61</pre>
         <div class="sub-section-title">
           <span class="step-badge">7</span> Expected Output
         </div>
-        <p class="hint">The script writes a summary CSV to your output directory, e.g. <code>results.csv</code>:</p>
-        <pre class="output-preview">ngnum,Converge?,bus_voltage_nadir,synccon_q_peak,rotor_speed_min,out_of_step,sizing_ok
-1,True,0.71,47.3,0.961,1,False
-2,True,0.74,94.1,0.966,1,False
-3,True,0.76,140.8,0.970,0,False
-4,True,0.79,187.2,0.973,0,True
-5,True,0.82,233.6,0.976,0,True
-...
-10,True,0.91,466.1,0.984,0,True</pre>
-        <p class="hint">The minimum passing size is the first row where <code>sizing_ok = True</code>; here, that is <strong>4 parallel units</strong>. Time-domain waveform plots for <code>bus_voltage_nadir</code> and <code>rotor_speed_min</code> are saved as <code>.png</code> files in <code>{output_dir}/graph/</code> for each scenario.</p>
+        <p class="hint">The script writes a CSV to your output directory. Columns are the swept inputs, the
+          convergence flag, then the three monitored outputs (values below are <em>indicative</em> and will be
+          confirmed against your first run):</p>
+        <pre class="output-preview">G2_dispatch,G3_dispatch,Converge?,G1_dispatch,Line_5_7_MW,Line_7_8_MW
+120.0,45.0,True,155.1,-71.2,-39.4
+120.0,85.0,True,115.6,-71.0,-7.1
+160.0,85.0,True,75.9,-83.5,-7.4
+160.0,125.0,True,36.5,-83.3,24.9
+200.0,125.0,True,-3.0,-95.8,25.2
+...</pre>
+        <p class="hint"><strong>Reading the loss/shift factor:</strong> hold one generator fixed and divide the
+          change in a line's MW by the change in that generator's MW. For example, between the 3rd and 5th rows
+          above (G3 fixed at 125, G2 from 160→200) Line&nbsp;5-7 moves −83.3→−95.8&nbsp;MW, i.e. roughly
+          <code>−0.31&nbsp;MW</code> per MW of G2 — its generation shift factor onto Line 5-7. Open the CSV in
+          Excel/pandas to fit the slopes for all four line/generator pairs.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SAMPLE 02 · MINIMUM SYSTEM LOSSES
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-card" id="sample-2">
+    <div class="section-header" onclick="toggleSection('sample-2')">
+      <span class="sample-num">02</span>
+      <h3>Minimum System Losses: Bayesian Re-Dispatch</h3>
+      <a class="dl-json-link" href="json-samples/sample-02-minimum-system-losses.json" download onclick="event.stopPropagation()">↓ JSON</a>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body" id="sample-2-body">
+
+      <!-- 1 Objective -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">1</span> Objective
+        </div>
+        <p class="objective-text">
+          Find the <code>G2</code> and <code>G3</code> active-power dispatch that <strong>minimises total
+          network active-power losses</strong> on the Nine-bus System, using a Bayesian optimiser. The slack
+          machine <code>G1</code> absorbs the balance at each evaluation, and the total loss is read from the
+          grid summary (<code>ElmNet</code> <code>c:LossP</code>).
+        </p>
+      </div>
+
+      <!-- 2 Assumptions -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">2</span> Assumptions
+        </div>
+        <ul class="assumption-list">
+          <li>Slack machine: <code>G1.ElmSym</code> — balances each candidate dispatch</li>
+          <li>Optimised variables: <code>G2.ElmSym</code> / <code>G3.ElmSym</code> <code>pgini</code></li>
+          <li>Objective: minimise total active losses = <code>*.ElmNet</code> <code>c:LossP</code> (single grid → scalar)</li>
+          <li>Bounds: G2 50–160&nbsp;MW, G3 20–105&nbsp;MW (within machine ratings)</li>
+          <li>Loads constant; base-case total losses ≈ 4.64&nbsp;MW (sum of line losses in the reference)</li>
+          <li>Algorithm: Bayesian (<code>gp_minimize</code>), 60 evaluations</li>
+        </ul>
+      </div>
+
+      <!-- 3 What to Input -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">3</span> What to Input
+        </div>
+        <div class="readonly-fields">
+
+          <div class="readonly-group-title">Initialisation</div>
+          <div class="form-row">
+            <label>Problem Type</label>
+            <select disabled><option>Optimisation</option></select>
+          </div>
+          <div class="form-row">
+            <label>Study Type</label>
+            <select disabled><option>Steady State</option></select>
+          </div>
+          <div class="form-row">
+            <label>Coding Style</label>
+            <select disabled><option>Python File</option></select>
+          </div>
+
+          <div class="readonly-group-title">Input Variables</div>
+          <div class="dyn-table-wrapper">
+            <table class="dyn-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Object</th>
+                  <th>Attribute</th>
+                  <th>Lower</th>
+                  <th>Upper</th>
+                  <th>Step</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="text" readonly value="G2_dispatch" /></td>
+                  <td><input type="text" readonly value="G2.ElmSym" /></td>
+                  <td><input type="text" readonly value="pgini" /></td>
+                  <td><input type="number" readonly value="50" /></td>
+                  <td><input type="number" readonly value="160" /></td>
+                  <td><input type="text" readonly value="N/A" /></td>
+                </tr>
+                <tr>
+                  <td><input type="text" readonly value="G3_dispatch" /></td>
+                  <td><input type="text" readonly value="G3.ElmSym" /></td>
+                  <td><input type="text" readonly value="pgini" /></td>
+                  <td><input type="number" readonly value="20" /></td>
+                  <td><input type="number" readonly value="105" /></td>
+                  <td><input type="text" readonly value="N/A" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="readonly-group-title">Output Variables</div>
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Scalar</span>
+              <input type="text" readonly value="total_losses" style="max-width:160px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row"><label>Object</label><input type="text" readonly value="*.ElmNet" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="c:LossP" /></div>
+            </div>
+          </div>
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Scalar</span>
+              <input type="text" readonly value="G1_dispatch" style="max-width:160px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row"><label>Object</label><input type="text" readonly value="G1.ElmSym" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="m:P:bus1" /></div>
+            </div>
+          </div>
+
+          <div class="readonly-group-title">Optimisation Settings</div>
+          <div class="form-row">
+            <label>Sense</label>
+            <select disabled><option>Minimise</option></select>
+          </div>
+          <div class="form-row">
+            <label>Objective</label>
+            <input type="text" readonly value="total_losses" />
+          </div>
+          <div class="form-row">
+            <label>Algorithm</label>
+            <select disabled><option>Bayesian</option></select>
+          </div>
+          <div class="form-row">
+            <label>Max Iterations</label>
+            <input type="number" readonly value="60" />
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Steps 4 5 6 -->
+      <div class="sub-section steps-section">
+        <div class="steps-title">Running the Code</div>
+        <div class="step-row">
+          <span class="step-badge">4</span>
+          <span>Click <strong>⚡ Generate Code</strong> in the tool.</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">5</span>
+          <span>Click <strong>Copy</strong> (or download as <code>.py</code>).</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">6</span>
+          <div>
+            <div>Paste the code into your Python environment and run it.</div>
+            <div class="step-note">Bayesian optimisation runs 60 load flows. Progress prints to the console if <em>Use progress bar</em> is enabled.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7 Expected Output -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">7</span> Expected Output
+        </div>
+        <p class="hint">The script prints the best dispatch found and writes every evaluation to the CSV
+          (values below are <em>indicative</em>, confirmed against your first run):</p>
+        <pre class="output-preview">Optimisation complete. Best value: 4.07
+Best dispatch:
+  G2_dispatch (pgini) = 138.4 MW
+  G3_dispatch (pgini) = 96.7 MW
+Resulting G1_dispatch  = 81.2 MW
+Best objective (total_losses) = 4.07 MW</pre>
+        <p class="hint">Compare the optimised loss against the base-case ≈&nbsp;4.64&nbsp;MW. The full evaluation
+          history in the CSV lets you plot loss vs. dispatch and confirm the minimum. The optimiser does not
+          enforce generator or thermal limits beyond the bounds you set — verify the result is physical.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SAMPLE 03 · FREQUENCY NADIR vs FAULT LOCATION
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-card" id="sample-3">
+    <div class="section-header" onclick="toggleSection('sample-3')">
+      <span class="sample-num">03</span>
+      <h3>Frequency Nadir: Short Circuit Swept Along a Line</h3>
+      <a class="dl-json-link" href="json-samples/sample-03-frequency-nadir.json" download onclick="event.stopPropagation()">↓ JSON</a>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body" id="sample-3-body">
+
+      <!-- 1 Objective -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">1</span> Objective
+        </div>
+        <p class="objective-text">
+          Apply a three-phase short circuit and sweep its position along <strong>Line 5-7</strong> (0–100% of
+          the line length), running an RMS simulation at each position to find the <strong>system frequency
+          nadir</strong>. The nadir is taken as the minimum generator rotor speed across <code>G1</code>,
+          <code>G2</code> and <code>G3</code>, converted to Hz on the 60&nbsp;Hz base. The result shows how
+          fault position influences the worst-case frequency dip.
+        </p>
+      </div>
+
+      <!-- 2 Assumptions -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">2</span> Assumptions
+        </div>
+        <ul class="assumption-list">
+          <li>Short-circuit event: <code>Short-Circuit.EvtShc</code> in the active RMS study case's <em>Simulation Events</em> folder — rename the query to match your event's <code>loc_name</code></li>
+          <li>Fault position swept via <code>e:shcLocation</code> = 0–100&nbsp;% in 25&nbsp;% steps (the position along the faulted line)</li>
+          <li>Fault applied at the event's <code>e:time</code>, cleared by tripping Line 5-7 (as in the reference's <em>Five-Cycles-Fault</em> case)</li>
+          <li>Frequency proxy: generator rotor speed <code>s:speed</code> (p.u.); nadir&nbsp;Hz = min&nbsp;speed&nbsp;×&nbsp;60</li>
+          <li>Simulation window: 0–10&nbsp;s; classical generator models per the reference</li>
+        </ul>
+      </div>
+
+      <!-- 3 What to Input -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">3</span> What to Input
+        </div>
+        <div class="readonly-fields">
+
+          <div class="readonly-group-title">Initialisation</div>
+          <div class="form-row">
+            <label>Problem Type</label>
+            <select disabled><option>Brute Force</option></select>
+          </div>
+          <div class="form-row">
+            <label>Study Type</label>
+            <select disabled><option>Dynamic RMS</option></select>
+          </div>
+          <div class="form-row">
+            <label>Stop Time (s)</label>
+            <input type="number" readonly value="10" />
+          </div>
+          <div class="form-row">
+            <label>Coding Style</label>
+            <select disabled><option>Python File</option></select>
+          </div>
+
+          <div class="readonly-group-title">Input Variables</div>
+          <div class="dyn-table-wrapper">
+            <table class="dyn-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Object</th>
+                  <th>Attribute</th>
+                  <th>Lower</th>
+                  <th>Upper</th>
+                  <th>Step</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="text" readonly value="fault_location_pct" /></td>
+                  <td><input type="text" readonly value="Short-Circuit.EvtShc" /></td>
+                  <td><input type="text" readonly value="e:shcLocation" /></td>
+                  <td><input type="number" readonly value="0" /></td>
+                  <td><input type="number" readonly value="100" /></td>
+                  <td><input type="number" readonly value="25" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="readonly-group-title">Output Variables</div>
+
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="nadir_speed_G1" style="max-width:180px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row"><label>Object</label><input type="text" readonly value="G1.ElmSym" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="s:speed" /></div>
+              <div class="form-row"><label>Metric</label><select disabled><option>Minimum</option></select></div>
+            </div>
+          </div>
+
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="nadir_speed_G2" style="max-width:180px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row"><label>Object</label><input type="text" readonly value="G2.ElmSym" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="s:speed" /></div>
+              <div class="form-row"><label>Metric</label><select disabled><option>Minimum</option></select></div>
+            </div>
+          </div>
+
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="nadir_speed_G3" style="max-width:180px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row"><label>Object</label><input type="text" readonly value="G3.ElmSym" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="s:speed" /></div>
+              <div class="form-row"><label>Metric</label><select disabled><option>Minimum</option></select></div>
+              <div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent2);">
+                <input type="checkbox" checked disabled style="accent-color:var(--accent2);" />
+                Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>)
+              </div>
+            </div>
+          </div>
+
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Custom</span>
+              <input type="text" readonly value="system_nadir_hz" style="max-width:160px" />
+            </div>
+            <div class="output-var-body">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;">Custom Function</div>
+              <pre style="background:#0B1120;border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-family:var(--mono);font-size:12px;color:var(--accent);line-height:1.7;margin:0;overflow-x:auto;">def system_nadir_hz(nadir_speed_G1, nadir_speed_G2, nadir_speed_G3):
+    return min(nadir_speed_G1, nadir_speed_G2, nadir_speed_G3) * 60.0</pre>
+              <p class="hint" style="margin-top:8px;">Arguments must match the names of the three speed outputs above. Returns the lowest rotor speed across the machines, scaled to Hz — the system frequency nadir for that fault position.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Steps 4 5 6 -->
+      <div class="sub-section steps-section">
+        <div class="steps-title">Running the Code</div>
+        <div class="step-row">
+          <span class="step-badge">4</span>
+          <span>Click <strong>⚡ Generate Code</strong> in the tool.</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">5</span>
+          <span>Click <strong>Copy</strong> (or download as <code>.py</code>).</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">6</span>
+          <div>
+            <div>Paste the code into your Python environment and run it.</div>
+            <div class="step-note">Ensure a three-phase short-circuit event exists in the active RMS study case and that its name matches the Object query. Five RMS runs (one per fault position) take a couple of minutes.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7 Expected Output -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">7</span> Expected Output
+        </div>
+        <p class="hint">The script writes a summary CSV (values below are <em>indicative</em>, confirmed against
+          your first run); rotor speeds are in p.u. and <code>system_nadir_hz</code> in Hz:</p>
+        <pre class="output-preview">fault_location_pct,Converge?,nadir_speed_G1,nadir_speed_G2,nadir_speed_G3,system_nadir_hz
+0.0,True,0.9979,0.9971,0.9963,59.778
+25.0,True,0.9981,0.9974,0.9966,59.796
+50.0,True,0.9984,0.9978,0.9971,59.826
+75.0,True,0.9987,0.9982,0.9976,59.856
+100.0,True,0.9990,0.9986,0.9981,59.886</pre>
+        <p class="hint">The lowest <code>system_nadir_hz</code> identifies the most severe fault position — here a
+          fault nearest Bus&nbsp;5 (0%). Time-domain rotor-speed plots for <code>nadir_speed_G3</code> are saved
+          as <code>.png</code> in <code>{output_dir}/graph/</code> for each position.</p>
       </div>
 
     </div>
@@ -749,7 +681,7 @@ Best objective (thd) = 2.61</pre>
           <span class="step-badge">1</span> Objective
         </div>
         <p class="objective-text">
-          Assess the steady-state impact of losing any single line in the network.
+          Assess the steady-state impact of losing any single transmission line in the Nine-bus System.
           The <strong>Contingency</strong> problem type resolves all matching lines at runtime via
           a wildcard query, with no manual enumeration or spreadsheet required.
           The script runs a base case followed by one load flow per line, recording bus voltages
@@ -764,7 +696,7 @@ Best objective (thd) = 2.61</pre>
         </div>
         <ul class="assumption-list">
           <li>N-1 contingency mode will be used</li>
-          <li>Only lines above 66 kV will be considered</li>
+          <li>All six transmission lines are 230&nbsp;kV; the filter <code>e:Unom ≥ 220</code> keeps all of them</li>
           <li>Bus voltage and line loading of all buses and lines will be monitored</li>
         </ul>
       </div>
@@ -810,7 +742,7 @@ Best objective (thd) = 2.61</pre>
                   <td><input type="text" readonly value="*.ElmLne" /></td>
                   <td><input type="text" readonly value="e:Unom" /></td>
                   <td><select disabled><option>>=</option></select></td>
-                  <td><input type="text" readonly value="66" /></td>
+                  <td><input type="text" readonly value="220" /></td>
                 </tr>
               </tbody>
             </table>
@@ -880,18 +812,25 @@ Best objective (thd) = 2.61</pre>
         <div class="sub-section-title">
           <span class="step-badge">8</span> Expected Output
         </div>
-        <p class="hint">The script writes a summary CSV to your output directory, e.g. <code>results.csv</code>. The first two columns identify the contingency and its convergence status; subsequent columns are the output values, each prefixed with the variable name and the element's <code>loc_name</code> (e.g. <code>bus_voltage_Bus_HV1</code>, <code>loading_Line_A</code>):</p>
-        <pre class="output-preview">Contingent Element 1,Converge?,bus_voltage_Bus_HV1,bus_voltage_Bus_HV2,bus_voltage_Bus_HV3,loading_Line_A,loading_Line_B,loading_Line_C,loading_Line_D
-Base Case,True,1.023,0.998,1.005,42.1,38.5,65.3,71.2
-Line_A,True,0.887,1.012,0.995,65.3,88.7,45.2,80.5
-Line_B,True,1.012,0.889,1.003,88.7,55.2,40.1,75.3
-Line_C,False,,,,,,,,
-Line_D,True,0.991,1.003,0.998,48.6,71.9,82.3,95.1</pre>
-        <p class="hint"><code>Converge? = False</code> for Line_C indicates the load flow did not converge with that line tripped. The row is still recorded but output columns are left empty.</p>
+        <p class="hint">The script writes a summary CSV to your output directory. The first two columns identify
+          the contingency and its convergence status; subsequent columns are the output values, each prefixed
+          with the variable name and the element's <code>loc_name</code> (e.g. <code>bus_voltage_Bus 5</code>,
+          <code>loading_Line 5-7</code>). Values below are <em>indicative</em>, confirmed against your first run:</p>
+        <pre class="output-preview">Contingent Element 1,Converge?,bus_voltage_Bus 5,bus_voltage_Bus 6,bus_voltage_Bus 8,loading_Line 4-5,loading_Line 5-7,loading_Line 7-8
+Base Case,True,0.996,1.013,1.016,40.8,33.1,30.5
+Line 4-5,True,0.948,1.010,1.014,0.0,61.7,28.9
+Line 5-7,True,0.971,1.011,1.009,55.2,0.0,44.6
+Line 7-8,True,0.982,1.012,0.961,42.0,58.3,0.0
+Line 8-9,True,0.994,1.009,0.978,41.1,35.0,49.7
+...</pre>
+        <p class="hint"><code>Converge? = False</code> on any row indicates the load flow did not converge with
+          that line tripped; the row is still recorded but its output columns are left empty. Scan the loading
+          columns for any post-contingency overloads (&gt;100%).</p>
       </div>
 
     </div>
   </div>
+
 
   <!-- ═══════════════════════════════════════════════════════════════
        FAQ
