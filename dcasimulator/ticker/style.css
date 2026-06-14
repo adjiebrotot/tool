@@ -1,0 +1,46 @@
+/* DCA Scenario Explorer — yfinance ticker reference page */
+
+.intro{color:var(--muted);font-size:.92rem;line-height:1.6;max-width:80ch;margin:0 0 4px}
+.intro code{background:var(--input-bg);border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-family:'DM Mono',monospace;font-size:.85em;color:var(--text)}
+
+.ticker-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.ticker-search{flex:1;min-width:220px}
+.ticker-count{color:var(--muted);font-size:.82rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.country-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.country-nav a{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1.5px solid var(--border);border-radius:999px;background:var(--input-bg);color:var(--text);font-size:.84rem;font-weight:600;text-decoration:none;transition:border-color var(--transition-fast),background var(--transition-fast)}
+.country-nav a:hover{border-color:var(--accent)}
+
+.country-block{margin-bottom:26px;scroll-margin-top:18px}
+.country-block h2{display:flex;align-items:center;gap:9px;font-size:1.18rem;margin:0 0 4px}
+.country-block .flag{font-size:1.25em;line-height:1}
+.country-note{color:var(--muted);font-size:.82rem;line-height:1.55;margin:0 0 12px;max-width:80ch}
+
+.ticker-table-wrap{overflow:auto;border:1px solid var(--border);border-radius:var(--radius-md)}
+table.ticker-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.86rem}
+table.ticker-table th,table.ticker-table td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+table.ticker-table thead th{position:sticky;top:0;background:var(--panel);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;z-index:1}
+table.ticker-table tbody tr:last-child td{border-bottom:none}
+table.ticker-table tbody tr:hover td{background:rgba(141,187,255,0.05)}
+body.light table.ticker-table tbody tr:hover td{background:rgba(90,145,232,0.05)}
+table.ticker-table td.tk{font-weight:700;color:var(--accent)}
+table.ticker-table td.nm{font-family:'DM Sans',sans-serif;white-space:normal;color:var(--text)}
+
+.type-tag{display:inline-block;font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.03em;padding:2px 8px;border-radius:999px;border:1px solid var(--border);color:var(--muted);background:var(--input-bg);white-space:nowrap}
+.type-tag.t-stock{color:var(--accent2);border-color:color-mix(in srgb,var(--accent2) 45%,var(--border))}
+.type-tag.t-equity{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
+.type-tag.t-cash{color:#2fae6b;border-color:color-mix(in srgb,#2fae6b 45%,var(--border))}
+.type-tag.t-bond{color:#d8923a;border-color:color-mix(in srgb,#d8923a 45%,var(--border))}
+.type-tag.t-reit{color:#a974d6;border-color:color-mix(in srgb,#a974d6 45%,var(--border))}
+
+.no-results{display:none;padding:24px;text-align:center;color:var(--muted);font-size:.9rem}
+.country-block.is-empty{display:none}
+
+.use-hint{color:var(--muted);font-size:.85rem;line-height:1.6;margin:18px 0 0;padding:14px 16px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);max-width:80ch}
+.use-hint a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.use-hint a:hover{opacity:.8}
+
+@media(max-width:600px){
+  table.ticker-table th,table.ticker-table td{padding:7px 9px;font-size:.8rem}
+  .country-block h2{font-size:1.06rem}
+}
