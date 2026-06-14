@@ -907,11 +907,12 @@ When these files are absent the tool works fully; smart autocomplete is simply u
 | `res.Release()` | §6.18 | `extract_timeseries_outputs` | Free ElmRes memory; always in `finally` block |
 | `res.GetNumberOfRows()` | §6.18 | `extract_timeseries_outputs`, `_read_column_values` | Get number of result time steps |
 | `res.FindColumn(obj, varName)` | §6.18 | `_load_elmres_column`, `extract_timeseries_outputs` | Locate a column; returns `-1` if not found |
-| `res.GetValue(row, col)` | §6.18 | `_read_column_values`, time axis read | Read one value; returns `(errorCode, value)` |
-| `res.FindMaxInColumn(col)` | §6.18 | `extract_timeseries_outputs` (maximum metric) | Native max search; returns `(errorCode, value, rowIndex)` |
-| `res.FindMinInColumn(col)` | §6.18 | `extract_timeseries_outputs` (minimum metric) | Native min search; returns `(errorCode, value, rowIndex)` |
-| `project.GetContents("Study Cases")` | §5 | Study case iteration helper | Access the Study Cases folder |
-| `project.GetContents("Operation Scenarios")` | §5 | Scenario iteration helper | Access the Operation Scenarios folder |
+| `res.GetValue(row, col)` | §6.18 | `_read_elmres_inmemory` (data columns) | Read one value; returns `(errorCode, value)` |
+| `res.GetValue(row, -1)` | §6.18 | `_read_elmres_inmemory` (time axis) | Read the result **x-axis (simulation time)** — it lives at column `-1`; columns `0..n-1` are the monitored variables |
+| `res.FindMaxInColumn(col)` | §6.18 | (available) | Native max search; returns `(errorCode, value, rowIndex)` |
+| `res.FindMinInColumn(col)` | §6.18 | (available) | Native min search; returns `(errorCode, value, rowIndex)` |
+| `project.GetContents("Study Cases")[0].GetContents("*.IntCase")` | §5 | `get_study_cases` | Access the Study Cases folder, filtered to `IntCase` (the folder may also hold non-case objects like a `ComTasks` "Task Automation") |
+| `project.GetContents("Operation Scenarios")[0].GetContents("*.IntScenario")` | §5 | `get_operating_scenarios` | Access the Operation Scenarios folder, filtered to `IntScenario` |
 | `study_case.Activate()` | §5 | Study case iteration loop | Switch the active study case |
 | `op_scenario.Activate()` | §5 | Scenario iteration loop | Switch the active operating scenario |
 | `element.GetAttribute("outserv")` | §5 | Contingency loop | Read out-of-service state before tripping |

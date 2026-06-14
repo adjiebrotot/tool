@@ -68,7 +68,6 @@ function buildImports(cfg) {
   const hasOutputGraph = cfg.outputVariables.some(o => o.type === 'timeseries' && o.output_graph);
   const hasOutputRaw   = cfg.outputVariables.some(o => o.type === 'timeseries' && o.output_raw_csv);
   const apiPath = init.powerfactoryApiPath || 'POWERFACTORY_API_PATH_HERE';
-  const username = init.username || 'USERNAME_HERE';
 
   let tqdmImport = '';
   if (cfg.additionalConfig.useProgressBar) {
@@ -107,9 +106,13 @@ ${matplotlibImport}${tqdmImport ? tqdmImport + '\n' : ''}${optimImports ? optimI
 
 // ── PREPARATION (app connection, project listing) ─────────────
 function buildPreparation(cfg) {
-  const username = cfg.initialisation.username || 'USERNAME_HERE';
+  // When a username is given, pass it; when blank, call GetApplication() with
+  // no argument so it connects as the current user. (Emitting a placeholder
+  // string like "USERNAME_HERE" would make GetApplication raise at runtime.)
+  const username = (cfg.initialisation.username || '').trim();
+  const getAppCall = username ? `pf.GetApplication("${username}")` : `pf.GetApplication()`;
   return `# ── PREPARATION ────────────────────────────────────────────────
-app = pf.GetApplication("${username}")
+app = ${getAppCall}
 user = app.GetCurrentUser()
 
 # Show available projects
@@ -371,7 +374,10 @@ def get_study_cases(app):
     study_case_root = project.GetContents("Study Cases")
     if not study_case_root:
         return []
-    return study_case_root[0].GetContents()
+    # Filter to IntCase only: the Study Cases folder can also hold non-case
+    # objects (e.g. a "Task Automation" ComTasks). Returning those unfiltered
+    # makes study_case.Activate() fail when iterating study cases.
+    return study_case_root[0].GetContents("*.IntCase")
 
 
 def get_operating_scenarios(app):
@@ -379,7 +385,7 @@ def get_operating_scenarios(app):
     scenario_root = project.GetContents("Operation Scenarios")
     if not scenario_root:
         return []
-    return scenario_root[0].GetContents()
+    return scenario_root[0].GetContents("*.IntScenario")
 
 
 def extract_attribute_output(app, object_query, variable_name):
@@ -493,7 +499,12 @@ def _read_elmres_inmemory(app, output_specs):
     res.Load()
 
     n_rows = res.GetNumberOfRows()
-    time_values = [res.GetValue(row, 0)[1] for row in range(n_rows)]
+    # Time axis: PowerFactory exposes the result x-axis (simulation time) at
+    # COLUMN INDEX -1. Columns 0..n-1 are the monitored VARIABLES, so
+    # res.GetValue(row, 0) returns the first monitored variable (often a
+    # near-constant state like a field voltage), NOT the time. Verified on
+    # PowerFactory 2024: GetValue(row, -1) returns the t_start..t_stop ramp.
+    time_values = [res.GetValue(row, -1)[1] for row in range(n_rows)]
 
     ts_data = {}
     for spec in output_specs:

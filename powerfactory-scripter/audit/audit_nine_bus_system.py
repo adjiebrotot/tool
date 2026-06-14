@@ -908,7 +908,7 @@ def phase7():
                 info(f"   {c:>3} | {str(cls):>10} | {str(ln):<22} | {res.GetVariable(c)}")
             if ncol > cap:
                 info(f"   ... ({ncol - cap} more columns not shown)")
-            # Probe a handful of rows for col 0 (tool's assumed time) + s:firel.
+            # Probe rows for col 0 (legacy time read) + the monitored variable.
             probe = sorted(set([0, 1, 2, nrow // 2, nrow - 1])) if nrow else []
             info("  --- row probes (does GetValue respect the row index?) ---")
             for r in probe:
@@ -945,23 +945,25 @@ def phase7():
     run("7.7b", "_read_elmres_inmemory", "GetValue (errorCode,value) shape", cp_getvalue_shape)
 
     # --- 7.8  Time-axis strategy comparison (THE crux) ---------------------
-    #   The generator reads time as GetValue(row, 0)[1]. Here we compare that
-    #   against other ways to obtain time and confirm which one yields a real
-    #   0 -> tstop ramp on this build/result.
+    #   The generator reads time as GetValue(row, -1)[1]: PowerFactory exposes
+    #   the result x-axis (simulation time) at column -1, while columns 0..n-1
+    #   are monitored variables. We confirm -1 is a real t_start..t_stop ramp,
+    #   and show the legacy column-0 read for contrast (it returns the first
+    #   monitored variable — often a near-constant state).
     def cp_time_axis():
         res = STATE["res"]
         res.Load()
         try:
             nrow = res.GetNumberOfRows()
             ncol = res.GetNumberOfColumns()
-            # Candidate (label, column-index passed straight to GetValue).
-            cands = [("A GetValue(row,0)  [tool]", 0),
-                     ("B GetValue(row,-1)", -1)]
+            # (label, column-index passed straight to GetValue); -1 is the tool's.
+            cands = [("GetValue(row,-1) [tool]", -1),
+                     ("GetValue(row,0)  [legacy]", 0)]
             tnow_col = next((c for c in range(ncol)
                              if res.GetVariable(c) in ("b:tnow", "s:tnow", "t")), None)
             if tnow_col is not None:
-                cands.append((f"C col {tnow_col} (var 'b:tnow')", tnow_col))
-            # D: auto-scan for a column that rises from ~0 (a time ramp).
+                cands.append((f"col {tnow_col} (var 'b:tnow')", tnow_col))
+            # auto-scan for a column that rises from ~0 (a time ramp)
             best = None
             for c in range(ncol):
                 try:
@@ -973,7 +975,7 @@ def phase7():
                     if best is None or (b - a) > best[1]:
                         best = (c, b - a)
             if best is not None and best[0] != tnow_col:
-                cands.append((f"D col {best[0]} (auto-detected ramp)", best[0]))
+                cands.append((f"col {best[0]} (auto-detected ramp)", best[0]))
             # Assess each candidate.
             sub = max(1, nrow // 50)
             results = []
@@ -994,47 +996,44 @@ def phase7():
         valid = []
         for r in results:
             if not r["ok"]:
-                info(f"  {r['label']:<32} -> ERROR {r['err']}")
+                info(f"  {r['label']:<28} -> ERROR {r['err']}")
                 continue
             tag = "CONSTANT(!)" if r["const"] else ("ramp" if r["nondec"] else "non-monotonic")
-            info(f"  {r['label']:<32} -> v0={fmt(r['v0'],4)} vend={fmt(r['vl'],4)} [{tag}]")
+            info(f"  {r['label']:<28} -> v0={fmt(r['v0'],4)} vend={fmt(r['vl'],4)} [{tag}]")
             if r["nondec"] and not r["const"]:
                 valid.append(r)
-        A = next((r for r in results if r["idx"] == 0), None)
-        tool_ok = bool(A and A["ok"] and A["nondec"] and not A["const"])
-        STATE["time_colidx"] = 0 if tool_ok else (valid[0]["idx"] if valid else 0)
+        tool = next((r for r in results if r["idx"] == -1), None)
+        tool_ok = bool(tool and tool["ok"] and tool["nondec"] and not tool["const"])
+        STATE["time_colidx"] = -1 if tool_ok else (valid[0]["idx"] if valid else -1)
         if tool_ok:
-            return "tool's GetValue(row,0) IS a valid 0->tstop ramp (column 0 = time)"
+            return (f"tool's GetValue(row,-1) IS a valid time ramp "
+                    f"(v0={fmt(tool['v0'],4)} vend={fmt(tool['vl'],4)}; time at column -1)")
         if valid:
-            reason = "CONSTANT" if (A and A.get("const")) else "NOT a monotonic ramp"
-            raise Warn(f"tool's time read GetValue(row,0) is {reason} "
-                       f"(v0={fmt(A.get('v0'),4)} vend={fmt(A.get('vl'),4)}) — column 0 is "
-                       f"NOT the time axis on this build. A valid time axis IS available via "
-                       f"[{valid[0]['label'].strip()}]. _read_elmres_inmemory therefore "
-                       f"mislabels the time vector: VALUE metrics (max/min/mean/rms/final) "
-                       f"stay correct, but time-based metrics (first_time_above/below, "
-                       f"time_settle) and graph/raw-CSV x-axes are WRONG until the generator "
-                       f"reads time from the correct column.")
-        raise Warn("no valid 0->tstop ramp found via GetValue(row,0)/(row,-1), a 'b:tnow' "
+            raise Warn(f"tool's time read GetValue(row,-1) is NOT a clean ramp on this build; "
+                       f"a valid time axis IS available via [{valid[0]['label'].strip()}] "
+                       f"(column {valid[0]['idx']}). Update _read_elmres_inmemory accordingly: "
+                       f"VALUE metrics stay correct, but time-based metrics and graph x-axes "
+                       f"depend on this.")
+        raise Warn("no valid time ramp found via GetValue(row,-1)/(row,0), a 'b:tnow' "
                    "column, or auto-scan — inspect the CP 7.7 column dump manually.")
     run("7.8", "_read_elmres_inmemory", "Time-axis strategy comparison", cp_time_axis)
 
     # --- 7.9  Metrics (mirrors calculate_timeseries_metric) ----------------
-    #   Computes value metrics (time-independent) + shows the time-of-max under
-    #   BOTH the tool's column 0 and the detected-correct time column, plus the
+    #   Value metrics are time-independent (always correct). time@max is shown
+    #   under the tool's time axis (col -1) vs the legacy col-0 read, plus the
     #   native ElmRes Find{Max,Min}InColumn the README lists.
     def cp_metrics():
         res = STATE["res"]
         g = STATE["rms_gen"]
         var = STATE["rms_var"]
-        idx = STATE.get("time_colidx", 0)
+        idx = STATE.get("time_colidx", -1)
         res.Load()
         try:
             nrow = res.GetNumberOfRows()
             sfcol = res.FindColumn(g, var)
             data = [res.GetValue(r, sfcol)[1] for r in range(nrow)]
-            t_tool = [res.GetValue(r, 0)[1] for r in range(nrow)]
-            t_good = [res.GetValue(r, idx)[1] for r in range(nrow)]
+            t_tool = [res.GetValue(r, idx)[1] for r in range(nrow)]
+            t_legacy = [res.GetValue(r, 0)[1] for r in range(nrow)]
             try:
                 mx = res.FindMaxInColumn(sfcol)
                 mn = res.FindMinInColumn(sfcol)
@@ -1051,16 +1050,16 @@ def phase7():
         info(f"VALUE metrics (time-independent, always correct): max={fmt(py_max)} "
              f"min={fmt(py_min)} final={fmt(py_final)} mean={fmt(py_mean)} rms={fmt(py_rms)}")
         imax = data.index(py_max)
-        info(f"time@max: tool col0 -> {fmt(t_tool[imax],4)} s   |   "
-             f"corrected col {idx} -> {fmt(t_good[imax],4)} s")
+        info(f"time@max: tool col{idx} -> {fmt(t_tool[imax],4)} s   |   "
+             f"legacy col0 -> {fmt(t_legacy[imax],4)} s")
         if mx is not None:
             info(f"native FindMaxInColumn={mx!r}  FindMinInColumn={mn!r}")
-        if idx != 0 and abs(t_good[imax] - t_tool[imax]) > 1e-6:
-            raise Warn(f"time-of-max differs: tool would report {fmt(t_tool[imax],4)} s, "
-                       f"true time is {fmt(t_good[imax],4)} s — confirms time-based metrics "
-                       f"are wrong with the current column-0 assumption. (Value metrics OK.)")
+        # The tool's chosen time axis must be a real ramp.
+        if not (t_tool[-1] > t_tool[0]):
+            raise Warn(f"tool time axis (col {idx}) is not increasing "
+                       f"(t0={fmt(t_tool[0])} tend={fmt(t_tool[-1])}) — time-based metrics suspect.")
         return f"value metrics OK; {native_note}; time column used = {idx}"
-    run("7.9", "calculate_timeseries_metric", "value metrics + time@max (tool vs corrected)", cp_metrics)
+    run("7.9", "calculate_timeseries_metric", "value metrics + time@max (tool col-1 vs legacy col0)", cp_metrics)
 
     # --- 7.10  Result validity flags ---------------------------------------
     def cp_valid():
