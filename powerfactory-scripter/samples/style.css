@@ -249,6 +249,9 @@
     font-weight: 600;
     color: var(--text);
     flex: 1;
+    margin: 0;
+    text-transform: none;
+    letter-spacing: normal;
   }
   .toggle-icon {
     color: var(--muted);
@@ -639,10 +642,13 @@
     padding: 1px 5px;
   }
 
+  .faq-table-wrapper {
+    overflow-x: auto;
+    margin-top: 10px;
+  }
   .faq-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
     font-size: 12.5px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
