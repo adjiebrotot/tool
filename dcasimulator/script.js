@@ -154,9 +154,16 @@ function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPri
 }
 
 /* ─── FETCH PROXY via Yahoo Finance (with proxy fallbacks) ─── */
-async function fetchWithTimeout(url, timeoutMs=15000){
+// Accepts an optional external AbortSignal so a request can be cancelled the
+// moment a sibling request (racing the same data) has already succeeded.
+async function fetchWithTimeout(url, timeoutMs=15000, externalSignal=null){
   const controller = new AbortController();
   const timeoutId = setTimeout(()=>controller.abort(), timeoutMs);
+  const onExternalAbort = ()=>controller.abort();
+  if(externalSignal){
+    if(externalSignal.aborted) controller.abort();
+    else externalSignal.addEventListener('abort', onExternalAbort, {once:true});
+  }
   try{
     const resp = await fetch(url, {signal: controller.signal, cache:'no-store'});
     return resp;
@@ -165,10 +172,11 @@ async function fetchWithTimeout(url, timeoutMs=15000){
     throw err;
   } finally {
     clearTimeout(timeoutId);
+    if(externalSignal) externalSignal.removeEventListener('abort', onExternalAbort);
   }
 }
 
-async function fetchYahooFinance(ticker, startDate, endDate, onAttempt=null){
+async function fetchYahooFinance(ticker, startDate, endDate){
   const start=Math.floor(new Date(startDate).getTime()/1000);
   const end=Math.floor(new Date(endDate).getTime()/1000+86400);
   const cacheBuster=isoDate(new Date());
@@ -215,24 +223,33 @@ async function fetchYahooFinance(ticker, startDate, endDate, onAttempt=null){
     }
   ];
 
-  let data = null;
+  // Race every source concurrently. The first one to return valid chart data
+  // wins, and we immediately abort all the others — so we stop hitting other
+  // sources the instant we have the data, instead of walking dead/slow proxies
+  // one-by-one (which is what made it always crawl to the last candidate).
   let lastError = null;
-  const total = proxyCandidates.length;
-  for(let i=0; i<total; i++){
-    const candidate = proxyCandidates[i];
-    if(onAttempt) onAttempt(i+1, total, candidate.name);
+  const abortAll = new AbortController();
+  const attempts = proxyCandidates.map(candidate => (async () => {
     try{
-      const resp = await fetchWithTimeout(candidate.url, 12000);
+      const resp = await fetchWithTimeout(candidate.url, 12000, abortAll.signal);
       if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      data = await candidate.parse(resp);
-      if(data?.chart?.result?.[0]) break;
-      throw new Error('No chart result');
+      const parsed = await candidate.parse(resp);
+      if(!parsed?.chart?.result?.[0]) throw new Error('No chart result');
+      return parsed;
     }catch(err){
       lastError = err;
-      data = null;
+      throw err;
     }
+  })());
+
+  let data = null;
+  try{
+    data = await Promise.any(attempts);
+  }catch{
+    throw new Error(`Unable to fetch market data via proxy (${lastError?.message||'unknown error'})`);
+  }finally{
+    abortAll.abort(); // cancel any sources still in flight
   }
-  if(!data) throw new Error(`Unable to fetch market data via proxy (${lastError?.message||'unknown error'})`);
 
   const result=data?.chart?.result?.[0];
   if(!result) throw new Error('No data returned for '+ticker);
@@ -461,7 +478,7 @@ function showDayRow(s){ return s==='monthly-date'||s==='weekly-day'; }
 // Ensures priceCache[ticker] covers [requestedStart, requestedEnd].
 // Fetches only when the cache is absent or the range must be expanded.
 // Returns true on success, throws on failure.
-async function ensureTickerCached(ticker, requestedStart, requestedEnd, onAttempt=null){
+async function ensureTickerCached(ticker, requestedStart, requestedEnd){
   const tk = String(ticker||'').trim().toUpperCase();
   if(!tk) throw new Error('Invalid ticker');
   const entry = priceCache[tk];
@@ -479,7 +496,7 @@ async function ensureTickerCached(ticker, requestedStart, requestedEnd, onAttemp
     }
     const fetchStart = latestEntry ? (latestEntry.coverageStart < requestedStart ? latestEntry.coverageStart : requestedStart) : requestedStart;
     const fetchEnd   = latestEntry ? (latestEntry.coverageEnd   > requestedEnd   ? latestEntry.coverageEnd   : requestedEnd)   : requestedEnd;
-    const data = await fetchYahooFinance(tk, fetchStart, fetchEnd, onAttempt);
+    const data = await fetchYahooFinance(tk, fetchStart, fetchEnd);
     if(!data.dates.length) throw new Error('No price data in range');
     priceCache[tk] = {
       dates: data.dates,
@@ -524,9 +541,8 @@ async function loadTickerData(sec, startDate, endDate){
     showStatus($('fetchStatus'), 'Fetching '+sec.ticker+'...','loading');
   }
   try {
-    await ensureTickerCached(sec.ticker, startDate, endDate, (attempt, total) => {
-      showStatus($('fetchStatus'), `Fetching ${sec.ticker}... (${attempt}/${total})`,'loading');
-    });
+    showStatus($('fetchStatus'), 'Fetching '+sec.ticker+'...','loading');
+    await ensureTickerCached(sec.ticker, startDate, endDate);
     sec.loaded = true;
     const entry = priceCache[String(sec.ticker).trim().toUpperCase()];
     if(statusEl){ statusEl.className='status-bar status-ok'; statusEl.textContent='✓ Loaded'; }
@@ -779,9 +795,7 @@ async function runSimulation(){
     const needsFetch = !isTickerRangeCovered(ticker, startDate, endDate);
     if(needsFetch) showStatus($('fetchStatus'),'Fetching '+ticker+'...','loading');
     try {
-      await ensureTickerCached(ticker, startDate, endDate, (attempt, total) => {
-        showStatus($('fetchStatus'), `Fetching ${ticker}... (${attempt}/${total})`,'loading');
-      });
+      await ensureTickerCached(ticker, startDate, endDate);
     } catch(e){
       showWarning('Could not load data for '+ticker+': '+e.message);
     }
@@ -1438,9 +1452,8 @@ async function runSensitivityAnalysis(){
     let priceData;
     if(sec.type==='ticker'){
       try{
-        await ensureTickerCached(sec.ticker, startDate, endDate, (attempt, total)=>{
-          showStatus($('sensStatus'),`Fetching ${sec.ticker}... (${attempt}/${total})`,'loading');
-        });
+        showStatus($('sensStatus'),`Fetching ${sec.ticker}...`,'loading');
+        await ensureTickerCached(sec.ticker, startDate, endDate);
         priceData=getCachedPriceSlice(sec.ticker, startDate, endDate);
         if(!priceData) throw new Error('No data in selected range');
       }catch(e){
