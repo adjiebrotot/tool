@@ -6,42 +6,42 @@
     "problemType": "brute_force",
     "studyType": "dynamic_rms",
     "codingStyle": "python_file",
-    "tstop": "30"
+    "tstop": "10"
   },
   "inputVariables": [
     {
-      "name": "ngnum",
-      "object_query": "SynCon.ElmSym",
-      "variable": "ngnum",
-      "lower": "1",
-      "upper": "10",
-      "step": "1",
-      "dtype": "int"
+      "name": "fault_location_pct",
+      "object_query": "Short-Circuit.EvtShc",
+      "variable": "e:shcLocation",
+      "lower": "0",
+      "upper": "100",
+      "step": "25",
+      "dtype": "float"
     }
   ],
   "outputVariables": [
     {
       "id": "ov-0",
       "type": "timeseries",
-      "name": "bus_voltage_nadir",
-      "object_query": "MainBus.ElmTerm",
-      "variable": "m:u",
+      "name": "nadir_speed_G1",
+      "object_query": "G1.ElmSym",
+      "variable": "s:speed",
       "metric": "minimum",
       "threshold": "",
       "settle_band": "",
       "settle_hold_time": "",
       "settle_reference_value": "",
       "customFn": "",
-      "output_graph": true,
+      "output_graph": false,
       "output_raw_csv": false
     },
     {
       "id": "ov-1",
       "type": "timeseries",
-      "name": "synccon_q_peak",
-      "object_query": "SynCon.ElmSym",
-      "variable": "m:Q",
-      "metric": "maximum",
+      "name": "nadir_speed_G2",
+      "object_query": "G2.ElmSym",
+      "variable": "s:speed",
+      "metric": "minimum",
       "threshold": "",
       "settle_band": "",
       "settle_hold_time": "",
@@ -53,8 +53,8 @@
     {
       "id": "ov-2",
       "type": "timeseries",
-      "name": "rotor_speed_min",
-      "object_query": "SynCon.ElmSym",
+      "name": "nadir_speed_G3",
+      "object_query": "G3.ElmSym",
       "variable": "s:speed",
       "metric": "minimum",
       "threshold": "",
@@ -67,23 +67,8 @@
     },
     {
       "id": "ov-3",
-      "type": "timeseries",
-      "name": "out_of_step",
-      "object_query": "SynCon.ElmSym",
-      "variable": "s:outofstep",
-      "metric": "maximum",
-      "threshold": "",
-      "settle_band": "",
-      "settle_hold_time": "",
-      "settle_reference_value": "",
-      "customFn": "",
-      "output_graph": false,
-      "output_raw_csv": false
-    },
-    {
-      "id": "ov-4",
       "type": "custom_calculation",
-      "name": "sizing_ok",
+      "name": "system_nadir_hz",
       "object_query": "",
       "variable": "",
       "metric": "maximum",
@@ -91,7 +76,7 @@
       "settle_band": "",
       "settle_hold_time": "",
       "settle_reference_value": "",
-      "customFn": "def sizing_ok(bus_voltage_nadir, rotor_speed_min, out_of_step):\n    return bus_voltage_nadir >= 0.85 and rotor_speed_min >= 0.97 and out_of_step == 0",
+      "customFn": "def system_nadir_hz(nadir_speed_G1, nadir_speed_G2, nadir_speed_G3):\n    return min(nadir_speed_G1, nadir_speed_G2, nadir_speed_G3) * 60.0",
       "output_graph": false,
       "output_raw_csv": false
     }
