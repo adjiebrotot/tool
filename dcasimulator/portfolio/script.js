@@ -102,55 +102,13 @@ function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPri
   return {dates, prices};
 }
 
-/* ─── YAHOO FINANCE FETCH (proxy fallbacks, copied workflow from ../) ─── */
-async function fetchWithTimeout(url, timeoutMs=12000, externalSignal=null){
-  const controller=new AbortController();
-  const timeoutId=setTimeout(()=>controller.abort(), timeoutMs);
-  const onAbort=()=>controller.abort();
-  if(externalSignal){ if(externalSignal.aborted) controller.abort(); else externalSignal.addEventListener('abort',onAbort,{once:true}); }
-  try{ return await fetch(url,{signal:controller.signal,cache:'no-store'}); }
-  catch(err){ if(err?.name==='AbortError') throw new Error('signal timed out'); throw err; }
-  finally{ clearTimeout(timeoutId); if(externalSignal) externalSignal.removeEventListener('abort',onAbort); }
-}
+/* ─── YAHOO FINANCE FETCH (shared engine from ../../shared.js) ─── */
+// Reliability engine (concurrent proxy race + retries + optional self-hosted
+// proxy failsafe) lives in shared.js, shared with the main simulator. Deploy
+// yf-proxy-worker.js and call SharedYF.setProxy(...) to bypass public proxies.
 async function fetchYahooFinance(ticker, startDate, endDate){
-  const start=Math.floor(new Date(startDate).getTime()/1000);
-  const end=Math.floor(new Date(endDate).getTime()/1000+86400);
-  const cb=isoDate(new Date());
-  const yfParams=`period1=${start}&period2=${end}&interval=1d&events=history&_cb=${cb}`;
-  const yf1=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?${yfParams}`;
-  const yf2=`https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?${yfParams}`;
-  const candidates=[
-    {url:`https://api.allorigins.win/raw?url=${encodeURIComponent(yf1)}`, parse:r=>r.json()},
-    {url:`https://corsproxy.io/?url=${encodeURIComponent(yf1)}`, parse:r=>r.json()},
-    {url:`https://api.allorigins.win/raw?url=${encodeURIComponent(yf2)}`, parse:r=>r.json()},
-    {url:`https://corsproxy.io/?url=${encodeURIComponent(yf2)}`, parse:r=>r.json()},
-    {url:`https://api.allorigins.win/get?url=${encodeURIComponent(yf1)}`, parse:async r=>{ const w=await r.json(); return JSON.parse(w.contents); }},
-    {url:`https://r.jina.ai/http://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?${yfParams}`, parse:async r=>{ const t=await r.text(); const s=t.indexOf('{'); return JSON.parse(s>=0?t.slice(s):t); }}
-  ];
-  let lastError=null;
-  const abortAll=new AbortController();
-  const attempts=candidates.map(c=>(async()=>{
-    try{
-      const resp=await fetchWithTimeout(c.url,12000,abortAll.signal);
-      if(!resp.ok) throw new Error('HTTP '+resp.status);
-      const parsed=await c.parse(resp);
-      if(!parsed?.chart?.result?.[0]) throw new Error('No chart result');
-      return parsed;
-    }catch(err){ lastError=err; throw err; }
-  })());
-  let data=null;
-  try{ data=await Promise.any(attempts); }
-  catch{ throw new Error('Unable to fetch market data via proxy ('+(lastError?.message||'unknown')+')'); }
-  finally{ abortAll.abort(); }
-  const result=data?.chart?.result?.[0];
-  if(!result) throw new Error('No data returned for '+ticker);
-  const ts=result.timestamp;
-  const closes=result.indicators?.adjclose?.[0]?.adjclose || result.indicators?.quote?.[0]?.close;
-  if(!ts||!closes) throw new Error('Invalid data structure');
-  const dates=[], prices=[];
-  for(let i=0;i<ts.length;i++){ if(closes[i]==null) continue; dates.push(isoDate(new Date(ts[i]*1000))); prices.push(closes[i]); }
-  if(!dates.length) throw new Error('No price data in range');
-  return {dates, prices};
+  if(!window.SharedYF) throw new Error('Market data engine not loaded (shared.js)');
+  return window.SharedYF.fetchPrices(ticker, startDate, endDate);
 }
 async function ensureTickerCached(ticker, reqStart, reqEnd){
   const tk=String(ticker||'').trim().toUpperCase();
@@ -165,7 +123,7 @@ async function ensureTickerCached(ticker, reqStart, reqEnd){
     const fEnd=e?(e.coverageEnd>reqEnd?e.coverageEnd:reqEnd):reqEnd;
     const data=await fetchYahooFinance(tk,fStart,fEnd);
     if(!data.dates.length) throw new Error('No price data in range');
-    priceCache[tk]={dates:data.dates,prices:data.prices,coverageStart:fStart,coverageEnd:fEnd};
+    priceCache[tk]={dates:data.dates,prices:data.prices,coverageStart:fStart,coverageEnd:fEnd,source:data.source,kind:data.kind};
   })();
   try{ await tickerFetchInFlight[tk]; } finally{ delete tickerFetchInFlight[tk]; }
 }
@@ -430,7 +388,7 @@ $('addAssetBtn').addEventListener('click', async()=>{
     $('newAssetName').value=''; $('assetTickerInput').value='';
     const sd=$('startDate').value||'2020-01-01', ed=$('endDate').value||isoDate(new Date());
     showStatus($('assetFetchStatus'),'Fetching '+ticker+'...','loading');
-    try{ await ensureTickerCached(ticker,sd,ed); asset.loaded=true; const e=priceCache[ticker.toUpperCase()]; showStatus($('assetFetchStatus'),ticker+' cached: '+e.dates.length+' trading days','ok'); }
+    try{ await ensureTickerCached(ticker,sd,ed); asset.loaded=true; const e=priceCache[ticker.toUpperCase()]; if(e.kind==='stock'&&e.source==='stooq'){ showStatus($('assetFetchStatus'),'⚠️ '+ticker+' loaded from Stooq (Yahoo Finance was unavailable): '+e.dates.length+' trading days. Stooq stock prices are <strong>not</strong> adjusted for splits/dividends, so returns across those events may differ slightly.','warn'); } else { showStatus($('assetFetchStatus'),ticker+' cached: '+e.dates.length+' trading days','ok'); } }
     catch(err){ asset.loaded=false; showStatus($('assetFetchStatus'),'Failed to load '+ticker+': '+err.message,'error'); }
     renderAssetList(); renderPortfolioList();
   } else {

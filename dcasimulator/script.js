@@ -174,117 +174,15 @@ function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPri
   return {dates, prices};
 }
 
-/* ─── FETCH PROXY via Yahoo Finance (with proxy fallbacks) ─── */
-// Accepts an optional external AbortSignal so a request can be cancelled the
-// moment a sibling request (racing the same data) has already succeeded.
-async function fetchWithTimeout(url, timeoutMs=15000, externalSignal=null){
-  const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), timeoutMs);
-  const onExternalAbort = ()=>controller.abort();
-  if(externalSignal){
-    if(externalSignal.aborted) controller.abort();
-    else externalSignal.addEventListener('abort', onExternalAbort, {once:true});
-  }
-  try{
-    const resp = await fetch(url, {signal: controller.signal, cache:'no-store'});
-    return resp;
-  } catch(err){
-    if(err?.name === 'AbortError') throw new Error('signal timed out');
-    throw err;
-  } finally {
-    clearTimeout(timeoutId);
-    if(externalSignal) externalSignal.removeEventListener('abort', onExternalAbort);
-  }
-}
-
+/* ─── FETCH via Yahoo Finance chart endpoint ─── */
+// The reliability engine (concurrent proxy race + retries + optional
+// self-hosted proxy failsafe) lives in shared.js so the simulator and the
+// portfolio tool share one hardened implementation. To remove the dependence
+// on third-party CORS proxies entirely, deploy yf-proxy-worker.js and call
+// SharedYF.setProxy('https://your-worker/?url=') once at startup.
 async function fetchYahooFinance(ticker, startDate, endDate){
-  const start=Math.floor(new Date(startDate).getTime()/1000);
-  const end=Math.floor(new Date(endDate).getTime()/1000+86400);
-  const cacheBuster=isoDate(new Date());
-  const yfParams=`period1=${start}&period2=${end}&interval=1d&events=history&_cb=${cacheBuster}`;
-  const yf1=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?${yfParams}`;
-  const yf2=`https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?${yfParams}`;
-  const proxyCandidates = [
-    {
-      name: 'allorigins-raw/q1',
-      url: `https://api.allorigins.win/raw?url=${encodeURIComponent(yf1)}`,
-      parse: async resp => resp.json()
-    },
-    {
-      name: 'corsproxy-io/q1',
-      url: `https://corsproxy.io/?url=${encodeURIComponent(yf1)}`,
-      parse: async resp => resp.json()
-    },
-    {
-      name: 'allorigins-raw/q2',
-      url: `https://api.allorigins.win/raw?url=${encodeURIComponent(yf2)}`,
-      parse: async resp => resp.json()
-    },
-    {
-      name: 'corsproxy-io/q2',
-      url: `https://corsproxy.io/?url=${encodeURIComponent(yf2)}`,
-      parse: async resp => resp.json()
-    },
-    {
-      name: 'allorigins-get/q1',
-      url: `https://api.allorigins.win/get?url=${encodeURIComponent(yf1)}`,
-      parse: async resp => {
-        const wrapper = await resp.json();
-        return JSON.parse(wrapper.contents);
-      }
-    },
-    {
-      name: 'jina-ai/q1',
-      url: `https://r.jina.ai/http://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?${yfParams}`,
-      parse: async resp => {
-        const txt = await resp.text();
-        const jsonStart = txt.indexOf('{');
-        return JSON.parse(jsonStart>=0 ? txt.slice(jsonStart) : txt);
-      }
-    }
-  ];
-
-  // Race every source concurrently. The first one to return valid chart data
-  // wins, and we immediately abort all the others — so we stop hitting other
-  // sources the instant we have the data, instead of walking dead/slow proxies
-  // one-by-one (which is what made it always crawl to the last candidate).
-  let lastError = null;
-  const abortAll = new AbortController();
-  const attempts = proxyCandidates.map(candidate => (async () => {
-    try{
-      const resp = await fetchWithTimeout(candidate.url, 12000, abortAll.signal);
-      if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      const parsed = await candidate.parse(resp);
-      if(!parsed?.chart?.result?.[0]) throw new Error('No chart result');
-      return parsed;
-    }catch(err){
-      lastError = err;
-      throw err;
-    }
-  })());
-
-  let data = null;
-  try{
-    data = await Promise.any(attempts);
-  }catch{
-    throw new Error(`Unable to fetch market data via proxy (${lastError?.message||'unknown error'})`);
-  }finally{
-    abortAll.abort(); // cancel any sources still in flight
-  }
-
-  const result=data?.chart?.result?.[0];
-  if(!result) throw new Error('No data returned for '+ticker);
-  const timestamps=result.timestamp;
-  const closes=result.indicators?.adjclose?.[0]?.adjclose || result.indicators?.quote?.[0]?.close;
-  if(!timestamps||!closes) throw new Error('Invalid data structure');
-  const dates=[], prices=[];
-  for(let i=0;i<timestamps.length;i++){
-    if(closes[i]==null) continue;
-    dates.push(isoDate(new Date(timestamps[i]*1000)));
-    prices.push(closes[i]);
-  }
-  if(!dates.length) throw new Error('No price data in range');
-  return {dates, prices};
+  if(!window.SharedYF) throw new Error('Market data engine not loaded (shared.js)');
+  return window.SharedYF.fetchPrices(ticker, startDate, endDate);
 }
 
 /* ─── SECURITY MANAGEMENT ─── */
@@ -624,7 +522,9 @@ async function ensureTickerCached(ticker, requestedStart, requestedEnd){
       cachedStart: data.dates[0],
       cachedEnd: data.dates[data.dates.length - 1],
       coverageStart: fetchStart,
-      coverageEnd: fetchEnd
+      coverageEnd: fetchEnd,
+      source: data.source,
+      kind: data.kind
     };
   })();
   try{
@@ -666,7 +566,11 @@ async function loadTickerData(sec, startDate, endDate){
     sec.loaded = true;
     const entry = priceCache[String(sec.ticker).trim().toUpperCase()];
     if(statusEl){ statusEl.className='status-bar status-ok'; statusEl.textContent='✓ Loaded'; }
-    showStatus($('fetchStatus'), sec.ticker+' cached: '+entry.dates.length+' trading days','ok');
+    if(entry.kind==='stock' && entry.source==='stooq'){
+      showStatus($('fetchStatus'), '⚠️ '+sec.ticker+' loaded from Stooq (Yahoo Finance was unavailable): '+entry.dates.length+' trading days. Stooq stock prices are <strong>not</strong> adjusted for splits/dividends, so returns across those events may differ slightly.','warn');
+    } else {
+      showStatus($('fetchStatus'), sec.ticker+' cached: '+entry.dates.length+' trading days','ok');
+    }
     return true;
   } catch(e){
     sec.loaded = false;
