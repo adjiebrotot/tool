@@ -13,20 +13,20 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Portfolio DCA Simulator</title>
-<meta name="description" content="Simulate portfolio-level dollar-cost averaging with multiple assets, target weights, rebalancing methods, fees and a risk-free cash account.">
+<meta name="description" content="Compare portfolio-level dollar-cost averaging strategies side by side — each with its own assets, target weights, top-up schedule and rebalancing method.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/dcasimulator/portfolio/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Portfolio DCA Simulator">
-<meta property="og:description" content="Simulate portfolio-level dollar-cost averaging with multiple assets, target weights, rebalancing methods, fees and a risk-free cash account.">
+<meta property="og:description" content="Compare portfolio-level dollar-cost averaging strategies side by side — each with its own assets, target weights, top-up schedule and rebalancing method.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/dcasimulator/portfolio/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Portfolio DCA Simulator">
-<meta name="twitter:description" content="Simulate portfolio-level dollar-cost averaging with multiple assets, target weights, rebalancing methods, fees and a risk-free cash account.">
+<meta name="twitter:description" content="Compare portfolio-level dollar-cost averaging strategies side by side — each with its own assets, target weights, top-up schedule and rebalancing method.">
 
 <script type="application/ld+json">
 {
@@ -34,17 +34,17 @@
   "@type": "WebApplication",
   "name": "Portfolio DCA Simulator",
   "url": "https://tool.adjiebrotots.com/dcasimulator/portfolio/",
-  "description": "Simulate portfolio-level dollar-cost averaging across multiple assets with target weights, rebalancing strategies, buying/selling fees and a risk-free cash account.",
+  "description": "Compare multiple portfolio DCA strategies side by side, each with its own assets, target weights, top-up schedule, rebalancing method, buying/selling fees and a risk-free cash account.",
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
   "inLanguage": "en",
   "alternateName": [
     "Portfolio Dollar Cost Averaging Simulator",
-    "Portfolio Rebalancing Backtest",
-    "Multi-Asset DCA Strategy Explorer"
+    "Portfolio Strategy Comparator",
+    "Rebalancing Strategy Backtest"
   ],
-  "keywords": "portfolio dca simulator, rebalancing backtest, target weight rebalancing, constant weight portfolio, constant allocation, multi asset dollar cost averaging, portfolio composition over time"
+  "keywords": "portfolio dca simulator, compare portfolio strategies, rebalancing backtest, target weight rebalancing, constant weight portfolio, constant allocation, multi asset dollar cost averaging, portfolio composition over time"
 }
 </script>
 <link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
@@ -64,7 +64,7 @@
 <section class="header card">
   <div class="header-left">
     <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 3v18h18"/> <path stroke="var(--accent2)" d="M7 14v4M12 9v9M17 5v13"/> </svg>Portfolio DCA Simulator</h1>
-    <p>Build a multi-asset portfolio strategy: schedule top-ups, target weights, rebalancing and fees — then watch value and composition evolve over time.</p>
+    <p>Compare portfolio strategies side by side — each with its own assets, target weights, top-up schedule and rebalancing method. See which approach grows value fastest.</p>
   </div>
   <div class="header-right">
     <a href="../" class="btn-theme btn-back">← Single-Asset DCA</a>
@@ -79,14 +79,32 @@
 <aside class="controls card">
   <div class="ctrl-scroll">
   <div class="ctrl-tabs">
-    <button class="ctrl-tab active" data-tab="assets">📊 Assets</button>
+    <button class="ctrl-tab active" data-tab="portfolios">📁 Portfolios</button>
+    <button class="ctrl-tab" data-tab="assets">📊 Assets</button>
     <button class="ctrl-tab" data-tab="topups">💵 Top-Ups</button>
     <button class="ctrl-tab" data-tab="rebal">⚖️ Rebalancing</button>
     <button class="ctrl-tab" data-tab="settings">⚙️ Settings</button>
   </div>
 
+  <!-- PORTFOLIOS TAB -->
+  <div class="ctrl-panel active" id="tab-portfolios">
+    <div class="section-label" style="margin-top:0">Add Portfolio</div>
+    <div class="add-sec-area" style="border-top:none;padding-top:4px">
+      <div class="add-sec-row" style="gap:6px;align-items:center">
+        <input class="txt-input" id="newPortfolioName" placeholder="Portfolio name (e.g. 60/40)" style="flex:1;min-width:0" />
+        <input type="color" id="newPortfolioColor" title="Pick colour (optional)" style="width:34px;height:34px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--input-bg);padding:2px;flex-shrink:0" />
+      </div>
+      <button class="btn-primary" id="addPortfolioBtn" style="margin-top:8px;width:100%">+ Add Portfolio</button>
+    </div>
+
+    <div class="section-label">Portfolios</div>
+    <div id="portfolioList" class="sec-list"></div>
+    <div class="field-sub" style="margin-top:10px">Each portfolio has its own assets, weights, top-ups and rebalancing. Select one to edit it in the other tabs. All portfolios are simulated on the same date axis and compared in <strong>Portfolio Value Over Time</strong>.</div>
+  </div>
+
   <!-- ASSETS TAB -->
-  <div class="ctrl-panel active" id="tab-assets">
+  <div class="ctrl-panel" id="tab-assets">
+    <div class="edit-pf-bar"><span class="edit-pf-label">Editing</span><select class="num-input edit-pf-select" id="editPfSelectAssets" style="cursor:pointer;flex:1"></select></div>
     <div class="section-label" style="margin-top:0">Add Asset</div>
     <div class="add-sec-area" style="border-top:none;padding-top:4px">
       <div class="add-sec-row" style="gap:6px;align-items:center">
@@ -118,6 +136,7 @@
 
   <!-- TOP-UPS TAB -->
   <div class="ctrl-panel" id="tab-topups">
+    <div class="edit-pf-bar"><span class="edit-pf-label">Editing</span><select class="num-input edit-pf-select" id="editPfSelectTopups" style="cursor:pointer;flex:1"></select></div>
     <div class="section-label" style="margin-top:0">Contribution</div>
     <div class="field-row" style="border-top:none;padding-top:0">
       <div class="field-label">Amount per top-up</div>
@@ -166,6 +185,7 @@
 
   <!-- REBALANCING TAB -->
   <div class="ctrl-panel" id="tab-rebal">
+    <div class="edit-pf-bar"><span class="edit-pf-label">Editing</span><select class="num-input edit-pf-select" id="editPfSelectRebal" style="cursor:pointer;flex:1"></select></div>
     <div class="section-label" style="margin-top:0">Method</div>
     <div class="radio-group" style="flex-direction:column">
       <label class="radio-opt selected" data-method="towards-weight">
@@ -280,7 +300,7 @@
   <!-- VALUE CHART -->
   <section class="chart-card card">
     <div class="section-title">
-      <div><h2>Portfolio Value Over Time</h2></div>
+      <div><h2>Portfolio Value Over Time</h2><p style="font-size:.82rem;color:var(--muted);margin-top:2px">One line per portfolio strategy — compare how each grows.</p></div>
       <div class="chart-actions">
         <label class="toggle-row" style="gap:8px;cursor:pointer;padding:0">
           <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Top-Ups</span>
@@ -296,7 +316,7 @@
     </div>
     <div class="legend" id="valueLegend"></div>
     <div class="canvas-wrap"><canvas id="valueCanvas"></canvas></div>
-    <div class="hover-box" id="valueHoverBox">Configure a portfolio and run to view value over time.</div>
+    <div class="hover-box" id="valueHoverBox">Configure portfolios and run to compare value over time.</div>
   </section>
 
   <!-- COMPOSITION CHART -->
@@ -304,6 +324,7 @@
     <div class="section-title">
       <div><h2>Composition Over Time <span style="color:var(--muted);font-size:.85rem;font-weight:400">(stacked)</span></h2></div>
       <div class="chart-actions">
+        <select class="num-input pf-view-select" id="compChartPfSelect" style="cursor:pointer" title="Choose which portfolio to view"></select>
         <button class="btn-secondary" id="compPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
         <button class="btn-secondary" id="compCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
         <button class="btn-secondary" id="compResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
@@ -316,7 +337,7 @@
 
   <!-- SUMMARY -->
   <section class="card summary-row" style="padding:18px">
-    <h2>Final Summary</h2>
+    <h2>Final Summary <span style="color:var(--muted);font-size:.85rem;font-weight:400">(per portfolio)</span></h2>
     <div id="summaryGrid" class="summary-grid"></div>
   </section>
 
@@ -325,7 +346,8 @@
     <div class="detail-header">
       <div class="detail-title-row">
         <h2>Composition Table <span style="color:var(--muted);font-size:.85rem;font-weight:400">(month-end)</span></h2>
-        <div class="detail-csv-wrap">
+        <div class="detail-csv-wrap" style="display:flex;gap:8px;align-items:center">
+          <select class="num-input pf-view-select" id="compTablePfSelect" style="cursor:pointer" title="Choose which portfolio to view"></select>
           <button class="btn-secondary" id="downloadBtn" style="white-space:nowrap;font-size:.82rem;padding:6px 13px">⬇ CSV (full daily)</button>
         </div>
       </div>
