@@ -63,7 +63,7 @@
 <!-- HEADER -->
 <section class="header card">
   <div class="header-left">
-    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 3v18h18"/> <path stroke="var(--accent2)" d="M7 14v4M12 9v9M17 5v13"/> </svg>Portfolio DCA Simulator</h1>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 3v18h18"/> <path stroke="var(--accent2)" d="m7 15 4-4 3 3 6-7"/> <path stroke="var(--accent2)" d="M16 7h4v4"/> </svg>Portfolio DCA Simulator</h1>
     <p>Compare portfolio strategies side by side — each with its own assets, target weights, top-up schedule and rebalancing method. See which approach grows value fastest.</p>
   </div>
   <div class="header-right">
@@ -80,9 +80,9 @@
   <div class="quick-start-row">
     <span class="quick-start-label">⚡ Quick Start</span><span class="tip-icon" data-tip="Prefill a worked portfolio comparison and fetch live prices from Yahoo Finance, then run the simulation automatically.">?</span>
     <div class="quick-start-btns">
-      <button class="quick-start-btn" data-preset="alloc">80/20 vs 60/40</button>
-      <button class="quick-start-btn" data-preset="rebal-freq">Rebal Monthly vs Quarterly</button>
-      <button class="quick-start-btn" data-preset="rebal-vs-alloc">Rebal vs Constant Alloc</button>
+      <button class="quick-start-btn" data-preset="alloc" data-tip="Comparing different portfolio weights: equity 80% / cash 20% (DHHF.AX/AAA.AX) vs equity 60% / cash 40%, both topped up $1,000/month.">80/20 vs 60/40</button>
+      <button class="quick-start-btn" data-preset="rebal-freq" data-tip="Comparing rebalance frequency: the same 50/50 SPY/GOVT portfolio rebalanced monthly vs quarterly.">Rebal Monthly vs Quarterly</button>
+      <button class="quick-start-btn" data-preset="rebal-vs-alloc" data-tip="Comparing rebalancing methods: keeping SPY/GOVT at a constant 50/50 weight vs always splitting $1,000 top-ups 50/50 with no rebalancing.">Rebal vs Constant Alloc</button>
     </div>
   </div>
   <div class="ctrl-scroll">
