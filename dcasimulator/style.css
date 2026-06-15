@@ -177,8 +177,8 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 .ticker-ref-link:hover{opacity:.75}
 
 /* Investment Style — category picker (progressive disclosure) */
-.cat-pills{display:flex;gap:5px;flex-wrap:wrap}
-.cat-pill{flex:1 1 0;min-width:0;padding:6px 6px;font-size:.74rem;font-weight:700;border:1px solid var(--border);background:var(--input-bg);color:var(--muted);border-radius:8px;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:inherit}
+.cat-pills{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.cat-pill{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;padding:7px 8px;font-size:.74rem;font-weight:700;border:1px solid var(--border);background:var(--input-bg);color:var(--muted);border-radius:8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .15s;font-family:inherit}
 .cat-pill:hover{border-color:var(--accent);color:var(--text)}
 .cat-pill.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .style-params{margin-top:6px}
