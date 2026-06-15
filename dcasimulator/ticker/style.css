@@ -13,7 +13,9 @@
 
 .country-block{margin-bottom:26px;scroll-margin-top:18px}
 .country-block h2{display:flex;align-items:center;gap:9px;font-size:1.18rem;margin:0 0 4px}
-.country-block .flag{font-size:1.25em;line-height:1}
+
+.flag-svg{display:inline-block;width:1.4em;height:auto;aspect-ratio:3/2;flex-shrink:0;border-radius:2px;border:1px solid var(--border);overflow:hidden;vertical-align:-0.16em}
+.flag-svg.flag-lg{width:1.6em}
 .country-note{color:var(--muted);font-size:.82rem;line-height:1.55;margin:0 0 12px;max-width:80ch}
 
 .ticker-table-wrap{overflow:auto;border:1px solid var(--border);border-radius:var(--radius-md)}

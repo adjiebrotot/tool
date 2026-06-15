@@ -136,16 +136,67 @@
     <span class="ticker-count" id="tickerCount"></span>
   </div>
 
+  <!-- Inline SVG flag sprite (emoji-free, renders everywhere) -->
+  <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true" focusable="false">
+    <symbol id="flag-au" viewBox="0 0 24 16">
+      <rect width="24" height="16" fill="#00247D"/>
+      <path d="M0 0 12 8M12 0 0 8" stroke="#fff" stroke-width="1.4"/>
+      <path d="M6 0V8M0 4H12" stroke="#fff" stroke-width="2.3"/>
+      <path d="M6 0V8M0 4H12" stroke="#CF142B" stroke-width="1.1"/>
+      <circle cx="6" cy="12.5" r="1" fill="#fff"/>
+      <circle cx="18" cy="3.4" r="0.65" fill="#fff"/>
+      <circle cx="20.6" cy="6.2" r="0.65" fill="#fff"/>
+      <circle cx="17.4" cy="8.6" r="0.65" fill="#fff"/>
+      <circle cx="18.4" cy="13" r="0.65" fill="#fff"/>
+      <circle cx="19" cy="10.4" r="0.4" fill="#fff"/>
+    </symbol>
+    <symbol id="flag-id" viewBox="0 0 24 16">
+      <rect width="24" height="8" fill="#CE1126"/>
+      <rect y="8" width="24" height="8" fill="#fff"/>
+    </symbol>
+    <symbol id="flag-us" viewBox="0 0 24 16">
+      <rect width="24" height="16" fill="#fff"/>
+      <g fill="#B22234">
+        <rect y="0" width="24" height="1.231"/>
+        <rect y="2.462" width="24" height="1.231"/>
+        <rect y="4.923" width="24" height="1.231"/>
+        <rect y="7.385" width="24" height="1.231"/>
+        <rect y="9.846" width="24" height="1.231"/>
+        <rect y="12.308" width="24" height="1.231"/>
+        <rect y="14.769" width="24" height="1.231"/>
+      </g>
+      <rect width="10" height="8.615" fill="#3C3B6E"/>
+      <g fill="#fff">
+        <circle cx="1.8" cy="1.7" r="0.42"/><circle cx="4" cy="1.7" r="0.42"/><circle cx="6.2" cy="1.7" r="0.42"/><circle cx="8.4" cy="1.7" r="0.42"/>
+        <circle cx="1.8" cy="4.3" r="0.42"/><circle cx="4" cy="4.3" r="0.42"/><circle cx="6.2" cy="4.3" r="0.42"/><circle cx="8.4" cy="4.3" r="0.42"/>
+        <circle cx="1.8" cy="6.9" r="0.42"/><circle cx="4" cy="6.9" r="0.42"/><circle cx="6.2" cy="6.9" r="0.42"/><circle cx="8.4" cy="6.9" r="0.42"/>
+      </g>
+    </symbol>
+    <symbol id="flag-sg" viewBox="0 0 24 16">
+      <rect width="24" height="8" fill="#EF3340"/>
+      <rect y="8" width="24" height="8" fill="#fff"/>
+      <circle cx="5.2" cy="4" r="2.5" fill="#fff"/>
+      <circle cx="6.3" cy="4" r="2.5" fill="#EF3340"/>
+      <g fill="#fff">
+        <circle cx="9.4" cy="2.3" r="0.5"/>
+        <circle cx="11" cy="3.5" r="0.5"/>
+        <circle cx="10.4" cy="5.4" r="0.5"/>
+        <circle cx="8.4" cy="5.4" r="0.5"/>
+        <circle cx="7.8" cy="3.5" r="0.5"/>
+      </g>
+    </symbol>
+  </svg>
+
   <nav class="country-nav" aria-label="Jump to country">
-    <a href="#au"><span>🇦🇺</span> Australia</a>
-    <a href="#id"><span>🇮🇩</span> Indonesia</a>
-    <a href="#us"><span>🇺🇸</span> United States</a>
-    <a href="#sg"><span>🇸🇬</span> Singapore</a>
+    <a href="#au"><svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true"><use href="#flag-au"/></svg> Australia</a>
+    <a href="#id"><svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true"><use href="#flag-id"/></svg> Indonesia</a>
+    <a href="#us"><svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true"><use href="#flag-us"/></svg> United States</a>
+    <a href="#sg"><svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true"><use href="#flag-sg"/></svg> Singapore</a>
   </nav>
 
   <!-- ── AUSTRALIA ── -->
   <div class="country-block" id="au">
-    <h2><span class="flag">🇦🇺</span> Australia <span style="color:var(--muted);font-weight:500;font-size:.85rem">— ASX, suffix <code style="font-family:'DM Mono',monospace">.AX</code></span></h2>
+    <h2><svg class="flag-svg flag-lg" viewBox="0 0 24 16" aria-hidden="true"><use href="#flag-au"/></svg> Australia <span style="color:var(--muted);font-weight:500;font-size:.85rem">— ASX, suffix <code style="font-family:'DM Mono',monospace">.AX</code></span></h2>
     <p class="country-note">Australian Securities Exchange (ASX) listings. <code style="font-family:'DM Mono',monospace;background:var(--input-bg);border:1px solid var(--border);border-radius:5px;padding:1px 5px">AAA.AX</code> is the most common at-call cash proxy; government and corporate bond exposure is via the bond ETFs below.</p>
     <div class="ticker-table-wrap">
       <table class="ticker-table">
@@ -188,7 +239,7 @@
 
   <!-- ── INDONESIA ── -->
   <div class="country-block" id="id">
-    <h2><span class="flag">🇮🇩</span> Indonesia <span style="color:var(--muted);font-weight:500;font-size:.85rem">— IDX, suffix <code style="font-family:'DM Mono',monospace">.JK</code></span></h2>
+    <h2><svg class="flag-svg flag-lg" viewBox="0 0 24 16" aria-hidden="true"><use href="#flag-id"/></svg> Indonesia <span style="color:var(--muted);font-weight:500;font-size:.85rem">— IDX, suffix <code style="font-family:'DM Mono',monospace">.JK</code></span></h2>
     <p class="country-note">Indonesia Stock Exchange (IDX) listings. Retail government bonds (ORI, SBR, SBN) and money-market funds (reksa dana pasar uang) are bought through banks or apps and generally have no tradable Yahoo Finance ticker; listed bond exposure is via the ABF government-bond ETF below.</p>
     <div class="ticker-table-wrap">
       <table class="ticker-table">
@@ -229,7 +280,7 @@
 
   <!-- ── UNITED STATES ── -->
   <div class="country-block" id="us">
-    <h2><span class="flag">🇺🇸</span> United States <span style="color:var(--muted);font-weight:500;font-size:.85rem">— NYSE / NASDAQ, no suffix</span></h2>
+    <h2><svg class="flag-svg flag-lg" viewBox="0 0 24 16" aria-hidden="true"><use href="#flag-us"/></svg> United States <span style="color:var(--muted);font-weight:500;font-size:.85rem">— NYSE / NASDAQ, no suffix</span></h2>
     <p class="country-note">US-listed securities use a plain symbol with no exchange suffix. Cash exposure is via short-term Treasury-bill ETFs; government and corporate bonds via the bond ETFs below.</p>
     <div class="ticker-table-wrap">
       <table class="ticker-table">
@@ -274,7 +325,7 @@
 
   <!-- ── SINGAPORE ── -->
   <div class="country-block" id="sg">
-    <h2><span class="flag">🇸🇬</span> Singapore <span style="color:var(--muted);font-weight:500;font-size:.85rem">— SGX, suffix <code style="font-family:'DM Mono',monospace">.SI</code></span></h2>
+    <h2><svg class="flag-svg flag-lg" viewBox="0 0 24 16" aria-hidden="true"><use href="#flag-sg"/></svg> Singapore <span style="color:var(--muted);font-weight:500;font-size:.85rem">— SGX, suffix <code style="font-family:'DM Mono',monospace">.SI</code></span></h2>
     <p class="country-note">Singapore Exchange (SGX) listings. Singapore Treasury bills and Singapore Savings Bonds (SSB) are bought through MAS / banks and have no Yahoo Finance ticker; listed government and corporate bond exposure is via the bond ETFs below. REITs are a large part of the SGX market.</p>
     <div class="ticker-table-wrap">
       <table class="ticker-table">
