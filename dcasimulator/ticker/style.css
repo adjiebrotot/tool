@@ -1,6 +1,13 @@
 /* DCA Scenario Explorer — yfinance ticker reference page */
 
-.intro{color:var(--muted);font-size:.92rem;line-height:1.6;max-width:80ch;margin:0 0 4px}
+/* Header layout (this page only loads shared.css + this file) */
+.header-left{min-width:0}
+.header-left h1{font-size:1.85rem;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;display:flex;align-items:center}
+.header-left p{color:var(--muted);font-size:.9rem;line-height:1.5}
+.header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;align-items:flex-start}
+.btn-back{text-decoration:none;display:inline-flex;align-items:center}
+
+.intro{color:var(--muted);font-size:.92rem;line-height:1.6;margin:0 0 4px}
 .intro code{background:var(--input-bg);border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-family:'DM Mono',monospace;font-size:.85em;color:var(--text)}
 
 .ticker-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
@@ -16,7 +23,7 @@
 
 .flag-svg{display:inline-block;width:1.4em;height:auto;aspect-ratio:3/2;flex-shrink:0;border-radius:2px;border:1px solid var(--border);overflow:hidden;vertical-align:-0.16em}
 .flag-svg.flag-lg{width:1.6em}
-.country-note{color:var(--muted);font-size:.82rem;line-height:1.55;margin:0 0 12px;max-width:80ch}
+.country-note{color:var(--muted);font-size:.82rem;line-height:1.55;margin:0 0 12px}
 
 .ticker-table-wrap{overflow:auto;border:1px solid var(--border);border-radius:var(--radius-md)}
 table.ticker-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.86rem}
@@ -34,11 +41,12 @@ table.ticker-table td.nm{font-family:'DM Sans',sans-serif;white-space:normal;col
 .type-tag.t-cash{color:#2fae6b;border-color:color-mix(in srgb,#2fae6b 45%,var(--border))}
 .type-tag.t-bond{color:#d8923a;border-color:color-mix(in srgb,#d8923a 45%,var(--border))}
 .type-tag.t-reit{color:#a974d6;border-color:color-mix(in srgb,#a974d6 45%,var(--border))}
+.type-tag.t-commodity{color:#c9a227;border-color:color-mix(in srgb,#c9a227 45%,var(--border))}
 
 .no-results{display:none;padding:24px;text-align:center;color:var(--muted);font-size:.9rem}
 .country-block.is-empty{display:none}
 
-.use-hint{color:var(--muted);font-size:.85rem;line-height:1.6;margin:18px 0 0;padding:14px 16px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);max-width:80ch}
+.use-hint{color:var(--muted);font-size:.85rem;line-height:1.6;margin:18px 0 0;padding:14px 16px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md)}
 .use-hint a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
 .use-hint a:hover{opacity:.8}
 
