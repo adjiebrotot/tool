@@ -225,6 +225,13 @@
     <div class="section-title">
       <h2>Security Prices <span style="color:var(--muted);font-size:.85rem;font-weight:400">(normalised to 100)</span></h2>
       <div class="chart-actions">
+        <label class="toggle-row" style="gap:8px;cursor:pointer;padding:0" title="Overlay the technical indicators behind each security's strategy">
+          <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Indicators</span>
+          <div class="toggle-switch">
+            <input type="checkbox" id="showTechToggle"/>
+            <div class="toggle-track"><div class="toggle-knob"></div></div>
+          </div>
+        </label>
         <button class="btn-secondary" id="priceSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
         <button class="btn-secondary" id="pricePngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
         <button class="btn-secondary" id="priceCopyPngBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>

@@ -14,7 +14,8 @@ const COLOR_NAMES     = ['Blue','Red','Green','Gold','Purple','Cyan'];
 const DATE_BASED_STYLES = ['monthly-date','weekly-day'];
 const FORWARD_STYLES    = ['monthly-top','monthly-bottom','weekly-top','weekly-bottom'];
 const MOMENTUM_STYLES   = ['momentum-peak','momentum-dip'];
-const STYLE_ORDER = [...DATE_BASED_STYLES, ...FORWARD_STYLES, ...MOMENTUM_STYLES];
+const TECH_STYLES       = ['tech-ma-cross','tech-rsi','tech-bollinger','tech-macd-cross','tech-macd-hist','tech-adx'];
+const STYLE_ORDER = [...DATE_BASED_STYLES, ...MOMENTUM_STYLES, ...TECH_STYLES, ...FORWARD_STYLES];
 const WEEKDAY_OPTIONS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const DEFAULT_RANDOM_SEED = 25823952204;
 
@@ -27,6 +28,7 @@ let equityChartInstance = null;
 let sensitivityChartInstance = null;
 let activeDetailSec = 0;
 let showDeposited = true;
+let showTechIndicators = false;
 let currentCurrencySymbol = '$';
 let secIdCounter = 0;
 let runDebounceTimer = null;
@@ -43,6 +45,15 @@ let tickerFetchInFlight = {};
 const $ = id => document.getElementById(id);
 function cssVar(n){ return getComputedStyle(document.body).getPropertyValue(n).trim(); }
 function getSecColor(sec){ return sec.colorHex || cssVar(sec.colorVar); }
+// Returns a related, semi-transparent shade of a colour so an indicator line
+// reads as belonging to its security while staying distinct from the price line.
+function withAlpha(c,a){
+  if(typeof c==='string'){
+    const m=c.match(/^#([0-9a-fA-F]{6})$/);
+    if(m){ const h=Math.round(Math.max(0,Math.min(1,a))*255).toString(16).padStart(2,'0'); return '#'+m[1]+h; }
+  }
+  return c;
+}
 function showStatus(el, msg, type){
   el.className = 'status-bar status-'+type;
   el.innerHTML = (type==='loading'?'<span class="spinner"></span>':'')+msg;
@@ -280,9 +291,18 @@ function addSecurity(cfg){
     amount: 500, style: 'monthly-date', dayOrDate: 1,
     returnPct: 8, stdPct: 15,
     momentumPct: 5, momentumEOM: true,
+    techEOM: true,
     priceData: null, loaded: false, open: true,
     ...cfg
   };
+  // Technical-strategy parameters (merged so cfg can override individual fields).
+  sec.tech = Object.assign({
+    fastMaType:'ema', fastMaLen:50, slowMaType:'sma', slowMaLen:200,
+    rsiPeriod:14, rsiOversold:35,
+    bbPeriod:20, bbStd:2, bbTrigger:'below',
+    macdFast:12, macdSlow:26, macdSignal:9, macdHistThreshold:0,
+    adxPeriod:14, adxThreshold:25
+  }, cfg.tech||{});
   // Ensure colorHex from cfg overrides the default set above
   if(cfg.colorHex) sec.colorHex = cfg.colorHex;
   securities.push(sec);
@@ -305,10 +325,6 @@ function renderSecList(){
   securities.forEach((sec)=>{
     const card=document.createElement('div');
     card.className='sec-card';
-    const dataBased=DATE_BASED_STYLES.map(s=>renderStyleOpt(sec,s)).join('');
-    const forward=FORWARD_STYLES.map(s=>renderStyleOpt(sec,s)).join('');
-    const momentumHtml=MOMENTUM_STYLES.map(s=>renderStyleOpt(sec,s)).join('');
-    const isMomentum=MOMENTUM_STYLES.includes(sec.style);
     card.innerHTML=`
       <div class="sec-header" data-id="${sec.id}">
         <span class="color-dot" style="background:${getSecColor(sec)}"></span>
@@ -336,30 +352,7 @@ function renderSecList(){
         </div>
         <div style="padding:6px 0 0">
           <div style="font-size:.8rem;font-weight:700;margin-bottom:6px">Investment Style</div>
-          <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:4px 0 4px;padding-bottom:3px;border-bottom:1px solid var(--border)">Date-Based</div>
-          <div class="radio-group" style="margin-top:4px">${dataBased}</div>
-          <div class="sec-row" id="secDayRow${sec.id}" style="${showDayRow(sec.style)?'':'display:none'}">
-            <label id="secDayLabel${sec.id}">${sec.style==='monthly-date'?'Day of month':'Day of week'}</label>
-            ${renderDaySelectorInner(sec)}
-          </div>
-          <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent2);margin:8px 0 4px;padding-bottom:3px;border-bottom:1px solid var(--border)">Momentum</div>
-          <div class="radio-group" style="margin-top:4px">${momentumHtml}</div>
-          <div id="secMomRow${sec.id}" style="${isMomentum?'':'display:none'}">
-            <div style="padding:6px 0 2px">
-              <div class="slider-head" style="margin-bottom:4px">
-                <span style="font-size:.8rem;color:var(--muted);font-weight:700">Threshold</span>
-                <span id="secMomPctVal${sec.id}" class="slider-value">${(+sec.momentumPct).toFixed(1)}%</span>
-              </div>
-              <input type="range" id="secMomPct${sec.id}" min="0.1" max="50" step="0.1" value="${sec.momentumPct}" style="width:100%;accent-color:var(--accent);cursor:pointer"/>
-            </div>
-            <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);cursor:pointer;padding:2px 0 6px">
-              <input type="checkbox" id="secMomEOM${sec.id}" ${sec.momentumEOM?'checked':''} style="accent-color:var(--accent);cursor:pointer;width:14px;height:14px;flex-shrink:0"/>
-              Invest at End of Month if target not reached
-            </label>
-          </div>
-          <!-- NOTE: Forward-Looking must always remain at the bottom when new Investment Styles are added -->
-          <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:8px 0 4px;padding-bottom:3px;border-bottom:1px solid var(--border)">Forward-Looking <span class="tip-icon warn" data-tip="⚠️ For demonstration only. These strategies use prices within the period to pick the buy date — they require future knowledge and cannot be replicated in real life.">!</span></div>
-          <div class="radio-group" style="margin-top:4px">${forward}</div>
+          <div id="styleBlock${sec.id}">${styleBlockInner(sec)}</div>
         </div>
         <button class="sec-del" id="secDel${sec.id}" style="margin-top:8px">🗑 Remove</button>
       </div>`;
@@ -388,44 +381,7 @@ function renderSecList(){
       $(`secReturn${sec.id}`).addEventListener('input',e=>{ sec.returnPct=parseFloat(e.target.value)||8; scheduleRun(); });
       $(`secStd${sec.id}`).addEventListener('input',e=>{ sec.stdPct=parseFloat(e.target.value)||15; scheduleRun(); });
     }
-    // Style radios
-    card.querySelectorAll(`input[name="secStyle${sec.id}"]`).forEach(r=>{
-      r.addEventListener('change',()=>{
-        card.querySelectorAll('.radio-opt').forEach(o=>o.classList.remove('selected'));
-        r.closest('.radio-opt').classList.add('selected');
-        sec.style=r.value;
-        const dayRow=$(`secDayRow${sec.id}`);
-        const momRow=$(`secMomRow${sec.id}`);
-        sec.dayOrDate=1;
-        dayRow.style.display=showDayRow(sec.style)?'':'none';
-        if(momRow) momRow.style.display=MOMENTUM_STYLES.includes(sec.style)?'':'none';
-        if(showDayRow(sec.style)){
-          $(`secDayLabel${sec.id}`).textContent=sec.style==='monthly-date'?'Day of month':'Day of week';
-          const old=dayRow.querySelector('input[type=number],select');
-          if(old) old.remove();
-          dayRow.insertAdjacentHTML('beforeend', renderDaySelectorInner(sec));
-          wireDayInput(sec);
-        }
-        updateSensSecurityDropdown();
-        scheduleRun();
-      });
-    });
-    wireDayInput(sec);
-    // Momentum controls
-    const momPctEl=$(`secMomPct${sec.id}`);
-    const momPctValEl=$(`secMomPctVal${sec.id}`);
-    const momEOMEl=$(`secMomEOM${sec.id}`);
-    if(momPctEl){
-      momPctEl.addEventListener('input',e=>{
-        sec.momentumPct=parseFloat(e.target.value)||5;
-        if(momPctValEl) momPctValEl.textContent=(+sec.momentumPct).toFixed(1)+'%';
-        scheduleRun();
-      });
-      makeSliderEditable(momPctValEl,momPctEl);
-    }
-    if(momEOMEl){
-      momEOMEl.addEventListener('change',e=>{ sec.momentumEOM=e.target.checked; scheduleRun(); });
-    }
+    wireStyleBlock(sec);
   });
   // Update color picker default to the next available slot
   const cp=$('newSecColor');
@@ -458,7 +414,9 @@ function renderDaySelector(sec){ return renderDaySelectorInner(sec); }
 function styleLabel(s){
   return {'monthly-date':'Monthly (Fixed Date)','monthly-top':'Monthly (Top)','monthly-bottom':'Monthly (Bottom)',
           'weekly-day':'Weekly (Fixed Day)','weekly-top':'Weekly (Top)','weekly-bottom':'Weekly (Bottom)',
-          'momentum-peak':'Buy the Peak','momentum-dip':'Buy the Dip'}[s]||s;
+          'momentum-peak':'Buy the Peak','momentum-dip':'Buy the Dip',
+          'tech-ma-cross':'MA Crossover','tech-rsi':'RSI Oversold Buy','tech-bollinger':'Bollinger Band Dip',
+          'tech-macd-cross':'MACD Bullish Cross','tech-macd-hist':'MACD Histogram Recovery','tech-adx':'ADX Trend Filter'}[s]||s;
 }
 function styleDesc(s){
   return {'monthly-date':'Buy on a specific day each month.',
@@ -468,9 +426,152 @@ function styleDesc(s){
           'weekly-top':'Buy on the peak price day of the week.',
           'weekly-bottom':'Buy on the lowest price day of the week.',
           'momentum-peak':'Invest after an upside of X% from month start.',
-          'momentum-dip':'Invest after a downside of X% from month start.'}[s]||'';
+          'momentum-dip':'Invest after a downside of X% from month start.',
+          'tech-ma-cross':'Buy on a golden cross of two moving averages.',
+          'tech-rsi':'Buy when RSI drops into oversold territory.',
+          'tech-bollinger':'Buy when price dips to the lower Bollinger Band.',
+          'tech-macd-cross':'Buy when MACD crosses above its signal line.',
+          'tech-macd-hist':'Buy when the MACD histogram turns positive.',
+          'tech-adx':'Buy only when the trend is strong (high ADX).'}[s]||'';
 }
 function showDayRow(s){ return s==='monthly-date'||s==='weekly-day'; }
+
+/* ─── INVESTMENT-STYLE PICKER (category-based, progressive disclosure) ─── */
+// To keep the panel uncluttered, styles are grouped into categories. Only the
+// active category's options — plus the parameters for the currently selected
+// style — are shown at any time.
+const STYLE_CATEGORIES=[['date','📅 Date'],['momentum','📈 Momentum'],['tech','🔧 Technical'],['forward','🔮 Forward']];
+function styleCategory(s){
+  if(DATE_BASED_STYLES.includes(s)) return 'date';
+  if(MOMENTUM_STYLES.includes(s)) return 'momentum';
+  if(TECH_STYLES.includes(s)) return 'tech';
+  if(FORWARD_STYLES.includes(s)) return 'forward';
+  return 'date';
+}
+function stylesForCat(c){
+  return {date:DATE_BASED_STYLES,momentum:MOMENTUM_STYLES,tech:TECH_STYLES,forward:FORWARD_STYLES}[c]||DATE_BASED_STYLES;
+}
+
+function styleBlockInner(sec){
+  const active = sec.catOpen || styleCategory(sec.style);
+  const pills = STYLE_CATEGORIES.map(([k,label])=>
+    `<button type="button" class="cat-pill${k===active?' active':''}" data-cat="${k}">${label}</button>`).join('');
+  const opts = stylesForCat(active).map(s=>renderStyleOpt(sec,s)).join('');
+  const warn = active==='forward'
+    ? `<div class="param-note warn-note">⚠️ For demonstration only — these use prices within the period to pick the buy date and require future knowledge that cannot be replicated in real life.</div>` : '';
+  // Show parameters only when the selected style belongs to the open category.
+  const params = (styleCategory(sec.style)===active) ? renderStyleParams(sec) : '';
+  return `
+    <div class="cat-pills">${pills}</div>
+    ${warn}
+    <div class="radio-group" style="margin-top:8px">${opts}</div>
+    <div class="style-params" id="styleParams${sec.id}">${params}</div>`;
+}
+
+function renderStyleParams(sec){
+  const s=sec.style, t=sec.tech||{}, id=sec.id;
+  const eomChecked = MOMENTUM_STYLES.includes(s) ? sec.momentumEOM : sec.techEOM;
+  const eomRow = `<label class="tech-eom"><input type="checkbox" id="secTechEOM${id}" ${eomChecked?'checked':''}/> Invest at End of Month if target not reached</label>`;
+  const maTypeSel=(elId,val)=>`<select class="num-input" id="${elId}" style="max-width:84px">
+      <option value="sma" ${val==='sma'?'selected':''}>SMA</option>
+      <option value="ema" ${val==='ema'?'selected':''}>EMA</option></select>`;
+  if(s==='monthly-date')
+    return `<div class="param-row"><label>Day of month</label><input class="num-input" id="secDay${id}" type="number" min="1" max="31" step="1" value="${Math.min(31,Math.max(1,sec.dayOrDate||1))}"/></div>`;
+  if(s==='weekly-day')
+    return `<div class="param-row"><label>Day of week</label><select class="txt-input" id="secDay${id}" style="max-width:160px">${WEEKDAY_OPTIONS.map((d,i)=>`<option value="${i+1}" ${Math.min(7,Math.max(1,sec.dayOrDate))===i+1?'selected':''}>${d}</option>`).join('')}</select></div>`;
+  if(MOMENTUM_STYLES.includes(s))
+    return `<div style="padding:4px 0 2px">
+        <div class="slider-head" style="margin-bottom:4px">
+          <span style="font-size:.8rem;color:var(--muted);font-weight:700">Threshold</span>
+          <span id="secMomPctVal${id}" class="slider-value">${(+sec.momentumPct).toFixed(1)}%</span>
+        </div>
+        <input type="range" id="secMomPct${id}" min="0.1" max="50" step="0.1" value="${sec.momentumPct}" style="width:100%;accent-color:var(--accent);cursor:pointer"/>
+      </div>${eomRow}`;
+  if(s==='tech-ma-cross')
+    return `<div class="param-row"><label>Fast MA</label><div class="param-grp">${maTypeSel(`secMaFastType${id}`,t.fastMaType)}<input class="num-input" id="secMaFastLen${id}" type="number" min="1" max="400" step="1" value="${t.fastMaLen}"/></div></div>
+      <div class="param-row"><label>Slow MA</label><div class="param-grp">${maTypeSel(`secMaSlowType${id}`,t.slowMaType)}<input class="num-input" id="secMaSlowLen${id}" type="number" min="1" max="400" step="1" value="${t.slowMaLen}"/></div></div>
+      <div class="param-note">Buys on a golden cross — the Fast MA crossing above the Slow MA.</div>${eomRow}`;
+  if(s==='tech-rsi')
+    return `<div class="param-row"><label>RSI period</label><input class="num-input" id="secRsiPeriod${id}" type="number" min="2" max="100" step="1" value="${t.rsiPeriod}"/></div>
+      <div class="param-row"><label>Oversold &lt;</label><input class="num-input" id="secRsiOversold${id}" type="number" min="1" max="99" step="1" value="${t.rsiOversold}"/></div>
+      <div class="param-note">Buys when RSI falls below the oversold threshold.</div>${eomRow}`;
+  if(s==='tech-bollinger')
+    return `<div class="param-row"><label>MA period</label><input class="num-input" id="secBbPeriod${id}" type="number" min="2" max="200" step="1" value="${t.bbPeriod}"/></div>
+      <div class="param-row"><label>Std dev</label><input class="num-input" id="secBbStd${id}" type="number" min="0.5" max="5" step="0.1" value="${t.bbStd}"/></div>
+      <div class="param-row"><label>Trigger</label><select class="txt-input" id="secBbTrigger${id}" style="max-width:220px"><option value="below" ${t.bbTrigger==='below'?'selected':''}>Close below lower band</option><option value="reclaim" ${t.bbTrigger==='reclaim'?'selected':''}>Reclaim above lower band</option></select></div>
+      <div class="param-note">Bollinger Band = MA ± N standard deviations.</div>${eomRow}`;
+  if(s==='tech-macd-cross')
+    return `<div class="param-row"><label>Fast EMA</label><input class="num-input" id="secMacdFast${id}" type="number" min="1" max="100" step="1" value="${t.macdFast}"/></div>
+      <div class="param-row"><label>Slow EMA</label><input class="num-input" id="secMacdSlow${id}" type="number" min="1" max="200" step="1" value="${t.macdSlow}"/></div>
+      <div class="param-row"><label>Signal EMA</label><input class="num-input" id="secMacdSignal${id}" type="number" min="1" max="100" step="1" value="${t.macdSignal}"/></div>
+      <div class="param-note">Buys when the MACD line crosses above the signal line.</div>${eomRow}`;
+  if(s==='tech-macd-hist')
+    return `<div class="param-row"><label>Fast EMA</label><input class="num-input" id="secMacdFast${id}" type="number" min="1" max="100" step="1" value="${t.macdFast}"/></div>
+      <div class="param-row"><label>Slow EMA</label><input class="num-input" id="secMacdSlow${id}" type="number" min="1" max="200" step="1" value="${t.macdSlow}"/></div>
+      <div class="param-row"><label>Signal EMA</label><input class="num-input" id="secMacdSignal${id}" type="number" min="1" max="100" step="1" value="${t.macdSignal}"/></div>
+      <div class="param-row"><label>Hist &gt;</label><input class="num-input" id="secMacdHist${id}" type="number" step="0.1" value="${t.macdHistThreshold}"/></div>
+      <div class="param-note">Buys when the histogram turns positive after being negative.</div>${eomRow}`;
+  if(s==='tech-adx')
+    return `<div class="param-row"><label>ADX period</label><input class="num-input" id="secAdxPeriod${id}" type="number" min="2" max="100" step="1" value="${t.adxPeriod}"/></div>
+      <div class="param-row"><label>Trend &gt;</label><input class="num-input" id="secAdxThreshold${id}" type="number" min="1" max="100" step="1" value="${t.adxThreshold}"/></div>
+      <div class="param-note">Buys only when ADX shows a strong trend (close-based ADX).</div>${eomRow}`;
+  return ''; // forward-looking styles have no parameters
+}
+
+function refreshStyleBlock(sec){
+  const c=$(`styleBlock${sec.id}`); if(!c) return;
+  c.innerHTML=styleBlockInner(sec);
+  wireStyleBlock(sec);
+}
+
+function wireStyleBlock(sec){
+  const c=$(`styleBlock${sec.id}`); if(!c) return;
+  // Category pills — switch which options are visible without changing selection.
+  c.querySelectorAll('.cat-pill').forEach(p=>{
+    p.addEventListener('click',()=>{ sec.catOpen=p.dataset.cat; refreshStyleBlock(sec); });
+  });
+  // Style radios
+  c.querySelectorAll(`input[name="secStyle${sec.id}"]`).forEach(r=>{
+    r.addEventListener('change',()=>{
+      sec.style=r.value;
+      sec.catOpen=styleCategory(sec.style);
+      if(showDayRow(sec.style)) sec.dayOrDate=1;
+      refreshStyleBlock(sec);
+      updateSensSecurityDropdown();
+      scheduleRun();
+    });
+  });
+  // Date-based day selector
+  wireDayInput(sec);
+  // Momentum threshold slider
+  const momPctEl=$(`secMomPct${sec.id}`), momPctValEl=$(`secMomPctVal${sec.id}`);
+  if(momPctEl){
+    momPctEl.addEventListener('input',e=>{ sec.momentumPct=parseFloat(e.target.value)||5; if(momPctValEl) momPctValEl.textContent=(+sec.momentumPct).toFixed(1)+'%'; scheduleRun(); });
+    makeSliderEditable(momPctValEl,momPctEl);
+  }
+  // Shared "invest at end of month" toggle (momentum + technical)
+  const eomEl=$(`secTechEOM${sec.id}`);
+  if(eomEl) eomEl.addEventListener('change',e=>{ sec.techEOM=e.target.checked; sec.momentumEOM=e.target.checked; scheduleRun(); });
+  // Technical-strategy parameters
+  const bind=(elId,fn)=>{ const el=$(elId); if(el)['input','change'].forEach(ev=>el.addEventListener(ev,e=>{ fn(e.target.value); scheduleRun(); })); };
+  const ti=v=>{ const n=parseInt(v); return isNaN(n)?null:n; };
+  const tf=v=>{ const n=parseFloat(v); return isNaN(n)?null:n; };
+  bind(`secMaFastType${sec.id}`,v=>sec.tech.fastMaType=v);
+  bind(`secMaFastLen${sec.id}`,v=>{ const n=ti(v); if(n) sec.tech.fastMaLen=n; });
+  bind(`secMaSlowType${sec.id}`,v=>sec.tech.slowMaType=v);
+  bind(`secMaSlowLen${sec.id}`,v=>{ const n=ti(v); if(n) sec.tech.slowMaLen=n; });
+  bind(`secRsiPeriod${sec.id}`,v=>{ const n=ti(v); if(n) sec.tech.rsiPeriod=n; });
+  bind(`secRsiOversold${sec.id}`,v=>{ const n=tf(v); if(n!=null) sec.tech.rsiOversold=n; });
+  bind(`secBbPeriod${sec.id}`,v=>{ const n=ti(v); if(n) sec.tech.bbPeriod=n; });
+  bind(`secBbStd${sec.id}`,v=>{ const n=tf(v); if(n!=null) sec.tech.bbStd=n; });
+  bind(`secBbTrigger${sec.id}`,v=>sec.tech.bbTrigger=v);
+  bind(`secMacdFast${sec.id}`,v=>{ const n=ti(v); if(n) sec.tech.macdFast=n; });
+  bind(`secMacdSlow${sec.id}`,v=>{ const n=ti(v); if(n) sec.tech.macdSlow=n; });
+  bind(`secMacdSignal${sec.id}`,v=>{ const n=ti(v); if(n) sec.tech.macdSignal=n; });
+  bind(`secMacdHist${sec.id}`,v=>{ const n=tf(v); if(n!=null) sec.tech.macdHistThreshold=n; });
+  bind(`secAdxPeriod${sec.id}`,v=>{ const n=ti(v); if(n) sec.tech.adxPeriod=n; });
+  bind(`secAdxThreshold${sec.id}`,v=>{ const n=tf(v); if(n!=null) sec.tech.adxThreshold=n; });
+}
 
 /* ─── FETCH TICKER DATA ─── */
 
@@ -611,8 +712,166 @@ $('randomSeed').addEventListener('input',e=>{
   $('endDate').value=isoDate(end);
 })();
 
+/* ─── TECHNICAL INDICATORS ─── */
+// All indicators operate on the close-price series only (the data this tool
+// stores). They are computed lazily — never on page load, only when a security
+// actually uses a technical strategy or the user toggles the chart overlay.
+function smaSeries(p,n){
+  const out=new Array(p.length).fill(null);
+  if(n<1) return out;
+  let sum=0;
+  for(let i=0;i<p.length;i++){ sum+=p[i]; if(i>=n) sum-=p[i-n]; if(i>=n-1) out[i]=sum/n; }
+  return out;
+}
+function emaSeries(p,n){
+  const out=new Array(p.length).fill(null);
+  if(n<1||p.length<n) return out;
+  const k=2/(n+1);
+  let seed=0;
+  for(let i=0;i<n;i++) seed+=p[i];
+  let prev=seed/n; out[n-1]=prev;
+  for(let i=n;i<p.length;i++){ prev=p[i]*k+prev*(1-k); out[i]=prev; }
+  return out;
+}
+function maSeries(p,type,n){ return type==='ema'?emaSeries(p,n):smaSeries(p,n); }
+function rsiSeries(p,n){
+  const out=new Array(p.length).fill(null);
+  if(p.length<n+1) return out;
+  let gain=0,loss=0;
+  for(let i=1;i<=n;i++){ const ch=p[i]-p[i-1]; if(ch>=0) gain+=ch; else loss-=ch; }
+  let avgG=gain/n, avgL=loss/n;
+  out[n]= avgL===0?100:100-100/(1+avgG/avgL);
+  for(let i=n+1;i<p.length;i++){
+    const ch=p[i]-p[i-1], g=ch>0?ch:0, l=ch<0?-ch:0;
+    avgG=(avgG*(n-1)+g)/n; avgL=(avgL*(n-1)+l)/n;
+    out[i]= avgL===0?100:100-100/(1+avgG/avgL);
+  }
+  return out;
+}
+function bollingerSeries(p,n,k){
+  const mid=smaSeries(p,n);
+  const upper=new Array(p.length).fill(null), lower=new Array(p.length).fill(null);
+  for(let i=n-1;i<p.length;i++){
+    let sq=0;
+    for(let j=i-n+1;j<=i;j++){ const d=p[j]-mid[i]; sq+=d*d; }
+    const sd=Math.sqrt(sq/n);
+    upper[i]=mid[i]+k*sd; lower[i]=mid[i]-k*sd;
+  }
+  return {mid,upper,lower};
+}
+function macdSeries(p,fast,slow,signal){
+  const ef=emaSeries(p,fast), es=emaSeries(p,slow);
+  const macd=p.map((_,i)=> (ef[i]!=null&&es[i]!=null)? ef[i]-es[i] : null);
+  const sig=new Array(p.length).fill(null);
+  const k=2/(signal+1);
+  let prev=null, count=0, seed=0;
+  for(let i=0;i<p.length;i++){
+    if(macd[i]==null) continue;
+    count++;
+    if(count<signal){ seed+=macd[i]; }
+    else if(count===signal){ seed+=macd[i]; prev=seed/signal; sig[i]=prev; }
+    else { prev=macd[i]*k+prev*(1-k); sig[i]=prev; }
+  }
+  const hist=p.map((_,i)=> (macd[i]!=null&&sig[i]!=null)? macd[i]-sig[i] : null);
+  return {macd,signal:sig,hist};
+}
+// ADX from close prices only (high=low=close approximation), Wilder-smoothed.
+function adxSeries(p,n){
+  const len=p.length;
+  const out=new Array(len).fill(null);
+  if(len<2*n+1) return out;
+  const tr=new Array(len).fill(0), pdm=new Array(len).fill(0), ndm=new Array(len).fill(0);
+  for(let i=1;i<len;i++){
+    const up=p[i]-p[i-1], down=p[i-1]-p[i];
+    pdm[i]=(up>down&&up>0)?up:0;
+    ndm[i]=(down>up&&down>0)?down:0;
+    tr[i]=Math.abs(p[i]-p[i-1]);
+  }
+  let atr=0,apdm=0,andm=0;
+  for(let i=1;i<=n;i++){ atr+=tr[i]; apdm+=pdm[i]; andm+=ndm[i]; }
+  const dx=new Array(len).fill(null);
+  for(let i=n+1;i<len;i++){
+    atr=atr-atr/n+tr[i]; apdm=apdm-apdm/n+pdm[i]; andm=andm-andm/n+ndm[i];
+    const pdi=atr===0?0:100*apdm/atr, ndi=atr===0?0:100*andm/atr;
+    const sum=pdi+ndi;
+    dx[i]= sum===0?0:100*Math.abs(pdi-ndi)/sum;
+  }
+  let cnt=0, dsum=0, prev=null;
+  for(let i=0;i<len;i++){
+    if(dx[i]==null) continue;
+    cnt++;
+    if(cnt<=n){ dsum+=dx[i]; if(cnt===n){ prev=dsum/n; out[i]=prev; } }
+    else { prev=(prev*(n-1)+dx[i])/n; out[i]=prev; }
+  }
+  return out;
+}
+
+// Build the per-day buy-signal array (and the overlay lines) for a technical
+// strategy. Returns { signal:[bool], lines:[{name,values,axis,dash,fade}] }.
+function buildTech(prices, style, tech){
+  const t=tech||{};
+  const n=prices.length;
+  const sig=new Array(n).fill(false);
+  const lines=[];
+  const crossUp=(a,b,i)=> a[i]!=null&&b[i]!=null&&a[i-1]!=null&&b[i-1]!=null&&a[i-1]<=b[i-1]&&a[i]>b[i];
+  if(style==='tech-ma-cross'){
+    const fast=maSeries(prices,t.fastMaType||'ema',t.fastMaLen||50);
+    const slow=maSeries(prices,t.slowMaType||'sma',t.slowMaLen||200);
+    for(let i=1;i<n;i++) if(crossUp(fast,slow,i)) sig[i]=true;
+    lines.push({name:`${(t.fastMaType||'ema').toUpperCase()} ${t.fastMaLen||50}`,values:fast,axis:'price',dash:'dash',fade:0.7});
+    lines.push({name:`${(t.slowMaType||'sma').toUpperCase()} ${t.slowMaLen||200}`,values:slow,axis:'price',dash:'dot',fade:0.45});
+  } else if(style==='tech-rsi'){
+    const r=rsiSeries(prices,t.rsiPeriod||14); const thr=t.rsiOversold??35;
+    for(let i=0;i<n;i++) if(r[i]!=null&&r[i]<thr) sig[i]=true;
+    lines.push({name:`RSI ${t.rsiPeriod||14}`,values:r,axis:'osc',dash:'dash',fade:0.75});
+    lines.push({name:`Oversold ${thr}`,values:new Array(n).fill(thr),axis:'osc',dash:'dot',fade:0.4});
+  } else if(style==='tech-bollinger'){
+    const {mid,upper,lower}=bollingerSeries(prices,t.bbPeriod||20,t.bbStd||2);
+    if((t.bbTrigger||'below')==='reclaim'){
+      for(let i=1;i<n;i++) if(lower[i]!=null&&lower[i-1]!=null&&prices[i]>=lower[i]&&prices[i-1]<lower[i-1]) sig[i]=true;
+    } else {
+      for(let i=0;i<n;i++) if(lower[i]!=null&&prices[i]<lower[i]) sig[i]=true;
+    }
+    lines.push({name:'BB Upper',values:upper,axis:'price',dash:'dot',fade:0.4});
+    lines.push({name:`BB Mid ${t.bbPeriod||20}`,values:mid,axis:'price',dash:'dash',fade:0.6});
+    lines.push({name:'BB Lower',values:lower,axis:'price',dash:'dot',fade:0.4});
+  } else if(style==='tech-macd-cross'){
+    const {macd,signal}=macdSeries(prices,t.macdFast||12,t.macdSlow||26,t.macdSignal||9);
+    for(let i=1;i<n;i++) if(crossUp(macd,signal,i)) sig[i]=true;
+    lines.push({name:'MACD',values:macd,axis:'osc',dash:'dash',fade:0.75});
+    lines.push({name:'Signal',values:signal,axis:'osc',dash:'dot',fade:0.45});
+  } else if(style==='tech-macd-hist'){
+    const {hist}=macdSeries(prices,t.macdFast||12,t.macdSlow||26,t.macdSignal||9);
+    const thr=t.macdHistThreshold??0;
+    for(let i=1;i<n;i++) if(hist[i]!=null&&hist[i-1]!=null&&hist[i]>thr&&hist[i-1]<=thr) sig[i]=true;
+    lines.push({name:'MACD Hist',values:hist,axis:'osc',dash:'dash',fade:0.75});
+    lines.push({name:`Threshold ${thr}`,values:new Array(n).fill(thr),axis:'osc',dash:'dot',fade:0.4});
+  } else if(style==='tech-adx'){
+    const a=adxSeries(prices,t.adxPeriod||14); const thr=t.adxThreshold??25;
+    for(let i=0;i<n;i++) if(a[i]!=null&&a[i]>thr) sig[i]=true;
+    lines.push({name:`ADX ${t.adxPeriod||14}`,values:a,axis:'osc',dash:'dash',fade:0.75});
+    lines.push({name:`Threshold ${thr}`,values:new Array(n).fill(thr),axis:'osc',dash:'dot',fade:0.4});
+  }
+  return {signal:sig, lines};
+}
+
+// Pick one buy per calendar month: the first day the signal fires, or — when
+// "Invest at End of Month" is on — the last trading day if it never fired.
+function monthlySignalDates(dates, signal, eom){
+  const months={};
+  dates.forEach((d,i)=>{ const ym=d.slice(0,7); (months[ym]||(months[ym]=[])).push(i); });
+  const out=[];
+  Object.values(months).forEach(idxs=>{
+    let picked=-1;
+    for(const i of idxs){ if(signal[i]){ picked=i; break; } }
+    if(picked>=0) out.push(picked);
+    else if(eom) out.push(idxs[idxs.length-1]);
+  });
+  return out;
+}
+
 /* ─── SIMULATION ENGINE ─── */
-function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentumEOM=true){
+function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentumEOM=true, tech=null, techEOM=true){
   const {dates, prices} = priceData;
   const dateIndex = {};
   dates.forEach((d,i)=>dateIndex[d]=i);
@@ -716,6 +975,9 @@ function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentum
       }
       if(!invested&&momentumEOM) result.push(idxs[idxs.length-1]);
     });
+  } else if(TECH_STYLES.includes(style)){
+    const {signal}=buildTech(prices, style, tech||{});
+    monthlySignalDates(dates, signal, techEOM).forEach(i=>result.push(i));
   }
 
   // Remove duplicates, sort
@@ -724,7 +986,7 @@ function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentum
 
 function simulateSecurity(sec){
   const {dates, prices} = sec.priceData;
-  const investIdxs = getInvestmentDates(sec.priceData, sec.style, sec.dayOrDate, sec.momentumPct, sec.momentumEOM);
+  const investIdxs = getInvestmentDates(sec.priceData, sec.style, sec.dayOrDate, sec.momentumPct, sec.momentumEOM, sec.tech, sec.techEOM);
   const investSet = new Set(investIdxs);
 
   let totalUnits=0, totalDeposited=0;
@@ -899,18 +1161,50 @@ function updatePriceChart(){
       borderColor:color, backgroundColor:color+'22', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.2, fill:false };
   });
 
+  // Technical indicator overlays — computed lazily, only while toggled on and
+  // only for securities running a technical strategy. Each line uses a close
+  // shade of its security's colour (dashed/dotted) so it reads as belonging to
+  // that security's strategy while staying distinct from the solid price line.
+  let hasOsc=false;
+  if(showTechIndicators){
+    uniqueResults.forEach(res=>{
+      if(!TECH_STYLES.includes(res.sec.style)) return;
+      const seriesPrices=res.dailyRows.map(r=>r.price);
+      const first=res.dailyRows[0]?.price||1;
+      const ts=res._techSeries || (res._techSeries=buildTech(seriesPrices,res.sec.style,res.sec.tech||{}));
+      const base=getSecColor(res.sec);
+      const secLabel=res.sec.type==='ticker'?res.sec.ticker.toUpperCase():res.sec.name;
+      ts.lines.forEach(ln=>{
+        const isOsc=ln.axis==='osc'; if(isOsc) hasOsc=true;
+        const dash=ln.dash==='dot'?[2,3]:ln.dash==='dash'?[7,4]:[];
+        datasets.push({
+          label:`${secLabel} · ${ln.name}`,
+          data:isOsc? ln.values : ln.values.map(v=> v==null?null:v/first*100),
+          borderColor:withAlpha(base, ln.fade||0.5),
+          backgroundColor:'transparent', borderWidth:1.4, pointRadius:0, pointHoverRadius:3,
+          borderDash:dash, tension:0.2, fill:false, spanGaps:true,
+          yAxisID:isOsc?'yInd':'y', _indicator:true
+        });
+      });
+    });
+  }
+
   const yCallback=val=>fmt.num(val,1)+'%';
-  const tooltipLabel=ctx=>`  ${ctx.dataset.label}: ${fmt.num(ctx.parsed.y,2)}%`;
+  const fmtPt=i=> (i.dataset._indicator&&i.dataset.yAxisID==='yInd')
+    ? `${i.dataset.label}: ${fmt.num(i.parsed.y,2)}`
+    : `${i.dataset.label}: ${fmt.num(i.parsed.y,2)}%`;
+  const tooltipLabel=ctx=>'  '+fmtPt(ctx);
 
   function buildPriceOpts(){ return {
     responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
     plugins:{ legend:{display:false}, tooltip:{
       callbacks:{ title:ctx=>ctx[0]?.label||'', label:tooltipLabel,
-        afterBody(items){ if(items.length) $('priceHoverBox').textContent=`${items[0].label}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.num(i.parsed.y,2)}%`).join('  |  '); }},
+        afterBody(items){ if(items.length) $('priceHoverBox').textContent=`${items[0].label}  —  `+items.map(fmtPt).join('  |  '); }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
     scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
-              y:{title:{display:true,text:'Normalised Price (base 100)',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
+              y:{title:{display:true,text:'Normalised Price (base 100)',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}},
+              yInd:{display:hasOsc, position:'right', grid:{drawOnChartArea:false,color:gridColor}, ticks:{color:mutedColor,font:{family:'inherit',size:10}}, title:{display:true,text:'Indicator',color:mutedColor,font:{family:'inherit',size:10}}}}
   };}
 
   if(priceChartInstance){
@@ -920,6 +1214,12 @@ function updatePriceChart(){
     priceChartInstance.options.scales.x.title.color=mutedColor;
     priceChartInstance.options.scales.y.ticks.color=mutedColor; priceChartInstance.options.scales.y.grid.color=gridColor;
     priceChartInstance.options.scales.y.title.color=mutedColor;
+    if(priceChartInstance.options.scales.yInd){
+      priceChartInstance.options.scales.yInd.display=hasOsc;
+      priceChartInstance.options.scales.yInd.ticks.color=mutedColor;
+      priceChartInstance.options.scales.yInd.grid.color=gridColor;
+      priceChartInstance.options.scales.yInd.title.color=mutedColor;
+    }
     priceChartInstance.update('none');
   } else {
     priceChartInstance=new Chart($('priceCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildPriceOpts()});
@@ -1006,6 +1306,11 @@ $('showDepositedToggle').addEventListener('change',e=>{
     equityChartInstance.data.datasets.forEach((ds,i)=>{ if(ds._type==='deposit') equityChartInstance.setDatasetVisibility(i,showDeposited); });
     equityChartInstance.update();
   }
+});
+
+$('showTechToggle').addEventListener('change',e=>{
+  showTechIndicators=e.target.checked;
+  if(simResults.length) updatePriceChart();
 });
 
 /* ─── TABLES ─── */
