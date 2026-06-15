@@ -16,6 +16,15 @@ const FORWARD_STYLES    = ['monthly-top','monthly-bottom','weekly-top','weekly-b
 const MOMENTUM_STYLES   = ['momentum-peak','momentum-dip'];
 const TECH_STYLES       = ['tech-ma-cross','tech-rsi','tech-bollinger','tech-macd-cross','tech-macd-hist','tech-adx'];
 const STYLE_ORDER = [...DATE_BASED_STYLES, ...MOMENTUM_STYLES, ...TECH_STYLES, ...FORWARD_STYLES];
+// Oscillator-style indicators each get their own grid stacked below the price
+// chart, grouped by indicator family so e.g. RSI (0-100) and MACD (near 0)
+// never share a scale and squash each other.
+const OSC_GROUPS = {
+  'tech-rsi':        {key:'rsi',  name:'RSI'},
+  'tech-macd-cross': {key:'macd', name:'MACD'},
+  'tech-macd-hist':  {key:'macd', name:'MACD'},
+  'tech-adx':        {key:'adx',  name:'ADX'}
+};
 const WEEKDAY_OPTIONS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const DEFAULT_RANDOM_SEED = 25823952204;
 
@@ -465,7 +474,9 @@ function styleBlockInner(sec){
     `<button type="button" class="cat-pill${k===active?' active':''}" data-cat="${k}">${label}</button>`).join('');
   const opts = stylesForCat(active).map(s=>renderStyleOpt(sec,s)).join('');
   const warn = active==='forward'
-    ? `<div class="param-note warn-note">⚠️ For demonstration only — these use prices within the period to pick the buy date and require future knowledge that cannot be replicated in real life.</div>` : '';
+    ? `<div class="param-note warn-note">⚠️ For demonstration only — these use prices within the period to pick the buy date and require future knowledge that cannot be replicated in real life.</div>`
+    : active==='tech'
+    ? `<div class="param-note info-note">ℹ️ Unlike fixed-schedule styles, this invests once per month only when the technical trigger is confirmed — if it never fires in a month, that month's deposit is skipped (enable "Invest at End of Month" below to always deposit by month-end).</div>` : '';
   // Show parameters only when the selected style belongs to the open category.
   const params = (styleCategory(sec.style)===active) ? renderStyleParams(sec) : '';
   return `
@@ -1189,7 +1200,7 @@ function updatePriceChart(){
       borderColor:color, backgroundColor:color+'22', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.2, fill:false };
   });
 
-  // Buy markers (▼) — one small downward triangle per purchase date, drawn a
+  // Buy markers (▲) — one small upward triangle per purchase date, drawn a
   // little below each security's price line (not on it) so the line stays
   // legible. Only built while "Show Buy Date" is on, and registered in
   // dsForSec so a security's markers hide together with its line.
@@ -1207,10 +1218,10 @@ function updatePriceChart(){
       const buyDates=new Set(res.investRows.map(r=>r.date));
       dsForSec[idx].push(datasets.length);
       datasets.push({
-        label:`${label} ▼ Buy`,
+        label:`${label} ▲ Buy`,
         data:res.dailyRows.map(r=> buyDates.has(r.date) ? r.price/first*100 - markerOffset : null),
         borderColor:color, backgroundColor:color, showLine:false, spanGaps:false,
-        pointStyle:'triangle', rotation:180, pointRadius:2.5, pointHoverRadius:4,
+        pointStyle:'triangle', pointRadius:2.5, pointHoverRadius:4,
         pointBorderColor:'#fff', pointBorderWidth:0.5, _marker:true
       });
     });
@@ -1218,11 +1229,11 @@ function updatePriceChart(){
 
   // Technical overlays, computed lazily and only while toggled on. Price-axis
   // overlays (moving averages, Bollinger bands) share the price grid; oscillator
-  // indicators (RSI, MACD, ADX) need their own scale and are drawn in a second
-  // grid stacked directly below — same canvas, same X-axis — so they stay
-  // attached to the price chart when activated and when exported. Every overlay
-  // is registered in dsForSec so it hides together with its security.
-  let hasOsc=false;
+  // indicators (RSI, MACD, ADX) each get their own grid stacked below the price
+  // grid — same canvas, same X-axis — grouped by indicator family (OSC_GROUPS) so
+  // securities using different indicators don't squash each other onto one scale.
+  // Every overlay is registered in dsForSec so it hides together with its security.
+  const oscGroups=new Map(); // group key -> axis title, in stacking order
   if(showTechIndicators){
     uniqueResults.forEach((res,idx)=>{
       if(!TECH_STYLES.includes(res.sec.style)) return;
@@ -1231,15 +1242,17 @@ function updatePriceChart(){
       const ts=res._techSeries || (res._techSeries=buildTech(seriesPrices,res.sec.style,res.sec.tech||{}));
       const base=getSecColor(res.sec);
       const secLabel=res.sec.type==='ticker'?res.sec.ticker.toUpperCase():res.sec.name;
+      const oscInfo=OSC_GROUPS[res.sec.style];
       ts.lines.forEach(ln=>{
         const dash=ln.dash==='dot'?[2,3]:ln.dash==='dash'?[7,4]:[];
-        const isOsc=ln.axis==='osc';
-        if(isOsc) hasOsc=true;
+        const isOsc=ln.axis==='osc'&&oscInfo;
+        const yAxisID=isOsc?'yOsc_'+oscInfo.key:'y';
+        if(isOsc&&!oscGroups.has(oscInfo.key)) oscGroups.set(oscInfo.key, oscInfo.name);
         dsForSec[idx].push(datasets.length);
         datasets.push({
           label:`${secLabel} · ${ln.name}`,
           data: isOsc ? ln.values.slice() : ln.values.map(v=> v==null?null:v/first*100),
-          yAxisID: isOsc?'yOsc':'y',
+          yAxisID,
           borderColor:withAlpha(base, ln.fade||0.5),
           backgroundColor:'transparent', borderWidth:1.4, pointRadius:0, pointHoverRadius:3,
           borderDash:dash, tension:0.2, fill:false, spanGaps:true, _indicator:true
@@ -1247,23 +1260,37 @@ function updatePriceChart(){
       });
     });
   }
+  const oscGroupKeys=[...oscGroups.keys()];
+  const hasOsc=oscGroupKeys.length>0;
 
-  // Give the canvas extra height when the oscillator grid is present so neither
-  // the price grid nor the indicator grid below it ends up cramped.
+  // Give the canvas extra height when oscillator grids are present so neither
+  // the price grid nor the indicator grid(s) below it end up cramped.
   const wrap=$('priceCanvasWrap'); if(wrap) wrap.classList.toggle('has-osc', hasOsc);
 
   const yCallback=val=>fmt.num(val,1)+'%';
-  const fmtPt=i=> `${i.dataset.label}: ${fmt.num(i.parsed.y,2)}${i.dataset.yAxisID==='yOsc'?'':'%'}`;
+  const fmtPt=i=> `${i.dataset.label}: ${fmt.num(i.parsed.y,2)}${i.dataset.yAxisID==='y'?'%':''}`;
   const tooltipLabel=ctx=>'  '+fmtPt(ctx);
 
   function buildPriceOpts(){
+    // Drop the tick sitting exactly at the seam between two stacked grids so
+    // its label doesn't overlap the label on the other side of the seam.
+    const dropEdgeTick=(edge)=>scale=>{ scale.ticks=scale.ticks.filter(t=>t.value!==scale[edge]); };
+    const numOsc=oscGroupKeys.length;
     const scales={
       x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
-      y:{stack:hasOsc?'pricestack':undefined,stackWeight:hasOsc?3:undefined,position:'left',title:{display:true,text:'Normalised Price (base 100)',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}
+      // Higher weight keeps the price scale above the oscillator grid(s) in the stack.
+      y:{stack:hasOsc?'pricestack':undefined,stackWeight:hasOsc?3:undefined,weight:hasOsc?numOsc+1:undefined,position:'left',title:{display:true,text:'Normalised Price (base 100)',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor},afterBuildTicks:hasOsc?dropEdgeTick('min'):undefined}
     };
-    if(hasOsc){
-      scales.yOsc={stack:'pricestack',stackWeight:1,position:'left',title:{display:true,text:'Indicator Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11}},grid:{color:gridColor}};
-    }
+    // One grid per indicator family, stacked below the price grid in order.
+    oscGroupKeys.forEach((key,i)=>{
+      const isLast=i===numOsc-1;
+      scales['yOsc_'+key]={
+        stack:'pricestack',stackWeight:1,weight:numOsc-i,position:'left',
+        title:{display:true,text:oscGroups.get(key),color:mutedColor,font:{family:'inherit',size:11}},
+        ticks:{color:mutedColor,font:{family:'inherit',size:11}},grid:{color:gridColor},
+        afterBuildTicks:scale=>{ dropEdgeTick('max')(scale); if(!isLast) dropEdgeTick('min')(scale); }
+      };
+    });
     return {
       responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
       plugins:{ legend:{display:false}, tooltip:{
