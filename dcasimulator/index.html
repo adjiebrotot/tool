@@ -91,16 +91,28 @@
     <p>Compare Dollar Cost Averaging strategies across multiple securities with real market data or custom models.</p>
   </div>
   <div class="header-right">
-    <a href="portfolio/" class="btn-theme btn-back">Portfolio Mode →</a>
     <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
     <button class="btn-theme" id="themeToggle">🌙 Dark</button>
   </div>
 </section>
 
+<!-- PORTFOLIO LINK -->
+<div id="portfolioLinkDiv" style="margin-bottom:14px;padding:11px 18px;background:rgba(141,187,255,.07);border:1px solid var(--border);border-radius:var(--radius-xl);font-size:.85rem;color:var(--muted);line-height:1.5;">
+  Power user? Compare portfolio-level strategy using <a href="portfolio/" style="color:var(--accent);font-weight:700;text-decoration:none;">Portfolio DCA Simulator</a>.
+</div>
+
 <section class="layout">
 
 <!-- SIDEBAR CONTROLS -->
 <aside class="controls card">
+  <div class="quick-start-row">
+    <span class="quick-start-label">⚡ Quick Start</span><span class="tip-icon" data-tip="Prefill a worked example and fetch live prices from Yahoo Finance, then run the simulation automatically.">?</span>
+    <div class="quick-start-btns">
+      <button class="quick-start-btn" data-preset="monthly-weekly">Monthly vs Weekly</button>
+      <button class="quick-start-btn" data-preset="equity-mmf">Equity vs Money Market</button>
+      <button class="quick-start-btn" data-preset="stock-etf">Stock vs ETF</button>
+    </div>
+  </div>
   <div class="ctrl-scroll">
   <div class="ctrl-tabs">
     <button class="ctrl-tab active" data-tab="securities">📦 Securities</button>
