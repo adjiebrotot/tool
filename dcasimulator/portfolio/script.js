@@ -193,6 +193,9 @@ function setActive(id){
 /* One compact tab per portfolio: click to edit it, double-click to rename. */
 function renderPortfolioList(){
   const el=$('portfolioTabs'); if(!el) return;
+  // Grab the + Add button before clearing — it lives inside this container after the
+  // first render, so detach-and-reuse keeps its click listener intact across re-renders.
+  const addBtn=$('addPortfolioBtn');
   el.innerHTML='';
   portfolios.forEach(p=>{
     const tab=document.createElement('div');
@@ -213,6 +216,8 @@ function renderPortfolioList(){
     tab.addEventListener('dblclick',()=>startRenamePortfolio(tab, p));
     el.appendChild(tab);
   });
+  // Keep the + Add button directly beside the last portfolio so it flows (and wraps) with the tabs.
+  if(addBtn) el.appendChild(addBtn);
 }
 
 /* Inline rename on the active tab (double-click), mirroring the scenario bar. */

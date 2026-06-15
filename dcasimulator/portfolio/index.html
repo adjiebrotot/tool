@@ -95,9 +95,10 @@
   <div class="ctrl-panel active" id="tab-portfolios">
     <!-- PORTFOLIO BAR — one tab per portfolio. Click to edit, double-click to rename. -->
     <div class="pf-bar">
+      <!-- portfolio tabs flow here; the inline + Add button is appended after the last tab by renderPortfolioList() -->
       <div id="portfolioTabs" class="pf-tabs"></div>
+      <button class="pf-add-btn" id="addPortfolioBtn" title="New portfolio" aria-label="New portfolio">+</button>
       <div class="pf-bar-actions">
-        <button class="pf-act-btn" id="addPortfolioBtn" title="New portfolio" aria-label="New portfolio">+</button>
         <button class="pf-act-btn" id="dupPortfolioBtn" title="Duplicate this portfolio" aria-label="Duplicate this portfolio">⧉</button>
         <button class="pf-act-btn pf-act-del" id="delPortfolioBtn" title="Remove this portfolio" aria-label="Remove this portfolio">✕</button>
       </div>
