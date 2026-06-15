@@ -194,5 +194,6 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 .param-row .txt-input{flex:1;min-width:0}
 .param-note{font-size:.74rem;color:var(--muted);line-height:1.35;margin:4px 0 2px;font-style:italic}
 .param-note.warn-note{color:var(--gold);font-style:normal;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22);border-radius:8px;padding:6px 9px;margin:8px 0}
+.param-note.info-note{color:var(--accent);font-style:normal;background:rgba(141,187,255,.08);border:1px solid rgba(141,187,255,.22);border-radius:8px;padding:6px 9px;margin:8px 0}
 .tech-eom{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);cursor:pointer;padding:6px 0 2px;line-height:1.35}
 .tech-eom input{accent-color:var(--accent);cursor:pointer;width:14px;height:14px;flex-shrink:0}
