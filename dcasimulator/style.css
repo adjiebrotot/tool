@@ -60,6 +60,8 @@ body.light .num-input option,body.light .txt-input option{background:#ffffff;col
 .legend-item.hidden{opacity:.35}
 .dot{width:11px;height:11px;border-radius:999px;flex-shrink:0}
 .canvas-wrap{position:relative;width:100%;height:420px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg)}
+/* Extra height when the oscillator indicator grid is stacked below the price grid */
+.canvas-wrap.has-osc{height:600px}
 body.light .canvas-wrap{background:var(--card-bg)}
 .hover-box{margin-top:10px;color:var(--muted);font-size:.86rem;min-height:22px}
 .bottom{display:grid;grid-template-columns:1fr;gap:18px;margin-bottom:18px}
@@ -144,6 +146,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
   .controls{position:static;height:auto;max-height:none;overflow:visible}
   .ctrl-scroll{flex:0 0 auto;overflow:visible}
   .canvas-wrap{height:340px}
+  .canvas-wrap.has-osc{height:500px}
   .metrics{grid-template-columns:repeat(2,1fr)}
   .summary-grid{grid-template-columns:repeat(2,1fr)}
 }
@@ -163,6 +166,7 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
   .sec-row label{min-width:0;width:100%}
   .sec-row .num-input,.sec-row .txt-input{flex:1 1 auto;max-width:100%!important}
   .canvas-wrap{height:280px}
+  .canvas-wrap.has-osc{height:440px}
   .table-wrap{font-size:.78rem}
   th,td{padding:6px 5px}
   .section-title>.chart-actions,.detail-title-row,.detail-csv-wrap{width:100%}

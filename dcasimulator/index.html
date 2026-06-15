@@ -226,6 +226,13 @@
     <div class="section-title">
       <h2>Security Prices <span style="color:var(--muted);font-size:.85rem;font-weight:400">(normalised to 100)</span></h2>
       <div class="chart-actions">
+        <label class="toggle-row" id="buyDateToggleWrap" style="gap:8px;cursor:pointer;padding:0" title="Mark each purchase date with a small ▼ below its security's price line">
+          <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Buy Date</span>
+          <div class="toggle-switch">
+            <input type="checkbox" id="showBuyDateToggle"/>
+            <div class="toggle-track"><div class="toggle-knob"></div></div>
+          </div>
+        </label>
         <label class="toggle-row" id="techToggleWrap" style="gap:8px;cursor:pointer;padding:0;display:none" title="Overlay the technical indicators behind each security's strategy">
           <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Indicators</span>
           <div class="toggle-switch">
@@ -240,27 +247,8 @@
       </div>
     </div>
     <div class="legend" id="priceLegend"></div>
-    <div class="canvas-wrap"><canvas id="priceCanvas"></canvas></div>
+    <div class="canvas-wrap" id="priceCanvasWrap"><canvas id="priceCanvas"></canvas></div>
     <div class="hover-box" id="priceHoverBox">Add securities and run to view price data.</div>
-  </section>
-
-  <!-- INDICATOR (OSCILLATOR) CHART -->
-  <section class="chart-card card" id="indicatorSection" style="display:none">
-    <div class="section-title">
-      <div>
-        <h2>Technical Indicators <span style="color:var(--muted);font-size:.85rem;font-weight:400">(oscillators)</span></h2>
-        <p style="font-size:.82rem;color:var(--muted);margin-top:2px">Relative/oscillator indicators that need their own scale. ▼ marks buy dates.</p>
-      </div>
-      <div class="chart-actions">
-        <button class="btn-secondary" id="indicatorSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
-        <button class="btn-secondary" id="indicatorPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
-        <button class="btn-secondary" id="indicatorCopyPngBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary" id="indicatorResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
-      </div>
-    </div>
-    <div class="legend" id="indicatorLegend"></div>
-    <div class="canvas-wrap"><canvas id="indicatorCanvas"></canvas></div>
-    <div class="hover-box" id="indicatorHoverBox">Hover to inspect indicator values.</div>
   </section>
 
   <!-- EQUITY CHART -->

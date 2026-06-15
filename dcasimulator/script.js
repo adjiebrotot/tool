@@ -25,11 +25,11 @@ let simResults = [];
 let latestRows = [];
 let priceChartInstance = null;
 let equityChartInstance = null;
-let indicatorChartInstance = null;
 let sensitivityChartInstance = null;
 let activeDetailSec = 0;
 let showDeposited = true;
 let showTechIndicators = false;
+let showBuyDates = false;
 let currentCurrencySymbol = '$';
 let secIdCounter = 0;
 let runDebounceTimer = null;
@@ -1163,8 +1163,9 @@ function updatePriceChart(){
     return true;
   });
 
-  // Map a security's legend index to the dataset indices it controls (its price
-  // line plus its buy-marker layer) so toggling the legend hides both together.
+  // Map a security's legend index to every dataset index it controls (price
+  // line, buy markers, and technical/oscillator overlays) so deactivating it in
+  // the legend hides all of its layers together.
   const dsForSec={};
   const datasets=uniqueResults.map((res,idx)=>{
     const first=res.dailyRows[0]?.price||1;
@@ -1188,161 +1189,100 @@ function updatePriceChart(){
       borderColor:color, backgroundColor:color+'22', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.2, fill:false };
   });
 
-  // Buy markers (▼) — one layer per security, placed on the price line at each
-  // purchase date. Drawn as a line-less dataset of downward triangles.
-  uniqueResults.forEach((res,idx)=>{
-    const first=res.dailyRows[0]?.price||1;
-    const color=getSecColor(res.sec);
-    const label=res.sec.type==='ticker' ? res.sec.ticker.toUpperCase() : res.sec.name;
-    const buyDates=new Set(res.investRows.map(r=>r.date));
-    dsForSec[idx].push(datasets.length);
-    datasets.push({
-      label:`${label} ▼ Buy`,
-      data:res.dailyRows.map(r=> buyDates.has(r.date) ? r.price/first*100 : null),
-      borderColor:color, backgroundColor:color, showLine:false, spanGaps:false,
-      pointStyle:'triangle', rotation:180, pointRadius:7, pointHoverRadius:9,
-      pointBorderColor:'#fff', pointBorderWidth:1, _marker:true
-    });
-  });
-
-  // Price-axis technical overlays (moving averages, Bollinger bands) — computed
-  // lazily, only while toggled on and only for technical strategies. Oscillator
-  // indicators (RSI, MACD, ADX) need their own scale and are rendered in a
-  // separate window below this chart instead (see updateIndicatorChart).
-  const oscGroups=[];
-  if(showTechIndicators){
+  // Buy markers (▼) — one small downward triangle per purchase date, drawn a
+  // little below each security's price line (not on it) so the line stays
+  // legible. Only built while "Show Buy Date" is on, and registered in
+  // dsForSec so a security's markers hide together with its line.
+  if(showBuyDates){
+    let gMin=Infinity, gMax=-Infinity;
     uniqueResults.forEach(res=>{
+      const f=res.dailyRows[0]?.price||1;
+      res.dailyRows.forEach(r=>{ const v=r.price/f*100; if(v<gMin)gMin=v; if(v>gMax)gMax=v; });
+    });
+    const markerOffset=((gMax-gMin)||1)*0.07;
+    uniqueResults.forEach((res,idx)=>{
+      const first=res.dailyRows[0]?.price||1;
+      const color=getSecColor(res.sec);
+      const label=res.sec.type==='ticker' ? res.sec.ticker.toUpperCase() : res.sec.name;
+      const buyDates=new Set(res.investRows.map(r=>r.date));
+      dsForSec[idx].push(datasets.length);
+      datasets.push({
+        label:`${label} ▼ Buy`,
+        data:res.dailyRows.map(r=> buyDates.has(r.date) ? r.price/first*100 - markerOffset : null),
+        borderColor:color, backgroundColor:color, showLine:false, spanGaps:false,
+        pointStyle:'triangle', rotation:180, pointRadius:2.5, pointHoverRadius:4,
+        pointBorderColor:'#fff', pointBorderWidth:0.5, _marker:true
+      });
+    });
+  }
+
+  // Technical overlays, computed lazily and only while toggled on. Price-axis
+  // overlays (moving averages, Bollinger bands) share the price grid; oscillator
+  // indicators (RSI, MACD, ADX) need their own scale and are drawn in a second
+  // grid stacked directly below — same canvas, same X-axis — so they stay
+  // attached to the price chart when activated and when exported. Every overlay
+  // is registered in dsForSec so it hides together with its security.
+  let hasOsc=false;
+  if(showTechIndicators){
+    uniqueResults.forEach((res,idx)=>{
       if(!TECH_STYLES.includes(res.sec.style)) return;
       const seriesPrices=res.dailyRows.map(r=>r.price);
       const first=res.dailyRows[0]?.price||1;
       const ts=res._techSeries || (res._techSeries=buildTech(seriesPrices,res.sec.style,res.sec.tech||{}));
       const base=getSecColor(res.sec);
       const secLabel=res.sec.type==='ticker'?res.sec.ticker.toUpperCase():res.sec.name;
-      const oscLines=ts.lines.filter(ln=>ln.axis==='osc');
-      ts.lines.filter(ln=>ln.axis!=='osc').forEach(ln=>{
+      ts.lines.forEach(ln=>{
         const dash=ln.dash==='dot'?[2,3]:ln.dash==='dash'?[7,4]:[];
+        const isOsc=ln.axis==='osc';
+        if(isOsc) hasOsc=true;
+        dsForSec[idx].push(datasets.length);
         datasets.push({
           label:`${secLabel} · ${ln.name}`,
-          data:ln.values.map(v=> v==null?null:v/first*100),
+          data: isOsc ? ln.values.slice() : ln.values.map(v=> v==null?null:v/first*100),
+          yAxisID: isOsc?'yOsc':'y',
           borderColor:withAlpha(base, ln.fade||0.5),
           backgroundColor:'transparent', borderWidth:1.4, pointRadius:0, pointHoverRadius:3,
           borderDash:dash, tension:0.2, fill:false, spanGaps:true, _indicator:true
         });
       });
-      if(oscLines.length) oscGroups.push({res, base, secLabel, lines:oscLines});
     });
   }
 
+  // Give the canvas extra height when the oscillator grid is present so neither
+  // the price grid nor the indicator grid below it ends up cramped.
+  const wrap=$('priceCanvasWrap'); if(wrap) wrap.classList.toggle('has-osc', hasOsc);
+
   const yCallback=val=>fmt.num(val,1)+'%';
-  const fmtPt=i=> `${i.dataset.label}: ${fmt.num(i.parsed.y,2)}%`;
+  const fmtPt=i=> `${i.dataset.label}: ${fmt.num(i.parsed.y,2)}${i.dataset.yAxisID==='yOsc'?'':'%'}`;
   const tooltipLabel=ctx=>'  '+fmtPt(ctx);
 
-  function buildPriceOpts(){ return {
-    responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
-    plugins:{ legend:{display:false}, tooltip:{
-      callbacks:{ title:ctx=>ctx[0]?.label||'', label:tooltipLabel,
-        afterBody(items){ if(items.length) $('priceHoverBox').textContent=`${items[0].label}  —  `+items.map(fmtPt).join('  |  '); }},
-      backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
-      zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
-    scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
-              y:{title:{display:true,text:'Normalised Price (base 100)',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
-  };}
+  function buildPriceOpts(){
+    const scales={
+      x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
+      y:{stack:hasOsc?'pricestack':undefined,stackWeight:hasOsc?3:undefined,position:'left',title:{display:true,text:'Normalised Price (base 100)',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}
+    };
+    if(hasOsc){
+      scales.yOsc={stack:'pricestack',stackWeight:1,position:'left',title:{display:true,text:'Indicator Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11}},grid:{color:gridColor}};
+    }
+    return {
+      responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
+      plugins:{ legend:{display:false}, tooltip:{
+        filter:item=>!item.dataset._marker,
+        callbacks:{ title:ctx=>ctx[0]?.label||'', label:tooltipLabel,
+          afterBody(items){ const its=items.filter(i=>!i.dataset._marker); if(its.length) $('priceHoverBox').textContent=`${its[0].label}  —  `+its.map(fmtPt).join('  |  '); }},
+        backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
+        zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
+      scales
+    };
+  }
 
   if(priceChartInstance){
-    priceChartInstance.data.labels=allDates; priceChartInstance.data.datasets=datasets;
-    priceChartInstance.options.scales.x.ticks.color=mutedColor; priceChartInstance.options.scales.x.grid.color=gridColor;
-    priceChartInstance.options.scales.x.ticks.callback=v=>allDates[Number(v)]?.slice(0,7)||'';
-    priceChartInstance.options.scales.x.title.color=mutedColor;
-    priceChartInstance.options.scales.y.ticks.color=mutedColor; priceChartInstance.options.scales.y.grid.color=gridColor;
-    priceChartInstance.options.scales.y.title.color=mutedColor;
+    priceChartInstance.data.labels=allDates;
+    priceChartInstance.data.datasets=datasets;
+    priceChartInstance.options=buildPriceOpts();
     priceChartInstance.update('none');
   } else {
     priceChartInstance=new Chart($('priceCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildPriceOpts()});
-  }
-
-  updateIndicatorChart(allDates, oscGroups);
-}
-
-/* ─── INDICATOR (OSCILLATOR) CHART ─── */
-// Renders relative/oscillator indicators (RSI, MACD, ADX) — which require their
-// own value axis — in a dedicated window below the price chart. Buy dates are
-// marked with ▼ on each security's primary oscillator line.
-function updateIndicatorChart(allDates, oscGroups){
-  const section=$('indicatorSection');
-  if(!oscGroups || !oscGroups.length){
-    section.style.display='none';
-    if(indicatorChartInstance){ indicatorChartInstance.destroy(); indicatorChartInstance=null; }
-    $('indicatorLegend').innerHTML='';
-    return;
-  }
-  section.style.display='';
-  const gridColor=cssVar('--chart-grid'), mutedColor=cssVar('--chart-text'), textColor=cssVar('--text');
-  const legendEl=$('indicatorLegend'); legendEl.innerHTML='';
-  const hiddenSeries=new Set();
-  const dsForGroup={};
-  const datasets=[];
-
-  oscGroups.forEach((g,gi)=>{
-    dsForGroup[gi]=[];
-    g.lines.forEach(ln=>{
-      const dash=ln.dash==='dot'?[2,3]:ln.dash==='dash'?[7,4]:[];
-      dsForGroup[gi].push(datasets.length);
-      datasets.push({
-        label:`${g.secLabel} · ${ln.name}`,
-        data:ln.values.slice(),
-        borderColor:withAlpha(g.base, ln.fade||0.6),
-        backgroundColor:'transparent', borderWidth:1.6, pointRadius:0, pointHoverRadius:3,
-        borderDash:dash, tension:0.2, fill:false, spanGaps:true
-      });
-    });
-    // Buy markers on the primary oscillator line (first line of the group).
-    const main=g.lines[0];
-    const buyDates=new Set(g.res.investRows.map(r=>r.date));
-    dsForGroup[gi].push(datasets.length);
-    datasets.push({
-      label:`${g.secLabel} ▼ Buy`,
-      data:g.res.dailyRows.map((r,i)=> buyDates.has(r.date) ? (main.values[i]??null) : null),
-      borderColor:g.base, backgroundColor:g.base, showLine:false, spanGaps:false,
-      pointStyle:'triangle', rotation:180, pointRadius:7, pointHoverRadius:9,
-      pointBorderColor:'#fff', pointBorderWidth:1, _marker:true
-    });
-
-    const item=document.createElement('div');
-    item.className='legend-item';
-    item.innerHTML=`<span class="dot" style="background:${g.base}"></span><span>${g.secLabel}</span>`;
-    item.addEventListener('click',()=>{
-      if(hiddenSeries.has(gi)) hiddenSeries.delete(gi); else hiddenSeries.add(gi);
-      item.classList.toggle('hidden',hiddenSeries.has(gi));
-      if(indicatorChartInstance){
-        dsForGroup[gi].forEach(di=>indicatorChartInstance.setDatasetVisibility(di,!hiddenSeries.has(gi)));
-        indicatorChartInstance.update();
-      }
-    });
-    legendEl.appendChild(item);
-  });
-
-  const fmtPt=i=>`${i.dataset.label}: ${fmt.num(i.parsed.y,2)}`;
-  function buildOpts(){ return {
-    responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
-    plugins:{ legend:{display:false}, tooltip:{
-      callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>'  '+fmtPt(ctx),
-        afterBody(items){ if(items.length) $('indicatorHoverBox').textContent=`${items[0].label}  —  `+items.map(fmtPt).join('  |  '); }},
-      backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
-      zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
-    scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
-              y:{title:{display:true,text:'Indicator Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11}},grid:{color:gridColor}}}
-  };}
-
-  if(indicatorChartInstance){
-    indicatorChartInstance.data.labels=allDates; indicatorChartInstance.data.datasets=datasets;
-    indicatorChartInstance.options.scales.x.ticks.color=mutedColor; indicatorChartInstance.options.scales.x.grid.color=gridColor;
-    indicatorChartInstance.options.scales.x.ticks.callback=v=>allDates[Number(v)]?.slice(0,7)||'';
-    indicatorChartInstance.options.scales.x.title.color=mutedColor;
-    indicatorChartInstance.options.scales.y.ticks.color=mutedColor; indicatorChartInstance.options.scales.y.grid.color=gridColor;
-    indicatorChartInstance.options.scales.y.title.color=mutedColor;
-    indicatorChartInstance.update('none');
-  } else {
-    indicatorChartInstance=new Chart($('indicatorCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildOpts()});
   }
 }
 
@@ -1417,10 +1357,8 @@ function updateEquityChart(){
 
 $('priceResetZoom').addEventListener('click',()=>{ if(priceChartInstance) priceChartInstance.resetZoom(); });
 $('equityResetZoom').addEventListener('click',()=>{ if(equityChartInstance) equityChartInstance.resetZoom(); });
-$('indicatorResetZoom').addEventListener('click',()=>{ if(indicatorChartInstance) indicatorChartInstance.resetZoom(); });
 $('priceCanvas').addEventListener('mouseleave',()=>{ $('priceHoverBox').textContent='Hover to inspect data points.'; });
 $('equityCanvas').addEventListener('mouseleave',()=>{ $('equityHoverBox').textContent='Hover to inspect data points.'; });
-$('indicatorCanvas').addEventListener('mouseleave',()=>{ $('indicatorHoverBox').textContent='Hover to inspect indicator values.'; });
 
 // The "Show Indicators" toggle is only meaningful when at least one security
 // runs a technical-indicator strategy — hide it otherwise.
@@ -1440,6 +1378,11 @@ $('showDepositedToggle').addEventListener('change',e=>{
 
 $('showTechToggle').addEventListener('change',e=>{
   showTechIndicators=e.target.checked;
+  if(simResults.length) updatePriceChart();
+});
+
+$('showBuyDateToggle').addEventListener('change',e=>{
+  showBuyDates=e.target.checked;
   if(simResults.length) updatePriceChart();
 });
 
@@ -1549,11 +1492,8 @@ $('resetBtn').addEventListener('click',()=>{
   currentRandomSeed=DEFAULT_RANDOM_SEED;
   if(priceChartInstance){ priceChartInstance.destroy(); priceChartInstance=null; }
   if(equityChartInstance){ equityChartInstance.destroy(); equityChartInstance=null; }
-  if(indicatorChartInstance){ indicatorChartInstance.destroy(); indicatorChartInstance=null; }
   if(sensitivityChartInstance){ sensitivityChartInstance.destroy(); sensitivityChartInstance=null; }
   $('sensitivitySection').style.display='none';
-  $('indicatorSection').style.display='none';
-  $('indicatorLegend').innerHTML='';
   renderSecList();
   $('summaryGrid').innerHTML='';
   $('milestoneBody').innerHTML='<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">Add securities to see milestones.</td></tr>';
@@ -1785,14 +1725,8 @@ $('sensCopyPngBtn').addEventListener('click', async () => {
   try { await copyCanvasPngToClipboard(downloadChartPng('sensCanvas', 'dca_sensitivity_chart.png', 'DCA Sensitivity Analysis — ' + subtitle, null, false)); alert('PNG copied to clipboard.'); }
   catch(err){ alert('PNG copy failed: ' + err.message); }
 });
-$('indicatorPngBtn').addEventListener('click', () => downloadChartPng('indicatorCanvas', 'dca_indicators_chart.png', 'DCA Scenario Explorer — Technical Indicators', 'indicatorLegend'));
-$('indicatorCopyPngBtn').addEventListener('click', async () => {
-  try { await copyCanvasPngToClipboard(downloadChartPng('indicatorCanvas', 'dca_indicators_chart.png', 'DCA Scenario Explorer — Technical Indicators', 'indicatorLegend', false)); alert('PNG copied to clipboard.'); }
-  catch(err){ alert('PNG copy failed: ' + err.message); }
-});
 $('priceSvgBtn').addEventListener('click', () => downloadChartSvg('priceCanvas', 'dca_price_chart.svg', 'DCA Scenario Explorer — Security Prices (Normalised to 100)', 'priceLegend'));
 $('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend'));
-$('indicatorSvgBtn').addEventListener('click', () => downloadChartSvg('indicatorCanvas', 'dca_indicators_chart.svg', 'DCA Scenario Explorer — Technical Indicators', 'indicatorLegend'));
 $('sensSvgBtn').addEventListener('click', () => {
   const subtitle = document.getElementById('sensChartSubtitle')?.textContent || 'Sensitivity Analysis';
   downloadChartSvg('sensCanvas', 'dca_sensitivity_chart.svg', 'DCA Sensitivity Analysis — ' + subtitle, null);
