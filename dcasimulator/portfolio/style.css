@@ -33,3 +33,25 @@ body.light .weight-summary.bad{background:#FFF0D9;color:#7A4A00}
 
 /* Composition table: tint the cash column */
 #compTable td.cash-cell,#compTable th.cash-cell{color:var(--gold)}
+
+/* "Editing" portfolio context bar on the Assets / Top-Ups / Rebalancing tabs */
+.edit-pf-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--input-bg)}
+.edit-pf-label{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);flex-shrink:0}
+.edit-pf-select{min-width:0}
+
+/* Portfolio cards in the Portfolios tab */
+.pf-card{border:1px solid var(--border);border-radius:11px;background:var(--input-bg);padding:0;margin-bottom:8px;overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.pf-card.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.pf-head{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer}
+.pf-head .color-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.pf-name{font-weight:700;font-size:.9rem;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pf-active-pill{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:6px;background:var(--accent);color:#fff;flex-shrink:0}
+.pf-meta{padding:0 12px 11px;font-size:.76rem;color:var(--muted);line-height:1.5}
+.pf-meta .pf-meta-row{display:flex;justify-content:space-between;gap:8px}
+.pf-actions{display:flex;gap:6px;padding:0 12px 11px}
+.pf-actions button{flex:1;font-size:.76rem;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s}
+.pf-actions button:hover{border-color:var(--accent);color:var(--accent)}
+.pf-actions button.pf-del:hover{border-color:#ef4444;color:#ef4444}
+
+/* Portfolio chooser on the composition chart/table headers */
+.pf-view-select{font-size:.8rem;padding:5px 10px;max-width:200px}
