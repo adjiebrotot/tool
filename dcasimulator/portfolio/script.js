@@ -29,8 +29,11 @@ let valueChart = null, compChart = null;
 let currentCurrencySymbol = '$';
 let currentRandomSeed = DEFAULT_RANDOM_SEED;
 let showTopups = true;
+let compViewMode = 'dollar';     // 'dollar' = absolute value · 'percent' = % of portfolio
 let activeCompChartId = null;    // which portfolio the Composition Over Time chart shows
 let activeCompTableId = null;    // which portfolio the Composition Table shows
+let valueDsPairs = [];           // [{value, topup}] dataset indices per portfolio (value chart)
+let hiddenPf = new Set();        // portfolio indices whose value line is hidden via the legend
 
 let priceCache = {};
 let tickerFetchInFlight = {};
@@ -256,19 +259,21 @@ function renderPortfolioList(){
         <button class="pf-del" data-id="${p.id}">🗑 Remove</button>
       </div>`;
     el.appendChild(card);
-    card.querySelector('.pf-head').addEventListener('click',()=>{ setActive(p.id); switchTab('assets'); });
-    card.querySelector('.pf-edit').addEventListener('click',e=>{ e.stopPropagation(); setActive(p.id); switchTab('assets'); });
+    card.querySelector('.pf-head').addEventListener('click',()=>{ setActive(p.id); switchSubTab('assets'); });
+    card.querySelector('.pf-edit').addEventListener('click',e=>{ e.stopPropagation(); setActive(p.id); switchSubTab('assets'); });
     card.querySelector('.pf-dup').addEventListener('click',e=>{ e.stopPropagation(); duplicatePortfolio(p.id); });
     card.querySelector('.pf-del').addEventListener('click',e=>{ e.stopPropagation(); removePortfolio(p.id); });
   });
 }
 
-/* Fill the three "Editing" dropdowns on the config tabs */
+/* Fill the single "Editing" dropdown that drives the Assets / Top-Ups / Rebalancing sub-tabs */
 function renderPfSelectors(){
-  ['editPfSelectAssets','editPfSelectTopups','editPfSelectRebal'].forEach(selId=>{
-    const sel=$(selId); if(!sel) return;
-    sel.innerHTML=portfolios.map(p=>`<option value="${p.id}" ${p.id===activePortfolioId?'selected':''}>${p.name}</option>`).join('');
-  });
+  const sel=$('editPfSelect'); if(!sel) return;
+  sel.innerHTML=portfolios.map(p=>`<option value="${p.id}" ${p.id===activePortfolioId?'selected':''}>${p.name}</option>`).join('');
+  updateEditSectionVisibility();
+}
+function updateEditSectionVisibility(){
+  const sec=$('pfEditSection'); if(sec) sec.style.display=portfolios.length?'':'none';
 }
 
 /* ─── LOAD ACTIVE PORTFOLIO INTO THE SIDEBAR CONTROLS ─── */
@@ -405,13 +410,11 @@ $('addPortfolioBtn').addEventListener('click',()=>{
   $('newPortfolioName').value='';
   $('newPortfolioColor').value=PORTFOLIO_COLOR_HEX[portfolios.length % PORTFOLIO_COLOR_HEX.length];
   loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();
-  switchTab('assets');
+  switchSubTab('assets');
 });
 $('newPortfolioName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addPortfolioBtn').click(); });
 
-['editPfSelectAssets','editPfSelectTopups','editPfSelectRebal'].forEach(id=>{
-  $(id).addEventListener('change',e=>setActive(parseInt(e.target.value,10)));
-});
+$('editPfSelect').addEventListener('change',e=>setActive(parseInt(e.target.value,10)));
 
 /* ─── ADD ASSET BUTTON ─── */
 $('addAssetBtn').addEventListener('click', async()=>{
@@ -759,24 +762,28 @@ function updateValueChart(){
   const dates=commonDates;
   const grid=cssVar('--chart-grid'), muted=cssVar('--chart-text'), text=cssVar('--text');
   const legendEl=$('valueLegend'); legendEl.innerHTML='';
-  const dsIndexMap={};
   const datasets=[];
+  valueDsPairs=[]; hiddenPf.clear();
 
   simResults.forEach((res,idx)=>{
     const color=res.colorHex;
-    dsIndexMap[idx]={value:datasets.length};
+    const valueIdx=datasets.length;
     datasets.push({label:res.name, data:res.rows.map(r=>r.total), borderColor:color, backgroundColor:color+'22', borderWidth:2.6, pointRadius:0, pointHoverRadius:5, tension:0.15, fill:false, _type:'value'});
-    dsIndexMap[idx].topup=datasets.length;
+    const topupIdx=datasets.length;
     datasets.push({label:res.name+' Top-Ups', data:res.rows.map(r=>r.cumTopup), borderColor:color, backgroundColor:'transparent', borderWidth:1.5, borderDash:[6,4], pointRadius:0, pointHoverRadius:4, tension:0, fill:false, _type:'topup'});
+    valueDsPairs[idx]={value:valueIdx, topup:topupIdx};
 
     const item=document.createElement('div'); item.className='legend-item';
     item.innerHTML=`<span class="dot" style="background:${color}"></span><span>${res.name}</span>`;
     item.addEventListener('click',()=>{
       if(!valueChart) return;
-      const vis=valueChart.isDatasetVisible(dsIndexMap[idx].value);
-      valueChart.setDatasetVisibility(dsIndexMap[idx].value,!vis);
-      if(showTopups) valueChart.setDatasetVisibility(dsIndexMap[idx].topup,!vis);
-      item.classList.toggle('hidden',vis);
+      // Hiding a portfolio's value line also hides its top-ups line; showing it
+      // restores the top-ups line only when the global "Show Top-Ups" toggle is on.
+      const nowHidden=!hiddenPf.has(idx);
+      if(nowHidden) hiddenPf.add(idx); else hiddenPf.delete(idx);
+      valueChart.setDatasetVisibility(valueIdx, !nowHidden);
+      valueChart.setDatasetVisibility(topupIdx, !nowHidden && showTopups);
+      item.classList.toggle('hidden',nowHidden);
       valueChart.update();
     });
     legendEl.appendChild(item);
@@ -809,9 +816,11 @@ function updateCompChart(){
   const grid=cssVar('--chart-grid'), muted=cssVar('--chart-text'), text=cssVar('--text');
   const legendEl=$('compLegend'); legendEl.innerHTML='';
   const hidden=new Set();
+  const isPct=compViewMode==='percent';
+  const asVal=(v,total)=> isPct ? (total>0 ? v/total*100 : 0) : v;
 
-  const series=[{label:'Cash', color:CASH_COLOR, data:res.rows.map(r=>r.cash)}];
-  res.assets.forEach(a=>series.push({label:a.name, color:a.colorHex, data:res.rows.map(r=>r.assetVals[a.id]||0)}));
+  const series=[{label:'Cash', color:CASH_COLOR, data:res.rows.map(r=>asVal(r.cash,r.total))}];
+  res.assets.forEach(a=>series.push({label:a.name, color:a.colorHex, data:res.rows.map(r=>asVal(r.assetVals[a.id]||0, r.total))}));
 
   const datasets=series.map(s=>({
     label:s.label, data:s.data, borderColor:s.color, backgroundColor:s.color+'66',
@@ -828,18 +837,20 @@ function updateCompChart(){
     legendEl.appendChild(item);
   });
 
-  const yCb=v=>fmt.currency(v,true);
+  const yCb = isPct ? (v=>fmt.num(v,0)+'%') : (v=>fmt.currency(v,true));
+  const valFmt = isPct ? (v=>fmt.num(v,1)+'%') : (v=>fmt.currency(v,true));
+  const totFmt = isPct ? (v=>fmt.num(v,0)+'%') : (v=>fmt.currency(v,true));
   const opts={
     responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
     plugins:{ legend:{display:false}, tooltip:{
       filter:item=>compChart?compChart.isDatasetVisible(item.datasetIndex):true,
-      callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y,true)}`,
-        afterBody(items){ if(items.length){ const tot=items.reduce((s,i)=>s+i.parsed.y,0); $('compHoverBox').textContent=`${items[0].label}  —  Total: ${fmt.currency(tot,true)}  |  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  '); } }},
+      callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${valFmt(ctx.parsed.y)}`,
+        afterBody(items){ if(items.length){ const tot=items.reduce((s,i)=>s+i.parsed.y,0); $('compHoverBox').textContent=`${items[0].label}  —  Total: ${totFmt(tot)}  |  `+items.map(i=>`${i.dataset.label}: ${valFmt(i.parsed.y)}`).join('  |  '); } }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10},
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
     scales:{
       x:{title:{display:true,text:'Date',color:muted,font:{size:11}},ticks:{color:muted,maxTicksLimit:12,font:{size:11},callback:v=>dates[Number(v)]?.slice(0,7)||''},grid:{color:grid}},
-      y:{stacked:true,title:{display:true,text:'Value ('+currentCurrencySymbol+')',color:muted,font:{size:11}},ticks:{color:muted,font:{size:11},callback:yCb},grid:{color:grid}}}
+      y:{stacked:true,min:0,max:isPct?100:undefined,title:{display:true,text:isPct?'% of Portfolio':'Value ('+currentCurrencySymbol+')',color:muted,font:{size:11}},ticks:{color:muted,font:{size:11},callback:yCb},grid:{color:grid}}}
   };
   if(compChart) compChart.destroy();
   compChart=new Chart($('compCanvas'),{type:'line',data:{labels:dates,datasets},options:opts});
@@ -890,6 +901,16 @@ function updateTable(){
 
 $('compChartPfSelect').addEventListener('change',e=>{ activeCompChartId=parseInt(e.target.value,10); updateCompChart(); });
 $('compTablePfSelect').addEventListener('change',e=>{ activeCompTableId=parseInt(e.target.value,10); updateTable(); });
+
+/* Composition chart view mode: dollar value vs % of portfolio */
+document.querySelectorAll('#compViewToggle .seg-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(compViewMode===btn.dataset.cv) return;
+    compViewMode=btn.dataset.cv;
+    document.querySelectorAll('#compViewToggle .seg-btn').forEach(b=>b.classList.toggle('active', b===btn));
+    if(simResults.length) updateCompChart();
+  });
+});
 
 /* ─── CSV EXPORT (full daily, selected table portfolio) ─── */
 $('downloadBtn').addEventListener('click',()=>{
@@ -956,7 +977,11 @@ $('compCanvas').addEventListener('mouseleave',()=>{ $('compHoverBox').textConten
 
 $('showTopupsToggle').addEventListener('change',e=>{
   showTopups=e.target.checked;
-  if(valueChart){ valueChart.data.datasets.forEach((ds,i)=>{ if(ds._type==='topup') valueChart.setDatasetVisibility(i,showTopups); }); valueChart.update(); }
+  if(valueChart){
+    // Only reveal a top-ups line when its portfolio's value line is also visible.
+    valueDsPairs.forEach((pair,idx)=>{ if(pair) valueChart.setDatasetVisibility(pair.topup, showTopups && !hiddenPf.has(idx)); });
+    valueChart.update();
+  }
 });
 
 /* ─── CURRENCY / SEED ─── */
@@ -984,6 +1009,15 @@ document.querySelectorAll('.ctrl-tab').forEach(btn=>{
   btn.addEventListener('click',()=>switchTab(btn.dataset.tab));
 });
 
+/* Sub-tabs (Assets / Top-Ups / Rebalancing) live inside the Portfolios tab */
+function switchSubTab(name){
+  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.toggle('active', b.dataset.sub===name));
+  document.querySelectorAll('.sub-panel').forEach(p=>p.classList.toggle('active', p.id==='sub-'+name));
+}
+document.querySelectorAll('.sub-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>switchSubTab(btn.dataset.sub));
+});
+
 /* ─── SIMULATE / RESET ─── */
 $('simBtn').addEventListener('click', runSimulation);
 $('resetBtn').addEventListener('click',()=>{
@@ -991,6 +1025,8 @@ $('resetBtn').addEventListener('click',()=>{
   simResults=[]; commonDates=[]; activeCompChartId=null; activeCompTableId=null;
   priceCache={}; tickerFetchInFlight={};
   currentCurrencySymbol='$'; currentRandomSeed=DEFAULT_RANDOM_SEED; showTopups=true;
+  compViewMode='dollar'; valueDsPairs=[]; hiddenPf.clear();
+  document.querySelectorAll('#compViewToggle .seg-btn').forEach(b=>b.classList.toggle('active', b.dataset.cv==='dollar'));
   if(valueChart){ valueChart.destroy(); valueChart=null; }
   if(compChart){ compChart.destroy(); compChart=null; }
   $('currencySymbol').value='$'; $('randomSeed').value=DEFAULT_RANDOM_SEED;

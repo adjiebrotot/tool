@@ -80,9 +80,6 @@
   <div class="ctrl-scroll">
   <div class="ctrl-tabs">
     <button class="ctrl-tab active" data-tab="portfolios">📁 Portfolios</button>
-    <button class="ctrl-tab" data-tab="assets">📊 Assets</button>
-    <button class="ctrl-tab" data-tab="topups">💵 Top-Ups</button>
-    <button class="ctrl-tab" data-tab="rebal">⚖️ Rebalancing</button>
     <button class="ctrl-tab" data-tab="settings">⚙️ Settings</button>
   </div>
 
@@ -99,12 +96,20 @@
 
     <div class="section-label">Portfolios</div>
     <div id="portfolioList" class="sec-list"></div>
-    <div class="field-sub" style="margin-top:10px">Each portfolio has its own assets, weights, top-ups and rebalancing. Select one to edit it in the other tabs. All portfolios are simulated on the same date axis and compared in <strong>Portfolio Value Over Time</strong>.</div>
-  </div>
+    <div class="field-sub" style="margin-top:10px">Each portfolio has its own assets, weights, top-ups and rebalancing. Select one below to edit it. All portfolios are simulated on the same date axis and compared in <strong>Portfolio Value Over Time</strong>.</div>
 
-  <!-- ASSETS TAB -->
-  <div class="ctrl-panel" id="tab-assets">
-    <div class="edit-pf-bar"><span class="edit-pf-label">Editing</span><select class="num-input edit-pf-select" id="editPfSelectAssets" style="cursor:pointer;flex:1"></select></div>
+    <!-- EDIT SELECTED PORTFOLIO -->
+    <div id="pfEditSection">
+    <div class="section-label">Edit Portfolio</div>
+    <div class="edit-pf-bar"><span class="edit-pf-label">Editing</span><select class="num-input edit-pf-select" id="editPfSelect" style="cursor:pointer;flex:1"></select></div>
+    <div class="sub-tabs">
+      <button class="sub-tab active" data-sub="assets" type="button">📊 Assets</button>
+      <button class="sub-tab" data-sub="topups" type="button">💵 Top-Ups</button>
+      <button class="sub-tab" data-sub="rebal" type="button">⚖️ Rebalancing</button>
+    </div>
+
+    <!-- ASSETS SUBTAB -->
+    <div class="sub-panel active" id="sub-assets">
     <div class="section-label" style="margin-top:0">Add Asset</div>
     <div class="add-sec-area" style="border-top:none;padding-top:4px">
       <div class="add-sec-row" style="gap:6px;align-items:center">
@@ -134,9 +139,8 @@
     <div class="weight-summary" id="weightSummary"></div>
   </div>
 
-  <!-- TOP-UPS TAB -->
-  <div class="ctrl-panel" id="tab-topups">
-    <div class="edit-pf-bar"><span class="edit-pf-label">Editing</span><select class="num-input edit-pf-select" id="editPfSelectTopups" style="cursor:pointer;flex:1"></select></div>
+    <!-- TOP-UPS SUBTAB -->
+    <div class="sub-panel" id="sub-topups">
     <div class="section-label" style="margin-top:0">Contribution</div>
     <div class="field-row" style="border-top:none;padding-top:0">
       <div class="field-label">Amount per top-up</div>
@@ -183,9 +187,8 @@
     </div>
   </div>
 
-  <!-- REBALANCING TAB -->
-  <div class="ctrl-panel" id="tab-rebal">
-    <div class="edit-pf-bar"><span class="edit-pf-label">Editing</span><select class="num-input edit-pf-select" id="editPfSelectRebal" style="cursor:pointer;flex:1"></select></div>
+    <!-- REBALANCING SUBTAB -->
+    <div class="sub-panel" id="sub-rebal">
     <div class="section-label" style="margin-top:0">Method</div>
     <div class="radio-group" style="flex-direction:column">
       <label class="radio-opt selected" data-method="towards-weight">
@@ -244,7 +247,9 @@
       <input class="num-input" id="sellFee" type="number" min="0" max="10" step="0.01" value="0.1" />
       <div class="field-sub">Charged on every sale during rebalancing.</div>
     </div>
-  </div>
+    </div><!-- /sub-rebal -->
+    </div><!-- /pfEditSection -->
+  </div><!-- /tab-portfolios -->
 
   <!-- SETTINGS TAB -->
   <div class="ctrl-panel" id="tab-settings">
@@ -286,7 +291,7 @@
     </div>
   </div>
 
-  <div class="warning" id="mainWarning"></div>
+  <div style="padding:0 16px"><div class="warning" id="mainWarning"></div></div>
   </div><!-- /ctrl-scroll -->
   <div class="btn-row">
     <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
@@ -309,9 +314,11 @@
             <div class="toggle-track"><div class="toggle-knob"></div></div>
           </div>
         </label>
-        <button class="btn-secondary" id="valuePngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
-        <button class="btn-secondary" id="valueCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary" id="valueResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
+        <div class="btn-cluster">
+          <button class="btn-secondary" id="valuePngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
+          <button class="btn-secondary" id="valueCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary" id="valueResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
+        </div>
       </div>
     </div>
     <div class="legend" id="valueLegend"></div>
@@ -324,10 +331,16 @@
     <div class="section-title">
       <div><h2>Composition Over Time <span style="color:var(--muted);font-size:.85rem;font-weight:400">(stacked)</span></h2></div>
       <div class="chart-actions">
+        <div class="seg-toggle" id="compViewToggle">
+          <button class="seg-btn active" data-cv="dollar" type="button">$ Value</button>
+          <button class="seg-btn" data-cv="percent" type="button">% of Portfolio</button>
+        </div>
         <select class="num-input pf-view-select" id="compChartPfSelect" style="cursor:pointer" title="Choose which portfolio to view"></select>
-        <button class="btn-secondary" id="compPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
-        <button class="btn-secondary" id="compCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary" id="compResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
+        <div class="btn-cluster">
+          <button class="btn-secondary" id="compPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
+          <button class="btn-secondary" id="compCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary" id="compResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
+        </div>
       </div>
     </div>
     <div class="legend" id="compLegend"></div>
@@ -346,9 +359,9 @@
     <div class="detail-header">
       <div class="detail-title-row">
         <h2>Composition Table <span style="color:var(--muted);font-size:.85rem;font-weight:400">(month-end)</span></h2>
-        <div class="detail-csv-wrap" style="display:flex;gap:8px;align-items:center">
+        <div class="detail-csv-wrap" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <select class="num-input pf-view-select" id="compTablePfSelect" style="cursor:pointer" title="Choose which portfolio to view"></select>
-          <button class="btn-secondary" id="downloadBtn" style="white-space:nowrap;font-size:.82rem;padding:6px 13px">⬇ CSV (full daily)</button>
+          <button class="btn-secondary" id="downloadBtn" style="white-space:nowrap;font-size:.82rem;padding:6px 13px;flex-shrink:0">⬇ CSV (full daily)</button>
         </div>
       </div>
     </div>
