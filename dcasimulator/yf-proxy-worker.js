@@ -31,6 +31,7 @@
 const ALLOWED_HOSTS = new Set([
   'query1.finance.yahoo.com',
   'query2.finance.yahoo.com',
+  'stooq.com',
 ]);
 
 const CORS_HEADERS = {
