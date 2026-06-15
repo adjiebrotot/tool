@@ -231,45 +231,51 @@ function setActive(id){
   renderPfSelectors();
 }
 
-/* ─── PORTFOLIO LIST (Portfolios tab) ─── */
+/* ─── PORTFOLIO TABS (Portfolios tab) ─── */
+/* One compact tab per portfolio: click to edit it, double-click to rename. */
 function renderPortfolioList(){
-  const el=$('portfolioList'); if(!el) return;
-  if(!portfolios.length){
-    el.innerHTML='<div style="color:var(--muted);font-size:.82rem;padding:8px 0">No portfolios yet. Add one above to start comparing.</div>';
-    return;
-  }
+  const el=$('portfolioTabs'); if(!el) return;
   el.innerHTML='';
   portfolios.forEach(p=>{
-    const card=document.createElement('div');
-    card.className='pf-card'+(p.id===activePortfolioId?' active':'');
-    const wOk=Math.abs(totalWeight(p)-100)<0.5;
-    card.innerHTML=`
-      <div class="pf-head" data-id="${p.id}">
-        <span class="color-dot" style="background:${p.colorHex}"></span>
-        <span class="pf-name">${p.name}</span>
-        ${p.id===activePortfolioId?'<span class="pf-active-pill">Editing</span>':''}
-      </div>
-      <div class="pf-meta">
-        <div class="pf-meta-row"><span>${p.assets.length} asset${p.assets.length!==1?'s':''} · ${wOk?'weights ✓':fmt.num(totalWeight(p),0)+'%'}</span><span>${fmt.currency(p.topup.amount)} / ${p.topupSched.period}</span></div>
-        <div class="pf-meta-row"><span>${METHOD_LABEL[p.rebal.method]}</span></div>
-      </div>
-      <div class="pf-actions">
-        <button class="pf-edit" data-id="${p.id}">✎ Edit</button>
-        <button class="pf-dup" data-id="${p.id}">⧉ Duplicate</button>
-        <button class="pf-del" data-id="${p.id}">🗑 Remove</button>
-      </div>`;
-    el.appendChild(card);
-    card.querySelector('.pf-head').addEventListener('click',()=>{ setActive(p.id); switchSubTab('assets'); });
-    card.querySelector('.pf-edit').addEventListener('click',e=>{ e.stopPropagation(); setActive(p.id); switchSubTab('assets'); });
-    card.querySelector('.pf-dup').addEventListener('click',e=>{ e.stopPropagation(); duplicatePortfolio(p.id); });
-    card.querySelector('.pf-del').addEventListener('click',e=>{ e.stopPropagation(); removePortfolio(p.id); });
+    const tab=document.createElement('div');
+    tab.className='pf-tab'+(p.id===activePortfolioId?' active':'');
+    tab.title=p.name;
+
+    const dot=document.createElement('input');
+    dot.type='color'; dot.className='pf-tab-dot'; dot.value=p.colorHex; dot.title='Pick colour';
+    dot.addEventListener('click',e=>e.stopPropagation());
+    dot.addEventListener('input',e=>{ p.colorHex=e.target.value; renderViewSelectors(); });
+    tab.appendChild(dot);
+
+    const name=document.createElement('span');
+    name.className='pf-tab-name'; name.textContent=p.name;
+    tab.appendChild(name);
+
+    tab.addEventListener('click',()=>{ if(p.id!==activePortfolioId){ setActive(p.id); switchSubTab('assets'); } });
+    tab.addEventListener('dblclick',()=>startRenamePortfolio(tab, p));
+    el.appendChild(tab);
   });
 }
 
-/* Fill the single "Editing" dropdown that drives the Assets / Top-Ups / Rebalancing sub-tabs */
+/* Inline rename on the active tab (double-click), mirroring the scenario bar. */
+function startRenamePortfolio(tab, p){
+  const nameSpan=tab.querySelector('.pf-tab-name'); if(!nameSpan) return;
+  const input=document.createElement('input');
+  input.type='text'; input.className='pf-tab-rename'; input.value=p.name;
+  input.addEventListener('click',e=>e.stopPropagation());
+  input.addEventListener('dblclick',e=>e.stopPropagation());
+  const commit=()=>{ p.name=input.value.trim()||p.name; renderPortfolioList(); renderViewSelectors(); };
+  input.addEventListener('blur',commit);
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){ e.preventDefault(); commit(); }
+    if(e.key==='Escape'){ renderPortfolioList(); }
+  });
+  nameSpan.replaceWith(input);
+  input.focus(); input.select();
+}
+
+/* The active tab is the portfolio being edited, so there is no separate selector to fill. */
 function renderPfSelectors(){
-  const sel=$('editPfSelect'); if(!sel) return;
-  sel.innerHTML=portfolios.map(p=>`<option value="${p.id}" ${p.id===activePortfolioId?'selected':''}>${p.name}</option>`).join('');
   updateEditSectionVisibility();
 }
 function updateEditSectionVisibility(){
@@ -402,19 +408,14 @@ function updateWeightSummary(){
   el.innerHTML=`<span>Total weight</span><span>${fmt.num(t,1)}% ${ok?'✓':'· must equal 100%'}</span>`;
 }
 
-/* ─── ADD PORTFOLIO BUTTON ─── */
+/* ─── PORTFOLIO BAR ACTIONS (act on the active portfolio) ─── */
 $('addPortfolioBtn').addEventListener('click',()=>{
-  const name=$('newPortfolioName').value.trim();
-  const color=$('newPortfolioColor').value;
-  const p=addPortfolio(name, color||undefined);
-  $('newPortfolioName').value='';
-  $('newPortfolioColor').value=PORTFOLIO_COLOR_HEX[portfolios.length % PORTFOLIO_COLOR_HEX.length];
+  addPortfolio();   // auto-named "Portfolio N" with an auto colour — rename by double-click
   loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();
   switchSubTab('assets');
 });
-$('newPortfolioName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addPortfolioBtn').click(); });
-
-$('editPfSelect').addEventListener('change',e=>setActive(parseInt(e.target.value,10)));
+$('dupPortfolioBtn').addEventListener('click',()=>{ if(activePortfolioId!=null) duplicatePortfolio(activePortfolioId); });
+$('delPortfolioBtn').addEventListener('click',()=>{ if(activePortfolioId!=null) removePortfolio(activePortfolioId); });
 
 /* ─── ADD ASSET BUTTON ─── */
 $('addAssetBtn').addEventListener('click', async()=>{
