@@ -54,4 +54,21 @@ body.light .weight-summary.bad{background:#FFF0D9;color:#7A4A00}
 .pf-actions button.pf-del:hover{border-color:#ef4444;color:#ef4444}
 
 /* Portfolio chooser on the composition chart/table headers */
-.pf-view-select{font-size:.8rem;padding:5px 10px;max-width:200px}
+.pf-view-select{font-size:.8rem;padding:5px 10px;min-width:130px;max-width:200px}
+
+/* Sub-tabs for editing the selected portfolio (Assets / Top-Ups / Rebalancing) */
+.sub-tabs{display:flex;gap:4px;margin-bottom:12px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px}
+.sub-tab{flex:1 1 0;padding:7px 4px;text-align:center;font-weight:700;font-size:.78rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-radius:7px;transition:all .15s;white-space:nowrap;font-family:inherit}
+.sub-tab:hover{color:var(--text)}
+.sub-tab.active{background:var(--accent);color:#fff}
+.sub-panel{display:none}
+.sub-panel.active{display:block}
+
+/* Segmented view toggle (Composition chart: $ value / % of portfolio) */
+.seg-toggle{display:inline-flex;gap:2px;background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:3px;flex-shrink:0}
+.seg-btn{padding:4px 11px;font-size:.78rem;font-weight:700;border:none;background:transparent;color:var(--muted);border-radius:6px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s}
+.seg-btn:hover{color:var(--text)}
+.seg-btn.active{background:var(--accent);color:#fff}
+
+/* Keep chart export buttons grouped so they don't orphan-wrap onto a new line */
+.btn-cluster{display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
