@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Portfolio DCA Simulator</title>
+<meta name="description" content="Simulate portfolio-level dollar-cost averaging with multiple assets, target weights, rebalancing methods, fees and a risk-free cash account.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tool.adjiebrotots.com/dcasimulator/portfolio/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Portfolio DCA Simulator">
+<meta property="og:description" content="Simulate portfolio-level dollar-cost averaging with multiple assets, target weights, rebalancing methods, fees and a risk-free cash account.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/dcasimulator/portfolio/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Portfolio DCA Simulator">
+<meta name="twitter:description" content="Simulate portfolio-level dollar-cost averaging with multiple assets, target weights, rebalancing methods, fees and a risk-free cash account.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Portfolio DCA Simulator",
+  "url": "https://tool.adjiebrotots.com/dcasimulator/portfolio/",
+  "description": "Simulate portfolio-level dollar-cost averaging across multiple assets with target weights, rebalancing strategies, buying/selling fees and a risk-free cash account.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "alternateName": [
+    "Portfolio Dollar Cost Averaging Simulator",
+    "Portfolio Rebalancing Backtest",
+    "Multi-Asset DCA Strategy Explorer"
+  ],
+  "keywords": "portfolio dca simulator, rebalancing backtest, target weight rebalancing, constant weight portfolio, constant allocation, multi asset dollar cost averaging, portfolio composition over time"
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+<div class="container">
+
+<!-- HEADER -->
+<section class="header card">
+  <div class="header-left">
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 3v18h18"/> <path stroke="var(--accent2)" d="M7 14v4M12 9v9M17 5v13"/> </svg>Portfolio DCA Simulator</h1>
+    <p>Build a multi-asset portfolio strategy: schedule top-ups, target weights, rebalancing and fees — then watch value and composition evolve over time.</p>
+  </div>
+  <div class="header-right">
+    <a href="../" class="btn-theme btn-back">← Single-Asset DCA</a>
+    <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
+    <button class="btn-theme" id="themeToggle">🌙 Dark</button>
+  </div>
+</section>
+
+<section class="layout">
+
+<!-- SIDEBAR CONTROLS -->
+<aside class="controls card">
+  <div class="ctrl-scroll">
+  <div class="ctrl-tabs">
+    <button class="ctrl-tab active" data-tab="assets">📊 Assets</button>
+    <button class="ctrl-tab" data-tab="topups">💵 Top-Ups</button>
+    <button class="ctrl-tab" data-tab="rebal">⚖️ Rebalancing</button>
+    <button class="ctrl-tab" data-tab="settings">⚙️ Settings</button>
+  </div>
+
+  <!-- ASSETS TAB -->
+  <div class="ctrl-panel active" id="tab-assets">
+    <div class="section-label" style="margin-top:0">Add Asset</div>
+    <div class="add-sec-area" style="border-top:none;padding-top:4px">
+      <div class="add-sec-row" style="gap:6px;align-items:center">
+        <input class="txt-input" id="newAssetName" placeholder="Asset name" style="flex:1;min-width:0" />
+        <input type="color" id="newAssetColor" title="Pick colour (optional)" style="width:34px;height:34px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--input-bg);padding:2px;flex-shrink:0" />
+      </div>
+      <div class="radio-group" style="margin-top:8px">
+        <label class="radio-opt selected" id="atypeOptCustom">
+          <input type="radio" name="newAssetType" value="custom" checked/>
+          <div class="radio-opt-text"><strong>Custom</strong>Simulated asset (define return &amp; volatility)</div>
+        </label>
+        <label class="radio-opt" id="atypeOptTicker">
+          <input type="radio" name="newAssetType" value="ticker"/>
+          <div class="radio-opt-text"><strong>Ticker</strong>Live price data from Yahoo Finance</div>
+        </label>
+      </div>
+      <div id="assetTickerRow" style="display:none;margin-top:6px">
+        <input class="txt-input" id="assetTickerInput" placeholder="e.g. AAPL, SPY, VAS.AX" style="text-transform:uppercase;width:100%" />
+        <a href="../ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
+      </div>
+      <button class="btn-primary" id="addAssetBtn" style="margin-top:8px;width:100%">+ Add Asset</button>
+      <div class="status-bar" id="assetFetchStatus"></div>
+    </div>
+
+    <div class="section-label">Assets &amp; Weights</div>
+    <div id="assetList" class="sec-list"></div>
+    <div class="weight-summary" id="weightSummary"></div>
+  </div>
+
+  <!-- TOP-UPS TAB -->
+  <div class="ctrl-panel" id="tab-topups">
+    <div class="section-label" style="margin-top:0">Contribution</div>
+    <div class="field-row" style="border-top:none;padding-top:0">
+      <div class="field-label">Amount per top-up</div>
+      <input class="num-input" id="topupAmount" type="number" min="1" step="100" value="5000" />
+      <div class="field-sub">Cash added to the portfolio on every top-up event.</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Top-up period</div>
+      <select class="num-input" id="topupPeriod" style="cursor:pointer">
+        <option value="weekly">Weekly</option>
+        <option value="fortnightly">Fortnightly</option>
+        <option value="monthly" selected>Monthly</option>
+        <option value="quarterly">Quarterly</option>
+        <option value="yearly">Yearly</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Schedule</div>
+      <div id="topupScheduleBox" class="sched-box"></div>
+      <div class="field-sub" id="topupScheduleHint"></div>
+    </div>
+
+    <div class="section-label">Risk-Free Account</div>
+    <div class="field-sub" style="margin-bottom:6px">Where topped-up money stays while it is not invested.</div>
+    <div class="radio-group">
+      <label class="radio-opt selected" id="rfOptRate">
+        <input type="radio" name="rfMode" value="rate" checked/>
+        <div class="radio-opt-text"><strong>Rate</strong>Fixed annual yield on idle cash</div>
+      </label>
+      <label class="radio-opt" id="rfOptTicker">
+        <input type="radio" name="rfMode" value="ticker"/>
+        <div class="radio-opt-text"><strong>Ticker</strong>Park cash in a money-market ticker</div>
+      </label>
+    </div>
+    <div class="field-row" id="rfRateRow">
+      <div class="field-label">Risk-free rate (% p.a.)</div>
+      <input class="num-input" id="rfRate" type="number" min="0" max="20" step="0.1" value="0" />
+      <div class="field-sub">0% = idle cash · 1–3% = savings · higher = money market.</div>
+    </div>
+    <div class="field-row" id="rfTickerRow" style="display:none">
+      <div class="field-label">Risk-free ticker</div>
+      <input class="txt-input" id="rfTicker" placeholder="e.g. AAA.AX" style="text-transform:uppercase" />
+      <div class="field-sub">Idle cash grows with this ticker's price. <a href="../ticker/" class="ticker-ref-link" style="margin-top:0">ticker codes →</a></div>
+    </div>
+  </div>
+
+  <!-- REBALANCING TAB -->
+  <div class="ctrl-panel" id="tab-rebal">
+    <div class="section-label" style="margin-top:0">Method</div>
+    <div class="radio-group" style="flex-direction:column">
+      <label class="radio-opt selected" data-method="towards-weight">
+        <input type="radio" name="rebalMethod" value="towards-weight" checked/>
+        <div class="radio-opt-text"><strong>Towards Weight</strong>Top-ups only buy underweight assets to move toward target weights. Never sells; may stay below 100% invested.</div>
+      </label>
+      <label class="radio-opt" data-method="constant-weight">
+        <input type="radio" name="rebalMethod" value="constant-weight"/>
+        <div class="radio-opt-text"><strong>Constant Weight</strong>Maintain target weights by buying underweight and selling overweight assets.</div>
+      </label>
+      <label class="radio-opt" data-method="constant-allocation">
+        <input type="radio" name="rebalMethod" value="constant-allocation"/>
+        <div class="radio-opt-text"><strong>Constant Allocation</strong>Each top-up is split by the weights and used to buy. Weights apply to the contribution, not the whole portfolio.</div>
+      </label>
+    </div>
+
+    <div id="constantWeightOpts" style="display:none">
+      <div class="section-label">Constant Weight Timing</div>
+      <div class="radio-group" style="flex-direction:column">
+        <label class="radio-opt selected" data-cwtiming="at-topup">
+          <input type="radio" name="cwTiming" value="at-topup" checked/>
+          <div class="radio-opt-text"><strong>At top-up</strong>Buy underweight first, then fully rebalance (buy &amp; sell) on every top-up.</div>
+        </label>
+        <label class="radio-opt" data-cwtiming="schedule">
+          <input type="radio" name="cwTiming" value="schedule"/>
+          <div class="radio-opt-text"><strong>Separate schedule</strong>Top-ups only buy underweight; a full rebalance runs on its own schedule below.</div>
+        </label>
+      </div>
+      <div id="rebalScheduleWrap" style="display:none">
+        <div class="field-row">
+          <div class="field-label">Rebalance period</div>
+          <select class="num-input" id="rebalPeriod" style="cursor:pointer">
+            <option value="weekly">Weekly</option>
+            <option value="fortnightly">Fortnightly</option>
+            <option value="monthly">Monthly</option>
+            <option value="quarterly" selected>Quarterly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Rebalance schedule</div>
+          <div id="rebalScheduleBox" class="sched-box"></div>
+          <div class="field-sub" id="rebalScheduleHint"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Fees</div>
+    <div class="field-row" style="border-top:none;padding-top:0">
+      <div class="field-label">Buying fee (%)</div>
+      <input class="num-input" id="buyFee" type="number" min="0" max="10" step="0.01" value="0.1" />
+      <div class="field-sub">Charged on every purchase.</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Selling fee (%)</div>
+      <input class="num-input" id="sellFee" type="number" min="0" max="10" step="0.01" value="0.1" />
+      <div class="field-sub">Charged on every sale during rebalancing.</div>
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div class="ctrl-panel" id="tab-settings">
+    <div class="section-label" style="margin-top:0">General</div>
+    <div class="field-row" style="border-top:none;padding-top:0">
+      <div class="field-label">Currency Symbol</div>
+      <select class="num-input" id="currencySymbol" style="cursor:pointer">
+        <option value="$" selected>$ — Dollar</option>
+        <option value="€">€ — Euro</option>
+        <option value="£">£ — Pound</option>
+        <option value="¥">¥ — Yen / Yuan</option>
+        <option value="₩">₩ — Won</option>
+        <option value="Rp">Rp — Rupiah</option>
+        <option value="RM">RM — Ringgit</option>
+        <option value="฿">฿ — Baht</option>
+        <option value="">— None (Agnostic)</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Simulation Seed</div>
+      <input class="num-input" id="randomSeed" type="number" min="0" step="1" value="25823952204" />
+      <div class="field-sub">Drives custom-asset price randomness (GBM).</div>
+    </div>
+
+    <div class="section-label">Date Range</div>
+    <div class="field-row" style="border-top:none;padding-top:0">
+      <div class="field-sub">The simulation uses the overlapping date range shared by every asset (and the risk-free ticker, if used). <span class="tip-icon" data-tip="Each ticker is trimmed to the common set of trading days so the portfolio is evaluated on dates where all assets have prices.">?</span></div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <div style="flex:1">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">Start</div>
+          <input class="txt-input" type="date" id="startDate" />
+        </div>
+        <div style="flex:1">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">End</div>
+          <input class="txt-input" type="date" id="endDate" />
+        </div>
+      </div>
+      <div class="status-bar" id="dateRangeStatus"></div>
+    </div>
+  </div>
+
+  <div class="warning" id="mainWarning"></div>
+  </div><!-- /ctrl-scroll -->
+  <div class="btn-row">
+    <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
+    <button class="btn-secondary" id="resetBtn" style="flex:1">↺ Reset</button>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main>
+
+  <!-- VALUE CHART -->
+  <section class="chart-card card">
+    <div class="section-title">
+      <div><h2>Portfolio Value Over Time</h2></div>
+      <div class="chart-actions">
+        <label class="toggle-row" style="gap:8px;cursor:pointer;padding:0">
+          <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Top-Ups</span>
+          <div class="toggle-switch">
+            <input type="checkbox" id="showTopupsToggle" checked/>
+            <div class="toggle-track"><div class="toggle-knob"></div></div>
+          </div>
+        </label>
+        <button class="btn-secondary" id="valuePngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
+        <button class="btn-secondary" id="valueCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
+        <button class="btn-secondary" id="valueResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
+      </div>
+    </div>
+    <div class="legend" id="valueLegend"></div>
+    <div class="canvas-wrap"><canvas id="valueCanvas"></canvas></div>
+    <div class="hover-box" id="valueHoverBox">Configure a portfolio and run to view value over time.</div>
+  </section>
+
+  <!-- COMPOSITION CHART -->
+  <section class="chart-card card">
+    <div class="section-title">
+      <div><h2>Composition Over Time <span style="color:var(--muted);font-size:.85rem;font-weight:400">(stacked)</span></h2></div>
+      <div class="chart-actions">
+        <button class="btn-secondary" id="compPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
+        <button class="btn-secondary" id="compCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
+        <button class="btn-secondary" id="compResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
+      </div>
+    </div>
+    <div class="legend" id="compLegend"></div>
+    <div class="canvas-wrap"><canvas id="compCanvas"></canvas></div>
+    <div class="hover-box" id="compHoverBox">Cash and each asset stack up to total portfolio value.</div>
+  </section>
+
+  <!-- SUMMARY -->
+  <section class="card summary-row" style="padding:18px">
+    <h2>Final Summary</h2>
+    <div id="summaryGrid" class="summary-grid"></div>
+  </section>
+
+  <!-- COMPOSITION TABLE -->
+  <section class="detail-section card">
+    <div class="detail-header">
+      <div class="detail-title-row">
+        <h2>Composition Table <span style="color:var(--muted);font-size:.85rem;font-weight:400">(month-end)</span></h2>
+        <div class="detail-csv-wrap">
+          <button class="btn-secondary" id="downloadBtn" style="white-space:nowrap;font-size:.82rem;padding:6px 13px">⬇ CSV (full daily)</button>
+        </div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="compTable">
+        <thead id="compHead"><tr><th>Date</th><th>Cash</th><th>Portfolio Value</th></tr></thead>
+        <tbody id="compBody"><tr><td colspan="3" style="color:var(--muted);text-align:center;padding:20px">Add assets and run to see composition.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+</section><!-- /layout -->
+</div><!-- /container -->
+
+<footer class="page-footer">
+  <section class="page-footer-info">
+    <p>
+      <strong>Disclaimer:</strong> This tool is provided on an "as is" and "as available" basis, free of charge, without any representations or warranties of any kind, whether express or implied. Market data is fetched from Yahoo Finance via a third-party proxy and may be delayed, incomplete, or inaccurate. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any investment decisions.
+    </p>
+    <p>
+      If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you're interested, confused, or would like help learning how to use the tool, feel free to email me as well 🙂
+    </p>
+    <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
+      <img src="../../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Made in Australia by Indonesian engineer.</span>
+      </div>
+    </div>
+  </section>
+</footer>
+
+<script src="../../shared.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

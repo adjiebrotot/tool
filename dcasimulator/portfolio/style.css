@@ -1,0 +1,35 @@
+/* Portfolio DCA Simulator — additions layered on top of ../style.css */
+
+/* Toggle switch (re-declared so this tool is self-sufficient if loaded alone) */
+.toggle-switch{position:relative;display:inline-flex;align-items:center}
+.toggle-switch input{position:absolute;opacity:0;width:0;height:0}
+.toggle-track{width:38px;height:21px;background:var(--input-bg);border:1px solid var(--border);border-radius:999px;position:relative;transition:background .15s,border-color .15s}
+.toggle-knob{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:var(--muted);transition:transform .15s,background .15s}
+.toggle-switch input:checked + .toggle-track{background:var(--accent);border-color:var(--accent)}
+.toggle-switch input:checked + .toggle-track .toggle-knob{transform:translateX(17px);background:#fff}
+
+/* Asset weight field inside the asset card */
+.asset-weight-row{display:flex;align-items:center;gap:8px;padding:6px 0}
+.asset-weight-row label{font-size:.8rem;color:var(--muted);min-width:80px;flex-shrink:0}
+.asset-weight-row .num-input{max-width:90px}
+.asset-weight-pill{margin-left:auto;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(141,187,255,.18);color:#8DBBFF;font-family:'DM Mono',monospace}
+
+/* Running weight total */
+.weight-summary{margin-top:10px;font-size:.82rem;font-weight:700;padding:8px 11px;border-radius:9px;border:1px solid var(--border);background:var(--input-bg);display:flex;justify-content:space-between;align-items:center}
+.weight-summary.ok{border-color:rgba(143,205,189,.4);color:#9BE7B4;background:#103529}
+.weight-summary.bad{border-color:rgba(255,210,140,.35);color:#FFD28C;background:#4A3412}
+body.light .weight-summary.ok{background:#E6F6EC;color:#1F7A4D}
+body.light .weight-summary.bad{background:#FFF0D9;color:#7A4A00}
+
+/* Schedule editor */
+.sched-box{margin-top:4px}
+.weekday-grid{display:flex;gap:5px;flex-wrap:wrap}
+.weekday-chip{flex:1 1 0;min-width:38px;padding:6px 4px;font-size:.74rem;font-weight:700;border:1px solid var(--border);background:var(--input-bg);color:var(--muted);border-radius:8px;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;user-select:none}
+.weekday-chip:hover{border-color:var(--accent);color:var(--text)}
+.weekday-chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.sched-inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sched-inline .num-input,.sched-inline .txt-input{max-width:120px}
+.sched-inline label{font-size:.8rem;color:var(--muted)}
+
+/* Composition table: tint the cash column */
+#compTable td.cash-cell,#compTable th.cash-cell{color:var(--gold)}
