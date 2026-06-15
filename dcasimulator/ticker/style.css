@@ -42,6 +42,7 @@ table.ticker-table td.nm{font-family:'DM Sans',sans-serif;white-space:normal;col
 .type-tag.t-bond{color:#d8923a;border-color:color-mix(in srgb,#d8923a 45%,var(--border))}
 .type-tag.t-reit{color:#a974d6;border-color:color-mix(in srgb,#a974d6 45%,var(--border))}
 .type-tag.t-commodity{color:#c9a227;border-color:color-mix(in srgb,#c9a227 45%,var(--border))}
+.type-tag.t-fx{color:#4cc4c4;border-color:color-mix(in srgb,#4cc4c4 45%,var(--border))}
 
 .no-results{display:none;padding:24px;text-align:center;color:var(--muted);font-size:.9rem}
 .country-block.is-empty{display:none}

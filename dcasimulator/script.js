@@ -522,7 +522,9 @@ async function ensureTickerCached(ticker, requestedStart, requestedEnd){
       cachedStart: data.dates[0],
       cachedEnd: data.dates[data.dates.length - 1],
       coverageStart: fetchStart,
-      coverageEnd: fetchEnd
+      coverageEnd: fetchEnd,
+      source: data.source,
+      kind: data.kind
     };
   })();
   try{
@@ -564,7 +566,11 @@ async function loadTickerData(sec, startDate, endDate){
     sec.loaded = true;
     const entry = priceCache[String(sec.ticker).trim().toUpperCase()];
     if(statusEl){ statusEl.className='status-bar status-ok'; statusEl.textContent='✓ Loaded'; }
-    showStatus($('fetchStatus'), sec.ticker+' cached: '+entry.dates.length+' trading days','ok');
+    if(entry.kind==='stock' && entry.source==='stooq'){
+      showStatus($('fetchStatus'), '⚠️ '+sec.ticker+' loaded from Stooq (Yahoo Finance was unavailable): '+entry.dates.length+' trading days. Stooq stock prices are <strong>not</strong> adjusted for splits/dividends, so returns across those events may differ slightly.','warn');
+    } else {
+      showStatus($('fetchStatus'), sec.ticker+' cached: '+entry.dates.length+' trading days','ok');
+    }
     return true;
   } catch(e){
     sec.loaded = false;

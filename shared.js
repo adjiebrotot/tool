@@ -221,8 +221,7 @@
     function yahooProvider(sym){
       var p = 'period1=' + s + '&period2=' + e + '&interval=1d&events=history&_cb=' + cb;
       return {
-        name: 'yahoo:' + sym,
-        parse: parseYahoo,
+        name: 'yahoo:' + sym, source: 'yahoo', parse: parseYahoo,
         candidates: proxyWrap('https://query1.finance.yahoo.com/v8/finance/chart/' + enc(sym) + '?' + p)
                 .concat(proxyWrap('https://query2.finance.yahoo.com/v8/finance/chart/' + enc(sym) + '?' + p))
       };
@@ -230,7 +229,7 @@
     function stooqProvider(sym){
       var url = 'https://stooq.com/q/d/l/?s=' + enc(sym) + '&i=d' +
                 '&d1=' + compactDate(startDate) + '&d2=' + compactDate(endDate);
-      return { name: 'stooq:' + sym, parse: parseStooq, candidates: proxyWrap(url) };
+      return { name: 'stooq:' + sym, source: 'stooq', parse: parseStooq, candidates: proxyWrap(url) };
     }
 
     // Spot FX / metals: 'USDIDR', 'XAUUSD', or Yahoo's 'USDIDR=X' form.
@@ -238,7 +237,7 @@
     var isFx = /^[A-Z]{6}$/.test(core) && FX_CODES[core.slice(0,3)] && FX_CODES[core.slice(3,6)];
     if (/=X$/.test(t) || isFx){
       // Stooq is the better source for spot FX/metals → try it first.
-      return [ stooqProvider(core.toLowerCase()), yahooProvider(core + '=X') ];
+      return { kind: 'fx', providers: [ stooqProvider(core.toLowerCase()), yahooProvider(core + '=X') ] };
     }
 
     // Stocks / ETFs / indices: Yahoo first (adjusted close), Stooq as fallback.
@@ -252,19 +251,26 @@
       if (suffix) stooqSym = t.slice(0, dot).toLowerCase() + '.' + suffix;
     }
     if (stooqSym) providers.push(stooqProvider(stooqSym));
-    return providers;
+    return { kind: 'stock', providers: providers };
   }
 
-  // Fetch daily closes for `ticker` between two ISO dates.
-  // Returns {dates:[ISO...], prices:[Number...]} or throws after all retries.
+  // Fetch daily closes for `ticker` between two ISO dates. Returns
+  // {dates, prices, source:'yahoo'|'stooq', kind:'stock'|'fx'} or throws.
+  // NOTE: for kind==='stock', a 'stooq' source means Yahoo was unreachable and
+  // we fell back to Stooq, whose stock closes are UNADJUSTED (no split/dividend
+  // adjustment) — callers should warn the user. FX/metals need no adjustment.
   async function yfFetchPrices(ticker, startDate, endDate){
-    var providers = classify(ticker, startDate, endDate);
+    var cls = classify(ticker, startDate, endDate);
+    var providers = cls.providers;
     var lastError = null;
     var ROUNDS = 2;
     for (var attempt = 0; attempt < ROUNDS; attempt++){
       for (var p = 0; p < providers.length; p++){
         try {
-          return await raceCandidates(providers[p].candidates, providers[p].parse, 12000);
+          var out = await raceCandidates(providers[p].candidates, providers[p].parse, 12000);
+          out.source = providers[p].source;
+          out.kind = cls.kind;
+          return out;
         } catch(err){ lastError = err; }
       }
       if (attempt < ROUNDS - 1){

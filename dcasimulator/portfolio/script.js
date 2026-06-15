@@ -123,7 +123,7 @@ async function ensureTickerCached(ticker, reqStart, reqEnd){
     const fEnd=e?(e.coverageEnd>reqEnd?e.coverageEnd:reqEnd):reqEnd;
     const data=await fetchYahooFinance(tk,fStart,fEnd);
     if(!data.dates.length) throw new Error('No price data in range');
-    priceCache[tk]={dates:data.dates,prices:data.prices,coverageStart:fStart,coverageEnd:fEnd};
+    priceCache[tk]={dates:data.dates,prices:data.prices,coverageStart:fStart,coverageEnd:fEnd,source:data.source,kind:data.kind};
   })();
   try{ await tickerFetchInFlight[tk]; } finally{ delete tickerFetchInFlight[tk]; }
 }
@@ -388,7 +388,7 @@ $('addAssetBtn').addEventListener('click', async()=>{
     $('newAssetName').value=''; $('assetTickerInput').value='';
     const sd=$('startDate').value||'2020-01-01', ed=$('endDate').value||isoDate(new Date());
     showStatus($('assetFetchStatus'),'Fetching '+ticker+'...','loading');
-    try{ await ensureTickerCached(ticker,sd,ed); asset.loaded=true; const e=priceCache[ticker.toUpperCase()]; showStatus($('assetFetchStatus'),ticker+' cached: '+e.dates.length+' trading days','ok'); }
+    try{ await ensureTickerCached(ticker,sd,ed); asset.loaded=true; const e=priceCache[ticker.toUpperCase()]; if(e.kind==='stock'&&e.source==='stooq'){ showStatus($('assetFetchStatus'),'⚠️ '+ticker+' loaded from Stooq (Yahoo Finance was unavailable): '+e.dates.length+' trading days. Stooq stock prices are <strong>not</strong> adjusted for splits/dividends, so returns across those events may differ slightly.','warn'); } else { showStatus($('assetFetchStatus'),ticker+' cached: '+e.dates.length+' trading days','ok'); } }
     catch(err){ asset.loaded=false; showStatus($('assetFetchStatus'),'Failed to load '+ticker+': '+err.message,'error'); }
     renderAssetList(); renderPortfolioList();
   } else {
