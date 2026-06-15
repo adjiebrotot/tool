@@ -25,6 +25,7 @@ let simResults = [];
 let latestRows = [];
 let priceChartInstance = null;
 let equityChartInstance = null;
+let indicatorChartInstance = null;
 let sensitivityChartInstance = null;
 let activeDetailSec = 0;
 let showDeposited = true;
@@ -288,7 +289,7 @@ function addSecurity(cfg){
     id, colorVar: getColor(colorIdx), colorName: COLOR_NAMES[colorIdx],
     colorHex: cfg.colorHex || LINE_COLOR_HEX[colorIdx],
     type: cfg.type, ticker: cfg.ticker||'', name: cfg.name||cfg.ticker||'Custom',
-    amount: 500, style: 'monthly-date', dayOrDate: 1,
+    amount: 500, yearlyIncrease: 0, style: 'monthly-date', dayOrDate: 1,
     returnPct: 8, stdPct: 15,
     momentumPct: 5, momentumEOM: true,
     techEOM: true,
@@ -347,8 +348,12 @@ function renderSecList(){
           <span class="status-bar ${sec.loaded?'status-ok':''}" style="display:inline-block;font-size:.75rem;padding:2px 8px;margin-left:4px" id="secLoadStatus${sec.id}">${sec.loaded?'✓ Loaded':'Not loaded'}</span>
         </div>`}
         <div class="sec-row">
-          <label>Amount per invest <span class="tip-icon" data-tip="Fixed amount invested on each DCA purchase date.">?</span></label>
+          <label>Amount per invest <span class="tip-icon" data-tip="Base amount invested on each DCA purchase date (before any yearly increase).">?</span></label>
           <input class="num-input" id="secAmount${sec.id}" type="number" min="1" step="50" value="${sec.amount}" style="max-width:100px"/>
+        </div>
+        <div class="sec-row">
+          <label>Yearly increase (%) <span class="tip-icon" data-tip="Compounds the invested amount each full year. 0 keeps the amount constant; e.g. 10 raises it by 10% every year (year 2 = +10%, year 3 = +21%, …).">?</span></label>
+          <input class="num-input" id="secYearlyInc${sec.id}" type="number" min="0" max="100" step="1" value="${sec.yearlyIncrease||0}" style="max-width:100px"/>
         </div>
         <div style="padding:6px 0 0">
           <div style="font-size:.8rem;font-weight:700;margin-bottom:6px">Investment Style</div>
@@ -377,6 +382,7 @@ function renderSecList(){
     });
     $(`secDel${sec.id}`).addEventListener('click',()=>{ removeSecurity(sec.id); scheduleRun(); });
     $(`secAmount${sec.id}`).addEventListener('input',e=>{ sec.amount=parseFloat(e.target.value)||100; scheduleRun(); });
+    $(`secYearlyInc${sec.id}`).addEventListener('input',e=>{ const v=parseFloat(e.target.value); sec.yearlyIncrease=isNaN(v)?0:Math.max(0,v); scheduleRun(); });
     if(sec.type==='custom'){
       $(`secReturn${sec.id}`).addEventListener('input',e=>{ sec.returnPct=parseFloat(e.target.value)||8; scheduleRun(); });
       $(`secStd${sec.id}`).addEventListener('input',e=>{ sec.stdPct=parseFloat(e.target.value)||15; scheduleRun(); });
@@ -387,6 +393,7 @@ function renderSecList(){
   const cp=$('newSecColor');
   if(cp) cp.value = LINE_COLOR_HEX[securities.length % LINE_COLOR_HEX.length];
   updateSensSecurityDropdown();
+  updateTechToggleVisibility();
 }
 
 function renderStyleOpt(sec,s){
@@ -538,6 +545,7 @@ function wireStyleBlock(sec){
       if(showDayRow(sec.style)) sec.dayOrDate=1;
       refreshStyleBlock(sec);
       updateSensSecurityDropdown();
+      updateTechToggleVisibility();
       scheduleRun();
     });
   });
@@ -984,24 +992,36 @@ function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentum
   return [...new Set(result)].sort((a,b)=>a-b);
 }
 
+// Amount invested on a given date, applying the optional annual compounding
+// increase. The increase steps up once per full year elapsed since `startStr`,
+// so year 1 uses the base amount, year 2 uses base·(1+r), and so on.
+function investAmountAt(base, yearlyIncreasePct, startStr, dateStr){
+  const r=(yearlyIncreasePct||0)/100;
+  if(!r) return base;
+  const yrs=Math.floor((parseDate(dateStr)-parseDate(startStr))/(365.25*86400000));
+  return base*Math.pow(1+r, Math.max(0,yrs));
+}
+
 function simulateSecurity(sec){
   const {dates, prices} = sec.priceData;
   const investIdxs = getInvestmentDates(sec.priceData, sec.style, sec.dayOrDate, sec.momentumPct, sec.momentumEOM, sec.tech, sec.techEOM);
   const investSet = new Set(investIdxs);
+  const startStr = dates[0];
+  const yinc = sec.yearlyIncrease||0;
 
   let totalUnits=0, totalDeposited=0;
-  const rows=[];
 
   // Build a running state over all trading days
   const investRows=[];
   for(let i=0;i<dates.length;i++){
     if(investSet.has(i)){
       const price=prices[i];
-      const units=sec.amount/price;
+      const amt=investAmountAt(sec.amount, yinc, startStr, dates[i]);
+      const units=amt/price;
       totalUnits+=units;
-      totalDeposited+=sec.amount;
+      totalDeposited+=amt;
       investRows.push({
-        date:dates[i], price, amountInvested:sec.amount, unitsAdded:units,
+        date:dates[i], price, amountInvested:amt, unitsAdded:units,
         totalUnits, totalDeposited, equity:totalUnits*price,
         returnPct:(totalUnits*price-totalDeposited)/totalDeposited*100
       });
@@ -1011,11 +1031,11 @@ function simulateSecurity(sec){
   // Also daily equity for chart
   let runUnits=0, runDeposited=0;
   const dailyRows=[];
-  let secInvestIdx=0;
   for(let i=0;i<dates.length;i++){
     if(investSet.has(i)){
-      runUnits+=sec.amount/prices[i];
-      runDeposited+=sec.amount;
+      const amt=investAmountAt(sec.amount, yinc, startStr, dates[i]);
+      runUnits+=amt/prices[i];
+      runDeposited+=amt;
     }
     dailyRows.push({
       date:dates[i], price:prices[i],
@@ -1143,6 +1163,9 @@ function updatePriceChart(){
     return true;
   });
 
+  // Map a security's legend index to the dataset indices it controls (its price
+  // line plus its buy-marker layer) so toggling the legend hides both together.
+  const dsForSec={};
   const datasets=uniqueResults.map((res,idx)=>{
     const first=res.dailyRows[0]?.price||1;
     const color=getSecColor(res.sec);
@@ -1154,18 +1177,39 @@ function updatePriceChart(){
     item.addEventListener('click',()=>{
       if(hiddenSeries.has(idx)) hiddenSeries.delete(idx); else hiddenSeries.add(idx);
       item.classList.toggle('hidden',hiddenSeries.has(idx));
-      if(priceChartInstance){ priceChartInstance.setDatasetVisibility(idx,!hiddenSeries.has(idx)); priceChartInstance.update(); }
+      if(priceChartInstance){
+        (dsForSec[idx]||[]).forEach(di=>priceChartInstance.setDatasetVisibility(di,!hiddenSeries.has(idx)));
+        priceChartInstance.update();
+      }
     });
     legendEl.appendChild(item);
+    dsForSec[idx]=[idx];
     return { label, data:res.dailyRows.map(r=>r.price/first*100),
       borderColor:color, backgroundColor:color+'22', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.2, fill:false };
   });
 
-  // Technical indicator overlays — computed lazily, only while toggled on and
-  // only for securities running a technical strategy. Each line uses a close
-  // shade of its security's colour (dashed/dotted) so it reads as belonging to
-  // that security's strategy while staying distinct from the solid price line.
-  let hasOsc=false;
+  // Buy markers (▼) — one layer per security, placed on the price line at each
+  // purchase date. Drawn as a line-less dataset of downward triangles.
+  uniqueResults.forEach((res,idx)=>{
+    const first=res.dailyRows[0]?.price||1;
+    const color=getSecColor(res.sec);
+    const label=res.sec.type==='ticker' ? res.sec.ticker.toUpperCase() : res.sec.name;
+    const buyDates=new Set(res.investRows.map(r=>r.date));
+    dsForSec[idx].push(datasets.length);
+    datasets.push({
+      label:`${label} ▼ Buy`,
+      data:res.dailyRows.map(r=> buyDates.has(r.date) ? r.price/first*100 : null),
+      borderColor:color, backgroundColor:color, showLine:false, spanGaps:false,
+      pointStyle:'triangle', rotation:180, pointRadius:7, pointHoverRadius:9,
+      pointBorderColor:'#fff', pointBorderWidth:1, _marker:true
+    });
+  });
+
+  // Price-axis technical overlays (moving averages, Bollinger bands) — computed
+  // lazily, only while toggled on and only for technical strategies. Oscillator
+  // indicators (RSI, MACD, ADX) need their own scale and are rendered in a
+  // separate window below this chart instead (see updateIndicatorChart).
+  const oscGroups=[];
   if(showTechIndicators){
     uniqueResults.forEach(res=>{
       if(!TECH_STYLES.includes(res.sec.style)) return;
@@ -1174,25 +1218,23 @@ function updatePriceChart(){
       const ts=res._techSeries || (res._techSeries=buildTech(seriesPrices,res.sec.style,res.sec.tech||{}));
       const base=getSecColor(res.sec);
       const secLabel=res.sec.type==='ticker'?res.sec.ticker.toUpperCase():res.sec.name;
-      ts.lines.forEach(ln=>{
-        const isOsc=ln.axis==='osc'; if(isOsc) hasOsc=true;
+      const oscLines=ts.lines.filter(ln=>ln.axis==='osc');
+      ts.lines.filter(ln=>ln.axis!=='osc').forEach(ln=>{
         const dash=ln.dash==='dot'?[2,3]:ln.dash==='dash'?[7,4]:[];
         datasets.push({
           label:`${secLabel} · ${ln.name}`,
-          data:isOsc? ln.values : ln.values.map(v=> v==null?null:v/first*100),
+          data:ln.values.map(v=> v==null?null:v/first*100),
           borderColor:withAlpha(base, ln.fade||0.5),
           backgroundColor:'transparent', borderWidth:1.4, pointRadius:0, pointHoverRadius:3,
-          borderDash:dash, tension:0.2, fill:false, spanGaps:true,
-          yAxisID:isOsc?'yInd':'y', _indicator:true
+          borderDash:dash, tension:0.2, fill:false, spanGaps:true, _indicator:true
         });
       });
+      if(oscLines.length) oscGroups.push({res, base, secLabel, lines:oscLines});
     });
   }
 
   const yCallback=val=>fmt.num(val,1)+'%';
-  const fmtPt=i=> (i.dataset._indicator&&i.dataset.yAxisID==='yInd')
-    ? `${i.dataset.label}: ${fmt.num(i.parsed.y,2)}`
-    : `${i.dataset.label}: ${fmt.num(i.parsed.y,2)}%`;
+  const fmtPt=i=> `${i.dataset.label}: ${fmt.num(i.parsed.y,2)}%`;
   const tooltipLabel=ctx=>'  '+fmtPt(ctx);
 
   function buildPriceOpts(){ return {
@@ -1203,8 +1245,7 @@ function updatePriceChart(){
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
     scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
-              y:{title:{display:true,text:'Normalised Price (base 100)',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}},
-              yInd:{display:hasOsc, position:'right', grid:{drawOnChartArea:false,color:gridColor}, ticks:{color:mutedColor,font:{family:'inherit',size:10}}, title:{display:true,text:'Indicator',color:mutedColor,font:{family:'inherit',size:10}}}}
+              y:{title:{display:true,text:'Normalised Price (base 100)',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
   };}
 
   if(priceChartInstance){
@@ -1214,15 +1255,94 @@ function updatePriceChart(){
     priceChartInstance.options.scales.x.title.color=mutedColor;
     priceChartInstance.options.scales.y.ticks.color=mutedColor; priceChartInstance.options.scales.y.grid.color=gridColor;
     priceChartInstance.options.scales.y.title.color=mutedColor;
-    if(priceChartInstance.options.scales.yInd){
-      priceChartInstance.options.scales.yInd.display=hasOsc;
-      priceChartInstance.options.scales.yInd.ticks.color=mutedColor;
-      priceChartInstance.options.scales.yInd.grid.color=gridColor;
-      priceChartInstance.options.scales.yInd.title.color=mutedColor;
-    }
     priceChartInstance.update('none');
   } else {
     priceChartInstance=new Chart($('priceCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildPriceOpts()});
+  }
+
+  updateIndicatorChart(allDates, oscGroups);
+}
+
+/* ─── INDICATOR (OSCILLATOR) CHART ─── */
+// Renders relative/oscillator indicators (RSI, MACD, ADX) — which require their
+// own value axis — in a dedicated window below the price chart. Buy dates are
+// marked with ▼ on each security's primary oscillator line.
+function updateIndicatorChart(allDates, oscGroups){
+  const section=$('indicatorSection');
+  if(!oscGroups || !oscGroups.length){
+    section.style.display='none';
+    if(indicatorChartInstance){ indicatorChartInstance.destroy(); indicatorChartInstance=null; }
+    $('indicatorLegend').innerHTML='';
+    return;
+  }
+  section.style.display='';
+  const gridColor=cssVar('--chart-grid'), mutedColor=cssVar('--chart-text'), textColor=cssVar('--text');
+  const legendEl=$('indicatorLegend'); legendEl.innerHTML='';
+  const hiddenSeries=new Set();
+  const dsForGroup={};
+  const datasets=[];
+
+  oscGroups.forEach((g,gi)=>{
+    dsForGroup[gi]=[];
+    g.lines.forEach(ln=>{
+      const dash=ln.dash==='dot'?[2,3]:ln.dash==='dash'?[7,4]:[];
+      dsForGroup[gi].push(datasets.length);
+      datasets.push({
+        label:`${g.secLabel} · ${ln.name}`,
+        data:ln.values.slice(),
+        borderColor:withAlpha(g.base, ln.fade||0.6),
+        backgroundColor:'transparent', borderWidth:1.6, pointRadius:0, pointHoverRadius:3,
+        borderDash:dash, tension:0.2, fill:false, spanGaps:true
+      });
+    });
+    // Buy markers on the primary oscillator line (first line of the group).
+    const main=g.lines[0];
+    const buyDates=new Set(g.res.investRows.map(r=>r.date));
+    dsForGroup[gi].push(datasets.length);
+    datasets.push({
+      label:`${g.secLabel} ▼ Buy`,
+      data:g.res.dailyRows.map((r,i)=> buyDates.has(r.date) ? (main.values[i]??null) : null),
+      borderColor:g.base, backgroundColor:g.base, showLine:false, spanGaps:false,
+      pointStyle:'triangle', rotation:180, pointRadius:7, pointHoverRadius:9,
+      pointBorderColor:'#fff', pointBorderWidth:1, _marker:true
+    });
+
+    const item=document.createElement('div');
+    item.className='legend-item';
+    item.innerHTML=`<span class="dot" style="background:${g.base}"></span><span>${g.secLabel}</span>`;
+    item.addEventListener('click',()=>{
+      if(hiddenSeries.has(gi)) hiddenSeries.delete(gi); else hiddenSeries.add(gi);
+      item.classList.toggle('hidden',hiddenSeries.has(gi));
+      if(indicatorChartInstance){
+        dsForGroup[gi].forEach(di=>indicatorChartInstance.setDatasetVisibility(di,!hiddenSeries.has(gi)));
+        indicatorChartInstance.update();
+      }
+    });
+    legendEl.appendChild(item);
+  });
+
+  const fmtPt=i=>`${i.dataset.label}: ${fmt.num(i.parsed.y,2)}`;
+  function buildOpts(){ return {
+    responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
+    plugins:{ legend:{display:false}, tooltip:{
+      callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>'  '+fmtPt(ctx),
+        afterBody(items){ if(items.length) $('indicatorHoverBox').textContent=`${items[0].label}  —  `+items.map(fmtPt).join('  |  '); }},
+      backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
+      zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
+    scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
+              y:{title:{display:true,text:'Indicator Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11}},grid:{color:gridColor}}}
+  };}
+
+  if(indicatorChartInstance){
+    indicatorChartInstance.data.labels=allDates; indicatorChartInstance.data.datasets=datasets;
+    indicatorChartInstance.options.scales.x.ticks.color=mutedColor; indicatorChartInstance.options.scales.x.grid.color=gridColor;
+    indicatorChartInstance.options.scales.x.ticks.callback=v=>allDates[Number(v)]?.slice(0,7)||'';
+    indicatorChartInstance.options.scales.x.title.color=mutedColor;
+    indicatorChartInstance.options.scales.y.ticks.color=mutedColor; indicatorChartInstance.options.scales.y.grid.color=gridColor;
+    indicatorChartInstance.options.scales.y.title.color=mutedColor;
+    indicatorChartInstance.update('none');
+  } else {
+    indicatorChartInstance=new Chart($('indicatorCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildOpts()});
   }
 }
 
@@ -1297,8 +1417,18 @@ function updateEquityChart(){
 
 $('priceResetZoom').addEventListener('click',()=>{ if(priceChartInstance) priceChartInstance.resetZoom(); });
 $('equityResetZoom').addEventListener('click',()=>{ if(equityChartInstance) equityChartInstance.resetZoom(); });
+$('indicatorResetZoom').addEventListener('click',()=>{ if(indicatorChartInstance) indicatorChartInstance.resetZoom(); });
 $('priceCanvas').addEventListener('mouseleave',()=>{ $('priceHoverBox').textContent='Hover to inspect data points.'; });
 $('equityCanvas').addEventListener('mouseleave',()=>{ $('equityHoverBox').textContent='Hover to inspect data points.'; });
+$('indicatorCanvas').addEventListener('mouseleave',()=>{ $('indicatorHoverBox').textContent='Hover to inspect indicator values.'; });
+
+// The "Show Indicators" toggle is only meaningful when at least one security
+// runs a technical-indicator strategy — hide it otherwise.
+function updateTechToggleVisibility(){
+  const wrap=$('techToggleWrap'); if(!wrap) return;
+  const anyTech=securities.some(s=>TECH_STYLES.includes(s.style));
+  wrap.style.display=anyTech?'':'none';
+}
 
 $('showDepositedToggle').addEventListener('change',e=>{
   showDeposited=e.target.checked;
@@ -1419,8 +1549,11 @@ $('resetBtn').addEventListener('click',()=>{
   currentRandomSeed=DEFAULT_RANDOM_SEED;
   if(priceChartInstance){ priceChartInstance.destroy(); priceChartInstance=null; }
   if(equityChartInstance){ equityChartInstance.destroy(); equityChartInstance=null; }
+  if(indicatorChartInstance){ indicatorChartInstance.destroy(); indicatorChartInstance=null; }
   if(sensitivityChartInstance){ sensitivityChartInstance.destroy(); sensitivityChartInstance=null; }
   $('sensitivitySection').style.display='none';
+  $('indicatorSection').style.display='none';
+  $('indicatorLegend').innerHTML='';
   renderSecList();
   $('summaryGrid').innerHTML='';
   $('milestoneBody').innerHTML='<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">Add securities to see milestones.</td></tr>';
@@ -1652,8 +1785,14 @@ $('sensCopyPngBtn').addEventListener('click', async () => {
   try { await copyCanvasPngToClipboard(downloadChartPng('sensCanvas', 'dca_sensitivity_chart.png', 'DCA Sensitivity Analysis — ' + subtitle, null, false)); alert('PNG copied to clipboard.'); }
   catch(err){ alert('PNG copy failed: ' + err.message); }
 });
+$('indicatorPngBtn').addEventListener('click', () => downloadChartPng('indicatorCanvas', 'dca_indicators_chart.png', 'DCA Scenario Explorer — Technical Indicators', 'indicatorLegend'));
+$('indicatorCopyPngBtn').addEventListener('click', async () => {
+  try { await copyCanvasPngToClipboard(downloadChartPng('indicatorCanvas', 'dca_indicators_chart.png', 'DCA Scenario Explorer — Technical Indicators', 'indicatorLegend', false)); alert('PNG copied to clipboard.'); }
+  catch(err){ alert('PNG copy failed: ' + err.message); }
+});
 $('priceSvgBtn').addEventListener('click', () => downloadChartSvg('priceCanvas', 'dca_price_chart.svg', 'DCA Scenario Explorer — Security Prices (Normalised to 100)', 'priceLegend'));
 $('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend'));
+$('indicatorSvgBtn').addEventListener('click', () => downloadChartSvg('indicatorCanvas', 'dca_indicators_chart.svg', 'DCA Scenario Explorer — Technical Indicators', 'indicatorLegend'));
 $('sensSvgBtn').addEventListener('click', () => {
   const subtitle = document.getElementById('sensChartSubtitle')?.textContent || 'Sensitivity Analysis';
   downloadChartSvg('sensCanvas', 'dca_sensitivity_chart.svg', 'DCA Sensitivity Analysis — ' + subtitle, null);
@@ -1724,11 +1863,12 @@ function updateSensStyleInfo(){
   }
 }
 
-function calcFinalEquityForParams(priceData, style, dayOrDate, momentumPct, momentumEOM, amount){
+function calcFinalEquityForParams(priceData, style, dayOrDate, momentumPct, momentumEOM, amount, yearlyIncrease){
   const idxs=getInvestmentDates(priceData, style, dayOrDate, momentumPct, momentumEOM);
   if(!idxs.length) return 0;
+  const startStr=priceData.dates[0];
   let units=0;
-  idxs.forEach(i=>{ units+=amount/priceData.prices[i]; });
+  idxs.forEach(i=>{ units+=investAmountAt(amount, yearlyIncrease||0, startStr, priceData.dates[i])/priceData.prices[i]; });
   return units*priceData.prices[priceData.prices.length-1];
 }
 
@@ -1777,13 +1917,13 @@ async function runSensitivityAnalysis(){
     if(isMonthly){
       for(let d=1;d<=28;d++){
         labels.push('Day '+d);
-        values.push(calcFinalEquityForParams(priceData, style, d, sec.momentumPct, sec.momentumEOM, sec.amount));
+        values.push(calcFinalEquityForParams(priceData, style, d, sec.momentumPct, sec.momentumEOM, sec.amount, sec.yearlyIncrease));
       }
     } else if(isWeekly){
       const dayNames=['Mon','Tue','Wed','Thu','Fri'];
       for(let d=1;d<=5;d++){
         labels.push(dayNames[d-1]);
-        values.push(calcFinalEquityForParams(priceData, style, d, sec.momentumPct, sec.momentumEOM, sec.amount));
+        values.push(calcFinalEquityForParams(priceData, style, d, sec.momentumPct, sec.momentumEOM, sec.amount, sec.yearlyIncrease));
       }
     } else if(isMomentum){
       const sv=Math.max(0.1,parseFloat($('sensThreshStart').value)||1);
@@ -1794,7 +1934,7 @@ async function runSensitivityAnalysis(){
       for(let i=0;i<=numSteps;i++){
         const t=Math.round((sv+i*step)*10)/10;
         labels.push(t+'%');
-        values.push(calcFinalEquityForParams(priceData, style, sec.dayOrDate, t, sec.momentumEOM, sec.amount));
+        values.push(calcFinalEquityForParams(priceData, style, sec.dayOrDate, t, sec.momentumEOM, sec.amount, sec.yearlyIncrease));
       }
     }
 
