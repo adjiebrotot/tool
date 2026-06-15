@@ -1532,8 +1532,52 @@ $('resetBtn').addEventListener('click',()=>{
   $('currencySymbol').value='$';
   $('randomSeed').value=DEFAULT_RANDOM_SEED;
   hideStatus($('fetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
+  document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
   initializeDefaultSecurities();
   runSimulation();
+});
+
+/* ─── QUICK START PRESETS ─── */
+// One-click worked examples. Each rebuilds the securities list with live-ticker
+// securities, then runs the simulation so real Yahoo Finance prices are fetched
+// (no simulated/custom data). Ideas: schedule, asset class, and instrument type.
+const QUICK_START_PRESETS = {
+  'monthly-weekly':[
+    {type:'ticker', ticker:'SPY', name:'SPY — $520 / month', amount:520, style:'monthly-date', dayOrDate:1},
+    {type:'ticker', ticker:'SPY', name:'SPY — $120 / week',  amount:120, style:'weekly-day',  dayOrDate:1},
+  ],
+  'equity-mmf':[
+    {type:'ticker', ticker:'DHHF.AX', name:'DHHF.AX — Equity ETF',       amount:500, style:'monthly-date', dayOrDate:1},
+    {type:'ticker', ticker:'AAA.AX',  name:'AAA.AX — Money Market Fund', amount:500, style:'monthly-date', dayOrDate:1},
+  ],
+  'stock-etf':[
+    {type:'ticker', ticker:'AAPL', name:'AAPL — Individual Stock', amount:500, style:'monthly-date', dayOrDate:1},
+    {type:'ticker', ticker:'SPY',  name:'SPY — ETF',               amount:500, style:'monthly-date', dayOrDate:1},
+  ],
+};
+
+async function applyQuickStart(key){
+  const defs = QUICK_START_PRESETS[key];
+  if(!defs) return;
+  // Rebuild the securities list from the preset (keep cached prices for speed).
+  securities=[]; simResults=[]; latestRows=[]; secIdCounter=0;
+  hideWarning();
+  defs.forEach(d=> addSecurity(d));
+  const secTabBtn=document.querySelector('.ctrl-tab[data-tab="securities"]');
+  if(secTabBtn && !secTabBtn.classList.contains('active')) secTabBtn.click();
+  renderSecList();
+  document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.toggle('active', b.dataset.preset===key));
+  await runSimulation();
+}
+
+document.querySelectorAll('.quick-start-btn').forEach(btn=>{
+  btn.addEventListener('click', async()=>{
+    if(btn.disabled) return;
+    const all=[...document.querySelectorAll('.quick-start-btn')];
+    all.forEach(b=>b.disabled=true);
+    try { await applyQuickStart(btn.dataset.preset); }
+    finally { all.forEach(b=>b.disabled=false); }
+  });
 });
 
 /* ─── DOWNLOAD CHART PNG ─── */

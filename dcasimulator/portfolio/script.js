@@ -1040,10 +1040,83 @@ $('resetBtn').addEventListener('click',()=>{
   $('valueHoverBox').textContent='Configure portfolios and run to compare value over time.';
   $('compHoverBox').textContent='Cash and each asset stack up to total portfolio value.';
   hideStatus($('assetFetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
+  document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
   initDefaults();
   loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();
   switchTab('portfolios');
   runSimulation();
+});
+
+/* ─── QUICK START PRESETS ─── */
+// One-click worked comparisons built from live-ticker assets. Each rebuilds the
+// portfolio list, then runs the simulation so real Yahoo Finance prices are
+// fetched (no simulated/custom data).
+function qsAddPortfolio(name, colorIdx, assets, opts){
+  const p = addPortfolio(name, PORTFOLIO_COLOR_HEX[colorIdx % PORTFOLIO_COLOR_HEX.length]);
+  activePortfolioId = p.id;
+  assets.forEach(a=> addAsset({type:'ticker', ticker:a.ticker, name:a.name||a.ticker, weight:a.weight}));
+  opts = opts || {};
+  if(opts.topup!=null)     p.topup.amount       = opts.topup;
+  if(opts.topupPeriod)     p.topupSched.period   = opts.topupPeriod;
+  if(opts.method)          p.rebal.method        = opts.method;
+  if(opts.cwTiming)        p.rebal.cwTiming      = opts.cwTiming;
+  if(opts.rebalPeriod)     p.rebalSched.period   = opts.rebalPeriod;
+  return p;
+}
+
+const PORTFOLIO_QUICK_START = {
+  // 80/20 vs 60/40 — growth vs conservative allocation, equity (DHHF.AX) vs cash (AAA.AX).
+  'alloc'(){
+    qsAddPortfolio('60/40 (DHHF/AAA)', 0,
+      [{ticker:'DHHF.AX', name:'DHHF.AX — Equity', weight:60},{ticker:'AAA.AX', name:'AAA.AX — Cash', weight:40}],
+      {topup:1000, topupPeriod:'monthly', method:'towards-weight'});
+    qsAddPortfolio('80/20 (DHHF/AAA)', 1,
+      [{ticker:'DHHF.AX', name:'DHHF.AX — Equity', weight:80},{ticker:'AAA.AX', name:'AAA.AX — Cash', weight:20}],
+      {topup:1000, topupPeriod:'monthly', method:'towards-weight'});
+  },
+  // Rebalancing Monthly vs Quarterly — same 50:50 SPY/GOVT, different rebalance cadence.
+  'rebal-freq'(){
+    qsAddPortfolio('Rebalance Monthly', 0,
+      [{ticker:'SPY', name:'SPY — Equity', weight:50},{ticker:'GOVT', name:'GOVT — Bonds', weight:50}],
+      {topup:1000, topupPeriod:'monthly', method:'constant-weight', cwTiming:'schedule', rebalPeriod:'monthly'});
+    qsAddPortfolio('Rebalance Quarterly', 1,
+      [{ticker:'SPY', name:'SPY — Equity', weight:50},{ticker:'GOVT', name:'GOVT — Bonds', weight:50}],
+      {topup:1000, topupPeriod:'monthly', method:'constant-weight', cwTiming:'schedule', rebalPeriod:'quarterly'});
+  },
+  // Rebalancing vs Constant Allocation — maintain SPY/GOVT 50:50 (constant weight)
+  // vs always splitting each top-up 50:50 (constant allocation).
+  'rebal-vs-alloc'(){
+    qsAddPortfolio('Constant Weight (rebalanced)', 0,
+      [{ticker:'SPY', name:'SPY — Equity', weight:50},{ticker:'GOVT', name:'GOVT — Bonds', weight:50}],
+      {topup:1000, topupPeriod:'monthly', method:'constant-weight', cwTiming:'at-topup'});
+    qsAddPortfolio('Constant Allocation (split 50:50)', 1,
+      [{ticker:'SPY', name:'SPY — Equity', weight:50},{ticker:'GOVT', name:'GOVT — Bonds', weight:50}],
+      {topup:1000, topupPeriod:'monthly', method:'constant-allocation'});
+  },
+};
+
+async function applyPortfolioQuickStart(key){
+  const build = PORTFOLIO_QUICK_START[key];
+  if(!build) return;
+  portfolios=[]; portfolioIdCounter=0; activePortfolioId=null;
+  simResults=[]; commonDates=[];
+  hideWarning();
+  build();
+  activePortfolioId = portfolios.length ? portfolios[0].id : null;
+  loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();
+  switchTab('portfolios');
+  document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.toggle('active', b.dataset.preset===key));
+  await runSimulation();
+}
+
+document.querySelectorAll('.quick-start-btn').forEach(btn=>{
+  btn.addEventListener('click', async()=>{
+    if(btn.disabled) return;
+    const all=[...document.querySelectorAll('.quick-start-btn')];
+    all.forEach(b=>b.disabled=true);
+    try { await applyPortfolioQuickStart(btn.dataset.preset); }
+    finally { all.forEach(b=>b.disabled=false); }
+  });
 });
 
 /* ─── INIT ─── */
