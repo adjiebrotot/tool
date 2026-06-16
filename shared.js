@@ -87,9 +87,9 @@
      SharedYF.setEndpoint('https://NAME.SUBDOMAIN.workers.dev') once at startup).
      ──────────────────────────────────────────────────────────────────────── */
 
-  // ▼▼▼ AFTER DEPLOYING yf-proxy-worker.js, PUT ITS URL HERE ▼▼▼
-  var WORKER_ENDPOINT = 'https://REPLACE-WITH-YOUR-WORKER.workers.dev';
-  // ▲▲▲ e.g. 'https://dca-market-data.adjiebrotots.workers.dev' ▲▲▲
+  // ▼▼▼ Deployed market-data Worker (dcasimulator/yf-proxy-worker.js) ▼▼▼
+  var WORKER_ENDPOINT = 'https://yfinance.adjiebrotots.workers.dev';
+  // ▲▲▲ change here if the Worker is ever redeployed under a new name ▲▲▲
 
   var MAX_PER_REQUEST = 25; // must match the Worker's MAX_TICKERS cap
 
