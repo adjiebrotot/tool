@@ -87,12 +87,50 @@
   </div>
   <div class="ctrl-scroll">
   <div class="ctrl-tabs">
-    <button class="ctrl-tab active" data-tab="portfolios">📁 Portfolios</button>
+    <button class="ctrl-tab active" data-tab="data">📥 Data</button>
+    <button class="ctrl-tab" data-tab="portfolios">📁 Portfolios</button>
     <button class="ctrl-tab" data-tab="settings">⚙️ Settings</button>
   </div>
 
+  <!-- DATA TAB -->
+  <div class="ctrl-panel active" id="tab-data">
+    <div class="section-label" style="margin-top:0">Data Download</div>
+    <div class="field-row" style="border-top:none;padding-top:0">
+      <div class="add-sec-area" style="border-top:none;padding-top:4px">
+        <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">Tickers <span class="tip-icon" data-tip="Enter every ticker you want to compare (comma-separated)">?</span></div>
+        <textarea class="txt-input" id="tickerPoolInput" rows="2" placeholder="e.g. SPY, GOVT, DHHF.AX, AAA.AX" style="text-transform:uppercase;width:100%;resize:vertical;font-family:inherit;line-height:1.4"></textarea>
+        <a href="../ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
+        <div class="add-sec-row" style="gap:6px;margin-top:8px">
+          <button class="btn-primary" id="loadTickersBtn" style="flex:2">⤓ Load tickers</button>
+          <button class="btn-secondary" id="editTickersBtn" style="flex:1;display:none">✎ Edit list</button>
+        </div>
+        <div class="status-bar" id="poolStatus"></div>
+        <div id="poolChipsWrap" style="display:none;margin-top:9px">
+          <div class="field-label" style="margin-bottom:5px">Loaded tickers</div>
+          <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Date Range</div>
+    <div class="field-row" style="border-top:none;padding-top:0">
+      <div class="field-sub">The simulation uses the overlapping date range shared by every asset (and the risk-free ticker, if used). <span class="tip-icon" data-tip="Each ticker is trimmed to the common set of trading days so the portfolio is evaluated on dates where all assets have prices.">?</span></div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <div style="flex:1">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">Start</div>
+          <input class="txt-input" type="date" id="startDate" />
+        </div>
+        <div style="flex:1">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">End</div>
+          <input class="txt-input" type="date" id="endDate" />
+        </div>
+      </div>
+      <div class="status-bar" id="dateRangeStatus"></div>
+    </div>
+  </div>
+
   <!-- PORTFOLIOS TAB -->
-  <div class="ctrl-panel active" id="tab-portfolios">
+  <div class="ctrl-panel" id="tab-portfolios">
     <!-- PORTFOLIO BAR — one tab per portfolio. Click to edit, double-click to rename. -->
     <div class="pf-bar">
       <!-- portfolio tabs flow here; the inline + Add button is appended after the last tab by renderPortfolioList() -->
@@ -112,34 +150,33 @@
       <button class="sub-tab" data-sub="rebal" type="button">⚖️ Rebalancing</button>
     </div>
 
-    <!-- ASSETS SUBTAB -->
+    <!-- ASSETS SUBTAB — add form and the asset/weight list flow as one section -->
     <div class="sub-panel active" id="sub-assets">
-    <div class="section-label" style="margin-top:0">Add Asset</div>
+    <div class="section-label" style="margin-top:0">Assets &amp; Weights</div>
     <div class="add-sec-area" style="border-top:none;padding-top:4px">
       <div class="add-sec-row" style="gap:6px;align-items:center">
         <input class="txt-input" id="newAssetName" placeholder="Asset name" style="flex:1;min-width:0" />
         <input type="color" id="newAssetColor" title="Pick colour (optional)" style="width:34px;height:34px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--input-bg);padding:2px;flex-shrink:0" />
       </div>
       <div class="radio-group" style="margin-top:8px">
-        <label class="radio-opt selected" id="atypeOptCustom">
-          <input type="radio" name="newAssetType" value="custom" checked/>
+        <label class="radio-opt selected" id="atypeOptTicker">
+          <input type="radio" name="newAssetType" value="ticker" checked/>
+          <div class="radio-opt-text"><strong>Ticker</strong>Real price data — pick from your loaded tickers</div>
+        </label>
+        <label class="radio-opt" id="atypeOptCustom">
+          <input type="radio" name="newAssetType" value="custom"/>
           <div class="radio-opt-text"><strong>Custom</strong>Simulated asset (define return &amp; volatility)</div>
         </label>
-        <label class="radio-opt" id="atypeOptTicker">
-          <input type="radio" name="newAssetType" value="ticker"/>
-          <div class="radio-opt-text"><strong>Ticker</strong>Live price data from Yahoo Finance</div>
-        </label>
       </div>
-      <div id="assetTickerRow" style="display:none;margin-top:6px">
-        <input class="txt-input" id="assetTickerInput" placeholder="e.g. AAPL, SPY, VAS.AX" style="text-transform:uppercase;width:100%" />
-        <a href="../ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
+      <div id="assetTickerRow" style="margin-top:6px">
+        <select class="txt-input" id="assetTickerSelect" style="width:100%;cursor:pointer"></select>
+        <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Only tickers loaded in the Data tab can be added. Load more there to expand this list.</div>
       </div>
       <button class="btn-primary" id="addAssetBtn" style="margin-top:8px;width:100%">+ Add Asset</button>
       <div class="status-bar" id="assetFetchStatus"></div>
     </div>
 
-    <div class="section-label">Assets &amp; Weights</div>
-    <div id="assetList" class="sec-list"></div>
+    <div id="assetList" class="sec-list" style="margin-top:12px"></div>
     <div class="weight-summary" id="weightSummary"></div>
   </div>
 
@@ -276,22 +313,6 @@
       <div class="field-label">Simulation Seed</div>
       <input class="num-input" id="randomSeed" type="number" min="0" step="1" value="25823952204" />
       <div class="field-sub">Drives custom-asset price randomness (GBM).</div>
-    </div>
-
-    <div class="section-label">Date Range</div>
-    <div class="field-row" style="border-top:none;padding-top:0">
-      <div class="field-sub">The simulation uses the overlapping date range shared by every asset (and the risk-free ticker, if used). <span class="tip-icon" data-tip="Each ticker is trimmed to the common set of trading days so the portfolio is evaluated on dates where all assets have prices.">?</span></div>
-      <div style="display:flex;gap:8px;margin-top:6px">
-        <div style="flex:1">
-          <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">Start</div>
-          <input class="txt-input" type="date" id="startDate" />
-        </div>
-        <div style="flex:1">
-          <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">End</div>
-          <input class="txt-input" type="date" id="endDate" />
-        </div>
-      </div>
-      <div class="status-bar" id="dateRangeStatus"></div>
     </div>
   </div>
 

@@ -46,6 +46,7 @@ let showTechIndicators = false;
 let showBuyDates = false;
 let currentCurrencySymbol = '$';
 let secIdCounter = 0;
+let activeSecurityId = null;   // the scenario currently being edited in the sidebar
 let runDebounceTimer = null;
 let currentRandomSeed = DEFAULT_RANDOM_SEED;
 
@@ -70,10 +71,11 @@ function withAlpha(c,a){
   return c;
 }
 function showStatus(el, msg, type){
+  if(!el) return;
   el.className = 'status-bar status-'+type;
   el.innerHTML = (type==='loading'?'<span class="spinner"></span>':'')+msg;
 }
-function hideStatus(el){ el.className='status-bar'; el.textContent=''; }
+function hideStatus(el){ if(!el) return; el.className='status-bar'; el.textContent=''; }
 
 function scheduleRun(){ /* no-op – simulation is manual via ▶ Simulate */ }
 
@@ -192,6 +194,8 @@ async function fetchYahooFinance(ticker, startDate, endDate){
 
 /* ─── SECURITY MANAGEMENT ─── */
 function getColor(idx){ return LINE_COLORS[idx % LINE_COLORS.length]; }
+function getActiveSec(){ return securities.find(s=>s.id===activeSecurityId) || null; }
+function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 function addSecurity(cfg){
   const id = ++secIdCounter;
@@ -219,93 +223,157 @@ function addSecurity(cfg){
   // Ensure colorHex from cfg overrides the default set above
   if(cfg.colorHex) sec.colorHex = cfg.colorHex;
   securities.push(sec);
+  activeSecurityId = sec.id;
   renderSecList();
   return sec;
 }
 
 function removeSecurity(id){
+  const idx = securities.findIndex(s=>s.id===id);
   securities = securities.filter(s=>s.id!==id);
+  if(activeSecurityId===id) activeSecurityId = securities.length ? securities[Math.max(0,Math.min(idx,securities.length-1))].id : null;
   renderSecList();
 }
 
-function renderSecList(){
-  const el=$('secList');
-  if(!securities.length){
-    el.innerHTML='<div style="color:var(--muted);font-size:.82rem;padding:8px 0">No securities added yet.</div>';
-    return;
-  }
-  el.innerHTML='';
-  securities.forEach((sec)=>{
-    const card=document.createElement('div');
-    card.className='sec-card';
-    card.innerHTML=`
-      <div class="sec-header" data-id="${sec.id}">
-        <span class="color-dot" style="background:${getSecColor(sec)}"></span>
-        <span class="sec-name">${sec.name}</span>
-        <span class="sec-badge ${sec.type==='ticker'?'badge-ticker':'badge-custom'}">${sec.type==='ticker'?'📊 Ticker':'⚙️ Custom'}</span>
-        <span style="color:var(--muted);font-size:.9rem">${sec.open?'▲':'▼'}</span>
-      </div>
-      <div class="sec-body ${sec.open?'open':''}" id="secBody${sec.id}">
-        ${sec.type==='custom'?`
-        <div class="sec-row">
-          <label>Return (% p.a.) <span class="tip-icon" data-tip="Expected annual return used to generate a simulated price path via Geometric Brownian Motion.">?</span></label>
-          <input class="num-input" id="secReturn${sec.id}" type="number" min="-50" max="200" step="0.5" value="${sec.returnPct}" style="max-width:80px"/>
-        </div>
-        <div class="sec-row">
-          <label>Standard deviation (%) <span class="tip-icon" data-tip="Annual volatility (standard deviation). Higher values produce more volatile simulated paths.">?</span></label>
-          <input class="num-input" id="secStd${sec.id}" type="number" min="0" max="200" step="0.5" value="${sec.stdPct}" style="max-width:80px"/>
-        </div>`:
-        `<div class="sec-row" style="align-items:center">
-          <span style="font-size:.8rem;color:var(--muted)">Ticker: <strong style="color:var(--text)">${sec.ticker}</strong></span>
-          <span class="status-bar ${sec.loaded?'status-ok':''}" style="display:inline-block;font-size:.75rem;padding:2px 8px;margin-left:4px" id="secLoadStatus${sec.id}">${sec.loaded?'✓ Loaded':'Not loaded'}</span>
-        </div>`}
-        <div class="sec-row">
-          <label>Amount per invest <span class="tip-icon" data-tip="Base amount invested on each DCA purchase date (before any yearly increase).">?</span></label>
-          <input class="num-input" id="secAmount${sec.id}" type="number" min="1" step="50" value="${sec.amount}" style="max-width:100px"/>
-        </div>
-        <div class="sec-row">
-          <label>Yearly increase (%) <span class="tip-icon" data-tip="Compounds the invested amount each full year. 0 keeps the amount constant; e.g. 10 raises it by 10% every year (year 2 = +10%, year 3 = +21%, …).">?</span></label>
-          <input class="num-input" id="secYearlyInc${sec.id}" type="number" min="0" max="100" step="1" value="${sec.yearlyIncrease||0}" style="max-width:100px"/>
-        </div>
-        <div style="padding:6px 0 0">
-          <div style="font-size:.8rem;font-weight:700;margin-bottom:6px">Investment Style</div>
-          <div id="styleBlock${sec.id}">${styleBlockInner(sec)}</div>
-        </div>
-        <button class="sec-del" id="secDel${sec.id}" style="margin-top:8px">🗑 Remove</button>
-      </div>`;
-    el.appendChild(card);
+// Copy the active scenario (deep clone of its settings), insert after it, and select it.
+function duplicateSecurity(id){
+  const src = securities.find(s=>s.id===id); if(!src) return;
+  const colorIdx = securities.length % LINE_COLORS.length;
+  const copy = JSON.parse(JSON.stringify(src));
+  copy.id = ++secIdCounter;
+  copy.name = src.name + ' (copy)';
+  copy.colorVar = getColor(colorIdx);
+  copy.colorName = COLOR_NAMES[colorIdx];
+  copy.colorHex = LINE_COLOR_HEX[colorIdx];
+  copy.priceData = null; copy.loaded = false; copy.open = true;
+  const idx = securities.findIndex(s=>s.id===id);
+  securities.splice(idx+1, 0, copy);
+  activeSecurityId = copy.id;
+  renderSecList();
+}
 
-    // Accordion: only one sec-body open at a time
-    card.querySelector('.sec-header').addEventListener('click',()=>{
-      const willOpen=!sec.open;
-      if(willOpen){
-        securities.forEach(s=>{
-          if(s.id!==sec.id && s.open){
-            s.open=false;
-            const b=$('secBody'+s.id); if(b) b.classList.remove('open');
-            const h=document.querySelector(`.sec-header[data-id="${s.id}"] span:last-child`);
-            if(h) h.textContent='▼';
-          }
-        });
-      }
-      sec.open=willOpen;
-      card.querySelector('.sec-body').classList.toggle('open',sec.open);
-      card.querySelector('.sec-header span:last-child').textContent=sec.open?'▲':'▼';
-    });
-    $(`secDel${sec.id}`).addEventListener('click',()=>{ removeSecurity(sec.id); scheduleRun(); });
-    $(`secAmount${sec.id}`).addEventListener('input',e=>{ sec.amount=parseFloat(e.target.value)||100; scheduleRun(); });
-    $(`secYearlyInc${sec.id}`).addEventListener('input',e=>{ const v=parseFloat(e.target.value); sec.yearlyIncrease=isNaN(v)?0:Math.max(0,v); scheduleRun(); });
-    if(sec.type==='custom'){
-      $(`secReturn${sec.id}`).addEventListener('input',e=>{ sec.returnPct=parseFloat(e.target.value)||8; scheduleRun(); });
-      $(`secStd${sec.id}`).addEventListener('input',e=>{ sec.stdPct=parseFloat(e.target.value)||15; scheduleRun(); });
-    }
-    wireStyleBlock(sec);
-  });
-  // Update color picker default to the next available slot
-  const cp=$('newSecColor');
-  if(cp) cp.value = LINE_COLOR_HEX[securities.length % LINE_COLOR_HEX.length];
+// Render both halves of the scenario UI (tab bar + active-scenario editor).
+function renderSecList(){
+  if(activeSecurityId==null && securities.length) activeSecurityId = securities[0].id;
+  renderScenarioBar();
+  renderScenarioConfig();
   updateSensSecurityDropdown();
   updateTechToggleVisibility();
+}
+
+/* ─── SCENARIO BAR — one tab per scenario (click to edit, double-click to rename) ─── */
+function renderScenarioBar(){
+  const el=$('scenarioTabs'); if(!el) return;
+  el.innerHTML='';
+  securities.forEach(sec=>{
+    const tab=document.createElement('div');
+    tab.className='sc-tab'+(sec.id===activeSecurityId?' active':'');
+    tab.title=sec.name;
+
+    const dot=document.createElement('input');
+    dot.type='color'; dot.className='sc-tab-dot'; dot.value=sec.colorHex||LINE_COLOR_HEX[0]; dot.title='Pick colour';
+    dot.addEventListener('click',e=>e.stopPropagation());
+    dot.addEventListener('input',e=>{ sec.colorHex=e.target.value; renderScenarioBar(); if(simResults.length){ updatePriceChart(); updateEquityChart(); updateTables(); } });
+    tab.appendChild(dot);
+
+    const name=document.createElement('span');
+    name.className='sc-tab-name'; name.textContent=sec.name||'Scenario';
+    tab.appendChild(name);
+
+    const badge=document.createElement('span');
+    badge.className='sc-tab-badge'; badge.textContent=sec.type==='ticker'?'📊':'⚙️';
+    tab.appendChild(badge);
+
+    tab.addEventListener('click',()=>{ if(sec.id!==activeSecurityId){ activeSecurityId=sec.id; renderScenarioBar(); renderScenarioConfig(); } });
+    tab.addEventListener('dblclick',()=>startRenameScenario(tab, sec));
+    el.appendChild(tab);
+  });
+}
+
+function startRenameScenario(tab, sec){
+  const nameSpan=tab.querySelector('.sc-tab-name'); if(!nameSpan) return;
+  const input=document.createElement('input');
+  input.type='text'; input.className='sc-tab-rename'; input.value=sec.name;
+  input.addEventListener('click',e=>e.stopPropagation());
+  input.addEventListener('dblclick',e=>e.stopPropagation());
+  const commit=()=>{ sec.name=input.value.trim()||sec.name; renderScenarioBar(); renderScenarioConfig(); };
+  input.addEventListener('blur',commit);
+  input.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); commit(); } if(e.key==='Escape'){ renderScenarioBar(); } });
+  nameSpan.replaceWith(input); input.focus(); input.select();
+}
+
+/* ─── CONFIGURE SCENARIO — editor bound to the active scenario ─── */
+function renderScenarioConfig(){
+  const wrap=$('scenarioConfig'); if(!wrap) return;
+  const sec=getActiveSec();
+  if(!sec){
+    wrap.innerHTML='<div style="color:var(--muted);font-size:.82rem;padding:8px 0">No scenario yet — click + to add one.</div>';
+    return;
+  }
+  const tks=loadedTickers();
+  const tickerBody = tks.length
+    ? `<select class="txt-input" id="cfgTickerSelect" style="width:100%;cursor:pointer">${tks.map(tk=>`<option value="${tk}" ${sec.ticker===tk?'selected':''}>${tk}</option>`).join('')}</select>
+       <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Only tickers loaded in ① can be used. Load more above to expand this list.</div>`
+    : `<div class="status-bar status-warn" style="display:block">No tickers loaded yet — add them in ① Data Download first.</div>`;
+  wrap.innerHTML=`
+    <div class="add-sec-area" style="border-top:none;padding-top:0">
+      <div class="add-sec-row" style="gap:6px;align-items:center">
+        <input class="txt-input" id="cfgName" placeholder="Scenario name" value="${escapeHtml(sec.name)}" style="flex:1;min-width:0"/>
+        <input type="color" id="cfgColor" value="${sec.colorHex||LINE_COLOR_HEX[0]}" title="Pick colour" style="width:34px;height:34px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--input-bg);padding:2px;flex-shrink:0"/>
+      </div>
+      <div class="radio-group" style="margin-top:8px">
+        <label class="radio-opt${sec.type==='ticker'?' selected':''}" id="cfgTypeTicker">
+          <input type="radio" name="cfgType" value="ticker" ${sec.type==='ticker'?'checked':''}/>
+          <div class="radio-opt-text"><strong>Ticker</strong>Real price data — pick from your loaded tickers</div>
+        </label>
+        <label class="radio-opt${sec.type==='custom'?' selected':''}" id="cfgTypeCustom">
+          <input type="radio" name="cfgType" value="custom" ${sec.type==='custom'?'checked':''}/>
+          <div class="radio-opt-text"><strong>Custom</strong>Simulated asset (define return &amp; volatility)</div>
+        </label>
+      </div>
+      ${sec.type==='ticker'
+        ? `<div style="margin-top:8px">${tickerBody}</div>`
+        : `<div class="sec-row" style="margin-top:8px">
+             <label>Return (% p.a.) <span class="tip-icon" data-tip="Expected annual return used to generate a simulated price path via Geometric Brownian Motion.">?</span></label>
+             <input class="num-input" id="cfgReturn" type="number" min="-50" max="200" step="0.5" value="${sec.returnPct}" style="max-width:80px"/>
+           </div>
+           <div class="sec-row">
+             <label>Standard deviation (%) <span class="tip-icon" data-tip="Annual volatility (standard deviation). Higher values produce more volatile simulated paths.">?</span></label>
+             <input class="num-input" id="cfgStd" type="number" min="0" max="200" step="0.5" value="${sec.stdPct}" style="max-width:80px"/>
+           </div>`}
+      <div class="sec-row">
+        <label>Amount per invest <span class="tip-icon" data-tip="Base amount invested on each DCA purchase date (before any yearly increase).">?</span></label>
+        <input class="num-input" id="cfgAmount" type="number" min="1" step="50" value="${sec.amount}" style="max-width:100px"/>
+      </div>
+      <div class="sec-row">
+        <label>Yearly increase (%) <span class="tip-icon" data-tip="Compounds the invested amount each full year. 0 keeps the amount constant; e.g. 10 raises it by 10% every year (year 2 = +10%, year 3 = +21%, …).">?</span></label>
+        <input class="num-input" id="cfgYearlyInc" type="number" min="0" max="100" step="1" value="${sec.yearlyIncrease||0}" style="max-width:100px"/>
+      </div>
+      <div style="padding:6px 0 0">
+        <div style="font-size:.8rem;font-weight:700;margin-bottom:6px">Investment Style</div>
+        <div id="styleBlock${sec.id}">${styleBlockInner(sec)}</div>
+      </div>
+    </div>`;
+
+  $('cfgName').addEventListener('input',e=>{ sec.name=e.target.value; renderScenarioBar(); });
+  $('cfgColor').addEventListener('input',e=>{ sec.colorHex=e.target.value; renderScenarioBar(); if(simResults.length){ updatePriceChart(); updateEquityChart(); updateTables(); } });
+  document.querySelectorAll('input[name="cfgType"]').forEach(r=>{
+    r.addEventListener('change',()=>{
+      sec.type=r.value;
+      if(sec.type==='ticker'){ const t=loadedTickers(); if(t.length && !t.includes(sec.ticker)) sec.ticker=t[0]; }
+      renderScenarioBar();
+      renderScenarioConfig();
+      updateSensSecurityDropdown();
+      updateTechToggleVisibility();
+      scheduleRun();
+    });
+  });
+  const tsel=$('cfgTickerSelect'); if(tsel) tsel.addEventListener('change',e=>{ sec.ticker=e.target.value; scheduleRun(); });
+  const ret=$('cfgReturn'); if(ret) ret.addEventListener('input',e=>{ sec.returnPct=parseFloat(e.target.value)||8; scheduleRun(); });
+  const std=$('cfgStd'); if(std) std.addEventListener('input',e=>{ sec.stdPct=parseFloat(e.target.value)||15; scheduleRun(); });
+  $('cfgAmount').addEventListener('input',e=>{ sec.amount=parseFloat(e.target.value)||100; scheduleRun(); });
+  $('cfgYearlyInc').addEventListener('input',e=>{ const v=parseFloat(e.target.value); sec.yearlyIncrease=isNaN(v)?0:Math.max(0,v); scheduleRun(); });
+  wireStyleBlock(sec);
 }
 
 function renderStyleOpt(sec,s){
@@ -590,33 +658,30 @@ function storeBatchResult(tk, r, fetchStart, fetchEnd){
   return true;
 }
 
+// Once anything is cached, the load action is additive — relabel the button so
+// users know subsequent loads add to (not replace) the pool.
+function loadBtnLabel(){ return loadedTickers().length ? '⤓ Load additional tickers' : '⤓ Load tickers'; }
+function updateLoadBtnLabel(){ const b=$('loadTickersBtn'); if(b && !b.disabled) b.innerHTML=loadBtnLabel(); }
+
 function renderPoolChips(){
   const box = $('poolChips');
   if(!box) return;
   const tks = loadedTickers();
-  if(!tks.length){ box.innerHTML=''; return; }
+  const wrap = $('poolChipsWrap');
+  if(!tks.length){ box.innerHTML=''; if(wrap) wrap.style.display='none'; updateLoadBtnLabel(); return; }
+  if(wrap) wrap.style.display='';
   box.innerHTML = tks.map(tk=>{
     const e = priceCache[tk];
     const warn = (e && e.kind==='stock' && e.source==='stooq');
     const title = warn ? 'Loaded from Stooq (unadjusted for splits/dividends)' : (e?e.dates.length+' trading days':'');
     return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}</span>`;
   }).join('');
+  updateLoadBtnLabel();
 }
 
-// Populate the "Add Security → Ticker" dropdown from the loaded pool only.
+// Reflect a freshly-loaded pool in the active scenario's ticker dropdown.
 function refreshTickerSelect(){
-  const sel = $('tickerSelect');
-  if(!sel) return;
-  const tks = loadedTickers();
-  const prev = sel.value;
-  if(!tks.length){
-    sel.innerHTML = '<option value="">— load tickers in ① first —</option>';
-    sel.disabled = true;
-    return;
-  }
-  sel.disabled = false;
-  sel.innerHTML = tks.map(tk=>`<option value="${tk}">${tk}</option>`).join('');
-  if(tks.indexOf(prev) >= 0) sel.value = prev;
+  if($('scenarioConfig')) renderScenarioConfig();
 }
 
 function setPoolLocked(locked){
@@ -661,7 +726,7 @@ async function loadTickerPool(){
   } catch(e){
     showStatus($('poolStatus'),'Load failed: '+e.message,'error');
   } finally {
-    loadBtn.disabled = false; loadBtn.innerHTML = '⤓ Load tickers';
+    loadBtn.disabled = false; loadBtn.innerHTML = loadBtnLabel();
   }
 }
 
@@ -694,41 +759,18 @@ async function loadTickerData(sec, startDate, endDate){
   }
 }
 
-/* ─── ADD SECURITY BUTTON ─── */
-$('addSecBtn').addEventListener('click', async()=>{
-  const name = $('newSecName').value.trim();
-  const type = document.querySelector('input[name="newSecType"]:checked')?.value || 'custom';
-  const colorHex = $('newSecColor').value;
-
-  if(type === 'ticker'){
-    const ticker = ($('tickerSelect').value||'').trim().toUpperCase();
-    if(!ticker){ showStatus($('fetchStatus'),'Load tickers in ① first, then pick one here.','error'); return; }
-    if(!priceCache[ticker]){ showStatus($('fetchStatus'), ticker+' is not loaded — add it in ① first.','error'); return; }
-    // Same ticker can appear multiple times (different strategies on the same security).
-    // Price data is shared via priceCache, so no fetch and no duplicate-data cost.
-    addSecurity({type:'ticker', ticker, name: name||ticker, colorHex});
-    $('newSecName').value='';
-    showStatus($('fetchStatus'), ticker+' added from cached data.','ok');
-    renderSecList();
-  } else {
-    if(!name){ showStatus($('fetchStatus'),'Please enter a security name.','error'); return; }
-    addSecurity({type:'custom', name, colorHex});
-    $('newSecName').value='';
-  }
+/* ─── SCENARIO BAR ACTIONS (add / copy / delete) ─── */
+// A new scenario defaults to a ticker (the loaded pool) when available, else a
+// custom simulated asset, matching the "ticker first" preference in the editor.
+$('addScenarioBtn').addEventListener('click', ()=>{
+  const tks = loadedTickers();
+  const n = securities.length + 1;
+  if(tks.length) addSecurity({type:'ticker', ticker:tks[0], name:'Scenario '+n});
+  else           addSecurity({type:'custom', name:'Scenario '+n});
   scheduleRun();
 });
-
-$('newSecName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addSecBtn').click(); });
-
-// Toggle ticker input visibility based on type selection
-document.querySelectorAll('input[name="newSecType"]').forEach(r=>{
-  r.addEventListener('change',()=>{
-    $('tickerInputRow').style.display = r.value==='ticker' ? '' : 'none';
-    if(r.value==='ticker') refreshTickerSelect();
-    document.querySelectorAll('#typeOptCustom,#typeOptTicker').forEach(o=>o.classList.remove('selected'));
-    r.closest('.radio-opt').classList.add('selected');
-  });
-});
+$('dupScenarioBtn').addEventListener('click', ()=>{ if(activeSecurityId!=null){ duplicateSecurity(activeSecurityId); scheduleRun(); } });
+$('delScenarioBtn').addEventListener('click', ()=>{ if(activeSecurityId!=null){ removeSecurity(activeSecurityId); scheduleRun(); } });
 
 /* ─── TICKER POOL WIRING ─── */
 $('loadTickersBtn').addEventListener('click', loadTickerPool);
@@ -1550,7 +1592,7 @@ $('simBtn').addEventListener('click', ()=>{
 /* ─── RESET ─── */
 $('resetBtn').addEventListener('click',()=>{
   securities=[]; simResults=[]; latestRows=[]; priceCache={}; tickerFetchInFlight={};
-  secIdCounter=0;
+  secIdCounter=0; activeSecurityId=null;
   currentCurrencySymbol='$';
   currentRandomSeed=DEFAULT_RANDOM_SEED;
   if(priceChartInstance){ priceChartInstance.destroy(); priceChartInstance=null; }
@@ -1568,6 +1610,8 @@ $('resetBtn').addEventListener('click',()=>{
   $('currencySymbol').value='$';
   $('randomSeed').value=DEFAULT_RANDOM_SEED;
   hideStatus($('fetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
+  const poolInp=$('tickerPoolInput'); if(poolInp) poolInp.value='';
+  setPoolLocked(false); hideStatus($('poolStatus')); renderPoolChips();
   document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
   initializeDefaultSecurities();
   runSimulation();

@@ -14,6 +14,10 @@ const WEEKDAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']; // 1..7
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; // 1..12
 const DEFAULT_RANDOM_SEED = 25823952204;
 const METHOD_LABEL = { 'towards-weight':'Towards Weight', 'constant-weight':'Constant Weight', 'constant-allocation':'Constant Allocation' };
+// Tickers are pooled and fetched once over a wide window so later date-range
+// tweaks reuse the cache instead of hitting the Worker again.
+const POOL_FETCH_START = '1990-01-01';
+const CACHE_STORAGE_KEY = 'dca_portfolio_priceCache_v1';
 
 /* ─── STATE ─── */
 // Each portfolio is an independent strategy: its own assets, weights, top-ups,
@@ -141,6 +145,106 @@ function isTickerRangeCovered(ticker, startDate, endDate){
   return !!(e && e.coverageStart<=startDate && e.coverageEnd>=endDate);
 }
 
+/* ─── PERSISTENT CACHE ─── */
+function persistPriceCache(){
+  try { localStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify({savedAt:Date.now(), cache:priceCache})); }
+  catch(_){ /* quota / private mode — caching is best-effort */ }
+}
+function loadPersistedCache(){
+  try {
+    const raw = localStorage.getItem(CACHE_STORAGE_KEY);
+    if(!raw) return;
+    const parsed = JSON.parse(raw);
+    if(parsed && parsed.cache && typeof parsed.cache==='object') priceCache = parsed.cache;
+  } catch(_){ /* ignore corrupt cache */ }
+}
+
+/* ─── TICKER POOL (load everything up front, in one request) ─── */
+function loadedTickers(){ return Object.keys(priceCache).sort(); }
+
+function storeBatchResult(tk, r, fetchStart, fetchEnd){
+  if(!(r && !r.error && r.dates && r.dates.length)) return false;
+  priceCache[tk]={ dates:r.dates, prices:r.prices, coverageStart:fetchStart, coverageEnd:fetchEnd, source:r.source, kind:r.kind };
+  return true;
+}
+
+function loadBtnLabel(){ return loadedTickers().length ? '⤓ Load additional tickers' : '⤓ Load tickers'; }
+function updateLoadBtnLabel(){ const b=$('loadTickersBtn'); if(b && !b.disabled) b.innerHTML=loadBtnLabel(); }
+
+function renderPoolChips(){
+  const box=$('poolChips'); if(!box) return;
+  const tks=loadedTickers();
+  const wrap=$('poolChipsWrap');
+  if(!tks.length){ box.innerHTML=''; if(wrap) wrap.style.display='none'; updateLoadBtnLabel(); return; }
+  if(wrap) wrap.style.display='';
+  box.innerHTML=tks.map(tk=>{
+    const e=priceCache[tk];
+    const warn=(e && e.kind==='stock' && e.source==='stooq');
+    const title=warn?'Loaded from Stooq (unadjusted for splits/dividends)':(e?e.dates.length+' trading days':'');
+    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}</span>`;
+  }).join('');
+  updateLoadBtnLabel();
+}
+
+// Populate the "Add Asset → Ticker" dropdown from the loaded pool only.
+function refreshAssetTickerSelect(){
+  const sel=$('assetTickerSelect'); if(!sel) return;
+  const tks=loadedTickers();
+  const prev=sel.value;
+  if(!tks.length){
+    sel.innerHTML='<option value="">— load tickers in the Data tab first —</option>';
+    sel.disabled=true;
+    return;
+  }
+  sel.disabled=false;
+  sel.innerHTML=tks.map(tk=>`<option value="${tk}">${tk}</option>`).join('');
+  if(tks.indexOf(prev)>=0) sel.value=prev;
+}
+
+function setPoolLocked(locked){
+  const inp=$('tickerPoolInput'), loadBtn=$('loadTickersBtn'), editBtn=$('editTickersBtn');
+  if(inp) inp.disabled=locked;
+  if(loadBtn) loadBtn.style.display=locked?'none':'';
+  if(editBtn) editBtn.style.display=locked?'':'none';
+}
+
+// Parse the textarea, fetch every NOT-yet-cached ticker in ONE batched request.
+async function loadTickerPool(){
+  const inp=$('tickerPoolInput');
+  const list=[...new Set((inp.value||'').split(/[\s,;]+/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
+  if(!list.length){ showStatus($('poolStatus'),'Enter at least one ticker.','error'); return; }
+  if(!window.SharedYF){ showStatus($('poolStatus'),'Market data engine not loaded (shared.js).','error'); return; }
+
+  const fetchStart=POOL_FETCH_START, fetchEnd=isoDate(new Date());
+  const need=list.filter(t=>!isTickerRangeCovered(t,fetchStart,fetchEnd));
+  const loadBtn=$('loadTickersBtn');
+  loadBtn.disabled=true; loadBtn.innerHTML='<span class="spinner"></span>Loading…';
+  try{
+    if(need.length){
+      showStatus($('poolStatus'),'Fetching '+need.length+' ticker(s) in one request…','loading');
+      const map=await window.SharedYF.fetchPricesBatch(need,fetchStart,fetchEnd);
+      const failed=[]; let ok=0;
+      for(const t of need){
+        if(storeBatchResult(t,map[t],fetchStart,fetchEnd)) ok++;
+        else failed.push(t+(map[t]&&map[t].error?' ('+map[t].error+')':''));
+      }
+      persistPriceCache();
+      if(failed.length&&ok) showStatus($('poolStatus'),ok+' loaded · could not load: '+failed.join(', '),'warn');
+      else if(failed.length) showStatus($('poolStatus'),'Could not load: '+failed.join(', '),'error');
+      else showStatus($('poolStatus'),ok+' ticker(s) loaded and cached.','ok');
+    } else {
+      showStatus($('poolStatus'),'All requested tickers are already cached.','ok');
+    }
+    renderPoolChips();
+    refreshAssetTickerSelect();
+    if(loadedTickers().length) setPoolLocked(true);
+  } catch(e){
+    showStatus($('poolStatus'),'Load failed: '+e.message,'error');
+  } finally {
+    loadBtn.disabled=false; loadBtn.innerHTML=loadBtnLabel();
+  }
+}
+
 /* ─── PORTFOLIO MODEL ─── */
 function makePortfolio(name, colorHex){
   return {
@@ -256,7 +360,8 @@ function loadControlsFromActive(){
   const p=getActive();
   const hasP=!!p;
   // disable/enable add-asset controls if there is no portfolio
-  ['addAssetBtn','newAssetName','assetTickerInput'].forEach(id=>{ const e=$(id); if(e) e.disabled=!hasP; });
+  refreshAssetTickerSelect();
+  ['addAssetBtn','newAssetName','assetTickerSelect','newAssetColor'].forEach(id=>{ const e=$(id); if(e) e.disabled=!hasP; });
   if(!hasP){ renderAssetList(); return; }
 
   // Top-ups
@@ -380,21 +485,29 @@ $('addPortfolioBtn').addEventListener('click',()=>{
 $('dupPortfolioBtn').addEventListener('click',()=>{ if(activePortfolioId!=null) duplicatePortfolio(activePortfolioId); });
 $('delPortfolioBtn').addEventListener('click',()=>{ if(activePortfolioId!=null) removePortfolio(activePortfolioId); });
 
+/* ─── TICKER POOL WIRING (Data tab) ─── */
+$('loadTickersBtn').addEventListener('click', loadTickerPool);
+$('editTickersBtn').addEventListener('click', ()=>{ setPoolLocked(false); const i=$('tickerPoolInput'); if(i) i.focus(); });
+$('tickerPoolInput').addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); loadTickerPool(); } });
+
 /* ─── ADD ASSET BUTTON ─── */
-$('addAssetBtn').addEventListener('click', async()=>{
+$('addAssetBtn').addEventListener('click', ()=>{
   if(!getActive()){ showStatus($('assetFetchStatus'),'Add a portfolio first.','error'); return; }
   const name=$('newAssetName').value.trim();
-  const type=document.querySelector('input[name="newAssetType"]:checked')?.value||'custom';
+  const type=document.querySelector('input[name="newAssetType"]:checked')?.value||'ticker';
   const colorHex=$('newAssetColor').value;
   if(type==='ticker'){
-    const ticker=$('assetTickerInput').value.trim().toUpperCase();
-    if(!ticker){ showStatus($('assetFetchStatus'),'Please enter a ticker symbol.','error'); return; }
+    const ticker=($('assetTickerSelect').value||'').trim().toUpperCase();
+    if(!ticker){ showStatus($('assetFetchStatus'),'Load tickers in the Data tab first, then pick one here.','error'); return; }
+    if(!priceCache[ticker]){ showStatus($('assetFetchStatus'),ticker+' is not loaded — add it in the Data tab first.','error'); return; }
+    // Price data is shared via priceCache (loaded up front in the Data tab), so
+    // adding the same ticker to multiple portfolios costs no extra request.
     const asset=addAsset({type:'ticker', ticker, name:name||ticker, colorHex});
-    $('newAssetName').value=''; $('assetTickerInput').value='';
-    const sd=$('startDate').value||'2020-01-01', ed=$('endDate').value||isoDate(new Date());
-    showStatus($('assetFetchStatus'),'Fetching '+ticker+'...','loading');
-    try{ await ensureTickerCached(ticker,sd,ed); asset.loaded=true; const e=priceCache[ticker.toUpperCase()]; if(e.kind==='stock'&&e.source==='stooq'){ showStatus($('assetFetchStatus'),'⚠️ '+ticker+' loaded from Stooq (Yahoo Finance was unavailable): '+e.dates.length+' trading days. Stooq stock prices are <strong>not</strong> adjusted for splits/dividends, so returns across those events may differ slightly.','warn'); } else { showStatus($('assetFetchStatus'),ticker+' cached: '+e.dates.length+' trading days','ok'); } }
-    catch(err){ asset.loaded=false; showStatus($('assetFetchStatus'),'Failed to load '+ticker+': '+err.message,'error'); }
+    asset.loaded=true;
+    $('newAssetName').value='';
+    const e=priceCache[ticker];
+    if(e && e.kind==='stock' && e.source==='stooq'){ showStatus($('assetFetchStatus'),'⚠️ '+ticker+' was loaded from Stooq — stock prices there are <strong>not</strong> adjusted for splits/dividends.','warn'); }
+    else showStatus($('assetFetchStatus'),ticker+' added from cached data.','ok');
     renderAssetList(); renderPortfolioList();
   } else {
     if(!name){ showStatus($('assetFetchStatus'),'Please enter an asset name.','error'); return; }
@@ -402,11 +515,11 @@ $('addAssetBtn').addEventListener('click', async()=>{
     $('newAssetName').value=''; hideStatus($('assetFetchStatus')); renderPortfolioList();
   }
 });
-$('assetTickerInput').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addAssetBtn').click(); });
 $('newAssetName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addAssetBtn').click(); });
 document.querySelectorAll('input[name="newAssetType"]').forEach(r=>{
   r.addEventListener('change',()=>{
     $('assetTickerRow').style.display=r.value==='ticker'?'':'none';
+    if(r.value==='ticker') refreshAssetTickerSelect();
     document.querySelectorAll('#atypeOptCustom,#atypeOptTicker').forEach(o=>o.classList.remove('selected'));
     r.closest('.radio-opt').classList.add('selected');
   });
@@ -658,6 +771,7 @@ async function runSimulation(){
             showWarning('Could not load data for '+tk+(r&&r.error?': '+r.error:'')+'.');
           }
         }
+        persistPriceCache(); renderPoolChips(); refreshAssetTickerSelect();
       }catch(err){ showWarning('Could not load ticker data: '+err.message); }
     }
 
@@ -1015,6 +1129,8 @@ $('resetBtn').addEventListener('click',()=>{
   $('valueHoverBox').textContent='Configure portfolios and run to compare value over time.';
   $('compHoverBox').textContent='Cash and each asset stack up to total portfolio value.';
   hideStatus($('assetFetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
+  const poolInp=$('tickerPoolInput'); if(poolInp) poolInp.value='';
+  setPoolLocked(false); hideStatus($('poolStatus')); renderPoolChips(); refreshAssetTickerSelect();
   document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
   initDefaults();
   loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();
@@ -1117,6 +1233,9 @@ function initDefaults(){
 }
 
 setDefaultDates();
+loadPersistedCache();
+renderPoolChips();
+refreshAssetTickerSelect();
 initDefaults();
 loadControlsFromActive();
 renderPortfolioList();
