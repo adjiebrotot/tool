@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const HERE = dirname(fileURLToPath(import.meta.url));
-const url = pathToFileURL(join(HERE,'..','rentvsownhouse','sensitivity','index.html')).href;
+const url = pathToFileURL(join(HERE,'..','sensitivity','index.html')).href;
 const b = await chromium.launch(); const p = await b.newPage();
 p.on('pageerror',()=>{});
 await p.goto(url,{waitUntil:'networkidle'});

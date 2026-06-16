@@ -10,7 +10,7 @@ import { dirname, join } from 'node:path';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const cases = JSON.parse(readFileSync(join(HERE, 'cases.json'), 'utf8'));
 mkdirSync(join(HERE, 'js_out'), { recursive: true });
-const pageUrl = pathToFileURL(join(HERE, '..', 'rentvsownhouse', 'index.html')).href;
+const pageUrl = pathToFileURL(join(HERE, '..', 'index.html')).href;
 
 const RANGE = new Set(['downPaymentPct','monthlyBudgetIncrease','riskFreeRate','horizon',
   'mortgageRate','mortgageTerm','houseGrowth','ownOngoingInflation','rentInflation',
