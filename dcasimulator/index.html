@@ -115,19 +115,18 @@
   </div>
   <div class="ctrl-scroll">
   <div class="ctrl-tabs">
-    <button class="ctrl-tab active" data-tab="securities">📦 Securities</button>
+    <button class="ctrl-tab active" data-tab="securities">📦 Scenarios</button>
     <button class="ctrl-tab" data-tab="settings">⚙️ Settings</button>
     <button class="ctrl-tab" data-tab="sensitivity">🔬 Sensitivity</button>
   </div>
 
   <!-- SECURITIES TAB -->
   <div class="ctrl-panel active" id="tab-securities">
-    <div class="section-label" style="margin-top:0">① Load tickers</div>
+    <!-- ① DATA DOWNLOAD -->
+    <div class="section-label" style="margin-top:0">① Data Download</div>
     <div class="field-row" style="border-top:none;padding-top:0">
       <div class="add-sec-area" style="border-top:none;padding-top:4px">
-        <div style="font-size:.8rem;color:var(--muted);line-height:1.45;margin-bottom:7px">
-          Enter <strong>every</strong> ticker you want to compare (comma-separated), then load them <strong>all at once</strong>. They are fetched in a single request and cached locally — adding them one by one wastes the daily data quota.
-        </div>
+        <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">Tickers <span class="tip-icon" data-tip="Enter every ticker you want to compare (comma-separated)">?</span></div>
         <textarea class="txt-input" id="tickerPoolInput" rows="2" placeholder="e.g. AAPL, SPY, USDIDR, XAUUSD, AAA.AX" style="text-transform:uppercase;width:100%;resize:vertical;font-family:inherit;line-height:1.4"></textarea>
         <a href="ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
         <div class="add-sec-row" style="gap:6px;margin-top:8px">
@@ -135,38 +134,44 @@
           <button class="btn-secondary" id="editTickersBtn" style="flex:1;display:none">✎ Edit list</button>
         </div>
         <div class="status-bar" id="poolStatus"></div>
-        <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:7px"></div>
+        <div id="poolChipsWrap" style="display:none;margin-top:9px">
+          <div class="field-label" style="margin-bottom:5px">Loaded tickers</div>
+          <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+        </div>
       </div>
     </div>
 
-    <div class="section-label">② Add Security</div>
+    <div class="section-label">Date Range</div>
     <div class="field-row" style="border-top:none;padding-top:0">
-      <div class="add-sec-area" style="border-top:none;padding-top:4px">
-        <div class="add-sec-row" style="gap:6px;align-items:center">
-          <input class="txt-input" id="newSecName" placeholder="Security name" style="flex:1;min-width:0" />
-          <input type="color" id="newSecColor" title="Pick colour (optional)" style="width:34px;height:34px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--input-bg);padding:2px;flex-shrink:0" />
+      <div class="field-sub">Simulation uses the shortest available date range across all selected tickers. <span class="tip-icon" data-tip="When multiple ticker securities are loaded, all will be trimmed to the common overlapping date range so comparisons are fair.">?</span></div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <div style="flex:1">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">Start</div>
+          <input class="txt-input" type="date" id="startDate" />
         </div>
-        <div class="radio-group" style="margin-top:8px">
-          <label class="radio-opt selected" id="typeOptCustom">
-            <input type="radio" name="newSecType" value="custom" checked/>
-            <div class="radio-opt-text"><strong>Custom</strong>Simulated asset (define return &amp; volatility)</div>
-          </label>
-          <label class="radio-opt" id="typeOptTicker">
-            <input type="radio" name="newSecType" value="ticker"/>
-            <div class="radio-opt-text"><strong>Ticker</strong>Real price data — pick from your loaded tickers</div>
-          </label>
+        <div style="flex:1">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">End</div>
+          <input class="txt-input" type="date" id="endDate" />
         </div>
-        <div id="tickerInputRow" style="display:none;margin-top:6px">
-          <select class="txt-input" id="tickerSelect" style="width:100%;cursor:pointer"></select>
-          <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Only tickers loaded in ① can be added. Load more above to expand this list.</div>
-        </div>
-        <button class="btn-primary" id="addSecBtn" style="margin-top:8px;width:100%">+ Add Security</button>
-        <div class="status-bar" id="fetchStatus"></div>
+      </div>
+      <div class="status-bar" id="dateRangeStatus"></div>
+    </div>
+
+    <!-- ② SCENARIO -->
+    <div class="section-label">② Scenario</div>
+    <div class="sc-bar">
+      <div id="scenarioTabs" class="sc-tabs"></div>
+      <button class="sc-add-btn" id="addScenarioBtn" title="New scenario" aria-label="New scenario">+</button>
+      <div class="sc-bar-actions">
+        <button class="sc-act-btn" id="dupScenarioBtn" title="Copy this scenario" aria-label="Copy this scenario">⧉</button>
+        <button class="sc-act-btn sc-act-del" id="delScenarioBtn" title="Remove this scenario" aria-label="Remove this scenario">✕</button>
       </div>
     </div>
 
-    <div class="section-label">Securities</div>
-    <div id="secList" class="sec-list"></div>
+    <!-- ③ CONFIGURE SCENARIO -->
+    <div class="section-label">③ Configure Scenario</div>
+    <div id="scenarioConfig" class="field-row" style="border-top:none;padding-top:0"></div>
+    <div class="status-bar" id="fetchStatus"></div>
   </div>
 
   <!-- SETTINGS TAB -->
@@ -190,22 +195,6 @@
       <div class="field-label">Simulation Seed</div>
       <input class="num-input" id="randomSeed" type="number" min="0" step="1" value="25823952204" />
       <div class="field-sub">Used for custom security randomness when Return and Standard Deviation are defined.</div>
-    </div>
-
-    <div class="section-label">Date Range</div>
-    <div class="field-row" style="border-top:none;padding-top:0">
-      <div class="field-sub">Simulation uses the shortest available date range across all selected tickers. <span class="tip-icon" data-tip="When multiple ticker securities are loaded, all will be trimmed to the common overlapping date range so comparisons are fair.">?</span></div>
-      <div style="display:flex;gap:8px;margin-top:6px">
-        <div style="flex:1">
-          <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">Start</div>
-          <input class="txt-input" type="date" id="startDate" />
-        </div>
-        <div style="flex:1">
-          <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">End</div>
-          <input class="txt-input" type="date" id="endDate" />
-        </div>
-      </div>
-      <div class="status-bar" id="dateRangeStatus"></div>
     </div>
   </div>
 
