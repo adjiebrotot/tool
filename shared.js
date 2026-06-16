@@ -65,226 +65,116 @@
     attachCurrencyInput: attachCurrencyInput
   };
 
-  /* ── Market data fetch (Yahoo Finance + Stooq) ─────────────────────────────
-     NOTE: "yfinance" is not a separate API — the Python library is just a
-     wrapper around Yahoo's public chart endpoint
-     (query1/query2.finance.yahoo.com/v8/finance/chart), which is exactly what
-     we call here. A browser can't hit it directly (no CORS headers), so we
-     relay through public CORS proxies. Those free proxies are the flaky part,
-     NOT Yahoo — so this engine:
-       1. races several proxies (and both Yahoo hosts) concurrently — first
-          valid response wins, the rest are aborted immediately;
-       2. falls back to a second, fully independent data source (Stooq) so a
-          fetch can still succeed when every Yahoo proxy is down;
-       3. retries the whole sequence a few times with backoff; and
-       4. lets you put your OWN proxy in front (the real failsafe) via
-          SharedYF.setProxy('https://your-worker.example.com/?url=') — a tiny
-          Cloudflare Worker removes the dependence on third-party proxies.
-          See dcasimulator/yf-proxy-worker.js.
+  /* ── Market data fetch — batched, self-hosted Worker only ──────────────────
+     The simulator runs in the browser; Yahoo's chart endpoint
+     (query1/query2.finance.yahoo.com/v8/finance/chart — what the Python
+     `yfinance` library wraps) and Stooq's CSV endpoint send no CORS headers, so
+     the page cannot call them directly. We relay through ONE self-hosted
+     Cloudflare Worker (dcasimulator/yf-proxy-worker.js). The old public CORS
+     proxies (allorigins/corsproxy/codetabs) were the unreliable part and have
+     been removed entirely.
 
-     Stooq also unlocks instruments Yahoo handles awkwardly: spot FX such as
-     USDIDR and precious metals such as XAUUSD / XAGUSD. For those, Stooq is
-     tried FIRST and Yahoo (USDIDR=X form) is the fallback.
+     REQUEST-MINIMISING DESIGN (Worker free tier = 100k requests/day):
+       • BATCHING — fetchPricesBatch() sends every ticker in ONE request
+         (?tickers=A,B,C). The Worker fans out to Yahoo/Stooq server-side, so N
+         tickers cost ONE invocation instead of N.
+       • NO PREFLIGHT — a GET with no custom headers is a "simple request", so
+         the browser sends no OPTIONS preflight (no doubled invocation).
+       • Source selection (Yahoo vs Stooq, FX/metal detection, exchange-suffix
+         mapping) now lives in the Worker; the client just passes ticker strings.
+
+     SETUP: deploy the Worker, then set WORKER_ENDPOINT below (or call
+     SharedYF.setEndpoint('https://NAME.SUBDOMAIN.workers.dev') once at startup).
      ──────────────────────────────────────────────────────────────────────── */
-  var YF_SELF_PROXY = ''; // e.g. 'https://yf.adjiebrotots.com/?url=' (see setProxy)
 
-  // 3-letter codes treated as FX/metal legs. Metals (XAU/XAG/XPT/XPD) trade as
-  // currency pairs on Stooq (e.g. xauusd), so they ride the same FX path.
-  var FX_CODES = {
-    USD:1,EUR:1,GBP:1,JPY:1,AUD:1,NZD:1,CAD:1,CHF:1,CNY:1,CNH:1,HKD:1,SGD:1,
-    IDR:1,INR:1,MYR:1,KRW:1,THB:1,PHP:1,VND:1,TWD:1,ZAR:1,BRL:1,MXN:1,RUB:1,
-    TRY:1,SEK:1,NOK:1,DKK:1,PLN:1,CZK:1,HUF:1,AED:1,SAR:1,ILS:1,
-    XAU:1,XAG:1,XPT:1,XPD:1
-  };
-  // Yahoo exchange suffix → Stooq market suffix, for stocks/ETFs we can map
-  // with confidence. Markets not listed (e.g. .JK, .SI, .KS, .NS) stay
-  // Yahoo-only — Stooq's coverage there is unreliable, so we don't risk it.
-  var STOOQ_SUFFIX = {
-    AX:'au', L:'uk', DE:'de', PA:'fr', AS:'nl', BR:'be', LS:'pt', MC:'es',
-    MI:'it', SW:'ch', VI:'at', ST:'se', HE:'fi', OL:'no', CO:'dk', HK:'hk',
-    T:'jp', SS:'cn', SZ:'cn', TO:'ca', V:'ca'
-  };
+  // ▼▼▼ Deployed market-data Worker (dcasimulator/yf-proxy-worker.js) ▼▼▼
+  var WORKER_ENDPOINT = 'https://yfinance.adjiebrotots.workers.dev';
+  // ▲▲▲ change here if the Worker is ever redeployed under a new name ▲▲▲
+
+  var MAX_PER_REQUEST = 25; // must match the Worker's MAX_TICKERS cap
 
   function yfIso(d){ return d.toISOString().slice(0,10); }
-  function compactDate(isoStr){ return String(isoStr).slice(0,10).replace(/-/g,''); }
 
-  async function yfFetchText(url, timeoutMs, externalSignal, unwrap){
+  async function workerFetchJson(url, timeoutMs){
     var controller = new AbortController();
     var timeoutId = setTimeout(function(){ controller.abort(); }, timeoutMs);
-    var onAbort = function(){ controller.abort(); };
-    if (externalSignal){
-      if (externalSignal.aborted) controller.abort();
-      else externalSignal.addEventListener('abort', onAbort, {once:true});
-    }
     try {
       var resp = await fetch(url, {signal: controller.signal, cache:'no-store'});
-      if (!resp.ok) throw new Error('HTTP ' + resp.status);
-      if (unwrap === 'allorigins-get'){
-        var w = await resp.json();
-        return w && w.contents != null ? String(w.contents) : '';
-      }
-      return await resp.text();
+      if (!resp.ok) throw new Error('Worker HTTP ' + resp.status);
+      return await resp.json();
     } catch(err){
       if (err && err.name === 'AbortError') throw new Error('timed out');
       throw err;
     } finally {
       clearTimeout(timeoutId);
-      if (externalSignal) externalSignal.removeEventListener('abort', onAbort);
     }
   }
 
-  // Wrap a target URL in every available CORS proxy (self-hosted first).
-  function proxyWrap(targetUrl){
-    var enc = encodeURIComponent;
+  function chunk(arr, size){
     var out = [];
-    if (YF_SELF_PROXY) out.push({url: YF_SELF_PROXY + enc(targetUrl), unwrap:'raw'});
-    out.push({url: 'https://api.allorigins.win/raw?url=' + enc(targetUrl), unwrap:'raw'});
-    out.push({url: 'https://corsproxy.io/?url=' + enc(targetUrl), unwrap:'raw'});
-    out.push({url: 'https://api.codetabs.com/v1/proxy/?quest=' + enc(targetUrl), unwrap:'raw'});
-    out.push({url: 'https://api.allorigins.win/get?url=' + enc(targetUrl), unwrap:'allorigins-get'});
+    for (var i=0; i<arr.length; i+=size) out.push(arr.slice(i, i+size));
     return out;
   }
 
-  // Parse Yahoo chart JSON text → {dates, prices} (adjusted close preferred).
-  function parseYahoo(text){
-    var jsonStart = text.indexOf('{');
-    var data = JSON.parse(jsonStart > 0 ? text.slice(jsonStart) : text);
-    var result = data && data.chart && data.chart.result && data.chart.result[0];
-    if (!result) throw new Error('No chart result');
-    var ts = result.timestamp;
-    var ind = result.indicators || {};
-    var closes = (ind.adjclose && ind.adjclose[0] && ind.adjclose[0].adjclose) ||
-                 (ind.quote && ind.quote[0] && ind.quote[0].close);
-    if (!ts || !closes) throw new Error('No price series');
-    var dates = [], prices = [];
-    for (var i=0; i<ts.length; i++){
-      if (closes[i] == null) continue;
-      dates.push(yfIso(new Date(ts[i]*1000)));
-      prices.push(closes[i]);
+  // Fetch many tickers in as few Worker calls as possible. Returns a map
+  // { TICKER: {dates, prices, source, kind} | {error} }. Never throws for an
+  // individual bad ticker — only for a total transport failure of a batch.
+  async function yfFetchPricesBatch(tickers, startDate, endDate){
+    if (!WORKER_ENDPOINT || /REPLACE-WITH-YOUR-WORKER/.test(WORKER_ENDPOINT)){
+      throw new Error('Market-data Worker endpoint not configured (set WORKER_ENDPOINT / SharedYF.setEndpoint)');
     }
-    if (!dates.length) throw new Error('Empty price series');
-    return {dates: dates, prices: prices};
-  }
+    var list = (tickers || [])
+      .map(function(t){ return String(t||'').trim().toUpperCase(); })
+      .filter(Boolean);
+    list = list.filter(function(t, i){ return list.indexOf(t) === i; }); // dedupe
+    if (!list.length) return {};
 
-  // Parse Stooq CSV text → {dates, prices} using the Close column.
-  function parseStooq(text){
-    var t = (text || '').trim();
-    // Stooq returns plain-text errors like "No data" or a rate-limit notice.
-    if (!/^Date,/i.test(t)) throw new Error(t.slice(0, 60) || 'No CSV');
-    var lines = t.split(/\r?\n/);
-    var header = lines[0].split(',');
-    var di = header.indexOf('Date'), ci = header.indexOf('Close');
-    if (di < 0 || ci < 0) throw new Error('Unexpected CSV columns');
-    var dates = [], prices = [];
-    for (var i=1; i<lines.length; i++){
-      if (!lines[i]) continue;
-      var cols = lines[i].split(',');
-      var px = parseFloat(cols[ci]);
-      if (!isFinite(px)) continue;
-      dates.push(cols[di].slice(0,10));
-      prices.push(px);
-    }
-    if (!dates.length) throw new Error('Empty CSV');
-    return {dates: dates, prices: prices};
-  }
-
-  // Race all proxy-wrapped candidates for one provider; first valid wins.
-  async function raceCandidates(candidates, parse, timeoutMs){
-    var lastError = null;
-    var abortAll = new AbortController();
-    var attempts = candidates.map(function(c){
-      return (async function(){
-        try {
-          var text = await yfFetchText(c.url, timeoutMs, abortAll.signal, c.unwrap);
-          return parse(text);
-        } catch(err){ lastError = err; throw err; }
-      })();
-    });
-    try {
-      return await Promise.any(attempts);
-    } catch(_){
-      throw new Error(lastError && lastError.message ? lastError.message : 'all sources failed');
-    } finally {
-      abortAll.abort();
-    }
-  }
-
-  // Classify a ticker into an ordered list of providers to try.
-  function classify(ticker, startDate, endDate){
-    var t = String(ticker || '').trim().toUpperCase();
-    if (!t) throw new Error('Invalid ticker');
-    var s = Math.floor(new Date(startDate).getTime()/1000);
-    var e = Math.floor(new Date(endDate).getTime()/1000 + 86400);
-    var cb = yfIso(new Date());
+    var start = String(startDate).slice(0,10);
+    var end = String(endDate).slice(0,10);
+    var base = WORKER_ENDPOINT.replace(/\/+$/, '');
     var enc = encodeURIComponent;
 
-    function yahooProvider(sym){
-      var p = 'period1=' + s + '&period2=' + e + '&interval=1d&events=history&_cb=' + cb;
-      return {
-        name: 'yahoo:' + sym, source: 'yahoo', parse: parseYahoo,
-        candidates: proxyWrap('https://query1.finance.yahoo.com/v8/finance/chart/' + enc(sym) + '?' + p)
-                .concat(proxyWrap('https://query2.finance.yahoo.com/v8/finance/chart/' + enc(sym) + '?' + p))
-      };
-    }
-    function stooqProvider(sym){
-      var url = 'https://stooq.com/q/d/l/?s=' + enc(sym) + '&i=d' +
-                '&d1=' + compactDate(startDate) + '&d2=' + compactDate(endDate);
-      return { name: 'stooq:' + sym, source: 'stooq', parse: parseStooq, candidates: proxyWrap(url) };
-    }
-
-    // Spot FX / metals: 'USDIDR', 'XAUUSD', or Yahoo's 'USDIDR=X' form.
-    var core = t.replace(/=X$/, '');
-    var isFx = /^[A-Z]{6}$/.test(core) && FX_CODES[core.slice(0,3)] && FX_CODES[core.slice(3,6)];
-    if (/=X$/.test(t) || isFx){
-      // Stooq is the better source for spot FX/metals → try it first.
-      return { kind: 'fx', providers: [ stooqProvider(core.toLowerCase()), yahooProvider(core + '=X') ] };
-    }
-
-    // Stocks / ETFs / indices: Yahoo first (adjusted close), Stooq as fallback.
-    var providers = [ yahooProvider(t) ];
-    var stooqSym = null;
-    var dot = t.indexOf('.');
-    if (dot < 0){
-      stooqSym = t.toLowerCase() + '.us';            // US listing
-    } else {
-      var suffix = STOOQ_SUFFIX[t.slice(dot + 1)];
-      if (suffix) stooqSym = t.slice(0, dot).toLowerCase() + '.' + suffix;
-    }
-    if (stooqSym) providers.push(stooqProvider(stooqSym));
-    return { kind: 'stock', providers: providers };
+    var batches = chunk(list, MAX_PER_REQUEST);
+    var merged = {};
+    // Batches run in parallel; with ≤25 tickers (the common case) this is one call.
+    var responses = await Promise.all(batches.map(function(group){
+      var url = base + '/?tickers=' + enc(group.join(',')) +
+                '&start=' + enc(start) + '&end=' + enc(end);
+      return workerFetchJson(url, 20000).then(function(data){
+        if (data && data.error && !data.results) throw new Error(data.error);
+        return data && data.results ? data.results : {};
+      }).catch(function(err){
+        // Mark every ticker in a failed batch so callers can report it.
+        var out = {};
+        group.forEach(function(t){ out[t] = { error: (err && err.message) || 'fetch failed' }; });
+        return out;
+      });
+    }));
+    responses.forEach(function(r){ Object.assign(merged, r); });
+    return merged;
   }
 
-  // Fetch daily closes for `ticker` between two ISO dates. Returns
-  // {dates, prices, source:'yahoo'|'stooq', kind:'stock'|'fx'} or throws.
-  // NOTE: for kind==='stock', a 'stooq' source means Yahoo was unreachable and
-  // we fell back to Stooq, whose stock closes are UNADJUSTED (no split/dividend
-  // adjustment) — callers should warn the user. FX/metals need no adjustment.
+  // Single-ticker convenience wrapper (kept for the portfolio tool and any
+  // caller that wants one series). Throws on failure like the old API.
   async function yfFetchPrices(ticker, startDate, endDate){
-    var cls = classify(ticker, startDate, endDate);
-    var providers = cls.providers;
-    var lastError = null;
-    var ROUNDS = 2;
-    for (var attempt = 0; attempt < ROUNDS; attempt++){
-      for (var p = 0; p < providers.length; p++){
-        try {
-          var out = await raceCandidates(providers[p].candidates, providers[p].parse, 12000);
-          out.source = providers[p].source;
-          out.kind = cls.kind;
-          return out;
-        } catch(err){ lastError = err; }
-      }
-      if (attempt < ROUNDS - 1){
-        await new Promise(function(res){ setTimeout(res, 800 * Math.pow(2, attempt)); });
-      }
+    var tk = String(ticker||'').trim().toUpperCase();
+    var map = await yfFetchPricesBatch([tk], startDate, endDate);
+    var r = map[tk];
+    if (!r || r.error || !r.dates || !r.dates.length){
+      throw new Error('Unable to fetch market data for ' + ticker +
+        ' (' + ((r && r.error) || 'no data') + ')');
     }
-    throw new Error('Unable to fetch market data for ' + ticker +
-      ' (' + (lastError && lastError.message ? lastError.message : 'unknown error') + ')');
+    return r;
   }
 
   global.SharedYF = {
     fetchPrices: yfFetchPrices,
-    setProxy: function(baseUrl){ YF_SELF_PROXY = baseUrl || ''; },
-    getProxy: function(){ return YF_SELF_PROXY; }
+    fetchPricesBatch: yfFetchPricesBatch,
+    setEndpoint: function(url){ WORKER_ENDPOINT = url || ''; },
+    getEndpoint: function(){ return WORKER_ENDPOINT; },
+    // Back-compat aliases for the old self-proxy API.
+    setProxy: function(url){ WORKER_ENDPOINT = url || ''; },
+    getProxy: function(){ return WORKER_ENDPOINT; }
   };
 
   /* ── Global Tooltip ── */

@@ -49,6 +49,9 @@ body.light .num-input option,body.light .txt-input option{background:#ffffff;col
 .btn-secondary:hover{border-color:var(--accent)}
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
 .btn-theme:hover{border-color:var(--accent);color:var(--text)}
+.pool-chip{display:inline-flex;align-items:center;gap:3px;background:var(--input-bg);border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:.78rem;font-weight:700;color:var(--text);font-family:'DM Mono',monospace}
+.pool-chip-warn{border-color:#f59e0b;color:#f59e0b}
+.txt-input:disabled{opacity:.6;cursor:not-allowed}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
 .metric{padding:16px 18px}
 .metric .label{color:var(--muted);font-size:.82rem;margin-bottom:5px}

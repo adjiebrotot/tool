@@ -27,6 +27,11 @@ const OSC_GROUPS = {
 };
 const WEEKDAY_OPTIONS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const DEFAULT_RANDOM_SEED = 25823952204;
+// Tickers are pooled and fetched once over a wide window so later date-range
+// tweaks reuse the cache instead of hitting the Worker again. Yahoo/Stooq simply
+// return each instrument's available history within this window.
+const POOL_FETCH_START = '1990-01-01';
+const CACHE_STORAGE_KEY = 'dca_priceCache_v1';
 
 /* ─── STATE ─── */
 let securities = [];
@@ -551,6 +556,115 @@ function isTickerRangeCovered(ticker, startDate, endDate){
   return !!(entry && entry.coverageStart <= startDate && entry.coverageEnd >= endDate);
 }
 
+/* ─── PERSISTENT CACHE ─── */
+// Price history is immutable for past dates, so we persist the cache to
+// localStorage. On a new day coverageEnd (yesterday) no longer reaches "today",
+// so the pool loader naturally refetches to refresh the tail — at most one
+// request — while same-day reloads cost ZERO requests.
+function persistPriceCache(){
+  try { localStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify({savedAt: Date.now(), cache: priceCache})); }
+  catch(_){ /* quota / private mode — caching is best-effort */ }
+}
+function loadPersistedCache(){
+  try {
+    const raw = localStorage.getItem(CACHE_STORAGE_KEY);
+    if(!raw) return;
+    const parsed = JSON.parse(raw);
+    if(parsed && parsed.cache && typeof parsed.cache === 'object') priceCache = parsed.cache;
+  } catch(_){ /* ignore corrupt cache */ }
+}
+
+/* ─── TICKER POOL (load everything up front, in one request) ─── */
+// Returns the sorted list of tickers currently held in the cache.
+function loadedTickers(){ return Object.keys(priceCache).sort(); }
+
+// Store one batched result into the cache. `r` is the Worker's per-ticker object.
+function storeBatchResult(tk, r, fetchStart, fetchEnd){
+  if(!(r && !r.error && r.dates && r.dates.length)) return false;
+  priceCache[tk] = {
+    dates: r.dates, prices: r.prices,
+    cachedStart: r.dates[0], cachedEnd: r.dates[r.dates.length-1],
+    coverageStart: fetchStart, coverageEnd: fetchEnd,
+    source: r.source, kind: r.kind
+  };
+  return true;
+}
+
+function renderPoolChips(){
+  const box = $('poolChips');
+  if(!box) return;
+  const tks = loadedTickers();
+  if(!tks.length){ box.innerHTML=''; return; }
+  box.innerHTML = tks.map(tk=>{
+    const e = priceCache[tk];
+    const warn = (e && e.kind==='stock' && e.source==='stooq');
+    const title = warn ? 'Loaded from Stooq (unadjusted for splits/dividends)' : (e?e.dates.length+' trading days':'');
+    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}</span>`;
+  }).join('');
+}
+
+// Populate the "Add Security → Ticker" dropdown from the loaded pool only.
+function refreshTickerSelect(){
+  const sel = $('tickerSelect');
+  if(!sel) return;
+  const tks = loadedTickers();
+  const prev = sel.value;
+  if(!tks.length){
+    sel.innerHTML = '<option value="">— load tickers in ① first —</option>';
+    sel.disabled = true;
+    return;
+  }
+  sel.disabled = false;
+  sel.innerHTML = tks.map(tk=>`<option value="${tk}">${tk}</option>`).join('');
+  if(tks.indexOf(prev) >= 0) sel.value = prev;
+}
+
+function setPoolLocked(locked){
+  const inp = $('tickerPoolInput'), loadBtn = $('loadTickersBtn'), editBtn = $('editTickersBtn');
+  if(inp) inp.disabled = locked;
+  if(loadBtn) loadBtn.style.display = locked ? 'none' : '';
+  if(editBtn) editBtn.style.display = locked ? '' : 'none';
+}
+
+// Parse the textarea, fetch every NOT-yet-cached ticker in ONE batched request.
+async function loadTickerPool(){
+  const inp = $('tickerPoolInput');
+  const list = [...new Set((inp.value||'').split(/[\s,;]+/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
+  if(!list.length){ showStatus($('poolStatus'),'Enter at least one ticker.','error'); return; }
+  if(!window.SharedYF){ showStatus($('poolStatus'),'Market data engine not loaded (shared.js).','error'); return; }
+
+  const fetchStart = POOL_FETCH_START, fetchEnd = isoDate(new Date());
+  const need = list.filter(t=>!isTickerRangeCovered(t, fetchStart, fetchEnd));
+  const loadBtn = $('loadTickersBtn');
+  loadBtn.disabled = true; loadBtn.innerHTML = '<span class="spinner"></span>Loading…';
+
+  try {
+    if(need.length){
+      showStatus($('poolStatus'),'Fetching '+need.length+' ticker(s) in one request…','loading');
+      const map = await window.SharedYF.fetchPricesBatch(need, fetchStart, fetchEnd);
+      const failed = [];
+      let ok = 0;
+      for(const t of need){
+        if(storeBatchResult(t, map[t], fetchStart, fetchEnd)) ok++;
+        else failed.push(t + (map[t] && map[t].error ? ' ('+map[t].error+')' : ''));
+      }
+      persistPriceCache();
+      if(failed.length && ok) showStatus($('poolStatus'), ok+' loaded · could not load: '+failed.join(', '),'warn');
+      else if(failed.length) showStatus($('poolStatus'),'Could not load: '+failed.join(', '),'error');
+      else showStatus($('poolStatus'), ok+' ticker(s) loaded and cached.','ok');
+    } else {
+      showStatus($('poolStatus'),'All requested tickers are already cached.','ok');
+    }
+    renderPoolChips();
+    refreshTickerSelect();
+    if(loadedTickers().length) setPoolLocked(true);
+  } catch(e){
+    showStatus($('poolStatus'),'Load failed: '+e.message,'error');
+  } finally {
+    loadBtn.disabled = false; loadBtn.innerHTML = '⤓ Load tickers';
+  }
+}
+
 /* ─── FETCH TICKER DATA (for manual "Add Security" flow) ─── */
 async function loadTickerData(sec, startDate, endDate){
   const statusEl = $(`secLoadStatus${sec.id}`);
@@ -587,15 +701,14 @@ $('addSecBtn').addEventListener('click', async()=>{
   const colorHex = $('newSecColor').value;
 
   if(type === 'ticker'){
-    const ticker = $('tickerInput').value.trim().toUpperCase();
-    if(!ticker){ showStatus($('fetchStatus'),'Please enter a ticker symbol.','error'); return; }
+    const ticker = ($('tickerSelect').value||'').trim().toUpperCase();
+    if(!ticker){ showStatus($('fetchStatus'),'Load tickers in ① first, then pick one here.','error'); return; }
+    if(!priceCache[ticker]){ showStatus($('fetchStatus'), ticker+' is not loaded — add it in ① first.','error'); return; }
     // Same ticker can appear multiple times (different strategies on the same security).
-    // Price data is shared via priceCache, so no duplicate-data cost.
-    const sec = addSecurity({type:'ticker', ticker, name: name||ticker, colorHex});
-    $('newSecName').value=''; $('tickerInput').value='';
-    const sd=$('startDate').value||'2020-01-01';
-    const ed=$('endDate').value||isoDate(new Date());
-    await loadTickerData(sec, sd, ed);
+    // Price data is shared via priceCache, so no fetch and no duplicate-data cost.
+    addSecurity({type:'ticker', ticker, name: name||ticker, colorHex});
+    $('newSecName').value='';
+    showStatus($('fetchStatus'), ticker+' added from cached data.','ok');
     renderSecList();
   } else {
     if(!name){ showStatus($('fetchStatus'),'Please enter a security name.','error'); return; }
@@ -605,16 +718,24 @@ $('addSecBtn').addEventListener('click', async()=>{
   scheduleRun();
 });
 
-$('tickerInput').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addSecBtn').click(); });
 $('newSecName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addSecBtn').click(); });
 
 // Toggle ticker input visibility based on type selection
 document.querySelectorAll('input[name="newSecType"]').forEach(r=>{
   r.addEventListener('change',()=>{
     $('tickerInputRow').style.display = r.value==='ticker' ? '' : 'none';
+    if(r.value==='ticker') refreshTickerSelect();
     document.querySelectorAll('#typeOptCustom,#typeOptTicker').forEach(o=>o.classList.remove('selected'));
     r.closest('.radio-opt').classList.add('selected');
   });
+});
+
+/* ─── TICKER POOL WIRING ─── */
+$('loadTickersBtn').addEventListener('click', loadTickerPool);
+$('editTickersBtn').addEventListener('click', ()=>{ setPoolLocked(false); const i=$('tickerPoolInput'); if(i) i.focus(); });
+$('tickerPoolInput').addEventListener('keydown', e=>{
+  // Enter loads; Shift+Enter inserts a newline.
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); loadTickerPool(); }
 });
 
 /* ─── CURRENCY CHANGE ─── */
@@ -983,18 +1104,29 @@ async function runSimulation(){
   // Reset stale data before rebuilding this run.
   securities.forEach(sec => { sec.priceData = null; sec.loaded = false; });
 
-  // Ensure ticker data once per unique ticker.
+  // Ticker data should already be pooled and cached (loaded up front in one
+  // request). If anything is missing or the date range moved outside the cached
+  // window, fetch ONLY those tickers — and do it in a SINGLE batched request
+  // rather than one-by-one — so we keep Worker invocations to a minimum.
   const uniqueTickers = [...new Set(securities
     .filter(sec => sec.type==='ticker')
     .map(sec => String(sec.ticker||'').trim().toUpperCase())
     .filter(Boolean))];
-  for(const ticker of uniqueTickers){
-    const needsFetch = !isTickerRangeCovered(ticker, startDate, endDate);
-    if(needsFetch) showStatus($('fetchStatus'),'Fetching '+ticker+'...','loading');
+  const missing = uniqueTickers.filter(t => !isTickerRangeCovered(t, startDate, endDate));
+  if(missing.length){
+    showStatus($('fetchStatus'),'Fetching '+missing.length+' ticker(s) in one request…','loading');
+    const fetchStart = POOL_FETCH_START < startDate ? POOL_FETCH_START : startDate;
+    const fetchEnd = isoDate(new Date()) > endDate ? isoDate(new Date()) : endDate;
     try {
-      await ensureTickerCached(ticker, startDate, endDate);
+      const map = await window.SharedYF.fetchPricesBatch(missing, fetchStart, fetchEnd);
+      for(const t of missing){
+        if(!storeBatchResult(t, map[t], fetchStart, fetchEnd)){
+          showWarning('Could not load data for '+t+(map[t]&&map[t].error?': '+map[t].error:'')+'.');
+        }
+      }
+      persistPriceCache(); renderPoolChips(); refreshTickerSelect();
     } catch(e){
-      showWarning('Could not load data for '+ticker+': '+e.message);
+      showWarning('Could not load ticker data: '+e.message);
     }
   }
 
@@ -1941,6 +2073,12 @@ function initializeDefaultSecurities(){
   addSecurity({type:'custom',name:'S&P500',returnPct:10,stdPct:18,amount:500,style:'monthly-date',dayOrDate:1});
   addSecurity({type:'custom',name:'Risk-Free 5%',returnPct:5,stdPct:0.5,amount:500,style:'monthly-date',dayOrDate:1});
 }
+
+// Restore any previously cached price history so reloads/return visits cost
+// zero Worker requests, then reflect it in the pool UI.
+loadPersistedCache();
+renderPoolChips();
+refreshTickerSelect();
 
 initializeDefaultSecurities();
 runSimulation();

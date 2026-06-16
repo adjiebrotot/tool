@@ -643,10 +643,22 @@ async function runSimulation(){
       p.assets.forEach(a=>{ if(a.type==='ticker'&&a.ticker) tickers.add(a.ticker.toUpperCase()); });
       if(p.rf.mode==='ticker'&&p.rf.ticker) tickers.add(p.rf.ticker.toUpperCase());
     });
-    for(const tk of tickers){
-      if(!isTickerRangeCovered(tk,startDate,endDate)) showStatus($('assetFetchStatus'),'Fetching '+tk+'...','loading');
-      try{ await ensureTickerCached(tk,startDate,endDate); }
-      catch(err){ showWarning('Could not load data for '+tk+': '+err.message); }
+    // Fetch every uncovered ticker in ONE batched request (not one-by-one) to
+    // keep Worker invocations to a minimum.
+    const missing=[...tickers].filter(tk=>!isTickerRangeCovered(tk,startDate,endDate));
+    if(missing.length){
+      showStatus($('assetFetchStatus'),'Fetching '+missing.length+' ticker(s) in one request…','loading');
+      try{
+        const map=await window.SharedYF.fetchPricesBatch(missing,startDate,endDate);
+        for(const tk of missing){
+          const r=map[tk];
+          if(r && !r.error && r.dates && r.dates.length){
+            priceCache[tk]={dates:r.dates,prices:r.prices,coverageStart:startDate,coverageEnd:endDate,source:r.source,kind:r.kind};
+          } else {
+            showWarning('Could not load data for '+tk+(r&&r.error?': '+r.error:'')+'.');
+          }
+        }
+      }catch(err){ showWarning('Could not load ticker data: '+err.message); }
     }
 
     // Build raw price series for every asset; collect date series for intersection.
