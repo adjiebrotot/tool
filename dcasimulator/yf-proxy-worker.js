@@ -1,113 +1,293 @@
 /* ──────────────────────────────────────────────────────────────────────────
-   yf-proxy-worker.js — your own Yahoo Finance proxy (the real failsafe)
+   yf-proxy-worker.js — batched market-data Worker for the DCA simulator
 
-   WHY: The DCA simulator runs entirely in the browser. Yahoo's chart endpoint
-   (query1/query2.finance.yahoo.com/v8/finance/chart — the exact endpoint the
-   Python `yfinance` library also uses) does not send CORS headers, so the page
-   relays through free public proxies (allorigins, corsproxy, codetabs, jina).
-   Those free proxies are the flaky part and cause the intermittent failures.
+   WHY THIS EXISTS
+   The simulator runs entirely in the browser. Yahoo's chart endpoint
+   (query1/query2.finance.yahoo.com/v8/finance/chart — the same endpoint the
+   Python `yfinance` library wraps) and Stooq's CSV endpoint do not send CORS
+   headers, so a page cannot call them directly. The old design relayed through
+   flaky public CORS proxies (allorigins / corsproxy / codetabs). Those were the
+   unreliable part. This Worker replaces them entirely.
 
-   This is a tiny Cloudflare Worker that does the relay itself: it fetches
-   Yahoo with a real browser User-Agent, adds permissive CORS headers, and
-   caches each response at Cloudflare's edge for a few minutes (so repeat loads
-   and rate-limit pressure both drop sharply). Once deployed, point the page at
-   it and you stop depending on third-party proxies entirely.
+   PRIME DIRECTIVE: MINIMISE WORKER INVOCATIONS (free tier = 100k/day).
+   The levers baked in here:
+     1. BATCHING — one request carries every ticker the user wants
+        (?tickers=AAPL,SPY,USDIDR). The browser makes ONE call instead of one
+        per ticker. The fan-out to Yahoo/Stooq happens here as subrequests
+        (free tier allows 50 subrequests per invocation), so a packed request
+        costs exactly one invocation regardless of how many tickers it carries.
+     2. NO CORS PREFLIGHT — this is a GET with no custom request headers, which
+        is a "simple request": the browser does NOT send an OPTIONS preflight,
+        so we are not charged a second invocation per call.
+     3. EDGE CACHE — each (ticker, range) upstream response is cached at the
+        edge (caches.default), collapsing repeat loads and easing Yahoo's rate
+        limiting.
+     4. ORIGIN LOCK — requests whose Origin/Referer is not tool.adjiebrotots.com
+        are rejected, and CORS is pinned to that exact origin so other websites'
+        browsers cannot read responses. (A static site cannot hold a real
+        secret, so this is "friction + browser-level lock", not 100% private.)
 
-   DEPLOY (free tier — 100k requests/day is plenty):
+   DEPLOY (workers.dev — adjiebrotots.com is NOT on Cloudflare DNS, so no custom
+   domain / WAF / zone cache is available; all protection lives in this file):
      1. https://dash.cloudflare.com → Workers & Pages → Create → Worker.
      2. Replace the worker code with this file's contents and Deploy.
-     3. (Optional) add a custom domain/route, e.g. yf.adjiebrotots.com.
-     4. In the simulator, after shared.js loads, call once:
-          SharedYF.setProxy('https://YOUR-WORKER-URL/?url=');
-        e.g. SharedYF.setProxy('https://yf.adjiebrotots.com/?url=');
-        With it set, your worker is tried FIRST and the public proxies remain
-        as automatic fallbacks — so you get reliability without a single point
-        of failure.
-
-   SECURITY: the allowlist below restricts this proxy to Yahoo's finance hosts
-   only, so it can't be abused as an open proxy.
+     3. Copy the deployed URL (https://NAME.SUBDOMAIN.workers.dev) and set it as
+        WORKER_ENDPOINT in shared.js (SharedYF). That single edit wires the apps.
+     4. Optional hardening in the dashboard: Settings → enable "Bot Fight Mode"
+        is zone-only and unavailable here, but you CAN reduce blast radius by
+        keeping ALLOWED_ORIGINS tight (below) and the per-request ticker cap.
    ────────────────────────────────────────────────────────────────────────── */
 
-const ALLOWED_HOSTS = new Set([
-  'query1.finance.yahoo.com',
-  'query2.finance.yahoo.com',
-  'stooq.com',
-]);
+// Only these origins may use the Worker. Keep this tight — it is the main lock.
+const ALLOWED_ORIGINS = [
+  'https://tool.adjiebrotots.com',
+  // Local development. Remove these two lines if you want production-only access.
+  'http://localhost',
+  'http://127.0.0.1',
+];
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+// Safety rails. Each ticker costs up to ~2 subrequests (Yahoo then Stooq); the
+// free tier allows 50 subrequests/invocation, so 25 tickers is a safe ceiling.
+const MAX_TICKERS = 25;
+const UPSTREAM_TIMEOUT_MS = 12000;
+const EDGE_CACHE_TTL = 600; // seconds the edge keeps an upstream price response
+
+const BROWSER_UA =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
+  '(KHTML, like Gecko) Chrome/124.0 Safari/537.36';
+
+/* ── FX / market mapping (mirrors classify() in shared.js) ─────────────────── */
+const FX_CODES = {
+  USD:1,EUR:1,GBP:1,JPY:1,AUD:1,NZD:1,CAD:1,CHF:1,CNY:1,CNH:1,HKD:1,SGD:1,
+  IDR:1,INR:1,MYR:1,KRW:1,THB:1,PHP:1,VND:1,TWD:1,ZAR:1,BRL:1,MXN:1,RUB:1,
+  TRY:1,SEK:1,NOK:1,DKK:1,PLN:1,CZK:1,HUF:1,AED:1,SAR:1,ILS:1,
+  XAU:1,XAG:1,XPT:1,XPD:1,
+};
+const STOOQ_SUFFIX = {
+  AX:'au', L:'uk', DE:'de', PA:'fr', AS:'nl', BR:'be', LS:'pt', MC:'es',
+  MI:'it', SW:'ch', VI:'at', ST:'se', HE:'fi', OL:'no', CO:'dk', HK:'hk',
+  T:'jp', SS:'cn', SZ:'cn', TO:'ca', V:'ca',
 };
 
 export default {
   async fetch(request, _env, ctx) {
+    const origin = request.headers.get('Origin') || '';
+    const referer = request.headers.get('Referer') || '';
+    const allowedOrigin = resolveAllowedOrigin(origin, referer);
+
+    // Preflight should never happen for a simple GET, but answer it cheaply if
+    // some client sends one anyway.
     if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: CORS_HEADERS });
+      return new Response(null, { status: 204, headers: corsHeaders(allowedOrigin) });
     }
     if (request.method !== 'GET') {
-      return new Response('Method not allowed', { status: 405, headers: CORS_HEADERS });
+      return json({ error: 'Method not allowed' }, 405, allowedOrigin);
     }
 
-    const target = new URL(request.url).searchParams.get('url');
-    if (!target) {
-      return json({ error: 'Missing ?url= parameter' }, 400);
+    // ORIGIN LOCK: reject anything not coming from an allowed origin. Browsers
+    // always send Origin on cross-origin fetch and cannot forge it; non-browser
+    // clients can spoof it, which is the accepted "friction, not fortress".
+    if (!allowedOrigin) {
+      return json({ error: 'Forbidden' }, 403, null);
     }
 
-    let upstream;
-    try {
-      upstream = new URL(target);
-    } catch {
-      return json({ error: 'Invalid url' }, 400);
-    }
-    if (upstream.protocol !== 'https:' || !ALLOWED_HOSTS.has(upstream.hostname)) {
-      return json({ error: 'Host not allowed' }, 403);
+    const params = new URL(request.url).searchParams;
+    const start = (params.get('start') || '').slice(0, 10);
+    const end = (params.get('end') || '').slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || !/^\d{4}-\d{2}-\d{2}$/.test(end)) {
+      return json({ error: 'start and end must be YYYY-MM-DD' }, 400, allowedOrigin);
     }
 
-    // Edge cache keyed by the upstream URL — collapses repeat loads and eases
-    // Yahoo rate limiting. Drop the page's cache-buster from the cache key.
-    const cache = caches.default;
-    const cacheKey = new Request(upstream.toString(), { method: 'GET' });
-    const cached = await cache.match(cacheKey);
-    if (cached) return withCors(cached);
-
-    let resp;
-    try {
-      resp = await fetch(upstream.toString(), {
-        headers: {
-          // A real browser UA avoids Yahoo's bot throttling.
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
-          'Accept': 'application/json,text/plain,*/*',
-        },
-        cf: { cacheTtl: 300, cacheEverything: true },
-      });
-    } catch (err) {
-      return json({ error: 'Upstream fetch failed', detail: String(err) }, 502);
+    const raw = (params.get('tickers') || '').split(',')
+      .map(t => t.trim().toUpperCase()).filter(Boolean);
+    const tickers = [...new Set(raw)].slice(0, MAX_TICKERS);
+    if (!tickers.length) {
+      return json({ error: 'Missing tickers parameter' }, 400, allowedOrigin);
     }
 
-    const body = await resp.text();
-    const out = new Response(body, {
-      status: resp.status,
-      headers: {
-        ...CORS_HEADERS,
-        'Content-Type': 'application/json; charset=utf-8',
-        'Cache-Control': 'public, max-age=300',
-      },
+    // Fan out — one subrequest chain per ticker, all in parallel.
+    const settled = await Promise.all(
+      tickers.map(t => fetchOneTicker(t, start, end, ctx)
+        .then(data => [t, data])
+        .catch(err => [t, { error: String(err && err.message || err) }]))
+    );
+
+    const results = {};
+    for (const [t, data] of settled) results[t] = data;
+
+    return json({ results, asOf: new Date().toISOString() }, 200, allowedOrigin, {
+      // Let the browser cache the batched answer briefly too.
+      'Cache-Control': 'public, max-age=120',
     });
-    if (resp.ok) ctx.waitUntil(cache.put(cacheKey, out.clone()));
-    return out;
   },
 };
 
-function withCors(resp) {
-  const r = new Response(resp.body, resp);
-  for (const [k, v] of Object.entries(CORS_HEADERS)) r.headers.set(k, v);
-  return r;
+/* ── Per-ticker fetch: pick sources, try in order, parse, return series ─────── */
+async function fetchOneTicker(ticker, start, end, ctx) {
+  const providers = classify(ticker, start, end);
+  let lastError = null;
+  for (const p of providers) {
+    try {
+      const text = await edgeFetch(p.url, ctx);
+      const series = p.parse(text);
+      return {
+        dates: series.dates,
+        prices: series.prices,
+        source: p.source,
+        kind: p.kind,
+      };
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw new Error(lastError && lastError.message ? lastError.message : 'all sources failed');
 }
 
-function json(obj, status) {
+// Fetch with an edge cache keyed on the upstream URL. A cache hit still counts
+// as an invocation (the worker ran), but it spares Yahoo/Stooq the load and
+// dodges their rate limits, which keeps the batched calls succeeding.
+async function edgeFetch(url, ctx) {
+  const cache = caches.default;
+  const cacheKey = new Request(url, { method: 'GET' });
+  const hit = await cache.match(cacheKey);
+  if (hit) return await hit.text();
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);
+  let resp;
+  try {
+    resp = await fetch(url, {
+      signal: controller.signal,
+      headers: { 'User-Agent': BROWSER_UA, 'Accept': 'application/json,text/csv,text/plain,*/*' },
+      cf: { cacheTtl: EDGE_CACHE_TTL, cacheEverything: true },
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  const body = await resp.text();
+  if (resp.ok) {
+    const toCache = new Response(body, {
+      headers: { 'Cache-Control': 'public, max-age=' + EDGE_CACHE_TTL },
+    });
+    ctx.waitUntil(cache.put(cacheKey, toCache));
+  }
+  return body;
+}
+
+/* ── Source classification (server-side port of shared.js classify) ────────── */
+function classify(ticker, startDate, endDate) {
+  const t = String(ticker || '').trim().toUpperCase();
+  if (!t) throw new Error('Invalid ticker');
+  const enc = encodeURIComponent;
+  const s = Math.floor(new Date(startDate).getTime() / 1000);
+  const e = Math.floor(new Date(endDate).getTime() / 1000 + 86400);
+  const cb = new Date().toISOString().slice(0, 10);
+  const d1 = compactDate(startDate), d2 = compactDate(endDate);
+
+  function yahoo(sym, kind) {
+    const p = 'period1=' + s + '&period2=' + e + '&interval=1d&events=history&_cb=' + cb;
+    return [
+      { source: 'yahoo', kind, parse: parseYahoo, url: 'https://query1.finance.yahoo.com/v8/finance/chart/' + enc(sym) + '?' + p },
+      { source: 'yahoo', kind, parse: parseYahoo, url: 'https://query2.finance.yahoo.com/v8/finance/chart/' + enc(sym) + '?' + p },
+    ];
+  }
+  function stooq(sym, kind) {
+    return { source: 'stooq', kind, parse: parseStooq,
+      url: 'https://stooq.com/q/d/l/?s=' + enc(sym) + '&i=d&d1=' + d1 + '&d2=' + d2 };
+  }
+
+  // Spot FX / metals: 'USDIDR', 'XAUUSD', or Yahoo's 'USDIDR=X' form.
+  const core = t.replace(/=X$/, '');
+  const isFx = /^[A-Z]{6}$/.test(core) && FX_CODES[core.slice(0, 3)] && FX_CODES[core.slice(3, 6)];
+  if (/=X$/.test(t) || isFx) {
+    // Stooq is the better source for spot FX/metals → try it first.
+    return [stooq(core.toLowerCase(), 'fx'), ...yahoo(core + '=X', 'fx')];
+  }
+
+  // Stocks / ETFs / indices: Yahoo first (adjusted close), Stooq fallback.
+  const providers = [...yahoo(t, 'stock')];
+  const dot = t.indexOf('.');
+  if (dot < 0) {
+    providers.push(stooq(t.toLowerCase() + '.us', 'stock'));
+  } else {
+    const suffix = STOOQ_SUFFIX[t.slice(dot + 1)];
+    if (suffix) providers.push(stooq(t.slice(0, dot).toLowerCase() + '.' + suffix, 'stock'));
+  }
+  return providers;
+}
+
+function parseYahoo(text) {
+  const jsonStart = text.indexOf('{');
+  const data = JSON.parse(jsonStart > 0 ? text.slice(jsonStart) : text);
+  const result = data && data.chart && data.chart.result && data.chart.result[0];
+  if (!result) throw new Error('No chart result');
+  const ts = result.timestamp;
+  const ind = result.indicators || {};
+  const closes = (ind.adjclose && ind.adjclose[0] && ind.adjclose[0].adjclose) ||
+                 (ind.quote && ind.quote[0] && ind.quote[0].close);
+  if (!ts || !closes) throw new Error('No price series');
+  const dates = [], prices = [];
+  for (let i = 0; i < ts.length; i++) {
+    if (closes[i] == null) continue;
+    dates.push(new Date(ts[i] * 1000).toISOString().slice(0, 10));
+    prices.push(closes[i]);
+  }
+  if (!dates.length) throw new Error('Empty price series');
+  return { dates, prices };
+}
+
+function parseStooq(text) {
+  const t = (text || '').trim();
+  if (!/^Date,/i.test(t)) throw new Error(t.slice(0, 60) || 'No CSV');
+  const lines = t.split(/\r?\n/);
+  const header = lines[0].split(',');
+  const di = header.indexOf('Date'), ci = header.indexOf('Close');
+  if (di < 0 || ci < 0) throw new Error('Unexpected CSV columns');
+  const dates = [], prices = [];
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i]) continue;
+    const cols = lines[i].split(',');
+    const px = parseFloat(cols[ci]);
+    if (!isFinite(px)) continue;
+    dates.push(cols[di].slice(0, 10));
+    prices.push(px);
+  }
+  if (!dates.length) throw new Error('Empty CSV');
+  return { dates, prices };
+}
+
+function compactDate(isoStr) { return String(isoStr).slice(0, 10).replace(/-/g, ''); }
+
+/* ── CORS / origin helpers ─────────────────────────────────────────────────── */
+// Returns the EXACT request origin to echo in Access-Control-Allow-Origin
+// (CORS requires an exact match, so we never substitute the allowlist base), or
+// null if the origin is not allowed. localhost/127.0.0.1 are allowed on any port.
+function resolveAllowedOrigin(origin, referer) {
+  const candidate = origin || refererOrigin(referer);
+  if (!candidate) return null;
+  for (const a of ALLOWED_ORIGINS) {
+    if (candidate === a) return candidate;
+    const devHost = (a === 'http://localhost' || a === 'http://127.0.0.1');
+    if (devHost && candidate.startsWith(a + ':')) return candidate; // dev with port
+  }
+  return null;
+}
+function refererOrigin(referer) {
+  try { return new URL(referer).origin; } catch { return ''; }
+}
+function corsHeaders(allowedOrigin) {
+  const h = {
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Vary': 'Origin',
+  };
+  if (allowedOrigin) h['Access-Control-Allow-Origin'] = allowedOrigin;
+  return h;
+}
+function json(obj, status, allowedOrigin, extra) {
   return new Response(JSON.stringify(obj), {
     status,
-    headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+    headers: { ...corsHeaders(allowedOrigin), 'Content-Type': 'application/json; charset=utf-8', ...(extra || {}) },
   });
 }
