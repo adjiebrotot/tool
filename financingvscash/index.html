@@ -124,7 +124,6 @@
         <span class="prefix" id="purchaseCostPrefix">$</span>
         <input class="currency-input fmt-num" id="purchaseCost" type="text" inputmode="decimal" value="50,000"/>
       </div>
-      <div class="field-sub">Total price of the item being purchased.</div>
     </div>
     <div class="field-row">
       <div class="field-label"><span class="tip-wrap">Available Cash <i class="tip-icon" data-tip="How much cash you have on hand. Must be at least equal to the purchase cost — financing something you cannot fully afford upfront is not modelled.">?</i></span></div>
@@ -132,12 +131,10 @@
         <span class="prefix" id="availableCashPrefix">$</span>
         <input class="currency-input fmt-num" id="availableCash" type="text" inputmode="decimal" value="50,000"/>
       </div>
-      <div class="field-sub">Cash on hand. Must be ≥ purchase cost to run the simulation.</div>
     </div>
     <div class="slider-block">
       <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Risk-Free Rate (annual %) <i class="tip-icon" data-tip="The annual return earned on uninvested cash (e.g. high-yield savings account, T-bills). Applies to all scenarios as the baseline investment return.">?</i></span></div><div class="slider-value" id="baseRfVal">4.50%</div></div>
       <input id="baseRf" type="range" min="0" max="20" step="0.1" value="4.5"/>
-      <div class="help">Annual return on invested unused cash (e.g. HYSA, T-bills). Shared across all scenarios.</div>
     </div>
     <div class="toggle-row">
       <div class="toggle-label"><span class="tip-wrap">Enable Inflation Adjustment <i class="tip-icon" data-tip="When enabled, all ending wealth values are also shown in today's dollars, adjusted for the annual inflation rate you set.">?</i></span></div>
@@ -146,7 +143,6 @@
     <div class="field-row" id="inflationRow" style="display:none;">
       <div class="field-label"><span class="tip-wrap">Inflation Rate (annual %) <i class="tip-icon" data-tip="The assumed annual rate of inflation. Used to convert nominal future values into real (purchasing-power) terms.">?</i></span></div>
       <input class="num-input" id="inflationRate" type="number" min="0" max="30" step="0.1" value="2.5"/>
-      <div class="field-sub">Used to compute real (inflation-adjusted) values.</div>
     </div>
   </div>
 
@@ -160,12 +156,10 @@
       <div class="slider-block">
         <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Finance Rate (annual %) <i class="tip-icon" data-tip="The annual interest rate on the loan. Used with compound-period conversion to calculate exact periodic payments.">?</i></span></div><div class="slider-value" id="scRateVal">5.00%</div></div>
         <input id="scRate" type="range" min="0" max="30" step="0.1" value="5"/>
-        <div class="help">Annual interest rate on the financed amount.</div>
       </div>
       <div class="slider-block">
         <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment (% of purchase cost) <i class="tip-icon" data-tip="The share of purchase cost paid upfront. 0% means full financing. 100% means the purchase is fully paid in cash, so no loan is needed.">?</i></span></div><div class="slider-value" id="scDownVal">0%</div></div>
         <input id="scDownPct" type="range" min="0" max="100" step="1" value="0"/>
-        <div class="help">Choose what percentage of the purchase cost is paid upfront before financing the remainder.</div>
       </div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Repayment Frequency <i class="tip-icon" data-tip="How often you make loan payments. Affects the period rate (compound-converted from annual) and the term unit shown below.">?</i></span></div>
@@ -178,7 +172,6 @@
       </div>
       <div class="field-row"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="An upfront fee charged to set up the loan. Can be a fixed amount or a percentage of the financed amount. Reduces your investable cash at the start.">?</i></span></div>
         <div class="inline-row"><input class="num-input fmt-num" id="scFeeAmt" type="text" inputmode="decimal" value="0"/><select class="sel-input" id="scFeeType" style="min-width:70px;"><option value="fixed">$</option><option value="pct">%</option></select></div>
-        <div class="field-sub">Fixed amount or % of financed amount, paid upfront.</div>
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;">
         <button class="btn-primary btn-sm" id="saveScenarioBtn">Save</button>
@@ -194,7 +187,6 @@
     </div>
     <div class="field-row"><div class="field-label"><span class="tip-wrap">Optimization Target <i class="tip-icon" data-tip="Determines which scenario is highlighted as &quot;Best&quot;. Net Benefit favours the scenario that leaves you the wealthiest vs paying cash. Lowest Interest/Cost minimises borrowing expense.">?</i></span></div>
       <select class="sel-input" id="optTarget"><option value="netBenefit">Highest Net Benefit</option><option value="lowestInterest">Lowest Total Interest</option><option value="lowestCost">Lowest Financing Cost</option></select>
-      <div class="field-sub">How to rank and highlight the best scenario.</div>
     </div>
   </div>
 
@@ -215,7 +207,7 @@
       </div>
       <div class="field-row"><div class="field-label"><span class="tip-wrap">Y Range <i class="tip-icon" data-tip="The minimum and maximum values to sweep the Y-axis variable between.">?</i></span></div><div class="inline-row"><input class="num-input" id="sensYStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensYEnd" type="number" step="0.5" value="8"/></div></div>
     </div>
-    <div class="field-row"><div class="field-label"><span class="tip-wrap">Grid Resolution <i class="tip-icon" data-tip="Number of evenly-spaced sample points along each axis. Higher values give smoother curves but take longer to compute.">?</i></span></div><input class="num-input" id="sensSteps" type="number" min="5" max="50" step="1" value="20"/><div class="field-sub">Number of steps per axis.</div></div>
+    <div class="field-row"><div class="field-label"><span class="tip-wrap">Grid Resolution <i class="tip-icon" data-tip="Number of evenly-spaced sample points along each axis. Higher values give smoother curves but take longer to compute.">?</i></span></div><input class="num-input" id="sensSteps" type="number" min="5" max="50" step="1" value="20"/></div>
     <button class="btn-primary btn-sm" id="runSensBtn" style="width:100%;margin-top:8px;">▶ Run Analysis</button>
   </div>
 

@@ -322,8 +322,7 @@ function renderScenarioConfig(){
   }
   const tks=loadedTickers();
   const tickerBody = tks.length
-    ? `<select class="txt-input" id="cfgTickerSelect" style="width:100%;cursor:pointer">${tks.map(tk=>`<option value="${tk}" ${sec.ticker===tk?'selected':''}>${tk}</option>`).join('')}</select>
-       <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Only tickers loaded in the Data tab can be used. Load more there to expand this list.</div>`
+    ? `<select class="txt-input" id="cfgTickerSelect" style="width:100%;cursor:pointer">${tks.map(tk=>`<option value="${tk}" ${sec.ticker===tk?'selected':''}>${tk}</option>`).join('')}</select>`
     : `<div class="status-bar status-warn" style="display:block">No tickers loaded yet — add them in the 📥 Data tab first.</div>`;
   wrap.innerHTML=`
     <div class="add-sec-area" style="border-top:none;padding-top:0">
