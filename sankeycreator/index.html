@@ -74,6 +74,7 @@
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <link rel="stylesheet" href="../shared.css">
+<script src="../shared.js"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
@@ -112,7 +113,9 @@
 
         <!-- ── TABLE sub-panel ── -->
         <div class="data-sub-panel active" id="sub-table">
-          <div class="help" style="flex-shrink:0">Each row defines a flow from <b>Source → Target</b> with a <b>Value</b>. Use <code>remaining</code> to auto-fill the leftovers. Use <code>|</code> in labels to add line breaks.</div>
+          <div style="display:flex;justify-content:flex-end;flex-shrink:0">
+            <span class="tip-icon" data-tip="Each row defines a flow from <strong>Source → Target</strong> with a <strong>Value</strong>. Use <code>remaining</code> to auto-fill the leftovers. Use <code>|</code> in labels to add line breaks.">?</span>
+          </div>
           <div class="editor-table-wrap" id="tableWrap">
             <table class="editor-table">
               <thead>
@@ -132,9 +135,8 @@
 
         <!-- ── TEXT sub-panel ── -->
         <div class="data-sub-panel" id="sub-text">
-          <div class="help" style="flex-shrink:0">
-            Format: <code>source,target,value[,color]</code><br>
-            Use <code>remaining</code> as value to auto-calculate the leftover flow from a node. Use <code>|</code> in labels to add line breaks.
+          <div style="display:flex;justify-content:flex-end;flex-shrink:0">
+            <span class="tip-icon" data-tip="Format: <code>source,target,value[,color]</code><br>Use <code>remaining</code> as value to auto-calculate the leftover flow from a node. Use <code>|</code> in labels to add line breaks.">?</span>
           </div>
           <textarea id="textInput" rows="18" spellcheck="false"
             placeholder="source,target,value,color&#10;Dubai,Applications,3&#10;Applications,Hired,5,#8FCDBD&#10;Applications,Declined,remaining,#FF8B8B"></textarea>
@@ -148,7 +150,9 @@
             <div>Drop a CSV file here or<br><label for="csvFile" class="csv-browse">browse to upload</label></div>
             <input type="file" id="csvFile" accept=".csv,.txt" style="display:none"/>
           </div>
-          <div class="help">CSV columns: <code>source</code>, <code>target</code>, <code>value</code>, <code>color</code> (optional). A header row is auto-detected.</div>
+          <div style="display:flex;justify-content:flex-end">
+            <span class="tip-icon" data-tip="CSV columns: <code>source</code>, <code>target</code>, <code>value</code>, <code>color</code> (optional). A header row is auto-detected.">?</span>
+          </div>
           <button id="downloadTemplate" class="btn-sec" style="width:100%">⬇ Download CSV Template</button>
           <div id="csvStatus"></div>
         </div>
@@ -158,13 +162,12 @@
       <!-- ── STYLE TAB ── -->
       <div class="ctrl-panel" id="tab-style">
         <div class="sblock">
-          <div class="slabel" style="margin-bottom:4px">Value Display</div>
+          <div class="slabel" style="margin-bottom:4px">Value Display <span class="tip-icon" data-tip="<strong>Nominal</strong> = actual values · <strong>% of Max</strong> = share of the node with highest total · <strong>None</strong> = hide values">?</span></div>
           <div class="radio-grp">
             <label class="radio-opt"><input type="radio" name="valueMode" value="nominal" checked>Nominal</label>
             <label class="radio-opt"><input type="radio" name="valueMode" value="percent">% of Max</label>
             <label class="radio-opt"><input type="radio" name="valueMode" value="none">None</label>
           </div>
-          <div class="help" style="margin-top:4px">Nominal = actual values · % of Max = share of the node with highest total · None = hide values</div>
         </div>
         <div class="sblock">
           <div class="slabel" style="margin-bottom:6px">Node Alignment</div>
@@ -220,10 +223,9 @@
         </div>
         <div class="sblock">
           <div class="toggle-row">
-            <span class="slabel">Label Background Box</span>
+            <span class="slabel">Label Background Box <span class="tip-icon" data-tip="Semi-transparent pill behind each label for legibility against busy flows.">?</span></span>
             <label class="toggle-wrap"><input type="checkbox" id="sLabelBox"><span class="toggle-track"></span></label>
           </div>
-          <div class="help" style="margin-top:4px">Semi-transparent pill behind each label for legibility against busy flows.</div>
         </div>
         <div class="sblock">
           <div class="slabel" style="margin-bottom:4px">Iterations (layout quality)</div>

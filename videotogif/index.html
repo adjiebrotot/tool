@@ -72,6 +72,7 @@
   <link rel="stylesheet" href="../dark.css">
   <link rel="stylesheet" href="../light.css">
   <link rel="stylesheet" href="../shared.css">
+  <script src="../shared.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -113,20 +114,18 @@
       <h3>Output</h3>
       <div class="slider-block">
         <div class="slider-head">
-          <span class="slider-label">Width</span>
+          <span class="slider-label">Width <span class="tip-icon" data-tip="Height is auto-calculated from source aspect ratio.">?</span></span>
           <span class="slider-value" id="widthVal">480 px</span>
         </div>
         <input type="range" id="widthSlider" min="120" max="3840" step="8" value="480">
-        <div class="help">Height is auto-calculated from source aspect ratio.</div>
         <div class="warn-hint" id="widthWarn">⚠ Above Full HD (1920 px) — conversion will be significantly slower.</div>
       </div>
       <div class="slider-block">
         <div class="slider-head">
-          <span class="slider-label">Frame Rate</span>
+          <span class="slider-label">Frame Rate <span class="tip-icon" data-tip="More fps = smoother animation, larger file size.">?</span></span>
           <span class="slider-value" id="fpsVal">12 fps</span>
         </div>
         <input type="range" id="fpsSlider" min="4" max="60" step="1" value="12">
-        <div class="help">More fps = smoother animation, larger file size.</div>
         <div class="warn-hint" id="fpsWarn">⚠ Above 24 fps — conversion will be significantly slower.</div>
       </div>
     </div>
@@ -135,25 +134,23 @@
       <h3>Quality</h3>
       <div class="slider-block">
         <div class="slider-head">
-          <span class="slider-label">Color Accuracy</span>
+          <span class="slider-label">Color Accuracy <span class="tip-icon" data-tip="Max quality samples every pixel for the palette.">?</span></span>
           <span class="slider-value" id="qualVal">High</span>
         </div>
         <input type="range" id="qualSlider" min="1" max="5" step="1" value="3">
-        <div class="help">Max quality samples every pixel for the palette.</div>
       </div>
       <div class="slider-head" style="margin-bottom:5px;">
-        <span class="slider-label" style="font-size:0.85rem;">Dithering</span>
+        <span class="slider-label" style="font-size:0.85rem;">Dithering <span class="tip-icon" data-tip="Reduces color banding. Bayer is fastest; Floyd-Steinberg is highest quality.">?</span></span>
       </div>
       <div class="toggle-row" id="ditherGroup">
         <button class="tbtn active" data-val="none">None</button>
         <button class="tbtn" data-val="bayer">Bayer</button>
         <button class="tbtn" data-val="floyd">Floyd-S</button>
       </div>
-      <div class="help" style="margin-top:4px;">Reduces color banding. Bayer is fastest; Floyd-Steinberg is highest quality.</div>
     </div>
 
     <div class="sb-section">
-      <h3>Playback Speed</h3>
+      <h3>Playback Speed <span class="tip-icon" data-tip="Preview uses this speed. GIF will also play at this speed.">?</span></h3>
       <div class="toggle-row" id="speedGroup">
         <button class="tbtn" data-speed="0.25">0.25×</button>
         <button class="tbtn" data-speed="0.5">0.5×</button>
@@ -163,7 +160,6 @@
         <button class="tbtn" data-speed="3">3×</button>
         <button class="tbtn" data-speed="4">4×</button>
       </div>
-      <div class="help" style="margin-top:4px;">Preview uses this speed. GIF will also play at this speed.</div>
     </div>
 
     <div class="sb-section">
