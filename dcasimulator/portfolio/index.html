@@ -97,17 +97,23 @@
     <div class="section-label" style="margin-top:0">Data Download</div>
     <div class="field-row" style="border-top:none;padding-top:0">
       <div class="add-sec-area" style="border-top:none;padding-top:4px">
-        <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">Tickers <span class="tip-icon" data-tip="Enter every ticker you want to compare (comma-separated)">?</span></div>
+        <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">Tickers <span class="tip-icon warn" data-tip="To keep this free tool sustainable, data loads are capped at 5 per device per day (shared with the single-asset tool). A load of up to 25 tickers counts as ONE request, so list EVERY ticker you want to assess and load them in one go. Already-cached tickers and same-day reloads are free. The cap resets each day.">!</span></div>
         <textarea class="txt-input" id="tickerPoolInput" rows="2" placeholder="e.g. SPY, GOVT, DHHF.AX, AAA.AX" style="text-transform:uppercase;width:100%;resize:vertical;font-family:inherit;line-height:1.4"></textarea>
+        <div class="field-sub" style="margin-top:5px">Tip: list every ticker at once — up to 25 load in a single request and stay cached for next time.</div>
         <a href="../ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
         <div class="add-sec-row" style="gap:6px;margin-top:8px">
-          <button class="btn-primary" id="loadTickersBtn" style="flex:2">⤓ Load tickers</button>
+          <button class="btn-primary" id="loadTickersBtn" style="flex:1">⤓ Load tickers</button>
           <button class="btn-secondary" id="editTickersBtn" style="flex:1;display:none">✎ Edit list</button>
         </div>
+        <div class="field-sub rate-info" id="rateInfo" style="margin-top:6px"></div>
         <div class="status-bar" id="poolStatus"></div>
         <div id="poolChipsWrap" style="display:none;margin-top:9px">
-          <div class="field-label" style="margin-bottom:5px">Loaded tickers</div>
-          <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+          <div class="pool-chips-head">
+            <span class="field-label" style="margin-bottom:0">Loaded tickers</span>
+            <button id="clearPoolBtn" class="pool-clear-btn" type="button" title="Remove every loaded ticker">Clear all</button>
+          </div>
+          <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px"></div>
+          <div class="field-sub" style="margin-top:6px">Click ✕ on a ticker to remove it, or type more above and load them in one go.</div>
         </div>
       </div>
     </div>

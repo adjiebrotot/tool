@@ -33,7 +33,10 @@
      2. Replace the worker code with this file's contents and Deploy.
      3. Copy the deployed URL (https://NAME.SUBDOMAIN.workers.dev) and set it as
         WORKER_ENDPOINT in shared.js (SharedYF). That single edit wires the apps.
-     4. Optional hardening in the dashboard: Settings → enable "Bot Fight Mode"
+     4. Bind a KV namespace as RATE_KV to switch on the per-IP daily cap — see
+        the IP_DAILY_LIMIT block below for the 3-step dashboard setup. Without
+        it the Worker still runs; only the server-side backstop is disabled.
+     5. Optional hardening in the dashboard: Settings → enable "Bot Fight Mode"
         is zone-only and unavailable here, but you CAN reduce blast radius by
         keeping ALLOWED_ORIGINS tight (below) and the per-request ticker cap.
    ────────────────────────────────────────────────────────────────────────── */
@@ -52,6 +55,30 @@ const MAX_TICKERS = 25;
 const UPSTREAM_TIMEOUT_MS = 12000;
 const EDGE_CACHE_TTL = 600; // seconds the edge keeps an upstream price response
 
+/* ── PER-IP DAILY LIMIT (the real backstop) ────────────────────────────────
+   The client also keeps a per-device cookie (5/day) as a UX nudge, but cookies
+   are trivially cleared. This server-side cap is the hard limit: one COUNT per
+   Worker invocation (a request carries up to 25 tickers, so batching is still
+   rewarded), keyed by the visitor's IP and the UTC date, stored in Workers KV.
+
+   It is deliberately MORE generous than the cookie because many people share a
+   public IP (mobile carriers, offices, schools via CGNAT/NAT) — a tight per-IP
+   cap would punish them. The cookie nudges individuals to ~5/day; this catches
+   a single source hammering hundreds of requests.
+
+   SETUP (Workers KV, dashboard-friendly):
+     1. Cloudflare dashboard → Storage & Databases → KV → Create namespace
+        (e.g. "yf_rate").
+     2. Your Worker → Settings → Bindings → Add → KV namespace. Set the
+        Variable name to exactly RATE_KV and pick the namespace.
+     3. Redeploy. With no binding present the Worker FAILS OPEN (no IP cap), so
+        it keeps working before/without KV — only the backstop is disabled.
+   Free KV allows 1k writes/day; we write at most IP_DAILY_LIMIT times per IP
+   per day. If traffic ever outgrows that, move this counter to a Durable
+   Object (strongly consistent) — the call sites below stay the same. */
+const IP_DAILY_LIMIT = 40;
+const IP_KV_TTL = 60 * 60 * 36; // counter auto-expires ~1.5 days after last write
+
 const BROWSER_UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
   '(KHTML, like Gecko) Chrome/124.0 Safari/537.36';
@@ -68,9 +95,13 @@ const STOOQ_SUFFIX = {
   MI:'it', SW:'ch', VI:'at', ST:'se', HE:'fi', OL:'no', CO:'dk', HK:'hk',
   T:'jp', SS:'cn', SZ:'cn', TO:'ca', V:'ca',
 };
+// Precious metals have no spot "<METAL>USD=X" symbol on Yahoo (that path 404s),
+// so when Stooq's spot series is unavailable we fall back to the COMEX/NYMEX
+// continuous futures contract, which Yahoo's chart endpoint does serve.
+const METAL_FUTURES = { XAU:'GC=F', XAG:'SI=F', XPT:'PL=F', XPD:'PA=F' };
 
 export default {
-  async fetch(request, _env, ctx) {
+  async fetch(request, env, ctx) {
     const origin = request.headers.get('Origin') || '';
     const referer = request.headers.get('Referer') || '';
     const allowedOrigin = resolveAllowedOrigin(origin, referer);
@@ -105,6 +136,17 @@ export default {
       return json({ error: 'Missing tickers parameter' }, 400, allowedOrigin);
     }
 
+    // PER-IP DAILY CAP — the hard backstop. Checked after validation so bad
+    // requests don't burn quota, and before fan-out so a blocked caller never
+    // touches Yahoo/Stooq. Fails open if KV isn't bound.
+    const ipCheck = await checkIpDailyLimit(request, env, ctx);
+    if (ipCheck.blocked) {
+      return json({
+        error: 'Daily request limit reached for your network (' + IP_DAILY_LIMIT +
+               '/day). It resets at 00:00 UTC. Tip: load all tickers in one request.',
+      }, 429, allowedOrigin, { 'Retry-After': '3600' });
+    }
+
     // Fan out — one subrequest chain per ticker, all in parallel.
     const settled = await Promise.all(
       tickers.map(t => fetchOneTicker(t, start, end, ctx)
@@ -121,6 +163,33 @@ export default {
     });
   },
 };
+
+/* ── Per-IP daily cap via Workers KV ────────────────────────────────────────
+   Counts one per Worker invocation. Returns { blocked } — fails OPEN on any
+   missing binding or KV error so data fetching never breaks because of the cap.
+   KV is eventually consistent, so racing requests from one IP may under-count
+   slightly; that's acceptable for a soft backstop. */
+async function checkIpDailyLimit(request, env, ctx) {
+  if (!env || !env.RATE_KV) return { blocked: false, disabled: true };
+  const ip = request.headers.get('CF-Connecting-IP') ||
+             (request.headers.get('X-Forwarded-For') || '').split(',')[0].trim() ||
+             'unknown';
+  const day = new Date().toISOString().slice(0, 10); // UTC date
+  const key = 'ip:' + day + ':' + ip;
+  let count = 0;
+  try {
+    const v = await env.RATE_KV.get(key);
+    count = v ? (parseInt(v, 10) || 0) : 0;
+  } catch (_) {
+    return { blocked: false }; // KV read failed → fail open
+  }
+  if (count >= IP_DAILY_LIMIT) return { blocked: true, count };
+  // Best-effort increment; don't block the response on the write.
+  ctx.waitUntil(
+    env.RATE_KV.put(key, String(count + 1), { expirationTtl: IP_KV_TTL }).catch(() => {})
+  );
+  return { blocked: false, count: count + 1 };
+}
 
 /* ── Per-ticker fetch: pick sources, try in order, parse, return series ─────── */
 async function fetchOneTicker(ticker, start, end, ctx) {
@@ -202,7 +271,13 @@ function classify(ticker, startDate, endDate) {
   const isFx = /^[A-Z]{6}$/.test(core) && FX_CODES[core.slice(0, 3)] && FX_CODES[core.slice(3, 6)];
   if (/=X$/.test(t) || isFx) {
     // Stooq is the better source for spot FX/metals → try it first.
-    return [stooq(core.toLowerCase(), 'fx'), ...yahoo(core + '=X', 'fx')];
+    const providers = [stooq(core.toLowerCase(), 'fx')];
+    // For metals quoted in USD (XAUUSD, XAGUSD, …) Yahoo has no '=X' spot symbol,
+    // so add the futures contract as a working fallback BEFORE the '=X' attempt.
+    const metalFut = METAL_FUTURES[core.slice(0, 3)];
+    if (metalFut && core.slice(3, 6) === 'USD') providers.push(...yahoo(metalFut, 'fx'));
+    providers.push(...yahoo(core + '=X', 'fx'));
+    return providers;
   }
 
   // Stocks / ETFs / indices: Yahoo first (adjusted close), Stooq fallback.
