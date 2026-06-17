@@ -4,7 +4,7 @@
     document.body.classList.toggle('light', light);
     btn.textContent = light ? '🌙 Dark' : '☀️ Light';
   };
-  apply(localStorage.getItem('pf-theme') === 'light');
+  apply(localStorage.getItem('pf-theme') !== 'dark');
   btn.addEventListener('click', () => {
     const next = !document.body.classList.contains('light');
     apply(next);

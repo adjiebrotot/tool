@@ -37,9 +37,10 @@ code{font-family:'DM Mono',monospace;background:var(--input-bg);padding:1px 5px;
 #tab-data{overflow-y:hidden;padding-bottom:6px}
 
 /* ─── DATA SUB-TABS ─── */
-.data-sub-tabs{display:flex;gap:5px;flex-shrink:0}
-.data-sub-tab{padding:4px 14px;font-weight:700;font-size:.78rem;cursor:pointer;color:var(--muted);background:var(--input-bg);border:1px solid var(--border);border-radius:999px;font-family:inherit;transition:all 150ms;white-space:nowrap}
-.data-sub-tab.active{color:var(--accent);border-color:var(--accent);background:rgba(141,187,255,.08)}
+.data-sub-tabs{display:inline-flex;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px;flex-shrink:0}
+.data-sub-tab{background:transparent;border:none;border-radius:7px;padding:5px 14px;font-size:.85rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 140ms;font-family:inherit;white-space:nowrap}
+.data-sub-tab.active{background:var(--accent-strong);color:#fff;box-shadow:var(--shadow-sm)}
+.data-sub-tab:hover:not(.active){color:var(--text)}
 .data-sub-panel{display:none;flex-direction:column;gap:8px;min-height:0;flex:1;overflow:hidden}
 .data-sub-panel.active{display:flex}
 
