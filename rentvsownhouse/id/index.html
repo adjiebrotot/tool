@@ -197,7 +197,6 @@
         <span class="slider-value" id="riskFreeRateVal">4.50%</span>
       </div>
       <input type="range" id="riskFreeRate" min="-10" max="25" step="0.1" value="4.5"/>
-      <div class="help" data-i18n="helpRiskFreeRate">Tingkat return kas yang tidak terpakai (di atas biaya sewa/KPR) yang berbunga setiap tahunnya.</div>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelInitialCash">Modal Awal</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(opsional)</span></div>
@@ -214,7 +213,6 @@
         <span class="prefix" id="monthlyBudgetPrefix">$</span>
         <input class="currency-input money-input" id="monthlyBudget" type="text" inputmode="numeric" data-money="true" value="0"/>
       </div>
-      <div class="field-sub" data-i18n="subMonthlyBudget">Jika 0, otomatis disesuaikan dengan cicilan KPR atau biaya sewa tertinggi. Sisa diinvestasikan pada suku bunga bebas risiko.</div>
     </div>
     <div class="field-row" id="budgetIncreaseRow" style="display:none;">
       <div class="field-label"><span data-i18n="labelBudgetIncrease">Kenaikan Anggaran Tahunan</span> <span class="tip-icon" data-tip-key="monthlyBudgetIncrease">?</span></div>
@@ -243,13 +241,12 @@
     </div>
     <div id="rtbParams" style="display:none;">
       <div class="field-row" style="border-top:none;padding-top:0;">
-        <div class="field-label"><span data-i18n="labelBuyAtYear">Beli di Tahun</span> <span class="tip-icon" data-tip-key="rtbEnabled">?</span></div>
+        <div class="field-label"><span data-i18n="labelBuyAtYear">Beli di Tahun</span> <span class="tip-icon" data-tip-key="rtbBuyAtYear">?</span></div>
         <div class="slider-head" style="margin-bottom:4px;">
           <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitYearsRentingFirst">tahun menyewa lebih dahulu</span>
           <span class="slider-value" id="rtbBuyYearVal">5 yrs</span>
         </div>
         <input type="range" id="rtbBuyYear" min="1" max="50" step="1" value="5"/>
-        <div class="help" data-i18n="helpBuyAtYear">Beralih dari menyewa ke membeli di tahun ini. Harga properti tumbuh sesuai RPPI hingga saat itu.</div>
       </div>
     </div>
   </div>
@@ -263,7 +260,6 @@
         <span class="prefix" id="propertyPricePrefix">$</span>
         <input class="currency-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
       </div>
-      <div class="field-sub" data-i18n="subPropertyPrice">Harga beli properti.</div>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelDownPayment">Uang Muka (DP)</span> <span class="tip-icon" data-tip-key="downPaymentPct">?</span></div>
@@ -324,7 +320,6 @@
       <div class="rate-schedule-actions">
         <button class="cagr-btn" id="addRatePeriod" type="button" data-i18n="btnAddPeriod">+ Tambah Periode</button>
       </div>
-      <div class="field-sub" data-i18n="helpRateSchedule">Periode selalu mencakup tahun 1 hingga akhir jangka waktu KPR, dengan periode terakhir diperpanjang secara otomatis. Periode mengambang menampilkan pita min–maks pada grafik; garis menggunakan titik tengah pita.</div>
     </div>
     <div class="section-label" data-i18n="sectionPropertyGrowth">Pertumbuhan Properti</div>
     <div class="field-row">
@@ -334,10 +329,9 @@
         <span class="slider-value" id="houseGrowthVal">5.00%</span>
       </div>
       <input type="range" id="houseGrowth" min="-10" max="25" step="0.1" value="5"/>
-      <div class="help" data-i18n="helpRPPIRate">Tingkat pertumbuhan tahunan Indeks Harga Properti Residensial.</div>
     </div>
     <div class="field-row">
-      <div class="field-label" data-i18n="labelCalcCAGR">Hitung CAGR dari Harga Historis</div>
+      <div class="field-label"><span data-i18n="labelCalcCAGR">Hitung CAGR dari Harga Historis</span> <span class="tip-icon" data-tip-key="calcCagr">?</span></div>
       <button class="btn-secondary cagr-toggle-btn" id="cagrToolToggle" type="button" data-i18n="btnShowTool">Tampilkan Alat</button>
       <div class="cagr-box" id="cagrToolWrap" style="display:none;">
         <div id="cagrRows">
@@ -358,7 +352,6 @@
         </div>
         <div class="cagr-result" id="cagrResult"></div>
       </div>
-      <div class="field-sub" data-i18n="helpCagrPairs">Masukkan pasangan tahun &amp; harga — CAGR akan diterapkan pada slider Kenaikan Harga Properti di atas.</div>
     </div>
     <div class="section-label" data-i18n="sectionCostsOwning">Biaya Kepemilikan</div>
     <div class="field-row">
@@ -381,7 +374,6 @@
           <option value="pct">%</option>
         </select>
       </div>
-      <div class="field-sub" data-i18n="helpSetupCost">Biaya satu kali saat pembelian (ditambahkan ke modal awal, bukan pinjaman).</div>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelOwnOngoing">Biaya Rutin Kepemilikan</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
@@ -400,7 +392,6 @@
         <option value="dollar" data-i18n-opt="optFixedAmount">Jumlah Tetap</option>
         <option value="pct" data-i18n-opt="optPctPropertyValue">% dari Nilai Properti</option>
       </select>
-      <div class="field-sub" data-i18n="helpOwnOngoing">PBB, asuransi, perawatan, kebersihan, dll.</div>
     </div>
     <div class="field-row" id="ownOngoingInflationRow">
       <div class="field-label"><span data-i18n="labelOwnInflation">Inflasi Biaya Rutin Kepemilikan</span> <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
@@ -409,7 +400,6 @@
         <span class="slider-value" id="ownOngoingInflationVal">0.00%</span>
       </div>
       <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.1" value="0"/>
-      <div class="help" data-i18n="helpOwnInflation">Misal 3% berarti PBB dan biaya perawatan naik 3% per tahun.</div>
     </div>
     </div><!-- /ownCostsSimple -->
     <div id="ownCostsDetailed" style="display:none;">
@@ -417,13 +407,11 @@
         <div class="field-label"><span data-i18n="labelSetupCosts">Biaya Awal Pembelian</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
         <div class="cost-items" id="ownSetupCostRows"></div>
         <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnSetupCost" type="button" data-i18n="btnAddSetupCost">+ Tambah Biaya Awal</button></div>
-        <div class="field-sub" data-i18n="helpSetupCostsDetailed">Biaya satu kali saat pembelian. Item % dihitung dari harga beli pada saat transaksi (termasuk Sewa Dulu, Beli Kemudian).</div>
       </div>
       <div class="field-row">
         <div class="field-label"><span data-i18n="labelOngoingCostsList">Biaya Rutin</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
         <div class="cost-items" id="ownOngoingCostRows"></div>
         <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Tambah Biaya Rutin</button></div>
-        <div class="field-sub" data-i18n="helpOwnCostsDetailed">Jumlah tetap tumbuh sesuai inflasinya masing-masing; item % mengikuti nilai properti.</div>
       </div>
     </div><!-- /ownCostsDetailed -->
   </div>
@@ -453,7 +441,6 @@
         <span class="slider-value" id="rentInflationVal">3.00%</span>
       </div>
       <input type="range" id="rentInflation" min="-10" max="25" step="0.1" value="3"/>
-      <div class="help" data-i18n="helpRentInflation">Tingkat kenaikan sewa per tahun.</div>
     </div>
     <div class="section-label" data-i18n="sectionCostsRenting">Biaya Menyewa</div>
     <div class="field-row">
@@ -481,7 +468,6 @@
         <option value="dollar" data-i18n-opt="optFixedAmount">Jumlah Tetap</option>
         <option value="pct" data-i18n-opt="optPctAnnualRent">% dari Sewa Tahunan</option>
       </select>
-      <div class="field-sub" data-i18n="helpRentOngoing">Asuransi isi rumah, biaya tambahan penyewa (tidak termasuk PBB dan perawatan gedung).</div>
     </div>
     <div class="field-row" id="rentOngoingInflationRow">
       <div class="field-label"><span data-i18n="labelRentOngoingInflation">Inflasi Biaya Rutin Menyewa</span> <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
@@ -490,7 +476,6 @@
         <span class="slider-value" id="rentOngoingInflationVal">0.00%</span>
       </div>
       <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.1" value="0"/>
-      <div class="help" data-i18n="helpRentOngoingInflation">Misal 2% berarti asuransi isi rumah naik 2% per tahun.</div>
     </div>
     </div><!-- /rentCostsSimple -->
     <div id="rentCostsDetailed" style="display:none;">
@@ -498,7 +483,6 @@
         <div class="field-label"><span data-i18n="labelOngoingCostsList">Biaya Rutin</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
         <div class="cost-items" id="rentOngoingCostRows"></div>
         <div class="rate-schedule-actions"><button class="cagr-btn" id="addRentOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Tambah Biaya Rutin</button></div>
-        <div class="field-sub" data-i18n="helpRentCostsDetailed">Jumlah tetap tumbuh sesuai inflasinya masing-masing; item % mengikuti sewa tahunan.</div>
       </div>
     </div><!-- /rentCostsDetailed -->
   </div>

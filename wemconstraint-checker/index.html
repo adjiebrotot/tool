@@ -73,6 +73,7 @@
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <link rel="stylesheet" href="../shared.css">
+<script src="../shared.js"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -105,12 +106,11 @@
     </div>
 
     <div class="tg" style="min-width:155px">
-      <span class="tg-lbl">2 · Demand Forecast</span>
+      <span class="tg-lbl">2 · Demand Forecast <span class="tip-icon" data-tip="The forecast demand (MW) is used as the RHS load scaling term in each constraint equation — it multiplies the equation's load coefficient when computing the right-hand-side limit.">?</span></span>
       <div class="tg-r">
         <input type="number" id="demandInp" value="1500" min="0" max="6000" step="1" style="width:90px"/>
         <span style="font-size:.8rem;color:var(--muted)">MW</span>
       </div>
-      <span class="hint">RHS load scaling term</span>
     </div>
 
     <div class="tg" style="flex:1;min-width:260px">
@@ -127,8 +127,8 @@
       <label class="chk-row">
         <input type="checkbox" id="activeOnly" checked/>
         Active constraint set only
+        <span class="tip-icon" data-tip="Limits the checked equations to rows that have a Constraint Set ID assigned — these are the constraints actively enforced by AEMO.">?</span>
       </label>
-      <span class="hint">Rows with a Constraint Set ID</span>
     </div>
 
     <div class="tg" style="min-width:110px;border-right:none">
@@ -212,7 +212,6 @@
       <tbody id="violBody"></tbody></table>
       <div id="violEmpty" class="empty" style="display:none">
         <div class="ico">✅</div><h2>No Violations</h2>
-        <p>All constraints satisfied for this contingency and demand.</p>
       </div>
     </div>
   </div>
@@ -247,7 +246,6 @@
 <div id="emptyState" class="empty card" style="padding:52px 24px">
   <div class="ico">📋</div>
   <h2>Ready to Check</h2>
-  <p>Upload a dispatch XLSX, confirm the demand forecast, choose a contingency, then click <strong>⚡ Check</strong>.</p>
 </div>
 
 </div><!-- /wrap -->

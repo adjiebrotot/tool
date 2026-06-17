@@ -200,7 +200,6 @@
         <span class="slider-value" id="riskFreeRateVal">4.50%</span>
       </div>
       <input type="range" id="riskFreeRate" min="-10" max="25" step="0.1" value="4.5"/>
-      <div class="help" data-i18n="helpRiskFreeRate">Rate at which surplus cash (not used for rent/mortgage) compounds annually.</div>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelInitialCash">Initial Cash</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(optional)</span></div>
@@ -217,7 +216,6 @@
         <span class="prefix" id="monthlyBudgetPrefix">$</span>
         <input class="currency-input money-input" id="monthlyBudget" type="text" inputmode="numeric" data-money="true" value="0"/>
       </div>
-      <div class="field-sub" data-i18n="subMonthlyBudget">If 0, auto-set to the higher of rent or mortgage payment. Leftover invested at risk-free rate.</div>
     </div>
     <div class="field-row" id="budgetIncreaseRow" style="display:none;">
       <div class="field-label"><span data-i18n="labelBudgetIncrease">Budget Annual Increase</span> <span class="tip-icon" data-tip-key="monthlyBudgetIncrease">?</span></div>
@@ -246,13 +244,12 @@
     </div>
     <div id="rtbParams" style="display:none;">
       <div class="field-row" style="border-top:none;padding-top:0;">
-        <div class="field-label"><span data-i18n="labelBuyAtYear">Buy at Year</span> <span class="tip-icon" data-tip-key="rtbEnabled">?</span></div>
+        <div class="field-label"><span data-i18n="labelBuyAtYear">Buy at Year</span> <span class="tip-icon" data-tip-key="rtbBuyAtYear">?</span></div>
         <div class="slider-head" style="margin-bottom:4px;">
           <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitYearsRentingFirst">years of renting first</span>
           <span class="slider-value" id="rtbBuyYearVal">5 yrs</span>
         </div>
         <input type="range" id="rtbBuyYear" min="1" max="50" step="1" value="5"/>
-        <div class="help" data-i18n="helpBuyAtYear">Switch from renting to buying at this year. Property price grows at RPPI until then.</div>
       </div>
     </div>
   </div>
@@ -266,7 +263,6 @@
         <span class="prefix" id="propertyPricePrefix">$</span>
         <input class="currency-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
       </div>
-      <div class="field-sub" data-i18n="subPropertyPrice">Purchase price of the property.</div>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelDownPayment">Down Payment</span> <span class="tip-icon" data-tip-key="downPaymentPct">?</span></div>
@@ -327,7 +323,6 @@
       <div class="rate-schedule-actions">
         <button class="cagr-btn" id="addRatePeriod" type="button" data-i18n="btnAddPeriod">+ Add Period</button>
       </div>
-      <div class="field-sub" data-i18n="helpRateSchedule">Periods always cover years 1 to the mortgage term — the last period extends automatically. Floating periods show a min–max band on the chart; lines use the band midpoint.</div>
     </div>
     <div class="section-label" data-i18n="sectionPropertyGrowth">Property Growth</div>
     <div class="field-row">
@@ -337,10 +332,9 @@
         <span class="slider-value" id="houseGrowthVal">5.00%</span>
       </div>
       <input type="range" id="houseGrowth" min="-10" max="25" step="0.1" value="5"/>
-      <div class="help" data-i18n="helpRPPIRate">Residential Property Price Index annual growth rate.</div>
     </div>
     <div class="field-row">
-      <div class="field-label" data-i18n="labelCalcCAGR">Calculate CAGR from Historical Prices</div>
+      <div class="field-label"><span data-i18n="labelCalcCAGR">Calculate CAGR from Historical Prices</span> <span class="tip-icon" data-tip-key="calcCagr">?</span></div>
       <button class="btn-secondary cagr-toggle-btn" id="cagrToolToggle" type="button" data-i18n="btnShowTool">Show Tool</button>
       <div class="cagr-box" id="cagrToolWrap" style="display:none;">
         <div id="cagrRows">
@@ -361,7 +355,6 @@
         </div>
         <div class="cagr-result" id="cagrResult"></div>
       </div>
-      <div class="field-sub" data-i18n="helpCagrPairs">Enter year & price pairs — CAGR will be applied to the House Price Growth slider above.</div>
     </div>
     <div class="section-label" data-i18n="sectionCostsOwning">Costs of Owning</div>
     <div class="field-row">
@@ -384,7 +377,6 @@
           <option value="pct">%</option>
         </select>
       </div>
-      <div class="field-sub" data-i18n="helpSetupCost">One-time cost at purchase (added to initial outlay, not loan).</div>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelOwnOngoing">Ongoing Costs of Owning</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
@@ -403,7 +395,6 @@
         <option value="dollar" data-i18n-opt="optFixedAmount">Fixed $ amount</option>
         <option value="pct" data-i18n-opt="optPctPropertyValue">% of property value</option>
       </select>
-      <div class="field-sub" data-i18n="helpOwnOngoing">Council rates, insurance, maintenance, lawn, etc.</div>
     </div>
     <div class="field-row" id="ownOngoingInflationRow">
       <div class="field-label"><span data-i18n="labelOwnInflation">Own Ongoing Cost Inflation</span> <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
@@ -412,7 +403,6 @@
         <span class="slider-value" id="ownOngoingInflationVal">0.00%</span>
       </div>
       <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.1" value="0"/>
-      <div class="help" data-i18n="helpOwnInflation">E.g. 3% means council rates and maintenance grow 3% per year.</div>
     </div>
     </div><!-- /ownCostsSimple -->
     <div id="ownCostsDetailed" style="display:none;">
@@ -420,13 +410,11 @@
         <div class="field-label"><span data-i18n="labelSetupCosts">Setup Costs</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
         <div class="cost-items" id="ownSetupCostRows"></div>
         <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnSetupCost" type="button" data-i18n="btnAddSetupCost">+ Add Setup Cost</button></div>
-        <div class="field-sub" data-i18n="helpSetupCostsDetailed">One-time costs at purchase. % items are computed on the buy price at purchase time (incl. Rent-Then-Buy).</div>
       </div>
       <div class="field-row">
         <div class="field-label"><span data-i18n="labelOngoingCostsList">Ongoing Costs</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
         <div class="cost-items" id="ownOngoingCostRows"></div>
         <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Add Ongoing Cost</button></div>
-        <div class="field-sub" data-i18n="helpOwnCostsDetailed">Fixed amounts grow at their own inflation rate; % items track the property value.</div>
       </div>
     </div><!-- /ownCostsDetailed -->
   </div>
@@ -456,7 +444,6 @@
         <span class="slider-value" id="rentInflationVal">3.00%</span>
       </div>
       <input type="range" id="rentInflation" min="-10" max="25" step="0.1" value="3"/>
-      <div class="help" data-i18n="helpRentInflation">Annual rate at which rent grows.</div>
     </div>
     <div class="section-label" data-i18n="sectionCostsRenting">Costs of Renting</div>
     <div class="field-row">
@@ -484,7 +471,6 @@
         <option value="dollar" data-i18n-opt="optFixedAmount">Fixed $ amount</option>
         <option value="pct" data-i18n-opt="optPctAnnualRent">% of annual rent</option>
       </select>
-      <div class="field-sub" data-i18n="helpRentOngoing">Contents insurance, extra costs renters bear (no council rates, no maintenance).</div>
     </div>
     <div class="field-row" id="rentOngoingInflationRow">
       <div class="field-label"><span data-i18n="labelRentOngoingInflation">Rent Ongoing Cost Inflation</span> <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
@@ -493,7 +479,6 @@
         <span class="slider-value" id="rentOngoingInflationVal">0.00%</span>
       </div>
       <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.1" value="0"/>
-      <div class="help" data-i18n="helpRentOngoingInflation">E.g. 2% means contents insurance grows 2% per year.</div>
     </div>
     </div><!-- /rentCostsSimple -->
     <div id="rentCostsDetailed" style="display:none;">
@@ -501,7 +486,6 @@
         <div class="field-label"><span data-i18n="labelOngoingCostsList">Ongoing Costs</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
         <div class="cost-items" id="rentOngoingCostRows"></div>
         <div class="rate-schedule-actions"><button class="cagr-btn" id="addRentOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Add Ongoing Cost</button></div>
-        <div class="field-sub" data-i18n="helpRentCostsDetailed">Fixed amounts grow at their own inflation rate; % items track the annual rent.</div>
       </div>
     </div><!-- /rentCostsDetailed -->
   </div>

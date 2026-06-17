@@ -78,6 +78,7 @@
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <link rel="stylesheet" href="../shared.css">
+<script src="../shared.js"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -173,7 +174,7 @@
       <!-- CONTROLS (shown after load) -->
       <div class="card" id="controlsCard" style="display:none">
         <div class="sidebar-section">
-          <div class="section-title">Controls</div>
+          <div class="section-title">Controls <span class="tip-icon" data-tip="The SVG/PNG download only captures nodes that are currently expanded and visible. Expand the nodes you want first, then download.">?</span></div>
           <div class="controls-row">
             <button class="btn-secondary" id="expandAllBtn" style="flex:1">Expand All</button>
             <button class="btn-secondary" id="collapseAllBtn" style="flex:1">Collapse All</button>
@@ -183,9 +184,6 @@
             <button class="btn-secondary" id="downloadSvgBtn" style="flex:1" disabled>⬇ SVG</button>
             <button class="btn-secondary" id="downloadPngBtn" style="flex:1" disabled>⬇ PNG</button>
             <button class="btn-secondary" id="copyPngBtn" style="flex:0 0 auto;min-width:44px" disabled title="Copy PNG to clipboard">⧉</button>
-          </div>
-          <div class="status-msg status-info" id="downloadNote" style="margin-top:10px">
-            Expand nodes first, then download the visible tree.
           </div>
         </div>
       </div>
@@ -199,7 +197,6 @@
       <div class="empty-state" id="emptyState">
         <div class="empty-icon">🗂️</div>
         <div class="empty-title">No JSON loaded</div>
-        <div class="empty-subtitle">Upload a file, paste JSON text, or fetch from a URL to see the interactive tree.</div>
       </div>
 
       <!-- Loading state -->

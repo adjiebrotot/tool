@@ -99,7 +99,6 @@
       <div class="add-sec-area" style="border-top:none;padding-top:4px">
         <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">Tickers <span class="tip-icon warn" data-tip="To keep this free tool sustainable, data loads are capped at 5 per device per day (shared with the single-asset tool). A load of up to 25 tickers counts as ONE request, so list EVERY ticker you want to assess and load them in one go. Already-cached tickers and same-day reloads are free. The cap resets each day.">!</span></div>
         <textarea class="txt-input" id="tickerPoolInput" rows="2" placeholder="e.g. SPY, GOVT, DHHF.AX, AAA.AX" style="text-transform:uppercase;width:100%;resize:vertical;font-family:inherit;line-height:1.4"></textarea>
-        <div class="field-sub" style="margin-top:5px">Tip: list every ticker at once — up to 25 load in a single request and stay cached for next time.</div>
         <a href="../ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
         <div class="add-sec-row" style="gap:6px;margin-top:8px">
           <button class="btn-accent2" id="loadTickersBtn" style="flex:1">⤓ Load tickers</button>
@@ -113,15 +112,13 @@
             <button id="clearPoolBtn" class="pool-clear-btn" type="button" title="Remove every loaded ticker">Clear all</button>
           </div>
           <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px"></div>
-          <div class="field-sub" style="margin-top:6px">Click ✕ on a ticker to remove it, or type more above and load them in one go.</div>
         </div>
       </div>
     </div>
 
-    <div class="section-label">Date Range</div>
+    <div class="section-label" style="display:flex;align-items:center;gap:6px">Date Range <span class="tip-icon" data-tip="The simulation uses the overlapping date range shared by every asset (and the risk-free ticker, if used) — each ticker is trimmed to the common set of trading days so the portfolio is evaluated on dates where all assets have prices.">?</span></div>
     <div class="field-row" style="border-top:none;padding-top:0">
-      <div class="field-sub">The simulation uses the overlapping date range shared by every asset (and the risk-free ticker, if used). <span class="tip-icon" data-tip="Each ticker is trimmed to the common set of trading days so the portfolio is evaluated on dates where all assets have prices.">?</span></div>
-      <div style="display:flex;gap:8px;margin-top:6px">
+      <div style="display:flex;gap:8px">
         <div style="flex:1">
           <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">Start</div>
           <input class="txt-input" type="date" id="startDate" />
@@ -176,7 +173,6 @@
       </div>
       <div id="assetTickerRow" style="margin-top:6px">
         <select class="txt-input" id="assetTickerSelect" style="width:100%;cursor:pointer"></select>
-        <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Only tickers loaded in the Data tab can be added. Load more there to expand this list.</div>
       </div>
       <button class="btn-accent2" id="addAssetBtn" style="margin-top:8px;width:100%">+ Add Asset</button>
       <div class="status-bar" id="assetFetchStatus"></div>
@@ -192,7 +188,6 @@
     <div class="field-row" style="border-top:none;padding-top:0">
       <div class="field-label">Amount per top-up</div>
       <input class="num-input" id="topupAmount" type="number" min="1" step="100" value="5000" />
-      <div class="field-sub">Cash added to the portfolio on every top-up event.</div>
     </div>
     <div class="field-row">
       <div class="field-label">Top-up period</div>
@@ -210,8 +205,7 @@
       <div class="field-sub" id="topupScheduleHint"></div>
     </div>
 
-    <div class="section-label">Risk-Free Account</div>
-    <div class="field-sub" style="margin-bottom:6px">Where topped-up money stays while it is not invested.</div>
+    <div class="section-label" style="display:flex;align-items:center;gap:6px">Risk-Free Account <span class="tip-icon" data-tip="Where topped-up money stays while it is not invested.">?</span></div>
     <div class="radio-group">
       <label class="radio-opt selected" id="rfOptRate">
         <input type="radio" name="rfMode" value="rate" checked/>
@@ -223,14 +217,13 @@
       </label>
     </div>
     <div class="field-row" id="rfRateRow">
-      <div class="field-label">Risk-free rate (% p.a.)</div>
+      <div class="field-label">Risk-free rate (% p.a.) <span class="tip-icon" data-tip="0% = idle cash · 1–3% = savings · higher = money market.">?</span></div>
       <input class="num-input" id="rfRate" type="number" min="0" max="20" step="0.1" value="0" />
-      <div class="field-sub">0% = idle cash · 1–3% = savings · higher = money market.</div>
     </div>
     <div class="field-row" id="rfTickerRow" style="display:none">
-      <div class="field-label">Risk-free ticker</div>
+      <div class="field-label">Risk-free ticker <span class="tip-icon" data-tip="Idle cash grows with this ticker's price instead of a fixed rate.">?</span></div>
       <input class="txt-input" id="rfTicker" placeholder="e.g. AAA.AX" style="text-transform:uppercase" />
-      <div class="field-sub">Idle cash grows with this ticker's price. <a href="../ticker/" class="ticker-ref-link" style="margin-top:0">ticker codes →</a></div>
+      <div class="field-sub"><a href="../ticker/" class="ticker-ref-link" style="margin-top:0">ticker codes →</a></div>
     </div>
   </div>
 
@@ -287,12 +280,10 @@
     <div class="field-row" style="border-top:none;padding-top:0">
       <div class="field-label">Buying fee (%)</div>
       <input class="num-input" id="buyFee" type="number" min="0" max="10" step="0.01" value="0.1" />
-      <div class="field-sub">Charged on every purchase.</div>
     </div>
     <div class="field-row">
-      <div class="field-label">Selling fee (%)</div>
+      <div class="field-label">Selling fee (%) <span class="tip-icon" data-tip="Charged on every sale during rebalancing.">?</span></div>
       <input class="num-input" id="sellFee" type="number" min="0" max="10" step="0.01" value="0.1" />
-      <div class="field-sub">Charged on every sale during rebalancing.</div>
     </div>
     </div><!-- /sub-rebal -->
     </div><!-- /pfEditSection -->
@@ -316,9 +307,8 @@
       </select>
     </div>
     <div class="field-row">
-      <div class="field-label">Simulation Seed</div>
+      <div class="field-label">Simulation Seed <span class="tip-icon" data-tip="Drives custom-asset price randomness (GBM).">?</span></div>
       <input class="num-input" id="randomSeed" type="number" min="0" step="1" value="25823952204" />
-      <div class="field-sub">Drives custom-asset price randomness (GBM).</div>
     </div>
   </div>
 

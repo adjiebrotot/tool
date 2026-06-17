@@ -133,7 +133,6 @@
             <option value="2" data-i18n-opt="dep2">2 — two children (anak)</option>
             <option value="3" data-i18n-opt="dep3">3 — three children (anak)</option>
           </select>
-          <div class="field-sub" data-i18n="dependentsSub">Max 3 dependents (tanggungan). Adds Rp 4.5M per dependent to PTKP.</div>
         </div>
 
         <div class="field-row" style="border-top:1px solid var(--border);padding-top:12px;">
@@ -147,28 +146,25 @@
         <!-- Mode A: Total + Split % -->
         <div id="modeTotal">
           <div class="field-row">
-            <div class="field-label" data-i18n="totalSalaryLabel">Total Household Gross Salary</div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="totalSalaryLabel">Total Household Gross Salary</span> <span class="tip-icon" data-i18n-tip="totalSalaryTip" data-tip="Combined annual gross salary of husband + wife.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="totalSalaryInput" type="text" inputmode="numeric" value="500,000,000" />
             </div>
-            <div class="field-sub" data-i18n="totalSalarySub">Combined annual gross salary of husband + wife.</div>
           </div>
           <div class="slider-block">
             <div class="slider-head">
-              <div class="slider-label" data-i18n="wifeShareLabel">Wife's share of income</div>
+              <div class="slider-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeShareLabel">Wife's share of income</span> <span class="tip-icon" data-i18n-tip="wifeShareTip" data-tip="Percentage of total household salary earned by wife. Husband earns the remainder.">?</span></div>
               <div class="slider-value" id="splitValue">50%</div>
             </div>
             <input id="splitPct" type="range" min="0" max="100" step="1" value="50" />
-            <div class="help" data-i18n="wifeShareHelp">Percentage of total household salary earned by wife. Husband earns the remainder.</div>
           </div>
           <div class="field-row">
-            <div class="field-label" data-i18n="deductionLabel">Combined Annual Deductions (Pengurang)</div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Combined Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Biaya jabatan, iuran pensiun, or other allowable deductions. Applied to gross income before PTKP. Split proportionally by each spouse's income share.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="deductionInput" type="text" inputmode="numeric" value="0" />
             </div>
-            <div class="field-sub" data-i18n="deductionSub">Biaya jabatan, iuran pensiun, or other allowable deductions. Applied to gross income before PTKP. Split proportionally by each spouse's income share.</div>
           </div>
         </div>
 
@@ -180,7 +176,6 @@
               <span class="prefix">Rp</span>
               <input class="currency-input" id="husbandSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
             </div>
-            <div class="field-sub" data-i18n="husbandSalarySub">Annual gross salary of the husband.</div>
           </div>
           <div class="field-row">
             <div class="field-label" data-i18n="wifeSalaryLabel">Wife's Gross Salary</div>
@@ -188,26 +183,23 @@
               <span class="prefix">Rp</span>
               <input class="currency-input" id="wifeSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
             </div>
-            <div class="field-sub" data-i18n="wifeSalarySub">Annual gross salary of the wife.</div>
           </div>
           <div class="field-row" style="padding-top:4px">
             <div class="field-sub"><span data-i18n="combinedPrefix">Combined:</span> <strong id="combinedLabel">Rp 500,000,000</strong> &nbsp;|&nbsp; <span data-i18n="wifeSharePrefix">Wife share:</span> <strong id="splitDerivedLabel">50.0%</strong></div>
           </div>
           <div class="field-row">
-            <div class="field-label" data-i18n="husbandDeductionLabel">Husband's Annual Deductions (Pengurang)</div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="husbandDeductionLabel">Husband's Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Applied only to husband's gross income before PTKP.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="husbandDeductionInput" type="text" inputmode="numeric" value="0" />
             </div>
-            <div class="field-sub" data-i18n="husbandDeductionSub">Applied only to husband's gross income before PTKP.</div>
           </div>
           <div class="field-row">
-            <div class="field-label" data-i18n="wifeDeductionLabel">Wife's Annual Deductions (Pengurang)</div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeDeductionLabel">Wife's Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Applied only to wife's gross income before PTKP.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="wifeDeductionInput" type="text" inputmode="numeric" value="0" />
             </div>
-            <div class="field-sub" data-i18n="wifeDeductionSub">Applied only to wife's gross income before PTKP.</div>
           </div>
         </div>
       </div>
@@ -235,14 +227,13 @@
         </div>
 
         <div class="bracket-section">
-          <div class="bracket-section-label" data-i18n="bracketSectionLabel">Tax Brackets (PPh 21)</div>
+          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Tax Brackets (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit thresholds and rates. &quot;From&quot; is auto-managed. Last bracket has no upper bound.">?</span></div>
           <div class="bracket-row-header">
             <div class="bracket-col-label" id="bracketColFrom">From (Rp)</div>
             <div class="bracket-col-label" id="bracketColTo">To (Rp) <span style="font-size:0.68rem">(blank=∞)</span></div>
             <div class="bracket-col-label" id="bracketColRate">Rate (%)</div>
           </div>
           <div id="bracketsContainer"></div>
-          <div class="help" style="margin-top:6px" data-i18n="bracketHelp">Edit thresholds and rates. "From" is auto-managed. Last bracket has no upper bound.</div>
         </div>
 
         <div class="bracket-section">

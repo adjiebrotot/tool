@@ -298,7 +298,6 @@ function renderTree(data, name, size, byteLen, loadMethod){
   $('downloadPngBtn').disabled = false;
   $('copyPngBtn').disabled = false;
   $('downloadSvgBtn').disabled = false;
-  $('downloadNote').classList.add('visible');
 
   // Keep the successful load method expanded and collapse the unused inputs.
   setLoadMethodMode(loadMethod);
@@ -656,7 +655,6 @@ $('clearBtn').addEventListener('click', () => {
   $('emptyState').style.display = 'flex';
   $('fileInfoSection').style.display = 'none';
   $('controlsCard').style.display = 'none';
-  $('downloadNote').classList.remove('visible');
   setLoadMethodMode(null);
   hideStatus();
 });

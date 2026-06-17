@@ -127,7 +127,6 @@
       <div class="add-sec-area" style="border-top:none;padding-top:4px">
         <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">Tickers <span class="tip-icon warn" data-tip="To keep this free tool sustainable, data loads are capped at 5 per device per day (shared with the Portfolio tool). A load of up to 25 tickers counts as ONE request, so list EVERY ticker you want to assess and load them in one go. Already-cached tickers and same-day reloads are free. The cap resets each day.">!</span></div>
         <textarea class="txt-input" id="tickerPoolInput" rows="2" placeholder="e.g. AAPL, SPY, USDIDR, XAUUSD, AAA.AX" style="text-transform:uppercase;width:100%;resize:vertical;font-family:inherit;line-height:1.4"></textarea>
-        <div class="field-sub" style="margin-top:5px">Tip: list every ticker at once — up to 25 load in a single request and stay cached for next time.</div>
         <a href="ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
         <div class="add-sec-row" style="gap:6px;margin-top:8px">
           <button class="btn-accent2" id="loadTickersBtn" style="flex:1">⤓ Load tickers</button>
@@ -141,15 +140,13 @@
             <button id="clearPoolBtn" class="pool-clear-btn" type="button" title="Remove every loaded ticker">Clear all</button>
           </div>
           <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px"></div>
-          <div class="field-sub" style="margin-top:6px">Click ✕ on a ticker to remove it, or type more above and load them in one go.</div>
         </div>
       </div>
     </div>
 
-    <div class="section-label">Date Range</div>
+    <div class="section-label" style="display:flex;align-items:center;gap:6px">Date Range <span class="tip-icon" data-tip="Simulation uses the shortest available date range across all selected tickers — when multiple ticker securities are loaded, all will be trimmed to the common overlapping range so comparisons are fair.">?</span></div>
     <div class="field-row" style="border-top:none;padding-top:0">
-      <div class="field-sub">Simulation uses the shortest available date range across all selected tickers. <span class="tip-icon" data-tip="When multiple ticker securities are loaded, all will be trimmed to the common overlapping date range so comparisons are fair.">?</span></div>
-      <div style="display:flex;gap:8px;margin-top:6px">
+      <div style="display:flex;gap:8px">
         <div style="flex:1">
           <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">Start</div>
           <input class="txt-input" type="date" id="startDate" />
@@ -197,9 +194,8 @@
       </select>
     </div>
     <div class="field-row">
-      <div class="field-label">Simulation Seed</div>
+      <div class="field-label">Simulation Seed <span class="tip-icon" data-tip="Used for custom security randomness when Return and Standard Deviation are defined.">?</span></div>
       <input class="num-input" id="randomSeed" type="number" min="0" step="1" value="25823952204" />
-      <div class="field-sub">Used for custom security randomness when Return and Standard Deviation are defined.</div>
     </div>
   </div>
 

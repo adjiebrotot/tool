@@ -164,9 +164,8 @@ function buildAxesUI() {
         <select id="axisX">${opts}</select>
       </div>
       <div class="field-group">
-        <label>Y Axis <span style="color:var(--muted);font-weight:400;font-size:.78rem">(Ctrl/Cmd = multi-select)</span></label>
+        <label>Y Axis <span style="color:var(--muted);font-weight:400;font-size:.78rem">(Ctrl/Cmd = multi-select)</span> <span class="tip-icon" data-tip="Each selected column becomes a separate line.">?</span></label>
         <select id="axisY" multiple size="7" style="height:auto;font-size:.83rem">${opts}</select>
-        <div class="help">Each selected column becomes a separate line.</div>
       </div>`;
     setTimeout(() => {
       const sel = document.getElementById('axisY');
@@ -196,7 +195,6 @@ function buildAxesUI() {
       <div class="field-group">
         <label>W Axis <span style="color:var(--muted);font-size:.78rem">(colour map)</span></label>
         <select id="axisW">${opts}</select>
-        <div class="help">This column will be colour-coded as a heat overlay.</div>
       </div>`;
     setTimeout(() => {
       const y=document.getElementById('axisY'), z=document.getElementById('axisZ'), w=document.getElementById('axisW');
