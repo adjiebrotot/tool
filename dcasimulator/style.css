@@ -45,6 +45,11 @@ body.light .num-input option,body.light .txt-input option{background:#ffffff;col
 .btn-primary{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.88rem;transition:opacity .15s;font-family:inherit}
 .btn-primary:hover{opacity:.85}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+/* Distinct accent (teal, --accent2) for data-entry actions like Load Tickers / Add Asset,
+   so they don't read as the same action as the blue Simulate button. */
+.btn-accent2{background:var(--accent2);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.88rem;transition:opacity .15s;font-family:inherit}
+.btn-accent2:hover{opacity:.85}
+.btn-accent2:disabled{opacity:.5;cursor:not-allowed}
 .btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.88rem;transition:border-color .15s;font-family:inherit}
 .btn-secondary:hover{border-color:var(--accent)}
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
@@ -207,8 +212,6 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
   .detail-title-row h2{width:100%}
 }
 .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin-right:6px}
-.sens-style-info{color:var(--muted);font-size:.78rem;line-height:1.4;margin-top:5px;padding:7px 9px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px}
-.sens-best-label{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);display:block;margin-top:2px}
 .ticker-ref-link{display:inline-block;margin-top:6px;font-size:.78rem;font-weight:600;color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent);transition:opacity var(--transition-fast)}
 .ticker-ref-link:hover{opacity:.75}
 

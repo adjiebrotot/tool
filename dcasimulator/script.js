@@ -45,7 +45,6 @@ let simResults = [];
 let latestRows = [];
 let priceChartInstance = null;
 let equityChartInstance = null;
-let sensitivityChartInstance = null;
 let activeDetailSec = 0;
 let showDeposited = true;
 let showTechIndicators = false;
@@ -109,7 +108,7 @@ function makeSliderEditable(valSpan,rangeEl){
   inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}else if(e.key==='Escape'){inp.value='';commit();}});
 }
 function getActiveTab(){ const t=document.querySelector('.ctrl-tab.active'); return t?t.dataset.tab:'securities'; }
-function updateSimBtn(){ const b=$('simBtn'); if(!b)return; b.textContent=getActiveTab()==='sensitivity'?'🔬 Analyse':'▶ Simulate'; }
+function updateSimBtn(){ const b=$('simBtn'); if(!b)return; b.textContent='▶ Simulate'; }
 function sanitizeSeed(v){
   const n = Number(v);
   if(!Number.isFinite(n)) return DEFAULT_RANDOM_SEED;
@@ -263,7 +262,6 @@ function renderSecList(){
   if(activeSecurityId==null && securities.length) activeSecurityId = securities[0].id;
   renderScenarioBar();
   renderScenarioConfig();
-  updateSensSecurityDropdown();
   updateTechToggleVisibility();
 }
 
@@ -375,7 +373,6 @@ function renderScenarioConfig(){
       if(sec.type==='ticker'){ const t=loadedTickers(); if(t.length && !t.includes(sec.ticker)) sec.ticker=t[0]; }
       renderScenarioBar();
       renderScenarioConfig();
-      updateSensSecurityDropdown();
       updateTechToggleVisibility();
       scheduleRun();
     });
@@ -538,7 +535,6 @@ function wireStyleBlock(sec){
       sec.catOpen=styleCategory(sec.style);
       if(showDayRow(sec.style)) sec.dayOrDate=1;
       refreshStyleBlock(sec);
-      updateSensSecurityDropdown();
       updateTechToggleVisibility();
       scheduleRun();
     });
@@ -724,7 +720,6 @@ function removeFromPool(tk){
   persistPriceCache();
   renderPoolChips();
   refreshTickerSelect();
-  updateSensSecurityDropdown();
   if(loadedTickers().length) showStatus($('poolStatus'), tk+' removed.','ok');
   else { hideStatus($('poolStatus')); }
 }
@@ -736,7 +731,6 @@ function clearPool(){
   persistPriceCache();
   renderPoolChips();
   refreshTickerSelect();
-  updateSensSecurityDropdown();
   hideStatus($('poolStatus'));
   const inp=$('tickerPoolInput'); if(inp) inp.focus();
 }
@@ -783,7 +777,7 @@ async function loadTickerPool(){
   const need = fullNeed.length + tailNeed.length;
   if(!need){
     showStatus($('poolStatus'),'All requested tickers are already cached.','ok');
-    if(inp) inp.value=''; renderPoolChips(); refreshTickerSelect(); updateSensSecurityDropdown(); updateRateInfo();
+    if(inp) inp.value=''; renderPoolChips(); refreshTickerSelect(); updateRateInfo();
     return;
   }
 
@@ -824,7 +818,6 @@ async function loadTickerPool(){
     if(ok && !failed.length && inp) inp.value='';
     renderPoolChips();
     refreshTickerSelect();
-    updateSensSecurityDropdown();
   } catch(e){
     showStatus($('poolStatus'),'Load failed: '+e.message,'error');
   } finally {
@@ -1691,15 +1684,11 @@ $('themeToggle').addEventListener('click',()=>{
   document.body.classList.toggle('light');
   $('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';
   if(simResults.length){ updatePriceChart(); updateEquityChart(); }
-  if(sensitivityChartInstance){ sensitivityChartInstance.destroy(); sensitivityChartInstance=null; }
   renderSecList();
 });
 
-/* ─── SIMULATE / ANALYSE BUTTON ─── */
-$('simBtn').addEventListener('click', ()=>{
-  if(getActiveTab()==='sensitivity') runSensitivityAnalysis();
-  else runSimulation();
-});
+/* ─── SIMULATE BUTTON ─── */
+$('simBtn').addEventListener('click', runSimulation);
 
 /* ─── RESET ─── */
 $('resetBtn').addEventListener('click',()=>{
@@ -1709,8 +1698,6 @@ $('resetBtn').addEventListener('click',()=>{
   currentRandomSeed=DEFAULT_RANDOM_SEED;
   if(priceChartInstance){ priceChartInstance.destroy(); priceChartInstance=null; }
   if(equityChartInstance){ equityChartInstance.destroy(); equityChartInstance=null; }
-  if(sensitivityChartInstance){ sensitivityChartInstance.destroy(); sensitivityChartInstance=null; }
-  $('sensitivitySection').style.display='none';
   renderSecList();
   $('summaryGrid').innerHTML='';
   $('milestoneBody').innerHTML='<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">Add securities to see milestones.</td></tr>';
@@ -1980,21 +1967,8 @@ $('equityCopyPngBtn').addEventListener('click', async () => {
   try { await copyCanvasPngToClipboard(downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend', false)); alert('PNG copied to clipboard.'); }
   catch(err){ alert('PNG copy failed: ' + err.message); }
 });
-$('sensPngBtn').addEventListener('click', () => {
-  const subtitle = document.getElementById('sensChartSubtitle')?.textContent || 'Sensitivity Analysis';
-  downloadChartPng('sensCanvas', 'dca_sensitivity_chart.png', 'DCA Sensitivity Analysis — ' + subtitle, null);
-});
-$('sensCopyPngBtn').addEventListener('click', async () => {
-  const subtitle = document.getElementById('sensChartSubtitle')?.textContent || 'Sensitivity Analysis';
-  try { await copyCanvasPngToClipboard(downloadChartPng('sensCanvas', 'dca_sensitivity_chart.png', 'DCA Sensitivity Analysis — ' + subtitle, null, false)); alert('PNG copied to clipboard.'); }
-  catch(err){ alert('PNG copy failed: ' + err.message); }
-});
 $('priceSvgBtn').addEventListener('click', () => downloadChartSvg('priceCanvas', 'dca_price_chart.svg', 'DCA Scenario Explorer — Security Prices (Normalised to 100)', 'priceLegend'));
 $('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend'));
-$('sensSvgBtn').addEventListener('click', () => {
-  const subtitle = document.getElementById('sensChartSubtitle')?.textContent || 'Sensitivity Analysis';
-  downloadChartSvg('sensCanvas', 'dca_sensitivity_chart.svg', 'DCA Sensitivity Analysis — ' + subtitle, null);
-});
 
 /* ─── DOWNLOAD CSV (Detailed Breakdown of active tab) ─── */
 $('downloadBtn').addEventListener('click',()=>{
@@ -2014,205 +1988,6 @@ $('downloadBtn').addEventListener('click',()=>{
 /* ─── WARNINGS ─── */
 function showWarning(msg){ const w=$('mainWarning'); w.style.display='block'; w.textContent=msg; }
 function hideWarning(){ const w=$('mainWarning'); w.style.display='none'; }
-
-/* ─── SENSITIVITY ANALYSIS ─── */
-function updateSensSecurityDropdown(){
-  const sel=$('sensSecurity');
-  if(!sel) return;
-  const prevId=sel.value;
-  sel.innerHTML='';
-  if(!securities.length){
-    sel.innerHTML='<option value="">— Add securities first —</option>';
-    const si=$('sensStyleInfo'); if(si) si.style.display='none';
-    const tr=$('sensThresholdRange'); if(tr) tr.style.display='none';
-    return;
-  }
-  securities.forEach(sec=>{
-    const opt=document.createElement('option');
-    opt.value=sec.id;
-    opt.textContent=sec.name+' ('+styleLabel(sec.style)+')';
-    sel.appendChild(opt);
-  });
-  if(prevId && securities.find(s=>s.id==prevId)) sel.value=prevId;
-  updateSensStyleInfo();
-}
-
-function updateSensStyleInfo(){
-  const sel=$('sensSecurity');
-  const infoEl=$('sensStyleInfo');
-  const threshEl=$('sensThresholdRange');
-  if(!sel||!sel.value){ if(infoEl)infoEl.style.display='none'; if(threshEl)threshEl.style.display='none'; return; }
-  const sec=securities.find(s=>s.id==sel.value);
-  if(!sec){ if(infoEl)infoEl.style.display='none'; if(threshEl)threshEl.style.display='none'; return; }
-  const style=sec.style;
-  const isMomentum=MOMENTUM_STYLES.includes(style);
-  if(style==='monthly-date'){
-    infoEl.textContent='Sweeps Day of Month (1 – 28) and shows final portfolio value for each day.';
-    infoEl.style.display=''; threshEl.style.display='none';
-  } else if(style==='weekly-day'){
-    infoEl.textContent='Sweeps Day of Week (Monday – Friday) and shows final portfolio value for each day.';
-    infoEl.style.display=''; threshEl.style.display='none';
-  } else if(isMomentum){
-    infoEl.textContent='Sweeps Threshold (%) across the Start–End range and shows final portfolio value for each level.';
-    infoEl.style.display=''; threshEl.style.display='';
-  } else {
-    infoEl.textContent='Sensitivity is not applicable for "'+styleLabel(style)+'". Use Monthly (Fixed Date), Weekly (Fixed Day), Buy the Peak, or Buy the Dip.';
-    infoEl.style.display=''; threshEl.style.display='none';
-  }
-}
-
-function calcFinalEquityForParams(priceData, style, dayOrDate, momentumPct, momentumEOM, amount, yearlyIncrease){
-  const idxs=getInvestmentDates(priceData, style, dayOrDate, momentumPct, momentumEOM);
-  if(!idxs.length) return 0;
-  const startStr=priceData.dates[0];
-  let units=0;
-  idxs.forEach(i=>{ units+=investAmountAt(amount, yearlyIncrease||0, startStr, priceData.dates[i])/priceData.prices[i]; });
-  return units*priceData.prices[priceData.prices.length-1];
-}
-
-async function runSensitivityAnalysis(){
-  const sel=$('sensSecurity');
-  if(!sel||!sel.value){ showStatus($('sensStatus'),'Select a security first.','error'); return; }
-  const sec=securities.find(s=>s.id==sel.value);
-  if(!sec){ showStatus($('sensStatus'),'Security not found.','error'); return; }
-
-  const style=sec.style;
-  const isMomentum=MOMENTUM_STYLES.includes(style);
-  const isWeekly=style==='weekly-day';
-  const isMonthly=style==='monthly-date';
-  if(!isMomentum&&!isWeekly&&!isMonthly){
-    showStatus($('sensStatus'),'Sensitivity not applicable for "'+styleLabel(style)+'".','error'); return;
-  }
-
-  const startDate=$('startDate').value||isoDate(new Date(Date.now()-5*365*24*3600*1000));
-  const endDate=$('endDate').value||isoDate(new Date());
-  const simBtn=$('simBtn');
-  simBtn.disabled=true;
-  simBtn.innerHTML='<span class="spinner"></span>Analysing…';
-  showStatus($('sensStatus'),'Preparing price data...','loading');
-
-  try{
-    let priceData;
-    if(sec.type==='ticker'){
-      try{
-        showStatus($('sensStatus'),`Fetching ${sec.ticker}...`,'loading');
-        await ensureTickerCached(sec.ticker, startDate, endDate);
-        priceData=getCachedPriceSlice(sec.ticker, startDate, endDate);
-        if(!priceData) throw new Error('No data in selected range');
-      }catch(e){
-        showStatus($('sensStatus'),'Failed to load '+sec.ticker+': '+e.message,'error'); return;
-      }
-    } else {
-      const secSeed=deriveSeed(currentRandomSeed,`${sec.name}|${sec.returnPct}|${sec.stdPct}|${sec.amount}|${sec.style}|${sec.dayOrDate}`);
-      const secRng=createSeededRng(secSeed);
-      priceData=generateGBMPrices(startDate, endDate, sec.returnPct, sec.stdPct, 100, secRng);
-    }
-
-    if(!priceData||!priceData.prices.length){ showStatus($('sensStatus'),'No price data available.','error'); return; }
-    showStatus($('sensStatus'),'Running analysis...','loading');
-
-    const labels=[], values=[];
-    if(isMonthly){
-      for(let d=1;d<=28;d++){
-        labels.push('Day '+d);
-        values.push(calcFinalEquityForParams(priceData, style, d, sec.momentumPct, sec.momentumEOM, sec.amount, sec.yearlyIncrease));
-      }
-    } else if(isWeekly){
-      const dayNames=['Mon','Tue','Wed','Thu','Fri'];
-      for(let d=1;d<=5;d++){
-        labels.push(dayNames[d-1]);
-        values.push(calcFinalEquityForParams(priceData, style, d, sec.momentumPct, sec.momentumEOM, sec.amount, sec.yearlyIncrease));
-      }
-    } else if(isMomentum){
-      const sv=Math.max(0.1,parseFloat($('sensThreshStart').value)||1);
-      const ev=Math.min(50,parseFloat($('sensThreshEnd').value)||20);
-      const step=Math.max(0.1,parseFloat($('sensThreshStep').value)||1);
-      if(sv>=ev){ showStatus($('sensStatus'),'Start Value must be less than End Value.','error'); return; }
-      const numSteps=Math.round((ev-sv)/step);
-      for(let i=0;i<=numSteps;i++){
-        const t=Math.round((sv+i*step)*10)/10;
-        labels.push(t+'%');
-        values.push(calcFinalEquityForParams(priceData, style, sec.dayOrDate, t, sec.momentumEOM, sec.amount, sec.yearlyIncrease));
-      }
-    }
-
-    if(!labels.length){ showStatus($('sensStatus'),'No data to display.','error'); return; }
-
-    const subtitle=sec.name+' — '+styleLabel(style)+'  |  '+startDate+' → '+endDate;
-    renderSensitivityChart(sec, labels, values, subtitle);
-    hideStatus($('sensStatus'));
-  } finally {
-    simBtn.disabled=false;
-    updateSimBtn();
-  }
-}
-
-function renderSensitivityChart(sec, labels, values, subtitle){
-  const section=$('sensitivitySection');
-  section.style.display='';
-  $('sensChartSubtitle').textContent=subtitle;
-
-  const color=getSecColor(sec);
-  const gridColor=cssVar('--chart-grid');
-  const mutedColor=cssVar('--chart-text');
-  const textColor=cssVar('--text');
-  const maxVal=Math.max(...values);
-  const bgColors=values.map(v=>Math.abs(v-maxVal)<0.01?color+'EE':color+'55');
-  const borderColors=values.map(v=>Math.abs(v-maxVal)<0.01?color:color+'99');
-
-  const dataset={
-    label:'Final Portfolio Value',
-    data:values,
-    backgroundColor:bgColors,
-    borderColor:borderColors,
-    borderWidth:1.5,
-    borderRadius:5
-  };
-
-  const yTickCb=val=>fmt.currency(val,true);
-
-  if(sensitivityChartInstance){
-    sensitivityChartInstance.data.labels=labels;
-    sensitivityChartInstance.data.datasets=[dataset];
-    sensitivityChartInstance.options.scales.x.ticks.color=mutedColor;
-    sensitivityChartInstance.options.scales.x.grid.color=gridColor;
-    sensitivityChartInstance.options.scales.x.title.color=mutedColor;
-    sensitivityChartInstance.options.scales.y.ticks.color=mutedColor;
-    sensitivityChartInstance.options.scales.y.grid.color=gridColor;
-    sensitivityChartInstance.options.scales.y.title.color=mutedColor;
-    sensitivityChartInstance.options.scales.y.title.text='Final Portfolio Value ('+currentCurrencySymbol+')';
-    sensitivityChartInstance.options.scales.y.ticks.callback=yTickCb;
-    sensitivityChartInstance.update();
-  } else {
-    sensitivityChartInstance=new Chart($('sensCanvas'),{
-      type:'bar',
-      data:{labels,datasets:[dataset]},
-      options:{
-        responsive:true, maintainAspectRatio:false, animation:{duration:400},
-        plugins:{
-          legend:{display:false},
-          tooltip:{
-            callbacks:{
-              label:ctx=>'  Final Value: '+fmt.currency(ctx.parsed.y),
-              afterBody:items=>{ if(items.length) $('sensHoverBox').textContent=items[0].label+': '+fmt.currency(items[0].parsed.y); }
-            },
-            backgroundColor:cssVar('--panel')||'#11172a',
-            titleColor:textColor, bodyColor:mutedColor,
-            borderColor:gridColor, borderWidth:1, padding:10
-          }
-        },
-        scales:{
-          x:{title:{display:true,text:'Scenario Value',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11}},grid:{color:gridColor}},
-          y:{title:{display:true,text:'Final Portfolio Value ('+currentCurrencySymbol+')',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yTickCb},grid:{color:gridColor},beginAtZero:false}
-        }
-      }
-    });
-  }
-  // scroll into view
-  section.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-$('sensSecurity').addEventListener('change', updateSensStyleInfo);
 
 /* ─── CTRL TABS ─── */
 document.querySelectorAll('.ctrl-tab').forEach(btn=>{
