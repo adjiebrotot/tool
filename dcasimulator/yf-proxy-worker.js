@@ -68,6 +68,10 @@ const STOOQ_SUFFIX = {
   MI:'it', SW:'ch', VI:'at', ST:'se', HE:'fi', OL:'no', CO:'dk', HK:'hk',
   T:'jp', SS:'cn', SZ:'cn', TO:'ca', V:'ca',
 };
+// Precious metals have no spot "<METAL>USD=X" symbol on Yahoo (that path 404s),
+// so when Stooq's spot series is unavailable we fall back to the COMEX/NYMEX
+// continuous futures contract, which Yahoo's chart endpoint does serve.
+const METAL_FUTURES = { XAU:'GC=F', XAG:'SI=F', XPT:'PL=F', XPD:'PA=F' };
 
 export default {
   async fetch(request, _env, ctx) {
@@ -202,7 +206,13 @@ function classify(ticker, startDate, endDate) {
   const isFx = /^[A-Z]{6}$/.test(core) && FX_CODES[core.slice(0, 3)] && FX_CODES[core.slice(3, 6)];
   if (/=X$/.test(t) || isFx) {
     // Stooq is the better source for spot FX/metals → try it first.
-    return [stooq(core.toLowerCase(), 'fx'), ...yahoo(core + '=X', 'fx')];
+    const providers = [stooq(core.toLowerCase(), 'fx')];
+    // For metals quoted in USD (XAUUSD, XAGUSD, …) Yahoo has no '=X' spot symbol,
+    // so add the futures contract as a working fallback BEFORE the '=X' attempt.
+    const metalFut = METAL_FUTURES[core.slice(0, 3)];
+    if (metalFut && core.slice(3, 6) === 'USD') providers.push(...yahoo(metalFut, 'fx'));
+    providers.push(...yahoo(core + '=X', 'fx'));
+    return providers;
   }
 
   // Stocks / ETFs / indices: Yahoo first (adjusted close), Stooq fallback.

@@ -115,33 +115,38 @@
   </div>
   <div class="ctrl-scroll">
   <div class="ctrl-tabs">
-    <button class="ctrl-tab active" data-tab="securities">📦 Scenarios</button>
+    <button class="ctrl-tab active" data-tab="data">📥 Data</button>
+    <button class="ctrl-tab" data-tab="securities">📦 Scenarios</button>
     <button class="ctrl-tab" data-tab="settings">⚙️ Settings</button>
     <button class="ctrl-tab" data-tab="sensitivity">🔬 Sensitivity</button>
   </div>
 
-  <!-- SECURITIES TAB -->
-  <div class="ctrl-panel active" id="tab-securities">
-    <!-- ① DATA DOWNLOAD -->
-    <div class="section-label" style="margin-top:0">① Data Download</div>
+  <!-- DATA TAB -->
+  <div class="ctrl-panel active" id="tab-data">
+    <div class="section-label" style="margin-top:0">Data Download</div>
     <div class="field-row" style="border-top:none;padding-top:0">
       <div class="add-sec-area" style="border-top:none;padding-top:4px">
-        <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">Tickers <span class="tip-icon" data-tip="Enter every ticker you want to compare (comma-separated)">?</span></div>
+        <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">Tickers <span class="tip-icon" data-tip="Enter every ticker you want to compare, separated by commas. Loading them together costs a single data request — far better than one at a time.">?</span></div>
         <textarea class="txt-input" id="tickerPoolInput" rows="2" placeholder="e.g. AAPL, SPY, USDIDR, XAUUSD, AAA.AX" style="text-transform:uppercase;width:100%;resize:vertical;font-family:inherit;line-height:1.4"></textarea>
+        <div class="field-sub" style="margin-top:5px">Tip: list every ticker at once — they load in one request and stay cached for next time.</div>
         <a href="ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
         <div class="add-sec-row" style="gap:6px;margin-top:8px">
-          <button class="btn-primary" id="loadTickersBtn" style="flex:2">⤓ Load tickers</button>
+          <button class="btn-primary" id="loadTickersBtn" style="flex:1">⤓ Load tickers</button>
           <button class="btn-secondary" id="editTickersBtn" style="flex:1;display:none">✎ Edit list</button>
         </div>
         <div class="status-bar" id="poolStatus"></div>
         <div id="poolChipsWrap" style="display:none;margin-top:9px">
-          <div class="field-label" style="margin-bottom:5px">Loaded tickers</div>
-          <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+          <div class="pool-chips-head">
+            <span class="field-label" style="margin-bottom:0">Loaded tickers</span>
+            <button id="clearPoolBtn" class="pool-clear-btn" type="button" title="Remove every loaded ticker">Clear all</button>
+          </div>
+          <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px"></div>
+          <div class="field-sub" style="margin-top:6px">Click ✕ on a ticker to remove it, or type more above and load them in one go.</div>
         </div>
       </div>
     </div>
 
-    <div class="field-label" style="margin-top:10px">Date Range</div>
+    <div class="section-label">Date Range</div>
     <div class="field-row" style="border-top:none;padding-top:0">
       <div class="field-sub">Simulation uses the shortest available date range across all selected tickers. <span class="tip-icon" data-tip="When multiple ticker securities are loaded, all will be trimmed to the common overlapping date range so comparisons are fair.">?</span></div>
       <div style="display:flex;gap:8px;margin-top:6px">
@@ -156,9 +161,11 @@
       </div>
       <div class="status-bar" id="dateRangeStatus"></div>
     </div>
+  </div>
 
-    <!-- ② SCENARIO -->
-    <div class="section-label">② Scenario</div>
+  <!-- SCENARIOS TAB -->
+  <div class="ctrl-panel" id="tab-securities">
+    <div class="section-label" style="margin-top:0">Scenarios</div>
     <div class="sc-bar">
       <div id="scenarioTabs" class="sc-tabs"></div>
       <button class="sc-add-btn" id="addScenarioBtn" title="New scenario" aria-label="New scenario">+</button>
@@ -168,8 +175,7 @@
       </div>
     </div>
 
-    <!-- ③ CONFIGURE SCENARIO -->
-    <div class="section-label">③ Configure Scenario</div>
+    <div class="section-label">Configure Scenario</div>
     <div id="scenarioConfig" class="field-row" style="border-top:none;padding-top:0"></div>
     <div class="status-bar" id="fetchStatus"></div>
   </div>

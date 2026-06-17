@@ -268,6 +268,10 @@ function renderSecList(){
 /* ─── SCENARIO BAR — one tab per scenario (click to edit, double-click to rename) ─── */
 function renderScenarioBar(){
   const el=$('scenarioTabs'); if(!el) return;
+  // Detach the + Add button before clearing so it can be re-appended right after
+  // the last scenario tab (so it flows/wraps with the tabs, matching the portfolio
+  // tool) — its click listener stays intact across re-renders.
+  const addBtn=$('addScenarioBtn');
   el.innerHTML='';
   securities.forEach(sec=>{
     const tab=document.createElement('div');
@@ -292,6 +296,8 @@ function renderScenarioBar(){
     tab.addEventListener('dblclick',()=>startRenameScenario(tab, sec));
     el.appendChild(tab);
   });
+  // Keep the + Add button directly beside the last scenario so it flows with the tabs.
+  if(addBtn) el.appendChild(addBtn);
 }
 
 function startRenameScenario(tab, sec){
@@ -317,8 +323,8 @@ function renderScenarioConfig(){
   const tks=loadedTickers();
   const tickerBody = tks.length
     ? `<select class="txt-input" id="cfgTickerSelect" style="width:100%;cursor:pointer">${tks.map(tk=>`<option value="${tk}" ${sec.ticker===tk?'selected':''}>${tk}</option>`).join('')}</select>
-       <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Only tickers loaded in ① can be used. Load more above to expand this list.</div>`
-    : `<div class="status-bar status-warn" style="display:block">No tickers loaded yet — add them in ① Data Download first.</div>`;
+       <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Only tickers loaded in the Data tab can be used. Load more there to expand this list.</div>`
+    : `<div class="status-bar status-warn" style="display:block">No tickers loaded yet — add them in the 📥 Data tab first.</div>`;
   wrap.innerHTML=`
     <div class="add-sec-area" style="border-top:none;padding-top:0">
       <div class="add-sec-row" style="gap:6px;align-items:center">
@@ -678,9 +684,35 @@ function renderPoolChips(){
     const e = priceCache[tk];
     const warn = (e && e.kind==='stock' && e.source==='stooq');
     const title = warn ? 'Loaded from Stooq (unadjusted for splits/dividends)' : (e?e.dates.length+' trading days':'');
-    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}</span>`;
+    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}<button class="pool-chip-del" type="button" data-tk="${tk}" title="Remove ${tk}" aria-label="Remove ${tk}">×</button></span>`;
   }).join('');
+  box.querySelectorAll('.pool-chip-del').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
   updateLoadBtnLabel();
+}
+
+// Remove a single ticker from the cached pool and reflect it everywhere.
+function removeFromPool(tk){
+  tk = String(tk||'').trim().toUpperCase();
+  if(!tk || !priceCache[tk]) return;
+  delete priceCache[tk];
+  persistPriceCache();
+  renderPoolChips();
+  refreshTickerSelect();
+  updateSensSecurityDropdown();
+  if(loadedTickers().length) showStatus($('poolStatus'), tk+' removed.','ok');
+  else { hideStatus($('poolStatus')); }
+}
+
+// Drop the entire cached pool (the data the app shows on first open lives here).
+function clearPool(){
+  if(!loadedTickers().length) return;
+  priceCache = {};
+  persistPriceCache();
+  renderPoolChips();
+  refreshTickerSelect();
+  updateSensSecurityDropdown();
+  hideStatus($('poolStatus'));
+  const inp=$('tickerPoolInput'); if(inp) inp.focus();
 }
 
 // Reflect a freshly-loaded pool in the active scenario's ticker dropdown.
@@ -688,11 +720,13 @@ function refreshTickerSelect(){
   if($('scenarioConfig')) renderScenarioConfig();
 }
 
-function setPoolLocked(locked){
+// Loading is additive and individual tickers are removed via the chip ✕, so the
+// input is never locked — it always stays open for adding the next batch.
+function setPoolLocked(_locked){
   const inp = $('tickerPoolInput'), loadBtn = $('loadTickersBtn'), editBtn = $('editTickersBtn');
-  if(inp) inp.disabled = locked;
-  if(loadBtn) loadBtn.style.display = locked ? 'none' : '';
-  if(editBtn) editBtn.style.display = locked ? '' : 'none';
+  if(inp) inp.disabled = false;
+  if(loadBtn) loadBtn.style.display = '';
+  if(editBtn) editBtn.style.display = 'none';
 }
 
 // Parse the textarea, fetch every NOT-yet-cached ticker in ONE batched request.
@@ -721,12 +755,16 @@ async function loadTickerPool(){
       if(failed.length && ok) showStatus($('poolStatus'), ok+' loaded · could not load: '+failed.join(', '),'warn');
       else if(failed.length) showStatus($('poolStatus'),'Could not load: '+failed.join(', '),'error');
       else showStatus($('poolStatus'), ok+' ticker(s) loaded and cached.','ok');
+      // Clear only the tickers that loaded cleanly so the box is ready for the next
+      // batch; leave any failures behind so the user can fix and retry them.
+      if(ok && !failed.length && inp) inp.value='';
     } else {
       showStatus($('poolStatus'),'All requested tickers are already cached.','ok');
+      if(inp) inp.value='';
     }
     renderPoolChips();
     refreshTickerSelect();
-    if(loadedTickers().length) setPoolLocked(true);
+    updateSensSecurityDropdown();
   } catch(e){
     showStatus($('poolStatus'),'Load failed: '+e.message,'error');
   } finally {
@@ -779,6 +817,7 @@ $('delScenarioBtn').addEventListener('click', ()=>{ if(activeSecurityId!=null){ 
 /* ─── TICKER POOL WIRING ─── */
 $('loadTickersBtn').addEventListener('click', loadTickerPool);
 $('editTickersBtn').addEventListener('click', ()=>{ setPoolLocked(false); const i=$('tickerPoolInput'); if(i) i.focus(); });
+{ const cb=$('clearPoolBtn'); if(cb) cb.addEventListener('click', clearPool); }
 $('tickerPoolInput').addEventListener('keydown', e=>{
   // Enter loads; Shift+Enter inserts a newline.
   if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); loadTickerPool(); }

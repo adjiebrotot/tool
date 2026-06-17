@@ -181,9 +181,33 @@ function renderPoolChips(){
     const e=priceCache[tk];
     const warn=(e && e.kind==='stock' && e.source==='stooq');
     const title=warn?'Loaded from Stooq (unadjusted for splits/dividends)':(e?e.dates.length+' trading days':'');
-    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}</span>`;
+    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}<button class="pool-chip-del" type="button" data-tk="${tk}" title="Remove ${tk}" aria-label="Remove ${tk}">×</button></span>`;
   }).join('');
+  box.querySelectorAll('.pool-chip-del').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
   updateLoadBtnLabel();
+}
+
+// Remove a single ticker from the cached pool and reflect it everywhere.
+function removeFromPool(tk){
+  tk=String(tk||'').trim().toUpperCase();
+  if(!tk || !priceCache[tk]) return;
+  delete priceCache[tk];
+  persistPriceCache();
+  renderPoolChips();
+  refreshAssetTickerSelect();
+  if(loadedTickers().length) showStatus($('poolStatus'), tk+' removed.','ok');
+  else hideStatus($('poolStatus'));
+}
+
+// Drop the entire cached pool (the data the app shows on first open lives here).
+function clearPool(){
+  if(!loadedTickers().length) return;
+  priceCache={};
+  persistPriceCache();
+  renderPoolChips();
+  refreshAssetTickerSelect();
+  hideStatus($('poolStatus'));
+  const inp=$('tickerPoolInput'); if(inp) inp.focus();
 }
 
 // Populate the "Add Asset → Ticker" dropdown from the loaded pool only.
@@ -201,11 +225,13 @@ function refreshAssetTickerSelect(){
   if(tks.indexOf(prev)>=0) sel.value=prev;
 }
 
-function setPoolLocked(locked){
+// Loading is additive and individual tickers are removed via the chip ✕, so the
+// input is never locked — it always stays open for adding the next batch.
+function setPoolLocked(_locked){
   const inp=$('tickerPoolInput'), loadBtn=$('loadTickersBtn'), editBtn=$('editTickersBtn');
-  if(inp) inp.disabled=locked;
-  if(loadBtn) loadBtn.style.display=locked?'none':'';
-  if(editBtn) editBtn.style.display=locked?'':'none';
+  if(inp) inp.disabled=false;
+  if(loadBtn) loadBtn.style.display='';
+  if(editBtn) editBtn.style.display='none';
 }
 
 // Parse the textarea, fetch every NOT-yet-cached ticker in ONE batched request.
@@ -232,12 +258,15 @@ async function loadTickerPool(){
       if(failed.length&&ok) showStatus($('poolStatus'),ok+' loaded · could not load: '+failed.join(', '),'warn');
       else if(failed.length) showStatus($('poolStatus'),'Could not load: '+failed.join(', '),'error');
       else showStatus($('poolStatus'),ok+' ticker(s) loaded and cached.','ok');
+      // Clear only cleanly-loaded tickers so the box is ready for the next batch;
+      // leave failures behind so the user can fix and retry them.
+      if(ok && !failed.length && inp) inp.value='';
     } else {
       showStatus($('poolStatus'),'All requested tickers are already cached.','ok');
+      if(inp) inp.value='';
     }
     renderPoolChips();
     refreshAssetTickerSelect();
-    if(loadedTickers().length) setPoolLocked(true);
   } catch(e){
     showStatus($('poolStatus'),'Load failed: '+e.message,'error');
   } finally {
@@ -488,6 +517,7 @@ $('delPortfolioBtn').addEventListener('click',()=>{ if(activePortfolioId!=null) 
 /* ─── TICKER POOL WIRING (Data tab) ─── */
 $('loadTickersBtn').addEventListener('click', loadTickerPool);
 $('editTickersBtn').addEventListener('click', ()=>{ setPoolLocked(false); const i=$('tickerPoolInput'); if(i) i.focus(); });
+{ const cb=$('clearPoolBtn'); if(cb) cb.addEventListener('click', clearPool); }
 $('tickerPoolInput').addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); loadTickerPool(); } });
 
 /* ─── ADD ASSET BUTTON ─── */
