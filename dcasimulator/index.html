@@ -118,7 +118,6 @@
     <button class="ctrl-tab active" data-tab="data">📥 Data</button>
     <button class="ctrl-tab" data-tab="securities">📦 Scenarios</button>
     <button class="ctrl-tab" data-tab="settings">⚙️ Settings</button>
-    <button class="ctrl-tab" data-tab="sensitivity">🔬 Sensitivity</button>
   </div>
 
   <!-- DATA TAB -->
@@ -131,7 +130,7 @@
         <div class="field-sub" style="margin-top:5px">Tip: list every ticker at once — up to 25 load in a single request and stay cached for next time.</div>
         <a href="ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
         <div class="add-sec-row" style="gap:6px;margin-top:8px">
-          <button class="btn-primary" id="loadTickersBtn" style="flex:1">⤓ Load tickers</button>
+          <button class="btn-accent2" id="loadTickersBtn" style="flex:1">⤓ Load tickers</button>
           <button class="btn-secondary" id="editTickersBtn" style="flex:1;display:none">✎ Edit list</button>
         </div>
         <div class="field-sub rate-info" id="rateInfo" style="margin-top:6px"></div>
@@ -166,7 +165,6 @@
 
   <!-- SCENARIOS TAB -->
   <div class="ctrl-panel" id="tab-securities">
-    <div class="section-label" style="margin-top:0">Scenarios</div>
     <div class="sc-bar">
       <div id="scenarioTabs" class="sc-tabs"></div>
       <button class="sc-add-btn" id="addScenarioBtn" title="New scenario" aria-label="New scenario">+</button>
@@ -176,7 +174,7 @@
       </div>
     </div>
 
-    <div class="section-label">Configure Scenario</div>
+    <div class="section-label" style="margin-top:0">Asset</div>
     <div id="scenarioConfig" class="field-row" style="border-top:none;padding-top:0"></div>
     <div class="status-bar" id="fetchStatus"></div>
   </div>
@@ -203,36 +201,6 @@
       <input class="num-input" id="randomSeed" type="number" min="0" step="1" value="25823952204" />
       <div class="field-sub">Used for custom security randomness when Return and Standard Deviation are defined.</div>
     </div>
-  </div>
-
-  <!-- SENSITIVITY TAB -->
-  <div class="ctrl-panel" id="tab-sensitivity">
-    <div class="section-label" style="margin-top:0">Sensitivity Analysis</div>
-    <div class="field-row" style="border-top:none;padding-top:0">
-      <div class="field-label">Security to Analyse</div>
-      <select class="txt-input" id="sensSecurity">
-        <option value="">— Add securities first —</option>
-      </select>
-      <div class="sens-style-info" id="sensStyleInfo" style="display:none"></div>
-    </div>
-    <div id="sensThresholdRange" style="display:none">
-      <div class="field-row">
-        <div class="field-label">Start Value (%)</div>
-        <input class="num-input" id="sensThreshStart" type="number" min="0.1" max="49.9" step="0.1" value="1"/>
-        <div class="field-sub">Lower bound of threshold sweep.</div>
-      </div>
-      <div class="field-row">
-        <div class="field-label">End Value (%)</div>
-        <input class="num-input" id="sensThreshEnd" type="number" min="0.2" max="50" step="0.1" value="20"/>
-        <div class="field-sub">Upper bound of threshold sweep.</div>
-      </div>
-      <div class="field-row">
-        <div class="field-label">Step (%)</div>
-        <input class="num-input" id="sensThreshStep" type="number" min="0.1" max="10" step="0.1" value="1"/>
-        <div class="field-sub">Increment between threshold values.</div>
-      </div>
-    </div>
-    <div class="status-bar" id="sensStatus" style="margin-top:8px"></div>
   </div>
 
   <div class="warning" id="mainWarning"></div>
@@ -339,22 +307,6 @@
   </section>
 
 
-  <!-- SENSITIVITY CHART -->
-  <section class="chart-card card" id="sensitivitySection" style="display:none;margin-bottom:18px">
-    <div class="section-title">
-      <div>
-        <h2>🔬 Sensitivity Analysis</h2>
-        <p id="sensChartSubtitle" style="font-size:.82rem;color:var(--muted);margin-top:2px"></p>
-      </div>
-      <div class="chart-actions">
-        <button class="btn-secondary" id="sensSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
-        <button class="btn-secondary" id="sensPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
-        <button class="btn-secondary" id="sensCopyPngBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
-      </div>
-    </div>
-    <div class="canvas-wrap" style="height:370px"><canvas id="sensCanvas"></canvas></div>
-    <div class="hover-box" id="sensHoverBox">Hover a bar to inspect the value.</div>
-  </section>
 
 </main>
 </section><!-- /layout -->
