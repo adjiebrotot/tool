@@ -141,7 +141,13 @@
     var timeoutId = setTimeout(function(){ controller.abort(); }, timeoutMs);
     try {
       var resp = await fetch(url, {signal: controller.signal, cache:'no-store'});
-      if (!resp.ok) throw new Error('Worker HTTP ' + resp.status);
+      if (!resp.ok) {
+        // Prefer the Worker's own JSON error (e.g. the per-IP daily-limit
+        // message on a 429) over a bare status code.
+        var msg = 'Worker HTTP ' + resp.status;
+        try { var j = await resp.json(); if (j && j.error) msg = j.error; } catch(_e){}
+        throw new Error(msg);
+      }
       return await resp.json();
     } catch(err){
       if (err && err.name === 'AbortError') throw new Error('timed out');
