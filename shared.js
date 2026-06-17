@@ -93,6 +93,47 @@
 
   var MAX_PER_REQUEST = 25; // must match the Worker's MAX_TICKERS cap
 
+  /* ── SOFT DAILY REQUEST CAP (per device, via a 1-day cookie) ───────────────
+     The Worker free tier is finite, so we nudge users to batch their loads. A
+     "request" here is one Worker invocation (one batch of up to 25 tickers).
+     Tickers already in the cache, and same-day reloads, cost nothing. The cap
+     lives in a cookie that expires at the end of the local day; clearing cookies
+     resets it — accepted friction, not a hard wall. The cookie is shared across
+     the whole origin, so the single-asset and portfolio tools draw on the SAME
+     daily allowance. */
+  var DAILY_REQUEST_LIMIT = 5;
+  var RATE_COOKIE = 'yf_req';
+
+  function rlToday(){ return new Date().toISOString().slice(0,10); }
+  function rlRead(){
+    var jar = (typeof document !== 'undefined' ? document.cookie : '') || '';
+    var m = jar.match(new RegExp('(?:^|;\\s*)' + RATE_COOKIE + '=([^;]+)'));
+    if(!m) return { day: rlToday(), n: 0 };
+    var parts = decodeURIComponent(m[1]).split('|');
+    if(parts[0] !== rlToday()) return { day: rlToday(), n: 0 }; // new day → reset
+    return { day: parts[0], n: parseInt(parts[1], 10) || 0 };
+  }
+  function rlWrite(n){
+    if(typeof document === 'undefined') return;
+    var exp = new Date(); exp.setHours(23, 59, 59, 999); // end of the local day
+    document.cookie = RATE_COOKIE + '=' + encodeURIComponent(rlToday() + '|' + n) +
+      '; expires=' + exp.toUTCString() + '; path=/; SameSite=Lax';
+  }
+  function rlRemaining(){ return Math.max(0, DAILY_REQUEST_LIMIT - rlRead().n); }
+  function rlConsume(){ var c = rlRead(); rlWrite(c.n + 1); return Math.max(0, DAILY_REQUEST_LIMIT - (c.n + 1)); }
+
+  // Merge two {dates, prices} series (ascending ISO dates), deduping by date so
+  // a freshly-fetched tail/front can be folded into the cached history without
+  // re-downloading what we already hold. `b` wins on overlapping dates.
+  function mergeSeries(a, b){
+    var map = Object.create(null), i;
+    if(a && a.dates) for(i=0;i<a.dates.length;i++) map[a.dates[i]] = a.prices[i];
+    if(b && b.dates) for(i=0;i<b.dates.length;i++) map[b.dates[i]] = b.prices[i];
+    var dates = Object.keys(map).sort();
+    var prices = dates.map(function(d){ return map[d]; });
+    return { dates: dates, prices: prices };
+  }
+
   function yfIso(d){ return d.toISOString().slice(0,10); }
 
   async function workerFetchJson(url, timeoutMs){
@@ -137,7 +178,18 @@
     var batches = chunk(list, MAX_PER_REQUEST);
     var merged = {};
     // Batches run in parallel; with ≤25 tickers (the common case) this is one call.
+    // Each batch that actually reaches the Worker consumes one of the device's
+    // daily requests. The .map() callbacks run synchronously in order, so the
+    // remaining-count check and the consume happen deterministically per batch.
     var responses = await Promise.all(batches.map(function(group){
+      if (rlRemaining() <= 0) {
+        var blocked = {};
+        group.forEach(function(t){
+          blocked[t] = { error: 'daily data-request limit reached (' + DAILY_REQUEST_LIMIT + '/device/day)' };
+        });
+        return Promise.resolve(blocked);
+      }
+      rlConsume();
       var url = base + '/?tickers=' + enc(group.join(',')) +
                 '&start=' + enc(start) + '&end=' + enc(end);
       return workerFetchJson(url, 20000).then(function(data){
@@ -170,8 +222,13 @@
   global.SharedYF = {
     fetchPrices: yfFetchPrices,
     fetchPricesBatch: yfFetchPricesBatch,
+    mergeSeries: mergeSeries,
     setEndpoint: function(url){ WORKER_ENDPOINT = url || ''; },
     getEndpoint: function(){ return WORKER_ENDPOINT; },
+    // Soft daily request cap (shared across both tools on this origin).
+    getDailyLimit: function(){ return DAILY_REQUEST_LIMIT; },
+    getDailyUsed: function(){ return rlRead().n; },
+    getDailyRemaining: rlRemaining,
     // Back-compat aliases for the old self-proxy API.
     setProxy: function(url){ WORKER_ENDPOINT = url || ''; },
     getProxy: function(){ return WORKER_ENDPOINT; }

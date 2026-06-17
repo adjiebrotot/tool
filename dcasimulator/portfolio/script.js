@@ -17,7 +17,9 @@ const METHOD_LABEL = { 'towards-weight':'Towards Weight', 'constant-weight':'Con
 // Tickers are pooled and fetched once over a wide window so later date-range
 // tweaks reuse the cache instead of hitting the Worker again.
 const POOL_FETCH_START = '1990-01-01';
-const CACHE_STORAGE_KEY = 'dca_portfolio_priceCache_v1';
+// Shared with the single-asset tool (same origin, same key) so prices cached on
+// one page are reused on the other. Bumped to v2 when the shared format landed.
+const CACHE_STORAGE_KEY = 'dca_priceCache_v2';
 
 /* ─── STATE ─── */
 // Each portfolio is an independent strategy: its own assets, weights, top-ups,
@@ -123,11 +125,26 @@ async function ensureTickerCached(ticker, reqStart, reqEnd){
   tickerFetchInFlight[tk]=(async()=>{
     const e=priceCache[tk];
     if(e && e.coverageStart<=reqStart && e.coverageEnd>=reqEnd) return;
-    const fStart=e?(e.coverageStart<reqStart?e.coverageStart:reqStart):reqStart;
-    const fEnd=e?(e.coverageEnd>reqEnd?e.coverageEnd:reqEnd):reqEnd;
-    const data=await fetchYahooFinance(tk,fStart,fEnd);
-    if(!data.dates.length) throw new Error('No price data in range');
-    priceCache[tk]={dates:data.dates,prices:data.prices,coverageStart:fStart,coverageEnd:fEnd,source:data.source,kind:data.kind};
+    // Fetch ONLY the missing segment(s) and merge — never re-download the whole
+    // history just to widen the range.
+    const segments=[];
+    if(!e){ segments.push([reqStart, reqEnd]); }
+    else {
+      if(reqStart < e.coverageStart) segments.push([reqStart, e.coverageStart]);
+      if(reqEnd   > e.coverageEnd)   segments.push([e.coverageEnd, reqEnd]);
+    }
+    let got=false;
+    for(const [segStart, segEnd] of segments){
+      const data=await fetchYahooFinance(tk,segStart,segEnd);
+      if(data && data.dates && data.dates.length){ storeBatchResult(tk, data, segStart, segEnd); got=true; }
+    }
+    const cur=priceCache[tk];
+    if(cur){
+      cur.coverageStart=minIso(cur.coverageStart, reqStart);
+      cur.coverageEnd=maxIso(cur.coverageEnd, reqEnd);
+    } else if(!got){
+      throw new Error('No price data in range');
+    }
   })();
   try{ await tickerFetchInFlight[tk]; } finally{ delete tickerFetchInFlight[tk]; }
 }
@@ -162,11 +179,27 @@ function loadPersistedCache(){
 /* ─── TICKER POOL (load everything up front, in one request) ─── */
 function loadedTickers(){ return Object.keys(priceCache).sort(); }
 
+// Merges freshly-fetched dates into any existing history (so an incremental
+// tail/front fetch never discards cached data) and widens the coverage window.
 function storeBatchResult(tk, r, fetchStart, fetchEnd){
   if(!(r && !r.error && r.dates && r.dates.length)) return false;
-  priceCache[tk]={ dates:r.dates, prices:r.prices, coverageStart:fetchStart, coverageEnd:fetchEnd, source:r.source, kind:r.kind };
+  const prev = priceCache[tk];
+  let dates = r.dates, prices = r.prices;
+  if(prev && prev.dates && prev.dates.length && window.SharedYF && SharedYF.mergeSeries){
+    const m = SharedYF.mergeSeries({dates:prev.dates, prices:prev.prices}, {dates:r.dates, prices:r.prices});
+    dates = m.dates; prices = m.prices;
+  }
+  priceCache[tk]={
+    dates, prices,
+    cachedStart: dates[0], cachedEnd: dates[dates.length-1],
+    coverageStart: prev ? minIso(prev.coverageStart, fetchStart) : fetchStart,
+    coverageEnd: prev ? maxIso(prev.coverageEnd, fetchEnd) : fetchEnd,
+    source:r.source, kind:r.kind
+  };
   return true;
 }
+function minIso(a, b){ return (a && a < b) ? a : b; }
+function maxIso(a, b){ return (a && a > b) ? a : b; }
 
 function loadBtnLabel(){ return loadedTickers().length ? '⤓ Load additional tickers' : '⤓ Load tickers'; }
 function updateLoadBtnLabel(){ const b=$('loadTickersBtn'); if(b && !b.disabled) b.innerHTML=loadBtnLabel(); }
@@ -234,44 +267,72 @@ function setPoolLocked(_locked){
   if(editBtn) editBtn.style.display='none';
 }
 
-// Parse the textarea, fetch every NOT-yet-cached ticker in ONE batched request.
+// Parse the textarea and fetch every NOT-yet-cached ticker, downloading only the
+// data we don't already hold: brand-new (or front-gapped) tickers get the full
+// history, while cached tickers missing only recent days fetch just the tail.
+// Each group is one batched Worker request (one daily request each).
 async function loadTickerPool(){
   const inp=$('tickerPoolInput');
   const list=[...new Set((inp.value||'').split(/[\s,;]+/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
   if(!list.length){ showStatus($('poolStatus'),'Enter at least one ticker.','error'); return; }
   if(!window.SharedYF){ showStatus($('poolStatus'),'Market data engine not loaded (shared.js).','error'); return; }
 
-  const fetchStart=POOL_FETCH_START, fetchEnd=isoDate(new Date());
-  const need=list.filter(t=>!isTickerRangeCovered(t,fetchStart,fetchEnd));
+  const fetchEnd=isoDate(new Date());
+  const fullNeed=[], tailNeed=[]; let tailStart=fetchEnd;
+  for(const t of list){
+    if(isTickerRangeCovered(t,POOL_FETCH_START,fetchEnd)) continue;
+    const e=priceCache[t];
+    if(e && e.coverageStart<=POOL_FETCH_START && e.coverageEnd<fetchEnd){
+      tailNeed.push(t); if(e.coverageEnd<tailStart) tailStart=e.coverageEnd;
+    } else { fullNeed.push(t); }
+  }
+  const need=fullNeed.length+tailNeed.length;
+  if(!need){
+    showStatus($('poolStatus'),'All requested tickers are already cached.','ok');
+    if(inp) inp.value=''; renderPoolChips(); refreshAssetTickerSelect(); updateRateInfo();
+    return;
+  }
+  if(SharedYF.getDailyRemaining()<=0){
+    showStatus($('poolStatus'),'Daily limit reached — you\'ve used all '+SharedYF.getDailyLimit()+' data requests for today. They reset tomorrow; cached tickers still work.','error');
+    updateRateInfo();
+    return;
+  }
+
+  const reqsNeeded=(fullNeed.length?1:0)+(tailNeed.length?1:0);
   const loadBtn=$('loadTickersBtn');
   loadBtn.disabled=true; loadBtn.innerHTML='<span class="spinner"></span>Loading…';
   try{
-    if(need.length){
-      showStatus($('poolStatus'),'Fetching '+need.length+' ticker(s) in one request…','loading');
-      const map=await window.SharedYF.fetchPricesBatch(need,fetchStart,fetchEnd);
-      const failed=[]; let ok=0;
-      for(const t of need){
-        if(storeBatchResult(t,map[t],fetchStart,fetchEnd)) ok++;
+    showStatus($('poolStatus'),'Fetching '+need+' ticker(s)'+(reqsNeeded>1?' in '+reqsNeeded+' requests':' in one request')+'…','loading');
+    const failed=[]; let ok=0;
+    const absorb=(group,start,map)=>{
+      for(const t of group){
+        if(storeBatchResult(t,map[t],start,fetchEnd)) ok++;
         else failed.push(t+(map[t]&&map[t].error?' ('+map[t].error+')':''));
       }
-      persistPriceCache();
-      if(failed.length&&ok) showStatus($('poolStatus'),ok+' loaded · could not load: '+failed.join(', '),'warn');
-      else if(failed.length) showStatus($('poolStatus'),'Could not load: '+failed.join(', '),'error');
-      else showStatus($('poolStatus'),ok+' ticker(s) loaded and cached.','ok');
-      // Clear only cleanly-loaded tickers so the box is ready for the next batch;
-      // leave failures behind so the user can fix and retry them.
-      if(ok && !failed.length && inp) inp.value='';
-    } else {
-      showStatus($('poolStatus'),'All requested tickers are already cached.','ok');
-      if(inp) inp.value='';
-    }
+    };
+    if(tailNeed.length){ absorb(tailNeed, tailStart, await SharedYF.fetchPricesBatch(tailNeed,tailStart,fetchEnd)); }
+    if(fullNeed.length){ absorb(fullNeed, POOL_FETCH_START, await SharedYF.fetchPricesBatch(fullNeed,POOL_FETCH_START,fetchEnd)); }
+    persistPriceCache();
+    if(failed.length&&ok) showStatus($('poolStatus'),ok+' loaded · could not load: '+failed.join(', '),'warn');
+    else if(failed.length) showStatus($('poolStatus'),'Could not load: '+failed.join(', '),'error');
+    else showStatus($('poolStatus'),ok+' ticker(s) loaded and cached.','ok');
+    if(ok && !failed.length && inp) inp.value='';
     renderPoolChips();
     refreshAssetTickerSelect();
   } catch(e){
     showStatus($('poolStatus'),'Load failed: '+e.message,'error');
   } finally {
     loadBtn.disabled=false; loadBtn.innerHTML=loadBtnLabel();
+    updateRateInfo();
   }
+}
+
+// Reflect the device's remaining daily data requests in the Data tab.
+function updateRateInfo(){
+  const el=$('rateInfo'); if(!el || !window.SharedYF) return;
+  const left=SharedYF.getDailyRemaining(), lim=SharedYF.getDailyLimit();
+  el.textContent=left+' of '+lim+' daily data requests remaining on this device.';
+  el.classList.toggle('rate-info-low', left<=1);
 }
 
 /* ─── PORTFOLIO MODEL ─── */
@@ -795,13 +856,12 @@ async function runSimulation(){
         const map=await window.SharedYF.fetchPricesBatch(missing,startDate,endDate);
         for(const tk of missing){
           const r=map[tk];
-          if(r && !r.error && r.dates && r.dates.length){
-            priceCache[tk]={dates:r.dates,prices:r.prices,coverageStart:startDate,coverageEnd:endDate,source:r.source,kind:r.kind};
-          } else {
+          // Merge (don't clobber) so any wider history already cached survives.
+          if(!storeBatchResult(tk, r, startDate, endDate)){
             showWarning('Could not load data for '+tk+(r&&r.error?': '+r.error:'')+'.');
           }
         }
-        persistPriceCache(); renderPoolChips(); refreshAssetTickerSelect();
+        persistPriceCache(); renderPoolChips(); refreshAssetTickerSelect(); updateRateInfo();
       }catch(err){ showWarning('Could not load ticker data: '+err.message); }
     }
 
@@ -1266,6 +1326,7 @@ setDefaultDates();
 loadPersistedCache();
 renderPoolChips();
 refreshAssetTickerSelect();
+updateRateInfo();
 initDefaults();
 loadControlsFromActive();
 renderPortfolioList();

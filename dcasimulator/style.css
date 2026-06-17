@@ -56,6 +56,9 @@ body.light .num-input option,body.light .txt-input option{background:#ffffff;col
 .pool-chips-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .pool-clear-btn{background:transparent;border:none;color:var(--muted);font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;padding:2px 4px;font-family:inherit;transition:color .12s}
 .pool-clear-btn:hover{color:#ef4444}
+.rate-info{font-weight:600}
+.rate-info.rate-info-low{color:var(--gold)}
+.rate-info:empty{display:none}
 
 /* ─── SCENARIO BAR — one tab per scenario (mirrors the portfolio bar) ─── */
 .sc-bar{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;padding:9px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg)}
