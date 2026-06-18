@@ -673,6 +673,30 @@ function buildTimeseriesGraphHelper(cfg) {
   if (graphVars.length === 0) return '';
 
   return `
+# ── GRAPH WATERMARK ──────────────────────────────────────────────
+def _add_graph_watermark(fig):
+    """
+    Stamp the credit onto the figure as vector glyph outlines — the text is
+    converted to Bezier splines / polylines via TextPath and drawn as a path,
+    not as an editable/selectable text object — so it renders identically but
+    cannot be trivially clicked and deleted from the saved graphic.
+    """
+    from matplotlib.textpath import TextPath
+    from matplotlib.patches import PathPatch
+    from matplotlib.transforms import Affine2D
+    credit = "Made using tool.adjiebrotots.com/powerfactory-scripter"
+    tp = TextPath((0, 0), credit, size=7)
+    bb = tp.get_extents()
+    dpi = fig.get_dpi()
+    scale = dpi / 72.0  # TextPath units are points; convert to display pixels
+    w_px, h_px = fig.get_size_inches() * dpi
+    tx = w_px - 6 - bb.x1 * scale   # right-align with a 6 px margin
+    ty = 6 - bb.y0 * scale          # bottom-align with a 6 px margin
+    patch = PathPatch(tp,
+                      transform=Affine2D().scale(scale).translate(tx, ty),
+                      facecolor="#333333", edgecolor="none", alpha=0.25)
+    fig.add_artist(patch)
+
 # ── TIMESERIES GRAPH HELPER ──────────────────────────────────────
 def save_timeseries_graph(time_values, ts_data, spec, row, graph_dir, context_label_parts):
     """
@@ -714,8 +738,7 @@ def save_timeseries_graph(time_values, ts_data, spec, row, graph_dir, context_la
     safe_name = safe_name.replace(" ", "_").replace("(", "").replace(")", "").replace("/", "-")
     graph_filename = f"{safe_name}_{timestamp_string()}.png"
     graph_path = os.path.join(graph_dir, graph_filename)
-    plt.figtext(0.99, 0.01, 'Made using tool.adjiebrotots.com/powerfactory-scripter',
-                ha='right', va='bottom', fontsize=7, alpha=0.25, color='#333333')
+    _add_graph_watermark(plt.gcf())
     plt.savefig(graph_path)
     plt.close()
     safe_print(f"Graph saved: {graph_path}")
@@ -1526,23 +1549,38 @@ print(f"Total attempted runs: {len(results_df)}")
 `;
 }
 
+// ── NOTEBOOK CELL NAMES ───────────────────────────────────────
+const NOTEBOOK_CELL_NAMES = [
+  'Preparation & Imports',
+  'Helper Functions',
+  'Project Selection & Checks',
+  'Input Specs & Object Resolution',
+  'Output Specs',
+  'Problem Loop & Study Execution',
+  'Output Export'
+];
+
+// ── NOTEBOOK CELLS ────────────────────────────────────────────
+// Returns the notebook as structured cells [{name, source}] — one per
+// section. Used both for the per-cell code preview and the .ipynb export.
+function buildNotebookCells(sections) {
+  return sections.map((sec, i) => ({
+    name: NOTEBOOK_CELL_NAMES[i] || 'Section',
+    source: sec.replace(/^\n+/, '').replace(/\s+$/, '')
+  }));
+}
+
 // ── NOTEBOOK WRAPPER ──────────────────────────────────────────
+// Flattens the cells into a single annotated .py-style string (used for the
+// "Copy" action and as the text fallback for the generated code).
 function buildNotebookWrapper(sections) {
-  const cellNames = [
-    'Preparation & Imports',
-    'Helper Functions',
-    'Project Selection & Checks',
-    'Input Specs & Object Resolution',
-    'Output Specs',
-    'Problem Loop & Study Execution',
-    'Output Export'
-  ];
+  const cells = buildNotebookCells(sections);
   let result = '';
-  sections.forEach((sec, i) => {
+  cells.forEach((cell, i) => {
     result += `# ╔══════════════════════════════════════════════════════════════╗\n`;
-    result += `# ║ Cell ${i+1} — ${cellNames[i] || 'Section'}\n`;
+    result += `# ║ Cell ${i+1} — ${cell.name}\n`;
     result += `# ╚══════════════════════════════════════════════════════════════╝\n`;
-    result += sec + '\n';
+    result += cell.source + '\n\n';
   });
   return result;
 }
@@ -1565,55 +1603,69 @@ if __name__ == "__main__":
    ORDER and the notebook-vs-python-file wrapping. script.js calls
    this after it has read + validated the config.
 ================================================================ */
+function buildPowerFactorySections(cfg) {
+  return {
+    sec1_imports:      buildImports(cfg),
+    sec2_prep:         buildPreparation(cfg),
+    sec3_projsel:      buildProjectSelection(cfg),
+    sec4_checks:       buildChecks(cfg),
+    sec5_helpers:      buildCommonHelpers(cfg),
+    sec6_studyhelper:  buildStudyHelper(cfg),
+    sec7_elmres:       buildElmResHelpers(cfg),
+    sec7b_graphhelper: buildTimeseriesGraphHelper(cfg),
+    sec7c_rawhelper:   buildRawCsvHelper(cfg),
+    sec8_customfn:     buildCustomFunctionHelpers(cfg),
+    sec9_outdir:       buildOutputDirSetup(cfg),
+    sec10_inputspecs:  buildInputSpecs(cfg),
+    sec11_outspecs:    buildOutputSpecs(cfg),
+    sec12_loop:        buildProblemLoop(cfg),
+    sec13_export:      buildOutputExport(cfg)
+  };
+}
+
+// Notebook cell order: helpers first so the project-selection cell can call them.
+function notebookSectionGroups(S) {
+  return [
+    S.sec1_imports + S.sec2_prep,
+    S.sec5_helpers + S.sec6_studyhelper + S.sec7_elmres + S.sec7b_graphhelper + S.sec7c_rawhelper + S.sec8_customfn,
+    S.sec3_projsel + S.sec4_checks,
+    S.sec9_outdir + S.sec10_inputspecs,
+    S.sec11_outspecs,
+    S.sec12_loop,
+    S.sec13_export
+  ];
+}
+
+// Structured notebook cells [{name, source}] — consumed by script.js for the
+// per-cell preview and the .ipynb download.
+function buildPowerFactoryNotebookCells(cfg) {
+  return buildNotebookCells(notebookSectionGroups(buildPowerFactorySections(cfg)));
+}
+
 function buildPowerFactoryScript(cfg) {
-  // Assemble code sections
-  const sec1_imports      = buildImports(cfg);
-  const sec2_prep         = buildPreparation(cfg);
-  const sec3_projsel      = buildProjectSelection(cfg);
-  const sec4_checks       = buildChecks(cfg);
-  const sec5_helpers      = buildCommonHelpers(cfg);
-  const sec6_studyhelper  = buildStudyHelper(cfg);
-  const sec7_elmres       = buildElmResHelpers(cfg);
-  const sec7b_graphhelper = buildTimeseriesGraphHelper(cfg);
-  const sec7c_rawhelper   = buildRawCsvHelper(cfg);
-  const sec8_customfn     = buildCustomFunctionHelpers(cfg);
-  const sec9_outdir       = buildOutputDirSetup(cfg);
-  const sec10_inputspecs  = buildInputSpecs(cfg);
-  const sec11_outspecs    = buildOutputSpecs(cfg);
-  const sec12_loop        = buildProblemLoop(cfg);
-  const sec13_export      = buildOutputExport(cfg);
+  const S = buildPowerFactorySections(cfg);
 
   if (cfg.initialisation.codingStyle === 'notebook') {
-    // Notebook cell order: helpers first so project-selection cell can call them
-    const sections = [
-      sec1_imports + sec2_prep,
-      sec5_helpers + sec6_studyhelper + sec7_elmres + sec7b_graphhelper + sec7c_rawhelper + sec8_customfn,
-      sec3_projsel + sec4_checks,
-      sec9_outdir + sec10_inputspecs,
-      sec11_outspecs,
-      sec12_loop,
-      sec13_export
-    ];
-    return buildNotebookWrapper(sections);
+    return buildNotebookWrapper(notebookSectionGroups(S));
   }
 
   // Python file style — helpers must be defined before top-level calls that use them
   const body = [
-    sec1_imports,
-    sec5_helpers,
-    sec6_studyhelper,
-    sec7_elmres,
-    sec7b_graphhelper,
-    sec7c_rawhelper,
-    sec8_customfn,
-    sec2_prep,
-    sec3_projsel,
-    sec4_checks,
-    sec9_outdir,
-    sec10_inputspecs,
-    sec11_outspecs,
-    sec12_loop,
-    sec13_export,
+    S.sec1_imports,
+    S.sec5_helpers,
+    S.sec6_studyhelper,
+    S.sec7_elmres,
+    S.sec7b_graphhelper,
+    S.sec7c_rawhelper,
+    S.sec8_customfn,
+    S.sec2_prep,
+    S.sec3_projsel,
+    S.sec4_checks,
+    S.sec9_outdir,
+    S.sec10_inputspecs,
+    S.sec11_outspecs,
+    S.sec12_loop,
+    S.sec13_export,
   ].join('\n');
   return buildPythonFileWrapper(body);
 }

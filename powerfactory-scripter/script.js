@@ -264,6 +264,7 @@ function onStudyTypeChange() {
 function onCodingStyleChange() {
   const cs = document.getElementById('coding-style').value;
   setTip('tt-coding-style', TIP_CODING_STYLE[cs] || '');
+  updateDownloadButtonLabel();
 }
 
 function onSaveIntermediateChange() {
@@ -1446,6 +1447,7 @@ function loadConfig(cfg) {
   onProblemTypeChange();
   onStudyTypeChange();
   onSaveIntermediateChange();
+  onCodingStyleChange();
 }
 
 /* ================================================================
@@ -1722,12 +1724,48 @@ function generateCode() {
   // Store for download
   window._generatedCode = finalCode;
 
-  // Render with syntax highlighting
-  const preEl  = document.getElementById('code-preview');
-  const codeEl = preEl.querySelector('code') || preEl;
-  preEl.innerHTML = `<code class="language-python">${escapeHtml(finalCode)}</code>`;
-  hljs.highlightElement(preEl.querySelector('code'));
+  const preEl = document.getElementById('code-preview');
+  const nbEl  = document.getElementById('nb-preview');
+  const isNotebook = cfg.initialisation.codingStyle === 'notebook';
+
+  if (isNotebook) {
+    // Notebook style → render one Jupyter-like cell per section.
+    const cells = buildPowerFactoryNotebookCells(cfg);
+    window._generatedCells = cells;
+    renderNotebookCells(cells, nbEl);
+    preEl.style.display = 'none';
+    nbEl.style.display = '';
+  } else {
+    window._generatedCells = null;
+    preEl.innerHTML = `<code class="language-python">${escapeHtml(finalCode)}</code>`;
+    hljs.highlightElement(preEl.querySelector('code'));
+    preEl.style.display = '';
+    nbEl.style.display = 'none';
+  }
+  updateDownloadButtonLabel();
   showToast('generate-toast');
+}
+
+/* Render the notebook cells as individual code cells (Jupyter-style). */
+function renderNotebookCells(cells, container) {
+  let html = '';
+  cells.forEach((cell, i) => {
+    html += `<div class="nb-md-heading">Cell ${i + 1} — ${escapeHtml(cell.name)}</div>`;
+    html += `<div class="nb-cell">` +
+              `<div class="nb-prompt">In [ ]:</div>` +
+              `<pre class="nb-source"><code class="language-python">${escapeHtml(cell.source)}</code></pre>` +
+            `</div>`;
+  });
+  container.innerHTML = html;
+  container.querySelectorAll('code').forEach(el => hljs.highlightElement(el));
+}
+
+/* Toolbar download button reflects the selected coding style (.py vs .ipynb). */
+function updateDownloadButtonLabel() {
+  const btn = document.getElementById('download-btn');
+  if (!btn) return;
+  const cs = document.getElementById('coding-style').value;
+  btn.textContent = cs === 'notebook' ? '↓ .ipynb' : '↓ .py';
 }
 
 function escapeHtml(str) {
@@ -1760,10 +1798,44 @@ function copyCode() {
   });
 }
 
+/* Route the toolbar download to .ipynb when the code was generated in
+   Notebook style, otherwise to a plain .py file. */
+function downloadCode() {
+  if (window._generatedCells) { downloadIpynb(); return; }
+  downloadPy();
+}
+
 function downloadPy() {
   if (!window._generatedCode) { alert('Generate code first.'); return; }
   const marked = '# Made using tool.adjiebrotots.com/powerfactory-scripter\n' + window._generatedCode;
   download(marked, 'powerfactory_script.py', 'text/plain');
+}
+
+/* Build a valid Jupyter notebook (.ipynb v4) from the generated cells —
+   each section becomes a markdown heading cell + a code cell. */
+function downloadIpynb() {
+  if (!window._generatedCells) { alert('Generate code first.'); return; }
+  const credit = '# Made using tool.adjiebrotots.com/powerfactory-scripter';
+  const toSource = text => {
+    const lines = String(text).replace(/\s+$/, '').split('\n');
+    return lines.map((l, i) => i === lines.length - 1 ? l : l + '\n');
+  };
+  const nbCells = [];
+  window._generatedCells.forEach((cell, i) => {
+    nbCells.push({ cell_type: 'markdown', id: `md-${i + 1}`, metadata: {}, source: toSource(`## Cell ${i + 1} — ${cell.name}`) });
+    const body = i === 0 ? credit + '\n' + cell.source : cell.source;
+    nbCells.push({ cell_type: 'code', id: `code-${i + 1}`, metadata: {}, execution_count: null, outputs: [], source: toSource(body) });
+  });
+  const notebook = {
+    cells: nbCells,
+    metadata: {
+      kernelspec: { display_name: 'Python 3', language: 'python', name: 'python3' },
+      language_info: { name: 'python' }
+    },
+    nbformat: 4,
+    nbformat_minor: 5
+  };
+  download(JSON.stringify(notebook, null, 1), 'powerfactory_script.ipynb', 'application/x-ipynb+json');
 }
 
 function download(content, filename, type) {
@@ -1858,12 +1930,18 @@ function resetForm() {
     additionalConfig: { iterateStudyCases:false, iterateOperatingScenarios:false, useProgressBar:true, openPowerFactoryWindow:false, saveIntermediateEnabled:false, saveIntermediateMinutes:30 }
   });
   window._generatedCode = '';
-  document.getElementById('code-preview').innerHTML = `<code class="language-python">
+  window._generatedCells = null;
+  const preEl = document.getElementById('code-preview');
+  const nbEl  = document.getElementById('nb-preview');
+  preEl.innerHTML = `<code class="language-python">
 <div class="placeholder-msg">
   <span class="big">⚡</span>
   <span>Configure inputs and click <strong>Generate Code</strong></span>
 </div>
   </code>`;
+  preEl.style.display = '';
+  if (nbEl) { nbEl.style.display = 'none'; nbEl.innerHTML = ''; }
+  updateDownloadButtonLabel();
   document.getElementById('validation-errors').style.display = 'none';
   document.getElementById('validation-warnings').style.display = 'none';
 }

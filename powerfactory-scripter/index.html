@@ -475,14 +475,14 @@
     <div class="right-toolbar">
       <span class="pane-title">▸ Generated Code Preview</span>
       <button class="btn btn-primary" onclick="generateCode()">⚡ Generate Code</button>
-      <button class="btn btn-success" onclick="copyCode()">⎘ Copy</button>
-      <button class="btn btn-ghost" onclick="downloadPy()">↓ .py</button>
-      <button class="btn btn-ghost" onclick="exportConfigJSON()">↑ Export JSON</button>
-      <label class="btn btn-ghost" style="cursor:pointer; position:relative;">
-        ↓ Import JSON
+      <button class="btn btn-success" onclick="copyCode()" title="Copy to clipboard" aria-label="Copy">⧉</button>
+      <button class="btn btn-ghost" id="download-btn" onclick="downloadCode()" title="Download script">↓ .py</button>
+      <button class="btn btn-ghost" onclick="exportConfigJSON()" title="Export config JSON">↓ JSON</button>
+      <label class="btn btn-ghost" style="cursor:pointer; position:relative;" title="Import config JSON">
+        ↑ JSON
         <input type="file" accept=".json" id="import-json-file" onchange="importConfigJSON(event)" style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;top:0;left:0;" />
       </label>
-      <button class="btn btn-danger btn-xs" onclick="resetForm()">↺ Reset</button>
+      <button class="btn btn-danger btn-xs" onclick="resetForm()" title="Reset" aria-label="Reset">↺</button>
     </div>
     <div id="code-preview-wrapper">
       <pre id="code-preview"><code class="language-python">
@@ -491,6 +491,7 @@
   <span>Configure inputs and click <strong>Generate Code</strong></span>
 </div>
       </code></pre>
+      <div id="nb-preview" style="display:none"></div>
     </div>
   </div>
 
