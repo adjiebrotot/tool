@@ -4,8 +4,6 @@ Free, privacy-first, browser-based tools for finance, tax, property, engineering
 
 Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems engineer based in Perth, Australia.
 
-> **Not to be confused with:** "BroTools", the animation/rigging plugin suite for Autodesk Maya. Adjie Brotools has no relation or affiliation with it and contains no 3D animation scripts.
-
 ## Why these tools
 
 - **100% client-side & private** — every tool is a static page; all calculations and file processing run locally in your browser. Nothing is uploaded, so it's safe even for confidential or sensitive data.
