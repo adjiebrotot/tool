@@ -1957,6 +1957,30 @@ function toggleInfoExtra(extraId, btn) {
 }
 
 /* ================================================================
+   QUICK START — one-click worked examples loaded from samples/
+================================================================ */
+async function applyQuickStart(key) {
+  const res = await fetch(`samples/json-samples/${key}.json`);
+  if (!res.ok) throw new Error(`Could not load ${key}.json`);
+  const cfg = await res.json();
+  loadConfig(cfg);
+  refreshLiveWarnings();
+  document.querySelectorAll('.quick-start-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === key));
+  showToast('import-toast');
+}
+
+document.querySelectorAll('.quick-start-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    if (btn.disabled) return;
+    const all = [...document.querySelectorAll('.quick-start-btn')];
+    all.forEach(b => b.disabled = true);
+    try { await applyQuickStart(btn.dataset.preset); }
+    catch (err) { alert('Could not load sample: ' + err.message); }
+    finally { all.forEach(b => b.disabled = false); }
+  });
+});
+
+/* ================================================================
    PANE RESIZER — drag handle between left and right panes
 ================================================================ */
 (function initPaneResizer() {

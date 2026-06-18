@@ -695,6 +695,15 @@
   }
   .info-box .info-extra.open { display: block; }
 
+  /* ── QUICK START — one-click worked examples loaded from samples/ ──── */
+  .quick-start-row{display:flex;align-items:center;gap:10px;padding:8px 0 14px;margin-bottom:4px;flex-wrap:wrap}
+  .quick-start-label{font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
+  .quick-start-btns{display:flex;gap:6px;flex-wrap:wrap}
+  .quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
+  .quick-start-btn:hover{border-color:var(--accent);color:var(--text)}
+  .quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15)}
+  .quick-start-btn:disabled{opacity:.55;cursor:wait}
+
   /* ── OUTPUT VAR CONTAINER ────────────────────────────────────────── */
   .output-var-item {
     background: var(--surface);
