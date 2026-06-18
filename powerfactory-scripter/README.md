@@ -392,7 +392,7 @@ function generateCode()
 5. If `codingStyle === 'notebook'`, groups sections into 7 cells and wraps with `buildNotebookWrapper(sections)`.
 6. If `codingStyle === 'python_file'`, places all helpers before the top-level calls and wraps with `buildPythonFileWrapper(body)`.
 7. Stores final code in `window._generatedCode` for download functions.
-8. Renders into `#code-preview` and calls `hljs.highlightElement()`.
+8. For Notebook style, also builds structured cells via `buildPowerFactoryNotebookCells(cfg)`, stores them in `window._generatedCells`, and renders one Jupyter-style code cell per section into `#nb-preview` (via `renderNotebookCells()`); otherwise renders the single block into `#code-preview` and calls `hljs.highlightElement()`.
 9. Shows `#generate-toast`.
 
 ### 5.7 File I/O Functions
@@ -400,7 +400,10 @@ function generateCode()
 | Function | Description |
 |---|---|
 | `copyCode()` | Copies `window._generatedCode` to clipboard via `navigator.clipboard.writeText()`. Shows `#copy-toast`. |
+| `downloadCode()` | Routes the toolbar download button: `.ipynb` when the code was generated in Notebook style (`window._generatedCells` present), otherwise `.py`. |
 | `downloadPy()` | Downloads `window._generatedCode` as `powerfactory_script.py`. |
+| `downloadIpynb()` | Builds a valid Jupyter notebook (nbformat v4) from `window._generatedCells` — one markdown heading + code cell per section — and downloads `powerfactory_script.ipynb`. |
+| `updateDownloadButtonLabel()` | Sets the download button label to `↓ .ipynb` for Notebook style or `↓ .py` otherwise, based on the selected Coding Style. |
 | `download(content, filename, type)` | Generic download helper — creates a Blob URL and triggers a click. |
 | `downloadCustomTemplate()` | Reads current input variables, generates an xlsx (via SheetJS) with the required 3-row header format and 4 blank scenario rows. Falls back to CSV if SheetJS is unavailable. Requires at least one input variable with Object and Variable filled. |
 | `exportConfigJSON()` | Reads current form via `readConfig()`, serializes to JSON, downloads as `powerfactory_config.json`. |
@@ -546,7 +549,7 @@ Emits: `_load_elmres_column`, `_read_column_values`, `calculate_timeseries_metri
 
 Returns an empty string if no timeseries output has `output_graph: true`.
 
-Otherwise emits `save_timeseries_graph(time_values, ts_data, spec, row, graph_dir, ctx)` — a helper that uses matplotlib (Agg backend) to save a time-vs-variable PNG to `{output_dir}/graph/`. The filename encodes the scenario label columns from `row` and the context list `ctx` (study case / operating scenario names).
+Otherwise emits `save_timeseries_graph(time_values, ts_data, spec, row, graph_dir, ctx)` — a helper that uses matplotlib (Agg backend) to save a time-vs-variable PNG to `{output_dir}/graph/`. The filename encodes the scenario label columns from `row` and the context list `ctx` (study case / operating scenario names). The `tool.adjiebrotots.com/powerfactory-scripter` credit is stamped by `_add_graph_watermark(fig)`, which converts the text to vector glyph outlines via `matplotlib.textpath.TextPath` and draws it as a `PathPatch` (splines/polylines) rather than an editable text object, so it cannot be trivially selected and deleted from the saved graphic.
 
 ---
 

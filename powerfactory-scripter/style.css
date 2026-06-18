@@ -201,6 +201,12 @@
     flex-direction: column;
     background: var(--surface);
     overflow: hidden;
+    /* Bound the pane to the viewport so the toolbar stays pinned on top and
+       only the code preview scrolls — no need to scroll back up for buttons. */
+    position: sticky;
+    top: 72px;
+    align-self: start;
+    max-height: calc(100vh - 88px);
   }
   /* ── PANE RESIZER ────────────────────────────────────────────── */
   .pane-resizer {
@@ -453,6 +459,59 @@
     padding: 0;
   }
   .hljs { background: transparent !important; }
+
+  /* ── NOTEBOOK-STYLE CELL PREVIEW ──────────────────────────────────── */
+  #nb-preview {
+    padding: 14px 16px 28px;
+    min-height: 100%;
+    background: #0F1728;
+  }
+  body.light #nb-preview { background: #F5F7FA; }
+  .nb-md-heading {
+    display: block;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    margin: 14px 0 6px;
+  }
+  .nb-md-heading:first-child { margin-top: 0; }
+  .nb-cell {
+    display: flex;
+    gap: 8px;
+    margin: 0 0 6px;
+  }
+  .nb-prompt {
+    flex-shrink: 0;
+    width: 58px;
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    padding-top: 12px;
+    user-select: none;
+  }
+  .nb-source {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  body.light .nb-source { background: #FFFFFF; }
+  .nb-source code {
+    font-family: inherit;
+    background: none !important;
+    padding: 0;
+  }
 
   .placeholder-msg {
     display: flex;
@@ -824,10 +883,14 @@
 
     /* Right pane: fixed height for usable code view */
     .right-pane {
+      position: static;
+      top: auto;
+      align-self: auto;
       width: 100%;
       max-width: 100%;
       box-sizing: border-box;
       height: 70vh;
+      max-height: none;
       min-height: 360px;
     }
 
