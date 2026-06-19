@@ -122,16 +122,34 @@
   function rlRemaining(){ return Math.max(0, DAILY_REQUEST_LIMIT - rlRead().n); }
   function rlConsume(){ var c = rlRead(); rlWrite(c.n + 1); return Math.max(0, DAILY_REQUEST_LIMIT - (c.n + 1)); }
 
-  // Merge two {dates, prices} series (ascending ISO dates), deduping by date so
-  // a freshly-fetched tail/front can be folded into the cached history without
-  // re-downloading what we already hold. `b` wins on overlapping dates.
+  // Merge two {dates, prices [, opens, highs, lows]} series (ascending ISO
+  // dates), deduping by date so a freshly-fetched tail/front can be folded into
+  // the cached history without re-downloading what we already hold. `b` wins on
+  // overlapping dates. OHLC arrays are merged only when present on either input.
   function mergeSeries(a, b){
     var map = Object.create(null), i;
-    if(a && a.dates) for(i=0;i<a.dates.length;i++) map[a.dates[i]] = a.prices[i];
-    if(b && b.dates) for(i=0;i<b.dates.length;i++) map[b.dates[i]] = b.prices[i];
+    function absorb(s){
+      if(!s || !s.dates) return;
+      for(i=0;i<s.dates.length;i++){
+        map[s.dates[i]] = {
+          p: s.prices ? s.prices[i] : undefined,
+          o: s.opens ? s.opens[i] : undefined,
+          h: s.highs ? s.highs[i] : undefined,
+          l: s.lows  ? s.lows[i]  : undefined
+        };
+      }
+    }
+    absorb(a); absorb(b); // b wins on overlapping dates
     var dates = Object.keys(map).sort();
-    var prices = dates.map(function(d){ return map[d]; });
-    return { dates: dates, prices: prices };
+    var prices = dates.map(function(d){ return map[d].p; });
+    var out = { dates: dates, prices: prices };
+    var hasOHLC = (a && a.opens && a.highs && a.lows) || (b && b.opens && b.highs && b.lows);
+    if(hasOHLC){
+      out.opens = dates.map(function(d){ return map[d].o; });
+      out.highs = dates.map(function(d){ return map[d].h; });
+      out.lows  = dates.map(function(d){ return map[d].l; });
+    }
+    return out;
   }
 
   function yfIso(d){ return d.toISOString().slice(0,10); }

@@ -234,6 +234,12 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 .param-note.info-note{color:var(--accent);font-style:normal;background:rgba(141,187,255,.08);border:1px solid rgba(141,187,255,.22);border-radius:8px;padding:6px 9px;margin:8px 0}
 .tech-eom{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);cursor:pointer;padding:6px 0 2px;line-height:1.35}
 .tech-eom input{accent-color:var(--accent);cursor:pointer;width:14px;height:14px;flex-shrink:0}
+/* Monthly / Weekly segmented control (momentum + technical frequency) */
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--input-bg);flex-shrink:0}
+.seg-btn{padding:5px 13px;font-size:.78rem;font-weight:700;border:none;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.seg-btn+.seg-btn{border-left:1px solid var(--border)}
+.seg-btn.active{background:var(--accent);color:#fff}
+.seg-btn:not(.active):hover{color:var(--text)}
 
 /* Quick Start — one-click worked examples that fetch live prices */
 .quick-start-row{display:flex;align-items:center;gap:10px;padding:10px 16px 14px;margin-bottom:4px;border-bottom:1px solid var(--border);flex-wrap:wrap}

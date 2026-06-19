@@ -213,8 +213,15 @@
   <!-- PRICE CHART -->
   <section class="chart-card card">
     <div class="section-title">
-      <h2>Security Prices <span style="color:var(--muted);font-size:.85rem;font-weight:400">(normalised to 100)</span></h2>
+      <h2>Security Prices <span id="priceChartSubtitle" style="color:var(--muted);font-size:.85rem;font-weight:400">(actual price)</span></h2>
       <div class="chart-actions">
+        <label class="toggle-row" id="candleToggleWrap" style="gap:8px;cursor:pointer;padding:0" title="Show each visible security as OHLC candlesticks (actual prices) instead of a line">
+          <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Candlesticks</span>
+          <div class="toggle-switch">
+            <input type="checkbox" id="showCandleToggle"/>
+            <div class="toggle-track"><div class="toggle-knob"></div></div>
+          </div>
+        </label>
         <label class="toggle-row" id="buyDateToggleWrap" style="gap:8px;cursor:pointer;padding:0" title="Mark each purchase date with a small ▲ below its security's price line">
           <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Buy Date</span>
           <div class="toggle-switch">

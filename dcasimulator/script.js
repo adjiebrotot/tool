@@ -30,6 +30,15 @@ const OSC_GROUPS = {
   'tech-adx':        {key:'adx',  name:'ADX'}
 };
 const WEEKDAY_OPTIONS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+// MACD histogram bar colours — the TradingView-style 4-colour scheme: a
+// saturated shade while a bar grows away from the zero line and a faded shade
+// while it shrinks back toward it (green above zero, red below).
+const MACD_HIST_COLORS = {
+  upStrong:'#26a69a', upFaint:'rgba(38,166,154,0.42)',
+  downStrong:'#ef5350', downFaint:'rgba(239,83,80,0.42)'
+};
+// Candlestick body/wick colours (up = close ≥ open, down = close < open).
+const CANDLE_UP = '#26a69a', CANDLE_DOWN = '#ef5350';
 const DEFAULT_RANDOM_SEED = 25823952204;
 // Tickers are pooled and fetched once over a wide window so later date-range
 // tweaks reuse the cache instead of hitting the Worker again. Yahoo/Stooq simply
@@ -49,6 +58,13 @@ let activeDetailSec = 0;
 let showDeposited = true;
 let showTechIndicators = false;
 let showBuyDates = false;
+// Security-prices chart view state. Each scenario is an independent series;
+// by default only the first is visible (the rest can be toggled on). The chart
+// shows actual prices when one series is visible and normalises to 100 when two
+// or more are compared. Candlestick mode always shows actual OHLC.
+let showCandles = false;
+let priceHidden = new Set();   // price-chart series indices currently hidden
+let priceSeriesCount = -1;     // last series count → reset "first only" default on change
 let currentCurrencySymbol = '$';
 let secIdCounter = 0;
 let activeSecurityId = null;   // the scenario currently being edited in the sidebar
@@ -74,6 +90,20 @@ function withAlpha(c,a){
     if(m){ const h=Math.round(Math.max(0,Math.min(1,a))*255).toString(16).padStart(2,'0'); return '#'+m[1]+h; }
   }
   return c;
+}
+// Per-bar colours for a MACD histogram: saturated while a bar grows away from
+// the zero line, faded while it shrinks back toward it (green ≥0, red <0) — the
+// standard 4-colour MACD histogram scheme.
+function macdHistColors(values){
+  const c=MACD_HIST_COLORS;
+  let prev=null;
+  return values.map(v=>{
+    if(v==null) return 'transparent';
+    const growing = prev==null ? true : (v>=0 ? v>=prev : v<=prev);
+    prev=v;
+    if(v>=0) return growing ? c.upStrong : c.upFaint;
+    return growing ? c.downStrong : c.downFaint;
+  });
 }
 function showStatus(el, msg, type){
   if(!el) return;
@@ -183,7 +213,20 @@ function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPri
     }
     d=addDays(d,1);
   }
-  return {dates, prices};
+  // Derive a plausible intraday O/H/L around each close so candlestick view has
+  // real (simulated) candles. randomFn is consumed AFTER the close loop, so the
+  // close path above is byte-identical to the close-only version and stays
+  // deterministic for a given seed. Open = prior close; wicks scale with σ.
+  const opens=[], highs=[], lows=[];
+  const idv=sigma*Math.sqrt(dt); // ~one-day stdev fraction
+  for(let i=0;i<prices.length;i++){
+    const c=prices[i];
+    const open=i===0?c:prices[i-1];
+    const hi=Math.max(open,c)*(1+Math.abs(randomFn())*idv*0.8);
+    const lo=Math.min(open,c)*(1-Math.abs(randomFn())*idv*0.8);
+    opens.push(open); highs.push(hi); lows.push(Math.max(1e-6,lo));
+  }
+  return {dates, prices, opens, highs, lows};
 }
 
 /* ─── FETCH via Yahoo Finance chart endpoint ─── */
@@ -214,6 +257,9 @@ function addSecurity(cfg){
     returnPct: 8, stdPct: 15,
     momentumPct: 5, momentumEOM: true,
     techEOM: true,
+    // Shared by the momentum + technical styles: invest once per 'monthly' or
+    // 'weekly' window. Fixed-schedule date/weekly styles ignore it.
+    period: 'monthly',
     priceData: null, loaded: false, open: true,
     ...cfg
   };
@@ -420,8 +466,8 @@ function styleDesc(s){
           'weekly-day':'Buy on a chosen weekday each week.',
           'weekly-top':'Buy on the peak price day of the week.',
           'weekly-bottom':'Buy on the lowest price day of the week.',
-          'momentum-peak':'Invest after an upside of X% from month start.',
-          'momentum-dip':'Invest after a downside of X% from month start.',
+          'momentum-peak':'Invest once price rises by the set % from the period open.',
+          'momentum-dip':'Invest once price falls by the set % from the period open.',
           'tech-ma-cross':'Buy on a golden cross of two moving averages.',
           'tech-rsi':'Buy when RSI drops into oversold territory.',
           'tech-bollinger':'Buy when price dips to the lower Bollinger Band.',
@@ -457,13 +503,15 @@ function stylesForCat(c){
 
 function styleBlockInner(sec){
   const active = sec.catOpen || styleCategory(sec.style);
+  const pw = (sec.period==='weekly') ? 'week' : 'month';
+  const pwCap = pw.charAt(0).toUpperCase()+pw.slice(1);
   const pills = STYLE_CATEGORIES.map(([k,label])=>
     `<button type="button" class="cat-pill${k===active?' active':''}" data-cat="${k}">${label}</button>`).join('');
   const opts = stylesForCat(active).map(s=>renderStyleOpt(sec,s)).join('');
   const warn = active==='forward'
     ? `<div class="param-note warn-note">⚠️ For demonstration only — these use prices within the period to pick the buy date and require future knowledge that cannot be replicated in real life.</div>`
     : active==='tech'
-    ? `<div class="param-note info-note">ℹ️ Unlike fixed-schedule styles, this invests once per month only when the technical trigger is confirmed — if it never fires in a month, that month's deposit is skipped (enable "Invest at End of Month" below to always deposit by month-end).</div>` : '';
+    ? `<div class="param-note info-note">ℹ️ Unlike fixed-schedule styles, this invests once per ${pw} only when the technical trigger is confirmed — if it never fires in a ${pw}, that ${pw}'s deposit is skipped (enable "Invest at End of ${pwCap}" below to always deposit by ${pw}-end).</div>` : '';
   // Show parameters only when the selected style belongs to the open category.
   const params = (styleCategory(sec.style)===active) ? renderStyleParams(sec) : '';
   return `
@@ -473,10 +521,30 @@ function styleBlockInner(sec){
     <div class="style-params" id="styleParams${sec.id}">${params}</div>`;
 }
 
+// Monthly / Weekly segmented control — shared by the momentum + technical
+// styles so each can invest once per chosen window (the date/forward styles
+// carry their own cadence and don't show it).
+function periodToggleRow(sec, id){
+  const p = (sec.period==='weekly') ? 'weekly' : 'monthly';
+  const word = p==='weekly' ? 'week' : 'month';
+  return `<div class="param-row"><label>Frequency <span class="tip-icon" data-tip="Invest once per ${word}: on the first day the trigger is met within the ${word}; otherwise skip that ${word} (or deposit on its last trading day if 'Invest at End of ${word.charAt(0).toUpperCase()+word.slice(1)}' is ticked below).">?</span></label>
+      <div class="seg" id="secPeriodSeg${id}" role="group" aria-label="Investment frequency">
+        <button type="button" class="seg-btn${p==='monthly'?' active':''}" data-period="monthly">Monthly</button>
+        <button type="button" class="seg-btn${p==='weekly'?' active':''}" data-period="weekly">Weekly</button>
+      </div></div>`;
+}
+
 function renderStyleParams(sec){
+  const s=sec.style;
+  const freqRow = (MOMENTUM_STYLES.includes(s)||TECH_STYLES.includes(s)) ? periodToggleRow(sec, sec.id) : '';
+  return freqRow + styleParamsBody(sec);
+}
+
+function styleParamsBody(sec){
   const s=sec.style, t=sec.tech||{}, id=sec.id;
+  const periodWord = (sec.period==='weekly') ? 'Week' : 'Month';
   const eomChecked = MOMENTUM_STYLES.includes(s) ? sec.momentumEOM : sec.techEOM;
-  const eomRow = `<label class="tech-eom"><input type="checkbox" id="secTechEOM${id}" ${eomChecked?'checked':''}/> Invest at End of Month if target not reached</label>`;
+  const eomRow = `<label class="tech-eom"><input type="checkbox" id="secTechEOM${id}" ${eomChecked?'checked':''}/> Invest at End of ${periodWord} if target not reached</label>`;
   const maTypeSel=(elId,val)=>`<select class="num-input" id="${elId}" style="max-width:84px">
       <option value="sma" ${val==='sma'?'selected':''}>SMA</option>
       <option value="ema" ${val==='ema'?'selected':''}>EMA</option></select>`;
@@ -554,7 +622,13 @@ function wireStyleBlock(sec){
     momPctEl.addEventListener('input',e=>{ sec.momentumPct=parseFloat(e.target.value)||5; if(momPctValEl) momPctValEl.textContent=(+sec.momentumPct).toFixed(1)+'%'; scheduleRun(); });
     makeSliderEditable(momPctValEl,momPctEl);
   }
-  // Shared "invest at end of month" toggle (momentum + technical)
+  // Monthly / Weekly frequency toggle (momentum + technical). Re-render the
+  // block on change so the EOM label and helper note pick up the new window.
+  const periodSeg=$(`secPeriodSeg${sec.id}`);
+  if(periodSeg) periodSeg.querySelectorAll('.seg-btn').forEach(b=>{
+    b.addEventListener('click',()=>{ sec.period=b.dataset.period==='weekly'?'weekly':'monthly'; refreshStyleBlock(sec); scheduleRun(); });
+  });
+  // Shared "invest at end of month/week" toggle (momentum + technical)
   const eomEl=$(`secTechEOM${sec.id}`);
   if(eomEl) eomEl.addEventListener('change',e=>{ sec.techEOM=e.target.checked; sec.momentumEOM=e.target.checked; scheduleRun(); });
   // Technical-strategy parameters
@@ -634,7 +708,9 @@ async function ensureTickerCached(ticker, requestedStart, requestedEnd){
   }
 }
 
-// Returns a {dates, prices} slice from the cache filtered to [startDate, endDate].
+// Returns a {dates, prices, [opens, highs, lows]} slice from the cache filtered
+// to [startDate, endDate]. OHLC arrays are included only when the cache holds
+// them (i.e. fetched from a Worker that returns OHLC); otherwise close-only.
 function getCachedPriceSlice(ticker, startDate, endDate){
   const tk = String(ticker||'').trim().toUpperCase();
   const entry = priceCache[tk];
@@ -642,7 +718,13 @@ function getCachedPriceSlice(ticker, startDate, endDate){
   const si = entry.dates.findIndex(d => d >= startDate);
   const ei = entry.dates.findLastIndex(d => d <= endDate);
   if(si < 0 || ei < 0 || si > ei) return null;
-  return { dates: entry.dates.slice(si, ei + 1), prices: entry.prices.slice(si, ei + 1) };
+  const out = { dates: entry.dates.slice(si, ei + 1), prices: entry.prices.slice(si, ei + 1) };
+  if(entry.opens && entry.highs && entry.lows){
+    out.opens = entry.opens.slice(si, ei + 1);
+    out.highs = entry.highs.slice(si, ei + 1);
+    out.lows  = entry.lows.slice(si, ei + 1);
+  }
+  return out;
 }
 
 function isTickerRangeCovered(ticker, startDate, endDate){
@@ -681,12 +763,17 @@ function storeBatchResult(tk, r, fetchStart, fetchEnd){
   if(!(r && !r.error && r.dates && r.dates.length)) return false;
   const prev = priceCache[tk];
   let dates = r.dates, prices = r.prices;
+  // OHLC is carried through only when the Worker returns it (newer deployments).
+  let opens = r.opens, highs = r.highs, lows = r.lows;
   if(prev && prev.dates && prev.dates.length && window.SharedYF && SharedYF.mergeSeries){
-    const m = SharedYF.mergeSeries({dates:prev.dates, prices:prev.prices}, {dates:r.dates, prices:r.prices});
-    dates = m.dates; prices = m.prices;
+    const m = SharedYF.mergeSeries(
+      {dates:prev.dates, prices:prev.prices, opens:prev.opens, highs:prev.highs, lows:prev.lows},
+      {dates:r.dates,    prices:r.prices,    opens:r.opens,    highs:r.highs,    lows:r.lows});
+    dates = m.dates; prices = m.prices; opens = m.opens; highs = m.highs; lows = m.lows;
   }
   priceCache[tk] = {
     dates, prices,
+    ...(opens && highs && lows ? {opens, highs, lows} : {}),
     cachedStart: dates[0], cachedEnd: dates[dates.length-1],
     coverageStart: prev ? minIso(prev.coverageStart, fetchStart) : fetchStart,
     coverageEnd: prev ? maxIso(prev.coverageEnd, fetchEnd) : fetchEnd,
@@ -1032,7 +1119,9 @@ function buildTech(prices, style, tech){
     }
     lines.push({name:'BB Upper',values:upper,axis:'price',dash:'dot',fade:0.4});
     lines.push({name:`BB Mid ${t.bbPeriod||20}`,values:mid,axis:'price',dash:'dash',fade:0.6});
-    lines.push({name:'BB Lower',values:lower,axis:'price',dash:'dot',fade:0.4});
+    // The lower band fills up to the upper band (2 datasets back) so the area
+    // between the bands reads as a shaded channel.
+    lines.push({name:'BB Lower',values:lower,axis:'price',dash:'dot',fade:0.4,bandFill:true});
   } else if(style==='tech-macd-cross'){
     const {macd,signal}=macdSeries(prices,t.macdFast||12,t.macdSlow||26,t.macdSignal||9);
     for(let i=1;i<n;i++) if(crossUp(macd,signal,i)) sig[i]=true;
@@ -1042,7 +1131,9 @@ function buildTech(prices, style, tech){
     const {hist}=macdSeries(prices,t.macdFast||12,t.macdSlow||26,t.macdSignal||9);
     const thr=t.macdHistThreshold??0;
     for(let i=1;i<n;i++) if(hist[i]!=null&&hist[i-1]!=null&&hist[i]>thr&&hist[i-1]<=thr) sig[i]=true;
-    lines.push({name:'MACD Hist',values:hist,axis:'osc',dash:'dash',fade:0.75});
+    // The histogram renders as MACD-style coloured bars (not a line), so flag it
+    // for the chart layer; the threshold/zero line stays a thin reference.
+    lines.push({name:'MACD Hist',values:hist,axis:'osc',bar:true});
     lines.push({name:`Threshold ${thr}`,values:new Array(n).fill(thr),axis:'osc',dash:'dot',fade:0.4});
   } else if(style==='tech-adx'){
     const a=adxSeries(prices,t.adxPeriod||14); const thr=t.adxThreshold??25;
@@ -1053,13 +1144,32 @@ function buildTech(prices, style, tech){
   return {signal:sig, lines};
 }
 
-// Pick one buy per calendar month: the first day the signal fires, or — when
-// "Invest at End of Month" is on — the last trading day if it never fired.
-function monthlySignalDates(dates, signal, eom){
-  const months={};
-  dates.forEach((d,i)=>{ const ym=d.slice(0,7); (months[ym]||(months[ym]=[])).push(i); });
+// ─── PERIOD BUCKETING (calendar month or week) ───
+// A stable Sunday-aligned week key (year + week-of-year), matching the scheme the
+// fixed Weekly styles already use so every "weekly" feature buckets identically.
+function isoWeekBucket(dateStr){
+  const dt=parseDate(dateStr);
+  const y=dt.getFullYear();
+  const doy=Math.floor((dt-new Date(y,0,1))/86400000);
+  const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
+  return y+'-'+String(wk).padStart(2,'0');
+}
+function periodKey(dateStr, period){
+  return period==='weekly' ? isoWeekBucket(dateStr) : dateStr.slice(0,7);
+}
+// Group trading-day indices into chronological per-period buckets (dates arrive
+// sorted, so insertion order == chronological order).
+function groupIndicesByPeriod(dates, period){
+  const groups={};
+  dates.forEach((d,i)=>{ const k=periodKey(d,period); (groups[k]||(groups[k]=[])).push(i); });
+  return Object.values(groups);
+}
+
+// Pick one buy per period (month or week): the first day the signal fires, or —
+// when "Invest at End of …" is on — the last trading day if it never fired.
+function periodSignalDates(dates, signal, eom, period){
   const out=[];
-  Object.values(months).forEach(idxs=>{
+  groupIndicesByPeriod(dates, period).forEach(idxs=>{
     let picked=-1;
     for(const i of idxs){ if(signal[i]){ picked=i; break; } }
     if(picked>=0) out.push(picked);
@@ -1069,7 +1179,7 @@ function monthlySignalDates(dates, signal, eom){
 }
 
 /* ─── SIMULATION ENGINE ─── */
-function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentumEOM=true, tech=null, techEOM=true){
+function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentumEOM=true, tech=null, techEOM=true, period='monthly'){
   const {dates, prices} = priceData;
   const dateIndex = {};
   dates.forEach((d,i)=>dateIndex[d]=i);
@@ -1106,18 +1216,9 @@ function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentum
       result.push(best);
     });
   } else if(style==='weekly-day'){
-    // Group by ISO week, find closest day
-    const weeks={};
-    dates.forEach((d,i)=>{
-      const dt=parseDate(d);
-      const y=dt.getFullYear(), doy=Math.floor((dt-new Date(y,0,1))/86400000);
-      const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
-      const key=y+'-'+String(wk).padStart(2,'0');
-      if(!weeks[key]) weeks[key]=[];
-      weeks[key].push(i);
-    });
+    // Group by ISO week, find closest day to the chosen weekday.
     const targetDow=Math.min(7,Math.max(1,dayOrDate)); // 1=Mon..7=Sun (nearest trading day)
-    Object.values(weeks).forEach(idxs=>{
+    groupIndicesByPeriod(dates,'weekly').forEach(idxs=>{
       let best=idxs[0];
       idxs.forEach(i=>{
         const dow=parseDate(dates[i]).getDay()||7;
@@ -1127,40 +1228,23 @@ function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentum
       result.push(best);
     });
   } else if(style==='weekly-top'){
-    const weeks={};
-    dates.forEach((d,i)=>{
-      const dt=parseDate(d);
-      const y=dt.getFullYear(), doy=Math.floor((dt-new Date(y,0,1))/86400000);
-      const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
-      const key=y+'-'+String(wk).padStart(2,'0');
-      if(!weeks[key]) weeks[key]=[];
-      weeks[key].push(i);
-    });
-    Object.values(weeks).forEach(idxs=>{
+    groupIndicesByPeriod(dates,'weekly').forEach(idxs=>{
       let best=idxs[0];
       idxs.forEach(i=>{ if(prices[i]>prices[best]) best=i; });
       result.push(best);
     });
   } else if(style==='weekly-bottom'){
-    const weeks={};
-    dates.forEach((d,i)=>{
-      const dt=parseDate(d);
-      const y=dt.getFullYear(), doy=Math.floor((dt-new Date(y,0,1))/86400000);
-      const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
-      const key=y+'-'+String(wk).padStart(2,'0');
-      if(!weeks[key]) weeks[key]=[];
-      weeks[key].push(i);
-    });
-    Object.values(weeks).forEach(idxs=>{
+    groupIndicesByPeriod(dates,'weekly').forEach(idxs=>{
       let best=idxs[0];
       idxs.forEach(i=>{ if(prices[i]<prices[best]) best=i; });
       result.push(best);
     });
   } else if(style==='momentum-peak'||style==='momentum-dip'){
-    const months={};
-    dates.forEach((d,i)=>{ const ym=d.slice(0,7); if(!months[ym])months[ym]=[]; months[ym].push(i); });
+    // Once per period (month or week): invest on the first day price moves the
+    // set % from the period's opening price; otherwise skip (or buy at the end
+    // of the period when "Invest at End of …" is on).
     const threshold=(momentumPct||5)/100;
-    Object.values(months).forEach(idxs=>{
+    groupIndicesByPeriod(dates, period).forEach(idxs=>{
       const refPrice=prices[idxs[0]];
       let invested=false;
       for(const i of idxs){
@@ -1175,7 +1259,7 @@ function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentum
     });
   } else if(TECH_STYLES.includes(style)){
     const {signal}=buildTech(prices, style, tech||{});
-    monthlySignalDates(dates, signal, techEOM).forEach(i=>result.push(i));
+    periodSignalDates(dates, signal, techEOM, period).forEach(i=>result.push(i));
   }
 
   // Remove duplicates, sort
@@ -1194,7 +1278,7 @@ function investAmountAt(base, yearlyIncreasePct, startStr, dateStr){
 
 function simulateSecurity(sec){
   const {dates, prices} = sec.priceData;
-  const investIdxs = getInvestmentDates(sec.priceData, sec.style, sec.dayOrDate, sec.momentumPct, sec.momentumEOM, sec.tech, sec.techEOM);
+  const investIdxs = getInvestmentDates(sec.priceData, sec.style, sec.dayOrDate, sec.momentumPct, sec.momentumEOM, sec.tech, sec.techEOM, sec.period||'monthly');
   const investSet = new Set(investIdxs);
   const startStr = dates[0];
   const yinc = sec.yearlyIncrease||0;
@@ -1312,13 +1396,19 @@ async function runSimulation(){
 
   if(latestStart>=earliestEnd){ showWarning('No overlapping date range between securities.'); return; }
 
-  // Trim all to common range
+  // Trim all to common range (carry OHLC along when present)
   for(const sec of loadedSecs){
-    const {dates,prices}=sec.priceData;
-    const si=dates.findIndex(d=>d>=latestStart);
-    const ei=dates.findLastIndex(d=>d<=earliestEnd);
+    const pd=sec.priceData;
+    const si=pd.dates.findIndex(d=>d>=latestStart);
+    const ei=pd.dates.findLastIndex(d=>d<=earliestEnd);
     if(si<0||ei<0) continue;
-    sec.priceData={dates:dates.slice(si,ei+1), prices:prices.slice(si,ei+1)};
+    const trimmed={dates:pd.dates.slice(si,ei+1), prices:pd.prices.slice(si,ei+1)};
+    if(pd.opens && pd.highs && pd.lows){
+      trimmed.opens=pd.opens.slice(si,ei+1);
+      trimmed.highs=pd.highs.slice(si,ei+1);
+      trimmed.lows =pd.lows.slice(si,ei+1);
+    }
+    sec.priceData=trimmed;
   }
 
   showStatus($('dateRangeStatus'),`Date range: ${latestStart} → ${earliestEnd}`,'ok');
@@ -1347,69 +1437,136 @@ async function runSimulation(){
 }
 
 /* ─── PRICE CHART ─── */
+// Actual-price OHLC for a result, used by the candlestick plugin. Real OHLC is
+// used when the source/cache provides it (custom GBM always does; tickers do
+// once the Worker returns OHLC); otherwise candles are synthesised from close.
+function buildOHLC(res){
+  const closes=res.dailyRows.map(r=>r.price);
+  const pd=res.sec.priceData||{};
+  if(pd.opens && pd.highs && pd.lows && pd.opens.length===closes.length){
+    return { o:pd.opens.slice(), h:pd.highs.slice(), l:pd.lows.slice(), c:closes, real:true };
+  }
+  const o=[],h=[],l=[];
+  for(let i=0;i<closes.length;i++){
+    const c=closes[i], open=i===0?c:closes[i-1], move=Math.abs(c-open);
+    o.push(open);
+    h.push(Math.max(open,c)+move*0.25);
+    l.push(Math.max(1e-6,Math.min(open,c)-move*0.25));
+  }
+  return { o,h,l,c:closes, real:false };
+}
+
+// Candlestick renderer. Draws candles for any visible price dataset carrying
+// _ohlc, and widens the price y-axis so wicks aren't clipped. Inactive unless
+// the Candles toggle is on, so line mode is untouched.
+const dcaCandlePlugin = {
+  id:'dcaCandles',
+  afterDataLimits(chart, args){
+    if(!showCandles) return;
+    const scale=args.scale;
+    if(!scale || scale.id!=='y') return;
+    let lo=scale.min, hi=scale.max, found=false;
+    chart.data.datasets.forEach((ds,di)=>{
+      if(!ds._ohlc || !chart.isDatasetVisible(di)) return;
+      found=true;
+      const {h,l}=ds._ohlc;
+      for(let i=0;i<h.length;i++){ if(h[i]!=null&&h[i]>hi)hi=h[i]; if(l[i]!=null&&l[i]<lo)lo=l[i]; }
+    });
+    // Only the price chart has _ohlc datasets — leave the equity chart untouched.
+    if(found && hi>lo){ const pad=(hi-lo)*0.03; scale.min=lo-pad; scale.max=hi+pad; }
+  },
+  afterDatasetsDraw(chart){
+    if(!showCandles) return;
+    if(!chart.data.datasets.some(ds=>ds._ohlc)) return; // not the price chart
+    const x=chart.scales.x, y=chart.scales.y;
+    if(!x||!y) return;
+    const ctx=chart.ctx, area=chart.chartArea;
+    const step=Math.abs(x.getPixelForValue(1)-x.getPixelForValue(0))||6;
+    const w=Math.max(1, Math.min(step*0.7, 16));
+    ctx.save();
+    ctx.beginPath(); ctx.rect(area.left,area.top,area.right-area.left,area.bottom-area.top); ctx.clip();
+    chart.data.datasets.forEach((ds,di)=>{
+      if(!ds._ohlc || !chart.isDatasetVisible(di)) return;
+      const {o,h,l,c}=ds._ohlc;
+      for(let i=0;i<c.length;i++){
+        if(c[i]==null||o[i]==null) continue;
+        const px=x.getPixelForValue(i);
+        if(px<area.left-w||px>area.right+w) continue;
+        const up=c[i]>=o[i], col=up?CANDLE_UP:CANDLE_DOWN;
+        ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(px,y.getPixelForValue(h[i])); ctx.lineTo(px,y.getPixelForValue(l[i])); ctx.stroke();
+        const yO=y.getPixelForValue(o[i]), yC=y.getPixelForValue(c[i]);
+        const top=Math.min(yO,yC), bot=Math.max(yO,yC);
+        ctx.fillRect(px-w/2, top, w, Math.max(1,bot-top));
+      }
+    });
+    ctx.restore();
+  }
+};
+if(window.Chart && Chart.register) Chart.register(dcaCandlePlugin);
+
 function updatePriceChart(){
   if(!simResults.length) return;
   const allDates=simResults[0].dailyRows.map(r=>r.date);
   const legendEl=$('priceLegend'); legendEl.innerHTML='';
-  const hiddenSeries=new Set();
   const gridColor=cssVar('--chart-grid'), mutedColor=cssVar('--chart-text'), textColor=cssVar('--text');
 
-  // Deduplicate by ticker: for fetched securities show one line per unique ticker symbol.
-  const seenTickers=new Set();
-  const uniqueResults=simResults.filter(res=>{
-    const key=res.sec.type==='ticker' ? res.sec.ticker.toUpperCase() : null;
-    if(key===null) return true; // custom assets always shown
-    if(seenTickers.has(key)) return false;
-    seenTickers.add(key);
-    return true;
-  });
+  // Each scenario is its OWN independent series (no ticker de-duplication), so
+  // the same symbol used with different strategies/triggers shows as separate
+  // lines you can toggle on individually.
+  const series=simResults;
 
-  // Map a security's legend index to every dataset index it controls (price
-  // line, buy markers, and technical/oscillator overlays) so deactivating it in
-  // the legend hides all of its layers together.
-  const dsForSec={};
-  const datasets=uniqueResults.map((res,idx)=>{
-    const first=res.dailyRows[0]?.price||1;
+  // Reset to "first series only" whenever the scenario set changes; otherwise
+  // keep the user's show/hide choices across rebuilds (theme, legend, toggles).
+  if(series.length!==priceSeriesCount){
+    priceHidden=new Set(series.map((_,i)=>i).filter(i=>i>0));
+    priceSeriesCount=series.length;
+  }
+  priceHidden=new Set([...priceHidden].filter(i=>i<series.length));
+
+  const visibleCount=series.reduce((n,_,i)=>n+(priceHidden.has(i)?0:1),0);
+  // Show actual prices for a single visible series (or candlestick mode) and
+  // normalise to base 100 only when two or more line series are compared.
+  const normalize = !showCandles && visibleCount>=2;
+  const priceVal=(res,price)=> normalize ? price/(res.dailyRows[0]?.price||1)*100 : price;
+
+  const datasets=series.map((res,idx)=>{
     const color=getSecColor(res.sec);
-    // For ticker securities use the ticker symbol as the label, not the scenario name
-    const label=res.sec.type==='ticker' ? res.sec.ticker.toUpperCase() : res.sec.name;
+    const label=res.sec.name;          // scenario name keeps same-ticker scenarios distinct
+    const hidden=priceHidden.has(idx);
     const item=document.createElement('div');
-    item.className='legend-item';
-    item.innerHTML=`<span class="dot" style="background:${color}"></span><span>${label}</span>`;
+    item.className='legend-item'+(hidden?' hidden':'');
+    item.innerHTML=`<span class="dot" style="background:${color}"></span><span>${escapeHtml(label)}</span>`;
+    // Toggling rebuilds the chart so normalisation (actual ↔ base-100) and the
+    // axis title follow the new visible count.
     item.addEventListener('click',()=>{
-      if(hiddenSeries.has(idx)) hiddenSeries.delete(idx); else hiddenSeries.add(idx);
-      item.classList.toggle('hidden',hiddenSeries.has(idx));
-      if(priceChartInstance){
-        (dsForSec[idx]||[]).forEach(di=>priceChartInstance.setDatasetVisibility(di,!hiddenSeries.has(idx)));
-        priceChartInstance.update();
-      }
+      if(priceHidden.has(idx)) priceHidden.delete(idx); else priceHidden.add(idx);
+      updatePriceChart();
     });
     legendEl.appendChild(item);
-    dsForSec[idx]=[idx];
-    return { label, data:res.dailyRows.map(r=>r.price/first*100),
-      borderColor:color, backgroundColor:color+'22', borderWidth:2.5, pointRadius:0, pointHoverRadius:5, tension:0.2, fill:false };
+    const ds={ label, hidden,
+      data:res.dailyRows.map(r=>priceVal(res,r.price)),
+      borderColor: showCandles ? 'transparent' : color,
+      backgroundColor:color+'22', borderWidth:2.5, pointRadius:0,
+      pointHoverRadius:showCandles?0:5, tension:0.2, fill:false };
+    if(showCandles) ds._ohlc=buildOHLC(res);
+    return ds;
   });
 
-  // Buy markers (▲) — one small upward triangle per purchase date, drawn a
-  // little below each security's price line (not on it) so the line stays
-  // legible. Only built while "Show Buy Date" is on, and registered in
-  // dsForSec so a security's markers hide together with its line.
+  // Buy markers (▲) — one small upward triangle per purchase date, just below
+  // each visible series' price. Only built while "Show Buy Date" is on.
   if(showBuyDates){
     let gMin=Infinity, gMax=-Infinity;
-    uniqueResults.forEach(res=>{
-      const f=res.dailyRows[0]?.price||1;
-      res.dailyRows.forEach(r=>{ const v=r.price/f*100; if(v<gMin)gMin=v; if(v>gMax)gMax=v; });
-    });
-    const markerOffset=((gMax-gMin)||1)*0.07;
-    uniqueResults.forEach((res,idx)=>{
-      const first=res.dailyRows[0]?.price||1;
+    series.forEach((res,idx)=>{ if(priceHidden.has(idx)) return; res.dailyRows.forEach(r=>{ const v=priceVal(res,r.price); if(v<gMin)gMin=v; if(v>gMax)gMax=v; }); });
+    if(!isFinite(gMin)){ gMin=0; gMax=1; }
+    const markerOffset=((gMax-gMin)||1)*0.05;
+    series.forEach((res,idx)=>{
       const color=getSecColor(res.sec);
-      const label=res.sec.type==='ticker' ? res.sec.ticker.toUpperCase() : res.sec.name;
+      const label=res.sec.name;
       const buyDates=new Set(res.investRows.map(r=>r.date));
-      dsForSec[idx].push(datasets.length);
       datasets.push({
-        label:`${label} ▲ Buy`,
-        data:res.dailyRows.map(r=> buyDates.has(r.date) ? r.price/first*100 - markerOffset : null),
+        label:`${label} ▲ Buy`, hidden:priceHidden.has(idx),
+        data:res.dailyRows.map(r=> buyDates.has(r.date) ? priceVal(res,r.price) - markerOffset : null),
         borderColor:color, backgroundColor:color, showLine:false, spanGaps:false,
         pointStyle:'triangle', pointRadius:2.5, pointHoverRadius:4,
         pointBorderColor:'#fff', pointBorderWidth:0.5, _marker:true
@@ -1422,31 +1579,51 @@ function updatePriceChart(){
   // indicators (RSI, MACD, ADX) each get their own grid stacked below the price
   // grid — same canvas, same X-axis — grouped by indicator family (OSC_GROUPS) so
   // securities using different indicators don't squash each other onto one scale.
-  // Every overlay is registered in dsForSec so it hides together with its security.
   const oscGroups=new Map(); // group key -> axis title, in stacking order
   if(showTechIndicators){
-    uniqueResults.forEach((res,idx)=>{
+    series.forEach((res,idx)=>{
       if(!TECH_STYLES.includes(res.sec.style)) return;
+      // Skip hidden series so a hidden indicator strategy doesn't reserve an
+      // empty oscillator panel (the chart rebuilds when visibility changes).
+      if(priceHidden.has(idx)) return;
       const seriesPrices=res.dailyRows.map(r=>r.price);
-      const first=res.dailyRows[0]?.price||1;
+      const base100=res.dailyRows[0]?.price||1;
       const ts=res._techSeries || (res._techSeries=buildTech(seriesPrices,res.sec.style,res.sec.tech||{}));
       const base=getSecColor(res.sec);
-      const secLabel=res.sec.type==='ticker'?res.sec.ticker.toUpperCase():res.sec.name;
-      const oscInfo=OSC_GROUPS[res.sec.style];
+      const secLabel=res.sec.name;
+      const hidden=false;
       ts.lines.forEach(ln=>{
-        const dash=ln.dash==='dot'?[2,3]:ln.dash==='dash'?[7,4]:[];
         const isOsc=ln.axis==='osc'&&oscInfo;
         const yAxisID=isOsc?'yOsc_'+oscInfo.key:'y';
         if(isOsc&&!oscGroups.has(oscInfo.key)) oscGroups.set(oscInfo.key, oscInfo.name);
-        dsForSec[idx].push(datasets.length);
-        datasets.push({
-          label:`${secLabel} · ${ln.name}`,
-          data: isOsc ? ln.values.slice() : ln.values.map(v=> v==null?null:v/first*100),
+        if(ln.bar){
+          // MACD histogram → coloured bars drawn from the zero line on the
+          // oscillator grid (a real MACD panel, not a line). Pushed before its
+          // threshold/zero reference line so that line sits on top.
+          const cols=macdHistColors(ln.values);
+          datasets.push({
+            type:'bar', label:`${secLabel} · ${ln.name}`, hidden,
+            data: ln.values.map(v=> v==null?null:v), yAxisID,
+            backgroundColor:cols, borderColor:cols, borderWidth:0,
+            categoryPercentage:1, barPercentage:1, _indicator:true, _hist:true
+          });
+          return;
+        }
+        const dash=ln.dash==='dot'?[2,3]:ln.dash==='dash'?[7,4]:[];
+        // Price-axis overlays follow the same actual/normalised scaling as the
+        // price line; oscillator overlays keep their raw values.
+        const priceAxisVal=v=> v==null?null:(normalize ? v/base100*100 : v);
+        const dsi={
+          label:`${secLabel} · ${ln.name}`, hidden,
+          data: isOsc ? ln.values.slice() : ln.values.map(priceAxisVal),
           yAxisID,
           borderColor:withAlpha(base, ln.fade||0.5),
           backgroundColor:'transparent', borderWidth:1.4, pointRadius:0, pointHoverRadius:3,
           borderDash:dash, tension:0.2, fill:false, spanGaps:true, _indicator:true
-        });
+        };
+        // Shade the area between the Bollinger bands (lower fills up to upper).
+        if(ln.bandFill){ dsi.fill='-2'; dsi.backgroundColor=withAlpha(base,0.10); }
+        datasets.push(dsi);
       });
     });
   }
@@ -1457,9 +1634,13 @@ function updatePriceChart(){
   // the price grid nor the indicator grid(s) below it end up cramped.
   const wrap=$('priceCanvasWrap'); if(wrap) wrap.classList.toggle('has-osc', hasOsc);
 
-  const yCallback=val=>fmt.num(val,1)+'%';
-  const fmtPt=i=> `${i.dataset.label}: ${fmt.num(i.parsed.y,2)}${i.dataset.yAxisID==='y'?'%':''}`;
-  const tooltipLabel=ctx=>'  '+fmtPt(ctx);
+  // Axis ticks / tooltips / subtitle all follow the current mode.
+  const isOscDs=ds=> typeof ds.yAxisID==='string' && ds.yAxisID.indexOf('yOsc_')===0;
+  const fmtY=v=> normalize ? fmt.num(v,2)+'%' : fmt.currency(v);
+  const yCallback= normalize ? (val=>fmt.num(val,1)+'%') : (val=>fmt.currency(val,true));
+  const fmtPt=i=> `${i.dataset.label}: ${isOscDs(i.dataset)?fmt.num(i.parsed.y,2):fmtY(i.parsed.y)}`;
+  const yTitle= normalize ? 'Normalised Price (base 100)' : 'Price';
+  const sub=$('priceChartSubtitle'); if(sub) sub.textContent = showCandles ? '(OHLC candlesticks)' : (normalize ? '(normalised to 100)' : '(actual price)');
 
   function buildPriceOpts(){
     // Drop the tick sitting exactly at the seam between two stacked grids so
@@ -1469,7 +1650,7 @@ function updatePriceChart(){
     const scales={
       x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
       // Higher weight keeps the price scale above the oscillator grid(s) in the stack.
-      y:{stack:hasOsc?'pricestack':undefined,stackWeight:hasOsc?3:undefined,weight:hasOsc?numOsc+1:undefined,position:'left',title:{display:true,text:'Normalised Price (base 100)',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor},afterBuildTicks:hasOsc?dropEdgeTick('min'):undefined}
+      y:{stack:hasOsc?'pricestack':undefined,stackWeight:hasOsc?3:undefined,weight:hasOsc?numOsc+1:undefined,position:'left',title:{display:true,text:yTitle,color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor},afterBuildTicks:hasOsc?dropEdgeTick('min'):undefined}
     };
     // One grid per indicator family, stacked below the price grid in order.
     oscGroupKeys.forEach((key,i)=>{
@@ -1485,7 +1666,7 @@ function updatePriceChart(){
       responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
       plugins:{ legend:{display:false}, tooltip:{
         filter:item=>!item.dataset._marker,
-        callbacks:{ title:ctx=>ctx[0]?.label||'', label:tooltipLabel,
+        callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>'  '+fmtPt(ctx),
           afterBody(items){ const its=items.filter(i=>!i.dataset._marker); if(its.length) $('priceHoverBox').textContent=`${its[0].label}  —  `+its.map(fmtPt).join('  |  '); }},
         backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
         zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
@@ -1603,6 +1784,11 @@ $('showBuyDateToggle').addEventListener('change',e=>{
   if(simResults.length) updatePriceChart();
 });
 
+$('showCandleToggle').addEventListener('change',e=>{
+  showCandles=e.target.checked;
+  if(simResults.length) updatePriceChart();
+});
+
 /* ─── TABLES ─── */
 function updateTables(){
   if(!simResults.length) return;
@@ -1611,7 +1797,9 @@ function updateTables(){
   const sg=$('summaryGrid');
   sg.innerHTML='';
   simResults.forEach(res=>{
-    const roi=(res.finalEquity-res.totalDeposited)/res.totalDeposited;
+    // Guard against a strategy that never invested in range (e.g. a technical
+    // trigger that never fired with End-of-Period off) → no division by zero.
+    const roi=res.totalDeposited>0?(res.finalEquity-res.totalDeposited)/res.totalDeposited:0;
     sg.innerHTML+=`
       <div class="tile" style="border-left:3px solid ${getSecColor(res.sec)}">
         <div class="label">${res.sec.name}</div>
@@ -1703,6 +1891,9 @@ $('resetBtn').addEventListener('click',()=>{
   secIdCounter=0; activeSecurityId=null;
   currentCurrencySymbol='$';
   currentRandomSeed=DEFAULT_RANDOM_SEED;
+  // Reset price-chart view state (candles off, "first only" default restored).
+  showCandles=false; priceHidden=new Set(); priceSeriesCount=-1;
+  { const ct=$('showCandleToggle'); if(ct) ct.checked=false; }
   if(priceChartInstance){ priceChartInstance.destroy(); priceChartInstance=null; }
   if(equityChartInstance){ equityChartInstance.destroy(); equityChartInstance=null; }
   renderSecList();
@@ -1964,9 +2155,14 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId, legendItemsO
   const a = document.createElement('a'); a.href=url; a.download=filename;
   document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
-$('pricePngBtn').addEventListener('click', () => downloadChartPng('priceCanvas', 'dca_price_chart.png', 'DCA Scenario Explorer — Security Prices (Normalised to 100)', 'priceLegend'));
+// Export title follows the current price-chart mode (actual / normalised / candles).
+function priceChartExportTitle(){
+  const sub=$('priceChartSubtitle'); const note=sub&&sub.textContent?' '+sub.textContent.trim():'';
+  return 'DCA Scenario Explorer — Security Prices'+note;
+}
+$('pricePngBtn').addEventListener('click', () => downloadChartPng('priceCanvas', 'dca_price_chart.png', priceChartExportTitle(), 'priceLegend'));
 $('priceCopyPngBtn').addEventListener('click', async () => {
-  try { await copyCanvasPngToClipboard(downloadChartPng('priceCanvas', 'dca_price_chart.png', 'DCA Scenario Explorer — Security Prices (Normalised to 100)', 'priceLegend', false)); alert('PNG copied to clipboard.'); }
+  try { await copyCanvasPngToClipboard(downloadChartPng('priceCanvas', 'dca_price_chart.png', priceChartExportTitle(), 'priceLegend', false)); alert('PNG copied to clipboard.'); }
   catch(err){ alert('PNG copy failed: ' + err.message); }
 });
 $('equityPngBtn').addEventListener('click', () => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend'));
@@ -1974,7 +2170,7 @@ $('equityCopyPngBtn').addEventListener('click', async () => {
   try { await copyCanvasPngToClipboard(downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend', false)); alert('PNG copied to clipboard.'); }
   catch(err){ alert('PNG copy failed: ' + err.message); }
 });
-$('priceSvgBtn').addEventListener('click', () => downloadChartSvg('priceCanvas', 'dca_price_chart.svg', 'DCA Scenario Explorer — Security Prices (Normalised to 100)', 'priceLegend'));
+$('priceSvgBtn').addEventListener('click', () => downloadChartSvg('priceCanvas', 'dca_price_chart.svg', priceChartExportTitle(), 'priceLegend'));
 $('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend'));
 
 /* ─── DOWNLOAD CSV (Detailed Breakdown of active tab) ─── */
