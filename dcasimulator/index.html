@@ -193,6 +193,10 @@
       <div class="field-label">Simulation Seed <span class="tip-icon" data-tip="Used for custom security randomness when Return and Standard Deviation are defined.">?</span></div>
       <input class="num-input" id="randomSeed" type="number" min="0" step="1" value="25823952204" />
     </div>
+    <div class="field-row">
+      <div class="field-label">Risk-Free Rate (% p.a.) <span class="tip-icon" data-tip="Annual risk-free rate used as the baseline for the advanced metrics in the Final Summary — Sharpe, Sortino and Treynor measure return earned above this rate.">?</span></div>
+      <input class="num-input" id="riskFreeRate" type="number" min="0" step="0.1" value="4" />
+    </div>
   </div>
 
   <div class="warning" id="mainWarning"></div>

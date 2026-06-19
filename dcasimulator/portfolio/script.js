@@ -163,6 +163,15 @@ const fmtRatio  = v => (v==null||!isFinite(v)) ? '—' : v.toFixed(2);
 // Always treat the input as a fraction (avoids fmt.pct's fraction-or-percent
 // ambiguity, which would misread a CAGR/Treynor above 100%).
 const fmtMetPct = v => (v==null||!isFinite(v)) ? '—' : (v*100).toFixed(2)+'%';
+// Hover explanations for each advanced metric (avoid double quotes — used in data-tip).
+const METRIC_TIPS = {
+  sharpe:  'Sharpe ratio: annualised excess return ÷ return volatility. Excess return = daily time-weighted return minus the daily risk-free rate (each portfolio uses its own assigned rate/ticker); annualised by ×√252.',
+  sortino: 'Sortino ratio: like Sharpe but only penalises downside — annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
+  treynor: 'Treynor ratio: annualised excess return ÷ beta, where beta is measured against the equal-weighted average of all compared portfolios (a lone portfolio has beta 1).',
+  twr:     'CAGR (TWR): time-weighted compound annual growth rate — the geometric mean of daily returns (each day net of that day’s top-up), annualised.',
+  mwr:     'CAGR (MWR): money-weighted compound annual growth rate — the annualised internal rate of return (IRR) of your actual top-ups and the final portfolio value.',
+};
+const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:var(--muted);cursor:help;border-bottom:1px dotted var(--border)">${label}</span> <b>${val}</b></div>`;
 
 /* ─── DATE UTILS ─── */
 function parseDate(s){ const [y,m,d]=s.split('-'); return new Date(+y,+m-1,+d); }
@@ -1204,18 +1213,17 @@ function updateSummary(){
     const cashPct=last.total>0?last.cash/last.total:0;
     const isBest=res.id===bestId && simResults.length>1;
     const m=computeMetrics(res, marketReturns);
-    const metric=(label,val)=>`<div><span style="color:var(--muted)">${label}</span> <b>${val}</b></div>`;
     sg.innerHTML+=`<div class="tile" style="border-left:3px solid ${res.colorHex}">
       <div class="label">${res.name}${isBest?' <span style="color:#22c55e;font-weight:700">★</span>':''}</div>
       <div class="value">${fmt.currency(last.total)}</div>
       <div style="font-size:.75rem;color:var(--muted);margin-top:3px">Net ${fmt.currency(gain)} · ROI ${fmt.pct(roi)}</div>
       <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Topped up ${fmt.currency(last.cumTopup)} · Cash ${fmt.pct(cashPct)}</div>
       <div class="adv-metrics" style="${advStyle}">
-        ${metric('Sharpe', fmtRatio(m.sharpe))}
-        ${metric('Sortino', fmtRatio(m.sortino))}
-        ${metric('Treynor', fmtMetPct(m.treynor))}
-        ${metric('CAGR (TWR)', fmtMetPct(m.cagrTwr))}
-        ${metric('CAGR (MWR)', fmtMetPct(m.cagrMwr))}
+        ${metricCell('Sharpe', fmtRatio(m.sharpe), METRIC_TIPS.sharpe)}
+        ${metricCell('Sortino', fmtRatio(m.sortino), METRIC_TIPS.sortino)}
+        ${metricCell('Treynor', fmtMetPct(m.treynor), METRIC_TIPS.treynor)}
+        ${metricCell('CAGR (TWR)', fmtMetPct(m.cagrTwr), METRIC_TIPS.twr)}
+        ${metricCell('CAGR (MWR)', fmtMetPct(m.cagrMwr), METRIC_TIPS.mwr)}
       </div>
     </div>`;
   });

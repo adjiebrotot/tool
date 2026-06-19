@@ -71,6 +71,8 @@ let secIdCounter = 0;
 let activeSecurityId = null;   // the scenario currently being edited in the sidebar
 let runDebounceTimer = null;
 let currentRandomSeed = DEFAULT_RANDOM_SEED;
+const DEFAULT_RISK_FREE_RATE = 4;          // % p.a., baseline for Sharpe/Sortino/Treynor
+let currentRiskFreeRate = DEFAULT_RISK_FREE_RATE;
 
 /* ─── PRICE CACHE ─── */
 // Keyed by ticker. Stores the widest date range ever fetched so simulations
@@ -169,8 +171,8 @@ const fmt = {
 
 /* ─── ADVANCED METRICS ───
    Risk/return statistics shown in the Final Summary when "Advanced metrics" is on.
-   - Sharpe / Sortino use daily time-weighted (price) returns; the risk-free rate
-     is assumed to be 0 (this tool has no rf input).
+   - Sharpe / Sortino use daily time-weighted (price) returns above the risk-free
+     rate set in Settings (Risk-Free Rate, default 4% p.a.).
    - Treynor uses beta vs. the equal-weighted average of all simulated series
      (a cross-sectional "market" proxy); a lone security has beta ≈ 1.
    - CAGR (TWR) annualises the geometric price return (cash-flow neutral).
@@ -204,9 +206,10 @@ function xirr(flows){
 function computeMetrics(res, marketReturns){
   const prices=res.dailyRows.map(r=>r.price);
   const rets=dailyReturns(prices);
-  const rf=0; // no risk-free input in this tool
+  // Daily risk-free rate derived from the annual rate set in Settings.
+  const rf=Math.pow(1+currentRiskFreeRate/100, 1/TRADING_DAYS)-1;
   const exc=rets.map(r=>r-rf);
-  const sd=statStdev(rets), dd=downsideDev(rets,rf);
+  const sd=statStdev(rets), dd=downsideDev(exc,0);
   const sharpe = sd>0 ? statMean(exc)/sd*Math.sqrt(TRADING_DAYS) : null;
   const sortino= dd>0 ? statMean(exc)/dd*Math.sqrt(TRADING_DAYS) : null;
   const varMkt = Math.pow(statStdev(marketReturns),2);
@@ -225,6 +228,15 @@ const fmtRatio  = v => (v==null||!isFinite(v)) ? '—' : v.toFixed(2);
 // Always treat the input as a fraction (avoids fmt.pct's fraction-or-percent
 // ambiguity, which would misread a CAGR/Treynor above 100%).
 const fmtMetPct = v => (v==null||!isFinite(v)) ? '—' : (v*100).toFixed(2)+'%';
+// Hover explanations for each advanced metric (avoid double quotes — used in data-tip).
+const METRIC_TIPS = {
+  sharpe:  'Sharpe ratio: annualised excess return ÷ return volatility. Excess return = daily time-weighted return minus the daily risk-free rate (set in Settings); annualised by ×√252.',
+  sortino: 'Sortino ratio: like Sharpe but only penalises downside — annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
+  treynor: 'Treynor ratio: annualised excess return ÷ beta, where beta is measured against the equal-weighted average of all compared scenarios (a lone scenario has beta 1).',
+  twr:     'CAGR (TWR): time-weighted compound annual growth rate — the geometric mean of daily returns, annualised. Ignores the timing/size of deposits.',
+  mwr:     'CAGR (MWR): money-weighted compound annual growth rate — the annualised internal rate of return (IRR) of your actual deposits and the final equity.',
+};
+const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:var(--muted);cursor:help;border-bottom:1px dotted var(--border)">${label}</span> <b>${val}</b></div>`;
 
 /* ─── DATE UTILS ─── */
 function parseDate(s){ const [y,m,d]=s.split('-'); return new Date(+y,+m-1,+d); }
@@ -1083,6 +1095,12 @@ $('randomSeed').addEventListener('input',e=>{
   currentRandomSeed = sanitizeSeed(e.target.value);
   scheduleRun();
 });
+$('riskFreeRate').addEventListener('input',e=>{
+  const n=parseFloat(e.target.value);
+  currentRiskFreeRate = Number.isFinite(n) ? Math.max(0,n) : 0;
+  // Only the advanced metrics depend on this — re-render the summary in place.
+  if(simResults.length) renderSummary();
+});
 
 /* ─── DEFAULT DATE RANGE ─── */
 (function initDates(){
@@ -1932,7 +1950,6 @@ function renderSummary(){
     // trigger that never fired with End-of-Period off) → no division by zero.
     const roi=res.totalDeposited>0?(res.finalEquity-res.totalDeposited)/res.totalDeposited:0;
     const m=computeMetrics(res, marketReturns);
-    const metric=(label,val)=>`<div><span style="color:var(--muted)">${label}</span> <b>${val}</b></div>`;
     sg.innerHTML+=`
       <div class="tile" style="border-left:3px solid ${getSecColor(res.sec)}">
         <div class="label">${res.sec.name}</div>
@@ -1940,11 +1957,11 @@ function renderSummary(){
         <div style="font-size:.75rem;color:var(--muted);margin-top:3px">ROI: ${fmt.pct(roi)} | Dep: ${fmt.currency(res.totalDeposited)}</div>
         <div style="font-size:.75rem;color:var(--muted)">Trades: ${res.investRows.length}</div>
         <div class="adv-metrics" style="${advStyle}">
-          ${metric('Sharpe', fmtRatio(m.sharpe))}
-          ${metric('Sortino', fmtRatio(m.sortino))}
-          ${metric('Treynor', fmtMetPct(m.treynor))}
-          ${metric('CAGR (TWR)', fmtMetPct(m.cagrTwr))}
-          ${metric('CAGR (MWR)', fmtMetPct(m.cagrMwr))}
+          ${metricCell('Sharpe', fmtRatio(m.sharpe), METRIC_TIPS.sharpe)}
+          ${metricCell('Sortino', fmtRatio(m.sortino), METRIC_TIPS.sortino)}
+          ${metricCell('Treynor', fmtMetPct(m.treynor), METRIC_TIPS.treynor)}
+          ${metricCell('CAGR (TWR)', fmtMetPct(m.cagrTwr), METRIC_TIPS.twr)}
+          ${metricCell('CAGR (MWR)', fmtMetPct(m.cagrMwr), METRIC_TIPS.mwr)}
         </div>
       </div>`;
   });
@@ -2039,6 +2056,7 @@ $('resetBtn').addEventListener('click',()=>{
   secIdCounter=0; activeSecurityId=null;
   currentCurrencySymbol='$';
   currentRandomSeed=DEFAULT_RANDOM_SEED;
+  currentRiskFreeRate=DEFAULT_RISK_FREE_RATE;
   // Reset price-chart view state (candles off, "first only" default restored).
   showCandles=false; priceHidden=new Set(); priceSeriesCount=-1;
   { const ct=$('showCandleToggle'); if(ct) ct.checked=false; }
@@ -2054,6 +2072,7 @@ $('resetBtn').addEventListener('click',()=>{
   $('equityHoverBox').textContent='Add securities and run to view equity data.';
   $('currencySymbol').value='$';
   $('randomSeed').value=DEFAULT_RANDOM_SEED;
+  $('riskFreeRate').value=DEFAULT_RISK_FREE_RATE;
   hideStatus($('fetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
   const poolInp=$('tickerPoolInput'); if(poolInp) poolInp.value='';
   setPoolLocked(false); hideStatus($('poolStatus')); renderPoolChips();
