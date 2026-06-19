@@ -127,7 +127,7 @@
         <span class="section-label" style="margin-top:0">Loaded tickers</span>
         <button id="clearPoolBtn" class="pool-clear-btn" type="button" title="Remove every loaded ticker">Clear all</button>
       </div>
-      <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px"></div>
+      <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 18px"></div>
     </div>
 
     <div class="section-label" style="margin-top:0">Data Download</div>
@@ -138,12 +138,9 @@
         <a href="ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
         <div class="field-sub rate-info" id="rateInfo" style="margin-top:6px"></div>
         <div class="status-bar" id="poolStatus"></div>
-      </div>
-    </div>
 
-    <div class="section-label" style="display:flex;align-items:center;gap:6px">Date Range <span class="tip-icon" data-tip="Simulation uses the shortest available date range across all selected tickers — when multiple ticker securities are loaded, all will be trimmed to the common overlapping range so comparisons are fair.">?</span></div>
-    <div class="field-row" style="border-top:none;padding-top:0">
-      <div style="display:flex;gap:8px">
+        <div class="field-label" style="display:flex;align-items:center;gap:6px;margin:14px 0 6px">Date Range <span class="tip-icon" data-tip="Simulation uses the shortest available date range across all selected tickers — when multiple ticker securities are loaded, all will be trimmed to the common overlapping range so comparisons are fair.">?</span></div>
+        <div style="display:flex;gap:8px">
         <div style="flex:1">
           <div style="font-size:.78rem;color:var(--muted);margin-bottom:3px">Start</div>
           <input class="txt-input" type="date" id="startDate" />
@@ -154,6 +151,7 @@
         </div>
       </div>
       <div class="status-bar" id="dateRangeStatus"></div>
+      </div>
     </div>
   </div>
 
