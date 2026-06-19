@@ -245,6 +245,17 @@ function getColor(idx){ return LINE_COLORS[idx % LINE_COLORS.length]; }
 function getActiveSec(){ return securities.find(s=>s.id===activeSecurityId) || null; }
 function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+// Wire a standardised number/money input (the shared currency-input design):
+// live thousands-grouping while typing, re-format on blur, and push the parsed
+// numeric value to `onVal` on every change. `opts` mirrors SharedFmt options
+// ({maxDecimals, allowNegative}).
+function wireMoneyField(el, opts, onVal){
+  if(!el) return;
+  const o = Object.assign({maxDecimals:0}, opts||{});
+  el.addEventListener('input',()=>{ SharedFmt.liveFormat(el,o); onVal(SharedFmt.parseFormatted(el.value)); });
+  el.addEventListener('blur',()=>{ SharedFmt.liveFormat(el,o); });
+}
+
 function addSecurity(cfg){
   const id = ++secIdCounter;
   const colorIdx = securities.length % LINE_COLORS.length;
@@ -367,6 +378,8 @@ function renderScenarioConfig(){
     return;
   }
   const tks=loadedTickers();
+  const sym=currentCurrencySymbol||'$';
+  const fmtN=(v,neg)=>SharedFmt.formatThousands(v==null?0:v,{maxDecimals:2,allowNegative:!!neg});
   const tickerBody = tks.length
     ? `<select class="txt-input" id="cfgTickerSelect" style="width:100%;cursor:pointer">${tks.map(tk=>`<option value="${tk}" ${sec.ticker===tk?'selected':''}>${tk}</option>`).join('')}</select>`
     : `<div class="status-bar status-warn" style="display:block">No tickers loaded yet — add them in the 📥 Data tab first.</div>`;
@@ -376,7 +389,25 @@ function renderScenarioConfig(){
         <input class="txt-input" id="cfgName" placeholder="Scenario name" value="${escapeHtml(sec.name)}" style="flex:1;min-width:0"/>
         <input type="color" id="cfgColor" value="${sec.colorHex||LINE_COLOR_HEX[0]}" title="Pick colour" style="width:34px;height:34px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--input-bg);padding:2px;flex-shrink:0"/>
       </div>
-      <div class="radio-group" style="margin-top:8px">
+
+      <div class="section-label">Top-Ups</div>
+      <div class="sec-row">
+        <label>Amount per invest <span class="tip-icon" data-tip="Base amount invested on each DCA purchase date (before any yearly increase).">?</span></label>
+        <div class="currency-wrap">
+          <span class="prefix" id="cfgAmountPrefix">${escapeHtml(sym)}</span>
+          <input class="currency-input money-input" id="cfgAmount" type="text" inputmode="numeric" value="${fmtN(sec.amount)}"/>
+        </div>
+      </div>
+      <div class="sec-row">
+        <label>Yearly increase (%) <span class="tip-icon" data-tip="Compounds the invested amount each full year. 0 keeps the amount constant; e.g. 10 raises it by 10% every year (year 2 = +10%, year 3 = +21%, …).">?</span></label>
+        <div class="currency-wrap">
+          <input class="currency-input money-input has-suffix" id="cfgYearlyInc" type="text" inputmode="numeric" value="${fmtN(sec.yearlyIncrease||0)}"/>
+          <span class="suffix">%</span>
+        </div>
+      </div>
+
+      <div class="section-label">Asset</div>
+      <div class="radio-group">
         <label class="radio-opt${sec.type==='ticker'?' selected':''}" id="cfgTypeTicker">
           <input type="radio" name="cfgType" value="ticker" ${sec.type==='ticker'?'checked':''}/>
           <div class="radio-opt-text"><strong>Ticker</strong>Real price data — pick from your loaded tickers</div>
@@ -390,20 +421,18 @@ function renderScenarioConfig(){
         ? `<div style="margin-top:8px">${tickerBody}</div>`
         : `<div class="sec-row" style="margin-top:8px">
              <label>Return (% p.a.) <span class="tip-icon" data-tip="Expected annual return used to generate a simulated price path via Geometric Brownian Motion.">?</span></label>
-             <input class="num-input" id="cfgReturn" type="number" min="-50" max="200" step="0.5" value="${sec.returnPct}" style="max-width:80px"/>
+             <div class="currency-wrap">
+               <input class="currency-input money-input has-suffix" id="cfgReturn" type="text" inputmode="numeric" value="${fmtN(sec.returnPct,true)}"/>
+               <span class="suffix">%</span>
+             </div>
            </div>
            <div class="sec-row">
              <label>Standard deviation (%) <span class="tip-icon" data-tip="Annual volatility (standard deviation). Higher values produce more volatile simulated paths.">?</span></label>
-             <input class="num-input" id="cfgStd" type="number" min="0" max="200" step="0.5" value="${sec.stdPct}" style="max-width:80px"/>
+             <div class="currency-wrap">
+               <input class="currency-input money-input has-suffix" id="cfgStd" type="text" inputmode="numeric" value="${fmtN(sec.stdPct)}"/>
+               <span class="suffix">%</span>
+             </div>
            </div>`}
-      <div class="sec-row">
-        <label>Amount per invest <span class="tip-icon" data-tip="Base amount invested on each DCA purchase date (before any yearly increase).">?</span></label>
-        <input class="num-input" id="cfgAmount" type="number" min="1" step="50" value="${sec.amount}" style="max-width:100px"/>
-      </div>
-      <div class="sec-row">
-        <label>Yearly increase (%) <span class="tip-icon" data-tip="Compounds the invested amount each full year. 0 keeps the amount constant; e.g. 10 raises it by 10% every year (year 2 = +10%, year 3 = +21%, …).">?</span></label>
-        <input class="num-input" id="cfgYearlyInc" type="number" min="0" max="100" step="1" value="${sec.yearlyIncrease||0}" style="max-width:100px"/>
-      </div>
       <div style="padding:6px 0 0">
         <div style="font-size:.8rem;font-weight:700;margin-bottom:6px">Investment Style</div>
         <div id="styleBlock${sec.id}">${styleBlockInner(sec)}</div>
@@ -423,10 +452,10 @@ function renderScenarioConfig(){
     });
   });
   const tsel=$('cfgTickerSelect'); if(tsel) tsel.addEventListener('change',e=>{ sec.ticker=e.target.value; scheduleRun(); });
-  const ret=$('cfgReturn'); if(ret) ret.addEventListener('input',e=>{ sec.returnPct=parseFloat(e.target.value)||8; scheduleRun(); });
-  const std=$('cfgStd'); if(std) std.addEventListener('input',e=>{ sec.stdPct=parseFloat(e.target.value)||15; scheduleRun(); });
-  $('cfgAmount').addEventListener('input',e=>{ sec.amount=parseFloat(e.target.value)||100; scheduleRun(); });
-  $('cfgYearlyInc').addEventListener('input',e=>{ const v=parseFloat(e.target.value); sec.yearlyIncrease=isNaN(v)?0:Math.max(0,v); scheduleRun(); });
+  const ret=$('cfgReturn'); if(ret) wireMoneyField(ret,{maxDecimals:2,allowNegative:true},v=>{ sec.returnPct=v; scheduleRun(); });
+  const std=$('cfgStd'); if(std) wireMoneyField(std,{maxDecimals:2},v=>{ sec.stdPct=Math.max(0,v); scheduleRun(); });
+  wireMoneyField($('cfgAmount'),{maxDecimals:2},v=>{ sec.amount=Math.max(0,v); scheduleRun(); });
+  wireMoneyField($('cfgYearlyInc'),{maxDecimals:2},v=>{ sec.yearlyIncrease=Math.max(0,v); scheduleRun(); });
   wireStyleBlock(sec);
 }
 
@@ -979,6 +1008,7 @@ $('tickerPoolInput').addEventListener('keydown', e=>{
 /* ─── CURRENCY CHANGE ─── */
 $('currencySymbol').addEventListener('change',e=>{
   currentCurrencySymbol=e.target.value;
+  const pfx=$('cfgAmountPrefix'); if(pfx) pfx.textContent=currentCurrencySymbol||'$';
   if(simResults.length){ updateTables(); updateEquityChart(); }
 });
 $('randomSeed').addEventListener('input',e=>{

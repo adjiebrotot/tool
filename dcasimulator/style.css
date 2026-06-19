@@ -134,6 +134,10 @@ body.light tr:hover td{background:rgba(90,145,232,.05)}
 .sec-row{display:flex;gap:8px;align-items:center;margin:0;padding:6px 0;flex-wrap:wrap}
 .sec-row label{font-size:.8rem;color:var(--muted);min-width:80px;flex-shrink:0}
 .sec-row .num-input,.sec-row .txt-input{flex:1;min-width:80px}
+.sec-row .currency-wrap{flex:1;min-width:80px}
+.sec-row .currency-input{font-size:.88rem;font-weight:600;padding:7px 10px}
+.sec-row .currency-wrap .currency-input{padding-left:30px}
+.sec-row .currency-wrap .currency-input.has-suffix{padding-left:10px;padding-right:30px}
 .sec-del{background:rgba(230,57,57,.15);border:1px solid rgba(230,57,57,.25);color:#FF8B8B;border-radius:8px;padding:4px 10px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit}
 .sec-del:hover{background:rgba(230,57,57,.3)}
 .color-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:2px solid var(--border)}
