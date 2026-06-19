@@ -187,7 +187,17 @@
     <div class="section-label" style="margin-top:0">Contribution</div>
     <div class="field-row" style="border-top:none;padding-top:0">
       <div class="field-label">Amount per top-up</div>
-      <input class="num-input" id="topupAmount" type="number" min="1" step="100" value="5000" />
+      <div class="currency-wrap">
+        <span class="prefix" id="topupAmountPrefix">$</span>
+        <input class="currency-input money-input" id="topupAmount" type="text" inputmode="numeric" value="5,000" />
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Yearly increase <span class="tip-icon" data-tip="Compounds the top-up amount each full year. 0 keeps it constant; e.g. 10 raises every top-up by 10% per year (year 2 = +10%, year 3 = +21%, …). The schedule is unchanged — only the amount grows.">?</span></div>
+      <div class="currency-wrap">
+        <input class="currency-input money-input has-suffix" id="topupYearlyInc" type="text" inputmode="numeric" value="0" />
+        <span class="suffix">%</span>
+      </div>
     </div>
     <div class="field-row">
       <div class="field-label">Top-up period</div>
@@ -218,7 +228,10 @@
     </div>
     <div class="field-row" id="rfRateRow">
       <div class="field-label">Risk-free rate (% p.a.) <span class="tip-icon" data-tip="0% = idle cash · 1–3% = savings · higher = money market.">?</span></div>
-      <input class="num-input" id="rfRate" type="number" min="0" max="20" step="0.1" value="0" />
+      <div class="currency-wrap">
+        <input class="currency-input money-input has-suffix" id="rfRate" type="text" inputmode="numeric" value="0" />
+        <span class="suffix">%</span>
+      </div>
     </div>
     <div class="field-row" id="rfTickerRow" style="display:none">
       <div class="field-label">Risk-free ticker <span class="tip-icon" data-tip="Idle cash grows with this ticker's price instead of a fixed rate.">?</span></div>
@@ -279,11 +292,17 @@
     <div class="section-label">Fees</div>
     <div class="field-row" style="border-top:none;padding-top:0">
       <div class="field-label">Buying fee (%)</div>
-      <input class="num-input" id="buyFee" type="number" min="0" max="10" step="0.01" value="0.1" />
+      <div class="currency-wrap">
+        <input class="currency-input money-input has-suffix" id="buyFee" type="text" inputmode="numeric" value="0.1" />
+        <span class="suffix">%</span>
+      </div>
     </div>
     <div class="field-row">
       <div class="field-label">Selling fee (%) <span class="tip-icon" data-tip="Charged on every sale during rebalancing.">?</span></div>
-      <input class="num-input" id="sellFee" type="number" min="0" max="10" step="0.01" value="0.1" />
+      <div class="currency-wrap">
+        <input class="currency-input money-input has-suffix" id="sellFee" type="text" inputmode="numeric" value="0.1" />
+        <span class="suffix">%</span>
+      </div>
     </div>
     </div><!-- /sub-rebal -->
     </div><!-- /pfEditSection -->

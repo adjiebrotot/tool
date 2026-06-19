@@ -57,6 +57,18 @@ function showWarning(msg){ const w=$('mainWarning'); w.textContent=msg; w.style.
 function hideWarning(){ const w=$('mainWarning'); w.style.display='none'; }
 function sanitizeSeed(v){ const n=Number(v); return Number.isFinite(n)?Math.floor(Math.abs(n)):DEFAULT_RANDOM_SEED; }
 
+// Wire a standardised number/money input (the shared currency-input design):
+// live thousands-grouping while typing, re-format on blur, and push the parsed
+// numeric value to `onVal` on every change. `opts` mirrors SharedFmt options
+// ({maxDecimals, allowNegative}).
+function wireMoneyField(el, opts, onVal){
+  if(!el) return;
+  const o = Object.assign({maxDecimals:0}, opts||{});
+  el.addEventListener('input',()=>{ SharedFmt.liveFormat(el,o); onVal(SharedFmt.parseFormatted(el.value)); });
+  el.addEventListener('blur',()=>{ SharedFmt.liveFormat(el,o); });
+}
+function fmtMoneyVal(v,neg){ return SharedFmt.formatThousands(v==null?0:v,{maxDecimals:2,allowNegative:!!neg}); }
+
 const fmt = {
   currency(v, compact=false){
     const sym=currentCurrencySymbol;
@@ -346,7 +358,7 @@ function makePortfolio(name, colorHex){
     name: name||('Portfolio '+(portfolios.length+1)),
     colorHex: colorHex||PORTFOLIO_COLOR_HEX[portfolios.length % PORTFOLIO_COLOR_HEX.length],
     assets:[], assetIdCounter:0,
-    topup:{ amount:5000 },
+    topup:{ amount:5000, yearlyIncrease:0 },
     topupSched:{ period:'monthly', weekdays:[1], daysOfMonth:[1], dayOfMonth:1, month:1 },
     rf:{ mode:'rate', rate:0, ticker:'' },
     rebal:{ method:'towards-weight', cwTiming:'at-topup', buyFee:0.1, sellFee:0.1 },
@@ -459,7 +471,9 @@ function loadControlsFromActive(){
   if(!hasP){ renderAssetList(); return; }
 
   // Top-ups
-  $('topupAmount').value=p.topup.amount;
+  const tpfx=$('topupAmountPrefix'); if(tpfx) tpfx.textContent=currentCurrencySymbol||'$';
+  $('topupAmount').value=fmtMoneyVal(p.topup.amount);
+  $('topupYearlyInc').value=fmtMoneyVal(p.topup.yearlyIncrease||0);
   $('topupPeriod').value=p.topupSched.period;
   renderScheduleBox('topupScheduleBox','topupScheduleHint',p.topupSched);
 
@@ -467,7 +481,7 @@ function loadControlsFromActive(){
   selectRadio('rfMode', p.rf.mode);
   $('rfRateRow').style.display=p.rf.mode==='ticker'?'none':'';
   $('rfTickerRow').style.display=p.rf.mode==='ticker'?'':'none';
-  $('rfRate').value=p.rf.rate;
+  $('rfRate').value=fmtMoneyVal(p.rf.rate);
   $('rfTicker').value=p.rf.ticker;
 
   // Rebalancing
@@ -477,8 +491,8 @@ function loadControlsFromActive(){
   $('rebalScheduleWrap').style.display=(p.rebal.method==='constant-weight'&&p.rebal.cwTiming==='schedule')?'':'none';
   $('rebalPeriod').value=p.rebalSched.period;
   renderScheduleBox('rebalScheduleBox','rebalScheduleHint',p.rebalSched);
-  $('buyFee').value=p.rebal.buyFee;
-  $('sellFee').value=p.rebal.sellFee;
+  $('buyFee').value=fmtMoneyVal(p.rebal.buyFee);
+  $('sellFee').value=fmtMoneyVal(p.rebal.sellFee);
 
   renderAssetList();
 }
@@ -664,13 +678,14 @@ function renderScheduleBox(boxId, hintId, sched){
 }
 
 /* ─── CONFIG INPUT BINDINGS (write to the active portfolio) ─── */
-$('topupAmount').addEventListener('input',e=>{ const p=getActive(); if(p){ p.topup.amount=parseFloat(e.target.value)||0; renderPortfolioList(); } });
+wireMoneyField($('topupAmount'),{maxDecimals:2},v=>{ const p=getActive(); if(p){ p.topup.amount=Math.max(0,v); renderPortfolioList(); } });
+wireMoneyField($('topupYearlyInc'),{maxDecimals:2},v=>{ const p=getActive(); if(p) p.topup.yearlyIncrease=Math.max(0,v); });
 $('topupPeriod').addEventListener('change',e=>{ const p=getActive(); if(!p) return; p.topupSched.period=e.target.value; renderScheduleBox('topupScheduleBox','topupScheduleHint',p.topupSched); renderPortfolioList(); });
 $('rebalPeriod').addEventListener('change',e=>{ const p=getActive(); if(!p) return; p.rebalSched.period=e.target.value; renderScheduleBox('rebalScheduleBox','rebalScheduleHint',p.rebalSched); });
-$('rfRate').addEventListener('input',e=>{ const p=getActive(); if(p) p.rf.rate=parseFloat(e.target.value)||0; });
+wireMoneyField($('rfRate'),{maxDecimals:2},v=>{ const p=getActive(); if(p) p.rf.rate=Math.max(0,v); });
 $('rfTicker').addEventListener('input',e=>{ const p=getActive(); if(p) p.rf.ticker=e.target.value.trim().toUpperCase(); });
-$('buyFee').addEventListener('input',e=>{ const p=getActive(); if(p) p.rebal.buyFee=parseFloat(e.target.value)||0; });
-$('sellFee').addEventListener('input',e=>{ const p=getActive(); if(p) p.rebal.sellFee=parseFloat(e.target.value)||0; });
+wireMoneyField($('buyFee'),{maxDecimals:2},v=>{ const p=getActive(); if(p) p.rebal.buyFee=Math.max(0,v); });
+wireMoneyField($('sellFee'),{maxDecimals:2},v=>{ const p=getActive(); if(p) p.rebal.sellFee=Math.max(0,v); });
 
 document.querySelectorAll('input[name="rfMode"]').forEach(r=>{
   r.addEventListener('change',()=>{
@@ -798,7 +813,9 @@ function fullRebalance(assets, state, i, buyFee, sellFee){
 function simulatePortfolio(p, assets, common, rfPx){
   const method=p.rebal.method, cwTiming=p.rebal.cwTiming;
   const buyFee=(p.rebal.buyFee||0)/100, sellFee=(p.rebal.sellFee||0)/100;
-  const amount=p.topup.amount||0;
+  const baseAmount=p.topup.amount||0;
+  const yinc=(p.topup.yearlyIncrease||0)/100;
+  const startStr=common[0];
   const rfMode=p.rf.mode, rfRate=p.rf.rate||0;
   const rfDayFactor=Math.pow(1+rfRate/100, 1/252);
   const topupSet=getScheduleIndices(common, p.topupSched);
@@ -811,6 +828,9 @@ function simulatePortfolio(p, assets, common, rfPx){
   for(let i=0;i<common.length;i++){
     if(i>0){ state.cash *= (rfMode==='ticker' && rfPx ? (rfPx[i]/rfPx[i-1]) : rfDayFactor); }
     if(topupSet.has(i)){
+      // Each top-up compounds the base amount by the yearly increase, stepping
+      // up once per full year elapsed since the first day of the simulation.
+      const amount = yinc ? baseAmount*Math.pow(1+yinc, Math.max(0,Math.floor((parseDate(common[i])-parseDate(startStr))/(365.25*86400000)))) : baseAmount;
       state.cash+=amount; cumTopup+=amount;
       if(method==='constant-allocation') buyByWeights(assets,state,i,buyFee);
       else if(method==='towards-weight') buyUnderweight(assets,state,i,buyFee);
@@ -1186,6 +1206,7 @@ $('showTopupsToggle').addEventListener('change',e=>{
 /* ─── CURRENCY / SEED ─── */
 $('currencySymbol').addEventListener('change',e=>{
   currentCurrencySymbol=e.target.value;
+  const pfx=$('topupAmountPrefix'); if(pfx) pfx.textContent=currentCurrencySymbol||'$';
   if(simResults.length){ updateValueChart(); updateCompChart(); updateSummary(); updateTable(); }
 });
 $('randomSeed').addEventListener('input',e=>{ currentRandomSeed=sanitizeSeed(e.target.value); });
@@ -1257,6 +1278,7 @@ function qsAddPortfolio(name, colorIdx, assets, opts){
   assets.forEach(a=> addAsset({type:'ticker', ticker:a.ticker, name:a.name||a.ticker, weight:a.weight}));
   opts = opts || {};
   if(opts.topup!=null)     p.topup.amount       = opts.topup;
+  if(opts.topupYearlyInc!=null) p.topup.yearlyIncrease = opts.topupYearlyInc;
   if(opts.topupPeriod)     p.topupSched.period   = opts.topupPeriod;
   if(opts.method)          p.rebal.method        = opts.method;
   if(opts.cwTiming)        p.rebal.cwTiming      = opts.cwTiming;
