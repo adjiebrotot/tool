@@ -58,7 +58,7 @@ let activeDetailSec = 0;
 let showDeposited = true;
 let showTechIndicators = false;
 let showBuyDates = false;
-let showAdvanced = false;       // Final Summary: reveal Sharpe/Sortino/Treynor/CAGR rows
+let showAdvanced = false;       // Final Summary: reveal Sharpe/Sortino/CAGR rows
 // Security-prices chart view state. Each scenario is an independent series;
 // by default only the first is visible (the rest can be toggled on). The chart
 // shows actual prices when one series is visible and normalises to 100 when two
@@ -71,7 +71,7 @@ let secIdCounter = 0;
 let activeSecurityId = null;   // the scenario currently being edited in the sidebar
 let runDebounceTimer = null;
 let currentRandomSeed = DEFAULT_RANDOM_SEED;
-const DEFAULT_RISK_FREE_RATE = 4;          // % p.a., baseline for Sharpe/Sortino/Treynor
+const DEFAULT_RISK_FREE_RATE = 4;          // % p.a., baseline for Sharpe/Sortino
 let currentRiskFreeRate = DEFAULT_RISK_FREE_RATE;
 
 /* ─── PRICE CACHE ─── */
@@ -173,8 +173,6 @@ const fmt = {
    Risk/return statistics shown in the Final Summary when "Advanced metrics" is on.
    - Sharpe / Sortino use daily time-weighted (price) returns above the risk-free
      rate set in Settings (Risk-Free Rate, default 4% p.a.).
-   - Treynor uses beta vs. the equal-weighted average of all simulated series
-     (a cross-sectional "market" proxy); a lone security has beta ≈ 1.
    - CAGR (TWR) annualises the geometric price return (cash-flow neutral).
    - CAGR (MWR) is the annualised IRR of actual deposits → final equity. */
 const TRADING_DAYS = 252;
@@ -186,7 +184,6 @@ function dailyReturns(prices){
 function statMean(a){ return a.length ? a.reduce((s,x)=>s+x,0)/a.length : 0; }
 function statStdev(a){ if(a.length<2) return 0; const m=statMean(a); return Math.sqrt(a.reduce((s,x)=>s+(x-m)*(x-m),0)/(a.length-1)); }
 function downsideDev(a,mar=0){ if(!a.length) return 0; const d=a.map(x=>Math.min(0,x-mar)); return Math.sqrt(d.reduce((s,x)=>s+x*x,0)/a.length); }
-function covariance(a,b){ const n=Math.min(a.length,b.length); if(n<2) return 0; const ma=statMean(a.slice(0,n)),mb=statMean(b.slice(0,n)); let c=0; for(let i=0;i<n;i++) c+=(a[i]-ma)*(b[i]-mb); return c/(n-1); }
 // Annualised IRR (money-weighted return) of dated cash flows via bisection.
 // flows: [{date:Date, amount}] — negative = invested, positive = received.
 function xirr(flows){
@@ -203,7 +200,7 @@ function xirr(flows){
   }
   return (lo+hi)/2;
 }
-function computeMetrics(res, marketReturns){
+function computeMetrics(res){
   const prices=res.dailyRows.map(r=>r.price);
   const rets=dailyReturns(prices);
   // Daily risk-free rate derived from the annual rate set in Settings.
@@ -212,9 +209,6 @@ function computeMetrics(res, marketReturns){
   const sd=statStdev(rets), dd=downsideDev(exc,0);
   const sharpe = sd>0 ? statMean(exc)/sd*Math.sqrt(TRADING_DAYS) : null;
   const sortino= dd>0 ? statMean(exc)/dd*Math.sqrt(TRADING_DAYS) : null;
-  const varMkt = Math.pow(statStdev(marketReturns),2);
-  const beta   = varMkt>0 ? covariance(rets,marketReturns)/varMkt : null;
-  const treynor= (beta!=null && Math.abs(beta)>1e-6) ? statMean(exc)*TRADING_DAYS/beta : null;
   const days=res.dailyRows;
   const years=(parseDate(days[days.length-1].date)-parseDate(days[0].date))/(365.25*86400000);
   const growth=rets.reduce((g,r)=>g*(1+r),1);
@@ -222,17 +216,16 @@ function computeMetrics(res, marketReturns){
   const flows=res.investRows.map(r=>({date:parseDate(r.date), amount:-r.amountInvested}));
   if(flows.length && res.finalEquity>0) flows.push({date:parseDate(days[days.length-1].date), amount:res.finalEquity});
   const cagrMwr = xirr(flows);
-  return {sharpe, sortino, treynor, cagrTwr, cagrMwr};
+  return {sharpe, sortino, cagrTwr, cagrMwr};
 }
 const fmtRatio  = v => (v==null||!isFinite(v)) ? '—' : v.toFixed(2);
 // Always treat the input as a fraction (avoids fmt.pct's fraction-or-percent
-// ambiguity, which would misread a CAGR/Treynor above 100%).
+// ambiguity, which would misread a CAGR above 100%).
 const fmtMetPct = v => (v==null||!isFinite(v)) ? '—' : (v*100).toFixed(2)+'%';
 // Hover explanations for each advanced metric (avoid double quotes — used in data-tip).
 const METRIC_TIPS = {
   sharpe:  'Sharpe ratio: annualised excess return ÷ return volatility. Excess return = daily time-weighted return minus the daily risk-free rate (set in Settings); annualised by ×√252.',
   sortino: 'Sortino ratio: like Sharpe but only penalises downside — annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
-  treynor: 'Treynor ratio: annualised excess return ÷ beta, where beta is measured against the equal-weighted average of all compared scenarios (a lone scenario has beta 1).',
   twr:     'CAGR (TWR): time-weighted compound annual growth rate — the geometric mean of daily returns, annualised. Ignores the timing/size of deposits.',
   mwr:     'CAGR (MWR): money-weighted compound annual growth rate — the annualised internal rate of return (IRR) of your actual deposits and the final equity.',
 };
@@ -1937,19 +1930,12 @@ function renderSummary(){
   sg.innerHTML='';
   if(!simResults.length) return;
 
-  // Equal-weighted average of all securities' daily returns → "market" proxy
-  // used for beta (Treynor). Index-aligned, matching the milestone table.
-  const allRets=simResults.map(res=>dailyReturns(res.dailyRows.map(r=>r.price)));
-  const n=Math.min(...allRets.map(a=>a.length));
-  const marketReturns=[];
-  for(let i=0;i<n;i++) marketReturns.push(statMean(allRets.map(a=>a[i])));
-
   const advStyle=`display:${showAdvanced?'grid':'none'}`;
   simResults.forEach(res=>{
     // Guard against a strategy that never invested in range (e.g. a technical
     // trigger that never fired with End-of-Period off) → no division by zero.
     const roi=res.totalDeposited>0?(res.finalEquity-res.totalDeposited)/res.totalDeposited:0;
-    const m=computeMetrics(res, marketReturns);
+    const m=computeMetrics(res);
     sg.innerHTML+=`
       <div class="tile" style="border-left:3px solid ${getSecColor(res.sec)}">
         <div class="label">${res.sec.name}</div>
@@ -1959,7 +1945,6 @@ function renderSummary(){
         <div class="adv-metrics" style="${advStyle}">
           ${metricCell('Sharpe', fmtRatio(m.sharpe), METRIC_TIPS.sharpe)}
           ${metricCell('Sortino', fmtRatio(m.sortino), METRIC_TIPS.sortino)}
-          ${metricCell('Treynor', fmtMetPct(m.treynor), METRIC_TIPS.treynor)}
           ${metricCell('CAGR (TWR)', fmtMetPct(m.cagrTwr), METRIC_TIPS.twr)}
           ${metricCell('CAGR (MWR)', fmtMetPct(m.cagrMwr), METRIC_TIPS.mwr)}
         </div>

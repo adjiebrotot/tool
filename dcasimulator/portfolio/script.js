@@ -39,7 +39,7 @@ let valueChart = null, compChart = null;
 let currentCurrencySymbol = '$';
 let currentRandomSeed = DEFAULT_RANDOM_SEED;
 let showTopups = true;
-let showAdvanced = false;        // Final Summary: reveal Sharpe/Sortino/Treynor/CAGR rows
+let showAdvanced = false;        // Final Summary: reveal Sharpe/Sortino/CAGR rows
 let compViewMode = 'dollar';     // 'dollar' = absolute value · 'percent' = % of portfolio
 let activeCompChartId = null;    // which portfolio the Composition Over Time chart shows
 let activeCompTableId = null;    // which portfolio the Composition Table shows
@@ -89,15 +89,12 @@ const fmt = {
      return reflects market performance, not the timing of contributions.
    - Sharpe / Sortino use each portfolio's own risk-free rate (fixed rate or rf
      ticker) as the daily excess-return baseline.
-   - Treynor uses beta vs. the equal-weighted average of all portfolios' returns
-     (a cross-sectional "market" proxy); a lone portfolio has beta ≈ 1.
    - CAGR (TWR) annualises the geometric time-weighted return.
    - CAGR (MWR) is the annualised IRR of actual top-ups → final value. */
 const TRADING_DAYS = 252;
 function statMean(a){ return a.length ? a.reduce((s,x)=>s+x,0)/a.length : 0; }
 function statStdev(a){ if(a.length<2) return 0; const m=statMean(a); return Math.sqrt(a.reduce((s,x)=>s+(x-m)*(x-m),0)/(a.length-1)); }
 function downsideDev(a,mar=0){ if(!a.length) return 0; const d=a.map(x=>Math.min(0,x-mar)); return Math.sqrt(d.reduce((s,x)=>s+x*x,0)/a.length); }
-function covariance(a,b){ const n=Math.min(a.length,b.length); if(n<2) return 0; const ma=statMean(a.slice(0,n)),mb=statMean(b.slice(0,n)); let c=0; for(let i=0;i<n;i++) c+=(a[i]-ma)*(b[i]-mb); return c/(n-1); }
 // Annualised IRR (money-weighted return) of dated cash flows via bisection.
 // flows: [{date:Date, amount}] — negative = invested, positive = received.
 function xirr(flows){
@@ -134,7 +131,7 @@ function rfReturns(res, len){
   const d=Math.pow(1+(res.rfRate||0)/100, 1/TRADING_DAYS)-1;
   return new Array(len).fill(d);
 }
-function computeMetrics(res, marketReturns){
+function computeMetrics(res){
   const rows=res.rows;
   const rets=portfolioReturns(rows);
   const rf=rfReturns(res, rets.length);
@@ -142,9 +139,6 @@ function computeMetrics(res, marketReturns){
   const sd=statStdev(rets), dd=downsideDev(exc,0);
   const sharpe = sd>0 ? statMean(exc)/sd*Math.sqrt(TRADING_DAYS) : null;
   const sortino= dd>0 ? statMean(exc)/dd*Math.sqrt(TRADING_DAYS) : null;
-  const varMkt = Math.pow(statStdev(marketReturns),2);
-  const beta   = varMkt>0 ? covariance(rets,marketReturns)/varMkt : null;
-  const treynor= (beta!=null && Math.abs(beta)>1e-6) ? statMean(exc)*TRADING_DAYS/beta : null;
   const years=(parseDate(rows[rows.length-1].date)-parseDate(rows[0].date))/(365.25*86400000);
   const growth=rets.reduce((g,r)=>g*(1+r),1);
   const cagrTwr = (years>0 && growth>0) ? Math.pow(growth,1/years)-1 : null;
@@ -157,17 +151,16 @@ function computeMetrics(res, marketReturns){
   const last=rows[rows.length-1];
   if(flows.length && last.total>0) flows.push({date:parseDate(last.date), amount:last.total});
   const cagrMwr = xirr(flows);
-  return {sharpe, sortino, treynor, cagrTwr, cagrMwr};
+  return {sharpe, sortino, cagrTwr, cagrMwr};
 }
 const fmtRatio  = v => (v==null||!isFinite(v)) ? '—' : v.toFixed(2);
 // Always treat the input as a fraction (avoids fmt.pct's fraction-or-percent
-// ambiguity, which would misread a CAGR/Treynor above 100%).
+// ambiguity, which would misread a CAGR above 100%).
 const fmtMetPct = v => (v==null||!isFinite(v)) ? '—' : (v*100).toFixed(2)+'%';
 // Hover explanations for each advanced metric (avoid double quotes — used in data-tip).
 const METRIC_TIPS = {
   sharpe:  'Sharpe ratio: annualised excess return ÷ return volatility. Excess return = daily time-weighted return minus the daily risk-free rate (each portfolio uses its own assigned rate/ticker); annualised by ×√252.',
   sortino: 'Sortino ratio: like Sharpe but only penalises downside — annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
-  treynor: 'Treynor ratio: annualised excess return ÷ beta, where beta is measured against the equal-weighted average of all compared portfolios (a lone portfolio has beta 1).',
   twr:     'CAGR (TWR): time-weighted compound annual growth rate — the geometric mean of daily returns (each day net of that day’s top-up), annualised.',
   mwr:     'CAGR (MWR): money-weighted compound annual growth rate — the annualised internal rate of return (IRR) of your actual top-ups and the final portfolio value.',
 };
@@ -1198,13 +1191,6 @@ function updateSummary(){
   let bestId=null, bestVal=-Infinity;
   simResults.forEach(res=>{ const v=res.rows[res.rows.length-1].total; if(v>bestVal){ bestVal=v; bestId=res.id; } });
 
-  // Equal-weighted average of all portfolios' daily returns → "market" proxy
-  // used for beta (Treynor).
-  const allRets=simResults.map(res=>portfolioReturns(res.rows));
-  const n=Math.min(...allRets.map(a=>a.length));
-  const marketReturns=[];
-  for(let i=0;i<n;i++) marketReturns.push(statMean(allRets.map(a=>a[i])));
-
   const advStyle=`display:${showAdvanced?'grid':'none'}`;
   simResults.forEach(res=>{
     const last=res.rows[res.rows.length-1];
@@ -1212,7 +1198,7 @@ function updateSummary(){
     const roi=last.cumTopup>0?gain/last.cumTopup:0;
     const cashPct=last.total>0?last.cash/last.total:0;
     const isBest=res.id===bestId && simResults.length>1;
-    const m=computeMetrics(res, marketReturns);
+    const m=computeMetrics(res);
     sg.innerHTML+=`<div class="tile" style="border-left:3px solid ${res.colorHex}">
       <div class="label">${res.name}${isBest?' <span style="color:#22c55e;font-weight:700">★</span>':''}</div>
       <div class="value">${fmt.currency(last.total)}</div>
@@ -1221,7 +1207,6 @@ function updateSummary(){
       <div class="adv-metrics" style="${advStyle}">
         ${metricCell('Sharpe', fmtRatio(m.sharpe), METRIC_TIPS.sharpe)}
         ${metricCell('Sortino', fmtRatio(m.sortino), METRIC_TIPS.sortino)}
-        ${metricCell('Treynor', fmtMetPct(m.treynor), METRIC_TIPS.treynor)}
         ${metricCell('CAGR (TWR)', fmtMetPct(m.cagrTwr), METRIC_TIPS.twr)}
         ${metricCell('CAGR (MWR)', fmtMetPct(m.cagrMwr), METRIC_TIPS.mwr)}
       </div>
