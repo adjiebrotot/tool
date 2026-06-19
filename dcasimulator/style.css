@@ -23,7 +23,7 @@ p,.muted{color:var(--muted);line-height:1.55}
 .ctrl-tab{flex:1 1 0;padding:12px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
 /* Inline SVG tab/pill icons — inherit the button's text colour via currentColor. */
-.tico{display:inline-block;width:1.05em;height:1.05em;vertical-align:-0.16em;flex-shrink:0}
+.tico{display:inline-block;width:1.35em;height:1.35em;vertical-align:-0.28em;flex-shrink:0}
 .ctrl-panel{display:none;padding:14px 16px 18px}
 .ctrl-panel.active{display:block}
 .slider-block{padding:10px 0 14px;border-top:1px solid var(--border)}
@@ -176,7 +176,11 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 .page-footer-info p:last-child{margin-bottom:0}
 .page-footer-info a{color:var(--accent)}
 .section-title{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px}
-.chart-actions{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap}
+.chart-actions{display:flex;justify-content:flex-end;align-items:center;gap:10px 16px;flex-wrap:wrap}
+/* Keep the toggles together as one cluster and the export buttons as another so
+   they wrap as coherent blocks instead of intermingling on narrow screens. */
+.chart-toggles{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap}
+.chart-export{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .detail-header{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
 .detail-title-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .detail-csv-wrap{display:flex;justify-content:flex-end}
@@ -210,7 +214,11 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
   th,td{padding:6px 5px}
   .section-title>.chart-actions,.detail-title-row,.detail-csv-wrap{width:100%}
   .section-title>.btn-secondary{margin-left:auto}
-  .chart-actions{justify-content:flex-end}
+  /* Stack the toggle cluster above the export buttons, each spanning the full
+     card width so neither row intermingles or right-floats awkwardly. */
+  .chart-actions{justify-content:flex-start;gap:10px}
+  .chart-toggles,.chart-export{width:100%}
+  .chart-export .btn-secondary{flex:1 1 auto}
   .detail-title-row h2{width:100%}
 }
 .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin-right:6px}

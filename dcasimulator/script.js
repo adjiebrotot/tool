@@ -503,15 +503,12 @@ function stylesForCat(c){
 
 function styleBlockInner(sec){
   const active = sec.catOpen || styleCategory(sec.style);
-  const pw = (sec.period==='weekly') ? 'week' : 'month';
-  const pwCap = pw.charAt(0).toUpperCase()+pw.slice(1);
   const pills = STYLE_CATEGORIES.map(([k,label])=>
     `<button type="button" class="cat-pill${k===active?' active':''}" data-cat="${k}">${label}</button>`).join('');
   const opts = stylesForCat(active).map(s=>renderStyleOpt(sec,s)).join('');
   const warn = active==='forward'
     ? `<div class="param-note warn-note">⚠️ For demonstration only — these use prices within the period to pick the buy date and require future knowledge that cannot be replicated in real life.</div>`
-    : active==='tech'
-    ? `<div class="param-note info-note">ℹ️ Unlike fixed-schedule styles, this invests once per ${pw} only when the technical trigger is confirmed — if it never fires in a ${pw}, that ${pw}'s deposit is skipped (enable "Invest at End of ${pwCap}" below to always deposit by ${pw}-end).</div>` : '';
+    : '';
   // Show parameters only when the selected style belongs to the open category.
   const params = (styleCategory(sec.style)===active) ? renderStyleParams(sec) : '';
   return `
@@ -1592,6 +1589,7 @@ function updatePriceChart(){
       const base=getSecColor(res.sec);
       const secLabel=res.sec.name;
       const hidden=false;
+      const oscInfo=OSC_GROUPS[res.sec.style];
       ts.lines.forEach(ln=>{
         const isOsc=ln.axis==='osc'&&oscInfo;
         const yAxisID=isOsc?'yOsc_'+oscInfo.key:'y';
