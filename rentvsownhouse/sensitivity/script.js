@@ -1037,14 +1037,13 @@ function downloadCSV(){
   });
   lines.push('');
   const ml = metricLabel();
-  // Plain-text result labels for CSV (no — / Δ / − glyphs): "Own Net Equity",
-  // "Rent Net Equity", "Own vs Rent". The UI labels (with glyphs) are left intact.
-  const ownLbl   = stripIcons(T('ownOutputLabel')(ml)).replace(/\s*—\s*/, ' ');
-  const rentLbl  = stripIcons(T('rentOutputLabel')(ml)).replace(/\s*—\s*/, ' ');
-  const deltaLbl = stripIcons(T('deltaLabel')).replace(/^Δ\s*/, '').replace(/\s*−\s*/, ' vs ');
-  lines.push([esc(ownLbl),   ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.own!==null?fmtCurrency(v.own,symOf(scenarios[i])):''); })].join(','));
-  lines.push([esc(rentLbl),  ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.rent!==null?fmtCurrency(v.rent,symOf(scenarios[i])):''); })].join(','));
-  lines.push([esc(deltaLbl), ...scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return esc(''); const d=v.own-v.rent; return esc((d>=0?'+':'')+fmtCurrency(d,symOf(scenarios[i]))); })].join(','));
+  // cleanCSV() renders the labels as plain ASCII: the cosmetic em-dash separator
+  // is dropped ("Own — Net Equity" -> "Own Net Equity") while the functional
+  // delta/minus are kept ("Δ Own − Rent" -> "Delta Own - Rent"). Empty cells
+  // mark scenarios with no value.
+  lines.push([esc(T('ownOutputLabel')(ml)),  ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.own!==null?fmtCurrency(v.own,symOf(scenarios[i])):''); })].join(','));
+  lines.push([esc(T('rentOutputLabel')(ml)), ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.rent!==null?fmtCurrency(v.rent,symOf(scenarios[i])):''); })].join(','));
+  lines.push([esc(T('deltaLabel')),          ...scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return esc(''); const d=v.own-v.rent; return esc((d>=0?'+':'')+fmtCurrency(d,symOf(scenarios[i]))); })].join(','));
 
   const blob = new Blob([RVOExport.cleanCSV(lines.join('\n'))], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a');

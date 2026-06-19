@@ -111,14 +111,19 @@ function rtbCashflowCSV(rows){
   return CSV_PREFIX + [headers.join(','), ...lines].join('\n');
 }
 
-/* Normalise CSV text to plain ASCII-friendly output: drop emoji/pictographs and
-   convert typographic dashes, the minus sign and the delta glyph to plain
-   characters, so spreadsheets never render mojibake like "â€”" / "Î”" / "âˆ’". */
+/* Sanitise CSV text to plain ASCII so spreadsheets never render mojibake
+   (â€” / Î” / âˆ’). Cosmetic glyphs are deleted; functional glyphs are replaced
+   with a safe ASCII equivalent that preserves their meaning:
+     - minus sign (−) and en dash (–) → "-"   (negative values stay negative)
+     - delta (Δ)                      → "Delta"
+     - emoji / pictographs            → removed (cosmetic)
+     - em dash (—), figure dash, bar  → removed (cosmetic separators) */
 function cleanCSV(text){
   return String(text||'')
+    .replace(/[–−]/g, '-')
+    .replace(/Δ/g, 'Delta')
     .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu, '')
-    .replace(/[‒–—―−]/g, '-')
-    .replace(/Δ/g, 'd');
+    .replace(/[ \t]*[‒—―][ \t]*/g, ' ');
 }
 
 function downloadCSV(filename, csvText){
