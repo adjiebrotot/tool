@@ -1589,6 +1589,7 @@ function updatePriceChart(){
       const base=getSecColor(res.sec);
       const secLabel=res.sec.name;
       const hidden=false;
+      const oscInfo=OSC_GROUPS[res.sec.style];
       ts.lines.forEach(ln=>{
         const isOsc=ln.axis==='osc'&&oscInfo;
         const yAxisID=isOsc?'yOsc_'+oscInfo.key:'y';
