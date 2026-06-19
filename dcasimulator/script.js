@@ -30,6 +30,13 @@ const OSC_GROUPS = {
   'tech-adx':        {key:'adx',  name:'ADX'}
 };
 const WEEKDAY_OPTIONS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+// MACD histogram bar colours — the TradingView-style 4-colour scheme: a
+// saturated shade while a bar grows away from the zero line and a faded shade
+// while it shrinks back toward it (green above zero, red below).
+const MACD_HIST_COLORS = {
+  upStrong:'#26a69a', upFaint:'rgba(38,166,154,0.42)',
+  downStrong:'#ef5350', downFaint:'rgba(239,83,80,0.42)'
+};
 const DEFAULT_RANDOM_SEED = 25823952204;
 // Tickers are pooled and fetched once over a wide window so later date-range
 // tweaks reuse the cache instead of hitting the Worker again. Yahoo/Stooq simply
@@ -74,6 +81,20 @@ function withAlpha(c,a){
     if(m){ const h=Math.round(Math.max(0,Math.min(1,a))*255).toString(16).padStart(2,'0'); return '#'+m[1]+h; }
   }
   return c;
+}
+// Per-bar colours for a MACD histogram: saturated while a bar grows away from
+// the zero line, faded while it shrinks back toward it (green ≥0, red <0) — the
+// standard 4-colour MACD histogram scheme.
+function macdHistColors(values){
+  const c=MACD_HIST_COLORS;
+  let prev=null;
+  return values.map(v=>{
+    if(v==null) return 'transparent';
+    const growing = prev==null ? true : (v>=0 ? v>=prev : v<=prev);
+    prev=v;
+    if(v>=0) return growing ? c.upStrong : c.upFaint;
+    return growing ? c.downStrong : c.downFaint;
+  });
 }
 function showStatus(el, msg, type){
   if(!el) return;
@@ -214,6 +235,9 @@ function addSecurity(cfg){
     returnPct: 8, stdPct: 15,
     momentumPct: 5, momentumEOM: true,
     techEOM: true,
+    // Shared by the momentum + technical styles: invest once per 'monthly' or
+    // 'weekly' window. Fixed-schedule date/weekly styles ignore it.
+    period: 'monthly',
     priceData: null, loaded: false, open: true,
     ...cfg
   };
@@ -420,8 +444,8 @@ function styleDesc(s){
           'weekly-day':'Buy on a chosen weekday each week.',
           'weekly-top':'Buy on the peak price day of the week.',
           'weekly-bottom':'Buy on the lowest price day of the week.',
-          'momentum-peak':'Invest after an upside of X% from month start.',
-          'momentum-dip':'Invest after a downside of X% from month start.',
+          'momentum-peak':'Invest once price rises by the set % from the period open.',
+          'momentum-dip':'Invest once price falls by the set % from the period open.',
           'tech-ma-cross':'Buy on a golden cross of two moving averages.',
           'tech-rsi':'Buy when RSI drops into oversold territory.',
           'tech-bollinger':'Buy when price dips to the lower Bollinger Band.',
@@ -457,13 +481,15 @@ function stylesForCat(c){
 
 function styleBlockInner(sec){
   const active = sec.catOpen || styleCategory(sec.style);
+  const pw = (sec.period==='weekly') ? 'week' : 'month';
+  const pwCap = pw.charAt(0).toUpperCase()+pw.slice(1);
   const pills = STYLE_CATEGORIES.map(([k,label])=>
     `<button type="button" class="cat-pill${k===active?' active':''}" data-cat="${k}">${label}</button>`).join('');
   const opts = stylesForCat(active).map(s=>renderStyleOpt(sec,s)).join('');
   const warn = active==='forward'
     ? `<div class="param-note warn-note">⚠️ For demonstration only — these use prices within the period to pick the buy date and require future knowledge that cannot be replicated in real life.</div>`
     : active==='tech'
-    ? `<div class="param-note info-note">ℹ️ Unlike fixed-schedule styles, this invests once per month only when the technical trigger is confirmed — if it never fires in a month, that month's deposit is skipped (enable "Invest at End of Month" below to always deposit by month-end).</div>` : '';
+    ? `<div class="param-note info-note">ℹ️ Unlike fixed-schedule styles, this invests once per ${pw} only when the technical trigger is confirmed — if it never fires in a ${pw}, that ${pw}'s deposit is skipped (enable "Invest at End of ${pwCap}" below to always deposit by ${pw}-end).</div>` : '';
   // Show parameters only when the selected style belongs to the open category.
   const params = (styleCategory(sec.style)===active) ? renderStyleParams(sec) : '';
   return `
@@ -473,10 +499,30 @@ function styleBlockInner(sec){
     <div class="style-params" id="styleParams${sec.id}">${params}</div>`;
 }
 
+// Monthly / Weekly segmented control — shared by the momentum + technical
+// styles so each can invest once per chosen window (the date/forward styles
+// carry their own cadence and don't show it).
+function periodToggleRow(sec, id){
+  const p = (sec.period==='weekly') ? 'weekly' : 'monthly';
+  const word = p==='weekly' ? 'week' : 'month';
+  return `<div class="param-row"><label>Frequency <span class="tip-icon" data-tip="Invest once per ${word}: on the first day the trigger is met within the ${word}; otherwise skip that ${word} (or deposit on its last trading day if 'Invest at End of ${word.charAt(0).toUpperCase()+word.slice(1)}' is ticked below).">?</span></label>
+      <div class="seg" id="secPeriodSeg${id}" role="group" aria-label="Investment frequency">
+        <button type="button" class="seg-btn${p==='monthly'?' active':''}" data-period="monthly">Monthly</button>
+        <button type="button" class="seg-btn${p==='weekly'?' active':''}" data-period="weekly">Weekly</button>
+      </div></div>`;
+}
+
 function renderStyleParams(sec){
+  const s=sec.style;
+  const freqRow = (MOMENTUM_STYLES.includes(s)||TECH_STYLES.includes(s)) ? periodToggleRow(sec, sec.id) : '';
+  return freqRow + styleParamsBody(sec);
+}
+
+function styleParamsBody(sec){
   const s=sec.style, t=sec.tech||{}, id=sec.id;
+  const periodWord = (sec.period==='weekly') ? 'Week' : 'Month';
   const eomChecked = MOMENTUM_STYLES.includes(s) ? sec.momentumEOM : sec.techEOM;
-  const eomRow = `<label class="tech-eom"><input type="checkbox" id="secTechEOM${id}" ${eomChecked?'checked':''}/> Invest at End of Month if target not reached</label>`;
+  const eomRow = `<label class="tech-eom"><input type="checkbox" id="secTechEOM${id}" ${eomChecked?'checked':''}/> Invest at End of ${periodWord} if target not reached</label>`;
   const maTypeSel=(elId,val)=>`<select class="num-input" id="${elId}" style="max-width:84px">
       <option value="sma" ${val==='sma'?'selected':''}>SMA</option>
       <option value="ema" ${val==='ema'?'selected':''}>EMA</option></select>`;
@@ -554,7 +600,13 @@ function wireStyleBlock(sec){
     momPctEl.addEventListener('input',e=>{ sec.momentumPct=parseFloat(e.target.value)||5; if(momPctValEl) momPctValEl.textContent=(+sec.momentumPct).toFixed(1)+'%'; scheduleRun(); });
     makeSliderEditable(momPctValEl,momPctEl);
   }
-  // Shared "invest at end of month" toggle (momentum + technical)
+  // Monthly / Weekly frequency toggle (momentum + technical). Re-render the
+  // block on change so the EOM label and helper note pick up the new window.
+  const periodSeg=$(`secPeriodSeg${sec.id}`);
+  if(periodSeg) periodSeg.querySelectorAll('.seg-btn').forEach(b=>{
+    b.addEventListener('click',()=>{ sec.period=b.dataset.period==='weekly'?'weekly':'monthly'; refreshStyleBlock(sec); scheduleRun(); });
+  });
+  // Shared "invest at end of month/week" toggle (momentum + technical)
   const eomEl=$(`secTechEOM${sec.id}`);
   if(eomEl) eomEl.addEventListener('change',e=>{ sec.techEOM=e.target.checked; sec.momentumEOM=e.target.checked; scheduleRun(); });
   // Technical-strategy parameters
@@ -1042,7 +1094,9 @@ function buildTech(prices, style, tech){
     const {hist}=macdSeries(prices,t.macdFast||12,t.macdSlow||26,t.macdSignal||9);
     const thr=t.macdHistThreshold??0;
     for(let i=1;i<n;i++) if(hist[i]!=null&&hist[i-1]!=null&&hist[i]>thr&&hist[i-1]<=thr) sig[i]=true;
-    lines.push({name:'MACD Hist',values:hist,axis:'osc',dash:'dash',fade:0.75});
+    // The histogram renders as MACD-style coloured bars (not a line), so flag it
+    // for the chart layer; the threshold/zero line stays a thin reference.
+    lines.push({name:'MACD Hist',values:hist,axis:'osc',bar:true});
     lines.push({name:`Threshold ${thr}`,values:new Array(n).fill(thr),axis:'osc',dash:'dot',fade:0.4});
   } else if(style==='tech-adx'){
     const a=adxSeries(prices,t.adxPeriod||14); const thr=t.adxThreshold??25;
@@ -1053,13 +1107,32 @@ function buildTech(prices, style, tech){
   return {signal:sig, lines};
 }
 
-// Pick one buy per calendar month: the first day the signal fires, or — when
-// "Invest at End of Month" is on — the last trading day if it never fired.
-function monthlySignalDates(dates, signal, eom){
-  const months={};
-  dates.forEach((d,i)=>{ const ym=d.slice(0,7); (months[ym]||(months[ym]=[])).push(i); });
+// ─── PERIOD BUCKETING (calendar month or week) ───
+// A stable Sunday-aligned week key (year + week-of-year), matching the scheme the
+// fixed Weekly styles already use so every "weekly" feature buckets identically.
+function isoWeekBucket(dateStr){
+  const dt=parseDate(dateStr);
+  const y=dt.getFullYear();
+  const doy=Math.floor((dt-new Date(y,0,1))/86400000);
+  const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
+  return y+'-'+String(wk).padStart(2,'0');
+}
+function periodKey(dateStr, period){
+  return period==='weekly' ? isoWeekBucket(dateStr) : dateStr.slice(0,7);
+}
+// Group trading-day indices into chronological per-period buckets (dates arrive
+// sorted, so insertion order == chronological order).
+function groupIndicesByPeriod(dates, period){
+  const groups={};
+  dates.forEach((d,i)=>{ const k=periodKey(d,period); (groups[k]||(groups[k]=[])).push(i); });
+  return Object.values(groups);
+}
+
+// Pick one buy per period (month or week): the first day the signal fires, or —
+// when "Invest at End of …" is on — the last trading day if it never fired.
+function periodSignalDates(dates, signal, eom, period){
   const out=[];
-  Object.values(months).forEach(idxs=>{
+  groupIndicesByPeriod(dates, period).forEach(idxs=>{
     let picked=-1;
     for(const i of idxs){ if(signal[i]){ picked=i; break; } }
     if(picked>=0) out.push(picked);
@@ -1069,7 +1142,7 @@ function monthlySignalDates(dates, signal, eom){
 }
 
 /* ─── SIMULATION ENGINE ─── */
-function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentumEOM=true, tech=null, techEOM=true){
+function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentumEOM=true, tech=null, techEOM=true, period='monthly'){
   const {dates, prices} = priceData;
   const dateIndex = {};
   dates.forEach((d,i)=>dateIndex[d]=i);
@@ -1106,18 +1179,9 @@ function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentum
       result.push(best);
     });
   } else if(style==='weekly-day'){
-    // Group by ISO week, find closest day
-    const weeks={};
-    dates.forEach((d,i)=>{
-      const dt=parseDate(d);
-      const y=dt.getFullYear(), doy=Math.floor((dt-new Date(y,0,1))/86400000);
-      const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
-      const key=y+'-'+String(wk).padStart(2,'0');
-      if(!weeks[key]) weeks[key]=[];
-      weeks[key].push(i);
-    });
+    // Group by ISO week, find closest day to the chosen weekday.
     const targetDow=Math.min(7,Math.max(1,dayOrDate)); // 1=Mon..7=Sun (nearest trading day)
-    Object.values(weeks).forEach(idxs=>{
+    groupIndicesByPeriod(dates,'weekly').forEach(idxs=>{
       let best=idxs[0];
       idxs.forEach(i=>{
         const dow=parseDate(dates[i]).getDay()||7;
@@ -1127,40 +1191,23 @@ function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentum
       result.push(best);
     });
   } else if(style==='weekly-top'){
-    const weeks={};
-    dates.forEach((d,i)=>{
-      const dt=parseDate(d);
-      const y=dt.getFullYear(), doy=Math.floor((dt-new Date(y,0,1))/86400000);
-      const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
-      const key=y+'-'+String(wk).padStart(2,'0');
-      if(!weeks[key]) weeks[key]=[];
-      weeks[key].push(i);
-    });
-    Object.values(weeks).forEach(idxs=>{
+    groupIndicesByPeriod(dates,'weekly').forEach(idxs=>{
       let best=idxs[0];
       idxs.forEach(i=>{ if(prices[i]>prices[best]) best=i; });
       result.push(best);
     });
   } else if(style==='weekly-bottom'){
-    const weeks={};
-    dates.forEach((d,i)=>{
-      const dt=parseDate(d);
-      const y=dt.getFullYear(), doy=Math.floor((dt-new Date(y,0,1))/86400000);
-      const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
-      const key=y+'-'+String(wk).padStart(2,'0');
-      if(!weeks[key]) weeks[key]=[];
-      weeks[key].push(i);
-    });
-    Object.values(weeks).forEach(idxs=>{
+    groupIndicesByPeriod(dates,'weekly').forEach(idxs=>{
       let best=idxs[0];
       idxs.forEach(i=>{ if(prices[i]<prices[best]) best=i; });
       result.push(best);
     });
   } else if(style==='momentum-peak'||style==='momentum-dip'){
-    const months={};
-    dates.forEach((d,i)=>{ const ym=d.slice(0,7); if(!months[ym])months[ym]=[]; months[ym].push(i); });
+    // Once per period (month or week): invest on the first day price moves the
+    // set % from the period's opening price; otherwise skip (or buy at the end
+    // of the period when "Invest at End of …" is on).
     const threshold=(momentumPct||5)/100;
-    Object.values(months).forEach(idxs=>{
+    groupIndicesByPeriod(dates, period).forEach(idxs=>{
       const refPrice=prices[idxs[0]];
       let invested=false;
       for(const i of idxs){
@@ -1175,7 +1222,7 @@ function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentum
     });
   } else if(TECH_STYLES.includes(style)){
     const {signal}=buildTech(prices, style, tech||{});
-    monthlySignalDates(dates, signal, techEOM).forEach(i=>result.push(i));
+    periodSignalDates(dates, signal, techEOM, period).forEach(i=>result.push(i));
   }
 
   // Remove duplicates, sort
@@ -1194,7 +1241,7 @@ function investAmountAt(base, yearlyIncreasePct, startStr, dateStr){
 
 function simulateSecurity(sec){
   const {dates, prices} = sec.priceData;
-  const investIdxs = getInvestmentDates(sec.priceData, sec.style, sec.dayOrDate, sec.momentumPct, sec.momentumEOM, sec.tech, sec.techEOM);
+  const investIdxs = getInvestmentDates(sec.priceData, sec.style, sec.dayOrDate, sec.momentumPct, sec.momentumEOM, sec.tech, sec.techEOM, sec.period||'monthly');
   const investSet = new Set(investIdxs);
   const startStr = dates[0];
   const yinc = sec.yearlyIncrease||0;
@@ -1434,11 +1481,24 @@ function updatePriceChart(){
       const secLabel=res.sec.type==='ticker'?res.sec.ticker.toUpperCase():res.sec.name;
       const oscInfo=OSC_GROUPS[res.sec.style];
       ts.lines.forEach(ln=>{
-        const dash=ln.dash==='dot'?[2,3]:ln.dash==='dash'?[7,4]:[];
         const isOsc=ln.axis==='osc'&&oscInfo;
         const yAxisID=isOsc?'yOsc_'+oscInfo.key:'y';
         if(isOsc&&!oscGroups.has(oscInfo.key)) oscGroups.set(oscInfo.key, oscInfo.name);
         dsForSec[idx].push(datasets.length);
+        if(ln.bar){
+          // MACD histogram → coloured bars drawn from the zero line on the
+          // oscillator grid (a real MACD panel, not a line). Pushed before its
+          // threshold/zero reference line so that line sits on top.
+          const cols=macdHistColors(ln.values);
+          datasets.push({
+            type:'bar', label:`${secLabel} · ${ln.name}`,
+            data: ln.values.map(v=> v==null?null:v), yAxisID,
+            backgroundColor:cols, borderColor:cols, borderWidth:0,
+            categoryPercentage:1, barPercentage:1, _indicator:true, _hist:true
+          });
+          return;
+        }
+        const dash=ln.dash==='dot'?[2,3]:ln.dash==='dash'?[7,4]:[];
         datasets.push({
           label:`${secLabel} · ${ln.name}`,
           data: isOsc ? ln.values.slice() : ln.values.map(v=> v==null?null:v/first*100),
@@ -1611,7 +1671,9 @@ function updateTables(){
   const sg=$('summaryGrid');
   sg.innerHTML='';
   simResults.forEach(res=>{
-    const roi=(res.finalEquity-res.totalDeposited)/res.totalDeposited;
+    // Guard against a strategy that never invested in range (e.g. a technical
+    // trigger that never fired with End-of-Period off) → no division by zero.
+    const roi=res.totalDeposited>0?(res.finalEquity-res.totalDeposited)/res.totalDeposited:0;
     sg.innerHTML+=`
       <div class="tile" style="border-left:3px solid ${getSecColor(res.sec)}">
         <div class="label">${res.sec.name}</div>
