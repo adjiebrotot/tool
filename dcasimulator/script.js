@@ -138,7 +138,14 @@ function makeSliderEditable(valSpan,rangeEl){
   inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}else if(e.key==='Escape'){inp.value='';commit();}});
 }
 function getActiveTab(){ const t=document.querySelector('.ctrl-tab.active'); return t?t.dataset.tab:'securities'; }
-function updateSimBtn(){ const b=$('simBtn'); if(!b)return; b.textContent='▶ Simulate'; }
+function updateSimBtn(){ const b=$('simBtn'); if(!b)return; b.textContent='▶ Simulate'; updateBtnRow(); }
+// On the Data tab the bottom action becomes "Load tickers" (it consumes the Date
+// Range below and you can't simulate from here anyway); other tabs show Simulate/Reset.
+function updateBtnRow(){
+  const dataTab = getActiveTab()==='data';
+  ['simBtn','resetBtn'].forEach(id=>{ const b=$(id); if(b) b.style.display=dataTab?'none':''; });
+  const lb=$('loadTickersBtn'); if(lb) lb.style.display=dataTab?'':'none';
+}
 function sanitizeSeed(v){
   const n = Number(v);
   if(!Number.isFinite(n)) return DEFAULT_RANDOM_SEED;
@@ -392,14 +399,14 @@ function renderScenarioConfig(){
 
       <div class="section-label">Top-Ups</div>
       <div class="sec-row">
-        <label>Amount per invest <span class="tip-icon" data-tip="Base amount invested on each DCA purchase date (before any yearly increase).">?</span></label>
+        <label>Amount per top-up <span class="tip-icon" data-tip="Base amount invested on each DCA purchase date (before any yearly increase).">?</span></label>
         <div class="currency-wrap">
           <span class="prefix" id="cfgAmountPrefix">${escapeHtml(sym)}</span>
           <input class="currency-input money-input" id="cfgAmount" type="text" inputmode="numeric" value="${fmtN(sec.amount)}"/>
         </div>
       </div>
       <div class="sec-row">
-        <label>Yearly increase (%) <span class="tip-icon" data-tip="Compounds the invested amount each full year. 0 keeps the amount constant; e.g. 10 raises it by 10% every year (year 2 = +10%, year 3 = +21%, …).">?</span></label>
+        <label>Yearly increase <span class="tip-icon" data-tip="Compounds the invested amount each full year. 0 keeps the amount constant; e.g. 10 raises it by 10% every year (year 2 = +10%, year 3 = +21%, …).">?</span></label>
         <div class="currency-wrap">
           <input class="currency-input money-input has-suffix" id="cfgYearlyInc" type="text" inputmode="numeric" value="${fmtN(sec.yearlyIncrease||0)}"/>
           <span class="suffix">%</span>
@@ -825,7 +832,8 @@ function renderPoolChips(){
   box.innerHTML = tks.map(tk=>{
     const e = priceCache[tk];
     const warn = (e && e.kind==='stock' && e.source==='stooq');
-    const title = warn ? 'Loaded from Stooq (unadjusted for splits/dividends)' : (e?e.dates.length+' trading days':'');
+    const range = (e && e.dates && e.dates.length) ? e.dates[0]+' to '+e.dates[e.dates.length-1] : '';
+    const title = warn ? 'Loaded from Stooq (unadjusted for splits/dividends)'+(range?' · '+range:'') : range;
     return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}<button class="pool-chip-del" type="button" data-tk="${tk}" title="Remove ${tk}" aria-label="Remove ${tk}">×</button></span>`;
   }).join('');
   box.querySelectorAll('.pool-chip-del').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
@@ -863,10 +871,10 @@ function refreshTickerSelect(){
 // Loading is additive and individual tickers are removed via the chip ✕, so the
 // input is never locked — it always stays open for adding the next batch.
 function setPoolLocked(_locked){
-  const inp = $('tickerPoolInput'), loadBtn = $('loadTickersBtn'), editBtn = $('editTickersBtn');
+  const inp = $('tickerPoolInput'), editBtn = $('editTickersBtn');
   if(inp) inp.disabled = false;
-  if(loadBtn) loadBtn.style.display = '';
   if(editBtn) editBtn.style.display = 'none';
+  updateBtnRow();
 }
 
 // Parse the textarea and fetch every NOT-yet-cached ticker, downloading only the
@@ -2260,6 +2268,7 @@ loadPersistedCache();
 renderPoolChips();
 refreshTickerSelect();
 updateRateInfo();
+updateBtnRow();
 
 initializeDefaultSecurities();
 runSimulation();
