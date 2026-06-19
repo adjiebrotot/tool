@@ -740,6 +740,21 @@ Sign Up,Dropped,remaining,`;
   URL.revokeObjectURL(a.href);
 });
 
+/* Sanitise CSV text to plain ASCII so spreadsheets never render mojibake
+   (â€” / Î” / âˆ’). Cosmetic glyphs are deleted; functional glyphs are replaced
+   with a safe ASCII equivalent that preserves their meaning:
+     - minus sign (−) and en dash (–) → "-"   (negative values stay negative)
+     - delta (Δ)                      → "Delta"
+     - emoji / pictographs            → removed (cosmetic)
+     - em dash (—), figure dash, bar  → removed (cosmetic separators) */
+function cleanCSV(text){
+  return String(text||'')
+    .replace(/[–−]/g, '-')
+    .replace(/Δ/g, 'Delta')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu, '')
+    .replace(/[ \t]*[‒—―][ \t]*/g, ' ');
+}
+
 // ─── Download current work as CSV ───
 $('downloadCsvBtn').addEventListener('click',()=>{
   const header = 'source,target,value,color';
@@ -749,7 +764,7 @@ $('downloadCsvBtn').addEventListener('click',()=>{
     const esc = v => (v+'').includes(',') ? `"${v}"` : v;
     return [esc(r.source), esc(r.target), esc(r.value), color].join(',');
   }).join('\n');
-  const csv = '# Made using tool.adjiebrotots.com/sankeycreator\n' + header + '\n' + dataRows;
+  const csv = cleanCSV('# Made using tool.adjiebrotots.com/sankeycreator\n' + header + '\n' + dataRows);
   const blob = new Blob([csv], {type:'text/csv'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);

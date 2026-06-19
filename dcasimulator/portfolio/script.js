@@ -1092,6 +1092,21 @@ document.querySelectorAll('#compViewToggle .seg-btn').forEach(btn=>{
   });
 });
 
+/* Sanitise CSV text to plain ASCII so spreadsheets never render mojibake
+   (â€” / Î” / âˆ’). Cosmetic glyphs are deleted; functional glyphs are replaced
+   with a safe ASCII equivalent that preserves their meaning:
+     - minus sign (−) and en dash (–) → "-"   (negative values stay negative)
+     - delta (Δ)                      → "Delta"
+     - emoji / pictographs            → removed (cosmetic)
+     - em dash (—), figure dash, bar  → removed (cosmetic separators) */
+function cleanCSV(text){
+  return String(text||'')
+    .replace(/[–−]/g, '-')
+    .replace(/Δ/g, 'Delta')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu, '')
+    .replace(/[ \t]*[‒—―][ \t]*/g, ' ');
+}
+
 /* ─── CSV EXPORT (full daily, selected table portfolio) ─── */
 $('downloadBtn').addEventListener('click',()=>{
   if(!simResults.length){ showWarning('Run a simulation first.'); return; }
@@ -1102,7 +1117,7 @@ $('downloadBtn').addEventListener('click',()=>{
     const row=[r.date, r.cash.toFixed(2), ...res.assets.map(a=>(r.assetVals[a.id]||0).toFixed(2)), r.invested.toFixed(2), r.total.toFixed(2), r.cumTopup.toFixed(2)];
     lines.push(row.join(','));
   });
-  const blob=new Blob([lines.join('\n')],{type:'text/csv'});
+  const blob=new Blob([cleanCSV(lines.join('\n'))],{type:'text/csv'});
   const safe=res.name.replace(/[^a-z0-9]+/gi,'-').toLowerCase();
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='portfolio-dca-'+safe+'.csv';
   document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);

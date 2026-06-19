@@ -348,11 +348,25 @@ function filterTable(tbody,q){
 }
 
 /* ═══ EXPORT ══════════════════════════════════════════════════════ */
+/* Sanitise CSV text to plain ASCII so spreadsheets never render mojibake
+   (â€” / Î” / âˆ’). Cosmetic glyphs are deleted; functional glyphs are replaced
+   with a safe ASCII equivalent that preserves their meaning:
+     - minus sign (−) and en dash (–) → "-"   (negative values stay negative)
+     - delta (Δ)                      → "Delta"
+     - emoji / pictographs            → removed (cosmetic)
+     - em dash (—), figure dash, bar  → removed (cosmetic separators) */
+function cleanCSV(text){
+  return String(text||'')
+    .replace(/[–−]/g, '-')
+    .replace(/Δ/g, 'Delta')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu, '')
+    .replace(/[ \t]*[‒—―][ \t]*/g, ' ');
+}
 function exportCsv(){
   if(!results.length) return;
   const hdr=['Status','Contingency','Constraint Equation ID','Monitored Element','LHS (MW)','RHS (MW)','Margin (MW)'];
   const rows=results.map(r=>[r.violated?'VIOLATED':'OK',r.cont,`"${r.id}"`,`"${r.monitored||''}"`,f4(r.lhs.total),f4(r.rhs.total),f4(r.margin)].join(','));
-  const blob=new Blob([[hdr.join(','),...rows].join('\n')],{type:'text/csv;charset=utf-8;'});
+  const blob=new Blob([cleanCSV([hdr.join(','),...rows].join('\n'))],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob), a=document.createElement('a');
   a.href=url; a.download='constraint_check.csv';
   document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);

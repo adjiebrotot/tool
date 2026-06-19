@@ -544,6 +544,21 @@ $('resetBtn').addEventListener('click',()=>{
   renderScenarioList();rerender();
 });
 
+/* Sanitise CSV text to plain ASCII so spreadsheets never render mojibake
+   (â€” / Î” / âˆ’). Cosmetic glyphs are deleted; functional glyphs are replaced
+   with a safe ASCII equivalent that preserves their meaning:
+     - minus sign (−) and en dash (–) → "-"   (negative values stay negative)
+     - delta (Δ)                      → "Delta"
+     - emoji / pictographs            → removed (cosmetic)
+     - em dash (—), figure dash, bar  → removed (cosmetic separators) */
+function cleanCSV(text){
+  return String(text||'')
+    .replace(/[–−]/g, '-')
+    .replace(/Δ/g, 'Delta')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu, '')
+    .replace(/[ \t]*[‒—―][ \t]*/g, ' ');
+}
+
 $('downloadBtn').addEventListener('click',()=>{
   const table=$('amortTableWrap').querySelector('table');
   if(!table)return;
@@ -552,7 +567,7 @@ $('downloadBtn').addEventListener('click',()=>{
     [...tr.querySelectorAll('th,td')].map(cell=>esc(cell.textContent.trim())).join(',')
   );
   if(!rows.length)return;
-  const csv='# Made using tool.adjiebrotots.com/financingvscash\n'+rows.join('\n');
+  const csv=cleanCSV('# Made using tool.adjiebrotots.com/financingvscash\n'+rows.join('\n'));
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');

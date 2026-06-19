@@ -111,9 +111,24 @@ function rtbCashflowCSV(rows){
   return CSV_PREFIX + [headers.join(','), ...lines].join('\n');
 }
 
+/* Sanitise CSV text to plain ASCII so spreadsheets never render mojibake
+   (â€” / Î” / âˆ’). Cosmetic glyphs are deleted; functional glyphs are replaced
+   with a safe ASCII equivalent that preserves their meaning:
+     - minus sign (−) and en dash (–) → "-"   (negative values stay negative)
+     - delta (Δ)                      → "Delta"
+     - emoji / pictographs            → removed (cosmetic)
+     - em dash (—), figure dash, bar  → removed (cosmetic separators) */
+function cleanCSV(text){
+  return String(text||'')
+    .replace(/[–−]/g, '-')
+    .replace(/Δ/g, 'Delta')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu, '')
+    .replace(/[ \t]*[‒—―][ \t]*/g, ' ');
+}
+
 function downloadCSV(filename, csvText){
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csvText], {type:'text/csv;charset=utf-8;'}));
+  a.href = URL.createObjectURL(new Blob([cleanCSV(csvText)], {type:'text/csv;charset=utf-8;'}));
   a.download = filename;
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(a.href);
@@ -362,7 +377,7 @@ function renderComparisonChart(canvas, opts){
 }
 
 global.RVOExport = {
-  ownCashflowCSV, rentCashflowCSV, rtbCashflowCSV, downloadCSV,
+  ownCashflowCSV, rentCashflowCSV, rtbCashflowCSV, downloadCSV, cleanCSV,
   exportChartPNG, exportChartSVG, copyChartPNG, renderComparisonChart,
 };
 
