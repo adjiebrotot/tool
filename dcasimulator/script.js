@@ -58,6 +58,7 @@ let activeDetailSec = 0;
 let showDeposited = true;
 let showTechIndicators = false;
 let showBuyDates = false;
+let showAdvanced = false;       // Final Summary: reveal Sharpe/Sortino/Treynor/CAGR rows
 // Security-prices chart view state. Each scenario is an independent series;
 // by default only the first is visible (the rest can be toggled on). The chart
 // shows actual prices when one series is visible and normalises to 100 when two
@@ -165,6 +166,65 @@ const fmt = {
   num(v,d=0){ return Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); },
   date(d){ return d instanceof Date ? d.toISOString().slice(0,10) : d; },
 };
+
+/* ─── ADVANCED METRICS ───
+   Risk/return statistics shown in the Final Summary when "Advanced metrics" is on.
+   - Sharpe / Sortino use daily time-weighted (price) returns; the risk-free rate
+     is assumed to be 0 (this tool has no rf input).
+   - Treynor uses beta vs. the equal-weighted average of all simulated series
+     (a cross-sectional "market" proxy); a lone security has beta ≈ 1.
+   - CAGR (TWR) annualises the geometric price return (cash-flow neutral).
+   - CAGR (MWR) is the annualised IRR of actual deposits → final equity. */
+const TRADING_DAYS = 252;
+function dailyReturns(prices){
+  const r=[];
+  for(let i=1;i<prices.length;i++){ const p0=prices[i-1], p1=prices[i]; r.push(p0>0?p1/p0-1:0); }
+  return r;
+}
+function statMean(a){ return a.length ? a.reduce((s,x)=>s+x,0)/a.length : 0; }
+function statStdev(a){ if(a.length<2) return 0; const m=statMean(a); return Math.sqrt(a.reduce((s,x)=>s+(x-m)*(x-m),0)/(a.length-1)); }
+function downsideDev(a,mar=0){ if(!a.length) return 0; const d=a.map(x=>Math.min(0,x-mar)); return Math.sqrt(d.reduce((s,x)=>s+x*x,0)/a.length); }
+function covariance(a,b){ const n=Math.min(a.length,b.length); if(n<2) return 0; const ma=statMean(a.slice(0,n)),mb=statMean(b.slice(0,n)); let c=0; for(let i=0;i<n;i++) c+=(a[i]-ma)*(b[i]-mb); return c/(n-1); }
+// Annualised IRR (money-weighted return) of dated cash flows via bisection.
+// flows: [{date:Date, amount}] — negative = invested, positive = received.
+function xirr(flows){
+  if(flows.length<2) return null;
+  const t0=flows[0].date;
+  const yr=d=>(d-t0)/(365.25*86400000);
+  const npv=rate=>flows.reduce((s,f)=>s+f.amount/Math.pow(1+rate,yr(f.date)),0);
+  let lo=-0.9999, hi=10, flo=npv(lo), fhi=npv(hi);
+  if(!isFinite(flo)||!isFinite(fhi)||flo*fhi>0) return null;
+  for(let k=0;k<200;k++){
+    const mid=(lo+hi)/2, fm=npv(mid);
+    if(Math.abs(fm)<1e-7) return mid;
+    if(flo*fm<0){ hi=mid; } else { lo=mid; flo=fm; }
+  }
+  return (lo+hi)/2;
+}
+function computeMetrics(res, marketReturns){
+  const prices=res.dailyRows.map(r=>r.price);
+  const rets=dailyReturns(prices);
+  const rf=0; // no risk-free input in this tool
+  const exc=rets.map(r=>r-rf);
+  const sd=statStdev(rets), dd=downsideDev(rets,rf);
+  const sharpe = sd>0 ? statMean(exc)/sd*Math.sqrt(TRADING_DAYS) : null;
+  const sortino= dd>0 ? statMean(exc)/dd*Math.sqrt(TRADING_DAYS) : null;
+  const varMkt = Math.pow(statStdev(marketReturns),2);
+  const beta   = varMkt>0 ? covariance(rets,marketReturns)/varMkt : null;
+  const treynor= (beta!=null && Math.abs(beta)>1e-6) ? statMean(exc)*TRADING_DAYS/beta : null;
+  const days=res.dailyRows;
+  const years=(parseDate(days[days.length-1].date)-parseDate(days[0].date))/(365.25*86400000);
+  const growth=rets.reduce((g,r)=>g*(1+r),1);
+  const cagrTwr = (years>0 && growth>0) ? Math.pow(growth,1/years)-1 : null;
+  const flows=res.investRows.map(r=>({date:parseDate(r.date), amount:-r.amountInvested}));
+  if(flows.length && res.finalEquity>0) flows.push({date:parseDate(days[days.length-1].date), amount:res.finalEquity});
+  const cagrMwr = xirr(flows);
+  return {sharpe, sortino, treynor, cagrTwr, cagrMwr};
+}
+const fmtRatio  = v => (v==null||!isFinite(v)) ? '—' : v.toFixed(2);
+// Always treat the input as a fraction (avoids fmt.pct's fraction-or-percent
+// ambiguity, which would misread a CAGR/Treynor above 100%).
+const fmtMetPct = v => (v==null||!isFinite(v)) ? '—' : (v*100).toFixed(2)+'%';
 
 /* ─── DATE UTILS ─── */
 function parseDate(s){ const [y,m,d]=s.split('-'); return new Date(+y,+m-1,+d); }
@@ -1842,25 +1902,60 @@ $('showCandleToggle').addEventListener('change',e=>{
   if(simResults.length) updatePriceChart();
 });
 
+$('showAdvancedToggle').addEventListener('change',e=>{
+  showAdvanced=e.target.checked;
+  // Toggle visibility in place — metrics are already rendered in each tile.
+  document.querySelectorAll('#summaryGrid .adv-metrics').forEach(el=>{ el.style.display=showAdvanced?'grid':'none'; });
+});
+
+/* ─── FINAL SUMMARY GRID ───
+   One tile per scenario. Final value is shown in full (e.g. $49,241, not $49k)
+   so small differences between scenarios stay visible. Advanced risk/return
+   metrics are appended to each tile and revealed by the "Advanced metrics"
+   toggle. */
+function renderSummary(){
+  const sg=$('summaryGrid');
+  if(!sg) return;
+  sg.innerHTML='';
+  if(!simResults.length) return;
+
+  // Equal-weighted average of all securities' daily returns → "market" proxy
+  // used for beta (Treynor). Index-aligned, matching the milestone table.
+  const allRets=simResults.map(res=>dailyReturns(res.dailyRows.map(r=>r.price)));
+  const n=Math.min(...allRets.map(a=>a.length));
+  const marketReturns=[];
+  for(let i=0;i<n;i++) marketReturns.push(statMean(allRets.map(a=>a[i])));
+
+  const advStyle=`display:${showAdvanced?'grid':'none'}`;
+  simResults.forEach(res=>{
+    // Guard against a strategy that never invested in range (e.g. a technical
+    // trigger that never fired with End-of-Period off) → no division by zero.
+    const roi=res.totalDeposited>0?(res.finalEquity-res.totalDeposited)/res.totalDeposited:0;
+    const m=computeMetrics(res, marketReturns);
+    const metric=(label,val)=>`<div><span style="color:var(--muted)">${label}</span> <b>${val}</b></div>`;
+    sg.innerHTML+=`
+      <div class="tile" style="border-left:3px solid ${getSecColor(res.sec)}">
+        <div class="label">${res.sec.name}</div>
+        <div class="value">${fmt.currency(res.finalEquity)}</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:3px">ROI: ${fmt.pct(roi)} | Dep: ${fmt.currency(res.totalDeposited)}</div>
+        <div style="font-size:.75rem;color:var(--muted)">Trades: ${res.investRows.length}</div>
+        <div class="adv-metrics" style="${advStyle}">
+          ${metric('Sharpe', fmtRatio(m.sharpe))}
+          ${metric('Sortino', fmtRatio(m.sortino))}
+          ${metric('Treynor', fmtMetPct(m.treynor))}
+          ${metric('CAGR (TWR)', fmtMetPct(m.cagrTwr))}
+          ${metric('CAGR (MWR)', fmtMetPct(m.cagrMwr))}
+        </div>
+      </div>`;
+  });
+}
+
 /* ─── TABLES ─── */
 function updateTables(){
   if(!simResults.length) return;
 
   // Summary grid
-  const sg=$('summaryGrid');
-  sg.innerHTML='';
-  simResults.forEach(res=>{
-    // Guard against a strategy that never invested in range (e.g. a technical
-    // trigger that never fired with End-of-Period off) → no division by zero.
-    const roi=res.totalDeposited>0?(res.finalEquity-res.totalDeposited)/res.totalDeposited:0;
-    sg.innerHTML+=`
-      <div class="tile" style="border-left:3px solid ${getSecColor(res.sec)}">
-        <div class="label">${res.sec.name}</div>
-        <div class="value">${fmt.currency(res.finalEquity,true)}</div>
-        <div style="font-size:.75rem;color:var(--muted);margin-top:3px">ROI: ${fmt.pct(roi)} | Dep: ${fmt.currency(res.totalDeposited,true)}</div>
-        <div style="font-size:.75rem;color:var(--muted)">Trades: ${res.investRows.length}</div>
-      </div>`;
-  });
+  renderSummary();
 
   // Milestone table
   const allDates=simResults[0].dailyRows.map(r=>r.date);

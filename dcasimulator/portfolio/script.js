@@ -39,6 +39,7 @@ let valueChart = null, compChart = null;
 let currentCurrencySymbol = '$';
 let currentRandomSeed = DEFAULT_RANDOM_SEED;
 let showTopups = true;
+let showAdvanced = false;        // Final Summary: reveal Sharpe/Sortino/Treynor/CAGR rows
 let compViewMode = 'dollar';     // 'dollar' = absolute value · 'percent' = % of portfolio
 let activeCompChartId = null;    // which portfolio the Composition Over Time chart shows
 let activeCompTableId = null;    // which portfolio the Composition Table shows
@@ -81,6 +82,87 @@ const fmt = {
   pct(v,d=2){ const n=Number(v||0); return (Math.abs(n)<=1?n*100:n).toFixed(d)+'%'; },
   num(v,d=0){ return Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); },
 };
+
+/* ─── ADVANCED METRICS ───
+   Risk/return statistics shown in the Final Summary when "Advanced metrics" is on.
+   - Daily portfolio returns are time-weighted: each day's top-up is removed so the
+     return reflects market performance, not the timing of contributions.
+   - Sharpe / Sortino use each portfolio's own risk-free rate (fixed rate or rf
+     ticker) as the daily excess-return baseline.
+   - Treynor uses beta vs. the equal-weighted average of all portfolios' returns
+     (a cross-sectional "market" proxy); a lone portfolio has beta ≈ 1.
+   - CAGR (TWR) annualises the geometric time-weighted return.
+   - CAGR (MWR) is the annualised IRR of actual top-ups → final value. */
+const TRADING_DAYS = 252;
+function statMean(a){ return a.length ? a.reduce((s,x)=>s+x,0)/a.length : 0; }
+function statStdev(a){ if(a.length<2) return 0; const m=statMean(a); return Math.sqrt(a.reduce((s,x)=>s+(x-m)*(x-m),0)/(a.length-1)); }
+function downsideDev(a,mar=0){ if(!a.length) return 0; const d=a.map(x=>Math.min(0,x-mar)); return Math.sqrt(d.reduce((s,x)=>s+x*x,0)/a.length); }
+function covariance(a,b){ const n=Math.min(a.length,b.length); if(n<2) return 0; const ma=statMean(a.slice(0,n)),mb=statMean(b.slice(0,n)); let c=0; for(let i=0;i<n;i++) c+=(a[i]-ma)*(b[i]-mb); return c/(n-1); }
+// Annualised IRR (money-weighted return) of dated cash flows via bisection.
+// flows: [{date:Date, amount}] — negative = invested, positive = received.
+function xirr(flows){
+  if(flows.length<2) return null;
+  const t0=flows[0].date;
+  const yr=d=>(d-t0)/(365.25*86400000);
+  const npv=rate=>flows.reduce((s,f)=>s+f.amount/Math.pow(1+rate,yr(f.date)),0);
+  let lo=-0.9999, hi=10, flo=npv(lo), fhi=npv(hi);
+  if(!isFinite(flo)||!isFinite(fhi)||flo*fhi>0) return null;
+  for(let k=0;k<200;k++){
+    const mid=(lo+hi)/2, fm=npv(mid);
+    if(Math.abs(fm)<1e-7) return mid;
+    if(flo*fm<0){ hi=mid; } else { lo=mid; flo=fm; }
+  }
+  return (lo+hi)/2;
+}
+// Daily time-weighted returns of a portfolio, removing each day's top-up.
+function portfolioReturns(rows){
+  const r=[];
+  for(let i=1;i<rows.length;i++){
+    const prev=rows[i-1].total;
+    const flow=rows[i].cumTopup-rows[i-1].cumTopup; // contribution added this day
+    r.push(prev>0 ? (rows[i].total-flow)/prev-1 : 0);
+  }
+  return r;
+}
+// Daily risk-free returns for a portfolio (rf ticker series or fixed annual rate).
+function rfReturns(res, len){
+  if(res.rfPx){
+    const r=[];
+    for(let i=1;i<res.rfPx.length;i++){ const p0=res.rfPx[i-1],p1=res.rfPx[i]; r.push(p0>0?p1/p0-1:0); }
+    return r;
+  }
+  const d=Math.pow(1+(res.rfRate||0)/100, 1/TRADING_DAYS)-1;
+  return new Array(len).fill(d);
+}
+function computeMetrics(res, marketReturns){
+  const rows=res.rows;
+  const rets=portfolioReturns(rows);
+  const rf=rfReturns(res, rets.length);
+  const exc=rets.map((r,i)=>r-(rf[i]||0));
+  const sd=statStdev(rets), dd=downsideDev(exc,0);
+  const sharpe = sd>0 ? statMean(exc)/sd*Math.sqrt(TRADING_DAYS) : null;
+  const sortino= dd>0 ? statMean(exc)/dd*Math.sqrt(TRADING_DAYS) : null;
+  const varMkt = Math.pow(statStdev(marketReturns),2);
+  const beta   = varMkt>0 ? covariance(rets,marketReturns)/varMkt : null;
+  const treynor= (beta!=null && Math.abs(beta)>1e-6) ? statMean(exc)*TRADING_DAYS/beta : null;
+  const years=(parseDate(rows[rows.length-1].date)-parseDate(rows[0].date))/(365.25*86400000);
+  const growth=rets.reduce((g,r)=>g*(1+r),1);
+  const cagrTwr = (years>0 && growth>0) ? Math.pow(growth,1/years)-1 : null;
+  // Money-weighted: each top-up is an outflow on its date, final value an inflow.
+  const flows=[];
+  for(let i=0;i<rows.length;i++){
+    const flow=rows[i].cumTopup-(i>0?rows[i-1].cumTopup:0);
+    if(flow>0) flows.push({date:parseDate(rows[i].date), amount:-flow});
+  }
+  const last=rows[rows.length-1];
+  if(flows.length && last.total>0) flows.push({date:parseDate(last.date), amount:last.total});
+  const cagrMwr = xirr(flows);
+  return {sharpe, sortino, treynor, cagrTwr, cagrMwr};
+}
+const fmtRatio  = v => (v==null||!isFinite(v)) ? '—' : v.toFixed(2);
+// Always treat the input as a fraction (avoids fmt.pct's fraction-or-percent
+// ambiguity, which would misread a CAGR/Treynor above 100%).
+const fmtMetPct = v => (v==null||!isFinite(v)) ? '—' : (v*100).toFixed(2)+'%';
 
 /* ─── DATE UTILS ─── */
 function parseDate(s){ const [y,m,d]=s.split('-'); return new Date(+y,+m-1,+d); }
@@ -966,7 +1048,7 @@ async function runSimulation(){
       let rfPx=null;
       if(p._rfData){ const m=new Map(); p._rfData.dates.forEach((d,i)=>m.set(d,p._rfData.prices[i])); rfPx=common.map(d=>m.get(d)); }
       const rows=simulatePortfolio(p, active, common, rfPx);
-      results.push({ id:p.id, name:p.name, colorHex:p.colorHex, rows, assets:active.map(a=>({id:a.id,name:a.name,colorHex:a.colorHex,weight:a.weight})) });
+      results.push({ id:p.id, name:p.name, colorHex:p.colorHex, rows, rfPx, rfRate:(p.rf.mode==='ticker'?0:(p.rf.rate||0)), assets:active.map(a=>({id:a.id,name:a.name,colorHex:a.colorHex,weight:a.weight})) });
       // reflect "loaded" badges for tickers in the active portfolio's asset list
       if(p.id===activePortfolioId){ active.forEach(a=>{ const el=$('aLoad'+a.id); if(el&&a.type==='ticker'){ el.className='status-bar status-ok'; el.textContent='✓ Loaded'; } }); }
     });
@@ -1096,7 +1178,10 @@ function updateCompChart(){
   compChart.update();
 }
 
-/* ─── SUMMARY TILES (one per portfolio, for comparison) ─── */
+/* ─── SUMMARY TILES (one per portfolio, for comparison) ───
+   Final value is shown in full (e.g. $49,241, not $49k) so small differences
+   between portfolios stay visible. Advanced risk/return metrics are appended to
+   each tile and revealed by the "Advanced metrics" toggle. */
 function updateSummary(){
   const sg=$('summaryGrid'); sg.innerHTML='';
   if(!simResults.length){ return; }
@@ -1104,17 +1189,34 @@ function updateSummary(){
   let bestId=null, bestVal=-Infinity;
   simResults.forEach(res=>{ const v=res.rows[res.rows.length-1].total; if(v>bestVal){ bestVal=v; bestId=res.id; } });
 
+  // Equal-weighted average of all portfolios' daily returns → "market" proxy
+  // used for beta (Treynor).
+  const allRets=simResults.map(res=>portfolioReturns(res.rows));
+  const n=Math.min(...allRets.map(a=>a.length));
+  const marketReturns=[];
+  for(let i=0;i<n;i++) marketReturns.push(statMean(allRets.map(a=>a[i])));
+
+  const advStyle=`display:${showAdvanced?'grid':'none'}`;
   simResults.forEach(res=>{
     const last=res.rows[res.rows.length-1];
     const gain=last.total-last.cumTopup;
     const roi=last.cumTopup>0?gain/last.cumTopup:0;
     const cashPct=last.total>0?last.cash/last.total:0;
     const isBest=res.id===bestId && simResults.length>1;
+    const m=computeMetrics(res, marketReturns);
+    const metric=(label,val)=>`<div><span style="color:var(--muted)">${label}</span> <b>${val}</b></div>`;
     sg.innerHTML+=`<div class="tile" style="border-left:3px solid ${res.colorHex}">
       <div class="label">${res.name}${isBest?' <span style="color:#22c55e;font-weight:700">★</span>':''}</div>
-      <div class="value">${fmt.currency(last.total,true)}</div>
-      <div style="font-size:.75rem;color:var(--muted);margin-top:3px">Net ${fmt.currency(gain,true)} · ROI ${fmt.pct(roi)}</div>
-      <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Topped up ${fmt.currency(last.cumTopup,true)} · Cash ${fmt.pct(cashPct)}</div>
+      <div class="value">${fmt.currency(last.total)}</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-top:3px">Net ${fmt.currency(gain)} · ROI ${fmt.pct(roi)}</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Topped up ${fmt.currency(last.cumTopup)} · Cash ${fmt.pct(cashPct)}</div>
+      <div class="adv-metrics" style="${advStyle}">
+        ${metric('Sharpe', fmtRatio(m.sharpe))}
+        ${metric('Sortino', fmtRatio(m.sortino))}
+        ${metric('Treynor', fmtMetPct(m.treynor))}
+        ${metric('CAGR (TWR)', fmtMetPct(m.cagrTwr))}
+        ${metric('CAGR (MWR)', fmtMetPct(m.cagrMwr))}
+      </div>
     </div>`;
   });
 }
@@ -1140,6 +1242,12 @@ function updateTable(){
 
 $('compChartPfSelect').addEventListener('change',e=>{ activeCompChartId=parseInt(e.target.value,10); updateCompChart(); });
 $('compTablePfSelect').addEventListener('change',e=>{ activeCompTableId=parseInt(e.target.value,10); updateTable(); });
+
+$('showAdvancedToggle').addEventListener('change',e=>{
+  showAdvanced=e.target.checked;
+  // Toggle visibility in place — metrics are already rendered in each tile.
+  document.querySelectorAll('#summaryGrid .adv-metrics').forEach(el=>{ el.style.display=showAdvanced?'grid':'none'; });
+});
 
 /* Composition chart view mode: dollar value vs % of portfolio */
 document.querySelectorAll('#compViewToggle .seg-btn').forEach(btn=>{
