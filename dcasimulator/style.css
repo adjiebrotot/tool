@@ -23,7 +23,7 @@ p,.muted{color:var(--muted);line-height:1.55}
 .ctrl-tab{flex:1 1 0;padding:12px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
 /* Inline SVG tab/pill icons — inherit the button's text colour via currentColor. */
-.tico{display:inline-block;width:1.05em;height:1.05em;vertical-align:-0.16em;flex-shrink:0}
+.tico{display:inline-block;width:1.35em;height:1.35em;vertical-align:-0.28em;flex-shrink:0}
 .ctrl-panel{display:none;padding:14px 16px 18px}
 .ctrl-panel.active{display:block}
 .slider-block{padding:10px 0 14px;border-top:1px solid var(--border)}
