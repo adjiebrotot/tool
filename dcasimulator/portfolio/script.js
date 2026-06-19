@@ -229,7 +229,8 @@ function renderPoolChips(){
   box.innerHTML=tks.map(tk=>{
     const e=priceCache[tk];
     const warn=(e && e.kind==='stock' && e.source==='stooq');
-    const title=warn?'Loaded from Stooq (unadjusted for splits/dividends)':(e?e.dates.length+' trading days':'');
+    const range=(e && e.dates && e.dates.length)?e.dates[0]+' to '+e.dates[e.dates.length-1]:'';
+    const title=warn?'Loaded from Stooq (unadjusted for splits/dividends)'+(range?' · '+range:''):range;
     return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}<button class="pool-chip-del" type="button" data-tk="${tk}" title="Remove ${tk}" aria-label="Remove ${tk}">×</button></span>`;
   }).join('');
   box.querySelectorAll('.pool-chip-del').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
@@ -277,10 +278,18 @@ function refreshAssetTickerSelect(){
 // Loading is additive and individual tickers are removed via the chip ✕, so the
 // input is never locked — it always stays open for adding the next batch.
 function setPoolLocked(_locked){
-  const inp=$('tickerPoolInput'), loadBtn=$('loadTickersBtn'), editBtn=$('editTickersBtn');
+  const inp=$('tickerPoolInput'), editBtn=$('editTickersBtn');
   if(inp) inp.disabled=false;
-  if(loadBtn) loadBtn.style.display='';
   if(editBtn) editBtn.style.display='none';
+  updateBtnRow();
+}
+// On the Data tab the bottom action becomes "Load tickers" (it consumes the Date
+// Range below and you can't simulate from here anyway); other tabs show Simulate/Reset.
+function updateBtnRow(){
+  const t=document.querySelector('.ctrl-tab.active');
+  const dataTab=t?t.dataset.tab==='data':true;
+  ['simBtn','resetBtn'].forEach(id=>{ const b=$(id); if(b) b.style.display=dataTab?'none':''; });
+  const lb=$('loadTickersBtn'); if(lb) lb.style.display=dataTab?'':'none';
 }
 
 // Parse the textarea and fetch every NOT-yet-cached ticker, downloading only the
@@ -359,10 +368,10 @@ function makePortfolio(name, colorHex){
     colorHex: colorHex||PORTFOLIO_COLOR_HEX[portfolios.length % PORTFOLIO_COLOR_HEX.length],
     assets:[], assetIdCounter:0,
     topup:{ amount:5000, yearlyIncrease:0 },
-    topupSched:{ period:'monthly', weekdays:[1], daysOfMonth:[1], dayOfMonth:1, month:1 },
+    topupSched:{ period:'monthly', weekdays:[1], weekParity:0, daysOfMonth:[1], dayOfMonth:1, quarterStart:1, month:1 },
     rf:{ mode:'rate', rate:0, ticker:'' },
     rebal:{ method:'towards-weight', cwTiming:'at-topup', buyFee:0.1, sellFee:0.1 },
-    rebalSched:{ period:'quarterly', weekdays:[1], daysOfMonth:[1], dayOfMonth:1, month:1 }
+    rebalSched:{ period:'quarterly', weekdays:[1], weekParity:0, daysOfMonth:[1], dayOfMonth:1, quarterStart:1, month:1 }
   };
 }
 function getActive(){ return portfolios.find(p=>p.id===activePortfolioId)||null; }
@@ -639,17 +648,32 @@ function renderScheduleBox(boxId, hintId, sched){
   const box=$(boxId), hint=$(hintId); if(!box||!hint) return;
   const p=sched.period;
   if(p==='weekly'||p==='fortnightly'){
-    box.innerHTML='<div class="weekday-grid">'+WEEKDAYS.map((w,i)=>{
+    let html='<div class="weekday-grid">'+WEEKDAYS.map((w,i)=>{
       const v=i+1, on=sched.weekdays.includes(v);
       return `<div class="weekday-chip${on?' active':''}" data-wd="${v}">${w}</div>`;
     }).join('')+'</div>';
-    box.querySelectorAll('.weekday-chip').forEach(chip=>{
+    if(p==='fortnightly'){
+      if(sched.weekParity!==0&&sched.weekParity!==1) sched.weekParity=0;
+      html+=`<div class="sched-inline" style="margin-top:8px"><label>Week</label>
+        <div class="weekday-grid" style="display:inline-flex">
+          <div class="weekday-chip${sched.weekParity===0?' active':''}" data-wp="0">First week</div>
+          <div class="weekday-chip${sched.weekParity===1?' active':''}" data-wp="1">Second week</div>
+        </div></div>`;
+    }
+    box.innerHTML=html;
+    box.querySelectorAll('.weekday-chip[data-wd]').forEach(chip=>{
       chip.addEventListener('click',()=>{
         const v=+chip.dataset.wd;
         const idx=sched.weekdays.indexOf(v);
         if(idx>=0){ if(sched.weekdays.length>1) sched.weekdays.splice(idx,1); }
         else sched.weekdays.push(v);
         chip.classList.toggle('active', sched.weekdays.includes(v));
+      });
+    });
+    box.querySelectorAll('.weekday-chip[data-wp]').forEach(chip=>{
+      chip.addEventListener('click',()=>{
+        sched.weekParity=+chip.dataset.wp;
+        box.querySelectorAll('.weekday-chip[data-wp]').forEach(c=>c.classList.toggle('active',+c.dataset.wp===sched.weekParity));
       });
     });
     hint.textContent=p==='weekly'?'Top-up on each selected weekday, every week.':'Top-up on each selected weekday, every second week.';
@@ -661,9 +685,18 @@ function renderScheduleBox(boxId, hintId, sched){
     });
     hint.textContent='Top-up on the closest trading day to each listed day, every month.';
   } else if(p==='quarterly'){
-    box.innerHTML=`<div class="sched-inline"><label>Day of month</label><input class="num-input" id="${boxId}_dom" type="number" min="1" max="31" value="${sched.dayOfMonth}"/></div>`;
+    if(![1,2,3].includes(sched.quarterStart)) sched.quarterStart=1;
+    const qOpts=[
+      {v:1,label:'Jan, Apr, Jul, Oct'},
+      {v:2,label:'Feb, May, Aug, Nov'},
+      {v:3,label:'Mar, Jun, Sep, Dec'}
+    ];
+    box.innerHTML=`<div class="sched-inline"><label>Months</label>
+      <select class="num-input" id="${boxId}_qs" style="max-width:160px">${qOpts.map(o=>`<option value="${o.v}" ${sched.quarterStart===o.v?'selected':''}>${o.label}</option>`).join('')}</select></div>
+      <div class="sched-inline" style="margin-top:6px"><label>Day of month</label><input class="num-input" id="${boxId}_dom" type="number" min="1" max="31" value="${sched.dayOfMonth}"/></div>`;
+    $(boxId+'_qs').addEventListener('change',e=>{ sched.quarterStart=parseInt(e.target.value,10)||1; renderScheduleBox(boxId,hintId,sched); });
     $(boxId+'_dom').addEventListener('input',e=>{ sched.dayOfMonth=Math.min(31,Math.max(1,parseInt(e.target.value,10)||1)); });
-    hint.textContent='Top-up on that day in January, April, July and October.';
+    hint.textContent='Top-up on that day in '+qOpts.find(o=>o.v===sched.quarterStart).label.replace(/,([^,]*)$/,' and$1')+'.';
   } else if(p==='yearly'){
     box.innerHTML=`<div class="sched-inline">
       <label>Month</label>
@@ -739,8 +772,9 @@ function getScheduleIndices(dates, sched){
     const groups=new Map();
     dates.forEach((d,i)=>{ const k=weekKey(d); if(!groups.has(k))groups.set(k,[]); groups.get(k).push(i); });
     const wds=(sched.weekdays&&sched.weekdays.length)?sched.weekdays:[1];
+    const parity=(sched.weekParity===1)?1:0;
     [...groups.values()].forEach((idxs,gi)=>{
-      if(p==='fortnightly' && gi%2!==0) return;
+      if(p==='fortnightly' && gi%2!==parity) return;
       wds.forEach(wd=>res.add(closestByDow(idxs,dates,wd)));
     });
   } else if(p==='monthly'){
@@ -751,7 +785,8 @@ function getScheduleIndices(dates, sched){
   } else if(p==='quarterly'){
     const months=new Map();
     dates.forEach((d,i)=>{ const ym=d.slice(0,7); if(!months.has(ym))months.set(ym,[]); months.get(ym).push(i); });
-    months.forEach((idxs,ym)=>{ const m=parseInt(ym.slice(5,7),10); if(m===1||m===4||m===7||m===10) res.add(closestByDom(idxs,dates,sched.dayOfMonth||1)); });
+    const qStart=[1,2,3].includes(sched.quarterStart)?sched.quarterStart:1;
+    months.forEach((idxs,ym)=>{ const m=parseInt(ym.slice(5,7),10); if(((m-1)%3)+1===qStart) res.add(closestByDom(idxs,dates,sched.dayOfMonth||1)); });
   } else if(p==='yearly'){
     const years=new Map();
     dates.forEach((d,i)=>{ const y=d.slice(0,4); if(!years.has(y))years.set(y,[]); years.get(y).push(i); });
@@ -1224,6 +1259,7 @@ function switchTab(name){
   document.querySelectorAll('.ctrl-tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
   document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));
   const panel=$('tab-'+name); if(panel) panel.classList.add('active');
+  updateBtnRow();
 }
 document.querySelectorAll('.ctrl-tab').forEach(btn=>{
   btn.addEventListener('click',()=>switchTab(btn.dataset.tab));
@@ -1372,6 +1408,7 @@ initDefaults();
 loadControlsFromActive();
 renderPortfolioList();
 renderPfSelectors();
+updateBtnRow();
 runSimulation();
 
 })();
