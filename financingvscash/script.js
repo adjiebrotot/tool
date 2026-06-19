@@ -544,6 +544,15 @@ $('resetBtn').addEventListener('click',()=>{
   renderScenarioList();rerender();
 });
 
+/* Strip emoji and convert typographic dashes/minus/delta to plain ASCII so the
+   downloaded CSV is clean simple text (no "â€”" / "Î”" / "âˆ’" mojibake). */
+function cleanCSV(text){
+  return String(text||'')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu, '')
+    .replace(/[‒–—―−]/g, '-')
+    .replace(/Δ/g, 'd');
+}
+
 $('downloadBtn').addEventListener('click',()=>{
   const table=$('amortTableWrap').querySelector('table');
   if(!table)return;
@@ -552,7 +561,7 @@ $('downloadBtn').addEventListener('click',()=>{
     [...tr.querySelectorAll('th,td')].map(cell=>esc(cell.textContent.trim())).join(',')
   );
   if(!rows.length)return;
-  const csv='# Made using tool.adjiebrotots.com/financingvscash\n'+rows.join('\n');
+  const csv=cleanCSV('# Made using tool.adjiebrotots.com/financingvscash\n'+rows.join('\n'));
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');

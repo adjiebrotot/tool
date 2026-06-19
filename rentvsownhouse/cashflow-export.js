@@ -111,9 +111,19 @@ function rtbCashflowCSV(rows){
   return CSV_PREFIX + [headers.join(','), ...lines].join('\n');
 }
 
+/* Normalise CSV text to plain ASCII-friendly output: drop emoji/pictographs and
+   convert typographic dashes, the minus sign and the delta glyph to plain
+   characters, so spreadsheets never render mojibake like "â€”" / "Î”" / "âˆ’". */
+function cleanCSV(text){
+  return String(text||'')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu, '')
+    .replace(/[‒–—―−]/g, '-')
+    .replace(/Δ/g, 'd');
+}
+
 function downloadCSV(filename, csvText){
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csvText], {type:'text/csv;charset=utf-8;'}));
+  a.href = URL.createObjectURL(new Blob([cleanCSV(csvText)], {type:'text/csv;charset=utf-8;'}));
   a.download = filename;
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(a.href);
@@ -362,7 +372,7 @@ function renderComparisonChart(canvas, opts){
 }
 
 global.RVOExport = {
-  ownCashflowCSV, rentCashflowCSV, rtbCashflowCSV, downloadCSV,
+  ownCashflowCSV, rentCashflowCSV, rtbCashflowCSV, downloadCSV, cleanCSV,
   exportChartPNG, exportChartSVG, copyChartPNG, renderComparisonChart,
 };
 

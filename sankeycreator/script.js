@@ -740,6 +740,15 @@ Sign Up,Dropped,remaining,`;
   URL.revokeObjectURL(a.href);
 });
 
+/* Strip emoji and convert typographic dashes/minus/delta to plain ASCII so the
+   downloaded CSV is clean simple text (no "â€”" / "Î”" / "âˆ’" mojibake). */
+function cleanCSV(text){
+  return String(text||'')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu, '')
+    .replace(/[‒–—―−]/g, '-')
+    .replace(/Δ/g, 'd');
+}
+
 // ─── Download current work as CSV ───
 $('downloadCsvBtn').addEventListener('click',()=>{
   const header = 'source,target,value,color';
@@ -749,7 +758,7 @@ $('downloadCsvBtn').addEventListener('click',()=>{
     const esc = v => (v+'').includes(',') ? `"${v}"` : v;
     return [esc(r.source), esc(r.target), esc(r.value), color].join(',');
   }).join('\n');
-  const csv = '# Made using tool.adjiebrotots.com/sankeycreator\n' + header + '\n' + dataRows;
+  const csv = cleanCSV('# Made using tool.adjiebrotots.com/sankeycreator\n' + header + '\n' + dataRows);
   const blob = new Blob([csv], {type:'text/csv'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
