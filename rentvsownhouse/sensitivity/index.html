@@ -173,7 +173,12 @@
     <input type="number" class="year-input" id="yearInput" min="1" max="60" value="30"/>
     <span class="year-hint" data-i18n="yearHint">(clamped to each scenario's horizon)</span>
   </div>
-  <button class="btn-theme" id="downloadCSVBtn" style="margin-left:auto;" data-i18n="btnCSV">⬇ CSV</button>
+  <div class="ctrl-row csv-actions">
+    <input type="file" id="csvFileInput" accept=".csv,text/csv" hidden/>
+    <button class="btn-theme" id="uploadCSVBtn" data-i18n="btnUploadCSV" title="Upload a sensitivity CSV to rebuild the scenarios">⬆ CSV</button>
+    <button class="btn-theme" id="downloadCSVBtn" data-i18n="btnCSV">⬇ CSV</button>
+    <button class="btn-theme" id="compareAllBtn" title="Compare all scenarios in one chart"><span class="ricon ricon-chart2" aria-hidden="true"></span><span data-i18n="btnCompareAll">Compare</span></button>
+  </div>
 </div>
 
 <!-- SENSITIVITY TABLE -->

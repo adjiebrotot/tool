@@ -12,9 +12,9 @@ const LANG = {
     /* sidebar */
     quickStartLabel: '⚡ Quick Start',
     quickStartTip: 'Prefill with quick assumption, assuming median price for two-bedroom apartment in the city centre or inner suburbs',
-    tabGeneral: '🌐 General',
-    tabOwn: '🏡 Own',
-    tabRent: '🏢 Rent',
+    tabGeneral: 'General',
+    tabOwn: 'Own',
+    tabRent: 'Rent',
     sectionCash: 'Cash',
     labelRiskFreeRate: 'Risk-Free Rate',
     unitPctPa: '% p.a.',
@@ -115,15 +115,15 @@ const LANG = {
     btnZoom: '⟳',
     chartHoverHint: 'Hover over the chart to inspect a year.',
     /* summary */
-    ownSnapshotTitle: '🏡 Own — Snapshot',
+    ownSnapshotTitle: 'Own — Snapshot',
     ownSnapshotTip: 'Summary of the Buy scenario at the final year of the time horizon.',
-    rentSnapshotTitle: '🏢 Rent — Snapshot',
+    rentSnapshotTitle: 'Rent — Snapshot',
     rentSnapshotTip: 'Summary of the pure Rent scenario at the final year of the time horizon.',
     rtbSnapshotTitle: '🔄 Rent-Then-Buy — Snapshot',
     rtbSnapshotTip: 'Summary of the Rent-Then-Buy scenario. Before the buy year, cashflows match the rent scenario. At the buy year, accumulated savings fund the down payment on the then-market-price property, and a new mortgage begins.',
     /* detail tabs */
-    tabOwnCashflow: '🏡 Own Cashflow',
-    tabRentCashflow: '🏢 Rent Cashflow',
+    tabOwnCashflow: 'Own Cashflow',
+    tabRentCashflow: 'Rent Cashflow',
     tabRTBCashflow: '🔄 Rent-Then-Buy Cashflow',
     btnCSV: '⬇ CSV',
     /* chart series */
@@ -180,9 +180,9 @@ const LANG = {
     tileYearlyRent: 'Yearly Rent',
     tilePropPriceAtBuy: 'Property Price at Buy',
     /* phase labels */
-    phaseRenting: '🏢 Renting',
+    phaseRenting: 'Renting',
     phaseBought: '🔄 Bought',
-    phaseOwning: '🏡 Owning',
+    phaseOwning: 'Owning',
     /* chart tooltip */
     chartTooltipYear: 'Year ',
   },
@@ -194,9 +194,9 @@ const LANG = {
     /* sidebar */
     quickStartLabel: '⚡ Mulai Cepat',
     quickStartTip: 'Isi otomatis dengan asumsi cepat berdasarkan harga median apartemen 2 kamar di pusat kota atau pinggiran kota',
-    tabGeneral: '🌐 Umum',
-    tabOwn: '🏡 Beli',
-    tabRent: '🏢 Sewa',
+    tabGeneral: 'Umum',
+    tabOwn: 'Beli',
+    tabRent: 'Sewa',
     sectionCash: 'Kas',
     labelRiskFreeRate: 'Suku Bunga Bebas Risiko',
     unitPctPa: '%/tahun',
@@ -297,15 +297,15 @@ const LANG = {
     btnZoom: '⟳',
     chartHoverHint: 'Arahkan kursor ke grafik untuk melihat detail per tahun.',
     /* summary */
-    ownSnapshotTitle: '🏡 Beli — Ringkasan',
+    ownSnapshotTitle: 'Beli — Ringkasan',
     ownSnapshotTip: 'Ringkasan skenario Beli pada tahun terakhir jangka waktu.',
-    rentSnapshotTitle: '🏢 Sewa — Ringkasan',
+    rentSnapshotTitle: 'Sewa — Ringkasan',
     rentSnapshotTip: 'Ringkasan skenario Sewa murni pada tahun terakhir jangka waktu.',
     rtbSnapshotTitle: '🔄 Sewa Dulu, Beli Kemudian — Ringkasan',
     rtbSnapshotTip: 'Ringkasan skenario Sewa Dulu, Beli Kemudian. Sebelum tahun pembelian, arus kas sama dengan skenario sewa. Pada tahun pembelian, tabungan terkumpul digunakan sebagai Uang Muka (DP) pada harga properti saat itu, dan KPR baru dimulai.',
     /* detail tabs */
-    tabOwnCashflow: '🏡 Arus Kas Beli',
-    tabRentCashflow: '🏢 Arus Kas Sewa',
+    tabOwnCashflow: 'Arus Kas Beli',
+    tabRentCashflow: 'Arus Kas Sewa',
     tabRTBCashflow: '🔄 Arus Kas Sewa Dulu, Beli Kemudian',
     btnCSV: '⬇ CSV',
     /* chart series */
@@ -362,9 +362,9 @@ const LANG = {
     tileYearlyRent: 'Sewa Tahunan',
     tilePropPriceAtBuy: 'Harga Properti Saat Beli',
     /* phase labels */
-    phaseRenting: '🏢 Menyewa',
+    phaseRenting: 'Menyewa',
     phaseBought: '🔄 Baru Dibeli',
-    phaseOwning: '🏡 Memiliki',
+    phaseOwning: 'Memiliki',
     /* chart tooltip */
     chartTooltipYear: 'Tahun ',
   },
@@ -387,7 +387,7 @@ function applyLang(){
   if(sensDiv) sensDiv.innerHTML = T('sensitivityHtml');
   /* KPI label spans contain tip-icon child — rebuild carefully */
   ['kpiInitialCashLabel','kpiBudgetLabel','kpiBreakevenLabel','kpiDiffLabel',
-   'ownSnapshotTitle','rentSnapshotTitle','rtbSnapshotTitle'].forEach(key=>{
+   'rtbSnapshotTitle'].forEach(key=>{
     const el = document.querySelector('[data-i18n="'+key+'"]');
     if(!el) return;
     const tipSpan = el.querySelector('.tip-icon');
@@ -1889,7 +1889,7 @@ function updateDetailTable(rows, rtbRows){
     </thead><tbody>`;
     rtbRows.forEach(r=>{
       const y0 = r.year===0;
-      const phaseLabel = r.phase==='rent'?T('phaseRenting'): r.phase==='buy-transition'?T('phaseBought'):T('phaseOwning');
+      const phaseLabel = r.phase==='rent'?`<span class="ricon ricon-rent" aria-hidden="true"></span>${T('phaseRenting')}`: r.phase==='buy-transition'?T('phaseBought'):`<span class="ricon ricon-own" aria-hidden="true"></span>${T('phaseOwning')}`;
       const isOwning = r.phase!=='rent';
       const cash = r.phase==='rent' ? r.rtbCash||0 : r.rtbCash2||0;
       // Total expense = principal + interest + ongoing (for both renting and owning)

@@ -323,6 +323,7 @@ function renderComparisonChart(canvas, opts){
     borderColor: s.color,
     backgroundColor: s.color + '22',
     borderWidth: 2.5,
+    borderDash: (s.dash && s.dash.length) ? s.dash : undefined,
     pointRadius: 0,
     pointHoverRadius: 6,
     tension: 0.3,

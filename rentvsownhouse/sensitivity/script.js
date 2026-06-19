@@ -15,6 +15,14 @@ const LANG_SENS = {
     labelAtYear: 'At Year:',
     yearHint: "(clamped to each scenario's horizon)",
     btnCSV: '⬇ CSV',
+    btnUploadCSV: '⬆ CSV',
+    btnCompareAll: 'Compare',
+    csvParseError: 'Could not read this CSV. Make sure it is a sensitivity CSV exported from this tool.',
+    gcTitle: 'All Scenarios',
+    gcScenariosLabel: 'Scenarios:',
+    gcLineHint: 'Solid = Own · Dotted = Rent',
+    gcShowOwn: 'Own',
+    gcShowRent: 'Rent',
     metricNetEquity: 'Net Equity',
     metricLiquidCash: 'Liquid Cash',
     metricAccumCost: 'Accum. Cost',
@@ -23,8 +31,8 @@ const LANG_SENS = {
     btnAddScenario: '+ Scenario',
     scenPlaceholder: 'Scenario',
     cappedAt: (n) => `capped at yr ${n}`,
-    ownOutputLabel: (ml) => `🏠 Own — ${ml}`,
-    rentOutputLabel: (ml) => `🏢 Rent — ${ml}`,
+    ownOutputLabel: (ml) => `Own — ${ml}`,
+    rentOutputLabel: (ml) => `Rent — ${ml}`,
     deltaLabel: 'Δ Own − Rent',
     actionsLabel: 'Per-scenario',
     dlOwnTitle: 'Download Own cashflow (CSV)',
@@ -38,9 +46,9 @@ const LANG_SENS = {
     boolEnabled: 'Enabled',
     dupTitle: 'Duplicate',
     removeTitle: 'Remove',
-    sepGeneral: '🌐 General',
-    sepOwn: '🏡 Own — Property & Mortgage',
-    sepRent: '🏢 Rent — Rental Payments & Costs',
+    sepGeneral: 'General',
+    sepOwn: 'Own — Property & Mortgage',
+    sepRent: 'Rent — Rental Payments & Costs',
     pHorizon: 'Horizon',
     pRiskFreeRate: 'Risk-Free Rate',
     pInitialCash: 'Initial Cash',
@@ -115,6 +123,14 @@ const LANG_SENS = {
     labelAtYear: 'Pada Tahun:',
     yearHint: '(dibatasi oleh jangka waktu masing-masing skenario)',
     btnCSV: '⬇ CSV',
+    btnUploadCSV: '⬆ CSV',
+    btnCompareAll: 'Bandingkan',
+    csvParseError: 'Tidak dapat membaca CSV ini. Pastikan file adalah CSV sensitivitas yang diekspor dari alat ini.',
+    gcTitle: 'Semua Skenario',
+    gcScenariosLabel: 'Skenario:',
+    gcLineHint: 'Garis penuh = Beli · Garis putus = Sewa',
+    gcShowOwn: 'Beli',
+    gcShowRent: 'Sewa',
     metricNetEquity: 'Kekayaan Bersih',
     metricLiquidCash: 'Uang Tunai',
     metricAccumCost: 'Biaya Kumulatif',
@@ -123,8 +139,8 @@ const LANG_SENS = {
     btnAddScenario: '+ Skenario',
     scenPlaceholder: 'Skenario',
     cappedAt: (n) => `dipotong di thn ${n}`,
-    ownOutputLabel: (ml) => `🏠 Beli — ${ml}`,
-    rentOutputLabel: (ml) => `🏢 Sewa — ${ml}`,
+    ownOutputLabel: (ml) => `Beli — ${ml}`,
+    rentOutputLabel: (ml) => `Sewa — ${ml}`,
     deltaLabel: 'Δ Beli − Sewa',
     actionsLabel: 'Per-skenario',
     dlOwnTitle: 'Unduh arus kas Beli (CSV)',
@@ -138,9 +154,9 @@ const LANG_SENS = {
     boolEnabled: 'Aktif',
     dupTitle: 'Duplikat',
     removeTitle: 'Hapus',
-    sepGeneral: '🌐 Umum',
-    sepOwn: '🏡 Beli — Properti & KPR',
-    sepRent: '🏢 Sewa — Pembayaran & Biaya',
+    sepGeneral: 'Umum',
+    sepOwn: 'Beli — Properti & KPR',
+    sepRent: 'Sewa — Pembayaran & Biaya',
     pHorizon: 'Jangka Waktu',
     pRiskFreeRate: 'Suku Bunga Bebas Risiko',
     pInitialCash: 'Modal Awal',
@@ -835,7 +851,9 @@ function buildTableHTML(){
   let bodyHtml = '';
   renderRows.forEach((r,ri)=>{
     if(r.type==='sep'){
-      bodyHtml += `<tr class="group-sep-tr"><td colspan="${colCount}">${T(r.sepKey)}</td></tr>`;
+      const sepIcon = {sepGeneral:'general', sepOwn:'own', sepRent:'rent'}[r.sepKey];
+      const icnHtml = sepIcon ? `<span class="ricon ricon-${sepIcon}" aria-hidden="true"></span>` : '';
+      bodyHtml += `<tr class="group-sep-tr"><td colspan="${colCount}">${icnHtml}${T(r.sepKey)}</td></tr>`;
       return;
     }
     const prevR = renderRows[ri-1], nextR = renderRows[ri+1];
@@ -915,9 +933,9 @@ function buildTableHTML(){
 
   const actionTds = scenarios.map((_,i)=>`<td class="scen-td action-td">
       <div class="scen-actions">
-        <button class="btn-scen-action dl-own" data-si="${i}" title="${escAttr(T('dlOwnTitle'))}">⬇<span class="logo-own">🏠</span></button>
-        <button class="btn-scen-action dl-rent" data-si="${i}" title="${escAttr(T('dlRentTitle'))}">⬇<span class="logo-rent">🏢</span></button>
-        <button class="btn-scen-action show-chart" data-si="${i}" title="${escAttr(T('chartBtnTitle'))}">📈</button>
+        <button class="btn-scen-action dl-own" data-si="${i}" title="${escAttr(T('dlOwnTitle'))}">⬇<span class="ricon ricon-own" aria-hidden="true"></span></button>
+        <button class="btn-scen-action dl-rent" data-si="${i}" title="${escAttr(T('dlRentTitle'))}">⬇<span class="ricon ricon-rent" aria-hidden="true"></span></button>
+        <button class="btn-scen-action show-chart" data-si="${i}" title="${escAttr(T('chartBtnTitle'))}"><span class="ricon ricon-chart" aria-hidden="true"></span></button>
       </div>
     </td>`).join('');
 
@@ -927,8 +945,8 @@ function buildTableHTML(){
   </tr></thead><tbody>
     ${bodyHtml}
     <tr class="sep-tr"><td colspan="${colCount}"></td></tr>
-    <tr class="out-own"><td class="label-td">${T('ownOutputLabel')(ml)}</td><td class="unit-td"></td>${ownTds}${emptyTd}</tr>
-    <tr class="out-rent"><td class="label-td">${T('rentOutputLabel')(ml)}</td><td class="unit-td"></td>${rentTds}${emptyTd}</tr>
+    <tr class="out-own"><td class="label-td"><span class="ricon ricon-own" aria-hidden="true"></span><span class="out-lbl-text">${T('ownOutputLabel')(ml)}</span></td><td class="unit-td"></td>${ownTds}${emptyTd}</tr>
+    <tr class="out-rent"><td class="label-td"><span class="ricon ricon-rent" aria-hidden="true"></span><span class="out-lbl-text">${T('rentOutputLabel')(ml)}</span></td><td class="unit-td"></td>${rentTds}${emptyTd}</tr>
     <tr class="out-delta"><td class="label-td">${T('deltaLabel')}</td><td class="unit-td"></td>${deltaTds}${emptyTd}</tr>
     <tr class="out-actions"><td class="label-td">${T('actionsLabel')}</td><td class="unit-td"></td>${actionTds}${emptyTd}</tr>
   </tbody></table>`;
@@ -939,8 +957,8 @@ function rerenderOutputOnly(){
   const wrap = document.getElementById('tableWrap');
   if(!wrap) return;
   const ml = metricLabel();
-  const ol = wrap.querySelector('tr.out-own .label-td');   if(ol) ol.textContent = T('ownOutputLabel')(ml);
-  const rl = wrap.querySelector('tr.out-rent .label-td');  if(rl) rl.textContent = T('rentOutputLabel')(ml);
+  const ol = wrap.querySelector('tr.out-own .label-td .out-lbl-text');   if(ol) ol.textContent = T('ownOutputLabel')(ml);
+  const rl = wrap.querySelector('tr.out-rent .label-td .out-lbl-text');  if(rl) rl.textContent = T('rentOutputLabel')(ml);
   const oTds = wrap.querySelectorAll('tr.out-own td.scen-td');
   const rTds = wrap.querySelectorAll('tr.out-rent td.scen-td');
   const dTds = wrap.querySelectorAll('tr.out-delta td.scen-td');
@@ -1029,6 +1047,196 @@ function downloadCSV(){
   a.download = 'rent-vs-own-sensitivity.csv';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
+}
+
+/* ── CSV UPLOAD ──
+   Rebuilds the scenarios + section modes from a CSV in the same layout produced
+   by downloadCSV(). The trailing result rows (Net Equity / Δ) are optional and
+   ignored, so a downloaded CSV — with or without those last 3 rows — round-trips
+   back to the identical computed result. */
+function parseCSVText(text){
+  const rows = [];
+  let row = [], field = '', inQ = false;
+  for(let i=0; i<text.length; i++){
+    const c = text[i];
+    if(inQ){
+      if(c==='"'){ if(text[i+1]==='"'){ field+='"'; i++; } else inQ=false; }
+      else field += c;
+      continue;
+    }
+    if(c==='"'){ inQ = true; }
+    else if(c===','){ row.push(field); field=''; }
+    else if(c==='\n' || c==='\r'){
+      if(c==='\r' && text[i+1]==='\n') i++;
+      row.push(field); rows.push(row); row=[]; field='';
+    } else field += c;
+  }
+  if(field.length || row.length){ row.push(field); rows.push(row); }
+  return rows;
+}
+
+// Reverse maps: translated label → param key / mode key (both languages).
+function buildReverseLabelMaps(){
+  const norm = s => String(s||'').trim().toLowerCase();
+  const paramByLabel = {}, modeByLabel = {};
+  ['en','id'].forEach(lg=>{
+    const L = LANG_SENS[lg];
+    PARAMS.forEach(p=>{ const lbl = L[p.labelKey]; if(typeof lbl==='string') paramByLabel[norm(lbl)] = p.key; });
+    [['pMortgageMode','mortgageMode'],['pOwnCostsMode','ownCostsMode'],['pRentCostsMode','rentCostsMode']].forEach(([lk,mk])=>{
+      const lbl = L[lk]; if(typeof lbl==='string') modeByLabel[norm(lbl)] = mk;
+    });
+  });
+  return {paramByLabel, modeByLabel};
+}
+
+const RE_PERIOD = /^(?:rate period|periode bunga)\s+(\d+)$/i;
+const RE_SETUP  = /^(?:setup cost|biaya awal)\s+(\d+)$/i;
+const RE_OWN_ON = /^(?:own ongoing cost|biaya rutin beli)\s+(\d+)$/i;
+const RE_RENT_ON= /^(?:rent ongoing cost|biaya rutin sewa)\s+(\d+)$/i;
+
+// Inverse of describePeriod(): "fixed yr 1-30 @ 6%" / "floating yr 1-5 @ 4-6%".
+function parsePeriodCell(text){
+  const m = String(text||'').trim().match(/^(fixed|floating)\s+yr\s+(\d+)-(\d+)\s+@\s+([\d.]+)(?:-([\d.]+))?%$/i);
+  if(!m) return null;
+  const toYear = parseInt(m[3],10);
+  if(m[1].toLowerCase()==='floating'){
+    const a = parseFloat(m[4])||0, b = parseFloat(m[5]!==undefined?m[5]:m[4])||0;
+    return {toYear, type:'floating', rate:a, rateMin:Math.min(a,b), rateMax:Math.max(a,b)};
+  }
+  const r = parseFloat(m[4])||0;
+  return {toYear, type:'fixed', rate:r, rateMin:r, rateMax:r};
+}
+// Inverse of describeCostItem().
+function parseCostCell(text, kind){
+  const s = String(text||'').trim();
+  let m;
+  if((m = s.match(/^([\d.]+)%\s+/))){ return {amount:parseFloat(m[1])||0, basis:'pct', inflation:0}; }
+  if((m = s.match(/^([\d,]+(?:\.\d+)?)\s+fixed$/i))){ return {amount:parseNum(m[1]), basis:'fixed'}; }
+  if((m = s.match(/^([\d,]+(?:\.\d+)?)\s+(yearly|monthly|weekly)\s+\(\+([\d.]+)%\/yr\)$/i))){
+    return {amount:parseNum(m[1]), basis:m[2].toLowerCase(), inflation:parseFloat(m[3])||0};
+  }
+  return null;
+}
+
+function buildScenariosFromCSV(text){
+  const rows = parseCSVText(text);
+  if(!rows.length) throw new Error('empty');
+  // Locate header: first row whose first cell is the Parameter header (any lang).
+  const isHeader = r => r && r[0] && /^(parameter)$/i.test(String(r[0]).trim());
+  let h = rows.findIndex(isHeader);
+  if(h < 0) h = 0;
+  const header = rows[h];
+  const names = header.slice(2).map(s=>String(s||'').trim()).filter((_,i)=> header[2+i] !== undefined);
+  // Trim trailing empty name columns (the result section has fewer columns).
+  let nScen = names.length;
+  while(nScen > 0 && names[nScen-1]==='') nScen--;
+  if(nScen < 1) throw new Error('no scenarios');
+
+  const {paramByLabel, modeByLabel} = buildReverseLabelMaps();
+  const newModes = {mortgageMode:'simple', ownCostsMode:'simple', rentCostsMode:'simple'};
+  const sym = (document.getElementById('currencySelect') || {}).value || '$';
+  const newScen = [];
+  for(let j=0;j<nScen;j++){
+    const sc = cloneScenario(DEFAULT_SCENARIO);
+    sc.name = names[j] || ('Scenario '+(j+1));
+    sc.currencySymbol = sym;
+    sc.ratePeriods = null; sc.ownSetupCosts = null; sc.ownOngoingCosts = null; sc.rentOngoingCosts = null;
+    newScen.push(sc);
+  }
+
+  for(let ri=h+1; ri<rows.length; ri++){
+    const r = rows[ri];
+    if(!r) continue;
+    const label = String(r[0]||'').trim();
+    if(label==='' ){
+      // Blank row marks the start of the (ignored) result section → stop.
+      const allEmpty = r.every(c=>String(c||'').trim()==='');
+      if(allEmpty) break;
+      continue;
+    }
+    const lc = label.toLowerCase();
+    const valAt = j => (r[2+j] !== undefined ? String(r[2+j]) : '');
+
+    // Section mode rows (value identical across columns → read first).
+    if(modeByLabel[lc]){
+      const v = String(valAt(0)).trim().toLowerCase();
+      newModes[modeByLabel[lc]] = (v==='detailed') ? 'detailed' : 'simple';
+      continue;
+    }
+    // Simple-mode parameter rows.
+    if(paramByLabel[lc]){
+      const key = paramByLabel[lc], p = PARAM_MAP[key];
+      for(let j=0;j<nScen;j++){
+        const raw = valAt(j).trim();
+        if(raw==='') continue;
+        if(p.type==='boolean')      newScen[j][key] = /^(yes|true|1|ya)$/i.test(raw);
+        else if(p.type==='select')  newScen[j][key] = raw;
+        else                        newScen[j][key] = parseNum(raw);
+      }
+      continue;
+    }
+    // Detailed rate-period rows.
+    let mm = label.match(RE_PERIOD);
+    if(mm){
+      const idx = parseInt(mm[1],10)-1;
+      for(let j=0;j<nScen;j++){
+        const obj = parsePeriodCell(valAt(j));
+        if(!obj) continue;
+        if(!Array.isArray(newScen[j].ratePeriods)) newScen[j].ratePeriods = [];
+        newScen[j].ratePeriods[idx] = obj;
+      }
+      continue;
+    }
+    // Detailed cost rows.
+    const costMatch = (re,listKey,kind)=>{
+      const m = label.match(re); if(!m) return false;
+      const idx = parseInt(m[1],10)-1;
+      for(let j=0;j<nScen;j++){
+        const obj = parseCostCell(valAt(j), kind);
+        if(!obj) continue;
+        if(!Array.isArray(newScen[j][listKey])) newScen[j][listKey] = [];
+        newScen[j][listKey][idx] = obj;
+      }
+      return true;
+    };
+    if(costMatch(RE_SETUP,'ownSetupCosts','setup')) continue;
+    if(costMatch(RE_OWN_ON,'ownOngoingCosts','ongoing')) continue;
+    if(costMatch(RE_RENT_ON,'rentOngoingCosts','ongoing')) continue;
+    // Unknown label → ignore (forward-compatible).
+  }
+
+  // Compact any sparse detailed lists (remove holes from skipped indices).
+  newScen.forEach(sc=>{
+    ['ratePeriods','ownSetupCosts','ownOngoingCosts','rentOngoingCosts'].forEach(k=>{
+      if(Array.isArray(sc[k])){ sc[k] = sc[k].filter(Boolean); if(!sc[k].length) sc[k]=null; }
+    });
+  });
+  return {scenarios:newScen, modes:newModes};
+}
+
+function applyUploadedCSV(text){
+  let parsed;
+  try{ parsed = buildScenariosFromCSV(text); }
+  catch(err){ console.error(err); alert(T('csvParseError')); return; }
+  if(!parsed || !parsed.scenarios || !parsed.scenarios.length){ alert(T('csvParseError')); return; }
+  scenarios = parsed.scenarios;
+  modes = parsed.modes;
+  // Seed any detailed lists that the CSV implied but did not fully populate.
+  if(modes.mortgageMode==='detailed')  seedDetailedLists('mortgageMode');
+  if(modes.ownCostsMode==='detailed')  seedDetailedLists('ownCostsMode');
+  if(modes.rentCostsMode==='detailed') seedDetailedLists('rentCostsMode');
+  const maxH = Math.max(...scenarios.map(s=>s.horizon||1));
+  const yi = document.getElementById('yearInput');
+  if(yi) yi.max = maxH;
+  rerender();
+}
+
+function handleCSVUpload(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => applyUploadedCSV(String(e.target.result || ''));
+  reader.onerror = () => alert(T('csvParseError'));
+  reader.readAsText(file);
 }
 
 /* ── PER-SCENARIO CASHFLOW CSV (shared with the main tool via RVOExport) ── */
@@ -1149,6 +1357,158 @@ function closeChartModal(){
   chartModal.el.classList.remove('open');
   document.body.style.overflow = '';
   if(chartModal.chart){ chartModal.chart.destroy(); chartModal.chart = null; }
+}
+
+/* ── GLOBAL MULTI-SCENARIO COMPARISON CHART ──
+   One chart overlaying every (included) scenario: Own = solid, Rent = dotted,
+   sharing the scenario's colour. Per-scenario include/colour pickers plus
+   Own/Rent visibility toggles, all the standard graph exports (SVG/PNG/copy/
+   reset) and metric switching. */
+const GC_PALETTE = ['#4F8DFD','#E8743B','#19A979','#945ECF','#E0529C','#13A4B4','#C9A227','#5B6470','#D1495B','#2E86AB'];
+let globalChart = { el:null, chart:null, met:'netEquity', include:[], colors:[], showOwn:true, showRent:true };
+
+function gcInitState(){
+  globalChart.include = scenarios.map(()=>true);
+  globalChart.colors  = scenarios.map((_,i)=> GC_PALETTE[i % GC_PALETTE.length]);
+  globalChart.showOwn = true;
+  globalChart.showRent = true;
+  globalChart.met = metric;
+}
+function gcMetricKeys(met){
+  return {
+    own:  met==='netEquity' ? 'ownNetEquity'  : met==='cash' ? 'ownCash'  : 'ownAccumCost',
+    rent: met==='netEquity' ? 'rentNetEquity' : met==='cash' ? 'rentCash' : 'rentAccumCost',
+  };
+}
+function gcChartData(){
+  const {own:ownKey, rent:rentKey} = gcMetricKeys(globalChart.met);
+  let maxLen = 0;
+  scenarios.forEach((sc,i)=>{
+    if(!globalChart.include[i]) return;
+    const res = scenarioResults[i];
+    if(res && res.rows) maxLen = Math.max(maxLen, res.rows.length);
+  });
+  const labels = []; for(let y=0; y<maxLen; y++) labels.push(y);
+  const series = [];
+  scenarios.forEach((sc,i)=>{
+    if(!globalChart.include[i]) return;
+    const res = scenarioResults[i];
+    const rows = (res && res.rows) ? res.rows : [];
+    if(!rows.length) return;
+    const color = globalChart.colors[i] || GC_PALETTE[i % GC_PALETTE.length];
+    if(globalChart.showOwn)
+      series.push({label:`${sc.name||T('scenPlaceholder')} — ${T('seriesOwn')}`,  data:rows.map(r=>r[ownKey]||0),  color, dash:null});
+    if(globalChart.showRent)
+      series.push({label:`${sc.name||T('scenPlaceholder')} — ${T('seriesRent')}`, data:rows.map(r=>r[rentKey]||0), color, dash:[5,4]});
+  });
+  return {labels, series};
+}
+function gcTitle(){ return `${T('gcTitle')} — ${metricLabelOf(globalChart.met)}`; }
+function gcLegendItems(){ return gcChartData().series.map(s=>({label:s.label, color:s.color})); }
+
+function buildGlobalChartModal(){
+  if(globalChart.el) return globalChart.el;
+  const overlay = document.createElement('div');
+  overlay.className = 'chart-modal-overlay gc-overlay';
+  overlay.innerHTML = `
+    <div class="chart-modal card" role="dialog" aria-modal="true">
+      <div class="chart-header">
+        <h2 class="chart-modal-title gc-title"></h2>
+        <div class="chart-controls">
+          <button class="graph-btn gc-met" data-met="netEquity">${T('metricNetEquity')}</button>
+          <button class="graph-btn gc-met" data-met="cash">${T('metricLiquidCash')}</button>
+          <button class="graph-btn gc-met" data-met="cost">${T('metricAccumCost')}</button>
+          <button class="graph-btn gc-toggle gc-own" data-series="own"><span class="ricon ricon-own" aria-hidden="true"></span>${T('gcShowOwn')}</button>
+          <button class="graph-btn gc-toggle gc-rent" data-series="rent"><span class="ricon ricon-rent" aria-hidden="true"></span>${T('gcShowRent')}</button>
+          <button class="btn-secondary chart-export-btn" data-act="svg">⬇ SVG</button>
+          <button class="btn-secondary chart-export-btn" data-act="png">⬇ PNG</button>
+          <button class="btn-secondary chart-export-btn" data-act="copy" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary chart-export-btn" data-act="reset">⟳</button>
+          <button class="btn-secondary chart-export-btn gc-close" data-act="close" title="${escAttr(T('closeTitle'))}">✕</button>
+        </div>
+      </div>
+      <div class="gc-scenarios-wrap">
+        <span class="gc-scenarios-label">${escHtml(T('gcScenariosLabel'))}</span>
+        <div class="gc-scenarios"></div>
+      </div>
+      <div class="gc-line-hint">${escHtml(T('gcLineHint'))}</div>
+      <div class="canvas-wrap"><canvas class="gc-canvas"></canvas></div>
+      <div class="hover-box">${escHtml(T('chartHoverHint'))}</div>
+    </div>`;
+  document.body.appendChild(overlay);
+  globalChart.el = overlay;
+
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) closeGlobalChartModal(); });
+  overlay.querySelectorAll('.gc-met').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ globalChart.met = btn.dataset.met; renderGlobalChartModal(); });
+  });
+  overlay.querySelectorAll('.gc-toggle').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(btn.dataset.series==='own')  globalChart.showOwn  = !globalChart.showOwn;
+      else                            globalChart.showRent = !globalChart.showRent;
+      renderGlobalChartModal();
+    });
+  });
+  overlay.querySelectorAll('[data-act]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const act = btn.dataset.act;
+      const canvas = overlay.querySelector('.gc-canvas');
+      const meta = {title:gcTitle(), legendItems:gcLegendItems()};
+      if(act==='close') closeGlobalChartModal();
+      else if(act==='reset'){ if(globalChart.chart && globalChart.chart.resetZoom) globalChart.chart.resetZoom(); }
+      else if(act==='png')  RVOExport.exportChartPNG(canvas, Object.assign({}, meta, {filename:`all_scenarios_${globalChart.met}_chart.png`, download:true}));
+      else if(act==='svg')  RVOExport.exportChartSVG(canvas, Object.assign({}, meta, {filename:`all_scenarios_${globalChart.met}_chart.svg`}));
+      else if(act==='copy') RVOExport.copyChartPNG(canvas, meta).then(()=>alert('PNG copied to clipboard.')).catch(err=>alert('PNG copy failed: '+err.message));
+    });
+  });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && globalChart.el && globalChart.el.classList.contains('open')) closeGlobalChartModal(); });
+  return overlay;
+}
+function gcRenderScenarioPickers(){
+  const wrap = globalChart.el.querySelector('.gc-scenarios');
+  wrap.innerHTML = scenarios.map((sc,i)=>`
+    <label class="gc-scen-item">
+      <input type="checkbox" class="gc-include" data-i="${i}"${globalChart.include[i]?' checked':''}/>
+      <input type="color" class="gc-color" data-i="${i}" value="${escAttr(globalChart.colors[i]||GC_PALETTE[i%GC_PALETTE.length])}"/>
+      <span class="gc-scen-name">${escHtml(sc.name||(T('scenPlaceholder')+' '+(i+1)))}</span>
+    </label>`).join('');
+  wrap.querySelectorAll('.gc-include').forEach(el=>{
+    el.addEventListener('change', e=>{ globalChart.include[+e.target.dataset.i] = e.target.checked; renderGlobalChartModal(); });
+  });
+  wrap.querySelectorAll('.gc-color').forEach(el=>{
+    el.addEventListener('input', e=>{ globalChart.colors[+e.target.dataset.i] = e.target.value; renderGlobalChartModal(); });
+  });
+}
+function renderGlobalChartModal(){
+  const overlay = globalChart.el;
+  if(!overlay) return;
+  overlay.querySelector('.gc-title').textContent = gcTitle();
+  overlay.querySelectorAll('.gc-met').forEach(b=>b.classList.toggle('active', b.dataset.met===globalChart.met));
+  overlay.querySelector('.gc-own').classList.toggle('active', globalChart.showOwn);
+  overlay.querySelector('.gc-rent').classList.toggle('active', globalChart.showRent);
+  const data = gcChartData();
+  const sym = symOf(scenarios[0]);
+  const canvas = overlay.querySelector('.gc-canvas');
+  if(globalChart.chart){ globalChart.chart.destroy(); globalChart.chart = null; }
+  globalChart.chart = RVOExport.renderComparisonChart(canvas, {
+    labels: data.labels, series: data.series, sym,
+    yAxisTitle: `${metricLabelOf(globalChart.met)} (${sym})`,
+  });
+}
+function openGlobalChartModal(){
+  if(!global_RVOExport() || !window.Chart){ return; }
+  buildGlobalChartModal();
+  gcInitState();
+  gcRenderScenarioPickers();
+  globalChart.el.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderGlobalChartModal();
+}
+function closeGlobalChartModal(){
+  if(!globalChart.el) return;
+  globalChart.el.classList.remove('open');
+  document.body.style.overflow = '';
+  if(globalChart.chart){ globalChart.chart.destroy(); globalChart.chart = null; }
 }
 
 /* ── WIRE EVENTS ── */
@@ -1416,6 +1776,20 @@ document.addEventListener('DOMContentLoaded', ()=>{
   });
 
   document.getElementById('downloadCSVBtn').addEventListener('click', downloadCSV);
+
+  const uploadBtn = document.getElementById('uploadCSVBtn');
+  const fileInput = document.getElementById('csvFileInput');
+  if(uploadBtn && fileInput){
+    uploadBtn.addEventListener('click', ()=> fileInput.click());
+    fileInput.addEventListener('change', e=>{
+      const f = e.target.files && e.target.files[0];
+      handleCSVUpload(f);
+      e.target.value = ''; // allow re-uploading the same file
+    });
+  }
+
+  const compareBtn = document.getElementById('compareAllBtn');
+  if(compareBtn) compareBtn.addEventListener('click', openGlobalChartModal);
 });
 
 })();
