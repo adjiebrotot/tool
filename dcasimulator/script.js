@@ -1454,23 +1454,40 @@ function buildOHLC(res){
 }
 
 // Candlestick renderer. Draws candles for any visible price dataset carrying
-// _ohlc, and widens the price y-axis so wicks aren't clipped. Inactive unless
-// the Candles toggle is on, so line mode is untouched.
+// _ohlc, and fits the price y-axis to the candles so wicks aren't clipped.
+// Inactive unless the Candles toggle is on, so line mode is untouched.
 const dcaCandlePlugin = {
   id:'dcaCandles',
   afterDataLimits(chart, args){
     if(!showCandles) return;
     const scale=args.scale;
     if(!scale || scale.id!=='y') return;
-    let lo=scale.min, hi=scale.max, found=false;
+    // Only the price chart carries _ohlc datasets — leave the equity chart untouched.
+    if(!chart.data.datasets.some(ds=>ds._ohlc)) return;
+    // Fit the y-axis to whatever is inside the currently visible x-window rather
+    // than the whole history, so the candles autoscale (fill the panel) as you
+    // zoom or pan instead of staying pinned to the full range's high/low.
+    const xs=chart.scales.x;
+    const iMin = xs ? Math.floor(xs.min) : 0;
+    const iMax = xs ? Math.ceil(xs.max) : Infinity;
+    let lo=Infinity, hi=-Infinity;
     chart.data.datasets.forEach((ds,di)=>{
-      if(!ds._ohlc || !chart.isDatasetVisible(di)) return;
-      found=true;
-      const {h,l}=ds._ohlc;
-      for(let i=0;i<h.length;i++){ if(h[i]!=null&&h[i]>hi)hi=h[i]; if(l[i]!=null&&l[i]<lo)lo=l[i]; }
+      if(!chart.isDatasetVisible(di)) return;
+      // Oscillator overlays (RSI/MACD/ADX) live on their own axes — never fold
+      // them into the price scale or they'd flatten the candles.
+      if(typeof ds.yAxisID==='string' && ds.yAxisID.indexOf('yOsc_')===0) return;
+      if(ds._ohlc){
+        const {h,l}=ds._ohlc;
+        const end=Math.min(h.length-1,iMax);
+        for(let i=Math.max(0,iMin);i<=end;i++){ if(h[i]!=null&&h[i]>hi)hi=h[i]; if(l[i]!=null&&l[i]<lo)lo=l[i]; }
+      } else {
+        // Price-axis overlays/markers (moving averages, Bollinger bands, buy
+        // triangles) — keep them in view too.
+        const data=ds.data; const end=Math.min(data.length-1,iMax);
+        for(let i=Math.max(0,iMin);i<=end;i++){ const v=data[i]; if(v==null) continue; if(v>hi)hi=v; if(v<lo)lo=v; }
+      }
     });
-    // Only the price chart has _ohlc datasets — leave the equity chart untouched.
-    if(found && hi>lo){ const pad=(hi-lo)*0.03; scale.min=lo-pad; scale.max=hi+pad; }
+    if(hi>lo){ const pad=(hi-lo)*0.04; scale.min=lo-pad; scale.max=hi+pad; }
   },
   afterDatasetsDraw(chart){
     if(!showCandles) return;
