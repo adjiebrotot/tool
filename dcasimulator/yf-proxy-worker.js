@@ -202,6 +202,9 @@ async function fetchOneTicker(ticker, start, end, ctx) {
       return {
         dates: series.dates,
         prices: series.prices,
+        // OHLC for candlestick view (split/dividend-adjusted to match `prices`).
+        ...(series.opens && series.highs && series.lows
+          ? { opens: series.opens, highs: series.highs, lows: series.lows } : {}),
         source: p.source,
         kind: p.kind,
       };
@@ -299,17 +302,29 @@ function parseYahoo(text) {
   if (!result) throw new Error('No chart result');
   const ts = result.timestamp;
   const ind = result.indicators || {};
-  const closes = (ind.adjclose && ind.adjclose[0] && ind.adjclose[0].adjclose) ||
-                 (ind.quote && ind.quote[0] && ind.quote[0].close);
+  const quote = (ind.quote && ind.quote[0]) || {};
+  const adj = (ind.adjclose && ind.adjclose[0] && ind.adjclose[0].adjclose) || null;
+  const closes = adj || quote.close;              // adjusted close preferred for returns
+  const rawCloses = quote.close || adj;           // unadjusted close, for the OHLC ratio
   if (!ts || !closes) throw new Error('No price series');
-  const dates = [], prices = [];
+  const opensR = quote.open, highsR = quote.high, lowsR = quote.low;
+  const dates = [], prices = [], opens = [], highs = [], lows = [];
   for (let i = 0; i < ts.length; i++) {
-    if (closes[i] == null) continue;
+    const c = closes[i];
+    if (c == null) continue;
     dates.push(new Date(ts[i] * 1000).toISOString().slice(0, 10));
-    prices.push(closes[i]);
+    prices.push(c);
+    // Scale O/H/L by the same split/dividend factor as the adjusted close so the
+    // candles line up with the price series the simulator uses everywhere else.
+    const rawC = rawCloses && rawCloses[i];
+    const ratio = (rawC != null && isFinite(rawC) && rawC !== 0) ? c / rawC : 1;
+    const o = (opensR && opensR[i] != null) ? opensR[i] * ratio : c;
+    const h = (highsR && highsR[i] != null) ? highsR[i] * ratio : c;
+    const l = (lowsR && lowsR[i] != null) ? lowsR[i] * ratio : c;
+    opens.push(o); highs.push(Math.max(o, h, c)); lows.push(Math.min(o, l, c));
   }
   if (!dates.length) throw new Error('Empty price series');
-  return { dates, prices };
+  return { dates, prices, opens, highs, lows };
 }
 
 function parseStooq(text) {
@@ -318,8 +333,9 @@ function parseStooq(text) {
   const lines = t.split(/\r?\n/);
   const header = lines[0].split(',');
   const di = header.indexOf('Date'), ci = header.indexOf('Close');
+  const oi = header.indexOf('Open'), hi = header.indexOf('High'), li = header.indexOf('Low');
   if (di < 0 || ci < 0) throw new Error('Unexpected CSV columns');
-  const dates = [], prices = [];
+  const dates = [], prices = [], opens = [], highs = [], lows = [];
   for (let i = 1; i < lines.length; i++) {
     if (!lines[i]) continue;
     const cols = lines[i].split(',');
@@ -327,9 +343,15 @@ function parseStooq(text) {
     if (!isFinite(px)) continue;
     dates.push(cols[di].slice(0, 10));
     prices.push(px);
+    // Stooq OHLC is unadjusted but internally consistent (same scale as Close).
+    const o = oi >= 0 ? parseFloat(cols[oi]) : NaN;
+    const h = hi >= 0 ? parseFloat(cols[hi]) : NaN;
+    const l = li >= 0 ? parseFloat(cols[li]) : NaN;
+    const oo = isFinite(o) ? o : px, hh = isFinite(h) ? h : px, ll = isFinite(l) ? l : px;
+    opens.push(oo); highs.push(Math.max(oo, hh, px)); lows.push(Math.min(oo, ll, px));
   }
   if (!dates.length) throw new Error('Empty CSV');
-  return { dates, prices };
+  return { dates, prices, opens, highs, lows };
 }
 
 function compactDate(isoStr) { return String(isoStr).slice(0, 10).replace(/-/g, ''); }
