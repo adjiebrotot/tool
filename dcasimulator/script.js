@@ -435,7 +435,11 @@ function showDayRow(s){ return s==='monthly-date'||s==='weekly-day'; }
 // To keep the panel uncluttered, styles are grouped into categories. Only the
 // active category's options — plus the parameters for the currently selected
 // style — are shown at any time.
-const STYLE_CATEGORIES=[['date','📅 Date'],['momentum','📈 Momentum'],['tech','🔧 Technical'],['forward','🔮 Forward']];
+const SVG_DATE='<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9.5h18"/><path d="M8 3v3.5"/><path d="M16 3v3.5"/><polyline points="6.5 17.5 9.5 14 12 15.5 16.5 12"/></svg>';
+const SVG_MOMENTUM='<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6Q12 22 20 6"/></svg>';
+const SVG_TECH='<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 15 7 9 11 14 15 8 21 12"/><path d="M3 12h18" stroke-dasharray="2.2 2.4"/></svg>';
+const SVG_FORWARD='<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 7 11 11 13.5"/><polyline points="11 13.5 15 8 21 11" stroke-dasharray="0.1 3.4"/></svg>';
+const STYLE_CATEGORIES=[['date',SVG_DATE+' Date'],['momentum',SVG_MOMENTUM+' Momentum'],['tech',SVG_TECH+' Technical'],['forward',SVG_FORWARD+' Forward']];
 function styleCategory(s){
   if(DATE_BASED_STYLES.includes(s)) return 'date';
   if(MOMENTUM_STYLES.includes(s)) return 'momentum';
