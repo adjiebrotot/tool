@@ -7,10 +7,10 @@ const wmLogoImg = new Image();
 wmLogoImg.src = WM_LOGO_SRC;
 
 /* ─── CONSTANTS ─── */
-// Asset-type badges: a squished "$TCK" tag for ticker-backed assets, the
-// settings gear for custom (manual return) assets. Inherit colour via currentColor.
-const SVG_TICKER='<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="19" height="11" rx="2.5"/><text x="12" y="14.4" textLength="13.5" lengthAdjust="spacingAndGlyphs" font-size="7.5" font-weight="800" stroke="none" fill="currentColor" text-anchor="middle" font-family="system-ui,Arial,sans-serif">$TCK</text></svg>';
-const SVG_GEAR='<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+// Asset-type badges: a dollar sign for ticker-backed assets, the "fx" formula
+// glyph for custom (manual return) assets. Inherit colour via currentColor.
+const SVG_TICKER='<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2v17.6"/><path d="M16 7.4c0-2-1.8-3.2-4-3.2S8 5.4 8 7.5s1.8 3 4 3.4 4 1.4 4 3.5-1.8 3.4-4 3.4-4-1.2-4-3.2"/></svg>';
+const SVG_CUSTOM='<svg class="tico" viewBox="0 0 24 24" fill="none"><text x="12" y="17.6" font-size="15.5" font-style="italic" font-weight="700" stroke="none" fill="currentColor" text-anchor="middle" font-family="Georgia,Cambria,&quot;Times New Roman&quot;,serif">fx</text></svg>';
 const LINE_COLOR_HEX = ['#3b82f6','#ef4444','#22c55e','#f59e0b','#a855f7','#06b6d4','#ec4899','#14b8a6'];
 const PORTFOLIO_COLOR_HEX = ['#3b82f6','#ef4444','#22c55e','#f59e0b','#a855f7','#06b6d4','#ec4899','#14b8a6'];
 const CASH_COLOR = '#94a3b8';
@@ -518,7 +518,7 @@ function renderAssetList(){
       <div class="sec-header" data-id="${a.id}">
         <span class="color-dot" style="background:${a.colorHex}"></span>
         <span class="sec-name">${a.name}</span>
-        <span class="sec-badge ${a.type==='ticker'?'badge-ticker':'badge-custom'}">${a.type==='ticker'?SVG_TICKER+' Ticker':SVG_GEAR+' Custom'}</span>
+        <span class="sec-badge ${a.type==='ticker'?'badge-ticker':'badge-custom'}">${a.type==='ticker'?SVG_TICKER+' Ticker':SVG_CUSTOM+' Custom'}</span>
         <span class="asset-weight-pill">${fmt.num(a.weight,1)}%</span>
         <span style="color:var(--muted);font-size:.9rem">${a.open?'▲':'▼'}</span>
       </div>
