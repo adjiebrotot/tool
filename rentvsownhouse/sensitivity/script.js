@@ -20,7 +20,6 @@ const LANG_SENS = {
     csvParseError: 'Could not read this CSV. Make sure it is a sensitivity CSV exported from this tool.',
     gcTitle: 'All Scenarios',
     gcScenariosLabel: 'Scenarios:',
-    gcLineHint: 'Solid = Own · Dotted = Rent',
     gcShowOwn: 'Own',
     gcShowRent: 'Rent',
     metricNetEquity: 'Net Equity',
@@ -128,7 +127,6 @@ const LANG_SENS = {
     csvParseError: 'Tidak dapat membaca CSV ini. Pastikan file adalah CSV sensitivitas yang diekspor dari alat ini.',
     gcTitle: 'Semua Skenario',
     gcScenariosLabel: 'Skenario:',
-    gcLineHint: 'Garis penuh = Beli · Garis putus = Sewa',
     gcShowOwn: 'Beli',
     gcShowRent: 'Sewa',
     metricNetEquity: 'Kekayaan Bersih',
@@ -1289,6 +1287,7 @@ function buildChartModal(){
   overlay.className = 'chart-modal-overlay';
   overlay.innerHTML = `
     <div class="chart-modal card" role="dialog" aria-modal="true">
+      <button class="chart-modal-close cm-close" data-act="close" title="${escAttr(T('closeTitle'))}" aria-label="${escAttr(T('closeTitle'))}">✕</button>
       <div class="chart-header">
         <h2 class="chart-modal-title"></h2>
         <div class="chart-controls">
@@ -1299,7 +1298,6 @@ function buildChartModal(){
           <button class="btn-secondary chart-export-btn" data-act="png">⬇ PNG</button>
           <button class="btn-secondary chart-export-btn" data-act="copy" title="Copy PNG to clipboard">⧉</button>
           <button class="btn-secondary chart-export-btn" data-act="reset">⟳</button>
-          <button class="btn-secondary chart-export-btn cm-close" data-act="close" title="${escAttr(T('closeTitle'))}">✕</button>
         </div>
       </div>
       <div class="legend cm-legend"></div>
@@ -1416,6 +1414,7 @@ function buildGlobalChartModal(){
   overlay.className = 'chart-modal-overlay gc-overlay';
   overlay.innerHTML = `
     <div class="chart-modal card" role="dialog" aria-modal="true">
+      <button class="chart-modal-close gc-close" data-act="close" title="${escAttr(T('closeTitle'))}" aria-label="${escAttr(T('closeTitle'))}">✕</button>
       <div class="chart-header">
         <h2 class="chart-modal-title gc-title"></h2>
         <div class="chart-controls">
@@ -1428,14 +1427,16 @@ function buildGlobalChartModal(){
           <button class="btn-secondary chart-export-btn" data-act="png">⬇ PNG</button>
           <button class="btn-secondary chart-export-btn" data-act="copy" title="Copy PNG to clipboard">⧉</button>
           <button class="btn-secondary chart-export-btn" data-act="reset">⟳</button>
-          <button class="btn-secondary chart-export-btn gc-close" data-act="close" title="${escAttr(T('closeTitle'))}">✕</button>
         </div>
       </div>
       <div class="gc-scenarios-wrap">
         <span class="gc-scenarios-label">${escHtml(T('gcScenariosLabel'))}</span>
         <div class="gc-scenarios"></div>
       </div>
-      <div class="gc-line-hint">${escHtml(T('gcLineHint'))}</div>
+      <div class="gc-line-hint">
+        <span class="gc-line-key"><span class="gc-line-sample gc-line-solid"></span>${escHtml(T('seriesOwn'))}</span>
+        <span class="gc-line-key"><span class="gc-line-sample gc-line-dotted"></span>${escHtml(T('seriesRent'))}</span>
+      </div>
       <div class="canvas-wrap"><canvas class="gc-canvas"></canvas></div>
       <div class="hover-box">${escHtml(T('chartHoverHint'))}</div>
     </div>`;
