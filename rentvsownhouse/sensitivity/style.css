@@ -134,7 +134,7 @@ tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
 }
 .btn-scen-action:hover{border-color:var(--accent);background:rgba(139,184,248,.12);}
 .btn-scen-action:active{transform:scale(.95);}
-.btn-scen-action .logo-own,.btn-scen-action .logo-rent{font-size:.92rem;}
+.btn-scen-action .ricon{margin-right:0;width:1.1em;height:1.1em;}
 
 /* ── Scenario comparison chart popup ── */
 .chart-modal-overlay{

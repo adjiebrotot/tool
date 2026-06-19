@@ -16,13 +16,13 @@ const LANG_SENS = {
     yearHint: "(clamped to each scenario's horizon)",
     btnCSV: '⬇ CSV',
     btnUploadCSV: '⬆ CSV',
-    btnCompareAll: '📈 Compare',
+    btnCompareAll: 'Compare',
     csvParseError: 'Could not read this CSV. Make sure it is a sensitivity CSV exported from this tool.',
     gcTitle: 'All Scenarios',
     gcScenariosLabel: 'Scenarios:',
     gcLineHint: 'Solid = Own · Dotted = Rent',
-    gcShowOwn: '🏠 Own',
-    gcShowRent: '🏢 Rent',
+    gcShowOwn: 'Own',
+    gcShowRent: 'Rent',
     metricNetEquity: 'Net Equity',
     metricLiquidCash: 'Liquid Cash',
     metricAccumCost: 'Accum. Cost',
@@ -31,8 +31,8 @@ const LANG_SENS = {
     btnAddScenario: '+ Scenario',
     scenPlaceholder: 'Scenario',
     cappedAt: (n) => `capped at yr ${n}`,
-    ownOutputLabel: (ml) => `🏠 Own — ${ml}`,
-    rentOutputLabel: (ml) => `🏢 Rent — ${ml}`,
+    ownOutputLabel: (ml) => `Own — ${ml}`,
+    rentOutputLabel: (ml) => `Rent — ${ml}`,
     deltaLabel: 'Δ Own − Rent',
     actionsLabel: 'Per-scenario',
     dlOwnTitle: 'Download Own cashflow (CSV)',
@@ -46,9 +46,9 @@ const LANG_SENS = {
     boolEnabled: 'Enabled',
     dupTitle: 'Duplicate',
     removeTitle: 'Remove',
-    sepGeneral: '🌐 General',
-    sepOwn: '🏡 Own — Property & Mortgage',
-    sepRent: '🏢 Rent — Rental Payments & Costs',
+    sepGeneral: 'General',
+    sepOwn: 'Own — Property & Mortgage',
+    sepRent: 'Rent — Rental Payments & Costs',
     pHorizon: 'Horizon',
     pRiskFreeRate: 'Risk-Free Rate',
     pInitialCash: 'Initial Cash',
@@ -124,13 +124,13 @@ const LANG_SENS = {
     yearHint: '(dibatasi oleh jangka waktu masing-masing skenario)',
     btnCSV: '⬇ CSV',
     btnUploadCSV: '⬆ CSV',
-    btnCompareAll: '📈 Bandingkan',
+    btnCompareAll: 'Bandingkan',
     csvParseError: 'Tidak dapat membaca CSV ini. Pastikan file adalah CSV sensitivitas yang diekspor dari alat ini.',
     gcTitle: 'Semua Skenario',
     gcScenariosLabel: 'Skenario:',
     gcLineHint: 'Garis penuh = Beli · Garis putus = Sewa',
-    gcShowOwn: '🏠 Beli',
-    gcShowRent: '🏢 Sewa',
+    gcShowOwn: 'Beli',
+    gcShowRent: 'Sewa',
     metricNetEquity: 'Kekayaan Bersih',
     metricLiquidCash: 'Uang Tunai',
     metricAccumCost: 'Biaya Kumulatif',
@@ -139,8 +139,8 @@ const LANG_SENS = {
     btnAddScenario: '+ Skenario',
     scenPlaceholder: 'Skenario',
     cappedAt: (n) => `dipotong di thn ${n}`,
-    ownOutputLabel: (ml) => `🏠 Beli — ${ml}`,
-    rentOutputLabel: (ml) => `🏢 Sewa — ${ml}`,
+    ownOutputLabel: (ml) => `Beli — ${ml}`,
+    rentOutputLabel: (ml) => `Sewa — ${ml}`,
     deltaLabel: 'Δ Beli − Sewa',
     actionsLabel: 'Per-skenario',
     dlOwnTitle: 'Unduh arus kas Beli (CSV)',
@@ -154,9 +154,9 @@ const LANG_SENS = {
     boolEnabled: 'Aktif',
     dupTitle: 'Duplikat',
     removeTitle: 'Hapus',
-    sepGeneral: '🌐 Umum',
-    sepOwn: '🏡 Beli — Properti & KPR',
-    sepRent: '🏢 Sewa — Pembayaran & Biaya',
+    sepGeneral: 'Umum',
+    sepOwn: 'Beli — Properti & KPR',
+    sepRent: 'Sewa — Pembayaran & Biaya',
     pHorizon: 'Jangka Waktu',
     pRiskFreeRate: 'Suku Bunga Bebas Risiko',
     pInitialCash: 'Modal Awal',
@@ -851,7 +851,9 @@ function buildTableHTML(){
   let bodyHtml = '';
   renderRows.forEach((r,ri)=>{
     if(r.type==='sep'){
-      bodyHtml += `<tr class="group-sep-tr"><td colspan="${colCount}">${T(r.sepKey)}</td></tr>`;
+      const sepIcon = {sepGeneral:'general', sepOwn:'own', sepRent:'rent'}[r.sepKey];
+      const icnHtml = sepIcon ? `<span class="ricon ricon-${sepIcon}" aria-hidden="true"></span>` : '';
+      bodyHtml += `<tr class="group-sep-tr"><td colspan="${colCount}">${icnHtml}${T(r.sepKey)}</td></tr>`;
       return;
     }
     const prevR = renderRows[ri-1], nextR = renderRows[ri+1];
@@ -931,9 +933,9 @@ function buildTableHTML(){
 
   const actionTds = scenarios.map((_,i)=>`<td class="scen-td action-td">
       <div class="scen-actions">
-        <button class="btn-scen-action dl-own" data-si="${i}" title="${escAttr(T('dlOwnTitle'))}">⬇<span class="logo-own">🏠</span></button>
-        <button class="btn-scen-action dl-rent" data-si="${i}" title="${escAttr(T('dlRentTitle'))}">⬇<span class="logo-rent">🏢</span></button>
-        <button class="btn-scen-action show-chart" data-si="${i}" title="${escAttr(T('chartBtnTitle'))}">📈</button>
+        <button class="btn-scen-action dl-own" data-si="${i}" title="${escAttr(T('dlOwnTitle'))}">⬇<span class="ricon ricon-own" aria-hidden="true"></span></button>
+        <button class="btn-scen-action dl-rent" data-si="${i}" title="${escAttr(T('dlRentTitle'))}">⬇<span class="ricon ricon-rent" aria-hidden="true"></span></button>
+        <button class="btn-scen-action show-chart" data-si="${i}" title="${escAttr(T('chartBtnTitle'))}"><span class="ricon ricon-chart" aria-hidden="true"></span></button>
       </div>
     </td>`).join('');
 
@@ -943,8 +945,8 @@ function buildTableHTML(){
   </tr></thead><tbody>
     ${bodyHtml}
     <tr class="sep-tr"><td colspan="${colCount}"></td></tr>
-    <tr class="out-own"><td class="label-td">${T('ownOutputLabel')(ml)}</td><td class="unit-td"></td>${ownTds}${emptyTd}</tr>
-    <tr class="out-rent"><td class="label-td">${T('rentOutputLabel')(ml)}</td><td class="unit-td"></td>${rentTds}${emptyTd}</tr>
+    <tr class="out-own"><td class="label-td"><span class="ricon ricon-own" aria-hidden="true"></span><span class="out-lbl-text">${T('ownOutputLabel')(ml)}</span></td><td class="unit-td"></td>${ownTds}${emptyTd}</tr>
+    <tr class="out-rent"><td class="label-td"><span class="ricon ricon-rent" aria-hidden="true"></span><span class="out-lbl-text">${T('rentOutputLabel')(ml)}</span></td><td class="unit-td"></td>${rentTds}${emptyTd}</tr>
     <tr class="out-delta"><td class="label-td">${T('deltaLabel')}</td><td class="unit-td"></td>${deltaTds}${emptyTd}</tr>
     <tr class="out-actions"><td class="label-td">${T('actionsLabel')}</td><td class="unit-td"></td>${actionTds}${emptyTd}</tr>
   </tbody></table>`;
@@ -955,8 +957,8 @@ function rerenderOutputOnly(){
   const wrap = document.getElementById('tableWrap');
   if(!wrap) return;
   const ml = metricLabel();
-  const ol = wrap.querySelector('tr.out-own .label-td');   if(ol) ol.textContent = T('ownOutputLabel')(ml);
-  const rl = wrap.querySelector('tr.out-rent .label-td');  if(rl) rl.textContent = T('rentOutputLabel')(ml);
+  const ol = wrap.querySelector('tr.out-own .label-td .out-lbl-text');   if(ol) ol.textContent = T('ownOutputLabel')(ml);
+  const rl = wrap.querySelector('tr.out-rent .label-td .out-lbl-text');  if(rl) rl.textContent = T('rentOutputLabel')(ml);
   const oTds = wrap.querySelectorAll('tr.out-own td.scen-td');
   const rTds = wrap.querySelectorAll('tr.out-rent td.scen-td');
   const dTds = wrap.querySelectorAll('tr.out-delta td.scen-td');
@@ -1416,8 +1418,8 @@ function buildGlobalChartModal(){
           <button class="graph-btn gc-met" data-met="netEquity">${T('metricNetEquity')}</button>
           <button class="graph-btn gc-met" data-met="cash">${T('metricLiquidCash')}</button>
           <button class="graph-btn gc-met" data-met="cost">${T('metricAccumCost')}</button>
-          <button class="graph-btn gc-toggle gc-own" data-series="own">${T('gcShowOwn')}</button>
-          <button class="graph-btn gc-toggle gc-rent" data-series="rent">${T('gcShowRent')}</button>
+          <button class="graph-btn gc-toggle gc-own" data-series="own"><span class="ricon ricon-own" aria-hidden="true"></span>${T('gcShowOwn')}</button>
+          <button class="graph-btn gc-toggle gc-rent" data-series="rent"><span class="ricon ricon-rent" aria-hidden="true"></span>${T('gcShowRent')}</button>
           <button class="btn-secondary chart-export-btn" data-act="svg">⬇ SVG</button>
           <button class="btn-secondary chart-export-btn" data-act="png">⬇ PNG</button>
           <button class="btn-secondary chart-export-btn" data-act="copy" title="Copy PNG to clipboard">⧉</button>
