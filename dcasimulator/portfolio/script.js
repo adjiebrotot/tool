@@ -521,6 +521,7 @@ function renderPortfolioList(){
   });
   // Keep the + Add button directly beside the last portfolio so it flows (and wraps) with the tabs.
   if(addBtn) el.appendChild(addBtn);
+  updateSimBtnState();
 }
 
 /* Inline rename on the active tab (double-click), mirroring the scenario bar. */
@@ -644,7 +645,7 @@ function renderAssetList(){
   const p=getActive();
   if(!p || !p.assets.length){
     el.innerHTML='<div style="color:var(--muted);font-size:.82rem;padding:8px 0">'+(p?'No assets added yet.':'Add a portfolio first.')+'</div>';
-    updateWeightSummary();
+    renderWeightTable();
     return;
   }
   el.innerHTML='';
@@ -657,7 +658,6 @@ function renderAssetList(){
         <span class="color-dot" style="background:${a.colorHex}"></span>
         <span class="sec-name">${a.name}</span>
         <span class="sec-badge ${a.type==='ticker'?'badge-ticker':'badge-custom'}">${a.type==='ticker'?SVG_TICKER+' Ticker':SVG_CUSTOM+' Custom'}</span>
-        <span class="asset-weight-pill">${fmt.num(a.weight,1)}%</span>
         <span style="color:var(--muted);font-size:.9rem">${a.open?'▲':'▼'}</span>
       </div>
       <div class="sec-body ${a.open?'open':''}" id="assetBody${a.id}">
@@ -674,10 +674,6 @@ function renderAssetList(){
           <span style="font-size:.8rem;color:var(--muted)">Ticker: <strong style="color:var(--text)">${a.ticker}</strong></span>
           <span class="status-bar ${a.loaded?'status-ok':''}" style="display:inline-block;font-size:.75rem;padding:2px 8px;margin-left:4px" id="aLoad${a.id}">${a.loaded?'✓ Loaded':'Not loaded'}</span>
         </div>`}
-        <div class="asset-weight-row">
-          <label>Target weight (%) <span class="tip-icon" data-tip="Target portfolio weight (or top-up allocation for Constant Allocation). All weights in this portfolio must sum to 100%.">?</span></label>
-          <input class="num-input" id="aWeight${a.id}" type="number" min="0" max="100" step="1" value="${a.weight}"/>
-        </div>
         <button class="sec-del" id="aDel${a.id}" style="margin-top:8px">🗑 Remove</button>
       </div>`;
     el.appendChild(card);
@@ -705,24 +701,89 @@ function renderAssetList(){
       reorderAssets(dragAssetId, a.id, e.clientY > rect.top+rect.height/2);
     });
     $(`aDel${a.id}`).addEventListener('click',e=>{ e.stopPropagation(); removeAsset(a.id); });
-    $(`aWeight${a.id}`).addEventListener('input',e=>{ a.weight=parseFloat(e.target.value)||0; updateWeightSummary(); const pill=card.querySelector('.asset-weight-pill'); if(pill) pill.textContent=fmt.num(a.weight,1)+'%'; renderPortfolioList(); });
     if(a.type==='custom'){
       $(`aRet${a.id}`).addEventListener('input',e=>{ a.returnPct=parseFloat(e.target.value)||0; });
       $(`aStd${a.id}`).addEventListener('input',e=>{ a.stdPct=parseFloat(e.target.value)||0; });
     }
   });
   const cp=$('newAssetColor'); if(cp) cp.value=LINE_COLOR_HEX[p.assets.length % LINE_COLOR_HEX.length];
-  updateWeightSummary();
+  renderWeightTable();
 }
-function updateWeightSummary(){
-  const el=$('weightSummary'); if(!el) return;
+
+/* ─── TARGET WEIGHTS (Rebalancing subtab) ─────────────────────────────────────
+   The weight pie + editable table only make sense for weight-based methods. New
+   rebalancing methods that don't depend on a static weight just return false from
+   methodNeedsWeights() and the whole block stays hidden. ─────────────────────── */
+function methodNeedsWeights(method){
+  return method==='towards-weight' || method==='constant-weight' || method==='constant-allocation';
+}
+let weightPieChart=null;
+function renderWeightTable(){
+  const wrap=$('rebalWeights'); if(!wrap) return;
   const p=getActive();
-  if(!p || !p.assets.length){ el.style.display='none'; return; }
-  el.style.display='flex';
+  const show=!!(p && p.assets.length && methodNeedsWeights(p.rebal.method));
+  wrap.style.display=show?'':'none';
+  if(!show){ updateSimBtnState(); return; }
+
+  const tableWrap=$('weightTableWrap');
+  tableWrap.innerHTML=`<table class="weight-table"><tbody>${
+    p.assets.map(a=>`
+      <tr>
+        <td class="wt-name"><span class="color-dot" style="background:${a.colorHex}"></span>${a.name}</td>
+        <td class="wt-input"><input class="num-input" id="wt${a.id}" type="number" min="0" max="100" step="1" value="${a.weight}"/><span class="wt-pct">%</span></td>
+      </tr>`).join('')
+  }<tr class="wt-total"><td>Total</td><td id="wtTotalCell"></td></tr></tbody></table>`;
+
+  p.assets.forEach(a=>{
+    $(`wt${a.id}`).addEventListener('input',e=>{
+      a.weight=Math.max(0,parseFloat(e.target.value)||0);
+      refreshWeightTotals();
+      updateWeightPie();
+      updateSimBtnState();
+    });
+  });
+  refreshWeightTotals();
+  updateWeightPie();
+  updateSimBtnState();
+}
+function refreshWeightTotals(){
+  const p=getActive(); if(!p) return;
   const t=totalWeight(p);
   const ok=Math.abs(t-100)<0.5;
-  el.className='weight-summary '+(ok?'ok':'bad');
-  el.innerHTML=`<span>Total weight</span><span>${fmt.num(t,1)}% ${ok?'✓':'· must equal 100%'}</span>`;
+  const cell=$('wtTotalCell'); if(cell) cell.textContent=fmt.num(t,1)+'%';
+  const sum=$('weightSummary');
+  if(sum){
+    sum.style.display='flex';
+    sum.className='weight-summary '+(ok?'ok':'bad');
+    sum.innerHTML=`<span>Total weight</span><span>${fmt.num(t,1)}% ${ok?'✓':'· must equal 100%'}</span>`;
+  }
+}
+function updateWeightPie(){
+  const cv=$('weightPieCanvas'); if(!cv || typeof Chart==='undefined') return;
+  const p=getActive(); if(!p) return;
+  const labels=p.assets.map(a=>a.name);
+  const data=p.assets.map(a=>a.weight||0);
+  const colors=p.assets.map(a=>a.colorHex);
+  const allZero=data.every(v=>v<=0);
+  if(weightPieChart){
+    weightPieChart.data.labels=labels;
+    weightPieChart.data.datasets[0].data=allZero?data.map(()=>1):data;
+    weightPieChart.data.datasets[0].backgroundColor=colors;
+    weightPieChart.data.datasets[0].borderColor=cssVar('--panel');
+    weightPieChart.update();
+    return;
+  }
+  weightPieChart=new Chart(cv.getContext('2d'),{
+    type:'doughnut',
+    data:{ labels, datasets:[{ data:allZero?data.map(()=>1):data, backgroundColor:colors, borderColor:cssVar('--panel'), borderWidth:2 }] },
+    options:{
+      responsive:true, maintainAspectRatio:true, cutout:'58%',
+      plugins:{
+        legend:{ display:false },
+        tooltip:{ callbacks:{ label:(c)=>{ const ap=getActive(); const a=ap&&ap.assets[c.dataIndex]; return `${c.label}: ${fmt.num(a?a.weight:0,1)}%`; } } }
+      }
+    }
+  });
 }
 
 /* ─── PORTFOLIO BAR ACTIONS (act on the active portfolio) ─── */
@@ -848,7 +909,7 @@ function renderScheduleBox(boxId, hintId, sched){
 }
 
 /* ─── CONFIG INPUT BINDINGS (write to the active portfolio) ─── */
-wireMoneyField($('topupAmount'),{maxDecimals:2},v=>{ const p=getActive(); if(p){ p.topup.amount=Math.max(0,v); renderPortfolioList(); } });
+wireMoneyField($('topupAmount'),{maxDecimals:2},v=>{ const p=getActive(); if(p){ p.topup.amount=Math.max(0,v); renderPortfolioList(); updateSimBtnState(); } });
 wireMoneyField($('topupYearlyInc'),{maxDecimals:2},v=>{ const p=getActive(); if(p) p.topup.yearlyIncrease=Math.max(0,v); });
 $('topupPeriod').addEventListener('change',e=>{ const p=getActive(); if(!p) return; p.topupSched.period=e.target.value; renderScheduleBox('topupScheduleBox','topupScheduleHint',p.topupSched); renderPortfolioList(); });
 $('rebalPeriod').addEventListener('change',e=>{ const p=getActive(); if(!p) return; p.rebalSched.period=e.target.value; renderScheduleBox('rebalScheduleBox','rebalScheduleHint',p.rebalSched); });
@@ -873,6 +934,7 @@ document.querySelectorAll('input[name="rebalMethod"]').forEach(r=>{
     r.closest('[data-method]').classList.add('selected');
     $('constantWeightOpts').style.display=r.value==='constant-weight'?'':'none';
     const p=getActive(); if(p) p.rebal.method=r.value;
+    renderWeightTable();
     renderPortfolioList();
   });
 });
@@ -1019,21 +1081,39 @@ function simulatePortfolio(p, assets, common, rfPx){
   return rows;
 }
 
+/* ─── SIMULATE BUTTON GATING ──────────────────────────────────────────────────
+   The Simulate button is greyed out (but still hoverable) whenever a required
+   input is missing, with the reason surfaced as a tooltip on hover. The weight
+   check only applies to weight-based methods so future weight-free methods are
+   never blocked by it. ───────────────────────────────────────────────────────── */
+function simBlockReason(){
+  if(!portfolios.length) return 'Add at least one portfolio to simulate.';
+  for(const p of portfolios){
+    if(!p.assets.length) return `Portfolio "${p.name}" has no assets yet.`;
+    if(methodNeedsWeights(p.rebal.method) && Math.abs(totalWeight(p)-100)>0.5)
+      return `Asset weights in "${p.name}" must sum to 100% (currently ${fmt.num(totalWeight(p),1)}%).`;
+    if((p.topup.amount||0)<=0) return `Top-up amount in "${p.name}" must be greater than zero.`;
+    if(p.rf.mode==='ticker' && !p.rf.ticker) return `Enter a risk-free ticker for "${p.name}" or switch it to a fixed rate.`;
+  }
+  return '';
+}
+function updateSimBtnState(){
+  const b=$('simBtn'); if(!b || b.dataset.running==='1') return;
+  const reason=simBlockReason();
+  if(reason){ b.classList.add('is-disabled'); b.setAttribute('aria-disabled','true'); b.setAttribute('data-tip',reason); }
+  else { b.classList.remove('is-disabled'); b.removeAttribute('aria-disabled'); b.removeAttribute('data-tip'); }
+}
+
 /* ─── RUN SIMULATION (all portfolios on a shared date axis) ─── */
 async function runSimulation(){
   hideWarning();
-  if(!portfolios.length){ showWarning('Add at least one portfolio to run a comparison.'); return; }
+  const blocked=simBlockReason();
+  if(blocked){ showWarning(blocked); return; }
   const startDate=$('startDate').value, endDate=$('endDate').value;
   if(!startDate||!endDate){ showWarning('Please set start and end dates.'); return; }
   if(startDate>=endDate){ showWarning('Start date must be before end date.'); return; }
-  for(const p of portfolios){
-    if(!p.assets.length){ showWarning(`Portfolio "${p.name}" has no assets: add some or remove the portfolio.`); return; }
-    if(Math.abs(totalWeight(p)-100)>0.5){ showWarning(`Asset weights in "${p.name}" must sum to 100% (currently ${fmt.num(totalWeight(p),1)}%).`); return; }
-    if((p.topup.amount||0)<=0){ showWarning(`Top-up amount in "${p.name}" must be greater than zero.`); return; }
-    if(p.rf.mode==='ticker' && !p.rf.ticker){ showWarning(`Enter a risk-free ticker for "${p.name}" or switch it to a fixed rate.`); return; }
-  }
 
-  const simBtn=$('simBtn'); simBtn.disabled=true; simBtn.innerHTML='<span class="spinner"></span>Running…';
+  const simBtn=$('simBtn'); simBtn.dataset.running='1'; simBtn.disabled=true; simBtn.classList.remove('is-disabled'); simBtn.removeAttribute('data-tip'); simBtn.innerHTML='<span class="spinner"></span>Running…';
   try{
     showStatus($('assetFetchStatus'),'Preparing simulation...','loading');
 
@@ -1121,7 +1201,7 @@ async function runSimulation(){
     updateSummary();
     updateTable();
   } finally {
-    simBtn.disabled=false; simBtn.textContent='▶ Simulate';
+    simBtn.disabled=false; simBtn.textContent='▶ Simulate'; delete simBtn.dataset.running; updateSimBtnState();
   }
 }
 
@@ -1425,6 +1505,9 @@ document.querySelectorAll('.ctrl-tab').forEach(btn=>{
 function switchSubTab(name){
   document.querySelectorAll('.sub-tab').forEach(b=>b.classList.toggle('active', b.dataset.sub===name));
   document.querySelectorAll('.sub-panel').forEach(p=>p.classList.toggle('active', p.id==='sub-'+name));
+  // The weight pie lives in a panel that is display:none until shown, so its
+  // canvas has no size at creation time - resize it once the panel is visible.
+  if(name==='rebal' && weightPieChart) weightPieChart.resize();
 }
 document.querySelectorAll('.sub-tab').forEach(btn=>{
   btn.addEventListener('click',()=>switchSubTab(btn.dataset.sub));

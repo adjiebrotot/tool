@@ -148,9 +148,10 @@
       <button class="sub-tab" data-sub="rebal" type="button"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M7.5 19h9"/><path d="M4.5 8h15"/><path d="M4.5 8 2.2 13h4.6z"/><path d="M19.5 8 17.2 13h4.6z"/></svg> Rebalancing</button>
     </div>
 
-    <!-- ASSETS SUBTAB - add form and the asset/weight list flow as one section -->
+    <!-- ASSETS SUBTAB - add form and the asset list flow as one section. Target
+         weights live in the Rebalancing subtab so weight-free methods can omit them. -->
     <div class="sub-panel active" id="sub-assets">
-    <div class="section-label" style="margin-top:0">Assets &amp; Weights</div>
+    <div class="section-label" style="margin-top:0">Assets</div>
     <div class="add-sec-area" style="border-top:none;padding-top:4px">
       <div class="add-sec-row" style="gap:6px;align-items:center">
         <input class="txt-input" id="newAssetName" placeholder="Asset name" style="flex:1;min-width:0" />
@@ -174,7 +175,6 @@
     </div>
 
     <div id="assetList" class="sec-list" style="margin-top:12px"></div>
-    <div class="weight-summary" id="weightSummary"></div>
   </div>
 
     <!-- TOP-UPS SUBTAB -->
@@ -251,6 +251,15 @@
         <input type="radio" name="rebalMethod" value="constant-allocation"/>
         <div class="radio-opt-text"><strong>Constant Allocation</strong>Each top-up is split by the weights and used to buy. Weights apply to the contribution, not the whole portfolio.</div>
       </label>
+    </div>
+
+    <!-- TARGET WEIGHTS - only shown for weight-based methods; future weight-free
+         methods leave this hidden. Pie + editable table are built in script.js. -->
+    <div id="rebalWeights" style="display:none">
+      <div class="section-label">Target Weights <span class="tip-icon" data-tip="Each asset's target share of the portfolio (or of each top-up for Constant Allocation). All weights must sum to 100%.">?</span></div>
+      <div class="weight-pie-wrap"><canvas id="weightPieCanvas" width="200" height="200"></canvas></div>
+      <div id="weightTableWrap"></div>
+      <div class="weight-summary" id="weightSummary"></div>
     </div>
 
     <div id="constantWeightOpts" style="display:none">

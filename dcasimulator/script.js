@@ -427,6 +427,7 @@ function renderScenarioBar(){
   });
   // Keep the + Add button directly beside the last scenario so it flows with the tabs.
   if(addBtn) el.appendChild(addBtn);
+  updateSimBtnState();
 }
 
 function startRenameScenario(tab, sec){
@@ -505,10 +506,8 @@ function renderScenarioConfig(){
                <span class="suffix">%</span>
              </div>
            </div>`}
-      <div style="padding:6px 0 0">
-        <div style="font-size:.8rem;font-weight:700;margin-bottom:6px">Investment Style</div>
-        <div id="styleBlock${sec.id}">${styleBlockInner(sec)}</div>
-      </div>
+      <div class="section-label">Investment Style</div>
+      <div id="styleBlock${sec.id}">${styleBlockInner(sec)}</div>
     </div>`;
 
   $('cfgName').addEventListener('input',e=>{ sec.name=e.target.value; renderScenarioBar(); });
@@ -523,7 +522,7 @@ function renderScenarioConfig(){
       scheduleRun();
     });
   });
-  const tsel=$('cfgTickerSelect'); if(tsel) tsel.addEventListener('change',e=>{ sec.ticker=e.target.value; scheduleRun(); });
+  const tsel=$('cfgTickerSelect'); if(tsel) tsel.addEventListener('change',e=>{ sec.ticker=e.target.value; updateSimBtnState(); scheduleRun(); });
   const ret=$('cfgReturn'); if(ret) wireMoneyField(ret,{maxDecimals:2,allowNegative:true},v=>{ sec.returnPct=v; scheduleRun(); });
   const std=$('cfgStd'); if(std) wireMoneyField(std,{maxDecimals:2},v=>{ sec.stdPct=Math.max(0,v); scheduleRun(); });
   wireMoneyField($('cfgAmount'),{maxDecimals:2},v=>{ sec.amount=Math.max(0,v); scheduleRun(); });
@@ -931,6 +930,7 @@ function clearPool(){
 // Reflect a freshly-loaded pool in the active scenario's ticker dropdown.
 function refreshTickerSelect(){
   if($('scenarioConfig')) renderScenarioConfig();
+  updateSimBtnState();
 }
 
 // Loading is additive and individual tickers are removed via the chip ✕, so the
@@ -1427,19 +1427,38 @@ function simulateSecurity(sec){
   return { investRows, dailyRows, finalEquity: runUnits*(prices[prices.length-1]||1), totalDeposited:runDeposited };
 }
 
+/* ─── SIMULATE BUTTON GATING ──────────────────────────────────────────────────
+   The Simulate button is greyed out (but still hoverable) whenever a required
+   input is missing, with the reason surfaced as a tooltip on hover. ──────────── */
+function simBlockReason(){
+  if(!securities.length) return 'Add at least one scenario to simulate.';
+  if(!$('startDate').value || !$('endDate').value) return 'Set a start and end date in the Data tab.';
+  // A Ticker scenario with no ticker chosen can't run (runSimulation can still
+  // fetch a chosen-but-uncached ticker, so only an empty selection is a blocker).
+  if(securities.some(s=>s.type==='ticker' && !s.ticker))
+    return 'Pick a ticker for every Ticker scenario (load tickers in the Data tab first).';
+  return '';
+}
+function updateSimBtnState(){
+  const b=$('simBtn'); if(!b || b.dataset.running==='1') return;
+  const reason=simBlockReason();
+  if(reason){ b.classList.add('is-disabled'); b.setAttribute('aria-disabled','true'); b.setAttribute('data-tip',reason); }
+  else { b.classList.remove('is-disabled'); b.removeAttribute('aria-disabled'); b.removeAttribute('data-tip'); }
+}
+
 /* ─── RUN SIMULATION ─── */
 async function runSimulation(){
-  if(!securities.length){
-    showWarning('Add at least one security to run simulation.');
-    return;
-  }
+  const blocked=simBlockReason();
+  if(blocked){ showWarning(blocked); return; }
 
   const startDate=$('startDate').value;
   const endDate=$('endDate').value;
-  if(!startDate||!endDate){ showWarning('Please set start and end dates.'); return; }
 
   const simBtn=$('simBtn');
+  simBtn.dataset.running='1';
   simBtn.disabled=true;
+  simBtn.classList.remove('is-disabled');
+  simBtn.removeAttribute('data-tip');
   simBtn.innerHTML='<span class="spinner"></span>Running…';
 
   try{
@@ -1538,7 +1557,9 @@ async function runSimulation(){
   updateTables();
   } finally {
     simBtn.disabled=false;
+    delete simBtn.dataset.running;
     updateSimBtn();
+    updateSimBtnState();
   }
 }
 
