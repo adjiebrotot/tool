@@ -174,6 +174,11 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
 .btn-primary{background:var(--accent);color:var(--text-inv);border:none;border-radius:var(--radius-md);padding:11px 22px;font-weight:700;font-size:.9rem;cursor:pointer;transition:opacity var(--transition-fast),transform var(--transition-fast);font-family:inherit;letter-spacing:.01em;}
 .btn-primary:hover{opacity:.88;}
 .btn-primary:active{transform:scale(.97);}
+/* Soft-disabled: greyed out but still hoverable so the data-tip reason shows.
+   Kept distinct from the native [disabled] (used only while a run is in flight). */
+.btn-primary.is-disabled{opacity:.45;cursor:not-allowed;}
+.btn-primary.is-disabled:hover{opacity:.45;}
+.btn-primary.is-disabled:active{transform:none;}
 .btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:11px 22px;font-weight:700;font-size:.9rem;cursor:pointer;transition:border-color var(--transition-fast);font-family:inherit;}
 .btn-secondary:hover{border-color:var(--accent);}
 .btn-secondary:active{transform:scale(.97);}
