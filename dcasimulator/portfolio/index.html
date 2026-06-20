@@ -253,12 +253,15 @@
       </label>
     </div>
 
-    <!-- TARGET WEIGHTS - only shown for weight-based methods; future weight-free
-         methods leave this hidden. Pie + editable table are built in script.js. -->
+    <!-- TARGET WEIGHTS - a sub-option of the method (same level as Constant Weight
+         Timing), only shown for weight-based methods; future weight-free methods
+         leave this hidden. Pie + editable table are built in script.js. -->
     <div id="rebalWeights" style="display:none">
-      <div class="section-label">Target Weights <span class="tip-icon" data-tip="Each asset's target share of the portfolio (or of each top-up for Constant Allocation). All weights must sum to 100%.">?</span></div>
-      <div class="weight-pie-wrap"><canvas id="weightPieCanvas" width="200" height="200"></canvas></div>
-      <div id="weightTableWrap"></div>
+      <div class="field-label" style="margin-top:10px">Target Weights <span class="tip-icon" data-tip="Each asset's target share of the portfolio (or of each top-up for Constant Allocation). All weights must sum to 100%.">?</span></div>
+      <div class="weight-main">
+        <div class="weight-pie-wrap"><canvas id="weightPieCanvas" width="200" height="200"></canvas></div>
+        <div id="weightTableWrap" class="weight-table-wrap"></div>
+      </div>
       <div class="weight-summary" id="weightSummary"></div>
     </div>
 

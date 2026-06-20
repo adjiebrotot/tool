@@ -16,13 +16,18 @@
 .sec-card.dragging{opacity:.5}
 .sec-card.drag-over{border-color:var(--accent);box-shadow:inset 0 2px 0 var(--accent)}
 
-/* Target-weight pie + editable table (Rebalancing subtab) */
-.weight-pie-wrap{max-width:190px;margin:4px auto 12px;display:flex;justify-content:center}
+/* Target-weight pie + editable table (Rebalancing subtab).
+   Pie and table sit side by side; the pie is kept compact (a fixed 120px so its
+   flex item has a definite width — a responsive Chart.js canvas collapses to 0
+   without one) so the table gets the rest of the room, even on narrow phones. */
+.weight-main{display:flex;align-items:center;gap:12px;margin:8px 0 2px}
+.weight-pie-wrap{flex:0 0 120px;width:120px;margin:0;display:flex;justify-content:center}
+.weight-table-wrap{flex:1 1 auto;min-width:0}
 .weight-table{width:100%;border-collapse:collapse;font-size:.84rem}
 .weight-table td{padding:5px 4px;border-bottom:1px solid var(--border)}
 .weight-table .wt-name{display:flex;align-items:center;gap:7px;color:var(--text)}
 .weight-table .wt-input{text-align:right;white-space:nowrap}
-.weight-table .wt-input .num-input{max-width:64px;text-align:right}
+.weight-table .wt-input .num-input{width:60px;max-width:60px;min-width:56px;text-align:right}
 .weight-table .wt-pct{color:var(--muted);margin-left:4px}
 .weight-table .wt-total td{border-bottom:none;font-weight:800;color:var(--text);padding-top:8px}
 .weight-table .wt-total td:last-child{text-align:right;font-family:'DM Mono',monospace}
