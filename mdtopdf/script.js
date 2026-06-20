@@ -208,6 +208,91 @@
     }, true);
   }
 
+  /* ────────────────────────────────────────────────────────────────
+     STICKY TABLE HEADERS  (screen view only)
+     While a long table is scrolled past the top of the document view, a
+     floating clone of its header row is pinned to the top so column
+     meanings stay visible all the way down to the last row. This is a
+     pure on-screen affordance: the floating clone lives in the scroll
+     container (not in #mdBody), so PDF pagination — which reads the bare
+     <table> from #mdBody — never sees it and the export is unchanged.
+     ──────────────────────────────────────────────────────────────── */
+  let stickyFloat = null;   // floating header container (lazily created)
+  let stickyActive = null;  // the .table-scroll currently mirrored
+  let stickyRaf = 0;
+
+  function getStickyFloat() {
+    if (stickyFloat && stickyFloat.isConnected) return stickyFloat;
+    stickyFloat = document.createElement('div');
+    stickyFloat.className = 'md-sticky-thead md-body';
+    stickyFloat.setAttribute('aria-hidden', 'true');
+    docScroll.appendChild(stickyFloat);
+    return stickyFloat;
+  }
+
+  function clearStickyHeader() {
+    if (stickyFloat) {
+      stickyFloat.classList.remove('visible');
+      stickyFloat.innerHTML = '';
+    }
+    stickyActive = null;
+  }
+
+  // Mirror a wrapper's table into the floating header. The whole table is
+  // cloned (then vertically clipped to the header row by the container) so
+  // the cloned columns line up with the real ones automatically.
+  function buildStickyClone(wrap) {
+    const table = wrap.querySelector(':scope > table');
+    if (!table) return;
+    const float = getStickyFloat();
+    float.innerHTML = '';
+    const clone = table.cloneNode(true);
+    clone.style.width = table.offsetWidth + 'px';
+    clone.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
+    float.appendChild(clone);
+  }
+
+  function updateStickyHeader() {
+    stickyRaf = 0;
+    if (state.editing || !workspace.classList.contains('active')) { clearStickyHeader(); return; }
+    const wraps = mdBody.querySelectorAll('.table-scroll');
+    if (!wraps.length) { clearStickyHeader(); return; }
+
+    const anchorTop = docScroll.getBoundingClientRect().top;
+    let chosen = null, chosenHead = 0;
+    for (const wrap of wraps) {
+      const table = wrap.querySelector(':scope > table');
+      const thead = table && table.querySelector('thead');
+      if (!thead) continue;
+      const r = table.getBoundingClientRect();
+      const hH = thead.getBoundingClientRect().height;
+      // Header floats once the real header has scrolled above the view top
+      // and stays until the last row reaches the top.
+      if (r.top < anchorTop - 1 && r.bottom > anchorTop + hH) {
+        chosen = wrap; chosenHead = hH; break;
+      }
+    }
+    if (!chosen) { clearStickyHeader(); return; }
+
+    if (chosen !== stickyActive) {
+      buildStickyClone(chosen);
+      stickyActive = chosen;
+    }
+    const float = getStickyFloat();
+    const wrapRect = chosen.getBoundingClientRect();
+    float.style.top = anchorTop + 'px';
+    float.style.left = wrapRect.left + 'px';
+    float.style.width = chosen.clientWidth + 'px';
+    float.style.height = chosenHead + 'px';
+    float.scrollLeft = chosen.scrollLeft; // keep horizontal pan in sync
+    float.classList.add('visible');
+  }
+
+  function scheduleSticky() {
+    if (stickyRaf) return;
+    stickyRaf = requestAnimationFrame(updateStickyHeader);
+  }
+
   function render() {
     if (!state.text) return;
     let html;
@@ -228,6 +313,10 @@
     if (state.latex) renderMath(mdBody);
     if (state.diagram) runMermaid(mdBody);
     enhanceTables(mdBody);
+
+    // Content changed — drop any stale floating header and re-evaluate.
+    clearStickyHeader();
+    scheduleSticky();
   }
 
   /* ────────────────────────────────────────────────────────────────
@@ -596,6 +685,7 @@
     state.editing = on;
     docScroll.classList.toggle('editing', on);
     if (on) {
+      clearStickyHeader();
       mdEditor.value = state.text;
       editToggle.textContent = '👁 Preview';
       mdEditor.focus();
@@ -781,6 +871,7 @@
       editToggle.textContent = '✏️ Edit';
       mdEditor.value = '';
       mdBody.innerHTML = '';
+      clearStickyHeader();
       workspace.classList.remove('active');
       dropZone.style.display = '';
       fileInput.value = '';
@@ -801,8 +892,17 @@
     let resizeTimer = null;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => markScrollableTables(mdBody), 150);
+      resizeTimer = setTimeout(() => {
+        markScrollableTables(mdBody);
+        stickyActive = null; // widths may have changed — force a fresh clone
+        scheduleSticky();
+      }, 150);
     });
+
+    // Keep the floating table header pinned/synced while scrolling. Capture
+    // phase also catches horizontal pans inside the per-table scroll boxes
+    // (scroll events don't bubble).
+    docScroll.addEventListener('scroll', scheduleSticky, true);
 
     // Smooth-scroll TOC anchors inside the scroll container.
     mdBody.addEventListener('click', e => {

@@ -256,6 +256,26 @@ body {
 }
 .md-body tbody tr:nth-child(even) td { background: rgba(0,0,0,0.015); }
 
+/* Sticky table header (screen view only).
+   A floating clone of a table's header row, pinned to the top of the
+   document scroll area while a long table is scrolled through, so column
+   headings stay visible down to the last row. It is built and positioned
+   in JS and lives in the scroll container — never in #mdBody — so PDF
+   pagination (which reads the bare <table> from #mdBody) is unaffected. */
+.md-sticky-thead {
+  position: fixed;
+  overflow: hidden;          /* clips the clone down to just the header row */
+  z-index: 4;                /* above the paper, below the sticky toolbar */
+  display: none;
+  margin: 0;
+  pointer-events: none;      /* let drag-to-pan reach the table underneath */
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+.md-sticky-thead.visible { display: block; }
+.md-sticky-thead table { margin: 0 !important; }
+.md-sticky-thead tbody { visibility: hidden; }
+
 /* Task list checkboxes */
 .md-body input[type=checkbox] { margin-right: 6px; transform: translateY(1px); }
 
