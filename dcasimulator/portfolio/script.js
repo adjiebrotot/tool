@@ -740,8 +740,8 @@ function renderScheduleBox(boxId, hintId, sched){
       if(sched.weekParity!==0&&sched.weekParity!==1) sched.weekParity=0;
       html+=`<div class="sched-inline" style="margin-top:8px"><label>Week</label>
         <div class="weekday-grid" style="display:inline-flex">
-          <div class="weekday-chip${sched.weekParity===0?' active':''}" data-wp="0">First week</div>
-          <div class="weekday-chip${sched.weekParity===1?' active':''}" data-wp="1">Second week</div>
+          <div class="weekday-chip wp-chip${sched.weekParity===0?' active':''}" data-wp="0">First week</div>
+          <div class="weekday-chip wp-chip${sched.weekParity===1?' active':''}" data-wp="1">Second week</div>
         </div></div>`;
     }
     box.innerHTML=html;
@@ -754,13 +754,15 @@ function renderScheduleBox(boxId, hintId, sched){
         chip.classList.toggle('active', sched.weekdays.includes(v));
       });
     });
+    const fortnightHint=()=>'Top-up on each selected weekday of the '+(sched.weekParity===1?'second':'first')+' week, every fortnight.';
     box.querySelectorAll('.weekday-chip[data-wp]').forEach(chip=>{
       chip.addEventListener('click',()=>{
         sched.weekParity=+chip.dataset.wp;
         box.querySelectorAll('.weekday-chip[data-wp]').forEach(c=>c.classList.toggle('active',+c.dataset.wp===sched.weekParity));
+        hint.textContent=fortnightHint();
       });
     });
-    hint.textContent=p==='weekly'?'Top-up on each selected weekday, every week.':'Top-up on each selected weekday, every second week.';
+    hint.textContent=p==='weekly'?'Top-up on each selected weekday, every week.':fortnightHint();
   } else if(p==='monthly'){
     box.innerHTML=`<div class="sched-inline"><label>Day(s) of month</label><input class="txt-input" id="${boxId}_dom" value="${sched.daysOfMonth.join(', ')}" placeholder="e.g. 1 or 1, 15"/></div>`;
     $(boxId+'_dom').addEventListener('input',e=>{
