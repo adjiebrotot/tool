@@ -726,13 +726,13 @@ function renderWeightTable(){
   if(!show){ updateSimBtnState(); return; }
 
   const tableWrap=$('weightTableWrap');
-  tableWrap.innerHTML=`<table class="weight-table"><tbody>${
+  tableWrap.innerHTML=`<div class="weight-table">${
     p.assets.map(a=>`
-      <tr>
-        <td class="wt-name"><span class="color-dot" style="background:${a.colorHex}"></span>${a.name}</td>
-        <td class="wt-input"><input class="num-input" id="wt${a.id}" type="number" min="0" max="100" step="1" value="${a.weight}"/><span class="wt-pct">%</span></td>
-      </tr>`).join('')
-  }<tr class="wt-total"><td>Total</td><td id="wtTotalCell"></td></tr></tbody></table>`;
+      <div class="weight-row">
+        <span class="wt-name"><span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span></span>
+        <span class="wt-input"><input class="num-input" id="wt${a.id}" type="number" min="0" max="100" step="1" value="${a.weight}"/><span class="wt-pct">%</span></span>
+      </div>`).join('')
+  }<div class="weight-row wt-total"><span class="wt-name">Total</span><span class="wt-input" id="wtTotalCell"></span></div></div>`;
 
   p.assets.forEach(a=>{
     $(`wt${a.id}`).addEventListener('input',e=>{
