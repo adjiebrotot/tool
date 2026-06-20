@@ -17,7 +17,11 @@ const CASH_COLOR = '#94a3b8';
 const WEEKDAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']; // 1..7
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; // 1..12
 const DEFAULT_RANDOM_SEED = 25823952204;
-const METHOD_LABEL = { 'towards-weight':'Towards Weight', 'constant-weight':'Constant Weight', 'constant-allocation':'Constant Allocation' };
+const METHOD_LABEL = { 'towards-weight':'Towards Weight', 'constant-weight':'Constant Weight', 'constant-allocation':'Constant Allocation', 'dynamic-momentum':'Dynamic Weight', 'rule-trigger':'Rule-Based' };
+// Default technical-trigger parameters for the Rule-Based method (mirrors the
+// single-asset tool's tech defaults so SharedTA.buildTech behaves identically).
+const TRIGGER_TECH_DEFAULTS = { fastMaType:'ema', fastMaLen:50, slowMaType:'sma', slowMaLen:200, rsiPeriod:14, rsiOversold:35, bbPeriod:20, bbStd:2, bbTrigger:'below', macdFast:12, macdSlow:26, macdSignal:9, macdHistThreshold:0, adxPeriod:14, adxThreshold:25 };
+function makeDefaultTrigger(){ return { type:'pct', direction:'drop', pct:10, period:'monthly', tech:Object.assign({}, TRIGGER_TECH_DEFAULTS) }; }
 // Tickers are pooled and fetched once over a wide window so later date-range
 // tweaks reuse the cache instead of hitting the Worker again.
 const POOL_FETCH_START = '1990-01-01';
@@ -454,7 +458,9 @@ function makePortfolio(name, colorHex){
     topup:{ amount:5000, yearlyIncrease:0 },
     topupSched:{ period:'monthly', weekdays:[1], weekParity:0, daysOfMonth:[1], dayOfMonth:1, quarterStart:1, month:1 },
     rf:{ mode:'rate', rate:0, ticker:'' },
-    rebal:{ method:'towards-weight', cwTiming:'at-topup', buyFee:0.1, sellFee:0.1 },
+    // method-specific extras: reserveMode/reserveAssetId (rule-trigger),
+    // lookbackMonths/rankWeights (dynamic-momentum).
+    rebal:{ method:'towards-weight', cwTiming:'at-topup', buyFee:0.1, sellFee:0.1, reserveMode:'cash', reserveAssetId:null, lookbackMonths:6, rankWeights:[] },
     rebalSched:{ period:'quarterly', weekdays:[1], weekParity:0, daysOfMonth:[1], dayOfMonth:1, quarterStart:1, month:1 }
   };
 }
@@ -580,15 +586,15 @@ function loadControlsFromActive(){
 
   // Rebalancing
   selectRadio('rebalMethod', p.rebal.method);
-  $('constantWeightOpts').style.display=p.rebal.method==='constant-weight'?'':'none';
   selectRadio('cwTiming', p.rebal.cwTiming);
-  $('rebalScheduleWrap').style.display=(p.rebal.method==='constant-weight'&&p.rebal.cwTiming==='schedule')?'':'none';
+  selectRadio('reserveMode', p.rebal.reserveMode||'cash');
+  const lbSel=$('lookbackMonths'); if(lbSel) lbSel.value=String(p.rebal.lookbackMonths||6);
   $('rebalPeriod').value=p.rebalSched.period;
   renderScheduleBox('rebalScheduleBox','rebalScheduleHint',p.rebalSched);
   $('buyFee').value=fmtMoneyVal(p.rebal.buyFee);
   $('sellFee').value=fmtMoneyVal(p.rebal.sellFee);
 
-  renderAssetList();
+  renderAssetList();   // tail calls refreshRebalPanels() to show the right panels
 }
 
 /* ─── ASSET MANAGEMENT (operates on the active portfolio) ─── */
@@ -602,6 +608,8 @@ function addAsset(cfg){
     colorHex:cfg.colorHex||LINE_COLOR_HEX[colorIdx],
     weight:cfg.weight!=null?cfg.weight:0,
     returnPct:cfg.returnPct!=null?cfg.returnPct:8, stdPct:cfg.stdPct!=null?cfg.stdPct:15,
+    // Per-asset deploy trigger, used only by the Rule-Based method.
+    trigger: cfg.trigger ? Object.assign(makeDefaultTrigger(), cfg.trigger) : makeDefaultTrigger(),
     loaded:false, open:true, priceData:null, px:null
   };
   p.assets.push(asset);
@@ -707,7 +715,7 @@ function renderAssetList(){
     }
   });
   const cp=$('newAssetColor'); if(cp) cp.value=LINE_COLOR_HEX[p.assets.length % LINE_COLOR_HEX.length];
-  renderWeightTable();
+  refreshRebalPanels();
 }
 
 /* ─── TARGET WEIGHTS (Rebalancing subtab) ─────────────────────────────────────
@@ -715,7 +723,9 @@ function renderAssetList(){
    rebalancing methods that don't depend on a static weight just return false from
    methodNeedsWeights() and the whole block stays hidden. ─────────────────────── */
 function methodNeedsWeights(method){
-  return method==='towards-weight' || method==='constant-weight' || method==='constant-allocation';
+  // Rule-Based also uses target weights: they set how much of the portfolio each
+  // asset deploys toward when its trigger fires (the reserve holds the rest).
+  return method==='towards-weight' || method==='constant-weight' || method==='constant-allocation' || method==='rule-trigger';
 }
 let weightPieChart=null;
 function renderWeightTable(){
@@ -779,6 +789,132 @@ function updateWeightPie(){
         tooltip:{ callbacks:{ label:(c)=>{ const ap=getActive(); const a=ap&&ap.assets[c.dataIndex]; return `${c.label}: ${fmt.num(a?a.weight:0,1)}%`; } } }
       }
     }
+  });
+}
+
+/* ─── DYNAMIC-WEIGHT & RULE-BASED PANELS (Rebalancing subtab) ──────────────────
+   These mirror renderWeightTable(): build a small editable table per method and
+   bind it back to the active portfolio. refreshRebalPanels() is the single entry
+   point that shows/hides the right blocks for the selected method. */
+function methodNeedsRankWeights(method){ return method==='dynamic-momentum'; }
+function methodNeedsTriggers(method){ return method==='rule-trigger'; }
+
+function refreshRebalPanels(){
+  const p=getActive();
+  const method=p?p.rebal.method:'towards-weight';
+  const showTiming = method==='constant-weight' || method==='dynamic-momentum';
+  const co=$('constantWeightOpts'); if(co) co.style.display=showTiming?'':'none';
+  const sw=$('rebalScheduleWrap'); if(sw) sw.style.display=(showTiming && p && p.rebal.cwTiming==='schedule')?'':'none';
+  const dyn=$('dynamicOpts'); if(dyn) dyn.style.display=methodNeedsRankWeights(method)?'':'none';
+  const rule=$('ruleOpts'); if(rule) rule.style.display=methodNeedsTriggers(method)?'':'none';
+  renderWeightTable();
+  renderRankWeightTable();
+  if(methodNeedsTriggers(method)){ populateReserveAssetSelect(); renderTriggerTable(); }
+}
+
+/* ── Dynamic weight: per-rank target weights + momentum lookback ── */
+function rankWeightTotal(p){ return ((p&&p.rebal.rankWeights)||[]).reduce((s,w)=>s+(w||0),0); }
+function renderRankWeightTable(){
+  const wrap=$('rankWeightTableWrap'); if(!wrap) return;
+  const p=getActive();
+  if(!p || !methodNeedsRankWeights(p.rebal.method)){ wrap.innerHTML=''; return; }
+  const lb=$('lookbackMonths'); if(lb) lb.value=String(p.rebal.lookbackMonths||6);
+  const n=p.assets.length;
+  if(!n){ wrap.innerHTML='<div class="field-sub">Add assets to set rank weights.</div>'; return; }
+  // Keep rankWeights length == asset count: default to an equal split, pad/truncate.
+  let rw=(p.rebal.rankWeights&&p.rebal.rankWeights.length)?p.rebal.rankWeights.slice():p.assets.map(()=>Math.round(1000/n)/10);
+  rw=rw.slice(0,n); while(rw.length<n) rw.push(0);
+  p.rebal.rankWeights=rw;
+  wrap.innerHTML=`<div class="weight-table">${
+    rw.map((w,idx)=>`
+      <div class="weight-row">
+        <span class="wt-name"><span class="wt-label">Rank ${idx+1}${idx===0?' · best':''}</span></span>
+        <span class="wt-input"><input class="num-input" id="rw${idx}" type="number" min="0" max="100" step="1" value="${w}"/><span class="wt-pct">%</span></span>
+      </div>`).join('')
+  }<div class="weight-row wt-total"><span class="wt-name">Total</span><span class="wt-input" id="rwTotalCell"></span></div></div>`;
+  rw.forEach((w,idx)=>{
+    $(`rw${idx}`).addEventListener('input',e=>{
+      p.rebal.rankWeights[idx]=Math.max(0,parseFloat(e.target.value)||0);
+      refreshRankTotals(); updateSimBtnState();
+    });
+  });
+  refreshRankTotals(); updateSimBtnState();
+}
+function refreshRankTotals(){
+  const p=getActive(); if(!p) return;
+  const t=rankWeightTotal(p);
+  const ok=Math.abs(t-100)<0.5;
+  const cell=$('rwTotalCell'); if(cell) cell.textContent=fmt.num(t,1)+'%'+(ok?'':' ⚠');
+  const row=cell?cell.closest('.wt-total'):null; if(row) row.classList.toggle('bad',!ok);
+}
+
+/* ── Rule-based: reserve selector + per-asset deploy triggers ── */
+const TRIGGER_TYPE_LABEL = { 'pct':'Price % move', 'tech-rsi':'RSI oversold', 'tech-ma-cross':'MA crossover', 'tech-bollinger':'Bollinger dip', 'tech-macd-cross':'MACD cross', 'tech-macd-hist':'MACD histogram', 'tech-adx':'ADX trend' };
+function populateReserveAssetSelect(){
+  const sel=$('reserveAssetSelect'); const p=getActive(); if(!sel||!p) return;
+  sel.innerHTML=p.assets.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
+  if(p.rebal.reserveAssetId==null || !p.assets.some(a=>a.id===p.rebal.reserveAssetId))
+    p.rebal.reserveAssetId = p.assets.length?p.assets[0].id:null;
+  if(p.rebal.reserveAssetId!=null) sel.value=String(p.rebal.reserveAssetId);
+  selectRadio('reserveMode', p.rebal.reserveMode||'cash');
+  const row=$('reserveAssetRow'); if(row) row.style.display=(p.rebal.reserveMode==='asset')?'':'none';
+}
+function triggerParamsHtml(a){
+  const tr=a.trigger||makeDefaultTrigger(); const t=tr.tech||{}; const aid=a.id;
+  if(tr.type==='pct'){
+    return `<div class="param-row"><label>Direction</label>
+        <select class="num-input trig-dir" data-aid="${aid}" style="cursor:pointer">
+          <option value="drop" ${tr.direction!=='rise'?'selected':''}>Falls by</option>
+          <option value="rise" ${tr.direction==='rise'?'selected':''}>Rises by</option>
+        </select></div>
+      <div class="param-row"><label>Amount</label><input class="num-input trig-pct" data-aid="${aid}" type="number" min="0.1" step="0.1" value="${tr.pct}"/><span class="wt-pct">%</span></div>
+      <div class="param-row"><label>From</label>
+        <select class="num-input trig-period" data-aid="${aid}" style="cursor:pointer">
+          <option value="monthly" ${tr.period!=='weekly'?'selected':''}>Month open</option>
+          <option value="weekly" ${tr.period==='weekly'?'selected':''}>Week open</option>
+        </select></div>`;
+  }
+  const maSel=(k,val)=>`<select class="num-input ttk" data-aid="${aid}" data-k="${k}" style="cursor:pointer"><option value="sma" ${val==='sma'?'selected':''}>SMA</option><option value="ema" ${val==='ema'?'selected':''}>EMA</option></select>`;
+  const num=(k,val,min,max,step)=>`<input class="num-input ttk" data-aid="${aid}" data-k="${k}" type="number" min="${min}" max="${max}" step="${step||1}" value="${val}"/>`;
+  if(tr.type==='tech-rsi') return `<div class="param-row"><label>RSI period</label>${num('rsiPeriod',t.rsiPeriod,2,100)}</div><div class="param-row"><label>Oversold &lt;</label>${num('rsiOversold',t.rsiOversold,1,99)}</div>`;
+  if(tr.type==='tech-ma-cross') return `<div class="param-row"><label>Fast MA</label>${maSel('fastMaType',t.fastMaType)}${num('fastMaLen',t.fastMaLen,1,200)}</div><div class="param-row"><label>Slow MA</label>${maSel('slowMaType',t.slowMaType)}${num('slowMaLen',t.slowMaLen,1,400)}</div>`;
+  if(tr.type==='tech-bollinger') return `<div class="param-row"><label>Period</label>${num('bbPeriod',t.bbPeriod,2,100)}</div><div class="param-row"><label>Std dev</label>${num('bbStd',t.bbStd,0.5,5,0.1)}</div>`;
+  if(tr.type==='tech-macd-cross'||tr.type==='tech-macd-hist') return `<div class="param-row"><label>Fast EMA</label>${num('macdFast',t.macdFast,1,100)}</div><div class="param-row"><label>Slow EMA</label>${num('macdSlow',t.macdSlow,1,200)}</div><div class="param-row"><label>Signal</label>${num('macdSignal',t.macdSignal,1,100)}</div>`;
+  if(tr.type==='tech-adx') return `<div class="param-row"><label>ADX period</label>${num('adxPeriod',t.adxPeriod,2,100)}</div><div class="param-row"><label>Threshold &gt;</label>${num('adxThreshold',t.adxThreshold,1,100)}</div>`;
+  return '';
+}
+function renderTriggerTable(){
+  const wrap=$('triggerTableWrap'); const p=getActive(); if(!wrap||!p) return;
+  if(!methodNeedsTriggers(p.rebal.method)){ wrap.innerHTML=''; return; }
+  if(!p.assets.length){ wrap.innerHTML='<div class="field-sub">Add assets to configure triggers.</div>'; return; }
+  const reserveId=(p.rebal.reserveMode==='asset')?p.rebal.reserveAssetId:null;
+  wrap.innerHTML=p.assets.map(a=>{
+    if(a.id===reserveId)
+      return `<div class="trigger-card"><div class="trigger-head"><span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span><span class="trigger-reserve-tag">Reserve</span></div></div>`;
+    const tr=a.trigger||makeDefaultTrigger();
+    return `<div class="trigger-card">
+      <div class="trigger-head"><span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span></div>
+      <div class="param-row"><label>Trigger</label>
+        <select class="num-input trig-type" data-aid="${a.id}" style="cursor:pointer">${
+          Object.keys(TRIGGER_TYPE_LABEL).map(k=>`<option value="${k}" ${tr.type===k?'selected':''}>${TRIGGER_TYPE_LABEL[k]}</option>`).join('')
+        }</select></div>
+      <div class="trig-params">${triggerParamsHtml(a)}</div>
+    </div>`;
+  }).join('');
+  wireTriggerTable();
+}
+function wireTriggerTable(){
+  const p=getActive(); if(!p) return;
+  const getAsset=el=>p.assets.find(a=>a.id===+el.dataset.aid);
+  document.querySelectorAll('#triggerTableWrap .trig-type').forEach(sel=>sel.addEventListener('change',e=>{
+    const a=getAsset(e.target); if(!a) return; a.trigger.type=e.target.value; renderTriggerTable();  // params depend on type
+  }));
+  document.querySelectorAll('#triggerTableWrap .trig-dir').forEach(sel=>sel.addEventListener('change',e=>{ const a=getAsset(e.target); if(a) a.trigger.direction=e.target.value; }));
+  document.querySelectorAll('#triggerTableWrap .trig-pct').forEach(inp=>inp.addEventListener('input',e=>{ const a=getAsset(e.target); if(a) a.trigger.pct=Math.max(0,parseFloat(e.target.value)||0); }));
+  document.querySelectorAll('#triggerTableWrap .trig-period').forEach(sel=>sel.addEventListener('change',e=>{ const a=getAsset(e.target); if(a) a.trigger.period=e.target.value; }));
+  document.querySelectorAll('#triggerTableWrap .ttk').forEach(el=>{
+    const handler=e=>{ const a=getAsset(e.target); if(!a) return; a.trigger.tech=a.trigger.tech||{}; const k=e.target.dataset.k; a.trigger.tech[k]= e.target.tagName==='SELECT' ? e.target.value : (parseFloat(e.target.value)||0); };
+    el.addEventListener(el.tagName==='SELECT'?'change':'input', handler);
   });
 }
 
@@ -928,9 +1064,8 @@ document.querySelectorAll('input[name="rebalMethod"]').forEach(r=>{
   r.addEventListener('change',()=>{
     document.querySelectorAll('[data-method]').forEach(o=>o.classList.remove('selected'));
     r.closest('[data-method]').classList.add('selected');
-    $('constantWeightOpts').style.display=r.value==='constant-weight'?'':'none';
     const p=getActive(); if(p) p.rebal.method=r.value;
-    renderWeightTable();
+    refreshRebalPanels();
     renderPortfolioList();
   });
 });
@@ -942,6 +1077,19 @@ document.querySelectorAll('input[name="cwTiming"]').forEach(r=>{
     const p=getActive(); if(p) p.rebal.cwTiming=r.value;
   });
 });
+// Reserve mode (rule-trigger): cash vs holding asset, + which asset.
+document.querySelectorAll('input[name="reserveMode"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    document.querySelectorAll('[data-reserve]').forEach(o=>o.classList.remove('selected'));
+    const lab=r.closest('[data-reserve]'); if(lab) lab.classList.add('selected');
+    const p=getActive(); if(p) p.rebal.reserveMode=r.value;
+    const row=$('reserveAssetRow'); if(row) row.style.display=(r.value==='asset')?'':'none';
+    if(p && r.value==='asset') populateReserveAssetSelect();
+    renderTriggerTable();   // reserve asset shows a "Reserve" tag instead of a trigger
+  });
+});
+{ const lb=$('lookbackMonths'); if(lb) lb.addEventListener('change',e=>{ const p=getActive(); if(p) p.rebal.lookbackMonths=parseInt(e.target.value,10)||6; }); }
+{ const rs=$('reserveAssetSelect'); if(rs) rs.addEventListener('change',e=>{ const p=getActive(); if(p) p.rebal.reserveAssetId=parseInt(e.target.value,10); renderTriggerTable(); }); }
 
 /* ─── SCHEDULE INDEX GENERATION ─── */
 function closestByDom(idxs, dates, targetDom){
@@ -990,22 +1138,28 @@ function getScheduleIndices(dates, sched){
   return res;
 }
 
-/* ─── BUY / REBALANCE HELPERS (operate on a given asset set + state) ─── */
+/* ─── BUY / REBALANCE HELPERS (operate on a given asset set + state) ───
+   Each takes an optional `wts` array (target weight % per asset, parallel to
+   `assets`). It defaults to the static per-asset weights so the existing
+   weight-based methods are unchanged, while the dynamic/rule-based methods pass
+   targets they compute per event (momentum ranks, or a single triggered asset). */
 function investedValue(assets, state, i){ return assets.reduce((s,a)=>s+state.units[a.id]*a.px[i],0); }
-function buyByWeights(assets, state, i, buyFee){
+function buyByWeights(assets, state, i, buyFee, wts){
+  wts = wts || assets.map(a=>a.weight||0);
   const cash=state.cash; if(cash<=0) return;
-  assets.forEach(a=>{
-    const dollars=cash*(a.weight/100);
+  assets.forEach((a,k)=>{
+    const dollars=cash*((wts[k]||0)/100);
     if(dollars<=0) return;
     state.units[a.id]+=dollars*(1-buyFee)/a.px[i];
     state.cash-=dollars;
   });
   if(state.cash<1e-9) state.cash=0;
 }
-function buyUnderweight(assets, state, i, buyFee){
+function buyUnderweight(assets, state, i, buyFee, wts){
+  wts = wts || assets.map(a=>a.weight||0);
   const C=state.cash; if(C<=0) return;
   const total=investedValue(assets,state,i)+C;
-  const deficits=assets.map(a=>Math.max(0, total*(a.weight/100)-state.units[a.id]*a.px[i]));
+  const deficits=assets.map((a,k)=>Math.max(0, total*((wts[k]||0)/100)-state.units[a.id]*a.px[i]));
   const sum=deficits.reduce((s,d)=>s+d,0);
   if(sum<=0) return;
   const scale=Math.min(1, C/sum);
@@ -1017,12 +1171,13 @@ function buyUnderweight(assets, state, i, buyFee){
   });
   if(state.cash<1e-9) state.cash=0;
 }
-function fullRebalance(assets, state, i, buyFee, sellFee){
+function fullRebalance(assets, state, i, buyFee, sellFee, wts){
+  wts = wts || assets.map(a=>a.weight||0);
   const T=state.cash+investedValue(assets,state,i);
   if(T<=0) return;
   // Sell overweight
-  assets.forEach(a=>{
-    const price=a.px[i], value=state.units[a.id]*price, target=T*(a.weight/100);
+  assets.forEach((a,k)=>{
+    const price=a.px[i], value=state.units[a.id]*price, target=T*((wts[k]||0)/100);
     if(value>target){
       const sellDollars=value-target;
       state.units[a.id]-=sellDollars/price;
@@ -1030,12 +1185,97 @@ function fullRebalance(assets, state, i, buyFee, sellFee){
     }
   });
   // Buy underweight with whatever cash is available (scaled to avoid overspend)
-  const buys=assets.map(a=>{ const value=state.units[a.id]*a.px[i], target=T*(a.weight/100); return Math.max(0,target-value); });
+  const buys=assets.map((a,k)=>{ const value=state.units[a.id]*a.px[i], target=T*((wts[k]||0)/100); return Math.max(0,target-value); });
   const totalBuy=buys.reduce((s,b)=>s+b,0);
   if(totalBuy>0){
     const scale=Math.min(1, state.cash/totalBuy);
     assets.forEach((a,k)=>{ const spend=buys[k]*scale; if(spend<=0) return; state.units[a.id]+=spend*(1-buyFee)/a.px[i]; state.cash-=spend; });
   }
+  if(state.cash<1e-9) state.cash=0;
+}
+
+/* ─── DYNAMIC-WEIGHT & RULE-BASED HELPERS ─────────────────────────────────────
+   Momentum ranking and per-asset trigger signals for the two new methods. Both
+   work off each asset's `a.px` (close prices aligned to the shared date axis)
+   and the technical machinery shared with the single-asset tool (SharedTA). */
+// Trailing return of asset over `lbDays` trading days ending at index i.
+// Falls back to return-since-start while there isn't a full lookback yet.
+function trailingReturn(px, i, lbDays){
+  const j = Math.max(0, i - lbDays);
+  const base = px[j];
+  if(base==null || base<=0 || px[i]==null) return -Infinity;
+  return px[i]/base - 1;
+}
+// Map per-rank target weights onto assets by trailing-return rank (best→rank 1).
+// Returns a wts array parallel to `assets` (percent). Ties keep input order.
+function momentumWeights(assets, i, lbDays, rankWeights){
+  const order = assets.map((a,k)=>k).sort((x,y)=>
+    trailingReturn(assets[y].px,i,lbDays) - trailingReturn(assets[x].px,i,lbDays));
+  const wts = new Array(assets.length).fill(0);
+  order.forEach((assetIdx, rank)=>{ wts[assetIdx] = rankWeights[rank]||0; });
+  return wts;
+}
+// Pre-compute a boolean buy-signal array per asset for the rule-trigger method.
+// Price-% triggers compare each day's price to its month/week open; technical
+// triggers reuse SharedTA.buildTech on the asset's own price series.
+function buildAssetTriggerSignals(assets, common){
+  return assets.map(a=>{
+    const tr = a.trigger || {};
+    const px = a.px, n = px.length;
+    if(tr.type && tr.type.indexOf('tech-')===0){
+      return SharedTA.buildTech(px, tr.type, tr.tech||{}).signal;
+    }
+    // Default: percentage move from the period open (monthly/weekly).
+    const sig = new Array(n).fill(false);
+    const pct = (tr.pct!=null?tr.pct:10)/100;
+    const dir = tr.direction || 'drop';
+    const period = tr.period || 'monthly';
+    let curKey=null, openPx=null;
+    for(let i=0;i<n;i++){
+      const k = SharedTA.periodKey(common[i], period);
+      if(k!==curKey){ curKey=k; openPx=px[i]; }
+      if(openPx==null||openPx<=0) continue;
+      const move = px[i]/openPx - 1;
+      sig[i] = dir==='rise' ? (move >= pct) : (move <= -pct);
+    }
+    return sig;
+  });
+}
+
+// Deploy the reserve into the assets whose trigger fired on day i, moving each
+// toward its target weight of total portfolio value. The reserve is either plain
+// cash or a designated holding asset (sold to fund the buys, net of the sell fee).
+function deployTriggered(assets, state, i, triggeredIdx, buyFee, sellFee, reserveIdx){
+  if(!triggeredIdx.length) return;
+  const T=state.cash+investedValue(assets,state,i);
+  if(T<=0) return;
+  const buys={}; let need=0;
+  triggeredIdx.forEach(k=>{
+    const a=assets[k];
+    const def=Math.max(0, T*((a.weight||0)/100) - state.units[a.id]*a.px[i]);
+    if(def>0){ buys[k]=def; need+=def; }
+  });
+  if(need<=0) return;
+  // If the reserve is a holding asset, liquidate just enough of it (grossed up
+  // for the sell fee) so cash can cover the buys.
+  if(reserveIdx!=null && reserveIdx>=0 && assets[reserveIdx]){
+    const r=assets[reserveIdx];
+    const shortfall=Math.max(0, need - state.cash);
+    if(shortfall>0 && sellFee<1){
+      const wantValue=shortfall/(1-sellFee);
+      const haveValue=state.units[r.id]*r.px[i];
+      const sellValue=Math.min(wantValue, haveValue);
+      state.units[r.id]-=sellValue/r.px[i];
+      state.cash+=sellValue*(1-sellFee);
+    }
+  }
+  const scale=Math.min(1, state.cash/need);
+  triggeredIdx.forEach(k=>{
+    const spend=(buys[k]||0)*scale; if(spend<=0) return;
+    const a=assets[k];
+    state.units[a.id]+=spend*(1-buyFee)/a.px[i];
+    state.cash-=spend;
+  });
   if(state.cash<1e-9) state.cash=0;
 }
 
@@ -1050,7 +1290,19 @@ function simulatePortfolio(p, assets, common, rfPx){
   const rfDayFactor=Math.pow(1+rfRate/100, 1/252);
   const topupSet=getScheduleIndices(common, p.topupSched);
   let rebalSet=new Set();
-  if(method==='constant-weight' && cwTiming==='schedule') rebalSet=getScheduleIndices(common, p.rebalSched);
+  if((method==='constant-weight'||method==='dynamic-momentum') && cwTiming==='schedule') rebalSet=getScheduleIndices(common, p.rebalSched);
+
+  // ── Dynamic-weight (momentum rank) pre-compute ──
+  const lbDays=Math.max(1, Math.round((p.rebal.lookbackMonths||6)*21));
+  let rankWeights=(p.rebal.rankWeights&&p.rebal.rankWeights.length)?p.rebal.rankWeights.slice():assets.map(()=>100/assets.length);
+  while(rankWeights.length<assets.length) rankWeights.push(0);  // unranked tail → 0%
+  const dynWts=i=>momentumWeights(assets,i,lbDays,rankWeights);
+
+  // ── Rule-based (trigger) pre-compute ──
+  const isRule=method==='rule-trigger';
+  const reserveIdx=(isRule && p.rebal.reserveMode==='asset') ? assets.findIndex(a=>a.id===p.rebal.reserveAssetId) : -1;
+  const triggerSig=isRule ? buildAssetTriggerSignals(assets, common) : null;
+  const reserveOnlyWts=(reserveIdx>=0) ? assets.map((a,k)=>k===reserveIdx?100:0) : null;
 
   const state={cash:0, units:{}};
   assets.forEach(a=>state.units[a.id]=0);
@@ -1068,8 +1320,25 @@ function simulatePortfolio(p, assets, common, rfPx){
         if(cwTiming==='at-topup'){ buyUnderweight(assets,state,i,buyFee); fullRebalance(assets,state,i,buyFee,sellFee); }
         else buyUnderweight(assets,state,i,buyFee);
       }
+      else if(method==='dynamic-momentum'){
+        const w=dynWts(i);
+        if(cwTiming==='at-topup'){ buyUnderweight(assets,state,i,buyFee,w); fullRebalance(assets,state,i,buyFee,sellFee,w); }
+        else buyUnderweight(assets,state,i,buyFee,w);
+      }
+      else if(isRule && reserveOnlyWts){
+        // Reserve is a holding asset: park the fresh cash in it immediately.
+        buyByWeights(assets,state,i,buyFee,reserveOnlyWts);
+      }
+      // rule-trigger with cash reserve: leave the top-up as cash (it compounds
+      // at the risk-free rate) until a trigger deploys it below.
     }
-    if(rebalSet.has(i)) fullRebalance(assets,state,i,buyFee,sellFee);
+    // Rule-based deployment runs every day, not just on top-up days.
+    if(isRule){
+      const fired=[];
+      for(let k=0;k<assets.length;k++){ if(k===reserveIdx) continue; if(triggerSig[k] && triggerSig[k][i]) fired.push(k); }
+      if(fired.length) deployTriggered(assets,state,i,fired,buyFee,sellFee,reserveIdx);
+    }
+    if(rebalSet.has(i)) fullRebalance(assets,state,i,buyFee,sellFee, method==='dynamic-momentum'?dynWts(i):undefined);
     const assetVals={}; let invested=0;
     assets.forEach(a=>{ const v=state.units[a.id]*a.px[i]; assetVals[a.id]=v; invested+=v; });
     rows.push({date:common[i], cash:state.cash, assetVals, invested, total:state.cash+invested, cumTopup});
@@ -1088,6 +1357,8 @@ function simBlockReason(){
     if(!p.assets.length) return `Portfolio "${p.name}" has no assets yet.`;
     if(methodNeedsWeights(p.rebal.method) && Math.abs(totalWeight(p)-100)>0.5)
       return `Asset weights in "${p.name}" must sum to 100% (currently ${fmt.num(totalWeight(p),1)}%).`;
+    if(methodNeedsRankWeights(p.rebal.method) && p.rebal.rankWeights && p.rebal.rankWeights.length && Math.abs(rankWeightTotal(p)-100)>0.5)
+      return `Rank weights in "${p.name}" must sum to 100% (currently ${fmt.num(rankWeightTotal(p),1)}%).`;
     if((p.topup.amount||0)<=0) return `Top-up amount in "${p.name}" must be greater than zero.`;
     if(p.rf.mode==='ticker' && !p.rf.ticker) return `Enter a risk-free ticker for "${p.name}" or switch it to a fixed rate.`;
   }
@@ -1413,6 +1684,69 @@ $('downloadBtn').addEventListener('click',()=>{
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='portfolio-dca-'+safe+'.csv';
   document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
 });
+
+/* ─── SAVE / LOAD SETTINGS (download/upload the whole configuration as JSON) ───
+   Persists every portfolio (assets, weights, schedules, rebalancing, triggers)
+   plus the global settings so a user can resume later. Price history is NOT
+   saved — it lives in the shared cache and re-fetches on the next run. */
+function exportSettings(){
+  const clean=JSON.parse(JSON.stringify(portfolios));
+  clean.forEach(p=>{ (p.assets||[]).forEach(a=>{ delete a.priceData; delete a.px; delete a.loaded; delete a.open; }); delete p._rfData; });
+  const obj={
+    app:'dca-portfolio', version:1, savedAt:new Date().toISOString(),
+    global:{
+      currencySymbol: currentCurrencySymbol,
+      randomSeed: currentRandomSeed,
+      startDate: $('startDate').value,
+      endDate: $('endDate').value,
+      tickerPool: ($('tickerPoolInput')||{}).value || ''
+    },
+    activePortfolioId,
+    portfolios: clean
+  };
+  SharedConfig.download('portfolio-dca-settings.json', obj);
+}
+// Rebuild one portfolio from a saved snapshot, merging onto current defaults so
+// older files still get any newer fields, and clearing transient/cache fields.
+function normalizeLoadedPortfolio(src){
+  const base=makePortfolio(src.name, src.colorHex);   // for default sub-objects
+  base.id = src.id||base.id;
+  base.name = src.name||base.name;
+  base.colorHex = src.colorHex||base.colorHex;
+  base.assetIdCounter = src.assetIdCounter||0;
+  base.topup = Object.assign({}, base.topup, src.topup);
+  base.topupSched = Object.assign({}, base.topupSched, src.topupSched);
+  base.rf = Object.assign({}, base.rf, src.rf);
+  base.rebal = Object.assign({}, base.rebal, src.rebal);
+  base.rebalSched = Object.assign({}, base.rebalSched, src.rebalSched);
+  base.assets = (src.assets||[]).map((a,idx)=>({
+    id: a.id!=null?a.id:(idx+1), type:a.type||'custom', ticker:a.ticker||'', name:a.name||a.ticker||'Asset',
+    colorHex:a.colorHex||LINE_COLOR_HEX[idx % LINE_COLOR_HEX.length],
+    weight:a.weight!=null?a.weight:0,
+    returnPct:a.returnPct!=null?a.returnPct:8, stdPct:a.stdPct!=null?a.stdPct:15,
+    trigger: a.trigger ? Object.assign(makeDefaultTrigger(), a.trigger, {tech:Object.assign(Object.assign({},TRIGGER_TECH_DEFAULTS), a.trigger.tech||{})}) : makeDefaultTrigger(),
+    loaded:false, open:false, priceData:null, px:null
+  }));
+  return base;
+}
+function importSettings(obj){
+  if(!obj || obj.app!=='dca-portfolio'){ showWarning('That file is not a Portfolio DCA settings file.'); return; }
+  const g=obj.global||{};
+  if(g.currencySymbol){ $('currencySymbol').value=g.currencySymbol; currentCurrencySymbol=g.currencySymbol; }
+  if(g.randomSeed!=null){ $('randomSeed').value=g.randomSeed; currentRandomSeed=sanitizeSeed(g.randomSeed); }
+  if(g.startDate) $('startDate').value=g.startDate;
+  if(g.endDate) $('endDate').value=g.endDate;
+  if(g.tickerPool!=null){ const inp=$('tickerPoolInput'); if(inp) inp.value=g.tickerPool; }
+  portfolios=(obj.portfolios||[]).map(normalizeLoadedPortfolio);
+  simResults=[]; commonDates=[];
+  portfolioIdCounter = portfolios.reduce((m,p)=>Math.max(m, p.id||0), 0);
+  activePortfolioId = (obj.activePortfolioId!=null && portfolios.some(p=>p.id===obj.activePortfolioId)) ? obj.activePortfolioId : (portfolios[0]?portfolios[0].id:null);
+  hideWarning();
+  loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();
+  runSimulation();
+}
+{ const e=$('exportConfigBtn'); if(e) e.addEventListener('click', exportSettings); }
+{ const i=$('importConfigBtn'); if(i) i.addEventListener('click', ()=>SharedConfig.upload(importSettings, err=>showWarning('Could not load settings: '+err.message))); }
 
 /* ─── CHART PNG EXPORT ─── */
 function exportChartPng(canvasId, filename, chartTitle, legendId, download=true){
