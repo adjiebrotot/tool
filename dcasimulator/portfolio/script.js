@@ -160,9 +160,9 @@ const fmtMetPct = v => (v==null||!isFinite(v)) ? ' - ' : (v*100).toFixed(2)+'%';
 // Hover explanations for each advanced metric (avoid double quotes - used in data-tip).
 const METRIC_TIPS = {
   sharpe:  'Sharpe ratio: annualised excess return ÷ return volatility. Excess return = daily time-weighted return minus the daily risk-free rate (each portfolio uses its own assigned rate/ticker); annualised by ×√252.',
-  sortino: 'Sortino ratio: like Sharpe but only penalises downside - annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
-  twr:     'CAGR (TWR): time-weighted compound annual growth rate - the geometric mean of daily returns (each day net of that day’s top-up), annualised.',
-  mwr:     'CAGR (MWR): money-weighted compound annual growth rate - the annualised internal rate of return (IRR) of your actual top-ups and the final portfolio value.',
+  sortino: 'Sortino ratio: like Sharpe but only penalises downside, i.e. the annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
+  twr:     'CAGR (TWR): time-weighted compound annual growth rate, the geometric mean of daily returns (each day net of that day’s top-up), annualised.',
+  mwr:     'CAGR (MWR): money-weighted compound annual growth rate, the annualised internal rate of return (IRR) of your actual top-ups and the final portfolio value.',
 };
 const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:var(--muted);cursor:help;border-bottom:1px dotted var(--border)">${label}</span> <b>${val}</b></div>`;
 
@@ -402,7 +402,7 @@ async function loadTickerPool(){
     return;
   }
   if(SharedYF.getDailyRemaining()<=0){
-    showStatus($('poolStatus'),'Daily limit reached - you\'ve used all '+SharedYF.getDailyLimit()+' data requests for today. They reset tomorrow; cached tickers still work.','error');
+    showStatus($('poolStatus'),'Daily limit reached: you\'ve used all '+SharedYF.getDailyLimit()+' data requests for today. They reset tomorrow; cached tickers still work.','error');
     updateRateInfo();
     return;
   }
@@ -701,14 +701,14 @@ $('addAssetBtn').addEventListener('click', ()=>{
   if(type==='ticker'){
     const ticker=($('assetTickerSelect').value||'').trim().toUpperCase();
     if(!ticker){ showStatus($('assetFetchStatus'),'Load tickers in the Data tab first, then pick one here.','error'); return; }
-    if(!priceCache[ticker]){ showStatus($('assetFetchStatus'),ticker+' is not loaded - add it in the Data tab first.','error'); return; }
+    if(!priceCache[ticker]){ showStatus($('assetFetchStatus'),ticker+' is not loaded: add it in the Data tab first.','error'); return; }
     // Price data is shared via priceCache (loaded up front in the Data tab), so
     // adding the same ticker to multiple portfolios costs no extra request.
     const asset=addAsset({type:'ticker', ticker, name:name||ticker, colorHex});
     asset.loaded=true;
     $('newAssetName').value='';
     const e=priceCache[ticker];
-    if(e && e.kind==='stock' && e.source==='stooq'){ showStatus($('assetFetchStatus'),'⚠️ '+ticker+' was loaded from Stooq - stock prices there are <strong>not</strong> adjusted for splits/dividends.','warn'); }
+    if(e && e.kind==='stock' && e.source==='stooq'){ showStatus($('assetFetchStatus'),'⚠️ '+ticker+' was loaded from Stooq: stock prices there are <strong>not</strong> adjusted for splits/dividends.','warn'); }
     else showStatus($('assetFetchStatus'),ticker+' added from cached data.','ok');
     renderAssetList(); renderPortfolioList();
   } else {
@@ -976,7 +976,7 @@ async function runSimulation(){
   if(!startDate||!endDate){ showWarning('Please set start and end dates.'); return; }
   if(startDate>=endDate){ showWarning('Start date must be before end date.'); return; }
   for(const p of portfolios){
-    if(!p.assets.length){ showWarning(`Portfolio "${p.name}" has no assets - add some or remove the portfolio.`); return; }
+    if(!p.assets.length){ showWarning(`Portfolio "${p.name}" has no assets: add some or remove the portfolio.`); return; }
     if(Math.abs(totalWeight(p)-100)>0.5){ showWarning(`Asset weights in "${p.name}" must sum to 100% (currently ${fmt.num(totalWeight(p),1)}%).`); return; }
     if((p.topup.amount||0)<=0){ showWarning(`Top-up amount in "${p.name}" must be greater than zero.`); return; }
     if(p.rf.mode==='ticker' && !p.rf.ticker){ showWarning(`Enter a risk-free ticker for "${p.name}" or switch it to a fixed rate.`); return; }
@@ -1260,13 +1260,13 @@ document.querySelectorAll('#compViewToggle .seg-btn').forEach(btn=>{
      - minus sign (−) and en dash (–) → "-"   (negative values stay negative)
      - delta (Δ)                      → "Delta"
      - emoji / pictographs            → removed (cosmetic)
-     - em dash ( - ), figure dash, bar  → removed (cosmetic separators) */
+     - em dash, figure dash, bar      → removed (cosmetic separators) */
 function cleanCSV(text){
   return String(text||'')
     .replace(/[–−]/g, '-')
     .replace(/Δ/g, 'Delta')
     .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu, '')
-    .replace(/[ \t]*[‒ - ―][ \t]*/g, ' ');
+    .replace(/[ \t]*[‒—―][ \t]*/g, ' ');
 }
 
 /* ─── CSV EXPORT (full daily, selected table portfolio) ─── */
@@ -1321,7 +1321,7 @@ async function copyCanvasPng(canvas){
   if(!blob) throw new Error('Could not create PNG.');
   await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
 }
-function compTitle(){ const res=simResults.find(r=>r.id===activeCompChartId); return 'Composition Over Time'+(res?' - '+res.name:''); }
+function compTitle(){ const res=simResults.find(r=>r.id===activeCompChartId); return 'Composition Over Time'+(res?': '+res.name:''); }
 $('valuePngBtn').addEventListener('click',()=>exportChartPng('valueCanvas','portfolio-value.png','Portfolio Value Over Time','valueLegend'));
 $('compPngBtn').addEventListener('click',()=>exportChartPng('compCanvas','portfolio-composition.png',compTitle(),'compLegend'));
 $('valueCopyBtn').addEventListener('click',async()=>{ const c=exportChartPng('valueCanvas','','Portfolio Value Over Time','valueLegend',false); if(c){ try{ await copyCanvasPng(c); showStatus($('assetFetchStatus'),'Copied value chart to clipboard.','ok'); }catch(e){ showStatus($('assetFetchStatus'),e.message,'error'); } } });

@@ -225,9 +225,9 @@ const fmtMetPct = v => (v==null||!isFinite(v)) ? ' - ' : (v*100).toFixed(2)+'%';
 // Hover explanations for each advanced metric (avoid double quotes - used in data-tip).
 const METRIC_TIPS = {
   sharpe:  'Sharpe ratio: annualised excess return ÷ return volatility. Excess return = daily time-weighted return minus the daily risk-free rate (set in Settings); annualised by ×√252.',
-  sortino: 'Sortino ratio: like Sharpe but only penalises downside - annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
-  twr:     'CAGR (TWR): time-weighted compound annual growth rate - the geometric mean of daily returns, annualised. Ignores the timing/size of deposits.',
-  mwr:     'CAGR (MWR): money-weighted compound annual growth rate - the annualised internal rate of return (IRR) of your actual deposits and the final equity.',
+  sortino: 'Sortino ratio: like Sharpe but only penalises downside, i.e. the annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
+  twr:     'CAGR (TWR): time-weighted compound annual growth rate, the geometric mean of daily returns, annualised. Ignores the timing/size of deposits.',
+  mwr:     'CAGR (MWR): money-weighted compound annual growth rate, the annualised internal rate of return (IRR) of your actual deposits and the final equity.',
 };
 const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:var(--muted);cursor:help;border-bottom:1px dotted var(--border)">${label}</span> <b>${val}</b></div>`;
 
@@ -446,7 +446,7 @@ function renderScenarioConfig(){
   const wrap=$('scenarioConfig'); if(!wrap) return;
   const sec=getActiveSec();
   if(!sec){
-    wrap.innerHTML='<div style="color:var(--muted);font-size:.82rem;padding:8px 0">No scenario yet - click + to add one.</div>';
+    wrap.innerHTML='<div style="color:var(--muted);font-size:.82rem;padding:8px 0">No scenario yet, click + to add one.</div>';
     return;
   }
   const tks=loadedTickers();
@@ -454,7 +454,7 @@ function renderScenarioConfig(){
   const fmtN=(v,neg)=>SharedFmt.formatThousands(v==null?0:v,{maxDecimals:2,allowNegative:!!neg});
   const tickerBody = tks.length
     ? `<select class="txt-input" id="cfgTickerSelect" style="width:100%;cursor:pointer">${tks.map(tk=>`<option value="${tk}" ${sec.ticker===tk?'selected':''}>${tk}</option>`).join('')}</select>`
-    : `<div class="status-bar status-warn" style="display:block">No tickers loaded yet - add them in the 📥 Data tab first.</div>`;
+    : `<div class="status-bar status-warn" style="display:block">No tickers loaded yet: add them in the 📥 Data tab first.</div>`;
   wrap.innerHTML=`
     <div class="add-sec-area" style="border-top:none;padding-top:0">
       <div class="add-sec-row" style="gap:6px;align-items:center">
@@ -482,7 +482,7 @@ function renderScenarioConfig(){
       <div class="radio-group">
         <label class="radio-opt${sec.type==='ticker'?' selected':''}" id="cfgTypeTicker">
           <input type="radio" name="cfgType" value="ticker" ${sec.type==='ticker'?'checked':''}/>
-          <div class="radio-opt-text"><strong>Ticker</strong>Real price data - pick from your loaded tickers</div>
+          <div class="radio-opt-text"><strong>Ticker</strong>Real price data, pick from your loaded tickers</div>
         </label>
         <label class="radio-opt${sec.type==='custom'?' selected':''}" id="cfgTypeCustom">
           <input type="radio" name="cfgType" value="custom" ${sec.type==='custom'?'checked':''}/>
@@ -608,7 +608,7 @@ function styleBlockInner(sec){
     `<button type="button" class="cat-pill${k===active?' active':''}" data-cat="${k}">${label}</button>`).join('');
   const opts = stylesForCat(active).map(s=>renderStyleOpt(sec,s)).join('');
   const warn = active==='forward'
-    ? `<div class="param-note warn-note">⚠️ For demonstration only - these use prices within the period to pick the buy date and require future knowledge that cannot be replicated in real life.</div>`
+    ? `<div class="param-note warn-note">⚠️ For demonstration only: these use prices within the period to pick the buy date and require future knowledge that cannot be replicated in real life.</div>`
     : '';
   // Show parameters only when the selected style belongs to the open category.
   const params = (styleCategory(sec.style)===active) ? renderStyleParams(sec) : '';
@@ -661,7 +661,7 @@ function styleParamsBody(sec){
   if(s==='tech-ma-cross')
     return `<div class="param-row"><label>Fast MA</label><div class="param-grp">${maTypeSel(`secMaFastType${id}`,t.fastMaType)}<input class="num-input" id="secMaFastLen${id}" type="number" min="1" max="400" step="1" value="${t.fastMaLen}"/></div></div>
       <div class="param-row"><label>Slow MA</label><div class="param-grp">${maTypeSel(`secMaSlowType${id}`,t.slowMaType)}<input class="num-input" id="secMaSlowLen${id}" type="number" min="1" max="400" step="1" value="${t.slowMaLen}"/></div></div>
-      <div class="param-note">Buys on a golden cross - the Fast MA crossing above the Slow MA.</div>${eomRow}`;
+      <div class="param-note">Buys on a golden cross, the Fast MA crossing above the Slow MA.</div>${eomRow}`;
   if(s==='tech-rsi')
     return `<div class="param-row"><label>RSI period</label><input class="num-input" id="secRsiPeriod${id}" type="number" min="2" max="100" step="1" value="${t.rsiPeriod}"/></div>
       <div class="param-row"><label>Oversold &lt;</label><input class="num-input" id="secRsiOversold${id}" type="number" min="1" max="99" step="1" value="${t.rsiOversold}"/></div>
@@ -978,7 +978,7 @@ async function loadTickerPool(){
   const reqsNeeded = (fullNeed.length?1:0) + (tailNeed.length?1:0);
   const remaining = SharedYF.getDailyRemaining();
   if(remaining <= 0){
-    showStatus($('poolStatus'),'Daily limit reached - you\'ve used all '+SharedYF.getDailyLimit()+' data requests for today. They reset tomorrow; cached tickers still work.','error');
+    showStatus($('poolStatus'),'Daily limit reached: you\'ve used all '+SharedYF.getDailyLimit()+' data requests for today. They reset tomorrow; cached tickers still work.','error');
     updateRateInfo();
     return;
   }
@@ -2310,20 +2310,20 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId, legendItemsO
 // Export title follows the current price-chart mode (actual / normalised / candles).
 function priceChartExportTitle(){
   const sub=$('priceChartSubtitle'); const note=sub&&sub.textContent?' '+sub.textContent.trim():'';
-  return 'DCA Scenario Explorer - Security Prices'+note;
+  return 'DCA Scenario Explorer: Security Prices'+note;
 }
 $('pricePngBtn').addEventListener('click', () => downloadChartPng('priceCanvas', 'dca_price_chart.png', priceChartExportTitle(), 'priceLegend'));
 $('priceCopyPngBtn').addEventListener('click', async () => {
   try { await copyCanvasPngToClipboard(downloadChartPng('priceCanvas', 'dca_price_chart.png', priceChartExportTitle(), 'priceLegend', false)); alert('PNG copied to clipboard.'); }
   catch(err){ alert('PNG copy failed: ' + err.message); }
 });
-$('equityPngBtn').addEventListener('click', () => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer - Portfolio Value', 'equityLegend'));
+$('equityPngBtn').addEventListener('click', () => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer: Portfolio Value', 'equityLegend'));
 $('equityCopyPngBtn').addEventListener('click', async () => {
-  try { await copyCanvasPngToClipboard(downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer - Portfolio Value', 'equityLegend', false)); alert('PNG copied to clipboard.'); }
+  try { await copyCanvasPngToClipboard(downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer: Portfolio Value', 'equityLegend', false)); alert('PNG copied to clipboard.'); }
   catch(err){ alert('PNG copy failed: ' + err.message); }
 });
 $('priceSvgBtn').addEventListener('click', () => downloadChartSvg('priceCanvas', 'dca_price_chart.svg', priceChartExportTitle(), 'priceLegend'));
-$('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer - Portfolio Value', 'equityLegend'));
+$('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer: Portfolio Value', 'equityLegend'));
 
 /* ─── DOWNLOAD CSV (Detailed Breakdown of active tab) ─── */
 $('downloadBtn').addEventListener('click',()=>{
