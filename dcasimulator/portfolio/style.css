@@ -1,4 +1,4 @@
-/* Portfolio DCA Simulator — additions layered on top of ../style.css */
+/* Portfolio DCA Simulator - additions layered on top of ../style.css */
 
 /* Toggle switch (re-declared so this tool is self-sufficient if loaded alone) */
 .toggle-switch{position:relative;display:inline-flex;align-items:center}
@@ -24,7 +24,8 @@ body.light .weight-summary.bad{background:#FFF0D9;color:#7A4A00}
 /* Schedule editor */
 .sched-box{margin-top:4px}
 .weekday-grid{display:flex;gap:5px;flex-wrap:wrap}
-.weekday-chip{flex:1 1 0;min-width:38px;padding:6px 4px;font-size:.74rem;font-weight:700;border:1px solid var(--border);background:var(--input-bg);color:var(--muted);border-radius:8px;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;user-select:none}
+.weekday-chip{flex:1 1 0;min-width:38px;padding:6px 4px;font-size:.74rem;font-weight:700;border:1px solid var(--border);background:var(--input-bg);color:var(--muted);border-radius:8px;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;user-select:none;white-space:nowrap}
+.weekday-chip.wp-chip{flex:0 0 auto;padding:6px 14px}
 .weekday-chip:hover{border-color:var(--accent);color:var(--text)}
 .weekday-chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .sched-inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -34,7 +35,7 @@ body.light .weight-summary.bad{background:#FFF0D9;color:#7A4A00}
 /* Composition table: tint the cash column */
 #compTable td.cash-cell,#compTable th.cash-cell{color:var(--gold)}
 
-/* Portfolio bar — the scenario selector. Wrapped in its own panel and given a
+/* Portfolio bar - the scenario selector. Wrapped in its own panel and given a
    distinct accent (--accent2, teal) so it reads as separate from the blue-accented
    #pfEditSection sub-tabs below it. */
 .pf-bar{display:flex;align-items:flex-start;gap:8px;margin-bottom:14px;padding:9px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg)}
@@ -49,7 +50,7 @@ body.light .weight-summary.bad{background:#FFF0D9;color:#7A4A00}
 .pf-tab-dot::-moz-color-swatch{border:1px solid rgba(0,0,0,.25);border-radius:50%}
 .pf-tab-rename{width:92px;font:inherit;font-size:.82rem;padding:1px 4px;border:1px solid var(--border);border-radius:5px;background:var(--panel);color:var(--text)}
 
-/* Inline + Add button — sits directly beside the last portfolio tab and wraps with them */
+/* Inline + Add button - sits directly beside the last portfolio tab and wraps with them */
 .pf-add-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;font-size:1.2rem;line-height:1;border:1px dashed var(--accent2);border-radius:8px;background:transparent;color:var(--accent2);cursor:pointer;font-family:inherit;padding:0;flex-shrink:0;transition:all .15s}
 .pf-add-btn:hover{background:var(--accent2);color:#fff;border-style:solid}
 

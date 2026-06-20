@@ -96,7 +96,7 @@ function statMean(a){ return a.length ? a.reduce((s,x)=>s+x,0)/a.length : 0; }
 function statStdev(a){ if(a.length<2) return 0; const m=statMean(a); return Math.sqrt(a.reduce((s,x)=>s+(x-m)*(x-m),0)/(a.length-1)); }
 function downsideDev(a,mar=0){ if(!a.length) return 0; const d=a.map(x=>Math.min(0,x-mar)); return Math.sqrt(d.reduce((s,x)=>s+x*x,0)/a.length); }
 // Annualised IRR (money-weighted return) of dated cash flows via bisection.
-// flows: [{date:Date, amount}] — negative = invested, positive = received.
+// flows: [{date:Date, amount}] - negative = invested, positive = received.
 function xirr(flows){
   if(flows.length<2) return null;
   const t0=flows[0].date;
@@ -153,16 +153,16 @@ function computeMetrics(res){
   const cagrMwr = xirr(flows);
   return {sharpe, sortino, cagrTwr, cagrMwr};
 }
-const fmtRatio  = v => (v==null||!isFinite(v)) ? '—' : v.toFixed(2);
+const fmtRatio  = v => (v==null||!isFinite(v)) ? ' - ' : v.toFixed(2);
 // Always treat the input as a fraction (avoids fmt.pct's fraction-or-percent
 // ambiguity, which would misread a CAGR above 100%).
-const fmtMetPct = v => (v==null||!isFinite(v)) ? '—' : (v*100).toFixed(2)+'%';
-// Hover explanations for each advanced metric (avoid double quotes — used in data-tip).
+const fmtMetPct = v => (v==null||!isFinite(v)) ? ' - ' : (v*100).toFixed(2)+'%';
+// Hover explanations for each advanced metric (avoid double quotes - used in data-tip).
 const METRIC_TIPS = {
   sharpe:  'Sharpe ratio: annualised excess return ÷ return volatility. Excess return = daily time-weighted return minus the daily risk-free rate (each portfolio uses its own assigned rate/ticker); annualised by ×√252.',
-  sortino: 'Sortino ratio: like Sharpe but only penalises downside — annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
-  twr:     'CAGR (TWR): time-weighted compound annual growth rate — the geometric mean of daily returns (each day net of that day’s top-up), annualised.',
-  mwr:     'CAGR (MWR): money-weighted compound annual growth rate — the annualised internal rate of return (IRR) of your actual top-ups and the final portfolio value.',
+  sortino: 'Sortino ratio: like Sharpe but only penalises downside, i.e. the annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
+  twr:     'CAGR (TWR): time-weighted compound annual growth rate, the geometric mean of daily returns (each day net of that day’s top-up), annualised.',
+  mwr:     'CAGR (MWR): money-weighted compound annual growth rate, the annualised internal rate of return (IRR) of your actual top-ups and the final portfolio value.',
 };
 const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:var(--muted);cursor:help;border-bottom:1px dotted var(--border)">${label}</span> <b>${val}</b></div>`;
 
@@ -225,7 +225,7 @@ async function ensureTickerCached(ticker, reqStart, reqEnd){
   tickerFetchInFlight[tk]=(async()=>{
     const e=priceCache[tk];
     if(e && e.coverageStart<=reqStart && e.coverageEnd>=reqEnd) return;
-    // Fetch ONLY the missing segment(s) and merge — never re-download the whole
+    // Fetch ONLY the missing segment(s) and merge - never re-download the whole
     // history just to widen the range.
     const segments=[];
     if(!e){ segments.push([reqStart, reqEnd]); }
@@ -265,7 +265,7 @@ function isTickerRangeCovered(ticker, startDate, endDate){
 /* ─── PERSISTENT CACHE ─── */
 function persistPriceCache(){
   try { localStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify({savedAt:Date.now(), cache:priceCache})); }
-  catch(_){ /* quota / private mode — caching is best-effort */ }
+  catch(_){ /* quota / private mode - caching is best-effort */ }
 }
 function loadPersistedCache(){
   try {
@@ -350,7 +350,7 @@ function refreshAssetTickerSelect(){
   const tks=loadedTickers();
   const prev=sel.value;
   if(!tks.length){
-    sel.innerHTML='<option value="">— load tickers in the Data tab first —</option>';
+    sel.innerHTML='<option value=""> - load tickers in the Data tab first - </option>';
     sel.disabled=true;
     return;
   }
@@ -360,7 +360,7 @@ function refreshAssetTickerSelect(){
 }
 
 // Loading is additive and individual tickers are removed via the chip ✕, so the
-// input is never locked — it always stays open for adding the next batch.
+// input is never locked - it always stays open for adding the next batch.
 function setPoolLocked(_locked){
   const inp=$('tickerPoolInput'), editBtn=$('editTickersBtn');
   if(inp) inp.disabled=false;
@@ -402,7 +402,7 @@ async function loadTickerPool(){
     return;
   }
   if(SharedYF.getDailyRemaining()<=0){
-    showStatus($('poolStatus'),'Daily limit reached — you\'ve used all '+SharedYF.getDailyLimit()+' data requests for today. They reset tomorrow; cached tickers still work.','error');
+    showStatus($('poolStatus'),'Daily limit reached: you\'ve used all '+SharedYF.getDailyLimit()+' data requests for today. They reset tomorrow; cached tickers still work.','error');
     updateRateInfo();
     return;
   }
@@ -496,7 +496,7 @@ function setActive(id){
 /* One compact tab per portfolio: click to edit it, double-click to rename. */
 function renderPortfolioList(){
   const el=$('portfolioTabs'); if(!el) return;
-  // Grab the + Add button before clearing — it lives inside this container after the
+  // Grab the + Add button before clearing - it lives inside this container after the
   // first render, so detach-and-reuse keeps its click listener intact across re-renders.
   const addBtn=$('addPortfolioBtn');
   el.innerHTML='';
@@ -679,7 +679,7 @@ function updateWeightSummary(){
 
 /* ─── PORTFOLIO BAR ACTIONS (act on the active portfolio) ─── */
 $('addPortfolioBtn').addEventListener('click',()=>{
-  addPortfolio();   // auto-named "Portfolio N" with an auto colour — rename by double-click
+  addPortfolio();   // auto-named "Portfolio N" with an auto colour - rename by double-click
   loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();
   switchSubTab('assets');
 });
@@ -701,14 +701,14 @@ $('addAssetBtn').addEventListener('click', ()=>{
   if(type==='ticker'){
     const ticker=($('assetTickerSelect').value||'').trim().toUpperCase();
     if(!ticker){ showStatus($('assetFetchStatus'),'Load tickers in the Data tab first, then pick one here.','error'); return; }
-    if(!priceCache[ticker]){ showStatus($('assetFetchStatus'),ticker+' is not loaded — add it in the Data tab first.','error'); return; }
+    if(!priceCache[ticker]){ showStatus($('assetFetchStatus'),ticker+' is not loaded: add it in the Data tab first.','error'); return; }
     // Price data is shared via priceCache (loaded up front in the Data tab), so
     // adding the same ticker to multiple portfolios costs no extra request.
     const asset=addAsset({type:'ticker', ticker, name:name||ticker, colorHex});
     asset.loaded=true;
     $('newAssetName').value='';
     const e=priceCache[ticker];
-    if(e && e.kind==='stock' && e.source==='stooq'){ showStatus($('assetFetchStatus'),'⚠️ '+ticker+' was loaded from Stooq — stock prices there are <strong>not</strong> adjusted for splits/dividends.','warn'); }
+    if(e && e.kind==='stock' && e.source==='stooq'){ showStatus($('assetFetchStatus'),'⚠️ '+ticker+' was loaded from Stooq: stock prices there are <strong>not</strong> adjusted for splits/dividends.','warn'); }
     else showStatus($('assetFetchStatus'),ticker+' added from cached data.','ok');
     renderAssetList(); renderPortfolioList();
   } else {
@@ -740,8 +740,8 @@ function renderScheduleBox(boxId, hintId, sched){
       if(sched.weekParity!==0&&sched.weekParity!==1) sched.weekParity=0;
       html+=`<div class="sched-inline" style="margin-top:8px"><label>Week</label>
         <div class="weekday-grid" style="display:inline-flex">
-          <div class="weekday-chip${sched.weekParity===0?' active':''}" data-wp="0">First week</div>
-          <div class="weekday-chip${sched.weekParity===1?' active':''}" data-wp="1">Second week</div>
+          <div class="weekday-chip wp-chip${sched.weekParity===0?' active':''}" data-wp="0">First week</div>
+          <div class="weekday-chip wp-chip${sched.weekParity===1?' active':''}" data-wp="1">Second week</div>
         </div></div>`;
     }
     box.innerHTML=html;
@@ -754,13 +754,15 @@ function renderScheduleBox(boxId, hintId, sched){
         chip.classList.toggle('active', sched.weekdays.includes(v));
       });
     });
+    const fortnightHint=()=>'Top-up on each selected weekday of the '+(sched.weekParity===1?'second':'first')+' week, every fortnight.';
     box.querySelectorAll('.weekday-chip[data-wp]').forEach(chip=>{
       chip.addEventListener('click',()=>{
         sched.weekParity=+chip.dataset.wp;
         box.querySelectorAll('.weekday-chip[data-wp]').forEach(c=>c.classList.toggle('active',+c.dataset.wp===sched.weekParity));
+        hint.textContent=fortnightHint();
       });
     });
-    hint.textContent=p==='weekly'?'Top-up on each selected weekday, every week.':'Top-up on each selected weekday, every second week.';
+    hint.textContent=p==='weekly'?'Top-up on each selected weekday, every week.':fortnightHint();
   } else if(p==='monthly'){
     box.innerHTML=`<div class="sched-inline"><label>Day(s) of month</label><input class="txt-input" id="${boxId}_dom" value="${sched.daysOfMonth.join(', ')}" placeholder="e.g. 1 or 1, 15"/></div>`;
     $(boxId+'_dom').addEventListener('input',e=>{
@@ -974,7 +976,7 @@ async function runSimulation(){
   if(!startDate||!endDate){ showWarning('Please set start and end dates.'); return; }
   if(startDate>=endDate){ showWarning('Start date must be before end date.'); return; }
   for(const p of portfolios){
-    if(!p.assets.length){ showWarning(`Portfolio "${p.name}" has no assets — add some or remove the portfolio.`); return; }
+    if(!p.assets.length){ showWarning(`Portfolio "${p.name}" has no assets: add some or remove the portfolio.`); return; }
     if(Math.abs(totalWeight(p)-100)>0.5){ showWarning(`Asset weights in "${p.name}" must sum to 100% (currently ${fmt.num(totalWeight(p),1)}%).`); return; }
     if((p.topup.amount||0)<=0){ showWarning(`Top-up amount in "${p.name}" must be greater than zero.`); return; }
     if(p.rf.mode==='ticker' && !p.rf.ticker){ showWarning(`Enter a risk-free ticker for "${p.name}" or switch it to a fixed rate.`); return; }
@@ -1010,7 +1012,7 @@ async function runSimulation(){
 
     // Build raw price series for every asset; collect date series for intersection.
     // Custom assets are seeded purely from their own characteristics so an identical
-    // asset follows the same price path in every portfolio — a fair comparison.
+    // asset follows the same price path in every portfolio - a fair comparison.
     const seriesDates=[];
     portfolios.forEach(p=>{
       p.assets.forEach(a=>{
@@ -1118,7 +1120,7 @@ function updateValueChart(){
     plugins:{ legend:{display:false}, tooltip:{
       filter:item=>valueChart?valueChart.isDatasetVisible(item.datasetIndex):true,
       callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y,true)}`,
-        afterBody(items){ if(items.length) $('valueHoverBox').textContent=`${items[0].label}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  '); }},
+        afterBody(items){ if(items.length) $('valueHoverBox').textContent=`${items[0].label}  -  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  '); }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10},
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
     scales:{
@@ -1168,7 +1170,7 @@ function updateCompChart(){
     plugins:{ legend:{display:false}, tooltip:{
       filter:item=>compChart?compChart.isDatasetVisible(item.datasetIndex):true,
       callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${valFmt(ctx.parsed.y)}`,
-        afterBody(items){ if(items.length){ const tot=items.reduce((s,i)=>s+i.parsed.y,0); $('compHoverBox').textContent=`${items[0].label}  —  Total: ${totFmt(tot)}  |  `+items.map(i=>`${i.dataset.label}: ${valFmt(i.parsed.y)}`).join('  |  '); } }},
+        afterBody(items){ if(items.length){ const tot=items.reduce((s,i)=>s+i.parsed.y,0); $('compHoverBox').textContent=`${items[0].label}  -  Total: ${totFmt(tot)}  |  `+items.map(i=>`${i.dataset.label}: ${valFmt(i.parsed.y)}`).join('  |  '); } }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10},
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
     scales:{
@@ -1238,7 +1240,7 @@ $('compTablePfSelect').addEventListener('change',e=>{ activeCompTableId=parseInt
 
 $('showAdvancedToggle').addEventListener('change',e=>{
   showAdvanced=e.target.checked;
-  // Toggle visibility in place — metrics are already rendered in each tile.
+  // Toggle visibility in place - metrics are already rendered in each tile.
   document.querySelectorAll('#summaryGrid .adv-metrics').forEach(el=>{ el.style.display=showAdvanced?'grid':'none'; });
 });
 
@@ -1258,7 +1260,7 @@ document.querySelectorAll('#compViewToggle .seg-btn').forEach(btn=>{
      - minus sign (−) and en dash (–) → "-"   (negative values stay negative)
      - delta (Δ)                      → "Delta"
      - emoji / pictographs            → removed (cosmetic)
-     - em dash (—), figure dash, bar  → removed (cosmetic separators) */
+     - em dash, figure dash, bar      → removed (cosmetic separators) */
 function cleanCSV(text){
   return String(text||'')
     .replace(/[–−]/g, '-')
@@ -1319,7 +1321,7 @@ async function copyCanvasPng(canvas){
   if(!blob) throw new Error('Could not create PNG.');
   await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
 }
-function compTitle(){ const res=simResults.find(r=>r.id===activeCompChartId); return 'Composition Over Time'+(res?' — '+res.name:''); }
+function compTitle(){ const res=simResults.find(r=>r.id===activeCompChartId); return 'Composition Over Time'+(res?': '+res.name:''); }
 $('valuePngBtn').addEventListener('click',()=>exportChartPng('valueCanvas','portfolio-value.png','Portfolio Value Over Time','valueLegend'));
 $('compPngBtn').addEventListener('click',()=>exportChartPng('compCanvas','portfolio-composition.png',compTitle(),'compLegend'));
 $('valueCopyBtn').addEventListener('click',async()=>{ const c=exportChartPng('valueCanvas','','Portfolio Value Over Time','valueLegend',false); if(c){ try{ await copyCanvasPng(c); showStatus($('assetFetchStatus'),'Copied value chart to clipboard.','ok'); }catch(e){ showStatus($('assetFetchStatus'),e.message,'error'); } } });
@@ -1424,32 +1426,32 @@ function qsAddPortfolio(name, colorIdx, assets, opts){
 }
 
 const PORTFOLIO_QUICK_START = {
-  // 80/20 vs 60/40 — growth vs conservative allocation, equity (DHHF.AX) vs cash (AAA.AX).
+  // 80/20 vs 60/40 - growth vs conservative allocation, equity (DHHF.AX) vs cash (AAA.AX).
   'alloc'(){
     qsAddPortfolio('60/40 (DHHF/AAA)', 0,
-      [{ticker:'DHHF.AX', name:'DHHF.AX — Equity', weight:60},{ticker:'AAA.AX', name:'AAA.AX — Cash', weight:40}],
+      [{ticker:'DHHF.AX', name:'DHHF.AX - Equity', weight:60},{ticker:'AAA.AX', name:'AAA.AX - Cash', weight:40}],
       {topup:1000, topupPeriod:'monthly', method:'towards-weight'});
     qsAddPortfolio('80/20 (DHHF/AAA)', 1,
-      [{ticker:'DHHF.AX', name:'DHHF.AX — Equity', weight:80},{ticker:'AAA.AX', name:'AAA.AX — Cash', weight:20}],
+      [{ticker:'DHHF.AX', name:'DHHF.AX - Equity', weight:80},{ticker:'AAA.AX', name:'AAA.AX - Cash', weight:20}],
       {topup:1000, topupPeriod:'monthly', method:'towards-weight'});
   },
-  // Rebalancing Monthly vs Quarterly — same 50:50 SPY/GOVT, different rebalance cadence.
+  // Rebalancing Monthly vs Quarterly - same 50:50 SPY/GOVT, different rebalance cadence.
   'rebal-freq'(){
     qsAddPortfolio('Rebalance Monthly', 0,
-      [{ticker:'SPY', name:'SPY — Equity', weight:50},{ticker:'GOVT', name:'GOVT — Bonds', weight:50}],
+      [{ticker:'SPY', name:'SPY - Equity', weight:50},{ticker:'GOVT', name:'GOVT - Bonds', weight:50}],
       {topup:1000, topupPeriod:'monthly', method:'constant-weight', cwTiming:'schedule', rebalPeriod:'monthly'});
     qsAddPortfolio('Rebalance Quarterly', 1,
-      [{ticker:'SPY', name:'SPY — Equity', weight:50},{ticker:'GOVT', name:'GOVT — Bonds', weight:50}],
+      [{ticker:'SPY', name:'SPY - Equity', weight:50},{ticker:'GOVT', name:'GOVT - Bonds', weight:50}],
       {topup:1000, topupPeriod:'monthly', method:'constant-weight', cwTiming:'schedule', rebalPeriod:'quarterly'});
   },
-  // Rebalancing vs Constant Allocation — maintain SPY/GOVT 50:50 (constant weight)
+  // Rebalancing vs Constant Allocation - maintain SPY/GOVT 50:50 (constant weight)
   // vs always splitting each top-up 50:50 (constant allocation).
   'rebal-vs-alloc'(){
     qsAddPortfolio('Constant Weight (rebalanced)', 0,
-      [{ticker:'SPY', name:'SPY — Equity', weight:50},{ticker:'GOVT', name:'GOVT — Bonds', weight:50}],
+      [{ticker:'SPY', name:'SPY - Equity', weight:50},{ticker:'GOVT', name:'GOVT - Bonds', weight:50}],
       {topup:1000, topupPeriod:'monthly', method:'constant-weight', cwTiming:'at-topup'});
     qsAddPortfolio('Constant Allocation (split 50:50)', 1,
-      [{ticker:'SPY', name:'SPY — Equity', weight:50},{ticker:'GOVT', name:'GOVT — Bonds', weight:50}],
+      [{ticker:'SPY', name:'SPY - Equity', weight:50},{ticker:'GOVT', name:'GOVT - Bonds', weight:50}],
       {topup:1000, topupPeriod:'monthly', method:'constant-allocation'});
   },
 };

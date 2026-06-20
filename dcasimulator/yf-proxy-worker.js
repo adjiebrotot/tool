@@ -1,9 +1,9 @@
 /* ──────────────────────────────────────────────────────────────────────────
-   yf-proxy-worker.js — batched market-data Worker for the DCA simulator
+   yf-proxy-worker.js - batched market-data Worker for the DCA simulator
 
    WHY THIS EXISTS
    The simulator runs entirely in the browser. Yahoo's chart endpoint
-   (query1/query2.finance.yahoo.com/v8/finance/chart — the same endpoint the
+   (query1/query2.finance.yahoo.com/v8/finance/chart - the same endpoint the
    Python `yfinance` library wraps) and Stooq's CSV endpoint do not send CORS
    headers, so a page cannot call them directly. The old design relayed through
    flaky public CORS proxies (allorigins / corsproxy / codetabs). Those were the
@@ -11,29 +11,29 @@
 
    PRIME DIRECTIVE: MINIMISE WORKER INVOCATIONS (free tier = 100k/day).
    The levers baked in here:
-     1. BATCHING — one request carries every ticker the user wants
+     1. BATCHING - one request carries every ticker the user wants
         (?tickers=AAPL,SPY,USDIDR). The browser makes ONE call instead of one
         per ticker. The fan-out to Yahoo/Stooq happens here as subrequests
         (free tier allows 50 subrequests per invocation), so a packed request
         costs exactly one invocation regardless of how many tickers it carries.
-     2. NO CORS PREFLIGHT — this is a GET with no custom request headers, which
+     2. NO CORS PREFLIGHT - this is a GET with no custom request headers, which
         is a "simple request": the browser does NOT send an OPTIONS preflight,
         so we are not charged a second invocation per call.
-     3. EDGE CACHE — each (ticker, range) upstream response is cached at the
+     3. EDGE CACHE - each (ticker, range) upstream response is cached at the
         edge (caches.default), collapsing repeat loads and easing Yahoo's rate
         limiting.
-     4. ORIGIN LOCK — requests whose Origin/Referer is not tool.adjiebrotots.com
+     4. ORIGIN LOCK - requests whose Origin/Referer is not tool.adjiebrotots.com
         are rejected, and CORS is pinned to that exact origin so other websites'
         browsers cannot read responses. (A static site cannot hold a real
         secret, so this is "friction + browser-level lock", not 100% private.)
 
-   DEPLOY (workers.dev — adjiebrotots.com is NOT on Cloudflare DNS, so no custom
+   DEPLOY (workers.dev - adjiebrotots.com is NOT on Cloudflare DNS, so no custom
    domain / WAF / zone cache is available; all protection lives in this file):
      1. https://dash.cloudflare.com → Workers & Pages → Create → Worker.
      2. Replace the worker code with this file's contents and Deploy.
      3. Copy the deployed URL (https://NAME.SUBDOMAIN.workers.dev) and set it as
         WORKER_ENDPOINT in shared.js (SharedYF). That single edit wires the apps.
-     4. Bind a KV namespace as RATE_KV to switch on the per-IP daily cap — see
+     4. Bind a KV namespace as RATE_KV to switch on the per-IP daily cap - see
         the IP_DAILY_LIMIT block below for the 3-step dashboard setup. Without
         it the Worker still runs; only the server-side backstop is disabled.
      5. Optional hardening in the dashboard: Settings → enable "Bot Fight Mode"
@@ -41,7 +41,7 @@
         keeping ALLOWED_ORIGINS tight (below) and the per-request ticker cap.
    ────────────────────────────────────────────────────────────────────────── */
 
-// Only these origins may use the Worker. Keep this tight — it is the main lock.
+// Only these origins may use the Worker. Keep this tight - it is the main lock.
 const ALLOWED_ORIGINS = [
   'https://tool.adjiebrotots.com',
   // Local development. Remove these two lines if you want production-only access.
@@ -62,7 +62,7 @@ const EDGE_CACHE_TTL = 600; // seconds the edge keeps an upstream price response
    rewarded), keyed by the visitor's IP and the UTC date, stored in Workers KV.
 
    It is deliberately MORE generous than the cookie because many people share a
-   public IP (mobile carriers, offices, schools via CGNAT/NAT) — a tight per-IP
+   public IP (mobile carriers, offices, schools via CGNAT/NAT) - a tight per-IP
    cap would punish them. The cookie nudges individuals to ~5/day; this catches
    a single source hammering hundreds of requests.
 
@@ -72,10 +72,10 @@ const EDGE_CACHE_TTL = 600; // seconds the edge keeps an upstream price response
      2. Your Worker → Settings → Bindings → Add → KV namespace. Set the
         Variable name to exactly RATE_KV and pick the namespace.
      3. Redeploy. With no binding present the Worker FAILS OPEN (no IP cap), so
-        it keeps working before/without KV — only the backstop is disabled.
+        it keeps working before/without KV - only the backstop is disabled.
    Free KV allows 1k writes/day; we write at most IP_DAILY_LIMIT times per IP
    per day. If traffic ever outgrows that, move this counter to a Durable
-   Object (strongly consistent) — the call sites below stay the same. */
+   Object (strongly consistent) - the call sites below stay the same. */
 const IP_DAILY_LIMIT = 40;
 const IP_KV_TTL = 60 * 60 * 36; // counter auto-expires ~1.5 days after last write
 
@@ -136,7 +136,7 @@ export default {
       return json({ error: 'Missing tickers parameter' }, 400, allowedOrigin);
     }
 
-    // PER-IP DAILY CAP — the hard backstop. Checked after validation so bad
+    // PER-IP DAILY CAP - the hard backstop. Checked after validation so bad
     // requests don't burn quota, and before fan-out so a blocked caller never
     // touches Yahoo/Stooq. Fails open if KV isn't bound.
     const ipCheck = await checkIpDailyLimit(request, env, ctx);
@@ -147,7 +147,7 @@ export default {
       }, 429, allowedOrigin, { 'Retry-After': '3600' });
     }
 
-    // Fan out — one subrequest chain per ticker, all in parallel.
+    // Fan out - one subrequest chain per ticker, all in parallel.
     const settled = await Promise.all(
       tickers.map(t => fetchOneTicker(t, start, end, ctx)
         .then(data => [t, data])
@@ -165,7 +165,7 @@ export default {
 };
 
 /* ── Per-IP daily cap via Workers KV ────────────────────────────────────────
-   Counts one per Worker invocation. Returns { blocked } — fails OPEN on any
+   Counts one per Worker invocation. Returns { blocked } - fails OPEN on any
    missing binding or KV error so data fetching never breaks because of the cap.
    KV is eventually consistent, so racing requests from one IP may under-count
    slightly; that's acceptable for a soft backstop. */
