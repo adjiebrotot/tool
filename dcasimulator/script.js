@@ -30,7 +30,7 @@ const OSC_GROUPS = {
   'tech-adx':        {key:'adx',  name:'ADX'}
 };
 const WEEKDAY_OPTIONS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-// MACD histogram bar colours — the TradingView-style 4-colour scheme: a
+// MACD histogram bar colours - the TradingView-style 4-colour scheme: a
 // saturated shade while a bar grows away from the zero line and a faded shade
 // while it shrinks back toward it (green above zero, red below).
 const MACD_HIST_COLORS = {
@@ -95,7 +95,7 @@ function withAlpha(c,a){
   return c;
 }
 // Per-bar colours for a MACD histogram: saturated while a bar grows away from
-// the zero line, faded while it shrinks back toward it (green ≥0, red <0) — the
+// the zero line, faded while it shrinks back toward it (green ≥0, red <0) - the
 // standard 4-colour MACD histogram scheme.
 function macdHistColors(values){
   const c=MACD_HIST_COLORS;
@@ -185,7 +185,7 @@ function statMean(a){ return a.length ? a.reduce((s,x)=>s+x,0)/a.length : 0; }
 function statStdev(a){ if(a.length<2) return 0; const m=statMean(a); return Math.sqrt(a.reduce((s,x)=>s+(x-m)*(x-m),0)/(a.length-1)); }
 function downsideDev(a,mar=0){ if(!a.length) return 0; const d=a.map(x=>Math.min(0,x-mar)); return Math.sqrt(d.reduce((s,x)=>s+x*x,0)/a.length); }
 // Annualised IRR (money-weighted return) of dated cash flows via bisection.
-// flows: [{date:Date, amount}] — negative = invested, positive = received.
+// flows: [{date:Date, amount}] - negative = invested, positive = received.
 function xirr(flows){
   if(flows.length<2) return null;
   const t0=flows[0].date;
@@ -218,16 +218,16 @@ function computeMetrics(res){
   const cagrMwr = xirr(flows);
   return {sharpe, sortino, cagrTwr, cagrMwr};
 }
-const fmtRatio  = v => (v==null||!isFinite(v)) ? '—' : v.toFixed(2);
+const fmtRatio  = v => (v==null||!isFinite(v)) ? ' - ' : v.toFixed(2);
 // Always treat the input as a fraction (avoids fmt.pct's fraction-or-percent
 // ambiguity, which would misread a CAGR above 100%).
-const fmtMetPct = v => (v==null||!isFinite(v)) ? '—' : (v*100).toFixed(2)+'%';
-// Hover explanations for each advanced metric (avoid double quotes — used in data-tip).
+const fmtMetPct = v => (v==null||!isFinite(v)) ? ' - ' : (v*100).toFixed(2)+'%';
+// Hover explanations for each advanced metric (avoid double quotes - used in data-tip).
 const METRIC_TIPS = {
   sharpe:  'Sharpe ratio: annualised excess return ÷ return volatility. Excess return = daily time-weighted return minus the daily risk-free rate (set in Settings); annualised by ×√252.',
-  sortino: 'Sortino ratio: like Sharpe but only penalises downside — annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
-  twr:     'CAGR (TWR): time-weighted compound annual growth rate — the geometric mean of daily returns, annualised. Ignores the timing/size of deposits.',
-  mwr:     'CAGR (MWR): money-weighted compound annual growth rate — the annualised internal rate of return (IRR) of your actual deposits and the final equity.',
+  sortino: 'Sortino ratio: like Sharpe but only penalises downside - annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
+  twr:     'CAGR (TWR): time-weighted compound annual growth rate - the geometric mean of daily returns, annualised. Ignores the timing/size of deposits.',
+  mwr:     'CAGR (MWR): money-weighted compound annual growth rate - the annualised internal rate of return (IRR) of your actual deposits and the final equity.',
 };
 const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:var(--muted);cursor:help;border-bottom:1px dotted var(--border)">${label}</span> <b>${val}</b></div>`;
 
@@ -394,12 +394,12 @@ function renderSecList(){
   updateTechToggleVisibility();
 }
 
-/* ─── SCENARIO BAR — one tab per scenario (click to edit, double-click to rename) ─── */
+/* ─── SCENARIO BAR - one tab per scenario (click to edit, double-click to rename) ─── */
 function renderScenarioBar(){
   const el=$('scenarioTabs'); if(!el) return;
   // Detach the + Add button before clearing so it can be re-appended right after
   // the last scenario tab (so it flows/wraps with the tabs, matching the portfolio
-  // tool) — its click listener stays intact across re-renders.
+  // tool) - its click listener stays intact across re-renders.
   const addBtn=$('addScenarioBtn');
   el.innerHTML='';
   securities.forEach(sec=>{
@@ -441,12 +441,12 @@ function startRenameScenario(tab, sec){
   nameSpan.replaceWith(input); input.focus(); input.select();
 }
 
-/* ─── CONFIGURE SCENARIO — editor bound to the active scenario ─── */
+/* ─── CONFIGURE SCENARIO - editor bound to the active scenario ─── */
 function renderScenarioConfig(){
   const wrap=$('scenarioConfig'); if(!wrap) return;
   const sec=getActiveSec();
   if(!sec){
-    wrap.innerHTML='<div style="color:var(--muted);font-size:.82rem;padding:8px 0">No scenario yet — click + to add one.</div>';
+    wrap.innerHTML='<div style="color:var(--muted);font-size:.82rem;padding:8px 0">No scenario yet - click + to add one.</div>';
     return;
   }
   const tks=loadedTickers();
@@ -454,7 +454,7 @@ function renderScenarioConfig(){
   const fmtN=(v,neg)=>SharedFmt.formatThousands(v==null?0:v,{maxDecimals:2,allowNegative:!!neg});
   const tickerBody = tks.length
     ? `<select class="txt-input" id="cfgTickerSelect" style="width:100%;cursor:pointer">${tks.map(tk=>`<option value="${tk}" ${sec.ticker===tk?'selected':''}>${tk}</option>`).join('')}</select>`
-    : `<div class="status-bar status-warn" style="display:block">No tickers loaded yet — add them in the 📥 Data tab first.</div>`;
+    : `<div class="status-bar status-warn" style="display:block">No tickers loaded yet - add them in the 📥 Data tab first.</div>`;
   wrap.innerHTML=`
     <div class="add-sec-area" style="border-top:none;padding-top:0">
       <div class="add-sec-row" style="gap:6px;align-items:center">
@@ -482,7 +482,7 @@ function renderScenarioConfig(){
       <div class="radio-group">
         <label class="radio-opt${sec.type==='ticker'?' selected':''}" id="cfgTypeTicker">
           <input type="radio" name="cfgType" value="ticker" ${sec.type==='ticker'?'checked':''}/>
-          <div class="radio-opt-text"><strong>Ticker</strong>Real price data — pick from your loaded tickers</div>
+          <div class="radio-opt-text"><strong>Ticker</strong>Real price data - pick from your loaded tickers</div>
         </label>
         <label class="radio-opt${sec.type==='custom'?' selected':''}" id="cfgTypeCustom">
           <input type="radio" name="cfgType" value="custom" ${sec.type==='custom'?'checked':''}/>
@@ -580,8 +580,8 @@ function showDayRow(s){ return s==='monthly-date'||s==='weekly-day'; }
 
 /* ─── INVESTMENT-STYLE PICKER (category-based, progressive disclosure) ─── */
 // To keep the panel uncluttered, styles are grouped into categories. Only the
-// active category's options — plus the parameters for the currently selected
-// style — are shown at any time.
+// active category's options - plus the parameters for the currently selected
+// style - are shown at any time.
 // Scenario-type badges: a dollar sign for ticker-backed scenarios, the "fx"
 // formula glyph for custom (hand-entered return) scenarios.
 const SVG_TICKER='<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2v17.6"/><path d="M16 7.4c0-2-1.8-3.2-4-3.2S8 5.4 8 7.5s1.8 3 4 3.4 4 1.4 4 3.5-1.8 3.4-4 3.4-4-1.2-4-3.2"/></svg>';
@@ -608,7 +608,7 @@ function styleBlockInner(sec){
     `<button type="button" class="cat-pill${k===active?' active':''}" data-cat="${k}">${label}</button>`).join('');
   const opts = stylesForCat(active).map(s=>renderStyleOpt(sec,s)).join('');
   const warn = active==='forward'
-    ? `<div class="param-note warn-note">⚠️ For demonstration only — these use prices within the period to pick the buy date and require future knowledge that cannot be replicated in real life.</div>`
+    ? `<div class="param-note warn-note">⚠️ For demonstration only - these use prices within the period to pick the buy date and require future knowledge that cannot be replicated in real life.</div>`
     : '';
   // Show parameters only when the selected style belongs to the open category.
   const params = (styleCategory(sec.style)===active) ? renderStyleParams(sec) : '';
@@ -619,7 +619,7 @@ function styleBlockInner(sec){
     <div class="style-params" id="styleParams${sec.id}">${params}</div>`;
 }
 
-// Monthly / Weekly segmented control — shared by the momentum + technical
+// Monthly / Weekly segmented control - shared by the momentum + technical
 // styles so each can invest once per chosen window (the date/forward styles
 // carry their own cadence and don't show it).
 function periodToggleRow(sec, id){
@@ -661,7 +661,7 @@ function styleParamsBody(sec){
   if(s==='tech-ma-cross')
     return `<div class="param-row"><label>Fast MA</label><div class="param-grp">${maTypeSel(`secMaFastType${id}`,t.fastMaType)}<input class="num-input" id="secMaFastLen${id}" type="number" min="1" max="400" step="1" value="${t.fastMaLen}"/></div></div>
       <div class="param-row"><label>Slow MA</label><div class="param-grp">${maTypeSel(`secMaSlowType${id}`,t.slowMaType)}<input class="num-input" id="secMaSlowLen${id}" type="number" min="1" max="400" step="1" value="${t.slowMaLen}"/></div></div>
-      <div class="param-note">Buys on a golden cross — the Fast MA crossing above the Slow MA.</div>${eomRow}`;
+      <div class="param-note">Buys on a golden cross - the Fast MA crossing above the Slow MA.</div>${eomRow}`;
   if(s==='tech-rsi')
     return `<div class="param-row"><label>RSI period</label><input class="num-input" id="secRsiPeriod${id}" type="number" min="2" max="100" step="1" value="${t.rsiPeriod}"/></div>
       <div class="param-row"><label>Oversold &lt;</label><input class="num-input" id="secRsiOversold${id}" type="number" min="1" max="99" step="1" value="${t.rsiOversold}"/></div>
@@ -697,7 +697,7 @@ function refreshStyleBlock(sec){
 
 function wireStyleBlock(sec){
   const c=$(`styleBlock${sec.id}`); if(!c) return;
-  // Category pills — switch which options are visible without changing selection.
+  // Category pills - switch which options are visible without changing selection.
   c.querySelectorAll('.cat-pill').forEach(p=>{
     p.addEventListener('click',()=>{ sec.catOpen=p.dataset.cat; refreshStyleBlock(sec); });
   });
@@ -761,7 +761,7 @@ async function ensureTickerCached(ticker, requestedStart, requestedEnd){
   if(!tk) throw new Error('Invalid ticker');
   const entry = priceCache[tk];
   if(entry && entry.coverageStart <= requestedStart && entry.coverageEnd >= requestedEnd){
-    return; // Cache already covers the full requested range — no fetch needed
+    return; // Cache already covers the full requested range - no fetch needed
   }
   if(tickerFetchInFlight[tk]){
     await tickerFetchInFlight[tk];
@@ -772,7 +772,7 @@ async function ensureTickerCached(ticker, requestedStart, requestedEnd){
     if(latestEntry && latestEntry.coverageStart <= requestedStart && latestEntry.coverageEnd >= requestedEnd){
       return;
     }
-    // Fetch ONLY the segment(s) we don't already hold, then merge — never
+    // Fetch ONLY the segment(s) we don't already hold, then merge - never
     // re-download the whole history just to widen the range.
     const segments = [];
     if(!latestEntry){
@@ -790,7 +790,7 @@ async function ensureTickerCached(ticker, requestedStart, requestedEnd){
       }
     }
     // Make sure coverage reflects what the caller asked for even if a segment
-    // returned no rows (e.g. a market holiday tail) — past prices are immutable.
+    // returned no rows (e.g. a market holiday tail) - past prices are immutable.
     const e = priceCache[tk];
     if(e){
       e.coverageStart = minIso(e.coverageStart, requestedStart);
@@ -834,11 +834,11 @@ function isTickerRangeCovered(ticker, startDate, endDate){
 /* ─── PERSISTENT CACHE ─── */
 // Price history is immutable for past dates, so we persist the cache to
 // localStorage. On a new day coverageEnd (yesterday) no longer reaches "today",
-// so the pool loader naturally refetches to refresh the tail — at most one
-// request — while same-day reloads cost ZERO requests.
+// so the pool loader naturally refetches to refresh the tail - at most one
+// request - while same-day reloads cost ZERO requests.
 function persistPriceCache(){
   try { localStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify({savedAt: Date.now(), cache: priceCache})); }
-  catch(_){ /* quota / private mode — caching is best-effort */ }
+  catch(_){ /* quota / private mode - caching is best-effort */ }
 }
 function loadPersistedCache(){
   try {
@@ -882,7 +882,7 @@ function storeBatchResult(tk, r, fetchStart, fetchEnd){
 function minIso(a, b){ return (a && a < b) ? a : b; }
 function maxIso(a, b){ return (a && a > b) ? a : b; }
 
-// Once anything is cached, the load action is additive — relabel the button so
+// Once anything is cached, the load action is additive - relabel the button so
 // users know subsequent loads add to (not replace) the pool.
 function loadBtnLabel(){ return loadedTickers().length ? '⤓ Load additional tickers' : '⤓ Load tickers'; }
 function updateLoadBtnLabel(){ const b=$('loadTickersBtn'); if(b && !b.disabled) b.innerHTML=loadBtnLabel(); }
@@ -934,7 +934,7 @@ function refreshTickerSelect(){
 }
 
 // Loading is additive and individual tickers are removed via the chip ✕, so the
-// input is never locked — it always stays open for adding the next batch.
+// input is never locked - it always stays open for adding the next batch.
 function setPoolLocked(_locked){
   const inp = $('tickerPoolInput'), editBtn = $('editTickersBtn');
   if(inp) inp.disabled = false;
@@ -974,11 +974,11 @@ async function loadTickerPool(){
     return;
   }
 
-  // Soft daily cap — refuse early with a clear message instead of burning a wasted call.
+  // Soft daily cap - refuse early with a clear message instead of burning a wasted call.
   const reqsNeeded = (fullNeed.length?1:0) + (tailNeed.length?1:0);
   const remaining = SharedYF.getDailyRemaining();
   if(remaining <= 0){
-    showStatus($('poolStatus'),'Daily limit reached — you\'ve used all '+SharedYF.getDailyLimit()+' data requests for today. They reset tomorrow; cached tickers still work.','error');
+    showStatus($('poolStatus'),'Daily limit reached - you\'ve used all '+SharedYF.getDailyLimit()+' data requests for today. They reset tomorrow; cached tickers still work.','error');
     updateRateInfo();
     return;
   }
@@ -995,7 +995,7 @@ async function loadTickerPool(){
         else failed.push(t + (map[t] && map[t].error ? ' ('+map[t].error+')' : ''));
       }
     };
-    // Tail extensions first — they're cheap and refresh existing data.
+    // Tail extensions first - they're cheap and refresh existing data.
     if(tailNeed.length){
       const map = await SharedYF.fetchPricesBatch(tailNeed, tailStart, fetchEnd);
       absorb(tailNeed, tailStart, map);
@@ -1091,7 +1091,7 @@ $('randomSeed').addEventListener('input',e=>{
 $('riskFreeRate').addEventListener('input',e=>{
   const n=parseFloat(e.target.value);
   currentRiskFreeRate = Number.isFinite(n) ? Math.max(0,n) : 0;
-  // Only the advanced metrics depend on this — re-render the summary in place.
+  // Only the advanced metrics depend on this - re-render the summary in place.
   if(simResults.length) renderSummary();
 });
 
@@ -1105,7 +1105,7 @@ $('riskFreeRate').addEventListener('input',e=>{
 
 /* ─── TECHNICAL INDICATORS ─── */
 // All indicators operate on the close-price series only (the data this tool
-// stores). They are computed lazily — never on page load, only when a security
+// stores). They are computed lazily - never on page load, only when a security
 // actually uses a technical strategy or the user toggles the chart overlay.
 function smaSeries(p,n){
   const out=new Array(p.length).fill(null);
@@ -1271,8 +1271,8 @@ function groupIndicesByPeriod(dates, period){
   return Object.values(groups);
 }
 
-// Pick one buy per period (month or week): the first day the signal fires, or —
-// when "Invest at End of …" is on — the last trading day if it never fired.
+// Pick one buy per period (month or week): the first day the signal fires, or - 
+// when "Invest at End of …" is on - the last trading day if it never fired.
 function periodSignalDates(dates, signal, eom, period){
   const out=[];
   groupIndicesByPeriod(dates, period).forEach(idxs=>{
@@ -1450,8 +1450,8 @@ async function runSimulation(){
 
   // Ticker data should already be pooled and cached (loaded up front in one
   // request). If anything is missing or the date range moved outside the cached
-  // window, fetch ONLY those tickers — and do it in a SINGLE batched request
-  // rather than one-by-one — so we keep Worker invocations to a minimum.
+  // window, fetch ONLY those tickers - and do it in a SINGLE batched request
+  // rather than one-by-one - so we keep Worker invocations to a minimum.
   const uniqueTickers = [...new Set(securities
     .filter(sec => sec.type==='ticker')
     .map(sec => String(sec.ticker||'').trim().toUpperCase())
@@ -1571,7 +1571,7 @@ const dcaCandlePlugin = {
     if(!showCandles) return;
     const scale=args.scale;
     if(!scale || scale.id!=='y') return;
-    // Only the price chart carries _ohlc datasets — leave the equity chart untouched.
+    // Only the price chart carries _ohlc datasets - leave the equity chart untouched.
     if(!chart.data.datasets.some(ds=>ds._ohlc)) return;
     // Fit the y-axis to whatever is inside the currently visible x-window rather
     // than the whole history, so the candles autoscale (fill the panel) as you
@@ -1582,7 +1582,7 @@ const dcaCandlePlugin = {
     let lo=Infinity, hi=-Infinity;
     chart.data.datasets.forEach((ds,di)=>{
       if(!chart.isDatasetVisible(di)) return;
-      // Oscillator overlays (RSI/MACD/ADX) live on their own axes — never fold
+      // Oscillator overlays (RSI/MACD/ADX) live on their own axes - never fold
       // them into the price scale or they'd flatten the candles.
       if(typeof ds.yAxisID==='string' && ds.yAxisID.indexOf('yOsc_')===0) return;
       if(ds._ohlc){
@@ -1591,7 +1591,7 @@ const dcaCandlePlugin = {
         for(let i=Math.max(0,iMin);i<=end;i++){ if(h[i]!=null&&h[i]>hi)hi=h[i]; if(l[i]!=null&&l[i]<lo)lo=l[i]; }
       } else {
         // Price-axis overlays/markers (moving averages, Bollinger bands, buy
-        // triangles) — keep them in view too.
+        // triangles) - keep them in view too.
         const data=ds.data; const end=Math.min(data.length-1,iMax);
         for(let i=Math.max(0,iMin);i<=end;i++){ const v=data[i]; if(v==null) continue; if(v>hi)hi=v; if(v<lo)lo=v; }
       }
@@ -1676,7 +1676,7 @@ function updatePriceChart(){
     return ds;
   });
 
-  // Buy markers (▲) — one small upward triangle per purchase date, just below
+  // Buy markers (▲) - one small upward triangle per purchase date, just below
   // each visible series' price. Only built while "Show Buy Date" is on.
   if(showBuyDates){
     let gMin=Infinity, gMax=-Infinity;
@@ -1700,7 +1700,7 @@ function updatePriceChart(){
   // Technical overlays, computed lazily and only while toggled on. Price-axis
   // overlays (moving averages, Bollinger bands) share the price grid; oscillator
   // indicators (RSI, MACD, ADX) each get their own grid stacked below the price
-  // grid — same canvas, same X-axis — grouped by indicator family (OSC_GROUPS) so
+  // grid - same canvas, same X-axis - grouped by indicator family (OSC_GROUPS) so
   // securities using different indicators don't squash each other onto one scale.
   const oscGroups=new Map(); // group key -> axis title, in stacking order
   if(showTechIndicators){
@@ -1791,7 +1791,7 @@ function updatePriceChart(){
       plugins:{ legend:{display:false}, tooltip:{
         filter:item=>!item.dataset._marker,
         callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>'  '+fmtPt(ctx),
-          afterBody(items){ const its=items.filter(i=>!i.dataset._marker); if(its.length) $('priceHoverBox').textContent=`${its[0].label}  —  `+its.map(fmtPt).join('  |  '); }},
+          afterBody(items){ const its=items.filter(i=>!i.dataset._marker); if(its.length) $('priceHoverBox').textContent=`${its[0].label}  -  `+its.map(fmtPt).join('  |  '); }},
         backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
         zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
       scales
@@ -1850,7 +1850,7 @@ function updateEquityChart(){
     plugins:{ legend:{display:false}, tooltip:{
       filter:item=>equityChartInstance?equityChartInstance.isDatasetVisible(item.datasetIndex):true,
       callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y,true)}`,
-        afterBody(items){ if(items.length) $('equityHoverBox').textContent=`${items[0].label}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  '); }},
+        afterBody(items){ if(items.length) $('equityHoverBox').textContent=`${items[0].label}  -  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  '); }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
     scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
@@ -1883,7 +1883,7 @@ $('priceCanvas').addEventListener('mouseleave',()=>{ $('priceHoverBox').textCont
 $('equityCanvas').addEventListener('mouseleave',()=>{ $('equityHoverBox').textContent='Hover to inspect data points.'; });
 
 // The "Show Indicators" toggle is only meaningful when at least one security
-// runs a technical-indicator strategy — hide it otherwise.
+// runs a technical-indicator strategy - hide it otherwise.
 function updateTechToggleVisibility(){
   const wrap=$('techToggleWrap'); if(!wrap) return;
   const anyTech=securities.some(s=>TECH_STYLES.includes(s.style));
@@ -1915,7 +1915,7 @@ $('showCandleToggle').addEventListener('change',e=>{
 
 $('showAdvancedToggle').addEventListener('change',e=>{
   showAdvanced=e.target.checked;
-  // Toggle visibility in place — metrics are already rendered in each tile.
+  // Toggle visibility in place - metrics are already rendered in each tile.
   document.querySelectorAll('#summaryGrid .adv-metrics').forEach(el=>{ el.style.display=showAdvanced?'grid':'none'; });
 });
 
@@ -2072,16 +2072,16 @@ $('resetBtn').addEventListener('click',()=>{
 // (no simulated/custom data). Ideas: schedule, asset class, and instrument type.
 const QUICK_START_PRESETS = {
   'monthly-weekly':[
-    {type:'ticker', ticker:'SPY', name:'SPY — $520 / month', amount:520, style:'monthly-date', dayOrDate:1},
-    {type:'ticker', ticker:'SPY', name:'SPY — $120 / week',  amount:120, style:'weekly-day',  dayOrDate:1},
+    {type:'ticker', ticker:'SPY', name:'SPY - $520 / month', amount:520, style:'monthly-date', dayOrDate:1},
+    {type:'ticker', ticker:'SPY', name:'SPY - $120 / week',  amount:120, style:'weekly-day',  dayOrDate:1},
   ],
   'equity-mmf':[
-    {type:'ticker', ticker:'DHHF.AX', name:'DHHF.AX — Equity ETF',       amount:500, style:'monthly-date', dayOrDate:1},
-    {type:'ticker', ticker:'AAA.AX',  name:'AAA.AX — Money Market Fund', amount:500, style:'monthly-date', dayOrDate:1},
+    {type:'ticker', ticker:'DHHF.AX', name:'DHHF.AX - Equity ETF',       amount:500, style:'monthly-date', dayOrDate:1},
+    {type:'ticker', ticker:'AAA.AX',  name:'AAA.AX - Money Market Fund', amount:500, style:'monthly-date', dayOrDate:1},
   ],
   'stock-etf':[
-    {type:'ticker', ticker:'AAPL', name:'AAPL — Individual Stock', amount:500, style:'monthly-date', dayOrDate:1},
-    {type:'ticker', ticker:'SPY',  name:'SPY — ETF',               amount:500, style:'monthly-date', dayOrDate:1},
+    {type:'ticker', ticker:'AAPL', name:'AAPL - Individual Stock', amount:500, style:'monthly-date', dayOrDate:1},
+    {type:'ticker', ticker:'SPY',  name:'SPY - ETF',               amount:500, style:'monthly-date', dayOrDate:1},
   ],
 };
 
@@ -2310,20 +2310,20 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId, legendItemsO
 // Export title follows the current price-chart mode (actual / normalised / candles).
 function priceChartExportTitle(){
   const sub=$('priceChartSubtitle'); const note=sub&&sub.textContent?' '+sub.textContent.trim():'';
-  return 'DCA Scenario Explorer — Security Prices'+note;
+  return 'DCA Scenario Explorer - Security Prices'+note;
 }
 $('pricePngBtn').addEventListener('click', () => downloadChartPng('priceCanvas', 'dca_price_chart.png', priceChartExportTitle(), 'priceLegend'));
 $('priceCopyPngBtn').addEventListener('click', async () => {
   try { await copyCanvasPngToClipboard(downloadChartPng('priceCanvas', 'dca_price_chart.png', priceChartExportTitle(), 'priceLegend', false)); alert('PNG copied to clipboard.'); }
   catch(err){ alert('PNG copy failed: ' + err.message); }
 });
-$('equityPngBtn').addEventListener('click', () => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend'));
+$('equityPngBtn').addEventListener('click', () => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer - Portfolio Value', 'equityLegend'));
 $('equityCopyPngBtn').addEventListener('click', async () => {
-  try { await copyCanvasPngToClipboard(downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend', false)); alert('PNG copied to clipboard.'); }
+  try { await copyCanvasPngToClipboard(downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer - Portfolio Value', 'equityLegend', false)); alert('PNG copied to clipboard.'); }
   catch(err){ alert('PNG copy failed: ' + err.message); }
 });
 $('priceSvgBtn').addEventListener('click', () => downloadChartSvg('priceCanvas', 'dca_price_chart.svg', priceChartExportTitle(), 'priceLegend'));
-$('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer — Portfolio Value', 'equityLegend'));
+$('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer - Portfolio Value', 'equityLegend'));
 
 /* ─── DOWNLOAD CSV (Detailed Breakdown of active tab) ─── */
 $('downloadBtn').addEventListener('click',()=>{
