@@ -750,13 +750,9 @@ function refreshWeightTotals(){
   const p=getActive(); if(!p) return;
   const t=totalWeight(p);
   const ok=Math.abs(t-100)<0.5;
-  const cell=$('wtTotalCell'); if(cell) cell.textContent=fmt.num(t,1)+'%';
-  const sum=$('weightSummary');
-  if(sum){
-    sum.style.display='flex';
-    sum.className='weight-summary '+(ok?'ok':'bad');
-    sum.innerHTML=`<span>Total weight</span><span>${fmt.num(t,1)}% ${ok?'✓':'· must equal 100%'}</span>`;
-  }
+  const cell=$('wtTotalCell'); if(cell) cell.textContent=fmt.num(t,1)+'%'+(ok?'':' ⚠');
+  const row=cell?cell.closest('.wt-total'):null;
+  if(row) row.classList.toggle('bad',!ok);
 }
 function updateWeightPie(){
   const cv=$('weightPieCanvas'); if(!cv || typeof Chart==='undefined') return;
