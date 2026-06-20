@@ -731,6 +731,9 @@ document.querySelectorAll('input[name="newAssetType"]').forEach(r=>{
 function renderScheduleBox(boxId, hintId, sched){
   const box=$(boxId), hint=$(hintId); if(!box||!hint) return;
   const p=sched.period;
+  const isRebal=/rebal/i.test(boxId);
+  const verb=isRebal?'Rebalance':'Top-up';
+  const onceLabel=isRebal?'One rebalance per year':'One top-up per year';
   if(p==='weekly'||p==='fortnightly'){
     let html='<div class="weekday-grid">'+WEEKDAYS.map((w,i)=>{
       const v=i+1, on=sched.weekdays.includes(v);
@@ -754,7 +757,7 @@ function renderScheduleBox(boxId, hintId, sched){
         chip.classList.toggle('active', sched.weekdays.includes(v));
       });
     });
-    const fortnightHint=()=>'Top-up on each selected weekday of the '+(sched.weekParity===1?'second':'first')+' week, every fortnight.';
+    const fortnightHint=()=>verb+' on each selected weekday of the '+(sched.weekParity===1?'second':'first')+' week, every fortnight.';
     box.querySelectorAll('.weekday-chip[data-wp]').forEach(chip=>{
       chip.addEventListener('click',()=>{
         sched.weekParity=+chip.dataset.wp;
@@ -762,14 +765,14 @@ function renderScheduleBox(boxId, hintId, sched){
         hint.textContent=fortnightHint();
       });
     });
-    hint.textContent=p==='weekly'?'Top-up on each selected weekday, every week.':fortnightHint();
+    hint.textContent=p==='weekly'?verb+' on each selected weekday, every week.':fortnightHint();
   } else if(p==='monthly'){
     box.innerHTML=`<div class="sched-inline"><label>Day(s) of month</label><input class="txt-input" id="${boxId}_dom" value="${sched.daysOfMonth.join(', ')}" placeholder="e.g. 1 or 1, 15"/></div>`;
     $(boxId+'_dom').addEventListener('input',e=>{
       const arr=e.target.value.split(',').map(s=>parseInt(s.trim(),10)).filter(n=>n>=1&&n<=31);
       sched.daysOfMonth=arr.length?arr:[1];
     });
-    hint.textContent='Top-up on the closest trading day to each listed day, every month.';
+    hint.textContent=verb+' on the closest trading day to each listed day, every month.';
   } else if(p==='quarterly'){
     if(![1,2,3].includes(sched.quarterStart)) sched.quarterStart=1;
     const qOpts=[
@@ -782,7 +785,7 @@ function renderScheduleBox(boxId, hintId, sched){
       <div class="sched-inline" style="margin-top:6px"><label>Day of month</label><input class="num-input" id="${boxId}_dom" type="number" min="1" max="31" value="${sched.dayOfMonth}"/></div>`;
     $(boxId+'_qs').addEventListener('change',e=>{ sched.quarterStart=parseInt(e.target.value,10)||1; renderScheduleBox(boxId,hintId,sched); });
     $(boxId+'_dom').addEventListener('input',e=>{ sched.dayOfMonth=Math.min(31,Math.max(1,parseInt(e.target.value,10)||1)); });
-    hint.textContent='Top-up on that day in '+qOpts.find(o=>o.v===sched.quarterStart).label.replace(/,([^,]*)$/,' and$1')+'.';
+    hint.textContent=verb+' on that day in '+qOpts.find(o=>o.v===sched.quarterStart).label.replace(/,([^,]*)$/,' and$1')+'.';
   } else if(p==='yearly'){
     box.innerHTML=`<div class="sched-inline">
       <label>Month</label>
@@ -792,7 +795,7 @@ function renderScheduleBox(boxId, hintId, sched){
     </div>`;
     $(boxId+'_mon').addEventListener('change',e=>{ sched.month=parseInt(e.target.value,10)||1; });
     $(boxId+'_dom').addEventListener('input',e=>{ sched.dayOfMonth=Math.min(31,Math.max(1,parseInt(e.target.value,10)||1)); });
-    hint.textContent='One top-up per year on the chosen month and day.';
+    hint.textContent=onceLabel+' on the chosen month and day.';
   }
 }
 
