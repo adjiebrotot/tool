@@ -8,6 +8,14 @@
 .toggle-switch input:checked + .toggle-track{background:var(--accent);border-color:var(--accent)}
 .toggle-switch input:checked + .toggle-track .toggle-knob{transform:translateX(17px);background:#fff}
 
+/* Drag-to-reorder handle on each asset card. The asset order sets the stacking
+   order in Composition Over Time (top of the list = top of the chart). */
+.drag-handle{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted);font-size:1.05rem;line-height:1;cursor:grab;padding:0 2px;margin-left:-2px;letter-spacing:-1px;user-select:none;touch-action:none;transition:color .15s}
+.drag-handle:hover{color:var(--text)}
+.drag-handle:active{cursor:grabbing}
+.sec-card.dragging{opacity:.5}
+.sec-card.drag-over{border-color:var(--accent);box-shadow:inset 0 2px 0 var(--accent)}
+
 /* Asset weight field inside the asset card */
 .asset-weight-row{display:flex;align-items:center;gap:8px;padding:6px 0}
 .asset-weight-row label{font-size:.8rem;color:var(--muted);min-width:80px;flex-shrink:0}

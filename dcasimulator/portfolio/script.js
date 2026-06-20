@@ -609,6 +609,36 @@ function addAsset(cfg){
 }
 function removeAsset(id){ const p=getActive(); if(!p) return; p.assets=p.assets.filter(a=>a.id!==id); renderAssetList(); renderPortfolioList(); }
 
+// Asset currently being dragged in the asset list (id), shared across the per-card
+// drag handlers wired up in renderAssetList.
+let dragAssetId=null;
+
+// Move asset `fromId` to sit before/after `targetId` in the active portfolio's
+// asset order. That order drives the Composition Over Time stacking (the first
+// asset is drawn on top), so dragging lets the user choose top/middle/bottom.
+function reorderAssets(fromId, targetId, after){
+  const p=getActive(); if(!p) return;
+  const from=p.assets.findIndex(a=>a.id===fromId);
+  if(from<0) return;
+  const [moved]=p.assets.splice(from,1);
+  let to=p.assets.findIndex(a=>a.id===targetId);
+  if(to<0){ p.assets.splice(from,0,moved); return; }
+  p.assets.splice(after?to+1:to, 0, moved);
+  renderAssetList();
+  renderPortfolioList();
+  syncResultAssetOrder(p);
+}
+
+// After a reorder, keep an already-computed simulation result for this portfolio
+// in sync so the Composition chart/table reflect the new order without a re-run.
+function syncResultAssetOrder(p){
+  const res=simResults.find(r=>r.id===p.id);
+  if(!res) return;
+  res.assets.sort((x,y)=> p.assets.findIndex(a=>a.id===x.id) - p.assets.findIndex(a=>a.id===y.id));
+  if(activeCompChartId===p.id) updateCompChart();
+  if(activeCompTableId===p.id) updateTable();
+}
+
 function renderAssetList(){
   const el=$('assetList'); if(!el) return;
   const p=getActive();
@@ -623,6 +653,7 @@ function renderAssetList(){
     card.className='sec-card';
     card.innerHTML=`
       <div class="sec-header" data-id="${a.id}">
+        <span class="drag-handle" title="Drag to reorder — the top asset sits on top of the Composition Over Time chart" aria-label="Drag to reorder">⠿</span>
         <span class="color-dot" style="background:${a.colorHex}"></span>
         <span class="sec-name">${a.name}</span>
         <span class="sec-badge ${a.type==='ticker'?'badge-ticker':'badge-custom'}">${a.type==='ticker'?SVG_TICKER+' Ticker':SVG_CUSTOM+' Custom'}</span>
@@ -655,6 +686,23 @@ function renderAssetList(){
       const willOpen=!a.open;
       if(willOpen) p.assets.forEach(o=>{ if(o.id!==a.id) o.open=false; });
       a.open=willOpen; renderAssetList();
+    });
+
+    // Drag to reorder. The card is only made draggable while the grip handle is
+    // held, so the weight input and the expand/collapse click keep working.
+    const handle=card.querySelector('.drag-handle');
+    handle.addEventListener('click',e=>e.stopPropagation());
+    handle.addEventListener('mousedown',()=>{ card.draggable=true; });
+    handle.addEventListener('mouseup',()=>{ card.draggable=false; });
+    card.addEventListener('dragstart',e=>{ dragAssetId=a.id; card.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; try{ e.dataTransfer.setData('text/plain',String(a.id)); }catch(_){} });
+    card.addEventListener('dragend',()=>{ card.draggable=false; dragAssetId=null; el.querySelectorAll('.sec-card').forEach(c=>c.classList.remove('dragging','drag-over')); });
+    card.addEventListener('dragover',e=>{ if(dragAssetId==null||dragAssetId===a.id){ return; } e.preventDefault(); e.dataTransfer.dropEffect='move'; card.classList.add('drag-over'); });
+    card.addEventListener('dragleave',()=>card.classList.remove('drag-over'));
+    card.addEventListener('drop',e=>{
+      e.preventDefault(); card.classList.remove('drag-over');
+      if(dragAssetId==null||dragAssetId===a.id) return;
+      const rect=card.getBoundingClientRect();
+      reorderAssets(dragAssetId, a.id, e.clientY > rect.top+rect.height/2);
     });
     $(`aDel${a.id}`).addEventListener('click',e=>{ e.stopPropagation(); removeAsset(a.id); });
     $(`aWeight${a.id}`).addEventListener('input',e=>{ a.weight=parseFloat(e.target.value)||0; updateWeightSummary(); const pill=card.querySelector('.asset-weight-pill'); if(pill) pill.textContent=fmt.num(a.weight,1)+'%'; renderPortfolioList(); });
@@ -1147,8 +1195,10 @@ function updateCompChart(){
   const isPct=compViewMode==='percent';
   const asVal=(v,total)=> isPct ? (total>0 ? v/total*100 : 0) : v;
 
+  // Cash is the base of the stack; assets are pushed in reverse list order so the
+  // first asset in the (drag-reorderable) asset list is drawn on top.
   const series=[{label:'Cash', color:CASH_COLOR, data:res.rows.map(r=>asVal(r.cash,r.total))}];
-  res.assets.forEach(a=>series.push({label:a.name, color:a.colorHex, data:res.rows.map(r=>asVal(r.assetVals[a.id]||0, r.total))}));
+  res.assets.slice().reverse().forEach(a=>series.push({label:a.name, color:a.colorHex, data:res.rows.map(r=>asVal(r.assetVals[a.id]||0, r.total))}));
 
   const datasets=series.map(s=>({
     label:s.label, data:s.data, borderColor:s.color, backgroundColor:s.color+'66',
