@@ -31,17 +31,14 @@
 .weight-row .wt-name{display:flex;align-items:center;gap:7px;min-width:0;color:var(--text)}
 .weight-row .wt-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .weight-row .wt-input{display:flex;align-items:center;gap:4px;flex-shrink:0;white-space:nowrap}
-.weight-row .wt-input .num-input{width:60px;max-width:60px;min-width:56px;text-align:right}
+.weight-row .wt-input .num-input{width:60px;max-width:60px;min-width:56px;text-align:right;-moz-appearance:textfield}
+.weight-row .wt-input .num-input::-webkit-inner-spin-button,
+.weight-row .wt-input .num-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .weight-row .wt-pct{color:var(--muted)}
 .weight-row.wt-total{border-bottom:none;font-weight:800;color:var(--text);padding-top:8px}
 .weight-row.wt-total .wt-input{font-family:'DM Mono',monospace}
-
-/* Running weight total */
-.weight-summary{margin-top:10px;font-size:.82rem;font-weight:700;padding:8px 11px;border-radius:9px;border:1px solid var(--border);background:var(--input-bg);display:flex;justify-content:space-between;align-items:center}
-.weight-summary.ok{border-color:rgba(143,205,189,.4);color:#9BE7B4;background:#103529}
-.weight-summary.bad{border-color:rgba(255,210,140,.35);color:#FFD28C;background:#4A3412}
-body.light .weight-summary.ok{background:#E6F6EC;color:#1F7A4D}
-body.light .weight-summary.bad{background:#FFF0D9;color:#7A4A00}
+.weight-row.wt-total.bad .wt-name,.weight-row.wt-total.bad .wt-input{color:#FFD28C}
+body.light .weight-row.wt-total.bad .wt-name,body.light .weight-row.wt-total.bad .wt-input{color:#7A4A00}
 
 /* Schedule editor */
 .sched-box{margin-top:4px}
