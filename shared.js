@@ -258,6 +258,203 @@
     getProxy: function(){ return WORKER_ENDPOINT; }
   };
 
+  /* ── Technical indicators (shared by the single-asset & portfolio tools) ──
+     All operate on a close-price array and return same-length arrays padded
+     with null until the indicator has enough history. Pure & side-effect free,
+     so both tools compute them lazily on the price series they already hold. */
+  function taParseDate(s){ var p=String(s).split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+  function smaSeries(p,n){
+    const out=new Array(p.length).fill(null);
+    if(n<1) return out;
+    let sum=0;
+    for(let i=0;i<p.length;i++){ sum+=p[i]; if(i>=n) sum-=p[i-n]; if(i>=n-1) out[i]=sum/n; }
+    return out;
+  }
+  function emaSeries(p,n){
+    const out=new Array(p.length).fill(null);
+    if(n<1||p.length<n) return out;
+    const k=2/(n+1);
+    let seed=0;
+    for(let i=0;i<n;i++) seed+=p[i];
+    let prev=seed/n; out[n-1]=prev;
+    for(let i=n;i<p.length;i++){ prev=p[i]*k+prev*(1-k); out[i]=prev; }
+    return out;
+  }
+  function maSeries(p,type,n){ return type==='ema'?emaSeries(p,n):smaSeries(p,n); }
+  function rsiSeries(p,n){
+    const out=new Array(p.length).fill(null);
+    if(p.length<n+1) return out;
+    let gain=0,loss=0;
+    for(let i=1;i<=n;i++){ const ch=p[i]-p[i-1]; if(ch>=0) gain+=ch; else loss-=ch; }
+    let avgG=gain/n, avgL=loss/n;
+    out[n]= avgL===0?100:100-100/(1+avgG/avgL);
+    for(let i=n+1;i<p.length;i++){
+      const ch=p[i]-p[i-1], g=ch>0?ch:0, l=ch<0?-ch:0;
+      avgG=(avgG*(n-1)+g)/n; avgL=(avgL*(n-1)+l)/n;
+      out[i]= avgL===0?100:100-100/(1+avgG/avgL);
+    }
+    return out;
+  }
+  function bollingerSeries(p,n,k){
+    const mid=smaSeries(p,n);
+    const upper=new Array(p.length).fill(null), lower=new Array(p.length).fill(null);
+    for(let i=n-1;i<p.length;i++){
+      let sq=0;
+      for(let j=i-n+1;j<=i;j++){ const d=p[j]-mid[i]; sq+=d*d; }
+      const sd=Math.sqrt(sq/n);
+      upper[i]=mid[i]+k*sd; lower[i]=mid[i]-k*sd;
+    }
+    return {mid,upper,lower};
+  }
+  function macdSeries(p,fast,slow,signal){
+    const ef=emaSeries(p,fast), es=emaSeries(p,slow);
+    const macd=p.map((_,i)=> (ef[i]!=null&&es[i]!=null)? ef[i]-es[i] : null);
+    const sig=new Array(p.length).fill(null);
+    const k=2/(signal+1);
+    let prev=null, count=0, seed=0;
+    for(let i=0;i<p.length;i++){
+      if(macd[i]==null) continue;
+      count++;
+      if(count<signal){ seed+=macd[i]; }
+      else if(count===signal){ seed+=macd[i]; prev=seed/signal; sig[i]=prev; }
+      else { prev=macd[i]*k+prev*(1-k); sig[i]=prev; }
+    }
+    const hist=p.map((_,i)=> (macd[i]!=null&&sig[i]!=null)? macd[i]-sig[i] : null);
+    return {macd,signal:sig,hist};
+  }
+  // ADX from close prices only (high=low=close approximation), Wilder-smoothed.
+  function adxSeries(p,n){
+    const len=p.length;
+    const out=new Array(len).fill(null);
+    if(len<2*n+1) return out;
+    const tr=new Array(len).fill(0), pdm=new Array(len).fill(0), ndm=new Array(len).fill(0);
+    for(let i=1;i<len;i++){
+      const up=p[i]-p[i-1], down=p[i-1]-p[i];
+      pdm[i]=(up>down&&up>0)?up:0;
+      ndm[i]=(down>up&&down>0)?down:0;
+      tr[i]=Math.abs(p[i]-p[i-1]);
+    }
+    let atr=0,apdm=0,andm=0;
+    for(let i=1;i<=n;i++){ atr+=tr[i]; apdm+=pdm[i]; andm+=ndm[i]; }
+    const dx=new Array(len).fill(null);
+    for(let i=n+1;i<len;i++){
+      atr=atr-atr/n+tr[i]; apdm=apdm-apdm/n+pdm[i]; andm=andm-andm/n+ndm[i];
+      const pdi=atr===0?0:100*apdm/atr, ndi=atr===0?0:100*andm/atr;
+      const sum=pdi+ndi;
+      dx[i]= sum===0?0:100*Math.abs(pdi-ndi)/sum;
+    }
+    let cnt=0, dsum=0, prev=null;
+    for(let i=0;i<len;i++){
+      if(dx[i]==null) continue;
+      cnt++;
+      if(cnt<=n){ dsum+=dx[i]; if(cnt===n){ prev=dsum/n; out[i]=prev; } }
+      else { prev=(prev*(n-1)+dx[i])/n; out[i]=prev; }
+    }
+    return out;
+  }
+  // Build the per-day buy-signal array (and the overlay lines) for a technical
+  // strategy. Returns { signal:[bool], lines:[{name,values,axis,dash,fade}] }.
+  function buildTech(prices, style, tech){
+    const t=tech||{};
+    const n=prices.length;
+    const sig=new Array(n).fill(false);
+    const lines=[];
+    const crossUp=(a,b,i)=> a[i]!=null&&b[i]!=null&&a[i-1]!=null&&b[i-1]!=null&&a[i-1]<=b[i-1]&&a[i]>b[i];
+    if(style==='tech-ma-cross'){
+      const fast=maSeries(prices,t.fastMaType||'ema',t.fastMaLen||50);
+      const slow=maSeries(prices,t.slowMaType||'sma',t.slowMaLen||200);
+      for(let i=1;i<n;i++) if(crossUp(fast,slow,i)) sig[i]=true;
+      lines.push({name:`${(t.fastMaType||'ema').toUpperCase()} ${t.fastMaLen||50}`,values:fast,axis:'price',dash:'dash',fade:0.7});
+      lines.push({name:`${(t.slowMaType||'sma').toUpperCase()} ${t.slowMaLen||200}`,values:slow,axis:'price',dash:'dot',fade:0.45});
+    } else if(style==='tech-rsi'){
+      const r=rsiSeries(prices,t.rsiPeriod||14); const thr=t.rsiOversold??35;
+      for(let i=0;i<n;i++) if(r[i]!=null&&r[i]<thr) sig[i]=true;
+      lines.push({name:`RSI ${t.rsiPeriod||14}`,values:r,axis:'osc',dash:'dash',fade:0.75});
+      lines.push({name:`Oversold ${thr}`,values:new Array(n).fill(thr),axis:'osc',dash:'dot',fade:0.4});
+    } else if(style==='tech-bollinger'){
+      const {mid,upper,lower}=bollingerSeries(prices,t.bbPeriod||20,t.bbStd||2);
+      if((t.bbTrigger||'below')==='reclaim'){
+        for(let i=1;i<n;i++) if(lower[i]!=null&&lower[i-1]!=null&&prices[i]>=lower[i]&&prices[i-1]<lower[i-1]) sig[i]=true;
+      } else {
+        for(let i=0;i<n;i++) if(lower[i]!=null&&prices[i]<lower[i]) sig[i]=true;
+      }
+      lines.push({name:'BB Upper',values:upper,axis:'price',dash:'dot',fade:0.4});
+      lines.push({name:`BB Mid ${t.bbPeriod||20}`,values:mid,axis:'price',dash:'dash',fade:0.6});
+      lines.push({name:'BB Lower',values:lower,axis:'price',dash:'dot',fade:0.4,bandFill:true});
+    } else if(style==='tech-macd-cross'){
+      const {macd,signal}=macdSeries(prices,t.macdFast||12,t.macdSlow||26,t.macdSignal||9);
+      for(let i=1;i<n;i++) if(crossUp(macd,signal,i)) sig[i]=true;
+      lines.push({name:'MACD',values:macd,axis:'osc',dash:'dash',fade:0.75});
+      lines.push({name:'Signal',values:signal,axis:'osc',dash:'dot',fade:0.45});
+    } else if(style==='tech-macd-hist'){
+      const {hist}=macdSeries(prices,t.macdFast||12,t.macdSlow||26,t.macdSignal||9);
+      const thr=t.macdHistThreshold??0;
+      for(let i=1;i<n;i++) if(hist[i]!=null&&hist[i-1]!=null&&hist[i]>thr&&hist[i-1]<=thr) sig[i]=true;
+      lines.push({name:'MACD Hist',values:hist,axis:'osc',bar:true});
+      lines.push({name:`Threshold ${thr}`,values:new Array(n).fill(thr),axis:'osc',dash:'dot',fade:0.4});
+    } else if(style==='tech-adx'){
+      const a=adxSeries(prices,t.adxPeriod||14); const thr=t.adxThreshold??25;
+      for(let i=0;i<n;i++) if(a[i]!=null&&a[i]>thr) sig[i]=true;
+      lines.push({name:`ADX ${t.adxPeriod||14}`,values:a,axis:'osc',dash:'dash',fade:0.75});
+      lines.push({name:`Threshold ${thr}`,values:new Array(n).fill(thr),axis:'osc',dash:'dot',fade:0.4});
+    }
+    return {signal:sig, lines};
+  }
+  // A stable Sunday-aligned week key (year + week-of-year), matching the scheme
+  // the fixed Weekly styles use so every "weekly" feature buckets identically.
+  function isoWeekBucket(dateStr){
+    const dt=taParseDate(dateStr);
+    const y=dt.getFullYear();
+    const doy=Math.floor((dt-new Date(y,0,1))/86400000);
+    const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
+    return y+'-'+String(wk).padStart(2,'0');
+  }
+  function periodKey(dateStr, period){
+    return period==='weekly' ? isoWeekBucket(dateStr) : dateStr.slice(0,7);
+  }
+
+  global.SharedTA = {
+    smaSeries: smaSeries, emaSeries: emaSeries, maSeries: maSeries,
+    rsiSeries: rsiSeries, bollingerSeries: bollingerSeries,
+    macdSeries: macdSeries, adxSeries: adxSeries, buildTech: buildTech,
+    isoWeekBucket: isoWeekBucket, periodKey: periodKey
+  };
+
+  /* ── Settings save/load (download/upload a config as JSON) ─────────────────
+     Each tool builds its own plain-object snapshot and restores from it; these
+     are just the transport helpers so a user can persist a configuration and
+     resume it later instead of re-entering everything. */
+  function downloadJson(filename, obj){
+    var blob = new Blob([JSON.stringify(obj, null, 2)], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 0);
+  }
+  function uploadJson(onParsed, onError){
+    var inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = 'application/json,.json';
+    inp.style.display = 'none';
+    inp.addEventListener('change', function(){
+      var f = inp.files && inp.files[0];
+      if(!f){ inp.remove(); return; }
+      var reader = new FileReader();
+      reader.onload = function(){
+        try { onParsed(JSON.parse(reader.result)); }
+        catch(e){ if(typeof onError==='function') onError(e); else alert('Invalid JSON file: '+e.message); }
+        inp.remove();
+      };
+      reader.onerror = function(){ if(typeof onError==='function') onError(new Error('Could not read file')); inp.remove(); };
+      reader.readAsText(f);
+    });
+    document.body.appendChild(inp);
+    inp.click();
+  }
+
+  global.SharedConfig = { download: downloadJson, upload: uploadJson };
+
   /* ── Global Tooltip ── */
   function initTooltip(){
     if (global.__sharedTooltipInit) return;

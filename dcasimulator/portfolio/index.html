@@ -125,6 +125,14 @@
       <div class="status-bar" id="dateRangeStatus"></div>
       </div>
     </div>
+
+    <div class="section-label">Configuration <span class="tip-icon" data-tip="Save every portfolio plus the global settings to a JSON file, or load a previously saved file to resume. Price history is not saved — it re-fetches from the shared cache on the next run.">?</span></div>
+    <div class="field-row" style="border-top:none;padding-top:0">
+      <div style="display:flex;gap:8px;width:100%">
+        <button class="btn-secondary" id="exportConfigBtn" type="button" style="flex:1;white-space:nowrap;font-size:.82rem;padding:6px 13px">⬇ Save settings</button>
+        <button class="btn-secondary" id="importConfigBtn" type="button" style="flex:1;white-space:nowrap;font-size:.82rem;padding:6px 13px">⬆ Load settings</button>
+      </div>
+    </div>
   </div>
 
   <!-- PORTFOLIOS TAB -->
@@ -251,6 +259,14 @@
         <input type="radio" name="rebalMethod" value="constant-allocation"/>
         <div class="radio-opt-text"><strong>Constant Allocation</strong>Each top-up is split by the weights and used to buy. Weights apply to the contribution, not the whole portfolio.</div>
       </label>
+      <label class="radio-opt" data-method="dynamic-momentum">
+        <input type="radio" name="rebalMethod" value="dynamic-momentum"/>
+        <div class="radio-opt-text"><strong>Dynamic Weight</strong>Rank assets by trailing return and apply your per-rank weights (e.g. 50 / 30 / 20). Winners earn the top ranks, so the holding behind each rank changes with performance.</div>
+      </label>
+      <label class="radio-opt" data-method="rule-trigger">
+        <input type="radio" name="rebalMethod" value="rule-trigger"/>
+        <div class="radio-opt-text"><strong>Rule-Based</strong>Park top-ups in a reserve (cash or a holding asset) and deploy into each asset only when its own trigger fires — a % move from the period open, or a technical signal.</div>
+      </label>
     </div>
 
     <!-- TARGET WEIGHTS - a sub-option of the method (same level as Constant Weight
@@ -264,8 +280,44 @@
       </div>
     </div>
 
+    <!-- DYNAMIC WEIGHT (momentum rank) options - only shown for that method. -->
+    <div id="dynamicOpts" style="display:none">
+      <div class="field-row" style="border-top:none;padding-top:0">
+        <div class="field-label">Momentum lookback <span class="tip-icon" data-tip="How far back each asset's return is measured to rank it. Each rebalance, assets are sorted by this trailing return and your per-rank weights are applied.">?</span></div>
+        <select class="num-input" id="lookbackMonths" style="cursor:pointer">
+          <option value="1">1 month</option>
+          <option value="3">3 months</option>
+          <option value="6" selected>6 months</option>
+          <option value="12">12 months</option>
+        </select>
+      </div>
+      <div class="field-label" style="margin-top:10px">Rank Weights <span class="tip-icon" data-tip="Target weight for each rank by trailing return (Rank 1 = strongest performer). Which asset fills each rank changes over time. All rank weights must sum to 100%.">?</span></div>
+      <div id="rankWeightTableWrap" class="weight-table-wrap"></div>
+    </div>
+
+    <!-- RULE-BASED (trigger) options - only shown for that method. -->
+    <div id="ruleOpts" style="display:none">
+      <div class="field-label" style="margin-top:10px">Reserve <span class="tip-icon" data-tip="Where un-deployed top-ups sit while waiting for triggers: as cash earning the risk-free rate, or parked in a chosen holding asset that is sold to fund deploys.">?</span></div>
+      <div class="radio-group" style="flex-direction:column">
+        <label class="radio-opt selected" data-reserve="cash">
+          <input type="radio" name="reserveMode" value="cash" checked/>
+          <div class="radio-opt-text"><strong>Cash</strong>Hold un-deployed money as cash earning the risk-free rate until a trigger fires.</div>
+        </label>
+        <label class="radio-opt" data-reserve="asset">
+          <input type="radio" name="reserveMode" value="asset"/>
+          <div class="radio-opt-text"><strong>Holding asset</strong>Park un-deployed money in a chosen asset, sold to fund deploys when a trigger fires.</div>
+        </label>
+      </div>
+      <div id="reserveAssetRow" class="field-row" style="display:none">
+        <div class="field-label">Reserve asset</div>
+        <select class="num-input" id="reserveAssetSelect" style="cursor:pointer"></select>
+      </div>
+      <div class="field-label" style="margin-top:10px">Deploy Triggers <span class="tip-icon" data-tip="Each asset deploys from the reserve only when its trigger fires. Price move is measured from the start of each month/week (the period open); technical triggers reuse the single-asset tool's indicators.">?</span></div>
+      <div id="triggerTableWrap"></div>
+    </div>
+
     <div id="constantWeightOpts" style="display:none">
-      <div class="field-label" style="margin-top:10px">Constant Weight Timing</div>
+      <div class="field-label" style="margin-top:10px">Rebalance Timing</div>
       <div class="radio-group" style="flex-direction:column">
         <label class="radio-opt selected" data-cwtiming="at-topup">
           <input type="radio" name="cwTiming" value="at-topup" checked/>

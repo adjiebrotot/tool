@@ -1104,165 +1104,20 @@ $('riskFreeRate').addEventListener('input',e=>{
 })();
 
 /* ─── TECHNICAL INDICATORS ─── */
-// All indicators operate on the close-price series only (the data this tool
-// stores). They are computed lazily - never on page load, only when a security
-// actually uses a technical strategy or the user toggles the chart overlay.
-function smaSeries(p,n){
-  const out=new Array(p.length).fill(null);
-  if(n<1) return out;
-  let sum=0;
-  for(let i=0;i<p.length;i++){ sum+=p[i]; if(i>=n) sum-=p[i-n]; if(i>=n-1) out[i]=sum/n; }
-  return out;
-}
-function emaSeries(p,n){
-  const out=new Array(p.length).fill(null);
-  if(n<1||p.length<n) return out;
-  const k=2/(n+1);
-  let seed=0;
-  for(let i=0;i<n;i++) seed+=p[i];
-  let prev=seed/n; out[n-1]=prev;
-  for(let i=n;i<p.length;i++){ prev=p[i]*k+prev*(1-k); out[i]=prev; }
-  return out;
-}
-function maSeries(p,type,n){ return type==='ema'?emaSeries(p,n):smaSeries(p,n); }
-function rsiSeries(p,n){
-  const out=new Array(p.length).fill(null);
-  if(p.length<n+1) return out;
-  let gain=0,loss=0;
-  for(let i=1;i<=n;i++){ const ch=p[i]-p[i-1]; if(ch>=0) gain+=ch; else loss-=ch; }
-  let avgG=gain/n, avgL=loss/n;
-  out[n]= avgL===0?100:100-100/(1+avgG/avgL);
-  for(let i=n+1;i<p.length;i++){
-    const ch=p[i]-p[i-1], g=ch>0?ch:0, l=ch<0?-ch:0;
-    avgG=(avgG*(n-1)+g)/n; avgL=(avgL*(n-1)+l)/n;
-    out[i]= avgL===0?100:100-100/(1+avgG/avgL);
-  }
-  return out;
-}
-function bollingerSeries(p,n,k){
-  const mid=smaSeries(p,n);
-  const upper=new Array(p.length).fill(null), lower=new Array(p.length).fill(null);
-  for(let i=n-1;i<p.length;i++){
-    let sq=0;
-    for(let j=i-n+1;j<=i;j++){ const d=p[j]-mid[i]; sq+=d*d; }
-    const sd=Math.sqrt(sq/n);
-    upper[i]=mid[i]+k*sd; lower[i]=mid[i]-k*sd;
-  }
-  return {mid,upper,lower};
-}
-function macdSeries(p,fast,slow,signal){
-  const ef=emaSeries(p,fast), es=emaSeries(p,slow);
-  const macd=p.map((_,i)=> (ef[i]!=null&&es[i]!=null)? ef[i]-es[i] : null);
-  const sig=new Array(p.length).fill(null);
-  const k=2/(signal+1);
-  let prev=null, count=0, seed=0;
-  for(let i=0;i<p.length;i++){
-    if(macd[i]==null) continue;
-    count++;
-    if(count<signal){ seed+=macd[i]; }
-    else if(count===signal){ seed+=macd[i]; prev=seed/signal; sig[i]=prev; }
-    else { prev=macd[i]*k+prev*(1-k); sig[i]=prev; }
-  }
-  const hist=p.map((_,i)=> (macd[i]!=null&&sig[i]!=null)? macd[i]-sig[i] : null);
-  return {macd,signal:sig,hist};
-}
-// ADX from close prices only (high=low=close approximation), Wilder-smoothed.
-function adxSeries(p,n){
-  const len=p.length;
-  const out=new Array(len).fill(null);
-  if(len<2*n+1) return out;
-  const tr=new Array(len).fill(0), pdm=new Array(len).fill(0), ndm=new Array(len).fill(0);
-  for(let i=1;i<len;i++){
-    const up=p[i]-p[i-1], down=p[i-1]-p[i];
-    pdm[i]=(up>down&&up>0)?up:0;
-    ndm[i]=(down>up&&down>0)?down:0;
-    tr[i]=Math.abs(p[i]-p[i-1]);
-  }
-  let atr=0,apdm=0,andm=0;
-  for(let i=1;i<=n;i++){ atr+=tr[i]; apdm+=pdm[i]; andm+=ndm[i]; }
-  const dx=new Array(len).fill(null);
-  for(let i=n+1;i<len;i++){
-    atr=atr-atr/n+tr[i]; apdm=apdm-apdm/n+pdm[i]; andm=andm-andm/n+ndm[i];
-    const pdi=atr===0?0:100*apdm/atr, ndi=atr===0?0:100*andm/atr;
-    const sum=pdi+ndi;
-    dx[i]= sum===0?0:100*Math.abs(pdi-ndi)/sum;
-  }
-  let cnt=0, dsum=0, prev=null;
-  for(let i=0;i<len;i++){
-    if(dx[i]==null) continue;
-    cnt++;
-    if(cnt<=n){ dsum+=dx[i]; if(cnt===n){ prev=dsum/n; out[i]=prev; } }
-    else { prev=(prev*(n-1)+dx[i])/n; out[i]=prev; }
-  }
-  return out;
-}
-
-// Build the per-day buy-signal array (and the overlay lines) for a technical
-// strategy. Returns { signal:[bool], lines:[{name,values,axis,dash,fade}] }.
-function buildTech(prices, style, tech){
-  const t=tech||{};
-  const n=prices.length;
-  const sig=new Array(n).fill(false);
-  const lines=[];
-  const crossUp=(a,b,i)=> a[i]!=null&&b[i]!=null&&a[i-1]!=null&&b[i-1]!=null&&a[i-1]<=b[i-1]&&a[i]>b[i];
-  if(style==='tech-ma-cross'){
-    const fast=maSeries(prices,t.fastMaType||'ema',t.fastMaLen||50);
-    const slow=maSeries(prices,t.slowMaType||'sma',t.slowMaLen||200);
-    for(let i=1;i<n;i++) if(crossUp(fast,slow,i)) sig[i]=true;
-    lines.push({name:`${(t.fastMaType||'ema').toUpperCase()} ${t.fastMaLen||50}`,values:fast,axis:'price',dash:'dash',fade:0.7});
-    lines.push({name:`${(t.slowMaType||'sma').toUpperCase()} ${t.slowMaLen||200}`,values:slow,axis:'price',dash:'dot',fade:0.45});
-  } else if(style==='tech-rsi'){
-    const r=rsiSeries(prices,t.rsiPeriod||14); const thr=t.rsiOversold??35;
-    for(let i=0;i<n;i++) if(r[i]!=null&&r[i]<thr) sig[i]=true;
-    lines.push({name:`RSI ${t.rsiPeriod||14}`,values:r,axis:'osc',dash:'dash',fade:0.75});
-    lines.push({name:`Oversold ${thr}`,values:new Array(n).fill(thr),axis:'osc',dash:'dot',fade:0.4});
-  } else if(style==='tech-bollinger'){
-    const {mid,upper,lower}=bollingerSeries(prices,t.bbPeriod||20,t.bbStd||2);
-    if((t.bbTrigger||'below')==='reclaim'){
-      for(let i=1;i<n;i++) if(lower[i]!=null&&lower[i-1]!=null&&prices[i]>=lower[i]&&prices[i-1]<lower[i-1]) sig[i]=true;
-    } else {
-      for(let i=0;i<n;i++) if(lower[i]!=null&&prices[i]<lower[i]) sig[i]=true;
-    }
-    lines.push({name:'BB Upper',values:upper,axis:'price',dash:'dot',fade:0.4});
-    lines.push({name:`BB Mid ${t.bbPeriod||20}`,values:mid,axis:'price',dash:'dash',fade:0.6});
-    // The lower band fills up to the upper band (2 datasets back) so the area
-    // between the bands reads as a shaded channel.
-    lines.push({name:'BB Lower',values:lower,axis:'price',dash:'dot',fade:0.4,bandFill:true});
-  } else if(style==='tech-macd-cross'){
-    const {macd,signal}=macdSeries(prices,t.macdFast||12,t.macdSlow||26,t.macdSignal||9);
-    for(let i=1;i<n;i++) if(crossUp(macd,signal,i)) sig[i]=true;
-    lines.push({name:'MACD',values:macd,axis:'osc',dash:'dash',fade:0.75});
-    lines.push({name:'Signal',values:signal,axis:'osc',dash:'dot',fade:0.45});
-  } else if(style==='tech-macd-hist'){
-    const {hist}=macdSeries(prices,t.macdFast||12,t.macdSlow||26,t.macdSignal||9);
-    const thr=t.macdHistThreshold??0;
-    for(let i=1;i<n;i++) if(hist[i]!=null&&hist[i-1]!=null&&hist[i]>thr&&hist[i-1]<=thr) sig[i]=true;
-    // The histogram renders as MACD-style coloured bars (not a line), so flag it
-    // for the chart layer; the threshold/zero line stays a thin reference.
-    lines.push({name:'MACD Hist',values:hist,axis:'osc',bar:true});
-    lines.push({name:`Threshold ${thr}`,values:new Array(n).fill(thr),axis:'osc',dash:'dot',fade:0.4});
-  } else if(style==='tech-adx'){
-    const a=adxSeries(prices,t.adxPeriod||14); const thr=t.adxThreshold??25;
-    for(let i=0;i<n;i++) if(a[i]!=null&&a[i]>thr) sig[i]=true;
-    lines.push({name:`ADX ${t.adxPeriod||14}`,values:a,axis:'osc',dash:'dash',fade:0.75});
-    lines.push({name:`Threshold ${thr}`,values:new Array(n).fill(thr),axis:'osc',dash:'dot',fade:0.4});
-  }
-  return {signal:sig, lines};
-}
-
-// ─── PERIOD BUCKETING (calendar month or week) ───
-// A stable Sunday-aligned week key (year + week-of-year), matching the scheme the
-// fixed Weekly styles already use so every "weekly" feature buckets identically.
-function isoWeekBucket(dateStr){
-  const dt=parseDate(dateStr);
-  const y=dt.getFullYear();
-  const doy=Math.floor((dt-new Date(y,0,1))/86400000);
-  const wk=Math.floor((doy+new Date(y,0,1).getDay())/7);
-  return y+'-'+String(wk).padStart(2,'0');
-}
-function periodKey(dateStr, period){
-  return period==='weekly' ? isoWeekBucket(dateStr) : dateStr.slice(0,7);
-}
+// Indicators + the technical buy-signal builder + period bucketing live in
+// shared.js (SharedTA) so the portfolio tool reuses the exact same logic. They
+// operate on a close-price series only and are computed lazily. Bound to local
+// names here so the rest of this file reads unchanged.
+const smaSeries        = SharedTA.smaSeries;
+const emaSeries        = SharedTA.emaSeries;
+const maSeries         = SharedTA.maSeries;
+const rsiSeries        = SharedTA.rsiSeries;
+const bollingerSeries  = SharedTA.bollingerSeries;
+const macdSeries       = SharedTA.macdSeries;
+const adxSeries        = SharedTA.adxSeries;
+const buildTech        = SharedTA.buildTech;
+const isoWeekBucket    = SharedTA.isoWeekBucket;
+const periodKey        = SharedTA.periodKey;
 // Group trading-day indices into chronological per-period buckets (dates arrive
 // sorted, so insertion order == chronological order).
 function groupIndicesByPeriod(dates, period){
@@ -2360,6 +2215,53 @@ $('downloadBtn').addEventListener('click',()=>{
   a.download=`dca_${res.sec.name.replace(/[^a-z0-9]/gi,'_')}.csv`;
   document.body.appendChild(a); a.click(); a.remove();
 });
+
+/* ─── SAVE / LOAD SETTINGS (download/upload the whole configuration as JSON) ───
+   Lets a user persist every scenario + the global settings and resume later
+   instead of re-entering them. Price history is NOT saved (it lives in the
+   shared cache and is re-fetched on the next run); only the configuration is. */
+function exportSettings(){
+  const securitiesOut = securities.map(s=>{
+    const c = JSON.parse(JSON.stringify(s));
+    delete c.priceData; delete c.loaded; delete c.open;  // transient/cache fields
+    return c;
+  });
+  const obj = {
+    app:'dca-single', version:1, savedAt:new Date().toISOString(),
+    global:{
+      currencySymbol: currentCurrencySymbol,
+      randomSeed: currentRandomSeed,
+      riskFreeRate: currentRiskFreeRate,
+      startDate: $('startDate').value,
+      endDate: $('endDate').value,
+      tickerPool: ($('tickerPoolInput')||{}).value || ''
+    },
+    securities: securitiesOut
+  };
+  SharedConfig.download('dca-simulator-settings.json', obj);
+}
+function importSettings(obj){
+  if(!obj || obj.app!=='dca-single'){
+    showWarning('That file is not a DCA Simulator settings file.'); return;
+  }
+  const g = obj.global || {};
+  if(g.currencySymbol){ $('currencySymbol').value=g.currencySymbol; currentCurrencySymbol=g.currencySymbol; const pfx=$('cfgAmountPrefix'); if(pfx) pfx.textContent=currentCurrencySymbol||'$'; }
+  if(g.randomSeed!=null){ $('randomSeed').value=g.randomSeed; currentRandomSeed=sanitizeSeed(g.randomSeed); }
+  if(g.riskFreeRate!=null){ $('riskFreeRate').value=g.riskFreeRate; const n=parseFloat(g.riskFreeRate); currentRiskFreeRate=Number.isFinite(n)?Math.max(0,n):0; }
+  if(g.startDate) $('startDate').value=g.startDate;
+  if(g.endDate) $('endDate').value=g.endDate;
+  if(g.tickerPool!=null){ const inp=$('tickerPoolInput'); if(inp) inp.value=g.tickerPool; }
+  // Rebuild the scenario list from the file (prices re-fetch on run; the cache
+  // makes that free for tickers already loaded).
+  securities=[]; simResults=[]; latestRows=[]; secIdCounter=0; activeSecurityId=null;
+  hideWarning();
+  (obj.securities||[]).forEach(s=>addSecurity(s));
+  document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
+  renderSecList();
+  runSimulation();
+}
+const _expCfgBtn=$('exportConfigBtn'); if(_expCfgBtn) _expCfgBtn.addEventListener('click', exportSettings);
+const _impCfgBtn=$('importConfigBtn'); if(_impCfgBtn) _impCfgBtn.addEventListener('click', ()=>SharedConfig.upload(importSettings, e=>showWarning('Could not load settings: '+e.message)));
 
 /* ─── WARNINGS ─── */
 function showWarning(msg){ const w=$('mainWarning'); w.style.display='block'; w.textContent=msg; }
