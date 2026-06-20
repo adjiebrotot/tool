@@ -214,6 +214,31 @@ body {
   font-family: 'DM Sans', sans-serif;
   font-size: 0.92rem;
 }
+
+/* Wide tables that overflow are wrapped (on screen only) in a scroll box the
+   user can drag/pan horizontally — no need to scroll to the bottom of the page
+   to reach a horizontal scrollbar. This wrapper never reaches the PDF: PDF
+   pagination reads the bare <table>, so print/export behaviour is unchanged. */
+.md-body .table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  margin: 0 0 1.2em;
+  border-radius: 8px;
+  scrollbar-width: thin;
+  overscroll-behavior-x: contain;
+}
+.md-body .table-scroll > table { margin: 0; }
+.md-body .table-scroll.is-scrollable { cursor: grab; }
+.md-body .table-scroll.is-scrollable.dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+.md-body .table-scroll::-webkit-scrollbar { height: 9px; }
+.md-body .table-scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 5px;
+}
+.md-body .table-scroll::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 .md-body th, .md-body td {
   border: 1px solid var(--border);
   padding: 8px 12px;

@@ -149,6 +149,65 @@
     } catch (e) {}
   }
 
+  // Wrap each table in a horizontally scrollable box that can be dragged/panned
+  // (screen view only). Wide tables no longer push a scrollbar to the very
+  // bottom of the document — they pan in place. The wrapper is stripped before
+  // PDF pagination, so export is unaffected.
+  function enhanceTables(root) {
+    root.querySelectorAll('table').forEach(table => {
+      const parent = table.parentNode;
+      if (parent && parent.classList && parent.classList.contains('table-scroll')) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'table-scroll';
+      parent.insertBefore(wrap, table);
+      wrap.appendChild(table);
+      enableDragScroll(wrap);
+    });
+    markScrollableTables(root);
+    // Re-measure once layout/fonts settle so borderline tables are caught.
+    requestAnimationFrame(() => markScrollableTables(root));
+  }
+
+  // Flag wrappers whose table actually overflows so the grab cursor only shows
+  // when there is something to pan to.
+  function markScrollableTables(root) {
+    root.querySelectorAll('.table-scroll').forEach(wrap => {
+      wrap.classList.toggle('is-scrollable', wrap.scrollWidth > wrap.clientWidth + 1);
+    });
+  }
+
+  // Click-and-drag horizontal panning for a scroll container.
+  function enableDragScroll(el) {
+    let down = false, startX = 0, startLeft = 0, moved = false;
+    el.addEventListener('pointerdown', e => {
+      if (e.button !== 0 || !el.classList.contains('is-scrollable')) return;
+      down = true; moved = false;
+      startX = e.clientX;
+      startLeft = el.scrollLeft;
+      el.classList.add('dragging');
+      try { el.setPointerCapture(e.pointerId); } catch (_) {}
+    });
+    el.addEventListener('pointermove', e => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 3) moved = true;
+      el.scrollLeft = startLeft - dx;
+    });
+    const end = e => {
+      if (!down) return;
+      down = false;
+      el.classList.remove('dragging');
+      try { el.releasePointerCapture(e.pointerId); } catch (_) {}
+    };
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+    // Swallow the click that follows a real drag so panning doesn't trigger
+    // link navigation inside the table.
+    el.addEventListener('click', e => {
+      if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
+    }, true);
+  }
+
   function render() {
     if (!state.text) return;
     let html;
@@ -168,6 +227,7 @@
     if (state.code) highlightCode(mdBody);
     if (state.latex) renderMath(mdBody);
     if (state.diagram) runMermaid(mdBody);
+    enhanceTables(mdBody);
   }
 
   /* ────────────────────────────────────────────────────────────────
@@ -445,7 +505,15 @@
     pdfStage.innerHTML = '';
     newPage();
     const blocks = Array.from(sourceBody.children);
-    blocks.forEach(b => placeBlock(b.cloneNode(true)));
+    blocks.forEach(b => {
+      // Unwrap the screen-only drag/scroll box so the PDF paginates the bare
+      // table exactly as before (header repetition, shrink-to-fit, etc.).
+      if (b.classList && b.classList.contains('table-scroll')) {
+        const t = b.querySelector(':scope > table');
+        if (t) { placeBlock(t.cloneNode(true)); return; }
+      }
+      placeBlock(b.cloneNode(true));
+    });
     // Drop a trailing empty page if one was created.
     const last = pdfStage.lastElementChild;
     if (last && !last.querySelector('.pdf-page-content').childElementCount) last.remove();
@@ -727,6 +795,13 @@
     Object.keys(toggleMap).forEach(id => {
       const el = document.getElementById(id);
       el.addEventListener('change', () => { state[toggleMap[id]] = el.checked; render(); });
+    });
+
+    // Re-evaluate which tables overflow when the viewport width changes.
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => markScrollableTables(mdBody), 150);
     });
 
     // Smooth-scroll TOC anchors inside the scroll container.
