@@ -258,7 +258,10 @@
     const wraps = mdBody.querySelectorAll('.table-scroll');
     if (!wraps.length) { clearStickyHeader(); return; }
 
-    const anchorTop = docScroll.getBoundingClientRect().top;
+    // The page itself scrolls (the toolbar is position:sticky at the top),
+    // so pin the floating header just below the toolbar.
+    const tb = document.querySelector('.toolbar');
+    const anchorTop = tb ? tb.getBoundingClientRect().bottom : 0;
     let chosen = null, chosenHead = 0;
     for (const wrap of wraps) {
       const table = wrap.querySelector(':scope > table');
@@ -899,10 +902,10 @@
       }, 150);
     });
 
-    // Keep the floating table header pinned/synced while scrolling. Capture
-    // phase also catches horizontal pans inside the per-table scroll boxes
-    // (scroll events don't bubble).
-    docScroll.addEventListener('scroll', scheduleSticky, true);
+    // Keep the floating table header pinned/synced while scrolling. The page
+    // scrolls on the window; capture phase also catches horizontal pans inside
+    // the per-table scroll boxes (scroll events don't bubble).
+    window.addEventListener('scroll', scheduleSticky, true);
 
     // Smooth-scroll TOC anchors inside the scroll container.
     mdBody.addEventListener('click', e => {
