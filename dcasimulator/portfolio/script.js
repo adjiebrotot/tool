@@ -17,13 +17,13 @@ const CASH_COLOR = '#94a3b8';
 const WEEKDAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']; // 1..7
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; // 1..12
 const DEFAULT_RANDOM_SEED = 25823952204;
-const METHOD_LABEL = { 'towards-weight':'Towards Weight', 'constant-weight':'Constant Weight', 'constant-allocation':'Constant Allocation', 'dynamic-momentum':'Dynamic Weight', 'rule-trigger':'Rule-Based' };
+const METHOD_LABEL = { 'towards-weight':'Towards Weight', 'constant-weight':'Constant Weight', 'constant-allocation':'Constant Allocation', 'dynamic-momentum':'Trend Following', 'rule-trigger':'Rule-Based Triggers' };
 // Short description per method, shown in the collapsed Method summary (em-dash free).
 const METHOD_DESC = {
   'towards-weight':'Top-ups only buy underweight assets to move toward target weights. Never sells; may stay below 100% invested.',
   'constant-weight':'Maintain target weights by buying underweight and selling overweight assets.',
   'constant-allocation':'Each top-up is split by the weights and used to buy. Weights apply to the contribution, not the whole portfolio.',
-  'dynamic-momentum':'Rank assets by trailing return and apply your per-rank weights (e.g. 50 / 30 / 20). Winners earn the top ranks, so the holding behind each rank changes with performance.',
+  'dynamic-momentum':'Each top-up is split by rank: assets are ranked by trailing return and the contribution is deployed by your per-rank weights (e.g. 50 / 30 / 20). Winners earn the top ranks, so the holding behind each rank changes with performance.',
   'rule-trigger':'Park top-ups in a reserve (cash or a holding asset) and deploy into each asset only when its own trigger fires: a % move from the period open, or a technical signal.'
 };
 // What "Target Weights" mean for each method (the same number is interpreted
@@ -32,12 +32,13 @@ const WEIGHT_EXPLAIN = {
   'towards-weight':'Each asset’s target share of the portfolio. Top-ups buy whichever assets sit below target; nothing is sold.',
   'constant-weight':'Each asset’s target share of the portfolio, kept on target by buying underweight and selling overweight assets.',
   'constant-allocation':'How each top-up is split across assets. The weights apply to the contribution, not to the whole portfolio.',
+  'dynamic-momentum':'How each top-up is split across ranks. The weights apply to the contribution, deployed to assets by their trailing-return rank.',
   'rule-trigger':'Each asset’s target share of the portfolio. When a trigger fires, the reserve is deployed to move that asset up to its target.'
 };
 // Default technical-trigger parameters for the Rule-Based method (mirrors the
 // single-asset tool's tech defaults so SharedTA.buildTech behaves identically).
 const TRIGGER_TECH_DEFAULTS = { fastMaType:'ema', fastMaLen:50, slowMaType:'sma', slowMaLen:200, rsiPeriod:14, rsiOversold:35, bbPeriod:20, bbStd:2, bbTrigger:'below', macdFast:12, macdSlow:26, macdSignal:9, macdHistThreshold:0, adxPeriod:14, adxThreshold:25 };
-function makeDefaultTrigger(){ return { type:'pct', direction:'drop', pct:10, period:'monthly', eom:false, tech:Object.assign({}, TRIGGER_TECH_DEFAULTS) }; }
+function makeDefaultTrigger(){ return { type:'pct', direction:'drop', pct:10, period:'monthly', eom:true, tech:Object.assign({}, TRIGGER_TECH_DEFAULTS) }; }
 // Tickers are pooled and fetched once over a wide window so later date-range
 // tweaks reuse the cache instead of hitting the Worker again.
 const POOL_FETCH_START = '1990-01-01';
@@ -65,6 +66,7 @@ let activeCompChartId = null;    // which portfolio the Composition Over Time ch
 let activeCompTableId = null;    // which portfolio the Composition Table shows
 let valueDsPairs = [];           // [{value, topup}] dataset indices per portfolio (value chart)
 let hiddenPf = new Set();        // portfolio indices whose value line is hidden via the legend
+let trigCollapsed = new Set();   // asset ids whose Deploy Trigger config form is collapsed
 
 let priceCache = {};
 let tickerFetchInFlight = {};
@@ -840,7 +842,9 @@ function methodNeedsTriggers(method){ return method==='rule-trigger'; }
 function refreshRebalPanels(){
   const p=getActive();
   const method=p?p.rebal.method:'towards-weight';
-  const showTiming = method==='constant-weight' || method==='dynamic-momentum';
+  // Trend Following always deploys at top-up (like Constant Allocation), so it has
+  // no separate Rebalance Timing; only Constant Weight exposes that choice.
+  const showTiming = method==='constant-weight';
   const co=$('constantWeightOpts'); if(co) co.style.display=showTiming?'':'none';
   const sw=$('rebalScheduleWrap'); if(sw) sw.style.display=(showTiming && p && p.rebal.cwTiming==='schedule')?'':'none';
   const dyn=$('dynamicOpts'); if(dyn) dyn.style.display=methodNeedsRankWeights(method)?'':'none';
@@ -957,6 +961,15 @@ function triggerParamsHtml(a){
   else if(tr.type==='tech-adx') body=`<div class="param-row"><label>ADX period</label>${num('adxPeriod',t.adxPeriod,2,100)}</div><div class="param-row"><label>Threshold &gt;</label>${num('adxThreshold',t.adxThreshold,1,100)}</div>`;
   return body+freqRow+eomRow;
 }
+// Compact one-line summary of an asset's trigger, shown on the collapsed card.
+function triggerSummary(a){
+  const tr=a.trigger||makeDefaultTrigger();
+  let s=TRIGGER_TYPE_LABEL[tr.type]||'Trigger';
+  if(tr.type==='pct') s+=` · ${tr.direction==='rise'?'rises':'falls'} ${tr.pct}%`;
+  s+=` · ${tr.period==='weekly'?'weekly':'monthly'}`;
+  if(tr.eom) s+=' · +EoP';
+  return s;
+}
 function renderTriggerTable(){
   const wrap=$('triggerTableWrap'); const p=getActive(); if(!wrap||!p) return;
   if(!methodNeedsTriggers(p.rebal.method)){ wrap.innerHTML=''; return; }
@@ -966,13 +979,20 @@ function renderTriggerTable(){
     if(a.id===reserveId)
       return `<div class="trigger-card"><div class="trigger-head"><span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span><span class="trigger-reserve-tag">Reserve</span></div></div>`;
     const tr=a.trigger||makeDefaultTrigger();
-    return `<div class="trigger-card">
-      <div class="trigger-head"><span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span><span class="tip-icon" data-tip="${triggerPlainDesc(a)}">?</span></div>
-      <div class="param-row"><label>Trigger</label>
-        <select class="num-input trig-type" data-aid="${a.id}" style="cursor:pointer">${
-          Object.keys(TRIGGER_TYPE_LABEL).map(k=>`<option value="${k}" ${tr.type===k?'selected':''}>${TRIGGER_TYPE_LABEL[k]}</option>`).join('')
-        }</select></div>
-      <div class="trig-params">${triggerParamsHtml(a)}</div>
+    const collapsed=trigCollapsed.has(a.id);
+    return `<div class="trigger-card${collapsed?' is-collapsed':''}">
+      <div class="trigger-head trigger-toggle" data-aid="${a.id}" role="button" tabindex="0" title="Show or hide this trigger's settings">
+        <span class="trig-chevron" aria-hidden="true">▾</span>
+        <span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span>
+        <span class="tip-icon" data-tip="${triggerPlainDesc(a)}">?</span></div>
+      <div class="trigger-summary">${triggerSummary(a)}</div>
+      <div class="trigger-body">
+        <div class="param-row"><label>Trigger</label>
+          <select class="num-input trig-type" data-aid="${a.id}" style="cursor:pointer">${
+            Object.keys(TRIGGER_TYPE_LABEL).map(k=>`<option value="${k}" ${tr.type===k?'selected':''}>${TRIGGER_TYPE_LABEL[k]}</option>`).join('')
+          }</select></div>
+        <div class="trig-params">${triggerParamsHtml(a)}</div>
+      </div>
     </div>`;
   }).join('');
   wireTriggerTable();
@@ -980,6 +1000,13 @@ function renderTriggerTable(){
 function wireTriggerTable(){
   const p=getActive(); if(!p) return;
   const getAsset=el=>p.assets.find(a=>a.id===+el.dataset.aid);
+  // Expand/collapse each asset's trigger config form. The header acts as the toggle;
+  // collapsed state is per asset id and survives re-renders.
+  const toggle=el=>{ const id=+el.dataset.aid; if(trigCollapsed.has(id)) trigCollapsed.delete(id); else trigCollapsed.add(id); renderTriggerTable(); };
+  document.querySelectorAll('#triggerTableWrap .trigger-toggle').forEach(h=>{
+    h.addEventListener('click',e=>{ if(e.target.closest('.tip-icon')) return; toggle(h); });
+    h.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(h); } });
+  });
   document.querySelectorAll('#triggerTableWrap .trig-type').forEach(sel=>sel.addEventListener('change',e=>{
     const a=getAsset(e.target); if(!a) return; a.trigger.type=e.target.value; renderTriggerTable();  // params depend on type
   }));
@@ -1410,7 +1437,7 @@ function simulatePortfolio(p, assets, common, rfPx){
   const rfDayFactor=Math.pow(1+rfRate/100, 1/252);
   const topupSet=getScheduleIndices(common, p.topupSched);
   let rebalSet=new Set();
-  if((method==='constant-weight'||method==='dynamic-momentum') && cwTiming==='schedule') rebalSet=getScheduleIndices(common, p.rebalSched);
+  if(method==='constant-weight' && cwTiming==='schedule') rebalSet=getScheduleIndices(common, p.rebalSched);
 
   // ── Dynamic-weight (momentum rank) pre-compute ──
   const lbDays=Math.max(1, Math.round((p.rebal.lookbackMonths||6)*21));
@@ -1441,9 +1468,10 @@ function simulatePortfolio(p, assets, common, rfPx){
         else buyUnderweight(assets,state,i,buyFee);
       }
       else if(method==='dynamic-momentum'){
-        const w=dynWts(i);
-        if(cwTiming==='at-topup'){ buyUnderweight(assets,state,i,buyFee,w); fullRebalance(assets,state,i,buyFee,sellFee,w); }
-        else buyUnderweight(assets,state,i,buyFee,w);
+        // Trend Following deploys the fresh top-up by rank, exactly like Constant
+        // Allocation but with weights assigned to momentum ranks rather than fixed
+        // assets. No selling/rebalancing: the contribution alone is split by rank.
+        buyByWeights(assets,state,i,buyFee,dynWts(i));
       }
       else if(isRule && reserveOnlyWts){
         // Reserve is a holding asset: park the fresh cash in it immediately.
@@ -1453,15 +1481,22 @@ function simulatePortfolio(p, assets, common, rfPx){
       // at the risk-free rate) until a trigger deploys it below.
     }
     // Rule-based deployment runs every day, not just on top-up days.
+    let firedToday=false;
     if(isRule){
       const fired=[];
       for(let k=0;k<assets.length;k++){ if(k===reserveIdx) continue; if(triggerSig[k] && triggerSig[k][i]) fired.push(k); }
-      if(fired.length) deployTriggered(assets,state,i,fired,buyFee,sellFee,reserveIdx);
+      if(fired.length){ deployTriggered(assets,state,i,fired,buyFee,sellFee,reserveIdx); firedToday=true; }
     }
-    if(rebalSet.has(i)) fullRebalance(assets,state,i,buyFee,sellFee, method==='dynamic-momentum'?dynWts(i):undefined);
+    if(rebalSet.has(i)) fullRebalance(assets,state,i,buyFee,sellFee);
+    // Tag each day with the events that occurred, so the Detailed Breakdown can show
+    // the start, every top-up / rebalance / trigger deployment, and the final day.
+    const ev=[];
+    if(topupSet.has(i)) ev.push('Top-up');
+    if(isRule && firedToday) ev.push('Trigger');
+    if(rebalSet.has(i)) ev.push('Rebalance');
     const assetVals={}; let invested=0;
     assets.forEach(a=>{ const v=state.units[a.id]*a.px[i]; assetVals[a.id]=v; invested+=v; });
-    rows.push({date:common[i], cash:state.cash, assetVals, invested, total:state.cash+invested, cumTopup});
+    rows.push({date:common[i], cash:state.cash, assetVals, invested, total:state.cash+invested, cumTopup, event:ev.join(' + ')});
   }
   return rows;
 }
@@ -1736,22 +1771,31 @@ function updateSummary(){
   });
 }
 
-/* ─── COMPOSITION TABLE (month-end snapshots for the selected portfolio) ─── */
-function monthEndRows(rows){
-  const out=[]; const seen=new Map();
-  rows.forEach((r,i)=>{ seen.set(r.date.slice(0,7), i); });
-  seen.forEach(i=>out.push(rows[i]));
-  out.sort((a,b)=>a.date<b.date?-1:1);
+/* ─── DETAILED BREAKDOWN (start, events & end snapshots for the selected portfolio) ─── */
+// Pick the rows worth showing: the very first day (start of simulation), every day an
+// event occurred (a top-up, a rebalance or a trigger deployment), and the very last
+// day (end of simulation). Endpoints are tagged so they stand out from event rows.
+function breakdownRows(rows){
+  if(!rows.length) return [];
+  const out=[]; const lastIdx=rows.length-1;
+  rows.forEach((r,i)=>{
+    let tag='';
+    if(i===0) tag='start';
+    else if(i===lastIdx) tag='final';
+    if(i===0 || i===lastIdx || (r.event && r.event.length)) out.push({row:r, tag});
+  });
   return out;
 }
 function updateTable(){
   const head=$('compHead'), body=$('compBody');
   if(!simResults.length){ return; }
   const res=simResults.find(r=>r.id===activeCompTableId)||simResults[0];
-  head.innerHTML=`<tr><th>Date</th><th class="cash-cell">Cash</th>${res.assets.map(a=>`<th>${a.name}</th>`).join('')}<th>Portfolio Value</th></tr>`;
-  const rows=monthEndRows(res.rows);
-  body.innerHTML=rows.map(r=>{
-    return `<tr><td>${r.date}</td><td class="cash-cell">${fmt.currency(r.cash)}</td>${res.assets.map(a=>`<td>${fmt.currency(r.assetVals[a.id]||0)}</td>`).join('')}<td>${fmt.currency(r.total)}</td></tr>`;
+  head.innerHTML=`<tr><th>Date</th><th>Event</th><th class="cash-cell">Cash</th>${res.assets.map(a=>`<th>${a.name}</th>`).join('')}<th>Deposited</th><th>Portfolio Value</th></tr>`;
+  const rows=breakdownRows(res.rows);
+  body.innerHTML=rows.map(({row:r,tag})=>{
+    const label=tag?`<span class="detail-row-tag">${tag}</span>`:'';
+    const evt=r.event||(tag?(tag==='start'?'Start of simulation':'End of simulation'):'');
+    return `<tr${tag?' class="detail-endpoint"':''}><td>${r.date}${label}</td><td>${evt}</td><td class="cash-cell">${fmt.currency(r.cash)}</td>${res.assets.map(a=>`<td>${fmt.currency(r.assetVals[a.id]||0)}</td>`).join('')}<td>${fmt.currency(r.cumTopup)}</td><td>${fmt.currency(r.total)}</td></tr>`;
   }).join('');
 }
 
@@ -1980,8 +2024,8 @@ $('resetBtn').addEventListener('click',()=>{
   $('currencySymbol').value='$'; $('randomSeed').value=DEFAULT_RANDOM_SEED;
   $('showTopupsToggle').checked=true;
   $('summaryGrid').innerHTML='';
-  $('compHead').innerHTML='<tr><th>Date</th><th>Cash</th><th>Portfolio Value</th></tr>';
-  $('compBody').innerHTML='<tr><td colspan="3" style="color:var(--muted);text-align:center;padding:20px">Add portfolios and run to see composition.</td></tr>';
+  $('compHead').innerHTML='<tr><th>Date</th><th>Event</th><th>Cash</th><th>Deposited</th><th>Portfolio Value</th></tr>';
+  $('compBody').innerHTML='<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">Add portfolios and run to see the breakdown.</td></tr>';
   $('valueLegend').innerHTML=''; $('compLegend').innerHTML='';
   $('compChartPfSelect').innerHTML=''; $('compTablePfSelect').innerHTML='';
   $('valueHoverBox').textContent='Configure portfolios and run to compare value over time.';

@@ -1890,59 +1890,46 @@ function updateTables(){
   // Summary grid
   renderSummary();
 
-  // Milestone table
-  const allDates=simResults[0].dailyRows.map(r=>r.date);
-  const totalDays=allDates.length;
-  const milestoneIdxs=[0,
-    Math.floor(totalDays*.1),Math.floor(totalDays*.2),Math.floor(totalDays*.3),
-    Math.floor(totalDays*.5),Math.floor(totalDays*.7),Math.floor(totalDays*.9),totalDays-1
-  ].filter((v,i,a)=>a.indexOf(v)===i);
-
-  const thead=$('milestoneTable').querySelector('thead tr');
-  thead.innerHTML=`<th>Period</th><th>Date</th>`+simResults.map(r=>`<th>${r.sec.name} Equity</th><th>ROI</th>`).join('');
-
-  const tbody=$('milestoneBody');
-  tbody.innerHTML='';
-  milestoneIdxs.forEach(idx=>{
-    const date=allDates[idx];
-    const pct=Math.round(idx/(totalDays-1)*100);
-    let row=`<td>${pct}%</td><td>${date}</td>`;
-    simResults.forEach(res=>{
-      const d=res.dailyRows[idx]||res.dailyRows[res.dailyRows.length-1];
-      const roi=d.totalDeposited>0?(d.equity-d.totalDeposited)/d.totalDeposited:0;
-      row+=`<td>${fmt.currency(d.equity,true)}</td><td style="color:${roi>=0?'var(--positive-em)':'var(--negative-em)'}">${fmt.pct(roi)}</td>`;
-    });
-    tbody.innerHTML+=`<tr>${row}</tr>`;
-  });
-
-  // Detail tabs
-  const tabs=$('detailTabs');
-  tabs.innerHTML='';
-  simResults.forEach((res,i)=>{
-    const btn=document.createElement('button');
-    btn.className='tab-btn'+(i===activeDetailSec?' active':'');
-    btn.textContent=res.sec.name;
-    btn.addEventListener('click',()=>{
-      tabs.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      activeDetailSec=i;
-      renderDetailTable(i);
-    });
-    tabs.appendChild(btn);
-  });
-  renderDetailTable(activeDetailSec<simResults.length?activeDetailSec:0);
+  // Detail scenario selector (dropdown)
+  if(activeDetailSec>=simResults.length) activeDetailSec=0;
+  const sel=$('detailSelect');
+  sel.innerHTML=simResults.map((res,i)=>`<option value="${i}">${res.sec.name}</option>`).join('');
+  sel.value=String(activeDetailSec);
+  renderDetailTable(activeDetailSec);
 
   latestRows=simResults[0].dailyRows;
+}
+
+// Render one labelled endpoint row (start-of-simulation / end-of-simulation) from
+// a daily snapshot. These bracket the per-investment rows so the table opens at the
+// very first trading day and closes at the very last, even when neither is a buy day.
+function endpointRowHtml(d, label){
+  const ret=d.totalDeposited>0?(d.equity-d.totalDeposited)/d.totalDeposited:0;
+  const color=ret>=0?'var(--positive-em)':'var(--negative-em)';
+  return `<tr class="detail-endpoint">
+    <td>${d.date}<span class="detail-row-tag">${label}</span></td>
+    <td>${fmt.currency(d.price)}</td>
+    <td>${fmt.currency(d.totalDeposited)}</td>
+    <td>—</td>
+    <td>${d.totalUnits.toFixed(6)}</td>
+    <td>${fmt.currency(d.equity)}</td>
+    <td style="color:${color}">${fmt.pct(ret)}</td>
+  </tr>`;
 }
 
 function renderDetailTable(idx){
   const res=simResults[idx];
   if(!res) return;
   const tbody=$('detailBody');
-  tbody.innerHTML='';
+  if(!res.investRows.length){ tbody.innerHTML='<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">No investment dates in range.</td></tr>'; return; }
+  const daily=res.dailyRows;
+  const first=daily[0], last=daily[daily.length-1];
+  let html='';
+  // Beginning (start-of-simulation) row, unless the first buy already lands on it.
+  if(first && first.date!==res.investRows[0].date) html+=endpointRowHtml(first,'start');
   res.investRows.forEach(r=>{
     const color=r.returnPct>=0?'var(--positive-em)':'var(--negative-em)';
-    tbody.innerHTML+=`<tr>
+    html+=`<tr>
       <td>${r.date}</td>
       <td>${fmt.currency(r.price)}</td>
       <td>${fmt.currency(r.amountInvested)}</td>
@@ -1952,7 +1939,9 @@ function renderDetailTable(idx){
       <td style="color:${color}">${fmt.pct(r.returnPct/100)}</td>
     </tr>`;
   });
-  if(!res.investRows.length) tbody.innerHTML='<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">No investment dates in range.</td></tr>';
+  // Final (end-of-simulation) row, unless the last buy already lands on it.
+  if(last && last.date!==res.investRows[res.investRows.length-1].date) html+=endpointRowHtml(last,'final');
+  tbody.innerHTML=html;
 }
 
 /* ─── THEME TOGGLE ─── */
@@ -1980,9 +1969,9 @@ $('resetBtn').addEventListener('click',()=>{
   if(equityChartInstance){ equityChartInstance.destroy(); equityChartInstance=null; }
   renderSecList();
   $('summaryGrid').innerHTML='';
-  $('milestoneBody').innerHTML='<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">Add securities to see milestones.</td></tr>';
   $('detailBody').innerHTML='<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">Add securities to see detailed data.</td></tr>';
-  $('detailTabs').innerHTML='';
+  $('detailSelect').innerHTML='';
+  activeDetailSec=0;
   $('priceLegend').innerHTML=''; $('equityLegend').innerHTML='';
   $('priceHoverBox').textContent='Add securities and run to view price data.';
   $('equityHoverBox').textContent='Add securities and run to view equity data.';
@@ -2257,6 +2246,11 @@ $('priceSvgBtn').addEventListener('click', () => downloadChartSvg('priceCanvas',
 $('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer: Portfolio Value', 'equityLegend'));
 
 /* ─── DOWNLOAD CSV (Detailed Breakdown of active tab) ─── */
+$('detailSelect').addEventListener('change',e=>{
+  activeDetailSec=parseInt(e.target.value,10)||0;
+  renderDetailTable(activeDetailSec);
+});
+
 $('downloadBtn').addEventListener('click',()=>{
   if(!simResults.length){ showWarning('Run simulation first.'); return; }
   const idx=activeDetailSec<simResults.length?activeDetailSec:0;

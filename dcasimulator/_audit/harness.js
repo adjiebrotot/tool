@@ -314,7 +314,7 @@ function simulatePortfolio(p, assets, common, rfPx){
   const rfDayFactor=Math.pow(1+rfRate/100, 1/252);
   const topupSet=getScheduleIndices(common, p.topupSched);
   let rebalSet=new Set();
-  if((method==='constant-weight'||method==='dynamic-momentum') && cwTiming==='schedule') rebalSet=getScheduleIndices(common, p.rebalSched);
+  if(method==='constant-weight' && cwTiming==='schedule') rebalSet=getScheduleIndices(common, p.rebalSched);
   const lbDays=Math.max(1, Math.round((p.rebal.lookbackMonths||6)*21));
   let rankWeights=(p.rebal.rankWeights&&p.rebal.rankWeights.length)?p.rebal.rankWeights.slice():assets.map(()=>100/assets.length);
   while(rankWeights.length<assets.length) rankWeights.push(0);
@@ -337,22 +337,23 @@ function simulatePortfolio(p, assets, common, rfPx){
         if(cwTiming==='at-topup'){ buyUnderweight(assets,state,i,buyFee); fullRebalance(assets,state,i,buyFee,sellFee); }
         else buyUnderweight(assets,state,i,buyFee);
       }
-      else if(method==='dynamic-momentum'){
-        const w=dynWts(i);
-        if(cwTiming==='at-topup'){ buyUnderweight(assets,state,i,buyFee,w); fullRebalance(assets,state,i,buyFee,sellFee,w); }
-        else buyUnderweight(assets,state,i,buyFee,w);
-      }
+      else if(method==='dynamic-momentum'){ buyByWeights(assets,state,i,buyFee,dynWts(i)); }
       else if(isRule && reserveOnlyWts){ buyByWeights(assets,state,i,buyFee,reserveOnlyWts); }
     }
+    let firedToday=false;
     if(isRule){
       const fired=[];
       for(let k=0;k<assets.length;k++){ if(k===reserveIdx) continue; if(triggerSig[k] && triggerSig[k][i]) fired.push(k); }
-      if(fired.length) deployTriggered(assets,state,i,fired,buyFee,sellFee,reserveIdx);
+      if(fired.length){ deployTriggered(assets,state,i,fired,buyFee,sellFee,reserveIdx); firedToday=true; }
     }
-    if(rebalSet.has(i)) fullRebalance(assets,state,i,buyFee,sellFee, method==='dynamic-momentum'?dynWts(i):undefined);
+    if(rebalSet.has(i)) fullRebalance(assets,state,i,buyFee,sellFee);
+    const ev=[];
+    if(topupSet.has(i)) ev.push('Top-up');
+    if(isRule && firedToday) ev.push('Trigger');
+    if(rebalSet.has(i)) ev.push('Rebalance');
     const assetVals={}; let invested=0;
     assets.forEach(a=>{ const v=state.units[a.id]*a.px[i]; assetVals[a.id]=v; invested+=v; });
-    rows.push({date:common[i], cash:state.cash, assetVals, invested, total:state.cash+invested, cumTopup});
+    rows.push({date:common[i], cash:state.cash, assetVals, invested, total:state.cash+invested, cumTopup, event:ev.join(' + ')});
   }
   return { rows, fees: state._fees, rfEarned: state._rfEarned, finalState: state };
 }
