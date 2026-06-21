@@ -751,9 +751,9 @@ function renderWeightTable(){
   wrap.style.display=show?'':'none';
   if(!show){ updateSimBtnState(); return; }
 
-  // Target Weights mean something different per method, so explain the active one.
+  // Target Weights mean something different per method, so fold the active one
+  // into the tooltip instead of a separate helper line.
   const explain=WEIGHT_EXPLAIN[p.rebal.method]||'';
-  const exEl=$('weightExplain'); if(exEl) exEl.textContent=explain;
   const tipEl=$('weightTip'); if(tipEl) tipEl.setAttribute('data-tip', explain+' All weights must sum to 100%.');
 
   const tableWrap=$('weightTableWrap');
@@ -886,10 +886,6 @@ function populateReserveSelect(){
   } else {
     sel.value='cash';
   }
-  const hint=$('reserveHint');
-  if(hint) hint.textContent = sel.value==='cash'
-    ? 'The Risk-Free Account holds un-deployed cash. Set its rate or ticker in the Top-Up tab.'
-    : 'Un-deployed money is parked in this asset and sold to fund deploys when a trigger fires.';
 }
 // One plain-language sentence describing what an asset's trigger does, shown as a
 // hover tooltip on each trigger card. Kept simple and em-dash free.
