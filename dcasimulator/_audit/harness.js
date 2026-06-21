@@ -334,8 +334,9 @@ function simulatePortfolio(p, assets, common, rfPx){
       if(method==='constant-allocation') buyByWeights(assets,state,i,buyFee);
       else if(method==='towards-weight') buyUnderweight(assets,state,i,buyFee);
       else if(method==='constant-weight'){
+        // at-top-up: deploy + rebalance now. separate-schedule: park the top-up in
+        // the Risk-Free Account until the next scheduled rebalance deploys it.
         if(cwTiming==='at-topup'){ buyUnderweight(assets,state,i,buyFee); fullRebalance(assets,state,i,buyFee,sellFee); }
-        else buyUnderweight(assets,state,i,buyFee);
       }
       else if(method==='dynamic-momentum'){ buyByWeights(assets,state,i,buyFee,dynWts(i)); }
       else if(isRule && reserveOnlyWts){ buyByWeights(assets,state,i,buyFee,reserveOnlyWts); }
