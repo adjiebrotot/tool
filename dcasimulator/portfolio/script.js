@@ -1464,8 +1464,14 @@ function simulatePortfolio(p, assets, common, rfPx){
       if(method==='constant-allocation') buyByWeights(assets,state,i,buyFee);
       else if(method==='towards-weight') buyUnderweight(assets,state,i,buyFee);
       else if(method==='constant-weight'){
+        // At-top-up timing rebalances on every contribution: deploy the fresh cash
+        // into underweight assets and trim overweight ones back to target in one
+        // pass, so the new money does the buying and minimises selling fees.
+        // Separate-schedule timing instead parks the top-up in the Risk-Free
+        // Account; it sits there earning the risk-free rate until the next
+        // scheduled rebalance deploys it (buy underweight + sell overweight) at once.
         if(cwTiming==='at-topup'){ buyUnderweight(assets,state,i,buyFee); fullRebalance(assets,state,i,buyFee,sellFee); }
-        else buyUnderweight(assets,state,i,buyFee);
+        // else: leave the contribution in the reserve until the scheduled rebalance.
       }
       else if(method==='dynamic-momentum'){
         // Trend Following deploys the fresh top-up by rank, exactly like Constant
