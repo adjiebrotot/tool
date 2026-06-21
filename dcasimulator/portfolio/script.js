@@ -432,8 +432,11 @@ function updateBtnRow(){
   const t=document.querySelector('.ctrl-tab.active');
   const dataTab=t?t.dataset.tab==='data':true;
   ['simBtn','resetBtn'].forEach(id=>{ const b=$(id); if(b) b.style.display=dataTab?'none':''; });
-  // The bottom "Load tickers" action only applies to the Real download mode.
-  const lb=$('loadTickersBtn'); if(lb) lb.style.display=(dataTab && (typeof dataMode==='undefined' || dataMode==='real'))?'':'none';
+  // On the Data tab the bottom action mirrors the chosen download mode: "Load
+  // tickers" for Real, "Add Simulated Asset" for Simulated. Other tabs show Simulate/Reset.
+  const realMode=(typeof dataMode==='undefined' || dataMode==='real');
+  const lb=$('loadTickersBtn'); if(lb) lb.style.display=(dataTab && realMode)?'':'none';
+  const sb=$('addSimBtn'); if(sb) sb.style.display=(dataTab && !realMode)?'':'none';
 }
 
 // Parse the textarea and fetch every NOT-yet-cached ticker, downloading only the
@@ -712,46 +715,25 @@ function renderAssetList(){
     renderWeightTable();
     return;
   }
+  // Assets are defined in the Data tab (real tickers or simulated assets); here they
+  // are only referenced. Each row is therefore read-only and can only be dragged to
+  // reorder (which sets the Composition stacking order) or removed with the ✕ button.
   el.innerHTML='';
   p.assets.forEach(a=>{
     const card=document.createElement('div');
     card.className='sec-card';
     card.innerHTML=`
-      <div class="sec-header" data-id="${a.id}">
+      <div class="sec-row-item" data-id="${a.id}">
         <span class="drag-handle" title="Drag to reorder. The top asset sits on top of the Composition Over Time chart" aria-label="Drag to reorder">⠿</span>
         <span class="color-dot" style="background:${a.colorHex}"></span>
-        <span class="sec-name">${a.name}</span>
+        <span class="sec-name">${escapeHtml(a.name)}</span>
         <span class="sec-badge ${a.type==='ticker'?'badge-ticker':'badge-custom'}">${a.type==='ticker'?SVG_TICKER+' Ticker':SVG_CUSTOM+' Custom'}</span>
-        <span style="color:var(--muted);font-size:.9rem">${a.open?'▲':'▼'}</span>
-      </div>
-      <div class="sec-body ${a.open?'open':''}" id="assetBody${a.id}">
-        ${a.type==='custom'?`
-        <div class="sec-row">
-          <label>Return (% p.a.) <span class="tip-icon" data-tip="Expected annual return for the simulated price path (Geometric Brownian Motion).">?</span></label>
-          <input class="num-input" id="aRet${a.id}" type="number" min="-50" max="200" step="0.5" value="${a.returnPct}" style="max-width:80px"/>
-        </div>
-        <div class="sec-row">
-          <label>Std deviation (%) <span class="tip-icon" data-tip="Annual volatility. Higher = more volatile simulated path.">?</span></label>
-          <input class="num-input" id="aStd${a.id}" type="number" min="0" max="200" step="0.5" value="${a.stdPct}" style="max-width:80px"/>
-        </div>`:`
-        <div class="sec-row" style="align-items:center">
-          <span style="font-size:.8rem;color:var(--muted)">Ticker: <strong style="color:var(--text)">${a.ticker}</strong></span>
-          <span class="status-bar ${a.loaded?'status-ok':''}" style="display:inline-block;font-size:.75rem;padding:2px 8px;margin-left:4px" id="aLoad${a.id}">${a.loaded?'✓ Loaded':'Not loaded'}</span>
-        </div>`}
-        <button class="sec-del" id="aDel${a.id}" style="margin-top:8px">🗑 Remove</button>
+        <button class="sec-del-x" id="aDel${a.id}" title="Remove asset" aria-label="Remove asset">×</button>
       </div>`;
     el.appendChild(card);
 
-    card.querySelector('.sec-header').addEventListener('click',()=>{
-      const willOpen=!a.open;
-      if(willOpen) p.assets.forEach(o=>{ if(o.id!==a.id) o.open=false; });
-      a.open=willOpen; renderAssetList();
-    });
-
-    // Drag to reorder. The card is only made draggable while the grip handle is
-    // held, so the weight input and the expand/collapse click keep working.
+    // Drag to reorder. The card is only made draggable while the grip handle is held.
     const handle=card.querySelector('.drag-handle');
-    handle.addEventListener('click',e=>e.stopPropagation());
     handle.addEventListener('mousedown',()=>{ card.draggable=true; });
     handle.addEventListener('mouseup',()=>{ card.draggable=false; });
     card.addEventListener('dragstart',e=>{ dragAssetId=a.id; card.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; try{ e.dataTransfer.setData('text/plain',String(a.id)); }catch(_){} });
@@ -765,10 +747,6 @@ function renderAssetList(){
       reorderAssets(dragAssetId, a.id, e.clientY > rect.top+rect.height/2);
     });
     $(`aDel${a.id}`).addEventListener('click',e=>{ e.stopPropagation(); removeAsset(a.id); });
-    if(a.type==='custom'){
-      $(`aRet${a.id}`).addEventListener('input',e=>{ a.returnPct=parseFloat(e.target.value)||0; });
-      $(`aStd${a.id}`).addEventListener('input',e=>{ a.stdPct=parseFloat(e.target.value)||0; });
-    }
   });
   refreshRebalPanels();
 }
@@ -2119,10 +2097,10 @@ function initDefaults(){
 setDefaultDates();
 loadPersistedCache();
 loadPersistedSimPool();
-renderPoolChips();
-refreshAssetPoolSelect();
 updateRateInfo();
-initDefaults();
+initDefaults();           // seeds the default simulated assets into the pool…
+renderPoolChips();        // …so render the "Loaded assets" chips after seeding
+refreshAssetPoolSelect();
 loadControlsFromActive();
 renderPortfolioList();
 renderPfSelectors();

@@ -16,6 +16,13 @@
 .sec-card.dragging{opacity:.5}
 .sec-card.drag-over{border-color:var(--accent);box-shadow:inset 0 2px 0 var(--accent)}
 
+/* Read-only asset row (Assets subtab): assets are defined in the Data tab, so a row
+   can only be dragged to reorder or removed via the ✕ button — no inline editing. */
+.sec-row-item{display:flex;align-items:center;gap:8px;padding:9px 11px}
+.sec-row-item .sec-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sec-del-x{flex-shrink:0;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:1.2rem;line-height:1;padding:0;border:1px solid rgba(230,57,57,.25);background:rgba(230,57,57,.12);color:#FF8B8B;border-radius:7px;cursor:pointer;font-family:inherit;transition:background .15s,border-color .15s}
+.sec-del-x:hover{background:rgba(230,57,57,.28);border-color:rgba(230,57,57,.5)}
+
 /* Target-weight pie + editable table (Rebalancing subtab).
    Pie and table sit side by side; the pie is kept compact (a fixed 120px so its
    flex item has a definite width — a responsive Chart.js canvas collapses to 0
