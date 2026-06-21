@@ -124,8 +124,8 @@
   <div class="ctrl-panel active" id="tab-data">
     <div id="poolChipsWrap" style="display:none">
       <div class="pool-chips-head">
-        <span class="section-label" style="margin-top:0">Loaded tickers</span>
-        <button id="clearPoolBtn" class="pool-clear-btn" type="button" title="Remove every loaded ticker">Clear all</button>
+        <span class="section-label" style="margin-top:0">Loaded assets</span>
+        <button id="clearPoolBtn" class="pool-clear-btn" type="button" title="Remove every loaded ticker and simulated asset">Clear all</button>
       </div>
       <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 18px"></div>
     </div>
@@ -133,11 +133,37 @@
     <div class="section-label" style="margin-top:0">Data Download</div>
     <div class="field-row" style="border-top:none;padding-top:0">
       <div class="add-sec-area" style="border-top:none;padding-top:4px">
-        <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">Tickers <span class="tip-icon warn" data-tip="To keep this free tool sustainable, data loads are capped at 5 per device per day (shared with the Portfolio tool). A load of up to 25 tickers counts as ONE request, so list EVERY ticker you want to assess and load them in one go. Already-cached tickers and same-day reloads are free. The cap resets each day.">!</span></div>
-        <textarea class="txt-input" id="tickerPoolInput" rows="2" placeholder="e.g. AAPL, SPY, USDIDR, XAUUSD, AAA.AX" style="text-transform:uppercase;width:100%;resize:vertical;font-family:inherit;line-height:1.4"></textarea>
-        <a href="ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
-        <div class="field-sub rate-info" id="rateInfo" style="margin-top:6px"></div>
-        <div class="status-bar" id="poolStatus"></div>
+        <div class="seg-toggle" id="dataModeToggle" style="margin-bottom:12px">
+          <button class="seg-btn active" data-dmode="real" type="button">Real</button>
+          <button class="seg-btn" data-dmode="simulated" type="button">Simulated</button>
+        </div>
+
+        <!-- REAL: download market data for tickers -->
+        <div id="dataRealPanel">
+          <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">Tickers <span class="tip-icon warn" data-tip="To keep this free tool sustainable, data loads are capped at 5 per device per day (shared with the Portfolio tool). A load of up to 25 tickers counts as ONE request, so list EVERY ticker you want to assess and load them in one go. Already-cached tickers and same-day reloads are free. The cap resets each day.">!</span></div>
+          <textarea class="txt-input" id="tickerPoolInput" rows="2" placeholder="e.g. AAPL, SPY, USDIDR, XAUUSD, AAA.AX" style="text-transform:uppercase;width:100%;resize:vertical;font-family:inherit;line-height:1.4"></textarea>
+          <a href="ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
+          <div class="field-sub rate-info" id="rateInfo" style="margin-top:6px"></div>
+          <div class="status-bar" id="poolStatus"></div>
+        </div>
+
+        <!-- SIMULATED: define a synthetic asset by return & volatility -->
+        <div id="dataSimPanel" style="display:none">
+          <div class="field-label" style="margin-bottom:6px">Asset name</div>
+          <input class="txt-input" id="simNameInput" placeholder="e.g. S&amp;P500" style="width:100%" />
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <div style="flex:1">
+              <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Return (% p.a.) <span class="tip-icon" data-tip="Expected annual return used to generate a simulated price path via Geometric Brownian Motion.">?</span></div>
+              <input class="num-input" id="simReturnInput" type="number" step="0.5" value="8" style="width:100%" />
+            </div>
+            <div style="flex:1">
+              <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Std dev (%) <span class="tip-icon" data-tip="Annual volatility (standard deviation). Higher values produce more volatile simulated paths.">?</span></div>
+              <input class="num-input" id="simStdInput" type="number" min="0" step="0.5" value="15" style="width:100%" />
+            </div>
+          </div>
+          <button class="btn-accent2" id="addSimBtn" style="margin-top:10px;width:100%">+ Add Simulated Asset</button>
+          <div class="status-bar" id="simStatus"></div>
+        </div>
 
         <div class="field-label" style="display:flex;align-items:center;gap:6px;margin:14px 0 6px">Date Range <span class="tip-icon" data-tip="Simulation uses the shortest available date range across all selected tickers: when multiple ticker securities are loaded, all will be trimmed to the common overlapping range so comparisons are fair.">?</span></div>
         <div style="display:flex;gap:8px">
@@ -151,14 +177,6 @@
         </div>
       </div>
       <div class="status-bar" id="dateRangeStatus"></div>
-      </div>
-    </div>
-
-    <div class="section-label">Configuration <span class="tip-icon" data-tip="Save every scenario plus the global settings to a JSON file, or load a previously saved file to resume. Price history is not saved — it re-fetches from the shared cache on the next run.">?</span></div>
-    <div class="field-row" style="border-top:none;padding-top:0">
-      <div style="display:flex;gap:8px;width:100%">
-        <button class="btn-secondary" id="exportConfigBtn" type="button" style="flex:1;white-space:nowrap;font-size:.82rem;padding:6px 13px">⬇ Save settings</button>
-        <button class="btn-secondary" id="importConfigBtn" type="button" style="flex:1;white-space:nowrap;font-size:.82rem;padding:6px 13px">⬆ Load settings</button>
       </div>
     </div>
   </div>
@@ -202,6 +220,14 @@
     <div class="field-row">
       <div class="field-label">Risk-Free Rate (% p.a.) <span class="tip-icon" data-tip="Annual risk-free rate used as the baseline for the advanced metrics in the Final Summary: Sharpe and Sortino measure return earned above this rate.">?</span></div>
       <input class="num-input" id="riskFreeRate" type="number" min="0" step="0.1" value="4" />
+    </div>
+
+    <div class="section-label">Configuration <span class="tip-icon" data-tip="Save every scenario plus the global settings to a JSON file, or load a previously saved file to resume. Price history is not saved — it re-fetches from the shared cache on the next run.">?</span></div>
+    <div class="field-row" style="border-top:none;padding-top:0">
+      <div style="display:flex;gap:8px;width:100%">
+        <button class="btn-secondary" id="exportConfigBtn" type="button" style="flex:1;white-space:nowrap;font-size:.82rem;padding:6px 13px">⬇ Save settings</button>
+        <button class="btn-secondary" id="importConfigBtn" type="button" style="flex:1;white-space:nowrap;font-size:.82rem;padding:6px 13px">⬆ Load settings</button>
+      </div>
     </div>
   </div>
 
