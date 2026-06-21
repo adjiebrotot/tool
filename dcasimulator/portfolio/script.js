@@ -18,10 +18,26 @@ const WEEKDAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']; // 1..7
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; // 1..12
 const DEFAULT_RANDOM_SEED = 25823952204;
 const METHOD_LABEL = { 'towards-weight':'Towards Weight', 'constant-weight':'Constant Weight', 'constant-allocation':'Constant Allocation', 'dynamic-momentum':'Dynamic Weight', 'rule-trigger':'Rule-Based' };
+// Short description per method, shown in the collapsed Method summary (em-dash free).
+const METHOD_DESC = {
+  'towards-weight':'Top-ups only buy underweight assets to move toward target weights. Never sells; may stay below 100% invested.',
+  'constant-weight':'Maintain target weights by buying underweight and selling overweight assets.',
+  'constant-allocation':'Each top-up is split by the weights and used to buy. Weights apply to the contribution, not the whole portfolio.',
+  'dynamic-momentum':'Rank assets by trailing return and apply your per-rank weights (e.g. 50 / 30 / 20). Winners earn the top ranks, so the holding behind each rank changes with performance.',
+  'rule-trigger':'Park top-ups in a reserve (cash or a holding asset) and deploy into each asset only when its own trigger fires: a % move from the period open, or a technical signal.'
+};
+// What "Target Weights" mean for each method (the same number is interpreted
+// differently), shown as a dynamic helper under the Target Weights heading.
+const WEIGHT_EXPLAIN = {
+  'towards-weight':'Each asset’s target share of the portfolio. Top-ups buy whichever assets sit below target; nothing is sold.',
+  'constant-weight':'Each asset’s target share of the portfolio, kept on target by buying underweight and selling overweight assets.',
+  'constant-allocation':'How each top-up is split across assets. The weights apply to the contribution, not to the whole portfolio.',
+  'rule-trigger':'Each asset’s target share of the portfolio. When a trigger fires, the reserve is deployed to move that asset up to its target.'
+};
 // Default technical-trigger parameters for the Rule-Based method (mirrors the
 // single-asset tool's tech defaults so SharedTA.buildTech behaves identically).
 const TRIGGER_TECH_DEFAULTS = { fastMaType:'ema', fastMaLen:50, slowMaType:'sma', slowMaLen:200, rsiPeriod:14, rsiOversold:35, bbPeriod:20, bbStd:2, bbTrigger:'below', macdFast:12, macdSlow:26, macdSignal:9, macdHistThreshold:0, adxPeriod:14, adxThreshold:25 };
-function makeDefaultTrigger(){ return { type:'pct', direction:'drop', pct:10, period:'monthly', tech:Object.assign({}, TRIGGER_TECH_DEFAULTS) }; }
+function makeDefaultTrigger(){ return { type:'pct', direction:'drop', pct:10, period:'monthly', eom:false, tech:Object.assign({}, TRIGGER_TECH_DEFAULTS) }; }
 // Tickers are pooled and fetched once over a wide window so later date-range
 // tweaks reuse the cache instead of hitting the Worker again.
 const POOL_FETCH_START = '1990-01-01';
@@ -587,7 +603,6 @@ function loadControlsFromActive(){
   // Rebalancing
   selectRadio('rebalMethod', p.rebal.method);
   selectRadio('cwTiming', p.rebal.cwTiming);
-  selectRadio('reserveMode', p.rebal.reserveMode||'cash');
   const lbSel=$('lookbackMonths'); if(lbSel) lbSel.value=String(p.rebal.lookbackMonths||6);
   $('rebalPeriod').value=p.rebalSched.period;
   renderScheduleBox('rebalScheduleBox','rebalScheduleHint',p.rebalSched);
@@ -595,6 +610,7 @@ function loadControlsFromActive(){
   $('sellFee').value=fmtMoneyVal(p.rebal.sellFee);
 
   renderAssetList();   // tail calls refreshRebalPanels() to show the right panels
+  setMethodCollapsed(true);   // start collapsed showing the active portfolio's method
 }
 
 /* ─── ASSET MANAGEMENT (operates on the active portfolio) ─── */
@@ -662,7 +678,7 @@ function renderAssetList(){
     card.className='sec-card';
     card.innerHTML=`
       <div class="sec-header" data-id="${a.id}">
-        <span class="drag-handle" title="Drag to reorder — the top asset sits on top of the Composition Over Time chart" aria-label="Drag to reorder">⠿</span>
+        <span class="drag-handle" title="Drag to reorder. The top asset sits on top of the Composition Over Time chart" aria-label="Drag to reorder">⠿</span>
         <span class="color-dot" style="background:${a.colorHex}"></span>
         <span class="sec-name">${a.name}</span>
         <span class="sec-badge ${a.type==='ticker'?'badge-ticker':'badge-custom'}">${a.type==='ticker'?SVG_TICKER+' Ticker':SVG_CUSTOM+' Custom'}</span>
@@ -734,6 +750,11 @@ function renderWeightTable(){
   const show=!!(p && p.assets.length && methodNeedsWeights(p.rebal.method));
   wrap.style.display=show?'':'none';
   if(!show){ updateSimBtnState(); return; }
+
+  // Target Weights mean something different per method, so explain the active one.
+  const explain=WEIGHT_EXPLAIN[p.rebal.method]||'';
+  const exEl=$('weightExplain'); if(exEl) exEl.textContent=explain;
+  const tipEl=$('weightTip'); if(tipEl) tipEl.setAttribute('data-tip', explain+' All weights must sum to 100%.');
 
   const tableWrap=$('weightTableWrap');
   tableWrap.innerHTML=`<div class="weight-table">${
@@ -809,7 +830,7 @@ function refreshRebalPanels(){
   const rule=$('ruleOpts'); if(rule) rule.style.display=methodNeedsTriggers(method)?'':'none';
   renderWeightTable();
   renderRankWeightTable();
-  if(methodNeedsTriggers(method)){ populateReserveAssetSelect(); renderTriggerTable(); }
+  if(methodNeedsTriggers(method)){ populateReserveSelect(); renderTriggerTable(); }
 }
 
 /* ── Dynamic weight: per-rank target weights + momentum lookback ── */
@@ -850,17 +871,49 @@ function refreshRankTotals(){
 
 /* ── Rule-based: reserve selector + per-asset deploy triggers ── */
 const TRIGGER_TYPE_LABEL = { 'pct':'Price % move', 'tech-rsi':'RSI oversold', 'tech-ma-cross':'MA crossover', 'tech-bollinger':'Bollinger dip', 'tech-macd-cross':'MACD cross', 'tech-macd-hist':'MACD histogram', 'tech-adx':'ADX trend' };
-function populateReserveAssetSelect(){
-  const sel=$('reserveAssetSelect'); const p=getActive(); if(!sel||!p) return;
-  sel.innerHTML=p.assets.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
-  if(p.rebal.reserveAssetId==null || !p.assets.some(a=>a.id===p.rebal.reserveAssetId))
-    p.rebal.reserveAssetId = p.assets.length?p.assets[0].id:null;
-  if(p.rebal.reserveAssetId!=null) sel.value=String(p.rebal.reserveAssetId);
-  selectRadio('reserveMode', p.rebal.reserveMode||'cash');
-  const row=$('reserveAssetRow'); if(row) row.style.display=(p.rebal.reserveMode==='asset')?'':'none';
+// Single Reserve dropdown: the Risk-Free Account (cash) plus every asset as a
+// holding option. This replaces the old two-part "Reserve mode + Reserve asset"
+// pair so there is just one control to set.
+function populateReserveSelect(){
+  const sel=$('reserveSelect'); const p=getActive(); if(!sel||!p) return;
+  const assetOpts=p.assets.map(a=>`<option value="asset:${a.id}">Hold in ${a.name}</option>`).join('');
+  sel.innerHTML=`<option value="cash">Risk-Free Account</option>${assetOpts}`;
+  if((p.rebal.reserveMode||'cash')==='asset'){
+    if(p.rebal.reserveAssetId==null || !p.assets.some(a=>a.id===p.rebal.reserveAssetId))
+      p.rebal.reserveAssetId = p.assets.length?p.assets[0].id:null;
+    sel.value = p.rebal.reserveAssetId!=null ? `asset:${p.rebal.reserveAssetId}` : 'cash';
+    if(sel.value==='cash') p.rebal.reserveMode='cash';
+  } else {
+    sel.value='cash';
+  }
+  const hint=$('reserveHint');
+  if(hint) hint.textContent = sel.value==='cash'
+    ? 'The Risk-Free Account holds un-deployed cash. Set its rate or ticker in the Top-Up tab.'
+    : 'Un-deployed money is parked in this asset and sold to fund deploys when a trigger fires.';
+}
+// One plain-language sentence describing what an asset's trigger does, shown as a
+// hover tooltip on each trigger card. Kept simple and em-dash free.
+function triggerPlainDesc(a){
+  const tr=a.trigger||makeDefaultTrigger();
+  const name=a.name, periodWord=tr.period==='weekly'?'week':'month';
+  let s;
+  switch(tr.type){
+    case 'tech-ma-cross':   s=`Invest cash into ${name} on a golden cross, the fast moving average crossing above the slow one.`; break;
+    case 'tech-rsi':        s=`Invest cash into ${name} when its RSI falls below the oversold level.`; break;
+    case 'tech-bollinger':  s=`Invest cash into ${name} when it dips below the lower Bollinger Band.`; break;
+    case 'tech-macd-cross': s=`Invest cash into ${name} when its MACD line crosses above the signal line.`; break;
+    case 'tech-macd-hist':  s=`Invest cash into ${name} when its MACD histogram turns positive.`; break;
+    case 'tech-adx':        s=`Invest cash into ${name} when its ADX shows a strong trend.`; break;
+    default:                s=`Invest cash into ${name} when its price ${tr.direction==='rise'?'rises':'falls'} ${tr.pct}% from the ${periodWord} open.`;
+  }
+  if(tr.eom) s+=` If it never fires within the ${periodWord}, invest on that ${periodWord}'s last trading day.`;
+  return s;
 }
 function triggerParamsHtml(a){
   const tr=a.trigger||makeDefaultTrigger(); const t=tr.tech||{}; const aid=a.id;
+  const periodWord=tr.period==='weekly'?'Week':'Month';
+  // Shared "invest at end of period if target not reached" toggle (mirrors the single-asset tool).
+  const eomRow=`<label class="tech-eom"><input type="checkbox" class="trig-eom" data-aid="${aid}" ${tr.eom?'checked':''}/> Invest at End of ${periodWord} if target not reached</label>`;
   if(tr.type==='pct'){
     return `<div class="param-row"><label>Direction</label>
         <select class="num-input trig-dir" data-aid="${aid}" style="cursor:pointer">
@@ -872,16 +925,24 @@ function triggerParamsHtml(a){
         <select class="num-input trig-period" data-aid="${aid}" style="cursor:pointer">
           <option value="monthly" ${tr.period!=='weekly'?'selected':''}>Month open</option>
           <option value="weekly" ${tr.period==='weekly'?'selected':''}>Week open</option>
-        </select></div>`;
+        </select></div>${eomRow}`;
   }
   const maSel=(k,val)=>`<select class="num-input ttk" data-aid="${aid}" data-k="${k}" style="cursor:pointer"><option value="sma" ${val==='sma'?'selected':''}>SMA</option><option value="ema" ${val==='ema'?'selected':''}>EMA</option></select>`;
   const num=(k,val,min,max,step)=>`<input class="num-input ttk" data-aid="${aid}" data-k="${k}" type="number" min="${min}" max="${max}" step="${step||1}" value="${val}"/>`;
-  if(tr.type==='tech-rsi') return `<div class="param-row"><label>RSI period</label>${num('rsiPeriod',t.rsiPeriod,2,100)}</div><div class="param-row"><label>Oversold &lt;</label>${num('rsiOversold',t.rsiOversold,1,99)}</div>`;
-  if(tr.type==='tech-ma-cross') return `<div class="param-row"><label>Fast MA</label>${maSel('fastMaType',t.fastMaType)}${num('fastMaLen',t.fastMaLen,1,200)}</div><div class="param-row"><label>Slow MA</label>${maSel('slowMaType',t.slowMaType)}${num('slowMaLen',t.slowMaLen,1,400)}</div>`;
-  if(tr.type==='tech-bollinger') return `<div class="param-row"><label>Period</label>${num('bbPeriod',t.bbPeriod,2,100)}</div><div class="param-row"><label>Std dev</label>${num('bbStd',t.bbStd,0.5,5,0.1)}</div>`;
-  if(tr.type==='tech-macd-cross'||tr.type==='tech-macd-hist') return `<div class="param-row"><label>Fast EMA</label>${num('macdFast',t.macdFast,1,100)}</div><div class="param-row"><label>Slow EMA</label>${num('macdSlow',t.macdSlow,1,200)}</div><div class="param-row"><label>Signal</label>${num('macdSignal',t.macdSignal,1,100)}</div>`;
-  if(tr.type==='tech-adx') return `<div class="param-row"><label>ADX period</label>${num('adxPeriod',t.adxPeriod,2,100)}</div><div class="param-row"><label>Threshold &gt;</label>${num('adxThreshold',t.adxThreshold,1,100)}</div>`;
-  return '';
+  // Frequency (month/week) buckets the technical signal so "invest once per period"
+  // and the End-of-period fallback behave like the single-asset tool.
+  const freqRow=`<div class="param-row"><label>Frequency</label>
+      <select class="num-input trig-period" data-aid="${aid}" style="cursor:pointer">
+        <option value="monthly" ${tr.period!=='weekly'?'selected':''}>Monthly</option>
+        <option value="weekly" ${tr.period==='weekly'?'selected':''}>Weekly</option>
+      </select></div>`;
+  let body='';
+  if(tr.type==='tech-rsi') body=`<div class="param-row"><label>RSI period</label>${num('rsiPeriod',t.rsiPeriod,2,100)}</div><div class="param-row"><label>Oversold &lt;</label>${num('rsiOversold',t.rsiOversold,1,99)}</div>`;
+  else if(tr.type==='tech-ma-cross') body=`<div class="param-row"><label>Fast MA</label>${maSel('fastMaType',t.fastMaType)}${num('fastMaLen',t.fastMaLen,1,200)}</div><div class="param-row"><label>Slow MA</label>${maSel('slowMaType',t.slowMaType)}${num('slowMaLen',t.slowMaLen,1,400)}</div>`;
+  else if(tr.type==='tech-bollinger') body=`<div class="param-row"><label>Period</label>${num('bbPeriod',t.bbPeriod,2,100)}</div><div class="param-row"><label>Std dev</label>${num('bbStd',t.bbStd,0.5,5,0.1)}</div>`;
+  else if(tr.type==='tech-macd-cross'||tr.type==='tech-macd-hist') body=`<div class="param-row"><label>Fast EMA</label>${num('macdFast',t.macdFast,1,100)}</div><div class="param-row"><label>Slow EMA</label>${num('macdSlow',t.macdSlow,1,200)}</div><div class="param-row"><label>Signal</label>${num('macdSignal',t.macdSignal,1,100)}</div>`;
+  else if(tr.type==='tech-adx') body=`<div class="param-row"><label>ADX period</label>${num('adxPeriod',t.adxPeriod,2,100)}</div><div class="param-row"><label>Threshold &gt;</label>${num('adxThreshold',t.adxThreshold,1,100)}</div>`;
+  return body+freqRow+eomRow;
 }
 function renderTriggerTable(){
   const wrap=$('triggerTableWrap'); const p=getActive(); if(!wrap||!p) return;
@@ -893,7 +954,7 @@ function renderTriggerTable(){
       return `<div class="trigger-card"><div class="trigger-head"><span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span><span class="trigger-reserve-tag">Reserve</span></div></div>`;
     const tr=a.trigger||makeDefaultTrigger();
     return `<div class="trigger-card">
-      <div class="trigger-head"><span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span></div>
+      <div class="trigger-head"><span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span><span class="tip-icon" data-tip="${triggerPlainDesc(a)}">?</span></div>
       <div class="param-row"><label>Trigger</label>
         <select class="num-input trig-type" data-aid="${a.id}" style="cursor:pointer">${
           Object.keys(TRIGGER_TYPE_LABEL).map(k=>`<option value="${k}" ${tr.type===k?'selected':''}>${TRIGGER_TYPE_LABEL[k]}</option>`).join('')
@@ -909,9 +970,11 @@ function wireTriggerTable(){
   document.querySelectorAll('#triggerTableWrap .trig-type').forEach(sel=>sel.addEventListener('change',e=>{
     const a=getAsset(e.target); if(!a) return; a.trigger.type=e.target.value; renderTriggerTable();  // params depend on type
   }));
-  document.querySelectorAll('#triggerTableWrap .trig-dir').forEach(sel=>sel.addEventListener('change',e=>{ const a=getAsset(e.target); if(a) a.trigger.direction=e.target.value; }));
+  document.querySelectorAll('#triggerTableWrap .trig-dir').forEach(sel=>sel.addEventListener('change',e=>{ const a=getAsset(e.target); if(a){ a.trigger.direction=e.target.value; renderTriggerTable(); } }));
   document.querySelectorAll('#triggerTableWrap .trig-pct').forEach(inp=>inp.addEventListener('input',e=>{ const a=getAsset(e.target); if(a) a.trigger.pct=Math.max(0,parseFloat(e.target.value)||0); }));
-  document.querySelectorAll('#triggerTableWrap .trig-period').forEach(sel=>sel.addEventListener('change',e=>{ const a=getAsset(e.target); if(a) a.trigger.period=e.target.value; }));
+  // Period change re-renders so the End-of-period label word and the tooltip update.
+  document.querySelectorAll('#triggerTableWrap .trig-period').forEach(sel=>sel.addEventListener('change',e=>{ const a=getAsset(e.target); if(a){ a.trigger.period=e.target.value; renderTriggerTable(); } }));
+  document.querySelectorAll('#triggerTableWrap .trig-eom').forEach(cb=>cb.addEventListener('change',e=>{ const a=getAsset(e.target); if(a){ a.trigger.eom=e.target.checked; renderTriggerTable(); } }));
   document.querySelectorAll('#triggerTableWrap .ttk').forEach(el=>{
     const handler=e=>{ const a=getAsset(e.target); if(!a) return; a.trigger.tech=a.trigger.tech||{}; const k=e.target.dataset.k; a.trigger.tech[k]= e.target.tagName==='SELECT' ? e.target.value : (parseFloat(e.target.value)||0); };
     el.addEventListener(el.tagName==='SELECT'?'change':'input', handler);
@@ -1066,9 +1129,24 @@ document.querySelectorAll('input[name="rebalMethod"]').forEach(r=>{
     r.closest('[data-method]').classList.add('selected');
     const p=getActive(); if(p) p.rebal.method=r.value;
     refreshRebalPanels();
+    setMethodCollapsed(true);   // picking a method collapses the list back down
     renderPortfolioList();
   });
 });
+// Collapse the long method list down to the chosen method, with a button to reopen it.
+function setMethodCollapsed(collapsed){
+  const list=$('methodList'), col=$('methodCollapsed'); if(!list||!col) return;
+  const p=getActive(); const m=p?p.rebal.method:'towards-weight';
+  if(collapsed){
+    const nameEl=$('methodCollapsedName'), descEl=$('methodCollapsedDesc');
+    if(nameEl) nameEl.textContent=METHOD_LABEL[m]||m;
+    if(descEl) descEl.textContent=METHOD_DESC[m]||'';
+    list.style.display='none'; col.style.display='';
+  } else {
+    list.style.display=''; col.style.display='none';
+  }
+}
+{ const cb=$('changeMethodBtn'); if(cb) cb.addEventListener('click',()=>setMethodCollapsed(false)); }
 document.querySelectorAll('input[name="cwTiming"]').forEach(r=>{
   r.addEventListener('change',()=>{
     document.querySelectorAll('[data-cwtiming]').forEach(o=>o.classList.remove('selected'));
@@ -1077,19 +1155,17 @@ document.querySelectorAll('input[name="cwTiming"]').forEach(r=>{
     const p=getActive(); if(p) p.rebal.cwTiming=r.value;
   });
 });
-// Reserve mode (rule-trigger): cash vs holding asset, + which asset.
-document.querySelectorAll('input[name="reserveMode"]').forEach(r=>{
-  r.addEventListener('change',()=>{
-    document.querySelectorAll('[data-reserve]').forEach(o=>o.classList.remove('selected'));
-    const lab=r.closest('[data-reserve]'); if(lab) lab.classList.add('selected');
-    const p=getActive(); if(p) p.rebal.reserveMode=r.value;
-    const row=$('reserveAssetRow'); if(row) row.style.display=(r.value==='asset')?'':'none';
-    if(p && r.value==='asset') populateReserveAssetSelect();
-    renderTriggerTable();   // reserve asset shows a "Reserve" tag instead of a trigger
-  });
-});
+// Reserve (rule-trigger): one dropdown for the Risk-Free Account (cash) or a
+// holding asset. "asset:<id>" values pick a holding asset; "cash" is the account.
+{ const rs=$('reserveSelect'); if(rs) rs.addEventListener('change',e=>{
+  const p=getActive(); if(!p) return;
+  const v=e.target.value;
+  if(v==='cash'){ p.rebal.reserveMode='cash'; }
+  else { p.rebal.reserveMode='asset'; p.rebal.reserveAssetId=parseInt(v.split(':')[1],10); }
+  populateReserveSelect();   // refresh the hint text
+  renderTriggerTable();      // the reserve asset shows a "Reserve" tag instead of a trigger
+}); }
 { const lb=$('lookbackMonths'); if(lb) lb.addEventListener('change',e=>{ const p=getActive(); if(p) p.rebal.lookbackMonths=parseInt(e.target.value,10)||6; }); }
-{ const rs=$('reserveAssetSelect'); if(rs) rs.addEventListener('change',e=>{ const p=getActive(); if(p) p.rebal.reserveAssetId=parseInt(e.target.value,10); renderTriggerTable(); }); }
 
 /* ─── SCHEDULE INDEX GENERATION ─── */
 function closestByDom(idxs, dates, targetDom){
@@ -1222,22 +1298,37 @@ function buildAssetTriggerSignals(assets, common){
   return assets.map(a=>{
     const tr = a.trigger || {};
     const px = a.px, n = px.length;
-    if(tr.type && tr.type.indexOf('tech-')===0){
-      return SharedTA.buildTech(px, tr.type, tr.tech||{}).signal;
-    }
-    // Default: percentage move from the period open (monthly/weekly).
-    const sig = new Array(n).fill(false);
-    const pct = (tr.pct!=null?tr.pct:10)/100;
-    const dir = tr.direction || 'drop';
     const period = tr.period || 'monthly';
-    let curKey=null, openPx=null;
-    for(let i=0;i<n;i++){
-      const k = SharedTA.periodKey(common[i], period);
-      if(k!==curKey){ curKey=k; openPx=px[i]; }
-      if(openPx==null||openPx<=0) continue;
-      const move = px[i]/openPx - 1;
-      sig[i] = dir==='rise' ? (move >= pct) : (move <= -pct);
+    const eom = !!tr.eom;
+    // Raw daily condition: technical signal, or a % move from the period open.
+    let raw;
+    if(tr.type && tr.type.indexOf('tech-')===0){
+      raw = SharedTA.buildTech(px, tr.type, tr.tech||{}).signal;
+    } else {
+      raw = new Array(n).fill(false);
+      const pct = (tr.pct!=null?tr.pct:10)/100;
+      const dir = tr.direction || 'drop';
+      let curKey=null, openPx=null;
+      for(let i=0;i<n;i++){
+        const k = SharedTA.periodKey(common[i], period);
+        if(k!==curKey){ curKey=k; openPx=px[i]; }
+        if(openPx==null||openPx<=0) continue;
+        const move = px[i]/openPx - 1;
+        raw[i] = dir==='rise' ? (move >= pct) : (move <= -pct);
+      }
     }
+    // Reduce to one fire per period: the first day the condition is met, or the
+    // period's last trading day when "Invest at End of …" is on and it never met.
+    // Mirrors the single-asset tool's periodSignalDates so behaviour matches.
+    const sig = new Array(n).fill(false);
+    const groups = new Map();
+    for(let i=0;i<n;i++){ const k=SharedTA.periodKey(common[i], period); if(!groups.has(k)) groups.set(k,[]); groups.get(k).push(i); }
+    groups.forEach(idxs=>{
+      let picked=-1;
+      for(const i of idxs){ if(raw[i]){ picked=i; break; } }
+      if(picked>=0) sig[picked]=true;
+      else if(eom) sig[idxs[idxs.length-1]]=true;
+    });
     return sig;
   });
 }
