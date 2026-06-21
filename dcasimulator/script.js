@@ -147,8 +147,11 @@ function updateSimBtn(){ const b=$('simBtn'); if(!b)return; b.textContent='▶ S
 function updateBtnRow(){
   const dataTab = getActiveTab()==='data';
   ['simBtn','resetBtn'].forEach(id=>{ const b=$(id); if(b) b.style.display=dataTab?'none':''; });
-  // The bottom "Load tickers" action only applies to the Real download mode.
-  const lb=$('loadTickersBtn'); if(lb) lb.style.display=(dataTab && (typeof dataMode==='undefined' || dataMode==='real'))?'':'none';
+  // On the Data tab the bottom action mirrors the chosen download mode: "Load
+  // tickers" for Real, "Add Simulated Asset" for Simulated. Other tabs show Simulate/Reset.
+  const realMode=(typeof dataMode==='undefined' || dataMode==='real');
+  const lb=$('loadTickersBtn'); if(lb) lb.style.display=(dataTab && realMode)?'':'none';
+  const sb=$('addSimBtn'); if(sb) sb.style.display=(dataTab && !realMode)?'':'none';
 }
 function sanitizeSeed(v){
   const n = Number(v);
@@ -1085,8 +1088,12 @@ async function loadTickerData(sec, startDate, endDate){
 $('addScenarioBtn').addEventListener('click', ()=>{
   const tks = loadedTickers();
   const n = securities.length + 1;
+  // A scenario references one asset from the shared pool (loaded tickers or simulated
+  // assets, defined in the Data tab). Default a new scenario to the first available
+  // pool asset rather than minting a throwaway custom one.
   if(tks.length) addSecurity({type:'ticker', ticker:tks[0], name:'Scenario '+n});
-  else           addSecurity({type:'custom', name:'Scenario '+n});
+  else if(simPool.length){ const s=simPool[0]; addSecurity({type:'custom', simName:s.name, returnPct:s.returnPct, stdPct:s.stdPct, name:'Scenario '+n}); }
+  else addSecurity({type:'custom', name:'Scenario '+n});
   scheduleRun();
 });
 $('dupScenarioBtn').addEventListener('click', ()=>{ if(activeSecurityId!=null){ duplicateSecurity(activeSecurityId); scheduleRun(); } });
