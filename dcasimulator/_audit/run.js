@@ -217,18 +217,23 @@ console.log('\n  -- constant-weight scheduled (quarterly rebalance) --');
   ok(rebalSet.size>0, `[constant-weight@sched] rebalance fired (${rebalSet.size} days)`);
 }
 
-// --- dynamic-momentum ---
-console.log('\n  -- dynamic-momentum (rank weights 70/30, 3 assets) --');
+// --- dynamic-momentum (Trend Following) ---
+// Trend Following deploys each top-up by momentum rank, exactly like Constant
+// Allocation but with the contribution split across ranks rather than fixed assets.
+console.log('\n  -- Trend Following / dynamic-momentum (rank weights 60/30/10, 3 assets) --');
 {
   const assets=[
     { id:'a1', name:'DHHF', px:common.DHHF, weight:0 },
     { id:'a2', name:'AAA',  px:common.AAA,  weight:0 },
     { id:'a3', name:'GHHF', px:common.GHHF, weight:0 }
   ];
-  const p=mkPort('dynamic-momentum'); p.rebal.cwTiming='at-topup'; p.rebal.rankWeights=[60,30,10]; p.rebal.lookbackMonths=6;
+  const p=mkPort('dynamic-momentum'); p.rebal.rankWeights=[60,30,10]; p.rebal.lookbackMonths=6;
   const out=integrityCheck('dynamic-momentum', p, assets);
   const last=out.rows[out.rows.length-1];
   console.log(`     final=${money(last.total)} cash=${money(last.cash)} fees=${money(out.fees)}`);
+  // Like constant-allocation, each top-up's rank weights sum to 100% and buy fully,
+  // so with a 0% risk-free rate negligible cash is left over at the end.
+  ok(last.cash < 1, `[dynamic-momentum] negligible residual cash, top-up fully deployed (${money(last.cash)})`);
   // verify rank weights map onto best performer. Pick a topup day, check best trailing-return asset got 60%.
   const topupSet=[...H.getScheduleIndices(common.dates,p.topupSched)].sort((a,b)=>a-b);
   const probe=topupSet[topupSet.length-1]; // late day, full lookback

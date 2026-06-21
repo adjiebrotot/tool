@@ -289,7 +289,7 @@
   <section class="chart-card card">
     <div class="section-title">
       <div>
-        <h2>Portfolio Value</h2>
+        <h2>Portfolio Value Over Time</h2>
       </div>
       <div class="chart-actions">
         <div class="chart-toggles">
@@ -328,29 +328,16 @@
     <div id="summaryGrid" class="summary-grid"></div>
   </section>
 
-  <!-- BOTTOM: Milestone Table -->
-  <section class="bottom">
-    <div class="card" style="padding:18px">
-      <h2>Period Milestones</h2>
-      <div class="table-wrap">
-        <table id="milestoneTable">
-          <thead><tr><th>Period</th><th>Date</th><th colspan="2"> - </th></tr></thead>
-          <tbody id="milestoneBody"><tr><td colspan="4" style="color:var(--muted);text-align:center;padding:20px">Run simulation to see milestones</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
   <!-- DETAILED BREAKDOWN -->
   <section class="detail-section card">
     <div class="detail-header">
       <div class="detail-title-row">
         <h2>Detailed Breakdown</h2>
-        <div class="detail-csv-wrap">
-          <button class="btn-secondary" id="downloadBtn" style="white-space:nowrap;font-size:.82rem;padding:6px 13px">⬇ CSV</button>
+        <div class="detail-csv-wrap" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <select class="num-input pf-view-select" id="detailSelect" style="cursor:pointer" title="Choose which scenario to view"></select>
+          <button class="btn-secondary" id="downloadBtn" style="white-space:nowrap;font-size:.82rem;padding:6px 13px;flex-shrink:0">⬇ CSV</button>
         </div>
       </div>
-      <div class="tab-bar" id="detailTabs"></div>
     </div>
     <div class="table-wrap">
       <table id="detailTable">

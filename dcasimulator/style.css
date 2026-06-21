@@ -129,6 +129,9 @@ body.light tr:hover td{background:rgba(90,145,232,.05)}
 .tab-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .tab-btn{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s;font-family:inherit}
 .tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pf-view-select{font-size:.8rem;padding:5px 10px;min-width:130px;max-width:220px}
+.detail-row-tag{display:inline-block;margin-left:6px;font-size:.68rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--accent);vertical-align:middle}
+tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 
 /* Securities Manager */
 .sec-list{display:flex;flex-direction:column;gap:8px}
