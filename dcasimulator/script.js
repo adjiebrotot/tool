@@ -147,7 +147,8 @@ function updateSimBtn(){ const b=$('simBtn'); if(!b)return; b.textContent='▶ S
 function updateBtnRow(){
   const dataTab = getActiveTab()==='data';
   ['simBtn','resetBtn'].forEach(id=>{ const b=$(id); if(b) b.style.display=dataTab?'none':''; });
-  const lb=$('loadTickersBtn'); if(lb) lb.style.display=dataTab?'':'none';
+  // The bottom "Load tickers" action only applies to the Real download mode.
+  const lb=$('loadTickersBtn'); if(lb) lb.style.display=(dataTab && (typeof dataMode==='undefined' || dataMode==='real'))?'':'none';
 }
 function sanitizeSeed(v){
   const n = Number(v);
@@ -453,9 +454,20 @@ function renderScenarioConfig(){
   const tks=loadedTickers();
   const sym=currentCurrencySymbol||'$';
   const fmtN=(v,neg)=>SharedFmt.formatThousands(v==null?0:v,{maxDecimals:2,allowNegative:!!neg});
-  const tickerBody = tks.length
-    ? `<select class="txt-input" id="cfgTickerSelect" style="width:100%;cursor:pointer">${tks.map(tk=>`<option value="${tk}" ${sec.ticker===tk?'selected':''}>${tk}</option>`).join('')}</select>`
-    : `<div class="status-bar status-warn" style="display:block">No tickers loaded yet: add them in the 📥 Data tab first.</div>`;
+  // Custom scenarios reference a simulated-asset pool entry; migrate older configs
+  // / presets that carried inline return & std so they still show in the dropdown.
+  if(sec.type==='custom'){
+    if(!sec.simName) sec.simName=sec.name;
+    ensureSimEntry(sec.simName, sec.returnPct, sec.stdPct);
+  }
+  const curVal = sec.type==='ticker' ? ('t:'+sec.ticker) : ('s:'+(sec.simName||sec.name));
+  const assetSelectBody = (tks.length || simPool.length)
+    ? `<select class="txt-input" id="cfgAssetSelect" style="width:100%;cursor:pointer">${
+        (tks.length?`<optgroup label="Tickers (real)">${tks.map(tk=>`<option value="t:${tk}" ${curVal==='t:'+tk?'selected':''}>${tk}</option>`).join('')}</optgroup>`:'')
+      }${
+        (simPool.length?`<optgroup label="Simulated">${simPool.map(s=>`<option value="s:${escapeHtml(s.name)}" ${curVal==='s:'+s.name?'selected':''}>ƒ ${escapeHtml(s.name)}</option>`).join('')}</optgroup>`:'')
+      }</select>`
+    : `<div class="status-bar status-warn" style="display:block">No assets yet: load tickers or add a simulated asset in the 📥 Data tab first.</div>`;
   wrap.innerHTML=`
     <div class="add-sec-area" style="border-top:none;padding-top:0">
       <div class="add-sec-row" style="gap:6px;align-items:center">
@@ -479,52 +491,27 @@ function renderScenarioConfig(){
         </div>
       </div>
 
-      <div class="section-label">Asset</div>
-      <div class="radio-group">
-        <label class="radio-opt${sec.type==='ticker'?' selected':''}" id="cfgTypeTicker">
-          <input type="radio" name="cfgType" value="ticker" ${sec.type==='ticker'?'checked':''}/>
-          <div class="radio-opt-text"><strong>Ticker</strong>Real price data, pick from your loaded tickers</div>
-        </label>
-        <label class="radio-opt${sec.type==='custom'?' selected':''}" id="cfgTypeCustom">
-          <input type="radio" name="cfgType" value="custom" ${sec.type==='custom'?'checked':''}/>
-          <div class="radio-opt-text"><strong>Custom</strong>Simulated asset (define return &amp; volatility)</div>
-        </label>
-      </div>
-      ${sec.type==='ticker'
-        ? `<div style="margin-top:8px">${tickerBody}</div>`
-        : `<div class="sec-row" style="margin-top:8px">
-             <label>Return (% p.a.) <span class="tip-icon" data-tip="Expected annual return used to generate a simulated price path via Geometric Brownian Motion.">?</span></label>
-             <div class="currency-wrap">
-               <input class="currency-input money-input has-suffix" id="cfgReturn" type="text" inputmode="numeric" value="${fmtN(sec.returnPct,true)}"/>
-               <span class="suffix">%</span>
-             </div>
-           </div>
-           <div class="sec-row">
-             <label>Standard deviation (%) <span class="tip-icon" data-tip="Annual volatility (standard deviation). Higher values produce more volatile simulated paths.">?</span></label>
-             <div class="currency-wrap">
-               <input class="currency-input money-input has-suffix" id="cfgStd" type="text" inputmode="numeric" value="${fmtN(sec.stdPct)}"/>
-               <span class="suffix">%</span>
-             </div>
-           </div>`}
+      <div class="section-label">Asset <span class="tip-icon" data-tip="Pick a loaded ticker (real market data) or a simulated asset. Add more in the 📥 Data tab.">?</span></div>
+      ${assetSelectBody}
       <div class="section-label">Investment Style</div>
       <div id="styleBlock${sec.id}">${styleBlockInner(sec)}</div>
     </div>`;
 
   $('cfgName').addEventListener('input',e=>{ sec.name=e.target.value; renderScenarioBar(); });
   $('cfgColor').addEventListener('input',e=>{ sec.colorHex=e.target.value; renderScenarioBar(); if(simResults.length){ updatePriceChart(); updateEquityChart(); updateTables(); } });
-  document.querySelectorAll('input[name="cfgType"]').forEach(r=>{
-    r.addEventListener('change',()=>{
-      sec.type=r.value;
-      if(sec.type==='ticker'){ const t=loadedTickers(); if(t.length && !t.includes(sec.ticker)) sec.ticker=t[0]; }
-      renderScenarioBar();
-      renderScenarioConfig();
-      updateTechToggleVisibility();
-      scheduleRun();
-    });
+  const asel=$('cfgAssetSelect'); if(asel) asel.addEventListener('change',e=>{
+    const v=e.target.value;
+    if(v.startsWith('t:')){
+      sec.type='ticker'; sec.ticker=v.slice(2);
+    } else if(v.startsWith('s:')){
+      const def=findSim(v.slice(2));
+      sec.type='custom'; sec.simName=v.slice(2);
+      if(def){ sec.returnPct=def.returnPct; sec.stdPct=def.stdPct; }
+    }
+    updateSimBtnState();
+    updateTechToggleVisibility();
+    scheduleRun();
   });
-  const tsel=$('cfgTickerSelect'); if(tsel) tsel.addEventListener('change',e=>{ sec.ticker=e.target.value; updateSimBtnState(); scheduleRun(); });
-  const ret=$('cfgReturn'); if(ret) wireMoneyField(ret,{maxDecimals:2,allowNegative:true},v=>{ sec.returnPct=v; scheduleRun(); });
-  const std=$('cfgStd'); if(std) wireMoneyField(std,{maxDecimals:2},v=>{ sec.stdPct=Math.max(0,v); scheduleRun(); });
   wireMoneyField($('cfgAmount'),{maxDecimals:2},v=>{ sec.amount=Math.max(0,v); scheduleRun(); });
   wireMoneyField($('cfgYearlyInc'),{maxDecimals:2},v=>{ sec.yearlyIncrease=Math.max(0,v); scheduleRun(); });
   wireStyleBlock(sec);
@@ -848,6 +835,34 @@ function loadPersistedCache(){
   } catch(_){ /* ignore corrupt cache */ }
 }
 
+/* ─── SIMULATED ASSET POOL ──────────────────────────────────────────────────────
+   Custom (synthetic) assets are defined here, in the Data tab, alongside the real
+   ticker pool. Each entry is {name, returnPct, stdPct}; scenarios then just pick
+   one from a dropdown. Persisted (and shared with the Portfolio tool) so the pool
+   survives reloads. */
+const SIM_POOL_KEY = 'dca_simPool_v1';
+let simPool = [];
+function persistSimPool(){ try { localStorage.setItem(SIM_POOL_KEY, JSON.stringify(simPool)); } catch(_){} }
+function loadPersistedSimPool(){
+  try { const raw=localStorage.getItem(SIM_POOL_KEY); if(raw){ const a=JSON.parse(raw); if(Array.isArray(a)) simPool=a.filter(x=>x&&x.name); } } catch(_){}
+}
+function findSim(name){ return simPool.find(s=>s.name===name) || null; }
+function addSimAsset(name, returnPct, stdPct){
+  name=String(name||'').trim();
+  if(!name) return {error:'Enter a name for the simulated asset.'};
+  if(findSim(name)) return {error:'A simulated asset named "'+name+'" already exists.'};
+  simPool.push({name, returnPct:Number(returnPct)||0, stdPct:Math.max(0,Number(stdPct)||0)});
+  persistSimPool();
+  return {ok:true};
+}
+function removeSimAsset(name){ simPool=simPool.filter(s=>s.name!==name); persistSimPool(); }
+// Make sure a custom scenario references a pool entry (so older saved configs and
+// presets that carried inline return/std still appear in the dropdown).
+function ensureSimEntry(name, returnPct, stdPct){
+  if(!name) return;
+  if(!findSim(name)){ simPool.push({name, returnPct:Number(returnPct)||0, stdPct:Math.max(0,Number(stdPct)||0)}); persistSimPool(); }
+}
+
 /* ─── TICKER POOL (load everything up front, in one request) ─── */
 // Returns the sorted list of tickers currently held in the cache.
 function loadedTickers(){ return Object.keys(priceCache).sort(); }
@@ -891,16 +906,22 @@ function renderPoolChips(){
   if(!box) return;
   const tks = loadedTickers();
   const wrap = $('poolChipsWrap');
-  if(!tks.length){ box.innerHTML=''; if(wrap) wrap.style.display='none'; updateLoadBtnLabel(); return; }
+  if(!tks.length && !simPool.length){ box.innerHTML=''; if(wrap) wrap.style.display='none'; updateLoadBtnLabel(); return; }
   if(wrap) wrap.style.display='';
-  box.innerHTML = tks.map(tk=>{
+  let html = tks.map(tk=>{
     const e = priceCache[tk];
     const warn = (e && e.kind==='stock' && e.source==='stooq');
     const range = (e && e.dates && e.dates.length) ? e.dates[0]+' to '+e.dates[e.dates.length-1] : '';
     const title = warn ? 'Loaded from Stooq (unadjusted for splits/dividends)'+(range?' · '+range:'') : range;
     return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}<button class="pool-chip-del" type="button" data-tk="${tk}" title="Remove ${tk}" aria-label="Remove ${tk}">×</button></span>`;
   }).join('');
-  box.querySelectorAll('.pool-chip-del').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
+  html += simPool.map(s=>{
+    const nm=escapeHtml(s.name);
+    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%">ƒ ${nm}<button class="pool-chip-del" type="button" data-sim="${nm}" title="Remove ${nm}" aria-label="Remove ${nm}">×</button></span>`;
+  }).join('');
+  box.innerHTML = html;
+  box.querySelectorAll('.pool-chip-del[data-tk]').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
+  box.querySelectorAll('.pool-chip-del[data-sim]').forEach(b=>b.addEventListener('click', ()=>{ removeSimAsset(b.dataset.sim); renderPoolChips(); refreshTickerSelect(); }));
   updateLoadBtnLabel();
 }
 
@@ -918,9 +939,11 @@ function removeFromPool(tk){
 
 // Drop the entire cached pool (the data the app shows on first open lives here).
 function clearPool(){
-  if(!loadedTickers().length) return;
+  if(!loadedTickers().length && !simPool.length) return;
   priceCache = {};
   persistPriceCache();
+  simPool = [];
+  persistSimPool();
   renderPoolChips();
   refreshTickerSelect();
   hideStatus($('poolStatus'));
@@ -1077,6 +1100,31 @@ $('tickerPoolInput').addEventListener('keydown', e=>{
   // Enter loads; Shift+Enter inserts a newline.
   if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); loadTickerPool(); }
 });
+
+/* ─── DATA MODE TOGGLE (Real ↔ Simulated) ─── */
+let dataMode='real';
+function setDataMode(mode){
+  dataMode = mode==='simulated' ? 'simulated' : 'real';
+  document.querySelectorAll('#dataModeToggle .seg-btn').forEach(b=>b.classList.toggle('active', b.dataset.dmode===dataMode));
+  const real=$('dataRealPanel'), sim=$('dataSimPanel');
+  if(real) real.style.display = dataMode==='real' ? '' : 'none';
+  if(sim) sim.style.display = dataMode==='simulated' ? '' : 'none';
+  updateBtnRow();
+}
+document.querySelectorAll('#dataModeToggle .seg-btn').forEach(b=>{
+  b.addEventListener('click', ()=>setDataMode(b.dataset.dmode));
+});
+{ const addSim=$('addSimBtn'); if(addSim) addSim.addEventListener('click', ()=>{
+  const name=$('simNameInput').value;
+  const ret=parseFloat($('simReturnInput').value);
+  const std=parseFloat($('simStdInput').value);
+  const r=addSimAsset(name, Number.isFinite(ret)?ret:0, Number.isFinite(std)?std:0);
+  if(r.error){ showStatus($('simStatus'), r.error, 'error'); return; }
+  showStatus($('simStatus'), 'Simulated asset "'+name.trim()+'" added.', 'ok');
+  $('simNameInput').value='';
+  renderPoolChips();
+  refreshTickerSelect();
+}); }
 
 /* ─── CURRENCY CHANGE ─── */
 $('currencySymbol').addEventListener('change',e=>{
@@ -1936,7 +1984,7 @@ $('resetBtn').addEventListener('click',()=>{
   $('riskFreeRate').value=DEFAULT_RISK_FREE_RATE;
   hideStatus($('fetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
   const poolInp=$('tickerPoolInput'); if(poolInp) poolInp.value='';
-  setPoolLocked(false); hideStatus($('poolStatus')); renderPoolChips();
+  setPoolLocked(false); hideStatus($('poolStatus')); setDataMode('real'); renderPoolChips();
   document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
   initializeDefaultSecurities();
   runSimulation();
@@ -2234,7 +2282,8 @@ function exportSettings(){
       riskFreeRate: currentRiskFreeRate,
       startDate: $('startDate').value,
       endDate: $('endDate').value,
-      tickerPool: ($('tickerPoolInput')||{}).value || ''
+      tickerPool: ($('tickerPoolInput')||{}).value || '',
+      simPool: JSON.parse(JSON.stringify(simPool))
     },
     securities: securitiesOut
   };
@@ -2251,6 +2300,7 @@ function importSettings(obj){
   if(g.startDate) $('startDate').value=g.startDate;
   if(g.endDate) $('endDate').value=g.endDate;
   if(g.tickerPool!=null){ const inp=$('tickerPoolInput'); if(inp) inp.value=g.tickerPool; }
+  if(Array.isArray(g.simPool)){ simPool=g.simPool.filter(x=>x&&x.name).map(x=>({name:x.name, returnPct:Number(x.returnPct)||0, stdPct:Math.max(0,Number(x.stdPct)||0)})); persistSimPool(); renderPoolChips(); }
   // Rebuild the scenario list from the file (prices re-fetch on run; the cache
   // makes that free for tickers already loaded).
   securities=[]; simResults=[]; latestRows=[]; secIdCounter=0; activeSecurityId=null;
@@ -2280,13 +2330,17 @@ document.querySelectorAll('.ctrl-tab').forEach(btn=>{
 
 /* ─── INIT: Add default securities ─── */
 function initializeDefaultSecurities(){
-  addSecurity({type:'custom',name:'S&P500',returnPct:10,stdPct:18,amount:500,style:'monthly-date',dayOrDate:1});
-  addSecurity({type:'custom',name:'Risk-Free 5%',returnPct:5,stdPct:0.5,amount:500,style:'monthly-date',dayOrDate:1});
+  ensureSimEntry('S&P500',10,18);
+  ensureSimEntry('Risk-Free 5%',5,0.5);
+  addSecurity({type:'custom',name:'S&P500',simName:'S&P500',returnPct:10,stdPct:18,amount:500,style:'monthly-date',dayOrDate:1});
+  addSecurity({type:'custom',name:'Risk-Free 5%',simName:'Risk-Free 5%',returnPct:5,stdPct:0.5,amount:500,style:'monthly-date',dayOrDate:1});
+  renderPoolChips();
 }
 
 // Restore any previously cached price history so reloads/return visits cost
 // zero Worker requests, then reflect it in the pool UI.
 loadPersistedCache();
+loadPersistedSimPool();
 renderPoolChips();
 refreshTickerSelect();
 updateRateInfo();

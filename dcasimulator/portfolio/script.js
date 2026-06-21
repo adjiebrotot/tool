@@ -296,6 +296,33 @@ function loadPersistedCache(){
   } catch(_){ /* ignore corrupt cache */ }
 }
 
+/* ─── SIMULATED ASSET POOL ──────────────────────────────────────────────────────
+   Custom (synthetic) assets are defined in the Data tab, alongside the real ticker
+   pool. Each entry is {name, returnPct, stdPct}; portfolios then just pick one from
+   a dropdown. Persisted (and shared with the single-asset tool) so it survives
+   reloads. */
+const SIM_POOL_KEY = 'dca_simPool_v1';
+let simPool = [];
+function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function persistSimPool(){ try { localStorage.setItem(SIM_POOL_KEY, JSON.stringify(simPool)); } catch(_){} }
+function loadPersistedSimPool(){
+  try { const raw=localStorage.getItem(SIM_POOL_KEY); if(raw){ const a=JSON.parse(raw); if(Array.isArray(a)) simPool=a.filter(x=>x&&x.name); } } catch(_){}
+}
+function findSim(name){ return simPool.find(s=>s.name===name) || null; }
+function addSimAsset(name, returnPct, stdPct){
+  name=String(name||'').trim();
+  if(!name) return {error:'Enter a name for the simulated asset.'};
+  if(findSim(name)) return {error:'A simulated asset named "'+name+'" already exists.'};
+  simPool.push({name, returnPct:Number(returnPct)||0, stdPct:Math.max(0,Number(stdPct)||0)});
+  persistSimPool();
+  return {ok:true};
+}
+function removeSimAsset(name){ simPool=simPool.filter(s=>s.name!==name); persistSimPool(); }
+function ensureSimEntry(name, returnPct, stdPct){
+  if(!name) return;
+  if(!findSim(name)){ simPool.push({name, returnPct:Number(returnPct)||0, stdPct:Math.max(0,Number(stdPct)||0)}); persistSimPool(); }
+}
+
 /* ─── TICKER POOL (load everything up front, in one request) ─── */
 function loadedTickers(){ return Object.keys(priceCache).sort(); }
 
@@ -328,16 +355,22 @@ function renderPoolChips(){
   const box=$('poolChips'); if(!box) return;
   const tks=loadedTickers();
   const wrap=$('poolChipsWrap');
-  if(!tks.length){ box.innerHTML=''; if(wrap) wrap.style.display='none'; updateLoadBtnLabel(); return; }
+  if(!tks.length && !simPool.length){ box.innerHTML=''; if(wrap) wrap.style.display='none'; updateLoadBtnLabel(); return; }
   if(wrap) wrap.style.display='';
-  box.innerHTML=tks.map(tk=>{
+  let html=tks.map(tk=>{
     const e=priceCache[tk];
     const warn=(e && e.kind==='stock' && e.source==='stooq');
     const range=(e && e.dates && e.dates.length)?e.dates[0]+' to '+e.dates[e.dates.length-1]:'';
     const title=warn?'Loaded from Stooq (unadjusted for splits/dividends)'+(range?' · '+range:''):range;
     return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}<button class="pool-chip-del" type="button" data-tk="${tk}" title="Remove ${tk}" aria-label="Remove ${tk}">×</button></span>`;
   }).join('');
-  box.querySelectorAll('.pool-chip-del').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
+  html+=simPool.map(s=>{
+    const nm=escapeHtml(s.name);
+    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%">ƒ ${nm}<button class="pool-chip-del" type="button" data-sim="${nm}" title="Remove ${nm}" aria-label="Remove ${nm}">×</button></span>`;
+  }).join('');
+  box.innerHTML=html;
+  box.querySelectorAll('.pool-chip-del[data-tk]').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
+  box.querySelectorAll('.pool-chip-del[data-sim]').forEach(b=>b.addEventListener('click', ()=>{ removeSimAsset(b.dataset.sim); renderPoolChips(); refreshAssetPoolSelect(); }));
   updateLoadBtnLabel();
 }
 
@@ -348,35 +381,41 @@ function removeFromPool(tk){
   delete priceCache[tk];
   persistPriceCache();
   renderPoolChips();
-  refreshAssetTickerSelect();
+  refreshAssetPoolSelect();
   if(loadedTickers().length) showStatus($('poolStatus'), tk+' removed.','ok');
   else hideStatus($('poolStatus'));
 }
 
 // Drop the entire cached pool (the data the app shows on first open lives here).
 function clearPool(){
-  if(!loadedTickers().length) return;
+  if(!loadedTickers().length && !simPool.length) return;
   priceCache={};
   persistPriceCache();
+  simPool=[];
+  persistSimPool();
   renderPoolChips();
-  refreshAssetTickerSelect();
+  refreshAssetPoolSelect();
   hideStatus($('poolStatus'));
   const inp=$('tickerPoolInput'); if(inp) inp.focus();
 }
 
-// Populate the "Add Asset → Ticker" dropdown from the loaded pool only.
-function refreshAssetTickerSelect(){
-  const sel=$('assetTickerSelect'); if(!sel) return;
+// Populate the "Add Asset" dropdown from the loaded pool: real tickers and
+// simulated assets, grouped so the user can tell them apart.
+function refreshAssetPoolSelect(){
+  const sel=$('assetPoolSelect'); if(!sel) return;
   const tks=loadedTickers();
   const prev=sel.value;
-  if(!tks.length){
-    sel.innerHTML='<option value=""> - load tickers in the Data tab first - </option>';
+  if(!tks.length && !simPool.length){
+    sel.innerHTML='<option value=""> - add data in the Data tab first - </option>';
     sel.disabled=true;
     return;
   }
   sel.disabled=false;
-  sel.innerHTML=tks.map(tk=>`<option value="${tk}">${tk}</option>`).join('');
-  if(tks.indexOf(prev)>=0) sel.value=prev;
+  let html='';
+  if(tks.length) html+='<optgroup label="Tickers (real)">'+tks.map(tk=>`<option value="t:${tk}">${tk}</option>`).join('')+'</optgroup>';
+  if(simPool.length) html+='<optgroup label="Simulated">'+simPool.map(s=>`<option value="s:${escapeHtml(s.name)}">ƒ ${escapeHtml(s.name)}</option>`).join('')+'</optgroup>';
+  sel.innerHTML=html;
+  if(prev && [...sel.options].some(o=>o.value===prev)) sel.value=prev;
 }
 
 // Loading is additive and individual tickers are removed via the chip ✕, so the
@@ -393,7 +432,8 @@ function updateBtnRow(){
   const t=document.querySelector('.ctrl-tab.active');
   const dataTab=t?t.dataset.tab==='data':true;
   ['simBtn','resetBtn'].forEach(id=>{ const b=$(id); if(b) b.style.display=dataTab?'none':''; });
-  const lb=$('loadTickersBtn'); if(lb) lb.style.display=dataTab?'':'none';
+  // The bottom "Load tickers" action only applies to the Real download mode.
+  const lb=$('loadTickersBtn'); if(lb) lb.style.display=(dataTab && (typeof dataMode==='undefined' || dataMode==='real'))?'':'none';
 }
 
 // Parse the textarea and fetch every NOT-yet-cached ticker, downloading only the
@@ -418,7 +458,7 @@ async function loadTickerPool(){
   const need=fullNeed.length+tailNeed.length;
   if(!need){
     showStatus($('poolStatus'),'All requested tickers are already cached.','ok');
-    if(inp) inp.value=''; renderPoolChips(); refreshAssetTickerSelect(); updateRateInfo();
+    if(inp) inp.value=''; renderPoolChips(); refreshAssetPoolSelect(); updateRateInfo();
     return;
   }
   if(SharedYF.getDailyRemaining()<=0){
@@ -447,7 +487,7 @@ async function loadTickerPool(){
     else showStatus($('poolStatus'),ok+' ticker(s) loaded and cached.','ok');
     if(ok && !failed.length && inp) inp.value='';
     renderPoolChips();
-    refreshAssetTickerSelect();
+    refreshAssetPoolSelect();
   } catch(e){
     showStatus($('poolStatus'),'Load failed: '+e.message,'error');
   } finally {
@@ -582,8 +622,8 @@ function loadControlsFromActive(){
   const p=getActive();
   const hasP=!!p;
   // disable/enable add-asset controls if there is no portfolio
-  refreshAssetTickerSelect();
-  ['addAssetBtn','newAssetName','assetTickerSelect','newAssetColor'].forEach(id=>{ const e=$(id); if(e) e.disabled=!hasP; });
+  refreshAssetPoolSelect();
+  ['addAssetBtn','assetPoolSelect'].forEach(id=>{ const e=$(id); if(e) e.disabled=!hasP; });
   if(!hasP){ renderAssetList(); return; }
 
   // Top-ups
@@ -730,7 +770,6 @@ function renderAssetList(){
       $(`aStd${a.id}`).addEventListener('input',e=>{ a.stdPct=parseFloat(e.target.value)||0; });
     }
   });
-  const cp=$('newAssetColor'); if(cp) cp.value=LINE_COLOR_HEX[p.assets.length % LINE_COLOR_HEX.length];
   refreshRebalPanels();
 }
 
@@ -992,39 +1031,55 @@ $('editTickersBtn').addEventListener('click', ()=>{ setPoolLocked(false); const 
 { const cb=$('clearPoolBtn'); if(cb) cb.addEventListener('click', clearPool); }
 $('tickerPoolInput').addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); loadTickerPool(); } });
 
+/* ─── DATA MODE TOGGLE (Real ↔ Simulated) ─── */
+let dataMode='real';
+function setDataMode(mode){
+  dataMode = mode==='simulated' ? 'simulated' : 'real';
+  document.querySelectorAll('#dataModeToggle .seg-btn').forEach(b=>b.classList.toggle('active', b.dataset.dmode===dataMode));
+  const real=$('dataRealPanel'), sim=$('dataSimPanel');
+  if(real) real.style.display = dataMode==='real' ? '' : 'none';
+  if(sim) sim.style.display = dataMode==='simulated' ? '' : 'none';
+  updateBtnRow();
+}
+document.querySelectorAll('#dataModeToggle .seg-btn').forEach(b=>{
+  b.addEventListener('click', ()=>setDataMode(b.dataset.dmode));
+});
+{ const addSim=$('addSimBtn'); if(addSim) addSim.addEventListener('click', ()=>{
+  const name=$('simNameInput').value;
+  const ret=parseFloat($('simReturnInput').value);
+  const std=parseFloat($('simStdInput').value);
+  const r=addSimAsset(name, Number.isFinite(ret)?ret:0, Number.isFinite(std)?std:0);
+  if(r.error){ showStatus($('simStatus'), r.error, 'error'); return; }
+  showStatus($('simStatus'), 'Simulated asset "'+name.trim()+'" added.', 'ok');
+  $('simNameInput').value='';
+  renderPoolChips();
+  refreshAssetPoolSelect();
+}); }
+
 /* ─── ADD ASSET BUTTON ─── */
+// The Assets dropdown lists the loaded pool: real tickers (value "t:TICKER") and
+// simulated assets (value "s:Name"). Adding just references the chosen pool entry.
 $('addAssetBtn').addEventListener('click', ()=>{
   if(!getActive()){ showStatus($('assetFetchStatus'),'Add a portfolio first.','error'); return; }
-  const name=$('newAssetName').value.trim();
-  const type=document.querySelector('input[name="newAssetType"]:checked')?.value||'ticker';
-  const colorHex=$('newAssetColor').value;
-  if(type==='ticker'){
-    const ticker=($('assetTickerSelect').value||'').trim().toUpperCase();
-    if(!ticker){ showStatus($('assetFetchStatus'),'Load tickers in the Data tab first, then pick one here.','error'); return; }
+  const val=($('assetPoolSelect').value||'');
+  if(!val){ showStatus($('assetFetchStatus'),'Add tickers or simulated assets in the Data tab first.','error'); return; }
+  if(val.startsWith('t:')){
+    const ticker=val.slice(2).trim().toUpperCase();
     if(!priceCache[ticker]){ showStatus($('assetFetchStatus'),ticker+' is not loaded: add it in the Data tab first.','error'); return; }
     // Price data is shared via priceCache (loaded up front in the Data tab), so
     // adding the same ticker to multiple portfolios costs no extra request.
-    const asset=addAsset({type:'ticker', ticker, name:name||ticker, colorHex});
+    const asset=addAsset({type:'ticker', ticker, name:ticker});
     asset.loaded=true;
-    $('newAssetName').value='';
     const e=priceCache[ticker];
     if(e && e.kind==='stock' && e.source==='stooq'){ showStatus($('assetFetchStatus'),'⚠️ '+ticker+' was loaded from Stooq: stock prices there are <strong>not</strong> adjusted for splits/dividends.','warn'); }
     else showStatus($('assetFetchStatus'),ticker+' added from cached data.','ok');
     renderAssetList(); renderPortfolioList();
-  } else {
-    if(!name){ showStatus($('assetFetchStatus'),'Please enter an asset name.','error'); return; }
-    addAsset({type:'custom', name, colorHex});
-    $('newAssetName').value=''; hideStatus($('assetFetchStatus')); renderPortfolioList();
+  } else if(val.startsWith('s:')){
+    const def=findSim(val.slice(2));
+    if(!def){ showStatus($('assetFetchStatus'),'That simulated asset is no longer in the pool.','error'); return; }
+    addAsset({type:'custom', name:def.name, returnPct:def.returnPct, stdPct:def.stdPct});
+    showStatus($('assetFetchStatus'),def.name+' added.','ok'); renderPortfolioList();
   }
-});
-$('newAssetName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('addAssetBtn').click(); });
-document.querySelectorAll('input[name="newAssetType"]').forEach(r=>{
-  r.addEventListener('change',()=>{
-    $('assetTickerRow').style.display=r.value==='ticker'?'':'none';
-    if(r.value==='ticker') refreshAssetTickerSelect();
-    document.querySelectorAll('#atypeOptCustom,#atypeOptTicker').forEach(o=>o.classList.remove('selected'));
-    r.closest('.radio-opt').classList.add('selected');
-  });
 });
 
 /* ─── SCHEDULE EDITOR ─── */
@@ -1491,7 +1546,7 @@ async function runSimulation(){
             showWarning('Could not load data for '+tk+(r&&r.error?': '+r.error:'')+'.');
           }
         }
-        persistPriceCache(); renderPoolChips(); refreshAssetTickerSelect(); updateRateInfo();
+        persistPriceCache(); renderPoolChips(); refreshAssetPoolSelect(); updateRateInfo();
       }catch(err){ showWarning('Could not load ticker data: '+err.message); }
     }
 
@@ -1786,7 +1841,8 @@ function exportSettings(){
       randomSeed: currentRandomSeed,
       startDate: $('startDate').value,
       endDate: $('endDate').value,
-      tickerPool: ($('tickerPoolInput')||{}).value || ''
+      tickerPool: ($('tickerPoolInput')||{}).value || '',
+      simPool: JSON.parse(JSON.stringify(simPool))
     },
     activePortfolioId,
     portfolios: clean
@@ -1824,6 +1880,7 @@ function importSettings(obj){
   if(g.startDate) $('startDate').value=g.startDate;
   if(g.endDate) $('endDate').value=g.endDate;
   if(g.tickerPool!=null){ const inp=$('tickerPoolInput'); if(inp) inp.value=g.tickerPool; }
+  if(Array.isArray(g.simPool)){ simPool=g.simPool.filter(x=>x&&x.name).map(x=>({name:x.name, returnPct:Number(x.returnPct)||0, stdPct:Math.max(0,Number(x.stdPct)||0)})); persistSimPool(); renderPoolChips(); refreshAssetPoolSelect(); }
   portfolios=(obj.portfolios||[]).map(normalizeLoadedPortfolio);
   simResults=[]; commonDates=[];
   portfolioIdCounter = portfolios.reduce((m,p)=>Math.max(m, p.id||0), 0);
@@ -1936,6 +1993,7 @@ $('resetBtn').addEventListener('click',()=>{
   portfolios=[]; portfolioIdCounter=0; activePortfolioId=null;
   simResults=[]; commonDates=[]; activeCompChartId=null; activeCompTableId=null;
   priceCache={}; tickerFetchInFlight={};
+  simPool=[]; persistSimPool();
   currentCurrencySymbol='$'; currentRandomSeed=DEFAULT_RANDOM_SEED; showTopups=true;
   compViewMode='dollar'; valueDsPairs=[]; hiddenPf.clear();
   document.querySelectorAll('#compViewToggle .seg-btn').forEach(b=>b.classList.toggle('active', b.dataset.cv==='dollar'));
@@ -1952,7 +2010,7 @@ $('resetBtn').addEventListener('click',()=>{
   $('compHoverBox').textContent='Cash and each asset stack up to total portfolio value.';
   hideStatus($('assetFetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
   const poolInp=$('tickerPoolInput'); if(poolInp) poolInp.value='';
-  setPoolLocked(false); hideStatus($('poolStatus')); renderPoolChips(); refreshAssetTickerSelect();
+  setPoolLocked(false); hideStatus($('poolStatus')); setDataMode('real'); renderPoolChips(); refreshAssetPoolSelect();
   document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
   initDefaults();
   loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();
@@ -2040,6 +2098,9 @@ function setDefaultDates(){
   $('startDate').value=isoDate(start); $('endDate').value=isoDate(end);
 }
 function initDefaults(){
+  // Seed the default simulated assets so they appear in the Assets dropdown.
+  ensureSimEntry('Equities',10,18);
+  ensureSimEntry('Bonds',4,6);
   // Two contrasting strategies to demonstrate the comparison.
   const a=addPortfolio('60/40 Balanced', PORTFOLIO_COLOR_HEX[0]);
   activePortfolioId=a.id;
@@ -2057,8 +2118,9 @@ function initDefaults(){
 
 setDefaultDates();
 loadPersistedCache();
+loadPersistedSimPool();
 renderPoolChips();
-refreshAssetTickerSelect();
+refreshAssetPoolSelect();
 updateRateInfo();
 initDefaults();
 loadControlsFromActive();
