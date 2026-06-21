@@ -1,5 +1,5 @@
 /* DCA Simulator audit harness.
-   Loads SharedTA from ../shared.js (stubbing browser globals), then replays the
+   Loads SharedTA from ../../shared.js (stubbing browser globals), then replays the
    two engines VERBATIM against the supplied real CSV data and checks accounting
    integrity invariants. Pure logic only — no DOM. */
 'use strict';
@@ -8,7 +8,7 @@ const path = require('path');
 
 /* ── 1. Load SharedTA from shared.js with browser stubs ── */
 function loadShared(){
-  const code = fs.readFileSync(path.join(__dirname,'..','shared.js'),'utf8');
+  const code = fs.readFileSync(path.join(__dirname,'..','..','shared.js'),'utf8');
   const noop = ()=>{};
   const fakeEl = new Proxy({}, { get:()=>noop, set:()=>true });
   const document = {
