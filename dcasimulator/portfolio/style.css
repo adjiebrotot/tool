@@ -99,12 +99,25 @@ body.light .weight-row.wt-total.bad .wt-name,body.light .weight-row.wt-total.bad
 /* Keep chart export buttons grouped so they don't orphan-wrap onto a new line */
 .btn-cluster{display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
 
+/* Collapsed Method summary (Rebalancing subtab): shows the chosen method with a
+   "Change Method" button so the long five-option list does not crowd the panel. */
+.method-collapsed{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--accent);background:rgba(141,187,255,.08);border-radius:9px;margin-top:6px}
+.method-collapsed-text{flex:1;min-width:0;font-size:.8rem;line-height:1.4;color:var(--muted)}
+.method-collapsed-text strong{display:block;color:var(--text);font-weight:700;font-size:.86rem;margin-bottom:1px}
+.method-change-btn{flex-shrink:0;font-size:.78rem;padding:6px 11px;white-space:nowrap}
+
 /* Rule-Based deploy triggers: one compact card per asset (Rebalancing subtab) */
 #triggerTableWrap{display:flex;flex-direction:column;gap:8px;margin-top:4px}
 .trigger-card{border:1px solid var(--border);border-radius:10px;padding:8px 10px;background:var(--input-bg)}
 .trigger-head{display:flex;align-items:center;gap:7px;font-size:.84rem;font-weight:700;color:var(--text);margin-bottom:2px}
-.trigger-head .wt-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.trigger-head .wt-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.trigger-head .tip-icon{flex-shrink:0}
 .trigger-reserve-tag{margin-left:auto;font-size:.7rem;font-weight:700;color:var(--gold);border:1px solid var(--gold);border-radius:6px;padding:1px 7px;flex-shrink:0}
-.trigger-card .param-row{padding:3px 0}
-.trigger-card .param-row .num-input{max-width:78px}
+/* Keep each control on its own line; let selects grow so long option labels
+   (e.g. "Price % move", "Falls by", "Month open") are no longer clipped, while
+   number inputs stay compact. */
+.trigger-card .param-row{padding:3px 0;flex-wrap:nowrap}
 .trigger-card .param-row>label{min-width:66px}
+.trigger-card .param-row input.num-input{max-width:78px}
+.trigger-card .param-row select.num-input{flex:1 1 auto;min-width:0;width:auto;max-width:none}
+.trigger-card .tech-eom{padding:6px 0 2px}
