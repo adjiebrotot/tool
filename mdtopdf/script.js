@@ -34,6 +34,7 @@
   // ── State ──
   const state = {
     text: '',
+    filename: 'document.md',
     latex: true,
     code: true,
     diagram: true,
@@ -43,7 +44,8 @@
 
   // ── Element refs ──
   let mdBody, docScroll, workspace, dropZone, fileInput, themeToggle,
-      pdfStage, overlay, overlayMsg, hljsLight, hljsDark, editToggle, mdEditor;
+      pdfStage, overlay, overlayMsg, hljsLight, hljsDark, editToggle, mdEditor,
+      printTip;
 
   /* ────────────────────────────────────────────────────────────────
      THEME
@@ -596,7 +598,10 @@
   function buildPages(sourceBody) {
     pdfStage.innerHTML = '';
     newPage();
-    const blocks = Array.from(sourceBody.children);
+    // The on-screen inline TOC is replaced by dedicated TOC page(s) (built
+    // below), so keep it out of the flowing content here.
+    const blocks = Array.from(sourceBody.children)
+      .filter(b => !(b.classList && b.classList.contains('md-toc')));
     blocks.forEach(b => {
       // Unwrap the screen-only drag/scroll box so the PDF paginates the bare
       // table exactly as before (header repetition, shrink-to-fit, etc.).
@@ -609,6 +614,125 @@
     // Drop a trailing empty page if one was created.
     const last = pdfStage.lastElementChild;
     if (last && !last.querySelector('.pdf-page-content').childElementCount) last.remove();
+    namespacePdfAnchors();
+
+    // Build the dedicated Table of Contents on its own page(s), prepended to the
+    // document, with the page number each section lands on (requirement 1).
+    if (state.toc) {
+      const contentPages = Array.from(pdfStage.querySelectorAll('.pdf-page'));
+      buildTocPages(contentPages);
+    }
+  }
+
+  // Build dedicated Table-of-Contents page(s) and move them to the front of the
+  // document. Each entry links to its heading and shows the absolute page number
+  // that section starts on (counting the TOC pages themselves, which come first).
+  function buildTocPages(contentPages) {
+    // Collect headings in document order, noting which CONTENT page each starts
+    // on (0-based). Split headings keep their id only on the first segment.
+    const heads = [];
+    contentPages.forEach((page, ci) => {
+      page.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]').forEach(h => {
+        heads.push({ id: h.id, level: +h.tagName.charAt(1), text: h.textContent, ci });
+      });
+    });
+    if (heads.length < 2) return; // mirror the inline-TOC threshold
+
+    const title = document.createElement('div');
+    title.className = 'pdf-toc-title';
+    title.textContent = 'Table of Contents';
+
+    const items = heads.map(h => {
+      const li = document.createElement('li');
+      li.className = 'lvl-' + h.level;
+      const a = document.createElement('a');
+      a.className = 'pdf-toc-label';
+      a.href = '#' + h.id;
+      a.textContent = h.text;
+      const dots = document.createElement('span');
+      dots.className = 'pdf-toc-dots';
+      const num = document.createElement('span');
+      num.className = 'pdf-toc-pageno';
+      num.dataset.ci = h.ci;        // resolved to an absolute page number below
+      num.textContent = '0';
+      li.appendChild(a);
+      li.appendChild(dots);
+      li.appendChild(num);
+      return li;
+    });
+
+    // Flow the TOC onto fresh page(s): the title sits atop the first TOC page,
+    // entries fill down and continue onto further pages as needed.
+    newPage();
+    ctx.content.appendChild(title);
+    function freshTocList() {
+      const ul = document.createElement('ul');
+      ul.className = 'pdf-toc-list';
+      ctx.content.appendChild(ul);
+      return ul;
+    }
+    let ul = freshTocList();
+    for (const li of items) {
+      ul.appendChild(li);
+      if (overflowing()) {
+        ul.removeChild(li);
+        newPage();
+        ul = freshTocList();
+        ul.appendChild(li);
+      }
+    }
+
+    // The pages just appended (beyond the content pages) are the TOC pages —
+    // move them, in order, to the very front of the document.
+    const allPages = Array.from(pdfStage.querySelectorAll('.pdf-page'));
+    const tocPages = allPages.slice(contentPages.length);
+    const tocPageCount = tocPages.length;
+    const firstContent = contentPages[0];
+    tocPages.forEach(p => pdfStage.insertBefore(p, firstContent));
+
+    // Now that the TOC's own length is known, resolve each entry's absolute page
+    // number: TOC pages occupy 1..tocPageCount, content follows.
+    pdfStage.querySelectorAll('.pdf-toc-pageno').forEach(span => {
+      const ci = parseInt(span.dataset.ci, 10) || 0;
+      span.textContent = String(tocPageCount + ci + 1);
+    });
+  }
+
+  // Stamp a centred page number (1, 2, 3, …) on every page (requirement 2).
+  function addPageNumbers() {
+    const pages = Array.from(pdfStage.querySelectorAll('.pdf-page'));
+    pages.forEach((page, i) => {
+      const n = document.createElement('div');
+      n.className = 'pdf-pagenum';
+      n.textContent = String(i + 1);
+      page.appendChild(n);
+    });
+  }
+
+  // Heading ids are cloned verbatim from #mdBody, so the same id now exists both
+  // on the hidden on-screen copy and on the printed pages. With duplicate ids the
+  // browser resolves a Table-of-Contents fragment link to the FIRST match in DOM
+  // order — the hidden on-screen heading — which renders on no page, so the PDF
+  // link goes nowhere. Re-namespacing every id (and matching TOC href) inside the
+  // print stage guarantees each "#…" link resolves to the printed heading, giving
+  // a genuinely clickable Table of Contents in the exported PDF.
+  function namespacePdfAnchors() {
+    const PFX = 'pdfdoc-';
+    const seen = new Set();
+    // Only re-id headings — they are the sole link targets. (Mermaid SVGs carry
+    // ids referenced internally via url(#…); leave those untouched.)
+    pdfStage.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]').forEach(h => {
+      // A split heading can repeat its id across segments; keep the first so the
+      // link lands at the start of the section.
+      if (seen.has(h.id)) { h.removeAttribute('id'); return; }
+      seen.add(h.id);
+      h.id = PFX + h.id;
+    });
+    // Point fragment links (Table of Contents + in-text heading links) at them.
+    pdfStage.querySelectorAll('a[href^="#"]').forEach(a => {
+      const slug = decodeURIComponent(a.getAttribute('href').slice(1));
+      if (seen.has(slug)) a.setAttribute('href', '#' + PFX + slug);
+    });
   }
 
   function addWatermarks() {
@@ -644,8 +768,56 @@
     return new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
   }
 
+  /* ── Markdown download (Task 2) ──
+     Saves the CURRENT markdown — including any unsaved edits in the editor —
+     as a .md file, entirely in the browser. */
+  function downloadMarkdown() {
+    const text = state.editing ? mdEditor.value : state.text;
+    if (!text) return;
+    const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = mdFilename();
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  // Derive a sensible .md filename from the loaded document.
+  function mdFilename() {
+    let name = (state.filename || 'document.md').replace(/[\\/:*?"<>|]+/g, '').trim() || 'document';
+    if (!/\.(md|markdown|mdown|mkd|txt)$/i.test(name)) name += '.md';
+    return name;
+  }
+
+  /* ── PDF download (Task 1 / 3) ──
+     A real, paginated PDF with selectable text and a clickable Table of
+     Contents is produced by the browser's native print pipeline — provided
+     the user picks a PDF *writer* ("Save as PDF") rather than a rasterising
+     system *printer* ("Microsoft Print to PDF"). We surface that guidance in a
+     one-time tip before opening the print dialog. */
+  function requestPDF() {
+    if (state.editing) setEditing(false);
+    if (!state.text) return;
+    let skip = false;
+    try { skip = localStorage.getItem('md2pdf-skiptip') === '1'; } catch (e) {}
+    if (skip || !printTip) { runPrint(); return; }
+    const skipBox = document.getElementById('printTipSkip');
+    if (skipBox) skipBox.checked = false;
+    printTip.classList.add('visible');
+    printTip.setAttribute('aria-hidden', 'false');
+  }
+
+  function closePrintTip() {
+    if (!printTip) return;
+    printTip.classList.remove('visible');
+    printTip.setAttribute('aria-hidden', 'true');
+  }
+
   let afterPrintBound = null;
-  async function downloadPDF() {
+  async function runPrint() {
     if (state.editing) setEditing(false);
     if (!state.text) return;
     showOverlay('Laying out pages…');
@@ -656,6 +828,7 @@
     try {
       buildPages(mdBody);
       addWatermarks();
+      addPageNumbers();
       await raf2();
     } catch (e) {
       console.error(e);
@@ -715,6 +888,7 @@
 
   function handleFile(file) {
     if (!file) return;
+    state.filename = file.name || 'document.md';
     const reader = new FileReader();
     reader.onload = e => loadText(String(e.target.result || ''));
     reader.readAsText(file);
@@ -864,11 +1038,13 @@
 
     document.getElementById('sampleBtn').addEventListener('click', e => {
       e.stopPropagation();
+      state.filename = 'sample.md';
       loadText(SAMPLE);
     });
 
     document.getElementById('newFileBtn').addEventListener('click', () => {
       state.text = '';
+      state.filename = 'document.md';
       state.editing = false;
       docScroll.classList.remove('editing');
       editToggle.textContent = '✏️ Edit';
@@ -882,7 +1058,24 @@
 
     editToggle.addEventListener('click', () => setEditing(!state.editing));
 
-    document.getElementById('downloadBtn').addEventListener('click', downloadPDF);
+    document.getElementById('downloadBtn').addEventListener('click', requestPDF);
+    document.getElementById('downloadMdBtn').addEventListener('click', downloadMarkdown);
+
+    // Print-tip modal wiring.
+    printTip = document.getElementById('printTip');
+    document.getElementById('printTipGo').addEventListener('click', () => {
+      const skipBox = document.getElementById('printTipSkip');
+      if (skipBox && skipBox.checked) {
+        try { localStorage.setItem('md2pdf-skiptip', '1'); } catch (e) {}
+      }
+      closePrintTip();
+      runPrint();
+    });
+    document.getElementById('printTipCancel').addEventListener('click', closePrintTip);
+    printTip.addEventListener('click', e => { if (e.target === printTip) closePrintTip(); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && printTip.classList.contains('visible')) closePrintTip();
+    });
 
     // Feature toggles → re-render.
     const toggleMap = { tgLatex: 'latex', tgCode: 'code', tgDiagram: 'diagram', tgToc: 'toc' };
