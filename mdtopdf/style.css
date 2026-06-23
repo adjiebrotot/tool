@@ -366,6 +366,65 @@ body {
   margin: 0 0 0.6em;
 }
 
+/* Centred page number on every PDF page */
+.pdf-pagenum {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 30px;
+  z-index: 2;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: #9aa7bd;
+  pointer-events: none;
+}
+
+/* Dedicated Table-of-Contents page(s). Selectors are scoped under .md-body so
+   they outrank the generic .md-body ul/li/a typography rules. */
+.md-body .pdf-toc-title {
+  font-weight: 800;
+  font-size: 1.7rem;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.9em;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid var(--border);
+}
+.md-body .pdf-toc-list { list-style: none; margin: 0; padding: 0; }
+.md-body .pdf-toc-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0.5em 0;
+  line-height: 1.4;
+}
+.md-body .pdf-toc-list li.lvl-1 { font-weight: 700; }
+.md-body .pdf-toc-list li.lvl-2 { padding-left: 0; }
+.md-body .pdf-toc-list li.lvl-3 { padding-left: 18px; }
+.md-body .pdf-toc-list li.lvl-4 { padding-left: 36px; }
+.md-body .pdf-toc-list li.lvl-5,
+.md-body .pdf-toc-list li.lvl-6 { padding-left: 54px; font-size: 0.95em; }
+.md-body .pdf-toc-label {
+  flex: 0 1 auto;
+  color: var(--text);
+  text-decoration: none;
+}
+.md-body .pdf-toc-dots {
+  flex: 1 1 auto;
+  min-width: 14px;
+  border-bottom: 1px dotted var(--muted);
+  position: relative;
+  bottom: 0.25em;
+  opacity: 0.55;
+}
+.md-body .pdf-toc-pageno {
+  flex: 0 0 auto;
+  padding-left: 4px;
+  color: var(--muted);
+  font-size: 0.9em;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ── PRINT TIP MODAL ── */
 #printTip {
   display: none;

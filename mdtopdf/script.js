@@ -598,7 +598,10 @@
   function buildPages(sourceBody) {
     pdfStage.innerHTML = '';
     newPage();
-    const blocks = Array.from(sourceBody.children);
+    // The on-screen inline TOC is replaced by dedicated TOC page(s) (built
+    // below), so keep it out of the flowing content here.
+    const blocks = Array.from(sourceBody.children)
+      .filter(b => !(b.classList && b.classList.contains('md-toc')));
     blocks.forEach(b => {
       // Unwrap the screen-only drag/scroll box so the PDF paginates the bare
       // table exactly as before (header repetition, shrink-to-fit, etc.).
@@ -612,6 +615,98 @@
     const last = pdfStage.lastElementChild;
     if (last && !last.querySelector('.pdf-page-content').childElementCount) last.remove();
     namespacePdfAnchors();
+
+    // Build the dedicated Table of Contents on its own page(s), prepended to the
+    // document, with the page number each section lands on (requirement 1).
+    if (state.toc) {
+      const contentPages = Array.from(pdfStage.querySelectorAll('.pdf-page'));
+      buildTocPages(contentPages);
+    }
+  }
+
+  // Build dedicated Table-of-Contents page(s) and move them to the front of the
+  // document. Each entry links to its heading and shows the absolute page number
+  // that section starts on (counting the TOC pages themselves, which come first).
+  function buildTocPages(contentPages) {
+    // Collect headings in document order, noting which CONTENT page each starts
+    // on (0-based). Split headings keep their id only on the first segment.
+    const heads = [];
+    contentPages.forEach((page, ci) => {
+      page.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]').forEach(h => {
+        heads.push({ id: h.id, level: +h.tagName.charAt(1), text: h.textContent, ci });
+      });
+    });
+    if (heads.length < 2) return; // mirror the inline-TOC threshold
+
+    const title = document.createElement('div');
+    title.className = 'pdf-toc-title';
+    title.textContent = 'Table of Contents';
+
+    const items = heads.map(h => {
+      const li = document.createElement('li');
+      li.className = 'lvl-' + h.level;
+      const a = document.createElement('a');
+      a.className = 'pdf-toc-label';
+      a.href = '#' + h.id;
+      a.textContent = h.text;
+      const dots = document.createElement('span');
+      dots.className = 'pdf-toc-dots';
+      const num = document.createElement('span');
+      num.className = 'pdf-toc-pageno';
+      num.dataset.ci = h.ci;        // resolved to an absolute page number below
+      num.textContent = '0';
+      li.appendChild(a);
+      li.appendChild(dots);
+      li.appendChild(num);
+      return li;
+    });
+
+    // Flow the TOC onto fresh page(s): the title sits atop the first TOC page,
+    // entries fill down and continue onto further pages as needed.
+    newPage();
+    ctx.content.appendChild(title);
+    function freshTocList() {
+      const ul = document.createElement('ul');
+      ul.className = 'pdf-toc-list';
+      ctx.content.appendChild(ul);
+      return ul;
+    }
+    let ul = freshTocList();
+    for (const li of items) {
+      ul.appendChild(li);
+      if (overflowing()) {
+        ul.removeChild(li);
+        newPage();
+        ul = freshTocList();
+        ul.appendChild(li);
+      }
+    }
+
+    // The pages just appended (beyond the content pages) are the TOC pages —
+    // move them, in order, to the very front of the document.
+    const allPages = Array.from(pdfStage.querySelectorAll('.pdf-page'));
+    const tocPages = allPages.slice(contentPages.length);
+    const tocPageCount = tocPages.length;
+    const firstContent = contentPages[0];
+    tocPages.forEach(p => pdfStage.insertBefore(p, firstContent));
+
+    // Now that the TOC's own length is known, resolve each entry's absolute page
+    // number: TOC pages occupy 1..tocPageCount, content follows.
+    pdfStage.querySelectorAll('.pdf-toc-pageno').forEach(span => {
+      const ci = parseInt(span.dataset.ci, 10) || 0;
+      span.textContent = String(tocPageCount + ci + 1);
+    });
+  }
+
+  // Stamp a centred page number (1, 2, 3, …) on every page (requirement 2).
+  function addPageNumbers() {
+    const pages = Array.from(pdfStage.querySelectorAll('.pdf-page'));
+    pages.forEach((page, i) => {
+      const n = document.createElement('div');
+      n.className = 'pdf-pagenum';
+      n.textContent = String(i + 1);
+      page.appendChild(n);
+    });
   }
 
   // Heading ids are cloned verbatim from #mdBody, so the same id now exists both
@@ -733,6 +828,7 @@
     try {
       buildPages(mdBody);
       addWatermarks();
+      addPageNumbers();
       await raf2();
     } catch (e) {
       console.error(e);
