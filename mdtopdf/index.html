@@ -146,7 +146,8 @@
     <div class="tb-actions">
       <button class="btn-secondary" id="newFileBtn" type="button">📂 New file</button>
       <button class="btn-secondary" id="editToggleBtn" type="button">✏️ Edit</button>
-      <button class="btn-primary" id="downloadBtn" type="button">⬇ Download PDF</button>
+      <button class="btn-secondary" id="downloadMdBtn" type="button">⬇ MD</button>
+      <button class="btn-primary" id="downloadBtn" type="button">⬇ PDF</button>
     </div>
   </div>
 
@@ -162,6 +163,26 @@
 
 <!-- ── OFFSCREEN PDF PAGINATION STAGE ── -->
 <div id="pdfStage" aria-hidden="true"></div>
+
+<!-- ── PRINT TIP MODAL (how to get a selectable / clickable PDF) ── -->
+<div id="printTip" aria-hidden="true">
+  <div class="print-tip-card" role="dialog" aria-modal="true" aria-labelledby="printTipTitle">
+    <div class="print-tip-title" id="printTipTitle">📄 Save a real, selectable PDF</div>
+    <p class="print-tip-text">
+      A print dialog will open next. For text you can <strong>select, search &amp; copy</strong>
+      and a <strong>clickable Table of Contents</strong>, set the <strong>Destination</strong> to:
+    </p>
+    <div class="print-tip-do">✓ “Save as PDF” &nbsp;<span>(Chrome / Edge)</span> — or “Save to PDF” / print from Firefox &amp; Safari</div>
+    <div class="print-tip-dont">✕ Avoid “Microsoft Print to PDF” &amp; other system <em>printer</em> drivers — they flatten the page into an image, so the text can’t be selected or searched and the contents aren’t clickable.</div>
+    <label class="print-tip-skip">
+      <input type="checkbox" id="printTipSkip"> Don’t show this again
+    </label>
+    <div class="print-tip-actions">
+      <button class="btn-secondary" id="printTipCancel" type="button">Cancel</button>
+      <button class="btn-primary" id="printTipGo" type="button">Open print dialog</button>
+    </div>
+  </div>
+</div>
 
 <!-- ── PDF PROGRESS OVERLAY ── -->
 <div id="pdfOverlay">

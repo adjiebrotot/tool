@@ -34,6 +34,7 @@
   // ── State ──
   const state = {
     text: '',
+    filename: 'document.md',
     latex: true,
     code: true,
     diagram: true,
@@ -43,7 +44,8 @@
 
   // ── Element refs ──
   let mdBody, docScroll, workspace, dropZone, fileInput, themeToggle,
-      pdfStage, overlay, overlayMsg, hljsLight, hljsDark, editToggle, mdEditor;
+      pdfStage, overlay, overlayMsg, hljsLight, hljsDark, editToggle, mdEditor,
+      printTip;
 
   /* ────────────────────────────────────────────────────────────────
      THEME
@@ -609,6 +611,33 @@
     // Drop a trailing empty page if one was created.
     const last = pdfStage.lastElementChild;
     if (last && !last.querySelector('.pdf-page-content').childElementCount) last.remove();
+    namespacePdfAnchors();
+  }
+
+  // Heading ids are cloned verbatim from #mdBody, so the same id now exists both
+  // on the hidden on-screen copy and on the printed pages. With duplicate ids the
+  // browser resolves a Table-of-Contents fragment link to the FIRST match in DOM
+  // order — the hidden on-screen heading — which renders on no page, so the PDF
+  // link goes nowhere. Re-namespacing every id (and matching TOC href) inside the
+  // print stage guarantees each "#…" link resolves to the printed heading, giving
+  // a genuinely clickable Table of Contents in the exported PDF.
+  function namespacePdfAnchors() {
+    const PFX = 'pdfdoc-';
+    const seen = new Set();
+    // Only re-id headings — they are the sole link targets. (Mermaid SVGs carry
+    // ids referenced internally via url(#…); leave those untouched.)
+    pdfStage.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]').forEach(h => {
+      // A split heading can repeat its id across segments; keep the first so the
+      // link lands at the start of the section.
+      if (seen.has(h.id)) { h.removeAttribute('id'); return; }
+      seen.add(h.id);
+      h.id = PFX + h.id;
+    });
+    // Point fragment links (Table of Contents + in-text heading links) at them.
+    pdfStage.querySelectorAll('a[href^="#"]').forEach(a => {
+      const slug = decodeURIComponent(a.getAttribute('href').slice(1));
+      if (seen.has(slug)) a.setAttribute('href', '#' + PFX + slug);
+    });
   }
 
   function addWatermarks() {
@@ -644,8 +673,56 @@
     return new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
   }
 
+  /* ── Markdown download (Task 2) ──
+     Saves the CURRENT markdown — including any unsaved edits in the editor —
+     as a .md file, entirely in the browser. */
+  function downloadMarkdown() {
+    const text = state.editing ? mdEditor.value : state.text;
+    if (!text) return;
+    const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = mdFilename();
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  // Derive a sensible .md filename from the loaded document.
+  function mdFilename() {
+    let name = (state.filename || 'document.md').replace(/[\\/:*?"<>|]+/g, '').trim() || 'document';
+    if (!/\.(md|markdown|mdown|mkd|txt)$/i.test(name)) name += '.md';
+    return name;
+  }
+
+  /* ── PDF download (Task 1 / 3) ──
+     A real, paginated PDF with selectable text and a clickable Table of
+     Contents is produced by the browser's native print pipeline — provided
+     the user picks a PDF *writer* ("Save as PDF") rather than a rasterising
+     system *printer* ("Microsoft Print to PDF"). We surface that guidance in a
+     one-time tip before opening the print dialog. */
+  function requestPDF() {
+    if (state.editing) setEditing(false);
+    if (!state.text) return;
+    let skip = false;
+    try { skip = localStorage.getItem('md2pdf-skiptip') === '1'; } catch (e) {}
+    if (skip || !printTip) { runPrint(); return; }
+    const skipBox = document.getElementById('printTipSkip');
+    if (skipBox) skipBox.checked = false;
+    printTip.classList.add('visible');
+    printTip.setAttribute('aria-hidden', 'false');
+  }
+
+  function closePrintTip() {
+    if (!printTip) return;
+    printTip.classList.remove('visible');
+    printTip.setAttribute('aria-hidden', 'true');
+  }
+
   let afterPrintBound = null;
-  async function downloadPDF() {
+  async function runPrint() {
     if (state.editing) setEditing(false);
     if (!state.text) return;
     showOverlay('Laying out pages…');
@@ -715,6 +792,7 @@
 
   function handleFile(file) {
     if (!file) return;
+    state.filename = file.name || 'document.md';
     const reader = new FileReader();
     reader.onload = e => loadText(String(e.target.result || ''));
     reader.readAsText(file);
@@ -864,11 +942,13 @@
 
     document.getElementById('sampleBtn').addEventListener('click', e => {
       e.stopPropagation();
+      state.filename = 'sample.md';
       loadText(SAMPLE);
     });
 
     document.getElementById('newFileBtn').addEventListener('click', () => {
       state.text = '';
+      state.filename = 'document.md';
       state.editing = false;
       docScroll.classList.remove('editing');
       editToggle.textContent = '✏️ Edit';
@@ -882,7 +962,24 @@
 
     editToggle.addEventListener('click', () => setEditing(!state.editing));
 
-    document.getElementById('downloadBtn').addEventListener('click', downloadPDF);
+    document.getElementById('downloadBtn').addEventListener('click', requestPDF);
+    document.getElementById('downloadMdBtn').addEventListener('click', downloadMarkdown);
+
+    // Print-tip modal wiring.
+    printTip = document.getElementById('printTip');
+    document.getElementById('printTipGo').addEventListener('click', () => {
+      const skipBox = document.getElementById('printTipSkip');
+      if (skipBox && skipBox.checked) {
+        try { localStorage.setItem('md2pdf-skiptip', '1'); } catch (e) {}
+      }
+      closePrintTip();
+      runPrint();
+    });
+    document.getElementById('printTipCancel').addEventListener('click', closePrintTip);
+    printTip.addEventListener('click', e => { if (e.target === printTip) closePrintTip(); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && printTip.classList.contains('visible')) closePrintTip();
+    });
 
     // Feature toggles → re-render.
     const toggleMap = { tgLatex: 'latex', tgCode: 'code', tgDiagram: 'diagram', tgToc: 'toc' };
