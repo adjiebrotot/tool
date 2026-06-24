@@ -448,8 +448,8 @@ function renderSimpleEarn(area,from,to){
   <div class="target-row">
     <span style="font-size:0.85rem;color:var(--muted);">Target:</span>
     <div class="seg-group" id="targetGroup">
-      <button class="seg-btn ${S.savingsTarget==='ratio'?'active':''}" data-val="ratio">Same savings ratio</button>
-      <button class="seg-btn ${S.savingsTarget==='nominal'?'active':''}" data-val="nominal">Same nominal savings</button>
+      <button class="seg-btn ${S.savingsTarget==='ratio'?'active':''}" data-val="ratio">Savings ratio</button>
+      <button class="seg-btn ${S.savingsTarget==='nominal'?'active':''}" data-val="nominal">Nominal savings</button>
     </div>
   </div>
   <div class="compare-cols">
@@ -611,9 +611,10 @@ function buildDetailHTML(fromCity,toCities){
       </div>
     </div>
     ${S.goal==='earn'?`<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;">
+      <span style="font-size:0.85rem;color:var(--muted);">Target:</span>
       <div class="seg-group" id="dtTargetGroup">
-        <button class="seg-btn ${S.savingsTarget==='ratio'?'active':''}" data-val="ratio">Same savings ratio</button>
-        <button class="seg-btn ${S.savingsTarget==='nominal'?'active':''}" data-val="nominal">Same nominal savings</button>
+        <button class="seg-btn ${S.savingsTarget==='ratio'?'active':''}" data-val="ratio">Savings ratio</button>
+        <button class="seg-btn ${S.savingsTarget==='nominal'?'active':''}" data-val="nominal">Nominal savings</button>
       </div>
     </div>`:''}
   </div>`;
