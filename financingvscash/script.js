@@ -324,7 +324,9 @@ function renderMainChart(results){
   });
   const le=$('chartLegend');le.innerHTML='';legendItems.forEach(l=>{const d=document.createElement('div');d.className='legend-item';d.innerHTML=`<span class="dot" style="background:${l.color};${l.dash?'border:2px dashed '+l.color+';background:transparent;':''}"></span><span>${l.label}</span>`;le.appendChild(d);});
   const gc=cssVar('--chart-grid'),mc=cssVar('--chart-text'),tc=cssVar('--text');
-  const cfg={type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>`${xAxisLabel} ${c[0].label}`,label:c=>`  ${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`},backgroundColor:'#1e1e2e',titleColor:tc,bodyColor:mc,borderColor:gc,borderWidth:1,padding:10,onAfterBody:items=>{if(!items.length)return;$('hoverBox').textContent=`${xAxisLabel} ${items[0].label}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  ');}},zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},scales:{x:{title:{display:true,text:xAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,maxTicksLimit:12,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:yAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
+  const tipLight=document.body.classList.contains('light');
+  const tipBg=tipLight?'#FFFFFF':'#1e1e2e',tipTitle=tipLight?'#2D3436':'#EAF1FF',tipBody=tipLight?'#4A5A6A':'#A8B6CF',tipBorder=tipLight?'#D4DEEF':gc;
+  const cfg={type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>`${xAxisLabel} ${c[0].label}`,label:c=>`  ${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`},backgroundColor:tipBg,titleColor:tipTitle,bodyColor:tipBody,borderColor:tipBorder,borderWidth:1,padding:10,onAfterBody:items=>{if(!items.length)return;$('hoverBox').textContent=`${xAxisLabel} ${items[0].label}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  ');}},zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},scales:{x:{title:{display:true,text:xAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,maxTicksLimit:12,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:yAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
   if(chartInstance){chartInstance.data=cfg.data;chartInstance.options.scales.x.ticks.color=mc;chartInstance.options.scales.x.grid.color=gc;chartInstance.options.scales.x.title.color=mc;chartInstance.options.scales.x.title.text=xAxisLabel;chartInstance.options.scales.y.ticks.color=mc;chartInstance.options.scales.y.grid.color=gc;chartInstance.options.scales.y.title.color=mc;chartInstance.options.scales.y.title.text=yAxisLabel;chartInstance.update('none');}
   else chartInstance=new Chart($('chartCanvas'),cfg);
 }
@@ -370,7 +372,24 @@ function renderAmortTabs(results){
   h+='</tbody></table>';$('amortTableWrap').innerHTML=h;
 }
 
-function updateSensScenarioDropdown(){const s=$('sensScenario'),p=s.value;s.innerHTML='';scenarios.forEach((sc,i)=>{const o=document.createElement('option');o.value=i;o.textContent=sc.name;s.appendChild(o);});if(p&&parseInt(p)<scenarios.length)s.value=p;}
+function updateSensScenarioDropdown(){const s=$('sensScenario'),p=s.value;s.innerHTML='';scenarios.forEach((sc,i)=>{const o=document.createElement('option');o.value=i;o.textContent=sc.name;s.appendChild(o);});if(p&&parseInt(p)<scenarios.length)s.value=p;updateSensTermLabels();}
+
+// The "Term" sweep variable is expressed in the selected scenario's repayment
+// periods (weeks/months/years) rather than a fixed unit of years.
+function sensSelectedFreq(){const sc=scenarios[parseInt($('sensScenario').value)];return sc?sc.freq:'monthly';}
+function updateSensTermLabels(){
+  const unit=termUnitLabel(sensSelectedFreq());
+  const xo=$('sensVarXTermOpt'),yo=$('sensVarYTermOpt');
+  if(xo)xo.textContent='Term ('+unit+')';
+  if(yo)yo.textContent='Term ('+unit+')';
+}
+function defaultAxisRange(vn,freq){
+  if(vn==='term')return{weekly:[52,364],fortnightly:[26,182],monthly:[12,84],yearly:[1,10]}[freq]||[12,84];
+  if(vn==='financeRate')return[1,10];
+  if(vn==='riskFreeRate')return[1,8];
+  if(vn==='downPayment')return[0,50];
+  return[1,10];
+}
 
 /* ─── Sensitivity Engine ─── */
 function runSensitivity(){
@@ -387,7 +406,7 @@ function runSensitivity(){
     if(vn==='financeRate')m.financeRate=val;
     else if(vn==='riskFreeRate'){/* now a global, override via closure */m._rfOverride=val;}
     else if(vn==='downPayment')m.downPaymentPct=Math.min(100,Math.max(0,val));
-    else if(vn==='termYears')m.termPeriods=Math.max(1,Math.round(Math.max(0.25,val)*periodsPerYear(m.freq)));
+    else if(vn==='term')m.termPeriods=Math.max(1,Math.round(val));
     return m;
   }
   function getNetBenefit(m,pc,ac,inflR,inflOn,obj){
@@ -531,6 +550,9 @@ document.querySelectorAll('.ctrl-tab').forEach(btn=>{btn.addEventListener('click
 $('mode2d').addEventListener('click',()=>{sensMode='2d';$('mode2d').classList.add('active');$('mode3d').classList.remove('active');$('sensYBlock').style.display='none';});
 $('mode3d').addEventListener('click',()=>{sensMode='3d';$('mode3d').classList.add('active');$('mode2d').classList.remove('active');$('sensYBlock').style.display='';});
 $('runSensBtn').addEventListener('click',runSensitivity);
+$('sensScenario').addEventListener('change',updateSensTermLabels);
+$('sensVarX').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarX').value,sensSelectedFreq());$('sensXStart').value=a;$('sensXEnd').value=b;});
+$('sensVarY').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarY').value,sensSelectedFreq());$('sensYStart').value=a;$('sensYEnd').value=b;});
 
 $('themeToggle').addEventListener('click',()=>{document.body.classList.toggle('light');$('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';if(chartInstance){chartInstance.destroy();chartInstance=null;}if(sensChartInstance){sensChartInstance.destroy();sensChartInstance=null;}rerender();});
 $('chartResetZoom').addEventListener('click',()=>{if(chartInstance)chartInstance.resetZoom();});

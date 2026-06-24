@@ -152,7 +152,7 @@
     <button class="btn-primary btn-sm" id="addScenarioBtn" style="width:100%;margin-bottom:12px;">+ Add Scenario</button>
     <div id="scenarioEditor" style="display:none;">
       <h3 id="editorTitle">Edit Scenario</h3>
-      <div class="field-row"><div class="field-label"><span class="tip-wrap">Scenario Name <i class="tip-icon" data-tip="A label to identify this financing option in charts and tables.">?</i></span></div><input class="num-input" id="scName" type="text" value=""/></div>
+      <div class="field-row"><div class="field-label">Scenario Name</div><input class="num-input" id="scName" type="text" value=""/></div>
       <div class="slider-block">
         <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Finance Rate (annual %) <i class="tip-icon" data-tip="The annual interest rate on the loan. Used with compound-period conversion to calculate exact periodic payments.">?</i></span></div><div class="slider-value" id="scRateVal">5.00%</div></div>
         <input id="scRate" type="range" min="0" max="30" step="0.1" value="5"/>
@@ -161,20 +161,26 @@
         <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment (% of purchase cost) <i class="tip-icon" data-tip="The share of purchase cost paid upfront. 0% means full financing. 100% means the purchase is fully paid in cash, so no loan is needed.">?</i></span></div><div class="slider-value" id="scDownVal">0%</div></div>
         <input id="scDownPct" type="range" min="0" max="100" step="1" value="0"/>
       </div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Repayment Frequency <i class="tip-icon" data-tip="How often you make loan payments. Affects the period rate (compound-converted from annual) and the term unit shown below.">?</i></span></div>
-        <select class="sel-input" id="scFreq"><option value="weekly">Weekly</option><option value="fortnightly">Fortnightly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select>
+      <div class="field-group">
+        <div class="group-title">Repayment Term</div>
+        <div class="field-row">
+          <div class="field-label"><span class="tip-wrap">Repayment Frequency <i class="tip-icon" data-tip="How often you make loan payments. Affects the period rate (compound-converted from annual) and the term unit shown below.">?</i></span></div>
+          <select class="sel-input" id="scFreq"><option value="weekly">Weekly</option><option value="fortnightly">Fortnightly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select>
+        </div>
+        <div class="field-row">
+          <div class="field-label"><span class="tip-wrap" id="termLabel">Term (months) <i class="tip-icon" data-tip="The number of repayment periods. Shown in weeks for weekly/fortnightly, months for monthly, or years for yearly frequency.">?</i></span></div>
+          <input class="num-input" id="scTerm" type="number" min="1" max="3000" step="1" value="60"/>
+          <div class="field-sub" id="termSub">Number of monthly payments (e.g. 60 = 5 years).</div>
+        </div>
       </div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap" id="termLabel">Term (months) <i class="tip-icon" data-tip="The number of repayment periods. Shown in weeks for weekly/fortnightly, months for monthly, or years for yearly frequency.">?</i></span></div>
-        <input class="num-input" id="scTerm" type="number" min="1" max="3000" step="1" value="60"/>
-        <div class="field-sub" id="termSub">Number of monthly payments (e.g. 60 = 5 years).</div>
-      </div>
-      <div class="field-row"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="An upfront fee charged to set up the loan. Can be a fixed amount or a percentage of the financed amount. Reduces your investable cash at the start.">?</i></span></div>
-        <div class="inline-row"><input class="num-input fmt-num" id="scFeeAmt" type="text" inputmode="decimal" value="0"/><select class="sel-input" id="scFeeType" style="min-width:70px;"><option value="fixed">$</option><option value="pct">%</option></select></div>
-      </div>
-      <div class="field-row"><div class="field-label"><span class="tip-wrap">Admin Fee (per payment) <i class="tip-icon" data-tip="A fixed fee charged on top of every repayment (e.g. a monthly account-keeping fee). Paid alongside each loan payment for the full term, so the total admin cost is this amount multiplied by the number of payments.">?</i></span></div>
-        <div class="currency-wrap"><span class="prefix" id="scAdminFeePrefix">$</span><input class="currency-input fmt-num" id="scAdminFee" type="text" inputmode="decimal" value="0"/></div>
+      <div class="field-group">
+        <div class="group-title">Fees</div>
+        <div class="field-row"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="An upfront fee charged to set up the loan. Can be a fixed amount or a percentage of the financed amount. Reduces your investable cash at the start.">?</i></span></div>
+          <div class="inline-row"><input class="num-input fmt-num" id="scFeeAmt" type="text" inputmode="decimal" value="0"/><select class="sel-input" id="scFeeType" style="min-width:70px;"><option value="fixed">$</option><option value="pct">%</option></select></div>
+        </div>
+        <div class="field-row"><div class="field-label"><span class="tip-wrap">Admin Fee (per payment) <i class="tip-icon" data-tip="A fixed fee charged on top of every repayment (e.g. a monthly account-keeping fee). Paid alongside each loan payment for the full term, so the total admin cost is this amount multiplied by the number of payments.">?</i></span></div>
+          <div class="currency-wrap"><span class="prefix" id="scAdminFeePrefix">$</span><input class="currency-input fmt-num" id="scAdminFee" type="text" inputmode="decimal" value="0"/></div>
+        </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;">
         <button class="btn-primary btn-sm" id="saveScenarioBtn">Save</button>
@@ -185,7 +191,7 @@
 
   <div class="ctrl-panel" id="tab-chart">
     <h3>Main Chart Settings</h3>
-    <div class="field-row"><div class="field-label"><span class="tip-wrap">Chart Metric <i class="tip-icon" data-tip="The value to plot over time. &quot;Ending Wealth&quot; = investment balance minus loan balance. &quot;Net Benefit&quot; = financing wealth vs cash-purchase wealth.">?</i></span></div>
+    <div class="field-row"><div class="field-label">Chart Metric</div>
       <select class="sel-input" id="chartMetric"><option value="wealth">Ending Wealth Over Time</option><option value="netBenefit">Net Benefit vs Cash</option><option value="investmentValue">Investment Value Over Time</option><option value="loanBalance">Loan Balance Over Time</option></select>
     </div>
     <div class="field-row"><div class="field-label"><span class="tip-wrap">Optimization Target <i class="tip-icon" data-tip="Determines which scenario is highlighted as &quot;Best&quot;. Net Benefit favours the scenario that leaves you the wealthiest vs paying cash. Lowest Interest/Cost minimises borrowing expense.">?</i></span></div>
@@ -195,22 +201,28 @@
 
   <div class="ctrl-panel" id="tab-sens">
     <h3>Sensitivity Analysis</h3>
-    <div class="field-row"><div class="field-label"><span class="tip-wrap">Apply to Scenario <i class="tip-icon" data-tip="The base financing scenario whose parameters will be swept in the sensitivity analysis.">?</i></span></div><select class="sel-input" id="sensScenario"></select></div>
-    <div class="field-row"><div class="field-label"><span class="tip-wrap">Objective (output metric) <i class="tip-icon" data-tip="The output value to compute at each point in the sweep. Net Benefit = financing end wealth minus cash-purchase end wealth.">?</i></span></div>
+    <div class="field-row"><div class="field-label">Apply to Scenario</div><select class="sel-input" id="sensScenario"></select></div>
+    <div class="field-row"><div class="field-label">Objective (output metric)</div>
       <select class="sel-input" id="sensObjective"><option value="netBenefit">Net Benefit vs Cash</option><option value="totalInterest">Total Interest Paid</option><option value="totalFinanceCost">Total Financing Cost</option><option value="endWealth">Ending Wealth</option><option value="inflAdjNetBenefit">Inflation-Adj Net Benefit</option></select>
     </div>
     <div class="mode-tabs"><button class="mode-tab active" id="mode2d">2D Sweep</button><button class="mode-tab" id="mode3d">3D Surface</button></div>
-    <div class="field-row" style="margin-top:8px;"><div class="field-label"><span class="tip-wrap">X-Axis Variable <i class="tip-icon" data-tip="The input parameter to vary along the X axis. All other parameters remain at their scenario defaults.">?</i></span></div>
-      <select class="sel-input" id="sensVarX"><option value="financeRate">Finance Rate (%)</option><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="termYears">Term (years)</option></select>
-    </div>
-    <div class="field-row"><div class="field-label"><span class="tip-wrap">X Range <i class="tip-icon" data-tip="The minimum and maximum values to sweep the X-axis variable between.">?</i></span></div><div class="inline-row"><input class="num-input" id="sensXStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensXEnd" type="number" step="0.5" value="10"/></div></div>
-    <div id="sensYBlock" style="display:none;">
-      <div class="field-row"><div class="field-label"><span class="tip-wrap">Y-Axis Variable <i class="tip-icon" data-tip="The second input parameter to vary for the 3D surface plot. Must differ from the X-axis variable.">?</i></span></div>
-        <select class="sel-input" id="sensVarY"><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="financeRate">Finance Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="termYears">Term (years)</option></select>
+    <div class="field-group">
+      <div class="group-title">X-Axis</div>
+      <div class="field-row"><div class="field-label">X-Axis Variable</div>
+        <select class="sel-input" id="sensVarX"><option value="financeRate">Finance Rate (%)</option><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="term" id="sensVarXTermOpt">Term (months)</option></select>
       </div>
-      <div class="field-row"><div class="field-label"><span class="tip-wrap">Y Range <i class="tip-icon" data-tip="The minimum and maximum values to sweep the Y-axis variable between.">?</i></span></div><div class="inline-row"><input class="num-input" id="sensYStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensYEnd" type="number" step="0.5" value="8"/></div></div>
+      <div class="field-row"><div class="field-label">X Range</div><div class="inline-row"><input class="num-input" id="sensXStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensXEnd" type="number" step="0.5" value="10"/></div></div>
     </div>
-    <div class="field-row"><div class="field-label"><span class="tip-wrap">Grid Resolution <i class="tip-icon" data-tip="Number of evenly-spaced sample points along each axis. Higher values give smoother curves but take longer to compute.">?</i></span></div><input class="num-input" id="sensSteps" type="number" min="5" max="50" step="1" value="20"/></div>
+    <div id="sensYBlock" style="display:none;">
+      <div class="field-group">
+        <div class="group-title">Y-Axis</div>
+        <div class="field-row"><div class="field-label">Y-Axis Variable</div>
+          <select class="sel-input" id="sensVarY"><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="financeRate">Finance Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="term" id="sensVarYTermOpt">Term (months)</option></select>
+        </div>
+        <div class="field-row"><div class="field-label">Y Range</div><div class="inline-row"><input class="num-input" id="sensYStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensYEnd" type="number" step="0.5" value="8"/></div></div>
+      </div>
+    </div>
+    <div class="field-row"><div class="field-label">Grid Resolution</div><input class="num-input" id="sensSteps" type="number" min="5" max="50" step="1" value="20"/></div>
     <button class="btn-primary btn-sm" id="runSensBtn" style="width:100%;margin-top:8px;">▶ Run Analysis</button>
   </div>
 
@@ -258,9 +270,11 @@
   <section class="chart-card card" id="sens3dSection" style="display:none;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
       <h2 id="sens3dTitle" style="margin:0;">3D Sensitivity Surface</h2>
-      <button class="btn-secondary btn-sm" id="sens3dSvgBtn">⬇ SVG</button>
-      <button class="btn-secondary btn-sm" id="sens3dPngBtn">⬇ PNG</button>
-      <button class="btn-secondary btn-sm" id="sens3dCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
+      <div style="display:flex;gap:6px;">
+        <button class="btn-secondary btn-sm" id="sens3dSvgBtn">⬇ SVG</button>
+        <button class="btn-secondary btn-sm" id="sens3dPngBtn">⬇ PNG</button>
+        <button class="btn-secondary btn-sm" id="sens3dCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
+      </div>
     </div>
     <div class="surface-wrap" id="plotly3d"></div>
   </section>
