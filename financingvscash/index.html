@@ -173,6 +173,9 @@
       <div class="field-row"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="An upfront fee charged to set up the loan. Can be a fixed amount or a percentage of the financed amount. Reduces your investable cash at the start.">?</i></span></div>
         <div class="inline-row"><input class="num-input fmt-num" id="scFeeAmt" type="text" inputmode="decimal" value="0"/><select class="sel-input" id="scFeeType" style="min-width:70px;"><option value="fixed">$</option><option value="pct">%</option></select></div>
       </div>
+      <div class="field-row"><div class="field-label"><span class="tip-wrap">Admin Fee (per payment) <i class="tip-icon" data-tip="A fixed fee charged on top of every repayment (e.g. a monthly account-keeping fee). Paid alongside each loan payment for the full term, so the total admin cost is this amount multiplied by the number of payments.">?</i></span></div>
+        <div class="currency-wrap"><span class="prefix" id="scAdminFeePrefix">$</span><input class="currency-input fmt-num" id="scAdminFee" type="text" inputmode="decimal" value="0"/></div>
+      </div>
       <div style="display:flex;gap:8px;margin-top:12px;">
         <button class="btn-primary btn-sm" id="saveScenarioBtn">Save</button>
         <button class="btn-secondary btn-sm" id="cancelScenarioBtn">Cancel</button>
