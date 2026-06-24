@@ -606,7 +606,7 @@ document.getElementById('confirmCancel').addEventListener('click',()=>{
   document.getElementById('confirmOverlay').classList.remove('open'); if(_cancel)_cancel();
 });
 
-/* ══ EXPORT PNG — always light mode, transparent background ══ */
+/* ══ EXPORT PNG — always light mode, solid white background ══ */
 async function renderCanvasBuilderPng() {
   deselectAll();
   const canvas=document.getElementById('theCanvas');
@@ -614,7 +614,7 @@ async function renderCanvasBuilderPng() {
 
   await new Promise(r=>setTimeout(r,60));
   const result=await html2canvas(canvas,{
-    backgroundColor:null,
+    backgroundColor:'#ffffff',
     scale:2, useCORS:true, logging:false, allowTaint:true, removeContainer:true,
     onclone:clonedDoc=>{
       clonedDoc.body.classList.add('light');
