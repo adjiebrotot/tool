@@ -49,7 +49,7 @@ function setupFmtInputs(){
 }
 function updateCurrencyPrefixes(){
   const sym=moneySymbol();
-  ['purchaseCostPrefix','availableCashPrefix'].forEach(id=>{
+  ['purchaseCostPrefix','availableCashPrefix','scAdminFeePrefix'].forEach(id=>{
     const el=$(id);
     if(el)el.textContent=sym;
   });
@@ -68,7 +68,7 @@ function defaultTerm(freq){return{weekly:260,fortnightly:130,monthly:60,yearly:5
 
 function defaultScenario(name,rate){
   const freq='monthly';
-  return{name:name||'Scenario '+(scenarios.length+1),financeRate:rate||5,downPaymentPct:0,termPeriods:defaultTerm(freq),freq,feeAmt:0,feeType:'fixed'};
+  return{name:name||'Scenario '+(scenarios.length+1),financeRate:rate||5,downPaymentPct:0,termPeriods:defaultTerm(freq),freq,feeAmt:0,feeType:'fixed',adminFee:0};
 }
 
 /*
@@ -91,8 +91,10 @@ function defaultScenario(name,rate){
 
  4. INVESTMENT GROWTH (financing path):
     Start with: availableCash − downPayment − originationFee
-    Each period: investBal = investBal × (1 + rf_period) − PMT
+    Each period: investBal = investBal × (1 + rf_period) − PMT − adminFee
     rf_period = (1 + rf_annual)^(1/ppy) − 1
+    adminFee is a fixed amount paid alongside every repayment (per period).
+    Total admin cost = adminFee × n  (charged only while the loan is active).
 
  5. CASH PURCHASE BASELINE:
     leftover = availableCash − purchaseCost
@@ -143,34 +145,39 @@ function computeScenario(sc, purchaseCost, availableCash, riskFreeRate, inflatio
   const ppy=periodsPerYear(sc.freq);
   const n=Math.round(sc.termPeriods);
   let fee=sc.feeType==='pct'?financed*(sc.feeAmt/100):Math.max(0,sc.feeAmt);
+  const adminFee=Math.max(0,sc.adminFee||0); // fixed amount paid every repayment
   const cashAfterUpfront=availableCash-down-fee;
   if(cashAfterUpfront<0) return null;
 
   const amort=computeAmortization(financed,sc.financeRate,sc.termPeriods,sc.freq);
   const rfPeriod=Math.pow(1+riskFreeRate/100,1/ppy)-1;
   let investBal=cashAfterUpfront;
-  const timeline=[{period:0,investBal:cashAfterUpfront,loanBal:financed,wealth:cashAfterUpfront-financed,cumInterest:0,cumPaid:0}];
-  let cumInt=0,cumPaid=0;
+  const timeline=[{period:0,investBal:cashAfterUpfront,loanBal:financed,wealth:cashAfterUpfront-financed,cumInterest:0,cumPaid:0,cumAdmin:0}];
+  let cumInt=0,cumPaid=0,cumAdmin=0;
 
   for(let i=0;i<n;i++){
     investBal=investBal*(1+rfPeriod); // grow first
     const pmt=amort.schedule[i]?amort.schedule[i].payment:amort.payment;
-    investBal-=pmt; // then pay
+    investBal-=pmt; // then pay the loan instalment
+    investBal-=adminFee; // and the fixed admin fee charged every repayment
     cumInt+=(amort.schedule[i]?amort.schedule[i].interest:0);
-    cumPaid+=pmt;
+    cumPaid+=pmt+adminFee;
+    cumAdmin+=adminFee;
     const loanBal=amort.schedule[i]?amort.schedule[i].endBal:0;
-    timeline.push({period:i+1,investBal,loanBal,wealth:investBal-loanBal,cumInterest:cumInt,cumPaid});
+    timeline.push({period:i+1,investBal,loanBal,wealth:investBal-loanBal,cumInterest:cumInt,cumPaid,cumAdmin});
   }
 
   const endWealth=investBal;
-  const totalFinanceCost=amort.totalInterest+fee;
-  const totalOOP=down+fee+amort.totalPaid;
+  const totalAdminFee=adminFee*n; // admin fee charged once per repayment over the full term
+  const totalFee=fee+totalAdminFee; // all fees: upfront origination + recurring admin
+  const totalFinanceCost=amort.totalInterest+totalFee;
+  const totalOOP=down+fee+amort.totalPaid+totalAdminFee;
   let inflAdj=null;
   if(inflationEnabled&&inflationRate>0){
     const rd=Math.pow(1+inflationRate/100,termYears);
     inflAdj={endWealthReal:endWealth/rd,totalFinanceCostReal:totalFinanceCost/rd};
   }
-  return{down,financed,fee,amort,endWealth,totalInterest:amort.totalInterest,totalFee:fee,totalFinanceCost,payment:amort.payment,totalOOP,timeline,negCarry:riskFreeRate<sc.financeRate,inflAdj,cashAfter:cashAfterUpfront,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
+  return{down,financed,fee,adminFee,totalAdminFee,amort,endWealth,totalInterest:amort.totalInterest,totalFee,totalFinanceCost,payment:amort.payment,totalOOP,timeline,negCarry:riskFreeRate<sc.financeRate,inflAdj,cashAfter:cashAfterUpfront,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
 }
 
 function computeScenarioAsCash(purchaseCost,availableCash,sc,riskFreeRate,inflationRate,inflationEnabled){
@@ -184,7 +191,7 @@ function computeScenarioAsCash(purchaseCost,availableCash,sc,riskFreeRate,inflat
   for(let i=0;i<n;i++){bal*=(1+rfP);timeline.push({period:i+1,investBal:bal,loanBal:0,wealth:bal,cumInterest:0,cumPaid:0});}
   let inflAdj=null;
   if(inflationEnabled&&inflationRate>0) inflAdj={endWealthReal:bal/Math.pow(1+inflationRate/100,termYears)};
-  return{down:purchaseCost,financed:0,fee:0,amort:{payment:0,schedule:[],totalInterest:0,totalPaid:0,periods:0,periodRate:0},endWealth:bal,totalInterest:0,totalFee:0,totalFinanceCost:0,payment:0,totalOOP:purchaseCost,timeline,negCarry:false,inflAdj,cashAfter:leftover,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
+  return{down:purchaseCost,financed:0,fee:0,adminFee:0,totalAdminFee:0,amort:{payment:0,schedule:[],totalInterest:0,totalPaid:0,periods:0,periodRate:0},endWealth:bal,totalInterest:0,totalFee:0,totalFinanceCost:0,payment:0,totalOOP:purchaseCost,timeline,negCarry:false,inflAdj,cashAfter:leftover,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
 }
 
 function computeCashBaseline(purchaseCost,availableCash,termYears,riskFreeRate,inflationRate,inflationEnabled){
@@ -330,7 +337,10 @@ function renderComparisonTable(results){
     ['Down Payment (%)','—',r=>fmt.pct((r.down/latestResults.purchaseCost)||0,2)],
     ['Down Payment Amount','—',r=>fmt.currency(r.down)],['Financed Amount','—',r=>fmt.currency(r.financed)],
     ['Periodic Payment','—',r=>r.payment>0?fmt.currencyExact(r.payment)+'/'+freqLabel(r.freq):'—'],
-    ['Total Interest Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalInterest)],['Total Fees Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalFee)],
+    ['Admin Fee (per payment)','—',r=>(r.adminFee>0)?fmt.currencyExact(r.adminFee)+'/'+freqLabel(r.freq):'—'],
+    ['Total Interest Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalInterest)],
+    ['Total Admin Fees',fmt.currency(0),r=>fmt.currencyExact(r.totalAdminFee||0)],
+    ['Total Fees Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalFee)],
     ['Total Financing Cost',fmt.currency(0),r=>fmt.currencyExact(r.totalFinanceCost)],['Total Out-of-Pocket',fmt.currency(pc),r=>fmt.currencyExact(r.totalOOP)],
     ['Ending Wealth',r=>fmt.currencyExact(r.cashBaseWealth),r=>fmt.currencyExact(r.endWealth)],
     ['Net Benefit vs Cash','Baseline',r=>{const v=r.netBenefit;return`<span style="color:${v>=0?cssVar('--positive-em'):cssVar('--negative-em')};font-weight:700">${fmt.currencyExact(v)}</span>`;}],
@@ -354,8 +364,9 @@ function renderAmortTabs(results){
   let tI=0,tP=0,tPmt=0;
   r.amort.schedule.forEach(p=>{tI+=p.interest;tP+=p.principal;tPmt+=p.payment;h+=`<tr><td>${fmt.num(p.num)}</td><td>${fmt.currencyExact(p.startBal)}</td><td>${fmt.currencyExact(p.interest)}</td><td>${fmt.currencyExact(p.principal)}</td><td>${fmt.currencyExact(p.payment)}</td><td>${fmt.currencyExact(p.endBal)}</td></tr>`;});
   h+=`<tr style="font-weight:800;border-top:2px solid var(--accent);"><td>Total</td><td></td><td>${fmt.currencyExact(tI)}</td><td>${fmt.currencyExact(tP)}</td><td>${fmt.currencyExact(tPmt)}</td><td></td></tr>`;
-  if(r.totalFee>0)h+=`<tr><td colspan="6" style="text-align:left;color:var(--muted);">+ Origination Fee: ${fmt.currencyExact(r.totalFee)}</td></tr>`;
-  h+=`<tr><td colspan="6" style="text-align:left;color:var(--muted);">= Grand Total: ${fmt.currencyExact(tPmt+r.totalFee+r.down)} (incl. ${fmt.currencyExact(r.down)} down)</td></tr>`;
+  if(r.fee>0)h+=`<tr><td colspan="6" style="text-align:left;color:var(--muted);">+ Origination Fee: ${fmt.currencyExact(r.fee)}</td></tr>`;
+  if(r.totalAdminFee>0)h+=`<tr><td colspan="6" style="text-align:left;color:var(--muted);">+ Admin Fees: ${fmt.currencyExact(r.totalAdminFee)} (${fmt.num(r.amort.schedule.length)} × ${fmt.currencyExact(r.adminFee)}/${freqLabel(r.freq)})</td></tr>`;
+  h+=`<tr><td colspan="6" style="text-align:left;color:var(--muted);">= Grand Total: ${fmt.currencyExact(tPmt+r.fee+r.totalAdminFee+r.down)} (incl. ${fmt.currencyExact(r.down)} down)</td></tr>`;
   h+='</tbody></table>';$('amortTableWrap').innerHTML=h;
 }
 
@@ -470,6 +481,7 @@ function openEditor(idx){
   updateTermLabel(sc.freq);
   $('scFeeAmt').value=fmt.fmtInput(sc.feeAmt);
   $('scFeeType').value=sc.feeType;
+  $('scAdminFee').value=fmt.fmtInput(sc.adminFee||0);
   $('scenarioEditor').style.display='block';
   renderScenarioList();
 }
@@ -487,6 +499,7 @@ function saveEditor(){
   sc.termPeriods=Math.max(1,Math.round(parseFloat($('scTerm').value)||defaultTerm(sc.freq)));
   sc.feeAmt=Math.max(0,parseNumInput($('scFeeAmt')));
   sc.feeType=$('scFeeType').value;
+  sc.adminFee=Math.max(0,parseNumInput($('scAdminFee')));
   renderScenarioList();rerender();
 }
 
