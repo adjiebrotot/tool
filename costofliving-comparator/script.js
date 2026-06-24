@@ -602,15 +602,19 @@ function buildDetailHTML(fromCity,toCities){
   let thAdd=`<th><button class="btn-add" id="addCityBtn">+ City</button></th>`;
 
   // Goal toggle
-  const goalHtml=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-    <span style="font-size:0.85rem;color:var(--muted);">I want to know:</span>
-    <div class="seg-group" id="dtGoalGroup">
-      <button class="seg-btn ${S.goal==='save'?'active':''}" data-val="save">My savings</button>
-      <button class="seg-btn ${S.goal==='earn'?'active':''}" data-val="earn">Required salary</button>
+  const goalHtml=`<div style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span style="font-size:0.85rem;color:var(--muted);">I want to know:</span>
+      <div class="seg-group" id="dtGoalGroup">
+        <button class="seg-btn ${S.goal==='save'?'active':''}" data-val="save">My savings</button>
+        <button class="seg-btn ${S.goal==='earn'?'active':''}" data-val="earn">Required salary</button>
+      </div>
     </div>
-    ${S.goal==='earn'?`<div class="seg-group" id="dtTargetGroup">
-      <button class="seg-btn ${S.savingsTarget==='ratio'?'active':''}" data-val="ratio">Same savings ratio</button>
-      <button class="seg-btn ${S.savingsTarget==='nominal'?'active':''}" data-val="nominal">Same nominal savings</button>
+    ${S.goal==='earn'?`<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;">
+      <div class="seg-group" id="dtTargetGroup">
+        <button class="seg-btn ${S.savingsTarget==='ratio'?'active':''}" data-val="ratio">Same savings ratio</button>
+        <button class="seg-btn ${S.savingsTarget==='nominal'?'active':''}" data-val="nominal">Same nominal savings</button>
+      </div>
     </div>`:''}
   </div>`;
 

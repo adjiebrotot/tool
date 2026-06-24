@@ -35,8 +35,8 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;font-size:0.88rem;}
 .mode-card{padding:14px 20px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px;}
 .toggle-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .toggle-label{font-size:0.88rem;color:var(--muted);font-weight:500;white-space:nowrap;}
-.seg-group{display:inline-flex;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px;}
-.seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 14px;font-size:0.85rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 140ms;font-family:inherit;white-space:nowrap;}
+.seg-group{display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px;}
+.seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 14px;font-size:0.85rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 140ms;font-family:inherit;white-space:nowrap;flex-shrink:0;}
 .seg-btn.active{background:var(--accent-strong);color:#fff;box-shadow:var(--shadow-sm);}
 .seg-btn:hover:not(.active){color:var(--text);}
 
