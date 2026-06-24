@@ -22,6 +22,7 @@ body.light, .export-light-theme{
   --error-bg:#FFD9DD; --error-text:#7A1622;
   --negative-em:#E63939;
   --sld-ink:#243049;
+  --sld-fill:#FFFFFF;
   --board-grid:rgba(45,111,217,.10);
 }
 body:not(.light){
@@ -31,6 +32,7 @@ body:not(.light){
   --success-bg:#103726; --success-text:#7DE0A8;
   --negative-em:#FF8B8B;
   --sld-ink:#CDD9FF;
+  --sld-fill:#162033;
   --board-grid:rgba(141,187,255,.12);
 }
 *,*::before,*::after{box-sizing:border-box;}
@@ -127,17 +129,20 @@ select.tb-control{padding-right:28px;
 #svgLayer .sym{fill:none;stroke:currentColor;stroke-width:2.2;
   stroke-linecap:round;stroke-linejoin:round;}
 .sld-el{cursor:move;}
-.sld-el text.el-label{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
-  fill:var(--text);text-anchor:middle;pointer-events:none;}
+text.el-label{font-family:'DM Sans',sans-serif;font-weight:600;
+  fill:var(--text);text-anchor:middle;cursor:move;}
+text.el-label:hover{fill:var(--accent-strong);}
 .sld-line{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;cursor:pointer;}
 .sld-line-hit{fill:none;stroke:transparent;stroke-width:14;cursor:pointer;}
-.line-label{font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:600;
+.line-label{font-family:'DM Sans',sans-serif;font-weight:600;
   fill:var(--text);text-anchor:middle;pointer-events:none;
   paint-order:stroke;stroke:var(--panel);stroke-width:3px;}
 .sel-box{fill:none;stroke:var(--accent-strong);stroke-width:1.4;stroke-dasharray:5 4;pointer-events:none;}
 .handle{cursor:pointer;}
 .handle.rot circle{fill:var(--accent-strong);stroke:#fff;stroke-width:1.5;}
 .handle.scale rect{fill:var(--accent-strong);stroke:#fff;stroke-width:1.5;}
+.handle.wp circle{fill:var(--panel);stroke:var(--accent-strong);stroke-width:2;cursor:grab;}
+.handle.wp:hover circle{fill:var(--accent-strong);}
 .term-dot{fill:var(--accent);stroke:#fff;stroke-width:1;}
 .scribble-path{fill:none;stroke:var(--accent-strong);stroke-width:2.4;stroke-dasharray:2 5;
   stroke-linecap:round;opacity:.85;}
