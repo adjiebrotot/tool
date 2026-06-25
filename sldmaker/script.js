@@ -1029,7 +1029,7 @@ function recognizeMulti(strokes){
   infos.forEach(i=>{ minx=Math.min(minx,i.minx);maxx=Math.max(maxx,i.maxx);miny=Math.min(miny,i.miny);maxy=Math.max(maxy,i.maxy); });
   const cx=(minx+maxx)/2, cy=(miny+maxy)/2, w=maxx-minx, h=maxy-miny;
   const big=Math.max(w,h)||1;
-  const out=type=>({type, cx, cy, w, h});
+  const out=(type,rot)=>({type, cx, cy, w, h, rot:rot||0});
 
   const circles=infos.filter(i=>i.shape==='circle');
   const rects=infos.filter(i=>i.shape==='rect');
@@ -1074,11 +1074,16 @@ function recognizeMulti(strokes){
     const f=d.pts[0], l=d.pts[d.pts.length-1];
     const edx=Math.abs(f.x-l.x), edy=Math.abs(f.y-l.y);
     const zig=Math.max(reversals(d.pts,'x'),reversals(d.pts,'y'));
+    // A sinusoid marks an inverter's AC side; which half it sits in sets the
+    // orientation (sine on top = AC up = 0°, sine on bottom = DC up = 180°).
+    const wave=inner.find(i=>i!==d && !i.closed && i.aspect>1.1 && i.sharp<=2 && reversals(i.pts,'y')>=2);
+    const invRot=wave ? (wave.cy<cy ? 0 : 180) : 0;
     // a corner-to-corner diagonal → inverter
-    if(d.sharp<=1 && d.straight>0.78 && edy>0.45*Math.max(1,d.h) && edx>0.25*Math.max(1,d.w)) return out('inverter');
+    if(d.sharp<=1 && d.straight>0.78 && edy>0.45*Math.max(1,d.h) && edx>0.25*Math.max(1,d.w)) return out('inverter',invRot);
     if(d.shape==='triangle' || isVee(d)) return out('solarpv');       // ▽ / V
     if(d.sharp>=2 || zig>=2) return out('battery');                   // lightning zig-zag
-    return out('inverter');
+    if(wave) return out('inverter',invRot);                           // sine + = (no diagonal drawn)
+    return out('inverter',invRot);
   }
 
   // ── inverted triangle / down-arrow → load ──
@@ -1103,7 +1108,8 @@ function finishScribbleElement(){
   const zf=mzf();
   if(def.bar) scale=clamp(Math.max(r.w,r.h)/92/zf, 0.6, 4);
   else { const natural=Math.max(def.bbox.w,def.bbox.h); scale=clamp(Math.max(r.w,r.h)/natural/zf, 0.6, 4); }
-  addElement(r.type, gsnap(r.cx), gsnap(r.cy), scale);
+  const el=addElement(r.type, gsnap(r.cx), gsnap(r.cy), scale);
+  if(r.rot){ el.rot=r.rot; markDirty(); renderAll(); renderInspector(); }
   toast('Recognised: '+def.label+' — change type in panel if wrong','success');
 }
 
