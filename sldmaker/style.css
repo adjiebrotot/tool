@@ -110,26 +110,19 @@ select.tb-control{padding-right:28px;
   background:var(--accent-strong);}
 .pal-item.pal-tool.active svg,.pal-item.pal-tool.active .pal-label{color:#fff;}
 
-/* ── CENTER CANVAS ───────────────────────────── */
-.canvas-area{flex:1;min-width:0;overflow:auto;background:var(--bg);position:relative;
-  -webkit-overflow-scrolling:touch;}
-.canvas-area::-webkit-scrollbar{width:8px;height:8px;}
-.canvas-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
-.sld-board{position:relative;width:1400px;height:900px;margin:18px;
-  background:var(--panel);border:1.5px solid var(--border);border-radius:14px;
-  box-shadow:var(--shadow);overflow:hidden;}
-.sld-board.blank{
-  background-image:
-    linear-gradient(var(--board-grid) 1px,transparent 1px),
-    linear-gradient(90deg,var(--board-grid) 1px,transparent 1px);
-  background-size:28px 28px;
-}
+/* ── CENTER CANVAS (unlimited / infinite) ────── */
+.canvas-area{flex:1;min-width:0;overflow:hidden;background:var(--bg);position:relative;}
+.sld-board{position:absolute;inset:0;background:var(--panel);overflow:hidden;
+  touch-action:none;}
+/* blank-canvas grid is painted by JS (pans & zooms with the viewport) */
 #mapLayer{position:absolute;inset:0;z-index:1;}
 #svgLayer{position:absolute;inset:0;z-index:2;width:100%;height:100%;
   touch-action:none;}
-.sld-board.map-move #svgLayer{pointer-events:none;}
-.sld-board.map-move #mapLayer{cursor:grab;}
-.sld-board:not(.map-move) #mapLayer{pointer-events:none;}
+.sld-board.blank #svgLayer{cursor:grab;}
+.sld-board.blank.panning #svgLayer{cursor:grabbing;}
+/* interactive shapes stay clickable even when the SVG itself is click-through
+   (so empty-space drags fall through to the map underneath) */
+.sld-el,.sld-line-hit,[data-label],.handle{pointer-events:auto;}
 
 /* ── SVG ELEMENTS ────────────────────────────── */
 #svgLayer .sym{fill:none;stroke:currentColor;stroke-width:2.2;

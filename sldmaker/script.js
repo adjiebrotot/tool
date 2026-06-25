@@ -128,10 +128,12 @@ const S = {
   colorMode:'none', mode:'select',
   selected:null,            // {kind:'element'|'line', id}
   nextId:1, isDirty:false,
-  map:null, mapView:null, mapMove:false,
+  map:null, mapView:null,
   mapBaseZoom:null,         // zoom level at which element scale is 1:1
-  mapOpacity:1, mapStyle:'standard', tileLayer:null,
-  snap:true, gridSize:28,   // grid snapping (28px matches the visible blank-canvas grid)
+  mapOpacity:1, mapStyle:'light', tileLayer:null,
+  snap:true, gridSize:28,   // grid snapping (also the blank-canvas grid spacing)
+  view:{x:0,y:0,k:1},       // blank-canvas viewport pan/zoom (infinite canvas)
+  labelScale:1,             // global multiplier for every text label
 };
 
 /* ── Map-zoom size factor + grid snapping helpers ──────────── */
@@ -152,12 +154,42 @@ const getEl   = id => S.elements.find(e=>e.id===id);
 const getLine = id => S.lines.find(l=>l.id===id);
 const clamp = (v,lo,hi)=>Math.max(lo,Math.min(hi,v));
 
+/* ── Infinite-canvas viewport (blank mode) ─────────────────────
+   In blank mode the diagram lives in world coordinates and is shown
+   through a pan/zoom viewport (translate + scale on #viewport). In
+   map mode the viewport is identity — Leaflet does the pan/zoom and
+   elements are reprojected to container pixels via their geo coords. */
+function applyView(){
+  const v = S.bgType==='map' ? {x:0,y:0,k:1} : S.view;
+  viewportG.setAttribute('transform',`translate(${v.x} ${v.y}) scale(${v.k})`);
+}
+// Blank-canvas grid: painted as a CSS background that pans & zooms with the
+// viewport. Hidden entirely when snapping is off or in map mode.
+function updateGrid(){
+  if(S.bgType!=='map' && S.snap){
+    const g=S.gridSize*S.view.k;
+    const c='var(--board-grid)';
+    board.style.backgroundImage=
+      `linear-gradient(${c} 1px,transparent 1px),linear-gradient(90deg,${c} 1px,transparent 1px)`;
+    board.style.backgroundSize=`${g}px ${g}px`;
+    board.style.backgroundPosition=`${S.view.x}px ${S.view.y}px`;
+  } else {
+    board.style.backgroundImage='none';
+  }
+}
+// Empty-space pointer routing: in map+select mode the SVG is click-through so
+// drags on empty space pan the Leaflet map underneath; otherwise the SVG
+// captures them (to pan the blank viewport, draw, or place lines).
+function updateSvgPointerEvents(){
+  const passThrough = (S.bgType==='map' && S.mode==='select');
+  svg.style.pointerEvents = passThrough ? 'none' : 'auto';
+}
+
 /* ── DOM refs ──────────────────────────────────────────────── */
 const $ = s => document.querySelector(s);
-const board=$('#sldBoard'), svg=$('#svgLayer');
+const board=$('#sldBoard'), svg=$('#svgLayer'), viewportG=$('#viewport');
 const layerLines=$('#layerLines'), layerEls=$('#layerEls'), layerOverlay=$('#layerOverlay');
 const appMain=$('#appMain'), inspector=$('#inspector'), inspBody=$('#inspBody'), inspTitle=$('#inspTitle');
-const canvasArea=$('#canvasArea');
 
 /* ── Mobile collapsible panels ─────────────────────────────────
    On small screens the left palette and right inspector are hidden
@@ -389,6 +421,7 @@ function renderAll(){
   S.elements.forEach(renderElement);
   renderOverlay();
   renderLegend();
+  applyView();
 }
 function renderElement(el){
   const g=el2('g',{class:'sld-el','data-id':el.id,
@@ -408,11 +441,18 @@ function labelPos(el){
   else below = (def.bbox.y+def.bbox.h)*escale(el) + lead() + 13;
   return {x:el.x, y:el.y+below};
 }
+// On-screen label font size. Labels keep a constant screen size regardless of
+// zoom (for readability) — in blank mode the viewport is scaled by view.k, so we
+// divide it back out; map-mode labels are already drawn in screen pixels.
+function labelFont(base){
+  const k = S.bgType==='map' ? 1 : S.view.k;
+  return ((base*S.labelScale)/k).toFixed(2);
+}
 function renderLabel(el){
   if(!el.name) return;
   const p=labelPos(el);
   const t=el2('text',{class:'el-label','data-label':el.id, x:p.x.toFixed(1), y:p.y.toFixed(1),
-    'font-size':(el.labelSize||12)});
+    'font-size':labelFont(el.labelSize||12)});
   t.textContent=el.name;
   layerEls.appendChild(t);
 }
@@ -425,7 +465,7 @@ function renderLine(line){
   layerLines.appendChild(hit); layerLines.appendChild(pl);
   if(line.name){
     const mid=pts[Math.floor(pts.length/2)];
-    const t=el2('text',{class:'line-label',x:mid.x,y:mid.y-6,'font-size':(line.labelSize||11)});
+    const t=el2('text',{class:'line-label',x:mid.x,y:mid.y-6,'font-size':labelFont(line.labelSize||11)});
     t.textContent=line.name;
     layerLines.appendChild(t);
   }
@@ -495,7 +535,9 @@ function escapeHtml(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&
    ════════════════════════════════════════════════════════════ */
 function boardPt(evt){
   const r=board.getBoundingClientRect();
-  return { x:(evt.clientX-r.left)/r.width*BOARD_W, y:(evt.clientY-r.top)/r.height*BOARD_H };
+  const sx=evt.clientX-r.left, sy=evt.clientY-r.top;
+  if(S.bgType==='map') return { x:sx, y:sy };                 // container pixels
+  return { x:(sx-S.view.x)/S.view.k, y:(sy-S.view.y)/S.view.k }; // world coords
 }
 function geoFromPx(x,y){ if(!S.map) return null; const ll=S.map.containerPointToLatLng([x,y]); return [ll.lat,ll.lng]; }
 function pxFromGeo(g){ const p=S.map.latLngToContainerPoint(L.latLng(g[0],g[1])); return {x:p.x,y:p.y}; }
@@ -574,26 +616,26 @@ function renderControlPanel(){
        </div>`)+
     field('Grid snapping',
       `<button class="btn btn-block ${S.snap?'active':''}" id="cpSnap">${S.snap?'⊞ Snapping on':'⊡ Snapping off'}</button>`)+
-    field('Grid size',
-      `<div class="row"><input type="range" id="cpGrid" min="8" max="60" step="2" value="${S.gridSize}" ${S.snap?'':'disabled'}><span class="rng-val" id="cpGridV">${S.gridSize}px</span></div>`)+
+    (S.snap? field('Grid size',
+      `<div class="row"><input type="range" id="cpGrid" min="8" max="60" step="2" value="${S.gridSize}"><span class="rng-val" id="cpGridV">${S.gridSize}px</span></div>`):'')+
+    field('Label text size (all labels)',
+      `<div class="row"><input type="range" id="cpText" min="0.4" max="1.6" step="0.05" value="${S.labelScale}"><span class="rng-val" id="cpTextV">${Math.round(S.labelScale*100)}%</span></div>`)+
     (isMap?
-      field('Map interaction',
-        `<button class="btn btn-block ${S.mapMove?'active':''}" id="cpUnlock">${S.mapMove?'🔒 Lock map':'🗺 Unlock map'}</button>`)+
       field('Map style',
         `<select id="cpStyle">${styleOpts}</select>`)+
       field('Map opacity',
         `<div class="row"><input type="range" id="cpOpacity" min="0.15" max="1" step="0.05" value="${S.mapOpacity}"><span class="rng-val" id="cpOpacityV">${Math.round(S.mapOpacity*100)}%</span></div>`)+
-      `<div class="insp-hint">Elements scale with the map zoom — zoom in to enlarge them, out to shrink. Unlock the map to pan &amp; zoom; lock it again to edit the diagram.</div>`
+      `<div class="insp-hint">Drag empty space to pan, scroll to zoom. Symbols scale with the map zoom; labels stay a fixed size for readability — use <b>Label text size</b> to shrink them all at once. Just click any element to select and edit it.</div>`
       :
-      `<div class="insp-hint">Drag or tap a symbol from the Tools panel to add it, or pick <b>Draw</b> to sketch one. Draw from one element to another to connect them. Select anything to edit it here.</div>`
+      `<div class="insp-hint">The canvas is unlimited — drag empty space to pan, scroll to zoom. Drag or tap a symbol from the Tools panel to add it, or pick <b>Draw</b> to sketch one. Draw from one element to another to connect them.</div>`
     );
   // background segmented control
   inspBody.querySelectorAll('#cpBg .seg-btn').forEach(b=>b.onclick=()=>requestBackgroundSwitch(b.dataset.bg));
   // grid snapping
-  $('#cpSnap').onclick=()=>{ S.snap=!S.snap; renderControlPanel(); };
-  $('#cpGrid').oninput=e=>{ S.gridSize=+e.target.value; $('#cpGridV').textContent=S.gridSize+'px'; };
+  $('#cpSnap').onclick=()=>{ S.snap=!S.snap; updateGrid(); renderControlPanel(); };
+  const gr=$('#cpGrid'); if(gr) gr.oninput=e=>{ S.gridSize=+e.target.value; $('#cpGridV').textContent=S.gridSize+'px'; updateGrid(); renderAll(); };
+  $('#cpText').oninput=e=>{ S.labelScale=+e.target.value; $('#cpTextV').textContent=Math.round(S.labelScale*100)+'%'; markDirty(); renderAll(); };
   if(isMap){
-    const un=$('#cpUnlock'); if(un) un.onclick=toggleMapMove;
     const st=$('#cpStyle'); if(st) st.onchange=e=>{ setMapStyle(e.target.value); markDirty(); };
     const op=$('#cpOpacity'); if(op) op.oninput=e=>{ setMapOpacity(+e.target.value); $('#cpOpacityV').textContent=Math.round(S.mapOpacity*100)+'%'; markDirty(); };
   }
@@ -663,7 +705,13 @@ $('#inspClose').onclick=()=>{ clearSelection(); if(isMobile()) closePanels(); };
    POINTER INTERACTION on the SVG board
    ════════════════════════════════════════════════════════════ */
 let drag=null;          // element move
+let pan=null;           // blank-canvas viewport pan
 let labelDrag=null;     // label move
+
+// Begin an SVG-captured interaction. In map+select mode the SVG is normally
+// click-through (so empty drags pan the map); force it back on for the drag so
+// pointer capture is honoured, then restore on release.
+function beginCapture(e){ svg.style.pointerEvents='auto'; svg.setPointerCapture(e.pointerId); }
 let pendingLine=null;   // first endpoint in click-line mode
 let scribble=null;      // active freehand stroke
 let scribbleStrokes=[]; // accumulated strokes (graceful multi-stroke recognition)
@@ -684,19 +732,25 @@ function onPointerDown(e){
       const el=getEl(labelNode.dataset.label);
       const p=labelPos(el);
       labelDrag={el, start:pt, ox:p.x-el.x, oy:p.y-el.y};
-      svg.setPointerCapture(e.pointerId); e.preventDefault();
+      beginCapture(e); e.preventDefault();
       return;
     }
     if(elNode){
       const el=getEl(elNode.dataset.id);
       select('element',el.id);
       drag={el, start:pt, ox:el.x, oy:el.y, moved:false, breaker:el.type==='breaker'};
-      svg.setPointerCapture(e.pointerId);
+      beginCapture(e);
       e.preventDefault();
     } else if(lineNode){
       select('line', lineNode.dataset.line);
     } else {
+      // empty space — pan the infinite blank canvas (map mode pans via Leaflet)
       clearSelection();
+      if(S.bgType!=='map'){
+        pan={sx:e.clientX, sy:e.clientY, vx:S.view.x, vy:S.view.y};
+        board.classList.add('panning');
+        beginCapture(e); e.preventDefault();
+      }
     }
     return;
   }
@@ -721,6 +775,12 @@ function onPointerDown(e){
 }
 
 svg.addEventListener('pointermove', e=>{
+  if(pan){
+    S.view.x=pan.vx+(e.clientX-pan.sx);
+    S.view.y=pan.vy+(e.clientY-pan.sy);
+    applyView(); updateGrid();
+    return;
+  }
   const pt=boardPt(e);
   if(labelDrag){
     const dx=pt.x-labelDrag.start.x, dy=pt.y-labelDrag.start.y;
@@ -740,10 +800,11 @@ svg.addEventListener('pointermove', e=>{
 });
 
 svg.addEventListener('pointerup', e=>{
-  if(labelDrag){ labelDrag=null; return; }
+  if(pan){ pan=null; board.classList.remove('panning'); updateSvgPointerEvents(); return; }
+  if(labelDrag){ labelDrag=null; updateSvgPointerEvents(); return; }
   if(drag){
     if(drag.breaker && !drag.moved){ drag.el.open=!drag.el.open; markDirty(); renderAll(); renderInspector(); }
-    drag=null;
+    drag=null; updateSvgPointerEvents();
     return;
   }
   if(scribble){
@@ -777,6 +838,25 @@ svg.addEventListener('dblclick', e=>{
   addWaypoint(line, boardPt(e));
 });
 
+// Wheel zoom — blank canvas zooms its viewport about the cursor; map mode
+// zooms the Leaflet map about the cursor. Keeps the point under the pointer fixed.
+board.addEventListener('wheel', e=>{
+  e.preventDefault();
+  const r=board.getBoundingClientRect();
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+  const dir=e.deltaY<0?1:-1;
+  if(S.bgType==='map'){
+    if(!S.map) return;
+    S.map.setZoomAround(L.point(mx,my), S.map.getZoom()+dir*0.5, {animate:false});
+  } else {
+    const factor=dir>0?1.12:1/1.12;
+    const wx=(mx-S.view.x)/S.view.k, wy=(my-S.view.y)/S.view.k;
+    S.view.k=clamp(S.view.k*factor,0.1,8);
+    S.view.x=mx-wx*S.view.k; S.view.y=my-wy*S.view.k;
+    renderAll(); updateGrid();   // renderAll keeps labels a constant screen size
+  }
+},{passive:false});
+
 function showTempMark(p){
   const m=el2('circle',{cx:p.x,cy:p.y,r:6,class:'term-dot'});
   layerOverlay.appendChild(m);
@@ -784,16 +864,16 @@ function showTempMark(p){
 
 /* ── Element rotate / scale handle drags ─────────────────── */
 function startRotate(e,el){
-  e.stopPropagation(); svg.setPointerCapture(e.pointerId);
+  e.stopPropagation(); beginCapture(e);
   const move=ev=>{ const p=boardPt(ev);
     let ang=Math.atan2(p.x-el.x, -(p.y-el.y))*180/Math.PI; // 0 = up
     if(ev.shiftKey||S.snap) ang=Math.round(ang/15)*15;
     el.rot=Math.round((ang+360)%360); markDirty(); renderAll(); if($('#fRot')){$('#fRot').value=el.rot;$('#fRotV').textContent=el.rot+'°';} };
-  const up=()=>{ svg.removeEventListener('pointermove',move); svg.removeEventListener('pointerup',up); };
+  const up=()=>{ svg.removeEventListener('pointermove',move); svg.removeEventListener('pointerup',up); updateSvgPointerEvents(); };
   svg.addEventListener('pointermove',move); svg.addEventListener('pointerup',up);
 }
 function startScale(e,el){
-  e.stopPropagation(); svg.setPointerCapture(e.pointerId);
+  e.stopPropagation(); beginCapture(e);
   const def=SYM[el.type];
   let diag;
   if(def.bar) diag=46;
@@ -802,7 +882,7 @@ function startScale(e,el){
     let v=clamp(d/diag/mzf(),0.5,4); v=clamp(snapScaleVal(v),0.5,4);
     el.scale=v; markDirty(); renderAll();
     if($('#fScale')){$('#fScale').value=el.scale;$('#fScaleV').textContent=el.scale.toFixed(1)+'×';} };
-  const up=()=>{ svg.removeEventListener('pointermove',move); svg.removeEventListener('pointerup',up); };
+  const up=()=>{ svg.removeEventListener('pointermove',move); svg.removeEventListener('pointerup',up); updateSvgPointerEvents(); };
   svg.addEventListener('pointermove',move); svg.addEventListener('pointerup',up);
 }
 
@@ -829,13 +909,13 @@ function deleteWaypoint(line,i){
   markDirty(); renderAll(); renderOverlay(); renderInspector();
 }
 function startWaypointDrag(e,line,i){
-  e.stopPropagation(); svg.setPointerCapture(e.pointerId);
+  e.stopPropagation(); beginCapture(e);
   const move=ev=>{ const p=boardPt(ev);
     const sx=gsnap(p.x), sy=gsnap(p.y);
     line.waypoints[i].x=sx; line.waypoints[i].y=sy;
     if(S.bgType==='map'&&S.map) line.waypoints[i].geo=geoFromPx(sx,sy);
     markDirty(); renderAll(); renderOverlay(); };
-  const up=()=>{ svg.removeEventListener('pointermove',move); svg.removeEventListener('pointerup',up); };
+  const up=()=>{ svg.removeEventListener('pointermove',move); svg.removeEventListener('pointerup',up); updateSvgPointerEvents(); };
   svg.addEventListener('pointermove',move); svg.addEventListener('pointerup',up);
 }
 
@@ -932,11 +1012,9 @@ function buildPalette(){
 }
 // Place an element at the centre of the visible canvas (used for tap-to-add on mobile).
 function placeAtViewCenter(type){
-  const ca=canvasArea.getBoundingClientRect(), br=board.getBoundingClientRect();
-  let bx=(ca.left+ca.width/2 - br.left)/br.width*BOARD_W;
-  let by=(ca.top +ca.height/2 - br.top )/br.height*BOARD_H;
-  bx=clamp(bx,40,BOARD_W-40); by=clamp(by,40,BOARD_H-40);
-  setMode('select'); addElement(type,gsnap(bx),gsnap(by),1);
+  const br=board.getBoundingClientRect();
+  const p=boardPt({clientX:br.left+br.width/2, clientY:br.top+br.height/2});
+  setMode('select'); addElement(type,gsnap(p.x),gsnap(p.y),1);
   closePanels();
   toast('Added '+SYM[type].label+' — drag to position','success');
 }
@@ -953,6 +1031,7 @@ board.addEventListener('drop',e=>{
 function setMode(m){
   S.mode=m; pendingLine=null; scribbleStrokes=[]; if(scribbleTimer){clearTimeout(scribbleTimer);scribbleTimer=null;}
   layerOverlay.innerHTML=''; renderOverlay();
+  updateSvgPointerEvents();
   $('#modeBar').querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
   const lt=document.querySelector('.pal-tool[data-tool="line"]');
   if(lt) lt.classList.toggle('active', m==='line');
@@ -966,31 +1045,20 @@ $('#modeBar').querySelectorAll('.mode-btn').forEach(b=> b.onclick=()=>setMode(b.
 $('#sldNameInput').oninput=e=>{ S.name=e.target.value||'Untitled SLD'; markDirty(); };
 $('#colorModeSelect').onchange=e=>{ S.colorMode=e.target.value; renderAll(); if(S.selected)renderInspector(); };
 
-$('#bgSelect').onchange=e=>{ requestBackgroundSwitch(e.target.value); };
-$('#mapMoveBtn').onclick=toggleMapMove;
-
 // Switch background, resetting the diagram (warn the user to save first).
 function requestBackgroundSwitch(type){
   if(type===S.bgType){ return; }
   const apply=()=>{ resetDiagram(); setBackground(type); renderAll(); markClean(); };
   if(S.isDirty && (S.elements.length||S.lines.length)){
-    $('#bgSelect').value=S.bgType;
     showConfirm('⚠️','Switch background',
       `Switching between Map and Canvas resets the diagram. Save your work first if you want to keep it — this can't be undone. Proceed?`,
-      ()=>{ apply(); }, ()=>{ $('#bgSelect').value=S.bgType; });
+      ()=>{ apply(); }, null);
   } else { apply(); }
 }
 function resetDiagram(){
   S.elements=[]; S.lines=[]; S.nextId=1; S.mapBaseZoom=null;
+  S.view={x:0,y:0,k:1};
   clearSelection();
-}
-function toggleMapMove(){
-  S.mapMove=!S.mapMove; board.classList.toggle('map-move',S.mapMove);
-  $('#mapMoveBtn').classList.toggle('active',S.mapMove);
-  $('#mapMoveBtn').textContent=S.mapMove?'🔒 Lock map':'🗺 Unlock map';
-  if(S.map){ if(S.mapMove){S.map.dragging.enable();S.map.scrollWheelZoom.enable();}
-    else{S.map.dragging.disable();S.map.scrollWheelZoom.disable();} }
-  if(!S.selected) renderControlPanel();
 }
 function setMapStyle(key){
   S.mapStyle=MAP_STYLES[key]?key:'standard';
@@ -1005,20 +1073,16 @@ function setMapOpacity(v){ S.mapOpacity=clamp(v,0.15,1); if(S.tileLayer) S.tileL
 
 function setBackground(type){
   S.bgType=type; markDirty();
-  $('#bgSelect').value=type;
   if(type==='map'){
     board.classList.remove('blank');
     $('#mapLayer').style.display='';
-    $('#mapMoveBtn').style.display='';
     ensureMap();
   } else {
     board.classList.add('blank');
-    $('#mapLayer').style.display='none';   // fix: hide the map when switching back to blank
-    $('#mapMoveBtn').style.display='none';
-    board.classList.remove('map-move'); S.mapMove=false;
-    $('#mapMoveBtn').textContent='🗺 Unlock map'; $('#mapMoveBtn').classList.remove('active');
+    $('#mapLayer').style.display='none';   // hide the map when switching back to blank
     renderAll();
   }
+  updateGrid(); updateSvgPointerEvents();
   if(!S.selected) renderControlPanel();
 }
 function ensureMap(){
@@ -1027,8 +1091,10 @@ function ensureMap(){
     if(S.mapBaseZoom==null) S.mapBaseZoom=S.map.getZoom();
     attachGeo(); refreshGeo(); renderAll(); },50); return; }
   if(typeof L==='undefined'){ toast('Map library failed to load','error'); return; }
-  S.map=L.map('mapLayer',{zoomControl:true,attributionControl:true,
-    dragging:false,scrollWheelZoom:false}).setView(S.mapView?[S.mapView[0],S.mapView[1]]:[-33.8688,151.2093], S.mapView&&S.mapView[2]||13);
+  // Map is always interactive: empty-space drags pan it (the SVG overlay is
+  // click-through in select mode); wheel zoom is handled manually. No lock needed.
+  S.map=L.map('mapLayer',{zoomControl:true,attributionControl:true,zoomSnap:0,
+    dragging:true,scrollWheelZoom:false,doubleClickZoom:false}).setView(S.mapView?[S.mapView[0],S.mapView[1]]:[-33.8688,151.2093], S.mapView&&S.mapView[2]||13);
   setMapStyle(S.mapStyle);
   if(S.mapBaseZoom==null) S.mapBaseZoom=S.map.getZoom();
   S.map.on('move zoom',()=>{ refreshGeo(); renderAll(); });
@@ -1053,7 +1119,20 @@ $('#confirmCancel').onclick=()=>{ $('#confirmOverlay').classList.remove('open');
 /* ════════════════════════════════════════════════════════════
    PNG EXPORT
    ════════════════════════════════════════════════════════════ */
-function buildExportSVG(){
+// Region of world (blank) / container (map) space to export. Blank mode fits the
+// content's bounding box so panning never crops it; map mode uses the visible board.
+function getExportRegion(){
+  if(S.bgType==='map') return {x:0,y:0,w:board.clientWidth||BOARD_W,h:board.clientHeight||BOARD_H};
+  let minx=Infinity,miny=Infinity,maxx=-Infinity,maxy=-Infinity;
+  const acc=(x,y)=>{minx=Math.min(minx,x);miny=Math.min(miny,y);maxx=Math.max(maxx,x);maxy=Math.max(maxy,y);};
+  S.elements.forEach(el=>{ elBBoxCorners(el).forEach(p=>acc(p.x,p.y)); const lp=labelPos(el); acc(lp.x,lp.y); });
+  S.lines.forEach(l=>linePoints(l).forEach(p=>acc(p.x,p.y)));
+  if(!isFinite(minx)) return {x:0,y:0,w:BOARD_W,h:BOARD_H};
+  const pad=70;
+  return {x:minx-pad,y:miny-pad,w:(maxx-minx)+2*pad,h:(maxy-miny)+2*pad};
+}
+function buildExportSVG(region){
+  const ls=S.labelScale;
   let body='';
   // lines
   S.lines.forEach(line=>{
@@ -1061,19 +1140,19 @@ function buildExportSVG(){
     const d=pts.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
     body+=`<polyline points="${d}" fill="none" stroke="${displayColor(line,true)}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
     if(line.name){ const m=pts[Math.floor(pts.length/2)];
-      body+=`<text x="${m.x}" y="${(m.y-6).toFixed(1)}" font-family="DM Sans,sans-serif" font-size="${line.labelSize||11}" font-weight="600" fill="#1A2236" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="3">${escapeHtml(line.name)}</text>`; }
+      body+=`<text x="${m.x}" y="${(m.y-6).toFixed(1)}" font-family="DM Sans,sans-serif" font-size="${((line.labelSize||11)*ls).toFixed(1)}" font-weight="600" fill="#1A2236" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="3">${escapeHtml(line.name)}</text>`; }
   });
   // elements
   S.elements.forEach(el=>{
     const col=displayColor(el,true);
     body+=`<g transform="translate(${el.x} ${el.y}) rotate(${el.rot})" style="color:${col}" fill="none" stroke="${col}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${elementInner(el,'#ffffff')}</g>`;
     if(el.name){ const p=labelPos(el);
-      body+=`<text x="${p.x.toFixed(1)}" y="${p.y.toFixed(1)}" font-family="DM Sans,sans-serif" font-size="${el.labelSize||12}" font-weight="600" fill="#1A2236" text-anchor="middle">${escapeHtml(el.name)}</text>`; }
+      body+=`<text x="${p.x.toFixed(1)}" y="${p.y.toFixed(1)}" font-family="DM Sans,sans-serif" font-size="${((el.labelSize||12)*ls).toFixed(1)}" font-weight="600" fill="#1A2236" text-anchor="middle">${escapeHtml(el.name)}</text>`; }
   });
-  // legend
+  // legend (anchored to the bottom-left of the exported region)
   if(COLOR_MAP && Object.keys(COLOR_MAP).length){
     const entries=Object.entries(COLOR_MAP); const unit=S.colorMode==='voltage'?' kV':'';
-    const lw=150, lh=22+entries.length*18, lx=24, ly=BOARD_H-lh-24;
+    const lw=150, lh=22+entries.length*18, lx=region.x+24, ly=region.y+region.h-lh-24;
     body+=`<g><rect x="${lx}" y="${ly}" width="${lw}" height="${lh}" rx="8" fill="#ffffff" stroke="#DDE4F2" stroke-width="1.5"/>`;
     body+=`<text x="${lx+12}" y="${ly+16}" font-family="DM Sans,sans-serif" font-size="9" font-weight="800" fill="#6B7A99" letter-spacing="0.8">${S.colorMode==='voltage'?'VOLTAGE':'TAG'}</text>`;
     entries.forEach(([k,c],i)=>{ const yy=ly+30+i*18;
@@ -1081,7 +1160,7 @@ function buildExportSVG(){
             `<text x="${lx+30}" y="${yy+1}" font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#1A2236">${escapeHtml(k)}${unit}</text>`; });
     body+=`</g>`;
   }
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${BOARD_W}" height="${BOARD_H}" viewBox="0 0 ${BOARD_W} ${BOARD_H}">${body}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${region.w.toFixed(0)}" height="${region.h.toFixed(0)}" viewBox="${region.x.toFixed(1)} ${region.y.toFixed(1)} ${region.w.toFixed(1)} ${region.h.toFixed(1)}">${body}</svg>`;
 }
 function drawWatermark(ctx,W,H){
   ctx.save(); ctx.globalAlpha=0.55;
@@ -1094,7 +1173,8 @@ function drawWatermark(ctx,W,H){
 }
 async function renderPng(){
   COLOR_MAP=buildColorMap();
-  const scale=2, W=BOARD_W*scale, H=BOARD_H*scale;
+  const region=getExportRegion();
+  const scale=2, W=Math.max(1,Math.round(region.w*scale)), H=Math.max(1,Math.round(region.h*scale));
   const out=document.createElement('canvas'); out.width=W; out.height=H;
   const ctx=out.getContext('2d');
   if(S.bgType==='map'){
@@ -1105,7 +1185,7 @@ async function renderPng(){
     }catch(err){ console.warn('map capture failed',err);
       ctx.fillStyle='#aad3df'; ctx.fillRect(0,0,W,H); }
   }
-  const svgStr=buildExportSVG();
+  const svgStr=buildExportSVG(region);
   const img=await loadSVG(svgStr);
   ctx.drawImage(img,0,0,W,H);
   drawWatermark(ctx,W,H);
@@ -1147,7 +1227,7 @@ $('#copyPngBtn').onclick=async()=>{
 $('#saveJsonBtn').onclick=()=>{
   const data={ _source:'tool.adjiebrotots.com/sldmaker', name:S.name, background:S.bgType,
     mapView:S.mapView, mapBaseZoom:S.mapBaseZoom, mapStyle:S.mapStyle, mapOpacity:S.mapOpacity,
-    snap:S.snap, gridSize:S.gridSize,
+    snap:S.snap, gridSize:S.gridSize, view:S.view, labelScale:S.labelScale,
     colorMode:S.colorMode, elements:S.elements, lines:S.lines };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const link=document.createElement('a');
@@ -1170,11 +1250,12 @@ function doLoad(d){
     $('#sldNameInput').value=S.name; $('#colorModeSelect').value=S.colorMode;
     S.mapView=d.mapView||S.mapView;
     S.mapBaseZoom = d.mapBaseZoom!=null ? d.mapBaseZoom : null;
-    S.mapStyle = d.mapStyle && MAP_STYLES[d.mapStyle] ? d.mapStyle : 'standard';
+    S.mapStyle = d.mapStyle && MAP_STYLES[d.mapStyle] ? d.mapStyle : 'light';
     S.mapOpacity = d.mapOpacity!=null ? d.mapOpacity : 1;
     if(d.snap!=null) S.snap = !!d.snap;
     if(d.gridSize!=null) S.gridSize = d.gridSize;
-    $('#bgSelect').value=d.background||'blank';
+    S.view = (d.view && typeof d.view.k==='number') ? {x:d.view.x||0,y:d.view.y||0,k:d.view.k||1} : {x:0,y:0,k:1};
+    S.labelScale = d.labelScale!=null ? d.labelScale : 1;
     if(S.map){ S.map.remove(); S.map=null; S.tileLayer=null; }
     clearSelection();
     setBackground(d.background||'blank');
@@ -1190,7 +1271,7 @@ function doLoad(d){
    THEME / KEYBOARD / TOAST
    ════════════════════════════════════════════════════════════ */
 $('#themeBtn').onclick=()=>{ const light=document.body.classList.toggle('light');
-  $('#themeBtn').textContent=light?'🌙 Dark':'☀️ Light'; renderAll(); };
+  $('#themeBtn').textContent=light?'🌙 Dark':'☀️ Light'; renderAll(); updateGrid(); };
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){ if(pendingLine){pendingLine=null;layerOverlay.innerHTML='';renderOverlay();} else clearSelection(); }
   if((e.key==='Delete'||e.key==='Backspace') && S.selected &&
@@ -1215,8 +1296,11 @@ function seedDemo(){
   createLine({elId:t.id,kind:'term',idx:1},{elId:b.id,kind:'bar',t:0.5},'click');
   clearSelection(); markClean();
 }
+window.addEventListener('resize',()=>{ if(S.map) S.map.invalidateSize(); });
 buildPalette();
 renderAll();
 seedDemo();
+updateGrid();
+updateSvgPointerEvents();
 
 })();
