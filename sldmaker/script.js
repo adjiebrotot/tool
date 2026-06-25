@@ -157,6 +157,19 @@ const $ = s => document.querySelector(s);
 const board=$('#sldBoard'), svg=$('#svgLayer');
 const layerLines=$('#layerLines'), layerEls=$('#layerEls'), layerOverlay=$('#layerOverlay');
 const appMain=$('#appMain'), inspector=$('#inspector'), inspBody=$('#inspBody'), inspTitle=$('#inspTitle');
+const canvasArea=$('#canvasArea');
+
+/* ── Mobile collapsible panels ─────────────────────────────────
+   On small screens the left palette and right inspector are hidden
+   slide-in overlays so the canvas/map gets the full screen. */
+const isMobile = () => window.matchMedia('(max-width:760px)').matches;
+function openPalette(){ appMain.classList.add('palette-open'); appMain.classList.remove('insp-open'); }
+function openInspector(){ appMain.classList.add('insp-open'); appMain.classList.remove('palette-open'); }
+function closePanels(){ appMain.classList.remove('palette-open','insp-open'); }
+$('#paletteFab').onclick=()=> appMain.classList.contains('palette-open')?closePanels():openPalette();
+$('#inspFab').onclick   =()=> appMain.classList.contains('insp-open')   ?closePanels():openInspector();
+$('#panelScrim').onclick=closePanels;
+$('#paletteClose').onclick=closePanels;
 
 /* ── Dirty tracking ────────────────────────────────────────── */
 function markDirty(){ S.isDirty=true; $('#dirtyDot').classList.add('visible'); }
@@ -531,10 +544,12 @@ function deleteLine(id){
    ════════════════════════════════════════════════════════════ */
 function select(kind,id){ S.selected={kind,id}; appMain.classList.add('has-sel');
   inspector.classList.add('open'); $('#inspClose').style.display='';
-  renderOverlay(); renderInspector(); }
+  updateInspFab(); renderOverlay(); renderInspector(); }
 function clearSelection(){ S.selected=null; appMain.classList.remove('has-sel');
   inspector.classList.add('open'); $('#inspClose').style.display='none';
-  layerOverlay.innerHTML=''; renderControlPanel(); }
+  updateInspFab(); layerOverlay.innerHTML=''; renderControlPanel(); }
+// Mobile FAB hints whether tapping opens element properties or the canvas/map panel.
+function updateInspFab(){ const f=$('#inspFab'); if(f) f.textContent = S.selected ? '✎ Edit' : '⚙ Panel'; }
 
 function field(label, inner){ return `<div class="field"><label>${label}</label>${inner}</div>`; }
 function swatchRow(){ return `<div class="swatches">${SWATCHES.map(c=>`<span class="swatch" data-color="${c}" style="background:${c}"></span>`).join('')}</div>`; }
@@ -570,7 +585,7 @@ function renderControlPanel(){
         `<div class="row"><input type="range" id="cpOpacity" min="0.15" max="1" step="0.05" value="${S.mapOpacity}"><span class="rng-val" id="cpOpacityV">${Math.round(S.mapOpacity*100)}%</span></div>`)+
       `<div class="insp-hint">Elements scale with the map zoom — zoom in to enlarge them, out to shrink. Unlock the map to pan &amp; zoom; lock it again to edit the diagram.</div>`
       :
-      `<div class="insp-hint">Drag a symbol from the left onto the canvas, or pick <b>Draw</b> to sketch one. Draw from one element to another to connect them. Select anything to edit it here.</div>`
+      `<div class="insp-hint">Drag or tap a symbol from the Tools panel to add it, or pick <b>Draw</b> to sketch one. Draw from one element to another to connect them. Select anything to edit it here.</div>`
     );
   // background segmented control
   inspBody.querySelectorAll('#cpBg .seg-btn').forEach(b=>b.onclick=()=>requestBackgroundSwitch(b.dataset.bg));
@@ -642,7 +657,7 @@ function renderLineInspector(line){
 }
 function connName(c){ const el=getEl(c.elId); return el? el.name||SYM[el.type].label : '?'; }
 
-$('#inspClose').onclick=clearSelection;
+$('#inspClose').onclick=()=>{ clearSelection(); if(isMobile()) closePanels(); };
 
 /* ════════════════════════════════════════════════════════════
    POINTER INTERACTION on the SVG board
@@ -909,9 +924,21 @@ function buildPalette(){
   wrap.querySelectorAll('.pal-item[data-type]').forEach(it=>{
     it.addEventListener('dragstart',e=>{ e.dataTransfer.setData('text/sld', it.dataset.type);
       e.dataTransfer.effectAllowed='copy'; });
+    // Touch devices can't drag-and-drop: tap to drop at the canvas centre.
+    it.addEventListener('click',()=>{ if(isMobile()) placeAtViewCenter(it.dataset.type); });
   });
   const lt=wrap.querySelector('.pal-tool[data-tool="line"]');
-  if(lt) lt.addEventListener('click',()=>{ setMode('line'); lt.classList.add('active'); });
+  if(lt) lt.addEventListener('click',()=>{ setMode('line'); lt.classList.add('active'); if(isMobile()) closePanels(); });
+}
+// Place an element at the centre of the visible canvas (used for tap-to-add on mobile).
+function placeAtViewCenter(type){
+  const ca=canvasArea.getBoundingClientRect(), br=board.getBoundingClientRect();
+  let bx=(ca.left+ca.width/2 - br.left)/br.width*BOARD_W;
+  let by=(ca.top +ca.height/2 - br.top )/br.height*BOARD_H;
+  bx=clamp(bx,40,BOARD_W-40); by=clamp(by,40,BOARD_H-40);
+  setMode('select'); addElement(type,gsnap(bx),gsnap(by),1);
+  closePanels();
+  toast('Added '+SYM[type].label+' — drag to position','success');
 }
 board.addEventListener('dragover',e=>{ if(e.dataTransfer.types.includes('text/sld')){ e.preventDefault(); e.dataTransfer.dropEffect='copy'; } });
 board.addEventListener('drop',e=>{

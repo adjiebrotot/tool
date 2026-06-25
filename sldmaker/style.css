@@ -235,7 +235,66 @@ text.el-label:hover{fill:var(--accent-strong);}
 /* leaflet tweaks */
 .leaflet-container{background:#aad3df;font-family:'DM Sans',sans-serif;}
 
-@media(max-width:860px){
+/* ── MOBILE: collapsible side panels (focus on canvas/map) ──── */
+.panel-close{display:none;}
+.panel-fab{display:none;}
+.panel-scrim{display:none;}
+
+@media(max-width:860px) and (min-width:761px){
   .palette{width:150px;}
-  .inspector{width:220px;}
+  .inspector{width:240px;}
+}
+
+@media(max-width:760px){
+  /* the toolbar gets tighter so the core actions stay reachable */
+  .toolbar{gap:6px;padding:8px 10px;}
+  .brand-text{display:none;}
+
+  /* both side panels become slide-in overlays anchored to app-main */
+  .app-main{position:relative;}
+  .palette,.inspector{position:absolute;top:0;bottom:0;z-index:60;
+    width:min(82vw,310px);box-shadow:var(--shadow-lg);
+    transition:transform .22s ease;}
+  .palette{left:0;transform:translateX(-100%);}
+  .app-main.palette-open .palette{transform:none;}
+  /* inspector: drive visibility from app-main state, overriding the
+     desktop ".inspector.open" rule that is always present via JS */
+  .inspector{right:0;}
+  .app-main:not(.insp-open) .inspector{transform:translateX(100%);}
+  .app-main.insp-open .inspector{transform:none;}
+
+  /* canvas fills the screen; panels float above it */
+  .canvas-area{width:100%;}
+
+  /* dim + tap-to-close backdrop while a panel is open */
+  .panel-scrim{position:absolute;inset:0;z-index:55;
+    background:rgba(0,0,0,.38);
+    -webkit-backdrop-filter:blur(1px);backdrop-filter:blur(1px);}
+  .app-main.palette-open .panel-scrim,
+  .app-main.insp-open .panel-scrim{display:block;}
+
+  /* in-panel close buttons */
+  .palette-head-main{display:flex;align-items:center;justify-content:space-between;}
+  .panel-close{display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border:1.5px solid var(--border);background:var(--input-bg);
+    color:var(--muted);border-radius:8px;font-size:20px;line-height:1;cursor:pointer;
+    flex-shrink:0;padding:0;}
+  .panel-close:active{transform:scale(.94);}
+  .insp-close{display:inline-flex !important;}
+
+  /* floating openers */
+  .panel-fab{display:inline-flex;align-items:center;gap:6px;position:fixed;
+    bottom:16px;z-index:70;border:none;border-radius:24px;
+    padding:11px 16px;font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:800;
+    color:#fff;background:var(--accent-strong);box-shadow:var(--shadow-lg);cursor:pointer;
+    transition:transform .1s,opacity .15s;}
+  .panel-fab:active{transform:scale(.95);}
+  .fab-left{left:16px;}
+  .fab-right{right:16px;}
+  /* hide the opener for whichever panel is currently open */
+  .app-main.palette-open ~ .fab-left,
+  .app-main.insp-open ~ .fab-right{opacity:0;pointer-events:none;}
+
+  /* keep leaflet attribution clear of the right FAB */
+  .leaflet-bottom.leaflet-right{margin-bottom:56px;}
 }
