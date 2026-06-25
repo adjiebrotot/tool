@@ -13,20 +13,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SLD Maker — Single Line Diagram Builder</title>
-<meta name="description" content="Draw electrical single line diagrams (SLD) in your browser: drag or scribble transformers, generators, busbars, loads, motors, PV, inverters, batteries and breakers, auto-route lines, colour-code by voltage, over a blank canvas or OpenStreetMap — free and private.">
+<meta name="description" content="Draw electrical single line diagrams (SLD) in your browser: drag or draw transformers, generators, busbars, loads, motors, PV, inverters, batteries and breakers, auto-route lines, colour-code by voltage, over a blank canvas or a map — free and private.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/sldmaker/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="SLD Maker — Single Line Diagram Builder">
-<meta property="og:description" content="Draw electrical single line diagrams in your browser — drag or scribble symbols, auto-route lines, colour-code by voltage, export to PNG. Free and private.">
+<meta property="og:description" content="Draw electrical single line diagrams in your browser — drag or draw symbols, auto-route lines, colour-code by voltage, export to PNG. Free and private.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/sldmaker/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SLD Maker — Single Line Diagram Builder">
-<meta name="twitter:description" content="Draw electrical single line diagrams in your browser — drag or scribble symbols, auto-route lines, colour-code by voltage, export to PNG.">
+<meta name="twitter:description" content="Draw electrical single line diagrams in your browser — drag or draw symbols, auto-route lines, colour-code by voltage, export to PNG.">
 
 <script type="application/ld+json">
 {
@@ -34,7 +34,7 @@
   "@type": "WebApplication",
   "name": "SLD Maker",
   "url": "https://tool.adjiebrotots.com/sldmaker/",
-  "description": "Draw electrical single line diagrams (SLD) in the browser with drag-and-drop or scribble-to-symbol input, auto-routed lines, colour coding by voltage, blank or OpenStreetMap backgrounds, and PNG export.",
+  "description": "Draw electrical single line diagrams (SLD) in the browser with drag-and-drop or draw-to-symbol input, auto-routed lines, colour coding by voltage, blank canvas or map backgrounds, and PNG export.",
   "applicationCategory": "DesignApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
@@ -64,9 +64,9 @@
   <div class="divider"></div>
   <select class="tb-control" id="bgSelect" title="Canvas background">
     <option value="blank">▦ Blank canvas</option>
-    <option value="map">🗺 OpenStreetMap</option>
+    <option value="map">🗺 Map</option>
   </select>
-  <button class="btn" id="mapMoveBtn" style="display:none" title="Toggle map panning">🗺 Move map</button>
+  <button class="btn" id="mapMoveBtn" style="display:none" title="Unlock map for panning &amp; zooming">🗺 Unlock map</button>
   <div class="divider"></div>
   <input type="text" class="tb-control" id="sldNameInput"
          placeholder="Diagram name…" value="Untitled SLD" spellcheck="false" autocomplete="off">
@@ -95,9 +95,7 @@
     <div class="palette-head">Tools</div>
     <div class="mode-bar" id="modeBar">
       <button class="mode-btn active" data-mode="select" title="Select, move, edit">✥ Select</button>
-      <button class="mode-btn" data-mode="line"           title="Click two elements to connect">⎘ Line</button>
-      <button class="mode-btn" data-mode="line-scribble"  title="Scribble from one element to another">〜 Line draw</button>
-      <button class="mode-btn" data-mode="scribble"       title="Scribble a symbol to place it">✎ Scribble</button>
+      <button class="mode-btn" data-mode="draw" title="Draw a symbol to place it, or draw from one element to another to connect them">✎ Draw</button>
     </div>
     <div class="palette-head">Elements · drag onto canvas</div>
     <div class="palette-scroll" id="paletteScroll"><!-- filled by JS --></div>

@@ -108,6 +108,19 @@ const PALETTE_ORDER = ['transformer2','generator','busbar','load','transformer3'
 const COLORS = ['#E6194B','#3CB44B','#4363D8','#F58231','#911EB4','#0DA9A0','#F032E6','#9A6324','#469990','#800000','#808000','#000075','#E6A817','#7A4FD0'];
 const SWATCHES = ['#243049','#E6194B','#3CB44B','#4363D8','#F58231','#911EB4','#0DAA8E','#E6A817','#6B7A99'];
 
+// Transmission-tower glyph used for the "Line" connection tool in the palette
+const TOWER_ICON = '<svg viewBox="-40 -40 80 80" class="sym"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M-3 -26 L0 -30 L3 -26"/><line x1="-20" y1="-22" x2="20" y2="-22"/><line x1="-15" y1="-12" x2="15" y2="-12"/><path d="M-7 -26 L-15 28"/><path d="M7 -26 L15 28"/><path d="M-12 0 L12 0"/><path d="M-13.5 14 L13.5 14"/><path d="M-7 -26 L12 0 M7 -26 L-12 0 M-12 0 L13.5 14 M12 0 L-13.5 14"/></g></svg>';
+
+// Map tile styles (all OpenStreetMap-based, no API key required)
+const MAP_STYLES = {
+  standard:    {label:'Standard',        url:'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',                 maxZoom:19, attr:'© OpenStreetMap'},
+  humanitarian:{label:'Humanitarian',    url:'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',             maxZoom:19, attr:'© OpenStreetMap, HOT'},
+  topo:        {label:'Topographic',     url:'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',                  maxZoom:17, attr:'© OpenTopoMap (CC-BY-SA)'},
+  cycle:       {label:'CyclOSM',         url:'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', maxZoom:19, attr:'© CyclOSM, © OpenStreetMap'},
+  light:       {label:'Light (muted)',   url:'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',       maxZoom:19, attr:'© OpenStreetMap, © CARTO'},
+  dark:        {label:'Dark (muted)',    url:'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',        maxZoom:19, attr:'© OpenStreetMap, © CARTO'},
+};
+
 /* ── State ─────────────────────────────────────────────────── */
 const S = {
   bgType:'blank', name:'Untitled SLD',
@@ -116,7 +129,24 @@ const S = {
   selected:null,            // {kind:'element'|'line', id}
   nextId:1, isDirty:false,
   map:null, mapView:null, mapMove:false,
+  mapBaseZoom:null,         // zoom level at which element scale is 1:1
+  mapOpacity:1, mapStyle:'standard', tileLayer:null,
+  snap:true, gridSize:28,   // grid snapping (28px matches the visible blank-canvas grid)
 };
+
+/* ── Map-zoom size factor + grid snapping helpers ──────────── */
+// In map mode, elements grow/shrink with zoom relative to the base zoom.
+function mzf(){
+  if(S.bgType==='map' && S.map && S.mapBaseZoom!=null)
+    return Math.pow(2, S.map.getZoom()-S.mapBaseZoom);
+  return 1;
+}
+function escale(el){ return el.scale*mzf(); }   // effective on-screen scale
+function lead(){ return LEAD*mzf(); }            // effective lead length
+function stub(){ return STUB*mzf(); }            // effective routing stub
+function gsnap(v){ return S.snap ? Math.round(v/S.gridSize)*S.gridSize : Math.round(v); }
+function snapAngle(a){ return S.snap ? Math.round(a/15)*15 : Math.round(a); }
+function snapScaleVal(v){ return S.snap ? Math.round(v/0.25)*0.25 : v; }
 const uid = (p)=> p+(S.nextId++);
 const getEl   = id => S.elements.find(e=>e.id===id);
 const getLine = id => S.lines.find(l=>l.id===id);
@@ -152,7 +182,7 @@ function nearestOnSeg(p,a,b){
   t=Math.max(0,Math.min(1,t));
   return {t, point:{x:a.x+dx*t, y:a.y+dy*t}};
 }
-function busHalf(el){ return 46*el.scale; }
+function busHalf(el){ return 46*escale(el); }
 
 // World terminal point + leave-direction for a terminal index
 function termPoint(el, idx, other){
@@ -164,9 +194,10 @@ function termPoint(el, idx, other){
   }
   const leads=def.leads||[];
   const ld=leads[Math.min(idx,leads.length-1)]||{x:0,y:0,dir:'down'};
-  const ax=ld.x*el.scale, ay=ld.y*el.scale;
+  const s=escale(el);
+  const ax=ld.x*s, ay=ld.y*s;
   const d=DIRV[ld.dir]||[0,1];
-  const ex=ax+d[0]*LEAD, ey=ay+d[1]*LEAD;
+  const ex=ax+d[0]*lead(), ey=ay+d[1]*lead();
   const w=lrot(el,ex,ey);
   return {x:w.x, y:w.y, dir:rotDir(ld.dir, el.rot)};
 }
@@ -213,8 +244,8 @@ function routeOrtho(from, to){
   const p1=connPoint(to);                    // resolve end first (for busbar dir)
   const p0=connPoint(from, p1);
   const p1b=connPoint(to, p0);
-  const a={x:p0.x+p0.dir.x*STUB, y:p0.y+p0.dir.y*STUB};
-  const b={x:p1b.x+p1b.dir.x*STUB, y:p1b.y+p1b.dir.y*STUB};
+  const a={x:p0.x+p0.dir.x*stub(), y:p0.y+p0.dir.y*stub()};
+  const b={x:p1b.x+p1b.dir.x*stub(), y:p1b.y+p1b.dir.y*stub()};
   const pts=[{x:p0.x,y:p0.y}, a];
   const horiz0=Math.abs(p0.dir.x)>Math.abs(p0.dir.y);
   if(Math.abs(a.x-b.x)>1 && Math.abs(a.y-b.y)>1){
@@ -319,8 +350,9 @@ function el2(tag,attrs){ const e=document.createElementNS(SVGNS,tag);
 // Inner markup (children of the element <g>): scaled body + fixed-length leads.
 function elementInner(el, fill){
   const def=SYM[el.type];
+  const s=escale(el);
   if(def.bar){
-    const len=92*el.scale;
+    const len=92*s;
     return `<rect x="${(-len/2).toFixed(1)}" y="-3.5" width="${len.toFixed(1)}" height="7" rx="2" fill="currentColor" stroke="none"/>`;
   }
   if(def.isNode){
@@ -329,12 +361,12 @@ function elementInner(el, fill){
   const bodyStr=def.body(el).replace(/@FILL/g,fill);
   let leads='';
   (def.leads||[]).forEach(ld=>{
-    const ax=ld.x*el.scale, ay=ld.y*el.scale;
+    const ax=ld.x*s, ay=ld.y*s;
     const d=DIRV[ld.dir]||[0,1];
-    const ex=ax+d[0]*LEAD, ey=ay+d[1]*LEAD;
+    const ex=ax+d[0]*lead(), ey=ay+d[1]*lead();
     leads+=`<line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}"/>`;
   });
-  return `<g class="sym"><g transform="scale(${el.scale})">${bodyStr}</g>${leads}</g>`;
+  return `<g class="sym"><g transform="scale(${s})">${bodyStr}</g>${leads}</g>`;
 }
 
 function renderAll(){
@@ -360,7 +392,7 @@ function labelPos(el){
   let below;
   if(def.bar) below = 3.5 + 15;
   else if(def.isNode) below = 13;
-  else below = (def.bbox.y+def.bbox.h)*el.scale + LEAD + 13;
+  else below = (def.bbox.y+def.bbox.h)*escale(el) + lead() + 13;
   return {x:el.x, y:el.y+below};
 }
 function renderLabel(el){
@@ -402,7 +434,7 @@ function elBBoxCorners(el){
     return [lrot(el,-half,-5),lrot(el,half,-5),lrot(el,half,5),lrot(el,-half,5)]; }
   if(def.isNode){ const r=8;
     return [lrot(el,-r,-r),lrot(el,r,-r),lrot(el,r,r),lrot(el,-r,r)]; }
-  const bb=def.bbox, s=el.scale;
+  const bb=def.bbox, s=escale(el);
   return [lrot(el,bb.x*s,bb.y*s),lrot(el,(bb.x+bb.w)*s,bb.y*s),
           lrot(el,(bb.x+bb.w)*s,(bb.y+bb.h)*s),lrot(el,bb.x*s,(bb.y+bb.h)*s)];
 }
@@ -498,9 +530,11 @@ function deleteLine(id){
    SELECTION + INSPECTOR
    ════════════════════════════════════════════════════════════ */
 function select(kind,id){ S.selected={kind,id}; appMain.classList.add('has-sel');
-  inspector.classList.add('open'); renderOverlay(); renderInspector(); }
+  inspector.classList.add('open'); $('#inspClose').style.display='';
+  renderOverlay(); renderInspector(); }
 function clearSelection(){ S.selected=null; appMain.classList.remove('has-sel');
-  inspector.classList.remove('open'); layerOverlay.innerHTML=''; }
+  inspector.classList.add('open'); $('#inspClose').style.display='none';
+  layerOverlay.innerHTML=''; renderControlPanel(); }
 
 function field(label, inner){ return `<div class="field"><label>${label}</label>${inner}</div>`; }
 function swatchRow(){ return `<div class="swatches">${SWATCHES.map(c=>`<span class="swatch" data-color="${c}" style="background:${c}"></span>`).join('')}</div>`; }
@@ -509,6 +543,45 @@ function renderInspector(){
   if(!S.selected) return;
   if(S.selected.kind==='element') renderElInspector(getEl(S.selected.id));
   else renderLineInspector(getLine(S.selected.id));
+}
+
+/* ── Canvas / map control panel (shown when nothing is selected) ── */
+function renderControlPanel(){
+  inspTitle.textContent = S.bgType==='map' ? 'Map controls' : 'Canvas controls';
+  const isMap=S.bgType==='map';
+  const styleOpts=Object.entries(MAP_STYLES).map(([k,v])=>
+    `<option value="${k}" ${k===S.mapStyle?'selected':''}>${v.label}</option>`).join('');
+  inspBody.innerHTML=
+    field('Background',
+      `<div class="seg" id="cpBg">
+         <button class="seg-btn ${!isMap?'active':''}" data-bg="blank">▦ Canvas</button>
+         <button class="seg-btn ${isMap?'active':''}" data-bg="map">🗺 Map</button>
+       </div>`)+
+    field('Grid snapping',
+      `<button class="btn btn-block ${S.snap?'active':''}" id="cpSnap">${S.snap?'⊞ Snapping on':'⊡ Snapping off'}</button>`)+
+    field('Grid size',
+      `<div class="row"><input type="range" id="cpGrid" min="8" max="60" step="2" value="${S.gridSize}" ${S.snap?'':'disabled'}><span class="rng-val" id="cpGridV">${S.gridSize}px</span></div>`)+
+    (isMap?
+      field('Map interaction',
+        `<button class="btn btn-block ${S.mapMove?'active':''}" id="cpUnlock">${S.mapMove?'🔒 Lock map':'🗺 Unlock map'}</button>`)+
+      field('Map style',
+        `<select id="cpStyle">${styleOpts}</select>`)+
+      field('Map opacity',
+        `<div class="row"><input type="range" id="cpOpacity" min="0.15" max="1" step="0.05" value="${S.mapOpacity}"><span class="rng-val" id="cpOpacityV">${Math.round(S.mapOpacity*100)}%</span></div>`)+
+      `<div class="insp-hint">Elements scale with the map zoom — zoom in to enlarge them, out to shrink. Unlock the map to pan &amp; zoom; lock it again to edit the diagram.</div>`
+      :
+      `<div class="insp-hint">Drag a symbol from the left onto the canvas, or pick <b>Draw</b> to sketch one. Draw from one element to another to connect them. Select anything to edit it here.</div>`
+    );
+  // background segmented control
+  inspBody.querySelectorAll('#cpBg .seg-btn').forEach(b=>b.onclick=()=>requestBackgroundSwitch(b.dataset.bg));
+  // grid snapping
+  $('#cpSnap').onclick=()=>{ S.snap=!S.snap; renderControlPanel(); };
+  $('#cpGrid').oninput=e=>{ S.gridSize=+e.target.value; $('#cpGridV').textContent=S.gridSize+'px'; };
+  if(isMap){
+    const un=$('#cpUnlock'); if(un) un.onclick=toggleMapMove;
+    const st=$('#cpStyle'); if(st) st.onchange=e=>{ setMapStyle(e.target.value); markDirty(); };
+    const op=$('#cpOpacity'); if(op) op.oninput=e=>{ setMapOpacity(+e.target.value); $('#cpOpacityV').textContent=Math.round(S.mapOpacity*100)+'%'; markDirty(); };
+  }
 }
 function renderElInspector(el){
   if(!el) return; inspTitle.textContent='Element';
@@ -623,14 +696,7 @@ function onPointerDown(e){
     }
     return;
   }
-  if(S.mode==='line-scribble'){
-    scribble={pts:[pt], el:null};
-    scribble.el=el2('polyline',{class:'scribble-path',points:`${pt.x},${pt.y}`});
-    layerOverlay.appendChild(scribble.el);
-    svg.setPointerCapture(e.pointerId); e.preventDefault();
-    return;
-  }
-  if(S.mode==='scribble'){
+  if(S.mode==='draw'){
     if(scribbleTimer){ clearTimeout(scribbleTimer); scribbleTimer=null; }
     scribble={pts:[pt], el:null};
     scribble.el=el2('polyline',{class:'scribble-path',points:`${pt.x},${pt.y}`});
@@ -649,7 +715,7 @@ svg.addEventListener('pointermove', e=>{
   } else if(drag){
     const dx=pt.x-drag.start.x, dy=pt.y-drag.start.y;
     if(Math.abs(dx)>2||Math.abs(dy)>2) drag.moved=true;
-    drag.el.x=Math.round(drag.ox+dx); drag.el.y=Math.round(drag.oy+dy);
+    drag.el.x=gsnap(drag.ox+dx); drag.el.y=gsnap(drag.oy+dy);
     syncElGeo(drag.el);
     markDirty(); renderAll();
   } else if(scribble){
@@ -667,13 +733,20 @@ svg.addEventListener('pointerup', e=>{
   }
   if(scribble){
     const pts=scribble.pts.slice();
-    const sc=scribble; scribble=null;
-    if(S.mode==='line-scribble'){
-      layerOverlay.innerHTML=''; renderOverlay();
-      if(pts.length>=3) finishScribbleLine(pts);
-      return;
+    scribble=null;
+    // Unified Draw tool: a stroke that links two different elements becomes a
+    // connection line; anything else is recognised as a symbol.
+    if(pts.length>=3){
+      const start=nearestConn(pts[0]);
+      const end=nearestConn(pts[pts.length-1], start?start.elId:null);
+      if(start && end && start.elId!==end.elId){
+        layerOverlay.innerHTML=''; renderOverlay();
+        scribbleStrokes=[];
+        createLine(start, end, 'scribble', simplify(pts, 7));
+        return;
+      }
     }
-    // element scribble — accumulate strokes, recognise after a pause
+    // otherwise — accumulate strokes and recognise a symbol after a short pause
     if(pts.length>=2) scribbleStrokes.push(pts);
     if(scribbleTimer) clearTimeout(scribbleTimer);
     scribbleTimer=setTimeout(()=>{ scribbleTimer=null; finishScribbleElement(); }, SCRIBBLE_PAUSE);
@@ -699,7 +772,7 @@ function startRotate(e,el){
   e.stopPropagation(); svg.setPointerCapture(e.pointerId);
   const move=ev=>{ const p=boardPt(ev);
     let ang=Math.atan2(p.x-el.x, -(p.y-el.y))*180/Math.PI; // 0 = up
-    if(ev.shiftKey) ang=Math.round(ang/15)*15;
+    if(ev.shiftKey||S.snap) ang=Math.round(ang/15)*15;
     el.rot=Math.round((ang+360)%360); markDirty(); renderAll(); if($('#fRot')){$('#fRot').value=el.rot;$('#fRotV').textContent=el.rot+'°';} };
   const up=()=>{ svg.removeEventListener('pointermove',move); svg.removeEventListener('pointerup',up); };
   svg.addEventListener('pointermove',move); svg.addEventListener('pointerup',up);
@@ -711,7 +784,8 @@ function startScale(e,el){
   if(def.bar) diag=46;
   else diag=Math.hypot(def.bbox.w,def.bbox.h)/2;
   const move=ev=>{ const p=boardPt(ev); const d=dist({x:el.x,y:el.y},p);
-    el.scale=clamp(d/diag,0.5,4); markDirty(); renderAll();
+    let v=clamp(d/diag/mzf(),0.5,4); v=clamp(snapScaleVal(v),0.5,4);
+    el.scale=v; markDirty(); renderAll();
     if($('#fScale')){$('#fScale').value=el.scale;$('#fScaleV').textContent=el.scale.toFixed(1)+'×';} };
   const up=()=>{ svg.removeEventListener('pointermove',move); svg.removeEventListener('pointerup',up); };
   svg.addEventListener('pointermove',move); svg.addEventListener('pointerup',up);
@@ -730,7 +804,7 @@ function addWaypoint(line, pt){
   // map segment index in rendered pts to waypoint insert index
   // rendered pts = [start, ...waypoints, end]; segment i sits before waypoint index i
   const insertIdx=Math.min(bestSeg, line.waypoints.length);
-  const wp={x:Math.round(pt.x), y:Math.round(pt.y)};
+  const wp={x:gsnap(pt.x), y:gsnap(pt.y)};
   if(S.bgType==='map'&&S.map) wp.geo=geoFromPx(wp.x,wp.y);
   line.waypoints.splice(insertIdx,0,wp);
   markDirty(); select('line',line.id); renderAll(); renderOverlay();
@@ -742,8 +816,9 @@ function deleteWaypoint(line,i){
 function startWaypointDrag(e,line,i){
   e.stopPropagation(); svg.setPointerCapture(e.pointerId);
   const move=ev=>{ const p=boardPt(ev);
-    line.waypoints[i].x=Math.round(p.x); line.waypoints[i].y=Math.round(p.y);
-    if(S.bgType==='map'&&S.map) line.waypoints[i].geo=geoFromPx(p.x,p.y);
+    const sx=gsnap(p.x), sy=gsnap(p.y);
+    line.waypoints[i].x=sx; line.waypoints[i].y=sy;
+    if(S.bgType==='map'&&S.map) line.waypoints[i].geo=geoFromPx(sx,sy);
     markDirty(); renderAll(); renderOverlay(); };
   const up=()=>{ svg.removeEventListener('pointermove',move); svg.removeEventListener('pointerup',up); };
   svg.addEventListener('pointermove',move); svg.addEventListener('pointerup',up);
@@ -759,15 +834,6 @@ function createLine(from, to, mode, raw){
   if(mode==='scribble' && raw) line.raw=raw;
   S.lines.push(line); markDirty(); renderAll(); select('line',line.id);
 }
-function finishScribbleLine(pts){
-  const start=nearestConn(pts[0]);
-  const end=nearestConn(pts[pts.length-1], start?start.elId:null);
-  if(!start||!end){ toast('Scribble must start and end on elements','error'); return; }
-  if(start.elId===end.elId){ toast('Start and end must differ','error'); return; }
-  const simp=simplify(pts, 7);
-  createLine(start,end,'scribble',simp);
-}
-
 /* ── Scribble → element recognition (multi-stroke, graceful) ── */
 function strokeInfo(pts){
   let minx=Infinity,miny=Infinity,maxx=-Infinity,maxy=-Infinity;
@@ -809,9 +875,10 @@ function finishScribbleElement(){
   const r=recognizeMulti(strokes);
   const def=SYM[r.type];
   let scale=1;
-  if(def.bar) scale=clamp(Math.max(r.w,r.h)/92, 0.6, 4);
-  else { const natural=Math.max(def.bbox.w,def.bbox.h); scale=clamp(Math.max(r.w,r.h)/natural, 0.6, 4); }
-  addElement(r.type, r.cx, r.cy, scale);
+  const zf=mzf();
+  if(def.bar) scale=clamp(Math.max(r.w,r.h)/92/zf, 0.6, 4);
+  else { const natural=Math.max(def.bbox.w,def.bbox.h); scale=clamp(Math.max(r.w,r.h)/natural/zf, 0.6, 4); }
+  addElement(r.type, gsnap(r.cx), gsnap(r.cy), scale);
   toast('Recognised: '+def.label+' — change type in panel if wrong','success');
 }
 
@@ -834,20 +901,23 @@ function paletteIcon(t){
 }
 function buildPalette(){
   const wrap=$('#paletteScroll');
-  wrap.innerHTML=PALETTE_ORDER.map(t=>{
+  const lineTool=`<div class="pal-item pal-tool" data-tool="line" title="Click two element terminals to connect them">${TOWER_ICON}<span class="pal-label">Line · connect</span></div>`;
+  wrap.innerHTML=lineTool+PALETTE_ORDER.map(t=>{
     const d=SYM[t];
     return `<div class="pal-item" draggable="true" data-type="${t}">${paletteIcon(t)}<span class="pal-label">${d.label}</span></div>`;
   }).join('');
-  wrap.querySelectorAll('.pal-item').forEach(it=>{
+  wrap.querySelectorAll('.pal-item[data-type]').forEach(it=>{
     it.addEventListener('dragstart',e=>{ e.dataTransfer.setData('text/sld', it.dataset.type);
       e.dataTransfer.effectAllowed='copy'; });
   });
+  const lt=wrap.querySelector('.pal-tool[data-tool="line"]');
+  if(lt) lt.addEventListener('click',()=>{ setMode('line'); lt.classList.add('active'); });
 }
 board.addEventListener('dragover',e=>{ if(e.dataTransfer.types.includes('text/sld')){ e.preventDefault(); e.dataTransfer.dropEffect='copy'; } });
 board.addEventListener('drop',e=>{
   const type=e.dataTransfer.getData('text/sld'); if(!type) return;
   e.preventDefault(); const p=boardPt(e);
-  setMode('select'); addElement(type,p.x,p.y,1);
+  setMode('select'); addElement(type,gsnap(p.x),gsnap(p.y),1);
 });
 
 /* ════════════════════════════════════════════════════════════
@@ -857,6 +927,8 @@ function setMode(m){
   S.mode=m; pendingLine=null; scribbleStrokes=[]; if(scribbleTimer){clearTimeout(scribbleTimer);scribbleTimer=null;}
   layerOverlay.innerHTML=''; renderOverlay();
   $('#modeBar').querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
+  const lt=document.querySelector('.pal-tool[data-tool="line"]');
+  if(lt) lt.classList.toggle('active', m==='line');
   if(m!=='select') clearSelection();
 }
 $('#modeBar').querySelectorAll('.mode-btn').forEach(b=> b.onclick=()=>setMode(b.dataset.mode));
@@ -867,15 +939,46 @@ $('#modeBar').querySelectorAll('.mode-btn').forEach(b=> b.onclick=()=>setMode(b.
 $('#sldNameInput').oninput=e=>{ S.name=e.target.value||'Untitled SLD'; markDirty(); };
 $('#colorModeSelect').onchange=e=>{ S.colorMode=e.target.value; renderAll(); if(S.selected)renderInspector(); };
 
-$('#bgSelect').onchange=e=>{ setBackground(e.target.value); };
-$('#mapMoveBtn').onclick=()=>{ S.mapMove=!S.mapMove; board.classList.toggle('map-move',S.mapMove);
+$('#bgSelect').onchange=e=>{ requestBackgroundSwitch(e.target.value); };
+$('#mapMoveBtn').onclick=toggleMapMove;
+
+// Switch background, resetting the diagram (warn the user to save first).
+function requestBackgroundSwitch(type){
+  if(type===S.bgType){ return; }
+  const apply=()=>{ resetDiagram(); setBackground(type); renderAll(); markClean(); };
+  if(S.isDirty && (S.elements.length||S.lines.length)){
+    $('#bgSelect').value=S.bgType;
+    showConfirm('⚠️','Switch background',
+      `Switching between Map and Canvas resets the diagram. Save your work first if you want to keep it — this can't be undone. Proceed?`,
+      ()=>{ apply(); }, ()=>{ $('#bgSelect').value=S.bgType; });
+  } else { apply(); }
+}
+function resetDiagram(){
+  S.elements=[]; S.lines=[]; S.nextId=1; S.mapBaseZoom=null;
+  clearSelection();
+}
+function toggleMapMove(){
+  S.mapMove=!S.mapMove; board.classList.toggle('map-move',S.mapMove);
   $('#mapMoveBtn').classList.toggle('active',S.mapMove);
-  $('#mapMoveBtn').textContent=S.mapMove?'🔒 Lock map':'🗺 Move map';
+  $('#mapMoveBtn').textContent=S.mapMove?'🔒 Lock map':'🗺 Unlock map';
   if(S.map){ if(S.mapMove){S.map.dragging.enable();S.map.scrollWheelZoom.enable();}
-    else{S.map.dragging.disable();S.map.scrollWheelZoom.disable();} } };
+    else{S.map.dragging.disable();S.map.scrollWheelZoom.disable();} }
+  if(!S.selected) renderControlPanel();
+}
+function setMapStyle(key){
+  S.mapStyle=MAP_STYLES[key]?key:'standard';
+  if(!S.map) return;
+  if(S.tileLayer){ S.map.removeLayer(S.tileLayer); S.tileLayer=null; }
+  const st=MAP_STYLES[S.mapStyle];
+  S.tileLayer=L.tileLayer(st.url,{maxZoom:st.maxZoom,crossOrigin:true,
+    opacity:S.mapOpacity, attribution:st.attr}).addTo(S.map);
+}
+// Fade only the tiles (keeps the OSM attribution & zoom controls fully legible).
+function setMapOpacity(v){ S.mapOpacity=clamp(v,0.15,1); if(S.tileLayer) S.tileLayer.setOpacity(S.mapOpacity); }
 
 function setBackground(type){
   S.bgType=type; markDirty();
+  $('#bgSelect').value=type;
   if(type==='map'){
     board.classList.remove('blank');
     $('#mapLayer').style.display='';
@@ -886,22 +989,27 @@ function setBackground(type){
     $('#mapLayer').style.display='none';   // fix: hide the map when switching back to blank
     $('#mapMoveBtn').style.display='none';
     board.classList.remove('map-move'); S.mapMove=false;
-    $('#mapMoveBtn').textContent='🗺 Move map'; $('#mapMoveBtn').classList.remove('active');
+    $('#mapMoveBtn').textContent='🗺 Unlock map'; $('#mapMoveBtn').classList.remove('active');
     renderAll();
   }
+  if(!S.selected) renderControlPanel();
 }
 function ensureMap(){
-  if(S.map){ setTimeout(()=>{ S.map.invalidateSize(); attachGeo(); refreshGeo(); renderAll(); },50); return; }
+  setMapOpacity(S.mapOpacity);
+  if(S.map){ setTimeout(()=>{ S.map.invalidateSize();
+    if(S.mapBaseZoom==null) S.mapBaseZoom=S.map.getZoom();
+    attachGeo(); refreshGeo(); renderAll(); },50); return; }
   if(typeof L==='undefined'){ toast('Map library failed to load','error'); return; }
   S.map=L.map('mapLayer',{zoomControl:true,attributionControl:true,
     dragging:false,scrollWheelZoom:false}).setView(S.mapView?[S.mapView[0],S.mapView[1]]:[-33.8688,151.2093], S.mapView&&S.mapView[2]||13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    maxZoom:19, crossOrigin:true,
-    attribution:'© OpenStreetMap'}).addTo(S.map);
+  setMapStyle(S.mapStyle);
+  if(S.mapBaseZoom==null) S.mapBaseZoom=S.map.getZoom();
   S.map.on('move zoom',()=>{ refreshGeo(); renderAll(); });
   S.map.on('moveend zoomend',()=>{ const c=S.map.getCenter(); S.mapView=[c.lat,c.lng,S.map.getZoom()];
     refreshGeo(); renderAll(); markDirty(); });
-  setTimeout(()=>{ S.map.invalidateSize(); attachGeo(); refreshGeo(); renderAll(); },60);
+  setTimeout(()=>{ S.map.invalidateSize();
+    if(S.mapBaseZoom==null) S.mapBaseZoom=S.map.getZoom();
+    attachGeo(); refreshGeo(); renderAll(); },60);
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -1011,7 +1119,9 @@ $('#copyPngBtn').onclick=async()=>{
    ════════════════════════════════════════════════════════════ */
 $('#saveJsonBtn').onclick=()=>{
   const data={ _source:'tool.adjiebrotots.com/sldmaker', name:S.name, background:S.bgType,
-    mapView:S.mapView, colorMode:S.colorMode, elements:S.elements, lines:S.lines };
+    mapView:S.mapView, mapBaseZoom:S.mapBaseZoom, mapStyle:S.mapStyle, mapOpacity:S.mapOpacity,
+    snap:S.snap, gridSize:S.gridSize,
+    colorMode:S.colorMode, elements:S.elements, lines:S.lines };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const link=document.createElement('a');
   const safe=(S.name||'sld').replace(/[^a-z0-9\-_ ]/gi,'').toLowerCase().replace(/\s+/g,'-')||'sld';
@@ -1032,8 +1142,14 @@ function doLoad(d){
     S.nextId=maxN;
     $('#sldNameInput').value=S.name; $('#colorModeSelect').value=S.colorMode;
     S.mapView=d.mapView||S.mapView;
-    $('#bgSelect').value=d.background||'blank'; clearSelection();
-    if(S.map){ S.map.remove(); S.map=null; }
+    S.mapBaseZoom = d.mapBaseZoom!=null ? d.mapBaseZoom : null;
+    S.mapStyle = d.mapStyle && MAP_STYLES[d.mapStyle] ? d.mapStyle : 'standard';
+    S.mapOpacity = d.mapOpacity!=null ? d.mapOpacity : 1;
+    if(d.snap!=null) S.snap = !!d.snap;
+    if(d.gridSize!=null) S.gridSize = d.gridSize;
+    $('#bgSelect').value=d.background||'blank';
+    if(S.map){ S.map.remove(); S.map=null; S.tileLayer=null; }
+    clearSelection();
     setBackground(d.background||'blank');
     if(S.mapView && S.map) S.map.setView([S.mapView[0],S.mapView[1]], S.mapView[2]||13);
     renderAll(); markClean(); toast('Loaded ✓','success');
