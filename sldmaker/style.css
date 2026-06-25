@@ -103,6 +103,12 @@ select.tb-control{padding-right:28px;
 .pal-item:active{cursor:grabbing;transform:scale(.98);}
 .pal-item svg{width:34px;height:34px;flex-shrink:0;color:var(--sld-ink);}
 .pal-item .pal-label{font-size:.74rem;font-weight:600;line-height:1.15;color:var(--text);}
+/* Line connection tool sits at the top of the element list */
+.pal-item.pal-tool{cursor:pointer;border-style:dashed;margin-bottom:10px;}
+.pal-item.pal-tool:active{transform:scale(.98);}
+.pal-item.pal-tool.active{border-style:solid;border-color:var(--accent-strong);
+  background:var(--accent-strong);}
+.pal-item.pal-tool.active svg,.pal-item.pal-tool.active .pal-label{color:#fff;}
 
 /* ── CENTER CANVAS ───────────────────────────── */
 .canvas-area{flex:1;min-width:0;overflow:auto;background:var(--bg);position:relative;
@@ -152,7 +158,6 @@ text.el-label:hover{fill:var(--accent-strong);}
   display:flex;flex-direction:column;overflow:hidden;transform:translateX(100%);
   transition:transform .18s ease;position:relative;}
 .inspector.open{transform:none;}
-.app-main:not(.has-sel) .inspector{display:none;}
 .insp-head{display:flex;align-items:center;justify-content:space-between;
   padding:11px 14px;border-bottom:1px solid var(--border);}
 .insp-title{font-size:.78rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);}
@@ -179,6 +184,13 @@ text.el-label:hover{fill:var(--accent-strong);}
 .swatch{width:20px;height:20px;border-radius:5px;cursor:pointer;border:1.5px solid rgba(0,0,0,.12);}
 .swatch:hover{transform:scale(1.12);}
 .btn-block{width:100%;justify-content:center;margin-top:4px;}
+.seg{display:flex;gap:6px;}
+.seg-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
+  background:var(--input-bg);border:1.5px solid var(--border);color:var(--text);
+  border-radius:8px;padding:7px 6px;font-family:'DM Sans',sans-serif;font-size:.8rem;
+  font-weight:700;cursor:pointer;transition:border-color .12s,background .12s;white-space:nowrap;}
+.seg-btn:hover{border-color:var(--accent);}
+.seg-btn.active{background:var(--accent-strong);border-color:var(--accent-strong);color:#fff;}
 .btn-danger{background:var(--error-bg);border-color:var(--error-bg);color:var(--error-text);}
 .insp-hint{font-size:.74rem;color:var(--muted);line-height:1.45;margin-top:4px;}
 
