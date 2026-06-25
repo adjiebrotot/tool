@@ -1777,6 +1777,26 @@ function updateCompChart(){
     label:s.label, data:s.data, borderColor:s.color, backgroundColor:s.color+'66',
     borderWidth:1.2, pointRadius:0, pointHoverRadius:4, tension:0.15, fill:true, stack:'comp'
   }));
+
+  // Buy markers (▲) - one upward triangle per buying date (a top-up or a trigger
+  // deployment), sitting just above the baseline so it reads like dcasimulator's
+  // "Show Buy Date" overlay without obscuring the stacked areas. Given its own
+  // stack so it renders at its literal value instead of stacking on the areas.
+  const buyDates=new Set(res.rows.filter(r=>r.event && (r.event.includes('Top-up')||r.event.includes('Trigger'))).map(r=>r.date));
+  let buyMarkerIdx=-1;
+  if(buyDates.size){
+    const yMax=isPct?100:Math.max(...res.rows.map(r=>r.total),1);
+    const markerOffset=yMax*0.04;
+    const markerColor=cssVar('--text')||'#e5e7eb';
+    buyMarkerIdx=datasets.length;
+    datasets.push({
+      label:'▲ Buy date', data:res.rows.map(r=> buyDates.has(r.date) ? markerOffset : null),
+      borderColor:markerColor, backgroundColor:markerColor, showLine:false, spanGaps:false,
+      pointStyle:'triangle', pointRadius:4, pointHoverRadius:6,
+      pointBorderColor:'#fff', pointBorderWidth:0.5, fill:false, stack:'marker', _marker:true
+    });
+  }
+
   series.forEach((s,idx)=>{
     const item=document.createElement('div'); item.className='legend-item';
     item.innerHTML=`<span class="dot" style="background:${s.color}"></span><span>${s.label}</span>`;
@@ -1788,13 +1808,25 @@ function updateCompChart(){
     legendEl.appendChild(item);
   });
 
+  // Legend toggle for the buy-date triangles (sits after the asset/cash entries).
+  if(buyMarkerIdx>=0){
+    const item=document.createElement('div'); item.className='legend-item';
+    item.innerHTML=`<span class="dot" style="background:${cssVar('--text')||'#e5e7eb'};clip-path:polygon(50% 0,100% 100%,0 100%)"></span><span>▲ Buy date</span>`;
+    item.addEventListener('click',()=>{
+      if(hidden.has(buyMarkerIdx)) hidden.delete(buyMarkerIdx); else hidden.add(buyMarkerIdx);
+      item.classList.toggle('hidden',hidden.has(buyMarkerIdx));
+      if(compChart){ compChart.setDatasetVisibility(buyMarkerIdx,!hidden.has(buyMarkerIdx)); compChart.update(); }
+    });
+    legendEl.appendChild(item);
+  }
+
   const yCb = isPct ? (v=>fmt.num(v,0)+'%') : (v=>fmt.currency(v,true));
   const valFmt = isPct ? (v=>fmt.num(v,1)+'%') : (v=>fmt.currency(v,true));
   const totFmt = isPct ? (v=>fmt.num(v,0)+'%') : (v=>fmt.currency(v,true));
   const opts={
     responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
     plugins:{ legend:{display:false}, tooltip:{
-      filter:item=>compChart?compChart.isDatasetVisible(item.datasetIndex):true,
+      filter:item=>!item.dataset._marker && (compChart?compChart.isDatasetVisible(item.datasetIndex):true),
       callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${valFmt(ctx.parsed.y)}`,
         afterBody(items){ if(items.length){ const tot=items.reduce((s,i)=>s+i.parsed.y,0); $('compHoverBox').textContent=`${items[0].label}  -  Total: ${totFmt(tot)}  |  `+items.map(i=>`${i.dataset.label}: ${valFmt(i.parsed.y)}`).join('  |  '); } }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10},
