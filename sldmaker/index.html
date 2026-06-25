@@ -91,13 +91,15 @@
 
 <div class="app-main" id="appMain">
   <!-- LEFT PALETTE -->
-  <aside class="palette">
-    <div class="palette-head">Tools</div>
+  <aside class="palette" id="palette">
+    <div class="palette-head palette-head-main">Tools
+      <button class="panel-close" id="paletteClose" aria-label="Close panel" title="Close">×</button>
+    </div>
     <div class="mode-bar" id="modeBar">
       <button class="mode-btn active" data-mode="select" title="Select, move, edit">✥ Select</button>
       <button class="mode-btn" data-mode="draw" title="Draw a symbol to place it, or draw from one element to another to connect them">✎ Draw</button>
     </div>
-    <div class="palette-head">Elements · drag onto canvas</div>
+    <div class="palette-head">Elements · drag or tap to add</div>
     <div class="palette-scroll" id="paletteScroll"><!-- filled by JS --></div>
   </aside>
 
@@ -122,7 +124,14 @@
     </div>
     <div class="insp-body" id="inspBody"><!-- filled by JS --></div>
   </aside>
+
+  <!-- MOBILE: scrim behind slide-in panels -->
+  <div class="panel-scrim" id="panelScrim"></div>
 </div>
+
+<!-- MOBILE: floating buttons to open the collapsed side panels -->
+<button class="panel-fab fab-left"  id="paletteFab" aria-label="Open tools &amp; elements" title="Tools &amp; elements">✥ Tools</button>
+<button class="panel-fab fab-right" id="inspFab"    aria-label="Open properties &amp; controls" title="Properties &amp; controls">⚙ Panel</button>
 
 <!-- CONFIRM MODAL -->
 <div class="modal-overlay" id="confirmOverlay">
