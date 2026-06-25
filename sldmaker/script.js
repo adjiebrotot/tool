@@ -1056,7 +1056,28 @@ function isVee(s){
   if(s.closed || s.shape==='line') return false;
   let lo=s.pts[0]; for(const p of s.pts) if(p.y>lo.y) lo=p;
   const ax=(lo.x-s.minx)/Math.max(1,s.w);
-  return lo.y>s.cy && ax>0.22 && ax<0.78 && s.sharp<=2;
+  return lo.y>s.cy && ax>0.22 && ax<0.78 && s.sharp<=3;
+}
+
+// A battery lightning bolt is a tall, jagged mark with alternating horizontal
+// direction.  The previous recogniser treated any two-corner detail inside a
+// square as lightning, so V marks, M marks, diagonal strokes and noisy box
+// redraws frequently became BESS.  Keep BESS detection deliberately specific
+// and let the less distinctive box symbols fall back to inverter/breaker.
+function isLightning(s){
+  if(s.closed || s.shape==='line') return false;
+  const zigX=reversals(s.pts,'x'), zigY=reversals(s.pts,'y');
+  const tall=s.h > s.w*0.9;
+  const enoughTurns=s.sharp>=3 || zigX>=2;
+  const verticalExtent=s.h > 0.35*Math.max(1,s.diag);
+  return tall && enoughTurns && verticalExtent && zigY<=2;
+}
+
+function isDiagonal(s){
+  if(s.closed) return false;
+  const f=s.pts[0], l=s.pts[s.pts.length-1];
+  const edx=Math.abs(f.x-l.x), edy=Math.abs(f.y-l.y);
+  return s.straight>0.74 && edx>0.45*Math.max(1,s.w) && edy>0.45*Math.max(1,s.h);
 }
 
 function recognizeMulti(strokes){
@@ -1106,19 +1127,17 @@ function recognizeMulti(strokes){
   if(rect){
     const inner=infos.filter(i=>i!==rect && Math.max(i.w,i.h) < Math.max(rect.w,rect.h)*1.4);
     if(inner.length===0) return out('breaker');                       // bare box → breaker
-    const d=inner.slice().sort((a,b)=>b.len-a.len)[0];               // most prominent detail
-    const f=d.pts[0], l=d.pts[d.pts.length-1];
-    const edx=Math.abs(f.x-l.x), edy=Math.abs(f.y-l.y);
-    const zig=Math.max(reversals(d.pts,'x'),reversals(d.pts,'y'));
     // A sinusoid marks an inverter's AC side; which half it sits in sets the
     // orientation (sine on top = AC up = 0°, sine on bottom = DC up = 180°).
-    const wave=inner.find(i=>i!==d && !i.closed && i.aspect>1.1 && i.sharp<=2 && reversals(i.pts,'y')>=2);
+    const wave=inner.find(i=>!i.closed && i.aspect>1.1 && i.sharp<=3 && reversals(i.pts,'y')>=2);
     const invRot=wave ? (wave.cy<cy ? 0 : 180) : 0;
-    // a corner-to-corner diagonal → inverter
-    if(d.sharp<=1 && d.straight>0.78 && edy>0.45*Math.max(1,d.h) && edx>0.25*Math.max(1,d.w)) return out('inverter',invRot);
-    if(d.shape==='triangle' || isVee(d)) return out('solarpv');       // ▽ / V
-    if(d.sharp>=2 || zig>=2) return out('battery');                   // lightning zig-zag
-    if(wave) return out('inverter',invRot);                           // sine + = (no diagonal drawn)
+    // Check the whole set of box details, not only the longest stroke: users
+    // often draw the solar V or inverter diagonal smaller than other accents.
+    if(inner.some(isDiagonal) || wave) return out('inverter',invRot);
+    if(inner.some(i=>i.shape==='triangle' || isVee(i))) return out('solarpv');
+    if(inner.some(isLightning)) return out('battery');
+    // A box with unrecognised interior detail is much more commonly intended
+    // as an inverter than as BESS; avoid the high-impact false positive.
     return out('inverter',invRot);
   }
 
