@@ -240,8 +240,8 @@
       </div>
     </div>
     <div class="field-row" id="rfTickerRow" style="display:none">
-      <div class="field-label">Risk-free ticker <span class="tip-icon" data-tip="Idle cash grows with this ticker's price instead of a fixed rate.">?</span></div>
-      <input class="txt-input" id="rfTicker" placeholder="e.g. AAA.AX" style="text-transform:uppercase" />
+      <div class="field-label">Risk-free ticker <span class="tip-icon" data-tip="Idle cash grows with this loaded ticker's price instead of a fixed rate. Pick from the tickers loaded in the Data tab.">?</span></div>
+      <select class="txt-input" id="rfTicker" style="cursor:pointer"></select>
       <div class="field-sub"><a href="../ticker/" class="ticker-ref-link" style="margin-top:0">ticker codes →</a></div>
     </div>
   </div>
@@ -310,7 +310,7 @@
     <div id="ruleOpts" style="display:none">
       <div class="field-label" style="margin-top:10px">Reserve <span class="tip-icon" data-tip="Where un-deployed top-ups sit while waiting for triggers. Pick the Risk-Free Account to hold them as cash, or pick an asset to park them in until a trigger fires.">?</span></div>
       <select class="num-input" id="reserveSelect" style="cursor:pointer"></select>
-      <div class="field-label" style="margin-top:10px">Deploy Triggers <span class="tip-icon" data-tip="Each asset deploys from the reserve only when its trigger fires. Price moves are measured from the start of each month or week (the period open); technical triggers reuse the single-asset tool's indicators.">?</span></div>
+      <div class="field-label" style="margin-top:10px">Deploy Triggers <span class="tip-icon" data-tip="Each asset deploys from the reserve only when its trigger fires. Price moves are measured from the start of each month or week (the period open); technical triggers reuse the single-asset tool's indicators. Pick 'Invest at Top-up' for an asset that should not wait, deploying toward its target weight on every top-up.">?</span></div>
       <div id="triggerTableWrap"></div>
     </div>
 

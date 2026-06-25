@@ -404,6 +404,7 @@ function clearPool(){
 // Populate the "Add Asset" dropdown from the loaded pool: real tickers and
 // simulated assets, grouped so the user can tell them apart.
 function refreshAssetPoolSelect(){
+  refreshRfTickerSelect();   // keep the Risk-Free ticker dropdown in sync with the pool
   const sel=$('assetPoolSelect'); if(!sel) return;
   const tks=loadedTickers();
   const prev=sel.value;
@@ -418,6 +419,27 @@ function refreshAssetPoolSelect(){
   if(simPool.length) html+='<optgroup label="Simulated">'+simPool.map(s=>`<option value="s:${escapeHtml(s.name)}">ƒ ${escapeHtml(s.name)}</option>`).join('')+'</optgroup>';
   sel.innerHTML=html;
   if(prev && [...sel.options].some(o=>o.value===prev)) sel.value=prev;
+}
+
+// Populate the Risk-Free "ticker" dropdown from the loaded real tickers (idle
+// cash compounds with this ticker's price). Only real tickers are offered, since
+// the risk-free price is resolved from the shared price cache. A previously chosen
+// ticker that is no longer loaded is kept selectable so the choice is not lost.
+function refreshRfTickerSelect(){
+  const sel=$('rfTicker'); if(!sel) return;
+  const p=getActive();
+  const cur=p?((p.rf.ticker||'')).toUpperCase():'';
+  const tks=loadedTickers();
+  if(!tks.length && !cur){
+    sel.innerHTML='<option value=""> - load tickers in the Data tab first - </option>';
+    sel.value='';
+    return;
+  }
+  let html='<option value=""> - select a ticker - </option>';
+  html+=tks.map(tk=>`<option value="${escapeHtml(tk)}">${escapeHtml(tk)}</option>`).join('');
+  if(cur && !tks.includes(cur)) html+=`<option value="${escapeHtml(cur)}">${escapeHtml(cur)} (not loaded)</option>`;
+  sel.innerHTML=html;
+  sel.value=cur;
 }
 
 // Loading is additive and individual tickers are removed via the chip ✕, so the
@@ -643,7 +665,7 @@ function loadControlsFromActive(){
   $('rfRateRow').style.display=p.rf.mode==='ticker'?'none':'';
   $('rfTickerRow').style.display=p.rf.mode==='ticker'?'':'none';
   $('rfRate').value=fmtMoneyVal(p.rf.rate);
-  $('rfTicker').value=p.rf.ticker;
+  refreshRfTickerSelect();
 
   // Rebalancing
   selectRadio('rebalMethod', p.rebal.method);
@@ -763,6 +785,35 @@ function methodNeedsWeights(method){
   return method==='towards-weight' || method==='constant-weight' || method==='constant-allocation' || method==='rule-trigger';
 }
 let weightPieChart=null;
+// Render the doughnut's tooltip as a fixed-position HTML bubble instead of the
+// default in-canvas one. The weight pie sits in a small (~120px) canvas, so the
+// built-in tooltip gets clipped at the canvas edge (see the cut-off bubble in the
+// bug report). A body-level element styled like the global tip is never clipped.
+function weightPieTooltip(context){
+  const {chart, tooltip}=context;
+  let el=document.getElementById('weightPieTip');
+  if(!el){
+    el=document.createElement('div');
+    el.id='weightPieTip';
+    el.style.cssText='position:fixed;z-index:99999;pointer-events:none;background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:var(--radius-lg,10px);padding:6px 10px;font-size:.8rem;line-height:1.4;color:var(--text);box-shadow:var(--shadow-lg);opacity:0;transition:opacity .12s;white-space:nowrap;transform:translate(-50%,calc(-100% - 10px));';
+    document.body.appendChild(el);
+  }
+  if(!tooltip || tooltip.opacity===0){ el.style.opacity='0'; return; }
+  const lines=(tooltip.body||[]).map(b=>b.lines).flat();
+  el.innerHTML=lines.map((l,idx)=>{
+    const c=(tooltip.labelColors&&tooltip.labelColors[idx])||{};
+    return `<span style="display:inline-flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;flex-shrink:0;background:${c.backgroundColor||'transparent'}"></span>${l}</span>`;
+  }).join('');
+  const r=chart.canvas.getBoundingClientRect();
+  let left=r.left+tooltip.caretX;
+  const top=r.top+tooltip.caretY;
+  // Keep the centred bubble inside the viewport so it never spills off-screen.
+  const halfW=el.offsetWidth/2+8;
+  left=Math.max(halfW, Math.min(left, window.innerWidth-halfW));
+  el.style.left=left+'px';
+  el.style.top=top+'px';
+  el.style.opacity='1';
+}
 function renderWeightTable(){
   const wrap=$('rebalWeights'); if(!wrap) return;
   const p=getActive();
@@ -826,7 +877,7 @@ function updateWeightPie(){
       responsive:true, maintainAspectRatio:true, cutout:'58%',
       plugins:{
         legend:{ display:false },
-        tooltip:{ callbacks:{ label:(c)=>{ const ap=getActive(); const a=ap&&ap.assets[c.dataIndex]; return `${c.label}: ${fmt.num(a?a.weight:0,1)}%`; } } }
+        tooltip:{ enabled:false, external:weightPieTooltip, callbacks:{ label:(c)=>{ const ap=getActive(); const a=ap&&ap.assets[c.dataIndex]; return `${c.label}: ${fmt.num(a?a.weight:0,1)}%`; } } }
       }
     }
   });
@@ -891,7 +942,7 @@ function refreshRankTotals(){
 }
 
 /* ── Rule-based: reserve selector + per-asset deploy triggers ── */
-const TRIGGER_TYPE_LABEL = { 'pct':'Price % move', 'tech-rsi':'RSI oversold', 'tech-ma-cross':'MA crossover', 'tech-bollinger':'Bollinger dip', 'tech-macd-cross':'MACD cross', 'tech-macd-hist':'MACD histogram', 'tech-adx':'ADX trend' };
+const TRIGGER_TYPE_LABEL = { 'at-topup':'Invest at Top-up', 'pct':'Price % move', 'tech-rsi':'RSI oversold', 'tech-ma-cross':'MA crossover', 'tech-bollinger':'Bollinger dip', 'tech-macd-cross':'MACD cross', 'tech-macd-hist':'MACD histogram', 'tech-adx':'ADX trend' };
 // Single Reserve dropdown: the Risk-Free Account (cash) plus every asset as a
 // holding option. This replaces the old two-part "Reserve mode + Reserve asset"
 // pair so there is just one control to set.
@@ -915,6 +966,7 @@ function triggerPlainDesc(a){
   const name=a.name, periodWord=tr.period==='weekly'?'week':'month';
   let s;
   switch(tr.type){
+    case 'at-topup':        return `Invest into ${name} immediately at every top-up, deploying the reserve toward its target weight with no waiting.`;
     case 'tech-ma-cross':   s=`Invest cash into ${name} on a golden cross, the fast moving average crossing above the slow one.`; break;
     case 'tech-rsi':        s=`Invest cash into ${name} when its RSI falls below the oversold level.`; break;
     case 'tech-bollinger':  s=`Invest cash into ${name} when it dips below the lower Bollinger Band.`; break;
@@ -931,6 +983,11 @@ function triggerParamsHtml(a){
   const periodWord=tr.period==='weekly'?'Week':'Month';
   // Shared "invest at end of period if target not reached" toggle (mirrors the single-asset tool).
   const eomRow=`<label class="tech-eom"><input type="checkbox" class="trig-eom" data-aid="${aid}" ${tr.eom?'checked':''}/> Invest at End of ${periodWord} if target not reached</label>`;
+  if(tr.type==='at-topup'){
+    // No trigger to configure: this asset deploys straight to its target weight
+    // on every top-up, so there are no parameters.
+    return `<div class="field-sub" style="margin-top:2px">Deploys toward this asset's target weight on every top-up, with no waiting for a price move or signal.</div>`;
+  }
   if(tr.type==='pct'){
     return `<div class="param-row"><label>Direction</label>
         <select class="num-input trig-dir" data-aid="${aid}" style="cursor:pointer">
@@ -965,6 +1022,7 @@ function triggerParamsHtml(a){
 function triggerSummary(a){
   const tr=a.trigger||makeDefaultTrigger();
   let s=TRIGGER_TYPE_LABEL[tr.type]||'Trigger';
+  if(tr.type==='at-topup') return s+' · no wait';
   if(tr.type==='pct') s+=` · ${tr.direction==='rise'?'rises':'falls'} ${tr.pct}%`;
   s+=` · ${tr.period==='weekly'?'weekly':'monthly'}`;
   if(tr.eom) s+=' · +EoP';
@@ -1165,7 +1223,7 @@ wireMoneyField($('topupYearlyInc'),{maxDecimals:2},v=>{ const p=getActive(); if(
 $('topupPeriod').addEventListener('change',e=>{ const p=getActive(); if(!p) return; p.topupSched.period=e.target.value; renderScheduleBox('topupScheduleBox','topupScheduleHint',p.topupSched); renderPortfolioList(); });
 $('rebalPeriod').addEventListener('change',e=>{ const p=getActive(); if(!p) return; p.rebalSched.period=e.target.value; renderScheduleBox('rebalScheduleBox','rebalScheduleHint',p.rebalSched); });
 wireMoneyField($('rfRate'),{maxDecimals:2},v=>{ const p=getActive(); if(p) p.rf.rate=Math.max(0,v); });
-$('rfTicker').addEventListener('input',e=>{ const p=getActive(); if(p) p.rf.ticker=e.target.value.trim().toUpperCase(); });
+$('rfTicker').addEventListener('change',e=>{ const p=getActive(); if(p) p.rf.ticker=(e.target.value||'').trim().toUpperCase(); });
 wireMoneyField($('buyFee'),{maxDecimals:2},v=>{ const p=getActive(); if(p) p.rebal.buyFee=Math.max(0,v); });
 wireMoneyField($('sellFee'),{maxDecimals:2},v=>{ const p=getActive(); if(p) p.rebal.sellFee=Math.max(0,v); });
 
@@ -1350,12 +1408,19 @@ function momentumWeights(assets, i, lbDays, rankWeights){
 // Pre-compute a boolean buy-signal array per asset for the rule-trigger method.
 // Price-% triggers compare each day's price to its month/week open; technical
 // triggers reuse SharedTA.buildTech on the asset's own price series.
-function buildAssetTriggerSignals(assets, common){
+function buildAssetTriggerSignals(assets, common, topupSet){
   return assets.map(a=>{
     const tr = a.trigger || {};
     const px = a.px, n = px.length;
     const period = tr.period || 'monthly';
     const eom = !!tr.eom;
+    // "Invest at Top-up": no waiting. The asset deploys straight to its target
+    // weight on every top-up, so its signal simply mirrors the top-up schedule.
+    if(tr.type==='at-topup'){
+      const sig=new Array(n).fill(false);
+      if(topupSet){ for(let i=0;i<n;i++){ if(topupSet.has(i)) sig[i]=true; } }
+      return sig;
+    }
     // Raw daily condition: technical signal, or a % move from the period open.
     let raw;
     if(tr.type && tr.type.indexOf('tech-')===0){
@@ -1448,7 +1513,7 @@ function simulatePortfolio(p, assets, common, rfPx){
   // ── Rule-based (trigger) pre-compute ──
   const isRule=method==='rule-trigger';
   const reserveIdx=(isRule && p.rebal.reserveMode==='asset') ? assets.findIndex(a=>a.id===p.rebal.reserveAssetId) : -1;
-  const triggerSig=isRule ? buildAssetTriggerSignals(assets, common) : null;
+  const triggerSig=isRule ? buildAssetTriggerSignals(assets, common, topupSet) : null;
   const reserveOnlyWts=(reserveIdx>=0) ? assets.map((a,k)=>k===reserveIdx?100:0) : null;
 
   const state={cash:0, units:{}};
