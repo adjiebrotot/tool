@@ -252,7 +252,14 @@ function connPoint(conn, other){
   if(conn.kind==='bar'){
     const half=busHalf(el);
     const lx=-half + (conn.t==null?0.5:conn.t)*2*half;
-    const w=lrot(el, lx, 0);
+    let w=lrot(el, lx, 0);
+    // Snap the busbar tap to the grid so risers/drops meet the bar at a grid
+    // point instead of an off-grid one (which leaves the "weird gap"/jog). The
+    // snapped point is projected back onto the bar so it stays on the conductor.
+    if(S.snap && S.bgType!=='map'){
+      const a=lrot(el,-half,0), b=lrot(el,half,0);
+      w=nearestOnSeg({x:gsnap(w.x), y:gsnap(w.y)}, a, b).point;
+    }
     let dir={x:0,y:1};
     if(other){ dir = (other.y < w.y) ? {x:0,y:-1} : {x:0,y:1}; }
     return {x:w.x, y:w.y, dir};
@@ -519,14 +526,28 @@ function renderOverlay(){
   layerOverlay.appendChild(sh);
 }
 function renderLineOverlay(line){
-  if(!line || !line.waypoints) return;
-  line.waypoints.forEach((w,i)=>{
+  if(!line) return;
+  if(line.waypoints && line.waypoints.length){
+    line.waypoints.forEach((w,i)=>{
+      const h=el2('g',{class:'handle wp'});
+      h.appendChild(el2('circle',{cx:w.x,cy:w.y,r:6}));
+      h.addEventListener('pointerdown',e=>startWaypointDrag(e,line,i));
+      h.addEventListener('contextmenu',e=>{ e.preventDefault(); deleteWaypoint(line,i); });
+      layerOverlay.appendChild(h);
+    });
+    return;
+  }
+  // No explicit route nodes yet: expose every corner of the auto-route as a
+  // draggable node. Grabbing one materialises the corners into editable
+  // waypoints so the line can be bent freely from any corner.
+  const pts=linePoints(line);
+  for(let i=1;i<pts.length-1;i++){
+    const p=pts[i];
     const h=el2('g',{class:'handle wp'});
-    h.appendChild(el2('circle',{cx:w.x,cy:w.y,r:6}));
-    h.addEventListener('pointerdown',e=>startWaypointDrag(e,line,i));
-    h.addEventListener('contextmenu',e=>{ e.preventDefault(); deleteWaypoint(line,i); });
+    h.appendChild(el2('circle',{cx:p.x.toFixed(1),cy:p.y.toFixed(1),r:6}));
+    h.addEventListener('pointerdown',e=>startCornerDrag(e,line,i-1));
     layerOverlay.appendChild(h);
-  });
+  }
 }
 function escapeHtml(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
@@ -683,17 +704,15 @@ function renderLineInspector(line){
     field('Label size',`<div class="row"><input type="range" id="lLblSize" min="8" max="28" step="1" value="${line.labelSize||11}"><span class="rng-val" id="lLblV">${line.labelSize||11}px</span></div>`)+
     field('Colour'+(S.colorMode!=='none'?' (overridden by colour coding)':''),
       `<div class="color-row"><input type="color" id="lColor" value="${line.color||'#243049'}">${swatchRow()}</div>`)+
-    `<div class="insp-hint">Routing: ${line.waypoints&&line.waypoints.length?'custom route ('+line.waypoints.length+' node'+(line.waypoints.length>1?'s':'')+')':(line.mode==='scribble'?'follows your scribble':'auto orthogonal')}. Connects <b>${connName(line.from)}</b> → <b>${connName(line.to)}</b>.<br>Double-click the line to add a route node; drag nodes to bend it; right-click a node to delete.</div>`+
-    `<button class="btn btn-block" id="lFlip" style="margin-top:10px">↔ Toggle routing style</button>`+
-    (line.waypoints&&line.waypoints.length?`<button class="btn btn-block" id="lClearWp">⌫ Clear route nodes</button>`:'')+
-    `<button class="btn btn-danger btn-block" id="lDelete">🗑 Delete line</button>`;
+    `<div class="insp-hint">Routing: ${line.waypoints&&line.waypoints.length?'custom route ('+line.waypoints.length+' node'+(line.waypoints.length>1?'s':'')+')':(line.mode==='scribble'?'follows your scribble':'auto orthogonal')}. Connects <b>${connName(line.from)}</b> → <b>${connName(line.to)}</b>.<br>Drag any corner to bend the line; double-click the line to add a node; right-click a node to delete.</div>`+
+    (line.waypoints&&line.waypoints.length?`<button class="btn btn-block" id="lClearWp" style="margin-top:10px">⌫ Clear route nodes</button>`:'')+
+    `<button class="btn btn-danger btn-block" id="lDelete" style="margin-top:10px">🗑 Delete line</button>`;
   $('#lName').oninput=e=>{ line.name=e.target.value; markDirty(); renderAll(); };
   $('#lTags').oninput=e=>{ line.tags=e.target.value.split(',').map(s=>s.trim()).filter(Boolean); markDirty(); renderAll(); };
   $('#lVolt').oninput=e=>{ line.voltage=e.target.value.trim(); markDirty(); renderAll(); };
   $('#lLblSize').oninput=e=>{ line.labelSize=+e.target.value; $('#lLblV').textContent=line.labelSize+'px'; markDirty(); renderAll(); };
   $('#lColor').oninput=e=>{ line.color=e.target.value; markDirty(); renderAll(); };
   inspBody.querySelectorAll('.swatch').forEach(s=>s.onclick=()=>{ line.color=s.dataset.color; $('#lColor').value=s.dataset.color; markDirty(); renderAll(); });
-  $('#lFlip').onclick=()=>{ line.mode = line.mode==='scribble' ? 'click' : (line.raw? 'scribble':'click'); markDirty(); renderAll(); renderInspector(); };
   const cw=$('#lClearWp'); if(cw) cw.onclick=()=>{ line.waypoints=[]; markDirty(); renderAll(); renderOverlay(); renderInspector(); };
   $('#lDelete').onclick=()=>deleteLine(line.id);
 }
@@ -917,6 +936,23 @@ function startWaypointDrag(e,line,i){
     markDirty(); renderAll(); renderOverlay(); };
   const up=()=>{ svg.removeEventListener('pointermove',move); svg.removeEventListener('pointerup',up); updateSvgPointerEvents(); };
   svg.addEventListener('pointermove',move); svg.addEventListener('pointerup',up);
+}
+// Freeze the rendered corners of an auto-routed line into editable waypoints, so
+// every corner becomes a real route node. No-op once the line already has nodes.
+function materializeWaypoints(line){
+  if(line.waypoints && line.waypoints.length) return;
+  const pts=linePoints(line);
+  line.waypoints=pts.slice(1,-1).map(p=>{
+    const wp={x:Math.round(p.x), y:Math.round(p.y)};
+    if(S.bgType==='map'&&S.map) wp.geo=geoFromPx(wp.x,wp.y);
+    return wp;
+  });
+}
+// Grab a corner of an auto-routed line: materialise the corners, then drag the
+// one that was grabbed (its interior index maps 1:1 onto the new waypoints).
+function startCornerDrag(e,line,idx){
+  materializeWaypoints(line);
+  startWaypointDrag(e,line,idx);
 }
 
 /* ════════════════════════════════════════════════════════════
