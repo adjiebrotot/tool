@@ -929,39 +929,169 @@ function createLine(from, to, mode, raw){
   if(mode==='scribble' && raw) line.raw=raw;
   S.lines.push(line); markDirty(); renderAll(); select('line',line.id);
 }
-/* ── Scribble → element recognition (multi-stroke, graceful) ── */
-function strokeInfo(pts){
-  let minx=Infinity,miny=Infinity,maxx=-Infinity,maxy=-Infinity;
-  for(const p of pts){ minx=Math.min(minx,p.x);maxx=Math.max(maxx,p.x);miny=Math.min(miny,p.y);maxy=Math.max(maxy,p.y); }
-  const w=maxx-minx, h=maxy-miny, diag=Math.hypot(w,h);
-  const closed=dist(pts[0],pts[pts.length-1]) < 0.32*diag;
-  const simp=simplify(pts, Math.max(6,diag*0.06));
-  const corners=Math.max(0, simp.length-1);
-  let shape;
-  if(!closed && (w>1.8*h || h>1.8*w)) shape='line';
-  else if(closed && corners<=3) shape='triangle';
-  else if(closed && corners<=5){ const a=w/Math.max(1,h); shape=(a>0.7&&a<1.4)?'rect':'triangle'; }
-  else shape='circle';
-  return {w,h,diag,closed,shape, cx:(minx+maxx)/2, cy:(miny+maxy)/2, minx,miny,maxx,maxy};
+/* ── Scribble → element recognition (multi-stroke, shape-aware) ──
+   Each stroke is reduced to scale-independent geometric features
+   (closedness, corner sharpness, roundness, wave reversals,
+   straightness). A drawing is then matched against the symbol
+   vocabulary using the same visual cues a person actually draws:
+     • circle + sinusoid          → synchronous generator
+     • circle + M                 → motor
+     • circle + blades            → wind turbine
+     • 2 / 3 overlapping circles  → 2- / 3-winding transformer
+     • square + diagonal          → inverter
+     • square + V / ▽             → solar PV
+     • square + lightning         → battery (BESS)
+     • small bare square          → circuit breaker
+     • inverted triangle / ▽      → load
+     • long horizontal line       → busbar
+     • dot                        → node                              */
+const SCREENK = () => (S.bgType==='map' ? 1 : (S.view.k||1));   // world→screen factor
+
+function pathLen(pts){ let L=0; for(let i=1;i<pts.length;i++) L+=dist(pts[i-1],pts[i]); return L; }
+
+// Count "sharp" turns along a simplified polyline (turn-angle > thresh rad).
+// A circle turns gently everywhere; a square/triangle concentrates the turning
+// into a few hard corners; a straight line has none.
+function sharpCorners(simp, closed, thresh){
+  const v=simp.slice();
+  if(closed && v.length>2 && dist(v[0],v[v.length-1])<1e-6) v.pop();
+  const n=v.length; if(n<3) return 0;
+  let c=0; const lo=closed?0:1, hi=closed?n:n-1;
+  for(let i=lo;i<hi;i++){
+    const a=v[(i-1+n)%n], b=v[i], d=v[(i+1)%n];
+    const ux=b.x-a.x, uy=b.y-a.y, vx=d.x-b.x, vy=d.y-b.y;
+    const mu=Math.hypot(ux,uy), mv=Math.hypot(vx,vy);
+    if(mu<1e-6||mv<1e-6) continue;
+    const ang=Math.acos(clamp((ux*vx+uy*vy)/(mu*mv),-1,1)); // deviation from straight
+    if(ang>thresh) c++;
+  }
+  return c;
 }
+
+// How many times the stroke reverses direction along an axis after light
+// smoothing — a sinusoid / zig-zag flips repeatedly, a straight stroke never.
+function reversals(pts, axis){
+  const simp=simplify(pts, Math.max(3, pathLen(pts)*0.05));
+  let dir=0, count=0, prev=simp[0];
+  for(let i=1;i<simp.length;i++){
+    const d = axis==='x' ? simp[i].x-prev.x : simp[i].y-prev.y;
+    if(Math.abs(d)<2){ prev=simp[i]; continue; }
+    const s=Math.sign(d);
+    if(dir!==0 && s!==dir) count++;
+    dir=s; prev=simp[i];
+  }
+  return count;
+}
+
+function analyze(pts){
+  let minx=Infinity,miny=Infinity,maxx=-Infinity,maxy=-Infinity, sx=0,sy=0;
+  for(const p of pts){ minx=Math.min(minx,p.x);maxx=Math.max(maxx,p.x);miny=Math.min(miny,p.y);maxy=Math.max(maxy,p.y); sx+=p.x; sy+=p.y; }
+  const w=maxx-minx, h=maxy-miny, diag=Math.hypot(w,h)||1;
+  const cx=(minx+maxx)/2, cy=(miny+maxy)/2, ccx=sx/pts.length, ccy=sy/pts.length;
+  const len=pathLen(pts), span=dist(pts[0],pts[pts.length-1]);
+  const closed = span < 0.32*diag && len > 1.6*diag;   // returns near start & encloses area
+  const straight = len>0 ? span/len : 1;               // 1 = perfectly straight
+  const simp=simplify(pts, Math.max(4, diag*0.07));
+  const sharp=sharpCorners(simp, closed, 0.9);         // ≈52°+ turns
+  const aspect = h>1 ? w/h : 99;
+  // roundness: coefficient of variation of the centroid radius (≈0 for circle)
+  let cv=1;
+  if(closed){
+    let m=0; const rs=pts.map(p=>{ const r=Math.hypot(p.x-ccx,p.y-ccy); m+=r; return r; }); m/=rs.length;
+    let varr=0; rs.forEach(r=>{ const d=r-m; varr+=d*d; }); varr/=rs.length;
+    cv = m>0 ? Math.sqrt(varr)/m : 1;
+  }
+  let shape;
+  if(diag*SCREENK() < 16) shape='dot';
+  else if(closed){
+    if(sharp<=1 && cv<0.22) shape='circle';
+    else if(sharp>=4) shape='rect';
+    else if(sharp===3) shape='triangle';
+    else shape = (aspect>0.6 && aspect<1.7 && cv<0.32) ? 'rect' : (cv<0.25 ? 'circle' : 'triangle');
+  } else {
+    shape = straight>0.82 ? 'line' : 'open';
+  }
+  return {pts,minx,miny,maxx,maxy,w,h,diag,cx,cy,ccx,ccy,len,span,closed,straight,sharp,aspect,cv,shape};
+}
+
+// A "V" / inverted triangle: open stroke whose apex (lowest point) sits between
+// its two ends — the cue for solar PV (▽ inside a box) and for a load symbol.
+function isVee(s){
+  if(s.closed || s.shape==='line') return false;
+  let lo=s.pts[0]; for(const p of s.pts) if(p.y>lo.y) lo=p;
+  const ax=(lo.x-s.minx)/Math.max(1,s.w);
+  return lo.y>s.cy && ax>0.22 && ax<0.78 && s.sharp<=2;
+}
+
 function recognizeMulti(strokes){
-  const infos=strokes.map(strokeInfo);
+  const infos=strokes.map(analyze);
   let minx=Infinity,miny=Infinity,maxx=-Infinity,maxy=-Infinity;
   infos.forEach(i=>{ minx=Math.min(minx,i.minx);maxx=Math.max(maxx,i.maxx);miny=Math.min(miny,i.miny);maxy=Math.max(maxy,i.maxy); });
   const cx=(minx+maxx)/2, cy=(miny+maxy)/2, w=maxx-minx, h=maxy-miny;
-  const circles=infos.filter(i=>i.shape==='circle').length;
-  const triangles=infos.filter(i=>i.shape==='triangle').length;
-  const rects=infos.filter(i=>i.shape==='rect').length;
-  const lines=infos.filter(i=>i.shape==='line').length;
-  let type='generator';
-  if(strokes.length>=3 && circles>=2) type='transformer3';
-  else if(strokes.length===2 && circles>=1) type='transformer2';
-  else if(circles===1 && strokes.length===1) type='generator';
-  else if(triangles>=1 && circles===0 && rects===0) type='load';
-  else if(rects>=1 && circles===0) type='battery';
-  else if(lines>=1 && circles===0 && rects===0 && triangles===0) type='busbar';
-  else if(circles>=2) type='transformer2';
-  return {type, cx, cy, w, h};
+  const big=Math.max(w,h)||1;
+  const out=type=>({type, cx, cy, w, h});
+
+  const circles=infos.filter(i=>i.shape==='circle');
+  const rects=infos.filter(i=>i.shape==='rect');
+  const triangles=infos.filter(i=>i.shape==='triangle');
+  const lines=infos.filter(i=>i.shape==='line');
+  const dots=infos.filter(i=>i.shape==='dot');
+
+  // ── single dot → node ──
+  if(infos.length===1 && dots.length===1) return out('node');
+
+  // ── overlapping circles of comparable size → transformer ──
+  const bigCircles=circles.filter(c=>Math.max(c.w,c.h) > 0.45*big);
+  if(bigCircles.length>=3) return out('transformer3');
+  if(bigCircles.length===2) return out('transformer2');
+
+  // ── one circle container → generator / motor / wind turbine ──
+  const circle=circles.slice().sort((a,b)=>(b.w*b.h)-(a.w*a.h))[0];
+  if(circle){
+    const inner=infos.filter(i=>i!==circle);
+    const innerLines=inner.filter(i=>i.shape==='line' || (i.shape==='open' && i.straight>0.6));
+    if(inner.length===0) return out('generator');                    // bare circle → default
+    // a horizontal sinusoid wave (wide & wavy) → synchronous generator
+    if(inner.some(i=>!i.closed && i.aspect>1.4 && reversals(i.pts,'y')>=2)) return out('generator');
+    // several separate strokes radiating inside → wind-turbine blades
+    if(innerLines.length>=2) return out('windturbine');
+    if(inner.length===1){
+      const d=inner[0], yr=reversals(d.pts,'y');
+      // the letter "M": squarish detail that goes up-down-up
+      if(d.sharp>=2 && d.aspect>0.5 && d.aspect<1.9 && yr>=2) return out('motor');
+      if(d.sharp>=2) return out('windturbine');                      // star-like blades
+    }
+    if(inner.some(i=>i.sharp>=2)) return out('windturbine');
+    return out('generator');
+  }
+
+  // ── one square container → inverter / solar PV / battery / breaker ──
+  const rect=rects.slice().sort((a,b)=>(b.w*b.h)-(a.w*a.h))[0];
+  if(rect){
+    const inner=infos.filter(i=>i!==rect && Math.max(i.w,i.h) < Math.max(rect.w,rect.h)*1.4);
+    if(inner.length===0) return out('breaker');                       // bare box → breaker
+    const d=inner.slice().sort((a,b)=>b.len-a.len)[0];               // most prominent detail
+    const f=d.pts[0], l=d.pts[d.pts.length-1];
+    const edx=Math.abs(f.x-l.x), edy=Math.abs(f.y-l.y);
+    const zig=Math.max(reversals(d.pts,'x'),reversals(d.pts,'y'));
+    // a corner-to-corner diagonal → inverter
+    if(d.sharp<=1 && d.straight>0.78 && edy>0.45*Math.max(1,d.h) && edx>0.25*Math.max(1,d.w)) return out('inverter');
+    if(d.shape==='triangle' || isVee(d)) return out('solarpv');       // ▽ / V
+    if(d.sharp>=2 || zig>=2) return out('battery');                   // lightning zig-zag
+    return out('inverter');
+  }
+
+  // ── inverted triangle / down-arrow → load ──
+  if(triangles.length>=1) return out('load');
+  if(infos.some(isVee) && lines.some(i=>i.aspect<0.6)) return out('load');  // ↓ arrow (line + V)
+
+  // ── long, mostly-horizontal line → busbar ──
+  if(lines.length>=1){
+    const longest=lines.slice().sort((a,b)=>b.len-a.len)[0];
+    if(longest.aspect>1.6 || lines.length===1) return out('busbar');
+  }
+  if(dots.length>=1) return out('node');
+  return out('busbar');
 }
 function finishScribbleElement(){
   const strokes=scribbleStrokes.slice(); scribbleStrokes=[];
