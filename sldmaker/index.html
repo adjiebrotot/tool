@@ -62,12 +62,6 @@
     <span class="brand-text">SLD Maker</span>
   </div>
   <div class="divider"></div>
-  <select class="tb-control" id="bgSelect" title="Canvas background">
-    <option value="blank">▦ Blank canvas</option>
-    <option value="map">🗺 Map</option>
-  </select>
-  <button class="btn" id="mapMoveBtn" style="display:none" title="Unlock map for panning &amp; zooming">🗺 Unlock map</button>
-  <div class="divider"></div>
   <input type="text" class="tb-control" id="sldNameInput"
          placeholder="Diagram name…" value="Untitled SLD" spellcheck="false" autocomplete="off">
   <div class="dirty-dot" id="dirtyDot" title="Unsaved changes"></div>
@@ -107,10 +101,12 @@
   <div class="canvas-area" id="canvasArea">
     <div class="sld-board blank" id="sldBoard">
       <div id="mapLayer"></div>
-      <svg id="svgLayer" viewBox="0 0 1400 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <g id="layerLines"></g>
-        <g id="layerEls"></g>
-        <g id="layerOverlay"></g>
+      <svg id="svgLayer" xmlns="http://www.w3.org/2000/svg">
+        <g id="viewport">
+          <g id="layerLines"></g>
+          <g id="layerEls"></g>
+          <g id="layerOverlay"></g>
+        </g>
       </svg>
       <div class="legend" id="legend"></div>
     </div>
