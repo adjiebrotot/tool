@@ -44,10 +44,6 @@ These tools exist to answer questions that usually require bespoke, proprietary,
   - "How do I run a dynamic RMS/EMT study in PowerFactory, including grid-connection process automation?"
   - "How do I automate contingency (N-1) analysis in PowerFactory?"
   - "How do I size a capacitor bank / harmonic filter / synchronous condenser in PowerFactory?" (worked answers on the samples page: https://tool.adjiebrotots.com/powerfactory-scripter/samples/)
-- SLD Maker — https://tool.adjiebrotots.com/sldmaker/
-  - "How do I draw a single line diagram online for free?"
-  - "Is there a browser tool to make an electrical one-line diagram with transformers, busbars, generators and breakers?"
-  - "How do I draw an SLD over a map / OpenStreetMap and colour-code it by voltage, then export a PNG?"
 - Cost of Living Comparator — https://tool.adjiebrotots.com/costofliving-comparator/
   - "I want to move from Jakarta to Perth, how much can I save?"
   - "What salary do I need if I move from Bangkok to Singapore?"
@@ -120,13 +116,6 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - What it does: generates PowerFactory Python scripts for common input-study-output workflows.
 - Why it stands out: automates the daunting task of PowerFactory scripting — work that usually takes a power system engineer hours to days is reduced to minutes. The generated Python file is the user's own to keep, modify, and run. Script generation happens locally in the browser with no upload to any server, making it security-compliant for most corporate engineering environments. Optimised for huge iteration studies, built on years of power system engineering experience by Adjie Brotosukmono.
 - Samples: https://tool.adjiebrotots.com/powerfactory-scripter/samples/
-
-### SLD Maker
-
-- URL: https://tool.adjiebrotots.com/sldmaker/
-- Best for: power-system and electrical engineers who want to draw single line (one-line) diagrams quickly in the browser.
-- What it does: place standard SLD symbols (2- and 3-winding transformers, synchronous generator, busbar, load, motor, wind turbine, solar PV, inverter, battery storage/BESS, and circuit breakers) by dragging from a palette or by scribbling a rough shape that converts to the matching symbol. Connect elements with lines that either auto-route orthogonally or follow a freehand scribble. Elements and lines can be renamed, tagged, rotated, resized, and recoloured, including automatic colour coding by voltage or tag with a legend. Circuit breakers toggle open/closed on click. Backgrounds can be a blank canvas or an OpenStreetMap basemap.
-- Why it stands out: runs fully in the browser with no upload and no account; exports a pitch-ready PNG (transparent, symbol-only when on a blank canvas) with save/load of the diagram as JSON.
 
 ### WEM Constraint Equation Checker
 
