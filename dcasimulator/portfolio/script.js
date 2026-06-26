@@ -1779,18 +1779,28 @@ function updateCompChart(){
   }));
 
   // Buy markers (▲) - one upward triangle per buying date (a top-up or a trigger
-  // deployment), sitting just above the baseline so it reads like dcasimulator's
-  // "Show Buy Date" overlay without obscuring the stacked areas. Given its own
-  // stack so it renders at its literal value instead of stacking on the areas.
+  // deployment), hugging the top of the stack (the portfolio's total line) just
+  // like dcasimulator's "Show Buy Date" overlay. Coloured to match the top-most
+  // band so it reads as part of that asset's line, and given its own stack so it
+  // plots at its literal value instead of piling on top of the stacked areas.
+  // It is the last dataset, so it renders in front of the area fills.
   const buyDates=new Set(res.rows.filter(r=>r.event && (r.event.includes('Top-up')||r.event.includes('Trigger'))).map(r=>r.date));
   let buyMarkerIdx=-1;
+  // Top-most drawn band (the first asset in the list, or Cash if asset-less) -
+  // its line is what the markers sit just beneath, so they share its colour.
+  const markerColor=series[series.length-1]?.color||cssVar('--text')||'#e5e7eb';
   if(buyDates.size){
     const yMax=isPct?100:Math.max(...res.rows.map(r=>r.total),1);
-    const markerOffset=yMax*0.04;
-    const markerColor=cssVar('--text')||'#e5e7eb';
+    const markerOffset=yMax*0.03;
     buyMarkerIdx=datasets.length;
     datasets.push({
-      label:'▲ Buy date', data:res.rows.map(r=> buyDates.has(r.date) ? markerOffset : null),
+      // Sit a small constant gap below each date's total; clamp the gap to half
+      // the total so early dates (tiny totals) don't drop below the baseline.
+      label:'▲ Buy date', data:res.rows.map(r=>{
+        if(!buyDates.has(r.date)) return null;
+        const top=isPct?100:r.total;
+        return top - Math.min(markerOffset, top*0.5);
+      }),
       borderColor:markerColor, backgroundColor:markerColor, showLine:false, spanGaps:false,
       pointStyle:'triangle', pointRadius:4, pointHoverRadius:6,
       pointBorderColor:'#fff', pointBorderWidth:0.5, fill:false, stack:'marker', _marker:true
@@ -1811,7 +1821,7 @@ function updateCompChart(){
   // Legend toggle for the buy-date triangles (sits after the asset/cash entries).
   if(buyMarkerIdx>=0){
     const item=document.createElement('div'); item.className='legend-item';
-    item.innerHTML=`<span class="dot" style="background:${cssVar('--text')||'#e5e7eb'};clip-path:polygon(50% 0,100% 100%,0 100%)"></span><span>▲ Buy date</span>`;
+    item.innerHTML=`<span class="dot" style="background:${markerColor};clip-path:polygon(50% 0,100% 100%,0 100%)"></span><span>▲ Buy date</span>`;
     item.addEventListener('click',()=>{
       if(hidden.has(buyMarkerIdx)) hidden.delete(buyMarkerIdx); else hidden.add(buyMarkerIdx);
       item.classList.toggle('hidden',hidden.has(buyMarkerIdx));
