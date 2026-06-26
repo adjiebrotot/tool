@@ -1520,6 +1520,11 @@ function simulatePortfolio(p, assets, common, rfPx){
   assets.forEach(a=>state.units[a.id]=0);
   const rows=[]; let cumTopup=0;
   for(let i=0;i<common.length;i++){
+    // Snapshot holdings before the day's buying/selling so we can flag, per asset,
+    // which ones were actually bought today (units increased). Each method/trigger
+    // buys different assets on different days, so the buy markers are per-asset.
+    const unitsBefore={};
+    assets.forEach(a=>unitsBefore[a.id]=state.units[a.id]);
     if(i>0){ state.cash *= (rfMode==='ticker' && rfPx ? (rfPx[i]/rfPx[i-1]) : rfDayFactor); }
     if(topupSet.has(i)){
       // Each top-up compounds the base amount by the yearly increase, stepping
@@ -1566,8 +1571,12 @@ function simulatePortfolio(p, assets, common, rfPx){
     if(isRule && firedToday) ev.push('Trigger');
     if(rebalSet.has(i)) ev.push('Rebalance');
     const assetVals={}; let invested=0;
-    assets.forEach(a=>{ const v=state.units[a.id]*a.px[i]; assetVals[a.id]=v; invested+=v; });
-    rows.push({date:common[i], cash:state.cash, assetVals, invested, total:state.cash+invested, cumTopup, event:ev.join(' + ')});
+    const bought=[];
+    assets.forEach(a=>{
+      const v=state.units[a.id]*a.px[i]; assetVals[a.id]=v; invested+=v;
+      if(state.units[a.id] > unitsBefore[a.id]+1e-12) bought.push(a.id);
+    });
+    rows.push({date:common[i], cash:state.cash, assetVals, invested, total:state.cash+invested, cumTopup, event:ev.join(' + '), bought});
   }
   return rows;
 }
@@ -1770,40 +1779,59 @@ function updateCompChart(){
 
   // Cash is the base of the stack; assets are pushed in reverse list order so the
   // first asset in the (drag-reorderable) asset list is drawn on top.
-  const series=[{label:'Cash', color:CASH_COLOR, data:res.rows.map(r=>asVal(r.cash,r.total))}];
-  res.assets.slice().reverse().forEach(a=>series.push({label:a.name, color:a.colorHex, data:res.rows.map(r=>asVal(r.assetVals[a.id]||0, r.total))}));
+  const series=[{label:'Cash', color:CASH_COLOR, assetId:null, data:res.rows.map(r=>asVal(r.cash,r.total))}];
+  res.assets.slice().reverse().forEach(a=>series.push({label:a.name, color:a.colorHex, assetId:a.id, data:res.rows.map(r=>asVal(r.assetVals[a.id]||0, r.total))}));
 
   const datasets=series.map(s=>({
     label:s.label, data:s.data, borderColor:s.color, backgroundColor:s.color+'66',
     borderWidth:1.2, pointRadius:0, pointHoverRadius:4, tension:0.15, fill:true, stack:'comp'
   }));
 
-  // Buy markers (▲) - one upward triangle per buying date (a top-up or a trigger
-  // deployment), hugging the top of the stack (the portfolio's total line) just
-  // like dcasimulator's "Show Buy Date" overlay. Coloured to match the top-most
-  // band so it reads as part of that asset's line, and given its own stack so it
-  // plots at its literal value instead of piling on top of the stacked areas.
-  // It is the last dataset, so it renders in front of the area fills.
-  const buyDates=new Set(res.rows.filter(r=>r.event && (r.event.includes('Top-up')||r.event.includes('Trigger'))).map(r=>r.date));
-  let buyMarkerIdx=-1;
-  // Top-most drawn band (the first asset in the list, or Cash if asset-less) -
-  // its line is what the markers sit just beneath, so they share its colour.
-  const markerColor=series[series.length-1]?.color||cssVar('--text')||'#e5e7eb';
-  if(buyDates.size){
-    const yMax=isPct?100:Math.max(...res.rows.map(r=>r.total),1);
-    const markerOffset=yMax*0.03;
-    buyMarkerIdx=datasets.length;
+  // Buy markers (▲) - one triangle series PER ASSET, since each asset is bought on
+  // its own days (its trigger fires, or a top-up deploys into it). Each marker is
+  // coloured like its asset and sits just below the top edge of that asset's band
+  // in the stack, so it reads as part of that asset's line. Marker datasets come
+  // last so they render in front of the area fills, and each gets its own stack so
+  // it plots at its literal value rather than piling on the stacked areas.
+  //
+  // Positions are derived from the *visible* stack: cumTop = sum of visible bands
+  // up to and including this asset's band. They are (re)computed by recomputeMarkers()
+  // both at build time and whenever a band is toggled in the legend, so the markers
+  // follow the bands down when assets above them are hidden (and disappear entirely
+  // when the asset's own band is hidden).
+  const yMax = isPct ? 100 : Math.max(...res.rows.map(r=>r.total), 1);
+  const markerOffset = yMax*0.03;
+  const markerMeta=[];   // {dsIndex, bandIndex, isBuy:[bool per row]}
+  series.forEach((s,si)=>{
+    if(si===0 || s.assetId==null) return;   // Cash is never "bought"
+    const aid=s.assetId;
+    const isBuy=res.rows.map(r=>Array.isArray(r.bought) && r.bought.indexOf(aid)>=0);
+    if(!isBuy.some(Boolean)) return;        // asset never bought → no marker series
+    markerMeta.push({dsIndex:datasets.length, bandIndex:si, isBuy});
     datasets.push({
-      // Sit a small constant gap below each date's total; clamp the gap to half
-      // the total so early dates (tiny totals) don't drop below the baseline.
-      label:'▲ Buy date', data:res.rows.map(r=>{
-        if(!buyDates.has(r.date)) return null;
-        const top=isPct?100:r.total;
-        return top - Math.min(markerOffset, top*0.5);
-      }),
-      borderColor:markerColor, backgroundColor:markerColor, showLine:false, spanGaps:false,
+      label:'▲ '+s.label+' buy', data:new Array(res.rows.length).fill(null),
+      borderColor:s.color, backgroundColor:s.color, showLine:false, spanGaps:false,
       pointStyle:'triangle', pointRadius:4, pointHoverRadius:6,
-      pointBorderColor:'#fff', pointBorderWidth:0.5, fill:false, stack:'marker', _marker:true
+      pointBorderColor:'#fff', pointBorderWidth:0.5, fill:false, stack:'marker'+aid, _marker:true
+    });
+  });
+  const markerIdxs=markerMeta.map(m=>m.dsIndex);
+  let markersVisible=true;
+  // Recompute each per-asset marker's Y from the currently-visible stack. A band
+  // counts toward the cumulative height only while its dataset is visible, so
+  // hiding assets shifts the surviving markers down to hug the new top edge.
+  function recomputeMarkers(){
+    if(!compChart) return;
+    const vis=j=>compChart.isDatasetVisible(j);
+    markerMeta.forEach(m=>{
+      const bandVisible=vis(m.bandIndex);
+      compChart.data.datasets[m.dsIndex].data=res.rows.map((r,ri)=>{
+        if(!bandVisible || !m.isBuy[ri]) return null;
+        let cumTop=0;
+        for(let j=0;j<=m.bandIndex;j++){ if(vis(j)) cumTop+=series[j].data[ri]; }
+        const ownVal=series[m.bandIndex].data[ri];
+        return cumTop - Math.min(markerOffset, ownVal*0.5);
+      });
     });
   }
 
@@ -1813,19 +1841,22 @@ function updateCompChart(){
     item.addEventListener('click',()=>{
       if(hidden.has(idx)) hidden.delete(idx); else hidden.add(idx);
       item.classList.toggle('hidden',hidden.has(idx));
-      if(compChart){ compChart.setDatasetVisibility(idx,!hidden.has(idx)); compChart.update(); }
+      // Toggling a band changes the visible stack, so recompute marker heights and
+      // drop the markers of any now-hidden asset before redrawing.
+      if(compChart){ compChart.setDatasetVisibility(idx,!hidden.has(idx)); recomputeMarkers(); compChart.update(); }
     });
     legendEl.appendChild(item);
   });
 
-  // Legend toggle for the buy-date triangles (sits after the asset/cash entries).
-  if(buyMarkerIdx>=0){
+  // One legend toggle for all buy-date triangles (sits after the asset/cash entries).
+  // The triangle swatch is neutral since the markers themselves are per-asset coloured.
+  if(markerIdxs.length){
     const item=document.createElement('div'); item.className='legend-item';
-    item.innerHTML=`<span class="dot" style="background:${markerColor};clip-path:polygon(50% 0,100% 100%,0 100%)"></span><span>▲ Buy date</span>`;
+    item.innerHTML=`<span class="dot" style="background:${cssVar('--text')||'#e5e7eb'};clip-path:polygon(50% 0,100% 100%,0 100%)"></span><span>▲ Buy date</span>`;
     item.addEventListener('click',()=>{
-      if(hidden.has(buyMarkerIdx)) hidden.delete(buyMarkerIdx); else hidden.add(buyMarkerIdx);
-      item.classList.toggle('hidden',hidden.has(buyMarkerIdx));
-      if(compChart){ compChart.setDatasetVisibility(buyMarkerIdx,!hidden.has(buyMarkerIdx)); compChart.update(); }
+      markersVisible=!markersVisible;
+      item.classList.toggle('hidden',!markersVisible);
+      if(compChart){ markerIdxs.forEach(di=>compChart.setDatasetVisibility(di,markersVisible)); compChart.update(); }
     });
     legendEl.appendChild(item);
   }
@@ -1847,6 +1878,7 @@ function updateCompChart(){
   };
   if(compChart) compChart.destroy();
   compChart=new Chart($('compCanvas'),{type:'line',data:{labels:dates,datasets},options:opts});
+  recomputeMarkers();   // fill in the per-asset marker heights for the initial (all-visible) stack
   compChart.update();
 }
 
