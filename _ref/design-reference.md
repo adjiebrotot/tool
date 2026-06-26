@@ -1,21 +1,23 @@
 # Design Reference
 
-This file documents the **Generic Soft UI Design System** used across tools in this repo
-(e.g. `dcasimulator`, `rentvsownhouse`, `financingvscash`, `costofliving-comparator`).
+This file documents the **Generic Soft UI Design System** — a reusable, theme-aware
+component and token library for building data-driven dashboards, calculators, and
+visualisation tools. It is domain-agnostic and can be dropped into any web project.
 
 Fonts: **DM Sans** (sans-serif) + **DM Mono** (monospace).
 Tokens live in `dark.css` (default) and `light.css` (applied via `body.light`).
 Shared, theme-independent components live in `shared.css` / `shared.js`.
 
-To use this system in a new page, include (in this order):
+To use this system in a new page, include the shared stylesheets and scripts (in this
+order), then layer your own page-specific overrides on top:
 
 ```html
-<link rel="stylesheet" href="../dark.css">
-<link rel="stylesheet" href="../light.css">
-<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="dark.css">
+<link rel="stylesheet" href="light.css">
+<link rel="stylesheet" href="shared.css">
 <link rel="stylesheet" href="style.css">  <!-- your page-specific overrides -->
 ...
-<script src="../shared.js"></script>
+<script src="shared.js"></script>
 <script src="script.js"></script>
 ```
 
@@ -420,8 +422,8 @@ body.light .sel-input option { background: #ffffff;  color: #2D3436; }
 
 ### Segmented Control Group (`.seg-group`)
 
-A group of mutually-exclusive toggle buttons styled as a single segmented control.
-Used in `costofliving-comparator` for "Simple/Detailed", "Save/Earn", etc.
+A group of mutually-exclusive toggle buttons styled as a single segmented control
+(e.g. "Simple / Detailed", "Save / Earn").
 
 ```html
 <div class="toggle-row">
@@ -474,8 +476,8 @@ document.querySelectorAll('[data-val]').forEach(btn => {
 
 ### Searchable Combobox / City Picker (`.city-picker`)
 
-A fully custom searchable dropdown used in `costofliving-comparator` for city selection.
-Features live search, clear button, and keyboard support.
+A fully custom searchable dropdown for selecting from a long list (e.g. cities, accounts,
+symbols). Features live search, clear button, and keyboard support.
 
 #### HTML
 
@@ -847,7 +849,7 @@ SharedTooltip.init();
 
 ### Static Inline Tooltip (Alternative: `.tip-box`)
 
-For static, always-visible tooltips (no hover required). Used in `costofliving-comparator`.
+For static tooltips anchored to their trigger (no dynamic positioning required).
 
 #### HTML
 
@@ -1016,8 +1018,9 @@ tr:hover td { background: rgba(141,187,255,0.04); }
 body.light tr:hover td { background: rgba(90,145,232,0.04); }
 ```
 
-For sticky headers / frozen first column on wide tables, see `rentvsownhouse/sensitivity/style.css`
-(`.table-wrap thead th { position: sticky; ... }`).
+For sticky headers / a frozen first column on wide tables, make the header cells
+`position: sticky; top: 0;` (and the first column `position: sticky; left: 0;`) with a
+solid background so rows scroll underneath them.
 
 ---
 
@@ -1109,7 +1112,7 @@ const fmt = {
 ```css
 --radius-sm: 8px;    /* small chips, inputs */
 --radius-md: 10px;   /* buttons, inputs, selects */
---radius-lg: 12px;   /* boxes (e.g. cagr-box) */
+--radius-lg: 12px;   /* callout boxes, highlighted stats */
 --radius-xl: 14px;   /* cards, panels, tiles */
 --radius-2xl: 20px;  /* large surfaces */
 --radius-pill: 999px;/* badges, deltas, toggles */
@@ -1118,3 +1121,363 @@ const fmt = {
 --motion-base: 250ms; /* theme switch, toggles */
 --motion-slow: 400ms; /* larger animations */
 ```
+
+---
+
+## Charts & Graphs
+
+The design system renders charts with **[Chart.js](https://www.chartjs.org/) 4.x**, plus
+**[chartjs-plugin-zoom](https://www.chartjs.org/chartjs-plugin-zoom/) 2.x** (driven by
+**[Hammer.js](https://hammerjs.github.io/) 2.x**) for panning and pinch/wheel zoom. Include
+them before your page script:
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+```
+
+The patterns below cover the three chart families this system uses — **line**, **stacked
+area**, and **pie / doughnut** — and the three things that matter most for all of them:
+
+1. **Axis titles & formatting** — every axis is labelled; ticks are run through a formatter.
+2. **Legends & hover info** — a custom HTML legend that toggles series, plus a tooltip and a
+   persistent hover read-out.
+3. **Panning & zooming** — wheel/pinch zoom and drag-to-pan on the x-axis, with a reset button.
+
+### Golden Rules
+
+- **Never hardcode colours in chart config.** Read every colour (series, axis text, grid,
+  tooltip background) from CSS variables via `cssVar()` so charts adapt to both themes:
+  ```js
+  const cssVar = n => getComputedStyle(document.body).getPropertyValue(n).trim();
+  const grid = cssVar('--chart-grid'), muted = cssVar('--chart-text'), text = cssVar('--text');
+  ```
+- **Re-create (or re-theme) charts on theme switch.** CSS variables resolve to fixed values
+  when the chart is built, so re-run your `updateChart()` functions inside the theme toggle:
+  ```js
+  $('themeToggle').addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    if (hasData) { updateLineChart(); updateStackedChart(); }  // re-read tokens
+  });
+  ```
+- **Always format displayed numbers.** Pipe axis ticks and tooltip values through the `fmt`
+  helpers (see *Number Formatters*) — never show a raw integer > 999.
+- **Use `--line-a … --line-e` for series colours**, in order, so multi-series charts stay
+  on-palette and theme-aware.
+
+---
+
+### Chart Card Scaffold (shared HTML + CSS)
+
+Every chart sits in a `.chart-card` with a title row, a custom legend, the canvas wrapper,
+and a hover read-out box. The title row's `.chart-actions` hold export + reset-zoom buttons.
+
+```html
+<section class="chart-card card">
+  <div class="section-title">
+    <div><h2>Value Over Time</h2></div>
+    <div class="chart-actions">
+      <div class="btn-cluster">
+        <button class="btn-secondary" id="pngBtn"       title="Download PNG">⬇ PNG</button>
+        <button class="btn-secondary" id="copyBtn"      title="Copy PNG to clipboard">⧉</button>
+        <button class="btn-secondary" id="resetZoomBtn" title="Reset zoom">⟳</button>
+      </div>
+    </div>
+  </div>
+  <div class="legend" id="chartLegend"></div>          <!-- custom HTML legend -->
+  <div class="canvas-wrap"><canvas id="chartCanvas"></canvas></div>
+  <div class="hover-box" id="chartHoverBox">Hover to inspect data points.</div>
+</section>
+```
+
+```css
+.chart-card    { padding: 20px; margin-bottom: 18px; }
+.chart-actions { display: flex; justify-content: flex-end; align-items: center; gap: 10px 16px; flex-wrap: wrap; }
+.btn-cluster   { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+/* Custom legend (replaces Chart.js's built-in legend) */
+.legend        { display: flex; gap: 14px; flex-wrap: wrap; margin: 10px 0 14px; font-size: .86rem; }
+.legend-item   { display: flex; align-items: center; gap: 7px; cursor: pointer; opacity: 1; transition: opacity .15s; }
+.legend-item.hidden { opacity: .35; }                /* dimmed when its series is toggled off */
+.dot           { width: 11px; height: 11px; border-radius: 999px; flex-shrink: 0; }
+
+/* Canvas wrapper — fixed height so a responsive canvas has a definite box to fill */
+.canvas-wrap   { position: relative; width: 100%; height: 420px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--card-bg); }
+
+/* Persistent hover read-out beneath the chart */
+.hover-box     { margin-top: 10px; color: var(--muted); font-size: .86rem; min-height: 22px; }
+
+@media (max-width: 1100px) { .canvas-wrap { height: 340px; } }
+@media (max-width: 600px)  { .canvas-wrap { height: 280px; } .chart-actions { justify-content: flex-start; } }
+```
+
+> **Why a custom HTML legend?** It lets each entry click-toggle its series, doubles as the
+> source for PNG-export legends, and is styled with the same tokens as the rest of the page.
+
+---
+
+### Shared Options (axes, tooltip, zoom)
+
+These option fragments are reused by the line and stacked charts. Note how **every axis has a
+`title`**, **every tick has a `callback` formatter**, and **zoom/pan are constrained to the
+x-axis** (the time dimension) so vertical scale stays honest.
+
+```js
+const grid = cssVar('--chart-grid'), muted = cssVar('--chart-text'), text = cssVar('--text');
+
+const baseOptions = {
+  responsive: true,
+  maintainAspectRatio: false,                       // fill .canvas-wrap's fixed height
+  animation: { duration: 300 },
+  interaction: { mode: 'index', intersect: false }, // hover anywhere on the x to read all series
+
+  plugins: {
+    legend: { display: false },                     // we render our own HTML legend instead
+
+    tooltip: {
+      // Theme the tooltip from tokens, not hardcoded colours:
+      backgroundColor: cssVar('--panel'), titleColor: text, bodyColor: muted,
+      borderColor: grid, borderWidth: 1, padding: 10,
+      callbacks: {
+        title: ctx => ctx[0]?.label || '',
+        label: ctx => `  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y, true)}`,
+        // Mirror the hovered point(s) into the persistent .hover-box read-out:
+        afterBody(items) {
+          if (!items.length) return;
+          $('chartHoverBox').textContent = `${items[0].label}  —  ` +
+            items.map(i => `${i.dataset.label}: ${fmt.currency(i.parsed.y, true)}`).join('  |  ');
+        }
+      }
+    },
+
+    // Pan + zoom, x-axis only. Wheel + pinch to zoom, drag to pan.
+    zoom: {
+      pan:  { enabled: true, mode: 'x' },
+      zoom: { wheel: { enabled: true, speed: .08 }, pinch: { enabled: true }, mode: 'x' }
+    }
+  },
+
+  scales: {
+    x: {
+      title: { display: true, text: 'Date', color: muted, font: { size: 11 } },
+      ticks: { color: muted, maxTicksLimit: 12, font: { size: 11 },
+               callback: v => labels[Number(v)]?.slice(0, 7) || '' },  // e.g. "2024-01"
+      grid:  { color: grid }
+    },
+    y: {
+      title: { display: true, text: 'Value ($)', color: muted, font: { size: 11 } },
+      ticks: { color: muted, font: { size: 11 }, callback: v => fmt.currency(v, true) },  // "$1.2m"
+      grid:  { color: grid }
+    }
+  }
+};
+```
+
+**Reset-zoom button** — wire it to the chart's `resetZoom()`:
+
+```js
+$('resetZoomBtn').addEventListener('click', () => { if (chart) chart.resetZoom(); });
+```
+
+**Clear the hover-box on mouse-leave** so it doesn't keep showing a stale point:
+
+```js
+$('chartCanvas').addEventListener('mouseleave', () => {
+  $('chartHoverBox').textContent = 'Hover to inspect data points.';
+});
+```
+
+---
+
+### 1. Line Chart (one series per scenario)
+
+A multi-series time chart. Series colours come from `--line-a … --line-e`; a faint matching
+fill (`color + '22'`) hints the area without obscuring overlapping lines.
+
+```js
+function updateLineChart() {
+  const grid = cssVar('--chart-grid'), muted = cssVar('--chart-text'), text = cssVar('--text');
+  const LINE = ['--line-a','--line-b','--line-c','--line-d','--line-e'].map(cssVar);
+
+  const datasets = scenarios.map((s, i) => ({
+    label: s.name,
+    data: s.values,
+    borderColor: LINE[i % LINE.length],
+    backgroundColor: LINE[i % LINE.length] + '22',
+    borderWidth: 2.6, pointRadius: 0, pointHoverRadius: 5, tension: 0.15, fill: false
+  }));
+
+  renderLegend('chartLegend', datasets, (i, hidden) => {   // see "Custom Legend" below
+    chart.setDatasetVisibility(i, !hidden);
+    chart.update();
+  });
+
+  if (chart) chart.destroy();
+  chart = new Chart($('chartCanvas'), { type: 'line', data: { labels, datasets }, options: baseOptions });
+}
+```
+
+### 2. Stacked Area Chart (composition over time)
+
+Parts that sum to a whole. Set `fill: true`, give every dataset the **same `stack` id**, and
+make the y-axis `stacked: true`. The `afterBody` callback adds a **Total** line to the
+read-out — essential context for a stack.
+
+```js
+const datasets = series.map(s => ({
+  label: s.label, data: s.data,
+  borderColor: s.color, backgroundColor: s.color + '66',   // 40%-ish fill, opaque enough to read
+  borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0.15,
+  fill: true, stack: 'composition'
+}));
+
+const options = {
+  ...baseOptions,
+  plugins: {
+    ...baseOptions.plugins,
+    tooltip: {
+      ...baseOptions.plugins.tooltip,
+      callbacks: {
+        ...baseOptions.plugins.tooltip.callbacks,
+        afterBody(items) {
+          if (!items.length) return;
+          const total = items.reduce((sum, i) => sum + i.parsed.y, 0);
+          $('chartHoverBox').textContent = `${items[0].label}  —  Total: ${fmt.currency(total, true)}  |  ` +
+            items.map(i => `${i.dataset.label}: ${fmt.currency(i.parsed.y, true)}`).join('  |  ');
+        }
+      }
+    }
+  },
+  scales: {
+    ...baseOptions.scales,
+    y: { ...baseOptions.scales.y, stacked: true, min: 0 }
+  }
+};
+
+chart = new Chart($('chartCanvas'), { type: 'line', data: { labels, datasets }, options });
+```
+
+> **Percentage mode.** To switch a stacked chart to "% of total", normalise each value to
+> `v / total * 100`, set the y-axis `max: 100`, and swap the tick/tooltip formatter to
+> `fmt.num(v, 0) + '%'`.
+
+### 3. Pie / Doughnut Chart (share breakdown)
+
+For composition at a single point in time. Use a thin gap between slices by setting the
+slice border to the panel colour. **In small canvases the built-in tooltip clips at the
+canvas edge** — render it as a fixed-position HTML bubble instead (pattern below).
+
+```js
+pieChart = new Chart($('pieCanvas').getContext('2d'), {
+  type: 'doughnut',
+  data: {
+    labels: items.map(i => i.name),
+    datasets: [{
+      data: items.map(i => i.value),
+      backgroundColor: items.map(i => i.color),
+      borderColor: cssVar('--panel'), borderWidth: 2     // slice separators match the card bg
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true, cutout: '58%',   // omit cutout for a solid pie
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        enabled: false, external: htmlPieTooltip,        // see below — avoids edge clipping
+        callbacks: { label: c => `${c.label}: ${fmt.num(items[c.dataIndex].value, 1)}%` }
+      }
+    }
+  }
+});
+```
+
+**Un-clippable HTML tooltip** — a single body-level element, styled like the global tooltip,
+positioned in viewport coordinates so it can overflow the (often tiny) pie canvas:
+
+```js
+function htmlPieTooltip(context) {
+  const { chart, tooltip } = context;
+  let el = document.getElementById('pieTip');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'pieTip';
+    el.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;' +
+      'background:var(--panel-raised,var(--panel));border:1px solid var(--border);' +
+      'border-radius:var(--radius-lg,10px);padding:6px 10px;font-size:.8rem;line-height:1.4;' +
+      'color:var(--text);box-shadow:var(--shadow-lg);opacity:0;transition:opacity .12s;' +
+      'white-space:nowrap;transform:translate(-50%,calc(-100% - 10px));';
+    document.body.appendChild(el);
+  }
+  if (!tooltip || tooltip.opacity === 0) { el.style.opacity = '0'; return; }
+
+  const lines = (tooltip.body || []).flatMap(b => b.lines);
+  el.innerHTML = lines.map((l, idx) => {
+    const c = (tooltip.labelColors && tooltip.labelColors[idx]) || {};
+    return `<span style="display:inline-flex;align-items:center;gap:6px">` +
+      `<span style="width:10px;height:10px;border-radius:2px;flex-shrink:0;` +
+      `background:${c.backgroundColor || 'transparent'}"></span>${l}</span>`;
+  }).join('');
+
+  const r = chart.canvas.getBoundingClientRect();
+  const halfW = el.offsetWidth / 2 + 8;
+  el.style.left = Math.max(halfW, Math.min(r.left + tooltip.caretX, window.innerWidth - halfW)) + 'px';
+  el.style.top  = (r.top + tooltip.caretY) + 'px';
+  el.style.opacity = '1';
+}
+```
+
+---
+
+### Custom Legend (clickable series toggle)
+
+The HTML legend mirrors the datasets and toggles each series on click, dimming the entry
+when hidden. Build it once per render:
+
+```js
+function renderLegend(legendId, datasets, onToggle) {
+  const el = $(legendId); el.innerHTML = '';
+  datasets.forEach((ds, i) => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<span class="dot" style="background:${ds.borderColor}"></span><span>${ds.label}</span>`;
+    item.addEventListener('click', () => {
+      const hidden = !item.classList.contains('hidden');
+      item.classList.toggle('hidden', hidden);
+      onToggle(i, hidden);
+    });
+    el.appendChild(item);
+  });
+}
+```
+
+---
+
+### Axis Titles & Formatting (checklist)
+
+- **Both axes carry a `title`** with `color: cssVar('--chart-text')` and `font.size: 11`.
+- **X (time) axis**: cap density with `maxTicksLimit: 12`; format labels in the `callback`
+  (e.g. trim an ISO date to `YYYY-MM` with `label.slice(0, 7)`).
+- **Y (value) axis**: format ticks through `fmt.currency(v, true)` (compact — `$1.2m`),
+  `fmt.num()`, or `fmt.pct()`. Pin `min: 0` for stacked/area charts so the baseline is real.
+- **Grid lines** use `--chart-grid`; **axis text** uses `--chart-text`.
+- Include the **unit in the axis title** (`Value ($)`, `% of Total`) so a stripped tick
+  (`1.2m`) is never ambiguous.
+
+### Legends & Hover Information (checklist)
+
+- Disable Chart.js's built-in `legend`; render the **custom HTML legend** so entries can
+  toggle series and match the page's styling.
+- Set `interaction: { mode: 'index', intersect: false }` so hovering anywhere on the x-axis
+  surfaces **every series** at that point.
+- Use tooltip `callbacks.label` to format each value, and `callbacks.afterBody` to feed a
+  **persistent `.hover-box`** beneath the chart (and a running **Total** for stacked charts).
+- Theme the tooltip from tokens (`--panel`, `--text`, `--chart-text`, `--chart-grid`).
+
+### Panning & Zooming (checklist)
+
+- Register the zoom plugin (loaded globally via the CDN script — Chart.js 4 auto-registers it).
+- Constrain to `mode: 'x'` for both `pan` and `zoom` so the value axis stays fixed and
+  comparisons remain truthful.
+- Enable `wheel` (desktop) and `pinch` (touch) zoom; `speed: .08` is a comfortable wheel rate.
+- Always provide a **Reset zoom** button calling `chart.resetZoom()`.
