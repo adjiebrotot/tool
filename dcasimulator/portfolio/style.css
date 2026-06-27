@@ -86,8 +86,16 @@ body.light .weight-row.wt-total.bad .wt-name,body.light .weight-row.wt-total.bad
 .pf-act-btn:hover{border-color:var(--accent2);color:var(--accent2)}
 .pf-act-btn.pf-act-del:hover{border-color:#ef4444;color:#ef4444}
 
-/* Portfolio chooser on the composition chart/table headers */
+/* Portfolio chooser on the Detailed Breakdown header (drives every subsection) */
 .pf-view-select{font-size:.8rem;padding:5px 10px;min-width:130px;max-width:200px}
+
+/* Detailed Breakdown subsections (Security Prices / Composition / Breakdown Table)
+   share one card and one portfolio selector; a divider separates each block. */
+.detail-subsection{margin-top:26px;padding-top:22px;border-top:1px solid var(--border)}
+.detail-subsection:first-of-type{margin-top:10px;padding-top:0;border-top:none}
+.detail-subsection .section-title{margin-bottom:10px}
+.detail-subtitle{margin:0;font-size:1rem;font-weight:700;color:var(--text);text-transform:none;letter-spacing:normal}
+.detail-subtitle .muted-note{color:var(--muted);font-size:.85rem;font-weight:400}
 
 /* Sub-tabs for editing the selected portfolio (Assets / Top-Ups / Rebalancing) */
 .sub-tabs{display:flex;gap:4px;margin-bottom:12px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px}

@@ -422,6 +422,7 @@
           </div>
         </label>
         <div class="btn-cluster">
+          <button class="btn-secondary" id="valueSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
           <button class="btn-secondary" id="valuePngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
           <button class="btn-secondary" id="valueCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
           <button class="btn-secondary" id="valueResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
@@ -431,28 +432,6 @@
     <div class="legend" id="valueLegend"></div>
     <div class="canvas-wrap"><canvas id="valueCanvas"></canvas></div>
     <div class="hover-box" id="valueHoverBox">Configure portfolios and run to compare value over time.</div>
-  </section>
-
-  <!-- COMPOSITION CHART -->
-  <section class="chart-card card">
-    <div class="section-title">
-      <div><h2>Composition Over Time <span style="color:var(--muted);font-size:.85rem;font-weight:400">(stacked)</span></h2></div>
-      <div class="chart-actions">
-        <div class="seg-toggle" id="compViewToggle">
-          <button class="seg-btn active" data-cv="dollar" type="button">$ Value</button>
-          <button class="seg-btn" data-cv="percent" type="button">% of Portfolio</button>
-        </div>
-        <select class="num-input pf-view-select" id="compChartPfSelect" style="cursor:pointer" title="Choose which portfolio to view"></select>
-        <div class="btn-cluster">
-          <button class="btn-secondary" id="compPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
-          <button class="btn-secondary" id="compCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
-          <button class="btn-secondary" id="compResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
-        </div>
-      </div>
-    </div>
-    <div class="legend" id="compLegend"></div>
-    <div class="canvas-wrap"><canvas id="compCanvas"></canvas></div>
-    <div class="hover-box" id="compHoverBox">Cash and each asset stack up to total portfolio value.</div>
   </section>
 
   <!-- SUMMARY -->
@@ -470,22 +449,95 @@
     <div id="summaryGrid" class="summary-grid"></div>
   </section>
 
-  <!-- DETAILED BREAKDOWN -->
+  <!-- DETAILED BREAKDOWN (one selected portfolio: prices, composition & events) -->
   <section class="detail-section card">
     <div class="detail-header">
       <div class="detail-title-row">
-        <h2>Detailed Breakdown <span style="color:var(--muted);font-size:.85rem;font-weight:400">(start, events &amp; end)</span></h2>
+        <h2>Detailed Breakdown <span style="color:var(--muted);font-size:.85rem;font-weight:400">(one portfolio: prices, composition &amp; events)</span></h2>
         <div class="detail-csv-wrap" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <select class="num-input pf-view-select" id="compTablePfSelect" style="cursor:pointer" title="Choose which portfolio to view"></select>
-          <button class="btn-secondary" id="downloadBtn" style="white-space:nowrap;font-size:.82rem;padding:6px 13px;flex-shrink:0">⬇ CSV (full daily)</button>
+          <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Portfolio</span>
+          <select class="num-input pf-view-select" id="detailPfSelect" style="cursor:pointer" title="Choose which portfolio to view"></select>
         </div>
       </div>
     </div>
-    <div class="table-wrap">
-      <table id="compTable">
-        <thead id="compHead"><tr><th>Date</th><th>Event</th><th>Cash</th><th>Deposited</th><th>Portfolio Value</th></tr></thead>
-        <tbody id="compBody"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">Add assets and run to see the breakdown.</td></tr></tbody>
-      </table>
+
+    <!-- SECURITY PRICES SUBSECTION -->
+    <div class="detail-subsection">
+      <div class="section-title">
+        <div><h3 class="detail-subtitle">Security Prices <span class="muted-note" id="pricePfSubtitle">(actual price)</span></h3></div>
+        <div class="chart-actions">
+          <div class="chart-toggles">
+          <label class="toggle-row" id="priceCandleToggleWrap" style="gap:8px;cursor:pointer;padding:0" title="Show each visible asset as OHLC candlesticks (actual prices) instead of a line">
+            <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Candlesticks</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="priceCandleToggle"/>
+              <div class="toggle-track"><div class="toggle-knob"></div></div>
+            </div>
+          </label>
+          <label class="toggle-row" id="priceBuyDateToggleWrap" style="gap:8px;cursor:pointer;padding:0" title="Mark each buy date with a small ▲ below the asset's price line">
+            <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Buy Date</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="priceBuyDateToggle"/>
+              <div class="toggle-track"><div class="toggle-knob"></div></div>
+            </div>
+          </label>
+          <label class="toggle-row" id="priceTechToggleWrap" style="gap:8px;cursor:pointer;padding:0;display:none" title="Overlay the technical indicators behind each asset's rule-based trigger">
+            <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Indicators</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="priceTechToggle"/>
+              <div class="toggle-track"><div class="toggle-knob"></div></div>
+            </div>
+          </label>
+          </div>
+          <div class="btn-cluster">
+            <button class="btn-secondary" id="priceSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
+            <button class="btn-secondary" id="pricePngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
+            <button class="btn-secondary" id="priceCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
+            <button class="btn-secondary" id="priceResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
+          </div>
+        </div>
+      </div>
+      <div class="legend" id="priceLegend"></div>
+      <div class="canvas-wrap" id="priceCanvasWrap"><canvas id="priceCanvas"></canvas></div>
+      <div class="hover-box" id="priceHoverBox">Run a simulation to view the prices of this portfolio's assets.</div>
+    </div>
+
+    <!-- COMPOSITION SUBSECTION -->
+    <div class="detail-subsection">
+      <div class="section-title">
+        <div><h3 class="detail-subtitle">Composition Over Time <span class="muted-note">(stacked)</span></h3></div>
+        <div class="chart-actions">
+          <div class="seg-toggle" id="compViewToggle">
+            <button class="seg-btn active" data-cv="dollar" type="button">$ Value</button>
+            <button class="seg-btn" data-cv="percent" type="button">% of Portfolio</button>
+          </div>
+          <div class="btn-cluster">
+            <button class="btn-secondary" id="compSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
+            <button class="btn-secondary" id="compPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
+            <button class="btn-secondary" id="compCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
+            <button class="btn-secondary" id="compResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
+          </div>
+        </div>
+      </div>
+      <div class="legend" id="compLegend"></div>
+      <div class="canvas-wrap"><canvas id="compCanvas"></canvas></div>
+      <div class="hover-box" id="compHoverBox">Cash and each asset stack up to total portfolio value.</div>
+    </div>
+
+    <!-- BREAKDOWN TABLE SUBSECTION -->
+    <div class="detail-subsection">
+      <div class="detail-title-row">
+        <h3 class="detail-subtitle">Breakdown Table <span class="muted-note">(start, events &amp; end)</span></h3>
+        <div class="detail-csv-wrap">
+          <button class="btn-secondary" id="downloadBtn" style="white-space:nowrap;font-size:.82rem;padding:6px 13px;flex-shrink:0">⬇ CSV (full daily)</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="compTable">
+          <thead id="compHead"><tr><th>Date</th><th>Event</th><th>Cash</th><th>Deposited</th><th>Portfolio Value</th></tr></thead>
+          <tbody id="compBody"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">Add assets and run to see the breakdown.</td></tr></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
