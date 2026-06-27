@@ -38,6 +38,26 @@ const WEIGHT_EXPLAIN = {
 // Default technical-trigger parameters for the Rule-Based method (mirrors the
 // single-asset tool's tech defaults so SharedTA.buildTech behaves identically).
 const TRIGGER_TECH_DEFAULTS = { fastMaType:'ema', fastMaLen:50, slowMaType:'sma', slowMaLen:200, rsiPeriod:14, rsiOversold:35, bbPeriod:20, bbStd:2, bbTrigger:'below', macdFast:12, macdSlow:26, macdSignal:9, macdHistThreshold:0, adxPeriod:14, adxThreshold:25 };
+// Technical trigger types whose indicators can be overlaid on the Security Prices
+// chart (the Rule-Based method's per-asset tech signals), shared with SharedTA.
+const TECH_TRIGGER_TYPES = ['tech-ma-cross','tech-rsi','tech-bollinger','tech-macd-cross','tech-macd-hist','tech-adx'];
+// Oscillator-style indicators each get their own grid stacked below the price
+// chart, grouped by family so e.g. RSI (0-100) and MACD (near 0) never share a
+// scale and squash each other. Mirrors the single-asset tool's OSC_GROUPS.
+const OSC_GROUPS = {
+  'tech-rsi':        {key:'rsi',  name:'RSI'},
+  'tech-macd-cross': {key:'macd', name:'MACD'},
+  'tech-macd-hist':  {key:'macd', name:'MACD'},
+  'tech-adx':        {key:'adx',  name:'ADX'}
+};
+// MACD histogram bar colours: saturated while a bar grows away from zero, faded
+// while it shrinks back toward it (green above zero, red below).
+const MACD_HIST_COLORS = {
+  upStrong:'#26a69a', upFaint:'rgba(38,166,154,0.42)',
+  downStrong:'#ef5350', downFaint:'rgba(239,83,80,0.42)'
+};
+// Candlestick body/wick colours (up = close ≥ open, down = close < open).
+const CANDLE_UP = '#26a69a', CANDLE_DOWN = '#ef5350';
 function makeDefaultTrigger(){ return { type:'pct', direction:'drop', pct:10, period:'monthly', eom:true, tech:Object.assign({}, TRIGGER_TECH_DEFAULTS) }; }
 // Tickers are pooled and fetched once over a wide window so later date-range
 // tweaks reuse the cache instead of hitting the Worker again.
@@ -54,19 +74,30 @@ let portfolios = [];             // see makePortfolio() for shape
 let portfolioIdCounter = 0;
 let activePortfolioId = null;    // the portfolio currently being edited in the sidebar
 
-let simResults = [];             // [{id,name,colorHex,rows,assets:[{id,name,colorHex,weight}]}]
+let simResults = [];             // [{id,name,colorHex,rows,method,assets:[{id,name,colorHex,weight,px,trigger}]}]
 let commonDates = [];            // shared date axis for the last run
-let valueChart = null, compChart = null;
+let valueChart = null, compChart = null, priceChart = null;
 let currentCurrencySymbol = '$';
 let currentRandomSeed = DEFAULT_RANDOM_SEED;
 let showTopups = true;
 let showAdvanced = false;        // Final Summary: reveal Sharpe/Sortino/CAGR rows
 let compViewMode = 'dollar';     // 'dollar' = absolute value · 'percent' = % of portfolio
-let activeCompChartId = null;    // which portfolio the Composition Over Time chart shows
-let activeCompTableId = null;    // which portfolio the Composition Table shows
+// One selector in the Detailed Breakdown header drives all three subsections
+// (Security Prices, Composition Over Time, Breakdown Table) for one portfolio.
+let activeDetailId = null;       // which portfolio the Detailed Breakdown shows
 let valueDsPairs = [];           // [{value, topup}] dataset indices per portfolio (value chart)
 let hiddenPf = new Set();        // portfolio indices whose value line is hidden via the legend
 let trigCollapsed = new Set();   // asset ids whose Deploy Trigger config form is collapsed
+
+// Security-prices chart view state. Each asset of the selected portfolio is an
+// independent series; the chart shows actual prices when one is visible and
+// normalises to base 100 when two or more are compared. Candlestick mode always
+// shows actual OHLC. Buy-date markers and technical overlays are opt-in toggles.
+let showCandles = false;
+let showBuyDates = false;
+let showTechIndicators = false;
+let priceHidden = new Set();     // asset indices currently hidden in the price chart
+let priceSeriesKey = '';         // last (portfolio + asset set) signature → reset hidden default on change
 
 let priceCache = {};
 let tickerFetchInFlight = {};
@@ -74,6 +105,27 @@ let tickerFetchInFlight = {};
 /* ─── HELPERS ─── */
 const $ = id => document.getElementById(id);
 function cssVar(n){ return getComputedStyle(document.body).getPropertyValue(n).trim(); }
+// Apply an alpha to a hex/rgb colour for faded technical-indicator overlays.
+function withAlpha(c,a){
+  if(!c) return c;
+  if(c[0]==='#'){
+    let h=c.slice(1); if(h.length===3) h=h.split('').map(x=>x+x).join('');
+    const n=parseInt(h,16); return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+  }
+  if(c.indexOf('rgb')===0) return c.replace(/rgba?\(([^)]+)\)/,(_,inner)=>{ const p=inner.split(',').slice(0,3).map(s=>s.trim()); return `rgba(${p.join(',')},${a})`; });
+  return c;
+}
+// MACD histogram bar colours, TradingView-style: saturated while the bar grows
+// away from zero, faded while it shrinks back toward it.
+function macdHistColors(values){
+  const C=MACD_HIST_COLORS;
+  return values.map((v,i)=>{
+    if(v==null) return 'transparent';
+    const prev=i>0?values[i-1]:null;
+    const grow=prev==null?true:Math.abs(v)>=Math.abs(prev);
+    return v>=0 ? (grow?C.upStrong:C.upFaint) : (grow?C.downStrong:C.downFaint);
+  });
+}
 function showStatus(el, msg, type){ if(!el) return; el.className='status-bar status-'+type; el.innerHTML=(type==='loading'?'<span class="spinner"></span>':'')+msg; }
 function hideStatus(el){ if(!el) return; el.className='status-bar'; el.textContent=''; }
 function showWarning(msg){ const w=$('mainWarning'); w.textContent=msg; w.style.display='block'; }
@@ -722,13 +774,12 @@ function reorderAssets(fromId, targetId, after){
 }
 
 // After a reorder, keep an already-computed simulation result for this portfolio
-// in sync so the Composition chart/table reflect the new order without a re-run.
+// in sync so the Detailed Breakdown subsections reflect the new order without a re-run.
 function syncResultAssetOrder(p){
   const res=simResults.find(r=>r.id===p.id);
   if(!res) return;
   res.assets.sort((x,y)=> p.assets.findIndex(a=>a.id===x.id) - p.assets.findIndex(a=>a.id===y.id));
-  if(activeCompChartId===p.id) updateCompChart();
-  if(activeCompTableId===p.id) updateTable();
+  if(activeDetailId===p.id){ updatePriceChart(); updateCompChart(); updateTable(); }
 }
 
 function renderAssetList(){
@@ -1685,33 +1736,36 @@ async function runSimulation(){
       let rfPx=null;
       if(p._rfData){ const m=new Map(); p._rfData.dates.forEach((d,i)=>m.set(d,p._rfData.prices[i])); rfPx=common.map(d=>m.get(d)); }
       const rows=simulatePortfolio(p, active, common, rfPx);
-      results.push({ id:p.id, name:p.name, colorHex:p.colorHex, rows, rfPx, rfRate:(p.rf.mode==='ticker'?0:(p.rf.rate||0)), assets:active.map(a=>({id:a.id,name:a.name,colorHex:a.colorHex,weight:a.weight})) });
+      // Carry each asset's close-price series (aligned to the shared date axis) and
+      // its trigger so the Security Prices subsection can chart prices, candlesticks
+      // and (for Rule-Based tech triggers) the underlying indicators on demand.
+      results.push({ id:p.id, name:p.name, colorHex:p.colorHex, rows, rfPx, rfRate:(p.rf.mode==='ticker'?0:(p.rf.rate||0)), method:p.rebal.method,
+        assets:active.map(a=>({id:a.id,name:a.name,colorHex:a.colorHex,weight:a.weight,type:a.type,px:a.px.slice(),trigger:a.trigger})) });
       // reflect "loaded" badges for tickers in the active portfolio's asset list
       if(p.id===activePortfolioId){ active.forEach(a=>{ const el=$('aLoad'+a.id); if(el&&a.type==='ticker'){ el.className='status-bar status-ok'; el.textContent='✓ Loaded'; } }); }
     });
     if(!results.length){ showWarning('No portfolios produced results.'); return; }
 
     simResults=results;
-    if(!simResults.some(r=>r.id===activeCompChartId)) activeCompChartId=simResults[0].id;
-    if(!simResults.some(r=>r.id===activeCompTableId)) activeCompTableId=simResults[0].id;
+    if(!simResults.some(r=>r.id===activeDetailId)) activeDetailId=simResults[0].id;
 
     showStatus($('dateRangeStatus'),`Date range: ${common[0]} → ${common[common.length-1]} (${common.length} days)`,'ok');
     hideStatus($('assetFetchStatus'));
     renderViewSelectors();
     updateValueChart();
-    updateCompChart();
     updateSummary();
+    updatePriceChart();
+    updateCompChart();
     updateTable();
   } finally {
     simBtn.disabled=false; simBtn.textContent='▶ Simulate'; delete simBtn.dataset.running; updateSimBtnState();
   }
 }
 
-/* ─── VIEW SELECTORS (composition chart + table) ─── */
+/* ─── VIEW SELECTOR (one chooser drives every Detailed Breakdown subsection) ─── */
 function renderViewSelectors(){
-  const opts=selId=>simResults.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
-  const cc=$('compChartPfSelect'); if(cc){ cc.innerHTML=opts(); cc.value=String(activeCompChartId); }
-  const ct=$('compTablePfSelect'); if(ct){ ct.innerHTML=opts(); ct.value=String(activeCompTableId); }
+  const sel=$('detailPfSelect');
+  if(sel){ sel.innerHTML=simResults.map(r=>`<option value="${r.id}">${r.name}</option>`).join(''); sel.value=String(activeDetailId); }
 }
 
 /* ─── VALUE CHART (one line per portfolio + per-portfolio top-ups) ─── */
@@ -1766,10 +1820,12 @@ function updateValueChart(){
   valueChart.update();
 }
 
-/* ─── COMPOSITION CHART (stacked area for the selected portfolio) ─── */
+/* ─── COMPOSITION CHART (stacked area for the selected portfolio) ───
+   Buy-date markers used to live here; they now belong exclusively to the
+   Security Prices subsection, so this chart is a clean cash/asset stack. */
 function updateCompChart(){
   if(!simResults.length) return;
-  const res=simResults.find(r=>r.id===activeCompChartId)||simResults[0];
+  const res=simResults.find(r=>r.id===activeDetailId)||simResults[0];
   const dates=res.rows.map(r=>r.date);
   const grid=cssVar('--chart-grid'), muted=cssVar('--chart-text'), text=cssVar('--text');
   const legendEl=$('compLegend'); legendEl.innerHTML='';
@@ -1787,79 +1843,16 @@ function updateCompChart(){
     borderWidth:1.2, pointRadius:0, pointHoverRadius:4, tension:0.15, fill:true, stack:'comp'
   }));
 
-  // Buy markers (▲) - one triangle series PER ASSET, since each asset is bought on
-  // its own days (its trigger fires, or a top-up deploys into it). Each marker is
-  // coloured like its asset and sits just below the top edge of that asset's band
-  // in the stack, so it reads as part of that asset's line. Marker datasets come
-  // last so they render in front of the area fills, and each gets its own stack so
-  // it plots at its literal value rather than piling on the stacked areas.
-  //
-  // Positions are derived from the *visible* stack: cumTop = sum of visible bands
-  // up to and including this asset's band. They are (re)computed by recomputeMarkers()
-  // both at build time and whenever a band is toggled in the legend, so the markers
-  // follow the bands down when assets above them are hidden (and disappear entirely
-  // when the asset's own band is hidden).
-  const yMax = isPct ? 100 : Math.max(...res.rows.map(r=>r.total), 1);
-  const markerOffset = yMax*0.03;
-  const markerMeta=[];   // {dsIndex, bandIndex, isBuy:[bool per row]}
-  series.forEach((s,si)=>{
-    if(si===0 || s.assetId==null) return;   // Cash is never "bought"
-    const aid=s.assetId;
-    const isBuy=res.rows.map(r=>Array.isArray(r.bought) && r.bought.indexOf(aid)>=0);
-    if(!isBuy.some(Boolean)) return;        // asset never bought → no marker series
-    markerMeta.push({dsIndex:datasets.length, bandIndex:si, isBuy});
-    datasets.push({
-      label:'▲ '+s.label+' buy', data:new Array(res.rows.length).fill(null),
-      borderColor:s.color, backgroundColor:s.color, showLine:false, spanGaps:false,
-      pointStyle:'triangle', pointRadius:4, pointHoverRadius:6,
-      pointBorderColor:'#fff', pointBorderWidth:0.5, fill:false, stack:'marker'+aid, _marker:true
-    });
-  });
-  const markerIdxs=markerMeta.map(m=>m.dsIndex);
-  let markersVisible=true;
-  // Recompute each per-asset marker's Y from the currently-visible stack. A band
-  // counts toward the cumulative height only while its dataset is visible, so
-  // hiding assets shifts the surviving markers down to hug the new top edge.
-  function recomputeMarkers(){
-    if(!compChart) return;
-    const vis=j=>compChart.isDatasetVisible(j);
-    markerMeta.forEach(m=>{
-      const bandVisible=vis(m.bandIndex);
-      compChart.data.datasets[m.dsIndex].data=res.rows.map((r,ri)=>{
-        if(!bandVisible || !m.isBuy[ri]) return null;
-        let cumTop=0;
-        for(let j=0;j<=m.bandIndex;j++){ if(vis(j)) cumTop+=series[j].data[ri]; }
-        const ownVal=series[m.bandIndex].data[ri];
-        return cumTop - Math.min(markerOffset, ownVal*0.5);
-      });
-    });
-  }
-
   series.forEach((s,idx)=>{
     const item=document.createElement('div'); item.className='legend-item';
     item.innerHTML=`<span class="dot" style="background:${s.color}"></span><span>${s.label}</span>`;
     item.addEventListener('click',()=>{
       if(hidden.has(idx)) hidden.delete(idx); else hidden.add(idx);
       item.classList.toggle('hidden',hidden.has(idx));
-      // Toggling a band changes the visible stack, so recompute marker heights and
-      // drop the markers of any now-hidden asset before redrawing.
-      if(compChart){ compChart.setDatasetVisibility(idx,!hidden.has(idx)); recomputeMarkers(); compChart.update(); }
+      if(compChart){ compChart.setDatasetVisibility(idx,!hidden.has(idx)); compChart.update(); }
     });
     legendEl.appendChild(item);
   });
-
-  // One legend toggle for all buy-date triangles (sits after the asset/cash entries).
-  // The triangle swatch is neutral since the markers themselves are per-asset coloured.
-  if(markerIdxs.length){
-    const item=document.createElement('div'); item.className='legend-item';
-    item.innerHTML=`<span class="dot" style="background:${cssVar('--text')||'#e5e7eb'};clip-path:polygon(50% 0,100% 100%,0 100%)"></span><span>▲ Buy date</span>`;
-    item.addEventListener('click',()=>{
-      markersVisible=!markersVisible;
-      item.classList.toggle('hidden',!markersVisible);
-      if(compChart){ markerIdxs.forEach(di=>compChart.setDatasetVisibility(di,markersVisible)); compChart.update(); }
-    });
-    legendEl.appendChild(item);
-  }
 
   const yCb = isPct ? (v=>fmt.num(v,0)+'%') : (v=>fmt.currency(v,true));
   const valFmt = isPct ? (v=>fmt.num(v,1)+'%') : (v=>fmt.currency(v,true));
@@ -1867,7 +1860,7 @@ function updateCompChart(){
   const opts={
     responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
     plugins:{ legend:{display:false}, tooltip:{
-      filter:item=>!item.dataset._marker && (compChart?compChart.isDatasetVisible(item.datasetIndex):true),
+      filter:item=>(compChart?compChart.isDatasetVisible(item.datasetIndex):true),
       callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${valFmt(ctx.parsed.y)}`,
         afterBody(items){ if(items.length){ const tot=items.reduce((s,i)=>s+i.parsed.y,0); $('compHoverBox').textContent=`${items[0].label}  -  Total: ${totFmt(tot)}  |  `+items.map(i=>`${i.dataset.label}: ${valFmt(i.parsed.y)}`).join('  |  '); } }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10},
@@ -1878,8 +1871,244 @@ function updateCompChart(){
   };
   if(compChart) compChart.destroy();
   compChart=new Chart($('compCanvas'),{type:'line',data:{labels:dates,datasets},options:opts});
-  recomputeMarkers();   // fill in the per-asset marker heights for the initial (all-visible) stack
   compChart.update();
+}
+
+/* ─── SECURITY PRICES CHART (asset prices for the selected portfolio) ───
+   Mirrors the single-asset tool's price chart: line ↔ candlestick, actual price
+   for a single visible asset and base-100 normalisation when comparing two or
+   more, opt-in per-asset buy-date triangles, and (for the Rule-Based method's
+   tech triggers) the underlying technical indicators stacked below the price. */
+
+// Synthesise plausible intraday OHLC from a close-price series so candlestick mode
+// has real candles. The portfolio's price feed carries closes only, so open is the
+// prior close and the wicks extend a quarter of the day's move past open/close.
+function buildPriceOHLC(closes){
+  const o=[],h=[],l=[];
+  for(let i=0;i<closes.length;i++){
+    const c=closes[i], open=i===0?c:closes[i-1], move=Math.abs(c-open);
+    o.push(open);
+    h.push(Math.max(open,c)+move*0.25);
+    l.push(Math.max(1e-6,Math.min(open,c)-move*0.25));
+  }
+  return { o,h,l,c:closes.slice() };
+}
+
+// Candlestick renderer for the price chart. Draws candles for any visible dataset
+// carrying _ohlc and fits the price y-axis to the visible candles so wicks aren't
+// clipped. Inactive unless the Candlesticks toggle is on, so line mode is untouched.
+const pfCandlePlugin = {
+  id:'pfCandles',
+  afterDataLimits(chart, args){
+    if(!showCandles) return;
+    const scale=args.scale;
+    if(!scale || scale.id!=='y') return;
+    if(!chart.data.datasets.some(ds=>ds._ohlc)) return;   // only the price chart
+    const xs=chart.scales.x;
+    const iMin = xs ? Math.floor(xs.min) : 0;
+    const iMax = xs ? Math.ceil(xs.max) : Infinity;
+    let lo=Infinity, hi=-Infinity;
+    chart.data.datasets.forEach((ds,di)=>{
+      if(!chart.isDatasetVisible(di)) return;
+      if(typeof ds.yAxisID==='string' && ds.yAxisID.indexOf('yOsc_')===0) return;
+      if(ds._ohlc){
+        const {h,l}=ds._ohlc;
+        const end=Math.min(h.length-1,iMax);
+        for(let i=Math.max(0,iMin);i<=end;i++){ if(h[i]!=null&&h[i]>hi)hi=h[i]; if(l[i]!=null&&l[i]<lo)lo=l[i]; }
+      } else {
+        const data=ds.data; const end=Math.min(data.length-1,iMax);
+        for(let i=Math.max(0,iMin);i<=end;i++){ const v=data[i]; if(v==null) continue; if(v>hi)hi=v; if(v<lo)lo=v; }
+      }
+    });
+    if(hi>lo){ const pad=(hi-lo)*0.04; scale.min=lo-pad; scale.max=hi+pad; }
+  },
+  afterDatasetsDraw(chart){
+    if(!showCandles) return;
+    if(!chart.data.datasets.some(ds=>ds._ohlc)) return;
+    const x=chart.scales.x, y=chart.scales.y;
+    if(!x||!y) return;
+    const ctx=chart.ctx, area=chart.chartArea;
+    const step=Math.abs(x.getPixelForValue(1)-x.getPixelForValue(0))||6;
+    const w=Math.max(1, Math.min(step*0.7, 16));
+    ctx.save();
+    ctx.beginPath(); ctx.rect(area.left,area.top,area.right-area.left,area.bottom-area.top); ctx.clip();
+    chart.data.datasets.forEach((ds,di)=>{
+      if(!ds._ohlc || !chart.isDatasetVisible(di)) return;
+      const {o,h,l,c}=ds._ohlc;
+      for(let i=0;i<c.length;i++){
+        if(c[i]==null||o[i]==null) continue;
+        const px=x.getPixelForValue(i);
+        if(px<area.left-w||px>area.right+w) continue;
+        const up=c[i]>=o[i], col=up?CANDLE_UP:CANDLE_DOWN;
+        ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(px,y.getPixelForValue(h[i])); ctx.lineTo(px,y.getPixelForValue(l[i])); ctx.stroke();
+        const yO=y.getPixelForValue(o[i]), yC=y.getPixelForValue(c[i]);
+        const top=Math.min(yO,yC), bot=Math.max(yO,yC);
+        ctx.fillRect(px-w/2, top, w, Math.max(1,bot-top));
+      }
+    });
+    ctx.restore();
+  }
+};
+if(window.Chart && Chart.register) Chart.register(pfCandlePlugin);
+
+// The "Show Indicators" toggle is only meaningful when the selected portfolio runs
+// the Rule-Based method with at least one technical trigger - hide it otherwise.
+function priceHasTech(res){
+  return !!(res && res.method==='rule-trigger' && res.assets.some(a=>a.trigger && TECH_TRIGGER_TYPES.includes(a.trigger.type)));
+}
+function updatePriceTechToggleVisibility(res){
+  const wrap=$('priceTechToggleWrap'); if(!wrap) return;
+  wrap.style.display=priceHasTech(res)?'':'none';
+}
+
+function updatePriceChart(){
+  if(!simResults.length) return;
+  const res=simResults.find(r=>r.id===activeDetailId)||simResults[0];
+  const dates=res.rows.map(r=>r.date);
+  const grid=cssVar('--chart-grid'), muted=cssVar('--chart-text'), text=cssVar('--text');
+  const legendEl=$('priceLegend'); legendEl.innerHTML='';
+
+  updatePriceTechToggleVisibility(res);
+
+  const assets=res.assets;
+  // Reset to "all visible" whenever the portfolio or its asset set changes; keep
+  // the user's show/hide choices across rebuilds (theme, toggles) otherwise.
+  const key=res.id+'|'+assets.map(a=>a.id).join(',');
+  if(key!==priceSeriesKey){ priceHidden=new Set(); priceSeriesKey=key; }
+  priceHidden=new Set([...priceHidden].filter(i=>i<assets.length));
+
+  const visibleCount=assets.reduce((n,_,i)=>n+(priceHidden.has(i)?0:1),0);
+  // Actual prices for a single visible asset (or any candlestick view); normalise
+  // to base 100 only when two or more line series are compared.
+  const normalize = !showCandles && visibleCount>=2;
+  const priceVal=(a,price)=> normalize ? price/(a.px[0]||1)*100 : price;
+
+  const datasets=assets.map((a,idx)=>{
+    const color=a.colorHex;
+    const hidden=priceHidden.has(idx);
+    const item=document.createElement('div');
+    item.className='legend-item'+(hidden?' hidden':'');
+    item.innerHTML=`<span class="dot" style="background:${color}"></span><span>${escapeHtml(a.name)}</span>`;
+    item.addEventListener('click',()=>{
+      if(priceHidden.has(idx)) priceHidden.delete(idx); else priceHidden.add(idx);
+      updatePriceChart();
+    });
+    legendEl.appendChild(item);
+    const ds={ label:a.name, hidden,
+      data:a.px.map(p=>priceVal(a,p)),
+      borderColor: showCandles ? 'transparent' : color,
+      backgroundColor:color+'22', borderWidth:2.5, pointRadius:0,
+      pointHoverRadius:showCandles?0:5, tension:0.2, fill:false };
+    if(showCandles) ds._ohlc=buildPriceOHLC(a.px);
+    return ds;
+  });
+
+  // Per-asset buy markers (▲): each asset is bought on its own days (a trigger
+  // fires or a top-up deploys into it), read straight from rows[i].bought.
+  if(showBuyDates){
+    let gMin=Infinity, gMax=-Infinity;
+    assets.forEach((a,idx)=>{ if(priceHidden.has(idx)) return; a.px.forEach(p=>{ const v=priceVal(a,p); if(v<gMin)gMin=v; if(v>gMax)gMax=v; }); });
+    if(!isFinite(gMin)){ gMin=0; gMax=1; }
+    const markerOffset=((gMax-gMin)||1)*0.05;
+    assets.forEach((a,idx)=>{
+      const color=a.colorHex;
+      const aid=a.id;
+      datasets.push({
+        label:`${a.name} ▲ Buy`, hidden:priceHidden.has(idx),
+        data:res.rows.map((r,ri)=> (Array.isArray(r.bought)&&r.bought.indexOf(aid)>=0) ? priceVal(a,a.px[ri]) - markerOffset : null),
+        borderColor:color, backgroundColor:color, showLine:false, spanGaps:false,
+        pointStyle:'triangle', pointRadius:2.5, pointHoverRadius:4,
+        pointBorderColor:'#fff', pointBorderWidth:0.5, _marker:true
+      });
+    });
+  }
+
+  // Technical overlays for Rule-Based tech triggers, computed lazily while toggled
+  // on. Price-axis overlays (MAs, Bollinger) share the price grid; oscillators
+  // (RSI, MACD, ADX) each get their own grid stacked below, grouped by family.
+  const oscGroups=new Map();
+  if(showTechIndicators && priceHasTech(res)){
+    assets.forEach((a,idx)=>{
+      if(priceHidden.has(idx)) return;
+      const tr=a.trigger;
+      if(!tr || !TECH_TRIGGER_TYPES.includes(tr.type)) return;
+      const prices=a.px;
+      const base100=prices[0]||1;
+      const ts=SharedTA.buildTech(prices, tr.type, tr.tech||{});
+      const base=a.colorHex;
+      const oscInfo=OSC_GROUPS[tr.type];
+      ts.lines.forEach(ln=>{
+        const isOsc=ln.axis==='osc'&&oscInfo;
+        const yAxisID=isOsc?'yOsc_'+oscInfo.key:'y';
+        if(isOsc&&!oscGroups.has(oscInfo.key)) oscGroups.set(oscInfo.key, oscInfo.name);
+        if(ln.bar){
+          const cols=macdHistColors(ln.values);
+          datasets.push({
+            type:'bar', label:`${a.name} · ${ln.name}`, hidden:false,
+            data: ln.values.map(v=> v==null?null:v), yAxisID,
+            backgroundColor:cols, borderColor:cols, borderWidth:0,
+            categoryPercentage:1, barPercentage:1, _indicator:true, _hist:true
+          });
+          return;
+        }
+        const dash=ln.dash==='dot'?[2,3]:ln.dash==='dash'?[7,4]:[];
+        const priceAxisVal=v=> v==null?null:(normalize ? v/base100*100 : v);
+        const dsi={
+          label:`${a.name} · ${ln.name}`, hidden:false,
+          data: isOsc ? ln.values.slice() : ln.values.map(priceAxisVal),
+          yAxisID,
+          borderColor:withAlpha(base, ln.fade||0.5),
+          backgroundColor:'transparent', borderWidth:1.4, pointRadius:0, pointHoverRadius:3,
+          borderDash:dash, tension:0.2, fill:false, spanGaps:true, _indicator:true
+        };
+        if(ln.bandFill){ dsi.fill='-2'; dsi.backgroundColor=withAlpha(base,0.10); }
+        datasets.push(dsi);
+      });
+    });
+  }
+  const oscGroupKeys=[...oscGroups.keys()];
+  const hasOsc=oscGroupKeys.length>0;
+  const wrap=$('priceCanvasWrap'); if(wrap) wrap.classList.toggle('has-osc', hasOsc);
+
+  const isOscDs=ds=> typeof ds.yAxisID==='string' && ds.yAxisID.indexOf('yOsc_')===0;
+  const fmtY=v=> normalize ? fmt.num(v,2)+'%' : fmt.currency(v);
+  const yCallback= normalize ? (val=>fmt.num(val,1)+'%') : (val=>fmt.currency(val,true));
+  const fmtPt=i=> `${i.dataset.label}: ${isOscDs(i.dataset)?fmt.num(i.parsed.y,2):fmtY(i.parsed.y)}`;
+  const yTitle= normalize ? 'Normalised Price (base 100)' : 'Price ('+currentCurrencySymbol+')';
+  const sub=$('pricePfSubtitle'); if(sub) sub.textContent = showCandles ? '(OHLC candlesticks)' : (normalize ? '(normalised to 100)' : '(actual price)');
+
+  function buildPriceOpts(){
+    const dropEdgeTick=(edge)=>scale=>{ scale.ticks=scale.ticks.filter(t=>t.value!==scale[edge]); };
+    const numOsc=oscGroupKeys.length;
+    const scales={
+      x:{title:{display:true,text:'Date',color:muted,font:{family:'inherit',size:11}},ticks:{color:muted,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>dates[Number(v)]?.slice(0,7)||''},grid:{color:grid}},
+      y:{stack:hasOsc?'pricestack':undefined,stackWeight:hasOsc?3:undefined,weight:hasOsc?numOsc+1:undefined,position:'left',title:{display:true,text:yTitle,color:muted,font:{family:'inherit',size:11}},ticks:{color:muted,font:{family:'inherit',size:11},callback:yCallback},grid:{color:grid},afterBuildTicks:hasOsc?dropEdgeTick('min'):undefined}
+    };
+    oscGroupKeys.forEach((k,i)=>{
+      const isLast=i===numOsc-1;
+      scales['yOsc_'+k]={
+        stack:'pricestack',stackWeight:1,weight:numOsc-i,position:'left',
+        title:{display:true,text:oscGroups.get(k),color:muted,font:{family:'inherit',size:11}},
+        ticks:{color:muted,font:{family:'inherit',size:11}},grid:{color:grid},
+        afterBuildTicks:scale=>{ dropEdgeTick('max')(scale); if(!isLast) dropEdgeTick('min')(scale); }
+      };
+    });
+    return {
+      responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
+      plugins:{ legend:{display:false}, tooltip:{
+        filter:item=>!item.dataset._marker,
+        callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>'  '+fmtPt(ctx),
+          afterBody(items){ const its=items.filter(i=>!i.dataset._marker); if(its.length) $('priceHoverBox').textContent=`${its[0].label}  -  `+its.map(fmtPt).join('  |  '); }},
+        backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10},
+        zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
+      scales
+    };
+  }
+
+  if(priceChart) priceChart.destroy();
+  priceChart=new Chart($('priceCanvas'),{type:'line',data:{labels:dates,datasets},options:buildPriceOpts()});
+  priceChart.update();
 }
 
 /* ─── SUMMARY TILES (one per portfolio, for comparison) ───
@@ -1934,7 +2163,7 @@ function breakdownRows(rows){
 function updateTable(){
   const head=$('compHead'), body=$('compBody');
   if(!simResults.length){ return; }
-  const res=simResults.find(r=>r.id===activeCompTableId)||simResults[0];
+  const res=simResults.find(r=>r.id===activeDetailId)||simResults[0];
   head.innerHTML=`<tr><th>Date</th><th>Event</th><th class="cash-cell">Cash</th>${res.assets.map(a=>`<th>${a.name}</th>`).join('')}<th>Deposited</th><th>Portfolio Value</th></tr>`;
   const rows=breakdownRows(res.rows);
   body.innerHTML=rows.map(({row:r,tag})=>{
@@ -1944,8 +2173,8 @@ function updateTable(){
   }).join('');
 }
 
-$('compChartPfSelect').addEventListener('change',e=>{ activeCompChartId=parseInt(e.target.value,10); updateCompChart(); });
-$('compTablePfSelect').addEventListener('change',e=>{ activeCompTableId=parseInt(e.target.value,10); updateTable(); });
+// One selector updates every Detailed Breakdown subsection for the chosen portfolio.
+$('detailPfSelect').addEventListener('change',e=>{ activeDetailId=parseInt(e.target.value,10); updatePriceChart(); updateCompChart(); updateTable(); });
 
 $('showAdvancedToggle').addEventListener('change',e=>{
   showAdvanced=e.target.checked;
@@ -1962,6 +2191,13 @@ document.querySelectorAll('#compViewToggle .seg-btn').forEach(btn=>{
     if(simResults.length) updateCompChart();
   });
 });
+
+/* ─── SECURITY PRICES CHART TOGGLES ─── */
+$('priceCandleToggle').addEventListener('change',e=>{ showCandles=e.target.checked; if(simResults.length) updatePriceChart(); });
+$('priceBuyDateToggle').addEventListener('change',e=>{ showBuyDates=e.target.checked; if(simResults.length) updatePriceChart(); });
+$('priceTechToggle').addEventListener('change',e=>{ showTechIndicators=e.target.checked; if(simResults.length) updatePriceChart(); });
+$('priceResetZoom').addEventListener('click',()=>{ if(priceChart) priceChart.resetZoom(); });
+$('priceCanvas').addEventListener('mouseleave',()=>{ $('priceHoverBox').textContent='Hover to inspect data points.'; });
 
 /* Sanitise CSV text to plain ASCII so spreadsheets never render mojibake
    (â€” / Î” / âˆ’). Cosmetic glyphs are deleted; functional glyphs are replaced
@@ -1981,7 +2217,7 @@ function cleanCSV(text){
 /* ─── CSV EXPORT (full daily, selected table portfolio) ─── */
 $('downloadBtn').addEventListener('click',()=>{
   if(!simResults.length){ showWarning('Run a simulation first.'); return; }
-  const res=simResults.find(r=>r.id===activeCompTableId)||simResults[0];
+  const res=simResults.find(r=>r.id===activeDetailId)||simResults[0];
   const header=['Date','Cash',...res.assets.map(a=>a.name),'Invested','PortfolioValue','CumulativeTopups'];
   const lines=[header.join(',')];
   res.rows.forEach(r=>{
@@ -2095,11 +2331,83 @@ async function copyCanvasPng(canvas){
   if(!blob) throw new Error('Could not create PNG.');
   await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
 }
-function compTitle(){ const res=simResults.find(r=>r.id===activeCompChartId); return 'Composition Over Time'+(res?': '+res.name:''); }
+
+/* ─── CHART SVG EXPORT ───
+   Wraps the Chart.js canvas as a raster <image> inside a vector SVG, then adds a
+   real vector title, legend swatches/labels and the watermark around it, so the
+   download stays crisp at the chart frame and is drop-in for slides/docs. */
+function downloadChartSvg(canvasId, filename, chartTitle, legendId){
+  const srcC=$(canvasId); if(!srcC) return;
+  const dpr=window.devicePixelRatio||1;
+  const chartW=Math.round(srcC.width/dpr), chartH=Math.round(srcC.height/dpr);
+  const isLight=document.body.classList.contains('light');
+  const bg=isLight?'#ffffff':'#0F1728', fg=isLight?'#2D3436':'#EAF1FF';
+  const FONT='DM Sans, sans-serif';
+  const items=[];
+  if(legendId){ const le=$(legendId); if(le) le.querySelectorAll('.legend-item:not(.hidden)').forEach(it=>{ const dot=it.querySelector('.dot'); const label=it.textContent.trim(); const color=dot?getComputedStyle(dot).backgroundColor:'#888'; if(label) items.push({label,color}); }); }
+  const titleH=chartTitle?40:0, legendH=items.length?34:0;
+  const svgW=chartW, svgH=chartH+titleH+legendH;
+  const NS='http://www.w3.org/2000/svg', xl='http://www.w3.org/1999/xlink';
+  const svg=document.createElementNS(NS,'svg');
+  svg.setAttribute('xmlns',NS); svg.setAttribute('xmlns:xlink',xl);
+  svg.setAttribute('width',svgW); svg.setAttribute('height',svgH); svg.setAttribute('viewBox',`0 0 ${svgW} ${svgH}`);
+  const bgRect=document.createElementNS(NS,'rect'); bgRect.setAttribute('width',svgW); bgRect.setAttribute('height',svgH); bgRect.setAttribute('fill',bg); svg.appendChild(bgRect);
+  if(chartTitle){
+    const t=document.createElementNS(NS,'text');
+    t.setAttribute('x',svgW/2); t.setAttribute('y',titleH/2);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','middle');
+    t.setAttribute('font-family',FONT); t.setAttribute('font-size','14'); t.setAttribute('font-weight','700'); t.setAttribute('fill',fg);
+    t.textContent=chartTitle; svg.appendChild(t);
+  }
+  const img=document.createElementNS(NS,'image');
+  img.setAttribute('x',0); img.setAttribute('y',titleH); img.setAttribute('width',chartW); img.setAttribute('height',chartH);
+  img.setAttributeNS(xl,'href',srcC.toDataURL('image/png')); svg.appendChild(img);
+  const mc=document.createElement('canvas').getContext('2d'); mc.font='500 11px DM Sans, sans-serif';
+  if(items.length){
+    const dotR=5,gap=7,pad=20; const cy=titleH+chartH+legendH/2;
+    const totalW=items.reduce((s,it,i)=>s+dotR*2+gap+mc.measureText(it.label).width+(i<items.length-1?pad:0),0);
+    let x=Math.max(16,(svgW-totalW)/2);
+    items.forEach(it=>{
+      const c=document.createElementNS(NS,'circle'); c.setAttribute('cx',x+dotR); c.setAttribute('cy',cy); c.setAttribute('r',dotR); c.setAttribute('fill',it.color); svg.appendChild(c);
+      x+=dotR*2+gap;
+      const lt=document.createElementNS(NS,'text'); lt.setAttribute('x',x); lt.setAttribute('y',cy); lt.setAttribute('dominant-baseline','middle');
+      lt.setAttribute('font-family',FONT); lt.setAttribute('font-size','11'); lt.setAttribute('font-weight','500'); lt.setAttribute('fill',fg);
+      lt.textContent=it.label; svg.appendChild(lt);
+      x+=mc.measureText(it.label).width+pad;
+    });
+  }
+  // Watermark: logo + wordmark, bottom-right (matches the PNG export wording).
+  const wmText='Made using tool.adjiebrotots.com/dcasimulator/portfolio';
+  const wmTextW=mc.measureText(wmText).width, wmLogoSize=13;
+  const wt=document.createElementNS(NS,'text');
+  wt.setAttribute('x',svgW-12); wt.setAttribute('y',svgH-11); wt.setAttribute('text-anchor','end');
+  wt.setAttribute('font-family',FONT); wt.setAttribute('font-size','11'); wt.setAttribute('font-weight','500'); wt.setAttribute('fill','#1a1a1a'); wt.setAttribute('opacity','0.22');
+  wt.textContent=wmText; svg.appendChild(wt);
+  const wmLogo=document.createElementNS(NS,'image');
+  wmLogo.setAttribute('href',WM_LOGO_SRC); wmLogo.setAttributeNS(xl,'href',WM_LOGO_SRC);
+  wmLogo.setAttribute('width',wmLogoSize); wmLogo.setAttribute('height',wmLogoSize);
+  wmLogo.setAttribute('x',svgW-12-wmTextW-4-wmLogoSize); wmLogo.setAttribute('y',svgH-12-wmLogoSize+2); wmLogo.setAttribute('opacity','0.22');
+  svg.appendChild(wmLogo);
+  const xml='<?xml version="1.0" encoding="utf-8"?>\n'+new XMLSerializer().serializeToString(svg);
+  const blob=new Blob([xml],{type:'image/svg+xml;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+
+function detailRes(){ return simResults.find(r=>r.id===activeDetailId)||simResults[0]||null; }
+function compTitle(){ const res=detailRes(); return 'Composition Over Time'+(res?': '+res.name:''); }
+function priceTitle(){ const res=detailRes(); const sub=$('pricePfSubtitle'); const note=sub&&sub.textContent?' '+sub.textContent.trim():''; return 'Security Prices'+(res?': '+res.name:'')+note; }
+
 $('valuePngBtn').addEventListener('click',()=>exportChartPng('valueCanvas','portfolio-value.png','Portfolio Value Over Time','valueLegend'));
 $('compPngBtn').addEventListener('click',()=>exportChartPng('compCanvas','portfolio-composition.png',compTitle(),'compLegend'));
+$('pricePngBtn').addEventListener('click',()=>exportChartPng('priceCanvas','portfolio-security-prices.png',priceTitle(),'priceLegend'));
 $('valueCopyBtn').addEventListener('click',async()=>{ const c=exportChartPng('valueCanvas','','Portfolio Value Over Time','valueLegend',false); if(c){ try{ await copyCanvasPng(c); showStatus($('assetFetchStatus'),'Copied value chart to clipboard.','ok'); }catch(e){ showStatus($('assetFetchStatus'),e.message,'error'); } } });
 $('compCopyBtn').addEventListener('click',async()=>{ const c=exportChartPng('compCanvas','',compTitle(),'compLegend',false); if(c){ try{ await copyCanvasPng(c); showStatus($('assetFetchStatus'),'Copied composition chart to clipboard.','ok'); }catch(e){ showStatus($('assetFetchStatus'),e.message,'error'); } } });
+$('priceCopyBtn').addEventListener('click',async()=>{ const c=exportChartPng('priceCanvas','',priceTitle(),'priceLegend',false); if(c){ try{ await copyCanvasPng(c); showStatus($('assetFetchStatus'),'Copied security prices chart to clipboard.','ok'); }catch(e){ showStatus($('assetFetchStatus'),e.message,'error'); } } });
+
+$('valueSvgBtn').addEventListener('click',()=>downloadChartSvg('valueCanvas','portfolio-value.svg','Portfolio Value Over Time','valueLegend'));
+$('compSvgBtn').addEventListener('click',()=>downloadChartSvg('compCanvas','portfolio-composition.svg',compTitle(),'compLegend'));
+$('priceSvgBtn').addEventListener('click',()=>downloadChartSvg('priceCanvas','portfolio-security-prices.svg',priceTitle(),'priceLegend'));
 
 $('valueResetZoom').addEventListener('click',()=>{ if(valueChart) valueChart.resetZoom(); });
 $('compResetZoom').addEventListener('click',()=>{ if(compChart) compChart.resetZoom(); });
@@ -2119,7 +2427,7 @@ $('showTopupsToggle').addEventListener('change',e=>{
 $('currencySymbol').addEventListener('change',e=>{
   currentCurrencySymbol=e.target.value;
   const pfx=$('topupAmountPrefix'); if(pfx) pfx.textContent=currentCurrencySymbol||'$';
-  if(simResults.length){ updateValueChart(); updateCompChart(); updateSummary(); updateTable(); }
+  if(simResults.length){ updateValueChart(); updatePriceChart(); updateCompChart(); updateSummary(); updateTable(); }
 });
 $('randomSeed').addEventListener('input',e=>{ currentRandomSeed=sanitizeSeed(e.target.value); });
 
@@ -2127,7 +2435,7 @@ $('randomSeed').addEventListener('input',e=>{ currentRandomSeed=sanitizeSeed(e.t
 $('themeToggle').addEventListener('click',()=>{
   document.body.classList.toggle('light');
   $('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';
-  if(simResults.length){ updateValueChart(); updateCompChart(); }
+  if(simResults.length){ updateValueChart(); updatePriceChart(); updateCompChart(); }
   renderAssetList(); renderPortfolioList();
 });
 
@@ -2158,23 +2466,29 @@ document.querySelectorAll('.sub-tab').forEach(btn=>{
 $('simBtn').addEventListener('click', runSimulation);
 $('resetBtn').addEventListener('click',()=>{
   portfolios=[]; portfolioIdCounter=0; activePortfolioId=null;
-  simResults=[]; commonDates=[]; activeCompChartId=null; activeCompTableId=null;
+  simResults=[]; commonDates=[]; activeDetailId=null;
   priceCache={}; tickerFetchInFlight={};
   simPool=[]; persistSimPool();
   currentCurrencySymbol='$'; currentRandomSeed=DEFAULT_RANDOM_SEED; showTopups=true;
   compViewMode='dollar'; valueDsPairs=[]; hiddenPf.clear();
+  showCandles=false; showBuyDates=false; showTechIndicators=false; priceHidden=new Set(); priceSeriesKey='';
   document.querySelectorAll('#compViewToggle .seg-btn').forEach(b=>b.classList.toggle('active', b.dataset.cv==='dollar'));
   if(valueChart){ valueChart.destroy(); valueChart=null; }
   if(compChart){ compChart.destroy(); compChart=null; }
+  if(priceChart){ priceChart.destroy(); priceChart=null; }
   $('currencySymbol').value='$'; $('randomSeed').value=DEFAULT_RANDOM_SEED;
   $('showTopupsToggle').checked=true;
+  $('priceCandleToggle').checked=false; $('priceBuyDateToggle').checked=false; $('priceTechToggle').checked=false;
+  $('priceTechToggleWrap').style.display='none';
   $('summaryGrid').innerHTML='';
   $('compHead').innerHTML='<tr><th>Date</th><th>Event</th><th>Cash</th><th>Deposited</th><th>Portfolio Value</th></tr>';
   $('compBody').innerHTML='<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">Add portfolios and run to see the breakdown.</td></tr>';
-  $('valueLegend').innerHTML=''; $('compLegend').innerHTML='';
-  $('compChartPfSelect').innerHTML=''; $('compTablePfSelect').innerHTML='';
+  $('valueLegend').innerHTML=''; $('compLegend').innerHTML=''; $('priceLegend').innerHTML='';
+  $('detailPfSelect').innerHTML='';
   $('valueHoverBox').textContent='Configure portfolios and run to compare value over time.';
   $('compHoverBox').textContent='Cash and each asset stack up to total portfolio value.';
+  $('priceHoverBox').textContent="Run a simulation to view the prices of this portfolio's assets.";
+  const pcw=$('priceCanvasWrap'); if(pcw) pcw.classList.remove('has-osc');
   hideStatus($('assetFetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
   const poolInp=$('tickerPoolInput'); if(poolInp) poolInp.value='';
   setPoolLocked(false); hideStatus($('poolStatus')); setDataMode('real'); renderPoolChips(); refreshAssetPoolSelect();
