@@ -68,6 +68,8 @@ a{color:inherit;text-decoration:none}
 .btn-secondary:disabled{opacity:.38;cursor:not-allowed}
 .btn-danger{background:var(--error-bg);border:1px solid var(--error-text);color:var(--error-text);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
 .btn-danger:hover{opacity:.85}
+.btn-toggle.is-active{background:var(--accent);border-color:var(--accent);color:var(--text-inv)}
+.btn-toggle.is-active:hover{color:var(--text-inv);opacity:.9}
 
 /* ─── SIDEBAR ───────────────────────────────────────────────────────────────── */
 .sidebar{display:flex;flex-direction:column;gap:12px;position:sticky;top:16px;align-self:start;overflow:hidden}
@@ -192,8 +194,17 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
 
 /* Primitive value */
 .node-value{color:var(--muted);max-width:260px;overflow:hidden;text-overflow:ellipsis}
-.node-value.expandable-str{cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
-.node-value.expandable-str:hover{text-decoration-style:solid}
+/* Values clipped by max-width get a dotted underline + pointer: "click to expand" */
+.node-value.is-truncated{cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
+.node-value.is-truncated:hover{text-decoration-style:solid;color:var(--accent)}
+/* A single value expanded inline: reveal the full text wrapped across rows */
+.node-value.is-wrapped{max-width:560px;white-space:pre-wrap;word-break:break-word;overflow:visible;text-overflow:clip;cursor:pointer}
+.tj-node.has-wrapped-value{align-items:flex-start}
+
+/* Global "Wrap Text" mode: wrap every value (and branch preview) across rows */
+.tj-root.wrap-text-mode .node-value,
+.tj-root.wrap-text-mode .node-preview-value{max-width:560px;white-space:pre-wrap;word-break:break-word;overflow:visible;text-overflow:clip}
+.tj-root.wrap-text-mode .tj-node{align-items:flex-start}
 
 /* Expand/collapse toggle */
 .node-toggle{color:var(--muted);font-size:.7rem;flex-shrink:0;transition:transform 150ms}
