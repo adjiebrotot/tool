@@ -16,6 +16,9 @@ let currentFileName = '';
 let currentFileSize = 0;
 let nodeIdCounter = 0;
 let rootDescriptor = null;
+// Collapsed primitive values longer than this are shown sliced (with a trailing
+// "…") to keep single-line layout cheap; the full value is revealed on expand.
+const VALUE_PREVIEW_CAP = 800;
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
 function $(id){ return document.getElementById(id); }
@@ -99,6 +102,32 @@ function syncBranchPreviewState(nodeEl){
 
 function syncBranchPreviewStates(rootEl = document){
   rootEl.querySelectorAll('.tj-node.has-preview').forEach(syncBranchPreviewState);
+}
+
+// ─── VALUE TRUNCATION DETECTION ──────────────────────────────────────────────
+// A value clipped by its max-width gets a "click to expand" affordance. Nodes
+// stream in lazily, so we measure in a single batched rAF pass (all reads after
+// all writes) to avoid layout thrashing.
+let truncationCheckScheduled = false;
+function scheduleTruncationCheck(){
+  if(truncationCheckScheduled) return;
+  truncationCheckScheduled = true;
+  requestAnimationFrame(markTruncatedValues);
+}
+function markTruncatedValues(){
+  truncationCheckScheduled = false;
+  const root = $('treeRoot');
+  // While global Wrap Text is on nothing is clipped, so the per-value affordance
+  // is irrelevant; we re-measure when it is turned back off.
+  if(!root || root.classList.contains('wrap-text-mode')) return;
+  root.querySelectorAll('.node-value:not([data-trunc])').forEach(el => {
+    const truncated = el.scrollWidth > el.clientWidth + 1;
+    el.dataset.trunc = truncated ? '1' : '0';
+    if(truncated){
+      el.classList.add('is-truncated');
+      el.title = 'Click to expand';
+    }
+  });
 }
 
 function getVisibleNodeText(nodeEl){
@@ -366,24 +395,32 @@ function renderNode(desc, parentEl){
   }
 
   if(isPrimitive(desc.type)){
-    // Primitive value
-    const rawVal = desc.type === 'null' ? 'null' : JSON.stringify(desc.rawRef);
+    // Primitive value. Show a (capped) single-line preview; clicking a value
+    // that is clipped expands it inline, wrapped across multiple rows.
+    const fullVal = desc.type === 'null' ? 'null' : JSON.stringify(desc.rawRef);
+    const previewVal = fullVal.length > VALUE_PREVIEW_CAP
+      ? fullVal.slice(0, VALUE_PREVIEW_CAP) + '…'
+      : fullVal;
     const valSpan = document.createElement('span');
     valSpan.className = 'node-value';
-    if(desc.type === 'string' && desc.rawRef.length > 120){
-      valSpan.textContent = JSON.stringify(desc.rawRef.slice(0,120)) + '…';
-      valSpan.className += ' expandable-str';
-      valSpan.title = 'Click to expand';
-      let expanded = false;
-      valSpan.addEventListener('click', (e) => {
-        e.stopPropagation();
-        expanded = !expanded;
-        valSpan.textContent = expanded ? JSON.stringify(desc.rawRef) : JSON.stringify(desc.rawRef.slice(0,120)) + '…';
-      });
-    } else {
-      valSpan.textContent = rawVal;
-    }
+    valSpan.textContent = previewVal;
+    valSpan.addEventListener('click', (e) => {
+      const wrapped = valSpan.classList.contains('is-wrapped');
+      // Only react when there is actually something hidden to reveal.
+      if(!wrapped && !valSpan.classList.contains('is-truncated')) return;
+      e.stopPropagation();
+      if(wrapped){
+        valSpan.classList.remove('is-wrapped');
+        valSpan.textContent = previewVal;
+        node.classList.remove('has-wrapped-value');
+      } else {
+        valSpan.classList.add('is-wrapped');
+        valSpan.textContent = fullVal;
+        node.classList.add('has-wrapped-value');
+      }
+    });
     node.appendChild(valSpan);
+    scheduleTruncationCheck();
   } else {
     // Object or array: show a useful first-entry preview for unnamed array branches,
     // then badge + optional toggle.
@@ -646,10 +683,29 @@ $('collapseAllBtn').addEventListener('click', () => {
   });
 });
 
+function setWrapTextMode(on){
+  const root = $('treeRoot');
+  const btn = $('wrapTextBtn');
+  root.classList.toggle('wrap-text-mode', on);
+  btn.classList.toggle('is-active', on);
+  btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  btn.textContent = on ? '↩ Wrap Text: On' : '↩ Wrap Text: Off';
+  if(!on){
+    // Measure any values that rendered while wrap mode was on (and were skipped).
+    // Values measured beforehand keep their flags — the unwrapped layout is the same.
+    scheduleTruncationCheck();
+  }
+}
+
+$('wrapTextBtn').addEventListener('click', () => {
+  setWrapTextMode(!$('treeRoot').classList.contains('wrap-text-mode'));
+});
+
 $('clearBtn').addEventListener('click', () => {
   parsedData = null;
   rootDescriptor = null;
   $('treeRoot').innerHTML = '';
+  setWrapTextMode(false);
   $('treeHeader').style.display = 'none';
   $('treeViewport').style.display = 'none';
   $('emptyState').style.display = 'flex';
@@ -708,7 +764,7 @@ vpEl.addEventListener('mousedown', (e) => {
   vp.dragging = true; vp.lastX = e.clientX; vp.lastY = e.clientY;
   vpEl.classList.add('panning');
   // Don't preventDefault on interactive elements — doing so suppresses their click events
-  if(!e.target.closest('.tj-node, .btn-page, .expandable-str')) {
+  if(!e.target.closest('.tj-node, .btn-page, .node-value')) {
     e.preventDefault();
   }
 });
@@ -748,7 +804,7 @@ vpEl.addEventListener('touchstart', (e) => {
   }
   // Don't preventDefault for single-finger taps on interactive elements —
   // it would suppress the synthesised click event on mobile.
-  if(e.touches.length !== 1 || !e.target.closest('.tj-node, .btn-page, .expandable-str')) {
+  if(e.touches.length !== 1 || !e.target.closest('.tj-node, .btn-page, .node-value')) {
     e.preventDefault();
   }
 }, { passive: false });
