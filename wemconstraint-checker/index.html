@@ -114,21 +114,12 @@
     </div>
 
     <div class="tg" style="flex:1;min-width:260px">
-      <span class="tg-lbl">3 · Contingency</span>
+      <span class="tg-lbl">3 · Constraint Set Invoked <span class="tip-icon" data-tip="A constraint equation is active only when its Constraint Set is invoked. The control room invokes the relevant set(s); EVERY equation in an invoked set — across all of that set's contingencies — is then enforced. Pick the set in force to check the dispatch against all of its equations.">?</span></span>
       <div class="tg-r">
-        <input type="text" id="contSearch" placeholder="Filter…" style="width:100px"/>
-        <select id="contSel" style="flex:1;min-width:140px"></select>
+        <input type="text" id="setSearch" placeholder="Filter sets…" style="width:100px"/>
+        <select id="setSel" style="flex:1;min-width:140px"></select>
       </div>
-      <span class="hint" id="contCount">—</span>
-    </div>
-
-    <div class="tg" style="min-width:185px;justify-content:center">
-      <span class="tg-lbl">Options</span>
-      <label class="chk-row">
-        <input type="checkbox" id="activeOnly" checked/>
-        Active constraint set only
-        <span class="tip-icon" data-tip="Limits the checked equations to rows that have a Constraint Set ID assigned — these are the constraints actively enforced by AEMO.">?</span>
-      </label>
+      <span class="hint" id="setCount">—</span>
     </div>
 
     <div class="tg" style="min-width:110px;border-right:none">
@@ -177,9 +168,10 @@
   <div class="legend">
     <div class="lg-grp">
       <span class="lg-grp-lbl">LHS:</span>
-      <span class="lg-item"><span class="lg-sw energy">●</span>Energy dispatch</span>
+      <span class="lg-item"><span class="lg-sw energy">●</span>Energy dispatch <span style="color:var(--muted)">(summed)</span></span>
       <span class="lg-item"><span class="lg-sw regRaise">▲</span>Reg Raise</span>
       <span class="lg-item"><span class="lg-sw regLower">▼</span>Reg Lower</span>
+      <span class="lg-item" style="color:var(--muted)">— reserve terms shown but not in the energy-only LHS</span>
     </div>
     <span class="lg-sep"></span>
     <div class="lg-grp">

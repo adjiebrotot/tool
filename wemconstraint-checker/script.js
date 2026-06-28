@@ -7,9 +7,9 @@ let csvOk=false, genOk=false, xlsxOk=false;
 const $=id=>document.getElementById(id);
 const E={
   xlsxInput:$('xlsxInput'), xlsxName:$('xlsxName'),
-  demandInp:$('demandInp'), contSearch:$('contSearch'),
-  contSel:$('contSel'), contCount:$('contCount'),
-  activeOnly:$('activeOnly'), checkBtn:$('checkBtn'),
+  demandInp:$('demandInp'), setSearch:$('setSearch'),
+  setSel:$('setSel'), setCount:$('setCount'),
+  checkBtn:$('checkBtn'),
   resultsArea:$('resultsArea'), emptyState:$('emptyState'), dlBtn:$('dlBtn'),
   spCsv:$('spCsv'), spGen:$('spGen'), spXlsx:$('spXlsx'),
   kpiBalance:$('kpiBalance'), kpiBalanceSub:$('kpiBalanceSub'),
@@ -51,7 +51,7 @@ function parseCsv(txt){
   Papa.parse(txt,{header:true,skipEmptyLines:true,complete:r=>{
     csvRows=dedupe(r.data); csvOk=true;
     pill(E.spCsv,'ok',`✓ ${csvRows.length} unique constraints`);
-    buildContingencyDd();
+    buildSetDd();
   },error:e=>pill(E.spCsv,'er','CSV error: '+e.message)});
 }
 function dedupe(rows){
@@ -116,56 +116,60 @@ function buildMaps(wb){
       if(r.Parameter){const v=parseFloat(r.Value);if(!isNaN(v))rhsMap[String(r.Parameter).trim()]=v;}
 }
 
-/* ═══ CONTINGENCY DROPDOWN ════════════════════════════════════════ */
-function buildContingencyDd(){
-  const onlyAct=E.activeOnly.checked;
-  const pool=onlyAct?csvRows.filter(r=>r['Constraint Set ID']&&r['Constraint Set ID']!=''):csvRows;
-  const counts={};
-  for(const r of pool){const c=(r['Contingency']||'').trim()||'NIL';counts[c]=(counts[c]||0)+1;}
-  const sorted=Object.keys(counts).sort((a,b)=>a==='NIL'?-1:b==='NIL'?1:a.localeCompare(b));
-  const q=E.contSearch.value.toLowerCase(), cur=E.contSel.value||'NIL';
-  E.contSel.innerHTML='';
-  let shown=0;
-  for(const c of sorted){
-    if(q&&!c.toLowerCase().includes(q)) continue;
-    const o=document.createElement('option');
-    o.value=c; o.textContent=`${c}  (${counts[c]})`;
-    if(c===cur) o.selected=true;
-    E.contSel.appendChild(o); shown++;
-  }
-  if(!E.contSel.value&&E.contSel.options[0]) E.contSel.options[0].selected=true;
-  const sel=E.contSel.value;
-  E.contCount.textContent=`${shown} contingencies · ${counts[sel]||0} constraints for "${sel}"`;
-}
-
-/* ═══ GENERATOR VALUE LOOKUP ══════════════════════════════════════
-   Reg Raise = Max − dispatch   (clamped ≥ 0)
-   Reg Lower = dispatch − Min   (clamped ≥ 0)
+/* ═══ CONSTRAINT-SET DROPDOWN ═════════════════════════════════════
+   A constraint equation is ACTIVATED when its Constraint Set is invoked.
+   The control room invokes the relevant set(s); every equation belonging
+   to an invoked set — across ALL contingencies in that set — becomes
+   active.  Contingency is a sub-grouping *within* a set, not the unit of
+   activation.  Equations with no Constraint Set ID belong to no set and
+   are therefore never active.
 ════════════════════════════════════════════════════════════════════ */
-function getVal(gen, ptNorm){
-  const disp=lhsMap[gen];
-  const gd=genDataMap[gen];
-  if(ptNorm==='energy'){
-    if(disp!==undefined) return{val:disp,src:'lhs'};
-    const nd=`${gen}.energy.sentOut`;
-    if(rhsMap[nd]!==undefined) return{val:rhsMap[nd],src:'rhs-nd'};
-    return{val:0,src:'default'};
+const setId=r=>(r['Constraint Set ID']||'').trim();
+function buildSetDd(){
+  // Only equations assigned to a constraint set can ever be invoked.
+  const counts={};
+  for(const r of csvRows){const s=setId(r);if(!s)continue;counts[s]=(counts[s]||0)+1;}
+  const sorted=Object.keys(counts).sort((a,b)=>a==='NIL'?-1:b==='NIL'?1:a.localeCompare(b));
+  const q=E.setSearch.value.toLowerCase(), cur=E.setSel.value||'NIL';
+  E.setSel.innerHTML='';
+  let shown=0;
+  for(const s of sorted){
+    if(q&&!s.toLowerCase().includes(q)) continue;
+    const o=document.createElement('option');
+    o.value=s; o.textContent=`${s}  (${counts[s]})`;
+    if(s===cur) o.selected=true;
+    E.setSel.appendChild(o); shown++;
   }
-  if(ptNorm==='regulationraise'){
-    if(disp!==undefined&&gd) return{val:Math.max(0,gd.max-disp),src:'calc'};
-    if(disp!==undefined)     return{val:0,src:'default'};
-    return{val:0,src:'default'};
-  }
-  if(ptNorm==='regulationlower'){
-    if(disp!==undefined&&gd) return{val:Math.max(0,disp-gd.min),src:'calc'};
-    if(disp!==undefined)     return{val:0,src:'default'};
-    return{val:0,src:'default'};
-  }
-  return{val:0,src:'default'};
+  if(!E.setSel.value&&E.setSel.options[0]) E.setSel.options[0].selected=true;
+  const sel=E.setSel.value;
+  E.setCount.textContent=`${shown} constraint sets · ${counts[sel]||0} equations active when "${sel}" is invoked`;
 }
 
-/* ═══ EVALUATION ══════════════════════════════════════════════════ */
-const RX=/^([+-])\s*([+-]?[\d.]+)\s+x\s+(\w+)\.(energy|regulationRaise|regulationLower)\.setpoint/i;
+/* ═══ ENERGY DISPATCH LOOKUP ══════════════════════════════════════
+   The dispatch file supplies generator ENERGY setpoints only.  An absent
+   generator is simply not running → 0 MW (matches the reference solver's
+   dispatch.get(fid, 0.0)).  Regulation/contingency reserve setpoints are
+   NOT part of a dispatch, so they cannot be looked up — see evalLHS.
+════════════════════════════════════════════════════════════════════ */
+function getEnergyVal(gen){
+  if(lhsMap[gen]!==undefined) return{val:lhsMap[gen],src:'lhs'};
+  const nd=`${gen}.energy.sentOut`;
+  if(rhsMap[nd]!==undefined) return{val:rhsMap[nd],src:'rhs-nd'};
+  return{val:0,src:'absent'};   // not dispatched ⇒ 0 MW
+}
+
+/* ═══ EVALUATION ══════════════════════════════════════════════════
+   LHS = Σ coeff · facility.energy.setpoint   (ENERGY terms ONLY).
+
+   Database constraint equations are evaluated on energy terms only,
+   exactly as wemulator-lite's solver does:
+       [t for t in eq["lhs_terms"] if t["service"] == "energy"]
+   regulationRaise/Lower (and contingencyRaise/Lower) terms describe ESS
+   reserve setpoints that a plain dispatch does not contain, so they are
+   reported for transparency but excluded from the LHS total.  (The old
+   tool fabricated them as Max−dispatch / dispatch−Min, which is wrong.)
+════════════════════════════════════════════════════════════════════ */
+const RX=/^([+-])\s*([+-]?[\d.]+)\s+x\s+(\w+)\.(energy|regulationRaise|regulationLower|contingencyRaise|contingencyLower)\.setpoint/i;
 
 function evalLHS(formula){
   if(!formula) return{total:0,terms:[],missing:false};
@@ -174,51 +178,114 @@ function evalLHS(formula){
     const m=raw.trim().match(RX); if(!m) continue;
     const outer=m[1]==='-'?-1:1, coeff=outer*parseFloat(m[2]);
     const gen=m[3], ptOrig=m[4], ptNorm=ptOrig.toLowerCase();
-    const info=getVal(gen,ptNorm);
-    if(info.src==='default') missing=true;
-    const contrib=coeff*info.val; total+=contrib;
-    terms.push({coeff,gen,ptOrig,ptNorm,val:info.val,src:info.src,contrib});
+    const isEnergy=ptNorm==='energy';
+    let val=0, src='reserve', contrib=0;
+    if(isEnergy){
+      const info=getEnergyVal(gen);
+      val=info.val; src=info.src; contrib=coeff*val;
+      total+=contrib;
+    }
+    terms.push({coeff,gen,ptOrig,ptNorm,val,src,contrib,counted:isEnergy});
   }
   return{total,terms,missing};
 }
 
+/* ── RHS script evaluation ─────────────────────────────────────────
+   Each constraint carries a Right Hand Side Script of the exact form
+
+       def RHS(terms):
+           return (
+               +0.95 * terms['…AMP.RATING.NORM'] * 132 * 1.7321 / 1000  # Rating
+               -0.1484 * min(45.0, terms['GEN.energy.sentOut'])         # Runback
+               +0.0140 * terms['forecast.…OperationalDemand-expected']  # Load
+               -12.2591                                                 # Offset
+           )
+
+   wemulator-lite evaluates this by EXECUTING the script with
+       terms = rhs_params ∪ {demand}
+   We mirror that in the browser: the parameter map (terms) is the RHS
+   sheet of the uploaded dispatch file (rhsMap), with the demand forecast
+   supplied by the demand input.  Every additive line is evaluated and
+   summed, and each line is kept with its trailing comment as a label so
+   the breakdown can be shown.
+
+   Returns { total, parts:[{label,value}], missingKeys:[…] } or
+   null when the RHS cannot be evaluated (a required parameter is absent),
+   in which case the equation is reported as "not evaluated" rather than
+   guessed — again matching the reference, which skips such equations.   */
+const DEMAND_KEY='forecast.energy-forecastOperationalDemand-expected';
+const PY_FUNCS=/\b(min|max|abs|round)\s*\(/g;
+
 function evalRHS(script,dem){
-  const info={rMVA:0,ls:0,lc:0,off:0,total:0};
-  if(!script) return info;
-  for(const line of script.split('\n')){
-    const cl=line.split('#')[0].trim().replace(/[,)]+$/,'');
-    if(!cl||cl.startsWith('def ')||cl==='return (') continue;
-    if(cl.includes('terms[')){
-      const m=cl.match(/([+-]?\s*[\d.]+)\s*\*/);
-      if(m) info.ls=parseFloat(m[1].replace(/\s/g,''))||0;
-    } else if(/[\d.]+\s*\*[\s\d.]+\*[\s\d.]+\*[\s\d.]+\/[\s\d.]+/.test(cl)){
-      const m=cl.match(/([+-]?\s*[\d.]+)\s*\*\s*([\d.]+)\s*\*\s*([\d.]+)\s*\*\s*([\d.]+)\s*\/\s*([\d.]+)/);
-      if(m) info.rMVA=parseFloat(m[1])*parseFloat(m[2])*parseFloat(m[3])*parseFloat(m[4])/parseFloat(m[5]);
-    } else {
-      const m=cl.match(/^([+-]?\s*[\d.]+)$/);
-      if(m) info.off=parseFloat(m[1].replace(/\s/g,''))||0;
-    }
+  if(!script) return null;
+  // Isolate the body of  return ( … )
+  const ret=script.indexOf('return (');
+  if(ret<0) return null;
+  let body=script.slice(ret+8);
+  const close=body.lastIndexOf(')');
+  if(close>=0) body=body.slice(0,close);
+
+  const parts=[]; const missingKeys=new Set(); let total=0;
+  for(const rawLine of body.split('\n')){
+    const hash=rawLine.indexOf('#');
+    const code=(hash>=0?rawLine.slice(0,hash):rawLine).trim();
+    if(!code) continue;
+    const label=hash>=0?rawLine.slice(hash+1).trim():'term';
+    // Substitute every terms['key'] with its numeric value.
+    let resolvable=true;
+    const subbed=code.replace(/terms\[\s*(['"])(.*?)\1\s*\]/g,(_,q,key)=>{
+      let v;
+      if(key===DEMAND_KEY) v=dem;
+      else if(rhsMap[key]!==undefined) v=rhsMap[key];
+      else { missingKeys.add(key); resolvable=false; v=0; }
+      return '('+v+')';
+    });
+    if(!resolvable) return null;   // required parameter absent ⇒ cannot evaluate
+    // Translate the (now numeric) Python expression to JS and evaluate.
+    const js=subbed.replace(PY_FUNCS,(m,fn)=>'Math.'+fn+'(');
+    let v;
+    try{ v=Function('"use strict";return ('+js+');')(); }
+    catch(e){ return null; }
+    if(typeof v!=='number'||!isFinite(v)) return null;
+    parts.push({label,value:v}); total+=v;
   }
-  info.lc=info.ls*dem; info.total=info.rMVA+info.lc+info.off;
-  return info;
+  if(!parts.length) return null;
+  return{total,parts,missingKeys:[...missingKeys]};
 }
 
 function runCheck(){
   if(!csvRows||!xlsxOk){alert('Please load constraint equations and upload a dispatch XLSX first.');return;}
   demand=parseFloat(E.demandInp.value)||1500;
-  const sel=E.contSel.value||'NIL', onlyAct=E.activeOnly.checked;
-  let pool=csvRows.filter(r=>(r['Contingency']||'').trim()===sel);
-  if(onlyAct) pool=pool.filter(r=>r['Constraint Set ID']&&r['Constraint Set ID']!='');
+  // ── Activation: every equation belonging to the invoked Constraint Set ──
+  const sel=E.setSel.value||'NIL';
+  const pool=csvRows.filter(r=>setId(r)===sel);
   results=pool.map(row=>{
     const lhs=evalLHS(row['Left Hand Side']);
-    const rhs=evalRHS(row['Right Hand Side Script'],demand);
+    let rhs=evalRHS(row['Right Hand Side Script'],demand);
+    // Reference fallback: when the script cannot be evaluated, use Default RHS
+    // — but only when it is a real limit (the 9999 sentinel means "no limit").
+    const defRhs=parseFloat(row['Default RHS']);
+    if(!rhs&&isFinite(defRhs)&&defRhs!==9999){
+      rhs={total:defRhs,parts:[{label:'Default RHS',value:defRhs}],missingKeys:[],fromDefault:true};
+    }
+    const skipped=!rhs;
     const op=(row['Equation Operator']||'').toLowerCase();
-    const violated=op.includes('less')?lhs.total>rhs.total:lhs.total<rhs.total;
-    const margin=rhs.total-lhs.total;
+    let violated=false, margin=null;
+    if(!skipped){
+      // LessThanOrEqualTo ⇒ violated when LHS > RHS; otherwise LHS < RHS.
+      violated=op.includes('less')?lhs.total>rhs.total:lhs.total<rhs.total;
+      margin=rhs.total-lhs.total;
+    }
     return{id:row['Constraint Equation ID'],monitored:row['Monitored Element'],
-           cont:sel,lhs,rhs,violated,margin,row};
+           set:sel,cont:(row['Contingency']||'').trim()||'NIL',
+           lhs,rhs,skipped,violated,margin,defRhs,row};
   });
-  results.sort((a,b)=>a.margin-b.margin);
+  // Skipped equations sink to the bottom; evaluated ones sort by margin.
+  results.sort((a,b)=>{
+    if(a.skipped!==b.skipped) return a.skipped?1:-1;
+    if(a.skipped) return 0;
+    return a.margin-b.margin;
+  });
   render(sel);
 }
 
@@ -227,7 +294,10 @@ function render(label){
   E.emptyState.style.display='none';
   E.resultsArea.style.display='flex';
   E.dlBtn.style.display='inline-block';
-  const viol=results.filter(r=>r.violated), pass=results.filter(r=>!r.violated);
+  const viol=results.filter(r=>!r.skipped&&r.violated),
+        pass=results.filter(r=>!r.skipped&&!r.violated),
+        skip=results.filter(r=>r.skipped);
+  const evaluated=viol.length+pass.length;
   const worst=viol.length?Math.min(...viol.map(r=>r.margin)):null;
   // Power Balance KPI
   const totalGen=Object.values(lhsMap).reduce((a,b)=>a+b,0);
@@ -239,13 +309,15 @@ function render(label){
   E.kpiBalanceSub.textContent=`Gen ${totalGen.toFixed(0)} MW | Load ${demand.toFixed(0)} MW`;
   // Other KPIs
   E.kpiViol.textContent=viol.length;
-  E.kpiPass.textContent=results.length?((pass.length/results.length*100).toFixed(1)+'%'):'—';
-  E.kpiTotal.textContent=`${results.length} constraints checked`;
+  E.kpiPass.textContent=evaluated?((pass.length/evaluated*100).toFixed(1)+'%'):'—';
+  const skipNote=skip.length?` · ${skip.length} not evaluated`:'';
+  E.kpiTotal.textContent=`${evaluated} of ${results.length} evaluated${skipNote}`;
   E.kpiWorst.textContent=worst!==null?f2(worst)+' MW':'—';
-  E.kpiContLbl.textContent=`Contingency: ${label}`;
+  E.kpiContLbl.textContent=`Constraint Set: ${label}`;
   // Banner
-  if(viol.length===0){E.banner.className='banner ok';E.banner.innerHTML=`✅ All <strong>${results.length}</strong> constraints satisfied for "<strong>${label}</strong>".`;}
-  else{E.banner.className='banner viol';E.banner.innerHTML=`⚠️ The Dispatch violates <strong>${viol.length}</strong> of <strong>${results.length}</strong> Constraint Equations for "<strong>${label}</strong>".`;}
+  if(evaluated===0){E.banner.className='banner idle';E.banner.innerHTML=`No equations could be evaluated for "<strong>${label}</strong>" — the dispatch file is missing the required RHS parameters.`;}
+  else if(viol.length===0){E.banner.className='banner ok';E.banner.innerHTML=`✅ All <strong>${evaluated}</strong> active constraints satisfied when "<strong>${label}</strong>" is invoked.`;}
+  else{E.banner.className='banner viol';E.banner.innerHTML=`⚠️ The Dispatch violates <strong>${viol.length}</strong> of <strong>${evaluated}</strong> active Constraint Equations when "<strong>${label}</strong>" is invoked.`;}
   E.violBadge.textContent=viol.length;
   E.passBadge.textContent=pass.length;
   E.violEmpty.style.display=viol.length?'none':'block';
@@ -276,21 +348,20 @@ function buildRow(r,idx,pfx){
   const op=r.violated?'&gt;':'≤', cls=r.violated?'viol':'ok';
   const mCls=r.margin<0?'neg':'pos';
   const badge=r.violated?'<span class="badge b-er">⚠ VIOLATED</span>':'<span class="badge b-ok">✓ OK</span>';
-  const mw=r.lhs.missing?'<span title="Some values defaulted to 0" style="color:var(--wn-txt);font-size:.67rem"> ⚠</span>':'';
   return `<td class="idx">${idx}</td>
     <td><span class="idc mono" title="${r.id}">${r.id}</span></td>
     <td class="elc">${r.monitored||'—'}</td>
-    <td class="lrc ${cls}"><span class="lv">${lf}${mw}</span><span class="op">${op}</span><span class="rv">${rf}</span></td>
+    <td class="lrc ${cls}"><span class="lv">${lf}</span><span class="op">${op}</span><span class="rv">${rf}</span></td>
     <td class="mgc ${mCls}">${sgn(r.margin)}</td>
     <td style="text-align:center">${badge} <button class="xbtn" data-p="${pfx}" data-i="${idx-1}" style="margin-left:5px">▶ Show</button></td>`;
 }
 
 /* ── Equation Panel ── */
 function buildPanel(r){
-  const miss=r.lhs.missing?'<div class="miss-note">⚠ Some generator setpoints not found — values defaulted to 0 MW.</div>':'';
+  const note=r.rhs&&r.rhs.fromDefault?'<div class="miss-note">RHS script not evaluable — Default RHS used.</div>':'';
   const opTxt=r.violated?`<span style="color:var(--neg)">&#62; VIOLATED</span>`:'≤';
-  return `${miss}
-<div class="eq-sec"><div class="eq-lbl">LHS — Generator Dispatch Sensitivity Terms</div>
+  return `${note}
+<div class="eq-sec"><div class="eq-lbl">LHS — Generator Dispatch Sensitivity Terms (energy only)</div>
   <div class="eq-terms">${buildLhsHtml(r.lhs.terms)}</div>
   <div class="eq-tot">Σ LHS = ${f4(r.lhs.total)} MW</div>
 </div>
@@ -304,8 +375,8 @@ function buildPanel(r){
 </div>`;
 }
 
-const SYM={energy:'●',regulationraise:'▲',regulationlower:'▼'};
-const TAG={energy:'Energy',regulationraise:'Reg↑',regulationlower:'Reg↓'};
+const SYM={energy:'●',regulationraise:'▲',regulationlower:'▼',contingencyraise:'△',contingencylower:'▽'};
+const TAG={energy:'Energy',regulationraise:'Reg↑',regulationlower:'Reg↓',contingencyraise:'Cont↑',contingencylower:'Cont↓'};
 function termCls(pt){return pt==='energy'?'energy':pt==='regulationraise'?'regRaise':'regLower';}
 
 function buildLhsHtml(terms){
@@ -313,28 +384,27 @@ function buildLhsHtml(terms){
   return terms.map(t=>{
     const cls=termCls(t.ptNorm), sign=t.coeff>=0?'+':'−';
     const sym=SYM[t.ptNorm]||'?', tag=TAG[t.ptNorm]||t.ptNorm;
-    const valStr=t.src==='default'
-      ?`<span class="tc-v" style="color:var(--wn-txt)">(missing)</span>`
-      :`<span class="tc-v">=&thinsp;${f2(t.val)}</span>`;
-    return `<span class="tsign">${sign}</span>`+
-      `<span class="tc ${cls}" title="${t.gen}.${t.ptOrig}.setpoint = ${f2(t.val)} MW">`+
+    // Reserve (non-energy) terms are not part of a dispatch ⇒ shown greyed,
+    // excluded from the energy-only LHS total.
+    const valStr=t.counted
+      ?`<span class="tc-v">=&thinsp;${f2(t.val)}</span>`
+      :`<span class="tc-v" style="color:var(--muted)">(reserve · not in LHS)</span>`;
+    const extra=t.counted?'':' style="opacity:.5"';
+    return `<span class="tsign"${extra}>${sign}</span>`+
+      `<span class="tc ${cls}"${extra} title="${t.gen}.${t.ptOrig}.setpoint">`+
       `<span class="tc-sym">${sym}</span><span class="tc-c">${Math.abs(t.coeff).toFixed(4)}×</span>${t.gen}<span style="opacity:.6;font-size:.65rem;margin-left:2px">[${tag}]</span>${valStr}</span>`;
   }).join(' ');
 }
 
+const RHS_SYM=[[/rat/i,'⬡','rating'],[/load|demand|scal/i,'≈','load'],[/runback|gen/i,'↘','load'],[/off/i,'±','offset']];
+function rhsTag(label){for(const[re,sym,cls]of RHS_SYM)if(re.test(label))return[sym,cls];return['•','offset'];}
 function buildRhsHtml(rhs){
-  const parts=[];
-  if(rhs.rMVA!==0)
-    parts.push(`<span class="tc rating"><span class="tc-sym">⬡</span>${f2(rhs.rMVA)} MW<span style="opacity:.6;font-size:.65rem;margin-left:2px">[Rating]</span></span>`);
-  if(rhs.ls!==0){
-    const s=rhs.lc>=0?'+':'−';
-    parts.push(`<span class="tsign">${s}</span><span class="tc load"><span class="tc-sym">≈</span><span class="tc-c">${Math.abs(rhs.ls).toFixed(4)}×</span>demand<span style="opacity:.6;font-size:.65rem;margin-left:2px">[Load]</span><span class="tc-v">=&thinsp;${f2(Math.abs(rhs.lc))}</span></span>`);
-  }
-  if(rhs.off!==0){
-    const s=rhs.off>=0?'+':'−';
-    parts.push(`<span class="tsign">${s}</span><span class="tc offset"><span class="tc-sym">±</span>${Math.abs(rhs.off).toFixed(4)}<span style="opacity:.6;font-size:.65rem;margin-left:2px">[Offset]</span></span>`);
-  }
-  return parts.length?parts.join(' '):'<span style="color:var(--muted)">Could not parse RHS script</span>';
+  if(!rhs||!rhs.parts.length) return '<span style="color:var(--muted)">Could not evaluate RHS script</span>';
+  return rhs.parts.map(p=>{
+    const [sym,cls]=rhsTag(p.label), s=p.value>=0?'+':'−';
+    return `<span class="tsign">${s}</span><span class="tc ${cls}" title="${p.label}">`+
+      `<span class="tc-sym">${sym}</span>${p.label}<span class="tc-v">=&thinsp;${f2(Math.abs(p.value))}</span></span>`;
+  }).join(' ');
 }
 
 /* ═══ TABLE FILTER ════════════════════════════════════════════════ */
@@ -364,8 +434,12 @@ function cleanCSV(text){
 }
 function exportCsv(){
   if(!results.length) return;
-  const hdr=['Status','Contingency','Constraint Equation ID','Monitored Element','LHS (MW)','RHS (MW)','Margin (MW)'];
-  const rows=results.map(r=>[r.violated?'VIOLATED':'OK',r.cont,`"${r.id}"`,`"${r.monitored||''}"`,f4(r.lhs.total),f4(r.rhs.total),f4(r.margin)].join(','));
+  const hdr=['Status','Constraint Set','Contingency','Constraint Equation ID','Monitored Element','LHS (MW)','RHS (MW)','Margin (MW)'];
+  const rows=results.map(r=>{
+    const status=r.skipped?'NOT EVALUATED':r.violated?'VIOLATED':'OK';
+    const rhs=r.skipped?'':f4(r.rhs.total), mgn=r.skipped?'':f4(r.margin);
+    return [status,`"${r.set}"`,`"${r.cont}"`,`"${r.id}"`,`"${r.monitored||''}"`,f4(r.lhs.total),rhs,mgn].join(',');
+  });
   const blob=new Blob([cleanCSV([hdr.join(','),...rows].join('\n'))],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob), a=document.createElement('a');
   a.href=url; a.download='constraint_check.csv';
@@ -380,12 +454,10 @@ document.addEventListener('drop',e=>{
   const f=Array.from(e.dataTransfer.files).find(f=>/\.xlsx?$/i.test(f.name));
   if(f) handleXlsx(f);
 });
-E.contSearch.oninput=()=>{if(csvOk) buildContingencyDd();};
-E.activeOnly.onchange=()=>{if(csvOk) buildContingencyDd();};
-E.contSel.onchange=()=>{
-  const pool=E.activeOnly.checked?csvRows.filter(r=>r['Constraint Set ID']&&r['Constraint Set ID']!=''):csvRows;
-  const cnt=pool.filter(r=>(r['Contingency']||'').trim()===E.contSel.value).length;
-  E.contCount.textContent=`${cnt} constraints for "${E.contSel.value}"`;
+E.setSearch.oninput=()=>{if(csvOk) buildSetDd();};
+E.setSel.onchange=()=>{
+  const cnt=csvRows.filter(r=>setId(r)===E.setSel.value).length;
+  E.setCount.textContent=`${cnt} equations active when "${E.setSel.value}" is invoked`;
 };
 E.checkBtn.onclick=runCheck;
 // Expand rows
