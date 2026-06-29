@@ -12,23 +12,23 @@
 
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>How to Invoke Constraints · WEM Constraint Equation Checker</title>
-<meta name="description" content="Step by step guide to invoking WEM constraint equations: select constraint sets, filter by constraint type, and filter by contingency.">
+<meta name="description" content="Step by step guide to invoking WEM constraint equations: select constraint sets, filter by constraint type, and filter by contingency, with worked scenario examples.">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://tool.adjiebrotots.com/wemconstraint-checker/guide.html">
+<link rel="canonical" href="https://tool.adjiebrotots.com/wemconstraint-checker/guide">
 
 <meta property="og:type" content="article">
 <meta property="og:title" content="How to Invoke Constraints">
-<meta property="og:description" content="Step by step guide to invoking WEM constraint equations.">
-<meta property="og:url" content="https://tool.adjiebrotots.com/wemconstraint-checker/guide.html">
+<meta property="og:description" content="Step by step guide to invoking WEM constraint equations, with worked scenario examples.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/wemconstraint-checker/guide">
 <meta property="og:site_name" content="Adjie Brotot Tools">
 
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="../dark.css">
-<link rel="stylesheet" href="../light.css">
-<link rel="stylesheet" href="../shared.css">
-<script src="../shared.js"></script>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<script src="../../shared.js"></script>
+<link rel="stylesheet" href="../style.css">
 <style>
   .guide{max-width:880px}
   .guide .gd-card{padding:20px 24px}
@@ -47,6 +47,17 @@
     padding:1px 6px;border-radius:5px}
   .gd-tag{display:inline-block;font-family:'DM Mono',monospace;font-size:.78rem;font-weight:600;
     background:var(--inp);border:1px solid var(--bdr);border-radius:6px;padding:1px 8px;margin:0 2px}
+  /* Scenario examples */
+  .gd-ex{border:1px solid var(--bdr);border-radius:12px;padding:0;margin-top:12px;overflow:hidden}
+  .gd-ex+.gd-ex{margin-top:14px}
+  .gd-ex-h{padding:11px 16px;background:var(--inp);font-weight:700;font-size:.92rem;
+    display:flex;align-items:center;gap:8px}
+  .gd-ex-h .pin{color:var(--acc)}
+  .gd-ex-b{padding:12px 16px}
+  .gd-ex-b p{margin:0 0 8px;font-size:.86rem;color:var(--muted);line-height:1.5}
+  .gd-set{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:.86rem;align-items:start}
+  .gd-set dt{font-weight:700;color:var(--txt);white-space:nowrap}
+  .gd-set dd{margin:0;line-height:1.5}
 </style>
 </head>
 <body class="light">
@@ -59,7 +70,7 @@
     <p>WEM Constraint Equation Checker · Set, type, and contingency filters</p>
   </div>
   <div class="hdr-r">
-    <a class="btn-s" href="./index.html">← Back to checker</a>
+    <a class="btn-s" href="../index.html">← Back to checker</a>
     <button id="themeBtn" class="btn-t">☀️ Light</button>
   </div>
 </section>
@@ -147,7 +158,92 @@
 
 </section>
 
-<!-- TIPS -->
+<!-- SCENARIO EXAMPLES -->
+<section class="card gd-card">
+  <h2>Worked examples</h2>
+  <p>Match your situation to one of these, then set the three filters as shown. The set
+  IDs and contingency names below are illustrative, use the ones in force for your case.</p>
+
+  <div class="gd-ex">
+    <div class="gd-ex-h"><span class="pin">●</span> Routine check, intact network</div>
+    <div class="gd-ex-b">
+      <p>Nothing is out of service, you just want to test a dispatch against the base limits.</p>
+      <dl class="gd-set">
+        <dt>Constraint Set</dt><dd>Leave defaults: <span class="gd-tag">NIL</span> only.</dd>
+        <dt>Constraint Type</dt><dd>All selected.</dd>
+        <dt>Contingency</dt><dd>All selected.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="gd-ex">
+    <div class="gd-ex-h"><span class="pin">●</span> A set has been invoked for a planned outage</div>
+    <div class="gd-ex-b">
+      <p>The control room has placed one set in force, for example for a planned line
+      outage, and you want to check the dispatch against it plus the base set.</p>
+      <dl class="gd-set">
+        <dt>Constraint Set</dt><dd>Search the invoked ID, for example <code>AMT-CTE 81</code>, and tick it. NIL stays on.</dd>
+        <dt>Constraint Type</dt><dd>All selected.</dd>
+        <dt>Contingency</dt><dd>All selected, its contingencies are added automatically.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="gd-ex">
+    <div class="gd-ex-h"><span class="pin">●</span> Several sets in force at once</div>
+    <div class="gd-ex-b">
+      <p>More than one set is invoked, for example a line outage set and a transformer
+      outage set together.</p>
+      <dl class="gd-set">
+        <dt>Constraint Set</dt><dd>Tick each set in force, for example <code>AMT-CTE 81</code> and <code>ALB522</code>. NIL stays on.</dd>
+        <dt>Constraint Type</dt><dd>All selected.</dd>
+        <dt>Contingency</dt><dd>All selected.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="gd-ex">
+    <div class="gd-ex-h"><span class="pin">●</span> Only thermal ratings of interest</div>
+    <div class="gd-ex-b">
+      <p>You are screening for conductor and plant rating breaches only and want to ignore
+      stability limits.</p>
+      <dl class="gd-set">
+        <dt>Constraint Set</dt><dd>The set(s) in force, NIL stays on.</dd>
+        <dt>Constraint Type</dt><dd>Click <span class="gd-tag">None</span>, then tick only <strong>Thermal</strong>.</dd>
+        <dt>Contingency</dt><dd>All selected.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="gd-ex">
+    <div class="gd-ex-h"><span class="pin">●</span> A unit is already offline, so its trip is not credible</div>
+    <div class="gd-ex-b">
+      <p>A facility is out of service, so the contingency defending against its trip should
+      not apply.</p>
+      <dl class="gd-set">
+        <dt>Constraint Set</dt><dd>The set(s) in force, NIL stays on.</dd>
+        <dt>Constraint Type</dt><dd>All selected.</dd>
+        <dt>Contingency</dt><dd>Untick that unit, for example <code>ALINTA_WGP_GT</code>, to drop its equations.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="gd-ex">
+    <div class="gd-ex-h"><span class="pin">●</span> Pre contingency (steady state) limits only</div>
+    <div class="gd-ex-b">
+      <p>You want only the equations that apply to the intact network, with no outage
+      defended against.</p>
+      <dl class="gd-set">
+        <dt>Constraint Set</dt><dd>The set(s) in force, NIL stays on.</dd>
+        <dt>Constraint Type</dt><dd>All selected.</dd>
+        <dt>Contingency</dt><dd>Click <span class="gd-tag">None</span>, then tick only <span class="gd-tag">NIL</span>.</dd>
+      </dl>
+    </div>
+  </div>
+
+</section>
+
+<!-- DEFAULTS -->
 <section class="card gd-card">
   <h2>Defaults at a glance</h2>
   <ul style="margin:6px 0 0;padding-left:18px">
