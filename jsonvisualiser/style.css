@@ -229,6 +229,8 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
 .btn-page:hover{background:var(--accent);color:var(--text-inv);border-color:var(--accent)}
 .pagination-count{font-size:.75rem;color:var(--muted);font-family:'DM Mono',monospace}
 .export-more-placeholder{padding:3px 2px;font-size:.76rem;color:var(--muted);font-family:'DM Mono',monospace;opacity:.75}
+/* Schema mode: marks an array as showing a single pruned example */
+.schema-note{padding:3px 2px;font-size:.76rem;color:var(--muted);font-family:'DM Mono',monospace;opacity:.8;font-style:italic}
 
 /* ─── FOOTER ────────────────────────────────────────────────────────────────── */
 .page-footer{max-width:1440px;margin:0 auto;padding:0 24px 24px}
