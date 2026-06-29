@@ -684,11 +684,11 @@ function expandDescriptorAndChildren(desc){
   desc.childDescriptors.forEach(expandDescriptorAndChildren);
 }
 
-$('expandAllBtn').addEventListener('click', () => {
+function expandAll(skipWarning){
   if(!parsedData || !rootDescriptor) return;
   const estimatedNodes = estimateNodeCountForExpandAll(parsedData);
   const isTooBig = estimatedNodes > EXPAND_ALL_WARN_NODE_LIMIT || currentFileSize > EXPAND_ALL_WARN_BYTE_LIMIT;
-  if(isTooBig){
+  if(isTooBig && !skipWarning){
     const nodeText = estimatedNodes > EXPAND_ALL_WARN_NODE_LIMIT ? `${EXPAND_ALL_WARN_NODE_LIMIT}+` : estimatedNodes;
     const sizeText = currentFileSize ? ` (${formatBytes(currentFileSize)})` : '';
     if(!confirm(`This JSON is large${sizeText}. Expanding all may render ${nodeText} nodes and can slow or freeze the browser. Continue?`)) return;
@@ -705,7 +705,9 @@ $('expandAllBtn').addEventListener('click', () => {
       btn.textContent = 'Expand All';
     }
   }, 20);
-});
+}
+
+$('expandAllBtn').addEventListener('click', () => expandAll(false));
 
 $('collapseAllBtn').addEventListener('click', () => {
   $('treeRoot').querySelectorAll('.tj-node.is-expanded').forEach(nodeEl => {
@@ -715,25 +717,24 @@ $('collapseAllBtn').addEventListener('click', () => {
 
 function setSchemaMode(on){
   schemaMode = on;
-  const btn = $('schemaModeBtn');
-  btn.classList.toggle('is-active', on);
-  btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-  btn.textContent = on ? '▦ Schema Mode: On' : '▦ Schema Mode: Off';
+  $('schemaModeToggle').checked = on;
   // Rebuild the tree so arrays re-render with (or without) example pruning.
-  if(parsedData) buildTree(parsedData);
+  if(parsedData){
+    buildTree(parsedData);
+    // Turning Schema Mode on automatically expands all nodes so the full
+    // structure is revealed immediately.
+    if(on) expandAll(true);
+  }
 }
 
-$('schemaModeBtn').addEventListener('click', () => {
-  setSchemaMode(!schemaMode);
+$('schemaModeToggle').addEventListener('change', (e) => {
+  setSchemaMode(e.target.checked);
 });
 
 function setWrapTextMode(on){
   const root = $('treeRoot');
-  const btn = $('wrapTextBtn');
   root.classList.toggle('wrap-text-mode', on);
-  btn.classList.toggle('is-active', on);
-  btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-  btn.textContent = on ? '↩ Wrap Text: On' : '↩ Wrap Text: Off';
+  $('wrapTextToggle').checked = on;
   if(!on){
     // Measure any values that rendered while wrap mode was on (and were skipped).
     // Values measured beforehand keep their flags — the unwrapped layout is the same.
@@ -741,8 +742,8 @@ function setWrapTextMode(on){
   }
 }
 
-$('wrapTextBtn').addEventListener('click', () => {
-  setWrapTextMode(!$('treeRoot').classList.contains('wrap-text-mode'));
+$('wrapTextToggle').addEventListener('change', (e) => {
+  setWrapTextMode(e.target.checked);
 });
 
 $('clearBtn').addEventListener('click', () => {

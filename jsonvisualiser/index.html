@@ -79,7 +79,7 @@
 <link rel="stylesheet" href="../light.css">
 <link rel="stylesheet" href="../shared.css">
 <script src="../shared.js"></script>
-<link rel="stylesheet" href="style.css?v=schema1">
+<link rel="stylesheet" href="style.css?v=schema2">
 </head>
 <body class="light">
 
@@ -180,8 +180,20 @@
             <button class="btn-secondary" id="collapseAllBtn" style="flex:1">Collapse All</button>
             <button class="btn-danger" id="clearBtn">✕</button>
           </div>
-          <button class="btn-secondary btn-toggle btn-full" id="schemaModeBtn" type="button" aria-pressed="false" title="Show only one representative example per array to reveal the JSON structure without the repeated data.">▦ Schema Mode: Off</button>
-          <button class="btn-secondary btn-toggle btn-full" id="wrapTextBtn" type="button" aria-pressed="false">↩ Wrap Text: Off</button>
+          <div class="toggle-row" title="Show only one representative example per array to reveal the JSON structure without the repeated data.">
+            <span class="toggle-label">Schema Mode</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="schemaModeToggle"/>
+              <div class="toggle-track"><div class="toggle-knob"></div></div>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <span class="toggle-label">Wrap Text</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="wrapTextToggle"/>
+              <div class="toggle-track"><div class="toggle-knob"></div></div>
+            </label>
+          </div>
           <div class="download-row">
             <button class="btn-secondary" id="downloadSvgBtn" style="flex:1" disabled>⬇ SVG</button>
             <button class="btn-secondary" id="downloadPngBtn" style="flex:1" disabled>⬇ PNG</button>
@@ -251,7 +263,7 @@
   </section>
 </footer>
 
-<script src="script.js?v=schema1"></script>
+<script src="script.js?v=schema2"></script>
 
 </body>
 </html>
