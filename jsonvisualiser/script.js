@@ -16,6 +16,9 @@ let currentFileName = '';
 let currentFileSize = 0;
 let nodeIdCounter = 0;
 let rootDescriptor = null;
+// Schema mode prunes redundant array data: each array shows a single
+// representative example so the tree reveals the JSON structure, not every value.
+let schemaMode = false;
 // Collapsed primitive values longer than this are shown sliced (with a trailing
 // "…") to keep single-line layout cheap; the full value is revealed on expand.
 const VALUE_PREVIEW_CAP = 800;
@@ -290,11 +293,6 @@ function handleRawJSON(text, name, size, loadMethod){
 
 // ─── RENDER TREE ─────────────────────────────────────────────────────────────
 function renderTree(data, name, size, byteLen, loadMethod){
-  nodeIdCounter = 0;
-  rootDescriptor = null;
-  const root = $('treeRoot');
-  root.innerHTML = '';
-
   // Hide loading, show tree
   $('loadingOverlay').classList.remove('visible');
   $('treeHeader').style.display = 'flex';
@@ -331,7 +329,22 @@ function renderTree(data, name, size, byteLen, loadMethod){
   // Keep the successful load method expanded and collapse the unused inputs.
   setLoadMethodMode(loadMethod);
 
-  // Render root node
+  // Build (or rebuild) the tree nodes from the parsed data.
+  buildTree(data);
+
+  hideStatus();
+  showStatus('statusSuccess', `Loaded ${name} (${formatBytes(byteLen)})`);
+}
+
+// Builds the tree nodes for `data` from scratch. Separated from renderTree so the
+// Schema Mode toggle can rebuild the same data with different pruning, without
+// touching the header, file info, or load-method UI.
+function buildTree(data){
+  nodeIdCounter = 0;
+  rootDescriptor = null;
+  const root = $('treeRoot');
+  root.innerHTML = '';
+
   const desc = createDescriptor(data, null);
   rootDescriptor = desc;
   renderNode(desc, root);
@@ -344,9 +357,6 @@ function renderTree(data, name, size, byteLen, loadMethod){
 
   // Reset pan/zoom to home position
   resetView();
-
-  hideStatus();
-  showStatus('statusSuccess', `Loaded ${name} (${formatBytes(byteLen)})`);
 }
 
 // ─── DESCRIPTOR FACTORY ──────────────────────────────────────────────────────
@@ -473,7 +483,7 @@ function toggleNode(desc, nodeEl, childrenEl){
     syncBranchPreviewState(nodeEl);
     if(desc.renderedCount === 0){
       if(desc.type === 'object') renderObjectChildren(desc, childrenEl);
-      else renderArrayChunk(desc, childrenEl, 5);
+      else renderArrayChunk(desc, childrenEl, schemaMode ? 1 : 5);
     }
   }
 }
@@ -543,8 +553,20 @@ function renderArrayChunk(desc, containerEl, count){
 function updateArrayPagination(desc, containerEl){
   const existing = containerEl.querySelector('.pagination-row');
   if(existing) existing.remove();
+  const existingNote = containerEl.querySelector('.schema-note');
+  if(existingNote) existingNote.remove();
   const remaining = desc.childCount - desc.renderedCount;
   if(remaining <= 0) return;
+
+  // Schema mode: show one representative example and prune the rest, replacing the
+  // "load more" buttons with a note explaining what was hidden.
+  if(schemaMode){
+    const note = document.createElement('div');
+    note.className = 'schema-note';
+    note.textContent = `1 of ${desc.childCount} shown · schema mode`;
+    containerEl.appendChild(note);
+    return;
+  }
 
   const row = document.createElement('div');
   row.className = 'pagination-row';
@@ -612,7 +634,12 @@ function estimateNodeCountForExpandAll(value, limit = EXPAND_ALL_WARN_NODE_LIMIT
     if(count >= limit) return count;
     if(current && typeof current === 'object'){
       if(Array.isArray(current)){
-        for(let i = current.length - 1; i >= 0; i--) stack.push(current[i]);
+        // Schema mode only ever expands the first element of each array.
+        if(schemaMode){
+          if(current.length) stack.push(current[0]);
+        } else {
+          for(let i = current.length - 1; i >= 0; i--) stack.push(current[i]);
+        }
       } else {
         const values = Object.values(current);
         for(let i = values.length - 1; i >= 0; i--) stack.push(values[i]);
@@ -636,12 +663,15 @@ function renderAllMissingChildren(desc){
     }
     desc.renderedCount = keys.length;
   } else if(desc.type === 'array'){
-    for(let i = desc.renderedCount; i < desc.childCount; i++){
+    // In schema mode an array never renders more than its single example.
+    const target = schemaMode ? Math.min(1, desc.childCount) : desc.childCount;
+    for(let i = desc.renderedCount; i < target; i++){
       const child = createDescriptor(desc.rawRef[i], i);
       desc.childDescriptors.push(child);
       renderNode(child, desc.containerEl);
     }
-    desc.renderedCount = desc.childCount;
+    desc.renderedCount = target;
+    if(schemaMode) updateArrayPagination(desc, desc.containerEl);
   }
 }
 
@@ -683,6 +713,20 @@ $('collapseAllBtn').addEventListener('click', () => {
   });
 });
 
+function setSchemaMode(on){
+  schemaMode = on;
+  const btn = $('schemaModeBtn');
+  btn.classList.toggle('is-active', on);
+  btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  btn.textContent = on ? '▦ Schema Mode: On' : '▦ Schema Mode: Off';
+  // Rebuild the tree so arrays re-render with (or without) example pruning.
+  if(parsedData) buildTree(parsedData);
+}
+
+$('schemaModeBtn').addEventListener('click', () => {
+  setSchemaMode(!schemaMode);
+});
+
 function setWrapTextMode(on){
   const root = $('treeRoot');
   const btn = $('wrapTextBtn');
@@ -706,6 +750,7 @@ $('clearBtn').addEventListener('click', () => {
   rootDescriptor = null;
   $('treeRoot').innerHTML = '';
   setWrapTextMode(false);
+  setSchemaMode(false);
   $('treeHeader').style.display = 'none';
   $('treeViewport').style.display = 'none';
   $('emptyState').style.display = 'flex';
@@ -1063,8 +1108,8 @@ $('downloadSvgBtn').addEventListener('click', () => {
         svg.appendChild(t);
       });
 
-      // "… N more" placeholders for truncated pagination
-      treeRootEl.querySelectorAll('.export-more-placeholder').forEach(ph => {
+      // "… N more" placeholders for truncated pagination, plus schema-mode notes.
+      treeRootEl.querySelectorAll('.export-more-placeholder, .schema-note').forEach(ph => {
         const pr = ph.getBoundingClientRect();
         if(pr.width === 0) return;
         const pt = document.createElementNS(NS, 'text');
