@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>How to Invoke Constraints · WEM Constraint Equation Checker</title>
+<meta name="description" content="Step by step guide to invoking WEM constraint equations: select constraint sets, filter by constraint type, and filter by contingency.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tool.adjiebrotots.com/wemconstraint-checker/guide.html">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to Invoke Constraints">
+<meta property="og:description" content="Step by step guide to invoking WEM constraint equations.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/wemconstraint-checker/guide.html">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../dark.css">
+<link rel="stylesheet" href="../light.css">
+<link rel="stylesheet" href="../shared.css">
+<script src="../shared.js"></script>
+<link rel="stylesheet" href="style.css">
+<style>
+  .guide{max-width:880px}
+  .guide .gd-card{padding:20px 24px}
+  .guide h2{margin:0 0 4px;font-size:1.05rem;font-weight:700}
+  .guide h3{margin:0 0 6px;font-size:.95rem;font-weight:700;color:var(--txt);
+    text-transform:none;letter-spacing:0}
+  .guide p{margin:0 0 10px;font-size:.9rem;line-height:1.55}
+  .gd-step{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--bdr)}
+  .gd-step:last-child{border-bottom:none}
+  .gd-num{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--acc);color:var(--inv);
+    font-weight:800;font-size:.9rem;display:flex;align-items:center;justify-content:center}
+  .gd-body{flex:1}
+  .gd-body ul{margin:6px 0 0;padding-left:18px}
+  .gd-body li{font-size:.88rem;line-height:1.55;margin-bottom:4px}
+  .gd-body code{font-family:'DM Mono',monospace;font-size:.82rem;background:var(--inp);
+    padding:1px 6px;border-radius:5px}
+  .gd-tag{display:inline-block;font-family:'DM Mono',monospace;font-size:.78rem;font-weight:600;
+    background:var(--inp);border:1px solid var(--bdr);border-radius:6px;padding:1px 8px;margin:0 2px}
+</style>
+</head>
+<body class="light">
+<div class="wrap guide">
+
+<!-- HEADER -->
+<section class="hdr card">
+  <div>
+    <h1>How to Invoke Constraints</h1>
+    <p>WEM Constraint Equation Checker · Set, type, and contingency filters</p>
+  </div>
+  <div class="hdr-r">
+    <a class="btn-s" href="./index.html">← Back to checker</a>
+    <button id="themeBtn" class="btn-t">☀️ Light</button>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="card gd-card">
+  <h2>What "invoking" means</h2>
+  <p>A constraint equation is enforced only when its <strong>Constraint Set</strong> is
+  invoked. In the control room one or more sets are placed in force for the current
+  network condition, and every equation in those sets is then checked against the
+  dispatch. This tool reproduces that: pick the sets in force, then narrow the active
+  equations by constraint type and contingency.</p>
+  <p>The three filters combine with AND. An equation is checked only when its set is
+  invoked <em>and</em> its constraint type is selected <em>and</em> its contingency is
+  selected.</p>
+</section>
+
+<!-- STEPS -->
+<section class="card gd-card">
+  <h2 style="margin-bottom:8px">Steps</h2>
+
+  <div class="gd-step">
+    <div class="gd-num">1</div>
+    <div class="gd-body">
+      <h3>Load the data</h3>
+      <p style="margin:0">Constraint equations and generator limits load automatically.
+      Upload a dispatch <code>.xlsx</code> (drag and drop works anywhere) and set the
+      demand forecast in MW.</p>
+    </div>
+  </div>
+
+  <div class="gd-step">
+    <div class="gd-num">2</div>
+    <div class="gd-body">
+      <h3>Invoke constraint sets</h3>
+      <p style="margin:0 0 6px">In the <strong>Constraint Set</strong> column, tick every
+      set in force. Multiple sets can be invoked at once.</p>
+      <ul>
+        <li><span class="gd-tag">NIL</span> is the base set and is always active. It cannot be unticked.</li>
+        <li>Use the search box to find a set by ID, and <span class="gd-tag">All</span> / <span class="gd-tag">None</span> to bulk select. <span class="gd-tag">None</span> leaves NIL on.</li>
+        <li>Invoking a set automatically selects its contingencies in the Contingency column.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="gd-step">
+    <div class="gd-num">3</div>
+    <div class="gd-body">
+      <h3>Filter by constraint type (optional)</h3>
+      <p style="margin:0 0 6px">Narrow the active equations by the kind of limit they
+      protect. All types are selected by default.</p>
+      <ul>
+        <li><strong>Thermal</strong>: conductor and plant current ratings.</li>
+        <li><strong>Transient Stability</strong>: post fault rotor angle stability.</li>
+        <li><strong>Voltage Stability</strong>: voltage collapse margins.</li>
+        <li><strong>Other</strong>: remaining limit types.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="gd-step">
+    <div class="gd-num">4</div>
+    <div class="gd-body">
+      <h3>Filter by contingency (optional)</h3>
+      <p style="margin:0 0 6px">A contingency is the credible outage an equation defends
+      against. The list shows only the contingencies that belong to the invoked sets, and
+      all are selected by default.</p>
+      <ul>
+        <li><span class="gd-tag">NIL</span> here means the intact, pre contingency network.</li>
+        <li>Deselect any contingency to drop its equations from the check.</li>
+        <li>Search, <span class="gd-tag">All</span>, and <span class="gd-tag">None</span> act on the visible contingencies.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="gd-step">
+    <div class="gd-num">5</div>
+    <div class="gd-body">
+      <h3>Check and read the result</h3>
+      <p style="margin:0">The summary next to the heading shows how many equations the
+      current filters invoke. Press <strong>Check</strong> to evaluate them, then review
+      the violated and passed tables. Export the full result to CSV from the header.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- TIPS -->
+<section class="card gd-card">
+  <h2>Defaults at a glance</h2>
+  <ul style="margin:6px 0 0;padding-left:18px">
+    <li style="font-size:.88rem;line-height:1.6;margin-bottom:4px"><strong>Constraint Set:</strong> only NIL invoked.</li>
+    <li style="font-size:.88rem;line-height:1.6;margin-bottom:4px"><strong>Constraint Type:</strong> all selected.</li>
+    <li style="font-size:.88rem;line-height:1.6"><strong>Contingency:</strong> all selected.</li>
+  </ul>
+  <p style="margin:12px 0 0;font-size:.85rem;color:var(--muted)">Equations with no
+  Constraint Set ID belong to no set and are never invoked.</p>
+</section>
+
+</div><!-- /wrap -->
+<script>
+  const tb=document.getElementById('themeBtn');
+  tb.onclick=()=>{
+    document.body.classList.toggle('light');
+    tb.textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';
+  };
+</script>
+</body>
+</html>

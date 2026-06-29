@@ -3,12 +3,26 @@
 let csvRows=null, lhsMap={}, rhsMap={}, genDataMap={}, results=[], demand=1500;
 let csvOk=false, genOk=false, xlsxOk=false;
 
+/* Constraint-invocation filter reference data + persistent selections.
+   The three filters mirror wemulator-lite: a constraint equation is active
+   only when its Constraint Set is invoked (NIL is the base set, always on),
+   and the active pool can be narrowed by constraint (limit) type and by
+   contingency.  Selection Sets survive search/re-render.                 */
+let ALL_SETS=[], ALL_LIMITS=[], ALL_CONTS=[], CONTS_BY_SET={};
+const SEL_SETS=new Set(), SEL_LIMITS=new Set(), SEL_CONTS=new Set();
+
 /* ═══ DOM ═════════════════════════════════════════════════════════ */
 const $=id=>document.getElementById(id);
 const E={
   xlsxInput:$('xlsxInput'), xlsxName:$('xlsxName'),
-  demandInp:$('demandInp'), setSearch:$('setSearch'),
-  setSel:$('setSel'), setCount:$('setCount'),
+  demandInp:$('demandInp'),
+  setSearch:$('setSearch'), setList:$('setList'), setIdCount:$('setIdCount'),
+  setAll:$('setAll'), setNone:$('setNone'),
+  limitList:$('limitList'), limitCount:$('limitCount'),
+  limitAll:$('limitAll'), limitNone:$('limitNone'),
+  contSearch:$('contSearch'), contList:$('contList'), contCount:$('contCount'),
+  contAll:$('contAll'), contNone:$('contNone'),
+  invokeSummary:$('invokeSummary'),
   checkBtn:$('checkBtn'),
   resultsArea:$('resultsArea'), emptyState:$('emptyState'), dlBtn:$('dlBtn'),
   spCsv:$('spCsv'), spGen:$('spGen'), spXlsx:$('spXlsx'),
@@ -53,7 +67,7 @@ function parseCsv(txt){
     const ids=new Set(csvRows.map(r=>r['Constraint Equation ID'])).size;
     const sets=new Set(csvRows.map(r=>setId(r)).filter(Boolean)).size;
     pill(E.spCsv,'ok',`✓ ${ids} equations · ${sets} constraint sets`);
-    buildSetDd();
+    buildFilters();
   },error:e=>pill(E.spCsv,'er','CSV error: '+e.message)});
 }
 /* One row per (equation, constraint set) membership.
@@ -129,33 +143,132 @@ function buildMaps(wb){
       if(r.Parameter){const v=parseFloat(r.Value);if(!isNaN(v))rhsMap[String(r.Parameter).trim()]=v;}
 }
 
-/* ═══ CONSTRAINT-SET DROPDOWN ═════════════════════════════════════
+/* ═══ CONSTRAINT-INVOCATION FILTERS ═══════════════════════════════
    A constraint equation is ACTIVATED when its Constraint Set is invoked.
    The control room invokes the relevant set(s); every equation belonging
-   to an invoked set — across ALL contingencies in that set — becomes
-   active.  Contingency is a sub-grouping *within* a set, not the unit of
-   activation.  Equations with no Constraint Set ID belong to no set and
-   are therefore never active.
+   to an invoked set becomes active.  Equations with no Constraint Set ID
+   belong to no set and are therefore never active.
+
+   This mirrors wemulator-lite: multiple sets can be invoked at once (NIL is
+   the base set and is always active), and the active pool can be narrowed
+   further by constraint (limit) type and by contingency.  An equation is
+   checked only when ALL THREE hold:
+       set ∈ selected sets   AND   limit type ∈ selected types
+                             AND   contingency ∈ selected contingencies
+   Constraint type and contingency default to ALL selected, so by default
+   nothing is filtered out of the invoked sets.
 ════════════════════════════════════════════════════════════════════ */
-const setId=r=>(r['Constraint Set ID']||'').trim();
-function buildSetDd(){
-  // Only equations assigned to a constraint set can ever be invoked.
-  const counts={};
-  for(const r of csvRows){const s=setId(r);if(!s)continue;counts[s]=(counts[s]||0)+1;}
-  const sorted=Object.keys(counts).sort((a,b)=>a==='NIL'?-1:b==='NIL'?1:a.localeCompare(b));
-  const q=E.setSearch.value.toLowerCase(), cur=E.setSel.value||'NIL';
-  E.setSel.innerHTML='';
-  let shown=0;
-  for(const s of sorted){
-    if(q&&!s.toLowerCase().includes(q)) continue;
-    const o=document.createElement('option');
-    o.value=s; o.textContent=`${s}  (${counts[s]})`;
-    if(s===cur) o.selected=true;
-    E.setSel.appendChild(o); shown++;
+const setId  =r=>(r['Constraint Set ID']||'').trim();
+const limitOf=r=>(r['Limit Type']||'').trim()||'Other';
+const contOf =r=>(r['Contingency']||'').trim()||'NIL';
+
+function buildFilters(){
+  // ── Reference lists derived from the loaded equations ──
+  const setSeen=new Set(), limitSeen=new Set(), contSeen=new Set();
+  CONTS_BY_SET={};
+  for(const r of csvRows){
+    const s=setId(r), lt=limitOf(r), c=contOf(r);
+    if(s){setSeen.add(s); (CONTS_BY_SET[s]||(CONTS_BY_SET[s]=new Set())).add(c);}
+    else (CONTS_BY_SET['']||(CONTS_BY_SET['']=new Set())).add(c);
+    limitSeen.add(lt); contSeen.add(c);
   }
-  if(!E.setSel.value&&E.setSel.options[0]) E.setSel.options[0].selected=true;
-  const sel=E.setSel.value;
-  E.setCount.textContent=`${shown} constraint sets · ${counts[sel]||0} equations active when "${sel}" is invoked`;
+  // Sets: NIL first, then alphabetical (blank set IDs are never invocable).
+  ALL_SETS=[...setSeen].sort((a,b)=>a==='NIL'?-1:b==='NIL'?1:a.localeCompare(b));
+  ALL_LIMITS=[...limitSeen].sort();
+  ALL_CONTS=[...contSeen].sort((a,b)=>a==='NIL'?-1:b==='NIL'?1:a.localeCompare(b));
+
+  // ── Defaults: NIL set invoked; all types + all contingencies selected ──
+  SEL_SETS.clear(); SEL_SETS.add('NIL');
+  SEL_LIMITS.clear(); ALL_LIMITS.forEach(l=>SEL_LIMITS.add(l));
+  SEL_CONTS.clear(); ALL_CONTS.forEach(c=>SEL_CONTS.add(c));
+
+  renderSetList(); renderLimitList(); renderContList(); updateSummary();
+}
+
+/* ── Constraint Set list (multi-select; NIL forced on) ── */
+function renderSetList(){
+  const q=(E.setSearch.value||'').toLowerCase();
+  const items=q?ALL_SETS.filter(s=>s.toLowerCase().includes(q)):ALL_SETS;
+  E.setList.innerHTML='';
+  if(!items.length){E.setList.innerHTML='<span class="chk-empty">No matching sets</span>';}
+  const frag=document.createDocumentFragment();
+  for(const s of items){
+    const isNil=s==='NIL';
+    const lbl=document.createElement('label'); if(isNil)lbl.className='nil';
+    const chk=document.createElement('input');
+    chk.type='checkbox'; chk.value=s;
+    chk.checked=SEL_SETS.has(s)||isNil; chk.disabled=isNil;
+    if(isNil) SEL_SETS.add('NIL');
+    chk.onchange=()=>{
+      if(chk.checked){
+        SEL_SETS.add(s);
+        // Auto-select the contingencies that belong to this newly invoked set.
+        (CONTS_BY_SET[s]||[]).forEach(c=>SEL_CONTS.add(c));
+      } else SEL_SETS.delete(s);
+      renderContList(); updateSetCount(); updateContCount(); updateSummary();
+    };
+    lbl.appendChild(chk);
+    lbl.appendChild(document.createTextNode(' '+s+`  (${(CONTS_BY_SET[s]||new Set()).size?countEq(s):0})`));
+    frag.appendChild(lbl);
+  }
+  E.setList.appendChild(frag);
+  updateSetCount();
+}
+function countEq(s){let n=0;for(const r of csvRows)if(setId(r)===s)n++;return n;}
+function updateSetCount(){E.setIdCount.textContent=`${SEL_SETS.size} selected`;}
+
+/* ── Constraint Type list (inline checkboxes) ── */
+function renderLimitList(){
+  E.limitList.innerHTML='';
+  const frag=document.createDocumentFragment();
+  for(const lt of ALL_LIMITS){
+    const lbl=document.createElement('label');
+    const chk=document.createElement('input');
+    chk.type='checkbox'; chk.value=lt; chk.checked=SEL_LIMITS.has(lt);
+    chk.onchange=()=>{chk.checked?SEL_LIMITS.add(lt):SEL_LIMITS.delete(lt);updateLimitCount();updateSummary();};
+    lbl.appendChild(chk); lbl.appendChild(document.createTextNode(' '+lt));
+    frag.appendChild(lbl);
+  }
+  E.limitList.appendChild(frag);
+  updateLimitCount();
+}
+function updateLimitCount(){E.limitCount.textContent=`${SEL_LIMITS.size} selected`;}
+
+/* ── Contingency list (pool follows the invoked sets) ── */
+function visibleConts(){
+  const vis=new Set();
+  for(const s of SEL_SETS)(CONTS_BY_SET[s]||[]).forEach(c=>vis.add(c));
+  return ALL_CONTS.filter(c=>vis.has(c));
+}
+function renderContList(){
+  const q=(E.contSearch.value||'').toLowerCase();
+  let pool=visibleConts();
+  if(q) pool=pool.filter(c=>c.toLowerCase().includes(q));
+  E.contList.innerHTML='';
+  if(!pool.length){E.contList.innerHTML='<span class="chk-empty">No contingencies for the invoked sets</span>';updateContCount();return;}
+  const frag=document.createDocumentFragment();
+  for(const c of pool){
+    const lbl=document.createElement('label');
+    const chk=document.createElement('input');
+    chk.type='checkbox'; chk.value=c; chk.checked=SEL_CONTS.has(c);
+    chk.onchange=()=>{chk.checked?SEL_CONTS.add(c):SEL_CONTS.delete(c);updateContCount();updateSummary();};
+    lbl.appendChild(chk); lbl.appendChild(document.createTextNode(' '+c));
+    frag.appendChild(lbl);
+  }
+  E.contList.appendChild(frag);
+  updateContCount();
+}
+function updateContCount(){
+  const pool=visibleConts();
+  const deselected=pool.filter(c=>!SEL_CONTS.has(c)).length;
+  E.contCount.textContent=deselected===0?'all selected':`${deselected} deselected`;
+}
+
+/* ── Live summary of how many equations the current filters invoke ── */
+function updateSummary(){
+  if(!csvRows){E.invokeSummary.textContent='—';return;}
+  const n=csvRows.filter(r=>SEL_SETS.has(setId(r))&&SEL_LIMITS.has(limitOf(r))&&SEL_CONTS.has(contOf(r))).length;
+  E.invokeSummary.textContent=`${n} equation${n===1?'':'s'} invoked · ${SEL_SETS.size} set${SEL_SETS.size===1?'':'s'}`;
 }
 
 /* ═══ ENERGY DISPATCH LOOKUP ══════════════════════════════════════
@@ -269,9 +382,11 @@ function evalRHS(script,dem){
 function runCheck(){
   if(!csvRows||!xlsxOk){alert('Please load constraint equations and upload a dispatch XLSX first.');return;}
   demand=parseFloat(E.demandInp.value)||1500;
-  // ── Activation: every equation belonging to the invoked Constraint Set ──
-  const sel=E.setSel.value||'NIL';
-  const pool=csvRows.filter(r=>setId(r)===sel);
+  // ── Activation: invoked set(s) → constraint type → contingency ──
+  // An equation is checked only when its set is invoked AND its constraint
+  // type AND contingency are both still selected (both default to all).
+  const pool=csvRows.filter(r=>
+    SEL_SETS.has(setId(r))&&SEL_LIMITS.has(limitOf(r))&&SEL_CONTS.has(contOf(r)));
   results=pool.map(row=>{
     const lhs=evalLHS(row['Left Hand Side']);
     let rhs=evalRHS(row['Right Hand Side Script'],demand);
@@ -290,7 +405,7 @@ function runCheck(){
       margin=rhs.total-lhs.total;
     }
     return{id:row['Constraint Equation ID'],monitored:row['Monitored Element'],
-           set:sel,cont:(row['Contingency']||'').trim()||'NIL',
+           set:setId(row)||'NIL',cont:contOf(row),limit:limitOf(row),
            lhs,rhs,skipped,violated,margin,defRhs,row};
   });
   // Skipped equations sink to the bottom; evaluated ones sort by margin.
@@ -299,7 +414,15 @@ function runCheck(){
     if(a.skipped) return 0;
     return a.margin-b.margin;
   });
-  render(sel);
+  render(invokeLabel());
+}
+
+/* Human-readable label for the invoked selection, used in banner/KPIs. */
+function invokeLabel(){
+  const sets=[...SEL_SETS];
+  if(sets.length===1) return sets[0];
+  if(sets.length<=3) return sets.join(', ');
+  return `${sets.length} constraint sets`;
 }
 
 /* ═══ RENDER ══════════════════════════════════════════════════════ */
@@ -326,9 +449,9 @@ function render(label){
   const skipNote=skip.length?` · ${skip.length} not evaluated`:'';
   E.kpiTotal.textContent=`${evaluated} of ${results.length} evaluated${skipNote}`;
   E.kpiWorst.textContent=worst!==null?f2(worst)+' MW':'—';
-  E.kpiContLbl.textContent=`Constraint Set: ${label}`;
+  E.kpiContLbl.textContent=`Invoked: ${label}`;
   // Banner
-  if(evaluated===0){E.banner.className='banner idle';E.banner.innerHTML=`No equations could be evaluated for "<strong>${label}</strong>" — the dispatch file is missing the required RHS parameters.`;}
+  if(evaluated===0){E.banner.className='banner idle';E.banner.innerHTML=`No equations could be evaluated for "<strong>${label}</strong>". The dispatch file may be missing the required RHS parameters, or the filters excluded every equation.`;}
   else if(viol.length===0){E.banner.className='banner ok';E.banner.innerHTML=`✅ All <strong>${evaluated}</strong> active constraints satisfied when "<strong>${label}</strong>" is invoked.`;}
   else{E.banner.className='banner viol';E.banner.innerHTML=`⚠️ The Dispatch violates <strong>${viol.length}</strong> of <strong>${evaluated}</strong> active Constraint Equations when "<strong>${label}</strong>" is invoked.`;}
   E.violBadge.textContent=viol.length;
@@ -467,11 +590,26 @@ document.addEventListener('drop',e=>{
   const f=Array.from(e.dataTransfer.files).find(f=>/\.xlsx?$/i.test(f.name));
   if(f) handleXlsx(f);
 });
-E.setSearch.oninput=()=>{if(csvOk) buildSetDd();};
-E.setSel.onchange=()=>{
-  const cnt=csvRows.filter(r=>setId(r)===E.setSel.value).length;
-  E.setCount.textContent=`${cnt} equations active when "${E.setSel.value}" is invoked`;
+// ── Constraint-invocation filters ──
+E.setSearch.oninput=()=>{if(csvOk) renderSetList();};
+E.contSearch.oninput=()=>{if(csvOk) renderContList();};
+E.setAll.onclick=()=>{
+  // Invoke every set currently shown by the search filter.
+  const q=(E.setSearch.value||'').toLowerCase();
+  for(const s of ALL_SETS){
+    if(q&&!s.toLowerCase().includes(q)) continue;
+    SEL_SETS.add(s); (CONTS_BY_SET[s]||[]).forEach(c=>SEL_CONTS.add(c));
+  }
+  renderSetList(); renderContList(); updateSummary();
 };
+E.setNone.onclick=()=>{
+  SEL_SETS.clear(); SEL_SETS.add('NIL');   // NIL stays invoked
+  renderSetList(); renderContList(); updateSummary();
+};
+E.limitAll.onclick=()=>{ALL_LIMITS.forEach(l=>SEL_LIMITS.add(l));renderLimitList();updateSummary();};
+E.limitNone.onclick=()=>{SEL_LIMITS.clear();renderLimitList();updateSummary();};
+E.contAll.onclick=()=>{visibleConts().forEach(c=>SEL_CONTS.add(c));renderContList();updateSummary();};
+E.contNone.onclick=()=>{visibleConts().forEach(c=>SEL_CONTS.delete(c));renderContList();updateSummary();};
 E.checkBtn.onclick=runCheck;
 // Expand rows
 document.addEventListener('click',e=>{

@@ -113,15 +113,6 @@
       </div>
     </div>
 
-    <div class="tg" style="flex:1;min-width:260px">
-      <span class="tg-lbl">3 · Constraint Set Invoked <span class="tip-icon" data-tip="A constraint equation is active only when its Constraint Set is invoked. The control room invokes the relevant set(s); EVERY equation in an invoked set — across all of that set's contingencies — is then enforced. Pick the set in force to check the dispatch against all of its equations.">?</span></span>
-      <div class="tg-r">
-        <input type="text" id="setSearch" placeholder="Filter sets…" style="width:100px"/>
-        <select id="setSel" style="flex:1;min-width:140px"></select>
-      </div>
-      <span class="hint" id="setCount">—</span>
-    </div>
-
     <div class="tg" style="min-width:110px;border-right:none">
       <button class="btn-p" id="checkBtn">⚡ Check</button>
     </div>
@@ -131,6 +122,60 @@
     <span class="sp in" id="spCsv"><span class="d"></span>Loading constraints…</span>
     <span class="sp in" id="spGen"><span class="d"></span>Loading generator data…</span>
     <span class="sp in" id="spXlsx"><span class="d"></span>Awaiting dispatch XLSX</span>
+  </div>
+</section>
+
+<!-- CONSTRAINT INVOCATION -->
+<section class="filt card">
+  <div class="filt-hd">
+    <h2>3 · Constraint Invocation <span class="tip-icon" data-tip="A constraint equation is enforced only when its Constraint Set is invoked. Invoke one or more sets, then narrow the active equations by constraint type and contingency. NIL is the base set and is always active.">?</span></h2>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="hint" id="invokeSummary">—</span>
+      <a class="btn-s" href="./guide.html">📖 How to invoke</a>
+    </div>
+  </div>
+  <div class="filt-grid">
+
+    <!-- Constraint Set ID -->
+    <div class="filt-col">
+      <div class="filt-lbl">Constraint Set
+        <span class="tip-icon" data-tip="A named group of constraint equations the control room invokes together for a given network condition. Select every set in force. NIL is the base set and is always active.">?</span>
+        <span class="filt-cnt" id="setIdCount">0 selected</span>
+        <span class="filt-note">NIL always active</span>
+      </div>
+      <div class="filt-bar">
+        <input type="text" id="setSearch" placeholder="Search sets…"/>
+        <button class="btn-sm" id="setAll">All</button>
+        <button class="btn-sm" id="setNone">None</button>
+      </div>
+      <div class="chk-list" id="setList"><span class="chk-empty">Loading…</span></div>
+    </div>
+
+    <!-- Constraint Type -->
+    <div class="filt-col">
+      <div class="filt-lbl">Constraint Type
+        <span class="tip-icon" data-tip="The kind of limit each equation protects: Thermal (current ratings), Transient Stability, Voltage Stability, or Other. Deselect a type to drop those equations from the check.">?</span>
+        <span class="filt-cnt" id="limitCount">0 selected</span>
+        <button class="btn-sm" id="limitAll">All</button>
+        <button class="btn-sm" id="limitNone">None</button>
+      </div>
+      <div class="chk-inline" id="limitList"><span class="chk-empty">Loading…</span></div>
+    </div>
+
+    <!-- Contingency -->
+    <div class="filt-col">
+      <div class="filt-lbl">Contingency
+        <span class="tip-icon" data-tip="The credible outage an equation defends against. NIL is the intact network. All contingencies in the invoked sets are selected by default; deselect any you want to ignore.">?</span>
+        <span class="filt-cnt" id="contCount">all selected</span>
+      </div>
+      <div class="filt-bar">
+        <input type="text" id="contSearch" placeholder="Search contingencies…"/>
+        <button class="btn-sm" id="contAll">All</button>
+        <button class="btn-sm" id="contNone">None</button>
+      </div>
+      <div class="chk-list" id="contList"><span class="chk-empty">Loading…</span></div>
+    </div>
+
   </div>
 </section>
 

@@ -94,6 +94,33 @@ body.light .tb-status{background:rgba(0,0,0,.04)}
 .b-ok {background:var(--ok-bg);color:var(--ok-txt)}
 .b-er {background:var(--er-bg);color:var(--er-txt)}
 
+/* ── Constraint invocation filter ── */
+.filt{padding:0;overflow:hidden}
+.filt-hd{padding:11px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;gap:8px}
+.filt-hd h2{margin:0;font-size:.95rem;font-weight:700}
+.filt-grid{display:grid;grid-template-columns:1.3fr 1fr 1.3fr}
+.filt-col{padding:12px 16px;border-right:1px solid var(--bdr);display:flex;flex-direction:column;gap:7px}
+.filt-col:last-child{border-right:none}
+.filt-lbl{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.filt-cnt{font-weight:600;color:var(--acc);text-transform:none;letter-spacing:0}
+.filt-note{font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;font-size:.66rem}
+.filt-bar{display:flex;gap:6px;align-items:center}
+.filt-bar input{flex:1;padding:5px 9px;font-size:.8rem}
+.btn-sm{padding:4px 10px;font-size:.75rem;border:1px solid var(--bdr);border-radius:6px;cursor:pointer;
+  background:var(--inp);color:var(--txt);font-family:inherit;white-space:nowrap;transition:border-color .15s}
+.btn-sm:hover{border-color:var(--acc)}
+.chk-list{height:172px;overflow-y:auto;border:1px solid var(--bdr);border-radius:8px;padding:4px 0}
+.chk-list label{display:flex;align-items:center;gap:6px;padding:3px 10px;cursor:pointer;font-size:.8rem}
+.chk-list label:hover{background:var(--inp)}
+.chk-list label.nil{font-weight:700}
+.chk-list input,.chk-inline input{accent-color:var(--acc);cursor:pointer;margin:0}
+.chk-list input:disabled{opacity:.7;cursor:default}
+.chk-inline{display:flex;flex-wrap:wrap;gap:6px 16px;padding:6px 2px}
+.chk-inline label{display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:.82rem}
+.chk-empty{padding:8px 10px;color:var(--muted);font-size:.8rem;display:block}
+
 /* ── KPIs ── */
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .metric{padding:14px 18px}
@@ -208,6 +235,9 @@ tr.xr td{padding:0;background:var(--bg2)}
   .tb-row{flex-direction:column}
   .tg{border-right:none;border-bottom:1px solid var(--bdr)}
   .tg:last-child{border-bottom:none;margin-left:0;align-items:flex-start}
+  .filt-grid{grid-template-columns:1fr}
+  .filt-col{border-right:none;border-bottom:1px solid var(--bdr)}
+  .filt-col:last-child{border-bottom:none}
 }
 @media(max-width:600px){
   .wrap{padding:10px 12px}
