@@ -1,5 +1,5 @@
 /* =====================================================================
-   GUIDED TOUR — first-visit walkthrough for PowerFactory Scripter
+   GUIDED TOUR: first-visit walkthrough for PowerFactory Scripter
    --------------------------------------------------------------------
    Features:
      1. Darkens the whole page except the focused element (spotlight).
@@ -25,14 +25,14 @@
       title: '👋 Welcome to PowerFactory Scripter',
       body: 'This quick tour walks you through building a PowerFactory ' +
             'automation script using the <strong>Transmission Loss Factor</strong> ' +
-            'worked example. It takes about a minute — you can skip it any time.'
+            'worked example. It takes about a minute, and you can skip it any time.'
     },
     {
       target: '.quick-start-row',
       title: '⚡ Quick Start examples',
       body: 'These one-click presets load complete worked examples. ' +
             'We\'ve just loaded the <strong>Transmission Loss Factor</strong> ' +
-            'case for you — a brute-force sweep of generator dispatch on the ' +
+            'case for you: a brute-force sweep of generator dispatch on the ' +
             'IEEE 9-bus system. Watch the form below fill in.',
       onEnter: loadSample
     },
@@ -40,7 +40,7 @@
       target: '#sec-init',
       title: '① Initialisation',
       body: 'The example uses <strong>Brute Force</strong> as the problem type and ' +
-            '<strong>Steady State</strong> as the study type — every combination of ' +
+            '<strong>Steady State</strong> as the study type, so every combination of ' +
             'inputs is run through a load flow. Here you also set the PowerFactory ' +
             'API path, username and output directory.'
     },
@@ -49,7 +49,7 @@
       title: '② Input Variables',
       body: 'These are the parameters swept each run. The sample sweeps ' +
             '<code>G2.ElmSym</code> and <code>G3.ElmSym</code> dispatch ' +
-            '(<code>pgini</code>) across a range — every combination is simulated.'
+            '(<code>pgini</code>) across a range, and every combination is simulated.'
     },
     {
       target: '#sec-outputs',
@@ -62,7 +62,7 @@
       target: '.right-toolbar .btn-primary',
       title: '④ Generate the script',
       body: 'When the form is configured, click <strong>Generate Code</strong>. ' +
-            'The Python script appears in the preview — copy it or download the ' +
+            'The Python script appears in the preview. Copy it or download the ' +
             '<code>.py</code> file. Everything runs locally; nothing is uploaded.'
     },
     {
@@ -84,7 +84,7 @@
         // Returns a promise; errors are non-fatal to the tour.
         Promise.resolve(window.applyQuickStart(SAMPLE_KEY)).catch(function () {});
       }
-    } catch (e) { /* ignore — tour still works without the sample */ }
+    } catch (e) { /* ignore; tour still works without the sample */ }
   }
 
   /* ---- DOM construction --------------------------------------------- */
