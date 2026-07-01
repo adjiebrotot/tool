@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.section-card').forEach((card) => {
     const header = card.querySelector('.section-header');
     const body = card.querySelector('.section-body');
-    if (!header || !body || card.id === 'faq') return;
+    if (!header || !body || card.id === 'faq' || card.id === 'models') return;
     header.classList.add('collapsed');
     body.classList.add('hidden');
   });
