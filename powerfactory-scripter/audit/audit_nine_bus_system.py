@@ -389,6 +389,10 @@ def phase1():
     # --- 1.6  Operating scenarios  (mirrors get_operating_scenarios) -------
     def cp_scenarios():
         proj = STATE["project"]
+        # The generator's get_operating_scenarios() resolves the folder via
+        # GetProjectFolder("scen") (robust). The raw project.GetContents(...)
+        # below is the FRAGILE alternative it replaced: operation scenarios are
+        # nested under "Network Model", so a non-recursive root search misses them.
         root = proj.GetContents("Operation Scenarios")
         by_name = root[0].GetContents() if root else []
         try:
@@ -397,13 +401,14 @@ def phase1():
         except Exception as e:                   # noqa: BLE001
             by_folder = []
             info(f"GetProjectFolder('scen') raised {type(e).__name__}: {e}")
-        STATE["scenarios"] = list(by_name) or list(by_folder)
+        STATE["scenarios"] = list(by_folder) or list(by_name)
         names = [s.loc_name for s in STATE["scenarios"]]
         info(f"operating scenarios: {names if names else '(none)'}")
         if not root and by_folder:
-            raise Warn("project.GetContents('Operation Scenarios') EMPTY but "
-                       f"GetProjectFolder('scen') found {len(by_folder)} — tool's "
-                       f"get_operating_scenarios() helper would miss them.")
+            info(f"project.GetContents('Operation Scenarios') EMPTY but "
+                 f"GetProjectFolder('scen') found {len(by_folder)} — confirms the "
+                 f"fragile root search the generator's helper avoids by using "
+                 f"GetProjectFolder('scen').")
         active = app.GetActiveScenario()
         # Activate the first scenario only to validate Activate(); restore later.
         if STATE["scenarios"]:

@@ -389,22 +389,34 @@ def save_intermediate_results(df, output_dir, prefix, last_save_time, interval_m
   // Always include — needed for prompt selection or iteration
   code += `
 def get_study_cases(app):
-    project = app.GetActiveProject()
-    study_case_root = project.GetContents("Study Cases")
-    if not study_case_root:
+    # Resolve the Study Cases folder via GetProjectFolder("study") so the lookup
+    # is independent of the folder's display name/localisation. Fall back to a
+    # name-based search for builds where GetProjectFolder returns None.
+    folder = app.GetProjectFolder("study")
+    if folder is None:
+        roots = app.GetActiveProject().GetContents("Study Cases")
+        folder = roots[0] if roots else None
+    if folder is None:
         return []
     # Filter to IntCase only: the Study Cases folder can also hold non-case
     # objects (e.g. a "Task Automation" ComTasks). Returning those unfiltered
     # makes study_case.Activate() fail when iterating study cases.
-    return study_case_root[0].GetContents("*.IntCase")
+    return folder.GetContents("*.IntCase")
 
 
 def get_operating_scenarios(app):
-    project = app.GetActiveProject()
-    scenario_root = project.GetContents("Operation Scenarios")
-    if not scenario_root:
+    # Operation scenarios live under "Network Model/Operation Scenarios", NOT at
+    # the project root, so project.GetContents("Operation Scenarios") (a
+    # non-recursive, direct-child search) never finds them. GetProjectFolder("scen")
+    # resolves the folder regardless of nesting/localisation; fall back to a
+    # recursive name-based search.
+    folder = app.GetProjectFolder("scen")
+    if folder is None:
+        roots = app.GetActiveProject().GetContents("Operation Scenarios.IntPrjfolder", 1)
+        folder = roots[0] if roots else None
+    if folder is None:
         return []
-    return scenario_root[0].GetContents("*.IntScenario")
+    return folder.GetContents("*.IntScenario")
 
 
 def extract_attribute_output(app, object_query, variable_name):
