@@ -40,7 +40,7 @@
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
   "inLanguage": "en",
-  "keywords": "PowerFactory transmission loss factor, generation shift factor, minimum system losses Bayesian optimisation, rotor angle stability critical clearing time, N-1 line contingency Nine-bus System, PowerFactory Python examples"
+  "keywords": "PowerFactory transmission loss factor, generation shift factor, minimum system losses Bayesian optimisation, rotor angle stability critical clearing time, N-1 line contingency Nine-bus System, HVDC harmonic filter tuning ComHldf, transformer energisation inrush EMT ComSim, PowerFactory Python examples"
 }
 </script>
 <script type="application/ld+json">
@@ -79,6 +79,22 @@
         "@type": "Answer",
         "text": "The N-1 line contingency sample shows the wildcard Contingency approach on the Nine-bus System, where one configuration resolves every matching line outage at runtime and runs each automatically. See the worked example at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
       }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I tune an HVDC harmonic filter with Bayesian optimisation in PowerFactory?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The HVDC harmonic filter sample runs on PowerFactory's Resonance Studies project. A converter 11th-harmonic current source is injected at the HVDC busbar and a Bayesian optimiser searches the 11th filter's tuning order (nres) and rated reactive power (qtotn), running a ComHldf harmonic load flow at each step, to minimise the voltage THD at the busbar while avoiding a parallel resonance. See the worked example at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I study transformer energisation inrush with an EMT simulation in PowerFactory?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The transformer energisation sample runs on PowerFactory's Switching Transients project. It sweeps the closing time of a breaker switch event (CB4.EvtSwitch) across one 50 Hz cycle, runs an EMT simulation (ComInc with iopt_sim='ins' then ComSim) at each value, and records the transformer HV-side inrush current on each phase plus the current waveform, showing how point-on-wave closing changes the inrush. See the worked example at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+      }
     }
   ]
 }
@@ -113,9 +129,47 @@
   <!-- HERO -->
   <div class="page-hero">
     <h1>Samples &amp; Guides</h1>
-    <p>Worked examples showing how to configure the tool for common power-system studies, all built on
-       PowerFactory's bundled <strong>Nine-bus System</strong> demo (Anderson &amp; Fouad; 9 buses, 3 generators,
-       6 lines, 230&nbsp;kV / 60&nbsp;Hz).</p>
+    <p>Worked examples showing how to configure the tool for common power-system studies. Every example runs on
+       one of PowerFactory's bundled demonstration projects, so you can reproduce each result without building a
+       network first.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       BUILT-IN MODELS USED
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-card" id="models">
+    <div class="section-header" onclick="toggleSection('models')">
+      <h3>Built-in Models Used</h3>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body" id="models-body">
+      <p class="hint" style="margin-top:0;">Each sample runs on a PowerFactory example project that ships with the
+        software. Samples 01 to 04 share the Nine-bus System; samples 05 and 06 use two different demonstration
+        projects because a harmonic filter study and an EMT switching study need networks the Nine-bus System does
+        not contain.</p>
+
+      <div class="model-grid">
+        <div class="model-item">
+          <div class="model-head"><span class="model-badge">01 - 04</span><strong>Nine-bus System</strong></div>
+          <p>Anderson &amp; Fouad Nine-bus System: 9 buses, 3 generators, 6 lines, 230&nbsp;kV / 60&nbsp;Hz.
+             Used for the steady-state loss-factor sweep, the minimum-loss optimisation, the RMS rotor-angle
+             stability study, and the N-1 line contingency scan.</p>
+        </div>
+        <div class="model-item">
+          <div class="model-head"><span class="model-badge">05</span><strong>Resonance Studies</strong></div>
+          <p>PowerFactory's harmonics and resonance demonstration: a 400&nbsp;kV / 50&nbsp;Hz transmission system
+             feeding downstream urban and rural networks, with an HVDC converter station whose tuned filter banks
+             (11th, 13th and 24th high-pass branches) sit on the 400&nbsp;kV busbar. Used for the harmonic filter tuning study on the
+             <code>01.1 Simplified Network Model</code> study case.</p>
+        </div>
+        <div class="model-item">
+          <div class="model-head"><span class="model-badge">06</span><strong>Switching Transients</strong></div>
+          <p>PowerFactory's switching-transients demonstration: a 400&nbsp;/&nbsp;110&nbsp;kV, 50&nbsp;Hz network in
+             which a power transformer is energised through a circuit breaker. Used for the EMT transformer
+             energisation study on the <code>03.1 Transformer Energisation I</code> study case.</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════════
@@ -932,6 +986,500 @@ Line 4-6,True,0.999,0.942,1.006,20.01,13.88,27.30
 Line 4-5,True,0.839,1.020,0.989,,40.29,8.34</pre>
         <p class="hint"><code>Converge? = False</code> on any row would mean the load flow did not converge with that
           line tripped. Scan the loading columns for post-contingency overloads (&gt;100%).</p>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SAMPLE 05 · HVDC HARMONIC FILTER TUNING
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-card" id="sample-5">
+    <div class="section-header" onclick="toggleSection('sample-5')">
+      <span class="sample-num">05</span>
+      <h3>HVDC Harmonic Filter Tuning (Harmonic Optimisation Demonstration)</h3>
+      <a class="dl-json-link" href="json-samples/sample-05-harmonic-filter-optimisation.json" download onclick="event.stopPropagation()">↓ JSON</a>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body" id="sample-5-body">
+
+      <!-- Built-in model -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">i</span> Built-in Model
+        </div>
+        <p class="objective-text">
+          This sample runs on the <strong>Resonance Studies</strong> project, study case
+          <code>01.1 Simplified Network Model</code>. It is a 400&nbsp;kV / 50&nbsp;Hz transmission system with an
+          HVDC converter station on the 400&nbsp;kV busbar. The station carries two identical filter banks, each
+          with an <code>11th</code> branch, a <code>13th</code> branch and a <code>24th</code> high-pass branch, plus
+          switchable capacitor banks. This is a different network from the Nine-bus System used by samples 01 to 04, because a
+          harmonic resonance study needs the filter banks and the converter that the Nine-bus System does not have.
+        </p>
+      </div>
+
+      <!-- 1 Objective -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">1</span> Objective
+        </div>
+        <p class="objective-text">
+          Tune the HVDC <strong>11th-harmonic filter</strong> (<code>HVDC Filter1 11th.ElmFilter</code>) so that it
+          <strong>minimises the voltage distortion at the HVDC busbar</strong> caused by the converter's 11th
+          harmonic, using a Bayesian optimiser. The filter is described by its <strong>tuning order</strong>
+          (<code>nres</code>) and its <strong>rated reactive power</strong> (<code>qtotn</code>). The optimiser
+          searches both: a filter tuned close to the 11th and sized correctly absorbs the harmonic, but the same
+          capacitance can form a <em>parallel resonance</em> with the network that amplifies the harmonic instead,
+          so the objective surface has a sharp resonance ridge the optimiser has to steer around.
+        </p>
+      </div>
+
+      <!-- 2 Model Preparation -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">2</span> Model Preparation (one-time, before generating code)
+        </div>
+        <p class="hint" style="margin-top:0;">The shipped study case has no harmonic source and two parallel filter
+          banks, so on its own the 11th filter has almost no measurable effect. Two small changes in PowerFactory
+          set up a meaningful single-bank tuning study. This is standard practice for HVDC filter design, where the
+          converter is represented as a harmonic current source and one bank is studied at a time.</p>
+        <ul class="assumption-list">
+          <li>Add a converter harmonic current source at the HVDC 400&nbsp;kV busbar: an <code>ElmIac</code> AC
+            current source with a <code>TypHmccur</code> spectrum carrying the <strong>11th harmonic</strong>. This
+            represents the characteristic 11th harmonic a 12-pulse converter injects.</li>
+          <li>Put the redundant second bank and the capacitor banks out of service, leaving
+            <code>HVDC Filter1</code> as the bank under study: set <code>HVDC Filter2 11th</code>,
+            <code>HVDC Filter2 13th</code>, <code>HVDC Filter2 24th HP</code>, <code>HVDC_C-Bank1</code> and
+            <code>HVDC_C-Bank2</code> to <em>out of service</em>.</li>
+        </ul>
+      </div>
+
+      <!-- 3 Assumptions -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">3</span> Assumptions
+        </div>
+        <ul class="assumption-list">
+          <li>Study case: <code>01.1 Simplified Network Model</code> (balanced harmonic load flow, <code>ComHldf</code>)</li>
+          <li>Optimised element: <code>HVDC Filter1 11th.ElmFilter</code> (single-tuned shunt filter)</li>
+          <li>Optimised variables: tuning order <code>nres</code> (9 to 13) and rated reactive power <code>qtotn</code> (40 to 120&nbsp;Mvar)</li>
+          <li>Objective: minimise the total harmonic voltage distortion at the HVDC busbar, read at terminal <code>400_G3.1.ElmTerm</code> (<code>m:THD</code>, in %)</li>
+          <li>As-built starting point: <code>nres&nbsp;=&nbsp;11</code>, <code>qtotn&nbsp;=&nbsp;56&nbsp;Mvar</code> gives a busbar THD of ≈&nbsp;1.61&nbsp;%</li>
+          <li>Algorithm: Bayesian (<code>gp_minimize</code>), 60 evaluations</li>
+        </ul>
+      </div>
+
+      <!-- 4 What to Input -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">4</span> What to Input
+        </div>
+        <div class="readonly-fields">
+
+          <div class="readonly-group-title">Initialisation</div>
+          <div class="form-row">
+            <label>Problem Type</label>
+            <select disabled><option>Optimisation</option></select>
+          </div>
+          <div class="form-row">
+            <label>Study Type</label>
+            <select disabled><option>Harmonic</option></select>
+          </div>
+          <div class="form-row">
+            <label>Coding Style</label>
+            <select disabled><option>Python File</option></select>
+          </div>
+
+          <div class="readonly-group-title">Input Variables</div>
+          <div class="dyn-table-wrapper">
+            <table class="dyn-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Object</th>
+                  <th>Attribute</th>
+                  <th>Lower</th>
+                  <th>Upper</th>
+                  <th>Step</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="text" readonly value="filter_tuning_order" /></td>
+                  <td><input type="text" readonly value="HVDC Filter1 11th.ElmFilter" /></td>
+                  <td><input type="text" readonly value="nres" /></td>
+                  <td><input type="number" readonly value="9" /></td>
+                  <td><input type="number" readonly value="13" /></td>
+                  <td><input type="text" readonly value="N/A" /></td>
+                </tr>
+                <tr>
+                  <td><input type="text" readonly value="filter_rated_power" /></td>
+                  <td><input type="text" readonly value="HVDC Filter1 11th.ElmFilter" /></td>
+                  <td><input type="text" readonly value="qtotn" /></td>
+                  <td><input type="number" readonly value="40" /></td>
+                  <td><input type="number" readonly value="120" /></td>
+                  <td><input type="text" readonly value="N/A" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="readonly-group-title">Output Variables</div>
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Scalar</span>
+              <input type="text" readonly value="THD_HVDC_bus" style="max-width:180px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row"><label>Object</label><input type="text" readonly value="400_G3.1.ElmTerm" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="m:THD" /></div>
+            </div>
+          </div>
+          <p class="hint" style="margin:4px 0 14px;">The HVDC busbar is named <code>4</code>, which repeats across
+            many substations, so it is not a unique query. Terminal <code>400_G3.1</code> sits on the same electrical
+            node as the filter and has a unique name, so it is the safe object to read the busbar's <code>m:THD</code>
+            from.</p>
+
+          <div class="readonly-group-title">Optimisation Settings</div>
+          <div class="form-row">
+            <label>Sense</label>
+            <select disabled><option>Minimise</option></select>
+          </div>
+          <div class="form-row">
+            <label>Objective</label>
+            <input type="text" readonly value="THD_HVDC_bus" />
+          </div>
+          <div class="form-row">
+            <label>Algorithm</label>
+            <select disabled><option>Bayesian</option></select>
+          </div>
+          <div class="form-row">
+            <label>Max Iterations</label>
+            <input type="number" readonly value="60" />
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Steps -->
+      <div class="sub-section steps-section">
+        <div class="steps-title">Running the Code</div>
+        <div class="step-row">
+          <span class="step-badge">5</span>
+          <span>Click <strong>⚡ Generate Code</strong> in the tool.</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">6</span>
+          <span>Click <strong>Copy</strong> (or download as <code>.py</code>).</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">7</span>
+          <div>
+            <div>Paste the code into your Python environment and run it.</div>
+            <div class="step-note">Make sure the Model Preparation above is done first. Bayesian optimisation runs
+              60 harmonic load flows; each one runs a balanced load flow and a <code>ComHldf</code> harmonic load
+              flow. Requires <code>pip install scikit-optimize</code>.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">8</span>
+          <div>
+            <div>When prompted, select the <strong>project</strong> and <strong>study case</strong> to run against.</div>
+            <div class="step-note">If you have more than one project loaded, enter the index of <strong>Resonance
+              Studies</strong>; then choose the <strong>01.1 Simplified Network Model</strong> study case (and the
+              operating scenario, if asked). A single project / study case is selected automatically.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expected Output -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">9</span> Expected Output
+        </div>
+        <p class="hint">The script prints the best objective value and writes every evaluation to the CSV: the two
+          swept filter parameters, the convergence flag, then the busbar THD. Real values from a 60-evaluation run
+          (rounded, a spread of rows shown):</p>
+        <pre class="output-preview">Optimisation complete. Best value: 0.6197
+
+# Run{timestamp}.csv (selected rows)
+filter_tuning_order,filter_rated_power,Converge?,THD_HVDC_bus
+9.909,65.52,True,3.175
+12.913,76.45,True,2.065
+11.689,95.52,True,4.325   &lt;- filter capacitance resonates with the network at the 11th
+12.991,101.18,True,4.228   &lt;- resonance ridge again
+10.232,61.11,True,2.299
+9.351,96.55,True,1.305
+9.014,119.67,True,0.629
+9.004,119.13,True,0.630
+9.000,120.00,True,0.620   &lt;- best</pre>
+        <p class="hint">The optimiser drives the busbar THD down to <strong>≈&nbsp;0.62&nbsp;%</strong>, from
+          <strong>≈&nbsp;1.61&nbsp;%</strong> at the as-built <code>nres&nbsp;=&nbsp;11</code>,
+          <code>qtotn&nbsp;=&nbsp;56&nbsp;Mvar</code>, a reduction of about 60&nbsp;%. Along the way it probes points
+          on the <strong>parallel-resonance ridge</strong> where the filter capacitance and the network inductance
+          resonate at the 11th harmonic and the THD jumps above 4&nbsp;%. The scatter below plots every evaluation
+          in the two-parameter design space, coloured by the resulting THD:</p>
+
+        <div class="graph-figure-row">
+          <figure class="graph-figure">
+            <img src="assets/sample-05-optim-scatter.png" alt="Scatter of 60 Bayesian evaluations over filter tuning order and rated power, coloured by busbar THD, with a resonance ridge in orange/red and the optimum ringed in the low-THD corner" loading="lazy" />
+            <figcaption>Every evaluation coloured by busbar THD. Dark points are low distortion; the orange and red
+              band is the parallel resonance. The optimiser (ring) settles in the low-THD corner.</figcaption>
+          </figure>
+        </div>
+        <p class="hint">The best point sits at the <strong>edge</strong> of the searched range
+          (<code>nres&nbsp;=&nbsp;9</code>, <code>qtotn&nbsp;=&nbsp;120&nbsp;Mvar</code>), which tells you the true
+          optimum lies just outside the bounds: widen them, or add a rating or fundamental-voltage constraint, if you
+          want the interior minimum. The optimiser does not enforce filter or busbar limits beyond the bounds you
+          set, so confirm the winning design is physically sensible.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SAMPLE 06 · TRANSFORMER ENERGISATION INRUSH (EMT)
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-card" id="sample-6">
+    <div class="section-header" onclick="toggleSection('sample-6')">
+      <span class="sample-num">06</span>
+      <h3>Transformer Energisation Inrush (EMT Time-Domain Demonstration)</h3>
+      <a class="dl-json-link" href="json-samples/sample-06-transformer-energisation-emt.json" download onclick="event.stopPropagation()">↓ JSON</a>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body" id="sample-6-body">
+
+      <!-- Built-in model -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">i</span> Built-in Model
+        </div>
+        <p class="objective-text">
+          This sample runs on the <strong>Switching Transients</strong> project, study case
+          <code>03.1 Transformer Energisation I</code>. It is a 400&nbsp;/&nbsp;110&nbsp;kV, 50&nbsp;Hz network in
+          which a power transformer (<code>TRF1</code>) is energised from the 110&nbsp;kV side by closing circuit
+          breaker <code>CB4</code>. This is a different network from the Nine-bus System used by samples 01 to 04,
+          because an EMT switching study needs the detailed transformer and breaker models that the Nine-bus System
+          does not carry.
+        </p>
+      </div>
+
+      <!-- 1 Objective -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">1</span> Objective
+        </div>
+        <p class="objective-text">
+          Energise transformer <code>TRF1</code> by closing breaker <code>CB4</code>, then <strong>sweep the
+          breaker closing time</strong> across one 50&nbsp;Hz cycle (0 to 0.02&nbsp;s) and run an EMT simulation at
+          each value. Transformer inrush depends on where on the voltage wave each pole closes, so the peak inrush
+          current moves between the three phases as the closing time shifts. For every run the tool records the peak
+          HV-side current on each phase and saves the current-versus-time waveform, so you can see both the numbers
+          and the classic offset, slowly decaying inrush shape.
+        </p>
+      </div>
+
+      <!-- 2 Assumptions -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">2</span> Assumptions
+        </div>
+        <ul class="assumption-list">
+          <li>Study case: <code>03.1 Transformer Energisation I</code> (EMT, <code>ComInc</code> with <code>iopt_sim = 'ins'</code> then <code>ComSim</code>), operating scenario <code>Transformer Energisation</code></li>
+          <li>Energised transformer: <code>TRF1.ElmTr2</code>; the HV-side phase currents are monitored</li>
+          <li>Breaker: <code>CB4</code>, closed by the <code>CB4.EvtSwitch</code> switch event in the study case's simulation event list</li>
+          <li>Swept input: the switch event's closing time <code>e:time</code>, 0 to 0.02&nbsp;s in 0.004&nbsp;s steps (6 EMT runs). One 50&nbsp;Hz cycle is 0.02&nbsp;s, so the sweep covers a full cycle of point-on-wave angles</li>
+          <li>Monitored outputs: HV phase currents <code>m:I:bushv:A</code>, <code>m:I:bushv:B</code>, <code>m:I:bushv:C</code> (kA), peak (<code>Maximum</code>) of each, with the time-versus-current graph saved</li>
+          <li><strong>Units on this study case:</strong> the switch-event time is in seconds, but the simulation time base is in milliseconds, so a <strong>Stop Time of 200</strong> gives a 0.2&nbsp;s window; the pre-energisation window starts at &minus;100&nbsp;ms</li>
+        </ul>
+      </div>
+
+      <!-- 3 What to Input -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">3</span> What to Input
+        </div>
+        <div class="readonly-fields">
+
+          <div class="readonly-group-title">Initialisation</div>
+          <div class="form-row">
+            <label>Problem Type</label>
+            <select disabled><option>Brute Force</option></select>
+          </div>
+          <div class="form-row">
+            <label>Study Type</label>
+            <select disabled><option>Dynamic EMT</option></select>
+          </div>
+          <div class="form-row">
+            <label>Stop Time</label>
+            <input type="number" readonly value="200" />
+          </div>
+          <div class="form-row">
+            <label>Coding Style</label>
+            <select disabled><option>Python File</option></select>
+          </div>
+
+          <div class="readonly-group-title">Input Variables</div>
+          <div class="dyn-table-wrapper">
+            <table class="dyn-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Object</th>
+                  <th>Attribute</th>
+                  <th>Lower</th>
+                  <th>Upper</th>
+                  <th>Step</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="text" readonly value="breaker_closing_time" /></td>
+                  <td><input type="text" readonly value="CB4.EvtSwitch" /></td>
+                  <td><input type="text" readonly value="e:time" /></td>
+                  <td><input type="number" readonly value="0" /></td>
+                  <td><input type="number" readonly value="0.02" /></td>
+                  <td><input type="number" readonly value="0.004" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="readonly-group-title">Output Variables</div>
+
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="TRF1_I_HV_A" style="max-width:200px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row"><label>Object</label><input type="text" readonly value="TRF1.ElmTr2" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="m:I:bushv:A" /></div>
+              <div class="form-row"><label>Metric</label><select disabled><option>Maximum</option></select></div>
+              <div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent2);">
+                <input type="checkbox" checked disabled style="accent-color:var(--accent2);" />
+                Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>)
+              </div>
+            </div>
+          </div>
+
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="TRF1_I_HV_B" style="max-width:200px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row"><label>Object</label><input type="text" readonly value="TRF1.ElmTr2" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="m:I:bushv:B" /></div>
+              <div class="form-row"><label>Metric</label><select disabled><option>Maximum</option></select></div>
+              <div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent2);">
+                <input type="checkbox" checked disabled style="accent-color:var(--accent2);" />
+                Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>)
+              </div>
+            </div>
+          </div>
+
+          <div class="output-var-item">
+            <div class="output-var-header">
+              <span class="ov-type-badge">Timeseries</span>
+              <input type="text" readonly value="TRF1_I_HV_C" style="max-width:200px" />
+            </div>
+            <div class="output-var-body">
+              <div class="form-row"><label>Object</label><input type="text" readonly value="TRF1.ElmTr2" /></div>
+              <div class="form-row"><label>Attribute</label><input type="text" readonly value="m:I:bushv:C" /></div>
+              <div class="form-row"><label>Metric</label><select disabled><option>Maximum</option></select></div>
+              <div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent2);">
+                <input type="checkbox" checked disabled style="accent-color:var(--accent2);" />
+                Output graph (Time vs variable, saved as .png in <code>{output_dir}/graph</code>)
+              </div>
+            </div>
+          </div>
+
+          <p class="hint" style="margin:4px 0 14px;">The <code>Maximum</code> metric records each phase's largest
+            positive current. Inrush pulses can be positive or negative depending on the phase and the closing
+            angle, so a phase whose inrush is negative on a given run reads near zero in the table while its real
+            peak shows up in the saved graph. Reading all three phases together captures the full picture; add a
+            <code>Minimum</code> output per phase if you want the negative peaks as numbers too.</p>
+
+        </div>
+      </div>
+
+      <!-- Steps -->
+      <div class="sub-section steps-section">
+        <div class="steps-title">Running the Code</div>
+        <div class="step-row">
+          <span class="step-badge">4</span>
+          <span>Click <strong>⚡ Generate Code</strong> in the tool.</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">5</span>
+          <span>Click <strong>Copy</strong> (or download as <code>.py</code>).</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">6</span>
+          <div>
+            <div>Paste the code into your Python environment and run it.</div>
+            <div class="step-note">Six EMT runs (one per closing time) take a couple of minutes. Each run writes a
+              time-versus-current PNG per phase to <code>{output_dir}/graph/</code>.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">7</span>
+          <div>
+            <div>When prompted, select the <strong>project</strong> and <strong>study case</strong> to run against.</div>
+            <div class="step-note">If you have more than one project loaded, enter the index of <strong>Switching
+              Transients</strong>; then choose the <strong>03.1 Transformer Energisation I</strong> study case (and
+              the operating scenario, if asked). A single project / study case is selected automatically.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expected Output -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">8</span> Expected Output
+        </div>
+        <p class="hint">The script writes a summary CSV: the swept closing time, the convergence flag, then the peak
+          HV current on each phase (kA). Time-domain inrush waveforms for each phase are saved as <code>.png</code>
+          in <code>{output_dir}/graph/</code>, one per closing time. Real values from a run (rounded):</p>
+        <pre class="output-preview">breaker_closing_time,Converge?,TRF1_I_HV_A,TRF1_I_HV_B,TRF1_I_HV_C
+0.000,True,0.114,0.623,0.002
+0.004,True,0.000,0.935,0.003
+0.008,True,0.000,0.003,0.937
+0.012,True,0.159,0.002,0.591
+0.016,True,1.034,0.001,0.001
+0.020,True,0.114,0.623,0.001</pre>
+        <p class="hint">Each phase's peak inrush appears at a different closing time, because the three pole voltages
+          are 120&nbsp;degrees apart. The largest positive peak in this run is <strong>≈&nbsp;1.03&nbsp;kA on phase
+          A at a 0.016&nbsp;s closing time</strong>, when that pole closes near a voltage zero and drives the core
+          deep into saturation. Note that the <code>0.000&nbsp;s</code> and <code>0.020&nbsp;s</code> rows match:
+          one 50&nbsp;Hz cycle later is the same point on the wave.</p>
+
+        <div class="graph-figure-row">
+          <figure class="graph-figure">
+            <img src="assets/sample-06-inrush-low.png" alt="Phase A HV current versus time for a 0.012 s closing time, a small inrush peaking near 0.16 kA" loading="lazy" />
+            <figcaption><code>closing_time = 0.012&nbsp;s</code>: phase A closes near its voltage peak, so its inrush
+              stays small (≈&nbsp;0.16&nbsp;kA).</figcaption>
+          </figure>
+          <figure class="graph-figure">
+            <img src="assets/sample-06-inrush-high.png" alt="Phase A HV current versus time for a 0.016 s closing time, a large offset inrush peaking near 1.03 kA and decaying slowly" loading="lazy" />
+            <figcaption><code>closing_time = 0.016&nbsp;s</code>: phase A closes near a voltage zero, so its inrush
+              jumps to ≈&nbsp;1.03&nbsp;kA and decays slowly.</figcaption>
+          </figure>
+        </div>
+        <p class="hint">These two PNGs are the <code>TRF1_I_HV_A</code> graphs the script saves to
+          <code>{output_dir}/graph/</code>, one per closing time. The offset, unidirectional pulses that decay over
+          many cycles are the signature of transformer inrush, and the contrast between the two closing times is the
+          point-on-wave effect. Plotting all three phases from one run shows how the inrush rotates between phases:</p>
+
+        <div class="graph-figure-row">
+          <figure class="graph-figure">
+            <img src="assets/sample-06-inrush-3phase.png" alt="Three-phase HV inrush current versus time at a 0.016 s closing time, phase A offset positive and phases B and C offset negative, all decaying slowly" loading="lazy" />
+            <figcaption>All three HV phase currents at <code>closing_time = 0.016&nbsp;s</code>. Current is zero
+              until <code>CB4</code> closes, then each phase draws an offset, slowly decaying inrush.</figcaption>
+          </figure>
+        </div>
       </div>
 
     </div>

@@ -464,8 +464,22 @@ function buildStudyHelper(cfg) {
 `;
   } else if (st === 'harmonic') {
     code += `def run_study_harmonic(app):
-    """Execute a harmonic load flow using ComHldf. Returns True if converged."""
+    """Execute a harmonic load flow using ComHldf. Returns True if converged.
+
+    ComHldf will not run headless unless two conditions are met:
+      1. A result file (ElmRes) is assigned to p_resvar. Without it the command
+         aborts with "No result file provided."
+      2. A converged load flow exists whose balanced/unbalanced setting matches
+         the harmonic calculation. A balanced harmonic load flow aborts with
+         "Balanced harmonics analysis requires balanced load flow." if the
+         preceding load flow was unbalanced. We match ComLdf.iopt_net to
+         ComHldf.iopt_net and run the load flow first.
+    """
     cmd = app.GetFromStudyCase("ComHldf")
+    cmd.p_resvar = app.GetFromStudyCase("ElmRes")
+    ldf = app.GetFromStudyCase("ComLdf")
+    ldf.iopt_net = cmd.iopt_net
+    ldf.Execute()
     err = cmd.Execute()
     return err == 0
 `;
@@ -490,7 +504,7 @@ function buildStudyHelper(cfg) {
 `;
   } else if (st === 'dynamic_emt') {
     code += `def run_study_dynamic_emt(app, tstop=${tstop}):
-    """Execute a dynamic EMT simulation using ComInc (iopt_sim='ins') + ComSim. Returns True if initial conditions converged."""
+    """Execute a dynamic EMT simulation using ComInc (iopt_sim='ins') + ComSim. Returns True if initial conditions were computed."""
     output_window = app.GetOutputWindow()
     output_window.Clear()
 
@@ -501,9 +515,13 @@ function buildStudyHelper(cfg) {
     comSim.tstop = tstop
 
     app.EchoOff()         # Required: suppresses ComInc console flood
-    comInc.Execute()
+    inc_err = comInc.Execute()
     app.EchoOn()
-    converged = comInc.ZeroDerivative() == 1  # 1 = converged; 0 = derivatives not at zero
+    # ZeroDerivative() is the right convergence test for RMS (a DC steady state has
+    # zero derivatives), but NOT for instantaneous EMT: the state variables are the
+    # actual waveforms, so they oscillate at power frequency and their derivatives
+    # are never zero. Base EMT convergence on the ComInc return code instead.
+    converged = inc_err == 0  # 0 = initial conditions computed successfully
     comSim.Execute()
     return converged
 `;

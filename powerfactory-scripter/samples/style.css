@@ -722,3 +722,45 @@
     .dyn-table { min-width: 420px; }
     .faq-table { font-size: 12px; }
   }
+
+  /* ── BUILT-IN MODELS GRID ────────────────────────────────────────── */
+  .model-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .model-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+  }
+  .model-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13.5px;
+    color: var(--text);
+  }
+  .model-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent2);
+    background: rgba(126,231,196,0.10);
+    border: 1px solid rgba(126,231,196,0.28);
+    border-radius: 6px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+  }
+  .model-item p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+  @media (max-width: 720px) {
+    .model-grid { grid-template-columns: 1fr; }
+  }
