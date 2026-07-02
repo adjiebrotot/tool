@@ -330,7 +330,9 @@ function calcTaxProgressive(income) {
   let prev = 0;
   for (const b of S.brackets) {
     const top = b.to !== null ? b.to : Infinity;
-    const width = top - prev;
+    // Guard against a mis-ordered ladder (a bracket whose upper bound sits below
+    // the previous one): a negative width would otherwise subtract tax.
+    const width = Math.max(0, top - prev);
     const chunk = Math.min(remaining, width);
     tax += chunk * b.rate;
     remaining -= chunk;
@@ -503,8 +505,11 @@ function computeModel() {
     }
   }
 
-  const currentHusbandGross = S.totalSalary * husbandPct;
-  const currentWifeGross = S.totalSalary * wifePct;
+  // In "Husband + Wife" mode tax the exact salaries the user typed. splitPct is
+  // rounded to a whole percent for the sweep chart, so deriving the grosses from
+  // it here would tax slightly-wrong amounts.
+  const currentHusbandGross = S.inputMode === 'individual' ? S.husbandSalary : S.totalSalary * husbandPct;
+  const currentWifeGross    = S.inputMode === 'individual' ? S.wifeSalary    : S.totalSalary * wifePct;
   const currentHusbandDeduction = S.inputMode === 'individual' ? S.husbandDeduction : S.deduction * husbandPct;
   const currentWifeDeduction = S.inputMode === 'individual' ? S.wifeDeduction : S.deduction * wifePct;
   const curHusbandNet = Math.max(0, currentHusbandGross - currentHusbandDeduction);
@@ -700,7 +705,7 @@ function updateSummary(state){
     {label:T('tilePtkpWife'),value:fmt.idr(s.ptkpW,true)},
     {label:T('tileTotalPtkpPisah'),value:fmt.idr(s.ptkpH+s.ptkpW,true)},
     {label:'PTKP Gabung (K/I/'+S.dependents+')',value:fmt.idr(s.ptkpGabung,true)},
-    {label:T('tileGrossalary'),value:fmt.idr(c.totalGross,true)},
+    {label:T('tileGrosssalary'),value:fmt.idr(c.totalGross,true)},
     {label:T('tileDeductions'),value:fmt.idr(c.totalDeduction,true)},
     {label:T('tileNetIncome'),value:fmt.idr(c.netIncome,true)},
     {label:T('tileHusbandNet'),value:fmt.idr(c.husbandNet,true)},
@@ -899,7 +904,10 @@ function buildBracketEditor(){
       this.setSelectionRange(Math.max(0,pos+(newLen-oldLen)),Math.max(0,pos+(newLen-oldLen)));
     });
     toEl.addEventListener('change',()=>{
-      const newTo=toEl.value===''?null:parseBracketNum(toEl.value);
+      let newTo=toEl.value===''?null:parseBracketNum(toEl.value);
+      // Keep the ladder monotonic: an upper bound can't drop below this bracket's
+      // own lower bound (which is the previous bracket's "to" + 1).
+      if(newTo!==null) newTo=Math.max(newTo, S.brackets[i].from);
       S.brackets[i].to=newTo;
       if(i+1<S.brackets.length&&newTo!==null){
         S.brackets[i+1].from=newTo+1;

@@ -21,6 +21,11 @@
       "usd_rate": 1.0
     },
     {
+      "country": "New Zealand",
+      "currency": "NZD",
+      "usd_rate": 1.67
+    },
+    {
       "country": "Cayman Islands",
       "currency": "KYD",
       "usd_rate": 0.8333

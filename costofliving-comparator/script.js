@@ -128,7 +128,9 @@ function cityKey(c){return c.city+'|'+c.country;}
 function cityLabel(c){return c.city+', '+c.country;}
 function cityDisplay(c){return c.city+', '+c.country;}
 
-function getRate(curr){return RATES[curr]||1;}
+// Returns 0 (falsy) for a currency with no known USD rate so the conversion
+// guards below fire and the UI shows "—" instead of silently converting 1:1.
+function getRate(curr){return RATES[curr]||0;}
 
 // Returns number of fromCurr per 1 toCurr using DB rates (DST/SRC notation)
 function getDefaultFxRate(fromCurr, toCurr){
@@ -153,6 +155,7 @@ function convertExpense(amount, fromCity, toCity, indexKey, customRate){
 
 function convertCurr(amount,fromCurr,toCurr){
   const fr=getRate(fromCurr), tr=getRate(toCurr);
+  if(!fr||!tr)return NaN; // unknown rate → let the display fall back to "—"
   return amount/fr*tr;
 }
 
@@ -310,10 +313,12 @@ function renderSimpleSave(area,from,to){
   const fs=S.fromSalary||0, fe=S.fromExpense||0, ts=S.toSalary||0;
   const ck=coliKey();
   const fi=from[ck]||100, ti=to[ck]||100;
-  // Custom FX: S.customFxSimple = fromCurr per 1 toCurr (e.g. IDR per AUD)
+  // Custom FX: S.customFxSimple = fromCurr per 1 toCurr (e.g. IDR per AUD).
+  // With no custom rate and a missing DB rate the multipliers are NaN so the
+  // estimates render as "—" rather than a wrong 1:1 conversion.
   const cfx=S.customFxSimple;
-  const fromToMult=cfx&&cfx>0?(1/cfx):(tr/fr);  // FC→TC multiplier
-  const toFromMult=cfx&&cfx>0?cfx:(fr/tr);        // TC→FC multiplier
+  const fromToMult=cfx&&cfx>0?(1/cfx):(fr&&tr?tr/fr:NaN);  // FC→TC multiplier
+  const toFromMult=cfx&&cfx>0?cfx:(fr&&tr?fr/tr:NaN);        // TC→FC multiplier
   const te=fe?fe*fromToMult*(ti/fi):0;
   const fSav=fs-fe, tSav=ts-te;
   const fRatio=fs>0?fSav/fs*100:0, tRatio=ts>0?tSav/ts*100:0;
@@ -375,7 +380,7 @@ function renderSimpleSave(area,from,to){
       </div>
     </div>
   </div>
-  <div class="summary-box" id="ss_summary">${buildSaveSummary(from,to,fc,tc,fr,tr,fSav,tSav,fRatio,tRatio)}</div>
+  <div class="summary-box" id="ss_summary">${buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,tRatio)}</div>
 </section>`;
 
   const fsEl = document.getElementById('ss_fs');
@@ -395,18 +400,18 @@ function renderSimpleSave(area,from,to){
   }
 }
 
-function buildSaveSummary(from,to,fc,tc,fr,tr,fSav,tSav,fRatio,tRatio){
+function buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,tRatio){
   if(!S.fromSalary&&!S.toSalary)return'Enter your salaries above to see the comparison summary.';
-  // Common currency: USD
-  const fSavUSD=fSav/fr, tSavUSD=tSav/tr;
-  const nomDiffUSD=tSavUSD-fSavUSD;
-  const nomDiffTC=nomDiffUSD*tr, nomDiffFC=nomDiffUSD*fr;
+  // Nominal-savings gap, expressed in the destination currency (and the source
+  // currency), converted with the same custom-aware FX the on-screen cells use.
+  const nomDiffTC=tSav-fSav*fromToMult;
+  const nomDiffFC=nomDiffTC*toFromMult;
   const ratDiff=tRatio-fRatio;
-  const nomPos=nomDiffUSD>=0, ratPos=ratDiff>=0;
-  const contradict=(nomPos!==ratPos)&&Math.abs(ratDiff)>0.5&&Math.abs(nomDiffUSD)>0.5;
+  const nomPos=nomDiffTC>=0, ratPos=ratDiff>=0;
+  const contradict=(nomPos!==ratPos)&&Math.abs(ratDiff)>0.5&&Math.abs(nomDiffTC)>0.5;
   const toName=`<strong>${to.city}</strong>`;
   let nomTxt='', ratTxt='';
-  if(Math.abs(nomDiffUSD)<0.5){nomTxt=`Living in ${toName} gives roughly the <strong>same nominal savings</strong> as ${from.city}`;}
+  if(Math.abs(nomDiffTC)<0.5){nomTxt=`Living in ${toName} gives roughly the <strong>same nominal savings</strong> as ${from.city}`;}
   else if(nomPos){nomTxt=`Living in ${toName} gives you <span style="color:var(--positive-em);font-weight:700;">${fmtC(Math.abs(nomDiffTC),tc)}${fc!==tc?' (≈ '+fmtC(Math.abs(nomDiffFC),fc)+')':''}</span> <strong>more</strong> in monthly savings`;}
   else{nomTxt=`Living in ${toName} gives you <span style="color:var(--negative-em);font-weight:700;">${fmtC(Math.abs(nomDiffTC),tc)}${fc!==tc?' (≈ '+fmtC(Math.abs(nomDiffFC),fc)+')':''}</span> <strong>less</strong> in monthly savings`;}
   if(Math.abs(ratDiff)<0.5){ratTxt=`with a similar savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)})`;}
@@ -425,8 +430,8 @@ function renderSimpleEarn(area,from,to){
   const ck=coliKey();
   const fi=from[ck]||100, ti=to[ck]||100;
   const cfx=S.customFxSimple;
-  const fromToMult=cfx&&cfx>0?(1/cfx):(tr/fr);
-  const toFromMult=cfx&&cfx>0?cfx:(fr/tr);
+  const fromToMult=cfx&&cfx>0?(1/cfx):(fr&&tr?tr/fr:NaN);
+  const toFromMult=cfx&&cfx>0?cfx:(fr&&tr?fr/tr:NaN);
   const fSav=fs-fe, fRatio=fs>0?fSav/fs:0;
   const te=fe?fe*fromToMult*(ti/fi):0;
 
@@ -526,8 +531,8 @@ function renderSimpleEarn(area,from,to){
 function buildEarnSummary(from,to,fc,tc,fr,tr,toReq,fSav,fRatPct,toRatio){
   if(!S.fromSalary)return'Enter your current salary and expenses to calculate what you need to earn in '+to.city+'.';
   const cfx=S.customFxSimple;
-  const fromToMult=cfx&&cfx>0?(1/cfx):(tr/fr);
-  const toFromMult=cfx&&cfx>0?cfx:(fr/tr);
+  const fromToMult=cfx&&cfx>0?(1/cfx):(fr&&tr?tr/fr:NaN);
+  const toFromMult=cfx&&cfx>0?cfx:(fr&&tr?fr/tr:NaN);
   const cross=fc!==tc?' (≈ '+fmtC(toReq*toFromMult,fc)+')':'';
   if(S.savingsTarget==='ratio'){
     return`To maintain the same <strong>${fmtP(fRatPct)}</strong> savings ratio in <strong>${to.city}</strong>, you need a net monthly salary of <strong>${fmtC(toReq,tc)}</strong>${cross}.`;
@@ -644,7 +649,9 @@ function buildDetailHTML(fromCity,toCities){
 
     toCities.forEach((tc,ci)=>{
       if(!tc||!fromCity){cols+=`<td class="num-td">—</td>`;return;}
-      const ovKey=`${ri}_${ci}`;
+      // Overrides are keyed by destination column only (they already live on the
+      // row object), so they survive inserting/removing OTHER expense rows.
+      const ovKey=String(ci);
       const isOv=row.overrides&&(ovKey in row.overrides);
       const cfxCi=S.customFxDetailed[ci]??null;
       const calc=calcExp(fv,fromCity,tc,cat.index,cfxCi);
@@ -680,7 +687,7 @@ function buildDetailHTML(fromCity,toCities){
     const curr=tc.currency;
     const customFx=S.customFxDetailed[ci]??null;
     const totExp=S.detailRows.reduce((s,row,ri)=>{
-      const ovKey=`${ri}_${ci}`;
+      const ovKey=String(ci);
       if(row.overrides&&(ovKey in row.overrides))return s+(row.overrides[ovKey]||0);
       const cat=CATS.find(c=>c.id===row.catId)||CATS[0];
       return s+calcExp(row.fromAmount||0,fromCity,tc,cat.index,customFx);
@@ -744,7 +751,7 @@ function calcReqSal(ci,fromCity,toCity){
   if(!fromCity||!toCity)return 0;
   const customFx=S.customFxDetailed[ci]??null;
   const totToExp=S.detailRows.reduce((s,row,ri)=>{
-    const ovKey=`${ri}_${ci}`;
+    const ovKey=String(ci);
     if(row.overrides&&(ovKey in row.overrides))return s+(row.overrides[ovKey]||0);
     const cat=CATS.find(c=>c.id===row.catId)||CATS[0];
     return s+calcExp(row.fromAmount||0,fromCity,toCity,cat.index,customFx);
@@ -782,7 +789,9 @@ function wireDetail(fromCity,toCities){
     btn.addEventListener('click',()=>{
       const ci=+btn.dataset.ci;
       S.detailToCities.splice(ci,1); S.detailToSalaries.splice(ci,1); S.customFxDetailed.splice(ci,1);
-      S.detailRows.forEach(r=>{const nb={};Object.entries(r.overrides||{}).forEach(([k,v])=>{const[ri,oci]=k.split('_').map(Number);if(oci!==ci)nb[`${ri}_${oci>ci?oci-1:oci}`]=v;});r.overrides=nb;});
+      // Overrides are keyed by destination column — drop the removed column and
+      // shift the higher columns down one.
+      S.detailRows.forEach(r=>{const nb={};Object.entries(r.overrides||{}).forEach(([k,v])=>{const oci=Number(k);if(oci!==ci)nb[String(oci>ci?oci-1:oci)]=v;});r.overrides=nb;});
       renderDetailArea();
     });
   });
@@ -815,7 +824,7 @@ function wireDetail(fromCity,toCities){
     inp.addEventListener('input',()=>{ SharedFmt.liveFormat(inp,{maxDecimals:0}); });
     inp.addEventListener('change',()=>{
       const ri=+inp.dataset.ri, ci=+inp.dataset.ci;
-      const key=`${ri}_${ci}`;
+      const key=String(ci);
       if(!S.detailRows[ri].overrides)S.detailRows[ri].overrides={};
       const v=parseNum(inp.value);
       if(inp.value===''||inp.value.replace(/,/g,'').trim()===''){delete S.detailRows[ri].overrides[key];}
