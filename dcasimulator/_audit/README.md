@@ -10,3 +10,8 @@ accounting integrity and cross-tool consistency against real Adj.Close data.
 - `metrics.js` — confirms the two tools' time-weighted-return definitions agree.
 
 Run: `node run.js` and `node metrics.js` (point the CSV paths at local data first).
+
+- `seed_tz_audit.mjs` — custom-asset (GBM) determinism: same asset must give
+  the same price path across DCA styles/amounts and across the two tools, and
+  the generated date axis must not depend on the user's timezone.
+  Run: `node seed_tz_audit.mjs`.
