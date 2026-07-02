@@ -271,13 +271,16 @@ function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPri
   let d=new Date(startDate); const end=new Date(endDate);
   let price=startPrice; const dt=1/252, mu=annualReturn/100, sigma=annualStd/100;
   while(d<=end){
-    const dow=d.getDay();
+    // isoDate() emits the UTC calendar date, so the weekend filter and the day
+    // step must be UTC too — otherwise users west of UTC drop Mondays and gain
+    // Saturday-dated points (the date axis would depend on the local timezone).
+    const dow=d.getUTCDay();
     if(dow!==0&&dow!==6){
       dates.push(isoDate(d)); prices.push(price);
       const z=(randomFn()*2-1)+(randomFn()*2-1)+(randomFn()*2-1);
       price=price*Math.exp((mu-0.5*sigma*sigma)*dt+sigma*Math.sqrt(dt)*z);
     }
-    d=addDays(d,1);
+    d=new Date(d.getTime()+86400000);
   }
   return {dates, prices};
 }

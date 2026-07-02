@@ -56,6 +56,7 @@ function updateCurrencyPrefixes(){
 }
 
 let scenarios=[], editingIdx=-1, activeAmortIdx=0, sensMode='2d';
+let editorTermFreq='monthly'; // the frequency the editor's Term field currently shows
 let baseRiskFreeRate=4.5; // global risk-free rate from Base tab
 
 function periodsPerYear(f){return{weekly:52,fortnightly:26,monthly:12,yearly:1}[f]||12;}
@@ -250,14 +251,22 @@ function rerender(){
   }
   $('warnBanner').style.display='none';
 
-  const results=[];let anyNegCarry=false;
+  const results=[];let anyNegCarry=false;const dropped=[];
   scenarios.forEach((sc,i)=>{
     const res=computeScenario(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled);
     if(res){res.name=sc.name;res.idx=i;res.colorVar=SCENARIO_COLORS[i%SCENARIO_COLORS.length];if(res.negCarry)anyNegCarry=true;}
+    else dropped.push(sc.name);
     results.push(res);
   });
   $('negCarryBanner').style.display=anyNegCarry?'block':'none';
   $('negCarryBanner').textContent=anyNegCarry?'⚠ Negative carry: finance rate exceeds risk-free rate. Financing will likely cost more than investing.':'';
+  // A scenario whose down payment + upfront fee exceeds available cash can't be
+  // modelled; surface it instead of silently dropping it from the comparison.
+  if(dropped.length){
+    $('warnBanner').style.display='block';
+    $('warnBanner').textContent='⚠ '+dropped.join(', ')+(dropped.length>1?' were':' was')+
+      ' skipped: the down payment plus upfront fee exceeds your available cash. Lower the down payment or fee, or increase available cash.';
+  }
 
   results.forEach(r=>{if(!r)return;const cb=computeCashBaseline(purchaseCost,availableCash,r.termYears,riskFreeRate,inflationRate,inflationEnabled);r.cashBaseWealth=cb.endWealth;r.netBenefit=r.endWealth-cb.endWealth;if(r.inflAdj&&cb.inflAdj)r.inflAdj.netBenefitReal=(r.inflAdj.endWealthReal||0)-(cb.inflAdj.endWealthReal||0);});
 
@@ -288,46 +297,58 @@ function renderMainChart(results){
   const metric=$('chartMetric').value;
   const titles={wealth:'Ending Wealth Over Time',netBenefit:'Net Benefit vs Cash Purchase',investmentValue:'Investment Value Over Time',loanBalance:'Loan Balance Over Time'};
   $('chartTitle').textContent=titles[metric]||'Chart';
-  const maxN=results.reduce((m,r)=>r?Math.max(m,r.n):m,0);
-  if(maxN===0){if(chartInstance){chartInstance.destroy();chartInstance=null;}return;}
-  const labels=[];for(let i=0;i<=maxN;i++)labels.push(i);
+  // Plot on a real-time (years) x-axis so scenarios with different payment
+  // frequencies align by actual duration, not by raw period index (a 5-year
+  // yearly loan and a 5-year monthly loan must both span 0–5 on the axis).
+  const maxYears=results.reduce((m,r)=>r?Math.max(m,r.n/r.ppy):m,0);
+  if(maxYears===0){if(chartInstance){chartInstance.destroy();chartInstance=null;}return;}
+  const rfAnnual=latestResults.riskFreeRate/100;
+  const left=Math.max(0,latestResults.availableCash-latestResults.purchaseCost);
+  // Shared ~monthly sampling grid: every line uses identical x positions so the
+  // multi-scenario tooltip stays aligned.
+  const steps=Math.max(1,Math.round(maxYears*12));
+  const xs=[];for(let k=0;k<=steps;k++)xs.push(maxYears*k/steps);
+
+  // Metric value of a result at a (possibly fractional) period index. Within the
+  // recorded timeline it interpolates between periods; past the loan term the
+  // leftover keeps compounding at the risk-free rate.
+  function periodValue(r, p, rfP_r){
+    const at=idx=>{const t=r.timeline[idx];
+      if(metric==='wealth')return t.wealth;
+      if(metric==='netBenefit')return t.wealth-left*Math.pow(1+rfP_r,idx);
+      if(metric==='investmentValue')return t.investBal;
+      return t.loanBal;};
+    if(p<=r.timeline.length-1){
+      const lo=Math.max(0,Math.floor(p)), hi=Math.min(r.timeline.length-1,Math.ceil(p));
+      return lo===hi ? at(lo) : at(lo)+(at(hi)-at(lo))*(p-lo);
+    }
+    const lastT=r.timeline[r.timeline.length-1];
+    const grown=lastT.investBal*Math.pow(1+rfP_r,p-(r.timeline.length-1));
+    if(metric==='wealth')return grown;
+    if(metric==='netBenefit')return grown-left*Math.pow(1+rfP_r,p);
+    if(metric==='investmentValue')return grown;
+    return 0; // loanBalance after payoff
+  }
+
   const datasets=[],legendItems=[];
   if(metric==='wealth'){
-    const v0=results.find(r=>r);
-    if(v0){const ppy=v0.ppy,rfP=Math.pow(1+latestResults.riskFreeRate/100,1/ppy)-1,left=Math.max(0,latestResults.availableCash-latestResults.purchaseCost);const cd=[];let b=left;for(let i=0;i<=maxN;i++){cd.push(b);b*=(1+rfP);}
-    datasets.push({label:'Cash Purchase',data:cd,borderColor:cssVar('--muted'),backgroundColor:'transparent',borderWidth:2,borderDash:[6,4],pointRadius:0,pointHoverRadius:4,tension:.3,fill:false});legendItems.push({label:'Cash Purchase',color:cssVar('--muted'),dash:true});}
+    const cd=xs.map(yr=>({x:yr,y:left*Math.pow(1+rfAnnual,yr)}));
+    datasets.push({label:'Cash Purchase',data:cd,borderColor:cssVar('--muted'),backgroundColor:'transparent',borderWidth:2,borderDash:[6,4],pointRadius:0,pointHoverRadius:4,tension:.3,fill:false});
+    legendItems.push({label:'Cash Purchase',color:cssVar('--muted'),dash:true});
   }
-  const maxNResult=results.find(r=>r&&r.n===maxN);
-  const freqLabelMap={weekly:'Week',fortnightly:'Fortnight',monthly:'Month',yearly:'Year'};
-  const xAxisLabel=maxNResult?freqLabelMap[maxNResult.freq]||'Period':'Period';
-  const yAxisLabel={wealth:`Wealth (${moneySymbol()})`,netBenefit:`Net Benefit (${moneySymbol()})`,investmentValue:`Investment Value (${moneySymbol()})`,loanBalance:`Loan Balance (${moneySymbol()})`}[metric]||`Value (${moneySymbol()})`;
-  results.forEach(r=>{if(!r)return;const color=cssVar(r.colorVar);const data=[];
-    const rfP_r=Math.pow(1+latestResults.riskFreeRate/100,1/r.ppy)-1;
-    const left=Math.max(0,latestResults.availableCash-latestResults.purchaseCost);
-    const lastT=r.timeline[r.timeline.length-1];
-    for(let p=0;p<=maxN;p++){
-      if(p<r.timeline.length){const t=r.timeline[p];
-        if(metric==='wealth')data.push(t.wealth);
-        else if(metric==='netBenefit')data.push(t.wealth-left*Math.pow(1+rfP_r,p));
-        else if(metric==='investmentValue')data.push(t.investBal);
-        else if(metric==='loanBalance')data.push(t.loanBal);
-      } else {
-        // Loan paid off — continue compounding leftover invest balance at risk-free rate
-        const extra=p-(r.timeline.length-1);const grownWealth=lastT.investBal*Math.pow(1+rfP_r,extra);
-        if(metric==='wealth')data.push(grownWealth);
-        else if(metric==='netBenefit')data.push(grownWealth-left*Math.pow(1+rfP_r,p));
-        else if(metric==='investmentValue')data.push(grownWealth);
-        else if(metric==='loanBalance')data.push(0);
-      }
-    }
+  results.forEach(r=>{if(!r)return;const color=cssVar(r.colorVar);
+    const rfP_r=Math.pow(1+rfAnnual,1/r.ppy)-1;
+    const data=xs.map(yr=>({x:yr,y:periodValue(r, yr*r.ppy, rfP_r)}));
     datasets.push({label:r.name,data,borderColor:color,backgroundColor:color+'22',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:.3,fill:false});legendItems.push({label:r.name,color});
   });
   const le=$('chartLegend');le.innerHTML='';legendItems.forEach(l=>{const d=document.createElement('div');d.className='legend-item';d.innerHTML=`<span class="dot" style="background:${l.color};${l.dash?'border:2px dashed '+l.color+';background:transparent;':''}"></span><span>${l.label}</span>`;le.appendChild(d);});
+  const yAxisLabel={wealth:`Wealth (${moneySymbol()})`,netBenefit:`Net Benefit (${moneySymbol()})`,investmentValue:`Investment Value (${moneySymbol()})`,loanBalance:`Loan Balance (${moneySymbol()})`}[metric]||`Value (${moneySymbol()})`;
+  const xLabelOf=v=>{const n=+v;return Number.isInteger(n)?`Year ${n}`:`Year ${n.toFixed(2)}`;};
   const gc=cssVar('--chart-grid'),mc=cssVar('--chart-text'),tc=cssVar('--text');
   const tipLight=document.body.classList.contains('light');
   const tipBg=tipLight?'#FFFFFF':'#1e1e2e',tipTitle=tipLight?'#2D3436':'#EAF1FF',tipBody=tipLight?'#4A5A6A':'#A8B6CF',tipBorder=tipLight?'#D4DEEF':gc;
-  const cfg={type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>`${xAxisLabel} ${c[0].label}`,label:c=>`  ${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`},backgroundColor:tipBg,titleColor:tipTitle,bodyColor:tipBody,borderColor:tipBorder,borderWidth:1,padding:10,onAfterBody:items=>{if(!items.length)return;$('hoverBox').textContent=`${xAxisLabel} ${items[0].label}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  ');}},zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},scales:{x:{title:{display:true,text:xAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,maxTicksLimit:12,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:yAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
-  if(chartInstance){chartInstance.data=cfg.data;chartInstance.options.scales.x.ticks.color=mc;chartInstance.options.scales.x.grid.color=gc;chartInstance.options.scales.x.title.color=mc;chartInstance.options.scales.x.title.text=xAxisLabel;chartInstance.options.scales.y.ticks.color=mc;chartInstance.options.scales.y.grid.color=gc;chartInstance.options.scales.y.title.color=mc;chartInstance.options.scales.y.title.text=yAxisLabel;chartInstance.update('none');}
+  const cfg={type:'line',data:{datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>xLabelOf(c[0].parsed.x),label:c=>`  ${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`},backgroundColor:tipBg,titleColor:tipTitle,bodyColor:tipBody,borderColor:tipBorder,borderWidth:1,padding:10,onAfterBody:items=>{if(!items.length)return;$('hoverBox').textContent=`${xLabelOf(items[0].parsed.x)}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  ');}},zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},scales:{x:{type:'linear',title:{display:true,text:'Years',color:mc,font:{size:12}},ticks:{color:mc,maxTicksLimit:12,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:yAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
+  if(chartInstance){chartInstance.data=cfg.data;chartInstance.options.scales.x.ticks.color=mc;chartInstance.options.scales.x.grid.color=gc;chartInstance.options.scales.x.title.color=mc;chartInstance.options.scales.y.ticks.color=mc;chartInstance.options.scales.y.grid.color=gc;chartInstance.options.scales.y.title.color=mc;chartInstance.options.scales.y.title.text=yAxisLabel;chartInstance.update('none');}
   else chartInstance=new Chart($('chartCanvas'),cfg);
 }
 
@@ -457,8 +478,26 @@ function runSensitivity(){
       },
       font:{family:'DM Sans',color:isLight?'#2D3436':'#EAF1FF'}
     };
-    Plotly.newPlot('plotly3d',plotData,layout,{responsive:true,displayModeBar:true,displaylogo:false});
+    ensurePlotly()
+      .then(()=>Plotly.newPlot('plotly3d',plotData,layout,{responsive:true,displayModeBar:true,displaylogo:false}))
+      .catch(()=>{ const el=$('plotly3d'); if(el) el.innerHTML='<p class="muted" style="padding:20px;text-align:center;">Could not load the 3D plotting library (Plotly). Check your connection and try again.</p>'; });
   }
+}
+
+/* Lazy-load Plotly on first 3D-surface use so the ~3.5 MB library never blocks
+   the initial page load (it is only needed for the optional 3D sensitivity view). */
+let _plotlyPromise=null;
+function ensurePlotly(){
+  if(window.Plotly) return Promise.resolve();
+  if(_plotlyPromise) return _plotlyPromise;
+  _plotlyPromise=new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';
+    s.onload=()=>resolve();
+    s.onerror=()=>{ _plotlyPromise=null; reject(new Error('Failed to load Plotly')); };
+    document.head.appendChild(s);
+  });
+  return _plotlyPromise;
 }
 
 /* ─── Scenario Management ─── */
@@ -497,6 +536,7 @@ function openEditor(idx){
   $('scDownVal').textContent=fmt.pct(($('scDownPct').value||0)/100,0);
   $('scTerm').value=sc.termPeriods;
   $('scFreq').value=sc.freq;
+  editorTermFreq=sc.freq;
   updateTermLabel(sc.freq);
   $('scFeeAmt').value=fmt.fmtInput(sc.feeAmt);
   $('scFeeType').value=sc.feeType;
@@ -513,7 +553,8 @@ function saveEditor(){
   const downPct=parseFloat($('scDownPct').value);
   sc.downPaymentPct=isNaN(downPct)?0:Math.min(100,Math.max(0,downPct));
   const newFreq=$('scFreq').value;
-  // If freq changed, convert termPeriods
+  // The Term field is kept in the current frequency's units live (see the
+  // scFreq change handler), so here we just persist it.
   if(newFreq!==sc.freq){sc.freq=newFreq;updateTermLabel(newFreq);}
   sc.termPeriods=Math.max(1,Math.round(parseFloat($('scTerm').value)||defaultTerm(sc.freq)));
   sc.feeAmt=Math.max(0,parseNumInput($('scFeeAmt')));
@@ -536,8 +577,18 @@ $('cancelScenarioBtn').addEventListener('click',closeEditor);
 ['input','change'].forEach(evt=>{$('scRate').addEventListener(evt,()=>{$('scRateVal').textContent=fmt.pct(parseFloat($('scRate').value)/100);});});
 ['input','change'].forEach(evt=>{$('scDownPct').addEventListener(evt,()=>{$('scDownVal').textContent=fmt.pct(parseFloat($('scDownPct').value||0)/100,0);});});
 
-// Freq change updates term label immediately
-$('scFreq').addEventListener('change',()=>{updateTermLabel($('scFreq').value);});
+// Freq change: convert the Term field to the new unit so the loan DURATION is
+// preserved (60 months → 260 weeks, not 60 weeks), then update the label.
+$('scFreq').addEventListener('change',()=>{
+  const newFreq=$('scFreq').value;
+  if(newFreq!==editorTermFreq){
+    const curTerm=parseFloat($('scTerm').value)||defaultTerm(editorTermFreq);
+    const years=termToYears(curTerm, editorTermFreq);
+    $('scTerm').value=Math.max(1,Math.round(years*periodsPerYear(newFreq)));
+    editorTermFreq=newFreq;
+  }
+  updateTermLabel(newFreq);
+});
 
 ['scName','scTerm','scFeeType'].forEach(id=>{['input','change'].forEach(evt=>{$(id).addEventListener(evt,()=>{/* live preview only on save click */});});});
 ['scFeeAmt'].forEach(id=>{$(id).addEventListener('blur',()=>{/* handled on save */});});
@@ -820,6 +871,7 @@ $('sens2dPngBtn').addEventListener('click', () => {
   downloadChartJsPng('sensCanvas', 'financing_sensitivity_2d.png', title, 'sensLegend');
 });
 async function withSens3dPngAnnotations(callback) {
+  await ensurePlotly();
   const title3d = document.getElementById('sens3dTitle')?.textContent || 'Finance vs Cash — 3D Sensitivity Surface';
   const titleAnnotation = {
     xref:'paper', yref:'paper', x:0.5, y:1.06, xanchor:'center', yanchor:'bottom',
@@ -867,6 +919,7 @@ $('sens2dSvgBtn').addEventListener('click', () => {
   downloadChartJsSvg('sensCanvas', 'financing_sensitivity_2d.svg', title, 'sensLegend');
 });
 $('sens3dSvgBtn').addEventListener('click', async () => {
+  await ensurePlotly();
   const title3d = document.getElementById('sens3dTitle')?.textContent || 'Finance vs Cash — 3D Sensitivity Surface';
   const titleAnnotation = {
     xref:'paper', yref:'paper', x:0.5, y:1.06, xanchor:'center', yanchor:'bottom',

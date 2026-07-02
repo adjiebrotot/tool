@@ -60,40 +60,36 @@ if(process.env.__TZ_CHILD){
   process.exit(0);
 }
 
-// ── S1: single-asset tool — same asset, different DCA style/amount ──
+// The single-asset tool builds the GBM seed inside runSimulation; extract that
+// literal from source so the tests track the real behaviour, not a copy.
+const singleSeedKey = (singleSrc.match(/deriveSeed\(currentRandomSeed,\s*`([^`]*)`\)/)||[])[1] || '';
+const portSeedKey   = (portSrc.match(/deriveSeed\(currentRandomSeed,\s*`([^`]*)`\)/)||[])[1] || '';
+
+// ── S1: single-asset seed must depend on the asset identity only, not on the
+//        DCA style/amount being tested (else comparing styles compares different
+//        price histories). ──
 {
-  // runSimulation seeds with `${name}|${returnPct}|${stdPct}|${amount}|${style}|${dayOrDate}`
-  const key = (amount,style,dayOrDate)=>`SIM A|8|15|${amount}|${style}|${dayOrDate}`;
-  const gen = k => single.generateGBMPrices('2020-01-01','2020-06-30', 8, 15, 100,
-    single.createSeededRng(single.deriveSeed(SEED, k))).prices;
-  const a = gen(key(1000,'monthly-date',1));
-  const b = gen(key(1000,'weekly-day',1));      // user only switched style
-  const c = gen(key(500 ,'monthly-date',1));    // user only changed amount
-  const same=(x,y)=>x.length===y.length&&x.every((v,i)=>v===y[i]);
-  check('S1 single-asset: price path of a custom asset is independent of DCA style/amount',
-    same(a,b)&&same(a,c),
-    `same asset, style changed → paths diverge at day 1: ${a[1].toFixed(4)} vs ${b[1].toFixed(4)}; `+
-    `amount changed → ${a[1].toFixed(4)} vs ${c[1].toFixed(4)}`);
+  const strategyTokens = ['amount','style','dayOrDate'];
+  const leaks = strategyTokens.filter(t=>singleSeedKey.includes(t));
+  check('S1 single-asset custom-asset seed excludes DCA style/amount',
+    leaks.length===0,
+    `seed key is \`${singleSeedKey}\` — strategy params ${JSON.stringify(leaks)} would fork the price path per style/amount`);
 }
 
-// ── S2: portfolio tool — seed keyed on asset identity only ──
+// ── S2: portfolio tool seeds on asset identity only (reference behaviour). ──
 {
-  const gen = k => port.generateGBMPrices('2020-01-01','2020-06-30', 8, 15, 100,
-    port.createSeededRng(port.deriveSeed(SEED, k))).prices;
-  // portfolio seeds with `${name}|${returnPct}|${stdPct}` — no strategy params
-  const a = gen('SIM A|8|15'), b = gen('SIM A|8|15');
-  check('S2 portfolio: same custom asset → same path', a.every((v,i)=>v===b[i]), '');
+  check('S2 portfolio custom-asset seed is identity-only (name|return|std)',
+    /^\$\{a\.name\}\|\$\{a\.returnPct\}\|\$\{a\.stdPct\}$/.test(portSeedKey),
+    `seed key is \`${portSeedKey}\``);
 }
 
-// ── S3: cross-tool — the same named custom asset should look the same in both ──
+// ── S3: cross-tool — both tools must seed the same identity fields so the same
+//        named custom asset renders the same price path in both. ──
 {
-  const s = single.generateGBMPrices('2020-01-01','2020-06-30', 8, 15, 100,
-    single.createSeededRng(single.deriveSeed(SEED, 'SIM A|8|15|1000|monthly-date|1'))).prices;
-  const p = port.generateGBMPrices('2020-01-01','2020-06-30', 8, 15, 100,
-    port.createSeededRng(port.deriveSeed(SEED, 'SIM A|8|15'))).prices;
-  check('S3 cross-tool: identical custom asset renders the same price path in both tools',
-    s.length===p.length && s.every((v,i)=>v===p[i]),
-    `single-asset seeds on strategy params too, so the two tools show different "history" for the same asset`);
+  const norm = k => k.replace(/\$\{(?:sec|a)\.(\w+)\}/g,'$1'); // strip sec./a. prefixes
+  check('S3 cross-tool: single-asset and portfolio seed on the same identity fields',
+    norm(singleSeedKey)===norm(portSeedKey) && norm(singleSeedKey)==='name|returnPct|stdPct',
+    `single=\`${singleSeedKey}\`  portfolio=\`${portSeedKey}\``);
 }
 
 // ── TZ: date axis must not depend on the user's timezone ──

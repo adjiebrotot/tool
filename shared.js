@@ -400,8 +400,11 @@
     }
     return {signal:sig, lines};
   }
-  // A stable Sunday-aligned week key (year + week-of-year), matching the scheme
-  // the fixed Weekly styles use so every "weekly" feature buckets identically.
+  // A stable Sunday-aligned "year + week-of-year" key. NOTE: despite the name
+  // this is NOT an ISO-8601 week number (ISO weeks are Monday-aligned and can
+  // roll a late-December date into week 1 of the next year). It is a simple
+  // local-time bucket that every "weekly" feature shares so they group
+  // identically; the name is kept only because both tools import it by this name.
   function isoWeekBucket(dateStr){
     const dt=taParseDate(dateStr);
     const y=dt.getFullYear();

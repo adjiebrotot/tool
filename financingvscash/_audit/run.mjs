@@ -100,17 +100,17 @@ async function compTable(){
   const chart=await page.evaluate(()=>{
     const ch=window.__charts[window.__charts.length-1];
     const ds=ch.data.datasets.find(d=>d.label==='Yearly 5y @5%');
-    return {labels:ch.data.labels.length-1, xTitle:ch.options.scales.x.title.text,
-            last:ds?ds.data[ds.data.length-1]:null, at5:ds?ds.data[5]:null};
+    const last=ds?ds.data[ds.data.length-1]:null;
+    return {xTitle:ch.options.scales.x.title.text, xType:ch.options.scales.x.type,
+            lastX:last?last.x:null, lastY:last?last.y:null};
   });
-  // If the axis were time-aligned, the yearly scenario's line would end at its
-  // 5-year wealth (== the comparison-table Ending Wealth). Instead it is
-  // compounded out to period 60 → 60 YEARS of growth on a 5-year scenario.
-  const ok = Math.abs(chart.last-tableEW) < Math.abs(tableEW)*0.01;
-  check('F2 chart end point of the yearly scenario equals its table Ending Wealth',
+  // On a time (years) axis the yearly scenario ends at x = its actual term (5)
+  // with y = its 5-year ending wealth (== the comparison-table Ending Wealth),
+  // instead of being compounded out to period 60 (60 years).
+  const ok = chart.xType==='linear' && Math.abs(chart.lastX-5)<1e-6 && Math.abs(chart.lastY-tableEW) < Math.abs(tableEW)*0.01;
+  check('F2 mixed-frequency chart uses a time axis; yearly scenario ends at its 5-yr wealth',
     ok,
-    `x-axis "${chart.xTitle}" runs to ${chart.labels}; yearly scenario plotted to ${chart.last?.toFixed(0)} `+
-    `(≈${(chart.last/tableEW).toFixed(1)}× its actual 5-yr ending wealth ${tableEW.toFixed(0)}; its 5-yr value sits at x=5 among the monthly scenarios' month-5 values)`);
+    `x-axis "${chart.xTitle}" (${chart.xType}); yearly scenario ends at x=${chart.lastX}, y=${chart.lastY?.toFixed(0)} vs table Ending Wealth ${tableEW.toFixed(0)}`);
 }
 
 // ── F3: editing a scenario's frequency: the code comments say "If freq changed,

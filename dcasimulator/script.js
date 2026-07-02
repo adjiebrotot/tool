@@ -240,13 +240,6 @@ function parseDate(s){ const [y,m,d]=s.split('-'); return new Date(+y,+m-1,+d); 
 function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
 function isoDate(d){ return d.toISOString().slice(0,10); }
 function dayOfWeek(d){ return d.getDay(); } // 0=Sun
-function getWeekdayInWeek(d, day){ // find given weekday (1=Mon..5=Fri) in the week of d
-  const r=new Date(d);
-  const dow=r.getDay()||7; // Mon=1..Sun=7
-  const diff=(day)-(dow<=5?dow:5);
-  r.setDate(r.getDate()+diff);
-  return r;
-}
 
 /* ─── SIMULATED PRICE GENERATION (GBM) ─── */
 function createSeededRng(seed){
@@ -279,7 +272,10 @@ function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPri
   const mu=annualReturn/100;
   const sigma=annualStd/100;
   while(d<=end){
-    const dow=d.getDay();
+    // isoDate() emits the UTC calendar date, so the weekend filter and the day
+    // step must be UTC too — otherwise users west of UTC drop Mondays and gain
+    // Saturday-dated points (the date axis would depend on the local timezone).
+    const dow=d.getUTCDay();
     if(dow!==0&&dow!==6){
       dates.push(isoDate(d));
       prices.push(price);
@@ -287,7 +283,7 @@ function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPri
       const z=(randomFn()*2-1)+(randomFn()*2-1)+(randomFn()*2-1); // approx normal
       price=price*Math.exp((mu-0.5*sigma*sigma)*dt+sigma*Math.sqrt(dt)*z);
     }
-    d=addDays(d,1);
+    d=new Date(d.getTime()+86400000);
   }
   // Derive a plausible intraday O/H/L around each close so candlestick view has
   // real (simulated) candles. randomFn is consumed AFTER the close loop, so the
@@ -1408,7 +1404,11 @@ async function runSimulation(){
   // Ticker: assign cached slice for the selected range.
   for(const sec of securities){
     if(sec.type==='custom'){
-      const secSeed = deriveSeed(currentRandomSeed, `${sec.name}|${sec.returnPct}|${sec.stdPct}|${sec.amount}|${sec.style}|${sec.dayOrDate}`);
+      // Seed on the asset's identity only (name + return + volatility) so its
+      // simulated price path is stable across DCA styles/amounts — otherwise
+      // comparing two styles would compare two different price histories. Matches
+      // the portfolio tool's seeding.
+      const secSeed = deriveSeed(currentRandomSeed, `${sec.name}|${sec.returnPct}|${sec.stdPct}`);
       const secRng = createSeededRng(secSeed);
       sec.priceData = generateGBMPrices(startDate, endDate, sec.returnPct, sec.stdPct, 100, secRng);
       sec.loaded=true;

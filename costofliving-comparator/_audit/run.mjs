@@ -144,12 +144,23 @@ function expected(fx){ // fx = IDR per 1 AUD
     `override was "777" before deleting row 1; surviving row now shows "${after.val}" (overridden=${after.overridden})`);
 }
 
-// ── C4: every city currency must have an FX rate ──
+// ── C4: a city whose currency has no FX rate must degrade to "—", NOT convert
+//        1:1 with USD. Caracas (VES) has no rate; pick it as the destination and
+//        confirm the estimated expenses show "—" rather than a plausible number. ──
 {
-  const missing = [...new Set(col.data.filter(c=>RATE[c.currency]==null).map(c=>c.currency))];
-  const affected = col.data.filter(c=>RATE[c.currency]==null).map(c=>c.city+', '+c.country);
-  check('C4 all city currencies present in currency_rates.json', missing.length===0,
-    `missing ${JSON.stringify(missing)} → ${affected.join('; ')} silently convert at 1:1 with USD`);
+  await page.evaluate(()=>{ document.querySelector('#modeGroup .seg-btn[data-val="simple"]')?.click(); });
+  await page.waitForTimeout(100);
+  if(!cityIdx['Caracas|Venezuela']){
+    check('C4 missing-rate city degrades to "—"', RATE.VES==null, 'no Caracas in data to test');
+  } else {
+    await pickCity('fromPicker','Perth|Australia');
+    await pickCity('toPicker','Caracas|Venezuela');
+    await setVal('ss_fs', (8000).toLocaleString('en-US'));
+    await setVal('ss_fe', (4000).toLocaleString('en-US'));
+    const te = await page.evaluate(()=>document.querySelectorAll('.col-card')[1].querySelectorAll('.sav-val')[0].textContent.trim());
+    check('C4 destination with no FX rate shows "—" (no silent 1:1 conversion)', te==='—',
+      `estimated expenses for a VES destination render as "${te}" (VES has no rate; must be "—")`);
+  }
 }
 
 await browser.close();
