@@ -30,6 +30,11 @@ window.__TOUR = {
     },
     {
       target: '#tab-data',
+      onEnter: function () {
+        // Make sure the Data panel is showing so the spotlight lands on it.
+        var tab = document.querySelector('.ctrl-tab[data-tab="data"]');
+        if (tab) tab.click();
+      },
       title: '③ Load real or simulated data',
       body: 'Enter tickers such as <code>SPY</code>, <code>AAPL</code>, or ' +
             '<code>AAA.AX</code> to pull real Yahoo Finance prices, or switch to ' +
