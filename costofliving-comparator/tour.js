@@ -21,6 +21,12 @@ window.__TOUR = {
     },
     {
       target: '#simpleCityCard',
+      onEnter: function () {
+        // The two-city card only exists in Simple mode; make sure we are in it
+        // so the spotlight lands on real content rather than a hidden element.
+        var seg = document.querySelector('#modeGroup .seg-btn[data-val="simple"]');
+        if (seg) seg.click();
+      },
       title: '② Pick your two cities',
       body: 'Choose a <strong>From</strong> city and a <strong>To</strong> city from ' +
             '500+ locations, for example <strong>Jakarta to Perth</strong> or ' +

@@ -13,6 +13,11 @@ window.__TOUR = {
     },
     {
       target: '#tab-inputs',
+      onEnter: function () {
+        // Make sure the Inputs panel is showing so the spotlight lands on it.
+        var tab = document.querySelector('.ctrl-tab[data-tab="inputs"]');
+        if (tab) tab.click();
+      },
       title: '① Enter household income',
       body: 'Set the <strong>number of dependents</strong> and the household salary. Use ' +
             '<strong>Total + Split %</strong> to enter one figure and a share, or ' +

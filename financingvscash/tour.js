@@ -14,6 +14,11 @@ window.__TOUR = {
     },
     {
       target: '#tab-base',
+      onEnter: function () {
+        // Make sure the Base panel is showing so the spotlight lands on it.
+        var tab = document.querySelector('.ctrl-tab[data-tab="base"]');
+        if (tab) tab.click();
+      },
       title: '① Set your base numbers',
       body: 'Enter the <strong>purchase cost</strong>, the <strong>cash you have</strong>, ' +
             'and the <strong>risk-free rate</strong> you would earn on cash left invested. ' +
