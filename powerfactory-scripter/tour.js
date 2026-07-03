@@ -260,15 +260,23 @@
 
   function addLaunchButton() {
     var nav = document.querySelector('.header-nav');
-    if (!nav || nav.querySelector('.pf-tour-launch')) return;
+    if (!nav || nav.querySelector('[data-pf-tour-launch]')) return;
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'pf-tour-launch';
+    btn.setAttribute('data-pf-tour-launch', '');
+    // Match the page's own header buttons so the launcher is visually
+    // coherent with the controls around it. Adopt the .btn-theme styling
+    // rather than hard-coding a look; .pf-tour-launch is only a fallback.
+    var themeBtn = nav.querySelector('#themeToggle');
+    var model = themeBtn || nav.querySelector('.btn-theme') || nav.querySelector('button, a');
+    if (model && model.className) {
+      btn.className = model.className.replace(/\bbtn-back\b/g, '').trim();
+    }
+    if (!btn.className) btn.className = 'pf-tour-launch';
     btn.textContent = '🧭 Take a tour';
     btn.addEventListener('click', start);
     // Insert before the theme toggle so it sits next to it.
-    var themeBtn = nav.querySelector('#themeToggle');
-    if (themeBtn) nav.insertBefore(btn, themeBtn);
+    if (themeBtn && themeBtn.parentNode) themeBtn.parentNode.insertBefore(btn, themeBtn);
     else nav.appendChild(btn);
   }
 
