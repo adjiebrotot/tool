@@ -841,7 +841,8 @@ function loadPersistedCache(){
    survives reloads. */
 const SIM_POOL_KEY = 'dca_simPool_v1';
 let simPool = [];
-function persistSimPool(){ try { localStorage.setItem(SIM_POOL_KEY, JSON.stringify(simPool)); } catch(_){} }
+let persist = null; // mini cache handle (assigned at init)
+function persistSimPool(){ try { localStorage.setItem(SIM_POOL_KEY, JSON.stringify(simPool)); } catch(_){} if(persist) persist.schedule(); }
 function loadPersistedSimPool(){
   try { const raw=localStorage.getItem(SIM_POOL_KEY); if(raw){ const a=JSON.parse(raw); if(Array.isArray(a)) simPool=a.filter(x=>x&&x.name); } } catch(_){}
 }
@@ -1354,6 +1355,7 @@ function updateSimBtnState(){
 
 /* ─── RUN SIMULATION ─── */
 async function runSimulation(){
+  if(persist) persist.schedule(); // runSimulation follows every scenario/input change — save it
   const blocked=simBlockReason();
   if(blocked){ showWarning(blocked); return; }
 
@@ -2269,13 +2271,13 @@ $('downloadBtn').addEventListener('click',()=>{
    Lets a user persist every scenario + the global settings and resume later
    instead of re-entering them. Price history is NOT saved (it lives in the
    shared cache and is re-fetched on the next run); only the configuration is. */
-function exportSettings(){
+function buildSettingsObj(){
   const securitiesOut = securities.map(s=>{
     const c = JSON.parse(JSON.stringify(s));
     delete c.priceData; delete c.loaded; delete c.open;  // transient/cache fields
     return c;
   });
-  const obj = {
+  return {
     app:'dca-single', version:1, savedAt:new Date().toISOString(),
     global:{
       currencySymbol: currentCurrencySymbol,
@@ -2288,7 +2290,9 @@ function exportSettings(){
     },
     securities: securitiesOut
   };
-  SharedConfig.download('dca-simulator-settings.json', obj);
+}
+function exportSettings(){
+  SharedConfig.download('dca-simulator-settings.json', buildSettingsObj());
 }
 function importSettings(obj){
   if(!obj || obj.app!=='dca-single'){
@@ -2347,7 +2351,23 @@ refreshTickerSelect();
 updateRateInfo();
 updateBtnRow();
 
-initializeDefaultSecurities();
-runSimulation();
+/* ── Mini cache ──────────────────────────────────────────────────────────
+   Restore the user's last scenario set + global settings (built with the same
+   shape as the export/import config) so a returning user resumes where they
+   left off. If there's no saved config, seed the default securities instead.
+   Price history is not cached here — it lives in the shared price cache and
+   re-fetches for free for tickers already loaded. */
+let restoredFromCache = false;
+persist = Persist.init('dcasimulator', {
+  onRestore: function(){ /* importSettings() already rebuilt securities and ran the sim */ },
+  extra: {
+    save: buildSettingsObj,
+    restore: function(e){ if(e && e.app === 'dca-single'){ try { importSettings(e); restoredFromCache = true; } catch(_){ restoredFromCache = false; } } }
+  }
+});
+if(!restoredFromCache){
+  initializeDefaultSecurities();
+  runSimulation();
+}
 
 })();

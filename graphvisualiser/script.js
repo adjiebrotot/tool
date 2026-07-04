@@ -447,3 +447,10 @@ function setInfoRow(...chips) {
   el.style.display = 'flex';
   el.innerHTML = chips.map(c=>`<div class="info-chip"><strong>${c}</strong></div>`).join('');
 }
+
+/* ── Mini cache ────────────────────────────────────────────────────────────
+   Remember chart-styling preferences (title, marker size/opacity) between
+   visits. The data itself comes from an uploaded file that can't be cached, so
+   restore is silent — the saved styling applies once the user loads data and a
+   chart renders. The header-row field is file-specific (data-no-persist). */
+if (window.Persist) Persist.init('graphvisualiser', { onRestore: function(){} });

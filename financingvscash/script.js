@@ -56,6 +56,7 @@ function updateCurrencyPrefixes(){
 }
 
 let scenarios=[], editingIdx=-1, activeAmortIdx=0, sensMode='2d';
+let persist=null; // mini cache handle (assigned at init)
 let editorTermFreq='monthly'; // the frequency the editor's Term field currently shows
 let baseRiskFreeRate=4.5; // global risk-free rate from Base tab
 
@@ -509,6 +510,7 @@ function renderScenarioList(){
     div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)'});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;$('scenarioEditor').style.display='none';}renderScenarioList();rerender();}});});
     div.addEventListener('click',()=>openEditor(i));list.appendChild(div);
   });
+  if(persist) persist.schedule(); // scenarios are JS state — save on every change
 }
 
 function updateTermLabel(freq){
@@ -968,4 +970,21 @@ function makeSliderEditable(valSpan,rangeEl){
 scenarios.push(defaultScenario('60mo Monthly @ 5%',5));
 scenarios.push({...defaultScenario('36mo Monthly @ 7%',7),termPeriods:36,financeRate:7});
 setupFmtInputs();renderScenarioList();rerender();
+
+/* ─── Mini cache ───────────────────────────────────────────────────────────
+   Persist the base inputs (form controls) plus the scenarios (JS array) so a
+   returning user keeps their previous comparison. The scenario editor and the
+   sensitivity panel are marked data-no-persist — they are transient. */
+persist = Persist.init('financingvscash', {
+  onRestore: function(){
+    $('baseRfVal').textContent = fmt.pct(parseFloat($('baseRf').value)/100);
+    renderScenarioList();
+    updateSensScenarioDropdown();
+    rerender();
+  },
+  extra: {
+    save: function(){ return { scenarios: scenarios }; },
+    restore: function(e){ if(e && Array.isArray(e.scenarios) && e.scenarios.length) scenarios = e.scenarios; }
+  }
+});
 })();

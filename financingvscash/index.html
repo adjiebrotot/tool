@@ -153,7 +153,7 @@
     <h3>Financing Scenarios</h3>
     <div class="scenario-list" id="scenarioList"></div>
     <button class="btn-primary btn-sm" id="addScenarioBtn" style="width:100%;margin-bottom:12px;">+ Add Scenario</button>
-    <div id="scenarioEditor" style="display:none;">
+    <div id="scenarioEditor" style="display:none;" data-no-persist>
       <h3 id="editorTitle">Edit Scenario</h3>
       <div class="field-row"><div class="field-label">Scenario Name</div><input class="num-input" id="scName" type="text" value=""/></div>
       <div class="slider-block">
@@ -202,7 +202,7 @@
     </div>
   </div>
 
-  <div class="ctrl-panel" id="tab-sens">
+  <div class="ctrl-panel" id="tab-sens" data-no-persist>
     <h3>Sensitivity Analysis</h3>
     <div class="field-row"><div class="field-label">Apply to Scenario</div><select class="sel-input" id="sensScenario"></select></div>
     <div class="field-row"><div class="field-label">Objective (output metric)</div>

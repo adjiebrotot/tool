@@ -38,7 +38,8 @@ function curSecs(){ return S.canvasType==='bmc'?BMC:VPC; }
 function hasContent(){ return Object.values(S.sections).some(a=>a.length>0); }
 
 /* ══ DIRTY ═══════════════════════════════════════════ */
-function markDirty(){ S.isDirty=true; document.getElementById('dirtyDot').classList.add('visible'); }
+let persist=null; // mini cache handle (assigned at init)
+function markDirty(){ S.isDirty=true; document.getElementById('dirtyDot').classList.add('visible'); if(persist) persist.schedule(); }
 function markClean(){ S.isDirty=false; document.getElementById('dirtyDot').classList.remove('visible'); }
 
 /* ══ RENDER ══════════════════════════════════════════ */
@@ -682,7 +683,8 @@ document.getElementById('copyPngBtn').addEventListener('click', async()=>{
 });
 
 /* ══ EXPORT JSON ═════════════════════════════════════ */
-document.getElementById('saveJsonBtn').addEventListener('click',()=>{
+// Serialise the whole canvas to the portable JSON shape doLoad() understands.
+function buildCanvasData(){
   const data={'canvas-name':S.canvasName,'canvas-type':S.canvasType,'cell-sizes':S.cellSizes,'_source':'tool.adjiebrotots.com/canvasbuilder'};
   curSecs().forEach(sec=>{
     data[sec.id]=(S.sections[sec.id]||[]).map(item=>({
@@ -692,6 +694,10 @@ document.getElementById('saveJsonBtn').addEventListener('click',()=>{
       location:{x:Math.round(item.x),y:Math.round(item.y)},
     }));
   });
+  return data;
+}
+document.getElementById('saveJsonBtn').addEventListener('click',()=>{
+  const data=buildCanvasData();
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const link=document.createElement('a');
   const safe=(S.canvasName||'canvas').replace(/[^a-z0-9\-_ ]/gi,'').toLowerCase().replace(/\s+/g,'-')||'canvas';
@@ -806,5 +812,20 @@ function triggerScrollHint(){
 S.sections=mkSections(S.canvasType);
 renderCanvas();
 setTimeout(triggerScrollHint,800);
+
+/* ══ MINI CACHE ══════════════════════════════════════
+   Persist the whole canvas (name, type, cell sizes and every sticky note)
+   using the same JSON shape as Save/Load, so a returning user finds their
+   canvas exactly as they left it. doLoad() handles rebuilding + rendering; the
+   empty onRestore suppresses the generic per-field dispatch. */
+if (window.Persist) {
+  persist = Persist.init('canvasbuilder', {
+    onRestore: function(){},
+    extra: {
+      save: buildCanvasData,
+      restore: function(d){ if(d && typeof d === 'object' && d['canvas-type']) doLoad(d); }
+    }
+  });
+}
 
 })();

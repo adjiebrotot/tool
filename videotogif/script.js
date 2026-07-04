@@ -783,4 +783,12 @@
     convertBtn.disabled = false;
   });
 
+  /* ── Mini cache ──────────────────────────────────────────────────────────
+     Remember conversion settings (fps, quality, loop, reverse, width) between
+     visits. The video itself can't be cached, but a returning user keeps their
+     preferred output settings. Each restored control fires its own handler, so
+     labels update and estimates stay correct (updateMetrics no-ops until a
+     video is loaded). */
+  if (window.Persist) Persist.init('videotogif');
+
 })();

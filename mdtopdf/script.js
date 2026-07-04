@@ -42,6 +42,34 @@
     editing: false
   };
 
+  /* ── Mini cache ──────────────────────────────────────────────────────────
+     Remember the user's document and render options between visits, so a
+     returning user finds their work still there instead of a blank editor.
+     Best-effort: silently no-ops in private mode or when the text is too big
+     for the localStorage quota. */
+  const CACHE_KEY = 'abt:save:mdtopdf:v1';
+  let cacheTimer = null;
+  function currentText() { return (state.editing && mdEditor) ? mdEditor.value : state.text; }
+  function saveCache() {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
+        text: currentText(), filename: state.filename,
+        latex: state.latex, code: state.code, diagram: state.diagram, toc: state.toc
+      }));
+    } catch (e) {}
+  }
+  function scheduleSave() { if (cacheTimer) clearTimeout(cacheTimer); cacheTimer = setTimeout(saveCache, 500); }
+  function restoreCache() {
+    let saved = null;
+    try { const raw = localStorage.getItem(CACHE_KEY); if (raw) saved = JSON.parse(raw); } catch (e) {}
+    if (!saved || typeof saved !== 'object' || !saved.text) return;
+    ['latex', 'code', 'diagram', 'toc'].forEach(k => { if (typeof saved[k] === 'boolean') state[k] = saved[k]; });
+    if (saved.filename) state.filename = saved.filename;
+    const map = { tgLatex: 'latex', tgCode: 'code', tgDiagram: 'diagram', tgToc: 'toc' };
+    Object.keys(map).forEach(id => { const el = document.getElementById(id); if (el) el.checked = state[map[id]]; });
+    loadText(saved.text);
+  }
+
   // ── Element refs ──
   let mdBody, docScroll, workspace, dropZone, fileInput, themeToggle,
       pdfStage, overlay, overlayMsg, hljsLight, hljsDark, editToggle, mdEditor,
@@ -884,6 +912,7 @@
     dropZone.style.display = 'none';
     render();
     docScroll.scrollTop = 0;
+    scheduleSave();
   }
 
   function handleFile(file) {
@@ -1054,6 +1083,7 @@
       workspace.classList.remove('active');
       dropZone.style.display = '';
       fileInput.value = '';
+      try { localStorage.removeItem(CACHE_KEY); } catch (e) {}
     });
 
     editToggle.addEventListener('click', () => setEditing(!state.editing));
@@ -1081,8 +1111,13 @@
     const toggleMap = { tgLatex: 'latex', tgCode: 'code', tgDiagram: 'diagram', tgToc: 'toc' };
     Object.keys(toggleMap).forEach(id => {
       const el = document.getElementById(id);
-      el.addEventListener('change', () => { state[toggleMap[id]] = el.checked; render(); });
+      el.addEventListener('change', () => { state[toggleMap[id]] = el.checked; render(); scheduleSave(); });
     });
+
+    // Mini cache: persist edits + restore the last document on revisit.
+    mdEditor.addEventListener('input', scheduleSave);
+    window.addEventListener('beforeunload', saveCache);
+    restoreCache();
 
     // Re-evaluate which tables overflow when the viewport width changes.
     let resizeTimer = null;

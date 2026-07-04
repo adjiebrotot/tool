@@ -458,6 +458,115 @@
 
   global.SharedConfig = { download: downloadJson, upload: uploadJson };
 
+  /* ── Mini cache (autosave) ─────────────────────────────────────────────────
+     Snapshots a tool's form controls to localStorage and restores them on the
+     next visit, so a returning user keeps their previous work instead of a
+     blank page. Best-effort: it silently no-ops in private mode or on quota
+     errors — persistence is a convenience, never a dependency.
+
+     Usage (call once, at the very end of the tool's setup so restored values
+     land after any default/demo seeding):
+
+         Persist.init('financingvscash', { onRestore: recompute });
+
+     What it saves: every <input>/<textarea>/<select> that has a stable handle
+     (data-persist attribute, else id, else name). Skips file/password/hidden/
+     button inputs and anything marked data-no-persist (put that on transient
+     controls like search boxes). Radios are keyed by group name.
+
+     Options:
+       onRestore(data) — called once after values are restored; pass the tool's
+                         recompute/render entrypoint so the UI reflects the
+                         restored state. When omitted, a bubbling input+change
+                         event is fired on each restored control instead.
+       extra           — { save():obj, restore(obj) } to piggyback state that
+                         isn't in a form control (a JS array of scenarios, a
+                         "mode" flag, editable tax brackets…) into the same blob
+                         and lifecycle. Call the returned schedule() after such
+                         state changes so it gets saved.
+       scope           — root element to scan (default: document).
+       debounce        — ms to coalesce rapid edits before saving (default 400).
+       version         — bump to invalidate an old, incompatible snapshot.
+
+     Returns { save, schedule, collect, clear }.                                 */
+  function makePersist(){
+    function keyFor(ns, ver){ return 'abt:save:' + ns + ':v' + (ver || 1); }
+    function handle(el){ return el.getAttribute('data-persist') || el.id || el.name || ''; }
+    function persistable(el){
+      if(!el || !el.tagName) return false;
+      if(el.closest('[data-no-persist]')) return false;
+      var tag = el.tagName;
+      if(tag === 'SELECT' || tag === 'TEXTAREA') return !!handle(el);
+      if(tag !== 'INPUT') return false;
+      var t = (el.type || 'text').toLowerCase();
+      if(['file','password','submit','button','reset','image','hidden'].indexOf(t) >= 0) return false;
+      return !!handle(el);
+    }
+    function collect(scope){
+      var out = {}, els = scope.querySelectorAll('input, textarea, select');
+      for(var i=0;i<els.length;i++){
+        var el = els[i]; if(!persistable(el)) continue;
+        var t = (el.type||'').toLowerCase(), id = handle(el);
+        if(t === 'checkbox') out['c:'+id] = !!el.checked;
+        else if(t === 'radio'){ if(el.checked) out['r:'+el.name] = el.value; }
+        else out['v:'+id] = el.value;
+      }
+      return out;
+    }
+    function restore(scope, data){
+      var els = scope.querySelectorAll('input, textarea, select'), touched = [];
+      for(var i=0;i<els.length;i++){
+        var el = els[i]; if(!persistable(el)) continue;
+        var t = (el.type||'').toLowerCase(), id = handle(el), hit = false;
+        if(t === 'checkbox'){
+          if(Object.prototype.hasOwnProperty.call(data,'c:'+id)){ el.checked = !!data['c:'+id]; hit = true; }
+        } else if(t === 'radio'){
+          if(Object.prototype.hasOwnProperty.call(data,'r:'+el.name)){ el.checked = (el.value === data['r:'+el.name]); hit = true; }
+        } else if(Object.prototype.hasOwnProperty.call(data,'v:'+id)){ el.value = data['v:'+id]; hit = true; }
+        if(hit) touched.push(el);
+      }
+      return touched;
+    }
+    function init(ns, opts){
+      opts = opts || {};
+      var scope = opts.scope || document;
+      var KEY = keyFor(ns, opts.version);
+      var hasExtra = opts.extra && typeof opts.extra.restore === 'function' && opts.extra.save && typeof opts.extra.save === 'function';
+      var saved = null;
+      try { var raw = localStorage.getItem(KEY); if(raw) saved = JSON.parse(raw); } catch(e){}
+      if(saved && typeof saved === 'object'){
+        var touched = restore(scope, saved.__fields || saved);
+        if(hasExtra && saved.__extra !== undefined){ try { opts.extra.restore(saved.__extra); } catch(e){} }
+        if(typeof opts.onRestore === 'function'){ try { opts.onRestore(saved); } catch(e){} }
+        else for(var i=0;i<touched.length;i++){
+          touched[i].dispatchEvent(new Event('input', {bubbles:true}));
+          touched[i].dispatchEvent(new Event('change', {bubbles:true}));
+        }
+      }
+      var timer = null;
+      function save(){
+        var blob = { __fields: collect(scope) };
+        if(hasExtra){ try { blob.__extra = opts.extra.save(); } catch(e){} }
+        try { localStorage.setItem(KEY, JSON.stringify(blob)); } catch(e){}
+        if(typeof opts.onSave === 'function'){ try { opts.onSave(); } catch(e){} }
+      }
+      function schedule(){ if(timer) clearTimeout(timer); timer = setTimeout(save, opts.debounce == null ? 400 : opts.debounce); }
+      scope.addEventListener('input', schedule, true);
+      scope.addEventListener('change', schedule, true);
+      // Always flush on unload so structural changes that didn't fire an input
+      // event (a removed row, a cleared field) are still captured.
+      window.addEventListener('beforeunload', function(){ if(timer) clearTimeout(timer); save(); });
+      return {
+        save: save,
+        schedule: schedule,
+        collect: function(){ return collect(scope); },
+        clear: function(){ try { localStorage.removeItem(KEY); } catch(e){} }
+      };
+    }
+    return { init: init };
+  }
+  global.Persist = makePersist();
+
   /* ── Global Tooltip ── */
   function initTooltip(){
     if (global.__sharedTooltipInit) return;

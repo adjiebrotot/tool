@@ -1038,4 +1038,10 @@ buildTableRows();
 syncText();
 scheduleRender();
 
+/* ── Mini cache ────────────────────────────────────────────────────────────
+   Restore the last diagram definition and styling on revisit. Each restored
+   control fires its normal input/change handler, so the table and diagram
+   rebuild from the saved text. */
+if (window.Persist) Persist.init('sankeycreator');
+
 })();

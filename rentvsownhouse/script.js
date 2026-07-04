@@ -709,6 +709,7 @@ const CITY_PRESETS = {
 };
 
 let S = JSON.parse(JSON.stringify(DEFAULTS));
+let persist = null; // mini cache handle (assigned at init)
 let latestRows = [];
 let cachedRtbRows = null;
 let latestHasBand = false;
@@ -2007,6 +2008,7 @@ function rerender(){
   $('rtbTableTab').style.display = S.rtbEnabled ? 'inline-block' : 'none';
   if(!S.rtbEnabled && activeTable==='rtb'){ activeTable='own'; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.table==='own')); }
   updateRTBSummary(state);
+  if(persist) persist.schedule(); // rerender is the universal funnel — save any state change
 }
 
 /* ── RESET ── */
@@ -2692,5 +2694,36 @@ updateCagrToolVisibility(false);
 updateMortgageModeUI();
 updateCostsModeUI();
 rerender();
+
+/* ── Mini cache ────────────────────────────────────────────────────────────
+   Persist the scalar inputs (form controls, read back into S by readInputs)
+   plus the parts of S that live only in JS — the mortgage/costs modes and the
+   editable rate-period and cost-item collections — so a returning user keeps
+   their full model. */
+persist = Persist.init('rentvsownhouse', {
+  onRestore: function(){
+    updateMortgageModeUI();
+    renderRatePeriodRows();
+    updateCostsModeUI();
+    rerender();
+  },
+  extra: {
+    save: function(){
+      return {
+        mortgageMode: S.mortgageMode, ratePeriods: S.ratePeriods,
+        ownCostsMode: S.ownCostsMode, rentCostsMode: S.rentCostsMode,
+        ownSetupCosts: S.ownSetupCosts, ownOngoingCosts: S.ownOngoingCosts,
+        rentOngoingCosts: S.rentOngoingCosts
+      };
+    },
+    restore: function(e){
+      if(!e || typeof e !== 'object') return;
+      ['mortgageMode','ratePeriods','ownCostsMode','rentCostsMode',
+       'ownSetupCosts','ownOngoingCosts','rentOngoingCosts'].forEach(function(k){
+        if(e[k] !== undefined) S[k] = e[k];
+      });
+    }
+  }
+});
 
 })();
