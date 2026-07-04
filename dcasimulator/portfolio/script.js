@@ -361,7 +361,8 @@ function loadPersistedCache(){
 const SIM_POOL_KEY = 'dca_simPool_v1';
 let simPool = [];
 function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function persistSimPool(){ try { localStorage.setItem(SIM_POOL_KEY, JSON.stringify(simPool)); } catch(_){} }
+let persist=null; // mini cache handle (assigned at init)
+function persistSimPool(){ try { localStorage.setItem(SIM_POOL_KEY, JSON.stringify(simPool)); } catch(_){} if(persist) persist.schedule(); }
 function loadPersistedSimPool(){
   try { const raw=localStorage.getItem(SIM_POOL_KEY); if(raw){ const a=JSON.parse(raw); if(Array.isArray(a)) simPool=a.filter(x=>x&&x.name); } } catch(_){}
 }
@@ -1662,6 +1663,7 @@ function updateSimBtnState(){
 
 /* ─── RUN SIMULATION (all portfolios on a shared date axis) ─── */
 async function runSimulation(){
+  if(persist) persist.schedule(); // runSimulation follows every change — save it
   hideWarning();
   const blocked=simBlockReason();
   if(blocked){ showWarning(blocked); return; }
@@ -2237,10 +2239,10 @@ $('downloadBtn').addEventListener('click',()=>{
    Persists every portfolio (assets, weights, schedules, rebalancing, triggers)
    plus the global settings so a user can resume later. Price history is NOT
    saved — it lives in the shared cache and re-fetches on the next run. */
-function exportSettings(){
+function buildSettingsObj(){
   const clean=JSON.parse(JSON.stringify(portfolios));
   clean.forEach(p=>{ (p.assets||[]).forEach(a=>{ delete a.priceData; delete a.px; delete a.loaded; delete a.open; }); delete p._rfData; });
-  const obj={
+  return {
     app:'dca-portfolio', version:1, savedAt:new Date().toISOString(),
     global:{
       currencySymbol: currentCurrencySymbol,
@@ -2253,7 +2255,9 @@ function exportSettings(){
     activePortfolioId,
     portfolios: clean
   };
-  SharedConfig.download('portfolio-dca-settings.json', obj);
+}
+function exportSettings(){
+  SharedConfig.download('portfolio-dca-settings.json', buildSettingsObj());
 }
 // Rebuild one portfolio from a saved snapshot, merging onto current defaults so
 // older files still get any newer fields, and clearing transient/cache fields.
@@ -2611,6 +2615,19 @@ loadControlsFromActive();
 renderPortfolioList();
 renderPfSelectors();
 updateBtnRow();
-runSimulation();
+
+/* ── Mini cache ────────────────────────────────────────────────────────────
+   Restore the user's last portfolios + global settings (same shape as the
+   export/import config) so a returning user resumes where they left off;
+   otherwise fall through to the seeded defaults and run. */
+let restoredFromCache=false;
+persist = Persist.init('dcasimulator-portfolio', {
+  onRestore: function(){ /* importSettings() already rebuilt + ran */ },
+  extra: {
+    save: buildSettingsObj,
+    restore: function(e){ if(e && e.app==='dca-portfolio'){ try { importSettings(e); restoredFromCache=true; } catch(_){ restoredFromCache=false; } } }
+  }
+});
+if(!restoredFromCache) runSimulation();
 
 })();

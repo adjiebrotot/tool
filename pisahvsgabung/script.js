@@ -397,6 +397,7 @@ let latestRows = [];
 let activeTab = 'comparison';
 let chartInstance = null;
 let chartInstance2 = null;
+let persist = null; // mini cache handle (assigned at init)
 
 function cssVar(name){return getComputedStyle(document.body).getPropertyValue(name).trim();}
 
@@ -864,6 +865,7 @@ function setInputMode(mode){
   $('modeBtnTotal').classList.toggle('active', mode==='total');
   $('modeBtnSplit').classList.toggle('active', mode==='individual');
   rerender();
+  if (persist) persist.schedule(); // mode is JS state, not a form control
 }
 
 /* ── Bracket number formatting helpers ── */
@@ -1222,5 +1224,20 @@ $('chartCanvas2').addEventListener('mouseleave',()=>{$('hoverBox2').textContent=
 /* ── Init ── */
 buildBracketEditor();
 rerender();
+
+/* ── Mini cache ────────────────────────────────────────────────────────────
+   Persist the salary/deduction/PTKP inputs (plain form controls) plus the
+   input mode and any edited tax brackets (JS state) so a returning user keeps
+   their previous scenario. */
+persist = Persist.init('pisahvsgabung', {
+  onRestore: function(){ setInputMode(S.inputMode || 'total'); buildBracketEditor(); rerender(); },
+  extra: {
+    save: function(){ return { mode: S.inputMode, brackets: S.brackets }; },
+    restore: function(e){
+      if (e && e.mode) S.inputMode = e.mode;
+      if (e && Array.isArray(e.brackets) && e.brackets.length) S.brackets = e.brackets;
+    }
+  }
+});
 
 })();

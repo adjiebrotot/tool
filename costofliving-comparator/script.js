@@ -71,6 +71,7 @@ const S = {
   detailRows: [{catId:'rent', fromAmount:0, overrides:{}}],
   customFxDetailed: [],      // per-destination: null = use DB; number = fromCurr per 1 destCurr
 };
+let persist = null; // mini cache handle (assigned at init)
 
 // ═══════════════════════════════════════════════════════════
 // FORMATTERS
@@ -254,6 +255,7 @@ const CATS=[
 // RENDER ORCHESTRATOR
 // ═══════════════════════════════════════════════════════════
 function render(){
+  if(persist) persist.schedule(); // render is the universal funnel — save the current S
   // Housing row visibility
   document.getElementById('housingRow').style.display=S.mode==='simple'?'flex':'none';
   document.getElementById('simpleCityCard').style.display=S.mode==='simple'?'flex':'none';
@@ -961,6 +963,26 @@ function init(){
 
   wireGlobalToggles();
   render();
+
+  /* ── Mini cache ──────────────────────────────────────────────────────────
+     The whole comparison lives in the JS state object S (selected cities,
+     mode/goal/housing, salaries, custom FX and cost overrides), so persist S
+     and rebuild the UI from it on revisit. */
+  persist = Persist.init('costofliving-comparator', {
+    onRestore: function(){
+      ['mode','goal','housing'].forEach(function(key){
+        var grp=document.getElementById(key+'Group');
+        if(grp) grp.querySelectorAll('.seg-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.val===S[key]); });
+      });
+      buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
+      buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
+      render();
+    },
+    extra: {
+      save: function(){ return S; },
+      restore: function(e){ if(e && typeof e==='object') Object.assign(S, e); }
+    }
+  });
 }
 
 loadData();

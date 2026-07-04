@@ -10,6 +10,7 @@ let csvOk=false, genOk=false, xlsxOk=false;
    contingency.  Selection Sets survive search/re-render.                 */
 let ALL_SETS=[], ALL_LIMITS=[], ALL_CONTS=[], CONTS_BY_SET={};
 const SEL_SETS=new Set(), SEL_LIMITS=new Set(), SEL_CONTS=new Set();
+let persist=null, cachedSel=null, cacheApplied=false; // mini cache
 
 /* ═══ DOM ═════════════════════════════════════════════════════════ */
 const $=id=>document.getElementById(id);
@@ -182,6 +183,17 @@ function buildFilters(){
   SEL_LIMITS.clear(); ALL_LIMITS.forEach(l=>SEL_LIMITS.add(l));
   SEL_CONTS.clear(); ALL_CONTS.forEach(c=>SEL_CONTS.add(c));
 
+  // Mini cache: on the very first load, replace the defaults with the user's
+  // previously saved selection (filtered to what this dataset still contains).
+  if(cachedSel && !cacheApplied){
+    cacheApplied=true;
+    const keep=(arr,all)=>Array.isArray(arr)?arr.filter(x=>all.includes(x)):null;
+    const s=keep(cachedSel.sets,ALL_SETS), l=keep(cachedSel.limits,ALL_LIMITS), c=keep(cachedSel.conts,ALL_CONTS);
+    if(s&&s.length){ SEL_SETS.clear(); SEL_SETS.add('NIL'); s.forEach(x=>SEL_SETS.add(x)); }
+    if(l&&l.length){ SEL_LIMITS.clear(); l.forEach(x=>SEL_LIMITS.add(x)); }
+    if(c&&c.length){ SEL_CONTS.clear(); c.forEach(x=>SEL_CONTS.add(x)); }
+  }
+
   renderSetList(); renderLimitList(); renderContList(); updateSummary();
 }
 
@@ -266,6 +278,7 @@ function updateContCount(){
 
 /* ── Live summary of how many equations the current filters invoke ── */
 function updateSummary(){
+  if(persist) persist.schedule(); // selection changes funnel through here — save them
   if(!csvRows){E.invokeSummary.textContent='—';return;}
   const n=csvRows.filter(r=>SEL_SETS.has(setId(r))&&SEL_LIMITS.has(limitOf(r))&&SEL_CONTS.has(contOf(r))).length;
   E.invokeSummary.textContent=`${n} equation${n===1?'':'s'} invoked · ${SEL_SETS.size} set${SEL_SETS.size===1?'':'s'}`;
@@ -631,6 +644,21 @@ E.themeBtn.onclick=()=>{
   E.themeBtn.textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';
 };
 E.dlBtn.onclick=exportCsv;
+
+/* ═══ MINI CACHE ══════════════════════════════════════════════════
+   Persist the demand value (form input) plus the selected constraint sets,
+   limit types and contingencies, so a returning user keeps their selection.
+   The selection is stashed now and applied once the bundled data finishes
+   loading (buildFilters). Search/filter boxes are transient (data-no-persist). */
+if (window.Persist) {
+  persist = Persist.init('wemconstraint-checker', {
+    onRestore: function(){},
+    extra: {
+      save: function(){ return { sets:[...SEL_SETS], limits:[...SEL_LIMITS], conts:[...SEL_CONTS] }; },
+      restore: function(e){ if(e && typeof e === 'object') cachedSel = e; }
+    }
+  });
+}
 
 /* ═══ INIT ════════════════════════════════════════════════════════ */
 Promise.all([fetchCsv(), fetchGenData()]);

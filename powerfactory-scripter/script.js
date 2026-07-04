@@ -2056,4 +2056,19 @@ document.querySelectorAll('.quick-start-btn').forEach(btn => {
   document.addEventListener('input', () => refreshLiveWarnings());
   document.addEventListener('change', () => refreshLiveWarnings());
   refreshLiveWarnings();
+
+  /* ── Mini cache ────────────────────────────────────────────────────────
+     Persist the whole scripter configuration using the same readConfig/
+     loadConfig pair the sample loader uses, so a returning user finds their
+     inputs, output variables, contingencies and settings still in place. The
+     generated script isn't stored — it regenerates on demand from the config. */
+  if (window.Persist) {
+    Persist.init('powerfactory-scripter', {
+      onRestore: function(){ refreshLiveWarnings(); },
+      extra: {
+        save: function(){ try { return readConfig(); } catch(e){ return null; } },
+        restore: function(cfg){ if(cfg && typeof cfg === 'object'){ loadConfig(cfg); } }
+      }
+    });
+  }
 })();

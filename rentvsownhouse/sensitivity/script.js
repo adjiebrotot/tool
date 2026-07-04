@@ -307,6 +307,7 @@ const DEFAULT_SCENARIO = {
 /* ── STATE ── */
 const cloneScenario = sc => JSON.parse(JSON.stringify(sc));
 let scenarios = [cloneScenario(DEFAULT_SCENARIO), Object.assign(cloneScenario(DEFAULT_SCENARIO), {name:'Scenario 1'})];
+let persist = null; // mini cache handle (assigned at init)
 let metric = 'netEquity';
 let viewYear = 30;
 let scenarioResults = [];
@@ -975,10 +976,12 @@ function rerenderOutputOnly(){
 
 function recomputeScenario(si){
   try{ scenarioResults[si] = computeModel(buildStateObj(scenarios[si])); }catch(err){ console.error(err); }
+  if(persist) persist.schedule(); // per-scenario edits — save them
 }
 
 /* ── RERENDER ── */
 function rerender(){
+  if(persist) persist.schedule(); // scenario edits funnel through here — save them
   scenarioResults = scenarios.map(sc=>{ try{ return computeModel(buildStateObj(sc)); }catch(e){ console.error(e); return null; } });
   const wrap = document.getElementById('tableWrap');
   if(!wrap) return;
@@ -1797,6 +1800,19 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   const compareBtn = document.getElementById('compareAllBtn');
   if(compareBtn) compareBtn.addEventListener('click', openGlobalChartModal);
+
+  /* ── Mini cache ──────────────────────────────────────────────────────────
+     The whole comparison is the scenarios array, so persist it and rebuild the
+     table on revisit — a returning user keeps every scenario they configured. */
+  if(window.Persist){
+    persist = Persist.init('rentvsownhouse-sensitivity', {
+      onRestore: function(){ rerender(); },
+      extra: {
+        save: function(){ return { scenarios: scenarios }; },
+        restore: function(e){ if(e && Array.isArray(e.scenarios) && e.scenarios.length) scenarios = e.scenarios; }
+      }
+    });
+  }
 });
 
 })();

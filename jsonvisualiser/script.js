@@ -1169,3 +1169,10 @@ $('downloadSvgBtn').addEventListener('click', () => {
     btn.disabled = false; btn.textContent = '⬇ SVG';
   }, 30);
 });
+
+/* ── Mini cache ────────────────────────────────────────────────────────────
+   Keep the pasted JSON and view options across visits. Rendering the tree
+   stays an explicit click, so a returning user finds their text still in the
+   box and re-runs it when ready (large payloads simply exceed the quota and
+   are skipped — persistence is best-effort). */
+if (window.Persist) Persist.init('jsonvisualiser', { onRestore: function(){} });
