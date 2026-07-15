@@ -1,0 +1,74 @@
+{
+  "initialisation": {
+    "powerfactoryApiPath": "",
+    "username": "",
+    "outputDir": "",
+    "problemType": "contingency",
+    "studyType": "steady_state",
+    "codingStyle": "python_file",
+    "tstop": "20"
+  },
+  "inputVariables": [],
+  "outputVariables": [
+    {
+      "id": "ov-0",
+      "type": "attribute",
+      "name": "bus_voltage",
+      "object_query": "*.ElmTerm",
+      "variable": "m:u",
+      "metric": "maximum",
+      "threshold": "",
+      "settle_band": "",
+      "settle_hold_time": "",
+      "settle_reference_value": "",
+      "customFn": "",
+      "output_graph": false,
+      "output_raw_csv": false
+    },
+    {
+      "id": "ov-1",
+      "type": "attribute",
+      "name": "loading",
+      "object_query": "*.ElmLne",
+      "variable": "c:loading",
+      "metric": "maximum",
+      "threshold": "",
+      "settle_band": "",
+      "settle_hold_time": "",
+      "settle_reference_value": "",
+      "customFn": "",
+      "output_graph": false,
+      "output_raw_csv": false
+    }
+  ],
+  "optimisation": {
+    "sense": "minimise",
+    "objectiveOutputName": "",
+    "algorithm": "placeholder",
+    "maxIterations": 50,
+    "constraints": []
+  },
+  "customMode": {
+    "scenarioFilePath": ""
+  },
+  "contingencyMode": {
+    "elementTypes": [
+      {
+        "query": "*.ElmLne",
+        "filterAttr": "e:Unom",
+        "filterOp": ">=",
+        "filterVal": "220"
+      }
+    ],
+    "contingencyN": "1",
+    "combineTypes": false
+  },
+  "additionalConfig": {
+    "iterateStudyCases": false,
+    "iterateOperatingScenarios": false,
+    "useProgressBar": true,
+    "openPowerFactoryWindow": false,
+    "saveIntermediateEnabled": false,
+    "saveIntermediateMinutes": 30
+  }
+}
