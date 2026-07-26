@@ -173,6 +173,9 @@ function downsideDev(a,mar=0){ if(!a.length) return 0; const d=a.map(x=>Math.min
 // flows: [{date:Date, amount}] - negative = invested, positive = received.
 function xirr(flows){
   if(flows.length<2) return null;
+  // An IRR only exists when money actually goes out and comes back (a set of
+  // all-zero flows, e.g. a top-up of 0, otherwise bisects to a nonsense rate).
+  if(!flows.some(f=>f.amount<0) || !flows.some(f=>f.amount>0)) return null;
   const t0=flows[0].date;
   const yr=d=>(d-t0)/(365.25*86400000);
   const npv=rate=>flows.reduce((s,f)=>s+f.amount/Math.pow(1+rate,yr(f.date)),0);
@@ -206,14 +209,25 @@ function rfReturns(res, len){
   return new Array(len).fill(d);
 }
 function computeMetrics(res){
+  // A denominator this small means the series has no measurable variation, so the
+  // ratio is meaningless (floating-point noise would print a number in the
+  // trillions). Show "-" instead.
+  const MIN_DEV = 1e-9;
   const rows=res.rows;
-  const rets=portfolioReturns(rows);
-  const rf=rfReturns(res, rets.length);
-  const exc=rets.map((r,i)=>r-(rf[i]||0));
+  // Everything time-weighted is anchored to the first day the portfolio holds
+  // value: days before the first top-up earn nothing and must not dilute the
+  // growth window or the annualisation window. Matches the single-asset tool.
+  const start=rows.findIndex(r=>r.total>0);
+  const held=start>=0 ? rows.slice(start) : [];
+  const rets=portfolioReturns(held);
+  // rfReturns is built over the whole axis, so index it with the same offset.
+  const rf=rfReturns(res, Math.max(0, rows.length-1));
+  const off=start>0 ? start : 0;
+  const exc=rets.map((r,i)=>r-(rf[off+i]||0));
   const sd=statStdev(rets), dd=downsideDev(exc,0);
-  const sharpe = sd>0 ? statMean(exc)/sd*Math.sqrt(TRADING_DAYS) : null;
-  const sortino= dd>0 ? statMean(exc)/dd*Math.sqrt(TRADING_DAYS) : null;
-  const years=(parseDate(rows[rows.length-1].date)-parseDate(rows[0].date))/(365.25*86400000);
+  const sharpe = sd>MIN_DEV ? statMean(exc)/sd*Math.sqrt(TRADING_DAYS) : null;
+  const sortino= dd>MIN_DEV ? statMean(exc)/dd*Math.sqrt(TRADING_DAYS) : null;
+  const years=held.length ? (parseDate(held[held.length-1].date)-parseDate(held[0].date))/(365.25*86400000) : 0;
   const growth=rets.reduce((g,r)=>g*(1+r),1);
   const cagrTwr = (years>0 && growth>0) ? Math.pow(growth,1/years)-1 : null;
   // Money-weighted: each top-up is an outflow on its date, final value an inflow.
@@ -235,7 +249,7 @@ const fmtMetPct = v => (v==null||!isFinite(v)) ? ' - ' : (v*100).toFixed(2)+'%';
 const METRIC_TIPS = {
   sharpe:  'Sharpe ratio: annualised excess return ÷ return volatility. Excess return = daily time-weighted return minus the daily risk-free rate (each portfolio uses its own assigned rate/ticker); annualised by ×√252.',
   sortino: 'Sortino ratio: like Sharpe but only penalises downside, i.e. the annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
-  twr:     'CAGR (TWR): time-weighted compound annual growth rate, the geometric mean of daily returns (each day net of that day’s top-up), annualised.',
+  twr:     'CAGR (TWR): time-weighted compound annual growth rate, the geometric mean of daily returns from the first top-up onward (each day net of that day’s top-up), annualised.',
   mwr:     'CAGR (MWR): money-weighted compound annual growth rate, the annualised internal rate of return (IRR) of your actual top-ups and the final portfolio value.',
 };
 const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:var(--muted);cursor:help;border-bottom:1px dotted var(--border)">${label}</span> <b>${val}</b></div>`;
@@ -1388,23 +1402,36 @@ function getScheduleIndices(dates, sched){
    `assets`). It defaults to the static per-asset weights so the existing
    weight-based methods are unchanged, while the dynamic/rule-based methods pass
    targets they compute per event (momentum ranks, or a single triggered asset). */
-function investedValue(assets, state, i){ return assets.reduce((s,a)=>s+state.units[a.id]*a.px[i],0); }
+// A missing, zero or negative quote is bad data, not a tradable price: skipping
+// the asset for the day leaves the money in cash instead of buying Infinity units
+// and turning every downstream number into Infinity/NaN.
+function pxOk(a, i){ return Number.isFinite(a.px[i]) && a.px[i]>0; }
+// Target weights are validated to sum to 100% before a run, but scale any other
+// set back to 100% so the whole contribution is deployed rather than silently
+// stranding the remainder in cash.
+function normWeights(wts){
+  const clean=wts.map(w=>(w>0?w:0));
+  const sum=clean.reduce((s,w)=>s+w,0);
+  if(sum<=0 || Math.abs(sum-100)<1e-9) return clean;
+  return clean.map(w=>w*100/sum);
+}
+function investedValue(assets, state, i){ return assets.reduce((s,a)=>s+(pxOk(a,i)?state.units[a.id]*a.px[i]:0),0); }
 function buyByWeights(assets, state, i, buyFee, wts){
-  wts = wts || assets.map(a=>a.weight||0);
+  wts = normWeights(wts || assets.map(a=>a.weight||0));
   const cash=state.cash; if(cash<=0) return;
   assets.forEach((a,k)=>{
     const dollars=cash*((wts[k]||0)/100);
-    if(dollars<=0) return;
+    if(dollars<=0 || !pxOk(a,i)) return;
     state.units[a.id]+=dollars*(1-buyFee)/a.px[i];
     state.cash-=dollars;
   });
   if(state.cash<1e-9) state.cash=0;
 }
 function buyUnderweight(assets, state, i, buyFee, wts){
-  wts = wts || assets.map(a=>a.weight||0);
+  wts = normWeights(wts || assets.map(a=>a.weight||0));
   const C=state.cash; if(C<=0) return;
   const total=investedValue(assets,state,i)+C;
-  const deficits=assets.map((a,k)=>Math.max(0, total*((wts[k]||0)/100)-state.units[a.id]*a.px[i]));
+  const deficits=assets.map((a,k)=>pxOk(a,i)?Math.max(0, total*((wts[k]||0)/100)-state.units[a.id]*a.px[i]):0);
   const sum=deficits.reduce((s,d)=>s+d,0);
   if(sum<=0) return;
   const scale=Math.min(1, C/sum);
@@ -1417,11 +1444,12 @@ function buyUnderweight(assets, state, i, buyFee, wts){
   if(state.cash<1e-9) state.cash=0;
 }
 function fullRebalance(assets, state, i, buyFee, sellFee, wts){
-  wts = wts || assets.map(a=>a.weight||0);
+  wts = normWeights(wts || assets.map(a=>a.weight||0));
   const T=state.cash+investedValue(assets,state,i);
   if(T<=0) return;
   // Sell overweight
   assets.forEach((a,k)=>{
+    if(!pxOk(a,i)) return;
     const price=a.px[i], value=state.units[a.id]*price, target=T*((wts[k]||0)/100);
     if(value>target){
       const sellDollars=value-target;
@@ -1430,7 +1458,7 @@ function fullRebalance(assets, state, i, buyFee, sellFee, wts){
     }
   });
   // Buy underweight with whatever cash is available (scaled to avoid overspend)
-  const buys=assets.map((a,k)=>{ const value=state.units[a.id]*a.px[i], target=T*((wts[k]||0)/100); return Math.max(0,target-value); });
+  const buys=assets.map((a,k)=>{ if(!pxOk(a,i)) return 0; const value=state.units[a.id]*a.px[i], target=T*((wts[k]||0)/100); return Math.max(0,target-value); });
   const totalBuy=buys.reduce((s,b)=>s+b,0);
   if(totalBuy>0){
     const scale=Math.min(1, state.cash/totalBuy);
@@ -1519,13 +1547,14 @@ function deployTriggered(assets, state, i, triggeredIdx, buyFee, sellFee, reserv
   const buys={}; let need=0;
   triggeredIdx.forEach(k=>{
     const a=assets[k];
+    if(!pxOk(a,i)) return;
     const def=Math.max(0, T*((a.weight||0)/100) - state.units[a.id]*a.px[i]);
     if(def>0){ buys[k]=def; need+=def; }
   });
   if(need<=0) return;
   // If the reserve is a holding asset, liquidate just enough of it (grossed up
   // for the sell fee) so cash can cover the buys.
-  if(reserveIdx!=null && reserveIdx>=0 && assets[reserveIdx]){
+  if(reserveIdx!=null && reserveIdx>=0 && assets[reserveIdx] && pxOk(assets[reserveIdx],i)){
     const r=assets[reserveIdx];
     const shortfall=Math.max(0, need - state.cash);
     if(shortfall>0 && sellFee<1){
@@ -1628,7 +1657,7 @@ function simulatePortfolio(p, assets, common, rfPx){
     const assetVals={}; let invested=0;
     const bought=[];
     assets.forEach(a=>{
-      const v=state.units[a.id]*a.px[i]; assetVals[a.id]=v; invested+=v;
+      const v=pxOk(a,i)?state.units[a.id]*a.px[i]:0; assetVals[a.id]=v; invested+=v;
       if(state.units[a.id] > unitsBefore[a.id]+1e-12) bought.push(a.id);
     });
     rows.push({date:common[i], cash:state.cash, assetVals, invested, total:state.cash+invested, cumTopup, event:ev.join(' + '), bought});

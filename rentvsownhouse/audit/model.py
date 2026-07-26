@@ -247,7 +247,8 @@ def compute_rtb(C, rent_m0, initialCash, auto_budget, rtb_sched,
                     rtbNetEquity=he + rtbCash2, rtbAccumCost=rtbAccumCost, rtbPropValue=rtbPropValue,
                     rtbPrincipal=rtbPrincipal, rtbHouseEquity=he, rtbBegCash=beg, rtbYearBudget=yB,
                     rtbYearCost=yC, rtbYearOngoing=yOng, rtbYearInterestInc=yIntInc,
-                    rtbYearInterest=0, rtbYearPrincipal=0, rtbYearSurplus=yB - yC))
+                    rtbYearInterest=0, rtbYearPrincipal=0, rtbYearSurplus=yB - yC,
+                    rtbPurchaseOutlay=dpAtBuy + setupAtBuy))
                 continue
             rows.append(dict(year=yr, phase='rent', rtbCash=rtbCash, rtbCash2=0, rtbNetEquity=rtbCash,
                 rtbAccumCost=rtbAccumCost, rtbPropValue=0, rtbPrincipal=0, rtbHouseEquity=0,
@@ -315,7 +316,7 @@ def rent_csv(rows):
             f0(r['rentCash']), f0(r['rentNetEquity']), '' if y0 else f0(r['rentAccumCost'])]))
     return '\n'.join(out)
 def rtb_csv(rows):
-    head = ['Year','Phase','Beg_Cash','Ann_Budget','Total_Exp','Principal_Exp','Interest_Exp','Ongoing_Exp','Interest_Inc','Surplus','End_Cash','Rate_Pct','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost']
+    head = ['Year','Phase','Beg_Cash','Ann_Budget','Total_Exp','Principal_Exp','Interest_Exp','Ongoing_Exp','Interest_Inc','Surplus','Purchase_Outlay','End_Cash','Rate_Pct','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost']
     out = [','.join(head)]
     for r in rows:
         y0 = r['year'] == 0; own = r['phase'] != 'rent'
@@ -328,7 +329,8 @@ def rtb_csv(rows):
             '' if (y0 or not own) else f0(r['rtbYearPrincipal']),
             '' if (y0 or not own) else f0(r['rtbYearInterest']),
             '' if y0 else f0(r['rtbYearOngoing']), '' if y0 else f0(r['rtbYearInterestInc']),
-            '' if y0 else f0(r['rtbYearSurplus']), f0(cash),
+            '' if y0 else f0(r['rtbYearSurplus']),
+            '' if y0 else f0(r.get('rtbPurchaseOutlay', 0)), f0(cash),
             ('%.2f' % r['rtbRateYr']) if hasLoan else '',
             '' if (y0 or not own) else f0(r['rtbPropValue']),
             '' if (y0 or not own) else f0(r['rtbPrincipal']),

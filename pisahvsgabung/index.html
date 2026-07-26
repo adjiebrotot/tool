@@ -228,10 +228,10 @@
         </div>
 
         <div class="bracket-section">
-          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Tax Brackets (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit thresholds and rates. &quot;From&quot; is auto-managed. Last bracket has no upper bound.">?</span></div>
+          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Tax Brackets (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit thresholds and rates. &quot;From&quot; is auto-managed and only the last bracket is open-ended. A bound that swallows later bands removes them, so the ladder shown is always the ladder applied.">?</span></div>
           <div class="bracket-row-header">
             <div class="bracket-col-label" id="bracketColFrom">From (Rp)</div>
-            <div class="bracket-col-label" id="bracketColTo">To (Rp) <span style="font-size:0.68rem">(blank=∞)</span></div>
+            <div class="bracket-col-label" id="bracketColTo">To (Rp) <span style="font-size:0.68rem">(last=∞)</span></div>
             <div class="bracket-col-label" id="bracketColRate">Rate (%)</div>
           </div>
           <div id="bracketsContainer"></div>
@@ -274,9 +274,9 @@
       <section class="position-card" id="positionCard">
         <div class="pos-title" data-i18n="posTitle">📍 Your Current Tax Position</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;">
-          <div class="position-row"><span class="pos-label">PTKP (Pisah H)</span><span class="pos-val" id="posP_ptkpH">—</span></div>
-          <div class="position-row"><span class="pos-label">PTKP (Pisah W)</span><span class="pos-val" id="posP_ptkpW">—</span></div>
-          <div class="position-row"><span class="pos-label">PTKP (Gabung)</span><span class="pos-val" id="posG_ptkp">—</span></div>
+          <div class="position-row"><span class="pos-label" data-i18n="posPtkpPisahH">PTKP (Pisah H)</span><span class="pos-val" id="posP_ptkpH">—</span></div>
+          <div class="position-row"><span class="pos-label" data-i18n="posPtkpPisahW">PTKP (Pisah W)</span><span class="pos-val" id="posP_ptkpW">—</span></div>
+          <div class="position-row"><span class="pos-label" data-i18n="posPtkpGabung">PTKP (Gabung)</span><span class="pos-val" id="posG_ptkp">—</span></div>
           <div class="position-row"><span class="pos-label" data-i18n="posMaxMarginal">Max Marginal Bracket</span><span class="pos-val" id="posMarginBracket">—</span></div>
           <div class="position-row"><span class="pos-label" data-i18n="posEffPisah">Effective Rate — Pisah</span><span class="pos-val" id="posEffPisah">—</span></div>
           <div class="position-row"><span class="pos-label" data-i18n="posEffGabung">Effective Rate — Gabung</span><span class="pos-val" id="posEffGabung">—</span></div>

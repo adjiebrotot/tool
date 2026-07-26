@@ -144,18 +144,21 @@ function simulateSecurity(sec){
   const investSet = new Set(investIdxs);
   const startStr = dates[0];
   const yinc = sec.yearlyIncrease||0;
+  // Mirrors the engine: a missing/zero/negative price is not a tradable day.
+  const tradable=i=>Number.isFinite(prices[i]) && prices[i]>0;
   let runUnits=0, runDeposited=0;
   const dailyRows=[];
   const investRows=[];
   for(let i=0;i<dates.length;i++){
-    if(investSet.has(i)){
+    if(investSet.has(i) && tradable(i)){
       const amt=investAmountAt(sec.amount, yinc, startStr, dates[i]);
       runUnits+=amt/prices[i]; runDeposited+=amt;
       investRows.push({date:dates[i], price:prices[i], amt, units:amt/prices[i], totalUnits:runUnits, totalDeposited:runDeposited});
     }
-    dailyRows.push({date:dates[i], price:prices[i], totalUnits:runUnits, totalDeposited:runDeposited, equity:runUnits*prices[i]});
+    dailyRows.push({date:dates[i], price:prices[i], totalUnits:runUnits, totalDeposited:runDeposited, equity:runUnits*(tradable(i)?prices[i]:0)});
   }
-  return { investRows, dailyRows, finalEquity: runUnits*(prices[prices.length-1]||1), totalDeposited:runDeposited, investIdxs };
+  const endPx=tradable(dates.length-1)?prices[dates.length-1]:0;
+  return { investRows, dailyRows, finalEquity: runUnits*endPx, totalDeposited:runDeposited, investIdxs };
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -208,13 +211,22 @@ function getScheduleIndices(dates, sched){
 }
 
 // Instrumented fee accumulator passed via state._fees
-function investedValue(assets, state, i){ return assets.reduce((s,a)=>s+state.units[a.id]*a.px[i],0); }
+// Both helpers mirror the engine: unusable quotes are skipped, and target weights
+// that do not sum to 100% are scaled instead of stranding the remainder in cash.
+function pxOk(a, i){ return Number.isFinite(a.px[i]) && a.px[i]>0; }
+function normWeights(wts){
+  const clean=wts.map(w=>(w>0?w:0));
+  const sum=clean.reduce((s,w)=>s+w,0);
+  if(sum<=0 || Math.abs(sum-100)<1e-9) return clean;
+  return clean.map(w=>w*100/sum);
+}
+function investedValue(assets, state, i){ return assets.reduce((s,a)=>s+(pxOk(a,i)?state.units[a.id]*a.px[i]:0),0); }
 function buyByWeights(assets, state, i, buyFee, wts){
-  wts = wts || assets.map(a=>a.weight||0);
+  wts = normWeights(wts || assets.map(a=>a.weight||0));
   const cash=state.cash; if(cash<=0) return;
   assets.forEach((a,k)=>{
     const dollars=cash*((wts[k]||0)/100);
-    if(dollars<=0) return;
+    if(dollars<=0 || !pxOk(a,i)) return;
     state.units[a.id]+=dollars*(1-buyFee)/a.px[i];
     state._fees += dollars*buyFee;
     state.cash-=dollars;
@@ -222,10 +234,10 @@ function buyByWeights(assets, state, i, buyFee, wts){
   if(state.cash<1e-9) state.cash=0;
 }
 function buyUnderweight(assets, state, i, buyFee, wts){
-  wts = wts || assets.map(a=>a.weight||0);
+  wts = normWeights(wts || assets.map(a=>a.weight||0));
   const C=state.cash; if(C<=0) return;
   const total=investedValue(assets,state,i)+C;
-  const deficits=assets.map((a,k)=>Math.max(0, total*((wts[k]||0)/100)-state.units[a.id]*a.px[i]));
+  const deficits=assets.map((a,k)=>pxOk(a,i)?Math.max(0, total*((wts[k]||0)/100)-state.units[a.id]*a.px[i]):0);
   const sum=deficits.reduce((s,d)=>s+d,0);
   if(sum<=0) return;
   const scale=Math.min(1, C/sum);
@@ -238,14 +250,15 @@ function buyUnderweight(assets, state, i, buyFee, wts){
   if(state.cash<1e-9) state.cash=0;
 }
 function fullRebalance(assets, state, i, buyFee, sellFee, wts){
-  wts = wts || assets.map(a=>a.weight||0);
+  wts = normWeights(wts || assets.map(a=>a.weight||0));
   const T=state.cash+investedValue(assets,state,i);
   if(T<=0) return;
   assets.forEach((a,k)=>{
+    if(!pxOk(a,i)) return;
     const price=a.px[i], value=state.units[a.id]*price, target=T*((wts[k]||0)/100);
     if(value>target){ const sellDollars=value-target; state.units[a.id]-=sellDollars/price; state.cash+=sellDollars*(1-sellFee); state._fees += sellDollars*sellFee; }
   });
-  const buys=assets.map((a,k)=>{ const value=state.units[a.id]*a.px[i], target=T*((wts[k]||0)/100); return Math.max(0,target-value); });
+  const buys=assets.map((a,k)=>{ if(!pxOk(a,i)) return 0; const value=state.units[a.id]*a.px[i], target=T*((wts[k]||0)/100); return Math.max(0,target-value); });
   const totalBuy=buys.reduce((s,b)=>s+b,0);
   if(totalBuy>0){
     const scale=Math.min(1, state.cash/totalBuy);
@@ -291,9 +304,9 @@ function deployTriggered(assets, state, i, triggeredIdx, buyFee, sellFee, reserv
   if(!triggeredIdx.length) return;
   const T=state.cash+investedValue(assets,state,i); if(T<=0) return;
   const buys={}; let need=0;
-  triggeredIdx.forEach(k=>{ const a=assets[k]; const def=Math.max(0, T*((a.weight||0)/100) - state.units[a.id]*a.px[i]); if(def>0){ buys[k]=def; need+=def; } });
+  triggeredIdx.forEach(k=>{ const a=assets[k]; if(!pxOk(a,i)) return; const def=Math.max(0, T*((a.weight||0)/100) - state.units[a.id]*a.px[i]); if(def>0){ buys[k]=def; need+=def; } });
   if(need<=0) return;
-  if(reserveIdx!=null && reserveIdx>=0 && assets[reserveIdx]){
+  if(reserveIdx!=null && reserveIdx>=0 && assets[reserveIdx] && pxOk(assets[reserveIdx],i)){
     const r=assets[reserveIdx]; const shortfall=Math.max(0, need - state.cash);
     if(shortfall>0 && sellFee<1){
       const wantValue=shortfall/(1-sellFee); const haveValue=state.units[r.id]*r.px[i];
