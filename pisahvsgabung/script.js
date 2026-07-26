@@ -218,7 +218,7 @@ const LANG = {
     crossoverTitle: 'Analisis Breakeven',
     tilePtkpHusband: 'PTKP Suami (Pisah)',
     tilePtkpWife: 'PTKP Istri (Pisah)',
-    tileTotalPtkpPisah: 'Total PTKP Pisah',
+    tileTotalPtkpPisah: 'Jumlah PTKP Pisah',
     tileGrossalary: 'Gaji Kotor',
     tileGrosssalary: 'Gaji Kotor',
     tileDeductions: 'Potongan (Pengurang)',
@@ -975,7 +975,11 @@ function buildBracketEditor(){
     rateEl.min=0;rateEl.max=100;rateEl.step=0.5;
     rateEl.value=(b.rate*100).toFixed(1);
     rateEl.addEventListener('change',()=>{
-      S.brackets[i].rate=Math.max(0,Math.min(100,parseFloat(rateEl.value)||0))/100;
+      // Clamp to 0-100 and quantise to the 0.1% the cell displays, so every row is
+      // formatted the same way and the number shown is exactly the number taxed.
+      const pct=Math.round(Math.max(0,Math.min(100,parseFloat(rateEl.value)||0))*10)/10;
+      S.brackets[i].rate=pct/100;
+      rateEl.value=pct.toFixed(1);
       rerender();
     });
 

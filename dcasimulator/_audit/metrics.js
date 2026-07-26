@@ -1,8 +1,32 @@
 'use strict';
 const path = require('path');
+const fs = require('fs');
 const H = require('./harness');
-const DIR = '/root/.claude/uploads/dafe2855-4ad0-5b8c-85e7-4f3e520e38d9';
-const DHHF = H.loadCsv(path.join(DIR,'c5cec415-DHHF.AX.csv'));
+/* Real CSV if available (DCA_FIXTURE_DIR=/path/to/csvs), else a deterministic
+   seeded GBM series. The comparison below is structural, so either works. */
+const DIR = process.env.DCA_FIXTURE_DIR ||
+            '/root/.claude/uploads/dafe2855-4ad0-5b8c-85e7-4f3e520e38d9';
+const CSV = path.join(DIR,'c5cec415-DHHF.AX.csv');
+function rng(seed){ let a=seed>>>0; return ()=>{ a=(a+0x6D2B79F5)>>>0; let t=a; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+function gbm(startISO,endISO,s0,driftPa,volPa,seed){
+  const r=rng(seed), dates=[], prices=[]; const dt=1/252;
+  let px=s0, d=new Date(startISO+'T00:00:00Z'); const end=new Date(endISO+'T00:00:00Z');
+  while(d<=end){
+    const dow=d.getUTCDay();
+    if(dow!==0&&dow!==6){
+      dates.push(d.toISOString().slice(0,10)); prices.push(Math.round(px*1e6)/1e6);
+      let u=r(); if(u<1e-12) u=1e-12;
+      const z=Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*r());
+      px*=Math.exp((driftPa-0.5*volPa*volPa)*dt + volPa*Math.sqrt(dt)*z);
+    }
+    d=new Date(d.getTime()+86400000);
+  }
+  return {dates,prices};
+}
+const haveCsv = fs.existsSync(CSV);
+const DHHF = haveCsv ? H.loadCsv(CSV) : gbm('2018-01-01','2024-12-31',25.00,0.080,0.160,22);
+console.log(haveCsv ? `Price data: real CSV ${CSV}`
+                    : 'Price data: SEEDED SYNTHETIC (fixture CSV not found; set DCA_FIXTURE_DIR to use real data)');
 const TRADING_DAYS=252;
 
 function statMean(a){ return a.length ? a.reduce((s,x)=>s+x,0)/a.length : 0; }

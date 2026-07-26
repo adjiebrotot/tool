@@ -243,8 +243,10 @@ let chartInstance=null,sensChartInstance=null,latestResults=null;
 
 function rerender(){
   const purchaseCost=Math.max(0,parseNumInput($('purchaseCost')));
-  let availableCash=parseNumInput($('availableCash'));
-  if(availableCash<=0)availableCash=purchaseCost;
+  // A blank, zero or unreadable cash field is not permission to assume the user
+  // happens to hold exactly the purchase price. Use what was actually typed and
+  // let the affordability guard below say so out loud.
+  const availableCash=Math.max(0,parseNumInput($('availableCash')));
   const inflationEnabled=$('inflationToggle').checked;
   const inflationRate=parseFloat($('inflationRate').value)||0;
   const riskFreeRate=parseFloat($('baseRf').value)||0;
@@ -256,9 +258,12 @@ function rerender(){
   $('scFeeType').querySelector('option[value="fixed"]').textContent=moneySymbol();
 
   let warn='';
+  const cashMissing = !(availableCash>0);
   const cashShortfall = availableCash < purchaseCost;
-  if(cashShortfall){
-    warn='⚠ Available cash ('+fmt.currencyExact(availableCash)+') is less than the purchase cost ('+fmt.currencyExact(purchaseCost)+'). Financing something you cannot afford upfront is not modelled here — please increase your available cash or reduce the purchase cost.';
+  if(cashMissing||cashShortfall){
+    warn=cashMissing
+      ? '⚠ Available cash reads '+fmt.currencyExact(0)+'. Enter the cash you could put toward this purchase today. Nothing is assumed on your behalf, so the results below stay blank until you do.'
+      : '⚠ Available cash ('+fmt.currencyExact(availableCash)+') is less than the purchase cost ('+fmt.currencyExact(purchaseCost)+'). Financing something you cannot afford upfront is not modelled here, so please increase your available cash or reduce the purchase cost.';
     $('warnBanner').style.display='block';$('warnBanner').textContent=warn;
     $('negCarryBanner').style.display='none';
     // Clear all outputs
@@ -381,6 +386,9 @@ function renderMainChart(results){
   else chartInstance=new Chart($('chartCanvas'),cfg);
 }
 
+// Horizons are compared in years, but a sub-year term reads better in months.
+function horizonTxt(y){const n=Number(y)||0;return n>0&&n<1?(n*12).toFixed(1)+' mo':n.toFixed(1)+' yr';}
+
 function renderComparisonTable(results){
   const valid=results.filter(r=>r);if(!valid.length){$('compTableWrap').innerHTML='<p class="muted">Add financing scenarios to compare.</p>';return;}
   const inflOn=latestResults.inflationEnabled,pc=latestResults.purchaseCost;
@@ -394,9 +402,12 @@ function renderComparisonTable(results){
     ['Total Admin Fees',fmt.currency(0),r=>fmt.currencyExact(r.totalAdminFee||0)],
     ['Total Fees Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalFee)],
     ['Total Financing Cost',fmt.currency(0),r=>fmt.currencyExact(r.totalFinanceCost)],['Total Out-of-Pocket',fmt.currency(pc),r=>fmt.currencyExact(r.totalOOP)],
-    // The cash column runs to the comparison horizon (the longest scenario), so
-    // scenarios that end earlier get their own same-horizon baseline row and
-    // every column reconciles: Ending Wealth − same-horizon cash = Net Benefit.
+    // Every column is measured at its own horizon, so print that horizon and the
+    // cash baseline that belongs to it. The cash column runs to the comparison
+    // horizon (the longest scenario) to match the chart and the KPI tile; each
+    // scenario column then reconciles against its own row:
+    //   Ending Wealth − Cash Purchase at Same Horizon = Net Benefit.
+    ['Comparison Horizon',horizonTxt(latestResults.maxTerm),r=>horizonTxt(r.termYears)],
     ['Ending Wealth',fmt.currencyExact(latestResults.cashBase.endWealth),r=>fmt.currencyExact(r.endWealth)],
     ['Cash Purchase at Same Horizon','Baseline',r=>fmt.currencyExact(r.cashBaseWealth)],
     ['Net Benefit vs Cash','Baseline',r=>{const v=snapNB(r.netBenefit);return`<span style="color:${v>0?cssVar('--positive-em'):v<0?cssVar('--negative-em'):cssVar('--text')};font-weight:700">${fmt.currencyExact(v)}</span>`;}],
@@ -460,8 +471,9 @@ function runSensitivity(){
   const steps=Math.max(5,Math.min(50,parseInt($('sensSteps').value)||20));
   // Read the same inputs, the same way, as the main panel: never substitute a
   // price of our own, and honour the "must be affordable upfront" guard.
-  const pc=Math.max(0,parseNumInput($('purchaseCost')));let ac=parseNumInput($('availableCash'));if(ac<=0)ac=pc;
+  const pc=Math.max(0,parseNumInput($('purchaseCost'))),ac=Math.max(0,parseNumInput($('availableCash')));
   const blocked=pc<=0?'Enter a purchase cost to run a sweep.'
+    :ac<=0?'Enter your available cash to run a sweep.'
     :ac<pc?'Available cash is below the purchase cost, so there is nothing to sweep.':'';
   const inflOn=$('inflationToggle').checked,inflR=parseFloat($('inflationRate').value)||0;
   const rfRate=parseFloat($('baseRf').value)||0;
