@@ -138,6 +138,11 @@ const LANG = {
     warnHusband0Post: ') entirely. Gabung Harta is strongly recommended.',
     warnDeductExceed: '⚠️ Deductions (pengurang) exceed gross salary. Net income is set to Rp 0.',
     warnSpouseExceed: '⚠️ One spouse deduction exceeds that spouse gross salary. Net income for that spouse is set to Rp 0.',
+    warnCapLead: '⚠️ Biaya jabatan is capped at 5% of gross salary, up to Rp 6,000,000 a year. Above the cap: ',
+    warnCapOf: ', cap ',
+    warnCapTail: '. The amount you entered is still applied in full.',
+    warnCapH: 'Husband',
+    warnCapW: 'Wife',
   },
   id: {
     subtitle: 'Bandingkan PPh orang pribadi di Indonesia antara skema Pisah Harta dan Gabung Harta.',
@@ -264,6 +269,11 @@ const LANG = {
     warnHusband0Post: ') terbuang sia-sia dalam Pisah Harta. Gabung Harta sangat disarankan.',
     warnDeductExceed: '⚠️ Potongan (pengurang) melebihi gaji kotor. Penghasilan bersih ditetapkan Rp 0.',
     warnSpouseExceed: '⚠️ Potongan salah satu pasangan melebihi gaji kotor pasangan tersebut. Penghasilan bersih pasangan itu ditetapkan Rp 0.',
+    warnCapLead: '⚠️ Biaya jabatan dibatasi 5% dari gaji kotor, maksimal Rp 6,000,000 per tahun. Di atas batas: ',
+    warnCapOf: ', batas ',
+    warnCapTail: '. Nilai yang Anda isi tetap dipakai sepenuhnya.',
+    warnCapH: 'Suami',
+    warnCapW: 'Istri',
   }
 };
 
@@ -328,6 +338,16 @@ const BRACKETS_DEFAULT = [
   { from:500000001, to: 5000000000,  rate: 0.30 },
   { from:5000000001,to: null,        rate: 0.35 },
 ];
+
+/* UU PPh Pasal 17 ayat (4): penghasilan kena pajak (PKP) is rounded DOWN to whole
+   thousands of rupiah before the rates apply. The proportional income split leaves
+   some PKP values a hair under a whole thousand in binary floating point
+   (6,899,999.999999993 is arithmetically 6,900,000), so absorb that artefact first
+   or the floor would silently cost the taxpayer a full Rp 1,000 of PKP. */
+function floorPkp(pkp) {
+  if (!(pkp > 0)) return 0;
+  return Math.floor((pkp + 1e-6) / 1000) * 1000;
+}
 
 function calcTaxProgressive(income) {
   if (income <= 0) return 0;
@@ -520,13 +540,13 @@ function computeModel() {
     const wifeNet = wifeGross - wifeDeduction;
     const netIncome = husbandNet + wifeNet;
 
-    const taxableH_p = Math.max(0, husbandNet - ptkpHusband_pisah);
-    const taxableW_p = Math.max(0, wifeNet - ptkpWife_pisah);
+    const taxableH_p = floorPkp(husbandNet - ptkpHusband_pisah);
+    const taxableW_p = floorPkp(wifeNet - ptkpWife_pisah);
     const taxH_p = calcTaxProgressive(taxableH_p);
     const taxW_p = calcTaxProgressive(taxableW_p);
     const totalTax_p = taxH_p + taxW_p;
 
-    const taxableG = Math.max(0, netIncome - ptkpGabung);
+    const taxableG = floorPkp(netIncome - ptkpGabung);
     const totalTax_g = calcTaxProgressive(taxableG);
     const taxH_g = netIncome > 0 ? totalTax_g * (husbandNet / netIncome) : 0;
     const taxW_g = netIncome > 0 ? totalTax_g * (wifeNet / netIncome) : 0;
@@ -568,13 +588,13 @@ function computeModel() {
   const curWifeNet = currentWifeGross - currentWifeDeduction;
   const currentNet = curHusbandNet + curWifeNet;
 
-  const curTxH_p = Math.max(0, curHusbandNet - ptkpHusband_pisah);
-  const curTxW_p = Math.max(0, curWifeNet - ptkpWife_pisah);
+  const curTxH_p = floorPkp(curHusbandNet - ptkpHusband_pisah);
+  const curTxW_p = floorPkp(curWifeNet - ptkpWife_pisah);
   const curTaxH_p = calcTaxProgressive(curTxH_p);
   const curTaxW_p = calcTaxProgressive(curTxW_p);
   const curTaxP = curTaxH_p + curTaxW_p;
 
-  const curTxG = Math.max(0, currentNet - ptkpGabung);
+  const curTxG = floorPkp(currentNet - ptkpGabung);
   const curTaxG = calcTaxProgressive(curTxG);
 
   const maxTaxableForMarginal = Math.max(curTxH_p, curTxW_p, curTxG);
@@ -854,6 +874,15 @@ function updateDetailTable(rows){
   }
 }
 
+/* ── Biaya jabatan cap (warning only, never applied to the maths) ── */
+const BIAYA_JABATAN_RATE = 0.05;
+const BIAYA_JABATAN_MAX  = 6000000;
+function biayaJabatanCap(gross){ return Math.min(Math.max(0,gross)*BIAYA_JABATAN_RATE, BIAYA_JABATAN_MAX); }
+function capWarnMoney(v){ return 'Rp ' + Math.round(v).toLocaleString('en-US'); }
+function capWarnItem(who, amount, cap){
+  return who + ' ' + capWarnMoney(amount) + T('warnCapOf') + capWarnMoney(cap);
+}
+
 /* ── Main loop ── */
 function rerender(){
   readInputs();
@@ -877,6 +906,24 @@ function rerender(){
   if(S.inputMode === 'individual' && (S.husbandDeduction > S.husbandSalary || S.wifeDeduction > S.wifeSalary)){
     warn.style.display='block';
     warn.textContent=T('warnSpouseExceed');
+  }
+
+  // Biaya jabatan is 5% of gross, capped at Rp 6,000,000 a year. The field stays
+  // free-form (users may model other deductions), so this only flags the cap.
+  // Nothing here changes what is computed. Louder warnings above keep priority.
+  if(warn.style.display==='none'){
+    const wf = S.splitPct/100, hf = 1-wf;
+    const hGross = S.inputMode==='individual' ? S.husbandSalary    : S.totalSalary*hf;
+    const wGross = S.inputMode==='individual' ? S.wifeSalary       : S.totalSalary*wf;
+    const hDed   = S.inputMode==='individual' ? S.husbandDeduction : S.deduction*hf;
+    const wDed   = S.inputMode==='individual' ? S.wifeDeduction    : S.deduction*wf;
+    const over=[];
+    if(hDed > biayaJabatanCap(hGross)+0.5) over.push(capWarnItem(T('warnCapH'), hDed, biayaJabatanCap(hGross)));
+    if(wDed > biayaJabatanCap(wGross)+0.5) over.push(capWarnItem(T('warnCapW'), wDed, biayaJabatanCap(wGross)));
+    if(over.length){
+      warn.style.display='block';
+      warn.textContent=T('warnCapLead')+over.join('; ')+T('warnCapTail');
+    }
   }
 
   const state=computeModel();
@@ -972,14 +1019,14 @@ function buildBracketEditor(){
     const rateEl = document.createElement('input');
     rateEl.className='num-input-sm';
     rateEl.type='number';
-    rateEl.min=0;rateEl.max=100;rateEl.step=0.5;
-    rateEl.value=(b.rate*100).toFixed(1);
+    rateEl.min=0;rateEl.max=100;rateEl.step=0.01;
+    rateEl.value=(b.rate*100).toFixed(2);
     rateEl.addEventListener('change',()=>{
-      // Clamp to 0-100 and quantise to the 0.1% the cell displays, so every row is
+      // Clamp to 0-100 and quantise to the 0.01% the cell displays, so every row is
       // formatted the same way and the number shown is exactly the number taxed.
-      const pct=Math.round(Math.max(0,Math.min(100,parseFloat(rateEl.value)||0))*10)/10;
+      const pct=Math.round(Math.max(0,Math.min(100,parseFloat(rateEl.value)||0))*100)/100;
       S.brackets[i].rate=pct/100;
-      rateEl.value=pct.toFixed(1);
+      rateEl.value=pct.toFixed(2);
       rerender();
     });
 
