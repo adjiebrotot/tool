@@ -77,17 +77,17 @@ let persist = null; // mini cache handle (assigned at init)
 // FORMATTERS
 // ═══════════════════════════════════════════════════════════
 function fmtN(v,d=0){
-  if(!isFinite(v)||v===null)return'—';
+  if(v==null||!isFinite(v))return'—';
   return Number(v).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});
 }
 function fmtC(v,curr,compact=false){
-  if(!isFinite(v)||v===null)return'—';
+  if(v==null||!isFinite(v))return'—';
   const n=Number(v), abs=Math.abs(n), sign=n<0?'-':'';
   if(compact&&abs>=1e9)return sign+curr+' '+(abs/1e9).toFixed(1)+'B';
   if(compact&&abs>=1e6)return sign+curr+' '+(abs/1e6).toFixed(1)+'M';
   return sign+curr+' '+fmtN(abs);
 }
-function fmtP(v,d=1){return isFinite(v)?v.toFixed(d)+'%':'—';}
+function fmtP(v,d=1){return(v!=null&&isFinite(v))?Number(v).toFixed(d)+'%':'—';}
 // Format an FX rate so it always carries meaningful precision. Large rates
 // (e.g. 1 AUD = 10,800 IDR) show 2 decimals; sub-1 rates (e.g. 1 IDR =
 // 0.000055 AUD) expand the decimals so at least 2 significant figures survive
@@ -109,10 +109,20 @@ function parseNum(val) {
   const n = Number(cleaned);
   return isFinite(n) ? n : 0;
 }
+// Money fields keep cents and keep a minus sign: "6543.21" must stay 6,543.21
+// (not 654,321) and "-5000" must stay −5,000 (not +5,000).
+const MONEY_FMT = {maxDecimals:2, allowNegative:true};
+function liveMoney(el) {
+  if(!el) return;
+  // An empty field stays empty — otherwise clearing an overridden cell would
+  // type a "0" override instead of reverting to the estimate.
+  if(String(el.value ?? '').trim() === '') return;
+  SharedFmt.liveFormat(el, MONEY_FMT);
+}
 function formatMoneyValue(val) {
   const n = parseNum(val);
   if(!isFinite(n)) return '';
-  return n.toLocaleString('en-AU', {minimumFractionDigits:0, maximumFractionDigits:0});
+  return n.toLocaleString('en-AU', {minimumFractionDigits:0, maximumFractionDigits:2});
 }
 function formatMoneyInput(el) {
   if(!el) return;
@@ -140,17 +150,20 @@ function getDefaultFxRate(fromCurr, toCurr){
   return fr/tr;
 }
 
-// Convert expense from one city to another
-// customRate: fromCurr per toCurr (null = use DB)
+// Convert expense from one city to another.
+// customRate: fromCurr per toCurr (null = use DB).
+// Returns null when no honest estimate exists (a missing index or a missing FX
+// rate) so the caller renders "—" instead of a fabricated number.
 function convertExpense(amount, fromCity, toCity, indexKey, customRate){
-  if(!amount||!fromCity||!toCity)return 0;
+  if(!fromCity||!toCity)return null;
+  if(!amount)return 0;
   const fi=getIdx(fromCity,indexKey), ti=getIdx(toCity,indexKey);
-  if(!fi||!ti)return 0;
+  if(fi==null||ti==null||fi<=0)return null;
   if(customRate!=null&&customRate>0){
     return amount/customRate*(ti/fi);
   }
   const fr=getRate(fromCity.currency), tr=getRate(toCity.currency);
-  if(!fr||!tr)return 0;
+  if(!fr||!tr)return null;
   return amount/fr*(ti/fi)*tr;
 }
 
@@ -160,22 +173,73 @@ function convertCurr(amount,fromCurr,toCurr){
   return amount/fr*tr;
 }
 
-function getIdx(city, key){
-  if(key==='rent')return city.rent_index_med||100;
-  if(key==='groceries')return city.groceries_index||100;
-  if(key==='eating_out')return city.eating_out_index||100;
-  if(key==='utilities')return 0.5*(city.elec||100)+0.2*(city.water||100)+0.3*(city.gas||100);
-  if(key==='electricity')return city.elec||100;
-  if(key==='water')return city.water||100;
-  if(key==='gas_util')return city.gas||100;
-  if(key==='fuel')return city.fuel||100;
-  if(key==='coli_no_housing')return city.coli_no_housing||100;
-  if(key==='coli_with_housing')return city.coli_with_housing||100;
-  if(key==='currency_only')return 100;
-  return 100;
+// Composite "utilities" weights (they must sum to 1 for a complete city).
+const UTIL_PARTS=[['electricity','elec',0.5],['water','water',0.2],['gas','gas',0.3]];
+
+// Index lookup. `idx` is null when the dataset has no value for that component
+// — never a stand-in of 100 (New York's level), which would silently invent
+// data. For the utilities composite the surviving weights are renormalised and
+// the dropped components are reported in `missing` so the UI can say so.
+function idxInfo(city, key){
+  if(!city)return{idx:null,missing:[]};
+  const val=v=>({idx:(v!=null&&v>0)?v:null,missing:[]});
+  if(key==='rent')return val(city.rent_index_med);
+  if(key==='groceries')return val(city.groceries_index);
+  if(key==='eating_out')return val(city.eating_out_index);
+  if(key==='electricity')return val(city.elec);
+  if(key==='water')return val(city.water);
+  if(key==='gas_util')return val(city.gas);
+  if(key==='fuel')return val(city.fuel);
+  if(key==='coli_no_housing')return val(city.coli_no_housing);
+  if(key==='coli_with_housing')return val(city.coli_with_housing);
+  if(key==='currency_only')return{idx:100,missing:[]}; // no index applies, FX only
+  if(key==='utilities'){
+    let acc=0,wt=0; const missing=[];
+    UTIL_PARTS.forEach(([label,prop,w])=>{
+      const v=city[prop];
+      if(v!=null&&v>0){acc+=w*v;wt+=w;} else missing.push(label);
+    });
+    return{idx:wt>0?acc/wt:null,missing};
+  }
+  return{idx:null,missing:[]};
 }
+function getIdx(city, key){return idxInfo(city,key).idx;}
 
 function coliKey(){return S.housing==='include'?'coli_with_housing':'coli_no_housing';}
+
+// ═══════════════════════════════════════════════════════════
+// CUSTOM FX GUARDS
+// A custom rate only means something between two different currencies. These
+// readers are the ONLY way the engine sees a custom rate, so a rate left over
+// from an earlier city can never be applied invisibly.
+// ═══════════════════════════════════════════════════════════
+function usableFx(rate,fromCity,toCity){
+  if(!fromCity||!toCity||fromCity.currency===toCity.currency)return null;
+  return(rate!=null&&rate>0&&isFinite(rate))?rate:null;
+}
+function simpleFx(fromCity,toCity){return usableFx(S.customFxSimple,fromCity,toCity);}
+function detailFx(ci,fromCity,toCity){return usableFx(S.customFxDetailed[ci],fromCity,toCity);}
+
+// Drops custom rates that no longer apply (city cleared, or both sides now on
+// the same currency). Called on every city change and on cache restore.
+function pruneCustomFx(){
+  if(!simpleFx(getCity(S.fromKey),getCity(S.toKey)))S.customFxSimple=null;
+  if(!Array.isArray(S.customFxDetailed))S.customFxDetailed=[];
+  if(!Array.isArray(S.detailToCities)||!S.detailToCities.length)S.detailToCities=[''];
+  S.customFxDetailed.length=S.detailToCities.length;
+  const df=getCity(S.detailFromKey);
+  S.detailToCities.forEach((k,i)=>{
+    if(!detailFx(i,df,getCity(k)))S.customFxDetailed[i]=null;
+  });
+}
+
+// A destination cell override is an amount in that destination's currency, so
+// it stops meaning anything the moment the column changes currency.
+function clearColOverrides(ci){
+  const k=String(ci);
+  S.detailRows.forEach(r=>{if(r.overrides)delete r.overrides[k];});
+}
+function currOf(city){return city?city.currency:'';}
 
 // ═══════════════════════════════════════════════════════════
 // CITY PICKER WIDGET
@@ -255,6 +319,7 @@ const CATS=[
 // RENDER ORCHESTRATOR
 // ═══════════════════════════════════════════════════════════
 function render(){
+  pruneCustomFx();                // never carry a custom rate that no longer applies
   if(persist) persist.schedule(); // render is the universal funnel — save the current S
   // Housing row visibility
   document.getElementById('housingRow').style.display=S.mode==='simple'?'flex':'none';
@@ -301,6 +366,7 @@ function renderSimpleFxSection(from,to){
       const raw=String(inp.value).replace(/,/g,'').trim();
       const v=parseFloat(raw);
       S.customFxSimple=(isFinite(v)&&v>0)?v:null;
+      if(persist)persist.schedule();
     });
     inp.addEventListener('blur',()=>{render();});
   }
@@ -314,16 +380,18 @@ function renderSimpleSave(area,from,to){
   const fr=getRate(fc), tr=getRate(tc);
   const fs=S.fromSalary||0, fe=S.fromExpense||0, ts=S.toSalary||0;
   const ck=coliKey();
-  const fi=from[ck]||100, ti=to[ck]||100;
+  const fi=getIdx(from,ck), ti=getIdx(to,ck);
   // Custom FX: S.customFxSimple = fromCurr per 1 toCurr (e.g. IDR per AUD).
   // With no custom rate and a missing DB rate the multipliers are NaN so the
   // estimates render as "—" rather than a wrong 1:1 conversion.
-  const cfx=S.customFxSimple;
-  const fromToMult=cfx&&cfx>0?(1/cfx):(fr&&tr?tr/fr:NaN);  // FC→TC multiplier
-  const toFromMult=cfx&&cfx>0?cfx:(fr&&tr?fr/tr:NaN);        // TC→FC multiplier
-  const te=fe?fe*fromToMult*(ti/fi):0;
+  const cfx=simpleFx(from,to);
+  const fromToMult=cfx?(1/cfx):(fr&&tr?tr/fr:NaN);  // FC→TC multiplier
+  const toFromMult=cfx?cfx:(fr&&tr?fr/tr:NaN);        // TC→FC multiplier
+  const te=!fe?0:(fi&&ti?fe*fromToMult*(ti/fi):NaN);
   const fSav=fs-fe, tSav=ts-te;
-  const fRatio=fs>0?fSav/fs*100:0, tRatio=ts>0?tSav/ts*100:0;
+  // A savings ratio needs a positive salary to divide by — otherwise show "—"
+  // rather than a made-up 0%.
+  const fRatio=fs>0?fSav/fs*100:null, tRatio=ts>0?tSav/ts*100:null;
 
   // Cross-currency display (uses custom FX if set)
   const xc=(a,c1,c2)=>{if(c1===c2)return a;return(c1===fc)?a*fromToMult:a*toFromMult;};
@@ -337,12 +405,12 @@ function renderSimpleSave(area,from,to){
       <div class="col-sub">${fc}</div>
       <div class="field-row">
         <div class="field-label">Net Monthly Salary</div>
-        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="numeric" class="num-input" id="ss_fs" value="${formatMoneyValue(fs)||''}" placeholder="0"/></div>
+        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="ss_fs" value="${formatMoneyValue(fs)||''}" placeholder="0"/></div>
         ${cc(fs,fc,tc)}
       </div>
       <div class="field-row">
         <div class="field-label">Monthly Expenses</div>
-        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="numeric" class="num-input" id="ss_fe" value="${formatMoneyValue(fe)||''}" placeholder="0"/></div>
+        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="ss_fe" value="${formatMoneyValue(fe)||''}" placeholder="0"/></div>
         ${cc(fe,fc,tc)}
       </div>
       <div class="field-row">
@@ -350,7 +418,7 @@ function renderSimpleSave(area,from,to){
         <div class="sav-block ${fSav>=0?'positive':'negative'}">
           <div class="sav-val">${fmtC(fSav,fc)}</div>
           ${cc(fSav,fc,tc)}
-          <div class="sav-ratio">${fmtP(fRatio)} savings ratio</div>
+          <div class="sav-ratio">${fRatio!=null?fmtP(fRatio)+' savings ratio':'—'}</div>
         </div>
       </div>
     </div>
@@ -359,7 +427,7 @@ function renderSimpleSave(area,from,to){
       <div class="col-sub">${tc}</div>
       <div class="field-row">
         <div class="field-label">Net Monthly Salary</div>
-        <div class="input-wrap"><span class="curr-tag">${tc}</span><input type="text" inputmode="numeric" class="num-input" id="ss_ts" value="${formatMoneyValue(ts)||''}" placeholder="0"/></div>
+        <div class="input-wrap"><span class="curr-tag">${tc}</span><input type="text" inputmode="decimal" class="num-input" id="ss_ts" value="${formatMoneyValue(ts)||''}" placeholder="0"/></div>
         ${cc(ts,tc,fc)}
       </div>
       <div class="field-row">
@@ -377,7 +445,7 @@ function renderSimpleSave(area,from,to){
         <div class="sav-block ${tSav>=0?'positive':'negative'}">
           <div class="sav-val">${fmtC(tSav,tc)}</div>
           ${cc(tSav,tc,fc)}
-          <div class="sav-ratio">${fmtP(tRatio)} savings ratio</div>
+          <div class="sav-ratio">${tRatio!=null?fmtP(tRatio)+' savings ratio':'—'}</div>
         </div>
       </div>
     </div>
@@ -387,17 +455,17 @@ function renderSimpleSave(area,from,to){
 
   const fsEl = document.getElementById('ss_fs');
   if(fsEl) {
-    fsEl.addEventListener('input', e => { SharedFmt.liveFormat(e.target,{maxDecimals:0}); S.fromSalary = parseNum(e.target.value); });
+    fsEl.addEventListener('input', e => { liveMoney(e.target); S.fromSalary = parseNum(e.target.value); });
     fsEl.addEventListener('blur', e => { formatMoneyInput(e.target); render(); });
   }
   const feEl = document.getElementById('ss_fe');
   if(feEl) {
-    feEl.addEventListener('input', e => { SharedFmt.liveFormat(e.target,{maxDecimals:0}); S.fromExpense = parseNum(e.target.value); });
+    feEl.addEventListener('input', e => { liveMoney(e.target); S.fromExpense = parseNum(e.target.value); });
     feEl.addEventListener('blur', e => { formatMoneyInput(e.target); render(); });
   }
   const tsEl = document.getElementById('ss_ts');
   if(tsEl) {
-    tsEl.addEventListener('input', e => { SharedFmt.liveFormat(e.target,{maxDecimals:0}); S.toSalary = parseNum(e.target.value); });
+    tsEl.addEventListener('input', e => { liveMoney(e.target); S.toSalary = parseNum(e.target.value); });
     tsEl.addEventListener('blur', e => { formatMoneyInput(e.target); render(); });
   }
 }
@@ -430,25 +498,29 @@ function renderSimpleEarn(area,from,to){
   const fr=getRate(fc), tr=getRate(tc);
   const fs=S.fromSalary||0, fe=S.fromExpense||0;
   const ck=coliKey();
-  const fi=from[ck]||100, ti=to[ck]||100;
-  const cfx=S.customFxSimple;
-  const fromToMult=cfx&&cfx>0?(1/cfx):(fr&&tr?tr/fr:NaN);
-  const toFromMult=cfx&&cfx>0?cfx:(fr&&tr?fr/tr:NaN);
+  const fi=getIdx(from,ck), ti=getIdx(to,ck);
+  const cfx=simpleFx(from,to);
+  const fromToMult=cfx?(1/cfx):(fr&&tr?tr/fr:NaN);
+  const toFromMult=cfx?cfx:(fr&&tr?fr/tr:NaN);
   const fSav=fs-fe, fRatio=fs>0?fSav/fs:0;
-  const te=fe?fe*fromToMult*(ti/fi):0;
+  const te=!fe?0:(fi&&ti?fe*fromToMult*(ti/fi):NaN);
 
-  let toReq=0,toSav=0,toRatio=0;
+  // toReq === null means "no single answer" (see reqSalNote): matching a 100%
+  // savings ratio, or a ratio against zero destination expenses, is true at any
+  // salary, so quoting a number (the old "SGD 0") would be nonsense.
+  let toReq=null,toSav=null,toRatio=null;
   if(S.savingsTarget==='ratio'){
-    if(fRatio<1)toReq=te/(1-fRatio); else toReq=te*2;
-    toSav=toReq-te; toRatio=toReq>0?toSav/toReq*100:0;
+    if(isFinite(te)&&te>0&&fRatio<1)toReq=te/(1-fRatio);
   } else {
     const fSavInTo=fSav*fromToMult;
-    toReq=te+fSavInTo; toSav=toReq-te; toRatio=toReq>0?toSav/toReq*100:0;
+    if(isFinite(te)&&isFinite(fSavInTo))toReq=te+fSavInTo;
   }
+  if(toReq!=null){toSav=toReq-te; toRatio=toReq>0?toSav/toReq*100:0;}
 
   const xc=(a,c1,c2)=>{if(c1===c2)return a;return(c1===fc)?a*fromToMult:a*toFromMult;};
-  const cc=(a,c1,c2)=>c1!==c2?`<div class="field-approx">≈ ${fmtC(xc(a,c1,c2),c2)}</div>`:'';
+  const cc=(a,c1,c2)=>(c1!==c2&&a!=null)?`<div class="field-approx">≈ ${fmtC(xc(a,c1,c2),c2)}</div>`:'';
   const fRatPct=fRatio*100;
+  const reqTip=toReq!=null?'':reqSalNote(te,fRatio,to,tc);
 
   area.innerHTML=`
 <section class="analysis-card card">
@@ -465,12 +537,12 @@ function renderSimpleEarn(area,from,to){
       <div class="col-sub">${fc}</div>
       <div class="field-row">
         <div class="field-label">Net Monthly Salary</div>
-        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="numeric" class="num-input" id="se_fs" value="${formatMoneyValue(fs)||''}" placeholder="0"/></div>
+        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="se_fs" value="${formatMoneyValue(fs)||''}" placeholder="0"/></div>
         ${cc(fs,fc,tc)}
       </div>
       <div class="field-row">
         <div class="field-label">Monthly Expenses</div>
-        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="numeric" class="num-input" id="se_fe" value="${formatMoneyValue(fe)||''}" placeholder="0"/></div>
+        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="se_fe" value="${formatMoneyValue(fe)||''}" placeholder="0"/></div>
         ${cc(fe,fc,tc)}
       </div>
       <div class="field-row">
@@ -486,7 +558,7 @@ function renderSimpleEarn(area,from,to){
       <div class="col-header">🏁 ${to.city}, ${to.country}</div>
       <div class="col-sub">${tc}</div>
       <div class="field-row">
-        <div class="field-label">Required Net Salary</div>
+        <div class="field-label">Required Net Salary${reqTip?` <span class="tip-icon" data-tip="${reqTip}">?</span>`:''}</div>
         <div class="sav-block positive">
           <div class="req-val">${fmtC(toReq,tc)}</div>
           ${cc(toReq,tc,fc)}
@@ -504,25 +576,25 @@ function renderSimpleEarn(area,from,to){
       </div>
       <div class="field-row">
         <div class="field-label">Monthly Savings</div>
-        <div class="sav-block ${toSav>=0?'positive':'negative'}">
+        <div class="sav-block ${toSav==null?'neutral':(toSav>=0?'positive':'negative')}">
           <div class="sav-val">${fmtC(toSav,tc)}</div>
           ${cc(toSav,tc,fc)}
-          <div class="sav-ratio">${fmtP(toRatio)} savings ratio</div>
+          <div class="sav-ratio">${toRatio!=null?fmtP(toRatio)+' savings ratio':'—'}</div>
         </div>
       </div>
     </div>
   </div>
-  <div class="summary-box">${buildEarnSummary(from,to,fc,tc,fr,tr,toReq,fSav,fRatPct,toRatio)}</div>
+  <div class="summary-box">${buildEarnSummary(from,to,fc,tc,fr,tr,toReq,fSav,fRatPct,toRatio,te,fRatio)}</div>
 </section>`;
 
   const sefsEl = document.getElementById('se_fs');
   if(sefsEl) {
-    sefsEl.addEventListener('input', e => { SharedFmt.liveFormat(e.target,{maxDecimals:0}); S.fromSalary = parseNum(e.target.value); });
+    sefsEl.addEventListener('input', e => { liveMoney(e.target); S.fromSalary = parseNum(e.target.value); });
     sefsEl.addEventListener('blur', e => { formatMoneyInput(e.target); render(); });
   }
   const sefeEl = document.getElementById('se_fe');
   if(sefeEl) {
-    sefeEl.addEventListener('input', e => { SharedFmt.liveFormat(e.target,{maxDecimals:0}); S.fromExpense = parseNum(e.target.value); });
+    sefeEl.addEventListener('input', e => { liveMoney(e.target); S.fromExpense = parseNum(e.target.value); });
     sefeEl.addEventListener('blur', e => { formatMoneyInput(e.target); render(); });
   }
   document.getElementById('targetGroup').querySelectorAll('.seg-btn').forEach(btn=>{
@@ -530,11 +602,21 @@ function renderSimpleEarn(area,from,to){
   });
 }
 
-function buildEarnSummary(from,to,fc,tc,fr,tr,toReq,fSav,fRatPct,toRatio){
+// Why a required salary has no single answer. Also used as the tooltip next to
+// the "—" so the user is told, not left guessing.
+function reqSalNote(te,fRatio,to,tc){
+  if(!isFinite(te))return`No exchange rate for ${tc}, so the ${to.city} expenses cannot be estimated.`;
+  if(S.savingsTarget==='ratio'&&(te<=0||fRatio>=1))
+    return`With no monthly expenses your savings ratio is 100% at any salary, so no single salary matches it. Add your expenses, or switch the target to nominal savings.`;
+  return`Not enough data to work out a required salary for ${to.city}.`;
+}
+
+function buildEarnSummary(from,to,fc,tc,fr,tr,toReq,fSav,fRatPct,toRatio,te,fRatio){
   if(!S.fromSalary)return'Enter your current salary and expenses to calculate what you need to earn in '+to.city+'.';
-  const cfx=S.customFxSimple;
-  const fromToMult=cfx&&cfx>0?(1/cfx):(fr&&tr?tr/fr:NaN);
-  const toFromMult=cfx&&cfx>0?cfx:(fr&&tr?fr/tr:NaN);
+  if(toReq==null)return reqSalNote(te,fRatio,to,tc);
+  const cfx=simpleFx(from,to);
+  const fromToMult=cfx?(1/cfx):(fr&&tr?tr/fr:NaN);
+  const toFromMult=cfx?cfx:(fr&&tr?fr/tr:NaN);
   const cross=fc!==tc?' (≈ '+fmtC(toReq*toFromMult,fc)+')':'';
   if(S.savingsTarget==='ratio'){
     return`To maintain the same <strong>${fmtP(fRatPct)}</strong> savings ratio in <strong>${to.city}</strong>, you need a net monthly salary of <strong>${fmtC(toReq,tc)}</strong>${cross}.`;
@@ -554,6 +636,8 @@ function renderDetailed(area){
     S.detailToSalaries=S.detailToCities.map((_,i)=>S.detailToSalaries?.[i]||0);
   }
   if(!S.detailRows||S.detailRows.length===0) S.detailRows=[{catId:'rent',fromAmount:0,overrides:{}}];
+  pruneCustomFx();
+  if(persist) persist.schedule();
 
   const fromCity=getCity(S.detailFromKey);
   const toCities=S.detailToCities.map(k=>getCity(k));
@@ -592,7 +676,7 @@ function buildDetailHTML(fromCity,toCities){
     const destCurr=tcs[i];
     if(!tc||!fromCity||destCurr===fc)return`<td class="num-td"></td>`;
     const defFx=fmtFx(getDefaultFxRate(fc,destCurr));
-    const curCustomFx=S.customFxDetailed[i]??null;
+    const curCustomFx=detailFx(i,fromCity,tc);
     return`<td class="num-td">
       <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;flex-wrap:wrap;">
         <span style="font-size:0.75rem;white-space:nowrap;">1&nbsp;<strong>${destCurr}</strong>&nbsp;=</span>
@@ -627,14 +711,15 @@ function buildDetailHTML(fromCity,toCities){
   </div>`;
 
   // Salary row
-  let salFrom=`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="numeric" class="num-input" id="dt_fs" value="${formatMoneyValue(S.detailFromSalary)||''}" placeholder="0" style="width:110px;"/></div></td>`;
+  let salFrom=`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="dt_fs" value="${formatMoneyValue(S.detailFromSalary)||''}" placeholder="0" style="width:110px;"/></div></td>`;
   let salTos=toCities.map((tc,i)=>{
     const curr=tc?tc.currency:'—';
     if(S.goal==='earn'){
       const req=calcReqSal(i,fromCity,tc);
-      return`<td class="num-td"><span style="color:var(--positive-em);font-weight:700;">${fmtC(req,curr)}</span><br><span class="sub-num">required</span></td>`;
+      const why=(req==null&&fromCity&&tc)?` <span class="tip-icon" data-tip="${reqSalNoteDetail(i,fromCity,tc)}">?</span>`:'';
+      return`<td class="num-td"><span style="color:var(--positive-em);font-weight:700;">${fmtC(req,curr)}</span><br><span class="sub-num">required${why}</span></td>`;
     }
-    return`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${curr}</span><input type="text" inputmode="numeric" class="num-input dt-to-sal" data-ci="${i}" value="${formatMoneyValue(S.detailToSalaries[i])||''}" placeholder="0" style="width:100px;"/></div></td>`;
+    return`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${curr}</span><input type="text" inputmode="decimal" class="num-input dt-to-sal" data-ci="${i}" value="${formatMoneyValue(S.detailToSalaries[i])||''}" placeholder="0" style="width:100px;"/></div></td>`;
   }).join('');
 
   // Expense rows
@@ -647,7 +732,7 @@ function buildDetailHTML(fromCity,toCities){
         <span class="tip-icon" data-tip="${cat.tip}">?</span>
       </div>
     </td>
-    <td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="numeric" class="num-input dt-from-exp" data-ri="${ri}" value="${formatMoneyValue(fv)||''}" placeholder="0" style="width:110px;"/></div></td>`;
+    <td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input dt-from-exp" data-ri="${ri}" value="${formatMoneyValue(fv)||''}" placeholder="0" style="width:110px;"/></div></td>`;
 
     toCities.forEach((tc,ci)=>{
       if(!tc||!fromCity){cols+=`<td class="num-td">—</td>`;return;}
@@ -655,20 +740,23 @@ function buildDetailHTML(fromCity,toCities){
       // row object), so they survive inserting/removing OTHER expense rows.
       const ovKey=String(ci);
       const isOv=row.overrides&&(ovKey in row.overrides);
-      const cfxCi=S.customFxDetailed[ci]??null;
-      const calc=calcExp(fv,fromCity,tc,cat.index,cfxCi);
+      const cfxCi=detailFx(ci,fromCity,tc);
+      const calc=calcExp(fv,fromCity,tc,cat.index,cfxCi);   // null = no estimate
+      const hasCalc=calc!=null&&isFinite(calc);
       const dispVal=isOv?row.overrides[ovKey]:calc;
-      const backToFc=cfxCi&&cfxCi>0?calc*cfxCi:convertCurr(calc,tc.currency,fc);
+      const backToFc=hasCalc?(cfxCi?calc*cfxCi:convertCurr(calc,tc.currency,fc)):null;
       cols+=`<td class="num-td ${isOv?'overridden':''}">
         <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">
           <span class="curr-tag" style="font-size:0.73rem;">${tc.currency}</span>
-          <input type="text" inputmode="numeric" class="num-input dt-to-exp" data-ri="${ri}" data-ci="${ci}"
-            value="${dispVal>0?formatMoneyValue(dispVal):''}"
-            placeholder="${calc>0?Math.round(calc):'0'}"
+          <input type="text" inputmode="decimal" class="num-input dt-to-exp" data-ri="${ri}" data-ci="${ci}"
+            value="${dispVal!=null&&dispVal>0?formatMoneyValue(dispVal):''}"
+            placeholder="${hasCalc?(calc>0?Math.round(calc):'0'):'—'}"
             title="Edit to override estimate"
             style="width:90px;${isOv?'background:var(--override-bg);border-color:var(--override-border);':''}"/>
         </div>
-        ${!isOv&&fromCity&&tc?`<div class="sub-num" style="text-align:right;margin-top:2px;">≈ ${fmtC(backToFc,fc)}</div>`:''}
+        ${isOv?'':(hasCalc
+          ?`<div class="sub-num" style="text-align:right;margin-top:2px;">≈ ${fmtC(backToFc,fc)}${renormTip(fromCity,tc,cat)}</div>`
+          :`<div class="sub-num" style="text-align:right;margin-top:2px;">no data <span class="tip-icon" data-tip="${noEstimateReason(fromCity,tc,cat)}">?</span></div>`)}
       </td>`;
     });
 
@@ -687,20 +775,13 @@ function buildDetailHTML(fromCity,toCities){
   let savTos=toCities.map((tc,ci)=>{
     if(!tc)return`<td class="num-td">—</td>`;
     const curr=tc.currency;
-    const customFx=S.customFxDetailed[ci]??null;
-    const totExp=S.detailRows.reduce((s,row,ri)=>{
-      const ovKey=String(ci);
-      if(row.overrides&&(ovKey in row.overrides))return s+(row.overrides[ovKey]||0);
-      const cat=CATS.find(c=>c.id===row.catId)||CATS[0];
-      return s+calcExp(row.fromAmount||0,fromCity,tc,cat.index,customFx);
-    },0);
-    let toSal=S.detailToSalaries[ci]||0;
-    if(S.goal==='earn')toSal=calcReqSal(ci,fromCity,tc);
-    const sav=toSal-totExp;
-    const rat=toSal>0?sav/toSal*100:0;
+    const totExp=destTotalExp(ci,fromCity,tc);
+    let toSal=S.goal==='earn'?calcReqSal(ci,fromCity,tc):(S.detailToSalaries[ci]||0);
+    const sav=(totExp==null||toSal==null)?null:toSal-totExp;
+    const rat=(sav!=null&&toSal>0)?sav/toSal*100:null;
     return`<td class="num-td">
-      <div style="color:${sav>=0?'var(--positive-em)':'var(--negative-em)'};font-weight:700;">${fmtC(sav,curr)}</div>
-      <div class="sub-num">${fmtP(rat)} ratio</div>
+      <div style="color:${sav!=null&&sav<0?'var(--negative-em)':'var(--positive-em)'};font-weight:700;">${fmtC(sav,curr)}</div>
+      <div class="sub-num">${rat!=null?fmtP(rat)+' ratio':'—'}</div>
     </td>`;
   }).join('');
 
@@ -744,47 +825,107 @@ ${goalHtml}
 <div class="util-note" style="margin-top:8px;">Data in cells with <span style="display:inline-block;padding:1px 6px;background:var(--override-bg);border:1px solid var(--override-border);border-radius:3px;font-size:0.75rem;font-family:'DM Mono',monospace;">yellow background</span> has been manually overridden. Clear the field to revert to the calculated estimate.</div>`;
 }
 
+// null = no honest estimate for this cell (missing index or missing FX rate).
 function calcExp(fromAmt,fromCity,toCity,indexKey,customRate){
-  if(!fromAmt||!fromCity||!toCity)return 0;
   return convertExpense(fromAmt,fromCity,toCity,indexKey,customRate??null);
 }
 
-function calcReqSal(ci,fromCity,toCity){
-  if(!fromCity||!toCity)return 0;
-  const customFx=S.customFxDetailed[ci]??null;
-  const totToExp=S.detailRows.reduce((s,row,ri)=>{
-    const ovKey=String(ci);
-    if(row.overrides&&(ovKey in row.overrides))return s+(row.overrides[ovKey]||0);
+// Why a cell has no estimate, for the on-demand tooltip.
+function noEstimateReason(fromCity,toCity,cat){
+  const label=cat.label.replace(/^\S+\s/,'');
+  if(getIdx(toCity,cat.index)==null)return`No ${label.toLowerCase()} data for ${toCity.city} in the dataset. Type your own figure to override.`;
+  if(getIdx(fromCity,cat.index)==null)return`No ${label.toLowerCase()} data for ${fromCity.city} in the dataset. Type your own figure to override.`;
+  if(!getRate(fromCity.currency))return`No exchange rate for ${fromCity.currency}. Type your own figure to override.`;
+  if(!getRate(toCity.currency))return`No exchange rate for ${toCity.currency}. Type your own figure to override.`;
+  return`No estimate available. Type your own figure to override.`;
+}
+
+// Flags a utilities estimate that had to drop a component. Renormalised, never
+// filled in with a stand-in index.
+function renormTip(fromCity,toCity,cat){
+  if(cat.index!=='utilities')return'';
+  const miss=[...new Set(idxInfo(fromCity,'utilities').missing.concat(idxInfo(toCity,'utilities').missing))];
+  if(!miss.length)return'';
+  const kept=UTIL_PARTS.filter(p=>!miss.includes(p[0])).map(p=>p[0]).join(' and ');
+  return` <span class="tip-icon" data-tip="No ${miss.join(' or ')} price data for ${miss.some(m=>idxInfo(toCity,'utilities').missing.includes(m))?toCity.city:fromCity.city}. The estimate renormalises the remaining weights over ${kept}.">!</span>`;
+}
+
+// Total destination expenses for one column. null when any row cannot be
+// estimated, so savings and required salary say "—" instead of quietly
+// treating an unknown cost as zero.
+function destTotalExp(ci,fromCity,toCity){
+  const customFx=detailFx(ci,fromCity,toCity);
+  const ovKey=String(ci);
+  let tot=0, known=true;
+  S.detailRows.forEach(row=>{
+    if(row.overrides&&(ovKey in row.overrides)){tot+=row.overrides[ovKey]||0;return;}
     const cat=CATS.find(c=>c.id===row.catId)||CATS[0];
-    return s+calcExp(row.fromAmount||0,fromCity,toCity,cat.index,customFx);
-  },0);
+    const v=calcExp(row.fromAmount||0,fromCity,toCity,cat.index,customFx);
+    if(v==null||!isFinite(v)){known=false;return;}
+    tot+=v;
+  });
+  return known?tot:null;
+}
+
+function reqSalNoteDetail(ci,fromCity,toCity){
+  if(destTotalExp(ci,fromCity,toCity)==null)
+    return`Some ${toCity.city} costs cannot be estimated, so the total is unknown. Override those cells to get a figure.`;
+  if(S.savingsTarget==='ratio')
+    return`With no expenses entered your savings ratio is 100% at any salary, so no single salary matches it. Add your expenses, or switch the target to nominal savings.`;
+  return`No exchange rate for ${toCity.currency}, so your savings cannot be converted.`;
+}
+
+// null = no single required salary (see reqSalNoteDetail).
+function calcReqSal(ci,fromCity,toCity){
+  if(!fromCity||!toCity)return null;
+  const customFx=detailFx(ci,fromCity,toCity);
+  const totToExp=destTotalExp(ci,fromCity,toCity);
+  if(totToExp==null)return null;
   const totFromExp=S.detailRows.reduce((s,r)=>s+(r.fromAmount||0),0);
   const fSav=(S.detailFromSalary||0)-totFromExp;
   const fRat=S.detailFromSalary>0?fSav/S.detailFromSalary:0;
   if(S.savingsTarget==='ratio'){
-    return fRat<1?totToExp/(1-fRat):totToExp*2;
-  } else {
-    const fr=getRate(fromCity.currency), tr=getRate(toCity.currency);
-    const fSavInTo=customFx&&customFx>0 ? fSav/customFx : (fr&&tr?fSav/fr*tr:0);
-    return totToExp+fSavInTo;
+    // A 100% source ratio (or zero destination expenses) is matched at ANY
+    // salary, so there is no number to quote.
+    if(totToExp<=0||fRat>=1)return null;
+    return totToExp/(1-fRat);
   }
+  const fSavInTo=customFx?fSav/customFx:convertCurr(fSav,fromCity.currency,toCity.currency);
+  if(!isFinite(fSavInTo))return null;
+  return totToExp+fSavInTo;
 }
 
 function wireDetail(fromCity,toCities){
-  // From picker
-  buildCityPicker('dtFromPicker',S.detailFromKey,key=>{S.detailFromKey=key;renderDetailArea();});
+  // From picker — a custom rate is quoted in the FROM currency, so changing that
+  // currency invalidates every custom rate. Clear them instead of just hiding
+  // the row, or a stale rate keeps dividing into the results unseen.
+  buildCityPicker('dtFromPicker',S.detailFromKey,key=>{
+    const prevCurr=currOf(getCity(S.detailFromKey));
+    S.detailFromKey=key;
+    if(currOf(getCity(key))!==prevCurr)S.customFxDetailed=S.detailToCities.map(()=>null);
+    pruneCustomFx();
+    renderDetailArea();
+  });
 
-  // To pickers
+  // To pickers — a cell override is an amount in the destination currency, so
+  // it is cleared when that column changes currency (never relabelled).
   toCities.forEach((_,i)=>{
     const pickerId=`dtToPicker${i}`;
     if(document.getElementById(pickerId)){
-      buildCityPicker(pickerId,S.detailToCities[i],key=>{S.detailToCities[i]=key;S.customFxDetailed[i]=null;renderDetailArea();});
+      buildCityPicker(pickerId,S.detailToCities[i],key=>{
+        const prevCurr=currOf(getCity(S.detailToCities[i]));
+        S.detailToCities[i]=key;
+        S.customFxDetailed[i]=null;
+        if(currOf(getCity(key))!==prevCurr)clearColOverrides(i);
+        renderDetailArea();
+      });
     }
   });
 
-  // Add city
+  // Add city — keep the per-destination arrays the same length as the city list
+  // so custom rates and overrides stay keyed to their own column.
   const acBtn=document.getElementById('addCityBtn');
-  if(acBtn)acBtn.addEventListener('click',()=>{S.detailToCities.push('');S.detailToSalaries.push(0);renderDetailArea();});
+  if(acBtn)acBtn.addEventListener('click',()=>{S.detailToCities.push('');S.detailToSalaries.push(0);S.customFxDetailed.push(null);renderDetailArea();});
 
   // Remove city
   document.querySelectorAll('.rmv-city-btn').forEach(btn=>{
@@ -817,13 +958,13 @@ function wireDetail(fromCity,toCities){
 
   // From expense inputs
   document.querySelectorAll('.dt-from-exp').forEach(inp=>{
-    inp.addEventListener('input', () => { SharedFmt.liveFormat(inp,{maxDecimals:0}); S.detailRows[+inp.dataset.ri].fromAmount = parseNum(inp.value); });
+    inp.addEventListener('input', () => { liveMoney(inp); S.detailRows[+inp.dataset.ri].fromAmount = parseNum(inp.value); });
     inp.addEventListener('blur', e => { formatMoneyInput(e.target); renderDetailArea(); });
   });
 
   // To expense inputs (override)
   document.querySelectorAll('.dt-to-exp').forEach(inp=>{
-    inp.addEventListener('input',()=>{ SharedFmt.liveFormat(inp,{maxDecimals:0}); });
+    inp.addEventListener('input',()=>{ liveMoney(inp); });
     inp.addEventListener('change',()=>{
       const ri=+inp.dataset.ri, ci=+inp.dataset.ci;
       const key=String(ci);
@@ -843,6 +984,7 @@ function wireDetail(fromCity,toCities){
       const raw=String(inp.value).replace(/,/g,'').trim();
       const v=parseFloat(raw);
       S.customFxDetailed[ci]=(isFinite(v)&&v>0)?v:null;
+      if(persist)persist.schedule();
     });
     inp.addEventListener('blur',()=>{renderDetailArea();});
   });
@@ -850,13 +992,13 @@ function wireDetail(fromCity,toCities){
   // From salary
   const dtfs=document.getElementById('dt_fs');
   if(dtfs) {
-    dtfs.addEventListener('input', () => { SharedFmt.liveFormat(dtfs,{maxDecimals:0}); S.detailFromSalary = parseNum(dtfs.value); });
+    dtfs.addEventListener('input', () => { liveMoney(dtfs); S.detailFromSalary = parseNum(dtfs.value); });
     dtfs.addEventListener('blur', e => { formatMoneyInput(e.target); renderDetailArea(); });
   }
 
   // To salaries
   document.querySelectorAll('.dt-to-sal').forEach(inp=>{
-    inp.addEventListener('input', () => { SharedFmt.liveFormat(inp,{maxDecimals:0}); S.detailToSalaries[+inp.dataset.ci] = parseNum(inp.value); });
+    inp.addEventListener('input', () => { liveMoney(inp); S.detailToSalaries[+inp.dataset.ci] = parseNum(inp.value); });
     inp.addEventListener('blur', e => { formatMoneyInput(e.target); renderDetailArea(); });
   });
 

@@ -192,6 +192,9 @@ function downsideDev(a,mar=0){ if(!a.length) return 0; const d=a.map(x=>Math.min
 // flows: [{date:Date, amount}] - negative = invested, positive = received.
 function xirr(flows){
   if(flows.length<2) return null;
+  // An IRR only exists when money actually goes out and comes back (a set of
+  // all-zero flows, e.g. a contribution of 0, otherwise bisects to a nonsense rate).
+  if(!flows.some(f=>f.amount<0) || !flows.some(f=>f.amount>0)) return null;
   const t0=flows[0].date;
   const yr=d=>(d-t0)/(365.25*86400000);
   const npv=rate=>flows.reduce((s,f)=>s+f.amount/Math.pow(1+rate,yr(f.date)),0);
@@ -205,16 +208,26 @@ function xirr(flows){
   return (lo+hi)/2;
 }
 function computeMetrics(res){
-  const prices=res.dailyRows.map(r=>r.price);
-  const rets=dailyReturns(prices);
+  // A denominator this small means the series has no measurable variation, so the
+  // ratio is meaningless (floating-point noise would print a number in the
+  // trillions). Show "-" instead.
+  const MIN_DEV = 1e-9;
+  const days=res.dailyRows;
+  // Everything time-weighted is anchored to the first day money is actually at
+  // work. Price moves before the first buy are not part of the result, and
+  // neither is the time they took, so the growth window and the annualisation
+  // window share one basis. This is also what the portfolio tool measures, which
+  // keeps a single 100% holding there identical to a scenario here.
+  const start=days.findIndex(r=>r.totalUnits>0);
+  const held=start>=0 ? days.slice(start) : [];
+  const rets=dailyReturns(held.map(r=>r.price));
   // Daily risk-free rate derived from the annual rate set in Settings.
   const rf=Math.pow(1+currentRiskFreeRate/100, 1/TRADING_DAYS)-1;
   const exc=rets.map(r=>r-rf);
   const sd=statStdev(rets), dd=downsideDev(exc,0);
-  const sharpe = sd>0 ? statMean(exc)/sd*Math.sqrt(TRADING_DAYS) : null;
-  const sortino= dd>0 ? statMean(exc)/dd*Math.sqrt(TRADING_DAYS) : null;
-  const days=res.dailyRows;
-  const years=(parseDate(days[days.length-1].date)-parseDate(days[0].date))/(365.25*86400000);
+  const sharpe = sd>MIN_DEV ? statMean(exc)/sd*Math.sqrt(TRADING_DAYS) : null;
+  const sortino= dd>MIN_DEV ? statMean(exc)/dd*Math.sqrt(TRADING_DAYS) : null;
+  const years=held.length ? (parseDate(held[held.length-1].date)-parseDate(held[0].date))/(365.25*86400000) : 0;
   const growth=rets.reduce((g,r)=>g*(1+r),1);
   const cagrTwr = (years>0 && growth>0) ? Math.pow(growth,1/years)-1 : null;
   const flows=res.investRows.map(r=>({date:parseDate(r.date), amount:-r.amountInvested}));
@@ -230,7 +243,7 @@ const fmtMetPct = v => (v==null||!isFinite(v)) ? ' - ' : (v*100).toFixed(2)+'%';
 const METRIC_TIPS = {
   sharpe:  'Sharpe ratio: annualised excess return ÷ return volatility. Excess return = daily time-weighted return minus the daily risk-free rate (set in Settings); annualised by ×√252.',
   sortino: 'Sortino ratio: like Sharpe but only penalises downside, i.e. the annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
-  twr:     'CAGR (TWR): time-weighted compound annual growth rate, the geometric mean of daily returns, annualised. Ignores the timing/size of deposits.',
+  twr:     'CAGR (TWR): time-weighted compound annual growth rate, the geometric mean of daily returns from the first buy onward, annualised. Ignores the timing/size of deposits.',
   mwr:     'CAGR (MWR): money-weighted compound annual growth rate, the annualised internal rate of return (IRR) of your actual deposits and the final equity.',
 };
 const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:var(--muted);cursor:help;border-bottom:1px dotted var(--border)">${label}</span> <b>${val}</b></div>`;
@@ -1297,11 +1310,15 @@ function simulateSecurity(sec){
   const yinc = sec.yearlyIncrease||0;
 
   let totalUnits=0, totalDeposited=0;
+  // A missing, zero or negative price is bad data, not a tradable day. Without
+  // this guard one such tick buys Infinity units and every downstream number
+  // (equity, ROI, metrics) becomes Infinity/NaN.
+  const tradable=i=>Number.isFinite(prices[i]) && prices[i]>0;
 
   // Build a running state over all trading days
   const investRows=[];
   for(let i=0;i<dates.length;i++){
-    if(investSet.has(i)){
+    if(investSet.has(i) && tradable(i)){
       const price=prices[i];
       const amt=investAmountAt(sec.amount, yinc, startStr, dates[i]);
       const units=amt/price;
@@ -1310,7 +1327,9 @@ function simulateSecurity(sec){
       investRows.push({
         date:dates[i], price, amountInvested:amt, unitsAdded:units,
         totalUnits, totalDeposited, equity:totalUnits*price,
-        returnPct:(totalUnits*price-totalDeposited)/totalDeposited*100
+        // Nothing deposited yet (e.g. a contribution of 0) means no return to
+        // report, not 0/0.
+        returnPct: totalDeposited>0 ? (totalUnits*price-totalDeposited)/totalDeposited*100 : 0
       });
     }
   }
@@ -1319,7 +1338,7 @@ function simulateSecurity(sec){
   let runUnits=0, runDeposited=0;
   const dailyRows=[];
   for(let i=0;i<dates.length;i++){
-    if(investSet.has(i)){
+    if(investSet.has(i) && tradable(i)){
       const amt=investAmountAt(sec.amount, yinc, startStr, dates[i]);
       runUnits+=amt/prices[i];
       runDeposited+=amt;
@@ -1327,11 +1346,15 @@ function simulateSecurity(sec){
     dailyRows.push({
       date:dates[i], price:prices[i],
       totalUnits:runUnits, totalDeposited:runDeposited,
-      equity:runUnits*prices[i]
+      equity:runUnits*(tradable(i)?prices[i]:0)
     });
   }
 
-  return { investRows, dailyRows, finalEquity: runUnits*(prices[prices.length-1]||1), totalDeposited:runDeposited };
+  // Value the final holding at the closing price, or at nothing if that price is
+  // unusable - never at the old `||1` fallback, which reported the unit count as
+  // dollars.
+  const endPx=tradable(dates.length-1)?prices[dates.length-1]:0;
+  return { investRows, dailyRows, finalEquity: runUnits*endPx, totalDeposited:runDeposited };
 }
 
 /* ─── SIMULATE BUTTON GATING ──────────────────────────────────────────────────

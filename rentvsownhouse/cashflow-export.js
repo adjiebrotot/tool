@@ -83,7 +83,11 @@ function rentCashflowCSV(rows){
 
 function rtbCashflowCSV(rows){
   const na = '';
-  const headers = ['Year','Phase','Beg_Cash','Ann_Budget','Total_Exp','Principal_Exp','Interest_Exp','Ongoing_Exp','Interest_Inc','Surplus','End_Cash','Rate_Pct','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
+  /* Purchase_Outlay = down payment + setup cost paid at the switch year. It is
+     not an expense (the down payment turns into house equity), but it does
+     leave the cash ledger, so without it the row would not reconcile:
+     Beg_Cash + Ann_Budget + Interest_Inc - Total_Exp - Purchase_Outlay = End_Cash. */
+  const headers = ['Year','Phase','Beg_Cash','Ann_Budget','Total_Exp','Principal_Exp','Interest_Exp','Ongoing_Exp','Interest_Inc','Surplus','Purchase_Outlay','End_Cash','Rate_Pct','Prop_Value','Principal_Left','House_Equity','Net_Equity','Accum_Cost'];
   const lines = rows.map(r=>{
     const y0 = r.year===0, own = r.phase!=='rent';
     const cash = r.phase==='rent' ? (r.rtbCash||0) : (r.rtbCash2||0);
@@ -99,6 +103,7 @@ function rtbCashflowCSV(rows){
       y0?na:(r.rtbYearOngoing||0).toFixed(0),
       y0?na:(r.rtbYearInterestInc||0).toFixed(0),
       y0?na:(r.rtbYearSurplus||0).toFixed(0),
+      y0?na:(r.rtbPurchaseOutlay||0).toFixed(0),
       cash.toFixed(0),
       rtbHasLoanYr?r.rtbRateYr.toFixed(2):na,
       (y0||!own)?na:(r.rtbPropValue||0).toFixed(0),

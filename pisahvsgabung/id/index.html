@@ -229,11 +229,11 @@
         </div>
 
         <div class="bracket-section">
-          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Lapisan Tarif PPh 21</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit ambang batas dan tarif. Kolom &quot;Dari&quot; dikelola otomatis. Lapisan terakhir tidak punya batas atas.">?</span></div>
+          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Lapisan Tarif PPh 21</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit ambang batas dan tarif. Kolom &quot;Dari&quot; dikelola otomatis dan hanya lapisan terakhir yang tanpa batas atas. Batas yang menelan lapisan di bawahnya akan menghapus lapisan tersebut, jadi tangga yang tampil selalu sama dengan yang dihitung.">?</span></div>
           <div class="bracket-row-header">
-            <div class="bracket-col-label" id="bracketColFrom">From (Rp)</div>
-            <div class="bracket-col-label" id="bracketColTo">To (Rp) <span style="font-size:0.68rem">(blank=∞)</span></div>
-            <div class="bracket-col-label" id="bracketColRate">Rate (%)</div>
+            <div class="bracket-col-label" id="bracketColFrom">Dari (Rp)</div>
+            <div class="bracket-col-label" id="bracketColTo">Sampai (Rp) <span style="font-size:0.68rem">(terakhir=∞)</span></div>
+            <div class="bracket-col-label" id="bracketColRate">Tarif (%)</div>
           </div>
           <div id="bracketsContainer"></div>
         </div>
@@ -272,9 +272,9 @@
       <section class="position-card" id="positionCard">
         <div class="pos-title" data-i18n="posTitle">📍 Posisi Pajak Anda Saat Ini</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;">
-          <div class="position-row"><span class="pos-label">PTKP (Pisah H)</span><span class="pos-val" id="posP_ptkpH">—</span></div>
-          <div class="position-row"><span class="pos-label">PTKP (Pisah W)</span><span class="pos-val" id="posP_ptkpW">—</span></div>
-          <div class="position-row"><span class="pos-label">PTKP (Gabung)</span><span class="pos-val" id="posG_ptkp">—</span></div>
+          <div class="position-row"><span class="pos-label" data-i18n="posPtkpPisahH">PTKP Pisah (Suami)</span><span class="pos-val" id="posP_ptkpH">—</span></div>
+          <div class="position-row"><span class="pos-label" data-i18n="posPtkpPisahW">PTKP Pisah (Istri)</span><span class="pos-val" id="posP_ptkpW">—</span></div>
+          <div class="position-row"><span class="pos-label" data-i18n="posPtkpGabung">PTKP Gabung</span><span class="pos-val" id="posG_ptkp">—</span></div>
           <div class="position-row"><span class="pos-label" data-i18n="posMaxMarginal">Tarif Marginal Tertinggi</span><span class="pos-val" id="posMarginBracket">—</span></div>
           <div class="position-row"><span class="pos-label" data-i18n="posEffPisah">Tarif Efektif — Pisah</span><span class="pos-val" id="posEffPisah">—</span></div>
           <div class="position-row"><span class="pos-label" data-i18n="posEffGabung">Tarif Efektif — Gabung</span><span class="pos-val" id="posEffGabung">—</span></div>
@@ -346,20 +346,20 @@
 <footer class="page-footer">
   <section class="page-footer-info">
     <p>
-      <strong>Disclaimer:</strong> This tool is provided on an "as is" and "as available" basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any decisions.
+      <strong>Penafian:</strong> Alat ini disediakan "sebagaimana adanya" dan "sesuai ketersediaan", gratis, tanpa pernyataan atau jaminan apa pun, baik tersurat maupun tersirat. Seluruh keluaran, hasil, penafsiran, atau keputusan yang dibuat menggunakan alat ini sepenuhnya menjadi tanggung jawab pengguna. Pengguna wajib mencari nasihat profesional sendiri sebelum mengambil keputusan.
     </p>
     <p>
-      If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you're interested, confused, or would like help learning how to use the tool, feel free to email me as well 🙂
+      Jika Anda menemukan bug atau kendala teknis, laporkan ke <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. Jika Anda tertarik, bingung, atau ingin dibantu memakai alat ini, silakan email saya juga 🙂
     </p>
     <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
       <img src="../../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
       <div style="display:flex;align-items:center;gap:10px">
         <img src="../../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
+        <span style="color:var(--muted);font-size:0.85rem">Dilisensikan di bawah <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — bebas dipakai, diubah, dan dibagikan dengan kode sumber terbuka.</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
         <img src="../../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-        <span style="color:var(--muted);font-size:0.85rem">Made in Australia by Indonesian engineer.</span>
+        <span style="color:var(--muted);font-size:0.85rem">Dibuat di Australia oleh insinyur Indonesia.</span>
       </div>
     </div>
   </section>

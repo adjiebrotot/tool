@@ -30,7 +30,7 @@ const fmt={
     const n=Number(v||0),abs=Math.abs(n),sign=n<0?'−':'';
     if(compact&&abs>=1e9)return sign+moneySymbol()+(abs/1e9).toFixed(2)+'b';
     if(compact&&abs>=1e6)return sign+moneySymbol()+(abs/1e6).toFixed(2)+'m';
-    if(compact&&abs>=1e3)return sign+moneySymbol()+(abs/1e3).toFixed(0)+'k';
+    if(compact&&abs>=1e3)return sign+moneySymbol()+(abs/1e3).toFixed(1).replace(/\.0$/,'')+'k';
     return sign+moneyWithSymbol(abs,{maximumFractionDigits:0});
   },
   currencyExact(v){const n=Number(v||0);return(n<0?'−':'')+moneyWithSymbol(Math.abs(n),{minimumFractionDigits:2,maximumFractionDigits:2});},
@@ -55,6 +55,10 @@ function updateCurrencyPrefixes(){
   });
 }
 
+// A net benefit smaller than half a cent cannot be shown at the precision we
+// print, so treat it as an exact tie instead of a win for either side.
+const NB_EPS=0.005, snapNB=v=>Math.abs(v)<=NB_EPS?0:v;
+
 let scenarios=[], editingIdx=-1, activeAmortIdx=0, sensMode='2d';
 let persist=null; // mini cache handle (assigned at init)
 let editorTermFreq='monthly'; // the frequency the editor's Term field currently shows
@@ -62,11 +66,28 @@ let baseRiskFreeRate=4.5; // global risk-free rate from Base tab
 
 function periodsPerYear(f){return{weekly:52,fortnightly:26,monthly:12,yearly:1}[f]||12;}
 function freqLabel(f){return{weekly:'week',fortnightly:'fortnight',monthly:'month',yearly:'year'}[f]||'period';}
-function termUnitLabel(f){return{weekly:'weeks',fortnightly:'weeks',monthly:'months',yearly:'years'}[f]||'periods';}
+function termUnitLabel(f){return{weekly:'weeks',fortnightly:'fortnights',monthly:'months',yearly:'years'}[f]||'periods';}
 function termToYears(termPeriods,f){return termPeriods/periodsPerYear(f);}
 
 // Default term in periods based on freq (5 years in each unit)
 function defaultTerm(freq){return{weekly:260,fortnightly:130,monthly:60,yearly:5}[freq]||60;}
+
+// Cached scenarios come back from localStorage and can be stale or hand-edited,
+// so hold them to what the editor itself can produce. A loan with no repayment
+// periods can never be repaid, so it is dropped rather than modelled.
+function normaliseScenario(sc){
+  if(!sc||typeof sc!=='object')return null;
+  const num=(v,d)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+  const freq=['weekly','fortnightly','monthly','yearly'].includes(sc.freq)?sc.freq:'monthly';
+  const term=Math.round(num(sc.termPeriods,0));
+  if(!(term>=1))return null;
+  let downPct=sc.downPaymentPct;
+  if(downPct===undefined&&sc.downPayment!==undefined)downPct=(num(sc.downPayment,0)/(parseNumInput($('purchaseCost'))||1))*100;
+  return{name:String(sc.name||'Scenario'),financeRate:num(sc.financeRate,5),
+    downPaymentPct:Math.min(100,Math.max(0,num(downPct,0))),termPeriods:term,freq,
+    feeAmt:Math.max(0,num(sc.feeAmt,0)),feeType:sc.feeType==='pct'?'pct':'fixed',
+    adminFee:Math.max(0,num(sc.adminFee,0))};
+}
 
 function defaultScenario(name,rate){
   const freq='monthly';
@@ -222,8 +243,10 @@ let chartInstance=null,sensChartInstance=null,latestResults=null;
 
 function rerender(){
   const purchaseCost=Math.max(0,parseNumInput($('purchaseCost')));
-  let availableCash=parseNumInput($('availableCash'));
-  if(availableCash<=0)availableCash=purchaseCost;
+  // A blank, zero or unreadable cash field is not permission to assume the user
+  // happens to hold exactly the purchase price. Use what was actually typed and
+  // let the affordability guard below say so out loud.
+  const availableCash=Math.max(0,parseNumInput($('availableCash')));
   const inflationEnabled=$('inflationToggle').checked;
   const inflationRate=parseFloat($('inflationRate').value)||0;
   const riskFreeRate=parseFloat($('baseRf').value)||0;
@@ -235,9 +258,12 @@ function rerender(){
   $('scFeeType').querySelector('option[value="fixed"]').textContent=moneySymbol();
 
   let warn='';
+  const cashMissing = !(availableCash>0);
   const cashShortfall = availableCash < purchaseCost;
-  if(cashShortfall){
-    warn='⚠ Available cash ('+fmt.currencyExact(availableCash)+') is less than the purchase cost ('+fmt.currencyExact(purchaseCost)+'). Financing something you cannot afford upfront is not modelled here — please increase your available cash or reduce the purchase cost.';
+  if(cashMissing||cashShortfall){
+    warn=cashMissing
+      ? '⚠ Available cash reads '+fmt.currencyExact(0)+'. Enter the cash you could put toward this purchase today. Nothing is assumed on your behalf, so the results below stay blank until you do.'
+      : '⚠ Available cash ('+fmt.currencyExact(availableCash)+') is less than the purchase cost ('+fmt.currencyExact(purchaseCost)+'). Financing something you cannot afford upfront is not modelled here, so please increase your available cash or reduce the purchase cost.';
     $('warnBanner').style.display='block';$('warnBanner').textContent=warn;
     $('negCarryBanner').style.display='none';
     // Clear all outputs
@@ -250,7 +276,7 @@ function rerender(){
     $('amortTableWrap').innerHTML='<p class="muted">Adjust inputs above to run the simulation.</p>';
     return;
   }
-  $('warnBanner').style.display='none';
+  $('warnBanner').style.display='none';$('warnBanner').textContent='';
 
   const results=[];let anyNegCarry=false;const dropped=[];
   scenarios.forEach((sc,i)=>{
@@ -278,18 +304,25 @@ function rerender(){
     else if(optTarget==='lowestInterest')bestIdx=valid.reduce((b,r)=>r.totalInterest<(results[b]?.totalInterest??Infinity)?r.idx:b,valid[0].idx);
     else if(optTarget==='lowestCost')bestIdx=valid.reduce((b,r)=>r.totalFinanceCost<(results[b]?.totalFinanceCost??Infinity)?r.idx:b,valid[0].idx);
   }
-  const allNeg=valid.every(r=>r.netBenefit<0);
+  const allNeg=valid.every(r=>r.netBenefit<-NB_EPS);
   const bestResult=bestIdx>=0?results[bestIdx]:null;
-  const maxTerm=valid.reduce((m,r)=>Math.max(m,r.termYears),5);
+  // Comparison horizon = the longest scenario actually being compared, so the
+  // KPI tile, the chart's cash line and the table's cash column all end together.
+  const maxTerm=valid.reduce((m,r)=>Math.max(m,r.termYears),0);
   const cashBase=computeCashBaseline(purchaseCost,availableCash,maxTerm,riskFreeRate,inflationRate,inflationEnabled);
   latestResults={results,cashBase,bestIdx,allNeg,purchaseCost,availableCash,maxTerm,inflationEnabled,inflationRate,riskFreeRate};
 
   // KPIs
-  if(allNeg||!bestResult){$('kpiBest').textContent='Cash Purchase';$('kpiBest').style.color=cssVar('--accent2');$('kpiBestSub').textContent=valid.length?'No financing scenario beats paying cash.':'Add scenarios to compare.';}
+  const tie=!!bestResult&&Math.abs(bestResult.netBenefit)<=NB_EPS;
+  if(tie){$('kpiBest').textContent='Break-even';$('kpiBest').style.color=cssVar('--text');$('kpiBestSub').textContent=bestResult.name+' is level with paying cash.';}
+  else if(allNeg||!bestResult){$('kpiBest').textContent='Cash Purchase';$('kpiBest').style.color=cssVar('--accent2');$('kpiBestSub').textContent=valid.length?'No financing scenario beats paying cash.':'Add scenarios to compare.';}
   else{$('kpiBest').textContent=bestResult.name;$('kpiBest').style.color=cssVar(bestResult.colorVar);$('kpiBestSub').textContent='Based on '+$('optTarget').selectedOptions[0].text.toLowerCase()+'.';}
-  if(bestResult){const nb=bestResult.netBenefit;$('kpiNetBenefit').textContent=fmt.currency(nb,true);$('kpiNetBenefit').style.color=nb>=0?cssVar('--positive-em'):cssVar('--negative-em');$('kpiNetSub').textContent=nb>=0?'Financing is more wealth-efficient':'Cash purchase preserves more wealth';$('kpiInterest').textContent=fmt.currency(bestResult.totalInterest,true);$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent=fmt.currencyExact(bestResult.payment)+'/'+freqLabel(bestResult.freq);}
+  if(bestResult){const nb=snapNB(bestResult.netBenefit),cashWins=allNeg&&!tie;$('kpiNetBenefit').textContent=fmt.currency(nb,true);$('kpiNetBenefit').style.color=nb>0?cssVar('--positive-em'):nb<0?cssVar('--negative-em'):cssVar('--text');$('kpiNetSub').textContent=nb>0?'Financing is more wealth-efficient':nb<0?'Cash purchase preserves more wealth':'Financing and paying cash end up level';
+    // The "(Best)" tiles must describe the strategy the verdict names: when the
+    // cash purchase wins there is no loan, so there is no interest.
+    $('kpiInterest').textContent=fmt.currency(cashWins?0:bestResult.totalInterest,true);$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent=cashWins?'Paying cash pays no interest.':fmt.currencyExact(bestResult.payment)+'/'+freqLabel(bestResult.freq);}
   else{$('kpiNetBenefit').textContent='—';$('kpiNetBenefit').style.color=cssVar('--text');$('kpiNetSub').textContent='';$('kpiInterest').textContent='—';$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent='';}
-  $('kpiCashWealth').textContent=fmt.currency(cashBase.endWealth,true);$('kpiCashWealth').style.color=cssVar('--text');$('kpiCashSub').textContent=`After ${maxTerm.toFixed(1)} yr at ${fmt.pct(riskFreeRate/100)} risk-free`;
+  $('kpiCashWealth').textContent=fmt.currency(cashBase.endWealth,true);$('kpiCashWealth').style.color=cssVar('--text');$('kpiCashSub').textContent=maxTerm>0?`After ${maxTerm.toFixed(1)} yr at ${fmt.pct(riskFreeRate/100)} risk-free`:'Cash left after buying outright.';
 
   renderMainChart(results);renderComparisonTable(results);renderAmortTabs(results);updateSensScenarioDropdown();
 }
@@ -353,6 +386,9 @@ function renderMainChart(results){
   else chartInstance=new Chart($('chartCanvas'),cfg);
 }
 
+// Horizons are compared in years, but a sub-year term reads better in months.
+function horizonTxt(y){const n=Number(y)||0;return n>0&&n<1?(n*12).toFixed(1)+' mo':n.toFixed(1)+' yr';}
+
 function renderComparisonTable(results){
   const valid=results.filter(r=>r);if(!valid.length){$('compTableWrap').innerHTML='<p class="muted">Add financing scenarios to compare.</p>';return;}
   const inflOn=latestResults.inflationEnabled,pc=latestResults.purchaseCost;
@@ -366,15 +402,25 @@ function renderComparisonTable(results){
     ['Total Admin Fees',fmt.currency(0),r=>fmt.currencyExact(r.totalAdminFee||0)],
     ['Total Fees Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalFee)],
     ['Total Financing Cost',fmt.currency(0),r=>fmt.currencyExact(r.totalFinanceCost)],['Total Out-of-Pocket',fmt.currency(pc),r=>fmt.currencyExact(r.totalOOP)],
-    ['Ending Wealth',r=>fmt.currencyExact(r.cashBaseWealth),r=>fmt.currencyExact(r.endWealth)],
-    ['Net Benefit vs Cash','Baseline',r=>{const v=r.netBenefit;return`<span style="color:${v>=0?cssVar('--positive-em'):cssVar('--negative-em')};font-weight:700">${fmt.currencyExact(v)}</span>`;}],
+    // Every column is measured at its own horizon, so print that horizon and the
+    // cash baseline that belongs to it. The cash column runs to the comparison
+    // horizon (the longest scenario) to match the chart and the KPI tile; each
+    // scenario column then reconciles against its own row:
+    //   Ending Wealth − Cash Purchase at Same Horizon = Net Benefit.
+    ['Comparison Horizon',horizonTxt(latestResults.maxTerm),r=>horizonTxt(r.termYears)],
+    ['Ending Wealth',fmt.currencyExact(latestResults.cashBase.endWealth),r=>fmt.currencyExact(r.endWealth)],
+    ['Cash Purchase at Same Horizon','Baseline',r=>fmt.currencyExact(r.cashBaseWealth)],
+    ['Net Benefit vs Cash','Baseline',r=>{const v=snapNB(r.netBenefit);return`<span style="color:${v>0?cssVar('--positive-em'):v<0?cssVar('--negative-em'):cssVar('--text')};font-weight:700">${fmt.currencyExact(v)}</span>`;}],
   ];
-  if(inflOn)rows.push(['Inflation-Adj Net Benefit','Baseline',r=>{if(!r.inflAdj||r.inflAdj.netBenefitReal===undefined)return'—';const v=r.inflAdj.netBenefitReal;return`<span style="color:${v>=0?cssVar('--positive-em'):cssVar('--negative-em')};font-weight:700">${fmt.currencyExact(v)}</span>`;}]);
+  if(inflOn)rows.push(['Inflation-Adj Net Benefit','Baseline',r=>{if(!r.inflAdj||r.inflAdj.netBenefitReal===undefined)return'—';const v=snapNB(r.inflAdj.netBenefitReal);return`<span style="color:${v>0?cssVar('--positive-em'):v<0?cssVar('--negative-em'):cssVar('--text')};font-weight:700">${fmt.currencyExact(v)}</span>`;}]);
   rows.forEach(([label,cashVal,fn])=>{
-    const cv=typeof cashVal==='function'?cashVal(valid[0]):cashVal;
-    h+=`<tr><td>${label}</td><td>${cv}</td>`;valid.forEach(r=>{h+='<td>'+fn(r)+'</td>';});h+='</tr>';
+    h+=`<tr><td>${label}</td><td>${cashVal}</td>`;valid.forEach(r=>{h+='<td>'+fn(r)+'</td>';});h+='</tr>';
   });
-  h+='</tbody></table>';$('compTableWrap').innerHTML=h;
+  h+='</tbody></table>';
+  // Only worth saying when the columns really do end at different dates.
+  const mixedHorizons=valid.some(r=>Math.abs(r.termYears-latestResults.maxTerm)>1e-9);
+  if(mixedHorizons)h+='<p class="muted" style="margin-top:10px;font-size:.85rem;">These scenarios run for different lengths. The Cash Purchase column is shown at the longest horizon ('+horizonTxt(latestResults.maxTerm)+'), so each shorter scenario is scored against its own same-horizon cash row above, never against the column.</p>';
+  $('compTableWrap').innerHTML=h;
 }
 
 function renderAmortTabs(results){
@@ -399,11 +445,19 @@ function updateSensScenarioDropdown(){const s=$('sensScenario'),p=s.value;s.inne
 // The "Term" sweep variable is expressed in the selected scenario's repayment
 // periods (weeks/months/years) rather than a fixed unit of years.
 function sensSelectedFreq(){const sc=scenarios[parseInt($('sensScenario').value)];return sc?sc.freq:'monthly';}
+let sensTermFreq=null; // last frequency the term sweep range was built for
 function updateSensTermLabels(){
-  const unit=termUnitLabel(sensSelectedFreq());
+  const freq=sensSelectedFreq(),unit=termUnitLabel(freq);
   const xo=$('sensVarXTermOpt'),yo=$('sensVarYTermOpt');
   if(xo)xo.textContent='Term ('+unit+')';
   if(yo)yo.textContent='Term ('+unit+')';
+  // A range of 12–84 means months for a monthly loan and years for a yearly
+  // one, so re-seed it whenever the selected scenario's unit changes.
+  if(freq!==sensTermFreq){
+    sensTermFreq=freq;const[a,b]=defaultAxisRange('term',freq);
+    if($('sensVarX').value==='term'){$('sensXStart').value=a;$('sensXEnd').value=b;}
+    if($('sensVarY').value==='term'){$('sensYStart').value=a;$('sensYEnd').value=b;}
+  }
 }
 function defaultAxisRange(vn,freq){
   if(vn==='term')return{weekly:[52,364],fortnightly:[26,182],monthly:[12,84],yearly:[1,10]}[freq]||[12,84];
@@ -419,7 +473,12 @@ function runSensitivity(){
   const baseSc={...scenarios[scIdx]};const obj=$('sensObjective').value;const varX=$('sensVarX').value;
   const xS=parseFloat($('sensXStart').value)||0,xE=parseFloat($('sensXEnd').value)||10;
   const steps=Math.max(5,Math.min(50,parseInt($('sensSteps').value)||20));
-  const pc=parseNumInput($('purchaseCost'))||50000;let ac=parseNumInput($('availableCash'));if(ac<=0)ac=pc;
+  // Read the same inputs, the same way, as the main panel: never substitute a
+  // price of our own, and honour the "must be affordable upfront" guard.
+  const pc=Math.max(0,parseNumInput($('purchaseCost'))),ac=Math.max(0,parseNumInput($('availableCash')));
+  const blocked=pc<=0?'Enter a purchase cost to run a sweep.'
+    :ac<=0?'Enter your available cash to run a sweep.'
+    :ac<pc?'Available cash is below the purchase cost, so there is nothing to sweep.':'';
   const inflOn=$('inflationToggle').checked,inflR=parseFloat($('inflationRate').value)||0;
   const rfRate=parseFloat($('baseRf').value)||0;
 
@@ -441,17 +500,21 @@ function runSensitivity(){
     $('sens2dSection').style.display='';$('sens3dSection').style.display='none';
     const objL=$('sensObjective').selectedOptions[0].text,xL=$('sensVarX').selectedOptions[0].text;
     $('sens2dTitle').textContent=`${objL} vs ${xL}`;
-    const data=xVals.map(x=>{const m=applyVar(baseSc,varX,x);const v=getNetBenefit(m,pc,ac,inflR,inflOn,obj);return v!==null?v:0;});
+    // An infeasible point (down payment + fee exceeds available cash) has no
+    // net benefit at all: plot NaN so Chart.js breaks the line instead of
+    // drawing a break-even $0 that never happens.
+    const data=xVals.map(x=>{if(blocked)return null;const m=applyVar(baseSc,varX,x);const v=getNetBenefit(m,pc,ac,inflR,inflOn,obj);return v===null?NaN:v;});
     const labels=xVals.map(x=>x.toFixed(2));const color=cssVar(SCENARIO_COLORS[scIdx%SCENARIO_COLORS.length]);
     const gc=cssVar('--chart-grid'),mc=cssVar('--chart-text');
     const datasets=[{label:objL,data,borderColor:color,backgroundColor:color+'22',borderWidth:2.5,pointRadius:2,pointHoverRadius:5,tension:.3,fill:false},{label:'Zero',data:xVals.map(()=>0),borderColor:cssVar('--muted'),borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}];
-    $('sensLegend').innerHTML=`<div class="legend-item"><span class="dot" style="background:${color}"></span><span>${baseSc.name}</span></div>`;
-    const cfg={type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>`${xL}: ${c[0].label}`,label:c=>`${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`}},zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},scales:{x:{title:{display:true,text:xL,color:mc},ticks:{color:mc,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:objL,color:mc},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
+    $('sensLegend').innerHTML=blocked?`<div class="legend-item" style="color:var(--muted)">${blocked}</div>`:`<div class="legend-item"><span class="dot" style="background:${color}"></span><span>${baseSc.name}</span></div>`;
+    const cfg={type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>`${xL}: ${c[0].label}`,label:c=>Number.isFinite(c.parsed.y)?`${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`:`${c.dataset.label}: not feasible`}},zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},scales:{x:{title:{display:true,text:xL,color:mc},ticks:{color:mc,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:objL,color:mc},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
     if(sensChartInstance){sensChartInstance.data=cfg.data;sensChartInstance.options=cfg.options;sensChartInstance.update('none');}
     else sensChartInstance=new Chart($('sensCanvas'),cfg);
   } else {
     // ═══ 3D SURFACE PLOT ═══
     $('sens2dSection').style.display='none';$('sens3dSection').style.display='';
+    if(blocked){const el=$('plotly3d');if(el)el.innerHTML=`<p class="muted" style="padding:20px;text-align:center;">${blocked}</p>`;return;}
     const varY=$('sensVarY').value;
     const yS=parseFloat($('sensYStart').value)||0,yE=parseFloat($('sensYEnd').value)||8;
     const yVals=[];for(let i=0;i<steps;i++)yVals.push(yS+i*(yE-yS)/(steps-1));
@@ -460,7 +523,7 @@ function runSensitivity(){
 
     // Build z matrix [y][x]
     const zData=[];
-    for(let yi=0;yi<steps;yi++){const row=[];for(let xi=0;xi<steps;xi++){let m=applyVar(baseSc,varX,xVals[xi]);m=applyVar(m,varY,yVals[yi]);const v=getNetBenefit(m,pc,ac,inflR,inflOn,obj);row.push(v!==null?v:0);}zData.push(row);}
+    for(let yi=0;yi<steps;yi++){const row=[];for(let xi=0;xi<steps;xi++){let m=applyVar(baseSc,varX,xVals[xi]);m=applyVar(m,varY,yVals[yi]);const v=getNetBenefit(m,pc,ac,inflR,inflOn,obj);row.push(v);}zData.push(row);} // null = infeasible, Plotly leaves a hole
 
     const isLight=document.body.classList.contains('light');
     const plotData=[{type:'surface',x:xVals,y:yVals,z:zData,
@@ -984,7 +1047,9 @@ persist = Persist.init('financingvscash', {
   },
   extra: {
     save: function(){ return { scenarios: scenarios }; },
-    restore: function(e){ if(e && Array.isArray(e.scenarios) && e.scenarios.length) scenarios = e.scenarios; }
+    // An empty list is a real state (the user deleted every scenario), so it
+    // must survive a reload instead of falling back to the defaults.
+    restore: function(e){ if(e && Array.isArray(e.scenarios)) scenarios = e.scenarios.map(normaliseScenario).filter(Boolean); }
   }
 });
 })();

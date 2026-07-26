@@ -31,30 +31,38 @@ def diff_file(py, js):
 
 names = sorted({os.path.basename(p).rsplit('_',1)[0]
                 for p in glob.glob(os.path.join(HERE,'py_out','*_own.csv'))})
-print("="*78)
-print("DISCREPANCIES: JS app  -  Python standard-accounting model  (>$1, whole-dollar)")
-print("="*78)
-for name in names:
-    for kind in ('own','rent','rtb'):
-        py = os.path.join(HERE,'py_out',f'{name}_{kind}.csv')
-        js = os.path.join(HERE,'js_out',f'{name}_{kind}.csv')
-        if not (os.path.exists(py) and os.path.exists(js)): continue
-        d = diff_file(py, js)
-        tag = f"{name} [{kind}]"
-        if not d:
-            print(f"  OK   {tag}: identical")
-        else:
-            # summarise by column
-            cols = {}
-            for yr,col,a,b,dl in d:
-                cols.setdefault(col, []).append((yr,a,b,dl))
-            print(f"  DIFF {tag}: {len(d)} cell(s) differ")
-            for col, items in cols.items():
-                worst = max(items, key=lambda x: abs(x[3]) if x[3] is not None else 0)
-                yr,a,b,dl = worst
-                rng = f"yrs {items[0][0]}..{items[-1][0]}" if len(items)>1 else f"yr {items[0][0]}"
-                if dl is None:
-                    print(f"        - {col}: {len(items)} cell(s), {rng}; e.g. yr{yr} py={a} js={b}")
-                else:
-                    print(f"        - {col}: {len(items)} cell(s), {rng}; worst yr{yr} py={a:,.0f} js={b:,.0f} (Δ={dl:+,.0f})")
+
+def report(out_dir, title):
+    print("="*78)
+    print(title)
+    print("="*78)
+    for name in names:
+        for kind in ('own','rent','rtb'):
+            py = os.path.join(HERE,'py_out',f'{name}_{kind}.csv')
+            js = os.path.join(HERE,out_dir,f'{name}_{kind}.csv')
+            if not (os.path.exists(py) and os.path.exists(js)): continue
+            d = diff_file(py, js)
+            tag = f"{name} [{kind}]"
+            if not d:
+                print(f"  OK   {tag}: identical")
+            else:
+                # summarise by column
+                cols = {}
+                for yr,col,a,b,dl in d:
+                    cols.setdefault(col, []).append((yr,a,b,dl))
+                print(f"  DIFF {tag}: {len(d)} cell(s) differ")
+                for col, items in cols.items():
+                    worst = max(items, key=lambda x: abs(x[3]) if x[3] is not None else 0)
+                    yr,a,b,dl = worst
+                    rng = f"yrs {items[0][0]}..{items[-1][0]}" if len(items)>1 else f"yr {items[0][0]}"
+                    if dl is None:
+                        print(f"        - {col}: {len(items)} cell(s), {rng}; e.g. yr{yr} py={a} js={b}")
+                    else:
+                        print(f"        - {col}: {len(items)} cell(s), {rng}; worst yr{yr} py={a:,.0f} js={b:,.0f} (Δ={dl:+,.0f})")
+
+report('js_out',  "DISCREPANCIES: JS app  -  Python standard-accounting model  (>$1, whole-dollar)")
+# The sensitivity sub-tool duplicates the engine, so it needs its own check against
+# the oracle rather than only against the main tool. No RTB there, so those cases
+# simply have no sens_out file and are skipped.
+report('sens_out', "DISCREPANCIES: JS sensitivity sub-tool  -  Python model  (>$1, whole-dollar)")
 print("="*78)

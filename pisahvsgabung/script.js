@@ -52,9 +52,9 @@ const LANG = {
     ptkpGLabel: 'Gabung:',
     bracketSectionLabel: 'Tax Brackets (PPh 21)',
     bracketFrom: 'From (Rp)',
-    bracketToHtml: 'To (Rp) <span style="font-size:0.68rem">(blank=∞)</span>',
+    bracketToHtml: 'To (Rp) <span style="font-size:0.68rem">(last=∞)</span>',
     bracketRate: 'Rate (%)',
-    bracketTip: 'Edit thresholds and rates. "From" is auto-managed. Last bracket has no upper bound.',
+    bracketTip: 'Edit thresholds and rates. "From" is auto-managed and only the last bracket is open-ended. A bound that swallows later bands removes them, so the ladder shown is always the ladder applied.',
     infoBoxHtml: '<strong>Pisah Harta (K/0 + TK/0):</strong> Each spouse files their own SPT. Husband uses PTKP K/tanggungan, wife uses PTKP TK/0. Double bracket access.<br><br><strong>Gabung Harta (K/I/0):</strong> Combined income, single SPT. Uses PTKP K/I/tanggungan. One bracket ladder for all income.',
     resetBtn: '↺ Reset',
     kpiPisahLabel: 'Pisah Harta — Total Tax',
@@ -65,6 +65,9 @@ const LANG = {
     pisahWins: '✅ Pisah Harta wins',
     gabungWins: '✅ Gabung Harta wins',
     posTitle: '📍 Your Current Tax Position',
+    posPtkpPisahH: 'PTKP (Pisah H)',
+    posPtkpPisahW: 'PTKP (Pisah W)',
+    posPtkpGabung: 'PTKP (Gabung)',
     posMaxMarginal: 'Max Marginal Bracket',
     posEffPisah: 'Effective Rate — Pisah',
     posEffGabung: 'Effective Rate — Gabung',
@@ -135,6 +138,11 @@ const LANG = {
     warnHusband0Post: ') entirely. Gabung Harta is strongly recommended.',
     warnDeductExceed: '⚠️ Deductions (pengurang) exceed gross salary. Net income is set to Rp 0.',
     warnSpouseExceed: '⚠️ One spouse deduction exceeds that spouse gross salary. Net income for that spouse is set to Rp 0.',
+    warnCapLead: '⚠️ Biaya jabatan is capped at 5% of gross salary, up to Rp 6,000,000 a year. Above the cap: ',
+    warnCapOf: ', cap ',
+    warnCapTail: '. The amount you entered is still applied in full.',
+    warnCapH: 'Husband',
+    warnCapW: 'Wife',
   },
   id: {
     subtitle: 'Bandingkan PPh orang pribadi di Indonesia antara skema Pisah Harta dan Gabung Harta.',
@@ -174,9 +182,9 @@ const LANG = {
     ptkpGLabel: 'Gabung:',
     bracketSectionLabel: 'Lapisan Tarif PPh 21',
     bracketFrom: 'Dari (Rp)',
-    bracketToHtml: 'Sampai (Rp) <span style="font-size:0.68rem">(kosong=∞)</span>',
+    bracketToHtml: 'Sampai (Rp) <span style="font-size:0.68rem">(terakhir=∞)</span>',
     bracketRate: 'Tarif (%)',
-    bracketTip: 'Edit ambang batas dan tarif. Kolom "Dari" dikelola otomatis. Lapisan terakhir tidak punya batas atas.',
+    bracketTip: 'Edit ambang batas dan tarif. Kolom "Dari" dikelola otomatis dan hanya lapisan terakhir yang tanpa batas atas. Batas yang menelan lapisan di bawahnya akan menghapus lapisan tersebut, jadi tangga yang tampil selalu sama dengan yang dihitung.',
     infoBoxHtml: '<strong>Pisah Harta (K/0 + TK/0):</strong> Masing-masing pasangan mengajukan SPT sendiri. Suami menggunakan PTKP K/tanggungan, istri menggunakan PTKP TK/0. Keduanya mengakses lapisan tarif secara terpisah.<br><br><strong>Gabung Harta (K/I/0):</strong> Penghasilan digabung dalam satu SPT bersama. Menggunakan PTKP K/I/tanggungan. Satu tangga lapisan tarif untuk seluruh penghasilan.',
     resetBtn: '↺ Atur Ulang',
     kpiPisahLabel: 'Pisah Harta — Total Pajak',
@@ -187,6 +195,9 @@ const LANG = {
     pisahWins: '✅ Pisah Harta lebih hemat',
     gabungWins: '✅ Gabung Harta lebih hemat',
     posTitle: '📍 Posisi Pajak Anda Saat Ini',
+    posPtkpPisahH: 'PTKP Pisah (Suami)',
+    posPtkpPisahW: 'PTKP Pisah (Istri)',
+    posPtkpGabung: 'PTKP Gabung',
     posMaxMarginal: 'Tarif Marginal Tertinggi',
     posEffPisah: 'Tarif Efektif — Pisah',
     posEffGabung: 'Tarif Efektif — Gabung',
@@ -212,7 +223,7 @@ const LANG = {
     crossoverTitle: 'Analisis Breakeven',
     tilePtkpHusband: 'PTKP Suami (Pisah)',
     tilePtkpWife: 'PTKP Istri (Pisah)',
-    tileTotalPtkpPisah: 'Total PTKP Pisah',
+    tileTotalPtkpPisah: 'Jumlah PTKP Pisah',
     tileGrossalary: 'Gaji Kotor',
     tileGrosssalary: 'Gaji Kotor',
     tileDeductions: 'Potongan (Pengurang)',
@@ -258,6 +269,11 @@ const LANG = {
     warnHusband0Post: ') terbuang sia-sia dalam Pisah Harta. Gabung Harta sangat disarankan.',
     warnDeductExceed: '⚠️ Potongan (pengurang) melebihi gaji kotor. Penghasilan bersih ditetapkan Rp 0.',
     warnSpouseExceed: '⚠️ Potongan salah satu pasangan melebihi gaji kotor pasangan tersebut. Penghasilan bersih pasangan itu ditetapkan Rp 0.',
+    warnCapLead: '⚠️ Biaya jabatan dibatasi 5% dari gaji kotor, maksimal Rp 6,000,000 per tahun. Di atas batas: ',
+    warnCapOf: ', batas ',
+    warnCapTail: '. Nilai yang Anda isi tetap dipakai sepenuhnya.',
+    warnCapH: 'Suami',
+    warnCapW: 'Istri',
   }
 };
 
@@ -323,6 +339,16 @@ const BRACKETS_DEFAULT = [
   { from:5000000001,to: null,        rate: 0.35 },
 ];
 
+/* UU PPh Pasal 17 ayat (4): penghasilan kena pajak (PKP) is rounded DOWN to whole
+   thousands of rupiah before the rates apply. The proportional income split leaves
+   some PKP values a hair under a whole thousand in binary floating point
+   (6,899,999.999999993 is arithmetically 6,900,000), so absorb that artefact first
+   or the floor would silently cost the taxpayer a full Rp 1,000 of PKP. */
+function floorPkp(pkp) {
+  if (!(pkp > 0)) return 0;
+  return Math.floor((pkp + 1e-6) / 1000) * 1000;
+}
+
 function calcTaxProgressive(income) {
   if (income <= 0) return 0;
   let tax = 0;
@@ -345,9 +371,35 @@ function calcTaxProgressive(income) {
 function marginalBracket(income) {
   if (income <= 0) return S.brackets[0];
   for (let i = S.brackets.length - 1; i >= 0; i--) {
-    if (income > S.brackets[i].from) return S.brackets[i];
+    // "from" is the first rupiah taxed at this rate, so it belongs to the bracket.
+    if (income >= S.brackets[i].from) return S.brackets[i];
   }
   return S.brackets[0];
+}
+
+/* Keep the ladder monotonic and honest: every "From" follows the previous
+   bracket's "To", only the last bracket is open-ended, and any bracket a bound
+   has swallowed is removed. The editor can then never show a band that the tax
+   engine does not apply. */
+function normalizeBrackets() {
+  const n = S.brackets.length;
+  const kept = [];
+  let prevTop = -1;
+  S.brackets.forEach((b, i) => {
+    let top;
+    if (i === n - 1) {
+      b.to = null;              // last bracket always runs to ∞
+      top = Infinity;
+    } else {
+      if (!Number.isFinite(b.to)) b.to = 0;   // a blank/invalid mid bound collapses
+      top = b.to;
+      if (top <= prevTop) return;             // swallowed by an earlier bracket
+    }
+    b.from = Math.max(0, prevTop + 1);
+    kept.push(b);
+    prevTop = top;
+  });
+  S.brackets = kept;
 }
 
 const DEFAULTS = {
@@ -401,12 +453,19 @@ let persist = null; // mini cache handle (assigned at init)
 
 function cssVar(name){return getComputedStyle(document.body).getPropertyValue(name).trim();}
 
+// A typed 0 is a deliberate override, not "no input", so only an empty or
+// unparseable field falls back to the statutory default.
+function readPtkpField(el, dflt){
+  const n = parseInt(String(el.value).replace(/[^0-9]/g,''), 10);
+  return Number.isFinite(n) ? n : dflt;
+}
+
 function readInputs(){
   S.dependents = parseInt(els.dependents.value)||0;
-  S.ptkpBase      = parseInt(els.ptkpBase.value.replace(/[^0-9]/g,''))||PTKP_BASE_DEFAULT;
-  S.ptkpMarried   = parseInt(els.ptkpMarried.value.replace(/[^0-9]/g,''))||PTKP_MARRIED_DEFAULT;
-  S.ptkpSpouse    = parseInt(els.ptkpSpouse.value.replace(/[^0-9]/g,''))||PTKP_SPOUSE_DEFAULT;
-  S.ptkpDependent = parseInt(els.ptkpDependent.value.replace(/[^0-9]/g,''))||PTKP_DEPENDENT_DEFAULT;
+  S.ptkpBase      = readPtkpField(els.ptkpBase, PTKP_BASE_DEFAULT);
+  S.ptkpMarried   = readPtkpField(els.ptkpMarried, PTKP_MARRIED_DEFAULT);
+  S.ptkpSpouse    = readPtkpField(els.ptkpSpouse, PTKP_SPOUSE_DEFAULT);
+  S.ptkpDependent = readPtkpField(els.ptkpDependent, PTKP_DEPENDENT_DEFAULT);
 
   if (S.inputMode === 'individual') {
     S.husbandSalary = Math.max(0, SharedFmt.parseFormatted(els.husbandSalaryInput.value));
@@ -415,7 +474,9 @@ function readInputs(){
     S.wifeDeduction = Math.max(0, SharedFmt.parseFormatted(els.wifeDeductionInput.value));
     S.totalSalary = S.husbandSalary + S.wifeSalary;
     S.deduction = S.husbandDeduction + S.wifeDeduction;
-    S.splitPct = S.totalSalary > 0 ? Math.round((S.wifeSalary / S.totalSalary) * 100) : 50;
+    // Exact share, not rounded to a whole percent: the sweep, charts, table and
+    // CSV all derive their grosses from this.
+    S.splitPct = S.totalSalary > 0 ? (S.wifeSalary / S.totalSalary) * 100 : 50;
     $('combinedLabel').textContent = 'Rp ' + S.totalSalary.toLocaleString('en-US');
     $('splitDerivedLabel').textContent = (S.totalSalary > 0 ? (S.wifeSalary/S.totalSalary*100).toFixed(1) : '50.0') + '%';
   } else {
@@ -427,14 +488,25 @@ function readInputs(){
   }
 }
 
+// The split can now be fractional (Husband + Wife mode), so show at most one
+// decimal and drop a trailing ".0".
+function splitPctLabel(){
+  const r = Math.round(S.splitPct * 10) / 10;
+  return Number.isInteger(r) ? String(r) : r.toFixed(1);
+}
+
 function refreshSliderLabels(){
   const sv=$('splitValue');
-  if(sv) sv.textContent = S.splitPct + '%';
+  if(sv) sv.textContent = splitPctLabel() + '%';
 }
 
 function computeModel() {
   const dep = S.dependents;
-  const wifePct = S.splitPct / 100;
+  // In "Husband + Wife" mode the share comes straight from the typed salaries so
+  // the sweep models the same household as the KPI.
+  const wifePct = (S.inputMode === 'individual' && S.totalSalary > 0)
+    ? S.wifeSalary / S.totalSalary
+    : S.splitPct / 100;
   const husbandPct = 1 - wifePct;
 
   const ptkpHusband_pisah = S.ptkpBase + S.ptkpMarried + dep * S.ptkpDependent;
@@ -445,13 +517,11 @@ function computeModel() {
   if($('ptkpWDisplay')) $('ptkpWDisplay').textContent = fmt.idr(ptkpWife_pisah,true);
   if($('ptkpGDisplay')) $('ptkpGDisplay').textContent = fmt.idr(ptkpGabung,true);
 
-  const totalDeductionRate = S.totalSalary > 0 ? S.deduction / S.totalSalary : 0;
-  const husbandDeductionRate = S.inputMode === 'individual'
-    ? (S.husbandSalary > 0 ? S.husbandDeduction / S.husbandSalary : 0)
-    : totalDeductionRate;
-  const wifeDeductionRate = S.inputMode === 'individual'
-    ? (S.wifeSalary > 0 ? S.wifeDeduction / S.wifeSalary : 0)
-    : totalDeductionRate;
+  // A deduction is a fixed rupiah amount, so it stays fixed across the salary
+  // sweep instead of being re-applied as a percentage of gross. In total mode the
+  // combined figure is split by each spouse's income share.
+  const husbandDeductionAmt = S.inputMode === 'individual' ? S.husbandDeduction : S.deduction * husbandPct;
+  const wifeDeductionAmt    = S.inputMode === 'individual' ? S.wifeDeduction    : S.deduction * wifePct;
 
   const rows = [];
   const salaries = [];
@@ -462,20 +532,21 @@ function computeModel() {
     const totalGross = salMio * 1e6;
     const wifeGross = totalGross * wifePct;
     const husbandGross = totalGross * husbandPct;
-    const husbandDeduction = husbandGross * husbandDeductionRate;
-    const wifeDeduction = wifeGross * wifeDeductionRate;
+    // Only the part of a deduction that fits inside that spouse's gross applies.
+    const husbandDeduction = Math.min(husbandGross, husbandDeductionAmt);
+    const wifeDeduction = Math.min(wifeGross, wifeDeductionAmt);
     const totalDeduction = husbandDeduction + wifeDeduction;
-    const husbandNet = Math.max(0, husbandGross - husbandDeduction);
-    const wifeNet = Math.max(0, wifeGross - wifeDeduction);
+    const husbandNet = husbandGross - husbandDeduction;
+    const wifeNet = wifeGross - wifeDeduction;
     const netIncome = husbandNet + wifeNet;
 
-    const taxableH_p = Math.max(0, husbandNet - ptkpHusband_pisah);
-    const taxableW_p = Math.max(0, wifeNet - ptkpWife_pisah);
+    const taxableH_p = floorPkp(husbandNet - ptkpHusband_pisah);
+    const taxableW_p = floorPkp(wifeNet - ptkpWife_pisah);
     const taxH_p = calcTaxProgressive(taxableH_p);
     const taxW_p = calcTaxProgressive(taxableW_p);
     const totalTax_p = taxH_p + taxW_p;
 
-    const taxableG = Math.max(0, netIncome - ptkpGabung);
+    const taxableG = floorPkp(netIncome - ptkpGabung);
     const totalTax_g = calcTaxProgressive(taxableG);
     const taxH_g = netIncome > 0 ? totalTax_g * (husbandNet / netIncome) : 0;
     const taxW_g = netIncome > 0 ? totalTax_g * (wifeNet / netIncome) : 0;
@@ -506,31 +577,33 @@ function computeModel() {
     }
   }
 
-  // In "Husband + Wife" mode tax the exact salaries the user typed. splitPct is
-  // rounded to a whole percent for the sweep chart, so deriving the grosses from
-  // it here would tax slightly-wrong amounts.
+  // In "Husband + Wife" mode tax the exact salaries the user typed.
   const currentHusbandGross = S.inputMode === 'individual' ? S.husbandSalary : S.totalSalary * husbandPct;
   const currentWifeGross    = S.inputMode === 'individual' ? S.wifeSalary    : S.totalSalary * wifePct;
-  const currentHusbandDeduction = S.inputMode === 'individual' ? S.husbandDeduction : S.deduction * husbandPct;
-  const currentWifeDeduction = S.inputMode === 'individual' ? S.wifeDeduction : S.deduction * wifePct;
-  const curHusbandNet = Math.max(0, currentHusbandGross - currentHusbandDeduction);
-  const curWifeNet = Math.max(0, currentWifeGross - currentWifeDeduction);
+  // Report the deduction actually applied, so Gross − Deductions = Net Income
+  // even when one spouse's deduction is larger than their gross.
+  const currentHusbandDeduction = Math.min(currentHusbandGross, husbandDeductionAmt);
+  const currentWifeDeduction = Math.min(currentWifeGross, wifeDeductionAmt);
+  const curHusbandNet = currentHusbandGross - currentHusbandDeduction;
+  const curWifeNet = currentWifeGross - currentWifeDeduction;
   const currentNet = curHusbandNet + curWifeNet;
 
-  const curTxH_p = Math.max(0, curHusbandNet - ptkpHusband_pisah);
-  const curTxW_p = Math.max(0, curWifeNet - ptkpWife_pisah);
+  const curTxH_p = floorPkp(curHusbandNet - ptkpHusband_pisah);
+  const curTxW_p = floorPkp(curWifeNet - ptkpWife_pisah);
   const curTaxH_p = calcTaxProgressive(curTxH_p);
   const curTaxW_p = calcTaxProgressive(curTxW_p);
   const curTaxP = curTaxH_p + curTaxW_p;
 
-  const curTxG = Math.max(0, currentNet - ptkpGabung);
+  const curTxG = floorPkp(currentNet - ptkpGabung);
   const curTaxG = calcTaxProgressive(curTxG);
 
   const maxTaxableForMarginal = Math.max(curTxH_p, curTxW_p, curTxG);
   const marginal = marginalBracket(maxTaxableForMarginal);
 
   const current = {
-    totalGross: S.totalSalary, totalDeduction: S.deduction, netIncome: currentNet,
+    totalGross: S.totalSalary,
+    totalDeduction: currentHusbandDeduction + currentWifeDeduction,
+    netIncome: currentNet,
     pisahTax: curTaxP, gabungTax: curTaxG, diff: curTaxG - curTaxP,
     pisahRate: S.totalSalary > 0 ? curTaxP / S.totalSalary : 0,
     gabungRate: S.totalSalary > 0 ? curTaxG / S.totalSalary : 0,
@@ -716,13 +789,13 @@ function updateSummary(state){
 
   const info=$('crossoverInfo');
   if(S.splitPct===0 || S.splitPct===100){
-    info.innerHTML=`<strong>${T('crossoverWith')} ${S.splitPct}${T('crossoverWifePct')}</strong><br>${T('crossoverWastedHtml')}<br><br>${T('crossoverAdjust')}`;
+    info.innerHTML=`<strong>${T('crossoverWith')} ${splitPctLabel()}${T('crossoverWifePct')}</strong><br>${T('crossoverWastedHtml')}<br><br>${T('crossoverAdjust')}`;
   } else if(s.crossover){
     info.innerHTML='<strong>'+T('crossoverPoint')+'</strong> ~'+fmt.salaryLabel(Math.round(s.crossover))+'<br><br>'+T('crossoverBelowPre')+S.dependents+T('crossoverBelowPost')+'<br><br>'+T('crossoverAbovePre')+S.dependents+'/'+T('crossoverAbovePost');
   } else {
     const last=state.rows[state.rows.length-1];
     if(last.diff>=0){
-      info.innerHTML='<strong>'+T('crossoverNoneFound')+'</strong><br><br>'+T('crossoverPisahBetterPre')+S.splitPct+T('crossoverPisahBetterPost');
+      info.innerHTML='<strong>'+T('crossoverNoneFound')+'</strong><br><br>'+T('crossoverPisahBetterPre')+splitPctLabel()+T('crossoverPisahBetterPost');
     } else {
       info.innerHTML='<strong>'+T('crossoverNoneFound')+'</strong><br><br>'+T('crossoverGabungBetterHtml');
     }
@@ -801,6 +874,15 @@ function updateDetailTable(rows){
   }
 }
 
+/* ── Biaya jabatan cap (warning only, never applied to the maths) ── */
+const BIAYA_JABATAN_RATE = 0.05;
+const BIAYA_JABATAN_MAX  = 6000000;
+function biayaJabatanCap(gross){ return Math.min(Math.max(0,gross)*BIAYA_JABATAN_RATE, BIAYA_JABATAN_MAX); }
+function capWarnMoney(v){ return 'Rp ' + Math.round(v).toLocaleString('en-US'); }
+function capWarnItem(who, amount, cap){
+  return who + ' ' + capWarnMoney(amount) + T('warnCapOf') + capWarnMoney(cap);
+}
+
 /* ── Main loop ── */
 function rerender(){
   readInputs();
@@ -824,6 +906,24 @@ function rerender(){
   if(S.inputMode === 'individual' && (S.husbandDeduction > S.husbandSalary || S.wifeDeduction > S.wifeSalary)){
     warn.style.display='block';
     warn.textContent=T('warnSpouseExceed');
+  }
+
+  // Biaya jabatan is 5% of gross, capped at Rp 6,000,000 a year. The field stays
+  // free-form (users may model other deductions), so this only flags the cap.
+  // Nothing here changes what is computed. Louder warnings above keep priority.
+  if(warn.style.display==='none'){
+    const wf = S.splitPct/100, hf = 1-wf;
+    const hGross = S.inputMode==='individual' ? S.husbandSalary    : S.totalSalary*hf;
+    const wGross = S.inputMode==='individual' ? S.wifeSalary       : S.totalSalary*wf;
+    const hDed   = S.inputMode==='individual' ? S.husbandDeduction : S.deduction*hf;
+    const wDed   = S.inputMode==='individual' ? S.wifeDeduction    : S.deduction*wf;
+    const over=[];
+    if(hDed > biayaJabatanCap(hGross)+0.5) over.push(capWarnItem(T('warnCapH'), hDed, biayaJabatanCap(hGross)));
+    if(wDed > biayaJabatanCap(wGross)+0.5) over.push(capWarnItem(T('warnCapW'), wDed, biayaJabatanCap(wGross)));
+    if(over.length){
+      warn.style.display='block';
+      warn.textContent=T('warnCapLead')+over.join('; ')+T('warnCapTail');
+    }
   }
 
   const state=computeModel();
@@ -906,14 +1006,12 @@ function buildBracketEditor(){
       this.setSelectionRange(Math.max(0,pos+(newLen-oldLen)),Math.max(0,pos+(newLen-oldLen)));
     });
     toEl.addEventListener('change',()=>{
-      let newTo=toEl.value===''?null:parseBracketNum(toEl.value);
-      // Keep the ladder monotonic: an upper bound can't drop below this bracket's
-      // own lower bound (which is the previous bracket's "to" + 1).
-      if(newTo!==null) newTo=Math.max(newTo, S.brackets[i].from);
-      S.brackets[i].to=newTo;
-      if(i+1<S.brackets.length&&newTo!==null){
-        S.brackets[i+1].from=newTo+1;
-      }
+      // Only the last bracket runs to ∞. Blanking any other row would hide every
+      // bracket below it, so put the stored bound back instead.
+      if(toEl.value.trim()===''){ buildBracketEditor(); return; }
+      // An upper bound can't drop below this bracket's own lower bound.
+      S.brackets[i].to=Math.max(parseBracketNum(toEl.value), S.brackets[i].from);
+      normalizeBrackets();
       buildBracketEditor();
       rerender();
     });
@@ -921,10 +1019,14 @@ function buildBracketEditor(){
     const rateEl = document.createElement('input');
     rateEl.className='num-input-sm';
     rateEl.type='number';
-    rateEl.min=0;rateEl.max=100;rateEl.step=0.5;
-    rateEl.value=(b.rate*100).toFixed(1);
+    rateEl.min=0;rateEl.max=100;rateEl.step=0.01;
+    rateEl.value=(b.rate*100).toFixed(2);
     rateEl.addEventListener('change',()=>{
-      S.brackets[i].rate=Math.max(0,Math.min(100,parseFloat(rateEl.value)||0))/100;
+      // Clamp to 0-100 and quantise to the 0.01% the cell displays, so every row is
+      // formatted the same way and the number shown is exactly the number taxed.
+      const pct=Math.round(Math.max(0,Math.min(100,parseFloat(rateEl.value)||0))*100)/100;
+      S.brackets[i].rate=pct/100;
+      rateEl.value=pct.toFixed(2);
       rerender();
     });
 
@@ -1235,7 +1337,7 @@ persist = Persist.init('pisahvsgabung', {
     save: function(){ return { mode: S.inputMode, brackets: S.brackets }; },
     restore: function(e){
       if (e && e.mode) S.inputMode = e.mode;
-      if (e && Array.isArray(e.brackets) && e.brackets.length) S.brackets = e.brackets;
+      if (e && Array.isArray(e.brackets) && e.brackets.length) { S.brackets = e.brackets; normalizeBrackets(); }
     }
   }
 });

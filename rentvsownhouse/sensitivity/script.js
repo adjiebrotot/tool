@@ -239,19 +239,22 @@ function applyLang(){
   }
 }
 
-/* ── PARAMS (metadata for simple-mode rows) ── */
+/* ── PARAMS (metadata for simple-mode rows) ──
+   min/max MUST match the matching control on the main calculator (index.html),
+   otherwise the same typed value is silently clamped differently on the two
+   pages and the scenarios stop being reproducible there. */
 const PARAMS = [
-  {key:'horizon',              labelKey:'pHorizon',              type:'integer',  unitKey:'uYrs',        min:1,   max:60,  step:1,    tip:'horizon'},
-  {key:'riskFreeRate',         labelKey:'pRiskFreeRate',         type:'percent',  unitKey:'uPctPa',      min:0,   max:25,  step:0.05, tip:'riskFreeRate'},
+  {key:'horizon',              labelKey:'pHorizon',              type:'integer',  unitKey:'uYrs',        min:5,   max:100, step:1,    tip:'horizon'},
+  {key:'riskFreeRate',         labelKey:'pRiskFreeRate',         type:'percent',  unitKey:'uPctPa',      min:-10, max:25,  step:0.05, tip:'riskFreeRate'},
   {key:'initialCash',          labelKey:'pInitialCash',          type:'currency', unitKey:'uAuto',       min:0,            step:10000,tip:'initialCash'},
   {key:'monthlyBudget',        labelKey:'pMonthlyBudget',        type:'currency', unitKey:'uAuto',       min:0,            step:100,  tip:'monthlyBudget'},
   {key:'monthlyBudgetIncrease',labelKey:'pMonthlyBudgetIncrease',type:'percent',  unitKey:'uPctPa',      min:0,   max:25,  step:0.1,  tip:'monthlyBudgetIncrease'},
   {key:'propertyPrice',        labelKey:'pPropertyPrice',        type:'currency',                        min:50000,        step:10000,tip:'propertyPrice'},
-  {key:'downPaymentPct',       labelKey:'pDownPaymentPct',       type:'percent',  unitKey:'uPctOfPrice', min:0,   max:99,  step:0.5,  tip:'downPaymentPct'},
+  {key:'downPaymentPct',       labelKey:'pDownPaymentPct',       type:'percent',  unitKey:'uPctOfPrice', min:0,   max:100, step:0.5,  tip:'downPaymentPct'},
   {key:'mortgageType',         labelKey:'pMortgageType',         type:'select',   options:[{v:'pi',lk:'optPI'},{v:'io',lk:'optIO'}], tip:'mortgageType'},
   {key:'mortgageRate',         labelKey:'pMortgageRate',         type:'percent',  unitKey:'uPctPa',      min:0,   max:25,  step:0.05, tip:'mortgageRate'},
-  {key:'mortgageTerm',         labelKey:'pMortgageTerm',         type:'integer',  unitKey:'uYrs',        min:1,   max:40,  step:1,    tip:'mortgageTerm'},
-  {key:'houseGrowth',          labelKey:'pHouseGrowth',          type:'percent',  unitKey:'uPctPaCagr',  min:-10, max:30,  step:0.1,  tip:'houseGrowth'},
+  {key:'mortgageTerm',         labelKey:'pMortgageTerm',         type:'integer',  unitKey:'uYrs',        min:5,   max:50,  step:1,    tip:'mortgageTerm'},
+  {key:'houseGrowth',          labelKey:'pHouseGrowth',          type:'percent',  unitKey:'uPctPaCagr',  min:-10, max:25,  step:0.1,  tip:'houseGrowth'},
   {key:'setupCost',            labelKey:'pSetupCost',            type:'currency',                        min:0,            step:500,  tip:'setupCost'},
   {key:'setupCostType',        labelKey:'pSetupCostType',        type:'select',   options:[{v:'dollar',lk:'optFixedAmount'},{v:'pct',lk:'optPctPropertyPrice'}], tip:'setupCost'},
   {key:'ownOngoingCost',       labelKey:'pOwnOngoingCost',       type:'currency',                        min:0,            step:100,  tip:'ownOngoingCost', subgroup:'own-cost'},
@@ -261,7 +264,7 @@ const PARAMS = [
   {key:'costInterestOnly',     labelKey:'pCostInterestOnly',     type:'boolean',                                                      tip:'costInterestOnly'},
   {key:'rentAmount',           labelKey:'pRentAmount',           type:'currency',                        min:0,            step:50,   tip:'rentAmount'},
   {key:'rentFreq',             labelKey:'pRentFreq',             type:'select',   options:[{v:'monthly',lk:'optMonthly'},{v:'weekly',lk:'optWeekly'},{v:'yearly',lk:'optYearly'}]},
-  {key:'rentInflation',        labelKey:'pRentInflation',        type:'percent',  unitKey:'uPctPa',      min:-5,  max:25,  step:0.1,  tip:'rentInflation'},
+  {key:'rentInflation',        labelKey:'pRentInflation',        type:'percent',  unitKey:'uPctPa',      min:-10, max:25,  step:0.1,  tip:'rentInflation'},
   {key:'rentOngoingCost',      labelKey:'pRentOngoingCost',      type:'currency',                        min:0,            step:100,  tip:'rentOngoingCost', subgroup:'rent-cost'},
   {key:'rentOngoingCostFreq',  labelKey:'pRentOngoingCostFreq',  type:'select',   options:[{v:'yearly',lk:'optYearly'},{v:'monthly',lk:'optMonthly'},{v:'weekly',lk:'optWeekly'}], subgroup:'rent-cost'},
   {key:'rentOngoingCostType',  labelKey:'pRentOngoingCostType',  type:'select',   options:[{v:'dollar',lk:'optFixedDollar'},{v:'pct',lk:'optPctAnnualRent'}], subgroup:'rent-cost'},
@@ -327,10 +330,13 @@ function parseIntSafe(val, fb){ const n=parseInt(String(val).replace(/,/g,'')); 
 function toYearly(val,freq){ if(freq==='weekly') return val*52; if(freq==='monthly') return val*12; return val; }
 function toMonthly(val,freq){ if(freq==='weekly') return val*52/12; if(freq==='yearly') return val/12; return val; }
 
+/* Thousands separators, keeping up to 2 decimals (mirrors formatMoneyValue() in
+   the main tool). Cost fields double as "% of value" fields, so rounding here
+   would silently turn 1.5% into 2%. */
 function addCommas(n){
-  const num = Math.round(n);
-  const abs = Math.abs(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
-  return num < 0 ? '-'+abs : abs;
+  const num = Number(n) || 0;
+  const isInt = Math.abs(num % 1) < 1e-9;
+  return num.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:isInt ? 0 : 2});
 }
 
 function fmtInputVal(val, type){
@@ -1533,7 +1539,10 @@ function wireEvents(){
       e.target.value = String(val ?? '').replace(/,/g,'');
     });
     el.addEventListener('input', e=>{
-      if(e.target.dataset.ptype==='currency') SharedFmt.liveFormat(e.target,{maxDecimals:0});
+      // maxDecimals:2 matches the main tool's money inputs — a currency row can
+      // also hold a percentage (e.g. ongoing cost as "% of property value"),
+      // and 0 decimals would turn a typed 1.5 into 15.
+      if(e.target.dataset.ptype==='currency') SharedFmt.liveFormat(e.target,{maxDecimals:2});
     });
     el.addEventListener('blur', e=>{
       const si = +e.target.dataset.si, key = e.target.dataset.key, ptype = e.target.dataset.ptype;
@@ -1657,8 +1666,7 @@ function wireEvents(){
   document.querySelectorAll('.ci-amt').forEach(el=>{
     el.addEventListener('focus', e=>{ e.target.value = String(e.target.value).replace(/,/g,''); });
     el.addEventListener('input', e=>{
-      const it = costItemOf(e.target);
-      if(it.basis!=='pct') SharedFmt.liveFormat(e.target,{maxDecimals:2});
+      SharedFmt.liveFormat(e.target,{maxDecimals:2});
     });
     el.addEventListener('blur', e=>{
       const si = +e.target.dataset.si;

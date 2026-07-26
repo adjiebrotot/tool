@@ -170,6 +170,7 @@ const LANG = {
     thPhase: 'Phase',
     thTotalExp: 'Total Exp.',
     thRentExp: 'Rent Exp.',
+    thPurchaseOutlay: 'Purchase Outlay',
     /* summary tile labels */
     tileNetEquity: 'Net Equity',
     tileAccumCost: 'Accumulated Cost',
@@ -352,6 +353,7 @@ const LANG = {
     thPhase: 'Fase',
     thTotalExp: 'Total Pengeluaran',
     thRentExp: 'Biaya Sewa',
+    thPurchaseOutlay: 'Pengeluaran Beli',
     /* summary tile labels */
     tileNetEquity: 'Kekayaan Bersih',
     tileAccumCost: 'Biaya Kumulatif',
@@ -1441,6 +1443,11 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
           rtbYearOngoing: rtbP1YearOngoing,
           rtbYearInterestInc: rtbP1YearInterestInc,
           rtbYearSurplus: rtbP1Surplus,
+          // Cash that leaves the ledger at the purchase (down payment + setup).
+          // Reported so the cash row still reconciles: beg + budget + interest
+          // income − expenses − purchase outlay = end cash.
+          rtbPurchaseOutlay: cashSpent,
+          rtbDownPaymentAtBuy: rtbDPAtBuy, rtbSetupAtBuy: rtbSetupCostAtBuy,
           rtbYearInterest:0, rtbYearPrincipal:0,
           rtbRent: currentRentMonthly*12,
           netEquityRTB: rtbNetEquity,
@@ -1878,12 +1885,12 @@ function updateDetailTable(rows, rtbRows){
       <tr>
         <th rowspan="2" class="th-sep-right">${T('thYear')}</th>
         <th rowspan="2" class="th-sep-right">${T('thPhase')}</th>
-        <th colspan="9" class="th-group th-sep-right">${T('thCashPosition')}</th>
+        <th colspan="10" class="th-group th-sep-right">${T('thCashPosition')}</th>
         <th colspan="4" class="th-group th-sep-right">${T('thMortgagePosition')}</th>
         <th colspan="2" class="th-group">${T('thFinancialPosition')}</th>
       </tr>
       <tr>
-        <th>${T('thBegCash')}</th><th>${T('thAnnBudget')}</th><th>${T('thTotalExp')}</th><th>${T('thPrincipalExp')}</th><th>${T('thInterestExp')}</th><th>${T('thOngoingExp')}</th><th>${T('thInterestInc')}</th><th>${T('thSurplus')}</th><th class="th-sep-right">${T('thEndCash')}</th>
+        <th>${T('thBegCash')}</th><th>${T('thAnnBudget')}</th><th>${T('thTotalExp')}</th><th>${T('thPrincipalExp')}</th><th>${T('thInterestExp')}</th><th>${T('thOngoingExp')}</th><th>${T('thInterestInc')}</th><th>${T('thSurplus')}</th><th>${T('thPurchaseOutlay')}</th><th class="th-sep-right">${T('thEndCash')}</th>
         <th>${T('thRate')}</th><th>${T('thPropValue')}</th><th>${T('thPrincipalLeft')}</th><th class="th-sep-right">${T('thHouseEquity')}</th>
         <th>${T('thNetEquity')}</th><th>${T('thAccumCost')}</th>
       </tr>
@@ -1907,6 +1914,7 @@ function updateDetailTable(rows, rtbRows){
         <td style="color:${neg}">${y0?na:c(r.rtbYearOngoing||0)}</td>
         <td style="color:${pos}">${y0?na:c(r.rtbYearInterestInc||0)}</td>
         <td style="color:var(--gold)">${y0?na:c(r.rtbYearSurplus||0)}</td>
+        <td style="color:${neg}">${y0?na:c(r.rtbPurchaseOutlay||0)}</td>
         <td class="td-sep-right">${c(cash)}</td>
         <td>${rtbHasLoanYr ? r.rtbRateYr.toFixed(2)+'%' : na}</td>
         <td>${y0||!isOwning?na:c(r.rtbPropValue||0)}</td>

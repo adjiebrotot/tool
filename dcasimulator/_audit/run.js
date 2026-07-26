@@ -1,11 +1,48 @@
 'use strict';
 const path = require('path');
+const fs = require('fs');
 const H = require('./harness');
 
-const DIR = '/root/.claude/uploads/dafe2855-4ad0-5b8c-85e7-4f3e520e38d9';
-const AAA  = H.loadCsv(path.join(DIR,'21ab219f-AAA.AX.csv'));   // money market (low vol)
-const DHHF = H.loadCsv(path.join(DIR,'c5cec415-DHHF.AX.csv'));  // equity ETF
-const GHHF = H.loadCsv(path.join(DIR,'79c33354-GHHF.AX.csv'));  // equity ETF (short history)
+/* ── Price data ──────────────────────────────────────────────────────────────
+   Prefers the real Adj.Close CSVs. Point at them with:
+       DCA_FIXTURE_DIR=/path/to/csvs node run.js
+   If they are not present, fall back to deterministic seeded GBM series with the
+   same SHAPE as the originals (a low-vol money-market proxy, a long equity ETF,
+   and a shorter-history equity ETF). Every assertion below is a structural
+   invariant (conservation, fees, target weights, trigger parity), never a
+   hardcoded value from a particular ticker, so the checks are identical either
+   way — only the numbers printed alongside them change.                        */
+const DIR = process.env.DCA_FIXTURE_DIR ||
+            '/root/.claude/uploads/dafe2855-4ad0-5b8c-85e7-4f3e520e38d9';
+const FIXTURES = { AAA:'21ab219f-AAA.AX.csv', DHHF:'c5cec415-DHHF.AX.csv', GHHF:'79c33354-GHHF.AX.csv' };
+const haveCsvs = Object.values(FIXTURES).every(f => fs.existsSync(path.join(DIR,f)));
+
+/* deterministic RNG (mulberry32) + Box-Muller, so runs are reproducible */
+function rng(seed){ let a=seed>>>0; return ()=>{ a=(a+0x6D2B79F5)>>>0; let t=a; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+function gbm(startISO, endISO, s0, driftPa, volPa, seed){
+  const r=rng(seed), dates=[], prices=[]; const dt=1/252;
+  let px=s0, d=new Date(startISO+'T00:00:00Z'); const end=new Date(endISO+'T00:00:00Z');
+  while(d<=end){
+    const dow=d.getUTCDay();
+    if(dow!==0&&dow!==6){
+      dates.push(d.toISOString().slice(0,10));
+      prices.push(Math.round(px*1e6)/1e6);
+      let u=r(); if(u<1e-12) u=1e-12;
+      const z=Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*r());
+      px*=Math.exp((driftPa-0.5*volPa*volPa)*dt + volPa*Math.sqrt(dt)*z);
+    }
+    d=new Date(d.getTime()+86400000);
+  }
+  return {dates,prices};
+}
+const AAA  = haveCsvs ? H.loadCsv(path.join(DIR,FIXTURES.AAA))    // money market (low vol)
+                      : gbm('2018-01-01','2024-12-31', 50.00, 0.020, 0.004, 11);
+const DHHF = haveCsvs ? H.loadCsv(path.join(DIR,FIXTURES.DHHF))   // equity ETF
+                      : gbm('2018-01-01','2024-12-31', 25.00, 0.080, 0.160, 22);
+const GHHF = haveCsvs ? H.loadCsv(path.join(DIR,FIXTURES.GHHF))   // equity ETF (short history)
+                      : gbm('2021-06-01','2024-12-31', 20.00, 0.100, 0.220, 33);
+console.log(haveCsvs ? `Price data: real CSVs from ${DIR}`
+                     : 'Price data: SEEDED SYNTHETIC (fixture CSVs not found; set DCA_FIXTURE_DIR to use real data)');
 
 let PASS=0, FAIL=0, WARN=0;
 const fails=[];
