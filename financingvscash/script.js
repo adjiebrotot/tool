@@ -416,7 +416,11 @@ function renderComparisonTable(results){
   rows.forEach(([label,cashVal,fn])=>{
     h+=`<tr><td>${label}</td><td>${cashVal}</td>`;valid.forEach(r=>{h+='<td>'+fn(r)+'</td>';});h+='</tr>';
   });
-  h+='</tbody></table>';$('compTableWrap').innerHTML=h;
+  h+='</tbody></table>';
+  // Only worth saying when the columns really do end at different dates.
+  const mixedHorizons=valid.some(r=>Math.abs(r.termYears-latestResults.maxTerm)>1e-9);
+  if(mixedHorizons)h+='<p class="muted" style="margin-top:10px;font-size:.85rem;">These scenarios run for different lengths. The Cash Purchase column is shown at the longest horizon ('+horizonTxt(latestResults.maxTerm)+'), so each shorter scenario is scored against its own same-horizon cash row above, never against the column.</p>';
+  $('compTableWrap').innerHTML=h;
 }
 
 function renderAmortTabs(results){
