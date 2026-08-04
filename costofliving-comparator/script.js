@@ -136,7 +136,6 @@ function formatMoneyInput(el) {
 // ═══════════════════════════════════════════════════════════
 function getCity(key){return key?CITY_MAP[key]:null;}
 function cityKey(c){return c.city+'|'+c.country;}
-function cityLabel(c){return c.city+', '+c.country;}
 function cityDisplay(c){return c.city+', '+c.country;}
 
 // Returns 0 (falsy) for a currency with no known USD rate so the conversion

@@ -28,6 +28,36 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 | [Cost of Living Comparator](https://tool.adjiebrotots.com/costofliving-comparator/) | Compare living costs across cities. |
 | [Video to GIF](https://tool.adjiebrotots.com/videotogif/) | Convert video to GIF locally — videos never leave your device. |
 
+## Repo layout
+
+Every tool is a self-contained directory (`index.html` + `script.js` + `style.css`) served as a
+static page. There is no build step and no dependency install — open a page and it runs.
+
+Shared, cross-tool files live at the repo root:
+
+| File | What it is |
+| --- | --- |
+| `shared.css`, `light.css`, `dark.css` | The design system and the two colour themes. |
+| `shared.js` | `SharedFmt` (number input formatting), `SharedYF` (market data via the self-hosted Cloudflare Worker in `dcasimulator/yf-proxy-worker.js`), `SharedTA` (technical indicators), `SharedConfig` (config download/upload), `Persist` (mini cache), `SharedTooltip`. |
+| `tour-shared.js`, `tour-shared.css` | The guided-tour engine. A tool opts in with a `tour.js` that sets `window.__TOUR = { seenKey, launchLabel, steps }` and loads `tour-shared.js` after it. |
+| `_ref/` | Build-time helpers and the design reference — not shipped to users. |
+
+## Audit harnesses
+
+Calculation-heavy tools carry an audit harness that drives the real page in headless Chromium and
+checks its output against an independent replay of the documented mathematics, rather than against
+the tool's own code:
+
+```sh
+cd <tool>/_audit && node run.mjs      # dcasimulator uses run.js
+```
+
+Harnesses live in `costofliving-comparator/`, `dcasimulator/`, `financingvscash/`, `pisahvsgabung/`,
+`rentvsownhouse/`, and `rentvsownhouse/sensitivity/`. `rentvsownhouse/audit/` is the earlier
+JS-versus-Python cross-model audit that these superseded; its CSV outputs are generated, not
+committed. `powerfactory-scripter/audit/` validates generated scripts against a nine-bus reference
+case.
+
 ## Multi-language pages
 
 `rentvsownhouse` and `pisahvsgabung` ship an Indonesian version at `<tool>/id/`. These static pages are generated from the English page plus the `LANG.id` table in each tool's `script.js`:

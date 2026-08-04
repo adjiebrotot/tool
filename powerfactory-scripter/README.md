@@ -321,8 +321,7 @@ const PF_REF = {
 | `getObjectSuggestions(typed, includeEvents)` | Suggests `Name.ElmXxx` and optionally `Name.EvtXxx` strings. Matches against `ALL_ELM_CLASSES` and `ALL_EVT_CLASSES`. |
 | `getInputAttrSuggestions(typed, elmClass)` | Suggests writable parameters from `element_params.json` for element classes, or `EVT_PARAMS[elmClass]` for event classes. Filters out non-numeric attributes via `INPUT_ATTR_BLACKLIST`. |
 | `getOutputAttrSuggestions(typed, elmClass, comboInstance)` | Suggests result variables from lazy-loaded per-class JSON (`result_vars[studyTypeKey]`). Falls back to index var names while the full file loads. Falls back to hardcoded common outputs when no class is detected or DB is offline. |
-| `extractPfClass(objectQuery)` | Extracts the PowerFactory class suffix from an object query (e.g. `"Grid.ElmTerm"` → `"ElmTerm"`). Handles `Elm*`, `Sta*`, and `Evt*` prefixes. Also exported as `extractElmClass` for backward compatibility. |
-| `isEventClass(objectQuery)` | Returns `true` if the object query refers to an `Evt*` class. |
+| `extractPfClass(objectQuery)` | Extracts the PowerFactory class suffix from an object query (e.g. `"Grid.ElmTerm"` → `"ElmTerm"`). Handles `Elm*`, `Sta*`, and `Evt*` prefixes. |
 
 **PFComboBox class:**
 

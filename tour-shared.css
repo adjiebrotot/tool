@@ -56,7 +56,6 @@
   align-items: center;
   gap: 8px;
 }
-.pf-tour-tooltip .pf-tour-title .pf-tour-badge { color: var(--accent); }
 
 .pf-tour-tooltip .pf-tour-body {
   margin: 0 0 14px;
