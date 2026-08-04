@@ -300,9 +300,10 @@ function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPri
 }
 
 /* ─── YAHOO FINANCE FETCH (shared engine from ../../shared.js) ─── */
-// Reliability engine (concurrent proxy race + retries + optional self-hosted
-// proxy failsafe) lives in shared.js, shared with the main simulator. Deploy
-// yf-proxy-worker.js and call SharedYF.setProxy(...) to bypass public proxies.
+// The fetch engine (single self-hosted Cloudflare Worker, batched requests,
+// retries) lives in shared.js, shared with the main simulator. The Worker
+// source is ../yf-proxy-worker.js; point the client at a redeployed one with
+// SharedYF.setEndpoint('https://NAME.SUBDOMAIN.workers.dev').
 async function fetchYahooFinance(ticker, startDate, endDate){
   if(!window.SharedYF) throw new Error('Market data engine not loaded (shared.js)');
   return window.SharedYF.fetchPrices(ticker, startDate, endDate);

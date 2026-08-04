@@ -627,18 +627,6 @@
   }
   .toast.show { opacity: 1; transform: translateY(0); }
 
-  /* ── OUTPUT ROWS WITH CONDITIONAL FIELDS ─────────────────────────── */
-  .output-row-extra {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-card);
-    padding: 10px 12px;
-    margin-top: 6px;
-    font-size: 12px;
-  }
-  .output-row-extra .form-row { margin-bottom: 6px; }
-  .output-row-extra label { font-size: 11px; }
-
   /* Separator */
   hr.divider {
     border: none;

@@ -122,6 +122,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - URL: https://tool.adjiebrotots.com/wemconstraint-checker/
 - Best for: users working with Western Australia WEM constraint equations.
 - What it does: checks constraint equations against generator and constraint data in the browser, with no upload of network data.
+- Guide: https://tool.adjiebrotots.com/wemconstraint-checker/guide/ — "How to Invoke Constraints", a walkthrough of reading and invoking a WEM constraint equation.
 
 ### Graph Visualiser
 

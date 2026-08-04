@@ -358,12 +358,6 @@ function fmtCurrency(v, sym){
 
 function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 const cssVar = n => getComputedStyle(document.body).getPropertyValue(n).trim();
-// Strip pictographic icons/emojis (and the now-orphaned spacing) for CSV output.
-function stripIcons(s){
-  return String(s||'')
-    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu, '')
-    .replace(/\s{2,}/g, ' ').trim();
-}
 function escAttr(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 /* ── COMPUTE ENGINE ──

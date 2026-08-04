@@ -136,20 +136,14 @@ tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 /* Securities Manager */
 .sec-list{display:flex;flex-direction:column;gap:8px}
 .sec-card{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.sec-header{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;user-select:none}
-.sec-header:hover{background:rgba(141,187,255,.06)}
 .sec-name{font-weight:700;font-size:.88rem;flex:1}
 .sec-badge{font-size:.72rem;padding:2px 7px;border-radius:6px;font-weight:700}
 .badge-ticker{background:rgba(141,187,255,.18);color:#8DBBFF}
 .badge-custom{background:rgba(143,205,189,.18);color:#8FCDBD}
-.sec-body{padding:12px;border-top:1px solid var(--border);display:none}
-.sec-body.open{display:block}
 .sec-row{display:flex;gap:8px;align-items:center;margin:0;padding:6px 0;flex-wrap:wrap}
 .sec-row label{font-size:.8rem;color:var(--muted);min-width:80px;flex-shrink:0}
 .sec-row .num-input,.sec-row .txt-input{flex:1;min-width:80px}
 .sec-row .currency-wrap{flex:1;min-width:80px}
-.sec-del{background:rgba(230,57,57,.15);border:1px solid rgba(230,57,57,.25);color:#FF8B8B;border-radius:8px;padding:4px 10px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit}
-.sec-del:hover{background:rgba(230,57,57,.3)}
 .color-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:2px solid var(--border)}
 .add-sec-area{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 .add-sec-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -175,7 +169,6 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 /* Section label */
 .section-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
 .section-label:first-child{margin-top:0}
-.section-label.fwd{color:var(--gold)}
 /* Header */
 .header-left h1{font-size:1.85rem;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
 .header-left p{color:var(--muted);font-size:.9rem}
@@ -253,7 +246,6 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 .param-row .txt-input{flex:1;min-width:0}
 .param-note{font-size:.74rem;color:var(--muted);line-height:1.35;margin:4px 0 2px;font-style:italic}
 .param-note.warn-note{color:var(--gold);font-style:normal;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22);border-radius:8px;padding:6px 9px;margin:8px 0}
-.param-note.info-note{color:var(--accent);font-style:normal;background:rgba(141,187,255,.08);border:1px solid rgba(141,187,255,.22);border-radius:8px;padding:6px 9px;margin:8px 0}
 .tech-eom{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);cursor:pointer;padding:6px 0 2px;line-height:1.35}
 .tech-eom input{accent-color:var(--accent);cursor:pointer;width:14px;height:14px;flex-shrink:0}
 /* Monthly / Weekly segmented control (momentum + technical frequency) */

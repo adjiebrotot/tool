@@ -290,15 +290,6 @@ body {
   overflow-x: auto;
 }
 .md-body .mermaid svg { max-width: 100%; height: auto; }
-.md-body .mermaid-error {
-  border: 1px solid var(--negative-border);
-  background: var(--negative-bg);
-  color: var(--negative-em);
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 0.85rem;
-  font-family: 'DM Mono', monospace;
-}
 
 /* ── AUTO TABLE OF CONTENTS ── */
 .md-toc {
@@ -359,13 +350,6 @@ body {
   pointer-events: none;
 }
 .pdf-watermark img { width: 15px; height: 15px; opacity: 0.85; }
-.pdf-continued {
-  font-size: 0.78rem;
-  color: var(--muted);
-  font-style: italic;
-  margin: 0 0 0.6em;
-}
-
 /* Centred page number on every PDF page */
 .pdf-pagenum {
   position: absolute;

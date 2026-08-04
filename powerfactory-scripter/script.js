@@ -725,15 +725,6 @@ function extractPfClass(objectQuery) {
   const m = objectQuery.match(/\.(Elm[A-Za-z0-9]+|Sta[A-Za-z0-9]+|Evt[A-Za-z0-9]+|Typ[A-Za-z0-9]+)\s*$/);
   return m ? m[1] : null;
 }
-// Legacy alias — keeps all existing callers working without change
-const extractElmClass = extractPfClass;
-
-// Returns true when the object query refers to a simulation event class
-function isEventClass(objectQuery) {
-  const cls = extractPfClass(objectQuery || '');
-  return cls ? cls.startsWith('Evt') : false;
-}
-
 // INPUT variable attribute suggestions — class-scoped params from element_params.json
 // or EVT_PARAMS for event classes (EvtShc, EvtSwitch, etc.)
 // Attributes that are strings, object references, or metadata — not numerically iterable

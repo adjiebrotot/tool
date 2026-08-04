@@ -152,8 +152,6 @@
     return out;
   }
 
-  function yfIso(d){ return d.toISOString().slice(0,10); }
-
   async function workerFetchJson(url, timeoutMs){
     var controller = new AbortController();
     var timeoutId = setTimeout(function(){ controller.abort(); }, timeoutMs);
@@ -248,14 +246,9 @@
     fetchPricesBatch: yfFetchPricesBatch,
     mergeSeries: mergeSeries,
     setEndpoint: function(url){ WORKER_ENDPOINT = url || ''; },
-    getEndpoint: function(){ return WORKER_ENDPOINT; },
     // Soft daily request cap (shared across both tools on this origin).
     getDailyLimit: function(){ return DAILY_REQUEST_LIMIT; },
-    getDailyUsed: function(){ return rlRead().n; },
-    getDailyRemaining: rlRemaining,
-    // Back-compat aliases for the old self-proxy API.
-    setProxy: function(url){ WORKER_ENDPOINT = url || ''; },
-    getProxy: function(){ return WORKER_ENDPOINT; }
+    getDailyRemaining: rlRemaining
   };
 
   /* ── Technical indicators (shared by the single-asset & portfolio tools) ──

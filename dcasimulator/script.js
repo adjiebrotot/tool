@@ -252,7 +252,6 @@ const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:v
 function parseDate(s){ const [y,m,d]=s.split('-'); return new Date(+y,+m-1,+d); }
 function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
 function isoDate(d){ return d.toISOString().slice(0,10); }
-function dayOfWeek(d){ return d.getDay(); } // 0=Sun
 
 /* ─── SIMULATED PRICE GENERATION (GBM) ─── */
 function createSeededRng(seed){
@@ -315,11 +314,11 @@ function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPri
 }
 
 /* ─── FETCH via Yahoo Finance chart endpoint ─── */
-// The reliability engine (concurrent proxy race + retries + optional
-// self-hosted proxy failsafe) lives in shared.js so the simulator and the
-// portfolio tool share one hardened implementation. To remove the dependence
-// on third-party CORS proxies entirely, deploy yf-proxy-worker.js and call
-// SharedYF.setProxy('https://your-worker/?url=') once at startup.
+// The fetch engine (single self-hosted Cloudflare Worker, batched requests,
+// retries) lives in shared.js so the simulator and the portfolio tool share one
+// hardened implementation. The Worker source is yf-proxy-worker.js; point the
+// client at a redeployed one with
+// SharedYF.setEndpoint('https://NAME.SUBDOMAIN.workers.dev').
 async function fetchYahooFinance(ticker, startDate, endDate){
   if(!window.SharedYF) throw new Error('Market data engine not loaded (shared.js)');
   return window.SharedYF.fetchPrices(ticker, startDate, endDate);
@@ -536,20 +535,10 @@ function renderStyleOpt(sec,s){
   </label>`;
 }
 
-function renderDaySelectorInner(sec){
-  if(sec.style==='weekly-day')
-    return `<select class="txt-input" id="secDay${sec.id}" style="max-width:170px">${WEEKDAY_OPTIONS.map((d,i)=>`<option value="${i+1}" ${Math.min(7,Math.max(1,sec.dayOrDate))===i+1?'selected':''}>${d}</option>`).join('')}</select>`;
-  if(sec.style==='monthly-date')
-    return `<input class="num-input" id="secDay${sec.id}" type="number" min="1" max="31" step="1" value="${Math.min(31,Math.max(1,sec.dayOrDate||1))}" style="max-width:80px"/>`;
-  return '';
-}
-
 function wireDayInput(sec){
   const el=$(`secDay${sec.id}`); if(!el) return;
   ['input','change'].forEach(ev=>el.addEventListener(ev,e=>{ sec.dayOrDate=parseInt(e.target.value)||1; scheduleRun(); }));
 }
-
-function renderDaySelector(sec){ return renderDaySelectorInner(sec); }
 
 function styleLabel(s){
   return {'monthly-date':'Monthly (Fixed Date)','monthly-top':'Monthly (Top)','monthly-bottom':'Monthly (Bottom)',
@@ -1061,35 +1050,6 @@ function updateRateInfo(){
   const left = SharedYF.getDailyRemaining(), lim = SharedYF.getDailyLimit();
   el.textContent = left + ' of ' + lim + ' daily data requests remaining on this device.';
   el.classList.toggle('rate-info-low', left <= 1);
-}
-
-/* ─── FETCH TICKER DATA (for manual "Add Security" flow) ─── */
-async function loadTickerData(sec, startDate, endDate){
-  const statusEl = $(`secLoadStatus${sec.id}`);
-  const covered = isTickerRangeCovered(sec.ticker, startDate, endDate);
-  if(covered){
-    showStatus($('fetchStatus'), 'Using cached '+sec.ticker+'...','loading');
-  } else {
-    showStatus($('fetchStatus'), 'Fetching '+sec.ticker+'...','loading');
-  }
-  try {
-    showStatus($('fetchStatus'), 'Fetching '+sec.ticker+'...','loading');
-    await ensureTickerCached(sec.ticker, startDate, endDate);
-    sec.loaded = true;
-    const entry = priceCache[String(sec.ticker).trim().toUpperCase()];
-    if(statusEl){ statusEl.className='status-bar status-ok'; statusEl.textContent='✓ Loaded'; }
-    if(entry.kind==='stock' && entry.source==='stooq'){
-      showStatus($('fetchStatus'), '⚠️ '+sec.ticker+' loaded from Stooq (Yahoo Finance was unavailable): '+entry.dates.length+' trading days. Stooq stock prices are <strong>not</strong> adjusted for splits/dividends, so returns across those events may differ slightly.','warn');
-    } else {
-      showStatus($('fetchStatus'), sec.ticker+' cached: '+entry.dates.length+' trading days','ok');
-    }
-    return true;
-  } catch(e){
-    sec.loaded = false;
-    if(statusEl){ statusEl.className='status-bar status-error'; statusEl.textContent='✗ Failed'; }
-    showStatus($('fetchStatus'),'Failed to load '+sec.ticker+': '+e.message,'error');
-    return false;
-  }
 }
 
 /* ─── SCENARIO BAR ACTIONS (add / copy / delete) ─── */
@@ -1799,7 +1759,6 @@ function updateEquityChart(){
   });
 
   const yCallback=val=>fmt.currency(val,true);
-  const tooltipLabel=ctx=>equityChartInstance&&!equityChartInstance.isDatasetVisible(ctx.datasetIndex)?null:`  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y,true)}`;
 
   function buildEquityOpts(){ return {
     responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
