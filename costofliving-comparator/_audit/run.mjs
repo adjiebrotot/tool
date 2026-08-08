@@ -2,8 +2,8 @@
 // Serves the repo over localhost (the page fetches its JSON data), drives the
 // REAL page headless and mimics a user:
 //   C1  simple mode: baseline estimated-expense math vs independent recompute
-//   C2  simple mode: set a CUSTOM FX rate → the summary's nominal-savings
-//       difference must use it (the ≈-conversions in the cells do)
+//   C2  simple mode: set a CUSTOM FX rate → cross-border figures must use it,
+//       but the destination's cost in its own currency must NOT move
 //   C3  detailed mode: override a destination cell on row 2, then delete row 1
 //       → the override must survive on the surviving row
 //   C4  data: every city currency must exist in currency_rates.json (missing
@@ -81,8 +81,11 @@ const fi=JKT.coli_with_housing, ti=PER.coli_with_housing;
 const fr=RATE.IDR, tr=RATE.AUD;               // units per USD
 const defaultFx = fr/tr;                      // IDR per AUD
 
-function expected(fx){ // fx = IDR per 1 AUD
-  const te = FE*(1/fx)*(ti/fi);               // est. expenses in AUD
+// fx = the IDR-per-AUD rate money crosses the border at (custom and/or the
+// scenario slider). The estimate itself never uses it: it is a ratio of local
+// prices and always rides the rate the indices were priced at.
+function expected(fx){
+  const te = FE*(1/defaultFx)*(ti/fi);        // est. expenses in AUD
   const fSav=FS-FE, tSav=TS-te;
   const nomDiffAUD = tSav - fSav/fx;          // common-currency diff in AUD
   return {te, nomDiffAUD};
@@ -103,17 +106,26 @@ function expected(fx){ // fx = IDR per 1 AUD
     `est ${got.te} vs ${e.te.toFixed(0)}; summary diff ${m&&m[1]} vs ${Math.abs(e.nomDiffAUD).toFixed(0)}`);
 }
 
-// ── C2: custom FX — summary must follow the custom rate ──
+// ── C2: custom FX crosses the border, but must NOT reprice Perth in AUD ──
 {
-  const customFx = Math.round(defaultFx*2);   // user thinks the AUD is 2× stronger
+  const before = await page.evaluate(()=>document.querySelectorAll('.col-card')[1].querySelectorAll('.sav-val')[0].textContent);
+  const customFx = Math.round(defaultFx*2);   // user thinks the AUD is 2x stronger
   await setVal('simpleFxInput', String(customFx));
   const e = expected(customFx);
-  const got = await page.evaluate(()=>document.getElementById('ss_summary').textContent);
-  const m = got.match(/AUD\s*([\d,]+)/);
-  check('C2 with a custom FX rate the summary nominal difference uses it',
+  const got = await page.evaluate(()=>({
+    te: document.querySelectorAll('.col-card')[1].querySelectorAll('.sav-val')[0].textContent,
+    summary: document.getElementById('ss_summary').textContent }));
+  const m = got.summary.match(/AUD\s*([\d,]+)/);
+  check('C2a with a custom FX rate the summary nominal difference uses it',
     m && Math.abs(num(m[1])-Math.abs(e.nomDiffAUD)) <= 1,
     `summary says AUD ${m&&m[1]}; with custom FX it should be ${Math.abs(e.nomDiffAUD).toFixed(0)} `+
     `(DB-rate value would be ${Math.abs(expected(defaultFx).nomDiffAUD).toFixed(0)})`);
+  // A rate is a bridge between currencies, not a price list. Perth's cost in
+  // AUD cannot change because the user re-quoted the Rupiah.
+  check('C2b a custom FX rate does not change the destination cost in its own currency',
+    got.te===before && Math.abs(num(got.te)-e.te)<=1,
+    `est expenses were "${before}" at the bundled rate and "${got.te}" at a 2x custom rate`);
+  await setVal('simpleFxInput', '');           // back to the bundled rate
 }
 
 // ── C3: detailed mode — override must survive deleting a row above it ──
@@ -167,7 +179,7 @@ function expected(fx){ // fx = IDR per 1 AUD
   }
 }
 
-// ── C5: FX-shock slider — local-price figures frozen, cross-currency ones move ──
+// ── C5: FX-shock slider: local-price figures frozen, cross-currency ones move ──
 {
   await pickCity('fromPicker','Jakarta|Indonesia');
   await pickCity('toPicker','Perth|Australia');
@@ -197,7 +209,7 @@ function expected(fx){ // fx = IDR per 1 AUD
   await setShock(-20);
   const atMinus = await readSimple();
 
-  // The estimate is expense × P_dest/P_src — the rate cancels out of it, so a
+  // The estimate is expense x P_dest/P_src, so the rate cancels out of it and a
   // nominal FX move must leave it (and the ratio built from it) untouched.
   check('C5b estimated destination expenses do not move with the FX shock',
     at0.te===atPlus.te && at0.te===atMinus.te,
@@ -227,13 +239,13 @@ function expected(fx){ // fx = IDR per 1 AUD
     gapDetail.join('; ')+` (unshocked gap is ${expectedShocked(0).toFixed(0)})`);
 
   // A scenario must announce itself, and must be clearable.
-  const flagged = await page.evaluate(()=>document.getElementById('ss_summary').textContent.includes('FX scenario'));
+  const flagged = await page.evaluate(()=>document.getElementById('ss_summary').textContent.includes('Scenario:'));
   await page.evaluate(()=>document.getElementById('fxShockReset').click());
   await page.waitForTimeout(80);
   const back = await readSimple();
   const sliderBack = await page.evaluate(()=>document.getElementById('fxShockSlider').value);
   check('C5e a non-zero shock is labelled a scenario, and reset returns to today\'s rate',
-    flagged && sliderBack==='0' && back.summary===at0.summary && !back.summary.includes('FX scenario'),
+    flagged && sliderBack==='0' && back.summary===at0.summary && !back.summary.includes('Scenario:'),
     `labelled=${flagged}; after reset slider="${sliderBack}", summary restored=${back.summary===at0.summary}`);
 }
 

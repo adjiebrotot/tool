@@ -241,21 +241,31 @@ function pruneCustomFx(){
 // the source currency, applied on top of whatever base rate is in force (the
 // bundled one, or the user's custom rate).
 //
-// It deliberately does NOT touch the index-based expense estimate, and that is
-// the whole point of the control. The cost-of-living indices are USD-normalised
-// (New York = 100), so index_c = P_c / (e_c · P_NY) · 100 where P is the local
-// price of the basket and e is units of local currency per USD. Substituting
-// that into the estimate makes the FX terms cancel outright:
+// Local prices are sticky and the exchange rate is not. A weaker Rupiah does
+// not reprice a Perth lunch in AUD, and it does not reprice a Jakarta lunch in
+// IDR either. What it changes is only the bridge between the two: the Perth
+// lunch costs an Indonesian more IDR, while an Australian notices nothing.
 //
-//   est = expense · (e_dst/e_src) · (I_dst/I_src)  =  expense · P_dst/P_src
+// The maths already works this way. The cost-of-living indices are USD-
+// normalised (New York = 100), so index_c = P_c / (e_c * P_NY) * 100, where P
+// is the local price of the basket and e is units of local currency per USD.
+// Substituting that into the estimate makes the FX terms cancel outright:
 //
-// i.e. a pure ratio of LOCAL shop prices. A nominal FX move does not reprice
-// the shops overnight, so the destination's cost in its own currency — and the
-// savings ratio built from it — hold still. Only money that actually crosses
-// the border gets repriced. Shocking both sides would double-count the move and
-// invent a change in local prices that has not happened.
+//   est = expense * (e_dst/e_src) * (I_dst/I_src)  =  expense * P_dst/P_src
+//
+// A ratio of LOCAL prices, with no rate left in it. So the destination's cost
+// in its own currency, and the savings ratio built from it, must hold still
+// under any rate the user can touch. Only figures that cross the two currencies
+// reprice. Two rules follow, and both are enforced in simpleMults():
+//
+//   1. The shock slider never reaches the estimate.
+//   2. Neither does the custom FX rate. It is a market rate for converting
+//      money across the border, NOT a correction to the rate the indices were
+//      priced at (that one is Numbeo's, baked into the index, and unknowable
+//      from here). Letting it move the estimate would say a Perth lunch got
+//      dearer in AUD because the Rupiah slipped, which is exactly wrong.
 // ═══════════════════════════════════════════════════════════
-const FX_SHOCK_LIMIT = 20;   // ±%, wide enough for a realistic swing
+const FX_SHOCK_LIMIT = 20;   // +/-%, wide enough for a realistic swing
 
 function fxShockPct(){
   const v = Number(S.fxShock);
@@ -268,25 +278,22 @@ function fxShockMult(fromCity,toCity){
   if(!fromCity||!toCity||fromCity.currency===toCity.currency) return 1;
   return 1 + fxShockPct()/100;
 }
-// Base rate: fromCurr per 1 toCurr — the rate the price indices were measured
-// at, or the user's correction to it. NaN when no rate is known, so every
-// multiplier derived from it stays NaN and the UI renders "—".
-function baseFxRate(fromCity,toCity){
-  const cfx = simpleFx(fromCity,toCity);
-  if(cfx) return cfx;
-  const fr = getRate(fromCity?fromCity.currency:''), tr = getRate(toCity?toCity.currency:'');
-  return (fr&&tr) ? fr/tr : NaN;
-}
-// Every multiplier simple mode needs. idxMult is the UNSHOCKED one and is used
-// only for the index-based expense estimate (see the note above).
+// Every multiplier simple mode needs, all quoted as fromCurr per 1 toCurr.
+// NaN propagates from a missing rate so the UI renders the "no data" dash
+// rather than a wrong 1:1 conversion.
 function simpleMults(fromCity,toCity){
-  const base = baseFxRate(fromCity,toCity);
-  const shocked = base * fxShockMult(fromCity,toCity);
+  const fr = getRate(fromCity?fromCity.currency:''), tr = getRate(toCity?toCity.currency:'');
+  const cfx = simpleFx(fromCity,toCity);
+  // The rate the indices were priced at. Falls back to the user's rate only
+  // when the dataset has none at all, since some rate beats no estimate.
+  const priced = (fr&&tr) ? fr/tr : (cfx || NaN);
+  // The rate money actually crosses at: the user's if given, then the scenario.
+  const market = (cfx || priced) * fxShockMult(fromCity,toCity);
   return {
-    base, shocked,
-    idxMult:    1/base,     // src→dst, for the index estimate (local prices are sticky)
-    fromToMult: 1/shocked,  // src→dst, for money crossing the border
-    toFromMult: shocked,    // dst→src, for money crossing the border
+    priced, market,
+    idxMult:    1/priced,   // src->dst, index estimate only (local prices are sticky)
+    fromToMult: 1/market,   // src->dst, for money crossing the border
+    toFromMult: market,     // dst->src, for money crossing the border
   };
 }
 
@@ -392,7 +399,7 @@ function render(){
 }
 
 // Results only. Kept separate from render() so dragging the FX slider can
-// refresh the numbers without rebuilding — and so killing the drag of — the
+// refresh the numbers without rebuilding (and so killing the drag of) the
 // slider element itself.
 function renderAnalysisArea(){
   const area=document.getElementById('analysisArea');
@@ -429,20 +436,16 @@ function renderSimpleFxSection(from,to){
       <span style="font-size:0.78rem;color:var(--muted);white-space:nowrap;">Default: ${defFmt}&nbsp;${fc}</span>
     </div>
     <div class="fx-shock ${pct?'shocked':''}" id="fxShockBlock">
-      <div class="slider-head">
-        <span class="slider-label">What if the rate moves?
-          <span class="tip-icon" data-tip="Moves the exchange rate only — not local prices. The cost-of-living indices are quoted in USD terms, so the estimated ${to.city} expenses are really a ratio of local shop prices: a currency swing does not change what a litre of milk costs in ${tc}, and it does not change your ${to.city} savings ratio. What it does change is anything that crosses the border — comparing the two salaries, and the nominal savings gap between them.">?</span>
-        </span>
-        <span class="slider-value" id="fxShockVal">${fxShockReadout(from,to)}</span>
+      <div class="fx-shock-head">
+        <span class="fx-shock-title">What if ${tc} moves?</span>
+        <span class="fx-shock-val" id="fxShockVal">${fxShockReadout(from,to)}</span>
       </div>
       <input type="range" id="fxShockSlider" min="-${FX_SHOCK_LIMIT}" max="${FX_SHOCK_LIMIT}" step="1" value="${pct}"
-        aria-label="Exchange rate scenario, percent change in ${tc} strength against ${fc}"/>
-      <div class="fx-shock-scale">
-        <span>${tc} ${FX_SHOCK_LIMIT}% weaker</span>
-        <button type="button" class="fx-shock-reset" id="fxShockReset">Today's rate</button>
-        <span>${tc} ${FX_SHOCK_LIMIT}% stronger</span>
+        aria-label="Exchange rate scenario, percent change in ${tc} against ${fc}"/>
+      <div class="fx-shock-note">
+        <span>${to.city} costs stay the same in ${tc}. Only ${fc} conversions move.</span>
+        <button type="button" class="fx-shock-reset" id="fxShockReset">Reset</button>
       </div>
-      <div class="fx-shock-note" id="fxShockNote">${fxShockNote(from,to)}</div>
     </div>`;
   const inp=document.getElementById('simpleFxInput');
   if(inp){
@@ -456,7 +459,7 @@ function renderSimpleFxSection(from,to){
   }
   const sl=document.getElementById('fxShockSlider');
   if(sl){
-    // Refresh the readout and the results in place — a full render() here would
+    // Refresh the readout and the results in place. A full render() here would
     // replace the range input mid-drag and the gesture would die.
     sl.addEventListener('input',()=>{
       S.fxShock=Number(sl.value)||0;
@@ -475,29 +478,19 @@ function renderSimpleFxSection(from,to){
   });
 }
 
-// "+8% · 1 AUD = 13,667 IDR" — the scenario and the rate it implies.
+// "+8%  1 AUD = 13,667 IDR": the scenario and the rate it implies.
 function fxShockReadout(from,to){
   const pct=fxShockPct();
   const M=simpleMults(from,to);
-  const rate=isFinite(M.shocked)?fmtFx(M.shocked)+' '+from.currency:'—';
-  return `${pct>0?'+':''}${pct}% · 1 ${to.currency} = ${rate}`;
+  const rate=isFinite(M.market)?fmtFx(M.market)+' '+from.currency:'—';
+  return `${pct>0?'+':''}${pct}%  ·  1 ${to.currency} = ${rate}`;
 }
 
-function fxShockNote(from,to){
-  const pct=fxShockPct();
-  if(!pct)return`At today's rate. Drag to test a currency swing — living costs in ${to.currency} stay put, only cross-currency figures move.`;
-  const dir=pct>0?'stronger':'weaker';
-  return`Scenario only: the ${to.currency} is ${Math.abs(pct)}% ${dir} than the rate the cost data was priced at. ` +
-        `${to.city} costs and its savings ratio are unchanged — local prices do not move with the currency. ` +
-        `The salary comparison and the savings gap below are converted at the scenario rate.`;
-}
-
-// In-place refresh of just the slider's own labels (never the input element).
+// In-place refresh of just the readout (never the range input, which would kill
+// the drag).
 function updateFxShockUI(from,to){
   const val=document.getElementById('fxShockVal');
   if(val)val.textContent=fxShockReadout(from,to);
-  const note=document.getElementById('fxShockNote');
-  if(note)note.textContent=fxShockNote(from,to);
   const blk=document.getElementById('fxShockBlock');
   if(blk)blk.classList.toggle('shocked',!!fxShockPct());
 }
@@ -510,14 +503,11 @@ function renderSimpleSave(area,from,to){
   const fs=S.fromSalary||0, fe=S.fromExpense||0, ts=S.toSalary||0;
   const ck=coliKey();
   const fi=getIdx(from,ck), ti=getIdx(to,ck);
-  // Base rate = S.customFxSimple (fromCurr per 1 toCurr, e.g. IDR per AUD) or
-  // the bundled one; the FX-shock slider moves the cross-border multipliers off
-  // it. With no rate at all every multiplier is NaN, so the estimates render as
-  // "—" rather than a wrong 1:1 conversion.
   const M=simpleMults(from,to);
   const fromToMult=M.fromToMult, toFromMult=M.toFromMult;
-  // The estimate rides the UNSHOCKED rate: it is a ratio of local prices, which
-  // a currency move does not touch (see the FX SHOCK note).
+  // The estimate uses the priced-at rate, never the custom rate or the scenario:
+  // it is a ratio of local prices, which no currency move touches. See the FX
+  // SHOCK note above.
   const te=!fe?0:(fi&&ti?fe*M.idxMult*(ti/fi):NaN);
   const fSav=fs-fe, tSav=ts-te;
   // A savings ratio needs a positive salary to divide by — otherwise show "—"
@@ -747,7 +737,7 @@ function buildEarnSummary(from,to,fc,tc,M,toReq,fSav,fRatPct,toRatio,te,fRatio){
   if(toReq==null)return reqSalNote(te,fRatio,to,tc);
   const cross=fc!==tc?' (≈ '+fmtC(toReq*M.toFromMult,fc)+')':'';
   if(S.savingsTarget==='ratio'){
-    // A ratio target is FX-free on both sides — the required salary and the
+    // A ratio target is FX-free on both sides: the required salary and the
     // expenses it has to cover are both in the destination currency.
     return`To maintain the same <strong>${fmtP(fRatPct)}</strong> savings ratio in <strong>${to.city}</strong>, you need a net monthly salary of <strong>${fmtC(toReq,tc)}</strong>${cross}.`
       +fxShockLine(from,to,false);
@@ -762,22 +752,20 @@ function buildEarnSummary(from,to,fc,tc,M,toReq,fSav,fRatPct,toRatio,te,fRatio){
 // Appended to the estimated-expenses tooltip while the slider is off zero, so
 // the one figure the shock does NOT move is explained rather than suspected.
 function estTipFx(from,to){
-  const pct=fxShockPct();
-  if(!pct||fxShockMult(from,to)===1)return'';
-  return` Unaffected by the FX scenario: this is a ratio of local prices in ${to.currency}, and a currency move does not reprice ${to.city}'s shops.`;
+  if(!fxShockPct()||fxShockMult(from,to)===1)return'';
+  return` The FX scenario does not change this: it is a ratio of local prices, and a currency move does not reprice ${to.city}'s shops.`;
 }
 
-// Appended to a summary while the FX slider is off zero, so a scenario figure
-// is never mistaken for the live one. `exposed` says whether the headline
-// number actually moves with the rate — for a savings-ratio target it does not.
+// Appended to a summary while the slider is off zero, so a scenario figure is
+// never mistaken for the live one. `exposed` says whether the headline number
+// moves with the rate; for a savings-ratio target it does not.
 function fxShockLine(from,to,exposed){
   const pct=fxShockPct();
   if(!pct||fxShockMult(from,to)===1)return'';   // no shock, or same currency both sides
-  const dir=pct>0?'stronger':'weaker';
-  const head=`<br><span style="opacity:.85;">💱 <strong>FX scenario:</strong> ${to.currency} ${Math.abs(pct)}% ${dir}. `;
-  return head+(exposed
-    ?`This figure moves with the rate — that is your currency exposure.</span>`
-    :`The ${to.currency} figure does not move with the rate — ${to.city} costs and income are both in ${to.currency}; only the ${from.currency} conversion beside it does.</span>`);
+  return`<br><span style="opacity:.85;">💱 <strong>Scenario:</strong> ${to.currency} ${Math.abs(pct)}% `
+    +`${pct>0?'stronger':'weaker'}. `
+    +(exposed?`This figure moves with the rate.`:`This ${to.currency} figure does not move with the rate.`)
+    +`</span>`;
 }
 
 // ═══════════════════════════════════════════════════════════
