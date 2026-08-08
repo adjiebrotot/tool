@@ -65,6 +65,7 @@ const S = {
   fromKey: '', toKey: '',
   fromSalary: 0, toSalary: 0, fromExpense: 0,
   customFxSimple: null,      // null = use DB; number = fromCurr per 1 toCurr (e.g. IDR per AUD)
+  fxShock: 0,                // simple mode: % move in the DESTINATION currency's strength (−20…+20)
   // Detailed
   detailFromKey: '', detailToCities: [], detailToSalaries: [],
   detailFromSalary: 0,
@@ -222,6 +223,7 @@ function detailFx(ci,fromCity,toCity){return usableFx(S.customFxDetailed[ci],fro
 // Drops custom rates that no longer apply (city cleared, or both sides now on
 // the same currency). Called on every city change and on cache restore.
 function pruneCustomFx(){
+  S.fxShock=fxShockPct();   // a cached value from an older build can be out of range
   if(!simpleFx(getCity(S.fromKey),getCity(S.toKey)))S.customFxSimple=null;
   if(!Array.isArray(S.customFxDetailed))S.customFxDetailed=[];
   if(!Array.isArray(S.detailToCities)||!S.detailToCities.length)S.detailToCities=[''];
@@ -230,6 +232,62 @@ function pruneCustomFx(){
   S.detailToCities.forEach((k,i)=>{
     if(!detailFx(i,df,getCity(k)))S.customFxDetailed[i]=null;
   });
+}
+
+// ═══════════════════════════════════════════════════════════
+// FX SHOCK (simple mode)
+//
+// S.fxShock is a percentage move in the DESTINATION currency's strength against
+// the source currency, applied on top of whatever base rate is in force (the
+// bundled one, or the user's custom rate).
+//
+// It deliberately does NOT touch the index-based expense estimate, and that is
+// the whole point of the control. The cost-of-living indices are USD-normalised
+// (New York = 100), so index_c = P_c / (e_c · P_NY) · 100 where P is the local
+// price of the basket and e is units of local currency per USD. Substituting
+// that into the estimate makes the FX terms cancel outright:
+//
+//   est = expense · (e_dst/e_src) · (I_dst/I_src)  =  expense · P_dst/P_src
+//
+// i.e. a pure ratio of LOCAL shop prices. A nominal FX move does not reprice
+// the shops overnight, so the destination's cost in its own currency — and the
+// savings ratio built from it — hold still. Only money that actually crosses
+// the border gets repriced. Shocking both sides would double-count the move and
+// invent a change in local prices that has not happened.
+// ═══════════════════════════════════════════════════════════
+const FX_SHOCK_LIMIT = 20;   // ±%, wide enough for a realistic swing
+
+function fxShockPct(){
+  const v = Number(S.fxShock);
+  if(!isFinite(v)) return 0;
+  return Math.max(-FX_SHOCK_LIMIT, Math.min(FX_SHOCK_LIMIT, Math.round(v)));
+}
+// 1 (no shock) when the shock cannot mean anything: a city is unset, or both
+// sides already share a currency.
+function fxShockMult(fromCity,toCity){
+  if(!fromCity||!toCity||fromCity.currency===toCity.currency) return 1;
+  return 1 + fxShockPct()/100;
+}
+// Base rate: fromCurr per 1 toCurr — the rate the price indices were measured
+// at, or the user's correction to it. NaN when no rate is known, so every
+// multiplier derived from it stays NaN and the UI renders "—".
+function baseFxRate(fromCity,toCity){
+  const cfx = simpleFx(fromCity,toCity);
+  if(cfx) return cfx;
+  const fr = getRate(fromCity?fromCity.currency:''), tr = getRate(toCity?toCity.currency:'');
+  return (fr&&tr) ? fr/tr : NaN;
+}
+// Every multiplier simple mode needs. idxMult is the UNSHOCKED one and is used
+// only for the index-based expense estimate (see the note above).
+function simpleMults(fromCity,toCity){
+  const base = baseFxRate(fromCity,toCity);
+  const shocked = base * fxShockMult(fromCity,toCity);
+  return {
+    base, shocked,
+    idxMult:    1/base,     // src→dst, for the index estimate (local prices are sticky)
+    fromToMult: 1/shocked,  // src→dst, for money crossing the border
+    toFromMult: shocked,    // dst→src, for money crossing the border
+  };
 }
 
 // A destination cell override is an amount in that destination's currency, so
@@ -324,18 +382,28 @@ function render(){
   document.getElementById('housingRow').style.display=S.mode==='simple'?'flex':'none';
   document.getElementById('simpleCityCard').style.display=S.mode==='simple'?'flex':'none';
 
+  if(S.mode==='simple'){
+    renderSimpleFxSection(getCity(S.fromKey),getCity(S.toKey));
+  } else {
+    const fxCard=document.getElementById('simpleFxCard');
+    if(fxCard)fxCard.style.display='none';
+  }
+  renderAnalysisArea();
+}
+
+// Results only. Kept separate from render() so dragging the FX slider can
+// refresh the numbers without rebuilding — and so killing the drag of — the
+// slider element itself.
+function renderAnalysisArea(){
   const area=document.getElementById('analysisArea');
   if(S.mode==='simple'){
     const from=getCity(S.fromKey), to=getCity(S.toKey);
-    renderSimpleFxSection(from,to);
     if(!from||!to){
       area.innerHTML=`<div class="card placeholder"><div class="icon">🗺️</div><div>Select a <strong>From</strong> and <strong>To</strong> city above to begin your analysis.</div></div>`;
       return;
     }
     S.goal==='save'?renderSimpleSave(area,from,to):renderSimpleEarn(area,from,to);
   } else {
-    const fxCard=document.getElementById('simpleFxCard');
-    if(fxCard)fxCard.style.display='none';
     renderDetailed(area);
   }
 }
@@ -347,6 +415,7 @@ function renderSimpleFxSection(from,to){
   const fc=from.currency, tc=to.currency;
   const defRate=getDefaultFxRate(fc,tc);
   const defFmt=defRate?fmtFx(defRate):'—';
+  const pct=fxShockPct();
   card.style.display='flex';
   card.innerHTML=`
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%;">
@@ -358,6 +427,22 @@ function renderSimpleFxSection(from,to){
         style="width:130px;"/>
       <span style="font-size:0.88rem;font-family:'DM Mono',monospace;white-space:nowrap;"><strong>${fc}</strong></span>
       <span style="font-size:0.78rem;color:var(--muted);white-space:nowrap;">Default: ${defFmt}&nbsp;${fc}</span>
+    </div>
+    <div class="fx-shock ${pct?'shocked':''}" id="fxShockBlock">
+      <div class="slider-head">
+        <span class="slider-label">What if the rate moves?
+          <span class="tip-icon" data-tip="Moves the exchange rate only — not local prices. The cost-of-living indices are quoted in USD terms, so the estimated ${to.city} expenses are really a ratio of local shop prices: a currency swing does not change what a litre of milk costs in ${tc}, and it does not change your ${to.city} savings ratio. What it does change is anything that crosses the border — comparing the two salaries, and the nominal savings gap between them.">?</span>
+        </span>
+        <span class="slider-value" id="fxShockVal">${fxShockReadout(from,to)}</span>
+      </div>
+      <input type="range" id="fxShockSlider" min="-${FX_SHOCK_LIMIT}" max="${FX_SHOCK_LIMIT}" step="1" value="${pct}"
+        aria-label="Exchange rate scenario, percent change in ${tc} strength against ${fc}"/>
+      <div class="fx-shock-scale">
+        <span>${tc} ${FX_SHOCK_LIMIT}% weaker</span>
+        <button type="button" class="fx-shock-reset" id="fxShockReset">Today's rate</button>
+        <span>${tc} ${FX_SHOCK_LIMIT}% stronger</span>
+      </div>
+      <div class="fx-shock-note" id="fxShockNote">${fxShockNote(from,to)}</div>
     </div>`;
   const inp=document.getElementById('simpleFxInput');
   if(inp){
@@ -369,6 +454,52 @@ function renderSimpleFxSection(from,to){
     });
     inp.addEventListener('blur',()=>{render();});
   }
+  const sl=document.getElementById('fxShockSlider');
+  if(sl){
+    // Refresh the readout and the results in place — a full render() here would
+    // replace the range input mid-drag and the gesture would die.
+    sl.addEventListener('input',()=>{
+      S.fxShock=Number(sl.value)||0;
+      updateFxShockUI(from,to);
+      renderAnalysisArea();
+      if(persist)persist.schedule();
+    });
+  }
+  const rst=document.getElementById('fxShockReset');
+  if(rst)rst.addEventListener('click',()=>{
+    S.fxShock=0;
+    if(sl)sl.value='0';
+    updateFxShockUI(from,to);
+    renderAnalysisArea();
+    if(persist)persist.schedule();
+  });
+}
+
+// "+8% · 1 AUD = 13,667 IDR" — the scenario and the rate it implies.
+function fxShockReadout(from,to){
+  const pct=fxShockPct();
+  const M=simpleMults(from,to);
+  const rate=isFinite(M.shocked)?fmtFx(M.shocked)+' '+from.currency:'—';
+  return `${pct>0?'+':''}${pct}% · 1 ${to.currency} = ${rate}`;
+}
+
+function fxShockNote(from,to){
+  const pct=fxShockPct();
+  if(!pct)return`At today's rate. Drag to test a currency swing — living costs in ${to.currency} stay put, only cross-currency figures move.`;
+  const dir=pct>0?'stronger':'weaker';
+  return`Scenario only: the ${to.currency} is ${Math.abs(pct)}% ${dir} than the rate the cost data was priced at. ` +
+        `${to.city} costs and its savings ratio are unchanged — local prices do not move with the currency. ` +
+        `The salary comparison and the savings gap below are converted at the scenario rate.`;
+}
+
+// In-place refresh of just the slider's own labels (never the input element).
+function updateFxShockUI(from,to){
+  const val=document.getElementById('fxShockVal');
+  if(val)val.textContent=fxShockReadout(from,to);
+  const note=document.getElementById('fxShockNote');
+  if(note)note.textContent=fxShockNote(from,to);
+  const blk=document.getElementById('fxShockBlock');
+  if(blk)blk.classList.toggle('shocked',!!fxShockPct());
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -376,17 +507,18 @@ function renderSimpleFxSection(from,to){
 // ═══════════════════════════════════════════════════════════
 function renderSimpleSave(area,from,to){
   const fc=from.currency, tc=to.currency;
-  const fr=getRate(fc), tr=getRate(tc);
   const fs=S.fromSalary||0, fe=S.fromExpense||0, ts=S.toSalary||0;
   const ck=coliKey();
   const fi=getIdx(from,ck), ti=getIdx(to,ck);
-  // Custom FX: S.customFxSimple = fromCurr per 1 toCurr (e.g. IDR per AUD).
-  // With no custom rate and a missing DB rate the multipliers are NaN so the
-  // estimates render as "—" rather than a wrong 1:1 conversion.
-  const cfx=simpleFx(from,to);
-  const fromToMult=cfx?(1/cfx):(fr&&tr?tr/fr:NaN);  // FC→TC multiplier
-  const toFromMult=cfx?cfx:(fr&&tr?fr/tr:NaN);        // TC→FC multiplier
-  const te=!fe?0:(fi&&ti?fe*fromToMult*(ti/fi):NaN);
+  // Base rate = S.customFxSimple (fromCurr per 1 toCurr, e.g. IDR per AUD) or
+  // the bundled one; the FX-shock slider moves the cross-border multipliers off
+  // it. With no rate at all every multiplier is NaN, so the estimates render as
+  // "—" rather than a wrong 1:1 conversion.
+  const M=simpleMults(from,to);
+  const fromToMult=M.fromToMult, toFromMult=M.toFromMult;
+  // The estimate rides the UNSHOCKED rate: it is a ratio of local prices, which
+  // a currency move does not touch (see the FX SHOCK note).
+  const te=!fe?0:(fi&&ti?fe*M.idxMult*(ti/fi):NaN);
   const fSav=fs-fe, tSav=ts-te;
   // A savings ratio needs a positive salary to divide by — otherwise show "—"
   // rather than a made-up 0%.
@@ -432,7 +564,7 @@ function renderSimpleSave(area,from,to){
       <div class="field-row">
         <div class="field-label">
           Est. Monthly Expenses
-          <span class="tip-icon" data-tip="Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio between cities. Data updated ${META_COL}.">?</span>
+          <span class="tip-icon" data-tip="Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio between cities. Data updated ${META_COL}.${estTipFx(from,to)}">?</span>
         </div>
         <div class="sav-block neutral">
           <div class="sav-val mono">${fmtC(te,tc)}</div>
@@ -486,7 +618,9 @@ function buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,t
   if(Math.abs(ratDiff)<0.5){ratTxt=`with a similar savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)})`;}
   else if(ratPos){ratTxt=`<strong>and</strong> a higher savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)}, +${fmtP(Math.abs(ratDiff))})`;}
   else{ratTxt=`${contradict?'<strong>but</strong>':'<strong>and</strong>'} a lower savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)}, −${fmtP(Math.abs(ratDiff))})`;}
-  return `${nomTxt}, ${ratTxt}.`;
+  // The nominal gap crosses currencies, so it is the half that moves with the
+  // slider; the ratio comparison is FX-free.
+  return `${nomTxt}, ${ratTxt}.`+fxShockLine(from,to,true);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -494,15 +628,13 @@ function buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,t
 // ═══════════════════════════════════════════════════════════
 function renderSimpleEarn(area,from,to){
   const fc=from.currency, tc=to.currency;
-  const fr=getRate(fc), tr=getRate(tc);
   const fs=S.fromSalary||0, fe=S.fromExpense||0;
   const ck=coliKey();
   const fi=getIdx(from,ck), ti=getIdx(to,ck);
-  const cfx=simpleFx(from,to);
-  const fromToMult=cfx?(1/cfx):(fr&&tr?tr/fr:NaN);
-  const toFromMult=cfx?cfx:(fr&&tr?fr/tr:NaN);
+  const M=simpleMults(from,to);
+  const fromToMult=M.fromToMult, toFromMult=M.toFromMult;
   const fSav=fs-fe, fRatio=fs>0?fSav/fs:0;
-  const te=!fe?0:(fi&&ti?fe*fromToMult*(ti/fi):NaN);
+  const te=!fe?0:(fi&&ti?fe*M.idxMult*(ti/fi):NaN);
 
   // toReq === null means "no single answer" (see reqSalNote): matching a 100%
   // savings ratio, or a ratio against zero destination expenses, is true at any
@@ -566,7 +698,7 @@ function renderSimpleEarn(area,from,to){
       <div class="field-row">
         <div class="field-label">
           Est. Monthly Expenses
-          <span class="tip-icon" data-tip="Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio. Data updated ${META_COL}.">?</span>
+          <span class="tip-icon" data-tip="Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio. Data updated ${META_COL}.${estTipFx(from,to)}">?</span>
         </div>
         <div class="sav-block neutral">
           <div class="sav-val mono">${fmtC(te,tc)}</div>
@@ -583,7 +715,7 @@ function renderSimpleEarn(area,from,to){
       </div>
     </div>
   </div>
-  <div class="summary-box">${buildEarnSummary(from,to,fc,tc,fr,tr,toReq,fSav,fRatPct,toRatio,te,fRatio)}</div>
+  <div class="summary-box">${buildEarnSummary(from,to,fc,tc,M,toReq,fSav,fRatPct,toRatio,te,fRatio)}</div>
 </section>`;
 
   const sefsEl = document.getElementById('se_fs');
@@ -610,20 +742,42 @@ function reqSalNote(te,fRatio,to,tc){
   return`Not enough data to work out a required salary for ${to.city}.`;
 }
 
-function buildEarnSummary(from,to,fc,tc,fr,tr,toReq,fSav,fRatPct,toRatio,te,fRatio){
+function buildEarnSummary(from,to,fc,tc,M,toReq,fSav,fRatPct,toRatio,te,fRatio){
   if(!S.fromSalary)return'Enter your current salary and expenses to calculate what you need to earn in '+to.city+'.';
   if(toReq==null)return reqSalNote(te,fRatio,to,tc);
-  const cfx=simpleFx(from,to);
-  const fromToMult=cfx?(1/cfx):(fr&&tr?tr/fr:NaN);
-  const toFromMult=cfx?cfx:(fr&&tr?fr/tr:NaN);
-  const cross=fc!==tc?' (≈ '+fmtC(toReq*toFromMult,fc)+')':'';
+  const cross=fc!==tc?' (≈ '+fmtC(toReq*M.toFromMult,fc)+')':'';
   if(S.savingsTarget==='ratio'){
-    return`To maintain the same <strong>${fmtP(fRatPct)}</strong> savings ratio in <strong>${to.city}</strong>, you need a net monthly salary of <strong>${fmtC(toReq,tc)}</strong>${cross}.`;
+    // A ratio target is FX-free on both sides — the required salary and the
+    // expenses it has to cover are both in the destination currency.
+    return`To maintain the same <strong>${fmtP(fRatPct)}</strong> savings ratio in <strong>${to.city}</strong>, you need a net monthly salary of <strong>${fmtC(toReq,tc)}</strong>${cross}.`
+      +fxShockLine(from,to,false);
   } else {
-    const fSavInTo=fSav*fromToMult;
+    const fSavInTo=fSav*M.fromToMult;
     const cross2=fc!==tc?' (≈ '+fmtC(fSav,fc)+')':'';
-    return`To maintain the same nominal savings of <strong>${fmtC(fSavInTo,tc)}</strong>${cross2} in <strong>${to.city}</strong>, you need a net monthly salary of <strong>${fmtC(toReq,tc)}</strong>${cross}.`;
+    return`To maintain the same nominal savings of <strong>${fmtC(fSavInTo,tc)}</strong>${cross2} in <strong>${to.city}</strong>, you need a net monthly salary of <strong>${fmtC(toReq,tc)}</strong>${cross}.`
+      +fxShockLine(from,to,true);
   }
+}
+
+// Appended to the estimated-expenses tooltip while the slider is off zero, so
+// the one figure the shock does NOT move is explained rather than suspected.
+function estTipFx(from,to){
+  const pct=fxShockPct();
+  if(!pct||fxShockMult(from,to)===1)return'';
+  return` Unaffected by the FX scenario: this is a ratio of local prices in ${to.currency}, and a currency move does not reprice ${to.city}'s shops.`;
+}
+
+// Appended to a summary while the FX slider is off zero, so a scenario figure
+// is never mistaken for the live one. `exposed` says whether the headline
+// number actually moves with the rate — for a savings-ratio target it does not.
+function fxShockLine(from,to,exposed){
+  const pct=fxShockPct();
+  if(!pct||fxShockMult(from,to)===1)return'';   // no shock, or same currency both sides
+  const dir=pct>0?'stronger':'weaker';
+  const head=`<br><span style="opacity:.85;">💱 <strong>FX scenario:</strong> ${to.currency} ${Math.abs(pct)}% ${dir}. `;
+  return head+(exposed
+    ?`This figure moves with the rate — that is your currency exposure.</span>`
+    :`The ${to.currency} figure does not move with the rate — ${to.city} costs and income are both in ${to.currency}; only the ${from.currency} conversion beside it does.</span>`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1065,7 +1219,7 @@ function seedSimpleDemo(){
     S.fromKey=findCityKey('Jakarta','Indonesia');
     S.toKey=findCityKey('Perth','Australia');
     S.fromSalary=20000000; S.fromExpense=12000000; S.toSalary=6500;
-    S.customFxSimple=null;
+    S.customFxSimple=null; S.fxShock=0;
     buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
     buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
   }

@@ -8,6 +8,10 @@
 //       → the override must survive on the surviving row
 //   C4  data: every city currency must exist in currency_rates.json (missing
 //       ones silently convert at 1:1 with USD)
+//   C5  simple mode: the ±20% FX-shock slider must move ONLY the cross-currency
+//       figures. The index-based expense estimate and the destination savings
+//       ratio are ratios of local prices and must hold still; the summary's
+//       nominal savings gap must follow the shocked rate exactly.
 // Run: node run.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
@@ -161,6 +165,76 @@ function expected(fx){ // fx = IDR per 1 AUD
     check('C4 destination with no FX rate shows "—" (no silent 1:1 conversion)', te==='—',
       `estimated expenses for a VES destination render as "${te}" (VES has no rate; must be "—")`);
   }
+}
+
+// ── C5: FX-shock slider — local-price figures frozen, cross-currency ones move ──
+{
+  await pickCity('fromPicker','Jakarta|Indonesia');
+  await pickCity('toPicker','Perth|Australia');
+  await setVal('ss_fs', FS.toLocaleString('en-US'));
+  await setVal('ss_fe', FE.toLocaleString('en-US'));
+  await setVal('ss_ts', TS.toLocaleString('en-US'));
+
+  const readSimple = () => page.evaluate(()=>{
+    const dest=document.querySelectorAll('.col-card')[1];
+    return { te: dest.querySelectorAll('.sav-val')[0].textContent.trim(),
+             ratio: dest.querySelectorAll('.sav-ratio')[0].textContent.trim(),
+             summary: document.getElementById('ss_summary').textContent };
+  });
+  const setShock = async p => {
+    await page.evaluate(p=>{ const s=document.getElementById('fxShockSlider'); s.value=String(p); s.dispatchEvent(new Event('input')); }, p);
+    await page.waitForTimeout(80);
+  };
+
+  const hasSlider = await page.evaluate(()=>!!document.getElementById('fxShockSlider'));
+  const bounds = await page.evaluate(()=>{ const s=document.getElementById('fxShockSlider'); return s?{min:s.min,max:s.max}:null; });
+  check('C5a FX-shock slider is present in simple mode and capped at ±20%',
+    hasSlider && bounds.min==='-20' && bounds.max==='20', `min=${bounds&&bounds.min} max=${bounds&&bounds.max}`);
+
+  const at0 = await readSimple();
+  await setShock(20);
+  const atPlus = await readSimple();
+  await setShock(-20);
+  const atMinus = await readSimple();
+
+  // The estimate is expense × P_dest/P_src — the rate cancels out of it, so a
+  // nominal FX move must leave it (and the ratio built from it) untouched.
+  check('C5b estimated destination expenses do not move with the FX shock',
+    at0.te===atPlus.te && at0.te===atMinus.te,
+    `est expenses: 0% "${at0.te}", +20% "${atPlus.te}", −20% "${atMinus.te}"`);
+  check('C5c destination savings ratio does not move with the FX shock',
+    at0.ratio===atPlus.ratio && at0.ratio===atMinus.ratio,
+    `dest ratio: 0% "${at0.ratio}", +20% "${atPlus.ratio}", −20% "${atMinus.ratio}"`);
+
+  // The summary gap converts source savings into the destination currency, so
+  // it must track the shocked rate to the cent.
+  function expectedShocked(pct){
+    const shocked = defaultFx*(1+pct/100);      // IDR per AUD under the scenario
+    const te = FE*(1/defaultFx)*(ti/fi);        // estimate stays on the BASE rate
+    return Math.abs((TS-te) - (FS-FE)/shocked); // nominal gap in AUD
+  }
+  let gapOk = true, gapDetail = [];
+  for(const pct of [20,-20,7]){
+    await setShock(pct);
+    const s = await readSimple();
+    const m = s.summary.match(/AUD\s*([\d,]+)/);
+    const want = expectedShocked(pct);
+    const ok = m && Math.abs(num(m[1])-want) <= 1;
+    if(!ok) gapOk = false;
+    gapDetail.push(`${pct>0?'+':''}${pct}%: got ${m&&m[1]} want ${want.toFixed(0)}`);
+  }
+  check('C5d summary nominal savings gap follows the shocked rate', gapOk,
+    gapDetail.join('; ')+` (unshocked gap is ${expectedShocked(0).toFixed(0)})`);
+
+  // A scenario must announce itself, and must be clearable.
+  const flagged = await page.evaluate(()=>document.getElementById('ss_summary').textContent.includes('FX scenario'));
+  await page.evaluate(()=>document.getElementById('fxShockReset').click());
+  await page.waitForTimeout(80);
+  const back = await readSimple();
+  const sliderBack = await page.evaluate(()=>document.getElementById('fxShockSlider').value);
+  check('C5e a non-zero shock is labelled a scenario, and reset returns to today\'s rate',
+    flagged && sliderBack==='0' && back.summary===at0.summary && !back.summary.includes('FX scenario'),
+    `labelled=${flagged}; after reset slider="${sliderBack}", summary restored=${back.summary===at0.summary}`);
 }
 
 await browser.close();
