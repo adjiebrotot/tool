@@ -177,7 +177,7 @@ function convertCurr(amount,fromCurr,toCurr){
 const UTIL_PARTS=[['electricity','elec',0.5],['water','water',0.2],['gas','gas',0.3]];
 
 // Index lookup. `idx` is null when the dataset has no value for that component
-// — never a stand-in of 100 (New York's level), which would silently invent
+// (never a stand-in of 100, the base city's level), which would silently invent
 // data. For the utilities composite the surviving weights are renormalised and
 // the dropped components are reported in `missing` so the UI can say so.
 function idxInfo(city, key){
@@ -247,9 +247,11 @@ function pruneCustomFx(){
 // lunch costs an Indonesian more IDR, while an Australian notices nothing.
 //
 // The maths already works this way. The cost-of-living indices are USD-
-// normalised (New York = 100), so index_c = P_c / (e_c * P_NY) * 100, where P
-// is the local price of the basket and e is units of local currency per USD.
-// Substituting that into the estimate makes the FX terms cancel outright:
+// normalised against a base city (this dataset is rebased to Perth = 100, not
+// Numbeo's New York; the choice does not matter because it cancels below), so
+// index_c = P_c / (e_c * P_base) * 100, where P is the local price of the
+// basket and e is units of local currency per USD. Substituting that into the
+// estimate makes both the base and the FX terms cancel outright:
 //
 //   est = expense * (e_dst/e_src) * (I_dst/I_src)  =  expense * P_dst/P_src
 //
