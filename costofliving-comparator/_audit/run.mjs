@@ -6,8 +6,8 @@
 //       but the destination's cost in its own currency must NOT move
 //   C3  detailed mode: override a destination cell on row 2, then delete row 1
 //       → the override must survive on the surviving row
-//   C4  data: every city currency must exist in currency_rates.json (missing
-//       ones silently convert at 1:1 with USD)
+//   C4  data: every city currency resolves to an FX rate, and every rate is
+//       used by at least one city (no orphans, no silent 1:1 conversions)
 //   C5  simple mode: the ±20% FX-shock slider must move ONLY the cross-currency
 //       figures. The index-based expense estimate and the destination savings
 //       ratio are ratios of local prices and must hold still; the summary's
@@ -160,23 +160,22 @@ function expected(fx){
     `override was "777" before deleting row 1; surviving row now shows "${after.val}" (overridden=${after.overridden})`);
 }
 
-// ── C4: a city whose currency has no FX rate must degrade to "—", NOT convert
-//        1:1 with USD. Caracas (VES) has no rate; pick it as the destination and
-//        confirm the estimated expenses show "—" rather than a plausible number. ──
+// ── C4: DATA — every city must resolve to an FX rate, and every rate must be
+//        used. Rows whose currency had no rate (Caracas/VES) were removed, so
+//        this now asserts the invariant rather than the old degradation path:
+//        a future data refresh that reintroduces a rate-less currency, or
+//        leaves an orphan rate behind, fails here. The engine's "no rate → —"
+//        guard still exists and is covered by the null handling in C1/C5. ──
 {
   await page.evaluate(()=>{ document.querySelector('#modeGroup .seg-btn[data-val="simple"]')?.click(); });
   await page.waitForTimeout(100);
-  if(!cityIdx['Caracas|Venezuela']){
-    check('C4 missing-rate city degrades to "—"', RATE.VES==null, 'no Caracas in data to test');
-  } else {
-    await pickCity('fromPicker','Perth|Australia');
-    await pickCity('toPicker','Caracas|Venezuela');
-    await setVal('ss_fs', (8000).toLocaleString('en-US'));
-    await setVal('ss_fe', (4000).toLocaleString('en-US'));
-    const te = await page.evaluate(()=>document.querySelectorAll('.col-card')[1].querySelectorAll('.sav-val')[0].textContent.trim());
-    check('C4 destination with no FX rate shows "—" (no silent 1:1 conversion)', te==='—',
-      `estimated expenses for a VES destination render as "${te}" (VES has no rate; must be "—")`);
-  }
+  const noRate = col.data.filter(c => RATE[c.currency] == null).map(c => `${c.city} (${c.currency})`);
+  check('C4a every city currency resolves to an FX rate', noRate.length === 0,
+    noRate.length ? `missing rates: ${noRate.join(', ')}` : `all ${col.data.length} cities covered by ${Object.keys(RATE).length} rates`);
+  const used = new Set(col.data.map(c => c.currency));
+  const orphan = Object.keys(RATE).filter(c => !used.has(c));
+  check('C4b no orphaned currency rates', orphan.length === 0,
+    orphan.length ? `rates with no city: ${orphan.join(', ')}` : 'every rate is referenced by at least one city');
 }
 
 // ── C5: FX-shock slider: local-price figures frozen, cross-currency ones move ──

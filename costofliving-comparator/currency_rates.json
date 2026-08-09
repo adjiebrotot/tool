@@ -18,7 +18,7 @@
     {
       "country": "United States",
       "currency": "USD",
-      "usd_rate": 1.0
+      "usd_rate": 1
     },
     {
       "country": "New Zealand",
@@ -138,7 +138,7 @@
     {
       "country": "Puerto Rico",
       "currency": "USD",
-      "usd_rate": 1.0
+      "usd_rate": 1
     },
     {
       "country": "Sweden",
@@ -246,11 +246,6 @@
       "usd_rate": 0.8619
     },
     {
-      "country": "Cuba",
-      "currency": "CUP",
-      "usd_rate": 24
-    },
-    {
       "country": "Slovakia",
       "currency": "EUR",
       "usd_rate": 0.8619
@@ -293,7 +288,7 @@
     {
       "country": "Panama",
       "currency": "PAB",
-      "usd_rate": 1.0
+      "usd_rate": 1
     },
     {
       "country": "Jordan",
@@ -353,7 +348,7 @@
     {
       "country": "El Salvador",
       "currency": "USD",
-      "usd_rate": 1.0
+      "usd_rate": 1
     },
     {
       "country": "Malaysia",
@@ -381,14 +376,9 @@
       "usd_rate": 2.74
     },
     {
-      "country": "Zimbabwe",
-      "currency": "ZWL",
-      "usd_rate": 65834.69
-    },
-    {
       "country": "Vietnam",
       "currency": "VND",
-      "usd_rate": 26350.0
+      "usd_rate": 26350
     },
     {
       "country": "Bosnia And Herzegovina",
@@ -398,7 +388,7 @@
     {
       "country": "Ecuador",
       "currency": "USD",
-      "usd_rate": 1.0
+      "usd_rate": 1
     },
     {
       "country": "South Africa",
@@ -458,7 +448,7 @@
     {
       "country": "Cambodia",
       "currency": "KHR",
-      "usd_rate": 4020.0
+      "usd_rate": 4020
     },
     {
       "country": "Argentina",
@@ -473,7 +463,7 @@
     {
       "country": "Indonesia",
       "currency": "IDR",
-      "usd_rate": 17717.0
+      "usd_rate": 17717
     },
     {
       "country": "Kazakhstan",
@@ -498,7 +488,7 @@
     {
       "country": "Tanzania",
       "currency": "TZS",
-      "usd_rate": 2613.0
+      "usd_rate": 2613
     },
     {
       "country": "Turkey",
@@ -538,7 +528,7 @@
     {
       "country": "Sri Lanka",
       "currency": "LKR",
-      "usd_rate": 330.0
+      "usd_rate": 330
     },
     {
       "country": "India",
@@ -614,11 +604,6 @@
       "country": "Iraq",
       "currency": "IQD",
       "usd_rate": 1310.52
-    },
-    {
-      "country": "Sudan",
-      "currency": "SDG",
-      "usd_rate": 601.5
     },
     {
       "country": "Myanmar",
