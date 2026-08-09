@@ -207,6 +207,18 @@ function getIdx(city, key){return idxInfo(city,key).idx;}
 
 function coliKey(){return S.housing==='include'?'coli_with_housing':'coli_no_housing';}
 
+// Simple mode's headline estimate: what the source city's monthly expense buys
+// for in the destination, quoted in the destination's currency. A ratio of
+// local prices, so it rides the priced-at rate (M.idxMult) and never the custom
+// rate or the scenario slider — see the FX SHOCK note below.
+// 0 when there is nothing to convert; NaN when the data cannot answer.
+function estDestExpense(from,to,fe){
+  if(!fe)return 0;
+  const ck=coliKey();
+  const fi=getIdx(from,ck), ti=getIdx(to,ck);
+  return(fi&&ti)?fe*simpleMults(from,to).idxMult*(ti/fi):NaN;
+}
+
 // ═══════════════════════════════════════════════════════════
 // CUSTOM FX GUARDS
 // A custom rate only means something between two different currencies. These
@@ -504,14 +516,9 @@ function updateFxShockUI(from,to){
 function renderSimpleSave(area,from,to){
   const fc=from.currency, tc=to.currency;
   const fs=S.fromSalary||0, fe=S.fromExpense||0, ts=S.toSalary||0;
-  const ck=coliKey();
-  const fi=getIdx(from,ck), ti=getIdx(to,ck);
   const M=simpleMults(from,to);
   const fromToMult=M.fromToMult, toFromMult=M.toFromMult;
-  // The estimate uses the priced-at rate, never the custom rate or the scenario:
-  // it is a ratio of local prices, which no currency move touches. See the FX
-  // SHOCK note above.
-  const te=!fe?0:(fi&&ti?fe*M.idxMult*(ti/fi):NaN);
+  const te=estDestExpense(from,to,fe);
   const fSav=fs-fe, tSav=ts-te;
   // A savings ratio needs a positive salary to divide by — otherwise show "—"
   // rather than a made-up 0%.
@@ -622,12 +629,10 @@ function buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,t
 function renderSimpleEarn(area,from,to){
   const fc=from.currency, tc=to.currency;
   const fs=S.fromSalary||0, fe=S.fromExpense||0;
-  const ck=coliKey();
-  const fi=getIdx(from,ck), ti=getIdx(to,ck);
   const M=simpleMults(from,to);
   const fromToMult=M.fromToMult, toFromMult=M.toFromMult;
   const fSav=fs-fe, fRatio=fs>0?fSav/fs:0;
-  const te=!fe?0:(fi&&ti?fe*M.idxMult*(ti/fi):NaN);
+  const te=estDestExpense(from,to,fe);
 
   // toReq === null means "no single answer" (see reqSalNote): matching a 100%
   // savings ratio, or a ratio against zero destination expenses, is true at any
@@ -1182,10 +1187,18 @@ function wireGlobalToggles(){
 // the destination. Everything that is tied to a side travels with it — the two
 // salaries swap, and the FX inputs are inverted rather than dropped, since both
 // are quoted as fromCurr per 1 toCurr and that direction has just flipped.
-// The typed monthly expense stays put: it is a figure for the source city and
-// has no counterpart on the other side to trade places with.
+//
+// The monthly expense has no counterpart to trade with, so it takes the
+// estimate the tool was already showing for the destination: the figure in the
+// "Est. Monthly Expenses" box becomes the typed expense for the new source
+// city. It is the tool's own answer, in the right currency, and a better start
+// than a stale number under a new currency tag. It stays editable, and it is
+// left alone when the estimate is not computable.
 // ═══════════════════════════════════════════════════════════
 function swapSimpleCities(){
+  const est=estDestExpense(getCity(S.fromKey),getCity(S.toKey),S.fromExpense||0);
+  if(isFinite(est))S.fromExpense=Math.round(est);
+
   const k=S.fromKey; S.fromKey=S.toKey; S.toKey=k;
   const sal=S.fromSalary; S.fromSalary=S.toSalary; S.toSalary=sal;
 

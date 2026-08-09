@@ -14,7 +14,8 @@
 //       ratio are ratios of local prices and must hold still; the summary's
 //       nominal savings gap must follow the shocked rate exactly.
 //   C6  simple mode: the ⇆ swap button turns the comparison around — cities,
-//       pickers and salaries change sides and the custom FX rate is inverted
+//       pickers and salaries change sides, the custom FX rate is inverted, and
+//       the monthly expense adopts the estimate shown for the destination
 // Run: node run.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
@@ -281,7 +282,12 @@ function expected(fx){
   await pickCity('fromPicker','Jakarta|Indonesia');
   await pickCity('toPicker','Perth|Australia');
   await setVal('ss_fs', (50000000).toLocaleString('en-US'));
+  await setVal('ss_fe', (15000000).toLocaleString('en-US'));
   await setVal('ss_ts', (6000).toLocaleString('en-US'));
+
+  // the destination estimate on screen — the swap must adopt it as the new
+  // source-city expense
+  const estShown = await page.evaluate(()=>document.querySelectorAll('.col-card')[1].querySelectorAll('.sav-val')[0].textContent);
 
   const before = await page.evaluate(()=>({
     from:document.querySelectorAll('.col-header')[0].textContent.replace(/^\W+/,'').trim(),
@@ -302,6 +308,7 @@ function expected(fx){
     fromInput:document.getElementById('fromPicker').querySelector('input').value,
     toInput:document.getElementById('toPicker').querySelector('input').value,
     fs:document.getElementById('ss_fs').value,
+    fe:document.getElementById('ss_fe').value,
     ts:document.getElementById('ss_ts').value,
     fx:document.getElementById('simpleFxInput').value,
   }));
@@ -315,6 +322,9 @@ function expected(fx){
   check('C6c the custom FX rate is inverted, not dropped',
     Math.abs(num(after.fx)-1/10000) < 1e-9,
     `10,000 IDR per AUD → ${after.fx} AUD per IDR`);
+  check('C6e the monthly expense adopts the estimate that was on screen for the destination',
+    Math.abs(num(after.fe)-num(estShown)) <= 1,
+    `destination showed "${estShown}"; new source expense is "${after.fe}"`);
   // Nothing to turn around once both sides are empty.
   await page.evaluate(()=>{
     ['fromPicker','toPicker'].forEach(id=>document.getElementById(id).querySelector('.city-clear')
