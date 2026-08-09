@@ -2,12 +2,16 @@
 // Serves the repo over localhost (the page fetches its JSON data), drives the
 // REAL page headless and mimics a user:
 //   C1  simple mode: baseline estimated-expense math vs independent recompute
-//   C2  simple mode: set a CUSTOM FX rate → the summary's nominal-savings
-//       difference must use it (the ≈-conversions in the cells do)
+//   C2  simple mode: set a CUSTOM FX rate → cross-border figures must use it,
+//       but the destination's cost in its own currency must NOT move
 //   C3  detailed mode: override a destination cell on row 2, then delete row 1
 //       → the override must survive on the surviving row
-//   C4  data: every city currency must exist in currency_rates.json (missing
-//       ones silently convert at 1:1 with USD)
+//   C4  data: every city currency resolves to an FX rate, and every rate is
+//       used by at least one city (no orphans, no silent 1:1 conversions)
+//   C5  simple mode: the ±20% FX-shock slider must move ONLY the cross-currency
+//       figures. The index-based expense estimate and the destination savings
+//       ratio are ratios of local prices and must hold still; the summary's
+//       nominal savings gap must follow the shocked rate exactly.
 // Run: node run.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
@@ -77,8 +81,11 @@ const fi=JKT.coli_with_housing, ti=PER.coli_with_housing;
 const fr=RATE.IDR, tr=RATE.AUD;               // units per USD
 const defaultFx = fr/tr;                      // IDR per AUD
 
-function expected(fx){ // fx = IDR per 1 AUD
-  const te = FE*(1/fx)*(ti/fi);               // est. expenses in AUD
+// fx = the IDR-per-AUD rate money crosses the border at (custom and/or the
+// scenario slider). The estimate itself never uses it: it is a ratio of local
+// prices and always rides the rate the indices were priced at.
+function expected(fx){
+  const te = FE*(1/defaultFx)*(ti/fi);        // est. expenses in AUD
   const fSav=FS-FE, tSav=TS-te;
   const nomDiffAUD = tSav - fSav/fx;          // common-currency diff in AUD
   return {te, nomDiffAUD};
@@ -99,17 +106,26 @@ function expected(fx){ // fx = IDR per 1 AUD
     `est ${got.te} vs ${e.te.toFixed(0)}; summary diff ${m&&m[1]} vs ${Math.abs(e.nomDiffAUD).toFixed(0)}`);
 }
 
-// ── C2: custom FX — summary must follow the custom rate ──
+// ── C2: custom FX crosses the border, but must NOT reprice Perth in AUD ──
 {
-  const customFx = Math.round(defaultFx*2);   // user thinks the AUD is 2× stronger
+  const before = await page.evaluate(()=>document.querySelectorAll('.col-card')[1].querySelectorAll('.sav-val')[0].textContent);
+  const customFx = Math.round(defaultFx*2);   // user thinks the AUD is 2x stronger
   await setVal('simpleFxInput', String(customFx));
   const e = expected(customFx);
-  const got = await page.evaluate(()=>document.getElementById('ss_summary').textContent);
-  const m = got.match(/AUD\s*([\d,]+)/);
-  check('C2 with a custom FX rate the summary nominal difference uses it',
+  const got = await page.evaluate(()=>({
+    te: document.querySelectorAll('.col-card')[1].querySelectorAll('.sav-val')[0].textContent,
+    summary: document.getElementById('ss_summary').textContent }));
+  const m = got.summary.match(/AUD\s*([\d,]+)/);
+  check('C2a with a custom FX rate the summary nominal difference uses it',
     m && Math.abs(num(m[1])-Math.abs(e.nomDiffAUD)) <= 1,
     `summary says AUD ${m&&m[1]}; with custom FX it should be ${Math.abs(e.nomDiffAUD).toFixed(0)} `+
     `(DB-rate value would be ${Math.abs(expected(defaultFx).nomDiffAUD).toFixed(0)})`);
+  // A rate is a bridge between currencies, not a price list. Perth's cost in
+  // AUD cannot change because the user re-quoted the Rupiah.
+  check('C2b a custom FX rate does not change the destination cost in its own currency',
+    got.te===before && Math.abs(num(got.te)-e.te)<=1,
+    `est expenses were "${before}" at the bundled rate and "${got.te}" at a 2x custom rate`);
+  await setVal('simpleFxInput', '');           // back to the bundled rate
 }
 
 // ── C3: detailed mode — override must survive deleting a row above it ──
@@ -144,23 +160,92 @@ function expected(fx){ // fx = IDR per 1 AUD
     `override was "777" before deleting row 1; surviving row now shows "${after.val}" (overridden=${after.overridden})`);
 }
 
-// ── C4: a city whose currency has no FX rate must degrade to "—", NOT convert
-//        1:1 with USD. Caracas (VES) has no rate; pick it as the destination and
-//        confirm the estimated expenses show "—" rather than a plausible number. ──
+// ── C4: DATA — every city must resolve to an FX rate, and every rate must be
+//        used. Rows whose currency had no rate (Caracas/VES) were removed, so
+//        this now asserts the invariant rather than the old degradation path:
+//        a future data refresh that reintroduces a rate-less currency, or
+//        leaves an orphan rate behind, fails here. The engine's "no rate → —"
+//        guard still exists and is covered by the null handling in C1/C5. ──
 {
   await page.evaluate(()=>{ document.querySelector('#modeGroup .seg-btn[data-val="simple"]')?.click(); });
   await page.waitForTimeout(100);
-  if(!cityIdx['Caracas|Venezuela']){
-    check('C4 missing-rate city degrades to "—"', RATE.VES==null, 'no Caracas in data to test');
-  } else {
-    await pickCity('fromPicker','Perth|Australia');
-    await pickCity('toPicker','Caracas|Venezuela');
-    await setVal('ss_fs', (8000).toLocaleString('en-US'));
-    await setVal('ss_fe', (4000).toLocaleString('en-US'));
-    const te = await page.evaluate(()=>document.querySelectorAll('.col-card')[1].querySelectorAll('.sav-val')[0].textContent.trim());
-    check('C4 destination with no FX rate shows "—" (no silent 1:1 conversion)', te==='—',
-      `estimated expenses for a VES destination render as "${te}" (VES has no rate; must be "—")`);
+  const noRate = col.data.filter(c => RATE[c.currency] == null).map(c => `${c.city} (${c.currency})`);
+  check('C4a every city currency resolves to an FX rate', noRate.length === 0,
+    noRate.length ? `missing rates: ${noRate.join(', ')}` : `all ${col.data.length} cities covered by ${Object.keys(RATE).length} rates`);
+  const used = new Set(col.data.map(c => c.currency));
+  const orphan = Object.keys(RATE).filter(c => !used.has(c));
+  check('C4b no orphaned currency rates', orphan.length === 0,
+    orphan.length ? `rates with no city: ${orphan.join(', ')}` : 'every rate is referenced by at least one city');
+}
+
+// ── C5: FX-shock slider: local-price figures frozen, cross-currency ones move ──
+{
+  await pickCity('fromPicker','Jakarta|Indonesia');
+  await pickCity('toPicker','Perth|Australia');
+  await setVal('ss_fs', FS.toLocaleString('en-US'));
+  await setVal('ss_fe', FE.toLocaleString('en-US'));
+  await setVal('ss_ts', TS.toLocaleString('en-US'));
+
+  const readSimple = () => page.evaluate(()=>{
+    const dest=document.querySelectorAll('.col-card')[1];
+    return { te: dest.querySelectorAll('.sav-val')[0].textContent.trim(),
+             ratio: dest.querySelectorAll('.sav-ratio')[0].textContent.trim(),
+             summary: document.getElementById('ss_summary').textContent };
+  });
+  const setShock = async p => {
+    await page.evaluate(p=>{ const s=document.getElementById('fxShockSlider'); s.value=String(p); s.dispatchEvent(new Event('input')); }, p);
+    await page.waitForTimeout(80);
+  };
+
+  const hasSlider = await page.evaluate(()=>!!document.getElementById('fxShockSlider'));
+  const bounds = await page.evaluate(()=>{ const s=document.getElementById('fxShockSlider'); return s?{min:s.min,max:s.max}:null; });
+  check('C5a FX-shock slider is present in simple mode and capped at ±20%',
+    hasSlider && bounds.min==='-20' && bounds.max==='20', `min=${bounds&&bounds.min} max=${bounds&&bounds.max}`);
+
+  const at0 = await readSimple();
+  await setShock(20);
+  const atPlus = await readSimple();
+  await setShock(-20);
+  const atMinus = await readSimple();
+
+  // The estimate is expense x P_dest/P_src, so the rate cancels out of it and a
+  // nominal FX move must leave it (and the ratio built from it) untouched.
+  check('C5b estimated destination expenses do not move with the FX shock',
+    at0.te===atPlus.te && at0.te===atMinus.te,
+    `est expenses: 0% "${at0.te}", +20% "${atPlus.te}", −20% "${atMinus.te}"`);
+  check('C5c destination savings ratio does not move with the FX shock',
+    at0.ratio===atPlus.ratio && at0.ratio===atMinus.ratio,
+    `dest ratio: 0% "${at0.ratio}", +20% "${atPlus.ratio}", −20% "${atMinus.ratio}"`);
+
+  // The summary gap converts source savings into the destination currency, so
+  // it must track the shocked rate to the cent.
+  function expectedShocked(pct){
+    const shocked = defaultFx*(1+pct/100);      // IDR per AUD under the scenario
+    const te = FE*(1/defaultFx)*(ti/fi);        // estimate stays on the BASE rate
+    return Math.abs((TS-te) - (FS-FE)/shocked); // nominal gap in AUD
   }
+  let gapOk = true, gapDetail = [];
+  for(const pct of [20,-20,7]){
+    await setShock(pct);
+    const s = await readSimple();
+    const m = s.summary.match(/AUD\s*([\d,]+)/);
+    const want = expectedShocked(pct);
+    const ok = m && Math.abs(num(m[1])-want) <= 1;
+    if(!ok) gapOk = false;
+    gapDetail.push(`${pct>0?'+':''}${pct}%: got ${m&&m[1]} want ${want.toFixed(0)}`);
+  }
+  check('C5d summary nominal savings gap follows the shocked rate', gapOk,
+    gapDetail.join('; ')+` (unshocked gap is ${expectedShocked(0).toFixed(0)})`);
+
+  // A scenario must announce itself, and must be clearable.
+  const flagged = await page.evaluate(()=>document.getElementById('ss_summary').textContent.includes('Scenario:'));
+  await page.evaluate(()=>document.getElementById('fxShockReset').click());
+  await page.waitForTimeout(80);
+  const back = await readSimple();
+  const sliderBack = await page.evaluate(()=>document.getElementById('fxShockSlider').value);
+  check('C5e a non-zero shock is labelled a scenario, and reset returns to today\'s rate',
+    flagged && sliderBack==='0' && back.summary===at0.summary && !back.summary.includes('Scenario:'),
+    `labelled=${flagged}; after reset slider="${sliderBack}", summary restored=${back.summary===at0.summary}`);
 }
 
 await browser.close();
