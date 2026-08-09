@@ -207,6 +207,18 @@ function getIdx(city, key){return idxInfo(city,key).idx;}
 
 function coliKey(){return S.housing==='include'?'coli_with_housing':'coli_no_housing';}
 
+// Simple mode's headline estimate: what the source city's monthly expense buys
+// for in the destination, quoted in the destination's currency. A ratio of
+// local prices, so it rides the priced-at rate (M.idxMult) and never the custom
+// rate or the scenario slider — see the FX SHOCK note below.
+// 0 when there is nothing to convert; NaN when the data cannot answer.
+function estDestExpense(from,to,fe){
+  if(!fe)return 0;
+  const ck=coliKey();
+  const fi=getIdx(from,ck), ti=getIdx(to,ck);
+  return(fi&&ti)?fe*simpleMults(from,to).idxMult*(ti/fi):NaN;
+}
+
 // ═══════════════════════════════════════════════════════════
 // CUSTOM FX GUARDS
 // A custom rate only means something between two different currencies. These
@@ -390,6 +402,7 @@ function render(){
   // Housing row visibility
   document.getElementById('housingRow').style.display=S.mode==='simple'?'flex':'none';
   document.getElementById('simpleCityCard').style.display=S.mode==='simple'?'flex':'none';
+  syncSwapButton();
 
   if(S.mode==='simple'){
     renderSimpleFxSection(getCity(S.fromKey),getCity(S.toKey));
@@ -503,14 +516,9 @@ function updateFxShockUI(from,to){
 function renderSimpleSave(area,from,to){
   const fc=from.currency, tc=to.currency;
   const fs=S.fromSalary||0, fe=S.fromExpense||0, ts=S.toSalary||0;
-  const ck=coliKey();
-  const fi=getIdx(from,ck), ti=getIdx(to,ck);
   const M=simpleMults(from,to);
   const fromToMult=M.fromToMult, toFromMult=M.toFromMult;
-  // The estimate uses the priced-at rate, never the custom rate or the scenario:
-  // it is a ratio of local prices, which no currency move touches. See the FX
-  // SHOCK note above.
-  const te=!fe?0:(fi&&ti?fe*M.idxMult*(ti/fi):NaN);
+  const te=estDestExpense(from,to,fe);
   const fSav=fs-fe, tSav=ts-te;
   // A savings ratio needs a positive salary to divide by — otherwise show "—"
   // rather than a made-up 0%.
@@ -621,12 +629,10 @@ function buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,t
 function renderSimpleEarn(area,from,to){
   const fc=from.currency, tc=to.currency;
   const fs=S.fromSalary||0, fe=S.fromExpense||0;
-  const ck=coliKey();
-  const fi=getIdx(from,ck), ti=getIdx(to,ck);
   const M=simpleMults(from,to);
   const fromToMult=M.fromToMult, toFromMult=M.toFromMult;
   const fSav=fs-fe, fRatio=fs>0?fSav/fs:0;
-  const te=!fe?0:(fi&&ti?fe*M.idxMult*(ti/fi):NaN);
+  const te=estDestExpense(from,to,fe);
 
   // toReq === null means "no single answer" (see reqSalNote): matching a 100%
   // savings ratio, or a ratio against zero destination expenses, is true at any
@@ -835,23 +841,18 @@ function buildDetailHTML(fromCity,toCities){
 
   let thAdd=`<th><button class="btn-add" id="addCityBtn">+ City</button></th>`;
 
-  // Goal toggle
-  const goalHtml=`<div style="margin-bottom:14px;">
+  // Target toggle. The goal itself lives in the mode card at the top of the
+  // page (#goalRow), which is on screen in both modes — a second copy here
+  // would be the same state under two labels, and the two would drift apart.
+  const goalHtml=S.goal==='earn'?`<div style="margin-bottom:14px;">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-      <span style="font-size:0.85rem;color:var(--muted);">I want to know:</span>
-      <div class="seg-group" id="dtGoalGroup">
-        <button class="seg-btn ${S.goal==='save'?'active':''}" data-val="save">My savings</button>
-        <button class="seg-btn ${S.goal==='earn'?'active':''}" data-val="earn">Required salary</button>
-      </div>
-    </div>
-    ${S.goal==='earn'?`<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;">
       <span style="font-size:0.85rem;color:var(--muted);">Target:</span>
       <div class="seg-group" id="dtTargetGroup">
         <button class="seg-btn ${S.savingsTarget==='ratio'?'active':''}" data-val="ratio">Savings ratio</button>
         <button class="seg-btn ${S.savingsTarget==='nominal'?'active':''}" data-val="nominal">Nominal savings</button>
       </div>
-    </div>`:''}
-  </div>`;
+    </div>
+  </div>`:'';
 
   // Salary row
   let salFrom=`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="dt_fs" value="${formatMoneyValue(S.detailFromSalary)||''}" placeholder="0" style="width:110px;"/></div></td>`;
@@ -1145,12 +1146,6 @@ function wireDetail(fromCity,toCities){
     inp.addEventListener('blur', e => { formatMoneyInput(e.target); renderDetailArea(); });
   });
 
-  // Goal toggle
-  const dtGoal=document.getElementById('dtGoalGroup');
-  if(dtGoal)dtGoal.querySelectorAll('.seg-btn').forEach(btn=>{
-    btn.addEventListener('click',()=>{S.goal=btn.dataset.val;renderDetailArea();});
-  });
-
   // Target toggle (earn mode)
   const dtTarget=document.getElementById('dtTargetGroup');
   if(dtTarget)dtTarget.querySelectorAll('.seg-btn').forEach(btn=>{
@@ -1181,6 +1176,52 @@ function wireGlobalToggles(){
   wireGroup('modeGroup','mode');
   wireGroup('goalGroup','goal');
   wireGroup('housingGroup','housing');
+
+  const swapBtn=document.getElementById('swapCities');
+  if(swapBtn)swapBtn.addEventListener('click',swapSimpleCities);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SWAP (simple mode)
+// Turns the comparison around: the destination becomes home and home becomes
+// the destination. Everything that is tied to a side travels with it — the two
+// salaries swap, and the FX inputs are inverted rather than dropped, since both
+// are quoted as fromCurr per 1 toCurr and that direction has just flipped.
+//
+// The monthly expense has no counterpart to trade with, so it takes the
+// estimate the tool was already showing for the destination: the figure in the
+// "Est. Monthly Expenses" box becomes the typed expense for the new source
+// city. It is the tool's own answer, in the right currency, and a better start
+// than a stale number under a new currency tag. It stays editable, and it is
+// left alone when the estimate is not computable.
+// ═══════════════════════════════════════════════════════════
+function swapSimpleCities(){
+  const est=estDestExpense(getCity(S.fromKey),getCity(S.toKey),S.fromExpense||0);
+  if(isFinite(est))S.fromExpense=Math.round(est);
+
+  const k=S.fromKey; S.fromKey=S.toKey; S.toKey=k;
+  const sal=S.fromSalary; S.fromSalary=S.toSalary; S.toSalary=sal;
+
+  const cfx=Number(S.customFxSimple);
+  S.customFxSimple=(isFinite(cfx)&&cfx>0)?1/cfx:null;
+
+  // The shock is a % move in the destination currency's strength, so the same
+  // scenario seen from the other side is the reciprocal multiplier.
+  const pct=fxShockPct();
+  if(pct){
+    const inv=(1/(1+pct/100)-1)*100;
+    S.fxShock=Math.max(-FX_SHOCK_LIMIT,Math.min(FX_SHOCK_LIMIT,Math.round(inv)));
+  }
+
+  buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
+  buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
+  render();
+}
+
+// Nothing to swap until at least one side is set.
+function syncSwapButton(){
+  const btn=document.getElementById('swapCities');
+  if(btn)btn.disabled=!(S.fromKey||S.toKey);
 }
 
 // ═══════════════════════════════════════════════════════════

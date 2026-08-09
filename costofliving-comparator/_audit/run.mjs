@@ -5,13 +5,17 @@
 //   C2  simple mode: set a CUSTOM FX rate → cross-border figures must use it,
 //       but the destination's cost in its own currency must NOT move
 //   C3  detailed mode: override a destination cell on row 2, then delete row 1
-//       → the override must survive on the surviving row
+//       → the override must survive on the surviving row; and the goal lives
+//       in exactly one control (#goalGroup), which drives the detailed card
 //   C4  data: every city currency resolves to an FX rate, and every rate is
 //       used by at least one city (no orphans, no silent 1:1 conversions)
 //   C5  simple mode: the ±20% FX-shock slider must move ONLY the cross-currency
 //       figures. The index-based expense estimate and the destination savings
 //       ratio are ratios of local prices and must hold still; the summary's
 //       nominal savings gap must follow the shocked rate exactly.
+//   C6  simple mode: the ⇆ swap button turns the comparison around — cities,
+//       pickers and salaries change sides, the custom FX rate is inverted, and
+//       the monthly expense adopts the estimate shown for the destination
 // Run: node run.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
@@ -158,6 +162,31 @@ function expected(fx){
   check('C3 detailed-mode override survives deleting the row above it',
     before==='777' && after.val==='777' && after.overridden,
     `override was "777" before deleting row 1; surviving row now shows "${after.val}" (overridden=${after.overridden})`);
+
+  // The goal lives in ONE control (#goalGroup, on screen in both modes). A
+  // second copy inside the detailed card would drift out of sync with it.
+  const goalCtl = await page.evaluate(()=>({
+    top: !!document.getElementById('goalGroup') && document.getElementById('goalRow').offsetParent!==null,
+    dup: !!document.getElementById('dtGoalGroup'),
+  }));
+  await page.evaluate(()=>document.querySelector('#goalGroup .seg-btn[data-val="earn"]').click());
+  await page.waitForTimeout(120);
+  const earn = await page.evaluate(()=>({
+    active: document.querySelector('#goalGroup .seg-btn.active').dataset.val,
+    target: !!document.getElementById('dtTargetGroup'),
+    reqSalary: /required/i.test(document.querySelector('table.dt').textContent),
+  }));
+  await page.evaluate(()=>document.querySelector('#goalGroup .seg-btn[data-val="save"]').click());
+  await page.waitForTimeout(120);
+  const saved = await page.evaluate(()=>({
+    active: document.querySelector('#goalGroup .seg-btn.active').dataset.val,
+    target: !!document.getElementById('dtTargetGroup'),
+  }));
+  check('C3b detailed mode has one goal control, and the top one drives it',
+    goalCtl.top && !goalCtl.dup && earn.active==='earn' && earn.target && earn.reqSalary
+      && saved.active==='save' && !saved.target,
+    `#goalRow visible=${goalCtl.top}, #dtGoalGroup present=${goalCtl.dup}; `+
+    `earn → target row=${earn.target}, save → target row=${saved.target}`);
 }
 
 // ── C4: DATA — every city must resolve to an FX rate, and every rate must be
@@ -246,6 +275,65 @@ function expected(fx){
   check('C5e a non-zero shock is labelled a scenario, and reset returns to today\'s rate',
     flagged && sliderBack==='0' && back.summary===at0.summary && !back.summary.includes('Scenario:'),
     `labelled=${flagged}; after reset slider="${sliderBack}", summary restored=${back.summary===at0.summary}`);
+}
+
+// ── C6: the ⇆ swap button turns the comparison around ────────────────────
+{
+  await pickCity('fromPicker','Jakarta|Indonesia');
+  await pickCity('toPicker','Perth|Australia');
+  await setVal('ss_fs', (50000000).toLocaleString('en-US'));
+  await setVal('ss_fe', (15000000).toLocaleString('en-US'));
+  await setVal('ss_ts', (6000).toLocaleString('en-US'));
+
+  // the destination estimate on screen — the swap must adopt it as the new
+  // source-city expense
+  const estShown = await page.evaluate(()=>document.querySelectorAll('.col-card')[1].querySelectorAll('.sav-val')[0].textContent);
+
+  const before = await page.evaluate(()=>({
+    from:document.querySelectorAll('.col-header')[0].textContent.replace(/^\W+/,'').trim(),
+    to:document.querySelectorAll('.col-header')[1].textContent.replace(/^\W+/,'').trim(),
+    fromInput:document.getElementById('fromPicker').querySelector('input').value,
+  }));
+
+  // a custom rate, so the inversion on swap can be checked
+  await page.evaluate(()=>{ const el=document.getElementById('simpleFxInput'); el.value='10000'; el.dispatchEvent(new Event('input')); el.dispatchEvent(new Event('blur')); });
+  await page.waitForTimeout(80);
+
+  await page.evaluate(()=>document.getElementById('swapCities').click());
+  await page.waitForTimeout(120);
+
+  const after = await page.evaluate(()=>({
+    from:document.querySelectorAll('.col-header')[0].textContent.replace(/^\W+/,'').trim(),
+    to:document.querySelectorAll('.col-header')[1].textContent.replace(/^\W+/,'').trim(),
+    fromInput:document.getElementById('fromPicker').querySelector('input').value,
+    toInput:document.getElementById('toPicker').querySelector('input').value,
+    fs:document.getElementById('ss_fs').value,
+    fe:document.getElementById('ss_fe').value,
+    ts:document.getElementById('ss_ts').value,
+    fx:document.getElementById('simpleFxInput').value,
+  }));
+
+  check('C6a swap exchanges the From and To cities, in the columns and the pickers',
+    after.from===before.to && after.to===before.from && after.fromInput!==before.fromInput && after.toInput===before.fromInput,
+    `${before.from} / ${before.to} → ${after.from} / ${after.to}; pickers "${before.fromInput}" → "${after.fromInput}" / "${after.toInput}"`);
+  check('C6b the salaries travel with their cities',
+    num(after.fs)===6000 && num(after.ts)===50000000,
+    `from salary ${after.fs}, to salary ${after.ts}`);
+  check('C6c the custom FX rate is inverted, not dropped',
+    Math.abs(num(after.fx)-1/10000) < 1e-9,
+    `10,000 IDR per AUD → ${after.fx} AUD per IDR`);
+  check('C6e the monthly expense adopts the estimate that was on screen for the destination',
+    Math.abs(num(after.fe)-num(estShown)) <= 1,
+    `destination showed "${estShown}"; new source expense is "${after.fe}"`);
+  // Nothing to turn around once both sides are empty.
+  await page.evaluate(()=>{
+    ['fromPicker','toPicker'].forEach(id=>document.getElementById(id).querySelector('.city-clear')
+      .dispatchEvent(new MouseEvent('mousedown',{bubbles:true})));
+  });
+  await page.waitForTimeout(120);
+  const disabledEmpty = await page.evaluate(()=>document.getElementById('swapCities').disabled);
+  check('C6d the button is disabled once both cities are cleared', disabledEmpty===true,
+    `disabled=${disabledEmpty}`);
 }
 
 await browser.close();
