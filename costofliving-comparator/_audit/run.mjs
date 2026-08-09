@@ -5,7 +5,8 @@
 //   C2  simple mode: set a CUSTOM FX rate → cross-border figures must use it,
 //       but the destination's cost in its own currency must NOT move
 //   C3  detailed mode: override a destination cell on row 2, then delete row 1
-//       → the override must survive on the surviving row
+//       → the override must survive on the surviving row; and the goal lives
+//       in exactly one control (#goalGroup), which drives the detailed card
 //   C4  data: every city currency resolves to an FX rate, and every rate is
 //       used by at least one city (no orphans, no silent 1:1 conversions)
 //   C5  simple mode: the ±20% FX-shock slider must move ONLY the cross-currency
@@ -160,6 +161,31 @@ function expected(fx){
   check('C3 detailed-mode override survives deleting the row above it',
     before==='777' && after.val==='777' && after.overridden,
     `override was "777" before deleting row 1; surviving row now shows "${after.val}" (overridden=${after.overridden})`);
+
+  // The goal lives in ONE control (#goalGroup, on screen in both modes). A
+  // second copy inside the detailed card would drift out of sync with it.
+  const goalCtl = await page.evaluate(()=>({
+    top: !!document.getElementById('goalGroup') && document.getElementById('goalRow').offsetParent!==null,
+    dup: !!document.getElementById('dtGoalGroup'),
+  }));
+  await page.evaluate(()=>document.querySelector('#goalGroup .seg-btn[data-val="earn"]').click());
+  await page.waitForTimeout(120);
+  const earn = await page.evaluate(()=>({
+    active: document.querySelector('#goalGroup .seg-btn.active').dataset.val,
+    target: !!document.getElementById('dtTargetGroup'),
+    reqSalary: /required/i.test(document.querySelector('table.dt').textContent),
+  }));
+  await page.evaluate(()=>document.querySelector('#goalGroup .seg-btn[data-val="save"]').click());
+  await page.waitForTimeout(120);
+  const saved = await page.evaluate(()=>({
+    active: document.querySelector('#goalGroup .seg-btn.active').dataset.val,
+    target: !!document.getElementById('dtTargetGroup'),
+  }));
+  check('C3b detailed mode has one goal control, and the top one drives it',
+    goalCtl.top && !goalCtl.dup && earn.active==='earn' && earn.target && earn.reqSalary
+      && saved.active==='save' && !saved.target,
+    `#goalRow visible=${goalCtl.top}, #dtGoalGroup present=${goalCtl.dup}; `+
+    `earn → target row=${earn.target}, save → target row=${saved.target}`);
 }
 
 // ── C4: DATA — every city must resolve to an FX rate, and every rate must be
