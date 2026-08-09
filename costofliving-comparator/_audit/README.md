@@ -5,6 +5,8 @@ page headless: recomputes the simple-mode estimates independently, tests the
 custom-FX summary, detailed-mode overrides across row deletion, data
 completeness of currency_rates.json, and the FX-shock slider's split: the
 index-based estimate and the destination savings ratio must hold still while
-the cross-currency figures track the shocked rate.
+the cross-currency figures track the shocked rate. It also checks the ⇆ swap
+button: cities, pickers and salaries change sides and the custom FX rate is
+inverted rather than dropped.
 
 Run: `node run.mjs`

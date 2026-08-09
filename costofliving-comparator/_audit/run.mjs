@@ -12,6 +12,8 @@
 //       figures. The index-based expense estimate and the destination savings
 //       ratio are ratios of local prices and must hold still; the summary's
 //       nominal savings gap must follow the shocked rate exactly.
+//   C6  simple mode: the ⇆ swap button turns the comparison around — cities,
+//       pickers and salaries change sides and the custom FX rate is inverted
 // Run: node run.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
@@ -246,6 +248,56 @@ function expected(fx){
   check('C5e a non-zero shock is labelled a scenario, and reset returns to today\'s rate',
     flagged && sliderBack==='0' && back.summary===at0.summary && !back.summary.includes('Scenario:'),
     `labelled=${flagged}; after reset slider="${sliderBack}", summary restored=${back.summary===at0.summary}`);
+}
+
+// ── C6: the ⇆ swap button turns the comparison around ────────────────────
+{
+  await pickCity('fromPicker','Jakarta|Indonesia');
+  await pickCity('toPicker','Perth|Australia');
+  await setVal('ss_fs', (50000000).toLocaleString('en-US'));
+  await setVal('ss_ts', (6000).toLocaleString('en-US'));
+
+  const before = await page.evaluate(()=>({
+    from:document.querySelectorAll('.col-header')[0].textContent.replace(/^\W+/,'').trim(),
+    to:document.querySelectorAll('.col-header')[1].textContent.replace(/^\W+/,'').trim(),
+    fromInput:document.getElementById('fromPicker').querySelector('input').value,
+  }));
+
+  // a custom rate, so the inversion on swap can be checked
+  await page.evaluate(()=>{ const el=document.getElementById('simpleFxInput'); el.value='10000'; el.dispatchEvent(new Event('input')); el.dispatchEvent(new Event('blur')); });
+  await page.waitForTimeout(80);
+
+  await page.evaluate(()=>document.getElementById('swapCities').click());
+  await page.waitForTimeout(120);
+
+  const after = await page.evaluate(()=>({
+    from:document.querySelectorAll('.col-header')[0].textContent.replace(/^\W+/,'').trim(),
+    to:document.querySelectorAll('.col-header')[1].textContent.replace(/^\W+/,'').trim(),
+    fromInput:document.getElementById('fromPicker').querySelector('input').value,
+    toInput:document.getElementById('toPicker').querySelector('input').value,
+    fs:document.getElementById('ss_fs').value,
+    ts:document.getElementById('ss_ts').value,
+    fx:document.getElementById('simpleFxInput').value,
+  }));
+
+  check('C6a swap exchanges the From and To cities, in the columns and the pickers',
+    after.from===before.to && after.to===before.from && after.fromInput!==before.fromInput && after.toInput===before.fromInput,
+    `${before.from} / ${before.to} → ${after.from} / ${after.to}; pickers "${before.fromInput}" → "${after.fromInput}" / "${after.toInput}"`);
+  check('C6b the salaries travel with their cities',
+    num(after.fs)===6000 && num(after.ts)===50000000,
+    `from salary ${after.fs}, to salary ${after.ts}`);
+  check('C6c the custom FX rate is inverted, not dropped',
+    Math.abs(num(after.fx)-1/10000) < 1e-9,
+    `10,000 IDR per AUD → ${after.fx} AUD per IDR`);
+  // Nothing to turn around once both sides are empty.
+  await page.evaluate(()=>{
+    ['fromPicker','toPicker'].forEach(id=>document.getElementById(id).querySelector('.city-clear')
+      .dispatchEvent(new MouseEvent('mousedown',{bubbles:true})));
+  });
+  await page.waitForTimeout(120);
+  const disabledEmpty = await page.evaluate(()=>document.getElementById('swapCities').disabled);
+  check('C6d the button is disabled once both cities are cleared', disabledEmpty===true,
+    `disabled=${disabledEmpty}`);
 }
 
 await browser.close();

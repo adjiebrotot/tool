@@ -390,6 +390,7 @@ function render(){
   // Housing row visibility
   document.getElementById('housingRow').style.display=S.mode==='simple'?'flex':'none';
   document.getElementById('simpleCityCard').style.display=S.mode==='simple'?'flex':'none';
+  syncSwapButton();
 
   if(S.mode==='simple'){
     renderSimpleFxSection(getCity(S.fromKey),getCity(S.toKey));
@@ -1181,6 +1182,44 @@ function wireGlobalToggles(){
   wireGroup('modeGroup','mode');
   wireGroup('goalGroup','goal');
   wireGroup('housingGroup','housing');
+
+  const swapBtn=document.getElementById('swapCities');
+  if(swapBtn)swapBtn.addEventListener('click',swapSimpleCities);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SWAP (simple mode)
+// Turns the comparison around: the destination becomes home and home becomes
+// the destination. Everything that is tied to a side travels with it — the two
+// salaries swap, and the FX inputs are inverted rather than dropped, since both
+// are quoted as fromCurr per 1 toCurr and that direction has just flipped.
+// The typed monthly expense stays put: it is a figure for the source city and
+// has no counterpart on the other side to trade places with.
+// ═══════════════════════════════════════════════════════════
+function swapSimpleCities(){
+  const k=S.fromKey; S.fromKey=S.toKey; S.toKey=k;
+  const sal=S.fromSalary; S.fromSalary=S.toSalary; S.toSalary=sal;
+
+  const cfx=Number(S.customFxSimple);
+  S.customFxSimple=(isFinite(cfx)&&cfx>0)?1/cfx:null;
+
+  // The shock is a % move in the destination currency's strength, so the same
+  // scenario seen from the other side is the reciprocal multiplier.
+  const pct=fxShockPct();
+  if(pct){
+    const inv=(1/(1+pct/100)-1)*100;
+    S.fxShock=Math.max(-FX_SHOCK_LIMIT,Math.min(FX_SHOCK_LIMIT,Math.round(inv)));
+  }
+
+  buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
+  buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
+  render();
+}
+
+// Nothing to swap until at least one side is set.
+function syncSwapButton(){
+  const btn=document.getElementById('swapCities');
+  if(btn)btn.disabled=!(S.fromKey||S.toKey);
 }
 
 // ═══════════════════════════════════════════════════════════
