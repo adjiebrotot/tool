@@ -241,8 +241,19 @@ function spinWheel() {
 /* BoxGeometry material order is [+X, -X, +Y, -Y, +Z, -Z].
    Faces are laid out so opposite sides sum to 7, like a real die. */
 const DIE_FACE_ORDER = [1, 6, 2, 5, 3, 4];
+const DIE_LOOK_Y = 0.6;
+const DIE_HALF_DIAG = Math.sqrt(3); // a 2-unit cube on its corner needs this much room
 let FACE_NORMAL = null; // built after THREE loads
 let three = null;
+
+// World-space half extents the camera can actually see at the die's plane, so
+// the roll can be sized to the canvas instead of overshooting it.
+function dieViewExtents() {
+  const cam = three.camera;
+  const dist = cam.position.distanceTo(new THREE.Vector3(0, DIE_LOOK_Y, 0));
+  const halfH = dist * Math.tan((cam.fov * Math.PI / 180) / 2);
+  return { halfW: halfH * cam.aspect, halfH };
+}
 
 function themeDieColors() {
   return {
@@ -345,8 +356,8 @@ function initThree() {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-  camera.position.set(0, 1.0, 5.8);
-  camera.lookAt(0, 0.32, 0); // sits the resting die low in frame, leaving headroom for the bounce
+  camera.position.set(0, 2.1, 7.2);
+  camera.lookAt(0, DIE_LOOK_Y, 0); // resting die sits low in frame, leaving headroom for the bounce
 
   scene.add(new THREE.AmbientLight(0xffffff, 0.55));
   const key = new THREE.DirectionalLight(0xffffff, 1.0);
@@ -410,8 +421,8 @@ function updateDieShadow() {
 }
 
 // Die rests at y = 0; the bounce curve starts high and decays to the table.
-function dieBounceY(t) {
-  return Math.abs(Math.cos(Math.PI * t * 3.2)) * 2.0 * Math.pow(1 - t, 1.7);
+function dieBounceY(t, amp) {
+  return Math.abs(Math.cos(Math.PI * t * 3.2)) * amp * Math.pow(1 - t, 1.7);
 }
 
 function rollDice() {
@@ -433,7 +444,11 @@ function rollDice() {
     const axis = new THREE.Vector3(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize();
     const turns = 3 + Math.floor(Math.random() * 2);
     const dur = 2200;
-    const startX = -(2.1 + Math.random() * 0.7);
+    // Keep the whole tumble inside the canvas, whatever the stage is sized to.
+    const view = dieViewExtents();
+    const travel = Math.max(0.7, Math.min(2.4, view.halfW - DIE_HALF_DIAG - 0.25));
+    const startX = -(travel * (0.78 + Math.random() * 0.22));
+    const amp = Math.max(0.5, Math.min(1.5, DIE_LOOK_Y + view.halfH - DIE_HALF_DIAG - 0.25));
     const t0 = performance.now();
     const qSlerp = new THREE.Quaternion(), qTumble = new THREE.Quaternion();
 
@@ -446,7 +461,7 @@ function rollDice() {
       qTumble.setFromAxisAngle(axis, turns * Math.PI * 2 * (1 - e));
       die.quaternion.multiplyQuaternions(qSlerp, qTumble);
       die.position.x = startX * (1 - easeOutCubic(t));
-      die.position.y = dieBounceY(t);
+      die.position.y = dieBounceY(t, amp);
       updateDieShadow();
       three.renderer.render(three.scene, three.camera);
       if (t < 1) requestAnimationFrame(frame);
@@ -615,6 +630,7 @@ let galtonCounts = [];
 let lastGaltonKey = '';
 let boardCanvas = null;
 let boardDirty = true;
+let galtonSkip = false; // set by the skip button to fast forward a falling ball
 
 function invalidateGaltonBoard() { boardDirty = true; }
 
@@ -744,8 +760,10 @@ function buildGalton() {
 // every peg instead of easing to a stop at each one.
 function animateHop(from, to, duration, arc) {
   return new Promise(resolve => {
+    if (galtonSkip) { resolve(); return; }
     const start = performance.now();
     function frame(now) {
+      if (galtonSkip) { resolve(); return; }
       const t = Math.min(1, (now - start) / duration);
       const x = from.x + (to.x - from.x) * smoothstep(t);
       const y = from.y + (to.y - from.y) * t - Math.sin(Math.PI * t) * arc;
@@ -762,6 +780,9 @@ async function dropGaltonBall() {
   if (choices.length < 2) return null;
   const layout = galtonLayout();
   const rows = layout.rows;
+
+  galtonSkip = false;
+  $('galtonSkipBtn').hidden = false;
 
   const stops = [];
   let s = 0;
@@ -780,6 +801,8 @@ async function dropGaltonBall() {
     cur = stops[i];
   }
 
+  $('galtonSkipBtn').hidden = true;
+  galtonSkip = false;
   galtonCounts[s] = (galtonCounts[s] || 0) + 1;
   invalidateGaltonBoard();
   drawGaltonBoard(null);
@@ -807,6 +830,8 @@ async function dropGaltonBatch(n) {
   invalidateGaltonBoard();
   drawGaltonBoard(null);
 }
+
+$('galtonSkipBtn').addEventListener('click', () => { galtonSkip = true; });
 
 $('galtonBatchBtn').addEventListener('click', async () => {
   if (animating || choices.length < 2) return;

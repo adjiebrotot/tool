@@ -54,8 +54,8 @@
 .wheel-hub{position:absolute;left:50%;top:50%;width:14%;height:14%;transform:translate(-50%,-50%);border-radius:50%;background:var(--panel-raised);border:3px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.25);z-index:4;}
 
 /* ---------- dice (three.js scene) ---------- */
-.dice-scene{position:relative;width:min(380px,86vw);height:310px;
-  background:radial-gradient(ellipse 62% 42% at 50% 74%,var(--input-bg),transparent 70%);}
+.dice-scene{position:relative;width:100%;max-width:620px;height:380px;
+  background:radial-gradient(ellipse 46% 32% at 50% 72%,var(--input-bg),transparent 70%);}
 #diceCanvas{width:100%;height:100%;display:block;}
 .dice-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 24px;color:var(--muted);font-size:.88rem;line-height:1.5;}
 .dice-fallback[hidden]{display:none;}
@@ -118,6 +118,8 @@
 #galtonCanvas{width:100%;height:auto;display:block;background:var(--input-bg);border:1px solid var(--border);border-radius:14px;}
 .galton-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:2px;width:100%;max-width:560px;flex-wrap:wrap;}
 .galton-foot .tip-wrap{color:var(--muted);font-size:.85rem;}
+.galton-btns{display:flex;align-items:center;gap:8px;}
+#galtonSkipBtn[hidden]{display:none;}
 
 /* ---------- action button ---------- */
 .action-row{display:flex;justify-content:center;padding:4px 0 8px;}
@@ -144,7 +146,7 @@
 }
 @media(max-width:600px){
   .stage-card{padding:20px 12px;min-height:420px;}
-  .dice-scene{height:250px;}
+  .dice-scene{height:300px;}
   .slot-machine{transform:scale(.84);}
   .btn-action{padding:14px 30px;font-size:1rem;}
   .winner-name{font-size:1.6rem;}
@@ -152,6 +154,6 @@
   .winner-actions{flex-direction:column;}
 }
 @media(max-width:380px){
-  .dice-scene{height:220px;}
+  .dice-scene{height:260px;}
   .slot-machine{transform:scale(.68);}
 }

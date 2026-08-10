@@ -81,7 +81,7 @@
   <!-- HEADER -->
   <div class="header">
     <div class="header-left">
-      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="12" cy="12" r="9"/> <path stroke="var(--accent2)" d="M12 3v9l6 3"/> </svg>Random Picker</h1>
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect stroke="var(--accent)" x="3" y="3" width="18" height="18" rx="4"/> <circle fill="var(--accent2)" stroke="none" cx="8.6" cy="8.6" r="1.7"/> <circle fill="var(--accent2)" stroke="none" cx="15.4" cy="8.6" r="1.7"/> <circle fill="var(--accent2)" stroke="none" cx="8.6" cy="15.4" r="1.7"/> <circle fill="var(--accent2)" stroke="none" cx="15.4" cy="15.4" r="1.7"/> </svg>Random Picker</h1>
       <p>Type your choices, then spin, roll, pull or drop to pick one at random.</p>
     </div>
     <div class="header-right">
@@ -187,7 +187,10 @@ Salad</textarea>
               <span class="tip-icon" data-tip="Each ball flips a fair coin at every peg row and drifts left or right. That produces a binomial distribution, so middle choices get picked far more often than the ones at either edge. This is expected, not a bug.">i</span>
               This board is not fair on purpose. Middle choices win more often.
             </span>
-            <button class="btn-secondary" id="galtonBatchBtn" data-no-persist>Drop 20 balls</button>
+            <div class="galton-btns">
+              <button class="btn-secondary" id="galtonSkipBtn" data-no-persist hidden title="Skip the fall and jump to the result">⏩ Skip</button>
+              <button class="btn-secondary" id="galtonBatchBtn" data-no-persist>Drop 20 balls</button>
+            </div>
           </div>
         </div>
 
