@@ -144,15 +144,9 @@ Salad</textarea>
 
         <!-- DICE -->
         <div class="stage" id="stage-dice">
-          <div class="dice-scene">
-            <div class="die" id="die">
-              <div class="face f1"><span class="pip mc"></span></div>
-              <div class="face f2"><span class="pip tl"></span><span class="pip br"></span></div>
-              <div class="face f3"><span class="pip tl"></span><span class="pip mc"></span><span class="pip br"></span></div>
-              <div class="face f4"><span class="pip tl"></span><span class="pip tr"></span><span class="pip bl"></span><span class="pip br"></span></div>
-              <div class="face f5"><span class="pip tl"></span><span class="pip tr"></span><span class="pip mc"></span><span class="pip bl"></span><span class="pip br"></span></div>
-              <div class="face f6"><span class="pip tl"></span><span class="pip tr"></span><span class="pip ml"></span><span class="pip mr"></span><span class="pip bl"></span><span class="pip br"></span></div>
-            </div>
+          <div class="dice-scene" id="diceScene">
+            <canvas id="diceCanvas"></canvas>
+            <div class="dice-fallback" id="diceFallback" hidden>The 3D dice library did not load. Check your connection, or pick with another mode.</div>
           </div>
           <div class="dice-legend" id="diceLegend"></div>
         </div>
@@ -160,13 +154,26 @@ Salad</textarea>
         <!-- SLOT MACHINE -->
         <div class="stage" id="stage-slot">
           <div class="slot-machine">
-            <div class="slot-window">
-              <div class="reel" id="reel0"><div class="reel-strip"></div></div>
-              <div class="reel" id="reel1"><div class="reel-strip"></div></div>
-              <div class="reel" id="reel2"><div class="reel-strip"></div></div>
-              <div class="payline"></div>
+            <div class="slot-cabinet">
+              <div class="slot-marquee">
+                <span class="bulb"></span>
+                <span class="marquee-text">Lucky Pick</span>
+                <span class="bulb"></span>
+              </div>
+              <div class="slot-window">
+                <div class="reel" id="reel0"><div class="reel-strip"></div></div>
+                <div class="reel" id="reel1"><div class="reel-strip"></div></div>
+                <div class="reel" id="reel2"><div class="reel-strip"></div></div>
+                <div class="slot-glass"></div>
+                <div class="payline"><span class="pay-mark left"></span><span class="pay-mark right"></span></div>
+              </div>
+              <div class="slot-tray"></div>
             </div>
-            <div class="slot-lever" id="slotLever" aria-hidden="true"><div class="lever-knob"></div></div>
+            <div class="slot-lever" id="slotLever" role="button" tabindex="0" aria-label="Pull the lever to spin">
+              <div class="lever-post"></div>
+              <div class="lever-arm"><span class="lever-knob"></span></div>
+              <div class="lever-base"></div>
+            </div>
           </div>
         </div>
 
@@ -200,7 +207,11 @@ Salad</textarea>
   <div class="winner-card">
     <div class="winner-label">🎉 The winner is</div>
     <div class="winner-name" id="winnerName">—</div>
-    <button class="btn-primary" id="winnerCloseBtn">Nice, close this</button>
+    <div class="winner-actions">
+      <button class="btn-secondary" id="winnerRemoveBtn">🗑 Remove from list</button>
+      <button class="btn-primary" id="winnerCloseBtn">Keep it, close</button>
+    </div>
+    <div class="winner-hint">Remove takes this line out of your choices so it cannot win again.</div>
   </div>
 </div>
 
@@ -220,6 +231,7 @@ Salad</textarea>
   </section>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
