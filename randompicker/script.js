@@ -118,6 +118,7 @@ function updateActionAvailability() {
   if (choices.length < 2) disabled = true;
   if (currentMode === 'dice' && choices.length > 6) disabled = true;
   btn.disabled = disabled;
+  $('galtonBatchBtn').disabled = animating || choices.length < 2;
 }
 
 // ── MODE SWITCHING ──────────────────────────────────────────────────────
@@ -727,7 +728,8 @@ function renderGaltonStatic() {
   boardDirty = false;
 }
 
-function drawGaltonBoard(ballPos) {
+// Takes a single { x, y } ball, an array of them (batch drops), or null.
+function drawGaltonBoard(balls) {
   const canvas = $('galtonCanvas');
   const { dpr } = sizeCanvasForDPR(canvas);
   if (boardDirty || !boardCanvas || boardCanvas.width !== canvas.width || boardCanvas.height !== canvas.height) {
@@ -738,11 +740,15 @@ function drawGaltonBoard(ballPos) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(boardCanvas, 0, 0);
 
-  if (ballPos) {
+  const list = !balls ? [] : (Array.isArray(balls) ? balls : [balls]);
+  if (list.length) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.fillStyle = cssVar('--accent3') || '#FF8B8B';
-    ctx.beginPath(); ctx.arc(ballPos.x, ballPos.y, 6.5, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,.18)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.strokeStyle = 'rgba(0,0,0,.18)';
+    ctx.lineWidth = 1;
+    for (const p of list) {
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r || 6.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    }
   }
 }
 
@@ -756,20 +762,76 @@ function buildGalton() {
   drawGaltonBoard(null);
 }
 
+// One fair coin flip per peg row, walked ahead of time so the animation only
+// has to replay a path it cannot influence.
+function planGaltonPath(layout) {
+  const rows = layout.rows;
+  const stops = [];
+  let s = 0;
+  for (let r = 0; r < rows; r++) {
+    stops.push({ x: layout.pegX(r, s), y: layout.pegRowY(r) });
+    if (Math.random() < 0.5) s += 1; // ← genuine fair coin flip at this peg row
+  }
+  stops.push({ x: layout.pegX(rows, s), y: layout.binTopY + 4 });
+  return { stops, slot: s };
+}
+
 // Linear vertical travel plus a sine arc: the ball keeps its momentum through
 // every peg instead of easing to a stop at each one.
-function animateHop(from, to, duration, arc) {
+function ballPositionAt(stops, start, t, hop, lastHop, arc, radius) {
+  let from = start;
+  let acc = 0;
+  for (let i = 0; i < stops.length; i++) {
+    const isLast = i === stops.length - 1;
+    const dur = isLast ? lastHop : hop;
+    if (t < acc + dur || isLast) {
+      const p = Math.max(0, Math.min(1, (t - acc) / dur));
+      const to = stops[i];
+      return {
+        x: from.x + (to.x - from.x) * smoothstep(p),
+        y: from.y + (to.y - from.y) * p - Math.sin(Math.PI * p) * (isLast ? 0 : arc),
+        r: radius
+      };
+    }
+    acc += dur;
+    from = stops[i];
+  }
+  return { x: stops[stops.length - 1].x, y: stops[stops.length - 1].y, r: radius };
+}
+
+// Every ball in flight shares one rAF loop, so twenty of them cost the same
+// per frame as one. A ball is only counted once it actually reaches its bin.
+function animateGaltonDrops(balls, layout, hop, radius) {
+  const start = { x: layout.centerX, y: layout.marginTop - 24 };
+  const arc = layout.stepY * 0.3;
+  const lastHop = hop * 1.3;
+  for (const b of balls) b.duration = (b.stops.length - 1) * hop + lastHop;
+
+  function land(b) {
+    if (b.landed) return;
+    b.landed = true;
+    galtonCounts[b.slot] = (galtonCounts[b.slot] || 0) + 1;
+    invalidateGaltonBoard();
+  }
+
   return new Promise(resolve => {
-    if (galtonSkip) { resolve(); return; }
-    const start = performance.now();
+    const t0 = performance.now();
     function frame(now) {
-      if (galtonSkip) { resolve(); return; }
-      const t = Math.min(1, (now - start) / duration);
-      const x = from.x + (to.x - from.x) * smoothstep(t);
-      const y = from.y + (to.y - from.y) * t - Math.sin(Math.PI * t) * arc;
-      drawGaltonBoard({ x, y });
-      if (t < 1) requestAnimationFrame(frame);
-      else resolve();
+      // Skip credits every ball still in the air, so the tally stays right.
+      if (galtonSkip) { balls.forEach(land); drawGaltonBoard(null); resolve(); return; }
+      const elapsed = now - t0;
+      const inFlight = [];
+      let done = true;
+      for (const b of balls) {
+        const t = elapsed - b.delay;
+        if (t < 0) { done = false; continue; }      // not launched yet
+        if (t >= b.duration) { land(b); continue; } // arrived
+        done = false;
+        inFlight.push(ballPositionAt(b.stops, start, t, hop, lastHop, arc, radius));
+      }
+      drawGaltonBoard(inFlight);
+      if (done) resolve();
+      else requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
   });
@@ -779,34 +841,18 @@ function animateHop(from, to, duration, arc) {
 async function dropGaltonBall() {
   if (choices.length < 2) return null;
   const layout = galtonLayout();
-  const rows = layout.rows;
 
   galtonSkip = false;
   $('galtonSkipBtn').hidden = false;
 
-  const stops = [];
-  let s = 0;
-  for (let r = 0; r < rows; r++) {
-    stops.push({ x: layout.pegX(r, s), y: layout.pegRowY(r) });
-    if (Math.random() < 0.5) s += 1; // ← genuine fair coin flip at this peg row
-  }
-  stops.push({ x: layout.pegX(rows, s), y: layout.binTopY + 4 });
-
-  let cur = { x: layout.centerX, y: layout.marginTop - 24 };
-  const hop = Math.max(90, 200 - rows * 6);
-  const arc = layout.stepY * 0.3;
-  for (let i = 0; i < stops.length; i++) {
-    const isLast = i === stops.length - 1;
-    await animateHop(cur, stops[i], isLast ? hop * 1.3 : hop, isLast ? 0 : arc);
-    cur = stops[i];
-  }
+  const path = planGaltonPath(layout);
+  const ball = { stops: path.stops, slot: path.slot, delay: 0, landed: false };
+  await animateGaltonDrops([ball], layout, Math.max(90, 200 - layout.rows * 6), 6.5);
 
   $('galtonSkipBtn').hidden = true;
   galtonSkip = false;
-  galtonCounts[s] = (galtonCounts[s] || 0) + 1;
-  invalidateGaltonBoard();
   drawGaltonBoard(null);
-  return { index: s, name: choices[s] };
+  return { index: ball.slot, name: choices[ball.slot] };
 }
 
 // Removing by index alone would delete the wrong line if the list moved on,
@@ -817,17 +863,26 @@ function resolveRemovalIndex(pick) {
   return choices.indexOf(pick.name);
 }
 
-// Fast batch drop for building up the distribution — same per-row coin flip,
-// just without the per-frame animation.
+// Batch drop for building up the distribution — same per-row coin flip as a
+// single drop, just poured in as a staggered stream instead of one ball.
+// Nothing is picked here: a batch fills the histogram, it names no winner.
 async function dropGaltonBatch(n) {
   if (choices.length < 2) return;
-  const rows = choices.length - 1;
+  const layout = galtonLayout();
+  const hop = Math.max(70, 150 - layout.rows * 5);
+  const stagger = Math.max(45, hop * 0.55);
+
+  const balls = [];
   for (let i = 0; i < n; i++) {
-    let s = 0;
-    for (let r = 0; r < rows; r++) { if (Math.random() < 0.5) s++; }
-    galtonCounts[s] = (galtonCounts[s] || 0) + 1;
+    const path = planGaltonPath(layout);
+    balls.push({ stops: path.stops, slot: path.slot, delay: i * stagger, landed: false });
   }
-  invalidateGaltonBoard();
+
+  galtonSkip = false;
+  $('galtonSkipBtn').hidden = false;
+  await animateGaltonDrops(balls, layout, hop, 5.4);
+  $('galtonSkipBtn').hidden = true;
+  galtonSkip = false;
   drawGaltonBoard(null);
 }
 
@@ -836,9 +891,21 @@ $('galtonSkipBtn').addEventListener('click', () => { galtonSkip = true; });
 $('galtonBatchBtn').addEventListener('click', async () => {
   if (animating || choices.length < 2) return;
   const btn = $('galtonBatchBtn');
-  btn.disabled = true;
-  await dropGaltonBatch(20);
-  btn.disabled = false;
+  const label = btn.textContent;
+  animating = true;
+  btn.textContent = 'Dropping…';
+  // Locked while balls fall: an edit mid-drop would rebuild the board under
+  // them and land them in bins that no longer match their path.
+  $('choicesInput').readOnly = true;
+  updateActionAvailability();
+  try {
+    await dropGaltonBatch(20);
+  } finally {
+    animating = false;
+    btn.textContent = label;
+    $('choicesInput').readOnly = false;
+    updateActionAvailability();
+  }
 });
 
 // ── HISTORY (session only, not persisted) ───────────────────────────────
