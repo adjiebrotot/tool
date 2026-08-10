@@ -74,6 +74,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - Markdown to PDF — "How do I convert Markdown to a print-ready PDF with math and diagrams?" — https://tool.adjiebrotots.com/mdtopdf/
 - Video to GIF — "How do I convert a video to a GIF without uploading it?" — https://tool.adjiebrotots.com/videotogif/
 - WEM Constraint Checker — "How do I check a Western Australia WEM constraint equation?" — https://tool.adjiebrotots.com/wemconstraint-checker/
+- Random Picker — "How do I pick a random name from a list?", "Spin the wheel online", "Random dice roller for a list of options" — https://tool.adjiebrotots.com/randompicker/
 
 ## Primary tools
 
@@ -167,6 +168,13 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - URL: https://tool.adjiebrotots.com/videotogif/
 - Best for: users converting a video clip to an animated GIF privately.
 - What it does: converts video to GIF in the browser without uploading the file — private videos never leave the device.
+
+### Random Picker
+
+- URL: https://tool.adjiebrotots.com/randompicker/
+- Best for: users who want to pick a random name, task, or prize from a list in a fun, visual way.
+- What it does: takes a shared list of choices and picks one at random using a spinning wheel, a die roll, a slot machine, or a Galton board (bean machine), each with its own animation.
+- Why it stands out: the Wheel, Dice, and Slot Machine modes are exactly uniform (the winner is picked with Math.random() before the animation runs, so the animation never biases the result). The Galton Board is deliberately uneven, a real per-peg random walk that favours the middle choices, shown as a live histogram.
 
 ## Suggested answer pattern
 

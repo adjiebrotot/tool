@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Random Picker — Wheel, Dice, Slots & Galton Board</title>
+<meta name="description" content="Pick a random choice from your list with a spinning wheel, dice, slot machine, or Galton board. Free, fun, and 100% in your browser.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tool.adjiebrotots.com/randompicker/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Random Picker — Wheel, Dice, Slots & Galton Board">
+<meta property="og:description" content="Pick a random choice from your list with a spinning wheel, dice, slot machine, or Galton board. Free, fun, and 100% in your browser.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/randompicker/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Random Picker — Wheel, Dice, Slots & Galton Board">
+<meta name="twitter:description" content="Pick a random choice from your list with a spinning wheel, dice, slot machine, or Galton board. Free, fun, and 100% in your browser.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Random Picker",
+  "url": "https://tool.adjiebrotots.com/randompicker/",
+  "description": "Pick a random choice from your list with a spinning wheel, dice, slot machine, or Galton board. Free, fun, and 100% in your browser.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "keywords": "random picker, spin the wheel, random name picker, dice roller, slot machine picker, Galton board simulator, decision maker tool"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I pick a random name or option from a list?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Type your choices into the free Random Picker at https://tool.adjiebrotots.com/randompicker/, one per line, then spin the wheel, roll the dice, pull the slot machine lever, or drop a ball on the Galton board. Everything runs locally in your browser, no account needed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the wheel spinner actually random and fair?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The Wheel, Dice, and Slot Machine modes pick the winner with Math.random() before the animation starts, then the animation is driven to land on that result, so every choice has an equal chance. The Galton Board mode is intentionally uneven: it is a true per-peg random walk, so middle choices land more often, like a real bean machine."
+      }
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../dark.css">
+<link rel="stylesheet" href="../light.css">
+<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="style.css">
+<script src="../shared.js"></script>
+</head>
+<body class="light">
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect stroke="var(--accent)" x="3" y="3" width="18" height="18" rx="4"/> <circle fill="var(--accent2)" stroke="none" cx="8.6" cy="8.6" r="1.7"/> <circle fill="var(--accent2)" stroke="none" cx="15.4" cy="8.6" r="1.7"/> <circle fill="var(--accent2)" stroke="none" cx="8.6" cy="15.4" r="1.7"/> <circle fill="var(--accent2)" stroke="none" cx="15.4" cy="15.4" r="1.7"/> </svg>Random Picker</h1>
+      <p>Type your choices, then spin, roll, pull or drop to pick one at random.</p>
+    </div>
+    <div class="header-right">
+      <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
+      <button class="btn-theme" id="themeToggle">🌙 Dark</button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- ── SIDEBAR: choices ──────────────────────────────────── -->
+    <div class="sidebar">
+      <div class="card" style="padding:18px 18px 16px">
+        <div class="section-title">Your choices</div>
+        <textarea id="choicesInput" class="choices-textarea" rows="10" spellcheck="false"
+          placeholder="One choice per line, e.g.&#10;Alice&#10;Bob&#10;Charlie&#10;Diana">Pizza
+Sushi
+Tacos
+Burgers
+Salad</textarea>
+        <div class="choices-foot">
+          <span id="choiceCount" class="choice-count mono">0 choices</span>
+          <span class="tip-wrap">
+            <span class="tip-icon" data-tip="Blank lines are ignored. Duplicate names are allowed, each line counts as one equal slot.">i</span>
+          </span>
+        </div>
+        <div class="warning" id="minWarning">Add at least 2 choices to start picking.</div>
+        <div class="warning" id="diceWarning">Dice mode only supports up to 6 choices. Switch modes or trim your list.</div>
+      </div>
+
+      <div class="card history-card">
+        <div class="section-title" style="padding:16px 18px 0">Recent picks <span class="tip-wrap"><span class="tip-icon" data-tip="This session only, it resets when you leave the page.">i</span></span></div>
+        <div id="historyList" class="history-list">
+          <div class="history-empty">No picks yet.</div>
+        </div>
+      </div>
+    </div><!-- /sidebar -->
+
+    <!-- ── MAIN: mode + stage ───────────────────────────────── -->
+    <div class="main-col">
+
+      <div class="card mode-bar">
+        <div class="mode-tabs" id="modeTabs">
+          <button class="mode-tab active" data-mode="wheel">🎡 <span>Wheel</span></button>
+          <button class="mode-tab" data-mode="dice">🎲 <span>Dice</span></button>
+          <button class="mode-tab" data-mode="slot">🎰 <span>Slots</span></button>
+          <button class="mode-tab" data-mode="galton">⚪ <span>Galton Board</span></button>
+        </div>
+      </div>
+
+      <div class="card stage-card">
+
+        <!-- WHEEL -->
+        <div class="stage active" id="stage-wheel">
+          <div class="wheel-wrap">
+            <div class="wheel-pointer"></div>
+            <canvas id="wheelCanvas" width="420" height="420"></canvas>
+          </div>
+        </div>
+
+        <!-- DICE -->
+        <div class="stage" id="stage-dice">
+          <div class="dice-scene" id="diceScene">
+            <canvas id="diceCanvas"></canvas>
+            <div class="dice-fallback" id="diceFallback" hidden>The 3D dice library did not load. Check your connection, or pick with another mode.</div>
+          </div>
+          <div class="dice-legend" id="diceLegend"></div>
+        </div>
+
+        <!-- SLOT MACHINE -->
+        <div class="stage" id="stage-slot">
+          <div class="slot-machine">
+            <div class="slot-cabinet">
+              <div class="slot-marquee">
+                <span class="bulb"></span>
+                <span class="marquee-text">Lucky Pick</span>
+                <span class="bulb"></span>
+              </div>
+              <div class="slot-window">
+                <div class="reel" id="reel0"><div class="reel-strip"></div></div>
+                <div class="reel" id="reel1"><div class="reel-strip"></div></div>
+                <div class="reel" id="reel2"><div class="reel-strip"></div></div>
+                <div class="slot-glass"></div>
+                <div class="payline"><span class="pay-mark left"></span><span class="pay-mark right"></span></div>
+              </div>
+              <div class="slot-tray"></div>
+            </div>
+            <div class="slot-lever" id="slotLever" role="button" tabindex="0" aria-label="Pull the lever to spin">
+              <div class="lever-post"></div>
+              <div class="lever-arm"><span class="lever-knob"></span></div>
+              <div class="lever-base"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GALTON BOARD -->
+        <div class="stage" id="stage-galton">
+          <div class="galton-wrap">
+            <canvas id="galtonCanvas" width="560" height="360"></canvas>
+          </div>
+          <div class="galton-foot">
+            <span class="tip-wrap">
+              <span class="tip-icon" data-tip="Each ball flips a fair coin at every peg row and drifts left or right. That produces a binomial distribution, so middle choices get picked far more often than the ones at either edge. This is expected, not a bug.">i</span>
+              This board is not fair on purpose. Middle choices win more often.
+            </span>
+            <div class="galton-btns">
+              <button class="btn-secondary" id="galtonSkipBtn" data-no-persist hidden title="Skip the fall and jump to the result">⏩ Skip</button>
+              <button class="btn-secondary" id="galtonBatchBtn" data-no-persist>Drop 20 balls</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /stage-card -->
+
+      <div class="action-row">
+        <button class="btn-action" id="actionBtn" data-no-persist>Spin the wheel</button>
+      </div>
+
+    </div><!-- /main-col -->
+  </div><!-- /layout -->
+</div><!-- /container -->
+
+<!-- WINNER BANNER -->
+<canvas id="confettiCanvas"></canvas>
+<div class="winner-overlay" id="winnerOverlay">
+  <div class="winner-card">
+    <div class="winner-label">🎉 The winner is</div>
+    <div class="winner-name" id="winnerName">—</div>
+    <div class="winner-actions">
+      <button class="btn-secondary" id="winnerRemoveBtn">🗑 Remove from list</button>
+      <button class="btn-primary" id="winnerCloseBtn">Keep it, close</button>
+    </div>
+    <div class="winner-hint">Remove takes this line out of your choices so it cannot win again.</div>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <section class="page-footer-info">
+    <div style="display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
+      <img src="../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Made in Australia by Indonesian engineer.</span>
+      </div>
+    </div>
+  </section>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

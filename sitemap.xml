@@ -86,6 +86,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/randompicker/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/</loc>
     <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
