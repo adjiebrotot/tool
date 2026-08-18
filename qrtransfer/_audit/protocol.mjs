@@ -227,7 +227,7 @@ export async function runFountainTests(check, C, opts = {}) {
 
   for (const K of Ks) {
     for (const loss of losses) {
-      let worst = 0, sum = 0, fails = 0;
+      let worst = 0, sum = 0, fails = 0, dirty = 0;
       for (let t = 0; t < trials; t++) {
         const rng = harnessRng(0x9E37 + K * 131 + Math.round(loss * 1000) * 17 + t);
         const blockSize = C.bodySizeFor(25, 'L') - C.HDR_DATA;
@@ -258,12 +258,20 @@ export async function runFountainTests(check, C, opts = {}) {
         if (same) for (let i = 0; i < size; i++) if (out[i] !== src[i]) { same = false; break; }
         if (!same) { fails++; continue; }
 
-        const ov = dec.stats().overhead;
-        sum += ov;
-        if (ov > worst) worst = ov;
+        const st = dec.stats();
+        // Every equation must be resolved or discarded by the time the decode
+        // finishes. Leftovers mean a solved block was never fed back into the
+        // peeling structure, which inflates the memory accounting and makes the
+        // eviction policy throw away equations it still needs.
+        if (st.liveEqs !== 0 || st.pendingBytes !== 0) dirty++;
+        sum += st.overhead;
+        if (st.overhead > worst) worst = st.overhead;
       }
       const avg = sum / Math.max(1, trials - fails);
       table.push({ K, loss, avg, worst, fails });
+      check('fountain K=' + K + ' at ' + Math.round(loss * 100) +
+        '% loss leaves no stranded equations behind', dirty === 0,
+        dirty + ' of ' + trials + ' decodes finished with live equations');
       check('fountain K=' + K + ' at ' + Math.round(loss * 100) + '% loss rebuilds byte for byte',
         fails === 0, fails + ' failures');
       check('fountain K=' + K + ' at ' + Math.round(loss * 100) + '% loss stays inside the ' +

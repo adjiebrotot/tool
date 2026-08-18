@@ -481,8 +481,12 @@ function encodeDataFrame(plan, symbolId) {
   dv.setUint32(5, symbolId >>> 0, true);
 
   var ids = symbolIndices(symbolId, plan.K, plan.sessionId, plan.degTable);
-  var payload = body.subarray(9, 9 + blockSize);
-  for (var i = 0; i < ids.length; i++) xorInto(payload, plan.blocks[ids[i]]);
+  // Composite in an own buffer rather than a subarray at offset 9: xorInto only
+  // takes its word-at-a-time path when both operands are 4-byte aligned.
+  var payload = new Uint8Array(blockSize);
+  payload.set(plan.blocks[ids[0]]);
+  for (var i = 1; i < ids.length; i++) xorInto(payload, plan.blocks[ids[i]]);
+  body.set(payload, 9);
 
   dv.setUint32(n - 4, crc32(body, 0, n - 4), true);
   return wrap(body);
@@ -601,6 +605,28 @@ function createDecoder(opts) {
   var seen = new Set();
   var ripple = [];
 
+  /* Fold a newly known block into every equation that still references it.
+     Must run for a block however it was solved, peeling or elimination, or
+     stale equations linger forever and inflate the memory accounting. */
+  function propagate(id) {
+    var data = blocks[id];
+    var lst = blockToEqs[id];
+    blockToEqs[id] = [];
+    for (var e = 0; e < lst.length; e++) {
+      var eq = lst[e];
+      if (eq.dead || !eq.unknown.has(id)) continue;
+      xorInto(eq.data, data);
+      eq.unknown.delete(id);
+      if (eq.unknown.size === 1) {
+        eq.dead = true; pendingBytes -= eq.data.length; liveEqs--;
+        var only = eq.unknown.values().next().value;
+        ripple.push([only, eq.data]);      // hand the buffer over, no copy
+      } else if (eq.unknown.size === 0) {
+        eq.dead = true; pendingBytes -= eq.data.length; liveEqs--;
+      }
+    }
+  }
+
   function processRipple() {
     while (ripple.length) {
       var item = ripple.pop();
@@ -608,21 +634,7 @@ function createDecoder(opts) {
       if (blocks[id] !== null) continue;
       blocks[id] = data;
       recovered++;
-      var lst = blockToEqs[id];
-      blockToEqs[id] = [];
-      for (var e = 0; e < lst.length; e++) {
-        var eq = lst[e];
-        if (eq.dead || !eq.unknown.has(id)) continue;
-        xorInto(eq.data, data);
-        eq.unknown.delete(id);
-        if (eq.unknown.size === 1) {
-          eq.dead = true; pendingBytes -= eq.data.length; liveEqs--;
-          var only = eq.unknown.values().next().value;
-          ripple.push([only, eq.data]);      // hand the buffer over, no copy
-        } else if (eq.unknown.size === 0) {
-          eq.dead = true; pendingBytes -= eq.data.length; liveEqs--;
-        }
-      }
+      propagate(id);
     }
   }
 
@@ -682,14 +694,20 @@ function createDecoder(opts) {
     }
     for (c = 0; c < u; c++) if (!piv[c]) return;    // rank deficient, wait for more
 
+    var solved = [];
     for (c = u - 1; c >= 0; c--) {
       var pr = piv[c];
       for (c2 = c + 1; c2 < u; c2++) {
         if (pr.coeff[c2 >>> 5] & (1 << (c2 & 31))) xorInto(pr.data, blocks[U[c2]]);
       }
-      blocks[U[c]] = pr.data;
+      blocks[U[c]] = pr.data;      // set first: the rows above back-substitute against it
       recovered++;
+      solved.push(U[c]);
     }
+    // Only now tell the peeling structure, so equations still holding these ids
+    // are reduced rather than left stranded.
+    for (var si = 0; si < solved.length; si++) propagate(solved[si]);
+    processRipple();
   }
 
   function addSymbol(symbolId, payload) {

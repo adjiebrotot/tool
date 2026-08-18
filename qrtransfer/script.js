@@ -12,6 +12,8 @@ var QR_LIB  = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.5.2/qrc
 var JSQR_LIB = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';
 
 var QUIET = 6;                 // quiet-zone modules on each side
+var ROI_PAD = 0.25;            // region of interest grown this much on each side
+var ROI_PAD_SCALE = 1 + 2 * ROI_PAD;
 var RING_CAP = 48;             // pre-rendered frames held ahead of playback
 var MAX_BYTES = 10 * 1024 * 1024;
 var SOFT_BYTES = 1024 * 1024;
@@ -512,7 +514,7 @@ var receiver = {
   detector: null, useNative: false, nativeChecked: 0, nativeBad: 0,
   roi: null, misses: 0, lastText: null,
   framesDecoded: 0, framesAccepted: 0, decodeTimes: [], lastDecodeTs: 0,
-  raf: 0, rvfc: 0, videoEl: null, grabCanvas: null, inflight: 0,
+  raf: 0, rvfc: 0, videoEl: null, grabCanvas: null, inflight: 0, objectUrl: null,
   startedAt: 0, finished: false, result: null,
 
   stop: function () {
@@ -521,7 +523,9 @@ var receiver = {
     if (this.stream) { this.stream.getTracks().forEach(function (t) { t.stop(); }); this.stream = null; }
     var v = $('camVideo');
     if (v.srcObject) v.srcObject = null;
-    if (v.src) { URL.revokeObjectURL(v.src); v.removeAttribute('src'); v.load(); }
+    releaseVideoUrl();
+    if (v.src) { v.removeAttribute('src'); v.load(); }
+    if (this.rvfc && v.cancelVideoFrameCallback) { v.cancelVideoFrameCallback(this.rvfc); this.rvfc = 0; }
     $('camHolder').hidden = true;
     $('camBtn').textContent = 'Start camera';
   },
@@ -536,6 +540,12 @@ var receiver = {
     refreshMetrics();
   }
 };
+
+/* One object URL at a time. Loading a second recording without stopping the
+   first would otherwise leak the earlier blob for the life of the tab. */
+function releaseVideoUrl() {
+  if (receiver.objectUrl) { URL.revokeObjectURL(receiver.objectUrl); receiver.objectUrl = null; }
+}
 
 function nativeAvailable() {
   if (!('BarcodeDetector' in window)) return Promise.resolve(false);
@@ -685,7 +695,12 @@ function grabRegion(video) {
   if (receiver.roi) {
     sx = receiver.roi.x; sy = receiver.roi.y; sw = receiver.roi.w; sh = receiver.roi.h;
     var modules = receiver.manifest ? C.moduleCountFor(C.versionForBodySize(receiver.manifest.n)) : 0;
-    target = modules ? Math.round(modules * 2.5) : 480;
+    // Size the crop for the code as it actually appears in it, not for the bare
+    // module count: the sender adds a 6 module quiet zone on each side, and the
+    // region is padded 25% on each side so the code cannot drift out of it.
+    // Aiming at the module count alone leaves under 2 pixels per module, which
+    // is below what a decoder can read.
+    target = modules ? Math.round((modules + QUIET * 2) * ROI_PAD_SCALE * 3) : 480;
   } else {
     var side = Math.min(vw, vh);
     sx = (vw - side) / 2; sy = (vh - side) / 2; sw = side; sh = side;
@@ -694,7 +709,7 @@ function grabRegion(video) {
   // Never scale up. Enlarging a region adds no detail, and the interpolation
   // smears module edges badly enough to stop a code decoding at all.
   target = Math.min(target, Math.round(Math.min(sw, sh)));
-  target = Math.max(80, Math.min(target, 900));
+  target = Math.max(80, Math.min(target, 1024));
 
   if (!receiver.grabCanvas) receiver.grabCanvas = document.createElement('canvas');
   var cv = receiver.grabCanvas;
@@ -821,8 +836,7 @@ function updateRoi(loc) {
   var w = (maxX - minX) * kx, h = (maxY - minY) * ky;
   if (!(w > 8 && h > 8)) return;
 
-  var pad = 0.25;
-  x -= w * pad; y -= h * pad; w *= (1 + 2 * pad); h *= (1 + 2 * pad);
+  x -= w * ROI_PAD; y -= h * ROI_PAD; w *= ROI_PAD_SCALE; h *= ROI_PAD_SCALE;
   var side = Math.max(w, h);
   var cx = x + w / 2, cy = y + h / 2;
   receiver.roi = { x: cx - side / 2, y: cy - side / 2, w: side, h: side };
@@ -930,7 +944,9 @@ $('videoInput').addEventListener('change', function (e) {
   initDecoders().then(function () {
     var v = $('camVideo');
     v.srcObject = null;
-    v.src = URL.createObjectURL(f);
+    releaseVideoUrl();
+    receiver.objectUrl = URL.createObjectURL(f);
+    v.src = receiver.objectUrl;
     v.muted = true;
     v.loop = false;
     return v.play().then(function () { return v; });
