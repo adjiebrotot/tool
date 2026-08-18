@@ -27,6 +27,22 @@ pass that caught the two bugs the codec tests could not see, an async
 `applyConstraints` rejection and a capture crop that upscaled the frame and
 destroyed the code.
 
+**Pass D** (online only) destroys frames on purpose, through that same optical
+path, and checks the two promises the tool makes.
+
+- **R1** blanks the opening, blocks about 40% of the codes with an obstruction
+  across the middle, and tears others in half across two different codes, so
+  roughly half of everything on screen is unreadable. The transfer still has to
+  finish and deliver a byte-identical file.
+- **R2** blocks the plain copies of two specific blocks in every single pass, so
+  those blocks are never once transmitted in the clear. The fountain repair
+  frames have to rebuild them, which is the whole reason the code is rateless.
+- **R3** is the inverse promise. Every code is clean and passes its own per-frame
+  checksum, but the blocks carry the wrong bytes, which is what a miscorrected
+  code looks like from the receiver's side. The whole-file checksum must catch
+  it: no download is ever offered, the receiver says so plainly, and it keeps
+  scanning rather than giving up.
+
 ```sh
 node run.mjs                  # passes A and B, fully offline
 QRT_ONLINE=1 node run.mjs     # adds real QR images and the fake camera

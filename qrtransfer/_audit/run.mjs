@@ -15,6 +15,7 @@ import { dirname, join } from 'node:path';
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { runProtocolTests, runFountainTests, runCompressionTests, runMemoryTests } from './protocol.mjs';
 import { loadQrEncoder, buildY4M, broadcastFrames } from './fakecam.mjs';
+import { runResilienceTests } from './resilience.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PAGE = pathToFileURL(join(HERE, '..', 'index.html')).href;
@@ -412,6 +413,16 @@ if (ONLINE) {
   }
 
   await camBrowser.close();
+}
+
+// ══ PASS D ═════════════════════════════════════════════════════════════════
+// Frame loss, on purpose, through the real optical path.
+if (ONLINE) {
+  section('Pass D: surviving destroyed frames');
+  await runResilienceTests(check, {
+    C, chromium, PAGE, libBody, cacheDir: join(HERE, '.cache'), join,
+    log: (m) => console.log(m)
+  });
 }
 
 await browser.close();
