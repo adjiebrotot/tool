@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap');
+
+/* ── HEADER ── */
+.header { align-items: center; }
+.logo { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; display: flex; align-items: center; }
+.logo span { color: var(--accent); }
+.tagline { color: var(--muted); font-size: 0.85rem; margin-top: 3px; }
+
+/* ── DROP ZONE ── */
+#dropZone {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; padding: 22px 14px; margin-bottom: 4px;
+  border: 2px dashed var(--border); border-radius: 16px;
+  background: var(--card-bg); cursor: pointer; position: relative; overflow: hidden;
+  transition: border-color var(--motion-base), background var(--motion-base);
+}
+#dropZone:hover, #dropZone.dragover { border-color: var(--accent); background: rgba(141,187,255,0.06); }
+#dropZone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.drop-icon { font-size: 34px; line-height: 1; }
+.drop-title { font-size: 1rem; font-weight: 700; }
+.drop-sub { font-size: 0.8rem; color: var(--muted); text-align: center; }
+#dropZone.has-file .drop-title { color: var(--accent); }
+
+textarea.txt-input { resize: vertical; min-height: 62px; font-family: 'DM Mono', monospace; font-size: 0.84rem; }
+input[type=file].txt-input { padding: 8px 10px; font-size: 0.82rem; cursor: pointer; }
+
+/* ── STAGE ── */
+.stage-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding: 14px 18px; border-bottom: 1px solid var(--border); flex-wrap: wrap;
+}
+.stage-head h2 { margin: 0; }
+.stage-note { color: var(--muted); font-size: 0.84rem; }
+
+.stage {
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; min-height: 340px;
+}
+.stage-empty { text-align: center; color: var(--muted); max-width: 340px; }
+.stage-empty p { margin-top: 10px; font-size: 0.9rem; }
+
+/* The code itself is always pure black on pure white, in both themes.
+   Contrast is the whole channel, so the palette does not get a vote. */
+.qr-holder { display: none; background: #FFFFFF; padding: 14px; border-radius: 10px; line-height: 0; }
+.qr-holder.active { display: block; }
+#qrCanvas { display: block; image-rendering: pixelated; max-width: 100%; height: auto; }
+
+.cam-holder { position: relative; width: 100%; max-width: 640px; line-height: 0; }
+#camVideo { width: 100%; border-radius: 10px; background: #000; display: block; }
+.cam-reticle {
+  position: absolute; inset: 12%; border: 2px solid var(--accent);
+  border-radius: 12px; pointer-events: none; opacity: 0.55;
+  transition: all 160ms ease-out;
+}
+.cam-reticle.locked { border-color: var(--accent2); opacity: 0.9; }
+
+/* Full screen puts the code on white and nothing else. */
+#stagePanel:fullscreen { background: #FFFFFF; border: none; border-radius: 0; display: flex; align-items: center; justify-content: center; }
+#stagePanel:fullscreen .stage-head,
+#stagePanel:fullscreen .stage-empty { display: none; }
+#stagePanel:fullscreen .stage { min-height: 100vh; padding: 0; }
+#stagePanel:fullscreen .qr-holder { padding: 24px; }
+
+/* ── BLOCK MAP ── */
+.blockmap-panel { margin-top: 18px; }
+#blockMap { display: block; width: 100%; height: auto; padding: 16px 18px 18px; }
+
+/* ── RESULT ── */
+.result-panel { margin-top: 18px; padding: 16px 18px 4px; }
+.result-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.result-name { font-size: 1rem; font-weight: 700; word-break: break-all; }
+.result-sub { color: var(--muted); font-size: 0.84rem; margin-top: 3px; }
+
+/* ── ABOUT ── */
+.about-panel { margin-top: 18px; }
+.about-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 24px; padding: 16px 18px 20px; }
+.about-grid p { font-size: 0.86rem; }
+
+/* ── METRICS ── */
+.metrics { grid-template-columns: repeat(4, 1fr); }
+.metric .value { font-size: 1.3rem; }
+.metric .value.small { font-size: 1rem; }
+
+.page-footer { margin-top: 22px; }
+
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: 1fr; }
+  .controls { position: static; }
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+  .header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 16px 18px; }
+}
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  .about-grid { grid-template-columns: 1fr; }
+  .stage { padding: 12px; min-height: 260px; }
+  .metric .value { font-size: 1.1rem; }
+}

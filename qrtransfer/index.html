@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Code Data Transfer</title>
+<meta name="description" content="Send a file between two devices with no wifi, no bluetooth, and no internet. One screen plays a stream of QR codes, the other camera reads it back.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tool.adjiebrotots.com/qrtransfer/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="QR Code Data Transfer">
+<meta property="og:description" content="Send a file between two devices with no wifi, no bluetooth, and no internet. One screen plays a stream of QR codes, the other camera reads it back.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/qrtransfer/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="QR Code Data Transfer">
+<meta name="twitter:description" content="Send a file between two devices with no wifi, no bluetooth, and no internet. One screen plays a stream of QR codes, the other camera reads it back.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "QR Code Data Transfer",
+  "url": "https://tool.adjiebrotots.com/qrtransfer/",
+  "description": "Send a file between two devices with no wifi, no bluetooth, and no internet. One screen plays a stream of QR codes, the other camera reads it back.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "keywords": "transfer file without internet, air gap file transfer, QR code file transfer, offline file transfer, animated QR code stream, send file with camera"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I move a file between two devices with no wifi, bluetooth, or internet?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use the free QR Code Data Transfer tool at https://tool.adjiebrotots.com/qrtransfer/. Open it on the sending device, pick your file, and it plays the bytes as a stream of animated QR codes. Open the same page on the receiving device, point its camera at the first screen, and the file is rebuilt and checksum verified locally. The only channel used is light between a screen and a camera, so it works on air-gapped machines."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if the camera misses some of the QR codes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nothing is lost. The stream uses fountain coding, so after the plain frames it keeps producing fresh repair frames forever. The receiver can join late, look away, or lose frames to glare and still finish, because any sufficient number of frames in any order rebuilds the file. Missed frames cost time, never correctness, and a CRC-32 checksum confirms the result is byte for byte identical."
+      }
+    }
+  ]
+}
+</script>
+  <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../dark.css">
+  <link rel="stylesheet" href="../light.css">
+  <link rel="stylesheet" href="../shared.css">
+  <script src="../shared.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect stroke="var(--accent)" x="3" y="3" width="7" height="7" rx="1.5"/> <rect stroke="var(--accent)" x="3" y="14" width="7" height="7" rx="1.5"/> <rect stroke="var(--accent2)" x="14" y="3" width="7" height="7" rx="1.5"/> <path d="M14 14.5h2.5M19 14.5h2M14 18h3.5M20 18h1M17.5 21h4" stroke="var(--accent2)"/> </svg>QR&nbsp;Code&nbsp;<span>Data Transfer</span></div>
+    <div class="tagline">Move a file between two devices using nothing but a screen and a camera.</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <a href="https://tool.adjiebrotots.com/" class="btn-theme">← Other Tools</a>
+    <button class="btn-theme" id="themeToggle">☀️ Light</button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="layout">
+
+    <!-- ── CONTROLS ── -->
+    <aside class="controls panel">
+      <div class="ctrl-tabs" role="tablist">
+        <button class="ctrl-tab active" data-tab="send" role="tab">Send</button>
+        <button class="ctrl-tab" data-tab="recv" role="tab">Receive</button>
+        <button class="ctrl-tab" data-tab="test" role="tab">Self-test</button>
+      </div>
+
+      <!-- SEND -->
+      <div class="ctrl-panel active" id="tab-send" role="tabpanel">
+        <div id="dropZone">
+          <input type="file" id="fileInput" data-no-persist>
+          <div class="drop-icon">📤</div>
+          <div class="drop-title">Drop any file here</div>
+          <div class="drop-sub">or click to browse, nothing is uploaded</div>
+        </div>
+
+        <div class="field-row" style="border-top:none">
+          <div class="field-label">Or send text
+            <span class="tip-icon" data-tip="Handy for a key, a config snippet, or a recovery phrase you need to get off an offline machine.">?</span>
+          </div>
+          <textarea class="txt-input" id="textInput" rows="3" placeholder="Paste text to send instead of a file" data-no-persist></textarea>
+          <button class="btn-secondary" id="useTextBtn" style="align-self:flex-start;padding:7px 14px">Use this text</button>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Density
+            <span class="tip-icon" data-tip="Denser codes carry more bytes per frame but need a steadier hand and a better camera. Balanced suits most phones. Maximum only decodes reliably on Android Chrome.">?</span>
+          </div>
+          <select class="sel-input" id="preset"></select>
+          <div class="field-sub" id="presetSub"></div>
+        </div>
+
+        <div class="slider-block">
+          <div class="slider-head">
+            <span class="slider-label">Frame rate
+              <span class="tip-icon" data-tip="How many codes per second. Faster is not always better: a phone camera needs each code held long enough to capture it cleanly.">?</span>
+            </span>
+            <span class="slider-value" id="fpsVal">8 fps</span>
+          </div>
+          <input type="range" id="fpsSlider" min="2" max="15" step="1" value="8">
+          <div class="help" id="fpsHelp"></div>
+        </div>
+
+        <div class="slider-block">
+          <div class="slider-head">
+            <span class="slider-label">Code size on screen</span>
+            <span class="slider-value" id="sizeVal">420 px</span>
+          </div>
+          <input type="range" id="sizeSlider" min="240" max="900" step="20" value="420">
+          <div class="help">Bigger is easier to scan from further away.</div>
+        </div>
+
+        <div class="field-row">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <span class="field-label">Compress first
+              <span class="tip-icon" data-tip="Deflate is tried first and kept only if it actually shrinks the file. Text, JSON, and CSV often shrink by two thirds.">?</span>
+            </span>
+            <label class="toggle-switch"><input type="checkbox" id="compressToggle" checked><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+          </div>
+        </div>
+        <div class="field-row">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <span class="field-label">Keep screen awake</span>
+            <label class="toggle-switch"><input type="checkbox" id="wakeToggle" checked><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-primary is-disabled" id="startBtn" disabled>Start broadcasting</button>
+          <button class="btn-secondary" id="fsBtn">Full screen</button>
+        </div>
+      </div>
+
+      <!-- RECEIVE -->
+      <div class="ctrl-panel" id="tab-recv" role="tabpanel">
+        <div class="field-row" style="border-top:none">
+          <div class="field-label">Camera</div>
+          <select class="sel-input" id="camSel" data-no-persist><option value="">Default camera</option></select>
+          <div class="field-sub">Point it at the sending screen from roughly 20 to 40 cm away.</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Decoder
+            <span class="tip-icon" data-tip="Native uses the browser's built-in barcode reader where it exists, which is much faster. Auto starts native, checks how many frames actually pass their checksum, and falls back on its own if they do not.">?</span>
+          </div>
+          <select class="sel-input" id="decSel">
+            <option value="auto">Auto</option>
+            <option value="native">Native only</option>
+            <option value="jsqr">jsQR only</option>
+          </select>
+          <div class="field-sub" id="decSub"></div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Capture resolution</div>
+          <select class="sel-input" id="resSel">
+            <option value="1280">1280 x 720</option>
+            <option value="1920" selected>1920 x 1080</option>
+            <option value="2560">2560 x 1440</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">No camera?
+            <span class="tip-icon" data-tip="Screen record the sending device, then load the recording here. The decode path is identical.">?</span>
+          </div>
+          <input type="file" class="txt-input" id="videoInput" accept="video/*" data-no-persist>
+          <div class="field-sub">Decode a screen recording of the sender instead.</div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-primary" id="camBtn">Start camera</button>
+          <button class="btn-secondary" id="resetBtn">Reset</button>
+        </div>
+      </div>
+
+      <!-- SELF-TEST -->
+      <div class="ctrl-panel" id="tab-test" role="tabpanel">
+        <div class="field-row" style="border-top:none">
+          <div class="field-sub">Runs the whole protocol against itself on this device, with frames deliberately thrown away. Use it to see what the transfer will cost before you rely on it.</div>
+        </div>
+        <div class="slider-block">
+          <div class="slider-head">
+            <span class="slider-label">Simulated frame loss</span>
+            <span class="slider-value" id="lossVal">30%</span>
+          </div>
+          <input type="range" id="lossSlider" min="0" max="80" step="5" value="30">
+        </div>
+        <div class="slider-block">
+          <div class="slider-head">
+            <span class="slider-label">Payload size</span>
+            <span class="slider-value" id="testSizeVal">200 KB</span>
+          </div>
+          <input type="range" id="testSizeSlider" min="1" max="2000" step="1" value="200">
+          <div class="help">Random incompressible bytes, so this is the worst case.</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" id="testBtn">Run self-test</button>
+        </div>
+      </div>
+
+      <div class="warning" id="warnBanner"></div>
+    </aside>
+
+    <!-- ── MAIN ── -->
+    <main>
+      <div class="metrics" id="metrics">
+        <div class="metric card"><div class="label" id="m1l">Frame payload</div><div class="value mono" id="m1v">–</div></div>
+        <div class="metric card"><div class="label" id="m2l">Blocks</div><div class="value mono" id="m2v">–</div></div>
+        <div class="metric card"><div class="label" id="m3l">Rate</div><div class="value mono" id="m3v">–</div></div>
+        <div class="metric card"><div class="label" id="m4l">Frames sent</div><div class="value mono" id="m4v">–</div></div>
+      </div>
+
+      <div class="panel" id="stagePanel">
+        <div class="stage-head">
+          <h2 id="stageTitle">Sender</h2>
+          <span class="stage-note" id="stageNote">Pick a file to begin.</span>
+        </div>
+        <div class="stage" id="stage">
+          <div class="qr-holder" id="qrHolder">
+            <canvas id="qrCanvas" width="420" height="420"></canvas>
+          </div>
+          <div class="cam-holder" id="camHolder" hidden>
+            <video id="camVideo" playsinline muted></video>
+            <div class="cam-reticle" id="camReticle"></div>
+          </div>
+          <div class="stage-empty" id="stageEmpty">
+            <div class="drop-icon">📱</div>
+            <p>Open this page on both devices. Send from one, receive on the other.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel blockmap-panel" id="progressPanel" hidden>
+        <div class="stage-head">
+          <h2>Blocks recovered</h2>
+          <span class="stage-note" id="mapNote">–</span>
+        </div>
+        <canvas id="blockMap"></canvas>
+      </div>
+
+      <div class="panel result-panel" id="resultPanel" hidden>
+        <div class="result-row">
+          <div>
+            <div class="result-name mono" id="resName">–</div>
+            <div class="result-sub" id="resSub">–</div>
+          </div>
+          <span class="badge badge-success" id="resBadge">Checksum OK</span>
+        </div>
+        <div class="btn-row" style="border-top:none;padding-left:0;padding-right:0">
+          <button class="btn-primary" id="dlBtn">Download file</button>
+          <button class="btn-secondary" id="copyBtn" hidden>Copy text</button>
+        </div>
+      </div>
+
+      <div class="panel about-panel">
+        <div class="stage-head"><h2>How it works</h2></div>
+        <div class="about-grid">
+          <div>
+            <h3>No radio, no network</h3>
+            <p>The only channel is light from one screen into one camera. Nothing is uploaded, because there is nowhere to upload to. That makes it usable on air-gapped machines and locked-down laptops.</p>
+          </div>
+          <div>
+            <h3>The receiver cannot talk back</h3>
+            <p>So the sender never stops. After the plain frames it keeps minting fresh repair frames, each one a combination of blocks. Any sufficient number of frames, in any order, rebuilds the file.</p>
+          </div>
+          <div>
+            <h3>Every frame is checked twice</h3>
+            <p>Each frame carries its own CRC-32, so a smeared or half-captured code is thrown away rather than trusted. The finished file is checked again against a checksum of the original.</p>
+          </div>
+          <div>
+            <h3>Sized for small files</h3>
+            <p>Expect roughly 6 to 10 KB per second. Keys, configs, documents, and photos are comfortable. Videos are not.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="page-footer">
+    <section class="page-footer-info">
+      <div style="display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
+        <img src="../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+        <div style="display:flex;align-items:center;gap:10px">
+          <img src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+          <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <img src="../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+          <span style="color:var(--muted);font-size:0.85rem">Made in Australia by Indonesian engineer.</span>
+        </div>
+      </div>
+    </section>
+  </footer>
+</div>
+
+<script src="codec.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

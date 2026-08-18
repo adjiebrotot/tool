@@ -916,6 +916,24 @@
               "Remove an option after it is picked to run a draw with no repeats"
             ]
           }
+        },
+        {
+          "@type": "ListItem",
+          "position": 15,
+          "item": {
+            "@type": "WebApplication",
+            "name": "QR Code Data Transfer",
+            "url": "https://tool.adjiebrotots.com/qrtransfer/",
+            "description": "Send a file between two devices with no wifi, no bluetooth, and no internet. One screen plays a stream of QR codes, the other camera reads it back.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true,
+            "featureList": [
+              "Moves a file with no wifi, bluetooth, or internet, using only a screen and a camera",
+              "Fountain coded, so missed frames cost time rather than restarting the transfer",
+              "Every frame and the finished file are checksum verified before anything is handed over"
+            ]
+          }
         }
       ]
     }
@@ -1416,6 +1434,39 @@
 
           <div class="tool-footer">
             <a class="tool-link" href="https://tool.adjiebrotots.com/randompicker/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Others"
+          data-geography="Universal"
+          data-tags="Transfer, Offline"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-top">
+            <div class="tool-title-group">
+              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect stroke="var(--accent)" x="3" y="3" width="7" height="7" rx="1.5"/> <rect stroke="var(--accent)" x="3" y="14" width="7" height="7" rx="1.5"/> <rect stroke="var(--accent2)" x="14" y="3" width="7" height="7" rx="1.5"/> <path d="M14 14.5h2.5M19 14.5h2M14 18h3.5M20 18h1M17.5 21h4" stroke="var(--accent2)"/> </svg> QR Code Data Transfer</h3>
+              <p itemprop="abstract">Move a file between two devices with no wifi, no bluetooth, and no internet.</p>
+            </div>
+            <span class="status-badge status-active">Active</span>
+          </div>
+
+          <p class="tool-description" itemprop="description">
+            Two devices that cannot reach each other over any network can still see each other. One screen plays your file as a rapid stream of QR codes, the other points its camera at it and rebuilds the bytes. The stream is fountain coded, so the receiver can join late, lose frames to glare, or look away, and still finish without starting over. Every frame carries its own checksum and the finished file is verified against a checksum of the original, so a damaged transfer is caught rather than handed over. Nothing is uploaded, because there is nowhere to upload to.
+          </p>
+
+          <ul class="tool-tags" aria-label="Categories">
+            <li>Others</li>
+            <li>Universal</li>
+            <li>Transfer</li>
+            <li>Offline</li>
+          </ul>
+
+          <div class="tool-footer">
+            <a class="tool-link" href="https://tool.adjiebrotots.com/qrtransfer/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
           </div>
         </article>
 

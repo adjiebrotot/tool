@@ -28,6 +28,7 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 | [Cost of Living Comparator](https://tool.adjiebrotots.com/costofliving-comparator/) | Compare living costs across cities. |
 | [Video to GIF](https://tool.adjiebrotots.com/videotogif/) | Convert video to GIF locally — videos never leave your device. |
 | [Random Picker](https://tool.adjiebrotots.com/randompicker/) | Pick one option at random with a spinning wheel, a 3D dice roll, a slot machine, or a Galton board. |
+| [QR Code Data Transfer](https://tool.adjiebrotots.com/qrtransfer/) | Move a file between two devices with no wifi, bluetooth, or internet. One screen plays the bytes as a stream of QR codes, the other camera rebuilds the file. Fountain coded, so missed frames cost time rather than restarting. |
 
 ## Repo layout
 
