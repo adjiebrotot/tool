@@ -80,7 +80,9 @@ function showTab(name) {
   for (i = 0; i < panels.length; i++) panels[i].classList.toggle('active', panels[i].id === 'tab-' + name);
 
   $('stageTitle').textContent = name === 'send' ? 'Sender' : 'Receiver';
-  $('stagePanel').hidden = (name === 'test');      // nothing to show, the block map is the view
+  // Nothing to stage on the self-test pane, and nothing left to stage once a
+  // receive has finished: the camera is off and the result panel says it all.
+  $('stagePanel').hidden = (name === 'test') || (name === 'recv' && !receiver.active && !!receiver.result);
   $('qrHolder').classList.toggle('active', name === 'send' && !!player.frameOnScreen);
   $('camHolder').hidden = (name !== 'recv') || !receiver.active;
   $('stageEmpty').hidden = (name === 'send' && !!player.frameOnScreen) || (name === 'recv' && receiver.active);
@@ -513,7 +515,7 @@ var receiver = {
   workers: [], workerBusy: [], nextId: 1,
   detector: null, useNative: false, nativeChecked: 0, nativeBad: 0,
   roi: null, misses: 0, lastText: null,
-  framesDecoded: 0, framesAccepted: 0, decodeTimes: [], lastDecodeTs: 0,
+  framesDecoded: 0, framesAccepted: 0, decodeTimes: [], lastDecodeTs: 0, blockTimes: [],
   raf: 0, rvfc: 0, videoEl: null, grabCanvas: null, inflight: 0, objectUrl: null,
   startedAt: 0, finished: false, result: null,
 
@@ -533,7 +535,7 @@ var receiver = {
   reset: function () {
     this.decoder = null; this.manifest = null; this.roi = null; this.misses = 0;
     this.lastText = null; this.framesDecoded = 0; this.framesAccepted = 0;
-    this.decodeTimes = []; this.finished = false; this.result = null;
+    this.decodeTimes = []; this.blockTimes = []; this.finished = false; this.result = null;
     this.nativeChecked = 0; this.nativeBad = 0;
     $('progressPanel').hidden = true;
     $('resultPanel').hidden = true;
@@ -651,6 +653,7 @@ function startCamera() {
       receiver.active = true;
       receiver.startedAt = performance.now();
       receiver.videoEl = v;
+      $('stagePanel').hidden = false;
       $('camHolder').hidden = false;
       $('stageEmpty').hidden = true;
       $('camBtn').textContent = 'Stop camera';
@@ -844,11 +847,14 @@ function updateRoi(loc) {
   var v = receiver.videoEl;
   if (v && v.videoWidth) {
     var r = receiver.roi;
-    $('camReticle').style.left = (r.x / v.videoWidth * 100) + '%';
-    $('camReticle').style.top = (r.y / v.videoHeight * 100) + '%';
-    $('camReticle').style.width = (r.w / v.videoWidth * 100) + '%';
-    $('camReticle').style.height = (r.h / v.videoHeight * 100) + '%';
-    $('camReticle').style.inset = 'auto';
+    var pct = function (val, of) { return Math.max(0, Math.min(100, val / of * 100)); };
+    var L = pct(r.x, v.videoWidth), T = pct(r.y, v.videoHeight);
+    var el = $('camReticle');
+    el.style.inset = 'auto';
+    el.style.left = L + '%';
+    el.style.top = T + '%';
+    el.style.width = Math.min(100 - L, pct(r.w, v.videoWidth)) + '%';
+    el.style.height = Math.min(100 - T, pct(r.h, v.videoHeight)) + '%';
   }
 }
 
@@ -859,8 +865,13 @@ function acceptFrame(parsed) {
     return;
   }
   if (!receiver.decoder) return;                 // data before the manifest, wait
+  var before = receiver.decoder.recovered;
   var r = receiver.decoder.addFrame(parsed);
   if (r === 'progress' || r === 'stored') receiver.framesAccepted++;
+  if (receiver.decoder.recovered > before) {
+    receiver.blockTimes.push(performance.now());
+    if (receiver.blockTimes.length > 40) receiver.blockTimes.shift();
+  }
   drawBlockMap();
   if (receiver.decoder.isComplete() && !receiver.finished) finishTransfer();
 }
@@ -871,6 +882,7 @@ function bindManifest(m) {
     K: m.K, blockSize: m.blockSize, sessionId: m.sessionId, degTable: m.degTable
   });
   receiver.framesAccepted = 0;
+  receiver.blockTimes = [];
   $('progressPanel').hidden = false;
   $('resultPanel').hidden = true;
   note('Receiving ' + m.name + ', ' + fmtBytes(m.originalSize) + '.');
@@ -897,6 +909,7 @@ function finishTransfer() {
     receiver.result = res;
     showResult(res.bytes, receiver.manifest, receiver.decoder.stats());
     receiver.stop();
+    if (activeTab === 'recv') $('stagePanel').hidden = true;
     note('Done. ' + receiver.manifest.name + ' rebuilt and verified.');
   });
 }
@@ -930,7 +943,12 @@ function showResult(bytes, manifest, stats) {
 }
 
 $('camBtn').addEventListener('click', startCamera);
-$('resetBtn').addEventListener('click', function () { receiver.reset(); note('Reset. Ready for a new transfer.'); });
+$('resetBtn').addEventListener('click', function () {
+  receiver.reset();
+  $('stagePanel').hidden = false;
+  $('stageEmpty').hidden = false;
+  note('Reset. Ready for a new transfer.');
+});
 $('decSel').addEventListener('change', function () {
   receiver.useNative = false; receiver.detector = null;
   if (receiver.active) { receiver.stop(); startCamera(); }
@@ -983,7 +1001,7 @@ function drawBlockMap() {
   var K = man.K;
   var cols = Math.ceil(Math.sqrt(K * 2.2));
   var rows = Math.ceil(K / cols);
-  var cell = Math.max(3, Math.min(14, Math.floor(760 / cols)));
+  var cell = Math.max(4, Math.min(28, Math.floor(560 / cols)));
   var gap = cell > 5 ? 1 : 0;
   var w = cols * (cell + gap), h = rows * (cell + gap);
   if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
@@ -1027,10 +1045,15 @@ function refreshMetrics() {
       : 0;
     var dec = receiver.decoder, man = receiver.manifest;
     var left = '–';
-    if (dec && man && !dec.isComplete() && dfps > 0) {
-      var remaining = (man.K - dec.recovered) * 1.3;
-      left = fmtDuration(remaining / Math.max(0.5, dfps));
-    } else if (dec && dec.isComplete()) left = 'done';
+    var bt = receiver.blockTimes;
+    if (dec && man && dec.isComplete()) left = 'done';
+    else if (dec && man && bt.length >= 3) {
+      var span = (bt[bt.length - 1] - bt[0]) / 1000;
+      var perSec = (bt.length - 1) / Math.max(0.001, span);
+      // The tail of a fountain decode is slower than the head, so do not promise
+      // the average rate holds to the finish.
+      left = fmtDuration((man.K - dec.recovered) / Math.max(0.02, perSec) * 1.25);
+    }
     setMetrics([
       ['Decode rate', dfps ? dfps.toFixed(1) + ' fps' : '–'],
       ['Blocks', dec ? dec.recovered + ' / ' + man.K : '–', true],

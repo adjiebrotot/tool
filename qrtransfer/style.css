@@ -45,7 +45,7 @@ input[type=file].txt-input { padding: 8px 10px; font-size: 0.82rem; cursor: poin
 .qr-holder.active { display: block; }
 #qrCanvas { display: block; image-rendering: pixelated; max-width: 100%; height: auto; }
 
-.cam-holder { position: relative; width: 100%; max-width: 640px; line-height: 0; }
+.cam-holder { position: relative; width: 100%; max-width: 640px; line-height: 0; overflow: hidden; border-radius: 10px; }
 #camVideo { width: 100%; border-radius: 10px; background: #000; display: block; }
 .cam-reticle {
   position: absolute; inset: 12%; border: 2px solid var(--accent);
