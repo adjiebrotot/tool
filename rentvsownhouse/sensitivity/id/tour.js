@@ -25,7 +25,9 @@ window.__TOUR = {
             'mana yang paling memengaruhi hasil.'
     },
     {
-      target: '#metricGroup',
+      // The step names both controls, so highlight both: the year box sits
+      // in its own row beside the metric buttons.
+      target: ['#metricGroup', '#yearInput'],
       title: '② Pilih metrik dan tahun',
       body: 'Bandingkan berdasarkan <strong>Ekuitas Bersih</strong>, <strong>Kas ' +
             'Likuid</strong>, atau <strong>Biaya Kumulatif</strong>, lalu atur ' +

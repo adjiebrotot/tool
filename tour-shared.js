@@ -14,13 +14,29 @@
        seenKey:     'unique-per-tool-key',   // localStorage flag
        launchLabel: '🧭 Take a tour',        // header button text (optional)
        labels:      { skip, back, next, start, done, dialog }, // optional
+       saveState:   function () { ... },   // optional, see below
+       restoreState:function (snapshot) { ... },
        steps: [ { target, title, body, onEnter } , ... ]
      };
-   `target`  : CSS selector of the element to spotlight (null = centered)
+   `target`  : CSS selector of the element to spotlight, an array of
+               selectors to spotlight together (the step highlights every
+               control it talks about), or null for a centered card.
    `onEnter` : optional callback run when the step is shown. A step whose
                target lives behind a tab, a panel, or a result that has not
                been produced yet MUST open or produce it here, so the step
                never spotlights something the user cannot see.
+
+   THE GOLDEN RULE: what a step says must match what is on screen. A step
+   may never describe a city, a preset, or a result the user cannot see, so
+   a tour that needs demo data fills it in from onEnter rather than hoping
+   the user already has some.
+
+   That means a tour can overwrite work, so a tool that fills anything in
+   pairs `saveState` with `restoreState`: saveState runs once as the tour
+   starts and returns a snapshot (or null when the user had nothing worth
+   keeping, which leaves the demo in place); restoreState is handed that
+   snapshot when the tour ends, however it ends. The active tab is saved
+   and restored for every tool automatically.
    ===================================================================== */
 (function () {
   'use strict';
@@ -39,6 +55,11 @@
   var START_LABEL = L.start || 'Start';
   var DONE_LABEL  = L.done  || 'Done';
   var DIALOG_LABEL = L.dialog || 'Product tour';
+
+  // Snapshot of the user's own work, taken when the tour starts and given
+  // back when it ends. null means there was nothing worth restoring.
+  var userState = null;
+  var userTab = null;
 
   if (!steps.length) return; // nothing to show
 
@@ -95,9 +116,31 @@
     return r.width >= 4 && r.height >= 4;
   }
 
-  function resolveTarget(selector) {
-    var el = selector ? document.querySelector(selector) : null;
-    return isUsableTarget(el) ? el : null;
+  /* Returns the elements a step spotlights: one for a plain selector, or
+     every usable one for an array, so a step that talks about two adjacent
+     controls can highlight both instead of only the first. */
+  function resolveTargets(target) {
+    if (!target) return [];
+    var list = Array.isArray(target) ? target : [target];
+    var found = [];
+    list.forEach(function (sel) {
+      var el = document.querySelector(sel);
+      if (isUsableTarget(el)) found.push(el);
+    });
+    // An array target is only satisfied once every selector resolves, so a
+    // step never highlights half of what it describes.
+    return found.length === list.length ? found : [];
+  }
+
+  /* Union of the boxes to spotlight. */
+  function unionRect(elements) {
+    var top = Infinity, left = Infinity, bottom = -Infinity, right = -Infinity;
+    elements.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      top = Math.min(top, r.top); left = Math.min(left, r.left);
+      bottom = Math.max(bottom, r.bottom); right = Math.max(right, r.right);
+    });
+    return { top: top, left: left, bottom: bottom, right: right };
   }
 
   /* ---- Rendering a step --------------------------------------------- */
@@ -116,12 +159,12 @@
     awaitTarget(step.target, token, Date.now());
   }
 
-  function awaitTarget(selector, token, since) {
+  function awaitTarget(target, token, since) {
     if (token !== renderToken || !els) return;
-    var el = resolveTarget(selector);
-    if (el) { scrollToTarget(el, token); return; }
+    var found = resolveTargets(target);
+    if (found.length) { scrollToTarget(found, token); return; }
     if (Date.now() - since < TARGET_WAIT_MS) {
-      setTimeout(function () { awaitTarget(selector, token, since); }, 60);
+      setTimeout(function () { awaitTarget(target, token, since); }, 60);
       return;
     }
     // Unreachable target: show the step centred rather than spotlighting
@@ -129,17 +172,17 @@
     positionCentered();
   }
 
-  /* Smooth scrolling has no completion event, so follow the element until it
-     stops moving instead of guessing with a fixed delay. */
-  function scrollToTarget(el, token) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  /* Smooth scrolling has no completion event, so follow the elements until
+     they stop moving instead of guessing with a fixed delay. */
+  function scrollToTarget(elements, token) {
+    elements[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
     var lastTop = null, steady = 0, ticks = 0;
     (function settle() {
       if (token !== renderToken || !els) return;
-      var top = el.getBoundingClientRect().top;
+      var top = unionRect(elements).top;
       steady = (lastTop !== null && Math.abs(top - lastTop) < 0.5) ? steady + 1 : 0;
       lastTop = top;
-      positionToTarget(el);
+      positionToTarget(elements);
       if (steady < 3 && ++ticks < 25) setTimeout(settle, 60);
     })();
   }
@@ -177,9 +220,9 @@
      step read as nothing being highlighted at all. */
   var PAD = 6, EDGE = 12;
 
-  function positionToTarget(targetEl) {
+  function positionToTarget(elements) {
     if (!els) return;
-    var r = targetEl.getBoundingClientRect();
+    var r = unionRect(elements);
     var vw = window.innerWidth, vh = window.innerHeight;
     var top    = Math.max(EDGE, r.top - PAD);
     var left   = Math.max(EDGE, r.left - PAD);
@@ -237,8 +280,8 @@
 
   function reposition() {
     if (!els) return;
-    var el = resolveTarget(steps[current].target);
-    if (el) positionToTarget(el);
+    var found = resolveTargets(steps[current].target);
+    if (found.length) positionToTarget(found);
     else positionCentered();
   }
 
@@ -260,9 +303,28 @@
     }
   }
 
+  /* The tab a tool is left on is part of the user's state, and every tour
+     here opens tabs to keep its steps honest, so save and restore it for
+     all of them rather than repeating the same code in each config. */
+  function activeTabName() {
+    var tab = document.querySelector('.ctrl-tab.active[data-tab]');
+    return tab ? tab.getAttribute('data-tab') : null;
+  }
+  function openTab(name) {
+    if (!name) return;
+    var tab = document.querySelector('.ctrl-tab[data-tab="' + name + '"]');
+    if (tab && !tab.classList.contains('active')) tab.click();
+  }
+
   function start() {
     if (els) return; // already running
     try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+    // Take the snapshot before the first step fills anything in.
+    userTab = activeTabName();
+    userState = null;
+    if (typeof CFG.saveState === 'function') {
+      try { userState = CFG.saveState(); } catch (e) { userState = null; }
+    }
     current = 0;
     els = buildOverlay();
     window.addEventListener('resize', reposition);
@@ -271,9 +333,17 @@
     renderStep();
   }
 
+  /* Ends the tour and hands the user their own work back, whether they
+     finished, skipped, or pressed Escape. */
   function end() {
     try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
     teardown();
+    if (userState != null && typeof CFG.restoreState === 'function') {
+      try { CFG.restoreState(userState); } catch (e) { /* non-fatal */ }
+    }
+    userState = null;
+    openTab(userTab);
+    userTab = null;
   }
 
   /* ---- First-visit detection & wiring ------------------------------- */

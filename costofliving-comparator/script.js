@@ -1240,9 +1240,14 @@ function findCityKey(name, country){
          || CITIES.find(c=>c.city.toLowerCase().includes(lc));
   return m ? cityKey(m) : '';
 }
-function syncModeButtons(){
-  document.querySelectorAll('#modeGroup .seg-btn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.val===S.mode);
+// Push mode/goal/housing from S back onto their segmented buttons. Used by
+// the demo seeds, by the tour's restore, and by the mini-cache restore.
+function syncSegButtons(){
+  ['mode','goal','housing'].forEach(key=>{
+    const grp=document.getElementById(key+'Group');
+    if(grp) grp.querySelectorAll('.seg-btn').forEach(b=>{
+      b.classList.toggle('active', b.dataset.val===S[key]);
+    });
   });
 }
 function seedSimpleDemo(){
@@ -1253,7 +1258,7 @@ function seedSimpleDemo(){
   S.customFxSimple=null; S.fxShock=0;
   buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
   buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
-  syncModeButtons();
+  syncSegButtons();
   render();
 }
 function seedDetailedDemo(){
@@ -1269,10 +1274,29 @@ function seedDetailedDemo(){
     {catId:'utilities', fromAmount:1000000, overrides:{}},
   ];
   S.customFxDetailed=[null];
-  syncModeButtons();
+  syncSegButtons();
   render();
 }
-window.__COL_TOUR = { seedSimple: seedSimpleDemo, seedDetailed: seedDetailedDemo };
+// The seeds above overwrite whatever was on screen, so the tour also gets a
+// way to put the user's own comparison back when it finishes. Returning null
+// means they had not picked a city yet, and the demo can simply stay.
+function tourSaveState(){
+  const hasInput = !!(S.fromKey || S.toKey || S.detailFromKey ||
+                      S.detailToCities.some(Boolean));
+  return hasInput ? JSON.parse(JSON.stringify(S)) : null;
+}
+function tourRestoreState(snap){
+  Object.keys(S).forEach(k=>{ delete S[k]; });
+  Object.assign(S, JSON.parse(JSON.stringify(snap)));
+  buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
+  buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
+  syncSegButtons();
+  render();
+}
+window.__COL_TOUR = {
+  seedSimple: seedSimpleDemo, seedDetailed: seedDetailedDemo,
+  saveState: tourSaveState, restoreState: tourRestoreState
+};
 
 // ═══════════════════════════════════════════════════════════
 // INIT
@@ -1293,10 +1317,7 @@ function init(){
      and rebuild the UI from it on revisit. */
   persist = Persist.init('costofliving-comparator', {
     onRestore: function(){
-      ['mode','goal','housing'].forEach(function(key){
-        var grp=document.getElementById(key+'Group');
-        if(grp) grp.querySelectorAll('.seg-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.val===S[key]); });
-      });
+      syncSegButtons();
       buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
       buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
       render();

@@ -23,7 +23,9 @@ window.__TOUR = {
             'most.'
     },
     {
-      target: '#metricGroup',
+      // The step names both controls, so highlight both: the year box sits
+      // in its own row beside the metric buttons.
+      target: ['#metricGroup', '#yearInput'],
       title: '② Choose the metric and year',
       body: 'Compare on <strong>Net Equity</strong>, <strong>Liquid Cash</strong>, or ' +
             '<strong>Accumulated Cost</strong>, and set the <strong>year</strong> to ' +

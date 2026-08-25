@@ -57,6 +57,10 @@ window.__TOUR = {
     },
     {
       target: '.summary-row',
+      onEnter: function () {
+        // Describing a Final Summary means there has to be one on screen.
+        if (window.__DCA_TOUR) window.__DCA_TOUR.ensureResults();
+      },
       title: '⑤ Compare the outcomes',
       body: 'Charts and the <strong>Final Summary</strong> line up ending value, average ' +
             'cost, and return side by side, plus Sharpe, Sortino, and CAGR when you enable ' +

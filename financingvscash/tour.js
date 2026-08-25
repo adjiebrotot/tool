@@ -41,9 +41,12 @@ window.__TOUR = {
     {
       target: '.metrics',
       title: '③ See the verdict',
-      body: 'The KPI cards call the <strong>best strategy</strong> and the ' +
-            '<strong>net benefit versus paying cash</strong>. A positive net benefit means ' +
-            'financing and investing the difference left you wealthier.'
+      body: 'Four KPI cards call it: the <strong>best strategy</strong>, the ' +
+            '<strong>net benefit versus paying cash</strong>, the <strong>total ' +
+            'interest</strong> that strategy pays, and the <strong>wealth a cash ' +
+            'purchase</strong> would leave you with. A positive net benefit means ' +
+            'financing and investing the difference left you wealthier; a negative one, ' +
+            'as in the default numbers here, means paying cash wins.'
     },
     {
       target: '.chart-card',

@@ -33,9 +33,11 @@ window.__TOUR = {
     {
       target: '.metrics',
       title: '③ Lihat angka kunci',
-      body: 'Kartu KPI menampilkan <strong>tahun breakeven</strong>, yaitu tahun saat ' +
-            'ekuitas bersih kepemilikan melampaui menyewa, dan <strong>selisih ' +
-            'ekuitas</strong> antara membeli dan menyewa di akhir jangka waktu Anda.'
+      body: 'Empat kartu KPI merangkum hasilnya: <strong>kas awal</strong> yang Anda ' +
+            'punya, <strong>anggaran hunian per tahun</strong>, <strong>tahun ' +
+            'breakeven</strong> saat ekuitas bersih kepemilikan melampaui menyewa, dan ' +
+            '<strong>selisih ekuitas</strong> antara membeli dan menyewa di akhir ' +
+            'jangka waktu Anda.'
     },
     {
       target: '.chart-card',

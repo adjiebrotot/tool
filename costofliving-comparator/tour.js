@@ -17,6 +17,14 @@ function colSeedDetailed(){
 window.__TOUR = {
   seenKey: 'col-tour-v1-seen',
   launchLabel: '🧭 Take a tour',
+  // The steps overwrite the comparison on screen, so hand back whatever the
+  // user had when the tour ends, however it ends.
+  saveState: function () {
+    return window.__COL_TOUR ? window.__COL_TOUR.saveState() : null;
+  },
+  restoreState: function (snap) {
+    if (window.__COL_TOUR) window.__COL_TOUR.restoreState(snap);
+  },
   steps: [
     {
       target: null,

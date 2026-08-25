@@ -3,6 +3,14 @@
 window.__TOUR = {
   seenKey: 'pf-tour-v1-seen',
   launchLabel: '🧭 Take a tour',
+  // Step ⚡ loads the worked example over the form, so give the user their
+  // own configuration back when the tour ends, however it ends.
+  saveState: function () {
+    return window.__PF_TOUR ? window.__PF_TOUR.saveState() : null;
+  },
+  restoreState: function (cfg) {
+    if (window.__PF_TOUR) window.__PF_TOUR.restoreState(cfg);
+  },
   steps: [
     {
       target: null,
@@ -45,9 +53,10 @@ window.__TOUR = {
     {
       target: '#sec-outputs',
       title: '③ Output Variables',
-      body: 'Results read back after each run. The sample records the ' +
-            '<code>Line 5-7</code> and <code>Line 7-8</code> active power ' +
-            '(<code>m:P:bus1</code>) so you can derive the transmission loss factors.'
+      body: 'Results read back after each run. The sample records three: the ' +
+            '<code>G1</code> slack dispatch, plus <code>Line 5-7</code> and ' +
+            '<code>Line 7-8</code> active power (all <code>m:P:bus1</code>), which ' +
+            'together give you the transmission loss factors.'
     },
     {
       target: '.right-toolbar .btn-primary',
