@@ -25,11 +25,17 @@ window.__TOUR = {
             'deductions (pengurang) if any.'
     },
     {
-      target: '.ctrl-tabs',
+      target: '#tab-advanced',
+      onEnter: function () {
+        // The step describes what is inside PTKP & Brackets, so open that
+        // panel rather than spotlighting a tab the user still has to find.
+        var tab = document.querySelector('.ctrl-tab[data-tab="advanced"]');
+        if (tab && !tab.classList.contains('active')) tab.click();
+      },
       title: '② Adjust PTKP and brackets',
-      body: 'The <strong>PTKP & Brackets</strong> tab lets you review and edit the PTKP ' +
-            'values and the PPh 21 tax brackets, so the calculation always reflects the ' +
-            'current rules or your own assumptions.'
+      body: 'This is <strong>PTKP &amp; Brackets</strong>, now open for you. Review and ' +
+            'edit the PTKP values and the PPh 21 tax brackets here, so the calculation ' +
+            'always reflects the current rules or your own assumptions.'
     },
     {
       target: '.metrics',

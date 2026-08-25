@@ -56,6 +56,12 @@ window.__TOUR = {
     },
     {
       target: '#simBtn',
+      onEnter: function () {
+        // Simulate/Reset only exist outside the Data panel, so make sure a
+        // Portfolios panel is open before the step points at the button.
+        var tab = document.querySelector('.ctrl-tab[data-tab="portfolios"]');
+        if (tab && !tab.classList.contains('active')) tab.click();
+      },
       title: '⑤ Run the simulation',
       body: 'Click <strong>Simulate</strong> to backtest every portfolio on the same ' +
             'overlapping dates. Charts and the <strong>Final Summary</strong> line up ' +

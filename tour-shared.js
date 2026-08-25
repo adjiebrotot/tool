@@ -13,10 +13,14 @@
      window.__TOUR = {
        seenKey:     'unique-per-tool-key',   // localStorage flag
        launchLabel: '🧭 Take a tour',        // header button text (optional)
+       labels:      { skip, back, next, start, done, dialog }, // optional
        steps: [ { target, title, body, onEnter } , ... ]
      };
    `target`  : CSS selector of the element to spotlight (null = centered)
-   `onEnter` : optional callback run when the step is shown
+   `onEnter` : optional callback run when the step is shown. A step whose
+               target lives behind a tab, a panel, or a result that has not
+               been produced yet MUST open or produce it here, so the step
+               never spotlights something the user cannot see.
    ===================================================================== */
 (function () {
   'use strict';
@@ -25,6 +29,16 @@
   var SEEN_KEY = CFG.seenKey || 'ab-tour-generic-seen';
   var LAUNCH_LABEL = CFG.launchLabel || '🧭 Take a tour';
   var steps = Array.isArray(CFG.steps) ? CFG.steps : [];
+
+  /* Button copy. Defaults are English; the translated pages pass their own
+     via __TOUR.labels so the card is not half English, half Indonesian. */
+  var L = CFG.labels || {};
+  var SKIP_LABEL  = L.skip  || 'Skip tour';
+  var BACK_LABEL  = L.back  || 'Back';
+  var NEXT_LABEL  = L.next  || 'Next';
+  var START_LABEL = L.start || 'Start';
+  var DONE_LABEL  = L.done  || 'Done';
+  var DIALOG_LABEL = L.dialog || 'Product tour';
 
   if (!steps.length) return; // nothing to show
 
@@ -43,7 +57,7 @@
     tooltip.className = 'pf-tour-tooltip';
     tooltip.setAttribute('role', 'dialog');
     tooltip.setAttribute('aria-live', 'polite');
-    tooltip.setAttribute('aria-label', 'Product tour');
+    tooltip.setAttribute('aria-label', DIALOG_LABEL);
 
     document.body.appendChild(backdrop);
     document.body.appendChild(spotlight);
@@ -63,25 +77,71 @@
     els = null;
   }
 
+  /* ---- Target resolution -------------------------------------------- */
+  /* A step may only spotlight an element that is really on screen. A target
+     sitting in an inactive tab, a collapsed panel, or a not-yet-rendered
+     result has a zero-size box, and spotlighting one used to punch a 12px
+     hole in the top-left corner: the step then appeared to highlight
+     nothing at all. Steps that need a panel open it from onEnter, so give
+     the page a moment to react before deciding the target is unreachable. */
+  var TARGET_WAIT_MS = 900;
+  var renderToken = 0;
+
+  function isUsableTarget(el) {
+    if (!el || !el.isConnected) return false;
+    var cs = window.getComputedStyle(el);
+    if (cs.display === 'none' || cs.visibility === 'hidden' || cs.opacity === '0') return false;
+    var r = el.getBoundingClientRect();
+    return r.width >= 4 && r.height >= 4;
+  }
+
+  function resolveTarget(selector) {
+    var el = selector ? document.querySelector(selector) : null;
+    return isUsableTarget(el) ? el : null;
+  }
+
   /* ---- Rendering a step --------------------------------------------- */
   function renderStep() {
     var step = steps[current];
+    var token = ++renderToken; // invalidates any in-flight positioning
 
     if (typeof step.onEnter === 'function') {
       try { step.onEnter(); } catch (e) { /* non-fatal to the tour */ }
     }
 
-    var targetEl = step.target ? document.querySelector(step.target) : null;
-
-    if (targetEl) {
-      targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // Give the smooth scroll a moment, then place the spotlight/tooltip.
-      setTimeout(function () { positionToTarget(targetEl); }, 320);
-    } else {
-      positionCentered();
-    }
-
+    // Draw the card first so its measured size is available for placement.
     renderTooltip(step);
+
+    if (!step.target) { positionCentered(); return; }
+    awaitTarget(step.target, token, Date.now());
+  }
+
+  function awaitTarget(selector, token, since) {
+    if (token !== renderToken || !els) return;
+    var el = resolveTarget(selector);
+    if (el) { scrollToTarget(el, token); return; }
+    if (Date.now() - since < TARGET_WAIT_MS) {
+      setTimeout(function () { awaitTarget(selector, token, since); }, 60);
+      return;
+    }
+    // Unreachable target: show the step centred rather than spotlighting
+    // an empty corner of the page.
+    positionCentered();
+  }
+
+  /* Smooth scrolling has no completion event, so follow the element until it
+     stops moving instead of guessing with a fixed delay. */
+  function scrollToTarget(el, token) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    var lastTop = null, steady = 0, ticks = 0;
+    (function settle() {
+      if (token !== renderToken || !els) return;
+      var top = el.getBoundingClientRect().top;
+      steady = (lastTop !== null && Math.abs(top - lastTop) < 0.5) ? steady + 1 : 0;
+      lastTop = top;
+      positionToTarget(el);
+      if (steady < 3 && ++ticks < 25) setTimeout(settle, 60);
+    })();
   }
 
   function renderTooltip(step) {
@@ -91,12 +151,12 @@
       '<h4 class="pf-tour-title">' + step.title + '</h4>' +
       '<p class="pf-tour-body">' + step.body + '</p>' +
       '<div class="pf-tour-footer">' +
-        '<button type="button" class="pf-tour-skip" data-act="skip">Skip tour</button>' +
+        '<button type="button" class="pf-tour-skip" data-act="skip">' + SKIP_LABEL + '</button>' +
         '<span class="pf-tour-progress">' + (current + 1) + ' / ' + steps.length + '</span>' +
         '<div class="pf-tour-btns">' +
-          (isFirst ? '' : '<button type="button" class="pf-tour-btn pf-tour-btn-ghost" data-act="back">Back</button>') +
+          (isFirst ? '' : '<button type="button" class="pf-tour-btn pf-tour-btn-ghost" data-act="back">' + BACK_LABEL + '</button>') +
           '<button type="button" class="pf-tour-btn pf-tour-btn-primary" data-act="next">' +
-            (isLast ? 'Done' : (isFirst ? 'Start' : 'Next')) +
+            (isLast ? DONE_LABEL : (isFirst ? START_LABEL : NEXT_LABEL)) +
           '</button>' +
         '</div>' +
       '</div>';
@@ -112,18 +172,31 @@
   }
 
   /* ---- Positioning -------------------------------------------------- */
+  /* The "hole" is clamped to the viewport. A target taller or wider than the
+     screen would otherwise push the darkened ring off-screen entirely, so the
+     step read as nothing being highlighted at all. */
+  var PAD = 6, EDGE = 12;
+
   function positionToTarget(targetEl) {
     if (!els) return;
     var r = targetEl.getBoundingClientRect();
-    var pad = 6;
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var top    = Math.max(EDGE, r.top - PAD);
+    var left   = Math.max(EDGE, r.left - PAD);
+    var bottom = Math.min(vh - EDGE, r.bottom + PAD);
+    var right  = Math.min(vw - EDGE, r.right + PAD);
+
+    // Scrolled entirely out of reach: fall back to a centred step.
+    if (bottom - top < 20 || right - left < 20) { positionCentered(); return; }
+
     var sp = els.spotlight;
     sp.style.display = 'block';
-    sp.style.top = (r.top - pad) + 'px';
-    sp.style.left = (r.left - pad) + 'px';
-    sp.style.width = (r.width + pad * 2) + 'px';
-    sp.style.height = (r.height + pad * 2) + 'px';
+    sp.style.top = top + 'px';
+    sp.style.left = left + 'px';
+    sp.style.width = (right - left) + 'px';
+    sp.style.height = (bottom - top) + 'px';
     els.backdrop.classList.remove('pf-tour-no-target');
-    placeTooltipNear(r);
+    placeTooltipNear({ top: top, bottom: bottom, left: left, right: right });
   }
 
   function positionCentered() {
@@ -144,25 +217,28 @@
     var gap = 14;
     var vw = window.innerWidth, vh = window.innerHeight;
 
-    // Prefer below the target; fall back to above; else centered vertically.
-    var top;
-    if (r.bottom + gap + th <= vh) top = r.bottom + gap;
-    else if (r.top - gap - th >= 0) top = r.top - gap - th;
-    else top = Math.max(gap, (vh - th) / 2);
+    // Prefer below the target; fall back to above; else beside it, and only
+    // then overlap, so the card never hides what it is describing.
+    var top, left = r.left;
+    if (r.bottom + gap + th <= vh) {
+      top = r.bottom + gap;
+    } else if (r.top - gap - th >= 0) {
+      top = r.top - gap - th;
+    } else {
+      top = Math.max(gap, Math.min((vh - th) / 2, vh - th - gap));
+      if (r.right + gap + tw <= vw) left = r.right + gap;
+      else if (r.left - gap - tw >= 0) left = r.left - gap - tw;
+    }
 
-    // Horizontally align to target start, clamped to viewport.
-    var left = r.left;
     left = Math.max(gap, Math.min(left, vw - tw - gap));
-
     t.style.top = top + 'px';
     t.style.left = left + 'px';
   }
 
   function reposition() {
     if (!els) return;
-    var step = steps[current];
-    var targetEl = step.target ? document.querySelector(step.target) : null;
-    if (targetEl) positionToTarget(targetEl);
+    var el = resolveTarget(steps[current].target);
+    if (el) positionToTarget(el);
     else positionCentered();
   }
 

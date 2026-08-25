@@ -3,6 +3,8 @@
 window.__TOUR = {
   seenKey: 'rvo-id-tour-v1-seen',
   launchLabel: '🧭 Ikuti tur',
+  labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
+            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
   steps: [
     {
       target: null,

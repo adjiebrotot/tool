@@ -43,6 +43,13 @@ window.__TOUR = {
     },
     {
       target: '#simBtn',
+      onEnter: function () {
+        // Simulate/Reset are hidden while the Data panel is showing, so the
+        // step used to spotlight an element with no box at all. Open the
+        // Scenarios panel the step is talking about before highlighting it.
+        var tab = document.querySelector('.ctrl-tab[data-tab="securities"]');
+        if (tab && !tab.classList.contains('active')) tab.click();
+      },
       title: '④ Run the simulation',
       body: 'Set the same contribution and schedule for each scenario, then click ' +
             '<strong>Simulate</strong>. Everything runs locally in your browser, no ' +

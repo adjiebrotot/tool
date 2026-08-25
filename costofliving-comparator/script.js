@@ -1227,9 +1227,10 @@ function syncSwapButton(){
 // ═══════════════════════════════════════════════════════════
 // GUIDED-TOUR DEMO DATA
 // The guided tour (tour.js) calls these so each step spotlights a
-// populated result — a realistic Jakarta → Perth example — instead of
-// an empty "select a city" placeholder. Existing user input is left
-// untouched; demo values are only filled in when the fields are blank.
+// populated result, the Jakarta to Perth example the tour narrates,
+// instead of an empty "select a city" placeholder. The seed always
+// applies: the tour names those two cities out loud, so leaving a
+// different pair on screen would contradict what the step just said.
 // ═══════════════════════════════════════════════════════════
 function findCityKey(name, country){
   if(!CITIES.length) return '';
@@ -1246,32 +1247,28 @@ function syncModeButtons(){
 }
 function seedSimpleDemo(){
   S.mode='simple';
-  if(!S.fromKey || !S.toKey){
-    S.fromKey=findCityKey('Jakarta','Indonesia');
-    S.toKey=findCityKey('Perth','Australia');
-    S.fromSalary=20000000; S.fromExpense=12000000; S.toSalary=6500;
-    S.customFxSimple=null; S.fxShock=0;
-    buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
-    buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
-  }
+  S.fromKey=findCityKey('Jakarta','Indonesia');
+  S.toKey=findCityKey('Perth','Australia');
+  S.fromSalary=20000000; S.fromExpense=12000000; S.toSalary=6500;
+  S.customFxSimple=null; S.fxShock=0;
+  buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
+  buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
   syncModeButtons();
   render();
 }
 function seedDetailedDemo(){
   S.mode='detailed';
-  if(!S.detailFromKey || !S.detailToCities.filter(Boolean).length){
-    S.detailFromKey=findCityKey('Jakarta','Indonesia');
-    S.detailToCities=[findCityKey('Perth','Australia')];
-    S.detailFromSalary=20000000;
-    S.detailToSalaries=[6500];
-    S.detailRows=[
-      {catId:'rent',      fromAmount:5000000, overrides:{}},
-      {catId:'groceries', fromAmount:2500000, overrides:{}},
-      {catId:'eating_out',fromAmount:1500000, overrides:{}},
-      {catId:'utilities', fromAmount:1000000, overrides:{}},
-    ];
-    S.customFxDetailed=[null];
-  }
+  S.detailFromKey=findCityKey('Jakarta','Indonesia');
+  S.detailToCities=[findCityKey('Perth','Australia')];
+  S.detailFromSalary=20000000;
+  S.detailToSalaries=[6500];
+  S.detailRows=[
+    {catId:'rent',      fromAmount:5000000, overrides:{}},
+    {catId:'groceries', fromAmount:2500000, overrides:{}},
+    {catId:'eating_out',fromAmount:1500000, overrides:{}},
+    {catId:'utilities', fromAmount:1000000, overrides:{}},
+  ];
+  S.customFxDetailed=[null];
   syncModeButtons();
   render();
 }
