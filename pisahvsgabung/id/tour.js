@@ -3,6 +3,8 @@
 window.__TOUR = {
   seenKey: 'pvg-id-tour-v1-seen',
   launchLabel: '🧭 Ikuti tur',
+  labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
+            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
   steps: [
     {
       target: null,
@@ -26,11 +28,17 @@ window.__TOUR = {
             'terpisah, lengkap dengan pengurang bila ada.'
     },
     {
-      target: '.ctrl-tabs',
+      target: '#tab-advanced',
+      onEnter: function () {
+        // Langkah ini menjelaskan isi panel PTKP & Lapisan Pajak, jadi buka
+        // panelnya, jangan menyorot tab yang masih harus dicari pengguna.
+        var tab = document.querySelector('.ctrl-tab[data-tab="advanced"]');
+        if (tab && !tab.classList.contains('active')) tab.click();
+      },
       title: '② Sesuaikan PTKP dan lapisan tarif',
-      body: 'Tab <strong>PTKP & Lapisan Pajak</strong> memungkinkan Anda meninjau dan ' +
-            'mengubah nilai PTKP serta lapisan tarif PPh 21, agar perhitungan selalu ' +
-            'sesuai aturan terbaru atau asumsi Anda sendiri.'
+      body: 'Inilah <strong>PTKP &amp; Lapisan Pajak</strong>, sudah kami bukakan. Di ' +
+            'sini Anda bisa meninjau dan mengubah nilai PTKP serta lapisan tarif PPh 21, ' +
+            'agar perhitungan selalu sesuai aturan terbaru atau asumsi Anda sendiri.'
     },
     {
       target: '.metrics',

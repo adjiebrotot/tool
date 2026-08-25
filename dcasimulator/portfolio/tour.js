@@ -42,20 +42,30 @@ window.__TOUR = {
             'every ticker in one go to stay within the free daily cap.'
     },
     {
-      target: '.pf-bar',
+      // .pf-bar is only the portfolio selector; the assets, weights, top-ups
+      // and rebalancing rules this step describes live in the panel below it,
+      // so spotlight the whole panel the step is actually about.
+      target: '#tab-portfolios',
       onEnter: function () {
         // Reveal the Portfolios panel so the spotlight lands on visible content.
         var tab = document.querySelector('.ctrl-tab[data-tab="portfolios"]');
         if (tab) tab.click();
       },
       title: '④ Build and compare portfolios',
-      body: 'Each portfolio gets its own <strong>assets</strong>, <strong>target ' +
-            'weights</strong>, <strong>top-ups</strong>, and <strong>rebalancing</strong> ' +
-            'rules. Add several and the simulator charts them together so you can compare ' +
-            'allocation and rebalancing choices fairly.'
+      body: 'Each portfolio gets its own three subtabs: <strong>Top-Ups</strong>, ' +
+            '<strong>Assets</strong>, and <strong>Rebalancing</strong>, where the target ' +
+            'weights live. Add as many portfolios as you like with <strong>+</strong> and ' +
+            'the simulator charts them together, so you can compare allocation and ' +
+            'rebalancing choices fairly.'
     },
     {
       target: '#simBtn',
+      onEnter: function () {
+        // Simulate/Reset only exist outside the Data panel, so make sure a
+        // Portfolios panel is open before the step points at the button.
+        var tab = document.querySelector('.ctrl-tab[data-tab="portfolios"]');
+        if (tab && !tab.classList.contains('active')) tab.click();
+      },
       title: '⑤ Run the simulation',
       body: 'Click <strong>Simulate</strong> to backtest every portfolio on the same ' +
             'overlapping dates. Charts and the <strong>Final Summary</strong> line up ' +

@@ -25,18 +25,28 @@ window.__TOUR = {
             'You can also switch on inflation adjustment to see results in today\'s money.'
     },
     {
-      target: '.ctrl-tabs',
+      target: '#tab-scenarios',
+      onEnter: function () {
+        // The step describes what is inside the Scenarios panel, so open it
+        // instead of asking the user to find the tab themselves.
+        var tab = document.querySelector('.ctrl-tab[data-tab="scenarios"]');
+        if (tab && !tab.classList.contains('active')) tab.click();
+      },
       title: '② Add financing scenarios',
-      body: 'Open <strong>Scenarios</strong> to add each installment or loan option: ' +
-            'interest rate, down payment, term, and fees. Compare several at once, then ' +
-            'use <strong>Sensitivity</strong> to sweep a variable like the finance rate.'
+      body: 'This is <strong>Scenarios</strong>, now open for you. Add each installment ' +
+            'or loan option here: interest rate, down payment, term, and fees. Compare ' +
+            'several at once, then use the <strong>Sensitivity</strong> tab to sweep a ' +
+            'variable such as the finance rate.'
     },
     {
       target: '.metrics',
       title: '③ See the verdict',
-      body: 'The KPI cards call the <strong>best strategy</strong> and the ' +
-            '<strong>net benefit versus paying cash</strong>. A positive net benefit means ' +
-            'financing and investing the difference left you wealthier.'
+      body: 'Four KPI cards call it: the <strong>best strategy</strong>, the ' +
+            '<strong>net benefit versus paying cash</strong>, the <strong>total ' +
+            'interest</strong> that strategy pays, and the <strong>wealth a cash ' +
+            'purchase</strong> would leave you with. A positive net benefit means ' +
+            'financing and investing the difference left you wealthier; a negative one, ' +
+            'as in the default numbers here, means paying cash wins.'
     },
     {
       target: '.chart-card',

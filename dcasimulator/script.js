@@ -2333,6 +2333,19 @@ refreshTickerSelect();
 updateRateInfo();
 updateBtnRow();
 
+/* The tour's results step describes the Final Summary and the charts, so
+   make sure there is something to describe: run the simulation if nothing
+   has been run yet. It only computes from the scenarios already on screen,
+   so there is no user input to save or restore here. */
+window.__DCA_TOUR = {
+  ensureResults: function(){
+    const grid=$('summaryGrid');
+    if(grid && grid.children.length) return;  // already showing results
+    if(simBlockReason()) return;              // can't run; don't claim we did
+    runSimulation();
+  }
+};
+
 /* ── Mini cache ──────────────────────────────────────────────────────────
    Restore the user's last scenario set + global settings (built with the same
    shape as the export/import config) so a returning user resumes where they

@@ -31,9 +31,11 @@ window.__TOUR = {
     {
       target: '.metrics',
       title: '③ See the key numbers',
-      body: 'The KPI cards show your <strong>breakeven year</strong>, the year owning ' +
-            'net equity overtakes renting, and the <strong>equity difference</strong> ' +
-            'between buying and renting at the end of your horizon.'
+      body: 'Four KPI cards summarise the run: the <strong>initial cash</strong> you ' +
+            'start with, your <strong>yearly housing budget</strong>, the ' +
+            '<strong>breakeven year</strong> when owning net equity overtakes renting, ' +
+            'and the <strong>equity difference</strong> between buying and renting at ' +
+            'the end of your horizon.'
     },
     {
       target: '.chart-card',

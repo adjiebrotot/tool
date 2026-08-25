@@ -12,7 +12,10 @@ window.__TOUR = {
             'rents, and rates change. It takes about a minute.'
     },
     {
-      target: '#tableWrap',
+      // The grid is far taller than the viewport, so spotlighting all of it
+      // left nothing dimmed and read as no highlight at all. The header row
+      // is what the step is about: one column per scenario, plus Add.
+      target: '#tableWrap thead',
       title: '① Each column is a scenario',
       body: 'Add a column for every case you want to test, for example different ' +
             'deposits, mortgage rates, or cities. Edit any assumption inline and the whole ' +
@@ -20,7 +23,9 @@ window.__TOUR = {
             'most.'
     },
     {
-      target: '#metricGroup',
+      // The step names both controls, so highlight both: the year box sits
+      // in its own row beside the metric buttons.
+      target: ['#metricGroup', '#yearInput'],
       title: '② Choose the metric and year',
       body: 'Compare on <strong>Net Equity</strong>, <strong>Liquid Cash</strong>, or ' +
             '<strong>Accumulated Cost</strong>, and set the <strong>year</strong> to ' +

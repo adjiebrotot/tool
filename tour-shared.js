@@ -13,10 +13,30 @@
      window.__TOUR = {
        seenKey:     'unique-per-tool-key',   // localStorage flag
        launchLabel: '🧭 Take a tour',        // header button text (optional)
+       labels:      { skip, back, next, start, done, dialog }, // optional
+       saveState:   function () { ... },   // optional, see below
+       restoreState:function (snapshot) { ... },
        steps: [ { target, title, body, onEnter } , ... ]
      };
-   `target`  : CSS selector of the element to spotlight (null = centered)
-   `onEnter` : optional callback run when the step is shown
+   `target`  : CSS selector of the element to spotlight, an array of
+               selectors to spotlight together (the step highlights every
+               control it talks about), or null for a centered card.
+   `onEnter` : optional callback run when the step is shown. A step whose
+               target lives behind a tab, a panel, or a result that has not
+               been produced yet MUST open or produce it here, so the step
+               never spotlights something the user cannot see.
+
+   THE GOLDEN RULE: what a step says must match what is on screen. A step
+   may never describe a city, a preset, or a result the user cannot see, so
+   a tour that needs demo data fills it in from onEnter rather than hoping
+   the user already has some.
+
+   That means a tour can overwrite work, so a tool that fills anything in
+   pairs `saveState` with `restoreState`: saveState runs once as the tour
+   starts and returns a snapshot (or null when the user had nothing worth
+   keeping, which leaves the demo in place); restoreState is handed that
+   snapshot when the tour ends, however it ends. The active tab is saved
+   and restored for every tool automatically.
    ===================================================================== */
 (function () {
   'use strict';
@@ -25,6 +45,21 @@
   var SEEN_KEY = CFG.seenKey || 'ab-tour-generic-seen';
   var LAUNCH_LABEL = CFG.launchLabel || '🧭 Take a tour';
   var steps = Array.isArray(CFG.steps) ? CFG.steps : [];
+
+  /* Button copy. Defaults are English; the translated pages pass their own
+     via __TOUR.labels so the card is not half English, half Indonesian. */
+  var L = CFG.labels || {};
+  var SKIP_LABEL  = L.skip  || 'Skip tour';
+  var BACK_LABEL  = L.back  || 'Back';
+  var NEXT_LABEL  = L.next  || 'Next';
+  var START_LABEL = L.start || 'Start';
+  var DONE_LABEL  = L.done  || 'Done';
+  var DIALOG_LABEL = L.dialog || 'Product tour';
+
+  // Snapshot of the user's own work, taken when the tour starts and given
+  // back when it ends. null means there was nothing worth restoring.
+  var userState = null;
+  var userTab = null;
 
   if (!steps.length) return; // nothing to show
 
@@ -43,7 +78,7 @@
     tooltip.className = 'pf-tour-tooltip';
     tooltip.setAttribute('role', 'dialog');
     tooltip.setAttribute('aria-live', 'polite');
-    tooltip.setAttribute('aria-label', 'Product tour');
+    tooltip.setAttribute('aria-label', DIALOG_LABEL);
 
     document.body.appendChild(backdrop);
     document.body.appendChild(spotlight);
@@ -63,25 +98,93 @@
     els = null;
   }
 
+  /* ---- Target resolution -------------------------------------------- */
+  /* A step may only spotlight an element that is really on screen. A target
+     sitting in an inactive tab, a collapsed panel, or a not-yet-rendered
+     result has a zero-size box, and spotlighting one used to punch a 12px
+     hole in the top-left corner: the step then appeared to highlight
+     nothing at all. Steps that need a panel open it from onEnter, so give
+     the page a moment to react before deciding the target is unreachable. */
+  var TARGET_WAIT_MS = 900;
+  var renderToken = 0;
+
+  function isUsableTarget(el) {
+    if (!el || !el.isConnected) return false;
+    var cs = window.getComputedStyle(el);
+    if (cs.display === 'none' || cs.visibility === 'hidden' || cs.opacity === '0') return false;
+    var r = el.getBoundingClientRect();
+    return r.width >= 4 && r.height >= 4;
+  }
+
+  /* Returns the elements a step spotlights: one for a plain selector, or
+     every usable one for an array, so a step that talks about two adjacent
+     controls can highlight both instead of only the first. */
+  function resolveTargets(target) {
+    if (!target) return [];
+    var list = Array.isArray(target) ? target : [target];
+    var found = [];
+    list.forEach(function (sel) {
+      var el = document.querySelector(sel);
+      if (isUsableTarget(el)) found.push(el);
+    });
+    // An array target is only satisfied once every selector resolves, so a
+    // step never highlights half of what it describes.
+    return found.length === list.length ? found : [];
+  }
+
+  /* Union of the boxes to spotlight. */
+  function unionRect(elements) {
+    var top = Infinity, left = Infinity, bottom = -Infinity, right = -Infinity;
+    elements.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      top = Math.min(top, r.top); left = Math.min(left, r.left);
+      bottom = Math.max(bottom, r.bottom); right = Math.max(right, r.right);
+    });
+    return { top: top, left: left, bottom: bottom, right: right };
+  }
+
   /* ---- Rendering a step --------------------------------------------- */
   function renderStep() {
     var step = steps[current];
+    var token = ++renderToken; // invalidates any in-flight positioning
 
     if (typeof step.onEnter === 'function') {
       try { step.onEnter(); } catch (e) { /* non-fatal to the tour */ }
     }
 
-    var targetEl = step.target ? document.querySelector(step.target) : null;
-
-    if (targetEl) {
-      targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // Give the smooth scroll a moment, then place the spotlight/tooltip.
-      setTimeout(function () { positionToTarget(targetEl); }, 320);
-    } else {
-      positionCentered();
-    }
-
+    // Draw the card first so its measured size is available for placement.
     renderTooltip(step);
+
+    if (!step.target) { positionCentered(); return; }
+    awaitTarget(step.target, token, Date.now());
+  }
+
+  function awaitTarget(target, token, since) {
+    if (token !== renderToken || !els) return;
+    var found = resolveTargets(target);
+    if (found.length) { scrollToTarget(found, token); return; }
+    if (Date.now() - since < TARGET_WAIT_MS) {
+      setTimeout(function () { awaitTarget(target, token, since); }, 60);
+      return;
+    }
+    // Unreachable target: show the step centred rather than spotlighting
+    // an empty corner of the page.
+    positionCentered();
+  }
+
+  /* Smooth scrolling has no completion event, so follow the elements until
+     they stop moving instead of guessing with a fixed delay. */
+  function scrollToTarget(elements, token) {
+    elements[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    var lastTop = null, steady = 0, ticks = 0;
+    (function settle() {
+      if (token !== renderToken || !els) return;
+      var top = unionRect(elements).top;
+      steady = (lastTop !== null && Math.abs(top - lastTop) < 0.5) ? steady + 1 : 0;
+      lastTop = top;
+      positionToTarget(elements);
+      if (steady < 3 && ++ticks < 25) setTimeout(settle, 60);
+    })();
   }
 
   function renderTooltip(step) {
@@ -91,12 +194,12 @@
       '<h4 class="pf-tour-title">' + step.title + '</h4>' +
       '<p class="pf-tour-body">' + step.body + '</p>' +
       '<div class="pf-tour-footer">' +
-        '<button type="button" class="pf-tour-skip" data-act="skip">Skip tour</button>' +
+        '<button type="button" class="pf-tour-skip" data-act="skip">' + SKIP_LABEL + '</button>' +
         '<span class="pf-tour-progress">' + (current + 1) + ' / ' + steps.length + '</span>' +
         '<div class="pf-tour-btns">' +
-          (isFirst ? '' : '<button type="button" class="pf-tour-btn pf-tour-btn-ghost" data-act="back">Back</button>') +
+          (isFirst ? '' : '<button type="button" class="pf-tour-btn pf-tour-btn-ghost" data-act="back">' + BACK_LABEL + '</button>') +
           '<button type="button" class="pf-tour-btn pf-tour-btn-primary" data-act="next">' +
-            (isLast ? 'Done' : (isFirst ? 'Start' : 'Next')) +
+            (isLast ? DONE_LABEL : (isFirst ? START_LABEL : NEXT_LABEL)) +
           '</button>' +
         '</div>' +
       '</div>';
@@ -112,18 +215,31 @@
   }
 
   /* ---- Positioning -------------------------------------------------- */
-  function positionToTarget(targetEl) {
+  /* The "hole" is clamped to the viewport. A target taller or wider than the
+     screen would otherwise push the darkened ring off-screen entirely, so the
+     step read as nothing being highlighted at all. */
+  var PAD = 6, EDGE = 12;
+
+  function positionToTarget(elements) {
     if (!els) return;
-    var r = targetEl.getBoundingClientRect();
-    var pad = 6;
+    var r = unionRect(elements);
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var top    = Math.max(EDGE, r.top - PAD);
+    var left   = Math.max(EDGE, r.left - PAD);
+    var bottom = Math.min(vh - EDGE, r.bottom + PAD);
+    var right  = Math.min(vw - EDGE, r.right + PAD);
+
+    // Scrolled entirely out of reach: fall back to a centred step.
+    if (bottom - top < 20 || right - left < 20) { positionCentered(); return; }
+
     var sp = els.spotlight;
     sp.style.display = 'block';
-    sp.style.top = (r.top - pad) + 'px';
-    sp.style.left = (r.left - pad) + 'px';
-    sp.style.width = (r.width + pad * 2) + 'px';
-    sp.style.height = (r.height + pad * 2) + 'px';
+    sp.style.top = top + 'px';
+    sp.style.left = left + 'px';
+    sp.style.width = (right - left) + 'px';
+    sp.style.height = (bottom - top) + 'px';
     els.backdrop.classList.remove('pf-tour-no-target');
-    placeTooltipNear(r);
+    placeTooltipNear({ top: top, bottom: bottom, left: left, right: right });
   }
 
   function positionCentered() {
@@ -144,25 +260,28 @@
     var gap = 14;
     var vw = window.innerWidth, vh = window.innerHeight;
 
-    // Prefer below the target; fall back to above; else centered vertically.
-    var top;
-    if (r.bottom + gap + th <= vh) top = r.bottom + gap;
-    else if (r.top - gap - th >= 0) top = r.top - gap - th;
-    else top = Math.max(gap, (vh - th) / 2);
+    // Prefer below the target; fall back to above; else beside it, and only
+    // then overlap, so the card never hides what it is describing.
+    var top, left = r.left;
+    if (r.bottom + gap + th <= vh) {
+      top = r.bottom + gap;
+    } else if (r.top - gap - th >= 0) {
+      top = r.top - gap - th;
+    } else {
+      top = Math.max(gap, Math.min((vh - th) / 2, vh - th - gap));
+      if (r.right + gap + tw <= vw) left = r.right + gap;
+      else if (r.left - gap - tw >= 0) left = r.left - gap - tw;
+    }
 
-    // Horizontally align to target start, clamped to viewport.
-    var left = r.left;
     left = Math.max(gap, Math.min(left, vw - tw - gap));
-
     t.style.top = top + 'px';
     t.style.left = left + 'px';
   }
 
   function reposition() {
     if (!els) return;
-    var step = steps[current];
-    var targetEl = step.target ? document.querySelector(step.target) : null;
-    if (targetEl) positionToTarget(targetEl);
+    var found = resolveTargets(steps[current].target);
+    if (found.length) positionToTarget(found);
     else positionCentered();
   }
 
@@ -184,9 +303,28 @@
     }
   }
 
+  /* The tab a tool is left on is part of the user's state, and every tour
+     here opens tabs to keep its steps honest, so save and restore it for
+     all of them rather than repeating the same code in each config. */
+  function activeTabName() {
+    var tab = document.querySelector('.ctrl-tab.active[data-tab]');
+    return tab ? tab.getAttribute('data-tab') : null;
+  }
+  function openTab(name) {
+    if (!name) return;
+    var tab = document.querySelector('.ctrl-tab[data-tab="' + name + '"]');
+    if (tab && !tab.classList.contains('active')) tab.click();
+  }
+
   function start() {
     if (els) return; // already running
     try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+    // Take the snapshot before the first step fills anything in.
+    userTab = activeTabName();
+    userState = null;
+    if (typeof CFG.saveState === 'function') {
+      try { userState = CFG.saveState(); } catch (e) { userState = null; }
+    }
     current = 0;
     els = buildOverlay();
     window.addEventListener('resize', reposition);
@@ -195,9 +333,17 @@
     renderStep();
   }
 
+  /* Ends the tour and hands the user their own work back, whether they
+     finished, skipped, or pressed Escape. */
   function end() {
     try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
     teardown();
+    if (userState != null && typeof CFG.restoreState === 'function') {
+      try { CFG.restoreState(userState); } catch (e) { /* non-fatal */ }
+    }
+    userState = null;
+    openTab(userTab);
+    userTab = null;
   }
 
   /* ---- First-visit detection & wiring ------------------------------- */

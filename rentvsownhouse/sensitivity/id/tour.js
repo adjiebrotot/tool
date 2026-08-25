@@ -3,6 +3,8 @@
 window.__TOUR = {
   seenKey: 'rvos-id-tour-v1-seen',
   launchLabel: '🧭 Ikuti tur',
+  labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
+            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
   steps: [
     {
       target: null,
@@ -12,7 +14,10 @@ window.__TOUR = {
             'bergeser saat harga, sewa, dan suku bunga berubah. Hanya sekitar satu menit.'
     },
     {
-      target: '#tableWrap',
+      // The grid is far taller than the viewport, so spotlighting all of it
+      // left nothing dimmed and read as no highlight at all. The header row
+      // is what the step is about: one column per scenario, plus Add.
+      target: '#tableWrap thead',
       title: '① Tiap kolom adalah satu skenario',
       body: 'Tambahkan kolom untuk setiap kasus yang ingin diuji, misalnya uang muka, ' +
             'suku bunga KPR, atau kota yang berbeda. Ubah asumsi apa pun secara langsung ' +
@@ -20,7 +25,9 @@ window.__TOUR = {
             'mana yang paling memengaruhi hasil.'
     },
     {
-      target: '#metricGroup',
+      // The step names both controls, so highlight both: the year box sits
+      // in its own row beside the metric buttons.
+      target: ['#metricGroup', '#yearInput'],
       title: '② Pilih metrik dan tahun',
       body: 'Bandingkan berdasarkan <strong>Ekuitas Bersih</strong>, <strong>Kas ' +
             'Likuid</strong>, atau <strong>Biaya Kumulatif</strong>, lalu atur ' +

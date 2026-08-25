@@ -2048,6 +2048,30 @@ document.querySelectorAll('.quick-start-btn').forEach(btn => {
   document.addEventListener('change', () => refreshLiveWarnings());
   refreshLiveWarnings();
 
+  /* ── Guided-tour state ─────────────────────────────────────────────────
+     The tour loads a worked example straight over the form so its steps can
+     describe real values. Capture the pristine config first: that is how the
+     tour tells an untouched form (leave the sample loaded, nothing was lost)
+     from the user's own work (put it back when the tour ends). */
+  var pristineConfig = '';
+  try { pristineConfig = JSON.stringify(readConfig()); } catch (e) {}
+  window.__PF_TOUR = {
+    saveState: function () {
+      try {
+        var cfg = readConfig();
+        return JSON.stringify(cfg) === pristineConfig ? null : cfg;
+      } catch (e) { return null; }
+    },
+    restoreState: function (cfg) {
+      try {
+        loadConfig(cfg);
+        refreshLiveWarnings();
+        document.querySelectorAll('.quick-start-btn')
+          .forEach(function (b) { b.classList.remove('active'); });
+      } catch (e) { /* non-fatal */ }
+    }
+  };
+
   /* ── Mini cache ────────────────────────────────────────────────────────
      Persist the whole scripter configuration using the same readConfig/
      loadConfig pair the sample loader uses, so a returning user finds their

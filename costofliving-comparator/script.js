@@ -1227,9 +1227,10 @@ function syncSwapButton(){
 // ═══════════════════════════════════════════════════════════
 // GUIDED-TOUR DEMO DATA
 // The guided tour (tour.js) calls these so each step spotlights a
-// populated result — a realistic Jakarta → Perth example — instead of
-// an empty "select a city" placeholder. Existing user input is left
-// untouched; demo values are only filled in when the fields are blank.
+// populated result, the Jakarta to Perth example the tour narrates,
+// instead of an empty "select a city" placeholder. The seed always
+// applies: the tour names those two cities out loud, so leaving a
+// different pair on screen would contradict what the step just said.
 // ═══════════════════════════════════════════════════════════
 function findCityKey(name, country){
   if(!CITIES.length) return '';
@@ -1239,43 +1240,63 @@ function findCityKey(name, country){
          || CITIES.find(c=>c.city.toLowerCase().includes(lc));
   return m ? cityKey(m) : '';
 }
-function syncModeButtons(){
-  document.querySelectorAll('#modeGroup .seg-btn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.val===S.mode);
+// Push mode/goal/housing from S back onto their segmented buttons. Used by
+// the demo seeds, by the tour's restore, and by the mini-cache restore.
+function syncSegButtons(){
+  ['mode','goal','housing'].forEach(key=>{
+    const grp=document.getElementById(key+'Group');
+    if(grp) grp.querySelectorAll('.seg-btn').forEach(b=>{
+      b.classList.toggle('active', b.dataset.val===S[key]);
+    });
   });
 }
 function seedSimpleDemo(){
   S.mode='simple';
-  if(!S.fromKey || !S.toKey){
-    S.fromKey=findCityKey('Jakarta','Indonesia');
-    S.toKey=findCityKey('Perth','Australia');
-    S.fromSalary=20000000; S.fromExpense=12000000; S.toSalary=6500;
-    S.customFxSimple=null; S.fxShock=0;
-    buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
-    buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
-  }
-  syncModeButtons();
+  S.fromKey=findCityKey('Jakarta','Indonesia');
+  S.toKey=findCityKey('Perth','Australia');
+  S.fromSalary=20000000; S.fromExpense=12000000; S.toSalary=6500;
+  S.customFxSimple=null; S.fxShock=0;
+  buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
+  buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
+  syncSegButtons();
   render();
 }
 function seedDetailedDemo(){
   S.mode='detailed';
-  if(!S.detailFromKey || !S.detailToCities.filter(Boolean).length){
-    S.detailFromKey=findCityKey('Jakarta','Indonesia');
-    S.detailToCities=[findCityKey('Perth','Australia')];
-    S.detailFromSalary=20000000;
-    S.detailToSalaries=[6500];
-    S.detailRows=[
-      {catId:'rent',      fromAmount:5000000, overrides:{}},
-      {catId:'groceries', fromAmount:2500000, overrides:{}},
-      {catId:'eating_out',fromAmount:1500000, overrides:{}},
-      {catId:'utilities', fromAmount:1000000, overrides:{}},
-    ];
-    S.customFxDetailed=[null];
-  }
-  syncModeButtons();
+  S.detailFromKey=findCityKey('Jakarta','Indonesia');
+  S.detailToCities=[findCityKey('Perth','Australia')];
+  S.detailFromSalary=20000000;
+  S.detailToSalaries=[6500];
+  S.detailRows=[
+    {catId:'rent',      fromAmount:5000000, overrides:{}},
+    {catId:'groceries', fromAmount:2500000, overrides:{}},
+    {catId:'eating_out',fromAmount:1500000, overrides:{}},
+    {catId:'utilities', fromAmount:1000000, overrides:{}},
+  ];
+  S.customFxDetailed=[null];
+  syncSegButtons();
   render();
 }
-window.__COL_TOUR = { seedSimple: seedSimpleDemo, seedDetailed: seedDetailedDemo };
+// The seeds above overwrite whatever was on screen, so the tour also gets a
+// way to put the user's own comparison back when it finishes. Returning null
+// means they had not picked a city yet, and the demo can simply stay.
+function tourSaveState(){
+  const hasInput = !!(S.fromKey || S.toKey || S.detailFromKey ||
+                      S.detailToCities.some(Boolean));
+  return hasInput ? JSON.parse(JSON.stringify(S)) : null;
+}
+function tourRestoreState(snap){
+  Object.keys(S).forEach(k=>{ delete S[k]; });
+  Object.assign(S, JSON.parse(JSON.stringify(snap)));
+  buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
+  buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
+  syncSegButtons();
+  render();
+}
+window.__COL_TOUR = {
+  seedSimple: seedSimpleDemo, seedDetailed: seedDetailedDemo,
+  saveState: tourSaveState, restoreState: tourRestoreState
+};
 
 // ═══════════════════════════════════════════════════════════
 // INIT
@@ -1296,10 +1317,7 @@ function init(){
      and rebuild the UI from it on revisit. */
   persist = Persist.init('costofliving-comparator', {
     onRestore: function(){
-      ['mode','goal','housing'].forEach(function(key){
-        var grp=document.getElementById(key+'Group');
-        if(grp) grp.querySelectorAll('.seg-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.val===S[key]); });
-      });
+      syncSegButtons();
       buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
       buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
       render();
