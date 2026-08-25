@@ -33,6 +33,8 @@
 .history-item .h-icon{flex-shrink:0;font-size:1rem;}
 .history-item .h-name{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .history-item .h-n{margin-left:auto;flex-shrink:0;color:var(--muted);font-family:'DM Mono',monospace;font-size:.76rem;}
+.history-item.no-win .h-name{color:var(--muted);font-weight:600;font-style:italic;}
+.history-item.no-win .h-icon{opacity:.6;}
 
 /* ---------- mode tabs ---------- */
 .mode-bar{padding:10px;}
@@ -63,6 +65,12 @@
 .dice-legend .leg-item{display:flex;align-items:center;gap:6px;background:var(--input-bg);border:1px solid var(--border);border-radius:999px;padding:5px 12px;font-size:.82rem;transition:border-color 200ms,background 200ms;}
 .dice-legend .leg-item.hit{border-color:var(--accent);background:rgba(141,187,255,.16);}
 .dice-legend .leg-face{font-family:'DM Mono',monospace;font-weight:700;color:var(--accent);}
+/* faces with no choice behind them: the rolls that pick nobody */
+.dice-legend .leg-item.leg-empty{color:var(--muted);border-style:dashed;}
+.dice-legend .leg-item.leg-empty .leg-face{color:var(--muted);}
+.dice-legend .leg-item.leg-empty.hit{border-style:solid;border-color:var(--warning-text);background:var(--warning-bg);color:var(--warning-text);}
+.dice-legend .leg-item.leg-empty.hit .leg-face{color:var(--warning-text);}
+.dice-scene.lose{animation:stageSlump 600ms ease;}
 
 /* ---------- slot machine ---------- */
 .slot-machine{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;transition:transform 150ms;}
@@ -113,6 +121,18 @@
 .slot-cabinet.win{animation:slotShake 520ms ease;}
 @keyframes slotShake{0%,100%{transform:translate3d(0,0,0)}15%{transform:translate3d(-6px,0,0)}30%{transform:translate3d(6px,0,0)}45%{transform:translate3d(-4px,0,0)}60%{transform:translate3d(4px,0,0)}80%{transform:translate3d(-2px,0,0)}}
 
+/* a pull that does not pay: the cabinet slumps instead of celebrating */
+.slot-cabinet.lose{animation:stageSlump 600ms ease;}
+@keyframes stageSlump{0%{transform:translate3d(0,0,0) rotate(0)}30%{transform:translate3d(0,6px,0) rotate(-.55deg)}62%{transform:translate3d(0,1px,0) rotate(.32deg)}100%{transform:translate3d(0,0,0) rotate(0)}}
+
+/* ---------- stage footnote + "no win" flash (slot & dice) ---------- */
+.stage-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:2px;width:100%;max-width:560px;flex-wrap:wrap;}
+.stage-foot .tip-wrap{color:var(--muted);font-size:.85rem;}
+.flash-pill{flex-shrink:0;padding:6px 14px;border-radius:999px;background:var(--warning-bg);color:var(--warning-text);font-weight:700;font-size:.82rem;
+  opacity:0;transform:translateY(5px);transition:opacity 200ms,transform 200ms;}
+.flash-pill.show{opacity:1;transform:none;}
+.flash-pill[hidden]{display:none;}
+
 /* ---------- galton board ---------- */
 .galton-wrap{width:100%;max-width:560px;}
 #galtonCanvas{width:100%;height:auto;display:block;background:var(--input-bg);border:1px solid var(--border);border-radius:14px;}
@@ -148,6 +168,7 @@
   .stage-card{padding:20px 12px;min-height:420px;}
   .dice-scene{height:300px;}
   .slot-machine{transform:scale(.84);}
+  .stage-foot{justify-content:center;text-align:center;}
   .btn-action{padding:14px 30px;font-size:1rem;}
   .winner-name{font-size:1.6rem;}
   .winner-card{padding:30px 24px;}
