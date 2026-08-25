@@ -61,7 +61,7 @@
       "name": "Is the wheel spinner actually random and fair?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. The Wheel, Dice, and Slot Machine modes pick the winner with Math.random() before the animation starts, then the animation is driven to land on that result, so every choice has an equal chance. The Galton Board mode is intentionally uneven: it is a true per-peg random walk, so middle choices land more often, like a real bean machine."
+        "text": "Yes. Every mode picks the outcome with Math.random() before the animation starts, then the animation is driven to land on that result. The Wheel gives every choice an equal chance and always picks one. The Slot Machine and Dice can come up empty, like the machines they imitate: about 1 pull in 4 lands no match, and the die is an honest 1-in-6 per face, so with fewer than six choices the leftover faces pick nobody. The Galton Board is intentionally uneven: it is a true per-peg random walk, so middle choices land more often, like a real bean machine."
       }
     }
   ]
@@ -149,6 +149,13 @@ Salad</textarea>
             <div class="dice-fallback" id="diceFallback" hidden>The 3D dice library did not load. Check your connection, or pick with another mode.</div>
           </div>
           <div class="dice-legend" id="diceLegend"></div>
+          <div class="stage-foot dice-foot">
+            <span class="tip-wrap">
+              <span class="tip-icon" data-tip="The die is rolled honestly: every face has a 1 in 6 chance, exactly like a real one. Face 1 is your first choice, face 2 the second, and so on. With fewer than six choices the leftover faces belong to nobody, so those rolls pick no one — roll again, or use the wheel if you want a guaranteed result.">i</span>
+              <span id="diceOdds">Every face has a 1 in 6 chance.</span>
+            </span>
+            <span class="flash-pill" id="diceFlash" role="status" aria-live="polite" hidden></span>
+          </div>
         </div>
 
         <!-- SLOT MACHINE -->
@@ -174,6 +181,13 @@ Salad</textarea>
               <div class="lever-arm"><span class="lever-knob"></span></div>
               <div class="lever-base"></div>
             </div>
+          </div>
+          <div class="stage-foot slot-foot">
+            <span class="tip-wrap">
+              <span class="tip-icon" data-tip="Every pull has a 75% chance of paying out, so about 1 in 4 lands a mismatched payline and picks nobody. When a pull does pay, every choice is still equally likely. Prefer a guaranteed result? Use the wheel.">i</span>
+              Like a real machine, not every pull pays. About 3 in 4 land a match.
+            </span>
+            <span class="flash-pill" id="slotFlash" role="status" aria-live="polite" hidden></span>
           </div>
         </div>
 

@@ -3,22 +3,33 @@
    RANDOM PICKER
    Four picking modes sharing one choices list:
      wheel  — spinning wheel, uniform over choices
-     dice   — 3D six-sided die (three.js), uniform, capped at 6 choices
-     slot   — 3-reel slot machine, uniform over choices
+     dice   — 3D six-sided die (three.js), a true 1-in-6 per face
+     slot   — 3-reel slot machine, pays out on ~75% of pulls
      galton — bean machine, deliberately NON-uniform (binomial)
 
-   FAIRNESS RULE (wheel / dice / slot): the winner is picked with
+   FAIRNESS RULE (wheel / dice / slot): the outcome is picked with
    Math.random() BEFORE any animation starts. The animation is then
    driven to land on that pre-chosen result — it never decides the
    outcome itself.
+
+   NO-WIN RULE (slot / dice): these two modes can come up empty, like the
+   machines they imitate.
+     slot — SLOT_WIN_CHANCE of pulls land three of a kind and return a
+       winner; the rest land a mismatched combination and return
+       { noWin: true }. Which choice wins is still uniform: the payout
+       roll only decides whether the pull pays at all.
+     dice — the die is rolled honestly, every face 1/6. Face f picks
+       choice f; with fewer than six choices the faces past the end of
+       the list belong to nobody and return { noWin: true }.
 
    GALTON RULE: no picking upfront. Each row is a genuine fair coin
    flip (Math.random() < 0.5) as the ball falls, so the bin (and the
    distribution across many drops) is a real binomial(rows, 0.5)
    random walk, not a scripted shape.
 
-   Every pick resolves to { index, name } so the winning line can be
-   removed from the list afterwards even when names are duplicated.
+   Every winning pick resolves to { index, name } so the winning line can
+   be removed from the list afterwards even when names are duplicated; a
+   slot pull that does not pay resolves to { noWin: true } instead.
    ============================================================ */
 
 const $ = id => document.getElementById(id);
@@ -130,6 +141,7 @@ function setMode(mode) {
   document.querySelectorAll('.stage').forEach(s => s.classList.toggle('active', s.id === 'stage-' + mode));
   $('actionBtn').textContent = ACTION_LABEL[mode] || 'Go';
   $('diceWarning').classList.toggle('visible', mode === 'dice' && choices.length > 6);
+  hideNoWinFlash();
   updateActionAvailability();
   // Canvases sized while hidden read back as 0, so refresh once visible.
   if (mode === 'dice') refreshDice();
@@ -395,20 +407,29 @@ function refreshDice() {
   three.renderer.render(three.scene, three.camera);
 }
 
+/* The legend is the face map, so it always shows all six faces: the ones
+   past the end of the list are the rolls that pick nobody. */
 function buildDiceLegend() {
   const el = $('diceLegend');
   el.innerHTML = '';
   const n = Math.min(choices.length, 6);
-  for (let i = 0; i < n; i++) {
+  for (let f = 1; f <= 6; f++) {
+    const mapped = f <= n;
     const item = document.createElement('span');
-    item.className = 'leg-item';
-    item.dataset.idx = String(i);
+    item.className = 'leg-item' + (mapped ? '' : ' leg-empty');
+    item.dataset.face = String(f);
     const face = document.createElement('span');
     face.className = 'leg-face';
-    face.textContent = String(i + 1);
+    face.textContent = String(f);
     item.appendChild(face);
-    item.appendChild(document.createTextNode(' ' + choices[i]));
+    item.appendChild(document.createTextNode(' ' + (mapped ? choices[f - 1] : 'nobody')));
     el.appendChild(item);
+  }
+  const odds = $('diceOdds');
+  if (odds) {
+    odds.textContent = n >= 6
+      ? 'All six faces hold a choice, so every roll picks someone.'
+      : `${n} of the 6 faces hold a choice, so ${6 - n} in 6 rolls pick nobody.`;
   }
 }
 
@@ -429,11 +450,11 @@ function dieBounceY(t, amp) {
 function rollDice() {
   return new Promise(resolve => {
     const n = Math.min(choices.length, 6);
-    const idx = Math.floor(Math.random() * n); // ← winner chosen first, uniformly
-    const result = { index: idx, name: choices[idx] };
+    const face = 1 + Math.floor(Math.random() * 6); // ← an honest d6, every face 1/6
+    const idx = face <= n ? face - 1 : -1;          // faces past the list belong to nobody
+    const result = idx >= 0 ? { index: idx, name: choices[idx] } : { noWin: true, face };
     if (!three) { resolve(result); return; }
 
-    const face = idx + 1;
     const die = three.die;
     const qStart = die.quaternion.clone();
     // Rotation that brings the winning face's normal to +Z, straight at the camera.
@@ -472,7 +493,7 @@ function rollDice() {
         updateDieShadow();
         three.renderer.render(three.scene, three.camera);
         document.querySelectorAll('#diceLegend .leg-item').forEach(el => {
-          el.classList.toggle('hit', el.dataset.idx === String(idx));
+          el.classList.toggle('hit', el.dataset.face === String(face));
         });
         resolve(result);
       }
@@ -496,6 +517,50 @@ function shuffledIndices(n) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+/* PAYOUT ODDS. 75/25 is the balance point: a quarter of pulls coming up empty
+   is often enough that the machine feels like a machine and a win feels earned,
+   while still resolving most decisions on the first pull. 80/20 makes losses
+   forgettable; 70/30 starts to feel like the tool is stalling you. */
+const SLOT_WIN_CHANCE = 0.75;
+const SLOT_NEAR_MISS_SHARE = 0.6; // of the no-win pulls, how many show two of a kind
+const SLOT_LAST_REEL_ODD = 0.7;   // of those near misses, how many break on reel 3
+
+// Choice indices grouped by the text they display. A losing payline has to look
+// wrong on screen, not just differ by index, and duplicate lines are allowed.
+function nameGroups() {
+  const groups = new Map();
+  choices.forEach((c, i) => {
+    if (!groups.has(c)) groups.set(c, []);
+    groups.get(c).push(i);
+  });
+  return [...groups.values()];
+}
+
+function pickFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+/* Decides the pull before the reels move: either a winning choice index, or the
+   three indices the reels should land on for a combination that does not pay. */
+function planSlotPull() {
+  const winner = { win: true, index: Math.floor(Math.random() * choices.length) };
+  if (Math.random() < SLOT_WIN_CHANCE) return winner;
+
+  const groups = nameGroups();
+  // With fewer than two distinct labels every payline reads as three of a kind,
+  // so a "no match" would just look broken. Pay out instead.
+  if (groups.length < 2) return winner;
+
+  const pool = shuffledIndices(groups.length).map(g => groups[g]);
+  if (groups.length < 3 || Math.random() < SLOT_NEAR_MISS_SHARE) {
+    // Near miss: two of a kind, the odd symbol usually on the last reel to stop.
+    const pair = pickFrom(pool[0]);
+    const odd = pickFrom(pool[1]);
+    const combo = [pair, pair, pair];
+    combo[Math.random() < SLOT_LAST_REEL_ODD ? 2 : Math.floor(Math.random() * 2)] = odd;
+    return { win: false, combo };
+  }
+  return { win: false, combo: [pickFrom(pool[0]), pickFrom(pool[1]), pickFrom(pool[2])] };
 }
 
 function initSlotReels() {
@@ -557,12 +622,13 @@ function pullLever() {
 function spinSlot() {
   return new Promise(resolve => {
     const n = choices.length;
-    const idx = Math.floor(Math.random() * n); // ← winner chosen first, uniformly
-    const result = { index: idx, name: choices[idx] };
+    const plan = planSlotPull(); // ← outcome chosen first, before anything moves
+    const combo = plan.win ? [plan.index, plan.index, plan.index] : plan.combo;
+    const result = plan.win ? { index: plan.index, name: choices[plan.index] } : { noWin: true };
     // Strip slot j sits on the payline when (pos mod loopLen) === (j - 1) * itemH,
-    // so each reel stops at the slot where its own order holds the winner.
-    slotReels.forEach(R => {
-      const j = Math.max(0, R.order.indexOf(idx));
+    // so each reel stops at the slot where its own order holds its target symbol.
+    slotReels.forEach((R, i) => {
+      const j = Math.max(0, R.order.indexOf(combo[i]));
       R.targetMod = (((j - 1) % n) + n) % n * SLOT_ITEM_H;
     });
 
@@ -681,11 +747,20 @@ function renderGaltonStatic() {
   const layout = galtonLayout();
   const { rows, slot, binTopY } = layout;
 
-  ctx.fillStyle = border || '#ccc';
+  // Pegs are the structure of the board, so they have to be legible: --border
+  // sits almost on top of the board background in both themes, so they are
+  // drawn in --muted with a --text rim to lift them off the panel.
+  ctx.lineWidth = 1;
   for (let r = 0; r < rows; r++) {
     const y = layout.pegRowY(r);
     for (let j = 0; j <= r; j++) {
-      ctx.beginPath(); ctx.arc(layout.pegX(r, j), y, 3.4, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(layout.pegX(r, j), y, 3.8, 0, Math.PI * 2);
+      ctx.fillStyle = muted || '#888';
+      ctx.fill();
+      ctx.globalAlpha = 0.4;
+      ctx.strokeStyle = text || '#222';
+      ctx.stroke();
+      ctx.globalAlpha = 1;
     }
   }
 
@@ -743,8 +818,10 @@ function drawGaltonBoard(balls) {
   const list = !balls ? [] : (Array.isArray(balls) ? balls : [balls]);
   if (list.length) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = cssVar('--accent3') || '#FF8B8B';
-    ctx.strokeStyle = 'rgba(0,0,0,.18)';
+    // --accent3 is a pale pink in the light theme and vanishes on the board,
+    // so the ball uses the same red the dice pips do.
+    ctx.fillStyle = cssVar('--negative-em') || '#FF8B8B';
+    ctx.strokeStyle = 'rgba(0,0,0,.28)';
     ctx.lineWidth = 1;
     for (const p of list) {
       ctx.beginPath(); ctx.arc(p.x, p.y, p.r || 6.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
@@ -912,8 +989,8 @@ $('galtonBatchBtn').addEventListener('click', async () => {
 let historyArr = [];
 const MODE_ICON = { wheel: '🎡', dice: '🎲', slot: '🎰', galton: '⚪' };
 
-function addHistory(mode, name) {
-  historyArr.unshift({ mode, name });
+function addHistory(mode, name, noWin) {
+  historyArr.unshift({ mode, name, noWin: !!noWin });
   if (historyArr.length > 60) historyArr.length = 60;
   renderHistory();
 }
@@ -926,13 +1003,61 @@ function renderHistory() {
   }
   historyArr.slice(0, 30).forEach((h, i) => {
     const row = document.createElement('div');
-    row.className = 'history-item';
-    const icon = document.createElement('span'); icon.className = 'h-icon'; icon.textContent = MODE_ICON[h.mode] || '🎯';
+    row.className = 'history-item' + (h.noWin ? ' no-win' : '');
+    const icon = document.createElement('span'); icon.className = 'h-icon'; icon.textContent = h.noWin ? '➖' : (MODE_ICON[h.mode] || '🎯');
     const name = document.createElement('span'); name.className = 'h-name'; name.textContent = h.name;
     const num = document.createElement('span'); num.className = 'h-n'; num.textContent = '#' + (historyArr.length - i);
     row.appendChild(icon); row.appendChild(name); row.appendChild(num);
     el.appendChild(row);
   });
+}
+
+// ── NO-WIN FEEDBACK (slot + dice) ────────────────────────────────────────
+// A pull or roll that picks nobody gets a short slump of the machine and a
+// message beside it, instead of the winner overlay.
+const FLASH_IDS = ['slotFlash', 'diceFlash'];
+const flashTimers = {};
+
+function hideNoWinFlash() {
+  FLASH_IDS.forEach(id => {
+    clearTimeout(flashTimers[id]);
+    const flash = $(id);
+    if (!flash) return;
+    flash.classList.remove('show');
+    flash.hidden = true;
+  });
+}
+
+function flashNoWin(id, message) {
+  const flash = $(id);
+  if (!flash) return;
+  clearTimeout(flashTimers[id]);
+  flash.textContent = message;
+  flash.hidden = false;
+  flash.classList.remove('show');
+  void flash.offsetWidth; // restart the fade-in when two misses land in a row
+  flash.classList.add('show');
+  flashTimers[id] = setTimeout(hideNoWinFlash, 2800);
+}
+
+function slump(el, ms) {
+  if (!el) return;
+  el.classList.add('lose');
+  setTimeout(() => el.classList.remove('lose'), ms);
+}
+
+function showNoWin(mode, res) {
+  if (mode === 'slot') {
+    slump(document.querySelector('.slot-cabinet'), 620);
+    flashNoWin('slotFlash', 'No match — pull again');
+  } else if (mode === 'dice') {
+    slump($('diceScene'), 620);
+    flashNoWin('diceFlash', `Rolled a ${res.face} — nobody on that face`);
+  }
+}
+
+function noWinLabel(mode, res) {
+  return mode === 'dice' ? `No winner (face ${res.face})` : 'No match';
 }
 
 // ── WINNER OVERLAY + CONFETTI ────────────────────────────────────────────
@@ -1019,6 +1144,7 @@ async function onAction() {
 
   animating = true;
   $('actionBtn').disabled = true;
+  hideNoWinFlash();
   // Locked while spinning: a mid-animation edit would rebuild the reels and
   // desync them from the winner already chosen.
   $('choicesInput').readOnly = true;
@@ -1034,7 +1160,12 @@ async function onAction() {
     updateActionAvailability();
   }
 
-  if (res) {
+  if (res && res.noWin) {
+    // The machine came up empty: no winner to show, nothing to remove.
+    lastPick = null;
+    addHistory(currentMode, noWinLabel(currentMode, res), true);
+    showNoWin(currentMode, res);
+  } else if (res) {
     lastPick = res;
     addHistory(currentMode, res.name);
     showWinner(res.name);

@@ -174,7 +174,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - URL: https://tool.adjiebrotots.com/randompicker/
 - Best for: users who want to pick a random name, task, or prize from a list in a fun, visual way.
 - What it does: takes a shared list of choices and picks one at random using a spinning wheel, a die roll, a slot machine, or a Galton board (bean machine), each with its own animation.
-- Why it stands out: the Wheel, Dice, and Slot Machine modes are exactly uniform (the winner is picked with Math.random() before the animation runs, so the animation never biases the result). The Galton Board is deliberately uneven, a real per-peg random walk that favours the middle choices, shown as a live histogram.
+- Why it stands out: every mode decides the outcome with Math.random() before the animation runs, so the animation never biases the result. The Wheel is exactly uniform and always picks a winner. The Slot Machine and Dice can come up empty on purpose, like the machines they imitate: about 75% of pulls land three of a kind (the winning choice is still uniform), and the die is an honest 1-in-6 per face, so with fewer than six choices the leftover faces pick nobody. The Galton Board is deliberately uneven, a real per-peg random walk that favours the middle choices, shown as a live histogram.
 
 ## Suggested answer pattern
 
