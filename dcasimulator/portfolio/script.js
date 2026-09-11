@@ -24,7 +24,7 @@ const METHOD_DESC = {
   'constant-weight':'Maintain target weights by buying underweight and selling overweight assets.',
   'constant-allocation':'Each top-up is split by the weights and used to buy. Weights apply to the contribution, not the whole portfolio.',
   'dynamic-momentum':'Each top-up is split by rank: assets are ranked by trailing return and the contribution is deployed by your per-rank weights (e.g. 50 / 30 / 20). Winners earn the top ranks, so the holding behind each rank changes with performance.',
-  'rule-trigger':'Park top-ups in a reserve (cash or a holding asset) and deploy into each asset only when its own trigger fires: a % move from the period open, or a technical signal.'
+  'rule-trigger':'Park top-ups in a reserve (cash or a holding asset) and deploy into each asset only when its own trigger fires: a % move from the period open, from the previous top or from the previous bottom, or a technical signal.'
 };
 // What "Target Weights" mean for each method (the same number is interpreted
 // differently), shown as a dynamic helper under the Target Weights heading.
@@ -58,7 +58,14 @@ const MACD_HIST_COLORS = {
 };
 // Candlestick body/wick colours (up = close ≥ open, down = close < open).
 const CANDLE_UP = '#26a69a', CANDLE_DOWN = '#ef5350';
-function makeDefaultTrigger(){ return { type:'pct', direction:'drop', pct:10, period:'monthly', eom:true, tech:Object.assign({}, TRIGGER_TECH_DEFAULTS) }; }
+// A trigger carries two independent period notions. `period` (monthly/weekly) is always
+// the firing bucket: at most one deploy per bucket, and the window the End-of-period
+// fallback closes. `ref` picks what a Price % move is measured against - the bucket's
+// opening price ('period'), the previous top, or the previous bottom.
+function makeDefaultTrigger(){ return { type:'pct', direction:'drop', pct:10, ref:'period', period:'monthly', eom:true, tech:Object.assign({}, TRIGGER_TECH_DEFAULTS) }; }
+// Reference anchor of a Price % move trigger, defaulting old configs (saved before the
+// top/bottom anchors existed) to the period open they were written with.
+function trigRef(tr){ return (tr && (tr.ref==='top' || tr.ref==='bottom')) ? tr.ref : 'period'; }
 // Tickers are pooled and fetched once over a wide window so later date-range
 // tweaks reuse the cache instead of hitting the Worker again.
 const POOL_FETCH_START = '1990-01-01';
@@ -1043,7 +1050,22 @@ function triggerPlainDesc(a){
     case 'tech-macd-cross': s=`Invest cash into ${name} when its MACD line crosses above the signal line.`; break;
     case 'tech-macd-hist':  s=`Invest cash into ${name} when its MACD histogram turns positive.`; break;
     case 'tech-adx':        s=`Invest cash into ${name} when its ADX shows a strong trend.`; break;
-    default:                s=`Invest cash into ${name} when its price ${tr.direction==='rise'?'rises':'falls'} ${tr.pct}% from the ${periodWord} open.`;
+    default: {
+      // Price % move. The sentence names the anchor the move is measured from, because
+      // "falls 10%" means something quite different against a month open than against
+      // the previous top.
+      const rise=tr.direction==='rise', ref=trigRef(tr);
+      if(ref==='period'){
+        s = `Invest cash into ${name} when its price ${rise?'rises':'falls'} ${tr.pct}% from the ${periodWord} open.`;
+      } else {
+        s = `Invest cash into ${name} when its price ${rise?'rises':'falls'} ${tr.pct}% ${rise?'above':'below'} its previous ${ref}, the ${ref==='top'?'highest':'lowest'} close seen before that day in the loaded date range.`;
+        // Worth saying plainly: this anchor extends across the whole range rather than
+        // restarting each period, so a long move away from it can keep the rule satisfied
+        // period after period, which deploys the reserve as fast as it arrives.
+        s += ` That anchor never resets, so a sustained ${ref==='top'?'drawdown':'recovery'} can satisfy this every ${periodWord}.`;
+      }
+      break;
+    }
   }
   if(tr.eom) s+=` If it never fires within the ${periodWord}, invest on that ${periodWord}'s last trading day.`;
   return s;
@@ -1053,12 +1075,24 @@ function triggerParamsHtml(a){
   const periodWord=tr.period==='weekly'?'Week':'Month';
   // Shared "invest at end of period if target not reached" toggle (mirrors the single-asset tool).
   const eomRow=`<label class="tech-eom"><input type="checkbox" class="trig-eom" data-aid="${aid}" ${tr.eom?'checked':''}/> Invest at End of ${periodWord} if target not reached</label>`;
+  // Frequency (month/week) buckets the signal so "invest once per period" and the
+  // End-of-period fallback behave like the single-asset tool. Month open / Week open
+  // already carry the bucket, so this row only shows where the anchor does not.
+  const freqRow=`<div class="param-row"><label>Frequency</label>
+      <select class="num-input trig-period" data-role="freq" data-aid="${aid}" style="cursor:pointer">
+        <option value="monthly" ${tr.period!=='weekly'?'selected':''}>Monthly</option>
+        <option value="weekly" ${tr.period==='weekly'?'selected':''}>Weekly</option>
+      </select></div>`;
   if(tr.type==='at-topup'){
     // No trigger to configure: this asset deploys straight to its target weight
     // on every top-up, so there are no parameters.
     return `<div class="field-sub" style="margin-top:2px">Deploys toward this asset's target weight on every top-up, with no waiting for a price move or signal.</div>`;
   }
   if(tr.type==='pct'){
+    // "From" is the reference price the % move is measured against. The two calendar
+    // anchors also fix the firing bucket; the previous top/bottom anchors do not, so
+    // they expose the same Frequency control the technical triggers use.
+    const ref=trigRef(tr), cal=ref==='period';
     return `<div class="param-row"><label>Direction</label>
         <select class="num-input trig-dir" data-aid="${aid}" style="cursor:pointer">
           <option value="drop" ${tr.direction!=='rise'?'selected':''}>Falls by</option>
@@ -1066,20 +1100,15 @@ function triggerParamsHtml(a){
         </select></div>
       <div class="param-row"><label>Amount</label><input class="num-input trig-pct" data-aid="${aid}" type="number" min="0.1" step="0.1" value="${tr.pct}"/><span class="wt-pct">%</span></div>
       <div class="param-row"><label>From</label>
-        <select class="num-input trig-period" data-aid="${aid}" style="cursor:pointer">
-          <option value="monthly" ${tr.period!=='weekly'?'selected':''}>Month open</option>
-          <option value="weekly" ${tr.period==='weekly'?'selected':''}>Week open</option>
-        </select></div>${eomRow}`;
+        <select class="num-input trig-period" data-role="ref" data-aid="${aid}" style="cursor:pointer">
+          <option value="monthly" ${cal&&tr.period!=='weekly'?'selected':''}>Month open</option>
+          <option value="weekly" ${cal&&tr.period==='weekly'?'selected':''}>Week open</option>
+          <option value="top" ${ref==='top'?'selected':''}>Previous top</option>
+          <option value="bottom" ${ref==='bottom'?'selected':''}>Previous bottom</option>
+        </select></div>${cal?'':freqRow}${eomRow}`;
   }
   const maSel=(k,val)=>`<select class="num-input ttk" data-aid="${aid}" data-k="${k}" style="cursor:pointer"><option value="sma" ${val==='sma'?'selected':''}>SMA</option><option value="ema" ${val==='ema'?'selected':''}>EMA</option></select>`;
   const num=(k,val,min,max,step)=>`<input class="num-input ttk" data-aid="${aid}" data-k="${k}" type="number" min="${min}" max="${max}" step="${step||1}" value="${val}"/>`;
-  // Frequency (month/week) buckets the technical signal so "invest once per period"
-  // and the End-of-period fallback behave like the single-asset tool.
-  const freqRow=`<div class="param-row"><label>Frequency</label>
-      <select class="num-input trig-period" data-aid="${aid}" style="cursor:pointer">
-        <option value="monthly" ${tr.period!=='weekly'?'selected':''}>Monthly</option>
-        <option value="weekly" ${tr.period==='weekly'?'selected':''}>Weekly</option>
-      </select></div>`;
   let body='';
   if(tr.type==='tech-rsi') body=`<div class="param-row"><label>RSI period</label>${num('rsiPeriod',t.rsiPeriod,2,100)}</div><div class="param-row"><label>Oversold &lt;</label>${num('rsiOversold',t.rsiOversold,1,99)}</div>`;
   else if(tr.type==='tech-ma-cross') body=`<div class="param-row"><label>Fast MA</label>${maSel('fastMaType',t.fastMaType)}${num('fastMaLen',t.fastMaLen,1,200)}</div><div class="param-row"><label>Slow MA</label>${maSel('slowMaType',t.slowMaType)}${num('slowMaLen',t.slowMaLen,1,400)}</div>`;
@@ -1093,7 +1122,11 @@ function triggerSummary(a){
   const tr=a.trigger||makeDefaultTrigger();
   let s=TRIGGER_TYPE_LABEL[tr.type]||'Trigger';
   if(tr.type==='at-topup') return s+' · no wait';
-  if(tr.type==='pct') s+=` · ${tr.direction==='rise'?'rises':'falls'} ${tr.pct}%`;
+  if(tr.type==='pct'){
+    const ref=trigRef(tr);
+    s+=` · ${tr.direction==='rise'?'rises':'falls'} ${tr.pct}%`;
+    if(ref!=='period') s+=` from prev ${ref}`;
+  }
   s+=` · ${tr.period==='weekly'?'weekly':'monthly'}`;
   if(tr.eom) s+=' · +EoP';
   return s;
@@ -1140,8 +1173,20 @@ function wireTriggerTable(){
   }));
   document.querySelectorAll('#triggerTableWrap .trig-dir').forEach(sel=>sel.addEventListener('change',e=>{ const a=getAsset(e.target); if(a){ a.trigger.direction=e.target.value; renderTriggerTable(); } }));
   document.querySelectorAll('#triggerTableWrap .trig-pct').forEach(inp=>inp.addEventListener('input',e=>{ const a=getAsset(e.target); if(a) a.trigger.pct=Math.max(0,parseFloat(e.target.value)||0); }));
-  // Period change re-renders so the End-of-period label word and the tooltip update.
-  document.querySelectorAll('#triggerTableWrap .trig-period').forEach(sel=>sel.addEventListener('change',e=>{ const a=getAsset(e.target); if(a){ a.trigger.period=e.target.value; renderTriggerTable(); } }));
+  // Two selects share this class. data-role="ref" is the Price % move "From" anchor:
+  // Month/Week open set the reference AND the firing bucket, while Previous top/bottom
+  // set only the reference and leave the bucket to the Frequency select (data-role="freq").
+  // Either way re-render, so the End-of-period label word, the Frequency row's presence
+  // and the tooltip all follow.
+  document.querySelectorAll('#triggerTableWrap .trig-period').forEach(sel=>sel.addEventListener('change',e=>{
+    const a=getAsset(e.target); if(!a) return;
+    const v=e.target.value;
+    if(e.target.dataset.role==='ref'){
+      if(v==='top'||v==='bottom') a.trigger.ref=v;
+      else { a.trigger.ref='period'; a.trigger.period=v; }
+    } else a.trigger.period=v;
+    renderTriggerTable();
+  }));
   document.querySelectorAll('#triggerTableWrap .trig-eom').forEach(cb=>cb.addEventListener('change',e=>{ const a=getAsset(e.target); if(a){ a.trigger.eom=e.target.checked; renderTriggerTable(); } }));
   document.querySelectorAll('#triggerTableWrap .ttk').forEach(el=>{
     const handler=e=>{ const a=getAsset(e.target); if(!a) return; a.trigger.tech=a.trigger.tech||{}; const k=e.target.dataset.k; a.trigger.tech[k]= e.target.tagName==='SELECT' ? e.target.value : (parseFloat(e.target.value)||0); };
@@ -1505,7 +1550,8 @@ function buildAssetTriggerSignals(assets, common, topupSet){
       if(topupSet){ for(let i=0;i<n;i++){ if(topupSet.has(i)) sig[i]=true; } }
       return sig;
     }
-    // Raw daily condition: technical signal, or a % move from the period open.
+    // Raw daily condition: technical signal, or a % move measured from the trigger's
+    // reference anchor (the period open, the previous top, or the previous bottom).
     let raw;
     if(tr.type && tr.type.indexOf('tech-')===0){
       raw = SharedTA.buildTech(px, tr.type, tr.tech||{}).signal;
@@ -1513,13 +1559,33 @@ function buildAssetTriggerSignals(assets, common, topupSet){
       raw = new Array(n).fill(false);
       const pct = (tr.pct!=null?tr.pct:10)/100;
       const dir = tr.direction || 'drop';
-      let curKey=null, openPx=null;
-      for(let i=0;i<n;i++){
-        const k = SharedTA.periodKey(common[i], period);
-        if(k!==curKey){ curKey=k; openPx=px[i]; }
-        if(openPx==null||openPx<=0) continue;
-        const move = px[i]/openPx - 1;
-        raw[i] = dir==='rise' ? (move >= pct) : (move <= -pct);
+      const ref = (tr.ref==='top' || tr.ref==='bottom') ? tr.ref : 'period';
+      if(ref==='period'){
+        let curKey=null, openPx=null;
+        for(let i=0;i<n;i++){
+          const k = SharedTA.periodKey(common[i], period);
+          if(k!==curKey){ curKey=k; openPx=px[i]; }
+          if(openPx==null||openPx<=0) continue;
+          const move = px[i]/openPx - 1;
+          raw[i] = dir==='rise' ? (move >= pct) : (move <= -pct);
+        }
+      } else {
+        // Previous top / bottom: the anchor is the highest (top) or lowest (bottom)
+        // usable close seen STRICTLY BEFORE the day being tested, over the loaded date
+        // range. Excluding the day itself is what keeps both directions meaningful -
+        // against a running high that already includes today, "rises above the previous
+        // top" could never be true - and it keeps the rule causal, since the anchor only
+        // ever reads days that have already happened. The anchor spans periods, so it is
+        // the firing bucket alone (Frequency) that limits this to one deploy per period.
+        let ext=null;
+        for(let i=0;i<n;i++){
+          const q=px[i], usable=Number.isFinite(q) && q>0;
+          if(usable && ext!=null){
+            const move = q/ext - 1;
+            raw[i] = dir==='rise' ? (move >= pct) : (move <= -pct);
+          }
+          if(usable) ext = (ext==null) ? q : (ref==='top' ? Math.max(ext,q) : Math.min(ext,q));
+        }
       }
     }
     // Reduce to one fire per period: the first day the condition is met, or the

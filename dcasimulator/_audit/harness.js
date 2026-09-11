@@ -277,22 +277,37 @@ function momentumWeights(assets, i, lbDays, rankWeights){
   order.forEach((assetIdx, rank)=>{ wts[assetIdx] = rankWeights[rank]||0; });
   return wts;
 }
-function buildAssetTriggerSignals(assets, common){
+function buildAssetTriggerSignals(assets, common, topupSet){
   return assets.map(a=>{
     const tr = a.trigger || {}; const px = a.px, n = px.length;
     const period = tr.period || 'monthly'; const eom = !!tr.eom;
+    if(tr.type==='at-topup'){
+      const sig=new Array(n).fill(false);
+      if(topupSet){ for(let i=0;i<n;i++){ if(topupSet.has(i)) sig[i]=true; } }
+      return sig;
+    }
     let raw;
     if(tr.type && tr.type.indexOf('tech-')===0){
       raw = SharedTA.buildTech(px, tr.type, tr.tech||{}).signal;
     } else {
       raw = new Array(n).fill(false);
       const pct = (tr.pct!=null?tr.pct:10)/100; const dir = tr.direction || 'drop';
-      let curKey=null, openPx=null;
-      for(let i=0;i<n;i++){ const k = SharedTA.periodKey(common[i], period);
-        if(k!==curKey){ curKey=k; openPx=px[i]; }
-        if(openPx==null||openPx<=0) continue;
-        const move = px[i]/openPx - 1;
-        raw[i] = dir==='rise' ? (move >= pct) : (move <= -pct); }
+      const ref = (tr.ref==='top' || tr.ref==='bottom') ? tr.ref : 'period';
+      if(ref==='period'){
+        let curKey=null, openPx=null;
+        for(let i=0;i<n;i++){ const k = SharedTA.periodKey(common[i], period);
+          if(k!==curKey){ curKey=k; openPx=px[i]; }
+          if(openPx==null||openPx<=0) continue;
+          const move = px[i]/openPx - 1;
+          raw[i] = dir==='rise' ? (move >= pct) : (move <= -pct); }
+      } else {
+        let ext=null;
+        for(let i=0;i<n;i++){
+          const q=px[i], usable=Number.isFinite(q) && q>0;
+          if(usable && ext!=null){ const move = q/ext - 1; raw[i] = dir==='rise' ? (move >= pct) : (move <= -pct); }
+          if(usable) ext = (ext==null) ? q : (ref==='top' ? Math.max(ext,q) : Math.min(ext,q));
+        }
+      }
     }
     const sig = new Array(n).fill(false); const groups = new Map();
     for(let i=0;i<n;i++){ const k=SharedTA.periodKey(common[i], period); if(!groups.has(k)) groups.set(k,[]); groups.get(k).push(i); }
@@ -334,7 +349,7 @@ function simulatePortfolio(p, assets, common, rfPx){
   const dynWts=i=>momentumWeights(assets,i,lbDays,rankWeights);
   const isRule=method==='rule-trigger';
   const reserveIdx=(isRule && p.rebal.reserveMode==='asset') ? assets.findIndex(a=>a.id===p.rebal.reserveAssetId) : -1;
-  const triggerSig=isRule ? buildAssetTriggerSignals(assets, common) : null;
+  const triggerSig=isRule ? buildAssetTriggerSignals(assets, common, topupSet) : null;
   const reserveOnlyWts=(reserveIdx>=0) ? assets.map((a,k)=>k===reserveIdx?100:0) : null;
   const state={cash:0, units:{}, _fees:0, _rfEarned:0};
   assets.forEach(a=>state.units[a.id]=0);
