@@ -147,7 +147,7 @@
         <!-- Mode A: Total + Split % -->
         <div id="modeTotal">
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="totalSalaryLabel">Total Household Gross Salary</span> <span class="tip-icon" data-i18n-tip="totalSalaryTip" data-tip="Combined annual gross salary of husband + wife.">?</span></div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="totalSalaryLabel">Total Household Gross Salary</span> <span class="tip-icon" data-i18n-tip="totalSalaryTip" data-tip="The husband&#39;s and wife&#39;s gross annual salaries added together, before any deduction.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="totalSalaryInput" type="text" inputmode="numeric" value="500,000,000" />
@@ -155,13 +155,13 @@
           </div>
           <div class="slider-block">
             <div class="slider-head">
-              <div class="slider-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeShareLabel">Wife's share of income</span> <span class="tip-icon" data-i18n-tip="wifeShareTip" data-tip="Percentage of total household salary earned by wife. Husband earns the remainder.">?</span></div>
+              <div class="slider-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeShareLabel">Wife's share of income</span> <span class="tip-icon" data-i18n-tip="wifeShareTip" data-tip="The share of the household salary the wife earns. The husband earns whatever is left, so 30% here means he earns 70%.">?</span></div>
               <div class="slider-value" id="splitValue">50%</div>
             </div>
             <input id="splitPct" type="range" min="0" max="100" step="1" value="50" />
           </div>
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Combined Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Biaya jabatan, iuran pensiun, or other allowable deductions. Applied to gross income before PTKP. Split proportionally by each spouse's income share.">?</span></div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Combined Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Allowable deductions such as biaya jabatan or iuran pensiun. They come off gross income before PTKP is applied, and they are split between the spouses in proportion to what each earns.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="deductionInput" type="text" inputmode="numeric" value="0" />
@@ -189,14 +189,14 @@
             <div class="field-sub"><span data-i18n="combinedPrefix">Combined:</span> <strong id="combinedLabel">Rp 500,000,000</strong> &nbsp;|&nbsp; <span data-i18n="wifeSharePrefix">Wife share:</span> <strong id="splitDerivedLabel">50.0%</strong></div>
           </div>
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="husbandDeductionLabel">Husband's Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Applied only to husband's gross income before PTKP.">?</span></div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="husbandDeductionLabel">Husband's Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Deductions that come off the husband's gross income only, applied before PTKP.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="husbandDeductionInput" type="text" inputmode="numeric" value="0" />
             </div>
           </div>
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeDeductionLabel">Wife's Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Applied only to wife's gross income before PTKP.">?</span></div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeDeductionLabel">Wife's Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Deductions that come off the wife's gross income only, applied before PTKP.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="wifeDeductionInput" type="text" inputmode="numeric" value="0" />
@@ -228,7 +228,7 @@
         </div>
 
         <div class="bracket-section">
-          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Tax Brackets (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit thresholds and rates. &quot;From&quot; is auto-managed and only the last bracket is open-ended. A bound that swallows later bands removes them, so the ladder shown is always the ladder applied.">?</span></div>
+          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Tax Brackets (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit each threshold and rate. The &quot;From&quot; column fills itself in, and only the last bracket is left open-ended. Raising a bound past the brackets beneath it deletes those brackets, so the ladder on screen is always exactly the ladder being calculated.">?</span></div>
           <div class="bracket-row-header">
             <div class="bracket-col-label" id="bracketColFrom">From (Rp)</div>
             <div class="bracket-col-label" id="bracketColTo">To (Rp) <span style="font-size:0.68rem">(last=∞)</span></div>

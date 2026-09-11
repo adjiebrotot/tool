@@ -254,10 +254,10 @@ const fmtRatio  = v => (v==null||!isFinite(v)) ? ' - ' : v.toFixed(2);
 const fmtMetPct = v => (v==null||!isFinite(v)) ? ' - ' : (v*100).toFixed(2)+'%';
 // Hover explanations for each advanced metric (avoid double quotes - used in data-tip).
 const METRIC_TIPS = {
-  sharpe:  'Sharpe ratio: annualised excess return ÷ return volatility. Excess return = daily time-weighted return minus the daily risk-free rate (each portfolio uses its own assigned rate/ticker); annualised by ×√252.',
-  sortino: 'Sortino ratio: like Sharpe but only penalises downside, i.e. the annualised excess return ÷ downside deviation (volatility of returns below the risk-free rate).',
-  twr:     'CAGR (TWR): time-weighted compound annual growth rate, the geometric mean of daily returns from the first top-up onward (each day net of that day’s top-up), annualised.',
-  mwr:     'CAGR (MWR): money-weighted compound annual growth rate, the annualised internal rate of return (IRR) of your actual top-ups and the final portfolio value.',
+  sharpe:  '<strong>Sharpe:</strong> return earned above the risk-free rate, divided by how much the returns bounce around. Excess return is the daily time-weighted return minus the daily risk-free rate, each portfolio using its own assigned rate or ticker, annualised by multiplying by √252. Higher is better.',
+  sortino: '<strong>Sortino:</strong> the same idea as Sharpe, but it only counts downside movement. It divides the annualised excess return by the volatility of returns that fall below the risk-free rate, so upside swings are not treated as risk.',
+  twr:     '<strong>CAGR (TWR):</strong> the time-weighted compound annual growth rate, taken as the geometric mean of daily returns from the first top-up onward, with each day measured net of that day’s top-up. It measures the portfolio itself, ignoring when you paid money in.',
+  mwr:     '<strong>CAGR (MWR):</strong> the money-weighted compound annual growth rate, which is the annualised internal rate of return (IRR) of your real top-ups and the final portfolio value. It measures what your actual money earned.',
 };
 const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:var(--muted);cursor:help;border-bottom:1px dotted var(--border)">${label}</span> <b>${val}</b></div>`;
 

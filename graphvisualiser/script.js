@@ -164,7 +164,7 @@ function buildAxesUI() {
         <select id="axisX">${opts}</select>
       </div>
       <div class="field-group">
-        <label>Y Axis <span style="color:var(--muted);font-weight:400;font-size:.78rem">(Ctrl/Cmd = multi-select)</span> <span class="tip-icon" data-tip="Each selected column becomes a separate line.">?</span></label>
+        <label>Y Axis <span style="color:var(--muted);font-weight:400;font-size:.78rem">(Ctrl/Cmd = multi-select)</span> <span class="tip-icon" data-tip="Each column you select is drawn as its own line, all sharing the X axis above. Hold Ctrl or Cmd to select more than one.">?</span></label>
         <select id="axisY" multiple size="7" style="height:auto;font-size:.83rem">${opts}</select>
       </div>`;
     setTimeout(() => {

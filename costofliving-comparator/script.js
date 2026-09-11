@@ -380,17 +380,17 @@ function buildCityPicker(containerId, currentKey, onSelect){
 // EXPENSE CATEGORIES (Detailed mode)
 // ═══════════════════════════════════════════════════════════
 const CATS=[
-  {id:'rent',label:'🏠 Rent',index:'rent',tip:'Monthly rent (median estimate using rent index)'},
-  {id:'groceries',label:'🛒 Groceries',index:'groceries',tip:'Supermarket & grocery shopping'},
-  {id:'eating_out',label:'🍽️ Eating Out',index:'eating_out',tip:'Restaurants, cafes, takeaway'},
-  {id:'utilities',label:'⚡ Utilities',index:'utilities',tip:'Composite utility cost: 50% electricity + 20% water + 30% gas'},
-  {id:'electricity',label:'💡 Electricity',index:'electricity',tip:'Electricity bills (residential)'},
-  {id:'water',label:'💧 Water',index:'water',tip:'Water & sewage bills'},
-  {id:'gas_util',label:'🔥 Gas',index:'gas_util',tip:'Gas utility bills'},
-  {id:'fuel',label:'⛽ Fuel',index:'fuel',tip:'Vehicle fuel costs (petrol/diesel)'},
-  {id:'remittance',label:'💸 Remittance',index:'currency_only',tip:'International money transfers — the amount is fixed globally; only the exchange rate applies when comparing cities.'},
-  {id:'intl_travel',label:'✈️ International Travel',index:'currency_only',tip:'International travel costs (e.g. flights booked abroad) — price is fixed globally; only the exchange rate applies when comparing cities.'},
-  {id:'other',label:'🌐 Other',index:'coli_no_housing',tip:'General living expenses'},
+  {id:'rent',label:'🏠 Rent',index:'rent',tip:'Monthly rent, estimated from the median rent index of each city.'},
+  {id:'groceries',label:'🛒 Groceries',index:'groceries',tip:'Supermarket and grocery shopping, eating at home rather than out.'},
+  {id:'eating_out',label:'🍽️ Eating Out',index:'eating_out',tip:'Meals bought out: restaurants, cafes and takeaway.'},
+  {id:'utilities',label:'⚡ Utilities',index:'utilities',tip:'A blended utility bill, weighted 50% electricity, 20% water and 30% gas.'},
+  {id:'electricity',label:'💡 Electricity',index:'electricity',tip:'Residential electricity bills on their own.'},
+  {id:'water',label:'💧 Water',index:'water',tip:'Water and sewage bills on their own.'},
+  {id:'gas_util',label:'🔥 Gas',index:'gas_util',tip:'Gas utility bills on their own.'},
+  {id:'fuel',label:'⛽ Fuel',index:'fuel',tip:'Vehicle fuel, whether petrol or diesel.'},
+  {id:'remittance',label:'💸 Remittance',index:'currency_only',tip:'Money you send abroad. The amount is the same wherever you live, so only the exchange rate changes it between cities.'},
+  {id:'intl_travel',label:'✈️ International Travel',index:'currency_only',tip:'International travel, such as flights booked abroad. The price is the same wherever you live, so only the exchange rate changes it between cities.'},
+  {id:'other',label:'🌐 Other',index:'coli_no_housing',tip:'Everything else, scaled by the cost-of-living index excluding housing.'},
 ];
 
 // ═══════════════════════════════════════════════════════════

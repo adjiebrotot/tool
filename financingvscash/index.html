@@ -122,29 +122,29 @@
       </select>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Purchase Cost <i class="tip-icon" data-tip="The total price of the asset or item being purchased (e.g. a car, equipment, or property).">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Purchase Cost <i class="tip-icon" data-tip="The full price of whatever you are buying, such as a car, equipment or property.">?</i></span></div>
       <div class="currency-wrap">
         <span class="prefix" id="purchaseCostPrefix">$</span>
         <input class="currency-input fmt-num" id="purchaseCost" type="text" inputmode="decimal" value="50,000"/>
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Available Cash <i class="tip-icon" data-tip="How much cash you have on hand. Must be at least equal to the purchase cost — financing something you cannot fully afford upfront is not modelled.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Available Cash <i class="tip-icon" data-tip="The cash you have on hand today. It must be at least the purchase cost, because this tool only compares financing against genuinely being able to pay cash.">?</i></span></div>
       <div class="currency-wrap">
         <span class="prefix" id="availableCashPrefix">$</span>
         <input class="currency-input fmt-num" id="availableCash" type="text" inputmode="decimal" value="50,000"/>
       </div>
     </div>
     <div class="slider-block">
-      <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Risk-Free Rate (annual %) <i class="tip-icon" data-tip="The annual return earned on uninvested cash (e.g. high-yield savings account, T-bills). Applies to all scenarios as the baseline investment return.">?</i></span></div><div class="slider-value" id="baseRfVal">4.50%</div></div>
+      <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Risk-Free Rate (annual %) <i class="tip-icon" data-tip="The yearly return your uninvested cash earns, for example in a high-yield savings account or T-bills. Every scenario compounds spare cash at this rate, so it is the common baseline.">?</i></span></div><div class="slider-value" id="baseRfVal">4.50%</div></div>
       <input id="baseRf" type="range" min="0" max="20" step="0.1" value="4.5"/>
     </div>
     <div class="toggle-row">
-      <div class="toggle-label"><span class="tip-wrap">Enable Inflation Adjustment <i class="tip-icon" data-tip="When enabled, all ending wealth values are also shown in today's dollars, adjusted for the annual inflation rate you set.">?</i></span></div>
+      <div class="toggle-label"><span class="tip-wrap">Enable Inflation Adjustment <i class="tip-icon" data-tip="<strong>On:</strong> ending wealth is also shown in today's dollars, discounted by the inflation rate below.<br><strong>Off:</strong> only the nominal future dollar amounts are shown.">?</i></span></div>
       <label class="toggle"><input type="checkbox" id="inflationToggle"/><span class="slider"></span></label>
     </div>
     <div class="field-row" id="inflationRow" style="display:none;">
-      <div class="field-label"><span class="tip-wrap">Inflation Rate (annual %) <i class="tip-icon" data-tip="The assumed annual rate of inflation. Used to convert nominal future values into real (purchasing-power) terms.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Inflation Rate (annual %) <i class="tip-icon" data-tip="The yearly inflation rate you want to assume. It converts future dollar amounts into today's purchasing power.">?</i></span></div>
       <input class="num-input" id="inflationRate" type="number" min="0" max="30" step="0.1" value="2.5"/>
     </div>
   </div>
@@ -157,31 +157,31 @@
       <h3 id="editorTitle">Edit Scenario</h3>
       <div class="field-row"><div class="field-label">Scenario Name</div><input class="num-input" id="scName" type="text" value=""/></div>
       <div class="slider-block">
-        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Finance Rate (annual %) <i class="tip-icon" data-tip="The annual interest rate on the loan. Used with compound-period conversion to calculate exact periodic payments.">?</i></span></div><div class="slider-value" id="scRateVal">5.00%</div></div>
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Finance Rate (annual %) <i class="tip-icon" data-tip="The yearly interest rate on the loan. It is converted to the repayment period below so each payment is exact rather than an approximation.">?</i></span></div><div class="slider-value" id="scRateVal">5.00%</div></div>
         <input id="scRate" type="range" min="0" max="30" step="0.1" value="5"/>
       </div>
       <div class="slider-block">
-        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment (% of purchase cost) <i class="tip-icon" data-tip="The share of purchase cost paid upfront. 0% means full financing. 100% means the purchase is fully paid in cash, so no loan is needed.">?</i></span></div><div class="slider-value" id="scDownVal">0%</div></div>
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment (% of purchase cost) <i class="tip-icon" data-tip="The share of the purchase cost you pay upfront. 0% borrows the whole amount; 100% pays cash outright, so there is no loan at all.">?</i></span></div><div class="slider-value" id="scDownVal">0%</div></div>
         <input id="scDownPct" type="range" min="0" max="100" step="1" value="0"/>
       </div>
       <div class="field-group">
         <div class="group-title">Repayment Term</div>
         <div class="field-row">
-          <div class="field-label"><span class="tip-wrap">Repayment Frequency <i class="tip-icon" data-tip="How often you make loan payments. Affects the period rate (compound-converted from annual) and the term unit shown below.">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Repayment Frequency <i class="tip-icon" data-tip="How often a repayment falls due. It sets the period interest rate, compound-converted from the annual rate, and it changes the unit of the Term field below.<br><strong>Weekly:</strong> 52 payments a year.<br><strong>Fortnightly:</strong> 26 payments a year.<br><strong>Monthly:</strong> 12 payments a year.<br><strong>Yearly:</strong> 1 payment a year.">?</i></span></div>
           <select class="sel-input" id="scFreq"><option value="weekly">Weekly</option><option value="fortnightly">Fortnightly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select>
         </div>
         <div class="field-row">
-          <div class="field-label"><span class="tip-wrap" id="termLabel">Term (months) <i class="tip-icon" data-tip="The number of repayment periods. Shown in weeks for weekly/fortnightly, months for monthly, or years for yearly frequency.">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap" id="termLabel">Term (months) <i class="tip-icon" data-tip="How many repayments the loan runs for, counted in the unit set by the frequency above: weeks for weekly and fortnightly, months for monthly, years for yearly.">?</i></span></div>
           <input class="num-input" id="scTerm" type="number" min="1" max="3000" step="1" value="60"/>
           <div class="field-sub" id="termSub">Number of monthly payments (e.g. 60 = 5 years).</div>
         </div>
       </div>
       <div class="field-group">
         <div class="group-title">Fees</div>
-        <div class="field-row"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="An upfront fee charged to set up the loan. Can be a fixed amount or a percentage of the financed amount. Reduces your investable cash at the start.">?</i></span></div>
+        <div class="field-row"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="A one-off fee charged to set the loan up. It comes out of your cash at the start, so it reduces what you have left to invest.<br><strong>$:</strong> a fixed amount.<br><strong>%:</strong> a percentage of the financed amount.">?</i></span></div>
           <div class="inline-row"><input class="num-input fmt-num" id="scFeeAmt" type="text" inputmode="decimal" value="0"/><select class="sel-input" id="scFeeType" style="min-width:70px;"><option value="fixed">$</option><option value="pct">%</option></select></div>
         </div>
-        <div class="field-row"><div class="field-label"><span class="tip-wrap">Admin Fee (per payment) <i class="tip-icon" data-tip="A fixed fee charged on top of every repayment (e.g. a monthly account-keeping fee). Paid alongside each loan payment for the full term, so the total admin cost is this amount multiplied by the number of payments.">?</i></span></div>
+        <div class="field-row"><div class="field-label"><span class="tip-wrap">Admin Fee (per payment) <i class="tip-icon" data-tip="A fixed fee added to every repayment, such as an account-keeping fee. It is paid for the full term, so the total is this amount times the number of payments.">?</i></span></div>
           <div class="currency-wrap"><span class="prefix" id="scAdminFeePrefix">$</span><input class="currency-input fmt-num" id="scAdminFee" type="text" inputmode="decimal" value="0"/></div>
         </div>
       </div>
@@ -197,7 +197,7 @@
     <div class="field-row"><div class="field-label">Chart Metric</div>
       <select class="sel-input" id="chartMetric"><option value="wealth">Ending Wealth Over Time</option><option value="netBenefit">Net Benefit vs Cash</option><option value="investmentValue">Investment Value Over Time</option><option value="loanBalance">Loan Balance Over Time</option></select>
     </div>
-    <div class="field-row"><div class="field-label"><span class="tip-wrap">Optimization Target <i class="tip-icon" data-tip="Determines which scenario is highlighted as &quot;Best&quot;. Net Benefit favours the scenario that leaves you the wealthiest vs paying cash. Lowest Interest/Cost minimises borrowing expense.">?</i></span></div>
+    <div class="field-row"><div class="field-label"><span class="tip-wrap">Optimization Target <i class="tip-icon" data-tip="Decides which scenario is labelled Best.<br><strong>Highest Net Benefit:</strong> the scenario that leaves you wealthiest at the end compared with paying cash.<br><strong>Lowest Total Interest:</strong> the scenario that pays the least interest.<br><strong>Lowest Financing Cost:</strong> the scenario with the smallest total borrowing cost, interest plus fees.">?</i></span></div>
       <select class="sel-input" id="optTarget"><option value="netBenefit">Highest Net Benefit</option><option value="lowestInterest">Lowest Total Interest</option><option value="lowestCost">Lowest Financing Cost</option></select>
     </div>
   </div>
@@ -238,10 +238,10 @@
 
 <main>
   <section class="metrics">
-    <div class="metric card"><div class="label"><span class="tip-wrap">Best Strategy <i class="tip-icon" data-tip="The financing scenario that wins on your chosen Optimization Target (Net Benefit, Lowest Interest, or Lowest Cost). Shows &quot;Cash Purchase&quot; if no scenario beats paying cash, or &quot;Break-even&quot; if the winner is level with cash.">?</i></span></div><div class="value" id="kpiBest">—</div><div class="sub" id="kpiBestSub"></div></div>
-    <div class="metric card"><div class="label"><span class="tip-wrap">Net Benefit vs Cash <i class="tip-icon" data-tip="End-of-term wealth under the best financing scenario minus end-of-term wealth under the cash-purchase baseline. Positive = financing left you richer.">?</i></span></div><div class="value" id="kpiNetBenefit">—</div><div class="sub" id="kpiNetSub"></div></div>
-    <div class="metric card"><div class="label"><span class="tip-wrap">Total Interest (Best) <i class="tip-icon" data-tip="The total interest paid over the full loan term under the best scenario. Does not include origination fees.">?</i></span></div><div class="value" id="kpiInterest">—</div><div class="sub" id="kpiIntSub"></div></div>
-    <div class="metric card"><div class="label"><span class="tip-wrap">Cash Purchase Wealth <i class="tip-icon" data-tip="The ending wealth if you paid cash: leftover funds (available cash minus purchase cost) compounded at the risk-free rate over the longest scenario term.">?</i></span></div><div class="value" id="kpiCashWealth">—</div><div class="sub" id="kpiCashSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Best Strategy <i class="tip-icon" data-tip="The financing scenario that wins on the Optimization Target you chose. It reads Cash Purchase when no scenario beats paying cash, or Break-even when the winner exactly matches cash.">?</i></span></div><div class="value" id="kpiBest">—</div><div class="sub" id="kpiBestSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Net Benefit vs Cash <i class="tip-icon" data-tip="End-of-term wealth under the best financing scenario minus end-of-term wealth if you had paid cash. A positive number means financing left you better off.">?</i></span></div><div class="value" id="kpiNetBenefit">—</div><div class="sub" id="kpiNetSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Total Interest (Best) <i class="tip-icon" data-tip="Total interest paid across the full loan term in the best scenario. Origination and admin fees are not counted here.">?</i></span></div><div class="value" id="kpiInterest">—</div><div class="sub" id="kpiIntSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Cash Purchase Wealth <i class="tip-icon" data-tip="What you would end up with if you paid cash: your leftover funds, meaning available cash minus the purchase cost, compounded at the risk-free rate over the longest scenario term.">?</i></span></div><div class="value" id="kpiCashWealth">—</div><div class="sub" id="kpiCashSub"></div></div>
   </section>
   <section class="chart-card card">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">

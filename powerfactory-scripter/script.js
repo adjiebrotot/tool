@@ -14,53 +14,40 @@ function setTip(id, text) {
   if (el) el.setAttribute('data-tip', text);
 }
 
-const TIP_PROBLEM_TYPE = {
-  brute_force:  'Runs every combination of input values. Total runs = product of all step counts.',
-  optimisation: 'Uses a search algorithm to find the best input combination. Configure algorithm below.',
-  custom:       'Reads input values row-by-row from an Excel file. Download the template for the required format.',
-  contingency:  'Takes each matched element out-of-service one at a time (N-1) or in pairs (N-2). No Excel file needed — wildcards are resolved at runtime. Study Type is locked to Steady State.',
-};
-const TIP_STUDY_TYPE = {
-  steady_state: 'Runs a load flow (ElmLdf) each iteration. Timeseries outputs are not available.',
-  dynamic_rms:  'Runs an RMS simulation (ComSim) each iteration. Enables timeseries outputs.',
-  dynamic_emt:  'Runs an EMT simulation (ComSim) each iteration. Enables timeseries outputs.',
-  harmonic:     'Runs a harmonic/frequency sweep (ComHlf) each iteration.',
-};
-const TIP_CODING_STYLE = {
-  python_file: 'Wraps all code in main() for clean script execution.',
-  notebook:    'Organises code into labelled cells for Jupyter or VS Code notebooks.',
-};
+// Option-list tooltips: every choice is shown at once so the list can be compared
+// before picking, rather than only describing whatever is currently selected.
+const TIP_PROBLEM_TYPE = '<strong>Brute Force:</strong> runs every combination of the input values. Total runs = the product of all step counts.<br><strong>Optimisation:</strong> a search algorithm looks for the best input combination. Choose the algorithm in Optimisation Settings.<br><strong>Custom:</strong> reads the input values row by row from an Excel file. Download the template for the required format.<br><strong>Contingency:</strong> takes each matched element out of service, one at a time (N-1) or two at a time (N-2). Wildcards are resolved at runtime, so no Excel file is needed. Study Type is locked to Steady State.';
+const TIP_STUDY_TYPE = '<strong>Steady State:</strong> runs a load flow (ElmLdf) on every iteration. Timeseries outputs are not available.<br><strong>Dynamic RMS:</strong> runs an RMS simulation (ComSim) on every iteration. Timeseries outputs are available.<br><strong>Dynamic EMT:</strong> runs an EMT simulation (ComSim) on every iteration. Timeseries outputs are available.<br><strong>Harmonic:</strong> runs a harmonic frequency sweep (ComHlf) on every iteration.';
+const TIP_CODING_STYLE = '<strong>Python File:</strong> wraps everything in main(), ready to run as a plain script.<br><strong>Notebook Style:</strong> splits the code into labelled cells for Jupyter or VS Code.';
+const TIP_OUTPUT_TYPE = '<strong>Scalar:</strong> reads one value after the solve, through obj.GetAttribute().<br><strong>Timeseries:</strong> reduces a whole time signal to a single metric. Dynamic studies only.<br><strong>Custom Calculation:</strong> calls a Python function you write, using the values of other variables.';
+// Per-selection tooltips: too many choices to list at once, so these still swap
+// with the selection and name the chosen option in bold.
 const TIP_MAX_ITER = {
-  placeholder:            'Not used in placeholder mode — fill in your own search loop.',
-  scipy_nelder_mead:      'Max function evaluations. 50–200 is typical for local methods.',
-  scipy_powell:           'Max function evaluations. 50–200 is typical for local methods.',
-  scipy_lbfgsb:           'Max function evaluations. 50–200 is typical for local methods.',
-  scipy_slsqp:            'Max function evaluations. 50–200 is typical for local methods.',
-  scipy_cobyla:           'Max function evaluations. 50–200 is typical for local methods.',
-  differential_evolution: 'Max generations × population. 100–500 is typical for global search.',
-  gp_minimize:            'Acquisition calls. 30–100 is usually sufficient for expensive objectives.',
-};
-const TIP_OUTPUT_TYPE = {
-  attribute:          'Read a single value after solving via obj.GetAttribute().',
-  timeseries:         'Extract a scalar metric from a time signal (dynamic study only).',
-  custom_calculation: 'Calls a user-defined Python function using other variable values.',
+  placeholder:            'Not used in Manual mode: your own search loop decides how many runs happen.',
+  scipy_nelder_mead:      'Maximum function evaluations. 50–200 is typical for a local method.',
+  scipy_powell:           'Maximum function evaluations. 50–200 is typical for a local method.',
+  scipy_lbfgsb:           'Maximum function evaluations. 50–200 is typical for a local method.',
+  scipy_slsqp:            'Maximum function evaluations. 50–200 is typical for a local method.',
+  scipy_cobyla:           'Maximum function evaluations. 50–200 is typical for a local method.',
+  differential_evolution: 'Maximum generations × population size. 100–500 is typical for a global search.',
+  gp_minimize:            'Number of acquisition calls. 30–100 is usually enough when each objective run is expensive.',
 };
 const TIP_OUTPUT_OBJ = {
-  attribute:  'Object query for GetCalcRelevantObjects() (e.g. Grid.ElmTerm).',
-  timeseries: 'Element name as shown in the ElmRes export header (e.g. HV_Bus — no path or class suffix).',
+  attribute:  'Object query passed to GetCalcRelevantObjects(), for example Grid.ElmTerm.',
+  timeseries: 'Element name exactly as it appears in the ElmRes export header, for example HV_Bus. No path and no class suffix.',
 };
 const TIP_OUTPUT_ATTR = {
-  attribute:  'Result variable key for GetAttribute() (e.g. m:u1, c:loading, m:P).',
-  timeseries: 'Variable key from PF result variable browser (e.g. m:u1, m:I:bus1).',
+  attribute:  'Result variable key read by GetAttribute(), for example m:u1, c:loading or m:P.',
+  timeseries: 'Variable key from the PF result variable browser, for example m:u1 or m:I:bus1.',
 };
 const TIP_METRIC = {
-  maximum:          'Peak value of the signal over the full simulation window.',
-  minimum:          'Trough value of the signal over the full simulation window.',
-  mean:             'Time-averaged value across the simulation window.',
-  median:           'Median value across the simulation window.',
-  first_time_above: 'First time the signal rises above the threshold.',
-  first_time_below: 'First time the signal falls below the threshold.',
-  time_settle:      'Time until the signal stays within ±band of the reference for the full hold duration.',
+  maximum:          '<strong>Maximum:</strong> the highest value the signal reaches over the whole simulation window.',
+  minimum:          '<strong>Minimum:</strong> the lowest value the signal reaches over the whole simulation window.',
+  mean:             '<strong>Mean:</strong> the time-averaged value across the simulation window.',
+  median:           '<strong>Median:</strong> the middle value across the simulation window, so outliers matter less than they do to the mean.',
+  first_time_above: '<strong>First Time Above:</strong> the first moment the signal rises above the threshold.',
+  first_time_below: '<strong>First Time Below:</strong> the first moment the signal falls below the threshold.',
+  time_settle:      '<strong>Time Settle:</strong> how long until the signal stays inside ±band of the reference for the full hold duration.',
 };
 
 /* ================================================================
@@ -219,10 +206,9 @@ function onProblemTypeChange() {
   const pt = document.getElementById('problem-type').value;
   const isCont = pt === 'contingency';
   // Update dynamic tooltips
-  setTip('tt-problem-type', TIP_PROBLEM_TYPE[pt] || '');
   const isOpt = pt === 'optimisation';
-  setTip('tt-lb', isOpt ? 'Lower boundary of the search space for this variable.' : 'Start of the swept range (inclusive).');
-  setTip('tt-ub', isOpt ? 'Upper boundary of the search space for this variable.' : 'End of the swept range (inclusive).');
+  setTip('tt-lb', isOpt ? 'Lowest value the search is allowed to try for this variable.' : 'First value of the swept range, included in the sweep.');
+  setTip('tt-ub', isOpt ? 'Highest value the search is allowed to try for this variable.' : 'Last value of the swept range, included in the sweep.');
   // Custom section
   document.getElementById('sec-custom').classList.toggle('cond-hidden', pt !== 'custom');
   // Optimisation section
@@ -251,7 +237,6 @@ function onProblemTypeChange() {
 
 function onStudyTypeChange() {
   const st = document.getElementById('study-type').value;
-  setTip('tt-study-type', TIP_STUDY_TYPE[st] || '');
   const isDynamic = st === 'dynamic_rms' || st === 'dynamic_emt';
   document.getElementById('row-tstop').style.display = isDynamic ? 'grid' : 'none';
   if (st === 'dynamic_emt') document.getElementById('tstop').value = 0.25;
@@ -262,8 +247,6 @@ function onStudyTypeChange() {
 
 
 function onCodingStyleChange() {
-  const cs = document.getElementById('coding-style').value;
-  setTip('tt-coding-style', TIP_CODING_STYLE[cs] || '');
   updateDownloadButtonLabel();
 }
 
@@ -524,14 +507,14 @@ const ALGORITHM_META = {
 };
 
 const ALGORITHM_TIPS = {
-  'placeholder':             'Wire up evaluate_one_case() yourself — the generated code creates the evaluation function but leaves the search loop for you to fill in.',
-  'scipy_nelder_mead':       'Nelder-Mead simplex — gradient-free local search. No derivatives needed. Does not natively support bounds; works best for unconstrained problems.',
-  'scipy_powell':            "Powell's directional-set method — gradient-free local search with bounds support. Efficient for smooth low-dimensional problems.",
-  'scipy_lbfgsb':           'L-BFGS-B — quasi-Newton method with bounds. Numerically approximates the gradient. Fast convergence near the optimum for smooth objectives.',
-  'scipy_slsqp':            'SLSQP — Sequential Least Squares Programming. Supports bounds and constraints. Numerically approximates the gradient.',
-  'scipy_cobyla':           'COBYLA — gradient-free constrained optimisation via linear approximations. Define bounds as inequality constraints rather than using the bounds field.',
-  'differential_evolution': 'Differential Evolution — global stochastic search across the full bounds. Robust to local minima but requires more function evaluations. Seed fixed for reproducibility.',
-  'gp_minimize':            'Bayesian Optimisation — builds a surrogate model of the objective to minimise expensive evaluations. Best when each simulation run is costly. Requires: pip install scikit-optimize.',
+  'placeholder':            '<strong>Manual (Placeholder):</strong> the generated code builds evaluate_one_case() for you, but leaves the search loop empty for you to write.',
+  'scipy_nelder_mead':      '<strong>Nelder-Mead:</strong> gradient-free local search using a simplex. Needs no derivatives. It has no native bounds support, so it suits unconstrained problems.',
+  'scipy_powell':           '<strong>Powell:</strong> gradient-free local search along directional sets, and it does support bounds. Efficient on smooth, low-dimensional problems.',
+  'scipy_lbfgsb':           '<strong>L-BFGS-B:</strong> quasi-Newton search with bounds. It approximates the gradient numerically and converges quickly near the optimum on smooth objectives.',
+  'scipy_slsqp':            '<strong>SLSQP:</strong> Sequential Least Squares Programming. Supports both bounds and constraints, and approximates the gradient numerically.',
+  'scipy_cobyla':           '<strong>COBYLA:</strong> gradient-free constrained search using linear approximations. Write bounds as inequality constraints instead of using the bounds fields.',
+  'differential_evolution': '<strong>Differential Evolution:</strong> global random search across the full bounds. Hard to fool with local minima, but it needs many more evaluations. The seed is fixed so runs repeat exactly.',
+  'gp_minimize':            '<strong>Bayesian Optimisation:</strong> builds a surrogate model of the objective so fewer real runs are needed. Best when one simulation is slow or costly. Requires pip install scikit-optimize.',
 };
 
 function updateAlgorithmUI() {
@@ -1074,10 +1057,10 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
         <option value="timeseries" ${type==='timeseries'?'selected':''}>Timeseries</option>
         <option value="custom_calculation" ${type==='custom_calculation'?'selected':''}>Custom Calculation</option>
       </select>
-      ${tip(TIP_OUTPUT_TYPE[type] || TIP_OUTPUT_TYPE.attribute, `${id}-tt-type`)}
+      ${tip(TIP_OUTPUT_TYPE, `${id}-tt-type`)}
       <input type="text" id="${id}-name" value="${data.name||''}" placeholder="Output var name"
         style="flex:1;font-size:12px;padding:3px 8px;min-width:80px;" oninput="onOutputNameChange()" autocomplete="off" />
-      ${tip('Python identifier for this output. Must be unique across all inputs and outputs.')}
+      ${tip('Python name for this output. It must be unique across every input and output.')}
       <button class="btn btn-ghost btn-icon btn-xs" title="Collapse" onclick="toggleOutputVar('${id}')" id="${id}-toggle" style="font-size:14px;flex-shrink:0;">▾</button>
       <button class="btn btn-remove btn-xs" onclick="removeOutputVar('${id}')">✕</button>
     </div>
@@ -1106,7 +1089,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       </div>
       <!-- THRESHOLD -->
       <div class="form-row ${!showThresh?'cond-hidden':''}" id="${id}-row-threshold">
-        <label>Threshold ${tip('Value the signal must cross (first_time_above) or drop below (first_time_below).')}</label>
+        <label>Threshold ${tip('The level the signal must rise above (First Time Above) or drop below (First Time Below).')}</label>
         <input type="number" id="${id}-threshold" value="${data.threshold||''}" step="any" placeholder="0.9" autocomplete="off" />
       </div>
       <!-- SETTLE PARAMS -->
@@ -1181,7 +1164,6 @@ function onOutputTypeChange(id) {
   document.getElementById(`${id}-row-settle`)?.classList.toggle('cond-hidden', !showSettle);
 
   // Update dynamic tooltips for this output var
-  setTip(`${id}-tt-type`, TIP_OUTPUT_TYPE[type] || '');
   setTip(`${id}-tt-obj`, TIP_OUTPUT_OBJ[type] || TIP_OUTPUT_OBJ.attribute);
   setTip(`${id}-tt-attr`, TIP_OUTPUT_ATTR[type] || TIP_OUTPUT_ATTR.attribute);
 
