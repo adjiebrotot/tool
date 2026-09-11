@@ -352,5 +352,330 @@ console.log('\n=== PART 4: ZERO-FEE / ZERO-RF CONSERVATION (towards-weight) ==='
   ok(last.cash < 1, `[conserve] zero-fee towards-weight deploys all cash (residual ${money(last.cash)})`);
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   PART 5 — PRICE % MOVE ANCHORS: previous top / previous bottom
+   ------------------------------------------------------------------
+   The "From" control on a Price % move trigger picks what the move is measured
+   against. Month open / Week open anchor on the firing bucket's opening price;
+   Previous top / Previous bottom anchor on the highest / lowest usable close seen
+   STRICTLY BEFORE the day under test, across the whole loaded range.
+
+   Everything below is checked against an independent replay written from that
+   wording alone: it recomputes each day's anchor from scratch over the prior
+   slice (rather than carrying a running extreme), and buckets with its own key
+   functions. A shared off-by-one would have to be made twice to pass.
+   ══════════════════════════════════════════════════════════════════ */
+console.log('\n=== PART 5: PRICE % MOVE ANCHORS (previous top / previous bottom) ===');
+
+// Independent period keys, written from the documented rule, not imported.
+const indMonthKey = d => d.slice(0,7);
+const indWeekKey  = d => {
+  const [y,m,dd]=d.split('-').map(Number);
+  const dt=new Date(y,m-1,dd), jan1=new Date(y,0,1);
+  const doy=Math.floor((dt-jan1)/86400000);
+  return y+'-'+String(Math.floor((doy+jan1.getDay())/7)).padStart(2,'0');
+};
+const indKey = (d,period) => period==='weekly' ? indWeekKey(d) : indMonthKey(d);
+
+// Independent replay of one trigger's fire days. Deliberately naive: the anchor is
+// re-derived from the whole prior slice on every day.
+function indFireIdx(dates, prices, cfg){
+  const {ref, dir, pct, period, eom} = cfg;
+  const n=prices.length, thr=pct/100;
+  const raw=new Array(n).fill(false);
+  for(let i=0;i<n;i++){
+    const p=prices[i];
+    if(!(Number.isFinite(p) && p>0)) continue;
+    const prior=[];
+    for(let j=0;j<i;j++){ const q=prices[j]; if(Number.isFinite(q)&&q>0) prior.push(q); }
+    if(!prior.length) continue;
+    const anchor = ref==='top' ? Math.max.apply(null,prior) : Math.min.apply(null,prior);
+    const move = p/anchor - 1;
+    raw[i] = dir==='rise' ? (move >= thr) : (move <= -thr);
+  }
+  const order=[], buckets=new Map();
+  for(let i=0;i<n;i++){ const k=indKey(dates[i],period); if(!buckets.has(k)){ buckets.set(k,[]); order.push(k); } buckets.get(k).push(i); }
+  const out=[];
+  order.forEach(k=>{
+    const idxs=buckets.get(k);
+    const hit=idxs.find(i=>raw[i]);
+    if(hit!==undefined) out.push(hit);
+    else if(eom) out.push(idxs[idxs.length-1]);
+  });
+  return out;
+}
+// Fire days straight from the engine copy under test.
+function engFireIdx(dates, prices, cfg){
+  const sig = H.buildAssetTriggerSignals(
+    [{id:1, px:prices, trigger:{type:'pct', direction:cfg.dir, pct:cfg.pct, ref:cfg.ref, period:cfg.period, eom:cfg.eom}}],
+    dates)[0];
+  const out=[]; sig.forEach((b,i)=>{ if(b) out.push(i); });
+  return out;
+}
+const sameIdx=(a,b)=>a.length===b.length && a.every((v,k)=>v===b[k]);
+
+/* ── 5a. engine == independent replay, across the whole option matrix ─────── */
+console.log('\n  -- engine vs independent replay --');
+// Breakouts above a running high and breakdowns below a running low are rare, so a
+// coarse threshold would compare an empty list against an empty list and prove nothing.
+// `live` records which (anchor, direction) pairs actually produced a signal with the
+// End-of-period fallback off, and is asserted non-empty for all four afterwards.
+const live={};
+for(const ref of ['top','bottom'])
+for(const dir of ['drop','rise'])
+for(const period of ['monthly','weekly'])
+for(const eom of [false,true])
+for(const pct of [1,3,10]){
+  const cfg={ref,dir,pct,period,eom};
+  const eng=engFireIdx(DHHF.dates, DHHF.prices, cfg);
+  const ind=indFireIdx(DHHF.dates, DHHF.prices, cfg);
+  ok(sameIdx(eng,ind),
+     `[${ref}/${dir}/${pct}%/${period}/eom=${eom}] engine fire days == independent replay (eng=${eng.length}, ind=${ind.length})`);
+  if(!eom) live[ref+'/'+dir] = Math.max(live[ref+'/'+dir]||0, eng.length);
+}
+for(const ref of ['top','bottom'])
+for(const dir of ['drop','rise'])
+  ok((live[ref+'/'+dir]||0) > 0,
+     `[${ref}/${dir}] the replay comparison is non-vacuous (peak ${live[ref+'/'+dir]||0} fires with EoP off)`);
+
+/* ── 5b. hand-built series: exact thresholds and unusable prices ──────────── */
+console.log('\n  -- hand-built edge cases (exact threshold, first day, bad quotes) --');
+{
+  // One trading day per month, so each day is its own firing bucket and the bucketed
+  // signal is the raw daily condition - the anchor logic is tested with nothing else
+  // in the way. Ratios are powers of two (150/100, 75/150, 150/300, 37/74) so the move
+  // lands EXACTLY on a 50% threshold in binary floating point; a strict > or < instead
+  // of >= or <= would silently drop those days. Real price data never sits on the
+  // threshold, so only a constructed series can pin this down.
+  const eDates=['2020-01-15','2020-02-14','2020-03-13','2020-04-15','2020-05-15',
+                '2020-06-15','2020-07-15','2020-08-14','2020-09-15','2020-10-15'];
+  //           i0    i1    i2   i3(bad) i4   i5(bad) i6    i7    i8    i9
+  const ePx  =[100,  150,  75,  NaN,    76,  0,      74,   300,  150,  37];
+  //  top anchor  : -    100   150   150    150   150     150   150   300   300
+  //  bottom anchor: -   100   100   75     75    75      75    74    74    74
+  const expect={
+    'top/drop':    [2,6,8,9],  // i2 -50.0% exact, i6 -50.67%, i8 -50.0% exact, i9 -87.7%
+    'top/rise':    [1,7],      // i1 +50.0% exact (breakout), i7 +100%
+    'bottom/drop': [9],        // i9 -50.0% exact below the 74 low
+    'bottom/rise': [1,7,8]     // i1 +50.0% exact, i7 +305%, i8 +103%
+  };
+  for(const ref of ['top','bottom'])
+  for(const dir of ['drop','rise']){
+    const cfg={ref,dir,pct:50,period:'monthly',eom:false};
+    const eng=engFireIdx(eDates, ePx, cfg);
+    const ind=indFireIdx(eDates, ePx, cfg);
+    const want=expect[ref+'/'+dir];
+    ok(sameIdx(eng,want), `[edge ${ref}/${dir}] fires on exactly the expected days (got [${eng}], want [${want}])`);
+    ok(sameIdx(ind,want), `[edge ${ref}/${dir}] independent replay agrees ([${ind}])`);
+  }
+  // i0 has nothing before it, so no anchor exists and nothing can fire on day one.
+  let firstDayQuiet=true;
+  for(const ref of ['top','bottom']) for(const dir of ['drop','rise'])
+    if(engFireIdx(eDates, ePx, {ref,dir,pct:0.01,period:'monthly',eom:false}).includes(0)) firstDayQuiet=false;
+  ok(firstDayQuiet, `[edge] the first day never fires - there is no previous top or bottom yet`);
+  // i3 (NaN) and i5 (0) are unusable quotes. They must be skipped without becoming the
+  // anchor: a 0 low would make every later rise infinite, and a NaN would poison a
+  // running Math.max/Math.min for the rest of the series. Both show up in the lists above.
+  const poisonFree = sameIdx(engFireIdx(eDates, ePx, {ref:'bottom',dir:'rise',pct:50,period:'monthly',eom:false}), expect['bottom/rise'])
+                  && sameIdx(engFireIdx(eDates, ePx, {ref:'top',dir:'drop',pct:50,period:'monthly',eom:false}), expect['top/drop']);
+  ok(poisonFree, `[edge] a zero or NaN quote is skipped and never becomes the anchor`);
+  // Same series under the calendar anchor: each day opens its own bucket, so the move
+  // from the period open is always zero and nothing fires. Proves the anchors are
+  // genuinely different code paths rather than one falling through to the other.
+  ok(engFireIdx(eDates, ePx, {ref:'period',dir:'drop',pct:50,period:'monthly',eom:false}).length===0,
+     `[edge] the month-open anchor fires nothing on this series (distinct code path)`);
+  // End-of-period fallback still closes every bucket, whatever the anchor says.
+  ok(engFireIdx(eDates, ePx, {ref:'top',dir:'drop',pct:50,period:'monthly',eom:true}).length===eDates.length,
+     `[edge] EoP on -> every one of the ${eDates.length} buckets deploys`);
+}
+
+/* ── 5c. the anchor bound actually holds on every fire ────────────────────── */
+console.log('\n  -- anchor bound on every fired day (eom off, so every fire is a real signal) --');
+for(const ref of ['top','bottom'])
+for(const dir of ['drop','rise']){
+  const pct=6, cfg={ref,dir,pct,period:'monthly',eom:false};
+  const fires=engFireIdx(DHHF.dates, DHHF.prices, cfg);
+  let boundOk=true;
+  fires.forEach(i=>{
+    const prior=DHHF.prices.slice(0,i).filter(q=>Number.isFinite(q)&&q>0);
+    const anchor = ref==='top' ? Math.max.apply(null,prior) : Math.min.apply(null,prior);
+    const p=DHHF.prices[i];
+    if(dir==='rise'){ if(p < anchor*(1+pct/100) - 1e-9) boundOk=false; }
+    else           { if(p > anchor*(1-pct/100) + 1e-9) boundOk=false; }
+  });
+  ok(boundOk, `[${ref}/${dir}] every buy price is ${dir==='rise'?'>=':'<='} prev ${ref} * (1${dir==='rise'?'+':'-'}${pct}%) (${fires.length} buys)`);
+}
+{
+  // The anchor excludes the day under test. If it did not, a running high that already
+  // contains today would make "rises above the previous top" unreachable (and likewise
+  // "falls below the previous bottom"), so these two combinations must fire at all.
+  const up   = engFireIdx(DHHF.dates, DHHF.prices, {ref:'top',    dir:'rise', pct:1, period:'monthly', eom:false});
+  const down = engFireIdx(DHHF.dates, DHHF.prices, {ref:'bottom', dir:'drop', pct:1, period:'monthly', eom:false});
+  ok(up.length>0,   `[top/rise] breakout above the previous top is reachable (${up.length} fires) - anchor excludes today`);
+  ok(down.length>0, `[bottom/drop] breakdown below the previous bottom is reachable (${down.length} fires) - anchor excludes today`);
+}
+
+/* ── 5d. causality: no lookahead ──────────────────────────────────────────── */
+console.log('\n  -- causality: truncating the series never changes an earlier signal --');
+for(const ref of ['top','bottom'])
+for(const dir of ['drop','rise']){
+  // With the End-of-period fallback off, a fire is "first raw hit in the bucket", which
+  // must not depend on any day after it. Rebuild on prefixes and compare.
+  const cfg={ref,dir,pct:5,period:'monthly',eom:false};
+  const full=new Set(engFireIdx(DHHF.dates, DHHF.prices, cfg));
+  let causal=true, checked=0;
+  [150, 400, 700, DHHF.prices.length-1].forEach(m=>{
+    if(m<2 || m>=DHHF.prices.length) return;
+    checked++;
+    const cut=engFireIdx(DHHF.dates.slice(0,m), DHHF.prices.slice(0,m), cfg);
+    const fullPrefix=[...full].filter(i=>i<m).sort((a,b)=>a-b);
+    if(!sameIdx(cut, fullPrefix)) causal=false;
+  });
+  ok(causal && checked>0, `[${ref}/${dir}] signals on a truncated series match the full series prefix (${checked} cut points)`);
+}
+
+/* ── 5e. bucketing: the firing rate is the Frequency control, not the anchor ─ */
+console.log('\n  -- one deploy per period bucket --');
+for(const ref of ['top','bottom'])
+for(const period of ['monthly','weekly']){
+  const fires=engFireIdx(DHHF.dates, DHHF.prices, {ref, dir:'drop', pct:2, period, eom:false});
+  const seen=new Set(); let dup=false;
+  fires.forEach(i=>{ const k=indKey(DHHF.dates[i],period); if(seen.has(k)) dup=true; seen.add(k); });
+  ok(!dup, `[${ref}/${period}] at most one fire per ${period==='weekly'?'week':'month'} with EoP off (${fires.length} fires)`);
+  // EoP on: every bucket must produce exactly one deploy day.
+  const eomFires=engFireIdx(DHHF.dates, DHHF.prices, {ref, dir:'drop', pct:2, period, eom:true});
+  const nBuckets=new Set(DHHF.dates.map(d=>indKey(d,period))).size;
+  ok(eomFires.length===nBuckets, `[${ref}/${period}] EoP on -> exactly one deploy per bucket (${eomFires.length} vs ${nBuckets} buckets)`);
+}
+
+/* ── 5f. backward compatibility of saved configs ──────────────────────────── */
+console.log('\n  -- saved-config compatibility --');
+{
+  const base={type:'pct', direction:'drop', pct:8, period:'monthly', eom:true};
+  const sig=cfg=>{ const s=H.buildAssetTriggerSignals([{id:1,px:DHHF.prices,trigger:cfg}], DHHF.dates)[0];
+                   const o=[]; s.forEach((b,i)=>{ if(b) o.push(i); }); return o; };
+  const legacy=sig(base);                                   // written before the anchors existed
+  const explicit=sig(Object.assign({},base,{ref:'period'})); // same thing, spelled out
+  const junk=sig(Object.assign({},base,{ref:'sideways'}));   // unknown value must fall back
+  ok(sameIdx(legacy,explicit), `[compat] a trigger with no "ref" behaves exactly like ref:'period' (${legacy.length} fires)`);
+  ok(sameIdx(legacy,junk),     `[compat] an unrecognised "ref" falls back to the period open`);
+  const top=sig(Object.assign({},base,{ref:'top'}));
+  ok(!sameIdx(legacy,top),     `[compat] ref:'top' really does change the signal (${top.length} vs ${legacy.length} fires)`);
+}
+
+/* ── 5g. the shipped page and the harness copy must not drift apart ───────── */
+console.log('\n  -- engine parity: portfolio/script.js vs harness copy --');
+{
+  // Pull buildAssetTriggerSignals straight out of the page source and run it beside the
+  // harness copy. "Verbatim" is then a checked property, not a comment.
+  const src=fs.readFileSync(path.join(__dirname,'..','portfolio','script.js'),'utf8');
+  const start=src.indexOf('function buildAssetTriggerSignals(');
+  let body=null;
+  if(start>=0){
+    let depth=0, i=src.indexOf('{',start);
+    for(let j=i;j<src.length;j++){
+      const c=src[j];
+      if(c==='{') depth++;
+      else if(c==='}'){ depth--; if(depth===0){ body=src.slice(start,j+1); break; } }
+    }
+  }
+  ok(!!body, '[parity] buildAssetTriggerSignals located in portfolio/script.js');
+  if(body){
+    const pageFn=new Function('SharedTA', body+'\nreturn buildAssetTriggerSignals;')(H.SharedTA);
+    let allSame=true, cases=0;
+    for(const ref of ['period','top','bottom'])
+    for(const dir of ['drop','rise'])
+    for(const period of ['monthly','weekly'])
+    for(const eom of [false,true]){
+      cases++;
+      const trigger={type:'pct', direction:dir, pct:7, ref, period, eom};
+      const a=[{id:1, px:DHHF.prices, trigger}];
+      const s1=pageFn(a, DHHF.dates, undefined)[0];
+      const s2=H.buildAssetTriggerSignals(a, DHHF.dates, undefined)[0];
+      if(s1.length!==s2.length || !s1.every((v,k)=>v===s2[k])) allSame=false;
+    }
+    for(const style of H.TECH_STYLES){
+      cases++;
+      const a=[{id:1, px:DHHF.prices, trigger:{type:style, period:'monthly', eom:true, tech:{}}}];
+      const s1=pageFn(a, DHHF.dates, undefined)[0];
+      const s2=H.buildAssetTriggerSignals(a, DHHF.dates, undefined)[0];
+      if(!s1.every((v,k)=>v===s2[k])) allSame=false;
+    }
+    { // at-topup mirrors the top-up schedule in both copies
+      cases++;
+      const topupSet=new Set([5,40,90]);
+      const a=[{id:1, px:DHHF.prices, trigger:{type:'at-topup'}}];
+      const s1=pageFn(a, DHHF.dates, topupSet)[0];
+      const s2=H.buildAssetTriggerSignals(a, DHHF.dates, topupSet)[0];
+      const hit=[]; s1.forEach((b,i)=>{ if(b) hit.push(i); });
+      if(!s1.every((v,k)=>v===s2[k])) allSame=false;
+      ok(sameIdx(hit,[5,40,90]), '[parity] at-topup signal mirrors the top-up schedule');
+    }
+    ok(allSame, `[parity] page engine and harness copy agree on every trigger config (${cases} cases)`);
+  }
+}
+
+/* ── 5h. accounting integrity of a full portfolio run on the new anchors ──── */
+console.log('\n  -- portfolio accounting integrity with top/bottom anchors --');
+for(const [ref,dir] of [['top','drop'],['bottom','rise']]){
+  const trig={type:'pct', direction:dir, pct:5, ref, period:'monthly', eom:false};
+  const assets=[
+    { id:'a1', name:'DHHF', px:common.DHHF, weight:100, trigger:trig },
+    { id:'a2', name:'AAA',  px:common.AAA,  weight:0,   trigger:trig }
+  ];
+  const p=mkPort('rule-trigger'); p.rebal.reserveMode='cash';
+  const out=integrityCheck(`rule-trigger/cash/${ref}`, p, assets);
+  const last=out.rows[out.rows.length-1];
+  // Money can only enter as a top-up: nothing is ever worth more than what was paid in
+  // plus market P&L, and the reserve never lends what it does not hold.
+  const bought=out.rows.filter(r=>/Trigger/.test(r.event)).length;
+  ok(bought>0, `[rule-trigger/cash/${ref}] the ${ref} anchor actually deploys (${bought} trigger days)`);
+  ok(out.fees <= last.cumTopup, `[rule-trigger/cash/${ref}] fees (${money(out.fees)}) never exceed money paid in (${money(last.cumTopup)})`);
+  console.log(`     ${ref}/${dir}: final=${money(last.total)} cash=${money(last.cash)} fees=${money(out.fees)} triggers=${bought}`);
+}
+{
+  // Asset reserve: top-ups park in AAA and are sold down to fund DHHF buys. Cash must not
+  // sit idle between deploys, and units sold can never exceed units held.
+  const trig={type:'pct', direction:'drop', pct:5, ref:'top', period:'monthly', eom:false};
+  const assets=[
+    { id:'a1', name:'DHHF', px:common.DHHF, weight:100, trigger:trig },
+    { id:'a2', name:'AAA',  px:common.AAA,  weight:0,   trigger:trig }
+  ];
+  const p=mkPort('rule-trigger'); p.rebal.reserveMode='asset'; p.rebal.reserveAssetId='a2';
+  const out=integrityCheck('rule-trigger/asset/top', p, assets);
+  const cashMostlyZero=out.rows.filter(r=>r.cash>1).length < out.rows.length*0.05;
+  ok(cashMostlyZero, `[rule-trigger/asset/top] fresh cash parked in the reserve asset (cash≈0 most days)`);
+  let reserveNonNeg=true;
+  out.rows.forEach(r=>{ if(r.assetVals['a2'] < -1e-6) reserveNonNeg=false; });
+  ok(reserveNonNeg, `[rule-trigger/asset/top] reserve asset value never goes negative (no short sales)`);
+  const last=out.rows[out.rows.length-1];
+  console.log(`     asset reserve: final=${money(last.total)} cash=${money(last.cash)} fees=${money(out.fees)}`);
+}
+{
+  // Zero fees, zero risk-free rate: the only way value moves is price. Replay the deploys
+  // against an independent unit ledger and the final equity must match to the cent.
+  const trig={type:'pct', direction:'drop', pct:5, ref:'top', period:'monthly', eom:false};
+  const assets=[{ id:'a1', name:'DHHF', px:common.DHHF, weight:100, trigger:trig }];
+  const p=mkPort('rule-trigger'); p.rebal.buyFee=0; p.rebal.sellFee=0; p.rebal.reserveMode='cash';
+  const out=H.simulatePortfolio(p, assets, common.dates, null);
+  const last=out.rows[out.rows.length-1];
+  ok(approx(out.fees,0,1e-9), `[conserve/top] zero fees configured -> zero fees charged`);
+  // Independent ledger: cash in on schedule, and on each fire day spend the whole deficit
+  // toward the 100% target, which with one asset means spending all the cash.
+  const topupSet=H.getScheduleIndices(common.dates, p.topupSched);
+  const fireSet=new Set(indFireIdx(common.dates, common.DHHF, {ref:'top', dir:'drop', pct:5, period:'monthly', eom:false}));
+  let cash=0, units=0;
+  for(let i=0;i<common.dates.length;i++){
+    if(topupSet.has(i)) cash += p.topup.amount;
+    if(fireSet.has(i) && cash>0 && common.DHHF[i]>0){ units += cash/common.DHHF[i]; cash=0; }
+  }
+  const expect = cash + units*common.DHHF[common.DHHF.length-1];
+  ok(approx(last.total, expect, 1e-6),
+     `[conserve/top] final total matches an independent unit ledger (${money(last.total)} vs ${money(expect)})`);
+  ok(approx(last.cumTopup, topupSet.size*p.topup.amount, 1e-6),
+     `[conserve/top] cumTopup == nTopups*amount (${money(last.cumTopup)})`);
+  console.log(`     zero-fee replay: final=${money(last.total)} independent=${money(expect)} cash=${money(last.cash)}`);
+}
+
 console.log(`\n════════ RESULT: ${PASS} passed, ${FAIL} failed, ${WARN} warnings ════════`);
 if(FAIL) { console.log('FAILURES:'); fails.forEach(f=>console.log('  - '+f)); process.exit(1); }
