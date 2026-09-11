@@ -106,7 +106,7 @@
     </div>
 
     <div class="tg" style="min-width:155px">
-      <span class="tg-lbl">2 · Demand Forecast <span class="tip-icon" data-tip="The forecast demand (MW) is used as the RHS load scaling term in each constraint equation — it multiplies the equation's load coefficient when computing the right-hand-side limit.">?</span></span>
+      <span class="tg-lbl">2 · Demand Forecast <span class="tip-icon" data-tip="The forecast demand in MW scales the right-hand side of every constraint equation. It is multiplied by the equation's load coefficient to give the limit that the left-hand side is checked against.">?</span></span>
       <div class="tg-r">
         <input type="number" id="demandInp" value="1500" min="0" max="6000" step="1" style="width:90px"/>
         <span style="font-size:.8rem;color:var(--muted)">MW</span>
@@ -128,7 +128,7 @@
 <!-- CONSTRAINT INVOCATION -->
 <section class="filt card">
   <div class="filt-hd">
-    <h2>3 · Constraint Invocation <span class="tip-icon" data-tip="A constraint equation is enforced only when its Constraint Set is invoked. Invoke one or more sets, then narrow the active equations by constraint type and contingency. NIL is the base set and is always active.">?</span></h2>
+    <h2>3 · Constraint Invocation <span class="tip-icon" data-tip="An equation is only enforced while its Constraint Set is invoked. Invoke the sets that are in force, then narrow what stays active using the constraint type and contingency filters below. NIL is the base set and is always active.">?</span></h2>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <span class="hint" id="invokeSummary">—</span>
       <a class="btn-s" href="./guide/">📖 How to invoke</a>
@@ -139,7 +139,7 @@
     <!-- Constraint Set ID -->
     <div class="filt-col">
       <div class="filt-lbl">Constraint Set
-        <span class="tip-icon" data-tip="A named group of constraint equations the control room invokes together for a given network condition. Select every set in force. NIL is the base set and is always active.">?</span>
+        <span class="tip-icon" data-tip="A named group of equations the control room invokes together for a given network condition. Tick every set currently in force. NIL is the base set and is always active.">?</span>
         <span class="filt-cnt" id="setIdCount">0 selected</span>
         <span class="filt-note">NIL always active</span>
       </div>
@@ -154,7 +154,7 @@
     <!-- Constraint Type -->
     <div class="filt-col">
       <div class="filt-lbl">Constraint Type
-        <span class="tip-icon" data-tip="The kind of limit each equation protects: Thermal (current ratings), Transient Stability, Voltage Stability, or Other. Deselect a type to drop those equations from the check.">?</span>
+        <span class="tip-icon" data-tip="What kind of limit each equation protects. Untick a type to drop its equations from the check.<br><strong>Thermal:</strong> plant and line current ratings.<br><strong>Transient Stability:</strong> the system staying in step after a disturbance.<br><strong>Voltage Stability:</strong> voltages staying inside their limits.<br><strong>Other:</strong> anything that does not fall into the three above.">?</span>
         <span class="filt-cnt" id="limitCount">0 selected</span>
         <button class="btn-sm" id="limitAll">All</button>
         <button class="btn-sm" id="limitNone">None</button>
@@ -165,7 +165,7 @@
     <!-- Contingency -->
     <div class="filt-col">
       <div class="filt-lbl">Contingency
-        <span class="tip-icon" data-tip="The credible outage an equation defends against. NIL is the intact network. All contingencies in the invoked sets are selected by default; deselect any you want to ignore.">?</span>
+        <span class="tip-icon" data-tip="The credible outage each equation defends against, where NIL means the intact network. Every contingency in the invoked sets starts ticked, so untick any you want the check to ignore.">?</span>
         <span class="filt-cnt" id="contCount">all selected</span>
       </div>
       <div class="filt-bar">

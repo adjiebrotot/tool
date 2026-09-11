@@ -114,7 +114,7 @@
         <!-- ── TABLE sub-panel ── -->
         <div class="data-sub-panel active" id="sub-table">
           <div style="display:flex;justify-content:flex-end;flex-shrink:0">
-            <span class="tip-icon" data-tip="Each row defines a flow from <strong>Source → Target</strong> with a <strong>Value</strong>. Use <code>remaining</code> to auto-fill the leftovers. Use <code>|</code> in labels to add line breaks.">?</span>
+            <span class="tip-icon" data-tip="Every row is one flow, from a <strong>Source</strong> to a <strong>Target</strong>, carrying a <strong>Value</strong>.<br>Type <code>remaining</code> as the value to fill in whatever is left over from that source.<br>Put <code>|</code> inside a label to break it onto a new line.">?</span>
           </div>
           <div class="editor-table-wrap" id="tableWrap">
             <table class="editor-table">
@@ -136,7 +136,7 @@
         <!-- ── TEXT sub-panel ── -->
         <div class="data-sub-panel" id="sub-text">
           <div style="display:flex;justify-content:flex-end;flex-shrink:0">
-            <span class="tip-icon" data-tip="Format: <code>source,target,value[,color]</code><br>Use <code>remaining</code> as value to auto-calculate the leftover flow from a node. Use <code>|</code> in labels to add line breaks.">?</span>
+            <span class="tip-icon" data-tip="One flow per line, written as <code>source,target,value[,color]</code>, where the colour is optional.<br>Type <code>remaining</code> as the value to fill in whatever is left over from that node.<br>Put <code>|</code> inside a label to break it onto a new line.">?</span>
           </div>
           <textarea id="textInput" rows="18" spellcheck="false"
             placeholder="source,target,value,color&#10;Dubai,Applications,3&#10;Applications,Hired,5,#8FCDBD&#10;Applications,Declined,remaining,#FF8B8B"></textarea>
@@ -151,7 +151,7 @@
             <input type="file" id="csvFile" accept=".csv,.txt" style="display:none"/>
           </div>
           <div style="display:flex;justify-content:flex-end">
-            <span class="tip-icon" data-tip="CSV columns: <code>source</code>, <code>target</code>, <code>value</code>, <code>color</code> (optional). A header row is auto-detected.">?</span>
+            <span class="tip-icon" data-tip="The CSV needs the columns <code>source</code>, <code>target</code> and <code>value</code>, plus an optional <code>color</code>. A header row is detected automatically, so you can leave it in.">?</span>
           </div>
           <button id="downloadTemplate" class="btn-sec" style="width:100%">⬇ Download CSV Template</button>
           <div id="csvStatus"></div>
@@ -162,7 +162,7 @@
       <!-- ── STYLE TAB ── -->
       <div class="ctrl-panel" id="tab-style">
         <div class="sblock">
-          <div class="slabel" style="margin-bottom:4px">Value Display <span class="tip-icon" data-tip="<strong>Nominal</strong> = actual values · <strong>% of Max</strong> = share of the node with highest total · <strong>None</strong> = hide values">?</span></div>
+          <div class="slabel" style="margin-bottom:4px">Value Display <span class="tip-icon" data-tip="<strong>Nominal:</strong> show each flow's actual value.<br><strong>% of Max:</strong> show each flow as a share of the node with the largest total.<br><strong>None:</strong> hide the values entirely and show labels only.">?</span></div>
           <div class="radio-grp">
             <label class="radio-opt"><input type="radio" name="valueMode" value="nominal" checked>Nominal</label>
             <label class="radio-opt"><input type="radio" name="valueMode" value="percent">% of Max</label>
@@ -223,7 +223,7 @@
         </div>
         <div class="sblock">
           <div class="toggle-row">
-            <span class="slabel">Label Background Box <span class="tip-icon" data-tip="Semi-transparent pill behind each label for legibility against busy flows.">?</span></span>
+            <span class="slabel">Label Background Box <span class="tip-icon" data-tip="Draws a semi-transparent pill behind every label, so text stays readable where flows are dense or brightly coloured.">?</span></span>
             <label class="toggle-wrap"><input type="checkbox" id="sLabelBox"><span class="toggle-track"></span></label>
           </div>
         </div>

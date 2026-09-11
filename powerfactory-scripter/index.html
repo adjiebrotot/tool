@@ -195,13 +195,13 @@
           <input type="text" id="pf-username" placeholder="USERNAME_HERE" autocomplete="off" />
         </div>
         <div class="form-row">
-          <label>Output Directory <span class="tip-icon" data-tip="Root folder for results. Subfolders /graph and /raw are auto-created if timeseries outputs are used.">?</span></label>
+          <label>Output Directory <span class="tip-icon" data-tip="Folder where results are written. The /graph and /raw subfolders are created automatically when timeseries outputs are used.">?</span></label>
           <div>
             <input type="text" id="output-dir" placeholder="C:\Users\user\results" autocomplete="off" />
           </div>
         </div>
         <div class="form-row">
-          <label>Problem Type <span class="tip-icon" id="tt-problem-type" data-tip="Runs every combination of input values. Total runs = product of all step counts.">?</span></label>
+          <label>Problem Type <span class="tip-icon" id="tt-problem-type" data-tip="<strong>Brute Force:</strong> runs every combination of the input values. Total runs = the product of all step counts.<br><strong>Optimisation:</strong> a search algorithm looks for the best input combination. Choose the algorithm in Optimisation Settings.<br><strong>Custom:</strong> reads the input values row by row from an Excel file. Download the template for the required format.<br><strong>Contingency:</strong> takes each matched element out of service, one at a time (N-1) or two at a time (N-2). Wildcards are resolved at runtime, so no Excel file is needed. Study Type is locked to Steady State.">?</span></label>
           <select id="problem-type" onchange="onProblemTypeChange()">
             <option value="brute_force">Brute Force</option>
             <option value="optimisation">Optimisation</option>
@@ -210,7 +210,7 @@
           </select>
         </div>
         <div class="form-row">
-          <label>Study Type <span class="tip-icon" id="tt-study-type" data-tip="Runs a load flow (ElmLdf) each iteration. Timeseries outputs are not available.">?</span></label>
+          <label>Study Type <span class="tip-icon" id="tt-study-type" data-tip="<strong>Steady State:</strong> runs a load flow (ElmLdf) on every iteration. Timeseries outputs are not available.<br><strong>Dynamic RMS:</strong> runs an RMS simulation (ComSim) on every iteration. Timeseries outputs are available.<br><strong>Dynamic EMT:</strong> runs an EMT simulation (ComSim) on every iteration. Timeseries outputs are available.<br><strong>Harmonic:</strong> runs a harmonic frequency sweep (ComHlf) on every iteration.">?</span></label>
           <select id="study-type" onchange="onStudyTypeChange()">
             <option value="steady_state">Steady State</option>
             <option value="dynamic_rms">Dynamic RMS</option>
@@ -219,13 +219,13 @@
           </select>
         </div>
         <div class="form-row" id="row-tstop" style="display:none">
-          <label>Stop Time (s) <span class="tip-icon" data-tip="Simulation end time in seconds (ComSim.tstop). 20 s for RMS; 0.25 s typical for EMT.">?</span></label>
+          <label>Stop Time (s) <span class="tip-icon" data-tip="How long the simulation runs, in seconds (ComSim.tstop). Typically 20 s for RMS and 0.25 s for EMT.">?</span></label>
           <div>
             <input type="number" id="tstop" value="20" step="0.01" min="0" autocomplete="off" />
           </div>
         </div>
         <div class="form-row">
-          <label>Coding Style <span class="tip-icon" id="tt-coding-style" data-tip="Wraps all code in main() for clean script execution.">?</span></label>
+          <label>Coding Style <span class="tip-icon" id="tt-coding-style" data-tip="<strong>Python File:</strong> wraps everything in main(), ready to run as a plain script.<br><strong>Notebook Style:</strong> splits the code into labelled cells for Jupyter or VS Code.">?</span></label>
           <select id="coding-style" onchange="onCodingStyleChange()">
             <option value="python_file">Python File</option>
             <option value="notebook">Notebook Style</option>
@@ -262,7 +262,7 @@
                 <th>Attribute <span class="tip-icon" data-tip="Writable numeric/boolean PF parameter to set via SetAttribute() before each run (e.g. e:qgini, e:usetp).">?</span></th>
                 <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tip-icon" id="tt-lb" data-tip="Start of the swept range (inclusive).">?</span></th>
                 <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tip-icon" id="tt-ub" data-tip="End of the swept range (inclusive).">?</span></th>
-                <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tip-icon" data-tip="Increment between values. E.g. lb=0, ub=10, step=0.5 → [0, 0.5, …, 10].">?</span></th>
+                <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tip-icon" data-tip="Gap between consecutive values. For example lb=0, ub=10, step=0.5 gives [0, 0.5, …, 10].">?</span></th>
                 <th></th>
               </tr>
             </thead>
@@ -326,10 +326,10 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Element Query <span class="tip-icon" data-tip="Wildcard PF query — all matching objects become contingency candidates (e.g. *.ElmLne).">?</span></th>
+                <th>Element Query <span class="tip-icon" data-tip="A wildcard PF query. Every object it matches becomes a contingency candidate, for example *.ElmLne.">?</span></th>
                 <th>Filter Attribute <span class="tip-icon" data-tip="Optional attribute to filter candidates (e.g. e:Unom, loc_name).">?</span></th>
                 <th>Op <span class="tip-icon" data-tip="Comparison operator for the filter.">?</span></th>
-                <th>Filter Value <span class="tip-icon" data-tip="Numeric (66), plain string, or wildcard string (North* — case-insensitive).">?</span></th>
+                <th>Filter Value <span class="tip-icon" data-tip="A number (66), plain text, or a wildcard such as North*. Wildcard matching ignores case.">?</span></th>
                 <th></th>
               </tr>
             </thead>
@@ -340,7 +340,7 @@
           <button class="btn btn-ghost btn-xs" onclick="addContingencyRow()">+ Add Element Type</button>
         </div>
         <div class="form-row" style="margin-top:12px;">
-          <label>Contingency Type <span class="tip-icon" data-tip="N-1: one element tripped per run. N-2: two elements tripped simultaneously per run.">?</span></label>
+          <label>Contingency Type <span class="tip-icon" data-tip="<strong>N-1:</strong> one element is tripped per run.<br><strong>N-2:</strong> two elements are tripped together per run.">?</span></label>
           <select id="contingency-n" onchange="onContingencyNChange()">
             <option value="1">N-1</option>
             <option value="2">N-2</option>
@@ -348,7 +348,7 @@
         </div>
         <div class="checkbox-row cond-hidden" id="row-contingency-combine" style="margin-top:4px;">
           <input type="checkbox" id="contingency-combine" />
-          <label for="contingency-combine">Combine element types <span class="tip-icon" data-tip="When checked, N-2 pairs are formed across different element types (e.g. line × generator). When unchecked, only same-type pairs (line × line).">?</span></label>
+          <label for="contingency-combine">Combine element types <span class="tip-icon" data-tip="<strong>Ticked:</strong> an N-2 pair may mix element types, such as a line with a generator.<br><strong>Unticked:</strong> pairs are formed within one type only, such as a line with another line.">?</span></label>
         </div>
       </div>
     </div>
@@ -385,7 +385,7 @@
       </div>
       <div class="section-body">
         <div class="form-row">
-          <label>Sense <span class="tip-icon" data-tip="Maximise negates the objective internally — all scipy algorithms are minimisers.">?</span></label>
+          <label>Sense <span class="tip-icon" data-tip="<strong>Minimise:</strong> the objective is passed to the algorithm as it is.<br><strong>Maximise:</strong> the objective is negated internally, because every scipy algorithm is a minimiser.">?</span></label>
           <select id="optim-sense">
             <option value="minimise">Minimise</option>
             <option value="maximise">Maximise</option>
@@ -417,11 +417,11 @@
           </div>
         </div>
         <div class="form-row">
-          <label>Max Iterations <span class="tip-icon" id="tt-max-iter" data-tip="Max function evaluations. 50–200 is typical for local methods.">?</span></label>
+          <label>Max Iterations <span class="tip-icon" id="tt-max-iter" data-tip="Not used in Manual mode: your own search loop decides how many runs happen.">?</span></label>
           <input type="number" id="optim-max-iter" value="50" min="1" autocomplete="off" />
         </div>
         <hr class="divider" />
-        <div class="sub-label">Constraints <span class="tip-icon" data-tip="Violations add a large penalty to the objective (soft constraint). Hard bounds are set via input variable bounds.">?</span></div>
+        <div class="sub-label">Constraints <span class="tip-icon" data-tip="A soft limit: breaking it adds a large penalty to the objective rather than blocking the run. For a hard limit, set the bounds on the input variable instead.">?</span></div>
         <div class="dyn-table-wrapper">
           <table class="dyn-table" id="constraint-table">
             <thead>
@@ -458,7 +458,7 @@
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="use-progress-bar" checked />
-          <label for="use-progress-bar">Use progress bar (tqdm) <span class="tip-icon" data-tip="Show live progress and ETA via tqdm. Requires pip install tqdm.">?</span></label>
+          <label for="use-progress-bar">Use progress bar (tqdm) <span class="tip-icon" data-tip="Shows live progress and an estimated finish time using tqdm. Requires pip install tqdm.">?</span></label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="open-pf-window" />
@@ -466,10 +466,10 @@
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="save-intermediate" onchange="onSaveIntermediateChange()" />
-          <label for="save-intermediate">Save intermediate results every X minutes <span class="tip-icon" data-tip="Flush partial results to CSV periodically. Prevents total data loss on crash or lockup.">?</span></label>
+          <label for="save-intermediate">Save intermediate results every X minutes <span class="tip-icon" data-tip="Writes partial results to CSV as the run goes, so a crash or a lockup does not cost you everything.">?</span></label>
         </div>
         <div id="row-save-interval" class="form-row cond-hidden">
-          <label>Interval (min) <span class="tip-icon" data-tip="Save interval in minutes. 10–30 min recommended for multi-hour runs.">?</span></label>
+          <label>Interval (min) <span class="tip-icon" data-tip="How often partial results are written, in minutes. 10–30 min suits a run lasting several hours.">?</span></label>
           <input type="number" id="save-interval-minutes" value="30" min="1" autocomplete="off" />
         </div>
       </div>
