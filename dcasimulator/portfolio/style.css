@@ -140,7 +140,7 @@ body.light .weight-row.wt-total.bad .wt-name,body.light .weight-row.wt-total.bad
    (e.g. "Price % move", "Falls by", "Month open") are no longer clipped, while
    number inputs stay compact. */
 .trigger-card .param-row{padding:3px 0;flex-wrap:nowrap}
-.trigger-card .param-row>label{min-width:66px}
+.trigger-card .param-row>label{min-width:66px;display:flex;align-items:center;gap:5px}
 .trigger-card .param-row input.num-input{max-width:78px}
 .trigger-card .param-row select.num-input{flex:1 1 auto;min-width:0;width:auto;max-width:none}
 .trigger-card .tech-eom{padding:6px 0 2px}

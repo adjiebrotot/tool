@@ -1019,6 +1019,10 @@ function refreshRankTotals(){
 }
 
 /* ── Rule-based: reserve selector + per-asset deploy triggers ── */
+// One static explainer for the Trigger dropdown itself, listing what every option does.
+// The per-asset icon in the card header stays dynamic (triggerPlainDesc); this one is about
+// the choices on offer, so it does not depend on the asset or its current settings.
+const TRIGGER_TYPE_TIP = 'What has to happen before this asset draws from the reserve.<br><strong>Invest at Top-up:</strong> no waiting, it moves toward its target weight at every top-up.<br><strong>Price % move:</strong> fires when the price moves your set % from the reference you pick, the period open or the previous top or bottom.<br><strong>RSI oversold:</strong> fires when RSI drops below the oversold level.<br><strong>MA crossover:</strong> fires on a golden cross, the fast moving average crossing above the slow one.<br><strong>Bollinger dip:</strong> fires when the price closes below the lower band.<br><strong>MACD cross:</strong> fires when the MACD line crosses above its signal line.<br><strong>MACD histogram:</strong> fires when the histogram turns positive.<br><strong>ADX trend:</strong> fires when ADX shows a trend stronger than your threshold.';
 const TRIGGER_TYPE_LABEL = { 'at-topup':'Invest at Top-up', 'pct':'Price % move', 'tech-rsi':'RSI oversold', 'tech-ma-cross':'MA crossover', 'tech-bollinger':'Bollinger dip', 'tech-macd-cross':'MACD cross', 'tech-macd-hist':'MACD histogram', 'tech-adx':'ADX trend' };
 // Single Reserve dropdown: the Risk-Free Account (cash) plus every asset as a
 // holding option. This replaces the old two-part "Reserve mode + Reserve asset"
@@ -1145,10 +1149,10 @@ function renderTriggerTable(){
       <div class="trigger-head trigger-toggle" data-aid="${a.id}" role="button" tabindex="0" title="Show or hide this trigger's settings">
         <span class="trig-chevron" aria-hidden="true">▾</span>
         <span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span>
-        <span class="tip-icon" data-tip="${triggerPlainDesc(a)}">?</span></div>
+        <span class="tip-icon" data-tip="${triggerPlainDesc(a)}">i</span></div>
       <div class="trigger-summary">${triggerSummary(a)}</div>
       <div class="trigger-body">
-        <div class="param-row"><label>Trigger</label>
+        <div class="param-row"><label>Trigger <span class="tip-icon" data-tip="${TRIGGER_TYPE_TIP}">?</span></label>
           <select class="num-input trig-type" data-aid="${a.id}" style="cursor:pointer">${
             Object.keys(TRIGGER_TYPE_LABEL).map(k=>`<option value="${k}" ${tr.type===k?'selected':''}>${TRIGGER_TYPE_LABEL[k]}</option>`).join('')
           }</select></div>
