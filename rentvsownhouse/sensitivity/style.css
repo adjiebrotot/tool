@@ -6,7 +6,7 @@ body{margin:0;font-family:'DM Sans',system-ui,-apple-system,sans-serif;color:var
 
 /* Header */
 .header{padding:18px 24px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
-.header-left h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:4px;}
+.header-left h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:6px;}
 .header-left p{color:var(--muted);font-size:.88rem;line-height:1.5;}
 .header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
 .btn-theme{background:var(--input-bg);border:1.5px solid var(--border);color:var(--muted);border-radius:var(--radius-md);padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;font-family:inherit;}

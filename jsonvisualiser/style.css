@@ -49,7 +49,7 @@ a{color:inherit;text-decoration:none}
 
 /* ─── HEADER ────────────────────────────────────────────────────────────────── */
 .header{padding:18px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-.header-left h1{margin:0 0 2px;font-size:1.75rem;font-weight:800;letter-spacing:-.02em}
+.header-left h1{margin:0 0 6px;font-size:1.75rem;font-weight:800;letter-spacing:-.02em}
 .header-left p{color:var(--muted);margin:0;font-size:.88rem}
 .header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 

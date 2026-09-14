@@ -38,7 +38,7 @@ body.light .card{background:rgba(255,255,255,.9)}
 
 /* ── Header ── */
 .hdr{padding:16px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-.hdr h1{margin:0 0 2px;font-size:1.5rem;font-weight:800;letter-spacing:-.02em}
+.hdr h1{margin:0 0 6px;font-size:1.5rem;font-weight:800;letter-spacing:-.02em}
 .hdr p{margin:0;color:var(--muted);font-size:.82rem}
 .hdr-r{display:flex;gap:8px}
 
