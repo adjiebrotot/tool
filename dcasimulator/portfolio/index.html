@@ -281,7 +281,7 @@
       </label>
       <label class="radio-opt" data-method="rule-trigger">
         <input type="radio" name="rebalMethod" value="rule-trigger"/>
-        <div class="radio-opt-text"><strong>Rule-Based Triggers</strong>Park top-ups in a reserve (cash or a holding asset) and deploy into each asset only when its own trigger fires: a % move from the period open, from the previous top or from the previous bottom, or a technical signal.</div>
+        <div class="radio-opt-text"><strong>Rule-Based Triggers</strong>Park top-ups in a reserve (cash or a holding asset) and deploy into each asset only when its own trigger fires: a % move from the period open, from a rolling previous top or from a rolling previous bottom, or a technical signal.</div>
       </label>
     </div>
 
@@ -315,7 +315,7 @@
     <div id="ruleOpts" style="display:none">
       <div class="field-label" style="margin-top:10px">Reserve <span class="tip-icon" data-tip="Where top-ups wait until a trigger fires.<br><strong>Risk-Free Account:</strong> the money is held as cash and earns the risk-free yield.<br><strong>An asset:</strong> the money is parked in that holding and follows its price until it is deployed.">?</span></div>
       <select class="num-input" id="reserveSelect" style="cursor:pointer"></select>
-      <div class="field-label" style="margin-top:10px">Deploy Triggers <span class="tip-icon" data-tip="Each asset only draws from the reserve when its own trigger fires. A price-move trigger is measured against the reference you pick.<br><strong>Period open:</strong> the price at the start of each month or week.<br><strong>Previous top:</strong> the highest close seen before that day.<br><strong>Previous bottom:</strong> the lowest close seen before that day.<br><strong>Technical:</strong> the same indicators as the single-asset tool.<br><strong>Invest at Top-up:</strong> no waiting at all, this asset moves toward its target weight on every top-up.">?</span></div>
+      <div class="field-label" style="margin-top:10px">Deploy Triggers <span class="tip-icon" data-tip="Each asset only draws from the reserve when its own trigger fires. A price-move trigger is measured against the reference you pick.<br><strong>Period open:</strong> the price at the start of each month or week.<br><strong>Previous top:</strong> the highest close in the lookback window of bars before that day.<br><strong>Previous bottom:</strong> the lowest close in that same window. A rolling extreme follows the price, so these deploy on every day the move still holds and need no frequency.<br><strong>Technical:</strong> the same indicators as the single-asset tool.<br><strong>Invest at Top-up:</strong> no waiting at all, this asset moves toward its target weight on every top-up.">?</span></div>
       <div id="triggerTableWrap"></div>
     </div>
 

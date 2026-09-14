@@ -286,13 +286,14 @@ function buildAssetTriggerSignals(assets, common, topupSet){
       if(topupSet){ for(let i=0;i<n;i++){ if(topupSet.has(i)) sig[i]=true; } }
       return sig;
     }
+    const isTech = !!(tr.type && tr.type.indexOf('tech-')===0);
+    const ref = isTech ? 'period' : ((tr.ref==='top' || tr.ref==='bottom') ? tr.ref : 'period');
     let raw;
-    if(tr.type && tr.type.indexOf('tech-')===0){
+    if(isTech){
       raw = SharedTA.buildTech(px, tr.type, tr.tech||{}).signal;
     } else {
       raw = new Array(n).fill(false);
       const pct = (tr.pct!=null?tr.pct:10)/100; const dir = tr.direction || 'drop';
-      const ref = (tr.ref==='top' || tr.ref==='bottom') ? tr.ref : 'period';
       if(ref==='period'){
         let curKey=null, openPx=null;
         for(let i=0;i<n;i++){ const k = SharedTA.periodKey(common[i], period);
@@ -301,14 +302,24 @@ function buildAssetTriggerSignals(assets, common, topupSet){
           const move = px[i]/openPx - 1;
           raw[i] = dir==='rise' ? (move >= pct) : (move <= -pct); }
       } else {
-        let ext=null;
-        for(let i=0;i<n;i++){
-          const q=px[i], usable=Number.isFinite(q) && q>0;
-          if(usable && ext!=null){ const move = q/ext - 1; raw[i] = dir==='rise' ? (move >= pct) : (move <= -pct); }
-          if(usable) ext = (ext==null) ? q : (ref==='top' ? Math.max(ext,q) : Math.min(ext,q));
+        const lbv = parseInt(tr.lookback, 10);
+        const lb = (isNaN(lbv) || lbv<1) ? 60 : lbv;
+        for(let i=1;i<n;i++){
+          const q=px[i];
+          if(!(Number.isFinite(q) && q>0)) continue;
+          let ext=null;
+          for(let j=Math.max(0,i-lb); j<i; j++){
+            const r=px[j];
+            if(!(Number.isFinite(r) && r>0)) continue;
+            ext = (ext==null) ? r : (ref==='top' ? Math.max(ext,r) : Math.min(ext,r));
+          }
+          if(ext==null) continue;
+          const move = q/ext - 1;
+          raw[i] = dir==='rise' ? (move >= pct) : (move <= -pct);
         }
       }
     }
+    if(ref!=='period') return raw;
     const sig = new Array(n).fill(false); const groups = new Map();
     for(let i=0;i<n;i++){ const k=SharedTA.periodKey(common[i], period); if(!groups.has(k)) groups.set(k,[]); groups.get(k).push(i); }
     groups.forEach(idxs=>{ let picked=-1; for(const i of idxs){ if(raw[i]){ picked=i; break; } } if(picked>=0) sig[picked]=true; else if(eom) sig[idxs[idxs.length-1]]=true; });
