@@ -6,13 +6,17 @@ accounting integrity and cross-tool consistency against real Adj.Close data.
 
 - `harness.js` — engine replay (verbatim from the two `script.js` files) + CSV loader.
 - `run.js` — exercises every investment style and every rebalancing method with
-  230 accounting-integrity assertions (conservation, fees, target weights, triggers).
+  263 accounting-integrity assertions (conservation, fees, target weights, triggers).
   Part 5 covers the Price % move reference anchors (period open / previous top /
   previous bottom): each is replayed independently from its documented wording, then
-  cross-checked for causality, bucketing, saved-config compatibility and money
-  conservation. It also lifts `buildAssetTriggerSignals` straight out of
-  `../portfolio/script.js` and diffs it against the copy here, so "verbatim" is a
-  checked property rather than a comment.
+  cross-checked for causality, saved-config compatibility and money conservation.
+  The rolling top/bottom anchors get their own invariants — the window nests (widening
+  it only ever adds fire days, or only ever removes them), and a step down followed by
+  a flat run goes quiet exactly `lookback` bars later, which is the property that lets
+  those anchors do without a firing bucket. It also lifts `buildAssetTriggerSignals`
+  and the trigger form helpers straight out of `../portfolio/script.js` and runs them
+  beside the copy here, so "verbatim" and "the form asks for what the engine reads"
+  are checked properties rather than comments.
 - `metrics.js` — confirms the two tools' time-weighted-return definitions agree.
 
 Run: `node run.js` and `node metrics.js`.
