@@ -226,9 +226,55 @@ const kpis = () => page.evaluate(() => {
   return { loan:t('kpiLoan'), bind:t('kpiBind'), price:t('kpiPrice'), repay:t('kpiRepay'),
            nsr:t('kpiNsr'), umi:t('kpiUmi'), warn:document.getElementById('warnBanner').textContent.trim() };
 });
+// The page ships with progressive disclosure on: Simple mode everywhere, and
+// only the debts the user ticks. The maths tests below want every stream and
+// every knob live, so reset() puts the page into the fully-disclosed state,
+// which is numerically the same scenario the tool used to open on.
+async function setModes(m){
+  await page.evaluate(mm => {
+    Object.entries(mm).forEach(([group, val]) => {
+      const g = document.getElementById(group);
+      if(!g) throw new Error('no such segmented control: ' + group);
+      const b = g.querySelector('.seg-btn[data-val="' + val + '"]');
+      if(!b) throw new Error('no such option: ' + group + '/' + val);
+      b.click();
+    });
+  }, m);
+  await page.waitForTimeout(90);
+}
+const modes = () => page.evaluate(() => ({ ...window.__BC.UI }));
+const shown = id => page.evaluate(i => {
+  const el = document.getElementById(i);
+  return !!el && el.style.display !== 'none' && el.offsetParent !== null;
+}, id);
+
+const ALL_DETAILED = { incWhoGroup:'employee', incModeGroup:'detailed', debtsModeGroup:'detailed',
+                       loanModeGroup:'detailed', capsModeGroup:'detailed' };
+const ALL_TICKED = { hasInvest:true, hasGov:true, hasHomeLoan:true, hasCard:true, hasPersonal:true,
+                     hasBnpl:true, hasSupport:true, hasRefi:true, hasGift:true, hasGrant:true };
+
 async function reset(){
   await page.evaluate(() => document.getElementById('resetBtn').click());
   await page.waitForTimeout(120);
+  await setModes(ALL_DETAILED);
+  await setInputs(ALL_TICKED);
+}
+
+/* ══════════════ B0 — the shipped default, before anything is disclosed ══════════════ */
+{
+  const d = await modes(), p = await inputs(), ref = replay(p);
+  const oneNumber = p.payg === 140000 && p.shdPayg === 100
+        && p.overtime === 0 && p.bonus === 0 && p.allow === 0 && p.casual === 0 && p.seNpat === 0;
+  check('B0 the page opens Simple, on the employee side, with one income counted in full',
+    d.incMode === 'simple' && d.incWho === 'employee' && oneNumber
+      && d.debtsMode === 'simple' && d.loanMode === 'simple' && d.capsMode === 'simple',
+    `modes ${JSON.stringify(d)}, payg ${p.payg} @ ${p.shdPayg}%`);
+  check('B0b an unticked checklist keeps its group off the screen and out of the maths',
+    p.rent === 0 && p.div === 0 && p.ftb === 0 && p.pension === 0 && p.olBal === 0
+      && p.persBal === 0 && p.bnplLimit === 0 && p.gift === 0 && p.grant === 0
+      && !(await shown('incRent')) && !(await shown('olBal')),
+    `capacity ${ref.maxLoan.toFixed(0)} from salary and the card limit alone`);
+  await reset();
 }
 
 /* ══════════════ B1 — every step of the default scenario ══════════════ */
@@ -360,7 +406,7 @@ async function reset(){
 /* ══════════════ B7 — interest only shortens the amortisation window ══════════════ */
 {
   const pi = await engine();
-  await setInputs({ newType:'io', newIo:5 });
+  await setInputs({ hasIo:true, newIo:5 });
   const io = await engine();
   const i = io.assessRate/1200;
   check('B7 interest only amortises over term minus the IO period, lowering capacity',
@@ -542,7 +588,7 @@ async function reset(){
 
 /* ══════════════ B15 — the mini cache round-trips ══════════════ */
 {
-  await setInputs({ incPayg:222000, city:'Hobart', deps:3, lvrMax:85, newType:'io' });
+  await setInputs({ incPayg:222000, city:'Hobart', deps:3, lvrMax:85, hasIo:true });
   const before = await engine();
   await page.waitForTimeout(600);   // the mini cache debounces saves by 400ms
   await page.reload({ waitUntil:'load' });
@@ -553,10 +599,126 @@ async function reset(){
     city: document.getElementById('city').value,
     ioShown: document.getElementById('newIoRow').style.display !== 'none'
   }));
+  const restoredModes = await modes();
   check('B15 the mini cache restores inputs and the conditional rows they control',
     near(before.maxLoan, after.maxLoan, 1) && restored.city === 'Hobart' && restored.ioShown,
     `capacity ${before.maxLoan.toFixed(0)} → ${after.maxLoan.toFixed(0)}, payg "${restored.payg}", city ${restored.city}`);
+  check('B15b the segmented controls survive the round trip too, buttons and all',
+    restoredModes.incMode === 'detailed' && restoredModes.debtsMode === 'detailed'
+      && restoredModes.capsMode === 'detailed'
+      && await page.evaluate(() => document.querySelector('#incModeGroup .seg-btn[data-val="detailed"]').classList.contains('active')),
+    `restored ${JSON.stringify(restoredModes)}`);
   await page.evaluate(() => { try { localStorage.clear(); } catch(e){} });
+}
+
+/* ══════════════ B17 — Simple and Detailed describe the same person ══════════════ */
+{
+  await reset();
+  await setInputs({ incPayg:120000, incOvertime:20000, shdOvertime:80 });
+  const detailed = await engine();
+
+  // Detailed → Simple carries the headline across, and counts it in full, so
+  // the shaded overtime is the entire difference between the two views.
+  await setModes({ incModeGroup:'simple' });
+  const p = await inputs(), simple = await engine();
+  check('B17 Simple carries the detailed total across and assesses every dollar of it',
+    p.payg === 140000 && p.shdPayg === 100 && p.overtime === 0
+      && near(simple.grossAssessable, 140000, 0.01),
+    `simple ${simple.grossAssessable.toFixed(0)} assessable on 140,000 entered `
+    + `vs detailed ${detailed.grossAssessable.toFixed(0)} on ${detailed.grossUnshaded.toFixed(0)}`);
+  check('B17b the shade boxes are gone in Simple and back in Detailed',
+    !(await shown('shdPayg')) && (await setModes({ incModeGroup:'detailed' }), await shown('shdPayg')),
+    'shdPayg hidden in Simple, shown in Detailed');
+
+  // Simple → Detailed hands the number to the primary field of whichever side
+  // of the Employee / Self-employed switch is showing.
+  await reset();
+  await setModes({ incModeGroup:'simple' });
+  await setInputs({ incSimple:'90,000' });
+  await setModes({ incWhoGroup:'self' });
+  const seSimple = await inputs();
+  await setModes({ incModeGroup:'detailed' });
+  const seDetailed = await inputs();
+  check('B17c the self-employed side reads the same figure as business profit, not salary',
+    seSimple.seNpat === 90000 && seSimple.payg === 0 && seSimple.shdSe === 100
+      && seDetailed.seNpat === 90000 && seDetailed.payg === 0,
+    `simple NPAT ${seSimple.seNpat} @ ${seSimple.shdSe}%, detailed NPAT ${seDetailed.seNpat}`);
+  check('B17d picking one side of the switch silences the other side entirely',
+    !(await shown('incPayg')) && (await shown('incSeNpat')),
+    'employment group hidden on the self-employed side');
+  await reset();
+}
+
+/* ══════════════ B18 — the checklists gate the maths, not just the view ══════════════ */
+{
+  await reset();
+  await setInputs({ incRent:30000, incFtb:8000, olBal:300000, cardLimit:25000,
+                    persBal:15000, persRepay:600, gift:50000 });
+  const on = await engine();
+
+  await setInputs({ hasInvest:false, hasGov:false, hasHomeLoan:false, hasCard:false,
+                    hasPersonal:false, hasGift:false });
+  const off = await inputs(), offR = await engine();
+  check('B18 unticking a checklist box zeroes its inputs instead of leaving them live',
+    off.rent === 0 && off.ftb === 0 && off.olBal === 0 && off.cardLimit === 0
+      && off.persBal === 0 && off.persRepay === 0 && off.gift === 0,
+    `assessable ${on.grossAssessable.toFixed(0)} → ${offR.grossAssessable.toFixed(0)}, `
+    + `commitments ${on.commitments.toFixed(0)} → ${offR.commitments.toFixed(0)}`);
+  check('B18b re-ticking a box brings the same numbers back untouched',
+    await (async () => {
+      await setInputs({ hasInvest:true, hasGov:true, hasHomeLoan:true, hasCard:true,
+                        hasPersonal:true, hasGift:true });
+      const back = await engine();
+      return near(back.maxLoan, on.maxLoan, 1);
+    })(),
+    `capacity returns to ${on.maxLoan.toFixed(0)}`);
+  await reset();
+}
+
+/* ══════════════ B19 — HEM is stated where it is entered ══════════════ */
+{
+  await reset();
+  await setInputs({ declaredExp:500, city:'Sydney' });
+  const low = await engine();
+  const noteLow = await page.evaluate(() => document.getElementById('hemNote').textContent.trim());
+  const warnLow = (await kpis()).warn;
+  check('B19 a declared figure under HEM says which benchmark is used, and where',
+    /HEM of \$[\d,]+\/mo in Sydney will be used/.test(noteLow)
+      && noteLow.includes(Math.round(low.hem).toLocaleString('en-AU')),
+    `"${noteLow}"`);
+  check('B19b the old "sits well under HEM" warning is gone from the banner',
+    !/well under HEM/i.test(warnLow) && !/benchmark is doing all the work/i.test(warnLow),
+    warnLow ? `banner now reads "${warnLow.slice(0,60)}"` : 'banner empty');
+
+  await setInputs({ declaredExp:12000 });
+  const noteHigh = await page.evaluate(() => document.getElementById('hemNote').textContent.trim());
+  check('B19c a declared figure above HEM says so, and names the benchmark it beat',
+    /Used as declared/.test(noteHigh) && /HEM for Sydney/.test(noteHigh), `"${noteHigh}"`);
+  await reset();
+}
+
+/* ══════════════ B20 — the chart tells its five series apart ══════════════ */
+{
+  await reset();
+  const style = await page.evaluate(() => {
+    const c = window.__charts[window.__charts.length - 1];
+    const ds = c.data.datasets;
+    const labelColor = c.options.plugins.tooltip.callbacks.labelColor;
+    return {
+      labels:  ds.map(d => d.label),
+      border:  ds.map(d => d.borderColor),
+      point:   ds.map(d => d.pointBackgroundColor),
+      swatch:  ds.map(d => labelColor({ dataset:d }).backgroundColor),
+      dashes:  ds.map(d => JSON.stringify(d.borderDash))
+    };
+  });
+  const distinct = a => new Set(a.map(v => String(v).toLowerCase())).size === a.length;
+  check('B20 every series carries its own line colour, marker colour and dash',
+    distinct(style.border) && distinct(style.point) && distinct(style.dashes),
+    `borders ${style.border.join(' ')}`);
+  check('B20b the tooltip swatch follows the line, so five rows no longer read as one colour',
+    distinct(style.swatch) && style.swatch.every((c, i) => c === style.border[i]),
+    `swatches ${style.swatch.join(' ')}`);
 }
 
 /* ══════════════ B16 — nothing threw along the way ══════════════ */

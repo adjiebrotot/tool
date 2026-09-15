@@ -124,9 +124,33 @@
 
   <!-- ══════════════ INCOME ══════════════ -->
   <div class="ctrl-panel active" id="tab-income">
-    <div class="help">Every amount is annual and gross. The percentage beside it is the shading factor, the share a lender is willing to count.</div>
+    <div class="mode-block">
+      <div class="mode-row">
+        <span class="mode-label">I earn as</span>
+        <div class="seg-group" id="incWhoGroup">
+          <button type="button" class="seg-btn active" data-val="employee">Employee</button>
+          <button type="button" class="seg-btn" data-val="self">Self-employed</button>
+        </div>
+      </div>
+      <div class="mode-row">
+        <span class="mode-label">Enter it</span>
+        <div class="seg-group" id="incModeGroup">
+          <button type="button" class="seg-btn active" data-val="simple">Simple</button>
+          <button type="button" class="seg-btn" data-val="detailed">Detailed</button>
+        </div>
+        <i class="tip-icon" data-tip="<strong>Simple</strong> takes one gross annual figure and counts it in full, which is how a lender treats base salary and business profit.<br><strong>Detailed</strong> splits the figure into each stream and exposes the shading factor, the share a lender is willing to count.">?</i>
+      </div>
+    </div>
 
-    <div class="field-group">
+    <!-- Simple: one number, counted in full -->
+    <div class="field-row" data-simple="inc">
+      <div class="field-label"><span class="tip-wrap"><span id="incSimpleLabel">Total employment income</span> <i class="tip-icon" id="incSimpleTip" data-tip="">?</i></span></div>
+      <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="incSimple" type="text" inputmode="decimal" value="140,000"></div>
+      <div class="field-sub" id="incSimpleNote">Annual and gross, counted in full.</div>
+    </div>
+
+    <!-- Detailed: employee -->
+    <div class="field-group" data-adv="inc" data-who="employee">
       <div class="group-title">Employment</div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Base salary (PAYG) <i class="tip-icon" data-tip="Gross base salary before tax and <strong>excluding</strong> employer super. Counted in full by every lender.">?</i></span></div>
@@ -165,7 +189,8 @@
       </div>
     </div>
 
-    <div class="field-group">
+    <!-- Detailed: self-employed -->
+    <div class="field-group" data-adv="inc" data-who="self">
       <div class="group-title">Self-employed</div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Two year average NPAT <i class="tip-icon" data-tip="Average net profit after tax of the business across the last two financial years.">?</i></span></div>
@@ -175,30 +200,36 @@
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Add-backs <i class="tip-icon" data-tip="Depreciation, one-off non-recurring items, super above the compulsory rate, and director wages already paid to you. Added back because they are not a real cash drain on servicing.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Add-backs <i class="tip-icon" data-tip="Depreciation, one-off non-recurring items, super above the compulsory rate, and director wages already paid to you. Added back because they are not a real cash drain on servicing.<br>Shaded at the same rate as NPAT, and not treated as taxable income.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="incSeAdd" type="text" inputmode="decimal" value="0"></div>
-        <div class="field-sub">Shaded at the same rate as NPAT. Not treated as taxable income.</div>
       </div>
     </div>
 
-    <div class="field-group">
+    <div class="chk-block">
+      <div class="chk-title">Anything else you receive</div>
+      <label class="chk-row"><input type="checkbox" id="hasInvest"><span>Rent, dividends or an investment property</span></label>
+      <label class="chk-row"><input type="checkbox" id="hasGov"><span>Family Tax Benefit, pension or child support</span></label>
+    </div>
+
+    <div class="field-group" data-when="hasInvest">
       <div class="group-title">Investments</div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Gross rental income <i class="tip-icon" data-tip="Annual rent before costs. The 70% to 80% shading is what covers vacancy, agent fees, rates and strata, so do not deduct those yourself.">?</i></span></div>
         <div class="inline-row">
           <div class="currency-wrap grow"><span class="prefix">$</span><input class="currency-input fmt-num" id="incRent" type="text" inputmode="decimal" value="0"></div>
-          <div class="currency-wrap shade-wrap"><input class="currency-input has-suffix fmt-pct" id="shdRent" type="text" inputmode="decimal" value="80"><span class="suffix">%</span></div>
+          <div class="currency-wrap shade-wrap" data-adv="inc"><input class="currency-input has-suffix fmt-pct" id="shdRent" type="text" inputmode="decimal" value="80"><span class="suffix">%</span></div>
         </div>
+        <div class="field-sub" data-simple="inc" id="rentShadeNote">Shaded to 80%, the usual lender treatment.</div>
       </div>
-      <div class="field-row">
+      <div class="field-row" data-adv="inc">
         <div class="field-label"><span class="tip-wrap">Investment property deductible costs <i class="tip-icon" data-tip="Annual interest, agent fees, rates, strata, insurance and repairs on the investment property. Used only to work out the tax position, never deducted twice from the rent.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="ipCash" type="text" inputmode="decimal" value="0"></div>
       </div>
-      <div class="field-row">
+      <div class="field-row" data-adv="inc">
         <div class="field-label"><span class="tip-wrap">Depreciation (non-cash) <i class="tip-icon" data-tip="Capital works and plant depreciation claimed on the investment property. It lowers taxable income without costing cash, which is why it lifts the negative gearing benefit.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="ipDep" type="text" inputmode="decimal" value="0"></div>
       </div>
-      <div class="toggle-row">
+      <div class="toggle-row" data-adv="inc">
         <div class="toggle-label"><span class="tip-wrap">Allow negative gearing add-back <i class="tip-icon" data-tip="Only some lenders add the tax saved on a rental loss back to servicing income. Turn it off for the conservative view.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="negGear" checked><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
@@ -206,32 +237,33 @@
         <div class="field-label"><span class="tip-wrap">Dividends and distributions <i class="tip-icon" data-tip="Cash received, two year average. Grossed up for franking credits, then shaded to 80%.">?</i></span></div>
         <div class="inline-row">
           <div class="currency-wrap grow"><span class="prefix">$</span><input class="currency-input fmt-num" id="incDiv" type="text" inputmode="decimal" value="0"></div>
-          <div class="currency-wrap shade-wrap"><input class="currency-input has-suffix fmt-pct" id="shdDiv" type="text" inputmode="decimal" value="80"><span class="suffix">%</span></div>
+          <div class="currency-wrap shade-wrap" data-adv="inc"><input class="currency-input has-suffix fmt-pct" id="shdDiv" type="text" inputmode="decimal" value="80"><span class="suffix">%</span></div>
         </div>
+        <div class="field-sub" data-simple="inc" id="divShadeNote">Grossed up for franking, then shaded to 80%.</div>
       </div>
-      <div class="field-row">
+      <div class="field-row" data-adv="inc">
         <div class="field-label"><span class="tip-wrap">Franked portion <i class="tip-icon" data-tip="Share of the dividend carrying franking credits at the 30% company rate. 100% means fully franked, which grosses the cash dividend up by a factor of 10 over 7.">?</i></span></div>
         <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="frankPct" type="text" inputmode="decimal" value="100"><span class="suffix">%</span></div>
       </div>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" data-when="hasGov">
       <div class="group-title">Government and support</div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Family Tax Benefit A and B <i class="tip-icon" data-tip="Counted in full, but only while the youngest child stays under the lender's age limit of roughly 11 to 13 years.">?</i></span></div>
         <div class="inline-row">
           <div class="currency-wrap grow"><span class="prefix">$</span><input class="currency-input fmt-num" id="incFtb" type="text" inputmode="decimal" value="0"></div>
-          <div class="currency-wrap shade-wrap"><input class="currency-input has-suffix fmt-pct" id="shdFtb" type="text" inputmode="decimal" value="100"><span class="suffix">%</span></div>
+          <div class="currency-wrap shade-wrap" data-adv="inc"><input class="currency-input has-suffix fmt-pct" id="shdFtb" type="text" inputmode="decimal" value="100"><span class="suffix">%</span></div>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Centrelink pension or DSP <i class="tip-icon" data-tip="Age pension, disability support pension and carer payment. Counted in full.">?</i></span></div>
         <div class="inline-row">
           <div class="currency-wrap grow"><span class="prefix">$</span><input class="currency-input fmt-num" id="incPension" type="text" inputmode="decimal" value="0"></div>
-          <div class="currency-wrap shade-wrap"><input class="currency-input has-suffix fmt-pct" id="shdPension" type="text" inputmode="decimal" value="100"><span class="suffix">%</span></div>
+          <div class="currency-wrap shade-wrap" data-adv="inc"><input class="currency-input has-suffix fmt-pct" id="shdPension" type="text" inputmode="decimal" value="100"><span class="suffix">%</span></div>
         </div>
       </div>
-      <div class="toggle-row">
+      <div class="toggle-row" data-adv="inc">
         <div class="toggle-label"><span class="tip-wrap">Pension is taxable <i class="tip-icon" data-tip="Age pension is taxable, the disability support pension below age pension age is not. This only changes the tax line, not the shading.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="pensionTaxable"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
@@ -239,7 +271,7 @@
         <div class="field-label"><span class="tip-wrap">Child support received <i class="tip-icon" data-tip="Needs a court order or binding agreement plus 6 months of evidence. Tax free, so it is counted in full.">?</i></span></div>
         <div class="inline-row">
           <div class="currency-wrap grow"><span class="prefix">$</span><input class="currency-input fmt-num" id="incCsIn" type="text" inputmode="decimal" value="0"></div>
-          <div class="currency-wrap shade-wrap"><input class="currency-input has-suffix fmt-pct" id="shdCsIn" type="text" inputmode="decimal" value="100"><span class="suffix">%</span></div>
+          <div class="currency-wrap shade-wrap" data-adv="inc"><input class="currency-input has-suffix fmt-pct" id="shdCsIn" type="text" inputmode="decimal" value="100"><span class="suffix">%</span></div>
         </div>
       </div>
     </div>
@@ -275,7 +307,7 @@
     <div class="field-row">
       <div class="field-label"><span class="tip-wrap">Declared living expenses <i class="tip-icon" data-tip="Your own monthly figure. It <strong>excludes</strong> rent, mortgage repayments, debt repayments and investment property outgoings, which are all counted separately under Debts.">?</i></span></div>
       <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="declaredExp" type="text" inputmode="decimal" value="3,500"><span class="suffix" style="right:11px">/mo</span></div>
-      <div class="field-sub">The lender uses the higher of this and HEM.</div>
+      <div class="field-sub" id="hemNote"></div>
     </div>
     <div class="toggle-row">
       <div class="toggle-label"><span class="tip-wrap">Private hospital cover <i class="tip-icon" data-tip="Without it, the Medicare Levy Surcharge of 1% to 1.5% applies once income passes the singles or family threshold.">?</i></span></div>
@@ -313,7 +345,28 @@
 
   <!-- ══════════════ DEBTS ══════════════ -->
   <div class="ctrl-panel" id="tab-debts">
-    <div class="field-group">
+    <div class="mode-block">
+      <div class="mode-row">
+        <span class="mode-label">Enter my debts</span>
+        <div class="seg-group" id="debtsModeGroup">
+          <button type="button" class="seg-btn active" data-val="simple">Simple</button>
+          <button type="button" class="seg-btn" data-val="detailed">Detailed</button>
+        </div>
+        <i class="tip-icon" data-tip="<strong>Simple</strong> asks only for the headline figure of each debt you tick and assesses it on the standard settings shown beneath it.<br><strong>Detailed</strong> exposes every one of those settings: rates, terms, repayment type and the rate charged on card limits.">?</i>
+      </div>
+    </div>
+
+    <div class="chk-block">
+      <div class="chk-title">Tick what you have</div>
+      <label class="chk-row"><input type="checkbox" id="hasHomeLoan"><span>Another home or investment loan</span></label>
+      <label class="chk-row"><input type="checkbox" id="hasCard" checked><span>Credit card or line of credit</span></label>
+      <label class="chk-row"><input type="checkbox" id="hasPersonal"><span>Personal or car loan</span></label>
+      <label class="chk-row"><input type="checkbox" id="hasBnpl"><span>Buy now pay later</span></label>
+      <label class="chk-row"><input type="checkbox" id="hasSupport"><span>Child support or maintenance paid</span></label>
+      <label class="chk-row"><input type="checkbox" id="hasRefi"><span>A facility closing or refinancing at settlement</span></label>
+    </div>
+
+    <div class="field-group" data-when="hasHomeLoan">
       <div class="group-title">Other home and investment loans</div>
       <div class="field-row">
         <div class="field-label">Total balance</div>
@@ -322,86 +375,93 @@
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Actual rate <i class="tip-icon" data-tip="The rate you pay today. The lender reassesses it at the higher of this plus 3.00% and its own floor.">?</i></span></div>
         <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="olRate" type="text" inputmode="decimal" value="6.20"><span class="suffix">%</span></div>
+        <div class="field-sub" data-simple="debts" id="olSimpleNote"></div>
       </div>
-      <div class="field-row">
+      <div class="field-row" data-adv="debts">
         <div class="field-label">Remaining term</div>
         <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="olTerm" type="text" inputmode="decimal" value="25"><span class="suffix">yrs</span></div>
       </div>
-      <div class="field-row">
+      <div class="field-row" data-adv="debts">
         <div class="field-label"><span class="tip-wrap">Repayment type <i class="tip-icon" data-tip="An interest only loan is reassessed as principal and interest over the term left <strong>after</strong> the interest only period ends, which makes the assessed repayment much larger.">?</i></span></div>
         <select class="sel-input" id="olType">
           <option value="pi" selected>Principal and interest</option>
           <option value="io">Interest only</option>
         </select>
       </div>
-      <div class="field-row" id="olIoRow" style="display:none">
+      <div class="field-row" id="olIoRow" data-adv="debts">
         <div class="field-label">Interest only period left</div>
         <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="olIo" type="text" inputmode="decimal" value="3"><span class="suffix">yrs</span></div>
       </div>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" data-when="hasCard">
       <div class="group-title">Revolving credit</div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Credit card and LOC limits <i class="tip-icon" data-tip="Assessed on the <strong>limit</strong>, not the balance. A card you never use still costs you capacity, so closing it before applying is the cheapest lift available.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="cardLimit" type="text" inputmode="decimal" value="10,000"></div>
+        <div class="field-sub" data-simple="debts" id="cardSimpleNote"></div>
       </div>
-      <div class="slider-block">
+      <div class="slider-block" data-adv="debts">
         <div class="slider-head"><div class="slider-label">Assessed monthly rate</div><div class="slider-value" id="cardPctValue">3.80%</div></div>
         <input id="cardPct" type="range" min="3" max="3.8" step="0.05" value="3.8">
         <div class="help">Share of the limit charged as a monthly repayment. Lenders use 3.0% to 3.8%.</div>
       </div>
     </div>
 
-    <div class="field-group">
-      <div class="group-title">Instalment debt</div>
+    <div class="field-group" data-when="hasPersonal">
+      <div class="group-title">Personal and car loans</div>
       <div class="field-row">
-        <div class="field-label">Personal and car loan repayments</div>
+        <div class="field-label">Monthly repayments</div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="persRepay" type="text" inputmode="decimal" value="0"><span class="suffix" style="right:11px">/mo</span></div>
       </div>
       <div class="field-row">
-        <div class="field-label">Personal and car loan balances</div>
+        <div class="field-label">Balances outstanding</div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="persBal" type="text" inputmode="decimal" value="0"></div>
         <div class="field-sub">Balance feeds the debt-to-income cap only.</div>
       </div>
+    </div>
+
+    <div class="field-group" data-when="hasBnpl">
+      <div class="group-title">Buy now pay later</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Buy now pay later <i class="tip-icon" data-tip="Enter the monthly instalment, or the limit divided by the lender's assessment period if it assesses on limits.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Monthly instalments <i class="tip-icon" data-tip="Enter the monthly instalment, or the limit divided by the lender's assessment period if it assesses on limits.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="bnplRepay" type="text" inputmode="decimal" value="0"><span class="suffix" style="right:11px">/mo</span></div>
       </div>
       <div class="field-row">
-        <div class="field-label">Buy now pay later limits</div>
+        <div class="field-label">Total limits</div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="bnplLimit" type="text" inputmode="decimal" value="0"></div>
+        <div class="field-sub">Limit feeds the debt-to-income cap only.</div>
       </div>
     </div>
 
     <div class="field-group">
-      <div class="group-title">Other monthly outgoings</div>
+      <div class="group-title">After settlement</div>
       <div class="field-row">
-        <div class="field-label">Child support or maintenance paid</div>
-        <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="csOut" type="text" inputmode="decimal" value="0"><span class="suffix" style="right:11px">/mo</span></div>
-      </div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Occupancy after settlement <i class="tip-icon" data-tip="Choose investor if you will keep renting or boarding after settlement. Owner occupiers move into the new property, so the rent line falls away.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Occupancy <i class="tip-icon" data-tip="Choose investor if you will keep renting or boarding after settlement. Owner occupiers move into the new property, so the rent line falls away.">?</i></span></div>
         <select class="sel-input" id="occupancy">
           <option value="owner" selected>Owner occupier</option>
           <option value="investor">Investor, still renting or boarding</option>
         </select>
       </div>
-      <div class="field-row" id="rentBoardRow" style="display:none">
+      <div class="field-row" id="rentBoardRow">
         <div class="field-label">Rent or board paid after settlement</div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="rentBoard" type="text" inputmode="decimal" value="0"><span class="suffix" style="right:11px">/mo</span></div>
-      </div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Investment property outgoings not netted off rent <i class="tip-icon" data-tip="Only what the rental shading does not already cover. Leave it at zero if you shaded the rent at 70% to 80%, otherwise you pay for the same cost twice.">?</i></span></div>
-        <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="ipOut" type="text" inputmode="decimal" value="0"><span class="suffix" style="right:11px">/mo</span></div>
       </div>
       <div class="field-row">
         <div class="field-label">Strata, rates and insurance on the new property</div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="newPropCosts" type="text" inputmode="decimal" value="350"><span class="suffix" style="right:11px">/mo</span></div>
       </div>
+      <div class="field-row" data-when="hasSupport">
+        <div class="field-label">Child support or maintenance paid</div>
+        <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="csOut" type="text" inputmode="decimal" value="0"><span class="suffix" style="right:11px">/mo</span></div>
+      </div>
+      <div class="field-row" data-adv="debts" data-when="hasInvest">
+        <div class="field-label"><span class="tip-wrap">Investment property outgoings not netted off rent <i class="tip-icon" data-tip="Only what the rental shading does not already cover. Leave it at zero if you shaded the rent at 70% to 80%, otherwise you pay for the same cost twice.">?</i></span></div>
+        <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="ipOut" type="text" inputmode="decimal" value="0"><span class="suffix" style="right:11px">/mo</span></div>
+      </div>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" data-when="hasRefi">
       <div class="group-title">Closing at settlement</div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Repayments being refinanced or closed <i class="tip-icon" data-tip="Facilities that will be paid out or closed at settlement. Subtracted from commitments, and their balances come off the debt-to-income cap.">?</i></span></div>
@@ -416,46 +476,78 @@
 
   <!-- ══════════════ LOAN ══════════════ -->
   <div class="ctrl-panel" id="tab-loan">
+    <div class="mode-block">
+      <div class="mode-row">
+        <span class="mode-label">Set up the loan</span>
+        <div class="seg-group" id="loanModeGroup">
+          <button type="button" class="seg-btn active" data-val="simple">Simple</button>
+          <button type="button" class="seg-btn" data-val="detailed">Detailed</button>
+        </div>
+        <i class="tip-icon" data-tip="<strong>Simple</strong> asks for the rate and the term, and tests you on the standard APRA settings shown beneath them.<br><strong>Detailed</strong> lets you move the buffer, the lender floor, the minimum surplus and the minimum NSR to match a particular lender's policy.">?</i>
+      </div>
+    </div>
+
+    <div class="chk-block">
+      <div class="chk-title">How the loan is structured</div>
+      <label class="chk-row"><input type="checkbox" id="hasIo"><span>Interest only for the first few years</span></label>
+    </div>
+
     <div class="field-row">
       <div class="field-label">Product rate offered</div>
       <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="prodRate" type="text" inputmode="decimal" value="5.90"><span class="suffix">%</span></div>
-    </div>
-    <div class="slider-block">
-      <div class="slider-head"><div class="slider-label"><span class="tip-wrap">APRA buffer <i class="tip-icon" data-tip="The serviceability buffer APRA requires lenders to add on top of the product rate. It has been 3.00 percentage points since October 2021.">?</i></span></div><div class="slider-value" id="bufferValue">3.00%</div></div>
-      <input id="buffer" type="range" min="0" max="5" step="0.25" value="3">
-    </div>
-    <div class="slider-block">
-      <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Lender floor <i class="tip-icon" data-tip="A hard minimum assessment rate the lender will not go below, typically 5.00% to 5.75%. Whichever is higher, floor or buffered rate, is the one used.">?</i></span></div><div class="slider-value" id="floorValue">5.50%</div></div>
-      <input id="floorRate" type="range" min="0" max="9" step="0.05" value="5.5">
     </div>
     <div class="field-row">
       <div class="field-label">Loan term</div>
       <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="termYears" type="text" inputmode="decimal" value="30"><span class="suffix">yrs</span></div>
     </div>
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">New loan repayment type <i class="tip-icon" data-tip="Interest only shortens the amortisation window the lender tests you on, from the full term down to the term minus the interest only period. It lowers capacity materially.">?</i></span></div>
-      <select class="sel-input" id="newType">
-        <option value="pi" selected>Principal and interest</option>
-        <option value="io">Interest only</option>
-      </select>
-    </div>
-    <div class="field-row" id="newIoRow" style="display:none">
-      <div class="field-label">Interest only period</div>
+    <div class="field-row" id="newIoRow" data-when="hasIo">
+      <div class="field-label"><span class="tip-wrap">Interest only period <i class="tip-icon" data-tip="Interest only shortens the amortisation window the lender tests you on, from the full term down to the term minus the interest only period. It lowers capacity materially.">?</i></span></div>
       <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="newIo" type="text" inputmode="decimal" value="5"><span class="suffix">yrs</span></div>
     </div>
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Minimum monthly surplus (UMI) <i class="tip-icon" data-tip="The buffer the lender insists you keep after every outgoing, including the new repayment. Usually $0 to $500 a month.">?</i></span></div>
-      <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="umiReq" type="text" inputmode="decimal" value="250"><span class="suffix" style="right:11px">/mo</span></div>
-    </div>
-    <div class="slider-block">
-      <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Minimum NSR <i class="tip-icon" data-tip="Net Service Ratio, assessed income divided by all outgoings. It must clear 1.00, and some lenders want 1.05 to 1.10. This is the secondary sanity check, UMI is the primary test.">?</i></span></div><div class="slider-value" id="nsrValue">1.00</div></div>
-      <input id="nsrMin" type="range" min="1" max="1.2" step="0.01" value="1">
+    <div class="field-sub" data-simple="loan" id="loanSimpleNote"></div>
+
+    <div class="field-group" data-adv="loan">
+      <div class="group-title">Lender policy</div>
+      <div class="slider-block">
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">APRA buffer <i class="tip-icon" data-tip="The serviceability buffer APRA requires lenders to add on top of the product rate. It has been 3.00 percentage points since October 2021.">?</i></span></div><div class="slider-value" id="bufferValue">3.00%</div></div>
+        <input id="buffer" type="range" min="0" max="5" step="0.25" value="3">
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Lender floor <i class="tip-icon" data-tip="A hard minimum assessment rate the lender will not go below, typically 5.00% to 5.75%. Whichever is higher, floor or buffered rate, is the one used.">?</i></span></div><div class="slider-value" id="floorValue">5.50%</div></div>
+        <input id="floorRate" type="range" min="0" max="9" step="0.05" value="5.5">
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Minimum monthly surplus (UMI) <i class="tip-icon" data-tip="The buffer the lender insists you keep after every outgoing, including the new repayment. Usually $0 to $500 a month.">?</i></span></div>
+        <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="umiReq" type="text" inputmode="decimal" value="250"><span class="suffix" style="right:11px">/mo</span></div>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Minimum NSR <i class="tip-icon" data-tip="Net Service Ratio, assessed income divided by all outgoings. It must clear 1.00, and some lenders want 1.05 to 1.10. This is the secondary sanity check, UMI is the primary test.">?</i></span></div><div class="slider-value" id="nsrValue">1.00</div></div>
+        <input id="nsrMin" type="range" min="1" max="1.2" step="0.01" value="1">
+      </div>
     </div>
   </div>
 
   <!-- ══════════════ CAPS ══════════════ -->
   <div class="ctrl-panel" id="tab-caps">
-    <div class="field-group">
+    <div class="mode-block">
+      <div class="mode-row">
+        <span class="mode-label">Set the caps</span>
+        <div class="seg-group" id="capsModeGroup">
+          <button type="button" class="seg-btn active" data-val="simple">Simple</button>
+          <button type="button" class="seg-btn" data-val="detailed">Detailed</button>
+        </div>
+        <i class="tip-icon" data-tip="<strong>Simple</strong> asks for the price, the LVR, your savings and the stamp duty, and applies the standard settings shown beneath them.<br><strong>Detailed</strong> adds the debt-to-income cap and its income basis, the bank valuation, and each purchase cost on its own line.">?</i>
+      </div>
+    </div>
+
+    <div class="chk-block">
+      <div class="chk-title">Tick what applies</div>
+      <label class="chk-row"><input type="checkbox" id="lmiCap"><span>Lenders Mortgage Insurance, capitalised onto the loan</span></label>
+      <label class="chk-row"><input type="checkbox" id="hasGift"><span>Gift or family contribution</span></label>
+      <label class="chk-row"><input type="checkbox" id="hasGrant"><span>First home buyer grant</span></label>
+    </div>
+
+    <div class="field-group" data-adv="caps">
       <div class="group-title">Debt to income</div>
       <div class="slider-block">
         <div class="slider-head"><div class="slider-label"><span class="tip-wrap">DTI cap <i class="tip-icon" data-tip="Total debt divided by gross income. Above 6.0 the loan is reportable to APRA as high DTI, and many lenders cut to 4.5 to 5.5 once the LVR is high.">?</i></span></div><div class="slider-value" id="dtiValue">6.00×</div></div>
@@ -480,19 +572,16 @@
         <div class="field-label">Purchase price</div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="price" type="text" inputmode="decimal" value="900,000"></div>
       </div>
-      <div class="field-row">
+      <div class="field-row" data-adv="caps">
         <div class="field-label"><span class="tip-wrap">Bank valuation <i class="tip-icon" data-tip="The LVR cap applies to the lower of the price and the bank's own valuation, so a valuation shortfall costs you directly.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="valuation" type="text" inputmode="decimal" value="900,000"></div>
       </div>
-      <div class="toggle-row">
-        <div class="toggle-label"><span class="tip-wrap">Capitalise LMI <i class="tip-icon" data-tip="Lenders Mortgage Insurance added on top of the loan. You then have to service the larger balance, so it feeds straight back into the serviceability test.">?</i></span></div>
-        <label class="toggle-switch"><input type="checkbox" id="lmiCap"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
-      </div>
-      <div class="field-row" id="lmiRow" style="display:none">
-        <div class="field-label">LMI premium</div>
+      <div class="field-row" id="lmiRow" data-when="lmiCap">
+        <div class="field-label"><span class="tip-wrap">LMI premium <i class="tip-icon" data-tip="Lenders Mortgage Insurance added on top of the loan. You then have to service the larger balance, so it feeds straight back into the serviceability test.">?</i></span></div>
         <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="lmiRate" type="text" inputmode="decimal" value="2.50"><span class="suffix">%</span></div>
         <div class="field-sub">Percentage of the base loan, added to the amount you must service.</div>
       </div>
+      <div class="field-sub" data-simple="caps" id="capsSimpleNote"></div>
     </div>
 
     <div class="field-group">
@@ -501,11 +590,11 @@
         <div class="field-label">Savings</div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="savings" type="text" inputmode="decimal" value="200,000"></div>
       </div>
-      <div class="field-row">
+      <div class="field-row" data-when="hasGift">
         <div class="field-label">Gift or family contribution</div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="gift" type="text" inputmode="decimal" value="0"></div>
       </div>
-      <div class="field-row">
+      <div class="field-row" data-when="hasGrant">
         <div class="field-label">First home buyer grant</div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="grant" type="text" inputmode="decimal" value="0"></div>
       </div>
@@ -518,18 +607,19 @@
         <div class="currency-wrap" id="dutyPctWrap"><input class="currency-input has-suffix fmt-pct" id="dutyPct" type="text" inputmode="decimal" value="4.00"><span class="suffix">%</span></div>
         <div class="currency-wrap" id="dutyAmtWrap" style="display:none"><span class="prefix">$</span><input class="currency-input fmt-num" id="dutyAmt" type="text" inputmode="decimal" value="36,000"></div>
       </div>
-      <div class="field-row">
+      <div class="field-row" data-adv="caps">
         <div class="field-label">Legal and conveyancing fees</div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="legalFees" type="text" inputmode="decimal" value="2,000"></div>
       </div>
-      <div class="field-row">
+      <div class="field-row" data-adv="caps">
         <div class="field-label">Transfer and registration</div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="transferFees" type="text" inputmode="decimal" value="1,200"></div>
       </div>
-      <div class="field-row">
+      <div class="field-row" data-adv="caps">
         <div class="field-label">Building and pest inspections</div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="inspections" type="text" inputmode="decimal" value="800"></div>
       </div>
+      <div class="field-sub" data-simple="caps" id="feesSimpleNote"></div>
     </div>
   </div>
 
@@ -553,8 +643,7 @@
   <section class="chart-card card">
     <div class="chart-head">
       <div>
-        <h2>Capacity across the income range</h2>
-        <p class="muted chart-sub">Your scenario sits at the centre. Salary, business and investment income scale together, government payments stay fixed.</p>
+        <h2>Capacity across the income range <i class="tip-icon" data-tip="Your own scenario sits at the centre of the sweep. Salary, business and investment income scale together across the range, while government payments hold still because they are needs tested rather than earned.">?</i></h2>
       </div>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="pngBtn" title="Download PNG">⬇ PNG</button>
