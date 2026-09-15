@@ -34,6 +34,23 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .toggle-label{font-weight:700;font-size:.88rem;flex:1;}
 .ctrl-panel>.help:first-child{margin:0 0 4px;}
 
+/* ── Mode switches: Simple vs Detailed, Employee vs Self-employed ── */
+.mode-block{border:1px solid var(--border);border-radius:12px;padding:2px 12px 6px;background:var(--bg-subtle);}
+.mode-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0;}
+.mode-row+.mode-row{border-top:1px solid var(--border);}
+.mode-label{font-weight:700;font-size:.82rem;color:var(--muted);flex:1 0 auto;}
+.seg-group{display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;}
+.seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 12px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;flex-shrink:0;}
+.seg-btn.active{background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}
+.seg-btn:hover:not(.active){color:var(--text);}
+
+/* ── Checklists: reveal a group only once the user says they have it ── */
+.chk-block{border:1px solid var(--border);border-radius:12px;padding:10px 12px 8px;margin-top:14px;background:var(--bg-subtle);}
+.chk-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);margin-bottom:4px;}
+.chk-row{display:flex;align-items:flex-start;gap:9px;padding:5px 0;cursor:pointer;font-size:.84rem;line-height:1.35;color:var(--text);}
+.chk-row input{accent-color:var(--accent);width:15px;height:15px;margin:1px 0 0;flex-shrink:0;cursor:pointer;}
+.chk-row:hover{color:var(--accent);}
+
 /* ── KPI strip ── */
 .metrics{grid-template-columns:repeat(3,1fr);}
 .metric{padding:14px 16px;min-height:96px;}
@@ -47,7 +64,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 /* ── Chart ── */
 .chart-card{padding:20px;margin-bottom:18px;}
 .chart-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;}
-.chart-sub{font-size:.82rem;margin-top:2px;max-width:60ch;}
+.chart-head h2{display:flex;align-items:center;gap:6px;}
 .btn-cluster{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;}
 .btn-sm{padding:6px 12px;font-size:.8rem;border-radius:8px;}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 14px;font-size:.84rem;}

@@ -23,6 +23,12 @@
    Step 7  Capacity = MIN(serviceability, DTI, LVR, deposit).
    Step 8  NSR and UMI pass/fail at the capacity figure.
 
+   The form in front of that pipeline is progressively disclosed. A Simple /
+   Detailed segmented control per section decides how many of a lender's knobs
+   the user tunes, an Employee / Self-employed control decides which side of the
+   income form is live, and a checklist per section decides which groups exist
+   at all. readInputs() is the one place any of that touches a number.
+
    Reference data
    - City index: coli_no_housing from
      ../costofliving-comparator/cost_of_living_indices_aggregated.json
@@ -329,6 +335,76 @@ function compute(p){
   };
 }
 
+/* ═════════════════════ Progressive disclosure ═════════════════════
+
+   Two independent dials sit above the form, and readInputs() is the single
+   place where either of them can change a number:
+
+   - The Simple / Detailed segmented control governs how much of a section the
+     user tunes. Its hidden rows are still live: they hold the standard lender
+     setting, which the Simple view discloses in a note underneath the field it
+     applies to.
+   - The checklists govern whether a thing exists at all. An unticked box zeroes
+     its inputs outright, so a group the user has scrolled past never leaks a
+     stale figure into the result.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+const UI_DEFAULTS = { incWho:'employee', incMode:'simple', debtsMode:'simple',
+                      loanMode:'simple', capsMode:'simple' };
+const UI = { ...UI_DEFAULTS };
+
+// Segmented control id → the UI key it writes.
+const SEG_GROUPS = {
+  incWhoGroup:'incWho', incModeGroup:'incMode', debtsModeGroup:'debtsMode',
+  loanModeGroup:'loanMode', capsModeGroup:'capsMode'
+};
+
+// The detailed employment and business streams, by side of the Employee /
+// Self-employed switch. Used both to gate them and to carry the headline
+// figure across when the user flips between Simple and Detailed.
+const DETAIL_STREAMS = {
+  employee: ['incPayg','incOvertime','incBonus','incAllow','incCasual'],
+  self:     ['incSeNpat','incSeAdd']
+};
+
+function segActive(){
+  Object.entries(SEG_GROUPS).forEach(([groupId, key]) => {
+    const g = $(groupId); if(!g) return;
+    g.querySelectorAll('.seg-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.val === UI[key]));
+  });
+}
+
+// Rows whose visibility turns on the value of another control rather than on a
+// mode or a checklist. Keyed by element id so they go through the same single
+// pass, which is what stops one rule showing a row another rule just hid.
+const EXTRA_RULES = {
+  olIoRow:          () => str('olType') === 'io',
+  rentBoardRow:     () => str('occupancy') === 'investor',
+  helpThresholdRow: () => str('helpMode') !== 'none',
+  dutyPctWrap:      () => str('dutyMode') === 'pct',
+  dutyAmtWrap:      () => str('dutyMode') !== 'pct'
+};
+
+// data-adv / data-simple gate on a section's mode, data-who on the Employee /
+// Self-employed switch, and data-when on one or more checklist boxes. An
+// element may carry several, and every one of them has to pass.
+function isVisible(el){
+  const d = el.dataset;
+  if(d.adv    && UI[d.adv + 'Mode'] !== 'detailed') return false;
+  if(d.simple && UI[d.simple + 'Mode'] !== 'simple') return false;
+  if(d.who    && UI.incWho !== d.who) return false;
+  if(d.when   && !d.when.split(/\s+/).every(id => { const c = $(id); return c && c.checked; })) return false;
+  const extra = EXTRA_RULES[el.id];
+  return extra ? extra() : true;
+}
+
+function applyVisibility(){
+  const els = new Set(document.querySelectorAll('[data-adv],[data-simple],[data-who],[data-when]'));
+  Object.keys(EXTRA_RULES).forEach(id => { const el = $(id); if(el) els.add(el); });
+  els.forEach(el => { el.style.display = isVisible(el) ? '' : 'none'; });
+}
+
 /* ═════════════════════ Reading the form ═════════════════════ */
 
 const num = id => SharedFmt.parseFormatted($(id).value);
@@ -336,7 +412,7 @@ const bool = id => $(id).checked;
 const str  = id => $(id).value;
 
 function readInputs(){
-  return {
+  const p = {
     payg:num('incPayg'),          shdPayg:num('shdPayg'),
     overtime:num('incOvertime'),  shdOvertime:num('shdOvertime'),
     bonus:num('incBonus'),        shdBonus:num('shdBonus'),
@@ -364,7 +440,7 @@ function readInputs(){
     refiRepay:num('refiRepay'), refiBal:num('refiBal'),
 
     prodRate:num('prodRate'), buffer:num('buffer'), floorRate:num('floorRate'),
-    termYears:num('termYears'), newType:str('newType'), newIo:num('newIo'),
+    termYears:num('termYears'), newType:bool('hasIo') ? 'io' : 'pi', newIo:num('newIo'),
     umiReq:num('umiReq'), nsrMin:num('nsrMin'),
 
     dtiCap:num('dtiCap'), dtiBasis:str('dtiBasis'),
@@ -374,6 +450,32 @@ function readInputs(){
     dutyMode:str('dutyMode'), dutyPct:num('dutyPct'), dutyAmt:num('dutyAmt'),
     legalFees:num('legalFees'), transferFees:num('transferFees'), inspections:num('inspections')
   };
+
+  /* ── Income: Simple takes one gross figure at 100%, which is how a lender
+        treats base salary and two-year-average business profit alike. ── */
+  if(UI.incMode === 'simple'){
+    const v = num('incSimple');
+    p.payg = UI.incWho === 'employee' ? v : 0;  p.shdPayg = 100;
+    p.overtime = p.bonus = p.allow = p.casual = 0;
+    p.seNpat = UI.incWho === 'self' ? v : 0;    p.seAdd = 0;  p.shdSe = 100;
+  } else {
+    if(UI.incWho !== 'employee') p.payg = p.overtime = p.bonus = p.allow = p.casual = 0;
+    if(UI.incWho !== 'self')     p.seNpat = p.seAdd = 0;
+  }
+
+  /* ── Checklists: an unticked box means the thing does not exist. ── */
+  if(!bool('hasInvest')){ p.rent = p.ipCash = p.ipDep = p.div = p.ipOut = 0; }
+  if(!bool('hasGov')){ p.ftb = p.pension = p.csIn = 0; }
+  if(!bool('hasHomeLoan')){ p.olBal = 0; }
+  if(!bool('hasCard')){ p.cardLimit = 0; }
+  if(!bool('hasPersonal')){ p.persRepay = p.persBal = 0; }
+  if(!bool('hasBnpl')){ p.bnplRepay = p.bnplLimit = 0; }
+  if(!bool('hasSupport')){ p.csOut = 0; }
+  if(!bool('hasRefi')){ p.refiRepay = p.refiBal = 0; }
+  if(!bool('hasGift')){ p.gift = 0; }
+  if(!bool('hasGrant')){ p.grant = 0; }
+
+  return p;
 }
 
 /* ═════════════════════ Income sweep for the chart ═════════════════════ */
@@ -409,6 +511,21 @@ let chart = null;
 let last = null;
 let persist = null;
 
+// Labels and tooltips that follow the Employee / Self-employed switch, so the
+// one Simple field reads correctly on either side of it.
+const SIMPLE_INC = {
+  employee: {
+    label: 'Total employment income',
+    tip: 'Gross salary and wages for the year, before tax and <strong>excluding</strong> employer super. Counted in full, which is how a lender treats base salary.',
+    note: 'Annual and gross, counted in full. Switch to Detailed to split out overtime, bonus, allowances and a second job, each with its own shading.'
+  },
+  self: {
+    label: 'Business income you draw on',
+    tip: 'Two year average net profit after tax of the business, plus any add-backs. Counted in full, which is how a lender treats an established trading history.',
+    note: 'Annual, two year average, counted in full. Switch to Detailed to separate NPAT from add-backs and shade them.'
+  }
+};
+
 function syncUI(){
   $('depsValue').textContent    = fmt.num(num('deps'));
   $('cardPctValue').textContent = fmt.pct(num('cardPct'));
@@ -417,13 +534,28 @@ function syncUI(){
   $('nsrValue').textContent     = num('nsrMin').toFixed(2);
   $('dtiValue').textContent     = num('dtiCap').toFixed(2)+'×';
   $('lvrValue').textContent     = fmt.pct(num('lvrMax'),0);
-  $('olIoRow').style.display      = str('olType')==='io' ? '' : 'none';
-  $('newIoRow').style.display     = str('newType')==='io' ? '' : 'none';
-  $('rentBoardRow').style.display = str('occupancy')==='investor' ? '' : 'none';
-  $('lmiRow').style.display       = bool('lmiCap') ? '' : 'none';
-  $('helpThresholdRow').style.display = str('helpMode')==='none' ? 'none' : '';
-  $('dutyPctWrap').style.display  = str('dutyMode')==='pct' ? '' : 'none';
-  $('dutyAmtWrap').style.display  = str('dutyMode')==='pct' ? 'none' : '';
+
+  segActive();
+  applyVisibility();
+
+  const si = SIMPLE_INC[UI.incWho];
+  $('incSimpleLabel').textContent = si.label;
+  $('incSimpleTip').setAttribute('data-tip', si.tip);
+  $('incSimpleNote').textContent  = si.note;
+
+  // What each Simple view is quietly assuming on the user's behalf.
+  const olYears = str('olType')==='io' ? num('olTerm') - num('olIo') : num('olTerm');
+  $('olSimpleNote').textContent = `Reassessed as principal and interest over ${fmt.num(olYears)} years, `
+    + `at the higher of this plus the buffer and the lender floor.`;
+  $('cardSimpleNote').textContent = `Assessed at ${fmt.pct(num('cardPct'))} of the limit a month, `
+    + `whatever the balance.`;
+  $('loanSimpleNote').textContent = `Tested at the higher of ${fmt.pct(num('prodRate') + num('buffer'))} `
+    + `(product rate plus the ${fmt.pct(num('buffer'))} APRA buffer) and the ${fmt.pct(num('floorRate'))} lender floor, `
+    + `keeping ${fmt.money0(num('umiReq'))}/mo spare and an NSR of at least ${num('nsrMin').toFixed(2)}.`;
+  $('capsSimpleNote').textContent = `Debt is also capped at ${num('dtiCap').toFixed(1)}× gross income, `
+    + `and the LVR is measured against a ${fmt.money0(num('valuation'))} bank valuation.`;
+  $('feesSimpleNote').textContent = `Plus ${fmt.money0(num('legalFees') + num('transferFees') + num('inspections'))} `
+    + `of legal, transfer and inspection fees.`;
 }
 
 function renderKpis(r, p){
@@ -528,6 +660,14 @@ function renderCommitments(r){
   $('commTableWrap').innerHTML = table(['Item','Monthly','Note'], rows);
 }
 
+// The HEM benchmark is not a warning, it is the number the assessment actually
+// uses, so it is stated where it is entered rather than in the banner.
+function renderHemNote(r, p){
+  $('hemNote').textContent = r.hemBinds
+    ? `HEM of ${fmt.money0(r.hem)}/mo in ${p.city} will be used instead, it is the higher figure.`
+    : `Used as declared, it is above the ${fmt.money0(r.hem)}/mo HEM for ${p.city}.`;
+}
+
 function renderWarnings(r, p){
   const msgs = [];
   if(r.maxRepay <= 0)
@@ -540,8 +680,6 @@ function renderWarnings(r, p){
     msgs.push(`At this loan the debt-to-income ratio reaches ${fmt.ratio(r.dtiAtMax)}, which is reportable to APRA as a high-DTI loan.`);
   if(!r.nsrPass)
     msgs.push(`The Net Service Ratio of ${fmt.ratio(r.nsr)} is below the ${p.nsrMin.toFixed(2)} minimum.`);
-  if(p.declaredExp > 0 && p.declaredExp < r.hem * 0.6)
-    msgs.push('The declared expenses sit well under HEM, so the benchmark is doing all the work. Lenders query figures this far below it.');
   const el = $('warnBanner');
   el.innerHTML = msgs.map(m => '• '+m).join('<br>');
   el.classList.toggle('visible', msgs.length > 0);
@@ -583,7 +721,6 @@ function updateChart(sweep, userIdx){
     return;
   }
   const grid = cssVar('--chart-grid'), muted = cssVar('--chart-text'), text = cssVar('--text');
-  const accent = cssVar('--accent-strong');
 
   const datasets = SERIES.map(s => {
     const colour = cssVar(s.varName);
@@ -600,7 +737,9 @@ function updateChart(sweep, userIdx){
       order: isCap ? 0 : 1,
       pointRadius: ctx => (isCap && ctx.dataIndex === userIdx) ? 7 : 0,
       pointHoverRadius: ctx => (isCap && ctx.dataIndex === userIdx) ? 9 : 4,
-      pointBackgroundColor: accent,
+      // Per series, not a shared accent: Chart.js draws the tooltip swatch from
+      // the point style, so one colour for all five made every row look alike.
+      pointBackgroundColor: colour,
       pointBorderColor: cssVar('--panel'),
       pointBorderWidth: 2
     };
@@ -619,6 +758,9 @@ function updateChart(sweep, userIdx){
         callbacks: {
           title: items => items.length ? 'Gross income '+fmt.money0(items[0].parsed.x) : '',
           label: ctx => `  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y, true)}`,
+          labelColor: ctx => ({ borderColor: ctx.dataset.borderColor,
+                                backgroundColor: ctx.dataset.borderColor,
+                                borderWidth: 2, borderRadius: 2 }),
           afterBody(items){
             if(!items.length) return;
             const you = items[0].dataIndex === userIdx ? '  (your scenario)' : '';
@@ -667,6 +809,7 @@ function render(){
   renderBuild(r, p);
   renderIncome(r);
   renderCommitments(r);
+  renderHemNote(r, p);
   renderWarnings(r, p);
   updateChart(sweep, sweep.tiny ? -1 : USER_INDEX);
 }
@@ -775,8 +918,40 @@ function resetAll(){
     if(el.type === 'checkbox') el.checked = DEFAULTS[id];
     else el.value = DEFAULTS[id];
   });
+  Object.assign(UI, UI_DEFAULTS);
   if(persist) persist.save();
   render();
+}
+
+// Flipping Simple and Detailed must not lose the headline figure, so the two
+// views hand it to each other: Detailed opens on the number Simple held, and
+// Simple reopens on what the streams on that side of the switch now add up to.
+const setAmount = (id, v) => { $(id).value = SharedFmt.formatThousands(String(v), { maxDecimals:2 }); };
+
+function carryIncome(nextMode, nextWho){
+  const primary = nextWho === 'self' ? 'incSeNpat' : 'incPayg';
+  if(nextMode === 'detailed' && UI.incMode === 'simple'){
+    setAmount(primary, num('incSimple'));
+  } else if(nextMode === 'simple' && UI.incMode === 'detailed'){
+    setAmount('incSimple', DETAIL_STREAMS[nextWho].reduce((a, id) => a + num(id), 0));
+  }
+}
+
+function wireSegments(){
+  Object.entries(SEG_GROUPS).forEach(([groupId, key]) => {
+    const g = $(groupId); if(!g) return;
+    g.querySelectorAll('.seg-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.dataset.val;
+        if(UI[key] === val) return;
+        if(key === 'incMode') carryIncome(val, UI.incWho);
+        if(key === 'incWho' && UI.incMode === 'detailed') carryIncome('detailed', val);
+        UI[key] = val;
+        if(persist) persist.schedule();
+        render();
+      });
+    });
+  });
 }
 
 function init(){
@@ -814,12 +989,25 @@ function init(){
     $('hoverBox').textContent = 'Hover the chart to read every cap at a given income.';
   });
 
-  persist = Persist.init('borrowingcapacity', { onRestore: render });
+  wireSegments();
+
+  // Persist stores form controls on its own. The segmented controls are
+  // buttons, so their state rides along in the extra slot.
+  persist = Persist.init('borrowingcapacity', {
+    onRestore: render,
+    extra: {
+      save: () => ({ ...UI }),
+      restore: saved => {
+        if(!saved || typeof saved !== 'object') return;
+        Object.keys(UI_DEFAULTS).forEach(k => { if(saved[k]) UI[k] = saved[k]; });
+      }
+    }
+  });
   render();
 
   // Exposed so the audit harness can drive the engine directly as well as
   // through the DOM.
-  window.__BC = { compute, readInputs, buildSweep, hemMonthly, incomeTax, litoAmount, marginalTaxRate,
+  window.__BC = { UI, compute, readInputs, buildSweep, hemMonthly, incomeTax, litoAmount, marginalTaxRate,
                   medicareLevy, mlsRate, helpRepayment, amortPayment, loanFromPayment,
                   CITY_INDEX, TAX_SCALES, USER_INDEX };
 }
