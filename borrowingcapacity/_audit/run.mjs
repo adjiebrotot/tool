@@ -135,7 +135,7 @@ function replay(p){
   const helpAll  = p.helpMode === 'none' ? 0 : refHelp(adjusted, p.helpThreshold);
   const helpTax  = p.helpMode === 'tax' ? helpAll : 0;
   const helpComm = p.helpMode === 'commitment' ? helpAll : 0;
-  const totalTax = incTax + medicare + mls + helpTax - grossUp;
+  const totalTax = incTax + medicare + mls + helpTax;   // the gross-up already puts the credit in income
   const negGear  = p.negGear ? refMarginal(taxable, p.taxYear, p.adults, p.deps) * rentalLoss : 0;
   const netMonthly = (grossAssessable - totalTax + negGear)/12;
 
@@ -492,6 +492,32 @@ async function reset(){
   check('B11b turning the add-back off lowers what income can service',
     off.Lserv < on.Lserv && near(off.negGear, 0, 1e-9),
     `serviceability ${on.Lserv.toFixed(0)} → ${off.Lserv.toFixed(0)}`);
+  await reset();
+}
+
+/* ══════════════ B11c — franking credits are counted once, not twice ══════════════ */
+{
+  await reset();
+  await setInputs({ incPayg:0, incOvertime:0, incBonus:0, incAllow:0, incCasual:0, incSeNpat:0,
+                    incSeAdd:0, incRent:0, incFtb:0, incPension:0, incCsIn:0,
+                    incDiv:50000, shdDiv:100, frankPct:100, adults:'1', deps:0,
+                    privHealth:true, helpMode:'none', taxYear:'2026-27' });
+  const got = await engine();
+  // Economics from first principles: a resident's excess franking credits are
+  // refunded, so the cash in hand is the dividend plus the refund.
+  const grossUp = 50000*(0.30/0.70), grossed = 50000 + grossUp;
+  const fullTax = (4020 + 0.30*(grossed - 45000)) + 0.02*grossed;
+  const trueCash = 50000 + (grossUp - fullTax);
+  check('B11c a fully franked dividend nets the real after-tax cash, with the credit counted once',
+    near(got.netMonthly*12, trueCash, 0.02) && near(got.totalTax, fullTax, 0.02),
+    `net ${(got.netMonthly*12).toFixed(2)} vs ${trueCash.toFixed(2)}; tax ${got.totalTax.toFixed(2)} vs ${fullTax.toFixed(2)}`);
+
+  // Unfranked dividends must not be grossed up at all.
+  await setInputs({ frankPct:0 });
+  const un = await engine();
+  check('B11cb an unfranked dividend is not grossed up',
+    near(un.grossAssessable, 50000, 0.01) && near(un.taxable, 50000, 0.01),
+    `assessable ${un.grossAssessable.toFixed(2)}, taxable ${un.taxable.toFixed(2)}`);
   await reset();
 }
 
