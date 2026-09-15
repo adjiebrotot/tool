@@ -33,4 +33,15 @@ the expenses field instead of in the warning banner, the segmented controls
 surviving the mini-cache round trip, and every chart series carrying its own
 line colour, marker colour, dash and tooltip swatch.
 
+And since the form was thinned out: Simple taking the LVR ceiling from the LMI
+switch and the valuation from the price while the hidden dials keep their own
+values for Detailed, the deposit giving the same answer whether it is stated as
+cash net of purchase costs or as a share of the price with those costs on top,
+the warning banner reading as a sentence for one point and as a list for
+several, the chart's x axis sitting exactly on the swept range with pan and
+zoom held inside it, and the row separators never doubling a card border or
+underlining a group title — checked across all five tabs in three different
+states of the form, since which row comes first is exactly what the modes and
+checklists change.
+
 Run: `node run.mjs`

@@ -29,6 +29,12 @@
    income form is live, and a checklist per section decides which groups exist
    at all. readInputs() is the one place any of that touches a number.
 
+   Nothing is asked twice, or asked when it can be worked out. The LVR ceiling
+   in Simple is whatever the LMI switch buys, 80% without it and 95% with it,
+   and the property is worth what is being paid for it. The deposit is one
+   quantity stated either as cash, which the purchase costs come out of, or as
+   a share of the price, which they sit on top of.
+
    Reference data
    - City index: coli_no_housing from
      ../costofliving-comparator/cost_of_living_indices_aggregated.json
@@ -297,8 +303,12 @@ function compute(p){
   const Llvr = lvr * Math.min(p.price, p.valuation);
 
   const stampDuty    = p.dutyMode === 'pct' ? p.price * p.dutyPct/100 : p.dutyAmt;
-  const purchaseCosts= stampDuty + p.legalFees + p.transferFees + p.inspections;
-  const availFunds   = p.savings + p.gift + p.grant - purchaseCosts;
+  const purchaseCosts= stampDuty + p.otherCosts;
+  // Two ways of saying the same thing. An amount is the cash in the bank, so
+  // the purchase costs come out of it first; a percentage is the down payment
+  // itself, so the costs are paid on top of it.
+  const availFunds   = p.depositMode === 'pct' ? p.price * p.depositPct/100
+                                               : p.savings - purchaseCosts;
   const Ldep = Math.max(0, availFunds / (1 - lvr) * lvr);
 
   const caps = [
@@ -383,7 +393,9 @@ const EXTRA_RULES = {
   rentBoardRow:     () => str('occupancy') === 'investor',
   helpThresholdRow: () => str('helpMode') !== 'none',
   dutyPctWrap:      () => str('dutyMode') === 'pct',
-  dutyAmtWrap:      () => str('dutyMode') !== 'pct'
+  dutyAmtWrap:      () => str('dutyMode') !== 'pct',
+  depAmtWrap:       () => str('depositMode') === 'amount',
+  depPctWrap:       () => str('depositMode') !== 'amount'
 };
 
 // data-adv / data-simple gate on a section's mode, data-who on the Employee /
@@ -403,6 +415,24 @@ function applyVisibility(){
   const els = new Set(document.querySelectorAll('[data-adv],[data-simple],[data-who],[data-when]'));
   Object.keys(EXTRA_RULES).forEach(id => { const el = $(id); if(el) els.add(el); });
   els.forEach(el => { el.style.display = isVisible(el) ? '' : 'none'; });
+  markFirstRows();
+}
+
+// A row separator belongs BETWEEN two visible rows: never under a card's own
+// border, and never under a group title. CSS cannot express "first row still
+// showing" because a hidden row is display:none rather than absent, so the
+// first visible row of each card is marked here, on the same pass that decided
+// what is visible in the first place.
+const RULED = ':scope > .field-row, :scope > .toggle-row, :scope > .slider-block';
+function markFirstRows(){
+  document.querySelectorAll('.field-group, .mode-block, .ctrl-panel').forEach(block => {
+    let first = true;
+    block.querySelectorAll(RULED).forEach(row => {
+      const shown = row.style.display !== 'none';
+      row.classList.toggle('rule-off', shown && first);
+      if(shown) first = false;
+    });
+  });
 }
 
 /* ═════════════════════ Reading the form ═════════════════════ */
@@ -446,9 +476,9 @@ function readInputs(){
     dtiCap:num('dtiCap'), dtiBasis:str('dtiBasis'),
     lvrMax:num('lvrMax'), price:num('price'), valuation:num('valuation'),
     lmiCap:bool('lmiCap'), lmiRate:num('lmiRate'),
-    savings:num('savings'), gift:num('gift'), grant:num('grant'),
+    depositMode:str('depositMode'), savings:num('savings'), depositPct:num('depositPct'),
     dutyMode:str('dutyMode'), dutyPct:num('dutyPct'), dutyAmt:num('dutyAmt'),
-    legalFees:num('legalFees'), transferFees:num('transferFees'), inspections:num('inspections')
+    otherCosts:num('otherCosts')
   };
 
   /* ── Income: Simple takes one gross figure at 100%, which is how a lender
@@ -463,6 +493,15 @@ function readInputs(){
     if(UI.incWho !== 'self')     p.seNpat = p.seAdd = 0;
   }
 
+  /* ── Caps: Simple does not ask for the LVR ceiling or a valuation, because
+        both follow from what it already knows. The ceiling is the level the
+        LMI switch buys, 80% without it and 95% with it, and the property is
+        worth what you are paying for it. ── */
+  if(UI.capsMode === 'simple'){
+    p.lvrMax    = p.lmiCap ? 95 : 80;
+    p.valuation = p.price;
+  }
+
   /* ── Checklists: an unticked box means the thing does not exist. ── */
   if(!bool('hasInvest')){ p.rent = p.ipCash = p.ipDep = p.div = p.ipOut = 0; }
   if(!bool('hasGov')){ p.ftb = p.pension = p.csIn = 0; }
@@ -472,8 +511,6 @@ function readInputs(){
   if(!bool('hasBnpl')){ p.bnplRepay = p.bnplLimit = 0; }
   if(!bool('hasSupport')){ p.csOut = 0; }
   if(!bool('hasRefi')){ p.refiRepay = p.refiBal = 0; }
-  if(!bool('hasGift')){ p.gift = 0; }
-  if(!bool('hasGrant')){ p.grant = 0; }
 
   return p;
 }
@@ -516,13 +553,11 @@ let persist = null;
 const SIMPLE_INC = {
   employee: {
     label: 'Total employment income',
-    tip: 'Gross salary and wages for the year, before tax and <strong>excluding</strong> employer super. Counted in full, which is how a lender treats base salary.',
-    note: 'Annual and gross, counted in full. Switch to Detailed to split out overtime, bonus, allowances and a second job, each with its own shading.'
+    tip: 'Gross salary and wages for the year, before tax and <strong>excluding</strong> employer super. Counted in full, which is how a lender treats base salary.'
   },
   self: {
     label: 'Business income you draw on',
-    tip: 'Two year average net profit after tax of the business, plus any add-backs. Counted in full, which is how a lender treats an established trading history.',
-    note: 'Annual, two year average, counted in full. Switch to Detailed to separate NPAT from add-backs and shade them.'
+    tip: 'Two year average net profit after tax of the business, plus any add-backs. Counted in full, which is how a lender treats an established trading history.'
   }
 };
 
@@ -541,7 +576,10 @@ function syncUI(){
   const si = SIMPLE_INC[UI.incWho];
   $('incSimpleLabel').textContent = si.label;
   $('incSimpleTip').setAttribute('data-tip', si.tip);
-  $('incSimpleNote').textContent  = si.note;
+
+  // The deposit field changes what it is asking for with its unit.
+  $('depositLabel').textContent = str('depositMode') === 'pct'
+    ? 'Deposit, share of the price' : 'Deposit funds';
 
   // What each Simple view is quietly assuming on the user's behalf.
   const olYears = str('olType')==='io' ? num('olTerm') - num('olIo') : num('olTerm');
@@ -552,10 +590,9 @@ function syncUI(){
   $('loanSimpleNote').textContent = `Tested at the higher of ${fmt.pct(num('prodRate') + num('buffer'))} `
     + `(product rate plus the ${fmt.pct(num('buffer'))} APRA buffer) and the ${fmt.pct(num('floorRate'))} lender floor, `
     + `keeping ${fmt.money0(num('umiReq'))}/mo spare and an NSR of at least ${num('nsrMin').toFixed(2)}.`;
-  $('capsSimpleNote').textContent = `Debt is also capped at ${num('dtiCap').toFixed(1)}× gross income, `
-    + `and the LVR is measured against a ${fmt.money0(num('valuation'))} bank valuation.`;
-  $('feesSimpleNote').textContent = `Plus ${fmt.money0(num('legalFees') + num('transferFees') + num('inspections'))} `
-    + `of legal, transfer and inspection fees.`;
+  $('lvrSimpleNote').textContent = bool('lmiCap')
+    ? `Ceiling lifted to 95% LVR, with the ${fmt.pct(num('lmiRate'))} premium capitalised onto the loan.`
+    : 'Ceiling held at 80% LVR, the level that avoids LMI.';
 }
 
 function renderKpis(r, p){
@@ -568,7 +605,9 @@ function renderKpis(r, p){
   $('kpiBindSub').textContent = `next limit is ${fmt.money0(secondLowest)}, ${fmt.money0(secondLowest - r.maxLoan)} above`;
 
   $('kpiPrice').textContent = fmt.money0(r.maxPrice);
-  $('kpiPriceSub').textContent = `loan plus ${fmt.money0(r.availFunds)} deposit after ${fmt.money0(r.purchaseCosts)} of costs`;
+  $('kpiPriceSub').textContent = p.depositMode === 'pct'
+    ? `loan plus a ${fmt.money0(r.availFunds)} deposit, ${fmt.money0(r.purchaseCosts)} of costs on top`
+    : `loan plus ${fmt.money0(r.availFunds)} deposit after ${fmt.money0(r.purchaseCosts)} of costs`;
 
   $('kpiRepay').textContent = fmt.money0(r.repayAtMax)+'/mo';
   const actualRepay = amortPayment(r.maxLoan*r.lmiFactor, p.prodRate/100/12, Math.max(1,p.termYears)*12);
@@ -668,6 +707,19 @@ function renderHemNote(r, p){
     : `Used as declared, it is above the ${fmt.money0(r.hem)}/mo HEM for ${p.city}.`;
 }
 
+// The deposit means a different quantity in each mode, so the note states the
+// whole arithmetic rather than restating the field above it.
+function renderDepositNote(r, p){
+  const costs = fmt.money0(r.purchaseCosts);
+  $('depositNote').textContent = p.depositMode === 'pct'
+    ? `${fmt.pct(p.depositPct,1)} of ${fmt.money0(p.price)} is ${fmt.money0(r.availFunds)}, `
+      + `with ${costs} of stamp duty and costs on top, so you need `
+      + `${fmt.money0(r.availFunds + r.purchaseCosts)} in the bank.`
+    : `${fmt.money0(p.savings)} less ${costs} of stamp duty and costs leaves `
+      + `${fmt.money0(r.availFunds)} as the deposit, `
+      + `${fmt.pct(p.price ? r.availFunds/p.price*100 : 0, 1)} of the ${fmt.money0(p.price)} price.`;
+}
+
 function renderWarnings(r, p){
   const msgs = [];
   if(r.maxRepay <= 0)
@@ -675,13 +727,16 @@ function renderWarnings(r, p){
   if(r.commitRaw < 0)
     msgs.push('The facilities closing at settlement are worth more than every other commitment, so commitments were floored at zero.');
   if(p.lvrMax > 80 && !p.lmiCap)
-    msgs.push('Above 80% LVR, Lenders Mortgage Insurance is normally payable. Switch on Capitalise LMI to feed it back into serviceability.');
+    msgs.push('Above 80% LVR, Lenders Mortgage Insurance is normally payable. Switch it on to feed the premium back into serviceability.');
   if(r.dtiAtMax > 6 && r.binding.key !== 'dti')
     msgs.push(`At this loan the debt-to-income ratio reaches ${fmt.ratio(r.dtiAtMax)}, which is reportable to APRA as a high-DTI loan.`);
   if(!r.nsrPass)
     msgs.push(`The Net Service Ratio of ${fmt.ratio(r.nsr)} is below the ${p.nsrMin.toFixed(2)} minimum.`);
   const el = $('warnBanner');
-  el.innerHTML = msgs.map(m => '• '+m).join('<br>');
+  // One point reads as a sentence; several read as a list.
+  el.innerHTML = msgs.length === 1
+    ? `<p>${msgs[0]}</p>`
+    : `<ul>${msgs.map(m => `<li>${m}</li>`).join('')}</ul>`;
   el.classList.toggle('visible', msgs.length > 0);
 }
 
@@ -721,6 +776,12 @@ function updateChart(sweep, userIdx){
     return;
   }
   const grid = cssVar('--chart-grid'), muted = cssVar('--chart-text'), text = cssVar('--text');
+
+  // The sweep is the whole story: the axis starts and ends on it rather than
+  // rounding outwards into income the page never evaluated.
+  const xs = sweep.rows.map(r => r.x);
+  const xMin = Math.min(...xs), xMax = Math.max(...xs);
+  const bounded = isFinite(xMin) && isFinite(xMax) && xMax > xMin;
 
   const datasets = SERIES.map(s => {
     const colour = cssVar(s.varName);
@@ -770,6 +831,9 @@ function updateChart(sweep, userIdx){
         }
       },
       zoom: {
+        // Panning and zooming stay inside the swept range. Beyond it there is
+        // nothing computed to look at, only empty axis.
+        limits: bounded ? { x:{ min:xMin, max:xMax, minRange:(xMax - xMin)/40 } } : {},
         pan: { enabled:true, mode:'x' },
         zoom: { wheel:{ enabled:true, speed:0.08 }, pinch:{ enabled:true }, mode:'x' }
       }
@@ -777,6 +841,7 @@ function updateChart(sweep, userIdx){
     scales: {
       x: {
         type:'linear',
+        ...(bounded ? { min:xMin, max:xMax } : {}),
         title:{ display:true, text:'Gross income, pre-tax ($ per year)', color:muted, font:{size:11} },
         ticks:{ color:muted, maxTicksLimit:9, font:{size:11}, callback:v => fmt.currency(v, true) },
         grid:{ color:grid }
@@ -810,6 +875,7 @@ function render(){
   renderIncome(r);
   renderCommitments(r);
   renderHemNote(r, p);
+  renderDepositNote(r, p);
   renderWarnings(r, p);
   updateChart(sweep, sweep.tiny ? -1 : USER_INDEX);
 }
@@ -937,6 +1003,15 @@ function carryIncome(nextMode, nextWho){
   }
 }
 
+// Simple decides the LVR ceiling and the valuation on the user's behalf, so
+// Detailed opens on the figures Simple was actually using rather than on
+// whatever the dials happened to be left at.
+function carryCaps(nextMode){
+  if(nextMode !== 'detailed') return;   // only ever called on a real change
+  $('lvrMax').value = bool('lmiCap') ? 95 : 80;
+  setAmount('valuation', num('price'));
+}
+
 function wireSegments(){
   Object.entries(SEG_GROUPS).forEach(([groupId, key]) => {
     const g = $(groupId); if(!g) return;
@@ -946,6 +1021,7 @@ function wireSegments(){
         if(UI[key] === val) return;
         if(key === 'incMode') carryIncome(val, UI.incWho);
         if(key === 'incWho' && UI.incMode === 'detailed') carryIncome('detailed', val);
+        if(key === 'capsMode') carryCaps(val);
         UI[key] = val;
         if(persist) persist.schedule();
         render();

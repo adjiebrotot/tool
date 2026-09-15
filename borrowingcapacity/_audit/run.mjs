@@ -168,7 +168,8 @@ function replay(p){
   const lvr  = p.lvrMax/100;
   const Llvr = lvr * Math.min(p.price, p.valuation);
   const duty = p.dutyMode === 'pct' ? p.price*p.dutyPct/100 : p.dutyAmt;
-  const funds = p.savings + p.gift + p.grant - (duty + p.legalFees + p.transferFees + p.inspections);
+  const costs = duty + p.otherCosts;
+  const funds = p.depositMode === 'pct' ? p.price*p.depositPct/100 : p.savings - costs;
   const Ldep = Math.max(0, funds/(1 - lvr)*lvr);
   const maxLoan = Math.min(Lserv, Ldti, Llvr, Ldep);
 
@@ -247,11 +248,15 @@ const shown = id => page.evaluate(i => {
   const el = document.getElementById(i);
   return !!el && el.style.display !== 'none' && el.offsetParent !== null;
 }, id);
+// shown() needs the row's own tab on screen, since a dormant panel is display:none.
+const openTab = name => page.evaluate(n => {
+  document.querySelector('.ctrl-tab[data-tab="' + n + '"]').click();
+}, name).then(() => page.waitForTimeout(60));
 
 const ALL_DETAILED = { incWhoGroup:'employee', incModeGroup:'detailed', debtsModeGroup:'detailed',
                        loanModeGroup:'detailed', capsModeGroup:'detailed' };
 const ALL_TICKED = { hasInvest:true, hasGov:true, hasHomeLoan:true, hasCard:true, hasPersonal:true,
-                     hasBnpl:true, hasSupport:true, hasRefi:true, hasGift:true, hasGrant:true };
+                     hasBnpl:true, hasSupport:true, hasRefi:true };
 
 async function reset(){
   await page.evaluate(() => document.getElementById('resetBtn').click());
@@ -271,7 +276,7 @@ async function reset(){
     `modes ${JSON.stringify(d)}, payg ${p.payg} @ ${p.shdPayg}%`);
   check('B0b an unticked checklist keeps its group off the screen and out of the maths',
     p.rent === 0 && p.div === 0 && p.ftb === 0 && p.pension === 0 && p.olBal === 0
-      && p.persBal === 0 && p.bnplLimit === 0 && p.gift === 0 && p.grant === 0
+      && p.persBal === 0 && p.bnplLimit === 0
       && !(await shown('incRent')) && !(await shown('olBal')),
     `capacity ${ref.maxLoan.toFixed(0)} from salary and the card limit alone`);
   await reset();
@@ -452,10 +457,10 @@ async function reset(){
     `page ${sh.Ldti.toFixed(0)} vs ${(4*172000-35000).toFixed(0)}`);
 
   await reset();
-  await setInputs({ savings:150000, gift:20000, grant:10000, dutyMode:'amount', dutyAmt:30000,
-                    legalFees:2000, transferFees:1000, inspections:1000, lvrMax:90 });
+  await setInputs({ savings:180000, dutyMode:'amount', dutyAmt:30000,
+                    otherCosts:4000, lvrMax:90 });
   const dep = await engine();
-  const funds = 150000+20000+10000-34000;
+  const funds = 180000-34000;
   check('B9c deposit cap = funds after costs ÷ (1 − LVR) × LVR',
     near(dep.Ldep, funds/0.10*0.90, 0.01) && near(dep.funds, funds, 0.01),
     `page ${dep.Ldep.toFixed(0)} vs ${(funds/0.10*0.90).toFixed(0)} on ${funds} of funds`);
@@ -653,21 +658,21 @@ async function reset(){
 {
   await reset();
   await setInputs({ incRent:30000, incFtb:8000, olBal:300000, cardLimit:25000,
-                    persBal:15000, persRepay:600, gift:50000 });
+                    persBal:15000, persRepay:600, bnplRepay:120, bnplLimit:2000 });
   const on = await engine();
 
   await setInputs({ hasInvest:false, hasGov:false, hasHomeLoan:false, hasCard:false,
-                    hasPersonal:false, hasGift:false });
+                    hasPersonal:false, hasBnpl:false });
   const off = await inputs(), offR = await engine();
   check('B18 unticking a checklist box zeroes its inputs instead of leaving them live',
     off.rent === 0 && off.ftb === 0 && off.olBal === 0 && off.cardLimit === 0
-      && off.persBal === 0 && off.persRepay === 0 && off.gift === 0,
+      && off.persBal === 0 && off.persRepay === 0 && off.bnplRepay === 0 && off.bnplLimit === 0,
     `assessable ${on.grossAssessable.toFixed(0)} → ${offR.grossAssessable.toFixed(0)}, `
     + `commitments ${on.commitments.toFixed(0)} → ${offR.commitments.toFixed(0)}`);
   check('B18b re-ticking a box brings the same numbers back untouched',
     await (async () => {
       await setInputs({ hasInvest:true, hasGov:true, hasHomeLoan:true, hasCard:true,
-                        hasPersonal:true, hasGift:true });
+                        hasPersonal:true, hasBnpl:true });
       const back = await engine();
       return near(back.maxLoan, on.maxLoan, 1);
     })(),
@@ -719,6 +724,172 @@ async function reset(){
   check('B20b the tooltip swatch follows the line, so five rows no longer read as one colour',
     distinct(style.swatch) && style.swatch.every((c, i) => c === style.border[i]),
     `swatches ${style.swatch.join(' ')}`);
+}
+
+
+/* ══════════════ B21 — Simple takes the LVR ceiling and the valuation from
+                        what it already knows, rather than asking ══════════════ */
+{
+  await reset();
+  await setModes({ capsModeGroup:'simple' });
+  await setInputs({ price:750000, valuation:900000, lvrMax:60, lmiCap:false });
+  await openTab('caps');
+  const plain = await inputs();
+  await setInputs({ lmiCap:true });
+  const withLmi = await inputs();
+  check('B21 Simple holds the ceiling at 80% LVR, and at 95% once LMI is switched on',
+    plain.lvrMax === 80 && withLmi.lvrMax === 95 && !(await shown('lvrMax')),
+    `ceiling ${plain.lvrMax}% → ${withLmi.lvrMax}% with the dial itself hidden and left at 60`);
+  check('B21b Simple values the property at the price, so a stale valuation cannot bind',
+    plain.valuation === 750000 && !(await shown('valuation')),
+    `valuation ${plain.valuation} against a price of 750,000, with 900,000 still in the hidden box`);
+
+  await setModes({ capsModeGroup:'detailed' });
+  const det = await inputs();
+  check('B21c Detailed hands both controls back, opened on what Simple was using',
+    det.lvrMax === 95 && det.valuation === 750000 && (await shown('lvrMax')) && (await shown('valuation')),
+    `ceiling ${det.lvrMax}% and valuation ${det.valuation} carried across, rather than the 60% and 900,000 left in the boxes`);
+  await openTab('income');
+  await reset();
+}
+
+/* ══════════════ B22 — the deposit reads the same stated either way ══════════════ */
+{
+  await reset();
+  await setInputs({ price:900000, valuation:900000, lvrMax:80, incPayg:400000,
+                    dutyMode:'amount', dutyAmt:36000, otherCosts:4000,
+                    depositMode:'amount', savings:220000 });
+  const asAmount = await engine();
+  const refAmount = replay(await inputs());
+
+  // 220,000 in the bank less 40,000 of costs is a 180,000 deposit, which is the
+  // same 20% of the price the percentage mode states directly.
+  await setInputs({ depositMode:'pct', depositPct:20 });
+  const asPct = await engine();
+  const refPct = replay(await inputs());
+  check('B22 an amount net of costs and the equivalent percentage give the same deposit',
+    near(asAmount.funds, 180000, 0.01) && near(asPct.funds, 180000, 0.01)
+      && near(asAmount.Ldep, asPct.Ldep, 0.01)
+      && near(asAmount.funds, refAmount.funds, 0.01) && near(asPct.funds, refPct.funds, 0.01),
+    `amount ${asAmount.funds.toFixed(0)} vs percentage ${asPct.funds.toFixed(0)}, `
+    + `deposit cap ${asAmount.Ldep.toFixed(0)} vs ${asPct.Ldep.toFixed(0)}`);
+
+  await openTab('caps');
+  const noteFields = await page.evaluate(() => ({
+    note: document.getElementById('depositNote').textContent.trim(),
+    label: document.getElementById('depositLabel').textContent.trim(),
+    pctShown: document.getElementById('depPctWrap').style.display !== 'none',
+    amtShown: document.getElementById('depAmtWrap').style.display !== 'none'
+  }));
+  check('B22b the percentage mode shows the percentage box, and says what it costs in cash',
+    noteFields.pctShown && !noteFields.amtShown
+      && /20\.0% of \$900,000 is \$180,000/.test(noteFields.note)
+      && /\$220,000 in the bank/.test(noteFields.note),
+    `"${noteFields.note}"`);
+
+  await setInputs({ depositMode:'amount' });
+  const amtNote = await page.evaluate(() => document.getElementById('depositNote').textContent.trim());
+  check('B22c the amount mode spells out the costs it absorbs and the LVR that leaves',
+    /\$220,000 less \$40,000 of stamp duty and costs leaves \$180,000 as the deposit, 20\.0%/.test(amtNote),
+    `"${amtNote}"`);
+  await openTab('income');
+  await reset();
+}
+
+/* ══════════════ B23 — the banner is a list only when there is a list ══════════════ */
+{
+  await reset();
+  await setInputs({ refiRepay:100000 });   // exactly one point: commitments floored
+  const one = await page.evaluate(() => {
+    const el = document.getElementById('warnBanner');
+    return { tags:[...el.children].map(c => c.tagName), bullets:/•/.test(el.textContent) };
+  });
+  check('B23 a single point is a plain sentence, with no bullet glyph in sight',
+    one.tags.length === 1 && one.tags[0] === 'P' && !one.bullets,
+    `banner children ${one.tags.join(',') || 'none'}`);
+
+  await setInputs({ incPayg:0, incOvertime:0, incBonus:0, incAllow:0, incCasual:0,
+                    incRent:0, incDiv:0, incFtb:0, incPension:0, incCsIn:0, incSeNpat:0,
+                    lvrMax:90, lmiCap:false });
+  const many = await page.evaluate(() => {
+    const el = document.getElementById('warnBanner');
+    return { tags:[...el.children].map(c => c.tagName),
+             items:el.querySelectorAll('li').length, bullets:/•/.test(el.textContent) };
+  });
+  check('B23b several points become a real list, one <li> each',
+    many.tags.length === 1 && many.tags[0] === 'UL' && many.items >= 2 && !many.bullets,
+    `${many.items} list items`);
+  await reset();
+}
+
+/* ══════════════ B24 — the chart cannot be panned or zoomed off the sweep ══════════════ */
+{
+  await reset();
+  const axis = await page.evaluate(() => {
+    const c = window.__charts[window.__charts.length - 1];
+    const xs = c.data.datasets[0].data.map(d => d.x);
+    return { min:c.options.scales.x.min, max:c.options.scales.x.max,
+             limits:c.options.plugins.zoom.limits,
+             dataMin:Math.min(...xs), dataMax:Math.max(...xs) };
+  });
+  check('B24 the x axis starts and ends on the swept range, not on rounder numbers outside it',
+    near(axis.min, axis.dataMin, 1e-6) && near(axis.max, axis.dataMax, 1e-6),
+    `axis ${axis.min} – ${axis.max} against data ${axis.dataMin} – ${axis.dataMax}`);
+  check('B24b zoom and pan are held to the same range',
+    axis.limits && axis.limits.x && near(axis.limits.x.min, axis.dataMin, 1e-6)
+      && near(axis.limits.x.max, axis.dataMax, 1e-6) && axis.limits.x.minRange > 0,
+    `limits ${JSON.stringify(axis.limits)}`);
+}
+
+/* ══════════════ B25 — a separator only ever sits between two visible rows ══════════════ */
+{
+  // The invariant: inside every card, the first row still showing opens clean
+  // and every row after it carries exactly one hairline. It has to survive any
+  // combination of modes and checklists, because those are what decide which
+  // row is first.
+  const auditRules = () => page.evaluate(() => {
+    const bad = [];
+    document.querySelectorAll('.field-group, .ctrl-panel').forEach(block => {
+      let seen = 0;
+      block.querySelectorAll(':scope > .field-row, :scope > .toggle-row, :scope > .slider-block')
+        .forEach(row => {
+          if(row.style.display === 'none') return;
+          const w = parseFloat(getComputedStyle(row).borderTopWidth) || 0;
+          const title = block.querySelector(':scope > .group-title');
+          const where = (title ? title.textContent : block.id) + ' / ' + (row.textContent.trim().slice(0,24));
+          if(seen === 0 && w > 0) bad.push('rule under the card edge: ' + where);
+          if(seen > 0 && w === 0) bad.push('no rule between rows: ' + where);
+          seen++;
+        });
+    });
+    return bad;
+  });
+  const ALL_SIMPLE = { incModeGroup:'simple', debtsModeGroup:'simple',
+                       loanModeGroup:'simple', capsModeGroup:'simple' };
+  const states = [
+    ['everything disclosed',        async () => { await reset(); }],
+    ['everything folded away',      async () => { await reset(); await setModes(ALL_SIMPLE);
+                                                  await setInputs({ hasInvest:false, hasGov:false, hasHomeLoan:false,
+                                                                    hasCard:false, hasPersonal:false, hasBnpl:false,
+                                                                    hasSupport:false, hasRefi:false, lmiCap:false }); }],
+    ['self-employed, LMI, IO loan', async () => { await reset(); await setModes({ incWhoGroup:'self' });
+                                                  await setInputs({ lmiCap:true, hasIo:true, occupancy:'investor',
+                                                                    helpMode:'commitment', olType:'io' }); }]
+  ];
+  const broken = [];
+  for(const [name, apply] of states){
+    await apply();
+    for(const tab of ['income','house','debts','loan','caps']){
+      await openTab(tab);
+      (await auditRules()).forEach(b => broken.push(`${name} / ${tab}: ${b}`));
+    }
+  }
+  check('B25 no hairline doubles a card border or underlines a group title, in any state',
+    broken.length === 0,
+    broken.length ? broken.slice(0,3).join(' | ')
+                  : 'every card opens clean and separates its rows across all five tabs and three form states');
+  await openTab('income');
+  await reset();
 }
 
 /* ══════════════ B16 — nothing threw along the way ══════════════ */
