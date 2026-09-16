@@ -59,7 +59,10 @@ with a soft dashed grey line and shows the expansion in the shared tooltip on ho
 - **Add its terms** to `SharedAbbr.GLOSSARY` in `shared.js`, under a key matching the
   tool's folder (`'*'` for anything site-wide). An entry is
   `[expansion, optional one-line gloss]`, or `{ en: […], id: […] }` for a tool with an
-  Indonesian page. Only real jargon, not units sitting next to numbers.
+  Indonesian page. **Subject-matter jargon only**: the vocabulary of the field the tool
+  works in (LVR, PTKP, RMS). Never file formats or everyday computing words (CSV, PDF,
+  PNG, SVG, JSON), and not units sitting next to numbers. A tool whose page has no
+  jargon adds nothing, which is a fine outcome.
 - **Mark user content `data-no-abbr`**: an uploaded table, a rendered document, a JSON
   tree, anything the user typed. Site text teaches, user data is left alone.
 

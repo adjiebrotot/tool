@@ -682,22 +682,15 @@
      ══════════════════════════════════════════════════════════════════════ */
   var ABBR_GLOSSARY = {
 
-    /* ── Site-wide: file formats and cross-tool finance terms ── */
+    /* ── Cross-tool subject-matter vocabulary ──
+       Only terms a reader may not know from the field the tool works in. File
+       formats and everyday computing words (CSV, PDF, PNG, SVG, JSON, URL)
+       are deliberately absent: everyone meets them at the download button, and
+       underlining them there would drown the terms that carry real meaning. */
     '*': {
-      API:  ['Application Programming Interface', 'the documented way one program drives another'],
       CAGR: ['Compound Annual Growth Rate', 'the one yearly rate that turns the starting value into the ending value'],
-      CSV:  ['Comma-Separated Values', 'a plain-text table any spreadsheet can open'],
       ETF:  ['Exchange-Traded Fund', 'a basket of assets that trades on an exchange like a single share'],
-      GIF:  ['Graphics Interchange Format', 'an image format that can hold a short looping animation'],
-      JSON: ['JavaScript Object Notation', 'a plain-text format for structured data'],
-      KPI:  ['Key Performance Indicator', 'the headline number a tool reports'],
-      PDF:  ['Portable Document Format', 'a fixed layout that prints the same everywhere'],
-      PNG:  ['Portable Network Graphics', 'a lossless image format, crisp for charts and screenshots'],
-      ROI:  ['Return on Investment', 'profit measured as a share of what you put in'],
-      SVG:  ['Scalable Vector Graphics', 'an image made of shapes, so it stays sharp at any size'],
-      TSV:  ['Tab-Separated Values', 'the same idea as CSV, with tabs between the columns'],
-      URL:  ['Uniform Resource Locator', 'a web address'],
-      XLSX: ['Excel Open XML Spreadsheet', 'the modern Excel workbook format']
+      ROI:  ['Return on Investment', 'profit measured as a share of what you put in']
     },
 
     /* ── Borrowing Capacity (Australian home lending) ── */
@@ -781,11 +774,10 @@
     /* ── PowerFactory Scripter (and its samples page) ── */
     'powerfactory-scripter': {
       AC:   ['Alternating Current', 'the mains supply, where current reverses direction each cycle'],
-      DB:   ['Database', 'the PowerFactory project database this tool reads your objects from'],
+      API:  ['Application Programming Interface', 'here, the PowerFactory Python folder a script imports from'],
       EMT:  ['Electromagnetic Transient', 'the instantaneous-value simulation. Slower than RMS, but it keeps switching and waveform detail'],
       HV:   ['High Voltage'],
       HVDC: ['High Voltage Direct Current', 'a DC link used to move bulk power or tie two AC systems together'],
-      IDE:  ['Integrated Development Environment', 'a code editor such as VS Code or PyCharm'],
       IEEE: ['Institute of Electrical and Electronics Engineers', 'the body whose published test systems these presets are built on'],
       /* MW is deliberately absent here: on the samples pages it is a unit next to
          a number ("163 MW", "0.61 MW per MW of G2"), and underlining every one
@@ -803,11 +795,6 @@
       MW:  ['Megawatt', 'a million watts of active power'],
       RHS: ['Right-Hand Side', 'the limit side of the constraint equation, what the flow has to stay under'],
       WEM: ['Wholesale Electricity Market', 'the Western Australian electricity market']
-    },
-
-    /* ── Video to GIF ── */
-    videotogif: {
-      HD: ['High Definition', 'Full HD is 1920 px wide. Wider output takes much longer to convert']
     }
   };
 

@@ -237,13 +237,13 @@ check('data-no-abbr region stays plain', optOut === 0, optOut + ' decorated');
 const boundaries = await page.evaluate(async () => {
   const host = document.createElement('div');
   document.body.appendChild(host);
-  host.textContent = 'AAA.LVR file.CSV LVRX xLVR CSVs and LVR.';
+  host.textContent = 'AAA.LVR file.ETF LVRX xLVR ETFs and LVR.';
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   const out = [...host.querySelectorAll('abbr.abbr')].map(a => a.textContent);
   host.remove();
   return out;
 });
-check('boundaries respected', JSON.stringify(boundaries) === JSON.stringify(['CSVs', 'LVR']), JSON.stringify(boundaries));
+check('boundaries respected', JSON.stringify(boundaries) === JSON.stringify(['ETFs', 'LVR']), JSON.stringify(boundaries));
 
 /* The documented escape hatches: a page can borrow another tool's scope, and a
    tool can register terms of its own at runtime. */

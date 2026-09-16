@@ -893,7 +893,8 @@ For static tooltips anchored to their trigger (no dynamic positioning required).
 
 Jargon explains itself everywhere: any glossary term found in visible page text
 gets a soft dashed grey underline and shows its definition in the global tooltip
-on hover. Nothing to mark up. `shared.js` wraps each match itself:
+on hover. Nothing to mark up, and nothing in the glossary but the vocabulary of
+the field the tool works in. `shared.js` wraps each match itself:
 
 ```html
 <!-- you write -->
@@ -942,7 +943,7 @@ faint tint. Printing drops it.
 Terms live in `SharedAbbr.GLOSSARY` in `shared.js`, keyed by scope:
 
 ```js
-'*': { CSV: ['Comma-Separated Values', 'a plain-text table any spreadsheet can open'] },
+'*': { CAGR: ['Compound Annual Growth Rate', 'the one yearly rate from start value to end value'] },
 borrowingcapacity: { LVR: ['Loan-to-Value Ratio', 'the loan as a share of the property value'] },
 'dcasimulator/ticker': { ASX: ['Australian Securities Exchange'] },
 pisahvsgabung: { PTKP: { en: ['Penghasilan Tidak Kena Pajak', 'the slice of income that is not taxed'],
@@ -975,10 +976,13 @@ JSON tree, a list of user choices. Site text teaches; user data is left alone.
 <tbody id="tableBody" data-no-abbr></tbody>
 ```
 
-Define a term only where it is jargon. Units that sit next to numbers in running
-prose ("163 MW") are left out on purpose: underlining every one buries the terms
-that matter. `node _ref/abbr-check.mjs` drives every page and prints how often
-each term is decorated, which is the clutter budget to check against.
+**Subject-matter jargon only.** The glossary explains the field the tool works
+in: LVR, PTKP, RMS, RPPI, TWR. It deliberately holds no file formats or everyday
+computing words (CSV, PDF, PNG, SVG, JSON, URL, XLSX); everyone meets those at
+the download button, and underlining them there would drown the terms that carry
+real meaning. Units that sit next to numbers in running prose ("163 MW") are out
+for the same reason. `node _ref/abbr-check.mjs` drives every page and prints how
+often each term is decorated, which is the clutter budget to check against.
 
 Other API: `SharedAbbr.define(term)`, `.terms()`, `.scan(root)`, `.refresh()`,
 `.undecorate(root)` (strip the decoration, e.g. from a clone before export),
