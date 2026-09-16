@@ -81,6 +81,10 @@ const TOOLS = [
     ],
     // Elements whose Indonesian copy is injected via innerHTML at runtime.
     htmlSpecials: [{ id: 'infoBoxContent', key: 'infoBoxHtml' }],
+    // Copy that names a PTKP status code is written with a placeholder the page
+    // fills in from the dependant count. The baked page is the page before any
+    // input, so it gets the values the tool starts on.
+    placeholders: { '{TK}': 'TK/0', '{K}': 'K/0', '{KI}': 'K/I/0', '{PISAH}': 'K/0 + TK/0' },
   },
   {
     dir: 'rentvsownhouse',
@@ -88,7 +92,7 @@ const TOOLS = [
     description: 'Simulasikan sewa vs beli rumah dalam jangka panjang: bandingkan kas, ekuitas, dan kekayaan bersih berdasarkan asumsi harga properti, KPR, sewa, dan imbal hasil investasi.',
     ogTitle: 'Sewa vs Beli Rumah — Simulasi Skenario Properti',
     ogDescription: 'Simulasikan sewa vs beli rumah dalam jangka panjang dengan membandingkan kas, ekuitas, dan kekayaan bersih.',
-    sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js'],
+    sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js'],
     extraReplacements: [["renderRVOFooter('../logos/')", "renderRVOFooter('../../logos/')"]],
     ldJson: [
       {
@@ -186,6 +190,8 @@ const TOOLS = [
     extraReplacements: [
       ["renderRVOFooter('../../logos/')", "renderRVOFooter('../../../logos/')"],
       ['<a href="../../" class="btn-theme btn-back" data-i18n="btnBack">', '<a href="../../id/" class="btn-theme btn-back" data-i18n="btnBack">'],
+      ['title="Upload a sensitivity CSV to rebuild the scenarios"', 'title="Unggah CSV sensitivitas untuk membangun ulang skenario"'],
+      ['title="Compare all scenarios in one chart"', 'title="Bandingkan semua skenario dalam satu grafik"'],
     ],
     ldJson: [
       {
@@ -271,6 +277,15 @@ const TOOLS = [
   },
 ];
 
+// Resolve a tool's runtime placeholders to the values its defaults produce, so
+// the baked page never ships a literal `{KI}` for the moment before JS runs.
+function fill(text, tool) {
+  if (typeof text !== 'string' || !tool.placeholders) return text;
+  let out = text;
+  for (const [token, value] of Object.entries(tool.placeholders)) out = out.split(token).join(value);
+  return out;
+}
+
 // Extract the `const <varName> = {...}` object literal from a script source
 // using a quote-aware brace matcher, then evaluate it.
 function extractLang(src, varName = 'LANG') {
@@ -347,15 +362,15 @@ function bake(tool) {
   let missing = 0;
   html = html.replace(/(<\w+\b[^>]*?\bdata-i18n="([^"]+)"[^>]*>)([^<]*)/g, (m, open, key, text) => {
     if (typeof id[key] !== 'string') { missing++; return m; }
-    return open + escapeText(id[key]);
+    return open + escapeText(fill(id[key], tool));
   });
   html = html.replace(/(<\w+\b[^>]*?\bdata-i18n-opt="([^"]+)"[^>]*>)([^<]*)/g, (m, open, key) =>
-    typeof id[key] === 'string' ? open + escapeText(id[key]) : m
+    typeof id[key] === 'string' ? open + escapeText(fill(id[key], tool)) : m
   );
   for (const special of tool.htmlSpecials) {
     if (typeof id[special.key] !== 'string') continue;
     const re = new RegExp(`(<(\\w+)\\b[^>]*\\bid="${special.id}"[^>]*>)[\\s\\S]*?(</\\2>)`);
-    html = html.replace(re, (m, open, tag, close) => open + id[special.key] + close);
+    html = html.replace(re, (m, open, tag, close) => open + fill(id[special.key], tool) + close);
   }
 
   mkdirSync(join(toolDir, 'id'), { recursive: true });

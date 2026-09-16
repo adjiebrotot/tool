@@ -956,6 +956,17 @@ pisahvsgabung: { PTKP: { en: ['Penghasilan Tidak Kena Pajak', 'the slice of inco
   `tool/sub-page` key covers one page. The scope comes from the URL, so a new
   tool only needs its own block. `<body data-abbr-scope="…">` overrides it.
 - A page can register its own at runtime: `SharedAbbr.add({ WACC: ['Weighted Average Cost of Capital'] })`.
+- **Never define a term in the page itself**, with `<abbr title="…">`, a `title`
+  attribute or a `?` icon whose whole tooltip is the expansion. `abbr` is a
+  skipped region, so a hand-rolled one silently opts the term out of the layer
+  it was meant to join: it reads differently, it has no Indonesian wording, and
+  the glossary entry it shadows looks unused. Put the term in the glossary and
+  leave the page text plain.
+- A term whose text moves with an input (`K/I/0`, `K/I/2`, `K/I/3` — the PTKP
+  status codes in `pisahvsgabung`) needs an entry per value the tool can
+  produce, since the glossary matches the literal string on screen. Generate the
+  set in a loop next to the glossary rather than writing each one out, and drive
+  the page copy from the same count so the two cannot drift apart.
 
 #### Keeping it calm
 
