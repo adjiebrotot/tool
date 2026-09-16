@@ -855,7 +855,7 @@ function getOutputAttrSuggestions(typed, elmClass, comboInstance) {
   // Fallback hardcoded common outputs when no class detected or DB not available
   if (results.length === 0) {
     const common = [
-      { var: 'm:u1',       desc: 'Voltage magnitude (pu)',              unit: 'pu'  },
+      { var: 'm:u1',       desc: 'Voltage magnitude (p.u.)',            unit: 'p.u.'},
       { var: 'm:phiu',     desc: 'Voltage angle',                       unit: 'deg' },
       { var: 'm:Psum',     desc: 'Total active power injection',         unit: 'MW'  },
       { var: 'm:Qsum',     desc: 'Total reactive power injection',       unit: 'Mvar'},
@@ -864,7 +864,7 @@ function getOutputAttrSuggestions(typed, elmClass, comboInstance) {
       { var: 'm:I1',       desc: 'Positive-sequence current magnitude',  unit: 'kA'  },
       { var: 'c:loading',  desc: 'Element loading',                      unit: '%'   },
       { var: 'm:Ikss',     desc: 'Short-circuit current (sym)',          unit: 'kA'  },
-      { var: 's:speed',    desc: 'Rotor speed (dynamic)',                unit: 'pu'  },
+      { var: 's:speed',    desc: 'Rotor speed (dynamic)',                unit: 'p.u.'},
       { var: 'm:cosphi',   desc: 'Power factor',                         unit: ''    },
     ];
     common.forEach(c => {

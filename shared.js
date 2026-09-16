@@ -706,6 +706,7 @@
       HECS: ['Higher Education Contribution Scheme', 'the older name for the same study loan'],
       HELP: ['Higher Education Loan Program', 'the Australian study loan, repaid through the tax system'],
       HEM:  ['Household Expenditure Measure', 'the benchmark living cost a lender falls back on when your declared expenses look too low'],
+      LITO: ['Low Income Tax Offset', 'a rebate that trims the tax bill on lower incomes and tapers away as income rises'],
       LMI:  ['Lenders Mortgage Insurance', 'a one-off premium that lets a lender go past 80% LVR. It protects the lender, not you'],
       LOC:  ['Line of Credit', 'a revolving facility, assessed on its limit rather than its balance'],
       LVR:  ['Loan-to-Value Ratio', 'the loan as a share of the property value, or of the bank valuation if that is lower'],
@@ -740,6 +741,8 @@
       BSE:    ['Bombay Stock Exchange'],
       HKEX:   ['Hong Kong Exchanges and Clearing'],
       IDX:    ['Indonesia Stock Exchange', 'Bursa Efek Indonesia'],
+      CAC:    ['Cotation Assistée en Continu', 'the CAC 40 is the headline index of the Paris exchange'],
+      KOSDAQ: ['Korea Securities Dealers Automated Quotations', 'the Korea Exchange board for smaller and growth companies'],
       KOSPI:  ['Korea Composite Stock Price Index', 'the main board of the Korea Exchange'],
       LSE:    ['London Stock Exchange'],
       NASDAQ: ['National Association of Securities Dealers Automated Quotations', 'the US exchange where most technology names list'],
@@ -753,6 +756,8 @@
 
     /* ── Rent vs Own Home (and its Sensitivity page, EN + ID) ── */
     rentvsownhouse: {
+      RTB:   { en: ['Rent-Then-Buy', 'the third scenario: rent first, then buy partway through the run'],
+               id: ['Rent-Then-Buy', 'skenario ketiga: menyewa dulu, lalu membeli di tengah periode'] },
       RPPI:  ['Residential Property Price Index', 'the official measure of how fast house prices move'],
       DP:    { en: ['Down Payment', 'the deposit paid upfront, the rest is borrowed'],
                id: ['Down Payment', 'uang muka yang dibayar di depan, sisanya dipinjam'] },
@@ -800,6 +805,7 @@
       API:  ['Application Programming Interface', 'here, the PowerFactory Python folder a script imports from'],
       EMT:  ['Electromagnetic Transient', 'the instantaneous-value simulation. Slower than RMS, but it keeps switching and waveform detail'],
       HV:   ['High Voltage'],
+      LV:   ['Low Voltage'],
       HVDC: ['High Voltage Direct Current', 'a DC link used to move bulk power or tie two AC systems together'],
       IEEE: ['Institute of Electrical and Electronics Engineers', 'the body whose published test systems these presets are built on'],
       /* MW is deliberately absent here: on the samples pages it is a unit next to
@@ -807,6 +813,7 @@
          would bury the terms that actually need explaining. So are N-1 and N-2:
          the page names the element count next to them every time they appear. */
       Op:   ['Operator', 'the comparison the filter applies to the value, such as = or >'],
+      'p.u.': ['per unit', 'a quantity scaled against its rated base, so 1.0 is nameplate'],
       PF:   ['PowerFactory', 'the DIgSILENT PowerFactory power system simulator'],
       RMS:  ['Root Mean Square', 'the phasor-domain dynamic simulation, fast enough for stability studies'],
       SG:   ['Synchronous Generator', 'the rotating machine most large power stations use'],
