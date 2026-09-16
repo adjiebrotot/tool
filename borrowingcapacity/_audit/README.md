@@ -44,4 +44,31 @@ underlining a group title — checked across all five tabs in three different
 states of the form, since which row comes first is exactly what the modes and
 checklists change.
 
+Since the income split landed: two applicants taxed as two people rather than
+one, the split being inert at a single applicant, a split of 0 reproducing the
+old single-taxpayer figure exactly, splitting never costing a couple more tax
+than pooling at any income from $40k to $400k, and the slider appearing only
+where it means something. The replay names the two applicants explicitly and
+adds them, while the page sums a reduce() over an array of shares, so the two
+sides agree on the arithmetic rather than on a shared shape.
+
+And since the Quick Start scenarios landed: each of the five applying its modes,
+its figures and its checklist boxes in full (read off the controls themselves,
+not off readInputs(), which renames and derives, so a scenario writing to an id
+that no longer exists is caught rather than papered over), binding on the cap it
+is documented to bind on, never inheriting the previous scenario's commitments,
+and clearing its highlight on Reset. Two of those checks exist because the
+scenarios got them wrong first: the first home buyer must gain capacity when LMI
+is capitalised, not merely change which cap binds, and no scenario may bind
+within 5% of its next cap. On a thin margin, capitalising the premium divides
+serviceability by 1 plus the rate and leaves the borrower worse off, which is
+the reverse of the lesson the button claims to teach.
+
+The tour is covered too: every step's selector resolving to an element with a
+real box, saveState returning null on a page nobody has touched so a first-time
+visitor keeps the demo, and a page the user has worked on coming back exactly as
+they left it after the tour seeds a scenario over the top of it. The harness also
+marks the tour as already seen, because clearing localStorage would otherwise
+re-arm the first-visit auto-start on every reload.
+
 Run: `node run.mjs`

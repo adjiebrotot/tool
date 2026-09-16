@@ -129,14 +129,22 @@ function replay(p){
   const taxable = p.payg + p.overtime + p.bonus + p.allow + p.casual + p.seNpat
                 + Math.max(0, rentalNet) + divGrossed + (p.pensionTaxable ? p.pension : 0);
   const adjusted = taxable + rentalLoss;
-  const incTax   = Math.max(0, refIncomeTax(taxable, p.taxYear) - refLito(taxable));
+  // Two applicants are two taxpayers. The page sums a reduce() over an array of
+  // shares; this side names the two people explicitly and adds them, so the
+  // agreement is on the arithmetic rather than on a shared shape.
+  const share2   = p.adults >= 2 ? Math.min(50, Math.max(0, p.incSplit))/100 : 0;
+  const taxable2 = taxable * share2;
+  const taxable1 = taxable - taxable2;
+  const perHead  = ti => Math.max(0, refIncomeTax(ti, p.taxYear) - refLito(ti));
+  const incTax   = share2 > 0 ? perHead(taxable1) + perHead(taxable2) : perHead(taxable);
   const medicare = refMedicare(taxable, p.adults, p.deps);
   const mls      = p.privHealth ? 0 : refMlsRate(adjusted, p.adults, p.deps) * taxable;
   const helpAll  = p.helpMode === 'none' ? 0 : refHelp(adjusted, p.helpThreshold);
   const helpTax  = p.helpMode === 'tax' ? helpAll : 0;
   const helpComm = p.helpMode === 'commitment' ? helpAll : 0;
   const totalTax = incTax + medicare + mls + helpTax;   // the gross-up already puts the credit in income
-  const negGear  = p.negGear ? refMarginal(taxable, p.taxYear, p.adults, p.deps) * rentalLoss : 0;
+  // The higher earner's rate: applicant 1 holds the geared property.
+  const negGear  = p.negGear ? refMarginal(share2 > 0 ? taxable1 : taxable, p.taxYear, p.adults, p.deps) * rentalLoss : 0;
   const netMonthly = (grossAssessable - totalTax + negGear)/12;
 
   // Step 3
@@ -176,7 +184,7 @@ function replay(p){
   // Step 8
   const repayAtMax = refPayment(maxLoan*lmiFactor, i, n);
   const outgoings  = living + commitments + repayAtMax;
-  return { grossAssessable, grossUnshaded, taxable, totalTax, netMonthly, hem, living,
+  return { grossAssessable, grossUnshaded, taxable, taxable1, taxable2, totalTax, netMonthly, hem, living,
            commitments, assessRate, n, maxRepay, Lserv, Ldti, Llvr, Ldep, maxLoan,
            repayAtMax, funds, nsr: netMonthly/outgoings, umi: netMonthly - outgoings,
            maxPrice: maxLoan + funds };
@@ -196,7 +204,12 @@ await page.route('**/*', route => {
   return route.fulfill({ contentType:'application/javascript', body:'/* stub */' });
 });
 await page.goto(PAGE, { waitUntil:'load' });
-await page.evaluate(() => { try { localStorage.clear(); } catch(e){} });
+// Clearing storage would also clear the tour's seen flag, and the tour then
+// auto-opens 700ms into every reload. The checks below drive the page through
+// page.evaluate(), which a backdrop cannot block, but a step that seeds a Quick
+// Start scenario would still land on top of a test's own inputs. Mark the tour
+// as already seen so the run is deterministic.
+await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v1-seen','1'); } catch(e){} });
 await page.reload({ waitUntil:'load' });
 await page.waitForTimeout(250);
 
@@ -487,7 +500,9 @@ async function reset(){
 {
   await setInputs({ incRent:30000, ipCash:38000, ipDep:6000, negGear:true });
   const on = await engine(), p = await inputs(), ref = replay(p);
-  const expected = refMarginal(ref.taxable, p.taxYear, p.adults, p.deps) * 14000;
+  // The add-back is at the HIGHER earner's marginal rate, so the expectation is
+  // built on applicant 1's share, not on the pooled figure.
+  const expected = refMarginal(ref.taxable1, p.taxYear, p.adults, p.deps) * 14000;
   check('B11 the negative gearing benefit is the marginal rate on the taxable rental loss',
     near(on.negGear, expected, 0.02) && near(on.maxLoan, ref.maxLoan, 1),
     `page ${on.negGear.toFixed(2)} vs ${expected.toFixed(2)} on a 14,000 loss`);
@@ -639,7 +654,7 @@ async function reset(){
       && restoredModes.capsMode === 'detailed'
       && await page.evaluate(() => document.querySelector('#incModeGroup .seg-btn[data-val="detailed"]').classList.contains('active')),
     `restored ${JSON.stringify(restoredModes)}`);
-  await page.evaluate(() => { try { localStorage.clear(); } catch(e){} });
+  await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v1-seen','1'); } catch(e){} });
 }
 
 /* ══════════════ B17 — Simple and Detailed describe the same person ══════════════ */
@@ -915,6 +930,239 @@ async function reset(){
     broken.length ? broken.slice(0,3).join(' | ')
                   : 'every card opens clean and separates its rows across all five tabs and three form states');
   await openTab('income');
+  await reset();
+}
+
+/* ══════════════ B26 — two applicants are taxed as two people ══════════════ */
+{
+  await reset();
+
+  // At one applicant the split is inert, whatever the slider says.
+  await setInputs({ adults:'1', incSplit:0,  incPayg:140000 });
+  const one0 = await engine();
+  await setInputs({ incSplit:50 });
+  const one50 = await engine();
+  check('B26 the income split is inert at one applicant',
+    near(one0.maxLoan, one50.maxLoan, 1e-6) && near(one0.totalTax, one50.totalTax, 1e-6),
+    `capacity ${one0.maxLoan.toFixed(0)} at 0% and ${one50.maxLoan.toFixed(0)} at 50%`);
+
+  // At two applicants, a split of 0 is the old single-taxpayer arithmetic.
+  await setInputs({ adults:'2', incSplit:0 });
+  const two0 = await engine(), p0 = await inputs();
+  const single = Math.max(0, refIncomeTax(p0.payg, p0.taxYear) - refLito(p0.payg))
+               + refMedicare(p0.payg, 2, 0);
+  check('B26b a split of 0 reproduces the single-taxpayer figure exactly',
+    near(two0.totalTax, single, 0.02) && near(two0.totalTax, one0.totalTax, 0.02),
+    `pooled tax ${two0.totalTax.toFixed(2)} vs ${single.toFixed(2)}`);
+
+  // And a real split agrees with the independent replay, and buys capacity.
+  await setInputs({ incSplit:50 });
+  const two50 = await engine(), p50 = await inputs(), ref50 = replay(p50);
+  check('B26c a 50/50 split matches the replay and is worth real capacity',
+    near(two50.totalTax, ref50.totalTax, 0.02) && near(two50.maxLoan, ref50.maxLoan, 1)
+      && two50.maxLoan > two0.maxLoan,
+    `tax ${two50.totalTax.toFixed(0)} vs replay ${ref50.totalTax.toFixed(0)}, capacity ${two0.maxLoan.toFixed(0)} → ${two50.maxLoan.toFixed(0)}`);
+
+  // Splitting can only ever reduce tax, never raise it, at any income.
+  const wrongWay = [];
+  for(const inc of [40000, 60000, 90000, 140000, 200000, 400000]){
+    await setInputs({ incPayg:inc, incSplit:0  });  const flat = (await engine()).totalTax;
+    await setInputs({ incSplit:50 });               const spl  = (await engine()).totalTax;
+    if(spl > flat + 0.02) wrongWay.push(`${inc}: ${flat.toFixed(0)} → ${spl.toFixed(0)}`);
+  }
+  check('B26d splitting never costs a couple more tax than pooling, at any income',
+    wrongWay.length === 0,
+    wrongWay.length ? wrongWay.join(' | ') : 'monotone across 40k to 400k');
+
+  // The control only exists where it means something.
+  await openTab('house');
+  await setInputs({ adults:'2' });
+  const shownAt2 = await shown('incSplitRow');
+  await setInputs({ adults:'1' });
+  const shownAt1 = await shown('incSplitRow');
+  check('B26e the split slider appears for two applicants and not for one',
+    shownAt2 && !shownAt1, `shown at 2: ${shownAt2}, shown at 1: ${shownAt1}`);
+  await openTab('income');
+  await reset();
+}
+
+/* ══════════════ B27 — the Quick Start scenarios ══════════════ */
+{
+  // Each button must land the whole form, not most of it. A typo'd element id
+  // would otherwise fail silently and leave the scenario describing someone else.
+  const EXPECTED = {
+    'finance-bro': { modes:{ incWho:'employee', incMode:'detailed', debtsMode:'detailed', loanMode:'simple', capsMode:'simple' },
+                     vals:{ city:'Sydney', adults:'1', incPayg:230000, incBonus:90000, shdBonus:80,
+                            cardLimit:25000, persRepay:950, price:1700000, savings:550000 },
+                     binds:'serv' },
+    'couple':      { modes:{ incWho:'employee', incMode:'simple', debtsMode:'simple', loanMode:'simple', capsMode:'simple' },
+                     vals:{ city:'Melbourne', adults:'2', incSplit:50, deps:2, declaredExp:4800,
+                            cardLimit:15000, price:950000, savings:250000 },
+                     binds:'serv' },
+    'geoff':       { modes:{ incWho:'employee', incMode:'simple', debtsMode:'simple', loanMode:'simple', capsMode:'simple' },
+                     vals:{ city:'Perth', adults:'1', declaredExp:2800, cardLimit:8000,
+                            price:650000, savings:150000 },
+                     binds:'serv' },
+    'first-home':  { modes:{ incWho:'employee', incMode:'simple', debtsMode:'simple', loanMode:'simple', capsMode:'simple' },
+                     vals:{ city:'Brisbane', adults:'1', declaredExp:2600, cardLimit:5000,
+                            price:650000, savings:70000, dutyPct:0 },
+                     binds:'dep' },
+    'tradie':      { modes:{ incWho:'self', incMode:'simple', debtsMode:'simple', loanMode:'simple', capsMode:'simple' },
+                     vals:{ city:'Adelaide', adults:'1', deps:1, cardLimit:20000,
+                            persRepay:950, price:850000, savings:300000 },
+                     binds:'serv' }
+  };
+
+  const applyPreset = key => page.evaluate(k => {
+    document.querySelector('.quick-start-btn[data-preset="' + k + '"]').click();
+  }, key).then(() => page.waitForTimeout(120));
+
+  const wrong = [], mismatched = [], unmarked = [];
+  for(const [key, want] of Object.entries(EXPECTED)){
+    await applyPreset(key);
+    const ui = await modes(), r = await engine();
+    // Read the controls themselves rather than readInputs(), which renames and
+    // derives. This is what catches a scenario writing to an id that no longer
+    // exists, which readInputs() would quietly paper over.
+    const got = await page.evaluate(ids => Object.fromEntries(ids.map(id => {
+      const el = document.getElementById(id);
+      return [id, el ? (el.type === 'checkbox' ? el.checked : el.value) : null];
+    })), Object.keys(want.vals));
+
+    Object.entries(want.modes).forEach(([k, v]) => {
+      if(ui[k] !== v) wrong.push(`${key}.${k}: ${ui[k]} want ${v}`);
+    });
+    Object.entries(want.vals).forEach(([id, v]) => {
+      const live = got[id];
+      if(live === null){ mismatched.push(`${key}.${id}: no such control`); return; }
+      const ok = typeof v === 'number'
+        ? near(parseFloat(String(live).replace(/,/g, '')), v, 0.01)
+        : String(live) === v;
+      if(!ok) mismatched.push(`${key}.${id}: ${live} want ${v}`);
+    });
+    if(!(await page.evaluate(k => {
+      const on = document.querySelectorAll('.quick-start-btn.active');
+      return on.length === 1 && on[0].dataset.preset === k;
+    }, key))) unmarked.push(key);
+    if(r.binding !== ({ serv:'Serviceability', dti:'Debt to income', lvr:'Loan to value', dep:'Deposit' })[want.binds])
+      wrong.push(`${key} binds on ${r.binding}, want ${want.binds}`);
+  }
+  check('B27 every Quick Start scenario applies its modes in full',
+    wrong.length === 0, wrong.length ? wrong.slice(0,4).join(' | ') : 'five scenarios, modes and binding cap as specified');
+  check('B27b every Quick Start scenario applies its figures in full',
+    mismatched.length === 0, mismatched.length ? mismatched.slice(0,4).join(' | ') : 'every checked field landed');
+  check('B27c the chosen scenario is the only one highlighted',
+    unmarked.length === 0, unmarked.length ? unmarked.join(' | ') : 'exactly one active button each time');
+
+  // The first home buyer is the one scenario that binds on the deposit, and
+  // capitalising LMI is the lever its tooltip points at. If a later tweak to
+  // duty or HEM quietly moves that, this is what says so.
+  await applyPreset('first-home');
+  const fhBefore = await engine();
+  await setInputs({ lmiCap:true });
+  const fhAfter = await engine();
+  // Changing the binding cap is not enough. Capitalising the premium divides
+  // serviceability by 1 + the rate, so on a deposit that is only just the
+  // tightest cap, LMI makes the borrower WORSE off and the tooltip becomes a
+  // lie. Capacity has to go UP.
+  check('B27d the first home buyer binds on the deposit, and capitalising LMI lifts capacity',
+    fhBefore.binding === 'Deposit' && fhAfter.binding !== 'Deposit'
+      && fhAfter.maxLoan > fhBefore.maxLoan,
+    `${fhBefore.binding} $${fhBefore.maxLoan.toFixed(0)} → ${fhAfter.binding} $${fhAfter.maxLoan.toFixed(0)}, ` +
+    `${fhAfter.maxLoan > fhBefore.maxLoan ? '+' : ''}$${(fhAfter.maxLoan - fhBefore.maxLoan).toFixed(0)} with LMI capitalised`);
+
+  // No scenario should ship on a knife edge. A binding cap sitting within a few
+  // percent of the next one means a small change to duty, HEM or a tax scale
+  // silently rewrites which lesson the button teaches.
+  const thin = [];
+  for(const key of Object.keys(EXPECTED)){
+    await applyPreset(key);
+    const r = await engine();
+    const caps = [r.Lserv, r.Ldti, r.Llvr, r.Ldep].sort((a, b) => a - b);
+    const margin = (caps[1] - caps[0]) / caps[0];
+    if(margin < 0.05) thin.push(`${key}: ${(margin*100).toFixed(1)}% over ${r.binding}`);
+  }
+  check('B27g no scenario binds within 5% of the next cap',
+    thin.length === 0,
+    thin.length ? thin.join(' | ') : 'every scenario clears its second cap by more than 5%');
+
+  // Reset has to clear the highlight, or the page claims a scenario it no
+  // longer shows.
+  await applyPreset('geoff');
+  await page.evaluate(() => document.getElementById('resetBtn').click());
+  await page.waitForTimeout(120);
+  check('B27e Reset drops the scenario highlight along with the figures',
+    await page.evaluate(() => !document.querySelector('.quick-start-btn.active')
+      && document.getElementById('incSimple').value === '140,000'),
+    'no active button and the default income back');
+
+  // A scenario must not inherit the last one's checklist boxes.
+  await applyPreset('tradie');          // ticks hasPersonal
+  await applyPreset('geoff');           // does not
+  const carried = await inputs();
+  check('B27f a scenario does not inherit the previous one\'s commitments',
+    near(carried.persRepay, 0, 1e-9) && near(carried.persBal, 0, 1e-9),
+    `personal repayment ${carried.persRepay}, balance ${carried.persBal} after switching from the tradie`);
+  await reset();
+}
+
+/* ══════════════ B28 — the guided tour ══════════════ */
+{
+  await reset();
+  const cfg = await page.evaluate(() => ({
+    seenKey: window.__TOUR.seenKey,
+    steps: window.__TOUR.steps.length,
+    targets: window.__TOUR.steps.map(s => s.target),
+    hasSave: typeof window.__TOUR.saveState === 'function',
+    hasRestore: typeof window.__TOUR.restoreState === 'function'
+  }));
+  // Every selector a step names has to resolve to something with a real box,
+  // or the spotlight punches a hole in an empty corner of the page.
+  const unreachable = [];
+  for(const t of cfg.targets){
+    if(!t) continue;
+    const ok = await page.evaluate(sel => {
+      const el = document.querySelector(sel);
+      if(!el) return false;
+      const r = el.getBoundingClientRect();
+      return r.width >= 4 && r.height >= 4;
+    }, t);
+    if(!ok) unreachable.push(t);
+  }
+  check('B28 every tour step points at an element that is really on screen',
+    cfg.steps > 0 && unreachable.length === 0 && cfg.hasSave && cfg.hasRestore,
+    unreachable.length ? unreachable.join(' | ')
+                       : `${cfg.steps} steps, seenKey ${cfg.seenKey}, state handed back`);
+
+  // saveState returns null on a page nobody has touched, so a first-time
+  // visitor keeps the demo instead of being dumped back on the default.
+  await page.evaluate(() => document.getElementById('resetBtn').click());
+  await page.waitForTimeout(120);
+  const pristine = await page.evaluate(() => window.__BC_TOUR.saveState());
+  check('B28b a pristine page has nothing worth handing back',
+    pristine === null, `saveState() returned ${JSON.stringify(pristine) === 'null' ? 'null' : 'a snapshot'}`);
+
+  // And a page the user has worked on comes back exactly as they left it,
+  // fields, checkboxes, segmented controls and all.
+  await setModes({ loanModeGroup:'detailed' });
+  await setInputs({ incSimple:172500, city:'Hobart', adults:'1', declaredExp:3150, hasBnpl:true });
+  const before = await page.evaluate(() => ({
+    inc:document.getElementById('incSimple').value, city:document.getElementById('city').value, adults:document.getElementById('adults').value, exp:document.getElementById('declaredExp').value,
+    bnpl:document.getElementById('hasBnpl').checked, ui:{ ...window.__BC.UI }
+  }));
+  const snap = await page.evaluate(() => window.__BC_TOUR.saveState());
+  await page.evaluate(() => window.__BC_TOUR.seedGeoff());
+  await page.waitForTimeout(120);
+  const seeded = await page.evaluate(() => document.getElementById('incSimple').value);
+  await page.evaluate(s => window.__BC_TOUR.restoreState(s), snap);
+  await page.waitForTimeout(120);
+  const after = await page.evaluate(() => ({
+    inc:document.getElementById('incSimple').value, city:document.getElementById('city').value, adults:document.getElementById('adults').value, exp:document.getElementById('declaredExp').value,
+    bnpl:document.getElementById('hasBnpl').checked, ui:{ ...window.__BC.UI }
+  }));
+  check('B28c the tour seeds a scenario and hands the user their own work back',
+    snap !== null && seeded === '105,000' && JSON.stringify(before) === JSON.stringify(after),
+    `seeded ${seeded}, restored ${JSON.stringify(after.inc)} in ${after.city} with loan mode ${after.ui.loanMode}`);
   await reset();
 }
 
