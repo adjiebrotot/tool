@@ -55,7 +55,7 @@ const LANG = {
     bracketToHtml: 'To (Rp) <span style="font-size:0.68rem">(last=∞)</span>',
     bracketRate: 'Rate (%)',
     bracketTip: 'Edit each threshold and rate. The "From" column fills itself in, and only the last bracket is left open-ended. Raising a bound past the brackets beneath it deletes those brackets, so the ladder on screen is always exactly the ladder being calculated.',
-    infoBoxHtml: '<strong>Pisah Harta (K/0 + TK/0):</strong> Each spouse files their own SPT. Husband uses PTKP K/tanggungan, wife uses PTKP TK/0. Double bracket access.<br><br><strong>Gabung Harta (K/I/0):</strong> Combined income, single SPT. Uses PTKP K/I/tanggungan. One bracket ladder for all income.',
+    infoBoxHtml: '<strong>Pisah Harta ({PISAH}):</strong> Each spouse files their own SPT. Husband uses PTKP {K}, wife uses PTKP {TK}. Double bracket access.<br><br><strong>Gabung Harta ({KI}):</strong> Combined income, single SPT. Uses PTKP {KI}. One bracket ladder for all income.',
     resetBtn: '↺ Reset',
     kpiPisahLabel: 'Pisah Harta — Total Tax',
     kpiGabungLabel: 'Gabung Harta — Total Tax',
@@ -82,8 +82,8 @@ const LANG = {
     chart2Sub: 'Positive = Gabung Harta pays more (Pisah Harta wins). Negative = Gabung Harta pays less (Gabung Harta wins).',
     chart2YTitle: 'Tax Difference (positive = Pisah wins)',
     hoverBox2: 'Hover over the chart to inspect the difference.',
-    legendPisah: 'Pisah Harta (K/0 + TK/0)',
-    legendGabung: 'Gabung Harta (K/I/0)',
+    legendPisah: 'Pisah Harta ({PISAH})',
+    legendGabung: 'Gabung Harta ({KI})',
     legendPisahWins: 'Pisah Harta wins (positive)',
     legendGabungWins: 'Gabung Harta wins (negative)',
     salaryLabel: 'Salary',
@@ -94,6 +94,7 @@ const LANG = {
     tilePtkpHusband: 'PTKP Husband (Pisah)',
     tilePtkpWife: 'PTKP Wife (Pisah)',
     tileTotalPtkpPisah: 'Total PTKP Pisah',
+    tilePtkpGabungCode: 'PTKP Gabung ({KI})',
     tileGrosssalary: 'Gross Salary',
     tileDeductions: 'Deductions (Pengurang)',
     tileNetIncome: 'Net Income (after deductions)',
@@ -104,10 +105,8 @@ const LANG = {
     crossoverWastedHtml: 'The non-earning spouse\'s PTKP is entirely wasted under Pisah Harta. Gabung Harta consolidates all PTKP into one filing, making it <span class="negative">beneficial</span> at this split.',
     crossoverAdjust: 'Adjust the income split to see where Pisah Harta becomes advantageous due to double bracket access.',
     crossoverPoint: 'Crossover point:',
-    crossoverBelowPre: 'Below this salary, <span class="negative">Gabung Harta (K/I/',
-    crossoverBelowPost: ')</span> may pay less because the higher combined PTKP is utilized more efficiently relative to income.',
-    crossoverAbovePre: 'Above this salary, <span class="positive">Pisah Harta (K/',
-    crossoverAbovePost: '+ TK/0)</span> wins because each spouse accesses lower tax brackets independently.',
+    crossoverBelowHtml: 'Below this salary, <span class="negative">Gabung Harta ({KI})</span> may pay less because the higher combined PTKP is utilized more efficiently relative to income.',
+    crossoverAboveHtml: 'Above this salary, <span class="positive">Pisah Harta ({PISAH})</span> wins because each spouse accesses lower tax brackets independently.',
     crossoverNoneFound: 'No crossover found in range.',
     crossoverPisahBetterPre: 'At this income split (',
     crossoverPisahBetterPost: '%), <span class="positive">Pisah Harta</span> is better (or equal) across the entire salary range. Both schemes have the same total PTKP at even splits, but Pisah Harta benefits from dual bracket access.',
@@ -121,6 +120,7 @@ const LANG = {
     tblDifference: 'Difference',
     tblWinner: 'Winner',
     tblEffRate: 'Effective Rate',
+    tblPtkpGabungCode: 'PTKP {KI}',
     tblNetIncome: 'Net Income',
     tblPTKP: 'PTKP',
     tblTaxableIncome: 'Taxable Income',
@@ -134,8 +134,7 @@ const LANG = {
     tblPisahWin: 'Pisah',
     tblGabungWin: 'Gabung',
     warnWife0: "⚠️ With 0% wife income, Pisah Harta wastes wife's PTKP (Rp 54M) entirely. Gabung Harta is strongly recommended.",
-    warnHusband0Pre: "⚠️ With 100% wife income (0% husband), Pisah Harta wastes husband's PTKP (K/",
-    warnHusband0Post: ') entirely. Gabung Harta is strongly recommended.',
+    warnHusband0: "⚠️ With 100% wife income (0% husband), Pisah Harta wastes husband's PTKP ({K}) entirely. Gabung Harta is strongly recommended.",
     warnDeductExceed: '⚠️ Deductions (pengurang) exceed gross salary. Net income is set to Rp 0.',
     warnSpouseExceed: '⚠️ One spouse deduction exceeds that spouse gross salary. Net income for that spouse is set to Rp 0.',
     warnCapLead: '⚠️ Biaya jabatan is capped at 5% of gross salary, up to Rp 6,000,000 a year. Above the cap: ',
@@ -185,7 +184,7 @@ const LANG = {
     bracketToHtml: 'Sampai (Rp) <span style="font-size:0.68rem">(terakhir=∞)</span>',
     bracketRate: 'Tarif (%)',
     bracketTip: 'Ubah setiap ambang batas dan tarif. Kolom "Dari" terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Menaikkan batas melewati lapisan di bawahnya akan menghapus lapisan tersebut, jadi tangga yang tampil selalu persis sama dengan yang dihitung.',
-    infoBoxHtml: '<strong>Pisah Harta (K/0 + TK/0):</strong> Masing-masing pasangan mengajukan SPT sendiri. Suami menggunakan PTKP K/tanggungan, istri menggunakan PTKP TK/0. Keduanya mengakses lapisan tarif secara terpisah.<br><br><strong>Gabung Harta (K/I/0):</strong> Penghasilan digabung dalam satu SPT bersama. Menggunakan PTKP K/I/tanggungan. Satu tangga lapisan tarif untuk seluruh penghasilan.',
+    infoBoxHtml: '<strong>Pisah Harta ({PISAH}):</strong> Masing-masing pasangan mengajukan SPT sendiri. Suami menggunakan PTKP {K}, istri menggunakan PTKP {TK}. Keduanya mengakses lapisan tarif secara terpisah.<br><br><strong>Gabung Harta ({KI}):</strong> Penghasilan digabung dalam satu SPT bersama. Menggunakan PTKP {KI}. Satu tangga lapisan tarif untuk seluruh penghasilan.',
     resetBtn: '↺ Atur Ulang',
     kpiPisahLabel: 'Pisah Harta — Total Pajak',
     kpiGabungLabel: 'Gabung Harta — Total Pajak',
@@ -212,8 +211,8 @@ const LANG = {
     chart2Sub: 'Positif = Gabung Harta bayar lebih banyak (Pisah Harta menang). Negatif = Gabung Harta bayar lebih sedikit (Gabung Harta menang).',
     chart2YTitle: 'Selisih Pajak (positif = Pisah menang)',
     hoverBox2: 'Arahkan kursor ke grafik untuk melihat selisihnya.',
-    legendPisah: 'Pisah Harta (K/0 + TK/0)',
-    legendGabung: 'Gabung Harta (K/I/0)',
+    legendPisah: 'Pisah Harta ({PISAH})',
+    legendGabung: 'Gabung Harta ({KI})',
     legendPisahWins: 'Pisah Harta menang (positif)',
     legendGabungWins: 'Gabung Harta menang (negatif)',
     salaryLabel: 'Gaji',
@@ -224,6 +223,7 @@ const LANG = {
     tilePtkpHusband: 'PTKP Suami (Pisah)',
     tilePtkpWife: 'PTKP Istri (Pisah)',
     tileTotalPtkpPisah: 'Jumlah PTKP Pisah',
+    tilePtkpGabungCode: 'PTKP Gabung ({KI})',
     tileGrossalary: 'Gaji Kotor',
     tileGrosssalary: 'Gaji Kotor',
     tileDeductions: 'Potongan (Pengurang)',
@@ -235,10 +235,8 @@ const LANG = {
     crossoverWastedHtml: 'PTKP pasangan yang tidak berpenghasilan terbuang sia-sia dalam skema Pisah Harta. Gabung Harta menggabungkan semua PTKP dalam satu SPT, sehingga lebih <span class="negative">menguntungkan</span> pada pembagian ini.',
     crossoverAdjust: 'Ubah pembagian penghasilan untuk melihat di mana Pisah Harta menjadi lebih menguntungkan berkat akses lapisan tarif ganda.',
     crossoverPoint: 'Breakeven:',
-    crossoverBelowPre: 'Di bawah gaji ini, <span class="negative">Gabung Harta (K/I/',
-    crossoverBelowPost: ')</span> bisa lebih hemat karena PTKP gabungan yang lebih besar dimanfaatkan lebih efisien relatif terhadap penghasilan.',
-    crossoverAbovePre: 'Di atas gaji ini, <span class="positive">Pisah Harta (K/',
-    crossoverAbovePost: '+ TK/0)</span> lebih unggul karena masing-masing pasangan mengakses lapisan tarif yang lebih rendah secara terpisah.',
+    crossoverBelowHtml: 'Di bawah gaji ini, <span class="negative">Gabung Harta ({KI})</span> bisa lebih hemat karena PTKP gabungan yang lebih besar dimanfaatkan lebih efisien relatif terhadap penghasilan.',
+    crossoverAboveHtml: 'Di atas gaji ini, <span class="positive">Pisah Harta ({PISAH})</span> lebih unggul karena masing-masing pasangan mengakses lapisan tarif yang lebih rendah secara terpisah.',
     crossoverNoneFound: 'Tidak ditemukan breakeven dalam rentang ini.',
     crossoverPisahBetterPre: 'Pada pembagian penghasilan ini (',
     crossoverPisahBetterPost: '%), <span class="positive">Pisah Harta</span> lebih baik (atau sama) di seluruh rentang gaji. Kedua skema memiliki total PTKP yang sama pada pembagian merata, namun Pisah Harta diuntungkan oleh akses lapisan tarif ganda.',
@@ -252,6 +250,7 @@ const LANG = {
     tblDifference: 'Selisih',
     tblWinner: 'Lebih Hemat',
     tblEffRate: 'Tarif Efektif',
+    tblPtkpGabungCode: 'PTKP {KI}',
     tblNetIncome: 'Penghasilan Bersih',
     tblPTKP: 'PTKP',
     tblTaxableIncome: 'Penghasilan Kena Pajak',
@@ -265,8 +264,7 @@ const LANG = {
     tblPisahWin: 'Pisah',
     tblGabungWin: 'Gabung',
     warnWife0: '⚠️ Dengan 0% penghasilan istri, PTKP istri (Rp 54 juta) terbuang sia-sia dalam Pisah Harta. Gabung Harta sangat disarankan.',
-    warnHusband0Pre: '⚠️ Dengan 100% penghasilan istri (suami 0%), PTKP suami (K/',
-    warnHusband0Post: ') terbuang sia-sia dalam Pisah Harta. Gabung Harta sangat disarankan.',
+    warnHusband0: '⚠️ Dengan 100% penghasilan istri (suami 0%), PTKP suami ({K}) terbuang sia-sia dalam Pisah Harta. Gabung Harta sangat disarankan.',
     warnDeductExceed: '⚠️ Potongan (pengurang) melebihi gaji kotor. Penghasilan bersih ditetapkan Rp 0.',
     warnSpouseExceed: '⚠️ Potongan salah satu pasangan melebihi gaji kotor pasangan tersebut. Penghasilan bersih pasangan itu ditetapkan Rp 0.',
     warnCapLead: '⚠️ Biaya jabatan dibatasi 5% dari gaji kotor, maksimal Rp 6,000,000 per tahun. Di atas batas: ',
@@ -279,6 +277,28 @@ const LANG = {
 
 let lang = (window.DEFAULT_LANG === 'id') ? 'id' : 'en';
 function T(key){ return LANG[lang][key] || LANG['en'][key] || key; }
+
+/* A PTKP status code is only half a code without the dependant count on the
+   end, so every string that names one is written with a placeholder and filled
+   in here. The wife always files as TK/0 under Pisah Harta — her own PTKP,
+   no married or dependant additions — so {TK} carries no count of its own.
+   Keep these in step with the codes SharedAbbr defines for this tool. */
+const PTKP_CODES = {
+  '{TK}':    () => 'TK/0',
+  '{K}':     () => 'K/' + S.dependents,
+  '{KI}':    () => 'K/I/' + S.dependents,
+  '{PISAH}': () => 'K/' + S.dependents + ' + TK/0'
+};
+function TF(key){
+  return T(key).replace(/\{(TK|KI|K|PISAH)\}/g, m => PTKP_CODES[m]());
+}
+
+/* The info box names the codes, so it is rebuilt whenever the count changes,
+   not only when the language does. */
+function renderInfoBox(){
+  const box = $('infoBoxContent');
+  if (box) box.innerHTML = TF('infoBoxHtml');
+}
 
 function applyLang() {
   // Static text nodes
@@ -300,7 +320,7 @@ function applyLang() {
     if (val !== undefined) el.setAttribute('data-tip', val);
   });
   // Info box (HTML)
-  $('infoBoxContent').innerHTML = T('infoBoxHtml');
+  renderInfoBox();
   // Bracket column headers
   $('bracketColFrom').textContent = T('bracketFrom');
   $('bracketColTo').innerHTML = T('bracketToHtml');
@@ -516,6 +536,7 @@ function computeModel() {
   if($('ptkpHDisplay')) $('ptkpHDisplay').textContent = fmt.idr(ptkpHusband_pisah,true);
   if($('ptkpWDisplay')) $('ptkpWDisplay').textContent = fmt.idr(ptkpWife_pisah,true);
   if($('ptkpGDisplay')) $('ptkpGDisplay').textContent = fmt.idr(ptkpGabung,true);
+  renderInfoBox();
 
   // A deduction is a fixed rupiah amount, so it stays fixed across the salary
   // sweep instead of being re-applied as a percentage of gross. In total mode the
@@ -630,8 +651,8 @@ function buildLegend(id, series){
 
 function renderMainChart(rows){
   const series=[
-    {key:'pisahTax',colorVar:'--line-a',label:T('legendPisah')},
-    {key:'gabungTax',colorVar:'--line-b',label:T('legendGabung')},
+    {key:'pisahTax',colorVar:'--line-a',label:TF('legendPisah')},
+    {key:'gabungTax',colorVar:'--line-b',label:TF('legendGabung')},
   ];
   buildLegend('chartLegend',series);
   const labels=rows.map(r=>r.salary);
@@ -778,7 +799,7 @@ function updateSummary(state){
     {label:T('tilePtkpHusband'),value:fmt.idr(s.ptkpH,true)},
     {label:T('tilePtkpWife'),value:fmt.idr(s.ptkpW,true)},
     {label:T('tileTotalPtkpPisah'),value:fmt.idr(s.ptkpH+s.ptkpW,true)},
-    {label:'PTKP Gabung (K/I/'+S.dependents+')',value:fmt.idr(s.ptkpGabung,true)},
+    {label:TF('tilePtkpGabungCode'),value:fmt.idr(s.ptkpGabung,true)},
     {label:T('tileGrosssalary'),value:fmt.idr(c.totalGross,true)},
     {label:T('tileDeductions'),value:fmt.idr(c.totalDeduction,true)},
     {label:T('tileNetIncome'),value:fmt.idr(c.netIncome,true)},
@@ -791,7 +812,7 @@ function updateSummary(state){
   if(S.splitPct===0 || S.splitPct===100){
     info.innerHTML=`<strong>${T('crossoverWith')} ${splitPctLabel()}${T('crossoverWifePct')}</strong><br>${T('crossoverWastedHtml')}<br><br>${T('crossoverAdjust')}`;
   } else if(s.crossover){
-    info.innerHTML='<strong>'+T('crossoverPoint')+'</strong> ~'+fmt.salaryLabel(Math.round(s.crossover))+'<br><br>'+T('crossoverBelowPre')+S.dependents+T('crossoverBelowPost')+'<br><br>'+T('crossoverAbovePre')+S.dependents+'/'+T('crossoverAbovePost');
+    info.innerHTML='<strong>'+T('crossoverPoint')+'</strong> ~'+fmt.salaryLabel(Math.round(s.crossover))+'<br><br>'+TF('crossoverBelowHtml')+'<br><br>'+TF('crossoverAboveHtml');
   } else {
     const last=state.rows[state.rows.length-1];
     if(last.diff>=0){
@@ -860,7 +881,7 @@ function updateDetailTable(rows){
         <tr>
           <th rowspan="2">${T('tblSalary')}</th>
           <th rowspan="2">${T('tblNetIncome')}</th>
-          <th rowspan="2">PTKP K/I/${S.dependents}</th>
+          <th rowspan="2">${TF('tblPtkpGabungCode')}</th>
           <th rowspan="2">${T('tblTaxableIncome')}</th>
           <th rowspan="2">${T('tblTotalTax')}</th>
           <th colspan="2" class="tbl-group-header">${T('tblProportional')}</th>
@@ -894,7 +915,7 @@ function rerender(){
     warn.textContent=T('warnWife0');
   } else if(S.splitPct===100){
     warn.style.display='block';
-    warn.textContent=T('warnHusband0Pre')+S.dependents+T('warnHusband0Post');
+    warn.textContent=TF('warnHusband0');
   } else {
     warn.style.display='none';
   }

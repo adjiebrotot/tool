@@ -1855,7 +1855,7 @@ function renderSummary(){
       <div class="tile" style="border-left:3px solid ${getSecColor(res.sec)}">
         <div class="label">${res.sec.name}</div>
         <div class="value">${fmt.currency(res.finalEquity)}</div>
-        <div style="font-size:.75rem;color:var(--muted);margin-top:3px">ROI: ${fmt.pct(roi)} | Dep: ${fmt.currency(res.totalDeposited)}</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:3px">ROI: ${fmt.pct(roi)} | Topped up: ${fmt.currency(res.totalDeposited)}</div>
         <div style="font-size:.75rem;color:var(--muted)">Trades: ${res.investRows.length}</div>
         <div class="adv-metrics" style="${advStyle}">
           ${metricCell('Sharpe', fmtRatio(m.sharpe), METRIC_TIPS.sharpe)}

@@ -204,4 +204,3 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
 .quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;}
 .quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
 .quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
-abbr.abbr-hint{text-decoration:underline dotted;cursor:help;text-underline-offset:2px;}

@@ -148,7 +148,7 @@
         <!-- Mode A: Total + Split % -->
         <div id="modeTotal">
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="totalSalaryLabel">Total Gaji Kotor Rumah Tangga</span> <span class="tip-icon" data-i18n-tip="totalSalaryTip" data-tip="Gaji kotor tahunan suami dan istri dijumlahkan, sebelum dikurangi apa pun.">?</span></div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="totalSalaryLabel">Total Gaji Kotor Rumah Tangga</span> <span class="tip-icon" data-i18n-tip="totalSalaryTip" data-tip="The husband&#39;s and wife&#39;s gross annual salaries added together, before any deduction.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="totalSalaryInput" type="text" inputmode="numeric" value="500,000,000" />
@@ -156,13 +156,13 @@
           </div>
           <div class="slider-block">
             <div class="slider-head">
-              <div class="slider-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeShareLabel">Porsi penghasilan istri</span> <span class="tip-icon" data-i18n-tip="wifeShareTip" data-tip="Porsi gaji rumah tangga yang diperoleh istri. Suami memperoleh sisanya, jadi 30% di sini berarti suami memperoleh 70%.">?</span></div>
+              <div class="slider-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeShareLabel">Porsi penghasilan istri</span> <span class="tip-icon" data-i18n-tip="wifeShareTip" data-tip="The share of the household salary the wife earns. The husband earns whatever is left, so 30% here means he earns 70%.">?</span></div>
               <div class="slider-value" id="splitValue">50%</div>
             </div>
             <input id="splitPct" type="range" min="0" max="100" step="1" value="50" />
           </div>
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Total Potongan Tahunan (Pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Pengurang yang diperbolehkan seperti biaya jabatan atau iuran pensiun. Dikurangkan dari penghasilan kotor sebelum PTKP, lalu dibagi antara suami dan istri sesuai porsi penghasilan masing-masing.">?</span></div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Total Potongan Tahunan (Pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Allowable deductions such as biaya jabatan or iuran pensiun. They come off gross income before PTKP is applied, and they are split between the spouses in proportion to what each earns.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="deductionInput" type="text" inputmode="numeric" value="0" />
@@ -190,14 +190,14 @@
             <div class="field-sub"><span data-i18n="combinedPrefix">Total:</span> <strong id="combinedLabel">Rp 500,000,000</strong> &nbsp;|&nbsp; <span data-i18n="wifeSharePrefix">Porsi istri:</span> <strong id="splitDerivedLabel">50.0%</strong></div>
           </div>
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="husbandDeductionLabel">Potongan Tahunan Suami (Pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Pengurang yang hanya dikurangkan dari penghasilan kotor suami, diterapkan sebelum PTKP.">?</span></div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="husbandDeductionLabel">Potongan Tahunan Suami (Pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Deductions that come off the husband's gross income only, applied before PTKP.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="husbandDeductionInput" type="text" inputmode="numeric" value="0" />
             </div>
           </div>
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeDeductionLabel">Potongan Tahunan Istri (Pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Pengurang yang hanya dikurangkan dari penghasilan kotor istri, diterapkan sebelum PTKP.">?</span></div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeDeductionLabel">Potongan Tahunan Istri (Pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Deductions that come off the wife's gross income only, applied before PTKP.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="wifeDeductionInput" type="text" inputmode="numeric" value="0" />
@@ -229,17 +229,17 @@
         </div>
 
         <div class="bracket-section">
-          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Lapisan Tarif PPh 21</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Ubah setiap ambang batas dan tarif. Kolom &quot;Dari&quot; terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Menaikkan batas melewati lapisan di bawahnya akan menghapus lapisan tersebut, jadi tangga yang tampil selalu persis sama dengan yang dihitung.">?</span></div>
+          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Lapisan Tarif PPh 21</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit each threshold and rate. The &quot;From&quot; column fills itself in, and only the last bracket is left open-ended. Raising a bound past the brackets beneath it deletes those brackets, so the ladder on screen is always exactly the ladder being calculated.">?</span></div>
           <div class="bracket-row-header">
-            <div class="bracket-col-label" id="bracketColFrom">Dari (Rp)</div>
-            <div class="bracket-col-label" id="bracketColTo">Sampai (Rp) <span style="font-size:0.68rem">(terakhir=∞)</span></div>
-            <div class="bracket-col-label" id="bracketColRate">Tarif (%)</div>
+            <div class="bracket-col-label" id="bracketColFrom">From (Rp)</div>
+            <div class="bracket-col-label" id="bracketColTo">To (Rp) <span style="font-size:0.68rem">(last=∞)</span></div>
+            <div class="bracket-col-label" id="bracketColRate">Rate (%)</div>
           </div>
           <div id="bracketsContainer"></div>
         </div>
 
         <div class="bracket-section">
-          <div class="info-box" style="margin-top:8px" id="infoBoxContent"><strong>Pisah Harta (K/0 + TK/0):</strong> Masing-masing pasangan mengajukan SPT sendiri. Suami menggunakan PTKP K/tanggungan, istri menggunakan PTKP TK/0. Keduanya mengakses lapisan tarif secara terpisah.<br><br><strong>Gabung Harta (K/I/0):</strong> Penghasilan digabung dalam satu SPT bersama. Menggunakan PTKP K/I/tanggungan. Satu tangga lapisan tarif untuk seluruh penghasilan.</div>
+          <div class="info-box" style="margin-top:8px" id="infoBoxContent"><strong>Pisah Harta (K/0 + TK/0):</strong> Masing-masing pasangan mengajukan SPT sendiri. Suami menggunakan PTKP K/0, istri menggunakan PTKP TK/0. Keduanya mengakses lapisan tarif secara terpisah.<br><br><strong>Gabung Harta (K/I/0):</strong> Penghasilan digabung dalam satu SPT bersama. Menggunakan PTKP K/I/0. Satu tangga lapisan tarif untuk seluruh penghasilan.</div>
         </div>
       </div>
 
@@ -346,20 +346,20 @@
 <footer class="page-footer">
   <section class="page-footer-info">
     <p>
-      <strong>Penafian:</strong> Alat ini disediakan "sebagaimana adanya" dan "sesuai ketersediaan", gratis, tanpa pernyataan atau jaminan apa pun, baik tersurat maupun tersirat. Seluruh keluaran, hasil, penafsiran, atau keputusan yang dibuat menggunakan alat ini sepenuhnya menjadi tanggung jawab pengguna. Pengguna wajib mencari nasihat profesional sendiri sebelum mengambil keputusan.
+      <strong>Disclaimer:</strong> This tool is provided on an "as is" and "as available" basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any decisions.
     </p>
     <p>
-      Jika Anda menemukan bug atau kendala teknis, laporkan ke <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. Jika Anda tertarik, bingung, atau ingin dibantu memakai alat ini, silakan email saya juga 🙂
+      If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you're interested, confused, or would like help learning how to use the tool, feel free to email me as well 🙂
     </p>
     <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
       <img src="../../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
       <div style="display:flex;align-items:center;gap:10px">
         <img src="../../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-        <span style="color:var(--muted);font-size:0.85rem">Dilisensikan di bawah <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — bebas dipakai, diubah, dan dibagikan dengan kode sumber terbuka.</span>
+        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
         <img src="../../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-        <span style="color:var(--muted);font-size:0.85rem">Dibuat di Australia oleh insinyur Indonesia.</span>
+        <span style="color:var(--muted);font-size:0.85rem">Made in Australia by Indonesian engineer.</span>
       </div>
     </div>
   </section>

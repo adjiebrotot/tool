@@ -688,9 +688,14 @@
        are deliberately absent: everyone meets them at the download button, and
        underlining them there would drown the terms that carry real meaning. */
     '*': {
-      CAGR: ['Compound Annual Growth Rate', 'the one yearly rate that turns the starting value into the ending value'],
+      CAGR: { en: ['Compound Annual Growth Rate', 'the one yearly rate that turns the starting value into the ending value'],
+              id: ['Compound Annual Growth Rate', 'satu tarif tahunan yang mengubah nilai awal menjadi nilai akhir'] },
       ETF:  ['Exchange-Traded Fund', 'a basket of assets that trades on an exchange like a single share'],
-      ROI:  ['Return on Investment', 'profit measured as a share of what you put in']
+      ROI:  ['Return on Investment', 'profit measured as a share of what you put in'],
+      /* Not an acronym, but the same problem: it sits next to a rate on half the
+         tools and is never spelled out anywhere on the page. */
+      'p.a.': { en: ['per annum', 'per year, so the rate is stated on a yearly basis'],
+                id: ['per annum', 'per tahun, tarif dinyatakan dalam basis tahunan'] }
     },
 
     /* ── Borrowing Capacity (Australian home lending) ── */
@@ -710,12 +715,18 @@
       UMI:  ['Uncommitted Monthly Income', 'what is left each month after living costs, commitments and the new repayment']
     },
 
+    /* ── Cost of Living Comparator ── */
+    'costofliving-comparator': {
+      FX: ['Foreign Exchange', 'the rate one currency converts into another at']
+    },
+
     /* ── DCA Scenario Explorer, Portfolio mode and the ticker reference ── */
     dcasimulator: {
       ADX:   ['Average Directional Index', 'how strong a trend is, whichever way it points'],
       DCA:   ['Dollar-Cost Averaging', 'investing a set amount on a set schedule instead of all at once'],
       ESG:   ['Environmental, Social and Governance', 'a screen some funds apply to what they are allowed to hold'],
       IRR:   ['Internal Rate of Return', 'the annual rate at which your deposits and the final value balance out'],
+      MA:    ['Moving Average', 'the average price over a rolling window, which smooths the day-to-day noise out of a trend'],
       MACD:  ['Moving Average Convergence Divergence', 'the gap between two moving averages, read as a trend signal'],
       MWR:   ['Money-Weighted Return', 'the growth of your actual money, so the timing of every deposit counts'],
       OHLC:  ['Open, High, Low, Close', 'the four prices a candlestick shows for one period'],
@@ -763,12 +774,24 @@
                id: ['Penghasilan Kena Pajak', 'penghasilan setelah PTKP dan pengurang, dasar perhitungan lapisan tarif'] },
       SPT:   { en: ['Surat Pemberitahuan Tahunan', 'the annual tax return'],
                id: ['Surat Pemberitahuan Tahunan', 'laporan pajak yang disampaikan setiap tahun'] },
-      'TK/0':  { en: ['Tidak Kawin, 0 tanggungan', 'single, no dependants. The base PTKP'],
-                 id: ['Tidak Kawin, 0 tanggungan', 'lajang tanpa tanggungan, PTKP dasar'] },
-      'K/0':   { en: ['Kawin, 0 tanggungan', 'married, no dependants'],
-                 id: ['Kawin, 0 tanggungan', 'kawin tanpa tanggungan'] },
-      'K/I/0': { en: ['Kawin, Istri berpenghasilan, 0 tanggungan', 'married with the spouse income combined, no dependants'],
-                 id: ['Kawin, penghasilan Istri digabung, 0 tanggungan', 'kawin dengan penghasilan istri digabung, tanpa tanggungan'] }
+      /* The single letters the PTKP section spells its codes out of, and the
+         ones the computed-PTKP line uses for each spouse. Both pages carry
+         both sets, so a reader switching language still gets a definition. */
+      TK: { en: ['Tidak Kawin', 'not married'],
+            id: ['Tidak Kawin', 'belum atau tidak menikah'] },
+      K:  { en: ['Kawin', 'married'],
+            id: ['Kawin', 'menikah'] },
+      I:  { en: ['Istri', 'the wife, whose income is combined into one filing'],
+            id: ['Istri', 'penghasilan istri digabung dalam satu SPT'] },
+      H:  { en: ['Husband', 'the husband\u2019s side of the Pisah Harta filing'],
+            id: ['Husband', 'sisi suami dalam skema Pisah Harta'] },
+      W:  { en: ['Wife', 'the wife\u2019s side of the Pisah Harta filing'],
+            id: ['Wife', 'sisi istri dalam skema Pisah Harta'] },
+      S:  { en: ['Suami', 'the husband\u2019s side of the Pisah Harta filing'],
+            id: ['Suami', 'sisi suami dalam skema Pisah Harta'] }
+      /* The numbered status codes (TK/0 … K/I/3) are added below: they only
+         differ by the dependant count, so writing all twelve out by hand would
+         be twelve chances to let one drift out of step with the others. */
     },
 
     /* ── PowerFactory Scripter (and its samples page) ── */
@@ -781,8 +804,9 @@
       IEEE: ['Institute of Electrical and Electronics Engineers', 'the body whose published test systems these presets are built on'],
       /* MW is deliberately absent here: on the samples pages it is a unit next to
          a number ("163 MW", "0.61 MW per MW of G2"), and underlining every one
-         would bury the terms that actually need explaining. */
-      'N-1': ['N minus 1', 'the test that the network still holds with any single element out of service'],
+         would bury the terms that actually need explaining. So are N-1 and N-2:
+         the page names the element count next to them every time they appear. */
+      Op:   ['Operator', 'the comparison the filter applies to the value, such as = or >'],
       PF:   ['PowerFactory', 'the DIgSILENT PowerFactory power system simulator'],
       RMS:  ['Root Mean Square', 'the phasor-domain dynamic simulation, fast enough for stability studies'],
       SG:   ['Synchronous Generator', 'the rotating machine most large power stations use'],
@@ -797,6 +821,32 @@
       WEM: ['Wholesale Electricity Market', 'the Western Australian electricity market']
     }
   };
+
+  /* PTKP status codes carry the dependant count, and the tool lets a reader pick
+     0 to 3, so "K/I/2" has to define itself as readily as "K/I/0" does. One pass
+     writes the whole ladder, which keeps the three families worded alike. */
+  (function expandPtkpCodes(scope, max){
+    var dep = {
+      en: ['no dependants', 'one dependant', 'two dependants', 'three dependants'],
+      id: ['tanpa tanggungan', 'satu tanggungan', 'dua tanggungan', 'tiga tanggungan']
+    };
+    var family = [
+      { code: 'TK/', en: 'Tidak Kawin', id: 'Tidak Kawin',
+        enGloss: 'single, ', idGloss: 'lajang, ' },
+      { code: 'K/',  en: 'Kawin', id: 'Kawin',
+        enGloss: 'married, ', idGloss: 'kawin, ' },
+      { code: 'K/I/', en: 'Kawin, Istri berpenghasilan', id: 'Kawin, penghasilan Istri digabung',
+        enGloss: 'married with the spouse income combined, ', idGloss: 'kawin dengan penghasilan istri digabung, ' }
+    ];
+    for (var f = 0; f < family.length; f++) {
+      for (var n = 0; n <= max; n++) {
+        scope[family[f].code + n] = {
+          en: [family[f].en + ', ' + n + ' tanggungan', family[f].enGloss + dep.en[n]],
+          id: [family[f].id + ', ' + n + ' tanggungan', family[f].idGloss + dep.id[n]]
+        };
+      }
+    }
+  })(ABBR_GLOSSARY.pisahvsgabung, 3);
 
   function makeAbbr(global){
     /* Regions that must never be decorated: interactive controls, code, an
