@@ -153,7 +153,7 @@
 
   <!-- DOCUMENT VIEW -->
   <div class="doc-scroll" id="docScroll">
-    <article class="md-paper" id="docView">
+    <article class="md-paper" id="docView" data-no-abbr>
       <div class="md-body" id="mdBody"></div>
     </article>
     <textarea class="md-editor" id="mdEditor" spellcheck="false" placeholder="Type or paste your Markdown here…"></textarea>
@@ -162,7 +162,7 @@
 </div><!-- #workspace -->
 
 <!-- ── OFFSCREEN PDF PAGINATION STAGE ── -->
-<div id="pdfStage" aria-hidden="true"></div>
+<div id="pdfStage" aria-hidden="true" data-no-abbr></div>
 
 <!-- ── PRINT TIP MODAL (how to get a selectable / clickable PDF) ── -->
 <div id="printTip" aria-hidden="true">
@@ -215,6 +215,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+<script src="../shared.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

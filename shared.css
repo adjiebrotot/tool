@@ -38,6 +38,40 @@
 .tip-icon.warn{background:rgba(245,158,11,.18);color:var(--gold);border-color:rgba(245,158,11,.3);}
 .tip-icon.warn:hover{border-color:var(--gold);}
 
+/* ============================================================
+   ABBREVIATIONS: soft dashed underline + hover definition
+   Applied automatically by SharedAbbr (shared.js) to any glossary
+   term found in visible page text, so every tool explains its own
+   jargon the same way (e.g. LVR -> Loan-to-Value Ratio).
+   Opt a region out with data-no-abbr (user data, uploaded content).
+   Add a term: SharedAbbr.GLOSSARY in shared.js, or SharedAbbr.add().
+   ============================================================ */
+abbr.abbr,.abbr{
+  text-decoration-line:underline;
+  text-decoration-style:dashed;
+  text-decoration-color:var(--abbr-line,rgba(128,140,160,.45));
+  text-decoration-thickness:1px;
+  text-underline-offset:.22em;
+  text-decoration-skip-ink:auto;
+  cursor:help;
+  border-radius:4px;
+  background-color:transparent;
+  transition:text-decoration-color var(--motion-fast),background-color var(--motion-fast),box-shadow var(--motion-fast);
+}
+/* The hover tint is spread with a shadow rather than padding, so decorating a
+   word never changes the width of the label, cell or column holding it. */
+abbr.abbr:hover,.abbr:hover,abbr.abbr:focus-visible,.abbr:focus-visible{
+  text-decoration-color:var(--abbr-line-hover,rgba(90,145,232,.85));
+  background-color:var(--abbr-hover-bg,rgba(90,145,232,.10));
+  box-shadow:0 0 0 .18em var(--abbr-hover-bg,rgba(90,145,232,.10));
+}
+abbr.abbr:focus-visible,.abbr:focus-visible{outline:none;}
+/* Wrapper SharedAbbr adds inside a flex/grid parent so the decorated text stays
+   one item: same boxes, same gaps, same rendering as the plain text it replaced. */
+.abbr-run{display:inline;}
+/* Keep the hint out of exports and printouts. */
+@media print{abbr.abbr,.abbr{text-decoration-line:none;background-color:transparent;}}
+
 /* Toggle switch */
 .toggle-switch{position:relative;width:40px;height:22px;flex-shrink:0;}
 .toggle-switch input{opacity:0;width:0;height:0;position:absolute;}

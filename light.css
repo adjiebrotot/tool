@@ -25,6 +25,8 @@ body.light {
   --info-bg:#EAF2FF;--info-text:#174A9C;--info-border:#8FB5FF;
   /* Chart tokens (light) — dedicated per spec, NOT text.secondary */
   --chart-text:#4A5A6A;--chart-grid:#C8D4E8;
+  /* Abbreviations (dashed underline + hover definition, see shared.css/.abbr) */
+  --abbr-line:rgba(110,124,142,.50);--abbr-line-hover:rgba(58,113,200,.85);--abbr-hover-bg:rgba(90,145,232,.09);
   /* Chart line colours */
   --line-a:#5A91E8;--line-b:#E63939;--line-c:#4A9E87;--line-d:#C46A7E;--line-e:#9B59B6;
   --line-rtb-rent:#E63939;--line-rtb-own:#5A91E8;

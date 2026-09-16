@@ -113,7 +113,7 @@
             <div class="upload-icon">📁</div>
             <div class="upload-text">Drop file here or click to browse</div>
             <div class="upload-sub">CSV, Excel (.xlsx .xls), TSV</div>
-            <div class="file-name" id="fileName"></div>
+            <div class="file-name" id="fileName" data-no-abbr></div>
           </div>
 
           <div class="field-group">
@@ -136,7 +136,7 @@
 
           <hr class="sep" style="margin-top:4px"/>
 
-          <div id="axesContent">
+          <div id="axesContent" data-no-abbr>
             <div style="color:var(--muted);font-size:.86rem;padding:6px 0;text-align:center">Upload a file first to configure axes.</div>
           </div>
         </div>
@@ -152,7 +152,7 @@
           <div id="seriesColourSection" style="display:none">
             <hr class="sep"/>
             <div class="section-title">Series Colours</div>
-            <div class="color-series-list" id="colorSeriesList">
+            <div class="color-series-list" id="colorSeriesList" data-no-abbr>
               <div style="color:var(--muted);font-size:.83rem">Select Y columns in Axes tab first.</div>
             </div>
           </div>
@@ -190,7 +190,7 @@
     <div class="chart-panel card">
       <div class="chart-header">
         <div class="chart-header-left">
-          <h2 id="chartPanelTitle">Graph Visualiser</h2>
+          <h2 id="chartPanelTitle" data-no-abbr>Graph Visualiser</h2>
           <div id="statusBadge"><span class="badge badge-info">Awaiting data</span></div>
         </div>
         <!-- Save PNG lives here, top-right of chart -->
@@ -200,13 +200,13 @@
         </div>
       </div>
 
-      <div class="info-row" id="infoRow" style="display:none"></div>
+      <div class="info-row" id="infoRow" data-no-abbr style="display:none"></div>
 
       <div id="emptyState" class="empty-state">
         <div class="icon">📈</div>
         <p>Upload a file, pick your axes, then click <strong>Visualise</strong>.</p>
       </div>
-      <div id="plotDiv" style="display:none"></div>
+      <div id="plotDiv" data-no-abbr style="display:none"></div>
     </div>
 
   </div><!-- /layout -->

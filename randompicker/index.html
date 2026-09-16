@@ -114,7 +114,7 @@ Salad</textarea>
 
       <div class="card history-card">
         <div class="section-title" style="padding:16px 18px 0">Recent picks <span class="tip-wrap"><span class="tip-icon" data-tip="Counts how often each choice has come up so far. It covers this session only and resets when you leave the page.">i</span></span></div>
-        <div id="historyList" class="history-list">
+        <div id="historyList" class="history-list" data-no-abbr>
           <div class="history-empty">No picks yet.</div>
         </div>
       </div>
@@ -132,7 +132,7 @@ Salad</textarea>
         </div>
       </div>
 
-      <div class="card stage-card">
+      <div class="card stage-card" data-no-abbr>
 
         <!-- WHEEL -->
         <div class="stage active" id="stage-wheel">
@@ -223,7 +223,7 @@ Salad</textarea>
 <div class="winner-overlay" id="winnerOverlay">
   <div class="winner-card">
     <div class="winner-label">🎉 The winner is</div>
-    <div class="winner-name" id="winnerName">—</div>
+    <div class="winner-name" id="winnerName" data-no-abbr>—</div>
     <div class="winner-actions">
       <button class="btn-secondary" id="winnerRemoveBtn">🗑 Remove from list</button>
       <button class="btn-primary" id="winnerCloseBtn">Keep it, close</button>

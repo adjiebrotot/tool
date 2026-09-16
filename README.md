@@ -39,7 +39,7 @@ Shared, cross-tool files live at the repo root:
 | File | What it is |
 | --- | --- |
 | `shared.css`, `light.css`, `dark.css` | The design system and the two colour themes. |
-| `shared.js` | `SharedFmt` (number input formatting), `SharedYF` (market data via the self-hosted Cloudflare Worker in `dcasimulator/yf-proxy-worker.js`), `SharedTA` (technical indicators), `SharedConfig` (config download/upload), `Persist` (mini cache), `SharedTooltip`. |
+| `shared.js` | `SharedFmt` (number input formatting), `SharedYF` (market data via the self-hosted Cloudflare Worker in `dcasimulator/yf-proxy-worker.js`), `SharedTA` (technical indicators), `SharedConfig` (config download/upload), `Persist` (mini cache), `SharedTooltip`, `SharedAbbr` (the abbreviation glossary: every known abbreviation in page text gets a dashed underline and a hover definition). |
 | `tour-shared.js`, `tour-shared.css` | The guided-tour engine. A tool opts in with a `tour.js` that sets `window.__TOUR = { seenKey, launchLabel, steps }` and loads `tour-shared.js` after it. |
 | `_ref/` | Build-time helpers and the design reference — not shipped to users. |
 
@@ -58,6 +58,12 @@ Harnesses live in `costofliving-comparator/`, `dcasimulator/`, `financingvscash/
 JS-versus-Python cross-model audit that these superseded; its CSV outputs are generated, not
 committed. `powerfactory-scripter/audit/` validates generated scripts against a nine-bus reference
 case.
+
+The shared layer has one of its own. `node _ref/abbr-check.mjs` loads every page and
+checks the abbreviation glossary (`SharedAbbr`): that decoration never lands in a link,
+a button, a form control, a page title or user content, that the visible text is
+unchanged by it, that hovering opens the definition, and that the dashed underline
+resolves in both themes. It also prints how often each term is decorated per page.
 
 ## Multi-language pages
 

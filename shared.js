@@ -655,9 +655,408 @@
 
   global.SharedTooltip = { init: initTooltip };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTooltip);
-  } else {
+  /* ══════════════════════════════════════════════════════════════════════
+     ABBREVIATIONS: shared glossary + auto-decoration (SharedAbbr)
+
+     Every tool explains its jargon the same way: any glossary term found in
+     visible page text is wrapped in <abbr class="abbr" data-tip="…">, which
+     shared.css draws with a soft dashed underline and the shared tooltip
+     expands on hover (LVR → Loan-to-Value Ratio).
+
+     GLOSSARY keys are scopes:
+       '*'                 every page on the site,
+       'borrowingcapacity' that tool's folder, sub-pages included,
+       'dcasimulator/ticker'  one sub-page only.
+     The scope is read from the URL path, or from data-abbr-scope on <body>.
+
+     An entry is [expansion, optional one-line gloss], or { en: …, id: … }
+     when the Indonesian page needs its own wording (<html lang="id">).
+
+     Keeping it calm: skipped inside links, buttons, form controls, code, the
+     page title, anything that already carries a data-tip, and any element (or
+     subtree) marked data-no-abbr. Use that for user data such as an uploaded
+     table, a rendered document or a JSON tree.
+
+     A tool with terms of its own can add them at runtime:
+       SharedAbbr.add({ WACC: ['Weighted Average Cost of Capital'] });
+     ══════════════════════════════════════════════════════════════════════ */
+  var ABBR_GLOSSARY = {
+
+    /* ── Site-wide: file formats and cross-tool finance terms ── */
+    '*': {
+      API:  ['Application Programming Interface', 'the documented way one program drives another'],
+      CAGR: ['Compound Annual Growth Rate', 'the one yearly rate that turns the starting value into the ending value'],
+      CSV:  ['Comma-Separated Values', 'a plain-text table any spreadsheet can open'],
+      ETF:  ['Exchange-Traded Fund', 'a basket of assets that trades on an exchange like a single share'],
+      GIF:  ['Graphics Interchange Format', 'an image format that can hold a short looping animation'],
+      JSON: ['JavaScript Object Notation', 'a plain-text format for structured data'],
+      KPI:  ['Key Performance Indicator', 'the headline number a tool reports'],
+      PDF:  ['Portable Document Format', 'a fixed layout that prints the same everywhere'],
+      PNG:  ['Portable Network Graphics', 'a lossless image format, crisp for charts and screenshots'],
+      ROI:  ['Return on Investment', 'profit measured as a share of what you put in'],
+      SVG:  ['Scalable Vector Graphics', 'an image made of shapes, so it stays sharp at any size'],
+      TSV:  ['Tab-Separated Values', 'the same idea as CSV, with tabs between the columns'],
+      URL:  ['Uniform Resource Locator', 'a web address'],
+      XLSX: ['Excel Open XML Spreadsheet', 'the modern Excel workbook format']
+    },
+
+    /* ── Borrowing Capacity (Australian home lending) ── */
+    borrowingcapacity: {
+      APRA: ['Australian Prudential Regulation Authority', 'the regulator that sets the serviceability buffer lenders must add'],
+      DSP:  ['Disability Support Pension', 'a Centrelink payment, counted in full as income'],
+      DTI:  ['Debt-to-Income ratio', 'total debt divided by gross income. Past 6.0 the loan is reportable to APRA as high DTI'],
+      HECS: ['Higher Education Contribution Scheme', 'the older name for the same study loan'],
+      HELP: ['Higher Education Loan Program', 'the Australian study loan, repaid through the tax system'],
+      HEM:  ['Household Expenditure Measure', 'the benchmark living cost a lender falls back on when your declared expenses look too low'],
+      LMI:  ['Lenders Mortgage Insurance', 'a one-off premium that lets a lender go past 80% LVR. It protects the lender, not you'],
+      LOC:  ['Line of Credit', 'a revolving facility, assessed on its limit rather than its balance'],
+      LVR:  ['Loan-to-Value Ratio', 'the loan as a share of the property value, or of the bank valuation if that is lower'],
+      NPAT: ['Net Profit After Tax', 'the business profit a lender counts as self-employed income'],
+      NSR:  ['Net Service Ratio', 'assessed income divided by every outgoing. It has to clear 1.00'],
+      PAYG: ['Pay As You Go', 'salary taxed at the source by your employer'],
+      UMI:  ['Uncommitted Monthly Income', 'what is left each month after living costs, commitments and the new repayment']
+    },
+
+    /* ── DCA Scenario Explorer, Portfolio mode and the ticker reference ── */
+    dcasimulator: {
+      ADX:   ['Average Directional Index', 'how strong a trend is, whichever way it points'],
+      DCA:   ['Dollar-Cost Averaging', 'investing a set amount on a set schedule instead of all at once'],
+      ESG:   ['Environmental, Social and Governance', 'a screen some funds apply to what they are allowed to hold'],
+      IRR:   ['Internal Rate of Return', 'the annual rate at which your deposits and the final value balance out'],
+      MACD:  ['Moving Average Convergence Divergence', 'the gap between two moving averages, read as a trend signal'],
+      MWR:   ['Money-Weighted Return', 'the growth of your actual money, so the timing of every deposit counts'],
+      OHLC:  ['Open, High, Low, Close', 'the four prices a candlestick shows for one period'],
+      REIT:  ['Real Estate Investment Trust', 'a listed trust that owns income-producing property'],
+      RSI:   ['Relative Strength Index', 'a 0 to 100 momentum gauge. Low readings read as oversold'],
+      TWR:   ['Time-Weighted Return', 'the growth of the asset itself, ignoring when money went in'],
+      UCITS: ['Undertakings for Collective Investment in Transferable Securities', 'the European fund standard, common on cross-border ETFs']
+    },
+    'dcasimulator/ticker': {
+      ASX:    ['Australian Securities Exchange'],
+      BSE:    ['Bombay Stock Exchange'],
+      HKEX:   ['Hong Kong Exchanges and Clearing'],
+      IDX:    ['Indonesia Stock Exchange', 'Bursa Efek Indonesia'],
+      KOSPI:  ['Korea Composite Stock Price Index', 'the main board of the Korea Exchange'],
+      LSE:    ['London Stock Exchange'],
+      NASDAQ: ['National Association of Securities Dealers Automated Quotations', 'the US exchange where most technology names list'],
+      NSE:    ['National Stock Exchange of India'],
+      NYSE:   ['New York Stock Exchange'],
+      SGX:    ['Singapore Exchange'],
+      SIX:    ['Swiss Infrastructure and Exchange', 'the Swiss stock exchange'],
+      TSE:    ['Tokyo Stock Exchange'],
+      XETRA:  ['Exchange Electronic Trading', 'the electronic market of the Frankfurt Stock Exchange']
+    },
+
+    /* ── Rent vs Own Home (and its Sensitivity page, EN + ID) ── */
+    rentvsownhouse: {
+      RPPI:  ['Residential Property Price Index', 'the official measure of how fast house prices move'],
+      DP:    { en: ['Down Payment', 'the deposit paid upfront, the rest is borrowed'],
+               id: ['Down Payment', 'uang muka yang dibayar di depan, sisanya dipinjam'] },
+      KPR:   { en: ['Kredit Pemilikan Rumah', 'the Indonesian home loan'],
+               id: ['Kredit Pemilikan Rumah', 'pinjaman bank untuk membeli rumah'] },
+      BPHTB: { en: ['Bea Perolehan Hak atas Tanah dan Bangunan', 'the Indonesian buyer duty on transferring property title'],
+               id: ['Bea Perolehan Hak atas Tanah dan Bangunan', 'pajak pembeli saat hak atas properti dialihkan'] },
+      PBB:   { en: ['Pajak Bumi dan Bangunan', 'the annual Indonesian land and building tax'],
+               id: ['Pajak Bumi dan Bangunan', 'pajak tahunan atas tanah dan bangunan'] }
+    },
+
+    /* ── PPh 21 Pisah vs Gabung (Indonesian personal income tax) ── */
+    pisahvsgabung: {
+      PPh:   { en: ['Pajak Penghasilan', 'Indonesian income tax. PPh 21 is the tax on personal employment income'],
+               id: ['Pajak Penghasilan', 'PPh 21 adalah pajak atas penghasilan orang pribadi dari pekerjaan'] },
+      PTKP:  { en: ['Penghasilan Tidak Kena Pajak', 'the slice of yearly income that is not taxed at all'],
+               id: ['Penghasilan Tidak Kena Pajak', 'bagian penghasilan setahun yang tidak dikenai pajak'] },
+      PKP:   { en: ['Penghasilan Kena Pajak', 'income left after PTKP and deductions, the figure the brackets run on'],
+               id: ['Penghasilan Kena Pajak', 'penghasilan setelah PTKP dan pengurang, dasar perhitungan lapisan tarif'] },
+      SPT:   { en: ['Surat Pemberitahuan Tahunan', 'the annual tax return'],
+               id: ['Surat Pemberitahuan Tahunan', 'laporan pajak yang disampaikan setiap tahun'] },
+      'TK/0':  { en: ['Tidak Kawin, 0 tanggungan', 'single, no dependants. The base PTKP'],
+                 id: ['Tidak Kawin, 0 tanggungan', 'lajang tanpa tanggungan, PTKP dasar'] },
+      'K/0':   { en: ['Kawin, 0 tanggungan', 'married, no dependants'],
+                 id: ['Kawin, 0 tanggungan', 'kawin tanpa tanggungan'] },
+      'K/I/0': { en: ['Kawin, Istri berpenghasilan, 0 tanggungan', 'married with the spouse income combined, no dependants'],
+                 id: ['Kawin, penghasilan Istri digabung, 0 tanggungan', 'kawin dengan penghasilan istri digabung, tanpa tanggungan'] }
+    },
+
+    /* ── PowerFactory Scripter (and its samples page) ── */
+    'powerfactory-scripter': {
+      AC:   ['Alternating Current', 'the mains supply, where current reverses direction each cycle'],
+      DB:   ['Database', 'the PowerFactory project database this tool reads your objects from'],
+      EMT:  ['Electromagnetic Transient', 'the instantaneous-value simulation. Slower than RMS, but it keeps switching and waveform detail'],
+      HV:   ['High Voltage'],
+      HVDC: ['High Voltage Direct Current', 'a DC link used to move bulk power or tie two AC systems together'],
+      IDE:  ['Integrated Development Environment', 'a code editor such as VS Code or PyCharm'],
+      IEEE: ['Institute of Electrical and Electronics Engineers', 'the body whose published test systems these presets are built on'],
+      /* MW is deliberately absent here: on the samples pages it is a unit next to
+         a number ("163 MW", "0.61 MW per MW of G2"), and underlining every one
+         would bury the terms that actually need explaining. */
+      'N-1': ['N minus 1', 'the test that the network still holds with any single element out of service'],
+      PF:   ['PowerFactory', 'the DIgSILENT PowerFactory power system simulator'],
+      RMS:  ['Root Mean Square', 'the phasor-domain dynamic simulation, fast enough for stability studies'],
+      SG:   ['Synchronous Generator', 'the rotating machine most large power stations use'],
+      THD:  ['Total Harmonic Distortion', 'how much harmonic content distorts a waveform, as a share of the fundamental']
+    },
+
+    /* ── WEM Constraint Checker (Western Australian electricity market) ── */
+    'wemconstraint-checker': {
+      LHS: ['Left-Hand Side', 'the flow side of the constraint equation, what is actually flowing'],
+      MW:  ['Megawatt', 'a million watts of active power'],
+      RHS: ['Right-Hand Side', 'the limit side of the constraint equation, what the flow has to stay under'],
+      WEM: ['Wholesale Electricity Market', 'the Western Australian electricity market']
+    },
+
+    /* ── Video to GIF ── */
+    videotogif: {
+      HD: ['High Definition', 'Full HD is 1920 px wide. Wider output takes much longer to convert']
+    }
+  };
+
+  function makeAbbr(global){
+    /* Regions that must never be decorated: interactive controls, code, an
+       element that already owns a tooltip, and anything opted out. */
+    var SKIP = 'a,button,input,select,textarea,option,optgroup,code,pre,kbd,samp,var,' +
+               'script,style,noscript,template,svg,canvas,iframe,abbr,' +
+               'h1,.logo,.header-title,' +                       /* the tool's own name stays clean */
+               '[class*="btn"],' +                               /* label-buttons read as controls too */
+               '[contenteditable],[data-no-abbr],[data-tip],.tip-icon,.pf-tour-tooltip,#globalTooltip';
+    var MAX_NODES = 5000;        // safety valve on a single pass
+    var WORDY  = /[A-Za-z0-9_&#]/;
+    var JOINER = /[.\-\/]/;      // a ticker suffix, a path, a hyphenated compound
+    var PLURAL = /^[A-Z0-9]{3,}$/;
+
+    var extra = {};              // terms a tool registered at runtime
+    var terms = null;            // TERM -> tooltip HTML, for the active page
+    var pattern = null;
+    var observer = null, pendingRoots = [], queued = false, started = false;
+
+    function escapeRe(s){ return s.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&'); }
+
+    /* This module is DOM-only. Node-side harnesses load shared.js for its
+       maths helpers against a stub document, so check before touching one. */
+    function hasDom(){
+      return typeof document !== 'undefined' && !!document.body &&
+             typeof document.createTreeWalker === 'function' &&
+             typeof document.createDocumentFragment === 'function';
+    }
+
+    function locale(){
+      var el = document.documentElement,
+          l = (el && typeof el.getAttribute === 'function' && el.getAttribute('lang')) || 'en';
+      return String(l).toLowerCase().slice(0,2) === 'id' ? 'id' : 'en';
+    }
+
+    /* '*' plus the tool folder the page sits in, plus the sub-page when the
+       glossary defines one. Works from any path depth, file:// included. */
+    function scopeKeys(){
+      var explicit = document.body && typeof document.body.getAttribute === 'function' &&
+                     document.body.getAttribute('data-abbr-scope');
+      var path = (global.location && global.location.pathname) || '';
+      var parts = String(explicit || path).split('/');
+      var keys = ['*'], clean = [], i;
+      for (i = 0; i < parts.length; i++) if (parts[i]) clean.push(parts[i]);
+      if (!explicit && clean.length && clean[clean.length-1].indexOf('.') > -1) clean.pop();
+      for (i = clean.length - 1; i >= 0; i--) {
+        if (ABBR_GLOSSARY[clean[i]]) {
+          keys.push(clean[i]);
+          if (clean[i+1] && ABBR_GLOSSARY[clean[i] + '/' + clean[i+1]]) keys.push(clean[i] + '/' + clean[i+1]);
+          break;
+        }
+      }
+      return keys;
+    }
+
+    function tipHtml(entry, loc){
+      if (!entry) return '';
+      if (!(entry instanceof Array)) entry = entry[loc] || entry.en;
+      if (!entry) return '';
+      if (typeof entry === 'string') entry = [entry];
+      return '<strong>' + entry[0] + '</strong>' + (entry[1] ? '<br>' + entry[1] : '');
+    }
+
+    function build(){
+      var loc = locale(), keys = scopeKeys(), map = {}, list = [], i, k, src;
+      for (i = 0; i < keys.length; i++) {
+        src = ABBR_GLOSSARY[keys[i]];
+        for (k in src) if (Object.prototype.hasOwnProperty.call(src, k)) map[k] = tipHtml(src[k], loc);
+      }
+      for (k in extra) if (Object.prototype.hasOwnProperty.call(extra, k)) map[k] = tipHtml(extra[k], loc);
+      terms = map;
+      for (k in map) if (map[k]) list.push(k);
+      list.sort(function(a,b){ return b.length - a.length; });   // longest match wins
+      pattern = list.length ? new RegExp(list.map(escapeRe).join('|'), 'g') : null;
+    }
+
+    function okLeft(text, i){
+      if (i === 0) return true;
+      var c = text.charAt(i-1);
+      return !WORDY.test(c) && !JOINER.test(c);
+    }
+    function okRight(text, i){
+      if (i >= text.length) return true;
+      var c = text.charAt(i);
+      if (WORDY.test(c)) return false;
+      return !(JOINER.test(c) && WORDY.test(text.charAt(i+1)));
+    }
+
+    /* A flex or grid parent turns each run of text into an anonymous item, so
+       splitting one would add items, add gaps and collapse the space at the
+       seam. Keep the run as a single item by wrapping it. */
+    function needsRunWrapper(node){
+      var parent = node.parentElement;
+      if (!parent || typeof global.getComputedStyle !== 'function') return false;
+      var display = global.getComputedStyle(parent).display || '';
+      return display.indexOf('flex') > -1 || display.indexOf('grid') > -1;
+    }
+
+    /* Split one text node around every term it holds. Leftover text never
+       contains a term, so re-scanning what this inserts is a no-op. */
+    function decorateNode(node){
+      if (!node.parentNode) return 0;
+      var text = node.nodeValue, frag = null, last = 0, hits = 0, m, term, start, end, el, run;
+      pattern.lastIndex = 0;
+      while ((m = pattern.exec(text))) {
+        term = m[0];
+        start = m.index;
+        end = start + term.length;
+        if (PLURAL.test(term) && text.charAt(end) === 's') end++;       // ETFs, PNGs
+        if (!okLeft(text, start) || !okRight(text, end)) { pattern.lastIndex = start + 1; continue; }
+        if (!frag) frag = document.createDocumentFragment();
+        if (start > last) frag.appendChild(document.createTextNode(text.slice(last, start)));
+        el = document.createElement('abbr');
+        el.className = 'abbr';
+        el.setAttribute('data-abbr', term);
+        el.setAttribute('data-tip', terms[term]);
+        el.textContent = text.slice(start, end);
+        frag.appendChild(el);
+        last = end;
+        hits++;
+        pattern.lastIndex = end;
+      }
+      if (!frag) return 0;
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      if (needsRunWrapper(node)) {
+        run = document.createElement('span');
+        run.className = 'abbr-run';
+        run.appendChild(frag);
+        frag = run;
+      }
+      node.parentNode.replaceChild(frag, node);
+      return hits;
+    }
+
+    function scan(root){
+      if (!pattern) return 0;
+      root = root || document.body;
+      if (!root) return 0;
+      if (root.nodeType === 3) {
+        var owner = root.parentElement;
+        if (!owner || owner.closest(SKIP)) return 0;
+        pattern.lastIndex = 0;
+        return pattern.test(root.nodeValue || '') ? decorateNode(root) : 0;
+      }
+      if (root.nodeType !== 1 && root.nodeType !== 9 && root.nodeType !== 11) return 0;
+      if (root.nodeType === 1 && root.closest(SKIP)) return 0;
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null),
+          found = [], hits = 0, node, value, parent, i;
+      while ((node = walker.nextNode())) {
+        value = node.nodeValue;
+        if (!value || value.length < 2) continue;
+        pattern.lastIndex = 0;
+        if (!pattern.test(value)) continue;
+        parent = node.parentElement;
+        if (!parent || parent.closest(SKIP)) continue;
+        found.push(node);
+        if (found.length >= MAX_NODES) break;
+      }
+      for (i = 0; i < found.length; i++) hits += decorateNode(found[i]);
+      return hits;
+    }
+
+    function flush(){
+      queued = false;
+      var roots = pendingRoots, i;
+      pendingRoots = [];
+      for (i = 0; i < roots.length; i++) if (roots[i] && roots[i].isConnected) scan(roots[i]);
+    }
+
+    function queue(root){
+      if (!root) return;
+      pendingRoots.push(root);
+      if (queued) return;
+      queued = true;
+      if (global.requestAnimationFrame) global.requestAnimationFrame(flush);
+      else setTimeout(flush, 16);
+    }
+
+    /* Tools rewrite their results constantly, so watch instead of re-running. */
+    function onMutations(records){
+      var i, j, rec, node;
+      for (i = 0; i < records.length; i++) {
+        rec = records[i];
+        if (rec.type === 'characterData') { queue(rec.target); continue; }
+        for (j = 0; j < rec.addedNodes.length; j++) {
+          node = rec.addedNodes[j];
+          if (node.nodeType === 1 || node.nodeType === 3) queue(node);
+        }
+      }
+    }
+
+    function init(){
+      if (started || !hasDom()) return;
+      started = true;
+      build();
+      scan(document.body);
+      if (global.MutationObserver) {
+        observer = new MutationObserver(onMutations);
+        observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+      }
+    }
+
+    return {
+      GLOSSARY: ABBR_GLOSSARY,
+      init: init,
+      /* Register page-specific terms, same entry shape as the glossary. */
+      add: function(map){
+        if (!map) return;
+        for (var k in map) if (Object.prototype.hasOwnProperty.call(map, k)) extra[k] = map[k];
+        if (started && hasDom()) { build(); scan(document.body); }
+      },
+      /* Decorate a subtree now (rarely needed, the observer handles updates). */
+      scan: function(root){ if (!hasDom()) return 0; if (!pattern) build(); return scan(root); },
+      /* Re-read scope, locale and terms, then decorate the page again. */
+      refresh: function(){ if (!hasDom()) return 0; build(); return scan(document.body); },
+      /* Tooltip HTML for a term on this page, or '' when it is not defined. */
+      define: function(term){ if (!terms) build(); return terms[term] || ''; },
+      terms: function(){ if (!terms) build(); return Object.keys(terms); },
+      /* Strip the decoration from a subtree, e.g. before exporting a clone. */
+      undecorate: function(root){
+        root = root || document.body;
+        if (!root || !root.querySelectorAll) return 0;
+        var els = root.querySelectorAll('abbr.abbr'), runs, i, run;
+        for (i = 0; i < els.length; i++) els[i].parentNode.replaceChild(document.createTextNode(els[i].textContent), els[i]);
+        runs = root.querySelectorAll('span.abbr-run');
+        for (i = 0; i < runs.length; i++) {
+          run = runs[i];
+          while (run.firstChild) run.parentNode.insertBefore(run.firstChild, run);
+          run.parentNode.removeChild(run);
+        }
+        if (root.normalize) root.normalize();
+        return els.length;
+      },
+      stop: function(){ if (observer) { observer.disconnect(); observer = null; } started = false; }
+    };
+  }
+
+  global.SharedAbbr = makeAbbr(global);
+
+  function initShared(){
     initTooltip();
+    global.SharedAbbr.init();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initShared);
+  } else {
+    initShared();
   }
 })(window);

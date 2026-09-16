@@ -889,6 +889,101 @@ For static tooltips anchored to their trigger (no dynamic positioning required).
 .tip-box br { display: block; margin-top: 5px; content: ''; }
 ```
 
+### Abbreviations (automatic, `SharedAbbr`)
+
+Jargon explains itself everywhere: any glossary term found in visible page text
+gets a soft dashed grey underline and shows its definition in the global tooltip
+on hover. Nothing to mark up. `shared.js` wraps each match itself:
+
+```html
+<!-- you write -->
+<div class="field-label">Maximum LVR</div>
+
+<!-- SharedAbbr renders -->
+<div class="field-label">Maximum <abbr class="abbr" data-abbr="LVR"
+     data-tip="<strong>Loan-to-Value Ratio</strong><br>the loan as a share of the property value">LVR</abbr></div>
+```
+
+#### Tokens and CSS
+
+```css
+/* dark.css */  --abbr-line:rgba(168,182,207,.42); --abbr-line-hover:rgba(141,187,255,.85); --abbr-hover-bg:rgba(141,187,255,.10);
+/* light.css */ --abbr-line:rgba(110,124,142,.50); --abbr-line-hover:rgba(58,113,200,.85);  --abbr-hover-bg:rgba(90,145,232,.09);
+
+abbr.abbr,.abbr{
+  text-decoration-line:underline;
+  text-decoration-style:dashed;
+  text-decoration-color:var(--abbr-line);
+  text-decoration-thickness:1px;
+  text-underline-offset:.22em;
+  cursor:help;
+  border-radius:4px;
+  transition:text-decoration-color var(--motion-fast),background-color var(--motion-fast),box-shadow var(--motion-fast);
+}
+/* Hover tint spread with a shadow, never padding: decorating a word must not
+   change the width of the label, cell or column holding it. */
+abbr.abbr:hover{
+  text-decoration-color:var(--abbr-line-hover);
+  background-color:var(--abbr-hover-bg);
+  box-shadow:0 0 0 .18em var(--abbr-hover-bg);
+}
+@media print{ abbr.abbr{ text-decoration-line:none; } }
+
+/* Wrapper used inside a flex/grid parent, see "Keeping it calm" below. */
+.abbr-run{ display:inline; }
+```
+
+The underline is a tint of `--muted`, so it reads as a hint in both themes
+without competing with the text. Hover lifts it to the accent colour and adds a
+faint tint. Printing drops it.
+
+#### Adding terms
+
+Terms live in `SharedAbbr.GLOSSARY` in `shared.js`, keyed by scope:
+
+```js
+'*': { CSV: ['Comma-Separated Values', 'a plain-text table any spreadsheet can open'] },
+borrowingcapacity: { LVR: ['Loan-to-Value Ratio', 'the loan as a share of the property value'] },
+'dcasimulator/ticker': { ASX: ['Australian Securities Exchange'] },
+pisahvsgabung: { PTKP: { en: ['Penghasilan Tidak Kena Pajak', 'the slice of income that is not taxed'],
+                         id: ['Penghasilan Tidak Kena Pajak', 'bagian penghasilan yang tidak dikenai pajak'] } }
+```
+
+- An entry is `[expansion, optional one-line gloss]`, or `{ en, id }` when the
+  Indonesian page needs its own wording (picked up from `<html lang="id">`).
+- `'*'` applies site-wide; a tool key covers that folder and its sub-pages; a
+  `tool/sub-page` key covers one page. The scope comes from the URL, so a new
+  tool only needs its own block. `<body data-abbr-scope="…">` overrides it.
+- A page can register its own at runtime: `SharedAbbr.add({ WACC: ['Weighted Average Cost of Capital'] })`.
+
+#### Keeping it calm
+
+Decoration is skipped inside links, buttons (`button` and anything whose class
+reads as one, `[class*="btn"]`), form controls, `code`/`pre`, the page title
+(`h1`, `.logo`, `.header-title`), anything that already carries a `data-tip`
+(no tooltip inside a tooltip), and any element marked `data-no-abbr`.
+
+Inside a flex or grid parent the run is wrapped in a `<span class="abbr-run">`
+first, because splitting a text run there would create extra flex items, extra
+gaps, and collapse the space at the seam. One item in, one item out, so the
+layout is identical with the decoration and without it.
+
+**Mark user content `data-no-abbr`**: an uploaded table, a rendered document, a
+JSON tree, a list of user choices. Site text teaches; user data is left alone.
+
+```html
+<tbody id="tableBody" data-no-abbr></tbody>
+```
+
+Define a term only where it is jargon. Units that sit next to numbers in running
+prose ("163 MW") are left out on purpose: underlining every one buries the terms
+that matter. `node _ref/abbr-check.mjs` drives every page and prints how often
+each term is decorated, which is the clutter budget to check against.
+
+Other API: `SharedAbbr.define(term)`, `.terms()`, `.scan(root)`, `.refresh()`,
+`.undecorate(root)` (strip the decoration, e.g. from a clone before export),
+`.stop()`.
+
 ---
 
 ## KPI Cards
