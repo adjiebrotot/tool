@@ -10,6 +10,25 @@
              income tax − LITO, + Medicare levy, + surcharge when uninsured,
              + HELP, − franking credits. Negative gearing is added back at the
              marginal rate for lenders that allow it.
+           Two applicants are taxed as two people, not as one. Taxable income
+           is divided by the income split and the progressive scale plus LITO
+           run once per applicant, because pooling a couple's income pushes it
+           up the brackets and charges tax nobody actually pays. At one
+           applicant, or at a split of 0, the arithmetic collapses back to the
+           single-taxpayer form.
+
+           Three parts of Step 2 stay on the COMBINED figure on purpose:
+             - Medicare levy. It is 2% of each person's taxable income, and
+               2%(a) + 2%(b) = 2%(a+b) outside the low income phase-in, so
+               pooling already gives the right answer.
+             - Medicare Levy Surcharge. The tiers are set on combined family
+               income and the surcharge then applies to each person's income,
+               which is what combined tier × combined income computes.
+             - HELP. Repayment income is per person, but the page has one
+               study loan control and cannot say which applicant holds the
+               debt, so it is modelled as one borrower's.
+           The negative gearing add-back uses the HIGHER earner's marginal
+           rate, since a geared property is normally held in that name.
    Step 3  Living expenses = MAX(declared, HEM). HEM scales with household
            composition, an income band, and a city cost index. It excludes
            rent, mortgage, debt repayments and investment property outgoings.
@@ -231,9 +250,20 @@ function compute(p){
   // Add net investment losses back for the tests that use a wider income base.
   const adjustedIncome = taxableIncome + rentalLoss;
 
-  const grossTax  = incomeTax(taxableIncome, p.taxYear);
-  const lito      = litoAmount(taxableIncome);
-  const netIncTax = Math.max(0, grossTax - lito);
+  /* Two applicants are two taxpayers. Split the taxable income and run the
+     progressive scale plus LITO once per share, because a couple never pays
+     the bracket creep that pooling their income invents. incSplit is the
+     SECOND applicant's share, so 0 leaves everything on applicant 1 and
+     reproduces the single-taxpayer result exactly. */
+  const share2   = p.adults >= 2 ? clamp(p.incSplit, 0, 50) / 100 : 0;
+  const shares   = share2 > 0 ? [taxableIncome * (1 - share2), taxableIncome * share2]
+                              : [taxableIncome];
+
+  const grossTax  = shares.reduce((a, ti) => a + incomeTax(ti, p.taxYear), 0);
+  const netIncTax = shares.reduce((a, ti) => a + Math.max(0, incomeTax(ti, p.taxYear) - litoAmount(ti)), 0);
+  // The offset actually applied, not the nominal entitlement, so the build-up
+  // table's "tax after LITO" line still adds up when an offset is clipped.
+  const lito      = grossTax - netIncTax;
   const medicare  = medicareLevy(taxableIncome, p.adults, p.deps);
   const surcharge = p.privHealth ? 0 : mlsRate(adjustedIncome, p.adults, p.deps) * taxableIncome;
   const helpAmt   = p.helpMode === 'none' ? 0 : helpRepayment(adjustedIncome, p.helpThreshold);
@@ -245,7 +275,9 @@ function compute(p){
   // full tax on the grossed-up amount stands.
   const totalTax = netIncTax + medicare + surcharge + helpAsTax;
 
-  const mRate    = marginalTaxRate(taxableIncome, p.taxYear, p.adults, p.deps);
+  // The higher earner's rate, because a geared property is normally held in
+  // that name. shares[0] is applicant 1 by construction.
+  const mRate    = marginalTaxRate(shares[0], p.taxYear, p.adults, p.deps);
   const negGear  = p.negGear ? mRate * rentalLoss : 0;
 
   const netMonthly = (grossAssessable - totalTax + negGear) / 12;
@@ -392,6 +424,7 @@ function segActive(){
 // mode or a checklist. Keyed by element id so they go through the same single
 // pass, which is what stops one rule showing a row another rule just hid.
 const EXTRA_RULES = {
+  incSplitRow:      () => str('adults') === '2',
   olIoRow:          () => str('olType') === 'io',
   rentBoardRow:     () => str('occupancy') === 'investor',
   helpThresholdRow: () => str('helpMode') !== 'none',
@@ -460,6 +493,7 @@ function readInputs(){
     csIn:num('incCsIn'),          shdCsIn:num('shdCsIn'),
 
     city:str('city'),  adults:parseInt(str('adults'),10) || 1,  deps:num('deps'),
+    incSplit:num('incSplit'),
     declaredExp:num('declaredExp'), privHealth:bool('privHealth'),
     helpMode:str('helpMode'), helpThreshold:num('helpThreshold'), taxYear:str('taxYear'),
 
@@ -566,6 +600,7 @@ const SIMPLE_INC = {
 
 function syncUI(){
   $('depsValue').textContent    = fmt.num(num('deps'));
+  $('incSplitValue').textContent = fmt.pct(num('incSplit'), 0);
   $('cardPctValue').textContent = fmt.pct(num('cardPct'));
   $('bufferValue').textContent  = fmt.pct(num('buffer'));
   $('floorValue').textContent   = fmt.pct(num('floorRate'));
@@ -1016,6 +1051,178 @@ function carryCaps(nextMode){
   setAmount('valuation', num('price'));
 }
 
+/* ═════════════════════ Quick Start scenarios ═════════════════════
+   One-click worked examples. Each fills every tab with a named Australian
+   borrower, so a first-time visitor reads a real answer instead of a generic
+   $140,000 default that describes nobody.
+
+   Sources and basis, all 2025-26:
+   - Stamp duty is the state general rate on the scenario's own price:
+     NSW $47,295 + $5.50/$100 over $1,168,000; VIC $2,870 + 6% over $130,000;
+     WA $11,115 + 4.75% over $360,000; SA $21,330 + $5.50/$100 over $500,000;
+     QLD nil under the first home concession, which fully exempts to $700,000.
+   - Incomes are full-time ordinary earnings for the occupation, not medians of
+     the whole workforce.
+   - Living expenses are what the borrower would declare. Where that falls under
+     the HEM benchmark the engine uses HEM instead, which is the point.
+   - Credit card limits are assessed at 3.8% of the LIMIT, not the balance,
+     which is why a barely used card still costs capacity.
+
+   Under the shipped APRA settings (5.90% product rate, 3.00% buffer, 5.50%
+   floor) serviceability binds for almost every realistic borrower. That is the
+   lesson, not an accident of the numbers. The first home buyer is the one
+   deliberate contrast: a thin deposit binds instead, and capitalising LMI is
+   the lever that moves it.
+
+   The DTI cap is unreachable here and no scenario should chase it. Stripped to
+   zero declared expenses, zero commitments and no minimum surplus, the
+   serviceability cap still peaks near 5.8 times gross income against a 6.0 cap,
+   and sits nearer 3 to 4 times for anyone real. A DTI-bound borrower needs a
+   lender writing a stricter cap than the 6.0 the page opens on.
+*/
+const QUICK_START_SCENARIOS = {
+
+  /* Sydney investment banking associate. One applicant, no dependants.
+     $230k base plus a $90k bonus, which a lender counts at 80% because a bonus
+     is not contractual. Detailed income is what makes that shading visible, and
+     detailed debts swap the flat note under the card for the rate itself, the
+     one commitment here whose setting is worth arguing with a lender about.
+     The car loan rows are the same in either mode.
+     NSW duty on $1.7M = $76,555, which is 4.50%. Strata, rates and insurance on
+     an inner Sydney apartment run far above the $350/mo the page opens on. */
+  'finance-bro': {
+    label: 'Finance Bro, Sydney',
+    modes: { incWho:'employee', incMode:'detailed', debtsMode:'detailed',
+             loanMode:'simple', capsMode:'simple' },
+    vals: {
+      city:'Sydney', adults:'1', deps:0, declaredExp:5200, privHealth:true,
+      taxYear:'2026-27', helpMode:'none',
+      incPayg:230000, shdPayg:100, incBonus:90000, shdBonus:80,
+      hasCard:true, cardLimit:25000,
+      hasPersonal:true, persRepay:950, persBal:42000,
+      newPropCosts:900,
+      price:1700000, savings:550000, dutyMode:'pct', dutyPct:'4.50', otherCosts:4000
+    }
+  },
+
+  /* Melbourne couple, two school-age children, one income each. $185k combined
+     is roughly a teacher plus a mid-level public servant. Two applicants means
+     two taxpayers, so the income split matters here more than anywhere else.
+     VIC duty on $950k = $52,070, which is 5.48%. */
+  'couple': {
+    label: 'Couple, Melbourne',
+    modes: { incWho:'employee', incMode:'simple', debtsMode:'simple',
+             loanMode:'simple', capsMode:'simple' },
+    vals: {
+      city:'Melbourne', adults:'2', incSplit:50, deps:2, declaredExp:4800,
+      privHealth:true, taxYear:'2026-27', helpMode:'none',
+      incSimple:185000,
+      hasCard:true, cardLimit:15000, newPropCosts:450,
+      price:950000, savings:250000, dutyMode:'pct', dutyPct:'5.48', otherCosts:4000
+    }
+  },
+
+  /* The ordinary single Perth buyer. $105k is close to WA full-time average
+     ordinary earnings. No dependants, no car loan, one modest card.
+     WA duty on $650k = $24,890, which is 3.83%. */
+  'geoff': {
+    label: 'Average Geoff, Perth',
+    modes: { incWho:'employee', incMode:'simple', debtsMode:'simple',
+             loanMode:'simple', capsMode:'simple' },
+    vals: {
+      city:'Perth', adults:'1', deps:0, declaredExp:2800, privHealth:true,
+      taxYear:'2026-27', helpMode:'none',
+      incSimple:105000,
+      hasCard:true, cardLimit:8000, newPropCosts:350,
+      price:650000, savings:150000, dutyMode:'pct', dutyPct:'3.83', otherCosts:4000
+    }
+  },
+
+  /* Brisbane first home buyer with a study loan still running. The deposit is
+     the binding cap here, not income: $70k against a $650k price is under 11%,
+     and without LMI the lender stops at 80% of the price. Tick "LMI capitalised"
+     on the Caps tab and capacity lifts from $264k to $292k, because the ceiling
+     moves to 95% and serviceability takes over as the binding cap.
+
+     The deposit has to be genuinely thin for that to be true. At $90k saved the
+     two caps sit 1.5% apart and capitalising the premium makes the borrower
+     WORSE off, which is the opposite of the lesson. B27d guards that margin.
+
+     QLD first home concession is a full exemption to $700,000, so duty is nil. */
+  'first-home': {
+    label: 'First home buyer, Brisbane',
+    modes: { incWho:'employee', incMode:'simple', debtsMode:'simple',
+             loanMode:'simple', capsMode:'simple' },
+    vals: {
+      city:'Brisbane', adults:'1', deps:0, declaredExp:2600, privHealth:true,
+      taxYear:'2026-27', helpMode:'tax', helpThreshold:67000,
+      incSimple:95000,
+      hasCard:true, cardLimit:5000, newPropCosts:400,
+      price:650000, savings:70000, dutyMode:'pct', dutyPct:'0.00', otherCosts:4000,
+      lmiCap:false
+    }
+  },
+
+  /* Adelaide sole trader, one dependant. $165k is two-year average net profit
+     after add-backs, which is what a lender assesses for the self-employed, and
+     the Employee / Self-employed switch is what puts the form on that side.
+     A ute under finance is the commitment that bites.
+     SA duty on $850k = $40,580, which is 4.77%. */
+  'tradie': {
+    label: 'Self-employed tradie, Adelaide',
+    modes: { incWho:'self', incMode:'simple', debtsMode:'simple',
+             loanMode:'simple', capsMode:'simple' },
+    vals: {
+      city:'Adelaide', adults:'1', deps:1, declaredExp:3200, privHealth:true,
+      taxYear:'2026-27', helpMode:'none',
+      incSimple:165000,
+      hasCard:true, cardLimit:20000, newPropCosts:380,
+      hasPersonal:true, persRepay:950, persBal:48000,
+      price:850000, savings:300000, dutyMode:'pct', dutyPct:'4.77', otherCosts:4000
+    }
+  }
+};
+
+/* Order matters here more than anywhere else on the page, because four mode
+   toggles and six checklists decide which fields readInputs() even looks at.
+
+   1. resetAll() first, so a scenario never inherits what the last one ticked.
+   2. Modes BEFORE values. A scenario writing incPayg while incMode is still
+      'simple' would have that figure thrown away and incSimple assessed
+      instead, and would silently describe the wrong person.
+   3. UI is assigned directly rather than by clicking the segmented buttons,
+      because a real click fires carryIncome() and carryCaps(), which would copy
+      incSimple over the detailed streams the scenario just set.
+   4. One render() at the end. syncUI() inside it pushes UI back onto the
+      buttons, re-runs visibility, and refreshes every slider readout. */
+function applyQuickStart(key){
+  const s = QUICK_START_SCENARIOS[key];
+  if(!s) return;
+
+  resetAll();
+  Object.assign(UI, s.modes);
+
+  Object.entries(s.vals).forEach(([id, v]) => {
+    const el = $(id); if(!el) return;
+    if(el.type === 'checkbox') el.checked = !!v;
+    else if(el.classList.contains('fmt-num') || el.classList.contains('fmt-pct')) setAmount(id, v);
+    else el.value = String(v);
+  });
+
+  document.querySelectorAll('.quick-start-btn')
+    .forEach(b => b.classList.toggle('active', b.dataset.preset === key));
+
+  // save(), not schedule(): resetAll() above has already written the DEFAULTS to
+  // storage, so a debounced write would leave the cache showing the defaults.
+  if(persist) persist.save();
+  render();
+}
+
+function wireQuickStart(){
+  document.querySelectorAll('.quick-start-btn').forEach(btn =>
+    btn.addEventListener('click', () => applyQuickStart(btn.dataset.preset)));
+}
+
 function wireSegments(){
   Object.entries(SEG_GROUPS).forEach(([groupId, key]) => {
     const g = $(groupId); if(!g) return;
@@ -1060,7 +1267,12 @@ function init(){
     if(last) updateChart(last.sweep, last.sweep.tiny ? -1 : USER_INDEX);
   });
 
-  $('resetBtn').addEventListener('click', resetAll);
+  // Reset clears the scenario highlight too. resetAll() itself must not, or
+  // applyQuickStart's own reset would wipe the highlight it is about to set.
+  $('resetBtn').addEventListener('click', () => {
+    document.querySelectorAll('.quick-start-btn').forEach(b => b.classList.remove('active'));
+    resetAll();
+  });
   $('csvBtn').addEventListener('click', exportCsv);
   $('pngBtn').addEventListener('click', exportPng);
   $('copyBtn').addEventListener('click', copyPng);
@@ -1070,6 +1282,7 @@ function init(){
   });
 
   wireSegments();
+  wireQuickStart();
 
   // Persist stores form controls on its own. The segmented controls are
   // buttons, so their state rides along in the extra slot.
@@ -1084,6 +1297,42 @@ function init(){
     }
   });
   render();
+
+  /* The guided tour seeds a scenario over the form, so it needs a way to hand
+     the user their own figures back when it finishes, skips or is escaped.
+     saveState returns null on a page nobody has touched, which leaves the demo
+     in place rather than dumping a first-time visitor back on the generic
+     default. The active tab is saved and restored by the engine itself. */
+  window.__BC_TOUR = {
+    seedGeoff: function(){ applyQuickStart('geoff'); },
+
+    saveState: function(){
+      const fieldsMatch = Object.keys(DEFAULTS).every(id => {
+        const el = $(id); if(!el) return true;
+        return (el.type === 'checkbox' ? el.checked : el.value) === DEFAULTS[id];
+      });
+      const modesMatch = Object.keys(UI_DEFAULTS).every(k => UI[k] === UI_DEFAULTS[k]);
+      if(fieldsMatch && modesMatch) return null;
+
+      const fields = {};
+      Object.keys(DEFAULTS).forEach(id => {
+        const el = $(id); if(el) fields[id] = el.type === 'checkbox' ? el.checked : el.value;
+      });
+      return { fields, ui: { ...UI } };
+    },
+
+    restoreState: function(snap){
+      if(!snap || !snap.fields) return;
+      Object.entries(snap.fields).forEach(([id, v]) => {
+        const el = $(id); if(!el) return;
+        if(el.type === 'checkbox') el.checked = v; else el.value = v;
+      });
+      Object.assign(UI, snap.ui);
+      document.querySelectorAll('.quick-start-btn').forEach(b => b.classList.remove('active'));
+      if(persist) persist.schedule();
+      render();   // syncUI() inside render() pushes UI back onto the segmented buttons
+    }
+  };
 
   // Exposed so the audit harness can drive the engine directly as well as
   // through the DOM.

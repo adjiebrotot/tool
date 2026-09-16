@@ -98,6 +98,7 @@
 <link rel="stylesheet" href="../light.css">
 <link rel="stylesheet" href="../shared.css">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../tour-shared.css">
 </head>
 <body class="light">
 <div class="container">
@@ -114,6 +115,16 @@
 
 <section class="layout">
 <aside class="controls card">
+  <div class="quick-start-row">
+    <span class="quick-start-label">⚡ Quick Start</span><span class="tip-icon" data-tip="Fills every tab with a worked example of a real Australian borrower and reads the result straight away. Change any figure over the top of it.">?</span>
+    <div class="quick-start-btns">
+      <button class="quick-start-btn" data-preset="finance-bro" data-tip="Sydney banking associate, one applicant. $230k base plus a $90k bonus, entered stream by stream so you can see the bonus counted at 80%. Buying at $1.7M with a $550k deposit.">Finance Bro, Sydney</button>
+      <button class="quick-start-btn" data-preset="couple" data-tip="Melbourne couple with two children, $185k between them. Two applicants are taxed as two people, so the income split on the Household tab moves the answer more here than anywhere else.">Couple, Melbourne</button>
+      <button class="quick-start-btn" data-preset="geoff" data-tip="The ordinary single Perth buyer on $105k, no dependants, one modest card. The plain baseline to measure the others against.">Average Geoff, Perth</button>
+      <button class="quick-start-btn" data-preset="first-home" data-tip="Brisbane first home buyer on $95k with $70k saved and a study loan running. The deposit binds here, not the income. Tick LMI capitalised on the Caps tab and capacity lifts from $264k to $292k, because the ceiling moves from 80% to 95% of the price.">First home buyer, Brisbane</button>
+      <button class="quick-start-btn" data-preset="tradie" data-tip="Adelaide sole trader on $165k of two-year average profit, with a ute under finance. Shows the Self-employed side of the income form.">Self-employed tradie, Adelaide</button>
+    </div>
+  </div>
   <div class="ctrl-tabs">
     <button class="ctrl-tab active" data-tab="income">💵<br>Income</button>
     <button class="ctrl-tab" data-tab="house">🏠<br>Household</button>
@@ -301,6 +312,10 @@
           <option value="1">1 applicant</option>
           <option value="2" selected>2 applicants</option>
         </select>
+      </div>
+      <div class="slider-block" id="incSplitRow">
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Second applicant&rsquo;s share of income <i class="tip-icon" data-tip="Two applicants are two taxpayers, so the income is split and the tax scale runs once on each share. Pooling a couple&rsquo;s income pushes it up the brackets and charges tax neither of them pays.<br>Set this to 0% when one applicant earns everything. The Medicare levy and the surcharge are unaffected, and the study loan is modelled as one borrower&rsquo;s.">?</i></span></div><div class="slider-value" id="incSplitValue">50%</div></div>
+        <input id="incSplit" type="range" min="0" max="50" step="5" value="50">
       </div>
       <div class="slider-block">
         <div class="slider-head"><div class="slider-label">Dependants</div><div class="slider-value" id="depsValue">0</div></div>
@@ -691,5 +706,7 @@
 
 <script src="../shared.js"></script>
 <script src="script.js"></script>
+<script src="tour.js"></script>
+<script src="../tour-shared.js"></script>
 </body>
 </html>
