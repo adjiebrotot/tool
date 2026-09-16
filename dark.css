@@ -28,6 +28,8 @@
   /* Chart line colours */
   --line-a:#8DBBFF;--line-b:#FF8B8B;--line-c:#8FCDBD;--line-d:#F1C0D0;--line-e:#FFD28C;
   --line-rtb-rent:#FF8B8B;--line-rtb-own:#8DBBFF;
+  /* Abbreviations (dashed underline + hover definition, see shared.css/.abbr) */
+  --abbr-line:rgba(168,182,207,.42);--abbr-line-hover:rgba(141,187,255,.85);--abbr-hover-bg:rgba(141,187,255,.10);
   /* Motion */
   --motion-fast:150ms;--motion-base:250ms;--motion-slow:400ms;
   --transition-fast:var(--motion-fast);--transition-base:var(--motion-base);

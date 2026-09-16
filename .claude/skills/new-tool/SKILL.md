@@ -49,6 +49,28 @@ block. Then register the tool site-wide:
 - If even a tooltip would be long, prefer **dynamic tooltiping** (progressive/on-demand
   detail) over dumping everything at once. Keep the page calm.
 
+### Abbreviations explain themselves
+
+`SharedAbbr` in `shared.js` underlines every known abbreviation in visible page text
+with a soft dashed grey line and shows the expansion in the shared tooltip on hover
+(LVR → Loan-to-Value Ratio). It runs on its own, so a tool that loads `shared.css` +
+`shared.js` already has it. Two things a new tool owes it:
+
+- **Add its terms** to `SharedAbbr.GLOSSARY` in `shared.js`, under a key matching the
+  tool's folder (`'*'` for anything site-wide). An entry is
+  `[expansion, optional one-line gloss]`, or `{ en: […], id: […] }` for a tool with an
+  Indonesian page. **Subject-matter jargon only**: the vocabulary of the field the tool
+  works in (LVR, PTKP, RMS). Never file formats or everyday computing words (CSV, PDF,
+  PNG, SVG, JSON), and not units sitting next to numbers. A tool whose page has no
+  jargon adds nothing, which is a fine outcome.
+- **Mark user content `data-no-abbr`**: an uploaded table, a rendered document, a JSON
+  tree, anything the user typed. Site text teaches, user data is left alone.
+
+Write labels in full anyway. The underline is a hint for a reader who does not know the
+term, never a substitute for saying what a field means. See "Abbreviations" in
+`_ref/design-reference.md`, and check a new page with `node _ref/abbr-check.mjs`, which
+prints how often each term fires per page.
+
 ## 4. Do not touch the main index.html
 
 The site's root `index.html` is the tool directory/landing page. **Do not add a new tool to it

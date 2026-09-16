@@ -53,7 +53,7 @@ async function fetchCsv(){
   }catch(e){
     pill(E.spCsv,'wn','CSV not auto-loaded — ');
     const lbl=document.createElement('label');
-    lbl.className='fallback-inp'; lbl.textContent='📁 Upload CSV';
+    lbl.className='fallback-inp'; lbl.setAttribute('data-no-abbr',''); lbl.textContent='📁 Upload CSV';
     const inp=document.createElement('input');
     inp.type='file'; inp.accept='.csv'; inp.style.display='none';
     inp.onchange=ev=>{if(!ev.target.files[0])return;
@@ -98,7 +98,7 @@ async function fetchGenData(){
   }catch(e){
     pill(E.spGen,'wn','Generator_Data.csv not found — ');
     const lbl=document.createElement('label');
-    lbl.className='fallback-inp'; lbl.textContent='📁 Upload Generator_Data.csv';
+    lbl.className='fallback-inp'; lbl.setAttribute('data-no-abbr',''); lbl.textContent='📁 Upload Generator_Data.csv';
     const inp=document.createElement('input');
     inp.type='file'; inp.accept='.csv'; inp.style.display='none';
     inp.onchange=ev=>{if(!ev.target.files[0])return;
