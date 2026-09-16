@@ -94,6 +94,9 @@ body.light .weight-row.wt-total.bad .wt-name,body.light .weight-row.wt-total.bad
 .detail-subsection{margin-top:26px;padding-top:22px;border-top:1px solid var(--border)}
 .detail-subsection:first-of-type{margin-top:10px;padding-top:0;border-top:none}
 .detail-subsection .section-title{margin-bottom:10px}
+/* A subsection whose header row sits directly above its content (the Breakdown
+   Table) needs the same breathing room the .section-title rows get. */
+.detail-subsection>.detail-title-row{margin-bottom:12px}
 .detail-subtitle{margin:0;font-size:1rem;font-weight:700;color:var(--text);text-transform:none;letter-spacing:normal}
 .detail-subtitle .muted-note{color:var(--muted);font-size:.85rem;font-weight:400}
 

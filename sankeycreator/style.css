@@ -15,7 +15,7 @@ body.light {
 body{margin:0;font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.5;color:var(--text);background:var(--bg);transition:background .25s,color .25s;overflow-x:hidden}
 .container{max-width:1560px;margin:0 auto;padding:20px 24px}
 .card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-h1{margin:0 0 3px;font-size:1.65rem;font-weight:800;letter-spacing:-.02em}
+h1{margin:0 0 6px;font-size:1.65rem;font-weight:800;letter-spacing:-.02em}
 h2{margin:0 0 10px;font-size:1.1rem;font-weight:700}
 p,.muted{color:var(--muted);margin:0}
 code{font-family:'DM Mono',monospace;background:var(--input-bg);padding:1px 5px;border-radius:4px;font-size:.85em;border:1px solid var(--border)}

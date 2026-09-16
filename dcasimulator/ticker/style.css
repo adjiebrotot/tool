@@ -7,7 +7,7 @@
 .header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;align-items:flex-start}
 .btn-back{text-decoration:none;display:inline-flex;align-items:center}
 
-.intro{color:var(--muted);font-size:.92rem;line-height:1.6;margin:0 0 4px}
+.intro{color:var(--muted);font-size:.92rem;line-height:1.6;margin:0 0 14px}
 .intro code{background:var(--input-bg);border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-family:'DM Mono',monospace;font-size:.85em;color:var(--text)}
 
 .ticker-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
@@ -19,12 +19,15 @@
 .country-nav a:hover{border-color:var(--accent)}
 
 .country-block{margin-bottom:26px;scroll-margin-top:18px}
-.country-block h2{display:flex;align-items:center;gap:9px;font-size:1.18rem;margin:0 0 4px}
+.country-block h2{display:flex;align-items:center;gap:9px;font-size:1.18rem;margin:0 0 8px}
 
 .flag-svg{display:inline-block;width:1.4em;height:auto;aspect-ratio:3/2;flex-shrink:0;border-radius:2px;border:1px solid var(--border);overflow:hidden;vertical-align:-0.16em}
 .flag-svg.flag-lg{width:1.6em}
 .country-note{color:var(--muted);font-size:.82rem;line-height:1.55;margin:0 0 12px}
 
+/* A country without an explanatory note puts its table straight under the
+   heading, so give the table its own top gap rather than relying on the note. */
+.country-block h2+.ticker-table-wrap{margin-top:12px}
 .ticker-table-wrap{overflow:auto;border:1px solid var(--border);border-radius:var(--radius-md)}
 table.ticker-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.86rem}
 table.ticker-table th,table.ticker-table td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
