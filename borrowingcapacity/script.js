@@ -240,7 +240,10 @@ function compute(p){
   const helpAsTax        = p.helpMode === 'tax'        ? helpAmt : 0;
   const helpAsCommitment = p.helpMode === 'commitment' ? helpAmt : 0;
 
-  const totalTax = netIncTax + medicare + surcharge + helpAsTax - divGrossUp;
+  // The franking credit is already in income, because the dividend is grossed
+  // up in Step 1. Subtracting it from tax as well would count it twice, so the
+  // full tax on the grossed-up amount stands.
+  const totalTax = netIncTax + medicare + surcharge + helpAsTax;
 
   const mRate    = marginalTaxRate(taxableIncome, p.taxYear, p.adults, p.deps);
   const negGear  = p.negGear ? mRate * rentalLoss : 0;
@@ -658,8 +661,9 @@ function renderBuild(r, p){
   push('Medicare levy', -r.medicare/12, '', '', ['','neg','neg','note']);
   if(r.surcharge > 0) push('Medicare levy surcharge', -r.surcharge/12, 'no private hospital cover', '', ['','neg','neg','note']);
   if(r.helpAsTax > 0) push('HELP repayment', -r.helpAsTax/12, `on ${M(r.adjustedIncome/12)}/mo repayment income`, '', ['','neg','neg','note']);
-  if(r.divGrossUp > 0) push('Franking credits', r.divGrossUp/12, 'refundable offset', '', ['','pos','pos','note']);
-  push('Total tax', -r.totalTax/12, '', 'total', ['','neg','neg','note']);
+  push('Total tax', -r.totalTax/12, r.divGrossUp > 0
+        ? `includes ${M(r.divGrossUp/12)}/mo of franking credits already counted in income`
+        : '', 'total', ['','neg','neg','note']);
   if(r.negGear > 0) push('Negative gearing add-back', r.negGear/12, `${fmt.pct(r.mRate*100,1)} on a ${M(r.rentalLoss/12)}/mo rental loss`, '', ['','pos','pos','note']);
   push('Net income available', r.netMonthly, '', 'total');
   push('Living expenses', -r.living, r.hemBinds
