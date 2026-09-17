@@ -1514,13 +1514,10 @@ filter_tuning_order,filter_rated_power,Converge?,THD_HVDC_bus
     <div class="section-body" id="custom-fn-library-body">
 
       <p class="objective-text">
-        An Output Variable of type <strong>Custom Calculation</strong> runs a Python function of your own on every
-        iteration and writes what it returns as one more column in the results CSV. These
-        <span id="custom-fn-count">14</span> functions are ready to use: overload and voltage-violation flags,
-        a contingency verdict, a fault ride-through check, thermal and frequency margins, power factor, loss
-        percentage, voltage unbalance, angle difference, the annual cost of losses, and capacitor sizing. Pick one
-        from the <strong>Insert a pre-made function</strong> list above the editor in the Scripter, or copy it
-        from here and edit the constants at the top of the body.
+        A <strong>Custom Calculation</strong> output runs your own Python on every iteration and writes what it
+        returns as one more column in the results CSV. These <span id="custom-fn-count">14</span> functions are
+        ready to use: pick one from <strong>Insert a pre-made function</strong> in the Scripter, or copy it from
+        here and edit the constants at the top.
       </p>
 
       <!-- 1 Rules -->
@@ -1529,22 +1526,16 @@ filter_tuning_order,filter_rated_power,Converge?,THD_HVDC_bus
           <span class="step-badge">1</span> What a Custom Function Must Do
         </div>
         <ul class="assumption-list">
-          <li><strong>Return exactly one scalar.</strong> A number, a string, <code>True</code> / <code>False</code>,
-            or <code>None</code>. Never a tuple: one function is one column.</li>
-          <li><strong>Name every argument after a variable.</strong> Each argument is looked up by name among the
-            Input Variables and the other Output Variables of the run, so <code>def overload_flag(loading_pct)</code>
-            needs a variable called <code>loading_pct</code>. A name that matches nothing arrives as
-            <code>None</code>.</li>
-          <li><strong>Handle <code>None</code>.</strong> A result that could not be read, for example a line that is
-            out of service in the contingency being run, arrives as <code>None</code>. An exception inside the
-            function costs the whole result row, so guard the arguments and the divisions.</li>
-          <li><strong>Feed it single-element outputs.</strong> An output with a wildcard query such as
-            <code>*.ElmLne</code> is written as one column per element (<code>loading_Line 5-7</code>,
-            <code>loading_Line 7-8</code>), so it cannot be passed in as one argument. Point each argument at an
-            output that matches one element, or pass the handful you care about separately, as
-            <code>worst_bus_voltage</code> does.</li>
-          <li><strong>Order matters if you chain.</strong> A custom function may take the result of another custom
-            function, as long as that one is defined earlier in the Output Variables list.</li>
+          <li><strong>Return one scalar.</strong> A number, a string, <code>True</code> / <code>False</code>, or
+            <code>None</code>. Never a tuple: one function is one column.</li>
+          <li><strong>Name each argument after a variable.</strong> Arguments are matched by name against the run's
+            input and output variables. A name that matches nothing arrives as <code>None</code>.</li>
+          <li><strong>Handle <code>None</code>.</strong> An unread result arrives as <code>None</code>, and an
+            exception costs the whole row, so guard the arguments and the divisions.</li>
+          <li><strong>Point at single elements.</strong> A wildcard output such as <code>*.ElmLne</code> becomes one
+            column per element, so it cannot be one argument.</li>
+          <li><strong>Chain in order.</strong> A function may take another custom function's result, if that one is
+            listed earlier.</li>
         </ul>
       </div>
 
