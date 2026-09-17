@@ -1229,7 +1229,7 @@ function buildFnLibPicker(id) {
             ${groups}
           </select>
           <button class="btn btn-ghost btn-xs" id="${id}-fn-lib-btn" onclick="insertFnLibSample('${id}')" disabled>Insert</button>
-          <a class="fn-lib-help" href="samples/#custom-fn-library" target="_blank" rel="noopener">All ${lib.length} explained</a>
+          <a class="fn-lib-help" href="samples/#custom-fn-library" target="_blank" rel="noopener">Doc ↗</a>
         </div>
         <div class="fn-lib-desc cond-hidden" id="${id}-fn-lib-desc"></div>`;
 }
