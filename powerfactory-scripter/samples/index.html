@@ -159,28 +159,23 @@
       <span class="toggle-icon">▾</span>
     </div>
     <div class="section-body" id="models-body">
-      <p class="hint" style="margin-top:0;">Samples 01 to 04 share the Nine-bus System. Samples 05 and 06 use other demonstration
-        projects, because a harmonic study and an EMT switching study need networks the Nine-bus System does not
-        contain.</p>
+      <p class="hint" style="margin-top:0;">The samples use three example projects that come with PowerFactory.
+        Open the one a sample names and you are ready to run it &mdash; there is nothing to build.</p>
 
       <div class="model-grid">
         <div class="model-item">
           <div class="model-head"><span class="model-badge">01 - 04</span><strong>Nine-bus System</strong></div>
-          <p>Anderson &amp; Fouad Nine-bus System: 9 buses, 3 generators, 6 lines, 230&nbsp;kV / 60&nbsp;Hz.
-             Used for the loss-factor sweep, the minimum-loss optimisation, the RMS rotor-angle study and the
-             N-1 contingency scan.</p>
+          <p>A small textbook network. Big enough to study power flow and generator behaviour, small enough to
+             follow by eye.</p>
         </div>
         <div class="model-item">
           <div class="model-head"><span class="model-badge">05</span><strong>Resonance Studies</strong></div>
-          <p>A 400&nbsp;kV / 50&nbsp;Hz transmission system with an HVDC converter station whose tuned filter
-             banks (11th, 13th and 24th high-pass) sit on the 400&nbsp;kV busbar. Used for the filter tuning study
-             on the <code>01.1 Simplified Network Model</code> study case.</p>
+          <p>A network built for harmonics work, with the filters the harmonic sample tunes.</p>
         </div>
         <div class="model-item">
           <div class="model-head"><span class="model-badge">06</span><strong>Switching Transients</strong></div>
-          <p>A 400&nbsp;/&nbsp;110&nbsp;kV, 50&nbsp;Hz network in which a power transformer is energised through a
-             circuit breaker. Used for the EMT energisation study on the
-             <code>03.1 Transformer Energisation I</code> study case.</p>
+          <p>A network built for switching studies, with the detailed transformer and breaker the EMT sample
+             needs.</p>
         </div>
       </div>
     </div>
@@ -1493,7 +1488,6 @@ filter_tuning_order,filter_rated_power,Converge?,THD_HVDC_bus
   ═══════════════════════════════════════════════════════════════ -->
   <div class="section-card" id="custom-fn-library">
     <div class="section-header" onclick="toggleSection('custom-fn-library')">
-      <span class="sample-num">FN</span>
       <h3>Custom Function Library: Pre-Made Scripts for a Custom Calculation Output</h3>
       <span class="toggle-icon">▾</span>
     </div>
