@@ -101,6 +101,10 @@ index.html
     └── File I/O (copy, download .py, export/import JSON, download xlsx template, reset)
 ```
 
+Alongside `index.html` the page loads `pf-script-builder.js` (the generated-Python builders),
+`script.js` (the UI), `custom-functions.js` (the pre-made Custom Calculation library, shared with
+`samples/`), `style.css`, and `tour.js` (guided tour config for `../tour-shared.js`).
+
 ---
 
 ## 3. UI Layout and Sections
@@ -274,7 +278,10 @@ Output variables are rendered as full `.output-var-item` div cards because each 
 | `removeOutputVar(id)` | Removes the output var div, destroys its Ace editor if present, reindexes, refreshes objective dropdown and live warnings. |
 | `toggleOutputVar(id)` | Collapses or expands the `.output-var-body` div for a given output var card. |
 | `getOutputVars()` | Reads all output vars from DOM, returns array matching `outputVariables` schema. |
-| `initAceEditor(id, initialValue)` | Creates an Ace editor inside `#${id}-ace` with Python mode and `tomorrow_night` theme. Stored in `aceEditors` map. Uses `setTimeout` to ensure DOM is ready. |
+| `initAceEditor(id, initialValue)` | Creates an Ace editor inside `#${id}-ace` with Python mode and `tomorrow_night` theme. Stored in `aceEditors` map. Uses `setTimeout` to ensure DOM is ready. Falls back to `DEFAULT_CUSTOM_FN` when no value is given. |
+| `buildFnLibPicker(id)` | Returns the "Insert a pre-made function" row above the editor, with one `<optgroup>` per `CUSTOM_FN_CATEGORIES` entry. Returns `''` if `custom-functions.js` did not load. |
+| `onFnLibChange(id)` | Renders the chosen function's summary, arguments and tunable constants under the picker, and enables the Insert button. |
+| `insertFnLibSample(id)` | Writes the chosen function into the Ace editor, confirming first if the editor holds anything other than the placeholder, and names an unnamed output variable after the function. |
 
 **Constraint Table (`#constraint-tbody`)**
 
@@ -723,10 +730,21 @@ if __name__ == "__main__":
 
 ### Custom Calculation
 
-- UI fields shown: all of the above + Ace.js Python function editor
-- User writes a function body; generator includes it verbatim in the helper section
+- UI fields shown: Name, the pre-made function picker, and the Ace.js Python function editor
+- User writes a function body, or inserts one from `custom-functions.js`; the generator includes it verbatim in the helper section
 - `evaluate_custom_calculations()` parses the function signature to auto-construct the call using result row values
-- Arguments must match names of previously defined input or output variables
+- Arguments must match names of defined input or output variables. An argument that matches nothing is passed as `None`, as is a result that could not be read, so a function must be `None`-safe: it runs inside the per-iteration `try`, and an exception costs the whole result row
+- An output whose query matches several objects is written as one column per element (`{name}_{loc_name}`), so it cannot be passed as a single argument
+- Results are written into a working copy of the row as they are produced (`_row` in the generated helper), so a custom calculation may take an **earlier** custom calculation as an argument; order follows the Output Variables list
+- The function must return exactly one scalar. `validateCustomCalcWarnings()` warns on an unknown argument name and on a tuple return; `validateConfig()` blocks a duplicate function name
+
+#### Pre-made function library (`custom-functions.js`)
+
+`CUSTOM_FN_LIBRARY` holds ready-to-use bodies (overload and voltage flags, contingency and ride-through
+verdicts, margins, derived quantities, cost and sizing). Each entry carries `id`, `fnName`, `label`,
+`category`, `summary`, `returns`, `study`, `args[{name, hint}]`, `tune[]` and `code`. The tool's picker
+and the library section on the Samples & Guides page both render from this one file, and
+`audit/audit_custom_functions.py` checks every entry against the rules above.
 
 ---
 
@@ -832,6 +850,7 @@ The `outserv` attribute is always restored in a `finally` block after each conti
 | Notebook cell structure | 7 cells | Rearrange section grouping in `buildNotebookWrapper` call inside `generateCode()` |
 | Reference data classes | ~40 element classes | Add to `ALL_ELM_CLASSES`; add corresponding JSON file to `variables/elements/` |
 | Custom function validation | String-based | Replace or augment `customFn.trim().length < 5` check in `validateConfig` |
+| Pre-made custom functions | 14 in `custom-functions.js` | Append an entry to `CUSTOM_FN_LIBRARY` (new category goes in `CUSTOM_FN_CATEGORIES` too); the picker and the samples page pick it up with no further edit, then run `audit/audit_custom_functions.py` |
 
 ---
 

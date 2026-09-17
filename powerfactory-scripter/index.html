@@ -140,6 +140,7 @@
 <div id="copy-toast" class="toast">Copied to clipboard!</div>
 <div id="generate-toast" class="toast">Code generated!</div>
 <div id="import-toast" class="toast">JSON imported!</div>
+<div id="fn-lib-toast" class="toast">Function inserted!</div>
 
 <!-- MAIN LAYOUT -->
 <div class="layout">
@@ -366,7 +367,7 @@
           <div class="info-extra" id="output-info-extra">
             <strong>Scalar</strong> uses <code>obj.GetAttribute()</code> on static result variables (e.g. <code>m:u1</code>, <code>c:loading</code>) after solving — check the PF result variable browser for available keys.<br/>
             <strong>Timeseries</strong> requires a Dynamic RMS or EMT study type. Use the PF variable key (e.g. <code>m:u1</code>, <code>m:I:bus1</code>) — same as the result variable browser, not the descriptive label.<br/>
-            <strong>Custom Calculation</strong> arguments must be names of other defined Input or Output Variables.<br/>
+            <strong>Custom Calculation</strong> arguments must be names of other defined Input or Output Variables. It must return exactly one scalar, and a value it could not read arrives as <code>None</code>. Pick a ready-made one from <strong>Insert a pre-made function</strong> above the editor, or see the <a href="samples/#custom-fn-library" target="_blank" rel="noopener">custom function library</a>.<br/>
             All variable names must be unique across inputs and outputs.
           </div>
         </div>
@@ -537,6 +538,7 @@
 ============================================================ -->
 <script src="../shared.js"></script>
 <script src="pf-script-builder.js"></script>
+<script src="custom-functions.js"></script>
 <script src="script.js"></script>
 <script src="tour.js"></script>
 <script src="../tour-shared.js"></script>

@@ -848,8 +848,14 @@ function buildCustomFunctionHelpers(cfg) {
   }
 
   code += `def evaluate_custom_calculations(base_result_row):
-    """Evaluate all user-defined custom calculation functions against result row."""
+    """Evaluate all user-defined custom calculation functions against result row.
+
+    The functions run in the order their output variables are defined, and each
+    result is written into the working row before the next call, so a custom
+    calculation can take an earlier custom calculation as an argument.
+    """
     custom_results = {}
+    _row = dict(base_result_row)
 `;
   customVars.forEach(ov => {
     // Extract the actual function name and arguments from the def line
@@ -859,8 +865,9 @@ function buildCustomFunctionHelpers(cfg) {
     const callee = defMatch ? defMatch[1] : sanitizeName(ov.name);
     const rawArgs = defMatch ? defMatch[2] : '';
     const args = rawArgs.split(',').map(a => a.trim()).filter(Boolean);
-    const argStr = args.map(a => `base_result_row.get("${a}", None)`).join(', ');
+    const argStr = args.map(a => `_row.get("${a}", None)`).join(', ');
     code += `    custom_results["${ov.name}"] = ${callee}(${argStr})\n`;
+    code += `    _row["${ov.name}"] = custom_results["${ov.name}"]\n`;
   });
   code += '    return custom_results\n';
 

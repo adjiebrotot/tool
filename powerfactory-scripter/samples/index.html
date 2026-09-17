@@ -14,20 +14,20 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Samples &amp; Guides | PowerFactory Scripter</title>
-<meta name="description" content="Explore sample PowerFactory Scripter workflows, JSON inputs, and guides for power-system automation tasks.">
+<meta name="description" content="Explore sample PowerFactory Scripter workflows, JSON inputs, a pre-made custom function library, and guides for power-system automation tasks.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/samples/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="PowerFactory Scripter Samples and Guides">
-<meta property="og:description" content="Explore sample PowerFactory Scripter workflows, JSON inputs, and guides for power-system automation tasks.">
+<meta property="og:description" content="Explore sample PowerFactory Scripter workflows, JSON inputs, a pre-made custom function library, and guides for power-system automation tasks.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/samples/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PowerFactory Scripter Samples and Guides">
-<meta name="twitter:description" content="Explore sample PowerFactory Scripter workflows, JSON inputs, and guides for power-system automation tasks.">
+<meta name="twitter:description" content="Explore sample PowerFactory Scripter workflows, JSON inputs, a pre-made custom function library, and guides for power-system automation tasks.">
 
 <script type="application/ld+json">
 {
@@ -35,12 +35,12 @@
   "@type": "WebApplication",
   "name": "PowerFactory Scripter Samples and Guides",
   "url": "https://tool.adjiebrotots.com/powerfactory-scripter/samples/",
-  "description": "Explore sample PowerFactory Scripter workflows, JSON inputs, and guides for power-system automation tasks.",
+  "description": "Explore sample PowerFactory Scripter workflows, JSON inputs, a pre-made custom function library, and guides for power-system automation tasks.",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
   "inLanguage": "en",
-  "keywords": "PowerFactory transmission loss factor, generation shift factor, minimum system losses Bayesian optimisation, rotor angle stability critical clearing time, N-1 line contingency Nine-bus System, HVDC harmonic filter tuning ComHldf, transformer energisation inrush EMT ComSim, PowerFactory Python examples"
+  "keywords": "PowerFactory transmission loss factor, generation shift factor, minimum system losses Bayesian optimisation, rotor angle stability critical clearing time, N-1 line contingency Nine-bus System, HVDC harmonic filter tuning ComHldf, transformer energisation inrush EMT ComSim, PowerFactory Python examples, PowerFactory custom calculation function, overload flag script, voltage violation flag"
 }
 </script>
 <script type="application/ld+json">
@@ -94,6 +94,22 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "The transformer energisation sample runs on PowerFactory's Switching Transients project. It sweeps the closing time of a breaker switch event (CB4.EvtSwitch) across one 50 Hz cycle, runs an EMT simulation (ComInc with iopt_sim='ins' then ComSim) at each value, and records the transformer HV-side inrush current on each phase plus the current waveform, showing how point-on-wave closing changes the inrush. See the worked example at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I flag overloaded lines or voltage violations in a PowerFactory Python script?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Add an Output Variable of type Custom Calculation and give it a Python function that returns one value per run. The overloading flag returns True once c:loading goes above 100 per cent, and the voltage band function returns UNDERVOLTAGE below 0.9 pu, OVERVOLTAGE above 1.1 pu and NORMAL in between, so the results CSV can be filtered straight to the violations. Both are ready to insert from the pre-made function library at https://tool.adjiebrotots.com/powerfactory-scripter/samples/#custom-fn-library."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What can a Custom Calculation output return in the PowerFactory Scripter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Exactly one scalar per run: a number, a string, True or False, or nothing. The function arguments are the names of other input or output variables of the same run, so a custom calculation can turn raw PowerFactory readings into a power factor, a thermal headroom in MW, a voltage unbalance percentage, an annual cost of losses, a capacitor size, or a pass and fail verdict. Fourteen ready-made examples are listed at https://tool.adjiebrotots.com/powerfactory-scripter/samples/#custom-fn-library."
       }
     }
   ]
@@ -1487,6 +1503,97 @@ filter_tuning_order,filter_rated_power,Converge?,THD_HVDC_bus
 
 
   <!-- ═══════════════════════════════════════════════════════════════
+       CUSTOM FUNCTION LIBRARY
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="section-card" id="custom-fn-library">
+    <div class="section-header" onclick="toggleSection('custom-fn-library')">
+      <span class="sample-num">FN</span>
+      <h3>Custom Function Library: Pre-Made Scripts for a Custom Calculation Output</h3>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body" id="custom-fn-library-body">
+
+      <p class="objective-text">
+        An Output Variable of type <strong>Custom Calculation</strong> runs a Python function of your own on every
+        iteration and writes what it returns as one more column in the results CSV. These
+        <span id="custom-fn-count">14</span> functions are ready to use: overload and voltage-violation flags,
+        a contingency verdict, a fault ride-through check, thermal and frequency margins, power factor, loss
+        percentage, voltage unbalance, angle difference, the annual cost of losses, and capacitor sizing. Pick one
+        from the <strong>Insert a pre-made function</strong> list above the editor in the Scripter, or copy it
+        from here and edit the constants at the top of the body.
+      </p>
+
+      <!-- 1 Rules -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">1</span> What a Custom Function Must Do
+        </div>
+        <ul class="assumption-list">
+          <li><strong>Return exactly one scalar.</strong> A number, a string, <code>True</code> / <code>False</code>,
+            or <code>None</code>. Never a tuple: one function is one column.</li>
+          <li><strong>Name every argument after a variable.</strong> Each argument is looked up by name among the
+            Input Variables and the other Output Variables of the run, so <code>def overload_flag(loading_pct)</code>
+            needs a variable called <code>loading_pct</code>. A name that matches nothing arrives as
+            <code>None</code>.</li>
+          <li><strong>Handle <code>None</code>.</strong> A result that could not be read, for example a line that is
+            out of service in the contingency being run, arrives as <code>None</code>. An exception inside the
+            function costs the whole result row, so guard the arguments and the divisions.</li>
+          <li><strong>Feed it single-element outputs.</strong> An output with a wildcard query such as
+            <code>*.ElmLne</code> is written as one column per element (<code>loading_Line 5-7</code>,
+            <code>loading_Line 7-8</code>), so it cannot be passed in as one argument. Point each argument at an
+            output that matches one element, or pass the handful you care about separately, as
+            <code>worst_bus_voltage</code> does.</li>
+          <li><strong>Order matters if you chain.</strong> A custom function may take the result of another custom
+            function, as long as that one is defined earlier in the Output Variables list.</li>
+        </ul>
+      </div>
+
+      <!-- 2 The library -->
+      <div class="sub-section">
+        <div class="sub-section-title">
+          <span class="step-badge">2</span> The Library
+        </div>
+        <div id="custom-fn-list"></div>
+      </div>
+
+      <!-- 3 Using one -->
+      <div class="sub-section steps-section">
+        <div class="steps-title">Using One</div>
+        <div class="step-row">
+          <span class="step-badge">1</span>
+          <span>In <strong>Output Variables</strong>, add a variable and set its type to
+            <strong>Custom Calculation</strong>.</span>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">2</span>
+          <div>
+            <div>Choose a function from <strong>Insert a pre-made function</strong> and click
+              <strong>Insert</strong>.</div>
+            <div class="step-note">The description under the list names the PowerFactory attribute each argument
+              expects. An unnamed output variable is named after the function for you.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">3</span>
+          <div>
+            <div>Add the Scalar or Timeseries outputs the function reads, and make each argument name match an
+              output name.</div>
+            <div class="step-note">Rename the arguments in the editor, or name the outputs to match the arguments.
+              Either way the two must agree, and a mismatch is reported in Warnings before you generate.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">4</span>
+          <span>Edit the constants at the top of the body to your own limits, then
+            <strong>⚡ Generate Code</strong>. The function is written into the script as you see it, and its
+            result becomes a column in the CSV.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
        FAQ
   ═══════════════════════════════════════════════════════════════ -->
   <div class="section-card" id="faq">
@@ -1595,6 +1702,7 @@ filter_tuning_order,filter_rated_power,Converge?,THD_HVDC_bus
 </footer>
 
 <script src="../../shared.js"></script>
+<script src="../custom-functions.js"></script>
 <script src="script.js"></script>
 
 </body>

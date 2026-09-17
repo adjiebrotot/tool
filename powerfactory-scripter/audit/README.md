@@ -1,4 +1,15 @@
-# PowerFactory-Scripter — Full API Audit
+# PowerFactory-Scripter — Audits
+
+Two harnesses live here:
+
+| Script | Needs PowerFactory? | Checks |
+|---|---|---|
+| `audit_nine_bus_system.py` | Yes (live instance + Nine-bus System) | every PowerFactory API call and pattern the generator emits |
+| `audit_custom_functions.py` | No (plain CPython) | the pre-made Custom Calculation library in `../custom-functions.js` |
+
+---
+
+## 1. Full API audit — `audit_nine_bus_system.py`
 
 `audit_nine_bus_system.py` is a standalone smoke-test that exercises **every
 PowerFactory Python-API call, pattern and result-handling assumption** the
@@ -69,3 +80,26 @@ pattern is broken on your PowerFactory build.
 * **FAIL** — the API call raised or returned a value the generated code does not
   expect. The traceback + the `-> builder fn` mapping point straight at the
   generator code to fix.
+
+---
+
+## 2. Custom function library audit — `audit_custom_functions.py`
+
+Checks every entry in [`../custom-functions.js`](../custom-functions.js), the pre-made bodies the
+Scripter offers above each Custom Calculation editor and the Samples page lists. It needs no
+PowerFactory and no network:
+
+```sh
+python3 audit_custom_functions.py
+```
+
+It exits non-zero on the first failure and prints `PASS` / `FAIL` per checkpoint, in four phases:
+
+| Phase | Validates |
+|---|---|
+| 1 Shape | one top-level `def` per entry, name and arguments matching the metadata, no `*args`, no defaults, no tuple return, every path returning, a docstring, and every constant the picker offers as tunable actually present in the body |
+| 2 Generator | the def line parses with the same regular expression `buildCustomFunctionHelpers()` uses, reads back the same arguments, and no `return` trips `hasMultipleReturnValues()` in `script.js` |
+| 3 Robustness | every function survives all of its arguments arriving as `None` (what the generated script passes for a result it could not read) and still returns a scalar |
+| 4 Behaviour | hand-calculated cases per function, for example 100 MW at 80 % loading leaving 25 MW of thermal headroom, and the capacitor sizing function landing exactly on a 0.95 power factor |
+
+Run it after adding or editing an entry in `CUSTOM_FN_LIBRARY`.
