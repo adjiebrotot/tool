@@ -27,7 +27,18 @@
   }
   body.light .fn-card-code {
     background: #F0F4FF;
+    color: #4D4D4C;
   }
+  /* Ace tomorrow (light) for the same tokens. */
+  body.light .py-kw      { color: #8959A8; }
+  body.light .py-const   { color: #F5871F; }
+  body.light .py-builtin { color: #3E999F; }
+  body.light .py-def,
+  body.light .py-call    { color: #4271AE; }
+  body.light .py-str     { color: #718C00; }
+  body.light .py-num     { color: #F5871F; }
+  body.light .py-com     { color: #8E908C; }
+  body.light .py-op      { color: #4D4D4C; }
   body.light .assumption-list code,
   body.light .step-row code,
   body.light .hint code,
@@ -720,14 +731,39 @@
   /* ── CUSTOM FUNCTION LIBRARY ─────────────────────────────────────── */
   .fn-cat { margin-bottom: 18px; }
   .fn-cat-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
     font-family: var(--mono);
     font-size: 11px;
     font-weight: 600;
+    text-align: left;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--accent2);
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 6px 2px;
     margin-bottom: 8px;
+    cursor: pointer;
   }
+  .fn-cat-title:hover { color: var(--accent); }
+  .fn-cat-name { flex: 1; }
+  .fn-cat-caret {
+    font-size: 10px;
+    transition: transform var(--transition-base, 0.2s) ease;
+  }
+  .fn-cat-title.collapsed .fn-cat-caret { transform: rotate(-90deg); }
+  .fn-cat-count {
+    font-size: 10px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 1px 7px;
+  }
+  .fn-cat-body.hidden { display: none; }
   .fn-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -778,9 +814,27 @@
     font-family: var(--mono);
     font-size: 12px;
     line-height: 1.7;
-    color: var(--accent);
+    color: #C5C8C6;
     overflow-x: auto;
   }
+  .fn-card-code code {
+    font-family: inherit;
+    font-size: inherit;
+    background: none;
+    padding: 0;
+  }
+
+  /* Python tokens, keyed to the Ace tomorrow-night theme the Scripter's
+     custom-function editor uses, so a snippet looks the same in both places. */
+  .py-kw      { color: #B294BB; }
+  .py-const   { color: #DE935F; }
+  .py-builtin { color: #8ABEB7; }
+  .py-def     { color: #81A2BE; }
+  .py-call    { color: #81A2BE; }
+  .py-str     { color: #B5BD68; }
+  .py-num     { color: #DE935F; }
+  .py-com     { color: #969896; font-style: italic; }
+  .py-op      { color: #C5C8C6; }
   .fn-card-foot {
     display: flex;
     gap: 16px;
