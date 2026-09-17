@@ -1125,6 +1125,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       <div class="${!isCust?'cond-hidden':''}" id="${id}-row-custom-fn">
         <div class="sub-label" style="margin-top:8px;">Custom Function (must return exactly one scalar) ${tip('Python function whose arguments are names of other defined input or output variables.')}</div>
         <div class="hint" style="margin-bottom:6px;">Arguments must be names of defined <strong>Input Variables</strong> or other <strong>Output Variables</strong>.</div>
+        ${buildFnLibPicker(id)}
         <div class="ace-editor-container">
           <div class="ace-editor" id="${id}-ace"></div>
         </div>
@@ -1207,6 +1208,86 @@ function toggleOutputVar(id) {
   btn.textContent = isHidden ? '▸' : '▾';
 }
 
+const DEFAULT_CUSTOM_FN = `def output_name(arg1, arg2):\n    return arg1 + arg2`;
+
+/* ── PRE-MADE CUSTOM FUNCTIONS ──────────────────────────────────────
+   The library lives in custom-functions.js and is shared with the
+   Samples & Guides page, so a function is written in one place only. */
+function buildFnLibPicker(id) {
+  const lib = window.CUSTOM_FN_LIBRARY || [];
+  if (!lib.length) return '';
+  const categories = window.CUSTOM_FN_CATEGORIES || [...new Set(lib.map(e => e.category))];
+  const groups = categories.map(cat => {
+    const opts = lib.filter(e => e.category === cat)
+      .map(e => `<option value="${e.id}">${e.label}</option>`).join('');
+    return opts ? `<optgroup label="${cat}">${opts}</optgroup>` : '';
+  }).join('');
+  return `
+        <div class="fn-lib-row">
+          <select id="${id}-fn-lib" class="fn-lib-select" onchange="onFnLibChange('${id}')">
+            <option value="">Insert a pre-made function...</option>
+            ${groups}
+          </select>
+          <button class="btn btn-ghost btn-xs" id="${id}-fn-lib-btn" onclick="insertFnLibSample('${id}')" disabled>Insert</button>
+          <a class="fn-lib-help" href="samples/#custom-fn-library" target="_blank" rel="noopener">All ${lib.length} explained</a>
+        </div>
+        <div class="fn-lib-desc cond-hidden" id="${id}-fn-lib-desc"></div>`;
+}
+
+function fnLibEntry(id) {
+  const value = document.getElementById(`${id}-fn-lib`)?.value || '';
+  return (window.CUSTOM_FN_LIBRARY || []).find(e => e.id === value) || null;
+}
+
+function onFnLibChange(id) {
+  const entry = fnLibEntry(id);
+  const btn   = document.getElementById(`${id}-fn-lib-btn`);
+  const box   = document.getElementById(`${id}-fn-lib-desc`);
+  if (btn) btn.disabled = !entry;
+  if (!box) return;
+  if (!entry) {
+    box.innerHTML = '';
+    box.classList.add('cond-hidden');
+    return;
+  }
+  const args = (entry.args || [])
+    .map(a => `<li><code>${a.name}</code> ${a.hint}</li>`).join('');
+  const tune = (entry.tune || []).length
+    ? `<div class="fn-lib-tune">Edit in the body: ${(entry.tune || []).map(c => `<code>${c}</code>`).join(' ')}</div>`
+    : '';
+  box.innerHTML = `
+    <div class="fn-lib-summary">${entry.summary}</div>
+    <div class="fn-lib-meta">Returns ${entry.returns} &middot; Suits ${entry.study}</div>
+    <ul class="fn-lib-args">${args}</ul>
+    ${tune}
+    <div class="fn-lib-note">Rename each argument to the variable name you gave it, or name your
+      variables to match the arguments. An argument that matches nothing arrives as
+      <code>None</code>.</div>`;
+  box.classList.remove('cond-hidden');
+}
+
+function insertFnLibSample(id) {
+  const entry = fnLibEntry(id);
+  if (!entry) return;
+  const editor  = aceEditors[id];
+  const current = editor ? editor.getValue().trim() : '';
+  const isPlaceholder = !current || current === DEFAULT_CUSTOM_FN.trim();
+  if (!isPlaceholder && !confirm(`Replace the function in the editor with "${entry.label}"?`)) return;
+
+  if (editor) editor.setValue(entry.code, -1);
+  else initAceEditor(id, entry.code);
+
+  // Name the output after the function when it has no name yet, so the CSV
+  // column and the function agree without a second edit.
+  const nameInput = document.getElementById(`${id}-name`);
+  if (nameInput && !nameInput.value.trim()) {
+    nameInput.value = entry.fnName;
+    onOutputNameChange();
+  }
+  showToast('fn-lib-toast');
+  refreshLiveWarnings();
+}
+
 function initAceEditor(id, initialValue) {
   setTimeout(() => {
     const aceEl = document.getElementById(`${id}-ace`);
@@ -1215,7 +1296,7 @@ function initAceEditor(id, initialValue) {
     editor.setTheme('ace/theme/tomorrow_night');
     editor.session.setMode('ace/mode/python');
     editor.setOptions({ showLineNumbers: true, tabSize: 4, useSoftTabs: true, fontSize: '12px' });
-    editor.setValue(initialValue || `def output_name(arg1, arg2):\n    return arg1 + arg2`, -1);
+    editor.setValue(initialValue || DEFAULT_CUSTOM_FN, -1);
     aceEditors[id] = editor;
   }, 50);
 }

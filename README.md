@@ -58,7 +58,8 @@ Harnesses live in `costofliving-comparator/`, `dcasimulator/`, `financingvscash/
 `rentvsownhouse/`, and `rentvsownhouse/sensitivity/`. `rentvsownhouse/audit/` is the earlier
 JS-versus-Python cross-model audit that these superseded; its CSV outputs are generated, not
 committed. `powerfactory-scripter/audit/` validates generated scripts against a nine-bus reference
-case.
+case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain
+CPython, with no PowerFactory needed.
 
 The shared layer has one of its own. `node _ref/abbr-check.mjs` loads every page and
 checks the abbreviation glossary (`SharedAbbr`): that decoration never lands in a link,
