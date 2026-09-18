@@ -25,6 +25,15 @@ class Chart {
   toBase64Image(){ return 'data:image/png;base64,'; }
 }
 Chart.register=function(){}; Chart.defaults={font:{},plugins:{}}; Chart.registry={plugins:{items:[]}};
+// Pages look their chart up by canvas, so the stub has to answer that too.
+Chart.getChart=function(el){
+  var node = (typeof el === 'string') ? document.getElementById(el) : el;
+  for (var i=0;i<window.__charts.length;i++){
+    var c = window.__charts[i];
+    if (c.ctx === node || (c.ctx && c.ctx.canvas === node)) return c;
+  }
+  return null;
+};
 window.Chart=Chart;
 window.__plotly=[];
 window.Plotly={ newPlot:async(el,data,layout)=>{window.__plotly.push({data,layout});}, react:async(el,data,layout)=>{window.__plotly.push({data,layout});},
@@ -81,9 +90,13 @@ export function money(s) {
   } else {
     t = t.replace(/,/g, '');
   }
+  // KPI tiles render compact ("$2.2K", "-$1.4M"); the suffix is part of the value.
+  // It only counts when it sits directly on a digit, so a unit suffix like
+  // "$509.61/week" or "/fortnight" is not mistaken for kilo or tera.
+  const mult = { k: 1e3, m: 1e6, b: 1e9, t: 1e12 }[(/\d\s*([kmbt])\s*$/i.exec(t) || [])[1]?.toLowerCase()] || 1;
   const n = parseFloat(t.replace(/[^0-9.eE+\-]/g, ''));
   if (!Number.isFinite(n)) return NaN;
-  return neg && n > 0 ? -n : n;
+  return (neg && n > 0 ? -n : n) * mult;
 }
 
 /** Set an input/select by DOM id and fire the events a page listens for. */

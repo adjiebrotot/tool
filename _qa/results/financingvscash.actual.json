@@ -1,0 +1,249 @@
+{
+  "tool": "financingvscash",
+  "ran_utc": "2026-09-18T13:49:11.264Z",
+  "page_errors": [],
+  "cases": {
+    "N1": {
+      "observed": {
+        "payment": 897.54,
+        "n_rows": 60,
+        "interest_p1": 123.31,
+        "sum_principal": 50000.020000000004,
+        "sum_interest": 3852.15,
+        "final_loan_balance": 0,
+        "balance_after_30": 25923.29,
+        "end_invest": 2181.6192788982903,
+        "end_wealth": 2181.62,
+        "nb_table": 2181.62,
+        "wealth_identity_residual": 0.0007211017095869465,
+        "kpi_best": "N1",
+        "kpi_net_benefit": 2200,
+        "kpi_interest": 3900,
+        "kpi_cash_wealth": 0,
+        "nan_count": 0
+      }
+    },
+    "F1": {
+      "observed": {
+        "payment_F1": 1096.78,
+        "interest_p1_F1": 474.44,
+        "sum_interest_F1": 15807.090000000002,
+        "payment_F1z": 833.33,
+        "end_invest_F1z": 6482.63287977385,
+        "end_wealth_F1z": 6482.63
+      },
+      "notes": "Payment read from the Periodic Payment row of the comparison table, which the page renders with currencyExact. Interest figures come from the amortisation schedule rows."
+    },
+    "F1-alt": {
+      "observed": {
+        "payment_F1": 1096.78,
+        "interest_p1_F1": 474.44,
+        "sum_interest_F1": 15807.090000000002,
+        "payment_F1z": 833.33,
+        "end_invest_F1z": 6482.63287977385,
+        "end_wealth_F1z": 6482.63
+      },
+      "notes": "Same measurement as F1; the two cases are rival conventions scored against one observation."
+    },
+    "F2": {
+      "observed": {
+        "payment": 416.67,
+        "n_rows": 12,
+        "total_fees": 4000,
+        "invest_p1": 587.0081427337702,
+        "invest_p3": -243.53414801145104,
+        "n_negative_rows": 10,
+        "min_invest": -4057.305441411869,
+        "end_invest": -4057.305441411869,
+        "end_wealth": -4057.31,
+        "kpi_net_benefit": -4100,
+        "kpi_best": "Cash Purchase",
+        "kpi_cash_wealth": 0,
+        "nan_count": 0
+      },
+      "notes": "Invested balance read directly from the page's own Investment Value chart metric, not reconstructed."
+    },
+    "F3": {
+      "observed": {
+        "warn_text": "⚠ toobig was skipped: the down payment plus upfront fee exceeds your available cash. Lower the down payment or fee, or increase available cash.",
+        "kpi_best": "affordable",
+        "kpi_net_benefit": 2200,
+        "affordable_end_wealth": 2181.62,
+        "toobig_row_numeric_wealth": null,
+        "chart_has_affordable_series": true,
+        "chart_has_toobig_series": false,
+        "legend_text": "Cash Purchaseaffordable",
+        "amort_tabs_text": "affordable",
+        "nan_count": 0
+      }
+    },
+    "F4": {
+      "observed": {
+        "neg_nb_a5": -2808.27,
+        "neg_nb_b5d20": -2246.61,
+        "neg_nb_c35": -698.93,
+        "neg_nb_c35_minus_a5": 2109.34,
+        "neg_nb_b5d20_minus_a5": 561.6599999999999,
+        "neg_fees_a5": 0,
+        "neg_kpi_best": "Cash Purchase",
+        "neg_kpi_net_benefit": -699,
+        "neg_negcarry_text": "⚠ Negative carry: finance rate exceeds risk-free rate. Financing will likely cost more than investing.",
+        "par_nb": 0,
+        "par_end_wealth": 0,
+        "par_kpi_net_benefit": 0
+      }
+    },
+    "F5": {
+      "observed": {
+        "kpi_cash_wealth": 11900,
+        "n_rows_A": 24,
+        "n_rows_B": 104,
+        "n_rows_C": 104,
+        "payment_A": 2212.45,
+        "payment_B": 509.61,
+        "payment_C": 539.58,
+        "end_wealth_A": 10117.04,
+        "end_wealth_B": 10142.36,
+        "end_wealth_C": 10243.9,
+        "last_x_A": 4,
+        "last_x_B": 4,
+        "last_x_C": 4,
+        "chart_last_y_A": 11048.05824233362,
+        "chart_last_y_B": 11075.713612225567,
+        "x_ratio_B_A": 1,
+        "x_ratio_C_A": 1,
+        "term_after_weekly": 104,
+        "label_after_weekly": "Term (weeks) ?",
+        "term_after_fortnightly": 52,
+        "label_after_fortnightly": "Term (fortnights) ?",
+        "term_after_yearly": 2,
+        "label_after_yearly": "Term (years) ?",
+        "term_after_monthly": 24,
+        "label_after_monthly": "Term (months) ?"
+      },
+      "notes": "Chart x values are read from the recorded dataset points; the page plots x as a linear Years axis."
+    },
+    "F6": {
+      "observed": {
+        "fees_pct": 1040,
+        "fees_flat": 1040,
+        "interest_pct": 2068.81,
+        "interest_flat": 2068.81,
+        "cost_pct": 3108.81,
+        "cost_flat": 3108.81,
+        "payment_pct": 1752.87,
+        "end_wealth_pct": -1338.54,
+        "end_wealth_flat": -1338.54,
+        "nb_pct": -1338.54,
+        "kpi_interest": 0,
+        "wealth_diff_pct_flat": 0
+      }
+    },
+    "F7": {
+      "observed": {
+        "a_payment": null,
+        "a_interest": 0,
+        "a_end_wealth": 12461.82,
+        "a_nb": 0,
+        "a_kpi_cash_wealth": 12500,
+        "a_kpi_best": "Break-even",
+        "a_nan_count": 0,
+        "a_n_rows": 0,
+        "b_payment": 833.33,
+        "b_interest": 0,
+        "b_sum_principal": 49999.80000000007,
+        "b_end_wealth": 6482.63,
+        "b_nb": 6482.63,
+        "c_term_effective": 60,
+        "c_state": "rejected",
+        "c_card_text": "zt✎⧉✕5.00% rate · 60 months monthly · 0% down",
+        "c_nan_count": 0,
+        "d_warn_text": "⚠ Available cash ($40,000.00) is less than the purchase cost ($50,000.00). Financing something you cannot afford upfront is not modelled here, so please increase your available cash or reduce the purchase cost.",
+        "d_nan_count": 0,
+        "e_warn_text": "⚠ Available cash reads $0.00. Enter the cash you could put toward this purchase today. Nothing is assumed on your behalf, so the results below stay blank until you do.",
+        "e_nan_count": 0
+      }
+    },
+    "F8": {
+      "observed": {
+        "s1_kpi_cash_wealth": 0,
+        "s2_kpi_cash_wealth": 24900,
+        "s2_end_wealth_full": 24923.64,
+        "s2_end_wealth_zero": 26090.64,
+        "s2_nb_zero": 1167,
+        "s2_final_loan_zero": 0,
+        "s2_end_invest_zero": 26090.64121726987
+      }
+    },
+    "F9": {
+      "observed": {
+        "sweep_x": [
+          70,
+          71.05,
+          72.11,
+          73.16,
+          74.21,
+          75.26,
+          76.32,
+          77.37,
+          78.42,
+          79.47,
+          80.53,
+          81.58,
+          82.63,
+          83.68,
+          84.74,
+          85.79,
+          86.84,
+          87.89,
+          88.95,
+          90
+        ],
+        "sweep_y": [
+          -12992.809053909232,
+          -12985.109257664875,
+          -12977.4094614205,
+          -12969.70966517612,
+          -12962.009868931747,
+          -12954.310072687376,
+          -12946.610276442996,
+          -12938.91048019862,
+          -12931.210683954245,
+          -12923.510887709863,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "n_points": 20,
+        "x_first": 70,
+        "y_first": -12992.809053909232,
+        "last_finite_x": 79.47,
+        "first_null_x": 80.53,
+        "n_finite_after_first_null": 0,
+        "y_last_finite": -12923.510887709863,
+        "nan_count": 0
+      }
+    },
+    "F10": {
+      "observed": {
+        "nb_A12": 405.31,
+        "nb_B60": 2181.62,
+        "real_nb_A12": 395.43,
+        "real_nb_B60": 1928.23,
+        "end_wealth_A12": 10855.31,
+        "end_wealth_B60": 14643.44,
+        "kpi_cash_wealth": 12500,
+        "note_text": "These scenarios run for different lengths. The Cash Purchase column is shown at the longest horizon (5.0 yr), so each shorter scenario is scored against its own same-horizon cash row above, never against the column.",
+        "real_ratio_A12": 0.9756235967531026,
+        "real_ratio_B60": 0.8838523665899654
+      }
+    }
+  }
+}
