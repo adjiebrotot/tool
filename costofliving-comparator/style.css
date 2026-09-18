@@ -103,7 +103,12 @@ select{background:var(--input-bg);border:1px solid var(--border);border-radius:9
 .field-row{display:block;margin-bottom:13px;padding:0;border-top:none;}
 .field-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
 .input-wrap{position:relative;}
-.curr-tag{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:700;color:var(--accent-strong);pointer-events:none;}
+/* The tag only overlays an input when it sits inside .input-wrap. Used
+   anywhere else (e.g. beside a table cell input) it stays in flow — an
+   unqualified position:absolute here escapes to the page and stacks every
+   tag on one spot. */
+.curr-tag{font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:700;color:var(--accent-strong);pointer-events:none;white-space:nowrap;flex-shrink:0;}
+.input-wrap .curr-tag{position:absolute;left:11px;top:50%;transform:translateY(-50%);}
 .input-wrap .num-input{padding-left:42px;}
 .field-approx{font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--muted);margin-top:3px;}
 
