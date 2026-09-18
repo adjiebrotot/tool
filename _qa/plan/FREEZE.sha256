@@ -1,0 +1,12 @@
+{
+  "frozen": {
+    "financingvscash.expected.json": {
+      "sha256": "488e0d1a1bf1ee10ae78d6347bc6cd7a14c102319bef2f9db3d06dbe8d50bc4b",
+      "frozen_utc": "2026-09-18T11:04:46.776Z"
+    },
+    "rentvsownhouse.expected.json": {
+      "sha256": "804450523af6f646c69cb212cf5a22a12f5e9249285ba0efb65d7dadcfaa468b",
+      "frozen_utc": "2026-09-18T11:04:46.778Z"
+    }
+  }
+}

@@ -1,0 +1,298 @@
+{
+  "tool": "pisahvsgabung",
+  "page": "pisahvsgabung/index.html",
+  "conventions": {
+    "money_inputs": "Currency inputs are text fields with thousands separators (#totalSalaryInput, #deductionInput, #husbandSalaryInput, #wifeSalaryInput, #husbandDeductionInput, #wifeDeductionInput, #ptkpBase, #ptkpMarried, #ptkpSpouse, #ptkpDependent). Set them by typing the digits and dispatching input+change events, then blur.",
+    "split_slider": "#splitPct is a range input 0..100 = the wife's share of the household salary in Total mode. Set its value and dispatch input+change.",
+    "dependents": "#dependents is a <select> with values 0..3.",
+    "modes": "#modeBtnTotal = Total + Split % mode (uses #totalSalaryInput, #splitPct, #deductionInput). #modeBtnSplit = Husband + Wife mode (uses the four individual inputs).",
+    "ladder": "The bracket ladder lives in #bracketsContainer as one .bracket-row per bracket, three inputs per row in DOM order: From (auto-filled), To, Rate (%). Rows are numbered 1..n from the top. The last row's To is the open bound. Refer to 'row k To' / 'row k Rate' below. The ladder is on the 'PTKP & Brackets' tab (.ctrl-tab[data-tab=advanced]).",
+    "reading_money": "Read a money figure by stripping everything except digits, '-' and '.', then Number(). Record numbers as JS numbers, not strings. Record the raw text separately where a *_text key is asked for.",
+    "ladder_string": "Where a 'ladder_*' key is asked for, encode the ladder on screen as rows joined by '|', each row 'FROM-TO@RATE' using plain integers with no separators, RATE as printed (e.g. 5 or 5.5), and the open bound written as inf. Example of the format only: '0-1000@1|1000-inf@2'.",
+    "reset": "Every case starts from a fresh page load followed by a click on #resetBtn, then the ladder is checked/edited as the case says. Unless a case says otherwise: #dependents=0, Total mode, #deductionInput=0.",
+    "statutory_ladder_setup": "Where a case says 'ladder = statutory', make the ladder on screen read exactly: row1 0-60000000@5, row2 60000000-250000000@15, row3 250000000-500000000@25, row4 500000000-5000000000@30, row5 5000000000-inf@35, editing rows if the shipped defaults differ. Record whether any edit was needed in the runner notes."
+  },
+  "cases": [
+    {
+      "id": "N1",
+      "title": "50/50 split, 2 dependants, Rp 500M — both branches against a hand-computed PPh 21, and Gross − Deductions = Net",
+      "setup": {
+        "steps": [
+          "Fresh load, click #resetBtn. Before touching the ladder, capture the shipped ladder (ladder_default) and the four PTKP inputs as shipped.",
+          "Set ladder = statutory.",
+          "Inputs tab: #dependents=2, Total mode, #totalSalaryInput=500,000,000, #splitPct=50, #deductionInput=0.",
+          "Capture the state-A observables (suffix _a).",
+          "Then set #deductionInput=20,000,000 and capture the state-B observables (suffix _b), including the per-spouse rows of the 'Pisah Harta Detail' tab at the table row whose salary is Rp 500,000,000."
+        ]
+      },
+      "observe": [
+        { "key": "ladder_default", "what": "The ladder as shipped after Reset, encoded per conventions.ladder_string" },
+        { "key": "ptkp_base_default", "what": "Shipped value of #ptkpBase after Reset, as a number" },
+        { "key": "ptkp_married_default", "what": "Shipped value of #ptkpMarried after Reset" },
+        { "key": "ptkp_spouse_default", "what": "Shipped value of #ptkpSpouse after Reset" },
+        { "key": "ptkp_dependent_default", "what": "Shipped value of #ptkpDependent after Reset" },
+        { "key": "ptkp_h_a", "what": "State A: PTKP (Pisah H) from the position card #posP_ptkpH" },
+        { "key": "ptkp_w_a", "what": "State A: PTKP (Pisah W) from #posP_ptkpW" },
+        { "key": "ptkp_g_a", "what": "State A: PTKP (Gabung) from #posG_ptkp" },
+        { "key": "ptkp_h_adv_a", "what": "State A: the Pisah (H) PTKP shown on the advanced tab in #ptkpHDisplay" },
+        { "key": "ptkp_g_adv_a", "what": "State A: the Gabung PTKP shown in #ptkpGDisplay" },
+        { "key": "kpi_pisah_a", "what": "State A: 'Pisah Harta — Total Tax' KPI #kpiPisah as a number" },
+        { "key": "kpi_gabung_a", "what": "State A: 'Gabung Harta — Total Tax' KPI #kpiGabung" },
+        { "key": "kpi_saving_a", "what": "State A: 'Tax Savings (Cheaper Option)' KPI #kpiSaving, absolute value" },
+        { "key": "kpi_winner_a", "what": "State A: the text under the savings KPI (#kpiWinner) naming the cheaper option" },
+        { "key": "eff_pisah_pct_a", "what": "State A: 'Effective Rate — Pisah' from #posEffPisah, as a percentage number" },
+        { "key": "eff_gabung_pct_a", "what": "State A: 'Effective Rate — Gabung' from #posEffGabung, as a percentage number" },
+        { "key": "husband_tax_a", "what": "State A: the husband's own tax under Pisah, from the Pisah Harta Detail tab row at salary 500,000,000 (or the summary grid if it shows it)" },
+        { "key": "wife_tax_a", "what": "State A: the wife's own tax under Pisah, same source" },
+        { "key": "husband_pkp_a", "what": "State A: the husband's PKP (taxable income) under Pisah, same source; null if not shown" },
+        { "key": "wife_pkp_a", "what": "State A: the wife's PKP under Pisah; null if not shown" },
+        { "key": "gabung_pkp_a", "what": "State A: the joint PKP under Gabung from the Gabung Harta Detail tab row at 500,000,000; null if not shown" },
+        { "key": "kpi_pisah_b", "what": "State B (combined deduction 20,000,000): #kpiPisah" },
+        { "key": "kpi_gabung_b", "what": "State B: #kpiGabung" },
+        { "key": "husband_gross_b", "what": "State B: husband gross salary in the Pisah Harta Detail row at 500,000,000" },
+        { "key": "husband_deduction_b", "what": "State B: husband deduction shown in that row" },
+        { "key": "husband_net_b", "what": "State B: husband net income shown in that row" },
+        { "key": "wife_gross_b", "what": "State B: wife gross in that row" },
+        { "key": "wife_deduction_b", "what": "State B: wife deduction in that row" },
+        { "key": "wife_net_b", "what": "State B: wife net in that row" },
+        { "key": "gross_minus_ded_minus_net_max_b", "what": "State B: max over husband and wife of |gross − deduction − net| computed from the three figures above" }
+      ]
+    },
+    {
+      "id": "C1",
+      "title": "0% and 100% splits waste a PTKP; warning present; 99/1 too",
+      "setup": {
+        "steps": [
+          "Reset, ladder = statutory, #dependents=0, Total mode, #totalSalaryInput=500,000,000, #deductionInput=0.",
+          "State s0: #splitPct=0. State s100: #splitPct=100. State s99: #splitPct=1 (wife 1%). State s50: #splitPct=50.",
+          "For each state capture the KPIs and whether the sidebar warning #capWarning is visible (computed display != none AND non-empty trimmed text)."
+        ]
+      },
+      "observe": [
+        { "key": "kpi_pisah_s0", "what": "#kpiPisah with the wife at 0%" },
+        { "key": "kpi_gabung_s0", "what": "#kpiGabung with the wife at 0%" },
+        { "key": "warning_visible_s0", "what": "true/false: #capWarning visible with text, wife at 0%" },
+        { "key": "warning_text_s0", "what": "Trimmed text of #capWarning at 0% (empty string if hidden)" },
+        { "key": "kpi_pisah_s100", "what": "#kpiPisah with the wife at 100%" },
+        { "key": "kpi_gabung_s100", "what": "#kpiGabung with the wife at 100%" },
+        { "key": "warning_visible_s100", "what": "true/false: #capWarning visible with text, wife at 100%" },
+        { "key": "kpi_pisah_s99", "what": "#kpiPisah with the wife at 1%" },
+        { "key": "kpi_gabung_s99", "what": "#kpiGabung with the wife at 1%" },
+        { "key": "warning_visible_s99", "what": "true/false: #capWarning visible with text, wife at 1%" },
+        { "key": "kpi_pisah_s50", "what": "#kpiPisah at 50%" },
+        { "key": "warning_visible_s50", "what": "true/false: #capWarning visible with text at 50%" }
+      ]
+    },
+    {
+      "id": "C2",
+      "title": "Crossover search: an exact tie at a round salary, and a ladder with two crossings",
+      "setup": {
+        "steps": [
+          "Part A: Reset, ladder = statutory, #dependents=0, Total mode, #totalSalaryInput=500,000,000, #splitPct=30, #deductionInput=0. Read the Crossover Analysis card #crossoverInfo.",
+          "Part B: keep the inputs of Part A, then edit the ladder: set row 3 To = 10,000,000,000 (this should remove the brackets beneath it per the page's own tooltip), then set row 3 Rate = 5 and the last row's Rate = 5. Confirm the ladder on screen and record it. Read #crossoverInfo again and read the Comparison detail table / chart 2 (Gabung − Pisah) across its whole salary range.",
+          "A 'crossover salary' is any household salary at which the card says the cheaper option changes. Parse every Rp figure the card presents as such; if the card says there is no crossover, record null and count 0."
+        ]
+      },
+      "observe": [
+        { "key": "crossover_a", "what": "Part A: the crossover household salary reported by #crossoverInfo (number; null if none)" },
+        { "key": "crossover_a_count", "what": "Part A: how many distinct crossover salaries the card reports" },
+        { "key": "diff_at_crossover_a", "what": "Part A: Gabung − Pisah tax at exactly the reported crossover salary, obtained by temporarily setting #totalSalaryInput to that salary and reading the KPIs (null if no crossover reported)" },
+        { "key": "ladder_b", "what": "Part B: the ladder on screen after the edits, encoded per conventions.ladder_string" },
+        { "key": "kpi_pisah_b", "what": "Part B: #kpiPisah at 500,000,000 / 30%" },
+        { "key": "kpi_gabung_b", "what": "Part B: #kpiGabung at 500,000,000 / 30%" },
+        { "key": "crossover_b_count", "what": "Part B: how many distinct crossover salaries the card reports" },
+        { "key": "crossover_b_first", "what": "Part B: the lowest crossover salary the card reports (null if none)" },
+        { "key": "crossover_b_second", "what": "Part B: the second-lowest crossover salary the card reports (null if fewer than two)" },
+        { "key": "sign_changes_b_series", "what": "Part B: independent of the card, the number of sign changes of the (Gabung − Pisah) series in the Comparison table across its full salary range, counting a change only between strictly positive and strictly negative values (zeros ignored)" }
+      ]
+    },
+    {
+      "id": "C3",
+      "title": "Crossover resolution: reported crossover vs the exact crossing",
+      "setup": {
+        "steps": [
+          "Reset, ladder = statutory, #dependents=0, Total mode, #totalSalaryInput=500,000,000, #splitPct=23, #deductionInput=0.",
+          "Read #crossoverInfo. Also record the salary step of the Comparison detail table (difference between consecutive salary rows near the crossover)."
+        ]
+      },
+      "observe": [
+        { "key": "crossover", "what": "The crossover household salary reported by #crossoverInfo (number; null if none)" },
+        { "key": "table_salary_step", "what": "Difference between two consecutive salary rows of the Comparison detail table nearest the reported crossover" },
+        { "key": "diff_at_crossover_minus", "what": "Gabung − Pisah tax (from the KPIs) after temporarily setting #totalSalaryInput to the reported crossover minus 2,000,000" },
+        { "key": "diff_at_crossover_plus", "what": "Gabung − Pisah tax after temporarily setting #totalSalaryInput to the reported crossover plus 2,000,000" }
+      ]
+    },
+    {
+      "id": "C4",
+      "title": "Bracket editor: collapse to one band, reversed bound, blank mid bound, non-monotonic rates, negative rate, last band forced open",
+      "setup": {
+        "steps": [
+          "Common: Reset, ladder = statutory, #dependents=0, Total mode, #totalSalaryInput=500,000,000, #splitPct=50, #deductionInput=0. Re-run 'Reset + ladder = statutory' before every sub-state below.",
+          "State collapse: set row 1 To = 10,000,000,000.",
+          "State reversed: set row 2 To = 30,000,000 (below its own From).",
+          "State blank: clear row 2 To to an empty string and blur.",
+          "State dip: set row 3 Rate = 5 (rates now 5,15,5,30,35).",
+          "State negative: set row 1 Rate = -5.",
+          "State open: attempt to type 6,000,000,000 into the last row's To; record whether the input is disabled/readonly and what it shows afterwards."
+        ]
+      },
+      "observe": [
+        { "key": "ladder_collapse", "what": "Ladder on screen after the collapse edit, per conventions.ladder_string" },
+        { "key": "kpi_pisah_collapse", "what": "#kpiPisah after the collapse edit" },
+        { "key": "kpi_gabung_collapse", "what": "#kpiGabung after the collapse edit" },
+        { "key": "ladder_to_bounds_reversed", "what": "After the reversed edit: array of the finite To bounds of the rows on screen, top to bottom, as numbers" },
+        { "key": "kpi_pisah_reversed", "what": "#kpiPisah after the reversed edit" },
+        { "key": "kpi_pisah_text_reversed", "what": "Raw text of #kpiPisah after the reversed edit" },
+        { "key": "ladder_to_bounds_blank", "what": "After the blank edit: array of the finite To bounds of the rows on screen" },
+        { "key": "kpi_pisah_text_blank", "what": "Raw text of #kpiPisah after the blank edit" },
+        { "key": "kpi_pisah_blank", "what": "#kpiPisah as a number after the blank edit" },
+        { "key": "kpi_pisah_dip", "what": "#kpiPisah after the dip edit" },
+        { "key": "kpi_gabung_dip", "what": "#kpiGabung after the dip edit" },
+        { "key": "row1_rate_negative", "what": "The value row 1 Rate shows after the negative edit, as a number" },
+        { "key": "kpi_pisah_negative", "what": "#kpiPisah after the negative edit" },
+        { "key": "kpi_gabung_negative", "what": "#kpiGabung after the negative edit" },
+        { "key": "last_to_disabled", "what": "true/false: the last row's To input is disabled or readonly" },
+        { "key": "last_to_text", "what": "The last row's To input value/text after the attempt" },
+        { "key": "ladder_open", "what": "Ladder on screen after the attempt, per conventions.ladder_string" }
+      ]
+    },
+    {
+      "id": "C5",
+      "title": "PKP floors to whole thousands: exact boundary, a hair below, and a floating-point hair below",
+      "setup": {
+        "steps": [
+          "Reset, ladder = statutory, #dependents=0.",
+          "State boundary: Husband + Wife mode, #husbandSalaryInput=118,500,000, #wifeSalaryInput=54,000,000, both deductions 0.",
+          "State hair: same but #husbandSalaryInput=118,499,999.",
+          "State fp: Total mode, #totalSalaryInput=172,500,000, #splitPct=30, #deductionInput=0."
+        ]
+      },
+      "observe": [
+        { "key": "kpi_pisah_boundary", "what": "#kpiPisah in the boundary state" },
+        { "key": "kpi_gabung_boundary", "what": "#kpiGabung in the boundary state" },
+        { "key": "husband_pkp_boundary", "what": "Husband PKP from the Pisah Harta Detail row at salary 172,500,000 (null if PKP is not shown)" },
+        { "key": "kpi_pisah_hair", "what": "#kpiPisah in the hair state" },
+        { "key": "kpi_gabung_hair", "what": "#kpiGabung in the hair state" },
+        { "key": "husband_pkp_hair", "what": "Husband PKP in the hair state from the detail row (null if not shown)" },
+        { "key": "kpi_pisah_fp", "what": "#kpiPisah in the fp state" },
+        { "key": "kpi_gabung_fp", "what": "#kpiGabung in the fp state" },
+        { "key": "husband_pkp_fp", "what": "Husband PKP in the fp state from the detail row at 172,500,000 (null if not shown)" }
+      ]
+    },
+    {
+      "id": "C6",
+      "title": "A deduction above a spouse's gross caps at gross, and the reported deduction is the applied one",
+      "setup": {
+        "steps": [
+          "Reset, ladder = statutory, #dependents=0, Husband + Wife mode.",
+          "#husbandSalaryInput=300,000,000, #wifeSalaryInput=50,000,000, #husbandDeductionInput=0, #wifeDeductionInput=80,000,000."
+        ]
+      },
+      "observe": [
+        { "key": "kpi_pisah", "what": "#kpiPisah" },
+        { "key": "kpi_gabung", "what": "#kpiGabung" },
+        { "key": "wife_deduction_reported", "what": "The wife's deduction as reported anywhere in the results (summary grid or the Pisah Harta Detail row at salary 350,000,000), as a number" },
+        { "key": "wife_net_reported", "what": "The wife's net income as reported in the same place" },
+        { "key": "warning_visible", "what": "true/false: #capWarning visible with non-empty text" },
+        { "key": "wife_deduction_input_after", "what": "Value of #wifeDeductionInput after blur, as a number" }
+      ]
+    },
+    {
+      "id": "C7",
+      "title": "Input mode parity: 300/200 individual equals 500 total at 40% wife, both directions",
+      "setup": {
+        "steps": [
+          "Direction 1: Reset, ladder = statutory, #dependents=0. Click #modeBtnSplit; #husbandSalaryInput=300,000,000; #wifeSalaryInput=200,000,000; deductions 0. Capture *_ind. Then click #modeBtnTotal and capture *_tot_after_ind including the values the total-mode controls now show.",
+          "Direction 2: Reset, ladder = statutory, #dependents=0. Total mode: #totalSalaryInput=500,000,000, #splitPct=40. Capture *_tot. Then click #modeBtnSplit and capture *_ind_after_tot including the values the individual inputs now show."
+        ]
+      },
+      "observe": [
+        { "key": "kpi_pisah_ind", "what": "#kpiPisah in individual mode 300/200" },
+        { "key": "kpi_gabung_ind", "what": "#kpiGabung in individual mode 300/200" },
+        { "key": "combined_label_ind", "what": "#combinedLabel as a number" },
+        { "key": "split_derived_ind", "what": "#splitDerivedLabel as a percentage number" },
+        { "key": "total_input_tot_after_ind", "what": "#totalSalaryInput value as a number after switching to Total mode" },
+        { "key": "split_slider_tot_after_ind", "what": "#splitPct value after switching to Total mode" },
+        { "key": "kpi_pisah_tot_after_ind", "what": "#kpiPisah after switching to Total mode" },
+        { "key": "kpi_pisah_tot", "what": "#kpiPisah in Total mode 500,000,000 at 40%" },
+        { "key": "kpi_gabung_tot", "what": "#kpiGabung in Total mode 500,000,000 at 40%" },
+        { "key": "husband_input_ind_after_tot", "what": "#husbandSalaryInput as a number after switching to individual mode" },
+        { "key": "wife_input_ind_after_tot", "what": "#wifeSalaryInput as a number after switching to individual mode" },
+        { "key": "kpi_pisah_ind_after_tot", "what": "#kpiPisah after switching to individual mode" }
+      ]
+    },
+    {
+      "id": "C8",
+      "title": "The Gabung husband/wife split is presentational: it must reconcile to the single joint tax",
+      "setup": {
+        "steps": [
+          "Reset, ladder = statutory, #dependents=0, Husband + Wife mode, #husbandSalaryInput=300,000,000, #wifeSalaryInput=200,000,000, deductions 0.",
+          "Open the 'Gabung Harta Detail' tab and read the row at salary 500,000,000. If that tab shows per-spouse tax figures under Gabung, record them; if it shows none, record null for the share keys and say so in notes."
+        ]
+      },
+      "observe": [
+        { "key": "gabung_total", "what": "The joint Gabung tax at 500,000,000 from the Gabung Harta Detail row (must be the same quantity as #kpiGabung)" },
+        { "key": "kpi_gabung", "what": "#kpiGabung" },
+        { "key": "gabung_h_share", "what": "Husband's share of the Gabung tax as presented in that row (null if not presented)" },
+        { "key": "gabung_w_share", "what": "Wife's share of the Gabung tax as presented (null if not presented)" },
+        { "key": "gabung_share_sum", "what": "gabung_h_share + gabung_w_share (null if not presented)" },
+        { "key": "gabung_share_min", "what": "min(gabung_h_share, gabung_w_share) (null if not presented)" }
+      ]
+    },
+    {
+      "id": "C9",
+      "title": "PTKP editing: zero, above income, large dependant allowance; all views use the same figures",
+      "setup": {
+        "steps": [
+          "Common: Reset, ladder = statutory, Total mode, #totalSalaryInput=500,000,000, #splitPct=50, #deductionInput=0.",
+          "State zero: #dependents=0; #ptkpBase=0, #ptkpMarried=0, #ptkpSpouse=0, #ptkpDependent=0.",
+          "State above: Reset + statutory again; #dependents=0; #ptkpBase=600,000,000 (others as shipped).",
+          "State large: Reset + statutory again; #dependents=3; #ptkpDependent=100,000,000 (others as shipped).",
+          "In every state read the PTKP figures from the advanced tab (#ptkpHDisplay/#ptkpWDisplay/#ptkpGDisplay), the position card (#posP_ptkpH/#posP_ptkpW/#posG_ptkp) and the Pisah/Gabung detail rows at 500,000,000."
+        ]
+      },
+      "observe": [
+        { "key": "kpi_pisah_zero", "what": "#kpiPisah, state zero" },
+        { "key": "kpi_gabung_zero", "what": "#kpiGabung, state zero" },
+        { "key": "ptkp_g_pos_zero", "what": "#posG_ptkp as a number, state zero" },
+        { "key": "kpi_pisah_above", "what": "#kpiPisah, state above" },
+        { "key": "kpi_gabung_above", "what": "#kpiGabung, state above" },
+        { "key": "eff_pisah_text_above", "what": "Raw text of #posEffPisah, state above" },
+        { "key": "kpi_pisah_text_above", "what": "Raw text of #kpiPisah, state above" },
+        { "key": "kpi_pisah_large", "what": "#kpiPisah, state large" },
+        { "key": "kpi_gabung_large", "what": "#kpiGabung, state large" },
+        { "key": "ptkp_h_pos_large", "what": "#posP_ptkpH, state large" },
+        { "key": "ptkp_w_pos_large", "what": "#posP_ptkpW, state large" },
+        { "key": "ptkp_g_pos_large", "what": "#posG_ptkp, state large" },
+        { "key": "ptkp_h_adv_large", "what": "#ptkpHDisplay, state large" },
+        { "key": "ptkp_g_adv_large", "what": "#ptkpGDisplay, state large" },
+        { "key": "ptkp_h_table_large", "what": "Husband PTKP in the Pisah Harta Detail row at 500,000,000, state large (null if the table has no PTKP column)" },
+        { "key": "ptkp_views_max_spread_large", "what": "State large: max absolute difference among every non-null place the husband PTKP is shown (advanced tab, position card, detail table), and likewise the Gabung PTKP; record the larger of the two spreads" }
+      ]
+    },
+    {
+      "id": "C10",
+      "title": "/id/ parity with /",
+      "setup": {
+        "steps": [
+          "On pisahvsgabung/index.html: Reset, capture the shipped ladder and PTKP inputs, then ladder = statutory, #dependents=2, Total mode, #totalSalaryInput=500,000,000, #splitPct=50, #deductionInput=0. Capture *_en including the crossover salary from #crossoverInfo.",
+          "On pisahvsgabung/id/index.html: same procedure (same DOM ids), capture *_id. Indonesian number formatting may use '.' as thousands separator and ',' as decimal: normalise before Number()."
+        ]
+      },
+      "observe": [
+        { "key": "ladder_default_id", "what": "ID page ladder as shipped after Reset, per conventions.ladder_string" },
+        { "key": "ladder_default_en", "what": "EN page ladder as shipped after Reset" },
+        { "key": "ptkp_base_default_id", "what": "ID page #ptkpBase as shipped" },
+        { "key": "ptkp_spouse_default_id", "what": "ID page #ptkpSpouse as shipped" },
+        { "key": "kpi_pisah_id", "what": "ID page #kpiPisah" },
+        { "key": "kpi_gabung_id", "what": "ID page #kpiGabung" },
+        { "key": "kpi_saving_id", "what": "ID page #kpiSaving absolute value" },
+        { "key": "kpi_pisah_en", "what": "EN page #kpiPisah" },
+        { "key": "kpi_gabung_en", "what": "EN page #kpiGabung" },
+        { "key": "crossover_en_minus_id", "what": "EN crossover salary minus ID crossover salary (null if either page reports none)" },
+        { "key": "lang_toggle_href_id", "what": "The href attribute of #langToggle on the ID page" },
+        { "key": "html_lang_id", "what": "The lang attribute of <html> on the ID page" }
+      ]
+    }
+  ]
+}
