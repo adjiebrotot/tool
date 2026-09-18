@@ -1,0 +1,1187 @@
+{
+  "tool": "rentvsownhouse",
+  "page": "rentvsownhouse/index.html",
+  "baseline": {
+    "procedure": "Open the page fresh (new browser context, empty localStorage), click #resetBtn, then set every control listed below even if it already shows the value. Money inputs (.money-input, e.g. #propertyPrice) accept digits; type the value and blur so a change event fires. Sliders (input[type=range]) must be set to the exact value and dispatch an input event; confirm via the neighbouring .slider-value span. Segmented controls (.seg-group) are set by clicking the .seg-btn whose data-val is given. Do NOT press any Quick Start city button.",
+    "tab_general": {
+      "#currencySymbol": "$",
+      "#riskFreeRate": 4.5,
+      "#initialCash": "(leave blank: the page's own sub-label says it defaults to down payment + setup cost)",
+      "#monthlyBudget": "0 / blank (automatic budget; #budgetIncreaseRow stays hidden)",
+      "#horizon": 30,
+      "#rtbEnabled": "unchecked"
+    },
+    "tab_own": {
+      "#propertyPrice": 800000,
+      "#downPaymentPct": 20,
+      "#mortgageModeGroup": "simple",
+      "#mortgageRate": 6.0,
+      "#mortgageTerm": 30,
+      "#houseGrowth": 5.0,
+      "#ownCostsModeGroup": "simple",
+      "#setupCost": 32000,
+      "#setupCostType": "dollar",
+      "#ownOngoingCost": 6000,
+      "#ownOngoingCostFreq": "yearly",
+      "#ownOngoingCostType": "dollar",
+      "#ownOngoingInflation": 0
+    },
+    "tab_rent": {
+      "#rentAmount": 2800,
+      "#rentFreq": "monthly",
+      "#rentInflation": 3.0,
+      "#rentCostsModeGroup": "simple",
+      "#rentOngoingCost": 1200,
+      "#rentOngoingCostFreq": "yearly",
+      "#rentOngoingCostType": "dollar",
+      "#rentOngoingInflation": 0
+    }
+  },
+  "read_rules": {
+    "series": "Yearly series come from the detail tables (#detailTableWrap; tabs .tab-btn[data-table=own], [data-table=rent], [data-table=rtb]) or, equivalently, from the CSV export (#downloadBtn) - the two must agree. 'Year N' is the row labelled year N, i.e. the state at the END of year N. If a year-0 row exists use it for year-0 quantities; otherwise year-0 cash is: Own = initial cash - down payment - setup cost, Rent (and RTB before purchase) = initial cash, and the year-0 loan balance is the loan taken (property price - down payment).",
+    "outflow": "'outflow' of a path in a year = every amount the path pays out in that year: for Own/RTB-after-purchase the FULL mortgage repayments (interest and principal) plus all ongoing costs (plus a principal/balloon repayment only where an observable says to include it); for Rent, rent plus rent ongoing costs. It is NOT the 'Accum. Cost' figure, which may leave out principal.",
+    "budget": "'budget' of a path in a year = the yearly housing budget the table shows as credited to that path for that year (what the path receives before paying its outflow). If the table has no budget column use the CSV's; if neither exists report null and say so in notes.",
+    "cash": "'cash' = the liquid cash / investment balance of the path at the end of the year (the Liquid Cash series).",
+    "netEquity": "'net equity' of a path at year N = the value the Net Equity series/table shows for that path at year N.",
+    "loanBalance": "'loan balance' at the end of year N = the outstanding mortgage principal shown for that year; if the table shows property value and property equity instead, balance = property value - property equity.",
+    "kpis": "KPI values are parsed from #kpiInitialCash, #kpiBudgetRange (two figures: min and max), #kpiBreakeven and #kpiDiff. Report every currency amount as a plain number (no symbol, no thousands separators, '-' for negatives). For #kpiBreakeven report the integer year; if the KPI says owning never overtakes renting within the horizon (any wording such as a dash, 'Never', 'N/A', 'beyond horizon') report null; if it says owning is ahead from the start report 1.",
+    "residuals": "Observables named '...Residual...' or '...MaxAbs' are computed by the runner from the named page quantities exactly as written, using the risk-free rate entered as rf (e.g. 4.5% -> 0.045).",
+    "nan": "'nanCount' = number of visible KPI values, snapshot tiles, legend/hover entries and table cells whose text contains NaN, Infinity, undefined or null."
+  },
+  "cases": [
+    {
+      "id": "N1",
+      "title": "Baseline: 20% deposit, 30y P&I, 30y horizon",
+      "setup": {
+        "page": "rentvsownhouse/index.html",
+        "start_from": "BASELINE (see contract.baseline) then apply the overrides below",
+        "note": "No overrides: the baseline itself."
+      },
+      "observe": [
+        {
+          "key": "kpiInitialCash",
+          "what": "Number in #kpiInitialCash (starting capital at year 0)."
+        },
+        {
+          "key": "budgetMonthlyMin",
+          "what": "The lower of the two figures in #kpiBudgetRange, expressed per month (if the KPI shows yearly amounts - tell by comparing with the Budget column of the cashflow table - divide by 12)."
+        },
+        {
+          "key": "loanAtStart",
+          "what": "The mortgage principal taken at purchase (Own snapshot, or the year-0 loan balance)."
+        },
+        {
+          "key": "mortgagePaymentMonthly",
+          "what": "The monthly P&I repayment for the loan; if the page reports only yearly repayment totals, the year-1 mortgage repayments divided by 12."
+        },
+        {
+          "key": "mortgagePaidYear1",
+          "what": "Total mortgage repayments (interest + principal) charged to Own in year 1."
+        },
+        {
+          "key": "mortgagePaidYear30",
+          "what": "Total mortgage repayments charged to Own in year 30."
+        },
+        {
+          "key": "loanBalanceEndY1",
+          "what": "Own loan balance at the end of year 1."
+        },
+        {
+          "key": "loanBalanceEndY5",
+          "what": "Own loan balance at the end of year 5."
+        },
+        {
+          "key": "loanBalanceEndY10",
+          "what": "Own loan balance at the end of year 10."
+        },
+        {
+          "key": "loanBalanceEndY15",
+          "what": "Own loan balance at the end of year 15."
+        },
+        {
+          "key": "loanBalanceEndY20",
+          "what": "Own loan balance at the end of year 20."
+        },
+        {
+          "key": "loanBalanceEndY25",
+          "what": "Own loan balance at the end of year 25."
+        },
+        {
+          "key": "loanBalanceEndY29",
+          "what": "Own loan balance at the end of year 29."
+        },
+        {
+          "key": "loanBalanceEndY30",
+          "what": "Own loan balance at the end of year 30."
+        },
+        {
+          "key": "principalPaidTotal",
+          "what": "Sum over years 1..30 of the principal portion of Own's mortgage repayments; if the table shows no principal column, year-0 loan balance minus year-30 loan balance."
+        },
+        {
+          "key": "interestPaidTotal",
+          "what": "Sum over years 1..30 of the interest portion of Own's mortgage repayments; if not shown, total repayments over 30 years minus principalPaidTotal."
+        },
+        {
+          "key": "propertyValueY1",
+          "what": "Own property value at the end of year 1."
+        },
+        {
+          "key": "propertyValueY10",
+          "what": "Own property value at the end of year 10."
+        },
+        {
+          "key": "propertyValueY30",
+          "what": "Own property value at the end of year 30."
+        },
+        {
+          "key": "ownOngoingYear1",
+          "what": "Own ongoing costs charged in year 1."
+        },
+        {
+          "key": "ownOngoingYear30",
+          "what": "Own ongoing costs charged in year 30."
+        },
+        {
+          "key": "ownOutflowYear1",
+          "what": "Own outflow in year 1 (see read_rules.outflow)."
+        },
+        {
+          "key": "ownOutflowYear30",
+          "what": "Own outflow in year 30."
+        },
+        {
+          "key": "rentOutflowYear1",
+          "what": "Rent outflow (rent + rent ongoing costs) in year 1."
+        },
+        {
+          "key": "rentOutflowYear2",
+          "what": "Rent outflow in year 2."
+        },
+        {
+          "key": "rentOutflowYear30",
+          "what": "Rent outflow in year 30."
+        },
+        {
+          "key": "budgetYear1",
+          "what": "Budget credited in year 1 (Own table; must be the same in the Rent table)."
+        },
+        {
+          "key": "ownCashEndY0",
+          "what": "Own cash at year 0 (see read_rules.series)."
+        },
+        {
+          "key": "rentCashEndY0",
+          "what": "Rent cash at year 0."
+        },
+        {
+          "key": "ownCashEndY1",
+          "what": "Own cash at the end of year 1."
+        },
+        {
+          "key": "rentCashEndY1",
+          "what": "Rent cash at the end of year 1."
+        },
+        {
+          "key": "ownCashIdentityResidualMaxAbs",
+          "what": "max over years t=1..30 of | ownCash_t - ( ownCash_(t-1) x (1 + rf) + budget_t - ownOutflow_t ) |, with rf = 0.045 and ownCash_0 as defined in read_rules.series."
+        },
+        {
+          "key": "rentCashIdentityResidualMaxAbs",
+          "what": "max over years t=1..30 of | rentCash_t - ( rentCash_(t-1) x (1 + rf) + budget_t - rentOutflow_t ) |."
+        },
+        {
+          "key": "ownTerminalResidual",
+          "what": "ownNetEquity_30 - ( propertyValue_30 - loanBalance_30 + ownCash_30 )."
+        },
+        {
+          "key": "rentTerminalResidual",
+          "what": "rentNetEquity_30 - rentCash_30."
+        },
+        {
+          "key": "nanCount",
+          "what": "See read_rules.nan, over the whole page in this state."
+        }
+      ]
+    },
+    {
+      "id": "R1",
+      "title": "Budget parity across own / rent / rent-then-buy in every mode",
+      "setup": {
+        "page": "rentvsownhouse/index.html",
+        "start_from": "BASELINE (see contract.baseline) then apply the overrides below",
+        "overrides": {
+          "A": {
+            "(baseline)": "automatic budget, RTB off"
+          },
+          "B": {
+            "#monthlyBudget": 5000,
+            "#monthlyBudgetIncrease": 2.0,
+            "note": "#budgetIncreaseRow becomes visible once a budget is entered"
+          },
+          "C": {
+            "#rtbEnabled": "checked",
+            "#rtbBuyYear": 5,
+            "#monthlyBudget": "0 / blank (auto)"
+          },
+          "D": {
+            "#rtbEnabled": "checked",
+            "#rtbBuyYear": 5,
+            "#monthlyBudget": 5000,
+            "#monthlyBudgetIncrease": 2.0
+          }
+        },
+        "note": "Read the Budget column of each cashflow table (Own, Rent, and Rent-Then-Buy where #rtbTableTab is visible)."
+      },
+      "observe": [
+        {
+          "key": "A_budgetDiffMaxAbs",
+          "what": "Sub-case A (auto budget): max over years 1..30 of | budget shown in the Own Cashflow table - budget shown in the Rent Cashflow table |."
+        },
+        {
+          "key": "A_budgetYear1",
+          "what": "Sub-case A: budget credited in year 1."
+        },
+        {
+          "key": "A_budgetEqualsMaxOfOutflowsMaxAbs",
+          "what": "Sub-case A: max over years 1..30 of | budget_t - max(ownOutflow_t, rentOutflow_t) |."
+        },
+        {
+          "key": "B_budgetDiffMaxAbs",
+          "what": "Sub-case B (explicit budget): max over years 1..30 of | Own budget_t - Rent budget_t |."
+        },
+        {
+          "key": "B_budgetYear1",
+          "what": "Sub-case B: budget credited in year 1."
+        },
+        {
+          "key": "B_budgetYear2",
+          "what": "Sub-case B: budget credited in year 2."
+        },
+        {
+          "key": "B_budgetYear3",
+          "what": "Sub-case B: budget credited in year 3."
+        },
+        {
+          "key": "B_budgetYear30",
+          "what": "Sub-case B: budget credited in year 30."
+        },
+        {
+          "key": "B_kpiBudgetMonthlyMin",
+          "what": "Sub-case B: lower figure of #kpiBudgetRange per month (divide by 12 if yearly, see N1.budgetMonthlyMin)."
+        },
+        {
+          "key": "B_kpiBudgetMonthlyMax",
+          "what": "Sub-case B: higher figure of #kpiBudgetRange per month."
+        },
+        {
+          "key": "C_budgetDiffMaxAbs",
+          "what": "Sub-case C (RTB on, auto budget): max over years 1..30 and over the three tables (Own, Rent, Rent-Then-Buy) of the largest pairwise | budget difference | in that year."
+        },
+        {
+          "key": "D_budgetDiffMaxAbs",
+          "what": "Sub-case D (RTB on, explicit budget): same three-way comparison."
+        },
+        {
+          "key": "D_budgetYear30",
+          "what": "Sub-case D: budget credited in year 30 in the Rent-Then-Buy table."
+        }
+      ]
+    },
+    {
+      "id": "R2",
+      "title": "Negative cash compounds at the risk-free rate; warning fires only below both sides",
+      "setup": {
+        "page": "rentvsownhouse/index.html",
+        "start_from": "BASELINE (see contract.baseline) then apply the overrides below",
+        "overrides": {
+          "A": {
+            "#monthlyBudget": 3500,
+            "#monthlyBudgetIncrease": 0
+          },
+          "B": {
+            "#monthlyBudget": 2000,
+            "#monthlyBudgetIncrease": 0
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "A_ownCashEndY1",
+          "what": "Sub-case A: Own cash at the end of year 1."
+        },
+        {
+          "key": "A_ownCashEndY2",
+          "what": "Sub-case A: Own cash at the end of year 2."
+        },
+        {
+          "key": "A_ownCashEndY5",
+          "what": "Sub-case A: Own cash at the end of year 5."
+        },
+        {
+          "key": "A_ownCashEndY30",
+          "what": "Sub-case A: Own cash at the end of year 30."
+        },
+        {
+          "key": "A_ownCashYears1to5",
+          "what": "Sub-case A: array of Own cash at the end of years 1,2,3,4,5 in order."
+        },
+        {
+          "key": "A_ownCashIdentityResidualMaxAbs",
+          "what": "Sub-case A: max over t=1..30 of | ownCash_t - ( ownCash_(t-1) x 1.045 + budget_t - ownOutflow_t ) |."
+        },
+        {
+          "key": "A_rentCashEndY1",
+          "what": "Sub-case A: Rent cash at the end of year 1."
+        },
+        {
+          "key": "A_rentCashEndY30",
+          "what": "Sub-case A: Rent cash at the end of year 30."
+        },
+        {
+          "key": "A_warningBannerText",
+          "what": "Sub-case A: trimmed text content of #warningBanner (empty string if hidden or empty)."
+        },
+        {
+          "key": "B_ownCashEndY1",
+          "what": "Sub-case B: Own cash at the end of year 1."
+        },
+        {
+          "key": "B_rentCashEndY1",
+          "what": "Sub-case B: Rent cash at the end of year 1."
+        },
+        {
+          "key": "B_warningBannerText",
+          "what": "Sub-case B: trimmed text content of #warningBanner (empty string if hidden or empty)."
+        }
+      ]
+    },
+    {
+      "id": "R3",
+      "title": "Terminal value is gross of selling costs and CGT",
+      "setup": {
+        "page": "rentvsownhouse/index.html",
+        "start_from": "BASELINE (see contract.baseline) then apply the overrides below",
+        "note": "Baseline, no overrides."
+      },
+      "observe": [
+        {
+          "key": "propertyValueFinal",
+          "what": "Own property value at year 30."
+        },
+        {
+          "key": "loanBalanceFinal",
+          "what": "Own loan balance at year 30."
+        },
+        {
+          "key": "ownCashFinal",
+          "what": "Own cash at year 30."
+        },
+        {
+          "key": "ownNetEquityFinal",
+          "what": "Own net equity at year 30."
+        },
+        {
+          "key": "rentCashFinal",
+          "what": "Rent cash at year 30."
+        },
+        {
+          "key": "rentNetEquityFinal",
+          "what": "Rent net equity at year 30."
+        },
+        {
+          "key": "ownTerminalResidual",
+          "what": "ownNetEquityFinal - ( propertyValueFinal - loanBalanceFinal + ownCashFinal )."
+        },
+        {
+          "key": "rentTerminalResidual",
+          "what": "rentNetEquityFinal - rentCashFinal."
+        },
+        {
+          "key": "ownEquityExCashFinal",
+          "what": "ownNetEquityFinal - ownCashFinal."
+        },
+        {
+          "key": "kpiDiffMinusFinalDelta",
+          "what": "Number in #kpiDiff minus ( ownNetEquityFinal - rentNetEquityFinal )."
+        }
+      ]
+    },
+    {
+      "id": "R4",
+      "title": "Past the mortgage term: interest-only balloon, and P&I payments stop",
+      "setup": {
+        "page": "rentvsownhouse/index.html",
+        "start_from": "BASELINE (see contract.baseline) then apply the overrides below",
+        "overrides": {
+          "A": {
+            "#horizon": 15,
+            "#mortgageTerm": 10,
+            "#monthlyBudget": 5000,
+            "#monthlyBudgetIncrease": 0,
+            "#mortgageModeGroup": "detailed",
+            "mortgageType radio": "io",
+            "#costInterestOnly": "leave checked",
+            "#mortgageRate": 6.0,
+            "rate schedule": "exactly one period covering loan years 1-10 (the full term) at a fixed 6.0% (if the row is floating, set low = mid = high = 6.0)"
+          },
+          "B": {
+            "#horizon": 15,
+            "#mortgageTerm": 10,
+            "#monthlyBudget": 8000,
+            "#monthlyBudgetIncrease": 0,
+            "#mortgageModeGroup": "simple",
+            "#mortgageRate": 6.0
+          }
+        },
+        "note": "Detailed mortgage mode (#mortgageModeGroup data-val=detailed) reveals #mortgageTypeRow (radios name=mortgageType value pi|io, checkbox #costInterestOnly) and #rateScheduleRow. Each period is a .rate-period-row inside #ratePeriodRows: its year bounds are the .rp-years from-year and .rp-to to-year fields, its rates block is either .rp-fixed-wrap (one fixed % rate) or .rp-float-wrap (a floating band with low / mid / high % rates, in that order of labels), and .rp-delete removes the row; #addRatePeriod appends a row. Years are loan years counted from 1. If the row layout differs from this description, identify the fields by their labels/placeholders and record the actual labels in the notes; also keep the plain #mortgageRate slider at the case's base rate."
+      },
+      "observe": [
+        {
+          "key": "A_mortgagePaidYear5",
+          "what": "Sub-case A (interest-only): mortgage payments charged in year 5."
+        },
+        {
+          "key": "A_loanBalanceEndY9",
+          "what": "Sub-case A: loan balance at the end of year 9."
+        },
+        {
+          "key": "A_loanBalanceEndY10",
+          "what": "Sub-case A: loan balance at the end of year 10 (the last year of the term)."
+        },
+        {
+          "key": "A_loanBalanceEndY12",
+          "what": "Sub-case A: loan balance at the end of year 12."
+        },
+        {
+          "key": "A_mortgagePaidYear12",
+          "what": "Sub-case A: mortgage payments charged in year 12 (0 if none)."
+        },
+        {
+          "key": "A_ownOutflowYear12",
+          "what": "Sub-case A: Own outflow in year 12."
+        },
+        {
+          "key": "A_ownCashEndY9",
+          "what": "Sub-case A: Own cash at the end of year 9."
+        },
+        {
+          "key": "A_balloonResidualY10",
+          "what": "Sub-case A: ownCash_10 - ( ownCash_9 x 1.045 + budget_10 - ( regular interest payments in year 10 + ongoing costs in year 10 ) ), i.e. the year-10 identity computed WITHOUT any principal/balloon repayment in the outflow; if the table lumps a principal repayment into the year-10 mortgage column, use 12 x the monthly interest-only payment as the regular payments."
+        },
+        {
+          "key": "A_ownCashEndY10",
+          "what": "Sub-case A: Own cash at the end of year 10."
+        },
+        {
+          "key": "A_ownNetEquityResidualY10",
+          "what": "Sub-case A: ownNetEquity_10 - ( propertyValue_10 - loanBalance_10 + ownCash_10 )."
+        },
+        {
+          "key": "A_ownCashIdentityResidualMaxAbsExY10",
+          "what": "Sub-case A: max over t in 1..9 and 11..15 of | ownCash_t - ( ownCash_(t-1) x 1.045 + budget_t - ownOutflow_t ) |."
+        },
+        {
+          "key": "A_ownCashEndY15",
+          "what": "Sub-case A: Own cash at the end of year 15."
+        },
+        {
+          "key": "B_mortgagePaymentMonthly",
+          "what": "Sub-case B (P&I, 10-year term): monthly repayment (year-1 total / 12 if only yearly is shown)."
+        },
+        {
+          "key": "B_mortgagePaidYear10",
+          "what": "Sub-case B: mortgage payments charged in year 10."
+        },
+        {
+          "key": "B_loanBalanceEndY10",
+          "what": "Sub-case B: loan balance at the end of year 10."
+        },
+        {
+          "key": "B_mortgagePaidYear11",
+          "what": "Sub-case B: mortgage payments charged in year 11 (0 if none)."
+        },
+        {
+          "key": "B_ownOutflowYear12",
+          "what": "Sub-case B: Own outflow in year 12."
+        },
+        {
+          "key": "B_principalPaidTotal",
+          "what": "Sub-case B: sum of principal repaid over years 1..15 (or year-0 balance minus year-15 balance)."
+        },
+        {
+          "key": "B_ownCashEndY10",
+          "what": "Sub-case B: Own cash at the end of year 10."
+        },
+        {
+          "key": "B_ownCashY11MinusY10Compounded",
+          "what": "Sub-case B: ownCash_11 - ownCash_10 x 1.045."
+        },
+        {
+          "key": "B_ownCashEndY15",
+          "what": "Sub-case B: Own cash at the end of year 15."
+        },
+        {
+          "key": "B_ownCashIdentityResidualMaxAbs",
+          "what": "Sub-case B: max over t=1..15 of | ownCash_t - ( ownCash_(t-1) x 1.045 + budget_t - ownOutflow_t ) |."
+        }
+      ]
+    },
+    {
+      "id": "R5",
+      "title": "Floating low/mid/high band is monotone in the verdict",
+      "setup": {
+        "page": "rentvsownhouse/index.html",
+        "start_from": "BASELINE (see contract.baseline) then apply the overrides below",
+        "overrides": {
+          "#mortgageModeGroup": "detailed",
+          "mortgageType radio": "pi",
+          "#mortgageRate": 6.0,
+          "rate schedule": "exactly one period, loan years 1-30, switched to floating (.rp-float-wrap) with low 5.0 / mid 6.0 / high 7.0",
+          "#monthlyBudget": "0 / blank (auto)"
+        },
+        "note": "Detailed mortgage mode (#mortgageModeGroup data-val=detailed) reveals #mortgageTypeRow (radios name=mortgageType value pi|io, checkbox #costInterestOnly) and #rateScheduleRow. Each period is a .rate-period-row inside #ratePeriodRows: its year bounds are the .rp-years from-year and .rp-to to-year fields, its rates block is either .rp-fixed-wrap (one fixed % rate) or .rp-float-wrap (a floating band with low / mid / high % rates, in that order of labels), and .rp-delete removes the row; #addRatePeriod appends a row. Years are loan years counted from 1. If the row layout differs from this description, identify the fields by their labels/placeholders and record the actual labels in the notes; also keep the plain #mortgageRate slider at the case's base rate."
+      },
+      "observe": [
+        {
+          "key": "verdictBandLowMidHigh",
+          "what": "Array [low, mid, high] of the final-year (year 30) Own net equity minus Rent net equity for the low, mid and high paths of the floating band, as the page itself reports them (band values in the Own snapshot, the Equity Difference KPI range, the hover box on the last year of the Net Equity chart, or the CSV band columns - record where you read them). Only if the page exposes no per-path figures at all: set the row to fixed 5.0, then 6.0, then 7.0 and read #kpiDiff each time, and say so in notes."
+        },
+        {
+          "key": "verdictBandCount",
+          "what": "Number of distinct paths for which a verdict was obtained (should be 3)."
+        }
+      ]
+    },
+    {
+      "id": "R6",
+      "title": "Rate period editing: past-term, overlaps, reversed bounds, term shortened, band backwards",
+      "setup": {
+        "page": "rentvsownhouse/index.html",
+        "start_from": "BASELINE (see contract.baseline) then apply the overrides below",
+        "overrides": {
+          "#mortgageModeGroup": "detailed",
+          "mortgageType radio": "pi",
+          "#mortgageRate": 6.0,
+          "#mortgageTerm": 30,
+          "#horizon": 30,
+          "#monthlyBudget": "0 / blank (auto)",
+          "base schedule": "exactly one fixed period, loan years 1-30, 6.0%; before each edit restore this base"
+        },
+        "note": "Detailed mortgage mode (#mortgageModeGroup data-val=detailed) reveals #mortgageTypeRow (radios name=mortgageType value pi|io, checkbox #costInterestOnly) and #rateScheduleRow. Each period is a .rate-period-row inside #ratePeriodRows: its year bounds are the .rp-years from-year and .rp-to to-year fields, its rates block is either .rp-fixed-wrap (one fixed % rate) or .rp-float-wrap (a floating band with low / mid / high % rates, in that order of labels), and .rp-delete removes the row; #addRatePeriod appends a row. Years are loan years counted from 1. If the row layout differs from this description, identify the fields by their labels/placeholders and record the actual labels in the notes; also keep the plain #mortgageRate slider at the case's base rate."
+      },
+      "observe": [
+        {
+          "key": "kpiDiffBase",
+          "what": "Base schedule (one fixed period years 1-30 at 6.0%): number in #kpiDiff."
+        },
+        {
+          "key": "pastTermMinusBase",
+          "what": "Edit 1: add a second fixed period years 31-35 at 9.0% (term stays 30). #kpiDiff after the edit minus kpiDiffBase."
+        },
+        {
+          "key": "overlapResolution",
+          "what": "Edit 2 (fresh base, then): periods [1-10 @ 6.0], [5-15 @ 8.0], [16-30 @ 6.0], all fixed. Classify the resulting #kpiDiff: 'later-wins' if it equals (within 1) the #kpiDiff of the non-overlapping schedule [1-4 @ 6.0],[5-15 @ 8.0],[16-30 @ 6.0]; 'first-wins' if it equals that of [1-10 @ 6.0],[11-15 @ 8.0],[16-30 @ 6.0]; 'rejected' if the page refused the overlapping entry (validation message, bounds auto-corrected, or the row reverted) and the value equals kpiDiffBase; otherwise 'other'. Record the three values and any message in notes."
+        },
+        {
+          "key": "reversedResolution",
+          "what": "Edit 3 (fresh base, then): periods [1-4 @ 6.0], one entered with from-year 10 and to-year 5 at 8.0, [11-30 @ 6.0]. Classify #kpiDiff: 'normalised' if it equals (within 1) the #kpiDiff of [1-4 @ 6.0],[5-10 @ 8.0],[11-30 @ 6.0]; 'rejected' if the page refused or ignored the reversed period and the value equals kpiDiffBase; otherwise 'other'."
+        },
+        {
+          "key": "termShortenedMinusTruncated",
+          "what": "Edit 4 (fresh base, then): periods [1-15 @ 6.0], [16-30 @ 8.0]; THEN set #mortgageTerm to 15. #kpiDiff after that, minus the #kpiDiff of a fresh setup with #mortgageTerm 15 and a single period [1-15 @ 6.0]."
+        },
+        {
+          "key": "bandBackwardsSortedDiffMaxAbs",
+          "what": "Edit 5 (fresh base, then): one floating period 1-30 entered with low 7.0 / mid 6.0 / high 5.0 (backwards). Take the three band verdicts (as in R5.verdictBandLowMidHigh), sort them ascending; do the same for the band entered as low 5.0 / mid 6.0 / high 7.0; report the largest absolute element-wise difference. If the page refuses the backwards entry, report the difference against whatever it kept."
+        },
+        {
+          "key": "nanCountAcrossEdits",
+          "what": "Sum of nanCount (read_rules.nan) observed after each of the five edits."
+        }
+      ]
+    },
+    {
+      "id": "R7",
+      "title": "Rent-then-buy transition conserves money; edge buy years and cash levels",
+      "setup": {
+        "page": "rentvsownhouse/index.html",
+        "start_from": "BASELINE (see contract.baseline) then apply the overrides below",
+        "overrides": {
+          "A": {
+            "#rtbEnabled": "checked",
+            "#rtbBuyYear": 5,
+            "#monthlyBudget": 5000,
+            "#monthlyBudgetIncrease": 0
+          },
+          "B": {
+            "#rtbEnabled": "checked",
+            "#rtbBuyYear": 5,
+            "#initialCash": 10000,
+            "#monthlyBudget": 3000,
+            "#monthlyBudgetIncrease": 0
+          },
+          "C": {
+            "#rtbEnabled": "checked",
+            "#rtbBuyYear": 5,
+            "#initialCash": 2000000,
+            "#monthlyBudget": 5000,
+            "#monthlyBudgetIncrease": 0
+          },
+          "D": {
+            "#rtbEnabled": "checked",
+            "#rtbBuyYear": 1,
+            "#monthlyBudget": 5000,
+            "#monthlyBudgetIncrease": 0
+          },
+          "E": {
+            "#rtbEnabled": "checked",
+            "#rtbBuyYear": 30,
+            "#horizon": 30,
+            "#monthlyBudget": 5000,
+            "#monthlyBudgetIncrease": 0
+          },
+          "F": {
+            "#monthlyBudget": 5000,
+            "#monthlyBudgetIncrease": 0,
+            "#rtbBuyYear": 5,
+            "#rtbEnabled": "checked, then unchecked (two readings)"
+          }
+        },
+        "note": "The RTB table is the .tab-btn[data-table=rtb] tab (#rtbTableTab becomes visible when #rtbEnabled is checked); the RTB snapshot is #rtbSummary. 'Buy at Year N' means N years of renting first, so the purchase happens at the end of year N / start of year N+1."
+      },
+      "observe": [
+        {
+          "key": "A_rtbMinusRentCashMaxAbsY1to5",
+          "what": "Sub-case A: max over years 1..5 of | RTB cash_t - Rent cash_t | where, for year 5, RTB cash is the figure BEFORE the purchase outlay if the table shows it (otherwise skip year 5 and say so)."
+        },
+        {
+          "key": "A_rtbPurchasePrice",
+          "what": "Sub-case A: the price the RTB path pays for the property (RTB snapshot if shown; otherwise the RTB table's property value in year 6 divided by 1.05)."
+        },
+        {
+          "key": "A_rtbLoanAtPurchase",
+          "what": "Sub-case A: the loan the RTB path takes at purchase (RTB snapshot; otherwise the RTB loan balance shown before any repayment, or the year-6 balance is NOT acceptable - state how it was obtained)."
+        },
+        {
+          "key": "A_rtbMortgagePaidYear6",
+          "what": "Sub-case A: mortgage repayments charged to the RTB path in year 6."
+        },
+        {
+          "key": "A_rtbPropertyValueY6",
+          "what": "Sub-case A: RTB property value at the end of year 6."
+        },
+        {
+          "key": "A_rtbLoanBalanceEndY6",
+          "what": "Sub-case A: RTB loan balance at the end of year 6."
+        },
+        {
+          "key": "A_rtbConservationResidualY6",
+          "what": "Sub-case A: rtbCash_6 - ( rentCash_5 x 1.045 + budget_6 - rtbOutflow_6 ), where rentCash_5 is the Rent path's cash at the end of year 5 (identical to RTB's pre-purchase cash) and rtbOutflow_6 = mortgage repayments + ongoing costs in year 6 (purchase outlay excluded)."
+        },
+        {
+          "key": "A_rtbNetEquityResidualY6",
+          "what": "Sub-case A: rtbNetEquity_6 - ( rtbPropertyValue_6 - rtbLoanBalance_6 + rtbCash_6 )."
+        },
+        {
+          "key": "A_rtbCashEndY6",
+          "what": "Sub-case A: RTB cash at the end of year 6."
+        },
+        {
+          "key": "A_rtbCashIdentityResidualMaxAbsY7toEnd",
+          "what": "Sub-case A: max over t=7..30 of | rtbCash_t - ( rtbCash_(t-1) x 1.045 + budget_t - rtbOutflow_t ) |."
+        },
+        {
+          "key": "B_rentCashEndY5",
+          "what": "Sub-case B (insufficient cash): Rent cash at the end of year 5."
+        },
+        {
+          "key": "B_rtbCashEndY6",
+          "what": "Sub-case B: RTB cash at the end of year 6."
+        },
+        {
+          "key": "B_rtbConservationResidualY6",
+          "what": "Sub-case B: as A_rtbConservationResidualY6."
+        },
+        {
+          "key": "B_rtbLoanAtPurchase",
+          "what": "Sub-case B: as A_rtbLoanAtPurchase."
+        },
+        {
+          "key": "C_kpiInitialCash",
+          "what": "Sub-case C (cash above the whole house): number in #kpiInitialCash."
+        },
+        {
+          "key": "C_ownCashEndY0",
+          "what": "Sub-case C: Own cash at year 0."
+        },
+        {
+          "key": "C_ownCashEndY1",
+          "what": "Sub-case C: Own cash at the end of year 1."
+        },
+        {
+          "key": "C_rtbLoanAtPurchase",
+          "what": "Sub-case C: as A_rtbLoanAtPurchase."
+        },
+        {
+          "key": "C_rtbCashEndY6",
+          "what": "Sub-case C: RTB cash at the end of year 6."
+        },
+        {
+          "key": "C_rtbConservationResidualY6",
+          "what": "Sub-case C: as A_rtbConservationResidualY6."
+        },
+        {
+          "key": "D_rtbPurchasePrice",
+          "what": "Sub-case D (buy at year 1): as A_rtbPurchasePrice but using year 2 / 1.05 as the fallback."
+        },
+        {
+          "key": "D_rtbLoanAtPurchase",
+          "what": "Sub-case D: as A_rtbLoanAtPurchase."
+        },
+        {
+          "key": "D_rtbMortgagePaidYear2",
+          "what": "Sub-case D: RTB mortgage repayments charged in year 2."
+        },
+        {
+          "key": "D_rtbMinusRentCashY1",
+          "what": "Sub-case D: RTB cash at the end of year 1 (pre-purchase figure if shown, else skip and say so) minus Rent cash at the end of year 1."
+        },
+        {
+          "key": "D_rtbConservationResidualY2",
+          "what": "Sub-case D: rtbCash_2 - ( rentCash_1 x 1.045 + budget_2 - rtbOutflow_2 )."
+        },
+        {
+          "key": "D_rtbCashEndY2",
+          "what": "Sub-case D: RTB cash at the end of year 2."
+        },
+        {
+          "key": "E_rtbMinusRentCashMaxAbsY1to29",
+          "what": "Sub-case E (buy year = horizon = 30): max over years 1..29 of | RTB cash_t - Rent cash_t |."
+        },
+        {
+          "key": "E_rtbNetEquityY30MinusRent",
+          "what": "Sub-case E: RTB net equity at year 30 minus Rent net equity at year 30."
+        },
+        {
+          "key": "E_nanCount",
+          "what": "Sub-case E: nanCount over the page."
+        },
+        {
+          "key": "F_ownNetEquityY30RtbOnMinusOff",
+          "what": "Sub-case F: with the explicit budget of A, Own net equity at year 30 with #rtbEnabled checked (buy year 5) minus the same with #rtbEnabled unchecked."
+        },
+        {
+          "key": "F_rentNetEquityY30RtbOnMinusOff",
+          "what": "Sub-case F: same for Rent net equity at year 30."
+        }
+      ]
+    },
+    {
+      "id": "R8",
+      "title": "Breakeven year: first crossing only; double crossing, no crossing, ahead at year 1",
+      "setup": {
+        "page": "rentvsownhouse/index.html",
+        "start_from": "BASELINE (see contract.baseline) then apply the overrides below",
+        "overrides": {
+          "A": {
+            "#houseGrowth": 10.0
+          },
+          "B": {
+            "#houseGrowth": -5.0,
+            "#rentInflation": 0.0
+          },
+          "C": {
+            "#houseGrowth": 1.0,
+            "#riskFreeRate": 4.5,
+            "#rentAmount": 5500,
+            "#rentFreq": "monthly",
+            "#rentInflation": -6.0,
+            "#monthlyBudget": 5000,
+            "#monthlyBudgetIncrease": 0
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "A_breakevenYear",
+          "what": "Sub-case A: breakeven year from #kpiBreakeven (see read_rules.kpis)."
+        },
+        {
+          "key": "A_ownMinusRentNetEquityY1",
+          "what": "Sub-case A: Own net equity minus Rent net equity at the end of year 1."
+        },
+        {
+          "key": "B_breakevenYear",
+          "what": "Sub-case B: breakeven year from #kpiBreakeven."
+        },
+        {
+          "key": "B_ownMinusRentNetEquityY30",
+          "what": "Sub-case B: Own minus Rent net equity at year 30."
+        },
+        {
+          "key": "C_ownMinusRentNetEquityByYear",
+          "what": "Sub-case C: array over years 0..30 of Own net equity minus Rent net equity (year 0 per read_rules.series: Own = value - loan + cash, Rent = cash)."
+        },
+        {
+          "key": "C_crossingCount",
+          "what": "Sub-case C: number of strict sign changes in C_ownMinusRentNetEquityByYear (a change from <=0 to >0 or from >=0 to <0 between consecutive years)."
+        },
+        {
+          "key": "C_firstOvertakeYearFromSeries",
+          "what": "Sub-case C: the first year t >= 1 at which the array is > 0 while the previous year's value is <= 0."
+        },
+        {
+          "key": "C_breakevenYear",
+          "what": "Sub-case C: breakeven year from #kpiBreakeven."
+        },
+        {
+          "key": "C_breakevenMinusFirstOvertake",
+          "what": "Sub-case C: C_breakevenYear - C_firstOvertakeYearFromSeries (null if either is null)."
+        },
+        {
+          "key": "C_ownMinusRentNetEquityY8",
+          "what": "Sub-case C: Own minus Rent net equity at year 8."
+        },
+        {
+          "key": "C_ownMinusRentNetEquityY30",
+          "what": "Sub-case C: Own minus Rent net equity at year 30."
+        }
+      ]
+    },
+    {
+      "id": "R9",
+      "title": "Sensitivity page parity with the main page (mid rate, no RTB, auto budget)",
+      "setup": {
+        "page": "rentvsownhouse/sensitivity/index.html. The scenario table is rendered inside #tableWrap as table.dt: one column per scenario (header .scen-th with .scen-name-input; cells .scen-td), one row per parameter (label in .label-td, unit in .unit-td, controls .param-input / .param-select / .param-bool; Simple/Detailed toggles are the .mode-seg rows and apply to all scenarios; rate periods and cost items are .dcell blocks). Output rows are tr.out-own (Own), tr.out-rent (Rent) and tr.out-delta (Own minus Rent) for the metric chosen in #metricGroup (data-metric netEquity | cash | cost) at the year in #yearInput. Scenarios are added / removed / duplicated with .btn-add / .btn-remove / .btn-dupe; each scenario also has a .scen-actions row that downloads its Own and Rent cashflow. Use exactly ONE scenario column (remove or ignore the others) and enter into it the same inputs as the main page, field by field, matching the labels of the main page's controls; leave every mode toggle on Simple unless the case says otherwise. Any main-page input that has no counterpart on the sensitivity page must be left at its baseline value on the main page and recorded in the notes.",
+        "main_page_state": "rentvsownhouse/index.html at BASELINE for sub-case A. Sub-case B: BASELINE plus #mortgageModeGroup detailed, P&I, one floating period years 1-30 with low 5.0 / mid 6.0 / high 7.0 (see R5). Auto budget and RTB off on the main page in both sub-cases.",
+        "sensitivity_state": "Sub-case A: one scenario with the BASELINE inputs (price 800000, down payment 20%, rate 6.0, term 30, growth 5.0, risk-free 4.5, setup 32000 $, own ongoing 6000/yr $, rent 2800/month, rent inflation 3.0, rent ongoing 1200/yr $, horizon 30, budget automatic/blank, all inflations 0). Sub-case B: the same scenario but with the mortgage in the mode that accepts a period schedule, one period years 1-30 with low 5.0 / mid 6.0 / high 7.0; if the sensitivity page accepts only one rate per period enter 6.0 and say so. Set #currencySelect to $ and #metricGroup / #yearInput as each observable says.",
+        "note": "Read the outputs from tr.out-own / tr.out-rent / tr.out-delta in the scenario's .scen-td column. Where a value is also downloadable via the scenario's .scen-actions cashflow, the two must agree."
+      },
+      "observe": [
+        {
+          "key": "A_sensOwnNetEquityY30",
+          "what": "Sub-case A: sensitivity page, metric Net Equity, #yearInput 30: the Own value (tr.out-own) in the scenario column."
+        },
+        {
+          "key": "A_ownNetEquityY30MainMinusSens",
+          "what": "Sub-case A: main page Own net equity at year 30 minus A_sensOwnNetEquityY30."
+        },
+        {
+          "key": "A_rentNetEquityY30MainMinusSens",
+          "what": "Sub-case A: main page Rent net equity at year 30 minus the sensitivity Rent value (tr.out-rent), Net Equity, year 30."
+        },
+        {
+          "key": "A_deltaY30MainMinusSens",
+          "what": "Sub-case A: number in the main page's #kpiDiff minus the sensitivity Delta value (tr.out-delta), Net Equity, year 30."
+        },
+        {
+          "key": "A_ownCashY30MainMinusSens",
+          "what": "Sub-case A: main Own cash at year 30 minus sensitivity Own value with metric Liquid Cash, year 30."
+        },
+        {
+          "key": "A_rentCashY30MainMinusSens",
+          "what": "Sub-case A: main Rent cash at year 30 minus sensitivity Rent value, Liquid Cash, year 30."
+        },
+        {
+          "key": "A_ownCostY30MainMinusSens",
+          "what": "Sub-case A: main Own accumulated cost at year 30 (the Accum. Cost series) minus sensitivity Own value, Accum. Cost, year 30."
+        },
+        {
+          "key": "A_rentCostY30MainMinusSens",
+          "what": "Sub-case A: main Rent accumulated cost at year 30 minus sensitivity Rent value, Accum. Cost, year 30."
+        },
+        {
+          "key": "A_ownNetEquityY10MainMinusSens",
+          "what": "Sub-case A: main Own net equity at year 10 minus sensitivity Own value, Net Equity, #yearInput 10."
+        },
+        {
+          "key": "A_rentNetEquityY10MainMinusSens",
+          "what": "Sub-case A: main Rent net equity at year 10 minus sensitivity Rent value, Net Equity, #yearInput 10."
+        },
+        {
+          "key": "A_sensYear100MinusYear30OwnNetEquity",
+          "what": "Sub-case A: sensitivity Own value, Net Equity, with #yearInput 100, minus the same with #yearInput 30."
+        },
+        {
+          "key": "B_sensOwnNetEquityY30MinusMainMid",
+          "what": "Sub-case B: sensitivity Own value (Net Equity, year 30) minus the main page's MID-path Own net equity at year 30."
+        },
+        {
+          "key": "B_sensRentNetEquityY30MinusMainMid",
+          "what": "Sub-case B: sensitivity Rent value minus the main page's mid-path Rent net equity at year 30."
+        },
+        {
+          "key": "B_sensOwnNetEquityY30MinusMainLowAbs",
+          "what": "Sub-case B: | sensitivity Own value minus the main page's LOW-path Own net equity at year 30 | (read the low path as in R5; if the page exposes no per-path figures, set the period to fixed 5.0 to obtain it)."
+        },
+        {
+          "key": "B_sensOwnNetEquityY30MinusMainHighAbs",
+          "what": "Sub-case B: same against the HIGH path (fixed 7.0 fallback)."
+        },
+        {
+          "key": "sensHasRtbRow",
+          "what": "true if the sensitivity table contains any Rent-Then-Buy input row, output row or scenario; false otherwise."
+        }
+      ]
+    },
+    {
+      "id": "R10",
+      "title": "Cost item bases: % tracks value/rent, $ inflates; year-start value; mode round trip",
+      "setup": {
+        "page": "rentvsownhouse/index.html",
+        "start_from": "BASELINE (see contract.baseline) then apply the overrides below",
+        "overrides": {
+          "A": {
+            "#ownOngoingCostType": "pct",
+            "#ownOngoingCost": 1,
+            "#ownOngoingCostFreq": "yearly",
+            "#ownOngoingInflation": "10.0 if #ownOngoingInflationRow is visible, else leave"
+          },
+          "B": {
+            "#ownOngoingCostType": "dollar",
+            "#ownOngoingCost": 6000,
+            "#ownOngoingCostFreq": "yearly",
+            "#ownOngoingInflation": 10.0
+          },
+          "C": {
+            "#rentOngoingCostType": "pct",
+            "#rentOngoingCost": 10,
+            "#rentOngoingCostFreq": "yearly",
+            "#rentOngoingInflation": "10.0 if #rentOngoingInflationRow is visible, else leave"
+          },
+          "D": {
+            "#setupCostType": "pct",
+            "#setupCost": 4,
+            "then compare with": "#setupCostType dollar, #setupCost 32000"
+          },
+          "E": {
+            "round trip": "#ownCostsModeGroup detailed then simple; #rentCostsModeGroup detailed then simple",
+            "detailed equivalent": "own setup item: name 'Stamp duty', 32000, $; own ongoing item: 'Rates', 6000, yearly, fixed $, inflation 0; rent ongoing item: 'Insurance', 1200, yearly, fixed $, inflation 0; remove any other items"
+          }
+        },
+        "note": "Detailed costs mode (#ownCostsModeGroup / #rentCostsModeGroup data-val=detailed) reveals #ownCostsDetailed / #rentCostsDetailed. Items are .cost-item-row elements in #ownSetupCostRows, #ownOngoingCostRows or #rentOngoingCostRows: .ci-name is the item name, .ci-line holds the amount plus its unit/frequency/type selects, .ci-infl its inflation %, .ci-delete removes it; #addOwnSetupCost, #addOwnOngoingCost, #addRentOngoingCost append rows. Identify fields by label if the layout differs and record what you found. In sub-case A/C the % figure is typed into the same amount box after choosing the % option."
+      },
+      "observe": [
+        {
+          "key": "A_ownOngoingYear1",
+          "what": "Sub-case A (own ongoing = % of property value): Own ongoing costs charged in year 1."
+        },
+        {
+          "key": "A_ownOngoingYear2",
+          "what": "Sub-case A: Own ongoing costs in year 2."
+        },
+        {
+          "key": "A_ownOngoingYear30",
+          "what": "Sub-case A: Own ongoing costs in year 30."
+        },
+        {
+          "key": "A_inflationControlState",
+          "what": "Sub-case A: 'hidden' if #ownOngoingInflationRow is not displayed while the % type is selected, otherwise the value the slider was set to."
+        },
+        {
+          "key": "B_ownOngoingYear1",
+          "what": "Sub-case B ($ item with 10% inflation): Own ongoing costs in year 1."
+        },
+        {
+          "key": "B_ownOngoingYear2",
+          "what": "Sub-case B: year 2."
+        },
+        {
+          "key": "B_ownOngoingYear5",
+          "what": "Sub-case B: year 5."
+        },
+        {
+          "key": "B_ownOngoingYear30",
+          "what": "Sub-case B: year 30."
+        },
+        {
+          "key": "C_rentOngoingYear1",
+          "what": "Sub-case C (rent ongoing = % of annual rent): Rent ongoing costs in year 1."
+        },
+        {
+          "key": "C_rentOngoingYear2",
+          "what": "Sub-case C: year 2."
+        },
+        {
+          "key": "C_rentOngoingYear30",
+          "what": "Sub-case C: year 30."
+        },
+        {
+          "key": "D_kpiInitialCash",
+          "what": "Sub-case D (setup cost as %): number in #kpiInitialCash."
+        },
+        {
+          "key": "D_kpiDiffPctSetupMinusDollarSetup",
+          "what": "Sub-case D: #kpiDiff with setup entered as 4 % minus #kpiDiff with setup entered as 32000 $ (baseline)."
+        },
+        {
+          "key": "E_kpiDiffRoundTripMinusBefore",
+          "what": "Sub-case E: #kpiDiff after switching #ownCostsModeGroup and #rentCostsModeGroup to detailed and back to simple (no other change) minus #kpiDiff before switching."
+        },
+        {
+          "key": "E_kpiDiffDetailedEquivalentMinusSimple",
+          "what": "Sub-case E: #kpiDiff with both cost modes on detailed holding exactly the items listed in the setup, minus #kpiDiff at BASELINE (simple mode)."
+        }
+      ]
+    },
+    {
+      "id": "R11",
+      "title": "Frequency conversions: weekly is x52/12, not x4",
+      "setup": {
+        "page": "rentvsownhouse/index.html",
+        "start_from": "BASELINE (see contract.baseline) then apply the overrides below",
+        "overrides": {
+          "A": {
+            "#rentFreq": "weekly",
+            "#rentAmount": 700
+          },
+          "B": {
+            "#rentFreq": "yearly",
+            "#rentAmount": 36000
+          },
+          "C": {
+            "#ownOngoingCostFreq": "weekly",
+            "#ownOngoingCost": 100,
+            "#ownOngoingCostType": "dollar"
+          },
+          "D": {
+            "#ownOngoingCostFreq": "monthly",
+            "#ownOngoingCost": 500,
+            "#ownOngoingCostType": "dollar"
+          },
+          "E": {
+            "#rentOngoingCostFreq": "weekly",
+            "#rentOngoingCost": 20,
+            "#rentOngoingCostType": "dollar"
+          },
+          "F": {
+            "(baseline)": "#rentFreq monthly, #rentAmount 2800"
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "A_rentMonthlyDisplayValue",
+          "what": "Sub-case A (700 per week): number in #rentMonthlyDisplay (the 'Rent = $X/mo' sub-label)."
+        },
+        {
+          "key": "A_rentPaidYear1",
+          "what": "Sub-case A: rent (excluding rent ongoing costs) charged in year 1."
+        },
+        {
+          "key": "A_rentPaidYear2",
+          "what": "Sub-case A: rent charged in year 2."
+        },
+        {
+          "key": "B_rentMonthlyDisplayValue",
+          "what": "Sub-case B (36000 per year): number in #rentMonthlyDisplay."
+        },
+        {
+          "key": "B_rentPaidYear1",
+          "what": "Sub-case B: rent charged in year 1."
+        },
+        {
+          "key": "C_ownOngoingYear1",
+          "what": "Sub-case C (own ongoing 100 per week): Own ongoing costs in year 1."
+        },
+        {
+          "key": "D_ownOngoingYear1",
+          "what": "Sub-case D (own ongoing 500 per month): Own ongoing costs in year 1."
+        },
+        {
+          "key": "E_rentOngoingYear1",
+          "what": "Sub-case E (rent ongoing 20 per week): Rent ongoing costs in year 1."
+        },
+        {
+          "key": "F_rentMonthlyDisplayValue",
+          "what": "Sub-case F (baseline 2800 per month): number in #rentMonthlyDisplay."
+        }
+      ]
+    },
+    {
+      "id": "R12",
+      "title": "/id/ page parity with /",
+      "setup": {
+        "page": "rentvsownhouse/id/index.html (compared against rentvsownhouse/index.html)",
+        "start_from": "Both pages: fresh context, #resetBtn, BASELINE. The /id/ page uses the same DOM ids and the same default values; only labels differ.",
+        "overrides": {
+          "A": {
+            "(baseline)": "no change on either page"
+          },
+          "B": {
+            "#propertyPrice": 950000,
+            "#downPaymentPct": 15,
+            "#mortgageRate": 6.5,
+            "#mortgageTerm": 25,
+            "#houseGrowth": 4.0,
+            "#setupCost": 40000,
+            "#ownOngoingCost": 7500,
+            "#rentAmount": 3100,
+            "#rentFreq": "monthly",
+            "#rentInflation": 2.5,
+            "#rentOngoingCost": 1000,
+            "#riskFreeRate": 5.0,
+            "#horizon": 25,
+            "#monthlyBudget": 6000,
+            "#monthlyBudgetIncrease": 2.0,
+            "#rtbEnabled": "checked",
+            "#rtbBuyYear": 7,
+            "applied identically on both pages": true
+          }
+        },
+        "note": "Keep #currencySymbol at $ on both pages so only the locale of the number formatting can differ."
+      },
+      "observe": [
+        {
+          "key": "A_kpiDiffIdMinusEn",
+          "what": "Sub-case A (baseline on both pages): #kpiDiff on /id/ minus #kpiDiff on / (parse Indonesian number formatting: '.' thousands, ',' decimals)."
+        },
+        {
+          "key": "A_kpiInitialCashIdMinusEn",
+          "what": "Sub-case A: #kpiInitialCash on /id/ minus on /."
+        },
+        {
+          "key": "A_breakevenIdMinusEn",
+          "what": "Sub-case A: breakeven year on /id/ minus on / (null if either is null; report 0 if both are null)."
+        },
+        {
+          "key": "A_ownNetEquityY30IdMinusEn",
+          "what": "Sub-case A: Own net equity at year 30 on /id/ minus on /."
+        },
+        {
+          "key": "A_rentNetEquityY30IdMinusEn",
+          "what": "Sub-case A: Rent net equity at year 30 on /id/ minus on /."
+        },
+        {
+          "key": "B_kpiDiffIdMinusEn",
+          "what": "Sub-case B (modified inputs on both pages): #kpiDiff on /id/ minus on /."
+        },
+        {
+          "key": "B_ownNetEquityY25IdMinusEn",
+          "what": "Sub-case B: Own net equity at year 25 on /id/ minus on /."
+        },
+        {
+          "key": "B_rentNetEquityY25IdMinusEn",
+          "what": "Sub-case B: Rent net equity at year 25 on /id/ minus on /."
+        },
+        {
+          "key": "B_rtbNetEquityY25IdMinusEn",
+          "what": "Sub-case B: Rent-Then-Buy net equity at year 25 on /id/ minus on /."
+        },
+        {
+          "key": "B_mortgagePaidYear1En",
+          "what": "Sub-case B: mortgage repayments charged to Own in year 1 on /."
+        },
+        {
+          "key": "B_mortgagePaidYear1Id",
+          "what": "Sub-case B: the same on /id/."
+        },
+        {
+          "key": "B_kpiInitialCashEn",
+          "what": "Sub-case B: #kpiInitialCash on /."
+        }
+      ]
+    }
+  ]
+}

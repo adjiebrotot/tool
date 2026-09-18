@@ -1,0 +1,1044 @@
+{
+  "tool": "financingvscash",
+  "authored_utc": "2026-09-18T11:01:22Z",
+  "cases": [
+    {
+      "id": "N1",
+      "severity": "blocker",
+      "basis": "Standard amortising loan of 50,000 at 3% p.a. compound-converted to monthly, 60 repayments; investment of the untouched 50,000 at 4.5% p.a. compound-converted to monthly with each repayment withdrawn at period end; cash path has zero leftover so cash wealth is 0. Conventions used in every expectation of this file: (1) loan period rate = (1+r)^(1/m)-1, the compound conversion the page's Repayment Frequency and Finance Rate tooltips describe ('compound-converted from the annual rate', 'so each payment is exact'); (2) level repayment = P*i/(1-(1+i)^-n) in arrears; (3) the invested balance starts at available cash - down payment - origination fee (Origination Fee tooltip: 'comes out of your cash at the start, so it reduces what you have left to invest'), grows for one period at (1+rf)^(1/m)-1 (the same compound conversion, so that m periods reproduce the annual rf the Cash Purchase Wealth tooltip promises), then the repayment plus the per-payment admin fee is withdrawn at the end of the period; (4) ending wealth = invested balance - loan balance (loan balance is 0 after the last repayment); (5) cash-purchase wealth = (cash - cost)*(1+rf)^years over the scenario's own term (per scenario) and over the longest term for the KPI, exactly as the Cash Purchase Wealth tooltip says; (6) net benefit = ending wealth - cash-purchase wealth at the same horizon. Where an alternative convention would give a materially different number it is quoted in the 'why' so a failing check can be diagnosed.",
+      "expect": [
+        {
+          "key": "payment",
+          "op": "~=",
+          "value": 897.54,
+          "tol": 0.01,
+          "why": "i=(1.03)^(1/12)-1=0.0024662698; 50000*i/(1-(1+i)^-60)=897.5355. (Nominal 0.03/12 would give 898.4345.)"
+        },
+        {
+          "key": "n_rows",
+          "op": "==",
+          "value": 60,
+          "why": "Term entered as 60 monthly repayments."
+        },
+        {
+          "key": "interest_p1",
+          "op": "~=",
+          "value": 123.31,
+          "tol": 0.01,
+          "why": "First-period interest = 50000*i = 123.3135."
+        },
+        {
+          "key": "sum_principal",
+          "op": "~=",
+          "value": 50000,
+          "tol": 0.5,
+          "why": "Sum of principal over the full schedule must equal the financed amount (0% deposit -> 50,000). Tolerance covers cent rounding on 60 rows."
+        },
+        {
+          "key": "sum_interest",
+          "op": "~=",
+          "value": 3852.13,
+          "tol": 0.5,
+          "why": "60*897.5355 - 50000 = 3852.1279."
+        },
+        {
+          "key": "final_loan_balance",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.01,
+          "why": "A level annuity amortises to exactly zero after the last repayment."
+        },
+        {
+          "key": "balance_after_30",
+          "op": "~=",
+          "value": 25923.29,
+          "tol": 0.02,
+          "why": "Closed form P(1+i)^k - pmt*((1+i)^k-1)/i with k=30: 25923.2925."
+        },
+        {
+          "key": "end_invest",
+          "op": "~=",
+          "value": 2181.62,
+          "tol": 1.0,
+          "why": "g=(1.045)^(1/12)-1=0.0036748094; 50000*(1+g)^60 - pmt*((1+g)^60-1)/g = 50000*1.045^5 - 897.5355*66.991757 = 2181.6193. Alternatives for diagnosis: withdrawal before growth 1960.66; nominal rf/12 growth 2324.28."
+        },
+        {
+          "key": "end_wealth",
+          "op": "~=",
+          "value": 2181.62,
+          "tol": 1.0,
+          "why": "Ending wealth = invested - loan = 2181.6193 - 0."
+        },
+        {
+          "key": "nb_table",
+          "op": "~=",
+          "value": 2181.62,
+          "tol": 1.0,
+          "why": "Net benefit = ending wealth - cash wealth = 2181.6193 - 0 (cash = cost, nothing left to invest on the cash path)."
+        },
+        {
+          "key": "wealth_identity_residual",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.02,
+          "why": "TESTCASES N1: wealth = invested - loan."
+        },
+        {
+          "key": "kpi_best",
+          "op": "matches",
+          "value": "N1",
+          "why": "3% financing against 4.5% risk-free with no fees beats paying cash, so the only scenario is Best."
+        },
+        {
+          "key": "kpi_net_benefit",
+          "op": "~=",
+          "value": 2181.62,
+          "tol": 1.0,
+          "why": "KPI tooltip: best scenario's end-of-term wealth minus cash wealth = 2181.6193 - 0."
+        },
+        {
+          "key": "kpi_interest",
+          "op": "~=",
+          "value": 3852.13,
+          "tol": 0.5,
+          "why": "Total interest over the term = 3852.1279; no fees to exclude."
+        },
+        {
+          "key": "kpi_cash_wealth",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "Cash Purchase Wealth tooltip: (available cash - purchase cost) compounded = (50000-50000)*1.045^5 = 0."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Robustness: no NaN/Infinity anywhere on a well-formed baseline."
+        }
+      ]
+    },
+    {
+      "id": "F1",
+      "severity": "major",
+      "basis": "The page's own wording fixes the convention: Finance Rate tooltip 'converted to the repayment period below so each payment is exact rather than an approximation' and Repayment Frequency tooltip 'sets the period interest rate, compound-converted from the annual rate'. A nominal r/m rate is the approximation being disclaimed, so the effective (equivalent-yield) rate (1+r)^(1/m)-1 is expected. 12% p.a. is used because the two conventions differ most there (1.0000% vs 0.9489% per month). Scenario F1z carries a 0% loan so its repayment is trivially 50000/60 and its ending balance isolates the convention used to compound the invested cash: the Cash Purchase Wealth tooltip compounds at the annual rate ((1+rf)^years), and the only per-period rate that reproduces that over 12 periods is (1+rf)^(1/12)-1. The companion case F1-alt carries the nominal figures with expect_outcome:fail; PASS here plus XFAIL there means the effective convention is live, FAIL here plus XPASS there means nominal is live. Conventions used in every expectation of this file: (1) loan period rate = (1+r)^(1/m)-1, the compound conversion the page's Repayment Frequency and Finance Rate tooltips describe ('compound-converted from the annual rate', 'so each payment is exact'); (2) level repayment = P*i/(1-(1+i)^-n) in arrears; (3) the invested balance starts at available cash - down payment - origination fee (Origination Fee tooltip: 'comes out of your cash at the start, so it reduces what you have left to invest'), grows for one period at (1+rf)^(1/m)-1 (the same compound conversion, so that m periods reproduce the annual rf the Cash Purchase Wealth tooltip promises), then the repayment plus the per-payment admin fee is withdrawn at the end of the period; (4) ending wealth = invested balance - loan balance (loan balance is 0 after the last repayment); (5) cash-purchase wealth = (cash - cost)*(1+rf)^years over the scenario's own term (per scenario) and over the longest term for the KPI, exactly as the Cash Purchase Wealth tooltip says; (6) net benefit = ending wealth - cash-purchase wealth at the same horizon. Where an alternative convention would give a materially different number it is quoted in the 'why' so a failing check can be diagnosed.",
+      "expect": [
+        {
+          "key": "payment_F1",
+          "op": "~=",
+          "value": 1096.78,
+          "tol": 0.01,
+          "why": "i=(1.12)^(1/12)-1=0.0094887929; 50000*i/(1-(1+i)^-60)=1096.7848. Nominal 0.12/12=0.01 would give 1112.2224."
+        },
+        {
+          "key": "interest_p1_F1",
+          "op": "~=",
+          "value": 474.44,
+          "tol": 0.01,
+          "why": "50000*0.0094887929=474.4396 (nominal: 500.00)."
+        },
+        {
+          "key": "sum_interest_F1",
+          "op": "~=",
+          "value": 15807.09,
+          "tol": 0.5,
+          "why": "60*1096.7848-50000=15807.0876 (nominal: 16733.34)."
+        },
+        {
+          "key": "payment_F1z",
+          "op": "~=",
+          "value": 833.33,
+          "tol": 0.01,
+          "why": "0% loan: 50000/60 = 833.3333 under either convention."
+        },
+        {
+          "key": "end_invest_F1z",
+          "op": "~=",
+          "value": 6482.63,
+          "tol": 1.0,
+          "why": "g=(1.045)^(1/12)-1=0.0036748094: 50000*1.045^5 - 833.3333*((1+g)^60-1)/g = 6482.6329. With nominal 0.045/12 it would be 6635.1642; withdrawal-before-growth timing would give 6277.48."
+        },
+        {
+          "key": "end_wealth_F1z",
+          "op": "~=",
+          "value": 6482.63,
+          "tol": 1.0,
+          "why": "Loan balance is 0 at the end, so ending wealth = invested balance = 6482.6329."
+        }
+      ]
+    },
+    {
+      "id": "F1-alt",
+      "severity": "major",
+      "basis": "Same state and observables as F1. These are the figures the page would print if it used the nominal r/m convention that the rest of the repo uses (TESTCASES F1). The page's own tooltips promise the effective convention, so this case is expected to fail (XFAIL). If it XPASSes, the live convention is nominal and the tooltips are wrong.",
+      "expect": [
+        {
+          "key": "payment_F1",
+          "op": "~=",
+          "value": 1112.22,
+          "tol": 0.01,
+          "why": "Nominal: i=0.12/12=0.01; 50000*0.01/(1-1.01^-60)=1112.2224."
+        },
+        {
+          "key": "interest_p1_F1",
+          "op": "~=",
+          "value": 500.0,
+          "tol": 0.01,
+          "why": "Nominal: 50000*0.01 = 500."
+        },
+        {
+          "key": "sum_interest_F1",
+          "op": "~=",
+          "value": 16733.34,
+          "tol": 0.5,
+          "why": "Nominal: 60*1112.2224-50000=16733.3431."
+        },
+        {
+          "key": "end_invest_F1z",
+          "op": "~=",
+          "value": 6635.16,
+          "tol": 1.0,
+          "why": "Nominal rf: 50000*(1+0.045/12)^60 - 833.3333*((1+0.00375)^60-1)/0.00375 = 6635.1642."
+        }
+      ],
+      "expect_outcome": "fail"
+    },
+    {
+      "id": "F2",
+      "severity": "major",
+      "basis": "Down payment 90% of 50,000 = 45,000 plus a 4,000 flat origination fee leave 1,000 invested; the 5,000 financed at 0% costs 416.67 a month, so the invested balance crosses zero in month 3 and the overdraft compounds at 4.5% p.a. (monthly (1.045)^(1/12)-1) for the rest of the year. The Available Cash tooltip only requires cash >= cost (50,000 = 50,000), and upfront outlay 49,000 < 50,000 so the scenario is affordable. Conventions used in every expectation of this file: (1) loan period rate = (1+r)^(1/m)-1, the compound conversion the page's Repayment Frequency and Finance Rate tooltips describe ('compound-converted from the annual rate', 'so each payment is exact'); (2) level repayment = P*i/(1-(1+i)^-n) in arrears; (3) the invested balance starts at available cash - down payment - origination fee (Origination Fee tooltip: 'comes out of your cash at the start, so it reduces what you have left to invest'), grows for one period at (1+rf)^(1/m)-1 (the same compound conversion, so that m periods reproduce the annual rf the Cash Purchase Wealth tooltip promises), then the repayment plus the per-payment admin fee is withdrawn at the end of the period; (4) ending wealth = invested balance - loan balance (loan balance is 0 after the last repayment); (5) cash-purchase wealth = (cash - cost)*(1+rf)^years over the scenario's own term (per scenario) and over the longest term for the KPI, exactly as the Cash Purchase Wealth tooltip says; (6) net benefit = ending wealth - cash-purchase wealth at the same horizon. Where an alternative convention would give a materially different number it is quoted in the 'why' so a failing check can be diagnosed.",
+      "expect": [
+        {
+          "key": "payment",
+          "op": "~=",
+          "value": 416.67,
+          "tol": 0.01,
+          "why": "5000/12 = 416.6667 (0% loan)."
+        },
+        {
+          "key": "n_rows",
+          "op": "==",
+          "value": 12,
+          "why": "12 monthly repayments."
+        },
+        {
+          "key": "total_fees",
+          "op": "~=",
+          "value": 4000,
+          "tol": 0.01,
+          "why": "Flat origination fee 4,000; admin fee 0."
+        },
+        {
+          "key": "invest_p1",
+          "op": "~=",
+          "value": 587.01,
+          "tol": 0.5,
+          "why": "1000*(1+g) - 416.6667 = 587.0081, g=(1.045)^(1/12)-1."
+        },
+        {
+          "key": "invest_p3",
+          "op": "~=",
+          "value": -243.53,
+          "tol": 0.5,
+          "why": "Row 3: -243.5341 (first negative row)."
+        },
+        {
+          "key": "invest_p3",
+          "op": "<",
+          "value": 0,
+          "why": "The balance must be allowed below zero rather than floored."
+        },
+        {
+          "key": "n_negative_rows",
+          "op": "==",
+          "value": 10,
+          "why": "Rows 3..12 are negative under either withdrawal timing: 10 rows."
+        },
+        {
+          "key": "min_invest",
+          "op": "<",
+          "value": 0,
+          "why": "TESTCASES F2: the invested balance may go negative."
+        },
+        {
+          "key": "end_invest",
+          "op": "~=",
+          "value": -4057.31,
+          "tol": 0.5,
+          "why": "1000*1.045 - 416.6667*((1+g)^12-1)/g = 1045 - 416.6667*12.245533 = -4057.3054. (Withdrawal-before-growth: -4076.06; nominal rf/12: -4058.49.)"
+        },
+        {
+          "key": "end_invest",
+          "op": "<",
+          "value": -4000,
+          "why": "Arithmetic without compounding would end at 1000-5000 = -4000 exactly; compounding the overdraft at rf must push it further below (-4057)."
+        },
+        {
+          "key": "end_wealth",
+          "op": "~=",
+          "value": -4057.31,
+          "tol": 0.5,
+          "why": "Loan is repaid, so ending wealth = invested balance."
+        },
+        {
+          "key": "kpi_net_benefit",
+          "op": "~=",
+          "value": -4057.31,
+          "tol": 0.5,
+          "why": "Cash path leftover is 0, so net benefit = ending wealth."
+        },
+        {
+          "key": "kpi_best",
+          "op": "matches",
+          "value": "Cash Purchase",
+          "why": "Best Strategy tooltip: reads 'Cash Purchase' when no scenario beats paying cash; F2's net benefit is negative."
+        },
+        {
+          "key": "kpi_cash_wealth",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "(50000-50000)*1.045^1 = 0."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "A negative balance must not break formatting."
+        }
+      ]
+    },
+    {
+      "id": "F3",
+      "severity": "major",
+      "basis": "'toobig' needs 50% x 50,000 + 30,000 = 55,000 upfront against 50,000 of cash, so it cannot be executed; the page must say so and carry on with 'affordable', whose numbers are the N1 baseline (3% vs 4.5%, no fees).",
+      "expect": [
+        {
+          "key": "warn_text",
+          "op": "matches",
+          "value": "toobig",
+          "why": "The warning must name the dropped scenario."
+        },
+        {
+          "key": "kpi_best",
+          "op": "matches",
+          "value": "affordable",
+          "why": "The surviving scenario beats cash, so it is Best."
+        },
+        {
+          "key": "kpi_net_benefit",
+          "op": "~=",
+          "value": 2181.62,
+          "tol": 1.0,
+          "why": "Same maths as N1: 2181.6193."
+        },
+        {
+          "key": "affordable_end_wealth",
+          "op": "~=",
+          "value": 2181.62,
+          "tol": 1.0,
+          "why": "Same maths as N1: 2181.6193."
+        },
+        {
+          "key": "toobig_row_numeric_wealth",
+          "op": "is-null",
+          "why": "A dropped scenario must not show a computed wealth figure."
+        },
+        {
+          "key": "chart_has_affordable_series",
+          "op": "==",
+          "value": true,
+          "why": "The surviving scenario still plots."
+        },
+        {
+          "key": "chart_has_toobig_series",
+          "op": "==",
+          "value": false,
+          "why": "TESTCASES F3: it must drop visibly and not corrupt the chart."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "No NaN/Infinity leaks from the dropped scenario."
+        }
+      ]
+    },
+    {
+      "id": "F4",
+      "severity": "blocker",
+      "basis": "Borrowing at r and investing the retained cash at rf < r with no fees has negative present value at rf: the loan's repayments, valued at rf, exceed the principal. So every zero-fee scenario with r > rf must show a negative net benefit, less negative for a smaller spread (3.5% vs 5%) and for a smaller financed amount (20% down). At r = rf exactly, the repayments valued at rf equal the principal, so net benefit is exactly 0 when both the loan and the invested cash use the same period-rate convention. Conventions used in every expectation of this file: (1) loan period rate = (1+r)^(1/m)-1, the compound conversion the page's Repayment Frequency and Finance Rate tooltips describe ('compound-converted from the annual rate', 'so each payment is exact'); (2) level repayment = P*i/(1-(1+i)^-n) in arrears; (3) the invested balance starts at available cash - down payment - origination fee (Origination Fee tooltip: 'comes out of your cash at the start, so it reduces what you have left to invest'), grows for one period at (1+rf)^(1/m)-1 (the same compound conversion, so that m periods reproduce the annual rf the Cash Purchase Wealth tooltip promises), then the repayment plus the per-payment admin fee is withdrawn at the end of the period; (4) ending wealth = invested balance - loan balance (loan balance is 0 after the last repayment); (5) cash-purchase wealth = (cash - cost)*(1+rf)^years over the scenario's own term (per scenario) and over the longest term for the KPI, exactly as the Cash Purchase Wealth tooltip says; (6) net benefit = ending wealth - cash-purchase wealth at the same horizon. Where an alternative convention would give a materially different number it is quoted in the 'why' so a failing check can be diagnosed.",
+      "expect": [
+        {
+          "key": "neg_nb_a5",
+          "op": "<",
+          "value": 0,
+          "why": "5% > 3%: negative carry."
+        },
+        {
+          "key": "neg_nb_a5",
+          "op": "~=",
+          "value": -2808.27,
+          "tol": 1.0,
+          "why": "pmt=50000*i/(1-(1+i)^-60) with i=(1.05)^(1/12)-1 -> 941.0199; 50000*1.03^5 - pmt*((1+g)^60-1)/g with g=(1.03)^(1/12)-1 -> -2808.2678."
+        },
+        {
+          "key": "neg_nb_b5d20",
+          "op": "<",
+          "value": 0,
+          "why": "Same spread, 40,000 financed: still negative."
+        },
+        {
+          "key": "neg_nb_b5d20",
+          "op": "~=",
+          "value": -2246.61,
+          "tol": 1.0,
+          "why": "40000 financed, invested 40000: pmt 752.8159; -2246.6143."
+        },
+        {
+          "key": "neg_nb_c35",
+          "op": "<",
+          "value": 0,
+          "why": "3.5% > 3%: negative carry."
+        },
+        {
+          "key": "neg_nb_c35",
+          "op": "~=",
+          "value": -698.93,
+          "tol": 1.0,
+          "why": "pmt 908.3580; -698.9288."
+        },
+        {
+          "key": "neg_nb_c35_minus_a5",
+          "op": ">",
+          "value": 0,
+          "why": "Smaller spread is less negative (relation between observed keys)."
+        },
+        {
+          "key": "neg_nb_b5d20_minus_a5",
+          "op": ">",
+          "value": 0,
+          "why": "Less borrowed at the same spread is less negative (relation between observed keys)."
+        },
+        {
+          "key": "neg_fees_a5",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "Zero-fee fixture."
+        },
+        {
+          "key": "neg_kpi_best",
+          "op": "matches",
+          "value": "Cash Purchase",
+          "why": "Best Strategy tooltip: 'reads Cash Purchase when no scenario beats paying cash'."
+        },
+        {
+          "key": "neg_kpi_net_benefit",
+          "op": "<=",
+          "value": 0,
+          "why": "No financing scenario is ahead of cash, so the KPI cannot be positive."
+        },
+        {
+          "key": "neg_negcarry_text",
+          "op": "matches",
+          "value": "\\S",
+          "why": "#negCarryBanner exists for exactly this condition; it must carry a visible message."
+        },
+        {
+          "key": "par_nb",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.05,
+          "why": "r = rf = 3%: 50000*(1+i)^60 - pmt*((1+i)^60-1)/i = 0 identically when i is the same effective monthly rate on both sides (computed -0.000000). A nominal/effective mismatch between loan and investment would leave a residue of the order of 100."
+        },
+        {
+          "key": "par_end_wealth",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.05,
+          "why": "Cash = cost, so the cash path has 0 leftover; at par the financed path ends at 0 too."
+        },
+        {
+          "key": "par_kpi_net_benefit",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.05,
+          "why": "KPI equals the single scenario's net benefit."
+        }
+      ]
+    },
+    {
+      "id": "F5",
+      "severity": "major",
+      "basis": "All three scenarios run for exactly two years: 24 monthly, 104 weekly, and 104 weeks fortnightly (the Term tooltip says the field is counted in 'weeks for weekly and fortnightly, months for monthly, years for yearly', so 104 weeks at fortnightly = 52 repayments). The frequency tooltip fixes 52 / 26 / 12 / 1 payments a year. Time alignment: each series' last point must sit at the same x (two years), whatever unit the axis uses, so the ratio of last-x values is 1 (it would be 104/24 = 4.33 on a period-index axis). Re-deriving the term on a frequency edit keeps the duration: 24 months -> 104 weeks -> 104 weeks (fortnightly, unit still weeks) -> 2 years -> 24 months. Cash wealth uses the longest term = 2 years. Conventions used in every expectation of this file: (1) loan period rate = (1+r)^(1/m)-1, the compound conversion the page's Repayment Frequency and Finance Rate tooltips describe ('compound-converted from the annual rate', 'so each payment is exact'); (2) level repayment = P*i/(1-(1+i)^-n) in arrears; (3) the invested balance starts at available cash - down payment - origination fee (Origination Fee tooltip: 'comes out of your cash at the start, so it reduces what you have left to invest'), grows for one period at (1+rf)^(1/m)-1 (the same compound conversion, so that m periods reproduce the annual rf the Cash Purchase Wealth tooltip promises), then the repayment plus the per-payment admin fee is withdrawn at the end of the period; (4) ending wealth = invested balance - loan balance (loan balance is 0 after the last repayment); (5) cash-purchase wealth = (cash - cost)*(1+rf)^years over the scenario's own term (per scenario) and over the longest term for the KPI, exactly as the Cash Purchase Wealth tooltip says; (6) net benefit = ending wealth - cash-purchase wealth at the same horizon. Where an alternative convention would give a materially different number it is quoted in the 'why' so a failing check can be diagnosed.",
+      "expect": [
+        {
+          "key": "kpi_cash_wealth",
+          "op": "~=",
+          "value": 10920.25,
+          "tol": 0.01,
+          "why": "(60000-50000)*1.045^2 = 10920.2500. If the longest term were taken as 104 'months' it would read 14644.50."
+        },
+        {
+          "key": "n_rows_A",
+          "op": "==",
+          "value": 24,
+          "why": "24 monthly repayments."
+        },
+        {
+          "key": "n_rows_B",
+          "op": "==",
+          "value": 104,
+          "why": "104 weekly repayments."
+        },
+        {
+          "key": "n_rows_C",
+          "op": "==",
+          "value": 52,
+          "why": "104 weeks at fortnightly = 52 repayments (Term tooltip: unit is weeks for fortnightly)."
+        },
+        {
+          "key": "payment_A",
+          "op": "~=",
+          "value": 2212.45,
+          "tol": 0.01,
+          "why": "i=(1.06)^(1/12)-1; 50000*i/(1-(1+i)^-24) = 2212.4514."
+        },
+        {
+          "key": "payment_B",
+          "op": "~=",
+          "value": 509.61,
+          "tol": 0.01,
+          "why": "i=(1.06)^(1/52)-1; 50000*i/(1-(1+i)^-104) = 509.6126."
+        },
+        {
+          "key": "payment_C",
+          "op": "~=",
+          "value": 1019.8,
+          "tol": 0.01,
+          "why": "i=(1.06)^(1/26)-1; 50000*i/(1-(1+i)^-52) = 1019.7965."
+        },
+        {
+          "key": "end_wealth_A",
+          "op": "~=",
+          "value": 10117.04,
+          "tol": 1.0,
+          "why": "60000*1.045^2 - 2212.4514*((1+g)^24-1)/g, g=(1.045)^(1/12)-1 -> 10117.0378."
+        },
+        {
+          "key": "end_wealth_B",
+          "op": "~=",
+          "value": 10142.36,
+          "tol": 1.0,
+          "why": "60000*1.045^2 - 509.6126*((1+g)^104-1)/g, g=(1.045)^(1/52)-1 -> 10142.3627."
+        },
+        {
+          "key": "end_wealth_C",
+          "op": "~=",
+          "value": 10134.77,
+          "tol": 1.0,
+          "why": "60000*1.045^2 - 1019.7965*((1+g)^52-1)/g, g=(1.045)^(1/26)-1 -> 10134.7693."
+        },
+        {
+          "key": "x_ratio_B_A",
+          "op": "~=",
+          "value": 1.0,
+          "tol": 0.01,
+          "why": "Both series end at two years on a time axis."
+        },
+        {
+          "key": "x_ratio_C_A",
+          "op": "~=",
+          "value": 1.0,
+          "tol": 0.01,
+          "why": "Both series end at two years on a time axis."
+        },
+        {
+          "key": "chart_last_y_A",
+          "op": "~=",
+          "value": 10117.04,
+          "tol": 1.0,
+          "why": "Chart and table are renderings of one model."
+        },
+        {
+          "key": "chart_last_y_B",
+          "op": "~=",
+          "value": 10142.36,
+          "tol": 1.0,
+          "why": "Chart and table are renderings of one model."
+        },
+        {
+          "key": "term_after_weekly",
+          "op": "==",
+          "value": 104,
+          "why": "24 months = 2 years = 104 weeks."
+        },
+        {
+          "key": "label_after_weekly",
+          "op": "matches",
+          "value": "week",
+          "why": "Term unit label follows the frequency."
+        },
+        {
+          "key": "term_after_fortnightly",
+          "op": "==",
+          "value": 104,
+          "why": "Unit stays weeks for fortnightly per the Term tooltip, so 104 weeks."
+        },
+        {
+          "key": "label_after_fortnightly",
+          "op": "matches",
+          "value": "week|fortnight",
+          "why": "Term unit label follows the frequency."
+        },
+        {
+          "key": "term_after_yearly",
+          "op": "==",
+          "value": 2,
+          "why": "2 years."
+        },
+        {
+          "key": "label_after_yearly",
+          "op": "matches",
+          "value": "year",
+          "why": "Term unit label follows the frequency."
+        },
+        {
+          "key": "term_after_monthly",
+          "op": "==",
+          "value": 24,
+          "why": "Round trip returns to 24 months."
+        },
+        {
+          "key": "label_after_monthly",
+          "op": "matches",
+          "value": "month",
+          "why": "Term unit label follows the frequency."
+        }
+      ]
+    },
+    {
+      "id": "F6",
+      "severity": "major",
+      "basis": "Financed = 80% x 50,000 = 40,000. Origination 2% of the financed amount = 800 (Origination Fee tooltip: '%: a percentage of the financed amount'), identical to the 800 flat fee, so the two scenarios must agree in every figure. Admin 10 per repayment x 24 = 240 (Admin Fee tooltip: 'this amount times the number of payments'). Total fees 1,040. Interest = 24 x repayment - 40,000 at 5% compound-converted monthly. Invested start = 50,000 - 10,000 down - 800 fee = 39,200; each month grows at (1.045)^(1/12)-1 then repayment + 10 is withdrawn. Conventions used in every expectation of this file: (1) loan period rate = (1+r)^(1/m)-1, the compound conversion the page's Repayment Frequency and Finance Rate tooltips describe ('compound-converted from the annual rate', 'so each payment is exact'); (2) level repayment = P*i/(1-(1+i)^-n) in arrears; (3) the invested balance starts at available cash - down payment - origination fee (Origination Fee tooltip: 'comes out of your cash at the start, so it reduces what you have left to invest'), grows for one period at (1+rf)^(1/m)-1 (the same compound conversion, so that m periods reproduce the annual rf the Cash Purchase Wealth tooltip promises), then the repayment plus the per-payment admin fee is withdrawn at the end of the period; (4) ending wealth = invested balance - loan balance (loan balance is 0 after the last repayment); (5) cash-purchase wealth = (cash - cost)*(1+rf)^years over the scenario's own term (per scenario) and over the longest term for the KPI, exactly as the Cash Purchase Wealth tooltip says; (6) net benefit = ending wealth - cash-purchase wealth at the same horizon. Where an alternative convention would give a materially different number it is quoted in the 'why' so a failing check can be diagnosed.",
+      "expect": [
+        {
+          "key": "fees_pct",
+          "op": "~=",
+          "value": 1040,
+          "tol": 0.01,
+          "why": "800 + 10*24."
+        },
+        {
+          "key": "fees_flat",
+          "op": "~=",
+          "value": 1040,
+          "tol": 0.01,
+          "why": "800 + 10*24."
+        },
+        {
+          "key": "interest_pct",
+          "op": "~=",
+          "value": 2068.81,
+          "tol": 0.5,
+          "why": "pmt = 40000*i/(1-(1+i)^-24), i=(1.05)^(1/12)-1 -> 1752.8669; 24*pmt-40000 = 2068.8060."
+        },
+        {
+          "key": "interest_flat",
+          "op": "~=",
+          "value": 2068.81,
+          "tol": 0.5,
+          "why": "Same loan."
+        },
+        {
+          "key": "cost_pct",
+          "op": "~=",
+          "value": 3108.81,
+          "tol": 0.5,
+          "why": "2068.8060 + 1040 (Optimization Target tooltip: financing cost = interest plus fees)."
+        },
+        {
+          "key": "cost_flat",
+          "op": "~=",
+          "value": 3108.81,
+          "tol": 0.5,
+          "why": "Same."
+        },
+        {
+          "key": "payment_pct",
+          "op": "~=",
+          "value": 1752.87,
+          "tol": 0.01,
+          "why": "1752.8669."
+        },
+        {
+          "key": "end_wealth_pct",
+          "op": "~=",
+          "value": -1338.54,
+          "tol": 1.0,
+          "why": "39200*1.045^2 - (1752.8669+10)*((1+g)^24-1)/g = -1338.5362."
+        },
+        {
+          "key": "end_wealth_flat",
+          "op": "~=",
+          "value": -1338.54,
+          "tol": 1.0,
+          "why": "Same."
+        },
+        {
+          "key": "wealth_diff_pct_flat",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.01,
+          "why": "2% of 40,000 and a flat 800 are the same fee."
+        },
+        {
+          "key": "nb_pct",
+          "op": "~=",
+          "value": -1338.54,
+          "tol": 1.0,
+          "why": "Cash path leftover is 0, so net benefit = ending wealth."
+        },
+        {
+          "key": "kpi_interest",
+          "op": "~=",
+          "value": 2068.81,
+          "tol": 0.5,
+          "why": "Total Interest (Best) tooltip: 'Origination and admin fees are not counted here'."
+        }
+      ]
+    },
+    {
+      "id": "F7",
+      "severity": "major",
+      "basis": "(a) Down Payment tooltip: '100% pays cash outright, so there is no loan at all', so the scenario is the cash path: both sides hold 10,000 compounding at 4.5% for 5 years, net benefit exactly 0, and the Best Strategy tooltip promises 'Break-even when the winner exactly matches cash'. (b) 0% loan: repayment = 50,000/60, zero interest, principal sums to the loan, invested cash compounds as in F1z. (c) A 0-period term is outside the field's min=1; the page must either clamp or reject, never divide by zero. (d)/(e) Available Cash tooltip: 'It must be at least the purchase cost' -> a warning, and no NaN. Conventions used in every expectation of this file: (1) loan period rate = (1+r)^(1/m)-1, the compound conversion the page's Repayment Frequency and Finance Rate tooltips describe ('compound-converted from the annual rate', 'so each payment is exact'); (2) level repayment = P*i/(1-(1+i)^-n) in arrears; (3) the invested balance starts at available cash - down payment - origination fee (Origination Fee tooltip: 'comes out of your cash at the start, so it reduces what you have left to invest'), grows for one period at (1+rf)^(1/m)-1 (the same compound conversion, so that m periods reproduce the annual rf the Cash Purchase Wealth tooltip promises), then the repayment plus the per-payment admin fee is withdrawn at the end of the period; (4) ending wealth = invested balance - loan balance (loan balance is 0 after the last repayment); (5) cash-purchase wealth = (cash - cost)*(1+rf)^years over the scenario's own term (per scenario) and over the longest term for the KPI, exactly as the Cash Purchase Wealth tooltip says; (6) net benefit = ending wealth - cash-purchase wealth at the same horizon. Where an alternative convention would give a materially different number it is quoted in the 'why' so a failing check can be diagnosed.",
+      "expect": [
+        {
+          "key": "a_payment",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "No loan at 100% down."
+        },
+        {
+          "key": "a_interest",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "No loan, no interest."
+        },
+        {
+          "key": "a_end_wealth",
+          "op": "~=",
+          "value": 12461.82,
+          "tol": 0.05,
+          "why": "10000*1.045^5 = 12461.8194 (12 monthly steps of (1.045)^(1/12) give the same)."
+        },
+        {
+          "key": "a_nb",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.01,
+          "why": "Identical to the cash path."
+        },
+        {
+          "key": "a_kpi_cash_wealth",
+          "op": "~=",
+          "value": 12461.82,
+          "tol": 0.05,
+          "why": "(60000-50000)*1.045^5 = 12461.8194."
+        },
+        {
+          "key": "a_kpi_best",
+          "op": "matches",
+          "value": "Break-even",
+          "why": "Best Strategy tooltip wording for a winner that exactly matches cash. (If the page prints the scenario name because of a floating-point residue, it needs an epsilon.)"
+        },
+        {
+          "key": "a_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Robustness."
+        },
+        {
+          "key": "b_payment",
+          "op": "~=",
+          "value": 833.33,
+          "tol": 0.01,
+          "why": "50000/60."
+        },
+        {
+          "key": "b_interest",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.01,
+          "why": "0% loan."
+        },
+        {
+          "key": "b_sum_principal",
+          "op": "~=",
+          "value": 50000,
+          "tol": 0.5,
+          "why": "Principal sums to the financed amount."
+        },
+        {
+          "key": "b_end_wealth",
+          "op": "~=",
+          "value": 6482.63,
+          "tol": 1.0,
+          "why": "50000*1.045^5 - 833.3333*((1+g)^60-1)/g = 6482.6329 (same as F1z)."
+        },
+        {
+          "key": "b_nb",
+          "op": "~=",
+          "value": 6482.63,
+          "tol": 1.0,
+          "why": "Cash path leftover 0."
+        },
+        {
+          "key": "c_state",
+          "op": "in",
+          "value": [
+            "clamped",
+            "rejected"
+          ],
+          "why": "Either behaviour is acceptable; a silent NaN/Infinity is not."
+        },
+        {
+          "key": "c_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "No division by zero on screen."
+        },
+        {
+          "key": "d_warn_text",
+          "op": "matches",
+          "value": "cash|cost|afford|exceed|least|short|enough",
+          "why": "Cash 40,000 < cost 50,000 must be flagged (Available Cash tooltip)."
+        },
+        {
+          "key": "d_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Robustness."
+        },
+        {
+          "key": "e_warn_text",
+          "op": "matches",
+          "value": "cash|cost|afford|exceed|least|short|enough",
+          "why": "Zero cash must be flagged."
+        },
+        {
+          "key": "e_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Robustness."
+        }
+      ]
+    },
+    {
+      "id": "F8",
+      "severity": "major",
+      "basis": "If the purchased asset were carried in wealth (resale or depreciated value), spending all your cash on it would leave wealth equal to the asset, not zero, and a 100%-down scenario would end above the compounded leftover. Cash Purchase Wealth tooltip: leftover funds compounded, nothing else. Conventions used in every expectation of this file: (1) loan period rate = (1+r)^(1/m)-1, the compound conversion the page's Repayment Frequency and Finance Rate tooltips describe ('compound-converted from the annual rate', 'so each payment is exact'); (2) level repayment = P*i/(1-(1+i)^-n) in arrears; (3) the invested balance starts at available cash - down payment - origination fee (Origination Fee tooltip: 'comes out of your cash at the start, so it reduces what you have left to invest'), grows for one period at (1+rf)^(1/m)-1 (the same compound conversion, so that m periods reproduce the annual rf the Cash Purchase Wealth tooltip promises), then the repayment plus the per-payment admin fee is withdrawn at the end of the period; (4) ending wealth = invested balance - loan balance (loan balance is 0 after the last repayment); (5) cash-purchase wealth = (cash - cost)*(1+rf)^years over the scenario's own term (per scenario) and over the longest term for the KPI, exactly as the Cash Purchase Wealth tooltip says; (6) net benefit = ending wealth - cash-purchase wealth at the same horizon. Where an alternative convention would give a materially different number it is quoted in the 'why' so a failing check can be diagnosed.",
+      "expect": [
+        {
+          "key": "s1_kpi_cash_wealth",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "(50000-50000)*1.045^5 = 0: the 50,000 asset is not counted."
+        },
+        {
+          "key": "s2_kpi_cash_wealth",
+          "op": "~=",
+          "value": 24923.64,
+          "tol": 0.05,
+          "why": "(100000-80000)*1.045^5 = 24923.6388."
+        },
+        {
+          "key": "s2_end_wealth_full",
+          "op": "~=",
+          "value": 24923.64,
+          "tol": 0.05,
+          "why": "100% down = cash path: 24923.6388; an 80,000 asset carried at cost would show ~104,924."
+        },
+        {
+          "key": "s2_end_wealth_zero",
+          "op": "~=",
+          "value": 26090.64,
+          "tol": 1.0,
+          "why": "pmt = 80000*i/(1-(1+i)^-60), i=(1.04)^(1/12)-1 -> 1470.7414; 100000*1.045^5 - pmt*((1+g)^60-1)/g = 26090.6412."
+        },
+        {
+          "key": "s2_nb_zero",
+          "op": "~=",
+          "value": 1167.0,
+          "tol": 1.0,
+          "why": "26090.6412 - 24923.6388 = 1167.0025 (4% < 4.5%: positive)."
+        },
+        {
+          "key": "s2_final_loan_zero",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.01,
+          "why": "Fully amortised."
+        },
+        {
+          "key": "s2_end_invest_zero",
+          "op": "~=",
+          "value": 26090.64,
+          "tol": 1.0,
+          "why": "Wealth = invested - 0; no asset term."
+        }
+      ]
+    },
+    {
+      "id": "F9",
+      "severity": "major",
+      "basis": "Scenario s9 pays a flat 10,250 origination fee, so the upfront outlay at down payment x% is 500x + 10,250 against 50,000 of cash: affordable iff x <= 79.5. On a 70..90 grid (20 steps -> 21 integer points, or 20 points 1.053 apart) the last affordable point is at x = 79 (or 79.47) and the first unaffordable at 80 (or 80.53). Beyond the break the objective is undefined for that scenario: the plot must gap, not print the cash-path value (0 net benefit) or keep extrapolating. The affordable points are strongly negative because the fee dominates. Conventions used in every expectation of this file: (1) loan period rate = (1+r)^(1/m)-1, the compound conversion the page's Repayment Frequency and Finance Rate tooltips describe ('compound-converted from the annual rate', 'so each payment is exact'); (2) level repayment = P*i/(1-(1+i)^-n) in arrears; (3) the invested balance starts at available cash - down payment - origination fee (Origination Fee tooltip: 'comes out of your cash at the start, so it reduces what you have left to invest'), grows for one period at (1+rf)^(1/m)-1 (the same compound conversion, so that m periods reproduce the annual rf the Cash Purchase Wealth tooltip promises), then the repayment plus the per-payment admin fee is withdrawn at the end of the period; (4) ending wealth = invested balance - loan balance (loan balance is 0 after the last repayment); (5) cash-purchase wealth = (cash - cost)*(1+rf)^years over the scenario's own term (per scenario) and over the longest term for the KPI, exactly as the Cash Purchase Wealth tooltip says; (6) net benefit = ending wealth - cash-purchase wealth at the same horizon. Where an alternative convention would give a materially different number it is quoted in the 'why' so a failing check can be diagnosed.",
+      "expect": [
+        {
+          "key": "x_first",
+          "op": "~=",
+          "value": 70,
+          "tol": 0.001,
+          "why": "X range starts at 70."
+        },
+        {
+          "key": "n_points",
+          "op": "between",
+          "value": [
+            20,
+            21
+          ],
+          "why": "Grid resolution 20 gives 20 or 21 samples depending on whether the end point is included."
+        },
+        {
+          "key": "y_first",
+          "op": "~=",
+          "value": -12992.81,
+          "tol": 1.0,
+          "why": "x=70: financed 15,000, invested 50000-35000-10250 = 4,750; pmt = 15000*i/(1-(1+i)^-60), i=(1.05)^(1/12)-1; 4750*1.045^5 - pmt*((1+g)^60-1)/g = -12992.8091."
+        },
+        {
+          "key": "last_finite_x",
+          "op": "between",
+          "value": [
+            78.9,
+            79.6
+          ],
+          "why": "Last affordable grid point: 79 (integer grid) or 79.47 (20-point grid)."
+        },
+        {
+          "key": "first_null_x",
+          "op": "not-null",
+          "why": "The sweep must break somewhere in 70..90."
+        },
+        {
+          "key": "first_null_x",
+          "op": "between",
+          "value": [
+            79.9,
+            80.6
+          ],
+          "why": "First unaffordable grid point: 80 or 80.53."
+        },
+        {
+          "key": "n_finite_after_first_null",
+          "op": "==",
+          "value": 0,
+          "why": "Nothing is plotted past the break; in particular no jump to the cash path."
+        },
+        {
+          "key": "y_last_finite",
+          "op": "<",
+          "value": 0,
+          "why": "10,250 of fees on a 5% loan against 4.5% risk-free can only lose."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Gaps are rendered as gaps, not as NaN text."
+        }
+      ]
+    },
+    {
+      "id": "F10",
+      "severity": "major",
+      "basis": "Inflation tooltip: 'ending wealth is also shown in today's dollars, discounted by the inflation rate'. Discounting by the scenario's own horizon means A12 (1 year) is divided by 1.025 and B60 (5 years) by 1.025^5 = 1.1314: the same nominal dollar is worth 12% less after 5 years than after 1, so real figures across different terms are not directly comparable and the page should say so. Each scenario's nominal net benefit is measured against the cash path at its own horizon: A12 vs 10,000 x 1.045, B60 vs 10,000 x 1.045^5. Conventions used in every expectation of this file: (1) loan period rate = (1+r)^(1/m)-1, the compound conversion the page's Repayment Frequency and Finance Rate tooltips describe ('compound-converted from the annual rate', 'so each payment is exact'); (2) level repayment = P*i/(1-(1+i)^-n) in arrears; (3) the invested balance starts at available cash - down payment - origination fee (Origination Fee tooltip: 'comes out of your cash at the start, so it reduces what you have left to invest'), grows for one period at (1+rf)^(1/m)-1 (the same compound conversion, so that m periods reproduce the annual rf the Cash Purchase Wealth tooltip promises), then the repayment plus the per-payment admin fee is withdrawn at the end of the period; (4) ending wealth = invested balance - loan balance (loan balance is 0 after the last repayment); (5) cash-purchase wealth = (cash - cost)*(1+rf)^years over the scenario's own term (per scenario) and over the longest term for the KPI, exactly as the Cash Purchase Wealth tooltip says; (6) net benefit = ending wealth - cash-purchase wealth at the same horizon. Where an alternative convention would give a materially different number it is quoted in the 'why' so a failing check can be diagnosed.",
+      "expect": [
+        {
+          "key": "nb_A12",
+          "op": "~=",
+          "value": 405.31,
+          "tol": 1.0,
+          "why": "pmt12 = 50000*i/(1-(1+i)^-12), i=(1.03)^(1/12)-1 -> 4233.7631; 60000*1.045 - pmt12*((1+g)^12-1)/g = 10855.3139; minus 10000*1.045 = 405.3139."
+        },
+        {
+          "key": "nb_B60",
+          "op": "~=",
+          "value": 2181.62,
+          "tol": 1.0,
+          "why": "60000*1.045^5 - 897.5355*((1+g)^60-1)/g = 14643.4387; minus 10000*1.045^5 = 2181.6193 (equal to N1's net benefit, as the extra 10,000 compounds identically on both sides)."
+        },
+        {
+          "key": "real_nb_A12",
+          "op": "~=",
+          "value": 395.43,
+          "tol": 1.0,
+          "why": "405.3139 / 1.025 = 395.4282."
+        },
+        {
+          "key": "real_nb_B60",
+          "op": "~=",
+          "value": 1928.23,
+          "tol": 1.0,
+          "why": "2181.6193 / 1.025^5 = 1928.2336."
+        },
+        {
+          "key": "real_ratio_A12",
+          "op": "~=",
+          "value": 0.97561,
+          "tol": 0.0005,
+          "why": "1/1.025 = 0.97561 (one year of deflation)."
+        },
+        {
+          "key": "real_ratio_B60",
+          "op": "~=",
+          "value": 0.88385,
+          "tol": 0.0005,
+          "why": "1/1.025^5 = 0.88385 (five years)."
+        },
+        {
+          "key": "end_wealth_A12",
+          "op": "~=",
+          "value": 10855.31,
+          "tol": 1.0,
+          "why": "10855.3139."
+        },
+        {
+          "key": "end_wealth_B60",
+          "op": "~=",
+          "value": 14643.44,
+          "tol": 1.0,
+          "why": "14643.4387."
+        },
+        {
+          "key": "kpi_cash_wealth",
+          "op": "~=",
+          "value": 12461.82,
+          "tol": 0.05,
+          "why": "Longest term 5 years: 10000*1.045^5 = 12461.8194."
+        },
+        {
+          "key": "note_text",
+          "op": "matches",
+          "value": "term|compar",
+          "why": "TESTCASES F10: scenarios of different terms are not comparable on real figures without a note."
+        }
+      ]
+    }
+  ]
+}

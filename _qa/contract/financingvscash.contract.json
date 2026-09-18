@@ -1,0 +1,1206 @@
+{
+  "tool": "financingvscash",
+  "page": "financingvscash/index.html",
+  "notes": [
+    "Apply every case from a clean state: click #resetBtn, then remove every scenario listed in #scenarioList with its own delete control so the list holds exactly the scenarios given in 'scenarios'.",
+    "'base' keys are DOM ids on the Base and Chart tabs. Text inputs with class fmt-num (#purchaseCost, #availableCash, #scFeeAmt, #scAdminFee) take a plain number string: set .value, dispatch 'input' and 'change', then blur. Range inputs (#baseRf, #scRate, #scDownPct): set .value and dispatch 'input' and 'change'. Selects: set .value and dispatch 'change'. Checkboxes (#inflationToggle): click only if the checked state differs from the requested boolean. #inflationRate is a number input, visible only when #inflationToggle is on.",
+    "Each entry of 'scenarios' is added by clicking #addScenarioBtn, filling the editor fields by id (#scName, #scRate, #scDownPct, #scFreq, #scTerm, #scFeeAmt, #scFeeType, #scAdminFee) and clicking #saveScenarioBtn. Set #scFreq before #scTerm because a frequency change re-derives the term. #scFeeType takes 'fixed' or 'pct'.",
+    "Cases with 'states' are several independent states; apply each from a clean state, and prefix that state's observation keys as listed in 'observe'.",
+    "Observables come from: the KPI cards (#kpiBest, #kpiNetBenefit, #kpiInterest, #kpiCashWealth), the Scenario Comparison table in #compTableWrap (find columns by header text), the Amortization Schedule (#amortTabs selects the scenario, table in #amortTableWrap), #warnBanner, #negCarryBanner, #chartLegend, and Chart.getChart(document.getElementById('chartCanvas')) / Chart.getChart(document.getElementById('sensCanvas')) for plotted points. Report numbers as plain numbers (strip currency symbols and thousands separators, keep the sign); report texts verbatim; report a missing quantity as null rather than guessing.",
+    "Runner-computed keys ('runner-computed' in 'what') are simple arithmetic on other keys of the same case; compute them from the same values you report."
+  ],
+  "cases": [
+    {
+      "id": "N1",
+      "title": "Baseline: 0% deposit, 5y monthly, rate below risk-free, no fees",
+      "setup": {
+        "base": {
+          "#purchaseCost": 50000,
+          "#availableCash": 50000,
+          "#baseRf": 4.5,
+          "#inflationToggle": false,
+          "#chartMetric": "wealth",
+          "#optTarget": "netBenefit"
+        },
+        "scenarios": [
+          {
+            "#scName": "N1",
+            "#scRate": 3.0,
+            "#scDownPct": 0,
+            "#scFreq": "monthly",
+            "#scTerm": 60,
+            "#scFeeAmt": 0,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "payment",
+          "what": "Per-period repayment of scenario N1 (principal + interest, excluding any admin fee), from the Scenario Comparison table or the schedule."
+        },
+        {
+          "key": "n_rows",
+          "what": "Number of repayment rows in N1's Amortization Schedule (exclude any opening 'period 0' row)."
+        },
+        {
+          "key": "interest_p1",
+          "what": "Interest charged in the first repayment row of N1's schedule."
+        },
+        {
+          "key": "sum_principal",
+          "what": "Sum of the principal column over every repayment row of N1's schedule."
+        },
+        {
+          "key": "sum_interest",
+          "what": "Sum of the interest column over every repayment row of N1's schedule."
+        },
+        {
+          "key": "final_loan_balance",
+          "what": "Loan balance shown in the last repayment row of N1's schedule."
+        },
+        {
+          "key": "balance_after_30",
+          "what": "Loan balance shown in repayment row 30 of N1's schedule."
+        },
+        {
+          "key": "end_invest",
+          "what": "Invested (investment) balance in the last repayment row of N1's schedule, or the last point of the 'Investment Value Over Time' chart metric for N1."
+        },
+        {
+          "key": "end_wealth",
+          "what": "Ending wealth of scenario N1 in the Scenario Comparison table."
+        },
+        {
+          "key": "nb_table",
+          "what": "Net benefit vs cash of scenario N1 in the Scenario Comparison table."
+        },
+        {
+          "key": "wealth_identity_residual",
+          "what": "Runner-computed: end_wealth - (end_invest - final_loan_balance)."
+        },
+        {
+          "key": "kpi_best",
+          "what": "Text of #kpiBest."
+        },
+        {
+          "key": "kpi_net_benefit",
+          "what": "Value of #kpiNetBenefit."
+        },
+        {
+          "key": "kpi_interest",
+          "what": "Value of #kpiInterest."
+        },
+        {
+          "key": "kpi_cash_wealth",
+          "what": "Value of #kpiCashWealth."
+        },
+        {
+          "key": "nan_count",
+          "what": "Count of occurrences of the strings 'NaN', 'Infinity', '∞', 'undefined' or 'null' in the visible text of the four KPI cards, the Scenario Comparison table and the Amortization Schedule table (0 when none)."
+        }
+      ]
+    },
+    {
+      "id": "F1",
+      "title": "Period rate convention: effective (1+r)^(1/m)-1 for the loan and for the invested cash",
+      "setup": {
+        "base": {
+          "#purchaseCost": 50000,
+          "#availableCash": 50000,
+          "#baseRf": 4.5,
+          "#inflationToggle": false,
+          "#chartMetric": "wealth",
+          "#optTarget": "netBenefit"
+        },
+        "scenarios": [
+          {
+            "#scName": "F1",
+            "#scRate": 12.0,
+            "#scDownPct": 0,
+            "#scFreq": "monthly",
+            "#scTerm": 60,
+            "#scFeeAmt": 0,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          },
+          {
+            "#scName": "F1z",
+            "#scRate": 0.0,
+            "#scDownPct": 0,
+            "#scFreq": "monthly",
+            "#scTerm": 60,
+            "#scFeeAmt": 0,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "payment_F1",
+          "what": "Per-period repayment of scenario F1 (12% p.a., monthly, 60 repayments), excluding any admin fee."
+        },
+        {
+          "key": "interest_p1_F1",
+          "what": "Interest charged in the first repayment row of F1's Amortization Schedule."
+        },
+        {
+          "key": "sum_interest_F1",
+          "what": "Sum of the interest column over every repayment row of F1's schedule (or the table's total interest for F1)."
+        },
+        {
+          "key": "payment_F1z",
+          "what": "Per-period repayment of scenario F1z (0% p.a., monthly, 60 repayments)."
+        },
+        {
+          "key": "end_invest_F1z",
+          "what": "Invested balance in the last repayment row of F1z's schedule (or last point of the 'Investment Value Over Time' metric for F1z)."
+        },
+        {
+          "key": "end_wealth_F1z",
+          "what": "Ending wealth of scenario F1z in the Scenario Comparison table."
+        }
+      ]
+    },
+    {
+      "id": "F1-alt",
+      "title": "Period rate convention: the nominal r/m alternative (expected NOT to hold)",
+      "setup": {
+        "base": {
+          "#purchaseCost": 50000,
+          "#availableCash": 50000,
+          "#baseRf": 4.5,
+          "#inflationToggle": false,
+          "#chartMetric": "wealth",
+          "#optTarget": "netBenefit"
+        },
+        "scenarios": [
+          {
+            "#scName": "F1",
+            "#scRate": 12.0,
+            "#scDownPct": 0,
+            "#scFreq": "monthly",
+            "#scTerm": 60,
+            "#scFeeAmt": 0,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          },
+          {
+            "#scName": "F1z",
+            "#scRate": 0.0,
+            "#scDownPct": 0,
+            "#scFreq": "monthly",
+            "#scTerm": 60,
+            "#scFeeAmt": 0,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "payment_F1",
+          "what": "Per-period repayment of scenario F1 (12% p.a., monthly, 60 repayments), excluding any admin fee."
+        },
+        {
+          "key": "interest_p1_F1",
+          "what": "Interest charged in the first repayment row of F1's Amortization Schedule."
+        },
+        {
+          "key": "sum_interest_F1",
+          "what": "Sum of the interest column over every repayment row of F1's schedule (or the table's total interest for F1)."
+        },
+        {
+          "key": "payment_F1z",
+          "what": "Per-period repayment of scenario F1z (0% p.a., monthly, 60 repayments)."
+        },
+        {
+          "key": "end_invest_F1z",
+          "what": "Invested balance in the last repayment row of F1z's schedule (or last point of the 'Investment Value Over Time' metric for F1z)."
+        },
+        {
+          "key": "end_wealth_F1z",
+          "what": "Ending wealth of scenario F1z in the Scenario Comparison table."
+        }
+      ]
+    },
+    {
+      "id": "F2",
+      "title": "Invested balance may go negative and keeps compounding (implicit overdraft at the risk-free rate)",
+      "setup": {
+        "base": {
+          "#purchaseCost": 50000,
+          "#availableCash": 50000,
+          "#baseRf": 4.5,
+          "#inflationToggle": false,
+          "#chartMetric": "wealth",
+          "#optTarget": "netBenefit"
+        },
+        "scenarios": [
+          {
+            "#scName": "F2",
+            "#scRate": 0.0,
+            "#scDownPct": 90,
+            "#scFreq": "monthly",
+            "#scTerm": 12,
+            "#scFeeAmt": 4000,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "payment",
+          "what": "Per-period repayment of scenario F2 (excluding any admin fee)."
+        },
+        {
+          "key": "n_rows",
+          "what": "Number of repayment rows in F2's Amortization Schedule."
+        },
+        {
+          "key": "total_fees",
+          "what": "Total fees charged to scenario F2 (origination plus all admin fees) as the Scenario Comparison table reports them; if only 'financing cost' and 'interest' are shown, report financing cost minus interest."
+        },
+        {
+          "key": "invest_p1",
+          "what": "Invested balance shown in repayment row 1 of F2's schedule."
+        },
+        {
+          "key": "invest_p3",
+          "what": "Invested balance shown in repayment row 3 of F2's schedule."
+        },
+        {
+          "key": "n_negative_rows",
+          "what": "Number of repayment rows of F2's schedule whose invested balance is below zero."
+        },
+        {
+          "key": "min_invest",
+          "what": "Smallest invested balance across all repayment rows of F2's schedule."
+        },
+        {
+          "key": "end_invest",
+          "what": "Invested balance in the last repayment row of F2's schedule."
+        },
+        {
+          "key": "end_wealth",
+          "what": "Ending wealth of scenario F2 in the Scenario Comparison table."
+        },
+        {
+          "key": "kpi_net_benefit",
+          "what": "Value of #kpiNetBenefit."
+        },
+        {
+          "key": "kpi_best",
+          "what": "Text of #kpiBest."
+        },
+        {
+          "key": "kpi_cash_wealth",
+          "what": "Value of #kpiCashWealth."
+        },
+        {
+          "key": "nan_count",
+          "what": "Count of occurrences of the strings 'NaN', 'Infinity', '∞', 'undefined' or 'null' in the visible text of the four KPI cards, the Scenario Comparison table and the Amortization Schedule table (0 when none)."
+        }
+      ]
+    },
+    {
+      "id": "F3",
+      "title": "Unaffordable upfront outlay drops the scenario visibly without corrupting chart or table",
+      "setup": {
+        "base": {
+          "#purchaseCost": 50000,
+          "#availableCash": 50000,
+          "#baseRf": 4.5,
+          "#inflationToggle": false,
+          "#chartMetric": "wealth",
+          "#optTarget": "netBenefit"
+        },
+        "scenarios": [
+          {
+            "#scName": "affordable",
+            "#scRate": 3.0,
+            "#scDownPct": 0,
+            "#scFreq": "monthly",
+            "#scTerm": 60,
+            "#scFeeAmt": 0,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          },
+          {
+            "#scName": "toobig",
+            "#scRate": 5.0,
+            "#scDownPct": 50,
+            "#scFreq": "monthly",
+            "#scTerm": 60,
+            "#scFeeAmt": 30000,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "warn_text",
+          "what": "Visible text of #warnBanner (empty string if hidden/empty)."
+        },
+        {
+          "key": "kpi_best",
+          "what": "Text of #kpiBest."
+        },
+        {
+          "key": "kpi_net_benefit",
+          "what": "Value of #kpiNetBenefit."
+        },
+        {
+          "key": "affordable_end_wealth",
+          "what": "Ending wealth of scenario 'affordable' in the Scenario Comparison table."
+        },
+        {
+          "key": "toobig_row_numeric_wealth",
+          "what": "The ending-wealth cell of the 'toobig' row of the Scenario Comparison table parsed as a number; null if the row is absent or the cell is not a number (dash, 'unaffordable', etc.)."
+        },
+        {
+          "key": "chart_has_affordable_series",
+          "what": "true if the main chart (Chart.getChart on #chartCanvas) contains a plotted series with at least one finite point for scenario 'affordable'."
+        },
+        {
+          "key": "chart_has_toobig_series",
+          "what": "true if the main chart contains a plotted series with at least one finite point for scenario 'toobig'."
+        },
+        {
+          "key": "legend_text",
+          "what": "Visible text of #chartLegend."
+        },
+        {
+          "key": "amort_tabs_text",
+          "what": "Visible text of #amortTabs."
+        },
+        {
+          "key": "nan_count",
+          "what": "Count of occurrences of the strings 'NaN', 'Infinity', '∞', 'undefined' or 'null' in the visible text of the four KPI cards, the Scenario Comparison table and the Amortization Schedule table (0 when none)."
+        }
+      ]
+    },
+    {
+      "id": "F4",
+      "title": "Negative carry: risk-free below the finance rate on a zero-fee loan always gives a negative net benefit",
+      "setup": {
+        "states": [
+          {
+            "state": "neg",
+            "base": {
+              "#purchaseCost": 50000,
+              "#availableCash": 50000,
+              "#baseRf": 3.0,
+              "#inflationToggle": false,
+              "#chartMetric": "wealth",
+              "#optTarget": "netBenefit"
+            },
+            "scenarios": [
+              {
+                "#scName": "a5",
+                "#scRate": 5.0,
+                "#scDownPct": 0,
+                "#scFreq": "monthly",
+                "#scTerm": 60,
+                "#scFeeAmt": 0,
+                "#scFeeType": "fixed",
+                "#scAdminFee": 0
+              },
+              {
+                "#scName": "b5d20",
+                "#scRate": 5.0,
+                "#scDownPct": 20,
+                "#scFreq": "monthly",
+                "#scTerm": 60,
+                "#scFeeAmt": 0,
+                "#scFeeType": "fixed",
+                "#scAdminFee": 0
+              },
+              {
+                "#scName": "c35",
+                "#scRate": 3.5,
+                "#scDownPct": 0,
+                "#scFreq": "monthly",
+                "#scTerm": 60,
+                "#scFeeAmt": 0,
+                "#scFeeType": "fixed",
+                "#scAdminFee": 0
+              }
+            ]
+          },
+          {
+            "state": "par",
+            "base": {
+              "#purchaseCost": 50000,
+              "#availableCash": 50000,
+              "#baseRf": 3.0,
+              "#inflationToggle": false,
+              "#chartMetric": "wealth",
+              "#optTarget": "netBenefit"
+            },
+            "scenarios": [
+              {
+                "#scName": "dpar",
+                "#scRate": 3.0,
+                "#scDownPct": 0,
+                "#scFreq": "monthly",
+                "#scTerm": 60,
+                "#scFeeAmt": 0,
+                "#scFeeType": "fixed",
+                "#scAdminFee": 0
+              }
+            ]
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "neg_nb_a5",
+          "what": "State 'neg': net benefit vs cash of scenario a5 in the Scenario Comparison table."
+        },
+        {
+          "key": "neg_nb_b5d20",
+          "what": "State 'neg': net benefit vs cash of scenario b5d20."
+        },
+        {
+          "key": "neg_nb_c35",
+          "what": "State 'neg': net benefit vs cash of scenario c35."
+        },
+        {
+          "key": "neg_nb_c35_minus_a5",
+          "what": "State 'neg', runner-computed: neg_nb_c35 - neg_nb_a5."
+        },
+        {
+          "key": "neg_nb_b5d20_minus_a5",
+          "what": "State 'neg', runner-computed: neg_nb_b5d20 - neg_nb_a5."
+        },
+        {
+          "key": "neg_fees_a5",
+          "what": "State 'neg': total fees of scenario a5 in the comparison table (financing cost minus interest if fees are not a column)."
+        },
+        {
+          "key": "neg_kpi_best",
+          "what": "State 'neg': text of #kpiBest."
+        },
+        {
+          "key": "neg_kpi_net_benefit",
+          "what": "State 'neg': value of #kpiNetBenefit."
+        },
+        {
+          "key": "neg_negcarry_text",
+          "what": "State 'neg': visible text of #negCarryBanner (empty string if hidden/empty)."
+        },
+        {
+          "key": "par_nb",
+          "what": "State 'par': net benefit vs cash of scenario dpar in the comparison table."
+        },
+        {
+          "key": "par_end_wealth",
+          "what": "State 'par': ending wealth of scenario dpar in the comparison table."
+        },
+        {
+          "key": "par_kpi_net_benefit",
+          "what": "State 'par': value of #kpiNetBenefit."
+        }
+      ]
+    },
+    {
+      "id": "F5",
+      "title": "Mixed frequencies share one time-aligned chart; a frequency edit re-derives the term",
+      "setup": {
+        "base": {
+          "#purchaseCost": 50000,
+          "#availableCash": 60000,
+          "#baseRf": 4.5,
+          "#inflationToggle": false,
+          "#chartMetric": "wealth",
+          "#optTarget": "netBenefit"
+        },
+        "scenarios": [
+          {
+            "#scName": "A",
+            "#scRate": 6.0,
+            "#scDownPct": 0,
+            "#scFreq": "monthly",
+            "#scTerm": 24,
+            "#scFeeAmt": 0,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          },
+          {
+            "#scName": "B",
+            "#scRate": 6.0,
+            "#scDownPct": 0,
+            "#scFreq": "weekly",
+            "#scTerm": 104,
+            "#scFeeAmt": 0,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          },
+          {
+            "#scName": "C",
+            "#scRate": 6.0,
+            "#scDownPct": 0,
+            "#scFreq": "fortnightly",
+            "#scTerm": 104,
+            "#scFeeAmt": 0,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          }
+        ],
+        "then": [
+          "Open scenario A in the editor (its edit control in #scenarioList). With #scTerm reading 24 and #scFreq = monthly, change #scFreq to 'weekly' and record #scTerm and the text of #termLabel (keys term_after_weekly, label_after_weekly).",
+          "Change #scFreq to 'fortnightly' and record #scTerm and #termLabel (term_after_fortnightly, label_after_fortnightly).",
+          "Change #scFreq to 'yearly' and record (term_after_yearly, label_after_yearly).",
+          "Change #scFreq back to 'monthly' and record (term_after_monthly, label_after_monthly).",
+          "Click #cancelScenarioBtn so scenario A is left unchanged, then read the remaining observables."
+        ]
+      },
+      "observe": [
+        {
+          "key": "kpi_cash_wealth",
+          "what": "Value of #kpiCashWealth."
+        },
+        {
+          "key": "n_rows_A",
+          "what": "Number of repayment rows in A's Amortization Schedule."
+        },
+        {
+          "key": "n_rows_B",
+          "what": "Number of repayment rows in B's Amortization Schedule."
+        },
+        {
+          "key": "n_rows_C",
+          "what": "Number of repayment rows in C's Amortization Schedule."
+        },
+        {
+          "key": "payment_A",
+          "what": "Per-period repayment of A."
+        },
+        {
+          "key": "payment_B",
+          "what": "Per-period repayment of B."
+        },
+        {
+          "key": "payment_C",
+          "what": "Per-period repayment of C."
+        },
+        {
+          "key": "end_wealth_A",
+          "what": "Ending wealth of A in the comparison table."
+        },
+        {
+          "key": "end_wealth_B",
+          "what": "Ending wealth of B."
+        },
+        {
+          "key": "end_wealth_C",
+          "what": "Ending wealth of C."
+        },
+        {
+          "key": "last_x_A",
+          "what": "x value (in the chart's own x-axis units) of the last plotted point of A's series in the main chart (metric 'Ending Wealth Over Time')."
+        },
+        {
+          "key": "last_x_B",
+          "what": "x value of the last plotted point of B's series."
+        },
+        {
+          "key": "last_x_C",
+          "what": "x value of the last plotted point of C's series."
+        },
+        {
+          "key": "x_ratio_B_A",
+          "what": "Runner-computed: last_x_B / last_x_A."
+        },
+        {
+          "key": "x_ratio_C_A",
+          "what": "Runner-computed: last_x_C / last_x_A."
+        },
+        {
+          "key": "chart_last_y_A",
+          "what": "y value of the last plotted point of A's series."
+        },
+        {
+          "key": "chart_last_y_B",
+          "what": "y value of the last plotted point of B's series."
+        },
+        {
+          "key": "term_after_weekly",
+          "what": "Value of #scTerm right after switching A's editor to weekly."
+        },
+        {
+          "key": "label_after_weekly",
+          "what": "Text of #termLabel right after switching to weekly."
+        },
+        {
+          "key": "term_after_fortnightly",
+          "what": "Value of #scTerm right after switching to fortnightly."
+        },
+        {
+          "key": "label_after_fortnightly",
+          "what": "Text of #termLabel right after switching to fortnightly."
+        },
+        {
+          "key": "term_after_yearly",
+          "what": "Value of #scTerm right after switching to yearly."
+        },
+        {
+          "key": "label_after_yearly",
+          "what": "Text of #termLabel right after switching to yearly."
+        },
+        {
+          "key": "term_after_monthly",
+          "what": "Value of #scTerm right after switching back to monthly."
+        },
+        {
+          "key": "label_after_monthly",
+          "what": "Text of #termLabel right after switching back to monthly."
+        }
+      ]
+    },
+    {
+      "id": "F6",
+      "title": "Fees: % of financed amount, flat upfront, per-repayment admin; total = upfront + admin x n",
+      "setup": {
+        "base": {
+          "#purchaseCost": 50000,
+          "#availableCash": 50000,
+          "#baseRf": 4.5,
+          "#inflationToggle": false,
+          "#chartMetric": "wealth",
+          "#optTarget": "netBenefit"
+        },
+        "scenarios": [
+          {
+            "#scName": "pct",
+            "#scRate": 5.0,
+            "#scDownPct": 20,
+            "#scFreq": "monthly",
+            "#scTerm": 24,
+            "#scFeeAmt": 2,
+            "#scFeeType": "pct",
+            "#scAdminFee": 10
+          },
+          {
+            "#scName": "flat",
+            "#scRate": 5.0,
+            "#scDownPct": 20,
+            "#scFreq": "monthly",
+            "#scTerm": 24,
+            "#scFeeAmt": 800,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 10
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "fees_pct",
+          "what": "Total fees of scenario 'pct' (origination + all admin fees) in the comparison table; if only financing cost and interest are shown, financing cost minus interest."
+        },
+        {
+          "key": "fees_flat",
+          "what": "Total fees of scenario 'flat', same definition."
+        },
+        {
+          "key": "interest_pct",
+          "what": "Total interest of scenario 'pct'."
+        },
+        {
+          "key": "interest_flat",
+          "what": "Total interest of scenario 'flat'."
+        },
+        {
+          "key": "cost_pct",
+          "what": "Total financing cost (interest plus fees) of scenario 'pct'."
+        },
+        {
+          "key": "cost_flat",
+          "what": "Total financing cost of scenario 'flat'."
+        },
+        {
+          "key": "payment_pct",
+          "what": "Per-period repayment of 'pct' excluding the admin fee."
+        },
+        {
+          "key": "end_wealth_pct",
+          "what": "Ending wealth of 'pct'."
+        },
+        {
+          "key": "end_wealth_flat",
+          "what": "Ending wealth of 'flat'."
+        },
+        {
+          "key": "wealth_diff_pct_flat",
+          "what": "Runner-computed: end_wealth_pct - end_wealth_flat."
+        },
+        {
+          "key": "nb_pct",
+          "what": "Net benefit vs cash of 'pct'."
+        },
+        {
+          "key": "kpi_interest",
+          "what": "Value of #kpiInterest."
+        }
+      ]
+    },
+    {
+      "id": "F7",
+      "title": "Degenerate inputs: 100% deposit, 0% rate, 0-period term, cost above cash, zero cash",
+      "setup": {
+        "states": [
+          {
+            "state": "a",
+            "base": {
+              "#purchaseCost": 50000,
+              "#availableCash": 60000,
+              "#baseRf": 4.5,
+              "#inflationToggle": false,
+              "#chartMetric": "wealth",
+              "#optTarget": "netBenefit"
+            },
+            "scenarios": [
+              {
+                "#scName": "full",
+                "#scRate": 5.0,
+                "#scDownPct": 100,
+                "#scFreq": "monthly",
+                "#scTerm": 60,
+                "#scFeeAmt": 0,
+                "#scFeeType": "fixed",
+                "#scAdminFee": 0
+              }
+            ]
+          },
+          {
+            "state": "b",
+            "base": {
+              "#purchaseCost": 50000,
+              "#availableCash": 50000,
+              "#baseRf": 4.5,
+              "#inflationToggle": false,
+              "#chartMetric": "wealth",
+              "#optTarget": "netBenefit"
+            },
+            "scenarios": [
+              {
+                "#scName": "zero",
+                "#scRate": 0.0,
+                "#scDownPct": 0,
+                "#scFreq": "monthly",
+                "#scTerm": 60,
+                "#scFeeAmt": 0,
+                "#scFeeType": "fixed",
+                "#scAdminFee": 0
+              }
+            ]
+          },
+          {
+            "state": "c",
+            "base": {
+              "#purchaseCost": 50000,
+              "#availableCash": 50000,
+              "#baseRf": 4.5,
+              "#inflationToggle": false,
+              "#chartMetric": "wealth",
+              "#optTarget": "netBenefit"
+            },
+            "scenarios": [
+              {
+                "#scName": "zt",
+                "#scRate": 5.0,
+                "#scDownPct": 0,
+                "#scFreq": "monthly",
+                "#scTerm": 0,
+                "#scFeeAmt": 0,
+                "#scFeeType": "fixed",
+                "#scAdminFee": 0
+              }
+            ],
+            "note": "#scTerm has min=1; type 0 anyway (set value '0', dispatch input/change) and click Save. Record what the page did."
+          },
+          {
+            "state": "d",
+            "base": {
+              "#purchaseCost": 50000,
+              "#availableCash": 40000,
+              "#baseRf": 4.5,
+              "#inflationToggle": false,
+              "#chartMetric": "wealth",
+              "#optTarget": "netBenefit"
+            },
+            "scenarios": [
+              {
+                "#scName": "d",
+                "#scRate": 5.0,
+                "#scDownPct": 0,
+                "#scFreq": "monthly",
+                "#scTerm": 60,
+                "#scFeeAmt": 0,
+                "#scFeeType": "fixed",
+                "#scAdminFee": 0
+              }
+            ]
+          },
+          {
+            "state": "e",
+            "base": {
+              "#purchaseCost": 50000,
+              "#availableCash": 0,
+              "#baseRf": 4.5,
+              "#inflationToggle": false,
+              "#chartMetric": "wealth",
+              "#optTarget": "netBenefit"
+            },
+            "scenarios": [
+              {
+                "#scName": "e",
+                "#scRate": 5.0,
+                "#scDownPct": 0,
+                "#scFreq": "monthly",
+                "#scTerm": 60,
+                "#scFeeAmt": 0,
+                "#scFeeType": "fixed",
+                "#scAdminFee": 0
+              }
+            ]
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "a_payment",
+          "what": "State a: per-period repayment shown for 'full' (0 if the table shows no loan/repayment)."
+        },
+        {
+          "key": "a_interest",
+          "what": "State a: total interest shown for 'full' (0 if none)."
+        },
+        {
+          "key": "a_end_wealth",
+          "what": "State a: ending wealth of 'full'."
+        },
+        {
+          "key": "a_nb",
+          "what": "State a: net benefit vs cash of 'full'."
+        },
+        {
+          "key": "a_kpi_cash_wealth",
+          "what": "State a: value of #kpiCashWealth."
+        },
+        {
+          "key": "a_kpi_best",
+          "what": "State a: text of #kpiBest."
+        },
+        {
+          "key": "a_nan_count",
+          "what": "State a: Count of occurrences of the strings 'NaN', 'Infinity', '∞', 'undefined' or 'null' in the visible text of the four KPI cards, the Scenario Comparison table and the Amortization Schedule table (0 when none)."
+        },
+        {
+          "key": "b_payment",
+          "what": "State b: per-period repayment of 'zero'."
+        },
+        {
+          "key": "b_interest",
+          "what": "State b: total interest of 'zero'."
+        },
+        {
+          "key": "b_sum_principal",
+          "what": "State b: sum of the principal column of 'zero''s schedule."
+        },
+        {
+          "key": "b_end_wealth",
+          "what": "State b: ending wealth of 'zero'."
+        },
+        {
+          "key": "b_nb",
+          "what": "State b: net benefit vs cash of 'zero'."
+        },
+        {
+          "key": "c_state",
+          "what": "State c: 'clamped' if scenario zt was saved and shows a term of at least 1 period; 'rejected' if it was not saved or a visible warning refused it; otherwise 'other'."
+        },
+        {
+          "key": "c_term_effective",
+          "what": "State c: the term (number of repayments) the page shows for zt, or null if it was rejected."
+        },
+        {
+          "key": "c_nan_count",
+          "what": "State c: Count of occurrences of the strings 'NaN', 'Infinity', '∞', 'undefined' or 'null' in the visible text of the four KPI cards, the Scenario Comparison table and the Amortization Schedule table (0 when none)."
+        },
+        {
+          "key": "d_warn_text",
+          "what": "State d: visible text of #warnBanner."
+        },
+        {
+          "key": "d_nan_count",
+          "what": "State d: Count of occurrences of the strings 'NaN', 'Infinity', '∞', 'undefined' or 'null' in the visible text of the four KPI cards, the Scenario Comparison table and the Amortization Schedule table (0 when none)."
+        },
+        {
+          "key": "e_warn_text",
+          "what": "State e: visible text of #warnBanner."
+        },
+        {
+          "key": "e_nan_count",
+          "what": "State e: Count of occurrences of the strings 'NaN', 'Infinity', '∞', 'undefined' or 'null' in the visible text of the four KPI cards, the Scenario Comparison table and the Amortization Schedule table (0 when none)."
+        }
+      ]
+    },
+    {
+      "id": "F8",
+      "title": "The asset itself is ignored: no depreciation, no resale value in wealth",
+      "setup": {
+        "states": [
+          {
+            "state": "s1",
+            "base": {
+              "#purchaseCost": 50000,
+              "#availableCash": 50000,
+              "#baseRf": 4.5,
+              "#inflationToggle": false,
+              "#chartMetric": "wealth",
+              "#optTarget": "netBenefit"
+            },
+            "scenarios": [
+              {
+                "#scName": "s",
+                "#scRate": 4.0,
+                "#scDownPct": 0,
+                "#scFreq": "monthly",
+                "#scTerm": 60,
+                "#scFeeAmt": 0,
+                "#scFeeType": "fixed",
+                "#scAdminFee": 0
+              }
+            ]
+          },
+          {
+            "state": "s2",
+            "base": {
+              "#purchaseCost": 80000,
+              "#availableCash": 100000,
+              "#baseRf": 4.5,
+              "#inflationToggle": false,
+              "#chartMetric": "wealth",
+              "#optTarget": "netBenefit"
+            },
+            "scenarios": [
+              {
+                "#scName": "full",
+                "#scRate": 4.0,
+                "#scDownPct": 100,
+                "#scFreq": "monthly",
+                "#scTerm": 60,
+                "#scFeeAmt": 0,
+                "#scFeeType": "fixed",
+                "#scAdminFee": 0
+              },
+              {
+                "#scName": "zero",
+                "#scRate": 4.0,
+                "#scDownPct": 0,
+                "#scFreq": "monthly",
+                "#scTerm": 60,
+                "#scFeeAmt": 0,
+                "#scFeeType": "fixed",
+                "#scAdminFee": 0
+              }
+            ]
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "s1_kpi_cash_wealth",
+          "what": "State s1: value of #kpiCashWealth."
+        },
+        {
+          "key": "s2_kpi_cash_wealth",
+          "what": "State s2: value of #kpiCashWealth."
+        },
+        {
+          "key": "s2_end_wealth_full",
+          "what": "State s2: ending wealth of 'full'."
+        },
+        {
+          "key": "s2_end_wealth_zero",
+          "what": "State s2: ending wealth of 'zero'."
+        },
+        {
+          "key": "s2_nb_zero",
+          "what": "State s2: net benefit vs cash of 'zero'."
+        },
+        {
+          "key": "s2_final_loan_zero",
+          "what": "State s2: loan balance in the last repayment row of 'zero''s schedule."
+        },
+        {
+          "key": "s2_end_invest_zero",
+          "what": "State s2: invested balance in the last repayment row of 'zero''s schedule."
+        }
+      ]
+    },
+    {
+      "id": "F9",
+      "title": "Sensitivity sweep breaks where scenarios become unaffordable instead of jumping to the cash path",
+      "setup": {
+        "base": {
+          "#purchaseCost": 50000,
+          "#availableCash": 50000,
+          "#baseRf": 4.5,
+          "#inflationToggle": false,
+          "#chartMetric": "wealth",
+          "#optTarget": "netBenefit"
+        },
+        "scenarios": [
+          {
+            "#scName": "s9",
+            "#scRate": 5.0,
+            "#scDownPct": 0,
+            "#scFreq": "monthly",
+            "#scTerm": 60,
+            "#scFeeAmt": 10250,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          }
+        ],
+        "sensitivity": {
+          "#sensScenario": "s9",
+          "#sensObjective": "netBenefit",
+          "mode": "2D (click #mode2d)",
+          "#sensVarX": "downPayment",
+          "#sensXStart": 70,
+          "#sensXEnd": 90,
+          "#sensSteps": 20,
+          "run": "click #runSensBtn and wait for #sens2dSection to be visible"
+        }
+      },
+      "observe": [
+        {
+          "key": "sweep_x",
+          "what": "List of x values (down payment %) of the 2D sweep series, read from Chart.getChart on #sensCanvas (labels or point x values), in order."
+        },
+        {
+          "key": "sweep_y",
+          "what": "List of y values of the sweep series in the same order; null where the chart has no finite value (gap) at that x."
+        },
+        {
+          "key": "n_points",
+          "what": "Number of x grid points in the sweep."
+        },
+        {
+          "key": "x_first",
+          "what": "First x value of the sweep."
+        },
+        {
+          "key": "y_first",
+          "what": "y value at the first x."
+        },
+        {
+          "key": "last_finite_x",
+          "what": "Largest x whose y is finite."
+        },
+        {
+          "key": "first_null_x",
+          "what": "Smallest x whose y is null/absent; null if every point is finite."
+        },
+        {
+          "key": "n_finite_after_first_null",
+          "what": "Number of finite y values at x greater than first_null_x (0 if first_null_x is null)."
+        },
+        {
+          "key": "y_last_finite",
+          "what": "y value at last_finite_x."
+        },
+        {
+          "key": "nan_count",
+          "what": "Count of 'NaN', 'Infinity', '∞', 'undefined' or 'null' in the visible text of #sens2dSection and the KPI cards."
+        }
+      ]
+    },
+    {
+      "id": "F10",
+      "title": "Real figures deflate by each scenario's own term; different terms need a comparability note",
+      "setup": {
+        "base": {
+          "#purchaseCost": 50000,
+          "#availableCash": 60000,
+          "#baseRf": 4.5,
+          "#inflationToggle": true,
+          "#chartMetric": "wealth",
+          "#optTarget": "netBenefit",
+          "#inflationRate": 2.5
+        },
+        "scenarios": [
+          {
+            "#scName": "A12",
+            "#scRate": 3.0,
+            "#scDownPct": 0,
+            "#scFreq": "monthly",
+            "#scTerm": 12,
+            "#scFeeAmt": 0,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          },
+          {
+            "#scName": "B60",
+            "#scRate": 3.0,
+            "#scDownPct": 0,
+            "#scFreq": "monthly",
+            "#scTerm": 60,
+            "#scFeeAmt": 0,
+            "#scFeeType": "fixed",
+            "#scAdminFee": 0
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "nb_A12",
+          "what": "Nominal net benefit vs cash of A12 in the comparison table."
+        },
+        {
+          "key": "nb_B60",
+          "what": "Nominal net benefit vs cash of B60."
+        },
+        {
+          "key": "real_nb_A12",
+          "what": "Inflation-adjusted (today's dollars) net benefit of A12 as the comparison table shows it."
+        },
+        {
+          "key": "real_nb_B60",
+          "what": "Inflation-adjusted net benefit of B60."
+        },
+        {
+          "key": "real_ratio_A12",
+          "what": "Runner-computed: real_nb_A12 / nb_A12."
+        },
+        {
+          "key": "real_ratio_B60",
+          "what": "Runner-computed: real_nb_B60 / nb_B60."
+        },
+        {
+          "key": "end_wealth_A12",
+          "what": "Nominal ending wealth of A12."
+        },
+        {
+          "key": "end_wealth_B60",
+          "what": "Nominal ending wealth of B60."
+        },
+        {
+          "key": "kpi_cash_wealth",
+          "what": "Value of #kpiCashWealth."
+        },
+        {
+          "key": "note_text",
+          "what": "Visible text of #warnBanner plus any caption, footnote or column-header note in the Scenario Comparison section that refers to term length or to the comparability of inflation-adjusted figures; empty string if none."
+        }
+      ]
+    }
+  ]
+}
