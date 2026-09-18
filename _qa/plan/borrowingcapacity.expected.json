@@ -1,0 +1,1609 @@
+{
+  "tool": "borrowingcapacity",
+  "authored_utc": "2026-09-18T14:06:10Z",
+  "cases": [
+    {
+      "id": "N1",
+      "severity": "blocker",
+      "basis": "Single PAYG applicant on $120,000, resident 2026-27, private hospital cover, no study loan, no debts of any kind, $4,000/mo declared living costs (set well above any plausible HEM for one adult with no dependants in Perth so that the living line is exactly the declared figure), $900,000 price with a $180,000 deposit and no stamp duty or other costs, so the deposit is exactly 20% of the price. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "assessment_rate",
+          "op": "~=",
+          "value": 8.9,
+          "tol": 0.01,
+          "why": "max(product 5.90 + buffer 3.00, floor 5.50) = 8.90."
+        },
+        {
+          "key": "gross_income_annual",
+          "op": "~=",
+          "value": 120000,
+          "tol": 1,
+          "why": "One salary of $120,000 entered in Simple mode, which the page says it 'counts in full'."
+        },
+        {
+          "key": "assessable_income_annual",
+          "op": "~=",
+          "value": 120000,
+          "tol": 1,
+          "why": "Simple mode shades nothing, so assessable equals gross."
+        },
+        {
+          "key": "tax_annual",
+          "op": "~=",
+          "value": 28920.0,
+          "tol": 1,
+          "why": "2026-27 base-plus form: $4,020 + 30c over $45,000 on $120,000 = 4,020 + 0.30*75,000 = 26,520. LITO is nil above $66,667. Medicare 2% x 120,000 = 2,400. Total 28,920. If LITO were wrongly allowed it would read 28,920 as well (LITO is already nil here), so a miss points at the scale or the levy, not the offset."
+        },
+        {
+          "key": "net_income_monthly",
+          "op": "~=",
+          "value": 7590.0,
+          "tol": 1,
+          "why": "(120,000 - 28,920)/12 = 7,590.00."
+        },
+        {
+          "key": "living_monthly",
+          "op": "~=",
+          "value": 4000,
+          "tol": 1,
+          "why": "Declared $4,000/mo, which is above the HEM benchmark for one adult, no dependants, in Perth (published HEM basics for a single sit near $1,700-2,700/mo). If this reads higher, HEM bound instead and every other figure in this case shifts with it."
+        },
+        {
+          "key": "commitments_monthly",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.5,
+          "why": "Every debt tick box is off, rent/board is nil and new-property costs are set to 0."
+        },
+        {
+          "key": "assessed_repayment",
+          "op": "~=",
+          "value": 3340.0,
+          "tol": 2,
+          "why": "7,590.00 - 4,000 - 0 - 250 (minimum UMI) = 3,340.00/mo."
+        },
+        {
+          "key": "capacity",
+          "op": "~=",
+          "value": 418841.44,
+          "tol": 550.0,
+          "why": "Loan whose level monthly repayment at 0.089/12 over 360 months equals 3,340.00, found by bisection: 418,841.44. (Effective-rate convention would give 433,241; a 25-year window would give 405,3xx.)"
+        },
+        {
+          "key": "capacity_per_repayment",
+          "op": "~=",
+          "value": 125.4016,
+          "tol": 0.4,
+          "why": "Capacity divided by the repayment it was derived from must be the pure annuity factor (1-(1+i)^-n)/i = 125.401630 at i=0.089/12, n=360 - a check of the amortisation convention that does not depend on any income or tax figure."
+        },
+        {
+          "key": "nsr",
+          "op": "~=",
+          "value": 1.0341,
+          "tol": 0.01,
+          "why": "Net Service Ratio = assessed income / every outgoing including the new repayment = 7,590.00 / (4,000 + 3,340.00) = 1.0341. If it reads 1.3624 the numerator is gross income (120,000/12 = 10,000) rather than net."
+        },
+        {
+          "key": "umi",
+          "op": "~=",
+          "value": 250,
+          "tol": 2,
+          "why": "At the serviceability-binding capacity the surplus left over is exactly the minimum UMI the lender demanded, $250/mo - that is the definition of the binding constraint."
+        },
+        {
+          "key": "binding",
+          "op": "matches",
+          "value": "(?i)serviceab",
+          "why": "Serviceability 418,841 is the smallest of the four: DTI 7.0 x 120,000 = 840,000, LVR 80% x 900,000 = 720,000, deposit 180,000 x 0.8/0.2 = 720,000."
+        },
+        {
+          "key": "caps_serviceability",
+          "op": "~=",
+          "value": 418841.44,
+          "tol": 550.0,
+          "why": "Same figure as the capacity, since serviceability is the binding cap."
+        },
+        {
+          "key": "caps_dti",
+          "op": "~=",
+          "value": 840000,
+          "tol": 550,
+          "why": "DTI cap 7.0 x gross income 120,000, with no existing debt balances to subtract."
+        },
+        {
+          "key": "caps_lvr",
+          "op": "~=",
+          "value": 720000,
+          "tol": 550,
+          "why": "80% of min(price 900,000, valuation 900,000)."
+        },
+        {
+          "key": "caps_deposit",
+          "op": "~=",
+          "value": 720000,
+          "tol": 550,
+          "why": "Available funds 180,000 - 0 duty - 0 other costs = 180,000; at an 80% ceiling that reaches a price of 180,000/0.2 = 900,000 and a loan of 720,000."
+        },
+        {
+          "key": "max_price",
+          "op": "~=",
+          "value": 598841.44,
+          "tol": 550,
+          "why": "Capacity 418,841.44 plus the $180,000 of deposit left over = 598,841.44."
+        },
+        {
+          "key": "buildup_residual",
+          "op": "~=",
+          "value": 0,
+          "tol": 2,
+          "why": "The build-up must add up line by line: net income - living - commitments - the assessed repayment - the surplus left over = 0. Any non-zero residual is a line the page charges but does not show."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "A fully specified ordinary borrower must not print NaN, Infinity, -0, undefined or null."
+        }
+      ]
+    },
+    {
+      "id": "B1",
+      "severity": "blocker",
+      "basis": "Four fixtures on the same dials, one per cap, each chosen so its own cap is the smallest by a wide margin. Living costs are $4,000/mo declared, above any plausible single-adult HEM in Perth, so the living line is exactly the declared figure in all four. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "cap_serv",
+          "op": "~=",
+          "value": 418841.44,
+          "tol": 550.0,
+          "why": "Single on $120,000, $4,000/mo living, no debts: repayment capacity 3,340.00/mo amortises to 418,841.44 at 8.90% over 360 months. The other three are DTI 6.0 x 120,000 = 720,000, LVR 80% x 2,000,000 = 1,600,000 and deposit 400,000 x 0.8/0.2 = 1,600,000."
+        },
+        {
+          "key": "bind_serv",
+          "op": "matches",
+          "value": "serviceab",
+          "why": "The smallest of the four caps in this fixture is the serv cap, so that is the one the page must name."
+        },
+        {
+          "key": "margin_serv",
+          "op": ">",
+          "value": 5.0,
+          "why": "Derived margin to the next nearest cap is (720,000 - 418,841)/418,841 = 71.9%. A fixture that binds within a whisker of another cap is not testing the cap it claims to test, so the case requires more than 5%."
+        },
+        {
+          "key": "cap_dti",
+          "op": "~=",
+          "value": 900000.0,
+          "tol": 550.0,
+          "why": "Single on $300,000 with the DTI dial at its 3.0 minimum: 3.0 x 300,000 = 900,000, with no existing debt to subtract. Serviceability is 1,485,277.81, LVR is 80% x 3,000,000 = 2,400,000 and the deposit reaches 700,000 x 0.8/0.2 = 2,800,000."
+        },
+        {
+          "key": "bind_dti",
+          "op": "matches",
+          "value": "(?i)debt|dti|income",
+          "why": "The smallest of the four caps in this fixture is the dti cap, so that is the one the page must name."
+        },
+        {
+          "key": "margin_dti",
+          "op": ">",
+          "value": 5.0,
+          "why": "Derived margin to the next nearest cap is (2,400,000 - 900,000)/900,000 = 166.7%. A fixture that binds within a whisker of another cap is not testing the cap it claims to test, so the case requires more than 5%."
+        },
+        {
+          "key": "cap_lvr",
+          "op": "~=",
+          "value": 480000.0,
+          "tol": 550.0,
+          "why": "80% of min(price 600,000, valuation 600,000) = 480,000. Deposit reaches 200,000 x 0.8/0.2 = 800,000, DTI is 6.0 x 300,000 = 1,800,000 and serviceability is 1,485,277.81."
+        },
+        {
+          "key": "bind_lvr",
+          "op": "matches",
+          "value": "(?i)lvr|loan.to.value|valuation",
+          "why": "The smallest of the four caps in this fixture is the lvr cap, so that is the one the page must name."
+        },
+        {
+          "key": "margin_lvr",
+          "op": ">",
+          "value": 5.0,
+          "why": "Derived margin to the next nearest cap is (800,000 - 480,000)/480,000 = 66.7%. A fixture that binds within a whisker of another cap is not testing the cap it claims to test, so the case requires more than 5%."
+        },
+        {
+          "key": "cap_dep",
+          "op": "~=",
+          "value": 400000.0,
+          "tol": 550.0,
+          "why": "Available funds 100,000 (no duty, no other costs) at an 80% ceiling reach a price of 100,000/0.2 = 500,000 and a loan of 400,000. LVR is 80% x 2,000,000 = 1,600,000, DTI is 6.0 x 300,000 = 1,800,000 and serviceability is 1,485,277.81. If the page instead reads the deposit cap as price minus funds it would report 1,900,000 and the LVR cap would bind, so this fixture is also the discriminator between the two readings."
+        },
+        {
+          "key": "bind_dep",
+          "op": "matches",
+          "value": "(?i)deposit|funds|savings",
+          "why": "The smallest of the four caps in this fixture is the dep cap, so that is the one the page must name."
+        },
+        {
+          "key": "margin_dep",
+          "op": ">",
+          "value": 5.0,
+          "why": "Derived margin to the next nearest cap is (1,485,278 - 400,000)/400,000 = 271.3%. A fixture that binds within a whisker of another cap is not testing the cap it claims to test, so the case requires more than 5%."
+        },
+        {
+          "key": "caps_serv_serviceability",
+          "op": "~=",
+          "value": 418841.44,
+          "tol": 550.0,
+          "why": "3,340.00/mo bisected to a loan at 0.089/12 over 360 months."
+        },
+        {
+          "key": "caps_serv_dti",
+          "op": "~=",
+          "value": 720000,
+          "tol": 550.0,
+          "why": "6.0 x 120,000, nothing to subtract."
+        },
+        {
+          "key": "caps_serv_lvr",
+          "op": "~=",
+          "value": 1600000,
+          "tol": 550.0,
+          "why": "80% of min(2,000,000, 2,000,000)."
+        },
+        {
+          "key": "caps_serv_deposit",
+          "op": "~=",
+          "value": 1600000,
+          "tol": 550.0,
+          "why": "400,000 x 0.8/0.2."
+        },
+        {
+          "key": "caps_dep_serviceability",
+          "op": "~=",
+          "value": 1485277.81,
+          "tol": 550.0,
+          "why": "On $300,000: tax 106,870, net 16,094.17/mo, repayment 11,844.17/mo, bisected over 360 months at 0.089/12."
+        },
+        {
+          "key": "caps_dep_dti",
+          "op": "~=",
+          "value": 1800000,
+          "tol": 550.0,
+          "why": "6.0 x 300,000."
+        },
+        {
+          "key": "caps_dep_lvr",
+          "op": "~=",
+          "value": 1600000,
+          "tol": 550.0,
+          "why": "80% of min(2,000,000, 2,000,000)."
+        },
+        {
+          "key": "caps_dep_deposit",
+          "op": "~=",
+          "value": 400000,
+          "tol": 550.0,
+          "why": "100,000 x 0.8/0.2."
+        },
+        {
+          "key": "capacity_per_repayment_serv",
+          "op": "~=",
+          "value": 125.4016,
+          "tol": 0.4,
+          "why": "Pure annuity factor at 0.089/12 over 360 months, independent of income and tax."
+        }
+      ]
+    },
+    {
+      "id": "B2",
+      "severity": "major",
+      "basis": "Same single borrower as B1's serviceability fixture, run in Simple caps mode where the page says the LVR ceiling comes from the LMI switch, 80% without it and 95% with it. The deposit ($400,000) and the price ($2,000,000) leave both the LVR and the deposit caps far above serviceability either way, so ticking LMI cannot buy this borrower any headroom - it can only add a capitalised 2.50% premium to the balance being serviced. Capitalising a premium onto a serviceability-bound loan mechanically shrinks the advance by lmiRate/(1+lmiRate); the reduction is arithmetically right and is exactly the reverse of what the LMI tooltip leads a user to expect. The second pair is the page's own first-home-buyer worked example, where the deposit cap is the binding one and relaxing the ceiling genuinely helps. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "cap_off",
+          "op": "~=",
+          "value": 418841.44,
+          "tol": 550.0,
+          "why": "Serviceability binds at 418,841.44; LVR 1,600,000 and deposit 1,600,000 are slack, DTI is 720,000."
+        },
+        {
+          "key": "bind_off",
+          "op": "matches",
+          "value": "(?i)serviceab",
+          "why": "418,841 is the smallest of 418,841 / 720,000 / 1,600,000 / 1,600,000."
+        },
+        {
+          "key": "bind_on",
+          "op": "matches",
+          "value": "(?i)serviceab",
+          "why": "At a 95% ceiling the LVR cap becomes 1,900,000 and the deposit cap 7,600,000, so serviceability still binds."
+        },
+        {
+          "key": "cap_on",
+          "op": "~=",
+          "value": 408625.8,
+          "tol": 550.0,
+          "why": "The same 3,340.00/mo now has to service advance x 1.025, so the advance is 418,841.44/1.025 = 408,625.80."
+        },
+        {
+          "key": "lmi_delta",
+          "op": "<",
+          "value": 0,
+          "why": "Capitalising a premium onto a loan that is already at its serviceability limit can only shrink the money that reaches the purchase. The sign is the finding."
+        },
+        {
+          "key": "lmi_delta",
+          "op": "~=",
+          "value": -10215.64,
+          "tol": 1100,
+          "why": "418,841.44 x (1/1.025 - 1) = -10,215.64."
+        },
+        {
+          "key": "lmi_delta_pct",
+          "op": "~=",
+          "value": -2.439024,
+          "tol": 0.25,
+          "why": "-2.4390% = -0.025/1.025, independent of the borrower. A reading of 0 means the premium is not being serviced; a positive reading means the capacity shown is the gross debt including the premium rather than the advance."
+        },
+        {
+          "key": "cap_fhb_off",
+          "op": "~=",
+          "value": 264000,
+          "tol": 550.0,
+          "why": "The page's own first-home-buyer Quick Start tooltip: 'capacity lifts from $264k to $292k'. $264,000 is also what the deposit formula gives: ($70,000 saved - $4,000 other costs) x 0.8/0.2."
+        },
+        {
+          "key": "bind_fhb_off",
+          "op": "matches",
+          "value": "(?i)deposit|funds|savings",
+          "why": "The same tooltip: 'The deposit binds here, not the income.'"
+        },
+        {
+          "key": "cap_fhb_on",
+          "op": "~=",
+          "value": 292000,
+          "tol": 550.0,
+          "why": "The same tooltip's second figure, after ticking LMI capitalised on the Caps tab."
+        },
+        {
+          "key": "fhb_delta",
+          "op": "~=",
+          "value": 28000,
+          "tol": 1100,
+          "why": "292,000 - 264,000. The preset must GAIN from LMI because its binding cap is the deposit, not serviceability."
+        },
+        {
+          "key": "fhb_delta",
+          "op": ">",
+          "value": 0,
+          "why": "A deposit-bound borrower must gain when the ceiling moves from 80% to 95% of the price."
+        }
+      ]
+    },
+    {
+      "id": "B3",
+      "severity": "major",
+      "basis": "The Household tab's income split. Sweep of eight combined incomes from $40,000 to $400,000, each run twice: slider at 0% (one taxpayer holds everything, the pooled treatment) and at 50% (an even split). Declared expenses $4,500/mo throughout the sweep; whatever HEM does it does identically on both sides of each pair, so it cancels out of every difference. Private hospital cover on and no study loan, so the surcharge and HELP are out of it. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "dtax_40000",
+          "op": "<=",
+          "value": 0,
+          "why": "A progressive scale with a tax-free step is convex, so 2*T(x/2) <= T(x) for every x: splitting a household's income between two taxpayers can never cost more than leaving it with one. LITO is per taxpayer and can only add to the saving. The Medicare levy and the surcharge are charged on the combined figure either way (the page's own income-split tooltip: 'the Medicare levy and the surcharge are unaffected'), so they cancel exactly in this difference. At $40,000 the expected saving is -2,695.00."
+        },
+        {
+          "key": "dtax_80000",
+          "op": "<=",
+          "value": 0,
+          "why": "A progressive scale with a tax-free step is convex, so 2*T(x/2) <= T(x) for every x: splitting a household's income between two taxpayers can never cost more than leaving it with one. LITO is per taxpayer and can only add to the saving. The Medicare levy and the surcharge are charged on the combined figure either way (the page's own income-split tooltip: 'the Medicare levy and the surcharge are unaffected'), so they cancel exactly in this difference. At $80,000 the expected saving is -9,130.00."
+        },
+        {
+          "key": "dtax_120000",
+          "op": "<=",
+          "value": 0,
+          "why": "A progressive scale with a tax-free step is convex, so 2*T(x/2) <= T(x) for every x: splitting a household's income between two taxpayers can never cost more than leaving it with one. LITO is per taxpayer and can only add to the saving. The Medicare levy and the surcharge are charged on the combined figure either way (the page's own income-split tooltip: 'the Medicare levy and the surcharge are unaffected'), so they cancel exactly in this difference. At $120,000 the expected saving is -9,680.00."
+        },
+        {
+          "key": "dtax_160000",
+          "op": "<=",
+          "value": 0,
+          "why": "A progressive scale with a tax-free step is convex, so 2*T(x/2) <= T(x) for every x: splitting a household's income between two taxpayers can never cost more than leaving it with one. LITO is per taxpayer and can only add to the saving. The Medicare levy and the surcharge are charged on the combined figure either way (the page's own income-split tooltip: 'the Medicare levy and the surcharge are unaffected'), so they cancel exactly in this difference. At $160,000 the expected saving is -11,230.00."
+        },
+        {
+          "key": "dtax_200000",
+          "op": "<=",
+          "value": 0,
+          "why": "A progressive scale with a tax-free step is convex, so 2*T(x/2) <= T(x) for every x: splitting a household's income between two taxpayers can never cost more than leaving it with one. LITO is per taxpayer and can only add to the saving. The Medicare levy and the surcharge are charged on the combined figure either way (the page's own income-split tooltip: 'the Medicare levy and the surcharge are unaffected'), so they cancel exactly in this difference. At $200,000 the expected saving is -14,830.00."
+        },
+        {
+          "key": "dtax_250000",
+          "op": "<=",
+          "value": 0,
+          "why": "A progressive scale with a tax-free step is convex, so 2*T(x/2) <= T(x) for every x: splitting a household's income between two taxpayers can never cost more than leaving it with one. LITO is per taxpayer and can only add to the saving. The Medicare levy and the surcharge are charged on the combined figure either way (the page's own income-split tooltip: 'the Medicare levy and the surcharge are unaffected'), so they cancel exactly in this difference. At $250,000 the expected saving is -22,330.00."
+        },
+        {
+          "key": "dtax_300000",
+          "op": "<=",
+          "value": 0,
+          "why": "A progressive scale with a tax-free step is convex, so 2*T(x/2) <= T(x) for every x: splitting a household's income between two taxpayers can never cost more than leaving it with one. LITO is per taxpayer and can only add to the saving. The Medicare levy and the surcharge are charged on the combined figure either way (the page's own income-split tooltip: 'the Medicare levy and the surcharge are unaffected'), so they cancel exactly in this difference. At $300,000 the expected saving is -27,730.00."
+        },
+        {
+          "key": "dtax_400000",
+          "op": "<=",
+          "value": 0,
+          "why": "A progressive scale with a tax-free step is convex, so 2*T(x/2) <= T(x) for every x: splitting a household's income between two taxpayers can never cost more than leaving it with one. LITO is per taxpayer and can only add to the saving. The Medicare levy and the surcharge are charged on the combined figure either way (the page's own income-split tooltip: 'the Medicare levy and the surcharge are unaffected'), so they cancel exactly in this difference. At $400,000 the expected saving is -34,130.00."
+        },
+        {
+          "key": "dtax_40000",
+          "op": "~=",
+          "value": -2695.0,
+          "tol": 2,
+          "why": "Pooled: 15c over 18,200 on 40,000 = 3,270, less LITO 700 - 5%*(40,000-37,500) = 575, so 2,695. Split: two shares of 20,000, each 15c over 18,200 = 270 against a $700 LITO, so nil each. Medicare is identical on the combined 40,000 either way. Difference -2,695.00."
+        },
+        {
+          "key": "dtax_200000",
+          "op": "~=",
+          "value": -14830.0,
+          "tol": 2,
+          "why": "Pooled: 51,370 + 45c over 190,000 = 55,870. Split: two shares of 100,000, each 4,020 + 30c over 45,000 = 20,520, so 41,040. LITO nil on both sides, Medicare 2% x 200,000 identical either way. Difference -14,830.00."
+        },
+        {
+          "key": "dtax_400000",
+          "op": "~=",
+          "value": -34130.0,
+          "tol": 2,
+          "why": "Pooled: 51,370 + 45c over 190,000 on 400,000 = 145,870. Split: two shares of 200,000 at 55,870 each = 111,740. Medicare identical. Difference -34,130.00."
+        },
+        {
+          "key": "dcap_40000",
+          "op": ">=",
+          "value": -1.0,
+          "why": "Lower household tax is more net income, and capacity is monotone in net income, so splitting can never reduce capacity. Below about $100,000 combined this household cannot service anything at all and both sides read zero, which satisfies the inequality without asserting anything false."
+        },
+        {
+          "key": "dcap_80000",
+          "op": ">=",
+          "value": -1.0,
+          "why": "Lower household tax is more net income, and capacity is monotone in net income, so splitting can never reduce capacity. Below about $100,000 combined this household cannot service anything at all and both sides read zero, which satisfies the inequality without asserting anything false."
+        },
+        {
+          "key": "dcap_120000",
+          "op": ">=",
+          "value": -1.0,
+          "why": "Lower household tax is more net income, and capacity is monotone in net income, so splitting can never reduce capacity. Below about $100,000 combined this household cannot service anything at all and both sides read zero, which satisfies the inequality without asserting anything false."
+        },
+        {
+          "key": "dcap_160000",
+          "op": ">=",
+          "value": -1.0,
+          "why": "Lower household tax is more net income, and capacity is monotone in net income, so splitting can never reduce capacity. Below about $100,000 combined this household cannot service anything at all and both sides read zero, which satisfies the inequality without asserting anything false."
+        },
+        {
+          "key": "dcap_200000",
+          "op": ">=",
+          "value": -1.0,
+          "why": "Lower household tax is more net income, and capacity is monotone in net income, so splitting can never reduce capacity. Below about $100,000 combined this household cannot service anything at all and both sides read zero, which satisfies the inequality without asserting anything false."
+        },
+        {
+          "key": "dcap_250000",
+          "op": ">=",
+          "value": -1.0,
+          "why": "Lower household tax is more net income, and capacity is monotone in net income, so splitting can never reduce capacity. Below about $100,000 combined this household cannot service anything at all and both sides read zero, which satisfies the inequality without asserting anything false."
+        },
+        {
+          "key": "dcap_300000",
+          "op": ">=",
+          "value": -1.0,
+          "why": "Lower household tax is more net income, and capacity is monotone in net income, so splitting can never reduce capacity. Below about $100,000 combined this household cannot service anything at all and both sides read zero, which satisfies the inequality without asserting anything false."
+        },
+        {
+          "key": "dcap_400000",
+          "op": ">=",
+          "value": -1.0,
+          "why": "Lower household tax is more net income, and capacity is monotone in net income, so splitting can never reduce capacity. Below about $100,000 combined this household cannot service anything at all and both sides read zero, which satisfies the inequality without asserting anything false."
+        },
+        {
+          "key": "split_row_visible",
+          "op": "==",
+          "value": false,
+          "why": "With one applicant there is no second applicant to give a share to, so the control must not be offered. The page itself gives the slider its own row (#incSplitRow) rather than inlining it, which is what makes hiding it possible."
+        },
+        {
+          "key": "inert_delta",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "At one applicant the split must be inert: moving the slider from 0% to 50% must not change a single dollar of capacity. Any non-zero difference means a one-applicant household is being taxed as two people."
+        },
+        {
+          "key": "zero_split_delta",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "The split tooltip says to 'set this to 0% when one applicant earns everything', so two applicants at 0% is exactly one taxpayer with the whole $200,000 - identical to the one-applicant state. Declared expenses are $6,000/mo on both sides, above any plausible HEM for one or two adults with no dependants in Perth, so the household-size term of HEM cannot make them differ; $200,000 is far above every Medicare threshold, where the levy is a flat 2% under both the singles and the family table."
+        },
+        {
+          "key": "split_clamped_value",
+          "op": "~=",
+          "value": 50,
+          "tol": 0.001,
+          "why": "The slider carries max=\"50\", because a 'second applicant's share' above 50% is the same household with the labels swapped. A value of 60 must clamp to 50."
+        },
+        {
+          "key": "split_clamped_text",
+          "op": "matches",
+          "value": "^\\s*50\\s*%\\s*$",
+          "why": "The readout must show the clamped 50%, not the 60% that was never accepted."
+        },
+        {
+          "key": "addback_delta",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "Same $200,000 salary and the same negatively geared rental ($20,000 rent, $45,000 cash costs, $5,000 depreciation), once as one applicant and once as two applicants with the split at 0%. In both the whole income and the whole rental loss belong to one taxpayer, so the loss must be relieved at that one higher earner's marginal rate and the two capacities must be identical. A difference means the loss is being spread across two notional taxpayers when only one of them has any income."
+        },
+        {
+          "key": "addback_bind_one",
+          "op": "matches",
+          "value": "(?i)serviceab",
+          "why": "Deliberately a serviceability-bound fixture (LVR 2,400,000, deposit 2,400,000, DTI 9.0 x 220,000 = 1,980,000) so that the add-back shows up in the capacity at all."
+        }
+      ]
+    },
+    {
+      "id": "B4",
+      "severity": "major",
+      "basis": "Two applicants sharing the income evenly. The page's income-split tooltip states the behaviour under test: 'the Medicare levy and the surcharge are unaffected [by the split], and the study loan is modelled as one borrower's' - i.e. both are charged on the household's combined figure. Two fixtures sit exactly where that departs from the law. (a) MEDICARE: $56,000 between two people is $28,000 each, and $28,000 is inside the singles low-income shade-in ($27,222 to $34,027.50), where the levy is 10c in each dollar over the threshold: 0.10 x (28,000 - 27,222) = $77.80 each, $155.60 for the household. The income tax is $770 each either way (15c over 18,200 on 28,000 = 1,470, less the full $700 LITO), so the correct total tax is $1,695.60. Charged on the combined $56,000 the levy is a flat 2% = $1,120 under the singles table (total $2,660.00) or 0.10 x (56,000 - 45,907) = $1,009.30 under the family table (total $2,549.30) - a deviation of $964.40 or $853.70. (b) STUDY LOAN: a couple on $130,000 combined, split evenly, is two people on $65,000, and $65,000 is below the $67,000 repayment threshold, so the correct compulsory repayment is nil. On the combined figure the page charges 15c in the dollar from 67,000 to 125,000 plus 17c beyond: 0.15 x 58,000 + 0.17 x 5,000 = $9,550. The observable isolates it as the difference between the same state with the study loan set to 'Deduct as tax' and to 'No study loan', so nothing about the rest of the tax calculation enters it. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "tax_med",
+          "op": "~=",
+          "value": 1695.6,
+          "tol": 2,
+          "why": "2 x (770.00 income tax + 77.80 Medicare levy shade-in on a $28,000 share) = 1,695.60."
+        },
+        {
+          "key": "help_charged",
+          "op": "~=",
+          "value": 0,
+          "tol": 2,
+          "why": "Neither borrower's own repayment income reaches the $67,000 threshold, so the compulsory repayment is nil."
+        }
+      ],
+      "expect_outcome": "fail"
+    },
+    {
+      "id": "B4-alt",
+      "severity": "minor",
+      "basis": "Same two fixtures as B4, read against the combined-figure treatment the page documents rather than against the law. This is the case that is expected to pass, and it is what pins down how big B4's deviation actually is. Two applicants sharing the income evenly. The page's income-split tooltip states the behaviour under test: 'the Medicare levy and the surcharge are unaffected [by the split], and the study loan is modelled as one borrower's' - i.e. both are charged on the household's combined figure. Two fixtures sit exactly where that departs from the law. (a) MEDICARE: $56,000 between two people is $28,000 each, and $28,000 is inside the singles low-income shade-in ($27,222 to $34,027.50), where the levy is 10c in each dollar over the threshold: 0.10 x (28,000 - 27,222) = $77.80 each, $155.60 for the household. The income tax is $770 each either way (15c over 18,200 on 28,000 = 1,470, less the full $700 LITO), so the correct total tax is $1,695.60. Charged on the combined $56,000 the levy is a flat 2% = $1,120 under the singles table (total $2,660.00) or 0.10 x (56,000 - 45,907) = $1,009.30 under the family table (total $2,549.30) - a deviation of $964.40 or $853.70. (b) STUDY LOAN: a couple on $130,000 combined, split evenly, is two people on $65,000, and $65,000 is below the $67,000 repayment threshold, so the correct compulsory repayment is nil. On the combined figure the page charges 15c in the dollar from 67,000 to 125,000 plus 17c beyond: 0.15 x 58,000 + 0.17 x 5,000 = $9,550. The observable isolates it as the difference between the same state with the study loan set to 'Deduct as tax' and to 'No study loan', so nothing about the rest of the tax calculation enters it. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "tax_med",
+          "op": "between",
+          "value": [
+            2500,
+            2700
+          ],
+          "why": "Combined-figure treatment gives 2,660.00 with the singles low-income table or 2,549.30 with the family table ($45,907); the band admits either, since the page does not say which table it ships and both are the same defect."
+        },
+        {
+          "key": "help_charged",
+          "op": "~=",
+          "value": 9550,
+          "tol": 2,
+          "why": "0.15 x (125,000 - 67,000) + 0.17 x (130,000 - 125,000) on the combined $130,000."
+        }
+      ]
+    },
+    {
+      "id": "B5",
+      "severity": "major",
+      "basis": "HEM, the Household Expenditure Measure. The page's own FAQ: 'Lenders take the higher of your declared expenses and HEM, so declaring a very low figure does not increase your borrowing capacity', and the City tooltip: 'scales the HEM benchmark by the cost of living excluding housing, cross-fed from the Cost of Living Comparator on this site. Perth is the index base at 100.' The HEM table itself is not published on the page, so no expectation here states a HEM dollar figure: the case tests the override, a floor on plausibility, the household-size term, and the city term through ratios taken from the cross-fed dataset (costofliving-comparator/cost_of_living_indices_aggregated.json, coli_no_housing: Perth 100.0, Adelaide 109.2, Hobart 86.5). Single applicant on $300,000 with the price, deposit and DTI dials set wide so serviceability binds in every state and a change in the living line shows up one-for-one in the capacity. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "living_d0",
+          "op": ">",
+          "value": 0,
+          "why": "Declaring nothing must not produce a household that costs nothing to run; HEM takes over."
+        },
+        {
+          "key": "living_d0",
+          "op": ">=",
+          "value": 1200,
+          "why": "A floor from the published HEM basics for one adult with no dependants, which sit near $1,700-2,700/mo; $1,200/mo is below anything defensible, so a figure under it means HEM is not really being applied."
+        },
+        {
+          "key": "declared_zero_delta",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "Declared $0 and declared $1 are both far below HEM, so both must resolve to the same HEM figure and give the identical capacity. A non-zero difference means the declared figure is leaking through instead of being overridden."
+        },
+        {
+          "key": "living_d12k",
+          "op": "~=",
+          "value": 12000,
+          "tol": 1,
+          "why": "$12,000/mo is above any HEM benchmark, so the higher of the two is the declared figure itself."
+        },
+        {
+          "key": "cap_d12k",
+          "op": "~=",
+          "value": 482064.77,
+          "tol": 550.0,
+          "why": "On $300,000: tax 106,870 (51,370 + 45c over 190,000, plus 2% Medicare), net 16,094.17/mo, less 12,000 living and 250 UMI leaves 3,844.17/mo, bisected to 482,064.77 at 0.089/12 over 360 months."
+        },
+        {
+          "key": "deps_delta",
+          "op": "<",
+          "value": 0,
+          "why": "HEM 'scales with household size and income' (the page's own FAQ), so three dependants must raise the living line and therefore lower capacity. Anything at or above zero means the dependants slider is not reaching the benchmark."
+        },
+        {
+          "key": "living_deps_delta",
+          "op": ">",
+          "value": 0,
+          "why": "The same statement read directly off the living line rather than through the capacity."
+        },
+        {
+          "key": "city_ratio_adelaide",
+          "op": "~=",
+          "value": 1.092,
+          "tol": 0.01,
+          "why": "Adelaide's coli_no_housing is 109.2 against Perth's 100.0 in the dataset the City tooltip says it is cross-fed from, so the HEM benchmark must scale by 1.092."
+        },
+        {
+          "key": "city_ratio_hobart",
+          "op": "~=",
+          "value": 0.865,
+          "tol": 0.01,
+          "why": "Hobart's coli_no_housing is 86.5 against Perth's 100.0, so the benchmark must scale by 0.865."
+        },
+        {
+          "key": "city_capacity_ratio",
+          "op": "~=",
+          "value": 1.4674,
+          "tol": 0.15,
+          "why": "A pure number that needs no HEM figure at all. Only the living line moves between the three cities, and a dollar of living cost is worth the same annuity factor in each, so (cap_Hobart - cap_Perth)/(cap_Perth - cap_Adelaide) = (1 - 0.865)/(1.092 - 1) = 1.4674. This is the check that survives even if the page's HEM base differs from anything I could guess."
+        }
+      ]
+    },
+    {
+      "id": "B6",
+      "severity": "blocker",
+      "basis": "Existing commitments. Three promises the page makes for itself: credit cards are 'assessed on the limit, not the balance ... usually 3.0 to 3.8 percent of the limit per month' (FAQ and the Credit card tooltip); 'an interest only loan is reassessed as principal and interest over the term left AFTER the interest only period ends' (Repayment type tooltip); and a facility being refinanced or closed at settlement is 'subtracted from commitments' (Closing at settlement tooltip), which cannot take the total below zero because a lender does not hand out capacity for debts you never had. The existing loan is reassessed at its own buffered rate, max(6.20 + 3.00, 5.50) = 9.20%, per the Actual rate tooltip. Single on $200,000, $4,000/mo declared living costs, with the price, deposit and DTI dials set wide so serviceability binds throughout. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "comm_card38",
+          "op": "~=",
+          "value": 760,
+          "tol": 1,
+          "why": "3.80% of the $20,000 limit per month = 760.00, with no balance entered anywhere."
+        },
+        {
+          "key": "comm_card30",
+          "op": "~=",
+          "value": 600,
+          "tol": 1,
+          "why": "3.00% of the $20,000 limit = 600.00; the slider is the only thing that moved."
+        },
+        {
+          "key": "comm_card40k",
+          "op": "~=",
+          "value": 1520,
+          "tol": 1,
+          "why": "3.80% of $40,000 = 1,520.00."
+        },
+        {
+          "key": "card_limit_doubling",
+          "op": "~=",
+          "value": 760,
+          "tol": 2,
+          "why": "Doubling the limit must double the assessed repayment exactly, because the charge is a share of the limit and nothing else: 1,520.00 - 760.00 = 760.00."
+        },
+        {
+          "key": "comm_ol_io",
+          "op": "~=",
+          "value": 4422.14,
+          "tol": 2,
+          "why": "$500,000 at 9.20% nominal monthly, amortised over the 22 years left after the 3-year interest-only period ends: 264 payments of 4,422.14. (Over the full 25 years it would be 4,264.67; as bare interest only it would be 3,833.33.)"
+        },
+        {
+          "key": "comm_ol_pi",
+          "op": "~=",
+          "value": 4264.67,
+          "tol": 2,
+          "why": "The same balance and rate as plain P&I over the full 25 years: 300 payments of 4,264.67."
+        },
+        {
+          "key": "io_uplift",
+          "op": "~=",
+          "value": 157.47,
+          "tol": 3,
+          "why": "Shortening the amortisation window from 300 to 264 months is worth 157.47/mo. The uplift is the whole point of the interest-only reassessment; a zero uplift means the IO period is being ignored."
+        },
+        {
+          "key": "io_uplift",
+          "op": ">",
+          "value": 0,
+          "why": "An interest-only loan must be reassessed as MORE expensive than the same loan as P&I over the full term."
+        },
+        {
+          "key": "comm_floor",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "$760/mo of card commitments less $5,000/mo of repayments being refinanced away is -4,240/mo, which must floor at zero rather than being handed back as income."
+        },
+        {
+          "key": "cap_none",
+          "op": "~=",
+          "value": 931420.61,
+          "tol": 550.0,
+          "why": "$200,000: tax 59,870 (51,370 + 45c over 190,000 = 55,870, plus 2% Medicare 4,000), net 11,677.50/mo, less 4,000 living and 250 UMI leaves 7,427.50/mo, bisected to 931,420.61."
+        },
+        {
+          "key": "floor_excess",
+          "op": "<=",
+          "value": 550,
+          "why": "Capacity with the over-sized refinance must not exceed capacity with no debts at all. Anything above the rounding allowance means negative commitments are being added to income."
+        },
+        {
+          "key": "floor_excess",
+          "op": "~=",
+          "value": 0,
+          "tol": 1100,
+          "why": "Floored at zero, the two states have identical outgoings, so the capacities must match."
+        }
+      ]
+    },
+    {
+      "id": "B7",
+      "severity": "blocker",
+      "basis": "The deposit stated two ways for the same real deposit. The Deposit funds tooltip: 'as an AMOUNT, stamp duty and the purchase costs come out of it first. As a PERCENTAGE OF THE PRICE, it is the down payment and those costs are paid on top.' On a $1,200,000 price with 4.00% duty ($48,000) and $4,000 of other costs, a 15% share is a $180,000 down payment; the same real deposit stated as cash is $180,000 + $48,000 + $4,000 = $232,000. Both therefore leave exactly $180,000 of available funds and must produce the identical answer, whatever formula the deposit cap uses - which is why this case is the one deposit test that does not depend on my reading of that formula. The borrower is on $300,000 so serviceability (1,485,278) and DTI (6.0 x 300,000 = 1,800,000) are slack and the deposit cap, 180,000 x 0.8/0.2 = 720,000, is the binding one, clearing the LVR cap (80% x 1,200,000 = 960,000) by 33%. The third state puts $20,000 of savings against $52,000 of purchase costs: available funds are negative, and a negative price is not a number a purchaser can act on. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "deposit_mode_delta",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "The two states describe the same borrower buying the same house with the same money. Any difference is a definition mismatch between the two input modes, not a finance result. A difference near -52,000 x 0.8/0.2 = -208,000 means the percentage mode is also taking the costs out of the deposit; near +208,000 means the amount mode is not."
+        },
+        {
+          "key": "price_mode_delta",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "Same argument applied to the max purchase price."
+        },
+        {
+          "key": "cap_cash",
+          "op": "~=",
+          "value": 720000,
+          "tol": 550.0,
+          "why": "Available funds 232,000 - 48,000 - 4,000 = 180,000; at an 80% ceiling that reaches 180,000/0.2 = 900,000 of price and 720,000 of loan."
+        },
+        {
+          "key": "cap_share",
+          "op": "~=",
+          "value": 720000,
+          "tol": 550.0,
+          "why": "15% of 1,200,000 is the same $180,000 down payment, so the same 720,000."
+        },
+        {
+          "key": "bind_cash",
+          "op": "matches",
+          "value": "(?i)deposit|funds|savings",
+          "why": "720,000 is the smallest of 720,000 / 960,000 / 1,485,278 / 1,800,000."
+        },
+        {
+          "key": "bind_share",
+          "op": "matches",
+          "value": "(?i)deposit|funds|savings",
+          "why": "Identical state, so identically deposit-bound."
+        },
+        {
+          "key": "price_cash",
+          "op": "~=",
+          "value": 900000,
+          "tol": 550.0,
+          "why": "Capacity 720,000 plus the 180,000 of deposit left over."
+        },
+        {
+          "key": "cap_negative",
+          "op": ">=",
+          "value": 0,
+          "why": "A borrowing capacity is a quantity of money a lender would advance; it cannot be negative."
+        },
+        {
+          "key": "price_negative",
+          "op": ">=",
+          "value": 0,
+          "why": "Available funds of 20,000 - 52,000 = -32,000 would drive a naive deposit cap to -128,000 and a max price to -160,000. The right answer is that this buyer cannot buy: zero, with a warning, not a negative price."
+        },
+        {
+          "key": "warn_negative",
+          "op": "not-null",
+          "why": "A buyer whose savings do not cover the purchase costs must be told so, not handed a number."
+        },
+        {
+          "key": "nan_negative",
+          "op": "==",
+          "value": 0,
+          "why": "No NaN, Infinity, -0, undefined or null anywhere on screen in the degenerate state."
+        }
+      ]
+    },
+    {
+      "id": "B8",
+      "severity": "major",
+      "basis": "The maximum-LVR dial. Borrower on $300,000 ($1,485,278 of serviceability), $1,000,000 price, $600,000 of available funds, DTI dial at 9.0 ($2,700,000), so the LVR cap is the binding one at every setting. The dial is a range input with min=50 and max=95, so the 0%, 99.9% and 100% settings TESTCASES asks for are not reachable through the interface: the browser clamps them to 50 and 95 before the page ever sees them. That is recorded here as the expected behaviour, and it means the LVR=100 division-by-zero path in a deposit cap of the form funds x v/(1-v) is not reachable by a user - a coverage gap rather than a defect. The final state is a valuation shortfall, where the LVR tooltip promises 'the LVR cap applies to the lower of the price and the bank's own valuation'. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "lvr_text_v0",
+          "op": "matches",
+          "value": "^\\s*50\\s*%\\s*$",
+          "why": "min=\"50\" on the range input, so 0 clamps to 50 and the readout must say so."
+        },
+        {
+          "key": "cap_v0",
+          "op": "~=",
+          "value": 500000,
+          "tol": 550.0,
+          "why": "50% of min(1,000,000, 1,000,000). The deposit cap at 50% is 600,000 x 50/50 = 600,000, so LVR still binds."
+        },
+        {
+          "key": "cap_v80",
+          "op": "~=",
+          "value": 800000,
+          "tol": 550.0,
+          "why": "80% of 1,000,000; the deposit reaches 600,000 x 0.8/0.2 = 2,400,000."
+        },
+        {
+          "key": "cap_v95",
+          "op": "~=",
+          "value": 950000,
+          "tol": 550.0,
+          "why": "95% of 1,000,000; the deposit reaches 600,000 x 0.95/0.05 = 11,400,000."
+        },
+        {
+          "key": "lvr_text_v999",
+          "op": "matches",
+          "value": "^\\s*95\\s*%\\s*$",
+          "why": "max=\"95\", so 99.9 clamps to 95."
+        },
+        {
+          "key": "cap_v999",
+          "op": "~=",
+          "value": 950000,
+          "tol": 550.0,
+          "why": "Clamped to 95%, so the same answer as the 95% state."
+        },
+        {
+          "key": "lvr_text_v100",
+          "op": "matches",
+          "value": "^\\s*95\\s*%\\s*$",
+          "why": "max=\"95\", so 100 clamps to 95 and the 1/(1-v) singularity is never reached."
+        },
+        {
+          "key": "cap_v100",
+          "op": "~=",
+          "value": 950000,
+          "tol": 550.0,
+          "why": "Clamped to 95%, so again 950,000."
+        },
+        {
+          "key": "nan_v100",
+          "op": "==",
+          "value": 0,
+          "why": "Even the clamped extreme must not print NaN or Infinity."
+        },
+        {
+          "key": "caps_lvr_under",
+          "op": "~=",
+          "value": 720000,
+          "tol": 550.0,
+          "why": "80% of min(price 1,000,000, valuation 900,000) = 720,000, not 800,000. An $80,000 valuation shortfall costs $64,000 of loan."
+        },
+        {
+          "key": "cap_under",
+          "op": "~=",
+          "value": 720000,
+          "tol": 550.0,
+          "why": "The LVR cap remains the smallest of the four."
+        },
+        {
+          "key": "bind_under",
+          "op": "matches",
+          "value": "(?i)lvr|loan.to.value|valuation",
+          "why": "720,000 against deposit 2,400,000, DTI 2,700,000 and serviceability 1,485,278."
+        }
+      ]
+    },
+    {
+      "id": "B9",
+      "severity": "major",
+      "basis": "Degenerate income and rate dials. Zero income and fully shaded-away income both leave nothing to service with. A zero assessment rate turns the annuity into a plain division, loan = repayment x n, and is the division-by-zero trap in any closed-form present-value formula; the expectation here is built by bisection on the payment function, which has no such special case. A product rate below the floor with the buffer at zero must be tested at the floor, per the Lender floor tooltip: 'whichever is higher, floor or buffered rate, is the one used'. The zero-rate state uses $6,000/mo of declared living costs so that the resulting capacity, 1,340 x 360 = 482,400, still sits below the DTI cap of 6.0 x 120,000 = 720,000 and serviceability remains the binding constraint. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "cap_zeroinc",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "No income, so no surplus, so nothing to lend. Not a negative number and not a blank."
+        },
+        {
+          "key": "nan_zeroinc",
+          "op": "==",
+          "value": 0,
+          "why": "Zero income must not divide by zero into the NSR or the shading table."
+        },
+        {
+          "key": "assessable_allshaded",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "$120,000 of salary at a 0% shading factor is $0 of assessable income by definition of the factor."
+        },
+        {
+          "key": "cap_allshaded",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "Nothing assessable to service with. Note the taxable income is still $120,000 (llms.txt: 'taxes the actual taxable income'), so the net figure is negative; the capacity must still floor at zero."
+        },
+        {
+          "key": "nan_allshaded",
+          "op": "==",
+          "value": 0,
+          "why": "A negative net income must not leak a NaN or an Infinity into the KPIs."
+        },
+        {
+          "key": "rate_zerorate",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.01,
+          "why": "max(0 product + 0 buffer, 0 floor) = 0."
+        },
+        {
+          "key": "repay_zerorate",
+          "op": "~=",
+          "value": 1340.0,
+          "tol": 2,
+          "why": "7,590.00 net - 6,000 living - 250 UMI = 1,340.00/mo."
+        },
+        {
+          "key": "cap_zerorate",
+          "op": "~=",
+          "value": 482400.0,
+          "tol": 550.0,
+          "why": "With $6,000/mo of declared living costs the repayment is 7,590.00 - 6,000 - 250 = 1,340.00/mo, and at a zero rate a loan is simply the sum of its repayments: 1,340.00 x 360 = 482,400.00. Found here by the same bisection on the payment function used everywhere else in this file, which has no zero-rate special case."
+        },
+        {
+          "key": "factor_zerorate",
+          "op": "~=",
+          "value": 360,
+          "tol": 1.0,
+          "why": "Capacity/repayment at a zero rate must be exactly the number of repayments, 360."
+        },
+        {
+          "key": "nan_zerorate",
+          "op": "==",
+          "value": 0,
+          "why": "The zero-rate branch is where a closed-form P*i/(1-(1+i)^-n) divides by zero."
+        },
+        {
+          "key": "rate_floorwins",
+          "op": "~=",
+          "value": 5.5,
+          "tol": 0.01,
+          "why": "max(3.00 + 0.00, 5.50) = 5.50; the floor governs."
+        },
+        {
+          "key": "repay_floorwins",
+          "op": "~=",
+          "value": 3340.0,
+          "tol": 2,
+          "why": "7,590.00 - 4,000 - 250 = 3,340.00/mo, unchanged by the rate."
+        },
+        {
+          "key": "cap_floorwins",
+          "op": "~=",
+          "value": 588246.69,
+          "tol": 550.0,
+          "why": "3,340.00/mo at 0.055/12 over 360 months, by bisection: 588,246.69. Had the 3.00% product rate been used it would read 792,3xx."
+        },
+        {
+          "key": "factor_floorwins",
+          "op": "~=",
+          "value": 176.1218,
+          "tol": 0.4,
+          "why": "Pure annuity factor at 0.055/12 over 360 months = 176.121763."
+        }
+      ]
+    },
+    {
+      "id": "B10",
+      "severity": "blocker",
+      "basis": "Progressive disclosure. Every optional block on this page is revealed by a tick box or a Simple/Detailed switch. A figure typed into a block that is then hidden must stop counting; if it only stops being visible, the user is being quoted a capacity that silently includes a debt or an income they told the page they do not have. Each state fills a block and then unticks its box, and the capacity must return exactly to the clean-state figure. The positive control leaves the card ticked, to prove the fill was reaching the engine in the first place. Single on $200,000, $4,000/mo living, serviceability binding at 931,420.61. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "cap_clean",
+          "op": "~=",
+          "value": 931420.61,
+          "tol": 550.0,
+          "why": "11,677.50/mo net - 4,000 - 250 = 7,427.50/mo, bisected at 0.089/12 over 360 months."
+        },
+        {
+          "key": "live_card_delta",
+          "op": "~=",
+          "value": -238263.1,
+          "tol": 1100,
+          "why": "Positive control: a $50,000 limit at 3.80%/mo is 1,900.00/mo of commitments, so the repayment falls to 5,527.50 and capacity to 693,157.51, a drop of 238,263.10. If this is zero the fill never reached the engine and none of the leak checks below mean anything."
+        },
+        {
+          "key": "leak_card",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "A $50,000 card limit entered and then unticked must count for nothing."
+        },
+        {
+          "key": "leak_pers",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "$2,000/mo of personal-loan repayments and a $100,000 balance entered and then unticked must count for nothing, in the serviceability cap and in the DTI cap alike."
+        },
+        {
+          "key": "leak_inv",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "$80,000 of gross rent entered and then unticked must count for nothing. This one leaks in the borrower's favour, which is the more dangerous direction."
+        },
+        {
+          "key": "leak_bnpl",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "$500/mo of instalments and a $10,000 limit entered and then unticked must count for nothing."
+        },
+        {
+          "key": "leak_ol",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "A $600,000 existing home loan entered and then unticked must count for nothing."
+        },
+        {
+          "key": "leak_io",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "The interest-only switch shortens the amortisation window from 360 to 300 months while it is on; switched off again the window must return to 360 and the capacity to the clean figure. A residual near -100,000 means the shortened window survived the toggle."
+        }
+      ]
+    },
+    {
+      "id": "B11",
+      "severity": "major",
+      "basis": "The five Quick Start scenarios. Every expectation here is read off the page's own tooltips, which describe each preset in words and, for the first-home buyer, in figures. Nothing in this case is derived from tax or annuity maths: the claim under test is that a preset applies in full, binds where it says it binds, and leaves nothing of the previous preset behind. Quick Start tooltips quoted: 'Sydney banking associate, one applicant. $230k base plus a $90k bonus, entered stream by stream so you can see the bonus counted at 80%. Buying at $1.7M with a $550k deposit.' / 'Melbourne couple with two children, $185k between them.' / 'The ordinary single Perth buyer on $105k, no dependants, one modest card.' / 'Brisbane first home buyer on $95k with $70k saved and a study loan running. The deposit binds here, not the income. Tick LMI capitalised on the Caps tab and capacity lifts from $264k to $292k.' / 'Adelaide sole trader on $165k of two-year average profit, with a ute under finance.'",
+      "expect": [
+        {
+          "key": "city_finance_bro",
+          "op": "==",
+          "value": "Sydney",
+          "why": "The preset's own tooltip: 'Sydney banking associate'."
+        },
+        {
+          "key": "adults_finance_bro",
+          "op": "==",
+          "value": "1",
+          "why": "'Sydney banking associate, one applicant'."
+        },
+        {
+          "key": "gross_finance_bro",
+          "op": "~=",
+          "value": 320000,
+          "tol": 1,
+          "why": "'$230k base plus a $90k bonus' = $320,000 of gross income before shading."
+        },
+        {
+          "key": "bonus_finance_bro",
+          "op": "~=",
+          "value": 90000,
+          "tol": 1,
+          "why": "'entered stream by stream so you can see the bonus counted at 80%'."
+        },
+        {
+          "key": "bonus_shade_finance_bro",
+          "op": "~=",
+          "value": 80,
+          "tol": 0.01,
+          "why": "'the bonus counted at 80%'."
+        },
+        {
+          "key": "incmode_finance_bro",
+          "op": "==",
+          "value": "detailed",
+          "why": "'entered stream by stream' is only possible in the Detailed income form."
+        },
+        {
+          "key": "price_finance_bro",
+          "op": "~=",
+          "value": 1700000,
+          "tol": 1,
+          "why": "'Buying at $1.7M with a $550k deposit'."
+        },
+        {
+          "key": "savings_finance_bro",
+          "op": "~=",
+          "value": 550000,
+          "tol": 1,
+          "why": "'with a $550k deposit'."
+        },
+        {
+          "key": "city_couple",
+          "op": "==",
+          "value": "Melbourne",
+          "why": "'Melbourne couple with two children'."
+        },
+        {
+          "key": "adults_couple",
+          "op": "==",
+          "value": "2",
+          "why": "'Two applicants are taxed as two people'."
+        },
+        {
+          "key": "deps_couple",
+          "op": "~=",
+          "value": 2,
+          "tol": 0.01,
+          "why": "'with two children'."
+        },
+        {
+          "key": "gross_couple",
+          "op": "~=",
+          "value": 185000,
+          "tol": 1,
+          "why": "'$185k between them'."
+        },
+        {
+          "key": "city_geoff",
+          "op": "==",
+          "value": "Perth",
+          "why": "'The ordinary single Perth buyer'."
+        },
+        {
+          "key": "adults_geoff",
+          "op": "==",
+          "value": "1",
+          "why": "'the ordinary SINGLE Perth buyer'."
+        },
+        {
+          "key": "gross_geoff",
+          "op": "~=",
+          "value": 105000,
+          "tol": 1,
+          "why": "'on $105k'."
+        },
+        {
+          "key": "deps_geoff",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.01,
+          "why": "'no dependants'."
+        },
+        {
+          "key": "card_geoff",
+          "op": ">",
+          "value": 0,
+          "why": "'one modest card' - a card limit must actually be set, since the whole point of the baseline scenario is that it carries one."
+        },
+        {
+          "key": "city_first_home",
+          "op": "==",
+          "value": "Brisbane",
+          "why": "'Brisbane first home buyer'."
+        },
+        {
+          "key": "gross_first_home",
+          "op": "~=",
+          "value": 95000,
+          "tol": 1,
+          "why": "'on $95k'."
+        },
+        {
+          "key": "savings_first_home",
+          "op": "~=",
+          "value": 70000,
+          "tol": 1,
+          "why": "'with $70k saved'."
+        },
+        {
+          "key": "help_first_home",
+          "op": "matches",
+          "value": "^(tax|commitment)$",
+          "why": "'and a study loan running' - the study-loan selector must not be on 'none'."
+        },
+        {
+          "key": "cap_first_home",
+          "op": "~=",
+          "value": 264000,
+          "tol": 550.0,
+          "why": "'capacity lifts from $264k to $292k' - $264k is the LMI-off figure the preset's own tooltip quotes."
+        },
+        {
+          "key": "bind_first_home",
+          "op": "matches",
+          "value": "(?i)deposit|funds|savings",
+          "why": "'The deposit binds here, not the income.'"
+        },
+        {
+          "key": "city_tradie",
+          "op": "==",
+          "value": "Adelaide",
+          "why": "'Adelaide sole trader'."
+        },
+        {
+          "key": "incwho_tradie",
+          "op": "==",
+          "value": "self",
+          "why": "'Shows the Self-employed side of the income form.'"
+        },
+        {
+          "key": "npat_tradie",
+          "op": "~=",
+          "value": 165000,
+          "tol": 1,
+          "why": "'on $165k of two-year average profit'."
+        },
+        {
+          "key": "chain_delta",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "Clicking 'Finance Bro, Sydney' and then 'Average Geoff, Perth' must leave exactly the state that 'Average Geoff, Perth' produces from a clean reset. A scenario that applies 'in full' overwrites every field it owns, including the ones it wants at zero."
+        },
+        {
+          "key": "bonus_chain",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "Geoff has no bonus, so the $90,000 left behind by the previous preset must be cleared. A stale figure sitting in a hidden Detailed panel is one click on Detailed away from becoming the user's answer."
+        },
+        {
+          "key": "city_chain",
+          "op": "==",
+          "value": "Perth",
+          "why": "Geoff is the Perth buyer; Sydney must not survive the second click."
+        },
+        {
+          "key": "nan_finance_bro",
+          "op": "==",
+          "value": 0,
+          "why": "The 'finance-bro' preset is a worked example the page offers as a starting point; it must not print NaN, Infinity, -0, undefined or null."
+        },
+        {
+          "key": "cap_finance_bro",
+          "op": ">",
+          "value": 0,
+          "why": "'finance-bro' is described as a real borrower with real income, so it must produce a real capacity."
+        },
+        {
+          "key": "nan_couple",
+          "op": "==",
+          "value": 0,
+          "why": "The 'couple' preset is a worked example the page offers as a starting point; it must not print NaN, Infinity, -0, undefined or null."
+        },
+        {
+          "key": "cap_couple",
+          "op": ">",
+          "value": 0,
+          "why": "'couple' is described as a real borrower with real income, so it must produce a real capacity."
+        },
+        {
+          "key": "nan_geoff",
+          "op": "==",
+          "value": 0,
+          "why": "The 'geoff' preset is a worked example the page offers as a starting point; it must not print NaN, Infinity, -0, undefined or null."
+        },
+        {
+          "key": "cap_geoff",
+          "op": ">",
+          "value": 0,
+          "why": "'geoff' is described as a real borrower with real income, so it must produce a real capacity."
+        },
+        {
+          "key": "nan_first_home",
+          "op": "==",
+          "value": 0,
+          "why": "The 'first-home' preset is a worked example the page offers as a starting point; it must not print NaN, Infinity, -0, undefined or null."
+        },
+        {
+          "key": "cap_first_home",
+          "op": ">",
+          "value": 0,
+          "why": "'first-home' is described as a real borrower with real income, so it must produce a real capacity."
+        },
+        {
+          "key": "nan_tradie",
+          "op": "==",
+          "value": 0,
+          "why": "The 'tradie' preset is a worked example the page offers as a starting point; it must not print NaN, Infinity, -0, undefined or null."
+        },
+        {
+          "key": "cap_tradie",
+          "op": ">",
+          "value": 0,
+          "why": "'tradie' is described as a real borrower with real income, so it must produce a real capacity."
+        }
+      ]
+    },
+    {
+      "id": "B12",
+      "severity": "blocker",
+      "basis": "The tax engine, dial by dial. Single applicant throughout so that the household split cannot enter, and each leg is isolated by taking a difference between two states that are identical apart from the dial under test. Tax years: the Resident tax year tooltip says the only thing that moves is the lowest bracket, '16% in 2025-26, 15% in 2026-27, 14% from 2027-28'. LITO: declared expenses $2,800/mo (above any published single-adult HEM in Perth) and the minimum UMI set to $0, so that these low incomes still produce a positive capacity and the taper is visible in it. MLS: four incomes chosen to be tier-unambiguous between the 2024-25 and 2025-26 published threshold tables. Study loan: the two treatments the page offers, at the shipped $67,000 threshold. Conventions used by every expectation in this file, all stated before the engine was run. (1) ASSESSMENT RATE = max(product rate + APRA buffer, lender floor), which is what the page's own FAQ promises ('APRA requires lenders to add a serviceability buffer of at least 3.00 percentage points to the product rate, and most lenders also apply a floor... your repayment capacity is tested at whichever is higher'). On the shipped dials that is max(5.90+3.00, 5.50) = 8.90%. (2) PERIOD RATE is nominal, annual/12, the universal Australian mortgage convention and the one TESTCASES Z1/F1 records as the repo norm outside financingvscash. At 8.90% the monthly rate is 0.089/12 = 0.0074166667 and the 360-month annuity factor (1-(1+i)^-n)/i is 125.401630. Under the effective convention (1.089^(1/12)-1) the factor would be 129.7276, about 3.4% higher, so every capacity in this file would be understated by that much - that is the diagnosis if the capacities fail high by ~3.4% in lockstep. (3) CAPACITY = the loan a level in-arrears P&I repayment supports over the full term at the assessment rate, found by BISECTION on ref.annuity_payment (ref.annuity_principal_bisect), never by the closed-form present-value formula, so the expectation is not the same algebra a calculator would naturally run. Term = 30 years = 360 months; with an interest-only period the window is (term - IO). (4) SERVICEABLE REPAYMENT = net monthly income - living costs - existing monthly commitments - minimum monthly surplus (UMI), per the UMI tooltip ('the buffer the lender insists you keep after every outgoing, including the new repayment'). With the shipped nsrMin of 1.00 the NSR test is looser than the UMI test whenever UMI > 0, so UMI is the binding serviceability test, exactly as the NSR tooltip says ('this is the secondary sanity check, UMI is the primary test'). (5) NET INCOME = shaded (assessable) income - tax on actual taxable income. llms.txt for this page: 'it shades each income stream, taxes the actual taxable income'. Every fixture that puts a number on tax uses 100% shading, so shaded = taxable = gross and the ordering question cannot contaminate it. (6) TAX SCALE. Resident scales are built in the ATO's 'base amount plus cents in the dollar over the threshold' form via ref.progressive_tax_base_plus - deliberately a different statement of the schedule from the band-by-band walk a calculator writes. Thresholds 18,200 / 45,000 / 135,000 / 190,000 with marginal rates [lowest] / 30% / 37% / 45%, where the lowest rate is the legislated cut the page's own Resident tax year tooltip quotes: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. The rows are therefore: 2025-26 (18,200: nil + 16c), (45,000: $4,288 + 30c), (135,000: $31,288 + 37c), (190,000: $51,638 + 45c); 2026-27 (45,000: $4,020), (135,000: $31,020), (190,000: $51,370); 2027-28 (45,000: $3,752), (135,000: $30,752), (190,000: $51,102). (7) LITO: $700, reduced by 5c per dollar of taxable income over $37,500 and then by 1.5c per dollar over $45,000, extinguished at $66,667; non-refundable, so it cannot take income tax below zero and it never reduces the Medicare levy. (8) MEDICARE LEVY: 2% of taxable income, with the singles low-income threshold $27,222 and a shade-in of 10c in the dollar above it until 2% is cheaper, i.e. up to $34,027.50 (the 2024-25 published thresholds; the family threshold is $45,907 plus $4,216 per dependent child). Every fixture that puts a number on tax sits above $34,027.50, where the levy is a flat 2% under either the singles or the family table, so the choice of table cannot move those figures. The one case that deliberately sits inside the phase-in is B4, and it quotes both tables. (9) MEDICARE LEVY SURCHARGE: charged on the whole income, not the excess, when there is no private hospital cover. Tiers 1/2/3 are 1%, 1.25% and 1.5%. The singles tier bounds were 97k/113k/151k in 2024-25 and 101k/118k/158k in 2025-26; the B12 fixtures use $90,000, $105,000, $130,000 and $250,000, each of which sits in the SAME tier under both tables, so no assumption about which year the page shipped can change the expected surcharge. (10) STUDY LOAN: nil up to the threshold, then 15c in the dollar to $125,000 and 17c beyond, which is the marginal structure the page's own Repayment threshold tooltip states ('repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it'). (11) THE FOUR CAPS, from the page's FAQ ('the smallest of four separate limits: what your surplus income can service at the assessment rate, the debt-to-income cap, the maximum loan-to-value ratio, and what your deposit can reach after purchase costs'): serviceability as above; DTI = cap x income basis - existing debt balances and limits; LVR = maxLVR x min(price, bank valuation); deposit = available funds x v/(1-v) where available funds = deposit amount - stamp duty - other purchase costs and v = the maximum LVR, i.e. the deposit must cover the (1-v) share of the price it reaches. That last formula is corroborated by the page's own first-home-buyer Quick Start tooltip: $70,000 saved less the $4,000 of other purchase costs is $66,000, and $66,000 x 0.8/0.2 = $264,000, the capacity that tooltip quotes. (12) MAX PURCHASE PRICE = capacity + available funds, per the Max purchase price tooltip ('capacity plus the deposit left over'). (13) LMI: the premium is lmiRate x the advance and is capitalised, so the debt serviced is advance x (1 + lmiRate) and the capacity reported is the advance. (14) HEM is not published anywhere on the page, so no expectation in this file states a HEM dollar figure. Fixtures either set declared expenses above any plausible HEM (so living costs are exactly the declared figure) or test HEM only through ratios and orderings. (15) Money tolerances of +/-550 on a capacity and +/-1,100 on a difference of two capacities exist to allow rounding to the nearest whole $1,000; they are far tighter than any convention error this file is designed to catch.",
+      "expect": [
+        {
+          "key": "tax_y2025",
+          "op": "~=",
+          "value": 35938.0,
+          "tol": 1,
+          "why": "2025-26: $140,000 is in the 37c band, so base-plus gives 33,138.00 (= 31,288 + 0.37 x 5,000); LITO is nil; Medicare is 2% x 140,000 = 2,800. Total 35,938.00."
+        },
+        {
+          "key": "cap_y2025",
+          "op": "~=",
+          "value": 554505.11,
+          "tol": 550.0,
+          "why": "(104,062.00/12 - 4,000 - 250) = 4,421.83/mo, bisected at 0.089/12 over 360 months."
+        },
+        {
+          "key": "tax_y2026",
+          "op": "~=",
+          "value": 35670.0,
+          "tol": 1,
+          "why": "2026-27: $140,000 is in the 37c band, so base-plus gives 32,870.00 (= 31,020 + 0.37 x 5,000); LITO is nil; Medicare is 2% x 140,000 = 2,800. Total 35,670.00."
+        },
+        {
+          "key": "cap_y2026",
+          "op": "~=",
+          "value": 557305.74,
+          "tol": 550.0,
+          "why": "(104,330.00/12 - 4,000 - 250) = 4,444.17/mo, bisected at 0.089/12 over 360 months."
+        },
+        {
+          "key": "tax_y2027",
+          "op": "~=",
+          "value": 35402.0,
+          "tol": 1,
+          "why": "2027-28: $140,000 is in the 37c band, so base-plus gives 32,602.00 (= 30,752 + 0.37 x 5,000); LITO is nil; Medicare is 2% x 140,000 = 2,800. Total 35,402.00."
+        },
+        {
+          "key": "cap_y2027",
+          "op": "~=",
+          "value": 560106.38,
+          "tol": 550.0,
+          "why": "(104,598.00/12 - 4,000 - 250) = 4,466.50/mo, bisected at 0.089/12 over 360 months."
+        },
+        {
+          "key": "dtax_2526_2627",
+          "op": "~=",
+          "value": 268,
+          "tol": 2,
+          "why": "The only thing that changes between the years is the rate on the $18,200-$45,000 slice, 16c to 15c. The whole slice is $26,800, so the step is exactly 26,800 x 0.01 = $268 for anybody earning above $45,000. This is the cleanest possible statement of the tax-year dial because it is independent of the rest of the scale, of LITO and of Medicare."
+        },
+        {
+          "key": "dtax_2627_2728",
+          "op": "~=",
+          "value": 268,
+          "tol": 2,
+          "why": "The same $268 step for the 15c-to-14c cut from 2027-28."
+        },
+        {
+          "key": "dcap_2627_2526",
+          "op": "~=",
+          "value": 2800.64,
+          "tol": 1100,
+          "why": "$268/yr of tax is $22.33/mo of repayment, worth 22.33 x 125.401630 = $2,800.64 of capacity."
+        },
+        {
+          "key": "dcap_2728_2627",
+          "op": "~=",
+          "value": 2800.64,
+          "tol": 1100,
+          "why": "The same $2,800.64 for the second step."
+        },
+        {
+          "key": "tax_lito37500",
+          "op": "~=",
+          "value": 2945.0,
+          "tol": 1,
+          "why": "2026-27 on $37,500: base-plus gives 2,895.00, LITO is 700.00 (=700 less 5c per dollar over 37,500 and then 1.5c per dollar over 45,000), and the Medicare levy is a flat 2% = 750.00 because $37,500 is above the $34,027.50 shade-in ceiling. Total 2,945.00. Omitting LITO entirely would read 3,645.00."
+        },
+        {
+          "key": "cap_lito37500",
+          "op": "~=",
+          "value": 9979.88,
+          "tol": 550.0,
+          "why": "(34,555.00/12 - 2,800 living - 0 UMI) = 79.58/mo, bisected at 0.089/12 over 360 months."
+        },
+        {
+          "key": "tax_lito45000",
+          "op": "~=",
+          "value": 4595.0,
+          "tol": 1,
+          "why": "2026-27 on $45,000: base-plus gives 4,020.00, LITO is 325.00 (=700 less 5c per dollar over 37,500 and then 1.5c per dollar over 45,000), and the Medicare levy is a flat 2% = 900.00 because $45,000 is above the $34,027.50 shade-in ceiling. Total 4,595.00. Omitting LITO entirely would read 4,920.00."
+        },
+        {
+          "key": "cap_lito45000",
+          "op": "~=",
+          "value": 71113.17,
+          "tol": 550.0,
+          "why": "(40,405.00/12 - 2,800 living - 0 UMI) = 567.08/mo, bisected at 0.089/12 over 360 months."
+        },
+        {
+          "key": "tax_lito55000",
+          "op": "~=",
+          "value": 7945.0,
+          "tol": 1,
+          "why": "2026-27 on $55,000: base-plus gives 7,020.00, LITO is 175.00 (=700 less 5c per dollar over 37,500 and then 1.5c per dollar over 45,000), and the Medicare levy is a flat 2% = 1,100.00 because $55,000 is above the $34,027.50 shade-in ceiling. Total 7,945.00. Omitting LITO entirely would read 8,120.00."
+        },
+        {
+          "key": "cap_lito55000",
+          "op": "~=",
+          "value": 140606.58,
+          "tol": 550.0,
+          "why": "(47,055.00/12 - 2,800 living - 0 UMI) = 1,121.25/mo, bisected at 0.089/12 over 360 months."
+        },
+        {
+          "key": "tax_lito70000",
+          "op": "~=",
+          "value": 12920.0,
+          "tol": 1,
+          "why": "2026-27 on $70,000: base-plus gives 11,520.00, LITO is 0.00 (=700 less 5c per dollar over 37,500 and then 1.5c per dollar over 45,000), and the Medicare levy is a flat 2% = 1,400.00 because $70,000 is above the $34,027.50 shade-in ceiling. Total 12,920.00. Omitting LITO entirely would read 12,920.00."
+        },
+        {
+          "key": "cap_lito70000",
+          "op": "~=",
+          "value": 245369.19,
+          "tol": 550.0,
+          "why": "(57,080.00/12 - 2,800 living - 0 UMI) = 1,956.67/mo, bisected at 0.089/12 over 360 months."
+        },
+        {
+          "key": "dcap_lito_45_375",
+          "op": "~=",
+          "value": 61133.29,
+          "tol": 1100,
+          "why": "Between $37,500 and $45,000 the borrower pays 15c on each extra dollar, loses 5c of LITO on each and pays 2c of Medicare: an effective 22c, so tax rises by 0.22 x 7,500 = $1,650 and net income by $5,850, i.e. $487.50/mo, worth 487.50 x 125.401630 = $61,133 of capacity. A step of $69,493 instead would mean the LITO taper is not running in this band."
+        },
+        {
+          "key": "dcap_lito_55_45",
+          "op": "~=",
+          "value": 69493.4,
+          "tol": 1100,
+          "why": "Between $45,000 and $55,000 the marginal rate is 30c, the LITO taper is 1.5c and Medicare is 2c: an effective 33.5c, so tax rises by $3,350 and net income by $6,650, i.e. $554.17/mo, worth $69,493 of capacity."
+        },
+        {
+          "key": "tax_on90000",
+          "op": "~=",
+          "value": 19320.0,
+          "tol": 1,
+          "why": "2026-27 on $90,000 with private hospital cover: 17,520.00 of income tax (LITO nil) plus 2% Medicare 1,800.00 = 19,320.00, and no surcharge."
+        },
+        {
+          "key": "mls_90000",
+          "op": "~=",
+          "value": 0.0,
+          "tol": 2,
+          "why": "Dropping private cover adds the surcharge on the whole income at 0%: 0 x 90,000 = 0.00. $90,000 sits in the same tier under both the 2024-25 singles bounds (97k/113k/151k) and the 2025-26 bounds (101k/118k/158k), so this figure does not depend on which year's thresholds shipped. Everything else in the two states is identical, so the difference is the surcharge and nothing else."
+        },
+        {
+          "key": "mls_rate_90000",
+          "op": "~=",
+          "value": 0.0,
+          "tol": 0.02,
+          "why": "The surcharge as a share of income must be exactly the tier rate, 0%."
+        },
+        {
+          "key": "tax_on105000",
+          "op": "~=",
+          "value": 24120.0,
+          "tol": 1,
+          "why": "2026-27 on $105,000 with private hospital cover: 22,020.00 of income tax (LITO nil) plus 2% Medicare 2,100.00 = 24,120.00, and no surcharge."
+        },
+        {
+          "key": "mls_105000",
+          "op": "~=",
+          "value": 1050.0,
+          "tol": 2,
+          "why": "Dropping private cover adds the surcharge on the whole income at 1%: 0.01 x 105,000 = 1,050.00. $105,000 sits in the same tier under both the 2024-25 singles bounds (97k/113k/151k) and the 2025-26 bounds (101k/118k/158k), so this figure does not depend on which year's thresholds shipped. Everything else in the two states is identical, so the difference is the surcharge and nothing else."
+        },
+        {
+          "key": "mls_rate_105000",
+          "op": "~=",
+          "value": 1.0,
+          "tol": 0.02,
+          "why": "The surcharge as a share of income must be exactly the tier rate, 1%."
+        },
+        {
+          "key": "tax_on130000",
+          "op": "~=",
+          "value": 32120.0,
+          "tol": 1,
+          "why": "2026-27 on $130,000 with private hospital cover: 29,520.00 of income tax (LITO nil) plus 2% Medicare 2,600.00 = 32,120.00, and no surcharge."
+        },
+        {
+          "key": "mls_130000",
+          "op": "~=",
+          "value": 1625.0,
+          "tol": 2,
+          "why": "Dropping private cover adds the surcharge on the whole income at 1.25%: 0.0125 x 130,000 = 1,625.00. $130,000 sits in the same tier under both the 2024-25 singles bounds (97k/113k/151k) and the 2025-26 bounds (101k/118k/158k), so this figure does not depend on which year's thresholds shipped. Everything else in the two states is identical, so the difference is the surcharge and nothing else."
+        },
+        {
+          "key": "mls_rate_130000",
+          "op": "~=",
+          "value": 1.25,
+          "tol": 0.02,
+          "why": "The surcharge as a share of income must be exactly the tier rate, 1.25%."
+        },
+        {
+          "key": "tax_on250000",
+          "op": "~=",
+          "value": 83370.0,
+          "tol": 1,
+          "why": "2026-27 on $250,000 with private hospital cover: 78,370.00 of income tax (LITO nil) plus 2% Medicare 5,000.00 = 83,370.00, and no surcharge."
+        },
+        {
+          "key": "mls_250000",
+          "op": "~=",
+          "value": 3750.0,
+          "tol": 2,
+          "why": "Dropping private cover adds the surcharge on the whole income at 1.5%: 0.015 x 250,000 = 3,750.00. $250,000 sits in the same tier under both the 2024-25 singles bounds (97k/113k/151k) and the 2025-26 bounds (101k/118k/158k), so this figure does not depend on which year's thresholds shipped. Everything else in the two states is identical, so the difference is the surcharge and nothing else."
+        },
+        {
+          "key": "mls_rate_250000",
+          "op": "~=",
+          "value": 1.5,
+          "tol": 0.02,
+          "why": "The surcharge as a share of income must be exactly the tier rate, 1.5%."
+        },
+        {
+          "key": "help_cap_delta",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "The study-loan tooltip: 'both paths subtract the same dollars from surplus income. The difference is where it lands.' As tax it comes off net income; as a commitment it is added to outgoings; the UMI test subtracts the same $662.50/mo either way, so the capacity must be identical to the dollar."
+        },
+        {
+          "key": "help_cost",
+          "op": "~=",
+          "value": 83078.58,
+          "tol": 1100,
+          "why": "0.15 x (120,000 - 67,000) = $7,950/yr = $662.50/mo, worth 662.50 x 125.401630 = $83,079 of capacity. $120,000 is below $125,000 so the 17c step does not apply."
+        },
+        {
+          "key": "help_nsr_delta",
+          "op": ">",
+          "value": 0,
+          "why": "With N net income, O other outgoings, H the study loan and R the repayment, the tax path gives NSR = (N-H)/(O+R) and the commitment path N/(O+H+R). Cross-multiplying, the difference has the sign of H x (N - O - H - R), and N - O - H - R is the surplus left over, which is the $250 minimum UMI. So the tax path must show the HIGHER NSR whenever the minimum UMI is positive - the same money, a different ratio, which is exactly the distinction the tooltip draws."
+        },
+        {
+          "key": "comm_help_tax",
+          "op": "~=",
+          "value": 0,
+          "tol": 1,
+          "why": "On the tax path the study loan sits above the line, so the commitments table must not also carry it."
+        },
+        {
+          "key": "comm_help_comm",
+          "op": "~=",
+          "value": 662.5,
+          "tol": 2,
+          "why": "On the commitment path it sits below the line as $7,950/12 = $662.50/mo of commitments."
+        }
+      ]
+    }
+  ]
+}

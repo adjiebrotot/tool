@@ -1,0 +1,941 @@
+{
+  "tool": "dca-portfolio",
+  "authored_utc": "2026-09-18T13:56:10Z",
+  "cases": [
+    {
+      "id": "N1",
+      "severity": "blocker",
+      "basis": "Calendar arithmetic and three accounting identities that hold for any price path: money in is the schedule count times the contribution; portfolio value is cash plus the market value of the holdings; and a full rebalance, which is defined as buying the underweight and selling the overweight until the targets are met, leaves the portfolio at its targets on the bar it runs. Fees are charged at 0.1% so they can move the restored weights only in the fourth significant figure. A holding of negative units or a negative cash balance would mean the engine sold something it did not own or spent money it did not have.",
+      "expect": [
+        {
+          "key": "n_topups",
+          "op": "==",
+          "value": 120,
+          "why": "120 whole months from January 2015 to December 2024, each containing a 15th inside the window."
+        },
+        {
+          "key": "total_deposited",
+          "op": "~=",
+          "value": 120000,
+          "tol": 0.01,
+          "why": "120 contributions of 1,000."
+        },
+        {
+          "key": "deposit_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "Deposit conservation: nothing added or lost between the schedule and the ledger."
+        },
+        {
+          "key": "n_rebalances",
+          "op": "between",
+          "value": [
+            38,
+            41
+          ],
+          "why": "Forty quarters in ten years; the bounds allow the first or last quarter to be treated as partial."
+        },
+        {
+          "key": "max_w_a_dev_after_rebal",
+          "op": "<=",
+          "value": 0.5,
+          "why": "'Maintain target weights by buying underweight and selling overweight assets': on the bar a full rebalance runs, the weights are the targets. Half a percentage point leaves room for the 0.1% fee taken out of the trade and for rounding, and excludes a rebalance that only moved part of the way."
+        },
+        {
+          "key": "min_cash",
+          "op": ">=",
+          "value": -0.005,
+          "why": "Cash may sit idle but may never go negative; there is no borrowing facility in this tool."
+        },
+        {
+          "key": "min_units_a",
+          "op": ">=",
+          "value": 0,
+          "why": "No short positions exist in this model."
+        },
+        {
+          "key": "min_units_b",
+          "op": ">=",
+          "value": 0,
+          "why": "No short positions exist in this model."
+        },
+        {
+          "key": "value_identity_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "Portfolio value is by definition cash plus holdings at market."
+        },
+        {
+          "key": "topups_off_schedule",
+          "op": "==",
+          "value": 0,
+          "why": "A contribution scheduled for the 15th lands on the 15th or on the trading day nearest it, which is at most two days away."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed inputs."
+        },
+        {
+          "key": "js_error_count",
+          "op": "==",
+          "value": 0,
+          "why": "A baseline run must not throw."
+        }
+      ]
+    },
+    {
+      "id": "P1",
+      "severity": "blocker",
+      "basis": "The trigger is a function of day D's close: 'the highest close in the lookback window of bars before that day' compared with today's close. The comparison cannot be made until day D's close exists, so no order placed on it can be filled at that same close - neither the purchase nor, when the reserve is a holding, the sale of the reserve asset that pays for it. Executing both legs at the signal bar's close buys and sells at prices that were only knowable after the decision, which flatters every figure the tool reports and cannot be reproduced by anyone following the rule. The lookback of 20 bars and the threshold of 5% are chosen so that a ten-year 15%-volatility path produces many firings, giving the count something to count. TESTCASES P1 records that this build is not expected to satisfy it.",
+      "expect": [
+        {
+          "key": "cash_n_deploys",
+          "op": ">",
+          "value": 0,
+          "why": "If the trigger never fired the case would prove nothing."
+        },
+        {
+          "key": "cash_sameBar_deploy_count",
+          "op": "==",
+          "value": 0,
+          "why": "A deploy priced at the close that created its own signal is a look-ahead trade."
+        },
+        {
+          "key": "cash_min_lag_bars",
+          "op": ">=",
+          "value": 1,
+          "why": "The first executable bar after a close-based signal is the next bar."
+        },
+        {
+          "key": "cash_unmatched_deploys",
+          "op": "==",
+          "value": 0,
+          "why": "Every deploy of a rule-based portfolio must be traceable to a condition that became true."
+        },
+        {
+          "key": "asset_sameBar_deploy_count",
+          "op": "==",
+          "value": 0,
+          "why": "The same rule when the reserve is a holding rather than cash."
+        },
+        {
+          "key": "asset_min_lag_bars",
+          "op": ">=",
+          "value": 1,
+          "why": "The same rule."
+        },
+        {
+          "key": "asset_reserve_sales_on_signal_bar",
+          "op": "==",
+          "value": 0,
+          "why": "Funding the purchase means selling the reserve asset; that sale is part of the same decision and is priced on the same information, so it cannot be filled at the signal bar's close either."
+        },
+        {
+          "key": "asset_min_sale_lag_bars",
+          "op": ">=",
+          "value": 1,
+          "why": "Stated as a minimum over every funding sale, so one exempt sale is enough to fail."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Robustness alongside the causality check."
+        }
+      ],
+      "expect_outcome": "fail"
+    },
+    {
+      "id": "P2",
+      "severity": "major",
+      "basis": "The asset is deterministic: zero volatility and -20% a year, so its close falls by the same factor every bar and the highest close of any window that ends before today is always the oldest close in that window. Over L bars the fall is 1 - 0.8^(L/B), where B is the number of bars a year. For any plausible B between 150 and 400 that is between 1.2% and 2.2% over 20 bars and between 3.6% and 6.4% over 60 bars, so a 3% threshold cannot fire on a 20-bar anchor and must fire on a 60-bar one. A 20-bar setting that fires anyway is reaching further back than it claims (an all-time high, or the untrimmed series); a 60-bar setting that never fires is not reaching back at all. The nesting statement is the same fact stated generally: a longer window has a maximum at least as high, so its condition is satisfied on a superset of days. Finally, the anchor must use bars strictly before today: an anchor that includes today's own close would let the rule fire one bar earlier than the causal definition allows.",
+      "expect": [
+        {
+          "key": "L20_n_deploys",
+          "op": "==",
+          "value": 0,
+          "why": "A 3% threshold against the highest close of the previous 20 bars, on a path that loses at most 2.2% over 20 bars, can never be satisfied."
+        },
+        {
+          "key": "L20_final_value",
+          "op": "~=",
+          "value": 120000,
+          "tol": 0.01,
+          "why": "With nothing ever deployed and a 0% risk-free rate, the portfolio is exactly the money paid in: 120 monthly top-ups of 1,000."
+        },
+        {
+          "key": "L20_final_cash",
+          "op": "~=",
+          "value": 120000,
+          "tol": 0.01,
+          "why": "The same money, still in the reserve."
+        },
+        {
+          "key": "L60_n_deploys",
+          "op": ">",
+          "value": 0,
+          "why": "Over 60 bars the same path falls at least 3.6%, which clears the 3% threshold, so the reserve must be deployed."
+        },
+        {
+          "key": "nesting_delta",
+          "op": ">=",
+          "value": 0,
+          "why": "max over 60 bars >= max over 20 bars at every date, so the 60-bar condition holds on a superset of the days the 20-bar condition holds on."
+        },
+        {
+          "key": "L60_first_deploy_lag",
+          "op": "between",
+          "value": [
+            0,
+            1
+          ],
+          "why": "The first deploy cannot precede the first bar at which the causal condition is true. Zero is same-bar execution, one is next-bar execution; a negative value means the anchor window was allowed to include the deploy bar's own close, which is the look-ahead this case is here to exclude."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed inputs."
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "severity": "minor",
+      "basis": "The Date Range tooltip states the rule: 'The simulation runs over the dates every asset has in common ... Each ticker is trimmed to that shared set of trading days, so the portfolio is only valued on days where every asset has a price.' NYSE and ASX keep different holiday calendars and sit on different sides of the date line, so their common dates are a strict subset of either one's, and the two-asset run therefore has fewer bars than the single-asset run over the same requested window. That is correct behaviour, but it changes the sample the user's comparison is drawn from, so it has to be visible in the result rather than only in a tooltip. TESTCASES P3 records the shrinkage as silent in this build, so the notice check is the one expected to fail.",
+      "expect": [
+        {
+          "key": "intersection_residual",
+          "op": "==",
+          "value": 0,
+          "why": "The axis the tooltip promises is exactly the intersection: no date where an asset has no price, and no date dropped that both assets have."
+        },
+        {
+          "key": "shrinkage",
+          "op": ">",
+          "value": 0,
+          "why": "Two exchanges with different holidays and a date line between them cannot share every trading day, so mixing them must cost bars."
+        },
+        {
+          "key": "effective_range_reported",
+          "op": "==",
+          "value": true,
+          "why": "A user comparing a one-asset portfolio against a two-asset one over 'the same' window is comparing different samples; the page has to say so where the result is shown."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed run."
+        }
+      ],
+      "expect_outcome": "fail"
+    },
+    {
+      "id": "P4",
+      "severity": "major",
+      "basis": "Ranking the assets needs each one's trailing return, and a trailing return that ends at day D's close is only known once day D has closed. Splitting that same day's contribution by that ranking, at that same day's closing prices, spends information the buyer did not have. The causal ranking is the one ending at the previous close. Three synthetic assets with different drifts and volatilities reorder often enough over ten years that the two rankings disagree on many top-ups, and those disagreements are the only ones that carry information: on them, the realised split must follow the causal ordering. TESTCASES P4 records this build as ranking same-bar.",
+      "expect": [
+        {
+          "key": "n_topups",
+          "op": "==",
+          "value": 120,
+          "why": "120 whole months in the window."
+        },
+        {
+          "key": "topups_where_orders_differ",
+          "op": ">",
+          "value": 0,
+          "why": "Without disagreements the test is vacuous; three assets with 25%, 12% and 4% volatility reorder many times over 120 monthly observations."
+        },
+        {
+          "key": "matched_sameBar_only",
+          "op": "==",
+          "value": 0,
+          "why": "Not one contribution may be split by a ranking that needed its own bar's close."
+        },
+        {
+          "key": "causal_match_residual",
+          "op": "==",
+          "value": 0,
+          "why": "Stated positively: on every top-up where the two rankings disagree, the realised split must be the causal one."
+        },
+        {
+          "key": "deploy_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "Rank weights of 50/30/20 sum to 100, so the whole contribution is deployed and none is lost in the ranking step."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed inputs."
+        }
+      ],
+      "expect_outcome": "fail"
+    },
+    {
+      "id": "P5",
+      "severity": "blocker",
+      "basis": "A portfolio of one asset held at 100%, with Constant Allocation splitting each contribution by the weights and buying, with no fees and with idle cash earning nothing, is the same model as plain dollar-cost averaging into that asset: the same money arrives on the same dates and buys the same asset at the same closes. The two tools share the synthetic-asset generator and the same seed, so the price path is the same input in both. Two renderings of one model must therefore agree to the last cent; any difference is one of the two being wrong, and the user has no way to tell which.",
+      "expect": [
+        {
+          "key": "price_series_match",
+          "op": "==",
+          "value": true,
+          "why": "Same generator, same seed, same parameters, same window: the inputs are identical, so the paths must be."
+        },
+        {
+          "key": "deposit_diff",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "Same amount on the same schedule."
+        },
+        {
+          "key": "buy_count_diff",
+          "op": "==",
+          "value": 0,
+          "why": "Same schedule over the same window."
+        },
+        {
+          "key": "buy_date_diff_count",
+          "op": "==",
+          "value": 0,
+          "why": "Same schedule and the same trading calendar, so the same dates in the same order."
+        },
+        {
+          "key": "pf_final_cash",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "Constant Allocation deploys the whole contribution at each top-up, so with a single asset at 100% and no fees nothing is left uninvested."
+        },
+        {
+          "key": "value_diff",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.01,
+          "why": "Identical money into identical units at identical prices gives an identical holding."
+        },
+        {
+          "key": "value_rel_diff",
+          "op": "~=",
+          "value": 0,
+          "tol": 1e-09,
+          "why": "Stated scale-free so the check does not soften as the terminal value grows."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed inputs."
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "severity": "major",
+      "basis": "The Target Weights tooltip states the contract the user is held to: 'The weights must add up to 100%.' A set that does not is therefore an input error, and there are only two honest responses: refuse to run, or normalise and say so - 60 and 50 become 54.5455% and 45.4545%. Silently treating 60 and 50 as shares of 110 without saying so, or as shares of 100 with the remaining 10% invented, both put a portfolio on screen that the user did not ask for. A weight of zero is a legitimate instruction to hold none of an asset, so no unit of it may ever be bought. A rank tail of zero is the same instruction expressed by rank. A negative weight is a short position, which this model has no representation for, so the realised share of that asset cannot be below zero and no holding or cash balance may go negative. None of these depends on the price path.",
+      "expect": [
+        {
+          "key": "sum110_blocked_or_normalised",
+          "op": "==",
+          "value": true,
+          "why": "One of the two honest responses to weights that break the stated contract."
+        },
+        {
+          "key": "sum110_warning_text",
+          "op": "matches",
+          "value": "100",
+          "why": "Whichever response is chosen, the user has to be told that the weights did not add up."
+        },
+        {
+          "key": "sum110_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "An input error must not put NaN on screen."
+        },
+        {
+          "key": "zero_units_b_max",
+          "op": "~=",
+          "value": 0,
+          "tol": 1e-09,
+          "why": "A target of 0% means hold none; buying any unit of it contradicts the instruction."
+        },
+        {
+          "key": "zero_w_a",
+          "op": "~=",
+          "value": 100,
+          "tol": 0.5,
+          "why": "With the other asset at zero, the whole portfolio is the first asset. Half a point of tolerance covers residual cash from rounding."
+        },
+        {
+          "key": "zero_final_value",
+          "op": ">",
+          "value": 0,
+          "why": "A 100/0 portfolio is an ordinary single-asset portfolio and must still produce a result."
+        },
+        {
+          "key": "zero_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed run."
+        },
+        {
+          "key": "rank_tail_rank3_deployed_total",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.01,
+          "why": "A rank weight of 0 means the asset in that rank receives nothing."
+        },
+        {
+          "key": "rank_tail_deposit_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "The first two ranks take 60 and 40, so the full contribution is still deployed and nothing is lost in the tail."
+        },
+        {
+          "key": "rank_tail_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed run."
+        },
+        {
+          "key": "negative_realised_w_a",
+          "op": ">=",
+          "value": 0,
+          "why": "There is no short position in this model, so a negative target must be refused or clamped, never held."
+        },
+        {
+          "key": "negative_min_units_a",
+          "op": ">=",
+          "value": 0,
+          "why": "A negative unit holding is a short the engine cannot settle."
+        },
+        {
+          "key": "negative_min_cash",
+          "op": ">=",
+          "value": -0.005,
+          "why": "Nor may it borrow to fund one."
+        },
+        {
+          "key": "negative_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "An input error must not put NaN on screen."
+        },
+        {
+          "key": "negative_js_error_count",
+          "op": "==",
+          "value": 0,
+          "why": "Nor may it throw."
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "severity": "major",
+      "basis": "The Reserve tooltip offers two kinds of waiting room: 'Risk-Free Account: the money is held as cash and earns the risk-free yield. An asset: the money is parked in that holding and follows its price until it is deployed.' Each of the four states puts that promise under a condition the form allows the user to create, and the assertions are the same in all of them because they are the accounting rules the model cannot break whatever the prices do: a reserve cannot be sold below empty, cash cannot go negative, every contribution is still accounted for, a reserve that has been deleted has to fall back to something rather than leave the engine pointing at an asset that no longer exists, and a trigger firing against an empty reserve deploys nothing rather than borrowing. A threshold of 0.1% against the previous five bars fires on most bars, which is what drains the reserve and produces the empty-on-fire condition repeatedly.",
+      "expect": [
+        {
+          "key": "asset_min_units_b",
+          "op": ">=",
+          "value": 0,
+          "why": "Selling the reserve asset to fund a deploy can take it to zero and no further."
+        },
+        {
+          "key": "asset_min_cash",
+          "op": ">=",
+          "value": -0.005,
+          "why": "Parking in a holding must not create a cash overdraft."
+        },
+        {
+          "key": "asset_n_deploys",
+          "op": ">",
+          "value": 0,
+          "why": "Sanity: the state must actually exercise the asset reserve."
+        },
+        {
+          "key": "asset_value_identity_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "Portfolio value is cash plus holdings at market, whatever the reserve is made of."
+        },
+        {
+          "key": "asset_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed run."
+        },
+        {
+          "key": "deleted_ran",
+          "op": "==",
+          "value": true,
+          "why": "Removing an asset must not leave the portfolio unrunnable; the reserve falls back to the Risk-Free Account, which is the option that always exists."
+        },
+        {
+          "key": "deleted_warning_text",
+          "op": "not-null",
+          "value": null,
+          "why": "The user changed the reserve by deleting an asset and has to be told which reserve is now in force."
+        },
+        {
+          "key": "deleted_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "A dangling reference must not surface as NaN."
+        },
+        {
+          "key": "deleted_js_error_count",
+          "op": "==",
+          "value": 0,
+          "why": "Nor as a thrown error."
+        },
+        {
+          "key": "triggered_min_units_b",
+          "op": ">=",
+          "value": 0,
+          "why": "A reserve that is also a trigger target can be bought and sold, but never to a negative holding."
+        },
+        {
+          "key": "triggered_min_cash",
+          "op": ">=",
+          "value": -0.005,
+          "why": "Nor may the circularity be funded by borrowing."
+        },
+        {
+          "key": "triggered_deposit_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "Money moving between the reserve and the asset it also targets must not create or destroy contributions."
+        },
+        {
+          "key": "triggered_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed run."
+        },
+        {
+          "key": "triggered_js_error_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed run."
+        },
+        {
+          "key": "empty_negative_cash_bars",
+          "op": "==",
+          "value": 0,
+          "why": "A trigger firing against an empty reserve deploys nothing; it may not spend money that is not there."
+        },
+        {
+          "key": "empty_min_units_a",
+          "op": ">=",
+          "value": 0,
+          "why": "No negative holdings."
+        },
+        {
+          "key": "empty_deposit_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "Repeated zero-size deploys must not disturb the deposit ledger."
+        },
+        {
+          "key": "empty_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "A zero-size deploy is the natural source of a 0/0; it must not print."
+        },
+        {
+          "key": "empty_js_error_count",
+          "op": "==",
+          "value": 0,
+          "why": "Nor throw."
+        }
+      ]
+    },
+    {
+      "id": "P8",
+      "severity": "major",
+      "basis": "Two independent claims. First, rebalancing frequency and trading cost: for a portfolio whose weights drift as a random walk, the trade needed to restore the targets grows with the square root of the time since the last rebalance, so total turnover over a fixed horizon scales with the number of rebalances divided by that square root - it rises as rebalancing gets more frequent. Rebalancing at every one of 120 monthly top-ups must therefore trade more in total than rebalancing on 40 quarter dates, and at a flat 0.1% per trade more turnover is strictly more cost. Second, parked cash: a trigger that needs a 99% fall from the month's open cannot fire on a 15%-volatility path, so every contribution stays in the Risk-Free Account for the rest of the run and the ending value is the contributions compounded at the stated yield and nothing else. At 0% that is exactly the money paid in; at 5% it is the sum over the 120 contribution dates of 1000*(1.05)^t, where t is the years from that date to 2024-12-31, which is 154,704.22 under annual compounding, 155,720.78 if the yield is applied continuously and 155,746.78 if it is applied as 5%/365 daily. Simple, non-compounded interest would give 150,021.36 and no interest at all 120,000, so the check separates 'earns the risk-free rate' from both of the ways of not doing so.",
+      "expect": [
+        {
+          "key": "attopup_n_rebalances",
+          "op": "==",
+          "value": 120,
+          "why": "'buy underweight first, then fully rebalance on every top-up' over 120 monthly top-ups."
+        },
+        {
+          "key": "schedule_n_rebalances",
+          "op": "between",
+          "value": [
+            38,
+            41
+          ],
+          "why": "Forty quarters in ten years, allowing a partial quarter at either end."
+        },
+        {
+          "key": "turnover_diff",
+          "op": ">",
+          "value": 0,
+          "why": "Three times as many rebalances, each roughly 1/sqrt(3) of the size, is more trading in total."
+        },
+        {
+          "key": "rf5_n_deploys",
+          "op": "==",
+          "value": 0,
+          "why": "A 99% fall from the month's open is about a 30-sigma move on this path; the trigger is dead by construction."
+        },
+        {
+          "key": "rf5_deposited",
+          "op": "~=",
+          "value": 120000,
+          "tol": 0.01,
+          "why": "120 contributions of 1,000 still arrive, they simply never leave the reserve."
+        },
+        {
+          "key": "rf5_final_value",
+          "op": "between",
+          "value": [
+            154000,
+            156200
+          ],
+          "why": "Brackets the three defensible ways of applying a 5% annual yield to money sitting from its contribution date to 2024-12-31, and excludes both simple interest (150,021) and no interest (120,000)."
+        },
+        {
+          "key": "rf5_final_value",
+          "op": "~=",
+          "value": 154704.22,
+          "tol": 1100,
+          "why": "The annual-compounding figure, sum over the 120 contribution dates of 1000*1.05^t. The tolerance reaches the continuous and daily conventions, which are 1,017 and 1,043 above it."
+        },
+        {
+          "key": "rf0_n_deploys",
+          "op": "==",
+          "value": 0,
+          "why": "The same dead trigger."
+        },
+        {
+          "key": "rf0_final_value",
+          "op": "~=",
+          "value": 120000,
+          "tol": 0.01,
+          "why": "At a 0% yield, cash that never leaves the reserve is exactly the money paid in - which also proves the 5% case is not just the deposits relabelled."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed inputs."
+        }
+      ]
+    },
+    {
+      "id": "P9",
+      "severity": "blocker",
+      "basis": "A buying fee of 0.1% has only two sensible readings: the fee comes off the contribution before it buys, so units*price is 0.999 of the money, or the fee is added on top of the trade, so units*price is 1/1.001 = 0.999001 of it. Both land within a millionth of 0.001, so the implied fraction identifies the fee rate without needing to know which convention the engine uses, and it is scale-free, so it does not depend on the price path. Whatever the page reports as fees must be that same money - a fee figure that does not reconcile with the gap between money in and money invested is decoration. A 100% fee is the degenerate end of the same arithmetic: it is a reachable input, it can legitimately buy nothing, and what it may not do is produce NaN, negative units, negative cash or a value larger than the money paid in.",
+      "expect": [
+        {
+          "key": "f01_implied_fee_fraction",
+          "op": "~=",
+          "value": 0.001,
+          "tol": 2e-05,
+          "why": "0.1% of every contribution does not reach the market, under either fee convention."
+        },
+        {
+          "key": "f01_reported_vs_implied_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 0.001,
+          "why": "The reported fee total must be the money that actually went missing between the contribution and the purchase."
+        },
+        {
+          "key": "f01_value_identity_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "Portfolio value is cash plus holdings at market; fees are already out of both."
+        },
+        {
+          "key": "f01_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed run."
+        },
+        {
+          "key": "f100_final_units",
+          "op": ">=",
+          "value": 0,
+          "why": "A 100% fee can buy nothing; it cannot buy a negative amount."
+        },
+        {
+          "key": "f100_final_value",
+          "op": ">=",
+          "value": 0,
+          "why": "Nor can the portfolio be worth less than nothing."
+        },
+        {
+          "key": "f100_final_value",
+          "op": "<=",
+          "value": 120000.01,
+          "why": "Nor more than the money paid in, since none of it was ever exposed to the market."
+        },
+        {
+          "key": "f100_min_cash",
+          "op": ">=",
+          "value": -0.005,
+          "why": "A fee larger than the trade must not be funded by an overdraft."
+        },
+        {
+          "key": "f100_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "A 100% fee is where a division by the net amount becomes 0/0; it must not print."
+        },
+        {
+          "key": "f100_js_error_count",
+          "op": "==",
+          "value": 0,
+          "why": "Nor throw."
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "severity": "major",
+      "basis": "Every figure here comes from the calendar alone. A fortnight is fourteen days, not half a month: counting from Sunday 2015-01-04 to Saturday 2024-12-28, a span of 3,647 days, gives 261 fourteen-day steps, whereas a schedule that fired twice a month would give 240 - the two cannot be mistaken for each other. A quarterly schedule offset to the second month of each quarter fires in February, May, August and November; offset to the third it fires in March, June, September and December; either way that is four times in each of ten years. A yearly schedule on 15 January in a window that opens on 1 February 2015 misses 2015 and fires nine times, from 2016 to 2024. Day 31 has to be clamped to the end of a shorter month: February must still receive its contribution, which after nearest-trading-day snapping lands no earlier than the 26th, and it must not leak into March, which would leave February empty and March doubled. A yearly schedule on 15 January inside a window that opens on 1 February 2015 and closes that December never fires at all, which is an empty result to be reported, not a crash and not a NaN.",
+      "expect": [
+        {
+          "key": "fort_n",
+          "op": "==",
+          "value": 261,
+          "why": "3,647 days from 2015-01-04 to 2024-12-28 inclusive holds 261 fourteen-day steps counting from the first."
+        },
+        {
+          "key": "fort_median_gap_days",
+          "op": "==",
+          "value": 14,
+          "why": "A fortnight is fourteen days; a semi-monthly schedule would show a median of 15 or 16 and a count near 240."
+        },
+        {
+          "key": "fort_first_date",
+          "op": "==",
+          "value": "2015-01-04",
+          "why": "The schedule is anchored at the window start, which is itself a scheduled date."
+        },
+        {
+          "key": "fort_deposit_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "Deposit conservation on a schedule that is easy to double-count."
+        },
+        {
+          "key": "q2_n",
+          "op": "==",
+          "value": 40,
+          "why": "Four quarters a year for ten years."
+        },
+        {
+          "key": "q2_months",
+          "op": "==",
+          "value": [
+            2,
+            5,
+            8,
+            11
+          ],
+          "why": "The second month of each of the four quarters."
+        },
+        {
+          "key": "q3_n",
+          "op": "==",
+          "value": 40,
+          "why": "Four quarters a year for ten years."
+        },
+        {
+          "key": "q3_months",
+          "op": "==",
+          "value": [
+            3,
+            6,
+            9,
+            12
+          ],
+          "why": "The third month of each of the four quarters."
+        },
+        {
+          "key": "yearly_n",
+          "op": "==",
+          "value": 9,
+          "why": "15 January exists in the window for 2016 through 2024; the 2015 occurrence is before the window opens on 1 February 2015."
+        },
+        {
+          "key": "yearly_first_date",
+          "op": "==",
+          "value": "2016-01-15",
+          "why": "A Friday, so no snapping applies."
+        },
+        {
+          "key": "yearly_last_date",
+          "op": "==",
+          "value": "2024-01-15",
+          "why": "A Monday, so no snapping applies."
+        },
+        {
+          "key": "day31_n",
+          "op": "==",
+          "value": 120,
+          "why": "One contribution in each of the 120 months, with day 31 clamped to the last day of shorter months."
+        },
+        {
+          "key": "day31_months_with_zero",
+          "op": "==",
+          "value": 0,
+          "why": "A month that receives nothing is a contribution silently dropped - the failure mode of treating 31 February as invalid rather than as the end of the month."
+        },
+        {
+          "key": "day31_months_with_two",
+          "op": "==",
+          "value": 0,
+          "why": "And a month that receives two is February's contribution having slipped forward."
+        },
+        {
+          "key": "day31_march_count",
+          "op": "==",
+          "value": 10,
+          "why": "One March contribution a year; eleven would mean February's had rolled into March."
+        },
+        {
+          "key": "day31_min_feb_day",
+          "op": ">=",
+          "value": 26,
+          "why": "The end of February is the 28th or 29th; the furthest nearest-trading-day snapping can move it while staying inside the month is to the 26th, which is the case of Sunday 2021-02-28."
+        },
+        {
+          "key": "day31_max_feb_day",
+          "op": "<=",
+          "value": 29,
+          "why": "It cannot land later than the last day of February without leaving the month."
+        },
+        {
+          "key": "outside_n",
+          "op": "==",
+          "value": 0,
+          "why": "15 January 2015 precedes the window and 15 January 2016 follows it, so the schedule never fires."
+        },
+        {
+          "key": "outside_deposited",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "No contribution means no money in."
+        },
+        {
+          "key": "outside_final_value_or_zero",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "A portfolio that never received anything is worth nothing."
+        },
+        {
+          "key": "outside_warning_text",
+          "op": "not-null",
+          "value": null,
+          "why": "A schedule that never fires inside the chosen dates is a configuration mistake the user needs told about, not an empty chart."
+        },
+        {
+          "key": "outside_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "The empty case is where a division by zero contributions leaks."
+        },
+        {
+          "key": "outside_js_error_count",
+          "op": "==",
+          "value": 0,
+          "why": "And it must not throw."
+        }
+      ]
+    },
+    {
+      "id": "P11",
+      "severity": "major",
+      "basis": "The Simulation Seed tooltip states the contract: 'Fixes the random numbers behind simulated assets, so the same seed always reproduces the same Geometric Brownian Motion price path.' A path that depends on anything other than the seed, the parameters and the window - which portfolio is looking at it, which rebalancing method that portfolio uses, which of the two tools is drawing it, how many times the page has been run, or the machine's timezone - is not reproducible, and every comparison the tool exists to make becomes a comparison of two different assets. The last check is the converse and guards against a seed that is ignored: a different seed must give a different path, otherwise 'fixes the random numbers' is vacuously satisfied by a constant.",
+      "expect": [
+        {
+          "key": "within_run_path_match",
+          "op": "==",
+          "value": true,
+          "why": "One asset, one run: the rebalancing method of a portfolio that holds it cannot change its prices."
+        },
+        {
+          "key": "rerun_path_match",
+          "op": "==",
+          "value": true,
+          "why": "The seed, not the number of times Simulate has been pressed, determines the path."
+        },
+        {
+          "key": "rerun_value_diff",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "Identical path and identical schedule give an identical result."
+        },
+        {
+          "key": "tz_path_match",
+          "op": "==",
+          "value": true,
+          "why": "A price path generated from a seed has nothing to do with the machine's clock setting."
+        },
+        {
+          "key": "tz_buydates_match",
+          "op": "==",
+          "value": true,
+          "why": "Nor has the contribution schedule; a date parsed as UTC midnight and rendered in a negative-offset zone would slip to the previous day."
+        },
+        {
+          "key": "tz_value_diff",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "Same path, same dates, same result."
+        },
+        {
+          "key": "cross_tool_path_match",
+          "op": "==",
+          "value": true,
+          "why": "Both tools describe the same generator with the same parameters; two different paths would make the cross-tool parity of P5 untestable and every cross-tool comparison meaningless."
+        },
+        {
+          "key": "seed_changed_path",
+          "op": "==",
+          "value": true,
+          "why": "If the seed makes no difference it is not fixing anything."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed inputs."
+        },
+        {
+          "key": "js_error_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed inputs."
+        }
+      ]
+    }
+  ]
+}

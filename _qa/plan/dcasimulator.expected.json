@@ -1,0 +1,781 @@
+{
+  "tool": "dcasimulator",
+  "authored_utc": "2026-09-18T13:56:10Z",
+  "cases": [
+    {
+      "id": "N1",
+      "severity": "blocker",
+      "basis": "Pure calendar and bookkeeping arithmetic, plus the page's own claim that a purchase lands on the trading day nearest the scheduled day ('nearest-trading-day selection'). Nothing here depends on the price path: the schedule is fixed by the calendar, and every other check is an identity that any correct DCA ledger satisfies for any prices.",
+      "expect": [
+        {
+          "key": "n_buys",
+          "op": "==",
+          "value": 120,
+          "why": "Every calendar month from January 2015 to December 2024 inclusive is 120 months, and the 15th of each of them lies inside 2015-01-01..2024-12-31, so a monthly-on-the-15th schedule has exactly 120 opportunities."
+        },
+        {
+          "key": "first_buy_date",
+          "op": "==",
+          "value": "2015-01-15",
+          "why": "2015-01-15 is a Thursday, i.e. already a trading day, so no nearest-day snapping applies and the first purchase can only be the 15th itself."
+        },
+        {
+          "key": "buy_date_jun_2024",
+          "op": "in",
+          "value": [
+            "2024-06-14",
+            "2024-06-15"
+          ],
+          "why": "2024-06-15 is a Saturday. If the synthetic series carries a bar every calendar day the purchase is the 15th; if it carries weekday bars only, the nearest trading day is Friday the 14th (1 day away) and not Monday the 17th (2 days away). A 'next trading day' rule would give 2024-06-17 and is excluded."
+        },
+        {
+          "key": "buy_date_dec_2024",
+          "op": "in",
+          "value": [
+            "2024-12-15",
+            "2024-12-16"
+          ],
+          "why": "2024-12-15 is a Sunday. Calendar-day bars give the 15th; weekday bars make the nearest trading day Monday the 16th (1 day away), not Friday the 13th (2 days away). A 'previous trading day' rule would give 2024-12-13 and is excluded. Taken with buy_date_jun_2024 this pins the rule to 'nearest', because no one-sided rule satisfies both."
+        },
+        {
+          "key": "months_with_no_buy",
+          "op": "==",
+          "value": 0,
+          "why": "A monthly schedule must fire once in every month it covers; a month with no purchase means a scheduled contribution was silently dropped."
+        },
+        {
+          "key": "months_with_two_buys",
+          "op": "==",
+          "value": 0,
+          "why": "A monthly schedule must not fire twice in one month; a double fire double-counts the contribution."
+        },
+        {
+          "key": "max_abs_gap_days",
+          "op": "<=",
+          "value": 3,
+          "why": "Snapping to the nearest trading day can move a purchase by at most two days when only weekends intervene (Saturday->Friday is 1, Sunday->Monday is 1); 3 leaves room for a synthetic calendar that also skips a day, and excludes any drift to a different week."
+        },
+        {
+          "key": "total_deposited",
+          "op": "~=",
+          "value": 120000,
+          "tol": 0.01,
+          "why": "120 contributions of 1,000."
+        },
+        {
+          "key": "deposit_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "Deposit conservation: the money the ledger says went in must be the schedule count times the contribution, with nothing added or lost."
+        },
+        {
+          "key": "units_recon_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "Unit accounting: units bought at each purchase are Deposited/Price, and holdings only ever grow by purchases in this tool, so the sum of per-purchase units must reproduce the final holding exactly. Scale-free so it does not depend on the price path."
+        },
+        {
+          "key": "equity_recon_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "Equity is by definition units held times the price at which they are valued; the last row values the whole holding at the last price."
+        },
+        {
+          "key": "return_pct_residual",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.02,
+          "why": "A total return of a DCA ledger is final value over money in, minus one. Any other figure under that label would be measuring something the label does not say."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed inputs; nothing should print NaN, Infinity or undefined."
+        },
+        {
+          "key": "js_error_count",
+          "op": "==",
+          "value": 0,
+          "why": "A baseline run must not throw."
+        }
+      ]
+    },
+    {
+      "id": "E1",
+      "severity": "blocker",
+      "basis": "Causality, not a convention: the condition for these styles is a function of day D's close, so the earliest price at which a human or an automated order could act on it is day D+1's. Executing at day D's own close spends information that did not exist when the trade was priced, which inflates every result the tool reports and cannot be reproduced by anyone following the strategy. The rule is independent of which indicator is used, so it is asserted over every conditional style at once. TESTCASES E1 records that this build is not expected to satisfy it.",
+      "expect": [
+        {
+          "key": "styles_tested",
+          "op": ">=",
+          "value": 2,
+          "why": "The claim is about the class of conditional styles, so at least two must be exercised for the case to mean anything."
+        },
+        {
+          "key": "total_buy_count",
+          "op": ">",
+          "value": 0,
+          "why": "If nothing traded, the case proves nothing; the thresholds are set loose enough that signals do occur over ten years."
+        },
+        {
+          "key": "sameBar_buy_count",
+          "op": "==",
+          "value": 0,
+          "why": "A purchase priced at the close of the very bar whose close created the signal is a look-ahead trade. Not one of them may exist."
+        },
+        {
+          "key": "styles_with_sameBar",
+          "op": "==",
+          "value": 0,
+          "why": "No conditional style may be exempt; one offending style is a defect in that style."
+        },
+        {
+          "key": "min_signal_to_execution_lag_bars",
+          "op": ">=",
+          "value": 1,
+          "why": "The first executable bar after a close-based signal is the next bar, so the minimum lag over all trades is one bar. A lag of 0 is same-bar execution; a negative lag would be worse still."
+        },
+        {
+          "key": "unmatched_buy_count",
+          "op": "==",
+          "value": 0,
+          "why": "Every purchase of a conditional style must be traceable to a condition that became true; a purchase with no antecedent signal is an unexplained trade."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Robustness alongside the causality check."
+        }
+      ],
+      "expect_outcome": "fail"
+    },
+    {
+      "id": "E2",
+      "severity": "major",
+      "basis": "For a fixed contribution C in a period whose lowest close is L, whose highest close is H and in which a causal style pays P, we have L <= P <= H, so C/H <= C/P <= C/L. Units only accumulate, every style here contributes the same C in the same periods, and all six scenarios are valued at the same final close, so final value = (sum of units) * final price is ordered the same way: buying at each period's bottom dominates any causal style, which in turn dominates buying at each period's top. This holds for every price path, so it needs no knowledge of the synthetic series. The window is chosen to start on Sunday 2015-01-04 and end on Saturday 2024-12-28 so that it spans exactly 521 whole Sunday-to-Saturday weeks and 120 whole months, which makes the period counts - and therefore the deposits - identical across styles.",
+      "expect": [
+        {
+          "key": "monthly_dep_spread",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.01,
+          "why": "All three monthly styles contribute 1,000 in each of the same 120 months, so the comparison is between equal amounts of money."
+        },
+        {
+          "key": "weekly_dep_spread",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.01,
+          "why": "Likewise for the three weekly styles over the same 521 weeks."
+        },
+        {
+          "key": "n_m15",
+          "op": "==",
+          "value": 120,
+          "why": "120 whole months, each containing a 15th."
+        },
+        {
+          "key": "n_mtop",
+          "op": "==",
+          "value": 120,
+          "why": "One purchase per month over 120 months."
+        },
+        {
+          "key": "n_mbot",
+          "op": "==",
+          "value": 120,
+          "why": "One purchase per month over 120 months."
+        },
+        {
+          "key": "n_wwed",
+          "op": "==",
+          "value": 521,
+          "why": "2015-01-04..2024-12-28 is 3,647 days = exactly 521 Sunday-to-Saturday weeks, and each contains exactly one Wednesday."
+        },
+        {
+          "key": "n_wtop",
+          "op": "==",
+          "value": 521,
+          "why": "One purchase per week over 521 whole weeks."
+        },
+        {
+          "key": "n_wbot",
+          "op": "==",
+          "value": 521,
+          "why": "One purchase per week over 521 whole weeks."
+        },
+        {
+          "key": "mbot_minus_m15",
+          "op": ">=",
+          "value": 0,
+          "why": "C/L >= C/P for every month, so the bottom-buyer ends with at least as many units, valued at the same final price."
+        },
+        {
+          "key": "m15_minus_mtop",
+          "op": ">=",
+          "value": 0,
+          "why": "C/P >= C/H for every month, so any causal style ends with at least as many units as the top-buyer."
+        },
+        {
+          "key": "mbot_minus_mtop",
+          "op": ">",
+          "value": 0,
+          "why": "Strict, because a ten-year synthetic path at 15% volatility has a strictly positive high-low range in essentially every month; an equality here would mean the two styles are not actually distinguishing top from bottom."
+        },
+        {
+          "key": "wbot_minus_wwed",
+          "op": ">=",
+          "value": 0,
+          "why": "Same argument on weekly buckets."
+        },
+        {
+          "key": "wwed_minus_wtop",
+          "op": ">=",
+          "value": 0,
+          "why": "Same argument on weekly buckets."
+        },
+        {
+          "key": "wbot_minus_wtop",
+          "op": ">",
+          "value": 0,
+          "why": "Same argument on weekly buckets, strict for the same reason."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Six well-formed scenarios."
+        }
+      ]
+    },
+    {
+      "id": "E3",
+      "severity": "major",
+      "basis": "A 200-bar simple moving average is undefined until 200 closes exist. The page states that the run covers only the dates inside the chosen range ('the simulation runs over the dates every selected ticker has in common ... all of them are trimmed to that shared window'), so the 200 closes have to be found inside that window: the earliest bar index at which a 200-bar average exists is 199 (0-based), and a crossing, which needs the average on two consecutive bars, is not available before index 200. A window shorter than the warm-up therefore yields no signal at all, and a long window cannot signal inside its first 199 bars. Reaching outside the window for warm-up data would show up as an earlier first purchase.",
+      "expect": [
+        {
+          "key": "short_n_bars",
+          "op": "between",
+          "value": [
+            1,
+            199
+          ],
+          "why": "2020-01-01..2020-03-31 is 91 calendar days, which is at most 91 bars and about 65 weekday bars - fewer than the 200 needed for the average to exist."
+        },
+        {
+          "key": "short_n_buys",
+          "op": "==",
+          "value": 0,
+          "why": "With the end-of-period fallback off, a signal that can never form must produce no purchase at all."
+        },
+        {
+          "key": "short_deposited",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "No purchase means no money in."
+        },
+        {
+          "key": "short_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "An empty result must be reported as an absence, not as NaN."
+        },
+        {
+          "key": "long_n_buys",
+          "op": ">",
+          "value": 0,
+          "why": "Control: over ten years the same rule must produce signals, otherwise the zero above would only show the rule is broken."
+        },
+        {
+          "key": "long_first_buy_row_index",
+          "op": ">=",
+          "value": 199,
+          "why": "The 200-bar average is first defined at 0-based bar index 199; nothing before that bar can carry a signal derived from it. An earlier purchase means the warm-up was taken from prices outside the trimmed window."
+        },
+        {
+          "key": "long_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed run."
+        }
+      ]
+    },
+    {
+      "id": "E4",
+      "severity": "blocker",
+      "basis": "A trigger that needs a 99% fall from the month's opening price inside that month cannot fire on a path whose yearly volatility is 15%: a 99% monthly fall is roughly a 30-sigma move. The trigger is therefore dead by construction, which isolates the fallback. With the fallback on, the strategy is by its own description reduced to contributing once per period regardless of the signal, i.e. plain DCA on 120 months; with it off, nothing may be bought and nothing deposited, and a result built on no trades has no return, no CAGR and no Sharpe - which must be shown as an absence, because a division by zero money printed as NaN is wrong money on screen.",
+      "expect": [
+        {
+          "key": "on_n_buys",
+          "op": "==",
+          "value": 120,
+          "why": "120 whole months in 2015-01-01..2024-12-31, one fallback contribution each."
+        },
+        {
+          "key": "on_deposited",
+          "op": "~=",
+          "value": 120000,
+          "tol": 0.01,
+          "why": "120 contributions of 1,000."
+        },
+        {
+          "key": "on_buys_at_period_end_count",
+          "op": ">=",
+          "value": 119,
+          "why": "The fallback is named for the end of the period, so each contribution lands on its month's last bar; 119 rather than 120 allows the final month to be handled as the end of the series."
+        },
+        {
+          "key": "on_last_buy_date",
+          "op": "matches",
+          "value": "^2024-12-",
+          "why": "The last fallback contribution belongs to December 2024, the last whole month in the window."
+        },
+        {
+          "key": "on_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "A full DCA ledger must print cleanly."
+        },
+        {
+          "key": "off_n_buys",
+          "op": "==",
+          "value": 0,
+          "why": "A dead trigger with no fallback can buy nothing."
+        },
+        {
+          "key": "off_deposited",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "No purchase means no money in."
+        },
+        {
+          "key": "off_final_equity_or_zero",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "No units were ever bought, so the holding is worth nothing."
+        },
+        {
+          "key": "off_metrics_no_data",
+          "op": "==",
+          "value": true,
+          "why": "Return, CAGR, Sharpe and Sortino are all ratios whose denominator is money invested or the variation of a value series. With neither, the honest output is 'no data'; a number would be fabricated and a NaN would be a bug on screen."
+        },
+        {
+          "key": "off_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "The empty case is exactly where NaN leaks; it must not."
+        },
+        {
+          "key": "off_js_error_count",
+          "op": "==",
+          "value": 0,
+          "why": "An empty result set must not throw."
+        }
+      ]
+    },
+    {
+      "id": "E5",
+      "severity": "major",
+      "basis": "A weekly bucket that runs Sunday to Saturday partitions the calendar: every day belongs to exactly one bucket, and a bucket never splits at the turn of the year. The classic failure is to key a bucket by (calendar year, week number), which puts 2015-12-31 and 2016-01-01 in different buckets although they sit in the same Sunday-to-Saturday week, producing two purchases in one week. The window 2015-01-04 (a Sunday) to 2024-12-28 (a Saturday) is 3,647 days, exactly 521 whole Sunday weeks, so the bucket count is fixed by the calendar alone. Separately, a weekly bucket described as local must not depend on the machine's zone: parsing a bar date as UTC midnight and then bucketing it in a negative-offset zone slips it to the previous day, so the same inputs would buy on different days in Los Angeles than in UTC. Neither claim depends on the price path.",
+      "expect": [
+        {
+          "key": "n_weekly_buys",
+          "op": "==",
+          "value": 521,
+          "why": "3,647 days from Sunday 2015-01-04 to Saturday 2024-12-28 is exactly 521 whole Sunday-to-Saturday weeks, and a weekly style buys once per week."
+        },
+        {
+          "key": "week_count_residual",
+          "op": "==",
+          "value": 0,
+          "why": "One purchase per bucket that holds any data: neither a skipped week nor a duplicated one."
+        },
+        {
+          "key": "buys_in_newyear_week_2016",
+          "op": "==",
+          "value": 1,
+          "why": "2015-12-27 is a Sunday and 2016-01-02 the following Saturday, so those seven days are one bucket and must carry exactly one purchase. Two would be the (year, week-number) keying bug; zero would be a bucket dropped at the year boundary."
+        },
+        {
+          "key": "max_buys_in_any_sunday_week",
+          "op": "==",
+          "value": 1,
+          "why": "The same rule stated globally: no Sunday week anywhere in ten years may hold two purchases."
+        },
+        {
+          "key": "weeks_straddling_year_boundary_with_two_buys",
+          "op": "==",
+          "value": 0,
+          "why": "The nine year boundaries inside the window are the only places the bucket key can break; none of them may split a week."
+        },
+        {
+          "key": "tz_buydates_match",
+          "op": "==",
+          "value": true,
+          "why": "The schedule is a property of the data and the calendar rule, not of the machine's clock setting."
+        },
+        {
+          "key": "tz_first_divergence",
+          "op": "is-null",
+          "value": null,
+          "why": "There is no first divergence when the lists agree; naming it makes a failure diagnosable."
+        },
+        {
+          "key": "tz_final_equity_diff",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "Identical purchases at identical prices give an identical holding."
+        }
+      ]
+    },
+    {
+      "id": "E6",
+      "severity": "major",
+      "basis": "A close of zero, a negative close or a missing close is not a price: no quantity of units can be bought at it (the unit count would be infinite or negative) and no holding can be valued at it. Both offline states are reachable from the form as it stands - the volatility field has no upper bound, and the return field has no lower bound - and both drive a geometric price path past the range a double can represent, so the series ends up carrying zeros and non-finite values. The rule asserted is the same in every state and needs no knowledge of the path: never buy at an unusable close, and if the final close is unusable value the holding at zero rather than printing NaN or Infinity, which would be wrong money on screen.",
+      "expect": [
+        {
+          "key": "vol_buys_at_unusable_price",
+          "op": "==",
+          "value": 0,
+          "why": "A purchase at a zero, negative or non-finite close would create an infinite or negative unit count."
+        },
+        {
+          "key": "vol_equity_when_final_close_unusable",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "If the last close cannot value the holding, the holding must be reported as worth nothing rather than as NaN or Infinity."
+        },
+        {
+          "key": "vol_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "No NaN, Infinity or undefined may reach the screen, however bad the series is."
+        },
+        {
+          "key": "vol_js_error_count",
+          "op": "==",
+          "value": 0,
+          "why": "Bad data must be handled, not thrown on."
+        },
+        {
+          "key": "dead_buys_at_unusable_price",
+          "op": "==",
+          "value": 0,
+          "why": "Same rule on a return of -100% p.a., which sends the price to zero under any (1+r)-based compounding convention."
+        },
+        {
+          "key": "dead_equity_when_final_close_unusable",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.005,
+          "why": "Same rule."
+        },
+        {
+          "key": "dead_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Same rule."
+        },
+        {
+          "key": "dead_js_error_count",
+          "op": "==",
+          "value": 0,
+          "why": "Same rule."
+        },
+        {
+          "key": "live_buys_at_unusable_price",
+          "op": "==",
+          "value": 0,
+          "why": "Real money-market and thin ETF series carry occasional null or zero closes; the same rule applies to them."
+        },
+        {
+          "key": "live_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Same rule."
+        }
+      ]
+    },
+    {
+      "id": "E7",
+      "severity": "major",
+      "basis": "Sharpe, Sortino and a time-weighted CAGR are measures of the asset's own price series over the window: they weight every period equally and are by construction insensitive to the size and the timing of contributions. Both scenarios hold the same synthetic asset over the same dates, so those three can differ only by the handful of bars at the start before the first purchase. A money-weighted return is the opposite: it is the internal rate of return of the actual cash flows, so paying each month's low instead of each month's high must raise it. An independent GBM at 8% drift and 15% volatility, bucketed monthly over ten years, puts the top-to-bottom entry advantage at roughly 6% of terminal value and the money-weighted gap at roughly 1.1 percentage points, so a threshold of 0.30 points is comfortably inside the effect and far outside rounding.",
+      "expect": [
+        {
+          "key": "sharpe_spread",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.05,
+          "why": "A ratio of the mean to the standard deviation of the asset's returns does not know when money arrived."
+        },
+        {
+          "key": "sortino_spread",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.08,
+          "why": "Same argument on downside deviation; the tolerance is wider because the downside subset is smaller and so noisier."
+        },
+        {
+          "key": "twr_spread",
+          "op": "~=",
+          "value": 0,
+          "tol": 0.5,
+          "why": "A time-weighted CAGR chains period returns of the holding, which for a single asset with no cash drag is the asset's own return; only the few bars before the first purchase differ between the two styles."
+        },
+        {
+          "key": "mwr_spread",
+          "op": ">",
+          "value": 0.3,
+          "why": "A money-weighted return prices the cash flows. Buying every monthly low rather than every monthly high is worth on the order of a percentage point a year over this window; anything under 0.30 points means the figure is not money-weighted at all."
+        },
+        {
+          "key": "mwr_bot_minus_top",
+          "op": ">",
+          "value": 0,
+          "why": "The direction is not ambiguous: a better entry price on every single contribution cannot lower the internal rate of return."
+        },
+        {
+          "key": "eq_bot",
+          "op": ">",
+          "value": 0,
+          "why": "Sanity: both scenarios must have produced a holding."
+        },
+        {
+          "key": "eq_top",
+          "op": ">",
+          "value": 0,
+          "why": "Sanity: both scenarios must have produced a holding."
+        }
+      ]
+    },
+    {
+      "id": "E8",
+      "severity": "major",
+      "basis": "With the risk-free rate set to 0 the Sharpe ratio reduces to mean(bar return)/sd(bar return) multiplied by the square root of the number of bars in a year, so dividing the reported figure by the unannualised ratio and squaring recovers exactly which annualisation factor was used. The correct factor is the number of bars this series actually carries per year, which the runner measures from the dates; a constant 252 is only right for a series of US trading days and is wrong by about 20% for a series carrying a bar every calendar day. The same argument applies to a compound annual growth rate: inverting the reported CAGR against the total price growth must give back the elapsed calendar time, not a bar count divided by an assumed 252. Both checks are ratios, so neither depends on the synthetic path.",
+      "expect": [
+        {
+          "key": "n_bars",
+          "op": ">",
+          "value": 1000,
+          "why": "Ten years of daily data; a much smaller count would mean the window was not applied."
+        },
+        {
+          "key": "ann_factor_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 0.08,
+          "why": "The annualisation factor recovered from the reported Sharpe must be the bar frequency the series actually has. 8% of tolerance absorbs the rounding of a Sharpe printed to two decimals and a leap-year wobble in the measured frequency, but not the 20% error of assuming 252 bars a year on a calendar-daily series."
+        },
+        {
+          "key": "implied_years_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 0.02,
+          "why": "A compound annual growth rate must compound over the calendar time actually elapsed: (P_last/P_first) = (1+CAGR)^years has exactly one solution for years, and it has to be the window length."
+        },
+        {
+          "key": "sd_daily_ret",
+          "op": ">",
+          "value": 0,
+          "why": "Sanity: the reference ratio is undefined on a flat series."
+        }
+      ]
+    },
+    {
+      "id": "E9",
+      "severity": "minor",
+      "basis": "The scope note for this tool is that it charges nothing. That is testable two ways at once: the form offers nowhere to enter a cost, and the ledger shows no leakage - if a purchase of D dollars at price P yields U units, then U*P must equal D exactly, for every row. Any brokerage, spread or percentage charge, however small, breaks that identity, and the ratio form makes the check independent of the price path and of the size of the contribution.",
+      "expect": [
+        {
+          "key": "fee_control_count",
+          "op": "==",
+          "value": 0,
+          "why": "A tool that charges nothing has nowhere to enter a charge; a control that exists but is ignored would be worse than either."
+        },
+        {
+          "key": "fee_column_count",
+          "op": "==",
+          "value": 0,
+          "why": "Nor anywhere to report one."
+        },
+        {
+          "key": "csv_fee_column_count",
+          "op": "==",
+          "value": 0,
+          "why": "The export is a rendering of the same model and must agree with the table."
+        },
+        {
+          "key": "cash_to_units_ratio",
+          "op": "~=",
+          "value": 1,
+          "tol": 1e-09,
+          "why": "Money in equals units bought times the price paid. A 0.1% charge would show as 1.001 here, far outside the tolerance."
+        },
+        {
+          "key": "nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed run."
+        }
+      ]
+    },
+    {
+      "id": "E10",
+      "severity": "major",
+      "basis": "The window deliberately starts on 2015-07-01, a Wednesday, so that the series start is the same date whether the synthetic series carries calendar-day or weekday bars, and so that 365.25-day blocks from the series start fall in late June and not near 1 January. Block k then begins at 2015-07-01 + 365.25k days, i.e. 2016-06-30 06:00, 2017-06-30 12:00, 2018-06-30 18:00, 2019-07-01 00:00, 2020-06-30 06:00, 2021-06-30 12:00, 2022-06-30 18:00, 2023-07-01 00:00 and 2024-06-30 06:00 - every one of them strictly between the 15th of June and the 15th of July, so no purchase sits on a boundary and the block index of each of the 120 purchases is unambiguous. The contribution for a purchase in block k is 1000 * 1.1^k, which the yearly-increase tooltip on the sister page states as compounding ('year 2 is +10% and year 3 is +21%'). The same schedule under a calendar-year convention, stepping every 1 January, would deposit 200,811.55 in total instead, so the two conventions are 9,562 apart and cannot be confused.",
+      "expect": [
+        {
+          "key": "n_buys",
+          "op": "==",
+          "value": 120,
+          "why": "120 whole months from July 2015 to June 2025, each containing a 15th inside the window."
+        },
+        {
+          "key": "total_deposited",
+          "op": "~=",
+          "value": 191249.1,
+          "tol": 1.0,
+          "why": "Sum over the 120 purchases of 1000*1.1^k with k = floor((purchase date - 2015-07-01)/365.25 days): twelve payments in each of blocks 0 to 9, i.e. 12000 * (1.1^10 - 1)/0.1 = 191,249.10."
+        },
+        {
+          "key": "amt_2015_07_15",
+          "op": "~=",
+          "value": 1000,
+          "tol": 0.01,
+          "why": "14 days after the series start: block 0, no increase yet."
+        },
+        {
+          "key": "amt_2016_06_15",
+          "op": "~=",
+          "value": 1000,
+          "tol": 0.01,
+          "why": "350 days after the series start, still short of 365.25: block 0. A calendar-year convention would also say 1,000 here, so this row is the control."
+        },
+        {
+          "key": "amt_2016_07_15",
+          "op": "~=",
+          "value": 1100,
+          "tol": 0.01,
+          "why": "380 days after the series start: block 1, one 10% step."
+        },
+        {
+          "key": "amt_2017_01_15",
+          "op": "~=",
+          "value": 1100,
+          "tol": 0.01,
+          "why": "564 days after the series start: still block 1. This is the discriminating row - a convention that steps on 1 January would pay 1,210 here."
+        },
+        {
+          "key": "amt_2017_07_15",
+          "op": "~=",
+          "value": 1210,
+          "tol": 0.01,
+          "why": "745 days after the series start: block 2, two compounded steps, 1000*1.1^2."
+        },
+        {
+          "key": "amt_2025_06_15",
+          "op": "~=",
+          "value": 2357.95,
+          "tol": 0.02,
+          "why": "3,637 days after the series start: block 9, 1000*1.1^9 = 2,357.9477."
+        },
+        {
+          "key": "distinct_amount_count",
+          "op": "==",
+          "value": 10,
+          "why": "Ten blocks are reached over a ten-year window, so exactly ten distinct contribution sizes appear."
+        },
+        {
+          "key": "first_step_date",
+          "op": "==",
+          "value": "2016-07-15",
+          "why": "The first block boundary falls on 2016-06-30, between the June and July purchases, so July 2016 is the first raised contribution."
+        }
+      ]
+    },
+    {
+      "id": "E11",
+      "severity": "major",
+      "basis": "The cap is stated on the page itself: 'data loads are capped at 5 per device per day, shared with the Portfolio tool. One load covers up to 25 tickers and still counts as a single request ... Cached tickers and same-day reloads are free.' Each clause is a separate testable promise. The offline state tests the clause that follows from the cap's purpose rather than its wording: a simulated asset is generated in the browser and fetches nothing, so it can neither consume the budget nor contact the worker.",
+      "expect": [
+        {
+          "key": "offline_rate_info_unchanged",
+          "op": "==",
+          "value": true,
+          "why": "A synthetic asset needs no market data, so it cannot spend a market-data allowance."
+        },
+        {
+          "key": "offline_external_requests_during_sim",
+          "op": "==",
+          "value": 0,
+          "why": "And it must not call the worker at all; a request that happens to be free still leaks the user's activity and still fails when the worker is down."
+        },
+        {
+          "key": "offline_nan_count",
+          "op": "==",
+          "value": 0,
+          "why": "Well-formed run."
+        },
+        {
+          "key": "live_remaining_initial",
+          "op": "==",
+          "value": 5,
+          "why": "'capped at 5 per device per day' on a device that has spent none."
+        },
+        {
+          "key": "live_remaining_after_one_ticker",
+          "op": "==",
+          "value": 4,
+          "why": "One load costs one."
+        },
+        {
+          "key": "live_remaining_after_25_ticker_load",
+          "op": "==",
+          "value": 3,
+          "why": "'One load covers up to 25 tickers and still counts as a single request' - so a 25-ticker load costs one, not 25."
+        },
+        {
+          "key": "live_remaining_after_cached_reload",
+          "op": "==",
+          "value": 3,
+          "why": "'Cached tickers and same-day reloads are free' - so this load costs nothing."
+        },
+        {
+          "key": "live_counter_shared_delta",
+          "op": "==",
+          "value": 0,
+          "why": "'shared with the Portfolio tool': one budget per device, so both pages must report the same remaining figure at the same moment."
+        },
+        {
+          "key": "live_sixth_load_refused",
+          "op": "==",
+          "value": true,
+          "why": "A cap that does not stop the sixth load is not a cap."
+        },
+        {
+          "key": "live_refusal_text",
+          "op": "matches",
+          "value": "(cap|limit|quota|5 )",
+          "why": "The refusal has to say why, otherwise the user reads it as a broken tool."
+        },
+        {
+          "key": "live_cookie_present",
+          "op": "==",
+          "value": true,
+          "why": "The page describes the count as per-device and cookie-backed; without stored state the cap resets on every reload."
+        }
+      ]
+    }
+  ]
+}

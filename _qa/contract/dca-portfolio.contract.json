@@ -1,0 +1,2297 @@
+{
+  "tool": "dca-portfolio",
+  "page": "dcasimulator/portfolio/index.html",
+  "notes": [
+    "Apply every case from a clean state: load dcasimulator/portfolio/index.html, dismiss any tour overlay, click #resetBtn, remove every portfolio left in #portfolioTabs with #delPortfolioBtn until only the portfolios listed in 'portfolios' remain, and click #clearPoolBtn (in #poolChipsWrap) if any asset is already loaded.",
+    "'settings' keys are DOM ids on the Settings tab (#randomSeed, #currencySymbol). Set #randomSeed BEFORE creating any simulated asset: the seed is what makes the synthetic price path reproducible.",
+    "'data' describes the Data tab. mode 'simulated': click the 'Simulated' button in #dataModeToggle, then for each entry of 'assets' fill #simNameInput / #simReturnInput / #simStdInput and click #addSimBtn. mode 'real': click 'Real', type the tickers into #tickerPoolInput and click #loadTickersBtn. Then set #startDate and #endDate.",
+    "'portfolios' is a list; create each with #addPortfolioBtn, rename it by double-clicking its tab, and fill it in the three sub-tabs of #pfEditSection. Assets sub-tab (#sub-assets): choose each asset in #assetPoolSelect and click #addAssetBtn. Top-Ups sub-tab (#sub-topups): #topupAmount, #topupYearlyInc, #topupPeriod, the schedule controls inside #topupScheduleBox, and the Risk-Free Account radios #rfOptRate / #rfOptTicker with #rfRate or #rfTicker. Rebalancing sub-tab (#sub-rebal): the method radios in #methodList (values towards-weight, constant-weight, constant-allocation, dynamic-momentum, rule-trigger; use #changeMethodBtn to reopen the list when it has collapsed), the per-asset target weights in #weightTableWrap, the momentum controls #lookbackMonths and #rankWeightTableWrap, the rule-based controls #reserveSelect and #triggerTableWrap, the Constant Weight timing radios (cwTiming values at-topup / schedule) with #rebalPeriod and #rebalScheduleBox, and the fees #buyFee and #sellFee.",
+    "Text/number inputs: set .value and dispatch 'input', 'change', 'blur'. Selects: set .value and dispatch 'change'. Radios: click the label. #topupAmount, #topupYearlyInc, #rfRate, #buyFee and #sellFee are formatted money inputs; give them a plain number string.",
+    "'schedule' keys and what they mean: day_of_month (the day a monthly schedule fires), quarter_month (which month of the quarter a quarterly schedule fires in, 1, 2 or 3), month_and_day (for a yearly schedule), anchor_date (the date a fortnightly schedule counts from), weekday.",
+    "'triggers' is a per-asset map filled in #triggerTableWrap. Trigger kinds, named as the Deploy Triggers tooltip names them: 'period-open' = a percentage move from the price at the start of each month or week; 'previous-top' and 'previous-bottom' = a percentage move against the highest / lowest close in the lookback window of bars before that day; 'technical' = the indicator rules the single-asset tool offers; 'at-topup' = invest at every top-up with no waiting. threshold_pct is the percentage move; lookback_bars is the rolling window length.",
+    "Run with #simBtn and wait until #summaryGrid has been rebuilt. Turn on #showAdvancedToggle when Sharpe / Sortino / CAGR are observed. Read: the per-portfolio tiles in #summaryGrid, the Breakdown Table in #compBody after choosing the portfolio in #detailPfSelect, the Composition chart series, #valueLegend / #priceLegend / #compLegend, #mainWarning, #dateRangeStatus / #poolStatus / #assetFetchStatus, #rateInfo, and the full daily CSV produced by #downloadBtn (use it wherever a per-bar or per-event series is needed).",
+    "Report numbers as plain numbers: strip currency symbols and thousands separators, keep the sign, and report a percentage as the number shown (9.7 for '9.7%'). Report text verbatim. Report a quantity that is absent, blank or shown as a dash as null rather than guessing.",
+    "Keys whose 'what' begins with 'Runner-computed' are arithmetic the runner performs on other observed values, on the displayed price series or on the daily CSV. Compute them from the same values reported for this case; never from anything inside _qa/plan/.",
+    "'bar index' means the 0-based position of a date in the run's trimmed date axis (row 0 of the daily CSV / the first plotted price point). A 'deploy' is an event in which reserve money is moved into an asset; a 'top-up' is a scheduled contribution arriving into the portfolio.",
+    "Cases with 'states' are several independent states. Apply each from a clean state and prefix that state's observation keys with the state name, exactly as the 'observe' keys are spelled.",
+    "A setup carrying \"requires\": \"network\" needs the live market-data worker. If it is unreachable, record the case as not-run (an error) rather than substituting anything.",
+    "Timezone states: relaunch the browser (or open a new Playwright context) with the named IANA zone - TZ env var or the context's timezoneId - and repeat the whole setup from scratch inside it.",
+    "nan_count means: the number of occurrences of 'NaN', 'Infinity', '-Infinity', 'undefined' or 'null' in the visible text of #summaryGrid, #compBody and #mainWarning (0 when there are none). js_error_count means the number of uncaught page errors and console errors captured while the case ran."
+  ],
+  "cases": [
+    {
+      "id": "N1",
+      "title": "Baseline: 60/40, monthly top-up, Constant Weight on a quarterly schedule, 0.1% fees",
+      "setup": {
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "simulated",
+          "assets": [
+            {
+              "#simNameInput": "SIMA",
+              "#simReturnInput": 8,
+              "#simStdInput": 15
+            },
+            {
+              "#simNameInput": "SIMB",
+              "#simReturnInput": 3,
+              "#simStdInput": 5
+            }
+          ],
+          "#startDate": "2015-01-01",
+          "#endDate": "2024-12-31"
+        },
+        "portfolios": [
+          {
+            "name": "N1",
+            "assets": [
+              "SIMA",
+              "SIMB"
+            ],
+            "#topupAmount": 1000,
+            "#topupYearlyInc": 0,
+            "#topupPeriod": "monthly",
+            "schedule": {
+              "day_of_month": 15
+            },
+            "rfMode": "rate",
+            "#rfRate": 0,
+            "method": "constant-weight",
+            "cwTiming": "schedule",
+            "#rebalPeriod": "quarterly",
+            "rebalSchedule": {
+              "quarter_month": 1,
+              "day_of_month": 15
+            },
+            "weights": {
+              "SIMA": 60,
+              "SIMB": 40
+            },
+            "#buyFee": 0.1,
+            "#sellFee": 0.1
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "n_topups",
+          "what": "Number of top-up events over the run."
+        },
+        {
+          "key": "total_deposited",
+          "what": "Total Deposited at the end of the run."
+        },
+        {
+          "key": "deposit_ratio",
+          "what": "Runner-computed: total_deposited / (1000 * n_topups)."
+        },
+        {
+          "key": "n_rebalances",
+          "what": "Number of scheduled rebalance events over the run."
+        },
+        {
+          "key": "max_w_a_dev_after_rebal",
+          "what": "Runner-computed: over every rebalance date, the largest absolute difference in percentage points between SIMA's share of portfolio value on that bar and 60."
+        },
+        {
+          "key": "min_cash",
+          "what": "Runner-computed: the smallest Cash value over every row of the daily CSV."
+        },
+        {
+          "key": "min_units_a",
+          "what": "Runner-computed: the smallest SIMA unit holding over the run."
+        },
+        {
+          "key": "min_units_b",
+          "what": "Runner-computed: the smallest SIMB unit holding over the run."
+        },
+        {
+          "key": "final_value",
+          "what": "Portfolio Value on the last row."
+        },
+        {
+          "key": "value_identity_ratio",
+          "what": "Runner-computed: final_value divided by (final Cash + the sum over assets of final units * that asset's final close)."
+        },
+        {
+          "key": "topups_off_schedule",
+          "what": "Runner-computed: the number of top-ups whose date is more than three calendar days from the 15th of the month it falls in."
+        },
+        {
+          "key": "nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "js_error_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "P1",
+      "title": "Look-ahead: a trigger read from day D's close, and the reserve sale that funds it, cannot execute at day D's close",
+      "setup": {
+        "states": {
+          "cash": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                },
+                {
+                  "#simNameInput": "SIMB",
+                  "#simReturnInput": 4,
+                  "#simStdInput": 8
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "P1",
+                "assets": [
+                  "SIMA",
+                  "SIMB"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "rule-trigger",
+                "#reserveSelect": "Risk-Free Account",
+                "weights": {
+                  "SIMA": 60,
+                  "SIMB": 40
+                },
+                "triggers": {
+                  "SIMA": {
+                    "kind": "previous-top",
+                    "threshold_pct": 5,
+                    "lookback_bars": 20
+                  },
+                  "SIMB": {
+                    "kind": "at-topup"
+                  }
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ],
+            "instructions": [
+              "For every deploy into SIMA, recompute its own condition from the displayed close series: the condition is true on bar D when close(D) <= 0.95 * max(close(D-20) .. close(D-1)), i.e. five percent below the highest close of the twenty bars BEFORE D. The 'signal bar' of a deploy is the most recent bar at or before it at which that condition turned from false to true."
+            ]
+          },
+          "asset": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                },
+                {
+                  "#simNameInput": "SIMB",
+                  "#simReturnInput": 4,
+                  "#simStdInput": 8
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "P1",
+                "assets": [
+                  "SIMA",
+                  "SIMB"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "rule-trigger",
+                "#reserveSelect": "SIMB",
+                "weights": {
+                  "SIMA": 60,
+                  "SIMB": 40
+                },
+                "triggers": {
+                  "SIMA": {
+                    "kind": "previous-top",
+                    "threshold_pct": 5,
+                    "lookback_bars": 20
+                  },
+                  "SIMB": {
+                    "kind": "at-topup"
+                  }
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ],
+            "instructions": [
+              "For every deploy into SIMA, recompute its own condition from the displayed close series: the condition is true on bar D when close(D) <= 0.95 * max(close(D-20) .. close(D-1)), i.e. five percent below the highest close of the twenty bars BEFORE D. The 'signal bar' of a deploy is the most recent bar at or before it at which that condition turned from false to true."
+            ]
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "cash_n_deploys",
+          "what": "Number of deploys into SIMA in the 'cash' state."
+        },
+        {
+          "key": "cash_sameBar_deploy_count",
+          "what": "Runner-computed: deploys in the 'cash' state whose execution bar index equals their own signal bar index."
+        },
+        {
+          "key": "cash_min_lag_bars",
+          "what": "Runner-computed: the smallest value over every deploy of (execution bar index - signal bar index)."
+        },
+        {
+          "key": "cash_unmatched_deploys",
+          "what": "Runner-computed: deploys the runner could not attribute to a signal bar."
+        },
+        {
+          "key": "asset_n_deploys",
+          "what": "Number of deploys into SIMA in the 'asset' state."
+        },
+        {
+          "key": "asset_sameBar_deploy_count",
+          "what": "As cash_sameBar_deploy_count, for the 'asset' state."
+        },
+        {
+          "key": "asset_min_lag_bars",
+          "what": "As cash_min_lag_bars, for the 'asset' state."
+        },
+        {
+          "key": "asset_reserve_sales_on_signal_bar",
+          "what": "Runner-computed: the number of SIMB sales that fund a deploy and are priced on that deploy's own signal bar."
+        },
+        {
+          "key": "asset_min_sale_lag_bars",
+          "what": "Runner-computed: the smallest value over every funding sale of (sale bar index - the funded deploy's signal bar index)."
+        },
+        {
+          "key": "nan_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "title": "Rolling previous-top anchor is causal and exactly as long as the lookback says",
+      "setup": {
+        "states": {
+          "L20": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMFALL",
+                  "#simReturnInput": -20,
+                  "#simStdInput": 0
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "P2",
+                "assets": [
+                  "SIMFALL"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "rule-trigger",
+                "#reserveSelect": "Risk-Free Account",
+                "weights": {
+                  "SIMFALL": 100
+                },
+                "triggers": {
+                  "SIMFALL": {
+                    "kind": "previous-top",
+                    "threshold_pct": 3,
+                    "lookback_bars": 20
+                  }
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          },
+          "L60": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMFALL",
+                  "#simReturnInput": -20,
+                  "#simStdInput": 0
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "P2",
+                "assets": [
+                  "SIMFALL"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "rule-trigger",
+                "#reserveSelect": "Risk-Free Account",
+                "weights": {
+                  "SIMFALL": 100
+                },
+                "triggers": {
+                  "SIMFALL": {
+                    "kind": "previous-top",
+                    "threshold_pct": 3,
+                    "lookback_bars": 60
+                  }
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          }
+        },
+        "instructions": [
+          "In the L60 state, also compute from the displayed close series the first bar index j at which close(j) <= 0.97 * max(close(j-60) .. close(j-1)), using only bars strictly before j, and report it."
+        ]
+      },
+      "observe": [
+        {
+          "key": "L20_n_deploys",
+          "what": "Number of deploys in the L20 state."
+        },
+        {
+          "key": "L20_n_trigger_days",
+          "what": "Number of bars in the L20 state on which the deploy trigger is reported as firing."
+        },
+        {
+          "key": "L20_final_value",
+          "what": "Portfolio Value on the last row of the L20 state."
+        },
+        {
+          "key": "L20_final_cash",
+          "what": "Cash on the last row of the L20 state."
+        },
+        {
+          "key": "L60_n_deploys",
+          "what": "Number of deploys in the L60 state."
+        },
+        {
+          "key": "L60_n_trigger_days",
+          "what": "Number of bars in the L60 state on which the deploy trigger is reported as firing."
+        },
+        {
+          "key": "L60_first_deploy_bar_index",
+          "what": "0-based bar index of the first deploy in the L60 state."
+        },
+        {
+          "key": "L60_causal_first_signal_bar_index",
+          "what": "Runner-computed: the bar index described in the instructions."
+        },
+        {
+          "key": "L60_first_deploy_lag",
+          "what": "Runner-computed: L60_first_deploy_bar_index - L60_causal_first_signal_bar_index."
+        },
+        {
+          "key": "nesting_delta",
+          "what": "Runner-computed: L60_n_trigger_days - L20_n_trigger_days."
+        },
+        {
+          "key": "bars_per_year",
+          "what": "Runner-computed: (number of bars - 1) divided by ((last date - first date in days)/365.25)."
+        },
+        {
+          "key": "nan_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "title": "The date axis is the intersection of the assets' calendars, and the shrinkage is reported",
+      "setup": {
+        "requires": "network",
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "real",
+          "assets": [
+            "SPY",
+            "DHHF.AX"
+          ],
+          "#startDate": "2020-01-01",
+          "#endDate": "2024-12-31"
+        },
+        "portfolios": [
+          {
+            "name": "ONE",
+            "assets": [
+              "SPY"
+            ],
+            "#topupAmount": 1000,
+            "#topupPeriod": "monthly",
+            "schedule": {
+              "day_of_month": 15
+            },
+            "rfMode": "rate",
+            "#rfRate": 0,
+            "method": "constant-allocation",
+            "weights": {
+              "SPY": 100
+            },
+            "#buyFee": 0,
+            "#sellFee": 0
+          },
+          {
+            "name": "MIX",
+            "assets": [
+              "SPY",
+              "DHHF.AX"
+            ],
+            "#topupAmount": 1000,
+            "#topupPeriod": "monthly",
+            "schedule": {
+              "day_of_month": 15
+            },
+            "rfMode": "rate",
+            "#rfRate": 0,
+            "method": "constant-allocation",
+            "weights": {
+              "SPY": 50,
+              "DHHF.AX": 50
+            },
+            "#buyFee": 0,
+            "#sellFee": 0
+          }
+        ],
+        "instructions": [
+          "Report the two portfolios from the same run, switching #detailPfSelect between them.",
+          "Also collect each ticker's own set of dates as delivered by the data load, before any trimming, so the intersection can be counted independently."
+        ]
+      },
+      "observe": [
+        {
+          "key": "n_bars_one",
+          "what": "Number of rows on the date axis of portfolio ONE."
+        },
+        {
+          "key": "n_bars_mix",
+          "what": "Number of rows on the date axis of portfolio MIX."
+        },
+        {
+          "key": "intersection_size",
+          "what": "Runner-computed: the number of dates present in both tickers' own date sets."
+        },
+        {
+          "key": "intersection_residual",
+          "what": "Runner-computed: n_bars_mix - intersection_size."
+        },
+        {
+          "key": "shrinkage",
+          "what": "Runner-computed: n_bars_one - n_bars_mix."
+        },
+        {
+          "key": "effective_range_reported",
+          "what": "True when the page states, in #dateRangeStatus, #mainWarning or another visible element, the effective first and last date actually simulated or the number of days dropped."
+        },
+        {
+          "key": "date_range_status_text",
+          "what": "Text of #dateRangeStatus, verbatim."
+        },
+        {
+          "key": "nan_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "title": "Momentum ranking uses information available before the top-up bar",
+      "setup": {
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "simulated",
+          "assets": [
+            {
+              "#simNameInput": "SIMA",
+              "#simReturnInput": 12,
+              "#simStdInput": 25
+            },
+            {
+              "#simNameInput": "SIMB",
+              "#simReturnInput": 6,
+              "#simStdInput": 12
+            },
+            {
+              "#simNameInput": "SIMC",
+              "#simReturnInput": 2,
+              "#simStdInput": 4
+            }
+          ],
+          "#startDate": "2015-01-01",
+          "#endDate": "2024-12-31"
+        },
+        "portfolios": [
+          {
+            "name": "P4",
+            "assets": [
+              "SIMA",
+              "SIMB",
+              "SIMC"
+            ],
+            "#topupAmount": 1000,
+            "#topupYearlyInc": 0,
+            "#topupPeriod": "monthly",
+            "schedule": {
+              "day_of_month": 15
+            },
+            "rfMode": "rate",
+            "#rfRate": 0,
+            "method": "dynamic-momentum",
+            "#lookbackMonths": 3,
+            "rankWeights": {
+              "1": 50,
+              "2": 30,
+              "3": 20
+            },
+            "#buyFee": 0,
+            "#sellFee": 0
+          }
+        ],
+        "instructions": [
+          "For each top-up bar D, compute each asset's trailing three-month return twice from the displayed closes: once ending at close(D) (the same-bar ordering) and once ending at close(D-1) (the causal ordering). Read the realised ordering from the share of that top-up deployed into each asset: 50% identifies rank 1, 30% rank 2, 20% rank 3."
+        ]
+      },
+      "observe": [
+        {
+          "key": "n_topups",
+          "what": "Number of top-up events."
+        },
+        {
+          "key": "topups_where_orders_differ",
+          "what": "Runner-computed: top-ups at which the same-bar ordering and the causal ordering are not the same ordering."
+        },
+        {
+          "key": "matched_sameBar_only",
+          "what": "Runner-computed: among those, the number at which the realised ordering equals the same-bar ordering."
+        },
+        {
+          "key": "matched_prevBar_only",
+          "what": "Runner-computed: among those, the number at which the realised ordering equals the causal ordering."
+        },
+        {
+          "key": "causal_match_residual",
+          "what": "Runner-computed: topups_where_orders_differ - matched_prevBar_only."
+        },
+        {
+          "key": "matched_neither",
+          "what": "Runner-computed: among those, the number at which the realised ordering equals neither."
+        },
+        {
+          "key": "deploy_ratio",
+          "what": "Runner-computed: total deployed at top-ups / (1000 * n_topups)."
+        },
+        {
+          "key": "nan_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "title": "Cross-tool parity: one asset at 100% with no fees is the single-asset tool",
+      "setup": {
+        "pages": [
+          "dcasimulator/portfolio/index.html",
+          "dcasimulator/index.html"
+        ],
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "simulated",
+          "assets": [
+            {
+              "#simNameInput": "SIMA",
+              "#simReturnInput": 8,
+              "#simStdInput": 15
+            }
+          ],
+          "#startDate": "2015-01-01",
+          "#endDate": "2024-12-31"
+        },
+        "portfolios": [
+          {
+            "name": "PF",
+            "assets": [
+              "SIMA"
+            ],
+            "#topupAmount": 1000,
+            "#topupYearlyInc": 0,
+            "#topupPeriod": "monthly",
+            "schedule": {
+              "day_of_month": 15
+            },
+            "rfMode": "rate",
+            "#rfRate": 0,
+            "method": "constant-allocation",
+            "weights": {
+              "SIMA": 100
+            },
+            "#buyFee": 0,
+            "#sellFee": 0
+          }
+        ],
+        "single_asset_page": {
+          "settings": {
+            "#randomSeed": 25823952204,
+            "#riskFreeRate": 0,
+            "#currencySymbol": "$"
+          },
+          "data": {
+            "mode": "simulated",
+            "assets": [
+              {
+                "#simNameInput": "SIMA",
+                "#simReturnInput": 8,
+                "#simStdInput": 15
+              }
+            ],
+            "#startDate": "2015-01-01",
+            "#endDate": "2024-12-31"
+          },
+          "scenarios": [
+            {
+              "name": "SA",
+              "asset": "SIMA",
+              "amount": 1000,
+              "style": "monthly",
+              "params": {
+                "day_of_month": 15,
+                "yearly_increase_pct": 0
+              }
+            }
+          ]
+        },
+        "instructions": [
+          "Drive both pages with the identical seed, asset definition, window, amount and schedule, and report the two results side by side."
+        ]
+      },
+      "observe": [
+        {
+          "key": "single_final_value",
+          "what": "Final value of the single-asset tool's scenario SA."
+        },
+        {
+          "key": "pf_final_value",
+          "what": "Final Portfolio Value of the portfolio tool's portfolio PF."
+        },
+        {
+          "key": "value_diff",
+          "what": "Runner-computed: pf_final_value - single_final_value."
+        },
+        {
+          "key": "value_rel_diff",
+          "what": "Runner-computed: value_diff / single_final_value."
+        },
+        {
+          "key": "single_deposited",
+          "what": "Total Deposited on the single-asset page."
+        },
+        {
+          "key": "pf_deposited",
+          "what": "Total Deposited on the portfolio page."
+        },
+        {
+          "key": "deposit_diff",
+          "what": "Runner-computed: pf_deposited - single_deposited."
+        },
+        {
+          "key": "single_n_buys",
+          "what": "Number of purchases on the single-asset page."
+        },
+        {
+          "key": "pf_n_topups",
+          "what": "Number of top-ups on the portfolio page."
+        },
+        {
+          "key": "buy_count_diff",
+          "what": "Runner-computed: pf_n_topups - single_n_buys."
+        },
+        {
+          "key": "buy_date_diff_count",
+          "what": "Runner-computed: the number of positions at which the two pages' ordered purchase-date lists differ."
+        },
+        {
+          "key": "price_series_match",
+          "what": "True when SIMA's displayed close series is identical on both pages, date for date and value for value."
+        },
+        {
+          "key": "pf_final_cash",
+          "what": "Cash on the last row of the portfolio run."
+        },
+        {
+          "key": "nan_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "title": "Target-weight edge cases: a sum other than 100, a zero weight, a short rank tail, a negative weight",
+      "setup": {
+        "states": {
+          "sum110": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                },
+                {
+                  "#simNameInput": "SIMB",
+                  "#simReturnInput": 3,
+                  "#simStdInput": 5
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "S110",
+                "assets": [
+                  "SIMA",
+                  "SIMB"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-weight",
+                "#buyFee": 0,
+                "#sellFee": 0,
+                "cwTiming": "at-topup",
+                "weights": {
+                  "SIMA": 60,
+                  "SIMB": 50
+                }
+              }
+            ]
+          },
+          "zero": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                },
+                {
+                  "#simNameInput": "SIMB",
+                  "#simReturnInput": 3,
+                  "#simStdInput": 5
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "Z",
+                "assets": [
+                  "SIMA",
+                  "SIMB"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-weight",
+                "#buyFee": 0,
+                "#sellFee": 0,
+                "cwTiming": "at-topup",
+                "weights": {
+                  "SIMA": 100,
+                  "SIMB": 0
+                }
+              }
+            ]
+          },
+          "rank_tail": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                },
+                {
+                  "#simNameInput": "SIMB",
+                  "#simReturnInput": 3,
+                  "#simStdInput": 5
+                },
+                {
+                  "#simNameInput": "SIMC",
+                  "#simReturnInput": 2,
+                  "#simStdInput": 4
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "RT",
+                "assets": [
+                  "SIMA",
+                  "SIMB",
+                  "SIMC"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "dynamic-momentum",
+                "#buyFee": 0,
+                "#sellFee": 0,
+                "#lookbackMonths": 6,
+                "rankWeights": {
+                  "1": 60,
+                  "2": 40,
+                  "3": 0
+                }
+              }
+            ]
+          },
+          "negative": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                },
+                {
+                  "#simNameInput": "SIMB",
+                  "#simReturnInput": 3,
+                  "#simStdInput": 5
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "NEG",
+                "assets": [
+                  "SIMA",
+                  "SIMB"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-weight",
+                "#buyFee": 0,
+                "#sellFee": 0,
+                "cwTiming": "at-topup",
+                "weights": {
+                  "SIMA": -20,
+                  "SIMB": 120
+                }
+              }
+            ]
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "sum110_warning_text",
+          "what": "Text of #mainWarning (and of any message shown beside #weightTableWrap) in the sum110 state, verbatim."
+        },
+        {
+          "key": "sum110_ran",
+          "what": "True when the simulation produced a result in the sum110 state, false when it refused to run."
+        },
+        {
+          "key": "sum110_w_a_realised",
+          "what": "Runner-computed: SIMA's share of portfolio value, in percentage points, on the bar after the last rebalance of the sum110 state, or null when the run was refused."
+        },
+        {
+          "key": "sum110_blocked_or_normalised",
+          "what": "Runner-computed: true when sum110_ran is false, or when sum110_w_a_realised is within 1.0 percentage point of SIMA's entered weight rescaled so that the two entered weights sum to 100; false otherwise."
+        },
+        {
+          "key": "sum110_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "zero_units_b_max",
+          "what": "Runner-computed: the largest SIMB unit holding at any point of the zero state."
+        },
+        {
+          "key": "zero_w_a",
+          "what": "Runner-computed: SIMA's share of portfolio value in percentage points on the last row of the zero state."
+        },
+        {
+          "key": "zero_final_value",
+          "what": "Portfolio Value on the last row of the zero state."
+        },
+        {
+          "key": "zero_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "rank_tail_rank3_deployed_total",
+          "what": "Runner-computed: the total money deployed into whichever asset held rank 3 at each top-up of the rank_tail state."
+        },
+        {
+          "key": "rank_tail_deposit_ratio",
+          "what": "Runner-computed: total deposited / (1000 * number of top-ups) in the rank_tail state."
+        },
+        {
+          "key": "rank_tail_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "negative_realised_w_a",
+          "what": "Runner-computed: SIMA's share of portfolio value in percentage points on the last row of the negative state."
+        },
+        {
+          "key": "negative_min_units_a",
+          "what": "Runner-computed: the smallest SIMA unit holding over the negative state."
+        },
+        {
+          "key": "negative_min_cash",
+          "what": "Runner-computed: the smallest Cash value over the negative state."
+        },
+        {
+          "key": "negative_warning_text",
+          "what": "Text of #mainWarning in the negative state, verbatim."
+        },
+        {
+          "key": "negative_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "negative_js_error_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "title": "Reserve edge cases: a holding as the reserve, a deleted reserve, a triggered reserve, an empty reserve",
+      "setup": {
+        "states": {
+          "asset": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                },
+                {
+                  "#simNameInput": "SIMB",
+                  "#simReturnInput": 4,
+                  "#simStdInput": 8
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "A",
+                "assets": [
+                  "SIMA",
+                  "SIMB"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "rule-trigger",
+                "#reserveSelect": "SIMB",
+                "weights": {
+                  "SIMA": 60,
+                  "SIMB": 40
+                },
+                "triggers": {
+                  "SIMA": {
+                    "kind": "previous-top",
+                    "threshold_pct": 5,
+                    "lookback_bars": 20
+                  },
+                  "SIMB": {
+                    "kind": "at-topup"
+                  }
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          },
+          "deleted": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                },
+                {
+                  "#simNameInput": "SIMB",
+                  "#simReturnInput": 4,
+                  "#simStdInput": 8
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "D",
+                "assets": [
+                  "SIMA",
+                  "SIMB"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "rule-trigger",
+                "#reserveSelect": "SIMB",
+                "weights": {
+                  "SIMA": 60,
+                  "SIMB": 40
+                },
+                "triggers": {
+                  "SIMA": {
+                    "kind": "previous-top",
+                    "threshold_pct": 5,
+                    "lookback_bars": 20
+                  },
+                  "SIMB": {
+                    "kind": "at-topup"
+                  }
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ],
+            "instructions": [
+              "After the portfolio is fully configured with SIMB as the reserve, remove SIMB from the Assets sub-tab, then run without touching the reserve selector."
+            ]
+          },
+          "triggered": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                },
+                {
+                  "#simNameInput": "SIMB",
+                  "#simReturnInput": 4,
+                  "#simStdInput": 8
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "T",
+                "assets": [
+                  "SIMA",
+                  "SIMB"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "rule-trigger",
+                "#reserveSelect": "SIMB",
+                "weights": {
+                  "SIMA": 60,
+                  "SIMB": 40
+                },
+                "triggers": {
+                  "SIMA": {
+                    "kind": "previous-top",
+                    "threshold_pct": 5,
+                    "lookback_bars": 20
+                  },
+                  "SIMB": {
+                    "kind": "previous-top",
+                    "threshold_pct": 5,
+                    "lookback_bars": 20
+                  }
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          },
+          "empty": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                },
+                {
+                  "#simNameInput": "SIMB",
+                  "#simReturnInput": 4,
+                  "#simStdInput": 8
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "E",
+                "assets": [
+                  "SIMA",
+                  "SIMB"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "rule-trigger",
+                "#reserveSelect": "Risk-Free Account",
+                "weights": {
+                  "SIMA": 60,
+                  "SIMB": 40
+                },
+                "triggers": {
+                  "SIMA": {
+                    "kind": "previous-top",
+                    "threshold_pct": 0.1,
+                    "lookback_bars": 5
+                  },
+                  "SIMB": {
+                    "kind": "previous-top",
+                    "threshold_pct": 0.1,
+                    "lookback_bars": 5
+                  }
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "asset_min_units_b",
+          "what": "Runner-computed: the smallest SIMB unit holding over the asset state."
+        },
+        {
+          "key": "asset_min_cash",
+          "what": "Runner-computed: the smallest Cash value over the asset state."
+        },
+        {
+          "key": "asset_n_deploys",
+          "what": "Number of deploys into SIMA in the asset state."
+        },
+        {
+          "key": "asset_value_identity_ratio",
+          "what": "Runner-computed: final Portfolio Value / (final Cash + the sum over assets of final units * final close), in the asset state."
+        },
+        {
+          "key": "asset_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "deleted_ran",
+          "what": "True when the simulation produced a result in the deleted state."
+        },
+        {
+          "key": "deleted_reserve_text",
+          "what": "The value shown in #reserveSelect after SIMB was removed, verbatim."
+        },
+        {
+          "key": "deleted_warning_text",
+          "what": "Text of #mainWarning in the deleted state, verbatim."
+        },
+        {
+          "key": "deleted_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "deleted_js_error_count",
+          "what": "See notes."
+        },
+        {
+          "key": "triggered_min_units_b",
+          "what": "Runner-computed: the smallest SIMB unit holding over the triggered state."
+        },
+        {
+          "key": "triggered_min_cash",
+          "what": "Runner-computed: the smallest Cash value over the triggered state."
+        },
+        {
+          "key": "triggered_deposit_ratio",
+          "what": "Runner-computed: total deposited / (1000 * number of top-ups) in the triggered state."
+        },
+        {
+          "key": "triggered_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "triggered_js_error_count",
+          "what": "See notes."
+        },
+        {
+          "key": "empty_negative_cash_bars",
+          "what": "Runner-computed: the number of bars in the empty state on which Cash is below -0.005."
+        },
+        {
+          "key": "empty_min_units_a",
+          "what": "Runner-computed: the smallest SIMA unit holding over the empty state."
+        },
+        {
+          "key": "empty_deposit_ratio",
+          "what": "Runner-computed: total deposited / (1000 * number of top-ups) in the empty state."
+        },
+        {
+          "key": "empty_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "empty_js_error_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "P8",
+      "title": "Constant Weight timing changes what trading costs, and parked cash really earns the risk-free rate",
+      "setup": {
+        "states": {
+          "attopup": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                },
+                {
+                  "#simNameInput": "SIMB",
+                  "#simReturnInput": 3,
+                  "#simStdInput": 5
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "CW",
+                "assets": [
+                  "SIMA",
+                  "SIMB"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-weight",
+                "cwTiming": "at-topup",
+                "#rebalPeriod": "quarterly",
+                "rebalSchedule": {
+                  "quarter_month": 1,
+                  "day_of_month": 15
+                },
+                "weights": {
+                  "SIMA": 60,
+                  "SIMB": 40
+                },
+                "#buyFee": 0.1,
+                "#sellFee": 0.1
+              }
+            ]
+          },
+          "schedule": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                },
+                {
+                  "#simNameInput": "SIMB",
+                  "#simReturnInput": 3,
+                  "#simStdInput": 5
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "CW",
+                "assets": [
+                  "SIMA",
+                  "SIMB"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-weight",
+                "cwTiming": "schedule",
+                "#rebalPeriod": "quarterly",
+                "rebalSchedule": {
+                  "quarter_month": 1,
+                  "day_of_month": 15
+                },
+                "weights": {
+                  "SIMA": 60,
+                  "SIMB": 40
+                },
+                "#buyFee": 0.1,
+                "#sellFee": 0.1
+              }
+            ]
+          },
+          "rf5": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "PARK",
+                "assets": [
+                  "SIMA"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 5,
+                "method": "rule-trigger",
+                "#reserveSelect": "Risk-Free Account",
+                "weights": {
+                  "SIMA": 100
+                },
+                "triggers": {
+                  "SIMA": {
+                    "kind": "period-open",
+                    "threshold_pct": 99,
+                    "period": "monthly"
+                  }
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          },
+          "rf0": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "PARK",
+                "assets": [
+                  "SIMA"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "rule-trigger",
+                "#reserveSelect": "Risk-Free Account",
+                "weights": {
+                  "SIMA": 100
+                },
+                "triggers": {
+                  "SIMA": {
+                    "kind": "period-open",
+                    "threshold_pct": 99,
+                    "period": "monthly"
+                  }
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "attopup_n_rebalances",
+          "what": "Number of full rebalance events in the attopup state."
+        },
+        {
+          "key": "attopup_gross_traded",
+          "what": "Runner-computed: the sum of the absolute cash value of every buy and every sell over the attopup run."
+        },
+        {
+          "key": "attopup_total_fees",
+          "what": "The total fees charged over the attopup run, from the Final Summary or by summing the fee amounts in the daily CSV; null if the page reports no fee figure anywhere."
+        },
+        {
+          "key": "attopup_final_value",
+          "what": "Portfolio Value on the last row of the attopup state."
+        },
+        {
+          "key": "schedule_n_rebalances",
+          "what": "Number of full rebalance events in the schedule state."
+        },
+        {
+          "key": "schedule_gross_traded",
+          "what": "As attopup_gross_traded, for the schedule state."
+        },
+        {
+          "key": "schedule_total_fees",
+          "what": "As attopup_total_fees, for the schedule state."
+        },
+        {
+          "key": "schedule_final_value",
+          "what": "Portfolio Value on the last row of the schedule state."
+        },
+        {
+          "key": "turnover_diff",
+          "what": "Runner-computed: attopup_gross_traded - schedule_gross_traded."
+        },
+        {
+          "key": "fee_diff",
+          "what": "Runner-computed: attopup_total_fees - schedule_total_fees, or null when either is null."
+        },
+        {
+          "key": "rf5_n_deploys",
+          "what": "Number of deploys in the rf5 state."
+        },
+        {
+          "key": "rf5_deposited",
+          "what": "Total Deposited in the rf5 state."
+        },
+        {
+          "key": "rf5_final_value",
+          "what": "Portfolio Value on the last row of the rf5 state."
+        },
+        {
+          "key": "rf0_n_deploys",
+          "what": "Number of deploys in the rf0 state."
+        },
+        {
+          "key": "rf0_deposited",
+          "what": "Total Deposited in the rf0 state."
+        },
+        {
+          "key": "rf0_final_value",
+          "what": "Portfolio Value on the last row of the rf0 state."
+        },
+        {
+          "key": "nan_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "P9",
+      "title": "Fee accounting reconciles with the ledger, and a 100% fee is still arithmetic",
+      "setup": {
+        "states": {
+          "f01": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "F",
+                "assets": [
+                  "SIMA"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-allocation",
+                "weights": {
+                  "SIMA": 100
+                },
+                "#buyFee": 0.1,
+                "#sellFee": 0.1
+              }
+            ]
+          },
+          "f100": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "F",
+                "assets": [
+                  "SIMA"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-allocation",
+                "weights": {
+                  "SIMA": 100
+                },
+                "#buyFee": 100,
+                "#sellFee": 100
+              }
+            ]
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "f01_total_deposited",
+          "what": "Total Deposited in the f01 state."
+        },
+        {
+          "key": "f01_sum_units_times_price",
+          "what": "Runner-computed: the sum over every purchase event of (units bought * the price paid) in the f01 state."
+        },
+        {
+          "key": "f01_implied_fee_fraction",
+          "what": "Runner-computed: 1 - f01_sum_units_times_price / f01_total_deposited."
+        },
+        {
+          "key": "f01_reported_total_fees",
+          "what": "The total fees the page reports for the f01 run, from the Final Summary or by summing the fee amounts in the daily CSV; null if no fee figure is reported anywhere."
+        },
+        {
+          "key": "f01_reported_vs_implied_ratio",
+          "what": "Runner-computed: f01_reported_total_fees / (f01_total_deposited - f01_sum_units_times_price)."
+        },
+        {
+          "key": "f01_value_identity_ratio",
+          "what": "Runner-computed: final Portfolio Value / (final Cash + final units * final close) in the f01 state."
+        },
+        {
+          "key": "f01_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "f100_final_units",
+          "what": "Final SIMA unit holding in the f100 state."
+        },
+        {
+          "key": "f100_final_value",
+          "what": "Portfolio Value on the last row of the f100 state."
+        },
+        {
+          "key": "f100_deposited",
+          "what": "Total Deposited in the f100 state."
+        },
+        {
+          "key": "f100_min_cash",
+          "what": "Runner-computed: the smallest Cash value over the f100 state."
+        },
+        {
+          "key": "f100_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "f100_js_error_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "title": "Schedules: fortnightly spacing, quarter offsets, an uncovered yearly date, day 31 in February, a schedule outside the range",
+      "setup": {
+        "states": {
+          "fort": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-01-04",
+              "#endDate": "2024-12-28"
+            },
+            "portfolios": [
+              {
+                "name": "S",
+                "assets": [
+                  "SIMA"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "fortnightly",
+                "schedule": {
+                  "anchor_date": "2015-01-04"
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-allocation",
+                "weights": {
+                  "SIMA": 100
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          },
+          "q2": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "S",
+                "assets": [
+                  "SIMA"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "quarterly",
+                "schedule": {
+                  "quarter_month": 2,
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-allocation",
+                "weights": {
+                  "SIMA": 100
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          },
+          "q3": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "S",
+                "assets": [
+                  "SIMA"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "quarterly",
+                "schedule": {
+                  "quarter_month": 3,
+                  "day_of_month": 15
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-allocation",
+                "weights": {
+                  "SIMA": 100
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          },
+          "yearly": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-02-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "S",
+                "assets": [
+                  "SIMA"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "yearly",
+                "schedule": {
+                  "month_and_day": "01-15"
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-allocation",
+                "weights": {
+                  "SIMA": 100
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          },
+          "day31": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "S",
+                "assets": [
+                  "SIMA"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "monthly",
+                "schedule": {
+                  "day_of_month": 31
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-allocation",
+                "weights": {
+                  "SIMA": 100
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          },
+          "outside": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-02-01",
+              "#endDate": "2015-12-31"
+            },
+            "portfolios": [
+              {
+                "name": "S",
+                "assets": [
+                  "SIMA"
+                ],
+                "#topupAmount": 1000,
+                "#topupYearlyInc": 0,
+                "#topupPeriod": "yearly",
+                "schedule": {
+                  "month_and_day": "01-15"
+                },
+                "rfMode": "rate",
+                "#rfRate": 0,
+                "method": "constant-allocation",
+                "weights": {
+                  "SIMA": 100
+                },
+                "#buyFee": 0,
+                "#sellFee": 0
+              }
+            ]
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "fort_n",
+          "what": "Number of top-ups in the fort state."
+        },
+        {
+          "key": "fort_median_gap_days",
+          "what": "Runner-computed: the median gap, in calendar days, between consecutive top-up dates of the fort state."
+        },
+        {
+          "key": "fort_first_date",
+          "what": "Date of the first top-up in the fort state, as YYYY-MM-DD."
+        },
+        {
+          "key": "fort_deposit_ratio",
+          "what": "Runner-computed: total deposited / (1000 * fort_n)."
+        },
+        {
+          "key": "q2_n",
+          "what": "Number of top-ups in the q2 state."
+        },
+        {
+          "key": "q2_months",
+          "what": "Runner-computed: the sorted list of distinct calendar month numbers (1-12) in which the q2 top-ups fall."
+        },
+        {
+          "key": "q3_n",
+          "what": "Number of top-ups in the q3 state."
+        },
+        {
+          "key": "q3_months",
+          "what": "Runner-computed: the sorted list of distinct calendar month numbers in which the q3 top-ups fall."
+        },
+        {
+          "key": "yearly_n",
+          "what": "Number of top-ups in the yearly state."
+        },
+        {
+          "key": "yearly_first_date",
+          "what": "Date of the first top-up in the yearly state, as YYYY-MM-DD."
+        },
+        {
+          "key": "yearly_last_date",
+          "what": "Date of the last top-up in the yearly state, as YYYY-MM-DD."
+        },
+        {
+          "key": "day31_n",
+          "what": "Number of top-ups in the day31 state."
+        },
+        {
+          "key": "day31_months_with_zero",
+          "what": "Runner-computed: calendar months inside the day31 window with no top-up."
+        },
+        {
+          "key": "day31_months_with_two",
+          "what": "Runner-computed: calendar months inside the day31 window with more than one top-up."
+        },
+        {
+          "key": "day31_march_count",
+          "what": "Runner-computed: the number of top-ups in the day31 state that fall in a March."
+        },
+        {
+          "key": "day31_min_feb_day",
+          "what": "Runner-computed: the smallest day-of-month among the February top-ups of the day31 state."
+        },
+        {
+          "key": "day31_max_feb_day",
+          "what": "Runner-computed: the largest day-of-month among the February top-ups of the day31 state."
+        },
+        {
+          "key": "outside_n",
+          "what": "Number of top-ups in the outside state."
+        },
+        {
+          "key": "outside_deposited",
+          "what": "Total Deposited in the outside state."
+        },
+        {
+          "key": "outside_final_value_or_zero",
+          "what": "Runner-computed: the reported final Portfolio Value of the outside state, or 0 if the page shows no figure there."
+        },
+        {
+          "key": "outside_warning_text",
+          "what": "Text of #mainWarning (or of #topupScheduleHint) in the outside state, verbatim."
+        },
+        {
+          "key": "outside_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "outside_js_error_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "P11",
+      "title": "Synthetic assets are deterministic across styles, portfolios, tools, runs and timezones",
+      "setup": {
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "simulated",
+          "assets": [
+            {
+              "#simNameInput": "SIMA",
+              "#simReturnInput": 8,
+              "#simStdInput": 15
+            }
+          ],
+          "#startDate": "2015-01-01",
+          "#endDate": "2024-12-31"
+        },
+        "portfolios": [
+          {
+            "name": "PF1",
+            "assets": [
+              "SIMA"
+            ],
+            "#topupAmount": 1000,
+            "#topupPeriod": "monthly",
+            "schedule": {
+              "day_of_month": 15
+            },
+            "rfMode": "rate",
+            "#rfRate": 0,
+            "method": "constant-allocation",
+            "weights": {
+              "SIMA": 100
+            },
+            "#buyFee": 0,
+            "#sellFee": 0
+          },
+          {
+            "name": "PF2",
+            "assets": [
+              "SIMA"
+            ],
+            "#topupAmount": 1000,
+            "#topupPeriod": "monthly",
+            "schedule": {
+              "day_of_month": 15
+            },
+            "rfMode": "rate",
+            "#rfRate": 0,
+            "method": "rule-trigger",
+            "#reserveSelect": "Risk-Free Account",
+            "triggers": {
+              "SIMA": {
+                "kind": "previous-top",
+                "threshold_pct": 5,
+                "lookback_bars": 20
+              }
+            },
+            "weights": {
+              "SIMA": 100
+            },
+            "#buyFee": 0,
+            "#sellFee": 0
+          }
+        ],
+        "timezones": [
+          "UTC",
+          "America/Los_Angeles"
+        ],
+        "repeats": [
+          "Run the setup once, then reload the page and repeat the whole setup from scratch in the same browser, and compare.",
+          "Repeat the setup in a second browser context whose timezone is America/Los_Angeles.",
+          "Repeat the setup once more with #randomSeed set to 1.",
+          "Build the same SIMA on dcasimulator/index.html with the same seed and window and compare its price series."
+        ]
+      },
+      "observe": [
+        {
+          "key": "within_run_path_match",
+          "what": "True when SIMA's displayed close series is identical when viewed under PF1 and under PF2 in the same run."
+        },
+        {
+          "key": "rerun_path_match",
+          "what": "True when SIMA's close series after a page reload and a full re-entry of the same inputs is identical to the first run's."
+        },
+        {
+          "key": "rerun_value_diff",
+          "what": "Runner-computed: PF1's final Portfolio Value in the second run minus its value in the first."
+        },
+        {
+          "key": "tz_path_match",
+          "what": "True when SIMA's close series is identical under TZ=UTC and under TZ=America/Los_Angeles."
+        },
+        {
+          "key": "tz_buydates_match",
+          "what": "True when PF1's ordered list of top-up dates is identical under both timezones."
+        },
+        {
+          "key": "tz_value_diff",
+          "what": "Runner-computed: PF1's final Portfolio Value under America/Los_Angeles minus its value under UTC."
+        },
+        {
+          "key": "cross_tool_path_match",
+          "what": "True when SIMA's close series on dcasimulator/index.html is identical to the one on the portfolio page, date for date and value for value."
+        },
+        {
+          "key": "seed_changed_path",
+          "what": "True when SIMA's close series under seed 1 differs from the series under the seed in 'settings'."
+        },
+        {
+          "key": "nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "js_error_count",
+          "what": "See notes."
+        }
+      ]
+    }
+  ]
+}

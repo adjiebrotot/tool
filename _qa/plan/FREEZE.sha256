@@ -7,6 +7,18 @@
     "rentvsownhouse.expected.json": {
       "sha256": "804450523af6f646c69cb212cf5a22a12f5e9249285ba0efb65d7dadcfaa468b",
       "frozen_utc": "2026-09-18T11:04:46.778Z"
+    },
+    "borrowingcapacity.expected.json": {
+      "sha256": "b21168ef2c9c103913bf570e1bec99b9800fe23a7e5b4ec136d0c0ad3b9ed4d3",
+      "frozen_utc": "2026-09-18T14:07:19.622Z"
+    },
+    "dca-portfolio.expected.json": {
+      "sha256": "fac67ddecc8ee63dbdb2a0901e9467e20237d7628fe229d24720e5c52bce61e5",
+      "frozen_utc": "2026-09-18T14:07:19.622Z"
+    },
+    "dcasimulator.expected.json": {
+      "sha256": "a2867239826b6225df1eee4cb50f5947b7495dcaaed57ff941cf872d5caa9087",
+      "frozen_utc": "2026-09-18T14:07:19.622Z"
     }
   }
 }

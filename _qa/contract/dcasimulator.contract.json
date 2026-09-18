@@ -1,0 +1,1320 @@
+{
+  "tool": "dcasimulator",
+  "page": "dcasimulator/index.html",
+  "notes": [
+    "Apply every case from a clean state: load dcasimulator/index.html, dismiss any tour overlay, click #resetBtn, then remove every scenario left in #scenarioTabs with #delScenarioBtn until only the scenarios listed in 'scenarios' remain, and click #clearPoolBtn (in #poolChipsWrap) if any asset is already loaded.",
+    "'settings' keys are DOM ids on the Settings tab (#randomSeed, #riskFreeRate, #currencySymbol). Set #randomSeed BEFORE creating any simulated asset, because the seed is what makes the synthetic price path reproducible.",
+    "'data' describes the Data tab. mode 'simulated': click the 'Simulated' button in #dataModeToggle, then for each entry of 'assets' fill #simNameInput / #simReturnInput / #simStdInput and click #addSimBtn. mode 'real': click 'Real', type the tickers into #tickerPoolInput and click #loadTickersBtn. Then set #startDate and #endDate. Text/number inputs: set .value and dispatch 'input', 'change', 'blur'. Selects: set .value and dispatch 'change'. Checkboxes: click only when the current checked state differs from the requested boolean.",
+    "'scenarios' is a list. Create each with #addScenarioBtn and fill the editor that renders into #scenarioConfig, then move to the next with the tabs in #scenarioTabs. The editor is built at runtime, so locate its controls by the visible text of their labels inside #scenarioConfig: 'name' is the scenario name field (or the tab rename control in #scenarioTabs), 'asset' the security/asset selector, 'amount' the contribution amount, 'style' the strategy selector, and 'params' the style-specific controls that appear under it (class .style-params / .param-row).",
+    "'style' values are the option values of the strategy selector. Map them by meaning if the value attributes differ: 'monthly' = the plain periodic style that buys on a fixed day of each month; 'weekly' = the plain periodic style that buys on a fixed weekday; 'monthly-top' / 'monthly-bottom' / 'weekly-top' / 'weekly-bottom' = the styles that buy at the highest / lowest close of each month or week; the remaining styles are the conditional ones (technical indicators and price-move rules).",
+    "'params' keys and what they mean: day_of_month (day the monthly style buys), weekday, indicator (which technical rule), fast_period, slow_period, rsi_period, threshold_pct (the percentage move a price rule needs), lookback_bars, end_of_period_fallback (the 'buy at the end of the period anyway' checkbox, class .tech-eom), yearly_increase_pct.",
+    "Run with #simBtn and wait until #summaryGrid has been rebuilt. Turn on #showAdvancedToggle when Sharpe / Sortino / CAGR are observed. Read: the per-scenario tiles in #summaryGrid, the per-row table in #detailBody after choosing the scenario in #detailSelect, #priceLegend / #equityLegend, #mainWarning, #poolStatus / #simStatus / #dateRangeStatus / #fetchStatus, #rateInfo, and the CSV produced by #downloadBtn.",
+    "Report numbers as plain numbers: strip currency symbols and thousands separators, keep the sign, and report a percentage as the number shown (9.7 for '9.7%'). Report text verbatim. Report a quantity that is absent, blank or shown as a dash as null rather than guessing.",
+    "Keys whose 'what' begins with 'Runner-computed' are arithmetic the runner performs on other observed values or on the displayed price series (the Price chart's data, or the Price column of the Detailed Breakdown). Compute them from the same values reported for this case; never from anything inside _qa/plan/.",
+    "'bar index' means the 0-based position of a date in this scenario's displayed price series after trimming (row 0 of the Detailed Breakdown / the first plotted price point).",
+    "Cases with 'states' are several independent states. Apply each from a clean state and prefix that state's observation keys with the state name, exactly as the 'observe' keys are spelled.",
+    "A setup carrying \"requires\": \"network\" needs the live market-data worker. If it is unreachable, record the case as not-run (an error) rather than substituting anything.",
+    "Timezone states: relaunch the browser (or open a new Playwright context) with the named IANA zone - TZ env var or the context's timezoneId - and repeat the whole setup from scratch inside it.",
+    "nan_count means: the number of occurrences of 'NaN', 'Infinity', '-Infinity', 'Infinity', 'undefined' or 'null' in the visible text of #summaryGrid, #detailBody and #mainWarning (0 when there are none). js_error_count means the number of uncaught page errors and console errors captured while the case ran."
+  ],
+  "cases": [
+    {
+      "id": "N1",
+      "title": "Baseline: monthly on the 15th, one simulated asset, ten years",
+      "setup": {
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#riskFreeRate": 0,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "simulated",
+          "assets": [
+            {
+              "#simNameInput": "SIMA",
+              "#simReturnInput": 8,
+              "#simStdInput": 15
+            }
+          ],
+          "#startDate": "2015-01-01",
+          "#endDate": "2024-12-31"
+        },
+        "scenarios": [
+          {
+            "name": "N1",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "monthly",
+            "params": {
+              "day_of_month": 15,
+              "yearly_increase_pct": 0
+            }
+          }
+        ],
+        "toggles": {
+          "#showAdvancedToggle": false,
+          "#showBuyDateToggle": true
+        }
+      },
+      "observe": [
+        {
+          "key": "n_buys",
+          "what": "Number of purchase rows in the Detailed Breakdown for scenario N1 (rows with a non-zero Deposited amount)."
+        },
+        {
+          "key": "first_buy_date",
+          "what": "Date of the first purchase, as YYYY-MM-DD."
+        },
+        {
+          "key": "buy_date_jun_2024",
+          "what": "Date of the purchase that falls in June 2024, as YYYY-MM-DD."
+        },
+        {
+          "key": "buy_date_dec_2024",
+          "what": "Date of the purchase that falls in December 2024, as YYYY-MM-DD."
+        },
+        {
+          "key": "months_with_no_buy",
+          "what": "Number of calendar months between the first and last bar of the trimmed series that contain no purchase."
+        },
+        {
+          "key": "months_with_two_buys",
+          "what": "Number of calendar months that contain more than one purchase."
+        },
+        {
+          "key": "max_abs_gap_days",
+          "what": "Runner-computed: over every purchase, the largest absolute difference in calendar days between the purchase date and the 15th of the month it falls in."
+        },
+        {
+          "key": "total_deposited",
+          "what": "Total Deposited for scenario N1 at the end of the run (from the Final Summary tile, or the last row of the Detailed Breakdown)."
+        },
+        {
+          "key": "deposit_ratio",
+          "what": "Runner-computed: total_deposited / (1000 * n_buys)."
+        },
+        {
+          "key": "units_recon_ratio",
+          "what": "Runner-computed: (sum over purchase rows of Deposited/Price) / the final Total Units."
+        },
+        {
+          "key": "equity_recon_ratio",
+          "what": "Runner-computed: the final Equity / (final Total Units * the final row's Price)."
+        },
+        {
+          "key": "return_pct_residual",
+          "what": "Runner-computed: the Return percentage reported for N1 in the Final Summary minus 100*(final Equity / total_deposited - 1)."
+        },
+        {
+          "key": "nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "js_error_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "E1",
+      "title": "Look-ahead: a signal formed from day D's close cannot be acted on at day D's close",
+      "setup": {
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#riskFreeRate": 0,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "simulated",
+          "assets": [
+            {
+              "#simNameInput": "SIMA",
+              "#simReturnInput": 8,
+              "#simStdInput": 15
+            }
+          ],
+          "#startDate": "2015-01-01",
+          "#endDate": "2024-12-31"
+        },
+        "scenarios": [
+          {
+            "name": "C1",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "<first conditional style>",
+            "params": {
+              "indicator": "sma-cross",
+              "fast_period": 20,
+              "slow_period": 50,
+              "end_of_period_fallback": false
+            }
+          },
+          {
+            "name": "C2",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "<second conditional style>",
+            "params": {
+              "indicator": "rsi",
+              "rsi_period": 14,
+              "threshold_pct": 30,
+              "end_of_period_fallback": false
+            }
+          },
+          {
+            "name": "C3",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "<third conditional style>",
+            "params": {
+              "indicator": "price-below-period-open",
+              "threshold_pct": 3,
+              "end_of_period_fallback": false
+            }
+          },
+          {
+            "name": "C4",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "<fourth conditional style>",
+            "params": {
+              "indicator": "price-below-previous-top",
+              "threshold_pct": 5,
+              "lookback_bars": 20,
+              "end_of_period_fallback": false
+            }
+          }
+        ],
+        "instructions": [
+          "Run one scenario for EVERY conditional style the strategy selector offers, not only the four sketched above: a conditional style is any style whose purchases depend on a condition computed from price history (technical indicators and percentage-move rules). Keep amount 1000, the same asset and the same window for all of them, and end_of_period_fallback off so only genuine signals buy.",
+          "For each purchase, recompute that style's own condition yourself from the displayed close series, using the textbook definition of the rule named in the editor (SMA = mean of the last n closes; EMA = 2/(n+1) smoothing seeded on the first n-bar mean; RSI = Wilder's smoothing; a cross = the bar at which the state changes from false to true; a percentage-move rule = close compared with the stated reference). The 'signal bar' of a purchase is the bar at which the condition that produced it first became true, i.e. the most recent false->true transition at or before the purchase."
+        ]
+      },
+      "observe": [
+        {
+          "key": "styles_tested",
+          "what": "Number of conditional styles actually run as scenarios in this case."
+        },
+        {
+          "key": "total_buy_count",
+          "what": "Total number of purchases across all the conditional scenarios in this case."
+        },
+        {
+          "key": "sameBar_buy_count",
+          "what": "Runner-computed: across all the conditional scenarios, the number of purchases whose execution bar index equals the bar index of their own signal bar."
+        },
+        {
+          "key": "styles_with_sameBar",
+          "what": "Runner-computed: the number of conditional styles for which sameBar_buy_count is non-zero."
+        },
+        {
+          "key": "min_signal_to_execution_lag_bars",
+          "what": "Runner-computed: the smallest value, over every purchase in this case, of (execution bar index - signal bar index)."
+        },
+        {
+          "key": "lagged_buy_count",
+          "what": "Runner-computed: the number of purchases whose execution bar index exceeds their signal bar index."
+        },
+        {
+          "key": "unmatched_buy_count",
+          "what": "Runner-computed: purchases the runner could not attribute to any signal bar."
+        },
+        {
+          "key": "nan_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "E2",
+      "title": "Perfect-foresight styles bracket every causal style on the same asset",
+      "setup": {
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#riskFreeRate": 0,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "simulated",
+          "assets": [
+            {
+              "#simNameInput": "SIMA",
+              "#simReturnInput": 8,
+              "#simStdInput": 15
+            }
+          ],
+          "#startDate": "2015-01-04",
+          "#endDate": "2024-12-28"
+        },
+        "scenarios": [
+          {
+            "name": "M15",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "monthly",
+            "params": {
+              "day_of_month": 15
+            }
+          },
+          {
+            "name": "MTOP",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "monthly-top",
+            "params": {}
+          },
+          {
+            "name": "MBOT",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "monthly-bottom",
+            "params": {}
+          },
+          {
+            "name": "WWED",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "weekly",
+            "params": {
+              "weekday": "Wednesday"
+            }
+          },
+          {
+            "name": "WTOP",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "weekly-top",
+            "params": {}
+          },
+          {
+            "name": "WBOT",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "weekly-bottom",
+            "params": {}
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "eq_m15",
+          "what": "Final value (Equity) of scenario M15."
+        },
+        {
+          "key": "eq_mtop",
+          "what": "Final value of scenario MTOP."
+        },
+        {
+          "key": "eq_mbot",
+          "what": "Final value of scenario MBOT."
+        },
+        {
+          "key": "eq_wwed",
+          "what": "Final value of scenario WWED."
+        },
+        {
+          "key": "eq_wtop",
+          "what": "Final value of scenario WTOP."
+        },
+        {
+          "key": "eq_wbot",
+          "what": "Final value of scenario WBOT."
+        },
+        {
+          "key": "n_m15",
+          "what": "Number of purchases in M15."
+        },
+        {
+          "key": "n_mtop",
+          "what": "Number of purchases in MTOP."
+        },
+        {
+          "key": "n_mbot",
+          "what": "Number of purchases in MBOT."
+        },
+        {
+          "key": "n_wwed",
+          "what": "Number of purchases in WWED."
+        },
+        {
+          "key": "n_wtop",
+          "what": "Number of purchases in WTOP."
+        },
+        {
+          "key": "n_wbot",
+          "what": "Number of purchases in WBOT."
+        },
+        {
+          "key": "monthly_dep_spread",
+          "what": "Runner-computed: max minus min of the Total Deposited of M15, MTOP and MBOT."
+        },
+        {
+          "key": "weekly_dep_spread",
+          "what": "Runner-computed: max minus min of the Total Deposited of WWED, WTOP and WBOT."
+        },
+        {
+          "key": "mbot_minus_m15",
+          "what": "Runner-computed: eq_mbot - eq_m15."
+        },
+        {
+          "key": "m15_minus_mtop",
+          "what": "Runner-computed: eq_m15 - eq_mtop."
+        },
+        {
+          "key": "mbot_minus_mtop",
+          "what": "Runner-computed: eq_mbot - eq_mtop."
+        },
+        {
+          "key": "wbot_minus_wwed",
+          "what": "Runner-computed: eq_wbot - eq_wwed."
+        },
+        {
+          "key": "wwed_minus_wtop",
+          "what": "Runner-computed: eq_wwed - eq_wtop."
+        },
+        {
+          "key": "wbot_minus_wtop",
+          "what": "Runner-computed: eq_wbot - eq_wtop."
+        },
+        {
+          "key": "nan_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "E3",
+      "title": "Indicator warm-up is served from inside the trimmed window",
+      "setup": {
+        "states": {
+          "short": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#riskFreeRate": 0,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2020-01-01",
+              "#endDate": "2020-03-31"
+            },
+            "scenarios": [
+              {
+                "name": "S",
+                "asset": "SIMA",
+                "amount": 1000,
+                "style": "<the SMA-based conditional style>",
+                "params": {
+                  "fast_period": 50,
+                  "slow_period": 200,
+                  "end_of_period_fallback": false
+                }
+              }
+            ]
+          },
+          "long": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#riskFreeRate": 0,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "scenarios": [
+              {
+                "name": "L",
+                "asset": "SIMA",
+                "amount": 1000,
+                "style": "<the SMA-based conditional style>",
+                "params": {
+                  "fast_period": 50,
+                  "slow_period": 200,
+                  "end_of_period_fallback": false
+                }
+              }
+            ]
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "short_n_bars",
+          "what": "Number of price rows in the trimmed series of the 'short' state."
+        },
+        {
+          "key": "short_n_buys",
+          "what": "Number of purchases in the 'short' state."
+        },
+        {
+          "key": "short_deposited",
+          "what": "Total Deposited in the 'short' state."
+        },
+        {
+          "key": "short_no_data_marker",
+          "what": "The text the Final Summary shows in place of a return / CAGR figure in the 'short' state (verbatim, or null if a number is shown)."
+        },
+        {
+          "key": "short_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "long_n_bars",
+          "what": "Number of price rows in the trimmed series of the 'long' state."
+        },
+        {
+          "key": "long_n_buys",
+          "what": "Number of purchases in the 'long' state."
+        },
+        {
+          "key": "long_first_buy_row_index",
+          "what": "0-based bar index of the first purchase in the 'long' state."
+        },
+        {
+          "key": "long_nan_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "E4",
+      "title": "End-of-period fallback: on degenerates a dead trigger to plain DCA, off deposits nothing",
+      "setup": {
+        "states": {
+          "on": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#riskFreeRate": 0,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "scenarios": [
+              {
+                "name": "ON",
+                "asset": "SIMA",
+                "amount": 1000,
+                "style": "<the conditional style that measures a fall from the period open>",
+                "params": {
+                  "threshold_pct": 99,
+                  "period": "monthly",
+                  "end_of_period_fallback": true
+                }
+              }
+            ]
+          },
+          "off": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#riskFreeRate": 0,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "scenarios": [
+              {
+                "name": "OFF",
+                "asset": "SIMA",
+                "amount": 1000,
+                "style": "<the conditional style that measures a fall from the period open>",
+                "params": {
+                  "threshold_pct": 99,
+                  "period": "monthly",
+                  "end_of_period_fallback": false
+                }
+              }
+            ]
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "on_n_buys",
+          "what": "Number of purchases in the 'on' state."
+        },
+        {
+          "key": "on_deposited",
+          "what": "Total Deposited in the 'on' state."
+        },
+        {
+          "key": "on_buys_at_period_end_count",
+          "what": "Runner-computed: the number of purchases in the 'on' state that fall on the last bar of their own calendar month."
+        },
+        {
+          "key": "on_last_buy_date",
+          "what": "Date of the last purchase in the 'on' state, as YYYY-MM-DD."
+        },
+        {
+          "key": "on_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "off_n_buys",
+          "what": "Number of purchases in the 'off' state."
+        },
+        {
+          "key": "off_deposited",
+          "what": "Total Deposited in the 'off' state."
+        },
+        {
+          "key": "off_final_equity_or_zero",
+          "what": "Runner-computed: the reported final Equity of the 'off' scenario, or 0 if the page shows no figure there."
+        },
+        {
+          "key": "off_metrics_no_data",
+          "what": "True when the Final Summary reports the 'off' scenario's return / CAGR / Sharpe as an explicit absence (a dash, 'n/a', 'no data' or similar) rather than a number; false when a number is shown."
+        },
+        {
+          "key": "off_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "off_js_error_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "E5",
+      "title": "Weekly buckets are Sunday-aligned local weeks: year boundary and timezone stability",
+      "setup": {
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#riskFreeRate": 0,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "simulated",
+          "assets": [
+            {
+              "#simNameInput": "SIMA",
+              "#simReturnInput": 8,
+              "#simStdInput": 15
+            }
+          ],
+          "#startDate": "2015-01-04",
+          "#endDate": "2024-12-28"
+        },
+        "scenarios": [
+          {
+            "name": "W",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "weekly-bottom",
+            "params": {}
+          }
+        ],
+        "timezones": [
+          "UTC",
+          "America/Los_Angeles"
+        ],
+        "instructions": [
+          "Run the whole setup twice from scratch, once in each timezone listed, and report the buy-date list of each. All other observation keys are read from the UTC run."
+        ]
+      },
+      "observe": [
+        {
+          "key": "n_weekly_buys",
+          "what": "Number of purchases in the UTC run."
+        },
+        {
+          "key": "n_sunday_weeks_with_bars",
+          "what": "Runner-computed: the number of distinct Sunday-to-Saturday weeks, in the browser's local timezone, that contain at least one bar of the displayed price series."
+        },
+        {
+          "key": "week_count_residual",
+          "what": "Runner-computed: n_weekly_buys - n_sunday_weeks_with_bars."
+        },
+        {
+          "key": "n_iso_weeks_with_bars",
+          "what": "Runner-computed, diagnostic only: the number of distinct ISO-8601 (Monday-to-Sunday) weeks that contain at least one bar."
+        },
+        {
+          "key": "buys_in_newyear_week_2016",
+          "what": "Number of purchases with a date in 2015-12-27..2016-01-02 inclusive."
+        },
+        {
+          "key": "max_buys_in_any_sunday_week",
+          "what": "Runner-computed: the largest number of purchases falling inside any single Sunday-to-Saturday week."
+        },
+        {
+          "key": "weeks_straddling_year_boundary_with_two_buys",
+          "what": "Runner-computed: the number of Sunday-to-Saturday weeks that contain both a December 31 and a January 1 and hold more than one purchase."
+        },
+        {
+          "key": "tz_utc_buydates",
+          "what": "The full list of purchase dates (YYYY-MM-DD) from the TZ=UTC run."
+        },
+        {
+          "key": "tz_la_buydates",
+          "what": "The full list of purchase dates (YYYY-MM-DD) from the TZ=America/Los_Angeles run."
+        },
+        {
+          "key": "tz_buydates_match",
+          "what": "True when tz_utc_buydates and tz_la_buydates are identical lists, in the same order."
+        },
+        {
+          "key": "tz_first_divergence",
+          "what": "The first date at which the two lists differ, written as 'utc=<date> la=<date>', or null when they do not differ."
+        },
+        {
+          "key": "tz_final_equity_diff",
+          "what": "Runner-computed: the final Equity of the Los Angeles run minus the final Equity of the UTC run."
+        }
+      ]
+    },
+    {
+      "id": "E6",
+      "title": "Unusable closes are skipped, never bought, and never valued",
+      "setup": {
+        "states": {
+          "vol": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#riskFreeRate": 0,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMV",
+                  "#simReturnInput": 0,
+                  "#simStdInput": 100000
+                }
+              ],
+              "#startDate": "2020-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "scenarios": [
+              {
+                "name": "V",
+                "asset": "SIMV",
+                "amount": 1000,
+                "style": "monthly",
+                "params": {
+                  "day_of_month": 15
+                }
+              }
+            ]
+          },
+          "dead": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#riskFreeRate": 0,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMD",
+                  "#simReturnInput": -100,
+                  "#simStdInput": 0
+                }
+              ],
+              "#startDate": "2020-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "scenarios": [
+              {
+                "name": "D",
+                "asset": "SIMD",
+                "amount": 1000,
+                "style": "monthly",
+                "params": {
+                  "day_of_month": 15
+                }
+              }
+            ]
+          },
+          "live": {
+            "requires": "network",
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#riskFreeRate": 0,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "real",
+              "assets": [
+                "SPY",
+                "AAA.AX"
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "scenarios": [
+              {
+                "name": "R",
+                "asset": "AAA.AX",
+                "amount": 1000,
+                "style": "monthly",
+                "params": {
+                  "day_of_month": 15
+                }
+              }
+            ]
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "vol_n_bars",
+          "what": "Number of price rows in the 'vol' state."
+        },
+        {
+          "key": "vol_n_unusable_bars",
+          "what": "Runner-computed: bars of the 'vol' state whose close is null, blank, NaN, non-finite, zero or negative."
+        },
+        {
+          "key": "vol_buys_at_unusable_price",
+          "what": "Runner-computed: purchases in the 'vol' state executed at such a close."
+        },
+        {
+          "key": "vol_final_close_usable",
+          "what": "True when the last bar's close of the 'vol' state is a finite number greater than zero."
+        },
+        {
+          "key": "vol_equity_when_final_close_unusable",
+          "what": "Runner-computed: the reported final Equity of the 'vol' state if vol_final_close_usable is false, otherwise 0."
+        },
+        {
+          "key": "vol_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "vol_js_error_count",
+          "what": "See notes."
+        },
+        {
+          "key": "dead_n_bars",
+          "what": "Number of price rows in the 'dead' state."
+        },
+        {
+          "key": "dead_n_unusable_bars",
+          "what": "As vol_n_unusable_bars, for the 'dead' state."
+        },
+        {
+          "key": "dead_buys_at_unusable_price",
+          "what": "As vol_buys_at_unusable_price, for the 'dead' state."
+        },
+        {
+          "key": "dead_final_close_usable",
+          "what": "As vol_final_close_usable, for the 'dead' state."
+        },
+        {
+          "key": "dead_equity_when_final_close_unusable",
+          "what": "As vol_equity_when_final_close_unusable, for the 'dead' state."
+        },
+        {
+          "key": "dead_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "dead_js_error_count",
+          "what": "See notes."
+        },
+        {
+          "key": "live_buys_at_unusable_price",
+          "what": "As vol_buys_at_unusable_price, for the 'live' state."
+        },
+        {
+          "key": "live_n_unusable_bars",
+          "what": "As vol_n_unusable_bars, for the 'live' state."
+        },
+        {
+          "key": "live_nan_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "E7",
+      "title": "Price-based metrics barely move between styles; the money-weighted one moves",
+      "setup": {
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#riskFreeRate": 0,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "simulated",
+          "assets": [
+            {
+              "#simNameInput": "SIMA",
+              "#simReturnInput": 8,
+              "#simStdInput": 15
+            }
+          ],
+          "#startDate": "2015-01-01",
+          "#endDate": "2024-12-31"
+        },
+        "scenarios": [
+          {
+            "name": "TOP",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "monthly-top",
+            "params": {}
+          },
+          {
+            "name": "BOT",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "monthly-bottom",
+            "params": {}
+          }
+        ],
+        "toggles": {
+          "#showAdvancedToggle": true
+        }
+      },
+      "observe": [
+        {
+          "key": "sharpe_top",
+          "what": "Sharpe of scenario TOP from the Final Summary advanced metrics."
+        },
+        {
+          "key": "sharpe_bot",
+          "what": "Sharpe of scenario BOT."
+        },
+        {
+          "key": "sortino_top",
+          "what": "Sortino of scenario TOP."
+        },
+        {
+          "key": "sortino_bot",
+          "what": "Sortino of scenario BOT."
+        },
+        {
+          "key": "twr_top",
+          "what": "CAGR (TWR) of scenario TOP, as the percentage number shown."
+        },
+        {
+          "key": "twr_bot",
+          "what": "CAGR (TWR) of scenario BOT, as the percentage number shown."
+        },
+        {
+          "key": "mwr_top",
+          "what": "CAGR (MWR) of scenario TOP, as the percentage number shown."
+        },
+        {
+          "key": "mwr_bot",
+          "what": "CAGR (MWR) of scenario BOT, as the percentage number shown."
+        },
+        {
+          "key": "eq_top",
+          "what": "Final value of scenario TOP."
+        },
+        {
+          "key": "eq_bot",
+          "what": "Final value of scenario BOT."
+        },
+        {
+          "key": "sharpe_spread",
+          "what": "Runner-computed: sharpe_bot - sharpe_top."
+        },
+        {
+          "key": "sortino_spread",
+          "what": "Runner-computed: sortino_bot - sortino_top."
+        },
+        {
+          "key": "twr_spread",
+          "what": "Runner-computed: twr_bot - twr_top."
+        },
+        {
+          "key": "mwr_spread",
+          "what": "Runner-computed: the absolute value of mwr_bot - mwr_top."
+        },
+        {
+          "key": "mwr_bot_minus_top",
+          "what": "Runner-computed: mwr_bot - mwr_top."
+        }
+      ]
+    },
+    {
+      "id": "E8",
+      "title": "Annualisation uses the series' own bar frequency and its own elapsed time",
+      "setup": {
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#riskFreeRate": 0,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "simulated",
+          "assets": [
+            {
+              "#simNameInput": "SIMA",
+              "#simReturnInput": 8,
+              "#simStdInput": 15
+            }
+          ],
+          "#startDate": "2015-01-01",
+          "#endDate": "2024-12-31"
+        },
+        "scenarios": [
+          {
+            "name": "A",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "monthly",
+            "params": {
+              "day_of_month": 15
+            }
+          }
+        ],
+        "toggles": {
+          "#showAdvancedToggle": true
+        }
+      },
+      "observe": [
+        {
+          "key": "n_bars",
+          "what": "Number of price rows in the trimmed series."
+        },
+        {
+          "key": "first_bar_date",
+          "what": "Date of the first price row, as YYYY-MM-DD."
+        },
+        {
+          "key": "last_bar_date",
+          "what": "Date of the last price row, as YYYY-MM-DD."
+        },
+        {
+          "key": "elapsed_years",
+          "what": "Runner-computed: (last_bar_date - first_bar_date) in days, divided by 365.25."
+        },
+        {
+          "key": "bars_per_year",
+          "what": "Runner-computed: (n_bars - 1) / elapsed_years."
+        },
+        {
+          "key": "sharpe_reported",
+          "what": "Sharpe from the Final Summary advanced metrics."
+        },
+        {
+          "key": "mean_daily_ret",
+          "what": "Runner-computed from the displayed closes: the arithmetic mean of the simple bar-to-bar returns P[i]/P[i-1] - 1."
+        },
+        {
+          "key": "sd_daily_ret",
+          "what": "Runner-computed from the displayed closes: the sample standard deviation (n-1 denominator) of those same returns."
+        },
+        {
+          "key": "implied_ann_factor",
+          "what": "Runner-computed: (sharpe_reported / (mean_daily_ret / sd_daily_ret)) squared."
+        },
+        {
+          "key": "ann_factor_ratio",
+          "what": "Runner-computed: implied_ann_factor / bars_per_year."
+        },
+        {
+          "key": "implied_ann_factor_over_252",
+          "what": "Runner-computed, diagnostic only: implied_ann_factor / 252."
+        },
+        {
+          "key": "cagr_twr_reported",
+          "what": "CAGR (TWR) from the Final Summary, as the percentage number shown."
+        },
+        {
+          "key": "price_first",
+          "what": "Close of the first price row."
+        },
+        {
+          "key": "price_last",
+          "what": "Close of the last price row."
+        },
+        {
+          "key": "implied_years",
+          "what": "Runner-computed: ln(price_last / price_first) / ln(1 + cagr_twr_reported/100)."
+        },
+        {
+          "key": "implied_years_ratio",
+          "what": "Runner-computed: implied_years / elapsed_years."
+        }
+      ]
+    },
+    {
+      "id": "E9",
+      "title": "No fees anywhere in this tool: every contributed unit of money buys units",
+      "setup": {
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#riskFreeRate": 0,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "simulated",
+          "assets": [
+            {
+              "#simNameInput": "SIMA",
+              "#simReturnInput": 8,
+              "#simStdInput": 15
+            }
+          ],
+          "#startDate": "2015-01-01",
+          "#endDate": "2024-12-31"
+        },
+        "scenarios": [
+          {
+            "name": "F",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "monthly",
+            "params": {
+              "day_of_month": 15
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "fee_control_count",
+          "what": "Number of input controls anywhere in the sidebar (Data, Scenarios and Settings tabs, including the scenario editor) whose visible label matches /fee|brokerage|commission|charge|spread|cost/i."
+        },
+        {
+          "key": "fee_column_count",
+          "what": "Number of columns in the Detailed Breakdown table whose header matches the same pattern."
+        },
+        {
+          "key": "csv_fee_column_count",
+          "what": "Number of columns in the header row of the CSV produced by #downloadBtn whose name matches the same pattern."
+        },
+        {
+          "key": "csv_header",
+          "what": "The header row of that CSV, verbatim."
+        },
+        {
+          "key": "cash_to_units_ratio",
+          "what": "Runner-computed: (sum over purchase rows of the Deposited amount) divided by (sum over the same rows of Units * Price)."
+        },
+        {
+          "key": "nan_count",
+          "what": "See notes."
+        }
+      ]
+    },
+    {
+      "id": "E10",
+      "title": "Yearly contribution increase steps on 365.25-day blocks measured from the series start",
+      "setup": {
+        "settings": {
+          "#randomSeed": 25823952204,
+          "#riskFreeRate": 0,
+          "#currencySymbol": "$"
+        },
+        "data": {
+          "mode": "simulated",
+          "assets": [
+            {
+              "#simNameInput": "SIMA",
+              "#simReturnInput": 8,
+              "#simStdInput": 15
+            }
+          ],
+          "#startDate": "2015-07-01",
+          "#endDate": "2025-06-30"
+        },
+        "scenarios": [
+          {
+            "name": "Y",
+            "asset": "SIMA",
+            "amount": 1000,
+            "style": "monthly",
+            "params": {
+              "day_of_month": 15,
+              "yearly_increase_pct": 10
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "n_buys",
+          "what": "Number of purchases."
+        },
+        {
+          "key": "total_deposited",
+          "what": "Total Deposited at the end of the run."
+        },
+        {
+          "key": "amt_2015_07_15",
+          "what": "Deposited amount of the purchase in July 2015."
+        },
+        {
+          "key": "amt_2016_06_15",
+          "what": "Deposited amount of the purchase in June 2016."
+        },
+        {
+          "key": "amt_2016_07_15",
+          "what": "Deposited amount of the purchase in July 2016."
+        },
+        {
+          "key": "amt_2017_01_15",
+          "what": "Deposited amount of the purchase in January 2017."
+        },
+        {
+          "key": "amt_2017_07_15",
+          "what": "Deposited amount of the purchase in July 2017."
+        },
+        {
+          "key": "amt_2025_06_15",
+          "what": "Deposited amount of the purchase in June 2025."
+        },
+        {
+          "key": "distinct_amount_count",
+          "what": "Runner-computed: the number of distinct Deposited amounts over all purchases, rounded to the nearest cent before counting."
+        },
+        {
+          "key": "first_step_date",
+          "what": "Runner-computed: the date of the earliest purchase whose Deposited amount is larger than the previous purchase's, as YYYY-MM-DD."
+        }
+      ]
+    },
+    {
+      "id": "E11",
+      "title": "Data budget: five loads per device per day, cookie-backed, shared with the portfolio tool",
+      "setup": {
+        "states": {
+          "offline": {
+            "settings": {
+              "#randomSeed": 25823952204,
+              "#riskFreeRate": 0,
+              "#currencySymbol": "$"
+            },
+            "data": {
+              "mode": "simulated",
+              "assets": [
+                {
+                  "#simNameInput": "SIMA",
+                  "#simReturnInput": 8,
+                  "#simStdInput": 15
+                }
+              ],
+              "#startDate": "2015-01-01",
+              "#endDate": "2024-12-31"
+            },
+            "scenarios": [
+              {
+                "name": "S",
+                "asset": "SIMA",
+                "amount": 1000,
+                "style": "monthly",
+                "params": {
+                  "day_of_month": 15
+                }
+              }
+            ],
+            "instructions": [
+              "Read #rateInfo before touching anything, then create the simulated asset and run the simulation, then read #rateInfo again.",
+              "Count every network request the page attempts to an origin other than the page's own while the simulated asset is created and the simulation is run."
+            ]
+          },
+          "live": {
+            "requires": "network",
+            "instructions": [
+              "Start from a browser profile with no cookies for the site.",
+              "Step 1: read the remaining-loads figure in #rateInfo. Step 2: load the single ticker SPY and read it again. Step 3: in one go, load a list of 25 tickers and read it again. Step 4: re-load SPY, which is now cached, and read it again. Step 5: open dcasimulator/portfolio/index.html in the same profile and read its #rateInfo. Step 6: keep loading fresh tickers until a load is refused; report the refusal text. Step 7: report whether a cookie holding the counter exists for the site."
+            ]
+          }
+        }
+      },
+      "observe": [
+        {
+          "key": "offline_rate_info_before",
+          "what": "Text of #rateInfo before the simulated asset is created, verbatim."
+        },
+        {
+          "key": "offline_rate_info_after_sim",
+          "what": "Text of #rateInfo after the simulated asset is created and the simulation has run, verbatim."
+        },
+        {
+          "key": "offline_rate_info_unchanged",
+          "what": "True when those two texts are identical."
+        },
+        {
+          "key": "offline_external_requests_during_sim",
+          "what": "Number of network requests to a foreign origin attempted while the simulated asset was created and the simulation run."
+        },
+        {
+          "key": "offline_nan_count",
+          "what": "See notes."
+        },
+        {
+          "key": "live_remaining_initial",
+          "what": "The remaining-loads number shown in #rateInfo on a fresh profile."
+        },
+        {
+          "key": "live_remaining_after_one_ticker",
+          "what": "The same number after loading one ticker."
+        },
+        {
+          "key": "live_remaining_after_25_ticker_load",
+          "what": "The same number after loading 25 tickers in a single load."
+        },
+        {
+          "key": "live_remaining_after_cached_reload",
+          "what": "The same number after re-loading an already-cached ticker."
+        },
+        {
+          "key": "live_remaining_on_portfolio_page",
+          "what": "The remaining-loads number shown by the portfolio page in the same profile at that moment."
+        },
+        {
+          "key": "live_counter_shared_delta",
+          "what": "Runner-computed: live_remaining_on_portfolio_page - live_remaining_after_cached_reload."
+        },
+        {
+          "key": "live_sixth_load_refused",
+          "what": "True when a load attempted after the budget is exhausted is refused rather than served."
+        },
+        {
+          "key": "live_refusal_text",
+          "what": "The message shown when the load is refused, verbatim."
+        },
+        {
+          "key": "live_cookie_present",
+          "what": "True when a cookie holding the load counter exists for the site after the loads."
+        }
+      ]
+    }
+  ]
+}

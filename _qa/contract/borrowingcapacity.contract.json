@@ -1,0 +1,2419 @@
+{
+  "tool": "borrowingcapacity",
+  "page": "borrowingcapacity/index.html",
+  "notes": [
+    "Every case starts from a clean state: click #resetBtn, then apply the 'baseline' block at the top of this file in the order given, then apply the case's (or the state's) own 'controls' block on top of it. The page's shipped defaults are NOT the baseline: out of the box #adults is 2, #hasCard is ticked with a $10,000 limit and #newPropCosts is $350/mo, so every one of those is restated in the baseline.",
+    "Setting controls. Text inputs with class fmt-num or fmt-pct (#incSimple, #incPayg, #declaredExp, #price, #savings, #prodRate, #termYears, #umiReq, ...) take a plain number string with no separators: set .value, dispatch 'input' and 'change', then blur. Range inputs (#incSplit, #deps, #buffer, #floorRate, #nsrMin, #cardPct, #lvrMax, #dtiCap): set .value then dispatch 'input' and 'change'; a range silently clamps to its own min/max, which two cases rely on. Selects (#city, #adults, #taxYear, #helpMode, #olType, #occupancy, #depositMode, #dutyMode, #dtiBasis): set .value and dispatch 'change'. Checkboxes and toggle switches (#hasCard, #privHealth, #lmiCap, #hasIo, #negGear, ...): click only when the current .checked differs from the requested boolean.",
+    "Segmented controls (#incWhoGroup, #incModeGroup, #debtsModeGroup, #loanModeGroup, #capsModeGroup) are groups of buttons: click the button inside that group whose data-val equals the requested string, and confirm it ends up with class 'active'.",
+    "Quick Start presets are the buttons .quick-start-btn[data-preset='...'] above the tabs; a state that names 'preset' clicks that button and then applies any controls listed after it.",
+    "Some inputs only exist once their tick box or tab mode is on. Apply controls in the order written: the tick boxes (#hasCard, #hasInvest, ...) and the Simple/Detailed segmented controls always come before the fields they reveal.",
+    "A state may carry, in this order: 'preset' (click that Quick Start button first), 'controls' (apply these), 'then_preset' (click a second Quick Start button without resetting) and 'then' (apply these last). 'then' exists so a case can fill a field and then untick the box that revealed it, which is the whole point of B10.",
+    "Observables come from the six KPI cards (#kpiLoan, #kpiBind, #kpiPrice, #kpiRepay, #kpiNsr, #kpiUmi and their .sub lines), the four tables (#capsTableWrap 'The four caps', #buildTableWrap 'Serviceability build-up', #incomeTableWrap 'Income shading', #commTableWrap 'Monthly commitments'), #warnBanner, and the small notes #hemNote, #depositNote, #lvrSimpleNote. Report every money figure as a plain number (strip $ and thousands separators, keep the sign), every percentage as a plain number in percent, and text verbatim. Report a quantity that is genuinely not on the page as null rather than guessing.",
+    "Several observables are derived: they are arithmetic the runner does on figures it has already read, and the key's 'what' states the arithmetic. Never compute finance maths of your own to fill one - only add, subtract or divide numbers the page printed.",
+    "Cases with 'states' are several independent states of the page. Apply each from a clean state (Reset -> baseline -> that state's controls) and prefix the observation keys as the observe list names them."
+  ],
+  "baseline": {
+    "#incWhoGroup": "employee",
+    "#incModeGroup": "simple",
+    "#incSimple": 120000,
+    "#hasInvest": false,
+    "#hasGov": false,
+    "#city": "Perth",
+    "#adults": "1",
+    "#deps": 0,
+    "#declaredExp": 4000,
+    "#privHealth": true,
+    "#taxYear": "2026-27",
+    "#helpMode": "none",
+    "#debtsModeGroup": "detailed",
+    "#hasHomeLoan": false,
+    "#hasCard": false,
+    "#hasPersonal": false,
+    "#hasBnpl": false,
+    "#hasSupport": false,
+    "#hasRefi": false,
+    "#occupancy": "owner",
+    "#rentBoard": 0,
+    "#newPropCosts": 0,
+    "#loanModeGroup": "detailed",
+    "#prodRate": 5.9,
+    "#termYears": 30,
+    "#hasIo": false,
+    "#buffer": 3,
+    "#floorRate": 5.5,
+    "#umiReq": 250,
+    "#nsrMin": 1,
+    "#capsModeGroup": "detailed",
+    "#price": 2000000,
+    "#valuation": 2000000,
+    "#depositMode": "amount",
+    "#savings": 400000,
+    "#dutyMode": "amount",
+    "#dutyAmt": 0,
+    "#otherCosts": 0,
+    "#lmiCap": false,
+    "#lmiRate": 2.5,
+    "#lvrMax": 80,
+    "#dtiCap": 6,
+    "#dtiBasis": "gross"
+  },
+  "cases": [
+    {
+      "id": "N1",
+      "title": "Baseline: single PAYG applicant, no debts, 20% deposit - the build-up adds up line by line",
+      "setup": {
+        "controls": {
+          "#incSimple": 120000,
+          "#declaredExp": 4000,
+          "#price": 900000,
+          "#valuation": 900000,
+          "#savings": 180000,
+          "#dutyMode": "amount",
+          "#dutyAmt": 0,
+          "#otherCosts": 0,
+          "#lvrMax": 80,
+          "#dtiCap": 7
+        }
+      },
+      "observe": [
+        {
+          "key": "capacity",
+          "what": "Borrowing capacity, the value of #kpiLoan."
+        },
+        {
+          "key": "binding",
+          "what": "Binding constraint, the text of #kpiBind."
+        },
+        {
+          "key": "assessment_rate",
+          "what": "The assessment rate the page says it tested you at, in percent (look in #kpiRepaySub, the Serviceability build-up, or the caps table)."
+        },
+        {
+          "key": "assessed_repayment",
+          "what": "Assessed monthly repayment, the value of #kpiRepay."
+        },
+        {
+          "key": "nsr",
+          "what": "NSR, the value of #kpiNsr."
+        },
+        {
+          "key": "umi",
+          "what": "UMI, the value of #kpiUmi, as a monthly dollar figure."
+        },
+        {
+          "key": "max_price",
+          "what": "Max purchase price, the value of #kpiPrice."
+        },
+        {
+          "key": "gross_income_annual",
+          "what": "Total gross annual income before shading, from the total row of the Income shading table."
+        },
+        {
+          "key": "assessable_income_annual",
+          "what": "Total assessed (shaded) annual income, from the total row of the Income shading table."
+        },
+        {
+          "key": "tax_annual",
+          "what": "Total annual tax the Serviceability build-up charges the household: income tax plus Medicare levy plus any surcharge plus any study-loan repayment treated as tax. If the build-up shows one combined tax line, report it; if it shows several tax lines, report their sum; if it shows monthly figures, multiply by 12. Report as a positive number."
+        },
+        {
+          "key": "net_income_monthly",
+          "what": "The monthly after-tax income the Serviceability build-up carries into the surplus calculation. If the build-up is annual, divide by 12."
+        },
+        {
+          "key": "living_monthly",
+          "what": "The monthly living-cost figure the build-up actually uses (the higher of declared expenses and HEM)."
+        },
+        {
+          "key": "commitments_monthly",
+          "what": "Total monthly existing commitments, from the total row of the Monthly commitments table (0 if the table is empty)."
+        },
+        {
+          "key": "buildup_residual",
+          "what": "Derived: net_income_monthly - living_monthly - commitments_monthly - assessed_repayment - umi."
+        },
+        {
+          "key": "capacity_per_repayment",
+          "what": "Derived: capacity / assessed_repayment."
+        },
+        {
+          "key": "caps_serviceability",
+          "what": "The serviceability cap's dollar value in the 'The four caps' table."
+        },
+        {
+          "key": "caps_dti",
+          "what": "The debt-to-income cap's dollar value in the 'The four caps' table."
+        },
+        {
+          "key": "caps_lvr",
+          "what": "The loan-to-value cap's dollar value in the 'The four caps' table."
+        },
+        {
+          "key": "caps_deposit",
+          "what": "The deposit cap's dollar value in the 'The four caps' table."
+        },
+        {
+          "key": "nan_count",
+          "what": "Count of occurrences of 'NaN', 'Infinity', '-0', 'undefined' or 'null' in the visible text of the six KPI cards and the four tables (0 when none)."
+        }
+      ]
+    },
+    {
+      "id": "B1",
+      "title": "Each of the four caps binds in turn, is named correctly, and clears the next cap by more than 5%",
+      "setup": {
+        "states": [
+          {
+            "name": "serv",
+            "controls": {}
+          },
+          {
+            "name": "dti",
+            "controls": {
+              "#incSimple": 300000,
+              "#price": 3000000,
+              "#valuation": 3000000,
+              "#savings": 700000,
+              "#dtiCap": 3
+            }
+          },
+          {
+            "name": "lvr",
+            "controls": {
+              "#incSimple": 300000,
+              "#price": 600000,
+              "#valuation": 600000,
+              "#savings": 200000
+            }
+          },
+          {
+            "name": "dep",
+            "controls": {
+              "#incSimple": 300000,
+              "#savings": 100000
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "cap_serv",
+          "what": "[serv] Borrowing capacity, the value of #kpiLoan."
+        },
+        {
+          "key": "bind_serv",
+          "what": "[serv] Binding constraint, the text of #kpiBind."
+        },
+        {
+          "key": "margin_serv",
+          "what": "[serv] Derived: from the four dollar values in 'The four caps' table, (second smallest - smallest) / smallest x 100, as a percentage."
+        },
+        {
+          "key": "cap_dti",
+          "what": "[dti] Borrowing capacity, the value of #kpiLoan."
+        },
+        {
+          "key": "bind_dti",
+          "what": "[dti] Binding constraint, the text of #kpiBind."
+        },
+        {
+          "key": "margin_dti",
+          "what": "[dti] Derived: from the four dollar values in 'The four caps' table, (second smallest - smallest) / smallest x 100, as a percentage."
+        },
+        {
+          "key": "cap_lvr",
+          "what": "[lvr] Borrowing capacity, the value of #kpiLoan."
+        },
+        {
+          "key": "bind_lvr",
+          "what": "[lvr] Binding constraint, the text of #kpiBind."
+        },
+        {
+          "key": "margin_lvr",
+          "what": "[lvr] Derived: from the four dollar values in 'The four caps' table, (second smallest - smallest) / smallest x 100, as a percentage."
+        },
+        {
+          "key": "cap_dep",
+          "what": "[dep] Borrowing capacity, the value of #kpiLoan."
+        },
+        {
+          "key": "bind_dep",
+          "what": "[dep] Binding constraint, the text of #kpiBind."
+        },
+        {
+          "key": "margin_dep",
+          "what": "[dep] Derived: from the four dollar values in 'The four caps' table, (second smallest - smallest) / smallest x 100, as a percentage."
+        },
+        {
+          "key": "caps_serv_serviceability",
+          "what": "[serv] The serviceability cap's dollar value in the four-caps table."
+        },
+        {
+          "key": "caps_serv_dti",
+          "what": "[serv] The debt-to-income cap's dollar value."
+        },
+        {
+          "key": "caps_serv_lvr",
+          "what": "[serv] The loan-to-value cap's dollar value."
+        },
+        {
+          "key": "caps_serv_deposit",
+          "what": "[serv] The deposit cap's dollar value."
+        },
+        {
+          "key": "caps_dep_serviceability",
+          "what": "[dep] The serviceability cap's dollar value in the four-caps table."
+        },
+        {
+          "key": "caps_dep_dti",
+          "what": "[dep] The debt-to-income cap's dollar value."
+        },
+        {
+          "key": "caps_dep_lvr",
+          "what": "[dep] The loan-to-value cap's dollar value."
+        },
+        {
+          "key": "caps_dep_deposit",
+          "what": "[dep] The deposit cap's dollar value."
+        },
+        {
+          "key": "capacity_per_repayment_serv",
+          "what": "[serv] Derived: cap_serv / #kpiRepay."
+        }
+      ]
+    },
+    {
+      "id": "B2",
+      "title": "Capitalised LMI reduces capacity for a serviceability-bound borrower, and lifts it for the first-home-buyer preset",
+      "setup": {
+        "states": [
+          {
+            "name": "off",
+            "controls": {
+              "#capsModeGroup": "simple",
+              "#lmiCap": false
+            }
+          },
+          {
+            "name": "on",
+            "controls": {
+              "#capsModeGroup": "simple",
+              "#lmiCap": true,
+              "#lmiRate": 2.5
+            }
+          },
+          {
+            "name": "fhb_off",
+            "preset": "first-home",
+            "controls": {
+              "#lmiCap": false
+            }
+          },
+          {
+            "name": "fhb_on",
+            "preset": "first-home",
+            "controls": {
+              "#lmiCap": true
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "cap_off",
+          "what": "[off] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "bind_off",
+          "what": "[off] Binding constraint, #kpiBind."
+        },
+        {
+          "key": "cap_on",
+          "what": "[on] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "bind_on",
+          "what": "[on] Binding constraint, #kpiBind."
+        },
+        {
+          "key": "lmi_delta",
+          "what": "Derived: cap_on - cap_off."
+        },
+        {
+          "key": "lmi_delta_pct",
+          "what": "Derived: (cap_on - cap_off) / cap_off x 100."
+        },
+        {
+          "key": "lvr_note_off",
+          "what": "[off] Text of #lvrSimpleNote, the note that says which LVR ceiling Simple mode is using."
+        },
+        {
+          "key": "lvr_note_on",
+          "what": "[on] Text of #lvrSimpleNote."
+        },
+        {
+          "key": "cap_fhb_off",
+          "what": "[fhb_off] Borrowing capacity after clicking the 'First home buyer, Brisbane' Quick Start button, LMI left off."
+        },
+        {
+          "key": "bind_fhb_off",
+          "what": "[fhb_off] Binding constraint, #kpiBind."
+        },
+        {
+          "key": "cap_fhb_on",
+          "what": "[fhb_on] Borrowing capacity with #lmiCap ticked."
+        },
+        {
+          "key": "fhb_delta",
+          "what": "Derived: cap_fhb_on - cap_fhb_off."
+        }
+      ]
+    },
+    {
+      "id": "B3",
+      "title": "Income split: inert at one applicant, exact at 0%, capped at 50%, never dearer than pooling from $40k to $400k, add-back at the higher earner's rate",
+      "setup": {
+        "states": [
+          {
+            "name": "p40000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 40000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 0
+            }
+          },
+          {
+            "name": "s40000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 40000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 50
+            }
+          },
+          {
+            "name": "p80000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 80000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 0
+            }
+          },
+          {
+            "name": "s80000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 80000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 50
+            }
+          },
+          {
+            "name": "p120000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 120000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 0
+            }
+          },
+          {
+            "name": "s120000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 120000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 50
+            }
+          },
+          {
+            "name": "p160000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 160000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 0
+            }
+          },
+          {
+            "name": "s160000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 160000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 50
+            }
+          },
+          {
+            "name": "p200000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 200000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 0
+            }
+          },
+          {
+            "name": "s200000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 200000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 50
+            }
+          },
+          {
+            "name": "p250000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 250000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 0
+            }
+          },
+          {
+            "name": "s250000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 250000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 50
+            }
+          },
+          {
+            "name": "p300000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 300000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 0
+            }
+          },
+          {
+            "name": "s300000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 300000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 50
+            }
+          },
+          {
+            "name": "p400000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 400000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 0
+            }
+          },
+          {
+            "name": "s400000",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 400000,
+              "#declaredExp": 4500,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#incSplit": 50
+            }
+          },
+          {
+            "name": "one_s0",
+            "controls": {
+              "#adults": "1",
+              "#incSimple": 200000,
+              "#incSplit": 0
+            }
+          },
+          {
+            "name": "one_s50",
+            "controls": {
+              "#adults": "1",
+              "#incSimple": 200000,
+              "#incSplit": 50
+            }
+          },
+          {
+            "name": "two_s0",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 200000,
+              "#incSplit": 0,
+              "#declaredExp": 6000
+            }
+          },
+          {
+            "name": "one_ref",
+            "controls": {
+              "#adults": "1",
+              "#incSimple": 200000,
+              "#declaredExp": 6000
+            }
+          },
+          {
+            "name": "clamp",
+            "controls": {
+              "#adults": "2",
+              "#incSimple": 200000,
+              "#incSplit": 60
+            }
+          },
+          {
+            "name": "ab_one",
+            "controls": {
+              "#adults": "1",
+              "#declaredExp": 6000,
+              "#incModeGroup": "detailed",
+              "#incPayg": 200000,
+              "#shdPayg": 100,
+              "#hasInvest": true,
+              "#incRent": 20000,
+              "#shdRent": 80,
+              "#ipCash": 45000,
+              "#ipDep": 5000,
+              "#negGear": true,
+              "#price": 3000000,
+              "#valuation": 3000000,
+              "#savings": 600000,
+              "#dtiCap": 9
+            }
+          },
+          {
+            "name": "ab_two0",
+            "controls": {
+              "#adults": "2",
+              "#incSplit": 0,
+              "#declaredExp": 6000,
+              "#incModeGroup": "detailed",
+              "#incPayg": 200000,
+              "#shdPayg": 100,
+              "#hasInvest": true,
+              "#incRent": 20000,
+              "#shdRent": 80,
+              "#ipCash": 45000,
+              "#ipDep": 5000,
+              "#negGear": true,
+              "#price": 3000000,
+              "#valuation": 3000000,
+              "#savings": 600000,
+              "#dtiCap": 9
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "tax_p40000",
+          "what": "[p40000] Total annual household tax from the Serviceability build-up (income tax + Medicare + any surcharge + any study-loan repayment taken as tax), split slider at 0%. Sum the tax lines if there are several; x12 if the build-up is monthly."
+        },
+        {
+          "key": "tax_s40000",
+          "what": "[s40000] The same total annual household tax with the split slider at 50%."
+        },
+        {
+          "key": "dtax_40000",
+          "what": "Derived: tax_s40000 - tax_p40000."
+        },
+        {
+          "key": "cap_p40000",
+          "what": "[p40000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "cap_s40000",
+          "what": "[s40000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "dcap_40000",
+          "what": "Derived: cap_s40000 - cap_p40000."
+        },
+        {
+          "key": "tax_p80000",
+          "what": "[p80000] Total annual household tax from the Serviceability build-up (income tax + Medicare + any surcharge + any study-loan repayment taken as tax), split slider at 0%. Sum the tax lines if there are several; x12 if the build-up is monthly."
+        },
+        {
+          "key": "tax_s80000",
+          "what": "[s80000] The same total annual household tax with the split slider at 50%."
+        },
+        {
+          "key": "dtax_80000",
+          "what": "Derived: tax_s80000 - tax_p80000."
+        },
+        {
+          "key": "cap_p80000",
+          "what": "[p80000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "cap_s80000",
+          "what": "[s80000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "dcap_80000",
+          "what": "Derived: cap_s80000 - cap_p80000."
+        },
+        {
+          "key": "tax_p120000",
+          "what": "[p120000] Total annual household tax from the Serviceability build-up (income tax + Medicare + any surcharge + any study-loan repayment taken as tax), split slider at 0%. Sum the tax lines if there are several; x12 if the build-up is monthly."
+        },
+        {
+          "key": "tax_s120000",
+          "what": "[s120000] The same total annual household tax with the split slider at 50%."
+        },
+        {
+          "key": "dtax_120000",
+          "what": "Derived: tax_s120000 - tax_p120000."
+        },
+        {
+          "key": "cap_p120000",
+          "what": "[p120000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "cap_s120000",
+          "what": "[s120000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "dcap_120000",
+          "what": "Derived: cap_s120000 - cap_p120000."
+        },
+        {
+          "key": "tax_p160000",
+          "what": "[p160000] Total annual household tax from the Serviceability build-up (income tax + Medicare + any surcharge + any study-loan repayment taken as tax), split slider at 0%. Sum the tax lines if there are several; x12 if the build-up is monthly."
+        },
+        {
+          "key": "tax_s160000",
+          "what": "[s160000] The same total annual household tax with the split slider at 50%."
+        },
+        {
+          "key": "dtax_160000",
+          "what": "Derived: tax_s160000 - tax_p160000."
+        },
+        {
+          "key": "cap_p160000",
+          "what": "[p160000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "cap_s160000",
+          "what": "[s160000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "dcap_160000",
+          "what": "Derived: cap_s160000 - cap_p160000."
+        },
+        {
+          "key": "tax_p200000",
+          "what": "[p200000] Total annual household tax from the Serviceability build-up (income tax + Medicare + any surcharge + any study-loan repayment taken as tax), split slider at 0%. Sum the tax lines if there are several; x12 if the build-up is monthly."
+        },
+        {
+          "key": "tax_s200000",
+          "what": "[s200000] The same total annual household tax with the split slider at 50%."
+        },
+        {
+          "key": "dtax_200000",
+          "what": "Derived: tax_s200000 - tax_p200000."
+        },
+        {
+          "key": "cap_p200000",
+          "what": "[p200000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "cap_s200000",
+          "what": "[s200000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "dcap_200000",
+          "what": "Derived: cap_s200000 - cap_p200000."
+        },
+        {
+          "key": "tax_p250000",
+          "what": "[p250000] Total annual household tax from the Serviceability build-up (income tax + Medicare + any surcharge + any study-loan repayment taken as tax), split slider at 0%. Sum the tax lines if there are several; x12 if the build-up is monthly."
+        },
+        {
+          "key": "tax_s250000",
+          "what": "[s250000] The same total annual household tax with the split slider at 50%."
+        },
+        {
+          "key": "dtax_250000",
+          "what": "Derived: tax_s250000 - tax_p250000."
+        },
+        {
+          "key": "cap_p250000",
+          "what": "[p250000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "cap_s250000",
+          "what": "[s250000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "dcap_250000",
+          "what": "Derived: cap_s250000 - cap_p250000."
+        },
+        {
+          "key": "tax_p300000",
+          "what": "[p300000] Total annual household tax from the Serviceability build-up (income tax + Medicare + any surcharge + any study-loan repayment taken as tax), split slider at 0%. Sum the tax lines if there are several; x12 if the build-up is monthly."
+        },
+        {
+          "key": "tax_s300000",
+          "what": "[s300000] The same total annual household tax with the split slider at 50%."
+        },
+        {
+          "key": "dtax_300000",
+          "what": "Derived: tax_s300000 - tax_p300000."
+        },
+        {
+          "key": "cap_p300000",
+          "what": "[p300000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "cap_s300000",
+          "what": "[s300000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "dcap_300000",
+          "what": "Derived: cap_s300000 - cap_p300000."
+        },
+        {
+          "key": "tax_p400000",
+          "what": "[p400000] Total annual household tax from the Serviceability build-up (income tax + Medicare + any surcharge + any study-loan repayment taken as tax), split slider at 0%. Sum the tax lines if there are several; x12 if the build-up is monthly."
+        },
+        {
+          "key": "tax_s400000",
+          "what": "[s400000] The same total annual household tax with the split slider at 50%."
+        },
+        {
+          "key": "dtax_400000",
+          "what": "Derived: tax_s400000 - tax_p400000."
+        },
+        {
+          "key": "cap_p400000",
+          "what": "[p400000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "cap_s400000",
+          "what": "[s400000] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "dcap_400000",
+          "what": "Derived: cap_s400000 - cap_p400000."
+        },
+        {
+          "key": "inert_delta",
+          "what": "Derived: capacity in state one_s50 minus capacity in state one_s0 (one applicant, split slider moved from 0% to 50%)."
+        },
+        {
+          "key": "split_row_visible",
+          "what": "[one_s0] Whether the second-applicant share slider block #incSplitRow is visible to the user (true/false): getComputedStyle(...).display !== 'none' and offsetParent !== null."
+        },
+        {
+          "key": "zero_split_delta",
+          "what": "Derived: capacity in state two_s0 minus capacity in state one_ref (two applicants with the split at 0% vs one applicant, same $200,000 and the same declared expenses)."
+        },
+        {
+          "key": "split_clamped_text",
+          "what": "[clamp] The text of #incSplitValue after the range input #incSplit was set to 60."
+        },
+        {
+          "key": "split_clamped_value",
+          "what": "[clamp] The .value of #incSplit after it was set to 60, as a number."
+        },
+        {
+          "key": "addback_delta",
+          "what": "Derived: capacity in state ab_two0 minus capacity in state ab_one (same $200,000 salary and same negatively geared rental, two applicants with the split at 0% vs one applicant)."
+        },
+        {
+          "key": "addback_cap_one",
+          "what": "[ab_one] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "addback_bind_one",
+          "what": "[ab_one] Binding constraint, #kpiBind."
+        }
+      ]
+    },
+    {
+      "id": "B4",
+      "title": "Medicare and HELP are charged on the household's combined figure instead of per taxpayer",
+      "setup": {
+        "states": [
+          {
+            "name": "med",
+            "controls": {
+              "#adults": "2",
+              "#incSplit": 50,
+              "#incSimple": 56000,
+              "#declaredExp": 4500
+            }
+          },
+          {
+            "name": "help_none",
+            "controls": {
+              "#adults": "2",
+              "#incSplit": 50,
+              "#incSimple": 130000,
+              "#declaredExp": 4500,
+              "#helpMode": "none"
+            }
+          },
+          {
+            "name": "help_tax",
+            "controls": {
+              "#adults": "2",
+              "#incSplit": 50,
+              "#incSimple": 130000,
+              "#declaredExp": 4500,
+              "#helpMode": "tax",
+              "#helpThreshold": 67000
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "tax_med",
+          "what": "[med] Total annual household tax from the Serviceability build-up for two applicants sharing $56,000 50/50 (income tax + Medicare levy; private hospital cover is on so there is no surcharge)."
+        },
+        {
+          "key": "tax_help_none",
+          "what": "[help_none] Total annual household tax for two applicants sharing $130,000 50/50 with no study loan."
+        },
+        {
+          "key": "tax_help_tax",
+          "what": "[help_tax] The same total with the study loan set to 'Deduct as tax' and the threshold at $67,000."
+        },
+        {
+          "key": "help_charged",
+          "what": "Derived: tax_help_tax - tax_help_none. This isolates the study-loan repayment the page charged, with every other part of the tax identical."
+        }
+      ]
+    },
+    {
+      "id": "B4-alt",
+      "title": "Same states as B4, read against the combined-figure treatment the page documents",
+      "setup": {
+        "states": [
+          {
+            "name": "med",
+            "controls": {
+              "#adults": "2",
+              "#incSplit": 50,
+              "#incSimple": 56000,
+              "#declaredExp": 4500
+            }
+          },
+          {
+            "name": "help_none",
+            "controls": {
+              "#adults": "2",
+              "#incSplit": 50,
+              "#incSimple": 130000,
+              "#declaredExp": 4500,
+              "#helpMode": "none"
+            }
+          },
+          {
+            "name": "help_tax",
+            "controls": {
+              "#adults": "2",
+              "#incSplit": 50,
+              "#incSimple": 130000,
+              "#declaredExp": 4500,
+              "#helpMode": "tax",
+              "#helpThreshold": 67000
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "tax_med",
+          "what": "[med] Total annual household tax from the Serviceability build-up for two applicants sharing $56,000 50/50 (income tax + Medicare levy; private hospital cover is on so there is no surcharge)."
+        },
+        {
+          "key": "tax_help_none",
+          "what": "[help_none] Total annual household tax for two applicants sharing $130,000 50/50 with no study loan."
+        },
+        {
+          "key": "tax_help_tax",
+          "what": "[help_tax] The same total with the study loan set to 'Deduct as tax' and the threshold at $67,000."
+        },
+        {
+          "key": "help_charged",
+          "what": "Derived: tax_help_tax - tax_help_none. This isolates the study-loan repayment the page charged, with every other part of the tax identical."
+        }
+      ]
+    },
+    {
+      "id": "B5",
+      "title": "HEM overrides declared expenses; declaring nothing must not give zero living costs; HEM scales with city and household",
+      "setup": {
+        "states": [
+          {
+            "name": "d0",
+            "controls": {
+              "#incSimple": 300000,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#declaredExp": 0
+            }
+          },
+          {
+            "name": "d1",
+            "controls": {
+              "#incSimple": 300000,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#declaredExp": 1
+            }
+          },
+          {
+            "name": "d12k",
+            "controls": {
+              "#incSimple": 300000,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#declaredExp": 12000
+            }
+          },
+          {
+            "name": "d0_deps3",
+            "controls": {
+              "#incSimple": 300000,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#declaredExp": 0,
+              "#deps": 3
+            }
+          },
+          {
+            "name": "d0_adl",
+            "controls": {
+              "#incSimple": 300000,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#declaredExp": 0,
+              "#city": "Adelaide"
+            }
+          },
+          {
+            "name": "d0_hob",
+            "controls": {
+              "#incSimple": 300000,
+              "#price": 5000000,
+              "#valuation": 5000000,
+              "#savings": 1500000,
+              "#dtiCap": 9,
+              "#declaredExp": 0,
+              "#city": "Hobart"
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "living_d0",
+          "what": "[d0] The monthly living-cost figure the Serviceability build-up actually uses, with declared expenses entered as 0."
+        },
+        {
+          "key": "cap_d0",
+          "what": "[d0] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "hem_note_d0",
+          "what": "[d0] The text of #hemNote, the small note under the declared-expenses field."
+        },
+        {
+          "key": "living_d1",
+          "what": "[d1] The monthly living-cost figure used, with declared expenses entered as 1."
+        },
+        {
+          "key": "cap_d1",
+          "what": "[d1] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "living_d12k",
+          "what": "[d12k] The monthly living-cost figure used, with declared expenses entered as 12,000."
+        },
+        {
+          "key": "cap_d12k",
+          "what": "[d12k] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "living_deps3",
+          "what": "[d0_deps3] The monthly living-cost figure used, declared 0, three dependants."
+        },
+        {
+          "key": "cap_deps3",
+          "what": "[d0_deps3] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "living_adelaide",
+          "what": "[d0_adl] The monthly living-cost figure used, declared 0, city Adelaide."
+        },
+        {
+          "key": "cap_adelaide",
+          "what": "[d0_adl] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "living_hobart",
+          "what": "[d0_hob] The monthly living-cost figure used, declared 0, city Hobart."
+        },
+        {
+          "key": "cap_hobart",
+          "what": "[d0_hob] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "declared_zero_delta",
+          "what": "Derived: cap_d1 - cap_d0."
+        },
+        {
+          "key": "city_ratio_adelaide",
+          "what": "Derived: living_adelaide / living_d0."
+        },
+        {
+          "key": "city_ratio_hobart",
+          "what": "Derived: living_hobart / living_d0."
+        },
+        {
+          "key": "city_capacity_ratio",
+          "what": "Derived: (cap_hobart - cap_d0) / (cap_d0 - cap_adelaide)."
+        },
+        {
+          "key": "deps_delta",
+          "what": "Derived: cap_deps3 - cap_d0."
+        },
+        {
+          "key": "living_deps_delta",
+          "what": "Derived: living_deps3 - living_d0."
+        }
+      ]
+    },
+    {
+      "id": "B6",
+      "title": "Cards are assessed on the limit, an interest-only existing loan is reassessed over term minus IO, and commitments floor at zero",
+      "setup": {
+        "states": [
+          {
+            "name": "card38",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#price": 3000000,
+              "#valuation": 3000000,
+              "#savings": 700000,
+              "#dtiCap": 9,
+              "#hasCard": true,
+              "#cardLimit": 20000,
+              "#cardPct": 3.8
+            }
+          },
+          {
+            "name": "card30",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#price": 3000000,
+              "#valuation": 3000000,
+              "#savings": 700000,
+              "#dtiCap": 9,
+              "#hasCard": true,
+              "#cardLimit": 20000,
+              "#cardPct": 3.0
+            }
+          },
+          {
+            "name": "card40k",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#price": 3000000,
+              "#valuation": 3000000,
+              "#savings": 700000,
+              "#dtiCap": 9,
+              "#hasCard": true,
+              "#cardLimit": 40000,
+              "#cardPct": 3.8
+            }
+          },
+          {
+            "name": "ol_io",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#price": 3000000,
+              "#valuation": 3000000,
+              "#savings": 700000,
+              "#dtiCap": 9,
+              "#hasHomeLoan": true,
+              "#olBal": 500000,
+              "#olRate": 6.2,
+              "#olTerm": 25,
+              "#olType": "io",
+              "#olIo": 3
+            }
+          },
+          {
+            "name": "ol_pi",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#price": 3000000,
+              "#valuation": 3000000,
+              "#savings": 700000,
+              "#dtiCap": 9,
+              "#hasHomeLoan": true,
+              "#olBal": 500000,
+              "#olRate": 6.2,
+              "#olTerm": 25,
+              "#olType": "pi"
+            }
+          },
+          {
+            "name": "floor",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#price": 3000000,
+              "#valuation": 3000000,
+              "#savings": 700000,
+              "#dtiCap": 9,
+              "#hasCard": true,
+              "#cardLimit": 20000,
+              "#cardPct": 3.8,
+              "#hasRefi": true,
+              "#refiRepay": 5000,
+              "#refiBal": 0
+            }
+          },
+          {
+            "name": "none",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#price": 3000000,
+              "#valuation": 3000000,
+              "#savings": 700000,
+              "#dtiCap": 9
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "comm_card38",
+          "what": "[card38] Total monthly commitments, from the total row of the Monthly commitments table, for a $20,000 card limit assessed at 3.80%/month."
+        },
+        {
+          "key": "comm_card30",
+          "what": "[card30] The same total with the assessed monthly rate slider at 3.00%."
+        },
+        {
+          "key": "comm_card40k",
+          "what": "[card40k] The same total with a $40,000 limit at 3.80%/month."
+        },
+        {
+          "key": "comm_ol_io",
+          "what": "[ol_io] Total monthly commitments for a $500,000 interest-only loan, 6.20%, 25 years left, 3 years of interest only left."
+        },
+        {
+          "key": "comm_ol_pi",
+          "what": "[ol_pi] Total monthly commitments for the same $500,000 loan as principal and interest over 25 years."
+        },
+        {
+          "key": "io_uplift",
+          "what": "Derived: comm_ol_io - comm_ol_pi."
+        },
+        {
+          "key": "comm_floor",
+          "what": "[floor] Total monthly commitments when $5,000/mo of repayments are being refinanced away but only $760/mo of commitments exist."
+        },
+        {
+          "key": "cap_floor",
+          "what": "[floor] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "cap_none",
+          "what": "[none] Borrowing capacity with no debts at all, #kpiLoan."
+        },
+        {
+          "key": "floor_excess",
+          "what": "Derived: cap_floor - cap_none."
+        },
+        {
+          "key": "card_limit_doubling",
+          "what": "Derived: comm_card40k - comm_card38."
+        }
+      ]
+    },
+    {
+      "id": "B7",
+      "title": "The same real deposit stated as cash net of purchase costs and as a share of the price must give the same capacity; negative available funds must not give a negative price",
+      "setup": {
+        "states": [
+          {
+            "name": "cash",
+            "controls": {
+              "#incSimple": 300000,
+              "#declaredExp": 4000,
+              "#price": 1200000,
+              "#valuation": 1200000,
+              "#lvrMax": 80,
+              "#dtiCap": 6,
+              "#depositMode": "amount",
+              "#savings": 232000,
+              "#dutyMode": "pct",
+              "#dutyPct": 4.0,
+              "#otherCosts": 4000
+            }
+          },
+          {
+            "name": "share",
+            "controls": {
+              "#incSimple": 300000,
+              "#declaredExp": 4000,
+              "#price": 1200000,
+              "#valuation": 1200000,
+              "#lvrMax": 80,
+              "#dtiCap": 6,
+              "#depositMode": "pct",
+              "#depositPct": 15,
+              "#dutyMode": "pct",
+              "#dutyPct": 4.0,
+              "#otherCosts": 4000
+            }
+          },
+          {
+            "name": "negative",
+            "controls": {
+              "#incSimple": 300000,
+              "#declaredExp": 4000,
+              "#price": 1200000,
+              "#valuation": 1200000,
+              "#lvrMax": 80,
+              "#dtiCap": 6,
+              "#depositMode": "amount",
+              "#savings": 20000,
+              "#dutyMode": "pct",
+              "#dutyPct": 4.0,
+              "#otherCosts": 4000
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "cap_cash",
+          "what": "[cash] Borrowing capacity, #kpiLoan, with $232,000 of savings and $52,000 of purchase costs taken out of it."
+        },
+        {
+          "key": "cap_share",
+          "what": "[share] Borrowing capacity, #kpiLoan, with the deposit entered as 15% of the price instead."
+        },
+        {
+          "key": "deposit_mode_delta",
+          "what": "Derived: cap_share - cap_cash."
+        },
+        {
+          "key": "bind_cash",
+          "what": "[cash] Binding constraint, #kpiBind."
+        },
+        {
+          "key": "bind_share",
+          "what": "[share] Binding constraint, #kpiBind."
+        },
+        {
+          "key": "price_cash",
+          "what": "[cash] Max purchase price, #kpiPrice."
+        },
+        {
+          "key": "price_share",
+          "what": "[share] Max purchase price, #kpiPrice."
+        },
+        {
+          "key": "price_mode_delta",
+          "what": "Derived: price_share - price_cash."
+        },
+        {
+          "key": "deposit_note_cash",
+          "what": "[cash] The text of #depositNote."
+        },
+        {
+          "key": "cap_negative",
+          "what": "[negative] Borrowing capacity, #kpiLoan, when $20,000 of savings does not cover $52,000 of purchase costs."
+        },
+        {
+          "key": "price_negative",
+          "what": "[negative] Max purchase price, #kpiPrice, in the same state."
+        },
+        {
+          "key": "warn_negative",
+          "what": "[negative] The visible text of #warnBanner, or null if it is empty or hidden."
+        },
+        {
+          "key": "nan_negative",
+          "what": "[negative] Count of 'NaN', 'Infinity', '-0', 'undefined' or 'null' in the visible text of the six KPI cards and the four tables."
+        }
+      ]
+    },
+    {
+      "id": "B8",
+      "title": "LVR ceiling at 0, 80, 95, 99.9 and 100, and a bank valuation below the price",
+      "setup": {
+        "states": [
+          {
+            "name": "v0",
+            "controls": {
+              "#incSimple": 300000,
+              "#declaredExp": 4000,
+              "#price": 1000000,
+              "#valuation": 1000000,
+              "#savings": 600000,
+              "#dtiCap": 9,
+              "#lvrMax": 0
+            }
+          },
+          {
+            "name": "v80",
+            "controls": {
+              "#incSimple": 300000,
+              "#declaredExp": 4000,
+              "#price": 1000000,
+              "#valuation": 1000000,
+              "#savings": 600000,
+              "#dtiCap": 9,
+              "#lvrMax": 80
+            }
+          },
+          {
+            "name": "v95",
+            "controls": {
+              "#incSimple": 300000,
+              "#declaredExp": 4000,
+              "#price": 1000000,
+              "#valuation": 1000000,
+              "#savings": 600000,
+              "#dtiCap": 9,
+              "#lvrMax": 95
+            }
+          },
+          {
+            "name": "v999",
+            "controls": {
+              "#incSimple": 300000,
+              "#declaredExp": 4000,
+              "#price": 1000000,
+              "#valuation": 1000000,
+              "#savings": 600000,
+              "#dtiCap": 9,
+              "#lvrMax": 99.9
+            }
+          },
+          {
+            "name": "v100",
+            "controls": {
+              "#incSimple": 300000,
+              "#declaredExp": 4000,
+              "#price": 1000000,
+              "#valuation": 1000000,
+              "#savings": 600000,
+              "#dtiCap": 9,
+              "#lvrMax": 100
+            }
+          },
+          {
+            "name": "under",
+            "controls": {
+              "#incSimple": 300000,
+              "#declaredExp": 4000,
+              "#price": 1000000,
+              "#valuation": 900000,
+              "#savings": 600000,
+              "#dtiCap": 9,
+              "#lvrMax": 80
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "lvr_text_v0",
+          "what": "[v0] The text of #lvrValue after the range input #lvrMax was set to 0."
+        },
+        {
+          "key": "cap_v0",
+          "what": "[v0] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "cap_v80",
+          "what": "[v80] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "cap_v95",
+          "what": "[v95] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "lvr_text_v999",
+          "what": "[v999] The text of #lvrValue after #lvrMax was set to 99.9."
+        },
+        {
+          "key": "cap_v999",
+          "what": "[v999] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "lvr_text_v100",
+          "what": "[v100] The text of #lvrValue after #lvrMax was set to 100."
+        },
+        {
+          "key": "cap_v100",
+          "what": "[v100] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "nan_v100",
+          "what": "[v100] Count of 'NaN', 'Infinity', '-0', 'undefined' or 'null' in the visible text of the six KPI cards and the four tables."
+        },
+        {
+          "key": "cap_under",
+          "what": "[under] Borrowing capacity with the bank valuation at $900,000 against a $1,000,000 price."
+        },
+        {
+          "key": "caps_lvr_under",
+          "what": "[under] The loan-to-value cap's dollar value in the four-caps table."
+        },
+        {
+          "key": "bind_under",
+          "what": "[under] Binding constraint, #kpiBind."
+        }
+      ]
+    },
+    {
+      "id": "B9",
+      "title": "Degenerate income and rate dials: zero income, fully shaded-away income, a zero assessment rate, and a floor above the product rate",
+      "setup": {
+        "states": [
+          {
+            "name": "zeroinc",
+            "controls": {
+              "#incSimple": 0
+            }
+          },
+          {
+            "name": "allshaded",
+            "controls": {
+              "#incModeGroup": "detailed",
+              "#incPayg": 120000,
+              "#shdPayg": 0
+            }
+          },
+          {
+            "name": "zerorate",
+            "controls": {
+              "#declaredExp": 6000,
+              "#prodRate": 0,
+              "#buffer": 0,
+              "#floorRate": 0
+            }
+          },
+          {
+            "name": "floorwins",
+            "controls": {
+              "#prodRate": 3.0,
+              "#buffer": 0,
+              "#floorRate": 5.5
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "cap_zeroinc",
+          "what": "[zeroinc] Borrowing capacity, #kpiLoan, on zero income."
+        },
+        {
+          "key": "bind_zeroinc",
+          "what": "[zeroinc] Binding constraint, #kpiBind."
+        },
+        {
+          "key": "nan_zeroinc",
+          "what": "[zeroinc] Count of 'NaN', 'Infinity', '-0', 'undefined' or 'null' in the visible text of the six KPI cards and the four tables."
+        },
+        {
+          "key": "cap_allshaded",
+          "what": "[allshaded] Borrowing capacity with $120,000 of salary shaded to 0%."
+        },
+        {
+          "key": "assessable_allshaded",
+          "what": "[allshaded] Total assessed (shaded) annual income from the total row of the Income shading table."
+        },
+        {
+          "key": "nan_allshaded",
+          "what": "[allshaded] Count of 'NaN', 'Infinity', '-0', 'undefined' or 'null' in the visible text of the six KPI cards and the four tables."
+        },
+        {
+          "key": "rate_zerorate",
+          "what": "[zerorate] The assessment rate the page says it used, in percent."
+        },
+        {
+          "key": "cap_zerorate",
+          "what": "[zerorate] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "repay_zerorate",
+          "what": "[zerorate] Assessed repayment, #kpiRepay."
+        },
+        {
+          "key": "factor_zerorate",
+          "what": "Derived: cap_zerorate / repay_zerorate."
+        },
+        {
+          "key": "nan_zerorate",
+          "what": "[zerorate] Count of 'NaN', 'Infinity', '-0', 'undefined' or 'null' in the visible text of the six KPI cards and the four tables."
+        },
+        {
+          "key": "rate_floorwins",
+          "what": "[floorwins] The assessment rate the page says it used, in percent, with a 3.00% product rate, a zero buffer and a 5.50% floor."
+        },
+        {
+          "key": "cap_floorwins",
+          "what": "[floorwins] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "repay_floorwins",
+          "what": "[floorwins] Assessed repayment, #kpiRepay."
+        },
+        {
+          "key": "factor_floorwins",
+          "what": "Derived: cap_floorwins / repay_floorwins."
+        }
+      ]
+    },
+    {
+      "id": "B10",
+      "title": "Progressive disclosure must not leak: unticking a box zeroes its input instead of hiding a live figure",
+      "setup": {
+        "states": [
+          {
+            "name": "clean",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000
+            }
+          },
+          {
+            "name": "card_live",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#hasCard": true,
+              "#cardLimit": 50000,
+              "#cardPct": 3.8
+            }
+          },
+          {
+            "name": "card_untick",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#hasCard": true,
+              "#cardLimit": 50000,
+              "#cardPct": 3.8
+            },
+            "then": {
+              "#hasCard": false
+            }
+          },
+          {
+            "name": "pers_untick",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#hasPersonal": true,
+              "#persRepay": 2000,
+              "#persBal": 100000
+            },
+            "then": {
+              "#hasPersonal": false
+            }
+          },
+          {
+            "name": "inv_untick",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#hasInvest": true,
+              "#incRent": 80000
+            },
+            "then": {
+              "#hasInvest": false
+            }
+          },
+          {
+            "name": "bnpl_untick",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#hasBnpl": true,
+              "#bnplRepay": 500,
+              "#bnplLimit": 10000
+            },
+            "then": {
+              "#hasBnpl": false
+            }
+          },
+          {
+            "name": "ol_untick",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#hasHomeLoan": true,
+              "#olBal": 600000,
+              "#olRate": 6.2,
+              "#olTerm": 25
+            },
+            "then": {
+              "#hasHomeLoan": false
+            }
+          },
+          {
+            "name": "io_untick",
+            "controls": {
+              "#incSimple": 200000,
+              "#declaredExp": 4000,
+              "#hasIo": true,
+              "#newIo": 5
+            },
+            "then": {
+              "#hasIo": false
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "cap_clean",
+          "what": "[clean] Borrowing capacity, #kpiLoan, with every tick box off."
+        },
+        {
+          "key": "cap_card_live",
+          "what": "[card_live] Borrowing capacity with a $50,000 card limit ticked and left on, assessed at 3.80%/month."
+        },
+        {
+          "key": "cap_card_untick",
+          "what": "[card_untick] Borrowing capacity after the same $50,000 limit was entered and the box then unticked."
+        },
+        {
+          "key": "cap_pers_untick",
+          "what": "[pers_untick] Borrowing capacity after $2,000/mo of personal-loan repayments and a $100,000 balance were entered and the box then unticked."
+        },
+        {
+          "key": "cap_inv_untick",
+          "what": "[inv_untick] Borrowing capacity after $80,000 of gross rent was entered and the box then unticked."
+        },
+        {
+          "key": "cap_bnpl_untick",
+          "what": "[bnpl_untick] Borrowing capacity after $500/mo of BNPL instalments and a $10,000 limit were entered and the box then unticked."
+        },
+        {
+          "key": "cap_ol_untick",
+          "what": "[ol_untick] Borrowing capacity after a $600,000 existing home loan was entered and the box then unticked."
+        },
+        {
+          "key": "cap_io_untick",
+          "what": "[io_untick] Borrowing capacity after a 5-year interest-only period was switched on and then off again."
+        },
+        {
+          "key": "leak_card",
+          "what": "Derived: cap_card_untick - cap_clean."
+        },
+        {
+          "key": "leak_pers",
+          "what": "Derived: cap_pers_untick - cap_clean."
+        },
+        {
+          "key": "leak_inv",
+          "what": "Derived: cap_inv_untick - cap_clean."
+        },
+        {
+          "key": "leak_bnpl",
+          "what": "Derived: cap_bnpl_untick - cap_clean."
+        },
+        {
+          "key": "leak_ol",
+          "what": "Derived: cap_ol_untick - cap_clean."
+        },
+        {
+          "key": "leak_io",
+          "what": "Derived: cap_io_untick - cap_clean."
+        },
+        {
+          "key": "live_card_delta",
+          "what": "Derived: cap_card_live - cap_clean."
+        }
+      ]
+    },
+    {
+      "id": "B11",
+      "title": "Quick Start scenarios apply in full, bind where the tooltips say they bind, and never inherit the previous scenario",
+      "setup": {
+        "states": [
+          {
+            "name": "finance-bro",
+            "preset": "finance-bro",
+            "controls": {}
+          },
+          {
+            "name": "couple",
+            "preset": "couple",
+            "controls": {}
+          },
+          {
+            "name": "geoff",
+            "preset": "geoff",
+            "controls": {}
+          },
+          {
+            "name": "first-home",
+            "preset": "first-home",
+            "controls": {}
+          },
+          {
+            "name": "tradie",
+            "preset": "tradie",
+            "controls": {}
+          },
+          {
+            "name": "chain",
+            "preset": "finance-bro",
+            "then_preset": "geoff",
+            "controls": {}
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "cap_finance_bro",
+          "what": "[finance-bro] Borrowing capacity, #kpiLoan, straight after clicking the 'finance-bro' Quick Start button and changing nothing."
+        },
+        {
+          "key": "bind_finance_bro",
+          "what": "[finance-bro] Binding constraint, #kpiBind."
+        },
+        {
+          "key": "city_finance_bro",
+          "what": "[finance-bro] The .value of #city."
+        },
+        {
+          "key": "adults_finance_bro",
+          "what": "[finance-bro] The .value of #adults."
+        },
+        {
+          "key": "gross_finance_bro",
+          "what": "[finance-bro] Total gross annual income before shading, from the total row of the Income shading table."
+        },
+        {
+          "key": "price_finance_bro",
+          "what": "[finance-bro] The number in #price."
+        },
+        {
+          "key": "savings_finance_bro",
+          "what": "[finance-bro] The number in #savings, or null if #depositMode is not 'amount'."
+        },
+        {
+          "key": "nan_finance_bro",
+          "what": "[finance-bro] Count of 'NaN', 'Infinity', '-0', 'undefined' or 'null' in the visible text of the six KPI cards and the four tables."
+        },
+        {
+          "key": "cap_couple",
+          "what": "[couple] Borrowing capacity, #kpiLoan, straight after clicking the 'couple' Quick Start button and changing nothing."
+        },
+        {
+          "key": "bind_couple",
+          "what": "[couple] Binding constraint, #kpiBind."
+        },
+        {
+          "key": "city_couple",
+          "what": "[couple] The .value of #city."
+        },
+        {
+          "key": "adults_couple",
+          "what": "[couple] The .value of #adults."
+        },
+        {
+          "key": "gross_couple",
+          "what": "[couple] Total gross annual income before shading, from the total row of the Income shading table."
+        },
+        {
+          "key": "price_couple",
+          "what": "[couple] The number in #price."
+        },
+        {
+          "key": "savings_couple",
+          "what": "[couple] The number in #savings, or null if #depositMode is not 'amount'."
+        },
+        {
+          "key": "nan_couple",
+          "what": "[couple] Count of 'NaN', 'Infinity', '-0', 'undefined' or 'null' in the visible text of the six KPI cards and the four tables."
+        },
+        {
+          "key": "cap_geoff",
+          "what": "[geoff] Borrowing capacity, #kpiLoan, straight after clicking the 'geoff' Quick Start button and changing nothing."
+        },
+        {
+          "key": "bind_geoff",
+          "what": "[geoff] Binding constraint, #kpiBind."
+        },
+        {
+          "key": "city_geoff",
+          "what": "[geoff] The .value of #city."
+        },
+        {
+          "key": "adults_geoff",
+          "what": "[geoff] The .value of #adults."
+        },
+        {
+          "key": "gross_geoff",
+          "what": "[geoff] Total gross annual income before shading, from the total row of the Income shading table."
+        },
+        {
+          "key": "price_geoff",
+          "what": "[geoff] The number in #price."
+        },
+        {
+          "key": "savings_geoff",
+          "what": "[geoff] The number in #savings, or null if #depositMode is not 'amount'."
+        },
+        {
+          "key": "nan_geoff",
+          "what": "[geoff] Count of 'NaN', 'Infinity', '-0', 'undefined' or 'null' in the visible text of the six KPI cards and the four tables."
+        },
+        {
+          "key": "cap_first_home",
+          "what": "[first-home] Borrowing capacity, #kpiLoan, straight after clicking the 'first-home' Quick Start button and changing nothing."
+        },
+        {
+          "key": "bind_first_home",
+          "what": "[first-home] Binding constraint, #kpiBind."
+        },
+        {
+          "key": "city_first_home",
+          "what": "[first-home] The .value of #city."
+        },
+        {
+          "key": "adults_first_home",
+          "what": "[first-home] The .value of #adults."
+        },
+        {
+          "key": "gross_first_home",
+          "what": "[first-home] Total gross annual income before shading, from the total row of the Income shading table."
+        },
+        {
+          "key": "price_first_home",
+          "what": "[first-home] The number in #price."
+        },
+        {
+          "key": "savings_first_home",
+          "what": "[first-home] The number in #savings, or null if #depositMode is not 'amount'."
+        },
+        {
+          "key": "nan_first_home",
+          "what": "[first-home] Count of 'NaN', 'Infinity', '-0', 'undefined' or 'null' in the visible text of the six KPI cards and the four tables."
+        },
+        {
+          "key": "cap_tradie",
+          "what": "[tradie] Borrowing capacity, #kpiLoan, straight after clicking the 'tradie' Quick Start button and changing nothing."
+        },
+        {
+          "key": "bind_tradie",
+          "what": "[tradie] Binding constraint, #kpiBind."
+        },
+        {
+          "key": "city_tradie",
+          "what": "[tradie] The .value of #city."
+        },
+        {
+          "key": "adults_tradie",
+          "what": "[tradie] The .value of #adults."
+        },
+        {
+          "key": "gross_tradie",
+          "what": "[tradie] Total gross annual income before shading, from the total row of the Income shading table."
+        },
+        {
+          "key": "price_tradie",
+          "what": "[tradie] The number in #price."
+        },
+        {
+          "key": "savings_tradie",
+          "what": "[tradie] The number in #savings, or null if #depositMode is not 'amount'."
+        },
+        {
+          "key": "nan_tradie",
+          "what": "[tradie] Count of 'NaN', 'Infinity', '-0', 'undefined' or 'null' in the visible text of the six KPI cards and the four tables."
+        },
+        {
+          "key": "bonus_finance_bro",
+          "what": "[finance-bro] The number in #incBonus."
+        },
+        {
+          "key": "bonus_shade_finance_bro",
+          "what": "[finance-bro] The number in #shdBonus."
+        },
+        {
+          "key": "incmode_finance_bro",
+          "what": "[finance-bro] The data-val of the button carrying class 'active' inside #incModeGroup."
+        },
+        {
+          "key": "deps_couple",
+          "what": "[couple] The .value of #deps."
+        },
+        {
+          "key": "deps_geoff",
+          "what": "[geoff] The .value of #deps."
+        },
+        {
+          "key": "card_geoff",
+          "what": "[geoff] The number in #cardLimit, or 0 if #hasCard is unticked."
+        },
+        {
+          "key": "help_first_home",
+          "what": "[first-home] The .value of #helpMode."
+        },
+        {
+          "key": "incwho_tradie",
+          "what": "[tradie] The data-val of the active button inside #incWhoGroup."
+        },
+        {
+          "key": "npat_tradie",
+          "what": "[tradie] The number in #incSeNpat."
+        },
+        {
+          "key": "cap_chain",
+          "what": "[chain] Borrowing capacity after clicking 'Finance Bro, Sydney' and then 'Average Geoff, Perth' without resetting in between."
+        },
+        {
+          "key": "bonus_chain",
+          "what": "[chain] The number in #incBonus in that same state."
+        },
+        {
+          "key": "city_chain",
+          "what": "[chain] The .value of #city in that same state."
+        },
+        {
+          "key": "chain_delta",
+          "what": "Derived: cap_chain - cap_geoff."
+        }
+      ]
+    },
+    {
+      "id": "B12",
+      "title": "Three tax years, the LITO taper, the MLS tiers, and a study loan under both treatments",
+      "setup": {
+        "states": [
+          {
+            "name": "y2025",
+            "controls": {
+              "#incSimple": 140000,
+              "#declaredExp": 4000,
+              "#taxYear": "2025-26"
+            }
+          },
+          {
+            "name": "y2026",
+            "controls": {
+              "#incSimple": 140000,
+              "#declaredExp": 4000,
+              "#taxYear": "2026-27"
+            }
+          },
+          {
+            "name": "y2027",
+            "controls": {
+              "#incSimple": 140000,
+              "#declaredExp": 4000,
+              "#taxYear": "2027-28"
+            }
+          },
+          {
+            "name": "lito37500",
+            "controls": {
+              "#declaredExp": 2800,
+              "#umiReq": 0,
+              "#incSimple": 37500
+            }
+          },
+          {
+            "name": "lito45000",
+            "controls": {
+              "#declaredExp": 2800,
+              "#umiReq": 0,
+              "#incSimple": 45000
+            }
+          },
+          {
+            "name": "lito55000",
+            "controls": {
+              "#declaredExp": 2800,
+              "#umiReq": 0,
+              "#incSimple": 55000
+            }
+          },
+          {
+            "name": "lito70000",
+            "controls": {
+              "#declaredExp": 2800,
+              "#umiReq": 0,
+              "#incSimple": 70000
+            }
+          },
+          {
+            "name": "mlson90000",
+            "controls": {
+              "#declaredExp": 4000,
+              "#incSimple": 90000,
+              "#privHealth": true
+            }
+          },
+          {
+            "name": "mlsoff90000",
+            "controls": {
+              "#declaredExp": 4000,
+              "#incSimple": 90000,
+              "#privHealth": false
+            }
+          },
+          {
+            "name": "mlson105000",
+            "controls": {
+              "#declaredExp": 4000,
+              "#incSimple": 105000,
+              "#privHealth": true
+            }
+          },
+          {
+            "name": "mlsoff105000",
+            "controls": {
+              "#declaredExp": 4000,
+              "#incSimple": 105000,
+              "#privHealth": false
+            }
+          },
+          {
+            "name": "mlson130000",
+            "controls": {
+              "#declaredExp": 4000,
+              "#incSimple": 130000,
+              "#privHealth": true
+            }
+          },
+          {
+            "name": "mlsoff130000",
+            "controls": {
+              "#declaredExp": 4000,
+              "#incSimple": 130000,
+              "#privHealth": false
+            }
+          },
+          {
+            "name": "mlson250000",
+            "controls": {
+              "#declaredExp": 4000,
+              "#incSimple": 250000,
+              "#privHealth": true
+            }
+          },
+          {
+            "name": "mlsoff250000",
+            "controls": {
+              "#declaredExp": 4000,
+              "#incSimple": 250000,
+              "#privHealth": false
+            }
+          },
+          {
+            "name": "help_none",
+            "controls": {
+              "#incSimple": 120000,
+              "#declaredExp": 4000,
+              "#helpMode": "none"
+            }
+          },
+          {
+            "name": "help_tax",
+            "controls": {
+              "#incSimple": 120000,
+              "#declaredExp": 4000,
+              "#helpMode": "tax",
+              "#helpThreshold": 67000
+            }
+          },
+          {
+            "name": "help_comm",
+            "controls": {
+              "#incSimple": 120000,
+              "#declaredExp": 4000,
+              "#helpMode": "commitment",
+              "#helpThreshold": 67000
+            }
+          }
+        ]
+      },
+      "observe": [
+        {
+          "key": "tax_y2025",
+          "what": "[y2025] Total annual household tax from the Serviceability build-up on $140,000 of salary, resident tax year 2025-26."
+        },
+        {
+          "key": "cap_y2025",
+          "what": "[y2025] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "tax_y2026",
+          "what": "[y2026] Total annual household tax from the Serviceability build-up on $140,000 of salary, resident tax year 2026-27."
+        },
+        {
+          "key": "cap_y2026",
+          "what": "[y2026] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "tax_y2027",
+          "what": "[y2027] Total annual household tax from the Serviceability build-up on $140,000 of salary, resident tax year 2027-28."
+        },
+        {
+          "key": "cap_y2027",
+          "what": "[y2027] Borrowing capacity, #kpiLoan."
+        },
+        {
+          "key": "dtax_2526_2627",
+          "what": "Derived: tax_y2025 - tax_y2026."
+        },
+        {
+          "key": "dtax_2627_2728",
+          "what": "Derived: tax_y2026 - tax_y2027."
+        },
+        {
+          "key": "dcap_2627_2526",
+          "what": "Derived: cap_y2026 - cap_y2025."
+        },
+        {
+          "key": "dcap_2728_2627",
+          "what": "Derived: cap_y2027 - cap_y2026."
+        },
+        {
+          "key": "tax_lito37500",
+          "what": "[lito37500] Total annual household tax on $37,500 of salary, single applicant, 2026-27."
+        },
+        {
+          "key": "cap_lito37500",
+          "what": "[lito37500] Borrowing capacity, #kpiLoan (declared expenses $2,800/mo, minimum UMI $0)."
+        },
+        {
+          "key": "tax_lito45000",
+          "what": "[lito45000] Total annual household tax on $45,000 of salary, single applicant, 2026-27."
+        },
+        {
+          "key": "cap_lito45000",
+          "what": "[lito45000] Borrowing capacity, #kpiLoan (declared expenses $2,800/mo, minimum UMI $0)."
+        },
+        {
+          "key": "tax_lito55000",
+          "what": "[lito55000] Total annual household tax on $55,000 of salary, single applicant, 2026-27."
+        },
+        {
+          "key": "cap_lito55000",
+          "what": "[lito55000] Borrowing capacity, #kpiLoan (declared expenses $2,800/mo, minimum UMI $0)."
+        },
+        {
+          "key": "tax_lito70000",
+          "what": "[lito70000] Total annual household tax on $70,000 of salary, single applicant, 2026-27."
+        },
+        {
+          "key": "cap_lito70000",
+          "what": "[lito70000] Borrowing capacity, #kpiLoan (declared expenses $2,800/mo, minimum UMI $0)."
+        },
+        {
+          "key": "dcap_lito_45_375",
+          "what": "Derived: cap_lito45000 - cap_lito37500."
+        },
+        {
+          "key": "dcap_lito_55_45",
+          "what": "Derived: cap_lito55000 - cap_lito45000."
+        },
+        {
+          "key": "tax_on90000",
+          "what": "[mlson90000] Total annual household tax on $90,000, private hospital cover ON."
+        },
+        {
+          "key": "tax_off90000",
+          "what": "[mlsoff90000] Total annual household tax on $90,000, private hospital cover OFF."
+        },
+        {
+          "key": "mls_90000",
+          "what": "Derived: tax_off90000 - tax_on90000. This isolates the Medicare Levy Surcharge."
+        },
+        {
+          "key": "mls_rate_90000",
+          "what": "Derived: (tax_off90000 - tax_on90000) / 90000 x 100, the surcharge as a percentage of income."
+        },
+        {
+          "key": "tax_on105000",
+          "what": "[mlson105000] Total annual household tax on $105,000, private hospital cover ON."
+        },
+        {
+          "key": "tax_off105000",
+          "what": "[mlsoff105000] Total annual household tax on $105,000, private hospital cover OFF."
+        },
+        {
+          "key": "mls_105000",
+          "what": "Derived: tax_off105000 - tax_on105000. This isolates the Medicare Levy Surcharge."
+        },
+        {
+          "key": "mls_rate_105000",
+          "what": "Derived: (tax_off105000 - tax_on105000) / 105000 x 100, the surcharge as a percentage of income."
+        },
+        {
+          "key": "tax_on130000",
+          "what": "[mlson130000] Total annual household tax on $130,000, private hospital cover ON."
+        },
+        {
+          "key": "tax_off130000",
+          "what": "[mlsoff130000] Total annual household tax on $130,000, private hospital cover OFF."
+        },
+        {
+          "key": "mls_130000",
+          "what": "Derived: tax_off130000 - tax_on130000. This isolates the Medicare Levy Surcharge."
+        },
+        {
+          "key": "mls_rate_130000",
+          "what": "Derived: (tax_off130000 - tax_on130000) / 130000 x 100, the surcharge as a percentage of income."
+        },
+        {
+          "key": "tax_on250000",
+          "what": "[mlson250000] Total annual household tax on $250,000, private hospital cover ON."
+        },
+        {
+          "key": "tax_off250000",
+          "what": "[mlsoff250000] Total annual household tax on $250,000, private hospital cover OFF."
+        },
+        {
+          "key": "mls_250000",
+          "what": "Derived: tax_off250000 - tax_on250000. This isolates the Medicare Levy Surcharge."
+        },
+        {
+          "key": "mls_rate_250000",
+          "what": "Derived: (tax_off250000 - tax_on250000) / 250000 x 100, the surcharge as a percentage of income."
+        },
+        {
+          "key": "cap_help_none",
+          "what": "[help_none] Borrowing capacity on $120,000 with no study loan."
+        },
+        {
+          "key": "cap_help_tax",
+          "what": "[help_tax] Borrowing capacity with the study loan deducted as tax."
+        },
+        {
+          "key": "cap_help_comm",
+          "what": "[help_comm] Borrowing capacity with the study loan treated as a commitment."
+        },
+        {
+          "key": "nsr_help_tax",
+          "what": "[help_tax] NSR, #kpiNsr."
+        },
+        {
+          "key": "nsr_help_comm",
+          "what": "[help_comm] NSR, #kpiNsr."
+        },
+        {
+          "key": "comm_help_tax",
+          "what": "[help_tax] Total monthly commitments from the Monthly commitments table."
+        },
+        {
+          "key": "comm_help_comm",
+          "what": "[help_comm] Total monthly commitments from the Monthly commitments table."
+        },
+        {
+          "key": "help_cap_delta",
+          "what": "Derived: cap_help_comm - cap_help_tax."
+        },
+        {
+          "key": "help_cost",
+          "what": "Derived: cap_help_none - cap_help_tax."
+        },
+        {
+          "key": "help_nsr_delta",
+          "what": "Derived: nsr_help_tax - nsr_help_comm."
+        }
+      ]
+    }
+  ]
+}
