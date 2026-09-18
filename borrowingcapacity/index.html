@@ -206,7 +206,7 @@
     <div class="field-group" data-adv="inc" data-who="self">
       <div class="group-title">Self-employed</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Two year average NPAT <i class="tip-icon" data-tip="Average net profit after tax of the business across the last two financial years.">?</i></span></div>
+        <div class="field-label">Two year average NPAT</div>
         <div class="inline-row">
           <div class="currency-wrap grow"><span class="prefix">$</span><input class="currency-input fmt-num" id="incSeNpat" type="text" inputmode="decimal" value="0"></div>
           <div class="currency-wrap shade-wrap"><input class="currency-input has-suffix fmt-pct" id="shdSe" type="text" inputmode="decimal" value="100"><span class="suffix">%</span></div>
@@ -537,7 +537,7 @@
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="umiReq" type="text" inputmode="decimal" value="250"><span class="suffix" style="right:11px">/mo</span></div>
       </div>
       <div class="slider-block">
-        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Minimum NSR <i class="tip-icon" data-tip="Net Service Ratio, assessed income divided by all outgoings. It must clear 1.00, and some lenders want 1.05 to 1.10. This is the secondary sanity check, UMI is the primary test.">?</i></span></div><div class="slider-value" id="nsrValue">1.00</div></div>
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Minimum NSR <i class="tip-icon" data-tip="It must clear 1.00, and some lenders want 1.05 to 1.10. This is the secondary sanity check, UMI is the primary test.">?</i></span></div><div class="slider-value" id="nsrValue">1.00</div></div>
         <input id="nsrMin" type="range" min="1" max="1.2" step="0.01" value="1">
       </div>
     </div>
@@ -611,7 +611,7 @@
     <div class="field-group" data-adv="caps">
       <div class="group-title">Debt to income</div>
       <div class="slider-block">
-        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">DTI cap <i class="tip-icon" data-tip="Total debt divided by gross income. Above 6.0 the loan is reportable to APRA as high DTI, and many lenders cut to 4.5 to 5.5 once the LVR is high.">?</i></span></div><div class="slider-value" id="dtiValue">6.00×</div></div>
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">DTI cap <i class="tip-icon" data-tip="Many lenders cut this well below the 6.0 reporting line, to 4.5 or 5.5, once the LVR is high.">?</i></span></div><div class="slider-value" id="dtiValue">6.00×</div></div>
         <input id="dtiCap" type="range" min="3" max="9" step="0.1" value="6">
       </div>
       <div class="field-row">
@@ -637,8 +637,8 @@
     <div class="metric card"><div class="label"><span class="tip-wrap">Binding constraint <i class="tip-icon" data-tip="The cap that is actually holding you back. Fix this one first, the other three have slack.">?</i></span></div><div class="value" id="kpiBind">—</div><div class="sub" id="kpiBindSub"></div></div>
     <div class="metric card"><div class="label"><span class="tip-wrap">Max purchase price <i class="tip-icon" data-tip="Capacity plus the deposit left over. Purchase costs are held at the price you entered, so in percentage duty mode this is slightly conservative. Re-enter this figure as the price to converge.">?</i></span></div><div class="value" id="kpiPrice">—</div><div class="sub" id="kpiPriceSub"></div></div>
     <div class="metric card"><div class="label"><span class="tip-wrap">Assessed repayment <i class="tip-icon" data-tip="Monthly repayment on the capacity figure at the assessment rate, not at the rate you were quoted.">?</i></span></div><div class="value" id="kpiRepay">—</div><div class="sub" id="kpiRepaySub"></div></div>
-    <div class="metric card"><div class="label"><span class="tip-wrap">NSR <i class="tip-icon" data-tip="Net Service Ratio at the capacity figure. Assessed income divided by every outgoing including the new repayment.">?</i></span></div><div class="value" id="kpiNsr">—</div><div class="sub" id="kpiNsrSub"></div></div>
-    <div class="metric card"><div class="label"><span class="tip-wrap">UMI <i class="tip-icon" data-tip="Uncommitted Monthly Income at the capacity figure. What is left after living costs, commitments and the new repayment.">?</i></span></div><div class="value" id="kpiUmi">—</div><div class="sub" id="kpiUmiSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">NSR <i class="tip-icon" data-tip="Measured at the capacity figure, so the new repayment is already counted in the outgoings.">?</i></span></div><div class="value" id="kpiNsr">—</div><div class="sub" id="kpiNsrSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">UMI <i class="tip-icon" data-tip="Measured at the capacity figure, so the new repayment is already taken out.">?</i></span></div><div class="value" id="kpiUmi">—</div><div class="sub" id="kpiUmiSub"></div></div>
   </section>
 
   <section class="chart-card card">

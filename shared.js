@@ -690,8 +690,10 @@
     '*': {
       CAGR: { en: ['Compound Annual Growth Rate', 'the one yearly rate that turns the starting value into the ending value'],
               id: ['Compound Annual Growth Rate', 'satu tarif tahunan yang mengubah nilai awal menjadi nilai akhir'] },
-      ETF:  ['Exchange-Traded Fund', 'a basket of assets that trades on an exchange like a single share'],
-      ROI:  ['Return on Investment', 'profit measured as a share of what you put in'],
+      ETF:  { en: ['Exchange-Traded Fund', 'a basket of assets that trades on an exchange like a single share'],
+              id: ['Exchange-Traded Fund', 'sekeranjang aset yang diperdagangkan di bursa layaknya satu saham'] },
+      ROI:  { en: ['Return on Investment', 'profit measured as a share of what you put in'],
+              id: ['Return on Investment', 'keuntungan diukur sebagai porsi dari modal yang ditanam'] },
       /* Not an acronym, but the same problem: it sits next to a rate on half the
          tools and is never spelled out anywhere on the page. */
       'p.a.': { en: ['per annum', 'per year, so the rate is stated on a yearly basis'],
@@ -725,6 +727,7 @@
     dcasimulator: {
       ADX:   ['Average Directional Index', 'how strong a trend is, whichever way it points'],
       DCA:   ['Dollar-Cost Averaging', 'investing a set amount on a set schedule instead of all at once'],
+      EMA:   ['Exponential Moving Average', 'a moving average that weights recent prices most, so it turns faster than a plain one'],
       ESG:   ['Environmental, Social and Governance', 'a screen some funds apply to what they are allowed to hold'],
       IRR:   ['Internal Rate of Return', 'the annual rate at which your deposits and the final value balance out'],
       MA:    ['Moving Average', 'the average price over a rolling window, which smooths the day-to-day noise out of a trend'],
@@ -758,7 +761,8 @@
     rentvsownhouse: {
       RTB:   { en: ['Rent-Then-Buy', 'the third scenario: rent first, then buy partway through the run'],
                id: ['Rent-Then-Buy', 'skenario ketiga: menyewa dulu, lalu membeli di tengah periode'] },
-      RPPI:  ['Residential Property Price Index', 'the official measure of how fast house prices move'],
+      RPPI:  { en: ['Residential Property Price Index', 'the official measure of how fast house prices move'],
+               id: ['Residential Property Price Index', 'Indeks Harga Properti Residensial, ukuran resmi laju pergerakan harga rumah'] },
       DP:    { en: ['Down Payment', 'the deposit paid upfront, the rest is borrowed'],
                id: ['Down Payment', 'uang muka yang dibayar di depan, sisanya dipinjam'] },
       KPR:   { en: ['Kredit Pemilikan Rumah', 'the Indonesian home loan'],
