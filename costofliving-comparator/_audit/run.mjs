@@ -16,6 +16,8 @@
 //   C6  simple mode: the ⇆ swap button turns the comparison around — cities,
 //       pickers and salaries change sides, the custom FX rate is inverted, and
 //       the monthly expense adopts the estimate shown for the destination
+//   C7  detailed mode layout: no absolutely positioned element may escape to
+//       the page, and every currency tag must sit inside its own cell
 // Run: node run.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
@@ -334,6 +336,46 @@ function expected(fx){
   const disabledEmpty = await page.evaluate(()=>document.getElementById('swapCities').disabled);
   check('C6d the button is disabled once both cities are cleared', disabledEmpty===true,
     `disabled=${disabledEmpty}`);
+}
+
+// ── C7: layout — no absolutely positioned element may escape to the page ──
+// A position:absolute rule applied outside a positioned wrapper resolves
+// against the initial containing block, so every such element lands on one
+// spot over the page. The destination currency tags did exactly that.
+{
+  await page.evaluate(()=>{ document.querySelector('#modeGroup .seg-btn[data-val="detailed"]').click(); });
+  await page.waitForTimeout(120);
+  await pickCity('dtFromPicker','Jakarta|Indonesia');
+  await pickCity('dtToPicker0','Perth|Australia');
+  await page.evaluate(()=>document.getElementById('addCityBtn').click());
+  await page.waitForTimeout(120);
+  await pickCity('dtToPicker1','Singapore|Singapore');
+  await page.evaluate(()=>document.getElementById('addRowBtn').click());
+  await page.waitForTimeout(150);
+  const escaped = await page.evaluate(()=>{
+    const out=[];
+    document.querySelectorAll('*').forEach(el=>{
+      const cs=getComputedStyle(el);
+      if(cs.position!=='absolute') return;
+      if(cs.display==='none' || el.offsetWidth+el.offsetHeight===0) return;
+      const op=el.offsetParent;               // null / body = no positioned ancestor
+      if(op && op!==document.body && op!==document.documentElement) return;
+      out.push(`${el.tagName.toLowerCase()}.${String(el.className)} "${(el.textContent||'').trim().slice(0,12)}"`);
+    });
+    return out;
+  });
+  // Tags must sit inside their cell, not over the page.
+  const tagsPlaced = await page.evaluate(()=>{
+    const tags=[...document.querySelectorAll('.curr-tag')];
+    return tags.length>0 && tags.every(t=>{
+      const cell=t.closest('td,th'); if(!cell) return false;
+      const a=t.getBoundingClientRect(), b=cell.getBoundingClientRect();
+      return a.left>=b.left-1 && a.right<=b.right+1 && a.top>=b.top-1 && a.bottom<=b.bottom+1;
+    });
+  });
+  check('C7 no absolutely positioned element escapes its wrapper, currency tags sit in their cell',
+    escaped.length===0 && tagsPlaced,
+    escaped.length ? `escaped: ${escaped.join(', ')}` : `all currency tags inside their own cell (${tagsPlaced})`);
 }
 
 await browser.close();
