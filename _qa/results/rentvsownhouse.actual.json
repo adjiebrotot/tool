@@ -1,6 +1,6 @@
 {
   "tool": "rentvsownhouse",
-  "ran_utc": "2026-09-18T14:13:20.116Z",
+  "ran_utc": "2026-09-19T04:10:40.932Z",
   "page_errors": [],
   "cases": {
     "N1": {
@@ -213,6 +213,83 @@
       },
       "notes": "The RTB conservation residuals are reported null: the export does not expose the purchase-year deposit and setup outlay as its own column, so the residual cannot be assembled from page figures without assuming the transition formula, which the contract forbids. Every other RTB observable is read from the page's RTB CSV."
     },
+    "R9": {
+      "observed": {
+        "A_sensOwnNetEquityY30": 3720000,
+        "A_ownNetEquityY30MainMinusSens": 2870,
+        "A_rentNetEquityY30MainMinusSens": -3035,
+        "A_deltaY30MainMinusSens": -4095,
+        "A_ownCashY30MainMinusSens": 316,
+        "A_rentCashY30MainMinusSens": -3035,
+        "A_ownCostY30MainMinusSens": 364,
+        "A_rentCostY30MainMinusSens": 4534,
+        "A_ownNetEquityY10MainMinusSens": -473,
+        "A_rentNetEquityY10MainMinusSens": -106,
+        "A_sensYear100MinusYear30OwnNetEquity": 0,
+        "B_sensOwnNetEquityY30MinusMainMid": null,
+        "B_sensRentNetEquityY30MinusMainMid": null,
+        "B_sensOwnNetEquityY30MinusMainLowAbs": null,
+        "B_sensOwnNetEquityY30MinusMainHighAbs": null,
+        "sensHasRtbRow": false,
+        "_applied": {
+          "horizon": "30",
+          "riskFreeRate": "4.50",
+          "initialCash": "0",
+          "monthlyBudget": "0",
+          "monthlyBudgetIncrease": "0.00",
+          "propertyPrice": "800,000",
+          "downPaymentPct": "20.00",
+          "mortgageRate": "6.00",
+          "mortgageTerm": "30",
+          "houseGrowth": "5.00",
+          "setupCost": "32,000",
+          "ownOngoingCost": "6,000",
+          "ownOngoingInflation": "0.00",
+          "rentAmount": "2,800",
+          "rentInflation": "3.00",
+          "rentOngoingCost": "1,200",
+          "rentOngoingInflation": "0.00"
+        },
+        "_mainY30": {
+          "ownNE30": 3722870,
+          "rentNE30": 1136965,
+          "ownNE10": 767527,
+          "rentNE10": 457894,
+          "ownCash30": 265316,
+          "rentCash30": 1136965,
+          "ownCost30": 953364,
+          "rentCost30": 1634534
+        },
+        "_sens": {
+          "ne30": {
+            "own": "$3.72m",
+            "rent": "$1.14m",
+            "delta": "+$2.59m"
+          },
+          "ne10": {
+            "own": "$768k",
+            "rent": "$458k",
+            "delta": "+$310k"
+          },
+          "cash30": {
+            "own": "$265k",
+            "rent": "$1.14m",
+            "delta": "−$872k"
+          },
+          "cost30": {
+            "own": "$953k",
+            "rent": "$1.63m",
+            "delta": "−$681k"
+          },
+          "ne100": {
+            "own": "$3.72m",
+            "rent": "$1.14m",
+            "delta": "+$2.59m"
+          }
+        }
+      },
+      "notes": "State A only (both pages at the baseline). The B states need a floating rate band built in the sensitivity page's rate-period cells, which this runner does not construct, so those keys are null. Main-page figures come from its CSV export; sensitivity figures from its out-own / out-rent / out-delta rows."
+    },
     "R4": {
       "error": "Needs detailed mortgage mode plus a constructed rate-period row (interest-only radio, #ratePeriodRows editing). Not implemented by this runner; state B alone would be misleading without A."
     },
@@ -221,9 +298,6 @@
     },
     "R6": {
       "error": "Needs repeated construction and mutation of .rate-period-row entries (past-term, overlapping, reversed bounds, shortened term, backwards band). Not implemented by this runner."
-    },
-    "R9": {
-      "error": "Needs the /sensitivity/ page driven to mirror the baseline field by field through its dynamic table.dt scenario column. Not implemented by this runner."
     },
     "R12": {
       "error": "Needs the /id/ page driven through the same baseline and compared field by field. Not implemented by this runner."

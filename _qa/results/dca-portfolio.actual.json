@@ -1,0 +1,127 @@
+{
+  "tool": "dca-portfolio",
+  "ran_utc": "2026-09-19T04:08:56.128Z",
+  "page_errors": [],
+  "cases": {
+    "N1": {
+      "observed": {
+        "n_topups": 120,
+        "total_deposited": 120000,
+        "deposit_ratio": 1,
+        "n_rebalances": 40,
+        "max_w_a_dev_after_rebal": null,
+        "min_cash": 0,
+        "min_units_a": null,
+        "min_units_b": null,
+        "final_value": 180922,
+        "value_identity_ratio": null,
+        "topups_off_schedule": 0,
+        "nan_count": 0,
+        "js_error_count": 0
+      },
+      "notes": "Read from the Breakdown Table, which carries one row per event day. Weight-deviation and unit-level observables are null: the table reports asset values, not units or post-rebalance weights, and this runner does not derive them."
+    },
+    "P1": {
+      "observed": {
+        "cash_n_deploys": 451,
+        "cash_sameBar_deploy_count": 59,
+        "cash_min_lag_bars": 0,
+        "cash_unmatched_deploys": 3,
+        "_trigger_cards": [
+          {
+            "name": "▾\n        SIMA\n        i",
+            "hasType": true,
+            "options": [
+              "at-topup",
+              "pct",
+              "tech-rsi",
+              "tech-ma-cross",
+              "tech-bollinger",
+              "tech-macd-cross",
+              "tech-macd-hist",
+              "tech-adx"
+            ]
+          },
+          {
+            "name": "▾\n        SIMB\n        i",
+            "hasType": true,
+            "options": [
+              "at-topup",
+              "pct",
+              "tech-rsi",
+              "tech-ma-cross",
+              "tech-bollinger",
+              "tech-macd-cross",
+              "tech-macd-hist",
+              "tech-adx"
+            ]
+          }
+        ],
+        "_trigger_applied": [
+          {
+            "name": "▾\n        SIMA\n        i",
+            "set": "pct"
+          },
+          {
+            "name": "▾\n        SIMB\n        i",
+            "set": "at-topup"
+          }
+        ],
+        "_n_signal_bars": 59,
+        "asset_n_deploys": null,
+        "asset_sameBar_deploy_count": null,
+        "asset_min_lag_bars": null,
+        "asset_reserve_sales_on_signal_bar": null,
+        "asset_min_sale_lag_bars": null,
+        "nan_count": 0
+      },
+      "notes": "Cash-reserve state only. Deploy dates come from the Breakdown Table rows tagged Trigger, mapped to bar indices via the price chart labels; the signal bars are recomputed here from the displayed SIMA closes using the causal previous-top rule (anchor reads only bars before the one being tested). The holding-reserve state is not driven, so its keys are null."
+    },
+    "P5": {
+      "observed": {
+        "single_final_value": 192883,
+        "pf_final_value": 203701,
+        "value_diff": -10818,
+        "value_rel_diff": -0.05310725033259532,
+        "single_deposited": 120000,
+        "pf_deposited": 120000,
+        "deposit_diff": 0,
+        "single_n_buys": 120,
+        "pf_n_topups": 120,
+        "buy_count_diff": 0,
+        "buy_date_diff_count": 0,
+        "price_series_match": false,
+        "pf_final_cash": 0,
+        "nan_count": 0
+      },
+      "notes": "Both pages driven with the same seed, asset definition, window, amount and schedule. The single-asset final value is the largest currency figure in its summary tile."
+    },
+    "P2": {
+      "error": "Not implemented by this runner."
+    },
+    "P3": {
+      "error": "Requires two real market calendars via the live market-data worker, unreachable from this sandbox."
+    },
+    "P4": {
+      "error": "Not implemented by this runner."
+    },
+    "P6": {
+      "error": "Not implemented by this runner."
+    },
+    "P7": {
+      "error": "Not implemented by this runner."
+    },
+    "P8": {
+      "error": "Not implemented by this runner."
+    },
+    "P9": {
+      "error": "Not implemented by this runner."
+    },
+    "P10": {
+      "error": "Not implemented by this runner."
+    },
+    "P11": {
+      "error": "Not implemented by this runner."
+    }
+  }
+}

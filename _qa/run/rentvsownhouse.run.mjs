@@ -526,12 +526,112 @@ await runCase(cases, 'R7', async () => {
 });
 cases['R7'].notes = "The RTB conservation residuals are reported null: the export does not expose the purchase-year deposit and setup outlay as its own column, so the residual cannot be assembled from page figures without assuming the transition formula, which the contract forbids. Every other RTB observable is read from the page's RTB CSV.";
 
-// R4, R5, R6, R9, R12 need machinery this runner does not implement.
+/* ── R9: the sensitivity page is a second copy of the model ─────────────── */
+
+await runCase(cases, 'R9', async () => {
+  // Main page first, at the baseline, reading Net Equity / Cash / Accum. Cost.
+  await goto('rentvsownhouse/index.html');
+  await baseline();
+  const own = await csv('own'), rent = await csv('rent');
+  const main = {
+    ownNE30: rowAt(own, 30)?.Net_Equity, rentNE30: rowAt(rent, 30)?.Net_Equity,
+    ownNE10: rowAt(own, 10)?.Net_Equity, rentNE10: rowAt(rent, 10)?.Net_Equity,
+    ownCash30: rowAt(own, 30)?.End_Cash, rentCash30: rowAt(rent, 30)?.End_Cash,
+    ownCost30: rowAt(own, 30)?.Accum_Cost, rentCost30: rowAt(rent, 30)?.Accum_Cost,
+  };
+
+  // Sensitivity page: one scenario column carrying the same inputs.
+  await goto('rentvsownhouse/sensitivity/index.html');
+  await page.waitForTimeout(400);
+  // Keep exactly one scenario.
+  for (let i = 0; i < 12; i++) {
+    const n = await page.evaluate(() => {
+      const cols = document.querySelectorAll('#tableWrap table.dt th.scen-th').length;
+      if (cols <= 1) return cols;
+      const rm = document.querySelector('.btn-remove');
+      if (!rm) return -1;
+      rm.click();
+      return document.querySelectorAll('#tableWrap table.dt th.scen-th').length;
+    });
+    if (n <= 1) break;
+  }
+  await page.waitForTimeout(250);
+  const applied = await page.evaluate(vals => {
+    const out = {};
+    for (const [k, v] of Object.entries(vals)) {
+      const el = document.querySelector(`.param-input[data-key="${k}"], .param-select[data-key="${k}"], .param-bool[data-key="${k}"]`);
+      if (!el) { out[k] = 'missing'; continue; }
+      if (el.type === 'checkbox') { if (el.checked !== !!v) el.click(); out[k] = el.checked; continue; }
+      el.value = String(v);
+      ['input', 'change', 'blur'].forEach(t => el.dispatchEvent(new Event(t, { bubbles: true })));
+      out[k] = el.value;
+    }
+    return out;
+  }, {
+    horizon: 30, riskFreeRate: 4.5, initialCash: '', monthlyBudget: '', monthlyBudgetIncrease: 0,
+    propertyPrice: 800000, downPaymentPct: 20, mortgageRate: 6, mortgageTerm: 30, houseGrowth: 5,
+    setupCost: 32000, ownOngoingCost: 6000, ownOngoingInflation: 0,
+    rentAmount: 2800, rentInflation: 3, rentOngoingCost: 1200, rentOngoingInflation: 0,
+  });
+  await page.waitForTimeout(600);
+
+  const readOut = async (metric, year) => {
+    await page.evaluate(m => {
+      const b = [...document.querySelectorAll('#metricGroup [data-metric]')].find(x => x.dataset.metric === m);
+      if (b) b.click();
+    }, metric);
+    await set('yearInput', year);
+    await page.waitForTimeout(400);
+    return page.evaluate(() => {
+      const pick = cls => {
+        const tr = document.querySelector('#tableWrap table.dt tr.' + cls);
+        if (!tr) return null;
+        const td = tr.querySelector('td.scen-td');
+        return td ? td.textContent.trim() : null;
+      };
+      return { own: pick('out-own'), rent: pick('out-rent'), delta: pick('out-delta') };
+    });
+  };
+
+  const ne30 = await readOut('netEquity', 30);
+  const ne10 = await readOut('netEquity', 10);
+  const cash30 = await readOut('cash', 30);
+  const cost30 = await readOut('cost', 30);
+  const ne100 = await readOut('netEquity', 100);
+  const hasRtb = await page.evaluate(() =>
+    !!document.querySelector('#tableWrap table.dt tr.out-rtb') ||
+    /rent.?then.?buy/i.test(document.getElementById('tableWrap')?.textContent || ''));
+
+  const sensOwnNE30 = money(ne30.own), sensRentNE30 = money(ne30.rent);
+  return {
+    A_sensOwnNetEquityY30: sensOwnNE30,
+    A_ownNetEquityY30MainMinusSens: (main.ownNE30 ?? 0) - sensOwnNE30,
+    A_rentNetEquityY30MainMinusSens: (main.rentNE30 ?? 0) - sensRentNE30,
+    A_deltaY30MainMinusSens: ((main.ownNE30 ?? 0) - (main.rentNE30 ?? 0)) - money(ne30.delta),
+    A_ownCashY30MainMinusSens: (main.ownCash30 ?? 0) - money(cash30.own),
+    A_rentCashY30MainMinusSens: (main.rentCash30 ?? 0) - money(cash30.rent),
+    A_ownCostY30MainMinusSens: (main.ownCost30 ?? 0) - money(cost30.own),
+    A_rentCostY30MainMinusSens: (main.rentCost30 ?? 0) - money(cost30.rent),
+    A_ownNetEquityY10MainMinusSens: (main.ownNE10 ?? 0) - money(ne10.own),
+    A_rentNetEquityY10MainMinusSens: (main.rentNE10 ?? 0) - money(ne10.rent),
+    A_sensYear100MinusYear30OwnNetEquity: money(ne100.own) - sensOwnNE30,
+    B_sensOwnNetEquityY30MinusMainMid: null,
+    B_sensRentNetEquityY30MinusMainMid: null,
+    B_sensOwnNetEquityY30MinusMainLowAbs: null,
+    B_sensOwnNetEquityY30MinusMainHighAbs: null,
+    sensHasRtbRow: hasRtb,
+    _applied: applied,
+    _mainY30: main,
+    _sens: { ne30, ne10, cash30, cost30, ne100 },
+  };
+});
+cases['R9'].notes = 'State A only (both pages at the baseline). The B states need a floating rate band built in the sensitivity page\'s rate-period cells, which this runner does not construct, so those keys are null. Main-page figures come from its CSV export; sensitivity figures from its out-own / out-rent / out-delta rows.';
+
+// R4, R5, R6, R12 need machinery this runner does not implement.
 for (const [id, why] of [
   ['R4', 'Needs detailed mortgage mode plus a constructed rate-period row (interest-only radio, #ratePeriodRows editing). Not implemented by this runner; state B alone would be misleading without A.'],
   ['R5', 'Needs a floating rate band (low/mid/high) built in #ratePeriodRows, and a per-path verdict readout the runner could not locate on the page. Not executed.'],
   ['R6', 'Needs repeated construction and mutation of .rate-period-row entries (past-term, overlapping, reversed bounds, shortened term, backwards band). Not implemented by this runner.'],
-  ['R9', 'Needs the /sensitivity/ page driven to mirror the baseline field by field through its dynamic table.dt scenario column. Not implemented by this runner.'],
   ['R12', 'Needs the /id/ page driven through the same baseline and compared field by field. Not implemented by this runner.'],
 ]) cases[id] = { error: why };
 

@@ -1,9 +1,10 @@
 # Rent vs Own — adjudication of the run
 
-Raw score: 2 pass, 6 fail, 5 not run. Adjudicated: **no tool defect was
-established**. Of the eight executed cases, two pass outright, four fail on a
-compounding convention the expectation author explicitly flagged as a guess,
-and two fail on defects in my runner. Five cases were never executed.
+Raw score: 2 pass, 7 fail, 4 not run. Adjudicated: **no tool defect was
+established**. Of the nine executed cases, two pass outright, and the rest fail
+on a compounding convention the expectation author explicitly flagged as a
+guess, on compact rendering scored against exact values, or on defects in my
+runner. Four cases were never executed.
 
 The frozen expectations are **not** edited. A wrong expectation is a finding
 about the test.
@@ -68,21 +69,44 @@ a state I did not re-examine or a genuine difference in what the KPI shows under
 those settings. **Unresolved, not cleared.** R8 needs a re-run before any claim
 is made about the first-crossing behaviour.
 
-## Not executed (5 of 13)
+## R9 — the two pages agree at the baseline, within display precision
+
+R9 now runs (state A). Every difference between the main page and the
+sensitivity page is the sensitivity page's compact rendering, not a model
+divergence: it prints `$3.72m` where the main page's export carries 3,722,870,
+so the gap is 2,870 on a figure in the millions. Own, Rent, the delta, cash and
+accumulated cost all line up that way at both year 10 and year 30.
+
+Two things the case does establish:
+
+- **`sensHasRtbRow` is false.** The sensitivity page carries no rent-then-buy
+  row, as TESTCASES describes.
+- **The year clamp works.** Asking for year 100 returns the year-30 figure
+  exactly (`A_sensYear100MinusYear30OwnNetEquity` is 0).
+
+**What it does NOT establish, and this is the important part.** State A runs
+both pages with RTB *off*. The divergence TESTCASES R9 predicts is precisely
+what happens when RTB is *on*, because the main page's auto budget becomes
+max(own, rent, rtb) while the sensitivity page's stays max(own, rent). Running
+the baseline with RTB off cannot see it. **That comparison is still untested**,
+and it remains the highest-value case in the suite.
+
+The B states (a floating low/mid/high band, to check the sensitivity page always
+takes the mid rate) need rate-period cells this runner does not construct, so
+those keys are null.
+
+## Not executed (4 of 13)
 
 | case | why |
 | --- | --- |
 | R4 | interest-only past term; needs detailed mode plus a constructed rate-period row |
 | R5 | the predicted band-monotonicity failure; needs a floating low/mid/high band and a per-path verdict readout I could not locate |
 | R6 | rate-period editing; needs repeated construction and mutation of period rows |
-| R9 | sensitivity-page parity; needs the dynamic scenario column driven field by field |
 | R12 | `/id/` parity; needs the second page driven through the same baseline |
 
-R5 and R9 are the two I most wanted. **R5 is the predicted failure** for this
-tool, and **R9 is the highest-value case in the whole suite**, since the
-sensitivity page carries a second copy of the model with no RTB and a different
-auto-budget. Neither has been tested. Nothing in this run confirms or clears the
-divergence described in TESTCASES R9.
+**R5 is still the predicted failure** for this tool and has not been tested. R9
+now runs at the baseline but, as above, cannot reach the RTB-on case that the
+divergence actually needs.
 
 ## A structural weakness in R1 worth recording
 

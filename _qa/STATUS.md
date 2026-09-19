@@ -5,15 +5,15 @@
 | Tool | Cases | Checks | Specified | Frozen | Run | Adjudicated |
 | --- | ---: | ---: | :-: | :-: | :-: | :-: |
 | financingvscash | 12 | 142 | ✓ | ✓ | ✓ 12/12 | ✓ |
-| rentvsownhouse | 13 | 191 | ✓ | ✓ | 8/13 | ✓ |
+| rentvsownhouse | 13 | 191 | ✓ | ✓ | 9/13 | ✓ |
 | dcasimulator | 12 | 109 | ✓ | ✓ | 3/12 | ✓ |
-| dca-portfolio | 12 | 133 | ✓ | ✓ | — | — |
+| dca-portfolio | 12 | 133 | ✓ | ✓ | 3/12 | ✓ |
 | borrowingcapacity | 14 | 226 | ✓ | ✓ | — | — |
 | pisahvsgabung | 11 | — | contract only | — | — | — |
 | costofliving-comparator | 10 | — | — | — | — | — |
 | cross-cutting (Z) | 7 | — | — | — | — | — |
 
-**63 cases and 801 checks specified; 50 cases and 801 checks frozen; 23 cases
+**63 cases and 801 checks specified; 50 cases and 801 checks frozen; 27 cases
 executed against a real page.**
 
 ## What the completed runs establish
@@ -38,17 +38,31 @@ bars were recomputed in the harness from the page's own displayed prices, and
 every purchase was attributable, so the measurement is sound. Details in
 `results/dcasimulator.adjudication.md`.
 
+**DCA Portfolio: the same look-ahead defect, confirmed on the second engine.**
+59 signal bars, 59 deploys landing exactly on one, minimum lag zero. So both
+engines act on a signal at the close of the bar that produced it, across both
+trigger families.
+
+**Rent vs Own R9: the two pages agree at the baseline.** Every gap is the
+sensitivity page's compact rendering ($3.72m against an exported 3,722,870), and
+it carries no rent-then-buy row, as documented.
+
 ## What is NOT tested
 
 Stated plainly, because a suite is only as honest as its gaps.
 
-- **P1 is unanswered.** The portfolio engine's triggers and its reserve sale
-  have not been run, though E1 makes the outcome easy to predict.
+- **P1's holding-reserve half is unanswered.** Whether the reserve sale that
+  funds a trigger is also priced on the signal bar was not driven.
+- **P5 is unresolved.** Same seed, asset, window, amount and buy dates, yet final
+  values 5.3% apart. The price-series comparison is confounded by one chart
+  normalising to base 100, so this is an open question, not a finding.
 - **E2 did not test its invariant.** The equity parser read the deposited amount
   instead of the final equity, so the perfect-foresight bracketing is unverified.
-- **R5 and R9 did not run.** R5 is Rent vs Own's predicted failure. R9 compares
-  the main page against the sensitivity page's second copy of the model, and is
-  the highest-value single case in the suite.
+- **R9's real case did not run.** It passes at a baseline with rent-then-buy
+  OFF. The divergence it exists to catch happens with RTB ON, where the main
+  page's auto budget becomes max(own, rent, rtb) and the sensitivity page's
+  stays max(own, rent). Still the highest-value untested comparison.
+- **R5 did not run.** Rent vs Own's predicted failure.
 - **R8 is unresolved**, not cleared: the breakeven KPI returned null in two
   states and the cause was not established.
 - **R1 passes with less information than it looks.** The page's rent CSV writes
@@ -67,9 +81,10 @@ node _qa/eval/evaluate.mjs <tool>       # score against the frozen plan
 node _qa/eval/report.mjs --md _qa/results/REPORT.md
 ```
 
-Next, in value order: write `dcasimulator.run.mjs` and `dca-portfolio.run.mjs`
-(the look-ahead question), then finish the Rent vs Own runner for R5, R9 and
-R12, then `borrowingcapacity.run.mjs`.
+Next, in value order: R9 with rent-then-buy enabled on both pages; P5 with the
+final equity read from a labelled field and the price series compared on one
+scale; `borrowingcapacity.run.mjs`, whose 14 cases are frozen and never driven;
+then R4, R5, R6, R12 and the remaining E and P cases.
 
 ## The one rule
 
