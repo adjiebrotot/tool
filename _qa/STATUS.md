@@ -6,17 +6,17 @@
 | --- | ---: | ---: | :-: | :-: | :-: | :-: |
 | financingvscash | 12 | 142 | ✓ | ✓ | ✓ 12/12 | ✓ |
 | rentvsownhouse | 13 | 191 | ✓ | ✓ | 8/13 | ✓ |
-| dcasimulator | 12 | 109 | ✓ | ✓ | — | — |
+| dcasimulator | 12 | 109 | ✓ | ✓ | 3/12 | ✓ |
 | dca-portfolio | 12 | 133 | ✓ | ✓ | — | — |
 | borrowingcapacity | 14 | 226 | ✓ | ✓ | — | — |
 | pisahvsgabung | 11 | — | contract only | — | — | — |
 | costofliving-comparator | 10 | — | — | — | — | — |
 | cross-cutting (Z) | 7 | — | — | — | — | — |
 
-**63 cases and 801 checks specified; 50 cases and 801 checks frozen; 20 cases
+**63 cases and 801 checks specified; 50 cases and 801 checks frozen; 23 cases
 executed against a real page.**
 
-## What the two completed runs establish
+## What the completed runs establish
 
 **Finance vs Cash: correct on all 12 cases.** The period-rate convention is
 `(1+r)^(1/m)−1`, established by a deliberate rival pair rather than assumed: a
@@ -31,13 +31,21 @@ price 1,021,025 and loan 816,820), and RTB tracks Rent to the rupee while still
 renting. The engine compounds cash monthly where the plan assumed yearly, which
 the plan itself flagged as a guess; monthly is the more faithful model.
 
+**DCA Scenario Explorer: the look-ahead defect is confirmed.** 319 of 347
+purchases across all eight conditional styles execute at the close of the very
+bar whose close produced their signal, with a minimum lag of zero. The signal
+bars were recomputed in the harness from the page's own displayed prices, and
+every purchase was attributable, so the measurement is sound. Details in
+`results/dcasimulator.adjudication.md`.
+
 ## What is NOT tested
 
 Stated plainly, because a suite is only as honest as its gaps.
 
-- **The look-ahead question is unanswered.** E1 and P1 are specified, frozen and
-  marked as predicted failures, but neither DCA engine has been run. Nothing
-  here confirms or clears same-bar execution.
+- **P1 is unanswered.** The portfolio engine's triggers and its reserve sale
+  have not been run, though E1 makes the outcome easy to predict.
+- **E2 did not test its invariant.** The equity parser read the deposited amount
+  instead of the final equity, so the perfect-foresight bracketing is unverified.
 - **R5 and R9 did not run.** R5 is Rent vs Own's predicted failure. R9 compares
   the main page against the sensitivity page's second copy of the model, and is
   the highest-value single case in the suite.

@@ -22,6 +22,7 @@ class Chart {
     this.options=(cfg&&cfg.options)||{}; this.scales={}; window.__charts.push(this); }
   update(){} destroy(){ const i=window.__charts.indexOf(this); if(i>=0) window.__charts.splice(i,1); }
   resetZoom(){} getDatasetMeta(){ return {data:[]}; } isDatasetVisible(){ return true; }
+  setDatasetVisibility(){} show(){} hide(){} stop(){} render(){} resize(){}
   toBase64Image(){ return 'data:image/png;base64,'; }
 }
 Chart.register=function(){}; Chart.defaults={font:{},plugins:{}}; Chart.registry={plugins:{items:[]}};

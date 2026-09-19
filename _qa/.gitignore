@@ -1,2 +1,8 @@
 __pycache__/
 *.pyc
+
+# Derived: regenerate with `node _qa/eval/evaluate.mjs` and `node _qa/eval/report.mjs`.
+# The observed run record (*.actual.json) IS kept: it cannot be reproduced without
+# re-running the engine, and the adjudications cite it as evidence.
+results/*.verdict.json
+results/REPORT.md

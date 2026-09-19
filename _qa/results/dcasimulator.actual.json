@@ -1,0 +1,327 @@
+{
+  "tool": "dcasimulator",
+  "ran_utc": "2026-09-19T03:15:29.144Z",
+  "page_errors": [],
+  "cases": {
+    "N1": {
+      "observed": {
+        "n_buys": 120,
+        "first_buy_date": "2015-01-15",
+        "buy_date_jun_2024": "2024-06-14",
+        "buy_date_dec_2024": "2024-12-16",
+        "months_with_no_buy": 0,
+        "months_with_two_buys": 0,
+        "max_abs_gap_days": 32,
+        "total_deposited": 120000,
+        "deposit_ratio": null,
+        "units_recon_ratio": null,
+        "equity_recon_ratio": null,
+        "return_pct_residual": null,
+        "nan_count": 0,
+        "js_error_count": 0,
+        "_summary": "N1\n$177,485\nROI: 47.90% | Topped up: $120,000\nTrades: 120"
+      },
+      "notes": "Buy dates from the page's own buy-marker dataset on the price chart. The deposit/units/equity reconciliation ratios are null: they need the Detailed Breakdown columns, which this runner does not parse."
+    },
+    "E1": {
+      "observed": {
+        "styles_tested": 8,
+        "total_buy_count": 347,
+        "sameBar_buy_count": 319,
+        "styles_with_sameBar": 8,
+        "min_signal_to_execution_lag_bars": 0,
+        "lagged_buy_count": 28,
+        "unmatched_buy_count": 0,
+        "nan_count": 0,
+        "_per_style": {
+          "tech-ma-cross": {
+            "buys": 6,
+            "sameBar": 6,
+            "lagged": 0,
+            "unmatched": 0,
+            "minLag": 0,
+            "params": {
+              "fastType": "ema",
+              "slowType": "sma",
+              "fastLen": 50,
+              "slowLen": 200,
+              "rsiPeriod": 14,
+              "rsiOversold": 35,
+              "bbPeriod": 20,
+              "bbStd": 2,
+              "bbTrigger": "below",
+              "macdFast": 12,
+              "macdSlow": 26,
+              "macdSignal": 9,
+              "macdHistThreshold": 0,
+              "adxPeriod": 14,
+              "adxThreshold": 25,
+              "momPct": 5,
+              "period": "monthly"
+            },
+            "fallbackOff": [
+              "secTechEOM"
+            ]
+          },
+          "tech-rsi": {
+            "buys": 41,
+            "sameBar": 32,
+            "lagged": 9,
+            "unmatched": 0,
+            "minLag": 0,
+            "params": {
+              "fastType": "ema",
+              "slowType": "sma",
+              "fastLen": 50,
+              "slowLen": 200,
+              "rsiPeriod": 14,
+              "rsiOversold": 35,
+              "bbPeriod": 20,
+              "bbStd": 2,
+              "bbTrigger": "below",
+              "macdFast": 12,
+              "macdSlow": 26,
+              "macdSignal": 9,
+              "macdHistThreshold": 0,
+              "adxPeriod": 14,
+              "adxThreshold": 25,
+              "momPct": 5,
+              "period": "monthly"
+            },
+            "fallbackOff": [
+              "secTechEOM"
+            ]
+          },
+          "tech-bollinger": {
+            "buys": 48,
+            "sameBar": 47,
+            "lagged": 1,
+            "unmatched": 0,
+            "minLag": 0,
+            "params": {
+              "fastType": "ema",
+              "slowType": "sma",
+              "fastLen": 50,
+              "slowLen": 200,
+              "rsiPeriod": 14,
+              "rsiOversold": 35,
+              "bbPeriod": 20,
+              "bbStd": 2,
+              "bbTrigger": "below",
+              "macdFast": 12,
+              "macdSlow": 26,
+              "macdSignal": 9,
+              "macdHistThreshold": 0,
+              "adxPeriod": 14,
+              "adxThreshold": 25,
+              "momPct": 5,
+              "period": "monthly"
+            },
+            "fallbackOff": [
+              "secTechEOM"
+            ]
+          },
+          "tech-macd-cross": {
+            "buys": 75,
+            "sameBar": 75,
+            "lagged": 0,
+            "unmatched": 0,
+            "minLag": 0,
+            "params": {
+              "fastType": "ema",
+              "slowType": "sma",
+              "fastLen": 50,
+              "slowLen": 200,
+              "rsiPeriod": 14,
+              "rsiOversold": 35,
+              "bbPeriod": 20,
+              "bbStd": 2,
+              "bbTrigger": "below",
+              "macdFast": 12,
+              "macdSlow": 26,
+              "macdSignal": 9,
+              "macdHistThreshold": 0,
+              "adxPeriod": 14,
+              "adxThreshold": 25,
+              "momPct": 5,
+              "period": "monthly"
+            },
+            "fallbackOff": [
+              "secTechEOM"
+            ]
+          },
+          "tech-macd-hist": {
+            "buys": 88,
+            "sameBar": 88,
+            "lagged": 0,
+            "unmatched": 0,
+            "minLag": 0,
+            "params": {
+              "fastType": "ema",
+              "slowType": "sma",
+              "fastLen": 50,
+              "slowLen": 200,
+              "rsiPeriod": 14,
+              "rsiOversold": 35,
+              "bbPeriod": 20,
+              "bbStd": 2,
+              "bbTrigger": "below",
+              "macdFast": 12,
+              "macdSlow": 26,
+              "macdSignal": 9,
+              "macdHistThreshold": 0,
+              "adxPeriod": 14,
+              "adxThreshold": 25,
+              "momPct": 5,
+              "period": "monthly"
+            },
+            "fallbackOff": [
+              "secTechEOM"
+            ]
+          },
+          "tech-adx": {
+            "buys": 35,
+            "sameBar": 17,
+            "lagged": 18,
+            "unmatched": 0,
+            "minLag": 0,
+            "params": {
+              "fastType": "ema",
+              "slowType": "sma",
+              "fastLen": 50,
+              "slowLen": 200,
+              "rsiPeriod": 14,
+              "rsiOversold": 35,
+              "bbPeriod": 20,
+              "bbStd": 2,
+              "bbTrigger": "below",
+              "macdFast": 12,
+              "macdSlow": 26,
+              "macdSignal": 9,
+              "macdHistThreshold": 0,
+              "adxPeriod": 14,
+              "adxThreshold": 25,
+              "momPct": 5,
+              "period": "monthly"
+            },
+            "fallbackOff": [
+              "secTechEOM"
+            ]
+          },
+          "momentum-dip": {
+            "buys": 28,
+            "sameBar": 28,
+            "lagged": 0,
+            "unmatched": 0,
+            "minLag": 0,
+            "params": {
+              "fastType": "ema",
+              "slowType": "sma",
+              "fastLen": 50,
+              "slowLen": 200,
+              "rsiPeriod": 14,
+              "rsiOversold": 35,
+              "bbPeriod": 20,
+              "bbStd": 2,
+              "bbTrigger": "below",
+              "macdFast": 12,
+              "macdSlow": 26,
+              "macdSignal": 9,
+              "macdHistThreshold": 0,
+              "adxPeriod": 14,
+              "adxThreshold": 25,
+              "momPct": 5,
+              "period": "monthly"
+            },
+            "fallbackOff": [
+              "secTechEOM"
+            ]
+          },
+          "momentum-peak": {
+            "buys": 26,
+            "sameBar": 26,
+            "lagged": 0,
+            "unmatched": 0,
+            "minLag": 0,
+            "params": {
+              "fastType": "ema",
+              "slowType": "sma",
+              "fastLen": 50,
+              "slowLen": 200,
+              "rsiPeriod": 14,
+              "rsiOversold": 35,
+              "bbPeriod": 20,
+              "bbStd": 2,
+              "bbTrigger": "below",
+              "macdFast": 12,
+              "macdSlow": 26,
+              "macdSignal": 9,
+              "macdHistThreshold": 0,
+              "adxPeriod": 14,
+              "adxThreshold": 25,
+              "momPct": 5,
+              "period": "monthly"
+            },
+            "fallbackOff": [
+              "secTechEOM"
+            ]
+          }
+        }
+      },
+      "notes": "Signal bars recomputed in the runner from the page's displayed close series using its own textbook indicator code; the style parameters are read off the form so both sides use the same numbers. The engine is never asked where its signal was."
+    },
+    "E2": {
+      "observed": {
+        "eq_m15": 120000,
+        "eq_mtop": 120000,
+        "eq_mbot": 120000,
+        "eq_wwed": 525000,
+        "eq_wtop": 525000,
+        "eq_wbot": 525000,
+        "n_m15": 120,
+        "n_mtop": 120,
+        "n_mbot": 120,
+        "n_wwed": 525,
+        "n_wtop": 525,
+        "n_wbot": 525,
+        "nan_count": 0,
+        "monthly_dep_spread": 0,
+        "weekly_dep_spread": 0,
+        "mbot_minus_m15": 0,
+        "m15_minus_mtop": 0,
+        "mbot_minus_mtop": 0,
+        "wbot_minus_wwed": 0,
+        "wwed_minus_wtop": 0,
+        "wbot_minus_wtop": 0
+      },
+      "notes": "Final equity parsed from the per-scenario summary tiles; buy counts from the chart's buy markers."
+    },
+    "E3": {
+      "error": "Not implemented by this runner."
+    },
+    "E4": {
+      "error": "Not implemented by this runner."
+    },
+    "E5": {
+      "error": "Needs two timezone contexts and a full repeat of the setup in each. Not implemented."
+    },
+    "E6": {
+      "error": "Requires the live market-data worker, unreachable from this sandbox."
+    },
+    "E7": {
+      "error": "Not implemented by this runner."
+    },
+    "E8": {
+      "error": "Not implemented by this runner."
+    },
+    "E9": {
+      "error": "Not implemented by this runner."
+    },
+    "E10": {
+      "error": "Not implemented by this runner."
+    },
+    "E11": {
+      "error": "Requires the live market-data worker, unreachable from this sandbox."
+    }
+  }
+}
