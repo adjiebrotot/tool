@@ -1,0 +1,232 @@
+{
+  "tool": "rentvsownhouse",
+  "ran_utc": "2026-09-18T14:13:20.116Z",
+  "page_errors": [],
+  "cases": {
+    "N1": {
+      "observed": {
+        "kpiInitialCash": 192000,
+        "budgetMonthlyMin": 4000,
+        "loanAtStart": 640000,
+        "mortgagePaymentMonthly": 3837.0833333333335,
+        "mortgagePaidYear1": 46045,
+        "mortgagePaidYear30": 46045,
+        "loanBalanceEndY1": 632141,
+        "loanBalanceEndY5": 595548,
+        "loanBalanceEndY10": 535589,
+        "loanBalanceEndY15": 454713,
+        "loanBalanceEndY20": 345623,
+        "loanBalanceEndY25": 198477,
+        "loanBalanceEndY29": 44583,
+        "loanBalanceEndY30": 0,
+        "principalPaidTotal": 639999,
+        "interestPaidTotal": 741363,
+        "propertyValueY1": 840000,
+        "propertyValueY10": 1303116,
+        "propertyValueY30": 3457554,
+        "ownOngoingYear1": 6000,
+        "ownOngoingYear30": 6000,
+        "ownOutflowYear1": 52045,
+        "ownOutflowYear30": 52045,
+        "rentOutflowYear1": 34800,
+        "rentOutflowYear2": 35808,
+        "rentOutflowYear30": 80381,
+        "budgetYear1": 52045,
+        "ownCashEndY0": 0,
+        "rentCashEndY0": 192000,
+        "ownCashEndY1": 0,
+        "rentCashEndY1": 218238,
+        "ownCashIdentityResidualMaxAbs": 579.0550000000512,
+        "rentCashIdentityResidualMaxAbs": 353,
+        "nanCount": 0,
+        "ownTerminalResidual": 0,
+        "rentTerminalResidual": 0
+      },
+      "notes": "Series from the page's own CSV export (integer precision); the on-screen table is compact so it cannot carry the residual checks."
+    },
+    "R1": {
+      "observed": {
+        "A_budgetDiffMaxAbs": 0,
+        "A_budgetYear1": 52045,
+        "A_budgetEqualsMaxOfOutflowsMaxAbs": 1,
+        "B_budgetDiffMaxAbs": 0,
+        "B_budgetYear1": 60000,
+        "B_budgetYear2": 61200,
+        "B_budgetYear3": 62424,
+        "B_budgetYear30": 106551,
+        "B_kpiBudgetMonthlyMin": 5000,
+        "B_kpiBudgetMonthlyMax": 9000,
+        "C_budgetDiffMaxAbs": 0,
+        "D_budgetDiffMaxAbs": 0,
+        "D_budgetYear30": 106551
+      },
+      "notes": "IMPORTANT: the page's rent CSV writes the Own budget field into the Rent budget column, so an own-vs-rent budget difference read from the export is 0 by construction and cannot independently confirm parity. The RTB comparison in states C and D is the part that carries information."
+    },
+    "R2": {
+      "observed": {
+        "A_ownCashEndY1": -10251,
+        "A_ownCashEndY2": -20963,
+        "A_ownCashEndY5": -56080,
+        "A_ownCashEndY30": -625385,
+        "A_ownCashYears1to5": [
+          -10251,
+          -20963,
+          -32158,
+          -43856,
+          -56080
+        ],
+        "A_ownCashIdentityResidualMaxAbs": 206.82000000000698,
+        "A_rentCashEndY1": 207987,
+        "A_rentCashEndY30": 246264,
+        "A_warningBannerText": "",
+        "B_ownCashEndY1": -28619,
+        "B_rentCashEndY1": 189619,
+        "B_warningBannerText": "⚠️ Budget ($2,000/mo) is below both total own cost ($4k/mo incl. ongoing) and rent cost ($3k/mo incl. ongoing). Surplus will be negative and cash may decline below zero."
+      }
+    },
+    "R3": {
+      "observed": {
+        "propertyValueFinal": 3457554,
+        "loanBalanceFinal": 0,
+        "ownCashFinal": 265316,
+        "ownNetEquityFinal": 3722870,
+        "rentCashFinal": 1136965,
+        "rentNetEquityFinal": 1136965,
+        "ownEquityExCashFinal": 3457554,
+        "ownTerminalResidual": 0,
+        "rentTerminalResidual": 0,
+        "kpiDiffMinusFinalDelta": 4095
+      }
+    },
+    "R8": {
+      "observed": {
+        "A_breakevenYear": null,
+        "A_ownMinusRentNetEquityY1": 29621,
+        "B_breakevenYear": null,
+        "B_ownMinusRentNetEquityY30": -1621013,
+        "C_ownMinusRentNetEquityByYear": [
+          -9316,
+          10198,
+          26649,
+          40131,
+          50732,
+          58531,
+          63597,
+          65993,
+          65777,
+          62995,
+          57691,
+          49901,
+          39655,
+          26979,
+          11891,
+          -5595,
+          -25467,
+          -47723,
+          -72361,
+          -99384,
+          -128799,
+          -160619,
+          -194858,
+          -231531,
+          -270662,
+          -312273,
+          -356391,
+          -403045,
+          -452263,
+          -504083
+        ],
+        "C_crossingCount": 2,
+        "C_firstOvertakeYearFromSeries": 2,
+        "C_breakevenYear": null,
+        "C_breakevenMinusFirstOvertake": -2,
+        "C_ownMinusRentNetEquityY8": 65993,
+        "C_ownMinusRentNetEquityY30": -504083
+      }
+    },
+    "R10": {
+      "observed": {
+        "A_inflationControlState": "hidden",
+        "A_ownOngoingYear1": 8000,
+        "A_ownOngoingYear2": 8400,
+        "A_ownOngoingYear30": 32929,
+        "B_ownOngoingYear1": 6000,
+        "B_ownOngoingYear2": 6600,
+        "B_ownOngoingYear5": 8785,
+        "B_ownOngoingYear30": 95179,
+        "C_rentOngoingYear1": 3360,
+        "C_rentOngoingYear2": 3461,
+        "C_rentOngoingYear30": 7918,
+        "D_kpiInitialCash": 192000,
+        "D_kpiDiffPctSetupMinusDollarSetup": 0,
+        "E_kpiDiffRoundTripMinusBefore": 0,
+        "E_kpiDiffDetailedEquivalentMinusSimple": null
+      },
+      "notes": "E's detailed-equivalent comparison is reported null: building the detailed cost lists needs the dynamic .cost-item-row editor, which this runner does not drive. The round-trip half of E is measured."
+    },
+    "R11": {
+      "observed": {
+        "A_rentMonthlyDisplayValue": 3033,
+        "A_rentPaidYear1": 36400,
+        "A_rentPaidYear2": 37492,
+        "B_rentMonthlyDisplayValue": 3000,
+        "B_rentPaidYear1": 36000,
+        "C_ownOngoingYear1": 5200,
+        "D_ownOngoingYear1": 6000,
+        "E_rentOngoingYear1": 1040,
+        "F_rentMonthlyDisplayValue": 2800
+      }
+    },
+    "R7": {
+      "observed": {
+        "A_rtbMinusRentCashMaxAbsY1to5": 236205,
+        "A_rtbPurchasePrice": 1072077,
+        "A_rtbLoanAtPurchase": 816820,
+        "A_rtbMortgagePaidYear6": 58767,
+        "A_rtbPropertyValueY6": 1072077,
+        "A_rtbLoanBalanceEndY6": 806790,
+        "A_rtbCashEndY6": 133770,
+        "A_rtbNetEquityResidualY6": 0,
+        "A_rtbConservationResidualY6": null,
+        "A_rtbCashIdentityResidualMaxAbsY7toEnd": 98.35999999998603,
+        "B_rentCashEndY5": 8081,
+        "B_rtbCashEndY6": -267745,
+        "B_rtbLoanAtPurchase": 806790,
+        "B_rtbConservationResidualY6": null,
+        "C_kpiInitialCash": 2000000,
+        "C_ownCashEndY0": 1808000,
+        "C_ownCashEndY1": 1897477,
+        "C_rtbLoanAtPurchase": 806790,
+        "C_rtbCashEndY6": 2488256,
+        "C_rtbConservationResidualY6": null,
+        "D_rtbPurchasePrice": 882000,
+        "D_rtbLoanAtPurchase": 672000,
+        "D_rtbMortgagePaidYear2": 48348,
+        "D_rtbMinusRentCashY1": -200000,
+        "D_rtbCashEndY2": 33310,
+        "D_rtbConservationResidualY2": null,
+        "E_rtbMinusRentCashMaxAbsY1to29": 690582,
+        "E_rtbNetEquityY30MinusRent": 16414,
+        "E_nanCount": 0,
+        "F_ownNetEquityY30RtbOnMinusOff": 0,
+        "F_rentNetEquityY30RtbOnMinusOff": 0
+      },
+      "notes": "The RTB conservation residuals are reported null: the export does not expose the purchase-year deposit and setup outlay as its own column, so the residual cannot be assembled from page figures without assuming the transition formula, which the contract forbids. Every other RTB observable is read from the page's RTB CSV."
+    },
+    "R4": {
+      "error": "Needs detailed mortgage mode plus a constructed rate-period row (interest-only radio, #ratePeriodRows editing). Not implemented by this runner; state B alone would be misleading without A."
+    },
+    "R5": {
+      "error": "Needs a floating rate band (low/mid/high) built in #ratePeriodRows, and a per-path verdict readout the runner could not locate on the page. Not executed."
+    },
+    "R6": {
+      "error": "Needs repeated construction and mutation of .rate-period-row entries (past-term, overlapping, reversed bounds, shortened term, backwards band). Not implemented by this runner."
+    },
+    "R9": {
+      "error": "Needs the /sensitivity/ page driven to mirror the baseline field by field through its dynamic table.dt scenario column. Not implemented by this runner."
+    },
+    "R12": {
+      "error": "Needs the /id/ page driven through the same baseline and compared field by field. Not implemented by this runner."
+    }
+  }
+}
