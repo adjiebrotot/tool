@@ -1,9 +1,9 @@
 /* Guided-tour config for the Borrowing Capacity tool.
    The shared engine (../tour-shared.js) reads this object.
 
-   Step ① loads the Average Geoff scenario over the form, so every later step
+   Step ① loads the Average Man scenario over the form, so every later step
    spotlights a populated panel and a real result rather than the generic
-   default. The steps name Geoff out loud, so the seed always applies and the
+   default. The steps name him out loud, so the seed always applies and the
    tour can never describe one borrower while showing another.
 
    Because that overwrites whatever was on screen, saveState and restoreState
@@ -30,11 +30,11 @@ window.__TOUR = {
     {
       target: '.quick-start-row',
       onEnter: function () {
-        if (window.__BC_TOUR) window.__BC_TOUR.seedGeoff();
+        if (window.__BC_TOUR) window.__BC_TOUR.seedMan();
       },
       title: '① Start from a worked example',
       body: 'One click fills every tab with a real borrower. We have loaded ' +
-            '<strong>Average Geoff in Perth</strong> for you, a single buyer on ' +
+            '<strong>Average Man in Perth</strong> for you, a single buyer on ' +
             '$105,000, so the rest of the tour has his numbers on screen. There is ' +
             'also a Sydney high earner, a Melbourne couple, a first home buyer and a ' +
             'self-employed tradie.'
@@ -64,14 +64,14 @@ window.__TOUR = {
       title: '④ Read the binding constraint first',
       body: 'Six numbers summarise the run. <strong>Binding constraint</strong> is the ' +
             'one to read first: it names the cap actually holding you back, and the ' +
-            'other three have slack. For Geoff it is serviceability, which is what ' +
+            'other three have slack. For him it is serviceability, which is what ' +
             'stops most Australian borrowers. <strong>NSR</strong> and ' +
             '<strong>UMI</strong> show how tightly the answer closes.'
     },
     {
       target: '.chart-card',
       title: '⑤ See every cap across the income range',
-      body: 'Geoff sits at the centre of a sweep across the income range, with all ' +
+      body: 'He sits at the centre of a sweep across the income range, with all ' +
             'four caps plotted. Your capacity is the <strong>lowest line at every ' +
             'point</strong>, so you can see exactly where one cap hands over to ' +
             'another. Hover for the figures, and export the chart as an image.'
