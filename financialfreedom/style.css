@@ -1,0 +1,124 @@
+/* Financial Freedom Calculator — page-specific layer.
+   Tokens and shared components come from ../dark.css, ../light.css, ../shared.css. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap');
+
+.container{max-width:1440px;}
+.layout{grid-template-columns:380px 1fr;}
+.controls{max-height:calc(100vh - 32px);overflow-y:auto;}
+.controls::-webkit-scrollbar{width:4px;}
+.controls::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.header{flex-wrap:wrap;gap:12px;}
+.header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
+.btn-back{text-decoration:none;display:inline-flex;align-items:center;}
+h1{font-size:1.85rem;margin:0 0 4px;}
+
+/* ── Control panel extras ── */
+.ctrl-tab{padding:11px 4px;font-size:.78rem;line-height:1.35;}
+.field-group{border:1px solid var(--border);border-radius:12px;padding:0 14px 6px;margin-top:14px;background:var(--bg-subtle);}
+.field-group>.field-row,.field-group>.toggle-row,.field-group>.slider-block{border-top:1px solid var(--border);}
+.field-group>:first-child{border-top:none;}
+.ctrl-panel>:first-child{margin-top:0;}
+.group-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);padding:10px 0 2px;}
+.inline-row{display:flex;gap:8px;align-items:center;}
+.inline-row .grow{flex:1;min-width:0;}
+.inline-row .period{flex:0 0 108px;width:108px;}
+.inline-row .age-in{flex:0 0 96px;width:96px;}
+/* shared.css ships .toggle-switch / .toggle-track / .toggle-knob but not the
+   row that holds them, which the design reference documents. The switch is a
+   <label>, so it only takes a width once this row makes it a flex item. */
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border);}
+.toggle-label{font-weight:700;font-size:.88rem;flex:1;}
+.seg-group{display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;}
+.seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 12px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;flex-shrink:0;}
+.seg-btn.active{background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}
+.seg-btn:hover:not(.active){color:var(--text);}
+.note{color:var(--muted);font-size:.79rem;line-height:1.45;margin:6px 0 0;}
+.note strong{color:var(--text);}
+.ticker-row{display:flex;gap:8px;align-items:stretch;}
+.ticker-row .txt-input{flex:1;min-width:0;text-transform:uppercase;}
+.ticker-ref-link{display:inline-block;margin-top:7px;font-size:.78rem;color:var(--accent);text-decoration:none;}
+.ticker-ref-link:hover{text-decoration:underline;}
+#tickerStatus{margin-top:8px;font-size:.79rem;line-height:1.45;color:var(--muted);min-height:1em;}
+#tickerStatus.err{color:var(--negative-em);}
+
+/* ── KPI strip ── */
+.metrics{grid-template-columns:repeat(3,1fr);}
+.metric{padding:14px 16px;min-height:96px;}
+.metric .label{display:flex;align-items:center;gap:5px;}
+.metric .value{font-size:1.35rem;}
+.metric .value.small{font-size:1.02rem;letter-spacing:0;}
+.metric .sub{color:var(--muted);font-size:.78rem;margin-top:5px;line-height:1.35;}
+.metric .value.pos{color:var(--data-pos-em);}
+.metric .value.neg{color:var(--data-neg-em);}
+
+/* ── Verdict banner: the one thing a first-time visitor reads ── */
+.verdict{padding:16px 18px;margin-bottom:18px;border-radius:var(--radius-xl);border:1px solid var(--border);background:var(--bg-subtle);display:none;}
+.verdict.visible{display:block;}
+.verdict h2{margin:0 0 6px;font-size:1.05rem;}
+.verdict p{margin:0;color:var(--muted);font-size:.88rem;line-height:1.55;}
+.verdict.good{border-color:var(--positive-border);background:var(--positive-bg);}
+.verdict.good h2{color:var(--positive-em);}
+.verdict.bad{border-color:var(--negative-border);background:var(--negative-bg);}
+.verdict.bad h2{color:var(--negative-em);}
+.verdict.warn{border-color:rgba(255,210,140,.35);background:var(--warning-bg);}
+.verdict.warn h2{color:var(--warning-text);}
+.remedies{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px;}
+.remedies li{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 12px;font-size:.85rem;line-height:1.45;color:var(--muted);}
+.remedies li strong{color:var(--text);display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
+
+/* ── Charts ── */
+.chart-card{padding:20px;margin-bottom:18px;}
+.chart-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;}
+.chart-head h2{display:flex;align-items:center;gap:6px;margin:0;}
+.chart-head .sub{color:var(--muted);font-size:.8rem;margin-top:3px;line-height:1.4;}
+.btn-cluster{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;}
+.btn-sm{padding:6px 12px;font-size:.8rem;border-radius:8px;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 14px;font-size:.84rem;}
+.legend-item{display:flex;align-items:center;gap:7px;cursor:pointer;transition:opacity .15s;}
+.legend-item.hidden{opacity:.35;}
+.dot{width:11px;height:11px;border-radius:999px;flex-shrink:0;}
+.dot.dash{border-radius:2px;height:4px;width:16px;}
+.dot.band{border-radius:3px;height:11px;width:16px;}
+.canvas-wrap{height:430px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
+.hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:22px;line-height:1.5;}
+
+/* ── Detail tables and notes ── */
+.detail-section{padding:20px;margin-bottom:18px;}
+.detail-section h2{margin:0 0 4px;}
+.detail-section .sub{color:var(--muted);font-size:.8rem;margin:0 0 12px;line-height:1.45;}
+table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.85rem;}
+th,td{padding:9px 8px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}
+th:first-child,td:first-child{text-align:left;white-space:normal;font-family:'DM Sans',sans-serif;}
+th{color:var(--muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;position:sticky;top:0;background:var(--panel);z-index:1;}
+.table-wrap{max-height:460px;overflow:auto;}
+tr:hover td{background:rgba(141,187,255,.05);}
+body.light tr:hover td{background:rgba(90,145,232,.05);}
+tr.free td{background:rgba(141,187,255,.12);font-weight:700;}
+body.light tr.free td{background:rgba(90,145,232,.12);}
+tr.retire td{border-top:1.5px solid var(--accent2);}
+td.neg{color:var(--data-neg-em);}
+td.pos{color:var(--data-pos-em);}
+.assumptions{margin:0;padding-left:18px;color:var(--muted);font-size:.85rem;line-height:1.65;}
+.assumptions li+li{margin-top:5px;}
+.assumptions strong{color:var(--text);}
+
+.page-footer{max-width:1440px;margin:0 auto;padding:0 24px 24px;}
+
+@media(max-width:1100px){
+  .layout{grid-template-columns:1fr;}
+  .controls{position:static;max-height:none;}
+  .metrics{grid-template-columns:repeat(2,1fr);}
+  .canvas-wrap{height:360px;}
+  .header{flex-direction:column;}
+}
+@media(max-width:600px){
+  h1{font-size:1.35rem;}
+  .container{padding:10px;}
+  .page-footer{padding:0 10px 16px;}
+  .metrics{grid-template-columns:1fr;}
+  .canvas-wrap{height:300px;}
+  .btn-row{flex-direction:column;}
+  .ctrl-tab{font-size:.7rem;}
+  .inline-row{flex-wrap:wrap;}
+  .inline-row .period{flex:1 1 100%;width:auto;}
+}

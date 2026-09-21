@@ -251,6 +251,156 @@
     getDailyRemaining: rlRemaining
   };
 
+  /* ── Persistent price cache (shared with the DCA tools) ───────────────────
+     A past date's price never changes, so a fetched series is kept in
+     localStorage and reused. The storage key and the entry shape are
+     DELIBERATELY identical to the DCA simulator's, so a ticker loaded on
+     either page is free on the other.
+
+     Anything written here must keep every field the DCA tools read back:
+     they use `source`/`kind` to flag unadjusted Stooq prices, and
+     `coverageStart`/`coverageEnd` to decide whether a refetch is needed.
+
+     There is no TTL, by design. `coverageEnd` is the last date we asked for,
+     so on the next calendar day it stops reaching "today" and the caller
+     refetches just the tail. Same-day reloads cost zero requests, which
+     matters because the whole origin shares one small daily allowance. */
+  var PRICE_CACHE_KEY = 'dca_priceCache_v2';
+  var priceCache = {};
+  var priceCacheLoaded = false;
+  var pcInFlight = {};
+
+  function pcMinIso(a, b){ return (a && a < b) ? a : b; }
+  function pcMaxIso(a, b){ return (a && a > b) ? a : b; }
+  function pcKey(t){ return String(t == null ? '' : t).trim().toUpperCase(); }
+
+  function pcLoad(){
+    if(priceCacheLoaded) return priceCache;
+    priceCacheLoaded = true;
+    try {
+      var raw = localStorage.getItem(PRICE_CACHE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && parsed.cache && typeof parsed.cache === 'object') priceCache = parsed.cache;
+      }
+    } catch(_e){ /* corrupt or unavailable storage - start empty */ }
+    return priceCache;
+  }
+
+  function pcSave(){
+    try { localStorage.setItem(PRICE_CACHE_KEY, JSON.stringify({savedAt: Date.now(), cache: priceCache})); }
+    catch(_e){ /* quota or private mode - caching is best-effort */ }
+  }
+
+  // Fold one Worker result into the cache. Merges rather than replaces, so an
+  // incremental front/tail fetch never discards history we already hold.
+  function pcStore(tk, r, fetchStart, fetchEnd){
+    if(!(r && !r.error && r.dates && r.dates.length)) return false;
+    var prev = priceCache[tk];
+    var dates = r.dates, prices = r.prices, opens = r.opens, highs = r.highs, lows = r.lows;
+    if(prev && prev.dates && prev.dates.length){
+      var m = mergeSeries(
+        {dates: prev.dates, prices: prev.prices, opens: prev.opens, highs: prev.highs, lows: prev.lows},
+        {dates: r.dates,    prices: r.prices,    opens: r.opens,    highs: r.highs,    lows: r.lows});
+      dates = m.dates; prices = m.prices; opens = m.opens; highs = m.highs; lows = m.lows;
+    }
+    var entry = {
+      dates: dates,
+      prices: prices,
+      cachedStart: dates[0],
+      cachedEnd: dates[dates.length - 1],
+      coverageStart: prev ? pcMinIso(prev.coverageStart, fetchStart) : fetchStart,
+      coverageEnd:   prev ? pcMaxIso(prev.coverageEnd, fetchEnd)     : fetchEnd,
+      source: r.source,
+      kind: r.kind
+    };
+    if(opens && highs && lows){ entry.opens = opens; entry.highs = highs; entry.lows = lows; }
+    priceCache[tk] = entry;
+    return true;
+  }
+
+  function pcCovered(ticker, start, end){
+    pcLoad();
+    var e = priceCache[pcKey(ticker)];
+    return !!(e && e.coverageStart <= start && e.coverageEnd >= end);
+  }
+
+  // A {dates, prices, [opens, highs, lows], source, kind} slice of the cache,
+  // filtered to [start, end]. Null when nothing cached covers that window.
+  function pcSlice(ticker, start, end){
+    pcLoad();
+    var e = priceCache[pcKey(ticker)];
+    if(!e || !e.dates || !e.dates.length) return null;
+    var si = -1, ei = -1, i;
+    for(i = 0; i < e.dates.length; i++){ if(e.dates[i] >= start){ si = i; break; } }
+    for(i = e.dates.length - 1; i >= 0; i--){ if(e.dates[i] <= end){ ei = i; break; } }
+    if(si < 0 || ei < 0 || si > ei) return null;
+    var out = {
+      dates: e.dates.slice(si, ei + 1),
+      prices: e.prices.slice(si, ei + 1),
+      source: e.source,
+      kind: e.kind
+    };
+    if(e.opens && e.highs && e.lows){
+      out.opens = e.opens.slice(si, ei + 1);
+      out.highs = e.highs.slice(si, ei + 1);
+      out.lows  = e.lows.slice(si, ei + 1);
+    }
+    return out;
+  }
+
+  // Guarantee [start, end] is covered, fetching ONLY the missing front/tail
+  // segments. Concurrent callers for the same ticker share one fetch.
+  async function pcEnsure(ticker, start, end){
+    var tk = pcKey(ticker);
+    if(!tk) throw new Error('Invalid ticker');
+    pcLoad();
+    if(pcCovered(tk, start, end)) return priceCache[tk];
+    if(pcInFlight[tk]){ await pcInFlight[tk]; return priceCache[tk]; }
+    pcInFlight[tk] = (async function(){
+      var prev = priceCache[tk];
+      var segments = [];
+      if(!prev){
+        segments.push([start, end]);
+      } else {
+        if(start < prev.coverageStart) segments.push([start, prev.coverageStart]);
+        if(end   > prev.coverageEnd)   segments.push([prev.coverageEnd, end]);
+      }
+      var lastErr = null, i, seg, map, r;
+      for(i = 0; i < segments.length; i++){
+        seg = segments[i];
+        map = await yfFetchPricesBatch([tk], seg[0], seg[1]);
+        r = map[tk];
+        if(!r || r.error){ lastErr = new Error((r && r.error) || 'fetch failed'); continue; }
+        pcStore(tk, r, seg[0], seg[1]);
+      }
+      if(!priceCache[tk]) throw lastErr || new Error('No price data for ' + tk + ' in that range');
+      // Only widen the recorded coverage when every segment came back clean.
+      // A segment may legitimately hold no rows (a holiday tail) and past
+      // prices are immutable, so that still counts as covered. A failed
+      // request must not, or we would never retry it.
+      if(!lastErr){
+        priceCache[tk].coverageStart = pcMinIso(priceCache[tk].coverageStart, start);
+        priceCache[tk].coverageEnd   = pcMaxIso(priceCache[tk].coverageEnd, end);
+      }
+      pcSave();
+    })();
+    try { await pcInFlight[tk]; } finally { delete pcInFlight[tk]; }
+    return priceCache[tk];
+  }
+
+  global.SharedPriceCache = {
+    key: PRICE_CACHE_KEY,
+    load: pcLoad,
+    save: pcSave,
+    ensure: pcEnsure,
+    slice: pcSlice,
+    covers: pcCovered,
+    entry: function(ticker){ pcLoad(); return priceCache[pcKey(ticker)] || null; },
+    tickers: function(){ pcLoad(); return Object.keys(priceCache).sort(); },
+    clear: function(){ priceCache = {}; priceCacheLoaded = true; pcSave(); }
+  };
+
   /* ── Technical indicators (shared by the single-asset & portfolio tools) ──
      All operate on a close-price array and return same-length arrays padded
      with null until the indicator has enough history. Pure & side-effect free,
@@ -755,6 +905,12 @@
       SIX:    ['Swiss Infrastructure and Exchange', 'the Swiss stock exchange'],
       TSE:    ['Tokyo Stock Exchange'],
       XETRA:  ['Exchange Electronic Trading', 'the electronic market of the Frankfurt Stock Exchange']
+    },
+
+    /* ── Financial Freedom Calculator ── */
+    financialfreedom: {
+      FIRE: ['Financial Independence, Retire Early', 'the idea this tool does the arithmetic for: save hard, invest, then live off the pot'],
+      SWR:  ['Safe Withdrawal Rate', 'the share of the pot you can spend each year without running out']
     },
 
     /* ── Rent vs Own Home (and its Sensitivity page, EN + ID) ── */
