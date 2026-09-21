@@ -32,7 +32,8 @@ window.__TOUR = {
         if (tab && !tab.classList.contains('active')) tab.click();
       },
       title: '② What the money is invested in',
-      body: 'Pick a preset to start from long-run historical figures, or type a ticker and ' +
+      body: 'What you already hold, and what it earns. Pick a preset to start from long-run ' +
+            'historical figures, or type a ticker and ' +
             'press <strong>Fetch</strong> to measure them from real prices. ' +
             '<strong>Volatility</strong> decides how wide the range of outcomes is, ' +
             'and it is what puts a crash into some of the simulated futures.'
@@ -69,8 +70,9 @@ window.__TOUR = {
       target: '#retireSlider',
       title: '⑤ Cashflows — drag the retirement age',
       body: 'This slider is the whole of Cashflows. It runs from <strong>stop today</strong> ' +
-            'to <strong>never stop</strong>, and everything below it — the four cards, the two ' +
-            'charts and the table — is measured at whatever age you leave it on. ' +
+            'to <strong>never stop</strong>, and everything below it — the verdict directly ' +
+            'under the handle, the four cards, the chart and the table — is measured at ' +
+            'whatever age you leave it on. ' +
             '<strong>Path to freedom</strong> does not move, because how early you ' +
             '<em>could</em> stop does not depend on when you <em>choose</em> to.'
     },
@@ -78,8 +80,9 @@ window.__TOUR = {
       target: '#boardCash .chart-card',
       title: '⑥ Where the money comes from, and goes',
       body: 'Income against spending, with the gap filled: green while you save it, red once ' +
-            'the pot has to cover it. The balance it leaves behind is the chart underneath, ' +
-            'zoomed and panned with this one so a year lines up between them. ' +
+            'the pot has to cover it. The balance it leaves behind runs in the panel ' +
+            'underneath, on the same years, so you can read straight down from a flow to ' +
+            'what it did to the pot — below zero included, if the money runs out. ' +
             '<strong>Retire earlier and the slide starts sooner.</strong>'
     },
     {

@@ -196,6 +196,13 @@
   <!-- ── Investment ── -->
   <div class="ctrl-panel" id="tab-invest">
     <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Invested assets today <i class="tip-icon" data-tip="What you already hold that earns the return below. Not the home you live in.">?</i></span></div>
+      <div class="currency-wrap">
+        <span class="prefix" id="assetsPrefix">$</span>
+        <input class="currency-input fmt-num" id="assets" type="text" inputmode="decimal" value="100,000"/>
+      </div>
+    </div>
+    <div class="field-row">
       <div class="field-label"><span class="tip-wrap">Asset <i class="tip-icon" data-tip="Fills the two fields below with long-run historical figures.">?</i></span></div>
       <select class="sel-input" id="assetPreset"></select>
       <p class="note" id="presetNote"></p>
@@ -256,13 +263,6 @@
       <div class="currency-wrap">
         <span class="prefix" id="legacyPrefix">$</span>
         <input class="currency-input fmt-num" id="legacy" type="text" inputmode="decimal" value="500,000"/>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Invested assets today <i class="tip-icon" data-tip="Anything earning the return on the Investment tab. Not the home you live in.">?</i></span></div>
-      <div class="currency-wrap">
-        <span class="prefix" id="assetsPrefix">$</span>
-        <input class="currency-input fmt-num" id="assets" type="text" inputmode="decimal" value="100,000"/>
       </div>
     </div>
     <div class="field-row">
@@ -395,6 +395,11 @@
         <input type="range" id="ageRetire" min="0" max="120" step="1" value="60"/>
         <div class="slider-scale"><span id="retireScaleMin">Age now</span><span id="retireScaleMax">Life expectancy</span></div>
       </div>
+      <!-- The verdict ON THE SLIDER'S OWN AGE, directly under the handle that
+           decides it: "not by 48, you get there at 64" is an answer about this
+           control, so it belongs beside it rather than at the top of the page.
+           The banner up there keeps the verdicts the slider cannot move. -->
+      <div class="verdict card" id="verdictSlider"></div>
     </header>
 
     <section class="metrics">
@@ -420,13 +425,15 @@
       </div>
     </section>
 
-    <!-- A stock and a flow no longer share a plot area, let alone a scale: the
-         flows are above, the balance they leave behind is below, and the two
-         are zoomed and panned as one so a year lines up vertically between
-         them. -->
+    <!-- A stock and a flow no longer share a plot area, let alone a scale, but
+         they do share one card and one x axis: the flows fill the upper two
+         thirds, the balance they leave behind the lower third, and a single
+         pair of x axes underneath serves both. One canvas, so a year cannot
+         drift out of line between them and one export carries the whole
+         picture. -->
     <section class="chart-card card">
       <div class="chart-head">
-        <h3>Income and spending</h3>
+        <h3>Income, spending and the balance they leave</h3>
         <div class="btn-cluster">
           <button class="btn-secondary btn-sm" id="ddSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
           <button class="btn-secondary btn-sm" id="ddPngBtn" title="Download this chart as PNG">⬇ PNG</button>
@@ -436,24 +443,8 @@
       </div>
       <div class="sub" id="chart2Sub"></div>
       <div class="legend" id="legend2"></div>
-      <div class="canvas-wrap"><canvas id="ddChart"></canvas></div>
+      <div class="canvas-wrap canvas-wrap-cash"><canvas id="ddChart"></canvas></div>
       <div class="hover-box" id="hover2">Hover to inspect any year.</div>
-    </section>
-
-    <section class="chart-card card">
-      <div class="chart-head">
-        <h3>Balance</h3>
-        <div class="btn-cluster">
-          <button class="btn-secondary btn-sm" id="balSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
-          <button class="btn-secondary btn-sm" id="balPngBtn" title="Download this chart as PNG">⬇ PNG</button>
-          <button class="btn-secondary btn-sm" id="balCopyBtn" title="Copy PNG to clipboard">⧉</button>
-          <button class="btn-secondary btn-sm" id="resetZoom3" title="Reset zoom">⟳</button>
-        </div>
-      </div>
-      <div class="sub" id="chart3Sub"></div>
-      <div class="legend" id="legend3"></div>
-      <div class="canvas-wrap"><canvas id="balChart"></canvas></div>
-      <div class="hover-box" id="hover3">Hover to inspect any year.</div>
     </section>
 
     <section class="detail-section card">

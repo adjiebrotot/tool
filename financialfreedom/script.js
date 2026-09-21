@@ -8,10 +8,11 @@
        in. No withdrawal appears anywhere in it, so the crossing is the crossing
        and nothing else moves the lines.
      SECTION 2, Cashflows.  What happens if you stop at THIS age? Income and
-       spending on one chart, and the balance they leave behind on a second
-       below it, sharing an x window so a year lines up between them. Both are
-       for the retirement age on the slider, and the slider is the sensitivity:
-       it moves nothing in section 1 and everything in section 2.
+       spending in the upper two thirds of one chart, the balance they leave
+       behind in the lower third, both on the same pair of x axes so a year
+       lines up between them. Everything here is for the retirement age on the
+       slider, the verdict on that age included, and the slider is the
+       sensitivity: it moves nothing in section 1 and everything in section 2.
 
    Everything below runs in REAL terms (today's money) on MONTHLY steps, and is
    sampled yearly for the charts and the table. The audit harness in _audit/
@@ -77,7 +78,10 @@
        W(t+1) = (W(t) - Xr + P(t)) * (1 + rm)
      Xr is the real monthly expense in retirement (today's expense times the
      retirement multiplier). This is section 2 only: the balance line there
-     accumulates to the slider age and draws down from it.
+     accumulates to the slider age and draws down from it. It is plotted as it
+     comes out, so a plan that runs out is drawn below zero rather than flat
+     along it: the negative balance is the size of the miss, and the table and
+     the "Left at" card read the same figure.
 
    Step 6  The pot required to stop work at age A. Because step 5 is AFFINE in
      the starting pot, one pass gives every constraint exactly. Track the
@@ -815,7 +819,7 @@ function yearly(arr, years){
 /* ─── UI STATE ─── */
 
 var persist = null, rendering = false, renderTimer = null;
-var chart1 = null, chart2 = null, chart3 = null;
+var chart1 = null, chart2 = null;
 var last = null;                 // the most recent computed result
 var tickerInfo = null;           // {ticker, stats, source} once a fetch succeeds
 
@@ -1057,6 +1061,20 @@ function renderPensionNote(){
     info('A frozen pension is eroded from TODAY, not from the day it starts: the amount entered is what it pays now, so the years before you claim it wear it down too.');
 }
 
+/* TWO verdicts, because the page asks two questions and the slider only moves
+   one of them.
+
+   The banner at the top of the page carries what the slider cannot touch: a
+   broken pair of ages, a plan no pot of any size can fund, and the age the
+   crossing actually happens at. Those are section 1's answers, and they read
+   the same wherever the handle is left.
+
+   The verdict on the SLIDER'S OWN AGE — "not by 48, you get there at 64" —
+   hangs under the slider instead, because it is an answer about that control:
+   it changes on every drag, and the remedies under it (retire later, save
+   more) are the ways to close the gap the handle just opened. Putting it at
+   the top of the page meant dragging the slider rewrote a banner three
+   screens above the hand doing the dragging. */
 function renderVerdict(res){
   var el = $('verdict');
   var d = res.diag;
@@ -1070,19 +1088,50 @@ function renderVerdict(res){
   } else if(d.status === 'already'){
     cls += 'good';
     html = '<h2>' + escapeHtml(d.message) + '</h2><p>Everything below shows what happens if you stop now.</p>';
-  } else if(d.status === 'late'){
+  } else {
+    /* `late` and `ok` are the SAME answer to this question: there is a
+       crossing, and this is the age it happens at. Whether the slider clears
+       it is the other card's business, so this one never mentions it. */
+    cls += 'good';
+    html = '<h2>Financially free at ' + escapeHtml(fmt.age(d.ffAge)) + '.</h2>' +
+      '<p>On the expected return alone, and the retirement slider cannot move it. Read the chance below too.' +
+      info('A single average return ignores the order the good and bad years arrive in. Land the bad ones early and the same average return runs out.') + '</p>';
+  }
+  el.className = cls;
+  el.innerHTML = html;
+  renderSliderVerdict(res);
+}
+
+/* The verdict on the age the slider is sitting on, drawn directly under it.
+   It says nothing at all when there is no plan to judge: the banner above has
+   already explained why, and a second red card under the slider would read as
+   a second, different failure. */
+function renderSliderVerdict(res){
+  var el = $('verdictSlider');
+  if(!el) return;
+  var d = res.diag;
+  var cls = 'verdict card visible ', html = '';
+  if(d.status === 'invalid' || d.status === 'impossible'){
+    el.className = 'verdict card';
+    el.innerHTML = '';
+    return;
+  }
+  if(d.status === 'late'){
     cls += 'warn';
     html = '<h2>' + escapeHtml(d.message) + '</h2><p>' +
       fmt.num(Math.max(0, d.ffAge - res.P.ageRetire), 1) +
-      ' years past the age on the Cashflows slider. Any one of these closes it.</p>' +
+      ' years past the age on this slider. Any one of these closes it.</p>' +
       remedyList(d.remedies);
+  } else if(d.status === 'already'){
+    cls += 'good';
+    html = '<h2>Stopping at ' + escapeHtml(fmt.age(res.P.ageRetire)) + ' works.</h2>' +
+      '<p>Your current assets already cover this plan, so every age on this slider clears it.</p>';
   } else {
     cls += 'good';
-    html = '<h2>Financially free at ' + escapeHtml(fmt.age(d.ffAge)) + ', ' +
-      fmt.num(Math.max(0, res.P.ageRetire - d.ffAge), 1) +
-      ' years before the age on the Cashflows slider.</h2>' +
-      '<p>On the expected return alone. Read the chance below too.' +
-      info('A single average return ignores the order the good and bad years arrive in. Land the bad ones early and the same average return runs out.') + '</p>';
+    html = '<h2>Stopping at ' + escapeHtml(fmt.age(res.P.ageRetire)) + ' works, with ' +
+      fmt.num(Math.max(0, res.P.ageRetire - d.ffAge), 1) + ' years to spare.</h2>' +
+      '<p>You reach financial freedom at ' + escapeHtml(fmt.age(d.ffAge)) +
+      ', and everything below this slider is measured at the age it is left on.</p>';
   }
   el.className = cls;
   el.innerHTML = html;
@@ -1226,13 +1275,17 @@ function makeYFit(y0, hiSeries, loSeries, opts){
     var hi = edge(hiSeries, xMin, xMax, function(v, b){ return v > b; });
     var lo = edge(loSeries, xMin, xMax, function(v, b){ return v < b; });
     if(hi === null || lo === null) return null;
-    // A cash flow is read against zero, so zero stays on the axis there even
-    // when every figure in the window is above it.
+    // A cash flow, and a balance that can go under, are both read against
+    // zero, so zero stays on the axis whichever side of it the window sits.
     if(opts.includeZero && lo > 0) lo = 0;
+    if(opts.includeZero && hi < 0) hi = 0;
     var pad = Math.max((hi - lo) * 0.1, Math.abs(hi) * 0.02, 1);
     var min = lo - pad * 0.6;
     if(lo >= 0 && min < 0) min = 0;   // never open a gap below an empty pot
-    return {min: min, max: hi + pad};
+    /* `topPad` buys extra headroom for a pane that has another one sitting on
+       top of it: without it the highest tick of the lower pane and the lowest
+       tick of the upper one are both drawn at the join, one on the other. */
+    return {min: min, max: hi + pad * (opts.topPad || 1)};
   };
 }
 
@@ -1248,8 +1301,9 @@ var Y_FIT_PLUGIN = {
   id: 'ffYFit',
   beforeUpdate: function(chart){
     // A map of scale id to fitter, because the cashflow chart carries two y
-    // axes: a flow on the left and a balance on the right. Both follow the
-    // same x window, and both have to be refitted in this one pass.
+    // axes stacked one above the other: the flows on top and the balance
+    // below. Both read the same x window, and both have to be refitted in this
+    // one pass.
     var fits = chart.$fitY;
     if(!fits) return;
     var xo = chart.options.scales.x;
@@ -1313,44 +1367,6 @@ function registerXValueMode(){
   return true;
 }
 
-/* The two cashflow charts are one picture cut in half — the flows above, the
-   balance they leave behind below — so a year has to sit at the same place on
-   both. Zooming or panning either writes the same x window into the other.
-
-   The window goes in through the plugin's own `zoomScale` rather than by
-   assigning to the scale options, because the plugin records a scale's
-   original bounds the first time it is asked to move it: write the window in
-   behind its back and the NEXT gesture would record the synced window as the
-   original, and Reset zoom would go back to that instead of the opening view.
-   The guard is what stops the two charts echoing each other for ever. */
-var syncingX = false;
-function syncCashX(src){
-  if(syncingX) return;
-  var xo = src.options.scales.x;
-  if(!isFinite(xo.min) || !isFinite(xo.max)) return;
-  syncingX = true;
-  try {
-    [chart2, chart3].forEach(function(c){
-      if(!c || c === src || !c.zoomScale) return;
-      ['x', 'xAge'].forEach(function(id){
-        if(c.scales && c.scales[id]) c.zoomScale(id, {min: xo.min, max: xo.max}, 'none');
-      });
-    });
-  } finally { syncingX = false; }
-}
-
-/* Reset is shared for the same reason the zoom is: putting one of the pair
-   back on its opening window and leaving the other zoomed in would break the
-   very alignment the link exists for. */
-function resetCashZoom(){
-  [chart2, chart3].forEach(function(c){
-    if(!c) return;
-    syncingX = true;
-    try { c.resetZoom('none'); c.update('none'); }
-    finally { syncingX = false; }
-  });
-}
-
 /* Both charts carry TWO x axes over the same numbers: the calendar year the
    data is plotted on, and the age that year lands on. They are given identical
    bounds so the zoom plugin, which moves every x-axis scale together, keeps
@@ -1370,7 +1386,8 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
   var span = Math.max(1, limMax - limMin);
   var limit = {min: limMin, max: limMax, minRange: Math.min(3, span)};
   var start = opts.fitY ? opts.fitY(xMin, xMax) : null;
-  var start2 = opts.fitY2 ? opts.fitY2(xMin, xMax) : null;
+  var lower = opts.lowerPane || null;
+  var startLow = lower && lower.fitY ? lower.fitY(xMin, xMax) : null;
   // Falls back to Chart.js's own index mode only where the custom one could
   // not be registered, which is the stubbed build the audit harness runs.
   var hoverMode = registerXValueMode() ? 'ffXValue' : 'index';
@@ -1406,55 +1423,68 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
       }),
       zoom: {
         limits: {x: limit, xAge: limit},
-        pan: {enabled: true, mode: 'x', onPan: opts.onXWindow},
-        zoom: {wheel: {enabled: true, speed: 0.08}, pinch: {enabled: true}, mode: 'x',
-               onZoom: opts.onXWindow}
+        /* No gesture callbacks: the y refit runs INSIDE the update the gesture
+           already triggers (see Y_FIT_PLUGIN), and there is no second chart
+           left to carry an x window across to. */
+        pan: {enabled: true, mode: 'x'},
+        zoom: {wheel: {enabled: true, speed: 0.08}, pinch: {enabled: true}, mode: 'x'}
       }
     },
-    scales: {
-      x: {
-        type: 'linear', position: 'bottom', min: xMin, max: xMax,
-        title: {display: true, text: 'Calendar year', color: t.muted, font: {size: 11}},
-        ticks: {color: t.muted, maxTicksLimit: 12, precision: 0, font: {size: 11},
-                callback: function(v){ return String(Math.round(v)); }},
-        grid: {color: t.grid}
-      },
-      // The age axis plots nothing. It restates the same x in the unit the
-      // reader actually thinks in, under the calendar year.
-      xAge: {
-        type: 'linear', position: 'bottom', min: xMin, max: xMax,
-        title: {display: true, text: 'Age', color: t.muted, font: {size: 11}},
-        ticks: {color: t.muted, maxTicksLimit: 12, precision: 0, font: {size: 11},
-                callback: function(v){ return fmt.age(ageOf(v)); }},
-        grid: {drawOnChartArea: false, color: t.grid}
-      },
-      y: {
-        // Both bounds come from the fitter above, so the view the chart opens
-        // on and the view it zooms to are sized by the same rule.
-        min: start ? start.min : undefined,
-        max: start ? start.max : undefined,
-        title: {display: true, text: (opts.yTitle || 'Balance') + ', ' + moneyMode(res),
-                color: t.muted, font: {size: 11}},
-        ticks: {color: t.muted, font: {size: 11}, callback: function(v){ return fmt.currency(v, true); }},
-        grid: {color: t.grid}
-      }
-    }
+    scales: {}
+  };
+  o.scales.x = {
+    type: 'linear', position: 'bottom', min: xMin, max: xMax,
+    title: {display: true, text: 'Calendar year', color: t.muted, font: {size: 11}},
+    ticks: {color: t.muted, maxTicksLimit: 12, precision: 0, font: {size: 11},
+            callback: function(v){ return String(Math.round(v)); }},
+    grid: {color: t.grid}
+  };
+  // The age axis plots nothing. It restates the same x in the unit the
+  // reader actually thinks in, under the calendar year.
+  o.scales.xAge = {
+    type: 'linear', position: 'bottom', min: xMin, max: xMax,
+    title: {display: true, text: 'Age', color: t.muted, font: {size: 11}},
+    ticks: {color: t.muted, maxTicksLimit: 12, precision: 0, font: {size: 11},
+            callback: function(v){ return fmt.age(ageOf(v)); }},
+    grid: {drawOnChartArea: false, color: t.grid}
   };
   /* A stock and a flow do not share a scale: a balance in the millions would
-     flatten a spending line in the tens of thousands into the axis. So the
-     balance gets its own axis on the right, drawn without gridlines so the
-     reader is never in doubt which rules belong to which unit, and the legend
-     entry says "right axis" out loud. */
-  if(opts.y2Title){
-    o.scales.y2 = {
-      type: 'linear', position: 'right',
-      min: start2 ? start2.min : undefined,
-      max: start2 ? start2.max : undefined,
-      title: {display: true, text: opts.y2Title + ', ' + moneyMode(res), color: t.muted, font: {size: 11}},
-      ticks: {color: t.muted, font: {size: 11}, callback: function(v){ return fmt.currency(v, true); }},
-      grid: {drawOnChartArea: false, color: t.grid}
+     flatten a spending line in the tens of thousands into the axis. They do
+     belong in one picture though, so they are given two STACKED scales on one
+     canvas instead — the flows in the upper share of the height, the balance
+     in the lower one, both reading the single pair of x axes above.
+
+     Chart.js stacks the scales of a group in the order they are DEFINED,
+     bottom one first, so the lower pane has to be written onto the options
+     before the main axis. Everything else about it is an ordinary y axis. */
+  if(lower){
+    o.scales[lower.id] = {
+      type: 'linear', position: 'left', stack: 'ffCash', stackWeight: lower.weight || 1,
+      min: startLow ? startLow.min : undefined,
+      max: startLow ? startLow.max : undefined,
+      title: {display: true, text: lower.title + ', ' + moneyMode(res),
+              color: t.muted, font: {size: 11}},
+      // Fewer ticks than a full-height axis would carry, so the two panes
+      // cannot print labels on top of each other across the join.
+      ticks: {color: t.muted, font: {size: 11}, maxTicksLimit: 5, includeBounds: false,
+              callback: function(v){ return fmt.currency(v, true); }},
+      grid: {color: t.grid}
     };
   }
+  o.scales.y = {
+    // Both bounds come from the fitter above, so the view the chart opens
+    // on and the view it zooms to are sized by the same rule.
+    min: start ? start.min : undefined,
+    max: start ? start.max : undefined,
+    stack: lower ? 'ffCash' : undefined,
+    stackWeight: lower ? (lower.topWeight || 2) : undefined,
+    title: {display: true, text: (opts.yTitle || 'Balance') + ', ' + moneyMode(res),
+            color: t.muted, font: {size: 11}},
+    ticks: {color: t.muted, font: {size: 11},
+            maxTicksLimit: lower ? 7 : undefined, includeBounds: !lower,
+            callback: function(v){ return fmt.currency(v, true); }},
+    grid: {color: t.grid}
+  };
   return o;
 }
 
@@ -1491,18 +1521,15 @@ function renderCharts(res){
   };
   var retIdx = Math.max(0, Math.round(res.P.ageRetire - res.P.ageNow));
 
-  /* An exhausted pot is drawn flat at zero rather than plunging. The engine
-     keeps compounding a negative balance, which is how it records that a plan
-     failed and by how much, and the table and the "Left at" card both show
-     that figure; but a pot that owes several million after thirty years of
-     borrowing to eat is arithmetic, not money, and on a sixty-year axis it
-     squashes everything real into a sliver at the top.
+  /* On the PATH chart an exhausted pot is drawn flat at zero rather than
+     plunging. Going under there means one thing only — you are spending more
+     than you earn, before you have even retired — and the line that records it
+     is a balance compounding further into the red every month, which on a
+     sixty-year axis squashes everything real into a sliver at the top.
 
-     The two charts fail for different reasons and say so separately: section 1
-     can only go under if you are spending more than you earn before you have
-     even retired, while section 2 going under is the retirement itself running
-     out. One shared flag would have each of them reporting the other's. */
-  var clipped = {path: false, cash: false};
+     The cashflow balance is not floored: there, going under IS the answer the
+     chart is being asked for, and the shortfall is the size of the miss. */
+  var clipped = {path: false};
   var floorZero = function(arr, which){
     return arr.map(function(v){
       if(v == null || !isFinite(v)) return v;
@@ -1608,54 +1635,58 @@ function renderCharts(res){
   $('chart1Sub').textContent = notes1.join(' ');
 
   /* ── Cashflows ──────────────────────────────────────────────────────────
-     Two charts over one x window. Above, income against spending with the gap
-     filled: one colour where income covers the spending and the difference is
-     saved, another where it does not and the difference has to come out of the
-     pot. Below, the balance that leaves behind.
+     ONE chart, two plot areas stacked on one pair of x axes. Above, in two
+     thirds of the height, income against spending with the gap filled: one
+     colour where income covers the spending and the difference is saved,
+     another where it does not and the difference has to come out of the pot.
+     Below, in the remaining third, the balance they leave behind.
 
-     A stock and a flow used to share a plot area on two axes, which meant a
-     balance in the millions and a spending line in the tens of thousands drawn
-     over each other against rules that belonged to neither. They are two
-     pictures, so they are two charts — linked, so a year stays in the same
-     place on both and the reader can read straight down from a flow to what it
-     did to the pot. */
+     A stock and a flow must not share a scale — a balance in the millions
+     flattens a spending line in the tens of thousands into the axis — but they
+     are one story, so they are two STACKED scales rather than two charts. A
+     year then sits at the same x by construction: there is no second chart to
+     keep in step, no zoom to mirror, and one hover card reads the flows and
+     what they did to the pot together. */
   var income = scale(res.incomeCurve);
   var spend = scale(res.expenseCurve);
-  var bal = floorZero(scale(yearly(res.det, years)), 'cash');
+  /* The balance is plotted exactly as the engine leaves it, negative years and
+     all. A pot that runs out does not politely stop at zero — it goes on
+     owing, which is how the engine records by how much the plan missed — and
+     a line drawn flat along the axis instead would be the one place on the
+     page that hid the failure the table and the "Left at" card both report. */
+  var bal = scale(yearly(res.det, years));
   var retLabel = 'Retire at ' + fmt.age(res.P.ageRetire);
-  var linkX = function(ctx){ syncCashX(ctx.chart); };
 
   var fit2 = makeYFit(y0, [income, spend], [income, spend], {includeZero: true});
-  var fit3 = makeYFit(y0, [bal], [bal], {includeZero: true});
+  var fit3 = makeYFit(y0, [bal], [bal], {includeZero: true, topPad: 2.2});
 
-  // A vertical rule at the year the two areas change sides, so the reader does
-  // not have to count years along the axis to find it. It is drawn to the top
-  // of the series it stands in, which is the top of that chart's own axis.
-  var topOf = function(){
-    var hi = 0, i, arr, v;
-    for(i = 0; i < arguments.length; i++){
-      arr = arguments[i];
-      for(v = 0; v < arr.length; v++){
-        if(arr[v] != null && isFinite(arr[v]) && arr[v] > hi) hi = arr[v];
-      }
-    }
-    return hi;
-  };
-  var retireLine = function(top){
-    return {label: retLabel, data:[{x: y0 + retIdx, y: 0}, {x: y0 + retIdx, y: top}],
+  /* A vertical rule at the year the two areas change sides, so the reader does
+     not have to count years along the axis to find it. One per pane, drawn
+     from the floor of that pane to its ceiling as the WHOLE plan sizes them:
+     a zoomed-in window can only ever be narrower, so the rule spans its pane
+     at every zoom and is clipped to it rather than falling short. */
+  var paneSpan = function(fit){ return fit(y0, y0 + years) || {min: 0, max: 0}; };
+  var retireLine = function(axisId, span){
+    return {label: retLabel, yAxisID: axisId,
+            data:[{x: y0 + retIdx, y: span.min}, {x: y0 + retIdx, y: span.max}],
             borderColor: withAlpha(t.e, 0.6), borderWidth: 1.4, borderDash:[4,4],
             pointRadius: 0, fill: false, order: -1, ffTipHide: true};
   };
   var marked = retIdx > 0 && retIdx < years;
 
   var ds2 = [
-    {label:'Spending', data: pts(spend, y0), borderColor: t.b, borderWidth: 2.2,
+    {label:'Spending', data: pts(spend, y0), yAxisID:'y', borderColor: t.b, borderWidth: 2.2,
      pointRadius: 0, fill: false, order: 1},
-    {label:'Income', data: pts(income, y0), borderColor: t.c, borderWidth: 2.2,
+    {label:'Income', data: pts(income, y0), yAxisID:'y', borderColor: t.c, borderWidth: 2.2,
      pointRadius: 0, order: 0,
      // `above` is where income runs above spending, so the gap is saved; the
      // other side is the gap the pot has to cover.
-     fill: {target: 0, above: withAlpha(t.c, 0.28), below: withAlpha(t.b, 0.28)}}
+     fill: {target: 0, above: withAlpha(t.c, 0.28), below: withAlpha(t.b, 0.28)}},
+    /* The pot is blue in the path chart, so it is blue here: the same money,
+       seen from the other question. It must not be red, because red is already
+       the spending and the gap the pot has to cover in the pane above. */
+    {label:'Balance', data: pts(bal, y0), yAxisID:'yBal', borderColor: t.a, borderWidth: 2.2,
+     pointRadius: 0, fill: 'origin', backgroundColor: withAlpha(t.a, 0.10), order: 3}
   ];
   /* One fill, one entry. The shaded gap is a single quantity — what income
      leaves over — and the two colours are its sign, so it reads as one swatch
@@ -1667,11 +1698,15 @@ function renderCharts(res){
        stated here as the block it is drawn as — in BOTH of its colours, which
        is what makes it one entry instead of two. */
     {label:'Savings/Withdrawal', datasets:[1],
-     spec:{type:'area', width:0, fill: withAlpha(t.c, 0.28), fill2: withAlpha(t.b, 0.28)}}
+     spec:{type:'area', width:0, fill: withAlpha(t.c, 0.28), fill2: withAlpha(t.b, 0.28)}},
+    {label:'Balance, lower panel', datasets:[2]}
   ];
   if(marked){
-    ds2.push(retireLine(topOf(income, spend)));
-    legend2.push({label: retLabel, datasets:[ds2.length - 1]});
+    // One rule, drawn in both panes, so hiding it hides the whole line down
+    // the picture rather than half of it.
+    ds2.push(retireLine('y', paneSpan(fit2)));
+    ds2.push(retireLine('yBal', paneSpan(fit3)));
+    legend2.push({label: retLabel, datasets:[ds2.length - 2, ds2.length - 1]});
   }
 
   if(chart2) chart2.destroy();
@@ -1680,47 +1715,24 @@ function renderCharts(res){
     plugins:[Y_FIT_PLUGIN],
     data:{datasets: ds2},
     options: baseOptions(res, t, 'hover2', ageOf, y0, y0 + years,
-                         {yTitle: 'A year', fitY: fit2, onXWindow: linkX})
+                         {yTitle: 'A year', fitY: fit2,
+                          lowerPane: {id: 'yBal', title: 'Balance', fitY: fit3,
+                                      weight: 1, topWeight: 2}})
   });
-  chart2.$fitY = {y: fit2};
+  // Both panes are refitted to the x window on the same update, so a zoom
+  // cannot leave one of them scaled for a view it is no longer showing.
+  chart2.$fitY = {y: fit2, yBal: fit3};
   renderLegend('legend2', chart2, legend2);
 
-  /* The pot is blue in the path chart, so it is blue here: the same money,
-     seen from the other question. It must not be red, because red is already
-     the spending and the gap the pot has to cover above. */
-  var ds3 = [
-    {label:'Balance', data: pts(bal, y0), borderColor: t.a, borderWidth: 2.2,
-     pointRadius: 0, fill: 'origin', backgroundColor: withAlpha(t.a, 0.10), order: 3}
-  ];
-  // Both swatches are read off the datasets themselves, so the shaded balance
-  // and the dashed retirement rule draw in the key as they draw on the chart.
-  var legend3 = [{label:'Balance', datasets:[0]}];
-  if(marked){
-    ds3.push(retireLine(topOf(bal)));
-    legend3.push({label: retLabel, datasets:[ds3.length - 1]});
-  }
-
-  if(chart3) chart3.destroy();
-  chart3 = new Chart($('balChart').getContext('2d'), {
-    type:'line',
-    plugins:[Y_FIT_PLUGIN],
-    data:{datasets: ds3},
-    options: baseOptions(res, t, 'hover3', ageOf, y0, y0 + years,
-                         {yTitle: 'Balance', fitY: fit3, onXWindow: linkX})
-  });
-  chart3.$fitY = {y: fit3};
-  renderLegend('legend3', chart3, legend3);
-
-  $('chart2Sub').textContent = res.P.ageRetire >= res.P.ageDie - 1e-9
+  var notes2 = [res.P.ageRetire >= res.P.ageDie - 1e-9
     ? 'The slider is at your life expectancy, so you never stop earning and nothing is ever drawn.'
     : (res.P.ageRetire <= res.P.ageNow + 1e-9
         ? 'The slider is at your age now, so the drawdown starts today.'
         : 'Income falls to the pension or nothing at ' + fmt.age(res.P.ageRetire) +
-          ', and the gap below spending is what the balance has to cover from then on.');
-
-  var notes3 = ['Zooming or panning either cashflow chart moves the other with it.'];
-  if(clipped.cash) notes3.push('A pot that runs out is drawn flat at zero; the table and the card above carry the shortfall.');
-  $('chart3Sub').textContent = notes3.join(' ');
+          ', and the gap below spending is what the balance underneath has to cover from then on.')];
+  var ranOut = bal.some(function(v){ return v != null && isFinite(v) && v < 0; });
+  if(ranOut) notes2.push('The balance goes below zero and is drawn there: that is the shortfall, not a pause at nothing.');
+  $('chart2Sub').textContent = notes2.join(' ');
 }
 
 /* ─── TABLE ─── */
@@ -2174,8 +2186,7 @@ function exportTitle(which){
   if(!last) return 'Financial Freedom Calculator';
   var mode = last.ui.showReal ? "today's money" : 'future dollars';
   var at = ' at ' + fmt.age(last.P.ageRetire);
-  var name = which === 'dd' ? 'Income and spending' + at
-    : (which === 'bal' ? 'Balance' + at : 'Path to freedom');
+  var name = which === 'dd' ? 'Cashflows and balance' + at : 'Path to freedom';
   return 'Financial Freedom Calculator: ' + name + ' (' + mode + ')';
 }
 
@@ -2329,9 +2340,7 @@ function wire(){
      builds on the reset pass is the zoomed one, and it would otherwise be left
      stranded across an axis it no longer belongs to. */
   $('resetZoom1').addEventListener('click', function(){ if(chart1){ chart1.resetZoom('none'); chart1.update('none'); } });
-  // The two cashflow charts share an x window, so they share the reset too.
-  $('resetZoom2').addEventListener('click', resetCashZoom);
-  $('resetZoom3').addEventListener('click', resetCashZoom);
+  $('resetZoom2').addEventListener('click', function(){ if(chart2){ chart2.resetZoom('none'); chart2.update('none'); } });
 
   $('ffPngBtn').addEventListener('click', function(){
     chartPng('ffChart', 'financial_freedom_path.png', exportTitle('ff'), 'legend1');
@@ -2345,12 +2354,6 @@ function wire(){
   $('ddSvgBtn').addEventListener('click', function(){
     chartSvg('ddChart', 'financial_freedom_cashflows.svg', exportTitle('dd'), 'legend2');
   });
-  $('balPngBtn').addEventListener('click', function(){
-    chartPng('balChart', 'financial_freedom_balance.png', exportTitle('bal'), 'legend3');
-  });
-  $('balSvgBtn').addEventListener('click', function(){
-    chartSvg('balChart', 'financial_freedom_balance.svg', exportTitle('bal'), 'legend3');
-  });
   $('ffCopyBtn').addEventListener('click', function(){
     copyCanvasPng(chartPng('ffChart', '', exportTitle('ff'), 'legend1', false))
       .then(function(){ flashBtn($('ffCopyBtn'), '✓'); },
@@ -2359,11 +2362,6 @@ function wire(){
   $('ddCopyBtn').addEventListener('click', function(){
     copyCanvasPng(chartPng('ddChart', '', exportTitle('dd'), 'legend2', false))
       .then(function(){ flashBtn($('ddCopyBtn'), '✓'); },
-            function(err){ alert('PNG copy failed: ' + (err && err.message ? err.message : 'unknown error')); });
-  });
-  $('balCopyBtn').addEventListener('click', function(){
-    copyCanvasPng(chartPng('balChart', '', exportTitle('bal'), 'legend3', false))
-      .then(function(){ flashBtn($('balCopyBtn'), '✓'); },
             function(err){ alert('PNG copy failed: ' + (err && err.message ? err.message : 'unknown error')); });
   });
   $('csvBtn').addEventListener('click', downloadCsv);
@@ -2376,7 +2374,7 @@ function wire(){
     render();
     flashBtn($('simBtn'), '✓ Updated');
   });
-  [['ffChart', 'hover1'], ['ddChart', 'hover2'], ['balChart', 'hover3']].forEach(function(pair){
+  [['ffChart', 'hover1'], ['ddChart', 'hover2']].forEach(function(pair){
     $(pair[0]).addEventListener('mouseleave', function(){
       $(pair[1]).textContent = 'Hover to inspect any year.';
     });
@@ -2460,7 +2458,7 @@ window.__FF = {
   layoutLegend: layoutLegend,
   render: render,
   get last(){ return last; },
-  get charts(){ return {main: chart1, drawdown: chart2, balance: chart3}; }
+  get charts(){ return {main: chart1, cashflows: chart2}; }
 };
 
 })();
