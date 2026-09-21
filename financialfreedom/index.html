@@ -138,13 +138,10 @@
         <input class="num-input" id="ageNow" type="number" min="0" max="100" step="1" value="30"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Target retirement age <i class="tip-icon" data-tip="When you stop earning and start living off the pot. The amount needed is measured here.">?</i></span></div>
-        <input class="num-input" id="ageRetire" type="number" min="1" max="110" step="1" value="60"/>
-      </div>
-      <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Life expectancy <i class="tip-icon" data-tip="How long the money has to last. Die Rich ignores it, because forever does not care when you stop.">?</i></span></div>
         <input class="num-input" id="ageDie" type="number" min="2" max="120" step="1" value="90"/>
       </div>
+      <p class="note">Retirement age lives on the <strong>Cashflows</strong> slider, so you can drag it and watch the answer move.</p>
     </div>
 
     <div class="field-group">
@@ -285,12 +282,24 @@
           <input class="num-input" id="pensionStartAge" type="number" min="40" max="90" step="1" value="67"/>
         </div>
         <div class="field-row">
-          <div class="field-label"><span class="tip-wrap">Pension, per year <i class="tip-icon" data-tip="In today's money, indexed to inflation.">?</i></span></div>
-          <div class="currency-wrap">
-            <span class="prefix" id="pensionAmountPrefix">$</span>
-            <input class="currency-input fmt-num" id="pensionAmount" type="text" inputmode="decimal" value="29,000"/>
+          <div class="field-label"><span class="tip-wrap">Pension amount <i class="tip-icon" data-tip="What the pension pays today, at whatever rate you name it in. It is counted as income from its start age, so it lowers the pot you need.">?</i></span></div>
+          <div class="inline-row">
+            <div class="currency-wrap grow">
+              <span class="prefix" id="pensionAmountPrefix">$</span>
+              <input class="currency-input fmt-num" id="pensionAmount" type="text" inputmode="decimal" value="29,000"/>
+            </div>
+            <select class="sel-input period" id="pensionPeriod">
+              <option value="weekly">a week</option>
+              <option value="monthly">a month</option>
+              <option value="yearly" selected>a year</option>
+            </select>
           </div>
         </div>
+        <div class="toggle-row">
+          <div class="toggle-label"><span class="tip-wrap">Rises with inflation <i class="tip-icon" data-tip="<strong>On:</strong> the pension is indexed, so it keeps buying the same thing every year. Australia, the UK and the US all index theirs.<br><strong>Off:</strong> a steady number that never changes, so it buys less every year. Several countries pay a flat pension that is only lifted by an occasional act of parliament, and some private and company pensions never rise at all.">?</i></span></div>
+          <label class="toggle-switch"><input type="checkbox" id="pensionIndexed" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+        </div>
+        <p class="note" id="pensionNote"></p>
       </div>
     </div>
   </div>
@@ -324,69 +333,122 @@
 <main>
   <div class="verdict card" id="verdict"></div>
 
-  <section class="metrics">
-    <div class="metric card">
-      <div class="label"><span class="tip-wrap">Amount needed <i class="tip-icon" data-tip="The pot you need on the day you retire for this goal to work on the expected return.">?</i></span></div>
-      <div class="value" id="mNeed">—</div>
-      <div class="sub" id="mNeedSub"></div>
-    </div>
-    <div class="metric card">
-      <div class="label"><span class="tip-wrap">Financially free at <i class="tip-icon" data-tip="The earliest age your savings reach the pot needed to stop then. It is where the two lines cross below.">?</i></span></div>
-      <div class="value" id="mFreeAge">—</div>
-      <div class="sub" id="mFreeAgeSub"></div>
-    </div>
-    <div class="metric card">
-      <div class="label"><span class="tip-wrap">Chance it works <i class="tip-icon" data-tip="The share of simulated futures in which the money lasts, using the pot you are on track for. A single average return usually lands near a coin flip, because it ignores the order the good and bad years arrive in.<br><br>The pot named underneath is the one that survives your chosen share of those futures. Plan around that, not the expected-return figure.">?</i></span></div>
-      <div class="value" id="mSuccess">—</div>
-      <div class="sub" id="mSuccessSub"></div>
-    </div>
-    <div class="metric card">
-      <div class="label"><span class="tip-wrap">Real return <i class="tip-icon" data-tip="Your return after inflation. It is what decides how big the pot has to be.">?</i></span></div>
-      <div class="value" id="mRealRet">—</div>
-      <div class="sub" id="mRealRetSub"></div>
-    </div>
-  </section>
-
-  <section class="chart-card card">
-    <div class="chart-head">
+  <!-- ════ SECTION 1 · Path to freedom ════
+       One question only: how early can you stop? Required pot against what
+       the investment grows to, with no withdrawal anywhere in it. -->
+  <section class="board" id="boardPath">
+    <header class="board-head">
+      <div class="board-kicker">Section 1</div>
       <h2>Path to freedom</h2>
-      <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="ffSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
-        <button class="btn-secondary btn-sm" id="ffPngBtn" title="Download this chart as PNG">⬇ PNG</button>
-        <button class="btn-secondary btn-sm" id="ffCopyBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary btn-sm" id="resetZoom1" title="Reset zoom">⟳</button>
+      <p class="board-lede">What the pot needs to be if you stopped at each age, against what your investment is on track to grow to. Where they meet is the earliest you could stop. <strong>Nothing is withdrawn anywhere on this chart</strong> — it is the run-up, not the retirement.</p>
+    </header>
+
+    <section class="metrics metrics-3">
+      <div class="metric card">
+        <div class="label"><span class="tip-wrap">Financially free at <i class="tip-icon" data-tip="The earliest age your investment reaches the pot needed to stop then. It is where the two lines cross below, and it does not depend on the retirement age you pick in Section 2.">?</i></span></div>
+        <div class="value" id="mFreeAge">—</div>
+        <div class="sub" id="mFreeAgeSub"></div>
       </div>
-    </div>
-    <div class="sub" id="chart1Sub"></div>
-    <div class="legend" id="legend1"></div>
-    <div class="canvas-wrap"><canvas id="ffChart"></canvas></div>
-    <div class="hover-box" id="hover1">Hover to inspect any year.</div>
+      <div class="metric card">
+        <div class="label"><span class="tip-wrap">Pot needed then <i class="tip-icon" data-tip="The pot the crossing happens at: what stopping at that age costs, on the expected return.">?</i></span></div>
+        <div class="value" id="mFreePot">—</div>
+        <div class="sub" id="mFreePotSub"></div>
+      </div>
+      <div class="metric card">
+        <div class="label"><span class="tip-wrap">Real return <i class="tip-icon" data-tip="Your return after inflation. It is what decides how big the pot has to be.">?</i></span></div>
+        <div class="value" id="mRealRet">—</div>
+        <div class="sub" id="mRealRetSub"></div>
+      </div>
+    </section>
+
+    <section class="chart-card card">
+      <div class="chart-head">
+        <h3>Pot needed vs investment growth</h3>
+        <div class="btn-cluster">
+          <button class="btn-secondary btn-sm" id="ffSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+          <button class="btn-secondary btn-sm" id="ffPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+          <button class="btn-secondary btn-sm" id="ffCopyBtn" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary btn-sm" id="resetZoom1" title="Reset zoom">⟳</button>
+        </div>
+      </div>
+      <div class="sub" id="chart1Sub"></div>
+      <div class="legend" id="legend1"></div>
+      <div class="canvas-wrap"><canvas id="ffChart"></canvas></div>
+      <div class="hover-box" id="hover1">Hover to inspect any year.</div>
+    </section>
   </section>
 
-  <section class="chart-card card">
-    <div class="chart-head">
-      <h2>Living off the pot</h2>
-      <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="ddSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
-        <button class="btn-secondary btn-sm" id="ddPngBtn" title="Download this chart as PNG">⬇ PNG</button>
-        <button class="btn-secondary btn-sm" id="ddCopyBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary btn-sm" id="resetZoom2" title="Reset zoom">⟳</button>
+  <!-- ════ SECTION 2 · Cashflows ════
+       Everything here answers "what if I stopped at THIS age", and the slider
+       is the age. Money in, money out, and what the balance does about it. -->
+  <section class="board" id="boardCash">
+    <header class="board-head">
+      <div class="board-kicker">Section 2</div>
+      <h2>Cashflows</h2>
+      <p class="board-lede">Money in, money out, and what the balance does about it — for the retirement age on the slider. Drag it to see the whole plan move.</p>
+      <div class="retire-slider" id="retireSlider">
+        <div class="slider-head">
+          <div class="slider-label"><span class="tip-wrap">Retire at <i class="tip-icon" data-tip="The age you stop earning and start living off the pot. Everything in this section is measured at this age. The slider runs from your age now, meaning stop today, to your life expectancy, meaning never stop.">?</i></span></div>
+          <div class="slider-value" id="ageRetireVal">60</div>
+        </div>
+        <!-- The real bounds are the two ages on the You tab and are written here on
+             every render. The static pair is the widest either age can be, so a
+             value restored from the last visit is never clamped by a stale bound
+             before the render that would have widened it. -->
+        <input type="range" id="ageRetire" min="0" max="120" step="1" value="60"/>
+        <div class="slider-scale"><span id="retireScaleMin">Age now</span><span id="retireScaleMax">Life expectancy</span></div>
       </div>
-    </div>
-    <div class="legend" id="legend2"></div>
-    <div class="canvas-wrap"><canvas id="ddChart"></canvas></div>
-    <div class="hover-box" id="hover2">Hover to inspect any year.</div>
-  </section>
+    </header>
 
-  <section class="detail-section card">
-    <div class="detail-head">
-      <h2>Year by year</h2>
-      <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="csvBtn" title="Download this table as CSV">⬇ CSV</button>
+    <section class="metrics">
+      <div class="metric card">
+        <div class="label"><span class="tip-wrap">Pot needed at <span id="mNeedAge">60</span> <i class="tip-icon" data-tip="The pot you need on the day you retire for this goal to work on the expected return.">?</i></span></div>
+        <div class="value" id="mNeed">—</div>
+        <div class="sub" id="mNeedSub"></div>
       </div>
-    </div>
-    <p class="sub" id="tableSub"></p>
-    <div class="table-wrap" id="tableWrap"></div>
+      <div class="metric card">
+        <div class="label"><span class="tip-wrap">Balance at <span id="mHaveAge">60</span> <i class="tip-icon" data-tip="What the investment is on track to be worth on the day you stop, on the expected return.">?</i></span></div>
+        <div class="value" id="mHave">—</div>
+        <div class="sub" id="mHaveSub"></div>
+      </div>
+      <div class="metric card">
+        <div class="label"><span class="tip-wrap">Chance it works <i class="tip-icon" data-tip="The share of simulated futures in which the money lasts, using the pot you are on track for at this retirement age. A single average return usually lands near a coin flip, because it ignores the order the good and bad years arrive in.<br><br>The pot named underneath is the one that survives your chosen share of those futures. Plan around that, not the expected-return figure.">?</i></span></div>
+        <div class="value" id="mSuccess">—</div>
+        <div class="sub" id="mSuccessSub"></div>
+      </div>
+      <div class="metric card">
+        <div class="label"><span class="tip-wrap">Left at <span id="mLeftAge">90</span> <i class="tip-icon" data-tip="What the balance reads at your life expectancy after the whole retirement has been paid for. Negative means the pot ran out and the shortfall is what it would have taken to see the plan through.">?</i></span></div>
+        <div class="value" id="mLeft">—</div>
+        <div class="sub" id="mLeftSub"></div>
+      </div>
+    </section>
+
+    <section class="chart-card card">
+      <div class="chart-head">
+        <h3>Income, expense and balance</h3>
+        <div class="btn-cluster">
+          <button class="btn-secondary btn-sm" id="ddSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+          <button class="btn-secondary btn-sm" id="ddPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+          <button class="btn-secondary btn-sm" id="ddCopyBtn" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary btn-sm" id="resetZoom2" title="Reset zoom">⟳</button>
+        </div>
+      </div>
+      <div class="sub" id="chart2Sub"></div>
+      <div class="legend" id="legend2"></div>
+      <div class="canvas-wrap"><canvas id="ddChart"></canvas></div>
+      <div class="hover-box" id="hover2">Hover to inspect any year.</div>
+    </section>
+
+    <section class="detail-section card">
+      <div class="detail-head">
+        <h3>Year by year</h3>
+        <div class="btn-cluster">
+          <button class="btn-secondary btn-sm" id="csvBtn" title="Download this table as CSV">⬇ CSV</button>
+        </div>
+      </div>
+      <p class="sub" id="tableSub"></p>
+      <div class="table-wrap" id="tableWrap"></div>
+    </section>
   </section>
 
   <section class="detail-section card">

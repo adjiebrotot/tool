@@ -3,7 +3,7 @@
 Drives the real page in headless Chromium (CDN libs stubbed, so it runs offline;
 the Chart.js stub records every chart config so the plotted series can be
 inspected) and checks it against an **independent replay** of the ten-step
-algorithm documented at the top of `script.js`.
+algorithm documented at the top of `script.js` (eleven steps since the overhaul).
 
 The replay is deliberately written a different way from the page, so agreement
 means the maths agrees rather than an implementation being compared to itself:
@@ -22,6 +22,10 @@ means the maths agrees rather than an implementation being compared to itself:
   running-minimum identity** in the replay,
   `D(T) = max(0, min over k of [W(k) + C(T) - C(k)])`, which agrees with the
   loop only if both the clamp and the deposit accounting are right;
+- the pension's indexation is a branch in the page and a **discount factor** in
+  the replay, so an unindexed pension agreeing means the erosion agrees;
+- the cashflow balance is `lifetimeSeries` in the page and `refLifetime`, a
+  forward walk written straight from steps 4 and 5, in the replay;
 - income and spending are rebuilt from the two savings models directly, rather
   than from the page's own helpers, so agreement means the definition agrees;
 - a pot the page solved backwards is walked **forwards** through the replay's
@@ -47,7 +51,8 @@ earlier version of this tool rejected exactly that by comparing the horizon
 balance against the starting pot. F8 exists because the page got it wrong first.
 
 Randomness: zero volatility collapsing every percentile onto the deterministic
-line exactly, seed reproducibility, success probability being monotone in the
+ACCUMULATION exactly — the band wraps the line it is drawn around, and that line
+never withdraws — seed reproducibility, success probability being monotone in the
 pot (which is what the common-random-numbers design buys and what the confidence
 pot depends on), and the log-growth drift and spread matching the documented
 log-normal over 240,000 draws.
@@ -56,12 +61,15 @@ log-normal over 240,000 draws.
 row of the table, under both savings models and across a pension start, and all
 three columns against the replay's own flows rather than against each other
 (F42e, because the table derives Saved by subtraction and would otherwise be
-proving only its own arithmetic). The deposited line is pinned four ways: the
-replay identity on four plans, the shape it exists for (climbs only while you
-are still paying in, never exceeds the pot, never negative), the closed form at
-the retirement month (starting assets plus every cent paid in), and the two ends
-of the spectrum — Die Rich never touches capital, a pot spent to nothing leaves
-nothing of what you put in.
+proving only its own arithmetic). The deposited line belongs to the path chart,
+where nothing is ever withdrawn, and is pinned five ways: the replay identity on
+four plans, the shape it exists for (never exceeds the pot, never negative, and
+under the savings model only ever climbs because there is no retirement on that
+chart to turn it down), the closed form at four separate months, the one case
+that can hold it down — an income below the spending pays in nothing at all —
+and the floor at zero, where a pot eaten to nothing leaves nothing of what you
+put in. F41h pins the deletion: the drawdown series carries no deposited line at
+all, because the section it belongs to does not ask that question.
 
 F45 pins the deletion: no drawdown field, no stress toggle, no crash metric, no
 `stressRequiredPot`, no `mdd` on a preset or in the defaults, and no crash left
@@ -97,20 +105,76 @@ otherwise would.
 against a straight line through the two samples it sits between rather than
 against either one, and its dropline is checked to run from the axis to it.
 
-**Both charts after the revision.** The path chart runs the whole plan rather
-than stopping past retirement, and carries the deposited line, which has stopped
-climbing by the retirement age. The second chart plots income against spending
-over those same years, with the gap filled on both sides in two different
-colours from the token set (F25 reads `fill.above` and `fill.below` too, or the
-one place a hardcoded hex could hide would be exactly there), an axis that says
-it is a yearly flow rather than a balance, a legend that names both sides of the
-fill, and no trace of the four-pot drawdown it replaced.
+**Two sections, and the line between them.** The page answers two questions and
+keeps them apart, so the harness pins the separation itself. F48 reads the two
+boards: their headings, that each owns its own cards, and that section 1 never
+names a retirement age while every section 2 card that has one says which age it
+is measured at. F51 drags the slider from one end of its range to the other and
+checks that the freedom age, all three plotted lines and the pot the crossing
+happens at are byte-identical at every position, while every figure in section 2
+is different at every position. F44h is the identity that ties them together:
+the cashflow balance IS the section 1 accumulation up to the retirement month
+and strictly below it from the next month on, because one keeps paying in and
+the other has started taking out.
+
+**The retirement age is a slider** (F52), capped from the age now to the life
+expectancy, with the number input gone from the input panel. Both ends have to
+be ordinary answers rather than errors — stopping today and never stopping are
+exactly what a sensitivity control is for — which is why F22, which used to
+demand an "invalid" verdict for a retirement age equal to the age now, now
+demands the opposite. Dragging the life expectancy under the handle pulls the
+handle down with it.
+
+**Both charts after the overhaul.** F43 pins the path chart at exactly three
+lines and a band — pot needed, investment outcome, money deposited, no median —
+running the whole plan with **no withdrawal anywhere in it**, which is what
+makes the crossing readable and what makes the plotted line the same line the
+crossing is solved against. F34d and F35 pin the consequence: sixty years of
+compounding put the end of a plan two orders of magnitude above its beginning,
+so the chart OPENS on the years that decide the answer and `limits` is pinned to
+the data rather than to the view, with the whole plan one pinch away. F44 pins
+the cashflow chart: income against spending with the gap filled on both sides in
+two different colours from the token set (F25 reads `fill.above` and
+`fill.below` too, or the one place a hardcoded hex could hide would be exactly
+there), the balance on its own right-hand axis because a stock and a flow cannot
+share a scale, an ungridded second axis that says what it carries, a legend that
+names the right axis out loud, and no trace of the four-pot drawdown it
+replaced. F50i pins that both of its y axes are refitted in the same pass, or
+the balance would be left drawn against a window it is not in.
+
+**The pension, per week or per year, indexed or frozen.** F53 pins that the same
+pension entered weekly, monthly or yearly gives the same pot to the cent, and
+that a weekly figure is 52/12 of a month rather than a quarter of one. Then the
+choice that actually changes the answer: an indexed pension is flat in today's
+money, while a frozen one decays by exactly the inflation factor measured from
+TODAY rather than from its start age — the amount entered is what it pays now,
+so the years before you claim it erode it too. An indexed pension is worth more
+than a frozen one, which is worth more than none; at zero inflation the two are
+the same plan to the cent; and under Die Rich a frozen pension has all but faded
+by the age-120 horizon, which is why the perpetuity there is taken on the net
+draw at the horizon.
+
+**The table adds up.** The year-by-year table is a cash flow statement now, with
+the pot and the gap gone and a Growth column in their place, and F54 treats it
+as one. On twelve plans — both savings models, both moneys, a frozen weekly
+pension, an indexed pension bridge, stopping today, never stopping, a plan that
+runs out, all three goals, zero inflation and zero real return — it checks that
+`Saved = Income - Expense` in every row, that `Balance + Saved + Growth` is next
+year's Balance, that the balance column matches the replay's own forward
+recurrence, and that the column starts at today's assets and ends on the
+engine's own terminal. F54e telescopes the lot: assets today plus all the saving
+plus all the growth is the final balance. F54f pins what the residual MEANS in
+each money — in today's money the real return, in the money of the day the same
+earnings plus the inflation uplift on the balance and on that year's flows,
+written out as a decomposition. F54h-l check that the four cards over the table
+say what the table says.
 
 **Inflation being visible, not merely applied.** The engine runs in real terms,
 where the living cost is flat and inflation can therefore look inert. F37 pins
 the Expense column: flat in today's money, exactly the real cost times the
 inflation factor in future dollars, and rising *before* retirement as well as
-after. F38 pins the consequence the tool is often asked for and rarely shows:
+after. The pot needed lost its table column when the table became a pure cash
+flow statement, so F38 reads it off the curve the page plots instead. F38 pins the consequence the tool is often asked for and rarely shows:
 in the money of the day, freedom at a later age costs MORE, while in today's
 money it costs less because fewer years are left to fund. Both are true at once
 and the page has to say which one it is showing.
@@ -141,9 +205,10 @@ the old scale while the ticks already show the new one. F50h pins the other half
 of that lesson — the reset button repaints once more, because the tick set built
 on the reset pass is the zoomed one.
 
-**The two cuts.** F48: the confidence pot has no card of its own any more, but
-the figure still rides under the probability it belongs to; and neither chart
-carries a subtitle explaining what its legend and its axis already say.
+**The one cut that stuck.** The confidence pot has no card of its own, but the
+figure still rides under the probability it belongs to (F48d). The chart
+subtitles are back, but only saying what a legend and an axis cannot: which
+chart withdraws and which does not (F48e).
 
 The exports: every control present, the CSV carrying the same columns and the
 same row count as the table it came from, and naming the currency and the money
@@ -153,6 +218,27 @@ exported legend used to be laid out on one assumed row, which fitted four
 entries and pushed the sixth through the watermark and off the right edge of
 the canvas. The action row: Simulate and Reset pinned together rather
 than Reset buried in the Settings tab.
+
+**A fuzz pass under all of it.** F56 runs 200 plans nobody chose — random ages,
+periods, rates, goals, pensions, both savings models and both moneys, from a
+fixed seed so a failure names its plan — and asserts every invariant at once:
+nothing is ever NaN or an unexpected Infinity, `Saved = Income - Expense`, every
+row closes into the next year's balance, the whole balance column matches the
+replay, a reported freedom age is one the plan is genuinely funded at AND the
+earliest such month (the month before it must NOT qualify, or the headline is
+not the earliest age it claims to be), probabilities stay in [0,1], only Die
+Rich may need an infinite pot, and no NaN ever reaches a chart. It is the net
+under everything above: a combination no hand-written case thought of either
+satisfies every invariant or shows up here.
+
+**Coming back tomorrow.** F57 reloads the page and checks the mini cache brings
+the plan back. The slider is the awkward one: a range input clamps an assigned
+value to the min and max ATTRIBUTES it currently carries, and those are only
+rewritten by a render, so a handle restored before the ages that widen its range
+would silently land on the old ceiling. The static pair in the markup is
+therefore the widest either age can ever be, and F57 is what says so — along
+with the pension coming back with its rate and its indexation intact, and the
+plan reloading to the same answer to the cent.
 
 `SharedPriceCache` round-tripping through the DCA simulator's own
 `dca_priceCache_v2` key with every field those tools read back (`source` and

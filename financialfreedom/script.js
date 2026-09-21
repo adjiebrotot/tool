@@ -1,14 +1,26 @@
 /* Financial Freedom Calculator. How much is enough, and when do you get there.
    ---------------------------------------------------------------------------
+   The page answers two separate questions and keeps them apart, because mixing
+   them is what made the old single chart unreadable:
+
+     SECTION 1, Path to freedom.  How EARLY could you stop? Required pot at
+       every age against what the investment grows to if you never stop paying
+       in. No withdrawal appears anywhere in it, so the crossing is the crossing
+       and nothing else moves the lines.
+     SECTION 2, Cashflows.  What happens if you stop at THIS age? Income,
+       spending and the balance through the whole plan, for the retirement age
+       on the slider. The slider is the sensitivity: it moves nothing in
+       section 1 and everything in section 2.
+
    Everything below runs in REAL terms (today's money) on MONTHLY steps, and is
    sampled yearly for the charts and the table. The audit harness in _audit/
    replays this documented maths in a deliberately different formulation, so
    read it as the specification, not as a summary.
 
    Step 1  Normalise the inputs.
-     Expenses and savings arrive weekly, monthly or yearly and are converted to
-     a monthly figure (weekly x 52/12, yearly / 12). Ages are decimal years;
-     month counts are round((b - a) * 12).
+     Expenses, savings and the pension all arrive weekly, monthly or yearly and
+     are converted to a monthly figure (weekly x 52/12, yearly / 12). Ages are
+     decimal years; month counts are round((b - a) * 12).
 
    Step 2  Strip out inflation, using Fisher rather than subtraction.
      rr   = (1 + r) / (1 + i) - 1        real annual return
@@ -39,15 +51,32 @@
                                      starts. Spending is Xr, so the gap is the
                                      net draw of step 5 with its sign flipped.
 
+   Step 3b  The pension, and whether it keeps its value.
+     P0 is the entered amount per month. Two countries do not treat it the same
+     way, so the tool asks:
+       indexed     P(t) = P0                       flat in TODAY'S money, which
+                                                   is a rising figure in the
+                                                   money of the day
+       not indexed P(t) = P0 / (1 + i)^(t/12)      flat in the MONEY OF THE DAY,
+                                                   which is a falling real value
+     t is months from TODAY, not from the pension start, so a pension that is
+     never indexed has already lost value by the time it starts. Both forms are
+     zero before the start age. With zero inflation the two coincide exactly.
+
    Step 4  Accumulation, while still working. Return over the month, savings
      added at the end of it:
        W(t+1) = W(t) * (1 + rm) + S(t),      W(0) = current invested assets
+     Section 1 runs this recurrence for the WHOLE span, today to the life
+     expectancy, with no retirement in it at all. That is the line the crossing
+     is solved against in step 7, so the marker cannot sit off the curve it is
+     read from.
 
    Step 5  Drawdown, once retired. Expenses out and any pension in at the
      START of the month, return over the month:
        W(t+1) = (W(t) - Xr + P(t)) * (1 + rm)
      Xr is the real monthly expense in retirement (today's expense times the
-     retirement multiplier). P(t) is the pension, zero before its start age.
+     retirement multiplier). This is section 2 only: the balance line there
+     accumulates to the slider age and draws down from it.
 
    Step 6  The pot required to stop work at age A. Because step 5 is AFFINE in
      the starting pot, one pass gives every constraint exactly. Track the
@@ -70,44 +99,59 @@
        Just Die   W = Xr * (1 - (1+rm)^-n) / rm * (1 + rm),  limit Xr * n at rm = 0
        Legacy     W = that + legacy / (1 + rm)^n
        Die Rich   W = Xr * (1 + rm) / rm,  needs rm > 0
+     An unindexed pension has faded to almost nothing by age 120, so the Die
+     Rich perpetuity is taken on the net draw AT the horizon, which is then
+     within a whisker of the full expense. The months either side of it are
+     covered by the same forward pass as every other month.
 
-   Step 7  The earliest financial freedom age. Two curves over age: what you
-     will have accumulated, and the pot step 6 requires if you stopped at that
-     age. Accumulated is non-decreasing, required is non-increasing, so they
-     cross at most once. The first month where accumulated >= required is the
-     answer. The search excludes the final month only: at the death age itself
-     there is nothing left to fund, so every plan would qualify. No crossing
-     before then means the plan is not achievable.
+   Step 7  The earliest financial freedom age. Two curves over age: what the
+     investment accumulates to, and the pot step 6 requires if you stopped at
+     that age. Accumulated is non-decreasing under the savings model, required
+     is non-increasing, so they cross at most once. The first month where
+     accumulated >= required is the answer. The search excludes the final month
+     only: at the death age itself there is nothing left to fund, so every plan
+     would qualify. No crossing before then means the plan is not achievable.
+     Neither curve depends on the retirement age, which is why section 1 does
+     not move when the slider does.
 
    Step 8  Monte Carlo. The same recurrences with a random monthly growth
      factor instead of (1 + rm):
        growth = exp(ln(1 + rr)/12 + sigma * sqrt(1/12) * z),   z ~ N(0,1)
      The drift is ln(1 + rr) because the return input is a COMPOUND (CAGR)
      figure, so with no cash flows the median path is the deterministic line
-     and sigma = 0 collapses to it exactly. Once withdrawals start, path
-     dependence pulls the median below the deterministic line: that gap is
-     volatility drag, and it is what the success probability measures.
-     Normals come from Box-Muller, seeded per path, so a run is reproducible
-     and every pot is scored against the SAME set of paths.
+     and sigma = 0 collapses to it exactly. Normals come from Box-Muller,
+     seeded per path, so a run is reproducible and every pot is scored against
+     the SAME set of paths. The band on the section 1 chart is the yearly
+     cross-section of the ACCUMULATION paths, matching the line it wraps.
 
    Step 9  The confidence pot. Because step 5 is affine in W, each simulated
      path has an exact minimum starting pot that survives it. Collect one per
      path, sort, and read off the percentile. The 90% confidence pot is the
      90th percentile. No search is needed, and success probability at any pot
-     is just the share of paths whose requirement is at or below it.
+     is just the share of paths whose requirement is at or below it. This is
+     measured at the slider's retirement age, so it is a section 2 figure.
 
-   Step 10  Money deposited, the second line on the first chart. It is what you
-     have put in that is STILL in the pot, so it answers "am I living off the
-     growth, or am I eating the capital?":
+   Step 10  Money deposited, the third line on the section 1 chart. It is what
+     you have put in that is STILL in the pot, so it answers "am I living off
+     the growth, or am I eating the capital?":
        D(0) = the current invested assets
        D(t+1) = max(0, min(D(t) + max(0, f), W))
      where f is the month's cash flow and W the balance just after it lands.
      Money in adds to it; money out comes off the growth first, which is all the
-     clamp against the balance says.
-     So it climbs while you work, goes flat the month you retire, holds flat for
-     as long as the growth covers the draw, and only then turns down, at the
-     moment the balance falls through what you put in. Under Die Rich it never
-     turns down, because only the real growth is ever spent.
+     clamp against the balance says. On the section 1 chart, where nothing is
+     ever withdrawn, it is simply every cent paid in, held down by the balance
+     in the years a bad market has the pot below it.
+
+   Step 11  The year-by-year table is a cash flow statement and reconciles as
+     one. Each row carries the balance at the start of the year, the twelve
+     months of income and spending that follow, and the investment return that
+     closes it:
+       Growth(y) = Balance(y+1) - Balance(y) - Saved(y)
+     Taken as a residual in whatever money is on screen, so the row adds up to
+     the cent in today's money and in the money of the day alike. In real terms
+     it is the real return on the pot; in future dollars it is the nominal
+     return, which is the same earnings plus the inflation uplift on the
+     balance and the year's flows.
 
    Not modelled, deliberately: tax, fees beyond whatever the return input is
    already net of, lumpy one-off spending, and any change in the expense level
@@ -172,7 +216,8 @@ var UI_DEFAULTS = {
   assetPreset: 'custom', ret: 8, std: 15, ticker: '',
   assets: 100000,
   mode: 'die', legacy: 500000, retireMultiplier: 100,
-  pensionOn: false, pensionStartAge: 67, pensionAmount: 29000,
+  pensionOn: false, pensionStartAge: 67,
+  pensionAmount: 29000, pensionPeriod: 'yearly', pensionIndexed: true,
   showReal: false, paths: 1000, seed: 20260921,
   confidence: 90
 };
@@ -312,8 +357,21 @@ function buildParams(ui){
     legacy: ui.legacy,
     pensionOn: !!ui.pensionOn,
     pensionStartAge: ui.pensionStartAge,
-    pensionMonthly: ui.pensionOn ? ui.pensionAmount / 12 : 0
+    pensionIndexed: ui.pensionIndexed !== false,
+    pensionMonthly: ui.pensionOn ? perMonth(ui.pensionAmount, ui.pensionPeriod) : 0
   };
+}
+
+/* The real monthly pension at absolute age `age` (step 3b). Indexed pensions
+   hold their value, so the real figure never moves. An unindexed one is a
+   steady figure in the money of the day, which is a real value falling at the
+   inflation rate from TODAY — not from the start age, because the amount
+   entered is what it pays now, and a pension frozen for the thirty years
+   before you claim it buys thirty years less by the time you do. */
+function pensionAt(P, age){
+  if(!P.pensionOn || age < P.pensionStartAge - 1e-9) return 0;
+  if(P.pensionIndexed) return P.pensionMonthly;
+  return P.pensionMonthly / Math.pow(1 + P.inflation, Math.max(0, age - P.ageNow));
 }
 
 // Real monthly savings t months from today, while still working (step 3).
@@ -323,10 +381,7 @@ function savingsAt(P, t){
 }
 
 // Net real monthly draw during retirement at absolute age `age` (step 5).
-function drawAt(P, age){
-  var pen = (P.pensionOn && age >= P.pensionStartAge - 1e-9) ? P.pensionMonthly : 0;
-  return P.Xr - pen;
-}
+function drawAt(P, age){ return P.Xr - pensionAt(P, age); }
 
 // Months of work left. Every series below splits on this exact month, so the
 // engine and the plotted cash flows cannot disagree about when work stops.
@@ -340,7 +395,7 @@ function incomeAt(P, t){
   if(t < accMonths(P)){
     return P.savingsMode === 'income' ? P.I0 * Math.pow(1 + P.gm, t) : savingsAt(P, t) + P.X;
   }
-  return (P.pensionOn && P.ageNow + t / 12 >= P.pensionStartAge - 1e-9) ? P.pensionMonthly : 0;
+  return pensionAt(P, P.ageNow + t / 12);
 }
 
 // Real monthly spending t months from today. Flat by construction in real
@@ -391,8 +446,12 @@ function requiredPot(P, ra, growth){
   return need;
 }
 
-// Accumulation while working (step 4), month 0 .. n.
+/* Accumulation (step 4), month 0 .. n. The month count is clamped at zero
+   because callers hand it a span that can be empty or inverted — retiring at
+   your age now is a legitimate slider position, and a solver probing past an
+   age bound is not. An empty span is a pot that has not grown, not a crash. */
 function accumulate(P, n, growth){
+  n = Math.max(0, n | 0);
   var out = new Float64Array(n + 1);
   var W = P.A0, t;
   out[0] = W;
@@ -438,43 +497,30 @@ function growthSeries(P, rng, n){
   return out;
 }
 
-/* Full-lifetime Monte Carlo: accumulate from today, then draw down. Returns
-   yearly percentile bands for the chart plus the share of paths that survive.
-   Bands are the cross-section at each year, so the p10 line is an envelope of
-   bad years, not a single bad path. */
-function monteCarlo(P, opts){
+/* The band on the section 1 chart (step 8). Accumulation only, because that
+   is the line it wraps: the same recurrence as step 4 with a random monthly
+   growth factor, sampled yearly across paths. Bands are the cross-section at
+   each year, so the p10 line is an envelope of bad years rather than one bad
+   path, and at zero volatility every percentile collapses onto the
+   deterministic accumulation exactly. */
+function accumBands(P, opts){
   var nPaths = Math.max(1, opts.paths | 0);
-  var accMonths = Math.max(0, months(P.ageNow, P.ageRetire));
   var chartYears = Math.max(1, Math.round(months(P.ageNow, P.ageDie) / 12));
-  var total = Math.max(1, months(P.ageNow, horizonAge(P)));
+  var total = Math.max(1, chartYears * 12);
   var samples = [], y, p, t;
   for(y = 0; y <= chartYears; y++) samples.push(new Float64Array(nPaths));
-  var survived = 0;
-  // Same bar requiredPot uses for Die Rich: enough at the horizon to fund the
-  // remaining draw for ever at the expected return.
-  var richNet = drawAt(P, horizonAge(P));
-  var richTarget = richNet <= 0 ? 0 : (P.rm > 0 ? richNet * (1 + P.rm) / P.rm : Infinity);
   for(p = 0; p < nPaths; p++){
     var rng = mulberry32(deriveSeed(opts.seed, 'path' + p));
     var g = growthSeries(P, rng, total);
-    var W = P.A0, ok = true;
+    var W = P.A0;
     samples[0][p] = W;
     for(t = 0; t < total; t++){
-      if(t < accMonths){
-        W = W * g[t] + savingsAt(P, t);
-      } else {
-        W -= drawAt(P, P.ageNow + t / 12);
-        if(W < 0) ok = false;
-        W *= g[t];
-      }
+      W = W * g[t] + savingsAt(P, t);
       if((t + 1) % 12 === 0){
         var yi = (t + 1) / 12;
         if(yi <= chartYears) samples[yi][p] = W;
       }
     }
-    if(P.mode === 'legacy' && W < P.legacy) ok = false;
-    if(P.mode === 'rich' && W < richTarget) ok = false;
-    if(ok) survived++;
   }
   var bands = {p10: [], p50: [], p90: []};
   for(y = 0; y <= chartYears; y++){
@@ -483,7 +529,7 @@ function monteCarlo(P, opts){
     bands.p50.push(quantile(col, 0.50));
     bands.p90.push(quantile(col, 0.90));
   }
-  return {bands: bands, years: chartYears, successRate: survived / nPaths, paths: nPaths};
+  return {bands: bands, years: chartYears, paths: nPaths};
 }
 
 function quantile(sorted, q){
@@ -655,8 +701,11 @@ function solveRemedies(ui){
 /* One place that decides what the page is allowed to claim. */
 function diagnose(ui){
   var P = buildParams(ui);
-  if(P.ageRetire <= P.ageNow) return {status:'invalid', message:'Your retirement age has to be later than your age now.'};
-  if(P.ageDie <= P.ageRetire) return {status:'invalid', message:'Your life expectancy has to be later than your retirement age.'};
+  /* The retirement age is a slider pinned to this span, so the only age that
+     can still be nonsense is the span itself. Both ends of the slider are
+     legitimate answers: retiring at your age now means stopping today, and
+     retiring at your life expectancy means never stopping at all. */
+  if(P.ageDie <= P.ageNow) return {status:'invalid', message:'Your life expectancy has to be later than your age now.'};
 
   var need = requiredPot(P, P.ageRetire);
   if(!isFinite(need)){
@@ -702,12 +751,36 @@ function diagnose(ui){
   return {status:'ok', ffAge: ffAge};
 }
 
-/* ─── FULL LIFETIME PATHS (deterministic) ─── */
+/* ─── DETERMINISTIC PATHS ─── */
 
-/* Accumulate to the retirement age, then live off whatever is there, carrying
-   the deposited line of step 10 alongside the balance. The two have to be built
-   in the same loop: what a withdrawal does to the deposited line depends on the
-   balance it leaves behind, which is the whole point of the line.
+/* SECTION 1. Accumulation for the whole span, today to the life expectancy,
+   with no retirement anywhere in it, carrying the deposited line of step 10
+   alongside the balance. This is the curve the crossing in step 7 is solved
+   against, so the chart and the answer are reading the same numbers.
+
+   The two series have to be built in the same loop: what a month does to the
+   deposited line depends on the balance it leaves behind, which is the whole
+   point of the line. Savings land at the END of a working month, after that
+   month's return. */
+function accumulationSeries(P){
+  var total = Math.max(1, months(P.ageNow, P.ageDie));
+  var balance = new Float64Array(total + 1);
+  var deposited = new Float64Array(total + 1);
+  var W = P.A0, dep = P.A0, t, f;
+  balance[0] = W; deposited[0] = dep;
+  for(t = 0; t < total; t++){
+    f = savingsAt(P, t);
+    W = W * (1 + P.rm) + f;
+    dep = Math.max(0, Math.min(dep + Math.max(0, f), W));
+    balance[t + 1] = W;
+    deposited[t + 1] = dep;
+  }
+  return {balance: balance, deposited: deposited, months: total};
+}
+
+/* SECTION 2. Accumulate to the retirement age on the slider, then live off
+   whatever is there. This is the balance line of the cashflow chart and the
+   Balance column of the table, and it is the ONLY place a withdrawal appears.
 
    Note where in the month each flow lands, because the engine says so: savings
    go in at the END of a working month, after that month's return, while a
@@ -716,31 +789,20 @@ function lifetimeSeries(P){
   var accM = accMonths(P);
   var total = Math.max(1, months(P.ageNow, P.ageDie));
   var balance = new Float64Array(total + 1);
-  var deposited = new Float64Array(total + 1);
-  var W = P.A0, dep = P.A0, t, f;
-  balance[0] = W; deposited[0] = dep;
+  var W = P.A0, t, f;
+  balance[0] = W;
   for(t = 0; t < total; t++){
     f = flowAt(P, t);
     if(t < accM){
       W = W * (1 + P.rm) + f;                  // savings land after the return
     } else {
       W += f;                                  // the draw comes out before it
+      W *= (1 + P.rm);
     }
-    /* Money in adds to what you put in; money out comes off the growth first,
-       which is what the clamp against the balance says. The clamp applies to
-       BOTH cases, because a pot that has lost money holds less than you put in
-       whether or not you are still paying into it. Floored at zero: once the
-       pot is spent, so is every cent you put into it. */
-    dep = Math.max(0, Math.min(dep + Math.max(0, f), W));
-    if(t >= accM) W *= (1 + P.rm);
     balance[t + 1] = W;
-    deposited[t + 1] = dep;
   }
-  return {balance: balance, deposited: deposited, months: total};
+  return {balance: balance, months: total};
 }
-
-// The balance alone, for callers that want nothing else.
-function lifetimePath(P){ return lifetimeSeries(P).balance; }
 
 // Yearly samples of a monthly array.
 function yearly(arr, years){
@@ -765,8 +827,17 @@ function withAlpha(hex, a){
 function readInputs(){
   UI.currency = $('currency').value;
   UI.ageNow = clamp(num($('ageNow').value, UI_DEFAULTS.ageNow), 0, 100);
-  UI.ageRetire = clamp(num($('ageRetire').value, UI_DEFAULTS.ageRetire), 1, 110);
   UI.ageDie = clamp(num($('ageDie').value, UI_DEFAULTS.ageDie), 2, 120);
+  /* The retirement age is a slider spanning age now to the life expectancy, so
+     it can never be read outside that span however the two ends move. Both
+     ends are meaningful: the left is "stop today", the right is "never stop".
+     The clamp runs before syncRetireSlider writes the bounds back onto the
+     control, so a life expectancy dragged below the handle pulls it down with
+     it instead of leaving a stale value behind — and it clamps to the SAME
+     rounded span the slider will carry, or a fractional age would have the two
+     disagreeing and the handle jumping a year on every keystroke. */
+  var span = retireSpan();
+  UI.ageRetire = clamp(num($('ageRetire').value, UI_DEFAULTS.ageRetire), span.lo, span.hi);
   UI.expense = Math.max(0, SharedFmt.parseFormatted($('expense').value) || 0);
   UI.expensePeriod = $('expensePeriod').value;
   UI.savings = SharedFmt.parseFormatted($('savings').value) || 0;
@@ -785,6 +856,8 @@ function readInputs(){
   UI.pensionOn = $('pensionOn').checked;
   UI.pensionStartAge = clamp(num($('pensionStartAge').value, 67), 40, 90);
   UI.pensionAmount = Math.max(0, SharedFmt.parseFormatted($('pensionAmount').value) || 0);
+  UI.pensionPeriod = $('pensionPeriod').value;
+  UI.pensionIndexed = $('pensionIndexed').checked;
   UI.showReal = $('showReal').checked;
   UI.paths = clamp(Math.round(num($('paths').value, 1000)), 100, 5000);
   UI.confidence = clamp(num($('confidence').value, 90), 50, 99);
@@ -792,13 +865,37 @@ function readInputs(){
   return UI;
 }
 
+/* The slider's own bounds are data, not markup: they are the two ages on the
+   You tab, so they are written back on every render. Kept here rather than in
+   the slider's listener because Persist restores values without firing events,
+   and because either end can move while the handle stays where it was.
+   Whole years, because the slider steps in whole years, and because the read
+   and the write have to agree on the span or the handle would never settle. */
+function retireSpan(){
+  var lo = Math.round(UI.ageNow);
+  return {lo: lo, hi: Math.max(lo, Math.round(UI.ageDie))};
+}
+
+function syncRetireSlider(){
+  var el = $('ageRetire'), span = retireSpan();
+  el.min = span.lo; el.max = span.hi;
+  if(Number(el.value) !== UI.ageRetire) el.value = UI.ageRetire;
+  $('ageRetireVal').textContent = fmt.age(UI.ageRetire);
+  $('retireScaleMin').textContent = 'Stop today (' + fmt.age(span.lo) + ')';
+  $('retireScaleMax').textContent = 'Never stop (' + fmt.age(span.hi) + ')';
+  ['mNeedAge', 'mHaveAge'].forEach(function(id){ $(id).textContent = fmt.age(UI.ageRetire); });
+  $('mLeftAge').textContent = fmt.age(UI.ageDie);
+}
+
 function syncVisibility(){
   // Persist restores a radio by setting .checked directly, which fires no
   // `change` event, so the highlighted card has to be re-synced on every
   // render rather than only from the radio's own listener.
   syncModeSelection();
+  syncRetireSlider();
   $('legacyRow').style.display = UI.mode === 'legacy' ? '' : 'none';
   $('pensionRows').style.display = UI.pensionOn ? '' : 'none';
+  renderPensionNote();
   $('savingsLabel').textContent = UI.savingsMode === 'income' ? 'Net income' : 'Savings';
   $('savingsModeNote').innerHTML = UI.savingsMode === 'income'
     ? 'You save the gap between income and expenses.' +
@@ -829,11 +926,15 @@ function compute(ui){
   var now = new Date();
   var thisYear = now.getFullYear(), thisMonth = now.getMonth();
 
-  var life = lifetimeSeries(P);
-  var det = life.balance;
-  var needAtRetire = requiredPot(P, P.ageRetire);
+  // Section 1: never retires. Section 2: retires at the slider age. Two
+  // different series on purpose, and the only place they have to agree is the
+  // retirement month itself, where the second one has not drawn anything yet.
+  var acc = accumulationSeries(P);
+  var det = lifetimeSeries(P).balance;
   var accM = accMonths(P);
-  var potAtRetire = det[Math.min(accM, det.length - 1)];
+  var needAtRetire = requiredPot(P, P.ageRetire);
+  var potAtRetire = acc.balance[Math.min(accM, acc.balance.length - 1)];
+  var leftAtDeath = det[det.length - 1];
 
   /* The engine runs in real terms, where the living cost is flat by
      construction. That is the whole point of real terms, and it is also why
@@ -863,15 +964,15 @@ function compute(ui){
     }
   }
 
-  var mc = monteCarlo(P, {paths: ui.paths, seed: ui.seed});
+  var mc = accumBands(P, {paths: ui.paths, seed: ui.seed});
   var reqs = potRequirements(P, {paths: ui.paths, seed: ui.seed});
 
   return {
     P: P, ui: ui, diag: diag, years: years, thisYear: thisYear, thisMonth: thisMonth,
-    det: det, deposited: life.deposited,
+    acc: acc.balance, deposited: acc.deposited, det: det,
     needCurve: needCurve, incomeCurve: incomeCurve,
     expenseCurve: expenseCurve, flowCurve: flowCurve,
-    needAtRetire: needAtRetire, potAtRetire: potAtRetire,
+    needAtRetire: needAtRetire, potAtRetire: potAtRetire, leftAtDeath: leftAtDeath,
     mc: mc, reqs: reqs,
     successAtPlan: reqs.successAt(potAtRetire),
     confPot: reqs.atConfidence(ui.confidence),
@@ -927,6 +1028,34 @@ function renderInflationNote(res){
     info('Same life, bigger figure. The pot you need is measured against that figure, which is why stopping later costs more in the money of the day even though it buys the same. Everything on the page is in the money of its own year until you turn on Show Present Value in Settings.');
 }
 
+/* What the indexation switch actually does to the reader's own pension. The
+   engine runs in real terms, so an indexed pension is a flat line and an
+   unindexed one a sinking one, and neither is legible until a figure is named
+   at a date the reader cares about. */
+function renderPensionNote(){
+  var el = $('pensionNote');
+  if(!el) return;
+  if(!UI.pensionOn){ el.textContent = ''; el.style.display = 'none'; return; }
+  el.style.display = '';
+  var perYear = perMonth(UI.pensionAmount, UI.pensionPeriod) * 12;
+  var i = UI.inflation / 100;
+  var toStart = Math.max(0, UI.pensionStartAge - UI.ageNow);
+  var toDie = Math.max(0, UI.ageDie - UI.ageNow);
+  if(!(perYear > 0)){ el.textContent = 'Enter an amount and it is counted as income from age ' + fmt.age(UI.pensionStartAge) + '.'; return; }
+  if(UI.pensionIndexed){
+    el.innerHTML = escapeHtml(fmt.currency(perYear)) + ' a year in today\u2019s money from age ' +
+      escapeHtml(fmt.age(UI.pensionStartAge)) + ', and it keeps buying that much: ' +
+      escapeHtml(fmt.currency(perYear * Math.pow(1 + i, toStart))) + ' a year in the money of that year.' +
+      info('Australia, the UK and the US all index their age pension, so the figure on the statement rises every year and the life it pays for stays the same.');
+    return;
+  }
+  el.innerHTML = escapeHtml(fmt.currency(perYear)) + ' a year from age ' +
+    escapeHtml(fmt.age(UI.pensionStartAge)) + ' and never a cent more, so it buys ' +
+    escapeHtml(fmt.currency(perYear / Math.pow(1 + i, toStart))) + ' of today\u2019s living when it starts and ' +
+    escapeHtml(fmt.currency(perYear / Math.pow(1 + i, toDie))) + ' by ' + escapeHtml(fmt.age(UI.ageDie)) + '.' +
+    info('A frozen pension is measured from TODAY, not from the day it starts: the amount entered is what it pays now, so the years before you claim it erode it too. Several countries pay a flat pension lifted only by an occasional act of parliament, and plenty of company pensions never rise at all.');
+}
+
 function renderVerdict(res){
   var el = $('verdict');
   var d = res.diag;
@@ -943,12 +1072,14 @@ function renderVerdict(res){
   } else if(d.status === 'late'){
     cls += 'warn';
     html = '<h2>' + escapeHtml(d.message) + '</h2><p>' +
-      fmt.num(Math.max(0, d.ffAge - res.P.ageRetire), 1) + ' years past your target. Any one of these closes it.</p>' +
+      fmt.num(Math.max(0, d.ffAge - res.P.ageRetire), 1) +
+      ' years past the age on the Cashflows slider. Any one of these closes it.</p>' +
       remedyList(d.remedies);
   } else {
     cls += 'good';
     html = '<h2>Financially free at ' + escapeHtml(fmt.age(d.ffAge)) + ', ' +
-      fmt.num(Math.max(0, res.P.ageRetire - d.ffAge), 1) + ' years before your target.</h2>' +
+      fmt.num(Math.max(0, res.P.ageRetire - d.ffAge), 1) +
+      ' years before the age on the Cashflows slider.</h2>' +
       '<p>On the expected return alone. Read the chance below too.' +
       info('A single average return ignores the order the good and bad years arrive in. Land the bad ones early in retirement and the same average return runs out, which is why the chance is usually near a coin flip at the amount needed.') + '</p>';
   }
@@ -965,43 +1096,81 @@ function remedyList(remedies){
   return html + '</ul>';
 }
 
+/* Two strips, one per section, and each figure sits with the question it
+   answers. Section 1 never mentions the slider; section 2 is entirely about it. */
 function renderMetrics(res){
   var retireYearIdx = Math.max(0, Math.round(res.P.ageRetire - res.P.ageNow));
+  var dieYearIdx = Math.max(0, Math.round(res.P.ageDie - res.P.ageNow));
   var modeName = {die:'Just Die', legacy:'Leave a Legacy', rich:'Die Rich'}[res.ui.mode];
+  var yearsOf = function(pot){ return pot / Math.max(1e-9, res.P.Xr * 12); };
 
-  $('mNeed').textContent = isFinite(res.needAtRetire)
-    ? fmt.currency(show(res, res.needAtRetire, retireYearIdx), true) : 'Not possible';
-  var swr = res.needAtRetire > 0 ? (res.P.Xr * 12 / res.needAtRetire * 100) : null;
-  $('mNeedSub').textContent = isFinite(res.needAtRetire)
-    ? 'Your FIRE number for ' + modeName + ' at ' + fmt.age(res.P.ageRetire) + ': ' +
-      fmt.num(res.needAtRetire / Math.max(1e-9, res.P.Xr * 12), 1) + 'x a year of spending' +
-      (swr == null ? '' : ', a ' + fmt.pct(swr, 2) + ' SWR') +
-      (res.ui.showReal ? '.' : ', in ' + (res.thisYear + retireYearIdx) + ' dollars.')
-    : 'No pot works at this real return.';
-
+  // ── Section 1 ──
   var free = res.ffAge;
   $('mFreeAge').textContent = free == null ? 'Never' : fmt.age(free);
+  $('mFreeAge').className = 'value ' + (free == null ? 'neg' : '');
   $('mFreeAgeSub').textContent = free == null
-    ? 'The curves never cross.'
+    ? 'The two curves never meet.'
     : fmt.num(Math.max(0, free - res.P.ageNow), 1) + ' years away, in ' +
       whenLabel(res, res.thisYear + (free - res.P.ageNow)) + '.';
 
-  var sr = res.successAtPlan;
-  $('mSuccess').textContent = fmt.pct(sr * 100, 0);
-  $('mSuccess').className = 'value ' + (sr >= 0.85 ? 'pos' : (sr < 0.6 ? 'neg' : ''));
-  /* The confidence pot no longer has a card of its own, but it is still the
-     figure to plan around, so it rides under the probability it belongs to. */
-  $('mSuccessSub').textContent = 'of ' + fmt.num(res.mc.paths) + ' simulated futures. ' +
-    (isFinite(res.confPot)
-      ? fmt.pct(res.ui.confidence, 0) + ' confidence needs ' +
-        fmt.currency(show(res, res.confPot, retireYearIdx), true) + '.'
-      : fmt.pct(res.ui.confidence, 0) + ' confidence is out of reach at this volatility.');
+  var freePot = free == null ? null : requiredPot(res.P, free);
+  var freeIdx = free == null ? 0 : (free - res.P.ageNow);
+  $('mFreePot').textContent = (freePot == null || !isFinite(freePot))
+    ? '—' : fmt.currency(show(res, freePot, freeIdx), true);
+  $('mFreePotSub').textContent = (freePot == null || !isFinite(freePot))
+    ? 'No pot funds this plan.'
+    : fmt.num(yearsOf(freePot), 1) + 'x a year of retirement spending, for ' + modeName +
+      (res.ui.showReal ? ', in today\u2019s money.' : ', in the money of that year.');
 
   $('mRealRet').textContent = fmt.pct(res.P.rr * 100, 2);
   $('mRealRetSub').textContent = fmt.pct(res.ui.ret, 1) + ' less ' + fmt.pct(res.ui.inflation, 1) +
     ' inflation. ' + (res.P.rr > 0
       ? 'Forever costs ' + fmt.num((1 + res.P.rm) / res.P.rm / 12, 1) + 'x spending.'
       : 'At or below zero, nothing lasts forever.');
+
+  // ── Section 2, all at the slider age ──
+  var need = res.needAtRetire, have = res.potAtRetire;
+  $('mNeed').textContent = isFinite(need) ? fmt.currency(show(res, need, retireYearIdx), true) : 'Not possible';
+  var swr = isFinite(need) && need > 0 ? (res.P.Xr * 12 / need * 100) : null;
+  $('mNeedSub').textContent = isFinite(need)
+    ? 'Your FIRE number for ' + modeName + ': ' + fmt.num(yearsOf(need), 1) + 'x a year of spending' +
+      (swr == null ? '' : ', a ' + fmt.pct(swr, 2) + ' SWR') +
+      (res.ui.showReal ? '.' : ', in ' + (res.thisYear + retireYearIdx) + ' dollars.')
+    : 'No pot works at this real return.';
+
+  var short = isFinite(need) ? have - need : -Infinity;
+  $('mHave').textContent = fmt.currency(show(res, have, retireYearIdx), true);
+  $('mHave').className = 'value ' + (!isFinite(short) ? 'neg' : (short >= -1e-6 ? 'pos' : 'neg'));
+  $('mHaveSub').textContent = !isFinite(short)
+    ? 'Nothing is enough for this goal.'
+    : (short >= -1e-6
+        ? fmt.currency(show(res, short, retireYearIdx), true) + ' more than the pot needed.'
+        : 'Short by ' + fmt.currency(show(res, -short, retireYearIdx), true) + '.');
+
+  var sr = res.successAtPlan;
+  $('mSuccess').textContent = fmt.pct(sr * 100, 0);
+  $('mSuccess').className = 'value ' + (sr >= 0.85 ? 'pos' : (sr < 0.6 ? 'neg' : ''));
+  /* The confidence pot no longer has a card of its own, but it is still the
+     figure to plan around, so it rides under the probability it belongs to. */
+  $('mSuccessSub').textContent = 'of ' + fmt.num(res.reqs.paths) + ' simulated futures. ' +
+    (isFinite(res.confPot)
+      ? fmt.pct(res.ui.confidence, 0) + ' confidence needs ' +
+        fmt.currency(show(res, res.confPot, retireYearIdx), true) + '.'
+      : fmt.pct(res.ui.confidence, 0) + ' confidence is out of reach at this volatility.');
+
+  /* What the whole drawdown adds up to. It is the one figure that says out
+     loud whether the plan was funded: the balance at the life expectancy after
+     every year of it has been paid for. */
+  var left = res.leftAtDeath;
+  $('mLeft').textContent = fmt.currency(show(res, left, dieYearIdx), true);
+  $('mLeft').className = 'value ' + (left >= -1e-6 ? (left > 1 ? 'pos' : '') : 'neg');
+  $('mLeftSub').textContent = left < -1e-6
+    ? 'The pot ran out. This is the shortfall it would have taken to see the plan through.'
+    : (res.ui.mode === 'legacy'
+        ? 'Against the ' + fmt.currency(show(res, res.ui.legacy, dieYearIdx), true) + ' you wanted to leave.'
+        : (res.P.ageRetire >= res.P.ageDie - 1e-9
+            ? 'You never stop working on this setting, so nothing is ever drawn.'
+            : 'After ' + fmt.num(Math.max(0, res.P.ageDie - res.P.ageRetire), 1) + ' years of retirement.'));
 }
 
 /* ─── CHARTS ─── */
@@ -1077,13 +1246,20 @@ function makeYFit(y0, hiSeries, loSeries, opts){
 var Y_FIT_PLUGIN = {
   id: 'ffYFit',
   beforeUpdate: function(chart){
-    var fit = chart.$fitY;
-    if(!fit) return;
-    var xo = chart.options.scales.x, yo = chart.options.scales.y;
+    // A map of scale id to fitter, because the cashflow chart carries two y
+    // axes: a flow on the left and a balance on the right. Both follow the
+    // same x window, and both have to be refitted in this one pass.
+    var fits = chart.$fitY;
+    if(!fits) return;
+    var xo = chart.options.scales.x;
     if(!isFinite(xo.min) || !isFinite(xo.max)) return;
-    var b = fit(xo.min, xo.max);
-    if(!b) return;
-    yo.min = b.min; yo.max = b.max;
+    Object.keys(fits).forEach(function(id){
+      var yo = chart.options.scales[id];
+      if(!yo) return;
+      var b = fits[id](xo.min, xo.max);
+      if(!b) return;
+      yo.min = b.min; yo.max = b.max;
+    });
   }
 };
 
@@ -1096,10 +1272,18 @@ var Y_FIT_PLUGIN = {
    category scale; a linear one has to say so). */
 function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
   opts = opts || {};
-  var span = Math.max(1, xMax - xMin);
-  var limit = {min: xMin, max: xMax, minRange: Math.min(3, span)};
+  /* The window the chart OPENS on and the window it may be zoomed out to are
+     two different things. Sixty years of compounding put the end of a plan two
+     orders of magnitude above its beginning, so a chart that opens on all of it
+     answers nothing; but the rest of the plan is real, and pinching out to it
+     has to work. `limitMin`/`limitMax` are the data, xMin/xMax the first view. */
+  var limMin = opts.limitMin == null ? xMin : opts.limitMin;
+  var limMax = opts.limitMax == null ? xMax : opts.limitMax;
+  var span = Math.max(1, limMax - limMin);
+  var limit = {min: limMin, max: limMax, minRange: Math.min(3, span)};
   var start = opts.fitY ? opts.fitY(xMin, xMax) : null;
-  return {
+  var start2 = opts.fitY2 ? opts.fitY2(xMin, xMax) : null;
+  var o = {
     responsive: true,
     maintainAspectRatio: false,
     animation: {duration: 250},
@@ -1159,6 +1343,22 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
       }
     }
   };
+  /* A stock and a flow do not share a scale: a balance in the millions would
+     flatten a spending line in the tens of thousands into the axis. So the
+     balance gets its own axis on the right, drawn without gridlines so the
+     reader is never in doubt which rules belong to which unit, and the legend
+     entry says "right axis" out loud. */
+  if(opts.y2Title){
+    o.scales.y2 = {
+      type: 'linear', position: 'right',
+      min: start2 ? start2.min : undefined,
+      max: start2 ? start2.max : undefined,
+      title: {display: true, text: opts.y2Title + ', ' + moneyMode(res), color: t.muted, font: {size: 11}},
+      ticks: {color: t.muted, font: {size: 11}, callback: function(v){ return fmt.currency(v, true); }},
+      grid: {drawOnChartArea: false, color: t.grid}
+    };
+  }
+  return o;
 }
 
 function renderLegend(elId, chart, items){
@@ -1188,64 +1388,80 @@ function renderCharts(res){
   var scale = function(arr){
     return arr.map(function(v, i){ return v == null ? null : show(res, v, i); });
   };
-
-  // ── Chart 1: the whole plan, and the two curves that decide the answer ──
-  // It runs to the life expectancy so the deposited line can do its job: flat
-  // from the month you retire, then turning down the moment the balance falls
-  // through what you put in. The axis is capped below, not the data.
   var retIdx = Math.max(0, Math.round(res.P.ageRetire - res.P.ageNow));
-  var c1 = years;
 
   /* An exhausted pot is drawn flat at zero rather than plunging. The engine
      keeps compounding a negative balance, which is how it records that a plan
-     failed and by how much, and the table shows that figure; but a pot that
-     owes several million after thirty years of borrowing to eat is arithmetic,
-     not money, and on a sixty-year axis it squashes everything real into a
-     sliver at the top. The failure is already told twice over, by the verdict
-     banner and by the Gap column. */
-  var ruined = false;
-  var floorZero = function(arr){
+     failed and by how much, and the table and the "Left at" card both show
+     that figure; but a pot that owes several million after thirty years of
+     borrowing to eat is arithmetic, not money, and on a sixty-year axis it
+     squashes everything real into a sliver at the top.
+
+     The two charts fail for different reasons and say so separately: section 1
+     can only go under if you are spending more than you earn before you have
+     even retired, while section 2 going under is the retirement itself running
+     out. One shared flag would have each of them reporting the other's. */
+  var clipped = {path: false, cash: false};
+  var floorZero = function(arr, which){
     return arr.map(function(v){
       if(v == null || !isFinite(v)) return v;
-      if(v < 0){ ruined = true; return 0; }
+      if(v < 0){ clipped[which] = true; return 0; }
       return v;
     });
   };
-  var det = floorZero(scale(yearly(res.det, years)));
-  var dep = floorZero(scale(yearly(res.deposited, years)));
+
+  /* ── SECTION 1 · Path to freedom ────────────────────────────────────────
+     Three lines and a band, and not one of them knows what retirement age is
+     on the slider. The pot needed falls with age because fewer years are left
+     to fund; the investment climbs because it is never drawn on; where they
+     meet is the answer. Putting a withdrawal on this chart was what used to
+     make it unreadable, and worse, it drew a balance the crossing was not
+     even solved against. */
+  var acc = floorZero(scale(yearly(res.acc, years)), 'path');
+  var dep = floorZero(scale(yearly(res.deposited, years)), 'path');
   var need = scale(res.needCurve);
-  var p10 = floorZero(scale(res.mc.bands.p10));
-  var p50 = floorZero(scale(res.mc.bands.p50));
-  var p90 = floorZero(scale(res.mc.bands.p90));
+  var p10 = floorZero(scale(res.mc.bands.p10), 'path');
+  var p90 = floorZero(scale(res.mc.bands.p90), 'path');
+
+  /* Where the chart OPENS. The crossing is the one thing this chart exists for
+     and it lands in the first third of most plans, while the investment keeps
+     compounding for decades afterwards: open on all sixty years and the answer
+     is a sliver a pixel above the axis. So the view opens on the years that
+     decide it, a few past the crossing, and the whole plan is one pinch away.
+     With no crossing there is nothing to centre on, so it opens on everything,
+     which is also the view that shows the two lines never meeting. */
+  var view1 = years;
+  if(res.ffAge != null){
+    view1 = clamp(Math.ceil(res.ffAge - res.P.ageNow) + 8, Math.min(12, years), years);
+  }
+  var zoomedOut = view1 < years;
 
   /* Size the axis to the expected plan, not to the best of a thousand futures.
      Sixty years of compounding put the 90th percentile an order of magnitude
      above the crossing, and the crossing is what this chart is for. The band is
-     allowed to run off the top; the subtitle says so when it does. */
-  var fit1 = makeYFit(y0, [det, dep, need, p50], [det, dep, need, p50, p10]);
-  var start1 = fit1(y0, y0 + years);
+     allowed to run off the top; the subtitle says so when it does. Measured
+     over the opening window, because that is the view the note describes. */
+  var fit1 = makeYFit(y0, [acc, dep, need], [acc, dep, need, p10]);
+  var start1 = fit1(y0, y0 + view1);
   var bandMax = 0;
-  p90.forEach(function(v){ if(v != null && isFinite(v) && v > bandMax) bandMax = v; });
+  p90.forEach(function(v, i){ if(i <= view1 && v != null && isFinite(v) && v > bandMax) bandMax = v; });
   var bandClipped = !!start1 && bandMax > start1.max;
 
   var ds1 = [
     {label:'Worst 10%', data: pts(p10, y0), borderColor: withAlpha(t.a, 0), backgroundColor:'transparent',
      borderWidth: 0, pointRadius: 0, fill: false},
-    {label:'Range of outcomes', data: pts(p90, y0), borderColor: withAlpha(t.a, 0), backgroundColor: withAlpha(t.a, 0.16),
+    {label:'Best 10%', data: pts(p90, y0), borderColor: withAlpha(t.a, 0), backgroundColor: withAlpha(t.a, 0.16),
      borderWidth: 0, pointRadius: 0, fill: '-1'},
-    {label:'Median outcome', data: pts(p50, y0), borderColor: t.c, borderDash:[5,4],
-     borderWidth: 1.6, pointRadius: 0, fill: false},
     {label:'Money deposited', data: pts(dep, y0), borderColor: t.a, borderDash:[2,3],
      borderWidth: 1.8, pointRadius: 0, fill: false},
-    {label:'Your money', data: pts(det, y0), borderColor: t.a, borderWidth: 2.4, pointRadius: 0, fill: false},
+    {label:'Investment outcome', data: pts(acc, y0), borderColor: t.a, borderWidth: 2.4, pointRadius: 0, fill: false},
     {label:'Pot needed to stop here', data: pts(need, y0), borderColor: t.b, borderWidth: 2, pointRadius: 0, fill: false}
   ];
   var legend1 = [
-    {label:'Your money', color:t.a, datasets:[4]},
-    {label:'Pot needed to stop here', color:t.b, datasets:[5]},
-    {label:'Money deposited, still in the pot', color:t.a, style:'dash', datasets:[3]},
-    {label:'Median outcome', color:t.c, style:'dash', datasets:[2]},
-    {label:'Range of outcomes, worst 10% to best 10%', color:withAlpha(t.a, 0.45), style:'band', datasets:[0,1]}
+    {label:'Pot needed to stop here', color:t.b, datasets:[4]},
+    {label:'Investment outcome, never drawn on', color:t.a, datasets:[3]},
+    {label:'Range of outcomes, worst 10% to best 10%', color:withAlpha(t.a, 0.45), style:'band', datasets:[0,1]},
+    {label:'Money deposited, still in the pot', color:t.a, style:'dash', datasets:[2]}
   ];
 
   /* The crossing is the one thing this chart exists for, and it falls BETWEEN
@@ -1255,7 +1471,7 @@ function renderCharts(res){
   if(res.ffAge != null){
     var crossOffset = res.ffAge - res.P.ageNow;
     var crossNeed = requiredPot(res.P, res.ffAge);
-    if(isFinite(crossNeed) && crossOffset <= c1 + 1e-9){
+    if(isFinite(crossNeed) && crossOffset <= years + 1e-9){
       var cx = y0 + crossOffset, cy = show(res, crossNeed, crossOffset);
       ds1.push({label:'Financially free', data:[{x: cx, y: 0}, {x: cx, y: cy}],
                 borderColor: withAlpha(t.e, 0.55), borderWidth: 1.4, borderDash:[4,4],
@@ -1273,51 +1489,65 @@ function renderCharts(res){
     type:'line',
     plugins:[Y_FIT_PLUGIN],
     data:{datasets: ds1},
-    options: baseOptions(res, t, 'hover1', ageOf, y0, y0 + c1, {fitY: fit1})
+    options: baseOptions(res, t, 'hover1', ageOf, y0, y0 + view1,
+                         {fitY: fit1, limitMin: y0, limitMax: y0 + years})
   });
-  chart1.$fitY = fit1;
+  chart1.$fitY = {y: fit1};
   renderLegend('legend1', chart1, legend1);
 
-  /* ── Chart 2: the cash flow, and which side of it the pot is on ──
-     Income against spending over the same years as chart 1, with the gap
-     between them filled: one colour where income covers the spending and the
-     difference is saved, another where it does not and the difference has to
-     come out of the pot. The switch happens at the retirement month, which is
-     the whole shape of a retirement plan in one picture. */
+  var notes1 = ['No withdrawal appears here: this is what the money does if you keep paying in. Section 2 is where you stop.'];
+  if(zoomedOut) notes1.push('The view opens on the years that decide the answer — scroll or pinch out for the rest of the plan, to ' + fmt.age(res.P.ageDie) + '.');
+  if(bandClipped) notes1.push('The axis is sized to the expected outcome, so the best of the simulated futures runs off the top.');
+  if(clipped.path) notes1.push('A balance below zero is drawn flat at zero: you are spending more than you earn, so the pot is being eaten before you have even retired.');
+  $('chart1Sub').textContent = notes1.join(' ');
+
+  /* ── SECTION 2 · Cashflows ──────────────────────────────────────────────
+     Income against spending, with the gap filled: one colour where income
+     covers the spending and the difference is saved, another where it does not
+     and the difference has to come out of the pot. The balance rides behind
+     them on its own axis, because a stock and a flow do not share a scale.
+     Retire early enough and the reader watches the balance top out and slide;
+     retire late enough and it never turns down at all. */
   var income = scale(res.incomeCurve);
   var spend = scale(res.expenseCurve);
-  var floor2 = 0, top2 = 0;
-  income.concat(spend).forEach(function(v){
-    if(v == null || !isFinite(v)) return;
-    if(v > top2) top2 = v;
-    if(v < floor2) floor2 = v;
-  });
+  var bal = floorZero(scale(yearly(res.det, years)), 'cash');
 
   var fit2 = makeYFit(y0, [income, spend], [income, spend], {includeZero: true});
+  var fit2b = makeYFit(y0, [bal], [bal], {includeZero: true});
 
   var ds2 = [
-    {label:'Spending', data: pts(spend, y0), borderColor: t.b, borderWidth: 2.2,
-     pointRadius: 0, fill: false},
-    {label:'Income', data: pts(income, y0), borderColor: t.c, borderWidth: 2.2,
-     pointRadius: 0,
+    /* The pot is blue in section 1, so it is blue here: the same money, seen
+       from the other question. It must not be red, because red is already the
+       spending AND the fill for what the pot has to cover, and a balance lost
+       inside that fill is the one line a reader cannot afford to lose. */
+    {label:'Balance', data: pts(bal, y0), yAxisID: 'y2', borderColor: t.a, borderWidth: 2.2,
+     pointRadius: 0, fill: 'origin', backgroundColor: withAlpha(t.a, 0.10), order: 3},
+    {label:'Spending', data: pts(spend, y0), yAxisID: 'y', borderColor: t.b, borderWidth: 2.2,
+     pointRadius: 0, fill: false, order: 1},
+    {label:'Income', data: pts(income, y0), yAxisID: 'y', borderColor: t.c, borderWidth: 2.2,
+     pointRadius: 0, order: 0,
      // `above` is where income runs above spending, so the gap is saved; the
      // other side is the gap the pot has to cover.
-     fill: {target: 0, above: withAlpha(t.c, 0.28), below: withAlpha(t.b, 0.28)}}
+     fill: {target: 1, above: withAlpha(t.c, 0.28), below: withAlpha(t.b, 0.28)}}
   ];
   var legend2 = [
-    {label:'Income', color:t.c, datasets:[1]},
-    {label:'Spending', color:t.b, datasets:[0]},
-    {label:'Saved into the pot', color: withAlpha(t.c, 0.5), style:'band', datasets:[1]},
-    {label:'Drawn from the pot', color: withAlpha(t.b, 0.5), style:'band', datasets:[1]}
+    {label:'Income', color:t.c, datasets:[2]},
+    {label:'Spending', color:t.b, datasets:[1]},
+    {label:'Saved into the pot', color: withAlpha(t.c, 0.5), style:'band', datasets:[2]},
+    {label:'Drawn from the pot', color: withAlpha(t.b, 0.5), style:'band', datasets:[2]},
+    {label:'Balance (right axis)', color:t.a, datasets:[0]}
   ];
 
-  // The line the two areas meet at, marked so the reader does not have to count
-  // years along the axis to find it.
+  // The year the two areas change sides, marked so the reader does not have to
+  // count years along the axis to find it. Drawn on the balance axis because
+  // that is the taller of the two, so it spans the whole plot area.
   if(retIdx > 0 && retIdx < years){
-    ds2.push({label:'Retire at ' + fmt.age(res.P.ageRetire),
-              data:[{x: y0 + retIdx, y: floor2}, {x: y0 + retIdx, y: top2}],
+    var top2 = 0;
+    bal.forEach(function(v){ if(v != null && isFinite(v) && v > top2) top2 = v; });
+    ds2.push({label:'Retire at ' + fmt.age(res.P.ageRetire), yAxisID: 'y2',
+              data:[{x: y0 + retIdx, y: 0}, {x: y0 + retIdx, y: top2}],
               borderColor: withAlpha(t.e, 0.6), borderWidth: 1.4, borderDash:[4,4],
-              pointRadius: 0, fill: false});
+              pointRadius: 0, fill: false, order: -1});
     legend2.push({label:'Retire at ' + fmt.age(res.P.ageRetire), color: t.e,
                   style:'dash', datasets:[ds2.length - 1]});
   }
@@ -1328,49 +1558,61 @@ function renderCharts(res){
     plugins:[Y_FIT_PLUGIN],
     data:{datasets: ds2},
     options: baseOptions(res, t, 'hover2', ageOf, y0, y0 + years,
-                         {yTitle: 'A year', fitY: fit2})
+                         {yTitle: 'A year', fitY: fit2, y2Title: 'Balance', fitY2: fit2b})
   });
-  chart2.$fitY = fit2;
+  chart2.$fitY = {y: fit2, y2: fit2b};
   renderLegend('legend2', chart2, legend2);
 
-  /* The legend names every line and the y axis names the money, so the only
-     thing left for a subtitle to say is what the DRAWING is doing that the data
-     is not: an axis sized past the band, and a failed pot held at zero. When
-     neither applies there is no subtitle at all. */
-  var notes = [];
-  if(bandClipped) notes.push('The axis is sized to the expected plan, so the best of the simulated futures runs off the top.');
-  if(ruined) notes.push('A pot that runs out is drawn flat at zero; the table carries the shortfall.');
-  var sub1 = $('chart1Sub');
-  sub1.textContent = notes.join(' ');
-  sub1.style.display = notes.length ? '' : 'none';
+  var notes2 = [];
+  notes2.push(res.P.ageRetire >= res.P.ageDie - 1e-9
+    ? 'The slider is at your life expectancy, so you never stop earning and nothing is ever drawn.'
+    : (res.P.ageRetire <= res.P.ageNow + 1e-9
+        ? 'The slider is at your age now, so the drawdown starts today.'
+        : 'Income falls to the pension or nothing at ' + fmt.age(res.P.ageRetire) +
+          ', and the gap below spending is what the balance has to cover from then on.'));
+  if(clipped.cash) notes2.push('A pot that runs out is drawn flat at zero; the table and the card above carry the shortfall.');
+  $('chart2Sub').textContent = notes2.join(' ');
 }
 
 /* ─── TABLE ─── */
 
-/* One row per year. Everything the table and the CSV need is computed once
-   here, so the two cannot drift apart. */
+/* One row per year, and the row is a cash flow statement that reconciles:
+
+     Balance(y) + Saved(y) + Growth(y) = Balance(y+1)
+
+   Balance is the balance AT that age, which is what the chart plots at that
+   year; Income, Expense and Saved are the twelve months that follow it; and
+   Growth is taken as the RESIDUAL, so the row adds up to the cent in whichever
+   money is on screen. In today's money that residual is the real return on the
+   pot. In the money of the day it is the nominal return, which is the same
+   earnings plus the inflation uplift on the balance and on the year's flows —
+   both true, and the subtitle says which one is showing.
+
+   Everything the table and the CSV need is computed once here, so the two
+   cannot drift apart. */
 function tableRows(res){
   var years = res.years, y0 = res.thisYear;
   var retIdx = Math.max(0, Math.round(res.P.ageRetire - res.P.ageNow));
   var freeIdx = res.ffAge == null ? -1 : Math.ceil(res.ffAge - res.P.ageNow);
   var det = yearly(res.det, years);
+  var balance = det.map(function(v, y){ return show(res, v, y); });
   var out = [], y;
   for(y = 0; y <= years; y++){
-    var needv = res.needCurve[y];
     var flow = res.flowCurve[y];
+    var saved = flow == null ? null : show(res, flow, y);
     out.push({
       year: y0 + y,
       age: res.P.ageNow + y,
+      balance: balance[y],
       /* Income, then expense, then what is left: the three read as one
          sentence, and Saved is the subtraction of the two beside it in every
          row. Expense is also the column that shows inflation doing its work
-         once future dollars are on, which is why it comes before the pot. */
+         once future dollars are on. */
       income: show(res, res.incomeCurve[y], y),
       expense: show(res, res.expenseCurve[y], y),
-      flow: flow == null ? null : show(res, flow, y),
-      balance: show(res, det[y], y),
-      need: needv == null ? null : show(res, needv, y),
-      gap: needv == null ? null : show(res, det[y] - needv, y),
+      flow: saved,
+      // No year after the last one, so there is no return to close it with.
+      growth: saved == null ? null : balance[y + 1] - balance[y] - saved,
       free: y === freeIdx,
       retire: y === retIdx
     });
@@ -1387,25 +1629,25 @@ function renderTable(res){
     rows += '<tr' + (cls.length ? ' class="' + cls.join(' ') + '"' : '') + '>' +
       '<td>' + r.year + '</td>' +
       '<td>' + fmt.age(r.age) + '</td>' +
+      '<td class="' + (r.balance < 0 ? 'neg' : '') + '">' + fmt.currency(r.balance, true) + '</td>' +
       '<td>' + fmt.currency(r.income, true) + '</td>' +
       '<td>' + fmt.currency(r.expense, true) + '</td>' +
       '<td class="' + (r.flow != null && r.flow < 0 ? 'neg' : 'pos') + '">' +
         (r.flow == null ? '—' : fmt.currency(r.flow, true)) + '</td>' +
-      '<td>' + fmt.currency(r.balance, true) + '</td>' +
-      '<td>' + (r.need == null ? 'n/a' : fmt.currency(r.need, true)) + '</td>' +
-      '<td class="' + (r.gap == null ? '' : (r.gap >= 0 ? 'pos' : 'neg')) + '">' +
-        (r.gap == null ? '—' : fmt.currency(r.gap, true)) + '</td>' +
+      '<td class="' + (r.growth == null ? '' : (r.growth >= 0 ? 'pos' : 'neg')) + '">' +
+        (r.growth == null ? '—' : fmt.currency(r.growth, true)) + '</td>' +
       '</tr>';
   });
   $('tableWrap').innerHTML =
-    '<table><thead><tr><th>Year</th><th>Age</th><th>Income</th><th>Expense</th><th>Saved</th>' +
-    '<th>Balance</th><th>Pot needed</th><th>Gap</th></tr></thead><tbody>' + rows + '</tbody></table>';
-  $('tableSub').innerHTML = 'In ' + moneyMode(res) + '. Saved is Income less Expense, in every row.' +
-    info('Whole years, not rates: each figure is the twelve months that follow. ' +
+    '<table><thead><tr><th>Year</th><th>Age</th><th>Balance</th><th>Income</th><th>Expense</th>' +
+    '<th>Saved / drawn</th><th>Growth</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  $('tableSub').innerHTML = 'In ' + moneyMode(res) +
+    '. Every row balances: this year’s Balance plus Saved plus Growth is next year’s Balance.' +
+    info('Balance is what the pot reads AT that age. Income, Expense and Saved are the twelve months that follow it, and Saved is Income less Expense in every row. ' +
          (res.ui.savingsMode === 'income'
            ? 'Income is the net income you entered, growing at the rate on the You tab.'
            : 'You entered savings rather than income, so Income is what you save plus what you spend: the take-home pay that combination implies.') +
-         ' Once you retire, income is the pension or nothing, expense is at the retirement percentage, and Saved turns negative because the difference comes out of the pot. The highlighted row is the year you become financially free, and the rule above a row marks the year you retire.');
+         ' Once you retire, income is the pension or nothing, expense is at the retirement percentage, and Saved turns negative because the difference comes out of the pot. Growth is the investment return that closes the year, taken as whatever is left over once the flows are accounted for, so the row adds up exactly in ' + moneyMode(res) + '. The highlighted row is the year you become financially free, and the rule above a row marks the year you retire.');
 }
 
 /* ─── ASSUMPTIONS ─── */
@@ -1422,14 +1664,20 @@ function renderAssumptions(res){
     '<strong>Inflation is ' + fmt.pct(res.ui.inflation, 1) + ' a year</strong> and applies to every year, working or retired.' +
       info('Living costs, the pot needed and the pension all rise with it, and the return is discounted by it (Fisher, not subtraction). That is why financial freedom at a later age costs more in the money of the day even though it buys the same life. The Expense column in the table below is that rise, year by year.'),
 
+    '<strong>The two sections are two different questions.</strong> Section 1 never withdraws; section 2 always does.' +
+      info('Path to freedom asks how early you could stop, so it runs the investment forward with you still paying in and compares it with the pot each age would need. Cashflows asks what happens if you stop at the age on the slider, so it accumulates to that age and draws down from it. The two balances agree up to the retirement month and part company after it, on purpose. Moving the slider cannot change the freedom age.'),
+
     '<strong>Your FIRE number</strong> implies a ' + (swr == null ? 'n/a' : fmt.pct(swr, 2)) + ' SWR.' +
       info('The share of the pot you spend in the first year. The familiar 25 times rule is the same arithmetic at a 4% real return, so a higher real return needs a smaller pot and a lower one needs more.'),
 
     '<strong>The shaded band is not a path.</strong>' +
-      info('It is the 10th to 90th percentile across ' + fmt.num(res.mc.paths) + ' simulated futures at each year separately, so its edges are an envelope rather than one future you could live through. The futures are a random walk that drifts upward and wobbles, using your return as the compound drift and your volatility as the wobble. At 0% volatility they collapse onto the single smooth projection exactly.'),
+      info('It is the 10th to 90th percentile across ' + fmt.num(res.mc.paths) + ' simulated futures at each year separately, so its edges are an envelope rather than one future you could live through. Those futures accumulate exactly as the line they wrap does, with nothing withdrawn, because that is the line the section is about. The futures are a random walk that drifts upward and wobbles, using your return as the compound drift and your volatility as the wobble. At 0% volatility they collapse onto the single smooth projection exactly.'),
 
     '<strong>Money deposited is what you put in that is still there.</strong>' +
-      info('It climbs while you work, goes flat the month you retire, and turns down only when the balance falls through it. That is the moment the growth stops covering the draw and the plan starts spending the capital itself. Under Die Rich it never turns down, because only the real growth is ever spent.'),
+      info('On the section 1 chart nothing is ever withdrawn, so it is every cent you have paid in, held down by the balance in the years a bad market has the pot below it. The distance between it and the investment line is the growth: the moment that gap is wider than the deposits themselves is the moment the market is doing more of the work than you are.'),
+
+    '<strong>The year-by-year table reconciles.</strong> Balance plus Saved plus Growth is next year\u2019s Balance, to the cent.' +
+      info('Growth is taken as whatever is left over once the flows are accounted for, so the row adds up in whichever money is on screen. In today\u2019s money it is the real return; in future dollars it is the nominal return, which is the same earnings plus the inflation uplift on the balance and on that year\u2019s flows.'),
 
     (res.ui.savingsMode === 'income'
       ? '<strong>Income is what you entered</strong>, and what you save is whatever it leaves over.' +
@@ -1439,6 +1687,14 @@ function renderAssumptions(res){
 
     '<strong>Not modelled:</strong> one-off costs, a mortgage ending, aged care, or any spending change beyond the retirement percentage.'
   ];
+  if(res.ui.pensionOn){
+    items.splice(3, 0, (res.P.pensionIndexed
+      ? '<strong>The pension rises with inflation</strong>, so it keeps its value for ever.'
+      : '<strong>The pension never rises</strong>, so it buys less every year.') +
+      info(res.P.pensionIndexed
+        ? 'A flat line in today\u2019s money and a rising figure in the money of the day. It starts at age ' + fmt.age(res.P.pensionStartAge) + ' and counts as income from then on, which is why it lowers the pot you need.'
+        : 'A flat figure in the money of the day and a sinking one in today\u2019s money. The erosion is measured from TODAY, not from the start age, because the amount you entered is what it pays now — so the years before you claim it wear it down too. Turn on "Rises with inflation" if your country indexes its pension.'));
+  }
   if(res.ui.mode === 'rich'){
     items.splice(3, 0, '<strong>Forever is tested to age ' + RICH_HORIZON_AGE + '.</strong>' +
       info('At the required pot the balance holds its real value, so a longer horizon would not change the answer. With a pension starting after you retire the pot is meant to fall through the years before it, then hold from there.'));
@@ -1798,7 +2054,8 @@ function exportTitle(which){
   if(!last) return 'Financial Freedom Calculator';
   var mode = last.ui.showReal ? "today's money" : 'future dollars';
   return 'Financial Freedom Calculator: ' +
-    (which === 'dd' ? 'Living off the pot' : 'Path to freedom') + ' (' + mode + ')';
+    (which === 'dd' ? 'Cashflows at ' + fmt.age(last.P.ageRetire) : 'Path to freedom') +
+    ' (' + mode + ')';
 }
 
 function csvCell(v){
@@ -1809,10 +2066,10 @@ function csvCell(v){
 function downloadCsv(){
   if(!last){ return; }
   var money = function(v){ return v == null ? '' : v.toFixed(2); };
-  var header = ['Year', 'Age', 'Income', 'Expense', 'Saved', 'Balance', 'Pot_needed', 'Gap'];
+  var header = ['Year', 'Age', 'Balance', 'Income', 'Expense', 'Saved_or_drawn', 'Growth'];
   var lines = tableRows(last).map(function(r){
-    return [r.year, r.age.toFixed(2), money(r.income), money(r.expense), money(r.flow),
-            money(r.balance), money(r.need), money(r.gap)].map(csvCell).join(',');
+    return [r.year, r.age.toFixed(2), money(r.balance), money(r.income), money(r.expense),
+            money(r.flow), money(r.growth)].map(csvCell).join(',');
   });
   var csv = '# Made using tool.adjiebrotots.com/financialfreedom\n' +
     '# ' + last.ui.currency + ', ' + (last.ui.showReal ? "today's money" : 'future dollars') + '\n' +
@@ -1825,8 +2082,10 @@ function downloadCsv(){
 function applyUIToDom(ui){
   $('currency').value = ui.currency;
   $('ageNow').value = ui.ageNow;
-  $('ageRetire').value = ui.ageRetire;
   $('ageDie').value = ui.ageDie;
+  // The slider's own bounds are rewritten from these two ages on every render,
+  // so the value is set before syncRetireSlider ever reads it back.
+  $('ageRetire').value = ui.ageRetire;
   $('expense').value = SharedFmt.formatThousands(ui.expense);
   $('expensePeriod').value = ui.expensePeriod;
   $('savings').value = SharedFmt.formatThousands(ui.savings);
@@ -1842,6 +2101,8 @@ function applyUIToDom(ui){
   $('pensionOn').checked = !!ui.pensionOn;
   $('pensionStartAge').value = ui.pensionStartAge;
   $('pensionAmount').value = SharedFmt.formatThousands(ui.pensionAmount);
+  $('pensionPeriod').value = ui.pensionPeriod;
+  $('pensionIndexed').checked = ui.pensionIndexed !== false;
   $('showReal').checked = !!ui.showReal;
   $('paths').value = ui.paths;
   $('confidence').value = ui.confidence;
@@ -1901,12 +2162,21 @@ function wire(){
     SharedFmt.attachCurrencyInput($(id), {maxDecimals: 0, onChange: scheduleRender});
   });
 
-  ['ageNow','ageRetire','ageDie','growth','inflation','ret','std','retireMultiplier',
+  ['ageNow','ageDie','growth','inflation','ret','std','retireMultiplier',
    'pensionStartAge','paths','confidence','seed'].forEach(function(id){
     $(id).addEventListener('input', scheduleRender);
   });
-  ['expensePeriod','savingsPeriod','currency'].forEach(function(id){
+  ['expensePeriod','savingsPeriod','pensionPeriod','currency'].forEach(function(id){
     $(id).addEventListener('change', scheduleRender);
+  });
+
+  /* The retirement slider is a sensitivity control, so it has to feel like one.
+     The readout follows the handle on every pixel of the drag, while the full
+     recompute stays debounced behind it: a Monte Carlo per animation frame
+     would make the drag stutter and tell the reader nothing extra. */
+  $('ageRetire').addEventListener('input', function(){
+    $('ageRetireVal').textContent = fmt.age(Number($('ageRetire').value));
+    scheduleRender();
   });
 
   $('assetPreset').addEventListener('change', function(){
@@ -1926,7 +2196,7 @@ function wire(){
     r.addEventListener('change', function(){ syncModeSelection(); scheduleRender(); });
   });
 
-  ['pensionOn','showReal'].forEach(function(id){
+  ['pensionOn','pensionIndexed','showReal'].forEach(function(id){
     $(id).addEventListener('change', scheduleRender);
   });
 
@@ -1944,13 +2214,13 @@ function wire(){
     chartPng('ffChart', 'financial_freedom_path.png', exportTitle('ff'), 'legend1');
   });
   $('ddPngBtn').addEventListener('click', function(){
-    chartPng('ddChart', 'financial_freedom_drawdown.png', exportTitle('dd'), 'legend2');
+    chartPng('ddChart', 'financial_freedom_cashflows.png', exportTitle('dd'), 'legend2');
   });
   $('ffSvgBtn').addEventListener('click', function(){
     chartSvg('ffChart', 'financial_freedom_path.svg', exportTitle('ff'), 'legend1');
   });
   $('ddSvgBtn').addEventListener('click', function(){
-    chartSvg('ddChart', 'financial_freedom_drawdown.svg', exportTitle('dd'), 'legend2');
+    chartSvg('ddChart', 'financial_freedom_cashflows.svg', exportTitle('dd'), 'legend2');
   });
   $('ffCopyBtn').addEventListener('click', function(){
     copyCanvasPng(chartPng('ffChart', '', exportTitle('ff'), 'legend1', false))
@@ -2029,10 +2299,11 @@ window.__FF = {
   incomeAt: incomeAt,
   spendAt: spendAt,
   flowAt: flowAt,
-  lifetimePath: lifetimePath,
   lifetimeSeries: lifetimeSeries,
+  accumulationSeries: accumulationSeries,
+  pensionAt: pensionAt,
   solveFreedomAge: solveFreedomAge,
-  monteCarlo: monteCarlo,
+  accumBands: accumBands,
   potRequirements: potRequirements,
   growthSeries: growthSeries,
   tickerStats: tickerStats,

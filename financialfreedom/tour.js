@@ -3,7 +3,7 @@
    describe what is actually on screen, so the steps that talk about a panel
    open that panel first. */
 window.__TOUR = {
-  seenKey: 'ff-tour-v1-seen',
+  seenKey: 'ff-tour-v2-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
@@ -47,39 +47,48 @@ window.__TOUR = {
       body: '<strong>Just Die</strong> runs the pot down to nothing at your life expectancy. ' +
             '<strong>Leave a Legacy</strong> keeps a set amount. <strong>Die Rich</strong> ' +
             'spends only the real growth, so it lasts forever. The three need very different ' +
-            'amounts, and this is where a government pension goes too.'
+            'amounts, and this is where a government pension goes too — per week, month or ' +
+            'year, and with a switch for whether it rises with inflation, because plenty of ' +
+            'countries pay a flat figure that never does.'
     },
     {
-      target: '.metrics',
+      target: '#boardPath',
       onEnter: function () {
         var tab = document.querySelector('.ctrl-tab[data-tab="you"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '④ Read the answer',
-      body: '<strong>Amount needed</strong> is the pot at your target retirement age. ' +
-            '<strong>Financially free at</strong> is the earliest you could stop. ' +
-            '<strong>Chance it works</strong> is usually near a coin flip at the amount ' +
-            'needed, because a single average return ignores the order the good and bad ' +
-            'years arrive in. The <strong>confidence pot</strong> named underneath it is the ' +
-            'number to plan around.'
+      title: '④ Section 1 — how early could you stop?',
+      body: 'The red line is the pot you would need if you stopped at that age, which falls ' +
+            'as you get older because there are fewer years left to fund. The blue line is ' +
+            'what your investment grows to, and <strong>nothing is ever withdrawn from it ' +
+            'here</strong>. <strong>Where they cross is your answer.</strong> The band is the ' +
+            'range of simulated futures and the dotted line is what you have put in, so the ' +
+            'gap between them is the growth doing the work.'
     },
     {
-      target: '.chart-card',
-      title: '⑤ Where the lines cross',
-      body: 'The blue line is what you will have. The red line is the pot you would need if ' +
-            'you stopped at that age, which falls as you get older because there are fewer ' +
-            'years left to fund. <strong>Where they cross is your answer.</strong> The shaded ' +
-            'band is the range of simulated futures, and the dotted line is what you have ' +
-            'put in: it goes flat the month you retire, and turns down when the growth stops ' +
-            'covering the draw.'
+      target: '#retireSlider',
+      title: '⑤ Section 2 — drag the retirement age',
+      body: 'This slider is the whole of section 2. It runs from <strong>stop today</strong> ' +
+            'to <strong>never stop</strong>, and everything below it — the four cards, the ' +
+            'cashflow chart and the table — is measured at whatever age you leave it on. ' +
+            'Section 1 does not move, because how early you <em>could</em> stop does not ' +
+            'depend on when you <em>choose</em> to.'
     },
     {
-      target: '.chart-card + .chart-card',
-      title: '⑥ Where the money comes from',
-      body: 'Income against spending, over the same years. While you work the gap is what ' +
-            'you save; once you stop, income falls to the pension or nothing and the same ' +
-            'gap becomes what the pot has to cover every year. <strong>That second area is ' +
-            'what the whole plan is for.</strong>'
+      target: '#boardCash .chart-card',
+      title: '⑥ Where the money comes from, and goes',
+      body: 'Income against spending, with the gap filled: green while you save it, red once ' +
+            'the pot has to cover it. The balance rides behind them on the right-hand axis, ' +
+            'so you can watch it top out the year you stop and slide from there. ' +
+            '<strong>Retire earlier and the slide starts sooner.</strong>'
+    },
+    {
+      target: '#boardCash .detail-section',
+      title: '⑦ The table adds up',
+      body: 'Every row is a cash flow statement: the balance at that age, then the income, ' +
+            'the spending, what was saved or drawn, and the investment return that closes ' +
+            'the year. <strong>Balance plus Saved plus Growth is the next row\u2019s ' +
+            'Balance</strong>, to the cent, in whichever money you are reading.'
     },
     {
       target: null,
