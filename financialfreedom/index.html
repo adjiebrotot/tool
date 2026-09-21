@@ -127,7 +127,7 @@
   <!-- ── You ── -->
   <div class="ctrl-panel active" id="tab-you">
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Currency <i class="tip-icon" data-tip="Display only. Nothing is converted, so every figure means whatever currency you typed it in.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Currency <i class="tip-icon" data-tip="Display only. Nothing is converted.">?</i></span></div>
       <select class="sel-input" id="currency"></select>
     </div>
 
@@ -138,17 +138,17 @@
         <input class="num-input" id="ageNow" type="number" min="0" max="100" step="1" value="30"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Life expectancy <i class="tip-icon" data-tip="How long the money has to last. Die Rich ignores it, because forever does not care when you stop.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Life expectancy <i class="tip-icon" data-tip="How long the money has to last. Die Rich ignores it.">?</i></span></div>
         <input class="num-input" id="ageDie" type="number" min="2" max="120" step="1" value="90"/>
       </div>
-      <p class="note">Retirement age lives on the <strong>Cashflows</strong> slider, so you can drag it and watch the answer move.</p>
+      <p class="note">Retirement age lives on the <strong>Cashflows</strong> slider below.</p>
     </div>
 
     <div class="field-group">
       <div class="group-title">Money in and out</div>
       <div class="field-row">
         <div class="field-head">
-          <div class="field-label"><span class="tip-wrap"><span id="savingsLabel">Savings</span> <i class="tip-icon" data-tip="<strong>Savings:</strong> what you actually put away. It grows at the rate below.<br><strong>Net income:</strong> your take-home pay. Income grows at the rate below, expenses grow with inflation, and what is left over is your saving. The two models give different answers, so the panel says which one is running.">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap"><span id="savingsLabel">Savings</span> <i class="tip-icon" data-tip="<strong>Savings:</strong> what you put away.<br><strong>Net income:</strong> your take-home pay, with the saving worked out as what is left after expenses.">?</i></span></div>
           <div class="seg-toggle" id="savingsModeGroup">
             <button class="seg-btn active" data-val="savings" type="button">Savings</button>
             <button class="seg-btn" data-val="income" type="button">Net income</button>
@@ -168,11 +168,11 @@
         <p class="note" id="savingsModeNote"></p>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Growth of that amount, % p.a. <i class="tip-icon" data-tip="How fast the amount above grows each year, before inflation. Pay rises live here. Match inflation and it stays flat in real terms.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Growth of that amount, % p.a. <i class="tip-icon" data-tip="How fast the amount above grows each year, before inflation. Pay rises live here.">?</i></span></div>
         <input class="num-input" id="growth" type="number" min="-10" max="30" step="0.1" value="3"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Living expenses <i class="tip-icon" data-tip="What you spend to live now. Prices rise at the inflation rate below, so this amount buys the same thing every year while the figure it costs keeps climbing.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Living expenses <i class="tip-icon" data-tip="What you spend to live now. It buys the same every year, at a figure that rises with inflation.">?</i></span></div>
         <div class="inline-row">
           <div class="currency-wrap grow">
             <span class="prefix" id="expensePrefix">$</span>
@@ -186,7 +186,7 @@
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Inflation, % p.a. <i class="tip-icon" data-tip="How fast prices rise. It lifts the living expenses above every year, which lifts the pot you need with them. Today's money means this rate stripped back out again.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Inflation, % p.a. <i class="tip-icon" data-tip="How fast prices rise. It lifts your expenses, and the pot you need with them.">?</i></span></div>
         <input class="num-input" id="inflation" type="number" min="0" max="30" step="0.1" value="2.5"/>
         <p class="note" id="inflationNote"></p>
       </div>
@@ -196,23 +196,23 @@
   <!-- ── Investment ── -->
   <div class="ctrl-panel" id="tab-invest">
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Asset <i class="tip-icon" data-tip="Fills the two fields below with long-run historical figures. Edit either of them afterwards.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Asset <i class="tip-icon" data-tip="Fills the two fields below with long-run historical figures.">?</i></span></div>
       <select class="sel-input" id="assetPreset"></select>
       <p class="note" id="presetNote"></p>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Expected return (CAGR), % p.a. <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees, so the rate that turns your starting pot into your ending one rather than the average of the good and bad years.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Expected return (CAGR), % p.a. <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees.">?</i></span></div>
       <input class="num-input" id="ret" type="number" min="-5" max="40" step="0.1" value="8"/>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Volatility, % p.a. <i class="tip-icon" data-tip="How much the return bounces year to year. It sets how wide the range of outcomes is, not the expected path. Use 0 for a single smooth projection.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Volatility, % p.a. <i class="tip-icon" data-tip="How much the return bounces year to year. Use 0 for a single smooth projection.">?</i></span></div>
       <input class="num-input" id="std" type="number" min="0" max="80" step="0.1" value="15"/>
     </div>
 
     <div class="field-group">
       <div class="group-title">Or use a real ticker</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Ticker <i class="tip-icon" data-tip="Measures the two fields above from real prices. Nothing is fetched until you press the button.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Ticker <i class="tip-icon" data-tip="Measures the two fields above from real prices.">?</i></span></div>
         <div class="ticker-row">
           <input class="txt-input" id="ticker" type="text" placeholder="e.g. SPY, VAS.AX, GLD" data-no-persist/>
           <button class="btn-secondary btn-sm" id="fetchTickerBtn">Fetch</button>
@@ -252,28 +252,28 @@
       </div>
     </div>
     <div class="field-row" id="legacyRow" style="display:none;">
-      <div class="field-label"><span class="tip-wrap">Amount to leave behind <i class="tip-icon" data-tip="In today's money, so it is what the bequest would buy now.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Amount to leave behind <i class="tip-icon" data-tip="In today's money.">?</i></span></div>
       <div class="currency-wrap">
         <span class="prefix" id="legacyPrefix">$</span>
         <input class="currency-input fmt-num" id="legacy" type="text" inputmode="decimal" value="500,000"/>
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Invested assets today <i class="tip-icon" data-tip="Anything earning the return on the Investment tab: shares, funds, super. Leave out the home you live in.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Invested assets today <i class="tip-icon" data-tip="Anything earning the return on the Investment tab. Not the home you live in.">?</i></span></div>
       <div class="currency-wrap">
         <span class="prefix" id="assetsPrefix">$</span>
         <input class="currency-input fmt-num" id="assets" type="text" inputmode="decimal" value="100,000"/>
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Retirement spending, % of today <i class="tip-icon" data-tip="80% if the mortgage is gone, 110% if you plan to travel. Leave at 100% to spend the same.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Retirement spending, % of today <i class="tip-icon" data-tip="100% spends the same as now. 80% if the mortgage is gone.">?</i></span></div>
       <input class="num-input" id="retireMultiplier" type="number" min="10" max="300" step="1" value="100"/>
     </div>
 
     <div class="field-group">
       <div class="group-title">Government or age pension</div>
       <div class="toggle-row">
-        <div class="toggle-label"><span class="tip-wrap">Include a pension <i class="tip-icon" data-tip="Reduces the pot you need, but only from its start age, so the years before it often decide the answer.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap">Include a pension <i class="tip-icon" data-tip="Reduces the pot you need, but only from its start age.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="pensionOn"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div id="pensionRows" style="display:none;">
@@ -282,7 +282,7 @@
           <input class="num-input" id="pensionStartAge" type="number" min="40" max="90" step="1" value="67"/>
         </div>
         <div class="field-row">
-          <div class="field-label"><span class="tip-wrap">Pension amount <i class="tip-icon" data-tip="What the pension pays today, at whatever rate you name it in. It is counted as income from its start age, so it lowers the pot you need.">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Pension amount <i class="tip-icon" data-tip="What it pays today. Counted as income from its start age.">?</i></span></div>
           <div class="inline-row">
             <div class="currency-wrap grow">
               <span class="prefix" id="pensionAmountPrefix">$</span>
@@ -296,7 +296,7 @@
           </div>
         </div>
         <div class="toggle-row">
-          <div class="toggle-label"><span class="tip-wrap">Rises with inflation <i class="tip-icon" data-tip="<strong>On:</strong> the pension is indexed, so it keeps buying the same thing every year. Australia, the UK and the US all index theirs.<br><strong>Off:</strong> a steady number that never changes, so it buys less every year. Several countries pay a flat pension that is only lifted by an occasional act of parliament, and some private and company pensions never rise at all.">?</i></span></div>
+          <div class="toggle-label"><span class="tip-wrap">Rises with inflation <i class="tip-icon" data-tip="<strong>On:</strong> indexed, so it keeps its value.<br><strong>Off:</strong> a flat figure that buys less every year.">?</i></span></div>
           <label class="toggle-switch"><input type="checkbox" id="pensionIndexed" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
         </div>
         <p class="note" id="pensionNote"></p>
@@ -307,19 +307,19 @@
   <!-- ── Settings ── -->
   <div class="ctrl-panel" id="tab-settings">
     <div class="toggle-row">
-      <div class="toggle-label"><span class="tip-wrap">Show Present Value <i class="tip-icon" data-tip="<strong>Off:</strong> every figure is in the dollars of the year it falls in, which is what the balance will actually read.<br><strong>On:</strong> every figure is brought back to today's money, so it means what it would buy now. The plan is identical either way.">?</i></span></div>
+      <div class="toggle-label"><span class="tip-wrap">Show Present Value <i class="tip-icon" data-tip="<strong>Off:</strong> the dollars of each year.<br><strong>On:</strong> today's money. The plan is the same either way.">?</i></span></div>
       <label class="toggle-switch"><input type="checkbox" id="showReal"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Simulated futures <i class="tip-icon" data-tip="How many random paths the band and the probability are built from. More is smoother and slower.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Simulated futures <i class="tip-icon" data-tip="How many random paths the band and the probability are built from.">?</i></span></div>
       <input class="num-input" id="paths" type="number" min="100" max="5000" step="100" value="1000"/>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Confidence level, % <i class="tip-icon" data-tip="The share of simulated futures the confidence pot has to survive. 90% is a common choice.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Confidence level, % <i class="tip-icon" data-tip="The share of simulated futures the confidence pot has to survive.">?</i></span></div>
       <input class="num-input" id="confidence" type="number" min="50" max="99" step="1" value="90"/>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Random seed <i class="tip-icon" data-tip="The same seed gives the same simulated futures, so a result can be reproduced exactly.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Random seed <i class="tip-icon" data-tip="The same seed gives the same simulated futures.">?</i></span></div>
       <input class="num-input" id="seed" type="number" min="1" step="1" value="20260921"/>
     </div>
   </div>
@@ -333,29 +333,27 @@
 <main>
   <div class="verdict card" id="verdict"></div>
 
-  <!-- ════ SECTION 1 · Path to freedom ════
+  <!-- ════ Path to freedom ════
        One question only: how early can you stop? Required pot against what
        the investment grows to, with no withdrawal anywhere in it. -->
   <section class="board" id="boardPath">
     <header class="board-head">
-      <div class="board-kicker">Section 1</div>
       <h2>Path to freedom</h2>
-      <p class="board-lede">What the pot needs to be if you stopped at each age, against what your investment is on track to grow to. Where they meet is the earliest you could stop. <strong>Nothing is withdrawn anywhere on this chart</strong> — it is the run-up, not the retirement.</p>
     </header>
 
     <section class="metrics metrics-3">
       <div class="metric card">
-        <div class="label"><span class="tip-wrap">Financially free at <i class="tip-icon" data-tip="The earliest age your investment reaches the pot needed to stop then. It is where the two lines cross below, and it does not depend on the retirement age you pick in Section 2.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Financially free at <i class="tip-icon" data-tip="The earliest age your investment reaches the pot needed to stop then. The retirement slider cannot move it.">?</i></span></div>
         <div class="value" id="mFreeAge">—</div>
         <div class="sub" id="mFreeAgeSub"></div>
       </div>
       <div class="metric card">
-        <div class="label"><span class="tip-wrap">Pot needed then <i class="tip-icon" data-tip="The pot the crossing happens at: what stopping at that age costs, on the expected return.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Pot needed then <i class="tip-icon" data-tip="What stopping at that age costs.">?</i></span></div>
         <div class="value" id="mFreePot">—</div>
         <div class="sub" id="mFreePotSub"></div>
       </div>
       <div class="metric card">
-        <div class="label"><span class="tip-wrap">Real return <i class="tip-icon" data-tip="Your return after inflation. It is what decides how big the pot has to be.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Real return <i class="tip-icon" data-tip="Your return after inflation. It decides how big the pot has to be.">?</i></span></div>
         <div class="value" id="mRealRet">—</div>
         <div class="sub" id="mRealRetSub"></div>
       </div>
@@ -378,17 +376,16 @@
     </section>
   </section>
 
-  <!-- ════ SECTION 2 · Cashflows ════
+  <!-- ════ Cashflows ════
        Everything here answers "what if I stopped at THIS age", and the slider
-       is the age. Money in, money out, and what the balance does about it. -->
+       is the age. Two charts share one x window: the flows, and the balance
+       they leave behind. -->
   <section class="board" id="boardCash">
     <header class="board-head">
-      <div class="board-kicker">Section 2</div>
       <h2>Cashflows</h2>
-      <p class="board-lede">Money in, money out, and what the balance does about it — for the retirement age on the slider. Drag it to see the whole plan move.</p>
       <div class="retire-slider" id="retireSlider">
         <div class="slider-head">
-          <div class="slider-label"><span class="tip-wrap">Retire at <i class="tip-icon" data-tip="The age you stop earning and start living off the pot. Everything in this section is measured at this age. The slider runs from your age now, meaning stop today, to your life expectancy, meaning never stop.">?</i></span></div>
+          <div class="slider-label"><span class="tip-wrap">Retire at <i class="tip-icon" data-tip="The age you stop earning and start living off the pot. Everything below is measured at it.">?</i></span></div>
           <div class="slider-value" id="ageRetireVal">60</div>
         </div>
         <!-- The real bounds are the two ages on the You tab and are written here on
@@ -402,30 +399,34 @@
 
     <section class="metrics">
       <div class="metric card">
-        <div class="label"><span class="tip-wrap">Pot needed at <span id="mNeedAge">60</span> <i class="tip-icon" data-tip="The pot you need on the day you retire for this goal to work on the expected return.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Pot needed at <span id="mNeedAge">60</span> <i class="tip-icon" data-tip="The pot you need on the day you retire, for this goal to work.">?</i></span></div>
         <div class="value" id="mNeed">—</div>
         <div class="sub" id="mNeedSub"></div>
       </div>
       <div class="metric card">
-        <div class="label"><span class="tip-wrap">Balance at <span id="mHaveAge">60</span> <i class="tip-icon" data-tip="What the investment is on track to be worth on the day you stop, on the expected return.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Balance at <span id="mHaveAge">60</span> <i class="tip-icon" data-tip="What the investment is on track to be worth on the day you stop.">?</i></span></div>
         <div class="value" id="mHave">—</div>
         <div class="sub" id="mHaveSub"></div>
       </div>
       <div class="metric card">
-        <div class="label"><span class="tip-wrap">Chance it works <i class="tip-icon" data-tip="The share of simulated futures in which the money lasts, using the pot you are on track for at this retirement age. A single average return usually lands near a coin flip, because it ignores the order the good and bad years arrive in.<br><br>The pot named underneath is the one that survives your chosen share of those futures. Plan around that, not the expected-return figure.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Chance it works <i class="tip-icon" data-tip="The share of simulated futures in which the money lasts. Plan around the confidence pot named underneath, not the expected-return figure.">?</i></span></div>
         <div class="value" id="mSuccess">—</div>
         <div class="sub" id="mSuccessSub"></div>
       </div>
       <div class="metric card">
-        <div class="label"><span class="tip-wrap">Left at <span id="mLeftAge">90</span> <i class="tip-icon" data-tip="What the balance reads at your life expectancy after the whole retirement has been paid for. Negative means the pot ran out and the shortfall is what it would have taken to see the plan through.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Left at <span id="mLeftAge">90</span> <i class="tip-icon" data-tip="What the balance reads at your life expectancy. Negative is the shortfall.">?</i></span></div>
         <div class="value" id="mLeft">—</div>
         <div class="sub" id="mLeftSub"></div>
       </div>
     </section>
 
+    <!-- A stock and a flow no longer share a plot area, let alone a scale: the
+         flows are above, the balance they leave behind is below, and the two
+         are zoomed and panned as one so a year lines up vertically between
+         them. -->
     <section class="chart-card card">
       <div class="chart-head">
-        <h3>Income, expense and balance</h3>
+        <h3>Income and spending</h3>
         <div class="btn-cluster">
           <button class="btn-secondary btn-sm" id="ddSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
           <button class="btn-secondary btn-sm" id="ddPngBtn" title="Download this chart as PNG">⬇ PNG</button>
@@ -437,6 +438,22 @@
       <div class="legend" id="legend2"></div>
       <div class="canvas-wrap"><canvas id="ddChart"></canvas></div>
       <div class="hover-box" id="hover2">Hover to inspect any year.</div>
+    </section>
+
+    <section class="chart-card card">
+      <div class="chart-head">
+        <h3>Balance</h3>
+        <div class="btn-cluster">
+          <button class="btn-secondary btn-sm" id="balSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+          <button class="btn-secondary btn-sm" id="balPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+          <button class="btn-secondary btn-sm" id="balCopyBtn" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary btn-sm" id="resetZoom3" title="Reset zoom">⟳</button>
+        </div>
+      </div>
+      <div class="sub" id="chart3Sub"></div>
+      <div class="legend" id="legend3"></div>
+      <div class="canvas-wrap"><canvas id="balChart"></canvas></div>
+      <div class="hover-box" id="hover3">Hover to inspect any year.</div>
     </section>
 
     <section class="detail-section card">

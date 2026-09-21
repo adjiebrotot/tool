@@ -125,22 +125,65 @@ demand an "invalid" verdict for a retirement age equal to the age now, now
 demands the opposite. Dragging the life expectancy under the handle pulls the
 handle down with it.
 
-**Both charts after the overhaul.** F43 pins the path chart at exactly three
-lines and a band — pot needed, investment outcome, money deposited, no median —
-running the whole plan with **no withdrawal anywhere in it**, which is what
-makes the crossing readable and what makes the plotted line the same line the
-crossing is solved against. F34d and F35 pin the consequence: sixty years of
+**All three charts after the overhaul.** F43 pins the path chart at exactly
+three lines and a band — pot needed, investment outcome, money deposited, no
+median — running the whole plan with **no withdrawal anywhere in it**, which is
+what makes the crossing readable and what makes the plotted line the same line
+the crossing is solved against. F34d and F35 pin the consequence: sixty years of
 compounding put the end of a plan two orders of magnitude above its beginning,
 so the chart OPENS on the years that decide the answer and `limits` is pinned to
-the data rather than to the view, with the whole plan one pinch away. F44 pins
-the cashflow chart: income against spending with the gap filled on both sides in
-two different colours from the token set (F25 reads `fill.above` and
-`fill.below` too, or the one place a hardcoded hex could hide would be exactly
-there), the balance on its own right-hand axis because a stock and a flow cannot
-share a scale, an ungridded second axis that says what it carries, a legend that
-names the right axis out loud, and no trace of the four-pot drawdown it
-replaced. F50i pins that both of its y axes are refitted in the same pass, or
-the balance would be left drawn against a window it is not in.
+the data rather than to the view, with the whole plan one pinch away.
+
+F44 pins the cashflows, which are two charts now. Above, income against spending
+with the gap filled on both sides in two different colours from the token set
+(F25 reads `fill.above` and `fill.below` too, or the one place a hardcoded hex
+could hide would be exactly there). Below, on a chart of its own, the balance
+that leaves behind. A stock and a flow cannot share a scale, and they no longer
+share a plot area either: F44f pins the balance out of the flow chart entirely
+and neither chart carrying a second axis, F44f2 that the two span the same
+years, and F44g3 that the balance chart has its own legend with the same
+retirement rule and no "right axis" left in it. F44g-g2b pin the merged fill
+legend. The shaded gap is ONE quantity, what income leaves over, and the two
+colours are its sign, so it is a single **Savings/Withdrawal** entry with a
+swatch split down the middle rather than two entries a reader has to add up.
+Banning the old wording would not hold that: split it back into "Surplus" and
+"Deficit" and a label test passes while the key has two entries again. So the
+invariant is structural — the key has exactly four entries, exactly one of them
+is a filled block, and that one block carries BOTH of the colours the chart
+fills with, read off the dataset's own `fill.above`/`fill.below` rather than
+restated. A split gives each entry one colour and all three checks fail at
+once; a recolour of the chart that left the key behind fails F44g2b. F50i pins that the balance chart is refitted to the
+shared window in the same pass, or it would be left drawn against a window it is
+not in.
+
+**One x window across two charts.** The flows and the balance they leave behind
+are one picture cut in half, so a year has to sit in the same place on both. F59
+drives the zoom and the pan callbacks and checks the window really is carried
+across, on the age axis as well as the calendar one, in both directions — and
+that the path chart, which answers a different question on a different opening
+view, is moved by neither. F50j pins the other half: either cashflow reset puts
+BOTH charts back, because a reset that left one zoomed in would break the
+alignment the link exists for. The window goes across through the zoom plugin's
+own `zoomScale` rather than by assigning to the scale options, because the
+plugin records a scale's original bounds the first time it is asked to move it:
+write the window in behind its back and the NEXT gesture records the synced
+window as the original, and Reset zoom goes back to that instead of the opening
+view.
+
+**What the tooltip is pointing at.** Chart.js resolves an `index` tooltip by
+DATA INDEX: nearest element, then read that index out of every other dataset.
+Every series here is one point per year EXCEPT the droplines, which are two
+points, and the crossing marker, which is one — so hovering either of those
+asked for index 0 or 1 of the yearly series, and the tooltip reported the FIRST
+YEAR of the plan under the hovered year's heading: the crossing dot in 2061
+showing "Money deposited: $100k", which is the balance today. F58 pins the fix,
+a custom interaction mode that matches by x VALUE, against hand-built metas in
+exactly that shape: a yearly series, and a one-point marker sitting between two
+of its samples. Hovering a year reads that year and nothing else; hovering the
+marker answers for the marker. F58d pins the other half — a dropline is a rule,
+not a reading, and both of its ends sit on the hovered year, so it is filtered
+out of the tooltip rather than listed twice, once at its value and once at
+zero.
 
 **The pension, per week or per year, indexed or frozen.** F53 pins that the same
 pension entered weekly, monthly or yearly gives the same pot to the cent, and
@@ -205,10 +248,20 @@ the old scale while the ticks already show the new one. F50h pins the other half
 of that lesson — the reset button repaints once more, because the tick set built
 on the reset pass is the zoomed one.
 
-**The one cut that stuck.** The confidence pot has no card of its own, but the
-figure still rides under the probability it belongs to (F48d). The chart
-subtitles are back, but only saying what a legend and an axis cannot: which
-chart withdraws and which does not (F48e).
+**The cuts that stuck.** The confidence pot has no card of its own, but the
+figure still rides under the probability it belongs to (F48d). The board
+kickers and the ledes under each heading are gone (F48e), and a subtitle now
+carries only what changes with the plan rather than repeating the legend
+(F48f). F61 holds the same line on the tips: every one of them is short enough
+to be read where it pops up, because a tip that runs past a couple of lines is
+one nobody reads.
+
+**The marked row in the year-by-year table.** The table belongs to Cashflows,
+where everything is measured at the age on the slider, so F60 pins that the one
+highlighted row is the RETIREMENT year — not the freedom age, which is Path to
+freedom's answer and cannot be read off a table the slider redraws. F60b checks
+the two really are different rows, so the move is real rather than a coincidence
+of the defaults, and F60c that the note under the table says which row it is.
 
 The exports: every control present, the CSV carrying the same columns and the
 same row count as the table it came from, and naming the currency and the money
