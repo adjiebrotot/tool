@@ -442,6 +442,7 @@
     }
 
     .tool-footer {
+      position: relative;
       margin-top: auto;
       display: flex;
       justify-content: space-between;
@@ -486,6 +487,112 @@
       color: var(--muted);
       border: 1.5px solid var(--border);
       cursor: not-allowed;
+    }
+
+    /* Split button: "Open tool" plus a menu of the tool's sub-tools. */
+    .tool-actions {
+      display: inline-flex;
+      align-items: stretch;
+    }
+
+    .tool-actions .tool-link {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .tool-options-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 0.8rem;
+      border: none;
+      border-left: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      background: var(--accent);
+      color: #fff;
+      font: inherit;
+      cursor: pointer;
+      transition: opacity var(--motion-fast), box-shadow var(--motion-fast);
+    }
+
+    /* Each half darkens on its own hover, and the shadow lifts the whole unit,
+       so the split button still reads as one control. */
+    .tool-actions:hover {
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 16px rgba(90, 145, 232, 0.30);
+    }
+
+    .tool-actions .tool-link:hover,
+    .tool-options-toggle:hover,
+    .tool-options-toggle[aria-expanded="true"] {
+      opacity: 1;
+      background: var(--accent-strong);
+      box-shadow: none;
+    }
+
+    .tool-options-toggle:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(90, 145, 232, 0.35);
+    }
+
+    .tool-options-toggle svg {
+      transition: transform var(--motion-fast);
+    }
+
+    .tool-options-toggle[aria-expanded="true"] svg {
+      transform: rotate(180deg);
+    }
+
+    .tool-options-menu {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(100% + 0.5rem);
+      z-index: 20;
+      margin: 0;
+      padding: 0.35rem;
+      list-style: none;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      display: none;
+    }
+
+    .tool-options-menu.is-open {
+      display: block;
+    }
+
+    .tool-options-menu a {
+      display: block;
+      padding: 0.6rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      transition: background var(--motion-fast), color var(--motion-fast);
+    }
+
+    .tool-options-menu a:hover,
+    .tool-options-menu a:focus-visible {
+      outline: none;
+      background: var(--input-bg);
+      color: var(--accent-strong);
+    }
+
+    .tool-options-menu .option-note {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-top: 0.1rem;
+    }
+
+    .tool-options-menu a:hover .option-note,
+    .tool-options-menu a:focus-visible .option-note {
+      color: var(--muted);
     }
 
     .empty-state {
@@ -1200,7 +1307,14 @@
           </ul>
 
           <div class="tool-footer">
+          <div class="tool-actions">
             <a class="tool-link" href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-rentvsownhouse" aria-label="Choose which Rent vs Own Home tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+            <ul class="tool-options-menu" id="options-rentvsownhouse" role="menu">
+              <li role="none"><a role="menuitem" href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer">Rent vs Own Home<span class="option-note">One scenario, year by year</span></a></li>
+              <li role="none"><a role="menuitem" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/" target="_blank" rel="noopener noreferrer">Sensitivity Analysis<span class="option-note">Several scenarios side by side</span></a></li>
+            </ul>
+          </div>
           </div>
         </article>
 
@@ -1232,7 +1346,14 @@
           </ul>
 
           <div class="tool-footer">
+          <div class="tool-actions">
             <a class="tool-link" href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-dcasimulator" aria-label="Choose which DCA Scenario Explorer tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+            <ul class="tool-options-menu" id="options-dcasimulator" role="menu">
+              <li role="none"><a role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer">DCA Scenario Explorer<span class="option-note">Compare single assets</span></a></li>
+              <li role="none"><a role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/portfolio/" target="_blank" rel="noopener noreferrer">Portfolio DCA Simulator<span class="option-note">Compare whole portfolios</span></a></li>
+            </ul>
+          </div>
           </div>
         </article>
         <article
@@ -1777,6 +1898,68 @@
       });
 
       applyFilters();
+    })();
+
+    // Sub-tool menus on the split "Open tool" buttons.
+    (function () {
+      const toggles = Array.from(document.querySelectorAll('.tool-options-toggle'));
+      if (!toggles.length) return;
+
+      const menuOf = btn => document.getElementById(btn.getAttribute('aria-controls'));
+
+      function close(btn) {
+        btn.setAttribute('aria-expanded', 'false');
+        menuOf(btn).classList.remove('is-open');
+      }
+
+      function closeAll(except) {
+        toggles.forEach(btn => { if (btn !== except) close(btn); });
+      }
+
+      function open(btn) {
+        closeAll(btn);
+        btn.setAttribute('aria-expanded', 'true');
+        menuOf(btn).classList.add('is-open');
+      }
+
+      toggles.forEach(btn => {
+        const menu = menuOf(btn);
+        const links = () => Array.from(menu.querySelectorAll('a'));
+
+        btn.addEventListener('click', event => {
+          event.stopPropagation();
+          if (btn.getAttribute('aria-expanded') === 'true') {
+            close(btn);
+          } else {
+            open(btn);
+            const first = links()[0];
+            if (first) first.focus();
+          }
+        });
+
+        menu.addEventListener('click', event => event.stopPropagation());
+
+        menu.addEventListener('keydown', event => {
+          const items = links();
+          const index = items.indexOf(document.activeElement);
+          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            const step = event.key === 'ArrowDown' ? 1 : -1;
+            const next = items[(index + step + items.length) % items.length];
+            if (next) next.focus();
+          } else if (event.key === 'Escape') {
+            close(btn);
+            btn.focus();
+          } else if (event.key === 'Tab') {
+            close(btn);
+          }
+        });
+      });
+
+      document.addEventListener('click', () => closeAll(null));
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeAll(null);
+      });
     })();
   </script>
 </body>
