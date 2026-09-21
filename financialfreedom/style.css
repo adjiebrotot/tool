@@ -46,8 +46,33 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 #tickerStatus{margin-top:8px;font-size:.79rem;line-height:1.45;color:var(--muted);min-height:1em;}
 #tickerStatus.err{color:var(--negative-em);}
 
+/* ── The two boards ──
+   The page answers two different questions and they are not the same question,
+   so each one gets a band of its own: a kicker, a heading, a sentence saying
+   what it is for, and then the cards, the chart and the table that belong to
+   it. The rule down the left is what stops the two reading as one long scroll. */
+.board{margin:0 0 26px;padding-left:16px;border-left:3px solid var(--accent);}
+#boardCash{border-left-color:var(--accent2);}
+.board-head{margin:0 0 14px;}
+.board-kicker{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);}
+#boardCash .board-kicker{color:var(--accent2);}
+.board-head h2{margin:2px 0 6px;font-size:1.3rem;}
+.board-lede{margin:0;color:var(--muted);font-size:.88rem;line-height:1.55;max-width:74ch;}
+.board-lede strong{color:var(--text);}
+.chart-head h3,.detail-head h3{margin:0;font-size:1.02rem;display:flex;align-items:center;gap:6px;}
+
+/* ── Retirement-age sensitivity slider ──
+   It is a control, but it belongs to the section it moves rather than to the
+   input panel, so it is styled as part of the board header. */
+.retire-slider{margin-top:14px;padding:13px 16px 11px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-subtle);}
+.retire-slider .slider-block{padding:0;border-top:none;}
+.retire-slider .slider-value{color:var(--accent2);font-size:1.05rem;}
+.slider-scale{display:flex;justify-content:space-between;gap:10px;margin-top:5px;color:var(--muted);font-size:.74rem;}
+#ageRetire{accent-color:var(--accent2);}
+
 /* ── KPI strip ── */
 .metrics{grid-template-columns:repeat(4,1fr);}
+.metrics-3{grid-template-columns:repeat(3,1fr);}
 .metric{padding:14px 16px;min-height:96px;}
 .metric .label{display:flex;align-items:center;gap:5px;}
 .metric .value{font-size:1.35rem;}
@@ -121,7 +146,7 @@ td.pos{color:var(--data-pos-em);}
 @media(max-width:1100px){
   .layout{grid-template-columns:1fr;}
   .controls{position:static;max-height:none;}
-  .metrics{grid-template-columns:repeat(2,1fr);}
+  .metrics,.metrics-3{grid-template-columns:repeat(2,1fr);}
   .canvas-wrap{height:360px;}
   .header{flex-direction:column;}
 }
@@ -129,7 +154,8 @@ td.pos{color:var(--data-pos-em);}
   h1{font-size:1.35rem;}
   .container{padding:10px;}
   .page-footer{padding:0 10px 16px;}
-  .metrics{grid-template-columns:1fr;}
+  .metrics,.metrics-3{grid-template-columns:1fr;}
+  .board{padding-left:11px;}
   .canvas-wrap{height:300px;}
   .btn-row{flex-direction:column;}
   .btn-row .btn-primary,.btn-row .btn-secondary{flex:1 1 auto;}

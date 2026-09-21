@@ -72,10 +72,18 @@ function refParams(ui){
     savingsMode: ui.savingsMode || 'savings',
     entered, A0: ui.assets, legacy: ui.legacy,
     pensionOn: !!ui.pensionOn, pStart: ui.pensionStartAge,
-    pMonthly: ui.pensionOn ? ui.pensionAmount / 12 : 0
+    pIndexed: ui.pensionIndexed !== false,
+    pMonthly: ui.pensionOn ? perMo(ui.pensionAmount, ui.pensionPeriod || 'yearly') : 0
   };
 }
-const refPension = (p, age) => (p.pensionOn && age >= p.pStart - 1e-9) ? p.pMonthly : 0;
+/* Step 3b, written as a discount factor rather than as the page's branch. An
+   unindexed pension is a fixed figure in the money of the day, so its real
+   value is deflated from TODAY — the amount entered is what it pays now, and
+   the years before it starts erode it just as the years after do. */
+const refPension = (p, age) => {
+  if(!(p.pensionOn && age >= p.pStart - 1e-9)) return 0;
+  return p.pIndexed ? p.pMonthly : p.pMonthly * Math.pow(1 + p.infl, -(age - p.ageNow));
+};
 const refHorizon = p => p.mode === 'rich' ? Math.max(120, p.ageDie) : p.ageDie;
 
 // BACKWARD recursion, floored at zero. Different formulation from the page.
@@ -174,23 +182,42 @@ const refSpend = (p, t) => t < refAccMonths(p) ? p.X : p.Xr;
    money paid IN. It falls straight out of D(t+1) = min(D(t) + p, W): a running
    minimum with additions is the minimum of the shifted history, and the two
    agree only if both the clamp and the deposit accounting are right.
-   The forward balance is rebuilt here too, from the replay's own flows. */
+   The forward balance is rebuilt here too, from the replay's own savings. It
+   is the SECTION 1 line, so nothing is ever withdrawn from it: the clamp bites
+   only when the market has the pot below what was paid into it, or when an
+   income smaller than the spending is draining it. */
 function refDeposited(p){
-  const accM = refAccMonths(p), total = Math.max(1, mo(p.ageNow, p.ageDie));
+  const total = Math.max(1, mo(p.ageNow, p.ageDie));
   const out = [Math.max(0, p.A0)];
   let W = p.A0, C = 0, best = p.A0;             // best = min over k of W(k) - C(k)
   for(let t = 0; t < total; t++){
-    const f = refIncome(p, t) - refSpend(p, t);
-    W = t < accM ? W * (1 + p.rm) + f : W + f;
+    const f = refSavings(p, t);
+    W = W * (1 + p.rm) + f;
     C += Math.max(0, f);
     if(W - C < best) best = W - C;
-    if(t >= accM) W *= (1 + p.rm);
     out.push(Math.max(0, best + C));
   }
   return out;
 }
 
-// Textbook annuity-due / perpetuity-due, the third formulation.
+/* The section 2 balance: accumulate to the retirement age, then draw down.
+   Written from step 4 and step 5 directly, so the page's own lifetimeSeries is
+   never consulted. */
+function refLifetime(p){
+  const accM = refAccMonths(p), total = Math.max(1, mo(p.ageNow, p.ageDie));
+  const out = [p.A0];
+  let W = p.A0;
+  for(let t = 0; t < total; t++){
+    const f = refIncome(p, t) - refSpend(p, t);
+    if(t < accM) W = W * (1 + p.rm) + f;
+    else { W += f; W *= (1 + p.rm); }
+    out.push(W);
+  }
+  return out;
+}
+
+// Textbook annuity-due / perpetuity-due, the third formulation. Used on plans
+// with no pension, so the net draw is the full retirement expense throughout.
 function refClosedForm(p){
   const n = mo(p.ageRetire, p.ageDie), rm = p.rm;
   if(p.mode === 'rich') return rm > 0 ? p.Xr * (1 + rm) / rm : Infinity;
@@ -215,7 +242,7 @@ await page.route('**/*', route => {
 // The guided tour opens itself on a first visit and its backdrop intercepts
 // every click, so mark it seen before anything loads.
 await page.addInitScript(() => {
-  try { localStorage.setItem('ff-tour-v1-seen', '1'); } catch(_e){}
+  try { localStorage.setItem('ff-tour-v2-seen', '1'); } catch(_e){}
 });
 await page.goto(PAGE, {waitUntil: 'load'});
 await page.waitForFunction(() => !!window.__FF, null, {timeout: 10000});
@@ -408,21 +435,23 @@ for(const savingsMode of ['savings', 'income']){
 
 console.log('\n── Randomness ──');
 
-// F12: zero volatility has to collapse the whole stochastic layer exactly.
+// F12: zero volatility has to collapse the whole stochastic layer exactly, and
+//      the band has to wrap the line it is drawn around: the ACCUMULATION, not
+//      the drawdown, because section 1 never withdraws.
 {
   const ui = Object.assign({}, base, {std: 0, paths: 200});
   const r = await engine(ui, `(function(){
-    var mc = F.monteCarlo(P, {paths: ui.paths, seed: ui.seed});
-    var det = F.lifetimePath(P);
+    var mc = F.accumBands(P, {paths: ui.paths, seed: ui.seed});
+    var acc = F.accumulationSeries(P).balance;
     var years = mc.years, worst = 0, y;
     for(y = 0; y <= years; y++){
       worst = Math.max(worst,
         Math.abs(mc.bands.p10[y] - mc.bands.p90[y]),
-        Math.abs(mc.bands.p50[y] - det[y * 12]));
+        Math.abs(mc.bands.p50[y] - acc[y * 12]));
     }
-    return {worst: worst, rate: mc.successRate};
+    return {worst: worst};
   })()`);
-  check('F12 at zero volatility every percentile equals the deterministic line',
+  check('F12 at zero volatility every percentile equals the deterministic accumulation',
     r.worst < 1e-6, `largest gap ${r.worst.toExponential(2)}`);
   const potGap = await engine(ui, `(function(){
     var reqs = F.potRequirements(P, {paths: ui.paths, seed: ui.seed});
@@ -435,11 +464,16 @@ console.log('\n── Randomness ──');
 // F13: same seed, same answer. Different seed, a different one.
 {
   const ui = Object.assign({}, base, {paths: 300});
-  const a = await engine(ui, 'F.monteCarlo(P, {paths: 300, seed: 12345}).successRate');
-  const b = await engine(ui, 'F.monteCarlo(P, {paths: 300, seed: 12345}).successRate');
-  const c = await engine(ui, 'F.monteCarlo(P, {paths: 300, seed: 999}).successRate');
-  check('F13 the same seed reproduces the same success rate exactly', a === b, `${a} vs ${b}`);
-  check('F13b a different seed moves it', a !== c, `${a} vs ${c}`);
+  const band = n => `F.accumBands(P, {paths: 300, seed: ${n}}).bands.p10.join(',')`;
+  const a = await engine(ui, band(12345));
+  const b = await engine(ui, band(12345));
+  const c = await engine(ui, band(999));
+  check('F13 the same seed reproduces the same band exactly', a === b);
+  check('F13b a different seed moves it', a !== c);
+  const s1 = await engine(ui, 'F.potRequirements(P, {paths: 300, seed: 12345}).successAt(F.requiredPot(P, P.ageRetire))');
+  const s2 = await engine(ui, 'F.potRequirements(P, {paths: 300, seed: 12345}).successAt(F.requiredPot(P, P.ageRetire))');
+  const s3 = await engine(ui, 'F.potRequirements(P, {paths: 300, seed: 999}).successAt(F.requiredPot(P, P.ageRetire))');
+  check('F13c and the success rate with it', s1 === s2 && s1 !== s3, `${s1} / ${s3}`);
 }
 
 // F14: success probability must never fall as the pot grows. This is what the
@@ -680,14 +714,24 @@ console.log('\n── Feasibility ──');
     `status ${d.status}`);
 }
 
-// F22: nonsense ages are caught as input errors, not as impossibility.
+/* F22: the only nonsense age left. The retirement age is a slider pinned
+   between the other two, so it can no longer be out of order; a life
+   expectancy before today still can be, and is an input error rather than an
+   impossible plan. Both ENDS of the slider have to be ordinary answers, not
+   errors: stopping today and never stopping are exactly the questions a
+   sensitivity control is for. */
 {
-  const a = await page.evaluate(() =>
-    window.__FF.diagnose(Object.assign({}, window.__FF.UI_DEFAULTS, {ageNow: 60, ageRetire: 40})));
-  const b = await page.evaluate(() =>
-    window.__FF.diagnose(Object.assign({}, window.__FF.UI_DEFAULTS, {ageRetire: 60, ageDie: 50})));
-  check('F22 a retirement age before today is an input error', a.status === 'invalid', a.message);
-  check('F22b so is a life expectancy before retirement', b.status === 'invalid', b.message);
+  const bad = await page.evaluate(() =>
+    window.__FF.diagnose(Object.assign({}, window.__FF.UI_DEFAULTS, {ageNow: 60, ageDie: 50, ageRetire: 55})));
+  const today = await page.evaluate(() =>
+    window.__FF.diagnose(Object.assign({}, window.__FF.UI_DEFAULTS, {ageNow: 30, ageRetire: 30, ageDie: 90})));
+  const never = await page.evaluate(() =>
+    window.__FF.diagnose(Object.assign({}, window.__FF.UI_DEFAULTS, {ageNow: 30, ageRetire: 90, ageDie: 90})));
+  check('F22 a life expectancy before today is an input error', bad.status === 'invalid', bad.message);
+  check('F22b retiring at your age now is a real answer, not an error',
+    today.status !== 'invalid', today.status + ': ' + (today.message || ''));
+  check('F22c and so is never retiring at all',
+    never.status !== 'invalid', never.status + ': ' + (never.message || ''));
 }
 
 console.log('\n── Page and presentation ──');
@@ -701,8 +745,8 @@ console.log('\n── Page and presentation ──');
   const r = await page.evaluate(() => {
     const box = document.getElementById('showReal');
     const row = box && box.closest('.toggle-row');
-    const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Your money'));
-    const plotted = path.data.datasets.find(d => d.label === 'Your money').data.map(p => p.y);
+    const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
+    const plotted = path.data.datasets.find(d => d.label === 'Investment outcome').data.map(p => p.y);
     const res = window.__FF.last;
     return {
       exists: !!box,
@@ -711,7 +755,7 @@ console.log('\n── Page and presentation ──');
       defaulted: window.__FF.UI_DEFAULTS.showReal,
       label: row ? row.querySelector('.toggle-label').textContent.trim() : '',
       plottedLast: plotted[plotted.length - 1],
-      realLast: res.det[Math.min(res.years * 12, res.det.length - 1)],
+      realLast: res.acc[Math.min(res.years * 12, res.acc.length - 1)],
       infl: res.P.inflation, years: res.years,
       yTitle: path.options.scales.y.title.text
     };
@@ -727,25 +771,48 @@ console.log('\n── Page and presentation ──');
   check('F47d and the axis names which money that is', /future dollars/.test(r.yTitle), r.yTitle);
 }
 
-/* F48: two cuts. The confidence pot loses its card but not its figure, and the
-   chart subtitles stop restating what the legend and the axis already say. */
+/* F48: the page is two boards now, and each figure has to sit with the
+   question it answers. Section 1 never mentions a retirement age; section 2 is
+   entirely about the one on the slider, and says which age that is on each of
+   its cards. The confidence pot still has no card of its own but still rides
+   under the probability it belongs to. */
 {
-  const r = await page.evaluate(() => ({
-    card: !!document.getElementById('mConfPot'),
-    cards: document.querySelectorAll('.metrics .metric').length,
-    labels: Array.from(document.querySelectorAll('.metrics .metric .label')).map(x => x.textContent.trim()),
-    succSub: document.getElementById('mSuccessSub').textContent,
-    sub2: !!document.getElementById('chart2Sub'),
-    sub1: (document.getElementById('chart1Sub') || {textContent: ''}).textContent
-  }));
-  check('F48 the "Pot for that confidence" card is gone',
-    !r.card && r.cards === 4 && !r.labels.some(l => /pot for that confidence/i.test(l)),
-    `${r.cards} cards: ${r.labels.map(l => l.replace(/\s*\?$/, '')).join(' | ')}`);
-  check('F48b but the pot it named still rides under the chance it belongs to',
-    /confidence (needs|is out of reach)/.test(r.succSub), r.succSub);
-  check('F48c and neither chart explains itself twice over',
-    !r.sub2 && !/cross is the earliest/i.test(r.sub1) && !/what comes in against/i.test(r.sub1),
-    r.sub1 ? r.sub1.slice(0, 80) : '(no subtitle)');
+  const r = await page.evaluate(() => {
+    const lab = sel => Array.from(document.querySelectorAll(sel)).map(x => x.textContent.trim().replace(/\s*\?$/, ''));
+    return {
+      boards: Array.from(document.querySelectorAll('.board')).map(b => ({
+        id: b.id,
+        kicker: (b.querySelector('.board-kicker') || {}).textContent,
+        heading: (b.querySelector('h2') || {}).textContent,
+        cards: b.querySelectorAll('.metrics .metric').length,
+        labels: lab('#' + b.id + ' .metrics .metric .label'),
+        charts: b.querySelectorAll('.chart-card').length,
+        tables: b.querySelectorAll('.detail-section').length
+      })),
+      card: !!document.getElementById('mConfPot'),
+      succSub: document.getElementById('mSuccessSub').textContent,
+      sub1: document.getElementById('chart1Sub').textContent,
+      sub2: document.getElementById('chart2Sub').textContent
+    };
+  });
+  const path = r.boards.find(b => b.id === 'boardPath') || {labels: []};
+  const cash = r.boards.find(b => b.id === 'boardCash') || {labels: []};
+  check('F48 the page is split into a Path to freedom board and a Cashflows board',
+    r.boards.length === 2 && /path to freedom/i.test(path.heading || '') && /cashflows/i.test(cash.heading || ''),
+    r.boards.map(b => b.id + ': ' + b.heading).join(' | '));
+  check('F48b each board owns its own cards, and only one owns the chart and the table',
+    path.cards === 3 && cash.cards === 4 && path.charts === 1 && cash.charts === 1 &&
+    path.tables === 0 && cash.tables === 1,
+    `path ${path.cards} cards / ${path.tables} tables, cash ${cash.cards} cards / ${cash.tables} tables`);
+  check('F48c section 1 never names a retirement age, section 2 names it on every card that has one',
+    !path.labels.some(l => /\bat 60\b/.test(l)) && cash.labels.filter(l => /\bat 60\b/.test(l)).length === 2,
+    `path: ${path.labels.join(' | ')}  ||  cash: ${cash.labels.join(' | ')}`);
+  check('F48d the "Pot for that confidence" card is still gone, but not the figure',
+    !r.card && /confidence (needs|is out of reach)/.test(r.succSub), r.succSub);
+  check('F48e and each chart subtitle says what the legend cannot: which one withdraws',
+    /no withdrawal appears here/i.test(r.sub1) && !/no withdrawal/i.test(r.sub2) &&
+    /income falls to the pension/i.test(r.sub2),
+    r.sub1.slice(0, 60) + ' // ' + r.sub2.slice(0, 60));
 }
 
 /* F49: a point between two yearly samples is a DATE, not a decimal. The
@@ -753,12 +820,12 @@ console.log('\n── Page and presentation ──');
    to print that number now names the month it falls in. */
 {
   const r = await page.evaluate(() => {
-    const c = window.__charts.find(ch => ch.data.datasets.some(d => d.label === 'Your money'));
+    const c = window.__charts.find(ch => ch.data.datasets.some(d => d.label === 'Investment outcome'));
     const marker = c.data.datasets.filter(d => d.label === 'Financially free');
     const x = marker.length ? marker[marker.length - 1].data[0].x : null;
     const cb = c.options.plugins.tooltip.callbacks;
     const whole = window.__FF.last.thisYear + 10;
-    cb.afterBody([{parsed: {x}, dataset: {label: 'Your money'}}]);
+    cb.afterBody([{parsed: {x}, dataset: {label: 'Investment outcome'}}]);
     return {
       x,
       fracTitle: x == null ? null : cb.title([{parsed: {x}}]),
@@ -788,15 +855,23 @@ console.log('\n── Page and presentation ──');
    a flat line however interesting the slice is. */
 {
   const r = await page.evaluate(() => {
-    const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Your money'));
+    const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
     const cash = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Income'));
     const sx = path.options.scales.x;
     const openedAt = {min: sx.min, max: sx.max};
-    const full = path.$fitY(sx.min, sx.max);
-    const early = path.$fitY(sx.min, sx.min + 5);
-    const mid = path.$fitY(sx.min, sx.min + 25);
-    const cashFull = cash.$fitY(sx.min, sx.max);
-    const cashEarly = cash.$fitY(sx.min, sx.min + 5);
+    // Each chart opens on its own window now, so the cashflow fitters are
+    // probed against the cashflow chart's x scale, not the path chart's.
+    const cxs = cash.options.scales.x;
+    // $fitY is a MAP of scale id to fitter, because the cashflow chart carries
+    // two y axes: a yearly flow on the left and a balance on the right.
+    const lim = path.options.plugins.zoom.limits.x;
+    const full = path.$fitY.y(lim.min, lim.max);      // the whole plan, zoomed out
+    const early = path.$fitY.y(sx.min, sx.min + 5);
+    const mid = path.$fitY.y(sx.min, sx.min + 25);
+    const cashFull = cash.$fitY.y(cxs.min, cxs.max);
+    const cashEarly = cash.$fitY.y(cxs.min, cxs.min + 5);
+    const balFull = cash.$fitY.y2(cxs.min, cxs.max);
+    const balEarly = cash.$fitY.y2(cxs.min, cxs.min + 5);
     /* Drive the wiring, not just the arithmetic. The refit is a chart plugin
        rather than a zoom callback, because it has to run inside the update the
        gesture triggers: the zoom plugin writes the window it is about to draw
@@ -808,8 +883,24 @@ console.log('\n── Page and presentation ──');
     sx.min = openedAt.min; sx.max = openedAt.max;
     plug.forEach(p => p.beforeUpdate(path));
     const restored = {min: path.options.scales.y.min, max: path.options.scales.y.max};
+    // And pinching all the way out to the whole plan sizes the axis to it.
+    sx.min = lim.min; sx.max = lim.max;
+    plug.forEach(p => p.beforeUpdate(path));
+    const widest = {min: path.options.scales.y.min, max: path.options.scales.y.max};
+    sx.min = openedAt.min; sx.max = openedAt.max;
+    plug.forEach(p => p.beforeUpdate(path));
+    // And the SAME pass has to move both of the cashflow chart's axes, or the
+    // balance is left drawn against a scale for a window it is not in.
+    const cashPlug = (cash.config.plugins || []).filter(p => p.id === 'ffYFit');
+    const cx = cxs, cashOpened = {min: cx.min, max: cx.max};
+    cx.min = cashOpened.min; cx.max = cashOpened.min + 5;
+    cashPlug.forEach(p => p.beforeUpdate(cash));
+    const bothMoved = {y: cash.options.scales.y.max, y2: cash.options.scales.y2.max};
+    cx.min = cashOpened.min; cx.max = cashOpened.max;
+    cashPlug.forEach(p => p.beforeUpdate(cash));
     return {
-      full, early, mid, cashFull, cashEarly, zoomed, restored, openedAt,
+      full, early, mid, cashFull, cashEarly, balFull, balEarly, bothMoved,
+      zoomed, restored, widest, opened: path.$fitY.y(openedAt.min, openedAt.max), openedAt,
       plugged: plug.length === 1 &&
                (cash.config.plugins || []).some(p => p.id === 'ffYFit'),
       // A second update chasing the first is what leaves the lines drawn on the
@@ -830,13 +921,20 @@ console.log('\n── Page and presentation ──');
   check('F50d a zoom writes those bounds onto the axis, inside its own update',
     close(r.zoomed.max, r.early.max, 1e-6) && close(r.zoomed.min, r.early.min, 1e-6),
     `${r.zoomed.min.toFixed(0)}..${r.zoomed.max.toFixed(0)}`);
-  check('F50e and zooming back out restores the full scale',
-    close(r.restored.max, r.full.max, 1e-6), `${r.restored.max.toFixed(0)} vs ${r.full.max.toFixed(0)}`);
+  check('F50e and zooming back out restores the window the chart opened on',
+    close(r.restored.max, r.opened.max, 1e-6), `${r.restored.max.toFixed(0)} vs ${r.opened.max.toFixed(0)}`);
+  check('F50e2 while pinching all the way out sizes the axis to the whole plan',
+    close(r.widest.max, r.full.max, 1e-6) && r.full.max > r.opened.max * 4,
+    `${r.widest.max.toFixed(0)} across the whole plan vs ${r.opened.max.toFixed(0)} on the opening view`);
   check('F50f the balance axis never opens below an empty pot', r.full.min >= 0 && r.early.min >= 0,
     `${r.full.min.toFixed(0)} / ${r.early.min.toFixed(0)}`);
   check('F50g the cash flow axis keeps zero and drops its ceiling to the years shown',
     r.cashEarly.min === 0 && r.cashEarly.max < r.cashFull.max / 2,
     `first five years ${r.cashEarly.max.toFixed(0)} vs whole plan ${r.cashFull.max.toFixed(0)}`);
+  check('F50i the balance axis on the right is refitted by the same pass, not left behind',
+    close(r.bothMoved.y, r.cashEarly.max, 1e-6) && close(r.bothMoved.y2, r.balEarly.max, 1e-6) &&
+    r.balEarly.max < r.balFull.max && r.balEarly.min === 0,
+    `flow ${r.bothMoved.y.toFixed(0)}, balance ${r.bothMoved.y2.toFixed(0)} (whole plan ${r.balFull.max.toFixed(0)})`);
 
   /* The reset button repaints a second time on purpose. resetZoom restores the
      window and the refit sizes y to it, but the tick set Chart.js builds on
@@ -844,7 +942,7 @@ console.log('\n── Page and presentation ──');
      longer belongs to. The plain update afterwards is what rebuilds it. */
   const calls = await page.evaluate(() => {
     const out = [];
-    [['Your money', 'resetZoom1'], ['Income', 'resetZoom2']].forEach(([label, btn]) => {
+    [['Investment outcome', 'resetZoom1'], ['Income', 'resetZoom2']].forEach(([label, btn]) => {
       const c = window.__charts.find(ch => ch.data.datasets.some(d => d.label === label));
       const reset = c.resetZoom, update = c.update;
       c.resetZoom = t => out.push(label + ' resetZoom(' + t + ')');
@@ -870,13 +968,13 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
 {
   await page.evaluate(() => { document.getElementById('showReal').checked = true; window.__FF.render(); });
   const real = await page.evaluate(() => {
-    const c = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Your money'));
-    return c.data.datasets.find(d => d.label === 'Your money').data.map(p => p.y);
+    const c = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
+    return c.data.datasets.find(d => d.label === 'Investment outcome').data.map(p => p.y);
   });
   await page.evaluate(() => { document.getElementById('showReal').checked = false; window.__FF.render(); });
   const nominal = await page.evaluate(() => {
-    const c = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Your money'));
-    return c.data.datasets.find(d => d.label === 'Your money').data.map(p => p.y);
+    const c = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
+    return c.data.datasets.find(d => d.label === 'Investment outcome').data.map(p => p.y);
   });
   const infl = (await page.evaluate(() => window.__FF.last.P.inflation));
   let worst = 0;
@@ -891,8 +989,8 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
 // F24: the chart starts at the current year and the current age, as promised.
 {
   const r = await page.evaluate(() => {
-    const c = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Your money'));
-    const ds = c.data.datasets.find(d => d.label === 'Your money');
+    const c = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
+    const ds = c.data.datasets.find(d => d.label === 'Investment outcome');
     return {firstX: ds.data[0].x, firstY: ds.data[0].y,
             assets: window.__FF.last.P.A0,
             xTitle: c.options.scales.x.title.text,
@@ -936,10 +1034,10 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
 
 // F26: flipping the theme must rebuild the charts from the new tokens.
 {
-  const before = await page.evaluate(() => window.__charts[0].data.datasets.find(d => d.label === 'Your money').borderColor);
+  const before = await page.evaluate(() => window.__charts[0].data.datasets.find(d => d.label === 'Investment outcome').borderColor);
   await page.click('#themeToggle');
   await page.waitForTimeout(120);
-  const after = await page.evaluate(() => window.__charts[0].data.datasets.find(d => d.label === 'Your money').borderColor);
+  const after = await page.evaluate(() => window.__charts[0].data.datasets.find(d => d.label === 'Investment outcome').borderColor);
   check('F26 the theme toggle re-reads the colour tokens', before !== after, `${before} -> ${after}`);
   await page.click('#themeToggle');
   await page.waitForTimeout(120);
@@ -1147,9 +1245,9 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
     window.__FF.render();
   });
   const r = await page.evaluate(() => {
-    const c = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Your money'));
+    const c = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
     const s = c.options.scales, z = c.options.plugins.zoom;
-    const pts = c.data.datasets.find(d => d.label === 'Your money').data;
+    const pts = c.data.datasets.find(d => d.label === 'Investment outcome').data;
     const marker = c.data.datasets.filter(d => d.label === 'Financially free');
     const need = c.data.datasets.find(d => d.label === 'Pot needed to stop here').data;
     const res = window.__FF.last;
@@ -1175,17 +1273,42 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
     r.xTitle === 'Calendar year' && r.ageTitle === 'Age', `${r.xTitle} / ${r.ageTitle}`);
   check('F34b and the age axis is labelled in ages, not years',
     String(r.ageTickAtStart) === String(r.ageNow), `${r.ageTickAtStart} at ${r.xBounds[0]}`);
-  check('F34c both x axes span exactly the plotted data',
-    r.xBounds[0] === r.dataBounds[0] && r.xBounds[1] === r.dataBounds[1] &&
+  check('F34c the two x axes are always in step, whatever window they are on',
     r.ageBounds[0] === r.xBounds[0] && r.ageBounds[1] === r.xBounds[1],
-    `x ${r.xBounds.join('..')}, age ${r.ageBounds.join('..')}, data ${r.dataBounds.join('..')}`);
-  check('F35 zooming out is bounded by that span, on both axes',
-    !!r.limits && r.limits.x.min === r.xBounds[0] && r.limits.x.max === r.xBounds[1] &&
-    r.limits.xAge.min === r.xBounds[0] && r.limits.xAge.max === r.xBounds[1],
+    `x ${r.xBounds.join('..')}, age ${r.ageBounds.join('..')}`);
+  /* The crossing lands in the first third of most plans while the investment
+     keeps compounding for decades after it, so a path chart opened on all
+     sixty years puts its own answer a pixel above the axis. It opens on the
+     years that decide it instead, with the rest of the plan one pinch away —
+     which is what makes the DATA span and the OPENING span two different
+     things, and why `limits` is pinned to the data rather than to the view. */
+  check('F34d the path chart opens on the years that decide the answer, not on all sixty',
+    r.xBounds[0] === r.dataBounds[0] && r.xBounds[1] < r.dataBounds[1] &&
+    r.xBounds[1] > r.thisYear + (r.ffAge - r.ageNow),
+    `opens ${r.xBounds.join('..')} of ${r.dataBounds.join('..')}, crossing at ${(r.thisYear + r.ffAge - r.ageNow).toFixed(1)}`);
+  check('F35 zooming out reaches the whole plan, and stops there, on both axes',
+    !!r.limits && r.limits.x.min === r.dataBounds[0] && r.limits.x.max === r.dataBounds[1] &&
+    r.limits.xAge.min === r.dataBounds[0] && r.limits.xAge.max === r.dataBounds[1],
     r.limits ? `x ${r.limits.x.min}..${r.limits.x.max}, minRange ${r.limits.x.minRange}` : 'no limits set');
   check('F35b and zooming in stops before the span is meaningless',
-    r.limits.x.minRange > 0 && r.limits.x.minRange <= r.xBounds[1] - r.xBounds[0],
+    r.limits.x.minRange > 0 && r.limits.x.minRange <= r.dataBounds[1] - r.dataBounds[0],
     `minRange ${r.limits.x.minRange}`);
+  /* The cashflow chart has no such problem: income and spending are flows, not
+     a compounding stock, so all sixty years of them fit on one scale. It opens
+     on the whole plan, and has to, or the retirement would be off the page. */
+  {
+    const c2 = await page.evaluate(() => {
+      const c = window.__charts.find(ch => ch.data.datasets.some(d => d.label === 'Income'));
+      const pts = c.data.datasets.find(d => d.label === 'Income').data;
+      return {view: [c.options.scales.x.min, c.options.scales.x.max],
+              data: [pts[0].x, pts[pts.length - 1].x],
+              lim: [c.options.plugins.zoom.limits.x.min, c.options.plugins.zoom.limits.x.max]};
+    });
+    check('F35c the cashflow chart opens on the whole plan, because a flow does not compound away',
+      c2.view[0] === c2.data[0] && c2.view[1] === c2.data[1] &&
+      c2.lim[0] === c2.data[0] && c2.lim[1] === c2.data[1],
+      `opens ${c2.view.join('..')} of ${c2.data.join('..')}`);
+  }
 
   check('F36 the crossing carries a marker and a dropline', r.markerCount === 2,
     `${r.markerCount} dataset(s)`);
@@ -1222,12 +1345,21 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
     const heads = Array.from(document.querySelectorAll('#tableWrap thead th')).map(t => t.textContent.trim());
     $('showReal').checked = false; window.__FF.render();
     const nom = rows();
+    // The pot needed lost its table column when the table became a pure cash
+    // flow statement, so it is read off the curve the page actually plots,
+    // which is the same figure in whatever money is on screen.
+    const needLine = () => {
+      const c = window.__charts.find(ch => ch.data.datasets.some(d => d.label === 'Pot needed to stop here'));
+      return c.data.datasets.find(d => d.label === 'Pot needed to stop here').data.map(p => p.y);
+    };
+    const nomNeed = needLine();
     const csv = window.__FF.last;
     $('showReal').checked = true; window.__FF.render();
+    const realNeed = needLine();
     return {
       note, heads, i: window.__FF.last.P.inflation,
       realExpense: real.map(x => x.expense), nomExpense: nom.map(x => x.expense),
-      realNeed: real.map(x => x.need), nomNeed: nom.map(x => x.need),
+      realNeed, nomNeed,
       ageNow: window.__FF.last.P.ageNow, ageRetire: window.__FF.last.P.ageRetire,
       currency: csv.ui.currency
     };
@@ -1268,9 +1400,10 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
 
 console.log('\n── Cash flow and deposits ──');
 
-// F41: the deposited line against the running-minimum identity, on three plans
-//      that never run the pot to nothing (where the per-step floor at zero and
-//      the closed form can legitimately part company).
+/* F41: the deposited line against the running-minimum identity. It belongs to
+   the SECTION 1 chart now, where nothing is ever withdrawn, so it is every cent
+   paid in held down by the balance — and it is read off accumulationSeries,
+   not off the drawdown, which no longer carries one at all. */
 for(const [name, extra] of [
   ['the target plan', {}],
   ['a plan retiring at the freedom age', {ageRetire: 47}],
@@ -1280,7 +1413,7 @@ for(const [name, extra] of [
   const ui = Object.assign({}, base, extra);
   const p = refParams(ui);
   const r = await engine(ui, `(function(){
-    var s = F.lifetimeSeries(P);
+    var s = F.accumulationSeries(P);
     return {dep: Array.from(s.deposited), bal: Array.from(s.balance)};
   })()`);
   const want = refDeposited(p);
@@ -1290,78 +1423,98 @@ for(const [name, extra] of [
     if(d > worst){ worst = d; at = t; }
   }
   check(`F41 money deposited matches the replay identity — ${name}`,
-    r.bal.every(v => v > -1e-6) && worst < 0.01,
-    `largest gap ${worst.toExponential(2)}${at >= 0 ? ' at month ' + at : ''}`);
+    worst < 0.01, `largest gap ${worst.toExponential(2)}${at >= 0 ? ' at month ' + at : ''}`);
 }
 
-// F41b: the shape the line is FOR. It climbs while you work, never climbs
-//       again after you stop, and never exceeds the pot it is part of.
+/* F41b: the line the section 1 chart actually needs. It is what you have put
+   in, so it never exceeds the pot and never goes negative, and under the
+   savings model it only ever climbs — there is no retirement on that chart to
+   turn it down. The gap between it and the balance is the growth, which is the
+   one thing the line exists to show. */
 {
   const ui = Object.assign({}, base, {ageRetire: 47});
   const r = await engine(ui, `(function(){
-    var s = F.lifetimeSeries(P), accM = F.accMonths(P), t;
-    var risesWhileWorking = true, risesAfter = false, overBalance = false, negative = false;
-    for(t = 0; t < s.deposited.length; t++){
-      if(t > 0 && t <= accM && s.deposited[t] < s.deposited[t - 1] - 1e-9) risesWhileWorking = false;
-      if(t > accM && s.deposited[t] > s.deposited[t - 1] + 1e-9) risesAfter = true;
+    var s = F.accumulationSeries(P), t;
+    var everFalls = false, overBalance = false, negative = false;
+    for(t = 1; t < s.deposited.length; t++){
+      if(s.deposited[t] < s.deposited[t - 1] - 1e-9) everFalls = true;
       if(s.deposited[t] > s.balance[t] + 1e-6) overBalance = true;
       if(s.deposited[t] < -1e-9) negative = true;
     }
-    return {risesWhileWorking: risesWhileWorking, risesAfter: risesAfter,
-            overBalance: overBalance, negative: negative,
-            atRetire: s.deposited[accM], last: s.deposited[s.deposited.length - 1],
-            balAtRetire: s.balance[accM]};
+    var last = s.deposited.length - 1;
+    return {everFalls: everFalls, overBalance: overBalance, negative: negative,
+            dep: s.deposited[last], bal: s.balance[last], A0: P.A0};
   })()`);
-  check('F41b it only ever climbs while you are still paying in',
-    r.risesWhileWorking && !r.risesAfter,
-    `climbs before retirement ${r.risesWhileWorking}, climbs after ${r.risesAfter}`);
+  check('F41b under the savings model it only ever climbs, because nothing is withdrawn',
+    !r.everFalls, `falls somewhere: ${r.everFalls}`);
   check('F41c and never exceeds the pot, nor falls below nothing',
     !r.overBalance && !r.negative, `over balance ${r.overBalance}, negative ${r.negative}`);
-  check('F41d it turns down once the growth stops covering the draw',
-    r.last < r.atRetire - 1,
-    `${r.atRetire.toFixed(0)} at retirement -> ${r.last.toFixed(0)} at the life expectancy`);
-  check('F41e which is later than retirement, not at it',
-    r.atRetire < r.balAtRetire - 1,
-    `deposited ${r.atRetire.toFixed(0)} vs balance ${r.balAtRetire.toFixed(0)}`);
+  check('F41d the gap to the balance is the growth, and by the end it dwarfs the deposits',
+    r.bal > r.dep * 3, `deposited ${r.dep.toFixed(0)} of a ${r.bal.toFixed(0)} balance`);
 }
 
-// F41f: at retirement it is exactly the starting assets plus everything paid
-//       in, because nothing has been taken out yet. Closed form, no loop.
+// F41e: at any month it is the starting assets plus everything paid in, as
+//       long as the balance never dips below that. Closed form, no loop.
 {
   const ui = Object.assign({}, base, {ageRetire: 47});
   const p = refParams(ui);
-  const n = refAccMonths(p);
-  let paid = 0;
-  for(let t = 0; t < n; t++) paid += Math.max(0, refIncome(p, t) - refSpend(p, t));
-  const got = await engine(ui, 'F.lifetimeSeries(P).deposited[F.accMonths(P)]');
-  check('F41f at retirement it is the starting assets plus every cent paid in',
-    close(got, p.A0 + paid, 0.01), `page ${got.toFixed(2)} vs replay ${(p.A0 + paid).toFixed(2)}`);
+  for(const n of [0, 120, 360, 719]){
+    let paid = 0;
+    for(let t = 0; t < n; t++) paid += Math.max(0, refSavings(p, t));
+    const got = await engine(ui, `F.accumulationSeries(P).deposited[${n}]`);
+    check(`F41e at month ${n} it is the starting assets plus every cent paid in`,
+      close(got, p.A0 + paid, 0.01), `page ${got.toFixed(2)} vs replay ${(p.A0 + paid).toFixed(2)}`);
+  }
 }
 
-// F41g: Die Rich spends only the real growth, so the capital is never touched.
+/* F41f: the net income model is the one case where the line can be held down,
+   because a year that spends more than it earns takes money OUT of the pot.
+   The deposits stop climbing there and the clamp against the balance bites. */
 {
-  const ui = Object.assign({}, base, {mode: 'rich', ageRetire: 55, assets: 400000});
+  // Earning less than you spend, but on a pot big enough to absorb it: not one
+  // cent is ever paid IN, so the line is dead flat at the starting assets.
+  const ui = Object.assign({}, base, {savingsMode: 'income', savings: 55000, expense: 60000,
+                                     growth: 0, assets: 2000000, ret: 6, inflation: 2.5});
   const r = await engine(ui, `(function(){
-    var s = F.lifetimeSeries(P), accM = F.accMonths(P);
-    var lowest = Infinity, t;
-    for(t = accM; t < s.deposited.length; t++) lowest = Math.min(lowest, s.deposited[t]);
-    return {atRetire: s.deposited[accM], lowest: lowest};
+    var s = F.accumulationSeries(P), t, flat = 0, over = false;
+    for(t = 1; t < s.deposited.length; t++){
+      if(Math.abs(s.deposited[t] - s.deposited[t - 1]) < 1e-9) flat++;
+      if(s.deposited[t] > s.balance[t] + 1e-6) over = true;
+    }
+    var last = s.deposited.length - 1;
+    return {flat: flat, over: over, dep: s.deposited[last], bal: s.balance[last],
+            A0: P.A0, months: last, minBal: Math.min.apply(null, Array.from(s.balance))};
   })()`);
-  check('F41g under Die Rich it never turns down at all',
-    close(r.lowest, r.atRetire, 0.01),
-    `${r.atRetire.toFixed(0)} at retirement, lowest after ${r.lowest.toFixed(0)}`);
+  check('F41f an income below the spending never adds a cent, so the line is flat',
+    r.flat === r.months && close(r.dep, r.A0, 0.01),
+    `${r.flat} of ${r.months} months flat, ending at ${r.dep.toFixed(0)} against ${r.A0.toFixed(0)} paid in`);
+  check('F41g and it stays inside the pot it is part of',
+    !r.over && r.minBal > 0, `deposited ${r.dep.toFixed(0)}, balance ${r.bal.toFixed(0)}`);
 }
 
-// F41h: a pot that runs out takes what you put in with it.
+// F41i: a pot the spending has eaten takes what you put in with it. The floor
+//       at zero is what says "once the pot is spent, so is every cent of it".
 {
-  const ui = Object.assign({}, base, {ageRetire: 40, assets: 0, savings: 5000});
+  const ui = Object.assign({}, base, {savingsMode: 'income', savings: 20000, expense: 60000, assets: 50000, ret: 4});
   const r = await engine(ui, `(function(){
+    var s = F.accumulationSeries(P), last = s.deposited.length - 1;
+    return {dep: s.deposited[last], bal: s.balance[last]};
+  })()`);
+  check('F41i a pot eaten to nothing leaves nothing of what you put in',
+    r.bal < 0 && Math.abs(r.dep) < 1e-9,
+    `balance ${r.bal.toFixed(0)}, deposited ${r.dep.toFixed(0)}`);
+}
+
+/* F41h: the drawdown carries NO deposited line any more. It was the one place
+   the old single chart mixed the two questions, and the section it belonged to
+   does not ask it. */
+{
+  const r = await engine(base, `(function(){
     var s = F.lifetimeSeries(P);
-    return {last: s.deposited[s.deposited.length - 1], lastBal: s.balance[s.balance.length - 1]};
+    return {keys: Object.keys(s), hasDep: s.deposited !== undefined};
   })()`);
-  check('F41h a pot spent to nothing leaves nothing of what you put in',
-    r.lastBal < 0 && Math.abs(r.last) < 1e-9,
-    `balance ${r.lastBal.toFixed(0)}, deposited ${r.last.toFixed(0)}`);
+  check('F41h the drawdown series carries no deposited line at all',
+    !r.hasDep, r.keys.join(', '));
 }
 
 // F42: SAVED = INCOME - EXPENSE, in every row of the table, under BOTH models
@@ -1446,70 +1599,489 @@ for(const [name, extra] of [
     window.__FF.render();
     return Array.from(document.querySelectorAll('#tableWrap thead th')).map(t => t.textContent.trim());
   });
-  const i = heads.indexOf('Income'), e = heads.indexOf('Expense'), sv = heads.indexOf('Saved');
-  check('F42c Income and Expense come before Saved, and Saved before the pot',
-    i >= 0 && e === i + 1 && sv === e + 1 && sv < heads.indexOf('Pot needed'),
+  const idx = re => heads.findIndex(h => re.test(h));
+  const bal = idx(/^Balance$/), i = idx(/^Income$/), e = idx(/^Expense$/),
+        sv = idx(/^Saved/), g = idx(/^Growth$/);
+  check('F42c the row reads as a statement: Balance, then Income, Expense, Saved, Growth',
+    bal >= 0 && i === bal + 1 && e === i + 1 && sv === e + 1 && g === sv + 1 &&
+    heads.length === 7,
     heads.join(' | '));
-  check('F42d and "Saved or spent" is gone', !heads.some(h => /or spent/i.test(h)),
-    heads.join(' | '));
+  check('F42d and the pot and the gap are gone, because this table is the cash flow',
+    !heads.some(h => /pot|gap|or spent/i.test(h)), heads.join(' | '));
 }
 
-/* ── The two charts, after the revision ── */
+/* ── The two charts, after the overhaul ──
+   Section 1 is three lines and a band and NEVER withdraws. Section 2 is income
+   against spending with the balance on its own axis, at the age on the slider.
+   Everything below is read off the chart configs the page actually built. */
 {
   const r = await page.evaluate(() => {
     const res = window.__FF.last;
-    const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Your money'));
+    const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
     const cash = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Income'));
     const label = (c, l) => c.data.datasets.find(d => d.label === l);
     const dep = label(path, 'Money deposited');
-    const inc = label(cash, 'Income'), spend = label(cash, 'Spending');
+    const inc = label(cash, 'Income'), spend = label(cash, 'Spending'), bal = label(cash, 'Balance');
     const xs = d => d.data.map(p => p.x);
+    const acc = label(path, 'Investment outcome');
+    const retIdx = Math.round(res.P.ageRetire - res.P.ageNow);
     return {
       years: res.years, thisYear: res.thisYear,
-      ageNow: res.P.ageNow, ageDie: res.P.ageDie, ageRetire: res.P.ageRetire,
-      pathSpan: [xs(label(path, 'Your money'))[0], xs(label(path, 'Your money')).slice(-1)[0]],
+      ageNow: res.P.ageNow, ageDie: res.P.ageDie, ageRetire: res.P.ageRetire, retIdx,
+      // Section 1
+      pathLabels: path.data.datasets.map(d => d.label),
+      pathSpan: [xs(acc)[0], xs(acc).slice(-1)[0]],
+      accSeries: acc.data.map(p => p.y),
       hasDeposited: !!dep,
       depSpan: dep ? [dep.data[0].y, dep.data.slice(-1)[0].y] : null,
-      depAtRetire: dep ? dep.data[Math.round(res.P.ageRetire - res.P.ageNow)].y : null,
-      cashSpan: inc ? [xs(inc)[0], xs(inc).slice(-1)[0]] : null,
-      incFirst: inc ? inc.data[0].y : null,
-      incAfterRetire: inc ? inc.data[Math.round(res.P.ageRetire - res.P.ageNow) + 1].y : null,
-      spendFlat: spend ? spend.data.every(p => Math.abs(p.y - spend.data[0].y) < 0.01) : null,
-      fill: inc ? inc.fill : null,
-      yTitle: cash ? cash.options.scales.y.title.text : null,
+      depAtRetire: dep ? dep.data[retIdx].y : null,
+      pathNeverDips: acc.data.every((p, k) => k === 0 || p.y >= acc.data[k - 1].y - 1e-6),
+      pathHasBalanceAxis: !path.options.scales.y2,
+      hasMedianLine: !!label(path, 'Median outcome'),
+      legend1: Array.from(document.querySelectorAll('#legend1 .legend-item')).map(x => x.textContent.trim()),
+      // Section 2
+      cashLabels: cash.data.datasets.map(d => d.label),
+      cashSpan: [xs(inc)[0], xs(inc).slice(-1)[0]],
+      incFirst: inc.data[0].y,
+      incAfterRetire: inc.data[retIdx + 1].y,
+      spendFlat: spend.data.every(p => Math.abs(p.y - spend.data[0].y) < 0.01),
+      fill: inc.fill,
+      fillTargetLabel: cash.data.datasets[inc.fill.target] ? cash.data.datasets[inc.fill.target].label : null,
+      yTitle: cash.options.scales.y.title.text,
+      y2Title: cash.options.scales.y2 ? cash.options.scales.y2.title.text : null,
+      y2Grid: cash.options.scales.y2 ? cash.options.scales.y2.grid.drawOnChartArea : null,
+      balAxis: bal ? bal.yAxisID : null,
+      flowAxis: [inc.yAxisID, spend.yAxisID],
+      balSeries: bal ? bal.data.map(p => p.y) : null,
+      balPeakIdx: bal ? bal.data.reduce((best, p, k) => p.y > bal.data[best].y ? k : best, 0) : null,
+      marker: !!label(cash, 'Retire at 60'),
       stillHasPotLines: !!(label(cash, 'Your pot') || label(cash, 'Your pot after a crash')),
       legend2: Array.from(document.querySelectorAll('#legend2 .legend-item')).map(x => x.textContent.trim())
     };
   });
 
+  // ── Section 1 ──
   check('F43 the path chart runs the whole plan, not just the run-up',
     r.pathSpan[0] === r.thisYear && r.pathSpan[1] === r.thisYear + r.years,
     `${r.pathSpan.join('..')} for ages ${r.ageNow}..${r.ageDie}`);
-  check('F43b and carries the money-deposited line', r.hasDeposited,
-    r.hasDeposited ? `${r.depSpan[0].toFixed(0)} -> ${r.depSpan[1].toFixed(0)}` : 'missing');
-  check('F43c which has stopped climbing by the retirement age',
-    r.depSpan[1] <= r.depAtRetire + 1e-6,
-    `${r.depAtRetire.toFixed(0)} at ${r.ageRetire}, ${r.depSpan[1].toFixed(0)} at ${r.ageDie}`);
+  check('F43b it plots exactly three lines and a band: pot needed, investment outcome, money deposited',
+    r.pathLabels.filter(l => /Worst 10%|Best 10%/.test(l)).length === 2 &&
+    r.pathLabels.includes('Pot needed to stop here') &&
+    r.pathLabels.includes('Investment outcome') &&
+    r.pathLabels.includes('Money deposited') &&
+    !r.hasMedianLine,
+    r.pathLabels.join(' | '));
+  check('F43c and it never withdraws: the investment line only ever climbs, retirement age or not',
+    r.pathNeverDips && r.depSpan[1] > r.depAtRetire + 1,
+    `deposits ${r.depAtRetire.toFixed(0)} at ${r.ageRetire} still climbing to ${r.depSpan[1].toFixed(0)} at ${r.ageDie}`);
+  check('F43d the legend says which line is which, and that nothing is drawn on',
+    r.legend1.some(l => /pot needed to stop here/i.test(l)) &&
+    r.legend1.some(l => /never drawn on/i.test(l)) &&
+    r.legend1.some(l => /money deposited/i.test(l)) &&
+    r.legend1.some(l => /range of outcomes/i.test(l)),
+    r.legend1.join(' | '));
+  check('F43e and it carries one y axis, because everything on it is a balance',
+    r.pathHasBalanceAxis, r.pathHasBalanceAxis ? 'single axis' : 'a second axis appeared');
 
-  check('F44 the second chart plots income against spending',
-    !!r.cashSpan && r.spendFlat === true && r.incFirst > 0,
-    `income starts ${r.incFirst == null ? '—' : r.incFirst.toFixed(0)}, spending flat ${r.spendFlat}`);
-  check('F44b over the same years as the first, so the two sides are comparable',
+  // ── Section 2 ──
+  check('F44 the cashflow chart plots income against spending',
+    r.spendFlat === true && r.incFirst > 0,
+    `income starts ${r.incFirst.toFixed(0)}, spending flat ${r.spendFlat}`);
+  check('F44b over the same years as the first, so the two sections line up',
     r.cashSpan[0] === r.thisYear && r.cashSpan[1] === r.thisYear + r.years,
     r.cashSpan.join('..'));
   check('F44c income falls away once you stop, with no pension to replace it',
     r.incAfterRetire === 0, `${r.incAfterRetire} the year after retiring`);
   check('F44d and the gap between them is filled on both sides, in two colours',
-    !!r.fill && r.fill.target === 0 && !!r.fill.above && !!r.fill.below &&
+    !!r.fill && r.fillTargetLabel === 'Spending' && !!r.fill.above && !!r.fill.below &&
     r.fill.above !== r.fill.below,
-    r.fill ? `target ${r.fill.target}, ${r.fill.above} / ${r.fill.below}` : 'no fill');
-  check('F44e the axis says it is a yearly flow, not a balance',
-    /a year/i.test(r.yTitle || ''), r.yTitle);
-  check('F44f the legend names both sides of the fill',
-    r.legend2.some(l => /saved/i.test(l)) && r.legend2.some(l => /drawn/i.test(l)),
+    r.fill ? `to ${r.fillTargetLabel}, ${r.fill.above} / ${r.fill.below}` : 'no fill');
+  check('F44e the flow axis says it is a yearly flow, not a balance',
+    /a year/i.test(r.yTitle || '') && r.flowAxis.every(a => a === 'y'), r.yTitle);
+  /* A stock and a flow cannot share a scale: a balance in the millions flattens
+     a spending line in the tens of thousands into the axis. So the balance gets
+     its own axis on the right, without gridlines of its own, and the legend
+     says "right axis" rather than leaving the reader to guess. */
+  check('F44f the balance rides on its own right-hand axis, named and ungridded',
+    r.balAxis === 'y2' && /^Balance/.test(r.y2Title || '') && r.y2Grid === false,
+    `${r.balAxis} titled "${r.y2Title}"`);
+  check('F44g the legend names every line, and says which one is on the right',
+    r.legend2.some(l => /saved/i.test(l)) && r.legend2.some(l => /drawn/i.test(l)) &&
+    r.legend2.some(l => /balance \(right axis\)/i.test(l)) &&
+    r.legend2.some(l => /retire at/i.test(l)),
     r.legend2.join(' | '));
-  check('F44g and the four-pot drawdown it replaced is gone', !r.stillHasPotLines,
+  /* The shape the two sections exist for, and the one identity that ties them
+     together: the cashflow balance IS the section 1 accumulation right up to
+     the retirement month, and is strictly below it from the next month on,
+     because one keeps paying in and the other has started taking out. They are
+     two answers to two questions, and they agree exactly where they should. */
+  {
+    const same = await page.evaluate(() => {
+      const res = window.__FF.last, accM = window.__FF.accMonths(res.P);
+      let worstBefore = 0, minGapAfter = Infinity;
+      for(let t = 0; t <= accM; t++) worstBefore = Math.max(worstBefore, Math.abs(res.acc[t] - res.det[t]));
+      for(let t = accM + 1; t < res.det.length; t++) minGapAfter = Math.min(minGapAfter, res.acc[t] - res.det[t]);
+      return {worstBefore, minGapAfter, accM};
+    });
+    check('F44h the cashflow balance is the section 1 line up to the retirement month, and below it after',
+      same.worstBefore < 0.01 && same.minGapAfter > 0,
+      `largest gap before ${same.worstBefore.toExponential(2)}, smallest gap after ${same.minGapAfter.toFixed(0)}`);
+  }
+  // And on a plan that is not overfunded, the balance really does top out the
+  // year you stop, which is the picture the section is for.
+  {
+    const peak = await page.evaluate(() => {
+      const F = window.__FF;
+      const res = F.compute(Object.assign({}, F.UI_DEFAULTS, {ageRetire: 50, savings: 20000, assets: 50000, showReal: true}));
+      const det = F.tableRows(res).map(x => x.balance);
+      let best = 0;
+      det.forEach((v, k) => { if(v > det[best]) best = k; });
+      return {best, retIdx: Math.round(res.P.ageRetire - res.P.ageNow), last: det[det.length - 1], top: det[best]};
+    });
+    check('F44h2 and on a plan that is not overfunded it tops out the year you stop',
+      peak.best === peak.retIdx && peak.last < peak.top,
+      `peak at year ${peak.best}, retirement at ${peak.retIdx}`);
+  }
+  check('F44i and the retirement year is marked, not left to be counted',
+    r.marker, r.marker ? 'marked' : 'no marker');
+  check('F44j the four-pot drawdown it replaced is still gone', !r.stillHasPotLines,
     r.stillHasPotLines ? 'pot lines still plotted' : 'replaced');
+}
+
+console.log('\n── Two sections, one slider ──');
+
+/* F51: the two questions are independent, and the page has to prove it. How
+   EARLY you could stop cannot depend on when you CHOOSE to stop, so dragging
+   the slider from one end of its range to the other must leave section 1
+   untouched — the freedom age, the pot-needed curve and the investment line
+   alike — while moving every figure in section 2. */
+{
+  const r = await page.evaluate(() => {
+    const F = window.__FF, $ = id => document.getElementById(id);
+    const snap = () => {
+      const res = F.last;
+      const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
+      const line = l => path.data.datasets.find(d => d.label === l).data.map(p => Math.round(p.y));
+      return {
+        ff: res.ffAge,
+        acc: line('Investment outcome').join(','),
+        need: line('Pot needed to stop here').join(','),
+        dep: line('Money deposited').join(','),
+        freePot: $('mFreePot').textContent,
+        // section 2
+        needAt: res.needAtRetire, have: res.potAtRetire, left: res.leftAtDeath,
+        succ: $('mSuccess').textContent,
+        balRow30: F.tableRows(res)[40].balance
+      };
+    };
+    const at = age => { $('ageRetire').value = age; F.render(); return snap(); };
+    const out = [40, 55, 60, 75, 89].map(at);
+    $('ageRetire').value = 60; F.render();
+    return out;
+  });
+  const first = r[0];
+  check('F51 the freedom age does not move when the retirement slider does',
+    r.every(x => x.ff === first.ff), r.map(x => x.ff.toFixed(3)).join(' '));
+  check('F51b nor does one pixel of the section 1 chart',
+    r.every(x => x.acc === first.acc && x.need === first.need && x.dep === first.dep),
+    r.every(x => x.acc === first.acc) ? 'all three lines identical at every slider position' : 'a line moved');
+  check('F51c nor the pot the crossing happens at', r.every(x => x.freePot === first.freePot),
+    r.map(x => x.freePot).join(' '));
+  check('F51d while every figure in section 2 moves with it',
+    new Set(r.map(x => x.needAt)).size === r.length &&
+    new Set(r.map(x => x.have)).size === r.length &&
+    new Set(r.map(x => x.left)).size === r.length &&
+    new Set(r.map(x => x.balRow30)).size > 1,
+    r.map(x => Math.round(x.needAt)).join(' / '));
+}
+
+/* F52: the retirement age is a SLIDER, capped by the two ages it sits between,
+   and the number input it replaced is gone. Both ends have to be reachable and
+   meaningful: the left is "stop today", the right is "never stop". */
+{
+  const r = await page.evaluate(() => {
+    const F = window.__FF, $ = id => document.getElementById(id);
+    const el = $('ageRetire');
+    const inYouTab = !!document.querySelector('#tab-you #ageRetire');
+    const before = {type: el.type, min: el.min, max: el.max, val: el.value,
+                    readout: $('ageRetireVal').textContent,
+                    inSection: !!document.querySelector('#boardCash #ageRetire'),
+                    scale: [$('retireScaleMin').textContent, $('retireScaleMax').textContent]};
+    // Move both ends and the slider has to follow them.
+    $('ageNow').value = 45; $('ageDie').value = 70; F.render();
+    const moved = {min: el.min, max: el.max, val: el.value, ui: F.UI.ageRetire};
+    // A life expectancy dragged below the handle pulls the handle down with it.
+    $('ageDie').value = 55; F.render();
+    const squeezed = {max: el.max, val: el.value, ui: F.UI.ageRetire};
+    // Both ends of the range are ordinary answers. The bounds are rewritten
+    // during a render, so restore the ages first and only then grab the end.
+    $('ageNow').value = 30; $('ageDie').value = 90; F.render();
+    el.value = el.min; F.render();
+    const today = {ui: F.UI.ageRetire, accM: F.accMonths(F.last.P), verdict: $('verdict').className,
+                   left: F.last.leftAtDeath, note: $('chart2Sub').textContent};
+    el.value = el.max; F.render();
+    const never = {ui: F.UI.ageRetire, accM: F.accMonths(F.last.P), verdict: $('verdict').className,
+                   left: F.last.leftAtDeath, note: $('chart2Sub').textContent};
+    el.value = 60; F.render();
+    return {before, moved, squeezed, today, never, inYouTab};
+  });
+  check('F52 the retirement age is a range slider, and the number input is gone from the panel',
+    r.before.type === 'range' && !r.inYouTab && r.before.inSection,
+    `${r.before.type}, in the You tab: ${r.inYouTab}, in the Cashflows board: ${r.before.inSection}`);
+  check('F52b capped from age now to the life expectancy',
+    r.before.min === '30' && r.before.max === '90', `${r.before.min}..${r.before.max}`);
+  check('F52c and the cap follows both ages when they change',
+    r.moved.min === '45' && r.moved.max === '70' && Number(r.moved.ui) === 60,
+    `${r.moved.min}..${r.moved.max}, handle at ${r.moved.ui}`);
+  check('F52d a life expectancy dragged under the handle pulls the handle down with it',
+    r.squeezed.max === '55' && Number(r.squeezed.ui) <= 55,
+    `max ${r.squeezed.max}, handle at ${r.squeezed.ui}`);
+  check('F52e the readout and the two end labels name the ages, not raw numbers',
+    /^\d/.test(r.before.readout) && /stop today/i.test(r.before.scale[0]) &&
+    /never stop/i.test(r.before.scale[1]), r.before.scale.join(' … '));
+  check('F52f the left end means stop today: no accumulation at all, and the page still works',
+    r.today.ui === 30 && r.today.accM === 0 && /visible/.test(r.today.verdict) &&
+    /drawdown starts today/i.test(r.today.note),
+    `accM ${r.today.accM}, left at 90 ${r.today.left.toFixed(0)}`);
+  check('F52g the right end means never stop: nothing is ever drawn, and the page says so',
+    r.never.ui === 90 && r.never.accM === 720 && /visible/.test(r.never.verdict) &&
+    /never stop earning/i.test(r.never.note),
+    `accM ${r.never.accM}, left at 90 ${r.never.left.toFixed(0)}`);
+}
+
+console.log('\n── The pension: rate, and whether it keeps its value ──');
+
+/* F53: the pension can be entered per week, per month or per year, and either
+   indexed to inflation or frozen. The period is pure arithmetic and has to be
+   exact; the indexation is a real modelling choice and changes the answer. */
+{
+  const pots = {};
+  for(const [amount, pensionPeriod] of [[52000, 'yearly'], [52000 / 12, 'monthly'], [1000, 'weekly']]){
+    pots[pensionPeriod] = await engine(
+      Object.assign({}, base, {pensionOn: true, amount, pensionAmount: amount, pensionPeriod}),
+      'F.requiredPot(P, P.ageRetire)');
+  }
+  check('F53 the same pension entered per week, per month or per year gives the same pot',
+    close(pots.yearly, pots.monthly, 1e-6) && close(pots.yearly, pots.weekly, 1e-6),
+    `y ${pots.yearly.toFixed(4)} | m ${pots.monthly.toFixed(4)} | w ${pots.weekly.toFixed(4)}`);
+
+  const peri = await engine(Object.assign({}, base, {pensionOn: true, pensionAmount: 1000, pensionPeriod: 'weekly'}),
+    'P.pensionMonthly');
+  check('F53b and a weekly figure is 52/12 of a month, not a quarter of one',
+    close(peri, 1000 * 52 / 12, 1e-9), `${peri.toFixed(4)} a month`);
+
+  // Indexation, against the replay's own discount-factor formulation.
+  const idxUi = Object.assign({}, base, {pensionOn: true, pensionStartAge: 67, pensionAmount: 29000, pensionIndexed: true});
+  const froUi = Object.assign({}, idxUi, {pensionIndexed: false});
+  const pIdx = refParams(idxUi), pFro = refParams(froUi);
+  const ages = [66, 67, 70, 80, 90];
+  const gotIdx = await engine(idxUi, `[${ages.join(',')}].map(function(a){ return F.pensionAt(P, a); })`);
+  const gotFro = await engine(froUi, `[${ages.join(',')}].map(function(a){ return F.pensionAt(P, a); })`);
+  check('F53c an indexed pension is flat in today’s money, and zero before it starts',
+    gotIdx[0] === 0 && ages.slice(1).every((a, k) => close(gotIdx[k + 1], refPension(pIdx, a), 1e-9)),
+    gotIdx.map(v => v.toFixed(0)).join(' '));
+  check('F53d a frozen one decays by exactly the inflation factor, measured from TODAY',
+    gotFro[0] === 0 && ages.slice(1).every((a, k) =>
+      close(gotFro[k + 1], 29000 / 12 * Math.pow(1.025, -(a - 30)), 1e-9) &&
+      close(gotFro[k + 1], refPension(pFro, a), 1e-9)),
+    gotFro.map(v => v.toFixed(0)).join(' '));
+
+  const needIdx = await engine(idxUi, 'F.requiredPot(P, P.ageRetire)');
+  const needFro = await engine(froUi, 'F.requiredPot(P, P.ageRetire)');
+  const needNone = await engine(base, 'F.requiredPot(P, P.ageRetire)');
+  check('F53e the page’s pot for a frozen pension matches the replay',
+    close(needFro, refRequired(pFro, pFro.ageRetire), 0.01),
+    `page ${needFro.toFixed(2)} vs replay ${refRequired(pFro, pFro.ageRetire).toFixed(2)}`);
+  check('F53f and an indexed one is worth more than a frozen one, which is worth more than none',
+    needIdx < needFro && needFro < needNone,
+    `indexed ${needIdx.toFixed(0)} < frozen ${needFro.toFixed(0)} < none ${needNone.toFixed(0)}`);
+  check('F53g the page’s pot for an indexed pension matches the replay too',
+    close(needIdx, refRequired(pIdx, pIdx.ageRetire), 0.01),
+    `page ${needIdx.toFixed(2)} vs replay ${refRequired(pIdx, pIdx.ageRetire).toFixed(2)}`);
+
+  // With no inflation the distinction cannot exist, and must not.
+  const z1 = await engine(Object.assign({}, idxUi, {inflation: 0}), 'F.requiredPot(P, P.ageRetire)');
+  const z2 = await engine(Object.assign({}, froUi, {inflation: 0}), 'F.requiredPot(P, P.ageRetire)');
+  check('F53h at zero inflation the two are the same plan, to the cent',
+    close(z1, z2, 1e-9), `${z1.toFixed(4)} vs ${z2.toFixed(4)}`);
+
+  // Die Rich takes its perpetuity on the net draw at the horizon, which a
+  // frozen pension has eroded almost entirely by age 120.
+  const richFro = await engine(Object.assign({}, froUi, {mode: 'rich'}), `(function(){
+    return {pot: F.requiredPot(P, P.ageRetire), atHorizon: F.pensionAt(P, 120),
+            atStart: F.pensionAt(P, 67), expense: P.Xr};
+  })()`);
+  const richIdx = await engine(Object.assign({}, idxUi, {mode: 'rich'}),
+    'F.requiredPot(P, P.ageRetire)');
+  check('F53i under Die Rich a frozen pension has all but faded by the horizon',
+    richFro.atHorizon < richFro.expense * 0.1 && richFro.atHorizon < richFro.atStart / 3,
+    `${richFro.atHorizon.toFixed(2)} a month at 120, from ${richFro.atStart.toFixed(2)} at 67, against spending of ${richFro.expense.toFixed(2)}`);
+  check('F53i2 so forever costs more with a frozen pension than with an indexed one',
+    richFro.pot > richIdx && isFinite(richFro.pot),
+    `frozen ${richFro.pot.toFixed(0)} vs indexed ${Number(richIdx).toFixed(0)}`);
+
+  // The page has to say what the switch does, in money, not only in words.
+  const ui = await page.evaluate(() => {
+    const F = window.__FF, $ = id => document.getElementById(id);
+    const set = () => { $('pensionOn').checked = true; $('pensionAmount').value = '29,000';
+                        $('pensionPeriod').value = 'yearly'; };
+    set(); $('pensionIndexed').checked = true; F.render();
+    const on = $('pensionNote').textContent;
+    $('pensionIndexed').checked = false; F.render();
+    const off = $('pensionNote').textContent;
+    $('pensionOn').checked = false; $('pensionIndexed').checked = true; F.render();
+    const none = $('pensionNote').textContent;
+    return {on, off, none, hasPeriod: !!document.getElementById('pensionPeriod'),
+            periods: Array.from(document.querySelectorAll('#pensionPeriod option')).map(o => o.value),
+            defaultIndexed: F.UI_DEFAULTS.pensionIndexed, defaultPeriod: F.UI_DEFAULTS.pensionPeriod};
+  });
+  check('F53j the amount takes a week, a month or a year, and defaults to a year',
+    ui.hasPeriod && ui.periods.join(',') === 'weekly,monthly,yearly' && ui.defaultPeriod === 'yearly',
+    ui.periods.join(','));
+  check('F53k indexation is a checkbox, on by default, and the note names a real figure either way',
+    ui.defaultIndexed === true && /keeps buying/.test(ui.on) && /never a cent more/.test(ui.off) &&
+    /\d/.test(ui.on) && /\d/.test(ui.off) && ui.none === '',
+    ui.off.slice(0, 90));
+}
+
+console.log('\n── Accounting integrity: the table adds up ──');
+
+/* F54: the year-by-year table is a cash flow statement, so it has to behave
+   like one. Four things, on every plan and in both moneys:
+     1. Saved  = Income - Expense                    (the flows agree)
+     2. Balance + Saved + Growth = next Balance      (the row closes)
+     3. the first Balance is what you hold today     (it starts where you are)
+     4. the last Balance is the engine's own terminal (it ends where the engine does)
+   The balance column is checked against the REPLAY's forward recurrence, not
+   against the page's own series, so agreement means the arithmetic agrees. */
+{
+  const plans = [
+    ['the target plan', {}],
+    ['in today’s money', {showReal: true}],
+    ['the net income model', {savingsMode: 'income', savings: 95000}],
+    ['a frozen weekly pension', {pensionOn: true, pensionAmount: 600, pensionPeriod: 'weekly', pensionIndexed: false}],
+    ['an indexed pension bridge', {ageRetire: 55, pensionOn: true, pensionStartAge: 67, pensionAmount: 29000}],
+    ['stopping today', {ageRetire: 30}],
+    ['never stopping', {ageRetire: 90}],
+    ['a plan that runs out', {savings: 2000, assets: 0, ageRetire: 45}],
+    ['Leave a Legacy', {mode: 'legacy'}],
+    ['Die Rich', {mode: 'rich', ageRetire: 70}],
+    ['zero inflation', {inflation: 0}],
+    ['zero return', {ret: 2.5}]
+  ];
+  for(const [name, extra] of plans){
+    const ui = Object.assign({}, base, extra);
+    const p = refParams(ui);
+    const r = await page.evaluate(u => {
+      const F = window.__FF;
+      const res = F.compute(Object.assign({}, F.UI_DEFAULTS, u));
+      const rows = F.tableRows(res);
+      return {rows, i: res.P.inflation, showReal: !!u.showReal,
+              A0: res.P.A0, terminal: res.leftAtDeath, years: res.years};
+    }, ui);
+    const rows = r.rows;
+    let savedErr = 0, closeErr = 0, worstRow = -1;
+    for(let y = 0; y < rows.length; y++){
+      if(rows[y].flow == null) continue;
+      savedErr = Math.max(savedErr, Math.abs(rows[y].income - rows[y].expense - rows[y].flow));
+      const d = Math.abs(rows[y].balance + rows[y].flow + rows[y].growth - rows[y + 1].balance);
+      if(d > closeErr){ closeErr = d; worstRow = y; }
+    }
+    const scale = y => r.showReal ? 1 : Math.pow(1 + r.i, y);
+    // The replay's own forward balance, in the money the table is showing.
+    const ref = refLifetime(p);
+    let balErr = 0;
+    for(let y = 0; y < rows.length; y++) balErr = Math.max(balErr, Math.abs(rows[y].balance - ref[y * 12] * scale(y)));
+    const tol = Math.max(0.01, Math.abs(rows[rows.length - 1].balance) * 1e-9);
+    check(`F54 Saved is Income less Expense in every row — ${name}`,
+      savedErr < 0.01, `largest gap ${savedErr.toExponential(2)}`);
+    check(`F54b every row closes: Balance + Saved + Growth is next year’s Balance — ${name}`,
+      closeErr < tol, `largest gap ${closeErr.toExponential(2)}${worstRow >= 0 ? ' at row ' + worstRow : ''}`);
+    check(`F54c and the balance column matches the replay's own forward recurrence — ${name}`,
+      balErr < Math.max(0.05, tol), `largest gap ${balErr.toExponential(2)}`);
+    check(`F54d it starts at today's assets and ends at the engine's own terminal — ${name}`,
+      close(rows[0].balance, r.A0, 0.01) &&
+      close(rows[rows.length - 1].balance, r.terminal * scale(r.years), Math.max(0.05, tol)) &&
+      rows[rows.length - 1].flow === null && rows[rows.length - 1].growth === null,
+      `${rows[0].balance.toFixed(0)} .. ${rows[rows.length - 1].balance.toFixed(0)}`);
+  }
+}
+
+/* F54e: the whole plan in one line. Telescoping every row has to leave
+   A0 + everything saved + everything earned = the final balance, which is the
+   same identity the rows carry, stated once for the plan as a whole. */
+{
+  const r = await page.evaluate(() => {
+    const F = window.__FF;
+    const res = F.compute(Object.assign({}, F.UI_DEFAULTS, {showReal: true}));
+    const rows = F.tableRows(res);
+    let saved = 0, grown = 0;
+    rows.forEach(x => { if(x.flow != null){ saved += x.flow; grown += x.growth; } });
+    return {A0: rows[0].balance, saved, grown, last: rows[rows.length - 1].balance};
+  });
+  check('F54e the whole plan telescopes: assets today plus all saving plus all growth is the final balance',
+    close(r.A0 + r.saved + r.grown, r.last, 0.05),
+    `${r.A0.toFixed(0)} + ${r.saved.toFixed(0)} saved + ${r.grown.toFixed(0)} grown = ${(r.A0 + r.saved + r.grown).toFixed(0)} vs ${r.last.toFixed(0)}`);
+}
+
+/* F54f: Growth is a residual, so it has to MEAN something in both moneys. In
+   today's money it is the real return on the pot. In the money of the day it
+   is the nominal return, which is the same earnings plus the inflation uplift
+   on the balance and on that year's flows — the decomposition written out. */
+{
+  const r = await page.evaluate(() => {
+    const F = window.__FF;
+    const real = F.tableRows(F.compute(Object.assign({}, F.UI_DEFAULTS, {showReal: true})));
+    const nom = F.tableRows(F.compute(Object.assign({}, F.UI_DEFAULTS, {showReal: false})));
+    const i = F.compute(Object.assign({}, F.UI_DEFAULTS, {})).P.inflation;
+    let worst = 0, negatives = 0;
+    for(let y = 0; y < real.length - 1; y++){
+      // nominal growth = real growth inflated one more year, plus i times the
+      // balance and the flows that year, all in that year's money.
+      const want = real[y].growth * Math.pow(1 + i, y + 1) +
+                   (real[y].balance + real[y].flow) * i * Math.pow(1 + i, y);
+      worst = Math.max(worst, Math.abs(nom[y].growth - want));
+      if(real[y].growth < 0) negatives++;
+    }
+    return {worst, negatives, i};
+  });
+  check('F54f nominal growth decomposes into the real return plus the inflation uplift, exactly',
+    r.worst < 0.05, `largest gap ${r.worst.toExponential(2)}`);
+  check('F54g and a pot that is still growing never reports a negative real return',
+    r.negatives === 0, `${r.negatives} negative years`);
+}
+
+/* F54h: the cards over the table have to say the same thing the table does.
+   A figure that disagrees with the row it summarises is worse than no figure. */
+{
+  const r = await page.evaluate(() => {
+    const F = window.__FF, $ = id => document.getElementById(id);
+    $('ageRetire').value = 55; $('showReal').checked = true; F.render();
+    const res = F.last, rows = F.tableRows(res);
+    const retIdx = Math.round(res.P.ageRetire - res.P.ageNow);
+    const cur = s => Number(String(s).replace(/[^0-9.\-]/g, '')) * (/m$/.test(s) ? 1e6 : (/k$/.test(s) ? 1e3 : 1));
+    const out = {
+      haveCard: cur($('mHave').textContent), haveRow: rows[retIdx].balance,
+      leftCard: cur($('mLeft').textContent), leftRow: rows[rows.length - 1].balance,
+      needCard: cur($('mNeed').textContent), needEngine: res.needAtRetire,
+      succ: $('mSuccess').textContent,
+      succEngine: res.successAtPlan,
+      ages: [$('mNeedAge').textContent, $('mHaveAge').textContent, $('mLeftAge').textContent]
+    };
+    $('ageRetire').value = 60; $('showReal').checked = false; F.render();
+    return out;
+  });
+  const near = (a, b) => Math.abs(a - b) <= Math.max(Math.abs(b) * 0.01, 1);
+  check('F54h the "Balance at" card is the table row for that age',
+    near(r.haveCard, r.haveRow), `card ${r.haveCard} vs row ${r.haveRow.toFixed(0)}`);
+  check('F54i the "Left at" card is the last row of the table',
+    near(r.leftCard, r.leftRow), `card ${r.leftCard} vs row ${r.leftRow.toFixed(0)}`);
+  check('F54j the "Pot needed at" card is the engine’s own requirement',
+    near(r.needCard, r.needEngine), `card ${r.needCard} vs engine ${r.needEngine.toFixed(0)}`);
+  check('F54k and the chance shown is the one the pot scores',
+    r.succ === Math.round(r.succEngine * 100) + '%', `${r.succ} vs ${(r.succEngine * 100).toFixed(1)}%`);
+  check('F54l each card names the age it is measured at',
+    r.ages[0] === '55' && r.ages[1] === '55' && r.ages[2] === '90', r.ages.join(' / '));
 }
 
 // F45: nothing anywhere still offers a crash stress test.
@@ -1538,7 +2110,7 @@ for(const [name, extra] of [
     const out = [];
     document.querySelectorAll('.chart-head, .detail-head').forEach(head => {
       const card = head.closest('.card');
-      const h2 = head.querySelector('h2');
+      const h2 = head.querySelector('h2, h3');
       const cluster = head.querySelector('.btn-cluster');
       if(!h2 || !cluster) return;
       const c = card.getBoundingClientRect();
@@ -1585,9 +2157,17 @@ for(const [name, extra] of [
   check('F39 every export control is on the page', r.missing.length === 0,
     r.missing.length ? 'missing ' + r.missing.join(',') : 'SVG, PNG, copy on both charts, CSV on the table');
   const lines = (r.text || '').trim().split('\n');
-  check('F39b the CSV carries the same columns as the table',
-    lines.length > 2 && lines[2] === 'Year,Age,Income,Expense,Saved,Balance,Pot_needed,Gap',
-    lines[2] || 'no header');
+  {
+    // Same columns, same order, same meaning as the table on screen. The CSV
+    // spells "Saved / drawn" without the spaces, and nothing else differs.
+    const heads = await page.evaluate(() =>
+      Array.from(document.querySelectorAll('#tableWrap thead th')).map(t => t.textContent.trim()));
+    const expect = heads.map(h => h.replace(/\s*\/\s*/g, '_or_').replace(/\s+/g, '_')).join(',');
+    check('F39b the CSV carries the same columns as the table, in the same order',
+      lines.length > 2 && lines[2] === expect, `${lines[2] || 'no header'}  vs table  ${expect}`);
+    check('F39b2 and the pot and the gap are gone from it too',
+      !/pot|gap/i.test(lines[2] || ''), lines[2] || '');
+  }
   check('F39c one row per year, matching the table',
     lines.length - 3 === (await page.evaluate(() => window.__FF.tableRows(window.__FF.last).length)),
     `${lines.length - 3} rows`);
@@ -1639,6 +2219,192 @@ for(const [name, extra] of [
 }
 
 // F32: the page must not have thrown anywhere along the way.
+console.log('\n── Fuzz: 200 random plans, every invariant at once ──');
+
+/* F56: the checks above each pin one thing on a plan chosen to expose it. This
+   one takes 200 plans nobody chose — random ages, rates, periods, goals,
+   pensions, both savings models, both moneys — and asserts everything that has
+   to hold on all of them at once. It is the net under the rest: a combination
+   no hand-written case thought of has to either satisfy every invariant or
+   show up here.
+
+   Seeded, so a failure is reproducible and the seed names the plan. */
+{
+  const rnd = (seed => () => {
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    return seed / 0x7fffffff;
+  })(20260921);
+  const pick = a => a[Math.floor(rnd() * a.length)];
+  const between = (lo, hi) => lo + rnd() * (hi - lo);
+
+  const plans = [];
+  for(let k = 0; k < 200; k++){
+    const ageNow = Math.round(between(18, 70));
+    const ageDie = ageNow + Math.round(between(1, 50));
+    plans.push({
+      ageNow, ageDie,
+      ageRetire: Math.round(between(ageNow, ageDie)),
+      expense: Math.round(between(0, 200000)), expensePeriod: pick(['weekly', 'monthly', 'yearly']),
+      savingsMode: pick(['savings', 'income']),
+      savings: Math.round(between(0, 250000)), savingsPeriod: pick(['weekly', 'monthly', 'yearly']),
+      growth: Number(between(-5, 12).toFixed(1)),
+      inflation: Number(between(0, 15).toFixed(1)),
+      ret: Number(between(-3, 20).toFixed(1)),
+      std: Number(between(0, 40).toFixed(1)),
+      assets: Math.round(between(0, 3000000)),
+      mode: pick(['die', 'legacy', 'rich']),
+      legacy: Math.round(between(0, 2000000)),
+      retireMultiplier: Math.round(between(10, 200)),
+      pensionOn: rnd() < 0.5,
+      pensionStartAge: Math.round(between(40, 90)),
+      pensionAmount: Math.round(between(0, 80000)),
+      pensionPeriod: pick(['weekly', 'monthly', 'yearly']),
+      pensionIndexed: rnd() < 0.5,
+      showReal: rnd() < 0.5,
+      paths: 60, seed: 1 + Math.floor(rnd() * 1e6), confidence: Math.round(between(50, 99))
+    });
+  }
+
+  const bad = {finite: [], saved: [], closes: [], replay: [], ff: [], ffTight: [], prob: [], chart: []};
+  for(let k = 0; k < plans.length; k++){
+    const ui = Object.assign({}, DEFAULTS, plans[k]);
+    const p = refParams(ui);
+    const r = await page.evaluate(u => {
+      const F = window.__FF;
+      const res = F.compute(Object.assign({}, F.UI_DEFAULTS, u));
+      const rows = F.tableRows(res);
+      const ok = v => v === null || (typeof v === 'number' && isFinite(v));
+      let finite = true;
+      rows.forEach(x => {
+        if(!ok(x.balance) || !ok(x.income) || !ok(x.expense) || !ok(x.flow) || !ok(x.growth)) finite = false;
+      });
+      let savedErr = 0, closeErr = 0;
+      for(let y = 0; y < rows.length; y++){
+        if(rows[y].flow == null) continue;
+        savedErr = Math.max(savedErr, Math.abs(rows[y].income - rows[y].expense - rows[y].flow));
+        closeErr = Math.max(closeErr, Math.abs(rows[y].balance + rows[y].flow + rows[y].growth - rows[y + 1].balance));
+      }
+      // The crossing has to be a real crossing: funded at it, and NOT funded
+      // the month before, or it is not the EARLIEST age and the headline lies.
+      const ff = res.ffAge;
+      let ffOk = true, ffTight = true;
+      if(ff !== null){
+        if(!(ff >= res.P.ageNow - 1e-9 && ff <= res.P.ageDie + 1e-9)) ffOk = false;
+        const n = F.months(res.P.ageNow, res.P.ageDie);
+        const acc = F.accumulate(res.P, n);
+        const t = Math.round((ff - res.P.ageNow) * 12);
+        if(!(acc[t] >= F.requiredPot(res.P, ff) - 1e-6)) ffOk = false;
+        if(t > 0){
+          const prev = res.P.ageNow + (t - 1) / 12;
+          if(acc[t - 1] >= F.requiredPot(res.P, prev) - 1e-6) ffTight = false;
+        }
+      }
+      // Nothing plotted may be NaN, on either chart.
+      let chartOk = true;
+      window.__charts.forEach(c => c.data.datasets.forEach(d => d.data.forEach(pt => {
+        if(pt && (Number.isNaN(pt.x) || Number.isNaN(pt.y))) chartOk = false;
+      })));
+      const need = res.needAtRetire, conf = res.confPot, sr = res.successAtPlan;
+      return {
+        finite, savedErr, closeErr, ffOk, ffTight, chartOk,
+        scale: rows.map((x, y) => u.showReal ? 1 : Math.pow(1 + res.P.inflation, y)),
+        balances: rows.map(x => x.balance),
+        mag: Math.max.apply(null, rows.map(x => Math.abs(x.balance)).concat([1])),
+        probOk: sr >= 0 && sr <= 1 && (conf >= 0 || conf === Infinity) &&
+                (isFinite(need) || (need === Infinity && u.mode === 'rich'))
+      };
+    }, ui);
+
+    const tol = Math.max(0.01, r.mag * 1e-9);
+    const ref = refLifetime(p);
+    let balErr = 0;
+    for(let y = 0; y < r.balances.length; y++){
+      balErr = Math.max(balErr, Math.abs(r.balances[y] - ref[y * 12] * r.scale[y]));
+    }
+    const tag = `#${k} seed ${plans[k].seed}`;
+    if(!r.finite) bad.finite.push(tag);
+    if(!(r.savedErr < 0.01)) bad.saved.push(`${tag} (${r.savedErr.toExponential(1)})`);
+    if(!(r.closeErr < tol)) bad.closes.push(`${tag} (${r.closeErr.toExponential(1)})`);
+    if(!(balErr < Math.max(0.05, tol))) bad.replay.push(`${tag} (${balErr.toExponential(1)})`);
+    if(!r.ffOk) bad.ff.push(tag);
+    if(!r.ffTight) bad.ffTight.push(tag);
+    if(!r.probOk) bad.prob.push(tag);
+    if(!r.chartOk) bad.chart.push(tag);
+  }
+  const n = plans.length;
+  check(`F56 every figure on ${n} random plans is a number, never a NaN or an Infinity`,
+    bad.finite.length === 0, bad.finite.slice(0, 3).join(', ') || 'all finite');
+  check('F56b Saved is Income less Expense on every one of them',
+    bad.saved.length === 0, bad.saved.slice(0, 3).join(', ') || 'exact everywhere');
+  check('F56c and every row closes into the next year\u2019s balance',
+    bad.closes.length === 0, bad.closes.slice(0, 3).join(', ') || 'exact everywhere');
+  check('F56d the balance column matches the replay on every one of them',
+    bad.replay.length === 0, bad.replay.slice(0, 3).join(', ') || 'agrees everywhere');
+  check('F56e where a freedom age is reported, the plan really is funded at it',
+    bad.ff.length === 0, bad.ff.slice(0, 3).join(', ') || 'funded at every crossing');
+  check('F56f and it is the EARLIEST such age, not merely one of them',
+    bad.ffTight.length === 0, bad.ffTight.slice(0, 3).join(', ') || 'no earlier month qualifies');
+  check('F56g probabilities stay in [0,1] and only Die Rich may need an infinite pot',
+    bad.prob.length === 0, bad.prob.slice(0, 3).join(', ') || 'all in range');
+  check('F56h and nothing NaN is ever handed to a chart',
+    bad.chart.length === 0, bad.chart.slice(0, 3).join(', ') || 'clean');
+}
+
+console.log('\n── Coming back tomorrow ──');
+
+/* F57: the mini cache has to bring back what it saved, and the slider is the
+   awkward one. A range input clamps whatever you assign it to the min and max
+   ATTRIBUTES it currently carries, and those are only rewritten by a render —
+   so a handle restored before the ages that widen its range would silently
+   land on the old ceiling. The static pair in the markup is therefore the
+   widest either age can ever be, and this check is what says so. */
+{
+  await page.evaluate(() => {
+    const $ = id => document.getElementById(id);
+    $('ageNow').value = 50; $('ageDie').value = 100;
+    $('pensionOn').checked = true; $('pensionIndexed').checked = false;
+    $('pensionAmount').value = '600'; $('pensionPeriod').value = 'weekly';
+    $('pensionStartAge').value = 70;
+    window.__FF.render();
+    $('ageRetire').value = 95;
+    window.__FF.render();
+    return null;
+  });
+  const before = await page.evaluate(() => {
+    const u = window.__FF.UI;
+    return {ageNow: u.ageNow, ageDie: u.ageDie, ageRetire: u.ageRetire,
+            pensionPeriod: u.pensionPeriod, pensionIndexed: u.pensionIndexed,
+            pensionAmount: u.pensionAmount, need: window.__FF.last.needAtRetire};
+  });
+  // Persist debounces, so give it room to land before the reload throws it away.
+  await page.waitForTimeout(700);
+  await page.reload({waitUntil: 'load'});
+  await page.waitForFunction(() => !!window.__FF, null, {timeout: 10000});
+  await page.waitForTimeout(400);
+  const after = await page.evaluate(() => {
+    const u = window.__FF.UI, el = document.getElementById('ageRetire');
+    return {ageNow: u.ageNow, ageDie: u.ageDie, ageRetire: u.ageRetire,
+            pensionPeriod: u.pensionPeriod, pensionIndexed: u.pensionIndexed,
+            pensionAmount: u.pensionAmount, need: window.__FF.last.needAtRetire,
+            min: el.min, max: el.max};
+  });
+  check('F57 a retirement age past the markup\u2019s own ceiling survives a reload',
+    after.ageRetire === before.ageRetire && after.ageRetire === 95 &&
+    after.min === '50' && after.max === '100',
+    `${before.ageRetire} -> ${after.ageRetire}, slider ${after.min}..${after.max}`);
+  check('F57b and so do the ages either side of it',
+    after.ageNow === before.ageNow && after.ageDie === before.ageDie,
+    `${after.ageNow}..${after.ageDie}`);
+  check('F57c the pension comes back with its rate and its indexation intact',
+    after.pensionPeriod === 'weekly' && after.pensionIndexed === false &&
+    after.pensionAmount === before.pensionAmount,
+    `${after.pensionAmount} ${after.pensionPeriod}, indexed ${after.pensionIndexed}`);
+  check('F57d so the plan reloads to the same answer, to the cent',
+    close(after.need, before.need, 0.01),
+    `${before.need.toFixed(2)} -> ${after.need.toFixed(2)}`);
+  await page.evaluate(() => { try { localStorage.removeItem('abt:save:financialfreedom:v1'); } catch(e){} });
+}
+
 check('F32 no uncaught page errors', pageErrors.length === 0, pageErrors.slice(0, 3).join(' | ') || 'clean');
 
 await browser.close();
