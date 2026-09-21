@@ -17,7 +17,17 @@ means the maths agrees rather than an implementation being compared to itself:
 - accumulation is checked against the **closed-form future value of a growing
   annuity**, while the page runs a month loop;
 - the freedom age is checked against a **brute-force month-by-month scan** built
-  entirely from the replay's own functions.
+  entirely from the replay's own functions;
+- the deposited line is a running clamp in the page and a **closed
+  running-minimum identity** in the replay,
+  `D(T) = max(0, min over k of [W(k) + C(T) - C(k)])`, which agrees with the
+  loop only if both the clamp and the deposit accounting are right;
+- income and spending are rebuilt from the two savings models directly, rather
+  than from the page's own helpers, so agreement means the definition agrees;
+- a pot the page solved backwards is walked **forwards** through the replay's
+  own step-5 recurrence (`refForward`), so "the solved pot never dips below
+  zero and lands on its terminal condition" is page against replay rather than
+  page against itself.
 
 Run: `node run.mjs`
 
@@ -42,10 +52,25 @@ pot (which is what the common-random-numbers design buys and what the confidence
 pot depends on), and the log-growth drift and spread matching the documented
 log-normal over 240,000 draws.
 
-The crash stress test as a scalar multiplier at the retirement month, and the
-pot that survives it. Ticker statistics against a synthetic series with a known
-closed-form answer, including a crash whose true depth is `0.70 * step - 1`
-rather than a round -30%, because the series keeps compounding through the gap.
+**The cash flows and the money you put in.** `Saved = Income - Expense` in every
+row of the table, under both savings models and across a pension start, and all
+three columns against the replay's own flows rather than against each other
+(F42e, because the table derives Saved by subtraction and would otherwise be
+proving only its own arithmetic). The deposited line is pinned four ways: the
+replay identity on four plans, the shape it exists for (climbs only while you
+are still paying in, never exceeds the pot, never negative), the closed form at
+the retirement month (starting assets plus every cent paid in), and the two ends
+of the spectrum — Die Rich never touches capital, a pot spent to nothing leaves
+nothing of what you put in.
+
+F45 pins the deletion: no drawdown field, no stress toggle, no crash metric, no
+`stressRequiredPot`, no `mdd` on a preset or in the defaults, and no crash left
+in the assumptions copy. The volatility already carries the downside, and a
+single hand-placed drawdown said less than the Monte Carlo does.
+
+Ticker statistics against a synthetic series with a known closed-form answer: a
+gap down lowers the measured compound return and raises the measured volatility,
+which are the only two figures the engine takes now.
 
 Feasibility: the promised "mathematically impossible" wording, Die Rich below
 inflation getting its own explanation rather than the generic one, already-free
@@ -72,9 +97,18 @@ otherwise would.
 against a straight line through the two samples it sits between rather than
 against either one, and its dropline is checked to run from the axis to it.
 
+**Both charts after the revision.** The path chart runs the whole plan rather
+than stopping past retirement, and carries the deposited line, which has stopped
+climbing by the retirement age. The second chart plots income against spending
+over those same years, with the gap filled on both sides in two different
+colours from the token set (F25 reads `fill.above` and `fill.below` too, or the
+one place a hardcoded hex could hide would be exactly there), an axis that says
+it is a yearly flow rather than a balance, a legend that names both sides of the
+fill, and no trace of the four-pot drawdown it replaced.
+
 **Inflation being visible, not merely applied.** The engine runs in real terms,
 where the living cost is flat and inflation can therefore look inert. F37 pins
-the living cost column: flat in today's money, exactly the real cost times the
+the Expense column: flat in today's money, exactly the real cost times the
 inflation factor in future dollars, and rising *before* retirement as well as
 after. F38 pins the consequence the tool is often asked for and rarely shows:
 in the money of the day, freedom at a later age costs MORE, while in today's
@@ -83,7 +117,11 @@ and the page has to say which one it is showing.
 
 The exports: every control present, the CSV carrying the same columns and the
 same row count as the table it came from, and naming the currency and the money
-mode it was taken in. The action row: Simulate and Reset pinned together rather
+mode it was taken in. F39e-g pin the legend packing, on labels of a known width
+so the check does not depend on a font headless Chromium may not have: the
+exported legend used to be laid out on one assumed row, which fitted four
+entries and pushed the sixth through the watermark and off the right edge of
+the canvas. The action row: Simulate and Reset pinned together rather
 than Reset buried in the Settings tab.
 
 `SharedPriceCache` round-tripping through the DCA simulator's own

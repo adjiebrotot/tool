@@ -14,20 +14,20 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Financial Freedom Calculator: How Much Is Enough</title>
-<meta name="description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a confidence band and a crash stress test.">
+<meta name="description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a Monte Carlo confidence band.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/financialfreedom/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Financial Freedom Calculator">
-<meta property="og:description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a confidence band and a crash stress test.">
+<meta property="og:description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a Monte Carlo confidence band.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/financialfreedom/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Financial Freedom Calculator">
-<meta name="twitter:description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a confidence band and a crash stress test.">
+<meta name="twitter:description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a Monte Carlo confidence band.">
 
 <script type="application/ld+json">
 {
@@ -35,7 +35,7 @@
   "@type": "WebApplication",
   "name": "Financial Freedom Calculator",
   "url": "https://tool.adjiebrotots.com/financialfreedom/",
-  "description": "Work out the pot you need before you can stop working, and the age you actually reach it. Three definitions of financial freedom, inflation-adjusted, with a Monte Carlo confidence band and a crash stress test.",
+  "description": "Work out the pot you need before you can stop working, and the age you actually reach it. Three definitions of financial freedom, inflation-adjusted, with a Monte Carlo confidence band.",
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
@@ -84,7 +84,7 @@
       "name": "Will my money last if I retire early?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A single average return hides the risk that a crash lands just as you stop working. The Financial Freedom Calculator runs thousands of simulated futures to give a success probability, shows the pot needed for 90 percent confidence, and applies the asset's worst historical drawdown at the moment you retire. Free at https://tool.adjiebrotots.com/financialfreedom/."
+        "text": "A single average return hides the risk that the bad years land just as you stop working. The Financial Freedom Calculator runs thousands of simulated futures from your return and your volatility to give a success probability, and shows the pot needed for 90 percent confidence. Free at https://tool.adjiebrotots.com/financialfreedom/."
       }
     }
   ]
@@ -199,7 +199,7 @@
   <!-- ── Investment ── -->
   <div class="ctrl-panel" id="tab-invest">
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Asset <i class="tip-icon" data-tip="Fills the three fields below with long-run historical figures. Edit any of them afterwards.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Asset <i class="tip-icon" data-tip="Fills the two fields below with long-run historical figures. Edit either of them afterwards.">?</i></span></div>
       <select class="sel-input" id="assetPreset"></select>
       <p class="note" id="presetNote"></p>
     </div>
@@ -211,15 +211,11 @@
       <div class="field-label"><span class="tip-wrap">Volatility, % p.a. <i class="tip-icon" data-tip="How much the return bounces year to year. It sets how wide the range of outcomes is, not the expected path. Use 0 for a single smooth projection.">?</i></span></div>
       <input class="num-input" id="std" type="number" min="0" max="80" step="0.1" value="15"/>
     </div>
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Worst drawdown (MDD), % <i class="tip-icon" data-tip="The deepest peak-to-trough fall this asset has had. Used only for the stress test, where it lands the month you retire.">?</i></span></div>
-      <input class="num-input" id="mdd" type="number" min="-95" max="0" step="1" value="-50"/>
-    </div>
 
     <div class="field-group">
       <div class="group-title">Or use a real ticker</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Ticker <i class="tip-icon" data-tip="Measures the three fields above from real prices. Nothing is fetched until you press the button.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Ticker <i class="tip-icon" data-tip="Measures the two fields above from real prices. Nothing is fetched until you press the button.">?</i></span></div>
         <div class="ticker-row">
           <input class="txt-input" id="ticker" type="text" placeholder="e.g. SPY, VAS.AX, GLD" data-no-persist/>
           <button class="btn-secondary btn-sm" id="fetchTickerBtn">Fetch</button>
@@ -305,10 +301,6 @@
       <div class="toggle-label"><span class="tip-wrap">Show future dollars <i class="tip-icon" data-tip="<strong>Off:</strong> everything is in today's money, so the figures mean what they would buy now.<br><strong>On:</strong> everything is in the dollars of the year shown, which look much bigger but buy the same.">?</i></span></div>
       <label class="toggle-switch"><input type="checkbox" id="showNominal"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
     </div>
-    <div class="toggle-row">
-      <div class="toggle-label"><span class="tip-wrap">Show the crash stress test <i class="tip-icon" data-tip="The worst drawdown lands the month you retire, with no bonus recovery. The biggest risk to an early retirement.">?</i></span></div>
-      <label class="toggle-switch"><input type="checkbox" id="showStress" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
-    </div>
     <div class="field-row">
       <div class="field-label"><span class="tip-wrap">Simulated futures <i class="tip-icon" data-tip="How many random paths the band and the probability are built from. More is smoother and slower.">?</i></span></div>
       <input class="num-input" id="paths" type="number" min="100" max="5000" step="100" value="1000"/>
@@ -354,11 +346,6 @@
       <div class="sub" id="mConfPotSub"></div>
     </div>
     <div class="metric card">
-      <div class="label"><span class="tip-wrap">Surviving a crash <i class="tip-icon" data-tip="What the pot has to be for the plan to survive the worst drawdown landing the month you retire.">?</i></span></div>
-      <div class="value" id="mStress">—</div>
-      <div class="sub" id="mStressSub"></div>
-    </div>
-    <div class="metric card">
       <div class="label"><span class="tip-wrap">Real return <i class="tip-icon" data-tip="Your return after inflation. It is what decides how big the pot has to be.">?</i></span></div>
       <div class="value" id="mRealRet">—</div>
       <div class="sub" id="mRealRetSub"></div>
@@ -367,10 +354,7 @@
 
   <section class="chart-card card">
     <div class="chart-head">
-      <div>
-        <h2>Path to freedom</h2>
-        <div class="sub" id="chart1Sub"></div>
-      </div>
+      <h2>Path to freedom</h2>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="ffSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="ffPngBtn" title="Download this chart as PNG">⬇ PNG</button>
@@ -378,6 +362,7 @@
         <button class="btn-secondary btn-sm" id="resetZoom1" title="Reset zoom">⟳</button>
       </div>
     </div>
+    <div class="sub" id="chart1Sub"></div>
     <div class="legend" id="legend1"></div>
     <div class="canvas-wrap"><canvas id="ffChart"></canvas></div>
     <div class="hover-box" id="hover1">Hover to inspect any year.</div>
@@ -385,10 +370,7 @@
 
   <section class="chart-card card">
     <div class="chart-head">
-      <div>
-        <h2>Living off the pot</h2>
-        <div class="sub" id="chart2Sub"></div>
-      </div>
+      <h2>Living off the pot</h2>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="ddSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="ddPngBtn" title="Download this chart as PNG">⬇ PNG</button>
@@ -396,6 +378,7 @@
         <button class="btn-secondary btn-sm" id="resetZoom2" title="Reset zoom">⟳</button>
       </div>
     </div>
+    <div class="sub" id="chart2Sub"></div>
     <div class="legend" id="legend2"></div>
     <div class="canvas-wrap"><canvas id="ddChart"></canvas></div>
     <div class="hover-box" id="hover2">Hover to inspect any year.</div>
