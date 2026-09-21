@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Financial Freedom Calculator: How Much Is Enough</title>
+<meta name="description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a confidence band and a crash stress test.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tool.adjiebrotots.com/financialfreedom/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Financial Freedom Calculator">
+<meta property="og:description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a confidence band and a crash stress test.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/financialfreedom/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Financial Freedom Calculator">
+<meta name="twitter:description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a confidence band and a crash stress test.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Financial Freedom Calculator",
+  "url": "https://tool.adjiebrotots.com/financialfreedom/",
+  "description": "Work out the pot you need before you can stop working, and the age you actually reach it. Three definitions of financial freedom, inflation-adjusted, with a Monte Carlo confidence band and a crash stress test.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "alternateName": [
+    "FIRE Calculator",
+    "Financial Independence Calculator",
+    "Retirement Number Calculator",
+    "Safe Withdrawal Rate Calculator",
+    "When Can I Retire Calculator"
+  ],
+  "keywords": "financial freedom calculator, FIRE calculator, how much do I need to retire, what is my FIRE number, when can I stop working, safe withdrawal rate, financial independence, retirement number, will my money last"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much money do I need to be financially free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use the free Financial Freedom Calculator at https://tool.adjiebrotots.com/financialfreedom/. Enter your spending, your saving, your expected return and inflation, and it gives you the pot you need in today's money. The number depends on what you want the money to do: run out exactly when you die, leave a set amount behind, or last forever."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When can I stop working?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Financial Freedom Calculator plots two curves: what you will have saved at each age, and the pot you would need if you stopped at that age. Where they cross is the earliest age you can stop. Free and fully in your browser at https://tool.adjiebrotots.com/financialfreedom/."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is my FIRE number?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your FIRE number is the pot that funds your spending without you working. The familiar 25 times spending rule is one case of it, the case where your return beats inflation by 4 percent a year. The Financial Freedom Calculator at https://tool.adjiebrotots.com/financialfreedom/ works it out from your own return and inflation assumptions instead of a rule of thumb."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will my money last if I retire early?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A single average return hides the risk that a crash lands just as you stop working. The Financial Freedom Calculator runs thousands of simulated futures to give a success probability, shows the pot needed for 90 percent confidence, and applies the asset's worst historical drawdown at the moment you retire. Free at https://tool.adjiebrotots.com/financialfreedom/."
+      }
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../dark.css">
+<link rel="stylesheet" href="../light.css">
+<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../tour-shared.css">
+</head>
+<body class="light">
+<div class="container">
+<section class="header card">
+  <div>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 20h18"/> <path stroke="var(--accent)" d="M4 16.5l5-5 3.5 3.5L18 8"/> <path stroke="var(--accent2)" d="M18 5v9"/> <path stroke="var(--accent2)" d="M18 5.5l4 1.75-4 1.75z" fill="var(--accent2)"/> </svg>Financial Freedom Calculator</h1>
+    <p>How much is enough to stop working, and the age you actually get there.</p>
+  </div>
+  <div class="header-right">
+    <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
+    <button class="btn-theme" id="themeToggle">🌙 Dark</button>
+  </div>
+</section>
+
+<section class="layout">
+<aside class="controls card">
+  <div class="ctrl-tabs">
+    <button class="ctrl-tab active" data-tab="you">🧍<br>You</button>
+    <button class="ctrl-tab" data-tab="invest">📈<br>Investment</button>
+    <button class="ctrl-tab" data-tab="goal">🎯<br>Goal</button>
+    <button class="ctrl-tab" data-tab="settings">⚙️<br>Settings</button>
+  </div>
+
+  <!-- ── You ── -->
+  <div class="ctrl-panel active" id="tab-you">
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Currency <i class="tip-icon" data-tip="Display only. Nothing is converted, so every figure means whatever currency you typed it in.">?</i></span></div>
+      <select class="sel-input" id="currency"></select>
+    </div>
+
+    <div class="field-group">
+      <div class="group-title">Ages</div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Age now <i class="tip-icon" data-tip="Where the projection starts. The chart begins at this age and the current calendar year.">?</i></span></div>
+        <input class="num-input" id="ageNow" type="number" min="0" max="100" step="1" value="30"/>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Target retirement age <i class="tip-icon" data-tip="The age you want to stop earning and start living off the pot. It is the age the headline &quot;amount needed&quot; is measured at.">?</i></span></div>
+        <input class="num-input" id="ageRetire" type="number" min="1" max="110" step="1" value="60"/>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Life expectancy <i class="tip-icon" data-tip="How long the money has to last. Just Die and Leave a Legacy both end here. Die Rich ignores it, because a pot that lasts forever does not care when you stop.">?</i></span></div>
+        <input class="num-input" id="ageDie" type="number" min="2" max="120" step="1" value="90"/>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="group-title">Money in and out</div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Living expenses <i class="tip-icon" data-tip="Everything you spend to live, before any retirement adjustment. It is assumed to rise with inflation, so it stays constant in today's money.">?</i></span></div>
+        <div class="inline-row">
+          <div class="currency-wrap grow">
+            <span class="prefix" id="expensePrefix">$</span>
+            <input class="currency-input fmt-num" id="expense" type="text" inputmode="decimal" value="60,000"/>
+          </div>
+          <select class="sel-input period" id="expensePeriod">
+            <option value="weekly">a week</option>
+            <option value="monthly">a month</option>
+            <option value="yearly" selected>a year</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Enter your <i class="tip-icon" data-tip="<strong>Savings:</strong> what you actually put away. It grows at the rate below.<br><strong>Net income:</strong> your take-home pay. Income grows at the rate below, expenses grow with inflation, and what is left over is your saving. The two models give different answers, so the panel says which one is running.">?</i></span></div>
+        <div class="seg-group" id="savingsModeGroup">
+          <button class="seg-btn active" data-val="savings">Savings</button>
+          <button class="seg-btn" data-val="income">Net income</button>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label" id="savingsLabel">Savings</div>
+        <div class="inline-row">
+          <div class="currency-wrap grow">
+            <span class="prefix" id="savingsPrefix">$</span>
+            <input class="currency-input fmt-num" id="savings" type="text" inputmode="decimal" value="30,000"/>
+          </div>
+          <select class="sel-input period" id="savingsPeriod">
+            <option value="weekly">a week</option>
+            <option value="monthly">a month</option>
+            <option value="yearly" selected>a year</option>
+          </select>
+        </div>
+        <p class="note" id="savingsModeNote"></p>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Growth of that amount, % p.a. <i class="tip-icon" data-tip="How fast the amount above grows each year, before inflation. Pay rises and promotions live here. If it matches inflation, your saving stays flat in today's money.">?</i></span></div>
+        <input class="num-input" id="growth" type="number" min="-10" max="30" step="0.1" value="3"/>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Inflation, % p.a. <i class="tip-icon" data-tip="How fast prices rise. Everything on this page is shown in today's money by default, which is this rate stripped back out.">?</i></span></div>
+        <input class="num-input" id="inflation" type="number" min="0" max="30" step="0.1" value="2.5"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Investment ── -->
+  <div class="ctrl-panel" id="tab-invest">
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Asset <i class="tip-icon" data-tip="Picking a preset fills the three fields below with long-run historical figures. They are starting points, not forecasts, and you can edit any of them afterwards.">?</i></span></div>
+      <select class="sel-input" id="assetPreset"></select>
+      <p class="note" id="presetNote"></p>
+    </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Expected return, % p.a. <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees. Compound means the rate that actually turns your starting pot into your ending pot, not the average of the good and bad years.">?</i></span></div>
+      <input class="num-input" id="ret" type="number" min="-5" max="40" step="0.1" value="8"/>
+    </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Volatility, % p.a. <i class="tip-icon" data-tip="How much the return bounces around from year to year, as a standard deviation. It does not change the expected path, it decides how wide the range of outcomes is. Set it to 0 for a single smooth projection.">?</i></span></div>
+      <input class="num-input" id="std" type="number" min="0" max="80" step="0.1" value="15"/>
+    </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Worst drawdown, % <i class="tip-icon" data-tip="The deepest peak-to-trough fall this asset has ever had. It is used only for the stress test: the crash lands the month you retire, which is the worst possible timing.">?</i></span></div>
+      <input class="num-input" id="mdd" type="number" min="-95" max="0" step="1" value="-50"/>
+    </div>
+
+    <div class="field-group">
+      <div class="group-title">Or use a real ticker</div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Ticker <i class="tip-icon" data-tip="Fetches the price history and measures the three fields above from it: compound return, volatility of daily moves, and the deepest fall. Nothing is fetched until you press the button.">?</i></span></div>
+        <div class="ticker-row">
+          <input class="txt-input" id="ticker" type="text" placeholder="e.g. SPY, VAS.AX, GLD" data-no-persist/>
+          <button class="btn-secondary btn-sm" id="fetchTickerBtn">Fetch</button>
+        </div>
+        <a href="../dcasimulator/ticker/" class="ticker-ref-link">See common ticker codes here →</a>
+        <div id="tickerStatus"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Goal ── -->
+  <div class="ctrl-panel" id="tab-goal">
+    <div class="field-row">
+      <div class="field-label">What should the money do?</div>
+      <div class="radio-group" id="modeGroup">
+        <label class="radio-opt selected">
+          <input type="radio" name="ffmode" value="die" checked/>
+          <div class="radio-opt-text">
+            <strong>Just Die</strong>
+            The pot runs down to nothing at your life expectancy. Cheapest to reach, and it leaves no margin at all if you live longer.
+          </div>
+        </label>
+        <label class="radio-opt">
+          <input type="radio" name="ffmode" value="legacy"/>
+          <div class="radio-opt-text">
+            <strong>Leave a Legacy</strong>
+            The pot is worth a set amount, in today's money, at your life expectancy.
+          </div>
+        </label>
+        <label class="radio-opt">
+          <input type="radio" name="ffmode" value="rich"/>
+          <div class="radio-opt-text">
+            <strong>Die Rich</strong>
+            You only ever spend the real growth, so the pot never shrinks and would last forever. Needs a return above inflation.
+          </div>
+        </label>
+      </div>
+    </div>
+    <div class="field-row" id="legacyRow" style="display:none;">
+      <div class="field-label"><span class="tip-wrap">Amount to leave behind <i class="tip-icon" data-tip="In today's money. The pot is sized so that after a lifetime of spending, this much purchasing power is still there.">?</i></span></div>
+      <div class="currency-wrap">
+        <span class="prefix" id="legacyPrefix">$</span>
+        <input class="currency-input fmt-num" id="legacy" type="text" inputmode="decimal" value="500,000"/>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Invested assets today <i class="tip-icon" data-tip="What you already have working for you: shares, funds, superannuation or a pension pot, anything that earns the return on the Investment tab. Leave out the house you live in and anything you would not sell.">?</i></span></div>
+      <div class="currency-wrap">
+        <span class="prefix" id="assetsPrefix">$</span>
+        <input class="currency-input fmt-num" id="assets" type="text" inputmode="decimal" value="100,000"/>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Retirement spending, % of today <i class="tip-icon" data-tip="Spending often changes when you stop working. 80% if the mortgage is gone and the commute with it, 110% if you plan to travel. Leave it at 100% to spend the same.">?</i></span></div>
+      <input class="num-input" id="retireMultiplier" type="number" min="10" max="300" step="1" value="100"/>
+    </div>
+
+    <div class="field-group">
+      <div class="group-title">Government or age pension</div>
+      <div class="toggle-row">
+        <div class="toggle-label"><span class="tip-wrap">Include a pension <i class="tip-icon" data-tip="An income stream that starts at a set age and rises with inflation. It reduces the pot you need, but only from its start age, so the years before it often decide the answer.">?</i></span></div>
+        <label class="toggle-switch"><input type="checkbox" id="pensionOn"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+      </div>
+      <div id="pensionRows" style="display:none;">
+        <div class="field-row">
+          <div class="field-label">Pension starts at age</div>
+          <input class="num-input" id="pensionStartAge" type="number" min="40" max="90" step="1" value="67"/>
+        </div>
+        <div class="field-row">
+          <div class="field-label"><span class="tip-wrap">Pension, per year <i class="tip-icon" data-tip="In today's money. It is assumed to be indexed to inflation, so it holds its purchasing power.">?</i></span></div>
+          <div class="currency-wrap">
+            <span class="prefix" id="pensionAmountPrefix">$</span>
+            <input class="currency-input fmt-num" id="pensionAmount" type="text" inputmode="decimal" value="29,000"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Settings ── -->
+  <div class="ctrl-panel" id="tab-settings">
+    <div class="toggle-row">
+      <div class="toggle-label"><span class="tip-wrap">Show future dollars <i class="tip-icon" data-tip="<strong>Off:</strong> everything is in today's money, so the figures mean what they would buy now.<br><strong>On:</strong> everything is in the dollars of the year shown, which look much bigger but buy the same.">?</i></span></div>
+      <label class="toggle-switch"><input type="checkbox" id="showNominal"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-label"><span class="tip-wrap">Show the crash stress test <i class="tip-icon" data-tip="Adds a line where the worst drawdown lands the month you retire and the pot never gets a bonus recovery. It is the single biggest risk to an early retirement.">?</i></span></div>
+      <label class="toggle-switch"><input type="checkbox" id="showStress" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+    </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Simulated futures <i class="tip-icon" data-tip="How many random paths the confidence band and the success probability are built from. More is smoother and slower.">?</i></span></div>
+      <input class="num-input" id="paths" type="number" min="100" max="5000" step="100" value="1000"/>
+    </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Confidence level, % <i class="tip-icon" data-tip="The share of simulated futures the &quot;confidence pot&quot; has to survive. 90% is a common planning choice.">?</i></span></div>
+      <input class="num-input" id="confidence" type="number" min="50" max="99" step="1" value="90"/>
+    </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Random seed <i class="tip-icon" data-tip="The same seed always gives the same simulated futures, so a result you share can be reproduced exactly.">?</i></span></div>
+      <input class="num-input" id="seed" type="number" min="1" step="1" value="20260921"/>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" id="resetBtn">Reset to defaults</button>
+    </div>
+  </div>
+</aside>
+
+<main>
+  <div class="verdict card" id="verdict"></div>
+
+  <section class="metrics">
+    <div class="metric card">
+      <div class="label"><span class="tip-wrap">Amount needed <i class="tip-icon" data-tip="The pot you need on the day you retire, at the target retirement age, for this goal to work on the expected return.">?</i></span></div>
+      <div class="value" id="mNeed">—</div>
+      <div class="sub" id="mNeedSub"></div>
+    </div>
+    <div class="metric card">
+      <div class="label"><span class="tip-wrap">Financially free at <i class="tip-icon" data-tip="The earliest age your savings reach the pot needed to stop at that age. Both curves are on the chart below and this is where they cross.">?</i></span></div>
+      <div class="value" id="mFreeAge">—</div>
+      <div class="sub" id="mFreeAgeSub"></div>
+    </div>
+    <div class="metric card">
+      <div class="label"><span class="tip-wrap">Chance it works <i class="tip-icon" data-tip="The share of simulated futures in which the money lasts. A single average return usually lands near a coin flip, because it ignores the order the good and bad years arrive in.">?</i></span></div>
+      <div class="value" id="mSuccess">—</div>
+      <div class="sub" id="mSuccessSub"></div>
+    </div>
+    <div class="metric card">
+      <div class="label"><span class="tip-wrap">Pot for that confidence <i class="tip-icon" data-tip="The pot that survives your chosen share of simulated futures. This is the number to plan around, not the one the expected return alone gives.">?</i></span></div>
+      <div class="value" id="mConfPot">—</div>
+      <div class="sub" id="mConfPotSub"></div>
+    </div>
+    <div class="metric card">
+      <div class="label"><span class="tip-wrap">Surviving a crash <i class="tip-icon" data-tip="What the pot has to be for the plan to survive the worst drawdown landing the month you retire.">?</i></span></div>
+      <div class="value" id="mStress">—</div>
+      <div class="sub" id="mStressSub"></div>
+    </div>
+    <div class="metric card">
+      <div class="label"><span class="tip-wrap">Real return <i class="tip-icon" data-tip="Your return after inflation is stripped out. It is what actually decides how big the pot has to be. Everything on this page runs on it.">?</i></span></div>
+      <div class="value" id="mRealRet">—</div>
+      <div class="sub" id="mRealRetSub"></div>
+    </div>
+  </section>
+
+  <section class="chart-card card">
+    <div class="chart-head">
+      <div>
+        <h2>Path to freedom</h2>
+        <div class="sub" id="chart1Sub"></div>
+      </div>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="resetZoom1" title="Reset zoom">⟳ Reset zoom</button>
+      </div>
+    </div>
+    <div class="legend" id="legend1"></div>
+    <div class="canvas-wrap"><canvas id="ffChart"></canvas></div>
+    <div class="hover-box" id="hover1">Hover to inspect any year.</div>
+  </section>
+
+  <section class="chart-card card">
+    <div class="chart-head">
+      <div>
+        <h2>Living off the pot</h2>
+        <div class="sub" id="chart2Sub"></div>
+      </div>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="resetZoom2" title="Reset zoom">⟳ Reset zoom</button>
+      </div>
+    </div>
+    <div class="legend" id="legend2"></div>
+    <div class="canvas-wrap"><canvas id="ddChart"></canvas></div>
+    <div class="hover-box" id="hover2">Hover to inspect any year.</div>
+  </section>
+
+  <section class="detail-section card">
+    <h2>Year by year</h2>
+    <p class="sub" id="tableSub"></p>
+    <div class="table-wrap" id="tableWrap"></div>
+  </section>
+
+  <section class="detail-section card">
+    <h2>What this assumes</h2>
+    <ul class="assumptions" id="assumptions"></ul>
+  </section>
+</main>
+</section>
+</div>
+<footer class="page-footer">
+  <section class="page-footer-info">
+    <p>
+      <strong>Disclaimer:</strong> This tool is provided on an “as is” and “as available” basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any decisions.
+    </p>
+    <p>
+      If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you’re interested, confused, or would like help learning how to use the tool, feel free to email me as well 🙂
+    </p>
+    <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
+      <img src="../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Made in Australia by Indonesian engineer.</span>
+      </div>
+    </div>
+  </section>
+</footer>
+
+<script src="../shared.js"></script>
+<script src="script.js"></script>
+<script src="tour.js"></script>
+<script src="../tour-shared.js"></script>
+</body>
+</html>
