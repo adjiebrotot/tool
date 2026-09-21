@@ -637,19 +637,25 @@
     return /^#[0-9a-f]{8}$/.test(s) && s.slice(7) === '00';
   }
 
+  /* A swatch is drawn as SVG and as canvas, so only a CSS colour STRING can
+     serve: a gradient object or a per-point callback read straight off a
+     dataset would paint nothing and take the whole mark down with it. */
+  function legCss(c){ return typeof c === 'string' && c.trim() ? c.trim() : null; }
+
   function normSpec(spec){
     var s = spec || {};
     var type = s.type || 'line';
-    var colors = (s.colors && s.colors.length >= 2) ? [s.colors[0], s.colors[1]] : null;
-    var color = s.color || (colors ? colors[0] : '#888888');
+    var colors = (s.colors && s.colors.length >= 2 && legCss(s.colors[0]) && legCss(s.colors[1]))
+      ? [legCss(s.colors[0]), legCss(s.colors[1])] : null;
+    var color = legCss(s.color) || (colors ? colors[0] : '#888888');
     var out = {
       type: type,
       color: color,
       colors: colors,
       dash: Array.isArray(s.dash) && s.dash.length ? s.dash.slice() : null,
       width: s.width == null ? 2 : s.width,
-      fill: isTransparent(s.fill) ? null : s.fill,
-      fill2: isTransparent(s.fill2) ? null : s.fill2,
+      fill: isTransparent(s.fill) ? null : legCss(s.fill),
+      fill2: isTransparent(s.fill2) ? null : legCss(s.fill2),
       point: null
     };
     if(out.type === 'line' && out.width <= 0 && out.fill) out.type = 'area';
@@ -657,8 +663,8 @@
       var p = s.point === true ? {} : s.point;
       out.point = {
         shape: p.shape || 'circle',
-        fill: p.shape === 'ring' ? (isTransparent(p.fill) ? null : p.fill) : (p.fill || out.color),
-        stroke: p.stroke || (p.shape === 'ring' ? out.color : null),
+        fill: p.shape === 'ring' ? (isTransparent(p.fill) ? null : legCss(p.fill)) : (legCss(p.fill) || out.color),
+        stroke: legCss(p.stroke) || (p.shape === 'ring' ? out.color : null),
         width: p.width == null ? (p.shape === 'ring' ? 2 : 0) : p.width,
         radius: p.radius == null ? 3.6 : p.radius
       };
@@ -698,6 +704,20 @@
     }
     if(over) for(var k in over) if(Object.prototype.hasOwnProperty.call(over, k)) spec[k] = over[k];
     return normSpec(spec);
+  }
+
+  /* The one spec a series is keyed by. A dataset can pin its own mark with
+     `legendSpec` for the looks a dataset cannot state — a band that is two
+     datasets, a marker a plugin draws — and everything else is read off the
+     dataset. The legend and the hover card both come through here, so the two
+     cannot drift apart.  `over` patches whichever of the two answers. */
+  function legSpecOf(ds, over){
+    ds = ds || {};
+    if(!ds.legendSpec) return legFromDataset(ds, over);
+    var s = {}, k;
+    for(k in ds.legendSpec) if(Object.prototype.hasOwnProperty.call(ds.legendSpec, k)) s[k] = ds.legendSpec[k];
+    if(over) for(k in over) if(Object.prototype.hasOwnProperty.call(over, k)) s[k] = over[k];
+    return normSpec(s);
   }
 
   /* The one description of what a swatch looks like. Everything below draws
@@ -882,6 +902,7 @@
     W: LEG_W, H: LEG_H,
     spec: normSpec,
     fromDataset: legFromDataset,
+    specOf: legSpecOf,
     swatchHtml: legSwatchHtml,
     attach: legAttach,
     item: legItem,
@@ -890,6 +911,156 @@
     markup: legSvgMarkup,
     paint: legPaint,
     svgNode: legSvgNode
+  };
+
+  /* ── SharedChartTip — the chart hover card, keyed exactly like the legend ─
+     Chart.js draws its own tooltip on the canvas, and every row of it gets the
+     same mark: a small filled-or-outlined square. So a chart whose key is a
+     dotted line, a shaded band and a ring marker answered the hover with three
+     squares, and the reader had to match rows to series by colour alone — the
+     very thing SharedLegend exists to stop.
+
+     This replaces that card with an HTML one whose row marks come from the
+     SAME spec the legend entry is built from, so the key, the chart and the
+     hover all show one mark per series. Being an element rather than canvas
+     pixels, it is also never clipped by a small canvas.
+
+         tooltip: SharedChartTip.options({ callbacks: {...}, filter: ... })
+
+     A series whose mark the dataset cannot state — a band that is two datasets,
+     a marker a plugin draws — pins it with `legendSpec` on the dataset, which
+     is the one spec the legend and the hover then share.
+     ──────────────────────────────────────────────────────────────────────── */
+  var TIP_ID = 'sharedChartTip';
+
+  function tipEsc(s){
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+      return c === '&' ? '&amp;' : c === '<' ? '&lt;' : c === '>' ? '&gt;' : '&quot;';
+    });
+  }
+
+  function tipHide(){
+    var el = document.getElementById(TIP_ID);
+    if(el) el.classList.remove('visible');
+  }
+
+  function tipEl(){
+    var el = document.getElementById(TIP_ID);
+    if(!el){
+      el = document.createElement('div');
+      el.id = TIP_ID;
+      el.className = 'chart-tip';
+      // The read-out box under every chart is the accessible copy of this, so
+      // the card itself stays out of the a11y tree rather than doubling it.
+      el.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(el);
+      // A fixed card would otherwise hang in mid-air over a page that has
+      // scrolled out from under the chart it belongs to.
+      window.addEventListener('scroll', tipHide, true);
+      window.addEventListener('resize', tipHide);
+    }
+    return el;
+  }
+
+  /* The mark a row carries is the mark its series is drawn with. `legendSpec`
+     on the dataset wins, exactly as it does in the key; otherwise the spec is
+     read off the dataset, with the per-element colours Chart.js resolved for
+     this point filling in whatever the dataset states as an array or a
+     callback (a pie slice, a bar in a coloured series). */
+  function tipSpecOf(chart, item, colors){
+    var ds = (item && item.dataset) || {};
+    if(ds.legendSpec) return legSpecOf(ds);
+    var lc = colors || {};
+    var meta = (chart && chart.getDatasetMeta && item) ? chart.getDatasetMeta(item.datasetIndex) : null;
+    var kind = ds.type || (meta && meta.type) ||
+               (chart && chart.config && (chart.config.type || (chart.config._config && chart.config._config.type))) || 'line';
+    var bg = legCss(lc.backgroundColor) || legFirst(ds.backgroundColor);
+    var bc = legCss(lc.borderColor) || legFirst(ds.borderColor);
+    if(kind === 'bar') return normSpec({type: 'bar', fill: bg, color: bc});
+    if(kind === 'pie' || kind === 'doughnut' || kind === 'polarArea')
+      return normSpec({type: 'bar', fill: bg || bc, color: bc});
+    if(kind === 'candlestick' || kind === 'ohlc')
+      return normSpec({type: 'candle', color: bc || bg, fill: bg || bc});
+    // A line, a scatter or anything drawn from them: the key's own reader.
+    return legSpecOf(ds, legCss(ds.borderColor) ? null : (bc ? {color: bc} : null));
+  }
+
+  function tipNote(line){ return '<div class="chart-tip-note">' + tipEsc(line) + '</div>'; }
+
+  // A callback that has nothing to say returns an empty string, which would
+  // otherwise open an empty line in the card.
+  function tipLines(v){
+    return (v || []).filter(function(line){ return String(line == null ? '' : line).trim() !== ''; });
+  }
+
+  function tipMarkup(chart, tooltip){
+    var showMarks = !(tooltip.options && tooltip.options.displayColors === false);
+    var html = '';
+    tipLines(tooltip.title).forEach(function(line){
+      html += '<div class="chart-tip-title">' + tipEsc(line) + '</div>';
+    });
+    tipLines(tooltip.beforeBody).forEach(function(line){ html += tipNote(line); });
+    (tooltip.body || []).forEach(function(body, i){
+      var mark = showMarks
+        ? legSwatchHtml(tipSpecOf(chart, (tooltip.dataPoints || [])[i], (tooltip.labelColors || [])[i]))
+        : '';
+      tipLines(body.before).forEach(function(line){ html += tipNote(line); });
+      tipLines(body.lines).forEach(function(line, k){
+        // Only the first line of a multi-line entry carries the mark; the rest
+        // line up under it, so one series still reads as one row.
+        html += '<div class="chart-tip-row">' +
+                (showMarks ? (k === 0 ? mark : '<span class="legend-swatch" aria-hidden="true"></span>') : '') +
+                '<span class="chart-tip-label">' + tipEsc(String(line).replace(/^\s+/, '')) + '</span></div>';
+      });
+      tipLines(body.after).forEach(function(line){ html += tipNote(line); });
+    });
+    tipLines(tooltip.afterBody).forEach(function(line){ html += tipNote(line); });
+    tipLines(tooltip.footer).forEach(function(line){
+      html += '<div class="chart-tip-footer">' + tipEsc(line) + '</div>';
+    });
+    return html;
+  }
+
+  /* Beside the caret and centred on it, which is where the canvas tooltip sat,
+     but clamped to the VIEWPORT rather than to the canvas: the card is an
+     element, so a small chart no longer cuts it in half. */
+  function tipPlace(el, chart, tooltip){
+    var r = chart.canvas.getBoundingClientRect();
+    var cx = r.left + tooltip.caretX, cy = r.top + tooltip.caretY;
+    var w = el.offsetWidth, h = el.offsetHeight, pad = 8, gap = 14;
+    var left = cx + gap;
+    if(left + w > window.innerWidth - pad) left = cx - gap - w;
+    el.style.left = Math.max(pad, Math.min(left, window.innerWidth - pad - w)) + 'px';
+    el.style.top = Math.max(pad, Math.min(cy - h / 2, window.innerHeight - pad - h)) + 'px';
+  }
+
+  function tipHandler(ctx){
+    var chart = ctx && ctx.chart, tooltip = ctx && ctx.tooltip;
+    if(!chart || !chart.canvas || !tooltip || !tooltip.opacity){ tipHide(); return; }
+    var html = tipMarkup(chart, tooltip);
+    if(!html){ tipHide(); return; }
+    var el = tipEl();
+    el.innerHTML = html;
+    el.classList.add('visible');
+    tipPlace(el, chart, tooltip);
+  }
+
+  /* Wrap a tool's own tooltip options: same callbacks, same filter, drawn as
+     the shared card instead of by Chart.js. */
+  function tipOptions(opts){
+    var o = opts || {};
+    o.enabled = false;
+    o.external = tipHandler;
+    return o;
+  }
+
+  global.SharedChartTip = {
+    id: TIP_ID,
+    options: tipOptions,
+    handler: tipHandler,
+    spec: tipSpecOf,
+    markup: tipMarkup,
+    hide: tipHide
   };
 
   /* ── Mini cache (autosave) ─────────────────────────────────────────────────

@@ -749,12 +749,20 @@ async function reset(){
   const style = await page.evaluate(() => {
     const c = window.__charts[window.__charts.length - 1];
     const ds = c.data.datasets;
-    const labelColor = c.options.plugins.tooltip.callbacks.labelColor;
+    /* The hover card draws each row with SharedChartTip.spec — the very spec
+       the legend entry is built from — so reading it here checks the key, the
+       chart and the tooltip agree in one go. */
+    const spec = d => window.SharedChartTip.spec(c, {dataset: d, datasetIndex: 0});
+    // A solid line is stated as [] by the chart and as null by the spec; both
+    // mean the same line, so they are compared as the same empty pattern.
+    const dashOf = v => (Array.isArray(v) && v.length) ? v.join(',') : '';
     return {
       labels:  ds.map(d => d.label),
       border:  ds.map(d => d.borderColor),
       point:   ds.map(d => d.pointBackgroundColor),
-      swatch:  ds.map(d => labelColor({ dataset:d }).backgroundColor),
+      swatch:  ds.map(d => spec(d).color),
+      tipDash: ds.map(d => dashOf(spec(d).dash)),
+      lineDash: ds.map(d => dashOf(d.borderDash)),
       dashes:  ds.map(d => JSON.stringify(d.borderDash))
     };
   });
@@ -765,6 +773,9 @@ async function reset(){
   check('B20b the tooltip swatch follows the line, so five rows no longer read as one colour',
     distinct(style.swatch) && style.swatch.every((c, i) => c === style.border[i]),
     `swatches ${style.swatch.join(' ')}`);
+  check('B20c and it is the line itself, dash and all, not a square standing in for it',
+    style.tipDash.every((d, i) => d === style.lineDash[i]),
+    `tip ${style.tipDash.map(d => d || 'solid').join(' ')}`);
 }
 
 

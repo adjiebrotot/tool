@@ -1381,7 +1381,7 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
     interaction: {mode: hoverMode, axis: 'x', intersect: false},
     plugins: {
       legend: {display: false},
-      tooltip: {
+      tooltip: SharedChartTip.options({
         mode: hoverMode, axis: 'x', intersect: false,
         backgroundColor: t.panel, titleColor: t.text, bodyColor: t.muted,
         borderColor: t.grid, borderWidth: 1, padding: 10,
@@ -1403,7 +1403,7 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
               items.map(function(i){ return i.dataset.label + ': ' + fmt.currency(i.parsed.y, true); }).join('  |  ');
           }
         }
-      },
+      }),
       zoom: {
         limits: {x: limit, xAge: limit},
         pan: {enabled: true, mode: 'x', onPan: opts.onXWindow},
@@ -1470,7 +1470,7 @@ function renderLegend(elId, chart, items){
     var div = document.createElement('div');
     div.className = 'legend-item';
     var src = chart.data.datasets[item.mark == null ? item.datasets[0] : item.mark];
-    SharedLegend.attach(div, SharedLegend.fromDataset(src, item.spec), item.label);
+    SharedLegend.attach(div, SharedLegend.specOf(src, item.spec), item.label);
     div.addEventListener('click', function(){
       var hidden = !chart.isDatasetVisible(item.datasets[0]);
       item.datasets.forEach(function(i){ chart.setDatasetVisibility(i, hidden); });
@@ -1548,11 +1548,16 @@ function renderCharts(res){
   p90.forEach(function(v, i){ if(i <= view1 && v != null && isFinite(v) && v > bandMax) bandMax = v; });
   var bandClipped = !!start1 && bandMax > start1.max;
 
+  /* The band is drawn by a PAIR of datasets — an invisible lower edge and an
+     upper one filled down to it — but it is one thing on the chart, so it is
+     one mark in the key and one mark against either row of the hover card.
+     Left to the datasets, the lower edge would key as nothing at all. */
+  var bandSpec = {type: 'area', fill: withAlpha(t.a, 0.16)};
   var ds1 = [
     {label:'Worst 10%', data: pts(p10, y0), borderColor: withAlpha(t.a, 0), backgroundColor:'transparent',
-     borderWidth: 0, pointRadius: 0, fill: false},
+     borderWidth: 0, pointRadius: 0, fill: false, legendSpec: bandSpec},
     {label:'Best 10%', data: pts(p90, y0), borderColor: withAlpha(t.a, 0), backgroundColor: withAlpha(t.a, 0.16),
-     borderWidth: 0, pointRadius: 0, fill: '-1'},
+     borderWidth: 0, pointRadius: 0, fill: '-1', legendSpec: bandSpec},
     {label:'Money deposited', data: pts(dep, y0), borderColor: t.a, borderDash:[2,3],
      borderWidth: 1.8, pointRadius: 0, fill: false},
     {label:'Investment outcome', data: pts(acc, y0), borderColor: t.a, borderWidth: 2.4, pointRadius: 0, fill: false},

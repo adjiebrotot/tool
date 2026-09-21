@@ -878,35 +878,6 @@ function methodNeedsWeights(method){
   return method==='towards-weight' || method==='constant-weight' || method==='constant-allocation' || method==='rule-trigger';
 }
 let weightPieChart=null;
-// Render the doughnut's tooltip as a fixed-position HTML bubble instead of the
-// default in-canvas one. The weight pie sits in a small (~120px) canvas, so the
-// built-in tooltip gets clipped at the canvas edge (see the cut-off bubble in the
-// bug report). A body-level element styled like the global tip is never clipped.
-function weightPieTooltip(context){
-  const {chart, tooltip}=context;
-  let el=document.getElementById('weightPieTip');
-  if(!el){
-    el=document.createElement('div');
-    el.id='weightPieTip';
-    el.style.cssText='position:fixed;z-index:99999;pointer-events:none;background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:var(--radius-lg,10px);padding:6px 10px;font-size:.8rem;line-height:1.4;color:var(--text);box-shadow:var(--shadow-lg);opacity:0;transition:opacity .12s;white-space:nowrap;transform:translate(-50%,calc(-100% - 10px));';
-    document.body.appendChild(el);
-  }
-  if(!tooltip || tooltip.opacity===0){ el.style.opacity='0'; return; }
-  const lines=(tooltip.body||[]).map(b=>b.lines).flat();
-  el.innerHTML=lines.map((l,idx)=>{
-    const c=(tooltip.labelColors&&tooltip.labelColors[idx])||{};
-    return `<span style="display:inline-flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;flex-shrink:0;background:${c.backgroundColor||'transparent'}"></span>${l}</span>`;
-  }).join('');
-  const r=chart.canvas.getBoundingClientRect();
-  let left=r.left+tooltip.caretX;
-  const top=r.top+tooltip.caretY;
-  // Keep the centred bubble inside the viewport so it never spills off-screen.
-  const halfW=el.offsetWidth/2+8;
-  left=Math.max(halfW, Math.min(left, window.innerWidth-halfW));
-  el.style.left=left+'px';
-  el.style.top=top+'px';
-  el.style.opacity='1';
-}
 function renderWeightTable(){
   const wrap=$('rebalWeights'); if(!wrap) return;
   const p=getActive();
@@ -970,7 +941,11 @@ function updateWeightPie(){
       responsive:true, maintainAspectRatio:true, cutout:'58%',
       plugins:{
         legend:{ display:false },
-        tooltip:{ enabled:false, external:weightPieTooltip, callbacks:{ label:(c)=>{ const ap=getActive(); const a=ap&&ap.assets[c.dataIndex]; return `${c.label}: ${fmt.num(a?a.weight:0,1)}%`; } } }
+        /* The shared hover card, for the same reason every other chart here
+           uses it — one mark per row, drawn as the chart draws it — and
+           because this canvas is ~120px across, which used to clip the
+           built-in bubble at the canvas edge. */
+        tooltip:SharedChartTip.options({ callbacks:{ title:()=>'', label:(c)=>{ const ap=getActive(); const a=ap&&ap.assets[c.dataIndex]; return `${c.label}: ${fmt.num(a?a.weight:0,1)}%`; } } })
       }
     }
   });
@@ -1968,11 +1943,11 @@ function updateValueChart(){
   const yCb=v=>fmt.currency(v,true);
   const opts={
     responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
-    plugins:{ legend:{display:false}, tooltip:{
+    plugins:{ legend:{display:false}, tooltip:SharedChartTip.options({
       filter:item=>valueChart?valueChart.isDatasetVisible(item.datasetIndex):true,
       callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y,true)}`,
         afterBody(items){ if(items.length) $('valueHoverBox').textContent=`${items[0].label}  -  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  '); }},
-      backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10},
+      backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10}),
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
     scales:{
       x:{title:{display:true,text:'Date',color:muted,font:{size:11}},ticks:{color:muted,maxTicksLimit:12,font:{size:11},callback:v=>dates[Number(v)]?.slice(0,7)||''},grid:{color:grid}},
@@ -2023,11 +1998,11 @@ function updateCompChart(){
   const totFmt = isPct ? (v=>fmt.num(v,0)+'%') : (v=>fmt.currency(v,true));
   const opts={
     responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
-    plugins:{ legend:{display:false}, tooltip:{
+    plugins:{ legend:{display:false}, tooltip:SharedChartTip.options({
       filter:item=>(compChart?compChart.isDatasetVisible(item.datasetIndex):true),
       callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${valFmt(ctx.parsed.y)}`,
         afterBody(items){ if(items.length){ const tot=items.reduce((s,i)=>s+i.parsed.y,0); $('compHoverBox').textContent=`${items[0].label}  -  Total: ${totFmt(tot)}  |  `+items.map(i=>`${i.dataset.label}: ${valFmt(i.parsed.y)}`).join('  |  '); } }},
-      backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10},
+      backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10}),
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
     scales:{
       x:{title:{display:true,text:'Date',color:muted,font:{size:11}},ticks:{color:muted,maxTicksLimit:12,font:{size:11},callback:v=>dates[Number(v)]?.slice(0,7)||''},grid:{color:grid}},
@@ -2153,15 +2128,16 @@ function updatePriceChart(){
     const hidden=priceHidden.has(idx);
     const item=document.createElement('div');
     item.className='legend-item'+(hidden?' hidden':'');
-    SharedLegend.attach(item, showCandles
-      ? {type:'candle', color, fill:color}
-      : {color, width:2.5}, a.name);
+    // One spec for the key and the hover card: a candle where the chart draws
+    // candles, the line itself where it draws a line.
+    const spec = showCandles ? {type:'candle', color, fill:color} : {color, width:2.5};
+    SharedLegend.attach(item, spec, a.name);
     item.addEventListener('click',()=>{
       if(priceHidden.has(idx)) priceHidden.delete(idx); else priceHidden.add(idx);
       updatePriceChart();
     });
     legendEl.appendChild(item);
-    const ds={ label:a.name, hidden,
+    const ds={ label:a.name, hidden, legendSpec:spec,
       data:a.px.map(p=>priceVal(a,p)),
       borderColor: showCandles ? 'transparent' : color,
       backgroundColor:color+'22', borderWidth:2.5, pointRadius:0,
@@ -2223,7 +2199,8 @@ function updatePriceChart(){
             type:'bar', label:`${a.name} · ${ln.name}`, hidden:false,
             data: ln.values.map(v=> v==null?null:v), yAxisID,
             backgroundColor:cols, borderColor:cols, borderWidth:0,
-            categoryPercentage:1, barPercentage:1, _indicator:true, _hist:true
+            categoryPercentage:1, barPercentage:1, _indicator:true, _hist:true,
+            legendSpec:{type:'bar', color:cssVar('--muted'), fill:cssVar('--muted')}
           });
           return;
         }
@@ -2247,9 +2224,7 @@ function updatePriceChart(){
   datasets.filter(ds=>ds._indicator).forEach(ds=>{
     const note=document.createElement('div');
     note.className='legend-item'; note.style.cursor='default';
-    SharedLegend.attach(note, ds._hist
-      ? {type:'bar', color:cssVar('--muted'), fill:cssVar('--muted')}
-      : SharedLegend.fromDataset(ds), ds.label);
+    SharedLegend.attach(note, SharedLegend.specOf(ds), ds.label);
     legendEl.appendChild(note);
   });
 
@@ -2282,11 +2257,11 @@ function updatePriceChart(){
     });
     return {
       responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
-      plugins:{ legend:{display:false}, tooltip:{
+      plugins:{ legend:{display:false}, tooltip:SharedChartTip.options({
         filter:item=>!item.dataset._marker,
         callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>'  '+fmtPt(ctx),
           afterBody(items){ const its=items.filter(i=>!i.dataset._marker); if(its.length) $('priceHoverBox').textContent=`${its[0].label}  -  `+its.map(fmtPt).join('  |  '); }},
-        backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10},
+        backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10}),
         zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
       scales
     };

@@ -1561,19 +1561,26 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
    own, and for rent-then-buy the dashed line that changes colour at the year
    of purchase. The shaded min–max band, when a floating rate puts one on the
    chart, gets an entry of its own rather than going unexplained. */
+/* The one mark a series is keyed by. The rent-then-buy swatch is the line in
+   miniature: it changes colour at the marked year of purchase, exactly as the
+   chart does — something no single dataset property can state, so it is said
+   here once and pinned to the dataset, and the key and the hover card both
+   read it from there. */
+function seriesSpec(s){
+  const isRTB = s.key && s.key.includes('RTB');
+  return isRTB
+    ? {colors:[cssVar('--line-rtb-rent'), cssVar('--line-rtb-own')], width:2.5, dash:[6,4],
+       point:{shape:'circle', fill:cssVar('--line-rtb-own'), stroke:'#fff', width:1.5, radius:3}}
+    : {color:cssVar(s.colorVar), width:2.5};
+}
+
 function buildLegend(series, hasBand){
   const el = $('chartLegend');
   el.innerHTML = '';
   series.forEach(s=>{
     const d = document.createElement('div');
     d.className='legend-item';
-    const isRTB = s.key && s.key.includes('RTB');
-    // The rent-then-buy swatch is the line in miniature: it changes colour at
-    // the marked year of purchase, exactly as the chart does.
-    SharedLegend.attach(d, isRTB
-      ? {colors:[cssVar('--line-rtb-rent'), cssVar('--line-rtb-own')], width:2.5, dash:[6,4],
-         point:{shape:'circle', fill:cssVar('--line-rtb-own'), stroke:'#fff', width:1.5, radius:3}}
-      : {color:cssVar(s.colorVar), width:2.5}, s.label);
+    SharedLegend.attach(d, seriesSpec(s), s.label);
     el.appendChild(d);
   });
   if(hasBand){
@@ -1662,7 +1669,7 @@ function renderChart(rows){
       tension:0.3, fill:false,
     };
   });
-  datasets.forEach((d,i)=>{ d.rvoKey = series[i].key; });
+  datasets.forEach((d,i)=>{ d.rvoKey = series[i].key; d.legendSpec = seriesSpec(series[i]); });
 
   // Floating-rate band: shaded min–max range per series (appended last so it draws
   // beneath the lines — Chart.js paints datasets from last to first).
@@ -1704,7 +1711,7 @@ function renderChart(rows){
       interaction:{mode:'index',intersect:false},
       plugins:{
         legend:{display:false},
-        tooltip:{
+        tooltip:SharedChartTip.options({
           filter: item => !item.dataset.isBand,
           callbacks:{
             title: ctx=>`${T('chartTooltipYear')}${ctx[0].label}`,
@@ -1724,7 +1731,7 @@ function renderChart(rows){
           },
           backgroundColor:cssVar('--panel')||'#162033',
           titleColor:t, bodyColor:m, borderColor:cssVar('--border'), borderWidth:1, padding:10,
-        },
+        }),
         zoom:{
           pan:{enabled:true,mode:'x'},
           zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'},
