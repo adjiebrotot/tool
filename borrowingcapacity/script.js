@@ -1126,7 +1126,7 @@ const QUICK_START_SCENARIOS = {
      ordinary earnings. No dependants, no car loan, one modest card.
      WA duty on $650k = $24,890, which is 3.83%. */
   'geoff': {
-    label: 'Average Geoff, Perth',
+    label: 'Average Man, Perth',
     modes: { incWho:'employee', incMode:'simple', debtsMode:'simple',
              loanMode:'simple', capsMode:'simple' },
     vals: {
@@ -1304,7 +1304,7 @@ function init(){
      in place rather than dumping a first-time visitor back on the generic
      default. The active tab is saved and restored by the engine itself. */
   window.__BC_TOUR = {
-    seedGeoff: function(){ applyQuickStart('geoff'); },
+    seedMan: function(){ applyQuickStart('geoff'); },
 
     saveState: function(){
       const fieldsMatch = Object.keys(DEFAULTS).every(id => {

@@ -1151,7 +1151,7 @@ async function reset(){
     bnpl:document.getElementById('hasBnpl').checked, ui:{ ...window.__BC.UI }
   }));
   const snap = await page.evaluate(() => window.__BC_TOUR.saveState());
-  await page.evaluate(() => window.__BC_TOUR.seedGeoff());
+  await page.evaluate(() => window.__BC_TOUR.seedMan());
   await page.waitForTimeout(120);
   const seeded = await page.evaluate(() => document.getElementById('incSimple').value);
   await page.evaluate(s => window.__BC_TOUR.restoreState(s), snap);
