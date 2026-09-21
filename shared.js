@@ -910,6 +910,8 @@
     /* ── Financial Freedom Calculator ── */
     financialfreedom: {
       FIRE: ['Financial Independence, Retire Early', 'the idea this tool does the arithmetic for: save hard, invest, then live off the pot'],
+      MDD:  ['Maximum Drawdown', 'the deepest peak-to-trough fall an asset has had, which is what the crash test lands on you'],
+      SORR: ['Sequence-of-Returns Risk', 'the risk that the bad years arrive early in retirement, when the pot is largest and has the longest left to fund'],
       SWR:  ['Safe Withdrawal Rate', 'the share of the pot you can spend each year without running out']
     },
 

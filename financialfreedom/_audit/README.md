@@ -62,6 +62,30 @@ theme toggle rebuilding charts from the new tokens, the currency picker changing
 the symbol without touching the number, every tour step target resolving, and no
 uncaught page errors.
 
+**Both x axes**, the calendar year the data is plotted on and the age beside it:
+that they span exactly the plotted data, that the age axis reads in ages rather
+than repeating the year, and that the zoom `limits` pin that span on both, so a
+zoom-out cannot pull back past the data the way an unbounded linear scale
+otherwise would.
+
+**The crossing marker.** It falls between two yearly samples, so it is checked
+against a straight line through the two samples it sits between rather than
+against either one, and its dropline is checked to run from the axis to it.
+
+**Inflation being visible, not merely applied.** The engine runs in real terms,
+where the living cost is flat and inflation can therefore look inert. F37 pins
+the living cost column: flat in today's money, exactly the real cost times the
+inflation factor in future dollars, and rising *before* retirement as well as
+after. F38 pins the consequence the tool is often asked for and rarely shows:
+in the money of the day, freedom at a later age costs MORE, while in today's
+money it costs less because fewer years are left to fund. Both are true at once
+and the page has to say which one it is showing.
+
+The exports: every control present, the CSV carrying the same columns and the
+same row count as the table it came from, and naming the currency and the money
+mode it was taken in. The action row: Simulate and Reset pinned together rather
+than Reset buried in the Settings tab.
+
 `SharedPriceCache` round-tripping through the DCA simulator's own
 `dca_priceCache_v2` key with every field those tools read back (`source` and
 `kind` drive their unadjusted-price warning), and nothing being fetched before

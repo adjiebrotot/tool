@@ -4,9 +4,12 @@
 
 .container{max-width:1440px;}
 .layout{grid-template-columns:380px 1fr;}
-.controls{max-height:calc(100vh - 32px);overflow-y:auto;}
-.controls::-webkit-scrollbar{width:4px;}
-.controls::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.controls{max-height:calc(100vh - 32px);display:flex;flex-direction:column;}
+.ctrl-scroll{flex:1;min-height:0;overflow-y:auto;}
+.ctrl-scroll::-webkit-scrollbar{width:4px;}
+.ctrl-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.btn-row{flex-shrink:0;}
+.btn-row .btn-primary,.btn-row .btn-secondary{padding:10px 16px;font-size:.86rem;}
 .header{flex-wrap:wrap;gap:12px;}
 .header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
 .btn-back{text-decoration:none;display:inline-flex;align-items:center;}
@@ -28,7 +31,9 @@ h1{font-size:1.85rem;margin:0 0 4px;}
    <label>, so it only takes a width once this row makes it a flex item. */
 .toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border);}
 .toggle-label{font-weight:700;font-size:.88rem;flex:1;}
-.seg-group{display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;}
+.field-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:7px;}
+.field-head .field-label{margin:0;}
+.seg-toggle{display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;flex-shrink:0;}
 .seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 12px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;flex-shrink:0;}
 .seg-btn.active{background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}
 .seg-btn:hover:not(.active){color:var(--text);}
@@ -71,14 +76,17 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .chart-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;}
 .chart-head h2{display:flex;align-items:center;gap:6px;margin:0;}
 .chart-head .sub{color:var(--muted);font-size:.8rem;margin-top:3px;line-height:1.4;}
-.btn-cluster{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;}
-.btn-sm{padding:6px 12px;font-size:.8rem;border-radius:8px;}
+.btn-cluster{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;flex-shrink:0;}
+.detail-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+.detail-head h2{margin:0;}
+.btn-sm{padding:5px 11px;font-size:.8rem;border-radius:8px;}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 14px;font-size:.84rem;}
 .legend-item{display:flex;align-items:center;gap:7px;cursor:pointer;transition:opacity .15s;}
 .legend-item.hidden{opacity:.35;}
 .dot{width:11px;height:11px;border-radius:999px;flex-shrink:0;}
 .dot.dash{border-radius:2px;height:4px;width:16px;}
 .dot.band{border-radius:3px;height:11px;width:16px;}
+.dot.ring{background:transparent;border:2.5px solid currentColor;}
 .canvas-wrap{height:430px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
 .hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:22px;line-height:1.5;}
 
@@ -118,6 +126,9 @@ td.pos{color:var(--data-pos-em);}
   .metrics{grid-template-columns:1fr;}
   .canvas-wrap{height:300px;}
   .btn-row{flex-direction:column;}
+  .btn-row .btn-primary,.btn-row .btn-secondary{flex:1 1 auto;}
+  .btn-cluster{width:100%;}
+  .btn-cluster .btn-secondary{flex:1 1 auto;}
   .ctrl-tab{font-size:.7rem;}
   .inline-row{flex-wrap:wrap;}
   .inline-row .period{flex:1 1 100%;width:auto;}

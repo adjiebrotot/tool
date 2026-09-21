@@ -116,6 +116,7 @@
 
 <section class="layout">
 <aside class="controls card">
+  <div class="ctrl-scroll">
   <div class="ctrl-tabs">
     <button class="ctrl-tab active" data-tab="you">🧍<br>You</button>
     <button class="ctrl-tab" data-tab="invest">📈<br>Investment</button>
@@ -149,28 +150,13 @@
     <div class="field-group">
       <div class="group-title">Money in and out</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Living expenses <i class="tip-icon" data-tip="What you spend to live now. It rises with inflation, so it holds its value in today's money.">?</i></span></div>
-        <div class="inline-row">
-          <div class="currency-wrap grow">
-            <span class="prefix" id="expensePrefix">$</span>
-            <input class="currency-input fmt-num" id="expense" type="text" inputmode="decimal" value="60,000"/>
+        <div class="field-head">
+          <div class="field-label"><span class="tip-wrap"><span id="savingsLabel">Savings</span> <i class="tip-icon" data-tip="<strong>Savings:</strong> what you actually put away. It grows at the rate below.<br><strong>Net income:</strong> your take-home pay. Income grows at the rate below, expenses grow with inflation, and what is left over is your saving. The two models give different answers, so the panel says which one is running.">?</i></span></div>
+          <div class="seg-toggle" id="savingsModeGroup">
+            <button class="seg-btn active" data-val="savings" type="button">Savings</button>
+            <button class="seg-btn" data-val="income" type="button">Net income</button>
           </div>
-          <select class="sel-input period" id="expensePeriod">
-            <option value="weekly">a week</option>
-            <option value="monthly">a month</option>
-            <option value="yearly" selected>a year</option>
-          </select>
         </div>
-      </div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Enter your <i class="tip-icon" data-tip="<strong>Savings:</strong> what you actually put away. It grows at the rate below.<br><strong>Net income:</strong> your take-home pay. Income grows at the rate below, expenses grow with inflation, and what is left over is your saving. The two models give different answers, so the panel says which one is running.">?</i></span></div>
-        <div class="seg-group" id="savingsModeGroup">
-          <button class="seg-btn active" data-val="savings">Savings</button>
-          <button class="seg-btn" data-val="income">Net income</button>
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field-label" id="savingsLabel">Savings</div>
         <div class="inline-row">
           <div class="currency-wrap grow">
             <span class="prefix" id="savingsPrefix">$</span>
@@ -189,8 +175,23 @@
         <input class="num-input" id="growth" type="number" min="-10" max="30" step="0.1" value="3"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Inflation, % p.a. <i class="tip-icon" data-tip="How fast prices rise. Today's money means this rate stripped back out.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Living expenses <i class="tip-icon" data-tip="What you spend to live now. Prices rise at the inflation rate below, so this amount buys the same thing every year while the figure it costs keeps climbing.">?</i></span></div>
+        <div class="inline-row">
+          <div class="currency-wrap grow">
+            <span class="prefix" id="expensePrefix">$</span>
+            <input class="currency-input fmt-num" id="expense" type="text" inputmode="decimal" value="60,000"/>
+          </div>
+          <select class="sel-input period" id="expensePeriod">
+            <option value="weekly">a week</option>
+            <option value="monthly">a month</option>
+            <option value="yearly" selected>a year</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Inflation, % p.a. <i class="tip-icon" data-tip="How fast prices rise. It lifts the living expenses above every year, which lifts the pot you need with them. Today's money means this rate stripped back out again.">?</i></span></div>
         <input class="num-input" id="inflation" type="number" min="0" max="30" step="0.1" value="2.5"/>
+        <p class="note" id="inflationNote"></p>
       </div>
     </div>
   </div>
@@ -203,7 +204,7 @@
       <p class="note" id="presetNote"></p>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Expected return, % p.a. <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees. Compound means the rate that turns your starting pot into your ending one, not the average of the good and bad years.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Expected return (CAGR), % p.a. <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees, so the rate that turns your starting pot into your ending one rather than the average of the good and bad years.">?</i></span></div>
       <input class="num-input" id="ret" type="number" min="-5" max="40" step="0.1" value="8"/>
     </div>
     <div class="field-row">
@@ -211,7 +212,7 @@
       <input class="num-input" id="std" type="number" min="0" max="80" step="0.1" value="15"/>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Worst drawdown, % <i class="tip-icon" data-tip="The deepest peak-to-trough fall this asset has had. Used only for the stress test, where it lands the month you retire.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Worst drawdown (MDD), % <i class="tip-icon" data-tip="The deepest peak-to-trough fall this asset has had. Used only for the stress test, where it lands the month you retire.">?</i></span></div>
       <input class="num-input" id="mdd" type="number" min="-95" max="0" step="1" value="-50"/>
     </div>
 
@@ -320,9 +321,11 @@
       <div class="field-label"><span class="tip-wrap">Random seed <i class="tip-icon" data-tip="The same seed gives the same simulated futures, so a result can be reproduced exactly.">?</i></span></div>
       <input class="num-input" id="seed" type="number" min="1" step="1" value="20260921"/>
     </div>
-    <div class="btn-row">
-      <button class="btn-secondary" id="resetBtn">Reset to defaults</button>
-    </div>
+  </div>
+  </div><!-- /ctrl-scroll -->
+  <div class="btn-row">
+    <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
+    <button class="btn-secondary" id="resetBtn" style="flex:1">↺ Reset</button>
   </div>
 </aside>
 
@@ -369,7 +372,10 @@
         <div class="sub" id="chart1Sub"></div>
       </div>
       <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="resetZoom1" title="Reset zoom">⟳ Reset zoom</button>
+        <button class="btn-secondary btn-sm" id="ffSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+        <button class="btn-secondary btn-sm" id="ffPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+        <button class="btn-secondary btn-sm" id="ffCopyBtn" title="Copy PNG to clipboard">⧉</button>
+        <button class="btn-secondary btn-sm" id="resetZoom1" title="Reset zoom">⟳</button>
       </div>
     </div>
     <div class="legend" id="legend1"></div>
@@ -384,7 +390,10 @@
         <div class="sub" id="chart2Sub"></div>
       </div>
       <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="resetZoom2" title="Reset zoom">⟳ Reset zoom</button>
+        <button class="btn-secondary btn-sm" id="ddSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+        <button class="btn-secondary btn-sm" id="ddPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+        <button class="btn-secondary btn-sm" id="ddCopyBtn" title="Copy PNG to clipboard">⧉</button>
+        <button class="btn-secondary btn-sm" id="resetZoom2" title="Reset zoom">⟳</button>
       </div>
     </div>
     <div class="legend" id="legend2"></div>
@@ -393,7 +402,12 @@
   </section>
 
   <section class="detail-section card">
-    <h2>Year by year</h2>
+    <div class="detail-head">
+      <h2>Year by year</h2>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="csvBtn" title="Download this table as CSV">⬇ CSV</button>
+      </div>
+    </div>
     <p class="sub" id="tableSub"></p>
     <div class="table-wrap" id="tableWrap"></div>
   </section>
