@@ -442,6 +442,7 @@
     }
 
     .tool-footer {
+      position: relative;
       margin-top: auto;
       display: flex;
       justify-content: space-between;
@@ -486,6 +487,112 @@
       color: var(--muted);
       border: 1.5px solid var(--border);
       cursor: not-allowed;
+    }
+
+    /* Split button: "Open tool" plus a menu of the tool's sub-tools. */
+    .tool-actions {
+      display: inline-flex;
+      align-items: stretch;
+    }
+
+    .tool-actions .tool-link {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .tool-options-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 0.8rem;
+      border: none;
+      border-left: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      background: var(--accent);
+      color: #fff;
+      font: inherit;
+      cursor: pointer;
+      transition: opacity var(--motion-fast), box-shadow var(--motion-fast);
+    }
+
+    /* Each half darkens on its own hover, and the shadow lifts the whole unit,
+       so the split button still reads as one control. */
+    .tool-actions:hover {
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 16px rgba(90, 145, 232, 0.30);
+    }
+
+    .tool-actions .tool-link:hover,
+    .tool-options-toggle:hover,
+    .tool-options-toggle[aria-expanded="true"] {
+      opacity: 1;
+      background: var(--accent-strong);
+      box-shadow: none;
+    }
+
+    .tool-options-toggle:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(90, 145, 232, 0.35);
+    }
+
+    .tool-options-toggle svg {
+      transition: transform var(--motion-fast);
+    }
+
+    .tool-options-toggle[aria-expanded="true"] svg {
+      transform: rotate(180deg);
+    }
+
+    .tool-options-menu {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(100% + 0.5rem);
+      z-index: 20;
+      margin: 0;
+      padding: 0.35rem;
+      list-style: none;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      display: none;
+    }
+
+    .tool-options-menu.is-open {
+      display: block;
+    }
+
+    .tool-options-menu a {
+      display: block;
+      padding: 0.6rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      transition: background var(--motion-fast), color var(--motion-fast);
+    }
+
+    .tool-options-menu a:hover,
+    .tool-options-menu a:focus-visible {
+      outline: none;
+      background: var(--input-bg);
+      color: var(--accent-strong);
+    }
+
+    .tool-options-menu .option-note {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-top: 0.1rem;
+    }
+
+    .tool-options-menu a:hover .option-note,
+    .tool-options-menu a:focus-visible .option-note {
+      color: var(--muted);
     }
 
     .empty-state {
@@ -937,6 +1044,27 @@
               "Remove an option after it is picked to run a draw with no repeats"
             ]
           }
+        },
+        {
+          "@type": "ListItem",
+          "position": 16,
+          "item": {
+            "@type": "WebApplication",
+            "name": "Financial Freedom Calculator",
+            "url": "https://tool.adjiebrotots.com/financialfreedom/",
+            "description": "Work out the pot you need before you can stop working, and the age you actually reach it, inflation-adjusted and tested against thousands of simulated futures.",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Any",
+            "isAccessibleForFree": true,
+            "featureList": [
+              "Three definitions of freedom: run the pot to nothing, leave a set legacy, or spend only the real growth so it lasts forever",
+              "Monte Carlo confidence band from your own return and volatility, not a single average return",
+              "Retirement age on a slider, so you can watch every figure move as you stop earlier or later",
+              "Prices each way out when the plan fails: save more, spend less, earn more, or retire later",
+              "Year-by-year cash flow table that reconciles to the cent, in today\u2019s money or the money of the day",
+              "Everything runs locally in the browser, so income and savings details never leave your device"
+            ]
+          }
         }
       ]
     }
@@ -1179,7 +1307,14 @@
           </ul>
 
           <div class="tool-footer">
+          <div class="tool-actions">
             <a class="tool-link" href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-rentvsownhouse" aria-label="Choose which Rent vs Own Home tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+            <ul class="tool-options-menu" id="options-rentvsownhouse" role="menu">
+              <li role="none"><a role="menuitem" href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer">Rent vs Own Home<span class="option-note">One scenario, year by year</span></a></li>
+              <li role="none"><a role="menuitem" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/" target="_blank" rel="noopener noreferrer">Sensitivity Analysis<span class="option-note">Several scenarios side by side</span></a></li>
+            </ul>
+          </div>
           </div>
         </article>
 
@@ -1211,7 +1346,45 @@
           </ul>
 
           <div class="tool-footer">
+          <div class="tool-actions">
             <a class="tool-link" href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-dcasimulator" aria-label="Choose which DCA Scenario Explorer tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+            <ul class="tool-options-menu" id="options-dcasimulator" role="menu">
+              <li role="none"><a role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer">DCA Scenario Explorer<span class="option-note">Compare single assets</span></a></li>
+              <li role="none"><a role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/portfolio/" target="_blank" rel="noopener noreferrer">Portfolio DCA Simulator<span class="option-note">Compare whole portfolios</span></a></li>
+            </ul>
+          </div>
+          </div>
+        </article>
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Finance"
+          data-geography="Universal"
+          data-tags="Investment"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-top">
+            <div class="tool-title-group">
+              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M6 21V4"/> <path stroke="var(--accent)" d="M6 4h11l-2.5 3.5L17 11H6"/> <path stroke="var(--accent2)" d="M3 21h18"/> </svg>Financial Freedom Calculator</h3>
+              <p itemprop="abstract">Work out the pot you need before you can stop working, and the age you actually reach it.</p>
+            </div>
+            <span class="status-badge status-active">Active</span>
+          </div>
+
+          <p class="tool-description" itemprop="description">
+            Everyone tells you to save more, nobody tells you how much is enough. This tool puts a number on it, and a date next to it. Instead of one tidy average return, it runs thousands of possible futures to show how likely your plan is to hold. And when the numbers say it won’t, it tells you plainly what each way out costs: save more, spend less, or work a little longer.
+          </p>
+
+          <ul class="tool-tags" aria-label="Categories">
+            <li>Finance</li>
+            <li>Universal</li>
+            <li>Investment</li>
+          </ul>
+
+          <div class="tool-footer">
+            <a class="tool-link" href="https://tool.adjiebrotots.com/financialfreedom/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
           </div>
         </article>
 
@@ -1725,6 +1898,68 @@
       });
 
       applyFilters();
+    })();
+
+    // Sub-tool menus on the split "Open tool" buttons.
+    (function () {
+      const toggles = Array.from(document.querySelectorAll('.tool-options-toggle'));
+      if (!toggles.length) return;
+
+      const menuOf = btn => document.getElementById(btn.getAttribute('aria-controls'));
+
+      function close(btn) {
+        btn.setAttribute('aria-expanded', 'false');
+        menuOf(btn).classList.remove('is-open');
+      }
+
+      function closeAll(except) {
+        toggles.forEach(btn => { if (btn !== except) close(btn); });
+      }
+
+      function open(btn) {
+        closeAll(btn);
+        btn.setAttribute('aria-expanded', 'true');
+        menuOf(btn).classList.add('is-open');
+      }
+
+      toggles.forEach(btn => {
+        const menu = menuOf(btn);
+        const links = () => Array.from(menu.querySelectorAll('a'));
+
+        btn.addEventListener('click', event => {
+          event.stopPropagation();
+          if (btn.getAttribute('aria-expanded') === 'true') {
+            close(btn);
+          } else {
+            open(btn);
+            const first = links()[0];
+            if (first) first.focus();
+          }
+        });
+
+        menu.addEventListener('click', event => event.stopPropagation());
+
+        menu.addEventListener('keydown', event => {
+          const items = links();
+          const index = items.indexOf(document.activeElement);
+          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            const step = event.key === 'ArrowDown' ? 1 : -1;
+            const next = items[(index + step + items.length) % items.length];
+            if (next) next.focus();
+          } else if (event.key === 'Escape') {
+            close(btn);
+            btn.focus();
+          } else if (event.key === 'Tab') {
+            close(btn);
+          }
+        });
+      });
+
+      document.addEventListener('click', () => closeAll(null));
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeAll(null);
+      });
     })();
   </script>
 </body>
