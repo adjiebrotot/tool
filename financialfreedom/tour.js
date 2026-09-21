@@ -60,7 +60,8 @@ window.__TOUR = {
             '<strong>Financially free at</strong> is the earliest you could stop. ' +
             '<strong>Chance it works</strong> is usually near a coin flip at the amount ' +
             'needed, because a single average return ignores the order the good and bad ' +
-            'years arrive in. The <strong>confidence pot</strong> is the number to plan around.'
+            'years arrive in. The <strong>confidence pot</strong> named underneath it is the ' +
+            'number to plan around.'
     },
     {
       target: '.chart-card',

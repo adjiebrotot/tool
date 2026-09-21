@@ -298,8 +298,8 @@
   <!-- ── Settings ── -->
   <div class="ctrl-panel" id="tab-settings">
     <div class="toggle-row">
-      <div class="toggle-label"><span class="tip-wrap">Show future dollars <i class="tip-icon" data-tip="<strong>Off:</strong> everything is in today's money, so the figures mean what they would buy now.<br><strong>On:</strong> everything is in the dollars of the year shown, which look much bigger but buy the same.">?</i></span></div>
-      <label class="toggle-switch"><input type="checkbox" id="showNominal"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+      <div class="toggle-label"><span class="tip-wrap">Show Present Value <i class="tip-icon" data-tip="<strong>Off:</strong> every figure is in the dollars of the year it falls in, which is what the balance will actually read.<br><strong>On:</strong> every figure is brought back to today's money, so it means what it would buy now. The plan is identical either way.">?</i></span></div>
+      <label class="toggle-switch"><input type="checkbox" id="showReal"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
     </div>
     <div class="field-row">
       <div class="field-label"><span class="tip-wrap">Simulated futures <i class="tip-icon" data-tip="How many random paths the band and the probability are built from. More is smoother and slower.">?</i></span></div>
@@ -336,14 +336,9 @@
       <div class="sub" id="mFreeAgeSub"></div>
     </div>
     <div class="metric card">
-      <div class="label"><span class="tip-wrap">Chance it works <i class="tip-icon" data-tip="The share of simulated futures in which the money lasts, using the pot you are on track for. A single average return usually lands near a coin flip, because it ignores the order the good and bad years arrive in.">?</i></span></div>
+      <div class="label"><span class="tip-wrap">Chance it works <i class="tip-icon" data-tip="The share of simulated futures in which the money lasts, using the pot you are on track for. A single average return usually lands near a coin flip, because it ignores the order the good and bad years arrive in.<br><br>The pot named underneath is the one that survives your chosen share of those futures. Plan around that, not the expected-return figure.">?</i></span></div>
       <div class="value" id="mSuccess">—</div>
       <div class="sub" id="mSuccessSub"></div>
-    </div>
-    <div class="metric card">
-      <div class="label"><span class="tip-wrap">Pot for that confidence <i class="tip-icon" data-tip="The pot that survives your chosen share of simulated futures. Plan around this, not the expected-return figure.">?</i></span></div>
-      <div class="value" id="mConfPot">—</div>
-      <div class="sub" id="mConfPotSub"></div>
     </div>
     <div class="metric card">
       <div class="label"><span class="tip-wrap">Real return <i class="tip-icon" data-tip="Your return after inflation. It is what decides how big the pot has to be.">?</i></span></div>
@@ -378,7 +373,6 @@
         <button class="btn-secondary btn-sm" id="resetZoom2" title="Reset zoom">⟳</button>
       </div>
     </div>
-    <div class="sub" id="chart2Sub"></div>
     <div class="legend" id="legend2"></div>
     <div class="canvas-wrap"><canvas id="ddChart"></canvas></div>
     <div class="hover-box" id="hover2">Hover to inspect any year.</div>

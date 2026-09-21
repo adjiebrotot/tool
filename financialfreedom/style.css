@@ -47,7 +47,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 #tickerStatus.err{color:var(--negative-em);}
 
 /* ── KPI strip ── */
-.metrics{grid-template-columns:repeat(3,1fr);}
+.metrics{grid-template-columns:repeat(4,1fr);}
 .metric{padding:14px 16px;min-height:96px;}
 .metric .label{display:flex;align-items:center;gap:5px;}
 .metric .value{font-size:1.35rem;}
