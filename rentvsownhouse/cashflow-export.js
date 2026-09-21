@@ -143,7 +143,9 @@ function downloadCSV(filename, csvText){
    CHART IMAGE EXPORT — render a source <canvas> (a live Chart.js chart) to a
    titled, legended, watermarked PNG or SVG. Shared by the main chart-card and
    the sensitivity scenario popup.
-     opts: { title, legendItems:[{label,color}], filename, download }
+     opts: { title, legendItems:[{label, color, swatch}], filename, download }
+     `swatch` is a SharedLegend spec — the mark the series is drawn with — so
+     the exported key shows lines as lines, bands as bands, markers as markers.
    ────────────────────────────────────────────────────────────────────────── */
 function exportChartPNG(src, opts){
   opts = opts || {};
@@ -161,11 +163,22 @@ function exportChartPNG(src, opts){
   const titleFontPx = Math.round(14 * OUT);
   const legendFontPx = Math.round(11 * OUT);
   const titleH = Math.round(40 * OUT);
-  const legendH = legendItems.length ? Math.round(34 * OUT) : 0;
+  // The key wraps onto as many rows as it needs, and the watermark keeps a
+  // strip of its own: on one assumed row a wide key ran off the canvas and
+  // through the watermark on its way out.
+  const markW = SharedLegend.W * OUT, legGap = Math.round(7 * OUT), legPad = Math.round(20 * OUT);
+  const legMargin = Math.round(16 * OUT), legRowH = Math.round(22 * OUT), wmH = Math.round(26 * OUT);
+  const measureCtx = document.createElement('canvas').getContext('2d');
+  measureCtx.font = `500 ${legendFontPx}px ${FONT}`;
+  const legendRows = legendItems.length
+    ? SharedLegend.layout(legendItems, s => measureCtx.measureText(s).width,
+                          chartW - legMargin * 2, markW, legGap, legPad)
+    : [];
+  const legendH = legendRows.length ? legendRows.length * legRowH + Math.round(8 * OUT) : 0;
 
   const tmp = document.createElement('canvas');
   tmp.width = chartW;
-  tmp.height = chartH + titleH + legendH;
+  tmp.height = chartH + titleH + legendH + wmH;
   const ctx = tmp.getContext('2d');
 
   ctx.fillStyle = bgColor;
@@ -179,29 +192,21 @@ function exportChartPNG(src, opts){
 
   ctx.drawImage(src, 0, titleH, chartW, chartH);
 
-  if(legendItems.length){
-    const ly = titleH + chartH;
-    const dotR = Math.round(5 * OUT);
-    const gap = Math.round(7 * OUT);
-    const pad = Math.round(20 * OUT);
+  if(legendRows.length){
     ctx.font = `500 ${legendFontPx}px ${FONT}`;
     ctx.textBaseline = 'middle';
-    let totalW = 0;
-    legendItems.forEach((item, i) => {
-      totalW += dotR * 2 + gap + ctx.measureText(item.label).width + (i < legendItems.length - 1 ? pad : 0);
-    });
-    let x = Math.max(Math.round(16 * OUT), (tmp.width - totalW) / 2);
-    const cy = ly + legendH / 2;
-    legendItems.forEach(item => {
-      ctx.fillStyle = item.color;
-      ctx.beginPath();
-      ctx.arc(x + dotR, cy, dotR, 0, Math.PI * 2);
-      ctx.fill();
-      x += dotR * 2 + gap;
-      ctx.fillStyle = fgColor;
-      ctx.textAlign = 'left';
-      ctx.fillText(item.label, x, cy);
-      x += ctx.measureText(item.label).width + pad;
+    const ly = titleH + chartH + Math.round(4 * OUT);
+    legendRows.forEach((row, ri) => {
+      let x = Math.max(legMargin, (tmp.width - row.width) / 2);
+      const cy = ly + legRowH * ri + legRowH / 2;
+      row.items.forEach(item => {
+        SharedLegend.paint(ctx, item.swatch || {color:item.color}, x, cy, OUT);
+        x += markW + legGap;
+        ctx.fillStyle = fgColor;
+        ctx.textAlign = 'left';
+        ctx.fillText(item.label, x, cy);
+        x += ctx.measureText(item.label).width + legPad;
+      });
     });
   }
 
@@ -253,8 +258,15 @@ function exportChartSVG(src, opts){
   const fgColor = isLight ? '#2D3436' : '#EAF1FF';
   const FONT = 'DM Sans, sans-serif';
   const titleH = 40;
-  const legendH = legendItems.length ? 34 : 0;
-  const svgW = chartW, svgH = chartH + titleH + legendH;
+  const markW = SharedLegend.W, legGap = 7, legPad = 20, legMargin = 16, legRowH = 22, wmH = 26;
+  const legMeasure = document.createElement('canvas').getContext('2d');
+  legMeasure.font = '500 11px DM Sans, sans-serif';
+  const legendRows = legendItems.length
+    ? SharedLegend.layout(legendItems, s => legMeasure.measureText(s).width,
+                          chartW - legMargin * 2, markW, legGap, legPad)
+    : [];
+  const legendH = legendRows.length ? legendRows.length * legRowH + 8 : 0;
+  const svgW = chartW, svgH = chartH + titleH + legendH + wmH;
   const NS = 'http://www.w3.org/2000/svg', xl = 'http://www.w3.org/1999/xlink';
   const svg = document.createElementNS(NS,'svg');
   svg.setAttribute('xmlns',NS); svg.setAttribute('xmlns:xlink',xl);
@@ -273,25 +285,20 @@ function exportChartSVG(src, opts){
   img.setAttribute('width',chartW); img.setAttribute('height',chartH);
   img.setAttributeNS(xl,'href',src.toDataURL('image/png'));
   svg.appendChild(img);
-  if(legendItems.length){
-    const dotR=5, gap=7, pad=20;
-    const cy = titleH + chartH + legendH/2;
-    const mc = document.createElement('canvas').getContext('2d');
-    mc.font = '500 11px DM Sans, sans-serif';
-    const totalW = legendItems.reduce((s,item,i) => s + dotR*2 + gap + mc.measureText(item.label).width + (i<legendItems.length-1?pad:0), 0);
-    let x = Math.max(16, (svgW - totalW) / 2);
-    legendItems.forEach(item => {
-      const c = document.createElementNS(NS,'circle');
-      c.setAttribute('cx',x+dotR); c.setAttribute('cy',cy); c.setAttribute('r',dotR); c.setAttribute('fill',item.color);
-      svg.appendChild(c); x += dotR*2 + gap;
+  legendRows.forEach((row, ri) => {
+    let x = Math.max(legMargin, (svgW - row.width) / 2);
+    const cy = titleH + chartH + 4 + legRowH * ri + legRowH / 2;
+    row.items.forEach(item => {
+      svg.appendChild(SharedLegend.svgNode(item.swatch || {color:item.color}, x, cy, 1));
+      x += markW + legGap;
       const lt = document.createElementNS(NS,'text');
       lt.setAttribute('x',x); lt.setAttribute('y',cy);
       lt.setAttribute('dominant-baseline','middle'); lt.setAttribute('font-family',FONT);
       lt.setAttribute('font-size','11'); lt.setAttribute('font-weight','500'); lt.setAttribute('fill',fgColor);
       lt.textContent = item.label; svg.appendChild(lt);
-      x += mc.measureText(item.label).width + pad;
+      x += legMeasure.measureText(item.label).width + legPad;
     });
-  }
+  });
   // Watermark text is baked to glyph outlines (WM_PATH) so the exported
   // SVG carries no editable/searchable string; renders identically.
   const wm = document.createElementNS(NS,'path');

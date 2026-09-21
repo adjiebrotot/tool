@@ -59,7 +59,6 @@
     .chart-card{padding:20px}
     .legend{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 14px;font-size:0.88rem}
     .legend-item{display:flex;align-items:center;gap:8px}
-    .dot{width:12px;height:12px;border-radius:999px;flex-shrink:0}
     .canvas-wrap{position:relative;width:100%;height:420px;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:transparent}
     body.light .canvas-wrap{background:transparent}
     .hover-box{margin-top:10px;color:var(--muted);font-size:0.88rem;min-height:22px}

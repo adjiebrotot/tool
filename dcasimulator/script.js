@@ -1575,7 +1575,11 @@ function updatePriceChart(){
     const hidden=priceHidden.has(idx);
     const item=document.createElement('div');
     item.className='legend-item'+(hidden?' hidden':'');
-    item.innerHTML=`<span class="dot" style="background:${color}"></span><span>${escapeHtml(label)}</span>`;
+    // Candlestick mode draws no line at all, so the key shows a candle; line
+    // mode shows the line itself, at the width the chart strokes it with.
+    SharedLegend.attach(item, showCandles
+      ? {type:'candle', color, fill:color}
+      : {color, width:2.5}, label);
     // Toggling rebuilds the chart so normalisation (actual ↔ base-100) and the
     // axis title follow the new visible count.
     item.addEventListener('click',()=>{
@@ -1591,6 +1595,17 @@ function updatePriceChart(){
     if(showCandles) ds._ohlc=buildOHLC(res);
     return ds;
   });
+
+  // The triangles below are the same mark for every series, so the key says so
+  // once, with the triangle it actually draws.
+  if(showBuyDates && series.length){
+    const note=document.createElement('div');
+    note.className='legend-item';
+    note.style.cursor='default';
+    SharedLegend.attach(note, {type:'point', color:cssVar('--muted'),
+      point:{shape:'triangle', fill:cssVar('--muted'), radius:3.4}}, 'Buy date');
+    legendEl.appendChild(note);
+  }
 
   // Buy markers (▲) - one small upward triangle per purchase date, just below
   // each visible series' price. Only built while "Show Buy Date" is on.
@@ -1667,6 +1682,19 @@ function updatePriceChart(){
       });
     });
   }
+  // Indicator overlays were drawn without ever appearing in the key: a handful
+  // of faint dashed and dotted lines with nothing to say what they were. Each
+  // one now gets an entry carrying its own line, read off the dataset that
+  // draws it (the MACD histogram included, as the bar it is).
+  datasets.filter(ds=>ds._indicator).forEach(ds=>{
+    const note=document.createElement('div');
+    note.className='legend-item'; note.style.cursor='default';
+    SharedLegend.attach(note, ds._hist
+      ? {type:'bar', color:cssVar('--muted'), fill:cssVar('--muted')}
+      : SharedLegend.fromDataset(ds), ds.label);
+    legendEl.appendChild(note);
+  });
+
   const oscGroupKeys=[...oscGroups.keys()];
   const hasOsc=oscGroupKeys.length>0;
 
@@ -1746,7 +1774,7 @@ function updateEquityChart(){
 
     const item=document.createElement('div');
     item.className='legend-item';
-    item.innerHTML=`<span class="dot" style="background:${color}"></span><span>${res.sec.name}</span>`;
+    SharedLegend.attach(item, {color, width:2.5}, res.sec.name);
     item.addEventListener('click',()=>{
       if(!equityChartInstance) return;
       const visible=equityChartInstance.isDatasetVisible(dsIndexMap[idx].equity);
@@ -1757,6 +1785,14 @@ function updateEquityChart(){
     });
     legendEl.appendChild(item);
   });
+
+  if(showDeposited && simResults.length){
+    const note=document.createElement('div');
+    note.className='legend-item';
+    note.style.cursor='default';
+    SharedLegend.attach(note, {color:cssVar('--muted'), width:1.5, dash:[5,4]}, 'Total deposited (per scenario)');
+    legendEl.appendChild(note);
+  }
 
   const yCallback=val=>fmt.currency(val,true);
 
@@ -1807,10 +1843,9 @@ function updateTechToggleVisibility(){
 
 $('showDepositedToggle').addEventListener('change',e=>{
   showDeposited=e.target.checked;
-  if(equityChartInstance&&simResults.length){
-    equityChartInstance.data.datasets.forEach((ds,i)=>{ if(ds._type==='deposit') equityChartInstance.setDatasetVisibility(i,showDeposited); });
-    equityChartInstance.update();
-  }
+  // Rebuilt rather than toggled, so the key loses its dashed entry with the
+  // dashed lines instead of explaining a line that is no longer drawn.
+  if(equityChartInstance&&simResults.length) updateEquityChart();
 });
 
 $('showTechToggle').addEventListener('change',e=>{
@@ -2026,28 +2061,30 @@ function downloadChartPng(canvasId, filename, chartTitle, legendId, shouldDownlo
   const fgColor = isLight ? '#2D3436' : '#EAF1FF';
   const FONT = '"DM Sans", sans-serif';
 
-  // Collect visible legend items from HTML legend element
-  const legendItems = [];
-  if(legendId){
-    const legendEl = document.getElementById(legendId);
-    if(legendEl){
-      legendEl.querySelectorAll('.legend-item:not(.hidden)').forEach(item => {
-        const dot = item.querySelector('.dot');
-        const label = item.textContent.trim();
-        const color = dot ? window.getComputedStyle(dot).backgroundColor : '#888888';
-        if(label) legendItems.push({ label, color });
-      });
-    }
-  }
+  // Visible legend entries, each with the mark it is drawn with, so the
+  // exported key matches the page's key line for line.
+  const legendItems = legendId ? SharedLegend.itemsOf(legendId) : [];
 
   const titleFontPx = Math.round(14 * OUT);
   const legendFontPx = Math.round(11 * OUT);
   const titleH = chartTitle ? Math.round(40 * OUT) : 0;
-  const legendH = legendItems.length ? Math.round(34 * OUT) : 0;
+  // The key is packed into as many rows as it needs, and the watermark gets a
+  // strip of its own: on one assumed row a wide key ran off the canvas, and
+  // straight through the watermark on its way out.
+  const markW = SharedLegend.W * OUT, legGap = Math.round(7 * OUT), legPad = Math.round(20 * OUT);
+  const legMargin = Math.round(16 * OUT), legRowH = Math.round(22 * OUT);
+  const wmH = Math.round(26 * OUT);
+  const measureCtx = document.createElement('canvas').getContext('2d');
+  measureCtx.font = `500 ${legendFontPx}px ${FONT}`;
+  const legendRows = legendItems.length
+    ? SharedLegend.layout(legendItems, s => measureCtx.measureText(s).width,
+                          chartW - legMargin * 2, markW, legGap, legPad)
+    : [];
+  const legendH = legendRows.length ? legendRows.length * legRowH + Math.round(8 * OUT) : 0;
 
   const tmp = document.createElement('canvas');
   tmp.width = chartW;
-  tmp.height = chartH + titleH + legendH;
+  tmp.height = chartH + titleH + legendH + wmH;
   const ctx = tmp.getContext('2d');
 
   ctx.fillStyle = bgColor;
@@ -2063,29 +2100,21 @@ function downloadChartPng(canvasId, filename, chartTitle, legendId, shouldDownlo
 
   ctx.drawImage(src, 0, titleH, chartW, chartH);
 
-  if(legendItems.length){
-    const ly = titleH + chartH;
-    const dotR = Math.round(5 * OUT);
-    const gap = Math.round(7 * OUT);
-    const pad = Math.round(20 * OUT);
+  if(legendRows.length){
     ctx.font = `500 ${legendFontPx}px ${FONT}`;
     ctx.textBaseline = 'middle';
-    let totalW = 0;
-    legendItems.forEach((item, i) => {
-      totalW += dotR * 2 + gap + ctx.measureText(item.label).width + (i < legendItems.length - 1 ? pad : 0);
-    });
-    let x = Math.max(Math.round(16 * OUT), (tmp.width - totalW) / 2);
-    const cy = ly + legendH / 2;
-    legendItems.forEach(item => {
-      ctx.fillStyle = item.color;
-      ctx.beginPath();
-      ctx.arc(x + dotR, cy, dotR, 0, Math.PI * 2);
-      ctx.fill();
-      x += dotR * 2 + gap;
-      ctx.fillStyle = fgColor;
-      ctx.textAlign = 'left';
-      ctx.fillText(item.label, x, cy);
-      x += ctx.measureText(item.label).width + pad;
+    const ly = titleH + chartH + Math.round(4 * OUT);
+    legendRows.forEach((row, ri) => {
+      let x = Math.max(legMargin, (tmp.width - row.width) / 2);
+      const cy = ly + legRowH * ri + legRowH / 2;
+      row.items.forEach(item => {
+        SharedLegend.paint(ctx, item.swatch || {color:item.color}, x, cy, OUT);
+        x += markW + legGap;
+        ctx.fillStyle = fgColor;
+        ctx.textAlign = 'left';
+        ctx.fillText(item.label, x, cy);
+        x += ctx.measureText(item.label).width + legPad;
+      });
     });
   }
 
@@ -2133,21 +2162,19 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId, legendItemsO
   const bgColor = isLight ? '#ffffff' : '#0F1728';
   const fgColor = isLight ? '#2D3436' : '#EAF1FF';
   const FONT = 'DM Sans, sans-serif';
-  const legendItems = legendItemsOverride ? legendItemsOverride.slice() : [];
-  if(!legendItemsOverride && legendId){
-    const legendEl = document.getElementById(legendId);
-    if(legendEl){
-      legendEl.querySelectorAll('.legend-item:not(.hidden)').forEach(item => {
-        const dot = item.querySelector('.dot');
-        const label = item.textContent.trim();
-        const color = dot ? window.getComputedStyle(dot).backgroundColor : '#888888';
-        if(label) legendItems.push({ label, color });
-      });
-    }
-  }
+  const legendItems = legendItemsOverride ? legendItemsOverride.slice()
+    : (legendId ? SharedLegend.itemsOf(legendId) : []);
   const titleH = chartTitle ? 40 : 0;
-  const legendH = legendItems.length ? 34 : 0;
-  const svgW = chartW, svgH = chartH + titleH + legendH;
+  // Same packing as the PNG, and the same strip kept clear for the watermark.
+  const markW = SharedLegend.W, legGap = 7, legPad = 20, legMargin = 16, legRowH = 22, wmH = 26;
+  const legMeasure = document.createElement('canvas').getContext('2d');
+  legMeasure.font = '500 11px DM Sans, sans-serif';
+  const legendRows = legendItems.length
+    ? SharedLegend.layout(legendItems, s => legMeasure.measureText(s).width,
+                          chartW - legMargin * 2, markW, legGap, legPad)
+    : [];
+  const legendH = legendRows.length ? legendRows.length * legRowH + 8 : 0;
+  const svgW = chartW, svgH = chartH + titleH + legendH + wmH;
   const NS = 'http://www.w3.org/2000/svg', xl = 'http://www.w3.org/1999/xlink';
   const svg = document.createElementNS(NS,'svg');
   svg.setAttribute('xmlns',NS); svg.setAttribute('xmlns:xlink',xl);
@@ -2168,25 +2195,20 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId, legendItemsO
   img.setAttribute('width',chartW); img.setAttribute('height',chartH);
   img.setAttributeNS(xl,'href',src.toDataURL('image/png'));
   svg.appendChild(img);
-  if(legendItems.length){
-    const dotR=5, gap=7, pad=20;
-    const cy = titleH + chartH + legendH/2;
-    const mc = document.createElement('canvas').getContext('2d');
-    mc.font = '500 11px DM Sans, sans-serif';
-    const totalW = legendItems.reduce((s,item,i) => s + dotR*2 + gap + mc.measureText(item.label).width + (i<legendItems.length-1?pad:0), 0);
-    let x = Math.max(16, (svgW - totalW) / 2);
-    legendItems.forEach(item => {
-      const c = document.createElementNS(NS,'circle');
-      c.setAttribute('cx',x+dotR); c.setAttribute('cy',cy); c.setAttribute('r',dotR); c.setAttribute('fill',item.color);
-      svg.appendChild(c); x += dotR*2 + gap;
+  legendRows.forEach((row, ri) => {
+    let x = Math.max(legMargin, (svgW - row.width) / 2);
+    const cy = titleH + chartH + 4 + legRowH * ri + legRowH / 2;
+    row.items.forEach(item => {
+      svg.appendChild(SharedLegend.svgNode(item.swatch || {color:item.color}, x, cy, 1));
+      x += markW + legGap;
       const lt = document.createElementNS(NS,'text');
       lt.setAttribute('x',x); lt.setAttribute('y',cy);
       lt.setAttribute('dominant-baseline','middle'); lt.setAttribute('font-family',FONT);
       lt.setAttribute('font-size','11'); lt.setAttribute('font-weight','500'); lt.setAttribute('fill',fgColor);
       lt.textContent = item.label; svg.appendChild(lt);
-      x += mc.measureText(item.label).width + pad;
+      x += legMeasure.measureText(item.label).width + legPad;
     });
-  }
+  });
   // Watermark text is baked to glyph outlines (WM_PATH) so the exported
   // SVG carries no editable/searchable string; renders identically.
   const wm = document.createElementNS(NS,'path');

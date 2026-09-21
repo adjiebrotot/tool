@@ -136,6 +136,7 @@ const LANG = {
     seriesOwnCost: 'Own — Accum. Cost (Mortgage+Ongoing)',
     seriesRentCost: 'Rent — Accum. Cost (Rent+Ongoing)',
     seriesRTBCost: 'Rent-Then-Buy — Accum. Cost',
+    seriesRateBand: 'Floating-rate range (min–max)',
     /* dynamic messages */
     kpiBreakevenYear: 'Year ',
     subInitialCashLeftover: (x) => `Leftover ${x} invested at risk-free rate from day one.`,
@@ -319,6 +320,7 @@ const LANG = {
     seriesOwnCost: 'Beli — Biaya Kumulatif (KPR+Rutin)',
     seriesRentCost: 'Sewa — Biaya Kumulatif (Sewa+Rutin)',
     seriesRTBCost: 'Sewa Dulu, Beli Kemudian — Biaya Kumulatif',
+    seriesRateBand: 'Rentang suku bunga mengambang (min–maks)',
     /* dynamic messages */
     kpiBreakevenYear: 'Tahun ',
     subInitialCashLeftover: (x) => `Sisa ${x} diinvestasikan pada suku bunga bebas risiko mulai hari pertama.`,
@@ -1555,23 +1557,31 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
 }
 
 /* ── CHART ── */
-function buildLegend(series){
+/* The key shows each line as the chart strokes it: a solid line for rent and
+   own, and for rent-then-buy the dashed line that changes colour at the year
+   of purchase. The shaded min–max band, when a floating rate puts one on the
+   chart, gets an entry of its own rather than going unexplained. */
+function buildLegend(series, hasBand){
   const el = $('chartLegend');
   el.innerHTML = '';
   series.forEach(s=>{
     const d = document.createElement('div');
     d.className='legend-item';
     const isRTB = s.key && s.key.includes('RTB');
-    if(isRTB){
-      d.innerHTML=`<span style="display:inline-flex;align-items:center;gap:2px;margin-right:2px;">
-        <span style="width:14px;height:0;border-top:2.5px dashed ${cssVar('--line-rtb-rent')};display:inline-block;"></span>
-        <span style="width:14px;height:0;border-top:2.5px dashed ${cssVar('--line-rtb-own')};display:inline-block;"></span>
-      </span><span>${s.label}</span>`;
-    } else {
-      d.innerHTML=`<span class="dot" style="background:${cssVar(s.colorVar)}"></span><span>${s.label}</span>`;
-    }
+    // The rent-then-buy swatch is the line in miniature: it changes colour at
+    // the marked year of purchase, exactly as the chart does.
+    SharedLegend.attach(d, isRTB
+      ? {colors:[cssVar('--line-rtb-rent'), cssVar('--line-rtb-own')], width:2.5, dash:[6,4],
+         point:{shape:'circle', fill:cssVar('--line-rtb-own'), stroke:'#fff', width:1.5, radius:3}}
+      : {color:cssVar(s.colorVar), width:2.5}, s.label);
     el.appendChild(d);
   });
+  if(hasBand){
+    const b = document.createElement('div');
+    b.className='legend-item';
+    SharedLegend.attach(b, {type:'area', fill:cssVar('--line-a')+'30', fill2:cssVar('--line-b')+'30'}, T('seriesRateBand'));
+    el.appendChild(b);
+  }
 }
 
 function getGraphSeries(){
@@ -1602,7 +1612,7 @@ function getGraphSeries(){
 
 function renderChart(rows){
   const series = getGraphSeries();
-  buildLegend(series);
+  buildLegend(series, !!latestHasBand);
   const sym = $('currencySymbol').value || '$';
   const yAxisTitle = activeGraph==='netEquity' ? `Net Equity (${sym})` : activeGraph==='cash' ? `Liquid Cash (${sym})` : `Accumulated Cost (${sym})`;
   // Use integer year numbers for labels — must be plain numbers, not strings
@@ -2120,10 +2130,9 @@ function chartExportMeta(){
   const chartTitleMap = {netEquity:'Rent vs Own — Net Equity Over Time', cash:'Rent vs Own — Liquid Cash Over Time', cost:'Rent vs Own — Accumulated Cost Over Time'};
   return {
     title: chartTitleMap[activeGraph] || 'Rent vs Own — Financial Comparison',
-    legendItems: getGraphSeries().map(s => ({
-      label: s.label,
-      color: s.key && s.key.includes('RTB') ? cssVar('--line-rtb-own') : cssVar(s.colorVar),
-    })),
+    // Read off the key on the page, so the export carries the same marks the
+    // reader just saw — dashed two-colour line and shaded band included.
+    legendItems: SharedLegend.itemsOf('chartLegend'),
   };
 }
 function downloadChartPng() {
