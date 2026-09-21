@@ -170,7 +170,6 @@ tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
 .chart-modal .chart-export-btn{flex:0 0 auto;min-width:48px;padding:6px 10px;font-size:.68rem;line-height:1;white-space:nowrap;text-align:center;font-weight:600;}
 .chart-modal .legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:.86rem;}
 .chart-modal .legend-item{display:flex;align-items:center;gap:7px;}
-.chart-modal .dot{width:11px;height:11px;border-radius:999px;flex-shrink:0;}
 .chart-modal .hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:20px;}
 
 /* ── CSV action button group (⬆ CSV · ⬇ CSV · 📈 Compare) ── */
@@ -191,8 +190,8 @@ tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
 .gc-scen-name{color:var(--text);font-weight:600;white-space:nowrap;}
 .gc-line-hint{display:flex;align-items:center;gap:18px;font-size:.8rem;color:var(--muted);margin-bottom:10px;}
 .gc-line-key{display:inline-flex;align-items:center;gap:8px;}
-.gc-line-sample{display:inline-block;width:28px;height:0;border-top:2.5px solid var(--text);}
-.gc-line-dotted{border-top-style:dotted;border-top-width:3px;}
+/* The samples are drawn by SharedLegend now, so they are the chart's own
+   marks rather than a CSS border that only resembled them. */
 
 /* Footer */
 .page-footer{margin-top:18px;}

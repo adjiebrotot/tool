@@ -1941,7 +1941,7 @@ function updateValueChart(){
     valueDsPairs[idx]={value:valueIdx, topup:topupIdx};
 
     const item=document.createElement('div'); item.className='legend-item';
-    item.innerHTML=`<span class="dot" style="background:${color}"></span><span>${res.name}</span>`;
+    SharedLegend.attach(item, SharedLegend.fromDataset(datasets[valueIdx]), res.name);
     item.addEventListener('click',()=>{
       if(!valueChart) return;
       // Hiding a portfolio's value line also hides its top-ups line; showing it
@@ -1955,6 +1955,15 @@ function updateValueChart(){
     });
     legendEl.appendChild(item);
   });
+
+  // The dashed line drawn alongside every portfolio means the same thing for
+  // all of them, so it is explained once, as the dashed line it is.
+  if(showTopups && simResults.length){
+    const note=document.createElement('div');
+    note.className='legend-item legend-note'; note.style.cursor='default';
+    SharedLegend.attach(note, {color:cssVar('--muted'), width:1.5, dash:[6,4]}, 'Cumulative top-ups (per portfolio)');
+    legendEl.appendChild(note);
+  }
 
   const yCb=v=>fmt.currency(v,true);
   const opts={
@@ -2000,7 +2009,7 @@ function updateCompChart(){
 
   series.forEach((s,idx)=>{
     const item=document.createElement('div'); item.className='legend-item';
-    item.innerHTML=`<span class="dot" style="background:${s.color}"></span><span>${s.label}</span>`;
+    SharedLegend.attach(item, SharedLegend.fromDataset(datasets[idx]), s.label);
     item.addEventListener('click',()=>{
       if(hidden.has(idx)) hidden.delete(idx); else hidden.add(idx);
       item.classList.toggle('hidden',hidden.has(idx));
@@ -2144,7 +2153,9 @@ function updatePriceChart(){
     const hidden=priceHidden.has(idx);
     const item=document.createElement('div');
     item.className='legend-item'+(hidden?' hidden':'');
-    item.innerHTML=`<span class="dot" style="background:${color}"></span><span>${escapeHtml(a.name)}</span>`;
+    SharedLegend.attach(item, showCandles
+      ? {type:'candle', color, fill:color}
+      : {color, width:2.5}, a.name);
     item.addEventListener('click',()=>{
       if(priceHidden.has(idx)) priceHidden.delete(idx); else priceHidden.add(idx);
       updatePriceChart();
@@ -2158,6 +2169,15 @@ function updatePriceChart(){
     if(showCandles) ds._ohlc=buildPriceOHLC(a.px);
     return ds;
   });
+
+  // One triangle mark for every asset, so the key explains it once.
+  if(showBuyDates && assets.length){
+    const note=document.createElement('div');
+    note.className='legend-item'; note.style.cursor='default';
+    SharedLegend.attach(note, {type:'point', color:cssVar('--muted'),
+      point:{shape:'triangle', fill:cssVar('--muted'), radius:3.4}}, 'Buy date');
+    legendEl.appendChild(note);
+  }
 
   // Per-asset buy markers (▲): each asset is bought on its own days (a trigger
   // fires or a top-up deploys into it), read straight from rows[i].bought.
@@ -2222,6 +2242,17 @@ function updatePriceChart(){
       });
     });
   }
+  // Overlay lines used to appear on the chart with nothing in the key to name
+  // them. Each one now has an entry drawn from its own dataset.
+  datasets.filter(ds=>ds._indicator).forEach(ds=>{
+    const note=document.createElement('div');
+    note.className='legend-item'; note.style.cursor='default';
+    SharedLegend.attach(note, ds._hist
+      ? {type:'bar', color:cssVar('--muted'), fill:cssVar('--muted')}
+      : SharedLegend.fromDataset(ds), ds.label);
+    legendEl.appendChild(note);
+  });
+
   const oscGroupKeys=[...oscGroups.keys()];
   const hasOsc=oscGroupKeys.length>0;
   const wrap=$('priceCanvasWrap'); if(wrap) wrap.classList.toggle('has-osc', hasOsc);
@@ -2459,20 +2490,32 @@ function exportChartPng(canvasId, filename, chartTitle, legendId, download=true)
   const chartW=Math.round(src.width/dpr*OUT), chartH=Math.round(src.height/dpr*OUT);
   const isLight=document.body.classList.contains('light');
   const bg=isLight?'#ffffff':'#0F1728', fg=isLight?'#2D3436':'#EAF1FF', FONT='"DM Sans", sans-serif';
-  const items=[];
-  if(legendId){ const le=$(legendId); if(le) le.querySelectorAll('.legend-item:not(.hidden)').forEach(it=>{ const dot=it.querySelector('.dot'); const label=it.textContent.trim(); const color=dot?getComputedStyle(dot).backgroundColor:'#888'; if(label) items.push({label,color}); }); }
-  const titleH=chartTitle?Math.round(40*OUT):0, legendH=items.length?Math.round(34*OUT):0;
-  const tmp=document.createElement('canvas'); tmp.width=chartW; tmp.height=chartH+titleH+legendH;
+  // Each entry keeps the mark it is drawn with, so the exported key is the
+  // page's key rather than a row of identical dots.
+  const items=legendId?SharedLegend.itemsOf(legendId):[];
+  const titleH=chartTitle?Math.round(40*OUT):0;
+  // The key wraps onto as many rows as it needs, and the watermark keeps a
+  // strip of its own beneath it rather than sharing the legend's.
+  const markW=SharedLegend.W*OUT, legGap=Math.round(7*OUT), legPad=Math.round(20*OUT);
+  const legMargin=Math.round(16*OUT), legRowH=Math.round(22*OUT), wmH=Math.round(26*OUT);
+  const legMeasure=document.createElement('canvas').getContext('2d');
+  legMeasure.font=`500 ${Math.round(11*OUT)}px ${FONT}`;
+  const legendRows=items.length
+    ? SharedLegend.layout(items, s=>legMeasure.measureText(s).width, chartW-legMargin*2, markW, legGap, legPad)
+    : [];
+  const legendH=legendRows.length?legendRows.length*legRowH+Math.round(8*OUT):0;
+  const tmp=document.createElement('canvas'); tmp.width=chartW; tmp.height=chartH+titleH+legendH+wmH;
   const ctx=tmp.getContext('2d');
   ctx.fillStyle=bg; ctx.fillRect(0,0,tmp.width,tmp.height);
   if(chartTitle){ ctx.font=`700 ${Math.round(14*OUT)}px ${FONT}`; ctx.fillStyle=fg; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(chartTitle,tmp.width/2,titleH/2); }
   ctx.drawImage(src,0,titleH,chartW,chartH);
-  if(items.length){
-    const ly=titleH+chartH, dotR=Math.round(5*OUT), gap=Math.round(7*OUT), pad=Math.round(20*OUT);
+  if(legendRows.length){
+    const ly=titleH+chartH+Math.round(4*OUT);
     ctx.font=`500 ${Math.round(11*OUT)}px ${FONT}`; ctx.textBaseline='middle';
-    let totalW=0; items.forEach((it,i)=>{ totalW+=dotR*2+gap+ctx.measureText(it.label).width+(i<items.length-1?pad:0); });
-    let x=Math.max(Math.round(16*OUT),(tmp.width-totalW)/2); const cy=ly+legendH/2;
-    items.forEach(it=>{ ctx.fillStyle=it.color; ctx.beginPath(); ctx.arc(x+dotR,cy,dotR,0,Math.PI*2); ctx.fill(); x+=dotR*2+gap; ctx.fillStyle=fg; ctx.textAlign='left'; ctx.fillText(it.label,x,cy); x+=ctx.measureText(it.label).width+pad; });
+    legendRows.forEach((row,ri)=>{
+      let x=Math.max(legMargin,(tmp.width-row.width)/2); const cy=ly+legRowH*ri+legRowH/2;
+      row.items.forEach(it=>{ SharedLegend.paint(ctx,it.swatch||{color:it.color},x,cy,OUT); x+=markW+legGap; ctx.fillStyle=fg; ctx.textAlign='left'; ctx.fillText(it.label,x,cy); x+=ctx.measureText(it.label).width+legPad; });
+    });
   }
   ctx.save(); ctx.globalAlpha=0.22; ctx.font=`500 ${Math.round(11*OUT)}px ${FONT}`; ctx.fillStyle='#1a1a1a'; ctx.textAlign='right'; ctx.textBaseline='bottom';
   const wmText='Made using tool.adjiebrotots.com/dcasimulator/portfolio';
@@ -2500,10 +2543,16 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId){
   const isLight=document.body.classList.contains('light');
   const bg=isLight?'#ffffff':'#0F1728', fg=isLight?'#2D3436':'#EAF1FF';
   const FONT='DM Sans, sans-serif';
-  const items=[];
-  if(legendId){ const le=$(legendId); if(le) le.querySelectorAll('.legend-item:not(.hidden)').forEach(it=>{ const dot=it.querySelector('.dot'); const label=it.textContent.trim(); const color=dot?getComputedStyle(dot).backgroundColor:'#888'; if(label) items.push({label,color}); }); }
-  const titleH=chartTitle?40:0, legendH=items.length?34:0;
-  const svgW=chartW, svgH=chartH+titleH+legendH;
+  const items=legendId?SharedLegend.itemsOf(legendId):[];
+  const titleH=chartTitle?40:0;
+  const markW=SharedLegend.W, legGap=7, legPad=20, legMargin=16, legRowH=22, wmH=26;
+  const legMeasure=document.createElement('canvas').getContext('2d');
+  legMeasure.font='500 11px DM Sans, sans-serif';
+  const legendRows=items.length
+    ? SharedLegend.layout(items, s=>legMeasure.measureText(s).width, chartW-legMargin*2, markW, legGap, legPad)
+    : [];
+  const legendH=legendRows.length?legendRows.length*legRowH+8:0;
+  const svgW=chartW, svgH=chartH+titleH+legendH+wmH;
   const NS='http://www.w3.org/2000/svg', xl='http://www.w3.org/1999/xlink';
   const svg=document.createElementNS(NS,'svg');
   svg.setAttribute('xmlns',NS); svg.setAttribute('xmlns:xlink',xl);
@@ -2520,19 +2569,18 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId){
   img.setAttribute('x',0); img.setAttribute('y',titleH); img.setAttribute('width',chartW); img.setAttribute('height',chartH);
   img.setAttributeNS(xl,'href',srcC.toDataURL('image/png')); svg.appendChild(img);
   const mc=document.createElement('canvas').getContext('2d'); mc.font='500 11px DM Sans, sans-serif';
-  if(items.length){
-    const dotR=5,gap=7,pad=20; const cy=titleH+chartH+legendH/2;
-    const totalW=items.reduce((s,it,i)=>s+dotR*2+gap+mc.measureText(it.label).width+(i<items.length-1?pad:0),0);
-    let x=Math.max(16,(svgW-totalW)/2);
-    items.forEach(it=>{
-      const c=document.createElementNS(NS,'circle'); c.setAttribute('cx',x+dotR); c.setAttribute('cy',cy); c.setAttribute('r',dotR); c.setAttribute('fill',it.color); svg.appendChild(c);
-      x+=dotR*2+gap;
+  legendRows.forEach((row,ri)=>{
+    let x=Math.max(legMargin,(svgW-row.width)/2);
+    const cy=titleH+chartH+4+legRowH*ri+legRowH/2;
+    row.items.forEach(it=>{
+      svg.appendChild(SharedLegend.svgNode(it.swatch||{color:it.color}, x, cy, 1));
+      x+=markW+legGap;
       const lt=document.createElementNS(NS,'text'); lt.setAttribute('x',x); lt.setAttribute('y',cy); lt.setAttribute('dominant-baseline','middle');
       lt.setAttribute('font-family',FONT); lt.setAttribute('font-size','11'); lt.setAttribute('font-weight','500'); lt.setAttribute('fill',fg);
       lt.textContent=it.label; svg.appendChild(lt);
-      x+=mc.measureText(it.label).width+pad;
+      x+=legMeasure.measureText(it.label).width+legPad;
     });
-  }
+  });
   // Watermark: logo + wordmark, bottom-right (matches the PNG export wording).
   const wmText='Made using tool.adjiebrotots.com/dcasimulator/portfolio';
   const wmTextW=mc.measureText(wmText).width, wmLogoSize=13;
@@ -2577,6 +2625,17 @@ $('showTopupsToggle').addEventListener('change',e=>{
     // Only reveal a top-ups line when its portfolio's value line is also visible.
     valueDsPairs.forEach((pair,idx)=>{ if(pair) valueChart.setDatasetVisibility(pair.topup, showTopups && !hiddenPf.has(idx)); });
     valueChart.update();
+    // ...and let the key gain or lose its dashed entry with the lines.
+    const legendEl=$('valueLegend');
+    if(legendEl){
+      const note=legendEl.querySelector('.legend-note');
+      if(showTopups && !note){
+        const el=document.createElement('div');
+        el.className='legend-item legend-note'; el.style.cursor='default';
+        SharedLegend.attach(el, {color:cssVar('--muted'), width:1.5, dash:[6,4]}, 'Cumulative top-ups (per portfolio)');
+        legendEl.appendChild(el);
+      } else if(!showTopups && note){ note.remove(); }
+    }
   }
 });
 

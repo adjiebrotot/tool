@@ -40,7 +40,7 @@ Shared, cross-tool files live at the repo root:
 | File | What it is |
 | --- | --- |
 | `shared.css`, `light.css`, `dark.css` | The design system and the two colour themes. |
-| `shared.js` | `SharedFmt` (number input formatting), `SharedYF` (market data via the self-hosted Cloudflare Worker in `dcasimulator/yf-proxy-worker.js`), `SharedTA` (technical indicators), `SharedConfig` (config download/upload), `Persist` (mini cache), `SharedTooltip`, `SharedAbbr` (the abbreviation glossary: subject-matter jargon found in page text gets a dashed underline and a hover definition). |
+| `shared.js` | `SharedFmt` (number input formatting), `SharedYF` (market data via the self-hosted Cloudflare Worker in `dcasimulator/yf-proxy-worker.js`), `SharedTA` (technical indicators), `SharedConfig` (config download/upload), `SharedLegend` (chart legend swatches: each entry is drawn with the mark its series is drawn with — solid, dashed, dotted, shaded band, marker — on the page and in the PNG/SVG exports alike), `Persist` (mini cache), `SharedTooltip`, `SharedAbbr` (the abbreviation glossary: subject-matter jargon found in page text gets a dashed underline and a hover definition). |
 | `tour-shared.js`, `tour-shared.css` | The guided-tour engine. A tool opts in with a `tour.js` that sets `window.__TOUR = { seenKey, launchLabel, steps }` and loads `tour-shared.js` after it. |
 | `_ref/` | Build-time helpers and the design reference — not shipped to users. |
 

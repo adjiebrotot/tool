@@ -84,6 +84,13 @@ abbr.abbr:focus-visible,.abbr:focus-visible{outline:none;}
 .page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;}
 .page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:.9rem;}
 
+/* Legend swatch — the mark a series is actually drawn with (SharedLegend).
+   A line stays a line, a dotted line stays dotted, a shaded range stays a
+   block, a marker keeps its shape, so the key never contradicts the chart. */
+.legend-swatch{display:inline-flex;align-items:center;justify-content:center;width:22px;height:12px;flex-shrink:0;line-height:0;}
+.legend-swatch svg{display:block;overflow:visible;}
+.legend-label{white-space:normal;}
+
 /* ============================================================
    RESET & BASE
    ============================================================ */
