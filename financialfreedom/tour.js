@@ -57,7 +57,7 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="you"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '④ Section 1 — how early could you stop?',
+      title: '④ Path to freedom — how early could you stop?',
       body: 'The red line is the pot you would need if you stopped at that age, which falls ' +
             'as you get older because there are fewer years left to fund. The blue line is ' +
             'what your investment grows to, and <strong>nothing is ever withdrawn from it ' +
@@ -67,19 +67,19 @@ window.__TOUR = {
     },
     {
       target: '#retireSlider',
-      title: '⑤ Section 2 — drag the retirement age',
-      body: 'This slider is the whole of section 2. It runs from <strong>stop today</strong> ' +
-            'to <strong>never stop</strong>, and everything below it — the four cards, the ' +
-            'cashflow chart and the table — is measured at whatever age you leave it on. ' +
-            'Section 1 does not move, because how early you <em>could</em> stop does not ' +
-            'depend on when you <em>choose</em> to.'
+      title: '⑤ Cashflows — drag the retirement age',
+      body: 'This slider is the whole of Cashflows. It runs from <strong>stop today</strong> ' +
+            'to <strong>never stop</strong>, and everything below it — the four cards, the two ' +
+            'charts and the table — is measured at whatever age you leave it on. ' +
+            '<strong>Path to freedom</strong> does not move, because how early you ' +
+            '<em>could</em> stop does not depend on when you <em>choose</em> to.'
     },
     {
       target: '#boardCash .chart-card',
       title: '⑥ Where the money comes from, and goes',
       body: 'Income against spending, with the gap filled: green while you save it, red once ' +
-            'the pot has to cover it. The balance rides behind them on the right-hand axis, ' +
-            'so you can watch it top out the year you stop and slide from there. ' +
+            'the pot has to cover it. The balance it leaves behind is the chart underneath, ' +
+            'zoomed and panned with this one so a year lines up between them. ' +
             '<strong>Retire earlier and the slide starts sooner.</strong>'
     },
     {

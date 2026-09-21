@@ -48,17 +48,13 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 
 /* ── The two boards ──
    The page answers two different questions and they are not the same question,
-   so each one gets a band of its own: a kicker, a heading, a sentence saying
-   what it is for, and then the cards, the chart and the table that belong to
-   it. The rule down the left is what stops the two reading as one long scroll. */
+   so each one gets a band of its own: a heading, then the cards, the charts and
+   the table that belong to it. The rule down the left is what stops the two
+   reading as one long scroll. */
 .board{margin:0 0 26px;padding-left:16px;border-left:3px solid var(--accent);}
 #boardCash{border-left-color:var(--accent2);}
 .board-head{margin:0 0 14px;}
-.board-kicker{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);}
-#boardCash .board-kicker{color:var(--accent2);}
-.board-head h2{margin:2px 0 6px;font-size:1.3rem;}
-.board-lede{margin:0;color:var(--muted);font-size:.88rem;line-height:1.55;max-width:74ch;}
-.board-lede strong{color:var(--text);}
+.board-head h2{margin:0 0 6px;font-size:1.3rem;}
 .chart-head h3,.detail-head h3{margin:0;font-size:1.02rem;display:flex;align-items:center;gap:6px;}
 
 /* ── Retirement-age sensitivity slider ──
@@ -118,6 +114,10 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .dot.dash{border-radius:2px;height:4px;width:16px;}
 .dot.band{border-radius:3px;height:11px;width:16px;}
 .dot.ring{background:transparent;border:2.5px solid currentColor;}
+/* One entry, two colours: a fill that is a surplus on one side of the line
+   it is measured against and a deficit on the other is still ONE quantity,
+   so it gets one swatch split down the middle rather than two entries. */
+.dot.split{border-radius:3px;height:11px;width:16px;}
 .canvas-wrap{height:430px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
 .hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:22px;line-height:1.5;}
 
@@ -132,9 +132,10 @@ th{color:var(--muted);font-size:.72rem;font-weight:700;text-transform:uppercase;
 .table-wrap{max-height:460px;overflow:auto;}
 tr:hover td{background:rgba(141,187,255,.05);}
 body.light tr:hover td{background:rgba(90,145,232,.05);}
-tr.free td{background:rgba(141,187,255,.12);font-weight:700;}
+/* The marked row is the RETIREMENT year: this table is measured at the age on
+   the Cashflows slider, not at the freedom age section 1 solves for. */
+tr.free td{background:rgba(141,187,255,.12);font-weight:700;border-top:1.5px solid var(--accent2);}
 body.light tr.free td{background:rgba(90,145,232,.12);}
-tr.retire td{border-top:1.5px solid var(--accent2);}
 td.neg{color:var(--data-neg-em);}
 td.pos{color:var(--data-pos-em);}
 .assumptions{margin:0;padding-left:18px;color:var(--muted);font-size:.85rem;line-height:1.65;}

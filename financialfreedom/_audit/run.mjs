@@ -30,16 +30,26 @@ class Chart {
     this.config = cfg;
     this.data = (cfg && cfg.data) || {datasets: []};
     this.options = (cfg && cfg.options) || {};
+    // The page reads chart.scales to decide which axes exist before moving them.
+    this.scales = this.options.scales || {};
     this._hidden = {};
     window.__charts.push(this);
   }
   update(){}
   destroy(){ const i = window.__charts.indexOf(this); if(i >= 0) window.__charts.splice(i, 1); }
   resetZoom(){}
+  zoomScale(id, range){
+    const s = this.options.scales && this.options.scales[id];
+    if(s){ s.min = range.min; s.max = range.max; }
+  }
   isDatasetVisible(i){ return !this._hidden[i]; }
   setDatasetVisibility(i, v){ this._hidden[i] = !v; }
 }
 Chart.register = function(){};
+// Enough of the real interaction surface for the page's own x-value tooltip
+// mode to register and be driven against hand-built metas.
+Chart.Interaction = {modes: {}};
+Chart.helpers = {getRelativePosition: function(e){ return e; }};
 window.Chart = Chart;`;
 
 let pass = 0, fail = 0;
@@ -791,8 +801,11 @@ console.log('\n── Page and presentation ──');
       })),
       card: !!document.getElementById('mConfPot'),
       succSub: document.getElementById('mSuccessSub').textContent,
+      kickers: document.querySelectorAll('.board-kicker').length,
+      ledes: document.querySelectorAll('.board-lede').length,
       sub1: document.getElementById('chart1Sub').textContent,
-      sub2: document.getElementById('chart2Sub').textContent
+      sub2: document.getElementById('chart2Sub').textContent,
+      sub3: document.getElementById('chart3Sub').textContent
     };
   });
   const path = r.boards.find(b => b.id === 'boardPath') || {labels: []};
@@ -800,19 +813,26 @@ console.log('\n── Page and presentation ──');
   check('F48 the page is split into a Path to freedom board and a Cashflows board',
     r.boards.length === 2 && /path to freedom/i.test(path.heading || '') && /cashflows/i.test(cash.heading || ''),
     r.boards.map(b => b.id + ': ' + b.heading).join(' | '));
-  check('F48b each board owns its own cards, and only one owns the chart and the table',
-    path.cards === 3 && cash.cards === 4 && path.charts === 1 && cash.charts === 1 &&
+  check('F48b each board owns its own cards, and only one owns the table',
+    path.cards === 3 && cash.cards === 4 && path.charts === 1 && cash.charts === 2 &&
     path.tables === 0 && cash.tables === 1,
-    `path ${path.cards} cards / ${path.tables} tables, cash ${cash.cards} cards / ${cash.tables} tables`);
+    `path ${path.cards} cards / ${path.charts} charts / ${path.tables} tables, ` +
+    `cash ${cash.cards} cards / ${cash.charts} charts / ${cash.tables} tables`);
   check('F48c section 1 never names a retirement age, section 2 names it on every card that has one',
     !path.labels.some(l => /\bat 60\b/.test(l)) && cash.labels.filter(l => /\bat 60\b/.test(l)).length === 2,
     `path: ${path.labels.join(' | ')}  ||  cash: ${cash.labels.join(' | ')}`);
   check('F48d the "Pot for that confidence" card is still gone, but not the figure',
     !r.card && /confidence (needs|is out of reach)/.test(r.succSub), r.succSub);
-  check('F48e and each chart subtitle says what the legend cannot: which one withdraws',
-    /no withdrawal appears here/i.test(r.sub1) && !/no withdrawal/i.test(r.sub2) &&
-    /income falls to the pension/i.test(r.sub2),
-    r.sub1.slice(0, 60) + ' // ' + r.sub2.slice(0, 60));
+  /* The standing explanations are gone: the kicker that numbered each board,
+     the lede under each heading, and the subtitle sentence that repeated what
+     the legend and the cards already say. A subtitle now only carries what
+     changes with the plan. */
+  check('F48e the board kickers and ledes are gone',
+    r.kickers === 0 && r.ledes === 0, `${r.kickers} kickers, ${r.ledes} ledes`);
+  check('F48f and no subtitle repeats what the legend already says',
+    !/no withdrawal/i.test(r.sub1) && !/no withdrawal/i.test(r.sub2) &&
+    /income falls to the pension/i.test(r.sub2) && /moves the other/i.test(r.sub3),
+    `1: "${r.sub1}" // 2: "${r.sub2.slice(0, 40)}" // 3: "${r.sub3.slice(0, 40)}"`);
 }
 
 /* F49: a point between two yearly samples is a DATE, not a decimal. The
@@ -857,21 +877,22 @@ console.log('\n── Page and presentation ──');
   const r = await page.evaluate(() => {
     const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
     const cash = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Income'));
+    const balc = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Balance'));
     const sx = path.options.scales.x;
     const openedAt = {min: sx.min, max: sx.max};
     // Each chart opens on its own window now, so the cashflow fitters are
     // probed against the cashflow chart's x scale, not the path chart's.
-    const cxs = cash.options.scales.x;
-    // $fitY is a MAP of scale id to fitter, because the cashflow chart carries
-    // two y axes: a yearly flow on the left and a balance on the right.
+    const cxs = cash.options.scales.x, bxs = balc.options.scales.x;
+    // $fitY is a MAP of scale id to fitter. Each chart carries one y axis
+    // again, because the flows and the balance no longer share a plot area.
     const lim = path.options.plugins.zoom.limits.x;
     const full = path.$fitY.y(lim.min, lim.max);      // the whole plan, zoomed out
     const early = path.$fitY.y(sx.min, sx.min + 5);
     const mid = path.$fitY.y(sx.min, sx.min + 25);
     const cashFull = cash.$fitY.y(cxs.min, cxs.max);
     const cashEarly = cash.$fitY.y(cxs.min, cxs.min + 5);
-    const balFull = cash.$fitY.y2(cxs.min, cxs.max);
-    const balEarly = cash.$fitY.y2(cxs.min, cxs.min + 5);
+    const balFull = balc.$fitY.y(bxs.min, bxs.max);
+    const balEarly = balc.$fitY.y(bxs.min, bxs.min + 5);
     /* Drive the wiring, not just the arithmetic. The refit is a chart plugin
        rather than a zoom callback, because it has to run inside the update the
        gesture triggers: the zoom plugin writes the window it is about to draw
@@ -889,22 +910,31 @@ console.log('\n── Page and presentation ──');
     const widest = {min: path.options.scales.y.min, max: path.options.scales.y.max};
     sx.min = openedAt.min; sx.max = openedAt.max;
     plug.forEach(p => p.beforeUpdate(path));
-    // And the SAME pass has to move both of the cashflow chart's axes, or the
-    // balance is left drawn against a scale for a window it is not in.
+    // Both cashflow charts carry the refit, so a shared zoom sizes each of
+    // them to the window they were both moved to.
     const cashPlug = (cash.config.plugins || []).filter(p => p.id === 'ffYFit');
-    const cx = cxs, cashOpened = {min: cx.min, max: cx.max};
-    cx.min = cashOpened.min; cx.max = cashOpened.min + 5;
+    const balPlug = (balc.config.plugins || []).filter(p => p.id === 'ffYFit');
+    const cashOpened = {min: cxs.min, max: cxs.max};
+    cxs.min = cashOpened.min; cxs.max = cashOpened.min + 5;
+    bxs.min = cashOpened.min; bxs.max = cashOpened.min + 5;
     cashPlug.forEach(p => p.beforeUpdate(cash));
-    const bothMoved = {y: cash.options.scales.y.max, y2: cash.options.scales.y2.max};
-    cx.min = cashOpened.min; cx.max = cashOpened.max;
+    balPlug.forEach(p => p.beforeUpdate(balc));
+    const bothMoved = {y: cash.options.scales.y.max, y2: balc.options.scales.y.max};
+    cxs.min = cashOpened.min; cxs.max = cashOpened.max;
+    bxs.min = cashOpened.min; bxs.max = cashOpened.max;
     cashPlug.forEach(p => p.beforeUpdate(cash));
+    balPlug.forEach(p => p.beforeUpdate(balc));
     return {
       full, early, mid, cashFull, cashEarly, balFull, balEarly, bothMoved,
       zoomed, restored, widest, opened: path.$fitY.y(openedAt.min, openedAt.max), openedAt,
       plugged: plug.length === 1 &&
-               (cash.config.plugins || []).some(p => p.id === 'ffYFit'),
-      // A second update chasing the first is what leaves the lines drawn on the
-      // old scale, so nothing may hang off the gesture itself.
+               (cash.config.plugins || []).some(p => p.id === 'ffYFit') &&
+               (balc.config.plugins || []).some(p => p.id === 'ffYFit'),
+      /* A second update chasing the first is what leaves the lines drawn on
+         the old scale, so the REFIT may not hang off the gesture: the path
+         chart, which is linked to nothing, has no gesture callbacks at all.
+         The two cashflow charts do, and they carry the x window across to
+         each other, never the y refit — that is still the plugin's job. */
       noCallbacks: !path.options.plugins.zoom.zoom.onZoom &&
                    !path.options.plugins.zoom.pan.onPan
     };
@@ -931,7 +961,7 @@ console.log('\n── Page and presentation ──');
   check('F50g the cash flow axis keeps zero and drops its ceiling to the years shown',
     r.cashEarly.min === 0 && r.cashEarly.max < r.cashFull.max / 2,
     `first five years ${r.cashEarly.max.toFixed(0)} vs whole plan ${r.cashFull.max.toFixed(0)}`);
-  check('F50i the balance axis on the right is refitted by the same pass, not left behind',
+  check('F50i the balance chart is refitted to the shared window too, not left behind',
     close(r.bothMoved.y, r.cashEarly.max, 1e-6) && close(r.bothMoved.y2, r.balEarly.max, 1e-6) &&
     r.balEarly.max < r.balFull.max && r.balEarly.min === 0,
     `flow ${r.bothMoved.y.toFixed(0)}, balance ${r.bothMoved.y2.toFixed(0)} (whole plan ${r.balFull.max.toFixed(0)})`);
@@ -941,22 +971,38 @@ console.log('\n── Page and presentation ──');
      that pass is the zoomed one, and it is left stranded across an axis it no
      longer belongs to. The plain update afterwards is what rebuilds it. */
   const calls = await page.evaluate(() => {
-    const out = [];
-    [['Investment outcome', 'resetZoom1'], ['Income', 'resetZoom2']].forEach(([label, btn]) => {
-      const c = window.__charts.find(ch => ch.data.datasets.some(d => d.label === label));
-      const reset = c.resetZoom, update = c.update;
-      c.resetZoom = t => out.push(label + ' resetZoom(' + t + ')');
-      c.update = t => out.push(label + ' update(' + t + ')');
+    const spy = (labels, btn) => {
+      const out = [];
+      const saved = labels.map(label => {
+        const c = window.__charts.find(ch => ch.data.datasets.some(d => d.label === label));
+        const keep = {c, reset: c.resetZoom, update: c.update};
+        c.resetZoom = t => out.push(label + ' resetZoom(' + t + ')');
+        c.update = t => out.push(label + ' update(' + t + ')');
+        return keep;
+      });
       document.getElementById(btn).click();
-      c.resetZoom = reset; c.update = update;
-    });
-    return out;
+      saved.forEach(k => { k.c.resetZoom = k.reset; k.c.update = k.update; });
+      return out;
+    };
+    return {
+      path: spy(['Investment outcome'], 'resetZoom1'),
+      cash: spy(['Income', 'Balance'], 'resetZoom2'),
+      bal: spy(['Income', 'Balance'], 'resetZoom3')
+    };
   });
+  const repaints = c => c.length === 2 && c.every(x => /\(none\)$/.test(x)) &&
+                        /resetZoom/.test(c[0]) && /update/.test(c[1]);
   check('F50h resetting the zoom repaints once more, so the ticks are rebuilt too',
-    calls.length === 4 && calls.every(c => /\((none)\)$/.test(c)) &&
-    /resetZoom/.test(calls[0]) && /update/.test(calls[1]) &&
-    /resetZoom/.test(calls[2]) && /update/.test(calls[3]),
-    calls.join(', ') || 'nothing called');
+    repaints(calls.path), calls.path.join(', ') || 'nothing called');
+  /* The two cashflow charts share an x window, so a reset that put one back and
+     left the other zoomed in would break the alignment the link exists for.
+     Either button resets the pair. */
+  check('F50j and either cashflow reset puts BOTH of them back',
+    repaints(calls.cash.filter(c => /^Income/.test(c))) &&
+    repaints(calls.cash.filter(c => /^Balance/.test(c))) &&
+    repaints(calls.bal.filter(c => /^Income/.test(c))) &&
+    repaints(calls.bal.filter(c => /^Balance/.test(c))),
+    `⟳ flows: ${calls.cash.join(', ')} || ⟳ balance: ${calls.bal.join(', ')}`);
 }
 
 /* Everything from here down reads the plan in today's money, because the
@@ -1610,18 +1656,20 @@ for(const [name, extra] of [
     !heads.some(h => /pot|gap|or spent/i.test(h)), heads.join(' | '));
 }
 
-/* ── The two charts, after the overhaul ──
-   Section 1 is three lines and a band and NEVER withdraws. Section 2 is income
-   against spending with the balance on its own axis, at the age on the slider.
-   Everything below is read off the chart configs the page actually built. */
+/* ── The three charts, after the overhaul ──
+   Path to freedom is three lines and a band and NEVER withdraws. Cashflows is
+   income against spending, and underneath it, on its own chart and its own x
+   window moved in step, the balance they leave behind — both at the age on the
+   slider. Everything below is read off the chart configs the page built. */
 {
   const r = await page.evaluate(() => {
     const res = window.__FF.last;
     const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
     const cash = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Income'));
+    const balc = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Balance'));
     const label = (c, l) => c.data.datasets.find(d => d.label === l);
     const dep = label(path, 'Money deposited');
-    const inc = label(cash, 'Income'), spend = label(cash, 'Spending'), bal = label(cash, 'Balance');
+    const inc = label(cash, 'Income'), spend = label(cash, 'Spending'), bal = label(balc, 'Balance');
     const xs = d => d.data.map(p => p.x);
     const acc = label(path, 'Investment outcome');
     const retIdx = Math.round(res.P.ageRetire - res.P.ageNow);
@@ -1648,15 +1696,24 @@ for(const [name, extra] of [
       fill: inc.fill,
       fillTargetLabel: cash.data.datasets[inc.fill.target] ? cash.data.datasets[inc.fill.target].label : null,
       yTitle: cash.options.scales.y.title.text,
-      y2Title: cash.options.scales.y2 ? cash.options.scales.y2.title.text : null,
-      y2Grid: cash.options.scales.y2 ? cash.options.scales.y2.grid.drawOnChartArea : null,
-      balAxis: bal ? bal.yAxisID : null,
-      flowAxis: [inc.yAxisID, spend.yAxisID],
+      // The flows chart carries ONE axis now. The balance is not on it at all.
+      cashHasSecondAxis: !!cash.options.scales.y2,
+      cashHasBalance: !!label(cash, 'Balance'),
+      balTitle: balc.options.scales.y.title.text,
+      balHasSecondAxis: !!balc.options.scales.y2,
+      balSpan: [xs(bal)[0], xs(bal).slice(-1)[0]],
       balSeries: bal ? bal.data.map(p => p.y) : null,
       balPeakIdx: bal ? bal.data.reduce((best, p, k) => p.y > bal.data[best].y ? k : best, 0) : null,
       marker: !!label(cash, 'Retire at 60'),
+      balMarker: !!label(balc, 'Retire at 60'),
       stillHasPotLines: !!(label(cash, 'Your pot') || label(cash, 'Your pot after a crash')),
-      legend2: Array.from(document.querySelectorAll('#legend2 .legend-item')).map(x => x.textContent.trim())
+      legend2: Array.from(document.querySelectorAll('#legend2 .legend-item')).map(x => x.textContent.trim()),
+      legend3: Array.from(document.querySelectorAll('#legend3 .legend-item')).map(x => x.textContent.trim()),
+      // One quantity, one entry: the swatch states both of its colours itself.
+      splitSwatch: (() => {
+        const d = document.querySelector('#legend2 .legend-item .dot.split');
+        return d ? {c1: d.dataset.c1, c2: d.dataset.c2, bg: d.style.background} : null;
+      })()
     };
   });
 
@@ -1697,19 +1754,37 @@ for(const [name, extra] of [
     r.fill.above !== r.fill.below,
     r.fill ? `to ${r.fillTargetLabel}, ${r.fill.above} / ${r.fill.below}` : 'no fill');
   check('F44e the flow axis says it is a yearly flow, not a balance',
-    /a year/i.test(r.yTitle || '') && r.flowAxis.every(a => a === 'y'), r.yTitle);
-  /* A stock and a flow cannot share a scale: a balance in the millions flattens
-     a spending line in the tens of thousands into the axis. So the balance gets
-     its own axis on the right, without gridlines of its own, and the legend
-     says "right axis" rather than leaving the reader to guess. */
-  check('F44f the balance rides on its own right-hand axis, named and ungridded',
-    r.balAxis === 'y2' && /^Balance/.test(r.y2Title || '') && r.y2Grid === false,
-    `${r.balAxis} titled "${r.y2Title}"`);
-  check('F44g the legend names every line, and says which one is on the right',
-    r.legend2.some(l => /saved/i.test(l)) && r.legend2.some(l => /drawn/i.test(l)) &&
-    r.legend2.some(l => /balance \(right axis\)/i.test(l)) &&
+    /a year/i.test(r.yTitle || ''), r.yTitle);
+  /* A stock and a flow cannot share a scale, and they no longer share a plot
+     area either: a balance in the millions drawn over a spending line in the
+     tens of thousands left both against rules belonging to neither. The
+     balance is a chart of its own, under the flows that produced it. */
+  check('F44f the balance has left the flow chart entirely, for one of its own',
+    !r.cashHasBalance && !r.cashHasSecondAxis && !r.balHasSecondAxis &&
+    /^Balance/.test(r.balTitle || ''),
+    `flows: balance ${r.cashHasBalance}, second axis ${r.cashHasSecondAxis}; balance chart titled "${r.balTitle}"`);
+  check('F44f2 and it spans exactly the same years, so the two line up',
+    r.balSpan[0] === r.cashSpan[0] && r.balSpan[1] === r.cashSpan[1],
+    `${r.balSpan.join('..')} vs ${r.cashSpan.join('..')}`);
+  /* The shaded gap is ONE quantity — what income leaves over — and the two
+     colours are its sign, so it is one legend entry with a swatch split down
+     the middle rather than two entries a reader has to add up. */
+  check('F44g the saved and drawn fills are one legend entry, not two',
+    r.legend2.some(l => /^savings\/withdrawal$/i.test(l)) &&
+    !r.legend2.some(l => /saved into the pot|drawn from the pot/i.test(l)) &&
+    r.legend2.some(l => /^income$/i.test(l)) && r.legend2.some(l => /^spending$/i.test(l)) &&
     r.legend2.some(l => /retire at/i.test(l)),
     r.legend2.join(' | '));
+  check('F44g2 and its swatch carries both colours, so the exporters can read them',
+    !!r.splitSwatch && !!r.splitSwatch.c1 && !!r.splitSwatch.c2 &&
+    r.splitSwatch.c1 !== r.splitSwatch.c2 &&
+    /linear-gradient/.test(r.splitSwatch.bg) &&
+    new Set(r.splitSwatch.bg.match(/rgba?\([^)]*\)/g) || []).size === 2,
+    r.splitSwatch ? `${r.splitSwatch.c1} / ${r.splitSwatch.c2} painted as ${r.splitSwatch.bg}` : 'no split swatch');
+  check('F44g3 the balance chart has a legend of its own, with the same retirement rule',
+    r.legend3.some(l => /^balance$/i.test(l)) && r.legend3.some(l => /retire at 60/i.test(l)) &&
+    r.balMarker && !r.legend3.some(l => /right axis/i.test(l)),
+    r.legend3.join(' | '));
   /* The shape the two sections exist for, and the one identity that ties them
      together: the cashflow balance IS the section 1 accumulation right up to
      the retirement month, and is strictly below it from the next month on,
@@ -1749,6 +1824,154 @@ for(const [name, extra] of [
 }
 
 console.log('\n── Two sections, one slider ──');
+
+/* ── What the tooltip is pointing at ──
+   Chart.js resolves an `index` tooltip by DATA INDEX: nearest element, then
+   read that index out of every other dataset. Every series here is one point
+   per year EXCEPT the droplines (two points) and the crossing marker (one), so
+   hovering either of those asked for index 0 or 1 of the yearly series and the
+   tooltip reported the FIRST YEAR of the plan under the hovered year's
+   heading — the crossing dot in 2061 showing "Money deposited: $100k", which
+   is the balance today. Matching by x VALUE is the fix. */
+{
+  const r = await page.evaluate(() => {
+    const mode = window.Chart.Interaction.modes.ffXValue;
+    const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
+    const opts = path.options;
+    /* Hand-built metas in exactly the shape that broke: a yearly series, and a
+       one-point marker sitting BETWEEN two of its samples. Indices 0 and 1 of
+       the yearly series carry deliberately unmistakable values. */
+    const years = [{x: 2026, y: 100}, {x: 2027, y: 200}, {x: 2028, y: 300}];
+    const marker = [{x: 2027.3, y: 250}];
+    const meta = (index, parsed, px) => ({
+      index,
+      data: parsed.map((p, i) => ({skip: false, getProps: () => ({x: px[i]})})),
+      controller: {getParsed: i => parsed[i]}
+    });
+    const metas = [meta(0, years, [0, 100, 200]), meta(1, marker, [130])];
+    const chart = {getSortedVisibleDatasetMetas: () => metas};
+    const at = x => mode(chart, {x, y: 0}, {}, false).map(it => it.datasetIndex + ':' + it.index);
+    const filter = opts.plugins.tooltip.filter;
+    const drop = path.data.datasets.filter(d => d.label === 'Financially free');
+    return {
+      onYear: at(101),
+      onMarker: at(128),
+      mode: opts.interaction.mode,
+      tipMode: opts.plugins.tooltip.mode,
+      filtersDroplines: filter({dataset: {ffTipHide: true}}) === false &&
+                        filter({dataset: {label: 'Investment outcome'}}) === true,
+      // Two datasets share the crossing's label: the dot, and the rule that
+      // drops from it to the axis. Only the dot is a reading.
+      dropFlags: drop.map(d => !!d.ffTipHide)
+    };
+  });
+  check('F58 the tooltip is resolved by x value, not by data index',
+    r.mode === 'ffXValue' && r.tipMode === 'ffXValue', `${r.mode} / ${r.tipMode}`);
+  check('F58b hovering a year reads that year out of the yearly series, and nothing else',
+    r.onYear.length === 1 && r.onYear[0] === '0:1', r.onYear.join(', ') || 'nothing');
+  check('F58c and hovering the marker between two samples answers for the marker',
+    r.onMarker.length === 1 && r.onMarker[0] === '1:0', r.onMarker.join(', ') || 'nothing');
+  check('F58d a dropline is a rule, not a reading, so it is filtered out of the tooltip',
+    r.filtersDroplines && r.dropFlags.length === 2 &&
+    r.dropFlags.filter(Boolean).length === 1,
+    `filter ${r.filtersDroplines}, crossing datasets hidden: ${r.dropFlags.join(',')}`);
+}
+
+/* ── One x window across two charts ──
+   The flows and the balance they leave behind are one picture cut in half, so
+   a year has to sit in the same place on both. Zooming or panning either one
+   carries the window across; the path chart, which answers a different
+   question on a different opening view, is untouched by either. */
+{
+  const r = await page.evaluate(() => {
+    const cash = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Income'));
+    const balc = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Balance'));
+    const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
+    const win = c => ({x: [c.options.scales.x.min, c.options.scales.x.max],
+                       xAge: [c.options.scales.xAge.min, c.options.scales.xAge.max]});
+    const home = win(cash), pathHome = win(path);
+    const set = (c, a, b) => ['x', 'xAge'].forEach(id => {
+      c.options.scales[id].min = a; c.options.scales[id].max = b;
+    });
+    // The reader pinches the flow chart down to five years mid-plan.
+    set(cash, home.x[0] + 10, home.x[0] + 15);
+    cash.options.plugins.zoom.zoom.onZoom({chart: cash});
+    const balFollowed = win(balc), pathAfterCash = win(path);
+    // And drags the balance chart somewhere else.
+    set(balc, home.x[0] + 30, home.x[0] + 35);
+    balc.options.plugins.zoom.pan.onPan({chart: balc});
+    const cashFollowed = win(cash);
+    return {
+      balFollowed, cashFollowed, pathAfterCash, pathHome,
+      wired: [cash, balc].every(c => !!c.options.plugins.zoom.zoom.onZoom &&
+                                     !!c.options.plugins.zoom.pan.onPan),
+      pathLoose: !path.options.plugins.zoom.zoom.onZoom && !path.options.plugins.zoom.pan.onPan,
+      expectFollowed: [home.x[0] + 10, home.x[0] + 15],
+      expectPanned: [home.x[0] + 30, home.x[0] + 35]
+    };
+  });
+  const same = (a, b) => a[0] === b[0] && a[1] === b[1];
+  check('F59 both cashflow charts hang on the zoom and the pan, and the path chart on neither',
+    r.wired && r.pathLoose, `cashflow wired ${r.wired}, path loose ${r.pathLoose}`);
+  check('F59b zooming the flows carries the same window to the balance, on both x axes',
+    same(r.balFollowed.x, r.expectFollowed) && same(r.balFollowed.xAge, r.expectFollowed),
+    `${r.balFollowed.x.join('..')} / age axis ${r.balFollowed.xAge.join('..')}`);
+  check('F59c and panning the balance carries it back to the flows',
+    same(r.cashFollowed.x, r.expectPanned) && same(r.cashFollowed.xAge, r.expectPanned),
+    `${r.cashFollowed.x.join('..')} / age axis ${r.cashFollowed.xAge.join('..')}`);
+  check('F59d while the path chart, which answers the other question, does not move',
+    same(r.pathAfterCash.x, r.pathHome.x), r.pathAfterCash.x.join('..'));
+  // Put the shared window back before anything downstream reads a chart.
+  await page.evaluate(() => window.__FF.render());
+}
+
+/* ── The marked row in the year-by-year table ──
+   The table belongs to Cashflows, where everything is measured at the age on
+   the slider, so the row it picks out is the RETIREMENT year. It used to
+   highlight the freedom age, which is Path to freedom's answer and cannot be
+   read off a table the slider redraws. */
+{
+  const r = await page.evaluate(() => {
+    const res = window.__FF.last;
+    const rows = Array.from(document.querySelectorAll('#tableWrap tbody tr'));
+    const marked = rows.map((tr, i) => tr.classList.contains('free') ? i : -1).filter(i => i >= 0);
+    return {
+      marked,
+      retIdx: Math.round(res.P.ageRetire - res.P.ageNow),
+      freeIdx: res.ffAge == null ? -1 : Math.ceil(res.ffAge - res.P.ageNow),
+      markedAge: marked.length === 1 ? rows[marked[0]].children[1].textContent.trim() : null,
+      strays: document.querySelectorAll('#tableWrap tr.retire').length,
+      sub: document.getElementById('tableSub').textContent,
+      // The detail rides in the (i) tip beside the one-line summary.
+      subTip: (document.querySelector('#tableSub [data-tip]') || {getAttribute: () => ''})
+                .getAttribute('data-tip')
+    };
+  });
+  check('F60 exactly one row is marked, and it is the retirement year',
+    r.marked.length === 1 && r.marked[0] === r.retIdx && r.strays === 0,
+    `row ${r.marked.join(',')} of retIdx ${r.retIdx}, age ${r.markedAge}`);
+  check('F60b which is a different row from the freedom age, so the move is real',
+    r.freeIdx >= 0 && r.freeIdx !== r.retIdx,
+    `freedom at row ${r.freeIdx}, retirement at row ${r.retIdx}`);
+  check('F60c and the note under the table says so',
+    /highlighted row is the year you retire/i.test(r.subTip) &&
+    !/financially free/i.test(r.subTip), r.subTip.slice(-90));
+}
+
+/* ── Nothing on the page explains itself at length ──
+   The board kickers, the ledes and the standing subtitle sentences are gone,
+   and a tip that runs past a couple of lines is one nobody reads. */
+{
+  const r = await page.evaluate(() => {
+    const tips = Array.from(document.querySelectorAll('[data-tip]'))
+      .map(el => el.getAttribute('data-tip'));
+    const longest = tips.reduce((a, b) => b.length > a.length ? b : a, '');
+    return {count: tips.length, max: longest.length, longest: longest.slice(0, 70),
+            over: tips.filter(t => t.length > 300).length};
+  });
+  check('F61 every tip is short enough to be read where it pops up',
+    r.count > 20 && r.over === 0, `${r.count} tips, longest ${r.max} chars: "${r.longest}…"`);
+}
 
 /* F51: the two questions are independent, and the page has to prove it. How
    EARLY you could stop cannot depend on when you CHOOSE to stop, so dragging
@@ -2127,7 +2350,7 @@ console.log('\n── Accounting integrity: the table adds up ──');
     return out;
   });
   check('F46 every export cluster sits in the top right, beside its heading',
-    r.length === 3 && r.every(x => x.sameRow && x.flushRight),
+    r.length === 4 && r.every(x => x.sameRow && x.flushRight),
     r.map(x => `${x.title}: row ${x.sameRow}, right ${x.flushRight}`).join(' | '));
   check('F46b and any subtitle sits below that row, so it cannot push them off it',
     r.every(x => x.subIsSibling),
@@ -2137,7 +2360,8 @@ console.log('\n── Accounting integrity: the table adds up ──');
 /* ── Exports ── */
 {
   const r = await page.evaluate(() => {
-    const ids = ['ffSvgBtn', 'ffPngBtn', 'ffCopyBtn', 'ddSvgBtn', 'ddPngBtn', 'ddCopyBtn', 'csvBtn'];
+    const ids = ['ffSvgBtn', 'ffPngBtn', 'ffCopyBtn', 'ddSvgBtn', 'ddPngBtn', 'ddCopyBtn',
+                 'balSvgBtn', 'balPngBtn', 'balCopyBtn', 'csvBtn'];
     const missing = ids.filter(i => !document.getElementById(i));
     // Intercept the blob the CSV path builds rather than downloading it. The
     // anchor's own click is stubbed too, so headless Chromium is never asked
@@ -2155,7 +2379,7 @@ console.log('\n── Accounting integrity: the table adds up ──');
     return captured ? captured.text().then(text => ({missing, text})) : {missing, text: null};
   });
   check('F39 every export control is on the page', r.missing.length === 0,
-    r.missing.length ? 'missing ' + r.missing.join(',') : 'SVG, PNG, copy on both charts, CSV on the table');
+    r.missing.length ? 'missing ' + r.missing.join(',') : 'SVG, PNG, copy on all three charts, CSV on the table');
   const lines = (r.text || '').trim().split('\n');
   {
     // Same columns, same order, same meaning as the table on screen. The CSV
