@@ -142,13 +142,17 @@ that leaves behind. A stock and a flow cannot share a scale, and they no longer
 share a plot area either: F44f pins the balance out of the flow chart entirely
 and neither chart carrying a second axis, F44f2 that the two span the same
 years, and F44g3 that the balance chart has its own legend with the same
-retirement rule and no "right axis" left in it. F44g pins the merged fill
-legend — the shaded gap is ONE quantity, what income leaves over, and the two
+retirement rule and no "right axis" left in it. F44g-g2b pin the merged fill
+legend. The shaded gap is ONE quantity, what income leaves over, and the two
 colours are its sign, so it is a single **Savings/Withdrawal** entry with a
-swatch split down the middle rather than two entries a reader has to add up —
-and F44g2 that the swatch states both of its colours in data attributes, because
-the exporters read the legend back off the DOM and a gradient's computed
-background is transparent. F50i pins that the balance chart is refitted to the
+swatch split down the middle rather than two entries a reader has to add up.
+Banning the old wording would not hold that: split it back into "Surplus" and
+"Deficit" and a label test passes while the key has two entries again. So the
+invariant is structural — the key has exactly four entries, exactly one of them
+is a filled block, and that one block carries BOTH of the colours the chart
+fills with, read off the dataset's own `fill.above`/`fill.below` rather than
+restated. A split gives each entry one colour and all three checks fail at
+once; a recolour of the chart that left the key behind fails F44g2b. F50i pins that the balance chart is refitted to the
 shared window in the same pass, or it would be left drawn against a window it is
 not in.
 

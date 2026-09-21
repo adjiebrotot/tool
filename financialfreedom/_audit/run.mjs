@@ -1709,17 +1709,16 @@ for(const [name, extra] of [
       stillHasPotLines: !!(label(cash, 'Your pot') || label(cash, 'Your pot after a crash')),
       legend2: Array.from(document.querySelectorAll('#legend2 .legend-item')).map(x => x.textContent.trim()),
       legend3: Array.from(document.querySelectorAll('#legend3 .legend-item')).map(x => x.textContent.trim()),
-      /* One quantity, one entry. SharedLegend stashes the spec on the element,
-         which is both what the page draws the swatch from and what the
-         exporters read back, so reading it here checks all three at once. */
-      splitSwatch: (() => {
-        const d = Array.from(document.querySelectorAll('#legend2 .legend-item'))
-          .find(el => /savings\/withdrawal/i.test(el.textContent));
-        if(!d) return null;
-        const spec = JSON.parse(d.dataset.swatch);
-        return {type: spec.type, fill: spec.fill, fill2: spec.fill2,
-                rects: d.querySelectorAll('svg rect').length};
-      })()
+      /* Every entry with the swatch it draws. SharedLegend stashes the spec on
+         the element, which is both what the page draws the swatch from and
+         what the exporters read back, so reading it here checks all three at
+         once. */
+      legend2Specs: Array.from(document.querySelectorAll('#legend2 .legend-item')).map(el => {
+        const spec = JSON.parse(el.dataset.swatch);
+        return {label: el.querySelector('.legend-label').textContent.trim(),
+                type: spec.type, color: spec.color, fill: spec.fill, fill2: spec.fill2,
+                rects: el.querySelectorAll('svg rect').length};
+      })
     };
   });
 
@@ -1775,18 +1774,35 @@ for(const [name, extra] of [
   /* The shaded gap is ONE quantity — what income leaves over — and the two
      colours are its sign, so it is one legend entry with a swatch split down
      the middle rather than two entries a reader has to add up. */
-  check('F44g the saved and drawn fills are one legend entry, not two',
-    r.legend2.some(l => /^savings\/withdrawal$/i.test(l)) &&
-    !r.legend2.some(l => /saved into the pot|drawn from the pot/i.test(l)) &&
-    r.legend2.some(l => /^income$/i.test(l)) && r.legend2.some(l => /^spending$/i.test(l)) &&
-    r.legend2.some(l => /retire at/i.test(l)),
-    r.legend2.join(' | '));
-  check('F44g2 and its swatch is one block in both of the fill colours',
-    !!r.splitSwatch && r.splitSwatch.type === 'area' &&
-    !!r.splitSwatch.fill && !!r.splitSwatch.fill2 &&
-    r.splitSwatch.fill !== r.splitSwatch.fill2 && r.splitSwatch.rects === 2,
-    r.splitSwatch ? `${r.splitSwatch.type}: ${r.splitSwatch.fill} / ${r.splitSwatch.fill2}, ` +
-                    `${r.splitSwatch.rects} halves drawn` : 'no split swatch');
+  /* ONE ENTRY FOR THE FILL, and the check has to survive a rename. Banning
+     the old wording would not: split it back into "Surplus" and "Deficit" and
+     a label test passes while the key has two entries again. So the invariant
+     is stated structurally instead — the key has exactly four entries, exactly
+     one of them is a filled block, and that one block carries BOTH of the
+     colours the chart fills with. A split into two entries gives each of them
+     one colour, and every clause here fails at once. */
+  const fills = [r.fill && r.fill.above, r.fill && r.fill.below];
+  const blocks = r.legend2Specs.filter(x => x.type === 'area');
+  const carries = c => r.legend2Specs.filter(x => x.fill === c || x.fill2 === c);
+  check('F44g the key names each line once, and the fill once',
+    r.legend2Specs.length === 4 &&
+    r.legend2Specs.some(x => /^income$/i.test(x.label)) &&
+    r.legend2Specs.some(x => /^spending$/i.test(x.label)) &&
+    r.legend2Specs.some(x => /retire at/i.test(x.label)) &&
+    r.legend2Specs.some(x => /^savings\/withdrawal$/i.test(x.label)),
+    r.legend2Specs.map(x => x.label).join(' | '));
+  check('F44g2 exactly one entry stands for the shaded gap, whatever it is called',
+    blocks.length === 1 && blocks[0].rects === 2,
+    blocks.length === 1
+      ? `"${blocks[0].label}", drawn as ${blocks[0].rects} halves`
+      : `${blocks.length} filled blocks: ${blocks.map(x => x.label).join(', ')}`);
+  /* And it is the chart's own two colours, read off the dataset's fill rather
+     than restated, so recolouring the chart cannot leave a stale key behind —
+     nor can either colour wander off into an entry of its own. */
+  check('F44g2b and it carries both of the colours the chart actually fills with',
+    blocks.length === 1 && fills.every(c => !!c) && fills[0] !== fills[1] &&
+    fills.every(c => carries(c).length === 1 && carries(c)[0] === blocks[0]),
+    `chart fills ${fills.join(' / ')}; key block has ${blocks.length === 1 ? blocks[0].fill + ' / ' + blocks[0].fill2 : 'n/a'}`);
   check('F44g3 the balance chart has a legend of its own, with the same retirement rule',
     r.legend3.some(l => /^balance$/i.test(l)) && r.legend3.some(l => /retire at 60/i.test(l)) &&
     r.balMarker && !r.legend3.some(l => /right axis/i.test(l)),
