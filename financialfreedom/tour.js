@@ -34,8 +34,8 @@ window.__TOUR = {
       title: '② What the money is invested in',
       body: 'Pick a preset to start from long-run historical figures, or type a ticker and ' +
             'press <strong>Fetch</strong> to measure them from real prices. ' +
-            '<strong>Volatility</strong> decides how wide the range of outcomes is. ' +
-            '<strong>Worst drawdown</strong> is used only for the crash test.'
+            '<strong>Volatility</strong> decides how wide the range of outcomes is, ' +
+            'and it is what puts a crash into some of the simulated futures.'
     },
     {
       target: '#tab-goal',
@@ -68,7 +68,17 @@ window.__TOUR = {
       body: 'The blue line is what you will have. The red line is the pot you would need if ' +
             'you stopped at that age, which falls as you get older because there are fewer ' +
             'years left to fund. <strong>Where they cross is your answer.</strong> The shaded ' +
-            'band is the range of simulated futures.'
+            'band is the range of simulated futures, and the dotted line is what you have ' +
+            'put in: it goes flat the month you retire, and turns down when the growth stops ' +
+            'covering the draw.'
+    },
+    {
+      target: '.chart-card + .chart-card',
+      title: '⑥ Where the money comes from',
+      body: 'Income against spending, over the same years. While you work the gap is what ' +
+            'you save; once you stop, income falls to the pension or nothing and the same ' +
+            'gap becomes what the pot has to cover every year. <strong>That second area is ' +
+            'what the whole plan is for.</strong>'
     },
     {
       target: null,
