@@ -10,7 +10,7 @@ const LANG = {
     btnBack: '← Other Tools',
     sensitivityHtml: 'Power user? Compare multiple scenarios side-by-side with our <a href="/rentvsownhouse/sensitivity/" style="color:var(--accent);font-weight:700;text-decoration:none;">Sensitivity Analysis Tool</a>.',
     /* sidebar */
-    quickStartLabel: '⚡ Quick Start',
+    quickStartLabel: 'Quick Start',
     quickStartTip: 'Prefill with quick assumption, assuming median price for two-bedroom apartment in the city centre or inner suburbs',
     tabGeneral: 'General',
     tabOwn: 'Own',
@@ -124,7 +124,7 @@ const LANG = {
     /* detail tabs */
     tabOwnCashflow: 'Own Cashflow',
     tabRentCashflow: 'Rent Cashflow',
-    tabRTBCashflow: '🔄 Rent-Then-Buy Cashflow',
+    tabRTBCashflow: 'Rent-Then-Buy Cashflow',
     btnCSV: '⬇ CSV',
     /* chart series */
     seriesOwnNetEquity: 'Own — Net Equity',
@@ -194,7 +194,7 @@ const LANG = {
     btnBack: '← Other Tools',
     sensitivityHtml: 'Power user? Bandingkan beberapa skenario secara berdampingan dengan <a href="/rentvsownhouse/sensitivity/id/" style="color:var(--accent);font-weight:700;text-decoration:none;">Alat Analisis Sensitivitas</a> kami.',
     /* sidebar */
-    quickStartLabel: '⚡ Mulai Cepat',
+    quickStartLabel: 'Mulai Cepat',
     quickStartTip: 'Isi otomatis dengan asumsi cepat berdasarkan harga median apartemen 2 kamar di pusat kota atau pinggiran kota',
     tabGeneral: 'Umum',
     tabOwn: 'Beli',
@@ -308,7 +308,7 @@ const LANG = {
     /* detail tabs */
     tabOwnCashflow: 'Arus Kas Beli',
     tabRentCashflow: 'Arus Kas Sewa',
-    tabRTBCashflow: '🔄 Arus Kas Sewa Dulu, Beli Kemudian',
+    tabRTBCashflow: 'Arus Kas Sewa Dulu, Beli Kemudian',
     btnCSV: '⬇ CSV',
     /* chart series */
     seriesOwnNetEquity: 'Beli — Kekayaan Bersih',

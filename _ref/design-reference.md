@@ -177,7 +177,8 @@ p, .muted { color: var(--muted); line-height: 1.5; margin: 0; }
 /* Two-column: sidebar (360px) + main (rest) */
 .layout { display: grid; grid-template-columns: 360px 1fr; gap: 18px; }
 
-/* Sidebar sticks while scrolling */
+/* Sidebar sticks while scrolling; with a .ctrl-scroll inside it is also capped
+   to the viewport so its tab bar can stay pinned (see Control Panel below). */
 .controls { padding: 0; position: sticky; top: 16px; align-self: start; overflow: hidden; }
 
 .canvas-wrap { position: relative; width: 100%; height: 380px; }
@@ -243,17 +244,31 @@ $('themeToggle').addEventListener('click', () => {
 
 ### Tab Bar
 
+The tab bar is **locked to the top of the card**: wrap the tabs and the panels in
+`.ctrl-scroll` and that wrapper becomes the only part that scrolls, so the tabs
+stay reachable however far down the panel you are. Anything placed *before*
+`.ctrl-scroll` (a quick-start row) stays put as well.
+
 ```html
-<div class="ctrl-tabs">
-  <button class="ctrl-tab active" data-tab="inputs">📊 Inputs</button>
-  <button class="ctrl-tab" data-tab="advanced">⚙️ Advanced</button>
-</div>
-<div class="ctrl-panel active" id="tab-inputs">…</div>
-<div class="ctrl-panel" id="tab-advanced">…</div>
+<aside class="controls card">
+  <div class="quick-start-row">…</div>      <!-- optional, stays on top -->
+  <div class="ctrl-scroll">
+    <div class="ctrl-tabs">
+      <button class="ctrl-tab active" data-tab="inputs"><svg class="tico" …></svg> Inputs</button>
+      <button class="ctrl-tab" data-tab="advanced"><svg class="tico" …></svg> Advanced</button>
+    </div>
+    <div class="ctrl-panel active" id="tab-inputs">…</div>
+    <div class="ctrl-panel" id="tab-advanced">…</div>
+  </div>
+</aside>
 ```
 
 ```css
-.ctrl-tabs { display: flex; border-bottom: 1px solid var(--border); }
+/* All three live in shared.css — a tool only opts in with .ctrl-scroll */
+.controls:has(.ctrl-scroll) { display: flex; flex-direction: column; max-height: calc(100vh - 32px); }
+.ctrl-scroll { flex: 0 1 auto; min-height: 0; overflow-y: auto; }
+.ctrl-tabs { display: flex; border-bottom: 1px solid var(--border);
+             position: sticky; top: 0; z-index: 3; background: var(--panel); }
 .ctrl-tab {
   flex: 1; padding: 13px 10px; text-align: center; font-weight: 700; font-size: 0.88rem;
   cursor: pointer; color: var(--muted); background: transparent; border: none;
@@ -264,6 +279,39 @@ $('themeToggle').addEventListener('click', () => {
 .ctrl-panel { display: none; padding: 16px 18px 20px; }
 .ctrl-panel.active { display: block; }
 ```
+
+A sidebar with four or more tabs stacks the icon above the label: add `stacked`
+to the tab bar (`<div class="ctrl-tabs stacked">`) and shared.css turns each
+button into a centred column. `borrowingcapacity/` and `financialfreedom/` do this.
+
+### Tab Icons (`.tico`) — never emoji
+
+Tab icons are **hand-drawn inline SVG**, not emoji: emoji carry the platform's own
+palette and metrics, so they break the page's colour system and sit differently on
+every device. A `.tico` is a 24×24 glyph drawn with `stroke="currentColor"`, so it
+follows the button's colour in both themes and lights up with the active tab.
+
+```html
+<button class="ctrl-tab" data-tab="caps">
+  <svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M3.5 4h17"/><path d="M12 20.5V8.5"/><path d="M7.2 13.3 12 8.5l4.8 4.8"/>
+  </svg><span>Caps</span>
+</button>
+```
+
+- **Draw the meaning, not the emoji.** The glyph replacing 🔬 on a Sensitivity tab is a
+  tuning dial, not a microscope; the one replacing 📐 on a Caps tab is an arrow stopped
+  by a ceiling. Ask what the tab *does*, then draw that.
+- **Reuse only for the same job.** Settings is the same gear everywhere. Anything else
+  gets its own glyph, so two tabs never share a picture for two different things.
+- **Keep the optical weight even.** Stroke 1.8 suits most shapes; a thin diagonal
+  (a staircase, an axis pair) needs 2.0–2.2 to sit next to a solid one.
+- `.tico` is styled in shared.css; a tool only sizes it when a tab bar needs
+  something other than 1.35em.
+
+Emoji outside a tab bar are fine where they are decoration rather than an icon
+(the 🌙 / ☀️ theme toggle, the footer flags).
 
 ### Section Label
 
@@ -1131,6 +1179,50 @@ body.light tr:hover td { background: rgba(90,145,232,0.04); }
 For sticky headers / a frozen first column on wide tables, make the header cells
 `position: sticky; top: 0;` (and the first column `position: sticky; left: 0;`) with a
 solid background so rows scroll underneath them.
+
+---
+
+## Scrollbars
+
+Site-wide, from `shared.css`: **no vertical scrollbar anywhere, a themed horizontal
+one where a surface scrolls sideways.** Vertical scrolling already has a gesture on
+every device (wheel, trackpad, arrow keys, touch), so the bar is dead weight and the
+page keeps its full width. Sideways scrolling has no such gesture on a plain mouse,
+so that bar stays, wearing the page's own colours instead of the operating system's.
+
+```css
+/* shared.css — already applied to every page */
+*::-webkit-scrollbar { width: 0; height: 10px; }              /* width = vertical, height = horizontal */
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb); border-radius: var(--radius-pill);
+  border: 2px solid transparent; background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+```
+
+`--scrollbar-thumb` / `--scrollbar-thumb-hover` are theme tokens, so the bar reads
+as part of the page in dark and light alike.
+
+**A tool stylesheet must not re-style `::-webkit-scrollbar`.** A class selector
+outranks the rules above and brings a vertical bar back on that one surface.
+
+**Firefox** styles scrollbars through `scrollbar-width` / `scrollbar-color`, and
+neither can pick an axis, so hiding the vertical bar hides the horizontal one too.
+There the vertical rule wins everywhere, and a surface that scrolls *sideways only*
+asks for the thin themed bar back:
+
+```css
+/* The guard keeps this away from Chrome and Safari, where scrollbar-width:none
+   would beat the rules above and take the horizontal bar with it. */
+@supports not selector(::-webkit-scrollbar) {
+  .sens-wrap { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
+}
+```
+
+`shared.css` ships `.x-scroll` for exactly this, so new markup can just add the class.
+A wrapper that scrolls *both* ways (a tall, wide table) keeps both bars hidden in
+Firefox: the vertical rule wins.
 
 ---
 

@@ -29,7 +29,9 @@ code{font-family:'DM Mono',monospace;background:var(--input-bg);padding:1px 5px;
 
 /* ─── SIDEBAR ─── */
 .controls{padding:0;position:sticky;top:14px;align-self:start;display:flex;flex-direction:column;overflow:hidden;max-height:calc(100vh - 28px)}
-.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+/* Already locked: the tab bar is a fixed row of the .controls column, so the
+   panel under it scrolls on its own. */
+.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;position:static}
 .ctrl-tab{flex:1;padding:10px 4px;text-align:center;font-weight:700;font-size:.8rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 150ms;font-family:inherit;white-space:nowrap}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
 .ctrl-panel{display:none;padding:12px 14px 14px;flex-direction:column;gap:10px;overflow-y:auto;flex:1;min-height:0}
@@ -46,9 +48,6 @@ code{font-family:'DM Mono',monospace;background:var(--input-bg);padding:1px 5px;
 
 /* ─── EDITOR TABLE ─── */
 .editor-table-wrap{overflow-y:auto;flex:1;min-height:0;border:1px solid var(--border);border-radius:8px}
-.editor-table-wrap::-webkit-scrollbar{width:4px}
-.editor-table-wrap::-webkit-scrollbar-track{background:transparent}
-.editor-table-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 .editor-table{width:100%;border-collapse:collapse;font-size:.8rem}
 .editor-table th{position:sticky;top:0;background:var(--panel-raised);font-weight:700;font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:6px 7px;border-bottom:2px solid var(--border);text-align:left;z-index:1}
 .editor-table .th-amt{text-align:right;padding-right:5px}

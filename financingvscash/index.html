@@ -101,11 +101,12 @@
 
 <section class="layout">
 <aside class="controls card">
-  <div class="ctrl-tabs">
-    <button class="ctrl-tab active" data-tab="base">💰<br>Base</button>
-    <button class="ctrl-tab" data-tab="scenarios">📊<br>Scenarios</button>
-    <button class="ctrl-tab" data-tab="chart">📈<br>Chart</button>
-    <button class="ctrl-tab" data-tab="sens">🔬<br>Sensitivity</button>
+  <div class="ctrl-scroll">
+  <div class="ctrl-tabs stacked">
+    <button class="ctrl-tab active" data-tab="base"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8 2.8 7.4 12 12l9.2-4.6z"/><path d="M2.8 12.4 12 17l9.2-4.6"/><path d="M2.8 16.9 12 21.5l9.2-4.6"/></svg><span>Base</span></button>
+    <button class="ctrl-tab" data-tab="scenarios"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="4.8" cy="12" r="2.1"/><path d="M6.9 12h2.4"/><path d="M9.3 12c3.4 0 3.1-6 6.4-6M9.3 12c3.4 0 3.1 6 6.4 6"/><circle cx="18.2" cy="6" r="2.1"/><circle cx="18.2" cy="18" r="2.1"/></svg><span>Scenarios</span></button>
+    <button class="ctrl-tab" data-tab="chart"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3.2v16.3c0 .3.2.5.5.5h15.8"/><path d="M7.6 15.6 11.2 11l2.9 2.4 4.4-6"/></svg><span>Chart</span></button>
+    <button class="ctrl-tab" data-tab="sens"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.3 18.4a8 8 0 1 1 11.4 0"/><path d="M12 13.4 8.6 9.3"/><circle cx="12" cy="13.6" r="1.35"/></svg><span>Sensitivity</span></button>
   </div>
 
   <div class="ctrl-panel active" id="tab-base">
@@ -233,6 +234,7 @@
   <div class="neg-carry" id="negCarryBanner"></div>
   <div class="btn-row">
     <button class="btn-primary" id="resetBtn">↺ Reset</button>
+  </div>
   </div>
 </aside>
 

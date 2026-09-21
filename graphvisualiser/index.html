@@ -99,10 +99,11 @@
 
       <!-- Control panel tabs -->
       <div class="card" style="overflow:hidden">
+        <div class="ctrl-scroll">
         <div class="ctrl-tabs">
-          <button class="ctrl-tab active" data-tab="data">📂 Data</button>
-          <button class="ctrl-tab" data-tab="axes">📐 Axes</button>
-          <button class="ctrl-tab" data-tab="style">🎨 Style</button>
+          <button class="ctrl-tab active" data-tab="data"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.2" y="4" width="17.6" height="16" rx="2.2"/><path d="M3.2 9.4h17.6"/><path d="M9.3 9.4V20M15.1 9.4V20"/></svg> Data</button>
+          <button class="ctrl-tab" data-tab="axes"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.2 3.2v15.6h15.6"/><path d="M5.2 8.4h2.8M5.2 13.4h2.8M10.4 18.8v-2.8M15.4 18.8v-2.8"/></svg> Axes</button>
+          <button class="ctrl-tab" data-tab="style"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2c0 0 6.3 6.3 6.3 10.4a6.3 6.3 0 0 1-12.6 0C5.7 9.5 12 3.2 12 3.2z"/></svg> Style</button>
         </div>
 
         <!-- DATA TAB -->
@@ -110,7 +111,7 @@
           <div class="section-title">Upload File</div>
           <div class="upload-zone" id="uploadZone">
             <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.tsv"/>
-            <div class="upload-icon">📁</div>
+            <div class="upload-icon"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 15.4v3.4a2 2 0 0 0 2 2h12.8a2 2 0 0 0 2-2v-3.4"/><path d="M12 15.6V3.6"/><path d="M7.6 8 12 3.6 16.4 8"/></svg></div>
             <div class="upload-text">Drop file here or click to browse</div>
             <div class="upload-sub">CSV, Excel (.xlsx .xls), TSV</div>
             <div class="file-name" id="fileName" data-no-abbr></div>
@@ -177,11 +178,12 @@
             </div>
           </div>
         </div>
+        </div>
       </div>
 
       <!-- VISUALISE BUTTON — always visible outside tabs -->
       <button class="btn-visualise" id="renderBtn" disabled>
-        🔍 Visualise
+        <svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="6.9"/><path d="M15.6 15.6 21 21"/><path d="M7.6 12.2 10 9.2l2 1.7 3.2-3.9"/></svg> Visualise
       </button>
 
     </div><!-- /sidebar -->
