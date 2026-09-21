@@ -1376,6 +1376,127 @@ a strip of its own beneath them.
 
 ---
 
+### Hover Card
+
+**A hover card is a reading, not a label.** The legend says what a mark *is*; the hover card
+says what it is *worth* at the point under the cursor. It names the x-value in words, lists
+one row per visible series in the order the chart stacks them, and puts every number through
+the same `fmt` helper the axis uses — so the card and the tick never disagree about what
+`$1.2m` means.
+
+Two surfaces carry that reading, and they always carry the same one:
+
+- the **card** that follows the cursor — Chart.js's own tooltip on a canvas chart, or an HTML
+  card when the chart is not Chart.js (the sankey) or the row needs markup the canvas tooltip
+  cannot draw (`tooltip: { enabled: false, external: fn }`);
+- the persistent **`.hover-box`** line beneath the canvas, fed from `callbacks.afterBody`, which
+  keeps the last reading visible after the card has faded.
+
+Prefer the built-in tooltip. Reach for an HTML card only when the canvas one genuinely cannot
+do the job — every HTML card is a second thing to theme, position and clamp.
+
+#### The canvas card (default)
+
+```js
+const grid = cssVar('--chart-grid'), muted = cssVar('--chart-text'), text = cssVar('--text');
+
+tooltip: {
+  backgroundColor: cssVar('--panel'), titleColor: text, bodyColor: muted,
+  borderColor: grid, borderWidth: 1, padding: 10,
+
+  // Drop anything that is drawn but is not a reading: band fills, droplines,
+  // marker-only datasets, series the legend has toggled off.
+  filter: item => !item.dataset.isBand && !item.dataset._marker,
+
+  callbacks: {
+    title: ctx => `Year ${ctx[0].label}`,                       // the x-value, spelled out
+    label: ctx => `  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y, true)}`,
+    // The colour box defaults to the dataset's fill — on a line with a faint `+'22'`
+    // area that is almost invisible, so point it at the stroke instead.
+    labelColor: ctx => ({ borderColor: ctx.dataset.borderColor,
+                          backgroundColor: ctx.dataset.borderColor,
+                          borderWidth: 2, borderRadius: 2 }),
+    afterBody(items) {                                          // mirror into .hover-box
+      if (!items.length) return;
+      $('chartHoverBox').textContent = `${items[0].label}  —  ` +
+        items.map(i => `${i.dataset.label}: ${fmt.currency(i.parsed.y, true)}`).join('  |  ');
+    }
+  }
+}
+```
+
+Pair it with `interaction: { mode: 'index', intersect: false }` so the card reads *every*
+series at the hovered x, not just the one the cursor happens to touch.
+
+| Part | Token / value |
+| --- | --- |
+| Background | `--panel` (`--panel-raised` where the card sits on a panel already) |
+| Border | `--chart-grid`, or `--border`, at `borderWidth: 1` |
+| Title text | `--text` |
+| Body text | `--chart-text` |
+| Row swatch | the series' **stroke** colour, via `callbacks.labelColor` |
+| Padding | `10` — the same figure in every chart in this repo |
+
+#### Text rules
+
+- **The title is the x-value in the user's words**, not the raw label: `Year 12`,
+  `Gross income $120,000`, `2035, age 47`, `Salary Rp 25,000,000`. Never a bare index.
+- **A body row is `  <series>: <formatted value>`.** The two leading spaces are deliberate —
+  they hold the text clear of the colour box.
+- **Every number is formatted** (`fmt.currency(v, true)`, `fmt.num`, `fmt.pct`), exactly as the
+  axis formats it. A raw integer above 999 never reaches a card.
+- **A range rides on its own row's value**, in parentheses after it —
+  `Net worth: $1.2m ($1.0m – $1.4m)` — rather than as a separate entry the legend has no key for.
+- **A value that does not exist says so in words** (`not feasible`), never `null`, `NaN` or `0`.
+- **Hidden means hidden**: a series toggled off in the legend is filtered out of the card too,
+  so the key and the reading always agree.
+
+#### Geometry and motion
+
+- The card is **anchored to the point, not the pointer**: centred above the caret, clear of it
+  by ~10px, so it never sits under the cursor.
+- It is **clamped to the viewport** — half its width in from either edge, flipped below or
+  left of the cursor when it would overflow — so a card near the frame's edge is never clipped.
+- It is **inert**: `pointer-events: none`, so moving toward it does not dismiss it.
+- It **fades, it does not slide**: `opacity` over 120–150ms. A card that travels with the
+  cursor reads as lag.
+
+#### The HTML card
+
+When the reading needs real markup, build the card from the same tokens as everything else —
+this is the whole of its style, and nothing in it is hardcoded:
+
+```css
+position: fixed; z-index: 200; pointer-events: none;
+background: var(--panel-raised); border: 1px solid var(--border);
+border-radius: var(--radius-md); padding: 10px 14px; box-shadow: var(--shadow-lg);
+font-size: .83rem; line-height: 1.4; color: var(--text);
+opacity: 0; transition: opacity .15s;          /* .show sets opacity: 1 */
+```
+
+Its rows follow the same hierarchy the KPI cards use — name, then value, then context:
+
+```html
+<div class="tt-title">Salary → Savings</div>   <!-- 700 weight, .86rem, --text  -->
+<div class="tt-val">Rp 4,500,000</div>         <!-- DM Mono, 700, 1rem, --accent -->
+<div class="tt-row">18% of inflow</div>        <!-- .78rem, --muted              -->
+```
+
+#### The persistent read-out
+
+Every chart that has a card also has a `.hover-box` beneath it (`--muted`, `.84–.86rem`,
+`min-height` reserved so the layout does not jump). It carries the same title and the same
+values as the card, joined with `  |  ` on one line, and it is **cleared back to its resting
+sentence on `mouseleave`** so it never shows a point the cursor left behind:
+
+```js
+$('chartCanvas').addEventListener('mouseleave', () => {
+  $('chartHoverBox').textContent = 'Hover to inspect data points.';
+});
+```
+
+---
+
 ### Shared Options (axes, tooltip, zoom)
 
 These option fragments are reused by the line and stacked charts. Note how **every axis has a
