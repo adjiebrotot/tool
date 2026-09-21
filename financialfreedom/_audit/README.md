@@ -115,6 +115,36 @@ in the money of the day, freedom at a later age costs MORE, while in today's
 money it costs less because fewer years are left to fund. Both are true at once
 and the page has to say which one it is showing.
 
+**Which money the page opens in.** Future dollars are the default, because a
+balance in the money of its own year is the figure a statement will actually
+read; today's money is the opt-in, behind Show Present Value. F47 pins that from
+the page as it loads — the toggle's wording, its unchecked state, the defaults
+object, the axis title, and the plotted balance genuinely carrying the inflation
+factor without anyone asking for it. Everything after F47 flips the toggle on,
+because the replay is written in real terms.
+
+**A point in time is a date, not a decimal.** The crossing falls between two
+yearly samples, so its x is 2039.1666…, and F49 pins every place that used to
+print that number: the tooltip, the hover line under the chart, and the
+freedom-age sub-line all name the month instead ("Feb 2040"), while a whole-year
+sample and the axis ticks themselves stay plain years.
+
+**The y axis follows the x window.** A linear y axis is sized once, from the
+whole series, so zooming into ten years of a sixty-year plan used to leave those
+ten years as a flat smear against a scale built for the end of it. F50 pins the
+refit: narrower windows get strictly narrower axes, the first five years no
+longer live in the bottom quarter, the balance axis never opens below an empty
+pot and the cash flow axis keeps zero. It also pins HOW: a chart plugin running
+inside the update the gesture triggers, with nothing hanging off the gesture
+itself, because a second update chasing the first leaves the lines drawn against
+the old scale while the ticks already show the new one. F50h pins the other half
+of that lesson — the reset button repaints once more, because the tick set built
+on the reset pass is the zoomed one.
+
+**The two cuts.** F48: the confidence pot has no card of its own any more, but
+the figure still rides under the probability it belongs to; and neither chart
+carries a subtitle explaining what its legend and its axis already say.
+
 The exports: every control present, the CSV carrying the same columns and the
 same row count as the table it came from, and naming the currency and the money
 mode it was taken in. F39e-g pin the legend packing, on labels of a known width

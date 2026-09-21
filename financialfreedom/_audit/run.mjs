@@ -692,14 +692,188 @@ console.log('\n── Feasibility ──');
 
 console.log('\n── Page and presentation ──');
 
+/* F47: what the reader sees having touched nothing. Future dollars are the
+   DEFAULT now, because they are the figures the account will actually read and
+   a reader who has never met real terms takes them at face value; today's
+   money is the opt-in behind Show Present Value. This block runs before
+   anything below flips that toggle, so it reads the page as it loads. */
+{
+  const r = await page.evaluate(() => {
+    const box = document.getElementById('showReal');
+    const row = box && box.closest('.toggle-row');
+    const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Your money'));
+    const plotted = path.data.datasets.find(d => d.label === 'Your money').data.map(p => p.y);
+    const res = window.__FF.last;
+    return {
+      exists: !!box,
+      oldGone: !document.getElementById('showNominal'),
+      checked: box ? box.checked : null,
+      defaulted: window.__FF.UI_DEFAULTS.showReal,
+      label: row ? row.querySelector('.toggle-label').textContent.trim() : '',
+      plottedLast: plotted[plotted.length - 1],
+      realLast: res.det[Math.min(res.years * 12, res.det.length - 1)],
+      infl: res.P.inflation, years: res.years,
+      yTitle: path.options.scales.y.title.text
+    };
+  });
+  check('F47 the money toggle asks for Present Value, not for future dollars',
+    r.exists && r.oldGone && /present value/i.test(r.label), r.label);
+  check('F47b and it is off on arrival, so future dollars are what you see first',
+    r.checked === false && r.defaulted === false,
+    `checked ${r.checked}, default ${r.defaulted}`);
+  check('F47c so the plotted balance carries the inflation factor unasked',
+    close(r.plottedLast, r.realLast * Math.pow(1 + r.infl, r.years), 0.01),
+    `${r.plottedLast.toFixed(0)} plotted vs ${r.realLast.toFixed(0)} real`);
+  check('F47d and the axis names which money that is', /future dollars/.test(r.yTitle), r.yTitle);
+}
+
+/* F48: two cuts. The confidence pot loses its card but not its figure, and the
+   chart subtitles stop restating what the legend and the axis already say. */
+{
+  const r = await page.evaluate(() => ({
+    card: !!document.getElementById('mConfPot'),
+    cards: document.querySelectorAll('.metrics .metric').length,
+    labels: Array.from(document.querySelectorAll('.metrics .metric .label')).map(x => x.textContent.trim()),
+    succSub: document.getElementById('mSuccessSub').textContent,
+    sub2: !!document.getElementById('chart2Sub'),
+    sub1: (document.getElementById('chart1Sub') || {textContent: ''}).textContent
+  }));
+  check('F48 the "Pot for that confidence" card is gone',
+    !r.card && r.cards === 4 && !r.labels.some(l => /pot for that confidence/i.test(l)),
+    `${r.cards} cards: ${r.labels.map(l => l.replace(/\s*\?$/, '')).join(' | ')}`);
+  check('F48b but the pot it named still rides under the chance it belongs to',
+    /confidence (needs|is out of reach)/.test(r.succSub), r.succSub);
+  check('F48c and neither chart explains itself twice over',
+    !r.sub2 && !/cross is the earliest/i.test(r.sub1) && !/what comes in against/i.test(r.sub1),
+    r.sub1 ? r.sub1.slice(0, 80) : '(no subtitle)');
+}
+
+/* F49: a point between two yearly samples is a DATE, not a decimal. The
+   crossing lands mid-year, so its x is 2039.1666…, and every place that used
+   to print that number now names the month it falls in. */
+{
+  const r = await page.evaluate(() => {
+    const c = window.__charts.find(ch => ch.data.datasets.some(d => d.label === 'Your money'));
+    const marker = c.data.datasets.filter(d => d.label === 'Financially free');
+    const x = marker.length ? marker[marker.length - 1].data[0].x : null;
+    const cb = c.options.plugins.tooltip.callbacks;
+    const whole = window.__FF.last.thisYear + 10;
+    cb.afterBody([{parsed: {x}, dataset: {label: 'Your money'}}]);
+    return {
+      x,
+      fracTitle: x == null ? null : cb.title([{parsed: {x}}]),
+      wholeTitle: cb.title([{parsed: {x: whole}}]),
+      hover: document.getElementById('hover1').textContent,
+      freeSub: document.getElementById('mFreeAgeSub').textContent,
+      tick: c.options.scales.x.ticks.callback(x)
+    };
+  });
+  check('F49 the crossing really does fall between two yearly samples',
+    r.x != null && Math.abs(r.x - Math.round(r.x)) > 1e-6, String(r.x));
+  check('F49b so the tooltip names the month instead of printing a decimal year',
+    /^[A-Z][a-z]{2} \d{4},/.test(r.fracTitle || '') && !/\d\.\d/.test(r.fracTitle || ''),
+    r.fracTitle);
+  check('F49c while a whole year is still just the year', /^\d{4},/.test(r.wholeTitle || ''),
+    r.wholeTitle);
+  check('F49d the hover line under the chart says the same thing',
+    /^[A-Z][a-z]{2} \d{4},/.test(r.hover) && !/\d\.\d/.test(r.hover.split('—')[0]),
+    r.hover.split('—')[0].trim());
+  check('F49e and so does the age you reach freedom in',
+    /[A-Z][a-z]{2} \d{4}\.$/.test(r.freeSub) && !/in \d+\.\d/.test(r.freeSub), r.freeSub);
+  check('F49f the axis tick itself stays a whole year', /^\d{4}$/.test(String(r.tick)), String(r.tick));
+}
+
+/* F50: zooming the x axis re-fits the y axis. Without it the window the reader
+   asked for is drawn against a scale built for the other fifty years, which is
+   a flat line however interesting the slice is. */
+{
+  const r = await page.evaluate(() => {
+    const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Your money'));
+    const cash = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Income'));
+    const sx = path.options.scales.x;
+    const openedAt = {min: sx.min, max: sx.max};
+    const full = path.$fitY(sx.min, sx.max);
+    const early = path.$fitY(sx.min, sx.min + 5);
+    const mid = path.$fitY(sx.min, sx.min + 25);
+    const cashFull = cash.$fitY(sx.min, sx.max);
+    const cashEarly = cash.$fitY(sx.min, sx.min + 5);
+    /* Drive the wiring, not just the arithmetic. The refit is a chart plugin
+       rather than a zoom callback, because it has to run inside the update the
+       gesture triggers: the zoom plugin writes the window it is about to draw
+       into the x scale's options, so replaying that here is the real path. */
+    const plug = (path.config.plugins || []).filter(p => p.id === 'ffYFit');
+    sx.min = openedAt.min; sx.max = openedAt.min + 5;
+    plug.forEach(p => p.beforeUpdate(path));
+    const zoomed = {min: path.options.scales.y.min, max: path.options.scales.y.max};
+    sx.min = openedAt.min; sx.max = openedAt.max;
+    plug.forEach(p => p.beforeUpdate(path));
+    const restored = {min: path.options.scales.y.min, max: path.options.scales.y.max};
+    return {
+      full, early, mid, cashFull, cashEarly, zoomed, restored, openedAt,
+      plugged: plug.length === 1 &&
+               (cash.config.plugins || []).some(p => p.id === 'ffYFit'),
+      // A second update chasing the first is what leaves the lines drawn on the
+      // old scale, so nothing may hang off the gesture itself.
+      noCallbacks: !path.options.plugins.zoom.zoom.onZoom &&
+                   !path.options.plugins.zoom.pan.onPan
+    };
+  });
+  check('F50 both charts carry the y-axis refit, and carry it as a plugin',
+    r.plugged && r.noCallbacks,
+    r.plugged ? 'ffYFit on both, nothing chasing the gesture' : 'missing');
+  check('F50b a narrower window gets a narrower axis, never a wider one',
+    r.early.max < r.mid.max && r.mid.max < r.full.max,
+    `5y ${r.early.max.toFixed(0)} < 25y ${r.mid.max.toFixed(0)} < all ${r.full.max.toFixed(0)}`);
+  check('F50c and the early years are no longer a smear along the bottom',
+    r.early.max < r.full.max / 4,
+    `${r.early.max.toFixed(0)} vs ${r.full.max.toFixed(0)}`);
+  check('F50d a zoom writes those bounds onto the axis, inside its own update',
+    close(r.zoomed.max, r.early.max, 1e-6) && close(r.zoomed.min, r.early.min, 1e-6),
+    `${r.zoomed.min.toFixed(0)}..${r.zoomed.max.toFixed(0)}`);
+  check('F50e and zooming back out restores the full scale',
+    close(r.restored.max, r.full.max, 1e-6), `${r.restored.max.toFixed(0)} vs ${r.full.max.toFixed(0)}`);
+  check('F50f the balance axis never opens below an empty pot', r.full.min >= 0 && r.early.min >= 0,
+    `${r.full.min.toFixed(0)} / ${r.early.min.toFixed(0)}`);
+  check('F50g the cash flow axis keeps zero and drops its ceiling to the years shown',
+    r.cashEarly.min === 0 && r.cashEarly.max < r.cashFull.max / 2,
+    `first five years ${r.cashEarly.max.toFixed(0)} vs whole plan ${r.cashFull.max.toFixed(0)}`);
+
+  /* The reset button repaints a second time on purpose. resetZoom restores the
+     window and the refit sizes y to it, but the tick set Chart.js builds on
+     that pass is the zoomed one, and it is left stranded across an axis it no
+     longer belongs to. The plain update afterwards is what rebuilds it. */
+  const calls = await page.evaluate(() => {
+    const out = [];
+    [['Your money', 'resetZoom1'], ['Income', 'resetZoom2']].forEach(([label, btn]) => {
+      const c = window.__charts.find(ch => ch.data.datasets.some(d => d.label === label));
+      const reset = c.resetZoom, update = c.update;
+      c.resetZoom = t => out.push(label + ' resetZoom(' + t + ')');
+      c.update = t => out.push(label + ' update(' + t + ')');
+      document.getElementById(btn).click();
+      c.resetZoom = reset; c.update = update;
+    });
+    return out;
+  });
+  check('F50h resetting the zoom repaints once more, so the ticks are rebuilt too',
+    calls.length === 4 && calls.every(c => /\((none)\)$/.test(c)) &&
+    /resetZoom/.test(calls[0]) && /update/.test(calls[1]) &&
+    /resetZoom/.test(calls[2]) && /update/.test(calls[3]),
+    calls.join(', ') || 'nothing called');
+}
+
+/* Everything from here down reads the plan in today's money, because the
+   replay is written in real terms. The default is pinned by F47 above, once,
+   before this flips it. */
+await page.evaluate(() => { document.getElementById('showReal').checked = true; window.__FF.render(); });
+
 // F23: real to nominal is exactly the inflation factor, to the cent.
 {
-  await page.evaluate(() => { document.getElementById('showNominal').checked = false; window.__FF.render(); });
+  await page.evaluate(() => { document.getElementById('showReal').checked = true; window.__FF.render(); });
   const real = await page.evaluate(() => {
     const c = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Your money'));
     return c.data.datasets.find(d => d.label === 'Your money').data.map(p => p.y);
   });
-  await page.evaluate(() => { document.getElementById('showNominal').checked = true; window.__FF.render(); });
+  await page.evaluate(() => { document.getElementById('showReal').checked = false; window.__FF.render(); });
   const nominal = await page.evaluate(() => {
     const c = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Your money'));
     return c.data.datasets.find(d => d.label === 'Your money').data.map(p => p.y);
@@ -711,7 +885,7 @@ console.log('\n── Page and presentation ──');
   }
   check('F23 future dollars are today’s money times the inflation factor',
     worst < 0.01, `largest gap ${worst.toExponential(2)}`);
-  await page.evaluate(() => { document.getElementById('showNominal').checked = false; window.__FF.render(); });
+  await page.evaluate(() => { document.getElementById('showReal').checked = true; window.__FF.render(); });
 }
 
 // F24: the chart starts at the current year and the current age, as promised.
@@ -969,7 +1143,7 @@ console.log('\n── Page and presentation ──');
    the plugin clamps to what `limits` says. ── */
 {
   await page.evaluate(() => {
-    document.getElementById('showNominal').checked = false;
+    document.getElementById('showReal').checked = true;
     window.__FF.render();
   });
   const r = await page.evaluate(() => {
@@ -1043,13 +1217,13 @@ console.log('\n── Page and presentation ──');
   const r = await page.evaluate(() => {
     const $ = id => document.getElementById(id);
     const rows = () => window.__FF.tableRows(window.__FF.last);
-    $('showNominal').checked = false; window.__FF.render();
+    $('showReal').checked = true; window.__FF.render();
     const real = rows(), note = $('inflationNote').textContent.trim();
     const heads = Array.from(document.querySelectorAll('#tableWrap thead th')).map(t => t.textContent.trim());
-    $('showNominal').checked = true; window.__FF.render();
+    $('showReal').checked = false; window.__FF.render();
     const nom = rows();
     const csv = window.__FF.last;
-    $('showNominal').checked = false; window.__FF.render();
+    $('showReal').checked = true; window.__FF.render();
     return {
       note, heads, i: window.__FF.last.P.inflation,
       realExpense: real.map(x => x.expense), nomExpense: nom.map(x => x.expense),
@@ -1244,7 +1418,9 @@ for(const [name, extra] of [
   const p = refParams(ui);
   const rows = await page.evaluate(u => {
     const F = window.__FF;
-    return F.tableRows(F.compute(Object.assign({}, F.UI_DEFAULTS, u)));
+    // The replay is written in real terms, so the table is read there too. The
+    // page's own default is future dollars; F47 pins that separately.
+    return F.tableRows(F.compute(Object.assign({}, F.UI_DEFAULTS, u, {showReal: true})));
   }, ui);
   let worstInc = 0, worstExp = 0, worstSav = 0;
   for(let y = 0; y < rows.length - 1; y++){
@@ -1381,8 +1557,8 @@ for(const [name, extra] of [
   check('F46 every export cluster sits in the top right, beside its heading',
     r.length === 3 && r.every(x => x.sameRow && x.flushRight),
     r.map(x => `${x.title}: row ${x.sameRow}, right ${x.flushRight}`).join(' | '));
-  check('F46b and the subtitle sits below that row, so it cannot push them off it',
-    r.every(x => x.subIsSibling) && r.some(x => x.subLen > 120),
+  check('F46b and any subtitle sits below that row, so it cannot push them off it',
+    r.every(x => x.subIsSibling),
     `longest subtitle ${Math.max.apply(null, r.map(x => x.subLen))} chars, none inside the row`);
 }
 

@@ -17,7 +17,10 @@
      gm   = (1 + gr)^(1/12) - 1          real monthly growth
      Expenses are constant in real terms by construction, so they never appear
      with an inflation factor again. Nominal figures are only ever produced for
-     display, by multiplying a real figure at year y by (1 + i)^y.
+     display, by multiplying a real figure at year y by (1 + i)^y. That is what
+     the page shows by DEFAULT, because a balance in the money of its own year
+     is the figure the statement will actually read; Show Present Value turns
+     the factor back off and leaves everything in today's money.
 
    Step 3  Savings depend on WHICH field was entered. These are two different
      models and the panel says which one is running.
@@ -157,6 +160,7 @@ var PRESETS_AS_AT = '2026-09';
 // age 120: at the perpetuity pot the real balance is flat, so the horizon only
 // has to be long enough to expose a declining one.
 var RICH_HORIZON_AGE = 120;
+var MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var TICKER_HISTORY_START = '1990-01-01';
 
 var UI_DEFAULTS = {
@@ -169,7 +173,7 @@ var UI_DEFAULTS = {
   assets: 100000,
   mode: 'die', legacy: 500000, retireMultiplier: 100,
   pensionOn: false, pensionStartAge: 67, pensionAmount: 29000,
-  showNominal: false, paths: 1000, seed: 20260921,
+  showReal: false, paths: 1000, seed: 20260921,
   confidence: 90
 };
 
@@ -781,7 +785,7 @@ function readInputs(){
   UI.pensionOn = $('pensionOn').checked;
   UI.pensionStartAge = clamp(num($('pensionStartAge').value, 67), 40, 90);
   UI.pensionAmount = Math.max(0, SharedFmt.parseFormatted($('pensionAmount').value) || 0);
-  UI.showNominal = $('showNominal').checked;
+  UI.showReal = $('showReal').checked;
   UI.paths = clamp(Math.round(num($('paths').value, 1000)), 100, 5000);
   UI.confidence = clamp(num($('confidence').value, 90), 50, 99);
   UI.seed = Math.max(1, Math.round(num($('seed').value, UI_DEFAULTS.seed)));
@@ -822,7 +826,8 @@ function compute(ui){
   var P = buildParams(ui);
   var diag = diagnose(ui);
   var years = Math.max(1, Math.round(months(P.ageNow, P.ageDie) / 12));
-  var thisYear = new Date().getFullYear();
+  var now = new Date();
+  var thisYear = now.getFullYear(), thisMonth = now.getMonth();
 
   var life = lifetimeSeries(P);
   var det = life.balance;
@@ -862,27 +867,41 @@ function compute(ui){
   var reqs = potRequirements(P, {paths: ui.paths, seed: ui.seed});
 
   return {
-    P: P, ui: ui, diag: diag, years: years, thisYear: thisYear,
+    P: P, ui: ui, diag: diag, years: years, thisYear: thisYear, thisMonth: thisMonth,
     det: det, deposited: life.deposited,
     needCurve: needCurve, incomeCurve: incomeCurve,
     expenseCurve: expenseCurve, flowCurve: flowCurve,
     needAtRetire: needAtRetire, potAtRetire: potAtRetire,
     mc: mc, reqs: reqs,
-    successAtNeed: reqs.successAt(needAtRetire),
     successAtPlan: reqs.successAt(potAtRetire),
     confPot: reqs.atConfidence(ui.confidence),
     ffAge: diag.ffAge != null ? diag.ffAge : null
   };
 }
 
-// Today's money to the money of year y, for display only.
+/* Today's money to the money of year y, for display only. Future dollars are
+   the default: they are what the account will actually read in that year, and
+   a reader who has not met real terms before takes them at face value. Show
+   Present Value leaves the engine's own real figures alone instead. */
 function show(res, value, yearIndex){
   if(value == null || !isFinite(value)) return value;
-  if(!res.ui.showNominal) return value;
+  if(res.ui.showReal) return value;
   return value * Math.pow(1 + res.P.inflation, yearIndex);
 }
 
-function moneyMode(res){ return res.ui.showNominal ? 'future dollars' : "today's money"; }
+function moneyMode(res){ return res.ui.showReal ? "today's money" : 'future dollars'; }
+
+/* Name a position on the calendar-year axis. The yearly samples sit on whole
+   years and read as one, but the crossing falls BETWEEN two of them, so its x
+   is a decimal: "2040.1666666666667" is not a date anyone can read. Year 0 of
+   the projection is today, so the fraction is months from this month, and the
+   answer is named to the nearest one: "Feb 2040". */
+function whenLabel(res, yearX){
+  var m = Math.round((yearX - res.thisYear) * 12);
+  if(m % 12 === 0) return String(res.thisYear + m / 12);
+  var abs = res.thisMonth + m;
+  return MONTH_NAMES[((abs % 12) + 12) % 12] + ' ' + (res.thisYear + Math.floor(abs / 12));
+}
 
 /* What the inflation rate actually does to the reader's own spending. The
    engine already applies it everywhere, but in today's money the living cost
@@ -905,7 +924,7 @@ function renderInflationNote(res){
     escapeHtml(fmt.age(res.P.ageRetire)) + ', and ' +
     escapeHtml(fmt.currency(now * Math.pow(1 + i, toDie))) + ' at ' +
     escapeHtml(fmt.age(res.P.ageDie)) + '.' +
-    info('Same life, bigger figure. The pot you need is measured against that figure, which is why stopping later costs more in the money of the day even though it buys the same. Everything on the page is in today\'s money until you turn on future dollars in Settings.');
+    info('Same life, bigger figure. The pot you need is measured against that figure, which is why stopping later costs more in the money of the day even though it buys the same. Everything on the page is in the money of its own year until you turn on Show Present Value in Settings.');
 }
 
 function renderVerdict(res){
@@ -957,7 +976,7 @@ function renderMetrics(res){
     ? 'Your FIRE number for ' + modeName + ' at ' + fmt.age(res.P.ageRetire) + ': ' +
       fmt.num(res.needAtRetire / Math.max(1e-9, res.P.Xr * 12), 1) + 'x a year of spending' +
       (swr == null ? '' : ', a ' + fmt.pct(swr, 2) + ' SWR') +
-      (res.ui.showNominal ? ', in ' + (res.thisYear + retireYearIdx) + ' dollars.' : '.')
+      (res.ui.showReal ? '.' : ', in ' + (res.thisYear + retireYearIdx) + ' dollars.')
     : 'No pot works at this real return.';
 
   var free = res.ffAge;
@@ -965,18 +984,18 @@ function renderMetrics(res){
   $('mFreeAgeSub').textContent = free == null
     ? 'The curves never cross.'
     : fmt.num(Math.max(0, free - res.P.ageNow), 1) + ' years away, in ' +
-      (res.thisYear + Math.round(free - res.P.ageNow));
+      whenLabel(res, res.thisYear + (free - res.P.ageNow)) + '.';
 
   var sr = res.successAtPlan;
   $('mSuccess').textContent = fmt.pct(sr * 100, 0);
   $('mSuccess').className = 'value ' + (sr >= 0.85 ? 'pos' : (sr < 0.6 ? 'neg' : ''));
-  $('mSuccessSub').textContent = 'of ' + fmt.num(res.mc.paths) + ' simulated futures.';
-
-  $('mConfPot').textContent = isFinite(res.confPot)
-    ? fmt.currency(show(res, res.confPot, retireYearIdx), true) : 'Not reachable';
-  $('mConfPotSub').textContent = isFinite(res.confPot)
-    ? 'vs ' + fmt.pct(res.successAtNeed * 100, 0) + ' survival at the amount needed.'
-    : 'Out of reach at this volatility.';
+  /* The confidence pot no longer has a card of its own, but it is still the
+     figure to plan around, so it rides under the probability it belongs to. */
+  $('mSuccessSub').textContent = 'of ' + fmt.num(res.mc.paths) + ' simulated futures. ' +
+    (isFinite(res.confPot)
+      ? fmt.pct(res.ui.confidence, 0) + ' confidence needs ' +
+        fmt.currency(show(res, res.confPot, retireYearIdx), true) + '.'
+      : fmt.pct(res.ui.confidence, 0) + ' confidence is out of reach at this volatility.');
 
   $('mRealRet').textContent = fmt.pct(res.P.rr * 100, 2);
   $('mRealRetSub').textContent = fmt.pct(res.ui.ret, 1) + ' less ' + fmt.pct(res.ui.inflation, 1) +
@@ -1006,6 +1025,68 @@ function pts(values, firstYear){
   return out;
 }
 
+/* Keep the y axis on the slice of the plan that is actually on screen. A
+   linear y axis is sized once, from the whole series, so zooming into ten
+   years of a sixty-year plan leaves those ten years as a flat smear against a
+   scale built for the end of it. Every zoom and every pan re-fits y to the x
+   window, so the shape under the reader's nose is the shape they can read.
+
+   `hiSeries` are the series the TOP of the axis is sized to, `loSeries` those
+   the bottom is. The simulated band's upper edge is deliberately in neither:
+   sixty years of compounding put its best decile so far above the lines that
+   decide the answer that the answer becomes an unreadable sliver, so the band
+   is allowed to run off the top instead and the subtitle says it does. Points
+   one year either side of the window count too, so the segments that cross the
+   edges are not clipped out of their own scale. */
+function makeYFit(y0, hiSeries, loSeries, opts){
+  opts = opts || {};
+  function edge(list, xMin, xMax, better){
+    var best = null;
+    list.forEach(function(arr){
+      for(var i = 0; i < arr.length; i++){
+        var v = arr[i], x = y0 + i;
+        if(v == null || !isFinite(v)) continue;
+        if(x < xMin - 1 || x > xMax + 1) continue;
+        if(best === null || better(v, best)) best = v;
+      }
+    });
+    return best;
+  }
+  return function(xMin, xMax){
+    var hi = edge(hiSeries, xMin, xMax, function(v, b){ return v > b; });
+    var lo = edge(loSeries, xMin, xMax, function(v, b){ return v < b; });
+    if(hi === null || lo === null) return null;
+    // A cash flow is read against zero, so zero stays on the axis there even
+    // when every figure in the window is above it.
+    if(opts.includeZero && lo > 0) lo = 0;
+    var pad = Math.max((hi - lo) * 0.1, Math.abs(hi) * 0.02, 1);
+    var min = lo - pad * 0.6;
+    if(lo >= 0 && min < 0) min = 0;   // never open a gap below an empty pot
+    return {min: min, max: hi + pad};
+  };
+}
+
+/* The refit is a Chart.js plugin rather than a zoom callback, because it has
+   to happen INSIDE the update the gesture already triggers. A second update
+   chasing the first leaves the lines drawn against the old scale while the
+   ticks already show the new one, which is worse than not refitting at all.
+
+   The zoom plugin writes the window it is about to draw into the x scale's
+   options and then calls update, so by `beforeUpdate` that window is readable
+   and the y axis can be sized to it in the same pass. */
+var Y_FIT_PLUGIN = {
+  id: 'ffYFit',
+  beforeUpdate: function(chart){
+    var fit = chart.$fitY;
+    if(!fit) return;
+    var xo = chart.options.scales.x, yo = chart.options.scales.y;
+    if(!isFinite(xo.min) || !isFinite(xo.max)) return;
+    var b = fit(xo.min, xo.max);
+    if(!b) return;
+    yo.min = b.min; yo.max = b.max;
+  }
+};
+
 /* Both charts carry TWO x axes over the same numbers: the calendar year the
    data is plotted on, and the age that year lands on. They are given identical
    bounds so the zoom plugin, which moves every x-axis scale together, keeps
@@ -1017,6 +1098,7 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
   opts = opts || {};
   var span = Math.max(1, xMax - xMin);
   var limit = {min: xMin, max: xMax, minRange: Math.min(3, span)};
+  var start = opts.fitY ? opts.fitY(xMin, xMax) : null;
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -1031,13 +1113,13 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
           title: function(items){
             if(!items.length) return '';
             var yr = items[0].parsed.x;
-            return yr + ', age ' + fmt.age(ageOf(yr));
+            return whenLabel(res, yr) + ', age ' + fmt.age(ageOf(yr));
           },
           label: function(ctx){ return '  ' + ctx.dataset.label + ': ' + fmt.currency(ctx.parsed.y, true); },
           afterBody: function(items){
             if(!items.length) return;
             var yr = items[0].parsed.x;
-            $(hoverId).textContent = yr + ', age ' + fmt.age(ageOf(yr)) + '  —  ' +
+            $(hoverId).textContent = whenLabel(res, yr) + ', age ' + fmt.age(ageOf(yr)) + '  —  ' +
               items.map(function(i){ return i.dataset.label + ': ' + fmt.currency(i.parsed.y, true); }).join('  |  ');
           }
         }
@@ -1066,13 +1148,10 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
         grid: {drawOnChartArea: false, color: t.grid}
       },
       y: {
-        // `yMax` caps the axis at the expected path rather than at the top of
-        // the simulated band. Sixty years of compounding put the best 10% so
-        // far above the lines that decide the answer that the answer becomes an
-        // unreadable sliver, so the band is allowed to run off the top instead
-        // and the subtitle says it does.
-        min: opts.yMin,
-        max: opts.yMax,
+        // Both bounds come from the fitter above, so the view the chart opens
+        // on and the view it zooms to are sized by the same rule.
+        min: start ? start.min : undefined,
+        max: start ? start.max : undefined,
         title: {display: true, text: (opts.yTitle || 'Balance') + ', ' + moneyMode(res),
                 color: t.muted, font: {size: 11}},
         ticks: {color: t.muted, font: {size: 11}, callback: function(v){ return fmt.currency(v, true); }},
@@ -1139,18 +1218,15 @@ function renderCharts(res){
   var p50 = floorZero(scale(res.mc.bands.p50));
   var p90 = floorZero(scale(res.mc.bands.p90));
 
-  /* Cap the axis at the expected plan, not at the best of a thousand futures.
+  /* Size the axis to the expected plan, not to the best of a thousand futures.
      Sixty years of compounding put the 90th percentile an order of magnitude
      above the crossing, and the crossing is what this chart is for. The band is
      allowed to run off the top; the subtitle says so when it does. */
-  var softMax = 0;
-  [det, dep, need, p50].forEach(function(arr){
-    arr.forEach(function(v){ if(v != null && isFinite(v) && v > softMax) softMax = v; });
-  });
+  var fit1 = makeYFit(y0, [det, dep, need, p50], [det, dep, need, p50, p10]);
+  var start1 = fit1(y0, y0 + years);
   var bandMax = 0;
   p90.forEach(function(v){ if(v != null && isFinite(v) && v > bandMax) bandMax = v; });
-  var yMax1 = softMax > 0 ? softMax * 1.12 : undefined;
-  var bandClipped = yMax1 != null && bandMax > yMax1;
+  var bandClipped = !!start1 && bandMax > start1.max;
 
   var ds1 = [
     {label:'Worst 10%', data: pts(p10, y0), borderColor: withAlpha(t.a, 0), backgroundColor:'transparent',
@@ -1195,9 +1271,11 @@ function renderCharts(res){
   if(chart1) chart1.destroy();
   chart1 = new Chart($('ffChart').getContext('2d'), {
     type:'line',
+    plugins:[Y_FIT_PLUGIN],
     data:{datasets: ds1},
-    options: baseOptions(res, t, 'hover1', ageOf, y0, y0 + c1, {yMax: yMax1})
+    options: baseOptions(res, t, 'hover1', ageOf, y0, y0 + c1, {fitY: fit1})
   });
+  chart1.$fitY = fit1;
   renderLegend('legend1', chart1, legend1);
 
   /* ── Chart 2: the cash flow, and which side of it the pot is on ──
@@ -1214,6 +1292,8 @@ function renderCharts(res){
     if(v > top2) top2 = v;
     if(v < floor2) floor2 = v;
   });
+
+  var fit2 = makeYFit(y0, [income, spend], [income, spend], {includeZero: true});
 
   var ds2 = [
     {label:'Spending', data: pts(spend, y0), borderColor: t.b, borderWidth: 2.2,
@@ -1245,23 +1325,24 @@ function renderCharts(res){
   if(chart2) chart2.destroy();
   chart2 = new Chart($('ddChart').getContext('2d'), {
     type:'line',
+    plugins:[Y_FIT_PLUGIN],
     data:{datasets: ds2},
     options: baseOptions(res, t, 'hover2', ageOf, y0, y0 + years,
-                         {yTitle: 'A year', yMin: Math.min(0, floor2)})
+                         {yTitle: 'A year', fitY: fit2})
   });
+  chart2.$fitY = fit2;
   renderLegend('legend2', chart2, legend2);
 
-  $('chart1Sub').textContent = 'Where the two solid lines cross is the earliest you can stop. In ' +
-    moneyMode(res) + (res.ui.showNominal
-      ? ', so stopping later costs more: prices keep rising while you wait.'
-      : ', so the pot needed falls with age. Turn on future dollars to see what it costs in the money of the day.') +
-    (bandClipped ? ' The axis is sized to the expected plan, so the best of the simulated futures runs off the top.' : '') +
-    (ruined ? ' A pot that runs out is drawn flat at zero; the table carries the shortfall.' : '');
-  $('chart2Sub').textContent = 'What comes in against what goes out, age ' +
-    fmt.age(res.P.ageNow) + ' to ' + fmt.age(res.P.ageDie) + ', in ' + moneyMode(res) +
-    '. The gap is what you save while working' +
-    (res.P.pensionOn ? ', and what the pot has to cover beyond the pension once you stop.'
-                     : ', and what the pot has to cover once you stop.');
+  /* The legend names every line and the y axis names the money, so the only
+     thing left for a subtitle to say is what the DRAWING is doing that the data
+     is not: an axis sized past the band, and a failed pot held at zero. When
+     neither applies there is no subtitle at all. */
+  var notes = [];
+  if(bandClipped) notes.push('The axis is sized to the expected plan, so the best of the simulated futures runs off the top.');
+  if(ruined) notes.push('A pot that runs out is drawn flat at zero; the table carries the shortfall.');
+  var sub1 = $('chart1Sub');
+  sub1.textContent = notes.join(' ');
+  sub1.style.display = notes.length ? '' : 'none';
 }
 
 /* ─── TABLE ─── */
@@ -1336,10 +1417,10 @@ function renderAssumptions(res){
       info('Spending, saving and the return are all taken as after-tax figures. Tax differs too much between countries, and between an ordinary account and a superannuation or pension wrapper, to model honestly in one tool.'),
 
     '<strong>Shown in ' + moneyMode(res) + '.</strong> Spending holds its value, so it rises with inflation.' +
-      info('Switch between today\'s money and future dollars on the Settings tab. Future dollars are the same plan multiplied by the inflation factor for each year, so they look larger and buy the same.'),
+      info('Future dollars are the figures the account will actually read: the same plan multiplied by the inflation factor for each year, so they look larger and buy the same. Turn on Show Present Value on the Settings tab to strip that factor back out and read everything in today\'s money instead.'),
 
     '<strong>Inflation is ' + fmt.pct(res.ui.inflation, 1) + ' a year</strong> and applies to every year, working or retired.' +
-      info('Living costs, the pot needed and the pension all rise with it, and the return is discounted by it (Fisher, not subtraction). That is why financial freedom at a later age costs more in the money of the day even though it buys the same life. The Living cost column in the table below is the figure to watch with future dollars turned on.'),
+      info('Living costs, the pot needed and the pension all rise with it, and the return is discounted by it (Fisher, not subtraction). That is why financial freedom at a later age costs more in the money of the day even though it buys the same life. The Expense column in the table below is that rise, year by year.'),
 
     '<strong>Your FIRE number</strong> implies a ' + (swr == null ? 'n/a' : fmt.pct(swr, 2)) + ' SWR.' +
       info('The share of the pot you spend in the first year. The familiar 25 times rule is the same arithmetic at a 4% real return, so a higher real return needs a smaller pot and a lower one needs more.'),
@@ -1715,7 +1796,7 @@ function chartSvg(canvasId, filename, chartTitle, legendId){
 // is a different picture, and an exported file has no Settings tab to check.
 function exportTitle(which){
   if(!last) return 'Financial Freedom Calculator';
-  var mode = last.ui.showNominal ? 'future dollars' : "today's money";
+  var mode = last.ui.showReal ? "today's money" : 'future dollars';
   return 'Financial Freedom Calculator: ' +
     (which === 'dd' ? 'Living off the pot' : 'Path to freedom') + ' (' + mode + ')';
 }
@@ -1734,7 +1815,7 @@ function downloadCsv(){
             money(r.balance), money(r.need), money(r.gap)].map(csvCell).join(',');
   });
   var csv = '# Made using tool.adjiebrotots.com/financialfreedom\n' +
-    '# ' + last.ui.currency + ', ' + (last.ui.showNominal ? 'future dollars' : "today's money") + '\n' +
+    '# ' + last.ui.currency + ', ' + (last.ui.showReal ? "today's money" : 'future dollars') + '\n' +
     header.join(',') + '\n' + lines.join('\n') + '\n';
   saveBlob(new Blob([csv], {type: 'text/csv;charset=utf-8;'}), 'financial_freedom.csv');
 }
@@ -1761,7 +1842,7 @@ function applyUIToDom(ui){
   $('pensionOn').checked = !!ui.pensionOn;
   $('pensionStartAge').value = ui.pensionStartAge;
   $('pensionAmount').value = SharedFmt.formatThousands(ui.pensionAmount);
-  $('showNominal').checked = !!ui.showNominal;
+  $('showReal').checked = !!ui.showReal;
   $('paths').value = ui.paths;
   $('confidence').value = ui.confidence;
   $('seed').value = ui.seed;
@@ -1845,15 +1926,19 @@ function wire(){
     r.addEventListener('change', function(){ syncModeSelection(); scheduleRender(); });
   });
 
-  ['pensionOn','showNominal'].forEach(function(id){
+  ['pensionOn','showReal'].forEach(function(id){
     $(id).addEventListener('change', scheduleRender);
   });
 
   $('fetchTickerBtn').addEventListener('click', fetchTicker);
   $('ticker').addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); fetchTicker(); } });
 
-  $('resetZoom1').addEventListener('click', function(){ if(chart1) chart1.resetZoom(); });
-  $('resetZoom2').addEventListener('click', function(){ if(chart2) chart2.resetZoom(); });
+  /* resetZoom puts the x window back and the refit plugin sizes y to it on the
+     same update. The second update is not redundant: the tick set Chart.js
+     builds on the reset pass is the zoomed one, and it would otherwise be left
+     stranded across an axis it no longer belongs to. */
+  $('resetZoom1').addEventListener('click', function(){ if(chart1){ chart1.resetZoom('none'); chart1.update('none'); } });
+  $('resetZoom2').addEventListener('click', function(){ if(chart2){ chart2.resetZoom('none'); chart2.update('none'); } });
 
   $('ffPngBtn').addEventListener('click', function(){
     chartPng('ffChart', 'financial_freedom_path.png', exportTitle('ff'), 'legend1');
