@@ -1709,10 +1709,16 @@ for(const [name, extra] of [
       stillHasPotLines: !!(label(cash, 'Your pot') || label(cash, 'Your pot after a crash')),
       legend2: Array.from(document.querySelectorAll('#legend2 .legend-item')).map(x => x.textContent.trim()),
       legend3: Array.from(document.querySelectorAll('#legend3 .legend-item')).map(x => x.textContent.trim()),
-      // One quantity, one entry: the swatch states both of its colours itself.
+      /* One quantity, one entry. SharedLegend stashes the spec on the element,
+         which is both what the page draws the swatch from and what the
+         exporters read back, so reading it here checks all three at once. */
       splitSwatch: (() => {
-        const d = document.querySelector('#legend2 .legend-item .dot.split');
-        return d ? {c1: d.dataset.c1, c2: d.dataset.c2, bg: d.style.background} : null;
+        const d = Array.from(document.querySelectorAll('#legend2 .legend-item'))
+          .find(el => /savings\/withdrawal/i.test(el.textContent));
+        if(!d) return null;
+        const spec = JSON.parse(d.dataset.swatch);
+        return {type: spec.type, fill: spec.fill, fill2: spec.fill2,
+                rects: d.querySelectorAll('svg rect').length};
       })()
     };
   });
@@ -1775,12 +1781,12 @@ for(const [name, extra] of [
     r.legend2.some(l => /^income$/i.test(l)) && r.legend2.some(l => /^spending$/i.test(l)) &&
     r.legend2.some(l => /retire at/i.test(l)),
     r.legend2.join(' | '));
-  check('F44g2 and its swatch carries both colours, so the exporters can read them',
-    !!r.splitSwatch && !!r.splitSwatch.c1 && !!r.splitSwatch.c2 &&
-    r.splitSwatch.c1 !== r.splitSwatch.c2 &&
-    /linear-gradient/.test(r.splitSwatch.bg) &&
-    new Set(r.splitSwatch.bg.match(/rgba?\([^)]*\)/g) || []).size === 2,
-    r.splitSwatch ? `${r.splitSwatch.c1} / ${r.splitSwatch.c2} painted as ${r.splitSwatch.bg}` : 'no split swatch');
+  check('F44g2 and its swatch is one block in both of the fill colours',
+    !!r.splitSwatch && r.splitSwatch.type === 'area' &&
+    !!r.splitSwatch.fill && !!r.splitSwatch.fill2 &&
+    r.splitSwatch.fill !== r.splitSwatch.fill2 && r.splitSwatch.rects === 2,
+    r.splitSwatch ? `${r.splitSwatch.type}: ${r.splitSwatch.fill} / ${r.splitSwatch.fill2}, ` +
+                    `${r.splitSwatch.rects} halves drawn` : 'no split swatch');
   check('F44g3 the balance chart has a legend of its own, with the same retirement rule',
     r.legend3.some(l => /^balance$/i.test(l)) && r.legend3.some(l => /retire at 60/i.test(l)) &&
     r.balMarker && !r.legend3.some(l => /right axis/i.test(l)),

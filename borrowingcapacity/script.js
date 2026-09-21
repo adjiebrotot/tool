@@ -797,8 +797,10 @@ function renderLegend(datasets){
   datasets.forEach((ds, idx) => {
     const item = document.createElement('div');
     item.className = 'legend-item';
-    const dashCls = SERIES[idx].dash.length ? ' dash' : '';
-    item.innerHTML = `<span class="dot${dashCls}" style="background:${ds.borderColor}"></span><span>${ds.label}</span>`;
+    // The swatch is read off the dataset itself, so each cap's own dash
+    // pattern — and the shading under the capacity line — appear in the key
+    // exactly as the chart draws them.
+    SharedLegend.attach(item, SharedLegend.fromDataset(ds), ds.label);
     item.addEventListener('click', () => {
       const hidden = !item.classList.contains('hidden');
       item.classList.toggle('hidden', hidden);
@@ -960,13 +962,19 @@ function exportCsv(){
   downloadBlob(lines.join('\n'), 'borrowing-capacity.csv', 'text/csv;charset=utf-8;');
 }
 
-// Composite the chart onto a titled canvas so the PNG stands alone.
+// Composite the chart onto a titled canvas so the PNG stands alone. Five caps
+// told apart by their dash patterns are unreadable without a key, so the
+// export carries the page's own legend, drawn with the same marks.
 function chartPng(){
   const src = $('chartCanvas');
   const pad = 28, headH = 74, footH = 34;
+  const items = SharedLegend.itemsOf('chartLegend');
+  const K = 1.4;                                   // 15px label ↔ a 15px-scale mark
+  const markW = SharedLegend.W * K, gap = 10, itemGap = 26;
+  const legendH = items.length ? 34 : 0;
   const out = document.createElement('canvas');
   out.width = src.width + pad*2;
-  out.height = src.height + headH + footH + pad;
+  out.height = src.height + headH + legendH + footH + pad;
   const ctx = out.getContext('2d');
   ctx.fillStyle = cssVar('--panel') || '#fff';
   ctx.fillRect(0,0,out.width,out.height);
@@ -977,6 +985,23 @@ function chartPng(){
   ctx.font = '400 15px "DM Sans", sans-serif';
   if(last) ctx.fillText(`Capacity ${fmt.money0(last.r.maxLoan)} · binding constraint: ${last.r.binding.label} · assessed at ${fmt.pct(last.r.assessRate)}`, pad, pad+48);
   ctx.drawImage(src, pad, headH);
+  if(items.length){
+    ctx.font = '500 15px "DM Sans", sans-serif';
+    ctx.textBaseline = 'middle';
+    const widths = items.map(it => markW + gap + ctx.measureText(it.label).width);
+    const totalW = widths.reduce((a,b)=>a+b, 0) + itemGap * (items.length - 1);
+    let x = Math.max(pad, (out.width - totalW) / 2);
+    const cy = headH + src.height + legendH/2;
+    items.forEach((it, i) => {
+      SharedLegend.paint(ctx, it.swatch || {color:it.color}, x, cy, K);
+      x += markW + gap;
+      ctx.fillStyle = cssVar('--text');
+      ctx.fillText(it.label, x, cy);
+      x += widths[i] - markW - gap + itemGap;
+    });
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = cssVar('--muted');
+  }
   ctx.font = '400 13px "DM Sans", sans-serif';
   ctx.fillText('Made using tool.adjiebrotots.com/borrowingcapacity', pad, out.height - 14);
   return out;

@@ -1306,11 +1306,11 @@ and a hover read-out box. The title row's `.chart-actions` hold export + reset-z
 .chart-actions { display: flex; justify-content: flex-end; align-items: center; gap: 10px 16px; flex-wrap: wrap; }
 .btn-cluster   { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
-/* Custom legend (replaces Chart.js's built-in legend) */
+/* Custom legend (replaces Chart.js's built-in legend). The swatch inside each
+   entry is drawn by SharedLegend — `.legend-swatch` is styled in shared.css. */
 .legend        { display: flex; gap: 14px; flex-wrap: wrap; margin: 10px 0 14px; font-size: .86rem; }
 .legend-item   { display: flex; align-items: center; gap: 7px; cursor: pointer; opacity: 1; transition: opacity .15s; }
 .legend-item.hidden { opacity: .35; }                /* dimmed when its series is toggled off */
-.dot           { width: 11px; height: 11px; border-radius: 999px; flex-shrink: 0; }
 
 /* Canvas wrapper — fixed height so a responsive canvas has a definite box to fill */
 .canvas-wrap   { position: relative; width: 100%; height: 420px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--card-bg); }
@@ -1324,6 +1324,55 @@ and a hover read-out box. The title row's `.chart-actions` hold export + reset-z
 
 > **Why a custom HTML legend?** It lets each entry click-toggle its series, doubles as the
 > source for PNG-export legends, and is styled with the same tokens as the rest of the page.
+
+---
+
+### Legend Swatches (`SharedLegend`)
+
+**A legend is a key, not a colour list.** Whatever the chart draws, the entry shows: a dotted
+line is dotted in the key, a dashed line dashed, a shaded range a block, a ring marker a ring,
+a candlestick a candle. Never a coloured dot standing in for all of them.
+
+The swatch is therefore **derived from the Chart.js dataset that draws the series**, so a change
+to the line cannot leave a stale mark behind in the key:
+
+```js
+const item = document.createElement('div');
+item.className = 'legend-item';
+SharedLegend.attach(item, SharedLegend.fromDataset(datasets[i]), 'Money deposited');
+legendEl.appendChild(item);
+```
+
+`fromDataset` reads `borderColor`, `borderDash`, `borderWidth`, the fill, and the point style.
+Pass a literal spec (or a patch as the second argument) for anything the dataset cannot state —
+a per-point callback, a fill that belongs to a neighbouring dataset, a mark the chart plugin
+draws itself:
+
+| Field | What it means |
+| --- | --- |
+| `type` | `line` (default), `area` (a band or fill with no line of its own), `bar`, `point`, `candle` |
+| `color` / `colors` | stroke colour; `colors: [a, b]` for a line that changes colour partway |
+| `dash`, `width` | Chart.js `borderDash` and `borderWidth`, drawn at the same scale |
+| `fill`, `fill2` | fill under the line, or the block itself; `fill2` splits a two-colour band |
+| `point` | `{shape: 'circle' | 'ring' | 'triangle' | 'rect', fill, stroke, width, radius}` |
+
+**Every series on the chart needs an entry.** A dashed reference line, a shaded min–max range,
+a marker series, an indicator overlay — if it is drawn, it is in the key; if it is toggled off,
+its entry goes with it.
+
+`attach` also stashes the spec on the element (`data-swatch`), which is what the exporters read:
+
+```js
+const items = SharedLegend.itemsOf('chartLegend');   // [{label, color, swatch}], visible only
+const rows  = SharedLegend.layout(items, measure, maxW, SharedLegend.W * OUT, gap, pad);
+SharedLegend.paint(ctx, item.swatch, x, cy, OUT);    // PNG
+svg.appendChild(SharedLegend.svgNode(item.swatch, x, cy, 1));   // SVG
+```
+
+One geometry function feeds the HTML swatch, the PNG and the SVG, so an exported chart carries
+exactly the key the page shows. `layout` packs the entries into as many centred rows as they
+need — a key wide enough to run off the canvas used to do exactly that — and the watermark gets
+a strip of its own beneath them.
 
 ---
 

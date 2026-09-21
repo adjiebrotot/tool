@@ -601,6 +601,297 @@
 
   global.SharedConfig = { download: downloadJson, upload: uploadJson };
 
+  /* ── SharedLegend — swatches that look like the mark they stand for ────────
+     A legend is a key, not a colour list: a dotted line on the chart has to be
+     a dotted line in the legend, a shaded range a shaded block, a ring marker
+     a ring. The swatch is therefore DERIVED from the Chart.js dataset that
+     draws the series (`fromDataset`), so a change to the line can never leave
+     a stale square behind in the key.
+
+     One geometry function feeds all three renderers — the HTML swatch, the
+     PNG export and the SVG export — so an exported chart carries exactly the
+     key the page shows.
+
+         var spec = SharedLegend.fromDataset(ds);          // or a literal spec
+         SharedLegend.attach(itemEl, spec, 'Money deposited');
+
+     Spec fields (all optional bar `color`):
+       type    'line' (default) | 'area' | 'bar' | 'point' | 'candle'
+       color   stroke colour;  colors  [a,b] for a line that changes colour
+       dash    Chart.js borderDash, e.g. [2,3];   width  borderWidth
+       fill    fill colour — under the line for an area line, the whole block
+               for a band;  fill2  second fill, for a band filled either side
+       point   {shape:'circle'|'ring'|'triangle'|'rect', fill, stroke, width,
+                radius} — a marker drawn at the centre of the swatch
+     ──────────────────────────────────────────────────────────────────────── */
+  var LEG_W = 22, LEG_H = 12;
+
+  function legFirst(v){ return Array.isArray(v) ? (v.find(function(x){ return !!x; }) || v[0]) : v; }
+
+  function isTransparent(c){
+    if(!c) return true;
+    var s = String(c).trim().toLowerCase();
+    if(s === 'transparent' || s === 'none') return true;
+    var m = s.match(/^rgba?\([^)]*,\s*([\d.]+)\s*\)$/);
+    if(m && parseFloat(m[1]) === 0) return true;
+    return /^#[0-9a-f]{8}$/.test(s) && s.slice(7) === '00';
+  }
+
+  function normSpec(spec){
+    var s = spec || {};
+    var type = s.type || 'line';
+    var colors = (s.colors && s.colors.length >= 2) ? [s.colors[0], s.colors[1]] : null;
+    var color = s.color || (colors ? colors[0] : '#888888');
+    var out = {
+      type: type,
+      color: color,
+      colors: colors,
+      dash: Array.isArray(s.dash) && s.dash.length ? s.dash.slice() : null,
+      width: s.width == null ? 2 : s.width,
+      fill: isTransparent(s.fill) ? null : s.fill,
+      fill2: isTransparent(s.fill2) ? null : s.fill2,
+      point: null
+    };
+    if(out.type === 'line' && out.width <= 0 && out.fill) out.type = 'area';
+    if(s.point){
+      var p = s.point === true ? {} : s.point;
+      out.point = {
+        shape: p.shape || 'circle',
+        fill: p.shape === 'ring' ? (isTransparent(p.fill) ? null : p.fill) : (p.fill || out.color),
+        stroke: p.stroke || (p.shape === 'ring' ? out.color : null),
+        width: p.width == null ? (p.shape === 'ring' ? 2 : 0) : p.width,
+        radius: p.radius == null ? 3.6 : p.radius
+      };
+    }
+    return out;
+  }
+
+  /* Read a swatch straight off the dataset that draws the series, so the key
+     and the chart cannot disagree. `over` patches anything the dataset states
+     as a callback (per-point radii and colours) or does not state at all. */
+  function legFromDataset(ds, over){
+    ds = ds || {};
+    var spec = {
+      color: typeof ds.borderColor === 'string' ? ds.borderColor : legFirst(ds.borderColor),
+      dash: ds.borderDash,
+      width: ds.borderWidth == null ? 2 : ds.borderWidth,
+      type: ds.type === 'bar' ? 'bar' : 'line'
+    };
+    if(spec.type === 'bar') spec.fill = typeof ds.backgroundColor === 'string' ? ds.backgroundColor : legFirst(ds.backgroundColor);
+    else if(ds.fill) spec.fill = typeof ds.backgroundColor === 'string' ? ds.backgroundColor : legFirst(ds.backgroundColor);
+    if(ds.showLine === false){ spec.type = 'point'; spec.fill = null; }
+    if(typeof ds.pointRadius === 'number' && ds.pointRadius > 0){
+      // Chart.js falls back to the dataset's own background/border for a point
+      // that states none of its own, which is how a ring marker is written: a
+      // panel-coloured fill inside a thick border. The swatch is 12px tall, so
+      // a marker sized for the plot is brought down to fit without losing its
+      // shape or the hollow that makes it a ring.
+      var pb = typeof ds.pointBorderWidth === 'number' ? ds.pointBorderWidth : ds.borderWidth;
+      spec.point = {
+        shape: ds.pointStyle === 'triangle' ? 'triangle' : (ds.pointStyle === 'rect' ? 'rect' : 'circle'),
+        fill: typeof ds.pointBackgroundColor === 'string' ? ds.pointBackgroundColor
+            : (typeof ds.backgroundColor === 'string' ? ds.backgroundColor : spec.color),
+        stroke: typeof ds.pointBorderColor === 'string' ? ds.pointBorderColor : spec.color,
+        width: Math.min(2.2, pb || 0),
+        radius: Math.max(2.6, Math.min(4.6, ds.pointRadius * 0.7))
+      };
+    }
+    if(over) for(var k in over) if(Object.prototype.hasOwnProperty.call(over, k)) spec[k] = over[k];
+    return normSpec(spec);
+  }
+
+  /* The one description of what a swatch looks like. Everything below draws
+     these primitives; `k` scales the whole box for high-resolution exports. */
+  function legMarks(spec, k){
+    k = k || 1;
+    var s = normSpec(spec), W = LEG_W * k, H = LEG_H * k, cy = H / 2, out = [];
+    var lw = Math.max(1 * k, (s.width || 0) * k);
+    var dash = s.dash ? s.dash.map(function(d){ return Math.max(0.5, d * k); }) : null;
+
+    if(s.type === 'bar'){
+      var bw = W * 0.56;
+      out.push({t:'rect', x:(W - bw)/2, y:cy - 4.5*k, w:bw, h:9*k, r:1.5*k, fill:s.fill || s.color});
+    } else if(s.type === 'candle'){
+      // Body with a wick standing clear above and below it, so a candlestick
+      // series reads as candles rather than as a block of colour.
+      var cw = W * 0.38;
+      out.push({t:'line', x1:W/2, y1:cy - 6*k, x2:W/2, y2:cy + 6*k, stroke:s.color, sw:1.2*k});
+      out.push({t:'rect', x:(W - cw)/2, y:cy - 3.4*k, w:cw, h:6.8*k, r:1*k, fill:s.fill || s.color});
+    } else if(s.type === 'area'){
+      // A band or a filled region with no line of its own: the whole block is
+      // the mark, in the two colours it is filled with when it has two.
+      if(s.fill2){
+        out.push({t:'rect', x:0, y:cy - 4.5*k, w:W/2, h:9*k, r:2*k, fill:s.fill || s.color});
+        out.push({t:'rect', x:W/2, y:cy - 4.5*k, w:W/2, h:9*k, r:2*k, fill:s.fill2});
+      } else {
+        out.push({t:'rect', x:0, y:cy - 4.5*k, w:W, h:9*k, r:2*k, fill:s.fill || s.color});
+      }
+    } else if(s.type !== 'point'){
+      // A line, with the area under it shaded when the series is filled.
+      if(s.fill) out.push({t:'rect', x:0, y:cy, w:W, h:H/2, r:0, fill:s.fill});
+      if(lw > 0){
+        if(s.colors) {
+          out.push({t:'line', x1:0, y1:cy, x2:W/2, y2:cy, stroke:s.colors[0], sw:lw, dash:dash});
+          out.push({t:'line', x1:W/2, y1:cy, x2:W, y2:cy, stroke:s.colors[1], sw:lw, dash:dash});
+        } else {
+          out.push({t:'line', x1:0, y1:cy, x2:W, y2:cy, stroke:s.color, sw:lw, dash:dash});
+        }
+      }
+    }
+    if(s.point){
+      var p = s.point, r = p.radius * k, pw = (p.width || 0) * k;
+      if(p.shape === 'triangle'){
+        out.push({t:'poly', pts:[[W/2, cy - r], [W/2 + r, cy + r * 0.85], [W/2 - r, cy + r * 0.85]],
+                  fill:p.fill || s.color, stroke:p.stroke, sw:pw});
+      } else if(p.shape === 'rect'){
+        out.push({t:'rect', x:W/2 - r, y:cy - r, w:r*2, h:r*2, r:1*k, fill:p.fill || s.color, stroke:p.stroke, sw:pw});
+      } else {
+        out.push({t:'circle', cx:W/2, cy:cy, r:r, fill:p.fill, stroke:p.stroke, sw:pw});
+      }
+    }
+    return out;
+  }
+
+  function legSvgMarkup(spec, k){
+    k = k || 1;
+    return legMarks(spec, k).map(function(m){
+      var st = (m.stroke && m.sw > 0) ? ' stroke="' + m.stroke + '" stroke-width="' + m.sw + '"' : '';
+      if(m.t === 'line') return '<line x1="' + m.x1 + '" y1="' + m.y1 + '" x2="' + m.x2 + '" y2="' + m.y2 +
+        '" stroke="' + m.stroke + '" stroke-width="' + m.sw + '"' +
+        (m.dash ? ' stroke-dasharray="' + m.dash.join(' ') + '"' : '') + ' stroke-linecap="butt"/>';
+      if(m.t === 'rect') return '<rect x="' + m.x + '" y="' + m.y + '" width="' + m.w + '" height="' + m.h +
+        '" rx="' + (m.r || 0) + '" fill="' + (m.fill || 'none') + '"' + st + '/>';
+      if(m.t === 'circle') return '<circle cx="' + m.cx + '" cy="' + m.cy + '" r="' + m.r +
+        '" fill="' + (m.fill || 'none') + '"' + st + '/>';
+      return '<polygon points="' + m.pts.map(function(p){ return p[0] + ',' + p[1]; }).join(' ') +
+        '" fill="' + (m.fill || 'none') + '"' + st + '/>';
+    }).join('');
+  }
+
+  /* The HTML swatch: an inline SVG, so a dotted line is dotted at any zoom. */
+  function legSwatchHtml(spec){
+    return '<span class="legend-swatch" aria-hidden="true"><svg width="' + LEG_W + '" height="' + LEG_H +
+      '" viewBox="0 0 ' + LEG_W + ' ' + LEG_H + '">' + legSvgMarkup(spec, 1) + '</svg></span>';
+  }
+
+  /* Fill a legend item: the swatch, the label, and the spec itself stashed on
+     the element so the PNG/SVG exporters can redraw the very same mark. */
+  function legAttach(el, spec, label){
+    if(!el) return el;
+    var s = normSpec(spec);
+    el.dataset.swatch = JSON.stringify(s);
+    el.innerHTML = legSwatchHtml(s) + '<span class="legend-label"></span>';
+    el.lastChild.textContent = label == null ? '' : String(label);
+    return el;
+  }
+
+  function legItem(spec, label, className){
+    var el = document.createElement('div');
+    el.className = className || 'legend-item';
+    return legAttach(el, spec, label);
+  }
+
+  /* What the exporters read: every visible entry, with the mark it draws. */
+  function legItemsOf(elOrId){
+    var el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+    var out = [];
+    if(!el) return out;
+    el.querySelectorAll('.legend-item:not(.hidden)').forEach(function(item){
+      var labelEl = item.querySelector('.legend-label');
+      var label = (labelEl ? labelEl.textContent : item.textContent).trim();
+      if(!label) return;
+      var spec = null;
+      if(item.dataset.swatch){ try { spec = JSON.parse(item.dataset.swatch); } catch(e){ spec = null; } }
+      if(!spec){
+        // An entry built without a spec still exports: fall back to the
+        // colour of whatever swatch element it does carry.
+        var sw = item.querySelector('.legend-swatch svg *, .dot');
+        var col = sw ? (sw.getAttribute && sw.getAttribute('fill')) || window.getComputedStyle(sw).backgroundColor : '#888888';
+        spec = normSpec({color: col, type:'point', point:{shape:'circle', radius:5}});
+      }
+      out.push({label: label, color: spec.color, swatch: spec});
+    });
+    return out;
+  }
+
+  /* Pack an exported legend into as many centred rows as it needs, reporting
+     each row's measured width so the caller can centre it. A key wide enough
+     to run off the canvas used to do exactly that, straight through the
+     watermark. `measure` is the caller's own text measurement, so the same
+     packing serves a 3x PNG and a 1x SVG.  `markW` is the swatch width at the
+     caller's scale (SharedLegend.W * k). */
+  function legLayout(items, measure, maxW, markW, gap, pad){
+    var rows = [], row = [], w = 0, i, itemW;
+    for(i = 0; i < items.length; i++){
+      itemW = markW + gap + measure(items[i].label);
+      if(row.length && w + pad + itemW > maxW){ rows.push({items: row, width: w}); row = []; w = 0; }
+      w += (row.length ? pad : 0) + itemW;
+      row.push(items[i]);
+    }
+    if(row.length) rows.push({items: row, width: w});
+    return rows;
+  }
+
+  /* PNG export: the same primitives, painted on a canvas at scale `k`, with
+     (x, cy) the left edge and vertical centre of the swatch box. */
+  function legPaint(ctx, spec, x, cy, k){
+    k = k || 1;
+    var top = cy - (LEG_H * k) / 2;
+    ctx.save();
+    legMarks(spec, k).forEach(function(m){
+      ctx.beginPath();
+      if(m.t === 'line'){
+        ctx.setLineDash(m.dash || []);
+        ctx.lineWidth = m.sw; ctx.strokeStyle = m.stroke; ctx.lineCap = 'butt';
+        ctx.moveTo(x + m.x1, top + m.y1); ctx.lineTo(x + m.x2, top + m.y2); ctx.stroke();
+        ctx.setLineDash([]);
+        return;
+      }
+      if(m.t === 'rect'){
+        var r = Math.min(m.r || 0, m.h / 2, m.w / 2);
+        if(ctx.roundRect) ctx.roundRect(x + m.x, top + m.y, m.w, m.h, r);
+        else ctx.rect(x + m.x, top + m.y, m.w, m.h);
+      } else if(m.t === 'circle'){
+        ctx.arc(x + m.cx, top + m.cy, m.r, 0, Math.PI * 2);
+      } else {
+        m.pts.forEach(function(p, i){ i ? ctx.lineTo(x + p[0], top + p[1]) : ctx.moveTo(x + p[0], top + p[1]); });
+        ctx.closePath();
+      }
+      if(m.fill){ ctx.fillStyle = m.fill; ctx.fill(); }
+      if(m.stroke && m.sw > 0){ ctx.setLineDash([]); ctx.lineWidth = m.sw; ctx.strokeStyle = m.stroke; ctx.stroke(); }
+    });
+    ctx.restore();
+  }
+
+  /* SVG export: the same primitives as a <g>, ready to append to the export. */
+  function legSvgNode(spec, x, cy, k){
+    k = k || 1;
+    var NS = 'http://www.w3.org/2000/svg';
+    var g = document.createElementNS(NS, 'g');
+    g.setAttribute('transform', 'translate(' + x + ',' + (cy - (LEG_H * k) / 2) + ')');
+    g.innerHTML = legSvgMarkup(spec, k);
+    if(!g.childNodes.length){
+      // innerHTML on an SVG element is unsupported in a few engines; parse it.
+      var doc = new DOMParser().parseFromString('<svg xmlns="' + NS + '">' + legSvgMarkup(spec, k) + '</svg>', 'image/svg+xml');
+      Array.prototype.slice.call(doc.documentElement.childNodes).forEach(function(n){ g.appendChild(n); });
+    }
+    return g;
+  }
+
+  global.SharedLegend = {
+    W: LEG_W, H: LEG_H,
+    spec: normSpec,
+    fromDataset: legFromDataset,
+    swatchHtml: legSwatchHtml,
+    attach: legAttach,
+    item: legItem,
+    itemsOf: legItemsOf,
+    layout: legLayout,
+    markup: legSvgMarkup,
+    paint: legPaint,
+    svgNode: legSvgNode
+  };
+
   /* ── Mini cache (autosave) ─────────────────────────────────────────────────
      Snapshots a tool's form controls to localStorage and restores them on the
      next visit, so a returning user keeps their previous work instead of a

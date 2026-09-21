@@ -1458,27 +1458,19 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
   return o;
 }
 
-/* A swatch carries its own colours in data attributes as well as in its style,
-   because the exporters read the legend back off the DOM and a two-colour
-   swatch is a gradient there: computed style would hand them a transparent
-   background instead of either half. */
-function swatchStyle(item){
-  if(item.style === 'ring') return 'border-color:' + item.color;
-  if(item.color2) return 'background:linear-gradient(90deg,' + item.color +
-    ' 0 50%,' + item.color2 + ' 50% 100%)';
-  return 'background:' + item.color;
-}
-
+/* The swatch is read off the dataset the entry stands for, so the key shows
+   the mark the chart actually draws: the deposited line is dotted in both, the
+   range is a block, the crossing is a ring. `mark` names the dataset that
+   carries the look when an entry toggles more than one (the band is a pair of
+   datasets, only the second of which is filled). */
 function renderLegend(elId, chart, items){
   var el = $(elId);
   el.innerHTML = '';
   items.forEach(function(item){
     var div = document.createElement('div');
     div.className = 'legend-item';
-    div.innerHTML = '<span class="dot ' + (item.style || '') + '" style="' +
-      swatchStyle(item) + '" data-c1="' + escapeHtml(item.color) + '"' +
-      (item.color2 ? ' data-c2="' + escapeHtml(item.color2) + '"' : '') + '></span>' +
-      '<span>' + escapeHtml(item.label) + '</span>';
+    var src = chart.data.datasets[item.mark == null ? item.datasets[0] : item.mark];
+    SharedLegend.attach(div, SharedLegend.fromDataset(src, item.spec), item.label);
     div.addEventListener('click', function(){
       var hidden = !chart.isDatasetVisible(item.datasets[0]);
       item.datasets.forEach(function(i){ chart.setDatasetVisibility(i, hidden); });
@@ -1567,10 +1559,10 @@ function renderCharts(res){
     {label:'Pot needed to stop here', data: pts(need, y0), borderColor: t.b, borderWidth: 2, pointRadius: 0, fill: false}
   ];
   var legend1 = [
-    {label:'Pot needed to stop here', color:t.b, datasets:[4]},
-    {label:'Investment outcome, never drawn on', color:t.a, datasets:[3]},
-    {label:'Range of outcomes, worst 10% to best 10%', color:withAlpha(t.a, 0.45), style:'band', datasets:[0,1]},
-    {label:'Money deposited, still in the pot', color:t.a, style:'dash', datasets:[2]}
+    {label:'Pot needed to stop here', datasets:[4]},
+    {label:'Investment outcome, never drawn on', datasets:[3]},
+    {label:'Range of outcomes, worst 10% to best 10%', datasets:[0, 1], mark: 1},
+    {label:'Money deposited, still in the pot', datasets:[2]}
   ];
 
   /* The crossing is the one thing this chart exists for, and it falls BETWEEN
@@ -1588,8 +1580,8 @@ function renderCharts(res){
       ds1.push({label:'Financially free', data:[{x: cx, y: cy}],
                 borderColor: t.e, backgroundColor: t.panel, borderWidth: 3,
                 pointRadius: 6, pointHoverRadius: 8, showLine: false, fill: false, order: -2});
-      legend1.push({label:'Financially free at ' + fmt.age(res.ffAge), color: t.e,
-                    style:'ring', datasets:[ds1.length - 2, ds1.length - 1]});
+      legend1.push({label:'Financially free at ' + fmt.age(res.ffAge),
+                    datasets:[ds1.length - 2, ds1.length - 1], mark: ds1.length - 1});
     }
   }
 
@@ -1664,14 +1656,17 @@ function renderCharts(res){
      leaves over — and the two colours are its sign, so it reads as one swatch
      split down the middle rather than as two separate things to hide. */
   var legend2 = [
-    {label:'Income', color:t.c, datasets:[1]},
-    {label:'Spending', color:t.b, datasets:[0]},
-    {label:'Savings/Withdrawal', color: withAlpha(t.c, 0.5), color2: withAlpha(t.b, 0.5),
-     style:'split', datasets:[1]}
+    {label:'Income', datasets:[1], spec:{fill: null}},
+    {label:'Spending', datasets:[0]},
+    /* The fill belongs to the income dataset but is not its line, so it is
+       stated here as the block it is drawn as — in BOTH of its colours, which
+       is what makes it one entry instead of two. */
+    {label:'Savings/Withdrawal', datasets:[1],
+     spec:{type:'area', width:0, fill: withAlpha(t.c, 0.28), fill2: withAlpha(t.b, 0.28)}}
   ];
   if(marked){
     ds2.push(retireLine(topOf(income, spend)));
-    legend2.push({label: retLabel, color: t.e, style:'dash', datasets:[ds2.length - 1]});
+    legend2.push({label: retLabel, datasets:[ds2.length - 1]});
   }
 
   if(chart2) chart2.destroy();
@@ -1692,10 +1687,12 @@ function renderCharts(res){
     {label:'Balance', data: pts(bal, y0), borderColor: t.a, borderWidth: 2.2,
      pointRadius: 0, fill: 'origin', backgroundColor: withAlpha(t.a, 0.10), order: 3}
   ];
-  var legend3 = [{label:'Balance', color:t.a, datasets:[0]}];
+  // Both swatches are read off the datasets themselves, so the shaded balance
+  // and the dashed retirement rule draw in the key as they draw on the chart.
+  var legend3 = [{label:'Balance', datasets:[0]}];
   if(marked){
     ds3.push(retireLine(topOf(bal)));
-    legend3.push({label: retLabel, color: t.e, style:'dash', datasets:[ds3.length - 1]});
+    legend3.push({label: retLabel, datasets:[ds3.length - 1]});
   }
 
   if(chart3) chart3.destroy();
@@ -1969,40 +1966,15 @@ function exportTokens(){
   return {bg: light ? '#ffffff' : '#0F1728', fg: light ? '#2D3436' : '#EAF1FF'};
 }
 
+// Every visible entry, carrying the swatch it draws, so the exported key is
+// the page's key rather than a row of coloured dots.
 function legendItemsOf(legendId){
-  var out = [], el = $(legendId);
-  if(!el) return out;
-  el.querySelectorAll('.legend-item:not(.hidden)').forEach(function(item){
-    var dot = item.querySelector('.dot');
-    var label = item.textContent.trim();
-    // The swatch states its own colours; computed style is only the fallback,
-    // and a ring has no fill, so there the colour is on the border.
-    var style = dot ? window.getComputedStyle(dot) : null;
-    var color = (dot && dot.dataset.c1) ? dot.dataset.c1
-      : (!style ? '#888888'
-        : (dot.classList.contains('ring') ? style.borderTopColor : style.backgroundColor));
-    if(label) out.push({label: label, color: color, color2: (dot && dot.dataset.c2) || null});
-  });
-  return out;
+  return SharedLegend.itemsOf(legendId);
 }
 
-/* Pack an exported legend into as many centred rows as it needs, and report
-   each row's measured width so the caller can centre it. One row was assumed,
-   which held at four entries and silently ran the sixth off the right edge of
-   the canvas, through the watermark on its way out. `measure` is the caller's
-   own text measurement, so the same packing serves the PNG at 3x and the SVG
-   at 1x. */
-function layoutLegend(items, measure, maxW, dotR, gap, pad){
-  var rows = [], row = [], w = 0, i, itemW;
-  for(i = 0; i < items.length; i++){
-    itemW = dotR * 2 + gap + measure(items[i].label);
-    if(row.length && w + pad + itemW > maxW){ rows.push({items: row, width: w}); row = []; w = 0; }
-    w += (row.length ? pad : 0) + itemW;
-    row.push(items[i]);
-  }
-  if(row.length) rows.push({items: row, width: w});
-  return rows;
-}
+// Row packing lives in SharedLegend now, so every tool's export wraps a wide
+// key the same way instead of running it off the edge of the canvas.
+var layoutLegend = SharedLegend.layout;
 
 function saveBlob(blob, filename){
   var url = URL.createObjectURL(blob);
@@ -2026,7 +1998,7 @@ function chartPng(canvasId, filename, chartTitle, legendId, shouldDownload){
   var titleFontPx = Math.round(14 * OUT);
   var legendFontPx = Math.round(11 * OUT);
   var titleH = chartTitle ? Math.round(40 * OUT) : 0;
-  var dotR = Math.round(5 * OUT), gap = Math.round(7 * OUT), pad = Math.round(20 * OUT);
+  var markW = SharedLegend.W * OUT, gap = Math.round(7 * OUT), pad = Math.round(20 * OUT);
   var margin = Math.round(16 * OUT), rowH = Math.round(22 * OUT);
   // The watermark gets a strip of its own, so a legend that needs two rows
   // cannot land on top of it.
@@ -2036,7 +2008,7 @@ function chartPng(canvasId, filename, chartTitle, legendId, shouldDownload){
   measureCtx.font = '500 ' + legendFontPx + 'px ' + FONT;
   var legendRows = legendItems.length
     ? layoutLegend(legendItems, function(s){ return measureCtx.measureText(s).width; },
-                   chartW - margin * 2, dotR, gap, pad)
+                   chartW - margin * 2, markW, gap, pad)
     : [];
   var legendH = legendRows.length ? legendRows.length * rowH + Math.round(8 * OUT) : 0;
 
@@ -2066,24 +2038,8 @@ function chartPng(canvasId, filename, chartTitle, legendId, shouldDownload){
       var x = Math.max(margin, (tmp.width - row.width) / 2);
       var cy = ly + rowH * ri + rowH / 2;
       row.items.forEach(function(item){
-        // Two colours means one quantity read on both sides of a line, so it
-        // exports as one swatch split down the middle, not as two dots.
-        if(item.color2){
-          ctx.fillStyle = item.color;
-          ctx.beginPath();
-          ctx.arc(x + dotR, cy, dotR, Math.PI / 2, Math.PI * 1.5);
-          ctx.fill();
-          ctx.fillStyle = item.color2;
-          ctx.beginPath();
-          ctx.arc(x + dotR, cy, dotR, -Math.PI / 2, Math.PI / 2);
-          ctx.fill();
-        } else {
-          ctx.fillStyle = item.color;
-          ctx.beginPath();
-          ctx.arc(x + dotR, cy, dotR, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        x += dotR * 2 + gap;
+        SharedLegend.paint(ctx, item.swatch, x, cy, OUT);
+        x += markW + gap;
         ctx.fillStyle = tone.fg;
         ctx.textAlign = 'left';
         ctx.fillText(item.label, x, cy);
@@ -2141,12 +2097,12 @@ function chartSvg(canvasId, filename, chartTitle, legendId){
   var FONT = 'DM Sans, sans-serif';
   var legendItems = legendId ? legendItemsOf(legendId) : [];
   var titleH = chartTitle ? 40 : 0;
-  var dotR = 5, gap = 7, pad = 20, margin = 16, rowH = 22, wmH = 26;
+  var markW = SharedLegend.W, gap = 7, pad = 20, margin = 16, rowH = 22, wmH = 26;
   var mc = document.createElement('canvas').getContext('2d');
   mc.font = '500 11px DM Sans, sans-serif';
   var legendRows = legendItems.length
     ? layoutLegend(legendItems, function(s){ return mc.measureText(s).width; },
-                   chartW - margin * 2, dotR, gap, pad)
+                   chartW - margin * 2, markW, gap, pad)
     : [];
   var legendH = legendRows.length ? legendRows.length * rowH + 8 : 0;
   var svgW = chartW, svgH = chartH + titleH + legendH + wmH;
@@ -2176,22 +2132,8 @@ function chartSvg(canvasId, filename, chartTitle, legendId){
     var x = Math.max(margin, (svgW - row.width) / 2);
     var cy = titleH + chartH + 4 + rowH * ri + rowH / 2;
     row.items.forEach(function(item){
-      var cx = x + dotR;
-      if(item.color2){
-        [[item.color, 0], [item.color2, 1]].forEach(function(half){
-          var h = document.createElementNS(NS, 'path');
-          h.setAttribute('d', 'M ' + cx + ' ' + (cy - dotR) + ' A ' + dotR + ' ' + dotR +
-            ' 0 0 ' + half[1] + ' ' + cx + ' ' + (cy + dotR) + ' Z');
-          h.setAttribute('fill', half[0]);
-          svg.appendChild(h);
-        });
-      } else {
-        var c = document.createElementNS(NS, 'circle');
-        c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', dotR);
-        c.setAttribute('fill', item.color);
-        svg.appendChild(c);
-      }
-      x += dotR * 2 + gap;
+      svg.appendChild(SharedLegend.svgNode(item.swatch, x, cy, 1));
+      x += markW + gap;
       var lt = document.createElementNS(NS, 'text');
       lt.setAttribute('x', x); lt.setAttribute('y', cy);
       lt.setAttribute('dominant-baseline', 'middle'); lt.setAttribute('font-family', FONT);

@@ -1281,10 +1281,13 @@ function chartModalTitle(){
   return `${scenarios[chartModal.si].name||T('scenPlaceholder')} — ${metricLabelOf(chartModal.met)}`;
 }
 function chartModalLegendItems(){
-  return [
-    {label:T('seriesOwn'),  color:cssVar('--line-a')},
-    {label:T('seriesRent'), color:cssVar('--line-b')},
-  ];
+  // Built from the same series the chart is rendered from, so each entry
+  // carries the line it stands for — solid, dashed, and in its own colour.
+  return scenarioChartData(chartModal.si, chartModal.met).series.map(s=>({
+    label: s.label,
+    color: s.color,
+    swatch: SharedLegend.spec({color:s.color, width:2.5, dash:s.dash}),
+  }));
 }
 function buildChartModal(){
   if(chartModal.el) return chartModal.el;
@@ -1336,10 +1339,10 @@ function renderChartModal(){
   if(!overlay) return;
   overlay.querySelector('.chart-modal-title').textContent = chartModalTitle();
   overlay.querySelectorAll('.cm-met').forEach(b=>b.classList.toggle('active', b.dataset.met===chartModal.met));
-  // Legend dots
+  // Legend: one entry per series, drawn as the chart draws it
   const legendEl = overlay.querySelector('.cm-legend');
-  legendEl.innerHTML = chartModalLegendItems().map(it=>
-    `<div class="legend-item"><span class="dot" style="background:${it.color}"></span><span>${escHtml(it.label)}</span></div>`).join('');
+  legendEl.innerHTML = '';
+  chartModalLegendItems().forEach(it=>{ legendEl.appendChild(SharedLegend.item(it.swatch, it.label)); });
   // (Re)build the chart
   const data = scenarioChartData(chartModal.si, chartModal.met);
   const sym = symOf(scenarios[chartModal.si]);
@@ -1411,7 +1414,14 @@ function gcChartData(){
   return {labels, series};
 }
 function gcTitle(){ return `${T('gcTitle')} — ${metricLabelOf(globalChart.met)}`; }
-function gcLegendItems(){ return gcChartData().series.map(s=>({label:s.label, color:s.color})); }
+function gcLegendItems(){
+  // Own and rent share a scenario's colour and are told apart by the dash, so
+  // the exported key has to carry the dash too.
+  return gcChartData().series.map(s=>({
+    label: s.label, color: s.color,
+    swatch: SharedLegend.spec({color:s.color, width:2.5, dash:s.dash}),
+  }));
+}
 
 function buildGlobalChartModal(){
   if(globalChart.el) return globalChart.el;
@@ -1438,10 +1448,7 @@ function buildGlobalChartModal(){
         <span class="gc-scenarios-label">${escHtml(T('gcScenariosLabel'))}</span>
         <div class="gc-scenarios"></div>
       </div>
-      <div class="gc-line-hint">
-        <span class="gc-line-key"><span class="gc-line-sample gc-line-solid"></span>${escHtml(T('seriesOwn'))}</span>
-        <span class="gc-line-key"><span class="gc-line-sample gc-line-dotted"></span>${escHtml(T('seriesRent'))}</span>
-      </div>
+      <div class="gc-line-hint"></div>
       <div class="canvas-wrap"><canvas class="gc-canvas"></canvas></div>
       <div class="hover-box">${escHtml(T('chartHoverHint'))}</div>
     </div>`;
@@ -1496,6 +1503,13 @@ function renderGlobalChartModal(){
   overlay.querySelectorAll('.gc-met').forEach(b=>b.classList.toggle('active', b.dataset.met===globalChart.met));
   overlay.querySelector('.gc-own').classList.toggle('active', globalChart.showOwn);
   overlay.querySelector('.gc-rent').classList.toggle('active', globalChart.showRent);
+  // The hint said "dotted" while the chart drew a dash. It now draws the very
+  // same marks, in the current theme's ink, and only for the lines on show.
+  const hint = overlay.querySelector('.gc-line-hint');
+  hint.innerHTML = '';
+  const ink = cssVar('--text');
+  if(globalChart.showOwn)  hint.appendChild(SharedLegend.item({color:ink, width:2.5}, T('seriesOwn'), 'legend-item gc-line-key'));
+  if(globalChart.showRent) hint.appendChild(SharedLegend.item({color:ink, width:2.5, dash:[5,4]}, T('seriesRent'), 'legend-item gc-line-key'));
   const data = gcChartData();
   const sym = symOf(scenarios[0]);
   const canvas = overlay.querySelector('.gc-canvas');
