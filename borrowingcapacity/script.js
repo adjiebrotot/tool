@@ -800,7 +800,7 @@ function renderLegend(datasets){
     // The swatch is read off the dataset itself, so each cap's own dash
     // pattern — and the shading under the capacity line — appear in the key
     // exactly as the chart draws them.
-    SharedLegend.attach(item, SharedLegend.fromDataset(ds), ds.label);
+    SharedLegend.attach(item, SharedLegend.specOf(ds), ds.label);
     item.addEventListener('click', () => {
       const hidden = !item.classList.contains('hidden');
       item.classList.toggle('hidden', hidden);
@@ -839,8 +839,8 @@ function updateChart(sweep, userIdx){
       order: isCap ? 0 : 1,
       pointRadius: ctx => (isCap && ctx.dataIndex === userIdx) ? 7 : 0,
       pointHoverRadius: ctx => (isCap && ctx.dataIndex === userIdx) ? 9 : 4,
-      // Per series, not a shared accent: Chart.js draws the tooltip swatch from
-      // the point style, so one colour for all five made every row look alike.
+      // The marker on the user's own income sits on the line it belongs to, so
+      // it takes that line's colour rather than a shared accent.
       pointBackgroundColor: colour,
       pointBorderColor: cssVar('--panel'),
       pointBorderWidth: 2
@@ -854,15 +854,15 @@ function updateChart(sweep, userIdx){
     interaction: { mode:'index', intersect:false },
     plugins: {
       legend: { display:false },
-      tooltip: {
+      // The hover card is keyed like the legend: each row carries its cap's
+      // own dashed line, which a coloured square could only ever approximate
+      // — five caps drawn in five dash patterns read as five squares.
+      tooltip: SharedChartTip.options({
         backgroundColor: cssVar('--panel'), titleColor: text, bodyColor: muted,
         borderColor: grid, borderWidth: 1, padding: 10,
         callbacks: {
           title: items => items.length ? 'Gross income '+fmt.money0(items[0].parsed.x) : '',
           label: ctx => `  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y, true)}`,
-          labelColor: ctx => ({ borderColor: ctx.dataset.borderColor,
-                                backgroundColor: ctx.dataset.borderColor,
-                                borderWidth: 2, borderRadius: 2 }),
           afterBody(items){
             if(!items.length) return;
             const you = items[0].dataIndex === userIdx ? '  (your scenario)' : '';
@@ -870,7 +870,7 @@ function updateChart(sweep, userIdx){
               + items.map(it => `${it.dataset.label}: ${fmt.currency(it.parsed.y, true)}`).join('  |  ');
           }
         }
-      },
+      }),
       zoom: {
         // Panning and zooming stay inside the swept range. Beyond it there is
         // nothing computed to look at, only empty axis.

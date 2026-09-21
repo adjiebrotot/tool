@@ -1376,6 +1376,48 @@ a strip of its own beneath them.
 
 ---
 
+### Hover Card (`SharedChartTip`)
+
+**The hover is a key too.** Chart.js paints one coloured square per tooltip row whatever the
+series is drawn with, so a chart whose key shows a dotted line, a shaded band and a ring marker
+answered the hover with three identical squares — the reader had to match rows to series by
+colour alone, which is the very thing the legend swatches exist to stop.
+
+So the canvas tooltip is replaced by a shared HTML card whose row marks come from the **same
+spec the legend entry is built from**. Wrap the tooltip options you already write:
+
+```js
+tooltip: SharedChartTip.options({
+  filter: item => !item.dataset.isBand,      // your own filter and callbacks, unchanged
+  callbacks: { title: …, label: …, afterBody: … }
+})
+```
+
+`options()` only adds `enabled: false` and the external renderer, so callbacks, filters and the
+`.hover-box` read-out keep working exactly as before. Being an element rather than canvas
+pixels, the card is also never clipped by a small canvas, and it is styled from the same tokens
+as the rest of the page (`.chart-tip` in `shared.css`).
+
+**A mark the dataset cannot state is pinned on the dataset**, and then the key and the card both
+read it from there — via `SharedLegend.specOf(ds)`, which prefers `legendSpec` and otherwise
+falls back to `fromDataset`:
+
+```js
+// A band is two datasets but one thing on the chart, so both edges carry the block:
+const bandSpec = {type: 'area', fill: withAlpha(colour, 0.16)};
+datasets.push({label: 'Worst 10%', …, legendSpec: bandSpec});
+datasets.push({label: 'Best 10%',  …, legendSpec: bandSpec, fill: '-1'});
+
+SharedLegend.attach(item, SharedLegend.specOf(ds), label);   // the key reads the same spec
+```
+
+Use `legendSpec` for a candlestick series (no line to read), a two-colour line, a MACD histogram
+whose bars are two colours, a mark a plugin draws — anything `fromDataset` cannot see. Everything
+else needs nothing: a bar, a pie slice and a plain line are resolved from the dataset and the
+per-element colours Chart.js already resolved for the hovered point.
+
+---
+
 ### Shared Options (axes, tooltip, zoom)
 
 These option fragments are reused by the line and stacked charts. Note how **every axis has a
@@ -1394,7 +1436,10 @@ const baseOptions = {
   plugins: {
     legend: { display: false },                     // we render our own HTML legend instead
 
-    tooltip: {
+    // SharedChartTip.options() wraps your own tooltip options: same callbacks,
+    // same filter, drawn as the shared HTML card so each row carries the mark
+    // its series is drawn with (see *Hover Card* below).
+    tooltip: SharedChartTip.options({
       // Theme the tooltip from tokens, not hardcoded colours:
       backgroundColor: cssVar('--panel'), titleColor: text, bodyColor: muted,
       borderColor: grid, borderWidth: 1, padding: 10,
@@ -1408,7 +1453,7 @@ const baseOptions = {
             items.map(i => `${i.dataset.label}: ${fmt.currency(i.parsed.y, true)}`).join('  |  ');
         }
       }
-    },
+    }),
 
     // Pan + zoom, x-axis only. Wheel + pinch to zoom, drag to pan.
     zoom: {

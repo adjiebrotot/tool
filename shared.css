@@ -91,6 +91,18 @@ abbr.abbr:focus-visible,.abbr:focus-visible{outline:none;}
 .legend-swatch svg{display:block;overflow:visible;}
 .legend-label{white-space:normal;}
 
+/* Chart hover card (SharedTooltip) — the same key as the legend, row by row.
+   Chart.js paints one square per row on the canvas; this is the HTML card that
+   replaces it, so a dotted series is dotted here too, and a small canvas can no
+   longer clip the reading off at its edge. */
+.chart-tip{position:fixed;z-index:99998;left:0;top:0;pointer-events:none;max-width:min(340px,calc(100vw - 16px));background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:var(--radius-lg);padding:9px 12px;font-size:.8rem;line-height:1.5;color:var(--muted);box-shadow:var(--shadow-lg);opacity:0;transition:opacity var(--motion-fast);}
+.chart-tip.visible{opacity:1;}
+.chart-tip-title{color:var(--text);font-weight:700;margin-bottom:5px;}
+.chart-tip-row{display:flex;align-items:center;gap:7px;}
+.chart-tip-label{white-space:nowrap;}
+.chart-tip-note,.chart-tip-footer{color:var(--muted);}
+.chart-tip-footer{margin-top:5px;color:var(--text);}
+
 /* ============================================================
    RESET & BASE
    ============================================================ */

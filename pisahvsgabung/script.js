@@ -674,7 +674,7 @@ function renderMainChart(rows){
       interaction:{mode:'index',intersect:false},
       plugins:{
         legend:{display:false},
-        tooltip:{
+        tooltip:SharedChartTip.options({
           callbacks:{
             title:ctx=>T('salaryLabel')+' '+fmt.salaryLabel(ctx[0].label),
             label:ctx=>'  '+ctx.dataset.label.split('(')[0].trim()+': '+fmt.idr(ctx.parsed.y,true),
@@ -685,7 +685,7 @@ function renderMainChart(rows){
             const parts=items.map(i=>i.dataset.label.split('(')[0].trim()+': '+fmt.idr(i.parsed.y,true)).join('  |  ');
             $('hoverBox').textContent=T('salaryLabel')+' '+fmt.salaryLabel(items[0].label)+'  —  '+parts;
           }
-        },
+        }),
         zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:0.08},pinch:{enabled:true},mode:'x'}},
       },
       scales:{
@@ -728,7 +728,7 @@ function renderDiffChart(rows){
       interaction:{mode:'index',intersect:false},
       plugins:{
         legend:{display:false},
-        tooltip:{
+        tooltip:SharedChartTip.options({
           callbacks:{
             title:ctx=>T('salaryLabel')+' '+fmt.salaryLabel(ctx[0].label),
             label:ctx=>{
@@ -744,7 +744,7 @@ function renderDiffChart(rows){
             const v=rows[items[0].dataIndex]?.diff||0;
             $('hoverBox2').textContent=T('salaryLabel')+' '+fmt.salaryLabel(items[0].label)+'  —  '+(v>=0?T('pisahSavesPrefix')+' '+fmt.idr(v,true):T('gabungSavesPrefix')+' '+fmt.idr(-v,true));
           }
-        },
+        }),
         zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:0.08},pinch:{enabled:true},mode:'x'}},
       },
       scales:{

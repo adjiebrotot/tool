@@ -1899,6 +1899,50 @@ console.log('\n── Two sections, one slider ──');
     `filter ${r.filtersDroplines}, crossing datasets hidden: ${r.dropFlags.join(',')}`);
 }
 
+/* ── The hover card is keyed like the chart ──
+   Chart.js paints one coloured square per tooltip row whatever the series is
+   drawn with, so a dotted line, a shaded band and a ring marker all answered
+   the hover as three identical squares while the key beside them showed three
+   different marks. The card is the shared one now, and every row's mark comes
+   from the SAME spec the key entry is built from, so the two cannot disagree.
+   Both are read here: the spec the hover resolves for a dataset against the
+   spec stashed on the legend entry that stands for it. */
+{
+  const r = await page.evaluate(() => {
+    const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
+    const tip = path.options.plugins.tooltip;
+    const ds = l => path.data.datasets.filter(d => d.label === l && !d.ffTipHide)[0];
+    const rowSpec = l => JSON.stringify(window.SharedChartTip.spec(path, {dataset: ds(l), datasetIndex: 0}));
+    const keySpec = l => {
+      const el = [...document.querySelectorAll('#legend1 .legend-item')]
+        .find(e => e.querySelector('.legend-label').textContent.trim().startsWith(l));
+      return el ? el.dataset.swatch : null;
+    };
+    // Nothing the hover can list may resolve to a mark that draws nothing.
+    const blank = path.data.datasets
+      .filter(d => !d.ffTipHide)
+      .filter(d => !window.SharedLegend.markup(window.SharedChartTip.spec(path, {dataset: d, datasetIndex: 0}), 1))
+      .map(d => d.label);
+    return {
+      shared: tip.enabled === false && typeof tip.external === 'function',
+      deposited: rowSpec('Money deposited'), depositedKey: keySpec('Money deposited'),
+      worst: rowSpec('Worst 10%'), best: rowSpec('Best 10%'), rangeKey: keySpec('Range of outcomes'),
+      free: rowSpec('Financially free'), freeKey: keySpec('Financially free at'),
+      blank
+    };
+  });
+  check('F62 the hover card is the shared one, not Chart.js\'s row of squares',
+    r.shared, r.shared ? 'enabled:false with an external renderer' : 'still the canvas tooltip');
+  check('F62b the deposited row is the dotted line the chart draws, exactly as the key shows it',
+    r.deposited === r.depositedKey && /"dash":\[2,3\]/.test(r.deposited || ''), r.deposited);
+  check('F62c both edges of the band answer with the band itself, not with nothing',
+    r.worst === r.rangeKey && r.best === r.rangeKey, `worst ${r.worst} / best ${r.best}`);
+  check('F62d and the crossing answers with its ring',
+    r.free === r.freeKey && /"shape":"circle"/.test(r.free || ''), r.free);
+  check('F62e no series the hover can list draws an empty mark',
+    r.blank.length === 0, r.blank.join(', ') || 'every row carries its mark');
+}
+
 /* ── One x window across two charts ──
    The flows and the balance they leave behind are one picture cut in half, so
    a year has to sit in the same place on both. Zooming or panning either one

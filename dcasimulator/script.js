@@ -1576,10 +1576,11 @@ function updatePriceChart(){
     const item=document.createElement('div');
     item.className='legend-item'+(hidden?' hidden':'');
     // Candlestick mode draws no line at all, so the key shows a candle; line
-    // mode shows the line itself, at the width the chart strokes it with.
-    SharedLegend.attach(item, showCandles
-      ? {type:'candle', color, fill:color}
-      : {color, width:2.5}, label);
+    // mode shows the line itself, at the width the chart strokes it with. The
+    // spec is stated once here and pinned to the dataset below, so the hover
+    // card answers with the very same mark.
+    const spec = showCandles ? {type:'candle', color, fill:color} : {color, width:2.5};
+    SharedLegend.attach(item, spec, label);
     // Toggling rebuilds the chart so normalisation (actual ↔ base-100) and the
     // axis title follow the new visible count.
     item.addEventListener('click',()=>{
@@ -1587,7 +1588,7 @@ function updatePriceChart(){
       updatePriceChart();
     });
     legendEl.appendChild(item);
-    const ds={ label, hidden,
+    const ds={ label, hidden, legendSpec:spec,
       data:res.dailyRows.map(r=>priceVal(res,r.price)),
       borderColor: showCandles ? 'transparent' : color,
       backgroundColor:color+'22', borderWidth:2.5, pointRadius:0,
@@ -1660,7 +1661,8 @@ function updatePriceChart(){
             type:'bar', label:`${secLabel} · ${ln.name}`, hidden,
             data: ln.values.map(v=> v==null?null:v), yAxisID,
             backgroundColor:cols, borderColor:cols, borderWidth:0,
-            categoryPercentage:1, barPercentage:1, _indicator:true, _hist:true
+            categoryPercentage:1, barPercentage:1, _indicator:true, _hist:true,
+            legendSpec:{type:'bar', color:cssVar('--muted'), fill:cssVar('--muted')}
           });
           return;
         }
@@ -1689,9 +1691,7 @@ function updatePriceChart(){
   datasets.filter(ds=>ds._indicator).forEach(ds=>{
     const note=document.createElement('div');
     note.className='legend-item'; note.style.cursor='default';
-    SharedLegend.attach(note, ds._hist
-      ? {type:'bar', color:cssVar('--muted'), fill:cssVar('--muted')}
-      : SharedLegend.fromDataset(ds), ds.label);
+    SharedLegend.attach(note, SharedLegend.specOf(ds), ds.label);
     legendEl.appendChild(note);
   });
 
@@ -1732,11 +1732,11 @@ function updatePriceChart(){
     });
     return {
       responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
-      plugins:{ legend:{display:false}, tooltip:{
+      plugins:{ legend:{display:false}, tooltip:SharedChartTip.options({
         filter:item=>!item.dataset._marker,
         callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>'  '+fmtPt(ctx),
           afterBody(items){ const its=items.filter(i=>!i.dataset._marker); if(its.length) $('priceHoverBox').textContent=`${its[0].label}  -  `+its.map(fmtPt).join('  |  '); }},
-        backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
+        backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10}),
         zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
       scales
     };
@@ -1798,11 +1798,11 @@ function updateEquityChart(){
 
   function buildEquityOpts(){ return {
     responsive:true, maintainAspectRatio:false, animation:{duration:300}, interaction:{mode:'index',intersect:false},
-    plugins:{ legend:{display:false}, tooltip:{
+    plugins:{ legend:{display:false}, tooltip:SharedChartTip.options({
       filter:item=>equityChartInstance?equityChartInstance.isDatasetVisible(item.datasetIndex):true,
       callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y,true)}`,
         afterBody(items){ if(items.length) $('equityHoverBox').textContent=`${items[0].label}  -  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  '); }},
-      backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10},
+      backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10}),
       zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
     scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
               y:{title:{display:true,text:'Portfolio Value ('+currentCurrencySymbol+')',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}

@@ -367,14 +367,16 @@ function renderComparisonChart(canvas, opts){
       interaction:{mode:'index',intersect:false},
       plugins:{
         legend:{display:false},
-        tooltip:{
+        // The shared hover card, so this popup's chart keys its rows exactly
+        // as the main tool's does — a dashed series dashed, not a square.
+        tooltip:global.SharedChartTip.options({
           callbacks:{
             title: ctx=>`Year ${ctx[0].label}`,
             label: ctx=>`  ${ctx.dataset.label}: ${chartCurrency(ctx.parsed.y, sym)}`,
           },
           backgroundColor:cssVar('--panel')||'#162033',
           titleColor:t, bodyColor:m, borderColor:cssVar('--border'), borderWidth:1, padding:10,
-        },
+        }),
         zoom: global.Chart.registry && global.Chart.registry.plugins.get('zoom') ? {
           pan:{enabled:true,mode:'x'},
           zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'},
