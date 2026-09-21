@@ -770,15 +770,18 @@ console.log('\n── Page and presentation ──');
       yTitle: path.options.scales.y.title.text
     };
   });
-  check('F47 the money toggle asks for Present Value, not for future dollars',
+  check('F47 the money toggle asks for Present Value, not for the money of the day',
     r.exists && r.oldGone && /present value/i.test(r.label), r.label);
-  check('F47b and it is off on arrival, so future dollars are what you see first',
+  check('F47b and it is off on arrival, so future\u2019s money is what you see first',
     r.checked === false && r.defaulted === false,
     `checked ${r.checked}, default ${r.defaulted}`);
   check('F47c so the plotted balance carries the inflation factor unasked',
     close(r.plottedLast, r.realLast * Math.pow(1 + r.infl, r.years), 0.01),
     `${r.plottedLast.toFixed(0)} plotted vs ${r.realLast.toFixed(0)} real`);
-  check('F47d and the axis names which money that is', /future dollars/.test(r.yTitle), r.yTitle);
+  /* The money mode is named in a currency-agnostic way: the tool draws in
+     whatever currency the reader picked, so it cannot call it dollars. */
+  check('F47d and the axis names which money that is, without naming a currency',
+    /future['\u2019]s money/.test(r.yTitle) && !/dollar/i.test(r.yTitle), r.yTitle);
 }
 
 /* F48: the page is two boards now, and each figure has to sit with the
@@ -839,9 +842,16 @@ console.log('\n── Page and presentation ──');
      changes with the plan. */
   check('F48e the board kickers and ledes are gone',
     r.kickers === 0 && r.ledes === 0, `${r.kickers} kickers, ${r.ledes} ledes`);
-  check('F48f and no subtitle repeats what the legend already says',
+  /* A subtitle now carries ONLY what the picture cannot show for itself, and
+     on the default plan it carries nothing at all: the retirement rule, the
+     two shaded sides and the balance pane are all in the legend already, and
+     "you can pinch out for the rest" is something a chart teaches by being
+     draggable. The edge cases at either end of the slider still speak up,
+     which F44g pins separately. */
+  check('F48f and no subtitle repeats what the legend or the chart already says',
     !/no withdrawal/i.test(r.sub1) && !/no withdrawal/i.test(r.sub2) &&
-    /income falls to the pension/i.test(r.sub2),
+    !/income falls to the pension/i.test(r.sub2) &&
+    !/the view opens on/i.test(r.sub1) && r.sub2 === '',
     `1: "${r.sub1}" // 2: "${r.sub2.slice(0, 40)}"`);
 }
 
@@ -1034,7 +1044,7 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
   for(let y = 0; y < real.length; y++){
     worst = Math.max(worst, Math.abs(nominal[y] - real[y] * Math.pow(1 + infl, y)));
   }
-  check('F23 future dollars are today’s money times the inflation factor',
+  check('F23 future’s money is today’s money times the inflation factor',
     worst < 0.01, `largest gap ${worst.toExponential(2)}`);
   await page.evaluate(() => { document.getElementById('showReal').checked = true; window.__FF.render(); });
 }
@@ -1429,7 +1439,7 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
     for(let y = 0; y < r.realExpense.length; y++){
       worst = Math.max(worst, Math.abs(r.nomExpense[y] - r.realExpense[y] * Math.pow(1 + r.i, y)));
     }
-    check('F37c and in future dollars it is the real cost times the inflation factor',
+    check('F37c and in future’s money it is the real cost times the inflation factor',
       worst < 0.01, `largest gap ${worst.toExponential(2)}`);
   }
   check('F37d so prices genuinely rise before retirement, not only after',
@@ -1625,7 +1635,7 @@ for(const [name, extra] of [
   const rows = await page.evaluate(u => {
     const F = window.__FF;
     // The replay is written in real terms, so the table is read there too. The
-    // page's own default is future dollars; F47 pins that separately.
+    // page's own default is future’s money; F47 pins that separately.
     return F.tableRows(F.compute(Object.assign({}, F.UI_DEFAULTS, u, {showReal: true})));
   }, ui);
   let worstInc = 0, worstExp = 0, worstSav = 0;
@@ -1712,6 +1722,13 @@ for(const [name, extra] of [
       flowAxisOf: inc.yAxisID, balAxisOf: bal.yAxisID,
       flowStack: {stack: cash.options.scales.y.stack, weight: cash.options.scales.y.stackWeight},
       balStack: {stack: cash.options.scales.yBal.stack, weight: cash.options.scales.yBal.stackWeight},
+      gapStack: cash.options.scales.yBalGap ? {
+        stack: cash.options.scales.yBalGap.stack,
+        weight: cash.options.scales.yBalGap.stackWeight,
+        ticks: cash.options.scales.yBalGap.ticks.display,
+        grid: cash.options.scales.yBalGap.grid.display,
+        border: cash.options.scales.yBalGap.border.display
+      } : null,
       balTitle: cash.options.scales.yBal.title.text,
       balSpan: [xs(bal)[0], xs(bal).slice(-1)[0]],
       balSeries: bal ? bal.data.map(p => p.y) : null,
@@ -1790,6 +1807,25 @@ for(const [name, extra] of [
      before the flow axis or the picture comes out upside down. */
   check('F44f2 and it is defined first, which is what puts it underneath',
     r.scaleIds.indexOf('yBal') < r.scaleIds.indexOf('y') && r.scaleIds.indexOf('yBal') > -1,
+    r.scaleIds.join(', '));
+  /* A seam between the two panes, so they read as two pictures rather than
+     one picture with a line drawn through the middle of it. It is a third
+     scale in the same stack, sitting between the two, that plots nothing and
+     draws nothing: no ticks, no gridlines, no border, only its share of the
+     height — and a small share, or it stops being a seam and starts being
+     empty chart. */
+  check('F44f4 a gap separates the two panes',
+    !!r.gapStack && r.gapStack.stack === r.flowStack.stack &&
+    r.gapStack.weight > 0 && r.gapStack.weight < r.balStack.weight / 2,
+    r.gapStack ? `weight ${r.gapStack.weight} in stack "${r.gapStack.stack}" ` +
+                 `against ${r.balStack.weight} for the balance` : 'no gap scale');
+  check('F44f4b and the gap itself draws nothing at all',
+    !!r.gapStack && r.gapStack.ticks === false && r.gapStack.grid === false &&
+    r.gapStack.border === false,
+    r.gapStack ? `ticks ${r.gapStack.ticks}, grid ${r.gapStack.grid}, border ${r.gapStack.border}` : 'no gap scale');
+  check('F44f4c and it sits between the two panes, not above or below both',
+    r.scaleIds.indexOf('yBal') < r.scaleIds.indexOf('yBalGap') &&
+    r.scaleIds.indexOf('yBalGap') < r.scaleIds.indexOf('y'),
     r.scaleIds.join(', '));
   check('F44f2b and it spans exactly the same years, so a year lines up between the two',
     r.balSpan[0] === r.cashSpan[0] && r.balSpan[1] === r.cashSpan[1],
@@ -2626,7 +2662,7 @@ console.log('\n── Accounting integrity: the table adds up ──');
     lines.length - 3 === (await page.evaluate(() => window.__FF.tableRows(window.__FF.last).length)),
     `${lines.length - 3} rows`);
   check('F39d and says which money and which currency it is in',
-    /today's money|future dollars/.test(lines[1] || ''), (lines[1] || '').replace('# ', ''));
+    /today's money|future['\u2019]s money/.test(lines[1] || ''), (lines[1] || '').replace('# ', ''));
 
   /* F39e: an exported legend wraps instead of running off the canvas. It used
      to be laid out on one assumed row, which fitted four entries and silently

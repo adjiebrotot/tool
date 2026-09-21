@@ -154,7 +154,7 @@
        Growth(y) = Balance(y+1) - Balance(y) - Saved(y)
      Taken as a residual in whatever money is on screen, so the row adds up to
      the cent in today's money and in the money of the day alike. In real terms
-     it is the real return on the pot; in future dollars it is the nominal
+     it is the real return on the pot; in future's money it is the nominal
      return, which is the same earnings plus the inflation uplift on the
      balance and the year's flows.
 
@@ -945,7 +945,7 @@ function compute(ui){
      construction. That is the whole point of real terms, and it is also why
      inflation can LOOK inert: the figure on the page never moves. So the cost
      of living is carried year by year as its own series, and `show()` turns it
-     into the money of that year whenever future dollars are on. It is the
+     into the money of that year whenever future's money is on. It is the
      same rise that lifts the pot needed, said out loud.
 
      Income and saving ride alongside it, as whole-year sums of the monthly
@@ -985,8 +985,8 @@ function compute(ui){
   };
 }
 
-/* Today's money to the money of year y, for display only. Future dollars are
-   the default: they are what the account will actually read in that year, and
+/* Today's money to the money of year y, for display only. Future's money is
+   the default: it is what the account will actually read in that year, and
    a reader who has not met real terms before takes them at face value. Show
    Present Value leaves the engine's own real figures alone instead. */
 function show(res, value, yearIndex){
@@ -995,7 +995,7 @@ function show(res, value, yearIndex){
   return value * Math.pow(1 + res.P.inflation, yearIndex);
 }
 
-function moneyMode(res){ return res.ui.showReal ? "today's money" : 'future dollars'; }
+function moneyMode(res){ return res.ui.showReal ? "today's money" : "future's money"; }
 
 /* Name a position on the calendar-year axis. The yearly samples sit on whole
    years and read as one, but the crossing falls BETWEEN two of them, so its x
@@ -1470,6 +1470,20 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
               callback: function(v){ return fmt.currency(v, true); }},
       grid: {color: t.grid}
     };
+    /* A spacer in the middle of the stack, so the two panes read as two
+       pictures rather than one picture with a line through it. It plots
+       nothing and draws nothing — no ticks, no gridlines, no border — it only
+       takes its share of the height, which is small enough to be a seam and
+       large enough that the balance floor and the flows floor are plainly not
+       the same axis. It is written between the two panes because Chart.js
+       stacks a group in the order its scales are DEFINED, bottom one first. */
+    o.scales[lower.id + 'Gap'] = {
+      type: 'linear', position: 'left', stack: 'ffCash',
+      stackWeight: lower.gapWeight || 0.12, min: 0, max: 1,
+      ticks: {display: false},
+      grid: {display: false, drawTicks: false},
+      border: {display: false}
+    };
   }
   o.scales.y = {
     // Both bounds come from the fitter above, so the view the chart opens
@@ -1562,7 +1576,6 @@ function renderCharts(res){
   if(res.ffAge != null){
     view1 = clamp(Math.ceil(res.ffAge - res.P.ageNow) + 8, Math.min(12, years), years);
   }
-  var zoomedOut = view1 < years;
 
   /* Size the axis to the expected plan, not to the best of a thousand futures.
      Sixty years of compounding put the 90th percentile an order of magnitude
@@ -1629,7 +1642,6 @@ function renderCharts(res){
   renderLegend('legend1', chart1, legend1);
 
   var notes1 = [];
-  if(zoomedOut) notes1.push('The view opens on the years that decide the answer — scroll or pinch out for the rest of the plan, to ' + fmt.age(res.P.ageDie) + '.');
   if(bandClipped) notes1.push('The axis is sized to the expected outcome, so the best of the simulated futures runs off the top.');
   if(clipped.path) notes1.push('A balance below zero is drawn flat at zero: you are spending more than you earn, so the pot is being eaten before you have even retired.');
   $('chart1Sub').textContent = notes1.join(' ');
@@ -1724,12 +1736,15 @@ function renderCharts(res){
   chart2.$fitY = {y: fit2, yBal: fit3};
   renderLegend('legend2', chart2, legend2);
 
-  var notes2 = [res.P.ageRetire >= res.P.ageDie - 1e-9
-    ? 'The slider is at your life expectancy, so you never stop earning and nothing is ever drawn.'
-    : (res.P.ageRetire <= res.P.ageNow + 1e-9
-        ? 'The slider is at your age now, so the drawdown starts today.'
-        : 'Income falls to the pension or nothing at ' + fmt.age(res.P.ageRetire) +
-          ', and the gap below spending is what the balance underneath has to cover from then on.')];
+  /* Only the two edge cases the picture cannot show for itself: at either end
+     of the slider there is no crossing to read, so the chart looks like a
+     mistake unless it is said. The ordinary case needs no caption. */
+  var notes2 = [];
+  if(res.P.ageRetire >= res.P.ageDie - 1e-9){
+    notes2.push('The slider is at your life expectancy, so you never stop earning and nothing is ever drawn.');
+  } else if(res.P.ageRetire <= res.P.ageNow + 1e-9){
+    notes2.push('The slider is at your age now, so the drawdown starts today.');
+  }
   var ranOut = bal.some(function(v){ return v != null && isFinite(v) && v < 0; });
   if(ranOut) notes2.push('The balance goes below zero and is drawn there: that is the shortfall, not a pause at nothing.');
   $('chart2Sub').textContent = notes2.join(' ');
@@ -1767,7 +1782,7 @@ function tableRows(res){
       /* Income, then expense, then what is left: the three read as one
          sentence, and Saved is the subtraction of the two beside it in every
          row. Expense is also the column that shows inflation doing its work
-         once future dollars are on. */
+         once future's money is on. */
       income: show(res, res.incomeCurve[y], y),
       expense: show(res, res.expenseCurve[y], y),
       flow: saved,
@@ -1801,8 +1816,7 @@ function renderTable(res){
   $('tableWrap').innerHTML =
     '<table><thead><tr><th>Year</th><th>Age</th><th>Balance</th><th>Income</th><th>Expense</th>' +
     '<th>Saved / drawn</th><th>Growth</th></tr></thead><tbody>' + rows + '</tbody></table>';
-  $('tableSub').innerHTML = 'In ' + moneyMode(res) +
-    '. Every row balances: this year’s Balance plus Saved plus Growth is next year’s Balance.' +
+  $('tableSub').innerHTML = 'In ' + moneyMode(res) + '.' +
     info('Balance is what the pot reads AT that age; Income, Expense and Saved are the twelve months that follow it. ' +
          (res.ui.savingsMode === 'income'
            ? 'Income is the net income you entered.'
@@ -1819,7 +1833,7 @@ function renderAssumptions(res){
       info('Tax differs too much between countries, and between an ordinary account and a pension wrapper, to model honestly in one tool.'),
 
     '<strong>Shown in ' + moneyMode(res) + '.</strong> Spending holds its value, so it rises with inflation.' +
-      info('Future dollars are what the account will actually read: the same plan times each year\'s inflation factor. Show Present Value strips it back out.'),
+      info('Future\u2019s money is what the account will actually read: the same plan times each year\'s inflation factor. Show Present Value strips it back out.'),
 
     '<strong>Inflation is ' + fmt.pct(res.ui.inflation, 1) + ' a year</strong> and applies to every year, working or retired.' +
       info('Living costs, the pot needed and the pension all rise with it, and the return is discounted by it (Fisher, not subtraction). The Expense column below is that rise, year by year.'),
@@ -1837,7 +1851,7 @@ function renderAssumptions(res){
       info('Nothing is withdrawn on that chart, so it is every cent you have paid in, held down by the balance in the years a bad market has the pot below it. The gap to the investment line is the growth.'),
 
     '<strong>The year-by-year table reconciles.</strong> Balance plus Saved plus Growth is next year\u2019s Balance, to the cent.' +
-      info('Growth is whatever is left over once the flows are accounted for. In today\u2019s money that is the real return; in future dollars, the nominal one.'),
+      info('Growth is whatever is left over once the flows are accounted for. In today\u2019s money that is the real return; in future\u2019s money, the nominal one.'),
 
     (res.ui.savingsMode === 'income'
       ? '<strong>Income is what you entered</strong>, and what you save is whatever it leaves over.' +
@@ -2180,11 +2194,11 @@ function chartSvg(canvasId, filename, chartTitle, legendId){
   saveBlob(new Blob([xml], {type: 'image/svg+xml;charset=utf-8'}), filename);
 }
 
-// The chart title has to carry the money mode: the same plan in future dollars
+// The chart title has to carry the money mode: the same plan in future's money
 // is a different picture, and an exported file has no Settings tab to check.
 function exportTitle(which){
   if(!last) return 'Financial Freedom Calculator';
-  var mode = last.ui.showReal ? "today's money" : 'future dollars';
+  var mode = last.ui.showReal ? "today's money" : "future's money";
   var at = ' at ' + fmt.age(last.P.ageRetire);
   var name = which === 'dd' ? 'Cashflows and balance' + at : 'Path to freedom';
   return 'Financial Freedom Calculator: ' + name + ' (' + mode + ')';
@@ -2204,7 +2218,7 @@ function downloadCsv(){
             money(r.flow), money(r.growth)].map(csvCell).join(',');
   });
   var csv = '# Made using tool.adjiebrotots.com/financialfreedom\n' +
-    '# ' + last.ui.currency + ', ' + (last.ui.showReal ? "today's money" : 'future dollars') + '\n' +
+    '# ' + last.ui.currency + ', ' + (last.ui.showReal ? "today's money" : "future's money") + '\n' +
     header.join(',') + '\n' + lines.join('\n') + '\n';
   saveBlob(new Blob([csv], {type: 'text/csv;charset=utf-8;'}), 'financial_freedom.csv');
 }

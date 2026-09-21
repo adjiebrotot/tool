@@ -88,7 +88,7 @@ needed. F18 exists because a crossing at the life expectancy used to count:
 at that age there is nothing left to fund, so the required pot is zero and a
 plan that never saved a cent was declared free at 90.
 
-Presentation: future dollars being today's money times the inflation factor to
+Presentation: future's money being today's money times the inflation factor to
 the cent, the chart starting at the current calendar year and today's assets,
 both axes titled, **no hardcoded colours anywhere in any chart config**, the
 theme toggle rebuilding charts from the new tokens, the currency picker changing
@@ -250,7 +250,7 @@ say what the table says.
 **Inflation being visible, not merely applied.** The engine runs in real terms,
 where the living cost is flat and inflation can therefore look inert. F37 pins
 the Expense column: flat in today's money, exactly the real cost times the
-inflation factor in future dollars, and rising *before* retirement as well as
+inflation factor in future's money, and rising *before* retirement as well as
 after. The pot needed lost its table column when the table became a pure cash
 flow statement, so F38 reads it off the curve the page plots instead. F38 pins the consequence the tool is often asked for and rarely shows:
 in the money of the day, freedom at a later age costs MORE, while in today's
