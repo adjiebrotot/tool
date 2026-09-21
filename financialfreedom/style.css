@@ -64,6 +64,9 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .retire-slider .slider-block{padding:0;border-top:none;}
 .retire-slider .slider-value{color:var(--accent2);font-size:1.05rem;}
 .slider-scale{display:flex;justify-content:space-between;gap:10px;margin-top:5px;color:var(--muted);font-size:.74rem;}
+/* The verdict on the slider's own age hangs directly off the slider, so it
+   keeps the banner's look and drops the banner's bottom margin. */
+.board-head .verdict{margin:12px 0 0;}
 #ageRetire{accent-color:var(--accent2);}
 
 /* ── KPI strip ── */
@@ -111,6 +114,9 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .legend-item{display:flex;align-items:center;gap:7px;cursor:pointer;transition:opacity .15s;}
 .legend-item.hidden{opacity:.35;}
 .canvas-wrap{height:430px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
+/* The cashflow card draws two plot areas on ONE canvas — the flows above, the
+   balance they leave behind below — so it needs room for both. */
+.canvas-wrap-cash{height:620px;}
 .hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:22px;line-height:1.5;}
 
 /* ── Detail tables and notes ── */
@@ -141,6 +147,7 @@ td.pos{color:var(--data-pos-em);}
   .controls{position:static;max-height:none;}
   .metrics,.metrics-3{grid-template-columns:repeat(2,1fr);}
   .canvas-wrap{height:360px;}
+  .canvas-wrap-cash{height:500px;}
   .header{flex-direction:column;}
 }
 @media(max-width:600px){
@@ -150,6 +157,7 @@ td.pos{color:var(--data-pos-em);}
   .metrics,.metrics-3{grid-template-columns:1fr;}
   .board{padding-left:11px;}
   .canvas-wrap{height:300px;}
+  .canvas-wrap-cash{height:420px;}
   .btn-row{flex-direction:column;}
   .btn-row .btn-primary,.btn-row .btn-secondary{flex:1 1 auto;}
   .btn-cluster{width:100%;}

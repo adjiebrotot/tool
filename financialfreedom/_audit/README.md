@@ -125,7 +125,7 @@ demand an "invalid" verdict for a retirement age equal to the age now, now
 demands the opposite. Dragging the life expectancy under the handle pulls the
 handle down with it.
 
-**All three charts after the overhaul.** F43 pins the path chart at exactly
+**Both charts after the overhaul.** F43 pins the path chart at exactly
 three lines and a band — pot needed, investment outcome, money deposited, no
 median — running the whole plan with **no withdrawal anywhere in it**, which is
 what makes the crossing readable and what makes the plotted line the same line
@@ -134,16 +134,34 @@ compounding put the end of a plan two orders of magnitude above its beginning,
 so the chart OPENS on the years that decide the answer and `limits` is pinned to
 the data rather than to the view, with the whole plan one pinch away.
 
-F44 pins the cashflows, which are two charts now. Above, income against spending
-with the gap filled on both sides in two different colours from the token set
-(F25 reads `fill.above` and `fill.below` too, or the one place a hardcoded hex
-could hide would be exactly there). Below, on a chart of its own, the balance
-that leaves behind. A stock and a flow cannot share a scale, and they no longer
-share a plot area either: F44f pins the balance out of the flow chart entirely
-and neither chart carrying a second axis, F44f2 that the two span the same
-years, and F44g3 that the balance chart has its own legend with the same
-retirement rule and no "right axis" left in it. F44g-g2b pin the merged fill
-legend. The shaded gap is ONE quantity, what income leaves over, and the two
+F44 pins the cashflows, which are one chart with two stacked panes now. Above,
+in two thirds of the height, income against spending with the gap filled on both
+sides in two different colours from the token set (F25 reads `fill.above` and
+`fill.below` too, or the one place a hardcoded hex could hide would be exactly
+there). Below, in the remaining third and on a scale of its own, the balance
+they leave behind. A stock and a flow cannot share a scale — a balance in the
+millions flattens a spending line in the tens of thousands into the axis — but
+they are one picture, so they are two stacked scales rather than two charts,
+which is what used to let a year drift out of line between them. F48b2 pins the
+one card, one `.canvas-wrap` and one canvas; F44f that the balance is on its own
+stacked pane under the flows rather than a second axis across them; F44f2 that
+the pane is DEFINED first, which is what puts it underneath, because Chart.js
+stacks a group in definition order, bottom first; F44f2b that both panes span
+the same years; and F44g3 that one key covers both panes with the retirement
+rule as a single entry drawn once in each. F44g-g2b pin the merged fill
+legend, now five entries rather than four.
+
+**A balance that runs out is drawn where it lands.** The cashflow balance is
+plotted exactly as the engine leaves it, negatives included: a pot that fails
+keeps owing, which is how the engine records the size of the miss, and the
+chart used to be the one place on the page that flattened it against zero while
+the table and the "Left at" card both reported it. F44f3 drives a plan that
+runs out and checks the plotted series against the table's own figures to the
+cent, F44f3b that the axis opens under zero and the subtitle says the line goes
+there. F50f keeps the opposite rule where it still belongs: the PATH chart's
+balance is floored at zero, because going under there means the pot is being
+eaten before retirement and a line compounding into the red would squash
+everything real into a sliver. The shaded gap is ONE quantity, what income leaves over, and the two
 colours are its sign, so it is a single **Savings/Withdrawal** entry with a
 swatch split down the middle rather than two entries a reader has to add up.
 Banning the old wording would not hold that: split it back into "Surplus" and
@@ -152,23 +170,40 @@ invariant is structural — the key has exactly four entries, exactly one of the
 is a filled block, and that one block carries BOTH of the colours the chart
 fills with, read off the dataset's own `fill.above`/`fill.below` rather than
 restated. A split gives each entry one colour and all three checks fail at
-once; a recolour of the chart that left the key behind fails F44g2b. F50i pins that the balance chart is refitted to the
-shared window in the same pass, or it would be left drawn against a window it is
-not in.
+once; a recolour of the chart that left the key behind fails F44g2b. F50i pins that the balance pane is refitted in the
+same pass as the flows, or it would be left drawn against a window it is not
+in.
 
-**One x window across two charts.** The flows and the balance they leave behind
-are one picture cut in half, so a year has to sit in the same place on both. F59
-drives the zoom and the pan callbacks and checks the window really is carried
-across, on the age axis as well as the calendar one, in both directions — and
-that the path chart, which answers a different question on a different opening
-view, is moved by neither. F50j pins the other half: either cashflow reset puts
-BOTH charts back, because a reset that left one zoomed in would break the
-alignment the link exists for. The window goes across through the zoom plugin's
-own `zoomScale` rather than by assigning to the scale options, because the
-plugin records a scale's original bounds the first time it is asked to move it:
-write the window in behind its back and the NEXT gesture records the synced
-window as the original, and Reset zoom goes back to that instead of the opening
-view.
+**One x window, by construction.** The flows and the balance they leave behind
+are one picture, so a year has to sit in the same place on both — and now it
+does because there is one chart under them, with a single pair of x axes. F59
+pins that: two charts on the page, the balance a dataset of the flow chart, one
+`x` and one `xAge` serving both panes, and **no** zoom or pan callback left
+anywhere, because there is no second chart to mirror a window to. F59c zooms it
+and checks both panes are sized to the years shown in the one update the gesture
+triggers, F59d that the path chart, which answers a different question on a
+different opening view, does not move with it. F50j pins the reset: one button,
+one chart, both panes back. The pair of charts that this replaced had to carry
+the window across through the zoom plugin's own `zoomScale` rather than by
+assigning to the scale options, because the plugin records a scale's original
+bounds the first time it is asked to move it — an entire class of bug that
+having one chart removes rather than guards against.
+
+**Two verdicts, one per question.** The page banner carries what the slider
+cannot move — a broken pair of ages, a plan no pot of any size funds, and the
+age the crossing happens at — while the verdict on the SLIDER'S OWN age
+("not by 45, you get there at 64") hangs directly under the slider, with the
+remedies that close the gap. F63 pins the placement (the slider card is the
+slider's next sibling, inside the Cashflows header; the banner is still first in
+the main column), F63b that the warn verdict and its remedies moved there,
+F63c that the banner never names the retirement age for any status, F63d that
+universal impossibility stays on top with the slider card silent rather than
+repeating the failure a second time, and F63e the clearing case.
+
+**Invested assets today is an investment figure.** F64 pins it on the Investment
+tab, first, beside the return and volatility it earns, off the Goal tab where it
+used to sit among the choices about what the money should do — with its label,
+its currency prefix and a tip that points at the return below it.
 
 **What the tooltip is pointing at.** Chart.js resolves an `index` tooltip by
 DATA INDEX: nearest element, then read that index out of every other dataset.
