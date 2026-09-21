@@ -566,6 +566,72 @@ console.log('\n── Feasibility ──');
     r.tight.join(', '));
 }
 
+// F19e: a crossing inside the final year is real freedom and must not be
+//       reported as impossible. The search used to exclude the whole last year
+//       rather than the degenerate final month, so a plan funded from 89y3m to
+//       90 was declared mathematically impossible and handed remedies.
+{
+  const r = await page.evaluate(() => {
+    const F = window.__FF;
+    const ui = Object.assign({}, F.UI_DEFAULTS,
+      {ageNow: 88, ageRetire: 89, ageDie: 90, assets: 0, savings: 36000, std: 0});
+    const P = F.buildParams(ui);
+    const n = F.months(P.ageNow, P.ageDie), acc = F.accumulate(P, n);
+    let brute = null;
+    for(let t = 0; t < n; t++){
+      const a = P.ageNow + t / 12;
+      if(acc[t] >= F.requiredPot(P, a) - 1e-6){ brute = a; break; }
+    }
+    return {brute: brute, got: F.solveFreedomAge(P), status: F.diagnose(ui).status,
+            needThere: brute == null ? null : F.requiredPot(P, brute)};
+  });
+  check('F19e a crossing inside the final year is found, not called impossible',
+    r.got !== null && Math.abs(r.got - r.brute) < 1e-9 && r.status !== 'impossible',
+    `brute ${r.brute}, page ${r.got}, status ${r.status}`);
+  check('F19f and the requirement it clears there is a real one, not a rounding artefact',
+    r.needThere > 1000, `required ${Number(r.needThere).toFixed(0)}`);
+}
+
+// F19g: both bisected remedies quote a rounded figure, and the rounding has to
+//       fall on the safe side of the threshold they solved for. Rounding to
+//       nearest put roughly half of them on the wrong side: "spend less" advised
+//       a level that does not fund, "earn a higher return" understated the rate.
+{
+  const r = await page.evaluate(() => {
+    const F = window.__FF;
+    const fund = (ui, over) => {
+      const p = F.buildParams(Object.assign({}, ui, over));
+      const n = F.months(p.ageNow, p.ageRetire);
+      return F.accumulate(p, n)[n] >= F.requiredPot(p, p.ageRetire) - 1e-6;
+    };
+    let spendBad = 0, spendN = 0, retBad = 0, retN = 0, firstBad = null;
+    for(let sav = 0; sav <= 40000; sav += 500){
+      const ui = Object.assign({}, F.UI_DEFAULTS, {savings: sav, assets: 0});
+      const rem = F.solveRemedies(ui);
+      const sp = rem.find(x => x.key === 'spend'), rt = rem.find(x => x.key === 'return');
+      if(sp){
+        spendN++;
+        const pct = parseFloat(sp.text.match(/to ([\d.]+)%/)[1]);
+        if(!fund(ui, {expense: F.UI_DEFAULTS.expense * pct / 100})){
+          spendBad++; firstBad = firstBad || ('savings ' + sav + ': ' + sp.text);
+        }
+      }
+      if(rt){
+        retN++;
+        const v = parseFloat(rt.text.match(/([\d.]+)% a year/)[1]);
+        if(!fund(ui, {ret: v})){
+          retBad++; firstBad = firstBad || ('savings ' + sav + ': ' + rt.text);
+        }
+      }
+    }
+    return {spendBad, spendN, retBad, retN, firstBad};
+  });
+  check('F19g every spend-less figure quoted actually funds the plan',
+    r.spendBad === 0, `${r.spendBad} of ${r.spendN} wrong` + (r.firstBad ? ' e.g. ' + r.firstBad : ''));
+  check('F19h every return figure quoted actually funds the plan',
+    r.retBad === 0, `${r.retBad} of ${r.retN} wrong`);
+}
+
 // F20: Die Rich below inflation gets its own explanation, not the generic one.
 {
   const d = await page.evaluate(() =>
@@ -698,47 +764,60 @@ console.log('\n── Page and presentation ──');
 }
 
 // F28: the shared price cache must round-trip every field the DCA tools read
-//      back out of the SAME localStorage key, or it corrupts their view.
+//      back out of the SAME localStorage key, or it corrupts their view. This
+//      drives the REAL write path (ensure -> pcStore) with a stubbed Worker and
+//      reads back through the module's own accessors, not through localStorage
+//      directly: an earlier version of this check built the entry itself and so
+//      could not have caught a renamed field.
 {
-  const r = await page.evaluate(() => {
+  const ohlc = {
+    dates: ['2020-01-01','2020-01-02','2020-01-03'],
+    prices: [10, 11, 12], opens: [10, 10.5, 11.5],
+    highs: [10.2, 11.2, 12.2], lows: [9.8, 10.4, 11.4],
+    source: 'yahoo', kind: 'stock'
+  };
+  await page.unroute('**/*');
+  await page.route('**/*', route => {
+    const url = route.request().url();
+    if(url.startsWith('file://')) return route.continue();
+    if(/chart\.umd/.test(url)) return route.fulfill({contentType:'application/javascript', body: CHART_STUB});
+    if(/workers\.dev/.test(url)) return route.fulfill({contentType:'application/json',
+      body: JSON.stringify({results: {OHLCTEST: ohlc}, asOf: new Date().toISOString()})});
+    return route.fulfill({contentType:'application/javascript', body: '/* stub */'});
+  });
+  const r = await page.evaluate(async () => {
     const C = window.SharedPriceCache;
     if(!C) return {missing: true};
-    const before = localStorage.getItem(C.key);
     C.clear();
-    const entry = {
-      dates: ['2020-01-01', '2020-01-02', '2020-01-03'],
-      prices: [10, 11, 12], opens: [10, 10.5, 11.5], highs: [10.2, 11.2, 12.2],
-      lows: [9.8, 10.4, 11.4], source: 'yahoo', kind: 'stock'
-    };
-    // Write through the same path a fetch would, then read it back fresh.
-    const stored = JSON.parse(localStorage.getItem(C.key) || '{"cache":{}}');
-    stored.cache.TEST = Object.assign({}, entry, {
-      cachedStart: '2020-01-01', cachedEnd: '2020-01-03',
-      coverageStart: '2020-01-01', coverageEnd: '2020-01-03'
-    });
-    localStorage.setItem(C.key, JSON.stringify({savedAt: Date.now(), cache: stored.cache}));
-    C.clear();
-    localStorage.setItem(C.key, JSON.stringify({savedAt: Date.now(), cache: stored.cache}));
-    // Force a reload of the in-memory copy.
-    const fresh = JSON.parse(localStorage.getItem(C.key)).cache.TEST;
-    const slice = (function(){
-      // Exercise the module's own reader against the same key.
-      C.clear();
-      localStorage.setItem(C.key, JSON.stringify({savedAt: Date.now(), cache: stored.cache}));
-      return null;
-    })();
-    const out = {
+    await C.ensure('OHLCTEST', '2020-01-01', '2020-01-03');
+    const e = C.entry('OHLCTEST');
+    const sl = C.slice('OHLCTEST', '2020-01-01', '2020-01-03');
+    const raw = JSON.parse(localStorage.getItem(C.key) || '{}');
+    return {
       key: C.key,
-      fields: ['dates','prices','opens','highs','lows','cachedStart','cachedEnd',
-               'coverageStart','coverageEnd','source','kind'].filter(f => fresh[f] === undefined)
+      // Exactly the fields dcasimulator/script.js reads back off an entry.
+      missingFields: ['dates','prices','opens','highs','lows','cachedStart','cachedEnd',
+                      'coverageStart','coverageEnd','source','kind']
+                     .filter(f => !e || e[f] === undefined),
+      cachedStart: e && e.cachedStart, cachedEnd: e && e.cachedEnd,
+      coverageStart: e && e.coverageStart, coverageEnd: e && e.coverageEnd,
+      sliceRows: sl ? sl.dates.length : 0,
+      sliceHasOhlc: !!(sl && sl.opens && sl.highs && sl.lows),
+      persisted: !!(raw.cache && raw.cache.OHLCTEST)
     };
-    if(before === null) localStorage.removeItem(C.key); else localStorage.setItem(C.key, before);
-    return out;
   });
-  check('F28 the shared cache uses the DCA simulator’s storage key',
+  check('F28 the shared cache uses the DCA simulator\u2019s storage key',
     r.key === 'dca_priceCache_v2', `key ${r.key}`);
-  check('F28b and an entry carries every field those tools read back',
-    r.fields && r.fields.length === 0, `missing: ${(r.fields || []).join(', ') || 'none'}`);
+  check('F28b a real fetch writes every field those tools read back',
+    r.missingFields && r.missingFields.length === 0,
+    `missing: ${(r.missingFields || []).join(', ') || 'none'}`);
+  check('F28c the data extent and the requested coverage are recorded separately',
+    r.cachedStart === '2020-01-01' && r.cachedEnd === '2020-01-03' &&
+    r.coverageStart === '2020-01-01' && r.coverageEnd === '2020-01-03',
+    `data ${r.cachedStart}..${r.cachedEnd}, coverage ${r.coverageStart}..${r.coverageEnd}`);
+  check('F28d and the reader hands back the rows with their OHLC intact',
+    r.sliceRows === 3 && r.sliceHasOhlc, `${r.sliceRows} rows, ohlc ${r.sliceHasOhlc}`);
+  check('F28e and it survives to the key on disk', r.persisted, `persisted ${r.persisted}`);
 }
 
 // F29: nothing may be fetched before the user asks for it.

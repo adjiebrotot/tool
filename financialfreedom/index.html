@@ -133,15 +133,15 @@
     <div class="field-group">
       <div class="group-title">Ages</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Age now <i class="tip-icon" data-tip="Where the projection starts. The chart begins at this age and the current calendar year.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Age now <i class="tip-icon" data-tip="Where the projection starts.">?</i></span></div>
         <input class="num-input" id="ageNow" type="number" min="0" max="100" step="1" value="30"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Target retirement age <i class="tip-icon" data-tip="The age you want to stop earning and start living off the pot. It is the age the headline &quot;amount needed&quot; is measured at.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Target retirement age <i class="tip-icon" data-tip="When you stop earning and start living off the pot. The amount needed is measured here.">?</i></span></div>
         <input class="num-input" id="ageRetire" type="number" min="1" max="110" step="1" value="60"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Life expectancy <i class="tip-icon" data-tip="How long the money has to last. Just Die and Leave a Legacy both end here. Die Rich ignores it, because a pot that lasts forever does not care when you stop.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Life expectancy <i class="tip-icon" data-tip="How long the money has to last. Die Rich ignores it, because forever does not care when you stop.">?</i></span></div>
         <input class="num-input" id="ageDie" type="number" min="2" max="120" step="1" value="90"/>
       </div>
     </div>
@@ -149,7 +149,7 @@
     <div class="field-group">
       <div class="group-title">Money in and out</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Living expenses <i class="tip-icon" data-tip="Everything you spend to live, before any retirement adjustment. It is assumed to rise with inflation, so it stays constant in today's money.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Living expenses <i class="tip-icon" data-tip="What you spend to live now. It rises with inflation, so it holds its value in today's money.">?</i></span></div>
         <div class="inline-row">
           <div class="currency-wrap grow">
             <span class="prefix" id="expensePrefix">$</span>
@@ -185,11 +185,11 @@
         <p class="note" id="savingsModeNote"></p>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Growth of that amount, % p.a. <i class="tip-icon" data-tip="How fast the amount above grows each year, before inflation. Pay rises and promotions live here. If it matches inflation, your saving stays flat in today's money.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Growth of that amount, % p.a. <i class="tip-icon" data-tip="How fast the amount above grows each year, before inflation. Pay rises live here. Match inflation and it stays flat in real terms.">?</i></span></div>
         <input class="num-input" id="growth" type="number" min="-10" max="30" step="0.1" value="3"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Inflation, % p.a. <i class="tip-icon" data-tip="How fast prices rise. Everything on this page is shown in today's money by default, which is this rate stripped back out.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Inflation, % p.a. <i class="tip-icon" data-tip="How fast prices rise. Today's money means this rate stripped back out.">?</i></span></div>
         <input class="num-input" id="inflation" type="number" min="0" max="30" step="0.1" value="2.5"/>
       </div>
     </div>
@@ -198,27 +198,27 @@
   <!-- ── Investment ── -->
   <div class="ctrl-panel" id="tab-invest">
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Asset <i class="tip-icon" data-tip="Picking a preset fills the three fields below with long-run historical figures. They are starting points, not forecasts, and you can edit any of them afterwards.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Asset <i class="tip-icon" data-tip="Fills the three fields below with long-run historical figures. Edit any of them afterwards.">?</i></span></div>
       <select class="sel-input" id="assetPreset"></select>
       <p class="note" id="presetNote"></p>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Expected return, % p.a. <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees. Compound means the rate that actually turns your starting pot into your ending pot, not the average of the good and bad years.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Expected return, % p.a. <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees. Compound means the rate that turns your starting pot into your ending one, not the average of the good and bad years.">?</i></span></div>
       <input class="num-input" id="ret" type="number" min="-5" max="40" step="0.1" value="8"/>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Volatility, % p.a. <i class="tip-icon" data-tip="How much the return bounces around from year to year, as a standard deviation. It does not change the expected path, it decides how wide the range of outcomes is. Set it to 0 for a single smooth projection.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Volatility, % p.a. <i class="tip-icon" data-tip="How much the return bounces year to year. It sets how wide the range of outcomes is, not the expected path. Use 0 for a single smooth projection.">?</i></span></div>
       <input class="num-input" id="std" type="number" min="0" max="80" step="0.1" value="15"/>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Worst drawdown, % <i class="tip-icon" data-tip="The deepest peak-to-trough fall this asset has ever had. It is used only for the stress test: the crash lands the month you retire, which is the worst possible timing.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Worst drawdown, % <i class="tip-icon" data-tip="The deepest peak-to-trough fall this asset has had. Used only for the stress test, where it lands the month you retire.">?</i></span></div>
       <input class="num-input" id="mdd" type="number" min="-95" max="0" step="1" value="-50"/>
     </div>
 
     <div class="field-group">
       <div class="group-title">Or use a real ticker</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Ticker <i class="tip-icon" data-tip="Fetches the price history and measures the three fields above from it: compound return, volatility of daily moves, and the deepest fall. Nothing is fetched until you press the button.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Ticker <i class="tip-icon" data-tip="Measures the three fields above from real prices. Nothing is fetched until you press the button.">?</i></span></div>
         <div class="ticker-row">
           <input class="txt-input" id="ticker" type="text" placeholder="e.g. SPY, VAS.AX, GLD" data-no-persist/>
           <button class="btn-secondary btn-sm" id="fetchTickerBtn">Fetch</button>
@@ -238,48 +238,48 @@
           <input type="radio" name="ffmode" value="die" checked/>
           <div class="radio-opt-text">
             <strong>Just Die</strong>
-            The pot runs down to nothing at your life expectancy. Cheapest to reach, and it leaves no margin at all if you live longer.
+            Runs to nothing at your life expectancy. Cheapest, and no margin if you live longer.
           </div>
         </label>
         <label class="radio-opt">
           <input type="radio" name="ffmode" value="legacy"/>
           <div class="radio-opt-text">
             <strong>Leave a Legacy</strong>
-            The pot is worth a set amount, in today's money, at your life expectancy.
+            A set amount, in today's money, is still there at your life expectancy.
           </div>
         </label>
         <label class="radio-opt">
           <input type="radio" name="ffmode" value="rich"/>
           <div class="radio-opt-text">
             <strong>Die Rich</strong>
-            You only ever spend the real growth, so the pot never shrinks and would last forever. Needs a return above inflation.
+            Spend only the real growth, so it lasts forever. Needs a return above inflation.
           </div>
         </label>
       </div>
     </div>
     <div class="field-row" id="legacyRow" style="display:none;">
-      <div class="field-label"><span class="tip-wrap">Amount to leave behind <i class="tip-icon" data-tip="In today's money. The pot is sized so that after a lifetime of spending, this much purchasing power is still there.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Amount to leave behind <i class="tip-icon" data-tip="In today's money, so it is what the bequest would buy now.">?</i></span></div>
       <div class="currency-wrap">
         <span class="prefix" id="legacyPrefix">$</span>
         <input class="currency-input fmt-num" id="legacy" type="text" inputmode="decimal" value="500,000"/>
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Invested assets today <i class="tip-icon" data-tip="What you already have working for you: shares, funds, superannuation or a pension pot, anything that earns the return on the Investment tab. Leave out the house you live in and anything you would not sell.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Invested assets today <i class="tip-icon" data-tip="Anything earning the return on the Investment tab: shares, funds, super. Leave out the home you live in.">?</i></span></div>
       <div class="currency-wrap">
         <span class="prefix" id="assetsPrefix">$</span>
         <input class="currency-input fmt-num" id="assets" type="text" inputmode="decimal" value="100,000"/>
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Retirement spending, % of today <i class="tip-icon" data-tip="Spending often changes when you stop working. 80% if the mortgage is gone and the commute with it, 110% if you plan to travel. Leave it at 100% to spend the same.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Retirement spending, % of today <i class="tip-icon" data-tip="80% if the mortgage is gone, 110% if you plan to travel. Leave at 100% to spend the same.">?</i></span></div>
       <input class="num-input" id="retireMultiplier" type="number" min="10" max="300" step="1" value="100"/>
     </div>
 
     <div class="field-group">
       <div class="group-title">Government or age pension</div>
       <div class="toggle-row">
-        <div class="toggle-label"><span class="tip-wrap">Include a pension <i class="tip-icon" data-tip="An income stream that starts at a set age and rises with inflation. It reduces the pot you need, but only from its start age, so the years before it often decide the answer.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap">Include a pension <i class="tip-icon" data-tip="Reduces the pot you need, but only from its start age, so the years before it often decide the answer.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="pensionOn"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div id="pensionRows" style="display:none;">
@@ -288,7 +288,7 @@
           <input class="num-input" id="pensionStartAge" type="number" min="40" max="90" step="1" value="67"/>
         </div>
         <div class="field-row">
-          <div class="field-label"><span class="tip-wrap">Pension, per year <i class="tip-icon" data-tip="In today's money. It is assumed to be indexed to inflation, so it holds its purchasing power.">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Pension, per year <i class="tip-icon" data-tip="In today's money, indexed to inflation.">?</i></span></div>
           <div class="currency-wrap">
             <span class="prefix" id="pensionAmountPrefix">$</span>
             <input class="currency-input fmt-num" id="pensionAmount" type="text" inputmode="decimal" value="29,000"/>
@@ -305,19 +305,19 @@
       <label class="toggle-switch"><input type="checkbox" id="showNominal"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
     </div>
     <div class="toggle-row">
-      <div class="toggle-label"><span class="tip-wrap">Show the crash stress test <i class="tip-icon" data-tip="Adds a line where the worst drawdown lands the month you retire and the pot never gets a bonus recovery. It is the single biggest risk to an early retirement.">?</i></span></div>
+      <div class="toggle-label"><span class="tip-wrap">Show the crash stress test <i class="tip-icon" data-tip="The worst drawdown lands the month you retire, with no bonus recovery. The biggest risk to an early retirement.">?</i></span></div>
       <label class="toggle-switch"><input type="checkbox" id="showStress" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Simulated futures <i class="tip-icon" data-tip="How many random paths the confidence band and the success probability are built from. More is smoother and slower.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Simulated futures <i class="tip-icon" data-tip="How many random paths the band and the probability are built from. More is smoother and slower.">?</i></span></div>
       <input class="num-input" id="paths" type="number" min="100" max="5000" step="100" value="1000"/>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Confidence level, % <i class="tip-icon" data-tip="The share of simulated futures the &quot;confidence pot&quot; has to survive. 90% is a common planning choice.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Confidence level, % <i class="tip-icon" data-tip="The share of simulated futures the confidence pot has to survive. 90% is a common choice.">?</i></span></div>
       <input class="num-input" id="confidence" type="number" min="50" max="99" step="1" value="90"/>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Random seed <i class="tip-icon" data-tip="The same seed always gives the same simulated futures, so a result you share can be reproduced exactly.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Random seed <i class="tip-icon" data-tip="The same seed gives the same simulated futures, so a result can be reproduced exactly.">?</i></span></div>
       <input class="num-input" id="seed" type="number" min="1" step="1" value="20260921"/>
     </div>
     <div class="btn-row">
@@ -331,22 +331,22 @@
 
   <section class="metrics">
     <div class="metric card">
-      <div class="label"><span class="tip-wrap">Amount needed <i class="tip-icon" data-tip="The pot you need on the day you retire, at the target retirement age, for this goal to work on the expected return.">?</i></span></div>
+      <div class="label"><span class="tip-wrap">Amount needed <i class="tip-icon" data-tip="The pot you need on the day you retire for this goal to work on the expected return.">?</i></span></div>
       <div class="value" id="mNeed">—</div>
       <div class="sub" id="mNeedSub"></div>
     </div>
     <div class="metric card">
-      <div class="label"><span class="tip-wrap">Financially free at <i class="tip-icon" data-tip="The earliest age your savings reach the pot needed to stop at that age. Both curves are on the chart below and this is where they cross.">?</i></span></div>
+      <div class="label"><span class="tip-wrap">Financially free at <i class="tip-icon" data-tip="The earliest age your savings reach the pot needed to stop then. It is where the two lines cross below.">?</i></span></div>
       <div class="value" id="mFreeAge">—</div>
       <div class="sub" id="mFreeAgeSub"></div>
     </div>
     <div class="metric card">
-      <div class="label"><span class="tip-wrap">Chance it works <i class="tip-icon" data-tip="The share of simulated futures in which the money lasts. A single average return usually lands near a coin flip, because it ignores the order the good and bad years arrive in.">?</i></span></div>
+      <div class="label"><span class="tip-wrap">Chance it works <i class="tip-icon" data-tip="The share of simulated futures in which the money lasts, using the pot you are on track for. A single average return usually lands near a coin flip, because it ignores the order the good and bad years arrive in.">?</i></span></div>
       <div class="value" id="mSuccess">—</div>
       <div class="sub" id="mSuccessSub"></div>
     </div>
     <div class="metric card">
-      <div class="label"><span class="tip-wrap">Pot for that confidence <i class="tip-icon" data-tip="The pot that survives your chosen share of simulated futures. This is the number to plan around, not the one the expected return alone gives.">?</i></span></div>
+      <div class="label"><span class="tip-wrap">Pot for that confidence <i class="tip-icon" data-tip="The pot that survives your chosen share of simulated futures. Plan around this, not the expected-return figure.">?</i></span></div>
       <div class="value" id="mConfPot">—</div>
       <div class="sub" id="mConfPotSub"></div>
     </div>
@@ -356,7 +356,7 @@
       <div class="sub" id="mStressSub"></div>
     </div>
     <div class="metric card">
-      <div class="label"><span class="tip-wrap">Real return <i class="tip-icon" data-tip="Your return after inflation is stripped out. It is what actually decides how big the pot has to be. Everything on this page runs on it.">?</i></span></div>
+      <div class="label"><span class="tip-wrap">Real return <i class="tip-icon" data-tip="Your return after inflation. It is what decides how big the pot has to be.">?</i></span></div>
       <div class="value" id="mRealRet">—</div>
       <div class="sub" id="mRealRetSub"></div>
     </div>

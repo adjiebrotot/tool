@@ -910,8 +910,7 @@
     /* ── Financial Freedom Calculator ── */
     financialfreedom: {
       FIRE: ['Financial Independence, Retire Early', 'the idea this tool does the arithmetic for: save hard, invest, then live off the pot'],
-      SWR:  ['Safe Withdrawal Rate', 'the share of the pot you can spend each year without running out'],
-      GBM:  ['Geometric Brownian Motion', 'the standard random walk used to simulate a price that drifts up and wobbles']
+      SWR:  ['Safe Withdrawal Rate', 'the share of the pot you can spend each year without running out']
     },
 
     /* ── Rent vs Own Home (and its Sensitivity page, EN + ID) ── */

@@ -61,9 +61,9 @@
      will have accumulated, and the pot step 6 requires if you stopped at that
      age. Accumulated is non-decreasing, required is non-increasing, so they
      cross at most once. The first month where accumulated >= required is the
-     answer. The search stops a year short of the death age, because at the
-     death age itself there is nothing left to fund and every plan would
-     qualify. No crossing by then means the plan is not achievable.
+     answer. The search excludes the final month only: at the death age itself
+     there is nothing left to fund, so every plan would qualify. No crossing
+     before then means the plan is not achievable.
 
    Step 8  Monte Carlo. The same recurrences with a random monthly growth
      factor instead of (1 + rm):
@@ -162,6 +162,13 @@ function perMonth(amount, period){
   if(period === 'weekly') return amount * 52 / 12;
   if(period === 'yearly') return amount / 12;
   return amount;
+}
+// An (i) marker carrying detail that would otherwise be a paragraph on the
+// page. `?` is for tips about a field, `i` is for background. The shared
+// tooltip renders markup, so only the attribute delimiter is escaped.
+function info(html){
+  return ' <span class="tip-wrap"><i class="tip-icon" data-tip="' +
+    String(html).replace(/"/g, '&quot;') + '">i</i></span>';
 }
 function escapeHtml(s){
   return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
@@ -373,10 +380,12 @@ function accumulate(P, n, growth){
 function solveFreedomAge(P, accumArr){
   var n = months(P.ageNow, P.ageDie);
   var acc = accumArr || accumulate(P, n);
-  // Stop a year short of the life expectancy. At the death age itself there is
-  // nothing left to fund, so the required pot is zero and every plan crosses,
-  // including one that never saves a cent. That is arithmetic, not freedom.
-  var last = Math.max(0, n - 12);
+  // Exclude only the final month. At the death age itself there is nothing left
+  // to fund, so the required pot is zero and every plan crosses, including one
+  // that never saves a cent. That is arithmetic, not freedom. Excluding any
+  // more than that discards real crossings: a plan funded from age 89y3m to 90
+  // is genuinely funded, however short the run.
+  var last = Math.max(0, n - 1);
   for(var t = 0; t <= last; t++){
     var age = P.ageNow + t / 12;
     if(acc[t] >= requiredPot(P, age) - 1e-6) return age;
@@ -577,12 +586,17 @@ function solveRemedies(ui){
       mid = (lo + hi) / 2;
       if(canFund(mid)) lo = mid; else hi = mid;
     }
-    if(lo < 0.999){
+    // Round DOWN to the figure shown. The bisection lands on the exact point
+    // where funding flips, so rounding up would advise a spending level that
+    // does not actually work. The dollar figure uses the same rounded share so
+    // the two halves of the sentence agree.
+    var shown = Math.floor(lo * 100) / 100;
+    if(shown < 0.999 && shown > 0){
       out.push({
         key: 'spend',
         label: 'Spend less',
-        text: 'cut spending to ' + fmt.pct(lo * 100, 0) + ' of today, about ' +
-              fmt.currency(perMonth(ui.expense * lo, ui.expensePeriod)) + ' a month'
+        text: 'cut spending to ' + fmt.pct(shown * 100, 0) + ' of today, about ' +
+              fmt.currency(perMonth(ui.expense * shown, ui.expensePeriod)) + ' a month'
       });
     }
   }
@@ -595,11 +609,13 @@ function solveRemedies(ui){
       if(fundedByRetirement(buildParams(Object.assign({}, ui, {ret: mid})))) rHi = mid;
       else rLo = mid;
     }
-    if(rHi > ui.ret + 0.01){
+    // Round UP, for the same reason in the other direction.
+    var shownRet = Math.ceil(rHi * 10) / 10;
+    if(shownRet > ui.ret + 0.01){
       out.push({
         key: 'return',
         label: 'Earn a higher return',
-        text: fmt.pct(rHi, 1) + ' a year instead of ' + fmt.pct(ui.ret, 1) +
+        text: fmt.pct(shownRet, 1) + ' a year instead of ' + fmt.pct(ui.ret, 1) +
               ', which means taking more risk'
       });
     }
@@ -629,13 +645,21 @@ function diagnose(ui){
 
   var need = requiredPot(P, P.ageRetire);
   if(!isFinite(need)){
+    // Only Die Rich can need an infinite pot, and only below inflation. Guard
+    // it anyway so a future mode cannot inherit the wrong explanation.
+    if(P.mode !== 'rich'){
+      return {
+        status: 'impossible',
+        message: 'Sorry. On these numbers, financial freedom is mathematically impossible.',
+        detail: 'No pot of any size funds this plan.',
+        remedies: []
+      };
+    }
     return {
       status: 'impossible',
       message: 'Sorry. At this return and inflation level, financial freedom is mathematically impossible.',
-      detail: 'Die Rich needs your money to grow faster than prices. At ' + fmt.pct(ui.ret, 1) +
-              ' a year with ' + fmt.pct(ui.inflation, 1) + ' inflation your real return is ' +
-              fmt.pct(P.rr * 100, 2) + ', so a pot that lasts forever does not exist at any size. ' +
-              'Raise the return above inflation, or choose Just Die instead.',
+      detail: 'Your real return is ' + fmt.pct(P.rr * 100, 2) +
+              ', so no pot lasts forever at any size. Beat inflation, or choose Just Die.',
       remedies: []
     };
   }
@@ -645,8 +669,7 @@ function diagnose(ui){
     return {
       status: 'impossible',
       message: 'Sorry. At this income and expense level, financial freedom is mathematically impossible.',
-      detail: 'Your savings never catch up with the pot you would need, at any age up to ' +
-              fmt.age(P.ageDie) + '. Any one of the changes below fixes that.',
+      detail: 'Your savings never catch up with the pot you need, at any age.',
       remedies: solveRemedies(ui)
     };
   }
@@ -740,17 +763,23 @@ function readInputs(){
 }
 
 function syncVisibility(){
+  // Persist restores a radio by setting .checked directly, which fires no
+  // `change` event, so the highlighted card has to be re-synced on every
+  // render rather than only from the radio's own listener.
+  syncModeSelection();
   $('legacyRow').style.display = UI.mode === 'legacy' ? '' : 'none';
   $('pensionRows').style.display = UI.pensionOn ? '' : 'none';
   $('savingsLabel').textContent = UI.savingsMode === 'income' ? 'Net income' : 'Savings';
   $('savingsModeNote').innerHTML = UI.savingsMode === 'income'
-    ? 'Your income grows at the rate below and your expenses rise with inflation, so what you save is the gap between them. It widens if your pay outgrows prices, and narrows if it does not.'
-    : 'The amount you put away grows at the rate below. Your expenses are used to size the pot you need, but they do not feed back into what you save.';
+    ? 'You save the gap between income and expenses.' +
+      info('Income grows at the rate below, expenses rise with inflation. The gap widens if your pay outgrows prices and narrows if it does not, so what you save changes every year.')
+    : 'This amount grows at the rate below.' +
+      info('Expenses size the pot you need but do not feed back into what you save. Switch to Net income if you want the gap between the two worked out for you.');
   var preset = PRESET_ASSETS[UI.assetPreset];
   $('presetNote').innerHTML = UI.assetPreset === 'custom'
-    ? 'Enter your own figures below, or pick a preset to start from a historical one.'
-    : escapeHtml(preset ? preset.label : '') + ': long-run historical figures as at ' + PRESETS_AS_AT +
-      ', nominal and before tax. They are a starting point, not a forecast, and every field stays editable.';
+    ? 'Your own figures, or pick a preset to start from.'
+    : 'Long-run history, not a forecast.' +
+      info('Nominal, before tax and fees, as at ' + PRESETS_AS_AT + '. Cash in particular does not earn a fixed real spread forever, and gold\'s figure depends heavily on the start date. Every field stays editable.');
 }
 
 function syncCurrencyPrefixes(){
@@ -820,14 +849,15 @@ function renderVerdict(res){
     html = '<h2>' + escapeHtml(d.message) + '</h2><p>Everything below shows what happens if you stop now.</p>';
   } else if(d.status === 'late'){
     cls += 'warn';
-    html = '<h2>' + escapeHtml(d.message) + '</h2><p>That is ' +
-      fmt.num(Math.max(0, d.ffAge - res.P.ageRetire), 1) + ' years past your target. Any one of these closes the gap.</p>' +
+    html = '<h2>' + escapeHtml(d.message) + '</h2><p>' +
+      fmt.num(Math.max(0, d.ffAge - res.P.ageRetire), 1) + ' years past your target. Any one of these closes it.</p>' +
       remedyList(d.remedies);
   } else {
     cls += 'good';
     html = '<h2>Financially free at ' + escapeHtml(fmt.age(d.ffAge)) + ', ' +
       fmt.num(Math.max(0, res.P.ageRetire - d.ffAge), 1) + ' years before your target.</h2>' +
-      '<p>On the expected return alone. The chance column below is the more honest read, because a single average return ignores the order the good and bad years arrive in.</p>';
+      '<p>On the expected return alone. Read the chance below too.' +
+      info('A single average return ignores the order the good and bad years arrive in. Land a crash early in retirement and the same average return runs out, which is why the chance is usually near a coin flip at the amount needed.') + '</p>';
   }
   el.className = cls;
   el.innerHTML = html;
@@ -849,40 +879,38 @@ function renderMetrics(res){
   $('mNeed').textContent = isFinite(res.needAtRetire)
     ? fmt.currency(show(res, res.needAtRetire, retireYearIdx), true) : 'Not possible';
   $('mNeedSub').textContent = isFinite(res.needAtRetire)
-    ? modeName + ' at age ' + fmt.age(res.P.ageRetire) + ', ' +
-      fmt.num(res.needAtRetire / Math.max(1e-9, res.P.Xr * 12), 1) + ' times a year of spending'
-    : 'No pot of any size satisfies ' + modeName + ' at this real return.';
+    ? modeName + ' at ' + fmt.age(res.P.ageRetire) + ', ' +
+      fmt.num(res.needAtRetire / Math.max(1e-9, res.P.Xr * 12), 1) + 'x a year of spending'
+    : 'No pot works at this real return.';
 
   var free = res.ffAge;
   $('mFreeAge').textContent = free == null ? 'Never' : fmt.age(free);
   $('mFreeAgeSub').textContent = free == null
-    ? 'The two curves never cross before age ' + fmt.age(res.P.ageDie) + '.'
-    : 'in ' + fmt.num(Math.max(0, free - res.P.ageNow), 1) + ' years, calendar year ' +
+    ? 'The curves never cross.'
+    : fmt.num(Math.max(0, free - res.P.ageNow), 1) + ' years away, in ' +
       (res.thisYear + Math.round(free - res.P.ageNow));
 
   var sr = res.successAtPlan;
   $('mSuccess').textContent = fmt.pct(sr * 100, 0);
   $('mSuccess').className = 'value ' + (sr >= 0.85 ? 'pos' : (sr < 0.6 ? 'neg' : ''));
-  $('mSuccessSub').textContent = 'of ' + fmt.num(res.mc.paths) + ' simulated futures, using the pot you are on track for at age ' +
-    fmt.age(res.P.ageRetire) + '.';
+  $('mSuccessSub').textContent = 'of ' + fmt.num(res.mc.paths) + ' simulated futures.';
 
   $('mConfPot').textContent = isFinite(res.confPot)
     ? fmt.currency(show(res, res.confPot, retireYearIdx), true) : 'Not reachable';
   $('mConfPotSub').textContent = isFinite(res.confPot)
-    ? fmt.pct(res.ui.confidence, 0) + ' of simulated futures survive this pot, versus ' +
-      fmt.pct(res.successAtNeed * 100, 0) + ' at the amount needed above.'
-    : fmt.pct(res.ui.confidence, 0) + ' confidence is out of reach at this volatility.';
+    ? 'vs ' + fmt.pct(res.successAtNeed * 100, 0) + ' survival at the amount needed.'
+    : 'Out of reach at this volatility.';
 
   $('mStress').textContent = isFinite(res.stressNeed)
     ? fmt.currency(show(res, res.stressNeed, retireYearIdx), true) : 'Not possible';
   $('mStressSub').textContent = 'if a ' + fmt.pct(Math.abs(res.ui.mdd), 0) +
-    ' fall lands the month you retire and never gets a bonus recovery.';
+    ' fall lands the month you retire.';
 
   $('mRealRet').textContent = fmt.pct(res.P.rr * 100, 2);
-  $('mRealRetSub').textContent = fmt.pct(res.ui.ret, 1) + ' return against ' + fmt.pct(res.ui.inflation, 1) +
+  $('mRealRetSub').textContent = fmt.pct(res.ui.ret, 1) + ' less ' + fmt.pct(res.ui.inflation, 1) +
     ' inflation. ' + (res.P.rr > 0
-      ? 'A pot that lasts forever is ' + fmt.num((1 + res.P.rm) / res.P.rm / 12, 1) + ' times a year of spending.'
-      : 'At or below zero, no pot lasts forever.');
+      ? 'Forever costs ' + fmt.num((1 + res.P.rm) / res.P.rm / 12, 1) + 'x spending.'
+      : 'At or below zero, nothing lasts forever.');
 }
 
 /* ─── CHARTS ─── */
@@ -1053,9 +1081,8 @@ function renderCharts(res){
   });
   renderLegend('legend2', chart2, legend2);
 
-  $('chart1Sub').textContent = 'Where the two solid lines cross is the earliest you can stop, from today to age ' +
-    fmt.age(res.P.ageNow + c1) + '. Everything is in ' + moneyMode(res) + '.';
-  $('chart2Sub').textContent = 'The same retirement funded from four different starting pots, from age ' +
+  $('chart1Sub').textContent = 'Where the two solid lines cross is the earliest you can stop.';
+  $('chart2Sub').textContent = 'The same retirement from four starting pots, age ' +
     fmt.age(res.P.ageRetire) + ' to ' + fmt.age(ha) + '.';
 }
 
@@ -1093,8 +1120,8 @@ function renderTable(res){
   $('tableWrap').innerHTML =
     '<table><thead><tr><th>Year</th><th>Age</th><th>Saved or spent</th><th>Balance</th>' +
     '<th>Pot needed</th><th>Gap</th></tr></thead><tbody>' + rows + '</tbody></table>';
-  $('tableSub').textContent = 'All figures in ' + moneyMode(res) +
-    '. The highlighted row is the year you become financially free, and the rule marks the year you retire.';
+  $('tableSub').innerHTML = 'In ' + moneyMode(res) + '.' +
+    info('The highlighted row is the year you become financially free. The rule above a row marks the year you retire. Saved or spent is the whole year: savings going in while you work, the net draw once you stop.');
 }
 
 /* ─── ASSUMPTIONS ─── */
@@ -1102,41 +1129,35 @@ function renderTable(res){
 function renderAssumptions(res){
   var swr = res.needAtRetire > 0 ? (res.P.Xr * 12 / res.needAtRetire * 100) : null;
   var items = [
-    '<strong>No tax.</strong> Enter your spending, your saving and your return all net of tax. ' +
-      'Tax rules differ too much by country to model honestly here.',
-    '<strong>Today’s money.</strong> Expenses hold their purchasing power, so they rise with inflation. ' +
-      'Every figure is shown in ' + moneyMode(res) + ', which you can switch on the Settings tab.',
-    '<strong>Timing.</strong> Expenses and any pension come out at the start of each month, savings go in at the end, ' +
-      'and the return is applied over the month.',
-    '<strong>This is your FIRE number.</strong> The amount needed works out to a ' +
-      (swr == null ? 'n/a' : fmt.pct(swr, 2)) + ' SWR, the share of the pot you spend in the first year. ' +
-      'The familiar 25 times rule is the same arithmetic at a 4% real return.',
-    '<strong>The range is not a path.</strong> The shaded band is the 10th to 90th percentile of ' +
-      fmt.num(res.mc.paths) + ' simulated futures at each year separately, so its edges are an envelope, ' +
-      'not one bad future you could actually live through.',
-    '<strong>Simulated futures use GBM</strong> with your return as the compound drift and your volatility as ' +
-      'the wobble. At 0% volatility they collapse onto the single smooth projection exactly.',
-    '<strong>The crash is the worst case on timing.</strong> The drawdown lands the month you retire and the pot ' +
-      'compounds again from there with no bonus recovery, which is deliberately pessimistic.',
-    '<strong>Not modelled:</strong> one-off costs, a mortgage being paid off, aged care, changes in spending ' +
-      'other than the retirement percentage, and any return that is not the one you entered.'
+    '<strong>No tax.</strong> Enter everything net of it.' +
+      info('Spending, saving and the return are all taken as after-tax figures. Tax differs too much between countries, and between an ordinary account and a superannuation or pension wrapper, to model honestly in one tool.'),
+
+    '<strong>Shown in ' + moneyMode(res) + '.</strong> Spending holds its value, so it rises with inflation.' +
+      info('Switch between today\'s money and future dollars on the Settings tab. Future dollars are the same plan multiplied by the inflation factor for each year, so they look larger and buy the same.'),
+
+    '<strong>Your FIRE number</strong> implies a ' + (swr == null ? 'n/a' : fmt.pct(swr, 2)) + ' SWR.' +
+      info('The share of the pot you spend in the first year. The familiar 25 times rule is the same arithmetic at a 4% real return, so a higher real return needs a smaller pot and a lower one needs more.'),
+
+    '<strong>The shaded band is not a path.</strong>' +
+      info('It is the 10th to 90th percentile across ' + fmt.num(res.mc.paths) + ' simulated futures at each year separately, so its edges are an envelope rather than one future you could live through. The futures are a random walk that drifts upward and wobbles, using your return as the compound drift and your volatility as the wobble. At 0% volatility they collapse onto the single smooth projection exactly.'),
+
+    '<strong>The crash is worst-case timing,</strong> with no bonus recovery.' +
+      info('The drawdown lands the month you retire, when the pot is largest and has the longest still to fund, then compounds again from there. A real crash usually rebounds, so this is deliberately pessimistic.'),
+
+    '<strong>Not modelled:</strong> one-off costs, a mortgage ending, aged care, or any spending change beyond the retirement percentage.'
   ];
-  if(res.ui.mode === 'die'){
-    items.splice(4, 0, '<strong>Just Die has no margin.</strong> The pot is sized to hit zero at age ' +
-      fmt.age(res.P.ageDie) + '. Living one year longer means living on nothing.');
-  }
   if(res.ui.mode === 'rich'){
-    items.splice(4, 0, '<strong>Forever is tested to age ' + RICH_HORIZON_AGE + '.</strong> ' +
-      'At the required pot the balance holds its real value, so a longer horizon would not change the answer.');
+    items.splice(3, 0, '<strong>Forever is tested to age ' + RICH_HORIZON_AGE + '.</strong>' +
+      info('At the required pot the balance holds its real value, so a longer horizon would not change the answer. With a pension starting after you retire the pot is meant to fall through the years before it, then hold from there.'));
   }
   if(tickerInfo){
-    items.push('<strong>' + escapeHtml(tickerInfo.ticker) + ' figures</strong> are measured from ' +
-      escapeHtml(tickerInfo.stats.from) + ' to ' + escapeHtml(tickerInfo.stats.to) +
-      (tickerInfo.source === 'stooq'
-        ? '. That series is not adjusted for dividends, so the return is understated.'
-        : '. Adjusted close, so dividends are included.'));
+    items.push('<strong>' + escapeHtml(tickerInfo.ticker) + '</strong> measured ' +
+      escapeHtml(tickerInfo.stats.from) + ' to ' + escapeHtml(tickerInfo.stats.to) + '.' +
+      info(tickerInfo.source === 'stooq'
+        ? 'That series is not adjusted for dividends, so the return is understated. A Yahoo series would include them.'
+        : 'Adjusted close, so dividends are included in the return.'));
   }
-  $('assumptions').innerHTML = items.map(function(s){ return '<li>' + s + '</li>'; }).join('');
+  $('assumptions').innerHTML = items.map(function(x){ return '<li>' + x + '</li>'; }).join('');
 }
 
 /* ─── MAIN RENDER ─── */
@@ -1196,6 +1217,10 @@ async function fetchTicker(){
     if(!slice){ tickerStatus('No price history came back for ' + escapeHtml(tk) + '.', true); return; }
     var st = tickerStats(slice.dates, slice.prices);
     if(!st){ tickerStatus('Not enough price history for ' + escapeHtml(tk) + ' to measure anything useful.', true); return; }
+    // ensure() does not throw when only part of a widen fails, and slice()
+    // reports what is held rather than what was asked for. Without this the
+    // figures would quietly come from a shorter window than advertised.
+    var partial = !SharedPriceCache.covers(tk, TICKER_HISTORY_START, end);
     $('assetPreset').value = 'custom';
     $('ret').value = st.cagr.toFixed(1);
     $('std').value = st.std.toFixed(1);
@@ -1204,7 +1229,9 @@ async function fetchTicker(){
     tickerStatus('<strong>' + escapeHtml(tk) + '</strong> over ' + fmt.num(st.years, 1) + ' years: ' +
       fmt.pct(st.cagr, 1) + ' a year, ' + fmt.pct(st.std, 1) + ' volatility, ' +
       fmt.pct(st.mdd, 0) + ' worst fall.' +
-      (slice.source === 'stooq' ? ' This series is not adjusted for dividends, so the return is understated.' : '') +
+      (slice.source === 'stooq' ? ' Not adjusted for dividends, so the return is understated.' : '') +
+      (partial ? ' Only part of the history was available, so this is measured from ' +
+        escapeHtml(st.from) + ' onward.' : '') +
       rateSuffix());
     render();
   } catch(err){
