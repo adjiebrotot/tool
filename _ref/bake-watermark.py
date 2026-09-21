@@ -42,6 +42,7 @@ COORD_PRECISION = 2     # decimal places in the emitted path data
 TOOLS = {
     "dcasimulator":   ("Made using tool.adjiebrotots.com/dcasimulator", 500),
     "financingvscash": ("Made using tool.adjiebrotots.com/financingvscash", 500),
+    "financialfreedom": ("Made using tool.adjiebrotots.com/financialfreedom", 500),
     "rentvsownhouse": ("Made using tool.adjiebrotots.com/rentvsownhouse", 500),
     "pisahvsgabung":  ("Made using tool.adjiebrotots.com/pisahvsgabung", 500),
     "jsonvisualiser": ("Made using tool.adjiebrotots.com/jsonvisualiser", 400),

@@ -54,8 +54,9 @@ the tool's own code:
 cd <tool>/_audit && node run.mjs      # dcasimulator uses run.js
 ```
 
-Harnesses live in `costofliving-comparator/`, `dcasimulator/`, `financingvscash/`, `pisahvsgabung/`,
-`rentvsownhouse/`, and `rentvsownhouse/sensitivity/`. `rentvsownhouse/audit/` is the earlier
+Harnesses live in `costofliving-comparator/`, `dcasimulator/`, `financialfreedom/`,
+`financingvscash/`, `pisahvsgabung/`, `rentvsownhouse/`, and
+`rentvsownhouse/sensitivity/`. `rentvsownhouse/audit/` is the earlier
 JS-versus-Python cross-model audit that these superseded; its CSV outputs are generated, not
 committed. `powerfactory-scripter/audit/` validates generated scripts against a nine-bus reference
 case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain

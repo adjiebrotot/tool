@@ -932,6 +932,178 @@ console.log('\n── Page and presentation ──');
     }), 'served from cache');
 }
 
+/* ── Axes, zoom bounds and the crossing marker ─────────────────────────────
+   The Chart.js stub records configuration rather than drawing, so these read
+   the config the page asked for. Bounds and limits ARE the behaviour here:
+   the plugin clamps to what `limits` says. ── */
+{
+  await page.evaluate(() => {
+    document.getElementById('showNominal').checked = false;
+    window.__FF.render();
+  });
+  const r = await page.evaluate(() => {
+    const c = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Your money'));
+    const s = c.options.scales, z = c.options.plugins.zoom;
+    const pts = c.data.datasets.find(d => d.label === 'Your money').data;
+    const marker = c.data.datasets.filter(d => d.label === 'Financially free');
+    const need = c.data.datasets.find(d => d.label === 'Pot needed to stop here').data;
+    const res = window.__FF.last;
+    return {
+      xTitle: s.x.title.text, ageTitle: s.xAge && s.xAge.title.text,
+      xBounds: [s.x.min, s.x.max], ageBounds: [s.xAge && s.xAge.min, s.xAge && s.xAge.max],
+      dataBounds: [pts[0].x, pts[pts.length - 1].x],
+      limits: z.limits,
+      // The age axis has to READ as an age, not repeat the year.
+      ageTickAtStart: s.xAge.ticks.callback(s.x.min),
+      markerCount: marker.length,
+      markerPoint: marker.length ? marker[marker.length - 1].data[0] : null,
+      dropline: marker.length ? marker[0].data.map(p => [p.x, p.y]) : null,
+      ffAge: res.ffAge, ageNow: res.P.ageNow, thisYear: res.thisYear,
+      needAtMarker: marker.length
+        ? window.__FF.requiredPot ? null : null
+        : null,
+      needSeries: need.map(p => [p.x, p.y])
+    };
+  });
+
+  check('F34 the x axis is doubled: calendar year and age',
+    r.xTitle === 'Calendar year' && r.ageTitle === 'Age', `${r.xTitle} / ${r.ageTitle}`);
+  check('F34b and the age axis is labelled in ages, not years',
+    String(r.ageTickAtStart) === String(r.ageNow), `${r.ageTickAtStart} at ${r.xBounds[0]}`);
+  check('F34c both x axes span exactly the plotted data',
+    r.xBounds[0] === r.dataBounds[0] && r.xBounds[1] === r.dataBounds[1] &&
+    r.ageBounds[0] === r.xBounds[0] && r.ageBounds[1] === r.xBounds[1],
+    `x ${r.xBounds.join('..')}, age ${r.ageBounds.join('..')}, data ${r.dataBounds.join('..')}`);
+  check('F35 zooming out is bounded by that span, on both axes',
+    !!r.limits && r.limits.x.min === r.xBounds[0] && r.limits.x.max === r.xBounds[1] &&
+    r.limits.xAge.min === r.xBounds[0] && r.limits.xAge.max === r.xBounds[1],
+    r.limits ? `x ${r.limits.x.min}..${r.limits.x.max}, minRange ${r.limits.x.minRange}` : 'no limits set');
+  check('F35b and zooming in stops before the span is meaningless',
+    r.limits.x.minRange > 0 && r.limits.x.minRange <= r.xBounds[1] - r.xBounds[0],
+    `minRange ${r.limits.x.minRange}`);
+
+  check('F36 the crossing carries a marker and a dropline', r.markerCount === 2,
+    `${r.markerCount} dataset(s)`);
+  check('F36b the marker sits at the freedom age',
+    r.markerPoint && Math.abs(r.markerPoint.x - (r.thisYear + r.ffAge - r.ageNow)) < 1e-6,
+    r.markerPoint ? `x ${r.markerPoint.x.toFixed(3)} for age ${r.ffAge.toFixed(3)}` : 'no marker');
+  // The marker has to land ON the pot-needed curve, not merely near it. The
+  // curve is sampled yearly and the crossing falls between two samples, so it
+  // is checked against a straight line through the two it sits between.
+  {
+    const x = r.markerPoint.x, i = Math.floor(x - r.needSeries[0][0]);
+    const f = x - r.needSeries[0][0] - i;
+    const lerp = r.needSeries[i][1] + (r.needSeries[i + 1][1] - r.needSeries[i][1]) * f;
+    check('F36c and on the pot-needed curve it marks',
+      Math.abs(r.markerPoint.y - lerp) / Math.max(1, lerp) < 0.02,
+      `marker ${r.markerPoint.y.toFixed(0)} vs curve ${lerp.toFixed(0)}`);
+  }
+  check('F36d the dropline runs from the axis to the marker',
+    r.dropline && r.dropline[0][0] === r.markerPoint.x && r.dropline[0][1] === 0 &&
+    r.dropline[1][1] === r.markerPoint.y,
+    r.dropline ? `${r.dropline[0].join(',')} -> ${r.dropline[1].join(',')}` : 'none');
+}
+
+/* ── Inflation is visible, not just applied ────────────────────────────────
+   The engine runs in real terms, where the living cost is flat. F37 pins that
+   the page also SHOWS the cost rising, and that the pot needed rises with it,
+   so "freedom later costs more" holds in the money of the day. ── */
+{
+  const r = await page.evaluate(() => {
+    const $ = id => document.getElementById(id);
+    const rows = () => window.__FF.tableRows(window.__FF.last);
+    $('showNominal').checked = false; window.__FF.render();
+    const real = rows(), note = $('inflationNote').textContent.trim();
+    const heads = Array.from(document.querySelectorAll('#tableWrap thead th')).map(t => t.textContent.trim());
+    $('showNominal').checked = true; window.__FF.render();
+    const nom = rows();
+    const csv = window.__FF.last;
+    $('showNominal').checked = false; window.__FF.render();
+    return {
+      note, heads, i: window.__FF.last.P.inflation,
+      realExpense: real.map(x => x.expense), nomExpense: nom.map(x => x.expense),
+      realNeed: real.map(x => x.need), nomNeed: nom.map(x => x.need),
+      ageNow: window.__FF.last.P.ageNow, ageRetire: window.__FF.last.P.ageRetire,
+      currency: csv.ui.currency
+    };
+  });
+
+  check('F37 the table carries the living cost itself', r.heads.includes('Living cost'),
+    r.heads.join(' | '));
+  check('F37b flat in today’s money, by construction',
+    r.realExpense.every(v => Math.abs(v - r.realExpense[0]) < 0.01 ||
+                             Math.abs(v - r.realExpense[r.realExpense.length - 1]) < 0.01),
+    `${r.realExpense[0].toFixed(0)} .. ${r.realExpense[r.realExpense.length - 1].toFixed(0)}`);
+  {
+    let worst = 0;
+    for(let y = 0; y < r.realExpense.length; y++){
+      worst = Math.max(worst, Math.abs(r.nomExpense[y] - r.realExpense[y] * Math.pow(1 + r.i, y)));
+    }
+    check('F37c and in future dollars it is the real cost times the inflation factor',
+      worst < 0.01, `largest gap ${worst.toExponential(2)}`);
+  }
+  check('F37d so prices genuinely rise before retirement, not only after',
+    r.nomExpense[Math.round(r.ageRetire - r.ageNow) - 1] > r.nomExpense[0] * 1.01,
+    `${r.nomExpense[0].toFixed(0)} at ${r.ageNow} -> ${r.nomExpense[Math.round(r.ageRetire - r.ageNow) - 1].toFixed(0)} the year before retiring`);
+  check('F38 financial freedom later costs MORE in the money of the day',
+    r.nomNeed[Math.round(r.ageRetire - r.ageNow)] > r.nomNeed[0],
+    `${r.nomNeed[0].toFixed(0)} now vs ${r.nomNeed[Math.round(r.ageRetire - r.ageNow)].toFixed(0)} at ${r.ageRetire}`);
+  check('F38b while in today’s money it costs less, because fewer years are left to fund',
+    r.realNeed[Math.round(r.ageRetire - r.ageNow)] < r.realNeed[0],
+    `${r.realNeed[0].toFixed(0)} vs ${r.realNeed[Math.round(r.ageRetire - r.ageNow)].toFixed(0)}`);
+  check('F38c and the inflation field names a future price rather than only a rate',
+    /costs/.test(r.note) && /\d/.test(r.note), r.note.slice(0, 90));
+}
+
+/* ── Exports ── */
+{
+  const r = await page.evaluate(() => {
+    const ids = ['ffSvgBtn', 'ffPngBtn', 'ffCopyBtn', 'ddSvgBtn', 'ddPngBtn', 'ddCopyBtn', 'csvBtn'];
+    const missing = ids.filter(i => !document.getElementById(i));
+    // Intercept the blob the CSV path builds rather than downloading it. The
+    // anchor's own click is stubbed too, so headless Chromium is never asked
+    // to navigate to the placeholder URL.
+    let captured = null;
+    const origCreate = URL.createObjectURL, origRevoke = URL.revokeObjectURL;
+    const origClick = HTMLAnchorElement.prototype.click;
+    URL.createObjectURL = b => { captured = b; return 'blob:stub'; };
+    URL.revokeObjectURL = () => {};
+    HTMLAnchorElement.prototype.click = function(){};
+    document.getElementById('csvBtn').click();
+    URL.createObjectURL = origCreate;
+    URL.revokeObjectURL = origRevoke;
+    HTMLAnchorElement.prototype.click = origClick;
+    return captured ? captured.text().then(text => ({missing, text})) : {missing, text: null};
+  });
+  check('F39 every export control is on the page', r.missing.length === 0,
+    r.missing.length ? 'missing ' + r.missing.join(',') : 'SVG, PNG, copy on both charts, CSV on the table');
+  const lines = (r.text || '').trim().split('\n');
+  check('F39b the CSV carries the same columns as the table',
+    lines.length > 2 && lines[2] === 'Year,Age,Living_cost,Saved_or_spent,Balance,Pot_needed,Gap',
+    lines[2] || 'no header');
+  check('F39c one row per year, matching the table',
+    lines.length - 3 === (await page.evaluate(() => window.__FF.tableRows(window.__FF.last).length)),
+    `${lines.length - 3} rows`);
+  check('F39d and says which money and which currency it is in',
+    /today's money|future dollars/.test(lines[1] || ''), (lines[1] || '').replace('# ', ''));
+}
+
+/* ── The control panel's action row ── */
+{
+  const r = await page.evaluate(() => {
+    const sim = document.getElementById('simBtn'), rst = document.getElementById('resetBtn');
+    const row = sim && sim.parentElement, aside = document.querySelector('.controls');
+    return {
+      hasSim: !!sim, sameRow: !!(rst && row && rst.parentElement === row),
+      pinned: !!(aside && aside.lastElementChild === row),
+      buriedInSettings: !!document.querySelector('#tab-settings #resetBtn')
+    };
+  });
+  check('F40 Simulate and Reset sit together in one pinned action row',
+    r.hasSim && r.sameRow && r.pinned, `sim ${r.hasSim}, together ${r.sameRow}, pinned ${r.pinned}`);
+  check('F40b so Reset is no longer buried in the Settings tab', !r.buriedInSettings, '');
+}
+
 // F32: the page must not have thrown anywhere along the way.
 check('F32 no uncaught page errors', pageErrors.length === 0, pageErrors.slice(0, 3).join(' | ') || 'clean');
 

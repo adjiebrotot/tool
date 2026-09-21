@@ -20,6 +20,7 @@ DATA = json.load(open(os.path.join(HERE, "watermark-paths.json")))
 FILES = {
     "dcasimulator": "dcasimulator/script.js",
     "financingvscash": "financingvscash/script.js",
+    "financialfreedom": "financialfreedom/script.js",
     "rentvsownhouse": "rentvsownhouse/cashflow-export.js",
     "pisahvsgabung": "pisahvsgabung/script.js",
     "jsonvisualiser": "jsonvisualiser/script.js",
@@ -33,6 +34,8 @@ STD = [
      "'Made using tool.adjiebrotots.com/dcasimulator'", "svg"),
     ("financingvscash", "  ", "NS", "svgW", "svgH",
      "'Made using tool.adjiebrotots.com/financingvscash'", "svg"),
+    ("financialfreedom", "  ", "NS", "svgW", "svgH",
+     "'Made using tool.adjiebrotots.com/financialfreedom'", "svg"),
     ("pisahvsgabung", "  ", "NS", "svgW", "svgH",
      "'Made using tool.adjiebrotots.com/pisahvsgabung'", "svg"),
     ("rentvsownhouse", "  ", "NS", "svgW", "svgH", "WM_TEXT", "svg"),
