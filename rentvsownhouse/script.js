@@ -2396,6 +2396,10 @@ function buildCostItemRow(key, item, idx, count){
       </div>
       <select class="ci-basis">${optsHtml}</select>
     </div>${inflHtml}`;
+  // The period this row's amount was entered against, read back off the select
+  // so an item that arrived without a basis records the one it actually shows.
+  const basisSel = row.querySelector('.ci-basis');
+  if(basisSel) basisSel.dataset.prev = basisSel.value;
   return row;
 }
 
@@ -2440,6 +2444,26 @@ function wireCostListEvents(key){
   const cfg = COST_LISTS[key];
   const wrap = $(cfg.rowsId);
   if(!wrap) return;
+  /* Same rescaling as the simple fields above, one row at a time: the period a
+     row's amount was entered against lives on the select, because the row is
+     rebuilt from state rather than kept around. A move to or from the "% of
+     value" basis is not a change of period, and SharedFreq.convert returns
+     null for it, so the amount stays as typed. Registered before the handlers
+     below, and on `input` as well as `change`, so the converted amount is in
+     the row before either rerenders. */
+  const convertBasis = e=>{
+    const sel = e.target;
+    if(!sel.classList || !sel.classList.contains('ci-basis')) return;
+    const from = sel.dataset.prev, to = sel.value;
+    sel.dataset.prev = to;
+    if(from === to) return;
+    const amt = sel.closest('.cost-item-row')?.querySelector('.ci-amount');
+    if(!amt) return;
+    const next = SharedFreq.convert(parseNum(amt.value), from, to, 2);
+    if(next !== null) amt.value = formatMoneyValue(next);
+  };
+  wrap.addEventListener('input', convertBasis);
+  wrap.addEventListener('change', convertBasis);
   wrap.addEventListener('click', e=>{
     const del = e.target.closest('.ci-delete');
     if(!del) return;
@@ -2521,6 +2545,23 @@ function updateCagrToolVisibility(show){
 }
 
 /* ── EVENTS ── */
+/* An amount entered against one frequency is rescaled when that frequency
+   moves, so $2,800 a month becomes $646.15 a week rather than quietly turning
+   into a quarter of the rent. Wired first, so the amount in the field is
+   already the converted one by the time the rerender below reads the form.
+   A cost switched to a "% of value" basis is not money per period, so its
+   frequency is left alone while that basis is selected. */
+[['ownOngoingCost','ownOngoingCostFreq','ownOngoingCostType'],
+ ['rentAmount','rentFreq',null],
+ ['rentOngoingCost','rentOngoingCostFreq','rentOngoingCostType']
+].forEach(([amountId, freqId, typeId])=>{
+  SharedFreq.attachSelect($(freqId), $(amountId), {
+    maxDecimals: 2,
+    format: formatMoneyValue,
+    skip: typeId ? (()=>$(typeId).value === 'pct') : null
+  });
+});
+
 ['propertyPrice','downPaymentPct','monthlyBudget','riskFreeRate','horizon',
  'mortgageRate','mortgageTerm','houseGrowth','setupCost','setupCostType',
  'ownOngoingCost','ownOngoingCostFreq','ownOngoingCostType','ownOngoingInflation',
