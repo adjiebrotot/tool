@@ -143,12 +143,12 @@ function makeSliderEditable(valSpan,rangeEl){
 function getActiveTab(){ const t=document.querySelector('.ctrl-tab.active'); return t?t.dataset.tab:'securities'; }
 function updateSimBtn(){ const b=$('simBtn'); if(!b)return; b.textContent='▶ Simulate'; updateBtnRow(); }
 // On the Data tab the bottom action becomes "Load tickers" (it consumes the Date
-// Range below and you can't simulate from here anyway); other tabs show Simulate/Reset.
+// Range below and you can't simulate from here anyway); other tabs show Simulate.
 function updateBtnRow(){
   const dataTab = getActiveTab()==='data';
-  ['simBtn','resetBtn'].forEach(id=>{ const b=$(id); if(b) b.style.display=dataTab?'none':''; });
+  { const b=$('simBtn'); if(b) b.style.display=dataTab?'none':''; }
   // On the Data tab the bottom action mirrors the chosen download mode: "Load
-  // tickers" for Real, "Add Simulated Asset" for Simulated. Other tabs show Simulate/Reset.
+  // tickers" for Real, "Add Simulated Asset" for Simulated. Other tabs show Simulate.
   const realMode=(typeof dataMode==='undefined' || dataMode==='real');
   const lb=$('loadTickersBtn'); if(lb) lb.style.display=(dataTab && realMode)?'':'none';
   const sb=$('addSimBtn'); if(sb) sb.style.display=(dataTab && !realMode)?'':'none';
@@ -1974,9 +1974,16 @@ $('themeToggle').addEventListener('click',()=>{
 /* ─── SIMULATE BUTTON ─── */
 $('simBtn').addEventListener('click', runSimulation);
 
-/* ─── RESET ─── */
-$('resetBtn').addEventListener('click',()=>{
-  securities=[]; simResults=[]; latestRows=[]; priceCache={}; tickerFetchInFlight={};
+/* ─── WORKSPACE RESET ─── */
+/* There is no Reset button. A Quick Start already clears the workspace and
+   lays a worked example over it, which is a better place to land than the
+   generic default, and the downloaded prices are cleared by Clear all on the
+   Data tab — the two jobs the one button used to do, each where it belongs.
+   Everything below is the first of those jobs: the settings and the view a
+   scenario does not set itself, back to their defaults. The price cache is
+   deliberately left alone, so switching examples costs no re-download. */
+function resetWorkspace(){
+  securities=[]; simResults=[]; latestRows=[];
   secIdCounter=0; activeSecurityId=null;
   currentCurrencySymbol='$';
   currentRandomSeed=DEFAULT_RANDOM_SEED;
@@ -1986,7 +1993,6 @@ $('resetBtn').addEventListener('click',()=>{
   { const ct=$('showCandleToggle'); if(ct) ct.checked=false; }
   if(priceChartInstance){ priceChartInstance.destroy(); priceChartInstance=null; }
   if(equityChartInstance){ equityChartInstance.destroy(); equityChartInstance=null; }
-  renderSecList();
   $('summaryGrid').innerHTML='';
   $('detailBody').innerHTML='<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">Add securities to see detailed data.</td></tr>';
   $('detailSelect').innerHTML='';
@@ -1998,12 +2004,8 @@ $('resetBtn').addEventListener('click',()=>{
   $('randomSeed').value=DEFAULT_RANDOM_SEED;
   $('riskFreeRate').value=DEFAULT_RISK_FREE_RATE;
   hideStatus($('fetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
-  const poolInp=$('tickerPoolInput'); if(poolInp) poolInp.value='';
-  setPoolLocked(false); hideStatus($('poolStatus')); setDataMode('real'); renderPoolChips();
-  document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
-  initializeDefaultSecurities();
-  runSimulation();
-});
+  setPoolLocked(false); hideStatus($('poolStatus')); setDataMode('real');
+}
 
 /* ─── QUICK START PRESETS ─── */
 // One-click worked examples. Each rebuilds the securities list with live-ticker
@@ -2027,9 +2029,9 @@ const QUICK_START_PRESETS = {
 async function applyQuickStart(key){
   const defs = QUICK_START_PRESETS[key];
   if(!defs) return;
-  // Rebuild the securities list from the preset (keep cached prices for speed).
-  securities=[]; simResults=[]; latestRows=[]; secIdCounter=0;
-  hideWarning();
+  // A clean workspace first, so an example never inherits the currency, seed or
+  // chart view the last one was read under, then the preset over the top.
+  resetWorkspace();
   defs.forEach(d=> addSecurity(d));
   const secTabBtn=document.querySelector('.ctrl-tab[data-tab="securities"]');
   if(secTabBtn && !secTabBtn.classList.contains('active')) secTabBtn.click();

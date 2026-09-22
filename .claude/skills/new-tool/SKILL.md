@@ -96,6 +96,15 @@ Scale the rigor to the risk:
 - **Plain tools with no potentially harmful finance/engineering content** — no disclaimer
   needed. Just the licence (GNU GPL) and the "Made in Australia by Indonesian engineer" line.
 
+## Simulate and Reset buttons
+
+Neither is a default; see **When Reset and Simulate earn their place** in
+`_ref/design-reference.md`. In short: time one recompute on the real page first —
+under ~50ms the output just follows the inputs and there is no Simulate button,
+over ~150ms (or if it fetches anything) it needs a real gate that actually gates.
+A tool with Quick Start scenarios needs no Reset, provided each scenario opens
+from the defaults rather than from whatever is on screen.
+
 ## Mini cache (nice to have)
 
 Tools remember the user's work between visits via `Persist` in `shared.js`. When inputs map to

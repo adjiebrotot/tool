@@ -63,12 +63,23 @@ window.__TOUR = {
             'countries pay a flat figure that never does.'
     },
     {
+      target: '#simBtn',
+      title: '⑤ Then press Simulate',
+      body: 'A thousand simulated futures is real work, so the page does not redo it on ' +
+            'every keystroke. Set the whole plan first — the form keeps up as you type — ' +
+            'then press <strong>Simulate</strong> to run it. While anything is unanswered ' +
+            'the results below step back and this button lights up, so you never read a ' +
+            'verdict that belongs to numbers you have already changed. ' +
+            'A <strong>Quick Start</strong> runs itself, and so does the retirement ' +
+            'slider in step ⑦ — sweeping that one is the question, not an assumption.'
+    },
+    {
       target: '#boardPath',
       onEnter: function () {
         var tab = document.querySelector('.ctrl-tab[data-tab="you"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '⑤ Path to freedom — how early could you stop?',
+      title: '⑥ Path to freedom — how early could you stop?',
       body: 'The red line is the pot you would need if you stopped at that age, which falls ' +
             'as you get older because there are fewer years left to fund. The blue line is ' +
             'what your investment grows to, and <strong>nothing is ever withdrawn from it ' +
@@ -78,17 +89,21 @@ window.__TOUR = {
     },
     {
       target: '#retireSlider',
-      title: '⑥ Cashflows — drag the retirement age',
+      title: '⑦ Cashflows — drag the retirement age',
       body: 'This slider is the whole of Cashflows. It runs from <strong>stop today</strong> ' +
             'to <strong>never stop</strong>, and everything below it — the verdict directly ' +
             'under the handle, the four cards, the chart and the table — is measured at ' +
-            'whatever age you leave it on. ' +
+            'whatever age you leave it on, as you drag it. ' +
+            'It <strong>starts on the crossing above</strong>: the earliest age this plan ' +
+            'works. That is solved on the average return, so it opens near a coin flip — ' +
+            '<strong>drag right and watch the chance climb</strong>, because the years of ' +
+            'margin are what you are really buying. ' +
             '<strong>Path to freedom</strong> does not move, because how early you ' +
             '<em>could</em> stop does not depend on when you <em>choose</em> to.'
     },
     {
       target: '#boardCash .chart-card',
-      title: '⑦ Where the money comes from, and goes',
+      title: '⑧ Where the money comes from, and goes',
       body: 'Income against spending, with the gap filled: green while you save it, red once ' +
             'the pot has to cover it. The balance it leaves behind runs in the panel ' +
             'underneath, on the same years, so you can read straight down from a flow to ' +
@@ -97,7 +112,7 @@ window.__TOUR = {
     },
     {
       target: '#boardCash .detail-section',
-      title: '⑧ The table adds up',
+      title: '⑨ The table adds up',
       body: 'Every row is a cash flow statement: the balance at that age, then the income, ' +
             'the spending, what was saved or drawn, and the investment return that closes ' +
             'the year. <strong>Balance plus Saved plus Growth is the next row\u2019s ' +

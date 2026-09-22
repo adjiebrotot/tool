@@ -92,7 +92,6 @@ const LANG = {
     labelRentOngoing: 'Ongoing Costs of Renting',
     optPctAnnualRent: '% of annual rent',
     labelRentOngoingInflation: 'Rent Ongoing Cost Inflation',
-    btnReset: '↺ Reset',
     labelCurrencySymbol: 'Currency Symbol',
     /* KPI */
     kpiInitialCashLabel: 'Initial Cash',
@@ -276,7 +275,6 @@ const LANG = {
     labelRentOngoing: 'Biaya Rutin Menyewa',
     optPctAnnualRent: '% dari Sewa Tahunan',
     labelRentOngoingInflation: 'Inflasi Biaya Rutin Menyewa',
-    btnReset: '↺ Atur Ulang',
     labelCurrencySymbol: 'Simbol Mata Uang',
     /* KPI */
     kpiInitialCashLabel: 'Modal Awal',
@@ -2076,10 +2074,16 @@ function resetAll(){
   rerender();
 }
 
-/* ── APPLY CITY PRESET ── */
+/* ── APPLY CITY PRESET ──
+   resetAll() first, so a city never inherits a field the last one did not set.
+   It is also what lets the page do without a Reset button: every Quick Start is
+   a full reset with a scenario laid on top, so any one of them already returns
+   the form to a clean, known state. */
 function applyPreset(cityKey){
   const p = CITY_PRESETS[cityKey];
   if(!p) return;
+
+  resetAll();
 
   currentCurrencySymbol = p.currencySymbol;
   $('currencySymbol').value      = p.currencySymbol;
@@ -2120,6 +2124,13 @@ function applyPreset(cityKey){
   S.ownSetupCosts = null;
   S.ownOngoingCosts = null;
   S.rentOngoingCosts = null;
+  /* Pull the preset off the form and into S BEFORE the detail rows are rebuilt.
+     defaultRatePeriods() and defaultCostItems() seed themselves from S, so
+     without this they would seed from whatever the previous scenario left
+     behind and the advanced tabs would open on a rate and costs the chosen
+     city never had. rerender() below calls this again; it is idempotent, and
+     the modes above are already 'simple', so it cannot read the stale rows. */
+  readInputs();
   updateMortgageModeUI();
   renderRatePeriodRows();
   updateCostsModeUI();
@@ -2633,7 +2644,6 @@ document.querySelectorAll('.graph-btn').forEach(btn=>{
   });
 });
 
-$('resetBtn').addEventListener('click', ()=>{ document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active')); resetAll(); });
 document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.addEventListener('click', ()=>applyPreset(btn.dataset.city)));
 $('downloadBtn').addEventListener('click', downloadCsv);
 $('chartResetZoom').addEventListener('click',()=>{ if(chartInstance) chartInstance.resetZoom(); });
@@ -2718,6 +2728,11 @@ updateCagrToolVisibility(false);
 updateMortgageModeUI();
 updateCostsModeUI();
 rerender();
+
+/* The page has no Reset button — every Quick Start city already opens with a
+   full resetAll() — but the audit harness still needs a documented way back to
+   the default model before it checks the engine against its replay. */
+window.__RVO = { resetAll: resetAll };
 
 /* ── Mini cache ────────────────────────────────────────────────────────────
    Persist the scalar inputs (form controls, read back into S by readInputs)

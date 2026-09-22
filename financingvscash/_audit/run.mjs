@@ -13,12 +13,16 @@ const PAGE = pathToFileURL(join(HERE, '..', 'index.html')).href;
 const CHART_STUB = `
 window.__charts = [];
 class Chart {
-  constructor(ctx, cfg){ this.config=cfg; this.data=(cfg&&cfg.data)||{datasets:[]}; this.options=(cfg&&cfg.options)||{}; window.__charts.push(this); }
+  constructor(ctx, cfg){ this.config=cfg; this.data=(cfg&&cfg.data)||{datasets:[]}; this.options=(cfg&&cfg.options)||{};
+    // Which canvas a chart was built on, because the page now draws the
+    // sensitivity sweep alongside the main chart and "the last one made" no
+    // longer picks out the one a check means.
+    this.canvasId=(ctx&&ctx.id)||''; window.__charts.push(this); }
   update(){} destroy(){ const i=window.__charts.indexOf(this); if(i>=0) window.__charts.splice(i,1); } resetZoom(){}
 }
 Chart.register=function(){};
 window.Chart=Chart;
-window.Plotly={newPlot:async()=>{},relayout:async()=>{},downloadImage:async()=>{},toImage:async()=>'data:,'};`;
+window.Plotly={newPlot:async()=>{},react:async()=>{},relayout:async()=>{},downloadImage:async()=>{},toImage:async()=>'data:,'};`;
 
 let pass=0, fail=0;
 const check=(name,ok,detail)=>{ console.log((ok?'  PASS  ':'✗ FAIL  ')+name+(detail?'  — '+detail:'')); ok?pass++:fail++; };
@@ -98,7 +102,7 @@ async function compTable(){
   const idxYearly=t.__cols.findIndex(c=>c==='Yearly 5y @5%')-1; // minus 'Metric' col
   const tableEW=money(t['Ending Wealth'][idxYearly]);
   const chart=await page.evaluate(()=>{
-    const ch=window.__charts[window.__charts.length-1];
+    const ch=window.__charts.filter(c=>c.canvasId==='chartCanvas').pop();
     const ds=ch.data.datasets.find(d=>d.label==='Yearly 5y @5%');
     const last=ds?ds.data[ds.data.length-1]:null;
     return {xTitle:ch.options.scales.x.title.text, xType:ch.options.scales.x.type,

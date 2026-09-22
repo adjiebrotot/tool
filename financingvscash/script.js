@@ -325,6 +325,10 @@ function rerender(){
   $('kpiCashWealth').textContent=fmt.currency(cashBase.endWealth,true);$('kpiCashWealth').style.color=cssVar('--text');$('kpiCashSub').textContent=maxTerm>0?`After ${maxTerm.toFixed(1)} yr at ${fmt.pct(riskFreeRate/100)} risk-free`:'Cash left after buying outright.';
 
   renderMainChart(results);renderComparisonTable(results);renderAmortTabs(results);updateSensScenarioDropdown();
+  // The sweep is built from the same purchase cost, cash and rates as the panel
+  // above it, so it has to move when they do. Leaving it to a button meant a
+  // surface could sit there describing a plan the reader had already edited.
+  scheduleSensitivity();
 }
 
 function renderMainChart(results){
@@ -471,6 +475,15 @@ function defaultAxisRange(vn,freq){
 }
 
 /* ─── Sensitivity Engine ─── */
+/* ── The sensitivity sweep ──────────────────────────────────────────────────
+   No Run button. A 50-point 2D sweep costs about 1ms and the 50x50 surface
+   about 9ms, so there is nothing here worth making the reader ask for — the
+   sweep just follows its inputs like every other output on the page. The
+   debounce is only there to keep a held arrow key from redrawing the Plotly
+   surface once per repeat. */
+let sensTimer=null;
+function scheduleSensitivity(){clearTimeout(sensTimer);sensTimer=setTimeout(runSensitivity,180);}
+
 function runSensitivity(){
   const scIdx=parseInt($('sensScenario').value);if(isNaN(scIdx)||!scenarios[scIdx])return;
   const baseSc={...scenarios[scIdx]};const obj=$('sensObjective').value;const varX=$('sensVarX').value;
@@ -553,8 +566,12 @@ function runSensitivity(){
       },
       font:{family:'DM Sans',color:isLight?'#2D3436':'#EAF1FF'}
     };
+    // react(), not newPlot(): the surface is redrawn as the reader types now, and
+    // uirevision tells Plotly the view is the same one, so the camera angle they
+    // set survives the redraw instead of snapping back to the default eye.
+    layout.uirevision='sens';
     ensurePlotly()
-      .then(()=>Plotly.newPlot('plotly3d',plotData,layout,{responsive:true,displayModeBar:true,displaylogo:false}))
+      .then(()=>Plotly.react('plotly3d',plotData,layout,{responsive:true,displayModeBar:true,displaylogo:false}))
       .catch(()=>{ const el=$('plotly3d'); if(el) el.innerHTML='<p class="muted" style="padding:20px;text-align:center;">Could not load the 3D plotting library (Plotly). Check your connection and try again.</p>'; });
   }
 }
@@ -674,12 +691,19 @@ $('inflationToggle').addEventListener('change',rerender);
 $('inflationRate').addEventListener('change',rerender);
 
 document.querySelectorAll('.ctrl-tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.ctrl-tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');$('tab-'+btn.dataset.tab).classList.add('active');});});
-$('mode2d').addEventListener('click',()=>{sensMode='2d';$('mode2d').classList.add('active');$('mode3d').classList.remove('active');$('sensYBlock').style.display='none';});
-$('mode3d').addEventListener('click',()=>{sensMode='3d';$('mode3d').classList.add('active');$('mode2d').classList.remove('active');$('sensYBlock').style.display='';});
-$('runSensBtn').addEventListener('click',runSensitivity);
+$('mode2d').addEventListener('click',()=>{sensMode='2d';$('mode2d').classList.add('active');$('mode3d').classList.remove('active');$('sensYBlock').style.display='none';scheduleSensitivity();});
+$('mode3d').addEventListener('click',()=>{sensMode='3d';$('mode3d').classList.add('active');$('mode2d').classList.remove('active');$('sensYBlock').style.display='';scheduleSensitivity();});
 $('sensScenario').addEventListener('change',updateSensTermLabels);
 $('sensVarX').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarX').value,sensSelectedFreq());$('sensXStart').value=a;$('sensXEnd').value=b;});
 $('sensVarY').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarY').value,sensSelectedFreq());$('sensYStart').value=a;$('sensYEnd').value=b;});
+// Every control in the Sensitivity panel redraws the sweep, the two above
+// included: their own listeners re-seed the axis range first, and this one runs
+// after them because it was added second.
+['sensScenario','sensObjective','sensVarX','sensXStart','sensXEnd',
+ 'sensVarY','sensYStart','sensYEnd','sensSteps'].forEach(id=>{
+  $(id).addEventListener('change',scheduleSensitivity);
+  $(id).addEventListener('input',scheduleSensitivity);
+});
 
 $('themeToggle').addEventListener('click',()=>{document.body.classList.toggle('light');$('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';if(chartInstance){chartInstance.destroy();chartInstance=null;}if(sensChartInstance){sensChartInstance.destroy();sensChartInstance=null;}rerender();});
 $('chartResetZoom').addEventListener('click',()=>{if(chartInstance)chartInstance.resetZoom();});

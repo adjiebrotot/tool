@@ -66,7 +66,7 @@ function pmt(P,annualPct,years){ const r=annualPct/100/12,n=years*12; return r==
 function balanceAfter(P,annualPct,years,months){ const r=annualPct/100/12; const m=pmt(P,annualPct,years); let b=P; for(let i=0;i<months;i++){ b=b-(m-b*r); } return b; }
 
 // ═══ Case A: defaults (800k, 20% down, 6%, 30y term, 30y horizon) ═══
-await page.evaluate(()=>document.getElementById('resetBtn').click());
+await page.evaluate(()=>window.__RVO.resetAll());
 await page.waitForTimeout(200);
 {
   const own = await grabCsv('own');
@@ -110,7 +110,7 @@ await setInputs({horizon:10});
 }
 
 // ═══ Case C: RTB at year 5 ═══
-await page.evaluate(()=>document.getElementById('resetBtn').click());
+await page.evaluate(()=>window.__RVO.resetAll());
 await page.waitForTimeout(200);
 await setInputs({rtbEnabled:true, rtbBuyYear:5});
 {
