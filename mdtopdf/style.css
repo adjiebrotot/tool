@@ -224,21 +224,17 @@ body {
   max-width: 100%;
   margin: 0 0 1.2em;
   border-radius: 8px;
-  scrollbar-width: thin;
   overscroll-behavior-x: contain;
 }
+/* Scrolls sideways only, so Firefox is asked for the thin themed bar back
+   (Chrome and Safari take the shared ::-webkit-scrollbar rules instead). */
+@supports not selector(::-webkit-scrollbar){.md-body .table-scroll{scrollbar-width:thin;scrollbar-color:var(--scrollbar-thumb) transparent;}}
 .md-body .table-scroll > table { margin: 0; }
 .md-body .table-scroll.is-scrollable { cursor: grab; }
 .md-body .table-scroll.is-scrollable.dragging {
   cursor: grabbing;
   user-select: none;
 }
-.md-body .table-scroll::-webkit-scrollbar { height: 9px; }
-.md-body .table-scroll::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 5px;
-}
-.md-body .table-scroll::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 .md-body th, .md-body td {
   border: 1px solid var(--border);
   padding: 8px 12px;

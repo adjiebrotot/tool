@@ -124,6 +124,12 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;}
 .container{max-width:1400px;margin:0 auto;padding:24px;}
 .layout{display:grid;grid-template-columns:360px 1fr;gap:18px;}
 .controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;}
+/* Locked control header: the card becomes a column, .ctrl-scroll takes the
+   leftover height and is the only part that scrolls, and anything placed
+   before it (a quick-start row) stays put. Opt in by wrapping the tab bar
+   and the panels in <div class="ctrl-scroll">. */
+.controls:has(.ctrl-scroll){display:flex;flex-direction:column;max-height:calc(100vh - 32px);}
+.ctrl-scroll{flex:0 1 auto;min-height:0;overflow-y:auto;}
 
 /* ============================================================
    CARD / PANEL
@@ -147,7 +153,9 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 /* ============================================================
    CONTROL PANEL — TABS
    ============================================================ */
-.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);}
+/* Pinned to the top of .ctrl-scroll, so the tabs stay reachable however far
+   down the panel is scrolled. */
+.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:3;background:var(--panel);}
 .ctrl-tab{flex:1;padding:13px 10px;text-align:center;font-weight:700;font-size:.88rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all var(--transition-fast);font-family:inherit;}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent);}
 .ctrl-panel{display:none;padding:16px 18px 20px;}
@@ -290,6 +298,10 @@ body.light tr:hover td{background:rgba(90,145,232,0.04);}
 @media(max-width:1100px){
   .layout,.bottom,.metrics{grid-template-columns:1fr;}
   .controls{position:static;}
+  /* The card no longer competes with the viewport for height, so it opens up
+     and the page scroll carries the panel. */
+  .controls:has(.ctrl-scroll){display:block;max-height:none;}
+  .ctrl-scroll{flex:0 0 auto;overflow:visible;}
   .canvas-wrap{height:380px!important;}
   .summary-grid{grid-template-columns:repeat(2,1fr);}
   .header{flex-direction:column;gap:10px;padding:16px 18px;}
@@ -310,7 +322,7 @@ body.light tr:hover td{background:rgba(90,145,232,0.04);}
    colour via mask; the two-line "global compare" chart keeps two fixed colours.
    ────────────────────────────────────────────────────────────────────────── */
 .ricon{display:inline-block;width:1.05em;height:1.05em;vertical-align:-0.16em;flex:0 0 auto;margin-right:.34em;background-repeat:no-repeat;background-position:center;background-size:contain;}
-.ricon-general,.ricon-own,.ricon-rent,.ricon-chart{
+.ricon-general,.ricon-own,.ricon-rent,.ricon-chart,.ricon-rtb{
   background-color:currentColor;
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
   -webkit-mask-position:center;mask-position:center;
@@ -320,4 +332,50 @@ body.light tr:hover td{background:rgba(90,145,232,0.04);}
 .ricon-own{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10.5 12 3l9 7.5'/%3E%3Cpath d='M5 9.5V21h14V9.5'/%3E%3Cpath d='M10 21v-6h4v6'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10.5 12 3l9 7.5'/%3E%3Cpath d='M5 9.5V21h14V9.5'/%3E%3Cpath d='M10 21v-6h4v6'/%3E%3C/svg%3E");}
 .ricon-rent{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='3' width='14' height='18' rx='1'/%3E%3Cpath d='M9 21v-4h6v4'/%3E%3Cpath d='M9 7h.01M12 7h.01M15 7h.01M9 11h.01M12 11h.01M15 11h.01'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='3' width='14' height='18' rx='1'/%3E%3Cpath d='M9 21v-4h6v4'/%3E%3Cpath d='M9 7h.01M12 7h.01M15 7h.01M9 11h.01M12 11h.01M15 11h.01'/%3E%3C/svg%3E");}
 .ricon-chart{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 15l5-5 4 3 9-9'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 15l5-5 4 3 9-9'/%3E%3C/svg%3E");}
+.ricon-rtb{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.6 12.4A8.4 8.4 0 0 1 18 6.4'/%3E%3Cpath d='M18.6 2.6v4h-4'/%3E%3Cpath d='M20.4 11.6A8.4 8.4 0 0 1 6 17.6'/%3E%3Cpath d='M5.4 21.4v-4h4'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.6 12.4A8.4 8.4 0 0 1 18 6.4'/%3E%3Cpath d='M18.6 2.6v4h-4'/%3E%3Cpath d='M20.4 11.6A8.4 8.4 0 0 1 6 17.6'/%3E%3Cpath d='M5.4 21.4v-4h4'/%3E%3C/svg%3E");}
 .ricon-chart2{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='%234F8DFD' d='M3 15l5-5 4 3 9-9'/%3E%3Cpath stroke='%2319A979' d='M3 21l5-4 4 2 9-7'/%3E%3C/svg%3E");}
+
+/* ============================================================
+   SCROLLBARS — vertical hidden, horizontal themed (site-wide)
+   ============================================================
+   Vertical scrolling already has a gesture on every device (wheel,
+   trackpad, arrow keys, touch), so the vertical bar is removed
+   everywhere and the page keeps its full width. Sideways scrolling has
+   no such gesture on a plain mouse, so that bar stays, wearing the
+   page's own colours instead of the operating system's.
+
+   Tool stylesheets must not re-style ::-webkit-scrollbar; a class
+   selector outranks the rules below and brings a vertical bar back. */
+/* width is the vertical bar's thickness, height the horizontal one's: zero
+   removes the vertical bar, 10px keeps the horizontal one at a usable size. */
+*::-webkit-scrollbar{width:0;height:10px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:var(--radius-pill);border:2px solid transparent;background-clip:padding-box;transition:background var(--motion-fast);}
+*::-webkit-scrollbar-thumb:hover{background:var(--scrollbar-thumb-hover);background-clip:padding-box;}
+*::-webkit-scrollbar-corner{background:transparent;}
+
+/* Firefox styles scrollbars through scrollbar-width / scrollbar-color instead,
+   and neither can pick an axis: hiding the vertical bar hides the horizontal
+   one too. So there the vertical rule wins everywhere, and a surface that
+   scrolls sideways only asks for the thin themed bar back with .x-scroll (or
+   by repeating these two declarations on its own wrapper, under the same
+   @supports guard). The guard keeps all of this away from Chrome and Safari,
+   where scrollbar-width:none would otherwise beat the rules above and take
+   the horizontal bar with it. */
+@supports not selector(::-webkit-scrollbar){
+  *{scrollbar-width:none;}
+  .x-scroll{scrollbar-width:thin;scrollbar-color:var(--scrollbar-thumb) transparent;}
+}
+
+/* ============================================================
+   .tico — inline SVG icon for tab / pill buttons
+   ============================================================
+   Drawn with stroke="currentColor" so it follows the button's own
+   colour in both themes and on the active tab. Emoji are not icons:
+   they carry the platform's own palette and metrics, so every control
+   here uses a hand-drawn glyph instead. */
+.tico{display:inline-block;width:1.35em;height:1.35em;vertical-align:-0.28em;flex-shrink:0;}
+/* Stacked tab bar: icon above the label, for a sidebar carrying four or
+   more tabs where icon + text side by side would not fit. */
+.ctrl-tabs.stacked .ctrl-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;line-height:1.2;}
+.ctrl-tabs.stacked .tico{vertical-align:baseline;width:1.5em;height:1.5em;}

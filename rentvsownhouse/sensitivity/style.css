@@ -33,7 +33,10 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 .year-hint{font-size:.75rem;color:var(--muted);}
 
 /* Table */
+/* Scrolls sideways only, so Firefox is asked for the thin themed bar back
+   (Chrome and Safari take the shared ::-webkit-scrollbar rules instead). */
 .sens-wrap{overflow-x:auto;padding-bottom:2px;}
+@supports not selector(::-webkit-scrollbar){.sens-wrap{scrollbar-width:thin;scrollbar-color:var(--scrollbar-thumb) transparent;}}
 table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .dt th{padding:10px 11px;background:var(--input-bg);border:1px solid var(--border);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);white-space:nowrap;text-align:left;vertical-align:bottom;}
 .dt td{padding:7px 9px;border:1px solid var(--border);vertical-align:middle;}

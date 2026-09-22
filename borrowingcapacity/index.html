@@ -116,7 +116,7 @@
 <section class="layout">
 <aside class="controls card">
   <div class="quick-start-row">
-    <span class="quick-start-label">⚡ Quick Start</span><span class="tip-icon" data-tip="Fills every tab with a worked example of a real Australian borrower and reads the result straight away. Change any figure over the top of it.">?</span>
+    <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start</span><span class="tip-icon" data-tip="Fills every tab with a worked example of a real Australian borrower and reads the result straight away. Change any figure over the top of it.">?</span>
     <div class="quick-start-btns">
       <button class="quick-start-btn" data-preset="finance-bro" data-tip="Sydney banking associate, one applicant. $230k base plus a $90k bonus, entered stream by stream so you can see the bonus counted at 80%. Buying at $1.7M with a $550k deposit.">Finance Bro, Sydney</button>
       <button class="quick-start-btn" data-preset="couple" data-tip="Melbourne couple with two children, $185k between them. Two applicants are taxed as two people, so the income split on the Household tab moves the answer more here than anywhere else.">Couple, Melbourne</button>
@@ -125,12 +125,13 @@
       <button class="quick-start-btn" data-preset="tradie" data-tip="Adelaide sole trader on $165k of two-year average profit, with a ute under finance. Shows the Self-employed side of the income form.">Self-employed tradie, Adelaide</button>
     </div>
   </div>
-  <div class="ctrl-tabs">
-    <button class="ctrl-tab active" data-tab="income">💵<br>Income</button>
-    <button class="ctrl-tab" data-tab="house">🏠<br>Household</button>
-    <button class="ctrl-tab" data-tab="debts">💳<br>Debts</button>
-    <button class="ctrl-tab" data-tab="loan">🏦<br>Loan</button>
-    <button class="ctrl-tab" data-tab="caps">📐<br>Caps</button>
+  <div class="ctrl-scroll">
+  <div class="ctrl-tabs stacked">
+    <button class="ctrl-tab active" data-tab="income"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v5"/><path d="M9.5 4.9 12 7.4l2.5-2.5"/><rect x="2.5" y="9" width="19" height="11" rx="2.2"/><circle cx="12" cy="14.5" r="2.2"/><path d="M6 13h.01M18 16h.01"/></svg><span>Income</span></button>
+    <button class="ctrl-tab" data-tab="house"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7.5" r="3.2"/><path d="M3 20c0-3.3 2.7-5.6 6-5.6s6 2.3 6 5.6"/><circle cx="17.5" cy="10.5" r="2.2"/><path d="M16 15.2c2.9-.4 5 1.7 5 4.8"/></svg><span>Household</span></button>
+    <button class="ctrl-tab" data-tab="debts"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 9.6h20"/><path d="M6 14.6h4.5"/></svg><span>Debts</span></button>
+    <button class="ctrl-tab" data-tab="loan"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.8 9.4 12 3.8l9.2 5.6"/><path d="M5.5 9.8V18M10 9.8V18M14 9.8V18M18.5 9.8V18"/><path d="M3.2 20.6h17.6"/></svg><span>Loan</span></button>
+    <button class="ctrl-tab" data-tab="caps"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 4h17"/><path d="M12 20.5V8.5"/><path d="M7.2 13.3 12 8.5l4.8 4.8"/></svg><span>Caps</span></button>
   </div>
 
   <!-- ══════════════ INCOME ══════════════ -->
@@ -628,6 +629,7 @@
   <div class="btn-row">
     <button class="btn-primary" id="resetBtn">↺ Reset</button>
     <button class="btn-secondary" id="csvBtn">⬇ CSV</button>
+  </div>
   </div>
 </aside>
 

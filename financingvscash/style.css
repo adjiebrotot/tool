@@ -16,15 +16,14 @@ h2{margin:0 0 10px;font-size:1.1rem;font-weight:700;}
 h3{margin:0 0 8px;font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
 p,.muted{color:var(--muted);line-height:1.55;margin:0;}
 .layout{display:grid;grid-template-columns:380px 1fr;gap:18px;}
-.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 32px);overflow-y:auto;}
-.controls::-webkit-scrollbar{width:4px;}
-.controls::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+/* Height, the inner scroller and the pinned tab bar come from shared.css
+   (.controls:has(.ctrl-scroll) / .ctrl-scroll / .ctrl-tabs). */
+.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;}
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-theme:hover{border-color:var(--accent);color:var(--text);}
 .btn-back{text-decoration:none;display:inline-flex;align-items:center;}
 .header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
-.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);}
-.ctrl-tab{flex:1;padding:13px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
+.ctrl-tab{flex:1;padding:11px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent);}
 .ctrl-panel{display:none;padding:16px 18px 20px;}
 .ctrl-panel.active{display:block;}

@@ -21,9 +21,10 @@ body{margin:0;font-family:'DM Sans',system-ui,-apple-system,sans-serif;color:var
 .btn-theme:hover{border-color:var(--accent);color:var(--text);}
 .btn-back{text-decoration:none;display:inline-flex;align-items:center;}
 .layout{display:grid;grid-template-columns:380px minmax(0,1fr);gap:18px;}
-.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;}
-.controls::-webkit-scrollbar{width:0;height:0;}
-.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);}
+/* Height, the inner scroller and the pinned tab bar come from shared.css
+   (.controls:has(.ctrl-scroll) / .ctrl-scroll / .ctrl-tabs), so the quick-start
+   row and the tabs stay on top however far the panel is scrolled. */
+.controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;}
 .ctrl-tab{flex:1;padding:12px 6px;text-align:center;font-weight:600;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all var(--motion-fast);letter-spacing:.02em;}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent);}
 .ctrl-panel{display:none;padding:14px 16px 18px;}
@@ -156,7 +157,7 @@ th:first-child,td:first-child{text-align:left;font-family:'DM Sans',system-ui,sa
 th{color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
 tr:hover td{background:rgba(139,184,248,.04);}
 body.light tr:hover td{background:rgba(90,145,232,.04);}
-.table-wrap{overflow-x:auto;overflow-y:auto;max-height:420px;border:1px solid var(--border);border-radius:var(--radius-md);scrollbar-gutter:stable both-edges;}
+.table-wrap{overflow-x:auto;overflow-y:auto;max-height:420px;border:1px solid var(--border);border-radius:var(--radius-md);}
 /* Sticky header — use box-shadow instead of border-bottom to survive border-collapse+sticky bug */
 .table-wrap thead th{position:sticky;background:var(--panel);z-index:2;border-bottom:none;box-shadow:inset 0 -1px 0 var(--border);}
 .table-wrap thead tr:first-child th{top:0;z-index:4;}
@@ -183,7 +184,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
 }
 @media(max-width:900px){
   .layout,.bottom,.metrics{grid-template-columns:1fr;}
-  .controls{position:static;max-height:none;}
+  .controls{position:static;}
   .canvas-wrap{height:380px!important;}
   .summary-grid{grid-template-columns:repeat(2,1fr);}
   .header{flex-direction:column;gap:10px;padding:16px 18px;}
@@ -198,7 +199,8 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
   .header{padding:14px 16px;}
 }
 .quick-start-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
-.quick-start-label{font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.quick-start-label .tico{width:1.05em;height:1.05em;}
 .quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
 .quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;}
 .quick-start-btn:hover{border-color:var(--accent);color:var(--text);}

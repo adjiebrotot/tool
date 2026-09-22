@@ -87,9 +87,30 @@
       --deprecated-bg: var(--data-neg-bg);
       --deprecated-text: var(--data-neg);
       --max-width: 1180px;
+      /* Scrollbars — vertical bars are hidden, the horizontal one is themed */
+      --scrollbar-thumb: #C3D0E6;
+      --scrollbar-thumb-hover: #9AB2D8;
     }
 
     * { box-sizing: border-box; }
+
+    /* Scrollbars, matching the tool pages (see shared.css). Vertical scrolling
+       already has a gesture on every device, so that bar is removed and the
+       page keeps its full width; a sideways bar stays, in the page's colours. */
+    *::-webkit-scrollbar { width: 0; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: var(--radius-pill);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    *::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); background-clip: padding-box; }
+    *::-webkit-scrollbar-corner { background: transparent; }
+    /* Firefox cannot pick an axis, so there the vertical rule wins everywhere.
+       The guard keeps this away from Chrome and Safari, where it would beat the
+       rules above and take the horizontal bar with it. */
+    @supports not selector(::-webkit-scrollbar) { * { scrollbar-width: none; } }
 
     html { scroll-behavior: smooth; }
 

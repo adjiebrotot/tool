@@ -671,10 +671,8 @@
   .app-footer a:hover { text-decoration: underline; }
 
   /* ── SCROLLBAR ───────────────────────────────────────────────────── */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+  /* Shared.css owns these now: no vertical bar anywhere, a themed horizontal
+     one where a surface scrolls sideways. */
 
   /* ── MOBILE ──────────────────────────────────────────────────────── */
   @media (max-width: 768px) {

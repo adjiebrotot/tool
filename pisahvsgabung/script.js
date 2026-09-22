@@ -17,8 +17,8 @@ const LANG = {
   en: {
     subtitle: 'Compare Indonesian personal income tax under separate filing (Pisah Harta) vs joint filing (Gabung Harta).',
     btnBack: '← Other Tools',
-    tabInputs: '📊 Inputs',
-    tabAdvanced: '📋 PTKP & Brackets',
+    tabInputs: 'Inputs',
+    tabAdvanced: 'PTKP & Brackets',
     dependentsLabel: 'Number of Dependents (Tanggungan)',
     dep0: '0 — no dependents',
     dep1: '1 — one child (anak)',
@@ -147,8 +147,8 @@ const LANG = {
   id: {
     subtitle: 'Bandingkan PPh orang pribadi di Indonesia antara skema Pisah Harta dan Gabung Harta.',
     btnBack: '← Alat Lainnya',
-    tabInputs: '📊 Masukan',
-    tabAdvanced: '📋 PTKP & Lapisan Pajak',
+    tabInputs: 'Masukan',
+    tabAdvanced: 'PTKP & Lapisan Pajak',
     dependentsLabel: 'Jumlah Tanggungan',
     dep0: '0 — tidak ada tanggungan',
     dep1: '1 — satu anak',

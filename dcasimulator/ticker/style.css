@@ -28,7 +28,10 @@
 /* A country without an explanatory note puts its table straight under the
    heading, so give the table its own top gap rather than relying on the note. */
 .country-block h2+.ticker-table-wrap{margin-top:12px}
-.ticker-table-wrap{overflow:auto;border:1px solid var(--border);border-radius:var(--radius-md)}
+/* Scrolls sideways only, so Firefox is asked for the thin themed bar back
+   (Chrome and Safari take the shared ::-webkit-scrollbar rules instead). */
+.ticker-table-wrap{overflow-x:auto;overflow-y:hidden;border:1px solid var(--border);border-radius:var(--radius-md)}
+@supports not selector(::-webkit-scrollbar){.ticker-table-wrap{scrollbar-width:thin;scrollbar-color:var(--scrollbar-thumb) transparent;}}
 table.ticker-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.86rem}
 table.ticker-table th,table.ticker-table td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
 table.ticker-table thead th{position:sticky;top:0;background:var(--panel);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;z-index:1}
