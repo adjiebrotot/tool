@@ -374,15 +374,6 @@ const PAGES = [
   },
   /* The Indonesian pages are baked from the English ones, so they carry the
      same row and the same charts — and have to prove it. */
-  {
-    name: 'financialfreedom/id',
-    url: '/financialfreedom/id/',
-    charts: ['ffChart', 'ddChart'],
-    async prep(page) {
-      await page.click('#simBtn');
-      await page.waitForFunction(() => !!window.Chart.getChart(document.getElementById('ffChart')));
-    },
-  },
   { name: 'pisahvsgabung/id', url: '/pisahvsgabung/id/', charts: ['chartCanvas', 'chartCanvas2'] },
   { name: 'rentvsownhouse/id', url: '/rentvsownhouse/id/', charts: ['chartCanvas'] },
 ];

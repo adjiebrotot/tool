@@ -18,7 +18,7 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 | [PPh 21 Pisah vs Gabung](https://tool.adjiebrotots.com/pisahvsgabung/) ([ID](https://tool.adjiebrotots.com/pisahvsgabung/id/)) | One-of-a-kind comparison of Indonesian PPh 21 under separate (pisah harta) vs joint (gabung harta) filing. |
 | [Borrowing Capacity (AU)](https://tool.adjiebrotots.com/borrowingcapacity/) | Work out how much an Australian bank would lend you, and which of the four caps (serviceability, DTI, LVR, deposit) is binding. Shows the full serviceability build-up line by line, which bank calculators never do. |
 | [Finance vs Cash](https://tool.adjiebrotots.com/financingvscash/) | Compare paying cash vs financing while investing unused cash. |
-| [Financial Freedom Calculator](https://tool.adjiebrotots.com/financialfreedom/) ([ID](https://tool.adjiebrotots.com/financialfreedom/id/)) | Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a Monte Carlo confidence band instead of a single average return. |
+| [Financial Freedom Calculator](https://tool.adjiebrotots.com/financialfreedom/) | Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a Monte Carlo confidence band instead of a single average return. |
 | [DCA Scenario Explorer](https://tool.adjiebrotots.com/dcasimulator/) | Compare dollar-cost averaging strategies. Includes a [common yfinance ticker reference](https://tool.adjiebrotots.com/dcasimulator/ticker/) for AU, ID, US, and SG, and a [Portfolio mode](https://tool.adjiebrotots.com/dcasimulator/portfolio/) for comparing multi-asset portfolio strategies side by side. |
 | [PowerFactory Scripter](https://tool.adjiebrotots.com/powerfactory-scripter/) | Generate DIgSILENT PowerFactory Python scripts in minutes instead of hours/days. The generated script is yours; generation runs locally, suiting security-restricted environments. |
 | [WEM Constraint Checker](https://tool.adjiebrotots.com/wemconstraint-checker/) | Check WA WEM constraint equations in the browser. |
@@ -91,7 +91,7 @@ resolves in both themes. It also prints how often each term is decorated per pag
 
 ## Multi-language pages
 
-`rentvsownhouse`, `pisahvsgabung` and `financialfreedom` ship an Indonesian version at `<tool>/id/`. These static pages are generated from the English page plus the `LANG.id` table in each tool's `script.js`:
+`rentvsownhouse` and `pisahvsgabung` ship an Indonesian version at `<tool>/id/`. These static pages are generated from the English page plus the `LANG.id` table in each tool's `script.js`:
 
 ```sh
 node _ref/bake-id.mjs

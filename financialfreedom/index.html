@@ -18,17 +18,12 @@
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/financialfreedom/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
-<link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/financialfreedom/">
-<link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/financialfreedom/id/">
-<link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/financialfreedom/">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Financial Freedom Calculator">
 <meta property="og:description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a Monte Carlo confidence band.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/financialfreedom/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
-<meta property="og:locale" content="en_US">
-<meta property="og:locale:alternate" content="id_ID">
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Financial Freedom Calculator">
@@ -44,21 +39,15 @@
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
-  "inLanguage": ["en", "id"],
+  "inLanguage": "en",
   "alternateName": [
     "FIRE Calculator",
     "Financial Independence Calculator",
     "Retirement Number Calculator",
     "Safe Withdrawal Rate Calculator",
-    "When Can I Retire Calculator",
-    "Kalkulator Kebebasan Finansial"
+    "When Can I Retire Calculator"
   ],
-  "keywords": "financial freedom calculator, FIRE calculator, how much do I need to retire, what is my FIRE number, when can I stop working, safe withdrawal rate, financial independence, retirement number, will my money last",
-  "featureList": [
-    "Available in English and Indonesian (Bahasa Indonesia) at https://tool.adjiebrotots.com/financialfreedom/id/",
-    "All calculations run locally in the browser, so your income and savings never leave your device",
-    "Free chart, SVG and CSV export with no paywall"
-  ]
+  "keywords": "financial freedom calculator, FIRE calculator, how much do I need to retire, what is my FIRE number, when can I stop working, safe withdrawal rate, financial independence, retirement number, will my money last"
 }
 </script>
 <script type="application/ld+json">
@@ -97,14 +86,6 @@
         "@type": "Answer",
         "text": "A single average return hides the risk that the bad years land just as you stop working. The Financial Freedom Calculator runs thousands of simulated futures from your return and your volatility to give a success probability, and shows the pot needed for 90 percent confidence. Free at https://tool.adjiebrotots.com/financialfreedom/."
       }
-    },
-    {
-      "@type": "Question",
-      "name": "Is there an Indonesian version of the Financial Freedom Calculator?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes. The same calculator is available in Bahasa Indonesia at https://tool.adjiebrotots.com/financialfreedom/id/, as Kalkulator Kebebasan Finansial, and it answers the same questions: berapa uang yang dibutuhkan untuk pensiun, kapan bisa berhenti bekerja, and berapa angka FIRE saya."
-      }
     }
   ]
 }
@@ -124,12 +105,11 @@
 <div class="container">
 <section class="header card">
   <div>
-    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 20h18"/> <path stroke="var(--accent)" d="M4 16.5l5-5 3.5 3.5L18 8"/> <path stroke="var(--accent2)" d="M18 5v9"/> <path stroke="var(--accent2)" d="M18 5.5l4 1.75-4 1.75z" fill="var(--accent2)"/> </svg><span data-i18n="h1Title">Financial Freedom Calculator</span></h1>
-    <p data-i18n="subtitle">How much is enough to stop working, and the age you actually get there.</p>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 20h18"/> <path stroke="var(--accent)" d="M4 16.5l5-5 3.5 3.5L18 8"/> <path stroke="var(--accent2)" d="M18 5v9"/> <path stroke="var(--accent2)" d="M18 5.5l4 1.75-4 1.75z" fill="var(--accent2)"/> </svg>Financial Freedom Calculator</h1>
+    <p>How much is enough to stop working, and the age you actually get there.</p>
   </div>
   <div class="header-right">
-    <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back" data-i18n="btnBack">← Other Tools</a>
-    <a id="langToggle" class="btn-theme" href="id/" hreflang="id" lang="id" title="Versi Bahasa Indonesia">ID</a>
+    <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
     <button class="btn-theme" id="themeToggle">🌙 Dark</button>
   </div>
 </section>
@@ -139,51 +119,51 @@
   <!-- Quick Start. Outside .ctrl-scroll on purpose, so the scenarios stay
        reachable however far down the panel you are. -->
   <div class="quick-start-row">
-    <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> <span data-i18n="quickStartLabel">Quick Start</span></span><span class="tip-icon" data-i18n-tip="quickStartTip" data-tip="Fills every tab with a worked plan and reads the answer straight away. Change any figure over the top of it.">?</span>
+    <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start</span><span class="tip-icon" data-tip="Fills every tab with a worked plan and reads the answer straight away. Change any figure over the top of it.">?</span>
     <div class="quick-start-btns">
-      <button class="quick-start-btn" data-preset="moderate" data-i18n="qsModerate" data-i18n-tip="qsModerateTip" data-tip="A 32-year-old saving $45,000 of a $110,000 take-home, spending $65,000, with $120,000 already in global equity and the same spending kept in retirement. The plain baseline to measure the others against.">Moderate FIRE</button>
-      <button class="quick-start-btn" data-preset="frugal" data-i18n="qsFrugal" data-i18n-tip="qsFrugalTip" data-tip="Lean FIRE at 28: net income $92,000 against $30,000 of spending, so two thirds of the pay packet is saved. Spending less does two jobs at once, because it fills the pot faster and shrinks the pot you need.">Frugal Living</button>
-      <button class="quick-start-btn" data-preset="geoarbitrage" data-i18n="qsGeo" data-i18n-tip="qsGeoTip" data-tip="Earn in Australia, retire in Bali. Spending stays $70,000 today, but retirement spending is set to 40% of it, and that multiplier on the Goal tab is the whole lever. One inflation rate, 3%, covers both countries.">Geoarbitrage, Bali</button>
-      <button class="quick-start-btn" data-preset="fatfire" data-i18n="qsFat" data-i18n-tip="qsFatTip" data-tip="High earner on $320,000 net, spending $120,000, in US equity, under Die Rich: only the real growth is ever spent, so the pot lasts forever. Forever costs the most of any goal, and the surplus still gets there fast.">Fat FIRE, forever</button>
-      <button class="quick-start-btn" data-preset="legacy" data-i18n="qsLegacy" data-i18n-tip="qsLegacyTip" data-tip="Leave a Legacy of $750,000 in today's money, still there at 90, on top of 95% of today's spending. The bequest is discounted back to the day you stop, so it adds far less to the pot than its face value.">Family legacy</button>
-      <button class="quick-start-btn" data-preset="latestart" data-i18n="qsLate" data-i18n-tip="qsLateTip" data-tip="Starting at 52 on a balanced 6.5% return, with the age pension on from 67 and retirement spending at 85%. Switch the pension off on the Goal tab and freedom moves years later: that is a pot it saves you building.">Late start, on a pension</button>
+      <button class="quick-start-btn" data-preset="moderate" data-tip="A 32-year-old saving $45,000 of a $110,000 take-home, spending $65,000, with $120,000 already in global equity and the same spending kept in retirement. The plain baseline to measure the others against.">Moderate FIRE</button>
+      <button class="quick-start-btn" data-preset="frugal" data-tip="Lean FIRE at 28: net income $92,000 against $30,000 of spending, so two thirds of the pay packet is saved. Spending less does two jobs at once, because it fills the pot faster and shrinks the pot you need.">Frugal Living</button>
+      <button class="quick-start-btn" data-preset="geoarbitrage" data-tip="Earn in Australia, retire in Bali. Spending stays $70,000 today, but retirement spending is set to 40% of it, and that multiplier on the Goal tab is the whole lever. One inflation rate, 3%, covers both countries.">Geoarbitrage, Bali</button>
+      <button class="quick-start-btn" data-preset="fatfire" data-tip="High earner on $320,000 net, spending $120,000, in US equity, under Die Rich: only the real growth is ever spent, so the pot lasts forever. Forever costs the most of any goal, and the surplus still gets there fast.">Fat FIRE, forever</button>
+      <button class="quick-start-btn" data-preset="legacy" data-tip="Leave a Legacy of $750,000 in today's money, still there at 90, on top of 95% of today's spending. The bequest is discounted back to the day you stop, so it adds far less to the pot than its face value.">Family legacy</button>
+      <button class="quick-start-btn" data-preset="latestart" data-tip="Starting at 52 on a balanced 6.5% return, with the age pension on from 67 and retirement spending at 85%. Switch the pension off on the Goal tab and freedom moves years later: that is a pot it saves you building.">Late start, on a pension</button>
     </div>
   </div>
   <div class="ctrl-scroll">
   <div class="ctrl-tabs stacked">
-    <button class="ctrl-tab active" data-tab="you"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7.4" r="3.7"/><path d="M4.6 20.4c0-4 3.3-6.7 7.4-6.7s7.4 2.7 7.4 6.7"/></svg><span data-i18n="tabYou">You</span></button>
-    <button class="ctrl-tab" data-tab="invest"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.4 20.4h17.2"/><path d="M5.6 16.6 10.2 10.6l3.3 2.9 5.4-7.1"/><path d="M15.2 6.4h3.7v3.7"/></svg><span data-i18n="tabInvest">Investment</span></button>
-    <button class="ctrl-tab" data-tab="goal"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 21.2V3.4"/><path d="M6 4.6h11.6l-2.5 3.7 2.5 3.7H6"/></svg><span data-i18n="tabGoal">Goal</span></button>
-    <button class="ctrl-tab" data-tab="settings"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span data-i18n="tabSettings">Settings</span></button>
+    <button class="ctrl-tab active" data-tab="you"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7.4" r="3.7"/><path d="M4.6 20.4c0-4 3.3-6.7 7.4-6.7s7.4 2.7 7.4 6.7"/></svg><span>You</span></button>
+    <button class="ctrl-tab" data-tab="invest"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.4 20.4h17.2"/><path d="M5.6 16.6 10.2 10.6l3.3 2.9 5.4-7.1"/><path d="M15.2 6.4h3.7v3.7"/></svg><span>Investment</span></button>
+    <button class="ctrl-tab" data-tab="goal"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 21.2V3.4"/><path d="M6 4.6h11.6l-2.5 3.7 2.5 3.7H6"/></svg><span>Goal</span></button>
+    <button class="ctrl-tab" data-tab="settings"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></button>
   </div>
 
   <!-- ── You ── -->
   <div class="ctrl-panel active" id="tab-you">
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap"><span data-i18n="labelCurrency">Currency</span> <i class="tip-icon" data-i18n-tip="tipCurrency" data-tip="Display only. Nothing is converted.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Currency <i class="tip-icon" data-tip="Display only. Nothing is converted.">?</i></span></div>
       <select class="sel-input" id="currency"></select>
     </div>
 
     <div class="field-group">
-      <div class="group-title" data-i18n="groupAges">Ages</div>
+      <div class="group-title">Ages</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap"><span data-i18n="labelAgeNow">Age now</span> <i class="tip-icon" data-i18n-tip="tipAgeNow" data-tip="Where the projection starts.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Age now <i class="tip-icon" data-tip="Where the projection starts.">?</i></span></div>
         <input class="num-input" id="ageNow" type="number" min="0" max="100" step="1" value="30"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap"><span data-i18n="labelAgeDie">Life expectancy</span> <i class="tip-icon" data-i18n-tip="tipAgeDie" data-tip="How long the money has to last. Die Rich ignores it.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Life expectancy <i class="tip-icon" data-tip="How long the money has to last. Die Rich ignores it.">?</i></span></div>
         <input class="num-input" id="ageDie" type="number" min="2" max="120" step="1" value="90"/>
       </div>
     </div>
 
     <div class="field-group">
-      <div class="group-title" data-i18n="groupMoney">Money in and out</div>
+      <div class="group-title">Money in and out</div>
       <div class="field-row">
         <div class="field-head">
-          <div class="field-label"><span class="tip-wrap"><span id="savingsLabel" data-i18n="savingsLabelSavings">Savings</span> <i class="tip-icon" data-i18n-tip="tipSavings" data-tip="<strong>Savings:</strong> what you put away.<br><strong>Net income:</strong> your take-home pay, with the saving worked out as what is left after expenses.">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap"><span id="savingsLabel">Savings</span> <i class="tip-icon" data-tip="<strong>Savings:</strong> what you put away.<br><strong>Net income:</strong> your take-home pay, with the saving worked out as what is left after expenses.">?</i></span></div>
           <div class="seg-toggle" id="savingsModeGroup">
-            <button class="seg-btn active" data-val="savings" type="button" data-i18n="segSavings">Savings</button>
-            <button class="seg-btn" data-val="income" type="button" data-i18n="segIncome">Net income</button>
+            <button class="seg-btn active" data-val="savings" type="button">Savings</button>
+            <button class="seg-btn" data-val="income" type="button">Net income</button>
           </div>
         </div>
         <div class="inline-row">
@@ -192,33 +172,33 @@
             <input class="currency-input fmt-num" id="savings" type="text" inputmode="decimal" value="30,000"/>
           </div>
           <select class="sel-input period" id="savingsPeriod">
-            <option value="weekly" data-i18n-opt="optWeekly">a week</option>
-            <option value="monthly" data-i18n-opt="optMonthly">a month</option>
-            <option value="yearly" selected data-i18n-opt="optYearly">a year</option>
+            <option value="weekly">a week</option>
+            <option value="monthly">a month</option>
+            <option value="yearly" selected>a year</option>
           </select>
         </div>
         <p class="note" id="savingsModeNote"></p>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap"><span data-i18n="labelGrowth">Growth of that amount, % p.a.</span> <i class="tip-icon" data-i18n-tip="tipGrowth" data-tip="How fast the amount above grows each year, before inflation. Pay rises live here.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Growth of that amount, % p.a. <i class="tip-icon" data-tip="How fast the amount above grows each year, before inflation. Pay rises live here.">?</i></span></div>
         <input class="num-input" id="growth" type="number" min="-10" max="30" step="0.1" value="3"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap"><span data-i18n="labelExpense">Living expenses</span> <i class="tip-icon" data-i18n-tip="tipExpense" data-tip="What you spend to live now. It buys the same every year, at a figure that rises with inflation.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Living expenses <i class="tip-icon" data-tip="What you spend to live now. It buys the same every year, at a figure that rises with inflation.">?</i></span></div>
         <div class="inline-row">
           <div class="currency-wrap grow">
             <span class="prefix" id="expensePrefix">$</span>
             <input class="currency-input fmt-num" id="expense" type="text" inputmode="decimal" value="60,000"/>
           </div>
           <select class="sel-input period" id="expensePeriod">
-            <option value="weekly" data-i18n-opt="optWeekly">a week</option>
-            <option value="monthly" data-i18n-opt="optMonthly">a month</option>
-            <option value="yearly" selected data-i18n-opt="optYearly">a year</option>
+            <option value="weekly">a week</option>
+            <option value="monthly">a month</option>
+            <option value="yearly" selected>a year</option>
           </select>
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap"><span data-i18n="labelInflation">Inflation, % p.a.</span> <i class="tip-icon" data-i18n-tip="tipInflation" data-tip="How fast prices rise. It lifts your expenses, and the pot you need with them.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Inflation, % p.a. <i class="tip-icon" data-tip="How fast prices rise. It lifts your expenses, and the pot you need with them.">?</i></span></div>
         <input class="num-input" id="inflation" type="number" min="0" max="30" step="0.1" value="2.5"/>
         <p class="note" id="inflationNote"></p>
       </div>
@@ -228,35 +208,35 @@
   <!-- ── Investment ── -->
   <div class="ctrl-panel" id="tab-invest">
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap"><span data-i18n="labelAssets">Invested assets today</span> <i class="tip-icon" data-i18n-tip="tipAssets" data-tip="What you already hold that earns the return below. Not the home you live in.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Invested assets today <i class="tip-icon" data-tip="What you already hold that earns the return below. Not the home you live in.">?</i></span></div>
       <div class="currency-wrap">
         <span class="prefix" id="assetsPrefix">$</span>
         <input class="currency-input fmt-num" id="assets" type="text" inputmode="decimal" value="100,000"/>
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap"><span data-i18n="labelAsset">Asset</span> <i class="tip-icon" data-i18n-tip="tipAsset" data-tip="Fills the two fields below with long-run historical figures.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Asset <i class="tip-icon" data-tip="Fills the two fields below with long-run historical figures.">?</i></span></div>
       <select class="sel-input" id="assetPreset"></select>
       <p class="note" id="presetNote"></p>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap"><span data-i18n="labelRet">Expected return (CAGR), % p.a.</span> <i class="tip-icon" data-i18n-tip="tipRet" data-tip="The compound return you expect, before inflation and after fees.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Expected return (CAGR), % p.a. <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees.">?</i></span></div>
       <input class="num-input" id="ret" type="number" min="-5" max="40" step="0.1" value="8"/>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap"><span data-i18n="labelStd">Volatility, % p.a.</span> <i class="tip-icon" data-i18n-tip="tipStd" data-tip="How much the return bounces year to year. Use 0 for a single smooth projection.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Volatility, % p.a. <i class="tip-icon" data-tip="How much the return bounces year to year. Use 0 for a single smooth projection.">?</i></span></div>
       <input class="num-input" id="std" type="number" min="0" max="80" step="0.1" value="15"/>
     </div>
 
     <div class="field-group">
-      <div class="group-title" data-i18n="groupTicker">Or use a real ticker</div>
+      <div class="group-title">Or use a real ticker</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap"><span data-i18n="labelTicker">Ticker</span> <i class="tip-icon" data-i18n-tip="tipTicker" data-tip="Measures the two fields above from real prices.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Ticker <i class="tip-icon" data-tip="Measures the two fields above from real prices.">?</i></span></div>
         <div class="ticker-row">
-          <input class="txt-input" id="ticker" type="text" placeholder="e.g. SPY, VAS.AX, GLD" data-i18n-ph="tickerPlaceholder" data-no-persist/>
-          <button class="btn-secondary btn-sm" id="fetchTickerBtn" data-i18n="btnFetch">Fetch</button>
+          <input class="txt-input" id="ticker" type="text" placeholder="e.g. SPY, VAS.AX, GLD" data-no-persist/>
+          <button class="btn-secondary btn-sm" id="fetchTickerBtn">Fetch</button>
         </div>
-        <a href="../dcasimulator/ticker/" class="ticker-ref-link" data-i18n="tickerRefLink">See common ticker codes here →</a>
+        <a href="../dcasimulator/ticker/" class="ticker-ref-link">See common ticker codes here →</a>
         <div id="tickerStatus"></div>
       </div>
     </div>
@@ -265,70 +245,70 @@
   <!-- ── Goal ── -->
   <div class="ctrl-panel" id="tab-goal">
     <div class="field-row">
-      <div class="field-label" data-i18n="labelGoalQuestion">What should the money do?</div>
+      <div class="field-label">What should the money do?</div>
       <div class="radio-group" id="modeGroup">
         <label class="radio-opt selected">
           <input type="radio" name="ffmode" value="die" checked/>
           <div class="radio-opt-text">
-            <strong data-i18n="modeDieTitle">Just Die</strong>
-            <span data-i18n="modeDieBody">Runs to nothing at your life expectancy. Cheapest, and no margin if you live longer.</span>
+            <strong>Just Die</strong>
+            Runs to nothing at your life expectancy. Cheapest, and no margin if you live longer.
           </div>
         </label>
         <label class="radio-opt">
           <input type="radio" name="ffmode" value="legacy"/>
           <div class="radio-opt-text">
-            <strong data-i18n="modeLegacyTitle">Leave a Legacy</strong>
-            <span data-i18n="modeLegacyBody">A set amount, in today's money, is still there at your life expectancy.</span>
+            <strong>Leave a Legacy</strong>
+            A set amount, in today's money, is still there at your life expectancy.
           </div>
         </label>
         <label class="radio-opt">
           <input type="radio" name="ffmode" value="rich"/>
           <div class="radio-opt-text">
-            <strong data-i18n="modeRichTitle">Die Rich</strong>
-            <span data-i18n="modeRichBody">Spend only the real growth, so it lasts forever. Needs a return above inflation.</span>
+            <strong>Die Rich</strong>
+            Spend only the real growth, so it lasts forever. Needs a return above inflation.
           </div>
         </label>
       </div>
     </div>
     <div class="field-row" id="legacyRow" style="display:none;">
-      <div class="field-label"><span class="tip-wrap"><span data-i18n="labelLegacy">Amount to leave behind</span> <i class="tip-icon" data-i18n-tip="tipLegacy" data-tip="In today's money.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Amount to leave behind <i class="tip-icon" data-tip="In today's money.">?</i></span></div>
       <div class="currency-wrap">
         <span class="prefix" id="legacyPrefix">$</span>
         <input class="currency-input fmt-num" id="legacy" type="text" inputmode="decimal" value="500,000"/>
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap"><span data-i18n="labelRetireMultiplier">Retirement spending, % of today</span> <i class="tip-icon" data-i18n-tip="tipRetireMultiplier" data-tip="100% spends the same as now. 80% if the mortgage is gone.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Retirement spending, % of today <i class="tip-icon" data-tip="100% spends the same as now. 80% if the mortgage is gone.">?</i></span></div>
       <input class="num-input" id="retireMultiplier" type="number" min="10" max="300" step="1" value="100"/>
     </div>
 
     <div class="field-group">
-      <div class="group-title" data-i18n="groupPension">Government or age pension</div>
+      <div class="group-title">Government or age pension</div>
       <div class="toggle-row">
-        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="labelPensionOn">Include a pension</span> <i class="tip-icon" data-i18n-tip="tipPensionOn" data-tip="Reduces the pot you need, but only from its start age.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap">Include a pension <i class="tip-icon" data-tip="Reduces the pot you need, but only from its start age.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="pensionOn"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div id="pensionRows" style="display:none;">
         <div class="field-row">
-          <div class="field-label" data-i18n="labelPensionStartAge">Pension starts at age</div>
+          <div class="field-label">Pension starts at age</div>
           <input class="num-input" id="pensionStartAge" type="number" min="40" max="90" step="1" value="67"/>
         </div>
         <div class="field-row">
-          <div class="field-label"><span class="tip-wrap"><span data-i18n="labelPensionAmount">Pension amount</span> <i class="tip-icon" data-i18n-tip="tipPensionAmount" data-tip="What it pays today. Counted as income from its start age.">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Pension amount <i class="tip-icon" data-tip="What it pays today. Counted as income from its start age.">?</i></span></div>
           <div class="inline-row">
             <div class="currency-wrap grow">
               <span class="prefix" id="pensionAmountPrefix">$</span>
               <input class="currency-input fmt-num" id="pensionAmount" type="text" inputmode="decimal" value="29,000"/>
             </div>
             <select class="sel-input period" id="pensionPeriod">
-              <option value="weekly" data-i18n-opt="optWeekly">a week</option>
-              <option value="monthly" data-i18n-opt="optMonthly">a month</option>
-              <option value="yearly" selected data-i18n-opt="optYearly">a year</option>
+              <option value="weekly">a week</option>
+              <option value="monthly">a month</option>
+              <option value="yearly" selected>a year</option>
             </select>
           </div>
         </div>
         <div class="toggle-row">
-          <div class="toggle-label"><span class="tip-wrap"><span data-i18n="labelPensionIndexed">Rises with inflation</span> <i class="tip-icon" data-i18n-tip="tipPensionIndexed" data-tip="<strong>On:</strong> indexed, so it keeps its value.<br><strong>Off:</strong> a flat figure that buys less every year.">?</i></span></div>
+          <div class="toggle-label"><span class="tip-wrap">Rises with inflation <i class="tip-icon" data-tip="<strong>On:</strong> indexed, so it keeps its value.<br><strong>Off:</strong> a flat figure that buys less every year.">?</i></span></div>
           <label class="toggle-switch"><input type="checkbox" id="pensionIndexed" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
         </div>
         <p class="note" id="pensionNote"></p>
@@ -339,26 +319,26 @@
   <!-- ── Settings ── -->
   <div class="ctrl-panel" id="tab-settings">
     <div class="toggle-row">
-      <div class="toggle-label"><span class="tip-wrap"><span data-i18n="labelShowReal">Show Present Value</span> <i class="tip-icon" data-i18n-tip="tipShowReal" data-tip="<strong>Off:</strong> future's money.<br><strong>On:</strong> today's money. The plan is the same either way.">?</i></span></div>
+      <div class="toggle-label"><span class="tip-wrap">Show Present Value <i class="tip-icon" data-tip="<strong>Off:</strong> future's money.<br><strong>On:</strong> today's money. The plan is the same either way.">?</i></span></div>
       <label class="toggle-switch"><input type="checkbox" id="showReal"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap"><span data-i18n="labelPaths">Simulated futures</span> <i class="tip-icon" data-i18n-tip="tipPaths" data-tip="How many random paths the band and the probability are built from.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Simulated futures <i class="tip-icon" data-tip="How many random paths the band and the probability are built from.">?</i></span></div>
       <input class="num-input" id="paths" type="number" min="100" max="5000" step="100" value="1000"/>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap"><span data-i18n="labelConfidence">Confidence level, %</span> <i class="tip-icon" data-i18n-tip="tipConfidence" data-tip="The share of simulated futures the confidence pot has to survive.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Confidence level, % <i class="tip-icon" data-tip="The share of simulated futures the confidence pot has to survive.">?</i></span></div>
       <input class="num-input" id="confidence" type="number" min="50" max="99" step="1" value="90"/>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap"><span data-i18n="labelSeed">Random seed</span> <i class="tip-icon" data-i18n-tip="tipSeed" data-tip="The same seed gives the same simulated futures.">?</i></span></div>
+      <div class="field-label"><span class="tip-wrap">Random seed <i class="tip-icon" data-tip="The same seed gives the same simulated futures.">?</i></span></div>
       <input class="num-input" id="seed" type="number" min="1" step="1" value="20260921"/>
     </div>
   </div>
   </div><!-- /ctrl-scroll -->
   <div class="btn-row">
-    <p class="stale-note" id="staleNote" role="status" data-i18n="staleNote">Assumptions changed. Press Simulate to run them.</p>
-    <button class="btn-primary" id="simBtn" style="flex:1" data-i18n="btnSimulate">▶ Simulate</button>
+    <p class="stale-note" id="staleNote" role="status">Assumptions changed. Press Simulate to run them.</p>
+    <button class="btn-primary" id="simBtn" style="flex:1">▶ Simulate</button>
   </div>
 </aside>
 
@@ -370,22 +350,22 @@
        the investment grows to, with no withdrawal anywhere in it. -->
   <section class="board" id="boardPath">
     <header class="board-head">
-      <h2 data-i18n="boardPathTitle">Path to freedom</h2>
+      <h2>Path to freedom</h2>
     </header>
 
     <section class="metrics metrics-3">
       <div class="metric card">
-        <div class="label"><span class="tip-wrap"><span data-i18n="mFreeAgeLabel">Financially free at</span> <i class="tip-icon" data-i18n-tip="mFreeAgeTip" data-tip="The earliest age your investment reaches the pot needed to stop then. The retirement slider cannot move it.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Financially free at <i class="tip-icon" data-tip="The earliest age your investment reaches the pot needed to stop then. The retirement slider cannot move it.">?</i></span></div>
         <div class="value" id="mFreeAge">—</div>
         <div class="sub" id="mFreeAgeSub"></div>
       </div>
       <div class="metric card">
-        <div class="label"><span class="tip-wrap"><span data-i18n="mFreePotLabel">Pot needed then</span> <i class="tip-icon" data-i18n-tip="mFreePotTip" data-tip="What stopping at that age costs.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Pot needed then <i class="tip-icon" data-tip="What stopping at that age costs.">?</i></span></div>
         <div class="value" id="mFreePot">—</div>
         <div class="sub" id="mFreePotSub"></div>
       </div>
       <div class="metric card">
-        <div class="label"><span class="tip-wrap"><span data-i18n="mRealRetLabel">Real return</span> <i class="tip-icon" data-i18n-tip="mRealRetTip" data-tip="Your return after inflation. It decides how big the pot has to be.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Real return <i class="tip-icon" data-tip="Your return after inflation. It decides how big the pot has to be.">?</i></span></div>
         <div class="value" id="mRealRet">—</div>
         <div class="sub" id="mRealRetSub"></div>
       </div>
@@ -393,18 +373,18 @@
 
     <section class="chart-card card">
       <div class="chart-head">
-        <h3 data-i18n="chart1Title">Pot needed vs investment growth</h3>
+        <h3>Pot needed vs investment growth</h3>
         <div class="btn-cluster">
-          <button class="btn-secondary btn-sm" id="ffSvgBtn" data-i18n-title="btnSvgTitle" title="Download this chart as SVG">⬇ SVG</button>
-          <button class="btn-secondary btn-sm" id="ffPngBtn" data-i18n-title="btnPngTitle" title="Download this chart as PNG">⬇ PNG</button>
-          <button class="btn-secondary btn-sm btn-icon" id="ffCopyBtn" data-i18n-title="btnCopyTitle" title="Copy PNG to clipboard">⧉</button>
-          <button class="btn-secondary btn-sm btn-icon" id="resetZoom1" data-i18n-title="btnResetZoomTitle" title="Reset zoom">⟳</button>
+          <button class="btn-secondary btn-sm" id="ffSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+          <button class="btn-secondary btn-sm" id="ffPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+          <button class="btn-secondary btn-sm btn-icon" id="ffCopyBtn" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary btn-sm btn-icon" id="resetZoom1" title="Reset zoom">⟳</button>
         </div>
       </div>
       <div class="sub" id="chart1Sub"></div>
       <div class="legend" id="legend1"></div>
       <div class="canvas-wrap"><canvas id="ffChart"></canvas></div>
-      <div class="hover-box" id="hover1" data-i18n="hoverHint">Hover to inspect any year.</div>
+      <div class="hover-box" id="hover1">Hover to inspect any year.</div>
     </section>
   </section>
 
@@ -414,10 +394,10 @@
        they leave behind. -->
   <section class="board" id="boardCash">
     <header class="board-head">
-      <h2 data-i18n="boardCashTitle">Cashflows</h2>
+      <h2>Cashflows</h2>
       <div class="retire-slider" id="retireSlider">
         <div class="slider-head">
-          <div class="slider-label"><span class="tip-wrap"><span data-i18n="labelRetireAt">Retire at</span> <i class="tip-icon" data-i18n-tip="tipRetireAt" data-tip="The age you stop earning and start living off the pot. Everything below is measured at it.">?</i></span></div>
+          <div class="slider-label"><span class="tip-wrap">Retire at <i class="tip-icon" data-tip="The age you stop earning and start living off the pot. Everything below is measured at it.">?</i></span></div>
           <div class="slider-value" id="ageRetireVal">60</div>
         </div>
         <!-- The real bounds are the two ages on the You tab and are written here on
@@ -425,7 +405,7 @@
              value restored from the last visit is never clamped by a stale bound
              before the render that would have widened it. -->
         <input type="range" id="ageRetire" min="0" max="120" step="1" value="60"/>
-        <div class="slider-scale"><span id="retireScaleMin" data-i18n="scaleMinDefault">Age now</span><span id="retireScaleMax" data-i18n="scaleMaxDefault">Life expectancy</span></div>
+        <div class="slider-scale"><span id="retireScaleMin">Age now</span><span id="retireScaleMax">Life expectancy</span></div>
       </div>
       <!-- The verdict ON THE SLIDER'S OWN AGE, directly under the handle that
            decides it: "not by 48, you get there at 64" is an answer about this
@@ -436,22 +416,22 @@
 
     <section class="metrics">
       <div class="metric card">
-        <div class="label"><span class="tip-wrap"><span data-i18n="mNeedLabelPre">Pot needed at </span><span id="mNeedAge">60</span><span data-i18n="mNeedLabelPost"></span> <i class="tip-icon" data-i18n-tip="tipNeed" data-tip="The pot you need on the day you retire, for this goal to work.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Pot needed at <span id="mNeedAge">60</span> <i class="tip-icon" data-tip="The pot you need on the day you retire, for this goal to work.">?</i></span></div>
         <div class="value" id="mNeed">—</div>
         <div class="sub" id="mNeedSub"></div>
       </div>
       <div class="metric card">
-        <div class="label"><span class="tip-wrap"><span data-i18n="mHaveLabelPre">Balance at </span><span id="mHaveAge">60</span><span data-i18n="mHaveLabelPost"></span> <i class="tip-icon" data-i18n-tip="tipHave" data-tip="What the investment is on track to be worth on the day you stop.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Balance at <span id="mHaveAge">60</span> <i class="tip-icon" data-tip="What the investment is on track to be worth on the day you stop.">?</i></span></div>
         <div class="value" id="mHave">—</div>
         <div class="sub" id="mHaveSub"></div>
       </div>
       <div class="metric card">
-        <div class="label"><span class="tip-wrap"><span data-i18n="mSuccessLabel">Chance it works</span> <i class="tip-icon" data-i18n-tip="tipSuccess" data-tip="The share of simulated futures in which the money lasts. Plan around the confidence pot named underneath, not the expected-return figure.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Chance it works <i class="tip-icon" data-tip="The share of simulated futures in which the money lasts. Plan around the confidence pot named underneath, not the expected-return figure.">?</i></span></div>
         <div class="value" id="mSuccess">—</div>
         <div class="sub" id="mSuccessSub"></div>
       </div>
       <div class="metric card">
-        <div class="label"><span class="tip-wrap"><span data-i18n="mLeftLabelPre">Left at </span><span id="mLeftAge">90</span><span data-i18n="mLeftLabelPost"></span> <i class="tip-icon" data-i18n-tip="tipLeft" data-tip="What the balance reads at your life expectancy. Negative is the shortfall.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Left at <span id="mLeftAge">90</span> <i class="tip-icon" data-tip="What the balance reads at your life expectancy. Negative is the shortfall.">?</i></span></div>
         <div class="value" id="mLeft">—</div>
         <div class="sub" id="mLeftSub"></div>
       </div>
@@ -465,25 +445,24 @@
          picture. -->
     <section class="chart-card card">
       <div class="chart-head">
-        <h3 data-i18n="chart2Title">Income, spending and the balance they leave</h3>
+        <h3>Income, spending and the balance they leave</h3>
         <div class="btn-cluster">
-          <button class="btn-secondary btn-sm" id="ddSvgBtn" data-i18n-title="btnSvgTitle" title="Download this chart as SVG">⬇ SVG</button>
-          <button class="btn-secondary btn-sm" id="ddPngBtn" data-i18n-title="btnPngTitle" title="Download this chart as PNG">⬇ PNG</button>
-          <button class="btn-secondary btn-sm btn-icon" id="ddCopyBtn" data-i18n-title="btnCopyTitle" title="Copy PNG to clipboard">⧉</button>
-          <button class="btn-secondary btn-sm btn-icon" id="resetZoom2" data-i18n-title="btnResetZoomTitle" title="Reset zoom">⟳</button>
+          <button class="btn-secondary btn-sm" id="ddSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+          <button class="btn-secondary btn-sm" id="ddPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+          <button class="btn-secondary btn-sm btn-icon" id="ddCopyBtn" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary btn-sm btn-icon" id="resetZoom2" title="Reset zoom">⟳</button>
         </div>
       </div>
-      <div class="sub" id="chart2Sub"></div>
       <div class="legend" id="legend2"></div>
       <div class="canvas-wrap canvas-wrap-cash"><canvas id="ddChart"></canvas></div>
-      <div class="hover-box" id="hover2" data-i18n="hoverHint">Hover to inspect any year.</div>
+      <div class="hover-box" id="hover2">Hover to inspect any year.</div>
     </section>
 
     <section class="detail-section card">
       <div class="detail-head">
-        <h3 data-i18n="tableTitle">Year by year</h3>
+        <h3>Year by year</h3>
         <div class="btn-cluster">
-          <button class="btn-secondary btn-sm" id="csvBtn" data-i18n-title="btnCsvTitle" title="Download this table as CSV">⬇ CSV</button>
+          <button class="btn-secondary btn-sm" id="csvBtn" title="Download this table as CSV">⬇ CSV</button>
         </div>
       </div>
       <p class="sub" id="tableSub"></p>
@@ -492,7 +471,7 @@
   </section>
 
   <section class="detail-section card">
-    <h2 data-i18n="assumptionsTitle">What this assumes</h2>
+    <h2>What this assumes</h2>
     <ul class="assumptions" id="assumptions"></ul>
   </section>
 </main>

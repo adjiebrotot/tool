@@ -1725,14 +1725,10 @@
 
     /* ── Financial Freedom Calculator ── */
     financialfreedom: {
-      FIRE: { en: ['Financial Independence, Retire Early', 'the idea this tool does the arithmetic for: save hard, invest, then live off the pot'],
-              id: ['Financial Independence, Retire Early', 'gagasan yang dihitung alat ini: menabung keras, berinvestasi, lalu hidup dari dananya'] },
-      MDD:  { en: ['Maximum Drawdown', 'the deepest peak-to-trough fall an asset has had, which is what the crash test lands on you'],
-              id: ['Maximum Drawdown', 'penurunan terdalam dari puncak ke dasar yang pernah dialami sebuah aset'] },
-      SORR: { en: ['Sequence-of-Returns Risk', 'the risk that the bad years arrive early in retirement, when the pot is largest and has the longest left to fund'],
-              id: ['Sequence-of-Returns Risk', 'risiko tahun-tahun buruk datang di awal masa pensiun, saat dana masih paling besar dan paling panjang masa yang harus dibiayainya'] },
-      SWR:  { en: ['Safe Withdrawal Rate', 'the share of the pot you can spend each year without running out'],
-              id: ['Safe Withdrawal Rate', 'porsi dana yang bisa Anda belanjakan tiap tahun tanpa membuatnya habis'] }
+      FIRE: ['Financial Independence, Retire Early', 'the idea this tool does the arithmetic for: save hard, invest, then live off the pot'],
+      MDD:  ['Maximum Drawdown', 'the deepest peak-to-trough fall an asset has had, which is what the crash test lands on you'],
+      SORR: ['Sequence-of-Returns Risk', 'the risk that the bad years arrive early in retirement, when the pot is largest and has the longest left to fund'],
+      SWR:  ['Safe Withdrawal Rate', 'the share of the pot you can spend each year without running out']
     },
 
     /* ── Rent vs Own Home (and its Sensitivity page, EN + ID) ── */

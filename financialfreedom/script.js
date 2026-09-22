@@ -168,832 +168,17 @@
 (function(){
 'use strict';
 
-/* ─── i18n ───────────────────────────────────────────────────────────────
-   One engine, two pages: the English page at /financialfreedom/ and the
-   Indonesian one at /financialfreedom/id/. The page declares which it is by
-   setting window.DEFAULT_LANG before this file loads, the same handshake
-   rentvsownhouse/ and pisahvsgabung/ use.
-
-   Almost every sentence this tool prints is built around a figure it has just
-   worked out, so an entry may be a FUNCTION of the values it interpolates
-   rather than a plain string. That keeps a translated sentence whole, instead
-   of splitting it into prefix and suffix keys that only ever reassemble in
-   English word order. T() calls the function with whatever arguments follow
-   the key; a key missing from a language falls back to English, so a
-   half-translated page still reads.
-
-   The markup carries the English copy and a data-i18n key beside it, so the
-   English page needs no translation pass at all and applyLang() only has work
-   to do on the Indonesian one. */
-let lang = (window.DEFAULT_LANG === 'id') ? 'id' : 'en';
-
-const LANG = {
-en: {
-  /* ── header ── */
-  h1Title: 'Financial Freedom Calculator',
-  subtitle: 'How much is enough to stop working, and the age you actually get there.',
-  btnBack: '← Other Tools',
-
-  /* ── quick start ── */
-  quickStartLabel: 'Quick Start',
-  quickStartTip: 'Fills every tab with a worked plan and reads the answer straight away. Change any figure over the top of it.',
-  qsModerate: 'Moderate FIRE',
-  qsModerateTip: 'A 32-year-old saving $45,000 of a $110,000 take-home, spending $65,000, with $120,000 already in global equity and the same spending kept in retirement. The plain baseline to measure the others against.',
-  qsFrugal: 'Frugal Living',
-  qsFrugalTip: 'Lean FIRE at 28: net income $92,000 against $30,000 of spending, so two thirds of the pay packet is saved. Spending less does two jobs at once, because it fills the pot faster and shrinks the pot you need.',
-  qsGeo: 'Geoarbitrage, Bali',
-  qsGeoTip: 'Earn in Australia, retire in Bali. Spending stays $70,000 today, but retirement spending is set to 40% of it, and that multiplier on the Goal tab is the whole lever. One inflation rate, 3%, covers both countries.',
-  qsFat: 'Fat FIRE, forever',
-  qsFatTip: 'High earner on $320,000 net, spending $120,000, in US equity, under Die Rich: only the real growth is ever spent, so the pot lasts forever. Forever costs the most of any goal, and the surplus still gets there fast.',
-  qsLegacy: 'Family legacy',
-  qsLegacyTip: 'Leave a Legacy of $750,000 in today’s money, still there at 90, on top of 95% of today’s spending. The bequest is discounted back to the day you stop, so it adds far less to the pot than its face value.',
-  qsLate: 'Late start, on a pension',
-  qsLateTip: 'Starting at 52 on a balanced 6.5% return, with the age pension on from 67 and retirement spending at 85%. Switch the pension off on the Goal tab and freedom moves years later: that is a pot it saves you building.',
-
-  /* ── control tabs ── */
-  tabYou: 'You',
-  tabInvest: 'Investment',
-  tabGoal: 'Goal',
-  tabSettings: 'Settings',
-
-  /* ── You tab ── */
-  labelCurrency: 'Currency',
-  tipCurrency: 'Display only. Nothing is converted.',
-  groupAges: 'Ages',
-  labelAgeNow: 'Age now',
-  tipAgeNow: 'Where the projection starts.',
-  labelAgeDie: 'Life expectancy',
-  tipAgeDie: 'How long the money has to last. Die Rich ignores it.',
-  groupMoney: 'Money in and out',
-  tipSavings: '<strong>Savings:</strong> what you put away.<br><strong>Net income:</strong> your take-home pay, with the saving worked out as what is left after expenses.',
-  segSavings: 'Savings',
-  segIncome: 'Net income',
-  optWeekly: 'a week',
-  optMonthly: 'a month',
-  optYearly: 'a year',
-  labelGrowth: 'Growth of that amount, % p.a.',
-  tipGrowth: 'How fast the amount above grows each year, before inflation. Pay rises live here.',
-  labelExpense: 'Living expenses',
-  tipExpense: 'What you spend to live now. It buys the same every year, at a figure that rises with inflation.',
-  labelInflation: 'Inflation, % p.a.',
-  tipInflation: 'How fast prices rise. It lifts your expenses, and the pot you need with them.',
-
-  /* ── Investment tab ── */
-  labelAssets: 'Invested assets today',
-  tipAssets: 'What you already hold that earns the return below. Not the home you live in.',
-  labelAsset: 'Asset',
-  tipAsset: 'Fills the two fields below with long-run historical figures.',
-  labelRet: 'Expected return (CAGR), % p.a.',
-  tipRet: 'The compound return you expect, before inflation and after fees.',
-  labelStd: 'Volatility, % p.a.',
-  tipStd: 'How much the return bounces year to year. Use 0 for a single smooth projection.',
-  groupTicker: 'Or use a real ticker',
-  labelTicker: 'Ticker',
-  tipTicker: 'Measures the two fields above from real prices.',
-  tickerPlaceholder: 'e.g. SPY, VAS.AX, GLD',
-  btnFetch: 'Fetch',
-  tickerRefLink: 'See common ticker codes here →',
-
-  /* ── Goal tab ── */
-  labelGoalQuestion: 'What should the money do?',
-  modeDieTitle: 'Just Die',
-  modeDieBody: 'Runs to nothing at your life expectancy. Cheapest, and no margin if you live longer.',
-  modeLegacyTitle: 'Leave a Legacy',
-  modeLegacyBody: 'A set amount, in today’s money, is still there at your life expectancy.',
-  modeRichTitle: 'Die Rich',
-  modeRichBody: 'Spend only the real growth, so it lasts forever. Needs a return above inflation.',
-  labelLegacy: 'Amount to leave behind',
-  tipLegacy: 'In today’s money.',
-  labelRetireMultiplier: 'Retirement spending, % of today',
-  tipRetireMultiplier: '100% spends the same as now. 80% if the mortgage is gone.',
-  groupPension: 'Government or age pension',
-  labelPensionOn: 'Include a pension',
-  tipPensionOn: 'Reduces the pot you need, but only from its start age.',
-  labelPensionStartAge: 'Pension starts at age',
-  labelPensionAmount: 'Pension amount',
-  tipPensionAmount: 'What it pays today. Counted as income from its start age.',
-  labelPensionIndexed: 'Rises with inflation',
-  tipPensionIndexed: '<strong>On:</strong> indexed, so it keeps its value.<br><strong>Off:</strong> a flat figure that buys less every year.',
-
-  /* ── Settings tab ── */
-  labelShowReal: 'Show Present Value',
-  tipShowReal: '<strong>Off:</strong> future’s money.<br><strong>On:</strong> today’s money. The plan is the same either way.',
-  labelPaths: 'Simulated futures',
-  tipPaths: 'How many random paths the band and the probability are built from.',
-  labelConfidence: 'Confidence level, %',
-  tipConfidence: 'The share of simulated futures the confidence pot has to survive.',
-  labelSeed: 'Random seed',
-  tipSeed: 'The same seed gives the same simulated futures.',
-  staleNote: 'Assumptions changed. Press Simulate to run them.',
-  btnSimulate: '▶ Simulate',
-  btnSimulated: '✓ Updated',
-
-  /* ── boards, cards and charts ── */
-  boardPathTitle: 'Path to freedom',
-  mFreeAgeLabel: 'Financially free at',
-  mFreeAgeTip: 'The earliest age your investment reaches the pot needed to stop then. The retirement slider cannot move it.',
-  mFreePotLabel: 'Pot needed then',
-  mFreePotTip: 'What stopping at that age costs.',
-  mRealRetLabel: 'Real return',
-  mRealRetTip: 'Your return after inflation. It decides how big the pot has to be.',
-  chart1Title: 'Pot needed vs investment growth',
-  btnSvgTitle: 'Download this chart as SVG',
-  btnPngTitle: 'Download this chart as PNG',
-  btnCopyTitle: 'Copy PNG to clipboard',
-  btnResetZoomTitle: 'Reset zoom',
-  btnCsvTitle: 'Download this table as CSV',
-  hoverHint: 'Hover to inspect any year.',
-  boardCashTitle: 'Cashflows',
-  labelRetireAt: 'Retire at',
-  tipRetireAt: 'The age you stop earning and start living off the pot. Everything below is measured at it.',
-  scaleMinDefault: 'Age now',
-  scaleMaxDefault: 'Life expectancy',
-  mNeedLabelPre: 'Pot needed at ',
-  mNeedLabelPost: '',
-  tipNeed: 'The pot you need on the day you retire, for this goal to work.',
-  mHaveLabelPre: 'Balance at ',
-  mHaveLabelPost: '',
-  tipHave: 'What the investment is on track to be worth on the day you stop.',
-  mSuccessLabel: 'Chance it works',
-  tipSuccess: 'The share of simulated futures in which the money lasts. Plan around the confidence pot named underneath, not the expected-return figure.',
-  mLeftLabelPre: 'Left at ',
-  mLeftLabelPost: '',
-  tipLeft: 'What the balance reads at your life expectancy. Negative is the shortfall.',
-  chart2Title: 'Income, spending and the balance they leave',
-  tableTitle: 'Year by year',
-  assumptionsTitle: 'What this assumes',
-
-  /* ── formatting atoms ── */
-  ageY: 'y',
-  ageM: 'm',
-  monthNames: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-  moneyToday: "today's money",
-  moneyFuture: "future's money",
-
-  /* ── currencies and asset presets ── */
-  curAUD: 'AUD - Australian Dollar',
-  curUSD: 'USD - US Dollar',
-  curIDR: 'IDR - Indonesian Rupiah',
-  curSGD: 'SGD - Singapore Dollar',
-  curGBP: 'GBP - British Pound',
-  curEUR: 'EUR - Euro',
-  presetCustom: 'Custom (enter your own)',
-  presetCash: 'Cash / high-yield savings',
-  presetBonds: 'Fixed income (government bonds)',
-  presetUs: 'Equity - United States',
-  presetAsx: 'Equity - Australia (ASX)',
-  presetWorld: 'Equity - global diversified',
-  presetGold: 'Gold',
-
-  /* ── live notes under the controls ── */
-  savingsLabelSavings: 'Savings',
-  savingsLabelIncome: 'Net income',
-  savingsNoteIncome: 'You save the gap between income and expenses.',
-  savingsNoteIncomeTip: 'Income grows at the rate below, expenses rise with inflation, so what you save changes every year.',
-  savingsNoteSavings: 'This amount grows at the rate below.',
-  savingsNoteSavingsTip: 'Expenses size the pot you need but do not change what you save. Switch to Net income to have the gap worked out for you.',
-  presetNoteCustom: 'Your own figures, or pick a preset to start from.',
-  presetNoteHistory: 'Long-run history, not a forecast.',
-  presetNoteHistoryTip: function(asAt){ return 'Nominal, before tax and fees, as at ' + asAt + '. Every field stays editable.'; },
-  scaleMin: function(age){ return 'Stop today (' + age + ')'; },
-  scaleMax: function(age){ return 'Never stop (' + age + ')'; },
-  inflationNoteFlat: function(now, dieAge){
-    return 'Prices hold still, so the ' + now + ' a year you spend today still costs ' + now + ' at ' + dieAge + '.';
-  },
-  inflationNote: function(now, atRetire, retireAge, atDie, dieAge){
-    return 'The ' + now + ' a year you spend today costs ' + atRetire + ' a year at ' + retireAge +
-           ', and ' + atDie + ' at ' + dieAge + '.';
-  },
-  inflationNoteTip: 'Same life, bigger figure. Turn on Show Present Value in Settings to read it in today’s money instead.',
-  pensionNoteEmpty: function(age){ return 'Enter an amount and it is counted as income from age ' + age + '.'; },
-  pensionNoteIndexed: function(perYear, startAge, atStart){
-    return perYear + ' a year in today’s money from age ' + startAge +
-           ', and it keeps buying that much: ' + atStart + ' a year in the money of that year.';
-  },
-  pensionNoteIndexedTip: 'Australia, the UK and the US all index their age pension.',
-  pensionNoteFlat: function(perYear, startAge, buysAtStart, buysAtDie, dieAge){
-    return perYear + ' a year from age ' + startAge + ' and never a cent more, so it buys ' +
-           buysAtStart + ' of today’s living when it starts and ' + buysAtDie + ' by ' + dieAge + '.';
-  },
-  pensionNoteFlatTip: 'A frozen pension is eroded from TODAY, not from the day it starts: the amount entered is what it pays now, so the years before you claim it wear it down too.',
-
-  /* ── diagnosis and remedies ── */
-  remedyEarnMore: 'Earn more',
-  remedySaveMore: 'Save more',
-  remedySaveText: function(amount){ return amount + ' more a month, every month from today'; },
-  remedySpendLabel: 'Spend less',
-  remedySpendText: function(pct, amount){
-    return 'cut spending to ' + pct + ' of today, about ' + amount + ' a month';
-  },
-  remedyReturnLabel: 'Earn a higher return',
-  remedyReturnText: function(need, have){
-    return need + ' a year instead of ' + have + ', which means taking more risk';
-  },
-  remedyLaterLabel: 'Retire later',
-  remedyLaterText: function(newAge, oldAge){ return 'at age ' + newAge + ' instead of ' + oldAge; },
-  diagInvalid: 'Your life expectancy has to be later than your age now.',
-  diagNoPotMsg: 'Sorry. On these numbers, financial freedom is mathematically impossible.',
-  diagNoPotDetail: 'No pot of any size funds this plan.',
-  diagRichMsg: 'Sorry. At this return and inflation level, financial freedom is mathematically impossible.',
-  diagRichDetail: function(realRet){
-    return 'Your real return is ' + realRet + ', so no pot lasts forever at any size. Beat inflation, or choose Just Die.';
-  },
-  diagNeverMsg: 'Sorry. At this income and expense level, financial freedom is mathematically impossible.',
-  diagNeverDetail: 'Your savings never catch up with the pot you need, at any age.',
-  diagAlready: 'You are already financially free. Your current assets alone cover this plan.',
-  diagLate: function(retireAge, ffAge){
-    return 'Not by ' + retireAge + '. On these numbers you reach financial freedom at ' + ffAge + '.';
-  },
-
-  /* ── verdict cards ── */
-  verdictCheckAges: 'Check the ages',
-  verdictAlreadyBody: 'Everything below shows what happens if you stop now.',
-  verdictFreeAt: function(age){ return 'Financially free at ' + age + '.'; },
-  verdictFreeBody: 'On the expected return alone, and the retirement slider cannot move it. Read the chance below too.',
-  verdictFreeTip: 'A single average return ignores the order the good and bad years arrive in. Land the bad ones early and the same average return runs out.',
-  sliderLateBody: function(years){ return years + ' years past the age on this slider. Any one of these closes it.'; },
-  sliderAlreadyHead: function(age){ return 'Stopping at ' + age + ' works.'; },
-  sliderAlreadyBody: 'Your current assets already cover this plan, so every age on this slider clears it.',
-  sliderOkHead: function(age, years){ return 'Stopping at ' + age + ' works, with ' + years + ' years to spare.'; },
-  sliderOkBody: function(ffAge){
-    return 'You reach financial freedom at ' + ffAge + ', and everything below this slider is measured at the age it is left on.';
-  },
-
-  /* ── metric cards ── */
-  modeNameDie: 'Just Die',
-  modeNameLegacy: 'Leave a Legacy',
-  modeNameRich: 'Die Rich',
-  freeNever: 'Never',
-  freeNeverSub: 'The two curves never meet.',
-  freeAgeSub: function(years, when){ return years + ' years away, in ' + when + '.'; },
-  freePotNone: 'No pot funds this plan.',
-  freePotSub: function(times, modeName, real){
-    return times + 'x a year of retirement spending, for ' + modeName +
-           (real ? ', in today’s money.' : ', in the money of that year.');
-  },
-  realRetSub: function(ret, infl, tail){ return ret + ' less ' + infl + ' inflation. ' + tail; },
-  realRetForever: function(times){ return 'Forever costs ' + times + 'x spending.'; },
-  realRetNever: 'At or below zero, nothing lasts forever.',
-  needNotPossible: 'Not possible',
-  needNone: 'No pot works at this real return.',
-  needSub: function(modeName, times, swr, year){
-    return 'Your FIRE number for ' + modeName + ': ' + times + 'x a year of spending' +
-           (swr == null ? '' : ', a ' + swr + ' SWR') +
-           (year == null ? '.' : ', in ' + year + ' dollars.');
-  },
-  haveNothingEnough: 'Nothing is enough for this goal.',
-  haveMore: function(amount){ return amount + ' more than the pot needed.'; },
-  haveShort: function(amount){ return 'Short by ' + amount + '.'; },
-  successSub: function(paths, conf, pot){
-    return 'of ' + paths + ' simulated futures. ' + (pot == null
-      ? conf + ' confidence is out of reach at this volatility.'
-      : conf + ' confidence needs ' + pot + '.');
-  },
-  leftRanOut: 'The pot ran out. This is the shortfall it would have taken to see the plan through.',
-  leftLegacy: function(amount){ return 'Against the ' + amount + ' you wanted to leave.'; },
-  leftNeverStop: 'You never stop working on this setting, so nothing is ever drawn.',
-  leftAfter: function(years){ return 'After ' + years + ' years of retirement.'; },
-
-  /* ── charts ── */
-  axisCalendarYear: 'Calendar year',
-  axisAge: 'Age',
-  axisBalance: 'Balance',
-  axisAYear: 'A year',
-  hoverAt: function(when, age){ return when + ', age ' + age; },
-  dsWorst10: 'Worst 10%',
-  dsBest10: 'Best 10%',
-  dsDeposited: 'Money deposited',
-  dsInvestment: 'Investment outcome',
-  dsPotNeeded: 'Pot needed to stop here',
-  dsFree: 'Financially free',
-  dsSpending: 'Spending',
-  dsIncome: 'Income',
-  dsBalance: 'Balance',
-  lgInvestment: 'Investment outcome, never drawn on',
-  lgRange: 'Range of outcomes, worst 10% to best 10%',
-  lgDeposited: 'Money deposited, still in the pot',
-  lgFreeAt: function(age){ return 'Financially free at ' + age; },
-  lgSavingsWithdrawal: 'Savings/Withdrawal',
-  lgBalanceLower: 'Balance, lower panel',
-  lgRetireAt: function(age){ return 'Retire at ' + age; },
-  note1BandClipped: 'The axis is sized to the expected outcome, so the best of the simulated futures runs off the top.',
-  note1Clipped: 'A balance below zero is drawn flat at zero: you are spending more than you earn, so the pot is being eaten before you have even retired.',
-  note2NeverStop: 'The slider is at your life expectancy, so you never stop earning and nothing is ever drawn.',
-  note2Today: 'The slider is at your age now, so the drawdown starts today.',
-  note2RanOut: 'The balance goes below zero and is drawn there: that is the shortfall, not a pause at nothing.',
-
-  /* ── table ── */
-  thYear: 'Year',
-  thAge: 'Age',
-  thBalance: 'Balance',
-  thIncome: 'Income',
-  thExpense: 'Expense',
-  thSaved: 'Saved / drawn',
-  thGrowth: 'Growth',
-  tableSub: function(money){ return 'In ' + money + '.'; },
-  tableSubTip: function(savingsMode){
-    return 'Balance is what the pot reads AT that age; Income, Expense and Saved are the twelve months that follow it. ' +
-      (savingsMode === 'income'
-        ? 'Income is the net income you entered.'
-        : 'You entered savings, so Income is what you save plus what you spend.') +
-      ' Growth is the return that closes the year, taken as the residual. The highlighted row is the year you retire.';
-  },
-
-  /* ── assumptions ── */
-  aNoTax: '<strong>No tax.</strong> Enter everything net of it.',
-  aNoTaxTip: 'Tax differs too much between countries, and between an ordinary account and a pension wrapper, to model honestly in one tool.',
-  aMoney: function(money){ return '<strong>Shown in ' + money + '.</strong> Spending holds its value, so it rises with inflation.'; },
-  aMoneyTip: 'Future’s money is what the account will actually read: the same plan times each year’s inflation factor. Show Present Value strips it back out.',
-  aInflation: function(rate){ return '<strong>Inflation is ' + rate + ' a year</strong> and applies to every year, working or retired.'; },
-  aInflationTip: 'Living costs, the pot needed and the pension all rise with it, and the return is discounted by it (Fisher, not subtraction). The Expense column below is that rise, year by year.',
-  aTwoSections: '<strong>The two sections are two different questions.</strong> Path to freedom never withdraws; Cashflows always does.',
-  aTwoSectionsTip: 'Path to freedom keeps paying in and compares the result with the pot each age would need. Cashflows stops at the age on the slider and draws down. Moving the slider cannot change the freedom age.',
-  aSwr: function(swr){ return '<strong>Your FIRE number</strong> implies a ' + swr + ' SWR.'; },
-  aSwrTip: 'The share of the pot you spend in the first year. The familiar 25 times rule is the same arithmetic at a 4% real return.',
-  aBand: '<strong>The shaded band is not a path.</strong>',
-  aBandTip: function(paths){
-    return 'The 10th to 90th percentile across ' + paths + ' simulated futures at each year separately, so its edges are an envelope rather than one future you could live through. At 0% volatility they collapse onto the single smooth projection.';
-  },
-  aDeposited: '<strong>Money deposited is what you put in that is still there.</strong>',
-  aDepositedTip: 'Nothing is withdrawn on that chart, so it is every cent you have paid in, held down by the balance in the years a bad market has the pot below it. The gap to the investment line is the growth.',
-  aTable: '<strong>The year-by-year table reconciles.</strong> Balance plus Saved plus Growth is next year’s Balance, to the cent.',
-  aTableTip: 'Growth is whatever is left over once the flows are accounted for. In today’s money that is the real return; in future’s money, the nominal one.',
-  aIncomeEntered: '<strong>Income is what you entered</strong>, and what you save is whatever it leaves over.',
-  aIncomeEnteredTip: 'Income grows at the rate on the You tab, spending rises with inflation. Once you retire the only income is the pension, if you included one.',
-  aIncomeImplied: '<strong>Income is implied, not entered.</strong> It is what you save plus what you spend.',
-  aIncomeImpliedTip: 'You entered savings, so the income shown is the take-home pay that saving that much while spending that much implies. Switch to Net income on the You tab to enter it directly.',
-  aNotModelled: '<strong>Not modelled:</strong> one-off costs, a mortgage ending, aged care, or any spending change beyond the retirement percentage.',
-  aPensionIndexed: '<strong>The pension rises with inflation</strong>, so it keeps its value for ever.',
-  aPensionIndexedTip: function(startAge){
-    return 'A flat line in today’s money and a rising figure in the money of the day. It starts at age ' + startAge + ' and counts as income from then on, which is why it lowers the pot you need.';
-  },
-  aPensionFlat: '<strong>The pension never rises</strong>, so it buys less every year.',
-  aPensionFlatTip: 'A flat figure in the money of the day and a sinking one in today’s money. The erosion is measured from TODAY, not from the start age, because the amount you entered is what it pays now, so the years before you claim it wear it down too. Turn on "Rises with inflation" if your country indexes its pension.',
-  aForever: function(horizon){ return '<strong>Forever is tested to age ' + horizon + '.</strong>'; },
-  aForeverTip: 'At the required pot the balance holds its real value, so a longer horizon would not change the answer.',
-  aTicker: function(ticker, from, to){ return '<strong>' + ticker + '</strong> measured ' + from + ' to ' + to + '.'; },
-  aTickerStooqTip: 'That series is not adjusted for dividends, so the return is understated. A Yahoo series would include them.',
-  aTickerAdjTip: 'Adjusted close, so dividends are included in the return.',
-
-  /* ── ticker ── */
-  tickerIdle: 'Nothing is fetched until you press Fetch.',
-  tickerEnterFirst: 'Enter a ticker code first, for example SPY.',
-  tickerNoEngine: 'Market data engine did not load.',
-  tickerLoading: function(tk){ return 'Loading ' + tk + '…'; },
-  tickerNoHistory: function(tk){ return 'No price history came back for ' + tk + '.'; },
-  tickerTooShort: function(tk){ return 'Not enough price history for ' + tk + ' to measure anything useful.'; },
-  tickerOk: function(tk, years, cagr, std){
-    return '<strong>' + tk + '</strong> over ' + years + ' years: ' + cagr + ' a year, ' + std + ' volatility.';
-  },
-  tickerNotAdjusted: ' Not adjusted for dividends, so the return is understated.',
-  tickerPartial: function(from){ return ' Only part of the history was available, so this is measured from ' + from + ' onward.'; },
-  tickerFailed: function(tk, msg){ return 'Could not load ' + tk + ': ' + msg + '.'; },
-  tickerUnknownError: 'unknown error',
-  rateSuffix: function(left, limit){ return left + ' of ' + limit + ' data requests left today'; },
-
-  /* ── export ── */
-  exportToolName: 'Financial Freedom Calculator',
-  exportPath: 'Path to freedom',
-  exportCash: function(age){ return 'Cashflows and balance at ' + age; },
-  exportTitle: function(name, money){ return 'Financial Freedom Calculator: ' + name + ' (' + money + ')'; },
-  copyFailed: function(msg){ return 'PNG copy failed: ' + msg; },
-  copyNothing: 'Nothing to copy yet.',
-  copyUnsupported: 'Clipboard image copy is not supported in this browser.',
-  copyNoBlob: 'Could not create PNG blob.'
-},
-
-id: {
-  /* ── header ── */
-  h1Title: 'Kalkulator Kebebasan Finansial',
-  subtitle: 'Berapa yang cukup untuk berhenti bekerja, dan di usia berapa Anda benar-benar sampai ke sana.',
-  btnBack: '← Alat Lainnya',
-
-  /* ── quick start ── */
-  quickStartLabel: 'Mulai Cepat',
-  quickStartTip: 'Mengisi seluruh tab dengan rencana yang sudah jadi dan langsung menampilkan jawabannya. Ubah angka mana pun di atasnya.',
-  qsModerate: 'FIRE Moderat',
-  qsModerateTip: 'Usia 32 tahun, menabung $45.000 dari penghasilan bersih $110.000, membelanjakan $65.000, sudah punya $120.000 di saham global, dan pengeluaran saat pensiun tetap sama. Ini garis dasar untuk membandingkan skenario lain.',
-  qsFrugal: 'Hidup Hemat',
-  qsFrugalTip: 'Lean FIRE di usia 28: penghasilan bersih $92.000 berbanding pengeluaran $30.000, jadi dua pertiga gaji ditabung. Berhemat bekerja dua kali sekaligus, karena mengisi dana lebih cepat sekaligus mengecilkan dana yang dibutuhkan.',
-  qsGeo: 'Geoarbitrase, Bali',
-  qsGeoTip: 'Mencari nafkah di Australia, pensiun di Bali. Pengeluaran hari ini tetap $70.000, tetapi pengeluaran saat pensiun diatur 40% darinya, dan pengali di tab Tujuan itulah seluruh tuasnya. Satu angka inflasi, 3%, menutup kedua negara.',
-  qsFat: 'Fat FIRE, selamanya',
-  qsFatTip: 'Penghasilan tinggi $320.000 bersih, pengeluaran $120.000, di saham AS, dengan tujuan Mati Kaya: hanya pertumbuhan riil yang dibelanjakan, sehingga dana bertahan selamanya. Selamanya adalah tujuan termahal, dan surplusnya tetap sampai dengan cepat.',
-  qsLegacy: 'Warisan keluarga',
-  qsLegacyTip: 'Mewariskan $750.000 dalam nilai uang hari ini, masih utuh di usia 90, di atas 95% pengeluaran hari ini. Warisan itu didiskontokan kembali ke hari Anda berhenti, jadi tambahannya ke dana jauh lebih kecil dari nilai nominalnya.',
-  qsLate: 'Mulai terlambat, dengan pensiun negara',
-  qsLateTip: 'Mulai di usia 52 dengan imbal hasil berimbang 6,5%, tunjangan hari tua aktif sejak 67, dan pengeluaran pensiun 85%. Matikan tunjangan itu di tab Tujuan dan kebebasan mundur bertahun-tahun: itulah dana yang tidak perlu Anda kumpulkan sendiri.',
-
-  /* ── control tabs ── */
-  tabYou: 'Anda',
-  tabInvest: 'Investasi',
-  tabGoal: 'Tujuan',
-  tabSettings: 'Pengaturan',
-
-  /* ── You tab ── */
-  labelCurrency: 'Mata Uang',
-  tipCurrency: 'Hanya tampilan. Tidak ada nilai yang dikonversi.',
-  groupAges: 'Usia',
-  labelAgeNow: 'Usia sekarang',
-  tipAgeNow: 'Titik awal proyeksi.',
-  labelAgeDie: 'Harapan hidup',
-  tipAgeDie: 'Berapa lama uang itu harus bertahan. Tujuan Mati Kaya mengabaikannya.',
-  groupMoney: 'Uang masuk dan keluar',
-  tipSavings: '<strong>Tabungan:</strong> jumlah yang Anda sisihkan.<br><strong>Penghasilan bersih:</strong> gaji bersih Anda, dengan tabungan dihitung sebagai sisa setelah pengeluaran.',
-  segSavings: 'Tabungan',
-  segIncome: 'Penghasilan bersih',
-  optWeekly: 'per minggu',
-  optMonthly: 'per bulan',
-  optYearly: 'per tahun',
-  labelGrowth: 'Pertumbuhan jumlah itu, % p.a.',
-  tipGrowth: 'Seberapa cepat jumlah di atas naik tiap tahun, sebelum inflasi. Kenaikan gaji masuk di sini.',
-  labelExpense: 'Biaya hidup',
-  tipExpense: 'Yang Anda belanjakan untuk hidup sekarang. Daya belinya tetap sama tiap tahun, dengan angka yang naik mengikuti inflasi.',
-  labelInflation: 'Inflasi, % p.a.',
-  tipInflation: 'Seberapa cepat harga naik. Inflasi menaikkan pengeluaran Anda, dan dana yang Anda butuhkan ikut naik bersamanya.',
-
-  /* ── Investment tab ── */
-  labelAssets: 'Aset yang sudah diinvestasikan',
-  tipAssets: 'Yang sudah Anda miliki dan menghasilkan imbal hasil di bawah ini. Bukan rumah yang Anda tempati.',
-  labelAsset: 'Aset',
-  tipAsset: 'Mengisi dua kolom di bawah dengan angka historis jangka panjang.',
-  labelRet: 'Imbal hasil harapan (CAGR), % p.a.',
-  tipRet: 'Imbal hasil majemuk yang Anda harapkan, sebelum inflasi dan setelah biaya.',
-  labelStd: 'Volatilitas, % p.a.',
-  tipStd: 'Seberapa besar imbal hasil berayun dari tahun ke tahun. Isi 0 untuk satu proyeksi mulus.',
-  groupTicker: 'Atau pakai kode saham sungguhan',
-  labelTicker: 'Kode saham',
-  tipTicker: 'Mengukur dua kolom di atas dari harga sungguhan.',
-  tickerPlaceholder: 'mis. SPY, VAS.AX, BBCA.JK',
-  btnFetch: 'Ambil',
-  tickerRefLink: 'Lihat daftar kode saham umum di sini →',
-
-  /* ── Goal tab ── */
-  labelGoalQuestion: 'Uang ini untuk apa?',
-  modeDieTitle: 'Habis Saat Meninggal',
-  modeDieBody: 'Dana habis tepat di harapan hidup Anda. Paling murah, dan tanpa cadangan bila Anda berumur lebih panjang.',
-  modeLegacyTitle: 'Tinggalkan Warisan',
-  modeLegacyBody: 'Sejumlah tertentu, dalam nilai uang hari ini, masih tersisa di harapan hidup Anda.',
-  modeRichTitle: 'Mati Kaya',
-  modeRichBody: 'Hanya membelanjakan pertumbuhan riilnya, jadi bertahan selamanya. Perlu imbal hasil di atas inflasi.',
-  labelLegacy: 'Jumlah yang ingin diwariskan',
-  tipLegacy: 'Dalam nilai uang hari ini.',
-  labelRetireMultiplier: 'Pengeluaran saat pensiun, % dari hari ini',
-  tipRetireMultiplier: '100% berarti belanja sama seperti sekarang. 80% bila cicilan rumah sudah lunas.',
-  groupPension: 'Tunjangan hari tua atau pensiun negara',
-  labelPensionOn: 'Sertakan tunjangan pensiun',
-  tipPensionOn: 'Mengurangi dana yang Anda butuhkan, tetapi hanya sejak usia mulainya.',
-  labelPensionStartAge: 'Tunjangan mulai di usia',
-  labelPensionAmount: 'Besar tunjangan',
-  tipPensionAmount: 'Besarnya hari ini. Dihitung sebagai penghasilan sejak usia mulainya.',
-  labelPensionIndexed: 'Naik mengikuti inflasi',
-  tipPensionIndexed: '<strong>Aktif:</strong> terindeks, jadi daya belinya terjaga.<br><strong>Mati:</strong> angka tetap yang daya belinya turun tiap tahun.',
-
-  /* ── Settings tab ── */
-  labelShowReal: 'Tampilkan Nilai Sekarang',
-  tipShowReal: '<strong>Mati:</strong> uang masa depan.<br><strong>Aktif:</strong> uang hari ini. Rencananya sama saja.',
-  labelPaths: 'Simulasi masa depan',
-  tipPaths: 'Berapa banyak jalur acak yang membentuk pita dan probabilitasnya.',
-  labelConfidence: 'Tingkat keyakinan, %',
-  tipConfidence: 'Porsi simulasi masa depan yang harus dilewati oleh dana keyakinan.',
-  labelSeed: 'Benih acak',
-  tipSeed: 'Benih yang sama menghasilkan simulasi masa depan yang sama.',
-  staleNote: 'Asumsi berubah. Tekan Simulasikan untuk menjalankannya.',
-  btnSimulate: '▶ Simulasikan',
-  btnSimulated: '✓ Diperbarui',
-
-  /* ── boards, cards and charts ── */
-  boardPathTitle: 'Jalan menuju kebebasan',
-  mFreeAgeLabel: 'Bebas finansial di usia',
-  mFreeAgeTip: 'Usia paling awal saat investasi Anda mencapai dana yang dibutuhkan untuk berhenti saat itu. Penggeser pensiun tidak bisa menggesernya.',
-  mFreePotLabel: 'Dana yang dibutuhkan saat itu',
-  mFreePotTip: 'Biaya untuk berhenti di usia tersebut.',
-  mRealRetLabel: 'Imbal hasil riil',
-  mRealRetTip: 'Imbal hasil Anda setelah inflasi. Inilah yang menentukan sebesar apa dananya harus.',
-  chart1Title: 'Dana yang dibutuhkan vs pertumbuhan investasi',
-  btnSvgTitle: 'Unduh grafik ini sebagai SVG',
-  btnPngTitle: 'Unduh grafik ini sebagai PNG',
-  btnCopyTitle: 'Salin PNG ke papan klip',
-  btnResetZoomTitle: 'Atur ulang zoom',
-  btnCsvTitle: 'Unduh tabel ini sebagai CSV',
-  hoverHint: 'Arahkan kursor untuk memeriksa tahun mana pun.',
-  boardCashTitle: 'Arus Kas',
-  labelRetireAt: 'Pensiun di usia',
-  tipRetireAt: 'Usia saat Anda berhenti bekerja dan mulai hidup dari dana itu. Semua yang di bawah diukur pada usia ini.',
-  scaleMinDefault: 'Usia sekarang',
-  scaleMaxDefault: 'Harapan hidup',
-  mNeedLabelPre: 'Dana yang dibutuhkan di usia ',
-  mNeedLabelPost: '',
-  tipNeed: 'Dana yang Anda perlukan pada hari Anda pensiun, agar tujuan ini tercapai.',
-  mHaveLabelPre: 'Saldo di usia ',
-  mHaveLabelPost: '',
-  tipHave: 'Nilai investasi Anda yang diperkirakan tercapai pada hari Anda berhenti.',
-  mSuccessLabel: 'Peluang berhasil',
-  tipSuccess: 'Porsi simulasi masa depan yang uangnya bertahan. Rencanakan berdasarkan dana keyakinan yang disebut di bawahnya, bukan angka imbal hasil harapan.',
-  mLeftLabelPre: 'Sisa di usia ',
-  mLeftLabelPost: '',
-  tipLeft: 'Saldo yang tercatat di harapan hidup Anda. Angka negatif berarti kekurangan.',
-  chart2Title: 'Penghasilan, pengeluaran, dan saldo yang ditinggalkannya',
-  tableTitle: 'Tahun demi tahun',
-  assumptionsTitle: 'Apa saja asumsinya',
-
-  /* ── formatting atoms ── */
-  ageY: 'th',
-  ageM: 'bl',
-  monthNames: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
-  moneyToday: 'nilai uang hari ini',
-  moneyFuture: 'nilai uang masa depan',
-
-  /* ── currencies and asset presets ── */
-  curAUD: 'AUD - Dolar Australia',
-  curUSD: 'USD - Dolar Amerika Serikat',
-  curIDR: 'IDR - Rupiah Indonesia',
-  curSGD: 'SGD - Dolar Singapura',
-  curGBP: 'GBP - Pound Inggris',
-  curEUR: 'EUR - Euro',
-  presetCustom: 'Kustom (isi sendiri)',
-  presetCash: 'Kas / tabungan berbunga tinggi',
-  presetBonds: 'Pendapatan tetap (obligasi pemerintah)',
-  presetUs: 'Saham - Amerika Serikat',
-  presetAsx: 'Saham - Australia (ASX)',
-  presetWorld: 'Saham - global terdiversifikasi',
-  presetGold: 'Emas',
-
-  /* ── live notes under the controls ── */
-  savingsLabelSavings: 'Tabungan',
-  savingsLabelIncome: 'Penghasilan bersih',
-  savingsNoteIncome: 'Yang Anda tabung adalah selisih antara penghasilan dan pengeluaran.',
-  savingsNoteIncomeTip: 'Penghasilan tumbuh pada laju di bawah, pengeluaran naik mengikuti inflasi, jadi jumlah yang Anda tabung berubah tiap tahun.',
-  savingsNoteSavings: 'Jumlah ini tumbuh pada laju di bawah.',
-  savingsNoteSavingsTip: 'Pengeluaran menentukan besar dana yang Anda butuhkan, tetapi tidak mengubah jumlah yang Anda tabung. Beralih ke Penghasilan bersih agar selisihnya dihitungkan untuk Anda.',
-  presetNoteCustom: 'Angka Anda sendiri, atau pilih preset sebagai titik awal.',
-  presetNoteHistory: 'Sejarah jangka panjang, bukan ramalan.',
-  presetNoteHistoryTip: function(asAt){ return 'Nominal, sebelum pajak dan biaya, per ' + asAt + '. Semua kolom tetap bisa diubah.'; },
-  scaleMin: function(age){ return 'Berhenti hari ini (' + age + ')'; },
-  scaleMax: function(age){ return 'Tidak pernah berhenti (' + age + ')'; },
-  inflationNoteFlat: function(now, dieAge){
-    return 'Harga tidak bergerak, jadi ' + now + ' setahun yang Anda belanjakan hari ini tetap berharga ' + now + ' di usia ' + dieAge + '.';
-  },
-  inflationNote: function(now, atRetire, retireAge, atDie, dieAge){
-    return 'Biaya ' + now + ' setahun yang Anda belanjakan hari ini menjadi ' + atRetire + ' setahun di usia ' + retireAge +
-           ', dan ' + atDie + ' di usia ' + dieAge + '.';
-  },
-  inflationNoteTip: 'Hidup yang sama, angka yang lebih besar. Aktifkan Tampilkan Nilai Sekarang di Pengaturan untuk membacanya dalam nilai uang hari ini.',
-  pensionNoteEmpty: function(age){ return 'Isi jumlahnya dan ia dihitung sebagai penghasilan sejak usia ' + age + '.'; },
-  pensionNoteIndexed: function(perYear, startAge, atStart){
-    return perYear + ' setahun dalam nilai uang hari ini sejak usia ' + startAge +
-           ', dan daya belinya terjaga: ' + atStart + ' setahun dalam nilai uang tahun tersebut.';
-  },
-  pensionNoteIndexedTip: 'Australia, Inggris, dan Amerika Serikat sama-sama mengindeks tunjangan hari tua mereka.',
-  pensionNoteFlat: function(perYear, startAge, buysAtStart, buysAtDie, dieAge){
-    return perYear + ' setahun sejak usia ' + startAge + ' dan tidak pernah bertambah sepeser pun, jadi daya belinya setara ' +
-           buysAtStart + ' biaya hidup hari ini saat mulai dan ' + buysAtDie + ' di usia ' + dieAge + '.';
-  },
-  pensionNoteFlatTip: 'Tunjangan yang dibekukan tergerus sejak HARI INI, bukan sejak hari ia mulai dibayarkan: jumlah yang Anda isi adalah besarnya sekarang, jadi tahun-tahun sebelum Anda mengklaimnya pun ikut menggerusnya.',
-
-  /* ── diagnosis and remedies ── */
-  remedyEarnMore: 'Hasilkan lebih banyak',
-  remedySaveMore: 'Tabung lebih banyak',
-  remedySaveText: function(amount){ return amount + ' lebih banyak per bulan, setiap bulan mulai hari ini'; },
-  remedySpendLabel: 'Belanja lebih sedikit',
-  remedySpendText: function(pct, amount){
-    return 'pangkas pengeluaran menjadi ' + pct + ' dari hari ini, sekitar ' + amount + ' per bulan';
-  },
-  remedyReturnLabel: 'Kejar imbal hasil lebih tinggi',
-  remedyReturnText: function(need, have){
-    return need + ' setahun, bukan ' + have + ', yang berarti mengambil risiko lebih besar';
-  },
-  remedyLaterLabel: 'Pensiun lebih lambat',
-  remedyLaterText: function(newAge, oldAge){ return 'di usia ' + newAge + ', bukan ' + oldAge; },
-  diagInvalid: 'Harapan hidup Anda harus lebih tinggi daripada usia Anda sekarang.',
-  diagNoPotMsg: 'Maaf. Dengan angka-angka ini, kebebasan finansial mustahil secara matematis.',
-  diagNoPotDetail: 'Tidak ada dana sebesar apa pun yang membiayai rencana ini.',
-  diagRichMsg: 'Maaf. Pada tingkat imbal hasil dan inflasi ini, kebebasan finansial mustahil secara matematis.',
-  diagRichDetail: function(realRet){
-    return 'Imbal hasil riil Anda ' + realRet + ', jadi tidak ada dana sebesar apa pun yang bertahan selamanya. Kalahkan inflasi, atau pilih Habis Saat Meninggal.';
-  },
-  diagNeverMsg: 'Maaf. Pada tingkat penghasilan dan pengeluaran ini, kebebasan finansial mustahil secara matematis.',
-  diagNeverDetail: 'Tabungan Anda tidak pernah menyusul dana yang dibutuhkan, di usia berapa pun.',
-  diagAlready: 'Anda sudah bebas finansial. Aset Anda saat ini saja sudah membiayai rencana ini.',
-  diagLate: function(retireAge, ffAge){
-    return 'Belum di usia ' + retireAge + '. Dengan angka-angka ini Anda mencapai kebebasan finansial di usia ' + ffAge + '.';
-  },
-
-  /* ── verdict cards ── */
-  verdictCheckAges: 'Periksa usianya',
-  verdictAlreadyBody: 'Semua yang di bawah menunjukkan apa yang terjadi bila Anda berhenti sekarang.',
-  verdictFreeAt: function(age){ return 'Bebas finansial di usia ' + age + '.'; },
-  verdictFreeBody: 'Berdasarkan imbal hasil harapan saja, dan penggeser pensiun tidak bisa menggesernya. Baca juga peluangnya di bawah.',
-  verdictFreeTip: 'Satu angka imbal hasil rata-rata mengabaikan urutan datangnya tahun baik dan tahun buruk. Bila tahun buruk datang di awal, imbal hasil rata-rata yang sama bisa habis.',
-  sliderLateBody: function(years){ return years + ' tahun setelah usia pada penggeser ini. Salah satu dari langkah berikut menutup selisihnya.'; },
-  sliderAlreadyHead: function(age){ return 'Berhenti di usia ' + age + ' berhasil.'; },
-  sliderAlreadyBody: 'Aset Anda saat ini sudah membiayai rencana ini, jadi setiap usia pada penggeser ini terlampaui.',
-  sliderOkHead: function(age, years){ return 'Berhenti di usia ' + age + ' berhasil, dengan kelebihan ' + years + ' tahun.'; },
-  sliderOkBody: function(ffAge){
-    return 'Anda mencapai kebebasan finansial di usia ' + ffAge + ', dan semua yang di bawah penggeser ini diukur pada usia tempat ia dilepaskan.';
-  },
-
-  /* ── metric cards ── */
-  modeNameDie: 'Habis Saat Meninggal',
-  modeNameLegacy: 'Tinggalkan Warisan',
-  modeNameRich: 'Mati Kaya',
-  freeNever: 'Tidak pernah',
-  freeNeverSub: 'Kedua kurva tidak pernah bertemu.',
-  freeAgeSub: function(years, when){ return years + ' tahun lagi, pada ' + when + '.'; },
-  freePotNone: 'Tidak ada dana yang membiayai rencana ini.',
-  freePotSub: function(times, modeName, real){
-    return times + 'x pengeluaran pensiun setahun, untuk ' + modeName +
-           (real ? ', dalam nilai uang hari ini.' : ', dalam nilai uang tahun tersebut.');
-  },
-  realRetSub: function(ret, infl, tail){ return ret + ' dikurangi inflasi ' + infl + '. ' + tail; },
-  realRetForever: function(times){ return 'Selamanya berbiaya ' + times + 'x pengeluaran.'; },
-  realRetNever: 'Pada nol atau di bawahnya, tidak ada yang bertahan selamanya.',
-  needNotPossible: 'Tidak mungkin',
-  needNone: 'Tidak ada dana yang berhasil pada imbal hasil riil ini.',
-  needSub: function(modeName, times, swr, year){
-    return 'Angka FIRE Anda untuk ' + modeName + ': ' + times + 'x pengeluaran setahun' +
-           (swr == null ? '' : ', SWR ' + swr) +
-           (year == null ? '.' : ', dalam nilai uang tahun ' + year + '.');
-  },
-  haveNothingEnough: 'Tidak ada jumlah yang cukup untuk tujuan ini.',
-  haveMore: function(amount){ return amount + ' lebih banyak dari dana yang dibutuhkan.'; },
-  haveShort: function(amount){ return 'Kurang ' + amount + '.'; },
-  successSub: function(paths, conf, pot){
-    return 'dari ' + paths + ' simulasi masa depan. ' + (pot == null
-      ? 'Keyakinan ' + conf + ' tidak tercapai pada volatilitas ini.'
-      : 'Keyakinan ' + conf + ' membutuhkan ' + pot + '.');
-  },
-  leftRanOut: 'Dananya habis. Inilah kekurangan yang dibutuhkan untuk menuntaskan rencana ini.',
-  leftLegacy: function(amount){ return 'Dibandingkan ' + amount + ' yang ingin Anda wariskan.'; },
-  leftNeverStop: 'Pada pengaturan ini Anda tidak pernah berhenti bekerja, jadi tidak ada penarikan sama sekali.',
-  leftAfter: function(years){ return 'Setelah ' + years + ' tahun masa pensiun.'; },
-
-  /* ── charts ── */
-  axisCalendarYear: 'Tahun kalender',
-  axisAge: 'Usia',
-  axisBalance: 'Saldo',
-  axisAYear: 'Setahun',
-  hoverAt: function(when, age){ return when + ', usia ' + age; },
-  dsWorst10: '10% terburuk',
-  dsBest10: '10% terbaik',
-  dsDeposited: 'Uang yang disetor',
-  dsInvestment: 'Hasil investasi',
-  dsPotNeeded: 'Dana untuk berhenti di sini',
-  dsFree: 'Bebas finansial',
-  dsSpending: 'Pengeluaran',
-  dsIncome: 'Penghasilan',
-  dsBalance: 'Saldo',
-  lgInvestment: 'Hasil investasi, tidak pernah ditarik',
-  lgRange: 'Rentang hasil, 10% terburuk sampai 10% terbaik',
-  lgDeposited: 'Uang yang disetor, masih di dalam dana',
-  lgFreeAt: function(age){ return 'Bebas finansial di usia ' + age; },
-  lgSavingsWithdrawal: 'Tabungan/Penarikan',
-  lgBalanceLower: 'Saldo, panel bawah',
-  lgRetireAt: function(age){ return 'Pensiun di usia ' + age; },
-  note1BandClipped: 'Sumbu disesuaikan dengan hasil harapan, jadi simulasi masa depan yang terbaik melewati batas atas.',
-  note1Clipped: 'Saldo di bawah nol digambar rata di nol: pengeluaran Anda melebihi penghasilan, jadi dana itu tergerus bahkan sebelum Anda pensiun.',
-  note2NeverStop: 'Penggeser berada di harapan hidup Anda, jadi Anda tidak pernah berhenti berpenghasilan dan tidak ada penarikan sama sekali.',
-  note2Today: 'Penggeser berada di usia Anda sekarang, jadi penarikan dimulai hari ini.',
-  note2RanOut: 'Saldo turun di bawah nol dan digambar apa adanya: itu besarnya kekurangan, bukan berhenti di angka nol.',
-
-  /* ── table ── */
-  thYear: 'Tahun',
-  thAge: 'Usia',
-  thBalance: 'Saldo',
-  thIncome: 'Penghasilan',
-  thExpense: 'Pengeluaran',
-  thSaved: 'Ditabung / ditarik',
-  thGrowth: 'Pertumbuhan',
-  tableSub: function(money){ return 'Dalam ' + money + '.'; },
-  tableSubTip: function(savingsMode){
-    return 'Saldo adalah isi dana PADA usia tersebut; Penghasilan, Pengeluaran, dan Ditabung adalah dua belas bulan sesudahnya. ' +
-      (savingsMode === 'income'
-        ? 'Penghasilan adalah penghasilan bersih yang Anda isi.'
-        : 'Anda mengisi tabungan, jadi Penghasilan adalah jumlah yang Anda tabung ditambah yang Anda belanjakan.') +
-      ' Pertumbuhan adalah imbal hasil yang menutup tahun itu, diambil sebagai sisa. Baris yang disorot adalah tahun Anda pensiun.';
-  },
-
-  /* ── assumptions ── */
-  aNoTax: '<strong>Tanpa pajak.</strong> Isi semua angka setelah pajak.',
-  aNoTaxTip: 'Pajak terlalu berbeda antarnegara, dan antara rekening biasa dengan wadah dana pensiun, untuk dimodelkan secara jujur dalam satu alat.',
-  aMoney: function(money){ return '<strong>Ditampilkan dalam ' + money + '.</strong> Daya beli pengeluaran terjaga, jadi angkanya naik mengikuti inflasi.'; },
-  aMoneyTip: 'Nilai uang masa depan adalah angka yang benar-benar akan tertera di rekening: rencana yang sama dikalikan faktor inflasi tiap tahun. Tampilkan Nilai Sekarang menanggalkannya kembali.',
-  aInflation: function(rate){ return '<strong>Inflasi ' + rate + ' setahun</strong> dan berlaku untuk setiap tahun, saat bekerja maupun pensiun.'; },
-  aInflationTip: 'Biaya hidup, dana yang dibutuhkan, dan tunjangan pensiun semuanya naik mengikutinya, dan imbal hasil didiskontokan olehnya (Fisher, bukan pengurangan biasa). Kolom Pengeluaran di bawah adalah kenaikan itu, tahun demi tahun.',
-  aTwoSections: '<strong>Kedua bagian menjawab dua pertanyaan berbeda.</strong> Jalan menuju kebebasan tidak pernah menarik dana; Arus Kas selalu menariknya.',
-  aTwoSectionsTip: 'Jalan menuju kebebasan terus menyetor dan membandingkan hasilnya dengan dana yang dibutuhkan di tiap usia. Arus Kas berhenti di usia pada penggeser lalu menarik dana. Menggeser penggeser tidak bisa mengubah usia kebebasan.',
-  aSwr: function(swr){ return '<strong>Angka FIRE Anda</strong> menyiratkan SWR ' + swr + '.'; },
-  aSwrTip: 'Porsi dana yang Anda belanjakan pada tahun pertama. Aturan 25 kali yang terkenal adalah aritmetika yang sama pada imbal hasil riil 4%.',
-  aBand: '<strong>Pita berarsir bukan sebuah jalur.</strong>',
-  aBandTip: function(paths){
-    return 'Persentil ke-10 sampai ke-90 dari ' + paths + ' simulasi masa depan pada tiap tahun secara terpisah, jadi tepinya adalah selubung, bukan satu masa depan yang bisa Anda jalani. Pada volatilitas 0% keduanya menyatu ke satu proyeksi mulus.';
-  },
-  aDeposited: '<strong>Uang yang disetor adalah modal Anda yang masih ada di dalamnya.</strong>',
-  aDepositedTip: 'Tidak ada penarikan pada grafik itu, jadi angkanya adalah setiap rupiah yang Anda setorkan, ditahan oleh saldo pada tahun-tahun saat pasar buruk menekan dana di bawahnya. Jarak ke garis investasi adalah pertumbuhannya.',
-  aTable: '<strong>Tabel tahun demi tahun selalu cocok.</strong> Saldo ditambah Ditabung ditambah Pertumbuhan sama dengan Saldo tahun berikutnya, sampai satuan terkecil.',
-  aTableTip: 'Pertumbuhan adalah sisa setelah semua arus kas diperhitungkan. Dalam nilai uang hari ini itu adalah imbal hasil riil; dalam nilai uang masa depan, imbal hasil nominal.',
-  aIncomeEntered: '<strong>Penghasilan adalah angka yang Anda isi</strong>, dan tabungan adalah sisanya.',
-  aIncomeEnteredTip: 'Penghasilan tumbuh pada laju di tab Anda, pengeluaran naik mengikuti inflasi. Setelah Anda pensiun, satu-satunya penghasilan adalah tunjangan pensiun, bila Anda menyertakannya.',
-  aIncomeImplied: '<strong>Penghasilan disiratkan, bukan diisi.</strong> Angkanya adalah tabungan ditambah pengeluaran Anda.',
-  aIncomeImpliedTip: 'Anda mengisi tabungan, jadi penghasilan yang ditampilkan adalah gaji bersih yang tersirat dari menabung sebanyak itu sambil membelanjakan sebanyak itu. Beralih ke Penghasilan bersih di tab Anda untuk mengisinya langsung.',
-  aNotModelled: '<strong>Tidak dimodelkan:</strong> biaya sekali jalan, cicilan rumah yang lunas, perawatan lansia, atau perubahan pengeluaran apa pun di luar persentase pensiun.',
-  aPensionIndexed: '<strong>Tunjangan pensiun naik mengikuti inflasi</strong>, jadi daya belinya terjaga selamanya.',
-  aPensionIndexedTip: function(startAge){
-    return 'Garis datar dalam nilai uang hari ini dan angka yang menanjak dalam nilai uang masa depan. Ia mulai di usia ' + startAge + ' dan dihitung sebagai penghasilan sejak saat itu, karena itulah ia menurunkan dana yang Anda butuhkan.';
-  },
-  aPensionFlat: '<strong>Tunjangan pensiun tidak pernah naik</strong>, jadi daya belinya turun tiap tahun.',
-  aPensionFlatTip: 'Angka tetap dalam nilai uang masa depan dan angka yang menyusut dalam nilai uang hari ini. Penggerusannya diukur sejak HARI INI, bukan sejak usia mulainya, karena jumlah yang Anda isi adalah besarnya sekarang, jadi tahun-tahun sebelum Anda mengklaimnya pun ikut menggerusnya. Aktifkan "Naik mengikuti inflasi" bila negara Anda mengindeks tunjangan pensiunnya.',
-  aForever: function(horizon){ return '<strong>Selamanya diuji sampai usia ' + horizon + '.</strong>'; },
-  aForeverTip: 'Pada dana yang dibutuhkan, saldo mempertahankan nilai riilnya, jadi horizon yang lebih panjang tidak akan mengubah jawabannya.',
-  aTicker: function(ticker, from, to){ return '<strong>' + ticker + '</strong> diukur dari ' + from + ' sampai ' + to + '.'; },
-  aTickerStooqTip: 'Deret itu tidak disesuaikan dengan dividen, jadi imbal hasilnya lebih rendah dari semestinya. Deret Yahoo sudah memasukkannya.',
-  aTickerAdjTip: 'Harga penutupan yang disesuaikan, jadi dividen sudah termasuk dalam imbal hasilnya.',
-
-  /* ── ticker ── */
-  tickerIdle: 'Tidak ada data yang diambil sampai Anda menekan Ambil.',
-  tickerEnterFirst: 'Isi kode saham dulu, misalnya SPY.',
-  tickerNoEngine: 'Mesin data pasar gagal dimuat.',
-  tickerLoading: function(tk){ return 'Memuat ' + tk + '…'; },
-  tickerNoHistory: function(tk){ return 'Tidak ada riwayat harga yang kembali untuk ' + tk + '.'; },
-  tickerTooShort: function(tk){ return 'Riwayat harga ' + tk + ' terlalu pendek untuk mengukur apa pun yang berguna.'; },
-  tickerOk: function(tk, years, cagr, std){
-    return '<strong>' + tk + '</strong> selama ' + years + ' tahun: ' + cagr + ' setahun, volatilitas ' + std + '.';
-  },
-  tickerNotAdjusted: ' Tidak disesuaikan dengan dividen, jadi imbal hasilnya lebih rendah dari semestinya.',
-  tickerPartial: function(from){ return ' Hanya sebagian riwayat yang tersedia, jadi pengukuran ini dimulai dari ' + from + '.'; },
-  tickerFailed: function(tk, msg){ return 'Gagal memuat ' + tk + ': ' + msg + '.'; },
-  tickerUnknownError: 'galat tidak dikenal',
-  rateSuffix: function(left, limit){ return 'sisa ' + left + ' dari ' + limit + ' permintaan data hari ini'; },
-
-  /* ── export ── */
-  exportToolName: 'Kalkulator Kebebasan Finansial',
-  exportPath: 'Jalan menuju kebebasan',
-  exportCash: function(age){ return 'Arus kas dan saldo di usia ' + age; },
-  exportTitle: function(name, money){ return 'Kalkulator Kebebasan Finansial: ' + name + ' (' + money + ')'; },
-  copyFailed: function(msg){ return 'Gagal menyalin PNG: ' + msg; },
-  copyNothing: 'Belum ada yang bisa disalin.',
-  copyUnsupported: 'Penyalinan gambar ke papan klip tidak didukung di peramban ini.',
-  copyNoBlob: 'Gagal membuat blob PNG.'
-}
-};
-
-/* Look a key up in the current language, falling back to English. Extra
-   arguments are passed on to an entry that is a function, so a translated
-   sentence is built in its own word order rather than glued together from
-   fragments. */
-function T(key){
-  var v = LANG[lang][key];
-  if(v === undefined) v = LANG.en[key];
-  if(v === undefined) return key;
-  if(typeof v === 'function') return v.apply(null, Array.prototype.slice.call(arguments, 1));
-  return v;
-}
-
-/* The markup carries the English copy beside its key, so this only has work to
-   do on the Indonesian page. data-i18n writes textContent, data-i18n-html
-   writes innerHTML (for copy that carries a <strong> or a <br>), data-i18n-opt
-   is the same as data-i18n but names an <option>, data-i18n-tip rewrites the
-   data-tip a tooltip icon carries, data-i18n-ph a placeholder and
-   data-i18n-title a title attribute. */
-function applyLang(){
-  if(lang === 'en') return;
-  document.querySelectorAll('[data-i18n]').forEach(function(el){
-    var v = T(el.getAttribute('data-i18n'));
-    if(typeof v === 'string') el.textContent = v;
-  });
-  document.querySelectorAll('[data-i18n-html]').forEach(function(el){
-    var v = T(el.getAttribute('data-i18n-html'));
-    if(typeof v === 'string') el.innerHTML = v;
-  });
-  document.querySelectorAll('[data-i18n-opt]').forEach(function(el){
-    var v = T(el.getAttribute('data-i18n-opt'));
-    if(typeof v === 'string') el.textContent = v;
-  });
-  document.querySelectorAll('[data-i18n-tip]').forEach(function(el){
-    var v = T(el.getAttribute('data-i18n-tip'));
-    if(typeof v === 'string') el.setAttribute('data-tip', v);
-  });
-  document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
-    var v = T(el.getAttribute('data-i18n-ph'));
-    if(typeof v === 'string') el.setAttribute('placeholder', v);
-  });
-  document.querySelectorAll('[data-i18n-title]').forEach(function(el){
-    var v = T(el.getAttribute('data-i18n-title'));
-    if(typeof v === 'string') el.setAttribute('title', v);
-  });
-}
-
 /* ─── CONSTANTS ─── */
 
 // Display only. No conversion is performed, so the figures mean whatever
 // currency the user entered them in.
 var CURRENCIES = {
-  AUD: {locale:'en-AU', label:T('curAUD')},
-  USD: {locale:'en-US', label:T('curUSD')},
-  IDR: {locale:'id-ID', label:T('curIDR')},
-  SGD: {locale:'en-SG', label:T('curSGD')},
-  GBP: {locale:'en-GB', label:T('curGBP')},
-  EUR: {locale:'de-DE', label:T('curEUR')}
+  AUD: {locale:'en-AU', label:'AUD - Australian Dollar'},
+  USD: {locale:'en-US', label:'USD - US Dollar'},
+  IDR: {locale:'id-ID', label:'IDR - Indonesian Rupiah'},
+  SGD: {locale:'en-SG', label:'SGD - Singapore Dollar'},
+  GBP: {locale:'en-GB', label:'GBP - British Pound'},
+  EUR: {locale:'de-DE', label:'EUR - Euro'}
 };
 
 /* Long-run NOMINAL figures, before tax and before fees. They are starting
@@ -1010,13 +195,13 @@ var CURRENCIES = {
                regime break, and the volatility is equity-like without the
                earnings behind it. */
 var PRESET_ASSETS = {
-  custom: {label:T('presetCustom'), ret:8.0,  std:15.0},
-  cash:   {label:T('presetCash'),   ret:4.0,  std:1.0},
-  bonds:  {label:T('presetBonds'),  ret:5.0,  std:6.0},
-  us:     {label:T('presetUs'),     ret:10.0, std:15.5},
-  asx:    {label:T('presetAsx'),    ret:9.5,  std:16.0},
-  world:  {label:T('presetWorld'),  ret:8.5,  std:15.0},
-  gold:   {label:T('presetGold'),   ret:7.5,  std:17.0}
+  custom: {label:'Custom (enter your own)',        ret:8.0,  std:15.0},
+  cash:   {label:'Cash / high-yield savings',      ret:4.0,  std:1.0},
+  bonds:  {label:'Fixed income (government bonds)',ret:5.0,  std:6.0},
+  us:     {label:'Equity - United States',         ret:10.0, std:15.5},
+  asx:    {label:'Equity - Australia (ASX)',       ret:9.5,  std:16.0},
+  world:  {label:'Equity - global diversified',    ret:8.5,  std:15.0},
+  gold:   {label:'Gold',                           ret:7.5,  std:17.0}
 };
 var PRESETS_AS_AT = '2026-09';
 
@@ -1024,7 +209,7 @@ var PRESETS_AS_AT = '2026-09';
 // age 120: at the perpetuity pot the real balance is flat, so the horizon only
 // has to be long enough to expose a declining one.
 var RICH_HORIZON_AGE = 120;
-var MONTH_NAMES = T('monthNames');
+var MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var TICKER_HISTORY_START = '1990-01-01';
 
 var UI_DEFAULTS = {
@@ -1114,7 +299,7 @@ var fmt = {
     var whole = Math.floor(a + 1e-9);
     var mo = Math.round((a - whole) * 12);
     if(mo >= 12){ whole += 1; mo = 0; }
-    return mo ? (whole + T('ageY') + ' ' + mo + T('ageM')) : (whole + '');
+    return mo ? (whole + 'y ' + mo + 'm') : (whole + '');
   }
 };
 
@@ -1444,8 +629,8 @@ function solveRemedies(ui){
       if(extraMonthly > 0 && isFinite(extraMonthly)){
         out.push({
           key: 'save',
-          label: T(ui.savingsMode === 'income' ? 'remedyEarnMore' : 'remedySaveMore'),
-          text: T('remedySaveText', fmt.currency(extraMonthly))
+          label: ui.savingsMode === 'income' ? 'Earn more' : 'Save more',
+          text: fmt.currency(extraMonthly) + ' more a month, every month from today'
         });
       }
     }
@@ -1475,9 +660,9 @@ function solveRemedies(ui){
     if(shown < 0.999 && shown > 0){
       out.push({
         key: 'spend',
-        label: T('remedySpendLabel'),
-        text: T('remedySpendText', fmt.pct(shown * 100, 0),
-                fmt.currency(perMonth(ui.expense * shown, ui.expensePeriod)))
+        label: 'Spend less',
+        text: 'cut spending to ' + fmt.pct(shown * 100, 0) + ' of today, about ' +
+              fmt.currency(perMonth(ui.expense * shown, ui.expensePeriod)) + ' a month'
       });
     }
   }
@@ -1495,8 +680,9 @@ function solveRemedies(ui){
     if(shownRet > ui.ret + 0.01){
       out.push({
         key: 'return',
-        label: T('remedyReturnLabel'),
-        text: T('remedyReturnText', fmt.pct(shownRet, 1), fmt.pct(ui.ret, 1))
+        label: 'Earn a higher return',
+        text: fmt.pct(shownRet, 1) + ' a year instead of ' + fmt.pct(ui.ret, 1) +
+              ', which means taking more risk'
       });
     }
   }
@@ -1510,8 +696,8 @@ function solveRemedies(ui){
   if(later !== null){
     out.push({
       key: 'later',
-      label: T('remedyLaterLabel'),
-      text: T('remedyLaterText', fmt.age(later), fmt.age(P2.ageRetire))
+      label: 'Retire later',
+      text: 'at age ' + fmt.age(later) + ' instead of ' + fmt.age(P2.ageRetire)
     });
   }
   return out;
@@ -1524,7 +710,7 @@ function diagnose(ui){
      can still be nonsense is the span itself. Both ends of the slider are
      legitimate answers: retiring at your age now means stopping today, and
      retiring at your life expectancy means never stopping at all. */
-  if(P.ageDie <= P.ageNow) return {status:'invalid', message:T('diagInvalid')};
+  if(P.ageDie <= P.ageNow) return {status:'invalid', message:'Your life expectancy has to be later than your age now.'};
 
   var need = requiredPot(P, P.ageRetire);
   if(!isFinite(need)){
@@ -1533,15 +719,16 @@ function diagnose(ui){
     if(P.mode !== 'rich'){
       return {
         status: 'impossible',
-        message: T('diagNoPotMsg'),
-        detail: T('diagNoPotDetail'),
+        message: 'Sorry. On these numbers, financial freedom is mathematically impossible.',
+        detail: 'No pot of any size funds this plan.',
         remedies: []
       };
     }
     return {
       status: 'impossible',
-      message: T('diagRichMsg'),
-      detail: T('diagRichDetail', fmt.pct(P.rr * 100, 2)),
+      message: 'Sorry. At this return and inflation level, financial freedom is mathematically impossible.',
+      detail: 'Your real return is ' + fmt.pct(P.rr * 100, 2) +
+              ', so no pot lasts forever at any size. Beat inflation, or choose Just Die.',
       remedies: []
     };
   }
@@ -1550,18 +737,18 @@ function diagnose(ui){
   if(ffAge === null){
     return {
       status: 'impossible',
-      message: T('diagNeverMsg'),
-      detail: T('diagNeverDetail'),
+      message: 'Sorry. At this income and expense level, financial freedom is mathematically impossible.',
+      detail: 'Your savings never catch up with the pot you need, at any age.',
       remedies: solveRemedies(ui)
     };
   }
   if(ffAge <= P.ageNow + 1e-9){
-    return {status:'already', message:T('diagAlready'), ffAge: ffAge};
+    return {status:'already', message:'You are already financially free. Your current assets alone cover this plan.', ffAge: ffAge};
   }
   if(ffAge > P.ageRetire + 1e-9){
     return {
       status: 'late',
-      message: T('diagLate', fmt.age(P.ageRetire), fmt.age(ffAge)),
+      message: 'Not by ' + fmt.age(P.ageRetire) + '. On these numbers you reach financial freedom at ' + fmt.age(ffAge) + '.',
       remedies: solveRemedies(ui),
       ffAge: ffAge
     };
@@ -1743,8 +930,8 @@ function syncRetireSlider(){
   el.min = span.lo; el.max = span.hi;
   if(Number(el.value) !== UI.ageRetire) el.value = UI.ageRetire;
   $('ageRetireVal').textContent = fmt.age(UI.ageRetire);
-  $('retireScaleMin').textContent = T('scaleMin', fmt.age(span.lo));
-  $('retireScaleMax').textContent = T('scaleMax', fmt.age(span.hi));
+  $('retireScaleMin').textContent = 'Stop today (' + fmt.age(span.lo) + ')';
+  $('retireScaleMax').textContent = 'Never stop (' + fmt.age(span.hi) + ')';
   ['mNeedAge', 'mHaveAge'].forEach(function(id){ $(id).textContent = fmt.age(UI.ageRetire); });
   $('mLeftAge').textContent = fmt.age(UI.ageDie);
 }
@@ -1758,13 +945,17 @@ function syncVisibility(){
   $('legacyRow').style.display = UI.mode === 'legacy' ? '' : 'none';
   $('pensionRows').style.display = UI.pensionOn ? '' : 'none';
   renderPensionNote();
-  $('savingsLabel').textContent = T(UI.savingsMode === 'income' ? 'savingsLabelIncome' : 'savingsLabelSavings');
+  $('savingsLabel').textContent = UI.savingsMode === 'income' ? 'Net income' : 'Savings';
   $('savingsModeNote').innerHTML = UI.savingsMode === 'income'
-    ? T('savingsNoteIncome') + info(T('savingsNoteIncomeTip'))
-    : T('savingsNoteSavings') + info(T('savingsNoteSavingsTip'));
+    ? 'You save the gap between income and expenses.' +
+      info('Income grows at the rate below, expenses rise with inflation, so what you save changes every year.')
+    : 'This amount grows at the rate below.' +
+      info('Expenses size the pot you need but do not change what you save. Switch to Net income to have the gap worked out for you.');
+  var preset = PRESET_ASSETS[UI.assetPreset];
   $('presetNote').innerHTML = UI.assetPreset === 'custom'
-    ? T('presetNoteCustom')
-    : T('presetNoteHistory') + info(T('presetNoteHistoryTip', PRESETS_AS_AT));
+    ? 'Your own figures, or pick a preset to start from.'
+    : 'Long-run history, not a forecast.' +
+      info('Nominal, before tax and fees, as at ' + PRESETS_AS_AT + '. Every field stays editable.');
 }
 
 function syncCurrencyPrefixes(){
@@ -1848,7 +1039,7 @@ function show(res, value, yearIndex){
   return value * Math.pow(1 + res.P.inflation, yearIndex);
 }
 
-function moneyMode(res){ return T(res.ui.showReal ? 'moneyToday' : 'moneyFuture'); }
+function moneyMode(res){ return res.ui.showReal ? "today's money" : "future's money"; }
 
 /* Name a position on the calendar-year axis. The yearly samples sit on whole
    years and read as one, but the crossing falls BETWEEN two of them, so its x
@@ -1871,15 +1062,19 @@ function renderInflationNote(res){
   var i = res.P.inflation, now = res.P.X * 12;
   if(!(now > 0)){ el.textContent = ''; return; }
   if(i <= 0){
-    el.textContent = T('inflationNoteFlat', fmt.currency(now), fmt.age(res.P.ageDie));
+    el.textContent = 'Prices hold still, so the ' + fmt.currency(now) +
+      ' a year you spend today still costs ' + fmt.currency(now) + ' at ' +
+      fmt.age(res.P.ageDie) + '.';
     return;
   }
   var toRetire = Math.max(0, res.P.ageRetire - res.P.ageNow);
   var toDie = Math.max(0, res.P.ageDie - res.P.ageNow);
-  el.innerHTML = escapeHtml(T('inflationNote',
-      fmt.currency(now), fmt.currency(now * Math.pow(1 + i, toRetire)), fmt.age(res.P.ageRetire),
-      fmt.currency(now * Math.pow(1 + i, toDie)), fmt.age(res.P.ageDie))) +
-    info(T('inflationNoteTip'));
+  el.innerHTML = 'The ' + escapeHtml(fmt.currency(now)) + ' a year you spend today costs ' +
+    escapeHtml(fmt.currency(now * Math.pow(1 + i, toRetire))) + ' a year at ' +
+    escapeHtml(fmt.age(res.P.ageRetire)) + ', and ' +
+    escapeHtml(fmt.currency(now * Math.pow(1 + i, toDie))) + ' at ' +
+    escapeHtml(fmt.age(res.P.ageDie)) + '.' +
+    info('Same life, bigger figure. Turn on Show Present Value in Settings to read it in today\'s money instead.');
 }
 
 /* What the indexation switch actually does to the reader's own pension. The
@@ -1895,17 +1090,19 @@ function renderPensionNote(){
   var i = UI.inflation / 100;
   var toStart = Math.max(0, UI.pensionStartAge - UI.ageNow);
   var toDie = Math.max(0, UI.ageDie - UI.ageNow);
-  if(!(perYear > 0)){ el.textContent = T('pensionNoteEmpty', fmt.age(UI.pensionStartAge)); return; }
+  if(!(perYear > 0)){ el.textContent = 'Enter an amount and it is counted as income from age ' + fmt.age(UI.pensionStartAge) + '.'; return; }
   if(UI.pensionIndexed){
-    el.innerHTML = escapeHtml(T('pensionNoteIndexed', fmt.currency(perYear), fmt.age(UI.pensionStartAge),
-        fmt.currency(perYear * Math.pow(1 + i, toStart)))) +
-      info(T('pensionNoteIndexedTip'));
+    el.innerHTML = escapeHtml(fmt.currency(perYear)) + ' a year in today\u2019s money from age ' +
+      escapeHtml(fmt.age(UI.pensionStartAge)) + ', and it keeps buying that much: ' +
+      escapeHtml(fmt.currency(perYear * Math.pow(1 + i, toStart))) + ' a year in the money of that year.' +
+      info('Australia, the UK and the US all index their age pension.');
     return;
   }
-  el.innerHTML = escapeHtml(T('pensionNoteFlat', fmt.currency(perYear), fmt.age(UI.pensionStartAge),
-      fmt.currency(perYear / Math.pow(1 + i, toStart)),
-      fmt.currency(perYear / Math.pow(1 + i, toDie)), fmt.age(UI.ageDie))) +
-    info(T('pensionNoteFlatTip'));
+  el.innerHTML = escapeHtml(fmt.currency(perYear)) + ' a year from age ' +
+    escapeHtml(fmt.age(UI.pensionStartAge)) + ' and never a cent more, so it buys ' +
+    escapeHtml(fmt.currency(perYear / Math.pow(1 + i, toStart))) + ' of today\u2019s living when it starts and ' +
+    escapeHtml(fmt.currency(perYear / Math.pow(1 + i, toDie))) + ' by ' + escapeHtml(fmt.age(UI.ageDie)) + '.' +
+    info('A frozen pension is eroded from TODAY, not from the day it starts: the amount entered is what it pays now, so the years before you claim it wear it down too.');
 }
 
 /* TWO verdicts, because the page asks two questions and the slider only moves
@@ -1928,20 +1125,21 @@ function renderVerdict(res){
   var cls = 'verdict card visible ', html = '';
   if(d.status === 'invalid'){
     cls += 'bad';
-    html = '<h2>' + escapeHtml(T('verdictCheckAges')) + '</h2><p>' + escapeHtml(d.message) + '</p>';
+    html = '<h2>Check the ages</h2><p>' + escapeHtml(d.message) + '</p>';
   } else if(d.status === 'impossible'){
     cls += 'bad';
     html = '<h2>' + escapeHtml(d.message) + '</h2><p>' + escapeHtml(d.detail || '') + '</p>' + remedyList(d.remedies);
   } else if(d.status === 'already'){
     cls += 'good';
-    html = '<h2>' + escapeHtml(d.message) + '</h2><p>' + escapeHtml(T('verdictAlreadyBody')) + '</p>';
+    html = '<h2>' + escapeHtml(d.message) + '</h2>';
   } else {
     /* `late` and `ok` are the SAME answer to this question: there is a
        crossing, and this is the age it happens at. Whether the slider clears
        it is the other card's business, so this one never mentions it. */
     cls += 'good';
-    html = '<h2>' + escapeHtml(T('verdictFreeAt', fmt.age(d.ffAge))) + '</h2>' +
-      '<p>' + escapeHtml(T('verdictFreeBody')) + info(T('verdictFreeTip')) + '</p>';
+    html = '<h2>Financially free at ' + escapeHtml(fmt.age(d.ffAge)) + '.</h2>' +
+      '<p>On the expected return alone, and the retirement slider cannot move it. Read the chance below too.' +
+      info('A single average return ignores the order the good and bad years arrive in. Land the bad ones early and the same average return runs out.') + '</p>';
   }
   el.className = cls;
   el.innerHTML = html;
@@ -1965,17 +1163,18 @@ function renderSliderVerdict(res){
   if(d.status === 'late'){
     cls += 'warn';
     html = '<h2>' + escapeHtml(d.message) + '</h2><p>' +
-      escapeHtml(T('sliderLateBody', fmt.num(Math.max(0, d.ffAge - res.P.ageRetire), 1))) + '</p>' +
+      fmt.num(Math.max(0, d.ffAge - res.P.ageRetire), 1) +
+      ' years past the age on this slider. Any one of these closes it.</p>' +
       remedyList(d.remedies);
   } else if(d.status === 'already'){
     cls += 'good';
-    html = '<h2>' + escapeHtml(T('sliderAlreadyHead', fmt.age(res.P.ageRetire))) + '</h2>' +
-      '<p>' + escapeHtml(T('sliderAlreadyBody')) + '</p>';
+    html = '<h2>Stopping at ' + escapeHtml(fmt.age(res.P.ageRetire)) + ' works.</h2>' +
+      '<p>Every age on this slider clears it.</p>';
   } else {
     cls += 'good';
-    html = '<h2>' + escapeHtml(T('sliderOkHead', fmt.age(res.P.ageRetire),
-        fmt.num(Math.max(0, res.P.ageRetire - d.ffAge), 1))) + '</h2>' +
-      '<p>' + escapeHtml(T('sliderOkBody', fmt.age(d.ffAge))) + '</p>';
+    html = '<h2>Stopping at ' + escapeHtml(fmt.age(res.P.ageRetire)) + ' works, with ' +
+      fmt.num(Math.max(0, res.P.ageRetire - d.ffAge), 1) + ' years to spare.</h2>' +
+      '<p>You reach financial freedom at ' + escapeHtml(fmt.age(d.ffAge)) + '.</p>';
   }
   el.className = cls;
   el.innerHTML = html;
@@ -1995,57 +1194,62 @@ function remedyList(remedies){
 function renderMetrics(res){
   var retireYearIdx = Math.max(0, Math.round(res.P.ageRetire - res.P.ageNow));
   var dieYearIdx = Math.max(0, Math.round(res.P.ageDie - res.P.ageNow));
-  var modeName = T({die:'modeNameDie', legacy:'modeNameLegacy', rich:'modeNameRich'}[res.ui.mode]);
+  var modeName = {die:'Just Die', legacy:'Leave a Legacy', rich:'Die Rich'}[res.ui.mode];
   var yearsOf = function(pot){ return pot / Math.max(1e-9, res.P.Xr * 12); };
 
   // ── Section 1 ──
   var free = res.ffAge;
-  $('mFreeAge').textContent = free == null ? T('freeNever') : fmt.age(free);
+  $('mFreeAge').textContent = free == null ? 'Never' : fmt.age(free);
   $('mFreeAge').className = 'value ' + (free == null ? 'neg' : '');
   $('mFreeAgeSub').textContent = free == null
-    ? T('freeNeverSub')
-    : T('freeAgeSub', fmt.num(Math.max(0, free - res.P.ageNow), 1),
-        whenLabel(res, res.thisYear + (free - res.P.ageNow)));
+    ? 'The two curves never meet.'
+    : fmt.num(Math.max(0, free - res.P.ageNow), 1) + ' years away, in ' +
+      whenLabel(res, res.thisYear + (free - res.P.ageNow)) + '.';
 
   var freePot = free == null ? null : requiredPot(res.P, free);
   var freeIdx = free == null ? 0 : (free - res.P.ageNow);
   $('mFreePot').textContent = (freePot == null || !isFinite(freePot))
     ? '—' : fmt.currency(show(res, freePot, freeIdx), true);
   $('mFreePotSub').textContent = (freePot == null || !isFinite(freePot))
-    ? T('freePotNone')
-    : T('freePotSub', fmt.num(yearsOf(freePot), 1), modeName, !!res.ui.showReal);
+    ? 'No pot funds this plan.'
+    : fmt.num(yearsOf(freePot), 1) + 'x a year of retirement spending, for ' + modeName +
+      (res.ui.showReal ? ', in today\u2019s money.' : ', in the money of that year.');
 
   $('mRealRet').textContent = fmt.pct(res.P.rr * 100, 2);
-  $('mRealRetSub').textContent = T('realRetSub', fmt.pct(res.ui.ret, 1), fmt.pct(res.ui.inflation, 1),
-    res.P.rr > 0
-      ? T('realRetForever', fmt.num((1 + res.P.rm) / res.P.rm / 12, 1))
-      : T('realRetNever'));
+  $('mRealRetSub').textContent = fmt.pct(res.ui.ret, 1) + ' less ' + fmt.pct(res.ui.inflation, 1) +
+    ' inflation. ' + (res.P.rr > 0
+      ? 'Forever costs ' + fmt.num((1 + res.P.rm) / res.P.rm / 12, 1) + 'x spending.'
+      : 'At or below zero, nothing lasts forever.');
 
   // ── Section 2, all at the slider age ──
   var need = res.needAtRetire, have = res.potAtRetire;
-  $('mNeed').textContent = isFinite(need) ? fmt.currency(show(res, need, retireYearIdx), true) : T('needNotPossible');
+  $('mNeed').textContent = isFinite(need) ? fmt.currency(show(res, need, retireYearIdx), true) : 'Not possible';
   var swr = isFinite(need) && need > 0 ? (res.P.Xr * 12 / need * 100) : null;
   $('mNeedSub').textContent = isFinite(need)
-    ? T('needSub', modeName, fmt.num(yearsOf(need), 1), swr == null ? null : fmt.pct(swr, 2),
-        res.ui.showReal ? null : (res.thisYear + retireYearIdx))
-    : T('needNone');
+    ? 'Your FIRE number for ' + modeName + ': ' + fmt.num(yearsOf(need), 1) + 'x a year of spending' +
+      (swr == null ? '' : ', a ' + fmt.pct(swr, 2) + ' SWR') +
+      (res.ui.showReal ? '.' : ', in ' + (res.thisYear + retireYearIdx) + ' dollars.')
+    : 'No pot works at this real return.';
 
   var short = isFinite(need) ? have - need : -Infinity;
   $('mHave').textContent = fmt.currency(show(res, have, retireYearIdx), true);
   $('mHave').className = 'value ' + (!isFinite(short) ? 'neg' : (short >= -1e-6 ? 'pos' : 'neg'));
   $('mHaveSub').textContent = !isFinite(short)
-    ? T('haveNothingEnough')
+    ? 'Nothing is enough for this goal.'
     : (short >= -1e-6
-        ? T('haveMore', fmt.currency(show(res, short, retireYearIdx), true))
-        : T('haveShort', fmt.currency(show(res, -short, retireYearIdx), true)));
+        ? fmt.currency(show(res, short, retireYearIdx), true) + ' more than the pot needed.'
+        : 'Short by ' + fmt.currency(show(res, -short, retireYearIdx), true) + '.');
 
   var sr = res.successAtPlan;
   $('mSuccess').textContent = fmt.pct(sr * 100, 0);
   $('mSuccess').className = 'value ' + (sr >= 0.85 ? 'pos' : (sr < 0.6 ? 'neg' : ''));
   /* The confidence pot no longer has a card of its own, but it is still the
      figure to plan around, so it rides under the probability it belongs to. */
-  $('mSuccessSub').textContent = T('successSub', fmt.num(res.reqs.paths), fmt.pct(res.ui.confidence, 0),
-    isFinite(res.confPot) ? fmt.currency(show(res, res.confPot, retireYearIdx), true) : null);
+  $('mSuccessSub').textContent = 'of ' + fmt.num(res.reqs.paths) + ' simulated futures. ' +
+    (isFinite(res.confPot)
+      ? fmt.pct(res.ui.confidence, 0) + ' confidence needs ' +
+        fmt.currency(show(res, res.confPot, retireYearIdx), true) + '.'
+      : fmt.pct(res.ui.confidence, 0) + ' confidence is out of reach at this volatility.');
 
   /* What the whole drawdown adds up to. It is the one figure that says out
      loud whether the plan was funded: the balance at the life expectancy after
@@ -2054,12 +1258,12 @@ function renderMetrics(res){
   $('mLeft').textContent = fmt.currency(show(res, left, dieYearIdx), true);
   $('mLeft').className = 'value ' + (left >= -1e-6 ? (left > 1 ? 'pos' : '') : 'neg');
   $('mLeftSub').textContent = left < -1e-6
-    ? T('leftRanOut')
+    ? 'The pot ran out.'
     : (res.ui.mode === 'legacy'
-        ? T('leftLegacy', fmt.currency(show(res, res.ui.legacy, dieYearIdx), true))
+        ? 'Against the ' + fmt.currency(show(res, res.ui.legacy, dieYearIdx), true) + ' you wanted to leave.'
         : (res.P.ageRetire >= res.P.ageDie - 1e-9
-            ? T('leftNeverStop')
-            : T('leftAfter', fmt.num(Math.max(0, res.P.ageDie - res.P.ageRetire), 1))));
+            ? 'You never stop working on this setting, so nothing is ever drawn.'
+            : 'After ' + fmt.num(Math.max(0, res.P.ageDie - res.P.ageRetire), 1) + ' years of retirement.'));
 }
 
 /* ─── CHARTS ─── */
@@ -2231,13 +1435,13 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
           title: function(items){
             if(!items.length) return '';
             var yr = items[0].parsed.x;
-            return T('hoverAt', whenLabel(res, yr), fmt.age(ageOf(yr)));
+            return whenLabel(res, yr) + ', age ' + fmt.age(ageOf(yr));
           },
           label: function(ctx){ return '  ' + ctx.dataset.label + ': ' + fmt.currency(ctx.parsed.y, true); },
           afterBody: function(items){
             if(!items.length) return;
             var yr = items[0].parsed.x;
-            $(hoverId).textContent = T('hoverAt', whenLabel(res, yr), fmt.age(ageOf(yr))) + '  —  ' +
+            $(hoverId).textContent = whenLabel(res, yr) + ', age ' + fmt.age(ageOf(yr)) + '  —  ' +
               items.map(function(i){ return i.dataset.label + ': ' + fmt.currency(i.parsed.y, true); }).join('  |  ');
           }
         }
@@ -2259,7 +1463,7 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
   };
   o.scales.x = {
     type: 'linear', position: 'bottom', min: xMin, max: xMax,
-    title: {display: true, text: T('axisCalendarYear'), color: t.muted, font: {size: 11}},
+    title: {display: true, text: 'Calendar year', color: t.muted, font: {size: 11}},
     ticks: {color: t.muted, maxTicksLimit: 12, precision: 0, font: {size: 11},
             callback: function(v){ return String(Math.round(v)); }},
     grid: {color: t.grid}
@@ -2268,7 +1472,7 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
   // reader actually thinks in, under the calendar year.
   o.scales.xAge = {
     type: 'linear', position: 'bottom', min: xMin, max: xMax,
-    title: {display: true, text: T('axisAge'), color: t.muted, font: {size: 11}},
+    title: {display: true, text: 'Age', color: t.muted, font: {size: 11}},
     ticks: {color: t.muted, maxTicksLimit: 12, precision: 0, font: {size: 11},
             callback: function(v){ return fmt.age(ageOf(v)); }},
     grid: {drawOnChartArea: false, color: t.grid}
@@ -2317,7 +1521,7 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
     max: start ? start.max : undefined,
     stack: lower ? 'ffCash' : undefined,
     stackWeight: lower ? (lower.topWeight || 2) : undefined,
-    title: {display: true, text: (opts.yTitle || T('axisBalance')) + ', ' + moneyMode(res),
+    title: {display: true, text: (opts.yTitle || 'Balance') + ', ' + moneyMode(res),
             color: t.muted, font: {size: 11}},
     ticks: {color: t.muted, font: {size: 11},
             maxTicksLimit: lower ? 7 : undefined, includeBounds: !lower,
@@ -2368,12 +1572,10 @@ function renderCharts(res){
 
      The cashflow balance is not floored: there, going under IS the answer the
      chart is being asked for, and the shortfall is the size of the miss. */
-  var clipped = {path: false};
-  var floorZero = function(arr, which){
+  var floorZero = function(arr){
     return arr.map(function(v){
       if(v == null || !isFinite(v)) return v;
-      if(v < 0){ clipped[which] = true; return 0; }
-      return v;
+      return v < 0 ? 0 : v;
     });
   };
 
@@ -2384,11 +1586,11 @@ function renderCharts(res){
      meet is the answer. Putting a withdrawal on this chart was what used to
      make it unreadable, and worse, it drew a balance the crossing was not
      even solved against. */
-  var acc = floorZero(scale(yearly(res.acc, years)), 'path');
-  var dep = floorZero(scale(yearly(res.deposited, years)), 'path');
+  var acc = floorZero(scale(yearly(res.acc, years)));
+  var dep = floorZero(scale(yearly(res.deposited, years)));
   var need = scale(res.needCurve);
-  var p10 = floorZero(scale(res.mc.bands.p10), 'path');
-  var p90 = floorZero(scale(res.mc.bands.p90), 'path');
+  var p10 = floorZero(scale(res.mc.bands.p10));
+  var p90 = floorZero(scale(res.mc.bands.p90));
 
   /* Where the chart OPENS. The crossing is the one thing this chart exists for
      and it lands in the first third of most plans, while the investment keeps
@@ -2423,20 +1625,20 @@ function renderCharts(res){
      it, and so does the cross-tool chart check). Here it is the 90th
      percentile: sized to, it would flatten the crossing this chart is for. */
   var ds1 = [
-    {label:T('dsWorst10'), data: pts(p10, y0), borderColor: withAlpha(t.a, 0), backgroundColor:'transparent',
+    {label:'Worst 10%', data: pts(p10, y0), borderColor: withAlpha(t.a, 0), backgroundColor:'transparent',
      borderWidth: 0, pointRadius: 0, fill: false, legendSpec: bandSpec},
-    {label:T('dsBest10'), data: pts(p90, y0), borderColor: withAlpha(t.a, 0), backgroundColor: withAlpha(t.a, 0.16),
+    {label:'Best 10%', data: pts(p90, y0), borderColor: withAlpha(t.a, 0), backgroundColor: withAlpha(t.a, 0.16),
      borderWidth: 0, pointRadius: 0, fill: '-1', legendSpec: bandSpec, noAutoFit: true},
-    {label:T('dsDeposited'), data: pts(dep, y0), borderColor: t.a, borderDash:[2,3],
+    {label:'Money deposited', data: pts(dep, y0), borderColor: t.a, borderDash:[2,3],
      borderWidth: 1.8, pointRadius: 0, fill: false},
-    {label:T('dsInvestment'), data: pts(acc, y0), borderColor: t.a, borderWidth: 2.4, pointRadius: 0, fill: false},
-    {label:T('dsPotNeeded'), data: pts(need, y0), borderColor: t.b, borderWidth: 2, pointRadius: 0, fill: false}
+    {label:'Investment outcome', data: pts(acc, y0), borderColor: t.a, borderWidth: 2.4, pointRadius: 0, fill: false},
+    {label:'Pot needed to stop here', data: pts(need, y0), borderColor: t.b, borderWidth: 2, pointRadius: 0, fill: false}
   ];
   var legend1 = [
-    {label:T('dsPotNeeded'), datasets:[4]},
-    {label:T('lgInvestment'), datasets:[3]},
-    {label:T('lgRange'), datasets:[0, 1], mark: 1},
-    {label:T('lgDeposited'), datasets:[2]}
+    {label:'Pot needed to stop here', datasets:[4]},
+    {label:'Investment outcome, never drawn on', datasets:[3]},
+    {label:'Range of outcomes, worst 10% to best 10%', datasets:[0, 1], mark: 1},
+    {label:'Money deposited, still in the pot', datasets:[2]}
   ];
 
   /* The crossing is the one thing this chart exists for, and it falls BETWEEN
@@ -2448,13 +1650,13 @@ function renderCharts(res){
     var crossNeed = requiredPot(res.P, res.ffAge);
     if(isFinite(crossNeed) && crossOffset <= years + 1e-9){
       var cx = y0 + crossOffset, cy = show(res, crossNeed, crossOffset);
-      ds1.push({label:T('dsFree'), data:[{x: cx, y: 0}, {x: cx, y: cy}],
+      ds1.push({label:'Financially free', data:[{x: cx, y: 0}, {x: cx, y: cy}],
                 borderColor: withAlpha(t.e, 0.55), borderWidth: 1.4, borderDash:[4,4],
                 pointRadius: 0, fill: false, order: -1, ffTipHide: true});
-      ds1.push({label:T('dsFree'), data:[{x: cx, y: cy}],
+      ds1.push({label:'Financially free', data:[{x: cx, y: cy}],
                 borderColor: t.e, backgroundColor: t.panel, borderWidth: 3,
                 pointRadius: 6, pointHoverRadius: 8, showLine: false, fill: false, order: -2});
-      legend1.push({label:T('lgFreeAt', fmt.age(res.ffAge)),
+      legend1.push({label:'Financially free at ' + fmt.age(res.ffAge),
                     datasets:[ds1.length - 2, ds1.length - 1], mark: ds1.length - 1});
     }
   }
@@ -2470,10 +1672,9 @@ function renderCharts(res){
   chart1.$fitY = {y: fit1};
   renderLegend('legend1', chart1, legend1);
 
-  var notes1 = [];
-  if(bandClipped) notes1.push(T('note1BandClipped'));
-  if(clipped.path) notes1.push(T('note1Clipped'));
-  $('chart1Sub').textContent = notes1.join(' ');
+  $('chart1Sub').textContent = bandClipped
+    ? 'The axis is sized to the expected outcome, so the best of the simulated futures runs off the top.'
+    : '';
 
   /* ── Cashflows ──────────────────────────────────────────────────────────
      ONE chart, two plot areas stacked on one pair of x axes. Above, in two
@@ -2496,7 +1697,7 @@ function renderCharts(res){
      a line drawn flat along the axis instead would be the one place on the
      page that hid the failure the table and the "Left at" card both report. */
   var bal = scale(yearly(res.det, years));
-  var retLabel = T('lgRetireAt', fmt.age(res.P.ageRetire));
+  var retLabel = 'Retire at ' + fmt.age(res.P.ageRetire);
 
   var fit2 = makeYFit(y0, [income, spend], [income, spend], {includeZero: true});
   var fit3 = makeYFit(y0, [bal], [bal], {includeZero: true, topPad: 2.2});
@@ -2516,9 +1717,9 @@ function renderCharts(res){
   var marked = retIdx > 0 && retIdx < years;
 
   var ds2 = [
-    {label:T('dsSpending'), data: pts(spend, y0), yAxisID:'y', borderColor: t.b, borderWidth: 2.2,
+    {label:'Spending', data: pts(spend, y0), yAxisID:'y', borderColor: t.b, borderWidth: 2.2,
      pointRadius: 0, fill: false, order: 1},
-    {label:T('dsIncome'), data: pts(income, y0), yAxisID:'y', borderColor: t.c, borderWidth: 2.2,
+    {label:'Income', data: pts(income, y0), yAxisID:'y', borderColor: t.c, borderWidth: 2.2,
      pointRadius: 0, order: 0,
      // `above` is where income runs above spending, so the gap is saved; the
      // other side is the gap the pot has to cover.
@@ -2526,21 +1727,21 @@ function renderCharts(res){
     /* The pot is blue in the path chart, so it is blue here: the same money,
        seen from the other question. It must not be red, because red is already
        the spending and the gap the pot has to cover in the pane above. */
-    {label:T('dsBalance'), data: pts(bal, y0), yAxisID:'yBal', borderColor: t.a, borderWidth: 2.2,
+    {label:'Balance', data: pts(bal, y0), yAxisID:'yBal', borderColor: t.a, borderWidth: 2.2,
      pointRadius: 0, fill: 'origin', backgroundColor: withAlpha(t.a, 0.10), order: 3}
   ];
   /* One fill, one entry. The shaded gap is a single quantity — what income
      leaves over — and the two colours are its sign, so it reads as one swatch
      split down the middle rather than as two separate things to hide. */
   var legend2 = [
-    {label:T('dsIncome'), datasets:[1], spec:{fill: null}},
-    {label:T('dsSpending'), datasets:[0]},
+    {label:'Income', datasets:[1], spec:{fill: null}},
+    {label:'Spending', datasets:[0]},
     /* The fill belongs to the income dataset but is not its line, so it is
        stated here as the block it is drawn as — in BOTH of its colours, which
        is what makes it one entry instead of two. */
-    {label:T('lgSavingsWithdrawal'), datasets:[1],
+    {label:'Savings/Withdrawal', datasets:[1],
      spec:{type:'area', width:0, fill: withAlpha(t.c, 0.28), fill2: withAlpha(t.b, 0.28)}},
-    {label:T('lgBalanceLower'), datasets:[2]}
+    {label:'Balance, lower panel', datasets:[2]}
   ];
   if(marked){
     // One rule, drawn in both panes, so hiding it hides the whole line down
@@ -2556,27 +1757,14 @@ function renderCharts(res){
     plugins:[Y_FIT_PLUGIN],
     data:{datasets: ds2},
     options: baseOptions(res, t, 'hover2', ageOf, y0, y0 + years,
-                         {yTitle: T('axisAYear'), fitY: fit2,
-                          lowerPane: {id: 'yBal', title: T('axisBalance'), fitY: fit3,
+                         {yTitle: 'A year', fitY: fit2,
+                          lowerPane: {id: 'yBal', title: 'Balance', fitY: fit3,
                                       weight: 1, topWeight: 2}})
   });
   // Both panes are refitted to the x window on the same update, so a zoom
   // cannot leave one of them scaled for a view it is no longer showing.
   chart2.$fitY = {y: fit2, yBal: fit3};
   renderLegend('legend2', chart2, legend2);
-
-  /* Only the two edge cases the picture cannot show for itself: at either end
-     of the slider there is no crossing to read, so the chart looks like a
-     mistake unless it is said. The ordinary case needs no caption. */
-  var notes2 = [];
-  if(res.P.ageRetire >= res.P.ageDie - 1e-9){
-    notes2.push(T('note2NeverStop'));
-  } else if(res.P.ageRetire <= res.P.ageNow + 1e-9){
-    notes2.push(T('note2Today'));
-  }
-  var ranOut = bal.some(function(v){ return v != null && isFinite(v) && v < 0; });
-  if(ranOut) notes2.push(T('note2RanOut'));
-  $('chart2Sub').textContent = notes2.join(' ');
 }
 
 /* ─── TABLE ─── */
@@ -2643,12 +1831,14 @@ function renderTable(res){
       '</tr>';
   });
   $('tableWrap').innerHTML =
-    '<table><thead><tr><th>' + escapeHtml(T('thYear')) + '</th><th>' + escapeHtml(T('thAge')) +
-    '</th><th>' + escapeHtml(T('thBalance')) + '</th><th>' + escapeHtml(T('thIncome')) +
-    '</th><th>' + escapeHtml(T('thExpense')) + '</th><th>' + escapeHtml(T('thSaved')) +
-    '</th><th>' + escapeHtml(T('thGrowth')) + '</th></tr></thead><tbody>' + rows + '</tbody></table>';
-  $('tableSub').innerHTML = escapeHtml(T('tableSub', moneyMode(res))) +
-    info(T('tableSubTip', res.ui.savingsMode));
+    '<table><thead><tr><th>Year</th><th>Age</th><th>Balance</th><th>Income</th><th>Expense</th>' +
+    '<th>Saved / drawn</th><th>Growth</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  $('tableSub').innerHTML = 'In ' + moneyMode(res) + '.' +
+    info('Balance is what the pot reads AT that age; Income, Expense and Saved are the twelve months that follow it. ' +
+         (res.ui.savingsMode === 'income'
+           ? 'Income is the net income you entered.'
+           : 'You entered savings, so Income is what you save plus what you spend.') +
+         ' Growth is the return that closes the year, taken as the residual. The highlighted row is the year you retire.');
 }
 
 /* ─── ASSUMPTIONS ─── */
@@ -2656,31 +1846,56 @@ function renderTable(res){
 function renderAssumptions(res){
   var swr = res.needAtRetire > 0 ? (res.P.Xr * 12 / res.needAtRetire * 100) : null;
   var items = [
-    T('aNoTax') + info(T('aNoTaxTip')),
-    T('aMoney', moneyMode(res)) + info(T('aMoneyTip')),
-    T('aInflation', fmt.pct(res.ui.inflation, 1)) + info(T('aInflationTip')),
-    T('aTwoSections') + info(T('aTwoSectionsTip')),
-    T('aSwr', swr == null ? 'n/a' : fmt.pct(swr, 2)) + info(T('aSwrTip')),
-    T('aBand') + info(T('aBandTip', fmt.num(res.mc.paths))),
-    T('aDeposited') + info(T('aDepositedTip')),
-    T('aTable') + info(T('aTableTip')),
+    '<strong>No tax.</strong> Enter everything net of it.' +
+      info('Tax differs too much between countries, and between an ordinary account and a pension wrapper, to model honestly in one tool.'),
+
+    '<strong>Shown in ' + moneyMode(res) + '.</strong> Spending holds its value, so it rises with inflation.' +
+      info('Future\u2019s money is what the account will actually read: the same plan times each year\'s inflation factor. Show Present Value strips it back out.'),
+
+    '<strong>Inflation is ' + fmt.pct(res.ui.inflation, 1) + ' a year</strong> and applies to every year, working or retired.' +
+      info('Living costs, the pot needed and the pension all rise with it, and the return is discounted by it (Fisher, not subtraction). The Expense column below is that rise, year by year.'),
+
+    '<strong>The two sections are two different questions.</strong> Path to freedom never withdraws; Cashflows always does.' +
+      info('Path to freedom keeps paying in and compares the result with the pot each age would need. Cashflows stops at the age on the slider and draws down. Moving the slider cannot change the freedom age.'),
+
+    '<strong>Your FIRE number</strong> implies a ' + (swr == null ? 'n/a' : fmt.pct(swr, 2)) + ' SWR.' +
+      info('The share of the pot you spend in the first year. The familiar 25 times rule is the same arithmetic at a 4% real return.'),
+
+    '<strong>The shaded band is not a path.</strong>' +
+      info('The 10th to 90th percentile across ' + fmt.num(res.mc.paths) + ' simulated futures at each year separately, so its edges are an envelope rather than one future you could live through. At 0% volatility they collapse onto the single smooth projection.'),
+
+    '<strong>Money deposited is what you put in that is still there.</strong>' +
+      info('Nothing is withdrawn on that chart, so it is every cent you have paid in, held down by the balance in the years a bad market has the pot below it. The gap to the investment line is the growth.'),
+
+    '<strong>The year-by-year table reconciles.</strong> Balance plus Saved plus Growth is next year\u2019s Balance, to the cent.' +
+      info('Growth is whatever is left over once the flows are accounted for. In today\u2019s money that is the real return; in future\u2019s money, the nominal one.'),
+
     (res.ui.savingsMode === 'income'
-      ? T('aIncomeEntered') + info(T('aIncomeEnteredTip'))
-      : T('aIncomeImplied') + info(T('aIncomeImpliedTip'))),
-    T('aNotModelled')
+      ? '<strong>Income is what you entered</strong>, and what you save is whatever it leaves over.' +
+        info('Income grows at the rate on the You tab, spending rises with inflation. Once you retire the only income is the pension, if you included one.')
+      : '<strong>Income is implied, not entered.</strong> It is what you save plus what you spend.' +
+        info('You entered savings, so the income shown is the take-home pay that saving that much while spending that much implies. Switch to Net income on the You tab to enter it directly.')),
+
+    '<strong>Not modelled:</strong> one-off costs, a mortgage ending, aged care, or any spending change beyond the retirement percentage.'
   ];
   if(res.ui.pensionOn){
-    items.splice(3, 0, res.P.pensionIndexed
-      ? T('aPensionIndexed') + info(T('aPensionIndexedTip', fmt.age(res.P.pensionStartAge)))
-      : T('aPensionFlat') + info(T('aPensionFlatTip')));
+    items.splice(3, 0, (res.P.pensionIndexed
+      ? '<strong>The pension rises with inflation</strong>, so it keeps its value for ever.'
+      : '<strong>The pension never rises</strong>, so it buys less every year.') +
+      info(res.P.pensionIndexed
+        ? 'A flat line in today\u2019s money and a rising figure in the money of the day. It starts at age ' + fmt.age(res.P.pensionStartAge) + ' and counts as income from then on, which is why it lowers the pot you need.'
+        : 'A flat figure in the money of the day and a sinking one in today\u2019s money. The erosion is measured from TODAY, not from the start age, because the amount you entered is what it pays now — so the years before you claim it wear it down too. Turn on "Rises with inflation" if your country indexes its pension.'));
   }
   if(res.ui.mode === 'rich'){
-    items.splice(3, 0, T('aForever', RICH_HORIZON_AGE) + info(T('aForeverTip')));
+    items.splice(3, 0, '<strong>Forever is tested to age ' + RICH_HORIZON_AGE + '.</strong>' +
+      info('At the required pot the balance holds its real value, so a longer horizon would not change the answer.'));
   }
   if(tickerInfo){
-    items.push(T('aTicker', escapeHtml(tickerInfo.ticker), escapeHtml(tickerInfo.stats.from),
-                escapeHtml(tickerInfo.stats.to)) +
-      info(T(tickerInfo.source === 'stooq' ? 'aTickerStooqTip' : 'aTickerAdjTip')));
+    items.push('<strong>' + escapeHtml(tickerInfo.ticker) + '</strong> measured ' +
+      escapeHtml(tickerInfo.stats.from) + ' to ' + escapeHtml(tickerInfo.stats.to) + '.' +
+      info(tickerInfo.source === 'stooq'
+        ? 'That series is not adjusted for dividends, so the return is understated. A Yahoo series would include them.'
+        : 'Adjusted close, so dividends are included in the return.'));
   }
   $('assumptions').innerHTML = items.map(function(x){ return '<li>' + x + '</li>'; }).join('');
 }
@@ -2765,24 +1980,24 @@ function tickerStatus(msg, isError){
 
 function rateSuffix(){
   if(!window.SharedYF || !SharedYF.getDailyRemaining) return '';
-  return ' <span style="opacity:.8">(' +
-    escapeHtml(T('rateSuffix', SharedYF.getDailyRemaining(), SharedYF.getDailyLimit())) + ')</span>';
+  return ' <span style="opacity:.8">(' + SharedYF.getDailyRemaining() + ' of ' +
+    SharedYF.getDailyLimit() + ' data requests left today)</span>';
 }
 
 async function fetchTicker(){
   var tk = $('ticker').value.trim().toUpperCase();
-  if(!tk){ tickerStatus(escapeHtml(T('tickerEnterFirst')), true); return; }
-  if(!window.SharedPriceCache){ tickerStatus(escapeHtml(T('tickerNoEngine')), true); return; }
+  if(!tk){ tickerStatus('Enter a ticker code first, for example SPY.', true); return; }
+  if(!window.SharedPriceCache){ tickerStatus('Market data engine did not load.', true); return; }
   var btn = $('fetchTickerBtn');
   btn.disabled = true;
-  tickerStatus(escapeHtml(T('tickerLoading', tk)));
+  tickerStatus('Loading ' + escapeHtml(tk) + '…');
   try {
     var end = isoToday();
     await SharedPriceCache.ensure(tk, TICKER_HISTORY_START, end);
     var slice = SharedPriceCache.slice(tk, TICKER_HISTORY_START, end);
-    if(!slice){ tickerStatus(escapeHtml(T('tickerNoHistory', tk)), true); return; }
+    if(!slice){ tickerStatus('No price history came back for ' + escapeHtml(tk) + '.', true); return; }
     var st = tickerStats(slice.dates, slice.prices);
-    if(!st){ tickerStatus(escapeHtml(T('tickerTooShort', tk)), true); return; }
+    if(!st){ tickerStatus('Not enough price history for ' + escapeHtml(tk) + ' to measure anything useful.', true); return; }
     // ensure() does not throw when only part of a widen fails, and slice()
     // reports what is held rather than what was asked for. Without this the
     // figures would quietly come from a shorter window than advertised.
@@ -2791,13 +2006,15 @@ async function fetchTicker(){
     $('ret').value = st.cagr.toFixed(1);
     $('std').value = st.std.toFixed(1);
     tickerInfo = {ticker: tk, stats: st, source: slice.source};
-    tickerStatus(T('tickerOk', escapeHtml(tk), fmt.num(st.years, 1), fmt.pct(st.cagr, 1), fmt.pct(st.std, 1)) +
-      (slice.source === 'stooq' ? escapeHtml(T('tickerNotAdjusted')) : '') +
-      (partial ? escapeHtml(T('tickerPartial', st.from)) : '') +
+    tickerStatus('<strong>' + escapeHtml(tk) + '</strong> over ' + fmt.num(st.years, 1) + ' years: ' +
+      fmt.pct(st.cagr, 1) + ' a year, ' + fmt.pct(st.std, 1) + ' volatility.' +
+      (slice.source === 'stooq' ? ' Not adjusted for dividends, so the return is understated.' : '') +
+      (partial ? ' Only part of the history was available, so this is measured from ' +
+        escapeHtml(st.from) + ' onward.' : '') +
       rateSuffix());
     render();
   } catch(err){
-    tickerStatus(escapeHtml(T('tickerFailed', tk, err && err.message ? err.message : T('tickerUnknownError'))) + rateSuffix(), true);
+    tickerStatus('Could not load ' + escapeHtml(tk) + ': ' + escapeHtml(err && err.message ? err.message : 'unknown error') + '.' + rateSuffix(), true);
   } finally {
     btn.disabled = false;
   }
@@ -2934,13 +2151,13 @@ function chartPng(canvasId, filename, chartTitle, legendId, shouldDownload){
 }
 
 function copyCanvasPng(canvas){
-  if(!canvas) return Promise.reject(new Error(T('copyNothing')));
+  if(!canvas) return Promise.reject(new Error('Nothing to copy yet.'));
   if(!navigator.clipboard || !window.ClipboardItem){
-    return Promise.reject(new Error(T('copyUnsupported')));
+    return Promise.reject(new Error('Clipboard image copy is not supported in this browser.'));
   }
   return new Promise(function(resolve, reject){
     canvas.toBlob(function(blob){
-      if(!blob){ reject(new Error(T('copyNoBlob'))); return; }
+      if(!blob){ reject(new Error('Could not create PNG blob.')); return; }
       navigator.clipboard.write([new ClipboardItem({'image/png': blob})]).then(resolve, reject);
     }, 'image/png');
   });
@@ -3024,10 +2241,11 @@ function chartSvg(canvasId, filename, chartTitle, legendId){
 // The chart title has to carry the money mode: the same plan in future's money
 // is a different picture, and an exported file has no Settings tab to check.
 function exportTitle(which){
-  if(!last) return T('exportToolName');
-  var mode = T(last.ui.showReal ? 'moneyToday' : 'moneyFuture');
-  var name = which === 'dd' ? T('exportCash', fmt.age(last.P.ageRetire)) : T('exportPath');
-  return T('exportTitle', name, mode);
+  if(!last) return 'Financial Freedom Calculator';
+  var mode = last.ui.showReal ? "today's money" : "future's money";
+  var at = ' at ' + fmt.age(last.P.ageRetire);
+  var name = which === 'dd' ? 'Cashflows and balance' + at : 'Path to freedom';
+  return 'Financial Freedom Calculator: ' + name + ' (' + mode + ')';
 }
 
 function csvCell(v){
@@ -3038,16 +2256,13 @@ function csvCell(v){
 function downloadCsv(){
   if(!last){ return; }
   var money = function(v){ return v == null ? '' : v.toFixed(2); };
-  /* The same columns the table shows, in the same order, spelled without the
-     spaces and the slash a machine reader would have to quote around. */
-  var header = ['thYear', 'thAge', 'thBalance', 'thIncome', 'thExpense', 'thSaved', 'thGrowth']
-    .map(function(key){ return T(key).replace(/\s*\/\s*/g, '_or_').replace(/\s+/g, '_'); });
+  var header = ['Year', 'Age', 'Balance', 'Income', 'Expense', 'Saved_or_drawn', 'Growth'];
   var lines = tableRows(last).map(function(r){
     return [r.year, r.age.toFixed(2), money(r.balance), money(r.income), money(r.expense),
             money(r.flow), money(r.growth)].map(csvCell).join(',');
   });
   var csv = '# Made using tool.adjiebrotots.com/financialfreedom\n' +
-    '# ' + last.ui.currency + ', ' + T(last.ui.showReal ? 'moneyToday' : 'moneyFuture') + '\n' +
+    '# ' + last.ui.currency + ', ' + (last.ui.showReal ? "today's money" : "future's money") + '\n' +
     header.join(',') + '\n' + lines.join('\n') + '\n';
   saveBlob(new Blob([csv], {type: 'text/csv;charset=utf-8;'}), 'financial_freedom.csv');
 }
@@ -3223,7 +2438,7 @@ function applyQuickStart(key){
 
   tickerInfo = null;
   $('ticker').value = '';
-  tickerStatus(escapeHtml(T('tickerIdle')) + rateSuffix());
+  tickerStatus('Nothing is fetched until you press Fetch.' + rateSuffix());
 
   Object.assign(UI, plan);
   applyUIToDom(plan);
@@ -3421,23 +2636,23 @@ function wire(){
   $('ffCopyBtn').addEventListener('click', function(){
     copyCanvasPng(chartPng('ffChart', '', exportTitle('ff'), 'legend1', false))
       .then(function(){ flashBtn($('ffCopyBtn'), '✓'); },
-            function(err){ alert(T('copyFailed', err && err.message ? err.message : T('tickerUnknownError'))); });
+            function(err){ alert('PNG copy failed: ' + (err && err.message ? err.message : 'unknown error')); });
   });
   $('ddCopyBtn').addEventListener('click', function(){
     copyCanvasPng(chartPng('ddChart', '', exportTitle('dd'), 'legend2', false))
       .then(function(){ flashBtn($('ddCopyBtn'), '✓'); },
-            function(err){ alert(T('copyFailed', err && err.message ? err.message : T('tickerUnknownError'))); });
+            function(err){ alert('PNG copy failed: ' + (err && err.message ? err.message : 'unknown error')); });
   });
   $('csvBtn').addEventListener('click', downloadCsv);
 
   // The gate itself: nothing else on the form runs the engine.
   $('simBtn').addEventListener('click', function(){
     render();
-    flashBtn($('simBtn'), T('btnSimulated'));
+    flashBtn($('simBtn'), '✓ Updated');
   });
   [['ffChart', 'hover1'], ['ddChart', 'hover2']].forEach(function(pair){
     $(pair[0]).addEventListener('mouseleave', function(){
-      $(pair[1]).textContent = T('hoverHint');
+      $(pair[1]).textContent = 'Hover to inspect any year.';
     });
   });
 
@@ -3463,7 +2678,6 @@ function resetToDefaults(){
 /* ─── INIT ─── */
 
 function init(){
-  applyLang();
   populateSelects();
   applyUIToDom(UI_DEFAULTS);
   // Before Persist, so a returning reader's own retirement age wins over the
@@ -3480,7 +2694,7 @@ function init(){
       }
     });
   }
-  tickerStatus(escapeHtml(T('tickerIdle')) + rateSuffix());
+  tickerStatus('Nothing is fetched until you press Fetch.' + rateSuffix());
   render();
 }
 
@@ -3494,10 +2708,6 @@ if(document.readyState === 'loading'){
    to drive the maths without going through the DOM. */
 window.__FF = {
   resetToDefaults: resetToDefaults,
-  // The language layer, so the harness can check the markup against the same
-  // dictionary the page rendered from rather than a second copy of it.
-  T: T,
-  get lang(){ return lang; },
   seedRetireAge: seedRetireAge,
   CURRENCIES: CURRENCIES,
   PRESET_ASSETS: PRESET_ASSETS,

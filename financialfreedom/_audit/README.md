@@ -355,25 +355,3 @@ plan reloading to the same answer to the cent.
 `kind` drive their unadjusted-price warning), and nothing being fetched before
 the user presses the button, because the whole origin shares a five-request
 daily allowance with both DCA tools.
-
-**The Indonesian page.** `/financialfreedom/id/` is the same engine behind
-translated markup: one `script.js`, one `style.css`, and a dictionary keyed off
-`window.DEFAULT_LANG`. Two things can go wrong with that arrangement and
-neither of them shows up on the English page, so both are pinned. F70 reads the
-`LANG` table straight out of `script.js` rather than restating it, and checks
-that every English key has an Indonesian one, that a key taking arguments in one
-language takes them in the other, and that no sentence was copied across
-untranslated (the handful that are the same word in both languages are named in
-the check). F72 walks the baked page and checks every keyed element, tooltip,
-placeholder and title really does read its Indonesian string, which is what
-catches a key the dictionary cannot resolve leaving English on screen; F72b
-catches the reverse, a key in the markup that no longer exists. F73 is the one
-that matters most: the Indonesian page has to give the English page's answer to
-the cent on the same defaults, because a page that somehow ran a different code
-path would give a different number. F73b through F73f then check the parts the
-engine writes at run time rather than the baker, which the static page cannot
-vouch for: the table headers, the verdict, the slider scale, the metric
-subtitles, the chart legend, the assumptions, and the two select menus the page
-fills itself. F71 covers the head, where the SEO lives: `lang`, `DEFAULT_LANG`,
-its own canonical, both languages cross-linked with an `x-default`, an
-Indonesian title, and a way back to English in the header.
