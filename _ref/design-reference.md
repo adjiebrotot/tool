@@ -881,12 +881,24 @@ nobody reads it. `node _ref/tip-check.mjs` holds every page to it (add a path
 fragment to run one tool) and prints each page's median, which is the number to
 watch.
 
-Three rules follow from that:
+Four rules follow from that:
 
+- **A tip nobody needs is deleted, not shortened.** The bar is a domain fact: a
+  definition, a unit, a rule, a formula, a caveat, a behaviour you could not
+  guess. "Purchase Cost: the full price of whatever you are buying" teaches
+  nothing, so it goes, and the (i) goes with it. Every (i) on the page is a
+  promise that something non-obvious is behind it, and a page that keeps that
+  promise is one where people keep hovering.
+- **Move the fact into the label rather than hiding it in a hover.** When the
+  only thing a tip carried was a word missing from the label, put the word in
+  the label and drop the tip: "Total Household Gross Salary" plus a tip saying
+  the figure is annual became "Total Household Annual Gross Salary".
 - **No em-dashes**, here as everywhere else in user-facing copy.
-- **Don't re-explain what is on screen.** If the radio buttons already carry a
-  line of their own, the (i) beside them says what the group is for, not what
-  each option does.
+- **Don't re-explain what is on screen.** A sub-line under the field, an
+  optgroup label, a radio's own description or a KPI's sub-line all count as on
+  screen. If the radio buttons already carry a line of their own, the (i) beside
+  them says what the group is for, not what each option does, and if the group
+  needs nothing said, it has no (i).
 - **A dependent field's tip follows the field.** See below.
 
 ### Dependent tooltips: say the state you are in

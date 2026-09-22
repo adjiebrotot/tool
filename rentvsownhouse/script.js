@@ -99,7 +99,6 @@ const LANG = {
     kpiInitialCashTip: 'Starting cash in both scenarios. Left blank, it is the deposit plus setup costs, and the Rent-Then-Buy need when that is on.',
     kpiInitialCashSub: 'Starting capital at Year 0',
     kpiBudgetLabel: 'Yearly Housing Budget',
-    kpiBudgetTip: 'The monthly housing budget across the modelled years, lowest to highest.',
     kpiBudgetSub: 'Min–max monthly budget over horizon',
     kpiBreakevenLabel: 'Breakeven Year',
     kpiBreakevenTip: 'The first year Buy net equity (house plus cash) passes the Rent scenario. Before it, renting is ahead.',
@@ -124,9 +123,7 @@ const LANG = {
     chartHoverHint: 'Hover over the chart to inspect a year.',
     /* summary */
     ownSnapshotTitle: 'Own — Snapshot',
-    ownSnapshotTip: 'Summary of the Buy scenario at the final year of the time horizon.',
     rentSnapshotTitle: 'Rent — Snapshot',
-    rentSnapshotTip: 'Summary of the pure Rent scenario at the final year of the time horizon.',
     rtbSnapshotTitle: '🔄 Rent-Then-Buy — Snapshot',
     rtbSnapshotTip: 'The Rent-Then-Buy scenario at the final year. Savings fund the deposit at the buy year, on the price by then, and a new mortgage starts.',
     /* detail tabs */
@@ -291,7 +288,6 @@ const LANG = {
     kpiInitialCashTip: 'Kas awal di kedua skenario. Jika dikosongkan, dihitung dari Uang Muka (DP) + biaya awal, dan kebutuhan Sewa Dulu jika aktif.',
     kpiInitialCashSub: 'Modal awal di Tahun 0',
     kpiBudgetLabel: 'Anggaran Perumahan Tahunan',
-    kpiBudgetTip: 'Anggaran perumahan bulanan sepanjang periode yang dimodelkan, dari terendah hingga tertinggi.',
     kpiBudgetSub: 'Anggaran bulanan min–maks selama jangka waktu',
     kpiBreakevenLabel: 'Tahun Breakeven',
     kpiBreakevenTip: 'Tahun pertama kekayaan bersih Beli (properti + kas) melampaui skenario Sewa. Sebelum itu, menyewa lebih unggul.',
@@ -313,9 +309,7 @@ const LANG = {
     chartHoverHint: 'Arahkan kursor ke grafik untuk melihat detail per tahun.',
     /* summary */
     ownSnapshotTitle: 'Beli — Ringkasan',
-    ownSnapshotTip: 'Ringkasan skenario Beli pada tahun terakhir jangka waktu.',
     rentSnapshotTitle: 'Sewa — Ringkasan',
-    rentSnapshotTip: 'Ringkasan skenario Sewa murni pada tahun terakhir jangka waktu.',
     rtbSnapshotTitle: '🔄 Sewa Dulu, Beli Kemudian — Ringkasan',
     rtbSnapshotTip: 'Skenario Sewa Dulu, Beli Kemudian pada tahun terakhir. Tabungan menjadi Uang Muka (DP) pada harga saat itu, lalu KPR baru dimulai.',
     /* detail tabs */
@@ -392,29 +386,25 @@ function applyLang(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     const key = el.dataset.i18n;
     const val = LANG[lang][key];
-    if(val !== undefined && typeof val === 'string') el.textContent = val;
+    if(val === undefined || typeof val !== 'string') return;
+    if(el.firstElementChild){
+      /* The label carries a child of its own, a tip icon: translate the text
+         beside it rather than replacing the lot. */
+      const text = Array.prototype.find.call(el.childNodes, n => n.nodeType === 3);
+      if(text) text.textContent = val + ' ';
+      else el.insertBefore(document.createTextNode(val + ' '), el.firstChild);
+      return;
+    }
+    el.textContent = val;
   });
   document.querySelectorAll('[data-i18n-opt]').forEach(el=>{
     const key = el.dataset.i18nOpt;
     const val = LANG[lang][key];
     if(val !== undefined) el.textContent = val;
   });
-  /* elements needing innerHTML (tip-icon inside label, sensitivity link) */
+  /* the one string that carries markup of its own */
   const sensDiv = document.getElementById('sensitivityLinkDiv');
   if(sensDiv) sensDiv.innerHTML = T('sensitivityHtml');
-  /* KPI label spans contain tip-icon child — rebuild carefully */
-  ['kpiInitialCashLabel','kpiBudgetLabel','kpiBreakevenLabel','kpiDiffLabel',
-   'rtbSnapshotTitle'].forEach(key=>{
-    const el = document.querySelector('[data-i18n="'+key+'"]');
-    if(!el) return;
-    const tipSpan = el.querySelector('.tip-icon');
-    const tipKey = tipSpan ? tipSpan.dataset.i18nTip : null;
-    el.childNodes.forEach(n=>{ if(n.nodeType===3) n.textContent = ''; }); /* clear text nodes */
-    const first = el.firstChild;
-    if(first && first.nodeType===3) first.textContent = T(key)+' ';
-    else el.insertBefore(document.createTextNode(T(key)+' '), el.firstChild);
-    if(tipSpan && tipKey) tipSpan.setAttribute('data-tip', T(tipKey));
-  });
   /* data-i18n-tip: update data-tip on tip-icons */
   document.querySelectorAll('[data-i18n-tip]').forEach(el=>{
     const key = el.dataset.i18nTip;

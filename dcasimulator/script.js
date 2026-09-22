@@ -530,7 +530,7 @@ function renderScenarioConfig(){
         </div>
       </div>
 
-      <div class="section-label">Asset <span class="tip-icon" data-tip="What this scenario buys: a loaded ticker on real market data, or a simulated asset. Add more in the 📥 Data tab.">?</span></div>
+      <div class="section-label">Asset</div>
       ${assetSelectBody}
       <div class="section-label">Investment Style</div>
       <div id="styleBlock${sec.id}">${styleBlockInner(sec)}</div>

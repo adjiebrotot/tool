@@ -98,7 +98,9 @@ readable where it pops up: one thought per tip, 200 characters of rendered text 
 150 as the aim, no em-dash, and never empty. It also drives every dropdown and segmented control
 through all of its values and re-checks each state, because the tip on a dependent field is
 written to follow that field: a loan type, a study type or a Simple/Detailed switch carries the
-option that is *selected* rather than a list of all of them. Pass a path fragment
+option that is *selected* rather than a list of all of them. A tip that carried no domain fact
+(no definition, unit, rule or caveat) is deleted rather than shortened, so every (i) on a page is
+a promise that something non-obvious sits behind it. Pass a path fragment
 (`node _ref/tip-check.mjs rentvsownhouse`) to run one tool.
 
 `node _ref/abbr-check.mjs` loads every page and

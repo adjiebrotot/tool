@@ -157,7 +157,7 @@
       </select>
     </div>
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Purchase Cost <i class="tip-icon" data-tip="The full price of whatever you are buying, such as a car, equipment or property.">?</i></span></div>
+      <div class="field-label">Purchase Cost</div>
       <div class="currency-wrap">
         <span class="prefix" id="purchaseCostPrefix">$</span>
         <input class="currency-input fmt-num" id="purchaseCost" type="text" inputmode="decimal" value="50,000"/>
@@ -183,7 +183,7 @@
       <label class="toggle"><input type="checkbox" id="inflationToggle"/><span class="slider"></span></label>
     </div>
     <div class="field-row" id="inflationRow" style="display:none;">
-      <div class="field-label"><span class="tip-wrap">Inflation Rate (annual %) <i class="tip-icon" data-tip="The yearly inflation rate you want to assume. It converts future dollar amounts into today's purchasing power.">?</i></span></div>
+      <div class="field-label">Inflation Rate (annual %)</div>
       <input class="num-input" id="inflationRate" type="number" min="0" max="30" step="0.1" value="2.5"/>
     </div>
   </div>
@@ -218,7 +218,7 @@
           <select class="sel-input" id="scFreq"><option value="weekly">Weekly</option><option value="fortnightly">Fortnightly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select>
         </div>
         <div class="field-row" id="scTermRow">
-          <div class="field-label"><span class="tip-wrap" id="termLabel">Term (months) <i class="tip-icon" data-tip="How many repayments the loan runs for, counted in the unit the frequency above sets.">?</i></span></div>
+          <div class="field-label"><span id="termLabel">Term (months) </span></div>
           <input class="num-input" id="scTerm" type="number" min="1" max="3000" step="1" value="60"/>
           <div class="field-sub" id="termSub">Number of monthly payments (e.g. 60 = 5 years).</div>
         </div>
@@ -263,7 +263,7 @@
           <input class="num-input" id="scResidualPct" type="number" min="0" max="99" step="1" value="0"/>
         </div>
         <div class="slider-block" id="scDownRow">
-          <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment (% of purchase cost) <i class="tip-icon" data-tip="The share of the purchase cost you pay upfront. 0% borrows the whole amount; 100% pays cash outright, so there is no loan at all.">?</i></span></div><div class="slider-value" id="scDownVal">0%</div></div>
+          <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment (% of purchase cost) <i class="tip-icon" data-tip="0% borrows the whole purchase cost; 100% pays cash outright, so there is no loan at all.">?</i></span></div><div class="slider-value" id="scDownVal">0%</div></div>
           <input id="scDownPct" type="range" min="0" max="100" step="1" value="0"/>
         </div>
         <div class="field-row" id="scFeeRow"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="A one-off fee to set the loan up, as a fixed amount or a % of the amount financed.">?</i></span></div>

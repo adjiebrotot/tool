@@ -149,7 +149,7 @@
         <!-- Mode A: Total + Split % -->
         <div id="modeTotal">
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="totalSalaryLabel">Total Gaji Kotor Rumah Tangga</span> <span class="tip-icon" data-i18n-tip="totalSalaryTip" data-tip="Gaji kotor tahunan suami dan istri dijumlahkan, sebelum dikurangi apa pun.">?</span></div>
+            <div class="field-label"><span data-i18n="totalSalaryLabel">Total Gaji Kotor Tahunan Rumah Tangga</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="totalSalaryInput" type="text" inputmode="numeric" value="500,000,000" />
@@ -157,7 +157,7 @@
           </div>
           <div class="slider-block">
             <div class="slider-head">
-              <div class="slider-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeShareLabel">Porsi penghasilan istri</span> <span class="tip-icon" data-i18n-tip="wifeShareTip" data-tip="Porsi gaji rumah tangga yang diperoleh istri. Suami memperoleh sisanya, jadi 30% di sini berarti suami memperoleh 70%.">?</span></div>
+              <div class="slider-label"><span data-i18n="wifeShareLabel">Porsi penghasilan istri</span></div>
               <div class="slider-value" id="splitValue">50%</div>
             </div>
             <input id="splitPct" type="range" min="0" max="100" step="1" value="50" />
@@ -174,14 +174,14 @@
         <!-- Mode B: Individual inputs -->
         <div id="modeIndividual" style="display:none;">
           <div class="field-row">
-            <div class="field-label" data-i18n="husbandSalaryLabel">Gaji Kotor Suami</div>
+            <div class="field-label" data-i18n="husbandSalaryLabel">Gaji Kotor Tahunan Suami</div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="husbandSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
             </div>
           </div>
           <div class="field-row">
-            <div class="field-label" data-i18n="wifeSalaryLabel">Gaji Kotor Istri</div>
+            <div class="field-label" data-i18n="wifeSalaryLabel">Gaji Kotor Tahunan Istri</div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="wifeSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
