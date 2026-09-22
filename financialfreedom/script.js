@@ -2579,6 +2579,15 @@ function wire(){
    'pensionStartAge','paths','confidence','seed'].forEach(function(id){
     $(id).addEventListener('input', markStale);
   });
+  /* A figure typed against one period is rescaled when the period moves, so
+     60,000 a year becomes 5,000 a month rather than a 12x pay cut nobody asked
+     for. Wired before the stale mark below so the converted amount is already
+     in the field when anything else reads the form. */
+  [['savings','savingsPeriod'], ['expense','expensePeriod'],
+   ['pensionAmount','pensionPeriod']].forEach(function(pair){
+    SharedFreq.attachSelect($(pair[1]), $(pair[0]), {maxDecimals: 0});
+  });
+
   ['expensePeriod','savingsPeriod','pensionPeriod','currency'].forEach(function(id){
     $(id).addEventListener('change', markStale);
   });

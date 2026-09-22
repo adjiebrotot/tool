@@ -1348,7 +1348,18 @@ function renderScheduleBox(boxId, hintId, sched){
 /* ─── CONFIG INPUT BINDINGS (write to the active portfolio) ─── */
 wireMoneyField($('topupAmount'),{maxDecimals:2},v=>{ const p=getActive(); if(p){ p.topup.amount=Math.max(0,v); renderPortfolioList(); updateSimBtnState(); } });
 wireMoneyField($('topupYearlyInc'),{maxDecimals:2},v=>{ const p=getActive(); if(p) p.topup.yearlyIncrease=Math.max(0,v); });
-$('topupPeriod').addEventListener('change',e=>{ const p=getActive(); if(!p) return; p.topupSched.period=e.target.value; renderScheduleBox('topupScheduleBox','topupScheduleHint',p.topupSched); renderPortfolioList(); });
+/* The amount is per top-up, so moving the period rescales it: 5,000 a month is
+   60,000 a year, and leaving the 5,000 alone would quietly cut the money going
+   in by twelve. The schedule itself is rebuilt either way. */
+$('topupPeriod').addEventListener('change',e=>{
+  const p=getActive(); if(!p) return;
+  const next=e.target.value;
+  const conv=SharedFreq.convert(p.topup.amount, p.topupSched.period, next, 2);
+  if(conv!==null){ p.topup.amount=conv; $('topupAmount').value=fmtMoneyVal(conv); }
+  p.topupSched.period=next;
+  renderScheduleBox('topupScheduleBox','topupScheduleHint',p.topupSched);
+  renderPortfolioList();
+});
 $('rebalPeriod').addEventListener('change',e=>{ const p=getActive(); if(!p) return; p.rebalSched.period=e.target.value; renderScheduleBox('rebalScheduleBox','rebalScheduleHint',p.rebalSched); });
 wireMoneyField($('rfRate'),{maxDecimals:2},v=>{ const p=getActive(); if(p) p.rf.rate=Math.max(0,v); });
 $('rfTicker').addEventListener('change',e=>{ const p=getActive(); if(p) p.rf.ticker=(e.target.value||'').trim().toUpperCase(); });

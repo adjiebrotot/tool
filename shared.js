@@ -65,6 +65,77 @@
     attachCurrencyInput: attachCurrencyInput
   };
 
+  /* ── Frequency conversion ───────────────────────────────────────────────
+     A per-period amount only means something next to its period: $500 a month
+     is $6,000 a year, not $500 a year. So when a frequency control moves, the
+     amount beside it is rescaled to keep describing the same real-world money,
+     instead of silently changing what was entered by a factor of twelve.
+
+     The result is rounded back to the field's own precision, because the
+     arithmetic does not always land on a round figure: $500 a week is
+     2,166.6666666666665 a month, which nobody wants to read. It becomes
+     2,166.67, or 2,167 in a field that takes no decimals.
+     ───────────────────────────────────────────────────────────────────────── */
+  var FREQ_PER_YEAR = {
+    daily: 365, weekly: 52, fortnightly: 26, monthly: 12, quarterly: 4, yearly: 1
+  };
+
+  // null for a period this table does not know — a caller's "% of value" or
+  // "fixed" basis, say, which is not a frequency and must not be rescaled.
+  function convertFrequency(amount, from, to, maxDecimals){
+    var f = FREQ_PER_YEAR[from], t = FREQ_PER_YEAR[to];
+    if (!f || !t || !isFinite(amount)) return null;
+    if (f === t) return amount;
+    var p = Math.pow(10, maxDecimals == null ? 2 : maxDecimals);
+    return Math.round(amount * f / t * p) / p;
+  }
+
+  /* Wires a <select> of periods to the amount input beside it.
+       maxDecimals  the field's precision (default 2)
+       format       value -> display string (default: the shared formatter)
+       skip         () -> true when the amount is not money this period (a
+                    percentage basis, say), so the value is left alone
+       onChange     called with (value, input) after a conversion
+     Both `input` and `change` are listened for, since a select fires input
+     first: converting there puts the new amount in place before any listener
+     the tool has already hung on the same events reads the form. The second
+     event then finds nothing left to do. */
+  function attachFrequencySelect(sel, input, opts){
+    if (!sel || !input) return;
+    opts = opts || {};
+    var decimals = opts.maxDecimals == null ? 2 : opts.maxDecimals;
+    var format = opts.format || function(v){
+      return formatThousands(String(v), {maxDecimals: decimals, allowNegative: true});
+    };
+    var prev = sel.value;
+    // A preset or a loaded config sets the control without firing an event, so
+    // the period we convert FROM is re-read as the user reaches for the select.
+    function syncPrev(){ prev = sel.value; }
+    sel.addEventListener('focus', syncPrev);
+    sel.addEventListener('mousedown', syncPrev);
+
+    function onPeriodChange(){
+      var from = prev, to = sel.value;
+      prev = to;
+      if (from === to) return;
+      if (typeof opts.skip === 'function' && opts.skip()) return;
+      var raw = String(input.value == null ? '' : input.value).trim();
+      if (raw === '') return;
+      var next = convertFrequency(parseFormatted(raw), from, to, decimals);
+      if (next === null) return;
+      input.value = format(next);
+      if (typeof opts.onChange === 'function') opts.onChange(next, input);
+    }
+    sel.addEventListener('input', onPeriodChange);
+    sel.addEventListener('change', onPeriodChange);
+  }
+
+  global.SharedFreq = {
+    perYear: FREQ_PER_YEAR,
+    convert: convertFrequency,
+    attachSelect: attachFrequencySelect
+  };
+
   /* ── Market data fetch — batched, self-hosted Worker only ──────────────────
      The simulator runs in the browser; Yahoo's chart endpoint
      (query1/query2.finance.yahoo.com/v8/finance/chart — what the Python

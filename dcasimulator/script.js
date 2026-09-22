@@ -711,7 +711,21 @@ function wireStyleBlock(sec){
   // block on change so the EOM label and helper note pick up the new window.
   const periodSeg=$(`secPeriodSeg${sec.id}`);
   if(periodSeg) periodSeg.querySelectorAll('.seg-btn').forEach(b=>{
-    b.addEventListener('click',()=>{ sec.period=b.dataset.period==='weekly'?'weekly':'monthly'; refreshStyleBlock(sec); scheduleRun(); });
+    b.addEventListener('click',()=>{
+      const next=b.dataset.period==='weekly'?'weekly':'monthly';
+      const prev=sec.period==='weekly'?'weekly':'monthly';
+      // The amount is per purchase, so a narrower window has to buy less for the
+      // scenario to keep putting the same money in over a year.
+      const conv=(next===prev)?null:SharedFreq.convert(sec.amount, prev, next, 2);
+      if(conv!==null){
+        sec.amount=conv;
+        const amtEl=$('cfgAmount');
+        if(amtEl) amtEl.value=SharedFmt.formatThousands(conv,{maxDecimals:2});
+      }
+      sec.period=next;
+      refreshStyleBlock(sec);
+      scheduleRun();
+    });
   });
   // Shared "invest at end of month/week" toggle (momentum + technical)
   const eomEl=$(`secTechEOM${sec.id}`);

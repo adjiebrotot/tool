@@ -41,7 +41,7 @@ Shared, cross-tool files live at the repo root:
 | File | What it is |
 | --- | --- |
 | `shared.css`, `light.css`, `dark.css` | The design system and the two colour themes. |
-| `shared.js` | `SharedFmt` (number input formatting), `SharedYF` (market data via the self-hosted Cloudflare Worker in `dcasimulator/yf-proxy-worker.js`), `SharedTA` (technical indicators), `SharedConfig` (config download/upload), `SharedLegend` (chart legend swatches: each entry is drawn with the mark its series is drawn with — solid, dashed, dotted, shaded band, marker — on the page and in the PNG/SVG exports alike), `Persist` (mini cache), `SharedTooltip`, `SharedAbbr` (the abbreviation glossary: subject-matter jargon found in page text gets a dashed underline and a hover definition). |
+| `shared.js` | `SharedFmt` (number input formatting), `SharedFreq` (a per-period amount follows its frequency: change a field from Monthly to Yearly and the 500 beside it becomes 6,000, rounded back to the field's own precision), `SharedYF` (market data via the self-hosted Cloudflare Worker in `dcasimulator/yf-proxy-worker.js`), `SharedTA` (technical indicators), `SharedConfig` (config download/upload), `SharedLegend` (chart legend swatches: each entry is drawn with the mark its series is drawn with — solid, dashed, dotted, shaded band, marker — on the page and in the PNG/SVG exports alike), `Persist` (mini cache), `SharedTooltip`, `SharedAbbr` (the abbreviation glossary: subject-matter jargon found in page text gets a dashed underline and a hover definition). |
 | `tour-shared.js`, `tour-shared.css` | The guided-tour engine. A tool opts in with a `tour.js` that sets `window.__TOUR = { seenKey, launchLabel, steps }` and loads `tour-shared.js` after it. |
 | `_ref/` | Build-time helpers and the design reference — not shipped to users. |
 
@@ -63,11 +63,16 @@ committed. `powerfactory-scripter/audit/` validates generated scripts against a 
 case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain
 CPython, with no PowerFactory needed.
 
-Two cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
+Three cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
 ships Quick Start scenarios instead of a Reset button and proves the claim that lets it: it
 applies each scenario to a freshly loaded page and to a page whose every control has been
 scribbled over, and the two have to land on identical form state across every tab — plus, where a
 tool seeds a detailed view from the simple field it replaces, the two have to agree.
+
+`node _ref/freq-check.mjs` drives every tool that pairs a money field with a frequency
+control and checks that moving the control rescales the money: the arithmetic and its
+rounding, the bases that are not periods at all (a "% of value" cost is left as typed),
+and that the tool's own state moved with the field rather than just its markup.
 
 `node _ref/abbr-check.mjs` loads every page and
 checks the abbreviation glossary (`SharedAbbr`): that decoration never lands in a link,

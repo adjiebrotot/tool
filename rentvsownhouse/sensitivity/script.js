@@ -1577,9 +1577,26 @@ function wireEvents(){
     el.addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
   });
 
+  /* A frequency parameter carries a money amount a row above it, so moving one
+     rescales the other: a scenario that read 2,800 a month reads 646.15 a week,
+     and stays the same scenario. The old period is still in the scenario when
+     the handler runs, which is what the conversion measures from. A cost on a
+     "% of value" basis is a percentage rather than money per period, so it is
+     left as typed. */
+  const FREQ_AMOUNT = {
+    rentFreq:            {amount: 'rentAmount'},
+    ownOngoingCostFreq:  {amount: 'ownOngoingCost',  type: 'ownOngoingCostType'},
+    rentOngoingCostFreq: {amount: 'rentOngoingCost', type: 'rentOngoingCostType'}
+  };
   document.querySelectorAll('.param-select').forEach(el=>{
     el.addEventListener('change', e=>{
       const si = +e.target.dataset.si, key = e.target.dataset.key;
+      const pair = FREQ_AMOUNT[key];
+      let converted = false;
+      if(pair && !(pair.type && scenarios[si][pair.type] === 'pct')){
+        const conv = SharedFreq.convert(scenarios[si][pair.amount], scenarios[si][key], e.target.value, 2);
+        if(conv !== null){ scenarios[si][pair.amount] = conv; converted = true; }
+      }
       scenarios[si][key] = e.target.value;
       if(key==='rentOngoingCostType' || key==='ownOngoingCostType'){
         const costKey = key==='rentOngoingCostType' ? 'rentOngoingCost' : 'ownOngoingCost';
@@ -1588,7 +1605,8 @@ function wireEvents(){
         });
       }
       recomputeScenario(si);
-      rerenderOutputOnly();
+      // A converted amount is a cell of the table, so the table is rebuilt.
+      if(converted) rerender(); else rerenderOutputOnly();
     });
   });
 
@@ -1690,6 +1708,10 @@ function wireEvents(){
     el.addEventListener('change', e=>{
       const si = +e.target.dataset.si;
       const it = costItemOf(e.target);
+      // Same rescaling, one cost row at a time. A move to or from the "%"
+      // basis is not a change of period, and convert returns null for it.
+      const conv = SharedFreq.convert(it.amount, it.basis, e.target.value, 2);
+      if(conv !== null) it.amount = conv;
       it.basis = e.target.value;
       recomputeScenario(si);
       rerender(); // inflation input visibility depends on basis
