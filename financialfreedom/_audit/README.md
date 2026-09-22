@@ -319,6 +319,28 @@ Rich may need an infinite pot, and no NaN ever reaches a chart. It is the net
 under everything above: a combination no hand-written case thought of either
 satisfies every invariant or shows up here.
 
+**The Quick Start scenarios.** Six buttons, each claiming the whole form now
+describes a named saver, so F65 reads the CONTROLS back rather than
+`readInputs()`: a scenario writing to an id that no longer exists would
+otherwise be papered over by the engine's own defaults and the button would
+quietly load somebody else. The return and the volatility are checked against
+the asset preset each scenario names, because they are taken from it rather than
+stored again beside it, and the two could otherwise drift apart on the next
+preset revision. F65e-g pin what a worked example has to be: every scenario
+reaches financial freedom, its slider opens PAST that age so Cashflows starts on
+a funded plan, and not so far past it that the plan reads as risk-free — the
+crossing is solved on the expected return alone, so every scenario has to land
+between a 60% and a 90% chance, where the confidence pot underneath still has
+something to say. Then the lesson each tooltip promises: Frugal Living freeing a
+saver in fewer YEARS OF WORK than the moderate plan, not merely at a younger age
+(F65h); the Bali scenario's 40% retirement multiplier being worth years against
+the same saver who stays home (F65i); and the late starter's age pension being
+worth years against the same plan with it switched off (F65j). F65k follows the
+late starter with a scenario that has no pension and checks nothing was
+inherited, because every scenario is built on the DEFAULTS rather than over
+whatever the last one left behind. F65l pins that Reset drops the highlight
+along with the figures, or the page claims a scenario it no longer shows.
+
 **Coming back tomorrow.** F57 reloads the page and checks the mini cache brings
 the plan back. The slider is the awkward one: a range input clamps an assigned
 value to the min and max ATTRIBUTES it currently carries, and those are only

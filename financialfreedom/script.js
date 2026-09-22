@@ -2225,6 +2225,193 @@ function downloadCsv(){
 
 /* ─── WIRING ─── */
 
+/* ═════════════════════ Quick Start scenarios ═════════════════════
+   One-click worked plans. Each one fills every tab with a named saver, so a
+   first-time visitor reads a real answer instead of a generic default that
+   describes nobody, and each is chosen to teach one lever the page carries:
+
+     Moderate FIRE      the baseline. Savings entered directly, spending kept
+                        as it is, the pot run to nothing at the life expectancy.
+     Frugal Living      the net income model, where spending less does two jobs
+                        at once: it fills the pot faster AND shrinks the pot
+                        needed, which is why a lean saver frees up in years
+                        rather than decades.
+     Geoarbitrage       the retirement spending multiplier. Same earner, same
+                        saving, retiring somewhere that costs 40% of home.
+     Fat FIRE forever   Die Rich, the goal that never touches the capital.
+     Family legacy      Leave a Legacy, where the bequest is discounted back to
+                        the day you stop and so costs less than its face value.
+     Late start         the pension, and a return that is not all equity. Switch
+                        the pension off and freedom moves years later.
+
+   Basis. Every figure is in the currency on screen, which the page never
+   converts, and the page carries no tax model, so an income here is take-home
+   and a return is net of fees:
+   - Returns and volatility come from the asset preset each scenario names, so
+     there is one source for them and a preset revision moves the scenarios
+     with it. The late starter is the exception: a 60/40 balanced mix is not
+     one of the presets, so it carries its own figures as Custom.
+   - Inflation is 2.5%, the middle of the RBA's 2-3% band. Geoarbitrage runs
+     3%, because a cost base in a developing economy is the one case where the
+     single inflation figure this page models is being asked to cover two.
+   - Savings rates are deliberately archetypal, not median: 41% for a moderate
+     saver, 67% for a frugal one, 63% for a high earner who has not inflated
+     their lifestyle with their pay.
+   - Every scenario leaves the slider one to four years PAST its own freedom
+     age, so Cashflows opens on a funded plan rather than on a shortfall the
+     reader has to fix before the section means anything. Not further: the
+     crossing is solved on the expected return alone, so a plan parked right on
+     it is close to a coin flip, and one parked a decade beyond it reads as
+     though the market cannot bite. Every scenario lands between a 70% and an
+     85% chance instead, which is the page's own lesson in the shape of a
+     default.
+
+   The audit harness in _audit/ pins all of it: every field landing on its own
+   control, the return agreeing with the named preset, every scenario reaching
+   freedom, the slider sitting past that age and the chance it opens on, and the
+   three tips that claim a lever — the frugal saver's years of work, the Bali
+   multiplier, the late starter's pension. */
+var QUICK_START_SCENARIOS = {
+
+  /* 32, on $110,000 take-home: $65,000 spent, $45,000 saved. Global equity,
+     spending unchanged in retirement, nothing left behind. This is the plan
+     every other button is a variation on. */
+  moderate: {
+    label: 'Moderate FIRE',
+    vals: {
+      ageNow: 32, ageRetire: 48, ageDie: 90,
+      expense: 65000, expensePeriod: 'yearly',
+      savingsMode: 'savings', savings: 45000, savingsPeriod: 'yearly',
+      growth: 3, inflation: 2.5,
+      assetPreset: 'world', assets: 120000,
+      mode: 'die', retireMultiplier: 100
+    }
+  },
+
+  /* Lean FIRE at 28. Entered as NET INCOME, which is the model that makes the
+     point: the $30,000 spending line is subtracted from the income to get the
+     saving AND multiplied into the pot, so cutting it moves both ends. Two
+     thirds of the pay packet saved gets there in years, not decades. */
+  frugal: {
+    label: 'Frugal Living',
+    vals: {
+      ageNow: 28, ageRetire: 37, ageDie: 92,
+      expense: 30000, expensePeriod: 'yearly',
+      savingsMode: 'income', savings: 92000, savingsPeriod: 'yearly',
+      growth: 2.5, inflation: 2.5,
+      assetPreset: 'world', assets: 40000,
+      mode: 'die', retireMultiplier: 100
+    }
+  },
+
+  /* Earn in Australia, retire in Bali. Nothing here is converted: the currency
+     selector is display only, and the arbitrage is expressed the way the page
+     actually models it, as retirement spending set to 40% of today's. That is
+     roughly what a comfortable Canggu or Ubud year costs against a Perth one.
+     Inflation is lifted to 3% because the one figure is now covering a cost
+     base that is not the one the saving is earned in. */
+  geoarbitrage: {
+    label: 'Geoarbitrage, Bali',
+    vals: {
+      ageNow: 34, ageRetire: 44, ageDie: 88,
+      expense: 70000, expensePeriod: 'yearly',
+      savingsMode: 'savings', savings: 40000, savingsPeriod: 'yearly',
+      growth: 3, inflation: 3,
+      assetPreset: 'world', assets: 90000,
+      mode: 'die', retireMultiplier: 40
+    }
+  },
+
+  /* $320,000 net, $120,000 spent, US equity, and the goal that never spends a
+     cent of capital. Die Rich prices the same spending as a perpetuity, so it
+     is the dearest pot on the page, and the $200,000 a year surplus is what
+     still reaches it in five years. */
+  fatfire: {
+    label: 'Fat FIRE, forever',
+    vals: {
+      ageNow: 38, ageRetire: 45, ageDie: 90,
+      expense: 120000, expensePeriod: 'yearly',
+      savingsMode: 'income', savings: 320000, savingsPeriod: 'yearly',
+      growth: 3, inflation: 2.5,
+      assetPreset: 'us', assets: 400000,
+      mode: 'rich', retireMultiplier: 100
+    }
+  },
+
+  /* 40, with a house's worth to hand on: $750,000 in TODAY'S money still there
+     at 90, on top of 95% of today's spending because the mortgage is gone by
+     then. The bequest is discounted over the thirty-odd years from stopping to
+     dying, which is why it adds a fraction of its face value to the pot. */
+  legacy: {
+    label: 'Family legacy',
+    vals: {
+      ageNow: 40, ageRetire: 53, ageDie: 90,
+      expense: 80000, expensePeriod: 'yearly',
+      savingsMode: 'savings', savings: 55000, savingsPeriod: 'yearly',
+      growth: 3, inflation: 2.5,
+      assetPreset: 'world', assets: 350000,
+      mode: 'legacy', legacy: 750000, retireMultiplier: 95
+    }
+  },
+
+  /* Starting at 52, which is when most people actually start asking. A 60/40
+     balanced mix rather than all equity, savings growing slower than prices,
+     and the Australian age pension at 67 on the single full rate of about
+     $29,000 indexed. The pension is worth a pot of its own: turn it off and the
+     freedom age moves years later, which is the lesson the tip points at. */
+  latestart: {
+    label: 'Late start, on a pension',
+    vals: {
+      ageNow: 52, ageRetire: 62, ageDie: 92,
+      expense: 55000, expensePeriod: 'yearly',
+      savingsMode: 'savings', savings: 25000, savingsPeriod: 'yearly',
+      growth: 2, inflation: 2.5,
+      assetPreset: 'custom', ret: 6.5, std: 10, assets: 180000,
+      mode: 'die', retireMultiplier: 85,
+      pensionOn: true, pensionStartAge: 67,
+      pensionAmount: 29000, pensionPeriod: 'yearly', pensionIndexed: true
+    }
+  }
+};
+
+/* A scenario is built on top of UI_DEFAULTS rather than over whatever is on
+   screen, so a field one scenario sets can never be inherited by the next one
+   that does not: a pension left ticked by the late starter would otherwise
+   quietly fund every plan after it.
+
+   The return and the volatility are taken FROM the named preset rather than
+   stored again beside it, so the two can never disagree. Custom is the one
+   preset that carries its own pair, and the late starter relies on that.
+
+   A ticker fetch is user data, not scenario data, so it is cleared the way
+   Reset clears it: the figures on screen now belong to the preset. */
+function applyQuickStart(key){
+  var s = QUICK_START_SCENARIOS[key];
+  if(!s) return;
+
+  var plan = Object.assign({}, UI_DEFAULTS, s.vals);
+  var preset = PRESET_ASSETS[plan.assetPreset];
+  if(preset && plan.assetPreset !== 'custom'){ plan.ret = preset.ret; plan.std = preset.std; }
+
+  tickerInfo = null;
+  $('ticker').value = '';
+  tickerStatus('Nothing is fetched until you press Fetch.' + rateSuffix());
+
+  Object.assign(UI, plan);
+  applyUIToDom(plan);
+  markQuickStart(key);
+  if(persist) persist.schedule();
+  render();
+}
+
+// The highlight is a claim about what is on screen, so Reset has to be able to
+// drop it as well. Passing no key clears it.
+function markQuickStart(key){
+  document.querySelectorAll('.quick-start-btn').forEach(function(b){
+    b.classList.toggle('active', !!key && b.dataset.preset === key);
+  });
+}
+
 function applyUIToDom(ui){
   $('currency').value = ui.currency;
   $('ageNow').value = ui.ageNow;
@@ -2334,6 +2521,10 @@ function wire(){
     scheduleRender();
   });
 
+  document.querySelectorAll('.quick-start-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ applyQuickStart(btn.dataset.preset); });
+  });
+
   document.querySelectorAll('#savingsModeGroup .seg-btn').forEach(function(btn){
     btn.addEventListener('click', function(){ setSavingsMode(btn.dataset.val); });
   });
@@ -2400,6 +2591,7 @@ function wire(){
     tickerStatus('');
     Object.assign(UI, UI_DEFAULTS);
     applyUIToDom(UI_DEFAULTS);
+    markQuickStart(null);
     if(persist) persist.schedule();
     render();
   });
@@ -2437,6 +2629,8 @@ window.__FF = {
   CURRENCIES: CURRENCIES,
   PRESET_ASSETS: PRESET_ASSETS,
   UI_DEFAULTS: UI_DEFAULTS,
+  QUICK_START_SCENARIOS: QUICK_START_SCENARIOS,
+  applyQuickStart: applyQuickStart,
   RICH_HORIZON_AGE: RICH_HORIZON_AGE,
   get UI(){ return UI; },
   buildParams: buildParams,
