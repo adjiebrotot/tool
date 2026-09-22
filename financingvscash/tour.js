@@ -1,7 +1,7 @@
 /* Guided-tour config for the Finance vs Cash Scenario Explorer.
    The shared engine (../tour-shared.js) reads this object. */
 window.__TOUR = {
-  seenKey: 'fvc-tour-v1-seen',
+  seenKey: 'fvc-tour-v2-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
@@ -34,9 +34,12 @@ window.__TOUR = {
       },
       title: '② Add financing scenarios',
       body: 'This is <strong>Scenarios</strong>, now open for you. Add each installment ' +
-            'or loan option here: interest rate, down payment, term, and fees. Compare ' +
-            'several at once, then use the <strong>Sensitivity</strong> tab to sweep a ' +
-            'variable such as the finance rate.'
+            'or loan option here: interest rate, down payment, term, and fees. ' +
+            '<strong>Loan Type</strong> covers the shapes lenders actually sell, from a ' +
+            'flat rate to interest-only, a balloon, or an instalment whose rate you do ' +
+            'not know. <strong>Rate Basis</strong> switches to a schedule when the rate ' +
+            'is fixed for a while and then floats. Compare several at once, then use the ' +
+            '<strong>Sensitivity</strong> tab to sweep a variable such as the finance rate.'
     },
     {
       target: '.metrics',
@@ -52,8 +55,9 @@ window.__TOUR = {
       target: '.chart-card',
       title: '④ Explore over time',
       body: 'The chart tracks ending wealth, loan balance, and investment value across the ' +
-            'term. Export any view as SVG or PNG, or download the amortization schedule as ' +
-            'CSV. Everything runs privately in your browser.'
+            'term. A floating rate is drawn as a shaded band, so you see the range rather ' +
+            'than one guess. Export any view as SVG or PNG, or download the amortization ' +
+            'schedule as CSV. Everything runs privately in your browser.'
     },
     {
       target: null,

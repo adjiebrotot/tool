@@ -58,6 +58,7 @@ function updateCurrencyPrefixes(){
 // A net benefit smaller than half a cent cannot be shown at the precision we
 // print, so treat it as an exact tie instead of a win for either side.
 const NB_EPS=0.005, snapNB=v=>Math.abs(v)<=NB_EPS?0:v;
+const HOVER_IDLE='Hover over the chart to inspect a period.';
 
 let scenarios=[], editingIdx=-1, activeAmortIdx=0, sensMode='2d';
 let persist=null; // mini cache handle (assigned at init)
@@ -72,9 +73,117 @@ function termToYears(termPeriods,f){return termPeriods/periodsPerYear(f);}
 // Default term in periods based on freq (5 years in each unit)
 function defaultTerm(freq){return{weekly:260,fortnightly:130,monthly:60,yearly:5}[freq]||60;}
 
+/* ─── Loan types ───────────────────────────────────────────────────────────
+   The repayment structure a lender actually sells. Every type produces the same
+   schedule rows, so everything downstream (chart, tables, CSV, sensitivity)
+   reads one shape and does not branch on the type. */
+const LOAN_TYPES=['annuity','flat','interestOnly','balloon','knownPayment','bullet','deferred'];
+const LOAN_TYPE_LABEL={
+  annuity:'Amortizing (fixed payment)',
+  flat:'Flat rate',
+  interestOnly:'Interest-only',
+  balloon:'Balloon / residual',
+  knownPayment:'Known repayment',
+  bullet:'Bullet (lump at maturity)',
+  deferred:'Deferred start',
+};
+// A rate schedule needs the rate to be an input that may change mid-loan. A flat
+// loan fixes its interest at the outset by definition, and a known-repayment
+// loan has the rate as its OUTPUT, so neither can carry one.
+function supportsSchedule(t){return t!=='flat'&&t!=='knownPayment';}
+function usesIoPeriods(t){return t==='interestOnly'||t==='deferred';}
+
+/* Annual percentage to a period rate, under the convention the reader chose.
+   'ear'     — compound conversion, (1+r)^(1/ppy)-1. The tool's original and
+               still the default, so saved and shared scenarios are unchanged.
+   'nominal' — r/ppy, the US APR convention: 12% p.a. monthly charges exactly
+               1.000% a month, not 0.949%. */
+let rateConvention='ear';
+function toPeriodRate(annualPct,ppy){
+  const a=Math.max(-0.999999,(Number(annualPct)||0)/100);
+  return rateConvention==='nominal'?a/ppy:Math.pow(1+a,1/ppy)-1;
+}
+function periodRateToAnnualPct(r,ppy){
+  if(r===null||!isFinite(r))return 0;
+  return rateConvention==='nominal'?r*ppy*100:(Math.pow(1+r,ppy)-1)*100;
+}
+// The comparison number is always a true effective annual rate, whichever
+// convention the loan was entered under. That is the whole point of the row.
+function effectiveAnnual(rPeriod,ppy){
+  if(rPeriod===null||!isFinite(rPeriod)||rPeriod<=-1)return null;
+  return (Math.pow(1+rPeriod,ppy)-1)*100;
+}
+
+/* ─── Rate and repayment schedules ─────────────────────────────────────────
+   Ordered, consecutive periods counted in the scenario's OWN repayment periods.
+   A fixed period is just min === max, which is what lets one code path serve
+   fixed, variable, and fixed-then-variable without branching. The last period
+   always stretches to the term, so gaps and overlaps cannot be entered. */
+function normaliseRatePeriods(periods,termPeriods,fallbackRate){
+  const term=Math.max(1,Math.round(termPeriods||1));
+  const out=[];let from=1;
+  if(Array.isArray(periods)){
+    for(let i=0;i<periods.length&&from<=term;i++){
+      const p=periods[i]||{};
+      let to=Math.round(Number(p.toPeriod)||0);
+      to=Math.min(term,Math.max(from,to));
+      if(i===periods.length-1)to=term;
+      let min,max;
+      if(p.type==='floating'){const a=Number(p.rateMin)||0,b=Number(p.rateMax)||0;min=Math.min(a,b);max=Math.max(a,b);}
+      else{min=max=Number(p.rate)||0;}
+      out.push({from,to,min,max});
+      from=to+1;
+    }
+  }
+  if(!out.length)out.push({from:1,to:term,min:Number(fallbackRate)||0,max:Number(fallbackRate)||0});
+  out[out.length-1].to=term;
+  return out;
+}
+function normalisePaymentPeriods(periods,termPeriods,fallbackAmt){
+  const term=Math.max(1,Math.round(termPeriods||1));
+  const out=[];let from=1;
+  if(Array.isArray(periods)){
+    for(let i=0;i<periods.length&&from<=term;i++){
+      const p=periods[i]||{};
+      let to=Math.round(Number(p.toPeriod)||0);
+      to=Math.min(term,Math.max(from,to));
+      if(i===periods.length-1)to=term;
+      out.push({from,to,amount:Math.max(0,Number(p.amount)||0)});
+      from=to+1;
+    }
+  }
+  if(!out.length)out.push({from:1,to:term,amount:Math.max(0,Number(fallbackAmt)||0)});
+  out[out.length-1].to=term;
+  return out;
+}
+function bandForPeriod(norm,i){for(let k=0;k<norm.length;k++){if(i>=norm[k].from&&i<=norm[k].to)return norm[k];}return norm[norm.length-1];}
+function rateFromBand(b,variant){return variant==='low'?b.min:variant==='high'?b.max:(b.min+b.max)/2;}
+
+function scenarioRateNorm(sc){
+  const term=Math.max(1,Math.round(sc.termPeriods||1));
+  if(sc.rateMode!=='schedule'||!supportsSchedule(sc.loanType||'annuity'))
+    return[{from:1,to:term,min:Number(sc.financeRate)||0,max:Number(sc.financeRate)||0}];
+  return normaliseRatePeriods(sc.ratePeriods,term,sc.financeRate);
+}
+// The single predicate that gates the whole band feature: legend entry, band
+// datasets, hover-card range suffix and the extra low/high model runs.
+function scenarioHasFloat(sc){return scenarioRateNorm(sc).some(p=>p.max-p.min>1e-9);}
+// The repayment stream a known-repayment scenario actually asks for.
+function scenarioPaymentStream(sc,n){
+  if(sc.paymentMode==='schedule'){
+    const norm=normalisePaymentPeriods(sc.paymentPeriods,n,sc.knownPayment);
+    const out=[];for(let i=1;i<=n;i++){const p=bandForPeriod(norm,i);out.push(p.amount);}
+    return out;
+  }
+  const amt=Math.max(0,Number(sc.knownPayment)||0);
+  return new Array(n).fill(amt);
+}
+
 // Cached scenarios come back from localStorage and can be stale or hand-edited,
 // so hold them to what the editor itself can produce. A loan with no repayment
-// periods can never be repaid, so it is dropped rather than modelled.
+// periods can never be repaid, so it is dropped rather than modelled. Anything
+// this function does not name is DROPPED, so every new field has to be listed
+// here or it silently vanishes on the next reload.
 function normaliseScenario(sc){
   if(!sc||typeof sc!=='object')return null;
   const num=(v,d)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
@@ -83,15 +192,36 @@ function normaliseScenario(sc){
   if(!(term>=1))return null;
   let downPct=sc.downPaymentPct;
   if(downPct===undefined&&sc.downPayment!==undefined)downPct=(num(sc.downPayment,0)/(parseNumInput($('purchaseCost'))||1))*100;
+  // A scenario saved before loan types existed is a plain fixed-rate annuity.
+  const loanType=LOAN_TYPES.includes(sc.loanType)?sc.loanType:'annuity';
+  const rateMode=(sc.rateMode==='schedule'&&supportsSchedule(loanType))?'schedule':'simple';
+  const paymentMode=(sc.paymentMode==='schedule'&&loanType==='knownPayment')?'schedule':'single';
+  const ratePeriods=Array.isArray(sc.ratePeriods)?sc.ratePeriods.map(p=>({
+    toPeriod:Math.max(1,Math.round(num(p&&p.toPeriod,term))),
+    type:(p&&p.type==='floating')?'floating':'fixed',
+    rate:Math.max(0,num(p&&p.rate,5)),
+    rateMin:Math.max(0,num(p&&p.rateMin,5)),
+    rateMax:Math.max(0,num(p&&p.rateMax,5)),
+  })):null;
+  const paymentPeriods=Array.isArray(sc.paymentPeriods)?sc.paymentPeriods.map(p=>({
+    toPeriod:Math.max(1,Math.round(num(p&&p.toPeriod,term))),
+    amount:Math.max(0,num(p&&p.amount,0)),
+  })):null;
   return{name:String(sc.name||'Scenario'),financeRate:num(sc.financeRate,5),
     downPaymentPct:Math.min(100,Math.max(0,num(downPct,0))),termPeriods:term,freq,
     feeAmt:Math.max(0,num(sc.feeAmt,0)),feeType:sc.feeType==='pct'?'pct':'fixed',
-    adminFee:Math.max(0,num(sc.adminFee,0))};
+    feeTreatment:['upfront','capitalise','discount'].includes(sc.feeTreatment)?sc.feeTreatment:'upfront',
+    adminFee:Math.max(0,num(sc.adminFee,0)),
+    loanType,rateMode,ratePeriods,paymentMode,paymentPeriods,
+    knownPayment:Math.max(0,num(sc.knownPayment,0)),
+    ioPeriods:Math.max(0,Math.round(num(sc.ioPeriods,term))),
+    residualPct:Math.min(99,Math.max(0,num(sc.residualPct,0)))};
 }
 
 function defaultScenario(name,rate){
   const freq='monthly';
-  return{name:name||'Scenario '+(scenarios.length+1),financeRate:rate||5,downPaymentPct:0,termPeriods:defaultTerm(freq),freq,feeAmt:0,feeType:'fixed',adminFee:0};
+  return{name:name||'Scenario '+(scenarios.length+1),financeRate:rate||5,downPaymentPct:0,termPeriods:defaultTerm(freq),freq,feeAmt:0,feeType:'fixed',feeTreatment:'upfront',adminFee:0,
+    loanType:'annuity',rateMode:'simple',ratePeriods:null,paymentMode:'single',paymentPeriods:null,knownPayment:0,ioPeriods:defaultTerm(freq),residualPct:0};
 }
 
 /*
@@ -99,21 +229,26 @@ function defaultScenario(name,rate){
  FINANCIAL ENGINE — VERIFIED MATHEMATICS
  ══════════════════════════════════════════════════════════
 
- 1. PERIOD RATE (compound conversion — NOT simple r/n):
-    r_period = (1 + r_annual)^(1/ppy) − 1
+ 1. PERIOD RATE — two conventions, chosen on the Base tab:
+    Effective (default):  r_period = (1 + r_annual)^(1/ppy) − 1
+    Nominal (US APR):     r_period = r_annual / ppy
+    The risk-free rate always uses the effective conversion, because it
+    describes a savings return, not a loan contract.
 
  2. AMORTIZATION PAYMENT (standard annuity formula):
     If r > 0:  PMT = P × r(1+r)^n / ((1+r)^n − 1)
     If r = 0:  PMT = P / n
     where P=principal, r=period rate, n=total periods
 
- 3. EACH PERIOD:
+ 3. EACH PERIOD (outstanding-balance products):
     interest_i  = balance_i × r_period
     principal_i = PMT − interest_i
     balance_{i+1} = balance_i − principal_i
+    The final period always clears the exact remaining balance:
+    payment_n = interest_n + balance_n.
 
  4. INVESTMENT GROWTH (financing path):
-    Start with: availableCash − downPayment − originationFee
+    Start with: availableCash − downPayment − upfrontFee
     Each period: investBal = investBal × (1 + rf_period) − PMT − adminFee
     rf_period = (1 + rf_annual)^(1/ppy) − 1
     adminFee is a fixed amount paid alongside every repayment (per period).
@@ -127,52 +262,247 @@ function defaultScenario(name,rate){
     Positive ⟹ financing preserves more wealth
 
  7. INFLATION: real = nominal / (1 + inflation)^years
+
+ ── LOAN TYPES ────────────────────────────────────────────
+ 8. FLAT RATE (interest on the ORIGINAL principal):
+    interest_i = P0 × r for every period (P0 = amount financed)
+    principal_i = P0 / n,  PMT = P0/n + P0×r
+    totalInterest = P0 × r × n
+    This is why a "5% flat" loan costs roughly 9% effective: you keep paying
+    interest on money you have already repaid.
+
+ 9. INTEREST-ONLY:
+    i ≤ k:  PMT = balance × r,  principal_i = 0   (k = interest-only periods)
+    i > k:  the §2 annuity over the remaining balance and remaining periods
+    k = n gives pure interest-only, principal repaid in full at maturity.
+
+10. BALLOON / RESIDUAL R:
+    PMT = (P − R/(1+r)^n) × r(1+r)^n / ((1+r)^n − 1)
+    The final payment is PMT + R, which §3's clearing rule produces exactly.
+
+11. KNOWN REPAYMENT (rate solved):
+    Given the stream {P_1 … P_n}, solve r from the terminal balance
+    bal_i = bal_{i−1}(1+r) − P_i,  bal_n = 0
+    by bisection. bal_n(r) is strictly increasing in r for non-negative
+    payments, so the root is unique and bisection always converges when at
+    least one payment is positive. The stream may be a single level amount or
+    a stepped schedule (period 1–2 at X, 3–6 at Y, …).
+    A payment below the interest due makes the balance RISE. That is real
+    negative amortization, so it is reported, not suppressed.
+
+12. BULLET: no payments at all; interest capitalises every period and the
+    whole debt is settled at maturity: payment_n = P(1+r)^n.
+
+13. DEFERRED START (capitalised holiday of k periods):
+    i ≤ k:  PMT = 0, interest capitalises, balance_{i+1} = balance_i(1+r)
+    i > k:  the §2 annuity over the grown balance and remaining periods
+    This is the one structure where the balance rises ABOVE the original
+    principal. Unlike §9 the interest is not paid, it is added to the debt.
+
+14. VARIABLE RATE (schedule of consecutive periods, each fixed or floating):
+    A fixed period is min == max. The payment is re-amortised over the
+    REMAINING term on the outstanding balance whenever the rate changes,
+    which is what a real lender does. A floating period is simulated three
+    ways — min, midpoint, max — and the chart draws the midpoint as a line
+    with the min–max range as a shaded band.
+
+15. EFFECTIVE RATE (APR): the internal rate of return of the actual payment
+    stream against the amount financed, solved by the same bisection as §11,
+    then annualised as (1+r)^ppy − 1. It is what makes a flat 5% and an
+    annuity 5% comparable, and it drives the negative-carry warning.
+
+16. FEE TREATMENT:
+    upfront    — fee paid from your own cash; financed is unchanged (default)
+    capitalise — fee added to the loan;  financed = base + fee
+    discount   — fee deducted from the advance, so the advance must be grossed
+                 up to still meet the price:  financed = base / (1 − feePct)
+    Under the last two the fee is repaid inside the instalments, so it is
+    counted in total out-of-pocket once, never twice.
  ══════════════════════════════════════════════════════════
 */
 
-function computeAmortization(principal, annualRate, termPeriods, freq){
-  const ppy=periodsPerYear(freq);
-  const n=Math.round(termPeriods);
-  const r=Math.pow(1+annualRate/100, 1/ppy)-1; // compound period rate
-
-  if(principal<=0||n<=0) return{payment:0,schedule:[],totalInterest:0,totalPaid:0,periods:0,periodRate:0};
-
-  let pmt;
-  if(r===0) pmt=principal/n;
-  else{
-    const factor=Math.pow(1+r,n);
-    pmt=principal*(r*factor)/(factor-1); // standard annuity formula
+/* Terminal balance of a loan under a payment stream at period rate r.
+   This multiplies only, so it stays finite at the bottom of the bisection
+   bracket where the discounted-NPV form would raise (1+r) to a large negative
+   power, underflow to zero and then divide by it on a long loan. */
+function terminalBalance(principal,payments,r){
+  let bal=principal;
+  for(let i=0;i<payments.length;i++){bal=bal*(1+r)-payments[i];if(!isFinite(bal))return bal;}
+  return bal;
+}
+/* Solve the period rate a payment stream implies. bal_n(r) is strictly
+   increasing in r for non-negative payments, deeply negative at the low bracket
+   and positive at the high one, so bisection always converges whenever at least
+   one payment is positive. Returns null when there is nothing to solve, which
+   the caller surfaces as an infeasible scenario rather than a confident zero. */
+function solvePeriodRate(principal,payments){
+  if(!(principal>0)||!payments||!payments.length)return null;
+  if(!(payments.reduce((s,p)=>s+(p||0),0)>0))return null;
+  let lo=-0.9999,hi=1;
+  if(!(terminalBalance(principal,payments,lo)<0))return null;
+  let guard=0;
+  while(!(terminalBalance(principal,payments,hi)>0)&&guard++<80)hi*=2;
+  if(!(terminalBalance(principal,payments,hi)>0))return null;
+  for(let i=0;i<200&&hi-lo>1e-14;i++){
+    const mid=(lo+hi)/2;
+    if(terminalBalance(principal,payments,mid)>0)hi=mid;else lo=mid;
   }
-
-  let bal=principal, totalInt=0;
-  const schedule=[];
-  for(let i=1;i<=n;i++){
-    const intPart=bal*r;
-    let prinPart=pmt-intPart;
-    // Final payment: clear exact remaining balance
-    if(i===n){prinPart=bal; const finalPmt=intPart+bal; schedule.push({num:i,startBal:bal,interest:intPart,principal:prinPart,payment:finalPmt,endBal:0}); totalInt+=intPart; bal=0;}
-    else{if(prinPart>bal)prinPart=bal; const endBal=Math.max(0,bal-prinPart); schedule.push({num:i,startBal:bal,interest:intPart,principal:prinPart,payment:pmt,endBal}); totalInt+=intPart; bal=endBal;}
-  }
-  const totalPaid=schedule.reduce((s,p)=>s+p.payment,0);
-  return{payment:pmt,schedule,totalInterest:totalInt,totalPaid,periods:n,periodRate:r};
+  return(lo+hi)/2;
 }
 
-function computeScenario(sc, purchaseCost, availableCash, riskFreeRate, inflationRate, inflationEnabled){
+function annuityPmt(bal,r,m){
+  if(m<=0)return bal;
+  if(bal<=0)return 0;
+  if(r===0)return bal/m;
+  const f=Math.pow(1+r,m);
+  return bal*(r*f)/(f-1);
+}
+// Annuity sized to leave exactly `res` outstanding after m periods.
+function annuityPmtToResidual(bal,r,m,res){
+  if(m<=0)return bal;
+  const pv=r===0?res:res/Math.pow(1+r,m);
+  return annuityPmt(bal-pv,r,m);
+}
+
+/* The one schedule builder. Every loan type funnels into the same row shape —
+   {num,startBal,interest,principal,payment,endBal,rate} — so the chart, the
+   tables, the CSV and the sensitivity sweep never branch on the type.
+   `variant` is 'mid' | 'low' | 'high' and only matters for floating periods. */
+function buildSchedule(sc,principal,freq,variant){
+  const ppy=periodsPerYear(freq);
+  const n=Math.max(0,Math.round(sc.termPeriods||0));
+  const type=sc.loanType||'annuity';
+  const empty={payment:0,finalPayment:0,schedule:[],totalInterest:0,totalPaid:0,periods:0,periodRate:0,
+    effectiveRate:null,impliedAnnualRate:null,residualAmt:0,paymentVaries:false,negAm:false,solved:true};
+  if(principal<=0||n<=0)return empty;
+
+  const norm=scenarioRateNorm(sc);
+  const v=variant||'mid';
+  let impliedPeriodRate=null,solved=true;
+  let rateAt;
+  if(type==='knownPayment'){
+    impliedPeriodRate=solvePeriodRate(principal,scenarioPaymentStream(sc,n));
+    if(impliedPeriodRate===null){return Object.assign({},empty,{solved:false});}
+    rateAt=()=>impliedPeriodRate;
+  } else {
+    rateAt=i=>toPeriodRate(rateFromBand(bandForPeriod(norm,i),v),ppy);
+  }
+
+  const schedule=[];
+  let bal=principal,totalInt=0,negAm=false;
+  const residualAmt=type==='balloon'?principal*(Math.min(99,Math.max(0,sc.residualPct||0))/100):0;
+  const k=usesIoPeriods(type)?Math.min(n,Math.max(0,Math.round(sc.ioPeriods===undefined?n:sc.ioPeriods))):0;
+
+  if(type==='flat'){
+    // Flat interest is fixed at the outset on the original principal, so a rate
+    // schedule cannot apply and the first period's rate is the only one.
+    const r=rateAt(1),prinPer=principal/n,intPer=principal*r;
+    for(let i=1;i<=n;i++){
+      const prin=(i===n)?bal:prinPer;
+      const endBal=(i===n)?0:Math.max(0,bal-prinPer);
+      schedule.push({num:i,startBal:bal,interest:intPer,principal:prin,payment:prin+intPer,endBal,rate:r});
+      totalInt+=intPer;bal=endBal;
+    }
+  } else {
+    const stream=type==='knownPayment'?scenarioPaymentStream(sc,n):null;
+    for(let i=1;i<=n;i++){
+      const r=rateAt(i);
+      const intPart=bal*r;
+      let pay,prin,endBal;
+      if(i===n){
+        // Whatever the product, the last period settles the debt exactly. For a
+        // balloon this is PMT + residual, for a bullet it is the whole grown
+        // debt, and for an annuity it is the ordinary final instalment.
+        pay=intPart+bal;prin=bal;endBal=0;
+      } else {
+        if(type==='annuity')pay=annuityPmt(bal,r,n-i+1);
+        else if(type==='interestOnly')pay=i<=k?intPart:annuityPmt(bal,r,n-i+1);
+        else if(type==='balloon')pay=annuityPmtToResidual(bal,r,n-i+1,residualAmt);
+        else if(type==='bullet')pay=0;
+        else if(type==='deferred')pay=i<=k?0:annuityPmt(bal,r,n-i+1);
+        else pay=stream[i-1];
+        prin=pay-intPart;
+        if(prin>bal)prin=bal;
+        // A payment below the interest due grows the debt. By design for a
+        // bullet or a deferred start; a red flag for a known repayment.
+        if(prin<0&&type==='knownPayment')negAm=true;
+        endBal=Math.max(0,bal-prin);
+      }
+      schedule.push({num:i,startBal:bal,interest:intPart,principal:prin,payment:pay,endBal,rate:r});
+      totalInt+=intPart;bal=endBal;
+    }
+  }
+
+  const totalPaid=schedule.reduce((s,p)=>s+p.payment,0);
+  const first=schedule[0]?schedule[0].payment:0;
+  const finalPayment=schedule[n-1]?schedule[n-1].payment:0;
+  let paymentVaries=false;
+  for(let i=0;i<schedule.length-1;i++){if(Math.abs(schedule[i].payment-first)>0.005){paymentVaries=true;break;}}
+  if(!paymentVaries&&schedule.length>1&&Math.abs(finalPayment-first)>0.005)paymentVaries=true;
+  const irr=solvePeriodRate(principal,schedule.map(p=>p.payment));
+  return{payment:first,finalPayment,schedule,totalInterest:totalInt,totalPaid,periods:n,
+    periodRate:schedule[0]?schedule[0].rate:0,
+    effectiveRate:effectiveAnnual(irr,ppy),
+    impliedAnnualRate:impliedPeriodRate===null?null:effectiveAnnual(impliedPeriodRate,ppy),
+    residualAmt,paymentVaries,negAm,solved};
+}
+
+// Kept as the named entry point the engine notes above describe. Everything
+// goes through buildSchedule so there is only one place a schedule is built.
+function computeAmortization(principal, annualRate, termPeriods, freq){
+  return buildSchedule({loanType:'annuity',rateMode:'simple',financeRate:annualRate,termPeriods},principal,freq,'mid');
+}
+
+/* How the origination fee is settled. Only 'upfront' spends your own cash; the
+   other two put the fee inside the loan, which means you also pay interest on
+   it, and which is why the fee must not then be added to out-of-pocket twice. */
+function resolveFinancing(sc,base){
+  const treat=['upfront','capitalise','discount'].includes(sc.feeTreatment)?sc.feeTreatment:'upfront';
+  const pct=sc.feeType==='pct';
+  const amt=Math.max(0,sc.feeAmt||0);
+  if(treat==='upfront'){
+    const fee=pct?base*(amt/100):amt;
+    return{financed:base,fee,cashFee:fee};
+  }
+  if(treat==='discount'){
+    // The advance arrives net of the fee, so it has to be grossed up for the
+    // net proceeds to still cover the price.
+    if(pct&&amt>=100)return null;
+    const financed=pct?base/(1-amt/100):base+amt;
+    return{financed,fee:financed-base,cashFee:0};
+  }
+  const fee=pct?base*(amt/100):amt;
+  return{financed:base+fee,fee,cashFee:0};
+}
+
+function dropReason(sc,purchaseCost,availableCash){
+  const downPct=Math.min(100,Math.max(0,sc.downPaymentPct||0));
+  const down=Math.min(purchaseCost*(downPct/100),purchaseCost,availableCash);
+  const fin=resolveFinancing(sc,purchaseCost-down);
+  if(!fin)return'fee';
+  if(availableCash-down-fin.cashFee<0)return'upfront';
+  return'unsolvable';
+}
+
+function computeScenario(sc, purchaseCost, availableCash, riskFreeRate, inflationRate, inflationEnabled, variant){
   const downPct=Math.min(100,Math.max(0,sc.downPaymentPct||0));
   const requestedDown=purchaseCost*(downPct/100);
   const down=Math.min(requestedDown,purchaseCost,availableCash);
-  const financed=purchaseCost-down;
+  const base=purchaseCost-down;
   const termYears=termToYears(sc.termPeriods,sc.freq);
-  if(financed<=0) return computeScenarioAsCash(purchaseCost,availableCash,sc,riskFreeRate,inflationRate,inflationEnabled);
+  if(base<=0) return computeScenarioAsCash(purchaseCost,availableCash,sc,riskFreeRate,inflationRate,inflationEnabled);
 
   const ppy=periodsPerYear(sc.freq);
   const n=Math.round(sc.termPeriods);
-  let fee=sc.feeType==='pct'?financed*(sc.feeAmt/100):Math.max(0,sc.feeAmt);
+  const fin=resolveFinancing(sc,base);
+  if(!fin) return null;
+  const financed=fin.financed,fee=fin.fee;
   const adminFee=Math.max(0,sc.adminFee||0); // fixed amount paid every repayment
-  const cashAfterUpfront=availableCash-down-fee;
+  const cashAfterUpfront=availableCash-down-fin.cashFee;
   if(cashAfterUpfront<0) return null;
 
-  const amort=computeAmortization(financed,sc.financeRate,sc.termPeriods,sc.freq);
+  const amort=buildSchedule(sc,financed,sc.freq,variant||'mid');
+  if(!amort.solved) return null;
   const rfPeriod=Math.pow(1+riskFreeRate/100,1/ppy)-1;
   let investBal=cashAfterUpfront;
   const timeline=[{period:0,investBal:cashAfterUpfront,loanBal:financed,wealth:cashAfterUpfront-financed,cumInterest:0,cumPaid:0,cumAdmin:0}];
@@ -192,15 +522,25 @@ function computeScenario(sc, purchaseCost, availableCash, riskFreeRate, inflatio
 
   const endWealth=investBal;
   const totalAdminFee=adminFee*n; // admin fee charged once per repayment over the full term
-  const totalFee=fee+totalAdminFee; // all fees: upfront origination + recurring admin
+  const totalFee=fee+totalAdminFee; // all fees: origination + recurring admin
   const totalFinanceCost=amort.totalInterest+totalFee;
-  const totalOOP=down+fee+amort.totalPaid+totalAdminFee;
+  // A capitalised or discounted fee is repaid inside the instalments, so it is
+  // already inside totalPaid and must not be added again here.
+  const totalOOP=down+fin.cashFee+amort.totalPaid+totalAdminFee;
   let inflAdj=null;
   if(inflationEnabled&&inflationRate>0){
     const rd=Math.pow(1+inflationRate/100,termYears);
     inflAdj={endWealthReal:endWealth/rd,totalFinanceCostReal:totalFinanceCost/rd};
   }
-  return{down,financed,fee,adminFee,totalAdminFee,amort,endWealth,totalInterest:amort.totalInterest,totalFee,totalFinanceCost,payment:amort.payment,totalOOP,timeline,negCarry:riskFreeRate<sc.financeRate,inflAdj,cashAfter:cashAfterUpfront,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
+  // Carry is judged on what the loan actually costs, not on the headline rate:
+  // a 5% flat loan really costs about 9%, and the warning has to say so.
+  const effRate=amort.effectiveRate;
+  return{down,financed,fee,cashFee:fin.cashFee,feeTreatment:sc.feeTreatment||'upfront',adminFee,totalAdminFee,amort,endWealth,
+    totalInterest:amort.totalInterest,totalFee,totalFinanceCost,payment:amort.payment,finalPayment:amort.finalPayment,
+    paymentVaries:amort.paymentVaries,negAm:amort.negAm,effectiveRate:effRate,impliedAnnualRate:amort.impliedAnnualRate,
+    residualAmt:amort.residualAmt,loanType:sc.loanType||'annuity',rateMode:sc.rateMode||'simple',
+    totalOOP,timeline,negCarry:riskFreeRate<(effRate===null?sc.financeRate:effRate),inflAdj,cashAfter:cashAfterUpfront,
+    n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
 }
 
 function computeScenarioAsCash(purchaseCost,availableCash,sc,riskFreeRate,inflationRate,inflationEnabled){
@@ -214,7 +554,7 @@ function computeScenarioAsCash(purchaseCost,availableCash,sc,riskFreeRate,inflat
   for(let i=0;i<n;i++){bal*=(1+rfP);timeline.push({period:i+1,investBal:bal,loanBal:0,wealth:bal,cumInterest:0,cumPaid:0});}
   let inflAdj=null;
   if(inflationEnabled&&inflationRate>0) inflAdj={endWealthReal:bal/Math.pow(1+inflationRate/100,termYears)};
-  return{down:purchaseCost,financed:0,fee:0,adminFee:0,totalAdminFee:0,amort:{payment:0,schedule:[],totalInterest:0,totalPaid:0,periods:0,periodRate:0},endWealth:bal,totalInterest:0,totalFee:0,totalFinanceCost:0,payment:0,totalOOP:purchaseCost,timeline,negCarry:false,inflAdj,cashAfter:leftover,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
+  return{down:purchaseCost,financed:0,fee:0,cashFee:0,feeTreatment:'upfront',adminFee:0,totalAdminFee:0,amort:{payment:0,finalPayment:0,schedule:[],totalInterest:0,totalPaid:0,periods:0,periodRate:0,effectiveRate:null,impliedAnnualRate:null,residualAmt:0,paymentVaries:false,negAm:false,solved:true},endWealth:bal,totalInterest:0,totalFee:0,totalFinanceCost:0,payment:0,finalPayment:0,paymentVaries:false,negAm:false,effectiveRate:null,impliedAnnualRate:null,residualAmt:0,loanType:sc.loanType||'annuity',rateMode:sc.rateMode||'simple',totalOOP:purchaseCost,timeline,negCarry:false,inflAdj,cashAfter:leftover,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
 }
 
 function computeCashBaseline(purchaseCost,availableCash,termYears,riskFreeRate,inflationRate,inflationEnabled){
@@ -254,6 +594,7 @@ function rerender(){
   $('inflationRow').style.display=inflationEnabled?'':'none';
   const optTarget=$('optTarget').value;
   currentCurrencySymbol=$('currencySymbol').value||'$';
+  rateConvention=$('rateConvention').value==='nominal'?'nominal':'ear';
   updateCurrencyPrefixes();
   $('scFeeType').querySelector('option[value="fixed"]').textContent=moneySymbol();
 
@@ -278,24 +619,51 @@ function rerender(){
   }
   $('warnBanner').style.display='none';$('warnBanner').textContent='';
 
-  const results=[];let anyNegCarry=false;const dropped=[];
+  const results=[];let anyNegCarry=false,anyNegAm=false;const dropped=[];
   scenarios.forEach((sc,i)=>{
     const res=computeScenario(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled);
-    if(res){res.name=sc.name;res.idx=i;res.colorVar=SCENARIO_COLORS[i%SCENARIO_COLORS.length];if(res.negCarry)anyNegCarry=true;}
-    else dropped.push(sc.name);
+    if(res){
+      res.name=sc.name;res.idx=i;res.colorVar=SCENARIO_COLORS[i%SCENARIO_COLORS.length];
+      if(res.negCarry)anyNegCarry=true;
+      if(res.negAm)anyNegAm=true;
+      // A floating period is simulated three ways. The model itself never knows
+      // about bands: it is simply run again along the min and the max path.
+      if(scenarioHasFloat(sc)){
+        res.bandLo=computeScenario(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled,'low');
+        res.bandHi=computeScenario(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled,'high');
+      }
+    }
+    else dropped.push({name:sc.name,why:dropReason(sc,purchaseCost,availableCash)});
     results.push(res);
   });
-  $('negCarryBanner').style.display=anyNegCarry?'block':'none';
-  $('negCarryBanner').textContent=anyNegCarry?'⚠ Negative carry: finance rate exceeds risk-free rate. Financing will likely cost more than investing.':'';
+  const carryMsgs=[];
+  if(anyNegCarry)carryMsgs.push('⚠ Negative carry: the effective cost of borrowing exceeds the risk-free rate. Financing will likely cost more than investing.');
+  // A repayment below the interest due grows the debt. That is a real outcome,
+  // so it is named rather than quietly folded into the numbers.
+  if(anyNegAm)carryMsgs.push('⚠ Negative amortization: a repayment is smaller than the interest due, so the balance grows before it falls.');
+  $('negCarryBanner').style.display=carryMsgs.length?'block':'none';
+  $('negCarryBanner').textContent=carryMsgs.join('  ');
   // A scenario whose down payment + upfront fee exceeds available cash can't be
   // modelled; surface it instead of silently dropping it from the comparison.
   if(dropped.length){
+    const REASON={
+      upfront:'the down payment plus upfront fee exceeds your available cash. Lower the down payment or fee, or increase available cash.',
+      fee:'a fee of 100% or more cannot be deducted from the advance. Lower the fee or settle it another way.',
+      unsolvable:'no interest rate makes that repayment plan pay the loan off. Raise the repayment or shorten the term.'
+    };
+    const byWhy={};
+    dropped.forEach(d=>{(byWhy[d.why]=byWhy[d.why]||[]).push(d.name);});
     $('warnBanner').style.display='block';
-    $('warnBanner').textContent='⚠ '+dropped.join(', ')+(dropped.length>1?' were':' was')+
-      ' skipped: the down payment plus upfront fee exceeds your available cash. Lower the down payment or fee, or increase available cash.';
+    // Name the real cause: blaming the down payment for an unsolvable repayment
+    // plan sends the reader to fix the wrong control.
+    $('warnBanner').textContent=Object.keys(byWhy).map(w=>
+      '⚠ '+byWhy[w].join(', ')+(byWhy[w].length>1?' were':' was')+' skipped: '+(REASON[w]||REASON.upfront)).join('  ');
   }
 
-  results.forEach(r=>{if(!r)return;const cb=computeCashBaseline(purchaseCost,availableCash,r.termYears,riskFreeRate,inflationRate,inflationEnabled);r.cashBaseWealth=cb.endWealth;r.netBenefit=r.endWealth-cb.endWealth;if(r.inflAdj&&cb.inflAdj)r.inflAdj.netBenefitReal=(r.inflAdj.endWealthReal||0)-(cb.inflAdj.endWealthReal||0);});
+  results.forEach(r=>{if(!r)return;const cb=computeCashBaseline(purchaseCost,availableCash,r.termYears,riskFreeRate,inflationRate,inflationEnabled);r.cashBaseWealth=cb.endWealth;r.netBenefit=r.endWealth-cb.endWealth;if(r.inflAdj&&cb.inflAdj)r.inflAdj.netBenefitReal=(r.inflAdj.endWealthReal||0)-(cb.inflAdj.endWealthReal||0);
+    // The two band paths are scored against the very same baseline, so the
+    // range row reads on the same footing as the midpoint above it.
+    [r.bandLo,r.bandHi].forEach(b=>{if(b){b.cashBaseWealth=cb.endWealth;b.netBenefit=b.endWealth-cb.endWealth;}});});
 
   const valid=results.filter(r=>r);
   let bestIdx=-1;
@@ -320,7 +688,7 @@ function rerender(){
   if(bestResult){const nb=snapNB(bestResult.netBenefit),cashWins=allNeg&&!tie;$('kpiNetBenefit').textContent=fmt.currency(nb,true);$('kpiNetBenefit').style.color=nb>0?cssVar('--positive-em'):nb<0?cssVar('--negative-em'):cssVar('--text');$('kpiNetSub').textContent=nb>0?'Financing is more wealth-efficient':nb<0?'Cash purchase preserves more wealth':'Financing and paying cash end up level';
     // The "(Best)" tiles must describe the strategy the verdict names: when the
     // cash purchase wins there is no loan, so there is no interest.
-    $('kpiInterest').textContent=fmt.currency(cashWins?0:bestResult.totalInterest,true);$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent=cashWins?'Paying cash pays no interest.':fmt.currencyExact(bestResult.payment)+'/'+freqLabel(bestResult.freq);}
+    $('kpiInterest').textContent=fmt.currency(cashWins?0:bestResult.totalInterest,true);$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent=cashWins?'Paying cash pays no interest.':paymentTxt(bestResult);}
   else{$('kpiNetBenefit').textContent='—';$('kpiNetBenefit').style.color=cssVar('--text');$('kpiNetSub').textContent='';$('kpiInterest').textContent='—';$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent='';}
   $('kpiCashWealth').textContent=fmt.currency(cashBase.endWealth,true);$('kpiCashWealth').style.color=cssVar('--text');$('kpiCashSub').textContent=maxTerm>0?`After ${maxTerm.toFixed(1)} yr at ${fmt.pct(riskFreeRate/100)} risk-free`:'Cash left after buying outright.';
 
@@ -368,29 +736,91 @@ function renderMainChart(results){
     return 0; // loanBalance after payoff
   }
 
-  const datasets=[],legendItems=[];
+  const datasets=[],legendItems=[],bandDatasets=[],bandColors=[];
+  // The key is built from each entry's OWN spec rather than from datasets[i]:
+  // the band adds two datasets that are one mark, so the two lists no longer
+  // run in lockstep.
+  const pushSeries=(ds,label)=>{datasets.push(ds);legendItems.push({label,spec:SharedLegend.specOf(ds)});};
   if(metric==='wealth'){
     const cd=xs.map(yr=>({x:yr,y:left*Math.pow(1+rfAnnual,yr)}));
-    datasets.push({label:'Cash Purchase',data:cd,borderColor:cssVar('--muted'),backgroundColor:'transparent',borderWidth:2,borderDash:[6,4],pointRadius:0,pointHoverRadius:4,tension:.3,fill:false});
-    legendItems.push({label:'Cash Purchase',color:cssVar('--muted'),dash:true});
+    pushSeries({label:'Cash Purchase',data:cd,borderColor:cssVar('--muted'),backgroundColor:'transparent',borderWidth:2,borderDash:[6,4],pointRadius:0,pointHoverRadius:4,tension:.3,fill:false},'Cash Purchase');
   }
   results.forEach(r=>{if(!r)return;const color=cssVar(r.colorVar);
     const rfP_r=Math.pow(1+rfAnnual,1/r.ppy)-1;
     const data=xs.map(yr=>({x:yr,y:periodValue(r, yr*r.ppy, rfP_r)}));
-    datasets.push({label:r.name,data,borderColor:color,backgroundColor:color+'22',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:.3,fill:false});legendItems.push({label:r.name,color});
+    r.bandSeries=null;
+    pushSeries({label:r.name,data,borderColor:color,backgroundColor:color+'22',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:.3,fill:false,fvcRef:r},r.name);
+    if(r.bandLo&&r.bandHi){
+      const lo=xs.map(yr=>periodValue(r.bandLo, yr*r.bandLo.ppy, rfP_r));
+      const hi=xs.map(yr=>periodValue(r.bandHi, yr*r.bandHi.ppy, rfP_r));
+      let maxDiff=0;for(let k=0;k<xs.length;k++)maxDiff=Math.max(maxDiff,Math.abs(hi[k]-lo[k]));
+      // A band narrower than fifty cents is noise, not information.
+      if(maxDiff>0.5){
+        r.bandSeries={lo,hi};bandColors.push(color);
+        bandDatasets.push({label:r.name+' (band)',data:xs.map((yr,k)=>({x:yr,y:hi[k]})),borderColor:'transparent',backgroundColor:'transparent',borderWidth:0,pointRadius:0,pointHoverRadius:0,tension:.3,fill:false,isBand:true});
+        bandDatasets.push({label:r.name+' (band)',data:xs.map((yr,k)=>({x:yr,y:lo[k]})),borderColor:'transparent',backgroundColor:color+'30',borderWidth:0,pointRadius:0,pointHoverRadius:0,tension:.3,fill:'-1',isBand:true});
+      }
+    }
   });
+  // Appended last because Chart.js paints datasets last to first, so the
+  // shading lands beneath every line with no draw-order juggling.
+  bandDatasets.forEach(d=>datasets.push(d));
+  // A band is two datasets but one thing on the chart, so it is one entry.
+  if(bandColors.length)legendItems.push({label:'Variable-rate range (min–max)',
+    spec:{type:'area',fill:bandColors[0]+'30',fill2:bandColors[1]?bandColors[1]+'30':undefined}});
   // Each entry is drawn as its series is: the cash line dashed, the financed
-  // lines solid, at the widths the chart strokes them with.
+  // lines solid, the range as the block it is shaded with.
   const le=$('chartLegend');le.innerHTML='';
-  legendItems.forEach((l,i)=>{const d=document.createElement('div');d.className='legend-item';SharedLegend.attach(d,SharedLegend.fromDataset(datasets[i]),l.label);le.appendChild(d);});
+  legendItems.forEach(l=>{const d=document.createElement('div');d.className='legend-item';SharedLegend.attach(d,l.spec,l.label);le.appendChild(d);});
   const yAxisLabel={wealth:`Wealth (${moneySymbol()})`,netBenefit:`Net Benefit (${moneySymbol()})`,investmentValue:`Investment Value (${moneySymbol()})`,loanBalance:`Loan Balance (${moneySymbol()})`}[metric]||`Value (${moneySymbol()})`;
   const xLabelOf=v=>{const n=+v;return Number.isInteger(n)?`Year ${n}`:`Year ${n.toFixed(2)}`;};
   const gc=cssVar('--chart-grid'),mc=cssVar('--chart-text'),tc=cssVar('--text');
   const tipLight=document.body.classList.contains('light');
   const tipBg=tipLight?'#FFFFFF':'#1e1e2e',tipTitle=tipLight?'#2D3436':'#EAF1FF',tipBody=tipLight?'#4A5A6A':'#A8B6CF',tipBorder=tipLight?'#D4DEEF':gc;
-  const cfg={type:'line',data:{datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:SharedChartTip.options({callbacks:{title:c=>xLabelOf(c[0].parsed.x),label:c=>`  ${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`},backgroundColor:tipBg,titleColor:tipTitle,bodyColor:tipBody,borderColor:tipBorder,borderWidth:1,padding:10,onAfterBody:items=>{if(!items.length)return;$('hoverBox').textContent=`${xLabelOf(items[0].parsed.x)}  —  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  ');}}),zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},scales:{x:{type:'linear',title:{display:true,text:'Years',color:mc,font:{size:12}},ticks:{color:mc,maxTicksLimit:12,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:yAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
+  const cfg={type:'line',data:{datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},onHover:(e,els,ch)=>{
+    const hb=$('hoverBox');if(!hb)return;
+    if(!els.length){hb.textContent=HOVER_IDLE;return;}
+    const i=els[0].index;
+    const parts=[];
+    ch.data.datasets.forEach(ds=>{
+      if(ds.isBand)return; // the range rides its own series' entry, as in the card
+      const pt=ds.data[i];if(!pt)return;
+      let txt=`${ds.label}: ${fmt.currency(pt.y,true)}`;
+      const rr=ds.fvcRef;
+      if(rr&&rr.bandSeries){
+        const a=Math.min(rr.bandSeries.lo[i],rr.bandSeries.hi[i]),b2=Math.max(rr.bandSeries.lo[i],rr.bandSeries.hi[i]);
+        if(Math.abs(b2-a)>0.5)txt+=` (${fmt.currency(a,true)} – ${fmt.currency(b2,true)})`;
+      }
+      parts.push(txt);
+    });
+    const x0=ch.data.datasets[0].data[i];
+    hb.textContent=(x0?xLabelOf(x0.x)+'  ·  ':'')+parts.join('  |  ');
+  },plugins:{legend:{display:false},tooltip:SharedChartTip.options({filter:item=>!item.dataset.isBand,callbacks:{title:c=>xLabelOf(c[0].parsed.x),label:c=>{
+    let t=`  ${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`;
+    const rr=c.dataset.fvcRef;
+    if(rr&&rr.bandSeries){
+      const a=Math.min(rr.bandSeries.lo[c.dataIndex],rr.bandSeries.hi[c.dataIndex]),b=Math.max(rr.bandSeries.lo[c.dataIndex],rr.bandSeries.hi[c.dataIndex]);
+      if(Math.abs(b-a)>0.5)t+=` (${fmt.currency(a,true)} – ${fmt.currency(b,true)})`;
+    }
+    return t;
+  }},backgroundColor:tipBg,titleColor:tipTitle,bodyColor:tipBody,borderColor:tipBorder,borderWidth:1,padding:10,}),zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},scales:{x:{type:'linear',title:{display:true,text:'Years',color:mc,font:{size:12}},ticks:{color:mc,maxTicksLimit:12,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:yAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
   if(chartInstance){chartInstance.data=cfg.data;chartInstance.options.scales.x.ticks.color=mc;chartInstance.options.scales.x.grid.color=gc;chartInstance.options.scales.x.title.color=mc;chartInstance.options.scales.y.ticks.color=mc;chartInstance.options.scales.y.grid.color=gc;chartInstance.options.scales.y.title.color=mc;chartInstance.options.scales.y.title.text=yAxisLabel;chartInstance.update('none');}
   else chartInstance=new Chart($('chartCanvas'),cfg);
+}
+
+/* A single scalar cannot describe an interest-only, balloon, stepped or
+   deferred loan, so say what the instalments actually do: one figure when they
+   are level, the span when they are not, and plain words when there are none. */
+function paymentTxt(r){
+  const sch=r.amort&&r.amort.schedule;
+  if(!sch||!sch.length)return'—';
+  const body=sch.length>1?sch.slice(0,-1):sch;
+  let lo=Infinity,hi=-Infinity;
+  body.forEach(p=>{lo=Math.min(lo,p.payment);hi=Math.max(hi,p.payment);});
+  if(!isFinite(lo))return'—';
+  const per='/'+freqLabel(r.freq);
+  if(Math.abs(hi-lo)<0.005)return lo>0.005?fmt.currencyExact(lo)+per:'None until the final payment';
+  return fmt.currencyExact(lo)+' → '+fmt.currencyExact(hi)+per;
 }
 
 // Horizons are compared in years, but a sub-year term reads better in months.
@@ -401,9 +831,14 @@ function renderComparisonTable(results){
   const inflOn=latestResults.inflationEnabled,pc=latestResults.purchaseCost;
   let h='<table><thead><tr><th>Metric</th><th>Cash Purchase</th>';valid.forEach(r=>{h+='<th>'+r.name+'</th>';});h+='</tr></thead><tbody>';
   const rows=[
+    // What the product IS comes before what it costs.
+    ['Loan Type','Pay in full',r=>(LOAN_TYPE_LABEL[r.loanType]||LOAN_TYPE_LABEL.annuity)+(r.rateMode==='schedule'?' · scheduled rate':'')],
     ['Down Payment (%)','—',r=>fmt.pct((r.down/latestResults.purchaseCost)||0,2)],
     ['Down Payment Amount','—',r=>fmt.currency(r.down)],['Financed Amount','—',r=>fmt.currency(r.financed)],
-    ['Periodic Payment','—',r=>r.payment>0?fmt.currencyExact(r.payment)+'/'+freqLabel(r.freq):'—'],
+    ['Periodic Payment','—',r=>paymentTxt(r)],
+    // What the loan really costs, so a flat 5% and an annuity 5% can be read
+    // against each other instead of against their headline numbers.
+    ['Effective Rate (APR)','—',r=>r.effectiveRate===null?'—':fmt.pct(r.effectiveRate/100)],
     ['Admin Fee (per payment)','—',r=>(r.adminFee>0)?fmt.currencyExact(r.adminFee)+'/'+freqLabel(r.freq):'—'],
     ['Total Interest Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalInterest)],
     ['Total Admin Fees',fmt.currency(0),r=>fmt.currencyExact(r.totalAdminFee||0)],
@@ -420,6 +855,23 @@ function renderComparisonTable(results){
     ['Net Benefit vs Cash','Baseline',r=>{const v=snapNB(r.netBenefit);return`<span style="color:${v>0?cssVar('--positive-em'):v<0?cssVar('--negative-em'):cssVar('--text')};font-weight:700">${fmt.currencyExact(v)}</span>`;}],
   ];
   if(inflOn)rows.push(['Inflation-Adj Net Benefit','Baseline',r=>{if(!r.inflAdj||r.inflAdj.netBenefitReal===undefined)return'—';const v=snapNB(r.inflAdj.netBenefitReal);return`<span style="color:${v>0?cssVar('--positive-em'):v<0?cssVar('--negative-em'):cssVar('--text')};font-weight:700">${fmt.currencyExact(v)}</span>`;}]);
+  // Rows that only earn their place when some scenario actually has the thing.
+  const rowAt=lbl=>rows.findIndex(x=>x[0]===lbl);
+  if(valid.some(r=>r.residualAmt>0))
+    rows.splice(rowAt('Financed Amount')+1,0,['Residual / Balloon','—',r=>r.residualAmt>0?fmt.currencyExact(r.residualAmt):'—']);
+  if(valid.some(r=>r.amort&&r.amort.schedule.length>1&&Math.abs(r.finalPayment-r.payment)>0.005))
+    rows.splice(rowAt('Periodic Payment')+1,0,['Final Payment','—',r=>{
+      const sch=r.amort&&r.amort.schedule;
+      return(!sch||sch.length<2||Math.abs(r.finalPayment-r.payment)<=0.005)?'—':fmt.currencyExact(r.finalPayment);
+    }]);
+  // The midpoint stays in the Ending Wealth row above; the spread gets its own,
+  // so every existing cell still reads as a single number.
+  if(valid.some(r=>r.bandLo&&r.bandHi))
+    rows.splice(rowAt('Ending Wealth')+1,0,['Ending Wealth Range (min–max)','—',r=>{
+      if(!r.bandLo||!r.bandHi)return'—';
+      const a=Math.min(r.bandLo.endWealth,r.bandHi.endWealth),b=Math.max(r.bandLo.endWealth,r.bandHi.endWealth);
+      return fmt.currencyExact(a)+' – '+fmt.currencyExact(b);
+    }]);
   rows.forEach(([label,cashVal,fn])=>{
     h+=`<tr><td>${label}</td><td>${cashVal}</td>`;valid.forEach(r=>{h+='<td>'+fn(r)+'</td>';});h+='</tr>';
   });
@@ -437,14 +889,21 @@ function renderAmortTabs(results){
   valid.forEach((r,i)=>{const b=document.createElement('button');b.className='tab-btn'+(i===activeAmortIdx?' active':'');b.textContent=r.name;b.addEventListener('click',()=>{activeAmortIdx=i;renderAmortTabs(results);});tb.appendChild(b);});
   const r=valid[activeAmortIdx];
   const periodHdr=freqLabel(r.freq).charAt(0).toUpperCase()+freqLabel(r.freq).slice(1)+' #';
-  let h='<table><thead><tr><th>'+periodHdr+'</th><th>Start Balance</th><th>Interest</th><th>Principal</th><th>Payment</th><th>End Balance</th></tr></thead><tbody>';
+  // The rate only earns a column where it actually moves, so a plain fixed-rate
+  // loan (and the CSV scraped from it) is unchanged.
+  const showRate=r.rateMode==='schedule';
+  const COLS=showRate?7:6;
+  let h='<table><thead><tr><th>'+periodHdr+'</th>'+(showRate?'<th>Rate (p.a.)</th>':'')+'<th>Start Balance</th><th>Interest</th><th>Principal</th><th>Payment</th><th>End Balance</th></tr></thead><tbody>';
   let tI=0,tP=0,tPmt=0;
-  r.amort.schedule.forEach(p=>{tI+=p.interest;tP+=p.principal;tPmt+=p.payment;h+=`<tr><td>${fmt.num(p.num)}</td><td>${fmt.currencyExact(p.startBal)}</td><td>${fmt.currencyExact(p.interest)}</td><td>${fmt.currencyExact(p.principal)}</td><td>${fmt.currencyExact(p.payment)}</td><td>${fmt.currencyExact(p.endBal)}</td></tr>`;});
-  h+=`<tr style="font-weight:800;border-top:2px solid var(--accent);"><td>Total</td><td></td><td>${fmt.currencyExact(tI)}</td><td>${fmt.currencyExact(tP)}</td><td>${fmt.currencyExact(tPmt)}</td><td></td></tr>`;
-  if(r.fee>0)h+=`<tr><td colspan="6" style="text-align:left;color:var(--muted);">+ Origination Fee: ${fmt.currencyExact(r.fee)}</td></tr>`;
-  if(r.totalAdminFee>0)h+=`<tr><td colspan="6" style="text-align:left;color:var(--muted);">+ Admin Fees: ${fmt.currencyExact(r.totalAdminFee)} (${fmt.num(r.amort.schedule.length)} × ${fmt.currencyExact(r.adminFee)}/${freqLabel(r.freq)})</td></tr>`;
-  h+=`<tr><td colspan="6" style="text-align:left;color:var(--muted);">= Grand Total: ${fmt.currencyExact(tPmt+r.fee+r.totalAdminFee+r.down)} (incl. ${fmt.currencyExact(r.down)} down)</td></tr>`;
-  h+='</tbody></table>';$('amortTableWrap').innerHTML=h;
+  r.amort.schedule.forEach(p=>{tI+=p.interest;tP+=p.principal;tPmt+=p.payment;h+=`<tr><td>${fmt.num(p.num)}</td>${showRate?'<td>'+fmt.pct(periodRateToAnnualPct(p.rate,r.ppy)/100)+'</td>':''}<td>${fmt.currencyExact(p.startBal)}</td><td>${fmt.currencyExact(p.interest)}</td><td>${fmt.currencyExact(p.principal)}</td><td>${fmt.currencyExact(p.payment)}</td><td>${fmt.currencyExact(p.endBal)}</td></tr>`;});
+  h+=`<tr style="font-weight:800;border-top:2px solid var(--accent);"><td>Total</td>${showRate?'<td></td>':''}<td></td><td>${fmt.currencyExact(tI)}</td><td>${fmt.currencyExact(tP)}</td><td>${fmt.currencyExact(tPmt)}</td><td></td></tr>`;
+  if(r.fee>0)h+=`<tr><td colspan="${COLS}" style="text-align:left;color:var(--muted);">+ Origination Fee: ${fmt.currencyExact(r.fee)}${r.feeTreatment==='upfront'?'':' ('+(r.feeTreatment==='capitalise'?'added to the loan':'deducted from the advance')+', so it is repaid inside the payments above)'}</td></tr>`;
+  if(r.totalAdminFee>0)h+=`<tr><td colspan="${COLS}" style="text-align:left;color:var(--muted);">+ Admin Fees: ${fmt.currencyExact(r.totalAdminFee)} (${fmt.num(r.amort.schedule.length)} × ${fmt.currencyExact(r.adminFee)}/${freqLabel(r.freq)})</td></tr>`;
+  h+=`<tr><td colspan="${COLS}" style="text-align:left;color:var(--muted);">= Grand Total: ${fmt.currencyExact(tPmt+r.cashFee+r.totalAdminFee+r.down)} (incl. ${fmt.currencyExact(r.down)} down)</td></tr>`;
+  h+='</tbody></table>';
+  // The schedule can only show one rate path, so say which one it is.
+  if(r.bandLo&&r.bandHi)h+='<p class="muted" style="margin-top:10px;font-size:.85rem;">This schedule follows the midpoint of the variable-rate range. The chart shades the full min to max span.</p>';
+  $('amortTableWrap').innerHTML=h;
 }
 
 function updateSensScenarioDropdown(){const s=$('sensScenario'),p=s.value;s.innerHTML='';scenarios.forEach((sc,i)=>{const o=document.createElement('option');o.value=i;o.textContent=sc.name;s.appendChild(o);});if(p&&parseInt(p)<scenarios.length)s.value=p;updateSensTermLabels();}
@@ -453,24 +912,58 @@ function updateSensScenarioDropdown(){const s=$('sensScenario'),p=s.value;s.inne
 // periods (weeks/months/years) rather than a fixed unit of years.
 function sensSelectedFreq(){const sc=scenarios[parseInt($('sensScenario').value)];return sc?sc.freq:'monthly';}
 let sensTermFreq=null; // last frequency the term sweep range was built for
+let sensScKind=null;   // last loan type + rate mode the sweep ranges were built for
+function sensSelectedScenario(){return scenarios[parseInt($('sensScenario').value)]||null;}
 function updateSensTermLabels(){
   const freq=sensSelectedFreq(),unit=termUnitLabel(freq);
   const xo=$('sensVarXTermOpt'),yo=$('sensVarYTermOpt');
   if(xo)xo.textContent='Term ('+unit+')';
   if(yo)yo.textContent='Term ('+unit+')';
+  // Only offer a sweep the selected scenario can actually answer, and name the
+  // rate sweep for what it does to a scheduled loan.
+  const sc=sensSelectedScenario();
+  const known=!!sc&&sc.loanType==='knownPayment',bal=!!sc&&sc.loanType==='balloon';
+  const shift=!!sc&&sc.rateMode==='schedule';
+  [['sensVarXPayOpt','sensVarX'],['sensVarYPayOpt','sensVarY']].forEach(([oid,sid])=>{
+    const o=$(oid);if(!o)return;o.hidden=!known;o.disabled=!known;
+    if(!known&&$(sid).value==='payment')$(sid).value=sid==='sensVarX'?'financeRate':'riskFreeRate';
+  });
+  [['sensVarXResOpt','sensVarX'],['sensVarYResOpt','sensVarY']].forEach(([oid,sid])=>{
+    const o=$(oid);if(!o)return;o.hidden=!bal;o.disabled=!bal;
+    if(!bal&&$(sid).value==='residual')$(sid).value=sid==='sensVarX'?'financeRate':'riskFreeRate';
+  });
+  [['sensVarXRateOpt','sensVarX'],['sensVarYRateOpt','sensVarY']].forEach(([oid,sid])=>{
+    const o=$(oid);if(!o)return;
+    o.textContent=shift?'Rate Shift (pp)':'Finance Rate (%)';
+    o.hidden=known;o.disabled=known;
+    if(known&&$(sid).value==='financeRate')$(sid).value=sid==='sensVarX'?'payment':'riskFreeRate';
+  });
+  // Switching to a scenario of a different shape makes the old range
+  // meaningless (a 1 to 10 sweep of a repayment amount says nothing), so
+  // re-seed both axes whenever that shape changes.
+  const kind=(sc?sc.loanType:'')+'|'+(sc?sc.rateMode:'');
+  if(kind!==sensScKind){
+    sensScKind=kind;
+    const[xa,xb]=defaultAxisRange($('sensVarX').value,freq,sc);$('sensXStart').value=xa;$('sensXEnd').value=xb;
+    const[ya,yb]=defaultAxisRange($('sensVarY').value,freq,sc);$('sensYStart').value=ya;$('sensYEnd').value=yb;
+  }
   // A range of 12–84 means months for a monthly loan and years for a yearly
   // one, so re-seed it whenever the selected scenario's unit changes.
   if(freq!==sensTermFreq){
-    sensTermFreq=freq;const[a,b]=defaultAxisRange('term',freq);
+    sensTermFreq=freq;const[a,b]=defaultAxisRange('term',freq,sc);
     if($('sensVarX').value==='term'){$('sensXStart').value=a;$('sensXEnd').value=b;}
     if($('sensVarY').value==='term'){$('sensYStart').value=a;$('sensYEnd').value=b;}
   }
 }
-function defaultAxisRange(vn,freq){
+function defaultAxisRange(vn,freq,sc){
   if(vn==='term')return{weekly:[52,364],fortnightly:[26,182],monthly:[12,84],yearly:[1,10]}[freq]||[12,84];
-  if(vn==='financeRate')return[1,10];
+  // A scheduled loan has no single rate to sweep, so the sweep shifts every
+  // period together and the range is a shift in percentage points, not a level.
+  if(vn==='financeRate')return(sc&&sc.rateMode==='schedule')?[-2,4]:[1,10];
   if(vn==='riskFreeRate')return[1,8];
   if(vn==='downPayment')return[0,50];
+  if(vn==='residual')return[0,60];
+  if(vn==='payment'){const b=sc?Math.max(1,Math.round((sc.knownPayment||0))):1;return[Math.round(b*0.6),Math.round(b*1.6)||10];}
   return[1,10];
 }
 
@@ -500,10 +993,25 @@ function runSensitivity(){
 
   function applyVar(sc,vn,val){
     const m={...sc};
-    if(vn==='financeRate')m.financeRate=val;
+    if(vn==='financeRate'){
+      if(m.rateMode==='schedule'&&Array.isArray(m.ratePeriods)){
+        // No single rate exists to set, so shift the whole schedule in
+        // percentage points: a rate shock, which is the useful sweep anyway.
+        m.ratePeriods=m.ratePeriods.map(p=>Object.assign({},p,{
+          rate:Math.max(0,(Number(p.rate)||0)+val),
+          rateMin:Math.max(0,(Number(p.rateMin)||0)+val),
+          rateMax:Math.max(0,(Number(p.rateMax)||0)+val)}));
+      } else m.financeRate=val;
+    }
     else if(vn==='riskFreeRate'){/* now a global, override via closure */m._rfOverride=val;}
     else if(vn==='downPayment')m.downPaymentPct=Math.min(100,Math.max(0,val));
-    else if(vn==='term')m.termPeriods=Math.max(1,Math.round(val));
+    else if(vn==='term'){
+      m.termPeriods=Math.max(1,Math.round(val));
+      // The interest-only span cannot outlast the loan it sits inside.
+      if(m.ioPeriods!==undefined)m.ioPeriods=Math.min(m.termPeriods,m.ioPeriods);
+    }
+    else if(vn==='payment')m.knownPayment=Math.max(0,val);
+    else if(vn==='residual')m.residualPct=Math.min(99,Math.max(0,val));
     return m;
   }
   function getNetBenefit(m,pc,ac,inflR,inflOn,obj){
@@ -593,11 +1101,21 @@ function ensurePlotly(){
 }
 
 /* ─── Scenario Management ─── */
+// A scheduled loan has no single headline rate, so the card shows the span it
+// actually runs across instead of a number that is only true for part of it.
+function scSummaryRate(sc){
+  if(sc.loanType==='knownPayment')return 'rate solved';
+  const norm=scenarioRateNorm(sc);
+  let lo=Infinity,hi=-Infinity;
+  norm.forEach(p=>{lo=Math.min(lo,p.min);hi=Math.max(hi,p.max);});
+  if(!isFinite(lo))return fmt.pct((sc.financeRate||0)/100)+' rate';
+  return (Math.abs(hi-lo)<1e-9?fmt.pct(lo/100):fmt.pct(lo/100)+'–'+fmt.pct(hi/100))+' rate';
+}
 function renderScenarioList(){
   const list=$('scenarioList');list.innerHTML='';
   scenarios.forEach((sc,i)=>{
     const div=document.createElement('div');div.className='scenario-card'+(editingIdx===i?' active':'');const color=cssVar(SCENARIO_COLORS[i%SCENARIO_COLORS.length]);
-    div.innerHTML=`<div class="sc-header"><div class="sc-name"><span class="sc-dot" style="background:${color}"></span>${sc.name}</div><div class="sc-actions"><button class="sc-btn" data-action="edit" data-idx="${i}" title="Edit">✎</button><button class="sc-btn" data-action="dup" data-idx="${i}" title="Duplicate">⧉</button><button class="sc-btn del" data-action="del" data-idx="${i}" title="Delete">✕</button></div></div><div class="sc-summary">${fmt.pct(sc.financeRate/100)} rate · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down</div>`;
+    div.innerHTML=`<div class="sc-header"><div class="sc-name"><span class="sc-dot" style="background:${color}"></span>${sc.name}</div><div class="sc-actions"><button class="sc-btn" data-action="edit" data-idx="${i}" title="Edit">✎</button><button class="sc-btn" data-action="dup" data-idx="${i}" title="Duplicate">⧉</button><button class="sc-btn del" data-action="del" data-idx="${i}" title="Delete">✕</button></div></div><div class="sc-summary">${scSummaryRate(sc)} · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down${(sc.loanType&&sc.loanType!=='annuity')?' · '+LOAN_TYPE_LABEL[sc.loanType]:''}${scenarioHasFloat(sc)?' · variable':''}</div>`;
     div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)'});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;$('scenarioEditor').style.display='none';}renderScenarioList();rerender();}});});
     div.addEventListener('click',()=>openEditor(i));list.appendChild(div);
   });
@@ -614,6 +1132,202 @@ function updateTermLabel(freq){
   else if(freq==='fortnightly')sub.textContent='Number of fortnightly payments (e.g. 130 = 5 years).';
   else if(freq==='monthly')sub.textContent='Number of monthly payments (e.g. 60 = 5 years).';
   else sub.textContent='Number of yearly payments (e.g. 5 = 5 years).';
+}
+
+/* ─── Loan type, rate schedule and repayment schedule (editor) ─────────────
+   The editor holds a DRAFT of the two schedules while it is open, so Cancel
+   really cancels. Everything else stays on the form controls, as before. */
+let editorDraft=null;
+function show(id,on){const el=$(id);if(el)el.style.display=on?'':'none';}
+function editorLoanType(){return $('scLoanType').value||'annuity';}
+function editorTerm(){return Math.max(1,Math.round(parseFloat($('scTerm').value)||defaultTerm(editorTermFreq)));}
+function schedList(kind){return kind==='rate'?editorDraft.ratePeriods:editorDraft.paymentPeriods;}
+function schedWrapId(kind){return kind==='rate'?'scRatePeriodRows':'scPaymentPeriodRows';}
+
+// Seeded so that switching to Schedule shows the idea rather than a blank list:
+// fixed for the first fifth of the term, floating after, which is the shape of
+// a fixed-then-variable loan.
+function defaultRatePeriods(term,rate){
+  const r=Number(rate)||5;
+  if(term<=2)return[{toPeriod:term,type:'floating',rate:r,rateMin:r,rateMax:r+3}];
+  const cut=Math.max(1,Math.min(term-1,Math.round(term/5)));
+  return[{toPeriod:cut,type:'fixed',rate:r,rateMin:r,rateMax:r},
+         {toPeriod:term,type:'floating',rate:r+1.5,rateMin:r,rateMax:r+3}];
+}
+function defaultPaymentPeriods(term,amt){
+  const a=Math.max(0,Number(amt)||0);
+  if(term<=2)return[{toPeriod:term,amount:a}];
+  const cut=Math.max(1,Math.min(term-1,Math.round(term/5)));
+  return[{toPeriod:cut,amount:Math.round(a*0.6)},{toPeriod:term,amount:a}];
+}
+// What a plain amortizing loan would charge, so the repayment field never opens
+// on a zero that no rate can solve.
+function suggestedPayment(){
+  const pc=Math.max(0,parseNumInput($('purchaseCost')));
+  const downPct=Math.min(100,Math.max(0,parseFloat($('scDownPct').value)||0));
+  const base=pc-pc*(downPct/100);
+  const ppy=periodsPerYear(editorTermFreq);
+  const r=toPeriodRate(parseFloat($('scRate').value)||5,ppy);
+  return Math.max(0,Math.round(annuityPmt(base,r,editorTerm())*100)/100);
+}
+
+function buildSchedRow(kind,p,idx,len){
+  const row=document.createElement('div');
+  row.className='sched-row';row.dataset.idx=idx;
+  const isLast=idx===len-1;
+  const unitCap=freqLabel(editorTermFreq).charAt(0).toUpperCase()+freqLabel(editorTermFreq).slice(1);
+  const to=isLast?'':'<input type="number" class="sp-to" min="1" step="1" value="'+p.toPeriod+'" aria-label="Last period"/>';
+  const del='<button type="button" class="btn-secondary btn-sm sp-delete"'+(len<=1?' disabled':'')+' aria-label="Delete period" title="Delete">✕</button>';
+  const head='<div class="sp-head"><span class="sp-range">'+unitCap+' <b class="sp-from">1</b>–<b class="sp-to-lbl">1</b></span>';
+  if(kind==='rate'){
+    const f=p.type==='floating';
+    row.innerHTML=head+
+      '<select class="sp-type" aria-label="Rate type"><option value="fixed"'+(f?'':' selected')+'>Fixed</option><option value="floating"'+(f?' selected':'')+'>Floating</option></select>'+
+      to+del+'</div><div class="sp-vals">'+
+      '<span class="sp-fixed-wrap"'+(f?' style="display:none"':'')+'><input type="number" class="sp-rate" min="0" max="40" step="0.01" value="'+p.rate+'" aria-label="Rate"/><span class="sp-unit">% p.a.</span></span>'+
+      '<span class="sp-float-wrap"'+(f?'':' style="display:none"')+'><input type="number" class="sp-min" min="0" max="40" step="0.01" value="'+p.rateMin+'" aria-label="Minimum rate"/><span class="sp-dash">–</span><input type="number" class="sp-max" min="0" max="40" step="0.01" value="'+p.rateMax+'" aria-label="Maximum rate"/><span class="sp-unit">% p.a.</span></span>'+
+      '</div>';
+  } else {
+    row.innerHTML=head+to+del+'</div><div class="sp-vals">'+
+      '<span class="sp-amt-wrap"><span class="sp-unit">'+moneySymbol()+'</span><input type="text" inputmode="decimal" class="sp-amt" value="'+fmt.fmtInput(p.amount)+'" aria-label="Repayment amount"/></span></div>';
+  }
+  return row;
+}
+function renderSchedRows(kind){
+  if(!editorDraft)return;
+  const wrap=$(schedWrapId(kind));if(!wrap)return;
+  const list=schedList(kind)||[];
+  wrap.innerHTML='';
+  list.forEach((p,i)=>wrap.appendChild(buildSchedRow(kind,p,i,list.length)));
+  syncSchedLabels(kind);
+}
+// The first period of each row is DERIVED, never typed, and the last row always
+// stretches to the term, so a gap or an overlap cannot be entered at all.
+function syncSchedLabels(kind){
+  if(!editorDraft)return;
+  const wrap=$(schedWrapId(kind));if(!wrap)return;
+  const list=schedList(kind)||[];const term=editorTerm();
+  let from=1;
+  [...wrap.querySelectorAll('.sched-row')].forEach((row,i)=>{
+    const isLast=i===list.length-1;
+    const to=isLast?term:Math.min(term,Math.max(from,Math.round(Number(list[i].toPeriod)||from)));
+    const a=row.querySelector('.sp-from'),b=row.querySelector('.sp-to-lbl');
+    if(a)a.textContent=from;if(b)b.textContent=to;
+    row.classList.toggle('sp-beyond',from>term);
+    from=to+1;
+  });
+}
+function readSchedFromDOM(kind){
+  if(!editorDraft)return;
+  const wrap=$(schedWrapId(kind));if(!wrap)return;
+  const rows=[...wrap.querySelectorAll('.sched-row')];
+  if(!rows.length)return;
+  const term=editorTerm();
+  const out=rows.map(row=>{
+    const toEl=row.querySelector('.sp-to');
+    const toPeriod=toEl?Math.max(1,Math.round(parseFloat(toEl.value)||term)):term;
+    if(kind==='rate')return{toPeriod,
+      type:row.querySelector('.sp-type').value==='floating'?'floating':'fixed',
+      rate:parseFloat(row.querySelector('.sp-rate').value)||0,
+      rateMin:parseFloat(row.querySelector('.sp-min').value)||0,
+      rateMax:parseFloat(row.querySelector('.sp-max').value)||0};
+    return{toPeriod,amount:Math.max(0,parseNumInput(row.querySelector('.sp-amt')))};
+  });
+  if(kind==='rate')editorDraft.ratePeriods=out;else editorDraft.paymentPeriods=out;
+}
+function addSchedPeriod(kind){
+  if(!editorDraft)return;
+  readSchedFromDOM(kind);
+  const list=schedList(kind),term=editorTerm();
+  if(!list||term<=list.length)return; // no room left to split
+  const prevTo=list.length>1?Math.round(Number(list[list.length-2].toPeriod)||0):0;
+  const cut=Math.min(term-1,Math.max(prevTo+1,Math.round((prevTo+term)/2)));
+  const last=list[list.length-1];
+  list.splice(list.length-1,0,kind==='rate'
+    ?{toPeriod:cut,type:last.type,rate:last.rate,rateMin:last.rateMin,rateMax:last.rateMax}
+    :{toPeriod:cut,amount:last.amount});
+  renderSchedRows(kind);
+  if(kind==='payment')updateImpliedRate();
+}
+function syncSegGroups(){
+  if(!editorDraft)return;
+  document.querySelectorAll('#scRateModeGroup .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===editorDraft.rateMode));
+  document.querySelectorAll('#scPaymentModeGroup .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===editorDraft.paymentMode));
+}
+
+/* Exactly one segmented control and at most one extra field group is ever on
+   screen, so picking a loan type never stacks a second way to say the same
+   thing on top of the first. */
+function updateEditorVisibility(){
+  if(!editorDraft)return;
+  const t=editorLoanType();
+  const canSched=supportsSchedule(t);
+  const sched=canSched&&editorDraft.rateMode==='schedule';
+  const known=t==='knownPayment';
+  const paySched=known&&editorDraft.paymentMode==='schedule';
+  show('scRateModeRow',canSched);
+  show('scRateBlock',!known&&!sched);
+  show('scRateScheduleRow',sched);
+  show('scPaymentModeRow',known);
+  show('scKnownPaymentRow',known&&!paySched);
+  show('scPaymentScheduleRow',paySched);
+  show('scImpliedRateRow',known);
+  show('scIoPeriodsRow',usesIoPeriods(t));
+  show('scResidualRow',t==='balloon');
+  const unit=termUnitLabel(editorTermFreq);
+  const rl=$('scRateLabel');
+  if(rl&&rl.firstChild)rl.firstChild.textContent=(t==='flat'?'Flat Rate (annual %) ':t==='bullet'?'Interest Rate (annual %) ':'Finance Rate (annual %) ');
+  const il=$('scIoLabel');
+  if(il&&il.firstChild)il.firstChild.textContent=(t==='deferred'?'Payment Holiday ('+unit+') ':'Interest-Only ('+unit+') ');
+  const isub=$('scIoSub');
+  if(isub)isub.textContent=t==='deferred'
+    ?'Repayments start after this many '+unit+'. Interest is added to the debt meanwhile.'
+    :'Set this to the full term to repay the principal in one lump at the end.';
+}
+
+function updateImpliedRate(){
+  const el=$('scImpliedRate');
+  if(!el||!editorDraft||editorLoanType()!=='knownPayment')return;
+  el.classList.remove('unsolved');
+  const pc=Math.max(0,parseNumInput($('purchaseCost')));
+  const downPct=Math.min(100,Math.max(0,parseFloat($('scDownPct').value)||0));
+  const base=pc-pc*(downPct/100);
+  const sc=editorScenarioDraft();
+  const fin=resolveFinancing(sc,base);
+  if(!fin||base<=0){el.textContent='—';return;}
+  const r=solvePeriodRate(fin.financed,scenarioPaymentStream(sc,editorTerm()));
+  if(r===null){
+    el.classList.add('unsolved');
+    el.textContent='No rate repays this loan. Raise the repayment or shorten the term.';
+    return;
+  }
+  const ann=effectiveAnnual(r,periodsPerYear(editorTermFreq));
+  el.textContent=fmt.pct(ann/100)+' p.a.'+(ann<0?' (you repay less than you borrow)':'');
+}
+
+// The whole scenario as the editor currently reads. Save writes this; the
+// implied-rate readout previews it.
+function editorScenarioDraft(){
+  const t=editorLoanType();
+  const rate=parseFloat($('scRate').value);
+  return{
+    name:$('scName').value||'Scenario',
+    financeRate:isNaN(rate)?5:rate,
+    downPaymentPct:Math.min(100,Math.max(0,parseFloat($('scDownPct').value)||0)),
+    termPeriods:editorTerm(),freq:editorTermFreq,
+    feeAmt:Math.max(0,parseNumInput($('scFeeAmt'))),
+    feeType:$('scFeeType').value,
+    feeTreatment:$('scFeeTreatment').value,
+    adminFee:Math.max(0,parseNumInput($('scAdminFee'))),
+    loanType:t,
+    rateMode:supportsSchedule(t)?editorDraft.rateMode:'simple',
+    ratePeriods:editorDraft.ratePeriods,
+    paymentMode:t==='knownPayment'?editorDraft.paymentMode:'single',
+    paymentPeriods:editorDraft.paymentPeriods,
+    knownPayment:Math.max(0,parseNumInput($('scKnownPayment'))),
+    ioPeriods:Math.max(0,Math.round(parseFloat($('scIoPeriods').value)||0)),
+    residualPct:Math.min(99,Math.max(0,parseFloat($('scResidualPct').value)||0)),
+  };
 }
 
 function openEditor(idx){
@@ -634,29 +1348,39 @@ function openEditor(idx){
   $('scFeeAmt').value=fmt.fmtInput(sc.feeAmt);
   $('scFeeType').value=sc.feeType;
   $('scAdminFee').value=fmt.fmtInput(sc.adminFee||0);
+  $('scFeeTreatment').value=['upfront','capitalise','discount'].includes(sc.feeTreatment)?sc.feeTreatment:'upfront';
+  $('scLoanType').value=LOAN_TYPES.includes(sc.loanType)?sc.loanType:'annuity';
+  $('scKnownPayment').value=fmt.fmtInput(sc.knownPayment||0);
+  $('scIoPeriods').value=(sc.ioPeriods===undefined||sc.ioPeriods===null)?sc.termPeriods:sc.ioPeriods;
+  $('scResidualPct').value=sc.residualPct||0;
+  editorDraft={
+    rateMode:sc.rateMode==='schedule'?'schedule':'simple',
+    paymentMode:sc.paymentMode==='schedule'?'schedule':'single',
+    ratePeriods:(Array.isArray(sc.ratePeriods)&&sc.ratePeriods.length)?sc.ratePeriods.map(x=>Object.assign({},x)):null,
+    paymentPeriods:(Array.isArray(sc.paymentPeriods)&&sc.paymentPeriods.length)?sc.paymentPeriods.map(x=>Object.assign({},x)):null,
+  };
+  if(!editorDraft.ratePeriods)editorDraft.ratePeriods=defaultRatePeriods(editorTerm(),sc.financeRate);
+  if(!editorDraft.paymentPeriods)editorDraft.paymentPeriods=defaultPaymentPeriods(editorTerm(),(sc.knownPayment>0?sc.knownPayment:suggestedPayment()));
+  syncSegGroups();
+  renderSchedRows('rate');renderSchedRows('payment');
+  updateEditorVisibility();updateImpliedRate();
   $('scenarioEditor').style.display='block';
   renderScenarioList();
 }
 
 function saveEditor(){
-  if(editingIdx<0)return;
-  const sc=scenarios[editingIdx];
-  sc.name=$('scName').value||'Scenario '+(editingIdx+1);
-  const _r=parseFloat($('scRate').value);sc.financeRate=isNaN(_r)?5:_r;
-  const downPct=parseFloat($('scDownPct').value);
-  sc.downPaymentPct=isNaN(downPct)?0:Math.min(100,Math.max(0,downPct));
-  const newFreq=$('scFreq').value;
+  if(editingIdx<0||!editorDraft)return;
+  readSchedFromDOM('rate');readSchedFromDOM('payment');
   // The Term field is kept in the current frequency's units live (see the
-  // scFreq change handler), so here we just persist it.
-  if(newFreq!==sc.freq){sc.freq=newFreq;updateTermLabel(newFreq);}
-  sc.termPeriods=Math.max(1,Math.round(parseFloat($('scTerm').value)||defaultTerm(sc.freq)));
-  sc.feeAmt=Math.max(0,parseNumInput($('scFeeAmt')));
-  sc.feeType=$('scFeeType').value;
-  sc.adminFee=Math.max(0,parseNumInput($('scAdminFee')));
+  // scFreq change handler), so the draft already carries the right unit.
+  const d=editorScenarioDraft();
+  d.name=$('scName').value||'Scenario '+(editingIdx+1);
+  if(d.freq!==scenarios[editingIdx].freq)updateTermLabel(d.freq);
+  scenarios[editingIdx]=d;
   renderScenarioList();rerender();
 }
 
-function closeEditor(){editingIdx=-1;$('scenarioEditor').style.display='none';renderScenarioList();}
+function closeEditor(){editingIdx=-1;editorDraft=null;$('scenarioEditor').style.display='none';renderScenarioList();}
 
 /* ─── Events ─── */
 $('addScenarioBtn').addEventListener('click',()=>{scenarios.push(defaultScenario());openEditor(scenarios.length-1);rerender();});
@@ -677,11 +1401,97 @@ $('scFreq').addEventListener('change',()=>{
   if(newFreq!==editorTermFreq){
     const curTerm=parseFloat($('scTerm').value)||defaultTerm(editorTermFreq);
     const years=termToYears(curTerm, editorTermFreq);
+    const scale=periodsPerYear(newFreq)/periodsPerYear(editorTermFreq);
     $('scTerm').value=Math.max(1,Math.round(years*periodsPerYear(newFreq)));
+    // Schedule boundaries and the interest-only span are counted in repayments
+    // too, so they scale with the unit exactly as the term does.
+    const io=parseFloat($('scIoPeriods').value);
+    if(isFinite(io))$('scIoPeriods').value=Math.max(0,Math.round(io*scale));
     editorTermFreq=newFreq;
+    if(editorDraft){
+      ['ratePeriods','paymentPeriods'].forEach(k=>{
+        if(Array.isArray(editorDraft[k]))editorDraft[k]=editorDraft[k].map(x=>Object.assign({},x,{toPeriod:Math.max(1,Math.round((Number(x.toPeriod)||1)*scale))}));
+      });
+      renderSchedRows('rate');renderSchedRows('payment');
+    }
   }
   updateTermLabel(newFreq);
+  updateEditorVisibility();updateImpliedRate();
 });
+
+/* ─── Loan type, schedules, fee treatment, rate convention ─── */
+$('scLoanType').addEventListener('change',()=>{
+  if(!editorDraft)return;
+  const t=editorLoanType();
+  // Open each type on a workable number rather than a zero that cannot be
+  // solved or a residual that makes the type a no-op.
+  if(t==='knownPayment'&&!(parseNumInput($('scKnownPayment'))>0)){
+    const sug=suggestedPayment();
+    $('scKnownPayment').value=fmt.fmtInput(sug);
+    editorDraft.paymentPeriods=defaultPaymentPeriods(editorTerm(),sug);
+    renderSchedRows('payment');
+  }
+  if(usesIoPeriods(t)&&!(parseFloat($('scIoPeriods').value)>0))
+    $('scIoPeriods').value=t==='deferred'?Math.max(1,Math.round(editorTerm()/5)):editorTerm();
+  if(t==='balloon'&&!(parseFloat($('scResidualPct').value)>0))$('scResidualPct').value=30;
+  updateEditorVisibility();updateImpliedRate();
+});
+
+[['scRateModeGroup','rateMode','rate'],['scPaymentModeGroup','paymentMode','payment']].forEach(([gid,key,kind])=>{
+  document.querySelectorAll('#'+gid+' .seg-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(!editorDraft)return;
+      const v=btn.dataset.val;
+      if(v===editorDraft[key])return;
+      editorDraft[key]=v;
+      if(v==='schedule'&&!(Array.isArray(editorDraft[kind==='rate'?'ratePeriods':'paymentPeriods'])&&editorDraft[kind==='rate'?'ratePeriods':'paymentPeriods'].length)){
+        if(kind==='rate')editorDraft.ratePeriods=defaultRatePeriods(editorTerm(),parseFloat($('scRate').value)||5);
+        else editorDraft.paymentPeriods=defaultPaymentPeriods(editorTerm(),suggestedPayment());
+      }
+      syncSegGroups();renderSchedRows(kind);updateEditorVisibility();updateImpliedRate();
+    });
+  });
+});
+
+$('addRatePeriodBtn').addEventListener('click',()=>addSchedPeriod('rate'));
+$('addPaymentPeriodBtn').addEventListener('click',()=>addSchedPeriod('payment'));
+
+[['scRatePeriodRows','rate'],['scPaymentPeriodRows','payment']].forEach(([id,kind])=>{
+  const wrap=$(id);
+  wrap.addEventListener('click',e=>{
+    const del=e.target.closest('.sp-delete');
+    if(!del||del.disabled)return;
+    const row=del.closest('.sched-row');
+    readSchedFromDOM(kind);
+    const list=schedList(kind);
+    if(!list||list.length<=1)return;
+    list.splice(parseInt(row.dataset.idx),1);
+    renderSchedRows(kind);
+    if(kind==='payment')updateImpliedRate();
+  });
+  wrap.addEventListener('change',e=>{
+    if(e.target.classList.contains('sp-type')){
+      // One row says its rate one way or the other, never both at once.
+      const row=e.target.closest('.sched-row'),f=e.target.value==='floating';
+      row.querySelector('.sp-fixed-wrap').style.display=f?'none':'';
+      row.querySelector('.sp-float-wrap').style.display=f?'':'none';
+    }
+    readSchedFromDOM(kind);syncSchedLabels(kind);
+    if(kind==='payment')updateImpliedRate();
+  });
+  wrap.addEventListener('input',()=>{
+    readSchedFromDOM(kind);syncSchedLabels(kind);
+    if(kind==='payment')updateImpliedRate();
+  });
+});
+
+['scKnownPayment','scRate','scDownPct','scFeeAmt','scFeeType','scFeeTreatment'].forEach(id=>{
+  ['input','change'].forEach(ev=>$(id).addEventListener(ev,updateImpliedRate));
+});
+['input','change'].forEach(ev=>$('scTerm').addEventListener(ev,()=>{
+  syncSchedLabels('rate');syncSchedLabels('payment');updateImpliedRate();
+}));
+$('rateConvention').addEventListener('change',()=>{rerender();updateImpliedRate();});
 
 ['scName','scTerm','scFeeType'].forEach(id=>{['input','change'].forEach(evt=>{$(id).addEventListener(evt,()=>{/* live preview only on save click */});});});
 ['scFeeAmt'].forEach(id=>{$(id).addEventListener('blur',()=>{/* handled on save */});});
@@ -694,8 +1504,8 @@ document.querySelectorAll('.ctrl-tab').forEach(btn=>{btn.addEventListener('click
 $('mode2d').addEventListener('click',()=>{sensMode='2d';$('mode2d').classList.add('active');$('mode3d').classList.remove('active');$('sensYBlock').style.display='none';scheduleSensitivity();});
 $('mode3d').addEventListener('click',()=>{sensMode='3d';$('mode3d').classList.add('active');$('mode2d').classList.remove('active');$('sensYBlock').style.display='';scheduleSensitivity();});
 $('sensScenario').addEventListener('change',updateSensTermLabels);
-$('sensVarX').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarX').value,sensSelectedFreq());$('sensXStart').value=a;$('sensXEnd').value=b;});
-$('sensVarY').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarY').value,sensSelectedFreq());$('sensYStart').value=a;$('sensYEnd').value=b;});
+$('sensVarX').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarX').value,sensSelectedFreq(),sensSelectedScenario());$('sensXStart').value=a;$('sensXEnd').value=b;});
+$('sensVarY').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarY').value,sensSelectedFreq(),sensSelectedScenario());$('sensYStart').value=a;$('sensYEnd').value=b;});
 // Every control in the Sensitivity panel redraws the sweep, the two above
 // included: their own listeners re-seed the axis range first, and this one runs
 // after them because it was added second.
@@ -708,7 +1518,7 @@ $('sensVarY').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sens
 $('themeToggle').addEventListener('click',()=>{document.body.classList.toggle('light');$('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';if(chartInstance){chartInstance.destroy();chartInstance=null;}if(sensChartInstance){sensChartInstance.destroy();sensChartInstance=null;}rerender();});
 $('chartResetZoom').addEventListener('click',()=>{if(chartInstance)chartInstance.resetZoom();});
 $('sensResetZoom').addEventListener('click',()=>{if(sensChartInstance)sensChartInstance.resetZoom();});
-$('chartCanvas').addEventListener('mouseleave',()=>{$('hoverBox').textContent='Hover over the chart to inspect a period.';});
+$('chartCanvas').addEventListener('mouseleave',()=>{$('hoverBox').textContent=HOVER_IDLE;});
 
 $('resetBtn').addEventListener('click',()=>{
   scenarios=[];
@@ -721,6 +1531,8 @@ $('resetBtn').addEventListener('click',()=>{
   $('currencySymbol').value='$';
   $('baseRf').value=4.5;
   $('baseRfVal').textContent='4.50%';
+  $('rateConvention').value='ear';
+  rateConvention='ear';
   $('inflationToggle').checked=false;
   $('inflationRate').value=2.5;
   $('chartMetric').value='wealth';
