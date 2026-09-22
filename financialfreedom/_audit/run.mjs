@@ -252,7 +252,7 @@ await page.route('**/*', route => {
 // The guided tour opens itself on a first visit and its backdrop intercepts
 // every click, so mark it seen before anything loads.
 await page.addInitScript(() => {
-  try { localStorage.setItem('ff-tour-v2-seen', '1'); } catch(_e){}
+  try { localStorage.setItem('ff-tour-v3-seen', '1'); } catch(_e){}
 });
 await page.goto(PAGE, {waitUntil: 'load'});
 await page.waitForFunction(() => !!window.__FF, null, {timeout: 10000});
@@ -2838,6 +2838,186 @@ console.log('\n── Fuzz: 200 random plans, every invariant at once ──');
     bad.prob.length === 0, bad.prob.slice(0, 3).join(', ') || 'all in range');
   check('F56h and nothing NaN is ever handed to a chart',
     bad.chart.length === 0, bad.chart.slice(0, 3).join(', ') || 'clean');
+}
+
+console.log('\n── Quick Start scenarios ──');
+
+/* F65: the Quick Start buttons. Each one is a claim that the whole form now
+   describes a named saver, so the harness reads the CONTROLS back rather than
+   readInputs(): a scenario writing to an id that no longer exists would
+   otherwise be papered over by the engine's own defaults and the button would
+   quietly load somebody else.
+
+   The lesson each scenario teaches is checked too, because the tooltips promise
+   one. A geoarbitrage plan that frees no earlier than the same saver staying
+   home, or a late starter the pension does nothing for, is a button that lies. */
+{
+  const SCEN = await page.evaluate(() => window.__FF.QUICK_START_SCENARIOS);
+  const PRESETS = await page.evaluate(() => window.__FF.PRESET_ASSETS);
+  const keys = Object.keys(SCEN);
+
+  // The plan a scenario means, derived here rather than read off the page: the
+  // named preset owns the return and the volatility, everything else falls back
+  // to the shipped defaults.
+  const planOf = key => {
+    const plan = Object.assign({}, DEFAULTS, SCEN[key].vals);
+    const pre = PRESETS[plan.assetPreset];
+    if(pre && plan.assetPreset !== 'custom'){ plan.ret = pre.ret; plan.std = pre.std; }
+    return plan;
+  };
+  const freeAge = async ui => (await engine(ui, 'F.diagnose(ui)')).ffAge;
+
+  const apply = key => page.evaluate(k => {
+    document.querySelector('.quick-start-btn[data-preset="' + k + '"]').click();
+  }, key).then(() => page.waitForTimeout(150));
+
+  const btns = await page.evaluate(() => Array.from(document.querySelectorAll('.quick-start-btn'))
+    .map(b => ({preset: b.dataset.preset, label: b.textContent.trim(),
+                tip: (b.getAttribute('data-tip') || '').length})));
+  check('F65 every scenario has a button and every button a scenario, each with its own tip',
+    btns.length === keys.length &&
+    btns.every(b => SCEN[b.preset] && SCEN[b.preset].label === b.label && b.tip > 40),
+    btns.map(b => b.label).join(' | ') || 'no buttons');
+
+  /* Every field the scenario names has to land on its own control. savingsMode
+     and the goal are not inputs with ids, so they are read where the user
+     reads them: the highlighted segment and the checked radio. */
+  const landed = [], unmarked = [], presetDrift = [];
+  for(const key of keys){
+    await apply(key);
+    const vals = SCEN[key].vals;
+    const got = await page.evaluate(ids => {
+      const out = {};
+      const seg = document.querySelector('#savingsModeGroup .seg-btn.active');
+      out.savingsMode = seg ? seg.dataset.val : null;
+      const radio = document.querySelector('input[name="ffmode"]:checked');
+      out.mode = radio ? radio.value : null;
+      ids.forEach(id => {
+        if(id === 'savingsMode' || id === 'mode') return;
+        const el = document.getElementById(id);
+        out[id] = el ? (el.type === 'checkbox' ? el.checked : el.value) : null;
+      });
+      return out;
+    }, Object.keys(vals));
+
+    Object.entries(vals).forEach(([id, want]) => {
+      const live = got[id];
+      if(live === null){ landed.push(`${key}.${id}: no such control`); return; }
+      const ok = typeof want === 'number'
+        ? close(parseFloat(String(live).replace(/,/g, '')), want, 1e-9)
+        : (typeof want === 'boolean' ? live === want : String(live) === String(want));
+      if(!ok) landed.push(`${key}.${id}: ${live} want ${want}`);
+    });
+
+    // The return and the volatility are the preset's, not a second copy of it.
+    const plan = planOf(key);
+    const shown = await page.evaluate(() => ({
+      ret: parseFloat(document.getElementById('ret').value),
+      std: parseFloat(document.getElementById('std').value),
+      preset: document.getElementById('assetPreset').value
+    }));
+    if(!(close(shown.ret, plan.ret, 1e-9) && close(shown.std, plan.std, 1e-9)))
+      presetDrift.push(`${key}: ${shown.preset} shows ${shown.ret}/${shown.std}, preset says ${plan.ret}/${plan.std}`);
+
+    if(!(await page.evaluate(k => {
+      const on = document.querySelectorAll('.quick-start-btn.active');
+      return on.length === 1 && on[0].dataset.preset === k;
+    }, key))) unmarked.push(key);
+  }
+  check('F65b every scenario lands every figure it names, on the control the reader sees',
+    landed.length === 0, landed.slice(0, 4).join(' | ') || `${keys.length} scenarios, every field landed`);
+  check('F65c the chosen scenario is the only one highlighted',
+    unmarked.length === 0, unmarked.join(' | ') || 'exactly one active button each time');
+  check('F65d the return and volatility shown are the named preset’s, never a second copy',
+    presetDrift.length === 0, presetDrift.join(' | ') || 'every scenario agrees with its asset preset');
+
+  /* A scenario nobody can reach teaches nothing, and a slider parked short of
+     the crossing opens Cashflows on a shortfall the reader has to fix first.
+     Every button therefore has to clear its own goal at its own slider age. */
+  const unreachable = [], unfunded = [];
+  const ages = {};
+  for(const key of keys){
+    const plan = planOf(key);
+    const ff = await freeAge(plan);
+    ages[key] = ff;
+    if(ff == null || !isFinite(ff)){ unreachable.push(key); continue; }
+    if(ff > plan.ageRetire + 1e-9) unfunded.push(`${key}: free at ${ff.toFixed(1)}, slider on ${plan.ageRetire}`);
+    const r = await engine(plan, '({need: F.requiredPot(P, P.ageRetire), pot: F.accumulate(P, F.accMonths(P))})');
+    if(r.pot < r.need) unfunded.push(`${key}: pot ${r.pot.toFixed(0)} under need ${r.need.toFixed(0)}`);
+  }
+  check('F65e every scenario reaches financial freedom',
+    unreachable.length === 0,
+    unreachable.join(' | ') || keys.map(k => `${SCEN[k].label} at ${ages[k].toFixed(1)}`).join(', '));
+  check('F65f and the slider opens past that age, so Cashflows starts on a funded plan',
+    unfunded.length === 0, unfunded.slice(0, 3).join(' | ') || 'every scenario funded at its own slider age');
+
+  /* And not too far past it. The crossing is solved on the expected return
+     alone, so a slider parked on it opens near a coin flip while one parked a
+     decade beyond it reads as though the market cannot bite. Every scenario has
+     to sit in the band between, which is where the confidence pot underneath
+     still has something to say. */
+  const odds = [];
+  for(const key of keys){
+    const r = await engine(planOf(key), 'F.compute(ui)');
+    odds.push({key, p: r.successAtPlan, gap: ages[key] == null ? null : planOf(key).ageRetire - ages[key]});
+  }
+  check('F65g every scenario opens on a plan that works without looking risk-free',
+    odds.every(o => o.p >= 0.6 && o.p <= 0.9),
+    odds.map(o => `${o.key} ${(o.p * 100).toFixed(0)}% (+${o.gap.toFixed(1)}y)`).join(', '));
+
+  // Frugal Living is the whole argument for spending less: it does both jobs at
+  // once, so it must free a saver earlier than the moderate plan does, in years
+  // of work and not merely in age.
+  const mod = planOf('moderate'), fru = planOf('frugal');
+  check('F65h Frugal Living frees a saver in fewer years of work than Moderate FIRE',
+    (ages.frugal - fru.ageNow) < (ages.moderate - mod.ageNow) && ages.frugal < ages.moderate,
+    `frugal ${(ages.frugal - fru.ageNow).toFixed(1)} years to age ${ages.frugal.toFixed(1)}, ` +
+    `moderate ${(ages.moderate - mod.ageNow).toFixed(1)} years to age ${ages.moderate.toFixed(1)}`);
+
+  /* Geoarbitrage is the retirement multiplier and nothing else, so the same
+     saver told to keep spending Australian money has to wait years longer.
+     Everything else about the two plans is identical by construction. */
+  const geo = planOf('geoarbitrage');
+  const geoHome = await freeAge(Object.assign({}, geo, {retireMultiplier: 100}));
+  check('F65i Geoarbitrage is the retirement multiplier: staying home costs the same saver years',
+    geoHome != null && geoHome > ages.geoarbitrage + 3,
+    `Bali at 40% frees at ${ages.geoarbitrage.toFixed(1)}, home at 100% ` +
+    (geoHome == null ? 'never' : `at ${geoHome.toFixed(1)}`));
+
+  // The late starter's tip points at the pension switch. It has to be worth
+  // real years, or the tip is pointing at nothing.
+  const late = planOf('latestart');
+  const noPension = await freeAge(Object.assign({}, late, {pensionOn: false}));
+  check('F65j the late starter’s pension is worth years, which is what its tip claims',
+    noPension != null && noPension > ages.latestart + 3,
+    `with the pension ${ages.latestart.toFixed(1)}, without it ` +
+    (noPension == null ? 'never' : noPension.toFixed(1)));
+
+  // Each scenario is built on the DEFAULTS, not on what the last one left
+  // behind. The late starter is the one that ticks the pension, so following it
+  // with a scenario that does not is the test.
+  await apply('latestart');
+  await apply('moderate');
+  const carried = await page.evaluate(() => ({
+    pensionOn: document.getElementById('pensionOn').checked,
+    ret: document.getElementById('ret').value,
+    preset: document.getElementById('assetPreset').value,
+    legacyShown: document.getElementById('legacyRow').style.display
+  }));
+  check('F65k a scenario inherits nothing from the one before it',
+    carried.pensionOn === false && carried.preset === 'world' && carried.legacyShown === 'none',
+    `pension ${carried.pensionOn}, preset ${carried.preset} at ${carried.ret}%`);
+
+  // Reset has to drop the highlight along with the figures, or the page claims
+  // a scenario it no longer shows.
+  await apply('frugal');
+  await page.evaluate(() => document.getElementById('resetBtn').click());
+  await page.waitForTimeout(150);
+  check('F65l Reset drops the scenario highlight along with its figures',
+    await page.evaluate(() => !document.querySelector('.quick-start-btn.active')
+      && document.getElementById('expense').value === '60,000'
+      && document.getElementById('ageNow').value === '30'),
+    'no active button and the defaults back');
 }
 
 console.log('\n── Coming back tomorrow ──');
