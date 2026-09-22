@@ -564,6 +564,71 @@ const PRICE=50000,CASH=80000,RF=4.5,PPY=12,N=60;
     `banner display=${w.disp}, text "${w.txt.trim().slice(0,110)}"`);
 }
 
+// ── F21: the editor is laid out as a DEPENDENCY order, per loan type. Whatever
+// decides what a later field may say has to sit above it, every row has to live
+// in a titled section, and a known repayment has to settle the amount financed
+// BEFORE the plan whose rate is solved against it. ──
+{
+  const layoutOf=async(t,extra)=>{
+    await setOneScenario(Object.assign({name:'L-'+t,loanType:t,freq:'monthly',term:N,rate:6},extra||{}));
+    await page.waitForTimeout(80);
+    return page.evaluate(()=>{
+      const vis=el=>el.style.display!=='none';
+      const host=document.getElementById('scFields');
+      const kids=[...host.children];
+      return{
+        // Nothing may sit loose between the panels.
+        orphans:kids.filter(el=>!el.classList.contains('field-group')).length,
+        titles:kids.filter(vis).map(g=>g.querySelector('.group-title').textContent),
+        rows:kids.filter(vis).map(g=>[...g.children]
+          .filter(el=>el.id&&!el.classList.contains('group-title')&&!el.classList.contains('sec-note')&&vis(el))
+          .map(el=>el.id)),
+      };
+    });
+  };
+  const seen=[];let ok=true,why='';
+  for(const t of ['annuity','flat','interestOnly','balloon','knownPayment','bullet','deferred']){
+    const L=await layoutOf(t,t==='deferred'?{ioPeriods:6}:t==='interestOnly'?{ioPeriods:N}:
+      t==='balloon'?{residualPct:30}:t==='knownPayment'?{payment:1000}:{});
+    seen.push(t+': '+L.titles.join(' › '));
+    const iType=L.rows.findIndex(r=>r.includes('scLoanTypeRow'));
+    const iTerm=L.titles.indexOf('Repayment Term');
+    const iCash=L.titles.indexOf('Upfront & Fees');
+    const iPrice=L.titles.indexOf(t==='knownPayment'?'Repayment Plan':(t==='flat'?'Flat Rate':'Interest Rate'));
+    // The type comes first, the term it is counted in next, and the price is
+    // quoted only once both are settled.
+    if(L.orphans||iType!==0||iTerm!==1||iPrice<2){ok=false;why=t+' → '+L.titles.join(' › ')+(L.orphans?' (+'+L.orphans+' orphan rows)':'');break;}
+    // Known repayment solves its rate from the amount financed, so the cash
+    // side is above the plan; every other type quotes a rate, so it is below.
+    if((t==='knownPayment'?iCash>iPrice:iCash<iPrice)){ok=false;why=t+' → '+L.titles.join(' › ');break;}
+  }
+  check('F21 the editor sections are ordered by what depends on what, and every row lives in one',
+    ok,ok?seen.join('  |  '):why);
+
+  // The payment holiday decides where the rate schedule can open, so it has to
+  // be settled above it — and the solved rate is the last thing on the plan.
+  await setOneScenario({name:'L-def',loanType:'deferred',freq:'monthly',term:N,rate:6,ioPeriods:6});
+  await setSchedule('rate',[{type:'fixed',to:24,rate:6},{type:'fixed',rate:9}]);
+  const def=await page.evaluate(()=>{
+    const vis=el=>el.style.display!=='none';
+    const idx=id=>[...document.getElementById('scFields').children].findIndex(g=>g.contains(document.getElementById(id))&&vis(g));
+    return{holiday:idx('scIoPeriodsRow'),sched:idx('scRateScheduleRow'),
+      firstRange:document.querySelector('#scRatePeriodRows .sp-from').textContent.trim()};
+  });
+  await setOneScenario({name:'L-known',loanType:'knownPayment',freq:'monthly',term:N,rate:6,payment:1000});
+  const known=await page.evaluate(()=>{
+    const vis=el=>el.style.display!=='none';
+    const g=[...document.getElementById('scFields').children].filter(vis).pop();
+    const rows=[...g.children].filter(el=>el.id&&vis(el)&&!el.classList.contains('group-title')&&!el.classList.contains('sec-note'));
+    return{title:g.querySelector('.group-title').textContent,last:rows[rows.length-1].id};
+  });
+  check('F21b the holiday sits above the schedule it moves, and the solved rate closes the plan',
+    def.holiday>=0&&def.sched>def.holiday&&def.firstRange==='7'&&
+    known.title==='Repayment Plan'&&known.last==='scImpliedRateRow',
+    `holiday in section ${def.holiday}, rate schedule in ${def.sched} opening on repayment ${def.firstRange}; `+
+    `last section "${known.title}" closes on ${known.last}`);
+}
+
 // ── F13: a scenario saved before loan types existed must still load ──
 {
   await page.addInitScript(()=>{

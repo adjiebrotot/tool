@@ -1359,6 +1359,11 @@ function clampSchedToStart(kind){
   // typed for a term they are still editing. The loan is built from one band
   // either way, so the rows are left as they are and only relabelled.
   if(term-from+1<=1){syncSchedLabels(kind);return;}
+  // A band that ends before the schedule opens covers no repayment at all: the
+  // holiday swallowed it whole. It is dropped rather than squeezed into a stub
+  // of one period, so the loan opens on the band that does carry repayments.
+  // The last band is never dropped — it is the one that stretches to the term.
+  while(list.length>1&&Math.round(Number(list[0].toPeriod)||0)<from){list.shift();changed=true;}
   list.forEach((p,i)=>{
     const isLast=i===list.length-1;
     const want=isLast?term:Math.min(term,Math.max(from,Math.round(Number(p.toPeriod)||from)));
@@ -1405,6 +1410,79 @@ function syncSegGroups(){
   document.querySelectorAll('#scPaymentModeGroup .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===editorDraft.paymentMode));
 }
 
+/* ─── Editor layout ────────────────────────────────────────────────────────
+   The editor is not one long list of fields. It is five titled sections, and
+   their order is a DEPENDENCY order: whatever decides what a later field is
+   allowed to say sits above it. The loan type and the shape parameter that type
+   brings with it come first, then the term those periods are counted in, then
+   the price, then the cash side of the deal.
+
+   A known repayment inverts the last two, and that is the whole reason the
+   order is a table rather than the markup: its rate is not typed at all, it is
+   SOLVED from the plan against the amount financed, so the down payment and the
+   fees have to be settled before the section that is priced from them.
+
+   Each section owns a fixed set of rows, so a type's layout is one line here
+   rather than a second copy of the form. updateEditorVisibility() decides which
+   ROWS a type shows; a section whose rows are all hidden hides with them, which
+   is what lets one table serve all seven types. */
+const EDITOR_SECTIONS={
+  structure:['scLoanTypeRow','scIoPeriodsRow','scResidualRow'],
+  term:['scFreqRow','scTermRow'],
+  rate:['scRateModeRow','scRateBlock','scRateScheduleRow'],
+  plan:['scPaymentModeRow','scKnownPaymentRow','scPaymentScheduleRow','scImpliedRateRow'],
+  cash:['scDownRow','scFeeRow','scFeeTreatmentRow','scAdminFeeRow'],
+};
+function editorSectionPlan(t){
+  const title={
+    structure:'Loan Structure',
+    term:'Repayment Term',
+    // A flat loan fixes its interest at the outset on the original principal,
+    // so the section is not offering a rate that can move.
+    rate:t==='flat'?'Flat Rate':'Interest Rate',
+    plan:'Repayment Plan',
+    cash:'Upfront & Fees',
+  };
+  // A note only where the order itself needs explaining, never as decoration.
+  const note={};
+  if(t==='knownPayment')
+    note.cash='Set these first: they fix the amount financed, and the rate below is solved against it.';
+  if(t==='deferred'&&editorDraft&&editorDraft.rateMode==='schedule')
+    note.rate='Counted from the first repayment after the payment holiday, not from repayment 1.';
+  const order=t==='knownPayment'
+    ?['structure','term','cash','plan','rate']
+    :['structure','term','rate','plan','cash'];
+  return order.map(key=>({key,title:title[key],note:note[key]||'',ids:EDITOR_SECTIONS[key]}));
+}
+/* Build the sections and put the rows in them. Nothing is created twice and
+   nothing is moved unless the order actually changed, so a layout that is
+   already right costs one comparison and never steals focus from the field the
+   reader is typing in. */
+function applyEditorLayout(){
+  const host=$('scFields');if(!host)return;
+  const plan=editorSectionPlan(editorLoanType());
+  const groups=plan.map(sec=>{
+    let g=$('scSec-'+sec.key);
+    if(!g){
+      g=document.createElement('div');g.className='field-group';g.id='scSec-'+sec.key;
+      g.innerHTML='<div class="group-title"></div><div class="field-sub sec-note"></div>';
+      // Attached before any row moves into it, so a row never leaves the
+      // document and getElementById can still find it on the next pass.
+      host.appendChild(g);
+    }
+    const head=g.querySelector('.group-title'),note=g.querySelector('.sec-note');
+    head.textContent=sec.title;
+    note.textContent=sec.note;note.style.display=sec.note?'':'none';
+    const want=sec.ids.map(id=>$(id)).filter(Boolean);
+    const have=[...g.children].filter(el=>el!==head&&el!==note);
+    if(have.length!==want.length||have.some((el,i)=>el!==want[i]))want.forEach(el=>g.appendChild(el));
+    g.style.display=want.some(el=>el.style.display!=='none')?'':'none';
+    return g;
+  });
+  const have=[...host.children];
+  if(have.length!==groups.length||have.some((el,i)=>el!==groups[i]))groups.forEach(g=>host.appendChild(g));
+}
+
 /* Exactly one segmented control and at most one extra field group is ever on
    screen, so picking a loan type never stacks a second way to say the same
    thing on top of the first. */
@@ -1436,6 +1514,9 @@ function updateEditorVisibility(){
   // The loan type decides where the rate schedule opens, so the ranges printed
   // on its rows are re-derived here rather than only when the term is edited.
   clampSchedToStart('rate');
+  // Which rows are on screen is settled above, so the sections can now be put
+  // in this type's order and the empty ones folded away.
+  applyEditorLayout();
 }
 
 function updateImpliedRate(){
