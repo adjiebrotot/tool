@@ -268,10 +268,10 @@ const fmtRatio  = v => (v==null||!isFinite(v)) ? ' - ' : v.toFixed(2);
 const fmtMetPct = v => (v==null||!isFinite(v)) ? ' - ' : (v*100).toFixed(2)+'%';
 // Hover explanations for each advanced metric (avoid double quotes - used in data-tip).
 const METRIC_TIPS = {
-  sharpe:  '<strong>Sharpe:</strong> return earned above the risk-free rate, divided by how much the returns bounce around. Excess return is the daily time-weighted return minus the daily risk-free rate set in Settings, annualised by multiplying by √252. Higher is better.',
-  sortino: '<strong>Sortino:</strong> the same idea as Sharpe, but it only counts downside movement. It divides the annualised excess return by the volatility of returns that fall below the risk-free rate, so upside swings are not treated as risk.',
-  twr:     '<strong>CAGR (TWR):</strong> the time-weighted compound annual growth rate, taken as the geometric mean of daily returns from the first buy onward. It measures the asset itself, ignoring when and how much you deposited.',
-  mwr:     '<strong>CAGR (MWR):</strong> the money-weighted compound annual growth rate, which is the annualised internal rate of return (IRR) of your real deposits and your final equity. It measures what your actual money earned.',
+  sharpe:  '<strong>Sharpe:</strong> return above the risk-free rate, divided by how much the returns bounce around. Annualised from daily returns. Higher is better.',
+  sortino: '<strong>Sortino:</strong> Sharpe counting downside only, so upside swings are not treated as risk.',
+  twr:     '<strong>CAGR (TWR):</strong> compound annual growth of the asset itself, from the first buy onward, ignoring when you deposited.',
+  mwr:     '<strong>CAGR (MWR):</strong> compound annual growth of your own money, the IRR of your real deposits against your final equity.',
 };
 const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:var(--muted);cursor:help;border-bottom:1px dotted var(--border)">${label}</span> <b>${val}</b></div>`;
 
@@ -523,14 +523,14 @@ function renderScenarioConfig(){
         </div>
       </div>
       <div class="sec-row">
-        <label>Yearly increase <span class="tip-icon" data-tip="Grows the invested amount once every full year. 0 keeps it flat; 10 raises it by 10% a year and compounds, so year 2 is +10% and year 3 is +21%.">?</span></label>
+        <label>Yearly increase <span class="tip-icon" data-tip="Grows the invested amount once a year and compounds: 10 makes year 2 +10% and year 3 +21%. 0 keeps it flat.">?</span></label>
         <div class="currency-wrap">
           <input class="currency-input money-input has-suffix" id="cfgYearlyInc" type="text" inputmode="numeric" value="${fmtN(sec.yearlyIncrease||0)}"/>
           <span class="suffix">%</span>
         </div>
       </div>
 
-      <div class="section-label">Asset <span class="tip-icon" data-tip="Choose what this scenario buys: a loaded ticker using real market data, or a simulated asset. Load or create more in the 📥 Data tab.">?</span></div>
+      <div class="section-label">Asset <span class="tip-icon" data-tip="What this scenario buys: a loaded ticker on real market data, or a simulated asset. Add more in the 📥 Data tab.">?</span></div>
       ${assetSelectBody}
       <div class="section-label">Investment Style</div>
       <div id="styleBlock${sec.id}">${styleBlockInner(sec)}</div>
@@ -640,7 +640,7 @@ function styleBlockInner(sec){
 function periodToggleRow(sec, id){
   const p = (sec.period==='weekly') ? 'weekly' : 'monthly';
   const word = p==='weekly' ? 'week' : 'month';
-  return `<div class="param-row"><label>Frequency <span class="tip-icon" data-tip="<strong>Monthly:</strong> at most one purchase per month.<br><strong>Weekly:</strong> at most one purchase per week.<br>The purchase happens on the first day the trigger is met inside that ${word}. If the trigger never fires, the ${word} is skipped, unless 'Invest at End of ${word.charAt(0).toUpperCase()+word.slice(1)}' is ticked below, which buys on its last trading day instead.">?</span></label>
+  return `<div class="param-row"><label>Frequency <span class="tip-icon" data-tip="One purchase per ${word} at most, on the first day the trigger fires. A ${word} it never fires in is skipped, unless 'Invest at End of ${word.charAt(0).toUpperCase()+word.slice(1)}' is ticked below.">?</span></label>
       <div class="seg" id="secPeriodSeg${id}" role="group" aria-label="Investment frequency">
         <button type="button" class="seg-btn${p==='monthly'?' active':''}" data-period="monthly">Monthly</button>
         <button type="button" class="seg-btn${p==='weekly'?' active':''}" data-period="weekly">Weekly</button>

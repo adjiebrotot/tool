@@ -116,13 +116,13 @@
 <section class="layout">
 <aside class="controls card">
   <div class="quick-start-row">
-    <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start</span><span class="tip-icon" data-tip="Fills every tab with a worked example of a real Australian borrower and reads the result straight away. Change any figure over the top of it.">?</span>
+    <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start</span><span class="tip-icon" data-tip="Fills every tab with a worked Australian example. Change any figure over the top of it.">?</span>
     <div class="quick-start-btns">
-      <button class="quick-start-btn" data-preset="finance-bro" data-tip="Sydney banking associate, one applicant. $230k base plus a $90k bonus, entered stream by stream so you can see the bonus counted at 80%. Buying at $1.7M with a $550k deposit.">Finance Bro, Sydney</button>
-      <button class="quick-start-btn" data-preset="couple" data-tip="Melbourne couple with two children, $185k between them. Two applicants are taxed as two people, so the income split on the Household tab moves the answer more here than anywhere else.">Couple, Melbourne</button>
-      <button class="quick-start-btn" data-preset="geoff" data-tip="The ordinary single Perth buyer on $105k, no dependants, one modest card. The plain baseline to measure the others against.">Average Man, Perth</button>
-      <button class="quick-start-btn" data-preset="first-home" data-tip="Brisbane first home buyer on $95k with $70k saved and a study loan running. The deposit binds here, not the income. Tick LMI capitalised on the Caps tab and capacity lifts from $264k to $292k, because the ceiling moves from 80% to 95% of the price.">First home buyer, Brisbane</button>
-      <button class="quick-start-btn" data-preset="tradie" data-tip="Adelaide sole trader on $165k of two-year average profit, with a ute under finance. Shows the Self-employed side of the income form.">Self-employed tradie, Adelaide</button>
+      <button class="quick-start-btn" data-preset="finance-bro" data-tip="Sydney associate: $230k base plus a $90k bonus, entered stream by stream so you see the bonus shaded to 80%. Buying at $1.7M.">Finance Bro, Sydney</button>
+      <button class="quick-start-btn" data-preset="couple" data-tip="Melbourne couple, two children, $185k between them. Two taxpayers, so the income split on the Household tab matters most here.">Couple, Melbourne</button>
+      <button class="quick-start-btn" data-preset="geoff" data-tip="Single Perth buyer on $105k, no dependants, one modest card. The plain baseline for the others.">Average Man, Perth</button>
+      <button class="quick-start-btn" data-preset="first-home" data-tip="Brisbane first home buyer on $95k with $70k saved. The deposit binds, not the income: tick LMI capitalised on the Caps tab and capacity lifts from $264k to $292k.">First home buyer, Brisbane</button>
+      <button class="quick-start-btn" data-preset="tradie" data-tip="Adelaide sole trader on $165k two-year average profit, with a ute under finance. Shows the Self-employed form.">Self-employed tradie, Adelaide</button>
     </div>
   </div>
   <div class="ctrl-scroll">
@@ -150,7 +150,7 @@
           <button type="button" class="seg-btn active" data-val="simple">Simple</button>
           <button type="button" class="seg-btn" data-val="detailed">Detailed</button>
         </div>
-        <i class="tip-icon" data-tip="<strong>Simple</strong> takes one gross annual figure and counts it in full, which is how a lender treats base salary and business profit.<br><strong>Detailed</strong> splits the figure into each stream and exposes the shading factor, the share a lender is willing to count.">?</i>
+        <i class="tip-icon" id="incModeTip" data-tip="">?</i>
       </div>
     </div>
 
@@ -174,7 +174,7 @@
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Overtime <i class="tip-icon" data-tip="Needs 6 to 12 months of history. Shaded to 80% normally, and to 100% for essential services such as nursing, police, fire and ambulance.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Overtime <i class="tip-icon" data-tip="Needs 6 to 12 months of history. Shaded 80%, or 100% for essential services such as nursing, police, fire and ambulance.">?</i></span></div>
         <div class="inline-row">
           <div class="currency-wrap grow"><span class="prefix">$</span><input class="currency-input fmt-num" id="incOvertime" type="text" inputmode="decimal" value="0"></div>
           <div class="currency-wrap shade-wrap"><input class="currency-input has-suffix fmt-pct" id="shdOvertime" type="text" inputmode="decimal" value="80"><span class="suffix">%</span></div>
@@ -214,7 +214,7 @@
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Add-backs <i class="tip-icon" data-tip="Depreciation, one-off non-recurring items, super above the compulsory rate, and director wages already paid to you. Added back because they are not a real cash drain on servicing.<br>Shaded at the same rate as NPAT, and not treated as taxable income.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Add-backs <i class="tip-icon" data-tip="Depreciation, one-off items, super above the compulsory rate, and director wages paid to you. Not a real cash drain, so they count.<br>Shaded like NPAT, and not taxed.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="incSeAdd" type="text" inputmode="decimal" value="0"></div>
       </div>
     </div>
@@ -228,18 +228,18 @@
     <div class="field-group" data-when="hasInvest">
       <div class="group-title">Investments</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Gross rental income <i class="tip-icon" data-tip="Annual rent before costs. The 70% to 80% shading is what covers vacancy, agent fees, rates and strata, so do not deduct those yourself.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Gross rental income <i class="tip-icon" data-tip="Annual rent before costs. The 70% to 80% shading covers vacancy, fees, rates and strata, so do not deduct those yourself.">?</i></span></div>
         <div class="inline-row">
           <div class="currency-wrap grow"><span class="prefix">$</span><input class="currency-input fmt-num" id="incRent" type="text" inputmode="decimal" value="0"></div>
           <div class="currency-wrap shade-wrap" data-adv="inc"><input class="currency-input has-suffix fmt-pct" id="shdRent" type="text" inputmode="decimal" value="80"><span class="suffix">%</span></div>
         </div>
       </div>
       <div class="field-row" data-adv="inc">
-        <div class="field-label"><span class="tip-wrap">Investment property deductible costs <i class="tip-icon" data-tip="Annual interest, agent fees, rates, strata, insurance and repairs on the investment property. Used only to work out the tax position, never deducted twice from the rent.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Investment property deductible costs <i class="tip-icon" data-tip="Interest, fees, rates, strata, insurance and repairs for the year. Used for the tax position only, never deducted from the rent twice.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="ipCash" type="text" inputmode="decimal" value="0"></div>
       </div>
       <div class="field-row" data-adv="inc">
-        <div class="field-label"><span class="tip-wrap">Depreciation (non-cash) <i class="tip-icon" data-tip="Capital works and plant depreciation claimed on the investment property. It lowers taxable income without costing cash, which is why it lifts the negative gearing benefit.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Depreciation (non-cash) <i class="tip-icon" data-tip="Claimed on the investment property. Lowers taxable income without costing cash, so it lifts the negative gearing benefit.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="ipDep" type="text" inputmode="decimal" value="0"></div>
       </div>
       <div class="toggle-row" data-adv="inc">
@@ -254,7 +254,7 @@
         </div>
       </div>
       <div class="field-row" data-adv="inc">
-        <div class="field-label"><span class="tip-wrap">Franked portion <i class="tip-icon" data-tip="Share of the dividend carrying franking credits at the 30% company rate. 100% means fully franked, which grosses the cash dividend up by a factor of 10 over 7.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Franked portion <i class="tip-icon" data-tip="Share carrying franking credits at the 30% company rate. Fully franked grosses the cash up by 10 over 7.">?</i></span></div>
         <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="frankPct" type="text" inputmode="decimal" value="100"><span class="suffix">%</span></div>
       </div>
     </div>
@@ -276,7 +276,7 @@
         </div>
       </div>
       <div class="toggle-row" data-adv="inc">
-        <div class="toggle-label"><span class="tip-wrap">Pension is taxable <i class="tip-icon" data-tip="Age pension is taxable, the disability support pension below age pension age is not. This only changes the tax line, not the shading.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap">Pension is taxable <i class="tip-icon" data-tip="Age pension is taxable, DSP below age pension age is not. Changes the tax line only, not the shading.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="pensionTaxable"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row">
@@ -294,7 +294,7 @@
     <div class="field-group">
       <div class="group-title">Household and living costs</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">City <i class="tip-icon" data-tip="Scales the HEM benchmark by the cost of living excluding housing, cross-fed from the Cost of Living Comparator on this site. Perth is the index base at 100.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">City <i class="tip-icon" data-tip="Scales the HEM benchmark by local cost of living excluding housing, taken from the Cost of Living Comparator. Perth is the base at 100.">?</i></span></div>
         <select class="sel-input" id="city">
           <option value="Sydney">Sydney</option>
           <option value="Melbourne">Melbourne</option>
@@ -315,7 +315,7 @@
         </select>
       </div>
       <div class="slider-block" id="incSplitRow">
-        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Second applicant&rsquo;s share of income <i class="tip-icon" data-tip="Two applicants are two taxpayers, so the income is split and the tax scale runs once on each share. Pooling a couple&rsquo;s income pushes it up the brackets and charges tax neither of them pays.<br>Set this to 0% when one applicant earns everything. The Medicare levy and the surcharge are unaffected, and the study loan is modelled as one borrower&rsquo;s.">?</i></span></div><div class="slider-value" id="incSplitValue">50%</div></div>
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Second applicant&rsquo;s share of income <i class="tip-icon" data-tip="Two applicants are two taxpayers, so the tax scale runs on each share, not on the pooled income. Set 0% when one earns everything.<br>Medicare and the study loan are not split.">?</i></span></div><div class="slider-value" id="incSplitValue">50%</div></div>
         <input id="incSplit" type="range" min="0" max="50" step="5" value="50">
       </div>
       <div class="slider-block">
@@ -323,7 +323,7 @@
         <input id="deps" type="range" min="0" max="6" step="1" value="0">
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Declared living expenses <i class="tip-icon" data-tip="Your own monthly figure. It <strong>excludes</strong> rent, mortgage repayments, debt repayments and investment property outgoings, which are all counted separately under Debts.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Declared living expenses <i class="tip-icon" data-tip="Your own monthly figure, <strong>excluding</strong> rent, every debt repayment and investment outgoings. Those are counted under Debts.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="declaredExp" type="text" inputmode="decimal" value="3,500"><span class="suffix" style="right:11px">/mo</span></div>
         <div class="field-sub" id="hemNote"></div>
       </div>
@@ -336,7 +336,7 @@
     <div class="field-group">
       <div class="group-title">Tax and study loan</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Resident tax year <i class="tip-icon" data-tip="The legislated cut to the lowest bracket: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. Medicare and surcharge thresholds are the latest published values.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Resident tax year <i class="tip-icon" data-tip="Sets the lowest bracket: 16% in 2025-26, 15% in 2026-27, 14% from 2027-28. Medicare thresholds use the latest published values.">?</i></span></div>
         <select class="sel-input" id="taxYear">
           <option value="2025-26">2025-26</option>
           <option value="2026-27" selected>2026-27</option>
@@ -344,7 +344,7 @@
         </select>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Study loan (HELP or HECS) <i class="tip-icon" data-tip="Both paths subtract the same dollars from surplus income. The difference is where it lands: as tax it sits above the line and lowers net income, as a commitment it sits below the line and lowers the NSR ratio.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Study loan (HELP or HECS) <i class="tip-icon" data-tip="The same dollars either way. As tax it lowers net income, as a commitment it lowers the NSR instead.">?</i></span></div>
         <select class="sel-input" id="helpMode">
           <option value="tax">Deduct as tax</option>
           <option value="commitment">Treat as a commitment</option>
@@ -352,7 +352,7 @@
         </select>
       </div>
       <div class="field-row" id="helpThresholdRow">
-        <div class="field-label"><span class="tip-wrap">Repayment threshold <i class="tip-icon" data-tip="Repayments apply only to income above this line, at 15% up to $125,000 and 17% beyond it. Indexed every year, so update it if yours differs.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Repayment threshold <i class="tip-icon" data-tip="Only income above this line repays, at 15% to $125,000 and 17% above. Indexed yearly, so update it if yours differs.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="helpThreshold" type="text" inputmode="decimal" value="67,000"></div>
       </div>
     </div>
@@ -367,7 +367,7 @@
           <button type="button" class="seg-btn active" data-val="simple">Simple</button>
           <button type="button" class="seg-btn" data-val="detailed">Detailed</button>
         </div>
-        <i class="tip-icon" data-tip="<strong>Simple</strong> asks only for the headline figure of each debt you tick and assesses it on the standard settings shown beneath it.<br><strong>Detailed</strong> exposes every one of those settings: rates, terms, repayment type and the rate charged on card limits.">?</i>
+        <i class="tip-icon" id="debtsModeTip" data-tip="">?</i>
       </div>
     </div>
 
@@ -397,7 +397,7 @@
         <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="olTerm" type="text" inputmode="decimal" value="25"><span class="suffix">yrs</span></div>
       </div>
       <div class="field-row" data-adv="debts">
-        <div class="field-label"><span class="tip-wrap">Repayment type <i class="tip-icon" data-tip="An interest only loan is reassessed as principal and interest over the term left <strong>after</strong> the interest only period ends, which makes the assessed repayment much larger.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Repayment type <i class="tip-icon" data-tip="Interest only is reassessed as principal and interest over the term left <strong>after</strong> it ends, so the assessed repayment is larger.">?</i></span></div>
         <select class="sel-input" id="olType">
           <option value="pi" selected>Principal and interest</option>
           <option value="io">Interest only</option>
@@ -412,7 +412,7 @@
     <div class="field-group" data-when="hasCard">
       <div class="group-title">Revolving credit</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Credit card and LOC limits <i class="tip-icon" data-tip="Assessed on the <strong>limit</strong>, not the balance. A card you never use still costs you capacity, so closing it before applying is the cheapest lift available.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Credit card and LOC limits <i class="tip-icon" data-tip="Assessed on the <strong>limit</strong>, not the balance. A card you never use still costs capacity, so closing it is the cheapest lift there is.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="cardLimit" type="text" inputmode="decimal" value="10,000"></div>
         <div class="field-sub" data-simple="debts" id="cardSimpleNote"></div>
       </div>
@@ -439,7 +439,7 @@
     <div class="field-group" data-when="hasBnpl">
       <div class="group-title">Buy now pay later</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Monthly instalments <i class="tip-icon" data-tip="Enter the monthly instalment, or the limit divided by the lender's assessment period if it assesses on limits.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Monthly instalments <i class="tip-icon" data-tip="The monthly instalment, or the limit divided by the assessment period where the lender assesses on limits.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="bnplRepay" type="text" inputmode="decimal" value="0"><span class="suffix" style="right:11px">/mo</span></div>
       </div>
       <div class="field-row">
@@ -452,7 +452,7 @@
     <div class="field-group">
       <div class="group-title">After settlement</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Occupancy <i class="tip-icon" data-tip="Choose investor if you will keep renting or boarding after settlement. Owner occupiers move into the new property, so the rent line falls away.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Occupancy <i class="tip-icon" data-tip="Investor if you keep renting or boarding after settlement. Owner occupiers move in, so the rent line falls away.">?</i></span></div>
         <select class="sel-input" id="occupancy">
           <option value="owner" selected>Owner occupier</option>
           <option value="investor">Investor, still renting or boarding</option>
@@ -471,7 +471,7 @@
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="csOut" type="text" inputmode="decimal" value="0"><span class="suffix" style="right:11px">/mo</span></div>
       </div>
       <div class="field-row" data-adv="debts" data-when="hasInvest">
-        <div class="field-label"><span class="tip-wrap">Investment property outgoings not netted off rent <i class="tip-icon" data-tip="Only what the rental shading does not already cover. Leave it at zero if you shaded the rent at 70% to 80%, otherwise you pay for the same cost twice.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Investment property outgoings not netted off rent <i class="tip-icon" data-tip="Only what the rental shading misses. Leave it at zero if you shaded rent at 70% to 80%, or you pay the same cost twice.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="ipOut" type="text" inputmode="decimal" value="0"><span class="suffix" style="right:11px">/mo</span></div>
       </div>
     </div>
@@ -479,7 +479,7 @@
     <div class="field-group" data-when="hasRefi">
       <div class="group-title">Closing at settlement</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Repayments being refinanced or closed <i class="tip-icon" data-tip="Facilities that will be paid out or closed at settlement. Subtracted from commitments, and their balances come off the debt-to-income cap.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Repayments being refinanced or closed <i class="tip-icon" data-tip="Facilities paid out or closed at settlement. They come off commitments, and their balances off the DTI cap.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input has-suffix fmt-num" id="refiRepay" type="text" inputmode="decimal" value="0"><span class="suffix" style="right:11px">/mo</span></div>
       </div>
       <div class="field-row">
@@ -498,7 +498,7 @@
           <button type="button" class="seg-btn active" data-val="simple">Simple</button>
           <button type="button" class="seg-btn" data-val="detailed">Detailed</button>
         </div>
-        <i class="tip-icon" data-tip="<strong>Simple</strong> asks for the rate and the term, and tests you on the standard APRA settings shown beneath them.<br><strong>Detailed</strong> lets you move the buffer, the lender floor, the minimum surplus and the minimum NSR to match a particular lender's policy.">?</i>
+        <i class="tip-icon" id="loanModeTip" data-tip="">?</i>
       </div>
     </div>
 
@@ -513,7 +513,7 @@
         <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="termYears" type="text" inputmode="decimal" value="30"><span class="suffix">yrs</span></div>
       </div>
       <div class="toggle-row">
-        <div class="toggle-label"><span class="tip-wrap">Interest only to start <i class="tip-icon" data-tip="Interest only shortens the amortisation window the lender tests you on, from the full term down to the term minus the interest only period. It lowers capacity materially.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap">Interest only to start <i class="tip-icon" data-tip="Shortens the window you are tested over to the term minus the interest only period, so capacity drops materially.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="hasIo"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" id="newIoRow" data-when="hasIo">
@@ -526,11 +526,11 @@
     <div class="field-group" data-adv="loan">
       <div class="group-title">Lender policy</div>
       <div class="slider-block">
-        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">APRA buffer <i class="tip-icon" data-tip="The serviceability buffer APRA requires lenders to add on top of the product rate. It has been 3.00 percentage points since October 2021.">?</i></span></div><div class="slider-value" id="bufferValue">3.00%</div></div>
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">APRA buffer <i class="tip-icon" data-tip="Added on top of the product rate by APRA rule. It has been 3.00 points since October 2021.">?</i></span></div><div class="slider-value" id="bufferValue">3.00%</div></div>
         <input id="buffer" type="range" min="0" max="5" step="0.25" value="3">
       </div>
       <div class="slider-block">
-        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Lender floor <i class="tip-icon" data-tip="A hard minimum assessment rate the lender will not go below, typically 5.00% to 5.75%. Whichever is higher, floor or buffered rate, is the one used.">?</i></span></div><div class="slider-value" id="floorValue">5.50%</div></div>
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Lender floor <i class="tip-icon" data-tip="A minimum assessment rate the lender never goes below, typically 5.00% to 5.75%. The higher of floor and buffered rate is used.">?</i></span></div><div class="slider-value" id="floorValue">5.50%</div></div>
         <input id="floorRate" type="range" min="0" max="9" step="0.05" value="5.5">
       </div>
       <div class="field-row">
@@ -553,7 +553,7 @@
           <button type="button" class="seg-btn active" data-val="simple">Simple</button>
           <button type="button" class="seg-btn" data-val="detailed">Detailed</button>
         </div>
-        <i class="tip-icon" data-tip="<strong>Simple</strong> asks for the price, the deposit and the purchase costs. It values the property at the price you are paying and takes the LVR ceiling from the LMI switch, 80% without it and 95% with it.<br><strong>Detailed</strong> adds the debt-to-income cap and its income basis, a separate bank valuation, and the LVR ceiling as its own dial.">?</i>
+        <i class="tip-icon" id="capsModeTip" data-tip="">?</i>
       </div>
     </div>
 
@@ -564,11 +564,11 @@
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="price" type="text" inputmode="decimal" value="900,000"></div>
       </div>
       <div class="field-row" data-adv="caps">
-        <div class="field-label"><span class="tip-wrap">Bank valuation <i class="tip-icon" data-tip="The LVR cap applies to the lower of the price and the bank's own valuation, so a valuation shortfall costs you directly. Simple values the property at the price you are paying.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Bank valuation <i class="tip-icon" data-tip="The LVR cap applies to the lower of price and valuation, so a shortfall costs you directly.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="valuation" type="text" inputmode="decimal" value="900,000"></div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap"><span id="depositLabel">Deposit funds</span> <i class="tip-icon" data-tip="Everything you are putting in: savings, a family gift, and any first home buyer grant.<br>As an <strong>amount</strong>, stamp duty and the purchase costs come out of it first. As a <strong>percentage of the price</strong>, it is the down payment and those costs are paid on top.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap"><span id="depositLabel">Deposit funds</span> <i class="tip-icon" id="depositTip" data-tip="">?</i></span></div>
         <select class="sel-input" id="depositMode">
           <option value="amount" selected>Enter an amount</option>
           <option value="pct">Percentage of price</option>
@@ -578,7 +578,7 @@
         <div class="field-sub" id="depositNote"></div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Stamp duty <i class="tip-icon" data-tip="Rates and concessions differ in every state and territory. Check your state revenue office, or use the percentage mode for a quick estimate.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Stamp duty <i class="tip-icon" data-tip="Rates and concessions differ by state. Check your revenue office, or use percentage mode for a quick estimate.">?</i></span></div>
         <select class="sel-input" id="dutyMode">
           <option value="pct" selected>Percentage of price</option>
           <option value="amount">Enter an amount</option>
@@ -587,7 +587,7 @@
         <div class="currency-wrap" id="dutyAmtWrap" style="display:none"><span class="prefix">$</span><input class="currency-input fmt-num" id="dutyAmt" type="text" inputmode="decimal" value="36,000"></div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Other purchase costs <i class="tip-icon" data-tip="Conveyancing and legal fees, transfer and registration, and building and pest inspections. Around $4,000 all up on a standard purchase.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Other purchase costs <i class="tip-icon" data-tip="Conveyancing, transfer and registration, building and pest. Around $4,000 on a standard purchase.">?</i></span></div>
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="otherCosts" type="text" inputmode="decimal" value="4,000"></div>
       </div>
     </div>
@@ -595,7 +595,7 @@
     <div class="field-group">
       <div class="group-title">Loan to value</div>
       <div class="toggle-row">
-        <div class="toggle-label"><span class="tip-wrap">Lenders Mortgage Insurance <i class="tip-icon" data-tip="LMI is what lets a lender go past 80% LVR, up to 95%. The premium is capitalised onto the loan, so you then have to service the larger balance and it feeds straight back into the serviceability test.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap">Lenders Mortgage Insurance <i class="tip-icon" data-tip="Lets a lender go past 80% LVR, up to 95%. The premium is capitalised, so you service the larger balance and serviceability tightens.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="lmiCap"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" id="lmiRow" data-when="lmiCap">
@@ -616,7 +616,7 @@
         <input id="dtiCap" type="range" min="3" max="9" step="0.1" value="6">
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Income basis <i class="tip-icon" data-tip="Lenders differ. Some measure DTI against raw gross income, others against the shaded assessable figure, which is stricter.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Income basis <i class="tip-icon" data-tip="Some lenders measure DTI on raw gross income, others on the shaded assessable figure, which is stricter.">?</i></span></div>
         <select class="sel-input" id="dtiBasis">
           <option value="gross" selected>Gross income, unshaded</option>
           <option value="assessable">Assessable income, shaded</option>
@@ -633,7 +633,7 @@
   <section class="metrics">
     <div class="metric card"><div class="label"><span class="tip-wrap">Borrowing capacity <i class="tip-icon" data-tip="The smallest of the four caps: serviceability, debt to income, loan to value, and deposit.">?</i></span></div><div class="value" id="kpiLoan">—</div><div class="sub" id="kpiLoanSub"></div></div>
     <div class="metric card"><div class="label"><span class="tip-wrap">Binding constraint <i class="tip-icon" data-tip="The cap that is actually holding you back. Fix this one first, the other three have slack.">?</i></span></div><div class="value" id="kpiBind">—</div><div class="sub" id="kpiBindSub"></div></div>
-    <div class="metric card"><div class="label"><span class="tip-wrap">Max purchase price <i class="tip-icon" data-tip="Capacity plus the deposit left over. Purchase costs are held at the price you entered, so in percentage duty mode this is slightly conservative. Re-enter this figure as the price to converge.">?</i></span></div><div class="value" id="kpiPrice">—</div><div class="sub" id="kpiPriceSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Max purchase price <i class="tip-icon" data-tip="Capacity plus the deposit left over. In percentage duty mode it reads slightly low, so re-enter it as the price to converge.">?</i></span></div><div class="value" id="kpiPrice">—</div><div class="sub" id="kpiPriceSub"></div></div>
     <div class="metric card"><div class="label"><span class="tip-wrap">Assessed repayment <i class="tip-icon" data-tip="Monthly repayment on the capacity figure at the assessment rate, not at the rate you were quoted.">?</i></span></div><div class="value" id="kpiRepay">—</div><div class="sub" id="kpiRepaySub"></div></div>
     <div class="metric card"><div class="label"><span class="tip-wrap">NSR <i class="tip-icon" data-tip="Measured at the capacity figure, so the new repayment is already counted in the outgoings.">?</i></span></div><div class="value" id="kpiNsr">—</div><div class="sub" id="kpiNsrSub"></div></div>
     <div class="metric card"><div class="label"><span class="tip-wrap">UMI <i class="tip-icon" data-tip="Measured at the capacity figure, so the new repayment is already taken out.">?</i></span></div><div class="value" id="kpiUmi">—</div><div class="sub" id="kpiUmiSub"></div></div>
@@ -642,7 +642,7 @@
   <section class="chart-card card">
     <div class="chart-head">
       <div>
-        <h2>Capacity across the income range <i class="tip-icon" data-tip="Your own scenario sits at the centre of the sweep. Salary, business and investment income scale together across the range, while government payments hold still because they are needs tested rather than earned.">?</i></h2>
+        <h2>Capacity across the income range <i class="tip-icon" data-tip="Your scenario sits at the centre. Salary, business and investment income scale together, while government payments hold still, being needs tested.">?</i></h2>
       </div>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="svgBtn" title="Download this chart as SVG">⬇ SVG</button>

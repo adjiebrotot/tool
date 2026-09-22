@@ -162,7 +162,7 @@
             <input id="splitPct" type="range" min="0" max="100" step="1" value="50" />
           </div>
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Combined Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Allowable deductions such as biaya jabatan or iuran pensiun. They come off gross income before PTKP is applied, and they are split between the spouses in proportion to what each earns.">?</span></div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Combined Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Deductions such as biaya jabatan or iuran pensiun, taken off gross income before PTKP and split in proportion to what each spouse earns.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="deductionInput" type="text" inputmode="numeric" value="0" />
@@ -229,7 +229,7 @@
         </div>
 
         <div class="bracket-section">
-          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Tax Brackets (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit each threshold and rate. The &quot;From&quot; column fills itself in, and only the last bracket is left open-ended. Raising a bound past the brackets beneath it deletes those brackets, so the ladder on screen is always exactly the ladder being calculated.">?</span></div>
+          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Tax Brackets (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit each threshold and rate. The &quot;From&quot; column fills itself in, and only the last bracket is open-ended. Raising a bound past the ones beneath it deletes them.">?</span></div>
           <div class="bracket-row-header">
             <div class="bracket-col-label" id="bracketColFrom">From (Rp)</div>
             <div class="bracket-col-label" id="bracketColTo">To (Rp) <span style="font-size:0.68rem">(last=∞)</span></div>

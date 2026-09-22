@@ -105,7 +105,7 @@ Salad</textarea>
         <div class="choices-foot">
           <span id="choiceCount" class="choice-count mono">0 choices</span>
           <span class="tip-wrap">
-            <span class="tip-icon" data-tip="One choice per line. Blank lines are ignored. Repeating a name is allowed and gives it more slots, because every line counts as one equal slot.">i</span>
+            <span class="tip-icon" data-tip="One choice per line, blank lines ignored. Repeating a name gives it more slots, since every line is one equal slot.">i</span>
           </span>
         </div>
         <div class="warning" id="minWarning">Add at least 2 choices to start picking.</div>
@@ -113,7 +113,7 @@ Salad</textarea>
       </div>
 
       <div class="card history-card">
-        <div class="section-title" style="padding:16px 18px 0">Recent picks <span class="tip-wrap"><span class="tip-icon" data-tip="Counts how often each choice has come up so far. It covers this session only and resets when you leave the page.">i</span></span></div>
+        <div class="section-title" style="padding:16px 18px 0">Recent picks <span class="tip-wrap"><span class="tip-icon" data-tip="How often each choice has come up. This session only, and it resets when you leave the page.">i</span></span></div>
         <div id="historyList" class="history-list" data-no-abbr>
           <div class="history-empty">No picks yet.</div>
         </div>
@@ -151,7 +151,7 @@ Salad</textarea>
           <div class="dice-legend" id="diceLegend"></div>
           <div class="stage-foot dice-foot">
             <span class="tip-wrap">
-              <span class="tip-icon" data-tip="The die is rolled honestly: every face has a 1 in 6 chance, exactly like a real one. Face 1 is your first choice, face 2 the second, and so on. With fewer than six choices the spare faces belong to nobody, so those rolls pick no one. Roll again, or use the wheel if you want a guaranteed result.">i</span>
+              <span class="tip-icon" data-tip="Rolled honestly: every face has a 1 in 6 chance, like a real die. Face 1 is your first choice, face 2 the second, and so on.">i</span>
               <span id="diceOdds">Every face has a 1 in 6 chance.</span>
             </span>
             <span class="flash-pill" id="diceFlash" role="status" aria-live="polite" hidden></span>
@@ -184,7 +184,7 @@ Salad</textarea>
           </div>
           <div class="stage-foot slot-foot">
             <span class="tip-wrap">
-              <span class="tip-icon" data-tip="Every pull has a 75% chance of paying out, so roughly 1 in 4 lands a mismatched payline and picks nobody. When a pull does pay, every choice is equally likely. Use the wheel if you want a guaranteed result.">i</span>
+              <span class="tip-icon" data-tip="When a pull does pay, every choice is equally likely. Use the wheel if you want every spin to pick someone.">i</span>
               Like a real machine, not every pull pays. About 3 in 4 land a match.
             </span>
             <span class="flash-pill" id="slotFlash" role="status" aria-live="polite" hidden></span>
@@ -198,7 +198,7 @@ Salad</textarea>
           </div>
           <div class="galton-foot">
             <span class="tip-wrap">
-              <span class="tip-icon" data-tip="Each ball flips a fair coin at every peg row and drifts left or right. That produces a binomial distribution, so choices in the middle get picked far more often than those at either edge. This is how a Galton board works, not a fault. Use the wheel if you want every choice to be equally likely.">i</span>
+              <span class="tip-icon" data-tip="Each ball flips a fair coin at every peg row, so the result is a binomial distribution. Use the wheel if you want equal odds.">i</span>
               This board is not fair on purpose. Middle choices win more often.
             </span>
             <div class="galton-btns">

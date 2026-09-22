@@ -114,7 +114,7 @@
       <h3>Output</h3>
       <div class="slider-block">
         <div class="slider-head">
-          <span class="slider-label">Width <span class="tip-icon" data-tip="Width of the GIF in pixels. The height follows automatically from the source video's aspect ratio, so the image is never stretched.">?</span></span>
+          <span class="slider-label">Width <span class="tip-icon" data-tip="Width of the GIF in pixels. The height follows the source aspect ratio, so nothing is stretched.">?</span></span>
           <span class="slider-value" id="widthVal">480 px</span>
         </div>
         <input type="range" id="widthSlider" min="120" max="3840" step="8" value="480">
@@ -122,7 +122,7 @@
       </div>
       <div class="slider-block">
         <div class="slider-head">
-          <span class="slider-label">Frame Rate <span class="tip-icon" data-tip="How many frames each second of the GIF holds. More frames make the motion smoother but make the file bigger and the conversion slower.">?</span></span>
+          <span class="slider-label">Frame Rate <span class="tip-icon" data-tip="Frames per second of GIF. More is smoother, but a bigger file and a slower conversion.">?</span></span>
           <span class="slider-value" id="fpsVal">12 fps</span>
         </div>
         <input type="range" id="fpsSlider" min="4" max="60" step="1" value="12">
@@ -134,13 +134,13 @@
       <h3>Quality</h3>
       <div class="slider-block">
         <div class="slider-head">
-          <span class="slider-label">Color Accuracy <span class="tip-icon" data-tip="How carefully the colour palette is chosen. Higher settings sample more of the image, giving truer colours at the cost of a slower conversion. At maximum, every pixel is sampled.">?</span></span>
+          <span class="slider-label">Color Accuracy <span class="tip-icon" data-tip="How carefully the palette is chosen. Higher samples more of the image: truer colours, slower conversion.">?</span></span>
           <span class="slider-value" id="qualVal">High</span>
         </div>
         <input type="range" id="qualSlider" min="1" max="5" step="1" value="3">
       </div>
       <div class="slider-head" style="margin-bottom:5px;">
-        <span class="slider-label" style="font-size:0.85rem;">Dithering <span class="tip-icon" data-tip="Dithering mixes nearby colours to hide the banding a 256-colour palette causes.<br><strong>None:</strong> no mixing, so it is fastest but bands are visible in gradients.<br><strong>Bayer:</strong> a fixed pattern, fast and predictable.<br><strong>Floyd-S:</strong> Floyd-Steinberg error diffusion, the best looking and the slowest.">?</span></span>
+        <span class="slider-label" style="font-size:0.85rem;">Dithering <span class="tip-icon" id="ditherTip" data-tip="">?</span></span>
       </div>
       <div class="toggle-row" id="ditherGroup">
         <button class="tbtn active" data-val="none">None</button>
@@ -150,7 +150,7 @@
     </div>
 
     <div class="sb-section">
-      <h3>Playback Speed <span class="tip-icon" data-tip="How fast the clip plays. The preview and the exported GIF both use this speed, so what you see is what you get.">?</span></h3>
+      <h3>Playback Speed <span class="tip-icon" data-tip="How fast the clip plays. The preview and the GIF use the same speed, so what you see is what you get.">?</span></h3>
       <div class="toggle-row" id="speedGroup">
         <button class="tbtn" data-speed="0.25">0.25×</button>
         <button class="tbtn" data-speed="0.5">0.5×</button>
