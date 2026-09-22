@@ -15,7 +15,24 @@ function wmPlotlyImage(){
 }
 const $=id=>document.getElementById(id);
 const SCENARIO_COLORS=['--line-a','--line-b','--line-c','--line-d','--line-e','--line-f'];
+/* A missing custom property resolves to an empty string, which would paint
+   nothing and, once concatenated with the band's alpha suffix, produce a colour
+   string Chart.js cannot read. The stylesheet does define all six slots, so
+   this is a guard rather than a fix: it only matters if one is ever dropped. */
+const SCENARIO_COLORS_FALLBACK=['#5A91E8','#E63939','#3aaa86','#b07a00','#c45e7a','#0052CC'];
 function cssVar(n){return getComputedStyle(document.body).getPropertyValue(n).trim();}
+/* A scenario keeps its palette slot unless the user picks a colour for it, in
+   which case that literal hex wins in both themes. Anything that draws or
+   labels a scenario asks here, so the dot, the lines, the band shading, the
+   sensitivity curve and the Best KPI can never disagree. */
+function isHexColor(v){return typeof v==='string'&&/^#[0-9a-fA-F]{6}$/.test(v);}
+function defaultScenarioColor(i){
+  const slot=SCENARIO_COLORS[i%SCENARIO_COLORS.length];
+  return cssVar(slot)||SCENARIO_COLORS_FALLBACK[i%SCENARIO_COLORS_FALLBACK.length];
+}
+function scenarioColor(sc,i){
+  return (sc&&isHexColor(sc.color))?sc.color:defaultScenarioColor(i);
+}
 let currentCurrencySymbol='$';
 
 function moneySymbol(){return currentCurrencySymbol||'$';}
@@ -214,7 +231,8 @@ function normaliseScenario(sc){
     toPeriod:Math.max(1,Math.round(num(p&&p.toPeriod,term))),
     amount:Math.max(0,num(p&&p.amount,0)),
   })):null;
-  return{name:String(sc.name||'Scenario'),financeRate:num(sc.financeRate,5),
+  return{name:String(sc.name||'Scenario'),color:isHexColor(sc.color)?sc.color:null,
+    financeRate:num(sc.financeRate,5),
     downPaymentPct:Math.min(100,Math.max(0,num(downPct,0))),termPeriods:term,freq,
     feeAmt:Math.max(0,num(sc.feeAmt,0)),feeType:sc.feeType==='pct'?'pct':'fixed',
     feeTreatment:['upfront','capitalise','discount'].includes(sc.feeTreatment)?sc.feeTreatment:'upfront',
@@ -227,7 +245,7 @@ function normaliseScenario(sc){
 
 function defaultScenario(name,rate){
   const freq='monthly';
-  return{name:name||'Scenario '+(scenarios.length+1),financeRate:rate||5,downPaymentPct:0,termPeriods:defaultTerm(freq),freq,feeAmt:0,feeType:'fixed',feeTreatment:'upfront',adminFee:0,
+  return{name:name||'Scenario '+(scenarios.length+1),color:null,financeRate:rate||5,downPaymentPct:0,termPeriods:defaultTerm(freq),freq,feeAmt:0,feeType:'fixed',feeTreatment:'upfront',adminFee:0,
     loanType:'annuity',rateMode:'simple',ratePeriods:null,paymentMode:'single',paymentPeriods:null,knownPayment:0,ioPeriods:defaultTerm(freq),residualPct:0};
 }
 
@@ -640,7 +658,7 @@ function rerender(){
   scenarios.forEach((sc,i)=>{
     const res=computeScenario(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled);
     if(res){
-      res.name=sc.name;res.idx=i;res.colorVar=SCENARIO_COLORS[i%SCENARIO_COLORS.length];
+      res.name=sc.name;res.idx=i;res.color=scenarioColor(sc,i);
       if(res.negCarry)anyNegCarry=true;
       if(res.negAm)anyNegAm=true;
       // A floating period is simulated three ways. The model itself never knows
@@ -701,7 +719,7 @@ function rerender(){
   const tie=!!bestResult&&Math.abs(bestResult.netBenefit)<=NB_EPS;
   if(tie){$('kpiBest').textContent='Break-even';$('kpiBest').style.color=cssVar('--text');$('kpiBestSub').textContent=bestResult.name+' is level with paying cash.';}
   else if(allNeg||!bestResult){$('kpiBest').textContent='Cash Purchase';$('kpiBest').style.color=cssVar('--accent2');$('kpiBestSub').textContent=valid.length?'No financing scenario beats paying cash.':'Add scenarios to compare.';}
-  else{$('kpiBest').textContent=bestResult.name;$('kpiBest').style.color=cssVar(bestResult.colorVar);$('kpiBestSub').textContent='Based on '+$('optTarget').selectedOptions[0].text.toLowerCase()+'.';}
+  else{$('kpiBest').textContent=bestResult.name;$('kpiBest').style.color=bestResult.color;$('kpiBestSub').textContent='Based on '+$('optTarget').selectedOptions[0].text.toLowerCase()+'.';}
   if(bestResult){const nb=snapNB(bestResult.netBenefit),cashWins=allNeg&&!tie;$('kpiNetBenefit').textContent=fmt.currency(nb,true);$('kpiNetBenefit').style.color=nb>0?cssVar('--positive-em'):nb<0?cssVar('--negative-em'):cssVar('--text');$('kpiNetSub').textContent=nb>0?'Financing is more wealth-efficient':nb<0?'Cash purchase preserves more wealth':'Financing and paying cash end up level';
     // The "(Best)" tiles must describe the strategy the verdict names: when the
     // cash purchase wins there is no loan, so there is no interest.
@@ -762,7 +780,7 @@ function renderMainChart(results){
     const cd=xs.map(yr=>({x:yr,y:left*Math.pow(1+rfAnnual,yr)}));
     pushSeries({label:'Cash Purchase',data:cd,borderColor:cssVar('--muted'),backgroundColor:'transparent',borderWidth:2,borderDash:[6,4],pointRadius:0,pointHoverRadius:4,tension:.3,fill:false},'Cash Purchase');
   }
-  results.forEach(r=>{if(!r)return;const color=cssVar(r.colorVar);
+  results.forEach(r=>{if(!r)return;const color=r.color;
     const rfP_r=Math.pow(1+rfAnnual,1/r.ppy)-1;
     const data=xs.map(yr=>({x:yr,y:periodValue(r, yr*r.ppy, rfP_r)}));
     r.bandSeries=null;
@@ -1047,7 +1065,7 @@ function runSensitivity(){
     // net benefit at all: plot NaN so Chart.js breaks the line instead of
     // drawing a break-even $0 that never happens.
     const data=xVals.map(x=>{if(blocked)return null;const m=applyVar(baseSc,varX,x);const v=getNetBenefit(m,pc,ac,inflR,inflOn,obj);return v===null?NaN:v;});
-    const labels=xVals.map(x=>x.toFixed(2));const color=cssVar(SCENARIO_COLORS[scIdx%SCENARIO_COLORS.length]);
+    const labels=xVals.map(x=>x.toFixed(2));const color=scenarioColor(scenarios[scIdx],scIdx);
     const gc=cssVar('--chart-grid'),mc=cssVar('--chart-text');
     const datasets=[{label:objL,data,borderColor:color,backgroundColor:color+'22',borderWidth:2.5,pointRadius:2,pointHoverRadius:5,tension:.3,fill:false},{label:'Zero',data:xVals.map(()=>0),borderColor:cssVar('--muted'),borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}];
     const sensLe=$('sensLegend'); sensLe.innerHTML='';
@@ -1130,12 +1148,45 @@ function scSummaryRate(sc){
   if(!isFinite(lo))return fmt.pct((sc.financeRate||0)/100)+' rate';
   return (Math.abs(hi-lo)<1e-9?fmt.pct(lo/100):fmt.pct(lo/100)+'–'+fmt.pct(hi/100))+' rate';
 }
+/* ─── Scenario colour ───────────────────────────────────────────────────────
+   One entry point for both swatches (the dot on the card and the box in the
+   editor) so they cannot drift apart. A native colour input fires `input`
+   continuously while the picker is dragged, so the live path only repaints the
+   chart on a short timer; `change`, fired once when the picker closes, commits
+   and saves. */
+let colorTimer=null;
+function applyScenarioColor(idx,hex,live){
+  const sc=scenarios[idx];if(!sc)return;
+  sc.color=isHexColor(hex)?hex:null;
+  const shown=scenarioColor(sc,idx);
+  // Mirror the value into whichever swatch did not originate the edit. Setting
+  // it on the source input too is harmless and keeps a reset in sync.
+  const dot=document.querySelector('.sc-dot[data-idx="'+idx+'"]');
+  if(dot&&dot.value!==shown)dot.value=shown;
+  if(editingIdx===idx){
+    const box=$('scColor');if(box&&box.value!==shown)box.value=shown;
+  }
+  if(live){clearTimeout(colorTimer);colorTimer=setTimeout(rerender,120);return;}
+  clearTimeout(colorTimer);
+  rerender();
+  if(persist)persist.schedule();
+}
+// Back to the palette slot for this position, which also restores the
+// theme-aware colour a literal hex would otherwise freeze.
+function resetScenarioColor(idx){applyScenarioColor(idx,null,false);}
+
 function renderScenarioList(){
   const list=$('scenarioList');list.innerHTML='';
   scenarios.forEach((sc,i)=>{
-    const div=document.createElement('div');div.className='scenario-card'+(editingIdx===i?' active':'');const color=cssVar(SCENARIO_COLORS[i%SCENARIO_COLORS.length]);
-    div.innerHTML=`<div class="sc-header"><div class="sc-name"><span class="sc-dot" style="background:${color}"></span>${sc.name}</div><div class="sc-actions"><button class="sc-btn" data-action="edit" data-idx="${i}" title="Edit">✎</button><button class="sc-btn" data-action="dup" data-idx="${i}" title="Duplicate">⧉</button><button class="sc-btn del" data-action="del" data-idx="${i}" title="Delete">✕</button></div></div><div class="sc-summary">${scSummaryRate(sc)} · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down${(sc.loanType&&sc.loanType!=='annuity')?' · '+LOAN_TYPE_LABEL[sc.loanType]:''}${scenarioHasFloat(sc)?' · variable':''}</div>`;
-    div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)'});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;$('scenarioEditor').style.display='none';}renderScenarioList();rerender();}});});
+    const div=document.createElement('div');div.className='scenario-card'+(editingIdx===i?' active':'');const color=scenarioColor(sc,i);
+    div.innerHTML=`<div class="sc-header"><div class="sc-name"><input type="color" class="sc-dot" data-idx="${i}" value="${color}" title="Click to change this scenario's colour" aria-label="Colour for ${sc.name}"/>${sc.name}</div><div class="sc-actions"><button class="sc-btn" data-action="edit" data-idx="${i}" title="Edit">✎</button><button class="sc-btn" data-action="dup" data-idx="${i}" title="Duplicate">⧉</button><button class="sc-btn del" data-action="del" data-idx="${i}" title="Delete">✕</button></div></div><div class="sc-summary">${scSummaryRate(sc)} · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down${(sc.loanType&&sc.loanType!=='annuity')?' · '+LOAN_TYPE_LABEL[sc.loanType]:''}${scenarioHasFloat(sc)?' · variable':''}</div>`;
+    div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)',color:null});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;$('scenarioEditor').style.display='none';}renderScenarioList();rerender();}});});
+    const dot=div.querySelector('.sc-dot');
+    // The dot sits inside the card, whose own click opens the editor; without
+    // this the swatch would open the editor before the colour picker appeared.
+    dot.addEventListener('click',e=>e.stopPropagation());
+    dot.addEventListener('input',e=>{e.stopPropagation();applyScenarioColor(+dot.dataset.idx,e.target.value,true);});
+    dot.addEventListener('change',e=>{e.stopPropagation();applyScenarioColor(+dot.dataset.idx,e.target.value,false);});
     div.addEventListener('click',()=>openEditor(i));list.appendChild(div);
   });
   if(persist) persist.schedule(); // scenarios are JS state — save on every change
@@ -1335,6 +1386,9 @@ function editorScenarioDraft(){
   const rate=parseFloat($('scRate').value);
   return{
     name:$('scName').value||'Scenario',
+    // The colour is applied live by the swatches, not read off the form, so a
+    // save must carry forward whatever the scenario already holds.
+    color:(editingIdx>=0&&scenarios[editingIdx])?(scenarios[editingIdx].color||null):null,
     financeRate:isNaN(rate)?5:rate,
     downPaymentPct:Math.min(100,Math.max(0,parseFloat($('scDownPct').value)||0)),
     termPeriods:editorTerm(),freq:editorTermFreq,
@@ -1360,6 +1414,7 @@ function openEditor(idx){
   }
   $('editorTitle').textContent='Edit: '+sc.name;
   $('scName').value=sc.name;
+  $('scColor').value=scenarioColor(sc,idx);
   $('scRate').value=sc.financeRate;
   $('scRateVal').textContent=fmt.pct(sc.financeRate/100);
   $('scDownPct').value=Math.min(100,Math.max(0,sc.downPaymentPct||0));
@@ -1407,6 +1462,9 @@ function closeEditor(){editingIdx=-1;editorDraft=null;$('scenarioEditor').style.
 
 /* ─── Events ─── */
 $('addScenarioBtn').addEventListener('click',()=>{scenarios.push(defaultScenario());openEditor(scenarios.length-1);rerender();});
+$('scColor').addEventListener('input',e=>applyScenarioColor(editingIdx,e.target.value,true));
+$('scColor').addEventListener('change',e=>applyScenarioColor(editingIdx,e.target.value,false));
+$('scColorReset').addEventListener('click',()=>{if(editingIdx>=0)resetScenarioColor(editingIdx);});
 $('saveScenarioBtn').addEventListener('click',()=>{saveEditor();closeEditor();});
 $('cancelScenarioBtn').addEventListener('click',closeEditor);
 

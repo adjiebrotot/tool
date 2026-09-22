@@ -54,7 +54,9 @@ window.__TOUR = {
             '<strong>Loan Type</strong> covers the shapes lenders actually sell, from a ' +
             'flat rate to interest-only, a balloon, or an instalment whose rate you do ' +
             'not know. <strong>Rate Basis</strong> switches to a schedule when the rate ' +
-            'is fixed for a while and then floats. Compare several at once, then use the ' +
+            'is fixed for a while and then floats. The coloured dot on each card is a ' +
+            'swatch \u2014 click it, or the one beside <strong>Scenario Name</strong>, to ' +
+            'recolour that scenario everywhere it is drawn. Compare several at once, then use the ' +
             '<strong>Sensitivity</strong> tab to sweep a variable such as the finance rate.'
     },
     {

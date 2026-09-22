@@ -81,7 +81,21 @@ body.light .scenario-card:hover{border-color:rgba(0,0,0,.2);}
 .scenario-card.active{border-color:var(--accent);background:rgba(141,187,255,.08);}
 .scenario-card .sc-header{display:flex;justify-content:space-between;align-items:center;gap:8px;}
 .scenario-card .sc-name{font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:8px;}
-.scenario-card .sc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+/* The dot is a live colour input: a round swatch that opens the picker. The
+   appearance resets below are what let a native colour input be a circle. */
+.scenario-card .sc-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;padding:0;border:none;background:none;cursor:pointer;-webkit-appearance:none;appearance:none;overflow:hidden;transition:box-shadow .15s,transform .15s;}
+.scenario-card .sc-dot::-webkit-color-swatch-wrapper{padding:0;}
+.scenario-card .sc-dot::-webkit-color-swatch{border:none;border-radius:50%;}
+.scenario-card .sc-dot::-moz-color-swatch{border:none;border-radius:50%;}
+.scenario-card .sc-dot:hover{transform:scale(1.15);box-shadow:0 0 0 3px rgba(141,187,255,.3);}
+.scenario-card .sc-dot:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+/* Editor swatch — the boxed, unmistakable twin of the dot. */
+.color-series-picker{width:32px;height:26px;border:2px solid var(--border);background:none;cursor:pointer;padding:2px;border-radius:6px;overflow:hidden;flex-shrink:0;-webkit-appearance:none;appearance:none;}
+.color-series-picker::-webkit-color-swatch-wrapper{padding:0;}
+.color-series-picker::-webkit-color-swatch{border:none;border-radius:4px;}
+.color-series-picker::-moz-color-swatch{border:none;border-radius:4px;}
+.color-series-picker:hover{border-color:var(--accent);}
+#scColorReset{flex-shrink:0;padding:5px 8px;font-size:.85rem;line-height:1;}
 .scenario-card .sc-actions{display:flex;gap:4px;}
 .scenario-card .sc-summary{color:var(--muted);font-size:.78rem;margin-top:6px;line-height:1.4;}
 .sc-btn{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:3px 7px;font-size:.72rem;cursor:pointer;transition:all .15s;font-family:inherit;}

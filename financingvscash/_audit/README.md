@@ -72,4 +72,23 @@ all three treatments alike, and the printed schedule column can differ from the
 total under it by display rounding. Both are deliberate choices whose
 alternatives are worse; the harness pins the consistency instead.
 
-Run: `node run.mjs`, `node reconcile.mjs` and `node accounting.mjs`
+## `colour.mjs` — do the two colour controls agree?
+
+A scenario's colour is user-settable from two places — the dot on its card and
+the boxed swatch in the editor's Scenario Name row — and it is read by the
+chart line, the variable-rate band, the sensitivity curve and the Best tile.
+This holds all of that to one answer (`colour.mjs`):
+
+- C1  the dot is a real colour input, seeded with the series colour
+- C2  a colour picked on the dot repaints that series and no other
+- C3  using the dot does not open the editor behind it
+- C4  the editor swatch opens showing what the dot holds
+- C5  a colour picked in the editor mirrors back onto the dot and the chart
+- C6  Reset returns the series to its theme-aware palette slot
+- C7  saving the editor keeps the colour, which the form itself never holds
+- C8  a duplicate takes its own palette slot rather than cloning a custom colour
+- C9  a custom colour survives a reload through the mini cache
+- C10 every palette slot resolves to a paintable colour, never an empty string
+
+Run: `node run.mjs`, `node reconcile.mjs`, `node accounting.mjs` and
+`node colour.mjs`
