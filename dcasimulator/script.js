@@ -1798,6 +1798,8 @@ function updatePriceChart(){
   }
 
   if(priceChartInstance){
+    // New data means a new view: a window left by a pan or a pinch is dropped.
+    SharedZoom.resetView(priceChartInstance);
     priceChartInstance.data.labels=allDates;
     priceChartInstance.data.datasets=datasets;
     // Rebuilt options carry the limits for the dates now plotted, so a longer
@@ -1870,6 +1872,8 @@ function updateEquityChart(){
   };}
 
   if(equityChartInstance){
+    // New data means a new view: a window left by a pan or a pinch is dropped.
+    SharedZoom.resetView(equityChartInstance);
     equityChartInstance.data.labels=allDates; equityChartInstance.data.datasets=datasets;
     equityChartInstance.options.scales.x.ticks.color=mutedColor; equityChartInstance.options.scales.x.grid.color=gridColor;
     equityChartInstance.options.scales.x.ticks.callback=v=>allDates[Number(v)]?.slice(0,7)||'';

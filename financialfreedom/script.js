@@ -1410,9 +1410,10 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
   var limMin = opts.limitMin == null ? xMin : opts.limitMin;
   var limMax = opts.limitMax == null ? xMax : opts.limitMax;
   var span = Math.max(1, limMax - limMin);
-  var start = opts.fitY ? opts.fitY(xMin, xMax) : null;
   var lower = opts.lowerPane || null;
-  var startLow = lower && lower.fitY ? lower.fitY(xMin, xMax) : null;
+  var fitMap = {};
+  if(opts.fitY) fitMap.y = opts.fitY;
+  if(lower && lower.fitY) fitMap[lower.id] = lower.fitY;
   // Falls back to Chart.js's own index mode only where the custom one could
   // not be registered, which is the stubbed build the audit harness runs.
   var hoverMode = registerXValueMode() ? 'ffXValue' : 'index';
@@ -1457,7 +1458,11 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
          chart left to carry an x window across to. */
       zoom: SharedZoom.options({
         min: limMin, max: limMax, minRange: Math.min(3, span), axes: ['x', 'xAge']
-      })
+      }),
+      /* The fitters travel in the options as well as on the instance, so the
+         plugin has them on the chart's very FIRST update and the axes open on
+         the fitted view rather than on the whole of the data. */
+      sharedYFit: {fit: fitMap}
     },
     scales: {}
   };
@@ -1489,8 +1494,11 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
   if(lower){
     o.scales[lower.id] = {
       type: 'linear', position: 'left', stack: 'ffCash', stackWeight: lower.weight || 1,
-      min: startLow ? startLow.min : undefined,
-      max: startLow ? startLow.max : undefined,
+      /* No bounds here: the pane is sized by the same fitter on every update,
+         through the shared refit plugin (`$fitY` below). A bound written into
+         the configuration would be a USER bound, which Chart.js restores after
+         the refit has run — the axis would then open right and never move
+         again. */
       title: {display: true, text: lower.title + ', ' + moneyMode(res),
               color: t.muted, font: {size: 11}},
       // Fewer ticks than a full-height axis would carry, so the two panes
@@ -1515,10 +1523,9 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
     };
   }
   o.scales.y = {
-    // Both bounds come from the fitter above, so the view the chart opens
-    // on and the view it zooms to are sized by the same rule.
-    min: start ? start.min : undefined,
-    max: start ? start.max : undefined,
+    /* No bounds here either: the fitter sizes this axis on every update, the
+       view it opens on and the view it zooms to alike, so a configured bound
+       would only override it (see the pane above). */
     stack: lower ? 'ffCash' : undefined,
     stackWeight: lower ? (lower.topWeight || 2) : undefined,
     title: {display: true, text: (opts.yTitle || 'Balance') + ', ' + moneyMode(res),

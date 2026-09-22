@@ -1160,8 +1160,13 @@
      ticks already show the new one, which is worse than not refitting at all.
      The zoom plugin writes the window it is about to draw into the x scale's
      options and then calls update, so the window is readable from the moment
-     that update starts, and the axis is sized to it before the chart is laid
-     out (see the two hooks below).
+     that update starts, and the axis is sized to it in `afterDataLimits`,
+     while the scale is working out its own range (see the hook below).
+
+     3. A chart that is handed new data opens on it. `SharedZoom.resetView`
+        drops the window a previous pan or pinch left in the axis options, so
+        a recompute, a preset or a fresh simulate draws the whole of what was
+        just computed rather than yesterday's zoom over today's numbers.
 
      A chart opts in by carrying, in its own options,
        plugins: {sharedYFit: {auto: {…}}}        or  {fit: {…}}
@@ -1184,6 +1189,12 @@
             A dataset may also opt itself out with `noAutoFit`, which is how a
             series that is deliberately allowed to run off the top of its axis
             says so.
+
+     A fitted axis must NOT carry `min`/`max` in its own configuration. Those
+     are USER bounds, and Chart.js pins the axis back to them after the refit
+     has run: the chart would open on the right view and then never move again.
+     Hand the opening view to the fitter instead — it is applied on the first
+     update like any other.
      ══════════════════════════════════════════════════════════════════════ */
 
   /* The x window the chart is about to draw. The zoom plugin writes numeric
@@ -1309,33 +1320,86 @@
     });
   }
 
+  /* Write fitted bounds into the chart's own options. This is what `refit`
+     does OUTSIDE an update; it is deliberately NOT done from `beforeUpdate`.
+     Writing a y bound into the options while an update is already running
+     makes Chart.js resolve every scale from the configuration it cached at
+     the start of that update, so an x axis whose data has just been replaced
+     is sized from the data it no longer holds and only catches up on the NEXT
+     update — the stale "0 to 1" axis a reader used to have to clear by hand.
+     Sizing the axis from `afterDataLimits` alone costs nothing: that hook
+     runs on the very first update too, so a chart still OPENS on the fitted
+     axis. */
+  function writeFits(chart, popts){
+    var fits = chart.$fitY || (popts && popts.fit);
+    var auto = chart.$autoFitY || (popts && popts.auto);
+    if(!fits && !auto) return;
+    var scales = chart.options.scales || {};
+    var ids = Object.keys(fits || {}).concat((auto && auto.axes) || []);
+    ids.forEach(function(id, i){
+      if(ids.indexOf(id) !== i) return;                 // named twice
+      if(!scales[id]) return;
+      var b = boundsFor(chart, id, fits, auto);
+      if(b) writeBounds(chart, id, b);
+    });
+  }
+
+  /* The bounds a chart's axes carried before any gesture touched them, kept so
+     `resetView` can put them back. Read once, off the configuration the chart
+     was built with: the zoom plugin writes a pan or a pinch into those same
+     option slots, so anything read later is a window, not a baseline. */
+  function captureBase(chart){
+    if(chart.$zoomBase) return;
+    var base = {}, scales = (chart.options && chart.options.scales) || {};
+    Object.keys(scales).forEach(function(id){
+      var sc = scales[id] || {};
+      base[id] = {
+        hasMin: typeof sc.min !== 'undefined', min: sc.min,
+        hasMax: typeof sc.max !== 'undefined', max: sc.max
+      };
+    });
+    chart.$zoomBase = base;
+  }
+
+  /* Put every axis back to the view the chart opened on, dropping whatever
+     window a pan or a pinch left behind. Call it whenever the data underneath
+     a chart is REPLACED — a recompute, a preset, a fresh simulate — because a
+     zoom into year 3 of the run just discarded says nothing about the run that
+     replaced it, and a reader should not have to press a reset button to see
+     the numbers they just asked for. An axis the chart deliberately pinned in
+     its own configuration is restored to that pin, not cleared.
+
+     It only records the intent; the caller's own `update()` draws it, so a
+     render still costs exactly one update. */
+  function resetView(chart){
+    if(!chart || !chart.options) return;
+    captureBase(chart);
+    var base = chart.$zoomBase || {}, scales = chart.options.scales || {};
+    Object.keys(scales).forEach(function(id){
+      var sc = scales[id], b = base[id];
+      if(!sc) return;
+      if(b && b.hasMin) sc.min = b.min; else delete sc.min;
+      if(b && b.hasMax) sc.max = b.max; else delete sc.max;
+    });
+  }
+
   var FIT_PLUGIN = {
     id: 'sharedYFit',
+    /* The baseline is taken before the chart's first update, which is the last
+       moment it is certainly free of gesture state. */
+    afterInit: captureBase,
     /* The config can arrive two ways. `options.plugins.sharedYFit` is read on
-       the chart's very FIRST update, so a chart built once with a generic fit
-       opens on the fitted axis rather than snapping to it on the first
-       gesture; `chart.$fitY` / `chart.$autoFitY` are hung on the instance, for
-       a chart whose fitters are rebuilt whenever its data is replaced in
-       place. An instance property wins, because it is the later word. */
-    beforeUpdate: function(chart, args, popts){
-      var fits = chart.$fitY || (popts && popts.fit);
-      var auto = chart.$autoFitY || (popts && popts.auto);
-      if(!fits && !auto) return;
-      var scales = chart.options.scales || {};
-      var ids = Object.keys(fits || {}).concat((auto && auto.axes) || []);
-      ids.forEach(function(id, i){
-        if(ids.indexOf(id) !== i) return;                 // named twice
-        if(!scales[id]) return;
-        var b = boundsFor(chart, id, fits, auto);
-        if(b) writeBounds(chart, id, b);
-      });
-    },
-    /* The bounds are applied AGAIN here, on the scale itself, because a scale
-       resolves its own range while it updates: `beforeUpdate` is early enough
-       to record the window but not always early enough to be read back, and a
-       y axis that lands one update late trails the gesture by a wheel tick —
-       the very thing the refit exists to prevent. `args.scale` is the scale
-       being sized, so each pane of a stacked pair is served in its own turn. */
+       every update, so a chart built once with a generic fit opens on the
+       fitted axis rather than snapping to it on the first gesture;
+       `chart.$fitY` / `chart.$autoFitY` are hung on the instance, for a chart
+       whose fitters are rebuilt whenever its data is replaced in place. An
+       instance property wins, because it is the later word.
+
+       The fit happens here, on the scale itself, because a scale resolves its
+       own range while it updates: this hook is the one point where the data
+       limits for THIS update are known and can still be overridden.
+       `args.scale` is the scale being sized, so each pane of a stacked pair is
+       served in its own turn. */
     afterDataLimits: function(chart, args, popts){
       var scale = args && args.scale;
       if(!scale) return;
@@ -1414,7 +1478,13 @@
     /* Fit y to the current x window outside an update — used right after a
        chart's data is replaced in place, where the axis would otherwise keep
        the bounds of the data it no longer holds. */
-    refit: function(chart){ if(chart) FIT_PLUGIN.beforeUpdate(chart); }
+    refit: function(chart){
+      if(!chart) return;
+      var popts = chart.options && chart.options.plugins && chart.options.plugins.sharedYFit;
+      writeFits(chart, popts);
+    },
+    /* Back to the view the chart opened on — see `resetView` above. */
+    resetView: resetView
   };
 
   /* ── Mini cache (autosave) ─────────────────────────────────────────────────
