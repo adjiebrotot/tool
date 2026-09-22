@@ -63,12 +63,6 @@ const dotVal=await page.evaluate(()=>document.querySelector('.sc-dot').value);
 check('C5 a colour picked in the editor mirrors onto the card dot and the chart',
   dotVal==='#00c2a0' && (await lineOf('60mo Monthly @ 5%'))==='#00c2a0', `dot ${dotVal}`);
 
-// C6 reset returns to the theme palette colour
-await page.evaluate(()=>document.getElementById('scColorReset').click());
-await page.waitForTimeout(250);
-const reset=await lineOf('60mo Monthly @ 5%');
-check('C6 reset returns the series to its palette colour', reset.toLowerCase()===before.toLowerCase(), `${reset} vs original ${before}`);
-
 // C7 a saved edit keeps the colour
 await page.evaluate(()=>{const b=document.getElementById('scColor');b.value='#ffaa00';
   b.dispatchEvent(new Event('change',{bubbles:true}));});

@@ -95,7 +95,6 @@ body.light .scenario-card:hover{border-color:rgba(0,0,0,.2);}
 .color-series-picker::-webkit-color-swatch{border:none;border-radius:4px;}
 .color-series-picker::-moz-color-swatch{border:none;border-radius:4px;}
 .color-series-picker:hover{border-color:var(--accent);}
-#scColorReset{flex-shrink:0;padding:5px 8px;font-size:.85rem;line-height:1;}
 .scenario-card .sc-actions{display:flex;gap:4px;}
 .scenario-card .sc-summary{color:var(--muted);font-size:.78rem;margin-top:6px;line-height:1.4;}
 .sc-btn{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:3px 7px;font-size:.72rem;cursor:pointer;transition:all .15s;font-family:inherit;}
