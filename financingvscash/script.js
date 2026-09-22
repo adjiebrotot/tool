@@ -1173,7 +1173,6 @@ function applyScenarioColor(idx,hex,live){
 }
 // Back to the palette slot for this position, which also restores the
 // theme-aware colour a literal hex would otherwise freeze.
-function resetScenarioColor(idx){applyScenarioColor(idx,null,false);}
 
 function renderScenarioList(){
   const list=$('scenarioList');list.innerHTML='';
@@ -1464,7 +1463,6 @@ function closeEditor(){editingIdx=-1;editorDraft=null;$('scenarioEditor').style.
 $('addScenarioBtn').addEventListener('click',()=>{scenarios.push(defaultScenario());openEditor(scenarios.length-1);rerender();});
 $('scColor').addEventListener('input',e=>applyScenarioColor(editingIdx,e.target.value,true));
 $('scColor').addEventListener('change',e=>applyScenarioColor(editingIdx,e.target.value,false));
-$('scColorReset').addEventListener('click',()=>{if(editingIdx>=0)resetScenarioColor(editingIdx);});
 $('saveScenarioBtn').addEventListener('click',()=>{saveEditor();closeEditor();});
 $('cancelScenarioBtn').addEventListener('click',closeEditor);
 
