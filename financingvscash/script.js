@@ -1600,6 +1600,11 @@ var QUICK_START_SCENARIOS={
   /* A $650,000 house against 20% down over 30 years. Both loans carry the same
      lender fees, so the only thing that differs between them is the rate
      structure — which is the whole point of putting them side by side. */
+  /* $650,000 against 20% down, and three ways to carry it. All three share the
+     same lender fees, so nothing here differs except the thing being compared.
+     The 15-year column also puts a SHORTER horizon beside a 30-year one, which
+     is the case the comparison table's per-row baseline exists for: the Cash
+     Purchase tile runs to 30 years while that row is scored at its own 15. */
   house:{
     base:{purchaseCost:650000,availableCash:700000,riskFree:4.5,inflationOn:true,inflationRate:2.5},
     scenarios:[
@@ -1607,50 +1612,67 @@ var QUICK_START_SCENARIOS={
        freq:'monthly',termPeriods:360,feeAmt:600,feeType:'fixed',feeTreatment:'upfront',adminFee:10},
       /* The revert is the product, not a footnote: two years at 5.80%, then a
          floating period simulated at 5.00, 6.75 and 8.50. */
-      {name:'2yr fixed, then variable',loanType:'annuity',financeRate:5.8,downPaymentPct:20,
+      {name:'30yr: 2yr fixed, then variable',loanType:'annuity',financeRate:5.8,downPaymentPct:20,
        freq:'monthly',termPeriods:360,feeAmt:600,feeType:'fixed',feeTreatment:'upfront',adminFee:10,
        rateMode:'schedule',ratePeriods:[
          {toPeriod:24,type:'fixed',rate:5.8,rateMin:5.8,rateMax:5.8},
-         {toPeriod:360,type:'floating',rate:6.75,rateMin:5,rateMax:8.5}]}
+         {toPeriod:360,type:'floating',rate:6.75,rateMin:5,rateMax:8.5}]},
+      /* Priced below the 30-year, as a shorter term really is. Double the
+         instalment, a fraction of the interest, and a different horizon. */
+      {name:'15yr fixed 5.85%',loanType:'annuity',financeRate:5.85,downPaymentPct:20,
+       freq:'monthly',termPeriods:180,feeAmt:600,feeType:'fixed',feeTreatment:'upfront',adminFee:10}
     ]
   },
 
-  /* $45,000, 10% down, 8.40% over five years, with and without a 35% residual.
-     Same rate, same term, same fee: the residual is the only variable. */
+  /* $45,000 at one rate over two terms, plus the balloon. Three different
+     instalments in DESCENDING order and three verdicts in ascending order,
+     which is the whole lesson: the smallest monthly is the dearest deal. */
   car:{
     base:{purchaseCost:45000,availableCash:60000,riskFree:4.5},
     scenarios:[
+      {name:'3yr loan, 10% down',loanType:'annuity',financeRate:8.4,downPaymentPct:10,
+       freq:'monthly',termPeriods:36,feeAmt:400,feeType:'fixed',feeTreatment:'upfront'},
       {name:'5yr loan, 10% down',loanType:'annuity',financeRate:8.4,downPaymentPct:10,
        freq:'monthly',termPeriods:60,feeAmt:400,feeType:'fixed',feeTreatment:'upfront'},
-      {name:'Same loan, 35% balloon',loanType:'balloon',financeRate:8.4,downPaymentPct:10,
+      {name:'5yr with 35% balloon',loanType:'balloon',financeRate:8.4,downPaymentPct:10,
        freq:'monthly',termPeriods:60,feeAmt:400,feeType:'fixed',feeTreatment:'upfront',residualPct:35}
     ]
   },
 
-  /* An $1,800 phone on two plans that quote an instalment and never a rate.
-     24 x 75 is exactly 1,800, so it really is 0% and really does beat holding
-     cash at 4.5%. 24 x 82 is not, and only solving for the rate says so. */
+  /* An $1,800 phone on three plans that quote an instalment and never a rate,
+     over three different terms — because two plans over the SAME term need no
+     tool at all: the cheaper instalment wins and everybody already knows it.
+     Over different terms the ranking stops being readable off the price tag.
+     12 x 150 is exactly 1,800, so it is genuinely 0% and beats holding cash;
+     the other two are not, and the one with the SMALLEST instalment is the
+     worst of the three. Only solving for the rate behind each says so. */
   phone:{
     base:{purchaseCost:1800,availableCash:4000,riskFree:4.5},
     scenarios:[
-      {name:'24 x $82 plan',loanType:'knownPayment',knownPayment:82,paymentMode:'single',
+      {name:'12 x $150',loanType:'knownPayment',knownPayment:150,paymentMode:'single',
+       freq:'monthly',termPeriods:12},
+      {name:'24 x $82',loanType:'knownPayment',knownPayment:82,paymentMode:'single',
        freq:'monthly',termPeriods:24},
-      {name:'24 x $75, interest-free',loanType:'knownPayment',knownPayment:75,paymentMode:'single',
-       freq:'monthly',termPeriods:24}
+      {name:'36 x $57',loanType:'knownPayment',knownPayment:57,paymentMode:'single',
+       freq:'monthly',termPeriods:36}
     ]
   },
 
-  /* $3,000 converted to a 12-month plan at 0%, once with the 3% conversion fee
-     banks actually charge and once without. The fee is taken as a percentage of
-     the amount converted and settled upfront, which is where it lands on a real
-     statement. */
+  /* $3,000 converted at 0% over three different tenors. Not one rate among
+     them, so the conversion fee is the entire cost — and because that fee is
+     FIXED rather than per-period, the longest plan carries it best. Which puts
+     the six-month plan, the middle one, last: it pays the same $90 as the
+     twelve-month and has half the time to earn it back. A comparison whose
+     answer is neither the shortest nor the largest instalment. */
   card:{
     base:{purchaseCost:3000,availableCash:8000,riskFree:4.5},
     scenarios:[
+      {name:'3mo 0%, no fee',loanType:'annuity',financeRate:0,downPaymentPct:0,
+       freq:'monthly',termPeriods:3},
+      {name:'6mo 0%, 3% fee',loanType:'annuity',financeRate:0,downPaymentPct:0,
+       freq:'monthly',termPeriods:6,feeAmt:3,feeType:'pct',feeTreatment:'upfront'},
       {name:'12mo 0%, 3% fee',loanType:'annuity',financeRate:0,downPaymentPct:0,
-       freq:'monthly',termPeriods:12,feeAmt:3,feeType:'pct',feeTreatment:'upfront'},
-      {name:'12mo 0%, no fee',loanType:'annuity',financeRate:0,downPaymentPct:0,
-       freq:'monthly',termPeriods:12}
+       freq:'monthly',termPeriods:12,feeAmt:3,feeType:'pct',feeTreatment:'upfront'}
     ]
   },
 

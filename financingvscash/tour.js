@@ -16,14 +16,17 @@ window.__TOUR = {
       target: '.quick-start-row',
       title: '① Start from a worked comparison',
       body: 'One click fills every tab with a decision people actually face: a ' +
-            '<strong>house</strong> paid outright against a fixed and a fixed-then-variable ' +
-            'mortgage, a <strong>car</strong> with and without a balloon, a ' +
-            '<strong>phone plan</strong> that quotes an instalment and no rate at all, a ' +
-            '<strong>credit-card 0%</strong> plan with and without the conversion fee, a ' +
-            '<strong>flat-rate motorbike</strong> quoted per month, and a ' +
-            '<strong>payment holiday</strong> against paying from day one. Then change any ' +
-            'figure over the top of it. There is no Reset button because each of these ' +
-            'rebuilds the whole form from scratch, so one of them always is one.'
+            '<strong>house</strong> paid outright against 30-year fixed, ' +
+            'fixed-then-variable, and 15-year loans; a <strong>car</strong> over three ' +
+            'years, five years, or five with a balloon; a <strong>phone</strong> on plans ' +
+            'of 12, 24 or 36 payments that quote no rate at all; a ' +
+            '<strong>credit-card 0%</strong> conversion over three tenors; a ' +
+            '<strong>flat-rate motorbike</strong> quoted per month; and a ' +
+            '<strong>payment holiday</strong> against paying from day one. None of them ' +
+            'is decided by the price tag — in the phone and the car the smallest ' +
+            'instalment is the worst deal. Then change any figure over the top of it. ' +
+            'There is no Reset button because each of these rebuilds the whole form from ' +
+            'scratch, so one of them always is one.'
     },
     {
       target: '#tab-base',

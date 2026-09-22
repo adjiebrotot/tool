@@ -753,7 +753,8 @@ const PRESETS=['house','car','phone','card','motorbike','deferred'];
     }
   }
   check('H1/H2 every Quick Start column closes its books and is scored at its own horizon',
-    !bad.length, bad.slice(0,4).join(' | ') || seen.join(', ')+' — 12 columns, all reconcile');
+    !bad.length, bad.slice(0,4).join(' | ')
+      || seen.join(', ')+` — ${seen.reduce((n,x)=>n+ +x.match(/\((\d+)\)/)[1],0)} columns, all reconcile`);
 }
 
 /* H4. A tip that claims a lesson is a claim about the numbers behind the
@@ -769,26 +770,53 @@ const PRESETS=['house','car','phone','card','motorbike','deferred'];
   claims.push({ok: flatApr>1.7*10.8 && flatApr<2.3*10.8 && near(amApr,11.35,0.2),
     say:`flat solves to ${flatApr.toFixed(2)}% against a quoted 10.8% (the same money amortizing costs ${amApr.toFixed(2)}%)`});
 
-  // phone: one plan is genuinely 0% and beats cash; the other is not.
+  /* phone: the tip's claim is an ORDERING, and the ordering is the whole reason
+     the three terms differ. Two plans over one term would be decided by the
+     price tag alone; over 12, 24 and 36 months the biggest instalment is the
+     only winner and the smallest is last, which no reader can read off the
+     monthly. Checked as the ranking, not as three separate numbers. */
   await load({}); await page.evaluate(()=>document.querySelector('.quick-start-btn[data-preset="phone"]').click());
   await page.waitForTimeout(450);
   t=await compTable();
-  const free=colOf(t,'24 x $75, interest-free'), paid=colOf(t,'24 x $82 plan');
-  claims.push({ok: money(t['Effective Rate (APR)'][free])===0 && money(t['Total Interest Paid'][free])===0
-      && money(t['Net Benefit vs Cash'][free])>0 && money(t['Net Benefit vs Cash'][paid])<0
-      && money(t['Effective Rate (APR)'][paid])>8,
-    say:`$75 plan solves to exactly 0.00% and wins by $${money(t['Net Benefit vs Cash'][free]).toFixed(2)}; the $82 plan solves to ${money(t['Effective Rate (APR)'][paid]).toFixed(2)}% and loses`});
+  const ph=['12 x $150','24 x $82','36 x $57'].map(n=>({n,
+    nb:money(t['Net Benefit vs Cash'][colOf(t,n)]), apr:money(t['Effective Rate (APR)'][colOf(t,n)]),
+    pmt:money(t['Periodic Payment'][colOf(t,n)])}));
+  claims.push({ok: ph[0].apr===0 && ph[0].nb>0 && ph[1].nb<0 && ph[2].nb<0
+      && ph[0].nb>ph[1].nb && ph[1].nb>ph[2].nb           // verdict falls
+      && ph[0].pmt>ph[1].pmt && ph[1].pmt>ph[2].pmt       // instalment falls with it
+      && ph[1].apr>8 && ph[2].apr>8,
+    say:`instalments ${ph.map(x=>'$'+x.pmt).join(' > ')} and verdicts ${ph.map(x=>x.nb.toFixed(2)).join(' > ')} fall together — the smallest monthly is last`});
 
-  // card: the fee is the whole price of the plan, and it decides the verdict.
+  /* card: the counter-intuitive one. No interest anywhere, so the flat $90
+     conversion fee is the entire cost — which puts the SIX-month plan last,
+     behind the twelve-month that pays exactly the same fee and has twice as
+     long to earn it back. A middle term finishing last is a ranking nobody
+     reads off the tenor, and it is what the tip claims. */
   await load({}); await page.evaluate(()=>document.querySelector('.quick-start-btn[data-preset="card"]').click());
   await page.waitForTimeout(450);
   t=await compTable();
-  const withFee=colOf(t,'12mo 0%, 3% fee'), noFee=colOf(t,'12mo 0%, no fee');
-  const gap=money(t['Net Benefit vs Cash'][noFee])-money(t['Net Benefit vs Cash'][withFee]);
-  claims.push({ok: money(t['Total Interest Paid'][withFee])===0 && money(t['Total Fees Paid'][withFee])===90
-      && money(t['Net Benefit vs Cash'][withFee])<0 && money(t['Net Benefit vs Cash'][noFee])>0
-      && near(gap, 90*Math.pow(1.045,1), 0.05),
-    say:`no interest either way; the $90 fee is the entire difference ($${gap.toFixed(2)} = 90 compounded a year) and it flips the verdict`});
+  const cd=['3mo 0%, no fee','6mo 0%, 3% fee','12mo 0%, 3% fee'].map(n=>({n,
+    nb:money(t['Net Benefit vs Cash'][colOf(t,n)]), int:money(t['Total Interest Paid'][colOf(t,n)]),
+    fee:money(t['Total Fees Paid'][colOf(t,n)])}));
+  claims.push({ok: cd.every(x=>x.int===0)                 // not a cent of interest anywhere
+      && cd[0].fee===0 && cd[1].fee===90 && cd[2].fee===90 // the same flat fee on both paid plans
+      && cd[0].nb>0 && cd[1].nb<0 && cd[2].nb<0
+      && cd[1].nb<cd[2].nb,                                // six months finishes BEHIND twelve
+    say:`no interest on any of the three; the free plan wins at $${cd[0].nb.toFixed(2)} and the same $90 fee leaves six months (${cd[1].nb.toFixed(2)}) behind twelve (${cd[2].nb.toFixed(2)})`});
+
+  /* car: same rate on all three, so the term and the residual are the only
+     variables, and the tip claims the instalment and the verdict move in
+     opposite directions. */
+  await load({}); await page.evaluate(()=>document.querySelector('.quick-start-btn[data-preset="car"]').click());
+  await page.waitForTimeout(450);
+  t=await compTable();
+  const cr=['3yr loan, 10% down','5yr loan, 10% down','5yr with 35% balloon'].map(n=>({n,
+    nb:money(t['Net Benefit vs Cash'][colOf(t,n)]), pmt:money(t['Periodic Payment'][colOf(t,n)]),
+    int:money(t['Total Interest Paid'][colOf(t,n)])}));
+  claims.push({ok: cr[0].pmt>cr[1].pmt && cr[1].pmt>cr[2].pmt
+      && cr[0].nb>cr[1].nb && cr[1].nb>cr[2].nb
+      && cr[0].int<cr[1].int && cr[1].int<cr[2].int,
+    say:`instalments $${cr.map(x=>x.pmt.toFixed(0)).join(' > ')} against interest $${cr.map(x=>x.int.toFixed(0)).join(' < ')} — the cheapest monthly pays the most`});
 
   // deferred: the balance climbs above the amount borrowed during the holiday.
   await load({}); await page.evaluate(()=>document.querySelector('.quick-start-btn[data-preset="deferred"]').click());
