@@ -14,20 +14,20 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Finance vs Cash Scenario Explorer | Adjie Brotools</title>
-<meta name="description" content="Compare paying cash versus financing a purchase while investing unused cash to evaluate total financial outcomes.">
+<meta name="description" content="Compare paying cash versus financing a purchase while investing unused cash. Models flat rate, interest-only, balloon, variable and known-repayment loans.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/financingvscash/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Finance vs Cash Scenario Explorer">
-<meta property="og:description" content="Compare paying cash versus financing a purchase while investing unused cash to evaluate total financial outcomes.">
+<meta property="og:description" content="Compare paying cash versus financing a purchase while investing unused cash. Models flat rate, interest-only, balloon, variable and known-repayment loans.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/financingvscash/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Finance vs Cash Scenario Explorer">
-<meta name="twitter:description" content="Compare paying cash versus financing a purchase while investing unused cash to evaluate total financial outcomes.">
+<meta name="twitter:description" content="Compare paying cash versus financing a purchase while investing unused cash. Models flat rate, interest-only, balloon, variable and known-repayment loans.">
 
 <script type="application/ld+json">
 {
@@ -35,7 +35,7 @@
   "@type": "WebApplication",
   "name": "Finance vs Cash Scenario Explorer",
   "url": "https://tool.adjiebrotots.com/financingvscash/",
-  "description": "Compare paying cash versus financing a purchase while investing unused cash to evaluate total financial outcomes.",
+  "description": "Compare paying cash versus financing a purchase while investing unused cash. Models flat rate, interest-only, balloon, variable and known-repayment loans.",
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
@@ -43,9 +43,12 @@
   "alternateName": [
     "Finance vs Cash Calculator",
     "Installment vs Cash Calculator",
-    "Pay Cash or Finance Comparator"
+    "Pay Cash or Finance Comparator",
+    "Flat Rate Loan Calculator",
+    "Balloon Payment Calculator",
+    "Effective Interest Rate Calculator"
   ],
-  "keywords": "buy now installment or cash, finance vs cash calculator, pay cash or finance, installment vs cash, invest the difference, 0% interest worth it"
+  "keywords": "buy now installment or cash, finance vs cash calculator, pay cash or finance, installment vs cash, invest the difference, 0% interest worth it, flat rate loan calculator, flat rate to effective rate, interest only loan calculator, balloon payment calculator, variable rate loan calculator, solve interest rate from repayment, murabaha margin financing, effective annual rate vs APR"
 }
 </script>
 <script type="application/ld+json">
@@ -59,6 +62,22 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Use the free Finance vs Cash tool at https://tool.adjiebrotots.com/financingvscash/. Enter the price, the installment terms, and the return you would earn on the cash you keep invested; it compares the total cost of each path so you can see whether paying cash or financing-and-investing leaves you better off."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "My loan is quoted at 5% flat. What interest rate am I really paying?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Far more than 5%. A flat rate charges interest on the original amount for the whole term, so you keep paying interest on money you have already repaid. On a 5-year loan a 5% flat rate works out near 9% effective. Set Loan Type to Flat rate in the Finance vs Cash tool at https://tool.adjiebrotots.com/financingvscash/ and it prints the Effective Rate (APR) beside the quoted one, so a flat quote and an ordinary installment quote can be compared directly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "The dealer quoted me a monthly payment but no interest rate. How do I work it out?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Set Loan Type to Known repayment in the Finance vs Cash tool at https://tool.adjiebrotots.com/financingvscash/, enter the amount financed, the term and the repayment, and it solves the rate the plan implies. The repayment can be a single amount or a stepped plan, for example month 1 to 2 at one amount and month 3 to 6 at another, and the solved rate is shown as an effective annual rate."
       }
     },
     {
@@ -91,7 +110,7 @@
 <section class="header card">
   <div>
     <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect stroke="var(--accent)" x="2" y="6" width="20" height="12" rx="2"/> <circle stroke="var(--accent2)" cx="12" cy="12" r="2.5"/> <path stroke="var(--accent)" d="M6 12h.01M18 12h.01"/> </svg>Finance vs Cash Purchase</h1>
-    <p>Compare paying in full versus financing and investing unused cash at the risk-free rate.</p>
+    <p>Compare paying in full versus financing and investing unused cash at the risk-free rate. Handles flat rate, interest-only, balloon, variable and known-repayment loans.</p>
   </div>
   <div class="header-right">
     <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
@@ -140,6 +159,10 @@
       <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Risk-Free Rate (annual %) <i class="tip-icon" data-tip="The yearly return your uninvested cash earns, for example in a high-yield savings account or T-bills. Every scenario compounds spare cash at this rate, so it is the common baseline.">?</i></span></div><div class="slider-value" id="baseRfVal">4.50%</div></div>
       <input id="baseRf" type="range" min="0" max="20" step="0.1" value="4.5"/>
     </div>
+    <div class="field-row">
+      <div class="field-label"><span class="tip-wrap">Rate Convention <i class="tip-icon" data-tip="How a quoted annual finance rate becomes the rate charged each repayment period. It applies to the loans only, never to the risk-free rate above.<br><strong>Effective (EAR):</strong> compound conversion. A 12% loan charges 0.949% a month.<br><strong>Nominal (APR):</strong> the rate divided by the number of periods, as most US contracts quote it. A 12% loan charges exactly 1.000% a month.">?</i></span></div>
+      <select class="sel-input" id="rateConvention"><option value="ear" selected>Effective annual (EAR)</option><option value="nominal">Nominal annual (APR)</option></select>
+    </div>
     <div class="toggle-row">
       <div class="toggle-label"><span class="tip-wrap">Enable Inflation Adjustment <i class="tip-icon" data-tip="<strong>On:</strong> ending wealth is also shown in today's dollars, discounted by the inflation rate below.<br><strong>Off:</strong> only the nominal future dollar amounts are shown.">?</i></span></div>
       <label class="toggle"><input type="checkbox" id="inflationToggle"/><span class="slider"></span></label>
@@ -157,9 +180,62 @@
     <div id="scenarioEditor" style="display:none;" data-no-persist>
       <h3 id="editorTitle">Edit Scenario</h3>
       <div class="field-row"><div class="field-label">Scenario Name</div><input class="num-input" id="scName" type="text" value=""/></div>
-      <div class="slider-block">
-        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Finance Rate (annual %) <i class="tip-icon" data-tip="The yearly interest rate on the loan. It is converted to the repayment period below so each payment is exact rather than an approximation.">?</i></span></div><div class="slider-value" id="scRateVal">5.00%</div></div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Loan Type <i class="tip-icon" data-tip="The repayment structure the lender is offering.<br><strong>Amortizing:</strong> the standard equal instalment, interest charged on what you still owe. The most common loan, and the default here.<br><strong>Flat rate:</strong> interest charged on the original amount for the whole term, so a 5% flat loan really costs about 9%. Also how Murabaha and margin financing work.<br><strong>Interest-only:</strong> you pay interest alone, then repay the principal at the end.<br><strong>Balloon / residual:</strong> smaller instalments, with a residual lump due at maturity. Common on car and equipment finance.<br><strong>Known repayment:</strong> you know the instalment but not the rate, so the rate is solved for you.<br><strong>Bullet:</strong> no instalments at all, the whole debt plus interest is settled at maturity.<br><strong>Deferred start:</strong> a payment holiday during which interest is added to the debt, then normal instalments.">?</i></span></div>
+        <select class="sel-input" id="scLoanType">
+          <option value="annuity" selected>Amortizing (fixed payment)</option>
+          <option value="flat">Flat rate (interest on original)</option>
+          <option value="interestOnly">Interest-only, principal at end</option>
+          <option value="balloon">Balloon / residual</option>
+          <option value="knownPayment">Known repayment, solve rate</option>
+          <option value="bullet">Bullet (lump at maturity)</option>
+          <option value="deferred">Deferred start (payment holiday)</option>
+        </select>
+      </div>
+      <div class="field-row" id="scRateModeRow">
+        <div class="field-label"><span class="tip-wrap">Rate Basis <i class="tip-icon" data-tip="<strong>Simple:</strong> one rate for the whole term.<br><strong>Schedule:</strong> split the term into consecutive periods, each either Fixed at one rate or Floating between a min and a max. A fixed period followed by a floating one is exactly how a 2 year fixed loan that reverts to a variable rate behaves. Floating periods are simulated at the min, the midpoint and the max, and the chart shades that range.">?</i></span></div>
+        <div class="seg-group" id="scRateModeGroup">
+          <button type="button" class="seg-btn active" data-val="simple">Simple</button>
+          <button type="button" class="seg-btn" data-val="schedule">Schedule</button>
+        </div>
+      </div>
+      <div class="slider-block" id="scRateBlock">
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap" id="scRateLabel">Finance Rate (annual %) <i class="tip-icon" data-tip="The yearly interest rate on the loan. It is converted to the repayment period below so each payment is exact rather than an approximation.">?</i></span></div><div class="slider-value" id="scRateVal">5.00%</div></div>
         <input id="scRate" type="range" min="0" max="30" step="0.1" value="5"/>
+      </div>
+      <div class="field-row" id="scRateScheduleRow" style="display:none;">
+        <div class="field-label"><span class="tip-wrap">Rate Schedule <i class="tip-icon" data-tip="Consecutive periods covering repayment 1 to the end of the term. The last period stretches automatically, so there can be no gaps or overlaps. When the rate changes, the instalment is re-amortised over the remaining term on the balance still owed, as a real lender does.">?</i></span></div>
+        <div class="sched-rows" id="scRatePeriodRows"></div>
+        <div class="sched-actions"><button class="btn-secondary btn-sm" id="addRatePeriodBtn" type="button">+ Add Period</button></div>
+      </div>
+      <div class="field-row" id="scPaymentModeRow" style="display:none;">
+        <div class="field-label"><span class="tip-wrap">Repayment Basis <i class="tip-icon" data-tip="<strong>Single:</strong> one instalment amount for the whole term.<br><strong>Schedule:</strong> a stepped plan, for example period 1 to 2 at one amount then period 3 to 6 at another. Either way the rate that makes the plan repay the loan exactly is solved and shown below.">?</i></span></div>
+        <div class="seg-group" id="scPaymentModeGroup">
+          <button type="button" class="seg-btn active" data-val="single">Single</button>
+          <button type="button" class="seg-btn" data-val="schedule">Schedule</button>
+        </div>
+      </div>
+      <div class="field-row" id="scKnownPaymentRow" style="display:none;">
+        <div class="field-label"><span class="tip-wrap">Repayment Amount <i class="tip-icon" data-tip="What you actually hand over each period. The finance rate is solved from it, so you can price a deal that quotes an instalment without quoting a rate.">?</i></span></div>
+        <div class="currency-wrap"><span class="prefix" id="scKnownPaymentPrefix">$</span><input class="currency-input fmt-num" id="scKnownPayment" type="text" inputmode="decimal" value="0"/></div>
+      </div>
+      <div class="field-row" id="scPaymentScheduleRow" style="display:none;">
+        <div class="field-label"><span class="tip-wrap">Repayment Schedule <i class="tip-icon" data-tip="Consecutive periods covering repayment 1 to the end of the term, each with its own amount. The last period stretches automatically.">?</i></span></div>
+        <div class="sched-rows" id="scPaymentPeriodRows"></div>
+        <div class="sched-actions"><button class="btn-secondary btn-sm" id="addPaymentPeriodBtn" type="button">+ Add Period</button></div>
+      </div>
+      <div class="field-row" id="scImpliedRateRow" style="display:none;">
+        <div class="field-label"><span class="tip-wrap">Implied Rate <i class="tip-icon" data-tip="The annual rate that makes this repayment plan pay the loan off exactly, shown as an effective annual rate so it is comparable with every other scenario.">?</i></span></div>
+        <div class="implied-rate" id="scImpliedRate">&mdash;</div>
+      </div>
+      <div class="field-row" id="scIoPeriodsRow" style="display:none;">
+        <div class="field-label"><span class="tip-wrap" id="scIoLabel">Interest-Only Periods <i class="tip-icon" data-tip="How many repayments run before normal instalments begin. Set it to the full term for a loan that stays interest-only and repays the principal in one lump at maturity.">?</i></span></div>
+        <input class="num-input" id="scIoPeriods" type="number" min="0" max="3000" step="1" value="60"/>
+        <div class="field-sub" id="scIoSub"></div>
+      </div>
+      <div class="field-row" id="scResidualRow" style="display:none;">
+        <div class="field-label"><span class="tip-wrap">Residual (% of financed amount) <i class="tip-icon" data-tip="The share of the amount financed still owed at the end of the term and settled in one lump. A bigger residual buys smaller instalments and costs more interest overall.">?</i></span></div>
+        <input class="num-input" id="scResidualPct" type="number" min="0" max="99" step="1" value="0"/>
       </div>
       <div class="slider-block">
         <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment (% of purchase cost) <i class="tip-icon" data-tip="The share of the purchase cost you pay upfront. 0% borrows the whole amount; 100% pays cash outright, so there is no loan at all.">?</i></span></div><div class="slider-value" id="scDownVal">0%</div></div>
@@ -181,6 +257,9 @@
         <div class="group-title">Fees</div>
         <div class="field-row"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="A one-off fee charged to set the loan up. It comes out of your cash at the start, so it reduces what you have left to invest.<br><strong>$:</strong> a fixed amount.<br><strong>%:</strong> a percentage of the financed amount.">?</i></span></div>
           <div class="inline-row"><input class="num-input fmt-num" id="scFeeAmt" type="text" inputmode="decimal" value="0"/><select class="sel-input" id="scFeeType" style="min-width:70px;"><option value="fixed">$</option><option value="pct">%</option></select></div>
+        </div>
+        <div class="field-row"><div class="field-label"><span class="tip-wrap">Fee Treatment <i class="tip-icon" data-tip="How the origination fee is settled.<br><strong>Paid upfront:</strong> out of your own cash, so it reduces what is left to invest.<br><strong>Added to the loan:</strong> borrowed alongside the purchase, so you pay interest on the fee too.<br><strong>Deducted from the advance:</strong> the lender pays out the loan net of the fee, so the loan is grossed up for the proceeds to still cover the price. This is how a discounted note works.">?</i></span></div>
+          <select class="sel-input" id="scFeeTreatment"><option value="upfront" selected>Paid upfront from cash</option><option value="capitalise">Added to the loan</option><option value="discount">Deducted from the advance</option></select>
         </div>
         <div class="field-row"><div class="field-label"><span class="tip-wrap">Admin Fee (per payment) <i class="tip-icon" data-tip="A fixed fee added to every repayment, such as an account-keeping fee. It is paid for the full term, so the total is this amount times the number of payments.">?</i></span></div>
           <div class="currency-wrap"><span class="prefix" id="scAdminFeePrefix">$</span><input class="currency-input fmt-num" id="scAdminFee" type="text" inputmode="decimal" value="0"/></div>
@@ -213,7 +292,7 @@
     <div class="field-group">
       <div class="group-title">X-Axis</div>
       <div class="field-row"><div class="field-label">X-Axis Variable</div>
-        <select class="sel-input" id="sensVarX"><option value="financeRate">Finance Rate (%)</option><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="term" id="sensVarXTermOpt">Term (months)</option></select>
+        <select class="sel-input" id="sensVarX"><option value="financeRate" id="sensVarXRateOpt">Finance Rate (%)</option><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="term" id="sensVarXTermOpt">Term (months)</option><option value="payment" id="sensVarXPayOpt">Repayment Amount</option><option value="residual" id="sensVarXResOpt">Residual (%)</option></select>
       </div>
       <div class="field-row"><div class="field-label">X Range</div><div class="inline-row"><input class="num-input" id="sensXStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensXEnd" type="number" step="0.5" value="10"/></div></div>
     </div>
@@ -221,7 +300,7 @@
       <div class="field-group">
         <div class="group-title">Y-Axis</div>
         <div class="field-row"><div class="field-label">Y-Axis Variable</div>
-          <select class="sel-input" id="sensVarY"><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="financeRate">Finance Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="term" id="sensVarYTermOpt">Term (months)</option></select>
+          <select class="sel-input" id="sensVarY"><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="financeRate" id="sensVarYRateOpt">Finance Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="term" id="sensVarYTermOpt">Term (months)</option><option value="payment" id="sensVarYPayOpt">Repayment Amount</option><option value="residual" id="sensVarYResOpt">Residual (%)</option></select>
         </div>
         <div class="field-row"><div class="field-label">Y Range</div><div class="inline-row"><input class="num-input" id="sensYStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensYEnd" type="number" step="0.5" value="8"/></div></div>
       </div>

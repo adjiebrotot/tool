@@ -1666,6 +1666,12 @@
                 id: ['per annum', 'per tahun, tarif dinyatakan dalam basis tahunan'] }
     },
 
+    /* ── Finance vs Cash (consumer and asset lending) ── */
+    financingvscash: {
+      APR:  ['Annual Percentage Rate', 'what a loan really costs a year once the shape of the repayments is taken into account. A 5% flat loan carries an APR near 9%'],
+      EAR:  ['Effective Annual Rate', 'a rate that already allows for compounding within the year, so 1% a month is 12.68% EAR, not 12%'],
+    },
+
     /* ── Borrowing Capacity (Australian home lending) ── */
     borrowingcapacity: {
       APRA: ['Australian Prudential Regulation Authority', 'the regulator that sets the serviceability buffer lenders must add'],
