@@ -1178,19 +1178,23 @@ function buildSchedRow(kind,p,idx,len){
   row.className='sched-row';row.dataset.idx=idx;
   const isLast=idx===len-1;
   const unitCap=freqLabel(editorTermFreq).charAt(0).toUpperCase()+freqLabel(editorTermFreq).slice(1);
-  const to=isLast?'':'<input type="number" class="sp-to" min="1" step="1" value="'+p.toPeriod+'" aria-label="Last period"/>';
-  const del='<button type="button" class="btn-secondary btn-sm sp-delete"'+(len<=1?' disabled':'')+' aria-label="Delete period" title="Delete">✕</button>';
-  const head='<div class="sp-head"><span class="sp-range">'+unitCap+' <b class="sp-from">1</b>–<b class="sp-to-lbl">1</b></span>';
+  // The last period always stretches to the term, so its end is read-only text;
+  // every other period ends where the reader types, inside the range itself.
+  const end=isLast
+    ?'<b class="sp-to-lbl">1</b>'
+    :'<input type="number" class="sp-to" min="1" step="1" value="'+p.toPeriod+'" aria-label="Last '+freqLabel(editorTermFreq)+' of this period" title="Last '+freqLabel(editorTermFreq)+' of this period"/>';
+  const del='<button type="button" class="btn-secondary btn-sm btn-icon sp-delete"'+(len<=1?' disabled':'')+' aria-label="Delete period" title="Delete period">✕</button>';
+  const head='<div class="sp-head"><span class="sp-range">'+unitCap+' <b class="sp-from">1</b><span class="sp-sep">–</span>'+end+'</span>';
   if(kind==='rate'){
     const f=p.type==='floating';
     row.innerHTML=head+
-      '<select class="sp-type" aria-label="Rate type"><option value="fixed"'+(f?'':' selected')+'>Fixed</option><option value="floating"'+(f?' selected':'')+'>Floating</option></select>'+
-      to+del+'</div><div class="sp-vals">'+
+      '<select class="sel-input sp-type" aria-label="Rate type"><option value="fixed"'+(f?'':' selected')+'>Fixed</option><option value="floating"'+(f?' selected':'')+'>Floating</option></select>'+
+      del+'</div><div class="sp-vals">'+
       '<span class="sp-fixed-wrap"'+(f?' style="display:none"':'')+'><input type="number" class="sp-rate" min="0" max="40" step="0.01" value="'+p.rate+'" aria-label="Rate"/><span class="sp-unit">% p.a.</span></span>'+
       '<span class="sp-float-wrap"'+(f?'':' style="display:none"')+'><input type="number" class="sp-min" min="0" max="40" step="0.01" value="'+p.rateMin+'" aria-label="Minimum rate"/><span class="sp-dash">–</span><input type="number" class="sp-max" min="0" max="40" step="0.01" value="'+p.rateMax+'" aria-label="Maximum rate"/><span class="sp-unit">% p.a.</span></span>'+
       '</div>';
   } else {
-    row.innerHTML=head+to+del+'</div><div class="sp-vals">'+
+    row.innerHTML=head+del+'</div><div class="sp-vals">'+
       '<span class="sp-amt-wrap"><span class="sp-unit">'+moneySymbol()+'</span><input type="text" inputmode="decimal" class="sp-amt" value="'+fmt.fmtInput(p.amount)+'" aria-label="Repayment amount"/></span></div>';
   }
   return row;
