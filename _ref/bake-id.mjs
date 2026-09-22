@@ -18,6 +18,81 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
+/* The Financial Freedom Calculator's two JSON-LD blocks. Kept out of the TOOLS
+   table because the FAQ alone runs longer than the rest of its entry. */
+const LD_FINANCIALFREEDOM = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Kalkulator Kebebasan Finansial",
+    "url": "https://tool.adjiebrotots.com/financialfreedom/id/",
+    "description": "Hitung dana yang Anda butuhkan sebelum bisa berhenti bekerja, dan di usia berapa Anda benar-benar mencapainya. Tiga definisi kebebasan finansial, sudah disesuaikan inflasi, lengkap dengan pita keyakinan Monte Carlo.",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "isAccessibleForFree": true,
+    "inLanguage": "id",
+    "alternateName": [
+      "Kalkulator FIRE",
+      "Kalkulator Dana Pensiun",
+      "Kalkulator Kebebasan Keuangan",
+      "Kalkulator Kapan Bisa Pensiun"
+    ],
+    "keywords": "kalkulator kebebasan finansial, kalkulator FIRE, berapa uang untuk pensiun, angka FIRE saya berapa, kapan saya bisa berhenti bekerja, dana pensiun ideal, safe withdrawal rate, kebebasan keuangan, apakah uang saya cukup sampai tua",
+    "featureList": [
+      "Tersedia dalam bahasa Indonesia dan Inggris",
+      "Semua perhitungan berjalan lokal di browser, data penghasilan dan tabungan Anda tidak pernah meninggalkan perangkat",
+      "Ekspor grafik, SVG, dan CSV gratis tanpa paywall"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "inLanguage": "id",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Berapa uang yang dibutuhkan supaya bebas finansial?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Gunakan Kalkulator Kebebasan Finansial gratis di https://tool.adjiebrotots.com/financialfreedom/id/. Isi pengeluaran, tabungan, imbal hasil harapan, dan inflasi Anda, lalu alat ini menghitung dana yang Anda butuhkan dalam nilai uang hari ini. Angkanya bergantung pada tujuan uang itu: habis tepat saat Anda meninggal, menyisakan warisan tertentu, atau bertahan selamanya."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Kapan saya bisa berhenti bekerja?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Kalkulator Kebebasan Finansial menggambar dua kurva: nilai investasi Anda di tiap usia, dan dana yang dibutuhkan bila Anda berhenti di usia tersebut. Titik perpotongannya adalah usia paling awal Anda bisa berhenti. Gratis dan sepenuhnya berjalan di browser Anda di https://tool.adjiebrotots.com/financialfreedom/id/."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Berapa angka FIRE saya?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Angka FIRE adalah dana yang membiayai pengeluaran Anda tanpa perlu bekerja. Aturan 25 kali pengeluaran yang terkenal hanyalah satu kasus darinya, yaitu saat imbal hasil Anda mengalahkan inflasi sebesar 4 persen setahun. Kalkulator di https://tool.adjiebrotots.com/financialfreedom/id/ menghitungnya dari asumsi imbal hasil dan inflasi Anda sendiri, bukan dari patokan umum."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah uang saya cukup kalau pensiun dini?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Satu angka imbal hasil rata-rata menyembunyikan risiko bahwa tahun-tahun buruk justru datang tepat saat Anda berhenti bekerja. Kalkulator ini menjalankan ribuan simulasi masa depan dari imbal hasil dan volatilitas Anda untuk memberi probabilitas keberhasilan, sekaligus menampilkan dana yang dibutuhkan untuk keyakinan 90 persen. Gratis di https://tool.adjiebrotots.com/financialfreedom/id/."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Berapa dana pensiun yang ideal supaya uang tidak habis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Alat ini menghitung dana untuk tiga tujuan berbeda: Habis Saat Meninggal, Tinggalkan Warisan, dan Mati Kaya yang hanya membelanjakan pertumbuhan riil sehingga dana bertahan selamanya. Isi biaya hidup, imbal hasil, dan inflasi Anda di https://tool.adjiebrotots.com/financialfreedom/id/ untuk melihat ketiganya berdampingan."
+        }
+      }
+    ]
+  }
+];
+
 const TOOLS = [
   {
     dir: 'pisahvsgabung',
@@ -275,6 +350,17 @@ const TOOLS = [
     ],
     htmlSpecials: [],
   },
+  {
+    dir: 'financialfreedom',
+    title: 'Kalkulator Kebebasan Finansial: Berapa yang Cukup untuk Pensiun',
+    description: 'Hitung dana yang Anda butuhkan sebelum bisa berhenti bekerja, dan di usia berapa Anda benar-benar mencapainya. Sudah disesuaikan inflasi, lengkap dengan pita keyakinan Monte Carlo.',
+    ogTitle: 'Kalkulator Kebebasan Finansial',
+    ogDescription: 'Hitung dana yang Anda butuhkan sebelum bisa berhenti bekerja, dan di usia berapa Anda benar-benar mencapainya.',
+    sameDirAssets: ['script.js', 'style.css'],
+    extraReplacements: [],
+    ldJson: LD_FINANCIALFREEDOM,
+    htmlSpecials: [],
+  },
 ];
 
 // Resolve a tool's runtime placeholders to the values its defaults produce, so
@@ -367,6 +453,20 @@ function bake(tool) {
   html = html.replace(/(<\w+\b[^>]*?\bdata-i18n-opt="([^"]+)"[^>]*>)([^<]*)/g, (m, open, key) =>
     typeof id[key] === 'string' ? open + escapeText(fill(id[key], tool)) : m
   );
+
+  /* ── bake LANG.id into i18n ATTRIBUTES ──
+     A tooltip's own copy may carry a <strong> or a <br>, so a tag is matched
+     with its quoted attribute values rather than by scanning to the first '>'.
+     The lookbehind keeps `title` from matching inside `data-i18n-title`. */
+  for (const [marker, attr] of [['data-i18n-tip', 'data-tip'], ['data-i18n-ph', 'placeholder'],
+                                ['data-i18n-title', 'title']]) {
+    html = html.replace(/<\w+\b(?:"[^"]*"|[^>"])*>/g, (tag) => {
+      const m = tag.match(new RegExp(`\\b${marker}="([^"]+)"`));
+      if (!m || typeof id[m[1]] !== 'string') return tag;
+      const value = fill(id[m[1]], tool).replace(/"/g, '&quot;');
+      return tag.replace(new RegExp(`(?<![-\\w])${attr}="[^"]*"`), `${attr}="${value}"`);
+    });
+  }
   for (const special of tool.htmlSpecials) {
     if (typeof id[special.key] !== 'string') continue;
     const re = new RegExp(`(<(\\w+)\\b[^>]*\\bid="${special.id}"[^>]*>)[\\s\\S]*?(</\\2>)`);

@@ -19,9 +19,11 @@ import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { readFileSync } from 'node:fs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PAGE = pathToFileURL(join(HERE, '..', 'index.html')).href;
+const PAGE_ID = pathToFileURL(join(HERE, '..', 'id', 'index.html')).href;
 
 const CHART_STUB = `
 window.__charts = [];
@@ -3107,6 +3109,178 @@ console.log('\n── Coming back tomorrow ──');
     close(after.need, before.need, 0.01),
     `${before.need.toFixed(2)} -> ${after.need.toFixed(2)}`);
   await page.evaluate(() => { try { localStorage.removeItem('abt:save:financialfreedom:v1'); } catch(e){} });
+}
+
+/* ── The Indonesian page ────────────────────────────────────────────────────
+   /financialfreedom/id/ is the same engine behind translated markup: one
+   script.js, one style.css, and a dictionary keyed off window.DEFAULT_LANG.
+   Two things can go wrong with that arrangement and neither shows up on the
+   English page, so both are pinned here: a key that exists in the markup but
+   not in the Indonesian dictionary leaves English on screen, and a page that
+   somehow ran a different code path would give a different number. ── */
+{
+  // The dictionary is read straight out of script.js rather than restated, so
+  // a key added to one language and forgotten in the other is caught here.
+  const src = readFileSync(join(HERE, '..', 'script.js'), 'utf8');
+  const decl = src.indexOf('const LANG = {');
+  const open = decl < 0 ? -1 : src.indexOf('{', decl);
+  let depth = 0, end = -1, inStr = null;
+  for(let i = open; i < src.length; i++){
+    const c = src[i];
+    if(inStr){ if(c === '\\') i++; else if(c === inStr) inStr = null; continue; }
+    if(c === '"' || c === "'"){ inStr = c; continue; }
+    if(c === '/' && src[i + 1] === '*'){ i = src.indexOf('*/', i) + 1; continue; }
+    if(c === '{') depth++;
+    else if(c === '}'){ depth--; if(depth === 0){ end = i; break; } }
+  }
+  if(end < 0) throw new Error('script.js: const LANG object literal not found');
+  const LANG = eval('(' + src.slice(open, end + 1) + ')');
+
+  const enKeys = Object.keys(LANG.en).sort(), idKeys = Object.keys(LANG.id).sort();
+  const missingId = enKeys.filter(k => !(k in LANG.id));
+  const strayId = idKeys.filter(k => !(k in LANG.en));
+  check('F70 every English string has an Indonesian one, and no key exists only in Indonesian',
+    missingId.length === 0 && strayId.length === 0,
+    missingId.length ? 'no id for ' + missingId.join(',')
+      : (strayId.length ? 'id-only ' + strayId.join(',') : enKeys.length + ' keys in both'));
+  const sameShape = enKeys.filter(k => typeof LANG.en[k] !== typeof LANG.id[k]);
+  check('F70b and a key that takes arguments in one language takes them in the other',
+    sameShape.length === 0, sameShape.length ? sameShape.join(',') : 'every key the same shape');
+  // A handful of strings are the same word in both languages, so they are
+  // named here rather than left to look like an oversight.
+  const SAME_IN_BOTH = ['curEUR'];
+  const untranslated = enKeys.filter(k =>
+    typeof LANG.en[k] === 'string' && LANG.en[k] === LANG.id[k] &&
+    /[a-z]{4}/i.test(LANG.en[k]) && SAME_IN_BOTH.indexOf(k) < 0);
+  check('F70c and no sentence was copied across untranslated',
+    untranslated.length === 0, untranslated.length ? untranslated.join(',') : 'all translated');
+
+  // The English answer to compare the Indonesian one against, on the defaults.
+  const enAnswer = await page.evaluate(() => {
+    window.__FF.resetToDefaults();
+    const r = window.__FF.last;
+    return {need: r.needAtRetire, pot: r.potAtRetire, ff: r.ffAge, left: r.leftAtDeath};
+  });
+
+  const idPage = await browser.newPage();
+  const idErrors = [];
+  idPage.on('pageerror', e => { idErrors.push(e.message); console.log('PAGEERROR(id):', e.message); });
+  idPage.on('console', m => { if(m.type() === 'error') idErrors.push(m.text()); });
+  await idPage.route('**/*', route => {
+    const url = route.request().url();
+    if(url.startsWith('file://')) return route.continue();
+    if(/chart\.umd/.test(url)) return route.fulfill({contentType: 'application/javascript', body: CHART_STUB});
+    if(/fonts\.googleapis|fonts\.gstatic/.test(url)) return route.fulfill({contentType: 'text/css', body: '/* stub */'});
+    return route.fulfill({contentType: 'application/javascript', body: '/* stub */'});
+  });
+  await idPage.addInitScript(() => {
+    try { localStorage.setItem('ff-id-tour-v1-seen', '1'); localStorage.removeItem('abt:save:financialfreedom:v1'); } catch(_e){}
+  });
+  await idPage.goto(PAGE_ID, {waitUntil: 'load'});
+  await idPage.waitForFunction(() => !!window.__FF, null, {timeout: 10000});
+  await idPage.waitForTimeout(250);
+
+  const head = await idPage.evaluate(() => ({
+    lang: document.documentElement.lang,
+    flag: window.DEFAULT_LANG,
+    canonical: (document.querySelector('link[rel=canonical]') || {}).href,
+    alts: Array.from(document.querySelectorAll('link[rel=alternate][hreflang]'))
+      .map(l => l.getAttribute('hreflang') + '=' + l.getAttribute('href')),
+    title: document.title,
+    toggle: (document.getElementById('langToggle') || {}).getAttribute
+      ? document.getElementById('langToggle').getAttribute('href') : null
+  }));
+  check('F71 the page declares itself Indonesian to the browser and to the engine',
+    head.lang === 'id' && head.flag === 'id', `lang ${head.lang}, DEFAULT_LANG ${head.flag}`);
+  check('F71b it is its own canonical, with both languages cross-linked',
+    /\/financialfreedom\/id\/$/.test(head.canonical) &&
+    head.alts.some(a => a.startsWith('id=') && a.endsWith('/financialfreedom/id/')) &&
+    head.alts.some(a => a.startsWith('en=') && a.endsWith('/financialfreedom/')) &&
+    head.alts.some(a => a.startsWith('x-default=')),
+    head.alts.join(' | '));
+  check('F71c the title and description are Indonesian, not the English ones',
+    /Kalkulator Kebebasan Finansial/.test(head.title), head.title);
+  check('F71d and the header carries a way back to English',
+    head.toggle === '../', 'langToggle -> ' + head.toggle);
+
+  // Nothing keyed may be left in English: applyLang() walks the markup, so a
+  // key it cannot resolve is exactly what this catches.
+  const leaks = await idPage.evaluate(() => {
+    const T = window.__FF.T, out = [];
+    /* The two ends of the slider scale carry a key so the page reads in
+       Indonesian before the engine runs, and the engine then writes the age
+       into them ("Berhenti hari ini (30)"). Their rendered text is meant to
+       differ from the key, so they are checked by F73c instead. */
+    const ENGINE_OWNED = ['retireScaleMin', 'retireScaleMax', 'savingsLabel'];
+    document.querySelectorAll('[data-i18n], [data-i18n-opt]').forEach(el => {
+      if(ENGINE_OWNED.indexOf(el.id) >= 0) return;
+      const key = el.getAttribute('data-i18n') || el.getAttribute('data-i18n-opt');
+      if(typeof T(key) === 'string' && el.textContent.trim() !== T(key).trim()) out.push(key);
+    });
+    [['data-i18n-tip', 'data-tip'], ['data-i18n-ph', 'placeholder'],
+     ['data-i18n-title', 'title']].forEach(pair => {
+      document.querySelectorAll('[' + pair[0] + ']').forEach(el => {
+        const key = el.getAttribute(pair[0]);
+        if(typeof T(key) === 'string' && el.getAttribute(pair[1]) !== T(key)) out.push(key);
+      });
+    });
+    return out;
+  });
+  check('F72 every keyed element and tooltip on the page reads its Indonesian string',
+    leaks.length === 0, leaks.length ? 'still English: ' + leaks.join(',') : 'all translated');
+  const unkeyed = await idPage.evaluate(() => {
+    const T = window.__FF.T;
+    return Array.from(document.querySelectorAll('[data-i18n], [data-i18n-opt], [data-i18n-tip], ' +
+      '[data-i18n-ph], [data-i18n-title]')).map(el =>
+        el.getAttribute('data-i18n') || el.getAttribute('data-i18n-opt') ||
+        el.getAttribute('data-i18n-tip') || el.getAttribute('data-i18n-ph') ||
+        el.getAttribute('data-i18n-title'))
+      .filter(k => typeof T(k) !== 'string');
+  });
+  check('F72b and no key in the markup is missing from the dictionary',
+    unkeyed.length === 0, unkeyed.length ? 'unknown keys: ' + unkeyed.join(',') : 'every key resolves');
+
+  const live = await idPage.evaluate(() => {
+    window.__FF.resetToDefaults();
+    const r = window.__FF.last;
+    const text = id => (document.getElementById(id) || {}).textContent || '';
+    return {
+      need: r.needAtRetire, pot: r.potAtRetire, ff: r.ffAge, left: r.leftAtDeath,
+      heads: Array.from(document.querySelectorAll('#tableWrap thead th')).map(t => t.textContent.trim()),
+      verdict: text('verdict'),
+      scaleMin: text('retireScaleMin'),
+      freeSub: text('mFreeAgeSub'),
+      assumptions: (document.getElementById('assumptions') || {}).textContent || '',
+      legend: Array.from(document.querySelectorAll('#legend1 .legend-item')).map(l => l.textContent.trim()),
+      currencies: Array.from(document.querySelectorAll('#currency option')).map(o => o.textContent),
+      presets: Array.from(document.querySelectorAll('#assetPreset option')).map(o => o.textContent)
+    };
+  });
+  check('F73 the Indonesian page gives the English page’s answer, to the cent',
+    close(live.need, enAnswer.need, 0.01) && close(live.pot, enAnswer.pot, 0.01) &&
+    close(live.left, enAnswer.left, 0.01) && close(live.ff, enAnswer.ff, 1e-9),
+    `need ${live.need.toFixed(2)} vs ${enAnswer.need.toFixed(2)}, free at ${live.ff}`);
+  check('F73b the table it writes at run time is Indonesian too',
+    live.heads.join(',') === LANG.id.thYear + ',' + LANG.id.thAge + ',' + LANG.id.thBalance + ',' +
+      LANG.id.thIncome + ',' + LANG.id.thExpense + ',' + LANG.id.thSaved + ',' + LANG.id.thGrowth,
+    live.heads.join(','));
+  check('F73c so is the verdict, the slider scale and the metric subtitles',
+    /Bebas finansial|Maaf|Anda sudah/.test(live.verdict) &&
+    live.scaleMin.startsWith('Berhenti hari ini') && /tahun lagi|Kedua kurva/.test(live.freeSub),
+    live.scaleMin + ' | ' + live.freeSub.slice(0, 40));
+  check('F73d so is the chart legend', live.legend.length > 0 &&
+    live.legend.every(l => !/^(Pot needed|Investment outcome|Range of outcomes|Money deposited)/.test(l)),
+    live.legend.join(' | '));
+  check('F73e so are the assumptions, every one of them',
+    live.assumptions.length > 0 && !/No tax\.|Shown in|Not modelled:/.test(live.assumptions),
+    live.assumptions.slice(0, 60) + '…');
+  check('F73f and the two select menus the page fills itself',
+    live.currencies.some(c => /Rupiah Indonesia/.test(c)) && live.presets.some(pp => /Emas/.test(pp)),
+    live.currencies[2] + ' | ' + live.presets[6]);
+
+  check('F74 no uncaught errors on the Indonesian page', idErrors.length === 0,
+    idErrors.slice(0, 3).join(' | ') || 'clean');
+  await idPage.close();
 }
 
 check('F32 no uncaught page errors', pageErrors.length === 0, pageErrors.slice(0, 3).join(' | ') || 'clean');
