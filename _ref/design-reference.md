@@ -800,6 +800,22 @@ saying plainly that the ANSWER is out of date. `financialfreedom` does this:
 `syncForm()` on every keystroke, `markStale()` to dim the results and light the
 button, `render()` only from Simulate.
 
+A **sensitivity control stays outside the gate**, however heavy the engine.
+Sweeping it *is* the question the reader came to ask, and one you have to press
+a button after is not a sensitivity control. Give it a live readout and put the
+recompute behind a short debounce so the drag stays smooth. Because that
+recompute reads the whole form, it runs anything staged but not yet simulated —
+so it clears the stale mark rather than leaving it up, which is honest: what is
+on screen afterwards really is the plan the form describes. `financialfreedom`'s
+retirement-age slider is the worked example.
+
+Where such a control has a **right answer the page already computes, default it
+to that** rather than to a round number, and re-seed it only when a whole plan is
+applied — at load, from a Quick Start, or back to the defaults. After that the
+control is the reader's and nothing moves it. `financialfreedom` seeds the
+retirement age from the plan's own freedom age (`seedRetireAge()`), falling back
+to the far end of the scale when a plan never reaches freedom.
+
 **Reset** is redundant the moment the tool has Quick Start scenarios, because
 every scenario is a reset with a worked example laid over it — and a worked
 example is a better place to land than an empty form. Two conditions before

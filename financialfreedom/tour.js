@@ -70,7 +70,8 @@ window.__TOUR = {
             'then press <strong>Simulate</strong> to run it. While anything is unanswered ' +
             'the results below step back and this button lights up, so you never read a ' +
             'verdict that belongs to numbers you have already changed. ' +
-            'A <strong>Quick Start</strong> runs itself.'
+            'A <strong>Quick Start</strong> runs itself, and so does the retirement ' +
+            'slider in step ⑦ — sweeping that one is the question, not an assumption.'
     },
     {
       target: '#boardPath',
@@ -92,7 +93,11 @@ window.__TOUR = {
       body: 'This slider is the whole of Cashflows. It runs from <strong>stop today</strong> ' +
             'to <strong>never stop</strong>, and everything below it — the verdict directly ' +
             'under the handle, the four cards, the chart and the table — is measured at ' +
-            'whatever age you leave it on, from the next <strong>Simulate</strong>. ' +
+            'whatever age you leave it on, as you drag it. ' +
+            'It <strong>starts on the crossing above</strong>: the earliest age this plan ' +
+            'works. That is solved on the average return, so it opens near a coin flip — ' +
+            '<strong>drag right and watch the chance climb</strong>, because the years of ' +
+            'margin are what you are really buying. ' +
             '<strong>Path to freedom</strong> does not move, because how early you ' +
             '<em>could</em> stop does not depend on when you <em>choose</em> to.'
     },

@@ -831,9 +831,13 @@ console.log('\n── Page and presentation ──');
     cash.charts === 1 && r.wraps === 1 && r.canvases.length === 1 && r.canvases[0] === 'ddChart' &&
     r.sub3 === null,
     `${r.wraps} wraps, canvases: ${r.canvases.join(', ') || 'none'}, old balance subtitle ${r.sub3 === null ? 'gone' : 'still there'}`);
+  // The retirement age is seeded from the plan's freedom age, so read what the
+  // slider actually holds rather than pinning the figure it used to default to.
+  const ra = await page.evaluate(() => Math.round(window.__FF.UI.ageRetire));
+  const namesAge = new RegExp('\\bat ' + ra + '\\b');
   check('F48c section 1 never names a retirement age, section 2 names it on every card that has one',
-    !path.labels.some(l => /\bat 60\b/.test(l)) && cash.labels.filter(l => /\bat 60\b/.test(l)).length === 2,
-    `path: ${path.labels.join(' | ')}  ||  cash: ${cash.labels.join(' | ')}`);
+    !path.labels.some(l => namesAge.test(l)) && cash.labels.filter(l => namesAge.test(l)).length === 2,
+    `age ${ra} — path: ${path.labels.join(' | ')}  ||  cash: ${cash.labels.join(' | ')}`);
   check('F48d the "Pot for that confidence" card is still gone, but not the figure',
     !r.card && /confidence (needs|is out of reach)/.test(r.succSub), r.succSub);
   /* The standing explanations are gone: the kicker that numbered each board,
@@ -1215,6 +1219,7 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
   await page.evaluate(() => window.__FF.resetToDefaults());
   await page.waitForTimeout(300);
   const r = await page.evaluate(() => ({
+    ageRetire: window.__FF.UI.ageRetire,
     need: window.__FF.last.needAtRetire,
     shown: document.getElementById('mNeed').textContent,
     freeAge: window.__FF.last.ffAge,
@@ -1223,10 +1228,13 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
     years: window.__FF.last.years,
     verdict: document.getElementById('verdict').className
   }));
-  const p = refParams(base);
+  /* The defaults no longer carry a retirement age: it is seeded from the plan's
+     own freedom age. Replay at the age the page landed on, or this would be
+     comparing two different questions. */
+  const p = refParams(Object.assign({}, base, {ageRetire: r.ageRetire}));
   check('F31 the amount needed on the page matches the replay',
     close(r.need, refRequired(p, p.ageRetire), 0.01),
-    `page ${r.need.toFixed(2)} vs replay ${refRequired(p, p.ageRetire).toFixed(2)}`);
+    `at ${r.ageRetire}: page ${r.need.toFixed(2)} vs replay ${refRequired(p, p.ageRetire).toFixed(2)}`);
   check('F31b the table has one row per year to the life expectancy',
     r.rows === r.years + 1, `${r.rows} rows for ${r.years} years`);
   check('F31c the verdict banner is showing', /visible/.test(r.verdict), r.verdict);
@@ -2858,13 +2866,27 @@ console.log('\n── Quick Start scenarios ──');
   // The plan a scenario means, derived here rather than read off the page: the
   // named preset owns the return and the volatility, everything else falls back
   // to the shipped defaults.
-  const planOf = key => {
+  const freeAge = async ui => (await engine(ui, 'F.diagnose(ui)')).ffAge;
+  /* A scenario no longer carries a retirement age: the page seeds the slider
+     from the plan's own freedom age. Resolve it here the same way, or every
+     check below would be measuring the generic default instead of the scenario
+     the reader is actually looking at. The freedom age does not depend on the
+     retirement age, so there is nothing circular in solving for it first. */
+  const seedRetire = (plan, ff) => {
+    const lo = Math.round(plan.ageNow), hi = Math.max(lo, Math.round(plan.ageDie));
+    const want = ff == null ? hi : Math.ceil(ff - 1e-9);
+    return Math.min(hi, Math.max(lo, want));
+  };
+  const planCache = {};
+  const planOf = async key => {
+    if(planCache[key]) return planCache[key];
     const plan = Object.assign({}, DEFAULTS, SCEN[key].vals);
     const pre = PRESETS[plan.assetPreset];
     if(pre && plan.assetPreset !== 'custom'){ plan.ret = pre.ret; plan.std = pre.std; }
+    plan.ageRetire = seedRetire(plan, await freeAge(plan));
+    planCache[key] = plan;
     return plan;
   };
-  const freeAge = async ui => (await engine(ui, 'F.diagnose(ui)')).ffAge;
 
   const apply = key => page.evaluate(k => {
     document.querySelector('.quick-start-btn[data-preset="' + k + '"]').click();
@@ -2909,7 +2931,7 @@ console.log('\n── Quick Start scenarios ──');
     });
 
     // The return and the volatility are the preset's, not a second copy of it.
-    const plan = planOf(key);
+    const plan = await planOf(key);
     const shown = await page.evaluate(() => ({
       ret: parseFloat(document.getElementById('ret').value),
       std: parseFloat(document.getElementById('std').value),
@@ -2932,11 +2954,12 @@ console.log('\n── Quick Start scenarios ──');
 
   /* A scenario nobody can reach teaches nothing, and a slider parked short of
      the crossing opens Cashflows on a shortfall the reader has to fix first.
-     Every button therefore has to clear its own goal at its own slider age. */
+     Every button therefore has to clear its own goal at its own slider age —
+     which, since the slider is seeded from the crossing, means landing ON it. */
   const unreachable = [], unfunded = [];
   const ages = {};
   for(const key of keys){
-    const plan = planOf(key);
+    const plan = await planOf(key);
     const ff = await freeAge(plan);
     ages[key] = ff;
     if(ff == null || !isFinite(ff)){ unreachable.push(key); continue; }
@@ -2947,27 +2970,35 @@ console.log('\n── Quick Start scenarios ──');
   check('F65e every scenario reaches financial freedom',
     unreachable.length === 0,
     unreachable.join(' | ') || keys.map(k => `${SCEN[k].label} at ${ages[k].toFixed(1)}`).join(', '));
-  check('F65f and the slider opens past that age, so Cashflows starts on a funded plan',
+  check('F65f and the slider opens on that age, so Cashflows starts on a funded plan',
     unfunded.length === 0, unfunded.slice(0, 3).join(' | ') || 'every scenario funded at its own slider age');
 
-  /* And not too far past it. The crossing is solved on the expected return
-     alone, so a slider parked on it opens near a coin flip while one parked a
-     decade beyond it reads as though the market cannot bite. Every scenario has
-     to sit in the band between, which is where the confidence pot underneath
-     still has something to say. */
+  /* Landing exactly on the crossing has a price, and the page has to be honest
+     about it rather than hide it. The crossing is solved on the expected return
+     alone, so opening on it is close to a coin flip once volatility is allowed
+     for — never the near-certainty a slider parked a decade later would imply.
+     Two things are pinned: the odds sit where the rule says they should, and
+     the margin is one drag to the right, which is the board's whole lesson. */
   const odds = [];
   for(const key of keys){
-    const r = await engine(planOf(key), 'F.compute(ui)');
-    odds.push({key, p: r.successAtPlan, gap: ages[key] == null ? null : planOf(key).ageRetire - ages[key]});
+    const plan = await planOf(key);
+    const r = await engine(plan, 'F.compute(ui)');
+    const later = await engine(Object.assign({}, plan, {ageRetire: Math.min(plan.ageDie, plan.ageRetire + 5)}),
+      'F.compute(ui)');
+    odds.push({key, p: r.successAtPlan, later: later.successAtPlan,
+               gap: ages[key] == null ? null : plan.ageRetire - ages[key]});
   }
-  check('F65g every scenario opens on a plan that works without looking risk-free',
-    odds.every(o => o.p >= 0.6 && o.p <= 0.9),
+  check('F65g every scenario opens on the crossing, at the coin-flip odds that implies',
+    odds.every(o => o.gap >= 0 && o.gap < 1 && o.p >= 0.35 && o.p <= 0.7),
     odds.map(o => `${o.key} ${(o.p * 100).toFixed(0)}% (+${o.gap.toFixed(1)}y)`).join(', '));
+  check('F65g2 and five more years of work is what buys the certainty back',
+    odds.every(o => o.later > o.p + 0.1),
+    odds.map(o => `${o.key} ${(o.p * 100).toFixed(0)}% → ${(o.later * 100).toFixed(0)}%`).join(', '));
 
   // Frugal Living is the whole argument for spending less: it does both jobs at
   // once, so it must free a saver earlier than the moderate plan does, in years
   // of work and not merely in age.
-  const mod = planOf('moderate'), fru = planOf('frugal');
+  const mod = await planOf('moderate'), fru = await planOf('frugal');
   check('F65h Frugal Living frees a saver in fewer years of work than Moderate FIRE',
     (ages.frugal - fru.ageNow) < (ages.moderate - mod.ageNow) && ages.frugal < ages.moderate,
     `frugal ${(ages.frugal - fru.ageNow).toFixed(1)} years to age ${ages.frugal.toFixed(1)}, ` +
@@ -2976,7 +3007,7 @@ console.log('\n── Quick Start scenarios ──');
   /* Geoarbitrage is the retirement multiplier and nothing else, so the same
      saver told to keep spending Australian money has to wait years longer.
      Everything else about the two plans is identical by construction. */
-  const geo = planOf('geoarbitrage');
+  const geo = await planOf('geoarbitrage');
   const geoHome = await freeAge(Object.assign({}, geo, {retireMultiplier: 100}));
   check('F65i Geoarbitrage is the retirement multiplier: staying home costs the same saver years',
     geoHome != null && geoHome > ages.geoarbitrage + 3,
@@ -2985,7 +3016,7 @@ console.log('\n── Quick Start scenarios ──');
 
   // The late starter's tip points at the pension switch. It has to be worth
   // real years, or the tip is pointing at nothing.
-  const late = planOf('latestart');
+  const late = await planOf('latestart');
   const noPension = await freeAge(Object.assign({}, late, {pensionOn: false}));
   check('F65j the late starter’s pension is worth years, which is what its tip claims',
     noPension != null && noPension > ages.latestart + 3,
@@ -3007,16 +3038,20 @@ console.log('\n── Quick Start scenarios ──');
     carried.pensionOn === false && carried.preset === 'world' && carried.legacyShown === 'none',
     `pension ${carried.pensionOn}, preset ${carried.preset} at ${carried.ret}%`);
 
-  // A scenario has to land on its own figures whatever the reader was looking
-  // at before. Frugal Living stops at 37, and the retirement slider must carry
-  // that even when the previous scenario's span did not reach down to it.
+  /* A scenario has to land on its own retirement age whatever the reader was
+     looking at before. Frugal Living frees a saver at 34.2, so the slider opens
+     on 35 — and it has to get there from Late start, whose span (52 to 92) does
+     not reach down to it. A range input clamps against the min and max it is
+     carrying when you write to it, so this is the check that says the span is
+     opened first. */
   await apply('latestart');
   await apply('frugal');
-  check('F65l a scenario lands on its own retirement age, not the last one\'s span',
-    await page.evaluate(() => document.getElementById('ageRetire').value === '37'
-      && document.getElementById('ageNow').value === '28'),
+  const fru65l = await planOf('frugal');
+  check('F65l a scenario lands on its own seeded age, not inside the last one\'s span',
+    await page.evaluate(want => document.getElementById('ageRetire').value === String(want)
+      && document.getElementById('ageNow').value === '28', fru65l.ageRetire),
     await page.evaluate(() => 'slider at ' + document.getElementById('ageRetire').value
-      + ' with min ' + document.getElementById('ageRetire').min));
+      + ' with min ' + document.getElementById('ageRetire').min) + `, want ${fru65l.ageRetire}`);
 }
 
 console.log('\n── Coming back tomorrow ──');

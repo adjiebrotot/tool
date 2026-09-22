@@ -818,7 +818,7 @@ function yearly(arr, years){
 
 /* ─── UI STATE ─── */
 
-var persist = null, rendering = false, stale = false;
+var persist = null, rendering = false, stale = false, retireTimer = null;
 var chart1 = null, chart2 = null;
 var last = null;                 // the most recent computed result
 var tickerInfo = null;           // {ticker, stats, source} once a fetch succeeds
@@ -892,6 +892,37 @@ function widenRetireSlider(){
   if(retireMarkupSpan === null) retireMarkupSpan = {min: el.min, max: el.max};
   el.min = retireMarkupSpan.min;
   el.max = retireMarkupSpan.max;
+}
+
+/* The slider's default is the answer above it. A plan's freedom age is the
+   earliest age it actually works, so that is where the handle starts: Cashflows
+   opens on the earliest stop that pays for itself, instead of on a round number
+   nobody chose. Whole years and rounded UP, because the crossing lands mid-year
+   and the year before it does not work.
+
+   A plan that never reaches freedom has no such age. Then the handle goes to
+   the far end of its own scale — "never stop", which is the life expectancy —
+   because that is what the plan says: there is no age at which you can stop.
+
+   It is a default, not a binding. It is set when a whole plan is applied (at
+   load, from a Quick Start, or back to the defaults) and from then on the
+   handle is the reader's; nothing moves it until the next whole plan.
+
+   Cheap enough to run on the spot: the freedom solve is about half a
+   millisecond, against ~150ms for the Monte Carlo it runs before. */
+function seedRetireAge(){
+  var ff = solveFreedomAge(buildParams(UI));
+  var span = retireSpan();
+  // 1e-9 so a crossing that lands exactly on a birthday is not pushed a year out.
+  UI.ageRetire = clamp(ff === null ? span.hi : Math.ceil(ff - 1e-9), span.lo, span.hi);
+  /* Write the handle through the markup's own span and leave it open. The
+     render that follows narrows it to this plan's two ages, and at load this
+     runs BEFORE the mini cache restores — which writes its saved age straight
+     onto the control, and would have it clamped to the defaults' ceiling if
+     this narrowed the span on the way past. */
+  widenRetireSlider();
+  $('ageRetire').value = UI.ageRetire;
+  $('ageRetireVal').textContent = fmt.age(UI.ageRetire);
 }
 
 function syncRetireSlider(){
@@ -2297,20 +2328,19 @@ function downloadCsv(){
    - Savings rates are deliberately archetypal, not median: 41% for a moderate
      saver, 67% for a frugal one, 63% for a high earner who has not inflated
      their lifestyle with their pay.
-   - Every scenario leaves the slider one to four years PAST its own freedom
-     age, so Cashflows opens on a funded plan rather than on a shortfall the
-     reader has to fix before the section means anything. Not further: the
-     crossing is solved on the expected return alone, so a plan parked right on
-     it is close to a coin flip, and one parked a decade beyond it reads as
-     though the market cannot bite. Every scenario lands between a 70% and an
-     85% chance instead, which is the page's own lesson in the shape of a
-     default.
+   - No scenario sets a retirement age. The slider is seeded from the plan's own
+     freedom age by seedRetireAge(), so every scenario opens on the earliest
+     stop that works. Read what that costs: the crossing is solved on the
+     expected return alone, so a plan parked exactly on it is close to a coin
+     flip on the volatility, and the chance shown on the Cashflows board says
+     so. The years of margin are one drag to the right, and that drag is the
+     board's whole lesson.
 
    The audit harness in _audit/ pins all of it: every field landing on its own
    control, the return agreeing with the named preset, every scenario reaching
-   freedom, the slider sitting past that age and the chance it opens on, and the
-   three tips that claim a lever — the frugal saver's years of work, the Bali
-   multiplier, the late starter's pension. */
+   freedom, the slider opening on that age, and the three tips that claim a
+   lever — the frugal saver's years of work, the Bali multiplier, the late
+   starter's pension. */
 var QUICK_START_SCENARIOS = {
 
   /* 32, on $110,000 take-home: $65,000 spent, $45,000 saved. Global equity,
@@ -2319,7 +2349,7 @@ var QUICK_START_SCENARIOS = {
   moderate: {
     label: 'Moderate FIRE',
     vals: {
-      ageNow: 32, ageRetire: 48, ageDie: 90,
+      ageNow: 32, ageDie: 90,
       expense: 65000, expensePeriod: 'yearly',
       savingsMode: 'savings', savings: 45000, savingsPeriod: 'yearly',
       growth: 3, inflation: 2.5,
@@ -2335,7 +2365,7 @@ var QUICK_START_SCENARIOS = {
   frugal: {
     label: 'Frugal Living',
     vals: {
-      ageNow: 28, ageRetire: 37, ageDie: 92,
+      ageNow: 28, ageDie: 92,
       expense: 30000, expensePeriod: 'yearly',
       savingsMode: 'income', savings: 92000, savingsPeriod: 'yearly',
       growth: 2.5, inflation: 2.5,
@@ -2353,7 +2383,7 @@ var QUICK_START_SCENARIOS = {
   geoarbitrage: {
     label: 'Geoarbitrage, Bali',
     vals: {
-      ageNow: 34, ageRetire: 44, ageDie: 88,
+      ageNow: 34, ageDie: 88,
       expense: 70000, expensePeriod: 'yearly',
       savingsMode: 'savings', savings: 40000, savingsPeriod: 'yearly',
       growth: 3, inflation: 3,
@@ -2369,7 +2399,7 @@ var QUICK_START_SCENARIOS = {
   fatfire: {
     label: 'Fat FIRE, forever',
     vals: {
-      ageNow: 38, ageRetire: 45, ageDie: 90,
+      ageNow: 38, ageDie: 90,
       expense: 120000, expensePeriod: 'yearly',
       savingsMode: 'income', savings: 320000, savingsPeriod: 'yearly',
       growth: 3, inflation: 2.5,
@@ -2385,7 +2415,7 @@ var QUICK_START_SCENARIOS = {
   legacy: {
     label: 'Family legacy',
     vals: {
-      ageNow: 40, ageRetire: 53, ageDie: 90,
+      ageNow: 40, ageDie: 90,
       expense: 80000, expensePeriod: 'yearly',
       savingsMode: 'savings', savings: 55000, savingsPeriod: 'yearly',
       growth: 3, inflation: 2.5,
@@ -2402,7 +2432,7 @@ var QUICK_START_SCENARIOS = {
   latestart: {
     label: 'Late start, on a pension',
     vals: {
-      ageNow: 52, ageRetire: 62, ageDie: 92,
+      ageNow: 52, ageDie: 92,
       expense: 55000, expensePeriod: 'yearly',
       savingsMode: 'savings', savings: 25000, savingsPeriod: 'yearly',
       growth: 2, inflation: 2.5,
@@ -2439,6 +2469,7 @@ function applyQuickStart(key){
 
   Object.assign(UI, plan);
   applyUIToDom(plan);
+  seedRetireAge();
   markQuickStart(key);
   if(persist) persist.schedule();
   render();
@@ -2552,13 +2583,20 @@ function wire(){
     $(id).addEventListener('change', markStale);
   });
 
-  /* The retirement slider is a sensitivity control, so the readout follows the
-     handle on every pixel of the drag. The answer below it waits for Simulate
-     like every other assumption: a Monte Carlo per animation frame would make
-     the drag stutter and tell the reader nothing extra. */
+  /* The retirement slider is the exception to the Simulate gate, because sweeping
+     it IS the question this board asks: it is a sensitivity control, and one you
+     have to press a button after is not one. The readout follows the handle on
+     every pixel and the recompute sits behind a short debounce, so a drag stays
+     smooth instead of running a Monte Carlo per animation frame.
+
+     That render reads the whole form, so any assumption typed but not yet
+     simulated is run by it — which is exactly why it clears the stale mark
+     rather than leaving it up. What is on screen afterwards really is the plan
+     the form describes. */
   $('ageRetire').addEventListener('input', function(){
     $('ageRetireVal').textContent = fmt.age(Number($('ageRetire').value));
-    markStale();
+    clearTimeout(retireTimer);
+    retireTimer = setTimeout(render, 160);
   });
 
   $('assetPreset').addEventListener('change', function(){
@@ -2649,6 +2687,7 @@ function resetToDefaults(){
   tickerStatus('');
   Object.assign(UI, UI_DEFAULTS);
   applyUIToDom(UI_DEFAULTS);
+  seedRetireAge();
   markQuickStart(null);
   if(persist) persist.schedule();
   render();
@@ -2659,6 +2698,9 @@ function resetToDefaults(){
 function init(){
   populateSelects();
   applyUIToDom(UI_DEFAULTS);
+  // Before Persist, so a returning reader's own retirement age wins over the
+  // default and a first-time one still opens on their freedom age.
+  seedRetireAge();
   wire();
   if(window.Persist){
     // Language-agnostic namespace, so an Indonesian page could share this cache.
@@ -2684,6 +2726,7 @@ if(document.readyState === 'loading'){
    to drive the maths without going through the DOM. */
 window.__FF = {
   resetToDefaults: resetToDefaults,
+  seedRetireAge: seedRetireAge,
   CURRENCIES: CURRENCIES,
   PRESET_ASSETS: PRESET_ASSETS,
   UI_DEFAULTS: UI_DEFAULTS,
