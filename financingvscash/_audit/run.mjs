@@ -456,6 +456,60 @@ const PRICE=50000,CASH=80000,RF=4.5,PPY=12,N=60;
     `balance after the 6-period holiday ${grown.toFixed(2)} vs replay ${refAfterHoliday.toFixed(2)} (borrowed ${PRICE}); first instalment ${a.rows[6][pi]}`);
 }
 
+// ── F20: a deferred start carrying a RATE SCHEDULE. Nothing is repaid inside
+// the holiday, so the schedule is counted from the first instalment after it,
+// and the holiday itself capitalises at the rate the schedule opens on — never
+// at the last band's rate, which is what falling off the end of the list would
+// have charged. ──
+{
+  const K=6,CUT=24,R1=6,R2=12;
+  await setOneScenario({name:'DeferredSched',loanType:'deferred',freq:'monthly',term:N,rate:R1,ioPeriods:K});
+  await setSchedule('rate',[{type:'fixed',to:CUT,rate:R1},{type:'fixed',rate:R2}]);
+  // The ranges the reader is shown, before the editor is closed.
+  const ranges=await page.evaluate(()=>[...document.querySelectorAll('#scRatePeriodRows .sched-row')]
+    .map(r=>{
+      // Every row but the last ends where the reader typed; the last one is a
+      // read-only label that stretches to the term.
+      const end=r.querySelector('.sp-to')||r.querySelector('.sp-to-lbl');
+      return{from:r.querySelector('.sp-from').textContent.trim(),
+             to:(end.tagName==='INPUT'?end.value:end.textContent).trim()};
+    }));
+  await saveScenario();await page.waitForTimeout(200);
+
+  // Independent replay of §13 under §14: the holiday pays nothing and grows at
+  // the opening band's rate, then each instalment is re-amortised over what is
+  // left at whatever rate that period carries.
+  const r1=perRate(R1,PPY),r2=perRate(R2,PPY);
+  const rateAt=i=>i<=CUT?r1:r2;
+  let bal=PRICE,totInt=0;const ref=[];
+  for(let i=1;i<=N;i++){
+    const r=rateAt(i),int=bal*r;
+    const pay=i===N?int+bal:(i<=K?0:pmtOf(bal,r,N-i+1));
+    bal=Math.max(0,bal-Math.min(pay-int,bal));totInt+=int;
+    ref.push({pay,end:bal});
+  }
+  const a=await amortRows();
+  const pi=a.head.indexOf('Payment'),ei=a.head.indexOf('End Balance');
+  const afterHoliday=money(a.rows[K-1][ei]);
+  const wrongBand=PRICE*Math.pow(1+r2,K); // what the last band would have charged
+  const t=await compTable();
+  const gotInt=cell(t,'Total Interest Paid');
+  const rangesOk=ranges.length===2&&ranges[0].from===String(K+1)&&ranges[0].to===String(CUT)
+    &&ranges[1].from===String(CUT+1)&&ranges[1].to===String(N);
+  check('F20 deferred start on a rate schedule: the schedule opens on the first repayment AFTER the holiday',
+    rangesOk,
+    `rows read ${ranges.map(x=>x.from+'–'+x.to).join(', ')} (holiday ${K}, cut ${CUT}, term ${N})`);
+  check('F20b the holiday capitalises at the opening band, and the later band re-amortises the instalments',
+    Math.abs(afterHoliday-ref[K-1].end)<0.05&&Math.abs(afterHoliday-wrongBand)>1&&
+    Math.abs(money(a.rows[K][pi])-ref[K].pay)<0.05&&
+    Math.abs(money(a.rows[CUT][pi])-ref[CUT].pay)<0.05&&
+    Math.abs(gotInt-totInt)<0.05,
+    `balance after the holiday ${afterHoliday.toFixed(2)} vs replay ${ref[K-1].end.toFixed(2)} `+
+    `(the last band would have made it ${wrongBand.toFixed(2)}); first instalment ${money(a.rows[K][pi]).toFixed(2)} `+
+    `vs ${ref[K].pay.toFixed(2)}, instalment after the switch ${money(a.rows[CUT][pi]).toFixed(2)} vs ${ref[CUT].pay.toFixed(2)}; `+
+    `total interest ${gotInt.toFixed(2)} vs ${totInt.toFixed(2)}`);
+}
+
 // ── F17: the fee is counted once, whichever way it is settled ──
 {
   const read=async()=>{const t=await compTable();

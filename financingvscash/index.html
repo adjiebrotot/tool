@@ -207,6 +207,23 @@
           <option value="deferred">Deferred start (payment holiday)</option>
         </select>
       </div>
+      <div class="field-row" id="scIoPeriodsRow" style="display:none;">
+        <div class="field-label"><span class="tip-wrap" id="scIoLabel">Interest-Only Periods <i class="tip-icon" data-tip="How many repayments run before normal instalments begin. Set it to the full term for a loan that stays interest-only and repays the principal in one lump at maturity.">?</i></span></div>
+        <input class="num-input" id="scIoPeriods" type="number" min="0" max="3000" step="1" value="60"/>
+        <div class="field-sub" id="scIoSub"></div>
+      </div>
+      <div class="field-group">
+        <div class="group-title">Repayment Term</div>
+        <div class="field-row">
+          <div class="field-label"><span class="tip-wrap">Repayment Frequency <i class="tip-icon" data-tip="How often a repayment falls due. It sets the period interest rate, compound-converted from the annual rate, and it changes the unit of the Term field below.<br><strong>Weekly:</strong> 52 payments a year.<br><strong>Fortnightly:</strong> 26 payments a year.<br><strong>Monthly:</strong> 12 payments a year.<br><strong>Yearly:</strong> 1 payment a year.">?</i></span></div>
+          <select class="sel-input" id="scFreq"><option value="weekly">Weekly</option><option value="fortnightly">Fortnightly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select>
+        </div>
+        <div class="field-row">
+          <div class="field-label"><span class="tip-wrap" id="termLabel">Term (months) <i class="tip-icon" data-tip="How many repayments the loan runs for, counted in the unit set by the frequency above: weeks for weekly and fortnightly, months for monthly, years for yearly.">?</i></span></div>
+          <input class="num-input" id="scTerm" type="number" min="1" max="3000" step="1" value="60"/>
+          <div class="field-sub" id="termSub">Number of monthly payments (e.g. 60 = 5 years).</div>
+        </div>
+      </div>
       <div class="field-row" id="scRateModeRow">
         <div class="field-label"><span class="tip-wrap">Rate Basis <i class="tip-icon" data-tip="<strong>Simple:</strong> one rate for the whole term.<br><strong>Schedule:</strong> split the term into consecutive periods, each either Fixed at one rate or Floating between a min and a max. A fixed period followed by a floating one is exactly how a 2 year fixed loan that reverts to a variable rate behaves. Floating periods are simulated at the min, the midpoint and the max, and the chart shades that range.">?</i></span></div>
         <div class="seg-group" id="scRateModeGroup">
@@ -219,7 +236,7 @@
         <input id="scRate" type="range" min="0" max="30" step="0.1" value="5"/>
       </div>
       <div class="field-row" id="scRateScheduleRow" style="display:none;">
-        <div class="field-label"><span class="tip-wrap">Rate Schedule <i class="tip-icon" data-tip="Consecutive periods covering repayment 1 to the end of the term. The last period stretches automatically, so there can be no gaps or overlaps. When the rate changes, the instalment is re-amortised over the remaining term on the balance still owed, as a real lender does.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Rate Schedule <i class="tip-icon" data-tip="Consecutive periods covering the first repayment to the end of the term. On a deferred start that is the first repayment after the payment holiday, since no instalment falls due inside it. The last period stretches automatically, so there can be no gaps or overlaps. When the rate changes, the instalment is re-amortised over the remaining term on the balance still owed, as a real lender does.">?</i></span></div>
         <div class="sched-rows" id="scRatePeriodRows"></div>
         <div class="sched-actions"><button class="btn-primary btn-sm" id="addRatePeriodBtn" type="button">+ Add Period</button></div>
       </div>
@@ -243,11 +260,6 @@
         <div class="field-label"><span class="tip-wrap">Implied Rate <i class="tip-icon" data-tip="The annual rate that makes this repayment plan pay the loan off exactly, shown as an effective annual rate so it is comparable with every other scenario.">?</i></span></div>
         <div class="implied-rate" id="scImpliedRate">&mdash;</div>
       </div>
-      <div class="field-row" id="scIoPeriodsRow" style="display:none;">
-        <div class="field-label"><span class="tip-wrap" id="scIoLabel">Interest-Only Periods <i class="tip-icon" data-tip="How many repayments run before normal instalments begin. Set it to the full term for a loan that stays interest-only and repays the principal in one lump at maturity.">?</i></span></div>
-        <input class="num-input" id="scIoPeriods" type="number" min="0" max="3000" step="1" value="60"/>
-        <div class="field-sub" id="scIoSub"></div>
-      </div>
       <div class="field-row" id="scResidualRow" style="display:none;">
         <div class="field-label"><span class="tip-wrap">Residual (% of financed amount) <i class="tip-icon" data-tip="The share of the amount financed still owed at the end of the term and settled in one lump. A bigger residual buys smaller instalments and costs more interest overall.">?</i></span></div>
         <input class="num-input" id="scResidualPct" type="number" min="0" max="99" step="1" value="0"/>
@@ -255,18 +267,6 @@
       <div class="slider-block">
         <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment (% of purchase cost) <i class="tip-icon" data-tip="The share of the purchase cost you pay upfront. 0% borrows the whole amount; 100% pays cash outright, so there is no loan at all.">?</i></span></div><div class="slider-value" id="scDownVal">0%</div></div>
         <input id="scDownPct" type="range" min="0" max="100" step="1" value="0"/>
-      </div>
-      <div class="field-group">
-        <div class="group-title">Repayment Term</div>
-        <div class="field-row">
-          <div class="field-label"><span class="tip-wrap">Repayment Frequency <i class="tip-icon" data-tip="How often a repayment falls due. It sets the period interest rate, compound-converted from the annual rate, and it changes the unit of the Term field below.<br><strong>Weekly:</strong> 52 payments a year.<br><strong>Fortnightly:</strong> 26 payments a year.<br><strong>Monthly:</strong> 12 payments a year.<br><strong>Yearly:</strong> 1 payment a year.">?</i></span></div>
-          <select class="sel-input" id="scFreq"><option value="weekly">Weekly</option><option value="fortnightly">Fortnightly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select>
-        </div>
-        <div class="field-row">
-          <div class="field-label"><span class="tip-wrap" id="termLabel">Term (months) <i class="tip-icon" data-tip="How many repayments the loan runs for, counted in the unit set by the frequency above: weeks for weekly and fortnightly, months for monthly, years for yearly.">?</i></span></div>
-          <input class="num-input" id="scTerm" type="number" min="1" max="3000" step="1" value="60"/>
-          <div class="field-sub" id="termSub">Number of monthly payments (e.g. 60 = 5 years).</div>
-        </div>
       </div>
       <div class="field-group">
         <div class="group-title">Fees</div>
