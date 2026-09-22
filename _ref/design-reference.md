@@ -1427,46 +1427,105 @@ area**, and **pie / doughnut** — and the three things that matter most for all
 ### Chart Card Scaffold (shared HTML + CSS)
 
 Every chart sits in a `.chart-card` with a title row, a custom legend, the canvas wrapper,
-and a hover read-out box. The title row's `.chart-actions` hold export + reset-zoom buttons.
+and a hover read-out box. The title row is a `.chart-head`: the title on the left, the export
+`.btn-cluster` hard right, and nothing else on that row — the subtitle is a SIBLING below it,
+so however long it runs it can never push the buttons onto a line of their own.
+
+The cluster is the same on every chart on the site, in the same order — **⬇ SVG, ⬇ PNG,
+⧉ copy, ⟳ reset zoom** — and a table's **⬇ CSV** is the same cluster in a `.detail-head`
+beside the table it exports. The buttons are labelled by a glyph, so each one carries a
+`title` saying what it does (and `data-i18n-title` on a translated page).
 
 ```html
 <section class="chart-card card">
-  <div class="section-title">
-    <div><h2>Value Over Time</h2></div>
-    <div class="chart-actions">
-      <div class="btn-cluster">
-        <button class="btn-secondary" id="pngBtn"       title="Download PNG">⬇ PNG</button>
-        <button class="btn-secondary" id="copyBtn"      title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary" id="resetZoomBtn" title="Reset zoom">⟳</button>
-      </div>
+  <div class="chart-head">
+    <h2>Value Over Time</h2>
+    <div class="btn-cluster">
+      <button class="btn-secondary btn-sm"          id="svgBtn"       title="Download this chart as SVG">⬇ SVG</button>
+      <button class="btn-secondary btn-sm"          id="pngBtn"       title="Download this chart as PNG">⬇ PNG</button>
+      <button class="btn-secondary btn-sm btn-icon" id="copyBtn"      title="Copy PNG to clipboard">⧉</button>
+      <button class="btn-secondary btn-sm btn-icon" id="resetZoomBtn" title="Reset zoom">⟳</button>
     </div>
   </div>
+  <div class="sub" id="chartSub"></div>                <!-- optional, BELOW the row -->
   <div class="legend" id="chartLegend"></div>          <!-- custom HTML legend -->
   <div class="canvas-wrap"><canvas id="chartCanvas"></canvas></div>
   <div class="hover-box" id="chartHoverBox">Hover to inspect data points.</div>
 </section>
 ```
 
+`.chart-head`, `.detail-head`, `.btn-cluster`, `.btn-sm` and `.btn-icon` — including the
+phone layout, where the cluster takes the full width under the title and its buttons share
+it evenly — all live in **`shared.css`**. A tool sets only what is particular to its own
+page (heading size, card padding, the height of its canvas) and never restates that
+geometry, or the row drifts apart tool by tool. `node _ref/chart-check.mjs` checks that it
+has not.
+
 ```css
+/* page-specific only — the row itself is shared.css's */
 .chart-card    { padding: 20px; margin-bottom: 18px; }
-.chart-actions { display: flex; justify-content: flex-end; align-items: center; gap: 10px 16px; flex-wrap: wrap; }
-.btn-cluster   { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.chart-card>.sub { color: var(--muted); font-size: .8rem; margin: 5px 0 0; line-height: 1.4; }
 
 /* Custom legend (replaces Chart.js's built-in legend). The swatch inside each
    entry is drawn by SharedLegend — `.legend-swatch` is styled in shared.css. */
-.legend        { display: flex; gap: 14px; flex-wrap: wrap; margin: 10px 0 14px; font-size: .86rem; }
-.legend-item   { display: flex; align-items: center; gap: 7px; cursor: pointer; opacity: 1; transition: opacity .15s; }
+.legend        { display: flex; gap: 14px; flex-wrap: wrap; margin: 12px 0 14px; font-size: .84rem; }
+.legend-item   { display: flex; align-items: center; gap: 7px; cursor: pointer; transition: opacity .15s; }
 .legend-item.hidden { opacity: .35; }                /* dimmed when its series is toggled off */
 
 /* Canvas wrapper — fixed height so a responsive canvas has a definite box to fill */
-.canvas-wrap   { position: relative; width: 100%; height: 420px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--card-bg); }
+.canvas-wrap   { position: relative; width: 100%; height: 430px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--card-bg); }
 
 /* Persistent hover read-out beneath the chart */
-.hover-box     { margin-top: 10px; color: var(--muted); font-size: .86rem; min-height: 22px; }
+.hover-box     { margin-top: 10px; color: var(--muted); font-size: .84rem; min-height: 22px; }
 
-@media (max-width: 1100px) { .canvas-wrap { height: 340px; } }
-@media (max-width: 600px)  { .canvas-wrap { height: 280px; } .chart-actions { justify-content: flex-start; } }
+@media (max-width: 1100px) { .canvas-wrap { height: 360px; } }
+@media (max-width: 600px)  { .canvas-wrap { height: 300px; } }
 ```
+
+---
+
+### Zoom and the Y Axis (`SharedZoom`, shared.js)
+
+Every zoomable chart makes the reader two promises, and `SharedZoom` keeps them in one
+place so they cannot drift apart tool by tool.
+
+**A gesture can never leave the data.** `SharedZoom.options()` returns the whole
+`plugins.zoom` block — pan, wheel and pinch, all in `x` at the same speed — with `limits`
+built from the extent of what was actually plotted, plus a floor on how far a pinch may go
+(about five data points, past which there is nothing left to read).
+
+**The y axis follows the x window.** A linear y axis is sized once, from the whole series,
+so zooming into five years of a sixty-year plan leaves them a flat smear against a scale
+built for the end of it. `SharedZoom.plugin` refits y to the slice on screen, inside the
+same update the gesture triggers — a second update chasing the first would draw the lines
+on the old scale under the new ticks.
+
+```js
+const chart = new Chart(canvas, {
+  type: 'line',
+  data: { labels, datasets },
+  plugins: [SharedZoom.plugin],
+  options: {
+    plugins: {
+      // `min`/`max` are the data's extent in x units (indices on a category
+      // axis); `points` is how many there are, which sets the pinch floor.
+      zoom: SharedZoom.options({ min: 0, max: labels.length - 1, points: labels.length }),
+      // Which y axes to refit, and how. `includeZero` keeps zero on the axis
+      // whichever side of it the window sits; `fixed` leaves an axis pinned to
+      // a range of its own (a 0–100 percentage stack) alone.
+      sharedYFit: { auto: { axes: ['y'], includeZero: true } },
+    },
+    scales: { /* … */ },
+  },
+});
+```
+
+A chart that sizes an axis to SOME of its series instead of all of them hangs its own
+fitters on the instance — `chart.$fitY = {y: fn(xMin, xMax) -> {min, max}}` — and the same
+plugin applies them. A single series that is deliberately allowed to run off the top (a
+simulated band's best decile, say) carries `noAutoFit: true` on its dataset, and the chart
+says so in its subtitle. A chart whose data is replaced in place rewrites
+`options.plugins.zoom` on the update, so the limits travel with the data.
 
 > **Why a custom HTML legend?** It lets each entry click-toggle its series, doubles as the
 > source for PNG-export legends, and is styled with the same tokens as the rest of the page.

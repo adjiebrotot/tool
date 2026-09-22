@@ -39,6 +39,13 @@ const LANG_SENS = {
     chartBtnTitle: 'Show comparison chart',
     chartCompare: 'Comparison',
     closeTitle: 'Close',
+    /* Buttons in the export cluster are glyphs or two-word labels, so the
+       title attribute is what says what each one does, in the wording every
+       tool on the site uses. */
+    btnSvgTitle: 'Download this chart as SVG',
+    btnPngTitle: 'Download this chart as PNG',
+    btnCopyTitle: 'Copy PNG to clipboard',
+    btnResetZoomTitle: 'Reset zoom',
     chartHoverHint: 'Hover over the chart to inspect a year.',
     seriesOwn: 'Own',
     seriesRent: 'Rent',
@@ -146,6 +153,10 @@ const LANG_SENS = {
     chartBtnTitle: 'Tampilkan grafik perbandingan',
     chartCompare: 'Perbandingan',
     closeTitle: 'Tutup',
+    btnSvgTitle: 'Unduh grafik ini sebagai SVG',
+    btnPngTitle: 'Unduh grafik ini sebagai PNG',
+    btnCopyTitle: 'Salin PNG ke papan klip',
+    btnResetZoomTitle: 'Atur ulang zoom',
     chartHoverHint: 'Arahkan kursor ke grafik untuk memeriksa suatu tahun.',
     seriesOwn: 'Beli',
     seriesRent: 'Sewa',
@@ -1296,16 +1307,18 @@ function buildChartModal(){
   overlay.innerHTML = `
     <div class="chart-modal card" role="dialog" aria-modal="true">
       <button class="chart-modal-close cm-close" data-act="close" title="${escAttr(T('closeTitle'))}" aria-label="${escAttr(T('closeTitle'))}">✕</button>
-      <div class="chart-header">
+      <div class="chart-head">
         <h2 class="chart-modal-title"></h2>
         <div class="chart-controls">
           <button class="graph-btn cm-met" data-met="netEquity">${T('metricNetEquity')}</button>
           <button class="graph-btn cm-met" data-met="cash">${T('metricLiquidCash')}</button>
           <button class="graph-btn cm-met" data-met="cost">${T('metricAccumCost')}</button>
-          <button class="btn-secondary chart-export-btn" data-act="svg">⬇ SVG</button>
-          <button class="btn-secondary chart-export-btn" data-act="png">⬇ PNG</button>
-          <button class="btn-secondary chart-export-btn" data-act="copy" title="Copy PNG to clipboard">⧉</button>
-          <button class="btn-secondary chart-export-btn" data-act="reset">⟳</button>
+        </div>
+        <div class="btn-cluster">
+          <button class="btn-secondary btn-sm" data-act="svg" title="${escAttr(T('btnSvgTitle'))}">⬇ SVG</button>
+          <button class="btn-secondary btn-sm" data-act="png" title="${escAttr(T('btnPngTitle'))}">⬇ PNG</button>
+          <button class="btn-secondary btn-sm btn-icon" data-act="copy" title="${escAttr(T('btnCopyTitle'))}">⧉</button>
+          <button class="btn-secondary btn-sm btn-icon" data-act="reset" title="${escAttr(T('btnResetZoomTitle'))}">⟳</button>
         </div>
       </div>
       <div class="legend cm-legend"></div>
@@ -1430,7 +1443,7 @@ function buildGlobalChartModal(){
   overlay.innerHTML = `
     <div class="chart-modal card" role="dialog" aria-modal="true">
       <button class="chart-modal-close gc-close" data-act="close" title="${escAttr(T('closeTitle'))}" aria-label="${escAttr(T('closeTitle'))}">✕</button>
-      <div class="chart-header">
+      <div class="chart-head">
         <h2 class="chart-modal-title gc-title"></h2>
         <div class="chart-controls">
           <button class="graph-btn gc-met" data-met="netEquity">${T('metricNetEquity')}</button>
@@ -1438,10 +1451,12 @@ function buildGlobalChartModal(){
           <button class="graph-btn gc-met" data-met="cost">${T('metricAccumCost')}</button>
           <button class="graph-btn gc-toggle gc-own" data-series="own"><span class="ricon ricon-own" aria-hidden="true"></span>${T('gcShowOwn')}</button>
           <button class="graph-btn gc-toggle gc-rent" data-series="rent"><span class="ricon ricon-rent" aria-hidden="true"></span>${T('gcShowRent')}</button>
-          <button class="btn-secondary chart-export-btn" data-act="svg">⬇ SVG</button>
-          <button class="btn-secondary chart-export-btn" data-act="png">⬇ PNG</button>
-          <button class="btn-secondary chart-export-btn" data-act="copy" title="Copy PNG to clipboard">⧉</button>
-          <button class="btn-secondary chart-export-btn" data-act="reset">⟳</button>
+        </div>
+        <div class="btn-cluster">
+          <button class="btn-secondary btn-sm" data-act="svg" title="${escAttr(T('btnSvgTitle'))}">⬇ SVG</button>
+          <button class="btn-secondary btn-sm" data-act="png" title="${escAttr(T('btnPngTitle'))}">⬇ PNG</button>
+          <button class="btn-secondary btn-sm btn-icon" data-act="copy" title="${escAttr(T('btnCopyTitle'))}">⧉</button>
+          <button class="btn-secondary btn-sm btn-icon" data-act="reset" title="${escAttr(T('btnResetZoomTitle'))}">⟳</button>
         </div>
       </div>
       <div class="gc-scenarios-wrap">

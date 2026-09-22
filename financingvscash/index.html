@@ -13,7 +13,7 @@
 
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Finance vs Cash — Scenario Explorer</title>
+<title>Finance vs Cash Scenario Explorer | Adjie Brotools</title>
 <meta name="description" content="Compare paying cash versus financing a purchase while investing unused cash. Models flat rate, interest-only, balloon, variable and known-repayment loans.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/financingvscash/">
@@ -324,13 +324,13 @@
     <div class="metric card"><div class="label"><span class="tip-wrap">Cash Purchase Wealth <i class="tip-icon" data-tip="What you would end up with if you paid cash: your leftover funds, meaning available cash minus the purchase cost, compounded at the risk-free rate over the longest scenario term.">?</i></span></div><div class="value" id="kpiCashWealth">—</div><div class="sub" id="kpiCashSub"></div></div>
   </section>
   <section class="chart-card card">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
-      <h2 id="chartTitle" style="margin:0;">Ending Wealth Over Time</h2>
-      <div style="display:flex;gap:6px;">
-        <button class="btn-secondary btn-sm" id="chartSvgBtn">⬇ SVG</button>
-        <button class="btn-secondary btn-sm" id="chartPngBtn">⬇ PNG</button>
-        <button class="btn-secondary btn-sm" id="chartCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary btn-sm" id="chartResetZoom" title="Reset zoom">⟳</button>
+    <div class="chart-head">
+      <h2 id="chartTitle">Ending Wealth Over Time</h2>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="chartSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+        <button class="btn-secondary btn-sm" id="chartPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+        <button class="btn-secondary btn-sm btn-icon" id="chartCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
+        <button class="btn-secondary btn-sm btn-icon" id="chartResetZoom" title="Reset zoom">⟳</button>
       </div>
     </div>
     <div class="legend" id="chartLegend"></div>
@@ -338,25 +338,26 @@
     <div class="hover-box" id="hoverBox">Hover over the chart to inspect a period.</div>
   </section>
   <section class="chart-card card" id="sens2dSection" style="display:none;">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
-      <h2 id="sens2dTitle" style="margin:0;">2D Sensitivity</h2>
-      <div style="display:flex;gap:6px;">
-        <button class="btn-secondary btn-sm" id="sens2dSvgBtn">⬇ SVG</button>
-        <button class="btn-secondary btn-sm" id="sens2dPngBtn">⬇ PNG</button>
-        <button class="btn-secondary btn-sm" id="sens2dCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary btn-sm" id="sensResetZoom" title="Reset zoom">⟳</button>
+    <div class="chart-head">
+      <h2 id="sens2dTitle">2D Sensitivity</h2>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="sens2dSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+        <button class="btn-secondary btn-sm" id="sens2dPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+        <button class="btn-secondary btn-sm btn-icon" id="sens2dCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
+        <button class="btn-secondary btn-sm btn-icon" id="sensResetZoom" title="Reset zoom">⟳</button>
       </div>
     </div>
     <div class="legend" id="sensLegend"></div>
     <div class="canvas-wrap"><canvas id="sensCanvas"></canvas></div>
   </section>
   <section class="chart-card card" id="sens3dSection" style="display:none;">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-      <h2 id="sens3dTitle" style="margin:0;">3D Sensitivity Surface</h2>
-      <div style="display:flex;gap:6px;">
-        <button class="btn-secondary btn-sm" id="sens3dSvgBtn">⬇ SVG</button>
-        <button class="btn-secondary btn-sm" id="sens3dPngBtn">⬇ PNG</button>
-        <button class="btn-secondary btn-sm" id="sens3dCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
+    <div class="chart-head" style="margin-bottom:12px;">
+      <h2 id="sens3dTitle">3D Sensitivity Surface</h2>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="sens3dSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+        <button class="btn-secondary btn-sm" id="sens3dPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+        <button class="btn-secondary btn-sm btn-icon" id="sens3dCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
+        <button class="btn-secondary btn-sm btn-icon" id="sens3dResetView" title="Reset view">⟳</button>
       </div>
     </div>
     <div class="surface-wrap" id="plotly3d"></div>
@@ -366,11 +367,13 @@
     <div class="table-wrap" id="compTableWrap"></div>
   </section>
   <section class="detail-section card" style="margin-top:18px;">
-    <h2>Amortization Schedule</h2>
-    <div class="tab-bar" id="amortTabs"></div>
-    <div class="csv-btn-row">
-      <button class="btn-secondary" id="downloadBtn" type="button">⬇ CSV</button>
+    <div class="detail-head">
+      <h2>Amortization Schedule</h2>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="downloadBtn" type="button" title="Download this table as CSV">⬇ CSV</button>
+      </div>
     </div>
+    <div class="tab-bar" id="amortTabs"></div>
     <div class="table-wrap" id="amortTableWrap"></div>
   </section>
 </main>

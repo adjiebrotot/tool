@@ -245,6 +245,44 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
 .btn-secondary:active{transform:scale(.97);}
 
 /* ============================================================
+   CHART CARD TOOLBAR
+   ------------------------------------------------------------
+   One definition of the export cluster every chart carries, so a reader who
+   learns the row on one tool reads it on all of them: the title on the left,
+   the buttons hard right in a fixed order — SVG, PNG, copy, reset zoom — and
+   the same order for a table's CSV. The subtitle is a SIBLING below this row,
+   never inside it, so however long it runs it can never push the buttons onto
+   a line of their own. `margin-left:auto` holds the right edge even when a
+   long title wraps.
+
+   Tools may still set their own heading sizes; they should not restate the
+   geometry here, or the row drifts apart again tool by tool.
+   ============================================================ */
+.chart-head,.detail-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.chart-head h2,.chart-head h3,.detail-head h2,.detail-head h3{display:flex;align-items:center;gap:6px;margin:0;}
+.chart-head .btn-cluster,.detail-head .btn-cluster{margin-left:auto;}
+.btn-cluster{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;flex-shrink:0;}
+/* The size every chart-toolbar button is drawn at. An icon-only button (copy,
+   reset) is squared off so ⧉ and ⟳ are not two different widths.
+
+   The doubled `.btn-secondary.btn-sm` selector is deliberate: a few tools
+   restate `.btn-secondary` in their own stylesheet, which loads after this
+   one, and a single-class rule would lose to it — one tool's export row would
+   then be drawn a size larger than the rest of the site's. */
+.btn-sm,.btn-secondary.btn-sm{padding:5px 11px;font-size:.8rem;font-weight:700;border-radius:8px;line-height:1.35;white-space:nowrap;}
+.btn-icon,.btn-secondary.btn-icon{min-width:34px;text-align:center;}
+
+/* Phone: the cluster takes the full width under the title and its buttons
+   share it evenly, so they stay thumb-sized instead of shrinking to a row of
+   glyphs squeezed against the right edge. */
+@media(max-width:600px){
+  .chart-head,.detail-head{align-items:flex-start;}
+  .btn-cluster{width:100%;}
+  .chart-head .btn-cluster,.detail-head .btn-cluster{margin-left:0;}
+  .btn-cluster .btn-secondary{flex:1 1 auto;}
+}
+
+/* ============================================================
    KPI CARDS
    ============================================================ */
 .metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px;}

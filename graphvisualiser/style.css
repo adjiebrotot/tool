@@ -83,7 +83,9 @@ select option{background:var(--panel);color:var(--text)}
 
 /* CHART PANEL */
 .chart-panel{position:relative;overflow:hidden}
-.chart-header{padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border)}
+/* The row's geometry and the export cluster inside it are shared.css's
+   (.chart-head, .btn-cluster, .btn-sm); only the panel's own chrome is here. */
+.chart-header{padding:14px 18px 12px;border-bottom:1px solid var(--border)}
 .chart-header-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .chart-header h2{margin:0;font-size:1.05rem;font-weight:700}
 .info-row{display:flex;gap:8px;flex-wrap:wrap;padding:9px 18px;font-size:.79rem;color:var(--muted);border-bottom:1px solid var(--border)}

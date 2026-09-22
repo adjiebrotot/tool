@@ -13,7 +13,7 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PPh 21 Pisah Harta vs Gabung Harta — Scenario Explorer</title>
+  <title>PPh 21 Pisah Harta vs Gabung Harta Calculator | Adjie Brotools</title>
 <meta name="description" content="Compare Indonesian PPh 21 personal income tax under separate and joint filing scenarios.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/pisahvsgabung/">
@@ -286,13 +286,13 @@
       </section>
 
       <section class="chart-card card" style="margin-bottom:18px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
-          <h2 style="margin:0;" data-i18n="chart1Title">Total Tax by Household Salary</h2>
-          <div style="display:flex;gap:6px;">
-            <button class="btn-secondary" id="chart1SvgBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ SVG</button>
-            <button class="btn-secondary" id="chart1PngBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ PNG</button>
-            <button class="btn-secondary" id="chart1CopyPngBtn" style="font-size:0.8rem;padding:6px 12px;" title="Copy PNG to clipboard">⧉</button>
-            <button class="btn-secondary" id="chartResetZoom" style="font-size:0.8rem;padding:6px 12px;" data-i18n="resetZoom" title="Reset zoom">⟳</button>
+        <div class="chart-head">
+          <h2 data-i18n="chart1Title">Total Tax by Household Salary</h2>
+          <div class="btn-cluster">
+            <button class="btn-secondary btn-sm" id="chart1SvgBtn" data-i18n-title="btnSvgTitle" title="Download this chart as SVG">⬇ SVG</button>
+            <button class="btn-secondary btn-sm" id="chart1PngBtn" data-i18n-title="btnPngTitle" title="Download this chart as PNG">⬇ PNG</button>
+            <button class="btn-secondary btn-sm btn-icon" id="chart1CopyPngBtn" data-i18n-title="btnCopyTitle" title="Copy PNG to clipboard">⧉</button>
+            <button class="btn-secondary btn-sm btn-icon" id="chartResetZoom" data-i18n-title="btnResetZoomTitle" title="Reset zoom">⟳</button>
           </div>
         </div>
         <p class="muted" style="font-size:0.84rem;margin-top:4px;" data-i18n="chart1Sub">Shows total tax payable across salary range. The gap between lines = tax savings.</p>
@@ -304,13 +304,13 @@
       </section>
 
       <section class="chart-card card" style="margin-bottom:18px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
-          <h2 style="margin:0;" data-i18n="chart2Title">Tax Difference (Gabung − Pisah)</h2>
-          <div style="display:flex;gap:6px;">
-            <button class="btn-secondary" id="chart2SvgBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ SVG</button>
-            <button class="btn-secondary" id="chart2PngBtn" style="font-size:0.8rem;padding:6px 12px;">⬇ PNG</button>
-            <button class="btn-secondary" id="chart2CopyPngBtn" style="font-size:0.8rem;padding:6px 12px;" title="Copy PNG to clipboard">⧉</button>
-            <button class="btn-secondary" id="chartResetZoom2" style="font-size:0.8rem;padding:6px 12px;" data-i18n="resetZoom" title="Reset zoom">⟳</button>
+        <div class="chart-head">
+          <h2 data-i18n="chart2Title">Tax Difference (Gabung − Pisah)</h2>
+          <div class="btn-cluster">
+            <button class="btn-secondary btn-sm" id="chart2SvgBtn" data-i18n-title="btnSvgTitle" title="Download this chart as SVG">⬇ SVG</button>
+            <button class="btn-secondary btn-sm" id="chart2PngBtn" data-i18n-title="btnPngTitle" title="Download this chart as PNG">⬇ PNG</button>
+            <button class="btn-secondary btn-sm btn-icon" id="chart2CopyPngBtn" data-i18n-title="btnCopyTitle" title="Copy PNG to clipboard">⧉</button>
+            <button class="btn-secondary btn-sm btn-icon" id="chartResetZoom2" data-i18n-title="btnResetZoomTitle" title="Reset zoom">⟳</button>
           </div>
         </div>
         <p class="muted" style="font-size:0.84rem;margin-top:4px;" data-i18n="chart2Sub">Positive = Gabung Harta pays more (Pisah Harta wins). Negative = Gabung Harta pays less (Gabung Harta wins).</p>
@@ -333,14 +333,16 @@
       </section>
 
       <section class="detail-section card">
-        <h3 data-i18n="detailTitle">Detailed Breakdown by Salary</h3>
+        <div class="detail-head">
+          <h3 data-i18n="detailTitle">Detailed Breakdown by Salary</h3>
+          <div class="btn-cluster">
+            <button class="btn-secondary btn-sm" id="downloadBtn" type="button" data-i18n-title="btnCsvTitle" title="Download this table as CSV">⬇ CSV</button>
+          </div>
+        </div>
         <div class="tab-btns">
           <button class="tab-btn active" data-scenario="comparison" data-i18n="tabComparison">Comparison</button>
           <button class="tab-btn" data-scenario="pisah" data-i18n="tabPisah">Pisah Harta Detail</button>
           <button class="tab-btn" data-scenario="gabung" data-i18n="tabGabung">Gabung Harta Detail</button>
-        </div>
-        <div class="csv-btn-row">
-          <button class="btn-secondary" id="downloadBtn" type="button">⬇ CSV</button>
         </div>
         <div class="table-wrap" id="detailTable"></div>
       </section>

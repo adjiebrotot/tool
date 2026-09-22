@@ -87,7 +87,8 @@ body.light .weight-row.wt-total.bad .wt-name,body.light .weight-row.wt-total.bad
 .pf-act-btn.pf-act-del:hover{border-color:#ef4444;color:#ef4444}
 
 /* Portfolio chooser on the Detailed Breakdown header (drives every subsection) */
-.pf-view-select{font-size:.8rem;padding:5px 10px;min-width:130px;max-width:200px}
+/* Sized by its own content inside the export cluster (see the DCA simulator). */
+.pf-view-select{font-size:.8rem;padding:5px 10px;min-width:130px;max-width:200px;width:auto;flex:0 0 auto}
 
 /* Detailed Breakdown subsections (Security Prices / Composition / Breakdown Table)
    share one card and one portfolio selector; a divider separates each block. */
@@ -96,7 +97,7 @@ body.light .weight-row.wt-total.bad .wt-name,body.light .weight-row.wt-total.bad
 .detail-subsection .section-title{margin-bottom:10px}
 /* A subsection whose header row sits directly above its content (the Breakdown
    Table) needs the same breathing room the .section-title rows get. */
-.detail-subsection>.detail-title-row{margin-bottom:12px}
+.detail-subsection>.detail-head{margin-bottom:12px}
 .detail-subtitle{margin:0;font-size:1rem;font-weight:700;color:var(--text);text-transform:none;letter-spacing:normal}
 .detail-subtitle .muted-note{color:var(--muted);font-size:.85rem;font-weight:400}
 
@@ -114,8 +115,9 @@ body.light .weight-row.wt-total.bad .wt-name,body.light .weight-row.wt-total.bad
 .seg-btn:hover{color:var(--text)}
 .seg-btn.active{background:var(--accent);color:#fff}
 
-/* Keep chart export buttons grouped so they don't orphan-wrap onto a new line */
-.btn-cluster{display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
+/* The export cluster itself — .btn-cluster, .btn-sm, .detail-head and their
+   phone layout — is shared.css's, so this tool's row is the one every other
+   tool carries. */
 
 /* Collapsed Method summary (Rebalancing subtab): shows the chosen method with a
    "Change Method" button so the long five-option list does not crowd the panel. */

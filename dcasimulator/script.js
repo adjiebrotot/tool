@@ -1783,7 +1783,16 @@ function updatePriceChart(){
         callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>'  '+fmtPt(ctx),
           afterBody(items){ const its=items.filter(i=>!i.dataset._marker); if(its.length) $('priceHoverBox').textContent=`${its[0].label}  -  `+its.map(fmtPt).join('  |  '); }},
         backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10}),
-        zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
+        /* The shared gesture block. A category axis is already bounded by its
+         labels, but nothing stops a pinch from shrinking the window to a
+         couple of days, so it carries the same floor every other chart on the
+         site does (SharedZoom, shared.js). */
+      zoom:SharedZoom.options({min:0,max:Math.max(0,allDates.length-1),points:allDates.length}),
+      /* ...and every pane's y axis follows the x window: zoom into six months
+         of a ten-year series and the prices there fill the pane instead of
+         flattening against a scale built for the whole run. The oscillator
+         grids below are refitted in the same pass. */
+      sharedYFit:{auto:{axes:['y'].concat(oscGroupKeys.map(k=>'yOsc_'+k))}}},
       scales
     };
   }
@@ -1791,10 +1800,12 @@ function updatePriceChart(){
   if(priceChartInstance){
     priceChartInstance.data.labels=allDates;
     priceChartInstance.data.datasets=datasets;
+    // Rebuilt options carry the limits for the dates now plotted, so a longer
+    // or shorter run means a longer or shorter axis to pan across.
     priceChartInstance.options=buildPriceOpts();
     priceChartInstance.update('none');
   } else {
-    priceChartInstance=new Chart($('priceCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildPriceOpts()});
+    priceChartInstance=new Chart($('priceCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildPriceOpts(),plugins:[SharedZoom.plugin]});
   }
 }
 
@@ -1849,7 +1860,11 @@ function updateEquityChart(){
       callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y,true)}`,
         afterBody(items){ if(items.length) $('equityHoverBox').textContent=`${items[0].label}  -  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  '); }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:textColor, bodyColor:mutedColor, borderColor:gridColor, borderWidth:1, padding:10}),
-      zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
+      zoom:SharedZoom.options({min:0,max:Math.max(0,allDates.length-1),points:allDates.length}),
+      // The y axis follows the x window, so a zoom into the early months
+      // shows the shape there rather than a flat line under a scale built for
+      // the final balance (SharedZoom, shared.js).
+      sharedYFit:{auto:{axes:['y']}}},
     scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
               y:{title:{display:true,text:'Portfolio Value ('+currentCurrencySymbol+')',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
   };}
@@ -1863,12 +1878,13 @@ function updateEquityChart(){
     equityChartInstance.options.scales.y.ticks.callback=yCallback;
     equityChartInstance.options.scales.y.title.color=mutedColor;
     equityChartInstance.options.scales.y.title.text='Portfolio Value ('+currentCurrencySymbol+')';
+    equityChartInstance.options.plugins.zoom=SharedZoom.options({min:0,max:Math.max(0,allDates.length-1),points:allDates.length});
     equityChartInstance.update('none');
     // re-apply deposited visibility
     datasets.forEach((ds,i)=>{ if(ds._type==='deposit') equityChartInstance.setDatasetVisibility(i,showDeposited); });
     equityChartInstance.update();
   } else {
-    equityChartInstance=new Chart($('equityCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildEquityOpts()});
+    equityChartInstance=new Chart($('equityCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildEquityOpts(),plugins:[SharedZoom.plugin]});
     datasets.forEach((ds,i)=>{ if(ds._type==='deposit') equityChartInstance.setDatasetVisibility(i,showDeposited); });
     equityChartInstance.update();
   }

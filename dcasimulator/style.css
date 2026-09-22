@@ -125,7 +125,10 @@ body.light tr:hover td{background:rgba(90,145,232,.05)}
 .tab-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .tab-btn{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s;font-family:inherit}
 .tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.pf-view-select{font-size:.8rem;padding:5px 10px;min-width:130px;max-width:220px}
+/* Sized by its own content inside the export cluster: .num-input is width:100%,
+   which in a flex row would stretch the select and push the CSV button onto a
+   line of its own. */
+.pf-view-select{font-size:.8rem;padding:5px 10px;min-width:130px;max-width:220px;width:auto;flex:0 0 auto}
 .detail-row-tag{display:inline-block;margin-left:6px;font-size:.68rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--accent);vertical-align:middle}
 tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 
@@ -183,10 +186,10 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 /* Keep the toggles together as one cluster and the export buttons as another so
    they wrap as coherent blocks instead of intermingling on narrow screens. */
 .chart-toggles{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap}
-.chart-export{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+/* The export cluster itself — .btn-cluster, .btn-sm, .detail-head and their
+   phone layout — is shared.css's, so this tool's row is the one every other
+   tool carries. */
 .detail-header{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
-.detail-title-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.detail-csv-wrap{display:flex;justify-content:flex-end}
 @media(max-width:1100px){
   .layout,.bottom{grid-template-columns:1fr}
   .controls{position:static;height:auto;max-height:none;overflow:visible}
@@ -214,14 +217,14 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
   .canvas-wrap.has-osc{height:440px}
   .table-wrap{font-size:.78rem}
   th,td{padding:6px 5px}
-  .section-title>.chart-actions,.detail-title-row,.detail-csv-wrap{width:100%}
+  .section-title>.chart-actions{width:100%}
   .section-title>.btn-secondary{margin-left:auto}
   /* Stack the toggle cluster above the export buttons, each spanning the full
-     card width so neither row intermingles or right-floats awkwardly. */
+     card width so neither row intermingles or right-floats awkwardly. The
+     export cluster's own full-width rule is shared.css's. */
   .chart-actions{justify-content:flex-start;gap:10px}
-  .chart-toggles,.chart-export{width:100%}
-  .chart-export .btn-secondary{flex:1 1 auto}
-  .detail-title-row h2{width:100%}
+  .chart-toggles{width:100%}
+  .detail-head h2{width:100%}
 }
 .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin-right:6px}
 .ticker-ref-link{display:inline-block;margin-top:6px;font-size:.78rem;font-weight:600;color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent);transition:opacity var(--transition-fast)}

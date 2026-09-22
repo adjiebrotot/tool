@@ -112,6 +112,14 @@ const LANG = {
     btnLiquidCash: 'Liquid Cash',
     btnAccumCost: 'Accum. Cost',
     btnZoom: '⟳',
+    /* Buttons in the export cluster are glyphs or two-word labels, so the
+       title attribute is what says what each one does, in the wording every
+       tool on the site uses. */
+    btnSvgTitle: 'Download this chart as SVG',
+    btnPngTitle: 'Download this chart as PNG',
+    btnCopyTitle: 'Copy PNG to clipboard',
+    btnResetZoomTitle: 'Reset zoom',
+    btnCsvTitle: 'Download this table as CSV',
     chartHoverHint: 'Hover over the chart to inspect a year.',
     /* summary */
     ownSnapshotTitle: 'Own — Snapshot',
@@ -295,6 +303,11 @@ const LANG = {
     btnLiquidCash: 'Uang Tunai',
     btnAccumCost: 'Biaya Kumulatif',
     btnZoom: '⟳',
+    btnSvgTitle: 'Unduh grafik ini sebagai SVG',
+    btnPngTitle: 'Unduh grafik ini sebagai PNG',
+    btnCopyTitle: 'Salin PNG ke papan klip',
+    btnResetZoomTitle: 'Atur ulang zoom',
+    btnCsvTitle: 'Unduh tabel ini sebagai CSV',
     chartHoverHint: 'Arahkan kursor ke grafik untuk melihat detail per tahun.',
     /* summary */
     ownSnapshotTitle: 'Beli — Ringkasan',
@@ -405,6 +418,12 @@ function applyLang(){
     const key = el.dataset.i18nTip;
     const val = T(key);
     if(val) el.setAttribute('data-tip', val);
+  });
+  /* data-i18n-title: the native tooltip on a button whose label is a glyph */
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{
+    const key = el.dataset.i18nTitle;
+    const val = T(key);
+    if(val) el.setAttribute('title', val);
   });
   /* quick start label */
   const qsl = document.querySelector('[data-i18n="quickStartLabel"]');
@@ -1730,10 +1749,15 @@ function renderChart(rows){
           backgroundColor:cssVar('--panel')||'#162033',
           titleColor:t, bodyColor:m, borderColor:cssVar('--border'), borderWidth:1, padding:10,
         }),
-        zoom:{
-          pan:{enabled:true,mode:'x'},
-          zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'},
-        },
+        /* The shared gesture block: a pan cannot leave the years modelled,
+           and the pinch has a floor, so the chart can never be zoomed past
+           the data it holds (SharedZoom, shared.js). */
+        zoom:SharedZoom.options({min:0,max:Math.max(0,labels.length-1),points:labels.length}),
+        /* ...and the y axis follows the x window. Net equity at year 30 is
+           an order of magnitude above year 3, so without this a zoom into
+           the early years draws them as a flat smear along the axis. Zero
+           stays on the scale: every series here is read against it. */
+        sharedYFit:{auto:{axes:['y'],includeZero:true}},
       },
       scales:{
         x:{title:{display:true,text:'Year',color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,maxTicksLimit:12,font:{family:"'DM Mono', monospace",size:11},callback:xTickCallback},grid:{color:g}},
@@ -1757,9 +1781,12 @@ function renderChart(rows){
     chartInstance.options.plugins.tooltip.titleColor=t;
     chartInstance.options.plugins.tooltip.bodyColor=m;
     chartInstance.options.plugins.tooltip.borderColor=cssVar('--border');
+    // The limits travel with the data: a different horizon means a different
+    // extent to pan across.
+    chartInstance.options.plugins.zoom=cfg.options.plugins.zoom;
     chartInstance.update('none');
   } else {
-    chartInstance = new Chart($('chartCanvas'), cfg);
+    chartInstance = new Chart($('chartCanvas'), {...cfg, plugins:[SharedZoom.plugin]});
   }
 }
 

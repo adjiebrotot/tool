@@ -13,7 +13,7 @@
 
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Rent vs Own — Property Scenario Explorer</title>
+<title>Rent vs Own Property Scenario Explorer | Adjie Brotools</title>
 <meta name="description" content="Model renting versus buying property over time by comparing cash, equity, and net wealth scenarios.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/rentvsownhouse/">
@@ -523,16 +523,21 @@
 
   <!-- CHART -->
   <section class="chart-card card">
-    <div class="chart-header">
+    <!-- Title, then what the chart is OF, then what to do with it: the graph
+         switches stay beside the title, the export cluster sits hard right in
+         the order every other tool on the site uses. -->
+    <div class="chart-head">
       <h2 data-i18n="chartTitle">Comparison</h2>
       <div class="chart-controls">
         <button class="graph-btn active" data-graph="netEquity" id="graphNetEquity" data-i18n="btnNetEquity">Net Equity</button>
         <button class="graph-btn" data-graph="cash" id="graphCash" data-i18n="btnLiquidCash">Liquid Cash</button>
         <button class="graph-btn" data-graph="cost" id="graphCost" data-i18n="btnAccumCost">Accum. Cost</button>
-        <button class="btn-secondary chart-export-btn" id="svgBtn">⬇ SVG</button>
-        <button class="btn-secondary chart-export-btn" id="pngBtn">⬇ PNG</button>
-        <button class="btn-secondary chart-export-btn" id="copyPngBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary chart-export-btn" id="chartResetZoom" data-i18n="btnZoom">⟳</button>
+      </div>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="svgBtn" data-i18n-title="btnSvgTitle" title="Download this chart as SVG">⬇ SVG</button>
+        <button class="btn-secondary btn-sm" id="pngBtn" data-i18n-title="btnPngTitle" title="Download this chart as PNG">⬇ PNG</button>
+        <button class="btn-secondary btn-sm btn-icon" id="copyPngBtn" data-i18n-title="btnCopyTitle" title="Copy PNG to clipboard">⧉</button>
+        <button class="btn-secondary btn-sm btn-icon" id="chartResetZoom" data-i18n="btnZoom" data-i18n-title="btnResetZoomTitle" title="Reset zoom">⟳</button>
       </div>
     </div>
     <div class="legend" id="chartLegend"></div>
@@ -566,8 +571,8 @@
         <button class="tab-btn" data-table="rent"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="tabRentCashflow">Rent Cashflow</span></button>
         <button class="tab-btn" id="rtbTableTab" data-table="rtb" style="display:none;"><span class="ricon ricon-rtb" aria-hidden="true"></span><span data-i18n="tabRTBCashflow">Rent-Then-Buy Cashflow</span></button>
       </div>
-      <div class="tab-row">
-        <button class="btn-secondary" id="downloadBtn" type="button" data-i18n="btnCSV">⬇ CSV</button>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="downloadBtn" type="button" data-i18n="btnCSV" data-i18n-title="btnCsvTitle" title="Download this table as CSV">⬇ CSV</button>
       </div>
     </div>
     <div class="table-wrap" id="detailTableWrap"></div>

@@ -871,13 +871,19 @@ function updateChart(sweep, userIdx){
           }
         }
       }),
-      zoom: {
-        // Panning and zooming stay inside the swept range. Beyond it there is
-        // nothing computed to look at, only empty axis.
-        limits: bounded ? { x:{ min:xMin, max:xMax, minRange:(xMax - xMin)/40 } } : {},
-        pan: { enabled:true, mode:'x' },
-        zoom: { wheel:{ enabled:true, speed:0.08 }, pinch:{ enabled:true }, mode:'x' }
-      }
+      // Panning and zooming stay inside the swept range. Beyond it there is
+      // nothing computed to look at, only empty axis. The shared block also
+      // floors the pinch, so the chart cannot be zoomed down to two points and
+      // a lot of grid.
+      zoom: SharedZoom.options(bounded
+        ? { min:xMin, max:xMax, points:sweep.rows.length }
+        : {}),
+      /* The y axis follows the x window: zoom into the bottom of the income
+         range and the caps there fill the pane, instead of hugging the axis
+         under a scale built for the top of it. Every cap is read against zero
+         and none can go negative, so the refitted axis keeps its floor there
+         whatever slice is on screen (SharedZoom, shared.js). */
+      sharedYFit: { auto:{ axes:['y'], includeZero:true } }
     },
     scales: {
       x: {
@@ -889,6 +895,8 @@ function updateChart(sweep, userIdx){
       },
       y: {
         title:{ display:true, text:'Borrowing capacity ($)', color:muted, font:{size:11} },
+        // The floor is the fitter's (see sharedYFit above), which holds it at
+        // zero on every window rather than only on the opening one.
         min: 0,
         ticks:{ color:muted, font:{size:11}, callback:v => fmt.currency(v, true) },
         grid:{ color:grid }
@@ -897,7 +905,10 @@ function updateChart(sweep, userIdx){
   };
 
   if(chart) chart.destroy();
-  chart = new Chart($('chartCanvas'), { type:'line', data:{ datasets }, options });
+  chart = new Chart($('chartCanvas'), {
+    type:'line', data:{ datasets }, options,
+    plugins: [SharedZoom.plugin]
+  });
   renderLegend(datasets);
 }
 
@@ -1005,6 +1016,80 @@ function chartPng(){
   ctx.font = '400 13px "DM Sans", sans-serif';
   ctx.fillText('Made using tool.adjiebrotots.com/borrowingcapacity', pad, out.height - 14);
   return out;
+}
+
+/* The SVG export lays out exactly as the PNG does — same title, same subtitle,
+   same key, same watermark — so the two downloads are the same picture in two
+   formats. The plot itself is the canvas Chart.js drew, embedded as an image;
+   everything around it is vector, which is what makes the text on an SVG stay
+   crisp at any size. */
+function chartSvg(){
+  const src = $('chartCanvas');
+  const NS = 'http://www.w3.org/2000/svg', XL = 'http://www.w3.org/1999/xlink';
+  const dpr = window.devicePixelRatio || 1;
+  const plotW = Math.round(src.width / dpr), plotH = Math.round(src.height / dpr);
+  const pad = 20, headH = 64, footH = 24;   // title, then subtitle, then the plot
+  const items = SharedLegend.itemsOf('chartLegend');
+  const markW = SharedLegend.W, gap = 7, itemGap = 19;
+  const legendH = items.length ? 24 : 0;
+  const W = plotW + pad * 2, H = plotH + headH + legendH + footH + pad;
+
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('xmlns', NS); svg.setAttribute('xmlns:xlink', XL);
+  svg.setAttribute('width', W); svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  const text = (str, x, y, size, weight, fill, anchor) => {
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', x); t.setAttribute('y', y);
+    t.setAttribute('font-family', '"DM Sans", sans-serif');
+    t.setAttribute('font-size', size); t.setAttribute('font-weight', weight);
+    t.setAttribute('fill', fill);
+    if(anchor) t.setAttribute('dominant-baseline', anchor);
+    t.textContent = str;
+    svg.appendChild(t);
+    return t;
+  };
+  const bg = document.createElementNS(NS, 'rect');
+  bg.setAttribute('width', W); bg.setAttribute('height', H);
+  bg.setAttribute('fill', cssVar('--panel') || '#fff');
+  svg.appendChild(bg);
+
+  text('Borrowing capacity across the income range', pad, pad + 16, 19, 700, cssVar('--text'));
+  if(last) text(`Capacity ${fmt.money0(last.r.maxLoan)} · binding constraint: ${last.r.binding.label} · assessed at ${fmt.pct(last.r.assessRate)}`,
+                pad, pad + 34, 11, 400, cssVar('--muted'));
+
+  const img = document.createElementNS(NS, 'image');
+  img.setAttribute('x', pad); img.setAttribute('y', headH);
+  img.setAttribute('width', plotW); img.setAttribute('height', plotH);
+  const href = src.toDataURL('image/png');
+  img.setAttribute('href', href); img.setAttributeNS(XL, 'href', href);
+  svg.appendChild(img);
+
+  if(items.length){
+    // Measured on a canvas because SVG cannot report a string's width before
+    // it is in the document, and the key is centred under the plot.
+    const mc = document.createElement('canvas').getContext('2d');
+    mc.font = '500 11px "DM Sans", sans-serif';
+    const widths = items.map(it => markW + gap + mc.measureText(it.label).width);
+    const totalW = widths.reduce((a, b) => a + b, 0) + itemGap * (items.length - 1);
+    let x = Math.max(pad, (W - totalW) / 2);
+    const cy = headH + plotH + legendH / 2;
+    items.forEach((it, i) => {
+      svg.appendChild(SharedLegend.svgNode(it.swatch || {color: it.color}, x, cy, 1));
+      x += markW + gap;
+      text(it.label, x, cy, 11, 500, cssVar('--text'), 'middle');
+      x += widths[i] - markW - gap + itemGap;
+    });
+  }
+  text('Made using tool.adjiebrotots.com/borrowingcapacity', pad, H - 10, 10, 400, cssVar('--muted'));
+
+  const xml = '<?xml version="1.0" encoding="utf-8"?>\n' + new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([xml], {type: 'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'borrowing-capacity.svg';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function exportPng(){
@@ -1296,6 +1381,7 @@ function init(){
   // so any one of them already returns the form to a clean, known state and a
   // separate Reset would only offer a worse version of the same thing.
   $('csvBtn').addEventListener('click', exportCsv);
+  $('svgBtn').addEventListener('click', chartSvg);
   $('pngBtn').addEventListener('click', exportPng);
   $('copyBtn').addEventListener('click', copyPng);
   $('resetZoomBtn').addEventListener('click', () => { if(chart) chart.resetZoom(); });

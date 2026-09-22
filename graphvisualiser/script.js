@@ -296,8 +296,11 @@ function renderChart() {
 
   document.getElementById('emptyState').style.display = 'none';
   document.getElementById('plotDiv').style.display    = 'block';
-  document.getElementById('savePng').style.display    = 'inline-flex';
-  document.getElementById('copyPng').style.display    = 'inline-flex';
+  ['saveSvg','savePng','copyPng','resetView'].forEach(id => {
+    document.getElementById(id).style.display = 'inline-flex';
+  });
+  // A 2D plot has a zoom to reset; a 3D one has a camera to put back.
+  document.getElementById('resetView').title = S.dim === 2 ? 'Reset zoom' : 'Reset view';
 
   const isLight  = document.body.classList.contains('light');
   const paperBg  = 'rgba(0,0,0,0)';
@@ -397,11 +400,109 @@ function renderChart() {
     responsive:true, displayModeBar:true,
     modeBarButtonsToRemove:['sendDataToCloud','editInChartStudio'],
     toImageButtonOptions:{format:'png',filename:title.replace(/\s+/g,'_'),scale:2},
-  });
+  }).then(() => bindAxisGuard(traces));
 
   document.getElementById('chartPanelTitle').textContent = title;
   setStatus('Rendered', 'success');
 }
+
+/* ─── ZOOM: BOUNDED, AND A Y AXIS THAT FOLLOWS THE X WINDOW ───────────────────
+   The same two promises every chart on this site makes, kept here by hand
+   because a Plotly plot has no zoom plugin to hand them to: a drag or a scroll
+   cannot leave the data, and the y axis is sized to the slice on screen rather
+   than to the whole series — otherwise zooming into the left of a fast-growing
+   column leaves it flat against a scale built for the right of it.
+
+   2D only. A 3D scene is moved by its camera, not by axis ranges, and its ⟳
+   puts that camera back instead. */
+let axisGuardBound = false, guardData = null, guarding = false;
+
+function dataExtent(traces, key){
+  let lo = null, hi = null;
+  traces.forEach(t => (t[key] || []).forEach(v => {
+    const n = typeof v === 'number' ? v : parseFloat(v);
+    if(!isFinite(n)) return;
+    if(lo === null || n < lo) lo = n;
+    if(hi === null || n > hi) hi = n;
+  }));
+  if(lo === null) return null;
+  if(hi === lo){ const p = Math.abs(hi) * 0.05 || 1; return [lo - p, hi + p]; }
+  return [lo, hi];
+}
+
+/* The y extent of everything inside an x window, with one point either side so
+   a segment crossing the edge is scaled with the slice it is drawn in. */
+function yExtentIn(traces, x0, x1){
+  let lo = null, hi = null;
+  traces.forEach(t => {
+    const xs = t.x || [], ys = t.y || [];
+    let before = null, after = null;
+    for(let i = 0; i < ys.length; i++){
+      const x = typeof xs[i] === 'number' ? xs[i] : parseFloat(xs[i]);
+      const y = typeof ys[i] === 'number' ? ys[i] : parseFloat(ys[i]);
+      if(!isFinite(y)) continue;
+      const xi = isFinite(x) ? x : i;
+      if(xi < x0){ before = y; continue; }
+      if(xi > x1){ if(after === null) after = y; continue; }
+      if(lo === null || y < lo) lo = y;
+      if(hi === null || y > hi) hi = y;
+    }
+    [before, after].forEach(v => {
+      if(v === null) return;
+      if(lo === null || v < lo) lo = v;
+      if(hi === null || v > hi) hi = v;
+    });
+  });
+  if(lo === null) return null;
+  const pad = Math.max((hi - lo) * 0.08, Math.abs(hi) * 0.02, 1e-9) || 1;
+  return [lo - pad, hi + pad];
+}
+
+function bindAxisGuard(traces){
+  const div = document.getElementById('plotDiv');
+  guardData = (S.dim === 2) ? { traces, x: dataExtent(traces, 'x') } : null;
+  if(guardData && guardData.x){
+    // Open on the data, so the first drag has an edge to meet.
+    const y = yExtentIn(traces, guardData.x[0], guardData.x[1]);
+    Plotly.relayout(div, y ? {'xaxis.range': guardData.x.slice(), 'yaxis.range': y}
+                           : {'xaxis.range': guardData.x.slice()});
+  }
+  if(axisGuardBound) return;
+  axisGuardBound = true;
+  div.on('plotly_relayout', ev => {
+    if(guarding || !guardData || !guardData.x) return;
+    const hasX = ('xaxis.range[0]' in ev) || ('xaxis.range' in ev);
+    const auto = ev['xaxis.autorange'] === true;
+    if(!hasX && !auto) return;
+    const full = guardData.x;
+    let x0 = auto ? full[0] : Number(ev['xaxis.range[0]'] ?? (ev['xaxis.range'] || [])[0]);
+    let x1 = auto ? full[1] : Number(ev['xaxis.range[1]'] ?? (ev['xaxis.range'] || [])[1]);
+    if(!isFinite(x0) || !isFinite(x1)) return;
+    if(x1 < x0){ const t = x0; x0 = x1; x1 = t; }
+    // A window wider than the data is pulled back to it; one that has been
+    // dragged off an end is slid back inside, keeping its width.
+    const width = Math.min(x1 - x0, full[1] - full[0]);
+    if(x0 < full[0]){ x0 = full[0]; x1 = x0 + width; }
+    if(x1 > full[1]){ x1 = full[1]; x0 = x1 - width; }
+    const y = yExtentIn(guardData.traces, x0, x1);
+    const update = {'xaxis.range': [x0, x1]};
+    if(y) update['yaxis.range'] = y;
+    guarding = true;
+    Plotly.relayout(div, update).finally(() => { guarding = false; });
+  });
+}
+
+document.getElementById('resetView').onclick = () => {
+  const div = document.getElementById('plotDiv');
+  if(S.dim === 2 && guardData && guardData.x){
+    const y = yExtentIn(guardData.traces, guardData.x[0], guardData.x[1]);
+    Plotly.relayout(div, y ? {'xaxis.range': guardData.x.slice(), 'yaxis.range': y}
+                           : {'xaxis.autorange': true, 'yaxis.autorange': true});
+  } else {
+    // A 3D scene: put the camera back where the plot opened.
+    Plotly.relayout(div, {'scene.camera': {eye:{x:1.25, y:1.25, z:1.25}}});
+  }
+};
 
 // ─── SAVE PNG ─────────────────────────────────────────────────────────────────
 async function withPngWatermark(callback) {
@@ -424,6 +525,12 @@ document.getElementById('savePng').onclick = async () => {
   const title = document.getElementById('chartTitle').value || 'graph';
   await withPngWatermark(() => Plotly.downloadImage('plotDiv', {
     format:'png', filename:title.replace(/\s+/g,'_'), scale:3, width:1440, height:760
+  }));
+};
+document.getElementById('saveSvg').onclick = async () => {
+  const title = document.getElementById('chartTitle').value || 'graph';
+  await withPngWatermark(() => Plotly.downloadImage('plotDiv', {
+    format:'svg', filename:title.replace(/\s+/g,'_'), width:1440, height:760
   }));
 };
 document.getElementById('copyPng').onclick = async () => {
