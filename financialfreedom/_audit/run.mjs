@@ -807,7 +807,7 @@ console.log('\n── Page and presentation ──');
       kickers: document.querySelectorAll('.board-kicker').length,
       ledes: document.querySelectorAll('.board-lede').length,
       sub1: document.getElementById('chart1Sub').textContent,
-      sub2: document.getElementById('chart2Sub').textContent,
+      sub2: document.getElementById('chart2Sub'),
       sub3: document.getElementById('chart3Sub'),
       canvases: Array.from(document.querySelectorAll('#boardCash canvas')).map(c => c.id),
       wraps: document.querySelectorAll('#boardCash .canvas-wrap').length
@@ -846,17 +846,18 @@ console.log('\n── Page and presentation ──');
      changes with the plan. */
   check('F48e the board kickers and ledes are gone',
     r.kickers === 0 && r.ledes === 0, `${r.kickers} kickers, ${r.ledes} ledes`);
-  /* A subtitle now carries ONLY what the picture cannot show for itself, and
-     on the default plan it carries nothing at all: the retirement rule, the
-     two shaded sides and the balance pane are all in the legend already, and
-     "you can pinch out for the rest" is something a chart teaches by being
-     draggable. The edge cases at either end of the slider still speak up,
-     which F44g pins separately. */
+  /* A subtitle now carries ONLY what the picture cannot show for itself: the
+     retirement rule, the two shaded sides and the balance pane are all in the
+     legend already, and "you can pinch out for the rest" is something a chart
+     teaches by being draggable. The cashflow chart has no subtitle left at
+     all — every sentence it carried restated the slider's own labels or the
+     "Left at" card — so the element is gone rather than left empty, and the
+     path chart keeps the one note the picture cannot show: a band running off
+     an axis sized to the expected outcome. */
   check('F48f and no subtitle repeats what the legend or the chart already says',
-    !/no withdrawal/i.test(r.sub1) && !/no withdrawal/i.test(r.sub2) &&
-    !/income falls to the pension/i.test(r.sub2) &&
-    !/the view opens on/i.test(r.sub1) && r.sub2 === '',
-    `1: "${r.sub1}" // 2: "${r.sub2.slice(0, 40)}"`);
+    !/no withdrawal/i.test(r.sub1) && !/the view opens on/i.test(r.sub1) &&
+    !/below zero/i.test(r.sub1) && r.sub2 === null,
+    `1: "${r.sub1}" // 2: ${r.sub2 === null ? 'gone' : 'still there'}`);
 }
 
 /* F49: a point between two yearly samples is a DATE, not a decimal. The
@@ -1915,7 +1916,8 @@ for(const [name, extra] of [
      table and the "Left at" card report, and the chart used to be the one
      place on the page that flattened it against the axis instead. So the
      plotted series is checked against the engine's own figures, negatives and
-     all, and the subtitle has to say the line goes under. */
+     all, and the axis has to open under zero to show it. No caption says so:
+     a line drawn below the axis, with a negative "Left at", is the statement. */
   {
     const r2 = await page.evaluate(() => {
       const F = window.__FF;
@@ -1933,8 +1935,8 @@ for(const [name, extra] of [
         tableLowest: Math.min.apply(null, rows),
         worst,
         axisMin: cash.options.scales.yBal.min,
-        sub: $('chart2Sub').textContent,
-        left: $('mLeft').textContent
+        left: $('mLeft').textContent,
+        leftSub: $('mLeftSub').textContent
       };
       $('savings').value = before.sav; $('assets').value = before.ass; $('ageRetire').value = before.ret;
       F.render();
@@ -1944,9 +1946,9 @@ for(const [name, extra] of [
       r2.lowest < 0 && r2.worst < 0.01 && close(r2.lowest, r2.tableLowest, 0.01),
       `chart floor ${r2.lowest.toFixed(0)}, table floor ${r2.tableLowest.toFixed(0)}, ` +
       `largest disagreement ${r2.worst.toExponential(2)}`);
-    check('F44f3b and the axis opens under zero to show it, with the subtitle saying so',
-      r2.axisMin < 0 && /below zero/i.test(r2.sub) && /^−/.test(r2.left),
-      `axis opens at ${r2.axisMin.toFixed(0)}, "Left at" reads ${r2.left}, subtitle: "${r2.sub.slice(-60)}"`);
+    check('F44f3b and the axis opens under zero to show it, with "Left at" reading the shortfall',
+      r2.axisMin < 0 && /^−/.test(r2.left) && /ran out/i.test(r2.leftSub),
+      `axis opens at ${r2.axisMin.toFixed(0)}, "Left at" reads ${r2.left} — "${r2.leftSub}"`);
   }
   check('F44i and the retirement year is marked, not left to be counted',
     r.marker, r.marker ? 'marked' : 'no marker');
@@ -2216,10 +2218,12 @@ console.log('\n── Two sections, one slider ──');
     $('ageNow').value = 30; $('ageDie').value = 90; F.render();
     el.value = el.min; F.render();
     const today = {ui: F.UI.ageRetire, accM: F.accMonths(F.last.P), verdict: $('verdict').className,
-                   left: F.last.leftAtDeath, note: $('chart2Sub').textContent};
+                   left: F.last.leftAtDeath, scale: $('retireScaleMin').textContent,
+                   note: $('mLeftSub').textContent};
     el.value = el.max; F.render();
     const never = {ui: F.UI.ageRetire, accM: F.accMonths(F.last.P), verdict: $('verdict').className,
-                   left: F.last.leftAtDeath, note: $('chart2Sub').textContent};
+                   left: F.last.leftAtDeath, scale: $('retireScaleMax').textContent,
+                   note: $('mLeftSub').textContent};
     el.value = 60; F.render();
     return {before, moved, squeezed, today, never, inYouTab};
   });
@@ -2237,14 +2241,17 @@ console.log('\n── Two sections, one slider ──');
   check('F52e the readout and the two end labels name the ages, not raw numbers',
     /^\d/.test(r.before.readout) && /stop today/i.test(r.before.scale[0]) &&
     /never stop/i.test(r.before.scale[1]), r.before.scale.join(' … '));
+  /* Both ends are named by the slider's own scale labels, so neither needs a
+     caption under the chart saying the handle is where the reader just put
+     it. What the end DOES to the plan is on the "Left at" card. */
   check('F52f the left end means stop today: no accumulation at all, and the page still works',
     r.today.ui === 30 && r.today.accM === 0 && /visible/.test(r.today.verdict) &&
-    /drawdown starts today/i.test(r.today.note),
+    /stop today/i.test(r.today.scale),
     `accM ${r.today.accM}, left at 90 ${r.today.left.toFixed(0)}`);
   check('F52g the right end means never stop: nothing is ever drawn, and the page says so',
     r.never.ui === 90 && r.never.accM === 720 && /visible/.test(r.never.verdict) &&
-    /never stop earning/i.test(r.never.note),
-    `accM ${r.never.accM}, left at 90 ${r.never.left.toFixed(0)}`);
+    /never stop/i.test(r.never.scale) && /nothing is ever drawn/i.test(r.never.note),
+    `accM ${r.never.accM}, left at 90 ${r.never.left.toFixed(0)}, "${r.never.note}"`);
 }
 
 /* F63: TWO verdicts, one per question. The banner at the top of the page

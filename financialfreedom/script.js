@@ -1131,7 +1131,7 @@ function renderVerdict(res){
     html = '<h2>' + escapeHtml(d.message) + '</h2><p>' + escapeHtml(d.detail || '') + '</p>' + remedyList(d.remedies);
   } else if(d.status === 'already'){
     cls += 'good';
-    html = '<h2>' + escapeHtml(d.message) + '</h2><p>Everything below shows what happens if you stop now.</p>';
+    html = '<h2>' + escapeHtml(d.message) + '</h2>';
   } else {
     /* `late` and `ok` are the SAME answer to this question: there is a
        crossing, and this is the age it happens at. Whether the slider clears
@@ -1169,13 +1169,12 @@ function renderSliderVerdict(res){
   } else if(d.status === 'already'){
     cls += 'good';
     html = '<h2>Stopping at ' + escapeHtml(fmt.age(res.P.ageRetire)) + ' works.</h2>' +
-      '<p>Your current assets already cover this plan, so every age on this slider clears it.</p>';
+      '<p>Every age on this slider clears it.</p>';
   } else {
     cls += 'good';
     html = '<h2>Stopping at ' + escapeHtml(fmt.age(res.P.ageRetire)) + ' works, with ' +
       fmt.num(Math.max(0, res.P.ageRetire - d.ffAge), 1) + ' years to spare.</h2>' +
-      '<p>You reach financial freedom at ' + escapeHtml(fmt.age(d.ffAge)) +
-      ', and everything below this slider is measured at the age it is left on.</p>';
+      '<p>You reach financial freedom at ' + escapeHtml(fmt.age(d.ffAge)) + '.</p>';
   }
   el.className = cls;
   el.innerHTML = html;
@@ -1259,7 +1258,7 @@ function renderMetrics(res){
   $('mLeft').textContent = fmt.currency(show(res, left, dieYearIdx), true);
   $('mLeft').className = 'value ' + (left >= -1e-6 ? (left > 1 ? 'pos' : '') : 'neg');
   $('mLeftSub').textContent = left < -1e-6
-    ? 'The pot ran out. This is the shortfall it would have taken to see the plan through.'
+    ? 'The pot ran out.'
     : (res.ui.mode === 'legacy'
         ? 'Against the ' + fmt.currency(show(res, res.ui.legacy, dieYearIdx), true) + ' you wanted to leave.'
         : (res.P.ageRetire >= res.P.ageDie - 1e-9
@@ -1587,12 +1586,10 @@ function renderCharts(res){
 
      The cashflow balance is not floored: there, going under IS the answer the
      chart is being asked for, and the shortfall is the size of the miss. */
-  var clipped = {path: false};
-  var floorZero = function(arr, which){
+  var floorZero = function(arr){
     return arr.map(function(v){
       if(v == null || !isFinite(v)) return v;
-      if(v < 0){ clipped[which] = true; return 0; }
-      return v;
+      return v < 0 ? 0 : v;
     });
   };
 
@@ -1603,11 +1600,11 @@ function renderCharts(res){
      meet is the answer. Putting a withdrawal on this chart was what used to
      make it unreadable, and worse, it drew a balance the crossing was not
      even solved against. */
-  var acc = floorZero(scale(yearly(res.acc, years)), 'path');
-  var dep = floorZero(scale(yearly(res.deposited, years)), 'path');
+  var acc = floorZero(scale(yearly(res.acc, years)));
+  var dep = floorZero(scale(yearly(res.deposited, years)));
   var need = scale(res.needCurve);
-  var p10 = floorZero(scale(res.mc.bands.p10), 'path');
-  var p90 = floorZero(scale(res.mc.bands.p90), 'path');
+  var p10 = floorZero(scale(res.mc.bands.p10));
+  var p90 = floorZero(scale(res.mc.bands.p90));
 
   /* Where the chart OPENS. The crossing is the one thing this chart exists for
      and it lands in the first third of most plans, while the investment keeps
@@ -1685,10 +1682,9 @@ function renderCharts(res){
   chart1.$fitY = {y: fit1};
   renderLegend('legend1', chart1, legend1);
 
-  var notes1 = [];
-  if(bandClipped) notes1.push('The axis is sized to the expected outcome, so the best of the simulated futures runs off the top.');
-  if(clipped.path) notes1.push('A balance below zero is drawn flat at zero: you are spending more than you earn, so the pot is being eaten before you have even retired.');
-  $('chart1Sub').textContent = notes1.join(' ');
+  $('chart1Sub').textContent = bandClipped
+    ? 'The axis is sized to the expected outcome, so the best of the simulated futures runs off the top.'
+    : '';
 
   /* ── Cashflows ──────────────────────────────────────────────────────────
      ONE chart, two plot areas stacked on one pair of x axes. Above, in two
@@ -1779,19 +1775,6 @@ function renderCharts(res){
   // cannot leave one of them scaled for a view it is no longer showing.
   chart2.$fitY = {y: fit2, yBal: fit3};
   renderLegend('legend2', chart2, legend2);
-
-  /* Only the two edge cases the picture cannot show for itself: at either end
-     of the slider there is no crossing to read, so the chart looks like a
-     mistake unless it is said. The ordinary case needs no caption. */
-  var notes2 = [];
-  if(res.P.ageRetire >= res.P.ageDie - 1e-9){
-    notes2.push('The slider is at your life expectancy, so you never stop earning and nothing is ever drawn.');
-  } else if(res.P.ageRetire <= res.P.ageNow + 1e-9){
-    notes2.push('The slider is at your age now, so the drawdown starts today.');
-  }
-  var ranOut = bal.some(function(v){ return v != null && isFinite(v) && v < 0; });
-  if(ranOut) notes2.push('The balance goes below zero and is drawn there: that is the shortfall, not a pause at nothing.');
-  $('chart2Sub').textContent = notes2.join(' ');
 }
 
 /* ─── TABLE ─── */
