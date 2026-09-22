@@ -21,7 +21,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TOOLS = [
   {
     dir: 'pisahvsgabung',
-    title: 'Kalkulator PPh 21 — Pisah Harta vs Gabung Harta (PH vs KK)',
+    title: 'Kalkulator PPh 21 Pisah Harta vs Gabung Harta | Adjie Brotools',
     description: 'Kalkulator gratis untuk membandingkan PPh 21 suami istri antara skema pisah harta (PH) dan gabung harta (KK), lengkap dengan PTKP, lapisan tarif pajak, grafik, dan analisis titik impas.',
     ogTitle: 'Kalkulator PPh 21 Pisah Harta vs Gabung Harta',
     ogDescription: 'Bandingkan PPh 21 suami istri antara skema pisah harta (PH) dan gabung harta (KK) di Indonesia.',
@@ -88,9 +88,9 @@ const TOOLS = [
   },
   {
     dir: 'rentvsownhouse',
-    title: 'Sewa vs Beli Rumah — Simulasi Skenario Properti',
+    title: 'Sewa vs Beli Rumah: Simulasi Skenario Properti | Adjie Brotools',
     description: 'Simulasikan sewa vs beli rumah dalam jangka panjang: bandingkan kas, ekuitas, dan kekayaan bersih berdasarkan asumsi harga properti, KPR, sewa, dan imbal hasil investasi.',
-    ogTitle: 'Sewa vs Beli Rumah — Simulasi Skenario Properti',
+    ogTitle: 'Sewa vs Beli Rumah: Simulasi Skenario Properti',
     ogDescription: 'Simulasikan sewa vs beli rumah dalam jangka panjang dengan membandingkan kas, ekuitas, dan kekayaan bersih.',
     sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js'],
     extraReplacements: [["renderRVOFooter('../logos/')", "renderRVOFooter('../../logos/')"]],
@@ -182,7 +182,7 @@ const TOOLS = [
   {
     dir: 'rentvsownhouse/sensitivity',
     langVar: 'LANG_SENS',
-    title: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah — Gratis',
+    title: 'Analisis Sensitivitas Sewa vs Beli Rumah | Adjie Brotools',
     description: 'Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti — alternatif gratis untuk pemodelan bespoke yang biasanya dijual analis properti dan penasihat keuangan seharga jutaan rupiah.',
     ogTitle: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah',
     ogDescription: 'Bandingkan beberapa skenario sewa vs beli berdampingan dan lihat asumsi mana yang paling menggerakkan kekayaan bersih — alternatif gratis untuk pemodelan properti bespoke yang biasanya berbiaya mahal.',
