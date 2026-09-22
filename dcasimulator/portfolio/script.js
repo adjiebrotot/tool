@@ -151,6 +151,35 @@ function macdHistColors(values){
 }
 function showStatus(el, msg, type){ if(!el) return; el.className='status-bar status-'+type; el.innerHTML=(type==='loading'?'<span class="spinner"></span>':'')+msg; }
 function hideStatus(el){ if(!el) return; el.className='status-bar'; el.textContent=''; }
+
+/* ── The Simulate gate ──────────────────────────────────────────────────────
+   A run fetches price history and walks every portfolio day by day, rebalancing
+   as it goes, so it is far too much work to repeat on a keystroke: the form does
+   not run the engine, ▶ Simulate does. That only works if the page is honest
+   about it. The moment an input changes, the board below steps back and the
+   button steps forward, so nobody reads a comparison that no longer belongs to
+   the numbers on screen. Nothing is marked before the first run, because there
+   is no answer to doubt yet. */
+let stale=false;
+function markStale(){
+  if(stale || !simResults.length) return;
+  stale=true;
+  document.body.classList.add('is-stale');
+  const b=$('simBtn'); if(b) b.classList.add('needs-run');
+}
+function markFresh(){
+  if(!stale) return;
+  stale=false;
+  document.body.classList.remove('is-stale');
+  const b=$('simBtn'); if(b) b.classList.remove('needs-run');
+}
+
+// A portfolio's name and colour are labels, not assumptions, so editing one
+// redraws the board in place rather than sending it out of date.
+function refreshResultLabels(){
+  if(!simResults.length) return;
+  updateValueChart(); updatePriceChart(); updateCompChart(); updateSummary(); updateTable();
+}
 function showWarning(msg){ const w=$('mainWarning'); w.textContent=msg; w.style.display='block'; }
 function hideWarning(){ const w=$('mainWarning'); w.style.display='none'; }
 function sanitizeSeed(v){ const n=Number(v); return Number.isFinite(n)?Math.floor(Math.abs(n)):DEFAULT_RANDOM_SEED; }
@@ -480,6 +509,7 @@ function removeFromPool(tk){
   refreshAssetPoolSelect();
   if(loadedTickers().length) showStatus($('poolStatus'), tk+' removed.','ok');
   else hideStatus($('poolStatus'));
+  markStale();   // a portfolio may have been holding it
 }
 
 // Drop the entire cached pool (the data the app shows on first open lives here).
@@ -492,6 +522,7 @@ function clearPool(){
   renderPoolChips();
   refreshAssetPoolSelect();
   hideStatus($('poolStatus'));
+  markStale();   // every portfolio has lost the data behind it
   const inp=$('tickerPoolInput'); if(inp) inp.focus();
 }
 
@@ -609,6 +640,7 @@ async function loadTickerPool(){
     if(ok && !failed.length && inp) inp.value='';
     renderPoolChips();
     refreshAssetPoolSelect();
+    if(ok) markStale();   // fresh history behind an asset is a different run
   } catch(e){
     showStatus($('poolStatus'),'Load failed: '+e.message,'error');
   } finally {
@@ -690,8 +722,9 @@ function renderPortfolioList(){
 
     const dot=document.createElement('input');
     dot.type='color'; dot.className='pf-tab-dot'; dot.value=p.colorHex; dot.title='Pick colour';
+    dot.setAttribute('data-no-stale',''); // a colour is a label, not an assumption
     dot.addEventListener('click',e=>e.stopPropagation());
-    dot.addEventListener('input',e=>{ p.colorHex=e.target.value; renderViewSelectors(); });
+    dot.addEventListener('input',e=>{ p.colorHex=e.target.value; renderViewSelectors(); refreshResultLabels(); });
     tab.appendChild(dot);
 
     const name=document.createElement('span');
@@ -712,9 +745,10 @@ function startRenamePortfolio(tab, p){
   const nameSpan=tab.querySelector('.pf-tab-name'); if(!nameSpan) return;
   const input=document.createElement('input');
   input.type='text'; input.className='pf-tab-rename'; input.value=p.name;
+  input.setAttribute('data-no-stale',''); // a rename is a label, not an assumption
   input.addEventListener('click',e=>e.stopPropagation());
   input.addEventListener('dblclick',e=>e.stopPropagation());
-  const commit=()=>{ p.name=input.value.trim()||p.name; renderPortfolioList(); renderViewSelectors(); };
+  const commit=()=>{ p.name=input.value.trim()||p.name; renderPortfolioList(); renderViewSelectors(); refreshResultLabels(); };
   input.addEventListener('blur',commit);
   input.addEventListener('keydown',e=>{
     if(e.key==='Enter'){ e.preventDefault(); commit(); }
@@ -1898,6 +1932,7 @@ async function runSimulation(){
     updatePriceChart();
     updateCompChart();
     updateTable();
+    markFresh();   // the board is the comparison the form describes again
   } finally {
     simBtn.disabled=false; simBtn.textContent='▶ Simulate'; delete simBtn.dataset.running; updateSimBtnState();
   }
@@ -2460,6 +2495,7 @@ function importSettings(obj){
   if(Array.isArray(g.simPool)){ simPool=g.simPool.filter(x=>x&&x.name).map(x=>({name:x.name, returnPct:Number(x.returnPct)||0, stdPct:Math.max(0,Number(x.stdPct)||0)})); persistSimPool(); renderPoolChips(); refreshAssetPoolSelect(); }
   portfolios=(obj.portfolios||[]).map(normalizeLoadedPortfolio);
   simResults=[]; commonDates=[];
+  markFresh();
   portfolioIdCounter = portfolios.reduce((m,p)=>Math.max(m, p.id||0), 0);
   activePortfolioId = (obj.activePortfolioId!=null && portfolios.some(p=>p.id===obj.activePortfolioId)) ? obj.activePortfolioId : (portfolios[0]?portfolios[0].id:null);
   hideWarning();
@@ -2666,6 +2702,22 @@ document.querySelectorAll('.sub-tab').forEach(btn=>{
 
 /* ─── SIMULATE ─── */
 $('simBtn').addEventListener('click', runSimulation);
+
+/* Every control in the sidebar feeds the engine, so any edit sends the results
+   out of date - including the fields the asset and portfolio editors mint on
+   the fly. The exceptions carry data-no-stale: they change how an existing run
+   is READ (the currency symbol) or what it is CALLED, and are re-rendered in
+   place instead. Capture phase, so a field that stops its own event from
+   bubbling is still counted. */
+{
+  const panel=document.querySelector('aside.controls');
+  if(panel) ['input','change'].forEach(ev=>panel.addEventListener(ev, e=>{
+    const t=e.target;
+    if(!t || !t.matches || !t.matches('input,select,textarea')) return;
+    if(t.closest('[data-no-stale]')) return;
+    markStale();
+  }, true));
+}
 /* There is no Reset button. A Quick Start already clears the workspace and lays
    a worked comparison over it, which is a better place to land than an empty
    one, and the downloaded prices are cleared by Clear all on the Data tab — the
@@ -2677,6 +2729,7 @@ $('simBtn').addEventListener('click', runSimulation);
 function resetWorkspace(){
   portfolios=[]; portfolioIdCounter=0; activePortfolioId=null;
   simResults=[]; commonDates=[]; activeDetailId=null;
+  markFresh();   // nothing on the board to be out of date
   currentCurrencySymbol='$'; currentRandomSeed=DEFAULT_RANDOM_SEED; showTopups=true;
   compViewMode='dollar'; valueDsPairs=[]; hiddenPf.clear();
   showCandles=false; showBuyDates=false; showTechIndicators=false; priceHidden=new Set(); priceSeriesKey='';

@@ -118,7 +118,7 @@
         <!-- REAL: download market data for tickers -->
         <div id="dataRealPanel">
           <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">Tickers <span class="tip-icon warn" data-tip="To keep this free tool sustainable, data loads are capped at 5 per device per day, shared with the single-asset tool. One load covers up to 25 tickers and still counts as a single request, so list every ticker you want in one go. Cached tickers and same-day reloads are free, and the cap resets each day.">!</span></div>
-          <textarea class="txt-input" id="tickerPoolInput" rows="2" placeholder="e.g. SPY, GOVT, DHHF.AX, AAA.AX" style="text-transform:uppercase;width:100%;resize:vertical;font-family:inherit;line-height:1.4"></textarea>
+          <textarea class="txt-input" id="tickerPoolInput" data-no-stale rows="2" placeholder="e.g. SPY, GOVT, DHHF.AX, AAA.AX" style="text-transform:uppercase;width:100%;resize:vertical;font-family:inherit;line-height:1.4"></textarea>
           <a href="../ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
           <div class="field-sub rate-info" id="rateInfo" style="margin-top:6px"></div>
           <div class="status-bar" id="poolStatus"></div>
@@ -127,15 +127,15 @@
         <!-- SIMULATED: define a synthetic asset by return & volatility -->
         <div id="dataSimPanel" style="display:none">
           <div class="field-label" style="margin-bottom:6px">Asset name</div>
-          <input class="txt-input" id="simNameInput" placeholder="e.g. Equities" style="width:100%" />
+          <input class="txt-input" id="simNameInput" data-no-stale placeholder="e.g. Equities" style="width:100%" />
           <div style="display:flex;gap:8px;margin-top:10px">
             <div style="flex:1">
               <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Return (% p.a.) <span class="tip-icon" data-tip="The average yearly return the simulated price path is built around, using Geometric Brownian Motion.">?</span></div>
-              <input class="num-input" id="simReturnInput" type="number" step="0.5" value="8" style="width:100%" />
+              <input class="num-input" id="simReturnInput" data-no-stale type="number" step="0.5" value="8" style="width:100%" />
             </div>
             <div style="flex:1">
               <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Std dev (%) <span class="tip-icon" data-tip="Yearly volatility, measured as the standard deviation of returns. A higher number makes the simulated path swing harder.">?</span></div>
-              <input class="num-input" id="simStdInput" type="number" min="0" step="0.5" value="15" style="width:100%" />
+              <input class="num-input" id="simStdInput" data-no-stale type="number" min="0" step="0.5" value="15" style="width:100%" />
             </div>
           </div>
           <div class="status-bar" id="simStatus"></div>
@@ -374,7 +374,7 @@
     <div class="section-label" style="margin-top:0">General</div>
     <div class="field-row" style="border-top:none;padding-top:0">
       <div class="field-label">Currency Symbol</div>
-      <select class="num-input" id="currencySymbol" style="cursor:pointer">
+      <select class="num-input" id="currencySymbol" data-no-stale style="cursor:pointer">
         <option value="$" selected>$ - Dollar</option>
         <option value="€">€ - Euro</option>
         <option value="£">£ - Pound</option>
@@ -403,6 +403,7 @@
   <div style="padding:0 16px"><div class="warning" id="mainWarning"></div></div>
   </div><!-- /ctrl-scroll -->
   <div class="btn-row">
+    <p class="stale-note" id="staleNote" role="status">Inputs changed. Press Simulate to run them.</p>
     <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
     <button class="btn-accent2" id="loadTickersBtn" style="flex:2;display:none">⤓ Load tickers</button>
     <button class="btn-accent2" id="addSimBtn" style="flex:2;display:none">+ Add Simulated Asset</button>

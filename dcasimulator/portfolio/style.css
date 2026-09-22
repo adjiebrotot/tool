@@ -147,3 +147,14 @@ body.light .weight-row.wt-total.bad .wt-name,body.light .weight-row.wt-total.bad
 .trigger-card .param-row input.num-input{max-width:78px}
 .trigger-card .param-row select.num-input{flex:1 1 auto;min-width:0;width:auto;max-width:none}
 .trigger-card .tech-eom{padding:6px 0 2px}
+
+/* ── The Simulate gate ──────────────────────────────────────────────────────
+   A run fetches price history and walks every portfolio day by day, so the form
+   does not run the engine - ▶ Simulate does. The moment an input changes the
+   board steps back and the button steps forward, so nobody reads a comparison
+   that no longer belongs to the numbers on screen. */
+.stale-note{display:none;flex-basis:100%;margin:0 0 4px;font-size:.78rem;font-weight:700;color:var(--accent2)}
+body.is-stale .stale-note{display:block}
+body.is-stale main .card{opacity:.45}
+main .card{transition:opacity var(--transition-fast)}
+.btn-primary.needs-run{box-shadow:0 0 0 2px var(--card-bg),0 0 0 4px var(--accent2)}

@@ -259,3 +259,14 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 .quick-start-btn:hover{border-color:var(--accent);color:var(--text)}
 .quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15)}
 .quick-start-btn:disabled{opacity:.55;cursor:wait}
+
+/* ── The Simulate gate ──────────────────────────────────────────────────────
+   A run fetches price history and walks every scenario day by day, so the form
+   does not run the engine - ▶ Simulate does. The moment an input changes the
+   board steps back and the button steps forward, so nobody reads a chart that
+   no longer belongs to the numbers on screen. */
+.stale-note{display:none;flex-basis:100%;margin:0 0 4px;font-size:.78rem;font-weight:700;color:var(--accent2)}
+body.is-stale .stale-note{display:block}
+body.is-stale main .card{opacity:.45}
+main .card{transition:opacity var(--transition-fast)}
+.btn-primary.needs-run{box-shadow:0 0 0 2px var(--card-bg),0 0 0 4px var(--accent2)}

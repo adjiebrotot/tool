@@ -115,7 +115,34 @@ function showStatus(el, msg, type){
 }
 function hideStatus(el){ if(!el) return; el.className='status-bar'; el.textContent=''; }
 
-function scheduleRun(){ /* no-op – simulation is manual via ▶ Simulate */ }
+/* ── The Simulate gate ──────────────────────────────────────────────────────
+   A run fetches price history and walks every scenario day by day, so it is far
+   too much work to repeat on a keystroke: the form does not run the engine,
+   ▶ Simulate does. That only works if the page is honest about it. The moment
+   an input changes, the board below steps back and the button steps forward, so
+   nobody reads a chart that no longer belongs to the numbers on screen. Nothing
+   is marked before the first run, because there is no answer to doubt yet. */
+let stale=false;
+function markStale(){
+  if(stale || !simResults.length) return;
+  stale=true;
+  document.body.classList.add('is-stale');
+  const b=$('simBtn'); if(b) b.classList.add('needs-run');
+}
+function markFresh(){
+  if(!stale) return;
+  stale=false;
+  document.body.classList.remove('is-stale');
+  const b=$('simBtn'); if(b) b.classList.remove('needs-run');
+}
+function scheduleRun(){ markStale(); } // simulation is manual via ▶ Simulate
+
+// A scenario's name is a label, not an assumption, so a rename redraws the
+// board in place rather than sending it out of date.
+function refreshResultLabels(){
+  if(!simResults.length) return;
+  updatePriceChart(); updateEquityChart(); updateTables();
+}
 
 function makeSliderEditable(valSpan,rangeEl){
   if(!valSpan||!rangeEl)return;
@@ -446,9 +473,10 @@ function startRenameScenario(tab, sec){
   const nameSpan=tab.querySelector('.sc-tab-name'); if(!nameSpan) return;
   const input=document.createElement('input');
   input.type='text'; input.className='sc-tab-rename'; input.value=sec.name;
+  input.setAttribute('data-no-stale',''); // a rename is a label, not an assumption
   input.addEventListener('click',e=>e.stopPropagation());
   input.addEventListener('dblclick',e=>e.stopPropagation());
-  const commit=()=>{ sec.name=input.value.trim()||sec.name; renderScenarioBar(); renderScenarioConfig(); };
+  const commit=()=>{ sec.name=input.value.trim()||sec.name; renderScenarioBar(); renderScenarioConfig(); refreshResultLabels(); };
   input.addEventListener('blur',commit);
   input.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); commit(); } if(e.key==='Escape'){ renderScenarioBar(); } });
   nameSpan.replaceWith(input); input.focus(); input.select();
@@ -482,8 +510,8 @@ function renderScenarioConfig(){
   wrap.innerHTML=`
     <div class="add-sec-area" style="border-top:none;padding-top:0">
       <div class="add-sec-row" style="gap:6px;align-items:center">
-        <input class="txt-input" id="cfgName" placeholder="Scenario name" value="${escapeHtml(sec.name)}" style="flex:1;min-width:0"/>
-        <input type="color" id="cfgColor" value="${sec.colorHex||LINE_COLOR_HEX[0]}" title="Pick colour" style="width:34px;height:34px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--input-bg);padding:2px;flex-shrink:0"/>
+        <input class="txt-input" id="cfgName" data-no-stale placeholder="Scenario name" value="${escapeHtml(sec.name)}" style="flex:1;min-width:0"/>
+        <input type="color" id="cfgColor" data-no-stale value="${sec.colorHex||LINE_COLOR_HEX[0]}" title="Pick colour" style="width:34px;height:34px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--input-bg);padding:2px;flex-shrink:0"/>
       </div>
 
       <div class="section-label">Top-Ups</div>
@@ -508,7 +536,7 @@ function renderScenarioConfig(){
       <div id="styleBlock${sec.id}">${styleBlockInner(sec)}</div>
     </div>`;
 
-  $('cfgName').addEventListener('input',e=>{ sec.name=e.target.value; renderScenarioBar(); });
+  $('cfgName').addEventListener('input',e=>{ sec.name=e.target.value; renderScenarioBar(); refreshResultLabels(); });
   $('cfgColor').addEventListener('input',e=>{ sec.colorHex=e.target.value; renderScenarioBar(); if(simResults.length){ updatePriceChart(); updateEquityChart(); updateTables(); } });
   const asel=$('cfgAssetSelect'); if(asel) asel.addEventListener('change',e=>{
     const v=e.target.value;
@@ -951,6 +979,7 @@ function removeFromPool(tk){
   refreshTickerSelect();
   if(loadedTickers().length) showStatus($('poolStatus'), tk+' removed.','ok');
   else { hideStatus($('poolStatus')); }
+  markStale();   // a scenario may have been pointing at it
 }
 
 // Drop the entire cached pool (the data the app shows on first open lives here).
@@ -963,6 +992,7 @@ function clearPool(){
   renderPoolChips();
   refreshTickerSelect();
   hideStatus($('poolStatus'));
+  markStale();   // every scenario has lost the data behind it
   const inp=$('tickerPoolInput'); if(inp) inp.focus();
 }
 
@@ -1050,6 +1080,7 @@ async function loadTickerPool(){
     if(ok && !failed.length && inp) inp.value='';
     renderPoolChips();
     refreshTickerSelect();
+    if(ok) markStale();   // fresh history behind a scenario is a different run
   } catch(e){
     showStatus($('poolStatus'),'Load failed: '+e.message,'error');
   } finally {
@@ -1464,6 +1495,7 @@ async function runSimulation(){
   updatePriceChart();
   updateEquityChart();
   updateTables();
+  markFresh();   // what is on screen is the plan the form describes again
   } finally {
     simBtn.disabled=false;
     delete simBtn.dataset.running;
@@ -1988,6 +2020,22 @@ $('themeToggle').addEventListener('click',()=>{
 /* ─── SIMULATE BUTTON ─── */
 $('simBtn').addEventListener('click', runSimulation);
 
+/* Every control in the sidebar feeds the engine, so any edit sends the results
+   out of date - including the fields the scenario editor mints on the fly.
+   The exceptions carry data-no-stale: they change how an existing run is READ
+   (currency symbol, the risk-free rate behind the advanced metrics) or what it
+   is CALLED, and are re-rendered in place instead. Capture phase, so a field
+   that stops its own event from bubbling is still counted. */
+{
+  const panel=document.querySelector('aside.controls');
+  if(panel) ['input','change'].forEach(ev=>panel.addEventListener(ev, e=>{
+    const t=e.target;
+    if(!t || !t.matches || !t.matches('input,select,textarea')) return;
+    if(t.closest('[data-no-stale]')) return;
+    markStale();
+  }, true));
+}
+
 /* ─── WORKSPACE RESET ─── */
 /* There is no Reset button. A Quick Start already clears the workspace and
    lays a worked example over it, which is a better place to land than the
@@ -1998,6 +2046,7 @@ $('simBtn').addEventListener('click', runSimulation);
    deliberately left alone, so switching examples costs no re-download. */
 function resetWorkspace(){
   securities=[]; simResults=[]; latestRows=[];
+  markFresh();   // nothing on the board to be out of date
   secIdCounter=0; activeSecurityId=null;
   currentCurrencySymbol='$';
   currentRandomSeed=DEFAULT_RANDOM_SEED;
@@ -2329,6 +2378,7 @@ function importSettings(obj){
   // Rebuild the scenario list from the file (prices re-fetch on run; the cache
   // makes that free for tickers already loaded).
   securities=[]; simResults=[]; latestRows=[]; secIdCounter=0; activeSecurityId=null;
+  markFresh();
   hideWarning();
   (obj.securities||[]).forEach(s=>addSecurity(s));
   document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
