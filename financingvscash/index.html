@@ -120,6 +120,21 @@
 
 <section class="layout">
 <aside class="controls card">
+  <!-- Quick Start. Outside .ctrl-scroll on purpose, so the scenarios stay
+       reachable however far down the panel you are. It is also the page's
+       Reset: every scenario is built from the same defaults rather than from
+       what is on screen, so clicking one clears the plan before it. -->
+  <div class="quick-start-row">
+    <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start</span><span class="tip-icon" data-tip="Loads a worked comparison into every tab and reads the answer straight away. Each one is built from the defaults, so it also clears whatever was on screen. Change any figure over the top of it.">?</span>
+    <div class="quick-start-btns">
+      <button class="quick-start-btn" data-preset="house" data-tip="A buyer holding $700,000 and a $650,000 house: pay outright, or put 20% down over 30 years. one loan fixed at 6.10%, one fixed at 5.80% for two years then floating between 5.00% and 8.50%. The band on the chart is shut for the two fixed years and opens only after the revert. Inflation is on, because a 30-year answer in today&#39;s dollars is a different number.">House: fixed vs variable</button>
+      <button class="quick-start-btn" data-preset="car" data-tip="$60,000 on hand and a $45,000 car: 10% down at 8.40% over five years, against the same loan with a 35% balloon. The balloon buys a smaller instalment and pays more interest for it, and the residual falls due in one lump with the final payment.">Car: loan vs balloon</button>
+      <button class="quick-start-btn" data-preset="phone" data-tip="An $1,800 phone on 24 payments of $82, beside the same phone on 24 payments of $75, for someone holding $4,000. Neither plan quotes a rate, so the tool solves one: the second is genuinely 0% and therefore beats cash, the first is not.">Phone on a plan</button>
+      <button class="quick-start-btn" data-preset="card" data-tip="A $3,000 purchase with $8,000 in the bank, converted to a 12-month 0% instalment plan, once with the bank&#39;s 3% conversion fee and once without. 0% with a fee is not 0%: the fee is the whole price of the plan, and it is what decides the verdict.">Credit card 0%</button>
+      <button class="quick-start-btn" data-preset="motorbike" data-tip="Rp 50,000,000 on hand and a Rp 35,000,000 bike: 20% down over 36 months at 0.9% a month flat, quoted the way Indonesian multifinance and Murabaha deals quote it. Interest is charged on the original amount for the whole term, so the rate the tool solves is roughly double the one advertised.">Motorbike, flat rate</button>
+      <button class="quick-start-btn" data-preset="deferred" data-tip="A $6,000 fit-out, $15,000 in the bank, on &quot;nothing to pay for 12 months&quot; at 19.90%, against paying the same 19.90% from day one. Nothing to pay is not nothing to owe: the interest capitalises through the holiday, so the balance is larger on the day the first bill arrives. The chart opens on the loan balance so you can watch it climb.">Furniture, pay later</button>
+    </div>
+  </div>
   <div class="ctrl-scroll">
   <div class="ctrl-tabs stacked">
     <button class="ctrl-tab active" data-tab="base"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8 2.8 7.4 12 12l9.2-4.6z"/><path d="M2.8 12.4 12 17l9.2-4.6"/><path d="M2.8 16.9 12 21.5l9.2-4.6"/></svg><span>Base</span></button>
@@ -310,9 +325,6 @@
 
   <div class="warning" id="warnBanner"></div>
   <div class="neg-carry" id="negCarryBanner"></div>
-  <div class="btn-row">
-    <button class="btn-primary" id="resetBtn">↺ Reset</button>
-  </div>
   </div>
 </aside>
 

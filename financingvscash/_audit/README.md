@@ -45,4 +45,31 @@ rather than code being compared with itself.
 `reconcile.mjs` guards the accounting identity across differing horizons:
 Ending Wealth minus the same-horizon cash baseline equals Net Benefit.
 
-Run: `node run.mjs` and `node reconcile.mjs`
+## `accounting.mjs` — does the money balance?
+
+Where `run.mjs` asks whether each loan type computes correctly, this asks the
+narrower and harder question: is every dollar accounted for once. It runs the
+plan in `ACCOUNTING-PLAN.md`, which was written against the page's own tooltips
+and double-entry first principles **before** `script.js` was opened, so each
+test cites a claim the page makes rather than a line of code. Scenarios are
+loaded through the page's own mini-cache — the path a returning reader's plan
+arrives by — rather than by reaching inside the module.
+
+| Group | What it holds the page to |
+| --- | --- |
+| **A** conservation | The loan closes at zero and Σ principal equals the amount financed, for all seven loan types; Σ payments equals financed + interest; every individual row balances (payment = interest + principal, end = start − principal); Total Financing Cost = interest + all fees; out-of-pocket = down + the fee actually handed over + payments + admin, across all six fee shapes. A5c bounds the difference between a printed column and the total under it to what display rounding alone can produce. |
+| **B** the wash | The sharpest test here needs no replay at all, because it fixes the answer to a constant: borrow at exactly the rate your spare cash earns, charge no fee, and Net Benefit must be **zero** — swept over 5 loan types × 4 frequencies × 3 down payments, and again at a one-period term and a 30-year one. Three deliberate exceptions prove it is measuring something: Nominal must break the wash by exactly the convention gap (the tooltip says the convention touches the loan and never the risk-free rate), a flat rate must break it and lose, and a 100% down payment must land exactly on the cash line. |
+| **C** marginal identities | Each input has to move the books by its own amount and no more: an upfront fee costs `F(1+rf)^T`, an admin fee costs `A·Σ(1+rf_p)^(n−k)`, neither adds a cent of interest; a capitalised fee is borrowed once; a discounted note grosses up so the net advance still meets the price; surplus cash cancels out of Net Benefit exactly (C5); the currency symbol moves nothing; inflation is a deflator, not a second model. |
+| **D** horizons | Each row is scored against its own end of term, the two baselines in a mixed-horizon comparison really do differ, and the headline tile is the winning row rather than the long-horizon tile minus it. |
+| **E** cross-paths | The sensitivity sweep passes through the live answer on all five objectives; every chart metric ends on the figure its own table prints; the CSV is the table, with the Unicode minus translated rather than deleted. |
+| **F** structural signs | Net Benefit falls with the finance rate, rises with the risk-free rate, is monotone in the down payment — and the sign of a longer term **flips exactly at the wash**, which pins timing, compounding and the direction of the spread in one test. |
+| **G** degenerate input | Cash below the price is explained rather than modelled; a fixed-then-floating loan brackets its own midpoint only after the revert; interest-only for the whole term, a 99% residual and a one-period loan all still close. |
+| **H** Quick Start | All twelve preset columns close their books and are scored at their own horizons, and every preset tip is checked against the numbers behind its button. `_ref/quickstart-check.mjs` separately proves each preset is a clean reset, which is what lets this tool ship no Reset button. |
+
+Two findings the plan turned up are recorded as notes in the run output rather
+than changed: Effective Rate (APR) is the contract rate and is blind to fees in
+all three treatments alike, and the printed schedule column can differ from the
+total under it by display rounding. Both are deliberate choices whose
+alternatives are worse; the harness pins the consistency instead.
+
+Run: `node run.mjs`, `node reconcile.mjs` and `node accounting.mjs`
