@@ -818,7 +818,7 @@ function yearly(arr, years){
 
 /* ─── UI STATE ─── */
 
-var persist = null, rendering = false, renderTimer = null;
+var persist = null, rendering = false, stale = false;
 var chart1 = null, chart2 = null;
 var last = null;                 // the most recent computed result
 var tickerInfo = null;           // {ticker, stats, source} once a fetch succeeds
@@ -879,6 +879,19 @@ function readInputs(){
 function retireSpan(){
   var lo = Math.round(UI.ageNow);
   return {lo: lo, hi: Math.max(lo, Math.round(UI.ageDie))};
+}
+
+/* The markup's own min and max are the widest the handle can ever go, and the
+   mini cache relies on that: Persist restores the saved age by writing it
+   straight onto the control, before any render has had a chance to widen the
+   span to fit it. Captured on the first call, which is applyUIToDom() at load,
+   before anything has narrowed them. */
+var retireMarkupSpan = null;
+function widenRetireSlider(){
+  var el = $('ageRetire');
+  if(retireMarkupSpan === null) retireMarkupSpan = {min: el.min, max: el.max};
+  el.min = retireMarkupSpan.min;
+  el.max = retireMarkupSpan.max;
 }
 
 function syncRetireSlider(){
@@ -1889,9 +1902,8 @@ function render(){
   if(rendering) return;
   rendering = true;
   try {
-    readInputs();
-    syncCurrencyPrefixes();
-    syncVisibility();
+    syncForm();
+    markFresh();
     var res = compute(UI);
     last = res;
     renderInflationNote(res);
@@ -1906,9 +1918,37 @@ function render(){
   }
 }
 
-function scheduleRender(){
-  clearTimeout(renderTimer);
-  renderTimer = setTimeout(render, 160);
+/* ── The Simulate gate ──────────────────────────────────────────────────────
+   A thousand simulated futures cost about 150ms, and the control goes to five
+   thousand, so a page that recomputed itself as you type would stutter for a
+   sixth of a second after every pause — longer on a phone — and would do it
+   while the plan on screen is still half-entered. So typing does not run the
+   engine. It keeps the FORM coherent, which is cheap and has to stay live:
+   currency prefixes follow the currency, the retirement slider's ends follow
+   the two ages, and the goal you pick decides which fields are even shown.
+   What it does not do is pretend the answer below has kept up. The results are
+   marked out of date instead, and Simulate is what runs them. */
+function syncForm(){
+  readInputs();
+  syncCurrencyPrefixes();
+  syncVisibility();
+}
+
+function markStale(){
+  syncForm();
+  if(stale) return;
+  stale = true;
+  document.body.classList.add('is-stale');
+  var b = $('simBtn');
+  if(b) b.classList.add('needs-run');
+}
+
+function markFresh(){
+  if(!stale) return;
+  stale = false;
+  document.body.classList.remove('is-stale');
+  var b = $('simBtn');
+  if(b) b.classList.remove('needs-run');
 }
 
 /* Swap a button's label for a moment to confirm something happened. Restores
@@ -2416,8 +2456,15 @@ function applyUIToDom(ui){
   $('currency').value = ui.currency;
   $('ageNow').value = ui.ageNow;
   $('ageDie').value = ui.ageDie;
-  // The slider's own bounds are rewritten from these two ages on every render,
-  // so the value is set before syncRetireSlider ever reads it back.
+  /* Open the slider's span back up BEFORE writing the handle. A range input
+     clamps whatever you assign against the min and max it is carrying at that
+     moment, and syncRetireSlider() keeps narrowing those to the two ages of
+     whatever plan is on screen — so writing the handle first let the previous
+     plan's ceiling silently eat the new one's retirement age. Frugal Living
+     (stop at 37) landed on 42 for anyone who had been looking at a later
+     starting age. syncRetireSlider() narrows the span again on the render that
+     follows, so the widening is never visible. */
+  widenRetireSlider();
   $('ageRetire').value = ui.ageRetire;
   $('expense').value = SharedFmt.formatThousands(ui.expense);
   $('expensePeriod').value = ui.expensePeriod;
@@ -2458,7 +2505,7 @@ function setSavingsMode(mode, silent){
   document.querySelectorAll('#savingsModeGroup .seg-btn').forEach(function(b){
     b.classList.toggle('active', b.dataset.val === UI.savingsMode);
   });
-  if(!silent){ if(persist) persist.schedule(); scheduleRender(); }
+  if(!silent){ if(persist) persist.schedule(); markStale(); }
 }
 
 function populateSelects(){
@@ -2491,25 +2538,27 @@ function wire(){
     if(last) renderCharts(last);
   });
 
+  /* Every assumption marks the answer out of date rather than recomputing it.
+     See the Simulate gate above the render() definition for why. */
   ['expense', 'savings', 'assets', 'legacy', 'pensionAmount'].forEach(function(id){
-    SharedFmt.attachCurrencyInput($(id), {maxDecimals: 0, onChange: scheduleRender});
+    SharedFmt.attachCurrencyInput($(id), {maxDecimals: 0, onChange: markStale});
   });
 
   ['ageNow','ageDie','growth','inflation','ret','std','retireMultiplier',
    'pensionStartAge','paths','confidence','seed'].forEach(function(id){
-    $(id).addEventListener('input', scheduleRender);
+    $(id).addEventListener('input', markStale);
   });
   ['expensePeriod','savingsPeriod','pensionPeriod','currency'].forEach(function(id){
-    $(id).addEventListener('change', scheduleRender);
+    $(id).addEventListener('change', markStale);
   });
 
-  /* The retirement slider is a sensitivity control, so it has to feel like one.
-     The readout follows the handle on every pixel of the drag, while the full
-     recompute stays debounced behind it: a Monte Carlo per animation frame
-     would make the drag stutter and tell the reader nothing extra. */
+  /* The retirement slider is a sensitivity control, so the readout follows the
+     handle on every pixel of the drag. The answer below it waits for Simulate
+     like every other assumption: a Monte Carlo per animation frame would make
+     the drag stutter and tell the reader nothing extra. */
   $('ageRetire').addEventListener('input', function(){
     $('ageRetireVal').textContent = fmt.age(Number($('ageRetire').value));
-    scheduleRender();
+    markStale();
   });
 
   $('assetPreset').addEventListener('change', function(){
@@ -2518,7 +2567,7 @@ function wire(){
       $('ret').value = p.ret; $('std').value = p.std;
       tickerInfo = null;
     }
-    scheduleRender();
+    markStale();
   });
 
   document.querySelectorAll('.quick-start-btn').forEach(function(btn){
@@ -2530,12 +2579,17 @@ function wire(){
   });
 
   document.querySelectorAll('input[name="ffmode"]').forEach(function(r){
-    r.addEventListener('change', function(){ syncModeSelection(); scheduleRender(); });
+    r.addEventListener('change', function(){ syncModeSelection(); markStale(); });
   });
 
-  ['pensionOn','pensionIndexed','showReal'].forEach(function(id){
-    $(id).addEventListener('change', scheduleRender);
+  ['pensionOn','pensionIndexed'].forEach(function(id){
+    $(id).addEventListener('change', markStale);
   });
+
+  /* Today's money against the money of the day is a way of READING the answer,
+     not an assumption about it, so it redraws on the spot. The seed makes the
+     simulated futures reproducible, so re-running gives back the same ones. */
+  $('showReal').addEventListener('change', render);
 
   $('fetchTickerBtn').addEventListener('click', fetchTicker);
   $('ticker').addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); fetchTicker(); } });
@@ -2571,11 +2625,8 @@ function wire(){
   });
   $('csvBtn').addEventListener('click', downloadCsv);
 
-  // Everything already recalculates as you type. Simulate is for the reader who
-  // wants to see it happen, and it skips the debounce rather than queueing
-  // another render behind it.
+  // The gate itself: nothing else on the form runs the engine.
   $('simBtn').addEventListener('click', function(){
-    clearTimeout(renderTimer);
     render();
     flashBtn($('simBtn'), '✓ Updated');
   });
@@ -2585,16 +2636,22 @@ function wire(){
     });
   });
 
-  $('resetBtn').addEventListener('click', function(){
-    tickerInfo = null;
-    $('ticker').value = '';
-    tickerStatus('');
-    Object.assign(UI, UI_DEFAULTS);
-    applyUIToDom(UI_DEFAULTS);
-    markQuickStart(null);
-    if(persist) persist.schedule();
-    render();
-  });
+}
+
+/* There is no Reset button. Every Quick Start scenario is built on top of
+   UI_DEFAULTS, so any one of them already returns the form to a clean, known
+   state — and returns it to a plan worth looking at rather than to an empty
+   one. Kept as a function because the page's own audit harness needs a
+   documented way back to the defaults. */
+function resetToDefaults(){
+  tickerInfo = null;
+  $('ticker').value = '';
+  tickerStatus('');
+  Object.assign(UI, UI_DEFAULTS);
+  applyUIToDom(UI_DEFAULTS);
+  markQuickStart(null);
+  if(persist) persist.schedule();
+  render();
 }
 
 /* ─── INIT ─── */
@@ -2626,6 +2683,7 @@ if(document.readyState === 'loading'){
 /* Engine handle for the audit harness in _audit/. Everything the harness needs
    to drive the maths without going through the DOM. */
 window.__FF = {
+  resetToDefaults: resetToDefaults,
   CURRENCIES: CURRENCIES,
   PRESET_ASSETS: PRESET_ASSETS,
   UI_DEFAULTS: UI_DEFAULTS,

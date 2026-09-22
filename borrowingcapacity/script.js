@@ -1292,12 +1292,9 @@ function init(){
     if(last) updateChart(last.sweep, last.sweep.tiny ? -1 : USER_INDEX);
   });
 
-  // Reset clears the scenario highlight too. resetAll() itself must not, or
-  // applyQuickStart's own reset would wipe the highlight it is about to set.
-  $('resetBtn').addEventListener('click', () => {
-    document.querySelectorAll('.quick-start-btn').forEach(b => b.classList.remove('active'));
-    resetAll();
-  });
+  // There is no Reset button: every Quick Start scenario opens with resetAll(),
+  // so any one of them already returns the form to a clean, known state and a
+  // separate Reset would only offer a worse version of the same thing.
   $('csvBtn').addEventListener('click', exportCsv);
   $('pngBtn').addEventListener('click', exportPng);
   $('copyBtn').addEventListener('click', copyPng);
@@ -1361,7 +1358,7 @@ function init(){
 
   // Exposed so the audit harness can drive the engine directly as well as
   // through the DOM.
-  window.__BC = { UI, compute, readInputs, buildSweep, hemMonthly, incomeTax, litoAmount, marginalTaxRate,
+  window.__BC = { UI, compute, readInputs, resetAll, buildSweep, hemMonthly, incomeTax, litoAmount, marginalTaxRate,
                   medicareLevy, mlsRate, helpRepayment, amortPayment, loanFromPayment,
                   CITY_INDEX, TAX_SCALES, USER_INDEX };
 }

@@ -549,9 +549,9 @@ function setPoolLocked(_locked){
 function updateBtnRow(){
   const t=document.querySelector('.ctrl-tab.active');
   const dataTab=t?t.dataset.tab==='data':true;
-  ['simBtn','resetBtn'].forEach(id=>{ const b=$(id); if(b) b.style.display=dataTab?'none':''; });
+  { const b=$('simBtn'); if(b) b.style.display=dataTab?'none':''; }
   // On the Data tab the bottom action mirrors the chosen download mode: "Load
-  // tickers" for Real, "Add Simulated Asset" for Simulated. Other tabs show Simulate/Reset.
+  // tickers" for Real, "Add Simulated Asset" for Simulated. Other tabs show Simulate.
   const realMode=(typeof dataMode==='undefined' || dataMode==='real');
   const lb=$('loadTickersBtn'); if(lb) lb.style.display=(dataTab && realMode)?'':'none';
   const sb=$('addSimBtn'); if(sb) sb.style.display=(dataTab && !realMode)?'':'none';
@@ -2653,13 +2653,19 @@ document.querySelectorAll('.sub-tab').forEach(btn=>{
   btn.addEventListener('click',()=>switchSubTab(btn.dataset.sub));
 });
 
-/* ─── SIMULATE / RESET ─── */
+/* ─── SIMULATE ─── */
 $('simBtn').addEventListener('click', runSimulation);
-$('resetBtn').addEventListener('click',()=>{
+/* There is no Reset button. A Quick Start already clears the workspace and lays
+   a worked comparison over it, which is a better place to land than an empty
+   one, and the downloaded prices are cleared by Clear all on the Data tab — the
+   two jobs the one button used to do, each where it belongs. Everything below
+   is the first of those jobs: the settings and the view a comparison does not
+   set itself, back to their defaults. The price cache and the simulated-asset
+   pool are deliberately left alone, so switching examples costs no re-download
+   and does not throw away assets the reader built by hand. */
+function resetWorkspace(){
   portfolios=[]; portfolioIdCounter=0; activePortfolioId=null;
   simResults=[]; commonDates=[]; activeDetailId=null;
-  priceCache={}; tickerFetchInFlight={};
-  simPool=[]; persistSimPool();
   currentCurrencySymbol='$'; currentRandomSeed=DEFAULT_RANDOM_SEED; showTopups=true;
   compViewMode='dollar'; valueDsPairs=[]; hiddenPf.clear();
   showCandles=false; showBuyDates=false; showTechIndicators=false; priceHidden=new Set(); priceSeriesKey='';
@@ -2681,14 +2687,8 @@ $('resetBtn').addEventListener('click',()=>{
   $('priceHoverBox').textContent="Run a simulation to view the prices of this portfolio's assets.";
   const pcw=$('priceCanvasWrap'); if(pcw) pcw.classList.remove('has-osc');
   hideStatus($('assetFetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
-  const poolInp=$('tickerPoolInput'); if(poolInp) poolInp.value='';
-  setPoolLocked(false); hideStatus($('poolStatus')); setDataMode('real'); renderPoolChips(); refreshAssetPoolSelect();
-  document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
-  initDefaults();
-  loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();
-  switchTab('portfolios');
-  runSimulation();
-});
+  setPoolLocked(false); hideStatus($('poolStatus')); setDataMode('real'); refreshAssetPoolSelect();
+}
 
 /* ─── QUICK START PRESETS ─── */
 // One-click worked comparisons built from live-ticker assets. Each rebuilds the
@@ -2742,9 +2742,9 @@ const PORTFOLIO_QUICK_START = {
 async function applyPortfolioQuickStart(key){
   const build = PORTFOLIO_QUICK_START[key];
   if(!build) return;
-  portfolios=[]; portfolioIdCounter=0; activePortfolioId=null;
-  simResults=[]; commonDates=[];
-  hideWarning();
+  // A clean workspace first, so an example never inherits the currency, seed or
+  // chart view the last one was read under, then the comparison over the top.
+  resetWorkspace();
   build();
   activePortfolioId = portfolios.length ? portfolios[0].id : null;
   loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();

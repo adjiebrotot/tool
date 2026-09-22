@@ -63,7 +63,13 @@ committed. `powerfactory-scripter/audit/` validates generated scripts against a 
 case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain
 CPython, with no PowerFactory needed.
 
-The shared layer has one of its own. `node _ref/abbr-check.mjs` loads every page and
+Two cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
+ships Quick Start scenarios instead of a Reset button and proves the claim that lets it: it
+applies each scenario to a freshly loaded page and to a page whose every control has been
+scribbled over, and the two have to land on identical form state across every tab — plus, where a
+tool seeds a detailed view from the simple field it replaces, the two have to agree.
+
+`node _ref/abbr-check.mjs` loads every page and
 checks the abbreviation glossary (`SharedAbbr`): that decoration never lands in a link,
 a button, a form control, a page title or user content, that the visible text is
 unchanged by it, that hovering opens the definition, and that the dashed underline

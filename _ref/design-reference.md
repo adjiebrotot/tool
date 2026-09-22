@@ -778,6 +778,44 @@ body.light .radio-opt.selected { background: rgba(139,184,248,0.10); }
 </div>
 ```
 
+#### When Reset and Simulate earn their place
+
+Neither is a default. Both have to be argued for, and the argument is about the
+tool, not the layout.
+
+**Simulate** is a gate, and a gate is only worth having when passing through it
+costs something. Time one recompute on the real page before deciding:
+
+| One recompute | What to build |
+| --- | --- |
+| Under ~50ms | No button. The output follows the inputs, debounced if a drag or a held key would thrash it. |
+| Roughly 50–150ms | Judgement. A phone is several times slower than the desk it was measured on. |
+| Over ~150ms, or it fetches anything | A real gate. Let the reader finish the plan before it runs. |
+
+A gate has to actually gate. A Simulate button that only skips a debounce the
+page is already running is a placebo: it tells the reader the answer waited for
+them when it did not. And a gated page still has to keep the FORM live —
+currency prefixes, a slider's bounds, which fields the chosen mode shows — while
+saying plainly that the ANSWER is out of date. `financialfreedom` does this:
+`syncForm()` on every keystroke, `markStale()` to dim the results and light the
+button, `render()` only from Simulate.
+
+**Reset** is redundant the moment the tool has Quick Start scenarios, because
+every scenario is a reset with a worked example laid over it — and a worked
+example is a better place to land than an empty form. Two conditions before
+dropping the button:
+
+1. Each scenario must open from the defaults, not from whatever is on screen
+   (`resetAll()` first, then the scenario's own values), so no field, mode or
+   hidden collection survives the switch.
+2. Anything Reset did that a scenario does not — clearing downloaded data, for
+   instance — must live on its own control. `dcasimulator` keeps that on
+   **Clear all** in the Data tab.
+
+Keep Reset on a tool with no scenarios (`pisahvsgabung`, `financingvscash`), and
+keep it where it means *empty the canvas* rather than *go back to the start*
+(`sankeycreator`'s Reset restores the demo, Clear empties the table).
+
 ```css
 .btn-row { display: flex; gap: 10px; flex-wrap: wrap; padding: 14px 18px 18px; border-top: 1px solid var(--border); }
 

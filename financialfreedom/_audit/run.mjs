@@ -1212,9 +1212,7 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
 
 // F31: the headline numbers on the page agree with the engine behind them.
 {
-  await page.evaluate(() => {
-    document.getElementById('resetBtn').click();
-  });
+  await page.evaluate(() => window.__FF.resetToDefaults());
   await page.waitForTimeout(300);
   const r = await page.evaluate(() => ({
     need: window.__FF.last.needAtRetire,
@@ -2695,17 +2693,18 @@ console.log('\n── Accounting integrity: the table adds up ──');
 /* ── The control panel's action row ── */
 {
   const r = await page.evaluate(() => {
-    const sim = document.getElementById('simBtn'), rst = document.getElementById('resetBtn');
+    const sim = document.getElementById('simBtn');
     const row = sim && sim.parentElement, aside = document.querySelector('.controls');
     return {
-      hasSim: !!sim, sameRow: !!(rst && row && rst.parentElement === row),
-      pinned: !!(aside && aside.lastElementChild === row),
-      buriedInSettings: !!document.querySelector('#tab-settings #resetBtn')
+      hasSim: !!sim, pinned: !!(aside && aside.lastElementChild === row),
+      hasReset: !!document.getElementById('resetBtn'),
+      note: !!document.getElementById('staleNote')
     };
   });
-  check('F40 Simulate and Reset sit together in one pinned action row',
-    r.hasSim && r.sameRow && r.pinned, `sim ${r.hasSim}, together ${r.sameRow}, pinned ${r.pinned}`);
-  check('F40b so Reset is no longer buried in the Settings tab', !r.buriedInSettings, '');
+  check('F40 Simulate is a pinned action row of its own',
+    r.hasSim && r.pinned && r.note, `sim ${r.hasSim}, pinned ${r.pinned}, stale note ${r.note}`);
+  check('F40b and there is no Reset button, because every Quick Start is one',
+    !r.hasReset, '');
 }
 
 // F32: the page must not have thrown anywhere along the way.
@@ -3008,16 +3007,16 @@ console.log('\n── Quick Start scenarios ──');
     carried.pensionOn === false && carried.preset === 'world' && carried.legacyShown === 'none',
     `pension ${carried.pensionOn}, preset ${carried.preset} at ${carried.ret}%`);
 
-  // Reset has to drop the highlight along with the figures, or the page claims
-  // a scenario it no longer shows.
+  // A scenario has to land on its own figures whatever the reader was looking
+  // at before. Frugal Living stops at 37, and the retirement slider must carry
+  // that even when the previous scenario's span did not reach down to it.
+  await apply('latestart');
   await apply('frugal');
-  await page.evaluate(() => document.getElementById('resetBtn').click());
-  await page.waitForTimeout(150);
-  check('F65l Reset drops the scenario highlight along with its figures',
-    await page.evaluate(() => !document.querySelector('.quick-start-btn.active')
-      && document.getElementById('expense').value === '60,000'
-      && document.getElementById('ageNow').value === '30'),
-    'no active button and the defaults back');
+  check('F65l a scenario lands on its own retirement age, not the last one\'s span',
+    await page.evaluate(() => document.getElementById('ageRetire').value === '37'
+      && document.getElementById('ageNow').value === '28'),
+    await page.evaluate(() => 'slider at ' + document.getElementById('ageRetire').value
+      + ' with min ' + document.getElementById('ageRetire').min));
 }
 
 console.log('\n── Coming back tomorrow ──');

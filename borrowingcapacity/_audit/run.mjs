@@ -272,7 +272,9 @@ const ALL_TICKED = { hasInvest:true, hasGov:true, hasHomeLoan:true, hasCard:true
                      hasBnpl:true, hasSupport:true, hasRefi:true };
 
 async function reset(){
-  await page.evaluate(() => document.getElementById('resetBtn').click());
+  // The page has no Reset button: a Quick Start already opens with resetAll(),
+  // so the harness drives the same function the presets do.
+  await page.evaluate(() => window.__BC.resetAll());
   await page.waitForTimeout(120);
   await setModes(ALL_DETAILED);
   await setInputs(ALL_TICKED);
@@ -1097,15 +1099,16 @@ async function reset(){
     thin.length === 0,
     thin.length ? thin.join(' | ') : 'every scenario clears its second cap by more than 5%');
 
-  // Reset has to clear the highlight, or the page claims a scenario it no
-  // longer shows.
+  // Exactly one scenario is ever highlighted, and it is the one whose figures
+  // are on screen — the page must never claim a scenario it no longer shows.
   await applyPreset('geoff');
-  await page.evaluate(() => document.getElementById('resetBtn').click());
-  await page.waitForTimeout(120);
-  check('B27e Reset drops the scenario highlight along with the figures',
-    await page.evaluate(() => !document.querySelector('.quick-start-btn.active')
-      && document.getElementById('incSimple').value === '140,000'),
-    'no active button and the default income back');
+  await applyPreset('couple');
+  check('B27e the highlight follows the scenario actually on screen',
+    await page.evaluate(() => {
+      const on = [...document.querySelectorAll('.quick-start-btn.active')];
+      return on.length === 1 && on[0].dataset.preset === 'couple';
+    }),
+    'one active button, and it is the last preset applied');
 
   // A scenario must not inherit the last one's checklist boxes.
   await applyPreset('tradie');          // ticks hasPersonal
@@ -1147,7 +1150,7 @@ async function reset(){
 
   // saveState returns null on a page nobody has touched, so a first-time
   // visitor keeps the demo instead of being dumped back on the default.
-  await page.evaluate(() => document.getElementById('resetBtn').click());
+  await page.evaluate(() => window.__BC.resetAll());
   await page.waitForTimeout(120);
   const pristine = await page.evaluate(() => window.__BC_TOUR.saveState());
   check('B28b a pristine page has nothing worth handing back',
