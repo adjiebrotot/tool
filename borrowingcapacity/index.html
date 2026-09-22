@@ -626,9 +626,6 @@
   </div>
 
   <div class="warning" id="warnBanner"></div>
-  <div class="btn-row">
-    <button class="btn-secondary" id="csvBtn">⬇ CSV</button>
-  </div>
   </div>
 </aside>
 
@@ -648,9 +645,10 @@
         <h2>Capacity across the income range <i class="tip-icon" data-tip="Your own scenario sits at the centre of the sweep. Salary, business and investment income scale together across the range, while government payments hold still because they are needs tested rather than earned.">?</i></h2>
       </div>
       <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="pngBtn" title="Download PNG">⬇ PNG</button>
-        <button class="btn-secondary btn-sm" id="copyBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary btn-sm" id="resetZoomBtn" title="Reset zoom">⟳</button>
+        <button class="btn-secondary btn-sm" id="svgBtn" title="Download this chart as SVG">⬇ SVG</button>
+        <button class="btn-secondary btn-sm" id="pngBtn" title="Download this chart as PNG">⬇ PNG</button>
+        <button class="btn-secondary btn-sm btn-icon" id="copyBtn" title="Copy PNG to clipboard">⧉</button>
+        <button class="btn-secondary btn-sm btn-icon" id="resetZoomBtn" title="Reset zoom">⟳</button>
       </div>
     </div>
     <div class="legend" id="chartLegend"></div>
@@ -659,7 +657,12 @@
   </section>
 
   <section class="detail-section card">
-    <h2>The four caps</h2>
+    <div class="detail-head">
+      <h2>The four caps</h2>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="csvBtn" title="Download this table as CSV">⬇ CSV</button>
+      </div>
+    </div>
     <div class="table-wrap" id="capsTableWrap"></div>
   </section>
 

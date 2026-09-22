@@ -66,7 +66,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 #boardCash{border-left-color:var(--accent2);}
 .board-head{margin:0 0 14px;}
 .board-head h2{margin:0 0 6px;font-size:1.3rem;}
-.chart-head h3,.detail-head h3{margin:0;font-size:1.02rem;display:flex;align-items:center;gap:6px;}
+.chart-head h3,.detail-head h3{font-size:1.02rem;}
 
 /* ── Retirement-age sensitivity slider ──
    It is a control, but it belongs to the section it moves rather than to the
@@ -106,21 +106,13 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .remedies li{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 12px;font-size:.85rem;line-height:1.45;color:var(--muted);}
 .remedies li strong{color:var(--text);display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
 
-/* ── Charts ── */
+/* ── Charts ──
+   The export row itself — .chart-head, .detail-head, .btn-cluster, .btn-sm and
+   their phone layout — is shared.css's, so every tool on the site carries the
+   same cluster. Only what is particular to this page is set here. */
 .chart-card{padding:20px;margin-bottom:18px;}
-/* Title left, export cluster hard right, and nothing else on that row: the
-   subtitle is a sibling BELOW it, so however long it runs it can never push the
-   buttons onto a line of their own. margin-left:auto holds the right edge even
-   when a long title wraps. Matches the DCA simulator's .section-title. */
-.chart-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
-.chart-head h2{display:flex;align-items:center;gap:6px;margin:0;}
-.chart-head .btn-cluster{margin-left:auto;}
 .chart-card>.sub{color:var(--muted);font-size:.8rem;margin:5px 0 0;line-height:1.4;}
-.btn-cluster{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;flex-shrink:0;}
-.detail-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
-.detail-head h2{margin:0;}
-.detail-head .btn-cluster{margin-left:auto;}
-.btn-sm{padding:5px 11px;font-size:.8rem;border-radius:8px;}
+.detail-head{margin-bottom:4px;}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 14px;font-size:.84rem;}
 .legend-item{display:flex;align-items:center;gap:7px;cursor:pointer;transition:opacity .15s;}
 .legend-item.hidden{opacity:.35;}
@@ -183,8 +175,6 @@ main .card{transition:opacity var(--transition-fast);}
   .canvas-wrap-cash{height:420px;}
   .btn-row{flex-direction:column;}
   .btn-row .btn-primary,.btn-row .btn-secondary{flex:1 1 auto;}
-  .btn-cluster{width:100%;}
-  .btn-cluster .btn-secondary{flex:1 1 auto;}
   .ctrl-tab{font-size:.7rem;}
   .inline-row{flex-wrap:wrap;}
   .inline-row .period{flex:1 1 100%;width:auto;}

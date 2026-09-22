@@ -924,7 +924,7 @@ console.log('\n── Page and presentation ──');
        rather than a zoom callback, because it has to run inside the update the
        gesture triggers: the zoom plugin writes the window it is about to draw
        into the x scale's options, so replaying that here is the real path. */
-    const plug = (path.config.plugins || []).filter(p => p.id === 'ffYFit');
+    const plug = (path.config.plugins || []).filter(p => p.id === 'sharedYFit');
     sx.min = openedAt.min; sx.max = openedAt.min + 5;
     plug.forEach(p => p.beforeUpdate(path));
     const zoomed = {min: path.options.scales.y.min, max: path.options.scales.y.max};
@@ -939,7 +939,7 @@ console.log('\n── Page and presentation ──');
     plug.forEach(p => p.beforeUpdate(path));
     // BOTH panes of the cashflow chart are refitted in the one pass, so a zoom
     // cannot leave the balance scaled for a window it is no longer showing.
-    const cashPlug = (cash.config.plugins || []).filter(p => p.id === 'ffYFit');
+    const cashPlug = (cash.config.plugins || []).filter(p => p.id === 'sharedYFit');
     const cashOpened = {min: cxs.min, max: cxs.max};
     cxs.min = cashOpened.min; cxs.max = cashOpened.min + 5;
     cashPlug.forEach(p => p.beforeUpdate(cash));
@@ -964,7 +964,7 @@ console.log('\n── Page and presentation ──');
   });
   check('F50 both charts carry the y-axis refit as a plugin, the cashflow one for both its panes',
     r.plugged && r.noCallbacks,
-    r.plugged ? 'ffYFit on both, two panes fitted, nothing chasing the gesture' : 'missing');
+    r.plugged ? 'sharedYFit on both, two panes fitted, nothing chasing the gesture' : 'missing');
   check('F50b a narrower window gets a narrower axis, never a wider one',
     r.early.max < r.mid.max && r.mid.max < r.full.max,
     `5y ${r.early.max.toFixed(0)} < 25y ${r.mid.max.toFixed(0)} < all ${r.full.max.toFixed(0)}`);
@@ -2075,7 +2075,7 @@ console.log('\n── Two sections, one slider ──');
       cash.options.scales[id].min = home.x[0] + 10;
       cash.options.scales[id].max = home.x[0] + 15;
     });
-    (cash.config.plugins || []).filter(p => p.id === 'ffYFit').forEach(p => p.beforeUpdate(cash));
+    (cash.config.plugins || []).filter(p => p.id === 'sharedYFit').forEach(p => p.beforeUpdate(cash));
     return {
       charts: window.__charts.length,
       oneChart: !!cash.data.datasets.find(d => d.label === 'Balance'),

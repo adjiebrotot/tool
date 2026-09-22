@@ -76,7 +76,13 @@ const LANG = {
     chart1Sub: 'Shows total tax payable across salary range. The gap between lines = tax savings.',
     chart1XTitle: 'Total Household Salary',
     chart1YTitle: 'Total Tax Payable',
-    resetZoom: '⟳',
+    /* The export cluster every chart and table on the site carries: the label
+       is a glyph, so the title attribute is what says what it does. */
+    btnSvgTitle: 'Download this chart as SVG',
+    btnPngTitle: 'Download this chart as PNG',
+    btnCopyTitle: 'Copy PNG to clipboard',
+    btnResetZoomTitle: 'Reset zoom',
+    btnCsvTitle: 'Download this table as CSV',
     hoverBox1: 'Hover over the chart to inspect a salary point.',
     chart2Title: 'Tax Difference (Gabung − Pisah)',
     chart2Sub: 'Positive = Gabung Harta pays more (Pisah Harta wins). Negative = Gabung Harta pays less (Gabung Harta wins).',
@@ -206,7 +212,11 @@ const LANG = {
     chart1Sub: 'Menampilkan total pajak terutang di berbagai tingkat gaji. Selisih antar garis = penghematan pajak.',
     chart1XTitle: 'Total Gaji Rumah Tangga',
     chart1YTitle: 'Total Pajak Terutang',
-    resetZoom: '⟳',
+    btnSvgTitle: 'Unduh grafik ini sebagai SVG',
+    btnPngTitle: 'Unduh grafik ini sebagai PNG',
+    btnCopyTitle: 'Salin PNG ke papan klip',
+    btnResetZoomTitle: 'Atur ulang zoom',
+    btnCsvTitle: 'Unduh tabel ini sebagai CSV',
     hoverBox1: 'Arahkan kursor ke grafik untuk melihat detail gaji.',
     chart2Title: 'Selisih Pajak (Gabung − Pisah)',
     chart2Sub: 'Positif = Gabung Harta bayar lebih banyak (Pisah Harta menang). Negatif = Gabung Harta bayar lebih sedikit (Gabung Harta menang).',
@@ -320,6 +330,13 @@ function applyLang() {
     const key = el.dataset.i18nTip;
     const val = LANG[lang][key];
     if (val !== undefined) el.setAttribute('data-tip', val);
+  });
+  // Native title attributes — the export buttons are glyphs, so this is the
+  // only place they say what they do.
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.dataset.i18nTitle;
+    const val = LANG[lang][key];
+    if (val !== undefined) el.setAttribute('title', val);
   });
   // Info box (HTML)
   renderInfoBox();
@@ -686,7 +703,14 @@ function renderMainChart(rows){
             $('hoverBox').textContent=T('salaryLabel')+' '+fmt.salaryLabel(items[0].label)+'  —  '+parts;
           }
         }),
-        zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:0.08},pinch:{enabled:true},mode:'x'}},
+        /* The shared gesture block: a pan cannot leave the swept salary range,
+           and the pinch has a floor, so the chart can never be zoomed past the
+           data it holds (SharedZoom, shared.js). */
+        zoom:SharedZoom.options({min:0,max:labels.length-1,points:labels.length}),
+        // ...and the y axis follows the x window, so a zoom into the lower
+        // salaries shows the gap between the two lines there rather than a
+        // flat pair of lines under a scale built for the top of the range.
+        sharedYFit:{auto:{axes:['y'],includeZero:true}},
       },
       scales:{
         x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{size:11},callback:(v,i)=>fmt.salaryLabel(labels[i])},grid:{color:gridColor},title:{display:true,text:T('chart1XTitle'),color:mutedColor}},
@@ -700,9 +724,12 @@ function renderMainChart(rows){
     chartInstance.options.scales.x.title.text=T('chart1XTitle');
     chartInstance.options.scales.y.ticks.color=mutedColor;chartInstance.options.scales.y.grid.color=gridColor;
     chartInstance.options.scales.y.title.text=T('chart1YTitle');
+    // The limits travel with the data: a different salary range means a
+    // different extent to pan across.
+    chartInstance.options.plugins.zoom=config.options.plugins.zoom;
     chartInstance.update('none');
   } else {
-    chartInstance=new Chart($('chartCanvas'),config);
+    chartInstance=new Chart($('chartCanvas'),{...config,plugins:[SharedZoom.plugin]});
   }
 }
 
@@ -745,7 +772,10 @@ function renderDiffChart(rows){
             $('hoverBox2').textContent=T('salaryLabel')+' '+fmt.salaryLabel(items[0].label)+'  —  '+(v>=0?T('pisahSavesPrefix')+' '+fmt.idr(v,true):T('gabungSavesPrefix')+' '+fmt.idr(-v,true));
           }
         }),
-        zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:0.08},pinch:{enabled:true},mode:'x'}},
+        zoom:SharedZoom.options({min:0,max:labels.length-1,points:labels.length}),
+        /* Zero is the whole point of this chart — it is the line either side
+           wins on — so the refitted axis keeps it whatever window is shown. */
+        sharedYFit:{auto:{axes:['y'],includeZero:true}},
       },
       scales:{
         x:{ticks:{color:mutedColor,maxTicksLimit:12,font:{size:11},callback:(v,i)=>fmt.salaryLabel(labels[i])},grid:{color:gridColor},title:{display:true,text:T('chart1XTitle'),color:mutedColor}},
@@ -759,9 +789,10 @@ function renderDiffChart(rows){
     chartInstance2.options.scales.x.title.text=T('chart1XTitle');
     chartInstance2.options.scales.y.ticks.color=mutedColor;chartInstance2.options.scales.y.grid.color=gridColor;
     chartInstance2.options.scales.y.title.text=T('chart2YTitle');
+    chartInstance2.options.plugins.zoom=config.options.plugins.zoom;
     chartInstance2.update('none');
   } else {
-    chartInstance2=new Chart($('chartCanvas2'),config);
+    chartInstance2=new Chart($('chartCanvas2'),{...config,plugins:[SharedZoom.plugin]});
   }
 }
 
