@@ -53,7 +53,8 @@ const LANG = {
     btnAddPeriod: '+ Add Period',
     optFixed: 'Fixed',
     optFloating: 'Floating',
-    labelYr: 'Yr',
+    labelYear: 'Year',
+    labelPeriodEnd: 'Last year of this period',
     sectionPropertyGrowth: 'Property Growth',
     labelHouseGrowth: 'House Price Growth (RPPI)',
     labelCalcCAGR: 'Calculate CAGR from Historical Prices',
@@ -244,7 +245,8 @@ const LANG = {
     btnAddPeriod: '+ Tambah Periode',
     optFixed: 'Tetap (Fixed)',
     optFloating: 'Mengambang (Floating)',
-    labelYr: 'Thn',
+    labelYear: 'Tahun',
+    labelPeriodEnd: 'Tahun terakhir periode ini',
     sectionPropertyGrowth: 'Pertumbuhan Properti',
     labelHouseGrowth: 'Kenaikan Harga Properti (RPPI)',
     labelCalcCAGR: 'Hitung CAGR dari Harga Historis',
@@ -2265,15 +2267,19 @@ function buildRatePeriodRow(p, idx){
   row.dataset.idx = idx;
   const isLast = idx === S.ratePeriods.length-1;
   const floating = p.type === 'floating';
+  // The last period always stretches to the mortgage term, so its end is read-only
+  // text; every other period ends where the reader types, inside the range itself.
+  const end = isLast
+    ? `<b class="rp-to-lbl">–</b>`
+    : `<input type="number" class="rp-to" min="1" step="1" value="${p.toYear}" aria-label="${T('labelPeriodEnd')}" title="${T('labelPeriodEnd')}"/>`;
   row.innerHTML = `
     <div class="rp-head">
-      <span class="rp-years">${T('labelYr')} <b class="rp-from">–</b>–<b class="rp-to-lbl">–</b></span>
-      <select class="rp-type">
+      <span class="rp-years">${T('labelYear')} <b class="rp-from">–</b><span class="rp-sep">–</span>${end}</span>
+      <select class="sel-input rp-type">
         <option value="fixed"${!floating?' selected':''}>${T('optFixed')}</option>
         <option value="floating"${floating?' selected':''}>${T('optFloating')}</option>
       </select>
-      ${isLast ? '' : `<input type="number" class="rp-to" min="1" step="1" value="${p.toYear}" title="${T('labelMortgageTerm')}"/>`}
-      <button type="button" class="cagr-btn delete rp-delete" ${S.ratePeriods.length<=1?'disabled':''}>${T('btnDelete')}</button>
+      <button type="button" class="btn-secondary btn-sm btn-icon rp-delete" ${S.ratePeriods.length<=1?'disabled':''} aria-label="${T('btnDelete')}" title="${T('btnDelete')}">✕</button>
     </div>
     <div class="rp-rates">
       <span class="rp-fixed-wrap" style="${floating?'display:none':''}">

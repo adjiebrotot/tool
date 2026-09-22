@@ -127,19 +127,21 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 .sched-row{background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 10px;display:grid;gap:7px;}
 .sched-row.sp-beyond{opacity:.45;}
 .sp-head{display:flex;align-items:center;gap:7px;}
-.sp-range{font-size:.8rem;font-weight:600;color:var(--muted);white-space:nowrap;}
+.sp-range{display:inline-flex;align-items:center;gap:5px;font-size:.8rem;font-weight:600;color:var(--muted);white-space:nowrap;flex-shrink:0;}
 .sp-range b{color:var(--text);font-family:'DM Mono',monospace;font-weight:600;}
-.sp-head select{flex:1;min-width:0;font-size:.8rem;padding:6px 8px;cursor:pointer;}
+.sp-sep{color:var(--muted);}
+/* Shared design-system select, sized down for the compact schedule row. */
+.sp-head .sp-type{flex:1;min-width:0;width:auto;font-size:.8rem;font-weight:600;padding:6px 26px 6px 9px;background-position:right 8px center;}
 .sched-row input[type=number],.sched-row input[type=text]{background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px;outline:none;text-align:right;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
 .sched-row input:focus{border-color:var(--accent);}
-.sp-head .sp-to{width:4.4em;flex-shrink:0;}
-.sp-delete{padding:5px 9px;font-size:.75rem;flex-shrink:0;line-height:1;}
+.sp-range .sp-to{width:4.4em;flex-shrink:0;}
+.sp-delete{margin-left:auto;flex-shrink:0;padding:5px 9px;font-size:.8rem;line-height:1;}
 .sp-vals{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
 .sp-fixed-wrap,.sp-float-wrap,.sp-amt-wrap{display:inline-flex;align-items:center;gap:6px;}
 .sp-vals input{width:5.6em;}
 .sp-dash,.sp-unit{color:var(--muted);font-size:.78rem;}
 .sched-actions{display:flex;gap:8px;margin-top:8px;}
-.sched-actions .btn-secondary{flex:1;}
+.sched-actions .btn-primary.btn-sm{flex:1;padding:6px 12px;font-size:.8rem;border-radius:8px;}
 
 /* The solved rate for a known-repayment loan: an output, so it reads as one. */
 .implied-rate{font-family:'DM Mono',monospace;font-weight:600;color:var(--accent2);font-size:.95rem;padding:7px 0;}
