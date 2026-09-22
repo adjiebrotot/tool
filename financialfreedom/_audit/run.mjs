@@ -922,29 +922,31 @@ console.log('\n── Page and presentation ──');
     /* Drive the wiring, not just the arithmetic. The refit is a chart plugin
        rather than a zoom callback, because it has to run inside the update the
        gesture triggers: the zoom plugin writes the window it is about to draw
-       into the x scale's options, so replaying that here is the real path. */
+       into the x scale's options, so replaying that here is the real path.
+       `SharedZoom.refit` is that same fitter, driven from outside an update. */
     const plug = (path.config.plugins || []).filter(p => p.id === 'sharedYFit');
+    const refit = c => window.SharedZoom.refit(c);
     sx.min = openedAt.min; sx.max = openedAt.min + 5;
-    plug.forEach(p => p.beforeUpdate(path));
+    refit(path);
     const zoomed = {min: path.options.scales.y.min, max: path.options.scales.y.max};
     sx.min = openedAt.min; sx.max = openedAt.max;
-    plug.forEach(p => p.beforeUpdate(path));
+    refit(path);
     const restored = {min: path.options.scales.y.min, max: path.options.scales.y.max};
     // And pinching all the way out to the whole plan sizes the axis to it.
     sx.min = lim.min; sx.max = lim.max;
-    plug.forEach(p => p.beforeUpdate(path));
+    refit(path);
     const widest = {min: path.options.scales.y.min, max: path.options.scales.y.max};
     sx.min = openedAt.min; sx.max = openedAt.max;
-    plug.forEach(p => p.beforeUpdate(path));
+    refit(path);
     // BOTH panes of the cashflow chart are refitted in the one pass, so a zoom
     // cannot leave the balance scaled for a window it is no longer showing.
     const cashPlug = (cash.config.plugins || []).filter(p => p.id === 'sharedYFit');
     const cashOpened = {min: cxs.min, max: cxs.max};
     cxs.min = cashOpened.min; cxs.max = cashOpened.min + 5;
-    cashPlug.forEach(p => p.beforeUpdate(cash));
+    refit(cash);
     const bothMoved = {y: cash.options.scales.y.max, y2: cash.options.scales.yBal.max};
     cxs.min = cashOpened.min; cxs.max = cashOpened.max;
-    cashPlug.forEach(p => p.beforeUpdate(cash));
+    refit(cash);
     return {
       full, early, mid, cashFull, cashEarly, balFull, balEarly, bothMoved,
       zoomed, restored, widest, opened: path.$fitY.y(openedAt.min, openedAt.max), openedAt,
@@ -1934,7 +1936,12 @@ for(const [name, extra] of [
         lowest: Math.min.apply(null, bal.data.map(p => p.y)),
         tableLowest: Math.min.apply(null, rows),
         worst,
-        axisMin: cash.options.scales.yBal.min,
+        /* The bound is no longer written into the configuration — a
+           configured bound is a USER bound, which Chart.js restores after the
+           refit has run. The fitter the chart hands the plugin IS the axis, so
+           the opening bound is what it returns for the opening window. */
+        axisMin: cash.options.plugins.sharedYFit.fit.yBal(
+          cash.options.scales.x.min, cash.options.scales.x.max).min,
         left: $('mLeft').textContent,
         leftSub: $('mLeftSub').textContent
       };
@@ -2068,6 +2075,9 @@ console.log('\n── Two sections, one slider ──');
     const win = c => ({x: [c.options.scales.x.min, c.options.scales.x.max],
                        xAge: [c.options.scales.xAge.min, c.options.scales.xAge.max]});
     const home = win(cash), pathHome = win(path);
+    // The axes are sized by the refit, not by a configured bound, so the view
+    // the chart opens on is read by driving it over the opening window.
+    window.SharedZoom.refit(cash);
     const opened = {y: cash.options.scales.y.max, yBal: cash.options.scales.yBal.max};
     // The reader pinches the cashflow chart down to five years mid-plan. Both
     // panes are sized to that window in the one update the gesture triggers.
@@ -2075,7 +2085,8 @@ console.log('\n── Two sections, one slider ──');
       cash.options.scales[id].min = home.x[0] + 10;
       cash.options.scales[id].max = home.x[0] + 15;
     });
-    (cash.config.plugins || []).filter(p => p.id === 'sharedYFit').forEach(p => p.beforeUpdate(cash));
+    // The fitter is driven straight, the way a chart refits outside an update.
+    window.SharedZoom.refit(cash);
     return {
       charts: window.__charts.length,
       oneChart: !!cash.data.datasets.find(d => d.label === 'Balance'),

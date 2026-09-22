@@ -719,6 +719,8 @@ function renderMainChart(rows){
     }
   };
   if(chartInstance){
+    // New data means a new view: a window left by a pan or a pinch is dropped.
+    SharedZoom.resetView(chartInstance);
     chartInstance.data.labels=labels;chartInstance.data.datasets=datasets;
     chartInstance.options.scales.x.ticks.color=mutedColor;chartInstance.options.scales.x.grid.color=gridColor;
     chartInstance.options.scales.x.title.text=T('chart1XTitle');
@@ -784,6 +786,8 @@ function renderDiffChart(rows){
     }
   };
   if(chartInstance2){
+    // New data means a new view: a window left by a pan or a pinch is dropped.
+    SharedZoom.resetView(chartInstance2);
     chartInstance2.data.labels=labels;chartInstance2.data.datasets=config.data.datasets;
     chartInstance2.options.scales.x.ticks.color=mutedColor;chartInstance2.options.scales.x.grid.color=gridColor;
     chartInstance2.options.scales.x.title.text=T('chart1XTitle');

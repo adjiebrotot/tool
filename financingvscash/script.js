@@ -841,7 +841,9 @@ function renderMainChart(results){
   }},backgroundColor:tipBg,titleColor:tipTitle,bodyColor:tipBody,borderColor:tipBorder,borderWidth:1,padding:10,}),zoom:SharedZoom.options({min:0,max:maxYears,points:xs.length}),sharedYFit:{auto:{axes:['y']}}},scales:{x:{type:'linear',title:{display:true,text:'Years',color:mc,font:{size:12}},ticks:{color:mc,maxTicksLimit:12,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:yAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
   // The limits travel with the data: a shorter term means a shorter axis to
   // pan across, so they are rewritten on an in-place update too.
-  if(chartInstance){chartInstance.data=cfg.data;chartInstance.options.plugins.zoom=cfg.options.plugins.zoom;chartInstance.options.scales.x.ticks.color=mc;chartInstance.options.scales.x.grid.color=gc;chartInstance.options.scales.x.title.color=mc;chartInstance.options.scales.y.ticks.color=mc;chartInstance.options.scales.y.grid.color=gc;chartInstance.options.scales.y.title.color=mc;chartInstance.options.scales.y.title.text=yAxisLabel;chartInstance.update('none');}
+  // New data means a new view: whatever window a pan or a pinch left behind
+  // is dropped so the reader sees the whole of what was just computed.
+  if(chartInstance){SharedZoom.resetView(chartInstance);chartInstance.data=cfg.data;chartInstance.options.plugins.zoom=cfg.options.plugins.zoom;chartInstance.options.scales.x.ticks.color=mc;chartInstance.options.scales.x.grid.color=gc;chartInstance.options.scales.x.title.color=mc;chartInstance.options.scales.y.ticks.color=mc;chartInstance.options.scales.y.grid.color=gc;chartInstance.options.scales.y.title.color=mc;chartInstance.options.scales.y.title.text=yAxisLabel;chartInstance.update('none');}
   else chartInstance=new Chart($('chartCanvas'),{...cfg,plugins:[SharedZoom.plugin]});
 }
 
@@ -1078,7 +1080,7 @@ function runSensitivity(){
       sensLe.appendChild(SharedLegend.item(SharedLegend.fromDataset(datasets[1]), 'Break-even (zero)'));
     }
     const cfg={type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:SharedChartTip.options({callbacks:{title:c=>`${xL}: ${c[0].label}`,label:c=>Number.isFinite(c.parsed.y)?`${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`:`${c.dataset.label}: not feasible`}}),zoom:SharedZoom.options({min:0,max:labels.length-1,points:labels.length}),sharedYFit:{auto:{axes:['y']}}},scales:{x:{title:{display:true,text:xL,color:mc},ticks:{color:mc,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:objL,color:mc},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
-    if(sensChartInstance){sensChartInstance.data=cfg.data;sensChartInstance.options=cfg.options;sensChartInstance.update('none');}
+    if(sensChartInstance){SharedZoom.resetView(sensChartInstance);sensChartInstance.data=cfg.data;sensChartInstance.options=cfg.options;sensChartInstance.update('none');}
     else sensChartInstance=new Chart($('sensCanvas'),{...cfg,plugins:[SharedZoom.plugin]});
   } else {
     // ═══ 3D SURFACE PLOT ═══

@@ -1769,6 +1769,8 @@ function renderChart(rows){
   };
 
   if(chartInstance){
+    // New data means a new view: a window left by a pan or a pinch is dropped.
+    SharedZoom.resetView(chartInstance);
     chartInstance.data.labels=labels;
     chartInstance.data.datasets=datasets;
     chartInstance.options.scales.x.ticks.color=m;
