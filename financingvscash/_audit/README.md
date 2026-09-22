@@ -36,6 +36,16 @@ Covered (`run.mjs`):
       the down payment
 - F19 the read-out under the chart names the period, every series once, and the
       band as a range on its own series' entry
+- F20 deferred start on a rate schedule: the schedule's periods are counted from
+      the first repayment AFTER the payment holiday, the holiday capitalises at
+      the rate the schedule opens on rather than the last band's, and the later
+      band re-amortises the instalments from its own first period
+- F21 the scenario editor is laid out as a dependency order for each of the
+      seven loan types: the type and its own shape parameter, then the term its
+      periods are counted in, then the price — except a known repayment, which
+      settles the amount financed first because its rate is solved against it.
+      Every row lives inside a titled section, the payment holiday sits above
+      the rate schedule it moves, and the solved rate closes the plan
 
 The replay in `run.mjs` is re-derived from the engine notes in `script.js`, and
 the IRR check deliberately uses the discounted-stream formulation rather than

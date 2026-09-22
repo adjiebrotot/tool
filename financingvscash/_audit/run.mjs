@@ -456,6 +456,60 @@ const PRICE=50000,CASH=80000,RF=4.5,PPY=12,N=60;
     `balance after the 6-period holiday ${grown.toFixed(2)} vs replay ${refAfterHoliday.toFixed(2)} (borrowed ${PRICE}); first instalment ${a.rows[6][pi]}`);
 }
 
+// ── F20: a deferred start carrying a RATE SCHEDULE. Nothing is repaid inside
+// the holiday, so the schedule is counted from the first instalment after it,
+// and the holiday itself capitalises at the rate the schedule opens on — never
+// at the last band's rate, which is what falling off the end of the list would
+// have charged. ──
+{
+  const K=6,CUT=24,R1=6,R2=12;
+  await setOneScenario({name:'DeferredSched',loanType:'deferred',freq:'monthly',term:N,rate:R1,ioPeriods:K});
+  await setSchedule('rate',[{type:'fixed',to:CUT,rate:R1},{type:'fixed',rate:R2}]);
+  // The ranges the reader is shown, before the editor is closed.
+  const ranges=await page.evaluate(()=>[...document.querySelectorAll('#scRatePeriodRows .sched-row')]
+    .map(r=>{
+      // Every row but the last ends where the reader typed; the last one is a
+      // read-only label that stretches to the term.
+      const end=r.querySelector('.sp-to')||r.querySelector('.sp-to-lbl');
+      return{from:r.querySelector('.sp-from').textContent.trim(),
+             to:(end.tagName==='INPUT'?end.value:end.textContent).trim()};
+    }));
+  await saveScenario();await page.waitForTimeout(200);
+
+  // Independent replay of §13 under §14: the holiday pays nothing and grows at
+  // the opening band's rate, then each instalment is re-amortised over what is
+  // left at whatever rate that period carries.
+  const r1=perRate(R1,PPY),r2=perRate(R2,PPY);
+  const rateAt=i=>i<=CUT?r1:r2;
+  let bal=PRICE,totInt=0;const ref=[];
+  for(let i=1;i<=N;i++){
+    const r=rateAt(i),int=bal*r;
+    const pay=i===N?int+bal:(i<=K?0:pmtOf(bal,r,N-i+1));
+    bal=Math.max(0,bal-Math.min(pay-int,bal));totInt+=int;
+    ref.push({pay,end:bal});
+  }
+  const a=await amortRows();
+  const pi=a.head.indexOf('Payment'),ei=a.head.indexOf('End Balance');
+  const afterHoliday=money(a.rows[K-1][ei]);
+  const wrongBand=PRICE*Math.pow(1+r2,K); // what the last band would have charged
+  const t=await compTable();
+  const gotInt=cell(t,'Total Interest Paid');
+  const rangesOk=ranges.length===2&&ranges[0].from===String(K+1)&&ranges[0].to===String(CUT)
+    &&ranges[1].from===String(CUT+1)&&ranges[1].to===String(N);
+  check('F20 deferred start on a rate schedule: the schedule opens on the first repayment AFTER the holiday',
+    rangesOk,
+    `rows read ${ranges.map(x=>x.from+'–'+x.to).join(', ')} (holiday ${K}, cut ${CUT}, term ${N})`);
+  check('F20b the holiday capitalises at the opening band, and the later band re-amortises the instalments',
+    Math.abs(afterHoliday-ref[K-1].end)<0.05&&Math.abs(afterHoliday-wrongBand)>1&&
+    Math.abs(money(a.rows[K][pi])-ref[K].pay)<0.05&&
+    Math.abs(money(a.rows[CUT][pi])-ref[CUT].pay)<0.05&&
+    Math.abs(gotInt-totInt)<0.05,
+    `balance after the holiday ${afterHoliday.toFixed(2)} vs replay ${ref[K-1].end.toFixed(2)} `+
+    `(the last band would have made it ${wrongBand.toFixed(2)}); first instalment ${money(a.rows[K][pi]).toFixed(2)} `+
+    `vs ${ref[K].pay.toFixed(2)}, instalment after the switch ${money(a.rows[CUT][pi]).toFixed(2)} vs ${ref[CUT].pay.toFixed(2)}; `+
+    `total interest ${gotInt.toFixed(2)} vs ${totInt.toFixed(2)}`);
+}
+
 // ── F17: the fee is counted once, whichever way it is settled ──
 {
   const read=async()=>{const t=await compTable();
@@ -508,6 +562,71 @@ const PRICE=50000,CASH=80000,RF=4.5,PPY=12,N=60;
   check('F18 an unsolvable repayment plan is explained as one, not blamed on the down payment',
     w.disp!=='none'&&/no interest rate/i.test(w.txt)&&!/down payment/i.test(w.txt),
     `banner display=${w.disp}, text "${w.txt.trim().slice(0,110)}"`);
+}
+
+// ── F21: the editor is laid out as a DEPENDENCY order, per loan type. Whatever
+// decides what a later field may say has to sit above it, every row has to live
+// in a titled section, and a known repayment has to settle the amount financed
+// BEFORE the plan whose rate is solved against it. ──
+{
+  const layoutOf=async(t,extra)=>{
+    await setOneScenario(Object.assign({name:'L-'+t,loanType:t,freq:'monthly',term:N,rate:6},extra||{}));
+    await page.waitForTimeout(80);
+    return page.evaluate(()=>{
+      const vis=el=>el.style.display!=='none';
+      const host=document.getElementById('scFields');
+      const kids=[...host.children];
+      return{
+        // Nothing may sit loose between the panels.
+        orphans:kids.filter(el=>!el.classList.contains('field-group')).length,
+        titles:kids.filter(vis).map(g=>g.querySelector('.group-title').textContent),
+        rows:kids.filter(vis).map(g=>[...g.children]
+          .filter(el=>el.id&&!el.classList.contains('group-title')&&vis(el))
+          .map(el=>el.id)),
+      };
+    });
+  };
+  const seen=[];let ok=true,why='';
+  for(const t of ['annuity','flat','interestOnly','balloon','knownPayment','bullet','deferred']){
+    const L=await layoutOf(t,t==='deferred'?{ioPeriods:6}:t==='interestOnly'?{ioPeriods:N}:
+      t==='balloon'?{residualPct:30}:t==='knownPayment'?{payment:1000}:{});
+    seen.push(t+': '+L.titles.join(' › '));
+    const iType=L.rows.findIndex(r=>r.includes('scLoanTypeRow'));
+    const iTerm=L.titles.indexOf('Repayment Term');
+    const iCash=L.titles.indexOf('Upfront & Fees');
+    const iPrice=L.titles.indexOf(t==='knownPayment'?'Repayment Plan':(t==='flat'?'Flat Rate':'Interest Rate'));
+    // The type comes first, the term it is counted in next, and the price is
+    // quoted only once both are settled.
+    if(L.orphans||iType!==0||iTerm!==1||iPrice<2){ok=false;why=t+' → '+L.titles.join(' › ')+(L.orphans?' (+'+L.orphans+' orphan rows)':'');break;}
+    // Known repayment solves its rate from the amount financed, so the cash
+    // side is above the plan; every other type quotes a rate, so it is below.
+    if((t==='knownPayment'?iCash>iPrice:iCash<iPrice)){ok=false;why=t+' → '+L.titles.join(' › ');break;}
+  }
+  check('F21 the editor sections are ordered by what depends on what, and every row lives in one',
+    ok,ok?seen.join('  |  '):why);
+
+  // The payment holiday decides where the rate schedule can open, so it has to
+  // be settled above it — and the solved rate is the last thing on the plan.
+  await setOneScenario({name:'L-def',loanType:'deferred',freq:'monthly',term:N,rate:6,ioPeriods:6});
+  await setSchedule('rate',[{type:'fixed',to:24,rate:6},{type:'fixed',rate:9}]);
+  const def=await page.evaluate(()=>{
+    const vis=el=>el.style.display!=='none';
+    const idx=id=>[...document.getElementById('scFields').children].findIndex(g=>g.contains(document.getElementById(id))&&vis(g));
+    return{holiday:idx('scIoPeriodsRow'),sched:idx('scRateScheduleRow'),
+      firstRange:document.querySelector('#scRatePeriodRows .sp-from').textContent.trim()};
+  });
+  await setOneScenario({name:'L-known',loanType:'knownPayment',freq:'monthly',term:N,rate:6,payment:1000});
+  const known=await page.evaluate(()=>{
+    const vis=el=>el.style.display!=='none';
+    const g=[...document.getElementById('scFields').children].filter(vis).pop();
+    const rows=[...g.children].filter(el=>el.id&&vis(el)&&!el.classList.contains('group-title'));
+    return{title:g.querySelector('.group-title').textContent,last:rows[rows.length-1].id};
+  });
+  check('F21b the holiday sits above the schedule it moves, and the solved rate closes the plan',
+    def.holiday>=0&&def.sched>def.holiday&&def.firstRange==='7'&&
+    known.title==='Repayment Plan'&&known.last==='scImpliedRateRow',
+    `holiday in section ${def.holiday}, rate schedule in ${def.sched} opening on repayment ${def.firstRange}; `+
+    `last section "${known.title}" closes on ${known.last}`);
 }
 
 // ── F13: a scenario saved before loan types existed must still load ──

@@ -142,10 +142,14 @@ function effectiveAnnual(rPeriod,ppy){
    Ordered, consecutive periods counted in the scenario's OWN repayment periods.
    A fixed period is just min === max, which is what lets one code path serve
    fixed, variable, and fixed-then-variable without branching. The last period
-   always stretches to the term, so gaps and overlaps cannot be entered. */
-function normaliseRatePeriods(periods,termPeriods,fallbackRate){
+   always stretches to the term, so gaps and overlaps cannot be entered.
+   A rate schedule does not have to open on repayment 1: `startFrom` moves its
+   first period, which is what a deferred start needs — nothing is repaid during
+   the payment holiday, so the schedule speaks about the instalments that follow
+   it. */
+function normaliseRatePeriods(periods,termPeriods,fallbackRate,startFrom){
   const term=Math.max(1,Math.round(termPeriods||1));
-  const out=[];let from=1;
+  const out=[];let from=Math.min(term,Math.max(1,Math.round(startFrom||1)));
   if(Array.isArray(periods)){
     for(let i=0;i<periods.length&&from<=term;i++){
       const p=periods[i]||{};
@@ -159,7 +163,7 @@ function normaliseRatePeriods(periods,termPeriods,fallbackRate){
       from=to+1;
     }
   }
-  if(!out.length)out.push({from:1,to:term,min:Number(fallbackRate)||0,max:Number(fallbackRate)||0});
+  if(!out.length)out.push({from,to:term,min:Number(fallbackRate)||0,max:Number(fallbackRate)||0});
   out[out.length-1].to=term;
   return out;
 }
@@ -180,14 +184,46 @@ function normalisePaymentPeriods(periods,termPeriods,fallbackAmt){
   out[out.length-1].to=term;
   return out;
 }
-function bandForPeriod(norm,i){for(let k=0;k<norm.length;k++){if(i>=norm[k].from&&i<=norm[k].to)return norm[k];}return norm[norm.length-1];}
-function rateFromBand(b,variant){return variant==='low'?b.min:variant==='high'?b.max:(b.min+b.max)/2;}
+/* The band a repayment falls in. A deferred start's schedule opens on the first
+   instalment AFTER the holiday, so the holiday periods sit BELOW the first band:
+   they capitalise at the rate the loan opens on, never at the last band's rate,
+   which is what falling through to the end of the list would have charged. */
+function bandForPeriod(norm,i){
+  if(!norm||!norm.length)return null;
+  if(i<norm[0].from)return norm[0];
+  for(let k=0;k<norm.length;k++){if(i>=norm[k].from&&i<=norm[k].to)return norm[k];}
+  return norm[norm.length-1];
+}
+// A missing band can only come of an empty schedule, which neither normaliser
+// can produce; it reads as 0% rather than throwing halfway through a loan.
+function rateFromBand(b,variant){if(!b)return 0;return variant==='low'?b.min:variant==='high'?b.max:(b.min+b.max)/2;}
 
+/* The payment holiday / interest-only span, in repayments, for the one scenario
+   shape that carries it. A scenario saved before the field existed means the
+   whole term, which is what a plain interest-only loan is. Both the engine and
+   the editor read the span from here, so the schedule the reader sees and the
+   schedule the loan is built from cannot drift apart. */
+function ioPeriodCount(sc,termPeriods){
+  const term=Math.max(0,Math.round(termPeriods||0));
+  if(!usesIoPeriods((sc&&sc.loanType)||'annuity'))return 0;
+  const raw=(sc&&sc.ioPeriods!==undefined&&sc.ioPeriods!==null)?Number(sc.ioPeriods):term;
+  return Math.min(term,Math.max(0,Math.round(isFinite(raw)?raw:term)));
+}
+/* The repayment a rate schedule opens on. Every structure starts at 1 except a
+   deferred start, where nothing is repaid until the payment holiday is over, so
+   period 1 of the schedule is the first instalment actually due. A holiday as
+   long as the term still leaves the final settling payment, so the start never
+   runs past the term. */
+function rateScheduleStart(sc,termPeriods){
+  const term=Math.max(1,Math.round(termPeriods||1));
+  if(((sc&&sc.loanType)||'annuity')!=='deferred')return 1;
+  return Math.min(term,ioPeriodCount(sc,term)+1);
+}
 function scenarioRateNorm(sc){
   const term=Math.max(1,Math.round(sc.termPeriods||1));
   if(sc.rateMode!=='schedule'||!supportsSchedule(sc.loanType||'annuity'))
     return[{from:1,to:term,min:Number(sc.financeRate)||0,max:Number(sc.financeRate)||0}];
-  return normaliseRatePeriods(sc.ratePeriods,term,sc.financeRate);
+  return normaliseRatePeriods(sc.ratePeriods,term,sc.financeRate,rateScheduleStart(sc,term));
 }
 // The single predicate that gates the whole band feature: legend entry, band
 // datasets, hover-card range suffix and the extra low/high model runs.
@@ -196,7 +232,7 @@ function scenarioHasFloat(sc){return scenarioRateNorm(sc).some(p=>p.max-p.min>1e
 function scenarioPaymentStream(sc,n){
   if(sc.paymentMode==='schedule'){
     const norm=normalisePaymentPeriods(sc.paymentPeriods,n,sc.knownPayment);
-    const out=[];for(let i=1;i<=n;i++){const p=bandForPeriod(norm,i);out.push(p.amount);}
+    const out=[];for(let i=1;i<=n;i++){const p=bandForPeriod(norm,i);out.push(p?p.amount:0);}
     return out;
   }
   const amt=Math.max(0,Number(sc.knownPayment)||0);
@@ -330,6 +366,11 @@ function defaultScenario(name,rate){
     which is what a real lender does. A floating period is simulated three
     ways — min, midpoint, max — and the chart draws the midpoint as a line
     with the min–max range as a shaded band.
+    The schedule runs from the first repayment to the end of the term. Under
+    §13 that first repayment is k+1, not 1: no instalment falls due inside the
+    payment holiday, so the schedule's periods are counted from the instalment
+    that ends it, and the holiday itself capitalises at the schedule's opening
+    rate.
 
 15. EFFECTIVE RATE (APR): the internal rate of return of the actual payment
     stream against the amount financed, solved by the same bisection as §11,
@@ -416,7 +457,7 @@ function buildSchedule(sc,principal,freq,variant){
   const schedule=[];
   let bal=principal,totalInt=0,negAm=false;
   const residualAmt=type==='balloon'?principal*(Math.min(99,Math.max(0,sc.residualPct||0))/100):0;
-  const k=usesIoPeriods(type)?Math.min(n,Math.max(0,Math.round(sc.ioPeriods===undefined?n:sc.ioPeriods))):0;
+  const k=ioPeriodCount(sc,n);
 
   if(type==='flat'){
     // Flat interest is fixed at the outset on the original principal, so a rate
@@ -1212,16 +1253,28 @@ let editorDraft=null;
 function show(id,on){const el=$(id);if(el)el.style.display=on?'':'none';}
 function editorLoanType(){return $('scLoanType').value||'annuity';}
 function editorTerm(){return Math.max(1,Math.round(parseFloat($('scTerm').value)||defaultTerm(editorTermFreq)));}
+function editorIoPeriods(){const v=parseFloat($('scIoPeriods').value);return isFinite(v)?Math.max(0,Math.round(v)):0;}
+// The repayment each schedule's first row opens on. A rate schedule on a
+// deferred start begins at the first instalment after the payment holiday,
+// because there is no repayment inside the holiday for a rate to be quoted
+// against; everything else opens on repayment 1.
+function schedStart(kind){
+  return kind==='rate'
+    ?rateScheduleStart({loanType:editorLoanType(),ioPeriods:editorIoPeriods()},editorTerm())
+    :1;
+}
 function schedList(kind){return kind==='rate'?editorDraft.ratePeriods:editorDraft.paymentPeriods;}
 function schedWrapId(kind){return kind==='rate'?'scRatePeriodRows':'scPaymentPeriodRows';}
 
 // Seeded so that switching to Schedule shows the idea rather than a blank list:
 // fixed for the first fifth of the term, floating after, which is the shape of
 // a fixed-then-variable loan.
-function defaultRatePeriods(term,rate){
+function defaultRatePeriods(term,rate,start){
   const r=Number(rate)||5;
-  if(term<=2)return[{toPeriod:term,type:'floating',rate:r,rateMin:r,rateMax:r+3}];
-  const cut=Math.max(1,Math.min(term-1,Math.round(term/5)));
+  const s=Math.max(1,Math.min(term,Math.round(start||1)));
+  const span=term-s+1; // the repayments the schedule actually covers
+  if(span<=2)return[{toPeriod:term,type:'floating',rate:r,rateMin:r,rateMax:r+3}];
+  const cut=Math.max(s,Math.min(term-1,s-1+Math.round(span/5)));
   return[{toPeriod:cut,type:'fixed',rate:r,rateMin:r,rateMax:r},
          {toPeriod:term,type:'floating',rate:r+1.5,rateMin:r,rateMax:r+3}];
 }
@@ -1282,7 +1335,7 @@ function syncSchedLabels(kind){
   if(!editorDraft)return;
   const wrap=$(schedWrapId(kind));if(!wrap)return;
   const list=schedList(kind)||[];const term=editorTerm();
-  let from=1;
+  let from=schedStart(kind);
   [...wrap.querySelectorAll('.sched-row')].forEach((row,i)=>{
     const isLast=i===list.length-1;
     const to=isLast?term:Math.min(term,Math.max(from,Math.round(Number(list[i].toPeriod)||from)));
@@ -1291,6 +1344,35 @@ function syncSchedLabels(kind){
     row.classList.toggle('sp-beyond',from>term);
     from=to+1;
   });
+}
+/* Moving where a schedule opens can strand a row that ends before its own first
+   period — a payment holiday extended past a boundary the reader had already
+   typed. normaliseRatePeriods() clamps those rows when the loan is built, so
+   they are clamped here too: the rows on screen say what the loan will actually
+   be built from, rather than printing a range that runs backwards. Only a
+   change of loan type, holiday or term gets here, never a keystroke inside the
+   rows themselves, so nothing is rewritten under the reader's cursor. */
+function clampSchedToStart(kind){
+  if(!editorDraft)return;
+  const list=schedList(kind);if(!list||!list.length)return;
+  const term=editorTerm();let from=schedStart(kind),changed=false;
+  // A holiday that leaves a single repayment has no boundaries to speak of, and
+  // rewriting every row to that one period would throw away what the reader
+  // typed for a term they are still editing. The loan is built from one band
+  // either way, so the rows are left as they are and only relabelled.
+  if(term-from+1<=1){syncSchedLabels(kind);return;}
+  // A band that ends before the schedule opens covers no repayment at all: the
+  // holiday swallowed it whole. It is dropped rather than squeezed into a stub
+  // of one period, so the loan opens on the band that does carry repayments.
+  // The last band is never dropped — it is the one that stretches to the term.
+  while(list.length>1&&Math.round(Number(list[0].toPeriod)||0)<from){list.shift();changed=true;}
+  list.forEach((p,i)=>{
+    const isLast=i===list.length-1;
+    const want=isLast?term:Math.min(term,Math.max(from,Math.round(Number(p.toPeriod)||from)));
+    if(!isLast&&Math.round(Number(p.toPeriod)||0)!==want){p.toPeriod=want;changed=true;}
+    from=want+1;
+  });
+  if(changed)renderSchedRows(kind);else syncSchedLabels(kind);
 }
 function readSchedFromDOM(kind){
   if(!editorDraft)return;
@@ -1313,9 +1395,9 @@ function readSchedFromDOM(kind){
 function addSchedPeriod(kind){
   if(!editorDraft)return;
   readSchedFromDOM(kind);
-  const list=schedList(kind),term=editorTerm();
-  if(!list||term<=list.length)return; // no room left to split
-  const prevTo=list.length>1?Math.round(Number(list[list.length-2].toPeriod)||0):0;
+  const list=schedList(kind),term=editorTerm(),start=schedStart(kind);
+  if(!list||term-start+1<=list.length)return; // no room left to split
+  const prevTo=list.length>1?Math.round(Number(list[list.length-2].toPeriod)||0):start-1;
   const cut=Math.min(term-1,Math.max(prevTo+1,Math.round((prevTo+term)/2)));
   const last=list[list.length-1];
   list.splice(list.length-1,0,kind==='rate'
@@ -1328,6 +1410,72 @@ function syncSegGroups(){
   if(!editorDraft)return;
   document.querySelectorAll('#scRateModeGroup .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===editorDraft.rateMode));
   document.querySelectorAll('#scPaymentModeGroup .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===editorDraft.paymentMode));
+}
+
+/* ─── Editor layout ────────────────────────────────────────────────────────
+   The editor is not one long list of fields. It is five titled sections, and
+   their order is a DEPENDENCY order: whatever decides what a later field is
+   allowed to say sits above it. The loan type and the shape parameter that type
+   brings with it come first, then the term those periods are counted in, then
+   the price, then the cash side of the deal.
+
+   A known repayment inverts the last two, and that is the whole reason the
+   order is a table rather than the markup: its rate is not typed at all, it is
+   SOLVED from the plan against the amount financed, so the down payment and the
+   fees have to be settled before the section that is priced from them.
+
+   Each section owns a fixed set of rows, so a type's layout is one line here
+   rather than a second copy of the form. updateEditorVisibility() decides which
+   ROWS a type shows; a section whose rows are all hidden hides with them, which
+   is what lets one table serve all seven types. */
+const EDITOR_SECTIONS={
+  structure:['scLoanTypeRow','scIoPeriodsRow','scResidualRow'],
+  term:['scFreqRow','scTermRow'],
+  rate:['scRateModeRow','scRateBlock','scRateScheduleRow'],
+  plan:['scPaymentModeRow','scKnownPaymentRow','scPaymentScheduleRow','scImpliedRateRow'],
+  cash:['scDownRow','scFeeRow','scFeeTreatmentRow','scAdminFeeRow'],
+};
+function editorSectionPlan(t){
+  const title={
+    structure:'Loan Structure',
+    term:'Repayment Term',
+    // A flat loan fixes its interest at the outset on the original principal,
+    // so the section is not offering a rate that can move.
+    rate:t==='flat'?'Flat Rate':'Interest Rate',
+    plan:'Repayment Plan',
+    cash:'Upfront & Fees',
+  };
+  const order=t==='knownPayment'
+    ?['structure','term','cash','plan','rate']
+    :['structure','term','rate','plan','cash'];
+  return order.map(key=>({key,title:title[key],ids:EDITOR_SECTIONS[key]}));
+}
+/* Build the sections and put the rows in them. Nothing is created twice and
+   nothing is moved unless the order actually changed, so a layout that is
+   already right costs one comparison and never steals focus from the field the
+   reader is typing in. */
+function applyEditorLayout(){
+  const host=$('scFields');if(!host)return;
+  const plan=editorSectionPlan(editorLoanType());
+  const groups=plan.map(sec=>{
+    let g=$('scSec-'+sec.key);
+    if(!g){
+      g=document.createElement('div');g.className='field-group';g.id='scSec-'+sec.key;
+      g.innerHTML='<div class="group-title"></div>';
+      // Attached before any row moves into it, so a row never leaves the
+      // document and getElementById can still find it on the next pass.
+      host.appendChild(g);
+    }
+    const head=g.querySelector('.group-title');
+    head.textContent=sec.title;
+    const want=sec.ids.map(id=>$(id)).filter(Boolean);
+    const have=[...g.children].filter(el=>el!==head);
+    if(have.length!==want.length||have.some((el,i)=>el!==want[i]))want.forEach(el=>g.appendChild(el));
+    g.style.display=want.some(el=>el.style.display!=='none')?'':'none';
+    return g;
+  });
+  const have=[...host.children];
+  if(have.length!==groups.length||have.some((el,i)=>el!==groups[i]))groups.forEach(g=>host.appendChild(g));
 }
 
 /* Exactly one segmented control and at most one extra field group is ever on
@@ -1358,6 +1506,12 @@ function updateEditorVisibility(){
   if(isub)isub.textContent=t==='deferred'
     ?'Repayments start after this many '+unit+'. Interest is added to the debt meanwhile.'
     :'Set this to the full term to repay the principal in one lump at the end.';
+  // The loan type decides where the rate schedule opens, so the ranges printed
+  // on its rows are re-derived here rather than only when the term is edited.
+  clampSchedToStart('rate');
+  // Which rows are on screen is settled above, so the sections can now be put
+  // in this type's order and the empty ones folded away.
+  applyEditorLayout();
 }
 
 function updateImpliedRate(){
@@ -1438,7 +1592,7 @@ function openEditor(idx){
     ratePeriods:(Array.isArray(sc.ratePeriods)&&sc.ratePeriods.length)?sc.ratePeriods.map(x=>Object.assign({},x)):null,
     paymentPeriods:(Array.isArray(sc.paymentPeriods)&&sc.paymentPeriods.length)?sc.paymentPeriods.map(x=>Object.assign({},x)):null,
   };
-  if(!editorDraft.ratePeriods)editorDraft.ratePeriods=defaultRatePeriods(editorTerm(),sc.financeRate);
+  if(!editorDraft.ratePeriods)editorDraft.ratePeriods=defaultRatePeriods(editorTerm(),sc.financeRate,schedStart('rate'));
   if(!editorDraft.paymentPeriods)editorDraft.paymentPeriods=defaultPaymentPeriods(editorTerm(),(sc.knownPayment>0?sc.knownPayment:suggestedPayment()));
   syncSegGroups();
   renderSchedRows('rate');renderSchedRows('payment');
@@ -1512,8 +1666,15 @@ $('scLoanType').addEventListener('change',()=>{
     editorDraft.paymentPeriods=defaultPaymentPeriods(editorTerm(),sug);
     renderSchedRows('payment');
   }
-  if(usesIoPeriods(t)&&!(parseFloat($('scIoPeriods').value)>0))
-    $('scIoPeriods').value=t==='deferred'?Math.max(1,Math.round(editorTerm()/5)):editorTerm();
+  if(usesIoPeriods(t)){
+    const term=editorTerm(),cur=parseFloat($('scIoPeriods').value);
+    // A holiday as long as the term leaves no instalment to defer TO — that is
+    // a bullet, not a deferred start — so a value left behind by another type
+    // opens on a fifth of the term. Interest-only is the opposite: the whole
+    // term is its ordinary shape, so only a zero is replaced there.
+    const workable=t==='deferred'?(cur>0&&cur<term):(cur>0);
+    if(!workable)$('scIoPeriods').value=t==='deferred'?Math.max(1,Math.round(term/5)):term;
+  }
   if(t==='balloon'&&!(parseFloat($('scResidualPct').value)>0))$('scResidualPct').value=30;
   updateEditorVisibility();updateImpliedRate();
 });
@@ -1526,7 +1687,7 @@ $('scLoanType').addEventListener('change',()=>{
       if(v===editorDraft[key])return;
       editorDraft[key]=v;
       if(v==='schedule'&&!(Array.isArray(editorDraft[kind==='rate'?'ratePeriods':'paymentPeriods'])&&editorDraft[kind==='rate'?'ratePeriods':'paymentPeriods'].length)){
-        if(kind==='rate')editorDraft.ratePeriods=defaultRatePeriods(editorTerm(),parseFloat($('scRate').value)||5);
+        if(kind==='rate')editorDraft.ratePeriods=defaultRatePeriods(editorTerm(),parseFloat($('scRate').value)||5,schedStart('rate'));
         else editorDraft.paymentPeriods=defaultPaymentPeriods(editorTerm(),suggestedPayment());
       }
       syncSegGroups();renderSchedRows(kind);updateEditorVisibility();updateImpliedRate();
@@ -1572,6 +1733,9 @@ $('addPaymentPeriodBtn').addEventListener('click',()=>addSchedPeriod('payment'))
 ['input','change'].forEach(ev=>$('scTerm').addEventListener(ev,()=>{
   syncSchedLabels('rate');syncSchedLabels('payment');updateImpliedRate();
 }));
+// A longer or shorter payment holiday moves the first instalment, and the rate
+// schedule is counted from that instalment, so its ranges follow the field.
+['input','change'].forEach(ev=>$('scIoPeriods').addEventListener(ev,()=>clampSchedToStart('rate')));
 $('rateConvention').addEventListener('change',()=>{rerender();updateImpliedRate();});
 
 ['scName','scTerm','scFeeType'].forEach(id=>{['input','change'].forEach(evt=>{$(id).addEventListener(evt,()=>{/* live preview only on save click */});});});
