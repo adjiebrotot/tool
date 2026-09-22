@@ -1,60 +1,127 @@
 // Shared tooltip definitions for the Rent vs Own calculator.
 // Used by both rentvsownhouse/index.html and rentvsownhouse/sensitivity/index.html.
+//
+// One tip, one thought: what the field is, plus the single thing a reader would
+// otherwise get wrong. A tip is read standing up in a small bubble, so anything
+// longer goes unread.
+//
+// A tip is either a string, or a set of VARIANTS keyed by the state its control
+// is in. A variant tip explains the state you are actually in and keeps one
+// clause for what the other state would do, instead of listing every state at
+// once and leaving the reader to find their own. The page sets the state with
+// data-tip-variant and RVO_APPLY_TIPS picks it up; anything that cannot say
+// which state it is in gets the first variant.
 var RVO_TIPS_EN = {
-  propertyPrice:        "The current market purchase price of the property being modelled. This is the starting value for house equity and mortgage calculations.",
-  downPaymentPct:       "The percentage of the property price paid upfront as a deposit. Set to 100% to model an all-cash purchase (no mortgage). Try different values; 20% isn't always optimal. The renter equivalent invests this same amount instead.",
-  mortgageMode:         "<strong>Simple:</strong> a standard Principal &amp; Interest loan at one rate for the whole term. Set the rate and the term, nothing else.<br><strong>Detailed:</strong> adds the mortgage type, the cost accounting toggle, and a year-by-year rate schedule with fixed or floating (min–max band) periods.",
-  mortgageType:         "<strong>Principal &amp; Interest:</strong> each payment reduces both interest and loan balance, building equity faster.<br><strong>Interest Only:</strong> payments cover only interest; principal stays unchanged until term ends. Lower monthly payments but no equity built from repayments.",
-  costInterestOnly:     "<strong>ON:</strong> Accumulated Cost counts only interest + ongoing (money truly lost; principal repayment builds equity).<br><strong>OFF:</strong> Full mortgage payment + ongoing are treated as outgoing costs.",
-  mortgageRate:         "The annual interest rate charged on the mortgage, held constant for the whole term. It sets the monthly repayment: a higher rate means a larger repayment and more total interest paid.",
-  rateSchedule:         "Split the mortgage term into consecutive periods, each set one of two ways.<br><strong>Fixed:</strong> one rate for the whole period.<br><strong>Floating:</strong> a min–max band, simulated three ways (min, midpoint, max). Chart lines use the midpoint and the shaded band shows the min–max range.<br>Periods always cover year 1 to the end of the term, and the last period stretches automatically. When the rate changes, the repayment is re-amortised over the remaining term on the outstanding balance, as a real lender does.",
-  mortgageTerm:         "The total number of years over which the loan is amortised. A longer term means lower monthly payments but more total interest paid. Once the loan is fully repaid, the entire monthly budget becomes surplus savings.",
-  houseGrowth:          "The Residential Property Price Index annual growth rate: how much the property appreciates each year. This drives house equity growth and the future purchase price in the Rent-Then-Buy scenario. Use the CAGR calculator below to derive this from historical data.",
-  ownCostsMode:         "<strong>Simple:</strong> one setup cost and one ongoing cost of owning.<br><strong>Detailed:</strong> list each cost separately. Setup costs are a fixed $ or a % of the buy price; ongoing costs are a weekly, monthly or yearly $ with their own inflation, or a % of property value.",
-  rentCostsMode:        "<strong>Simple:</strong> one ongoing cost of renting.<br><strong>Detailed:</strong> list each cost separately, as a weekly, monthly or yearly $ with its own inflation, or as a % of annual rent.",
-  setupCost:            "One-off costs paid at purchase: stamp duty, conveyancing, building inspection, and other transaction fees. They come out of savings rather than being added to the loan, so they also reduce the renter's starting investable capital. % items are computed on the buy price at the time of purchase, Rent-Then-Buy included.",
-  ownOngoingCost:       "Annual recurring costs of owning the property beyond the mortgage: council rates, building insurance, maintenance, strata levies, land tax, lawn care, etc. Fixed-dollar amounts grow at their own inflation rate; % items track the property value.",
-  ownOngoingInflation:  "Annual rate at which fixed-dollar ongoing ownership costs increase. Applies only when 'Fixed $ amount' is selected; % of property value already grows with house appreciation.",
-  rentAmount:           "The current weekly, monthly, or yearly rent payment. This is the base figure that grows each year at the Rent Inflation rate. The renter invests any monthly budget surplus above this rent amount.",
-  rentInflation:        "The annual rate at which rent increases each year. Historical rent inflation has typically tracked general consumer price inflation (CPI) or slightly above. Higher rent inflation erodes the renter's monthly surplus faster over time.",
-  rentOngoingCost:      "Extra costs the renter carries on top of the base rent: contents insurance, renters' insurance, utility connection fees, and so on. Renters do not pay council rates or building maintenance, so this is usually far lower than the owner's ongoing cost. Fixed-dollar amounts grow at their own inflation rate; % items track the annual rent.",
-  rentOngoingInflation: "Annual rate at which fixed-dollar renting ongoing costs increase. Applies only when 'Fixed $ amount' is selected; % of annual rent already grows with rent inflation.",
-  riskFreeRate:         "The annual return earned on any uninvested cash: surplus above rent or mortgage, and any leftover initial cash. Could be a high-yield savings account, term deposit, ETFs, or bonds. Both scenarios compound idle cash at this rate.",
-  initialCash:          "Your total cash available right now. This funds the down payment + setup costs for the Buy scenario. Any leftover is invested at the risk-free rate from day one. The Rent scenario invests the full amount from day one. If left blank, it defaults to exactly down payment + setup cost (no surplus, no shortfall).",
-  monthlyBudget:        "The total monthly cash available for housing costs. If left blank, it's auto-set to the higher of rent or mortgage payment each year. Any surplus above actual costs is invested at the risk-free rate.",
-  monthlyBudgetIncrease:"The rate at which your monthly housing budget grows each year. Only applies when a manual budget is set above. Use this to model wage growth, consumer price inflation (CPI) adjustments, or property-linked cost increases. The budget compounds at this rate annually, growing the surplus (or shrinking the shortfall) over time.",
-  horizon:              "Number of years to project the scenario. Longer horizons allow property compounding and mortgage payoff effects to fully materialise. Up to 100 years supported.",
-  rtbEnabled:           "Model a third scenario where you rent for X years, then buy the property at the then-current market price. This helps compare the optimal timing of entry into property ownership.",
+  propertyPrice:        "Market price you would pay today. It sets the starting house equity and the loan size.",
+  downPaymentPct:       "Share of the price paid upfront. 100% models an all-cash buy, and the renter invests the same amount instead. 20% is not always best.",
+  mortgageMode: {
+    simple:   "<strong>Simple:</strong> principal and interest at one rate for the whole term. Detailed adds the loan type, cost accounting and a rate schedule.",
+    detailed: "<strong>Detailed:</strong> loan type, cost accounting, and a year-by-year rate schedule. Simple is one flat rate for the whole term."
+  },
+  mortgageType: {
+    pi: "<strong>Principal &amp; Interest:</strong> every payment cuts the balance, so equity builds from the first one. Interest Only pays interest alone.",
+    io: "<strong>Interest Only:</strong> payments cover interest and the balance never falls, so repayments build no equity. The monthly cost is lower."
+  },
+  costInterestOnly: {
+    on:  "<strong>On:</strong> Accumulated Cost counts interest and ongoing costs only, since principal becomes equity rather than money lost.",
+    off: "<strong>Off:</strong> the whole repayment plus ongoing costs counts as an outgoing, principal included."
+  },
+  mortgageRate:         "Annual rate on the loan, held flat for the whole term. It sets the repayment and the total interest.",
+  rateSchedule:         "Consecutive periods, each <strong>Fixed</strong> at one rate or <strong>Floating</strong> in a min to max band. Each rate change re-amortises the balance left.",
+  mortgageTerm:         "Years the loan is amortised over. Longer means a smaller repayment and more interest. Once it is repaid, the whole budget turns into savings.",
+  houseGrowth:          "Annual property growth (RPPI). It drives house equity and the future price in Rent-Then-Buy. The CAGR tool below derives it from history.",
+  ownCostsMode: {
+    simple:   "<strong>Simple:</strong> one setup cost and one ongoing cost. Detailed lists each one, with its own unit, inflation or percentage basis.",
+    detailed: "<strong>Detailed:</strong> each cost on its own line. Setup as $ or % of price, ongoing per week, month or year with its own inflation, or % of value."
+  },
+  rentCostsMode: {
+    simple:   "<strong>Simple:</strong> one ongoing cost of renting. Detailed lists each one separately.",
+    detailed: "<strong>Detailed:</strong> each cost on its own line, per week, month or year with its own inflation, or as a % of annual rent."
+  },
+  setupCost:            "One-off costs at purchase: stamp duty, conveyancing, inspection. Paid from savings, not added to the loan. % items use the price on the buying day.",
+  ownOngoingCost:       "Yearly costs beyond the loan: rates, insurance, maintenance, strata, land tax. Fixed amounts grow at their own inflation, % items track the value.",
+  ownOngoingInflation:  "Yearly rise in fixed-dollar ownership costs. A % of property value already grows with the house.",
+  rentAmount:           "Rent as it stands today, per week, month or year. It grows each year at rent inflation, and any budget surplus above it is invested.",
+  rentInflation:        "How fast rent rises each year, historically around CPI or a little above. Faster rent erodes the renter's surplus.",
+  rentOngoingCost:      "Costs on top of the rent: contents and renters' insurance, connection fees. No rates or building upkeep, so well below the owner's.",
+  rentOngoingInflation: "Yearly rise in fixed-dollar renting costs. A % of annual rent already grows with rent inflation.",
+  riskFreeRate:         "Return on idle cash in both scenarios: surplus above the rent or the repayment, plus any leftover initial cash.",
+  initialCash:          "Cash you hold today. Buy spends it on the deposit and setup costs, Rent invests all of it. Blank means exactly deposit plus setup, nothing spare.",
+  monthlyBudget:        "Monthly cash for housing. Blank follows the higher of rent or repayment each year. Surplus above the actual cost is invested.",
+  monthlyBudgetIncrease: {
+    manual: "Compounds your monthly budget each year, for wage growth or CPI. It widens the surplus, or shrinks the shortfall, over time.",
+    auto:   "Grows the monthly budget each year. Inert while the budget is automatic, so set a budget above for it to bite."
+  },
+  horizon:              "Years to project. A longer run lets property compounding and the loan payoff play out. Up to 100.",
+  rtbEnabled:           "A third scenario: rent for X years, then buy at the price by then. It shows what waiting costs or saves.",
   rtbBuyAtYear:         "Switch from renting to buying at this year. Property price grows at RPPI until then.",
   calcCagr:             "Enter year and price pairs. The resulting CAGR is applied to the House Price Growth slider above.",
 };
 var RVO_TIPS_ID = {
-  propertyPrice:        "Harga beli properti yang dimodelkan saat ini. Ini adalah nilai awal untuk perhitungan nilai bersih properti dan KPR.",
-  downPaymentPct:       "Persentase harga properti yang dibayar di muka sebagai uang muka. Atur ke 100% untuk memodelkan pembelian tunai (tanpa KPR). Coba nilai berbeda; 20% tidak selalu optimal. Penyewa menginvestasikan jumlah yang sama sebagai gantinya.",
-  mortgageMode:         "<strong>Sederhana:</strong> KPR Pokok &amp; Bunga standar dengan satu suku bunga untuk seluruh jangka waktu. Cukup atur bunga dan jangka waktunya.<br><strong>Rinci:</strong> menambah pilihan jenis KPR, toggle akuntansi biaya, dan jadwal bunga per periode dengan suku bunga tetap atau mengambang (pita min–maks).",
-  mortgageType:         "<strong>Pokok &amp; Bunga:</strong> setiap cicilan mengurangi bunga dan saldo pinjaman, ekuitas bertambah lebih cepat.<br><strong>Bunga Saja:</strong> cicilan hanya menutup bunga; pokok tidak berubah hingga akhir jangka waktu. Cicilan bulanan lebih rendah namun tidak ada ekuitas dari cicilan.",
-  costInterestOnly:     "<strong>AKTIF:</strong> Biaya Kumulatif hanya menghitung bunga + biaya rutin (uang yang benar-benar hilang; cicilan pokok membangun ekuitas).<br><strong>NONAKTIF:</strong> Seluruh cicilan KPR + biaya rutin dihitung sebagai pengeluaran.",
-  mortgageRate:         "Suku bunga tahunan yang dikenakan pada KPR, tetap untuk seluruh jangka waktu. Ini menentukan jumlah cicilan bulanan: bunga lebih tinggi berarti cicilan lebih besar dan total bunga lebih banyak.",
-  rateSchedule:         "Bagi jangka waktu KPR menjadi periode berurutan, masing-masing diatur dengan salah satu dari dua cara.<br><strong>Tetap (fixed):</strong> satu suku bunga untuk seluruh periode.<br><strong>Mengambang (floating):</strong> pita min–maks, disimulasikan tiga arah (min, titik tengah, maks). Garis grafik memakai titik tengah dan area berbayang menunjukkan rentang min–maks.<br>Periode selalu mencakup tahun 1 hingga akhir jangka waktu, dan periode terakhir diperpanjang otomatis. Saat suku bunga berubah, cicilan dihitung ulang (re-amortisasi) atas sisa pokok selama sisa jangka waktu, seperti yang dilakukan bank.",
-  mortgageTerm:         "Total jumlah tahun pelunasan pinjaman. Jangka waktu lebih panjang berarti cicilan bulanan lebih rendah namun total bunga lebih besar. Setelah pinjaman lunas, seluruh anggaran bulanan menjadi surplus tabungan.",
-  houseGrowth:          "Tingkat pertumbuhan tahunan Indeks Harga Properti Residensial (RPPI): seberapa banyak properti mengalami apresiasi setiap tahun. Ini mendorong pertumbuhan nilai bersih properti dan harga beli masa depan dalam skenario Sewa Dulu, Beli Kemudian. Gunakan kalkulator CAGR di bawah untuk menghitung dari data historis.",
-  ownCostsMode:         "<strong>Sederhana:</strong> satu biaya awal pembelian dan satu biaya rutin kepemilikan.<br><strong>Rinci:</strong> rinci setiap biaya satu per satu. Biaya awal berupa nominal tetap atau % dari harga beli; biaya rutin berupa nominal mingguan, bulanan atau tahunan dengan inflasinya sendiri, atau % dari nilai properti.",
-  rentCostsMode:        "<strong>Sederhana:</strong> satu biaya rutin menyewa.<br><strong>Rinci:</strong> rinci setiap biaya satu per satu, berupa nominal mingguan, bulanan atau tahunan dengan inflasinya sendiri, atau % dari sewa tahunan.",
-  setupCost:            "Biaya satu kali saat pembelian properti: BPHTB, biaya notaris/PPAT (Pejabat Pembuat Akta Tanah), inspeksi, dan biaya transaksi lainnya. Dibayar dari tabungan, bukan ditambahkan ke pinjaman, sehingga juga mengurangi modal awal penyewa yang dapat diinvestasikan. Item % dihitung dari harga beli pada saat pembelian, termasuk pada skenario Sewa Dulu, Beli Kemudian.",
-  ownOngoingCost:       "Biaya rutin tahunan kepemilikan properti di luar KPR: PBB, asuransi gedung, perawatan, iuran pengelola, pajak, dll. Jumlah tetap bertambah sesuai inflasinya sendiri; item % mengikuti nilai properti.",
-  ownOngoingInflation:  "Tingkat kenaikan tahunan biaya kepemilikan tetap. Hanya berlaku saat 'Jumlah Tetap' dipilih; % dari nilai properti sudah tumbuh seiring apresiasi rumah.",
-  rentAmount:           "Pembayaran sewa mingguan, bulanan, atau tahunan saat ini. Ini adalah nilai dasar yang naik setiap tahun sesuai Kenaikan Sewa Tahunan. Penyewa menginvestasikan sisa anggaran di atas biaya sewa.",
-  rentInflation:        "Tingkat kenaikan sewa per tahun. Secara historis, kenaikan sewa biasanya mengikuti inflasi harga konsumen (CPI) atau sedikit di atasnya. Kenaikan sewa yang lebih tinggi mengikis surplus bulanan penyewa lebih cepat.",
-  rentOngoingCost:      "Biaya tambahan yang ditanggung penyewa di luar sewa pokok: asuransi isi rumah, asuransi penyewa, biaya koneksi utilitas, dan sejenisnya. Penyewa tidak membayar PBB atau perawatan gedung, sehingga biaya ini umumnya jauh lebih rendah daripada biaya rutin pemilik. Jumlah tetap bertambah sesuai inflasinya sendiri; item % mengikuti sewa tahunan.",
-  rentOngoingInflation: "Tingkat kenaikan tahunan biaya menyewa tetap. Hanya berlaku saat 'Jumlah Tetap' dipilih; % dari sewa tahunan sudah tumbuh seiring kenaikan sewa.",
-  riskFreeRate:         "Return tahunan atas kas yang tidak terpakai: surplus di atas sewa atau KPR, dan sisa modal awal. Bisa berupa deposito, obligasi, reksa dana pasar uang, atau ETF. Kedua skenario mengenakan return ini pada kas menganggur.",
-  initialCash:          "Total kas yang tersedia saat ini. Untuk skenario Beli, ini membiayai Uang Muka (DP) + biaya awal pembelian. Sisa diinvestasikan pada suku bunga bebas risiko mulai hari pertama. Skenario Sewa menginvestasikan seluruh jumlah dari hari pertama. Jika dikosongkan, default ke tepat Uang Muka (DP) + biaya awal pembelian.",
-  monthlyBudget:        "Total kas bulanan yang tersedia untuk biaya perumahan. Jika dikosongkan, otomatis disesuaikan dengan cicilan KPR atau biaya sewa tertinggi setiap tahun. Sisa di atas biaya aktual diinvestasikan pada suku bunga bebas risiko.",
-  monthlyBudgetIncrease:"Tingkat pertumbuhan anggaran perumahan bulanan per tahun. Hanya berlaku saat anggaran manual ditetapkan di atas. Gunakan untuk memodelkan kenaikan gaji, penyesuaian inflasi harga konsumen (CPI), atau kenaikan biaya terkait properti.",
-  horizon:              "Jumlah tahun proyeksi skenario. Jangka waktu lebih panjang memungkinkan efek compounding properti dan pelunasan KPR terlihat sepenuhnya. Mendukung hingga 100 tahun.",
-  rtbEnabled:           "Modelkan skenario ketiga di mana Anda menyewa selama X tahun, lalu membeli properti pada harga pasar saat itu. Ini membantu membandingkan waktu optimal untuk masuk ke kepemilikan properti.",
+  propertyPrice:        "Harga pasar properti saat ini. Menjadi nilai awal ekuitas rumah dan besaran KPR.",
+  downPaymentPct:       "Persentase harga yang dibayar di muka. 100% berarti pembelian tunai, dan penyewa menginvestasikan jumlah yang sama. 20% tidak selalu optimal.",
+  mortgageMode: {
+    simple:   "<strong>Sederhana:</strong> Pokok &amp; Bunga dengan satu suku bunga untuk seluruh jangka waktu. Rinci menambah jenis KPR, akuntansi biaya, dan jadwal bunga.",
+    detailed: "<strong>Rinci:</strong> jenis KPR, akuntansi biaya, dan jadwal bunga per periode. Sederhana memakai satu suku bunga tetap."
+  },
+  mortgageType: {
+    pi: "<strong>Pokok &amp; Bunga:</strong> tiap cicilan mengurangi saldo, jadi ekuitas bertambah sejak cicilan pertama. Bunga Saja hanya menutup bunga.",
+    io: "<strong>Bunga Saja:</strong> cicilan hanya menutup bunga dan pokok tidak berubah, jadi cicilan tidak membangun ekuitas. Cicilan bulanan lebih ringan."
+  },
+  costInterestOnly: {
+    on:  "<strong>Aktif:</strong> Biaya Kumulatif hanya menghitung bunga dan biaya rutin, karena cicilan pokok menjadi ekuitas, bukan uang yang hilang.",
+    off: "<strong>Nonaktif:</strong> seluruh cicilan ditambah biaya rutin dihitung sebagai pengeluaran, termasuk pokoknya."
+  },
+  mortgageRate:         "Suku bunga tahunan KPR, tetap sepanjang jangka waktu. Menentukan besar cicilan dan total bunga.",
+  rateSchedule:         "Periode berurutan, masing-masing <strong>Tetap</strong> pada satu bunga atau <strong>Mengambang</strong> dalam pita min sampai maks. Tiap perubahan bunga me-amortisasi ulang sisa pokok.",
+  mortgageTerm:         "Jumlah tahun pelunasan pinjaman. Lebih panjang berarti cicilan lebih kecil dan bunga lebih besar. Setelah lunas, seluruh anggaran menjadi tabungan.",
+  houseGrowth:          "Pertumbuhan harga properti tahunan (RPPI). Mendorong ekuitas rumah dan harga beli pada skenario Sewa Dulu. Kalkulator CAGR di bawah menghitungnya dari data.",
+  ownCostsMode: {
+    simple:   "<strong>Sederhana:</strong> satu biaya awal dan satu biaya rutin. Rinci mendaftar tiap biaya dengan satuan, inflasi, atau dasar persentasenya sendiri.",
+    detailed: "<strong>Rinci:</strong> tiap biaya satu baris. Biaya awal nominal atau % harga, biaya rutin per minggu, bulan atau tahun dengan inflasinya, atau % nilai."
+  },
+  rentCostsMode: {
+    simple:   "<strong>Sederhana:</strong> satu biaya rutin menyewa. Rinci mendaftar tiap biaya satu per satu.",
+    detailed: "<strong>Rinci:</strong> tiap biaya satu baris, per minggu, bulan atau tahun dengan inflasinya sendiri, atau % dari sewa tahunan."
+  },
+  setupCost:            "Biaya satu kali saat membeli: BPHTB, notaris, inspeksi. Dibayar dari tabungan, bukan ditambahkan ke pinjaman. Item % memakai harga saat pembelian.",
+  ownOngoingCost:       "Biaya tahunan di luar KPR: PBB, asuransi, perawatan, iuran pengelola. Nominal tetap naik sesuai inflasinya, item % mengikuti nilai properti.",
+  ownOngoingInflation:  "Kenaikan tahunan biaya kepemilikan bernominal tetap. Item % dari nilai properti sudah naik bersama harga rumah.",
+  rentAmount:           "Sewa saat ini, per minggu, bulan atau tahun. Naik tiap tahun sesuai kenaikan sewa, dan sisa anggaran di atasnya diinvestasikan.",
+  rentInflation:        "Laju kenaikan sewa per tahun, secara historis sekitar CPI atau sedikit di atasnya. Semakin cepat, surplus penyewa makin terkikis.",
+  rentOngoingCost:      "Biaya di luar sewa pokok: asuransi isi rumah, biaya koneksi utilitas. Tanpa PBB atau perawatan gedung, jadi jauh di bawah biaya pemilik.",
+  rentOngoingInflation: "Kenaikan tahunan biaya menyewa bernominal tetap. Item % dari sewa tahunan sudah naik bersama kenaikan sewa.",
+  riskFreeRate:         "Return atas kas menganggur di kedua skenario: surplus di atas sewa atau cicilan, ditambah sisa kas awal.",
+  initialCash:          "Kas yang Anda miliki sekarang. Skenario Beli memakainya untuk DP dan biaya awal, Sewa menginvestasikan semuanya. Kosong berarti tepat DP + biaya awal.",
+  monthlyBudget:        "Kas bulanan untuk biaya perumahan. Kosong berarti mengikuti cicilan atau sewa tertinggi tiap tahun. Sisa di atas biaya aktual diinvestasikan.",
+  monthlyBudgetIncrease: {
+    manual: "Menaikkan anggaran bulanan Anda tiap tahun secara berbunga, untuk kenaikan gaji atau CPI. Surplus melebar seiring waktu.",
+    auto:   "Menaikkan anggaran bulanan tiap tahun. Tidak berpengaruh selama anggaran otomatis, jadi tetapkan anggaran di atas."
+  },
+  horizon:              "Jumlah tahun proyeksi. Makin panjang, efek compounding properti dan pelunasan KPR makin terlihat. Hingga 100 tahun.",
+  rtbEnabled:           "Skenario ketiga: menyewa X tahun, lalu membeli pada harga pasar saat itu. Menunjukkan untung atau ruginya menunda.",
   rtbBuyAtYear:         "Beralih dari menyewa ke membeli pada tahun ini. Harga properti tumbuh sesuai RPPI hingga saat itu.",
-  calcCagr:             "Masukkan pasangan tahun dan harga. CAGR yang dihitung akan diterapkan ke slider Kenaikan Harga Properti di atas.",
+  calcCagr:             "Masukkan pasangan tahun dan harga. CAGR hasilnya diterapkan ke slider Kenaikan Harga Properti di atas.",
 };
 // RVO_TIPS returns EN by default; pages switch to ID via RVO_TIPS_ID when needed
 var RVO_TIPS = RVO_TIPS_EN;
+
+/* Resolve one tip to the text a reader should see. `variant` is the state the
+   control is in ('detailed', 'io', 'on'…); an unknown or missing one falls back
+   to the first variant, which is what a page that cannot tell its state gets. */
+function RVO_TIP(key, variant, tips){
+  var v = (tips || RVO_TIPS)[key];
+  if(v === undefined || v === null) return '';
+  if(typeof v === 'string') return v;
+  return (variant && v[variant]) || v[Object.keys(v)[0]] || '';
+}
+
+/* Write every [data-tip-key] element's tip, reading each one's own
+   data-tip-variant. Safe to re-run: it is how both a language switch and a
+   state change land. */
+function RVO_APPLY_TIPS(tips, root){
+  (root || document).querySelectorAll('[data-tip-key]').forEach(function(el){
+    var text = RVO_TIP(el.getAttribute('data-tip-key'), el.getAttribute('data-tip-variant'), tips);
+    if(text) el.setAttribute('data-tip', text);
+  });
+}

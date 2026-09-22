@@ -169,11 +169,11 @@
 
     <!-- Quick Start — one-click worked examples loaded straight from samples/ -->
     <div class="quick-start-row">
-      <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start with IEEE 9-bus System</span><span class="tip-icon" data-tip="Load a worked example from the Samples &amp; Guides straight into the form below.">?</span>
+      <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start with IEEE 9-bus System</span>
       <div class="quick-start-btns">
         <button class="quick-start-btn" data-preset="sample-01-transmission-loss-factor" data-tip="Brute-force sweep of G2/G3 dispatch (pgini) to read the Line 5-7 / Line 7-8 transmission loss (generation shift) factors.">Transmission Loss Factor</button>
         <button class="quick-start-btn" data-preset="sample-02-minimum-system-losses" data-tip="Bayesian optimisation of G2/G3 dispatch to minimise total network active-power losses (ElmNet c:LossP).">Minimum System Losses</button>
-        <button class="quick-start-btn" data-preset="sample-03-rotor-angle-stability" data-tip="Dynamic RMS sweep of fault-clearing time, tracking G2/G3 rotor angle (c:firel) to find the critical clearing time before a machine slips a pole.">Rotor Angle Stability</button>
+        <button class="quick-start-btn" data-preset="sample-03-rotor-angle-stability" data-tip="Dynamic RMS sweep of fault-clearing time, tracking G2/G3 rotor angle (c:firel) for the critical clearing time before a pole slip.">Rotor Angle Stability</button>
         <button class="quick-start-btn" data-preset="sample-04-n1-line-contingency" data-tip="Wildcard N-1 contingency: trips every 230kV line in turn and records bus voltages and line loadings, no manual enumeration needed.">N-1 Line Contingency</button>
       </div>
     </div>
@@ -196,13 +196,13 @@
           <input type="text" id="pf-username" placeholder="USERNAME_HERE" autocomplete="off" />
         </div>
         <div class="form-row">
-          <label>Output Directory <span class="tip-icon" data-tip="Folder where results are written. The /graph and /raw subfolders are created automatically when timeseries outputs are used.">?</span></label>
+          <label>Output Directory <span class="tip-icon" data-tip="Folder where results are written. The /graph and /raw subfolders appear automatically when timeseries outputs are used.">?</span></label>
           <div>
             <input type="text" id="output-dir" placeholder="C:\Users\user\results" autocomplete="off" />
           </div>
         </div>
         <div class="form-row">
-          <label>Problem Type <span class="tip-icon" id="tt-problem-type" data-tip="<strong>Brute Force:</strong> runs every combination of the input values. Total runs = the product of all step counts.<br><strong>Optimisation:</strong> a search algorithm looks for the best input combination. Choose the algorithm in Optimisation Settings.<br><strong>Custom:</strong> reads the input values row by row from an Excel file. Download the template for the required format.<br><strong>Contingency:</strong> takes each matched element out of service, one at a time (N-1) or two at a time (N-2). Wildcards are resolved at runtime, so no Excel file is needed. Study Type is locked to Steady State.">?</span></label>
+          <label>Problem Type <span class="tip-icon" id="tt-problem-type" data-tip="">?</span></label>
           <select id="problem-type" onchange="onProblemTypeChange()">
             <option value="brute_force">Brute Force</option>
             <option value="optimisation">Optimisation</option>
@@ -211,7 +211,7 @@
           </select>
         </div>
         <div class="form-row">
-          <label>Study Type <span class="tip-icon" id="tt-study-type" data-tip="<strong>Steady State:</strong> runs a load flow (ElmLdf) on every iteration. Timeseries outputs are not available.<br><strong>Dynamic RMS:</strong> runs an RMS simulation (ComSim) on every iteration. Timeseries outputs are available.<br><strong>Dynamic EMT:</strong> runs an EMT simulation (ComSim) on every iteration. Timeseries outputs are available.<br><strong>Harmonic:</strong> runs a harmonic frequency sweep (ComHlf) on every iteration.">?</span></label>
+          <label>Study Type <span class="tip-icon" id="tt-study-type" data-tip="">?</span></label>
           <select id="study-type" onchange="onStudyTypeChange()">
             <option value="steady_state">Steady State</option>
             <option value="dynamic_rms">Dynamic RMS</option>
@@ -226,7 +226,7 @@
           </div>
         </div>
         <div class="form-row">
-          <label>Coding Style <span class="tip-icon" id="tt-coding-style" data-tip="<strong>Python File:</strong> wraps everything in main(), ready to run as a plain script.<br><strong>Notebook Style:</strong> splits the code into labelled cells for Jupyter or VS Code.">?</span></label>
+          <label>Coding Style <span class="tip-icon" id="tt-coding-style" data-tip="">?</span></label>
           <select id="coding-style" onchange="onCodingStyleChange()">
             <option value="python_file">Python File</option>
             <option value="notebook">Notebook Style</option>
@@ -263,7 +263,7 @@
                 <th>Attribute <span class="tip-icon" data-tip="Writable numeric/boolean PF parameter to set via SetAttribute() before each run (e.g. e:qgini, e:usetp).">?</span></th>
                 <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tip-icon" id="tt-lb" data-tip="Start of the swept range (inclusive).">?</span></th>
                 <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tip-icon" id="tt-ub" data-tip="End of the swept range (inclusive).">?</span></th>
-                <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tip-icon" data-tip="Gap between consecutive values. For example lb=0, ub=10, step=0.5 gives [0, 0.5, …, 10].">?</span></th>
+                <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tip-icon" data-tip="Both bounds are included: lb=0, ub=10, step=0.5 gives [0, 0.5, …, 10].">?</span></th>
                 <th></th>
               </tr>
             </thead>
@@ -349,7 +349,7 @@
         </div>
         <div class="checkbox-row cond-hidden" id="row-contingency-combine" style="margin-top:4px;">
           <input type="checkbox" id="contingency-combine" />
-          <label for="contingency-combine">Combine element types <span class="tip-icon" data-tip="<strong>Ticked:</strong> an N-2 pair may mix element types, such as a line with a generator.<br><strong>Unticked:</strong> pairs are formed within one type only, such as a line with another line.">?</span></label>
+          <label for="contingency-combine">Combine element types <span class="tip-icon" data-tip="<strong>Ticked:</strong> an N-2 pair may mix types, such as a line with a generator.<br><strong>Unticked:</strong> pairs form within one type only.">?</span></label>
         </div>
       </div>
     </div>
@@ -386,7 +386,7 @@
       </div>
       <div class="section-body">
         <div class="form-row">
-          <label>Sense <span class="tip-icon" data-tip="<strong>Minimise:</strong> the objective is passed to the algorithm as it is.<br><strong>Maximise:</strong> the objective is negated internally, because every scipy algorithm is a minimiser.">?</span></label>
+          <label>Sense <span class="tip-icon" data-tip="<strong>Minimise:</strong> the objective goes to the algorithm as it is.<br><strong>Maximise:</strong> it is negated internally, since every scipy algorithm minimises.">?</span></label>
           <select id="optim-sense">
             <option value="minimise">Minimise</option>
             <option value="maximise">Maximise</option>
@@ -422,7 +422,7 @@
           <input type="number" id="optim-max-iter" value="50" min="1" autocomplete="off" />
         </div>
         <hr class="divider" />
-        <div class="sub-label">Constraints <span class="tip-icon" data-tip="A soft limit: breaking it adds a large penalty to the objective rather than blocking the run. For a hard limit, set the bounds on the input variable instead.">?</span></div>
+        <div class="sub-label">Constraints <span class="tip-icon" data-tip="A soft limit: breaking it adds a large penalty rather than blocking the run. For a hard limit, bound the input variable instead.">?</span></div>
         <div class="dyn-table-wrapper">
           <table class="dyn-table" id="constraint-table">
             <thead>

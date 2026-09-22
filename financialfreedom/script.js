@@ -945,7 +945,12 @@ function syncVisibility(){
   $('legacyRow').style.display = UI.mode === 'legacy' ? '' : 'none';
   $('pensionRows').style.display = UI.pensionOn ? '' : 'none';
   renderPensionNote();
-  $('savingsLabel').textContent = UI.savingsMode === 'income' ? 'Net income' : 'Savings';
+  var byIncome = UI.savingsMode === 'income';
+  $('savingsLabel').textContent = byIncome ? 'Net income' : 'Savings';
+  // The field is one of two questions, so its tip asks the one on screen.
+  $('savingsTip').setAttribute('data-tip', byIncome
+    ? '<strong>Net income:</strong> your take-home pay. What you save is whatever is left after expenses.'
+    : '<strong>Savings:</strong> what you put away, entered directly.');
   $('savingsModeNote').innerHTML = UI.savingsMode === 'income'
     ? 'You save the gap between income and expenses.' +
       info('Income grows at the rate below, expenses rise with inflation, so what you save changes every year.')
@@ -1102,7 +1107,7 @@ function renderPensionNote(){
     escapeHtml(fmt.age(UI.pensionStartAge)) + ' and never a cent more, so it buys ' +
     escapeHtml(fmt.currency(perYear / Math.pow(1 + i, toStart))) + ' of today\u2019s living when it starts and ' +
     escapeHtml(fmt.currency(perYear / Math.pow(1 + i, toDie))) + ' by ' + escapeHtml(fmt.age(UI.ageDie)) + '.' +
-    info('A frozen pension is eroded from TODAY, not from the day it starts: the amount entered is what it pays now, so the years before you claim it wear it down too.');
+    info('A frozen pension is eroded from TODAY, not from the day it starts: the years before you claim it wear down the amount you entered.');
 }
 
 /* TWO verdicts, because the page asks two questions and the slider only moves
@@ -1841,11 +1846,11 @@ function renderTable(res){
     '<table><thead><tr><th>Year</th><th>Age</th><th>Balance</th><th>Income</th><th>Expense</th>' +
     '<th>Saved / drawn</th><th>Growth</th></tr></thead><tbody>' + rows + '</tbody></table>';
   $('tableSub').innerHTML = 'In ' + moneyMode(res) + '.' +
-    info('Balance is what the pot reads AT that age; Income, Expense and Saved are the twelve months that follow it. ' +
+    info('Balance is the pot AT that age; the other columns are the twelve months after it. ' +
          (res.ui.savingsMode === 'income'
-           ? 'Income is the net income you entered.'
-           : 'You entered savings, so Income is what you save plus what you spend.') +
-         ' Growth is the return that closes the year, taken as the residual. The highlighted row is the year you retire.');
+           ? 'Income is what you entered.'
+           : 'Income is your savings plus your spending.') +
+         ' The highlighted row is the year you retire.');
 }
 
 /* ─── ASSUMPTIONS ─── */
@@ -1857,22 +1862,22 @@ function renderAssumptions(res){
       info('Tax differs too much between countries, and between an ordinary account and a pension wrapper, to model honestly in one tool.'),
 
     '<strong>Shown in ' + moneyMode(res) + '.</strong> Spending holds its value, so it rises with inflation.' +
-      info('Future\u2019s money is what the account will actually read: the same plan times each year\'s inflation factor. Show Present Value strips it back out.'),
+      info('Future\u2019s money is what the account will read: the plan times each year\'s inflation factor. Show Present Value strips it back out.'),
 
     '<strong>Inflation is ' + fmt.pct(res.ui.inflation, 1) + ' a year</strong> and applies to every year, working or retired.' +
-      info('Living costs, the pot needed and the pension all rise with it, and the return is discounted by it (Fisher, not subtraction). The Expense column below is that rise, year by year.'),
+      info('Living costs, the pot needed and the pension all rise with it, and the return is discounted by it (Fisher, not subtraction).'),
 
     '<strong>The two sections are two different questions.</strong> Path to freedom never withdraws; Cashflows always does.' +
-      info('Path to freedom keeps paying in and compares the result with the pot each age would need. Cashflows stops at the age on the slider and draws down. Moving the slider cannot change the freedom age.'),
+      info('Path to freedom keeps paying in and compares the pot with what each age needs. Cashflows stops at the slider age and draws down.'),
 
     '<strong>Your FIRE number</strong> implies a ' + (swr == null ? 'n/a' : fmt.pct(swr, 2)) + ' SWR.' +
       info('The share of the pot you spend in the first year. The familiar 25 times rule is the same arithmetic at a 4% real return.'),
 
     '<strong>The shaded band is not a path.</strong>' +
-      info('The 10th to 90th percentile across ' + fmt.num(res.mc.paths) + ' simulated futures at each year separately, so its edges are an envelope rather than one future you could live through. At 0% volatility they collapse onto the single smooth projection.'),
+      info('The 10th to 90th percentile across ' + fmt.num(res.mc.paths) + ' simulated futures, taken year by year, so the edges are an envelope rather than one future you could live through.'),
 
     '<strong>Money deposited is what you put in that is still there.</strong>' +
-      info('Nothing is withdrawn on that chart, so it is every cent you have paid in, held down by the balance in the years a bad market has the pot below it. The gap to the investment line is the growth.'),
+      info('Nothing is withdrawn on that chart, so it is every cent you have paid in. The gap to the investment line is the growth.'),
 
     '<strong>The year-by-year table reconciles.</strong> Balance plus Saved plus Growth is next year\u2019s Balance, to the cent.' +
       info('Growth is whatever is left over once the flows are accounted for. In today\u2019s money that is the real return; in future\u2019s money, the nominal one.'),
@@ -1881,7 +1886,7 @@ function renderAssumptions(res){
       ? '<strong>Income is what you entered</strong>, and what you save is whatever it leaves over.' +
         info('Income grows at the rate on the You tab, spending rises with inflation. Once you retire the only income is the pension, if you included one.')
       : '<strong>Income is implied, not entered.</strong> It is what you save plus what you spend.' +
-        info('You entered savings, so the income shown is the take-home pay that saving that much while spending that much implies. Switch to Net income on the You tab to enter it directly.')),
+        info('You entered savings, so the income shown is what saving and spending that much implies. Switch to Net income on the You tab to enter it directly.')),
 
     '<strong>Not modelled:</strong> one-off costs, a mortgage ending, aged care, or any spending change beyond the retirement percentage.'
   ];

@@ -148,7 +148,7 @@
         <!-- Mode A: Total + Split % -->
         <div id="modeTotal">
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="totalSalaryLabel">Total Household Gross Salary</span> <span class="tip-icon" data-i18n-tip="totalSalaryTip" data-tip="The husband&#39;s and wife&#39;s gross annual salaries added together, before any deduction.">?</span></div>
+            <div class="field-label"><span data-i18n="totalSalaryLabel">Total Household Annual Gross Salary</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="totalSalaryInput" type="text" inputmode="numeric" value="500,000,000" />
@@ -156,13 +156,13 @@
           </div>
           <div class="slider-block">
             <div class="slider-head">
-              <div class="slider-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeShareLabel">Wife's share of income</span> <span class="tip-icon" data-i18n-tip="wifeShareTip" data-tip="The share of the household salary the wife earns. The husband earns whatever is left, so 30% here means he earns 70%.">?</span></div>
+              <div class="slider-label"><span data-i18n="wifeShareLabel">Wife's share of income</span></div>
               <div class="slider-value" id="splitValue">50%</div>
             </div>
             <input id="splitPct" type="range" min="0" max="100" step="1" value="50" />
           </div>
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Combined Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Allowable deductions such as biaya jabatan or iuran pensiun. They come off gross income before PTKP is applied, and they are split between the spouses in proportion to what each earns.">?</span></div>
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Combined Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Deductions such as biaya jabatan or iuran pensiun, taken off gross income before PTKP and split in proportion to what each spouse earns.">?</span></div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="deductionInput" type="text" inputmode="numeric" value="0" />
@@ -173,14 +173,14 @@
         <!-- Mode B: Individual inputs -->
         <div id="modeIndividual" style="display:none;">
           <div class="field-row">
-            <div class="field-label" data-i18n="husbandSalaryLabel">Husband's Gross Salary</div>
+            <div class="field-label" data-i18n="husbandSalaryLabel">Husband's Annual Gross Salary</div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="husbandSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
             </div>
           </div>
           <div class="field-row">
-            <div class="field-label" data-i18n="wifeSalaryLabel">Wife's Gross Salary</div>
+            <div class="field-label" data-i18n="wifeSalaryLabel">Wife's Annual Gross Salary</div>
             <div class="currency-wrap">
               <span class="prefix">Rp</span>
               <input class="currency-input" id="wifeSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
@@ -229,7 +229,7 @@
         </div>
 
         <div class="bracket-section">
-          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Tax Brackets (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit each threshold and rate. The &quot;From&quot; column fills itself in, and only the last bracket is left open-ended. Raising a bound past the brackets beneath it deletes those brackets, so the ladder on screen is always exactly the ladder being calculated.">?</span></div>
+          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Tax Brackets (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit each threshold and rate. The &quot;From&quot; column fills itself in, and only the last bracket is open-ended. Raising a bound past the ones beneath it deletes them.">?</span></div>
           <div class="bracket-row-header">
             <div class="bracket-col-label" id="bracketColFrom">From (Rp)</div>
             <div class="bracket-col-label" id="bracketColTo">To (Rp) <span style="font-size:0.68rem">(last=∞)</span></div>

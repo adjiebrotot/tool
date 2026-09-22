@@ -241,13 +241,12 @@ function applyLang(){
     if(val !== undefined && typeof val === 'string') el.textContent = val;
   });
   /* switch tooltip text for data-tip-key elements based on language */
-  const tips = (lang === 'id' && window.RVO_TIPS_ID) ? RVO_TIPS_ID : (window.RVO_TIPS_EN || window.RVO_TIPS);
-  if(tips){
-    document.querySelectorAll('[data-tip-key]').forEach(function(el){
-      var k = el.getAttribute('data-tip-key');
-      if(tips[k]) el.setAttribute('data-tip', tips[k]);
-    });
-  }
+  if(window.RVO_APPLY_TIPS) RVO_APPLY_TIPS(tipTable());
+}
+
+// The tip table for the language on screen.
+function tipTable(){
+  return (lang === 'id' && window.RVO_TIPS_ID) ? RVO_TIPS_ID : (window.RVO_TIPS_EN || window.RVO_TIPS);
 }
 
 /* ── PARAMS (metadata for simple-mode rows) ──
@@ -775,11 +774,15 @@ function buildRenderRows(){
   return rows;
 }
 
-function tipHtmlFor(tipKey){
+/* `variant` is the state the control is in, for a tip that has one per state.
+   A per-scenario row cannot name one state for the whole row, so it passes
+   none and gets the default state's wording. */
+function tipHtmlFor(tipKey, variant){
   if(!tipKey) return '';
-  const tipTips = (lang==='id'&&window.RVO_TIPS_ID)?RVO_TIPS_ID:(window.RVO_TIPS_EN||window.RVO_TIPS||{});
-  const tipText = tipTips[tipKey] || '';
-  return tipText ? `<span class="tip-icon" data-tip-key="${escAttr(tipKey)}" data-tip="${escAttr(tipText)}">?</span>` : '';
+  const tipText = window.RVO_TIP ? RVO_TIP(tipKey, variant, tipTable()) : '';
+  return tipText ? `<span class="tip-icon" data-tip-key="${escAttr(tipKey)}"`
+    + (variant ? ` data-tip-variant="${escAttr(variant)}"` : '')
+    + ` data-tip="${escAttr(tipText)}">?</span>` : '';
 }
 
 const INACTIVE_TD = () => `<td class="scen-td inactive-td" title="${escAttr(T('notUsed'))}"></td>`;
@@ -884,7 +887,7 @@ function buildTableHTML(){
         <button class="seg-btn${cur==='simple'?' active':''}" data-val="simple">${T('segSimple')}</button>
         <button class="seg-btn${cur==='detailed'?' active':''}" data-val="detailed">${T('segDetailed')}</button>
       </div>`;
-      bodyHtml += `<tr class="mode-tr"><td class="label-td">${escHtml(T(r.labelKey))}${tipHtmlFor(r.tip)}</td><td class="unit-td"></td><td class="scen-td mode-td" colspan="${n}">${seg}</td>${trailTd}</tr>`;
+      bodyHtml += `<tr class="mode-tr"><td class="label-td">${escHtml(T(r.labelKey))}${tipHtmlFor(r.tip, cur)}</td><td class="unit-td"></td><td class="scen-td mode-td" colspan="${n}">${seg}</td>${trailTd}</tr>`;
       return;
     }
     if(r.type==='period'){

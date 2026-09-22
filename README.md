@@ -73,7 +73,7 @@ committed. `powerfactory-scripter/audit/` validates generated scripts against a 
 case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain
 CPython, with no PowerFactory needed.
 
-Four cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
+Five cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
 ships Quick Start scenarios instead of a Reset button and proves the claim that lets it: it
 applies each scenario to a freshly loaded page and to a page whose every control has been
 scribbled over, and the two have to land on identical form state across every tab — plus, where a
@@ -92,6 +92,16 @@ stay inside the data, floor included; and that the y axis follows the x window. 
 real Chart.js, chartjs-plugin-zoom and Plotly rather than stubs, since the promises are about
 what those libraries do: they are fetched once into `_ref/.libcache/` (gitignored) and served
 from there afterwards, so later runs need no network.
+
+`node _ref/tip-check.mjs` loads every page and holds every tooltip to the budget that makes one
+readable where it pops up: one thought per tip, 200 characters of rendered text at the outside and
+150 as the aim, no em-dash, and never empty. It also drives every dropdown and segmented control
+through all of its values and re-checks each state, because the tip on a dependent field is
+written to follow that field: a loan type, a study type or a Simple/Detailed switch carries the
+option that is *selected* rather than a list of all of them. A tip that carried no domain fact
+(no definition, unit, rule or caveat) is deleted rather than shortened, so every (i) on a page is
+a promise that something non-obvious sits behind it. Pass a path fragment
+(`node _ref/tip-check.mjs rentvsownhouse`) to run one tool.
 
 `node _ref/abbr-check.mjs` loads every page and
 checks the abbreviation glossary (`SharedAbbr`): that decoration never lands in a link,

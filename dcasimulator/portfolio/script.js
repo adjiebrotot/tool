@@ -299,10 +299,10 @@ const fmtRatio  = v => (v==null||!isFinite(v)) ? ' - ' : v.toFixed(2);
 const fmtMetPct = v => (v==null||!isFinite(v)) ? ' - ' : (v*100).toFixed(2)+'%';
 // Hover explanations for each advanced metric (avoid double quotes - used in data-tip).
 const METRIC_TIPS = {
-  sharpe:  '<strong>Sharpe:</strong> return earned above the risk-free rate, divided by how much the returns bounce around. Excess return is the daily time-weighted return minus the daily risk-free rate, each portfolio using its own assigned rate or ticker, annualised by multiplying by √252. Higher is better.',
-  sortino: '<strong>Sortino:</strong> the same idea as Sharpe, but it only counts downside movement. It divides the annualised excess return by the volatility of returns that fall below the risk-free rate, so upside swings are not treated as risk.',
-  twr:     '<strong>CAGR (TWR):</strong> the time-weighted compound annual growth rate, taken as the geometric mean of daily returns from the first top-up onward, with each day measured net of that day’s top-up. It measures the portfolio itself, ignoring when you paid money in.',
-  mwr:     '<strong>CAGR (MWR):</strong> the money-weighted compound annual growth rate, which is the annualised internal rate of return (IRR) of your real top-ups and the final portfolio value. It measures what your actual money earned.',
+  sharpe:  '<strong>Sharpe:</strong> return above the risk-free rate, divided by how much the returns bounce around. Each portfolio uses its own rate. Higher is better.',
+  sortino: '<strong>Sortino:</strong> Sharpe counting downside only, so upside swings are not treated as risk.',
+  twr:     '<strong>CAGR (TWR):</strong> compound annual growth of the portfolio itself, each day measured net of that day’s top-up, ignoring when you paid in.',
+  mwr:     '<strong>CAGR (MWR):</strong> compound annual growth of your own money, the IRR of your real top-ups against the final portfolio value.',
 };
 const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:var(--muted);cursor:help;border-bottom:1px dotted var(--border)">${label}</span> <b>${val}</b></div>`;
 
@@ -1047,13 +1047,26 @@ function refreshRankTotals(){
 // One static explainer for the Trigger dropdown itself, listing what every option does.
 // The per-asset icon in the card header stays dynamic (triggerPlainDesc); this one is about
 // the choices on offer, so it does not depend on the asset or its current settings.
-const TRIGGER_TYPE_TIP = 'What has to happen before this asset draws from the reserve.<br><strong>Invest at Top-up:</strong> no waiting, it moves toward its target weight at every top-up.<br><strong>Price % move:</strong> fires when the price moves your set % from the reference you pick: the period open, or the previous top or bottom over a lookback window you set in bars.<br><strong>RSI oversold:</strong> fires when RSI drops below the oversold level.<br><strong>MA crossover:</strong> fires on a golden cross, the fast moving average crossing above the slow one.<br><strong>Bollinger dip:</strong> fires when the price closes below the lower band.<br><strong>MACD cross:</strong> fires when the MACD line crosses above its signal line.<br><strong>MACD histogram:</strong> fires when the histogram turns positive.<br><strong>ADX trend:</strong> fires when ADX shows a trend stronger than your threshold.';
+/* Eight trigger types used to arrive as one list on every trigger card. The
+   card already knows which type is selected, so the tip carries that one. */
+const TRIGGER_TYPE_TIPS = {
+  'at-topup':       'No waiting: the asset moves toward its target weight at every top-up.',
+  'pct':            'Fires when the price moves your set % from the reference you pick: the period open, or the previous top or bottom over your lookback.',
+  'tech-rsi':       'Fires when RSI drops below the oversold level.',
+  'tech-ma-cross':  'Fires on a golden cross, the fast moving average crossing above the slow one.',
+  'tech-bollinger': 'Fires when the price closes below the lower Bollinger Band.',
+  'tech-macd-cross':'Fires when the MACD line crosses above its signal line.',
+  'tech-macd-hist': 'Fires when the MACD histogram turns positive.',
+  'tech-adx':       'Fires when ADX shows a trend stronger than your threshold.'
+};
+const TRIGGER_TYPE_TIP = 'What has to happen before this asset draws from the reserve.';
 const TRIGGER_TYPE_LABEL = { 'at-topup':'Invest at Top-up', 'pct':'Price % move', 'tech-rsi':'RSI oversold', 'tech-ma-cross':'MA crossover', 'tech-bollinger':'Bollinger dip', 'tech-macd-cross':'MACD cross', 'tech-macd-hist':'MACD histogram', 'tech-adx':'ADX trend' };
 // Single Reserve dropdown: the Risk-Free Account (cash) plus every asset as a
 // holding option. This replaces the old two-part "Reserve mode + Reserve asset"
 // pair so there is just one control to set.
 function populateReserveSelect(){
   const sel=$('reserveSelect'); const p=getActive(); if(!sel||!p) return;
+  syncReserveTip(p);
   const assetOpts=p.assets.map(a=>`<option value="asset:${a.id}">Hold in ${a.name}</option>`).join('');
   sel.innerHTML=`<option value="cash">Risk-Free Account</option>${assetOpts}`;
   if((p.rebal.reserveMode||'cash')==='asset'){
@@ -1065,6 +1078,17 @@ function populateReserveSelect(){
     sel.value='cash';
   }
 }
+/* The Reserve tip names the reserve that is actually selected: cash earns the
+   risk-free yield, a holding follows its own price until it is deployed. */
+function syncReserveTip(p){
+  const el=$('reserveTip'); if(!el) return;
+  const asset=(p.rebal.reserveMode==='asset')
+    ? p.assets.find(a=>a.id===p.rebal.reserveAssetId) : null;
+  el.setAttribute('data-tip', asset
+    ? `Top-ups wait in ${asset.name}, following its price, until a trigger fires.`
+    : 'Top-ups wait as cash in the Risk-Free Account, earning its yield, until a trigger fires.');
+}
+
 // One plain-language sentence describing what an asset's trigger does, shown as a
 // hover tooltip on each trigger card. Kept simple and em-dash free.
 function triggerPlainDesc(a){
@@ -1186,7 +1210,7 @@ function renderTriggerTable(){
         <span class="tip-icon" data-tip="${triggerPlainDesc(a)}">i</span></div>
       <div class="trigger-summary">${triggerSummary(a)}</div>
       <div class="trigger-body">
-        <div class="param-row"><label>Trigger <span class="tip-icon" data-tip="${TRIGGER_TYPE_TIP}">?</span></label>
+        <div class="param-row"><label>Trigger <span class="tip-icon" data-tip="${TRIGGER_TYPE_TIP} ${TRIGGER_TYPE_TIPS[tr.type]||''}">?</span></label>
           <select class="num-input trig-type" data-aid="${a.id}" style="cursor:pointer">${
             Object.keys(TRIGGER_TYPE_LABEL).map(k=>`<option value="${k}" ${tr.type===k?'selected':''}>${TRIGGER_TYPE_LABEL[k]}</option>`).join('')
           }</select></div>

@@ -590,12 +590,43 @@ let persist = null;
 const SIMPLE_INC = {
   employee: {
     label: 'Total employment income',
-    tip: 'Gross salary and wages for the year, before tax and <strong>excluding</strong> employer super. Counted in full, which is how a lender treats base salary.'
+    tip: 'Gross pay for the year, before tax and <strong>excluding</strong> employer super. Counted in full, as a lender treats base salary.'
   },
   self: {
     label: 'Business income you draw on',
-    tip: 'Two year average net profit after tax of the business, plus any add-backs. Counted in full, which is how a lender treats an established trading history.'
+    tip: 'Two year average net profit after tax, plus add-backs. Counted in full, as a lender treats an established trading history.'
   }
+};
+
+/* Tips that answer the mode you are actually in.
+   ---------------------------------------------------------------------------
+   A Simple/Detailed row used to carry both halves of the explanation at once,
+   which is two paragraphs to read a switch you have already made. Each tip now
+   leads with the mode that is live and keeps one clause on what the other mode
+   would add, which is all the switch is asking. Keyed by UI key, then value. */
+const MODE_TIPS = {
+  incMode: {
+    simple:   '<strong>Simple</strong> counts one gross figure in full, as a lender treats base salary or business profit. Detailed splits it per stream.',
+    detailed: '<strong>Detailed</strong> takes each stream with its own shading, the share a lender counts. Simple takes one gross figure in full.'
+  },
+  debtsMode: {
+    simple:   '<strong>Simple</strong> takes the headline figure of each debt you tick, on the standard settings shown beneath it. Detailed opens those up.',
+    detailed: '<strong>Detailed</strong> sets each rate, term, repayment type and the rate charged on card limits. Simple assesses on the standards.'
+  },
+  loanMode: {
+    simple:   '<strong>Simple</strong> asks for the rate and term, then tests you on the standard APRA settings below. Detailed lets you move them.',
+    detailed: '<strong>Detailed</strong> moves the buffer, lender floor, minimum surplus and minimum NSR to one lender&rsquo;s policy. Simple uses APRA standards.'
+  },
+  capsMode: {
+    simple:   '<strong>Simple</strong> takes the price, deposit and purchase costs, and reads the LVR ceiling off the LMI switch. Detailed adds the rest.',
+    detailed: '<strong>Detailed</strong> adds the DTI cap and its income basis, a separate bank valuation, and the LVR ceiling as its own dial.'
+  }
+};
+
+// The deposit field asks for two different things, so its tip follows the unit.
+const DEPOSIT_TIPS = {
+  amount: 'Savings, a family gift and any grant. Stamp duty and the purchase costs come out of it first.',
+  pct:    'Savings, a family gift and any grant. As a share of the price it is the down payment, with purchase costs on top.'
 };
 
 function syncUI(){
@@ -615,9 +646,15 @@ function syncUI(){
   $('incSimpleLabel').textContent = si.label;
   $('incSimpleTip').setAttribute('data-tip', si.tip);
 
+  // Every Simple/Detailed row explains the mode it is sitting in, not both.
+  Object.entries(MODE_TIPS).forEach(([key, tips]) => {
+    const el = $(key + 'Tip'); if(el) el.setAttribute('data-tip', tips[UI[key]] || '');
+  });
+
   // The deposit field changes what it is asking for with its unit.
-  $('depositLabel').textContent = str('depositMode') === 'pct'
-    ? 'Deposit, share of the price' : 'Deposit funds';
+  const depPct = str('depositMode') === 'pct';
+  $('depositLabel').textContent = depPct ? 'Deposit, share of the price' : 'Deposit funds';
+  $('depositTip').setAttribute('data-tip', depPct ? DEPOSIT_TIPS.pct : DEPOSIT_TIPS.amount);
 
   // What each Simple view is quietly assuming on the user's behalf.
   const olYears = str('olType')==='io' ? num('olTerm') - num('olIo') : num('olTerm');

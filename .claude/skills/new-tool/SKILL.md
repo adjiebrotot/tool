@@ -46,8 +46,16 @@ block. Then register the tool site-wide:
 - Simple language, but do not dumb down the technical meaning. Say it plainly and correctly.
 - No walls of explanation. If a field needs a note, put it in a **tooltip** (`data-tip="…"`,
   rendered by the shared global tooltip), not inline paragraph text.
-- If even a tooltip would be long, prefer **dynamic tooltiping** (progressive/on-demand
-  detail) over dumping everything at once. Keep the page calm.
+- **One thought per tooltip**, 150 characters of rendered text as the aim and 200 at the
+  outside. See "Tooltips" in `_ref/design-reference.md`, and check a new page with
+  `node _ref/tip-check.mjs <tool>`.
+- **No tooltip at all** where the label, a sub-line or the control itself already says it.
+  A tip has to carry a domain fact: a definition, a unit, a rule, a caveat, a behaviour
+  nobody could guess. If the only missing word is something like "annual", put it in the
+  label instead of hiding it in a hover.
+- A tooltip on a **dependent** field is written to follow that field: it carries the option
+  that is selected, or the state the control is in, not a list of every option. Leave its
+  markup `data-tip=""` and fill it from the handler that already runs on change.
 
 ### Abbreviations explain themselves
 

@@ -11,7 +11,7 @@ const LANG = {
     sensitivityHtml: 'Power user? Compare multiple scenarios side-by-side with our <a href="/rentvsownhouse/sensitivity/" style="color:var(--accent);font-weight:700;text-decoration:none;">Sensitivity Analysis Tool</a>.',
     /* sidebar */
     quickStartLabel: 'Quick Start',
-    quickStartTip: 'Prefill with quick assumption, assuming median price for two-bedroom apartment in the city centre or inner suburbs',
+    quickStartTip: 'Prefills with a median two-bedroom apartment in the city centre or inner suburbs.',
     tabGeneral: 'General',
     tabOwn: 'Own',
     tabRent: 'Rent',
@@ -96,16 +96,15 @@ const LANG = {
     labelCurrencySymbol: 'Currency Symbol',
     /* KPI */
     kpiInitialCashLabel: 'Initial Cash',
-    kpiInitialCashTip: 'The starting cash used in both scenarios. If left blank in inputs, this is auto-calculated from down payment + setup requirements (and RTB needs when enabled).',
+    kpiInitialCashTip: 'Starting cash in both scenarios. Left blank, it is the deposit plus setup costs, and the Rent-Then-Buy need when that is on.',
     kpiInitialCashSub: 'Starting capital at Year 0',
     kpiBudgetLabel: 'Yearly Housing Budget',
-    kpiBudgetTip: 'The monthly housing budget range used across the modeled years, shown from minimum to maximum (e.g., $1k–$5k).',
     kpiBudgetSub: 'Min–max monthly budget over horizon',
     kpiBreakevenLabel: 'Breakeven Year',
-    kpiBreakevenTip: "The first year when the Buy scenario's net equity (house equity + cash) overtakes the pure Rent scenario's invested savings. Before this year, renting produces higher net wealth.",
+    kpiBreakevenTip: 'The first year Buy net equity (house plus cash) passes the Rent scenario. Before it, renting is ahead.',
     kpiBreakevenSub: 'When owning net equity overtakes renting',
     kpiDiffLabel: 'Equity Difference',
-    kpiDiffTip: 'Own Net Equity minus Rent Net Equity at the final year. Positive (green) means buying wins; negative (red) means renting & investing wins over the chosen time horizon.',
+    kpiDiffTip: 'Own net equity minus Rent net equity at the final year. Green means buying wins, red means renting and investing wins.',
     kpiDiffSub: 'Own minus Rent at final year',
     /* chart */
     chartTitle: 'Comparison',
@@ -124,11 +123,9 @@ const LANG = {
     chartHoverHint: 'Hover over the chart to inspect a year.',
     /* summary */
     ownSnapshotTitle: 'Own — Snapshot',
-    ownSnapshotTip: 'Summary of the Buy scenario at the final year of the time horizon.',
     rentSnapshotTitle: 'Rent — Snapshot',
-    rentSnapshotTip: 'Summary of the pure Rent scenario at the final year of the time horizon.',
     rtbSnapshotTitle: '🔄 Rent-Then-Buy — Snapshot',
-    rtbSnapshotTip: 'Summary of the Rent-Then-Buy scenario. Before the buy year, cashflows match the rent scenario. At the buy year, accumulated savings fund the down payment on the then-market-price property, and a new mortgage begins.',
+    rtbSnapshotTip: 'The Rent-Then-Buy scenario at the final year. Savings fund the deposit at the buy year, on the price by then, and a new mortgage starts.',
     /* detail tabs */
     tabOwnCashflow: 'Own Cashflow',
     tabRentCashflow: 'Rent Cashflow',
@@ -203,7 +200,7 @@ const LANG = {
     sensitivityHtml: 'Power user? Bandingkan beberapa skenario secara berdampingan dengan <a href="/rentvsownhouse/sensitivity/id/" style="color:var(--accent);font-weight:700;text-decoration:none;">Alat Analisis Sensitivitas</a> kami.',
     /* sidebar */
     quickStartLabel: 'Mulai Cepat',
-    quickStartTip: 'Isi otomatis dengan asumsi cepat berdasarkan harga median apartemen 2 kamar di pusat kota atau pinggiran kota',
+    quickStartTip: 'Isi otomatis dengan harga median apartemen 2 kamar di pusat kota atau pinggiran kota.',
     tabGeneral: 'Umum',
     tabOwn: 'Beli',
     tabRent: 'Sewa',
@@ -288,16 +285,15 @@ const LANG = {
     labelCurrencySymbol: 'Simbol Mata Uang',
     /* KPI */
     kpiInitialCashLabel: 'Modal Awal',
-    kpiInitialCashTip: 'Kas awal yang digunakan di kedua skenario. Jika dikosongkan, dihitung otomatis dari Uang Muka (DP) + biaya awal pembelian (dan kebutuhan Sewa Dulu jika diaktifkan).',
+    kpiInitialCashTip: 'Kas awal di kedua skenario. Jika dikosongkan, dihitung dari Uang Muka (DP) + biaya awal, dan kebutuhan Sewa Dulu jika aktif.',
     kpiInitialCashSub: 'Modal awal di Tahun 0',
     kpiBudgetLabel: 'Anggaran Perumahan Tahunan',
-    kpiBudgetTip: 'Rentang anggaran perumahan bulanan selama periode yang dimodelkan, dari minimum hingga maksimum.',
     kpiBudgetSub: 'Anggaran bulanan min–maks selama jangka waktu',
     kpiBreakevenLabel: 'Tahun Breakeven',
-    kpiBreakevenTip: 'Tahun pertama saat kekayaan bersih skenario Beli (nilai bersih properti + kas) melampaui tabungan skenario Sewa. Sebelum tahun ini, menyewa menghasilkan kekayaan bersih lebih tinggi.',
+    kpiBreakevenTip: 'Tahun pertama kekayaan bersih Beli (properti + kas) melampaui skenario Sewa. Sebelum itu, menyewa lebih unggul.',
     kpiBreakevenSub: 'Saat kekayaan bersih Beli melampaui Sewa',
     kpiDiffLabel: 'Perbedaan Kekayaan Bersih',
-    kpiDiffTip: 'Kekayaan Bersih Beli dikurangi Kekayaan Bersih Sewa di tahun terakhir. Positif (hijau) berarti beli lebih menguntungkan; negatif (merah) berarti sewa & investasi lebih menguntungkan.',
+    kpiDiffTip: 'Kekayaan Bersih Beli dikurangi Kekayaan Bersih Sewa di tahun terakhir. Hijau berarti beli menang, merah berarti sewa dan investasi menang.',
     kpiDiffSub: 'Beli dikurangi Sewa di tahun terakhir',
     /* chart */
     chartTitle: 'Perbandingan',
@@ -313,11 +309,9 @@ const LANG = {
     chartHoverHint: 'Arahkan kursor ke grafik untuk melihat detail per tahun.',
     /* summary */
     ownSnapshotTitle: 'Beli — Ringkasan',
-    ownSnapshotTip: 'Ringkasan skenario Beli pada tahun terakhir jangka waktu.',
     rentSnapshotTitle: 'Sewa — Ringkasan',
-    rentSnapshotTip: 'Ringkasan skenario Sewa murni pada tahun terakhir jangka waktu.',
     rtbSnapshotTitle: '🔄 Sewa Dulu, Beli Kemudian — Ringkasan',
-    rtbSnapshotTip: 'Ringkasan skenario Sewa Dulu, Beli Kemudian. Sebelum tahun pembelian, arus kas sama dengan skenario sewa. Pada tahun pembelian, tabungan terkumpul digunakan sebagai Uang Muka (DP) pada harga properti saat itu, dan KPR baru dimulai.',
+    rtbSnapshotTip: 'Skenario Sewa Dulu, Beli Kemudian pada tahun terakhir. Tabungan menjadi Uang Muka (DP) pada harga saat itu, lalu KPR baru dimulai.',
     /* detail tabs */
     tabOwnCashflow: 'Arus Kas Beli',
     tabRentCashflow: 'Arus Kas Sewa',
@@ -392,29 +386,25 @@ function applyLang(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     const key = el.dataset.i18n;
     const val = LANG[lang][key];
-    if(val !== undefined && typeof val === 'string') el.textContent = val;
+    if(val === undefined || typeof val !== 'string') return;
+    if(el.firstElementChild){
+      /* The label carries a child of its own, a tip icon: translate the text
+         beside it rather than replacing the lot. */
+      const text = Array.prototype.find.call(el.childNodes, n => n.nodeType === 3);
+      if(text) text.textContent = val + ' ';
+      else el.insertBefore(document.createTextNode(val + ' '), el.firstChild);
+      return;
+    }
+    el.textContent = val;
   });
   document.querySelectorAll('[data-i18n-opt]').forEach(el=>{
     const key = el.dataset.i18nOpt;
     const val = LANG[lang][key];
     if(val !== undefined) el.textContent = val;
   });
-  /* elements needing innerHTML (tip-icon inside label, sensitivity link) */
+  /* the one string that carries markup of its own */
   const sensDiv = document.getElementById('sensitivityLinkDiv');
   if(sensDiv) sensDiv.innerHTML = T('sensitivityHtml');
-  /* KPI label spans contain tip-icon child — rebuild carefully */
-  ['kpiInitialCashLabel','kpiBudgetLabel','kpiBreakevenLabel','kpiDiffLabel',
-   'rtbSnapshotTitle'].forEach(key=>{
-    const el = document.querySelector('[data-i18n="'+key+'"]');
-    if(!el) return;
-    const tipSpan = el.querySelector('.tip-icon');
-    const tipKey = tipSpan ? tipSpan.dataset.i18nTip : null;
-    el.childNodes.forEach(n=>{ if(n.nodeType===3) n.textContent = ''; }); /* clear text nodes */
-    const first = el.firstChild;
-    if(first && first.nodeType===3) first.textContent = T(key)+' ';
-    else el.insertBefore(document.createTextNode(T(key)+' '), el.firstChild);
-    if(tipSpan && tipKey) tipSpan.setAttribute('data-tip', T(tipKey));
-  });
   /* data-i18n-tip: update data-tip on tip-icons */
   document.querySelectorAll('[data-i18n-tip]').forEach(el=>{
     const key = el.dataset.i18nTip;
@@ -475,13 +465,33 @@ function applyLang(){
   const rPPIAbbr = document.querySelector('[data-i18n="labelHouseGrowth"]');
   if(rPPIAbbr) rPPIAbbr.innerHTML = T('labelHouseGrowth')+' ';
   /* switch tooltip text for data-tip-key elements based on language */
-  const tips = (lang === 'id' && window.RVO_TIPS_ID) ? RVO_TIPS_ID : (window.RVO_TIPS_EN || window.RVO_TIPS);
-  if(tips){
-    document.querySelectorAll('[data-tip-key]').forEach(function(el){
-      var k = el.getAttribute('data-tip-key');
-      if(tips[k]) el.setAttribute('data-tip', tips[k]);
-    });
-  }
+  if(window.RVO_APPLY_TIPS) RVO_APPLY_TIPS(tipTable());
+}
+
+// The tip table for the language on screen.
+function tipTable(){
+  return (lang === 'id' && window.RVO_TIPS_ID) ? RVO_TIPS_ID : (window.RVO_TIPS_EN || window.RVO_TIPS);
+}
+
+/* Tips on dependent fields follow the state of the control they hang off, so a
+   mode switch reads as the mode you are in rather than as a list of both. Run
+   from refreshLabels(), i.e. on every rerender. */
+const TIP_VARIANTS = {
+  mortgageMode:          () => S.mortgageMode,
+  mortgageType:          () => S.mortgageType,
+  ownCostsMode:          () => S.ownCostsMode,
+  rentCostsMode:         () => S.rentCostsMode,
+  costInterestOnly:      () => S.costInterestOnly ? 'on' : 'off',
+  // The budget growth slider does nothing until a manual budget exists.
+  monthlyBudgetIncrease: () => S.monthlyBudget > 0 ? 'manual' : 'auto'
+};
+
+function syncTipVariants(){
+  Object.entries(TIP_VARIANTS).forEach(([key, read]) => {
+    document.querySelectorAll('[data-tip-key="' + key + '"]').forEach(el =>
+      el.setAttribute('data-tip-variant', read()));
+  });
+  if(window.RVO_APPLY_TIPS) RVO_APPLY_TIPS(tipTable());
 }
 
 /* ── DEFAULTS ── */
@@ -997,6 +1007,7 @@ function updateCurrencyPrefixes(){
 }
 
 function refreshLabels(){
+  syncTipVariants();
   const dp = S.propertyPrice * S.downPaymentPct/100;
   $('downPaymentPctVal').textContent = S.downPaymentPct+'%';
   $('downPaymentDollar').textContent = fmt.currency(dp);
@@ -2791,12 +2802,7 @@ function makeSliderEditable(valSpan,rangeEl){
 
 /* ── INIT ── */
 // Populate data-tip from centralised RVO_TIPS (tooltips.js)
-if(window.RVO_TIPS){
-  document.querySelectorAll('[data-tip-key]').forEach(function(el){
-    var k=el.getAttribute('data-tip-key');
-    if(RVO_TIPS[k]) el.setAttribute('data-tip', RVO_TIPS[k]);
-  });
-}
+if(window.RVO_APPLY_TIPS) RVO_APPLY_TIPS(RVO_TIPS);
 applyLang();
 syncMoneyInputs();
 syncCagrDeleteButtons();

@@ -1234,6 +1234,65 @@ function renderScenarioList(){
   if(persist) persist.schedule(); // scenarios are JS state — save on every change
 }
 
+/* ─── Tips that answer the option you picked ───────────────────────────────
+   Seven loan types, four frequencies and three fee treatments used to arrive as
+   one tip listing every option at once, which is a paragraph to read a choice
+   you have already made. Each of these tips now carries only the option that is
+   selected, so the (i) beside a control explains the control's current state.
+   Each entry is [tip element, the control it follows, the text per value]. A
+   checkbox reads as 'on' or 'off'. */
+const DYNAMIC_TIPS=[
+  ['tipLoanType','scLoanType',{
+    annuity:'<strong>Amortizing:</strong> one equal instalment, interest charged on what you still owe. The standard loan, and the default here.',
+    flat:'<strong>Flat rate:</strong> interest on the original amount for the whole term, so a 5% flat loan really costs about 9%. Murabaha works this way.',
+    interestOnly:'<strong>Interest-only:</strong> you pay interest alone, then repay the principal in one lump at the end.',
+    balloon:'<strong>Balloon / residual:</strong> smaller instalments, with a residual lump due at maturity. Common on car and equipment finance.',
+    knownPayment:'<strong>Known repayment:</strong> you know the instalment but not the rate, so the rate is solved from the plan.',
+    bullet:'<strong>Bullet:</strong> no instalments at all. The whole debt plus interest is settled at maturity.',
+    deferred:'<strong>Deferred start:</strong> a payment holiday first, interest added to the debt meanwhile, then normal instalments.'}],
+  ['tipFreq','scFreq',{
+    weekly:'Repayments fall due weekly, 52 a year. It sets the period rate and makes the Term below a count of weeks.',
+    fortnightly:'Repayments fall due fortnightly, 26 a year. It sets the period rate and makes the Term below a count of fortnights.',
+    monthly:'Repayments fall due monthly, 12 a year. It sets the period rate and makes the Term below a count of months.',
+    yearly:'Repayments fall due yearly, 1 a year. It sets the period rate and makes the Term below a count of years.'}],
+  ['tipFeeTreatment','scFeeTreatment',{
+    upfront:'<strong>Paid upfront:</strong> out of your own cash, so it reduces what is left to invest.',
+    capitalise:'<strong>Added to the loan:</strong> borrowed alongside the purchase, so you pay interest on the fee too.',
+    discount:'<strong>Deducted from the advance:</strong> the lender pays out net of the fee, so the loan is grossed up to still cover the price.'}],
+  ['tipRateConvention','rateConvention',{
+    ear:'<strong>Effective (EAR):</strong> compound conversion to the repayment period. A 12% loan charges 0.949% a month. Loans only, never the cash rate.',
+    nominal:'<strong>Nominal (APR):</strong> the rate divided by the periods, as US contracts quote it. A 12% loan charges exactly 1.000% a month.'}],
+  ['tipOptTarget','optTarget',{
+    netBenefit:'<strong>Highest Net Benefit:</strong> the scenario that leaves you wealthiest at the end against paying cash.',
+    lowestInterest:'<strong>Lowest Total Interest:</strong> the scenario that pays the least interest, fees aside.',
+    lowestCost:'<strong>Lowest Financing Cost:</strong> the smallest total borrowing cost, interest plus fees.'}],
+  ['tipInflation','inflationToggle',{
+    on:'Ending wealth is also shown in today\'s dollars, discounted at the inflation rate below.',
+    off:'Only nominal future dollars are shown. Turn this on to also read them in today\'s money.'}],
+];
+
+// The two segmented controls live on the editor draft rather than on an input.
+const RATE_MODE_TIPS={
+  simple:'<strong>Simple:</strong> one rate for the whole term. Schedule splits the term into fixed or floating periods instead.',
+  schedule:'<strong>Schedule:</strong> consecutive periods, each Fixed at one rate or Floating between a min and a max. That is how a 2 year fixed that reverts behaves.'
+};
+const PAYMENT_MODE_TIPS={
+  single:'<strong>Single:</strong> one instalment for the whole term. The rate that repays the loan exactly is solved below.',
+  schedule:'<strong>Schedule:</strong> a stepped plan, say periods 1 to 2 at one amount then 3 to 6 at another. The rate is solved from it.'
+};
+
+function setTip(id,text){const el=$(id);if(el&&text)el.setAttribute('data-tip',text);}
+
+function syncDynamicTips(){
+  DYNAMIC_TIPS.forEach(([tipId,ctrlId,texts])=>{
+    const ctrl=$(ctrlId);if(!ctrl)return;
+    setTip(tipId,texts[ctrl.type==='checkbox'?(ctrl.checked?'on':'off'):ctrl.value]);
+  });
+  const d=editorDraft;
+  setTip('tipRateMode',RATE_MODE_TIPS[(d&&d.rateMode)||'simple']);
+  setTip('tipPaymentMode',PAYMENT_MODE_TIPS[(d&&d.paymentMode)||'single']);
+}
+
 function updateTermLabel(freq){
   const unit=termUnitLabel(freq);
   // Update the label text node (first child of tip-wrap)
@@ -1408,6 +1467,7 @@ function addSchedPeriod(kind){
 }
 function syncSegGroups(){
   if(!editorDraft)return;
+  syncDynamicTips();
   document.querySelectorAll('#scRateModeGroup .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===editorDraft.rateMode));
   document.querySelectorAll('#scPaymentModeGroup .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===editorDraft.paymentMode));
 }
@@ -1509,6 +1569,7 @@ function updateEditorVisibility(){
   // The loan type decides where the rate schedule opens, so the ranges printed
   // on its rows are re-derived here rather than only when the term is edited.
   clampSchedToStart('rate');
+  syncDynamicTips();
   // Which rows are on screen is settled above, so the sections can now be put
   // in this type's order and the empty ones folded away.
   applyEditorLayout();
@@ -2342,6 +2403,14 @@ function makeSliderEditable(valSpan,rangeEl){
 scenarios.push(defaultScenario('60mo Monthly @ 5%',5));
 scenarios.push({...defaultScenario('36mo Monthly @ 7%',7),termPeriods:36,financeRate:7});
 setupFmtInputs();renderScenarioList();rerender();
+
+/* Each control that carries a dynamic tip keeps that tip current itself, so no
+   other handler has to remember to. */
+DYNAMIC_TIPS.forEach(([,ctrlId])=>{
+  const c=$(ctrlId);if(!c)return;
+  ['input','change'].forEach(ev=>c.addEventListener(ev,syncDynamicTips));
+});
+syncDynamicTips();
 
 /* ─── Mini cache ───────────────────────────────────────────────────────────
    Persist the base inputs (form controls) plus the scenarios (JS array) so a

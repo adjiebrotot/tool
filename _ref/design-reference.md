@@ -871,6 +871,67 @@ keep it where it means *empty the canvas* rather than *go back to the start*
 
 ## Tooltips
 
+### What a tooltip is allowed to say
+
+A tooltip is read standing up, mid-decision, in a bubble 270px wide. So one tip
+carries **one thought**: what the field is, plus the single thing a reader would
+otherwise get wrong. The budget is **150 characters of rendered text as the aim,
+200 at the outside**; past that it is a paragraph wearing a tooltip's clothes and
+nobody reads it. `node _ref/tip-check.mjs` holds every page to it (add a path
+fragment to run one tool) and prints each page's median, which is the number to
+watch.
+
+Four rules follow from that:
+
+- **A tip nobody needs is deleted, not shortened.** The bar is a domain fact: a
+  definition, a unit, a rule, a formula, a caveat, a behaviour you could not
+  guess. "Purchase Cost: the full price of whatever you are buying" teaches
+  nothing, so it goes, and the (i) goes with it. Every (i) on the page is a
+  promise that something non-obvious is behind it, and a page that keeps that
+  promise is one where people keep hovering.
+- **Move the fact into the label rather than hiding it in a hover.** When the
+  only thing a tip carried was a word missing from the label, put the word in
+  the label and drop the tip: "Total Household Gross Salary" plus a tip saying
+  the figure is annual became "Total Household Annual Gross Salary".
+- **No em-dashes**, here as everywhere else in user-facing copy.
+- **Don't re-explain what is on screen.** A sub-line under the field, an
+  optgroup label, a radio's own description or a KPI's sub-line all count as on
+  screen. If the radio buttons already carry a line of their own, the (i) beside
+  them says what the group is for, not what each option does, and if the group
+  needs nothing said, it has no (i).
+- **A dependent field's tip follows the field.** See below.
+
+### Dependent tooltips: say the state you are in
+
+A dropdown with seven options used to mean a tip listing all seven, which is the
+longest tip on any page and the least read: the options are already on screen in
+the dropdown, and six of the seven describe a choice the reader did not make. So
+a tip that hangs off a control carries the option that is **selected**, with at
+most one clause on what switching would do:
+
+```js
+const TIP_STUDY_TYPE = {
+  steady_state: '<strong>Steady State:</strong> a load flow (ElmLdf) on every iteration. Timeseries outputs are not available.',
+  dynamic_rms:  '<strong>Dynamic RMS:</strong> an RMS simulation (ComSim) on every iteration. Timeseries outputs are available.',
+};
+// from the control's own change handler, and once at start-up
+setTip('tt-study-type', TIP_STUDY_TYPE[$('study-type').value] || '');
+```
+
+The same shape covers a Simple/Detailed switch (`<strong>Simple</strong> counts
+one gross figure in full. Detailed splits it per stream.`), a unit that changes
+what a field is asking for (deposit as an amount versus a share of the price), and
+a field that is inert until another one is set (a budget-growth slider while the
+budget is automatic). Where a tool already keeps a table of tip text, give the
+entry variants keyed by state rather than a second element:
+`rentvsownhouse/tooltips.js` does this, and `RVO_APPLY_TIPS` reads each element's
+`data-tip-variant`.
+
+Wire it so the control keeps its own tip current, from the handler that already
+runs on change, and leave the markup's `data-tip` empty (`data-tip=""`) so an
+unwired tip shows up as a blank bubble rather than as stale text. `tip-check`
+fails on an empty tip for exactly that reason.
+
 ### Global Tooltip (Dynamic, triggered by `data-tip`)
 
 Auto-created by `shared.js`. Appears on hover, positioned intelligently to avoid viewport edges.

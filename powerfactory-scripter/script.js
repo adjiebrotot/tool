@@ -14,12 +14,40 @@ function setTip(id, text) {
   if (el) el.setAttribute('data-tip', text);
 }
 
-// Option-list tooltips: every choice is shown at once so the list can be compared
-// before picking, rather than only describing whatever is currently selected.
-const TIP_PROBLEM_TYPE = '<strong>Brute Force:</strong> runs every combination of the input values. Total runs = the product of all step counts.<br><strong>Optimisation:</strong> a search algorithm looks for the best input combination. Choose the algorithm in Optimisation Settings.<br><strong>Custom:</strong> reads the input values row by row from an Excel file. Download the template for the required format.<br><strong>Contingency:</strong> takes each matched element out of service, one at a time (N-1) or two at a time (N-2). Wildcards are resolved at runtime, so no Excel file is needed. Study Type is locked to Steady State.';
-const TIP_STUDY_TYPE = '<strong>Steady State:</strong> runs a load flow (ElmLdf) on every iteration. Timeseries outputs are not available.<br><strong>Dynamic RMS:</strong> runs an RMS simulation (ComSim) on every iteration. Timeseries outputs are available.<br><strong>Dynamic EMT:</strong> runs an EMT simulation (ComSim) on every iteration. Timeseries outputs are available.<br><strong>Harmonic:</strong> runs a harmonic frequency sweep (ComHlf) on every iteration.';
-const TIP_CODING_STYLE = '<strong>Python File:</strong> wraps everything in main(), ready to run as a plain script.<br><strong>Notebook Style:</strong> splits the code into labelled cells for Jupyter or VS Code.';
-const TIP_OUTPUT_TYPE = '<strong>Scalar:</strong> reads one value after the solve, through obj.GetAttribute().<br><strong>Timeseries:</strong> reduces a whole time signal to a single metric. Dynamic studies only.<br><strong>Custom Calculation:</strong> calls a Python function you write, using the values of other variables.';
+/* Option-list tooltips: the (i) beside a dropdown carries the option that is
+   SELECTED, not the whole list. The list itself is on screen in the dropdown,
+   so repeating all of it is a paragraph explaining a choice already made.
+   Keyed by the control's value; setOptionTips() keeps them current. */
+const TIP_PROBLEM_TYPE = {
+  brute_force:  '<strong>Brute Force:</strong> runs every combination of the input values. Total runs = the product of all step counts.',
+  optimisation: '<strong>Optimisation:</strong> a search algorithm hunts for the best input combination. Pick it in Optimisation Settings.',
+  custom:       '<strong>Custom:</strong> reads the input values row by row from an Excel file. Download the template for the format.',
+  contingency:  '<strong>Contingency:</strong> trips each matched element in turn, one at a time (N-1) or two (N-2). Wildcards resolve at runtime, so no Excel file is needed.'
+};
+const TIP_STUDY_TYPE = {
+  steady_state: '<strong>Steady State:</strong> a load flow (ElmLdf) on every iteration. Timeseries outputs are not available.',
+  dynamic_rms:  '<strong>Dynamic RMS:</strong> an RMS simulation (ComSim) on every iteration. Timeseries outputs are available.',
+  dynamic_emt:  '<strong>Dynamic EMT:</strong> an EMT simulation (ComSim) on every iteration. Timeseries outputs are available.',
+  harmonic:     '<strong>Harmonic:</strong> a harmonic frequency sweep (ComHlf) on every iteration.'
+};
+const TIP_CODING_STYLE = {
+  python_file: '<strong>Python File:</strong> wraps everything in main(), ready to run as a plain script.',
+  notebook:    '<strong>Notebook Style:</strong> splits the code into labelled cells for Jupyter or VS Code.'
+};
+
+// Point each option-list tip at the option on screen. Called from the three
+// change handlers and once at start-up.
+function setOptionTips() {
+  const val = id => (document.getElementById(id) || {}).value;
+  setTip('tt-problem-type', TIP_PROBLEM_TYPE[val('problem-type')] || '');
+  setTip('tt-study-type',   TIP_STUDY_TYPE[val('study-type')] || '');
+  setTip('tt-coding-style', TIP_CODING_STYLE[val('coding-style')] || '');
+}
+const TIP_OUTPUT_TYPE = {
+  attribute:          '<strong>Scalar:</strong> reads one value after the solve, through obj.GetAttribute().',
+  timeseries:         '<strong>Timeseries:</strong> reduces a whole time signal to a single metric. Dynamic studies only.',
+  custom_calculation: '<strong>Custom Calculation:</strong> calls a Python function you write, on the values of other variables.'
+};
 // Per-selection tooltips: too many choices to list at once, so these still swap
 // with the selection and name the chosen option in bold.
 const TIP_MAX_ITER = {
@@ -204,6 +232,7 @@ function getContingencyFilterAttrSuggestions(typed, elmClass) {
 
 function onProblemTypeChange() {
   const pt = document.getElementById('problem-type').value;
+  setOptionTips();
   const isCont = pt === 'contingency';
   // Update dynamic tooltips
   const isOpt = pt === 'optimisation';
@@ -237,6 +266,7 @@ function onProblemTypeChange() {
 
 function onStudyTypeChange() {
   const st = document.getElementById('study-type').value;
+  setOptionTips();
   const isDynamic = st === 'dynamic_rms' || st === 'dynamic_emt';
   document.getElementById('row-tstop').style.display = isDynamic ? 'grid' : 'none';
   if (st === 'dynamic_emt') document.getElementById('tstop').value = 0.25;
@@ -247,6 +277,7 @@ function onStudyTypeChange() {
 
 
 function onCodingStyleChange() {
+  setOptionTips();
   updateDownloadButtonLabel();
 }
 
@@ -1057,7 +1088,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
         <option value="timeseries" ${type==='timeseries'?'selected':''}>Timeseries</option>
         <option value="custom_calculation" ${type==='custom_calculation'?'selected':''}>Custom Calculation</option>
       </select>
-      ${tip(TIP_OUTPUT_TYPE, `${id}-tt-type`)}
+      ${tip(TIP_OUTPUT_TYPE[type] || TIP_OUTPUT_TYPE.attribute, `${id}-tt-type`)}
       <input type="text" id="${id}-name" value="${data.name||''}" placeholder="Output var name"
         style="flex:1;font-size:12px;padding:3px 8px;min-width:80px;" oninput="onOutputNameChange()" autocomplete="off" />
       ${tip('Python name for this output. It must be unique across every input and output.')}
@@ -1165,6 +1196,7 @@ function onOutputTypeChange(id) {
   document.getElementById(`${id}-row-settle`)?.classList.toggle('cond-hidden', !showSettle);
 
   // Update dynamic tooltips for this output var
+  setTip(`${id}-tt-type`, TIP_OUTPUT_TYPE[type] || TIP_OUTPUT_TYPE.attribute);
   setTip(`${id}-tt-obj`, TIP_OUTPUT_OBJ[type] || TIP_OUTPUT_OBJ.attribute);
   setTip(`${id}-tt-attr`, TIP_OUTPUT_ATTR[type] || TIP_OUTPUT_ATTR.attribute);
 

@@ -616,13 +616,26 @@
   loopCheck.addEventListener('change',   () => { S.loop    = loopCheck.checked; });
   reverseCheck.addEventListener('change',() => { S.reverse = reverseCheck.checked; });
 
-  // Dither toggle
+  /* Dither toggle. Three modes trade quality against speed, so the tip carries
+     the one that is selected rather than all three at once. */
+  const DITHER_TIPS = {
+    none:  'No mixing, so it is the fastest, but banding shows in gradients.',
+    bayer: 'A fixed ordered pattern: fast and predictable, and it hides most banding.',
+    floyd: 'Floyd-Steinberg error diffusion: the best looking and the slowest.'
+  };
+  const syncDitherTip = () => {
+    const el = $('ditherTip');
+    if (el) el.setAttribute('data-tip',
+      'Mixing that hides the banding a 256-colour palette causes. ' + (DITHER_TIPS[S.dither] || ''));
+  };
+  syncDitherTip();
   $('ditherGroup').addEventListener('click', e => {
     const btn = e.target.closest('[data-val]');
     if (!btn) return;
     $('ditherGroup').querySelectorAll('.tbtn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     S.dither = btn.dataset.val;
+    syncDitherTip();
   });
 
   // Speed toggle
