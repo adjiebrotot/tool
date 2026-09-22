@@ -109,9 +109,16 @@ function periodRateToAnnualPct(r,ppy){
 }
 // The comparison number is always a true effective annual rate, whichever
 // convention the loan was entered under. That is the whole point of the row.
+// The snap is not cosmetic: solvePeriodRate() bisects to a residue of about
+// 1e-14, so an interest-free plan whose payments sum to exactly the amount
+// financed would otherwise print "-0.00%" and claim, in the sign, to be paying
+// the reader to borrow. Nothing a lender could quote lives inside 1e-9 of a
+// percentage point, so nothing real is being rounded away.
+const RATE_EPS=1e-9;
 function effectiveAnnual(rPeriod,ppy){
   if(rPeriod===null||!isFinite(rPeriod)||rPeriod<=-1)return null;
-  return (Math.pow(1+rPeriod,ppy)-1)*100;
+  const pct=(Math.pow(1+rPeriod,ppy)-1)*100;
+  return Math.abs(pct)<RATE_EPS?0:pct;
 }
 
 /* ─── Rate and repayment schedules ─────────────────────────────────────────
@@ -432,6 +439,16 @@ function buildSchedule(sc,principal,freq,variant){
       totalInt+=intPart;bal=endBal;
     }
   }
+
+  /* The same 1e-14 residue lands in the interest column as bal x r per period,
+     so a 0% plan accrues about -4e-10 of "interest" over its term. Snapped
+     here rather than in the formatter, because totalInterest is not only
+     printed: it is an optimisation target, it is summed into the financing
+     cost, and "lowest total interest" must not be won by a rounding artefact.
+     A ten-thousandth of a cent is below anything a contract can express. */
+  const MONEY_EPS=1e-6;
+  if(Math.abs(totalInt)<MONEY_EPS)totalInt=0;
+  schedule.forEach(row=>{if(Math.abs(row.interest)<MONEY_EPS)row.interest=0;});
 
   const totalPaid=schedule.reduce((s,p)=>s+p.payment,0);
   const first=schedule[0]?schedule[0].payment:0;
@@ -1526,26 +1543,243 @@ $('chartResetZoom').addEventListener('click',()=>{if(chartInstance)chartInstance
 $('sensResetZoom').addEventListener('click',()=>{if(sensChartInstance)sensChartInstance.resetZoom();});
 $('chartCanvas').addEventListener('mouseleave',()=>{$('hoverBox').textContent=HOVER_IDLE;});
 
-$('resetBtn').addEventListener('click',()=>{
-  scenarios=[];
-  scenarios.push(defaultScenario('60mo Monthly @ 5%',5));
-  scenarios.push({...defaultScenario('36mo Monthly @ 7%',7),termPeriods:36,financeRate:7});
-  editingIdx=-1;
+/* ─── Quick Start ───────────────────────────────────────────────────────────
+   Six worked comparisons, and the page's Reset. There is no Reset button any
+   more because a scenario here already IS one: every preset is rebuilt from
+   QS_DEFAULTS and defaultScenario() rather than from whatever is on screen, so
+   a rate schedule, a balloon, a fee treatment or a currency left behind by the
+   plan before it cannot survive the click. A separate Reset would only have
+   been a worse version of the same thing — one more button that lands on the
+   generic two-scenario opening state nobody was asking about.
+
+   That claim is checked rather than trusted: _ref/quickstart-check.mjs applies
+   each preset to a clean page and to a page whose every control has been
+   scribbled over, and the two have to land on identical form state across every
+   tab. _audit/accounting.mjs then holds each preset's own figures to the
+   accounting identities in _audit/ACCOUNTING-PLAN.md.
+
+   What the six are for. They are not six flavours of the same loan; each one
+   exists because it is the shape of a decision people actually face, and each
+   carries a lesson the arithmetic will prove:
+
+     house      — the only comparison here where cash and finance are both
+                  plausible for the same buyer. Fixed against a 2-year fixed
+                  that reverts to variable, so the band on the chart is shut
+                  for two years and opens after the revert. Inflation on: a
+                  30-year answer means something different in today's money.
+     car        — the balloon. A residual buys a smaller instalment and is paid
+                  for in interest, and the residual itself falls due in one
+                  lump with the final payment.
+     phone      — a plan that quotes an instalment and no rate at all, which is
+                  what Known repayment is for. Two of them, one genuinely 0%
+                  and one not, because the only way to tell them apart is to
+                  solve for the rate.
+     card       — 0% with a conversion fee against 0% without. The fee is the
+                  whole price of the plan and it is what decides the verdict.
+     motorbike  — a flat rate, quoted per month, the way Indonesian
+                  multifinance and Murabaha deals quote it. This is the one
+                  preset on Nominal, because 0.9% a MONTH is a nominal quote
+                  and compounding it would misstate the contract.
+     deferred   — "nothing to pay for 12 months" against paying from day one.
+                  It opens on the loan-balance chart because the lesson is a
+                  picture: the debt climbing through the holiday.
+
+   Interest-only and bullet are the two loan types no preset opens on; neither
+   is a mass-market retail comparison, and run.mjs F9 and F15 pin them. */
+var QS_DEFAULTS={currencySymbol:'$',purchaseCost:50000,availableCash:50000,riskFree:4.5,
+  rateConvention:'ear',inflationOn:false,inflationRate:2.5,chartMetric:'wealth',optTarget:'netBenefit'};
+
+/* Every preset holds MORE cash than the purchase price, and none of them holds
+   exactly the price. Two reasons, one presentational and one arithmetic. Cash
+   equal to the price leaves the cash buyer with nothing to invest, so the Cash
+   Purchase Wealth tile reads $0, the Net Benefit column becomes a copy of the
+   Ending Wealth column, and the page's own idea — that the money you do not
+   spend is working — has nothing to show. And it costs nothing to avoid,
+   because Net Benefit is a DIFFERENCE: the surplus is invested identically in
+   both arms and cancels exactly, so the verdict a preset teaches is the same
+   whatever buffer it carries. _audit/accounting.mjs pins that cancellation as
+   identity C5, which is also what makes these buffers safe to choose freely. */
+var QUICK_START_SCENARIOS={
+
+  /* A $650,000 house against 20% down over 30 years. Both loans carry the same
+     lender fees, so the only thing that differs between them is the rate
+     structure — which is the whole point of putting them side by side. */
+  /* $650,000 against 20% down, and three ways to carry it. All three share the
+     same lender fees, so nothing here differs except the thing being compared.
+     The 15-year column also puts a SHORTER horizon beside a 30-year one, which
+     is the case the comparison table's per-row baseline exists for: the Cash
+     Purchase tile runs to 30 years while that row is scored at its own 15. */
+  house:{
+    base:{purchaseCost:650000,availableCash:700000,riskFree:4.5,inflationOn:true,inflationRate:2.5},
+    scenarios:[
+      {name:'30yr fixed 6.10%',loanType:'annuity',financeRate:6.1,downPaymentPct:20,
+       freq:'monthly',termPeriods:360,feeAmt:600,feeType:'fixed',feeTreatment:'upfront',adminFee:10},
+      /* The revert is the product, not a footnote: two years at 5.80%, then a
+         floating period simulated at 5.00, 6.75 and 8.50. */
+      {name:'30yr: 2yr fixed, then variable',loanType:'annuity',financeRate:5.8,downPaymentPct:20,
+       freq:'monthly',termPeriods:360,feeAmt:600,feeType:'fixed',feeTreatment:'upfront',adminFee:10,
+       rateMode:'schedule',ratePeriods:[
+         {toPeriod:24,type:'fixed',rate:5.8,rateMin:5.8,rateMax:5.8},
+         {toPeriod:360,type:'floating',rate:6.75,rateMin:5,rateMax:8.5}]},
+      /* Priced below the 30-year, as a shorter term really is. Double the
+         instalment, a fraction of the interest, and a different horizon. */
+      {name:'15yr fixed 5.85%',loanType:'annuity',financeRate:5.85,downPaymentPct:20,
+       freq:'monthly',termPeriods:180,feeAmt:600,feeType:'fixed',feeTreatment:'upfront',adminFee:10}
+    ]
+  },
+
+  /* $45,000 at one rate over two terms, plus the balloon. Three different
+     instalments in DESCENDING order and three verdicts in ascending order,
+     which is the whole lesson: the smallest monthly is the dearest deal. */
+  car:{
+    base:{purchaseCost:45000,availableCash:60000,riskFree:4.5},
+    scenarios:[
+      {name:'3yr loan, 10% down',loanType:'annuity',financeRate:8.4,downPaymentPct:10,
+       freq:'monthly',termPeriods:36,feeAmt:400,feeType:'fixed',feeTreatment:'upfront'},
+      {name:'5yr loan, 10% down',loanType:'annuity',financeRate:8.4,downPaymentPct:10,
+       freq:'monthly',termPeriods:60,feeAmt:400,feeType:'fixed',feeTreatment:'upfront'},
+      {name:'5yr with 35% balloon',loanType:'balloon',financeRate:8.4,downPaymentPct:10,
+       freq:'monthly',termPeriods:60,feeAmt:400,feeType:'fixed',feeTreatment:'upfront',residualPct:35}
+    ]
+  },
+
+  /* An $1,800 phone on three plans that quote an instalment and never a rate,
+     over three different terms — because two plans over the SAME term need no
+     tool at all: the cheaper instalment wins and everybody already knows it.
+     Over different terms the ranking stops being readable off the price tag.
+     12 x 150 is exactly 1,800, so it is genuinely 0% and beats holding cash;
+     the other two are not, and the one with the SMALLEST instalment is the
+     worst of the three. Only solving for the rate behind each says so. */
+  phone:{
+    base:{purchaseCost:1800,availableCash:4000,riskFree:4.5},
+    scenarios:[
+      {name:'12 x $150',loanType:'knownPayment',knownPayment:150,paymentMode:'single',
+       freq:'monthly',termPeriods:12},
+      {name:'24 x $82',loanType:'knownPayment',knownPayment:82,paymentMode:'single',
+       freq:'monthly',termPeriods:24},
+      {name:'36 x $57',loanType:'knownPayment',knownPayment:57,paymentMode:'single',
+       freq:'monthly',termPeriods:36}
+    ]
+  },
+
+  /* $3,000 converted at 0% over three different tenors. Not one rate among
+     them, so the conversion fee is the entire cost — and because that fee is
+     FIXED rather than per-period, the longest plan carries it best. Which puts
+     the six-month plan, the middle one, last: it pays the same $90 as the
+     twelve-month and has half the time to earn it back. A comparison whose
+     answer is neither the shortest nor the largest instalment. */
+  card:{
+    base:{purchaseCost:3000,availableCash:8000,riskFree:4.5},
+    scenarios:[
+      {name:'3mo 0%, no fee',loanType:'annuity',financeRate:0,downPaymentPct:0,
+       freq:'monthly',termPeriods:3},
+      {name:'6mo 0%, 3% fee',loanType:'annuity',financeRate:0,downPaymentPct:0,
+       freq:'monthly',termPeriods:6,feeAmt:3,feeType:'pct',feeTreatment:'upfront'},
+      {name:'12mo 0%, 3% fee',loanType:'annuity',financeRate:0,downPaymentPct:0,
+       freq:'monthly',termPeriods:12,feeAmt:3,feeType:'pct',feeTreatment:'upfront'}
+    ]
+  },
+
+  /* Rp 35,000,000, 20% down, 36 months at 0.9% a month flat — 10.8% a year as
+     the contract quotes it, which is why this preset is the one on Nominal:
+     compound-converting a rate the lender states per month would charge 0.857%
+     and misstate the deal. The risk-free rate is an Indonesian deposito.
+     The comparison scenario is the same money on an ordinary declining-balance
+     loan at the same headline 10.8%, which is what makes the gap legible. */
+  motorbike:{
+    base:{currencySymbol:'Rp',purchaseCost:35000000,availableCash:50000000,riskFree:5.5,
+      rateConvention:'nominal'},
+    scenarios:[
+      {name:'36mo @ 0.9%/mo flat',loanType:'flat',financeRate:10.8,downPaymentPct:20,
+       freq:'monthly',termPeriods:36,feeAmt:500000,feeType:'fixed',feeTreatment:'upfront'},
+      {name:'36mo @ 10.8% amortizing',loanType:'annuity',financeRate:10.8,downPaymentPct:20,
+       freq:'monthly',termPeriods:36,feeAmt:500000,feeType:'fixed',feeTreatment:'upfront'}
+    ]
+  },
+
+  /* A $6,000 fit-out on a 12-month payment holiday at 19.90%, against the same
+     rate and the same 36-month term paid from day one. Opens on the loan
+     balance, because the lesson is the shape of that line. */
+  deferred:{
+    base:{purchaseCost:6000,availableCash:15000,riskFree:4.5,chartMetric:'loanBalance'},
+    scenarios:[
+      {name:'12mo holiday, then 24 payments',loanType:'deferred',financeRate:19.9,
+       freq:'monthly',termPeriods:36,ioPeriods:12},
+      {name:'36 payments from day one',loanType:'annuity',financeRate:19.9,
+       freq:'monthly',termPeriods:36}
+    ]
+  }
+};
+
+/* Order matters twice here. The purchase cost is written before the scenarios,
+   because normaliseScenario() reads it when it upgrades a pre-percentage down
+   payment; and renderScenarioList() runs before rerender(), so the sensitivity
+   dropdown is rebuilt against the list the reader can see. */
+function applyQuickStart(key){
+  const s=QUICK_START_SCENARIOS[key];
+  if(!s)return;
+  const b=Object.assign({},QS_DEFAULTS,s.base||{});
+
+  $('currencySymbol').value=b.currencySymbol;
+  currentCurrencySymbol=b.currencySymbol;
+  $('purchaseCost').value=fmt.fmtInput(b.purchaseCost);
+  $('availableCash').value=fmt.fmtInput(b.availableCash);
+  $('baseRf').value=b.riskFree;
+  $('baseRfVal').textContent=fmt.pct(b.riskFree/100);
+  $('rateConvention').value=b.rateConvention;
+  rateConvention=b.rateConvention;
+  $('inflationToggle').checked=!!b.inflationOn;
+  $('inflationRow').style.display=b.inflationOn?'':'none';
+  $('inflationRate').value=b.inflationRate;
+  $('chartMetric').value=b.chartMetric;
+  $('optTarget').value=b.optTarget;
+
+  /* Every scenario is built over defaultScenario() and then put through the
+     same normaliser a hand-edited cache goes through, so a preset can only
+     produce state the editor itself could have produced. The interest-only span
+     follows the term rather than the 60 defaultScenario() hands out, so opening
+     the editor on a 360-month loan and switching it to Interest-only does not
+     land on somebody else's five years. */
+  scenarios=s.scenarios.map(function(x){
+    const seed=defaultScenario(x.name);
+    seed.ioPeriods=Math.max(1,Math.round(x.termPeriods||seed.termPeriods));
+    return normaliseScenario(Object.assign(seed,x));
+  }).filter(Boolean);
+
+  // The editor and the amortisation tab are views onto the plan before this one.
+  editingIdx=-1;editorDraft=null;activeAmortIdx=0;
   $('scenarioEditor').style.display='none';
-  $('purchaseCost').value=fmt.fmtInput(50000);
-  $('availableCash').value=fmt.fmtInput(50000);
-  $('currencySymbol').value='$';
-  $('baseRf').value=4.5;
-  $('baseRfVal').textContent='4.50%';
-  $('rateConvention').value='ear';
-  rateConvention='ear';
-  $('inflationToggle').checked=false;
-  $('inflationRate').value=2.5;
-  $('chartMetric').value='wealth';
-  $('optTarget').value='netBenefit';
-  $('sens2dSection').style.display='none';
-  $('sens3dSection').style.display='none';
+
+  /* The sensitivity panel is marked data-no-persist, but it is still on screen,
+     so it is part of what a reset has to clear. Nulling the two range caches is
+     the point: they exist to stop the axis range being re-seeded on every
+     keystroke, and left alone they would hand this plan the last plan's sweep
+     range whenever the two happen to share a loan shape. */
+  sensMode='2d';
+  $('mode2d').classList.add('active');$('mode3d').classList.remove('active');
+  $('sensYBlock').style.display='none';
+  $('sens2dSection').style.display='none';$('sens3dSection').style.display='none';
+  $('sensScenario').value='0';
+  $('sensObjective').value='netBenefit';
+  $('sensVarX').value='financeRate';$('sensVarY').value='riskFreeRate';
+  $('sensSteps').value=20;
+  sensScKind=null;sensTermFreq=null;
+
+  markQuickStart(key);
   renderScenarioList();rerender();
+  if(persist)persist.schedule();
+}
+
+// The highlight is a claim about which preset is on screen. Passing no key
+// clears it.
+function markQuickStart(key){
+  document.querySelectorAll('.quick-start-btn').forEach(function(b){
+    b.classList.toggle('active',!!key&&b.dataset.preset===key);
+  });
+}
+
+document.querySelectorAll('.quick-start-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){applyQuickStart(btn.dataset.preset);});
 });
 
 /* Sanitise CSV text to plain ASCII so spreadsheets never render mojibake

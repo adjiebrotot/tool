@@ -19,6 +19,17 @@ p,.muted{color:var(--muted);line-height:1.55;margin:0;}
 /* Height, the inner scroller and the pinned tab bar come from shared.css
    (.controls:has(.ctrl-scroll) / .ctrl-scroll / .ctrl-tabs). */
 .controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;}
+/* ── Quick Start ──
+   Sits above .ctrl-scroll so it stays put while the panel below it scrolls.
+   Six worked comparisons; there is no Reset button because each one rebuilds
+   the whole form from the same defaults. */
+.quick-start-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.quick-start-label .tico{width:1.05em;height:1.05em;}
+.quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit;}
+.quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
+.quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(58,170,134,.15);}
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-theme:hover{border-color:var(--accent);color:var(--text);}
 .btn-back{text-decoration:none;display:inline-flex;align-items:center;}

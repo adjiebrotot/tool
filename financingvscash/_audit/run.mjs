@@ -58,6 +58,18 @@ await page.route('**/*', route=>{
 await page.goto(PAGE, {waitUntil:'load'});
 await page.waitForTimeout(300);
 
+/* Back to the page's opening state. The Reset button this used to click is
+   gone — Quick Start replaced it, and a Quick Start scenario loads its own plan
+   rather than the two generic ones the tests below are written against. A
+   reload does restore exactly those, provided the mini-cache is emptied first
+   and then sealed: the page flushes its own state on beforeunload, so an
+   unsealed store would hand the next document the very plan we just cleared. */
+async function resetPage(){
+  await page.evaluate(()=>{ try{ localStorage.clear(); localStorage.setItem=function(){}; }catch(e){} });
+  await page.reload({waitUntil:'load'});
+  await page.waitForTimeout(300);
+}
+
 async function compTable(){
   return await page.evaluate(()=>{
     const rows=[...document.querySelectorAll('#compTableWrap table tbody tr')];
@@ -139,8 +151,7 @@ async function compTable(){
 //        silently vanishes (computeScenario returns null) with NO warning. 99%
 //        down (49,500) + 1,000 fee > 50,000 cash → cashAfterUpfront < 0. ──
 {
-  await page.evaluate(()=>document.getElementById('resetBtn').click());
-  await page.waitForTimeout(200);
+  await resetPage();
   await page.evaluate(()=>{ document.querySelectorAll('.scenario-card .sc-btn[data-action="edit"]')[0].click(); });
   await page.evaluate(()=>{
     const set=(id,v)=>{ const el=document.getElementById(id); el.value=v; ['input','change'].forEach(t=>el.dispatchEvent(new Event(t,{bubbles:true}))); };
