@@ -581,7 +581,7 @@ const PRICE=50000,CASH=80000,RF=4.5,PPY=12,N=60;
         orphans:kids.filter(el=>!el.classList.contains('field-group')).length,
         titles:kids.filter(vis).map(g=>g.querySelector('.group-title').textContent),
         rows:kids.filter(vis).map(g=>[...g.children]
-          .filter(el=>el.id&&!el.classList.contains('group-title')&&!el.classList.contains('sec-note')&&vis(el))
+          .filter(el=>el.id&&!el.classList.contains('group-title')&&vis(el))
           .map(el=>el.id)),
       };
     });
@@ -619,7 +619,7 @@ const PRICE=50000,CASH=80000,RF=4.5,PPY=12,N=60;
   const known=await page.evaluate(()=>{
     const vis=el=>el.style.display!=='none';
     const g=[...document.getElementById('scFields').children].filter(vis).pop();
-    const rows=[...g.children].filter(el=>el.id&&vis(el)&&!el.classList.contains('group-title')&&!el.classList.contains('sec-note'));
+    const rows=[...g.children].filter(el=>el.id&&vis(el)&&!el.classList.contains('group-title'));
     return{title:g.querySelector('.group-title').textContent,last:rows[rows.length-1].id};
   });
   check('F21b the holiday sits above the schedule it moves, and the solved rate closes the plan',

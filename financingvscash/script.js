@@ -1443,16 +1443,10 @@ function editorSectionPlan(t){
     plan:'Repayment Plan',
     cash:'Upfront & Fees',
   };
-  // A note only where the order itself needs explaining, never as decoration.
-  const note={};
-  if(t==='knownPayment')
-    note.cash='Set these first: they fix the amount financed, and the rate below is solved against it.';
-  if(t==='deferred'&&editorDraft&&editorDraft.rateMode==='schedule')
-    note.rate='Counted from the first repayment after the payment holiday, not from repayment 1.';
   const order=t==='knownPayment'
     ?['structure','term','cash','plan','rate']
     :['structure','term','rate','plan','cash'];
-  return order.map(key=>({key,title:title[key],note:note[key]||'',ids:EDITOR_SECTIONS[key]}));
+  return order.map(key=>({key,title:title[key],ids:EDITOR_SECTIONS[key]}));
 }
 /* Build the sections and put the rows in them. Nothing is created twice and
    nothing is moved unless the order actually changed, so a layout that is
@@ -1465,16 +1459,15 @@ function applyEditorLayout(){
     let g=$('scSec-'+sec.key);
     if(!g){
       g=document.createElement('div');g.className='field-group';g.id='scSec-'+sec.key;
-      g.innerHTML='<div class="group-title"></div><div class="field-sub sec-note"></div>';
+      g.innerHTML='<div class="group-title"></div>';
       // Attached before any row moves into it, so a row never leaves the
       // document and getElementById can still find it on the next pass.
       host.appendChild(g);
     }
-    const head=g.querySelector('.group-title'),note=g.querySelector('.sec-note');
+    const head=g.querySelector('.group-title');
     head.textContent=sec.title;
-    note.textContent=sec.note;note.style.display=sec.note?'':'none';
     const want=sec.ids.map(id=>$(id)).filter(Boolean);
-    const have=[...g.children].filter(el=>el!==head&&el!==note);
+    const have=[...g.children].filter(el=>el!==head);
     if(have.length!==want.length||have.some((el,i)=>el!==want[i]))want.forEach(el=>g.appendChild(el));
     g.style.display=want.some(el=>el.style.display!=='none')?'':'none';
     return g;
