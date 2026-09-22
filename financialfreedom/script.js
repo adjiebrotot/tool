@@ -1332,34 +1332,17 @@ function makeYFit(y0, hiSeries, loSeries, opts){
   };
 }
 
-/* The refit is a Chart.js plugin rather than a zoom callback, because it has
-   to happen INSIDE the update the gesture already triggers. A second update
-   chasing the first leaves the lines drawn against the old scale while the
-   ticks already show the new one, which is worse than not refitting at all.
+/* The y-axis refit is shared.js's, so every chart on the site re-fits its y
+   axis to the x window the same way (SharedZoom, shared.js). It reads the
+   `$fitY` map this page hangs on each chart: a scale id per entry, because the
+   cashflow chart carries two y axes stacked one above the other — the flows on
+   top and the balance below — and both have to be refitted in the one pass.
 
-   The zoom plugin writes the window it is about to draw into the x scale's
-   options and then calls update, so by `beforeUpdate` that window is readable
-   and the y axis can be sized to it in the same pass. */
-var Y_FIT_PLUGIN = {
-  id: 'ffYFit',
-  beforeUpdate: function(chart){
-    // A map of scale id to fitter, because the cashflow chart carries two y
-    // axes stacked one above the other: the flows on top and the balance
-    // below. Both read the same x window, and both have to be refitted in this
-    // one pass.
-    var fits = chart.$fitY;
-    if(!fits) return;
-    var xo = chart.options.scales.x;
-    if(!isFinite(xo.min) || !isFinite(xo.max)) return;
-    Object.keys(fits).forEach(function(id){
-      var yo = chart.options.scales[id];
-      if(!yo) return;
-      var b = fits[id](xo.min, xo.max);
-      if(!b) return;
-      yo.min = b.min; yo.max = b.max;
-    });
-  }
-};
+   It is a Chart.js plugin rather than a zoom callback because it has to happen
+   INSIDE the update the gesture already triggers. A second update chasing the
+   first leaves the lines drawn against the old scale while the ticks already
+   show the new one, which is worse than not refitting at all. */
+var Y_FIT_PLUGIN = SharedZoom.plugin;
 
 /* Chart.js resolves an `index` tooltip by DATA INDEX: it takes the nearest
    element, reads its index, and pulls that index out of every other dataset.
@@ -1427,7 +1410,6 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
   var limMin = opts.limitMin == null ? xMin : opts.limitMin;
   var limMax = opts.limitMax == null ? xMax : opts.limitMax;
   var span = Math.max(1, limMax - limMin);
-  var limit = {min: limMin, max: limMax, minRange: Math.min(3, span)};
   var start = opts.fitY ? opts.fitY(xMin, xMax) : null;
   var lower = opts.lowerPane || null;
   var startLow = lower && lower.fitY ? lower.fitY(xMin, xMax) : null;
@@ -1464,14 +1446,18 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
           }
         }
       }),
-      zoom: {
-        limits: {x: limit, xAge: limit},
-        /* No gesture callbacks: the y refit runs INSIDE the update the gesture
-           already triggers (see Y_FIT_PLUGIN), and there is no second chart
-           left to carry an x window across to. */
-        pan: {enabled: true, mode: 'x'},
-        zoom: {wheel: {enabled: true, speed: 0.08}, pinch: {enabled: true}, mode: 'x'}
-      }
+      /* The shared gesture block, so pan, wheel and pinch feel the same here
+         as on every other chart on the site, and neither gesture can leave the
+         data: both x axes carry the same limits, because the zoom plugin moves
+         every x scale together and a limit on one alone would let the other
+         drift out of step.
+
+         No gesture callbacks: the y refit runs INSIDE the update the gesture
+         already triggers (see SharedZoom, shared.js), and there is no second
+         chart left to carry an x window across to. */
+      zoom: SharedZoom.options({
+        min: limMin, max: limMax, minRange: Math.min(3, span), axes: ['x', 'xAge']
+      })
     },
     scales: {}
   };
@@ -1634,11 +1620,15 @@ function renderCharts(res){
      one mark in the key and one mark against either row of the hover card.
      Left to the datasets, the lower edge would key as nothing at all. */
   var bandSpec = {type: 'area', fill: withAlpha(t.a, 0.16)};
+  /* `noAutoFit` on the band's upper edge is the site-wide way of saying a
+     series is deliberately allowed off the top of its axis (SharedZoom reads
+     it, and so does the cross-tool chart check). Here it is the 90th
+     percentile: sized to, it would flatten the crossing this chart is for. */
   var ds1 = [
     {label:'Worst 10%', data: pts(p10, y0), borderColor: withAlpha(t.a, 0), backgroundColor:'transparent',
      borderWidth: 0, pointRadius: 0, fill: false, legendSpec: bandSpec},
     {label:'Best 10%', data: pts(p90, y0), borderColor: withAlpha(t.a, 0), backgroundColor: withAlpha(t.a, 0.16),
-     borderWidth: 0, pointRadius: 0, fill: '-1', legendSpec: bandSpec},
+     borderWidth: 0, pointRadius: 0, fill: '-1', legendSpec: bandSpec, noAutoFit: true},
     {label:'Money deposited', data: pts(dep, y0), borderColor: t.a, borderDash:[2,3],
      borderWidth: 1.8, pointRadius: 0, fill: false},
     {label:'Investment outcome', data: pts(acc, y0), borderColor: t.a, borderWidth: 2.4, pointRadius: 0, fill: false},

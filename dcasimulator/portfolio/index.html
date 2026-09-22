@@ -427,10 +427,10 @@
           </div>
         </label>
         <div class="btn-cluster">
-          <button class="btn-secondary" id="valueSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
-          <button class="btn-secondary" id="valuePngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
-          <button class="btn-secondary" id="valueCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
-          <button class="btn-secondary" id="valueResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
+          <button class="btn-secondary btn-sm" id="valueSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+          <button class="btn-secondary btn-sm" id="valuePngBtn" title="Download this chart as PNG">⬇ PNG</button>
+          <button class="btn-secondary btn-sm btn-icon" id="valueCopyBtn" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary btn-sm btn-icon" id="valueResetZoom" title="Reset zoom">⟳</button>
         </div>
       </div>
     </div>
@@ -457,9 +457,9 @@
   <!-- DETAILED BREAKDOWN (one selected portfolio: prices, composition & events) -->
   <section class="detail-section card">
     <div class="detail-header">
-      <div class="detail-title-row">
+      <div class="detail-head">
         <h2>Detailed Breakdown <span style="color:var(--muted);font-size:.85rem;font-weight:400">(one portfolio: prices, composition &amp; events)</span></h2>
-        <div class="detail-csv-wrap" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div class="btn-cluster">
           <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Portfolio</span>
           <select class="num-input pf-view-select" id="detailPfSelect" style="cursor:pointer" title="Choose which portfolio to view"></select>
         </div>
@@ -495,10 +495,10 @@
           </label>
           </div>
           <div class="btn-cluster">
-            <button class="btn-secondary" id="priceSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
-            <button class="btn-secondary" id="pricePngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
-            <button class="btn-secondary" id="priceCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
-            <button class="btn-secondary" id="priceResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
+            <button class="btn-secondary btn-sm" id="priceSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+            <button class="btn-secondary btn-sm" id="pricePngBtn" title="Download this chart as PNG">⬇ PNG</button>
+            <button class="btn-secondary btn-sm btn-icon" id="priceCopyBtn" title="Copy PNG to clipboard">⧉</button>
+            <button class="btn-secondary btn-sm btn-icon" id="priceResetZoom" title="Reset zoom">⟳</button>
           </div>
         </div>
       </div>
@@ -517,10 +517,10 @@
             <button class="seg-btn" data-cv="percent" type="button">% of Portfolio</button>
           </div>
           <div class="btn-cluster">
-            <button class="btn-secondary" id="compSvgBtn" style="font-size:.8rem;padding:5px 11px">⬇ SVG</button>
-            <button class="btn-secondary" id="compPngBtn" style="font-size:.8rem;padding:5px 11px">⬇ PNG</button>
-            <button class="btn-secondary" id="compCopyBtn" style="font-size:.8rem;padding:5px 11px" title="Copy PNG to clipboard">⧉</button>
-            <button class="btn-secondary" id="compResetZoom" style="font-size:.8rem;padding:5px 11px" title="Reset zoom">⟳</button>
+            <button class="btn-secondary btn-sm" id="compSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+            <button class="btn-secondary btn-sm" id="compPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+            <button class="btn-secondary btn-sm btn-icon" id="compCopyBtn" title="Copy PNG to clipboard">⧉</button>
+            <button class="btn-secondary btn-sm btn-icon" id="compResetZoom" title="Reset zoom">⟳</button>
           </div>
         </div>
       </div>
@@ -531,10 +531,10 @@
 
     <!-- BREAKDOWN TABLE SUBSECTION -->
     <div class="detail-subsection">
-      <div class="detail-title-row">
+      <div class="detail-head">
         <h3 class="detail-subtitle">Breakdown Table <span class="muted-note">(start, events &amp; end)</span></h3>
-        <div class="detail-csv-wrap">
-          <button class="btn-secondary" id="downloadBtn" style="white-space:nowrap;font-size:.82rem;padding:6px 13px;flex-shrink:0">⬇ CSV (full daily)</button>
+        <div class="btn-cluster">
+          <button class="btn-secondary btn-sm" id="downloadBtn" title="Download this table as CSV">⬇ CSV (full daily)</button>
         </div>
       </div>
       <div class="table-wrap">

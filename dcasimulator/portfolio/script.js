@@ -1994,13 +1994,20 @@ function updateValueChart(){
       callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${fmt.currency(ctx.parsed.y,true)}`,
         afterBody(items){ if(items.length) $('valueHoverBox').textContent=`${items[0].label}  -  `+items.map(i=>`${i.dataset.label}: ${fmt.currency(i.parsed.y,true)}`).join('  |  '); }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10}),
-      zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
+      /* The shared gesture block: a category axis is bounded by its labels
+         already, but nothing floors the pinch, so it carries the same floor
+         every other chart on the site does. The y axis follows the x window
+         too, so a zoom into the first months shows their shape rather than a
+         flat line under a scale built for the final value (SharedZoom,
+         shared.js). */
+      zoom:SharedZoom.options({min:0,max:Math.max(0,dates.length-1),points:dates.length}),
+      sharedYFit:{auto:{axes:['y']}}},
     scales:{
       x:{title:{display:true,text:'Date',color:muted,font:{size:11}},ticks:{color:muted,maxTicksLimit:12,font:{size:11},callback:v=>dates[Number(v)]?.slice(0,7)||''},grid:{color:grid}},
       y:{title:{display:true,text:'Value ('+currentCurrencySymbol+')',color:muted,font:{size:11}},ticks:{color:muted,font:{size:11},callback:yCb},grid:{color:grid}}}
   };
   if(valueChart) valueChart.destroy();
-  valueChart=new Chart($('valueCanvas'),{type:'line',data:{labels:dates,datasets},options:opts});
+  valueChart=new Chart($('valueCanvas'),{type:'line',data:{labels:dates,datasets},options:opts,plugins:[SharedZoom.plugin]});
   datasets.forEach((ds,i)=>{ if(ds._type==='topup') valueChart.setDatasetVisibility(i,showTopups); });
   valueChart.update();
 }
@@ -2049,13 +2056,18 @@ function updateCompChart(){
       callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>`  ${ctx.dataset.label}: ${valFmt(ctx.parsed.y)}`,
         afterBody(items){ if(items.length){ const tot=items.reduce((s,i)=>s+i.parsed.y,0); $('compHoverBox').textContent=`${items[0].label}  -  Total: ${totFmt(tot)}  |  `+items.map(i=>`${i.dataset.label}: ${valFmt(i.parsed.y)}`).join('  |  '); } }},
       backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10}),
-      zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
+      zoom:SharedZoom.options({min:0,max:Math.max(0,dates.length-1),points:dates.length}),
+      /* The stack's top is what sizes this axis, so the fitter adds the
+         series up per date rather than reading any one of them. In percent
+         mode the axis IS the full height of the stack, 0 to 100, so it is
+         left alone. */
+      sharedYFit:{auto:{axes:['y'],fixed:isPct?['y']:[]}}},
     scales:{
       x:{title:{display:true,text:'Date',color:muted,font:{size:11}},ticks:{color:muted,maxTicksLimit:12,font:{size:11},callback:v=>dates[Number(v)]?.slice(0,7)||''},grid:{color:grid}},
       y:{stacked:true,min:0,max:isPct?100:undefined,title:{display:true,text:isPct?'% of Portfolio':'Value ('+currentCurrencySymbol+')',color:muted,font:{size:11}},ticks:{color:muted,font:{size:11},callback:yCb},grid:{color:grid}}}
   };
   if(compChart) compChart.destroy();
-  compChart=new Chart($('compCanvas'),{type:'line',data:{labels:dates,datasets},options:opts});
+  compChart=new Chart($('compCanvas'),{type:'line',data:{labels:dates,datasets},options:opts,plugins:[SharedZoom.plugin]});
   compChart.update();
 }
 
@@ -2308,13 +2320,16 @@ function updatePriceChart(){
         callbacks:{ title:ctx=>ctx[0]?.label||'', label:ctx=>'  '+fmtPt(ctx),
           afterBody(items){ const its=items.filter(i=>!i.dataset._marker); if(its.length) $('priceHoverBox').textContent=`${its[0].label}  -  `+its.map(fmtPt).join('  |  '); }},
         backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10}),
-        zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'}}},
+        zoom:SharedZoom.options({min:0,max:Math.max(0,dates.length-1),points:dates.length}),
+        // Every pane follows the x window, the oscillator grids below the
+        // price included, all refitted in the one pass (SharedZoom, shared.js).
+        sharedYFit:{auto:{axes:['y'].concat(oscGroupKeys.map(k=>'yOsc_'+k))}}},
       scales
     };
   }
 
   if(priceChart) priceChart.destroy();
-  priceChart=new Chart($('priceCanvas'),{type:'line',data:{labels:dates,datasets},options:buildPriceOpts()});
+  priceChart=new Chart($('priceCanvas'),{type:'line',data:{labels:dates,datasets},options:buildPriceOpts(),plugins:[SharedZoom.plugin]});
   priceChart.update();
 }
 

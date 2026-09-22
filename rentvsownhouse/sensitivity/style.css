@@ -161,8 +161,11 @@ tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
 }
 .chart-modal-close:hover{border-color:var(--accent);color:var(--text);}
 .chart-modal-close:active{transform:scale(.95);}
-.chart-modal .chart-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;padding-right:42px;}
-.chart-modal .chart-header h2{font-size:1.05rem;margin:0;}
+/* The export row itself is shared.css's (.chart-head, .btn-cluster, .btn-sm),
+   so a modal's cluster is the one every chart on the site carries; the padding
+   keeps it clear of the close button in the modal's corner. */
+.chart-modal .chart-head{margin-bottom:10px;padding-right:42px;}
+.chart-modal .chart-head h2{font-size:1.05rem;}
 .chart-modal .chart-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .chart-modal .graph-btn{
   background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);
@@ -170,7 +173,6 @@ tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
   transition:all var(--motion-fast);letter-spacing:.01em;
 }
 .chart-modal .graph-btn.active{border-color:var(--accent);color:var(--text);background:rgba(139,184,248,.12);}
-.chart-modal .chart-export-btn{flex:0 0 auto;min-width:48px;padding:6px 10px;font-size:.68rem;line-height:1;white-space:nowrap;text-align:center;font-weight:600;}
 .chart-modal .legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:.86rem;}
 .chart-modal .legend-item{display:flex;align-items:center;gap:7px;}
 .chart-modal .hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:20px;}

@@ -79,12 +79,11 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .metric .value.pos{color:var(--data-pos-em);}
 .metric .value.neg{color:var(--data-neg-em);}
 
-/* ── Chart ── */
+/* ── Chart ──
+   The export row itself — .chart-head, .detail-head, .btn-cluster, .btn-sm and
+   their phone layout — is shared.css's, so this tool's cluster is the one
+   every other tool carries. */
 .chart-card{padding:20px;margin-bottom:18px;}
-.chart-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;}
-.chart-head h2{display:flex;align-items:center;gap:6px;}
-.btn-cluster{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;}
-.btn-sm{padding:6px 12px;font-size:.8rem;border-radius:8px;}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 14px;font-size:.84rem;}
 .legend-item{display:flex;align-items:center;gap:7px;cursor:pointer;transition:opacity .15s;}
 .legend-item.hidden{opacity:.35;}
@@ -93,6 +92,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 
 /* ── Detail tables ── */
 .detail-section{padding:20px;margin-bottom:18px;}
+.detail-head{margin-bottom:10px;}
 table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.85rem;}
 th,td{padding:9px 8px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}
 th:first-child,td:first-child{text-align:left;white-space:normal;font-family:'DM Sans',sans-serif;}

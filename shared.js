@@ -1134,6 +1134,289 @@
     hide: tipHide
   };
 
+  /* ══════════════════════════════════════════════════════════════════════
+     CHART ZOOM (SharedZoom)
+
+     Two rules every zoomable chart on the site obeys, in one place so they
+     cannot drift apart tool by tool:
+
+     1. A gesture can never leave the data. chartjs-plugin-zoom will happily
+        pan a linear axis into empty space and pinch it down to a single
+        pixel-wide sliver, so every chart hands it the extent of what it
+        actually plotted as `limits`, plus a floor on how far in a pinch may
+        go (a handful of points wide — past that there is nothing left to
+        read). A category axis is bounded by its labels already, but not
+        floored, so it gets the same treatment in index units.
+
+     2. The y axis follows the x window. A linear y axis is sized once, from
+        the whole series, so zooming into five years of a sixty-year plan
+        leaves those five years as a flat smear against a scale built for the
+        end of it. Refitting y to the slice on screen is what makes a zoom
+        worth making.
+
+     The refit is a Chart.js PLUGIN rather than a zoom callback, because it has
+     to happen INSIDE the update the gesture already triggers. A second update
+     chasing the first leaves the lines drawn against the old scale while the
+     ticks already show the new one, which is worse than not refitting at all.
+     The zoom plugin writes the window it is about to draw into the x scale's
+     options and then calls update, so the window is readable from the moment
+     that update starts, and the axis is sized to it before the chart is laid
+     out (see the two hooks below).
+
+     A chart opts in by carrying, in its own options,
+       plugins: {sharedYFit: {auto: {…}}}        or  {fit: {…}}
+     — read on the very first update, so the chart OPENS on the fitted axis —
+     or by hanging the same config on the instance as `chart.$autoFitY` /
+     `chart.$fitY`, for a chart whose fitters are rebuilt when its data is
+     replaced in place. Either way:
+
+       fit  {scaleId: function(xMin, xMax){ return {min, max}; }}
+            bespoke fitters, for a chart that sizes an axis to SOME of its
+            series rather than all of them.
+       auto {…}
+            the generic fitter below, which reads the datasets the chart is
+            actually showing. Options:
+              axes        scale ids to fit (default ['y'])
+              includeZero keep zero on the axis either way
+              skip        function(dataset, i) -> true to ignore
+              fixed       scale ids to leave alone, for an axis pinned to a
+                          range of its own (a 0-100 percentage stack)
+            A dataset may also opt itself out with `noAutoFit`, which is how a
+            series that is deliberately allowed to run off the top of its axis
+            says so.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* The x window the chart is about to draw. The zoom plugin writes numeric
+     bounds onto the scale's OPTIONS; before the first gesture they are absent,
+     which means the whole of the data. */
+  function xWindowOf(chart){
+    var sc = chart.options && chart.options.scales && chart.options.scales.x;
+    if(!sc) return null;
+    var lo = typeof sc.min === 'number' && isFinite(sc.min) ? sc.min : -Infinity;
+    var hi = typeof sc.max === 'number' && isFinite(sc.max) ? sc.max : Infinity;
+    if(hi < lo) return null;
+    return {min: lo, max: hi};
+  }
+
+  /* Pad a raw hi/lo into axis bounds. Ten per cent of the span, with a floor
+     tied to the numbers themselves so a nearly flat series still gets air
+     rather than a hairline box. */
+  function padBounds(lo, hi, opts){
+    opts = opts || {};
+    if(opts.includeZero && lo > 0) lo = 0;
+    if(opts.includeZero && hi < 0) hi = 0;
+    var pad = Math.max((hi - lo) * 0.1, Math.abs(hi) * 0.02, Math.abs(lo) * 0.02);
+    if(!(pad > 0)) pad = Math.max(Math.abs(hi), 1) * 0.1;
+    var min = lo - pad * (opts.bottomPad == null ? 0.6 : opts.bottomPad);
+    // Never open a gap below an empty pot: a series that never goes negative
+    // reads against zero, not against some arbitrary padding below it.
+    if(lo >= 0 && min < 0) min = 0;
+    return {min: min, max: hi + pad * (opts.topPad == null ? 1 : opts.topPad)};
+  }
+
+  /* Scan the datasets the chart is SHOWING for the y extent inside an x
+     window. Points are read in either shape Chart.js accepts: {x, y} pairs on
+     a linear axis, or bare numbers on a category axis, where the index is the
+     x. The nearest point on each side of the window counts too, so a segment
+     that crosses an edge is scaled with the slice it is drawn in rather than
+     clipped out of its own axis. */
+  /* A stacked axis is sized by the TOP of the stack, not by any one series, so
+     the values sharing an x are added up first — positives and negatives apart,
+     the way Chart.js stacks them — and the extent is taken over those totals. */
+  function scanStacked(chart, win, axisId, cfg){
+    var up = {}, down = {}, any = false;
+    var sets = (chart.data && chart.data.datasets) || [];
+    sets.forEach(function(ds, i){
+      if(!ds || ds.noAutoFit) return;
+      if(cfg.skip && cfg.skip(ds, i)) return;
+      if((ds.yAxisID || 'y') !== axisId) return;
+      if(chart.isDatasetVisible && !chart.isDatasetVisible(i)) return;
+      var data = ds.data || [];
+      for(var k = 0; k < data.length; k++){
+        var p = data[k], x, y;
+        if(p && typeof p === 'object'){ x = p.x; y = p.y; } else { x = k; y = p; }
+        if(typeof x !== 'number' || !isFinite(x)) x = k;
+        if(y == null || typeof y !== 'number' || !isFinite(y)) continue;
+        if(x < win.min || x > win.max) continue;
+        var key = String(x);
+        if(y >= 0) up[key] = (up[key] || 0) + y; else down[key] = (down[key] || 0) + y;
+        any = true;
+      }
+    });
+    if(!any) return null;
+    var lo = 0, hi = 0;
+    Object.keys(up).forEach(function(k){ if(up[k] > hi) hi = up[k]; });
+    Object.keys(down).forEach(function(k){ if(down[k] < lo) lo = down[k]; });
+    return {lo: lo, hi: hi};
+  }
+
+  function scanExtent(chart, win, axisId, cfg){
+    var lo = null, hi = null;
+    var sets = (chart.data && chart.data.datasets) || [];
+    sets.forEach(function(ds, i){
+      if(!ds || ds.noAutoFit) return;
+      if(cfg.skip && cfg.skip(ds, i)) return;
+      if((ds.yAxisID || 'y') !== axisId) return;
+      if(chart.isDatasetVisible && !chart.isDatasetVisible(i)) return;
+      var data = ds.data || [];
+      var before = null, after = null, k, p, x, y;
+      for(k = 0; k < data.length; k++){
+        p = data[k];
+        if(p && typeof p === 'object'){ x = p.x; y = p.y; } else { x = k; y = p; }
+        if(typeof x !== 'number' || !isFinite(x)) x = k;
+        if(y == null || typeof y !== 'number' || !isFinite(y)) continue;
+        if(x < win.min){ before = y; continue; }
+        if(x > win.max){ if(after === null) after = y; continue; }
+        if(lo === null || y < lo) lo = y;
+        if(hi === null || y > hi) hi = y;
+      }
+      [before, after].forEach(function(v){
+        if(v === null) return;
+        if(lo === null || v < lo) lo = v;
+        if(hi === null || v > hi) hi = v;
+      });
+    });
+    if(lo === null || hi === null) return null;
+    return {lo: lo, hi: hi};
+  }
+
+  /* Write the fitted bounds onto the chart's own configuration, so they
+     persist past this update, and onto the scale's resolver proxy, which is
+     what the scale reads. */
+  function writeBounds(chart, id, b){
+    var opt = chart.options.scales && chart.options.scales[id];
+    if(opt){ opt.min = b.min; opt.max = b.max; }
+    var sc = chart.scales && chart.scales[id];
+    if(sc && sc.options && sc.options !== opt){ sc.options.min = b.min; sc.options.max = b.max; }
+  }
+
+  /* The bounds one y scale should carry for the x window the chart is about to
+     draw, or null if this scale is not one the chart asked to have fitted. */
+  function boundsFor(chart, id, fits, auto){
+    var win = xWindowOf(chart);
+    if(!win) return null;
+    if(fits && fits[id]) return fits[id](win.min, win.max) || null;
+    if(!auto) return null;
+    var axes = auto.axes || ['y'];
+    if(axes.indexOf(id) < 0) return null;
+    if(auto.fixed && auto.fixed.indexOf(id) >= 0) return null;
+    var sc = (chart.options.scales || {})[id];
+    var stacked = sc && sc.stacked;
+    var ext = stacked ? scanStacked(chart, win, id, auto) : scanExtent(chart, win, id, auto);
+    if(!ext) return null;
+    return padBounds(ext.lo, ext.hi, {
+      includeZero: auto.includeZero, topPad: auto.topPad, bottomPad: auto.bottomPad
+    });
+  }
+
+  var FIT_PLUGIN = {
+    id: 'sharedYFit',
+    /* The config can arrive two ways. `options.plugins.sharedYFit` is read on
+       the chart's very FIRST update, so a chart built once with a generic fit
+       opens on the fitted axis rather than snapping to it on the first
+       gesture; `chart.$fitY` / `chart.$autoFitY` are hung on the instance, for
+       a chart whose fitters are rebuilt whenever its data is replaced in
+       place. An instance property wins, because it is the later word. */
+    beforeUpdate: function(chart, args, popts){
+      var fits = chart.$fitY || (popts && popts.fit);
+      var auto = chart.$autoFitY || (popts && popts.auto);
+      if(!fits && !auto) return;
+      var scales = chart.options.scales || {};
+      var ids = Object.keys(fits || {}).concat((auto && auto.axes) || []);
+      ids.forEach(function(id, i){
+        if(ids.indexOf(id) !== i) return;                 // named twice
+        if(!scales[id]) return;
+        var b = boundsFor(chart, id, fits, auto);
+        if(b) writeBounds(chart, id, b);
+      });
+    },
+    /* The bounds are applied AGAIN here, on the scale itself, because a scale
+       resolves its own range while it updates: `beforeUpdate` is early enough
+       to record the window but not always early enough to be read back, and a
+       y axis that lands one update late trails the gesture by a wheel tick —
+       the very thing the refit exists to prevent. `args.scale` is the scale
+       being sized, so each pane of a stacked pair is served in its own turn. */
+    afterDataLimits: function(chart, args, popts){
+      var scale = args && args.scale;
+      if(!scale) return;
+      var fits = chart.$fitY || (popts && popts.fit);
+      var auto = chart.$autoFitY || (popts && popts.auto);
+      if(!fits && !auto) return;
+      var b = boundsFor(chart, scale.id, fits, auto);
+      if(!b) return;
+      scale.min = b.min; scale.max = b.max;
+    }
+  };
+
+  /* The gesture block every zoomable chart passes to `plugins.zoom`, so pan,
+     wheel and pinch feel the same everywhere. `min`/`max` are the extent of
+     the plotted data in x units (indices on a category axis); `points` is how
+     many of them there are, which sets how far in a pinch may go. */
+  function zoomOptions(cfg){
+    cfg = cfg || {};
+    var o = {
+      pan: {enabled: cfg.pan !== false, mode: cfg.mode || 'x'},
+      zoom: {
+        wheel: {enabled: cfg.wheel !== false, speed: cfg.speed || 0.08},
+        pinch: {enabled: cfg.pinch !== false},
+        mode: cfg.mode || 'x'
+      }
+    };
+    var lim = zoomLimits(cfg);
+    if(lim) o.limits = lim;
+    return o;
+  }
+
+  /* `limits` for one or more x scales. A chart with a second x axis over the
+     same numbers (a calendar year and the age it lands on, say) passes both
+     ids, because the zoom plugin moves every x scale together and a limit on
+     one of them alone would let the other drift out of step. */
+  function zoomLimits(cfg){
+    cfg = cfg || {};
+    if(!isFinite(cfg.min) || !isFinite(cfg.max)) return null;
+    var span = Math.max(cfg.max - cfg.min, 0);
+    if(!(span > 0)) return null;
+    var minRange = cfg.minRange;
+    if(minRange == null){
+      // Roughly five data points: past that a line chart is two points and a
+      // lot of grid. A chart that knows nothing about its density gets a
+      // fortieth of the span, the same ceiling by another route.
+      var pts = cfg.points;
+      minRange = (pts && pts > 1) ? (span / (pts - 1)) * 5 : span / 40;
+    }
+    minRange = Math.min(minRange, span);
+    var bound = {min: cfg.min, max: cfg.max, minRange: minRange};
+    var out = {};
+    (cfg.axes || ['x']).forEach(function(id){ out[id] = bound; });
+    return out;
+  }
+
+  /* Registering the refit globally is offered for a page that builds charts in
+     many places, but the usual wiring is per chart — `plugins: [SharedZoom.plugin]`
+     in the chart's own config — so it cannot depend on shared.js having loaded
+     after Chart.js. Charts that carry neither $fitY nor $autoFitY never notice
+     it either way. */
+  function registerFit(){
+    var C = global.Chart;
+    if(!C || !C.register) return false;
+    if(C.registry && C.registry.plugins && C.registry.plugins.get){
+      try { if(C.registry.plugins.get(FIT_PLUGIN.id)) return true; } catch(e){ /* not registered yet */ }
+    }
+    C.register(FIT_PLUGIN);
+    return true;
+  }
+
+  global.SharedZoom = {
+    plugin: FIT_PLUGIN,
+    register: registerFit,
+    options: zoomOptions,
+    limits: zoomLimits,
+    /* Fit y to the current x window outside an update — used right after a
+       chart's data is replaced in place, where the axis would otherwise keep
+       the bounds of the data it no longer holds. */
+    refit: function(chart){ if(chart) FIT_PLUGIN.beforeUpdate(chart); }
+  };
+
   /* ── Mini cache (autosave) ─────────────────────────────────────────────────
      Snapshots a tool's form controls to localStorage and restores them on the
      next visit, so a returning user keeps their previous work instead of a

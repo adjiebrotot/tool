@@ -362,6 +362,7 @@ function renderComparisonChart(canvas, opts){
   };
   return new global.Chart(canvas.getContext('2d'), {
     type:'line', data:{labels, datasets},
+    plugins: global.SharedZoom ? [global.SharedZoom.plugin] : [],
     options:{
       responsive:true, maintainAspectRatio:false, animation:{duration:200},
       interaction:{mode:'index',intersect:false},
@@ -377,10 +378,16 @@ function renderComparisonChart(canvas, opts){
           backgroundColor:cssVar('--panel')||'#162033',
           titleColor:t, bodyColor:m, borderColor:cssVar('--border'), borderWidth:1, padding:10,
         }),
-        zoom: global.Chart.registry && global.Chart.registry.plugins.get('zoom') ? {
-          pan:{enabled:true,mode:'x'},
-          zoom:{wheel:{enabled:true,speed:.08},pinch:{enabled:true},mode:'x'},
-        } : undefined,
+        /* The shared gesture block, so a chart in the sensitivity popup pans
+           and pinches exactly as the main tool's does, and neither gesture can
+           leave the years plotted (SharedZoom, shared.js). */
+        zoom: global.Chart.registry && global.Chart.registry.plugins.get('zoom')
+          ? global.SharedZoom.options({min:0, max:Math.max(0, labels.length-1), points:labels.length})
+          : undefined,
+        // The y axis follows the x window, so zooming into the early years
+        // shows their shape rather than a flat smear under a scale built for
+        // the last one. Zero stays on it: every series is read against it.
+        sharedYFit: {auto:{axes:['y'], includeZero:true}},
       },
       scales:{
         x:{title:{display:true,text:'Year',color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,maxTicksLimit:12,font:{family:"'DM Mono', monospace",size:11},callback:xTickCallback},grid:{color:g}},
