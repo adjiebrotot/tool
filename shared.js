@@ -1004,10 +1004,20 @@
      ──────────────────────────────────────────────────────────────────────── */
   var TIP_ID = 'sharedChartTip';
 
+  /* A sign belongs to the figure it signs. Now that a row wraps instead of
+     running out through the side of the card, a line can break between a
+     leading − and the $ that follows it, and the next line then reads as a
+     positive number. A word joiner closes that one break opportunity and no
+     other: the sign has to open the run (start of line, after a space or an
+     opening bracket) and be followed by a figure, so a hyphenated word, a
+     1990-2020 span and the spaced dash of a (−$491.9k – $31.9k) range all
+     still break where they should. */
+  var TIP_WJ = /(^|[\s(\[])([-\u2212+])(?=[\d$\u20ac\u00a3\u00a5\u20b9])/g;
+
   function tipEsc(s){
     return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
       return c === '&' ? '&amp;' : c === '<' ? '&lt;' : c === '>' ? '&gt;' : '&quot;';
-    });
+    }).replace(TIP_WJ, '$1$2\u2060');
   }
 
   function tipHide(){

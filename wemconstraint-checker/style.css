@@ -67,13 +67,16 @@ select option{background:var(--panel);color:var(--txt)}
 .tb-status{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px;
   background:rgba(0,0,0,.12);align-items:center}
 body.light .tb-status{background:rgba(0,0,0,.04)}
-.sp{display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:600;
-  padding:3px 9px;border-radius:999px;white-space:nowrap}
+/* A status pill states a whole sentence ("Generator_Data.csv not found —
+   Upload…"), so on a narrow screen it has to wrap inside its own
+   background rather than run the text out past the rounded edge. */
+.sp{display:inline-flex;align-items:flex-start;gap:5px;font-size:.75rem;font-weight:600;
+  padding:3px 9px;border-radius:999px;white-space:normal;max-width:100%;overflow-wrap:break-word}
 .sp.ok {background:var(--ok-bg);color:var(--ok-txt)}
 .sp.er {background:var(--er-bg);color:var(--er-txt)}
 .sp.wn {background:var(--wn-bg);color:var(--wn-txt)}
 .sp.in {background:var(--in-bg);color:var(--in-txt)}
-.sp .d{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.sp .d{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;margin-top:.5em}
 .fallback-inp{font-size:.74rem;color:var(--wn-txt);cursor:pointer;text-decoration:underline;margin-left:4px}
 /* Buttons */
 .btn-p{background:var(--acc);color:var(--inv);border:none;border-radius:10px;

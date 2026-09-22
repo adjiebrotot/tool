@@ -98,8 +98,16 @@ abbr.abbr:focus-visible,.abbr:focus-visible{outline:none;}
 .chart-tip{position:fixed;z-index:99998;left:0;top:0;pointer-events:none;max-width:min(340px,calc(100vw - 16px));background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:var(--radius-lg);padding:9px 12px;font-size:.8rem;line-height:1.5;color:var(--muted);box-shadow:var(--shadow-lg);opacity:0;transition:opacity var(--motion-fast);}
 .chart-tip.visible{opacity:1;}
 .chart-tip-title{color:var(--text);font-weight:700;margin-bottom:5px;}
-.chart-tip-row{display:flex;align-items:center;gap:7px;}
-.chart-tip-label{white-space:nowrap;}
+/* A row is a mark in its own column and a label beside it. The label WRAPS:
+   a long reading (a scenario name plus a figure plus its range) used to run
+   straight out through the right-hand border of the card, because the card is
+   max-width capped but the label was nowrap. Wrapped lines line up under the
+   label, not under the mark, so one series still reads as one row, and the
+   mark keeps the place it has in the key — a one-line-tall box that centres it
+   on the FIRST line however many lines the label takes. */
+.chart-tip-row{display:flex;align-items:flex-start;gap:7px;}
+.chart-tip-row .legend-swatch{height:1.5em;}
+.chart-tip-label{min-width:0;white-space:normal;overflow-wrap:break-word;}
 .chart-tip-note,.chart-tip-footer{color:var(--muted);}
 .chart-tip-footer{margin-top:5px;color:var(--text);}
 
@@ -271,6 +279,13 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
    then be drawn a size larger than the rest of the site's. */
 .btn-sm,.btn-secondary.btn-sm{padding:5px 11px;font-size:.8rem;font-weight:700;border-radius:8px;line-height:1.35;white-space:nowrap;}
 .btn-icon,.btn-secondary.btn-icon{min-width:34px;text-align:center;}
+/* A toolbar button is as wide as its own label. Several tools give their
+   page-level `.btn-secondary` a `flex:1` for a two-button action row; that
+   rule also lands on the export cluster, where a zero flex-basis divides the
+   row evenly and squeezes `⬇ SVG` out through its own rounded edge. Pinning
+   the basis to the content keeps every label inside its button, and the
+   cluster already wraps when the row runs out of width. */
+.btn-cluster .btn-sm,.btn-cluster .btn-secondary.btn-sm{flex:0 0 auto;}
 
 /* Phone: the cluster takes the full width under the title and its buttons
    share it evenly, so they stay thumb-sized instead of shrinking to a row of
@@ -279,7 +294,7 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
   .chart-head,.detail-head{align-items:flex-start;}
   .btn-cluster{width:100%;}
   .chart-head .btn-cluster,.detail-head .btn-cluster{margin-left:0;}
-  .btn-cluster .btn-secondary{flex:1 1 auto;}
+  .btn-cluster .btn-secondary,.btn-cluster .btn-sm,.btn-cluster .btn-secondary.btn-sm{flex:1 1 auto;}
 }
 
 /* ============================================================
