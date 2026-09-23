@@ -57,7 +57,7 @@
 
 /* ---------- dice (three.js scene) ---------- */
 .dice-scene{position:relative;width:100%;max-width:620px;height:380px;
-  background:radial-gradient(ellipse 46% 32% at 50% 72%,var(--input-bg),transparent 70%);}
+  background:radial-gradient(ellipse 46% 32% at 50% 64%,var(--input-bg),transparent 70%);}
 #diceCanvas{width:100%;height:100%;display:block;}
 .dice-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 24px;color:var(--muted);font-size:.88rem;line-height:1.5;}
 .dice-fallback[hidden]{display:none;}

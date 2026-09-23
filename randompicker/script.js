@@ -3,7 +3,7 @@
    RANDOM PICKER
    Four picking modes sharing one choices list:
      wheel  — spinning wheel, uniform over choices
-     dice   — 3D six-sided die (three.js), a true 1-in-6 per face
+     dice   — 3D six-sided die (three.js, rigid-body throw), a true 1-in-6 per face
      slot   — 3-reel slot machine, pays out on ~75% of pulls
      galton — bean machine, deliberately NON-uniform (binomial)
 
@@ -252,52 +252,58 @@ function spinWheel() {
 
 // ── DICE (three.js) ──────────────────────────────────────────────────────
 /* BoxGeometry material order is [+X, -X, +Y, -Y, +Z, -Z].
-   Faces are laid out so opposite sides sum to 7, like a real die. */
+   Faces are laid out so opposite sides sum to 7, like a real die.
+
+   The die is a 2-unit cube with rounded edges resting on a table at y = 0,
+   so its centre sits at y = 1. A roll pops it off the table and a small
+   rigid-body simulation (gravity, bounces, friction, tray walls) plays it
+   out. The simulation only decides how the throw LOOKS: the face was
+   already picked, and the cube's symmetry lets the playback relabel the
+   faces mid-air so the pre-chosen face is the one that ends up on top. */
 const DIE_FACE_ORDER = [1, 6, 2, 5, 3, 4];
-const DIE_LOOK_Y = 0.6;
-const DIE_HALF_DIAG = Math.sqrt(3); // a 2-unit cube on its corner needs this much room
+const DIE_EDGE_R = 0.25;            // edge and corner rounding radius
+const DIE_CORE = 1 - DIE_EDGE_R;    // half-size of the cube the rounding wraps
+const DIE_LOOK = { x: 0, y: 1.1, z: 0.4 };
+const DIE_SIM = {
+  dt: 1 / 240, g: 34, restitution: 0.42, friction: 0.5,
+  invMass: 1, invInertia: 1.5,      // solid cube of side 2: I = m·s²/6 = 2/3
+  maxTime: 4.5
+};
+const UP = { x: 0, y: 1, z: 0 };
 let FACE_NORMAL = null; // built after THREE loads
+let DIE_CORNERS = null;
 let three = null;
 
-// World-space half extents the camera can actually see at the die's plane, so
-// the roll can be sized to the canvas instead of overshooting it.
-function dieViewExtents() {
-  const cam = three.camera;
-  const dist = cam.position.distanceTo(new THREE.Vector3(0, DIE_LOOK_Y, 0));
-  const halfH = dist * Math.tan((cam.fov * Math.PI / 180) / 2);
-  return { halfW: halfH * cam.aspect, halfH };
-}
-
-function themeDieColors() {
-  return {
-    body: cssVar('--panel-raised') || '#ffffff',
-    bevel: cssVar('--border') || '#e0e6f0',
-    pip: cssVar('--negative-em') || '#e63939'
+/* A box whose grid lines are pushed into the edge bands, then wrapped onto
+   a rounded cube: every vertex is pulled back onto a sphere of radius r
+   around the nearest point of the inner core. Normals come out exact. */
+function makeRoundedDieGeometry(r, bandSegs) {
+  const seg = bandSegs * 2 + 1;
+  const geo = new THREE.BoxGeometry(2, 2, 2, seg, seg, seg);
+  const core = 1 - r;
+  const remap = u => {
+    const i = Math.round((u + 1) / 2 * seg);
+    return i <= bandSegs ? -1 + r * (i / bandSegs) : 1 - r * ((seg - i) / bandSegs);
   };
+  const pos = geo.attributes.position, nor = geo.attributes.normal, uv = geo.attributes.uv;
+  const q = new THREE.Vector3(), c = new THREE.Vector3(), d = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    q.set(remap(pos.getX(i)), remap(pos.getY(i)), remap(pos.getZ(i)));
+    c.set(
+      Math.max(-core, Math.min(core, q.x)),
+      Math.max(-core, Math.min(core, q.y)),
+      Math.max(-core, Math.min(core, q.z)));
+    d.subVectors(q, c).normalize();
+    pos.setXYZ(i, c.x + d.x * r, c.y + d.y * r, c.z + d.z * r);
+    nor.setXYZ(i, d.x, d.y, d.z);
+    uv.setXY(i, (remap(uv.getX(i) * 2 - 1) + 1) / 2, (remap(uv.getY(i) * 2 - 1) + 1) / 2);
+  }
+  return geo;
 }
 
-function makeFaceTexture(pips, col) {
-  const S = 256;
-  const c = document.createElement('canvas');
-  c.width = c.height = S;
-  const g = c.getContext('2d');
-
-  g.fillStyle = col.bevel;
-  g.fillRect(0, 0, S, S);
-  roundRectPath(g, 9, 9, S - 18, S - 18, 42);
-  g.fillStyle = col.body;
-  g.fill();
-
-  const sheen = g.createLinearGradient(0, 0, S, S);
-  sheen.addColorStop(0, 'rgba(255,255,255,0.20)');
-  sheen.addColorStop(0.55, 'rgba(255,255,255,0)');
-  sheen.addColorStop(1, 'rgba(0,0,0,0.10)');
-  roundRectPath(g, 9, 9, S - 18, S - 18, 42);
-  g.fillStyle = sheen;
-  g.fill();
-
-  const A = 0.27, M = 0.5, B = 0.73;
-  const LAYOUT = {
+const PIP_LAYOUT = (() => {
+  const A = 0.28, M = 0.5, B = 0.72;
+  return {
     1: [[M, M]],
     2: [[A, A], [B, B]],
     3: [[A, A], [M, M], [B, B]],
@@ -305,22 +311,109 @@ function makeFaceTexture(pips, col) {
     5: [[A, A], [B, A], [M, M], [A, B], [B, B]],
     6: [[A, A], [B, A], [A, M], [B, M], [A, B], [B, B]]
   };
-  const r = S * 0.076;
-  (LAYOUT[pips] || []).forEach(([px, py]) => {
+})();
+const PIP_R = 0.074; // pip radius as a share of the face (the ace is drawn larger)
+function pipRadius(pips) { return pips === 1 ? PIP_R * 1.45 : PIP_R; }
+
+function themeDieColors() {
+  return {
+    body: '#f6f2e9',                          // ivory acetate
+    pip: '#c8121c',                           // casino red
+    shadow: document.body.classList.contains('light') ? 0.2 : 0.42
+  };
+}
+
+// Colour map: ivory face with painted, drilled pips (darker toward the rim).
+function makeFaceTexture(pips, col) {
+  const S = 512;
+  const c = document.createElement('canvas');
+  c.width = c.height = S;
+  const g = c.getContext('2d');
+  g.fillStyle = col.body;
+  g.fillRect(0, 0, S, S);
+  // Faint mottling so the plastic does not read as a flat CG fill.
+  for (let i = 0; i < 900; i++) {
+    g.fillStyle = `rgba(${Math.random() < 0.5 ? '120,100,70' : '255,255,255'},${0.018 + Math.random() * 0.02})`;
+    const x = Math.random() * S, y = Math.random() * S, rr = 4 + Math.random() * 18;
+    g.beginPath(); g.arc(x, y, rr, 0, Math.PI * 2); g.fill();
+  }
+  const r = pipRadius(pips) * S;
+  PIP_LAYOUT[pips].forEach(([px, py]) => {
     const x = px * S, y = py * S;
     g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2);
     g.fillStyle = col.pip; g.fill();
-    const inner = g.createRadialGradient(x - r * 0.3, y - r * 0.4, r * 0.12, x, y, r);
-    inner.addColorStop(0, 'rgba(0,0,0,0.30)');
-    inner.addColorStop(1, 'rgba(0,0,0,0)');
-    g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2);
-    g.fillStyle = inner; g.fill();
+    // Paint sits in shade inside the hole, darkest where the wall meets it.
+    const shade = g.createRadialGradient(x, y, 0, x, y, r);
+    shade.addColorStop(0, 'rgba(20,0,0,0.28)');
+    shade.addColorStop(0.7, 'rgba(20,0,0,0.38)');
+    shade.addColorStop(1, 'rgba(20,0,0,0.7)');
+    g.fillStyle = shade; g.fill();
+    // Thin worn lip where the paint meets the plastic.
+    g.beginPath(); g.arc(x, y, r * 1.04, 0, Math.PI * 2);
+    g.strokeStyle = 'rgba(90,60,40,0.25)'; g.lineWidth = S * 0.004; g.stroke();
   });
-
   const tex = new THREE.CanvasTexture(c);
-  tex.anisotropy = 4;
+  tex.anisotropy = 8;
   if (THREE.sRGBEncoding !== undefined) tex.encoding = THREE.sRGBEncoding;
   return tex;
+}
+
+/* Normal map: each pip is a spherical dimple drilled into the face, with a
+   softly rounded rim, so light catches the far wall of every hole. */
+function makePipNormalMap(pips) {
+  const S = 256;
+  const c = document.createElement('canvas');
+  c.width = c.height = S;
+  const g = c.getContext('2d');
+  const img = g.createImageData(S, S);
+  const data = img.data;
+  for (let i = 0; i < data.length; i += 4) { data[i] = 128; data[i + 1] = 128; data[i + 2] = 255; data[i + 3] = 255; }
+  const rp = pipRadius(pips) * S;
+  const bowl = rp * 1.22;   // sphere radius of the drill
+  const lip = rp * 0.16;    // width of the rounded rim outside the hole
+  PIP_LAYOUT[pips].forEach(([px, py]) => {
+    const cx = px * S, cy = py * S;
+    const x0 = Math.max(0, Math.floor(cx - rp - lip - 1)), x1 = Math.min(S - 1, Math.ceil(cx + rp + lip + 1));
+    const y0 = Math.max(0, Math.floor(cy - rp - lip - 1)), y1 = Math.min(S - 1, Math.ceil(cy + rp + lip + 1));
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        const dx = x + 0.5 - cx, dy = y + 0.5 - cy, dist = Math.hypot(dx, dy);
+        let nx, ny;
+        if (dist < rp) {
+          nx = -dx / bowl; ny = dy / bowl;           // wall tilts toward the centre
+        } else if (dist < rp + lip) {
+          const k = 0.55 * (1 - (dist - rp) / lip);  // rim rolls over into the face
+          nx = dx / dist * k; ny = -dy / dist * k;
+        } else continue;
+        const nz = Math.sqrt(Math.max(0, 1 - nx * nx - ny * ny));
+        const o = (y * S + x) * 4;
+        data[o] = Math.round((nx * 0.5 + 0.5) * 255);
+        data[o + 1] = Math.round((ny * 0.5 + 0.5) * 255);
+        data[o + 2] = Math.round((nz * 0.5 + 0.5) * 255);
+      }
+    }
+  });
+  g.putImageData(img, 0, 0);
+  const tex = new THREE.CanvasTexture(c);
+  tex.anisotropy = 8;
+  return tex;
+}
+
+/* Surface map shared by clearcoat (red channel) and roughness (green): the
+   plastic is lacquered and glossy, the paint down in the pips is matte. */
+function makeSurfaceMap(pips) {
+  const S = 256;
+  const c = document.createElement('canvas');
+  c.width = c.height = S;
+  const g = c.getContext('2d');
+  g.fillStyle = 'rgb(255,82,0)';
+  g.fillRect(0, 0, S, S);
+  const r = pipRadius(pips) * S;
+  g.fillStyle = 'rgb(30,190,0)';
+  PIP_LAYOUT[pips].forEach(([px, py]) => {
+    g.beginPath(); g.arc(px * S, py * S, r * 0.97, 0, Math.PI * 2); g.fill();
+  });
+  return new THREE.CanvasTexture(c);
 }
 
 function makeShadowTexture() {
@@ -329,25 +422,67 @@ function makeShadowTexture() {
   c.width = c.height = S;
   const g = c.getContext('2d');
   const grad = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
-  grad.addColorStop(0, 'rgba(0,0,0,0.40)');
-  grad.addColorStop(0.5, 'rgba(0,0,0,0.17)');
+  grad.addColorStop(0, 'rgba(0,0,0,0.55)');
+  grad.addColorStop(0.45, 'rgba(0,0,0,0.22)');
   grad.addColorStop(1, 'rgba(0,0,0,0)');
   g.fillStyle = grad;
   g.fillRect(0, 0, S, S);
   return new THREE.CanvasTexture(c);
 }
 
+/* A soft photo-studio room baked into a prefiltered environment map: a big
+   overhead softbox, a key strip and a dim fill. The glossy die reflects it,
+   which is most of what makes plastic read as plastic. */
+function makeStudioEnvironment(renderer) {
+  const env = new THREE.Scene();
+  env.add(new THREE.Mesh(
+    new THREE.SphereGeometry(30, 32, 16),
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(0.32, 0.33, 0.36), side: THREE.BackSide })));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 80),
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(0.1, 0.1, 0.11) }));
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -4;
+  env.add(floor);
+  const panel = (w, h, x, y, z, k) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(k, k, k * 0.97), side: THREE.DoubleSide }));
+    m.position.set(x, y, z); m.lookAt(0, 0, 0);
+    env.add(m);
+  };
+  panel(14, 10, 0, 14, 2, 3.2);    // overhead softbox
+  panel(5, 12, 13, 5, 7, 5.0);     // key strip, front right
+  panel(8, 6, -13, 4, -3, 1.2);    // fill, back left
+  panel(10, 3, 0, 3, 15, 0.8);     // low front bounce, lights the faces toward camera
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const tex = pmrem.fromScene(env, 0.035).texture;
+  pmrem.dispose();
+  return tex;
+}
+
 function applyDieTextures() {
   if (!three) return;
   const col = themeDieColors();
   if (Array.isArray(three.die.material)) {
-    three.die.material.forEach(m => { if (m.map) m.map.dispose(); m.dispose(); });
+    three.die.material.forEach(m => {
+      if (m.map) m.map.dispose();
+      if (m.normalMap) m.normalMap.dispose();
+      if (m.roughnessMap) m.roughnessMap.dispose();
+      m.dispose();
+    });
   }
-  three.die.material = DIE_FACE_ORDER.map(face => new THREE.MeshStandardMaterial({
-    map: makeFaceTexture(face, col),
-    roughness: 0.42,
-    metalness: 0.04
-  }));
+  three.die.material = DIE_FACE_ORDER.map(face => {
+    const surface = makeSurfaceMap(face);
+    return new THREE.MeshPhysicalMaterial({
+      map: makeFaceTexture(face, col),
+      normalMap: makePipNormalMap(face),
+      roughness: 1,
+      roughnessMap: surface,
+      clearcoat: 1,
+      clearcoatMap: surface,
+      clearcoatRoughness: 0.12,
+      metalness: 0
+    });
+  });
+  three.floor.material.opacity = col.shadow;
 }
 
 function initThree() {
@@ -361,39 +496,80 @@ function initThree() {
     2: new THREE.Vector3(0, 1, 0), 5: new THREE.Vector3(0, -1, 0),
     3: new THREE.Vector3(0, 0, 1), 4: new THREE.Vector3(0, 0, -1)
   };
+  DIE_CORNERS = [];
+  for (const sx of [-1, 1]) for (const sy of [-1, 1]) for (const sz of [-1, 1]) {
+    DIE_CORNERS.push(new THREE.Vector3(sx, sy, sz).multiplyScalar(DIE_CORE));
+  }
 
   const canvas = $('diceCanvas');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   if (THREE.sRGBEncoding !== undefined) renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-  camera.position.set(0, 2.1, 7.2);
-  camera.lookAt(0, DIE_LOOK_Y, 0); // resting die sits low in frame, leaving headroom for the bounce
+  scene.environment = makeStudioEnvironment(renderer);
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+  camera.position.set(0, 7.4, 8.6);
+  camera.lookAt(DIE_LOOK.x, DIE_LOOK.y, DIE_LOOK.z);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
-  const key = new THREE.DirectionalLight(0xffffff, 1.0);
-  key.position.set(3.5, 6.5, 4.5);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.25));
+  const key = new THREE.DirectionalLight(0xfff6ea, 1.1);
+  key.position.set(4, 10, 5);
+  key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024);
+  key.shadow.camera.left = -8; key.shadow.camera.right = 8;
+  key.shadow.camera.top = 8; key.shadow.camera.bottom = -8;
+  key.shadow.camera.near = 1; key.shadow.camera.far = 30;
+  key.shadow.bias = -0.0006;
+  key.shadow.normalBias = 0.02;
+  key.shadow.radius = 5;
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xffffff, 0.3);
-  fill.position.set(-4.5, 2, -3);
-  scene.add(fill);
 
-  const die = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), []);
+  const die = new THREE.Mesh(makeRoundedDieGeometry(DIE_EDGE_R, 7), []);
+  die.castShadow = true;
+  die.position.y = 1;
+  // Rest at a natural angle rather than square to the camera.
+  die.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -0.45);
   scene.add(die);
 
-  // Soft contact shadow. A real shadow map reads as a hard wedge at this
-  // shallow camera angle, so the blob is both prettier and cheaper.
+  // The table only shows the shadow the key light casts on it.
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.25 }));
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // Soft contact shadow: the occlusion right under the die a light alone misses.
   const shadow = new THREE.Mesh(
-    new THREE.PlaneGeometry(4.4, 4.4),
+    new THREE.PlaneGeometry(3.4, 3.4),
     new THREE.MeshBasicMaterial({ map: makeShadowTexture(), transparent: true, depthWrite: false })
   );
   shadow.rotation.x = -Math.PI / 2;
-  shadow.position.y = -1.0;
+  shadow.position.y = 0.005;
   scene.add(shadow);
 
-  return { renderer, scene, camera, die, shadow };
+  return { renderer, scene, camera, die, floor, shadow, rolling: false };
+}
+
+/* Tray the die is allowed to roam: the patch of table the camera sees,
+   less a margin so a tumbling die never clips the canvas edge. */
+function dieTrayBounds() {
+  const cam = three.camera;
+  const ray = new THREE.Raycaster();
+  const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -1); // die-centre height
+  const hit = new THREE.Vector3();
+  const at = (x, y) => {
+    ray.setFromCamera(new THREE.Vector2(x, y), cam);
+    return ray.ray.intersectPlane(plane, hit) ? hit.clone() : null;
+  };
+  const side = at(1, 0), near = at(0, -1), far = at(0, 0.4);
+  const bx = side ? Math.max(0.6, Math.abs(side.x) - 1.7) : 1;
+  const zNear = near ? Math.max(0.3, near.z - 1.6) : 0.8;
+  const zFar = far ? Math.min(-0.3, far.z + 1.6) : -0.8;
+  return { bx, zNear, zFar };
 }
 
 function refreshDice() {
@@ -404,6 +580,13 @@ function refreshDice() {
   three.renderer.setSize(w, h, false);
   three.camera.aspect = w / h;
   three.camera.updateProjectionMatrix();
+  if (!three.rolling) {
+    // A narrower stage can leave the resting die outside the new tray.
+    const b = dieTrayBounds();
+    three.die.position.x = Math.max(-b.bx, Math.min(b.bx, three.die.position.x));
+    three.die.position.z = Math.max(b.zFar, Math.min(b.zNear, three.die.position.z));
+    updateDieShadow();
+  }
   three.renderer.render(three.scene, three.camera);
 }
 
@@ -433,18 +616,156 @@ function buildDiceLegend() {
   }
 }
 
-// Shadow tightens and darkens as the die drops back towards the table.
+// Contact shadow follows the die and fades as it lifts off the table.
 function updateDieShadow() {
   if (!three || !three.shadow) return;
-  const k = Math.max(0, 1 - three.die.position.y / 3);
-  three.shadow.position.x = three.die.position.x;
-  three.shadow.scale.setScalar(0.72 + 0.4 * k);
-  three.shadow.material.opacity = 0.3 + 0.7 * k;
+  const p = three.die.position;
+  const k = Math.max(0, Math.min(1, 1 - (p.y - 1) / 2.2));
+  three.shadow.position.x = p.x;
+  three.shadow.position.z = p.z;
+  three.shadow.scale.setScalar(0.8 + 0.5 * (1 - k));
+  three.shadow.material.opacity = 0.15 + 0.85 * k;
 }
 
-// Die rests at y = 0; the bounce curve starts high and decays to the table.
-function dieBounceY(t, amp) {
-  return Math.abs(Math.cos(Math.PI * t * 3.2)) * amp * Math.pow(1 - t, 1.7);
+/* Rigid-body throw of a rounded cube. Collision uses the eight corner
+   spheres (centre at ±DIE_CORE, radius DIE_EDGE_R), which is exact for a
+   rounded cube against flat planes. Contacts are solved with sequential
+   impulses: restitution on the normal, Coulomb friction on the tangent. */
+function simulateDieThrow(p0, q0, v0, w0, bounds) {
+  const S = DIE_SIM, dt = S.dt;
+  const p = p0.clone(), q = q0.clone(), v = v0.clone(), w = w0.clone();
+  const planes = [
+    { n: new THREE.Vector3(0, 1, 0), d: 0 },
+    { n: new THREE.Vector3(-1, 0, 0), d: bounds.bx + 1 },
+    { n: new THREE.Vector3(1, 0, 0), d: bounds.bx + 1 },
+    { n: new THREE.Vector3(0, 0, -1), d: bounds.zNear + 1 },
+    { n: new THREE.Vector3(0, 0, 1), d: -bounds.zFar + 1 }
+  ];
+  const frames = [];
+  const wc = new THREE.Vector3(), r = new THREE.Vector3(), vp = new THREE.Vector3();
+  const tmp = new THREE.Vector3(), J = new THREE.Vector3(), spin = new THREE.Quaternion();
+  const velAt = (rr, out) => out.crossVectors(w, rr).add(v);
+  const applyImpulse = (rr, imp) => {
+    v.addScaledVector(imp, S.invMass);
+    w.addScaledVector(tmp.crossVectors(rr, imp), S.invInertia);
+  };
+  let still = 0, settled = false;
+  const steps = Math.round(S.maxTime / dt);
+  for (let step = 0; step < steps; step++) {
+    v.y -= S.g * dt;
+    p.addScaledVector(v, dt);
+    spin.set(w.x, w.y, w.z, 0).multiply(q);
+    q.set(q.x + 0.5 * dt * spin.x, q.y + 0.5 * dt * spin.y, q.z + 0.5 * dt * spin.z, q.w + 0.5 * dt * spin.w).normalize();
+
+    const contacts = [];
+    let onFloor = false;
+    for (const pl of planes) {
+      let deepest = 0;
+      for (const corner of DIE_CORNERS) {
+        wc.copy(corner).applyQuaternion(q).add(p);
+        const gap = pl.n.dot(wc) + pl.d - DIE_EDGE_R;
+        if (gap >= 0.002) continue;
+        deepest = Math.min(deepest, gap);
+        const rr = wc.clone().addScaledVector(pl.n, -DIE_EDGE_R).sub(p);
+        const vn0 = velAt(rr, vp).dot(pl.n);
+        const rn = tmp.crossVectors(rr, pl.n);
+        contacts.push({
+          r: rr, n: pl.n, jn: 0, jt: new THREE.Vector3(),
+          kn: S.invMass + S.invInertia * rn.lengthSq(),
+          target: vn0 < -2.2 ? -S.restitution * vn0 : 0
+        });
+        if (pl.n.y === 1) onFloor = true;
+      }
+      if (deepest < 0) p.addScaledVector(pl.n, -deepest * 0.6);
+    }
+    for (let it = 0; it < 10; it++) {
+      for (const c of contacts) {
+        velAt(c.r, vp);
+        const jn = Math.max(0, c.jn + (c.target - vp.dot(c.n)) / c.kn);
+        J.copy(c.n).multiplyScalar(jn - c.jn);
+        c.jn = jn;
+        applyImpulse(c.r, J);
+
+        velAt(c.r, vp);
+        const vt = vp.addScaledVector(c.n, -vp.dot(c.n));
+        const speed = vt.length();
+        if (speed < 1e-6) continue;
+        const t = vt.divideScalar(speed);
+        const kt = S.invMass + S.invInertia * tmp.crossVectors(c.r, t).lengthSq();
+        const jt = c.jt.clone().addScaledVector(t, -speed / kt);
+        const maxF = S.friction * c.jn;
+        if (jt.length() > maxF) jt.setLength(maxF);
+        J.subVectors(jt, c.jt);
+        c.jt.copy(jt);
+        applyImpulse(c.r, J);
+      }
+    }
+    if (onFloor) {
+      // Rolling resistance and felt drag: what finally stops a real die.
+      w.multiplyScalar(1 - 2.2 * dt);
+      v.x *= 1 - 1.2 * dt; v.z *= 1 - 1.2 * dt;
+    }
+    frames.push({ p: p.clone(), q: q.clone(), onFloor });
+    if (onFloor && v.lengthSq() < 0.02 && w.lengthSq() < 0.03) still++;
+    else still = 0;
+    if (still > 24) { settled = true; break; }
+  }
+  // Which body axis ended up pointing at the ceiling.
+  const qInv = q.clone().invert();
+  const upBody = new THREE.Vector3(0, 1, 0).applyQuaternion(qInv);
+  let best = null, bestDot = -2;
+  for (const f of [1, 2, 3, 4, 5, 6]) {
+    const dot = FACE_NORMAL[f].dot(upBody);
+    if (dot > bestDot) { bestDot = dot; best = f; }
+  }
+  return { frames, settled, topFace: best, tilt: Math.acos(Math.min(1, bestDot)) };
+}
+
+// How far (in screen units) the tumbling die's bounding sphere pokes past the canvas.
+function dieOffscreen(frames) {
+  const cam = three.camera, v = new THREE.Vector3();
+  const reach = DIE_CORE * Math.sqrt(3) + DIE_EDGE_R;
+  let spill = 0;
+  for (let i = 0; i < frames.length; i += 6) {
+    const p = frames[i].p;
+    for (const [dx, dy] of [[reach, 0], [-reach, 0], [0, reach], [0, -reach]]) {
+      v.set(p.x + dx, p.y + dy, p.z).project(cam);
+      spill = Math.max(spill, Math.abs(v.x) - 0.97, Math.abs(v.y) - 0.97);
+    }
+  }
+  return spill;
+}
+
+/* The body-frame rotation the playback eases in while the die is in the
+   air, and the window it has to do it in (no contact, clear of the table). */
+function planDieThrow(bounds) {
+  const die = three.die;
+  const p0 = die.position.clone();
+  p0.y = 1;
+  let chosen = null;
+  for (let attempt = 0; attempt < 24; attempt++) {
+    // Aim for a random spot in the middle of the tray, so rolls wander but stay in view.
+    const tx = (Math.random() * 2 - 1) * bounds.bx * 0.6;
+    const tz = (bounds.zNear + bounds.zFar) / 2 + (Math.random() * 2 - 1) * (bounds.zNear - bounds.zFar) * 0.25;
+    const v0 = new THREE.Vector3((tx - p0.x) * 1.1, 8.5 + Math.random() * 1.8, (tz - p0.z) * 1.1);
+    const w0 = new THREE.Vector3(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1)
+      .normalize().multiplyScalar(13 + Math.random() * 9);
+    const sim = simulateDieThrow(p0, die.quaternion, v0, w0, bounds);
+    // First airborne arc: the frames between leaving the table and landing again.
+    let a = -1, b = -1;
+    for (let i = 0; i < sim.frames.length; i++) {
+      const f = sim.frames[i];
+      if (a < 0 && !f.onFloor && f.p.y > 1.65) a = i;
+      else if (a >= 0 && (f.onFloor || f.p.y < 1.65)) { b = i; break; }
+    }
+    sim.window = [a, b];
+    const spill = dieOffscreen(sim.frames);
+    const ok = sim.settled && sim.tilt < 0.06 && a >= 0 && b - a > 24 && spill === 0;
+    const score = (sim.settled ? 0 : 10) + sim.tilt * 20 + (a >= 0 && b - a > 24 ? 0 : 5) + spill * 30;
+    if (!chosen || score < chosen.score) chosen = Object.assign(sim, { score });
+    if (ok) break;
+  }
+  return chosen;
 }
 
 function rollDice() {
@@ -455,43 +776,48 @@ function rollDice() {
     const result = idx >= 0 ? { index: idx, name: choices[idx] } : { noWin: true, face };
     if (!three) { resolve(result); return; }
 
+    document.querySelectorAll('#diceLegend .leg-item').forEach(el => el.classList.remove('hit'));
     const die = three.die;
-    const qStart = die.quaternion.clone();
-    // Rotation that brings the winning face's normal to +Z, straight at the camera.
-    const align = new THREE.Quaternion().setFromUnitVectors(FACE_NORMAL[face], new THREE.Vector3(0, 0, 1));
-    const spinZ = new THREE.Quaternion().setFromAxisAngle(
-      new THREE.Vector3(0, 0, 1), Math.floor(Math.random() * 4) * Math.PI / 2);
-    const qEnd = new THREE.Quaternion().multiplyQuaternions(spinZ, align);
-
-    const axis = new THREE.Vector3(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize();
-    const turns = 3 + Math.floor(Math.random() * 2);
-    const dur = 2200;
-    // Keep the whole tumble inside the canvas, whatever the stage is sized to.
-    const view = dieViewExtents();
-    const travel = Math.max(0.7, Math.min(2.4, view.halfW - DIE_HALF_DIAG - 0.25));
-    const startX = -(travel * (0.78 + Math.random() * 0.22));
-    const amp = Math.max(0.5, Math.min(1.5, DIE_LOOK_Y + view.halfH - DIE_HALF_DIAG - 0.25));
+    const sim = planDieThrow(dieTrayBounds());
+    const frames = sim.frames;
+    // A cube looks the same after any of its 24 symmetry rotations, so the
+    // simulated throw can carry any face to the top. relabel maps the chosen
+    // face's normal onto the one the simulation left facing up.
+    const relabel = new THREE.Quaternion().setFromUnitVectors(FACE_NORMAL[face], FACE_NORMAL[sim.topFace]);
+    const [wa, wb] = sim.window;
+    const last = frames[frames.length - 1];
+    const qLast = last.q.clone().multiply(relabel);
+    // Whatever tilt is left once the simulation stops, levelled over the last frames.
+    const level = new THREE.Quaternion().setFromUnitVectors(
+      FACE_NORMAL[face].clone().applyQuaternion(qLast), new THREE.Vector3(0, 1, 0));
+    const settleFrames = Math.min(frames.length - 1, 60);
+    const ident = new THREE.Quaternion(), qRel = new THREE.Quaternion(), qLev = new THREE.Quaternion();
+    const dur = frames.length * DIE_SIM.dt * 1000;
+    three.rolling = true;
     const t0 = performance.now();
-    const qSlerp = new THREE.Quaternion(), qTumble = new THREE.Quaternion();
 
     function frame(now) {
-      const t = Math.min(1, (now - t0) / dur);
-      const e = easeOutQuint(t);
-      // Slerp toward the target while an extra tumble unwinds to exactly zero,
-      // so the die always settles on the pre-chosen face.
-      qSlerp.copy(qStart).slerp(qEnd, e);
-      qTumble.setFromAxisAngle(axis, turns * Math.PI * 2 * (1 - e));
-      die.quaternion.multiplyQuaternions(qSlerp, qTumble);
-      die.position.x = startX * (1 - easeOutCubic(t));
-      die.position.y = dieBounceY(t, amp);
+      const i = Math.max(0, Math.min(frames.length - 1, Math.floor((now - t0) / (DIE_SIM.dt * 1000))));
+      const f = frames[i];
+      const s = wa < 0 ? (i >= frames.length - 1 ? 1 : 0) : smoothstep(Math.max(0, Math.min(1, (i - wa) / Math.max(1, wb - wa))));
+      qRel.copy(ident).slerp(relabel, s);
+      die.quaternion.copy(f.q).multiply(qRel);
+      die.position.copy(f.p);
+      const e = Math.max(0, (i - (frames.length - 1 - settleFrames)) / settleFrames);
+      if (e > 0) {
+        qLev.copy(ident).slerp(level, smoothstep(e));
+        die.quaternion.premultiply(qLev);
+        die.position.y += (1 - die.position.y) * smoothstep(e);
+      }
       updateDieShadow();
       three.renderer.render(three.scene, three.camera);
-      if (t < 1) requestAnimationFrame(frame);
+      if (now - t0 < dur) requestAnimationFrame(frame);
       else {
-        die.position.x = 0; die.position.y = 0;
-        die.quaternion.copy(qEnd);
+        die.quaternion.copy(qLast).premultiply(level);
+        die.position.set(last.p.x, 1, last.p.z);
         updateDieShadow();
         three.renderer.render(three.scene, three.camera);
+        three.rolling = false;
         document.querySelectorAll('#diceLegend .leg-item').forEach(el => {
           el.classList.toggle('hit', el.dataset.face === String(face));
         });
