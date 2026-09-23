@@ -55,21 +55,27 @@
 .wheel-pointer{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:26px solid var(--accent3);z-index:5;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3));}
 .wheel-hub{position:absolute;left:50%;top:50%;width:14%;height:14%;transform:translate(-50%,-50%);border-radius:50%;background:var(--panel-raised);border:3px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.25);z-index:4;}
 
+/* ---------- 3D models (models3d.js); the 2D versions are the fallback ---------- */
+.scene3d{display:none;}
+body.gl3d .scene3d{display:block;}
+body.gl3d .wheel-wrap,body.gl3d .slot-machine,body.gl3d #galtonCanvas{display:none;}
+.wheel3d{position:relative;width:min(500px,100%);aspect-ratio:1/1;}
+.slot3d{position:relative;width:100%;max-width:640px;height:460px;}
+#wheel3dCanvas,#slot3dCanvas{width:100%;height:100%;display:block;}
+#galton3dCanvas{width:100%;aspect-ratio:560/440;height:auto;border-radius:14px;}
+
 /* ---------- dice (three.js scene) ---------- */
 .dice-scene{position:relative;width:100%;max-width:620px;height:380px;
-  background:radial-gradient(ellipse 46% 32% at 50% 72%,var(--input-bg),transparent 70%);}
+  background:radial-gradient(ellipse 46% 32% at 50% 64%,var(--input-bg),transparent 70%);}
 #diceCanvas{width:100%;height:100%;display:block;}
 .dice-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 24px;color:var(--muted);font-size:.88rem;line-height:1.5;}
 .dice-fallback[hidden]{display:none;}
 .dice-legend{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:460px;}
 .dice-legend .leg-item{display:flex;align-items:center;gap:6px;background:var(--input-bg);border:1px solid var(--border);border-radius:999px;padding:5px 12px;font-size:.82rem;transition:border-color 200ms,background 200ms;}
 .dice-legend .leg-item.hit{border-color:var(--accent);background:rgba(141,187,255,.16);}
-.dice-legend .leg-face{font-family:'DM Mono',monospace;font-weight:700;color:var(--accent);}
 /* faces with no choice behind them: the rolls that pick nobody */
 .dice-legend .leg-item.leg-empty{color:var(--muted);border-style:dashed;}
-.dice-legend .leg-item.leg-empty .leg-face{color:var(--muted);}
 .dice-legend .leg-item.leg-empty.hit{border-style:solid;border-color:var(--warning-text);background:var(--warning-bg);color:var(--warning-text);}
-.dice-legend .leg-item.leg-empty.hit .leg-face{color:var(--warning-text);}
 .dice-scene.lose{animation:stageSlump 600ms ease;}
 
 /* ---------- slot machine ---------- */
@@ -168,6 +174,7 @@
   .stage-card{padding:20px 12px;min-height:420px;}
   .dice-scene{height:300px;}
   .slot-machine{transform:scale(.84);}
+  .slot3d{height:380px;}
   .stage-foot{justify-content:center;text-align:center;}
   .btn-action{padding:14px 30px;font-size:1rem;}
   .winner-name{font-size:1.6rem;}
@@ -177,4 +184,5 @@
 @media(max-width:380px){
   .dice-scene{height:260px;}
   .slot-machine{transform:scale(.68);}
+  .slot3d{height:320px;}
 }

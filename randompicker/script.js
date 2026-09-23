@@ -3,7 +3,7 @@
    RANDOM PICKER
    Four picking modes sharing one choices list:
      wheel  — spinning wheel, uniform over choices
-     dice   — 3D six-sided die (three.js), a true 1-in-6 per face
+     dice   — 3D six-sided die (three.js, rigid-body throw), a true 1-in-6 per face
      slot   — 3-reel slot machine, pays out on ~75% of pulls
      galton — bean machine, deliberately NON-uniform (binomial)
 
@@ -26,6 +26,14 @@
    flip (Math.random() < 0.5) as the ball falls, so the bin (and the
    distribution across many drops) is a real binomial(rows, 0.5)
    random walk, not a scripted shape.
+
+   3D MODELS: the wheel, slot machine and Galton board are three.js models
+   (models3d.js) whenever WebGL is available, with the original 2D versions
+   as the fallback. The models are driven by the same numbers as the 2D
+   versions (wheel angle, reel pixel offset, ball path), so they only show
+   an outcome that was already decided. On the 3D board a ball's path ends
+   on top of its bin's pile instead of at the bin mouth; the coin flips that
+   chose the bin are untouched.
 
    Every winning pick resolves to { index, name } so the winning line can
    be removed from the list afterwards even when names are duplicated; a
@@ -80,6 +88,26 @@ function smoothstep(t) { return t * t * (3 - 2 * t); }
 // mechanical snap-back at the end of a spin.
 function easeOutBackSoft(t) { const c1 = 0.55, c3 = c1 + 1, u = t - 1; return 1 + c3 * u * u * u + c1 * u * u; }
 
+// CSS cubic-bezier() as a function of time, so the 3D wheel eases exactly like the 2D one.
+function cubicBezier(x1, y1, x2, y2) {
+  const bx = t => 3 * x1 * t * (1 - t) * (1 - t) + 3 * x2 * t * t * (1 - t) + t * t * t;
+  const by = t => 3 * y1 * t * (1 - t) * (1 - t) + 3 * y2 * t * t * (1 - t) + t * t * t;
+  const dbx = t => 3 * x1 * (1 - t) * (1 - t) + 6 * (x2 - x1) * t * (1 - t) + 3 * (1 - x2) * t * t;
+  return x => {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    let t = x;
+    for (let i = 0; i < 8; i++) {
+      const d = dbx(t);
+      if (Math.abs(d) < 1e-6) break;
+      t = Math.max(0, Math.min(1, t - (bx(t) - x) / d));
+    }
+    return by(t);
+  };
+}
+const WHEEL_EASE = cubicBezier(0.12, 0.67, 0.14, 1);
+const WHEEL_SPIN_MS = 4800;
+
 function roundRectPath(g, x, y, w, h, r) {
   g.beginPath();
   g.moveTo(x + r, y);
@@ -96,6 +124,10 @@ let choices = [];
 let animating = false;
 let persistApi = null;
 let lastPick = null; // { index, name } — drives the "remove from list" action
+let gl = null;       // { wheel, slot, galton } three.js models, or null to use the 2D versions
+let celebrateUntil = 0;
+const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+function isLight() { return document.body.classList.contains('light'); }
 
 // ── CHOICES PARSING ─────────────────────────────────────────────────────
 function parseChoices() {
@@ -147,6 +179,8 @@ function setMode(mode) {
   if (mode === 'dice') refreshDice();
   if (mode === 'galton') { invalidateGaltonBoard(); drawGaltonBoard(null); }
   if (mode === 'wheel') buildWheel();
+  if (mode === 'slot') refreshSlot3D();
+  kickIdle();
   if (persistApi) persistApi.schedule();
 }
 
@@ -158,17 +192,87 @@ document.querySelectorAll('.mode-tab').forEach(btn => {
   });
 });
 
+// ── 3D MODELS (models3d.js) ─────────────────────────────────────────────
+/* When three.js and WebGL are available the wheel, slot machine and Galton
+   board are drawn as 3D models; otherwise the 2D versions below are used.
+   Either way the outcome is picked by the same code before anything moves. */
+function initModels() {
+  if (typeof M3D === 'undefined' || !M3D.available()) return null;
+  try {
+    return {
+      wheel: M3D.Wheel($('wheel3dCanvas')),
+      slot: M3D.SlotMachine($('slot3dCanvas')),
+      galton: M3D.GaltonBoard($('galton3dCanvas'))
+    };
+  } catch (e) {
+    console.warn('3D models unavailable, using 2D', e);
+    return null;
+  }
+}
+
+function sizeModel(model, el) {
+  const r = el.getBoundingClientRect();
+  if (r.width > 0 && r.height > 0) model.resize(r.width, r.height);
+}
+
+function bulbMode(now) {
+  if (reduceMotion) return 'still';
+  if (now < celebrateUntil) return 'party';
+  return animating ? 'fast' : 'idle';
+}
+
+// Chasing bulbs and the flapper's wobble keep the wheel and the slot machine
+// alive between spins. ~30 fps is plenty for that, and it stops whenever the
+// tab is hidden or another mode is showing.
+let idleRaf = 0, idleLast = 0;
+function idleLoop(now) {
+  idleRaf = 0;
+  if (!gl || document.hidden || (currentMode !== 'wheel' && currentMode !== 'slot')) return;
+  if (!animating && now - idleLast > 32) {
+    const dt = Math.min(0.05, (now - idleLast) / 1000);
+    idleLast = now;
+    if (currentMode === 'wheel') {
+      gl.wheel.settleFlapper(dt);
+      gl.wheel.tick(now / 1000, bulbMode(now));
+      gl.wheel.render();
+    } else {
+      gl.slot.tick(now, bulbMode(now));
+      gl.slot.render();
+    }
+  }
+  idleRaf = requestAnimationFrame(idleLoop);
+}
+function kickIdle() {
+  if (gl && !idleRaf && !reduceMotion) idleRaf = requestAnimationFrame(idleLoop);
+}
+document.addEventListener('visibilitychange', kickIdle);
+
 // ── WHEEL ────────────────────────────────────────────────────────────────
 let wheelRotation = 0;
 
 function resetWheelRotation() {
+  if (gl) gl.wheel.setRotation(0);
   const c = $('wheelCanvas');
   c.style.transition = 'none';
   c.style.transform = 'rotate(0deg)';
   wheelRotation = 0;
 }
 
+function wheelColors(n) {
+  const palette = getPalette();
+  return Array.from({ length: n }, (_, i) => palette[i % palette.length] || '#8DBBFF');
+}
+
 function buildWheel() {
+  if (gl) {
+    sizeModel(gl.wheel, $('wheel3d'));
+    gl.wheel.setTheme(isLight());
+    gl.wheel.setSegments(choices, wheelColors(choices.length));
+    gl.wheel.setRotation(wheelRotation);
+    gl.wheel.tick(performance.now() / 1000, bulbMode(performance.now()));
+    gl.wheel.render();
+    return;
+  }
   const canvas = $('wheelCanvas');
   const { cssW, cssH } = sizeCanvasForDPR(canvas);
   const dpr = window.devicePixelRatio || 1;
@@ -241,6 +345,26 @@ function spinWheel() {
     const total = spins * 360 + delta;
     wheelRotation += total;
 
+    if (gl) {
+      // Same ease and duration as the CSS transition, driven frame by frame so
+      // the flapper can react to each peg.
+      const from = wheelRotation - total, to = wheelRotation;
+      const t0 = performance.now();
+      let last = t0;
+      const frame = now => {
+        const t = Math.max(0, Math.min(1, (now - t0) / WHEEL_SPIN_MS));
+        const dt = Math.min(0.05, Math.max(0, now - last) / 1000);
+        last = now;
+        gl.wheel.setRotation(t < 1 ? from + total * WHEEL_EASE(t) : to, dt);
+        gl.wheel.tick(now / 1000, bulbMode(now));
+        gl.wheel.render();
+        if (t < 1) requestAnimationFrame(frame);
+        else resolve(result);
+      };
+      requestAnimationFrame(frame);
+      return;
+    }
+
     canvas.style.transition = 'transform 4800ms cubic-bezier(.12,.67,.14,1)';
     canvas.style.transform = `rotate(${wheelRotation}deg)`;
     canvas.addEventListener('transitionend', function onEnd() {
@@ -252,75 +376,141 @@ function spinWheel() {
 
 // ── DICE (three.js) ──────────────────────────────────────────────────────
 /* BoxGeometry material order is [+X, -X, +Y, -Y, +Z, -Z].
-   Faces are laid out so opposite sides sum to 7, like a real die. */
+   Faces are laid out so opposite sides sum to 7, like a real die.
+
+   The die is a 2-unit cube with rounded edges resting on a table at y = 0,
+   so its centre sits at y = 1. A roll pops it off the table and a small
+   rigid-body simulation (gravity, bounces, friction, tray walls) plays it
+   out. The simulation only decides how the throw LOOKS: the face was
+   already picked, and the cube's symmetry lets the playback relabel the
+   faces mid-air so the pre-chosen face is the one that ends up on top. */
 const DIE_FACE_ORDER = [1, 6, 2, 5, 3, 4];
-const DIE_LOOK_Y = 0.6;
-const DIE_HALF_DIAG = Math.sqrt(3); // a 2-unit cube on its corner needs this much room
+const DIE_EDGE_R = 0.25;            // edge and corner rounding radius
+const DIE_CORE = 1 - DIE_EDGE_R;    // half-size of the cube the rounding wraps
+const DIE_LOOK = { x: 0, y: 1.1, z: 0.4 };
+const DIE_SIM = {
+  dt: 1 / 240, g: 34, restitution: 0.42, friction: 0.5,
+  invMass: 1, invInertia: 1.5,      // solid cube of side 2: I = m·s²/6 = 2/3
+  maxTime: 4.5
+};
+const UP = { x: 0, y: 1, z: 0 };
 let FACE_NORMAL = null; // built after THREE loads
+let TEXT_UP = null;     // per face: the direction the writing reads "up", in the die's own frame
+let DIE_CORNERS = null;
 let three = null;
 
-// World-space half extents the camera can actually see at the die's plane, so
-// the roll can be sized to the canvas instead of overshooting it.
-function dieViewExtents() {
-  const cam = three.camera;
-  const dist = cam.position.distanceTo(new THREE.Vector3(0, DIE_LOOK_Y, 0));
-  const halfH = dist * Math.tan((cam.fov * Math.PI / 180) / 2);
-  return { halfW: halfH * cam.aspect, halfH };
+/* Each face carries one choice, engraved into the plastic and painted, in
+   place of pips. Face f holds choice f; faces past the end of the list are
+   engraved "Nobody", the rolls that pick no one. */
+const DIE_BLANK = 'Nobody';
+function dieFaceLabel(face) {
+  return face <= Math.min(choices.length, 6) ? choices[face - 1] : null;
 }
 
 function themeDieColors() {
   return {
-    body: cssVar('--panel-raised') || '#ffffff',
-    bevel: cssVar('--border') || '#e0e6f0',
-    pip: cssVar('--negative-em') || '#e63939'
+    body: '#f6f2e9',                          // ivory acetate
+    ink: '#c8121c',                           // casino red
+    blank: '#5d6470',                         // slate, for the faces that pick nobody
+    shadow: document.body.classList.contains('light') ? 0.2 : 0.42
   };
 }
 
-function makeFaceTexture(pips, col) {
-  const S = 256;
+// Lays the label out inside the flat part of a face, at canvas size S.
+function layoutDieLabel(g, S, label) {
+  const text = label == null ? DIE_BLANK : label;
+  const fit = M3D.wrapLabel(g, text, S * 0.72, Math.round(S * 0.26), Math.round(S * 0.075), 3, 800, '"DM Sans", sans-serif');
+  return { lines: fit.lines, px: fit.px, lh: fit.px * 1.06 };
+}
+function drawDieLabel(g, S, lay, fill) {
+  g.font = `800 ${lay.px}px "DM Sans", sans-serif`;
+  g.textAlign = 'center';
+  g.textBaseline = 'middle';
+  g.fillStyle = fill;
+  lay.lines.forEach((ln, i) => g.fillText(ln, S / 2, S / 2 + (i - (lay.lines.length - 1) / 2) * lay.lh));
+}
+function scaledLayout(lay, k) { return { lines: lay.lines, px: lay.px * k, lh: lay.lh * k }; }
+
+function dieCanvas(S) {
   const c = document.createElement('canvas');
   c.width = c.height = S;
+  return c;
+}
+
+// Colour map: ivory face with the label painted into its engraving.
+function makeFaceTexture(lay, blank, col) {
+  const S = 512;
+  const c = dieCanvas(S);
   const g = c.getContext('2d');
-
-  g.fillStyle = col.bevel;
-  g.fillRect(0, 0, S, S);
-  roundRectPath(g, 9, 9, S - 18, S - 18, 42);
   g.fillStyle = col.body;
-  g.fill();
-
-  const sheen = g.createLinearGradient(0, 0, S, S);
-  sheen.addColorStop(0, 'rgba(255,255,255,0.20)');
-  sheen.addColorStop(0.55, 'rgba(255,255,255,0)');
-  sheen.addColorStop(1, 'rgba(0,0,0,0.10)');
-  roundRectPath(g, 9, 9, S - 18, S - 18, 42);
-  g.fillStyle = sheen;
-  g.fill();
-
-  const A = 0.27, M = 0.5, B = 0.73;
-  const LAYOUT = {
-    1: [[M, M]],
-    2: [[A, A], [B, B]],
-    3: [[A, A], [M, M], [B, B]],
-    4: [[A, A], [B, A], [A, B], [B, B]],
-    5: [[A, A], [B, A], [M, M], [A, B], [B, B]],
-    6: [[A, A], [B, A], [A, M], [B, M], [A, B], [B, B]]
-  };
-  const r = S * 0.076;
-  (LAYOUT[pips] || []).forEach(([px, py]) => {
-    const x = px * S, y = py * S;
-    g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2);
-    g.fillStyle = col.pip; g.fill();
-    const inner = g.createRadialGradient(x - r * 0.3, y - r * 0.4, r * 0.12, x, y, r);
-    inner.addColorStop(0, 'rgba(0,0,0,0.30)');
-    inner.addColorStop(1, 'rgba(0,0,0,0)');
-    g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2);
-    g.fillStyle = inner; g.fill();
-  });
-
+  g.fillRect(0, 0, S, S);
+  // Faint mottling so the plastic does not read as a flat CG fill.
+  for (let i = 0; i < 900; i++) {
+    g.fillStyle = `rgba(${Math.random() < 0.5 ? '120,100,70' : '255,255,255'},${0.018 + Math.random() * 0.02})`;
+    const x = Math.random() * S, y = Math.random() * S, rr = 4 + Math.random() * 18;
+    g.beginPath(); g.arc(x, y, rr, 0, Math.PI * 2); g.fill();
+  }
+  // Worn lip where the paint meets the plastic, then the paint itself, in shade.
+  g.save();
+  g.lineJoin = 'round';
+  g.strokeStyle = 'rgba(90,60,40,0.22)';
+  g.lineWidth = S * 0.012;
+  g.font = `800 ${lay.px}px "DM Sans", sans-serif`;
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  lay.lines.forEach((ln, i) => g.strokeText(ln, S / 2, S / 2 + (i - (lay.lines.length - 1) / 2) * lay.lh));
+  g.restore();
+  drawDieLabel(g, S, lay, blank ? col.blank : col.ink);
+  drawDieLabel(g, S, lay, 'rgba(20,0,0,0.22)');
   const tex = new THREE.CanvasTexture(c);
-  tex.anisotropy = 4;
+  tex.anisotropy = 8;
   if (THREE.sRGBEncoding !== undefined) tex.encoding = THREE.sRGBEncoding;
   return tex;
+}
+
+/* Normal map: the label is cut into the face. The engraving is a blurred
+   mask of the text used as a height field (sunk where the text is), and the
+   normals are its slope, so light catches the far wall of every stroke. */
+function makeEngravingMaps(lay) {
+  const S = 256;
+  const mask = dieCanvas(S);
+  const mg = mask.getContext('2d');
+  mg.fillStyle = '#000';
+  mg.fillRect(0, 0, S, S);
+  mg.filter = 'blur(1.4px)'; // ignored where unsupported: the bevel is just crisper
+  drawDieLabel(mg, S, scaledLayout(lay, S / 512), '#fff');
+  mg.filter = 'none';
+  const a = mg.getImageData(0, 0, S, S).data;
+  const h = (x, y) => a[(Math.min(S - 1, Math.max(0, y)) * S + Math.min(S - 1, Math.max(0, x))) * 4] / 255;
+
+  const nc = dieCanvas(S);
+  const ng = nc.getContext('2d');
+  const img = ng.createImageData(S, S);
+  const d = img.data;
+  const depth = 2.4;
+  for (let y = 0; y < S; y++) {
+    for (let x = 0; x < S; x++) {
+      const nx = depth * (h(x + 1, y) - h(x - 1, y)) / 2;
+      const ny = -depth * (h(x, y + 1) - h(x, y - 1)) / 2;
+      const len = Math.hypot(nx, ny, 1);
+      const o = (y * S + x) * 4;
+      d[o] = Math.round((nx / len * 0.5 + 0.5) * 255);
+      d[o + 1] = Math.round((ny / len * 0.5 + 0.5) * 255);
+      d[o + 2] = Math.round((1 / len * 0.5 + 0.5) * 255);
+      d[o + 3] = 255;
+    }
+  }
+  ng.putImageData(img, 0, 0);
+  const normal = new THREE.CanvasTexture(nc);
+  normal.anisotropy = 8;
+
+  /* Surface map shared by clearcoat (red channel) and roughness (green): the
+     plastic is lacquered and glossy, the paint down in the engraving is matte. */
+  const sc = dieCanvas(S);
+  const sg = sc.getContext('2d');
+  sg.fillStyle = 'rgb(255,82,0)';
+  sg.fillRect(0, 0, S, S);
+  drawDieLabel(sg, S, scaledLayout(lay, S / 512), 'rgb(30,190,0)');
+  return { normal, surface: new THREE.CanvasTexture(sc) };
 }
 
 function makeShadowTexture() {
@@ -329,25 +519,70 @@ function makeShadowTexture() {
   c.width = c.height = S;
   const g = c.getContext('2d');
   const grad = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
-  grad.addColorStop(0, 'rgba(0,0,0,0.40)');
-  grad.addColorStop(0.5, 'rgba(0,0,0,0.17)');
+  grad.addColorStop(0, 'rgba(0,0,0,0.55)');
+  grad.addColorStop(0.45, 'rgba(0,0,0,0.22)');
   grad.addColorStop(1, 'rgba(0,0,0,0)');
   g.fillStyle = grad;
   g.fillRect(0, 0, S, S);
   return new THREE.CanvasTexture(c);
 }
 
-function applyDieTextures() {
+let dieFaceKey = '';
+function applyDieTextures(force) {
   if (!three) return;
   const col = themeDieColors();
+  const labels = DIE_FACE_ORDER.map(dieFaceLabel);
+  const key = JSON.stringify([labels, col]);
+  if (!force && key === dieFaceKey) return;
+  dieFaceKey = key;
   if (Array.isArray(three.die.material)) {
-    three.die.material.forEach(m => { if (m.map) m.map.dispose(); m.dispose(); });
+    three.die.material.forEach(m => {
+      if (m.map) m.map.dispose();
+      if (m.normalMap) m.normalMap.dispose();
+      if (m.roughnessMap) m.roughnessMap.dispose();
+      m.dispose();
+    });
   }
-  three.die.material = DIE_FACE_ORDER.map(face => new THREE.MeshStandardMaterial({
-    map: makeFaceTexture(face, col),
-    roughness: 0.42,
-    metalness: 0.04
-  }));
+  const measure = dieCanvas(8).getContext('2d');
+  three.die.material = labels.map(label => {
+    const lay = layoutDieLabel(measure, 512, label);
+    const { normal, surface } = makeEngravingMaps(lay);
+    return new THREE.MeshPhysicalMaterial({
+      map: makeFaceTexture(lay, label == null, col),
+      normalMap: normal,
+      roughness: 1,
+      roughnessMap: surface,
+      clearcoat: 1,
+      clearcoatMap: surface,
+      clearcoatRoughness: 0.12,
+      metalness: 0
+    });
+  });
+  three.floor.material.opacity = col.shadow;
+}
+
+/* Reads the writing direction of each face off the geometry's UVs: the
+   average direction in which v (texture up) increases across the face. */
+function faceTextUp(geo) {
+  const pos = geo.attributes.position, uv = geo.attributes.uv, index = geo.index;
+  const out = {};
+  geo.groups.forEach((grp, m) => {
+    const face = DIE_FACE_ORDER[m];
+    const ids = new Set();
+    for (let i = grp.start; i < grp.start + grp.count; i++) ids.add(index.getX(i));
+    let vMean = 0;
+    const pMean = new THREE.Vector3();
+    ids.forEach(i => { vMean += uv.getY(i); pMean.x += pos.getX(i); pMean.y += pos.getY(i); pMean.z += pos.getZ(i); });
+    vMean /= ids.size; pMean.divideScalar(ids.size);
+    const dir = new THREE.Vector3();
+    ids.forEach(i => {
+      const w = uv.getY(i) - vMean;
+      dir.x += w * (pos.getX(i) - pMean.x); dir.y += w * (pos.getY(i) - pMean.y); dir.z += w * (pos.getZ(i) - pMean.z);
+    });
+    const n = FACE_NORMAL[face];
+    out[face] = dir.addScaledVector(n, -dir.dot(n)).normalize();
+  });
+  return out;
 }
 
 function initThree() {
@@ -361,39 +596,83 @@ function initThree() {
     2: new THREE.Vector3(0, 1, 0), 5: new THREE.Vector3(0, -1, 0),
     3: new THREE.Vector3(0, 0, 1), 4: new THREE.Vector3(0, 0, -1)
   };
+  DIE_CORNERS = [];
+  for (const sx of [-1, 1]) for (const sy of [-1, 1]) for (const sz of [-1, 1]) {
+    DIE_CORNERS.push(new THREE.Vector3(sx, sy, sz).multiplyScalar(DIE_CORE));
+  }
 
   const canvas = $('diceCanvas');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   if (THREE.sRGBEncoding !== undefined) renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-  camera.position.set(0, 2.1, 7.2);
-  camera.lookAt(0, DIE_LOOK_Y, 0); // resting die sits low in frame, leaving headroom for the bounce
+  scene.environment = M3D.studioEnvironment(renderer);
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+  camera.position.set(0, 7.4, 8.6);
+  camera.lookAt(DIE_LOOK.x, DIE_LOOK.y, DIE_LOOK.z);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
-  const key = new THREE.DirectionalLight(0xffffff, 1.0);
-  key.position.set(3.5, 6.5, 4.5);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.25));
+  const key = new THREE.DirectionalLight(0xfff6ea, 1.1);
+  key.position.set(4, 10, 5);
+  key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024);
+  key.shadow.camera.left = -8; key.shadow.camera.right = 8;
+  key.shadow.camera.top = 8; key.shadow.camera.bottom = -8;
+  key.shadow.camera.near = 1; key.shadow.camera.far = 30;
+  key.shadow.bias = -0.0006;
+  key.shadow.normalBias = 0.02;
+  key.shadow.radius = 5;
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xffffff, 0.3);
-  fill.position.set(-4.5, 2, -3);
-  scene.add(fill);
 
-  const die = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), []);
+  const dieGeo = M3D.roundedBox(2, 2, 2, DIE_EDGE_R, 7);
+  TEXT_UP = faceTextUp(dieGeo);
+  const die = new THREE.Mesh(dieGeo, []);
+  die.castShadow = true;
+  die.position.y = 1;
+  // Face 2 on top, its writing turned a little off square so it reads naturally.
+  const up2 = TEXT_UP[2];
+  if (up2) die.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.atan2(-0.3, -1) - Math.atan2(up2.x, up2.z));
   scene.add(die);
 
-  // Soft contact shadow. A real shadow map reads as a hard wedge at this
-  // shallow camera angle, so the blob is both prettier and cheaper.
+  // The table only shows the shadow the key light casts on it.
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.25 }));
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // Soft contact shadow: the occlusion right under the die a light alone misses.
   const shadow = new THREE.Mesh(
-    new THREE.PlaneGeometry(4.4, 4.4),
+    new THREE.PlaneGeometry(3.4, 3.4),
     new THREE.MeshBasicMaterial({ map: makeShadowTexture(), transparent: true, depthWrite: false })
   );
   shadow.rotation.x = -Math.PI / 2;
-  shadow.position.y = -1.0;
+  shadow.position.y = 0.005;
   scene.add(shadow);
 
-  return { renderer, scene, camera, die, shadow };
+  return { renderer, scene, camera, die, floor, shadow, rolling: false };
+}
+
+/* Tray the die is allowed to roam: the patch of table the camera sees,
+   less a margin so a tumbling die never clips the canvas edge. */
+function dieTrayBounds() {
+  const cam = three.camera;
+  const ray = new THREE.Raycaster();
+  const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -1); // die-centre height
+  const hit = new THREE.Vector3();
+  const at = (x, y) => {
+    ray.setFromCamera(new THREE.Vector2(x, y), cam);
+    return ray.ray.intersectPlane(plane, hit) ? hit.clone() : null;
+  };
+  const side = at(1, 0), near = at(0, -1), far = at(0, 0.4);
+  const bx = side ? Math.max(0.6, Math.abs(side.x) - 1.7) : 1;
+  const zNear = near ? Math.max(0.3, near.z - 1.6) : 0.8;
+  const zFar = far ? Math.min(-0.3, far.z + 1.6) : -0.8;
+  return { bx, zNear, zFar };
 }
 
 function refreshDice() {
@@ -404,6 +683,13 @@ function refreshDice() {
   three.renderer.setSize(w, h, false);
   three.camera.aspect = w / h;
   three.camera.updateProjectionMatrix();
+  if (!three.rolling) {
+    // A narrower stage can leave the resting die outside the new tray.
+    const b = dieTrayBounds();
+    three.die.position.x = Math.max(-b.bx, Math.min(b.bx, three.die.position.x));
+    three.die.position.z = Math.max(b.zFar, Math.min(b.zNear, three.die.position.z));
+    updateDieShadow();
+  }
   three.renderer.render(three.scene, three.camera);
 }
 
@@ -418,11 +704,7 @@ function buildDiceLegend() {
     const item = document.createElement('span');
     item.className = 'leg-item' + (mapped ? '' : ' leg-empty');
     item.dataset.face = String(f);
-    const face = document.createElement('span');
-    face.className = 'leg-face';
-    face.textContent = String(f);
-    item.appendChild(face);
-    item.appendChild(document.createTextNode(' ' + (mapped ? choices[f - 1] : 'nobody')));
+    item.textContent = mapped ? choices[f - 1] : DIE_BLANK;
     el.appendChild(item);
   }
   const odds = $('diceOdds');
@@ -433,18 +715,156 @@ function buildDiceLegend() {
   }
 }
 
-// Shadow tightens and darkens as the die drops back towards the table.
+// Contact shadow follows the die and fades as it lifts off the table.
 function updateDieShadow() {
   if (!three || !three.shadow) return;
-  const k = Math.max(0, 1 - three.die.position.y / 3);
-  three.shadow.position.x = three.die.position.x;
-  three.shadow.scale.setScalar(0.72 + 0.4 * k);
-  three.shadow.material.opacity = 0.3 + 0.7 * k;
+  const p = three.die.position;
+  const k = Math.max(0, Math.min(1, 1 - (p.y - 1) / 2.2));
+  three.shadow.position.x = p.x;
+  three.shadow.position.z = p.z;
+  three.shadow.scale.setScalar(0.8 + 0.5 * (1 - k));
+  three.shadow.material.opacity = 0.15 + 0.85 * k;
 }
 
-// Die rests at y = 0; the bounce curve starts high and decays to the table.
-function dieBounceY(t, amp) {
-  return Math.abs(Math.cos(Math.PI * t * 3.2)) * amp * Math.pow(1 - t, 1.7);
+/* Rigid-body throw of a rounded cube. Collision uses the eight corner
+   spheres (centre at ±DIE_CORE, radius DIE_EDGE_R), which is exact for a
+   rounded cube against flat planes. Contacts are solved with sequential
+   impulses: restitution on the normal, Coulomb friction on the tangent. */
+function simulateDieThrow(p0, q0, v0, w0, bounds) {
+  const S = DIE_SIM, dt = S.dt;
+  const p = p0.clone(), q = q0.clone(), v = v0.clone(), w = w0.clone();
+  const planes = [
+    { n: new THREE.Vector3(0, 1, 0), d: 0 },
+    { n: new THREE.Vector3(-1, 0, 0), d: bounds.bx + 1 },
+    { n: new THREE.Vector3(1, 0, 0), d: bounds.bx + 1 },
+    { n: new THREE.Vector3(0, 0, -1), d: bounds.zNear + 1 },
+    { n: new THREE.Vector3(0, 0, 1), d: -bounds.zFar + 1 }
+  ];
+  const frames = [];
+  const wc = new THREE.Vector3(), r = new THREE.Vector3(), vp = new THREE.Vector3();
+  const tmp = new THREE.Vector3(), J = new THREE.Vector3(), spin = new THREE.Quaternion();
+  const velAt = (rr, out) => out.crossVectors(w, rr).add(v);
+  const applyImpulse = (rr, imp) => {
+    v.addScaledVector(imp, S.invMass);
+    w.addScaledVector(tmp.crossVectors(rr, imp), S.invInertia);
+  };
+  let still = 0, settled = false;
+  const steps = Math.round(S.maxTime / dt);
+  for (let step = 0; step < steps; step++) {
+    v.y -= S.g * dt;
+    p.addScaledVector(v, dt);
+    spin.set(w.x, w.y, w.z, 0).multiply(q);
+    q.set(q.x + 0.5 * dt * spin.x, q.y + 0.5 * dt * spin.y, q.z + 0.5 * dt * spin.z, q.w + 0.5 * dt * spin.w).normalize();
+
+    const contacts = [];
+    let onFloor = false;
+    for (const pl of planes) {
+      let deepest = 0;
+      for (const corner of DIE_CORNERS) {
+        wc.copy(corner).applyQuaternion(q).add(p);
+        const gap = pl.n.dot(wc) + pl.d - DIE_EDGE_R;
+        if (gap >= 0.002) continue;
+        deepest = Math.min(deepest, gap);
+        const rr = wc.clone().addScaledVector(pl.n, -DIE_EDGE_R).sub(p);
+        const vn0 = velAt(rr, vp).dot(pl.n);
+        const rn = tmp.crossVectors(rr, pl.n);
+        contacts.push({
+          r: rr, n: pl.n, jn: 0, jt: new THREE.Vector3(),
+          kn: S.invMass + S.invInertia * rn.lengthSq(),
+          target: vn0 < -2.2 ? -S.restitution * vn0 : 0
+        });
+        if (pl.n.y === 1) onFloor = true;
+      }
+      if (deepest < 0) p.addScaledVector(pl.n, -deepest * 0.6);
+    }
+    for (let it = 0; it < 10; it++) {
+      for (const c of contacts) {
+        velAt(c.r, vp);
+        const jn = Math.max(0, c.jn + (c.target - vp.dot(c.n)) / c.kn);
+        J.copy(c.n).multiplyScalar(jn - c.jn);
+        c.jn = jn;
+        applyImpulse(c.r, J);
+
+        velAt(c.r, vp);
+        const vt = vp.addScaledVector(c.n, -vp.dot(c.n));
+        const speed = vt.length();
+        if (speed < 1e-6) continue;
+        const t = vt.divideScalar(speed);
+        const kt = S.invMass + S.invInertia * tmp.crossVectors(c.r, t).lengthSq();
+        const jt = c.jt.clone().addScaledVector(t, -speed / kt);
+        const maxF = S.friction * c.jn;
+        if (jt.length() > maxF) jt.setLength(maxF);
+        J.subVectors(jt, c.jt);
+        c.jt.copy(jt);
+        applyImpulse(c.r, J);
+      }
+    }
+    if (onFloor) {
+      // Rolling resistance and felt drag: what finally stops a real die.
+      w.multiplyScalar(1 - 2.2 * dt);
+      v.x *= 1 - 1.2 * dt; v.z *= 1 - 1.2 * dt;
+    }
+    frames.push({ p: p.clone(), q: q.clone(), onFloor });
+    if (onFloor && v.lengthSq() < 0.02 && w.lengthSq() < 0.03) still++;
+    else still = 0;
+    if (still > 24) { settled = true; break; }
+  }
+  // Which body axis ended up pointing at the ceiling.
+  const qInv = q.clone().invert();
+  const upBody = new THREE.Vector3(0, 1, 0).applyQuaternion(qInv);
+  let best = null, bestDot = -2;
+  for (const f of [1, 2, 3, 4, 5, 6]) {
+    const dot = FACE_NORMAL[f].dot(upBody);
+    if (dot > bestDot) { bestDot = dot; best = f; }
+  }
+  return { frames, settled, topFace: best, tilt: Math.acos(Math.min(1, bestDot)) };
+}
+
+// How far (in screen units) the tumbling die's bounding sphere pokes past the canvas.
+function dieOffscreen(frames) {
+  const cam = three.camera, v = new THREE.Vector3();
+  const reach = DIE_CORE * Math.sqrt(3) + DIE_EDGE_R;
+  let spill = 0;
+  for (let i = 0; i < frames.length; i += 6) {
+    const p = frames[i].p;
+    for (const [dx, dy] of [[reach, 0], [-reach, 0], [0, reach], [0, -reach]]) {
+      v.set(p.x + dx, p.y + dy, p.z).project(cam);
+      spill = Math.max(spill, Math.abs(v.x) - 0.97, Math.abs(v.y) - 0.97);
+    }
+  }
+  return spill;
+}
+
+/* The body-frame rotation the playback eases in while the die is in the
+   air, and the window it has to do it in (no contact, clear of the table). */
+function planDieThrow(bounds) {
+  const die = three.die;
+  const p0 = die.position.clone();
+  p0.y = 1;
+  let chosen = null;
+  for (let attempt = 0; attempt < 24; attempt++) {
+    // Aim for a random spot in the middle of the tray, so rolls wander but stay in view.
+    const tx = (Math.random() * 2 - 1) * bounds.bx * 0.6;
+    const tz = (bounds.zNear + bounds.zFar) / 2 + (Math.random() * 2 - 1) * (bounds.zNear - bounds.zFar) * 0.25;
+    const v0 = new THREE.Vector3((tx - p0.x) * 1.1, 8.5 + Math.random() * 1.8, (tz - p0.z) * 1.1);
+    const w0 = new THREE.Vector3(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1)
+      .normalize().multiplyScalar(13 + Math.random() * 9);
+    const sim = simulateDieThrow(p0, die.quaternion, v0, w0, bounds);
+    // First airborne arc: the frames between leaving the table and landing again.
+    let a = -1, b = -1;
+    for (let i = 0; i < sim.frames.length; i++) {
+      const f = sim.frames[i];
+      if (a < 0 && !f.onFloor && f.p.y > 1.65) a = i;
+      else if (a >= 0 && (f.onFloor || f.p.y < 1.65)) { b = i; break; }
+    }
+    sim.window = [a, b];
+    const spill = dieOffscreen(sim.frames);
+    const ok = sim.settled && sim.tilt < 0.06 && a >= 0 && b - a > 24 && spill === 0;
+    const score = (sim.settled ? 0 : 10) + sim.tilt * 20 + (a >= 0 && b - a > 24 ? 0 : 5) + spill * 30;
+    if (!chosen || score < chosen.score) chosen = Object.assign(sim, { score });
+    if (ok) break;
+  }
+  return chosen;
 }
 
 function rollDice() {
@@ -455,43 +875,60 @@ function rollDice() {
     const result = idx >= 0 ? { index: idx, name: choices[idx] } : { noWin: true, face };
     if (!three) { resolve(result); return; }
 
+    document.querySelectorAll('#diceLegend .leg-item').forEach(el => el.classList.remove('hit'));
     const die = three.die;
-    const qStart = die.quaternion.clone();
-    // Rotation that brings the winning face's normal to +Z, straight at the camera.
-    const align = new THREE.Quaternion().setFromUnitVectors(FACE_NORMAL[face], new THREE.Vector3(0, 0, 1));
-    const spinZ = new THREE.Quaternion().setFromAxisAngle(
-      new THREE.Vector3(0, 0, 1), Math.floor(Math.random() * 4) * Math.PI / 2);
-    const qEnd = new THREE.Quaternion().multiplyQuaternions(spinZ, align);
-
-    const axis = new THREE.Vector3(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize();
-    const turns = 3 + Math.floor(Math.random() * 2);
-    const dur = 2200;
-    // Keep the whole tumble inside the canvas, whatever the stage is sized to.
-    const view = dieViewExtents();
-    const travel = Math.max(0.7, Math.min(2.4, view.halfW - DIE_HALF_DIAG - 0.25));
-    const startX = -(travel * (0.78 + Math.random() * 0.22));
-    const amp = Math.max(0.5, Math.min(1.5, DIE_LOOK_Y + view.halfH - DIE_HALF_DIAG - 0.25));
+    const sim = planDieThrow(dieTrayBounds());
+    const frames = sim.frames;
+    // A cube looks the same after any of its 24 symmetry rotations, so the
+    // simulated throw can carry any face to the top. relabel maps the chosen
+    // face's normal onto the one the simulation left facing up. Four such
+    // rotations exist (a quarter turn apart about that face); take the one
+    // that leaves the writing reading upright from where the player sits.
+    const last = frames[frames.length - 1];
+    const Y = new THREE.Vector3(0, 1, 0);
+    const away = new THREE.Vector3(last.p.x - three.camera.position.x, 0, last.p.z - three.camera.position.z).normalize();
+    const toTop = new THREE.Quaternion().setFromUnitVectors(FACE_NORMAL[face], FACE_NORMAL[sim.topFace]);
+    let relabel = null, bestUp = -2;
+    for (let k = 0; k < 4; k++) {
+      const cand = toTop.clone().multiply(new THREE.Quaternion().setFromAxisAngle(FACE_NORMAL[face], k * Math.PI / 2));
+      const qEnd = last.q.clone().multiply(cand);
+      const lv = new THREE.Quaternion().setFromUnitVectors(FACE_NORMAL[face].clone().applyQuaternion(qEnd), Y);
+      const up = TEXT_UP[face].clone().applyQuaternion(qEnd).applyQuaternion(lv).dot(away);
+      if (up > bestUp) { bestUp = up; relabel = cand; }
+    }
+    const [wa, wb] = sim.window;
+    const qLast = last.q.clone().multiply(relabel);
+    // Whatever tilt is left once the simulation stops, levelled over the last frames.
+    const level = new THREE.Quaternion().setFromUnitVectors(
+      FACE_NORMAL[face].clone().applyQuaternion(qLast), new THREE.Vector3(0, 1, 0));
+    const settleFrames = Math.min(frames.length - 1, 60);
+    const ident = new THREE.Quaternion(), qRel = new THREE.Quaternion(), qLev = new THREE.Quaternion();
+    const dur = frames.length * DIE_SIM.dt * 1000;
+    three.rolling = true;
     const t0 = performance.now();
-    const qSlerp = new THREE.Quaternion(), qTumble = new THREE.Quaternion();
 
     function frame(now) {
-      const t = Math.min(1, (now - t0) / dur);
-      const e = easeOutQuint(t);
-      // Slerp toward the target while an extra tumble unwinds to exactly zero,
-      // so the die always settles on the pre-chosen face.
-      qSlerp.copy(qStart).slerp(qEnd, e);
-      qTumble.setFromAxisAngle(axis, turns * Math.PI * 2 * (1 - e));
-      die.quaternion.multiplyQuaternions(qSlerp, qTumble);
-      die.position.x = startX * (1 - easeOutCubic(t));
-      die.position.y = dieBounceY(t, amp);
+      const i = Math.max(0, Math.min(frames.length - 1, Math.floor((now - t0) / (DIE_SIM.dt * 1000))));
+      const f = frames[i];
+      const s = wa < 0 ? (i >= frames.length - 1 ? 1 : 0) : smoothstep(Math.max(0, Math.min(1, (i - wa) / Math.max(1, wb - wa))));
+      qRel.copy(ident).slerp(relabel, s);
+      die.quaternion.copy(f.q).multiply(qRel);
+      die.position.copy(f.p);
+      const e = Math.max(0, (i - (frames.length - 1 - settleFrames)) / settleFrames);
+      if (e > 0) {
+        qLev.copy(ident).slerp(level, smoothstep(e));
+        die.quaternion.premultiply(qLev);
+        die.position.y += (1 - die.position.y) * smoothstep(e);
+      }
       updateDieShadow();
       three.renderer.render(three.scene, three.camera);
-      if (t < 1) requestAnimationFrame(frame);
+      if (now - t0 < dur) requestAnimationFrame(frame);
       else {
-        die.position.x = 0; die.position.y = 0;
-        die.quaternion.copy(qEnd);
+        die.quaternion.copy(qLast).premultiply(level);
+        die.position.set(last.p.x, 1, last.p.z);
         updateDieShadow();
         three.renderer.render(three.scene, three.camera);
+        three.rolling = false;
         document.querySelectorAll('#diceLegend .leg-item').forEach(el => {
           el.classList.toggle('hit', el.dataset.face === String(face));
         });
@@ -566,6 +1003,7 @@ function planSlotPull() {
 function initSlotReels() {
   for (let r = 0; r < 3; r++) {
     slotReels[r] = {
+      i: r,
       el: $('reel' + r),
       strip: document.querySelector('#reel' + r + ' .reel-strip'),
       pos: 0, vel: 0, loopLen: 0, state: 'idle', order: [],
@@ -579,6 +1017,42 @@ function applyReel(R) {
   R.strip.style.transform = `translate3d(0,${off}px,0)`;
   const b = Math.min(7, Math.abs(R.vel) / 420);
   R.strip.style.filter = b > 0.25 ? `blur(${b.toFixed(2)}px)` : 'none';
+  if (gl) gl.slot.setReel(R.i, R.pos, SLOT_ITEM_H, Math.abs(R.vel));
+}
+
+// Symbol colours follow the name, so duplicate lines print identically.
+function slotSymbolColor(name) {
+  const palette = getPalette();
+  const hex = palette[Math.max(0, choices.indexOf(name)) % palette.length] || '#1b3a7a';
+  return M3D.shade(hex, -0.42);
+}
+
+/* The 3D reels print each reel's order round a cylinder, repeated until there
+   are enough symbols for a proper drum. The repeat count is a whole number,
+   so slot k on the drum still shows R.order[k mod n]. */
+function buildSlotReels3D() {
+  const n = choices.length;
+  const lists = slotReels.map(R => {
+    if (!n) return Array.from({ length: M3D.REEL_MIN_SYMBOLS }, () => ({ label: '—', color: '#555' }));
+    const reps = Math.max(1, Math.ceil(M3D.REEL_MIN_SYMBOLS / n));
+    const list = [];
+    for (let k = 0; k < n * reps; k++) {
+      const name = choices[R.order[k % n]];
+      list.push({ label: name, color: slotSymbolColor(name) });
+    }
+    return list;
+  });
+  gl.slot.setReels(lists);
+  slotReels.forEach(applyReel);
+  refreshSlot3D();
+}
+
+function refreshSlot3D() {
+  if (!gl || currentMode !== 'slot') return;
+  sizeModel(gl.slot, $('slot3d'));
+  gl.slot.setTheme(isLight());
+  gl.slot.tick(performance.now(), bulbMode(performance.now()));
+  gl.slot.render();
 }
 
 function buildSlotStrips() {
@@ -611,10 +1085,12 @@ function buildSlotStrips() {
     R.pos = ((i * 2 + 1) * SLOT_ITEM_H) % R.loopLen; // stagger the idle offsets
     applyReel(R);
   });
+  if (gl) buildSlotReels3D();
 }
 
 function pullLever() {
   const lever = $('slotLever');
+  if (gl) gl.slot.pull(performance.now());
   lever.classList.add('pulled');
   setTimeout(() => lever.classList.remove('pulled'), 210);
 }
@@ -673,12 +1149,14 @@ function spinSlot() {
           if (t >= 1) {
             R.pos = R.to; R.vel = 0; R.state = 'done';
             R.el.classList.add('landed');
+            if (gl) gl.slot.flashReel(R.i, now);
             setTimeout(() => R.el.classList.remove('landed'), 300);
             done++;
           }
         }
         applyReel(R);
       });
+      if (gl) { gl.slot.tick(now, bulbMode(now)); gl.slot.render(); }
 
       if (done < 3) requestAnimationFrame(frame);
       else resolve(result);
@@ -688,6 +1166,14 @@ function spinSlot() {
 }
 
 $('slotLever').addEventListener('click', () => { if (currentMode === 'slot') onAction(); });
+// On the 3D machine the lever is part of the model: clicking it pulls.
+$('slot3dCanvas').addEventListener('click', e => {
+  if (gl && currentMode === 'slot' && gl.slot.hitsLever(e.clientX, e.clientY)) onAction();
+});
+$('slot3dCanvas').addEventListener('mousemove', e => {
+  if (!gl) return;
+  $('slot3dCanvas').style.cursor = !animating && gl.slot.hitsLever(e.clientX, e.clientY) ? 'pointer' : '';
+});
 $('slotLever').addEventListener('keydown', e => {
   if ((e.key === 'Enter' || e.key === ' ') && currentMode === 'slot') { e.preventDefault(); onAction(); }
 });
@@ -702,6 +1188,7 @@ let galtonSkip = false; // set by the skip button to fast forward a falling ball
 function invalidateGaltonBoard() { boardDirty = true; }
 
 function galtonLayout() {
+  if (gl) return galtonLayout3D();
   const canvas = $('galtonCanvas');
   const rect = canvas.getBoundingClientRect();
   const cssW = rect.width || 560;
@@ -720,6 +1207,63 @@ function galtonLayout() {
     pegRowY(r) { return marginTop + r * stepY; },
     binTopY: marginTop + boardH + 24
   };
+}
+
+/* The 3D board keeps the same px coordinate system but leaves room for a
+   hopper at the top, deeper bins for the balls to pile up in, and a name
+   plate, and sizes the bins so all of them sit inside the frame. */
+function galtonLayout3D() {
+  const rect = $('galton3dCanvas').getBoundingClientRect();
+  const cssW = rect.width || 560;
+  const cssH = rect.height || (cssW * 440 / 560);
+  const rows = Math.max(1, choices.length - 1);
+  const marginTop = 58;
+  const plateH = rows + 1 > 8 ? 64 : 48;
+  const binBottomY = cssH - 12 - plateH;
+  const binTopY = binBottomY - Math.max(46, cssH * 0.27);
+  const boardH = Math.max(30, binTopY - 20 - marginTop);
+  const stepY = boardH / rows;
+  const slot = Math.min((cssW - 40) / (rows + 1), stepY * 2.4);
+  const centerX = cssW / 2;
+  return {
+    cssW, cssH, rows, marginTop, stepY, slot, centerX, binTopY, binBottomY,
+    valid: choices.length >= 2,
+    pegX(r, s) { return centerX + (s - r / 2) * slot; },
+    pegRowY(r) { return marginTop + r * stepY; }
+  };
+}
+
+let galtonBoardKey = '';
+function renderGalton3D(balls) {
+  const canvas = $('galton3dCanvas');
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width) return;
+  gl.galton.resize(rect.width, rect.height);
+  if (boardDirty) {
+    const layout = galtonLayout3D();
+    const key = [Math.round(layout.cssW), Math.round(layout.cssH), layout.rows, layout.valid, isLight()].join(':');
+    if (key !== galtonBoardKey) { galtonBoardKey = key; gl.galton.build(layout, isLight()); }
+    gl.galton.setCounts(galtonCounts, choices);
+    boardDirty = false;
+  }
+  const list = !balls ? [] : (Array.isArray(balls) ? balls : [balls]);
+  gl.galton.setFlying(list);
+  gl.galton.render();
+}
+
+/* In 3D a ball does not vanish into a bar: it drops through the mouth of its
+   bin and comes to rest on top of the pile. Only the end of the path changes;
+   the coin flips that chose the bin are untouched. */
+function landOnPile(path, layout, pending) {
+  if (!gl) return;
+  const bin = path.slot;
+  const before = (galtonCounts[bin] || 0) + (pending[bin] || 0);
+  pending[bin] = (pending[bin] || 0) + 1;
+  const projectedMax = Math.max(...galtonCounts.map((c, i) => c + (pending[i] || 0)), pending[bin]);
+  const rest = gl.galton.landingPx(bin, before, projectedMax);
+  const r = gl.galton.ballRadiusPx();
+  path.stops[path.stops.length - 1] = { x: rest.x, y: layout.binTopY + r };
+  path.stops.push({ x: rest.x, y: rest.y });
 }
 
 // The pegs, bars and labels only change when the data does, so they are
@@ -805,6 +1349,7 @@ function renderGaltonStatic() {
 
 // Takes a single { x, y } ball, an array of them (batch drops), or null.
 function drawGaltonBoard(balls) {
+  if (gl) { renderGalton3D(balls); return; }
   const canvas = $('galtonCanvas');
   const { dpr } = sizeCanvasForDPR(canvas);
   if (boardDirty || !boardCanvas || boardCanvas.width !== canvas.width || boardCanvas.height !== canvas.height) {
@@ -866,7 +1411,7 @@ function ballPositionAt(stops, start, t, hop, lastHop, arc, radius) {
       const to = stops[i];
       return {
         x: from.x + (to.x - from.x) * smoothstep(p),
-        y: from.y + (to.y - from.y) * p - Math.sin(Math.PI * p) * (isLast ? 0 : arc),
+        y: from.y + (to.y - from.y) * (isLast ? p * (0.35 + 0.65 * p) : p) - Math.sin(Math.PI * p) * (isLast ? 0 : arc),
         r: radius
       };
     }
@@ -923,8 +1468,9 @@ async function dropGaltonBall() {
   $('galtonSkipBtn').hidden = false;
 
   const path = planGaltonPath(layout);
+  landOnPile(path, layout, {});
   const ball = { stops: path.stops, slot: path.slot, delay: 0, landed: false };
-  await animateGaltonDrops([ball], layout, Math.max(90, 200 - layout.rows * 6), 6.5);
+  await animateGaltonDrops([ball], layout, Math.max(90, 200 - layout.rows * 6), gl ? gl.galton.ballRadiusPx() : 6.5);
 
   $('galtonSkipBtn').hidden = true;
   galtonSkip = false;
@@ -950,14 +1496,16 @@ async function dropGaltonBatch(n) {
   const stagger = Math.max(45, hop * 0.55);
 
   const balls = [];
+  const pending = {};
   for (let i = 0; i < n; i++) {
     const path = planGaltonPath(layout);
+    landOnPile(path, layout, pending);
     balls.push({ stops: path.stops, slot: path.slot, delay: i * stagger, landed: false });
   }
 
   galtonSkip = false;
   $('galtonSkipBtn').hidden = false;
-  await animateGaltonDrops(balls, layout, hop, 5.4);
+  await animateGaltonDrops(balls, layout, hop, gl ? gl.galton.ballRadiusPx() : 5.4);
   $('galtonSkipBtn').hidden = true;
   galtonSkip = false;
   drawGaltonBoard(null);
@@ -1049,15 +1597,16 @@ function slump(el, ms) {
 function showNoWin(mode, res) {
   if (mode === 'slot') {
     slump(document.querySelector('.slot-cabinet'), 620);
+    if (gl && !reduceMotion) gl.slot.shake(performance.now(), 'lose');
     flashNoWin('slotFlash', 'No match — pull again');
   } else if (mode === 'dice') {
     slump($('diceScene'), 620);
-    flashNoWin('diceFlash', `Rolled a ${res.face} — nobody on that face`);
+    flashNoWin('diceFlash', 'Landed on Nobody. Roll again.');
   }
 }
 
 function noWinLabel(mode, res) {
-  return mode === 'dice' ? `No winner (face ${res.face})` : 'No match';
+  return mode === 'dice' ? 'No winner (Nobody face)' : 'No match';
 }
 
 // ── WINNER OVERLAY + CONFETTI ────────────────────────────────────────────
@@ -1158,6 +1707,7 @@ async function onAction() {
     animating = false;
     $('choicesInput').readOnly = false;
     updateActionAvailability();
+    kickIdle();
   }
 
   if (res && res.noWin) {
@@ -1170,7 +1720,9 @@ async function onAction() {
     addHistory(currentMode, res.name);
     showWinner(res.name);
     burstConfetti();
+    if (gl && (currentMode === 'wheel' || currentMode === 'slot')) celebrateUntil = performance.now() + 2400;
     if (currentMode === 'slot') {
+      if (gl && !reduceMotion) gl.slot.shake(performance.now(), 'win');
       const cab = document.querySelector('.slot-cabinet');
       cab.classList.add('win');
       setTimeout(() => cab.classList.remove('win'), 540);
@@ -1188,6 +1740,7 @@ $('themeToggle').addEventListener('click', () => {
   drawGaltonBoard(null);
   applyDieTextures();
   refreshDice();
+  if (gl) buildSlotReels3D(); // symbol colours follow the theme palette
 });
 
 // ── RECOMPUTE ON CHOICE EDITS ────────────────────────────────────────────
@@ -1199,6 +1752,7 @@ function recomputeAll() {
     buildWheel();
   }
   buildDiceLegend();
+  applyDieTextures();
   buildSlotStrips();
   buildGalton();
   if (currentMode === 'dice') refreshDice();
@@ -1206,6 +1760,7 @@ function recomputeAll() {
 $('choicesInput').addEventListener('input', recomputeAll);
 
 window.addEventListener('resize', debounce(() => {
+  refreshSlot3D();
   buildWheel();
   invalidateGaltonBoard();
   drawGaltonBoard(null);
@@ -1219,8 +1774,18 @@ persistApi = Persist.init('randompicker', {
     restore(ex) { if (ex && ex.mode) currentMode = ex.mode; }
   }
 });
+gl = initModels();
+document.body.classList.toggle('gl3d', !!gl);
 initSlotReels();
 three = initThree();
-applyDieTextures();
 setMode(currentMode);
 recomputeAll();
+// Canvas text only uses DM Sans once it has loaded, so repaint anything drawn before that.
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => {
+    applyDieTextures(true);
+    if (gl) gl.wheel.invalidate();
+    recomputeAll();
+    refreshDice();
+  });
+}
