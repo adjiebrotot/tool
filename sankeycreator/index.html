@@ -96,6 +96,18 @@
 
     <!-- SIDEBAR -->
     <aside class="controls card">
+      <!-- Quick Start swaps in a worked example's flows and title. Styling is
+           left as it is; Reset below is what restores the default styling. -->
+      <div class="quick-start-row">
+        <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start</span><span class="tip-icon" data-tip="Loads a worked example into the Data tab and names the diagram. It replaces the current flows but keeps your Style settings. Figures are illustrative.">?</span>
+        <div class="quick-start-btns">
+          <button class="quick-start-btn" data-preset="family" data-tip="Two salaries pooled into one household budget, then split into housing, food, transport, leisure and savings, with <code>remaining</code> sending whatever is left to the last bucket.">Family Finance</button>
+          <button class="quick-start-btn" data-preset="energy" data-tip="Primary energy sources feed electricity generation and the four end-use sectors, which split into useful energy services and rejected (waste) energy. Units in quads.">Energy Flow</button>
+          <button class="quick-start-btn" data-preset="trade" data-tip="A resource-exporting country: export earnings by product, spent on imports by category and partner, with the trade surplus left over.">Export &amp; Import</button>
+          <button class="quick-start-btn" data-preset="pnl" data-tip="A company income statement: revenue less cost of sales gives gross profit, less operating costs gives operating profit, less interest and tax gives net profit.">Profit &amp; Loss</button>
+          <button class="quick-start-btn" data-preset="funnel" data-tip="Visits by traffic channel dropping out at each step of an online shop, from landing on the site to a completed purchase.">Web Funnel</button>
+        </div>
+      </div>
       <div class="ctrl-tabs">
         <button class="ctrl-tab active" data-tab="data"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.2" y="4" width="17.6" height="16" rx="2.2"/><path d="M3.2 9.4h17.6"/><path d="M9.3 9.4V20M15.1 9.4V20"/></svg> Data</button>
         <button class="ctrl-tab" data-tab="style"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2c0 0 6.3 6.3 6.3 10.4a6.3 6.3 0 0 1-12.6 0C5.7 9.5 12 3.2 12 3.2z"/></svg> Style</button>
@@ -162,7 +174,7 @@
       <!-- ── STYLE TAB ── -->
       <div class="ctrl-panel" id="tab-style">
         <div class="sblock">
-          <div class="slabel" style="margin-bottom:4px">Value Display <span class="tip-icon" data-tip="<strong>Nominal:</strong> each flow's actual value.<br><strong>% of Max:</strong> a share of the largest node total.<br><strong>None:</strong> labels only.">?</span></div>
+          <div class="slabel" style="margin-bottom:4px">Value Display <span class="tip-icon" data-tip="<strong>Nominal:</strong> each node's actual total.<br><strong>% of Max:</strong> a share of the largest node total.<br><strong>None:</strong> labels only.">?</span></div>
           <div class="radio-grp">
             <label class="radio-opt"><input type="radio" name="valueMode" value="nominal" checked>Nominal</label>
             <label class="radio-opt"><input type="radio" name="valueMode" value="percent">% of Max</label>
@@ -187,8 +199,8 @@
           <input type="range" id="sNW" min="4" max="48" step="2" value="18">
         </div>
         <div class="sblock">
-          <div class="shead"><span class="slabel">Link Opacity</span><span class="sval" id="vOp">42%</span></div>
-          <input type="range" id="sOp" min="5" max="95" step="5" value="42">
+          <div class="shead"><span class="slabel">Link Opacity</span><span class="sval" id="vOp">40%</span></div>
+          <input type="range" id="sOp" min="5" max="95" step="5" value="40">
         </div>
         <div class="sblock">
           <div class="shead"><span class="slabel">Diagram Height</span><span class="sval" id="vH">520px</span></div>

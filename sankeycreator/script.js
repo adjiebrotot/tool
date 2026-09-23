@@ -25,20 +25,122 @@ const PALETTES = {
 // ═══════════════════════════════════════════════
 //  DEFAULTS
 // ═══════════════════════════════════════════════
-const DEFAULT_ROWS = [
-  {source:'Husband Income',  target:'Family Income', value:'5000', color:'#6BA5D7'},
-  {source:'Wife Income',     target:'Family Income', value:'4000', color:'#82C4A0'},
-  {source:'Family Income',   target:'Housing',       value:'2200', color:''},
-  {source:'Family Income',   target:'Food',          value:'900',  color:''},
-  {source:'Family Income',   target:'Transport',     value:'600',  color:''},
-  {source:'Family Income',   target:'Savings',       value:'1500', color:'#8FCDBD'},
-  {source:'Family Income',   target:'Leisure',       value:'remaining', color:''},
-  {source:'Housing',         target:'Mortgage',      value:'1600', color:''},
-  {source:'Housing',         target:'Utilities',     value:'remaining', color:''},
-  {source:'Savings',         target:'Emergency Fund',value:'500',  color:'#8FCDBD'},
-  {source:'Savings',         target:'Investments',   value:'remaining', color:'#6BA5D7'},
-];
-const DEFAULT_S = {align:'justify',pad:20,nw:18,op:42,h:520,scheme:'tableau',label:'auto',linkStyle:'gradient',iter:32,labelBox:false,valueMode:'nominal'};
+// Quick Start scenarios. Each one replaces the data and the diagram title and
+// leaves the Style tab alone; Reset is what puts the styling back. Figures are
+// illustrative, rounded to read cleanly, not sourced statistics.
+const PRESETS = {
+  family: {
+    title: 'Family Finance (monthly)',
+    rows: [
+      {source:'Husband Income',  target:'Family Income', value:'5000', color:'#6BA5D7'},
+      {source:'Wife Income',     target:'Family Income', value:'4000', color:'#82C4A0'},
+      {source:'Family Income',   target:'Housing',       value:'2200', color:''},
+      {source:'Family Income',   target:'Food',          value:'900',  color:''},
+      {source:'Family Income',   target:'Transport',     value:'600',  color:''},
+      {source:'Family Income',   target:'Savings',       value:'1500', color:'#8FCDBD'},
+      {source:'Family Income',   target:'Leisure',       value:'remaining', color:''},
+      {source:'Housing',         target:'Mortgage',      value:'1600', color:''},
+      {source:'Housing',         target:'Utilities',     value:'remaining', color:''},
+      {source:'Savings',         target:'Emergency Fund',value:'500',  color:'#8FCDBD'},
+      {source:'Savings',         target:'Investments',   value:'remaining', color:'#6BA5D7'},
+    ],
+  },
+  energy: {
+    title: 'National Energy Flow (quads)',
+    rows: [
+      {source:'Solar',          target:'Electricity',     value:'0.9',  color:'#F2C14E'},
+      {source:'Wind',           target:'Electricity',     value:'1.5',  color:'#76B7B2'},
+      {source:'Hydro',          target:'Electricity',     value:'0.8',  color:'#4E79A7'},
+      {source:'Nuclear',        target:'Electricity',     value:'8.1',  color:'#E15759'},
+      {source:'Coal',           target:'Electricity',     value:'7.4',  color:'#6B6B6B'},
+      {source:'Coal',           target:'Industrial',      value:'0.8',  color:'#6B6B6B'},
+      {source:'Natural Gas',    target:'Electricity',     value:'12.9', color:'#8FB3E0'},
+      {source:'Natural Gas',    target:'Residential',     value:'4.8',  color:'#8FB3E0'},
+      {source:'Natural Gas',    target:'Commercial',      value:'3.6',  color:'#8FB3E0'},
+      {source:'Natural Gas',    target:'Industrial',      value:'10.7', color:'#8FB3E0'},
+      {source:'Natural Gas',    target:'Transportation',  value:'1.4',  color:'#8FB3E0'},
+      {source:'Petroleum',      target:'Transportation',  value:'25.6', color:'#9C755F'},
+      {source:'Petroleum',      target:'Industrial',      value:'8.4',  color:'#9C755F'},
+      {source:'Petroleum',      target:'Residential',     value:'0.9',  color:'#9C755F'},
+      {source:'Petroleum',      target:'Commercial',      value:'0.5',  color:'#9C755F'},
+      {source:'Biomass',        target:'Transportation',  value:'1.6',  color:'#59A14F'},
+      {source:'Biomass',        target:'Industrial',      value:'2.3',  color:'#59A14F'},
+      {source:'Biomass',        target:'Residential',     value:'0.4',  color:'#59A14F'},
+      {source:'Electricity',    target:'Residential',     value:'5.0',  color:''},
+      {source:'Electricity',    target:'Commercial',      value:'4.6',  color:''},
+      {source:'Electricity',    target:'Industrial',      value:'3.4',  color:''},
+      {source:'Electricity',    target:'Rejected Energy', value:'remaining', color:''},
+      {source:'Residential',    target:'Energy Services', value:'7.0',  color:''},
+      {source:'Residential',    target:'Rejected Energy', value:'remaining', color:''},
+      {source:'Commercial',     target:'Energy Services', value:'5.6',  color:''},
+      {source:'Commercial',     target:'Rejected Energy', value:'remaining', color:''},
+      {source:'Industrial',     target:'Energy Services', value:'12.6', color:''},
+      {source:'Industrial',     target:'Rejected Energy', value:'remaining', color:''},
+      {source:'Transportation', target:'Energy Services', value:'6.0',  color:''},
+      {source:'Transportation', target:'Rejected Energy', value:'remaining', color:''},
+    ],
+  },
+  trade: {
+    title: 'Country Exports & Imports (bn/yr)',
+    rows: [
+      {source:'Iron Ore',         target:'Export Earnings',   value:'124', color:'#9C755F'},
+      {source:'Coal',             target:'Export Earnings',   value:'102', color:'#6B6B6B'},
+      {source:'Natural Gas (LNG)',target:'Export Earnings',   value:'92',  color:'#8FB3E0'},
+      {source:'Gold',             target:'Export Earnings',   value:'28',  color:'#EDC948'},
+      {source:'Agriculture',      target:'Export Earnings',   value:'45',  color:'#59A14F'},
+      {source:'Services|(education & tourism)', target:'Export Earnings', value:'70', color:'#B07AA1'},
+      {source:'Other Goods',      target:'Export Earnings',   value:'64',  color:'#BAB0AC'},
+      {source:'Export Earnings',  target:'Machinery & Equipment', value:'98', color:''},
+      {source:'Export Earnings',  target:'Vehicles',          value:'44',  color:''},
+      {source:'Export Earnings',  target:'Refined Fuels',     value:'58',  color:''},
+      {source:'Export Earnings',  target:'Consumer Goods',    value:'86',  color:''},
+      {source:'Export Earnings',  target:'Services Imports',  value:'92',  color:''},
+      {source:'Export Earnings',  target:'Trade Surplus',     value:'remaining', color:''},
+      {source:'Machinery & Equipment', target:'China',        value:'38',  color:''},
+      {source:'Machinery & Equipment', target:'United States',value:'26',  color:''},
+      {source:'Machinery & Equipment', target:'Other Partners',value:'remaining', color:''},
+      {source:'Consumer Goods',   target:'China',             value:'46',  color:''},
+      {source:'Consumer Goods',   target:'Other Partners',    value:'remaining', color:''},
+      {source:'Vehicles',         target:'Japan',             value:'24',  color:''},
+      {source:'Vehicles',         target:'Other Partners',    value:'remaining', color:''},
+      {source:'Refined Fuels',    target:'Singapore',         value:'30',  color:''},
+      {source:'Refined Fuels',    target:'Other Partners',    value:'remaining', color:''},
+    ],
+  },
+  pnl: {
+    title: 'Company Profit & Loss (m)',
+    rows: [
+      {source:'Product Sales',    target:'Revenue',           value:'70',  color:'#4E79A7'},
+      {source:'Subscriptions',    target:'Revenue',           value:'30',  color:'#76B7B2'},
+      {source:'Revenue',          target:'Cost of Sales',     value:'40',  color:''},
+      {source:'Revenue',          target:'Gross Profit',      value:'remaining', color:'#3A71C8'},
+      {source:'Gross Profit',     target:'R&D',               value:'15',  color:''},
+      {source:'Gross Profit',     target:'Sales & Marketing', value:'12',  color:''},
+      {source:'Gross Profit',     target:'Admin',             value:'8',   color:''},
+      {source:'Gross Profit',     target:'Operating Profit',  value:'remaining', color:'#59A14F'},
+      {source:'Operating Profit', target:'Interest',          value:'2',   color:''},
+      {source:'Operating Profit', target:'Tax',               value:'6',   color:''},
+      {source:'Operating Profit', target:'Net Profit',        value:'remaining', color:'#59A14F'},
+    ],
+  },
+  funnel: {
+    title: 'Website Conversion Funnel (visits/month)',
+    rows: [
+      {source:'Organic Search', target:'Website Visits', value:'6000', color:'#59A14F'},
+      {source:'Paid Ads',       target:'Website Visits', value:'3000', color:'#F28E2B'},
+      {source:'Social Media',   target:'Website Visits', value:'1500', color:'#B07AA1'},
+      {source:'Email',          target:'Website Visits', value:'800',  color:'#4E79A7'},
+      {source:'Website Visits', target:'Product Page',   value:'4200', color:''},
+      {source:'Website Visits', target:'Bounced',        value:'remaining', color:''},
+      {source:'Product Page',   target:'Add to Cart',    value:'1300', color:''},
+      {source:'Product Page',   target:'Left Site',      value:'remaining', color:''},
+      {source:'Add to Cart',    target:'Purchased',      value:'520',  color:''},
+      {source:'Add to Cart',    target:'Abandoned Cart', value:'remaining', color:''},
+    ],
+  },
+};
+const DEFAULT_ROWS = PRESETS.family.rows;
+const DEFAULT_S = {align:'justify',pad:20,nw:18,op:40,h:520,scheme:'tableau',label:'auto',linkStyle:'gradient',iter:32,labelBox:false,valueMode:'nominal'};
 
 // ═══════════════════════════════════════════════
 //  STATE
@@ -106,43 +208,45 @@ function autoResize(ta){
 //  RESOLVE "remaining"
 // ═══════════════════════════════════════════════
 function resolveRows(rawRows){
-  const incoming  = {};
-  const explOut   = {};
-  const remSrcs   = {};
-
+  // Valid rows only, with explicit values parsed. A "remaining" row starts
+  // unresolved (val null) and is filled in below.
+  const list = [];
   rawRows.forEach(r=>{
     const s = (r.source||'').trim();
     const t = (r.target||'').trim();
     if(!s||!t||s===t) return;
     const vStr = (r.value+'').trim().toLowerCase();
     if(vStr==='remaining'){
-      remSrcs[s] = (remSrcs[s]||0)+1;
+      list.push({r, s, t, rem:true, val:null});
     } else {
       const v = parseFloat(r.value);
-      if(!isNaN(v)&&v>0){
-        incoming[t] = (incoming[t]||0)+v;
-        explOut[s]  = (explOut[s] ||0)+v;
-      }
+      if(!isNaN(v)&&v>0) list.push({r, s, t, rem:false, val:v});
     }
   });
 
-  const out = [];
-  rawRows.forEach(r=>{
-    const s = (r.source||'').trim();
-    const t = (r.target||'').trim();
-    if(!s||!t||s===t) return;
-    const vStr = (r.value+'').trim().toLowerCase();
-    if(vStr==='remaining'){
-      const count  = remSrcs[s]||1;
-      const avail  = (incoming[s]||0)-(explOut[s]||0);
-      const val    = Math.max(0, avail/count);
-      out.push({...r, source:s, target:t, resolvedValue:val, wasRemaining:true});
-    } else {
-      const v = parseFloat(r.value);
-      if(!isNaN(v)&&v>0) out.push({...r, source:s, target:t, resolvedValue:v, wasRemaining:false});
+  // A node's "remaining" is what flows into it less what it sends out
+  // explicitly, shared equally between its "remaining" rows. The inflow can
+  // itself come from a "remaining" row (Revenue → Gross Profit → Operating
+  // Profit), so resolve node by node once every row into it is known.
+  // Whatever is left unresolved sits on a cycle and gets 0.
+  const remBySrc = new Map();
+  list.forEach(x=>{ if(x.rem){ if(!remBySrc.has(x.s)) remBySrc.set(x.s, []); remBySrc.get(x.s).push(x); } });
+  let progress = true;
+  while(progress && remBySrc.size){
+    progress = false;
+    for(const [s, rems] of remBySrc){
+      const into = list.filter(x=>x.t===s);
+      if(into.some(x=>x.val===null)) continue;
+      const inV  = into.reduce((a,x)=>a+x.val, 0);
+      const outV = list.filter(x=>x.s===s && !x.rem).reduce((a,x)=>a+x.val, 0);
+      const each = Math.max(0, (inV-outV)/rems.length);
+      rems.forEach(x=>{ x.val = each; });
+      remBySrc.delete(s);
+      progress = true;
     }
-  });
-  return out;
+  }
+
+  return list.map(x=>({...x.r, source:x.s, target:x.t, resolvedValue:x.val||0, wasRemaining:x.rem}));
 }
 
 // ═══════════════════════════════════════════════
@@ -262,8 +366,10 @@ function doRender(){
         .attr('id',`lg${i}`)
         .attr('gradientUnits','userSpaceOnUse')
         .attr('x1',lk.source.x1).attr('x2',lk.target.x0);
-      g.append('stop').attr('offset','0%').attr('stop-color',lk.customColor||sc).attr('stop-opacity',Math.min(op+0.1,0.95));
-      g.append('stop').attr('offset','100%').attr('stop-color',tc).attr('stop-opacity',op);
+      // Stops stay opaque: the path's stroke-opacity already applies the
+      // Link Opacity slider, and fading the stops too would square it.
+      g.append('stop').attr('offset','0%').attr('stop-color',lk.customColor||sc);
+      g.append('stop').attr('offset','100%').attr('stop-color',tc);
     }
   });
 
@@ -706,6 +812,7 @@ function handleFile(file){
     buildTableRows();
     syncText();
     scheduleRender();
+    markPreset(null);
     $('csvStatus').innerHTML=`<span class="status-ok">✓ Loaded ${parsed.length} rows from ${file.name}</span>`;
   };
   reader.readAsText(file);
@@ -777,6 +884,7 @@ $('downloadCsvBtn').addEventListener('click',()=>{
 //  ADD ROW
 // ═══════════════════════════════════════════════
 $('addRowBtn').addEventListener('click',()=>{
+  markPreset(null);
   rows.push({source:'',target:'',value:'',color:''});
   buildTableRows();
   syncText();
@@ -844,11 +952,11 @@ $('sIter').addEventListener('change',()=>{ S.iter=parseInt($('sIter').value); sc
 $('sLabelBox').addEventListener('change',()=>{ S.labelBox=$('sLabelBox').checked; scheduleRender(); });
 
 document.querySelectorAll('input[name="align"]').forEach(r=>{
-  r.addEventListener('change',()=>{ S.align=r.value; scheduleRender(); });
+  r.addEventListener('change',()=>{ if(!r.checked) return; S.align=r.value; scheduleRender(); });
 });
 
 document.querySelectorAll('input[name="valueMode"]').forEach(r=>{
-  r.addEventListener('change',()=>{ S.valueMode=r.value; scheduleRender(); });
+  r.addEventListener('change',()=>{ if(!r.checked) return; S.valueMode=r.value; scheduleRender(); });
 });
 
 // ═══════════════════════════════════════════════
@@ -871,6 +979,7 @@ $('resetBtn').addEventListener('click',()=>{
   buildTableRows();
   syncText();
   scheduleRender();
+  markPreset('family');
 });
 
 $('clearBtn').addEventListener('click',()=>{
@@ -878,6 +987,39 @@ $('clearBtn').addEventListener('click',()=>{
   buildTableRows();
   syncText();
   scheduleRender();
+  markPreset(null);
+});
+
+// ═══════════════════════════════════════════════
+//  QUICK START
+// ═══════════════════════════════════════════════
+// The highlight claims which scenario is on screen, so any edit to the data
+// drops it. Style changes keep it: the flows are still the scenario's.
+function markPreset(key){
+  document.querySelectorAll('.quick-start-btn').forEach(b=>{
+    b.classList.toggle('active', !!key && b.dataset.preset===key);
+  });
+}
+
+function applyPreset(key){
+  const p = PRESETS[key];
+  if(!p) return;
+  rows = clone(p.rows);
+  $('diagramTitle').value = p.title;
+  buildTableRows();
+  syncText();
+  $('textStatus').innerHTML = '';
+  $('csvStatus').innerHTML = '';
+  scheduleRender();
+  markPreset(key);
+}
+
+document.querySelectorAll('.quick-start-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>applyPreset(btn.dataset.preset));
+});
+$('tab-data').addEventListener('input', ()=>markPreset(null), true);
+tableBody.addEventListener('click', e=>{
+  if(e.target.closest('.del-btn, .color-clear')) markPreset(null);
 });
 
 // ═══════════════════════════════════════════════
@@ -1037,6 +1179,7 @@ function makeSliderEditable(valSpan,rangeEl){
 buildTableRows();
 syncText();
 scheduleRender();
+markPreset('family');
 
 /* ── Mini cache ────────────────────────────────────────────────────────────
    Restore the last diagram definition and styling on revisit. Each restored
