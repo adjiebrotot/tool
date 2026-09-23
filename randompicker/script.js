@@ -1757,7 +1757,9 @@ function recomputeAll() {
   buildGalton();
   if (currentMode === 'dice') refreshDice();
 }
-$('choicesInput').addEventListener('input', recomputeAll);
+// Rebuild only once the user leaves the textarea; rebuilding on every keystroke
+// re-rendered the wheel, dice, slots and Galton board constantly.
+$('choicesInput').addEventListener('change', recomputeAll);
 
 window.addEventListener('resize', debounce(() => {
   refreshSlot3D();
