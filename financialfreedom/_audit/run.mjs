@@ -1845,26 +1845,33 @@ for(const [name, extra] of [
   /* ONE ENTRY FOR THE FILL, and the check has to survive a rename. Banning
      the old wording would not: split it back into "Surplus" and "Deficit" and
      a label test passes while the key has two entries again. So the invariant
-     is stated structurally instead — the key has exactly four entries, exactly
-     one of them is a filled block, and that one block carries BOTH of the
-     colours the chart fills with. A split into two entries gives each of them
-     one colour, and every clause here fails at once. */
+     is stated structurally instead: exactly one entry carries the colours the
+     flows are filled with, it carries BOTH of them, and it is drawn as one
+     block split in two. A split into two entries gives each of them one
+     colour, and every clause here fails at once.
+
+     The balance pane has shaded blocks of its own now, the range of balances,
+     so "one filled block in the key" is no longer the invariant: those two
+     are pinned by F66 and set aside here by what they carry: the balance's
+     hue, never either flow colour. */
   const fills = [r.fill && r.fill.above, r.fill && r.fill.below];
-  const blocks = r.legend2Specs.filter(x => x.type === 'area');
   const carries = c => r.legend2Specs.filter(x => x.fill === c || x.fill2 === c);
-  check('F44g the key names each line once, and the fill once',
-    r.legend2Specs.length === 5 &&
+  const blocks = r.legend2Specs.filter(x => x.type === 'area' && fills.some(c => x.fill === c || x.fill2 === c));
+  const bandBlocks = r.legend2Specs.filter(x => x.type === 'area' && !blocks.includes(x));
+  check('F44g the key names each line once, the fill once, and the range of balances',
+    r.legend2Specs.length === 7 &&
     r.legend2Specs.some(x => /^income$/i.test(x.label)) &&
     r.legend2Specs.some(x => /^spending$/i.test(x.label)) &&
     r.legend2Specs.some(x => /retire at/i.test(x.label)) &&
     r.legend2Specs.some(x => /^balance/i.test(x.label)) &&
-    r.legend2Specs.some(x => /^savings\/withdrawal$/i.test(x.label)),
+    r.legend2Specs.some(x => /^savings\/withdrawal$/i.test(x.label)) &&
+    bandBlocks.length === 2 && bandBlocks.every(x => /balances/i.test(x.label)),
     r.legend2Specs.map(x => x.label).join(' | '));
   check('F44g2 exactly one entry stands for the shaded gap, whatever it is called',
     blocks.length === 1 && blocks[0].rects === 2,
     blocks.length === 1
       ? `"${blocks[0].label}", drawn as ${blocks[0].rects} halves`
-      : `${blocks.length} filled blocks: ${blocks.map(x => x.label).join(', ')}`);
+      : `${blocks.length} blocks carry the flow colours: ${blocks.map(x => x.label).join(', ')}`);
   /* And it is the chart's own two colours, read off the dataset's fill rather
      than restated, so recolouring the chart cannot leave a stale key behind —
      nor can either colour wander off into an entry of its own. */
@@ -1961,6 +1968,346 @@ for(const [name, extra] of [
     r.marker, r.marker ? 'marked' : 'no marker');
   check('F44j the four-pot drawdown it replaced is still gone', !r.stillHasPotLines,
     r.stillHasPotLines ? 'pot lines still plotted' : 'replaced');
+}
+
+console.log('\n── The range of balances ──');
+
+/* F66: the cashflow balance carries a shaded range now, the middle half of
+   the simulated futures in a deeper shade and the worst to the best tenth in
+   a lighter one. It is the "Chance it works" card drawn out, so it is held to
+   the card rather than to itself:
+
+   - the band is REPLAYED here from the replay's own flows and its own
+     recurrence (refLifetime for the pot, refIncome/refSpend for the draws),
+     taking nothing from the page but the random draws themselves, which are
+     the page's by definition;
+   - the paths the replay finds funded (never below zero after a draw, and
+     on the goal's terminal condition at the horizon) are counted, and that
+     count has to BE the card's figure, path for path. The card is scored by
+     the page's affine required-pot solve; the replay never solves a pot at
+     all, it only walks the money forward, so agreement is two formulations
+     agreeing on which futures work;
+   - and the shading has to say what the card says: on a plan whose failed
+     futures stay failed, the worst-tenth edge ends above zero exactly when
+     more than nine futures in ten work, and the worst-quarter edge exactly
+     when more than three in four do. */
+
+// Nearest rank, the k-th smallest with k = ceil(q N), written from the
+// definition rather than copied from the page.
+const refRank = (sorted, q) => sorted[Math.min(sorted.length, Math.max(1, Math.ceil(q * sorted.length))) - 1];
+
+/* Walk every simulated future through the replay's own arithmetic. `draws`
+   are the page's growth factors, one array per path, long enough for both the
+   chart (to the life expectancy) and the card (to the goal's horizon).
+   Returns the four band edges per plotted year and how many futures work. */
+function refFan(p, draws){
+  const accM = refAccMonths(p), total = Math.max(1, mo(p.ageNow, p.ageDie));
+  if(accM >= total) return null;
+  const line = refLifetime(p);
+  const years = Math.max(1, Math.round(total / 12)), start = Math.floor(accM / 12);
+  const at = [];
+  for(let y = start; y <= years; y++) at.push(Math.min(y * 12, total));
+  const cols = at.map(() => []);
+  const n = Math.max(0, mo(p.ageRetire, refHorizon(p)));
+  // The goal's terminal condition, from the goal itself: nothing for Just Die,
+  // the bequest for Leave a Legacy, and for Die Rich a perpetuity-due on
+  // whatever the net draw has settled to by the horizon.
+  let target = p.mode === 'legacy' ? Math.max(0, p.legacy) : 0;
+  if(p.mode === 'rich'){
+    const net = p.Xr - refPension(p, refHorizon(p));
+    target = net <= 0 ? 0 : (p.rm > 0 ? net * (1 + p.rm) / p.rm : Infinity);
+  }
+  let funded = 0;
+  const finals = [];
+  draws.forEach(g => {
+    // The chart's path: the expected balance up to the retirement month, then
+    // this future's returns on what is left after each month's draw.
+    const path = line.slice(0, accM + 1);
+    let W = line[accM];
+    for(let t = accM; t < total; t++){
+      W += refIncome(p, t) - refSpend(p, t);
+      W *= g[t - accM];
+      path.push(W);
+    }
+    at.forEach((m, k) => cols[k].push(path[m]));
+    finals.push(path[total]);
+    // The card's question, asked forward: does the pot this plan reaches
+    // cover this future? A pot is a sum of money, so it has to start at zero
+    // or more, never dip under zero after a draw, and land on the target.
+    const tol = 1e-9 * Math.max(1, Math.abs(line[accM]));
+    let V = line[accM], ok = V >= -tol;
+    for(let t = 0; t < n && ok; t++){
+      V -= p.Xr - refPension(p, p.ageRetire + t / 12);
+      if(V < -tol) ok = false;
+      V *= g[t];
+    }
+    if(ok && !(V >= target - 1e-9 * Math.max(1, Math.abs(line[accM]), Math.abs(target)))) ok = false;
+    if(ok) funded++;
+  });
+  const edges = {p10: [], p25: [], p75: [], p90: []};
+  cols.forEach(c => {
+    c.sort((a, b) => a - b);
+    edges.p10.push(refRank(c, 0.10)); edges.p25.push(refRank(c, 0.25));
+    edges.p75.push(refRank(c, 0.75)); edges.p90.push(refRank(c, 0.90));
+  });
+  return {edges, start, years, funded, finals, line};
+}
+
+// The page's own band, its card, and the draws it scored the card on.
+const pageFan = ui => page.evaluate(u => {
+  const F = window.__FF;
+  const full = Object.assign({}, F.UI_DEFAULTS, u);
+  const res = F.compute(full), P = res.P;
+  const accM = F.accMonths(P), total = res.det.length - 1;
+  const h = P.mode === 'rich' ? Math.max(F.RICH_HORIZON_AGE, P.ageDie) : P.ageDie;
+  const len = Math.max(1, F.months(P.ageRetire, h), total - accM);
+  const draws = [];
+  for(let k = 0; k < full.paths; k++){
+    draws.push(Array.from(F.growthSeries(P, F.mulberry32(F.deriveSeed(full.seed, 'pot' + k)), len)));
+  }
+  const pot = res.potAtRetire, sorted = res.reqs.sorted;
+  // Futures whose own required pot sits within a hair of the plan's pot: the
+  // only ones on which two formulations may round to different answers.
+  const hair = 1e-7 * Math.max(1, Math.abs(pot));
+  return {
+    dd: res.dd, draws, paths: full.paths,
+    success: res.successAtPlan, borderline: sorted.filter(w => Math.abs(w - pot) <= hair).length,
+    mode: P.mode, pensionOn: P.pensionOn
+  };
+}, ui);
+
+const worstRel = (a, b) => {
+  let w = 0;
+  for(let k = 0; k < Math.max(a.length, b.length); k++){
+    const x = a[k], y = b[k];
+    if(typeof x !== 'number' || typeof y !== 'number') return Infinity;
+    w = Math.max(w, Math.abs(x - y) / Math.max(1, Math.abs(y)));
+  }
+  return w;
+};
+
+{
+  const plans = {
+    'defaults, Just Die': {},
+    'Leave a Legacy': {mode: 'legacy', legacy: 500000},
+    'Die Rich on a frozen pension that starts after retirement':
+      {mode: 'rich', pensionOn: true, pensionStartAge: 67, pensionAmount: 20000, pensionIndexed: false, ret: 8},
+    'net income model, indexed pension from 60': {savingsMode: 'income', savings: 120000, savingsPeriod: 'yearly',
+      pensionOn: true, pensionStartAge: 60, pensionAmount: 15000},
+    'stopping today': {ageRetire: 30, assets: 2500000},
+    'a volatile portfolio': {std: 30},
+    'a plan that runs out': {savings: 2000, assets: 0, ageRetire: 45}
+  };
+  const bandBad = [], cardBad = [], lineBad = [], orderBad = [];
+  const cardDetail = [];
+  for(const [name, over] of Object.entries(plans)){
+    const ui = Object.assign({}, base, {paths: 400}, over);
+    const pg = await pageFan(ui);
+    const rf = refFan(refParams(ui), pg.draws);
+    if(!pg.dd || !rf){ bandBad.push(`${name}: no band`); continue; }
+    const w = Math.max(...['p10', 'p25', 'p75', 'p90'].map(q => worstRel(pg.dd.bands[q], rf.edges[q])));
+    if(!(w < 1e-9) || pg.dd.startYear !== rf.start) bandBad.push(`${name} (${w.toExponential(1)})`);
+    const want = Math.round(pg.success * pg.paths);
+    if(Math.abs(rf.funded - want) > pg.borderline) cardBad.push(`${name}: replay ${rf.funded}, card ${want}`);
+    cardDetail.push(`${want}/${pg.paths}`);
+    // The fan opens ON the expected line: every edge equals it at the first year.
+    const y0 = rf.start, onLine = rf.line[Math.min(y0 * 12, rf.line.length - 1)];
+    if(!['p10', 'p25', 'p75', 'p90'].every(q => Math.abs(pg.dd.bands[q][0] - onLine) <= 1e-6 * Math.max(1, Math.abs(onLine))))
+      lineBad.push(name);
+    for(let k = 0; k < pg.dd.bands.p10.length; k++){
+      const b = pg.dd.bands;
+      if(!(b.p10[k] <= b.p25[k] && b.p25[k] <= b.p75[k] && b.p75[k] <= b.p90[k])){ orderBad.push(`${name} year ${k}`); break; }
+    }
+  }
+  const nPlans = Object.keys(plans).length;
+  check(`F66 every edge of the band matches the replay, year by year, on ${nPlans} plans`,
+    bandBad.length === 0, bandBad.join(', ') || 'agrees to 1e-9 everywhere');
+  check('F66b the futures the replay finds funded ARE the "Chance it works" figure, path for path',
+    cardBad.length === 0, cardBad.join(', ') || `agrees on every plan: ${cardDetail.join(', ')}`);
+  check('F66c the fan opens on the expected balance, the year the draws begin',
+    lineBad.length === 0, lineBad.join(', ') || 'every edge starts on the line');
+  check('F66d and the edges never cross: worst 10% under worst 25% under best 25% under best 10%',
+    orderBad.length === 0, orderBad.join(', ') || 'ordered every year');
+}
+
+// F66e: the shading says what the card says. With no pension a future that
+// runs out stays out, so the share of futures under zero at the life
+// expectancy is exactly the share the card says fail, and each edge of the
+// band ends above zero exactly when its tail of futures all work. Swept over
+// the whole slider, so the chance runs from nothing to everything.
+{
+  const bad = [], seen = [];
+  for(let ar = 35; ar <= 70; ar += 1){
+    const ui = Object.assign({}, base, {paths: 400, ageRetire: ar});
+    const pg = await pageFan(ui);
+    if(!pg.dd) continue;
+    const rf = refFan(refParams(ui), pg.draws);
+    const failShare = rf.finals.filter(v => v < 0).length / pg.paths;
+    const last = k => pg.dd.bands[k][pg.dd.bands[k].length - 1];
+    const s = pg.success;
+    seen.push(Math.round(s * 100));
+    if(Math.abs(failShare - (1 - s)) > pg.borderline / pg.paths + 1e-12)
+      bad.push(`retire ${ar}: ${(failShare * 100).toFixed(1)}% under zero vs ${((1 - s) * 100).toFixed(1)}% failing`);
+    if((last('p10') >= 0) !== (s > 0.9)) bad.push(`retire ${ar}: worst 10% ends at ${last('p10').toFixed(0)} on ${(s * 100).toFixed(1)}%`);
+    if((last('p25') >= 0) !== (s > 0.75)) bad.push(`retire ${ar}: worst 25% ends at ${last('p25').toFixed(0)} on ${(s * 100).toFixed(1)}%`);
+  }
+  check('F66e the band ends under zero in exactly the futures the card counts as failing',
+    bad.length === 0 && Math.min(...seen) === 0 && Math.max(...seen) === 100,
+    bad.slice(0, 3).join(', ') || `swept ${seen.length} retirement ages, chance ${Math.min(...seen)}%..${Math.max(...seen)}%`);
+}
+
+// F66f: at zero volatility there is one future, so every edge IS the expected
+// balance, to the cent, and so is what the chart plots.
+{
+  const r = await page.evaluate(() => {
+    const F = window.__FF, $ = id => document.getElementById(id);
+    const was = {std: $('std').value, real: $('showReal').checked};
+    $('std').value = '0'; $('showReal').checked = false;
+    F.render();
+    const cash = F.charts.cashflows, get = l => cash.data.datasets.find(d => d.label === l);
+    const bal = get('Balance');
+    const byX = {}; bal.data.forEach(p => { byX[p.x] = p.y; });
+    let worst = 0, n = 0;
+    ['Balance, best 10%', 'Balance, best 25%', 'Balance, worst 25%', 'Balance, worst 10%'].forEach(l => {
+      get(l).data.forEach(p => { worst = Math.max(worst, Math.abs(p.y - byX[p.x])); n++; });
+    });
+    $('std').value = was.std; $('showReal').checked = was.real;
+    F.render();
+    return {worst, n};
+  });
+  check('F66f at zero volatility every plotted edge is the expected balance, to the cent',
+    r.n > 0 && r.worst < 0.01, `${r.n} points, largest gap ${r.worst.toExponential(2)}`);
+}
+
+// F66g: what is plotted is the engine's band in the money on screen, in both
+// moneys, on the balance pane, over the same years as the balance line.
+for(const real of [false, true]){
+  await page.evaluate(v => { document.getElementById('showReal').checked = v; window.__FF.render(); }, real);
+  const ui = Object.assign({}, DEFAULTS, await page.evaluate(() => window.__FF.readInputs()));
+  const pg = await pageFan(ui);
+  const rf = refFan(refParams(ui), pg.draws);
+  const r = await page.evaluate(() => {
+    const F = window.__FF, cash = F.charts.cashflows;
+    const get = l => cash.data.datasets.find(d => d.label === l);
+    const pick = d => ({axis: d.yAxisID, xs: d.data.map(p => p.x), ys: d.data.map(p => p.y),
+                        noAutoFit: !!d.noAutoFit, fill: d.fill, bg: d.backgroundColor, order: d.order});
+    const bal = get('Balance');
+    return {
+      showReal: F.last.ui.showReal, infl: F.last.P.inflation, thisYear: F.last.thisYear,
+      balXs: bal.data.map(p => p.x), balOrder: bal.order, balFill: bal.fill,
+      b10: pick(get('Balance, best 10%')), b25: pick(get('Balance, best 25%')),
+      w25: pick(get('Balance, worst 25%')), w10: pick(get('Balance, worst 10%')),
+      idx: ['Balance, best 10%', 'Balance, best 25%', 'Balance, worst 25%', 'Balance, worst 10%']
+        .map(l => cash.data.datasets.findIndex(d => d.label === l)),
+      fitsBand: (function(){
+        const fit = cash.$fitY.yBal(cash.options.scales.x.min, cash.options.scales.x.max);
+        const inner = get('Balance, best 25%').data.concat(get('Balance, worst 25%').data, bal.data);
+        return inner.every(p => p.y >= fit.min - 1e-6 && p.y <= fit.max + 1e-6);
+      })()
+    };
+  });
+  const scaleOf = x => r.showReal ? 1 : Math.pow(1 + r.infl, x - r.thisYear);
+  const want = (edges, xs) => xs.map((x, k) => edges[k] * scaleOf(x));
+  const err = Math.max(
+    worstRel(r.b10.ys, want(rf.edges.p90, r.b10.xs)), worstRel(r.b25.ys, want(rf.edges.p75, r.b25.xs)),
+    worstRel(r.w25.ys, want(rf.edges.p25, r.w25.xs)), worstRel(r.w10.ys, want(rf.edges.p10, r.w10.xs)));
+  check(`F66g the plotted band is the replay in ${real ? 'today’s' : 'future’s'} money`,
+    r.showReal === real && err < 1e-9, `largest relative gap ${err.toExponential(2)}`);
+  if(real) continue;   // the rest reads the same structure in either money
+  const sameYears = [r.b10, r.b25, r.w25, r.w10].every(d =>
+    d.axis === 'yBal' && d.xs[0] === r.thisYear + rf.start && d.xs[d.xs.length - 1] === r.balXs[r.balXs.length - 1]);
+  check('F66h on the balance pane, from the retirement year to the last year the balance is drawn',
+    sameYears, `${r.b10.xs[0]}..${r.b10.xs[r.b10.xs.length - 1]} on ${r.b10.axis}, balance ends ${r.balXs[r.balXs.length - 1]}`);
+  /* Two fills, each from an upper edge down to its own lower edge, and the
+     line drawn over both. The shading replaces the line's old fill to zero,
+     which would have laid a third shade of the same blue under the band. */
+  check('F66i each band is filled from its upper edge to its own lower edge, under the line',
+    r.b10.fill === r.idx[3] && r.b25.fill === r.idx[2] && r.w25.fill === false && r.w10.fill === false &&
+    [r.b10, r.b25, r.w25, r.w10].every(d => d.order > r.balOrder) && r.balFill === false,
+    `best 10% fills to #${r.b10.fill}, best 25% to #${r.b25.fill}, line fill ${r.balFill}`);
+  /* Decades of drawing down put the outer tenths an order of magnitude past
+     the expected line, so the pane is sized to the line and the middle half,
+     and only the outer edges are allowed off it, marked as the path chart
+     marks its own best decile. */
+  check('F66j the pane holds the line and the middle half; only the outer tenths may run off it',
+    r.fitsBand && r.b10.noAutoFit && r.w10.noAutoFit && !r.b25.noAutoFit && !r.w25.noAutoFit,
+    `inner band inside the axis ${r.fitsBand}, outer edges noAutoFit ${r.b10.noAutoFit}/${r.w10.noAutoFit}`);
+}
+
+// F66k: the key. Two shaded blocks in the balance's own hue, the middle half
+// the deeper of the two, and each hides the pair of datasets it stands for.
+{
+  const r = await page.evaluate(() => {
+    const F = window.__FF, cash = F.charts.cashflows;
+    const items = [...document.querySelectorAll('#legend2 .legend-item')];
+    const spec = el => JSON.parse(el.dataset.swatch);
+    const find = re => items.find(el => re.test(el.textContent));
+    const mid = find(/middle half of balances/i), range = find(/range of balances, worst 10% to best 10%/i);
+    const bal = cash.data.datasets.find(d => d.label === 'Balance');
+    const vis = () => ['Balance, best 10%', 'Balance, best 25%', 'Balance, worst 25%', 'Balance, worst 10%']
+      .map(l => cash.isDatasetVisible(cash.data.datasets.findIndex(d => d.label === l)));
+    const out = {mid: mid && spec(mid), range: range && spec(range), balColor: bal.borderColor};
+    if(mid){ mid.click(); out.afterMid = vis(); mid.click(); }
+    if(range){ range.click(); out.afterRange = vis(); range.click(); }
+    out.after = vis();
+    return out;
+  });
+  const alpha = c => parseInt(String(c).slice(7, 9), 16);
+  const hue = c => String(c).slice(0, 7).toLowerCase();
+  check('F66k the key carries both bands as blocks in the balance’s hue, the middle half deeper',
+    !!r.mid && !!r.range && r.mid.type === 'area' && r.range.type === 'area' &&
+    hue(r.mid.fill) === hue(r.balColor) && hue(r.range.fill) === hue(r.balColor) &&
+    alpha(r.mid.fill) > alpha(r.range.fill),
+    r.mid && r.range ? `middle ${r.mid.fill}, range ${r.range.fill}, line ${r.balColor}` : 'missing');
+  check('F66l and each entry hides exactly its own pair of edges',
+    JSON.stringify(r.afterMid) === '[true,false,false,true]' &&
+    JSON.stringify(r.afterRange) === '[false,true,true,false]' &&
+    JSON.stringify(r.after) === '[true,true,true,true]',
+    `middle off ${JSON.stringify(r.afterMid)}, range off ${JSON.stringify(r.afterRange)}`);
+}
+
+// F66m: the two ends of the slider. Never stopping draws nothing, so there is
+// no band and no key for one; stopping today opens the fan on today's assets.
+{
+  const r = await page.evaluate(() => {
+    const F = window.__FF, $ = id => document.getElementById(id);
+    const was = $('ageRetire').value;
+    const bands = () => F.charts.cashflows.data.datasets.filter(d => /^Balance, (best|worst)/.test(d.label));
+    const keys = () => [...document.querySelectorAll('#legend2 .legend-item')].filter(el => /balances/i.test(el.textContent)).length;
+    $('ageRetire').value = String(F.last.P.ageDie); F.render();
+    const never = {bands: bands().length, keys: keys(), dd: F.last.dd};
+    $('ageRetire').value = String(F.last.P.ageNow); F.render();
+    const b = bands();
+    const today = {bands: b.length, keys: keys(), firstX: b.length ? b[0].data[0].x : null,
+                   firstYs: b.map(d => d.data[0].y), assets: F.last.P.A0, thisYear: F.last.thisYear};
+    $('ageRetire').value = was; F.render();
+    return {never, today};
+  });
+  check('F66m never stopping draws no range, and keys none',
+    r.never.bands === 0 && r.never.keys === 0 && r.never.dd === null,
+    `${r.never.bands} band datasets, ${r.never.keys} key entries`);
+  check('F66n stopping today opens the fan this year, on the assets you hold today',
+    r.today.bands === 4 && r.today.keys === 2 && r.today.firstX === r.today.thisYear &&
+    r.today.firstYs.every(v => Math.abs(v - r.today.assets) < 0.01),
+    `opens ${r.today.firstX} at ${r.today.firstYs.map(v => v.toFixed(0)).join(' / ')}, assets ${r.today.assets}`);
+}
+
+// F66o: the same seed draws the same band, a different one moves it, and the
+// draws the band is built on are a prefix of any longer run of them: the band
+// takes the card's full horizon so its paths are the card's, and that is only
+// true if asking for more months changes none of the ones before.
+{
+  const ui = Object.assign({}, base, {paths: 200});
+  const band = s => `JSON.stringify(F.drawdownBands(P, F.lifetimeSeries(P).balance, {paths: 200, seed: ${s}}).bands)`;
+  const a = await engine(ui, band(4242)), b = await engine(ui, band(4242)), c = await engine(ui, band(77));
+  const prefix = await engine(ui, `(function(){
+    var s = F.growthSeries(P, F.mulberry32(F.deriveSeed(9, 'pot3')), 480);
+    var l = F.growthSeries(P, F.mulberry32(F.deriveSeed(9, 'pot3')), 1441);
+    for(var i = 0; i < s.length; i++) if(s[i] !== l[i]) return false;
+    return true;
+  })()`);
+  check('F66o the same seed reproduces the band, a different seed moves it, and longer draws share every earlier month',
+    a === b && a !== c && prefix === true, `reproducible ${a === b}, moves ${a !== c}, prefix ${prefix}`);
 }
 
 console.log('\n── Two sections, one slider ──');
@@ -2780,7 +3127,9 @@ console.log('\n── Fuzz: 200 random plans, every invariant at once ──');
     });
   }
 
-  const bad = {finite: [], saved: [], closes: [], replay: [], ff: [], ffTight: [], prob: [], chart: []};
+  const bad = {finite: [], saved: [], closes: [], replay: [], ff: [], ffTight: [], prob: [], chart: [],
+               band: [], card: []};
+  let banded = 0;
   for(let k = 0; k < plans.length; k++){
     const ui = Object.assign({}, DEFAULTS, plans[k]);
     const p = refParams(ui);
@@ -2845,6 +3194,19 @@ console.log('\n── Fuzz: 200 random plans, every invariant at once ──');
     if(!r.ffTight) bad.ffTight.push(tag);
     if(!r.probOk) bad.prob.push(tag);
     if(!r.chartOk) bad.chart.push(tag);
+    // The range of balances, replayed and held to the card on every plan
+    // that retires before its life expectancy (F66 on plans nobody chose).
+    const pg = await pageFan(ui);
+    const rf = refFan(p, pg.draws);
+    if(!!pg.dd !== !!rf) bad.band.push(`${tag} (band ${!!pg.dd}, replay ${!!rf})`);
+    else if(rf){
+      banded++;
+      const w = Math.max(...['p10', 'p25', 'p75', 'p90'].map(q => worstRel(pg.dd.bands[q], rf.edges[q])));
+      const flat = ['p10', 'p25', 'p75', 'p90'].every(q => pg.dd.bands[q].every(v => typeof v === 'number' && isFinite(v)));
+      if(!(w < 1e-8) || !flat || pg.dd.startYear !== rf.start) bad.band.push(`${tag} (${w.toExponential(1)})`);
+      const want = Math.round(pg.success * pg.paths);
+      if(Math.abs(rf.funded - want) > pg.borderline) bad.card.push(`${tag} (replay ${rf.funded}, card ${want})`);
+    }
   }
   const n = plans.length;
   check(`F56 every figure on ${n} random plans is a number, never a NaN or an Infinity`,
@@ -2863,6 +3225,10 @@ console.log('\n── Fuzz: 200 random plans, every invariant at once ──');
     bad.prob.length === 0, bad.prob.slice(0, 3).join(', ') || 'all in range');
   check('F56h and nothing NaN is ever handed to a chart',
     bad.chart.length === 0, bad.chart.slice(0, 3).join(', ') || 'clean');
+  check('F56i the range of balances matches the replay on every plan that draws one',
+    bad.band.length === 0 && banded > 100, bad.band.slice(0, 3).join(', ') || `agrees on all ${banded}`);
+  check('F56j and the futures it shades as funded are the "Chance it works" figure on every one',
+    bad.card.length === 0, bad.card.slice(0, 3).join(', ') || `path for path on all ${banded}`);
 }
 
 console.log('\n── Quick Start scenarios ──');

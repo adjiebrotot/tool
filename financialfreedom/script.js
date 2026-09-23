@@ -576,6 +576,63 @@ function potRequirements(P, opts){
   };
 }
 
+/* The band on the cashflow balance. It is the "Chance it works" card drawn
+   out: the SAME futures potRequirements scores, seed for seed, each one
+   drawing down the pot the expected return builds by the slider age, through
+   the recurrence lifetimeSeries uses. A pot survives a path exactly when it is
+   at least that path's required pot, so the paths that stay funded here are
+   the paths the card counts, and the band shows where the rest run out.
+
+   Before retirement every path is the expected balance: the card starts its
+   futures at the pot the plan reaches, so the fan opens at the retirement
+   month and not before. A path that runs out keeps owing, as the expected
+   line does, so the lower edge shows the size of the miss as well as when.
+   With zero volatility every percentile is the expected balance exactly.
+
+   Sampled at the same months yearly() samples the expected line, from the
+   last whole year at or before retirement, so the fan opens from a point on
+   the line. Returns null when the plan never retires. */
+function drawdownBands(P, det, opts){
+  var nPaths = Math.max(1, opts.paths | 0);
+  var accM = accMonths(P);
+  var total = det.length - 1;
+  if(accM >= total) return null;                        // never retires, nothing drawn
+  var chartYears = Math.max(1, Math.round(total / 12));
+  var startYear = Math.floor(accM / 12);
+  /* The card's own path length, so each path is the card's path draw for
+     draw. It is never shorter than the chart: the draws come out in order, so
+     a longer series only adds months at the end and changes none before. */
+  var n = Math.max(1, months(P.ageRetire, horizonAge(P)), total - accM);
+  var flows = new Float64Array(total), W, y, p, t;
+  for(t = accM; t < total; t++) flows[t] = flowAt(P, t);
+  // The month each yearly sample reads, clamped the way yearly() clamps the
+  // expected line, so the band and the line are sampled at the same months.
+  var at = [];
+  for(y = startYear; y <= chartYears; y++) at.push(Math.min(y * 12, total));
+  var samples = at.map(function(){ return new Float64Array(nPaths); });
+  var path = new Float64Array(total + 1);
+  for(t = 0; t <= accM; t++) path[t] = det[t];         // the same for every path
+  for(p = 0; p < nPaths; p++){
+    var g = growthSeries(P, mulberry32(deriveSeed(opts.seed, 'pot' + p)), n);
+    W = det[accM];
+    for(t = accM; t < total; t++){
+      W += flows[t];                                    // the draw comes out before the return
+      W *= g[t - accM];
+      path[t + 1] = W;
+    }
+    for(y = 0; y < at.length; y++) samples[y][p] = path[at[y]];
+  }
+  var bands = {p10: [], p25: [], p75: [], p90: []};
+  samples.forEach(function(col){
+    col = Array.prototype.slice.call(col).sort(function(a, b){ return a - b; });
+    bands.p10.push(quantile(col, 0.10));
+    bands.p25.push(quantile(col, 0.25));
+    bands.p75.push(quantile(col, 0.75));
+    bands.p90.push(quantile(col, 0.90));
+  });
+  return {bands: bands, startYear: startYear, years: chartYears, paths: nPaths};
+}
+
 /* Annualised return and volatility from a fetched price series, the two figures
    the engine takes. Adjusted close from the Worker's Yahoo path includes
    dividends; its Stooq fallback does not, so the caller warns when `source` is
@@ -1020,6 +1077,7 @@ function compute(ui){
 
   var mc = accumBands(P, {paths: ui.paths, seed: ui.seed});
   var reqs = potRequirements(P, {paths: ui.paths, seed: ui.seed});
+  var dd = drawdownBands(P, det, {paths: ui.paths, seed: ui.seed});
 
   return {
     P: P, ui: ui, diag: diag, years: years, thisYear: thisYear, thisMonth: thisMonth,
@@ -1027,7 +1085,7 @@ function compute(ui){
     needCurve: needCurve, incomeCurve: incomeCurve,
     expenseCurve: expenseCurve, flowCurve: flowCurve,
     needAtRetire: needAtRetire, potAtRetire: potAtRetire, leftAtDeath: leftAtDeath,
-    mc: mc, reqs: reqs,
+    mc: mc, reqs: reqs, dd: dd,
     successAtPlan: reqs.successAt(potAtRetire),
     confPot: reqs.atConfidence(ui.confidence),
     ffAge: diag.ffAge != null ? diag.ffAge : null
@@ -1348,6 +1406,44 @@ function makeYFit(y0, hiSeries, loSeries, opts){
    first leaves the lines drawn against the old scale while the ticks already
    show the new one, which is worse than not refitting at all. */
 var Y_FIT_PLUGIN = SharedZoom.plugin;
+
+/* Chart.js clips every dataset to the whole plot area, which on a chart of
+   stacked panes is all of them: a series allowed off the top of the balance
+   pane would be drawn on over the flows. So a dataset on a stacked axis is
+   clipped to its own pane. Both exports copy the canvas, so they inherit it.
+
+   A fill is painted by Chart.js's own Filler plugin in the same hook, and
+   registered plugins run before a chart's inline ones, so this one is
+   registered globally and AHEAD of Filler: the clip is then in place before
+   the fill is drawn. It touches nothing on a chart without stacked axes. */
+function registerPaneClip(){
+  if(!window.Chart || !Chart.register || !Chart.registry || !Chart.registry.plugins) return false;
+  if(Chart.registry.plugins.get('ffPaneClip')) return true;
+  var filler = Chart.Filler || Chart.registry.plugins.get('filler');
+  if(filler && Chart.unregister) Chart.unregister(filler);
+  Chart.register(PANE_CLIP_PLUGIN);
+  if(filler) Chart.register(filler);
+  return true;
+}
+var PANE_CLIP_PLUGIN = {
+  id: 'ffPaneClip',
+  beforeDatasetDraw: function(chart, args){
+    var ds = chart.data.datasets[args.index];
+    var sc = ds && ds.yAxisID ? chart.scales[ds.yAxisID] : null;
+    if(!sc || !sc.options || !sc.options.stack || !chart.chartArea) return;
+    var a = chart.chartArea, ctx = chart.ctx;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(a.left, sc.top, a.right - a.left, sc.bottom - sc.top);
+    ctx.clip();
+    args.meta.$ffPaneClip = true;
+  },
+  afterDatasetDraw: function(chart, args){
+    if(!args.meta.$ffPaneClip) return;
+    args.meta.$ffPaneClip = false;
+    chart.ctx.restore();
+  }
+};
 
 /* Chart.js resolves an `index` tooltip by DATA INDEX: it takes the nearest
    element, reads its index, and pulls that index out of every other dataset.
@@ -1711,8 +1807,29 @@ function renderCharts(res){
   var bal = scale(yearly(res.det, years));
   var retLabel = 'Retire at ' + fmt.age(res.P.ageRetire);
 
+  /* The range of balances, shaded round the expected line from the year the
+     draws begin: the middle half of the simulated futures in a deeper shade,
+     the worst to the best tenth in a lighter one. Held as whole-plan arrays,
+     blank before the fan opens, so the fitter reads them by the same year
+     index as every other series. */
+  var fan = {p10: [], p25: [], p75: [], p90: []}, fanFrom = null;
+  if(res.dd){
+    fanFrom = res.dd.startYear;
+    Object.keys(fan).forEach(function(q){
+      for(var yi = 0; yi <= years; yi++){
+        var v = res.dd.bands[q][yi - fanFrom];
+        fan[q].push(yi >= fanFrom && v != null ? show(res, v, yi) : null);
+      }
+    });
+  }
+
   var fit2 = makeYFit(y0, [income, spend], [income, spend], {includeZero: true});
-  var fit3 = makeYFit(y0, [bal], [bal], {includeZero: true, topPad: 2.2});
+  /* The pane is sized to the expected balance and the middle half of the
+     futures. Decades of drawing down spread the outer tenths an order of
+     magnitude past the line, so sized to them the line and the point where
+     futures start running out would both be a sliver; the outer band is
+     allowed off the edges instead. */
+  var fit3 = makeYFit(y0, [bal, fan.p75], [bal, fan.p25], {includeZero: true, topPad: 2.2});
 
   /* A vertical rule at the year the two areas change sides, so the reader does
      not have to count years along the axis to find it. One per pane, drawn
@@ -1740,7 +1857,7 @@ function renderCharts(res){
        seen from the other question. It must not be red, because red is already
        the spending and the gap the pot has to cover in the pane above. */
     {label:'Balance', data: pts(bal, y0), yAxisID:'yBal', borderColor: t.a, borderWidth: 2.2,
-     pointRadius: 0, fill: 'origin', backgroundColor: withAlpha(t.a, 0.10), order: 3}
+     pointRadius: 0, fill: false, order: 3}
   ];
   /* One fill, one entry. The shaded gap is a single quantity — what income
      leaves over — and the two colours are its sign, so it reads as one swatch
@@ -1755,6 +1872,31 @@ function renderCharts(res){
      spec:{type:'area', width:0, fill: withAlpha(t.c, 0.28), fill2: withAlpha(t.b, 0.28)}},
     {label:'Balance, lower panel', datasets:[2]}
   ];
+  /* Each band is a pair of datasets, an invisible lower edge and an upper
+     one filled down to it, drawn under the line and keyed as one block, the
+     way the path chart keys its own range. The upper edges come first so the
+     hover card reads from the best futures down to the worst. The outer pair
+     is `noAutoFit`: it is the one the pane lets run off its edges. */
+  if(res.dd){
+    var outerFill = withAlpha(t.a, 0.12), innerFill = withAlpha(t.a, 0.24);
+    var outerSpec = {type: 'area', fill: outerFill};
+    var innerSpec = {type: 'area', fill: withAlpha(t.a, 0.33)};   // as it shows, over the outer
+    var fanPts = function(arr){ return pts(arr.slice(fanFrom), y0 + fanFrom); };
+    var edge = function(label, arr, fill, spec, outer){
+      return {label: label, data: fanPts(arr), yAxisID: 'yBal',
+              borderColor: withAlpha(t.a, 0), backgroundColor: fill || 'transparent', borderWidth: 0,
+              pointRadius: 0, fill: false, order: 4, legendSpec: spec, noAutoFit: outer};
+    };
+    var b10 = ds2.length;
+    ds2.push(edge('Balance, best 10%', fan.p90, outerFill, outerSpec, true));
+    ds2.push(edge('Balance, best 25%', fan.p75, innerFill, innerSpec, false));
+    ds2.push(edge('Balance, worst 25%', fan.p25, null, innerSpec, false));
+    ds2.push(edge('Balance, worst 10%', fan.p10, null, outerSpec, true));
+    ds2[b10].fill = b10 + 3;
+    ds2[b10 + 1].fill = b10 + 2;
+    legend2.push({label:'Middle half of balances', datasets:[b10 + 1, b10 + 2], mark: b10 + 1});
+    legend2.push({label:'Range of balances, worst 10% to best 10%', datasets:[b10, b10 + 3], mark: b10});
+  }
   if(marked){
     // One rule, drawn in both panes, so hiding it hides the whole line down
     // the picture rather than half of it.
@@ -1763,6 +1905,7 @@ function renderCharts(res){
     legend2.push({label: retLabel, datasets:[ds2.length - 2, ds2.length - 1]});
   }
 
+  registerPaneClip();
   if(chart2) chart2.destroy();
   chart2 = new Chart($('ddChart').getContext('2d'), {
     type:'line',
@@ -2743,6 +2886,7 @@ window.__FF = {
   solveFreedomAge: solveFreedomAge,
   accumBands: accumBands,
   potRequirements: potRequirements,
+  drawdownBands: drawdownBands,
   growthSeries: growthSeries,
   tickerStats: tickerStats,
   diagnose: diagnose,

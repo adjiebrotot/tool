@@ -149,7 +149,7 @@ the pane is DEFINED first, which is what puts it underneath, because Chart.js
 stacks a group in definition order, bottom first; F44f2b that both panes span
 the same years; and F44g3 that one key covers both panes with the retirement
 rule as a single entry drawn once in each. F44g-g2b pin the merged fill
-legend, now five entries rather than four.
+legend, now seven entries with the two bands of the range of balances.
 
 **A balance that runs out is drawn where it lands.** The cashflow balance is
 plotted exactly as the engine leaves it, negatives included: a pot that fails
@@ -166,13 +166,54 @@ colours are its sign, so it is a single **Savings/Withdrawal** entry with a
 swatch split down the middle rather than two entries a reader has to add up.
 Banning the old wording would not hold that: split it back into "Surplus" and
 "Deficit" and a label test passes while the key has two entries again. So the
-invariant is structural — the key has exactly four entries, exactly one of them
-is a filled block, and that one block carries BOTH of the colours the chart
-fills with, read off the dataset's own `fill.above`/`fill.below` rather than
-restated. A split gives each entry one colour and all three checks fail at
-once; a recolour of the chart that left the key behind fails F44g2b. F50i pins that the balance pane is refitted in the
+invariant is structural: exactly one entry carries the colours the flows are
+filled with, it carries BOTH of them, read off the dataset's own
+`fill.above`/`fill.below` rather than restated, and it is drawn as one block
+split in two. A split gives each entry one colour and all three checks fail at
+once; a recolour of the chart that left the key behind fails F44g2b. The two
+blocks of the range of balances are set aside by what they carry, the
+balance's own hue and never a flow colour, and F66k pins them. F50i pins that the balance pane is refitted in the
 same pass as the flows, or it would be left drawn against a window it is not
 in.
+
+**The range of balances is the "Chance it works" card, drawn out.** The
+cashflow balance carries a fan now: the middle half of the simulated futures in
+a deeper shade, the worst to the best tenth in a lighter one, opening at the
+retirement year. It is built from the SAME futures the card is scored on, seed
+for seed, each drawing down the pot the expected return reaches by the slider
+age, so the harness holds it to the card rather than to itself. F66 replays
+every edge, year by year, from the replay's own flows and recurrence
+(`refFan`), taking nothing from the page but the random draws. F66b walks each
+of those futures forward and counts the ones that stay funded (never under
+zero after a draw, and on the goal's terminal condition at its horizon), and
+that count has to BE the card's figure, path for path: the card is scored by
+the page's affine required-pot solve, the replay never solves a pot at all, so
+agreement is two formulations agreeing on which futures work. F66e is what
+makes the shading say it: swept across thirty-six retirement ages, from a 0%
+chance to 100%, the share of futures under zero at the life expectancy is
+exactly the share the card says fail, and the worst-tenth edge ends above zero
+exactly when more than nine futures in ten work (the worst quarter, three in
+four). F66c-d pin that the fan opens on the expected line and the edges never
+cross, F66f that zero volatility collapses every plotted edge onto the line to
+the cent, F66g the plotted edges in both moneys, F66h-j where they sit and
+what they fill (the line's old fill to zero is gone, or a third blue would lie
+under the band), and that the pane is sized to the line and the middle half
+while only the outer tenths, marked `noAutoFit`, may run off it. Decades of
+drawing down put the outer tenths an order of magnitude past the line; sized to
+them, the line and the point where futures start running out would both be a
+sliver. F66k-l pin the key, F66m-n the two ends of the slider (never stopping
+draws no fan; stopping today opens it on today's assets), and F66o that the
+same seed reproduces it and that a longer run of draws shares every earlier
+month, which is what lets the band use the card's full horizon. F56i-j run the
+replay and the path-for-path identity on the fuzz pass's 200 random plans too.
+
+A band allowed off its pane must not be painted over the pane above it, and
+Chart.js clips to the whole plot area, so the page clips a stacked axis's
+datasets to their own pane with a plugin registered ahead of Chart.js's Filler
+(which paints fills in the same hook). The stubbed Chart.js here cannot see
+pixels, so that one is checked against the real library: with every other
+series hidden, a pixel diff with and without the band shows no change above the
+balance pane, on the opening view and zoomed.
 
 **One x window, by construction.** The flows and the balance they leave behind
 are one picture, so a year has to sit in the same place on both — and now it
