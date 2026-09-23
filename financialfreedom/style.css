@@ -118,6 +118,19 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 14px;font-size:.84rem;}
 .legend-item{display:flex;align-items:center;gap:7px;cursor:pointer;transition:opacity .15s;}
 .legend-item.hidden{opacity:.35;}
+/* A key grouped by pane: one row per group, each led by the pane's name, the
+   names in one column so the two rows' entries start in line. */
+.legend.legend-grouped{flex-direction:column;gap:8px;}
+.legend-group{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+.legend-group-label{color:var(--muted);font-weight:600;min-width:6.6em;}
+@media (max-width:600px){
+  /* On a phone the entries wrap, so the name takes a line of its own above
+     them rather than leaving the second line of a group hanging under it. */
+  .legend.legend-grouped{gap:4px;}
+  .legend-group{row-gap:6px;}
+  .legend-group-label{flex-basis:100%;min-width:0;}
+  .legend-group + .legend-group{margin-top:6px;}
+}
 .canvas-wrap{height:430px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
 /* The cashflow card draws two plot areas on ONE canvas — the flows above, the
    balance they leave behind below — so it needs room for both. */

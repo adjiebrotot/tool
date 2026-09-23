@@ -576,6 +576,61 @@ function potRequirements(P, opts){
   };
 }
 
+/* The band on the cashflow balance. It is the "Chance it works" card drawn
+   out: the SAME futures potRequirements scores, seed for seed, each one
+   drawing down the pot the expected return builds by the slider age, through
+   the recurrence lifetimeSeries uses. A pot survives a path exactly when it is
+   at least that path's required pot, so the paths that stay funded here are
+   the paths the card counts, and the band shows where the rest run out.
+
+   Before retirement every path is the expected balance: the card starts its
+   futures at the pot the plan reaches, so the fan opens at the retirement
+   month and not before. A path that runs out keeps owing, as the expected
+   line does, so the lower edge shows the size of the miss as well as when.
+   With zero volatility every percentile is the expected balance exactly.
+
+   Sampled at the same months yearly() samples the expected line, from the
+   last whole year at or before retirement, so the fan opens from a point on
+   the line. Returns null when the plan never retires. */
+function drawdownBands(P, det, opts){
+  var nPaths = Math.max(1, opts.paths | 0);
+  var accM = accMonths(P);
+  var total = det.length - 1;
+  if(accM >= total) return null;                        // never retires, nothing drawn
+  var chartYears = Math.max(1, Math.round(total / 12));
+  var startYear = Math.floor(accM / 12);
+  /* The card's own path length, so each path is the card's path draw for
+     draw. It is never shorter than the chart: the draws come out in order, so
+     a longer series only adds months at the end and changes none before. */
+  var n = Math.max(1, months(P.ageRetire, horizonAge(P)), total - accM);
+  var flows = new Float64Array(total), W, y, p, t;
+  for(t = accM; t < total; t++) flows[t] = flowAt(P, t);
+  // The month each yearly sample reads, clamped the way yearly() clamps the
+  // expected line, so the band and the line are sampled at the same months.
+  var at = [];
+  for(y = startYear; y <= chartYears; y++) at.push(Math.min(y * 12, total));
+  var samples = at.map(function(){ return new Float64Array(nPaths); });
+  var path = new Float64Array(total + 1);
+  for(t = 0; t <= accM; t++) path[t] = det[t];         // the same for every path
+  for(p = 0; p < nPaths; p++){
+    var g = growthSeries(P, mulberry32(deriveSeed(opts.seed, 'pot' + p)), n);
+    W = det[accM];
+    for(t = accM; t < total; t++){
+      W += flows[t];                                    // the draw comes out before the return
+      W *= g[t - accM];
+      path[t + 1] = W;
+    }
+    for(y = 0; y < at.length; y++) samples[y][p] = path[at[y]];
+  }
+  var bands = {p10: [], p90: []};
+  samples.forEach(function(col){
+    col = Array.prototype.slice.call(col).sort(function(a, b){ return a - b; });
+    bands.p10.push(quantile(col, 0.10));
+    bands.p90.push(quantile(col, 0.90));
+  });
+  return {bands: bands, startYear: startYear, years: chartYears, paths: nPaths};
+}
+
 /* Annualised return and volatility from a fetched price series, the two figures
    the engine takes. Adjusted close from the Worker's Yahoo path includes
    dividends; its Stooq fallback does not, so the caller warns when `source` is
@@ -1020,6 +1075,7 @@ function compute(ui){
 
   var mc = accumBands(P, {paths: ui.paths, seed: ui.seed});
   var reqs = potRequirements(P, {paths: ui.paths, seed: ui.seed});
+  var dd = drawdownBands(P, det, {paths: ui.paths, seed: ui.seed});
 
   return {
     P: P, ui: ui, diag: diag, years: years, thisYear: thisYear, thisMonth: thisMonth,
@@ -1027,7 +1083,7 @@ function compute(ui){
     needCurve: needCurve, incomeCurve: incomeCurve,
     expenseCurve: expenseCurve, flowCurve: flowCurve,
     needAtRetire: needAtRetire, potAtRetire: potAtRetire, leftAtDeath: leftAtDeath,
-    mc: mc, reqs: reqs,
+    mc: mc, reqs: reqs, dd: dd,
     successAtPlan: reqs.successAt(potAtRetire),
     confPot: reqs.atConfidence(ui.confidence),
     ffAge: diag.ffAge != null ? diag.ffAge : null
@@ -1349,6 +1405,44 @@ function makeYFit(y0, hiSeries, loSeries, opts){
    show the new one, which is worse than not refitting at all. */
 var Y_FIT_PLUGIN = SharedZoom.plugin;
 
+/* Chart.js clips every dataset to the whole plot area, which on a chart of
+   stacked panes is all of them: a series allowed off the top of the balance
+   pane would be drawn on over the flows. So a dataset on a stacked axis is
+   clipped to its own pane. Both exports copy the canvas, so they inherit it.
+
+   A fill is painted by Chart.js's own Filler plugin in the same hook, and
+   registered plugins run before a chart's inline ones, so this one is
+   registered globally and AHEAD of Filler: the clip is then in place before
+   the fill is drawn. It touches nothing on a chart without stacked axes. */
+function registerPaneClip(){
+  if(!window.Chart || !Chart.register || !Chart.registry || !Chart.registry.plugins) return false;
+  if(Chart.registry.plugins.get('ffPaneClip')) return true;
+  var filler = Chart.Filler || Chart.registry.plugins.get('filler');
+  if(filler && Chart.unregister) Chart.unregister(filler);
+  Chart.register(PANE_CLIP_PLUGIN);
+  if(filler) Chart.register(filler);
+  return true;
+}
+var PANE_CLIP_PLUGIN = {
+  id: 'ffPaneClip',
+  beforeDatasetDraw: function(chart, args){
+    var ds = chart.data.datasets[args.index];
+    var sc = ds && ds.yAxisID ? chart.scales[ds.yAxisID] : null;
+    if(!sc || !sc.options || !sc.options.stack || !chart.chartArea) return;
+    var a = chart.chartArea, ctx = chart.ctx;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(a.left, sc.top, a.right - a.left, sc.bottom - sc.top);
+    ctx.clip();
+    args.meta.$ffPaneClip = true;
+  },
+  afterDatasetDraw: function(chart, args){
+    if(!args.meta.$ffPaneClip) return;
+    args.meta.$ffPaneClip = false;
+    chart.ctx.restore();
+  }
+};
+
 /* Chart.js resolves an `index` tooltip by DATA INDEX: it takes the nearest
    element, reads its index, and pulls that index out of every other dataset.
    Every series here is one point per year EXCEPT the droplines, which are two
@@ -1510,7 +1604,14 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
       // cannot print labels on top of each other across the join.
       ticks: {color: t.muted, font: {size: 11}, maxTicksLimit: 5, includeBounds: false,
               callback: function(v){ return fmt.currency(v, true); }},
-      grid: {color: t.grid}
+      /* Zero is the line a balance is read against: above it the money
+         lasts, under it the plan has failed. So it is drawn heavier than the
+         other gridlines, in the axis text colour. Ticks are whole multiples
+         of their step, so zero is always one of them when it is on the axis. */
+      grid: {
+        color: function(c){ return c.tick && c.tick.value === 0 ? t.muted : t.grid; },
+        lineWidth: function(c){ return c.tick && c.tick.value === 0 ? 1.6 : 1; }
+      }
     };
     /* A spacer in the middle of the stack, so the two panes read as two
        pictures rather than one picture with a line through it. It plots
@@ -1551,6 +1652,27 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
 function renderLegend(elId, chart, items){
   var el = $(elId);
   el.innerHTML = '';
+  /* A key for a chart of stacked panes is grouped by pane: each entry names
+     its `group`, and each group is one row led by its name, so the key says
+     where to look instead of every label saying it. Groups keep the order
+     they first appear in. A key with no groups is one flat row, as before. */
+  var grouped = items.some(function(item){ return !!item.group; });
+  el.classList.toggle('legend-grouped', grouped);
+  var rows = {}, order = [];
+  var rowOf = function(name){
+    if(!grouped) return el;
+    if(!rows[name]){
+      var row = document.createElement('div');
+      row.className = 'legend-group';
+      var head = document.createElement('span');
+      head.className = 'legend-group-label';
+      head.textContent = name + ':';
+      row.appendChild(head);
+      rows[name] = row;
+      order.push(name);
+    }
+    return rows[name];
+  };
   items.forEach(function(item){
     var div = document.createElement('div');
     div.className = 'legend-item';
@@ -1562,8 +1684,9 @@ function renderLegend(elId, chart, items){
       div.classList.toggle('hidden', !hidden);
       chart.update();
     });
-    el.appendChild(div);
+    rowOf(item.group).appendChild(div);
   });
+  order.forEach(function(name){ el.appendChild(rows[name]); });
 }
 
 function renderCharts(res){
@@ -1711,8 +1834,47 @@ function renderCharts(res){
   var bal = scale(yearly(res.det, years));
   var retLabel = 'Retire at ' + fmt.age(res.P.ageRetire);
 
+  /* The range of balances, shaded round the expected line from the year the
+     draws begin, worst tenth of the simulated futures to the best. Held as
+     whole-plan arrays, blank before the fan opens, so the fitter reads them by
+     the same year index as every other series. */
+  var fan = {p10: [], p90: []}, fanFrom = null;
+  if(res.dd){
+    fanFrom = res.dd.startYear;
+    Object.keys(fan).forEach(function(q){
+      for(var yi = 0; yi <= years; yi++){
+        var v = res.dd.bands[q][yi - fanFrom];
+        fan[q].push(yi >= fanFrom && v != null ? show(res, v, yi) : null);
+      }
+    });
+  }
+  /* Leave a Legacy is funded only if the balance ends on the bequest, so the
+     bequest is drawn across the pane as the line to end above. It is entered
+     in today's money, so in future's money it is that sum in each year's
+     money, the same way the table and the "Left at" card state it. */
+  var legacyLine = res.ui.mode === 'legacy'
+    ? scale(res.needCurve.map(function(){ return Math.max(0, res.P.legacy); }))
+    : null;
+
   var fit2 = makeYFit(y0, [income, spend], [income, spend], {includeZero: true});
-  var fit3 = makeYFit(y0, [bal], [bal], {includeZero: true, topPad: 2.2});
+  /* The balance pane is sized to what it is read against: the expected
+     balance, zero, and the bequest when there is one. Decades of drawing down
+     spread the band an order of magnitude past the line, so it is given a
+     margin rather than the axis: it may widen the pane by up to BAND_ROOM of
+     that span on either side, and past that it is clipped. The margin is what
+     keeps a band that dips under zero visibly under zero, which is how the
+     pane shows the futures that fail. */
+  var BAND_ROOM = 0.3;
+  var balLines = legacyLine ? [bal, legacyLine] : [bal];
+  var fitLine = makeYFit(y0, balLines, balLines, {includeZero: true, topPad: 2.2});
+  var fitFan = makeYFit(y0, [fan.p90], [fan.p10], {includeZero: true, topPad: 2.2});
+  var fit3 = function(xMin, xMax){
+    var l = fitLine(xMin, xMax), f = res.dd ? fitFan(xMin, xMax) : null;
+    if(!l || !f) return l || f;
+    var room = BAND_ROOM * (l.max - l.min);
+    return {min: Math.min(l.min, Math.max(f.min, l.min - room)),
+            max: Math.max(l.max, Math.min(f.max, l.max + room))};
+  };
 
   /* A vertical rule at the year the two areas change sides, so the reader does
      not have to count years along the axis to find it. One per pane, drawn
@@ -1740,29 +1902,57 @@ function renderCharts(res){
        seen from the other question. It must not be red, because red is already
        the spending and the gap the pot has to cover in the pane above. */
     {label:'Balance', data: pts(bal, y0), yAxisID:'yBal', borderColor: t.a, borderWidth: 2.2,
-     pointRadius: 0, fill: 'origin', backgroundColor: withAlpha(t.a, 0.10), order: 3}
+     pointRadius: 0, fill: false, order: 3}
   ];
   /* One fill, one entry. The shaded gap is a single quantity — what income
      leaves over — and the two colours are its sign, so it reads as one swatch
      split down the middle rather than as two separate things to hide. */
+  var UPPER = 'Upper panel', LOWER = 'Lower panel';
   var legend2 = [
-    {label:'Income', datasets:[1], spec:{fill: null}},
-    {label:'Spending', datasets:[0]},
+    {label:'Income', datasets:[1], spec:{fill: null}, group: UPPER},
+    {label:'Spending', datasets:[0], group: UPPER},
     /* The fill belongs to the income dataset but is not its line, so it is
        stated here as the block it is drawn as — in BOTH of its colours, which
        is what makes it one entry instead of two. */
-    {label:'Savings/Withdrawal', datasets:[1],
+    {label:'Savings/Withdrawal', datasets:[1], group: UPPER,
      spec:{type:'area', width:0, fill: withAlpha(t.c, 0.28), fill2: withAlpha(t.b, 0.28)}},
-    {label:'Balance, lower panel', datasets:[2]}
+    {label:'Balance', datasets:[2], group: LOWER}
   ];
+  /* The band is a pair of datasets, an invisible lower edge and an upper one
+     filled down to it, drawn under the line and keyed as one block, the way
+     the path chart keys its own range. Both edges are `noAutoFit`: the pane
+     gives them a margin, not the axis, and clips them past it. */
+  if(res.dd){
+    var bandFill = withAlpha(t.a, 0.16);
+    var bandSpec = {type: 'area', fill: bandFill};
+    var edge = function(label, arr, fill){
+      return {label: label, data: pts(arr.slice(fanFrom), y0 + fanFrom), yAxisID: 'yBal',
+              borderColor: withAlpha(t.a, 0), backgroundColor: fill || 'transparent', borderWidth: 0,
+              pointRadius: 0, fill: false, order: 4, legendSpec: bandSpec, noAutoFit: true};
+    };
+    var b10 = ds2.length;
+    ds2.push(edge('Balance, best 10%', fan.p90, bandFill));
+    ds2.push(edge('Balance, worst 10%', fan.p10, null));
+    ds2[b10].fill = b10 + 1;
+    legend2.push({label:'Range of balances, worst 10% to best 10%', datasets:[b10, b10 + 1], mark: b10,
+                  group: LOWER});
+  }
+  if(legacyLine){
+    ds2.push({label:'Target legacy', data: pts(legacyLine, y0), yAxisID:'yBal', borderColor: t.d,
+              borderWidth: 1.8, borderDash:[6,4], pointRadius: 0, fill: false, order: 2});
+    legend2.push({label:'Target legacy', datasets:[ds2.length - 1], group: LOWER});
+  }
   if(marked){
     // One rule, drawn in both panes, so hiding it hides the whole line down
     // the picture rather than half of it.
     ds2.push(retireLine('y', paneSpan(fit2)));
     ds2.push(retireLine('yBal', paneSpan(fit3)));
-    legend2.push({label: retLabel, datasets:[ds2.length - 2, ds2.length - 1]});
+    // Drawn down both panes, and read against the flows first, where income
+    // stops, so it is keyed with the upper one.
+    legend2.push({label: retLabel, datasets:[ds2.length - 2, ds2.length - 1], group: UPPER});
   }
 
+  registerPaneClip();
   if(chart2) chart2.destroy();
   chart2 = new Chart($('ddChart').getContext('2d'), {
     type:'line',
@@ -2063,6 +2253,33 @@ function legendItemsOf(legendId){
 // key the same way instead of running it off the edge of the canvas.
 var layoutLegend = SharedLegend.layout;
 
+/* The exported key, packed into rows. A grouped key exports the way it reads
+   on the page: each group starts a row of its own, led by its name, and only
+   the entries still showing are carried. A group with none showing is left
+   out, name and all. Each row reports `head` (the name, or null on a row that
+   continues a group) and `headW`, which is included in its `width`. */
+function legendRowsOf(legendId, measure, maxW, markW, gap, pad){
+  var el = $(legendId);
+  if(!el) return [];
+  var groups = el.querySelectorAll('.legend-group');
+  if(!groups.length){
+    var flat = legendItemsOf(legendId);
+    return flat.length ? layoutLegend(flat, measure, maxW, markW, gap, pad) : [];
+  }
+  var out = [];
+  Array.prototype.forEach.call(groups, function(g){
+    var items = SharedLegend.itemsOf(g);
+    if(!items.length) return;
+    var labelEl = g.querySelector('.legend-group-label');
+    var head = labelEl ? labelEl.textContent.trim() : '';
+    var headW = head ? measure(head) + pad : 0;
+    layoutLegend(items, measure, maxW - headW, markW, gap, pad).forEach(function(row, i){
+      out.push({items: row.items, head: i === 0 ? head : null, headW: headW, width: row.width + headW});
+    });
+  });
+  return out;
+}
+
 function saveBlob(blob, filename){
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
@@ -2080,8 +2297,6 @@ function chartPng(canvasId, filename, chartTitle, legendId, shouldDownload){
   var chartH = Math.round(src.height / dpr * OUT);
   var tone = exportTokens();
   var FONT = '"DM Sans", sans-serif';
-  var legendItems = legendId ? legendItemsOf(legendId) : [];
-
   var titleFontPx = Math.round(14 * OUT);
   var legendFontPx = Math.round(11 * OUT);
   var titleH = chartTitle ? Math.round(40 * OUT) : 0;
@@ -2093,8 +2308,8 @@ function chartPng(canvasId, filename, chartTitle, legendId, shouldDownload){
 
   var measureCtx = document.createElement('canvas').getContext('2d');
   measureCtx.font = '500 ' + legendFontPx + 'px ' + FONT;
-  var legendRows = legendItems.length
-    ? layoutLegend(legendItems, function(s){ return measureCtx.measureText(s).width; },
+  var legendRows = legendId
+    ? legendRowsOf(legendId, function(s){ return measureCtx.measureText(s).width; },
                    chartW - margin * 2, markW, gap, pad)
     : [];
   var legendH = legendRows.length ? legendRows.length * rowH + Math.round(8 * OUT) : 0;
@@ -2124,6 +2339,12 @@ function chartPng(canvasId, filename, chartTitle, legendId, shouldDownload){
     legendRows.forEach(function(row, ri){
       var x = Math.max(margin, (tmp.width - row.width) / 2);
       var cy = ly + rowH * ri + rowH / 2;
+      if(row.head){
+        ctx.fillStyle = tone.fg;
+        ctx.textAlign = 'left';
+        ctx.fillText(row.head, x, cy);
+      }
+      x += row.headW || 0;
       row.items.forEach(function(item){
         SharedLegend.paint(ctx, item.swatch, x, cy, OUT);
         x += markW + gap;
@@ -2182,13 +2403,12 @@ function chartSvg(canvasId, filename, chartTitle, legendId){
   var chartW = Math.round(src.width / dpr), chartH = Math.round(src.height / dpr);
   var tone = exportTokens();
   var FONT = 'DM Sans, sans-serif';
-  var legendItems = legendId ? legendItemsOf(legendId) : [];
   var titleH = chartTitle ? 40 : 0;
   var markW = SharedLegend.W, gap = 7, pad = 20, margin = 16, rowH = 22, wmH = 26;
   var mc = document.createElement('canvas').getContext('2d');
   mc.font = '500 11px DM Sans, sans-serif';
-  var legendRows = legendItems.length
-    ? layoutLegend(legendItems, function(s){ return mc.measureText(s).width; },
+  var legendRows = legendId
+    ? legendRowsOf(legendId, function(s){ return mc.measureText(s).width; },
                    chartW - margin * 2, markW, gap, pad)
     : [];
   var legendH = legendRows.length ? legendRows.length * rowH + 8 : 0;
@@ -2218,15 +2438,20 @@ function chartSvg(canvasId, filename, chartTitle, legendId){
   legendRows.forEach(function(row, ri){
     var x = Math.max(margin, (svgW - row.width) / 2);
     var cy = titleH + chartH + 4 + rowH * ri + rowH / 2;
-    row.items.forEach(function(item){
-      svg.appendChild(SharedLegend.svgNode(item.swatch, x, cy, 1));
-      x += markW + gap;
+    var text = function(str, at){
       var lt = document.createElementNS(NS, 'text');
-      lt.setAttribute('x', x); lt.setAttribute('y', cy);
+      lt.setAttribute('x', at); lt.setAttribute('y', cy);
       lt.setAttribute('dominant-baseline', 'middle'); lt.setAttribute('font-family', FONT);
       lt.setAttribute('font-size', '11'); lt.setAttribute('font-weight', '500');
       lt.setAttribute('fill', tone.fg);
-      lt.textContent = item.label; svg.appendChild(lt);
+      lt.textContent = str; svg.appendChild(lt);
+    };
+    if(row.head) text(row.head, x);
+    x += row.headW || 0;
+    row.items.forEach(function(item){
+      svg.appendChild(SharedLegend.svgNode(item.swatch, x, cy, 1));
+      x += markW + gap;
+      text(item.label, x);
       x += mc.measureText(item.label).width + pad;
     });
   });
@@ -2743,6 +2968,7 @@ window.__FF = {
   solveFreedomAge: solveFreedomAge,
   accumBands: accumBands,
   potRequirements: potRequirements,
+  drawdownBands: drawdownBands,
   growthSeries: growthSeries,
   tickerStats: tickerStats,
   diagnose: diagnose,
@@ -2759,6 +2985,7 @@ window.__FF = {
   chartPng: chartPng,
   chartSvg: chartSvg,
   layoutLegend: layoutLegend,
+  legendRowsOf: legendRowsOf,
   render: render,
   get last(){ return last; },
   get charts(){ return {main: chart1, cashflows: chart2}; }
