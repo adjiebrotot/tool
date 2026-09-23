@@ -30,8 +30,7 @@
   --line-rtb-rent:#FF8B8B;--line-rtb-own:#8DBBFF;
   /* Abbreviations (dashed underline + hover definition, see shared.css/.abbr) */
   --abbr-line:rgba(168,182,207,.42);--abbr-line-hover:rgba(141,187,255,.85);--abbr-hover-bg:rgba(141,187,255,.10);
-  /* Scrollbars (see shared.css) — vertical bars are hidden site-wide, the
-     horizontal bar wears these colours */
+  /* Scrollbars (see shared.css): both bars wear these colours site-wide */
   --scrollbar-thumb:#3C4C68;--scrollbar-thumb-hover:#5B7398;
   /* Motion */
   --motion-fast:150ms;--motion-base:250ms;--motion-slow:400ms;

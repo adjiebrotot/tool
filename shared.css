@@ -389,35 +389,30 @@ body.light tr:hover td{background:rgba(90,145,232,0.04);}
 .ricon-chart2{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='%234F8DFD' d='M3 15l5-5 4 3 9-9'/%3E%3Cpath stroke='%2319A979' d='M3 21l5-4 4 2 9-7'/%3E%3C/svg%3E");}
 
 /* ============================================================
-   SCROLLBARS — vertical hidden, horizontal themed (site-wide)
+   SCROLLBARS — thin and themed on both axes (site-wide)
    ============================================================
-   Vertical scrolling already has a gesture on every device (wheel,
-   trackpad, arrow keys, touch), so the vertical bar is removed
-   everywhere and the page keeps its full width. Sideways scrolling has
-   no such gesture on a plain mouse, so that bar stays, wearing the
-   page's own colours instead of the operating system's.
+   Both bars wear the page's own colours instead of the operating
+   system's: a pill thumb on a transparent track, so the bar reads as part
+   of the page rather than a grey strip beside it. The gutter is reserved
+   on the root so the layout does not shift sideways when a page grows
+   long enough to scroll.
 
    Tool stylesheets must not re-style ::-webkit-scrollbar; a class
-   selector outranks the rules below and brings a vertical bar back. */
-/* width is the vertical bar's thickness, height the horizontal one's: zero
-   removes the vertical bar, 10px keeps the horizontal one at a usable size. */
-*::-webkit-scrollbar{width:0;height:10px;}
+   selector outranks the rules below and gives that surface a different bar. */
+html{scrollbar-gutter:stable;}
+/* width is the vertical bar's thickness, height the horizontal one's; the
+   2px transparent border leaves a 6px thumb inside the 10px track. */
+*::-webkit-scrollbar{width:10px;height:10px;}
 *::-webkit-scrollbar-track{background:transparent;}
 *::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:var(--radius-pill);border:2px solid transparent;background-clip:padding-box;transition:background var(--motion-fast);}
 *::-webkit-scrollbar-thumb:hover{background:var(--scrollbar-thumb-hover);background-clip:padding-box;}
 *::-webkit-scrollbar-corner{background:transparent;}
 
-/* Firefox styles scrollbars through scrollbar-width / scrollbar-color instead,
-   and neither can pick an axis: hiding the vertical bar hides the horizontal
-   one too. So there the vertical rule wins everywhere, and a surface that
-   scrolls sideways only asks for the thin themed bar back with .x-scroll (or
-   by repeating these two declarations on its own wrapper, under the same
-   @supports guard). The guard keeps all of this away from Chrome and Safari,
-   where scrollbar-width:none would otherwise beat the rules above and take
-   the horizontal bar with it. */
+/* Firefox styles scrollbars through scrollbar-width / scrollbar-color instead.
+   The guard keeps this away from Chrome and Safari, where scrollbar-width
+   would beat the rules above and fall back to the system's own bar. */
 @supports not selector(::-webkit-scrollbar){
-  *{scrollbar-width:none;}
-  .x-scroll{scrollbar-width:thin;scrollbar-color:var(--scrollbar-thumb) transparent;}
+  *{scrollbar-width:thin;scrollbar-color:var(--scrollbar-thumb) transparent;}
 }
 
 /* ============================================================
