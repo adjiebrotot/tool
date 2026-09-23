@@ -1888,6 +1888,46 @@ for(const [name, extra] of [
     r.markerAxes.length === 2 && r.markerAxes.includes('y') && r.markerAxes.includes('yBal') &&
     !r.legend2.some(l => /right axis/i.test(l)),
     `${r.legend2.join(' | ')}  ||  rule on ${r.markerAxes.join(' + ')}`);
+  /* The key is grouped by pane rather than each label saying where to look:
+     an "Upper panel:" row for the flows and the retirement rule, a "Lower
+     panel:" row for the balance and everything read against it. The export
+     carries the same rows, each led by its name, and a group whose entries
+     are all hidden drops out of it whole. */
+  {
+    const g = await page.evaluate(() => {
+      const F = window.__FF;
+      const groups = [...document.querySelectorAll('#legend2 .legend-group')].map(el => ({
+        head: el.querySelector('.legend-group-label').textContent.trim(),
+        items: [...el.querySelectorAll('.legend-item')].map(i => i.textContent.trim())
+      }));
+      const measure = s => s.length * 6;
+      const rows = () => F.legendRowsOf('legend2', measure, 4000, 22, 7, 20)
+        .map(r => ({head: r.head, items: r.items.map(i => i.label), width: r.width, headW: r.headW}));
+      const all = rows();
+      // Hide every lower-panel entry and read the export rows again.
+      const lower = [...document.querySelectorAll('#legend2 .legend-group')][1];
+      const clicks = [...lower.querySelectorAll('.legend-item')];
+      clicks.forEach(el => el.click());
+      const upperOnly = rows();
+      clicks.forEach(el => el.click());
+      return {groups, all, upperOnly, grouped: document.getElementById('legend2').classList.contains('legend-grouped'),
+              flat1: document.querySelectorAll('#legend1 .legend-group').length};
+    });
+    const up = g.groups[0], lo = g.groups[1];
+    check('F44g4 the key is grouped by pane: the flows under "Upper panel", the balance under "Lower panel"',
+      g.grouped && g.groups.length === 2 && up.head === 'Upper panel:' && lo.head === 'Lower panel:' &&
+      ['Income', 'Spending', 'Savings/Withdrawal'].every(l => up.items.includes(l)) && up.items.some(l => /^retire at/i.test(l)) &&
+      lo.items[0] === 'Balance' && lo.items.some(l => /^range of balances/i.test(l)) &&
+      !g.groups.some(x => x.items.some(l => /panel/i.test(l))) && g.flat1 === 0,
+      g.groups.map(x => `${x.head} ${x.items.join(', ')}`).join('  ||  '));
+    check('F44g5 and the export carries the same rows, each led by its pane, with a hidden pane left out whole',
+      g.all.length === 2 && g.all[0].head === 'Upper panel:' && g.all[1].head === 'Lower panel:' &&
+      JSON.stringify(g.all[0].items) === JSON.stringify(up.items) &&
+      JSON.stringify(g.all[1].items) === JSON.stringify(lo.items) &&
+      g.all.every(r => r.headW > 0 && r.width > r.headW) &&
+      g.upperOnly.length === 1 && g.upperOnly[0].head === 'Upper panel:',
+      g.all.map(r => `${r.head} ${r.items.length} entries`).join(', ') + `; lower hidden: ${g.upperOnly.length} row`);
+  }
   /* The shape the two sections exist for, and the one identity that ties them
      together: the cashflow balance IS the section 1 accumulation right up to
      the retirement month, and is strictly below it from the next month on,

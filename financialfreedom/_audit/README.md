@@ -149,7 +149,12 @@ the pane is DEFINED first, which is what puts it underneath, because Chart.js
 stacks a group in definition order, bottom first; F44f2b that both panes span
 the same years; and F44g3 that one key covers both panes with the retirement
 rule as a single entry drawn once in each. F44g-g2b pin the merged fill
-legend, now six entries with the range of balances.
+legend, now six entries with the range of balances. F44g4 pins the key grouped
+by pane, an "Upper panel:" row for the flows and the retirement rule and a
+"Lower panel:" row for the balance and what it is read against, so no label has
+to say which pane it belongs to; F44g5 that the PNG and SVG exports carry the
+same rows, each led by its name, with a pane whose entries are all hidden left
+out whole.
 
 **A balance that runs out is drawn where it lands.** The cashflow balance is
 plotted exactly as the engine leaves it, negatives included: a pot that fails

@@ -1652,6 +1652,27 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
 function renderLegend(elId, chart, items){
   var el = $(elId);
   el.innerHTML = '';
+  /* A key for a chart of stacked panes is grouped by pane: each entry names
+     its `group`, and each group is one row led by its name, so the key says
+     where to look instead of every label saying it. Groups keep the order
+     they first appear in. A key with no groups is one flat row, as before. */
+  var grouped = items.some(function(item){ return !!item.group; });
+  el.classList.toggle('legend-grouped', grouped);
+  var rows = {}, order = [];
+  var rowOf = function(name){
+    if(!grouped) return el;
+    if(!rows[name]){
+      var row = document.createElement('div');
+      row.className = 'legend-group';
+      var head = document.createElement('span');
+      head.className = 'legend-group-label';
+      head.textContent = name + ':';
+      row.appendChild(head);
+      rows[name] = row;
+      order.push(name);
+    }
+    return rows[name];
+  };
   items.forEach(function(item){
     var div = document.createElement('div');
     div.className = 'legend-item';
@@ -1663,8 +1684,9 @@ function renderLegend(elId, chart, items){
       div.classList.toggle('hidden', !hidden);
       chart.update();
     });
-    el.appendChild(div);
+    rowOf(item.group).appendChild(div);
   });
+  order.forEach(function(name){ el.appendChild(rows[name]); });
 }
 
 function renderCharts(res){
@@ -1885,15 +1907,16 @@ function renderCharts(res){
   /* One fill, one entry. The shaded gap is a single quantity — what income
      leaves over — and the two colours are its sign, so it reads as one swatch
      split down the middle rather than as two separate things to hide. */
+  var UPPER = 'Upper panel', LOWER = 'Lower panel';
   var legend2 = [
-    {label:'Income', datasets:[1], spec:{fill: null}},
-    {label:'Spending', datasets:[0]},
+    {label:'Income', datasets:[1], spec:{fill: null}, group: UPPER},
+    {label:'Spending', datasets:[0], group: UPPER},
     /* The fill belongs to the income dataset but is not its line, so it is
        stated here as the block it is drawn as — in BOTH of its colours, which
        is what makes it one entry instead of two. */
-    {label:'Savings/Withdrawal', datasets:[1],
+    {label:'Savings/Withdrawal', datasets:[1], group: UPPER,
      spec:{type:'area', width:0, fill: withAlpha(t.c, 0.28), fill2: withAlpha(t.b, 0.28)}},
-    {label:'Balance, lower panel', datasets:[2]}
+    {label:'Balance', datasets:[2], group: LOWER}
   ];
   /* The band is a pair of datasets, an invisible lower edge and an upper one
      filled down to it, drawn under the line and keyed as one block, the way
@@ -1911,19 +1934,22 @@ function renderCharts(res){
     ds2.push(edge('Balance, best 10%', fan.p90, bandFill));
     ds2.push(edge('Balance, worst 10%', fan.p10, null));
     ds2[b10].fill = b10 + 1;
-    legend2.push({label:'Range of balances, worst 10% to best 10%', datasets:[b10, b10 + 1], mark: b10});
+    legend2.push({label:'Range of balances, worst 10% to best 10%', datasets:[b10, b10 + 1], mark: b10,
+                  group: LOWER});
   }
   if(legacyLine){
     ds2.push({label:'Target legacy', data: pts(legacyLine, y0), yAxisID:'yBal', borderColor: t.d,
               borderWidth: 1.8, borderDash:[6,4], pointRadius: 0, fill: false, order: 2});
-    legend2.push({label:'Target legacy', datasets:[ds2.length - 1]});
+    legend2.push({label:'Target legacy', datasets:[ds2.length - 1], group: LOWER});
   }
   if(marked){
     // One rule, drawn in both panes, so hiding it hides the whole line down
     // the picture rather than half of it.
     ds2.push(retireLine('y', paneSpan(fit2)));
     ds2.push(retireLine('yBal', paneSpan(fit3)));
-    legend2.push({label: retLabel, datasets:[ds2.length - 2, ds2.length - 1]});
+    // Drawn down both panes, and read against the flows first, where income
+    // stops, so it is keyed with the upper one.
+    legend2.push({label: retLabel, datasets:[ds2.length - 2, ds2.length - 1], group: UPPER});
   }
 
   registerPaneClip();
@@ -2227,6 +2253,33 @@ function legendItemsOf(legendId){
 // key the same way instead of running it off the edge of the canvas.
 var layoutLegend = SharedLegend.layout;
 
+/* The exported key, packed into rows. A grouped key exports the way it reads
+   on the page: each group starts a row of its own, led by its name, and only
+   the entries still showing are carried. A group with none showing is left
+   out, name and all. Each row reports `head` (the name, or null on a row that
+   continues a group) and `headW`, which is included in its `width`. */
+function legendRowsOf(legendId, measure, maxW, markW, gap, pad){
+  var el = $(legendId);
+  if(!el) return [];
+  var groups = el.querySelectorAll('.legend-group');
+  if(!groups.length){
+    var flat = legendItemsOf(legendId);
+    return flat.length ? layoutLegend(flat, measure, maxW, markW, gap, pad) : [];
+  }
+  var out = [];
+  Array.prototype.forEach.call(groups, function(g){
+    var items = SharedLegend.itemsOf(g);
+    if(!items.length) return;
+    var labelEl = g.querySelector('.legend-group-label');
+    var head = labelEl ? labelEl.textContent.trim() : '';
+    var headW = head ? measure(head) + pad : 0;
+    layoutLegend(items, measure, maxW - headW, markW, gap, pad).forEach(function(row, i){
+      out.push({items: row.items, head: i === 0 ? head : null, headW: headW, width: row.width + headW});
+    });
+  });
+  return out;
+}
+
 function saveBlob(blob, filename){
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
@@ -2244,8 +2297,6 @@ function chartPng(canvasId, filename, chartTitle, legendId, shouldDownload){
   var chartH = Math.round(src.height / dpr * OUT);
   var tone = exportTokens();
   var FONT = '"DM Sans", sans-serif';
-  var legendItems = legendId ? legendItemsOf(legendId) : [];
-
   var titleFontPx = Math.round(14 * OUT);
   var legendFontPx = Math.round(11 * OUT);
   var titleH = chartTitle ? Math.round(40 * OUT) : 0;
@@ -2257,8 +2308,8 @@ function chartPng(canvasId, filename, chartTitle, legendId, shouldDownload){
 
   var measureCtx = document.createElement('canvas').getContext('2d');
   measureCtx.font = '500 ' + legendFontPx + 'px ' + FONT;
-  var legendRows = legendItems.length
-    ? layoutLegend(legendItems, function(s){ return measureCtx.measureText(s).width; },
+  var legendRows = legendId
+    ? legendRowsOf(legendId, function(s){ return measureCtx.measureText(s).width; },
                    chartW - margin * 2, markW, gap, pad)
     : [];
   var legendH = legendRows.length ? legendRows.length * rowH + Math.round(8 * OUT) : 0;
@@ -2288,6 +2339,12 @@ function chartPng(canvasId, filename, chartTitle, legendId, shouldDownload){
     legendRows.forEach(function(row, ri){
       var x = Math.max(margin, (tmp.width - row.width) / 2);
       var cy = ly + rowH * ri + rowH / 2;
+      if(row.head){
+        ctx.fillStyle = tone.fg;
+        ctx.textAlign = 'left';
+        ctx.fillText(row.head, x, cy);
+      }
+      x += row.headW || 0;
       row.items.forEach(function(item){
         SharedLegend.paint(ctx, item.swatch, x, cy, OUT);
         x += markW + gap;
@@ -2346,13 +2403,12 @@ function chartSvg(canvasId, filename, chartTitle, legendId){
   var chartW = Math.round(src.width / dpr), chartH = Math.round(src.height / dpr);
   var tone = exportTokens();
   var FONT = 'DM Sans, sans-serif';
-  var legendItems = legendId ? legendItemsOf(legendId) : [];
   var titleH = chartTitle ? 40 : 0;
   var markW = SharedLegend.W, gap = 7, pad = 20, margin = 16, rowH = 22, wmH = 26;
   var mc = document.createElement('canvas').getContext('2d');
   mc.font = '500 11px DM Sans, sans-serif';
-  var legendRows = legendItems.length
-    ? layoutLegend(legendItems, function(s){ return mc.measureText(s).width; },
+  var legendRows = legendId
+    ? legendRowsOf(legendId, function(s){ return mc.measureText(s).width; },
                    chartW - margin * 2, markW, gap, pad)
     : [];
   var legendH = legendRows.length ? legendRows.length * rowH + 8 : 0;
@@ -2382,15 +2438,20 @@ function chartSvg(canvasId, filename, chartTitle, legendId){
   legendRows.forEach(function(row, ri){
     var x = Math.max(margin, (svgW - row.width) / 2);
     var cy = titleH + chartH + 4 + rowH * ri + rowH / 2;
-    row.items.forEach(function(item){
-      svg.appendChild(SharedLegend.svgNode(item.swatch, x, cy, 1));
-      x += markW + gap;
+    var text = function(str, at){
       var lt = document.createElementNS(NS, 'text');
-      lt.setAttribute('x', x); lt.setAttribute('y', cy);
+      lt.setAttribute('x', at); lt.setAttribute('y', cy);
       lt.setAttribute('dominant-baseline', 'middle'); lt.setAttribute('font-family', FONT);
       lt.setAttribute('font-size', '11'); lt.setAttribute('font-weight', '500');
       lt.setAttribute('fill', tone.fg);
-      lt.textContent = item.label; svg.appendChild(lt);
+      lt.textContent = str; svg.appendChild(lt);
+    };
+    if(row.head) text(row.head, x);
+    x += row.headW || 0;
+    row.items.forEach(function(item){
+      svg.appendChild(SharedLegend.svgNode(item.swatch, x, cy, 1));
+      x += markW + gap;
+      text(item.label, x);
       x += mc.measureText(item.label).width + pad;
     });
   });
@@ -2924,6 +2985,7 @@ window.__FF = {
   chartPng: chartPng,
   chartSvg: chartSvg,
   layoutLegend: layoutLegend,
+  legendRowsOf: legendRowsOf,
   render: render,
   get last(){ return last; },
   get charts(){ return {main: chart1, cashflows: chart2}; }
