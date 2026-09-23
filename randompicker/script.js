@@ -395,36 +395,52 @@ const DIE_SIM = {
 };
 const UP = { x: 0, y: 1, z: 0 };
 let FACE_NORMAL = null; // built after THREE loads
+let TEXT_UP = null;     // per face: the direction the writing reads "up", in the die's own frame
 let DIE_CORNERS = null;
 let three = null;
 
-const PIP_LAYOUT = (() => {
-  const A = 0.28, M = 0.5, B = 0.72;
-  return {
-    1: [[M, M]],
-    2: [[A, A], [B, B]],
-    3: [[A, A], [M, M], [B, B]],
-    4: [[A, A], [B, A], [A, B], [B, B]],
-    5: [[A, A], [B, A], [M, M], [A, B], [B, B]],
-    6: [[A, A], [B, A], [A, M], [B, M], [A, B], [B, B]]
-  };
-})();
-const PIP_R = 0.074; // pip radius as a share of the face (the ace is drawn larger)
-function pipRadius(pips) { return pips === 1 ? PIP_R * 1.45 : PIP_R; }
+/* Each face carries one choice, engraved into the plastic and painted, in
+   place of pips. Face f holds choice f; faces past the end of the list are
+   engraved "Nobody", the rolls that pick no one. */
+const DIE_BLANK = 'Nobody';
+function dieFaceLabel(face) {
+  return face <= Math.min(choices.length, 6) ? choices[face - 1] : null;
+}
 
 function themeDieColors() {
   return {
     body: '#f6f2e9',                          // ivory acetate
-    pip: '#c8121c',                           // casino red
+    ink: '#c8121c',                           // casino red
+    blank: '#5d6470',                         // slate, for the faces that pick nobody
     shadow: document.body.classList.contains('light') ? 0.2 : 0.42
   };
 }
 
-// Colour map: ivory face with painted, drilled pips (darker toward the rim).
-function makeFaceTexture(pips, col) {
-  const S = 512;
+// Lays the label out inside the flat part of a face, at canvas size S.
+function layoutDieLabel(g, S, label) {
+  const text = label == null ? DIE_BLANK : label;
+  const fit = M3D.wrapLabel(g, text, S * 0.72, Math.round(S * 0.26), Math.round(S * 0.075), 3, 800, '"DM Sans", sans-serif');
+  return { lines: fit.lines, px: fit.px, lh: fit.px * 1.06 };
+}
+function drawDieLabel(g, S, lay, fill) {
+  g.font = `800 ${lay.px}px "DM Sans", sans-serif`;
+  g.textAlign = 'center';
+  g.textBaseline = 'middle';
+  g.fillStyle = fill;
+  lay.lines.forEach((ln, i) => g.fillText(ln, S / 2, S / 2 + (i - (lay.lines.length - 1) / 2) * lay.lh));
+}
+function scaledLayout(lay, k) { return { lines: lay.lines, px: lay.px * k, lh: lay.lh * k }; }
+
+function dieCanvas(S) {
   const c = document.createElement('canvas');
   c.width = c.height = S;
+  return c;
+}
+
+// Colour map: ivory face with the label painted into its engraving.
+function makeFaceTexture(lay, blank, col) {
+  const S = 512;
+  const c = dieCanvas(S);
   const g = c.getContext('2d');
   g.fillStyle = col.body;
   g.fillRect(0, 0, S, S);
@@ -434,83 +450,67 @@ function makeFaceTexture(pips, col) {
     const x = Math.random() * S, y = Math.random() * S, rr = 4 + Math.random() * 18;
     g.beginPath(); g.arc(x, y, rr, 0, Math.PI * 2); g.fill();
   }
-  const r = pipRadius(pips) * S;
-  PIP_LAYOUT[pips].forEach(([px, py]) => {
-    const x = px * S, y = py * S;
-    g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2);
-    g.fillStyle = col.pip; g.fill();
-    // Paint sits in shade inside the hole, darkest where the wall meets it.
-    const shade = g.createRadialGradient(x, y, 0, x, y, r);
-    shade.addColorStop(0, 'rgba(20,0,0,0.28)');
-    shade.addColorStop(0.7, 'rgba(20,0,0,0.38)');
-    shade.addColorStop(1, 'rgba(20,0,0,0.7)');
-    g.fillStyle = shade; g.fill();
-    // Thin worn lip where the paint meets the plastic.
-    g.beginPath(); g.arc(x, y, r * 1.04, 0, Math.PI * 2);
-    g.strokeStyle = 'rgba(90,60,40,0.25)'; g.lineWidth = S * 0.004; g.stroke();
-  });
+  // Worn lip where the paint meets the plastic, then the paint itself, in shade.
+  g.save();
+  g.lineJoin = 'round';
+  g.strokeStyle = 'rgba(90,60,40,0.22)';
+  g.lineWidth = S * 0.012;
+  g.font = `800 ${lay.px}px "DM Sans", sans-serif`;
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  lay.lines.forEach((ln, i) => g.strokeText(ln, S / 2, S / 2 + (i - (lay.lines.length - 1) / 2) * lay.lh));
+  g.restore();
+  drawDieLabel(g, S, lay, blank ? col.blank : col.ink);
+  drawDieLabel(g, S, lay, 'rgba(20,0,0,0.22)');
   const tex = new THREE.CanvasTexture(c);
   tex.anisotropy = 8;
   if (THREE.sRGBEncoding !== undefined) tex.encoding = THREE.sRGBEncoding;
   return tex;
 }
 
-/* Normal map: each pip is a spherical dimple drilled into the face, with a
-   softly rounded rim, so light catches the far wall of every hole. */
-function makePipNormalMap(pips) {
+/* Normal map: the label is cut into the face. The engraving is a blurred
+   mask of the text used as a height field (sunk where the text is), and the
+   normals are its slope, so light catches the far wall of every stroke. */
+function makeEngravingMaps(lay) {
   const S = 256;
-  const c = document.createElement('canvas');
-  c.width = c.height = S;
-  const g = c.getContext('2d');
-  const img = g.createImageData(S, S);
-  const data = img.data;
-  for (let i = 0; i < data.length; i += 4) { data[i] = 128; data[i + 1] = 128; data[i + 2] = 255; data[i + 3] = 255; }
-  const rp = pipRadius(pips) * S;
-  const bowl = rp * 1.22;   // sphere radius of the drill
-  const lip = rp * 0.16;    // width of the rounded rim outside the hole
-  PIP_LAYOUT[pips].forEach(([px, py]) => {
-    const cx = px * S, cy = py * S;
-    const x0 = Math.max(0, Math.floor(cx - rp - lip - 1)), x1 = Math.min(S - 1, Math.ceil(cx + rp + lip + 1));
-    const y0 = Math.max(0, Math.floor(cy - rp - lip - 1)), y1 = Math.min(S - 1, Math.ceil(cy + rp + lip + 1));
-    for (let y = y0; y <= y1; y++) {
-      for (let x = x0; x <= x1; x++) {
-        const dx = x + 0.5 - cx, dy = y + 0.5 - cy, dist = Math.hypot(dx, dy);
-        let nx, ny;
-        if (dist < rp) {
-          nx = -dx / bowl; ny = dy / bowl;           // wall tilts toward the centre
-        } else if (dist < rp + lip) {
-          const k = 0.55 * (1 - (dist - rp) / lip);  // rim rolls over into the face
-          nx = dx / dist * k; ny = -dy / dist * k;
-        } else continue;
-        const nz = Math.sqrt(Math.max(0, 1 - nx * nx - ny * ny));
-        const o = (y * S + x) * 4;
-        data[o] = Math.round((nx * 0.5 + 0.5) * 255);
-        data[o + 1] = Math.round((ny * 0.5 + 0.5) * 255);
-        data[o + 2] = Math.round((nz * 0.5 + 0.5) * 255);
-      }
-    }
-  });
-  g.putImageData(img, 0, 0);
-  const tex = new THREE.CanvasTexture(c);
-  tex.anisotropy = 8;
-  return tex;
-}
+  const mask = dieCanvas(S);
+  const mg = mask.getContext('2d');
+  mg.fillStyle = '#000';
+  mg.fillRect(0, 0, S, S);
+  mg.filter = 'blur(1.4px)'; // ignored where unsupported: the bevel is just crisper
+  drawDieLabel(mg, S, scaledLayout(lay, S / 512), '#fff');
+  mg.filter = 'none';
+  const a = mg.getImageData(0, 0, S, S).data;
+  const h = (x, y) => a[(Math.min(S - 1, Math.max(0, y)) * S + Math.min(S - 1, Math.max(0, x))) * 4] / 255;
 
-/* Surface map shared by clearcoat (red channel) and roughness (green): the
-   plastic is lacquered and glossy, the paint down in the pips is matte. */
-function makeSurfaceMap(pips) {
-  const S = 256;
-  const c = document.createElement('canvas');
-  c.width = c.height = S;
-  const g = c.getContext('2d');
-  g.fillStyle = 'rgb(255,82,0)';
-  g.fillRect(0, 0, S, S);
-  const r = pipRadius(pips) * S;
-  g.fillStyle = 'rgb(30,190,0)';
-  PIP_LAYOUT[pips].forEach(([px, py]) => {
-    g.beginPath(); g.arc(px * S, py * S, r * 0.97, 0, Math.PI * 2); g.fill();
-  });
-  return new THREE.CanvasTexture(c);
+  const nc = dieCanvas(S);
+  const ng = nc.getContext('2d');
+  const img = ng.createImageData(S, S);
+  const d = img.data;
+  const depth = 2.4;
+  for (let y = 0; y < S; y++) {
+    for (let x = 0; x < S; x++) {
+      const nx = depth * (h(x + 1, y) - h(x - 1, y)) / 2;
+      const ny = -depth * (h(x, y + 1) - h(x, y - 1)) / 2;
+      const len = Math.hypot(nx, ny, 1);
+      const o = (y * S + x) * 4;
+      d[o] = Math.round((nx / len * 0.5 + 0.5) * 255);
+      d[o + 1] = Math.round((ny / len * 0.5 + 0.5) * 255);
+      d[o + 2] = Math.round((1 / len * 0.5 + 0.5) * 255);
+      d[o + 3] = 255;
+    }
+  }
+  ng.putImageData(img, 0, 0);
+  const normal = new THREE.CanvasTexture(nc);
+  normal.anisotropy = 8;
+
+  /* Surface map shared by clearcoat (red channel) and roughness (green): the
+     plastic is lacquered and glossy, the paint down in the engraving is matte. */
+  const sc = dieCanvas(S);
+  const sg = sc.getContext('2d');
+  sg.fillStyle = 'rgb(255,82,0)';
+  sg.fillRect(0, 0, S, S);
+  drawDieLabel(sg, S, scaledLayout(lay, S / 512), 'rgb(30,190,0)');
+  return { normal, surface: new THREE.CanvasTexture(sc) };
 }
 
 function makeShadowTexture() {
@@ -527,9 +527,14 @@ function makeShadowTexture() {
   return new THREE.CanvasTexture(c);
 }
 
-function applyDieTextures() {
+let dieFaceKey = '';
+function applyDieTextures(force) {
   if (!three) return;
   const col = themeDieColors();
+  const labels = DIE_FACE_ORDER.map(dieFaceLabel);
+  const key = JSON.stringify([labels, col]);
+  if (!force && key === dieFaceKey) return;
+  dieFaceKey = key;
   if (Array.isArray(three.die.material)) {
     three.die.material.forEach(m => {
       if (m.map) m.map.dispose();
@@ -538,11 +543,13 @@ function applyDieTextures() {
       m.dispose();
     });
   }
-  three.die.material = DIE_FACE_ORDER.map(face => {
-    const surface = makeSurfaceMap(face);
+  const measure = dieCanvas(8).getContext('2d');
+  three.die.material = labels.map(label => {
+    const lay = layoutDieLabel(measure, 512, label);
+    const { normal, surface } = makeEngravingMaps(lay);
     return new THREE.MeshPhysicalMaterial({
-      map: makeFaceTexture(face, col),
-      normalMap: makePipNormalMap(face),
+      map: makeFaceTexture(lay, label == null, col),
+      normalMap: normal,
       roughness: 1,
       roughnessMap: surface,
       clearcoat: 1,
@@ -552,6 +559,30 @@ function applyDieTextures() {
     });
   });
   three.floor.material.opacity = col.shadow;
+}
+
+/* Reads the writing direction of each face off the geometry's UVs: the
+   average direction in which v (texture up) increases across the face. */
+function faceTextUp(geo) {
+  const pos = geo.attributes.position, uv = geo.attributes.uv, index = geo.index;
+  const out = {};
+  geo.groups.forEach((grp, m) => {
+    const face = DIE_FACE_ORDER[m];
+    const ids = new Set();
+    for (let i = grp.start; i < grp.start + grp.count; i++) ids.add(index.getX(i));
+    let vMean = 0;
+    const pMean = new THREE.Vector3();
+    ids.forEach(i => { vMean += uv.getY(i); pMean.x += pos.getX(i); pMean.y += pos.getY(i); pMean.z += pos.getZ(i); });
+    vMean /= ids.size; pMean.divideScalar(ids.size);
+    const dir = new THREE.Vector3();
+    ids.forEach(i => {
+      const w = uv.getY(i) - vMean;
+      dir.x += w * (pos.getX(i) - pMean.x); dir.y += w * (pos.getY(i) - pMean.y); dir.z += w * (pos.getZ(i) - pMean.z);
+    });
+    const n = FACE_NORMAL[face];
+    out[face] = dir.addScaledVector(n, -dir.dot(n)).normalize();
+  });
+  return out;
 }
 
 function initThree() {
@@ -598,11 +629,14 @@ function initThree() {
   key.shadow.radius = 5;
   scene.add(key);
 
-  const die = new THREE.Mesh(M3D.roundedBox(2, 2, 2, DIE_EDGE_R, 7), []);
+  const dieGeo = M3D.roundedBox(2, 2, 2, DIE_EDGE_R, 7);
+  TEXT_UP = faceTextUp(dieGeo);
+  const die = new THREE.Mesh(dieGeo, []);
   die.castShadow = true;
   die.position.y = 1;
-  // Rest at a natural angle rather than square to the camera.
-  die.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -0.45);
+  // Face 2 on top, its writing turned a little off square so it reads naturally.
+  const up2 = TEXT_UP[2];
+  if (up2) die.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.atan2(-0.3, -1) - Math.atan2(up2.x, up2.z));
   scene.add(die);
 
   // The table only shows the shadow the key light casts on it.
@@ -670,11 +704,7 @@ function buildDiceLegend() {
     const item = document.createElement('span');
     item.className = 'leg-item' + (mapped ? '' : ' leg-empty');
     item.dataset.face = String(f);
-    const face = document.createElement('span');
-    face.className = 'leg-face';
-    face.textContent = String(f);
-    item.appendChild(face);
-    item.appendChild(document.createTextNode(' ' + (mapped ? choices[f - 1] : 'nobody')));
+    item.textContent = mapped ? choices[f - 1] : DIE_BLANK;
     el.appendChild(item);
   }
   const odds = $('diceOdds');
@@ -851,10 +881,22 @@ function rollDice() {
     const frames = sim.frames;
     // A cube looks the same after any of its 24 symmetry rotations, so the
     // simulated throw can carry any face to the top. relabel maps the chosen
-    // face's normal onto the one the simulation left facing up.
-    const relabel = new THREE.Quaternion().setFromUnitVectors(FACE_NORMAL[face], FACE_NORMAL[sim.topFace]);
-    const [wa, wb] = sim.window;
+    // face's normal onto the one the simulation left facing up. Four such
+    // rotations exist (a quarter turn apart about that face); take the one
+    // that leaves the writing reading upright from where the player sits.
     const last = frames[frames.length - 1];
+    const Y = new THREE.Vector3(0, 1, 0);
+    const away = new THREE.Vector3(last.p.x - three.camera.position.x, 0, last.p.z - three.camera.position.z).normalize();
+    const toTop = new THREE.Quaternion().setFromUnitVectors(FACE_NORMAL[face], FACE_NORMAL[sim.topFace]);
+    let relabel = null, bestUp = -2;
+    for (let k = 0; k < 4; k++) {
+      const cand = toTop.clone().multiply(new THREE.Quaternion().setFromAxisAngle(FACE_NORMAL[face], k * Math.PI / 2));
+      const qEnd = last.q.clone().multiply(cand);
+      const lv = new THREE.Quaternion().setFromUnitVectors(FACE_NORMAL[face].clone().applyQuaternion(qEnd), Y);
+      const up = TEXT_UP[face].clone().applyQuaternion(qEnd).applyQuaternion(lv).dot(away);
+      if (up > bestUp) { bestUp = up; relabel = cand; }
+    }
+    const [wa, wb] = sim.window;
     const qLast = last.q.clone().multiply(relabel);
     // Whatever tilt is left once the simulation stops, levelled over the last frames.
     const level = new THREE.Quaternion().setFromUnitVectors(
@@ -1559,12 +1601,12 @@ function showNoWin(mode, res) {
     flashNoWin('slotFlash', 'No match — pull again');
   } else if (mode === 'dice') {
     slump($('diceScene'), 620);
-    flashNoWin('diceFlash', `Rolled a ${res.face} — nobody on that face`);
+    flashNoWin('diceFlash', 'Landed on Nobody. Roll again.');
   }
 }
 
 function noWinLabel(mode, res) {
-  return mode === 'dice' ? `No winner (face ${res.face})` : 'No match';
+  return mode === 'dice' ? 'No winner (Nobody face)' : 'No match';
 }
 
 // ── WINNER OVERLAY + CONFETTI ────────────────────────────────────────────
@@ -1710,6 +1752,7 @@ function recomputeAll() {
     buildWheel();
   }
   buildDiceLegend();
+  applyDieTextures();
   buildSlotStrips();
   buildGalton();
   if (currentMode === 'dice') refreshDice();
@@ -1735,6 +1778,14 @@ gl = initModels();
 document.body.classList.toggle('gl3d', !!gl);
 initSlotReels();
 three = initThree();
-applyDieTextures();
 setMode(currentMode);
 recomputeAll();
+// Canvas text only uses DM Sans once it has loaded, so repaint anything drawn before that.
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => {
+    applyDieTextures(true);
+    if (gl) gl.wheel.invalidate();
+    recomputeAll();
+    refreshDice();
+  });
+}

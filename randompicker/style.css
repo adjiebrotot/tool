@@ -73,12 +73,9 @@ body.gl3d .wheel-wrap,body.gl3d .slot-machine,body.gl3d #galtonCanvas{display:no
 .dice-legend{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:460px;}
 .dice-legend .leg-item{display:flex;align-items:center;gap:6px;background:var(--input-bg);border:1px solid var(--border);border-radius:999px;padding:5px 12px;font-size:.82rem;transition:border-color 200ms,background 200ms;}
 .dice-legend .leg-item.hit{border-color:var(--accent);background:rgba(141,187,255,.16);}
-.dice-legend .leg-face{font-family:'DM Mono',monospace;font-weight:700;color:var(--accent);}
 /* faces with no choice behind them: the rolls that pick nobody */
 .dice-legend .leg-item.leg-empty{color:var(--muted);border-style:dashed;}
-.dice-legend .leg-item.leg-empty .leg-face{color:var(--muted);}
 .dice-legend .leg-item.leg-empty.hit{border-style:solid;border-color:var(--warning-text);background:var(--warning-bg);color:var(--warning-text);}
-.dice-legend .leg-item.leg-empty.hit .leg-face{color:var(--warning-text);}
 .dice-scene.lose{animation:stageSlump 600ms ease;}
 
 /* ---------- slot machine ---------- */

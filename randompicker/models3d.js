@@ -82,8 +82,23 @@ const M3D = (() => {
       if (line) lines.push(line);
       if (ok && lines.length <= maxLines) return { lines, px };
     }
-    const f = fitLabel(g, text, maxW, minPx, minPx, weight, family);
-    return { lines: [f.text], px: f.px };
+    // Still too long at the smallest size: break inside words, keep the first
+    // maxLines lines and end the last one with an ellipsis.
+    g.font = `${weight} ${minPx}px ${family}`;
+    const lines = [];
+    let line = '';
+    for (const ch of text.replace(/\s+/g, ' ')) {
+      if (g.measureText(line + ch).width > maxW && line) { lines.push(line.trim()); line = ''; }
+      line += ch;
+    }
+    if (line.trim()) lines.push(line.trim());
+    if (lines.length > maxLines) {
+      lines.length = maxLines;
+      let last = lines[maxLines - 1];
+      while (last.length > 1 && g.measureText(last + '…').width > maxW) last = last.slice(0, -1);
+      lines[maxLines - 1] = last + '…';
+    }
+    return { lines, px: minPx };
   }
 
   function glowTexture() {
@@ -481,6 +496,7 @@ const M3D = (() => {
     let faceKey = '';
     return {
       stage: st,
+      invalidate() { faceKey = ''; }, // e.g. once the web font has loaded
       setSegments(labels, colors) {
         const k = JSON.stringify([labels, colors]);
         if (k === faceKey) return;
@@ -1171,5 +1187,5 @@ const M3D = (() => {
     };
   }
 
-  return { available, createStage, studioEnvironment, roundedBox, Wheel, SlotMachine, GaltonBoard, shade, REEL_MIN_SYMBOLS };
+  return { available, createStage, studioEnvironment, roundedBox, Wheel, SlotMachine, GaltonBoard, shade, wrapLabel, REEL_MIN_SYMBOLS };
 })();
