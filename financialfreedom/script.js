@@ -2930,6 +2930,7 @@ function init(){
         restore: function(saved){ if(saved && saved.savingsMode) setSavingsMode(saved.savingsMode, true); }
       }
     });
+    SharedScenario.mount('.quick-start-row', { tool: 'financialfreedom', persist: persist });
   }
   tickerStatus('Nothing is fetched until you press Fetch.' + rateSuffix());
   render();

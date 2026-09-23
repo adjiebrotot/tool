@@ -207,6 +207,10 @@ tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
   .header-left h1{font-size:1.25rem;}
   .header-right{flex-wrap:nowrap;}
   .header-right .btn-theme{flex:1;text-align:center;justify-content:center;}
+  /* Save/open take a row of their own rather than squeezing the four above. */
+  .header-right{flex-wrap:wrap;}
+  .header-right .scenario-io{flex:1 0 100%;}
+  .header-right .scenario-io-btn{flex:1;}
   .controls-bar{flex-direction:column;align-items:stretch;gap:10px;}
   .ctrl-row{justify-content:space-between;flex-wrap:wrap;}
   .controls-bar .csv-actions{margin-left:0!important;align-self:stretch;}

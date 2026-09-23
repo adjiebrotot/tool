@@ -2497,9 +2497,6 @@ function buildSettingsObj(){
     portfolios: clean
   };
 }
-function exportSettings(){
-  SharedConfig.download('portfolio-dca-settings.json', buildSettingsObj());
-}
 // Rebuild one portfolio from a saved snapshot, merging onto current defaults so
 // older files still get any newer fields, and clearing transient/cache fields.
 function normalizeLoadedPortfolio(src){
@@ -2541,8 +2538,13 @@ function importSettings(obj){
   loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();
   runSimulation();
 }
-{ const e=$('exportConfigBtn'); if(e) e.addEventListener('click', exportSettings); }
-{ const i=$('importConfigBtn'); if(i) i.addEventListener('click', ()=>SharedConfig.upload(importSettings, err=>showWarning('Could not load settings: '+err.message))); }
+// The file keeps its own 'dca-portfolio' format, so files saved before the
+// buttons moved to the Quick Start row still open.
+SharedScenario.mount('.quick-start-row', {
+  tool:'dcasimulator-portfolio', filename:'portfolio-dca-settings.json',
+  save: buildSettingsObj, load: importSettings,
+  onError: msg=>showWarning(msg)
+});
 
 /* ─── CHART PNG EXPORT ─── */
 function exportChartPng(canvasId, filename, chartTitle, legendId, download=true){

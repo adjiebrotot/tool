@@ -2380,9 +2380,6 @@ function buildSettingsObj(){
     securities: securitiesOut
   };
 }
-function exportSettings(){
-  SharedConfig.download('dca-simulator-settings.json', buildSettingsObj());
-}
 function importSettings(obj){
   if(!obj || obj.app!=='dca-single'){
     showWarning('That file is not a DCA Simulator settings file.'); return;
@@ -2405,8 +2402,13 @@ function importSettings(obj){
   renderSecList();
   runSimulation();
 }
-const _expCfgBtn=$('exportConfigBtn'); if(_expCfgBtn) _expCfgBtn.addEventListener('click', exportSettings);
-const _impCfgBtn=$('importConfigBtn'); if(_impCfgBtn) _impCfgBtn.addEventListener('click', ()=>SharedConfig.upload(importSettings, e=>showWarning('Could not load settings: '+e.message)));
+// The file keeps its own 'dca-single' format, so files saved before the
+// buttons moved to the Quick Start row still open.
+SharedScenario.mount('.quick-start-row', {
+  tool:'dcasimulator', filename:'dca-simulator-settings.json',
+  save: buildSettingsObj, load: importSettings,
+  onError: msg=>showWarning(msg)
+});
 
 /* ─── WARNINGS ─── */
 function showWarning(msg){ const w=$('mainWarning'); w.style.display='block'; w.textContent=msg; }

@@ -1327,6 +1327,8 @@ function init(){
       restore: function(e){ if(e && typeof e==='object') Object.assign(S, e); }
     }
   });
+  // No Quick Start row here, so save/open sit in the header beside Other Tools.
+  SharedScenario.mount('.header-right', { tool: 'costofliving-comparator', persist: persist });
 }
 
 loadData();
