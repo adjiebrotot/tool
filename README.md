@@ -17,7 +17,7 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 | [Rent vs Own Home](https://tool.adjiebrotots.com/rentvsownhouse/) ([ID](https://tool.adjiebrotots.com/rentvsownhouse/id/)) | Model renting vs buying property over time — fixed/floating rates, setup/ongoing costs, and [multi-scenario sensitivity analysis](https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/). Comparable commercial software costs tens of thousands of dollars. |
 | [PPh 21 Pisah vs Gabung](https://tool.adjiebrotots.com/pisahvsgabung/) ([ID](https://tool.adjiebrotots.com/pisahvsgabung/id/)) | One-of-a-kind comparison of Indonesian PPh 21 under separate (pisah harta) vs joint (gabung harta) filing. |
 | [Borrowing Capacity (AU)](https://tool.adjiebrotots.com/borrowingcapacity/) | Work out how much an Australian bank would lend you, and which of the four caps (serviceability, DTI, LVR, deposit) is binding. Shows the full serviceability build-up line by line, which bank calculators never do. |
-| [Finance vs Cash](https://tool.adjiebrotots.com/financingvscash/) | Compare paying cash vs financing while investing unused cash, across the seven repayment structures lenders actually sell. Six worked comparisons — house, car, phone plan, credit-card 0%, flat-rate motorbike, payment holiday — load in one click, each over differing terms so none is decided by the price tag. |
+| [Finance vs Cash](https://tool.adjiebrotots.com/financingvscash/) | Compare paying cash vs financing while investing unused cash, across the seven repayment structures lenders actually sell. Six worked comparisons — house, car, phone plan, credit-card 0%, flat-rate motorbike, payment holiday — load in one click, each over differing terms so none is decided by the price tag. [Loan Types Explained](https://tool.adjiebrotots.com/financingvscash/loan-types/) defines all seven structures, gives the formula behind each, names the markets it is sold in, and works one of the Quick Start presets through with charts. |
 | [Financial Freedom Calculator](https://tool.adjiebrotots.com/financialfreedom/) | Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a Monte Carlo confidence band instead of a single average return. |
 | [DCA Scenario Explorer](https://tool.adjiebrotots.com/dcasimulator/) | Compare dollar-cost averaging strategies. Includes a [common yfinance ticker reference](https://tool.adjiebrotots.com/dcasimulator/ticker/) for AU, ID, US, and SG, and a [Portfolio mode](https://tool.adjiebrotots.com/dcasimulator/portfolio/) for comparing multi-asset portfolio strategies side by side. |
 | [PowerFactory Scripter](https://tool.adjiebrotots.com/powerfactory-scripter/) | Generate DIgSILENT PowerFactory Python scripts in minutes instead of hours/days. The generated script is yours; generation runs locally, suiting security-restricted environments. |
@@ -66,7 +66,7 @@ down payment. No modelling choice can move a zero, so a drift names its own
 cause.
 
 Harnesses live in `costofliving-comparator/`, `dcasimulator/`, `financialfreedom/`,
-`financingvscash/`, `pisahvsgabung/`, `rentvsownhouse/`, and
+`financingvscash/`, `financingvscash/loan-types/`, `pisahvsgabung/`, `rentvsownhouse/`, and
 `rentvsownhouse/sensitivity/`. `rentvsownhouse/audit/` is the earlier
 JS-versus-Python cross-model audit that these superseded; its CSV outputs are generated, not
 committed. `powerfactory-scripter/audit/` validates generated scripts against a nine-bus reference

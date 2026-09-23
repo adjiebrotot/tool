@@ -1752,6 +1752,17 @@
       EAR:  ['Effective Annual Rate', 'a rate that already allows for compounding within the year, so 1% a month is 12.68% EAR, not 12%'],
     },
 
+    /* ── Loan Types Explained ──
+       The explainer names the markets each structure is sold in, so it carries
+       vocabulary the tool itself never has to: the local name for a lender, a
+       product or a contract a reader outside that market will not know. */
+    'financingvscash/loan-types': {
+      Murabaha:      ['cost-plus sale', 'an Islamic finance contract: the bank buys the asset and resells it to you at an agreed markup, paid in instalments. The markup behaves exactly like a flat rate'],
+      multifinance:  ['a non-bank consumer lender', 'the South-East Asian term for the vehicle and appliance credit companies that quote a flat rate per month'],
+      KPR:           ['Kredit Pemilikan Rumah', 'the Indonesian home loan'],
+      Lombard:       ['a loan secured against a securities portfolio', 'drawn and repaid in one lump, so it is usually a bullet']
+    },
+
     /* ── Borrowing Capacity (Australian home lending) ── */
     borrowingcapacity: {
       APRA: ['Australian Prudential Regulation Authority', 'the regulator that sets the serviceability buffer lenders must add'],

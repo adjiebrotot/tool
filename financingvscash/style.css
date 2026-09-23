@@ -45,6 +45,10 @@ p,.muted{color:var(--muted);line-height:1.55;margin:0;}
 .field-row:first-of-type{border-top:none;}
 .field-label{font-weight:700;font-size:.88rem;}
 .field-sub{color:var(--muted);font-size:.78rem;line-height:1.35;margin-top:2px;}
+/* A note under a control may carry a link out of the tool. It wears the
+   accent rather than the browser's default blue, like every other link here. */
+.field-sub a{color:var(--accent);font-weight:600;text-decoration:none;}
+.field-sub a:hover{text-decoration:underline;}
 .num-input,.sel-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:.9rem;font-weight:600;padding:10px 13px;width:100%;outline:none;transition:border-color .15s;font-family:inherit;}
 .num-input:focus,.sel-input:focus{border-color:var(--accent);}
 .sel-input{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a8b4d4'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
