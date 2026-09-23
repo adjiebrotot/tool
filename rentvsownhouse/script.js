@@ -2433,7 +2433,7 @@ function buildCostItemRow(key, item, idx, count){
   row.innerHTML = `
     <div class="ci-head">
       <input type="text" class="ci-name" placeholder="${T('phCostName')}" value="${String(item.name||'').replace(/"/g,'&quot;')}"/>
-      <button type="button" class="cagr-btn delete ci-delete" ${count<=1?'disabled':''}>${T('btnDelete')}</button>
+      <button type="button" class="cagr-btn delete ci-delete" ${count<=1?'disabled':''} aria-label="${T('btnDelete')}" title="${T('btnDelete')}">✕</button>
     </div>
     <div class="ci-line">
       <div class="currency-wrap">
@@ -2554,7 +2554,7 @@ function buildCagrRow(year='', price=''){
   row.innerHTML = `
     <input type="number" placeholder="Year e.g. 2020" class="cagr-year" value="${year}"/>
     <input type="text" inputmode="numeric" placeholder="Price e.g. 450,000" class="cagr-price money-input" data-money="true" value="${price}"/>
-    <button class="cagr-btn delete cagr-delete" type="button">${T('btnDelete')}</button>
+    <button class="cagr-btn delete cagr-delete" type="button" aria-label="${T('btnDelete')}" title="${T('btnDelete')}">✕</button>
   `;
   const priceEl = row.querySelector('.cagr-price');
   formatMoneyInput(priceEl);
