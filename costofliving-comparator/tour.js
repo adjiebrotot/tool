@@ -69,6 +69,8 @@ window.__TOUR = {
             'destination cities as you like and split spending into <strong>rent, ' +
             'groceries, eating out, utilities</strong> and more. Every category is ' +
             'estimated across cities from its own index, and you can override any figure. ' +
+            'Tick <strong>At a custom frequency</strong> to enter a row per week or year, ' +
+            'or as a price per meal, kWh, litre or trip. ' +
             'The same Jakarta → Perth example is now shown category by category.'
     },
     {
