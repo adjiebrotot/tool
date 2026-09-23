@@ -140,6 +140,9 @@ Salad</textarea>
             <div class="wheel-pointer"></div>
             <canvas id="wheelCanvas" width="420" height="420"></canvas>
           </div>
+          <div class="scene3d wheel3d" id="wheel3d">
+            <canvas id="wheel3dCanvas" aria-label="Prize wheel with your choices"></canvas>
+          </div>
         </div>
 
         <!-- DICE -->
@@ -182,6 +185,9 @@ Salad</textarea>
               <div class="lever-base"></div>
             </div>
           </div>
+          <div class="scene3d slot3d" id="slot3d">
+            <canvas id="slot3dCanvas" aria-label="Slot machine. Pull the lever to spin."></canvas>
+          </div>
           <div class="stage-foot slot-foot">
             <span class="tip-wrap">
               <span class="tip-icon" data-tip="When a pull does pay, every choice is equally likely. Use the wheel if you want every spin to pick someone.">i</span>
@@ -195,6 +201,7 @@ Salad</textarea>
         <div class="stage" id="stage-galton">
           <div class="galton-wrap">
             <canvas id="galtonCanvas" width="560" height="360"></canvas>
+            <canvas id="galton3dCanvas" class="scene3d" aria-label="Galton board"></canvas>
           </div>
           <div class="galton-foot">
             <span class="tip-wrap">
@@ -249,6 +256,7 @@ Salad</textarea>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="models3d.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

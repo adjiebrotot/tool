@@ -27,6 +27,14 @@
    distribution across many drops) is a real binomial(rows, 0.5)
    random walk, not a scripted shape.
 
+   3D MODELS: the wheel, slot machine and Galton board are three.js models
+   (models3d.js) whenever WebGL is available, with the original 2D versions
+   as the fallback. The models are driven by the same numbers as the 2D
+   versions (wheel angle, reel pixel offset, ball path), so they only show
+   an outcome that was already decided. On the 3D board a ball's path ends
+   on top of its bin's pile instead of at the bin mouth; the coin flips that
+   chose the bin are untouched.
+
    Every winning pick resolves to { index, name } so the winning line can
    be removed from the list afterwards even when names are duplicated; a
    slot pull that does not pay resolves to { noWin: true } instead.
@@ -80,6 +88,26 @@ function smoothstep(t) { return t * t * (3 - 2 * t); }
 // mechanical snap-back at the end of a spin.
 function easeOutBackSoft(t) { const c1 = 0.55, c3 = c1 + 1, u = t - 1; return 1 + c3 * u * u * u + c1 * u * u; }
 
+// CSS cubic-bezier() as a function of time, so the 3D wheel eases exactly like the 2D one.
+function cubicBezier(x1, y1, x2, y2) {
+  const bx = t => 3 * x1 * t * (1 - t) * (1 - t) + 3 * x2 * t * t * (1 - t) + t * t * t;
+  const by = t => 3 * y1 * t * (1 - t) * (1 - t) + 3 * y2 * t * t * (1 - t) + t * t * t;
+  const dbx = t => 3 * x1 * (1 - t) * (1 - t) + 6 * (x2 - x1) * t * (1 - t) + 3 * (1 - x2) * t * t;
+  return x => {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    let t = x;
+    for (let i = 0; i < 8; i++) {
+      const d = dbx(t);
+      if (Math.abs(d) < 1e-6) break;
+      t = Math.max(0, Math.min(1, t - (bx(t) - x) / d));
+    }
+    return by(t);
+  };
+}
+const WHEEL_EASE = cubicBezier(0.12, 0.67, 0.14, 1);
+const WHEEL_SPIN_MS = 4800;
+
 function roundRectPath(g, x, y, w, h, r) {
   g.beginPath();
   g.moveTo(x + r, y);
@@ -96,6 +124,10 @@ let choices = [];
 let animating = false;
 let persistApi = null;
 let lastPick = null; // { index, name } — drives the "remove from list" action
+let gl = null;       // { wheel, slot, galton } three.js models, or null to use the 2D versions
+let celebrateUntil = 0;
+const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+function isLight() { return document.body.classList.contains('light'); }
 
 // ── CHOICES PARSING ─────────────────────────────────────────────────────
 function parseChoices() {
@@ -147,6 +179,8 @@ function setMode(mode) {
   if (mode === 'dice') refreshDice();
   if (mode === 'galton') { invalidateGaltonBoard(); drawGaltonBoard(null); }
   if (mode === 'wheel') buildWheel();
+  if (mode === 'slot') refreshSlot3D();
+  kickIdle();
   if (persistApi) persistApi.schedule();
 }
 
@@ -158,17 +192,87 @@ document.querySelectorAll('.mode-tab').forEach(btn => {
   });
 });
 
+// ── 3D MODELS (models3d.js) ─────────────────────────────────────────────
+/* When three.js and WebGL are available the wheel, slot machine and Galton
+   board are drawn as 3D models; otherwise the 2D versions below are used.
+   Either way the outcome is picked by the same code before anything moves. */
+function initModels() {
+  if (typeof M3D === 'undefined' || !M3D.available()) return null;
+  try {
+    return {
+      wheel: M3D.Wheel($('wheel3dCanvas')),
+      slot: M3D.SlotMachine($('slot3dCanvas')),
+      galton: M3D.GaltonBoard($('galton3dCanvas'))
+    };
+  } catch (e) {
+    console.warn('3D models unavailable, using 2D', e);
+    return null;
+  }
+}
+
+function sizeModel(model, el) {
+  const r = el.getBoundingClientRect();
+  if (r.width > 0 && r.height > 0) model.resize(r.width, r.height);
+}
+
+function bulbMode(now) {
+  if (reduceMotion) return 'still';
+  if (now < celebrateUntil) return 'party';
+  return animating ? 'fast' : 'idle';
+}
+
+// Chasing bulbs and the flapper's wobble keep the wheel and the slot machine
+// alive between spins. ~30 fps is plenty for that, and it stops whenever the
+// tab is hidden or another mode is showing.
+let idleRaf = 0, idleLast = 0;
+function idleLoop(now) {
+  idleRaf = 0;
+  if (!gl || document.hidden || (currentMode !== 'wheel' && currentMode !== 'slot')) return;
+  if (!animating && now - idleLast > 32) {
+    const dt = Math.min(0.05, (now - idleLast) / 1000);
+    idleLast = now;
+    if (currentMode === 'wheel') {
+      gl.wheel.settleFlapper(dt);
+      gl.wheel.tick(now / 1000, bulbMode(now));
+      gl.wheel.render();
+    } else {
+      gl.slot.tick(now, bulbMode(now));
+      gl.slot.render();
+    }
+  }
+  idleRaf = requestAnimationFrame(idleLoop);
+}
+function kickIdle() {
+  if (gl && !idleRaf && !reduceMotion) idleRaf = requestAnimationFrame(idleLoop);
+}
+document.addEventListener('visibilitychange', kickIdle);
+
 // ── WHEEL ────────────────────────────────────────────────────────────────
 let wheelRotation = 0;
 
 function resetWheelRotation() {
+  if (gl) gl.wheel.setRotation(0);
   const c = $('wheelCanvas');
   c.style.transition = 'none';
   c.style.transform = 'rotate(0deg)';
   wheelRotation = 0;
 }
 
+function wheelColors(n) {
+  const palette = getPalette();
+  return Array.from({ length: n }, (_, i) => palette[i % palette.length] || '#8DBBFF');
+}
+
 function buildWheel() {
+  if (gl) {
+    sizeModel(gl.wheel, $('wheel3d'));
+    gl.wheel.setTheme(isLight());
+    gl.wheel.setSegments(choices, wheelColors(choices.length));
+    gl.wheel.setRotation(wheelRotation);
+    gl.wheel.tick(performance.now() / 1000, bulbMode(performance.now()));
+    gl.wheel.render();
+    return;
+  }
   const canvas = $('wheelCanvas');
   const { cssW, cssH } = sizeCanvasForDPR(canvas);
   const dpr = window.devicePixelRatio || 1;
@@ -241,6 +345,26 @@ function spinWheel() {
     const total = spins * 360 + delta;
     wheelRotation += total;
 
+    if (gl) {
+      // Same ease and duration as the CSS transition, driven frame by frame so
+      // the flapper can react to each peg.
+      const from = wheelRotation - total, to = wheelRotation;
+      const t0 = performance.now();
+      let last = t0;
+      const frame = now => {
+        const t = Math.max(0, Math.min(1, (now - t0) / WHEEL_SPIN_MS));
+        const dt = Math.min(0.05, Math.max(0, now - last) / 1000);
+        last = now;
+        gl.wheel.setRotation(t < 1 ? from + total * WHEEL_EASE(t) : to, dt);
+        gl.wheel.tick(now / 1000, bulbMode(now));
+        gl.wheel.render();
+        if (t < 1) requestAnimationFrame(frame);
+        else resolve(result);
+      };
+      requestAnimationFrame(frame);
+      return;
+    }
+
     canvas.style.transition = 'transform 4800ms cubic-bezier(.12,.67,.14,1)';
     canvas.style.transform = `rotate(${wheelRotation}deg)`;
     canvas.addEventListener('transitionend', function onEnd() {
@@ -273,33 +397,6 @@ const UP = { x: 0, y: 1, z: 0 };
 let FACE_NORMAL = null; // built after THREE loads
 let DIE_CORNERS = null;
 let three = null;
-
-/* A box whose grid lines are pushed into the edge bands, then wrapped onto
-   a rounded cube: every vertex is pulled back onto a sphere of radius r
-   around the nearest point of the inner core. Normals come out exact. */
-function makeRoundedDieGeometry(r, bandSegs) {
-  const seg = bandSegs * 2 + 1;
-  const geo = new THREE.BoxGeometry(2, 2, 2, seg, seg, seg);
-  const core = 1 - r;
-  const remap = u => {
-    const i = Math.round((u + 1) / 2 * seg);
-    return i <= bandSegs ? -1 + r * (i / bandSegs) : 1 - r * ((seg - i) / bandSegs);
-  };
-  const pos = geo.attributes.position, nor = geo.attributes.normal, uv = geo.attributes.uv;
-  const q = new THREE.Vector3(), c = new THREE.Vector3(), d = new THREE.Vector3();
-  for (let i = 0; i < pos.count; i++) {
-    q.set(remap(pos.getX(i)), remap(pos.getY(i)), remap(pos.getZ(i)));
-    c.set(
-      Math.max(-core, Math.min(core, q.x)),
-      Math.max(-core, Math.min(core, q.y)),
-      Math.max(-core, Math.min(core, q.z)));
-    d.subVectors(q, c).normalize();
-    pos.setXYZ(i, c.x + d.x * r, c.y + d.y * r, c.z + d.z * r);
-    nor.setXYZ(i, d.x, d.y, d.z);
-    uv.setXY(i, (remap(uv.getX(i) * 2 - 1) + 1) / 2, (remap(uv.getY(i) * 2 - 1) + 1) / 2);
-  }
-  return geo;
-}
 
 const PIP_LAYOUT = (() => {
   const A = 0.28, M = 0.5, B = 0.72;
@@ -430,34 +527,6 @@ function makeShadowTexture() {
   return new THREE.CanvasTexture(c);
 }
 
-/* A soft photo-studio room baked into a prefiltered environment map: a big
-   overhead softbox, a key strip and a dim fill. The glossy die reflects it,
-   which is most of what makes plastic read as plastic. */
-function makeStudioEnvironment(renderer) {
-  const env = new THREE.Scene();
-  env.add(new THREE.Mesh(
-    new THREE.SphereGeometry(30, 32, 16),
-    new THREE.MeshBasicMaterial({ color: new THREE.Color(0.32, 0.33, 0.36), side: THREE.BackSide })));
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 80),
-    new THREE.MeshBasicMaterial({ color: new THREE.Color(0.1, 0.1, 0.11) }));
-  floor.rotation.x = -Math.PI / 2; floor.position.y = -4;
-  env.add(floor);
-  const panel = (w, h, x, y, z, k) => {
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h),
-      new THREE.MeshBasicMaterial({ color: new THREE.Color(k, k, k * 0.97), side: THREE.DoubleSide }));
-    m.position.set(x, y, z); m.lookAt(0, 0, 0);
-    env.add(m);
-  };
-  panel(14, 10, 0, 14, 2, 3.2);    // overhead softbox
-  panel(5, 12, 13, 5, 7, 5.0);     // key strip, front right
-  panel(8, 6, -13, 4, -3, 1.2);    // fill, back left
-  panel(10, 3, 0, 3, 15, 0.8);     // low front bounce, lights the faces toward camera
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const tex = pmrem.fromScene(env, 0.035).texture;
-  pmrem.dispose();
-  return tex;
-}
-
 function applyDieTextures() {
   if (!three) return;
   const col = themeDieColors();
@@ -511,7 +580,7 @@ function initThree() {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  scene.environment = makeStudioEnvironment(renderer);
+  scene.environment = M3D.studioEnvironment(renderer);
   const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
   camera.position.set(0, 7.4, 8.6);
   camera.lookAt(DIE_LOOK.x, DIE_LOOK.y, DIE_LOOK.z);
@@ -529,7 +598,7 @@ function initThree() {
   key.shadow.radius = 5;
   scene.add(key);
 
-  const die = new THREE.Mesh(makeRoundedDieGeometry(DIE_EDGE_R, 7), []);
+  const die = new THREE.Mesh(M3D.roundedBox(2, 2, 2, DIE_EDGE_R, 7), []);
   die.castShadow = true;
   die.position.y = 1;
   // Rest at a natural angle rather than square to the camera.
@@ -892,6 +961,7 @@ function planSlotPull() {
 function initSlotReels() {
   for (let r = 0; r < 3; r++) {
     slotReels[r] = {
+      i: r,
       el: $('reel' + r),
       strip: document.querySelector('#reel' + r + ' .reel-strip'),
       pos: 0, vel: 0, loopLen: 0, state: 'idle', order: [],
@@ -905,6 +975,42 @@ function applyReel(R) {
   R.strip.style.transform = `translate3d(0,${off}px,0)`;
   const b = Math.min(7, Math.abs(R.vel) / 420);
   R.strip.style.filter = b > 0.25 ? `blur(${b.toFixed(2)}px)` : 'none';
+  if (gl) gl.slot.setReel(R.i, R.pos, SLOT_ITEM_H, Math.abs(R.vel));
+}
+
+// Symbol colours follow the name, so duplicate lines print identically.
+function slotSymbolColor(name) {
+  const palette = getPalette();
+  const hex = palette[Math.max(0, choices.indexOf(name)) % palette.length] || '#1b3a7a';
+  return M3D.shade(hex, -0.42);
+}
+
+/* The 3D reels print each reel's order round a cylinder, repeated until there
+   are enough symbols for a proper drum. The repeat count is a whole number,
+   so slot k on the drum still shows R.order[k mod n]. */
+function buildSlotReels3D() {
+  const n = choices.length;
+  const lists = slotReels.map(R => {
+    if (!n) return Array.from({ length: M3D.REEL_MIN_SYMBOLS }, () => ({ label: '—', color: '#555' }));
+    const reps = Math.max(1, Math.ceil(M3D.REEL_MIN_SYMBOLS / n));
+    const list = [];
+    for (let k = 0; k < n * reps; k++) {
+      const name = choices[R.order[k % n]];
+      list.push({ label: name, color: slotSymbolColor(name) });
+    }
+    return list;
+  });
+  gl.slot.setReels(lists);
+  slotReels.forEach(applyReel);
+  refreshSlot3D();
+}
+
+function refreshSlot3D() {
+  if (!gl || currentMode !== 'slot') return;
+  sizeModel(gl.slot, $('slot3d'));
+  gl.slot.setTheme(isLight());
+  gl.slot.tick(performance.now(), bulbMode(performance.now()));
+  gl.slot.render();
 }
 
 function buildSlotStrips() {
@@ -937,10 +1043,12 @@ function buildSlotStrips() {
     R.pos = ((i * 2 + 1) * SLOT_ITEM_H) % R.loopLen; // stagger the idle offsets
     applyReel(R);
   });
+  if (gl) buildSlotReels3D();
 }
 
 function pullLever() {
   const lever = $('slotLever');
+  if (gl) gl.slot.pull(performance.now());
   lever.classList.add('pulled');
   setTimeout(() => lever.classList.remove('pulled'), 210);
 }
@@ -999,12 +1107,14 @@ function spinSlot() {
           if (t >= 1) {
             R.pos = R.to; R.vel = 0; R.state = 'done';
             R.el.classList.add('landed');
+            if (gl) gl.slot.flashReel(R.i, now);
             setTimeout(() => R.el.classList.remove('landed'), 300);
             done++;
           }
         }
         applyReel(R);
       });
+      if (gl) { gl.slot.tick(now, bulbMode(now)); gl.slot.render(); }
 
       if (done < 3) requestAnimationFrame(frame);
       else resolve(result);
@@ -1014,6 +1124,14 @@ function spinSlot() {
 }
 
 $('slotLever').addEventListener('click', () => { if (currentMode === 'slot') onAction(); });
+// On the 3D machine the lever is part of the model: clicking it pulls.
+$('slot3dCanvas').addEventListener('click', e => {
+  if (gl && currentMode === 'slot' && gl.slot.hitsLever(e.clientX, e.clientY)) onAction();
+});
+$('slot3dCanvas').addEventListener('mousemove', e => {
+  if (!gl) return;
+  $('slot3dCanvas').style.cursor = !animating && gl.slot.hitsLever(e.clientX, e.clientY) ? 'pointer' : '';
+});
 $('slotLever').addEventListener('keydown', e => {
   if ((e.key === 'Enter' || e.key === ' ') && currentMode === 'slot') { e.preventDefault(); onAction(); }
 });
@@ -1028,6 +1146,7 @@ let galtonSkip = false; // set by the skip button to fast forward a falling ball
 function invalidateGaltonBoard() { boardDirty = true; }
 
 function galtonLayout() {
+  if (gl) return galtonLayout3D();
   const canvas = $('galtonCanvas');
   const rect = canvas.getBoundingClientRect();
   const cssW = rect.width || 560;
@@ -1046,6 +1165,63 @@ function galtonLayout() {
     pegRowY(r) { return marginTop + r * stepY; },
     binTopY: marginTop + boardH + 24
   };
+}
+
+/* The 3D board keeps the same px coordinate system but leaves room for a
+   hopper at the top, deeper bins for the balls to pile up in, and a name
+   plate, and sizes the bins so all of them sit inside the frame. */
+function galtonLayout3D() {
+  const rect = $('galton3dCanvas').getBoundingClientRect();
+  const cssW = rect.width || 560;
+  const cssH = rect.height || (cssW * 440 / 560);
+  const rows = Math.max(1, choices.length - 1);
+  const marginTop = 58;
+  const plateH = rows + 1 > 8 ? 64 : 48;
+  const binBottomY = cssH - 12 - plateH;
+  const binTopY = binBottomY - Math.max(46, cssH * 0.27);
+  const boardH = Math.max(30, binTopY - 20 - marginTop);
+  const stepY = boardH / rows;
+  const slot = Math.min((cssW - 40) / (rows + 1), stepY * 2.4);
+  const centerX = cssW / 2;
+  return {
+    cssW, cssH, rows, marginTop, stepY, slot, centerX, binTopY, binBottomY,
+    valid: choices.length >= 2,
+    pegX(r, s) { return centerX + (s - r / 2) * slot; },
+    pegRowY(r) { return marginTop + r * stepY; }
+  };
+}
+
+let galtonBoardKey = '';
+function renderGalton3D(balls) {
+  const canvas = $('galton3dCanvas');
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width) return;
+  gl.galton.resize(rect.width, rect.height);
+  if (boardDirty) {
+    const layout = galtonLayout3D();
+    const key = [Math.round(layout.cssW), Math.round(layout.cssH), layout.rows, layout.valid, isLight()].join(':');
+    if (key !== galtonBoardKey) { galtonBoardKey = key; gl.galton.build(layout, isLight()); }
+    gl.galton.setCounts(galtonCounts, choices);
+    boardDirty = false;
+  }
+  const list = !balls ? [] : (Array.isArray(balls) ? balls : [balls]);
+  gl.galton.setFlying(list);
+  gl.galton.render();
+}
+
+/* In 3D a ball does not vanish into a bar: it drops through the mouth of its
+   bin and comes to rest on top of the pile. Only the end of the path changes;
+   the coin flips that chose the bin are untouched. */
+function landOnPile(path, layout, pending) {
+  if (!gl) return;
+  const bin = path.slot;
+  const before = (galtonCounts[bin] || 0) + (pending[bin] || 0);
+  pending[bin] = (pending[bin] || 0) + 1;
+  const projectedMax = Math.max(...galtonCounts.map((c, i) => c + (pending[i] || 0)), pending[bin]);
+  const rest = gl.galton.landingPx(bin, before, projectedMax);
+  const r = gl.galton.ballRadiusPx();
+  path.stops[path.stops.length - 1] = { x: rest.x, y: layout.binTopY + r };
+  path.stops.push({ x: rest.x, y: rest.y });
 }
 
 // The pegs, bars and labels only change when the data does, so they are
@@ -1131,6 +1307,7 @@ function renderGaltonStatic() {
 
 // Takes a single { x, y } ball, an array of them (batch drops), or null.
 function drawGaltonBoard(balls) {
+  if (gl) { renderGalton3D(balls); return; }
   const canvas = $('galtonCanvas');
   const { dpr } = sizeCanvasForDPR(canvas);
   if (boardDirty || !boardCanvas || boardCanvas.width !== canvas.width || boardCanvas.height !== canvas.height) {
@@ -1192,7 +1369,7 @@ function ballPositionAt(stops, start, t, hop, lastHop, arc, radius) {
       const to = stops[i];
       return {
         x: from.x + (to.x - from.x) * smoothstep(p),
-        y: from.y + (to.y - from.y) * p - Math.sin(Math.PI * p) * (isLast ? 0 : arc),
+        y: from.y + (to.y - from.y) * (isLast ? p * (0.35 + 0.65 * p) : p) - Math.sin(Math.PI * p) * (isLast ? 0 : arc),
         r: radius
       };
     }
@@ -1249,8 +1426,9 @@ async function dropGaltonBall() {
   $('galtonSkipBtn').hidden = false;
 
   const path = planGaltonPath(layout);
+  landOnPile(path, layout, {});
   const ball = { stops: path.stops, slot: path.slot, delay: 0, landed: false };
-  await animateGaltonDrops([ball], layout, Math.max(90, 200 - layout.rows * 6), 6.5);
+  await animateGaltonDrops([ball], layout, Math.max(90, 200 - layout.rows * 6), gl ? gl.galton.ballRadiusPx() : 6.5);
 
   $('galtonSkipBtn').hidden = true;
   galtonSkip = false;
@@ -1276,14 +1454,16 @@ async function dropGaltonBatch(n) {
   const stagger = Math.max(45, hop * 0.55);
 
   const balls = [];
+  const pending = {};
   for (let i = 0; i < n; i++) {
     const path = planGaltonPath(layout);
+    landOnPile(path, layout, pending);
     balls.push({ stops: path.stops, slot: path.slot, delay: i * stagger, landed: false });
   }
 
   galtonSkip = false;
   $('galtonSkipBtn').hidden = false;
-  await animateGaltonDrops(balls, layout, hop, 5.4);
+  await animateGaltonDrops(balls, layout, hop, gl ? gl.galton.ballRadiusPx() : 5.4);
   $('galtonSkipBtn').hidden = true;
   galtonSkip = false;
   drawGaltonBoard(null);
@@ -1375,6 +1555,7 @@ function slump(el, ms) {
 function showNoWin(mode, res) {
   if (mode === 'slot') {
     slump(document.querySelector('.slot-cabinet'), 620);
+    if (gl && !reduceMotion) gl.slot.shake(performance.now(), 'lose');
     flashNoWin('slotFlash', 'No match — pull again');
   } else if (mode === 'dice') {
     slump($('diceScene'), 620);
@@ -1484,6 +1665,7 @@ async function onAction() {
     animating = false;
     $('choicesInput').readOnly = false;
     updateActionAvailability();
+    kickIdle();
   }
 
   if (res && res.noWin) {
@@ -1496,7 +1678,9 @@ async function onAction() {
     addHistory(currentMode, res.name);
     showWinner(res.name);
     burstConfetti();
+    if (gl && (currentMode === 'wheel' || currentMode === 'slot')) celebrateUntil = performance.now() + 2400;
     if (currentMode === 'slot') {
+      if (gl && !reduceMotion) gl.slot.shake(performance.now(), 'win');
       const cab = document.querySelector('.slot-cabinet');
       cab.classList.add('win');
       setTimeout(() => cab.classList.remove('win'), 540);
@@ -1514,6 +1698,7 @@ $('themeToggle').addEventListener('click', () => {
   drawGaltonBoard(null);
   applyDieTextures();
   refreshDice();
+  if (gl) buildSlotReels3D(); // symbol colours follow the theme palette
 });
 
 // ── RECOMPUTE ON CHOICE EDITS ────────────────────────────────────────────
@@ -1532,6 +1717,7 @@ function recomputeAll() {
 $('choicesInput').addEventListener('input', recomputeAll);
 
 window.addEventListener('resize', debounce(() => {
+  refreshSlot3D();
   buildWheel();
   invalidateGaltonBoard();
   drawGaltonBoard(null);
@@ -1545,6 +1731,8 @@ persistApi = Persist.init('randompicker', {
     restore(ex) { if (ex && ex.mode) currentMode = ex.mode; }
   }
 });
+gl = initModels();
+document.body.classList.toggle('gl3d', !!gl);
 initSlotReels();
 three = initThree();
 applyDieTextures();

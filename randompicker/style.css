@@ -55,6 +55,15 @@
 .wheel-pointer{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:26px solid var(--accent3);z-index:5;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3));}
 .wheel-hub{position:absolute;left:50%;top:50%;width:14%;height:14%;transform:translate(-50%,-50%);border-radius:50%;background:var(--panel-raised);border:3px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.25);z-index:4;}
 
+/* ---------- 3D models (models3d.js); the 2D versions are the fallback ---------- */
+.scene3d{display:none;}
+body.gl3d .scene3d{display:block;}
+body.gl3d .wheel-wrap,body.gl3d .slot-machine,body.gl3d #galtonCanvas{display:none;}
+.wheel3d{position:relative;width:min(500px,100%);aspect-ratio:1/1;}
+.slot3d{position:relative;width:100%;max-width:640px;height:460px;}
+#wheel3dCanvas,#slot3dCanvas{width:100%;height:100%;display:block;}
+#galton3dCanvas{width:100%;aspect-ratio:560/440;height:auto;border-radius:14px;}
+
 /* ---------- dice (three.js scene) ---------- */
 .dice-scene{position:relative;width:100%;max-width:620px;height:380px;
   background:radial-gradient(ellipse 46% 32% at 50% 64%,var(--input-bg),transparent 70%);}
@@ -168,6 +177,7 @@
   .stage-card{padding:20px 12px;min-height:420px;}
   .dice-scene{height:300px;}
   .slot-machine{transform:scale(.84);}
+  .slot3d{height:380px;}
   .stage-foot{justify-content:center;text-align:center;}
   .btn-action{padding:14px 30px;font-size:1rem;}
   .winner-name{font-size:1.6rem;}
@@ -177,4 +187,5 @@
 @media(max-width:380px){
   .dice-scene{height:260px;}
   .slot-machine{transform:scale(.68);}
+  .slot3d{height:320px;}
 }
