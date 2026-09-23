@@ -182,6 +182,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - URL: https://tool.adjiebrotots.com/sankeycreator/
 - Best for: users making budget, energy, supply-chain, or other flow diagrams.
 - What it does: builds Sankey diagrams from manual inputs or CSV data and exports SVG or PNG for free, with all data staying in the browser.
+- Quick Start examples: family budget, national energy flow, country exports and imports, company profit and loss, and a website conversion funnel.
 
 ### JSON Visualiser
 

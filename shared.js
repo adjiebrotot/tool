@@ -1659,7 +1659,10 @@
         } else if(t === 'radio'){
           if(Object.prototype.hasOwnProperty.call(data,'r:'+el.name)){ el.checked = (el.value === data['r:'+el.name]); hit = true; }
         } else if(Object.prototype.hasOwnProperty.call(data,'v:'+id)){ el.value = data['v:'+id]; hit = true; }
-        if(hit) touched.push(el);
+        // A browser only fires change on the radio that became checked, and
+        // tools read el.value in that handler, so the unchecked ones in the
+        // group are restored but not announced.
+        if(hit && !(t === 'radio' && !el.checked)) touched.push(el);
       }
       return touched;
     }
