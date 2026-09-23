@@ -181,6 +181,7 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
   .canvas-wrap{height:380px!important;}
   .metrics{grid-template-columns:repeat(2,1fr);}
   .header{flex-direction:column;gap:12px;}
+  .header>div:first-child{flex:none;}
 }
 @media(max-width:600px){
   h1{font-size:1.35rem;}
