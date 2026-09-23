@@ -165,7 +165,10 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
    hard right, sized like the preset buttons; in a header they sit in the
    button cluster, sized like the theme toggle. */
 .scenario-io{display:inline-flex;gap:6px;flex-shrink:0;}
+/* They share the label's line; the presets drop to a full-width line below,
+   so the buttons never strand a line of their own under the presets. */
 .quick-start-row .scenario-io{margin-left:auto;}
+.quick-start-row:has(.scenario-io) .quick-start-btns{order:1;flex-basis:100%;}
 .scenario-io-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;padding:0;background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);cursor:pointer;transition:all var(--transition-fast);font-family:inherit;}
 .scenario-io-btn svg{width:17px;height:17px;}
 .scenario-io-btn:hover{border-color:var(--accent);color:var(--text);}
