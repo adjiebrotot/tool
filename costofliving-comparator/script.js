@@ -71,6 +71,11 @@ const S = {
   detailFromSalary: 0,
   detailRows: [{catId:'rent', fromAmount:0, overrides:{}}],
   customFxDetailed: [],      // per-destination: null = use DB; number = fromCurr per 1 destCurr
+  // Custom frequency (detailed mode). Off = every amount is monthly, as before.
+  customFreq: false,
+  detailIncomeFreq: 'monthly',   // the period Net Income is typed (and required salary shown) in
+  detailSavingsFreq: 'monthly',  // the period Savings is shown in; display only
+  detailPrevIncomeFreq: null,    // remembered while the feature is off
 };
 let persist = null; // mini cache handle (assigned at init)
 
@@ -113,12 +118,12 @@ function parseNum(val) {
 // Money fields keep cents and keep a minus sign: "6543.21" must stay 6,543.21
 // (not 654,321) and "-5000" must stay −5,000 (not +5,000).
 const MONEY_FMT = {maxDecimals:2, allowNegative:true};
-function liveMoney(el) {
+function liveMoney(el, fmt) {
   if(!el) return;
   // An empty field stays empty — otherwise clearing an overridden cell would
   // type a "0" override instead of reverting to the estimate.
   if(String(el.value ?? '').trim() === '') return;
-  SharedFmt.liveFormat(el, MONEY_FMT);
+  SharedFmt.liveFormat(el, fmt || MONEY_FMT);
 }
 function formatMoneyValue(val) {
   const n = parseNum(val);
@@ -394,6 +399,165 @@ const CATS=[
 ];
 
 // ═══════════════════════════════════════════════════════════
+// CUSTOM FREQUENCY (Detailed mode)
+//
+// A conversion add-on and nothing more: the engine still works in months. Each
+// row carries a unit, and its amounts (the source figure and any destination
+// override) are in that unit. rowMult() says how many of them make a month:
+//
+//   a period   per week        52/12
+//   a price    per meal        meals per period x periods a month
+//
+// Every switch of unit re-expresses the amounts so the money they stand for is
+// unchanged (amount x old multiplier = new amount x new multiplier). The state
+// keeps the exact figure and the field shows it to its own precision, so a
+// round trip gives back exactly what was typed. Rounding 2 trips a year to
+// 0.04 a week would quietly book 2.08. So the only things that ever move a
+// total are a typed amount and a typed quantity.
+//
+// The index ratio is linear, so estimating a destination's price per meal and
+// multiplying by the meals gives exactly the estimate of the monthly bill.
+// ═══════════════════════════════════════════════════════════
+const PERIODS={weekly:'week',fortnightly:'fortnight',monthly:'month',yearly:'year'};
+const US_GALLON=3.785411784;   // litres
+const UNITS={
+  meal:  {cat:'eating_out', one:'meal',   many:'meals',   qty:2,   per:'weekly'},
+  kwh:   {cat:'electricity',one:'kWh',    many:'kWh',     qty:450, per:'monthly'},
+  litre: {cat:'fuel',       one:'litre',  many:'litres',  qty:75,  per:'monthly', litres:1},
+  gallon:{cat:'fuel',       one:'gallon', many:'gallons', qty:75/US_GALLON, per:'monthly', litres:US_GALLON},
+  trip:  {cat:'intl_travel',one:'trip',   many:'trips',   qty:2,   per:'yearly'},
+};
+function perMonth(period){return SharedFreq.perYear[period]/12;}
+function validPeriod(p){return PERIODS[p]?p:'monthly';}
+function unitAllowed(catId,u){return !!PERIODS[u]||!!(UNITS[u]&&UNITS[u].cat===catId);}
+function rowUnit(row){return unitAllowed(row.catId,row.unit)?row.unit:'monthly';}
+function isUnitPrice(row){return !!UNITS[rowUnit(row)];}
+function rowQty(row){const q=Number(row.qty);return isFinite(q)&&q>0?q:0;}
+// How many of this row's unit make one month.
+function rowMult(row){
+  const u=rowUnit(row);
+  if(PERIODS[u])return perMonth(u);
+  return rowQty(row)*perMonth(validPeriod(row.qtyPer));
+}
+// Monthly multipliers for the two whole-table figures. Savings is display only,
+// and shows monthly while the feature is off.
+function incomeMult(){return perMonth(validPeriod(S.detailIncomeFreq));}
+function savingsFreq(){return S.customFreq?validPeriod(S.detailSavingsFreq):'monthly';}
+function savingsMult(){return perMonth(savingsFreq());}
+
+// Re-express a row in another unit without changing its money. Destination
+// overrides are amounts in the same unit, so they move by the same factor.
+function setRowUnit(row,to){
+  if(!row.overrides)row.overrides={};
+  const from=rowUnit(row);
+  if(!unitAllowed(row.catId,to)||to===from){row.unit=from;return;}
+  const m1=rowMult(row);
+  const U=UNITS[to];
+  if(U){
+    const F=UNITS[from];
+    if(F&&F.litres&&U.litres){
+      // litre <-> gallon: the same fuel in another measure
+      row.qty=rowQty(row)*F.litres/U.litres;
+    } else if(row.qtyUnit!==to||!rowQty(row)){
+      row.qty=U.qty; row.qtyPer=U.per;
+    }
+    row.qtyUnit=to;
+    if(!rowQty(row)){row.qty=U.qty;row.qtyPer=U.per;}
+  }
+  row.unit=to;
+  const m2=rowMult(row);
+  const k=m2>0?m1/m2:0;
+  row.fromAmount=(row.fromAmount||0)*k;
+  Object.keys(row.overrides).forEach(key=>{row.overrides[key]=(row.overrides[key]||0)*k;});
+}
+// The quantity's own period follows the SharedFreq rule: 2 meals a week is
+// 8.67 a month, not 2.
+function rescale(v,from,to){return(Number(v)||0)*SharedFreq.perYear[from]/SharedFreq.perYear[to];}
+function setRowQtyPer(row,to){
+  const from=validPeriod(row.qtyPer);
+  to=validPeriod(to);
+  if(from===to)return;
+  row.qty=rescale(rowQty(row),from,to);
+  row.qtyPer=to;
+}
+function setIncomeFreq(to){
+  const from=validPeriod(S.detailIncomeFreq);
+  to=validPeriod(to);
+  if(from===to){S.detailIncomeFreq=to;return;}
+  const cv=v=>rescale(v,from,to);
+  S.detailFromSalary=cv(S.detailFromSalary);
+  S.detailToSalaries=(S.detailToSalaries||[]).map(cv);
+  S.detailIncomeFreq=to;
+}
+// Switching the feature off puts every amount back on a month, so the table
+// is exactly the monthly one it always was. The units are remembered and put
+// back when it is switched on again.
+function setCustomFreq(on){
+  on=!!on;
+  if(on===!!S.customFreq)return;
+  if(!on){
+    S.detailRows.forEach(r=>{
+      const u=rowUnit(r);
+      r.prevUnit=u==='monthly'?null:u;
+      setRowUnit(r,'monthly');
+    });
+    const inc=validPeriod(S.detailIncomeFreq);
+    S.detailPrevIncomeFreq=inc==='monthly'?null:inc;
+    setIncomeFreq('monthly');
+  } else {
+    S.detailRows.forEach(r=>{
+      const u=r.prevUnit; delete r.prevUnit;
+      if(u&&unitAllowed(r.catId,u))setRowUnit(r,u);
+    });
+    if(S.detailPrevIncomeFreq)setIncomeFreq(S.detailPrevIncomeFreq);
+    S.detailPrevIncomeFreq=null;
+  }
+  S.customFreq=on;
+}
+// Repairs a restored or hand-edited state so the invariant holds: with the
+// feature off, every row and the income are monthly.
+function normaliseFreq(){
+  S.customFreq=!!S.customFreq;
+  S.detailIncomeFreq=validPeriod(S.detailIncomeFreq);
+  S.detailSavingsFreq=validPeriod(S.detailSavingsFreq);
+  S.detailRows.forEach(r=>{
+    if(!r.overrides)r.overrides={};
+    r.unit=rowUnit(r);
+    r.qtyPer=validPeriod(r.qtyPer);
+    if(!S.customFreq&&r.unit!=='monthly')setRowUnit(r,'monthly');
+  });
+  if(!S.customFreq&&S.detailIncomeFreq!=='monthly')setIncomeFreq('monthly');
+}
+function unitOptions(catId,cur){
+  const opts=Object.entries(PERIODS).map(([k,v])=>[k,'per '+v]);
+  Object.entries(UNITS).forEach(([k,U])=>{if(U.cat===catId)opts.push([k,'per '+U.one+(k==='gallon'?' (US)':'')]);});
+  return opts.map(([k,l])=>`<option value="${k}" ${k===cur?'selected':''}>${l}</option>`).join('');
+}
+function periodOptions(cur){
+  return Object.entries(PERIODS).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('');
+}
+// Unit prices can be small (AUD 0.3081 a kWh, the way tariffs are quoted), so
+// their fields and figures keep four decimals; everything else keeps cents.
+const UNIT_FMT={maxDecimals:4, allowNegative:true};
+function fmtDec(v,d){return Number(v).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:d});}
+function rowFieldValue(v,row){
+  if(!isUnitPrice(row))return formatMoneyValue(v);
+  const n=parseNum(v);
+  return fmtDec(n,Math.abs(n)<100?4:2);
+}
+function fmtRowC(v,curr,row){
+  if(!isUnitPrice(row)||v==null||!isFinite(v)||Math.abs(v)>=1000)return fmtC(v,curr);
+  const n=Number(v);
+  return(n<0?'-':'')+curr+' '+fmtDec(Math.abs(n),Math.abs(n)<100?4:2);
+}
+// "= AUD 60 a week": what a unit-priced row comes to over its quantity's period.
+function unitTotalLine(price,curr,row){
+  if(!isUnitPrice(row)||price==null||!isFinite(price))return'';
+  const per=validPeriod(row.qtyPer);
+  return`<div class="sub-num" style="text-align:right;margin-top:2px;">= ${fmtC(price*rowQty(row),curr)} a ${PERIODS[per]}</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
 // RENDER ORCHESTRATOR
 // ═══════════════════════════════════════════════════════════
 function render(){
@@ -402,6 +566,9 @@ function render(){
   // Housing row visibility
   document.getElementById('housingRow').style.display=S.mode==='simple'?'flex':'none';
   document.getElementById('simpleCityCard').style.display=S.mode==='simple'?'flex':'none';
+  document.getElementById('freqRow').style.display=S.mode==='detailed'?'flex':'none';
+  const fchk=document.getElementById('customFreqChk');
+  if(fchk)fchk.checked=!!S.customFreq;
   syncSwapButton();
 
   if(S.mode==='simple'){
@@ -785,6 +952,7 @@ function renderDetailed(area){
     S.detailToSalaries=S.detailToCities.map((_,i)=>S.detailToSalaries?.[i]||0);
   }
   if(!S.detailRows||S.detailRows.length===0) S.detailRows=[{catId:'rent',fromAmount:0,overrides:{}}];
+  normaliseFreq();
   pruneCustomFx();
   if(persist) persist.schedule();
 
@@ -854,12 +1022,19 @@ function buildDetailHTML(fromCity,toCities){
     </div>
   </div>`:'';
 
+  const cf=!!S.customFreq;
+  const incFreq=validPeriod(S.detailIncomeFreq), savFreq=savingsFreq();
+  const incLabel=cf?`<br><select class="freq-sel" id="dtIncomeFreq" aria-label="Net income frequency">${unitOptions('',incFreq)}</select>`:'';
+  const savLabel=cf?`<br><select class="freq-sel" id="dtSavingsFreq" aria-label="Savings frequency">${unitOptions('',savFreq)}</select>`:'';
+
   // Salary row
   let salFrom=`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="dt_fs" value="${formatMoneyValue(S.detailFromSalary)||''}" placeholder="0" style="width:110px;"/></div></td>`;
   let salTos=toCities.map((tc,i)=>{
     const curr=tc?tc.currency:'—';
     if(S.goal==='earn'){
-      const req=calcReqSal(i,fromCity,tc);
+      // Worked out a month at a time, shown in the Net Income period.
+      const reqM=calcReqSal(i,fromCity,tc);
+      const req=reqM==null?null:reqM/incomeMult();
       const why=(req==null&&fromCity&&tc)?` <span class="tip-icon" data-tip="${reqSalNoteDetail(i,fromCity,tc)}">?</span>`:'';
       return`<td class="num-td"><span style="color:var(--positive-em);font-weight:700;">${fmtC(req,curr)}</span><br><span class="sub-num">required${why}</span></td>`;
     }
@@ -870,13 +1045,21 @@ function buildDetailHTML(fromCity,toCities){
   let expRows=S.detailRows.map((row,ri)=>{
     const cat=CATS.find(c=>c.id===row.catId)||CATS[0];
     const fv=row.fromAmount||0;
+    const unit=rowUnit(row), U=UNITS[unit];
+    const unitHtml=cf?`<select class="freq-sel dt-unit" data-ri="${ri}" aria-label="${cat.label.replace(/^\S+\s/,'')} frequency">${unitOptions(row.catId,unit)}</select>
+      ${U?`<div class="qty-line">
+        <input type="text" inputmode="decimal" class="num-input dt-qty" data-ri="${ri}" value="${fmtDec(rowQty(row),4)}" aria-label="${U.many} per period"/>
+        <span>${U.many} a</span>
+        <select class="dt-qty-per" data-ri="${ri}" aria-label="Period for ${U.many}">${periodOptions(validPeriod(row.qtyPer))}</select>
+      </div>`:''}`:'';
     let cols=`<td class="cat-td">
       <div style="display:flex;align-items:center;gap:6px;">
         <select class="cat-sel" data-ri="${ri}">${CATS.map(c=>`<option value="${c.id}" ${c.id===row.catId?'selected':''}>${c.label}</option>`).join('')}</select>
         <span class="tip-icon" data-tip="${cat.tip}">?</span>
       </div>
+      ${unitHtml}
     </td>
-    <td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input dt-from-exp" data-ri="${ri}" value="${formatMoneyValue(fv)||''}" placeholder="0" style="width:110px;"/></div></td>`;
+    <td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input dt-from-exp" data-ri="${ri}" value="${rowFieldValue(fv,row)||''}" placeholder="0" style="width:110px;"/></div>${fromCity?unitTotalLine(fv,fc,row):''}</td>`;
 
     toCities.forEach((tc,ci)=>{
       if(!tc||!fromCity){cols+=`<td class="num-td">—</td>`;return;}
@@ -893,14 +1076,15 @@ function buildDetailHTML(fromCity,toCities){
         <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">
           <span class="curr-tag" style="font-size:0.73rem;">${tc.currency}</span>
           <input type="text" inputmode="decimal" class="num-input dt-to-exp" data-ri="${ri}" data-ci="${ci}"
-            value="${dispVal!=null&&dispVal>0?formatMoneyValue(dispVal):''}"
+            value="${dispVal!=null&&dispVal>0?rowFieldValue(dispVal,row):''}"
             placeholder="${hasCalc?(calc>0?Math.round(calc):'0'):'—'}"
             title="Edit to override estimate"
             style="width:90px;${isOv?'background:var(--override-bg);border-color:var(--override-border);':''}"/>
         </div>
         ${isOv?'':(hasCalc
-          ?`<div class="sub-num" style="text-align:right;margin-top:2px;">≈ ${fmtC(backToFc,fc)}${renormTip(fromCity,tc,cat)}</div>`
+          ?`<div class="sub-num" style="text-align:right;margin-top:2px;">≈ ${fmtRowC(backToFc,fc,row)}${renormTip(fromCity,tc,cat)}</div>`
           :`<div class="sub-num" style="text-align:right;margin-top:2px;">no data <span class="tip-icon" data-tip="${noEstimateReason(fromCity,tc,cat)}">?</span></div>`)}
+        ${(isOv||hasCalc)?unitTotalLine(dispVal,tc.currency,row):''}
       </td>`;
     });
 
@@ -908,23 +1092,25 @@ function buildDetailHTML(fromCity,toCities){
     return`<tr data-ri="${ri}">${cols}</tr>`;
   }).join('');
 
-  // Savings row
-  const fTotalExp=S.detailRows.reduce((s,r)=>s+(r.fromAmount||0),0);
-  const fSav=(S.detailFromSalary||0)-fTotalExp;
-  const fRat=S.detailFromSalary>0?fSav/S.detailFromSalary*100:0;
-  let savFrom=`<td class="num-td">
-    <div style="color:${fSav>=0?'var(--positive-em)':'var(--negative-em)'};font-weight:700;">${fmtC(fSav,fc)}</div>
+  // Savings row. Worked out a month at a time, then shown in the Savings
+  // period; the ratio is the same in any period.
+  const fSalM=fromSalaryMonthly();
+  const fSav=fSalM-fromTotalExp();
+  const fRat=fSalM>0?fSav/fSalM*100:0;
+  const sm=savingsMult();
+  let savFrom=`<td class="num-td dt-sav-from">
+    <div style="color:${fSav>=0?'var(--positive-em)':'var(--negative-em)'};font-weight:700;">${fmtC(fSav/sm,fc)}</div>
     <div class="sub-num">${fmtP(fRat)} ratio</div>
   </td>`;
   let savTos=toCities.map((tc,ci)=>{
     if(!tc)return`<td class="num-td">—</td>`;
     const curr=tc.currency;
     const totExp=destTotalExp(ci,fromCity,tc);
-    let toSal=S.goal==='earn'?calcReqSal(ci,fromCity,tc):(S.detailToSalaries[ci]||0);
+    let toSal=S.goal==='earn'?calcReqSal(ci,fromCity,tc):(S.detailToSalaries[ci]||0)*incomeMult();
     const sav=(totExp==null||toSal==null)?null:toSal-totExp;
     const rat=(sav!=null&&toSal>0)?sav/toSal*100:null;
-    return`<td class="num-td">
-      <div style="color:${sav!=null&&sav<0?'var(--negative-em)':'var(--positive-em)'};font-weight:700;">${fmtC(sav,curr)}</div>
+    return`<td class="num-td dt-sav" data-ci="${ci}">
+      <div style="color:${sav!=null&&sav<0?'var(--negative-em)':'var(--positive-em)'};font-weight:700;">${fmtC(sav==null?null:sav/sm,curr)}</div>
       <div class="sub-num">${rat!=null?fmtP(rat)+' ratio':'—'}</div>
     </td>`;
   }).join('');
@@ -943,7 +1129,7 @@ ${goalHtml}
     </thead>
     <tbody>
       <tr class="salary-tr">
-        <td class="cat-td" style="font-weight:700;">💵 Net Income</td>
+        <td class="cat-td" style="font-weight:700;">💵 Net Income${incLabel}</td>
         ${salFrom}${salTos}
         <td></td>
       </tr>
@@ -959,7 +1145,7 @@ ${goalHtml}
         </td>
       </tr>
       <tr class="savings-tr">
-        <td class="cat-td">💰 Savings</td>
+        <td class="cat-td">💰 Savings${savLabel}</td>
         ${savFrom}${savTos}
         <td></td>
       </tr>
@@ -997,19 +1183,23 @@ function renormTip(fromCity,toCity,cat){
 // Total destination expenses for one column. null when any row cannot be
 // estimated, so savings and required salary say "—" instead of quietly
 // treating an unknown cost as zero.
+// All three totals are a month's worth: each row's amount times its rowMult().
 function destTotalExp(ci,fromCity,toCity){
   const customFx=detailFx(ci,fromCity,toCity);
   const ovKey=String(ci);
   let tot=0, known=true;
   S.detailRows.forEach(row=>{
-    if(row.overrides&&(ovKey in row.overrides)){tot+=row.overrides[ovKey]||0;return;}
+    const m=rowMult(row);
+    if(row.overrides&&(ovKey in row.overrides)){tot+=(row.overrides[ovKey]||0)*m;return;}
     const cat=CATS.find(c=>c.id===row.catId)||CATS[0];
     const v=calcExp(row.fromAmount||0,fromCity,toCity,cat.index,customFx);
     if(v==null||!isFinite(v)){known=false;return;}
-    tot+=v;
+    tot+=v*m;
   });
   return known?tot:null;
 }
+function fromTotalExp(){return S.detailRows.reduce((s,r)=>s+(r.fromAmount||0)*rowMult(r),0);}
+function fromSalaryMonthly(){return(S.detailFromSalary||0)*incomeMult();}
 
 function reqSalNoteDetail(ci,fromCity,toCity){
   if(destTotalExp(ci,fromCity,toCity)==null)
@@ -1019,15 +1209,15 @@ function reqSalNoteDetail(ci,fromCity,toCity){
   return`No exchange rate for ${toCity.currency}, so your savings cannot be converted.`;
 }
 
-// null = no single required salary (see reqSalNoteDetail).
+// A month's required salary. null = no single answer (see reqSalNoteDetail).
 function calcReqSal(ci,fromCity,toCity){
   if(!fromCity||!toCity)return null;
   const customFx=detailFx(ci,fromCity,toCity);
   const totToExp=destTotalExp(ci,fromCity,toCity);
   if(totToExp==null)return null;
-  const totFromExp=S.detailRows.reduce((s,r)=>s+(r.fromAmount||0),0);
-  const fSav=(S.detailFromSalary||0)-totFromExp;
-  const fRat=S.detailFromSalary>0?fSav/S.detailFromSalary:0;
+  const fSal=fromSalaryMonthly();
+  const fSav=fSal-fromTotalExp();
+  const fRat=fSal>0?fSav/fSal:0;
   if(S.savingsTarget==='ratio'){
     // A 100% source ratio (or zero destination expenses) is matched at ANY
     // salary, so there is no number to quote.
@@ -1095,20 +1285,47 @@ function wireDetail(fromCity,toCities){
     });
   });
 
-  // Cat selects
+  // Cat selects. A unit the new category does not offer (a price per meal on
+  // a groceries row) goes back to a month first, so the money carries over.
   document.querySelectorAll('.cat-sel').forEach(sel=>{
-    sel.addEventListener('change',()=>{S.detailRows[+sel.dataset.ri].catId=sel.value;renderDetailArea();});
+    sel.addEventListener('change',()=>{
+      const row=S.detailRows[+sel.dataset.ri];
+      if(!unitAllowed(sel.value,rowUnit(row)))setRowUnit(row,'monthly');
+      if(row.prevUnit&&!unitAllowed(sel.value,row.prevUnit))delete row.prevUnit;
+      row.catId=sel.value;
+      renderDetailArea();
+    });
   });
+
+  // Custom frequency: a row's unit, a unit price's quantity and its period
+  document.querySelectorAll('.dt-unit').forEach(sel=>{
+    sel.addEventListener('change',()=>{setRowUnit(S.detailRows[+sel.dataset.ri],sel.value);renderDetailArea();});
+  });
+  document.querySelectorAll('.dt-qty').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      SharedFmt.liveFormat(inp,{maxDecimals:4});
+      S.detailRows[+inp.dataset.ri].qty=Math.max(0,parseNum(inp.value));
+    });
+    inp.addEventListener('blur',()=>{renderDetailArea();});
+  });
+  document.querySelectorAll('.dt-qty-per').forEach(sel=>{
+    sel.addEventListener('change',()=>{setRowQtyPer(S.detailRows[+sel.dataset.ri],sel.value);renderDetailArea();});
+  });
+  const incSel=document.getElementById('dtIncomeFreq');
+  if(incSel)incSel.addEventListener('change',()=>{setIncomeFreq(incSel.value);renderDetailArea();});
+  const savSel=document.getElementById('dtSavingsFreq');
+  if(savSel)savSel.addEventListener('change',()=>{S.detailSavingsFreq=validPeriod(savSel.value);renderDetailArea();});
 
   // From expense inputs
   document.querySelectorAll('.dt-from-exp').forEach(inp=>{
-    inp.addEventListener('input', () => { liveMoney(inp); S.detailRows[+inp.dataset.ri].fromAmount = parseNum(inp.value); });
-    inp.addEventListener('blur', e => { formatMoneyInput(e.target); renderDetailArea(); });
+    const row=S.detailRows[+inp.dataset.ri];
+    inp.addEventListener('input', () => { liveMoney(inp, isUnitPrice(row)?UNIT_FMT:MONEY_FMT); row.fromAmount = parseNum(inp.value); });
+    inp.addEventListener('blur', () => { renderDetailArea(); });
   });
 
   // To expense inputs (override)
   document.querySelectorAll('.dt-to-exp').forEach(inp=>{
-    inp.addEventListener('input',()=>{ liveMoney(inp); });
+    inp.addEventListener('input',()=>{ liveMoney(inp, isUnitPrice(S.detailRows[+inp.dataset.ri])?UNIT_FMT:MONEY_FMT); });
     inp.addEventListener('change',()=>{
       const ri=+inp.dataset.ri, ci=+inp.dataset.ci;
       const key=String(ci);
@@ -1179,6 +1396,9 @@ function wireGlobalToggles(){
 
   const swapBtn=document.getElementById('swapCities');
   if(swapBtn)swapBtn.addEventListener('click',swapSimpleCities);
+
+  const fchk=document.getElementById('customFreqChk');
+  if(fchk)fchk.addEventListener('change',()=>{setCustomFreq(fchk.checked);render();});
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1249,6 +1469,8 @@ function syncSegButtons(){
       b.classList.toggle('active', b.dataset.val===S[key]);
     });
   });
+  const fchk=document.getElementById('customFreqChk');
+  if(fchk) fchk.checked=!!S.customFreq;
 }
 function seedSimpleDemo(){
   S.mode='simple';
@@ -1274,6 +1496,8 @@ function seedDetailedDemo(){
     {catId:'utilities', fromAmount:1000000, overrides:{}},
   ];
   S.customFxDetailed=[null];
+  // The tour narrates monthly figures, so the demo is the plain monthly table.
+  S.customFreq=false; S.detailIncomeFreq='monthly'; S.detailSavingsFreq='monthly'; S.detailPrevIncomeFreq=null;
   syncSegButtons();
   render();
 }

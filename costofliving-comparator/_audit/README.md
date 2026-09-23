@@ -13,4 +13,15 @@ no absolutely positioned element may escape to the page (the currency tags
 once did, stacking on one spot over the card), and every currency tag must
 sit inside its own cell.
 
-Run: `node run.mjs`
+`freq.mjs` is the accounting integrity audit for Detailed mode's custom
+frequency checkbox, a conversion add-on that changes the units amounts are
+typed in, never the money. Unticked, the table must match the pre-feature
+page (commit `0127cc7`) cell by cell; ticked with every row left monthly,
+nothing may move. Every switch of period or unit (week, fortnight, month,
+year, per meal, per kWh, per litre, per US gallon, per trip), of a quantity's
+period, of Net Income's period or Savings' display period must leave every
+column's money where it was, including through a sweep of 60 random switches,
+unticking and ticking again, and a reload. Every Savings and Required salary
+cell is replayed from the raw JSON and the page state, without the tool's code.
+
+Run: `node run.mjs` and `node freq.mjs`
