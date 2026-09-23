@@ -1441,6 +1441,7 @@ function init(){
       }
     }
   });
+  SharedScenario.mount('.quick-start-row', { tool: 'borrowingcapacity', persist });
   render();
 
   /* The guided tour seeds a scenario over the form, so it needs a way to hand

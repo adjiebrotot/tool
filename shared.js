@@ -672,6 +672,100 @@
 
   global.SharedConfig = { download: downloadJson, upload: uploadJson };
 
+  /* ── SharedScenario — save the scenario to a file, open it again tomorrow ──
+     Two small icon buttons (a floppy disk and an open folder) that write every
+     input on the page to a JSON file and read one back. The mini cache already
+     knows how to snapshot a tool and put it back, so a tool that uses Persist
+     needs one line, after its Persist.init:
+
+         SharedScenario.mount('.quick-start-row', { tool: 'financingvscash', persist: persist });
+
+     The file is { tool, kind: 'scenario', version, savedAt, state }, where state
+     is the Persist blob. A file from another tool is refused rather than half
+     applied. A tool whose state does not live in Persist (the DCA explorers,
+     which already had their own settings format) passes save()/load(obj) in
+     place of persist, and its file is whatever save() returns.
+
+     target  — element or selector the buttons are appended to: the Quick Start
+               row where the tool has one, else the header's button cluster.
+     options — tool (file tag and default file name), persist | save+load,
+               filename, onError(message), onLoaded().                        */
+  function makeScenario(){
+    var ICON_SAVE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3.5h11.2L20.5 7.8V19a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5z"/><path d="M7.5 3.5v5h8v-5"/><rect x="7" y="13" width="10" height="7.5" rx=".6"/></svg>';
+    var ICON_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 19V6a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2.2H18a1.5 1.5 0 0 1 1.5 1.5V10"/><path d="M3.5 19l2.6-7.4A1.5 1.5 0 0 1 7.5 10.6h13.1a1 1 0 0 1 .95 1.3L19.3 18.5a1.5 1.5 0 0 1-1.4 1H3.5"/></svg>';
+    var TEXT = {
+      en: { save: 'Save scenario to a file', load: 'Open a saved scenario file',
+            wrong: 'That file is not a saved scenario for this tool.',
+            bad: 'Could not open that file: ' },
+      id: { save: 'Simpan skenario ke file', load: 'Buka file skenario tersimpan',
+            wrong: 'File itu bukan skenario tersimpan untuk alat ini.',
+            bad: 'File tidak bisa dibuka: ' }
+    };
+    function lang(){
+      var l = (document.documentElement.getAttribute('lang') || 'en').toLowerCase();
+      return l.indexOf('id') === 0 ? 'id' : 'en';
+    }
+    function stamp(){
+      var d = new Date(), p = function(n){ return (n < 10 ? '0' : '') + n; };
+      return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    }
+    function button(cls, icon, label){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'scenario-io-btn ' + cls;
+      b.innerHTML = icon;
+      b.title = label;
+      b.setAttribute('aria-label', label);
+      return b;
+    }
+    function mount(target, opts){
+      opts = opts || {};
+      var host = typeof target === 'string' ? document.querySelector(target) : target;
+      if(!host || !opts.tool) return null;
+      var t = TEXT[lang()];
+      var fail = function(msg){
+        if(typeof opts.onError === 'function') opts.onError(msg); else alert(msg);
+      };
+      var custom = typeof opts.save === 'function' && typeof opts.load === 'function';
+      if(!custom && !(opts.persist && typeof opts.persist.snapshot === 'function')) return null;
+
+      function doSave(){
+        var body = custom ? opts.save() : {
+          tool: opts.tool, kind: 'scenario', version: 1,
+          savedAt: new Date().toISOString(), state: opts.persist.snapshot()
+        };
+        downloadJson(opts.filename || (opts.tool + '-scenario-' + stamp() + '.json'), body);
+      }
+      function doLoad(obj){
+        if(custom){ opts.load(obj); }
+        else {
+          if(!obj || obj.tool !== opts.tool || !obj.state || typeof obj.state !== 'object'){ fail(t.wrong); return; }
+          opts.persist.load(obj.state);
+        }
+        // A loaded file is the user's own scenario, not one of the presets.
+        document.querySelectorAll('.quick-start-btn.active').forEach(function(b){ b.classList.remove('active'); });
+        if(typeof opts.onLoaded === 'function') opts.onLoaded(obj);
+      }
+
+      var wrap = document.createElement('div');
+      wrap.className = 'scenario-io';
+      wrap.setAttribute('data-no-abbr', '');
+      // Beside the header's own buttons, look like them.
+      var extra = host.classList.contains('header-right') ? ' btn-theme' : '';
+      var bSave = button('scenario-save' + extra, ICON_SAVE, t.save);
+      var bLoad = button('scenario-load' + extra, ICON_OPEN, t.load);
+      bSave.addEventListener('click', doSave);
+      bLoad.addEventListener('click', function(){
+        uploadJson(doLoad, function(e){ fail(t.bad + (e && e.message ? e.message : e)); });
+      });
+      wrap.appendChild(bSave); wrap.appendChild(bLoad);
+      host.appendChild(wrap);
+      return { save: doSave, load: doLoad, el: wrap };
+    }
+    return { mount: mount };
+  }
+  global.SharedScenario = makeScenario();
+
   /* ── SharedLegend — swatches that look like the mark they stand for ────────
      A legend is a key, not a colour list: a dotted line on the chart has to be
      a dotted line in the legend, a shaded range a shaded block, a ring marker
@@ -1527,7 +1621,10 @@
        debounce        — ms to coalesce rapid edits before saving (default 400).
        version         — bump to invalidate an old, incompatible snapshot.
 
-     Returns { save, schedule, collect, clear }.                                 */
+     Returns { save, schedule, collect, clear, snapshot, load }. snapshot() is
+     the same blob that goes to localStorage; load(blob) applies one to the live
+     page exactly as a returning visit would, then saves it. SharedScenario
+     below uses the pair to write a scenario to a file and read it back.      */
   function makePersist(){
     function keyFor(ns, ver){ return 'abt:save:' + ns + ':v' + (ver || 1); }
     function handle(el){ return el.getAttribute('data-persist') || el.id || el.name || ''; }
@@ -1571,9 +1668,7 @@
       var scope = opts.scope || document;
       var KEY = keyFor(ns, opts.version);
       var hasExtra = opts.extra && typeof opts.extra.restore === 'function' && opts.extra.save && typeof opts.extra.save === 'function';
-      var saved = null;
-      try { var raw = localStorage.getItem(KEY); if(raw) saved = JSON.parse(raw); } catch(e){}
-      if(saved && typeof saved === 'object'){
+      function apply(saved){
         var touched = restore(scope, saved.__fields || saved);
         if(hasExtra && saved.__extra !== undefined){ try { opts.extra.restore(saved.__extra); } catch(e){} }
         if(typeof opts.onRestore === 'function'){ try { opts.onRestore(saved); } catch(e){} }
@@ -1582,11 +1677,17 @@
           touched[i].dispatchEvent(new Event('change', {bubbles:true}));
         }
       }
+      var saved = null;
+      try { var raw = localStorage.getItem(KEY); if(raw) saved = JSON.parse(raw); } catch(e){}
+      if(saved && typeof saved === 'object') apply(saved);
       var timer = null;
-      function save(){
+      function snapshot(){
         var blob = { __fields: collect(scope) };
-        if(hasExtra){ try { blob.__extra = opts.extra.save(); } catch(e){} }
-        try { localStorage.setItem(KEY, JSON.stringify(blob)); } catch(e){}
+        if(hasExtra){ try { blob.__extra = JSON.parse(JSON.stringify(opts.extra.save())); } catch(e){} }
+        return blob;
+      }
+      function save(){
+        try { localStorage.setItem(KEY, JSON.stringify(snapshot())); } catch(e){}
         if(typeof opts.onSave === 'function'){ try { opts.onSave(); } catch(e){} }
       }
       function schedule(){ if(timer) clearTimeout(timer); timer = setTimeout(save, opts.debounce == null ? 400 : opts.debounce); }
@@ -1599,7 +1700,14 @@
         save: save,
         schedule: schedule,
         collect: function(){ return collect(scope); },
-        clear: function(){ try { localStorage.removeItem(KEY); } catch(e){} }
+        clear: function(){ try { localStorage.removeItem(KEY); } catch(e){} },
+        snapshot: snapshot,
+        load: function(blob){
+          if(!blob || typeof blob !== 'object') return;
+          if(timer) clearTimeout(timer);
+          apply(blob);
+          save();
+        }
       };
     }
     return { init: init };

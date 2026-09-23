@@ -55,6 +55,12 @@ const LANG = {
     bracketTip: 'Edit each threshold and rate. The "From" column fills itself in, and only the last bracket is open-ended. Raising a bound past the ones beneath it deletes them.',
     infoBoxHtml: '<strong>Pisah Harta ({PISAH}):</strong> Each spouse files their own SPT. Husband uses PTKP {K}, wife uses PTKP {TK}. Double bracket access.<br><br><strong>Gabung Harta ({KI}):</strong> Combined income, single SPT. Uses PTKP {KI}. One bracket ladder for all income.',
     resetBtn: '↺ Reset',
+    quickStartLabel: 'Quick Start',
+    quickStartTip: 'Fills the Inputs tab with a worked household and resets PTKP and brackets to statute. Change any figure over the top of it.',
+    qsSingle: 'Single income family',
+    qsSingleTip: 'Husband earns Rp 300 million, wife earns nothing, two children. Her own PTKP goes unused under Pisah, so Gabung saves Rp 8.1 million.',
+    qsDouble: 'Double income family',
+    qsDoubleTip: 'Husband Rp 400 million, wife Rp 300 million, one child. Under Pisah each climbs their own bracket ladder, which saves Rp 34.8 million.',
     kpiPisahLabel: 'Pisah Harta — Total Tax',
     kpiGabungLabel: 'Gabung Harta — Total Tax',
     kpiSavingLabel: 'Tax Savings (Cheaper Option)',
@@ -189,6 +195,12 @@ const LANG = {
     bracketTip: 'Ubah setiap ambang batas dan tarif. Kolom "Dari" terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Menaikkan batas melewati lapisan di bawahnya akan menghapusnya.',
     infoBoxHtml: '<strong>Pisah Harta ({PISAH}):</strong> Masing-masing pasangan mengajukan SPT sendiri. Suami menggunakan PTKP {K}, istri menggunakan PTKP {TK}. Keduanya mengakses lapisan tarif secara terpisah.<br><br><strong>Gabung Harta ({KI}):</strong> Penghasilan digabung dalam satu SPT bersama. Menggunakan PTKP {KI}. Satu tangga lapisan tarif untuk seluruh penghasilan.',
     resetBtn: '↺ Atur Ulang',
+    quickStartLabel: 'Mulai Cepat',
+    quickStartTip: 'Mengisi tab Input dengan contoh rumah tangga dan mengembalikan PTKP serta tarif ke ketentuan. Ubah angka mana pun setelahnya.',
+    qsSingle: 'Keluarga satu penghasilan',
+    qsSingleTip: 'Suami berpenghasilan Rp 300 juta, istri tidak berpenghasilan, dua anak. PTKP istri terbuang saat Pisah, jadi Gabung hemat Rp 8,1 juta.',
+    qsDouble: 'Keluarga dua penghasilan',
+    qsDoubleTip: 'Suami Rp 400 juta, istri Rp 300 juta, satu anak. Saat Pisah masing-masing menapaki lapisan tarifnya sendiri, jadi Pisah hemat Rp 34,8 juta.',
     kpiPisahLabel: 'Pisah Harta — Total Pajak',
     kpiGabungLabel: 'Gabung Harta — Total Pajak',
     kpiSavingLabel: 'Penghematan Pajak',
@@ -1016,6 +1028,28 @@ function resetAll(){
   rerender();
 }
 
+/* ── Quick Start ──
+   Each scenario opens from the defaults (resetAll), so the PTKP values and
+   brackets go back to statute and nothing left on screen leaks into it. */
+const QUICK_START = {
+  single: { mode: 'total', dependents: 2, totalSalary: 300000000, splitPct: 0 },
+  double: { mode: 'individual', dependents: 1, husbandSalary: 400000000, wifeSalary: 300000000 }
+};
+function applyQuickStart(key){
+  const q = QUICK_START[key]; if (!q) return;
+  resetAll();
+  els.dependents.value = q.dependents;
+  if (q.mode === 'total') {
+    els.totalSalaryInput.value = q.totalSalary.toLocaleString('en-US');
+    els.splitPct.value = q.splitPct;
+  } else {
+    els.husbandSalaryInput.value = q.husbandSalary.toLocaleString('en-US');
+    els.wifeSalaryInput.value = q.wifeSalary.toLocaleString('en-US');
+  }
+  setInputMode(q.mode);  // rerenders and schedules the save
+  document.querySelectorAll('.quick-start-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === key));
+}
+
 /* ── Input mode toggle ── */
 function setInputMode(mode){
   S.inputMode = mode;
@@ -1334,7 +1368,11 @@ $('modeBtnTotal').addEventListener('click',()=>setInputMode('total'));
 $('modeBtnSplit').addEventListener('click',()=>setInputMode('individual'));
 
 els.dependents.addEventListener('change',rerender);
-els.resetBtn.addEventListener('click',resetAll);
+els.resetBtn.addEventListener('click',()=>{
+  resetAll();
+  document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
+});
+document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.addEventListener('click',()=>applyQuickStart(btn.dataset.preset)));
 els.downloadBtn.addEventListener('click',downloadCsv);
 
 document.querySelectorAll('.ctrl-tab').forEach(btn=>{
@@ -1389,5 +1427,8 @@ persist = Persist.init('pisahvsgabung', {
     }
   }
 });
+// One namespace for the English and Indonesian pages, so a file saved on one
+// opens on the other.
+SharedScenario.mount('.quick-start-row', { tool: 'pisahvsgabung', persist: persist });
 
 })();

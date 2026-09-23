@@ -1868,6 +1868,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
         restore: function(e){ if(e && Array.isArray(e.scenarios) && e.scenarios.length) scenarios = e.scenarios; }
       }
     });
+    // No Quick Start row on this page, so save/open sit in the header.
+    SharedScenario.mount('.header-right', { tool: 'rentvsownhouse-sensitivity', persist: persist });
   }
 });
 

@@ -159,6 +159,23 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;}
 a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 
 /* ============================================================
+   SCENARIO SAVE / OPEN (SharedScenario in shared.js)
+   ============================================================ */
+/* Two icon buttons, floppy disk and open folder. In a Quick Start row they sit
+   hard right, sized like the preset buttons; in a header they sit in the
+   button cluster, sized like the theme toggle. */
+.scenario-io{display:inline-flex;gap:6px;flex-shrink:0;}
+.quick-start-row .scenario-io{margin-left:auto;}
+.scenario-io-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;padding:0;background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);cursor:pointer;transition:all var(--transition-fast);font-family:inherit;}
+.scenario-io-btn svg{width:17px;height:17px;}
+.scenario-io-btn:hover{border-color:var(--accent);color:var(--text);}
+.scenario-io-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+/* In a header the buttons also carry .btn-theme, so they wear whatever the
+   page's own header buttons wear; only the shape is set here. */
+.header-right .scenario-io{align-self:stretch;}
+.scenario-io-btn.btn-theme{display:inline-flex;width:38px;height:auto;min-height:34px;padding:0;}
+
+/* ============================================================
    CONTROL PANEL — TABS
    ============================================================ */
 /* Pinned to the top of .ctrl-scroll, so the tabs stay reachable however far

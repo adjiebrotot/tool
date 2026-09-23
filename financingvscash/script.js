@@ -2443,4 +2443,5 @@ persist = Persist.init('financingvscash', {
     restore: function(e){ if(e && Array.isArray(e.scenarios)) scenarios = e.scenarios.map(normaliseScenario).filter(Boolean); }
   }
 });
+SharedScenario.mount('.quick-start-row', { tool: 'financingvscash', persist: persist });
 })();

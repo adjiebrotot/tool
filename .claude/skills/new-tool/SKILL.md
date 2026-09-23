@@ -121,6 +121,11 @@ isn't in a form control (a JS array, a mode flag), pass an `extra: { save, resto
 the returned `schedule()` after those changes. Mark transient controls (search boxes, editors)
 with `data-no-persist`. See any recent tool's `script.js` for a worked example.
 
+A finance tool also gets **save / open scenario** buttons (floppy disk and open folder) so a user
+can keep a scenario as a JSON file and open it another day. One line after `Persist.init`:
+`SharedScenario.mount('.quick-start-row', { tool: '<toolname>', persist })`, or `'.header-right'`
+when the tool has no Quick Start row. Add the page to `_ref/scenario-check.mjs`.
+
 For a multi-language tool (an `en` page and an `id/` page sharing one `script.js`), use a
 **language-agnostic namespace** (`'pisahvsgabung'`, not `'pisahvsgabung-en'`). `localStorage` is
 per-origin, so both pages then share one cache and a user's work follows them across a language

@@ -2846,5 +2846,8 @@ persist = Persist.init('rentvsownhouse', {
     }
   }
 });
+// One namespace for the English and Indonesian pages, so a file saved on one
+// opens on the other.
+SharedScenario.mount('.quick-start-row', { tool: 'rentvsownhouse', persist: persist });
 
 })();
