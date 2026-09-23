@@ -766,7 +766,7 @@ function rerender(){
     // cash purchase wins there is no loan, so there is no interest.
     $('kpiInterest').textContent=fmt.currency(cashWins?0:bestResult.totalInterest,true);$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent=cashWins?'Paying cash pays no interest.':paymentTxt(bestResult);}
   else{$('kpiNetBenefit').textContent='—';$('kpiNetBenefit').style.color=cssVar('--text');$('kpiNetSub').textContent='';$('kpiInterest').textContent='—';$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent='';}
-  $('kpiCashWealth').textContent=fmt.currency(cashBase.endWealth,true);$('kpiCashWealth').style.color=cssVar('--text');$('kpiCashSub').textContent=maxTerm>0?`After ${maxTerm.toFixed(1)} yr at ${fmt.pct(riskFreeRate/100)} risk-free`:'Cash left after buying outright.';
+  $('kpiCashWealth').textContent=fmt.currency(cashBase.endWealth,true);$('kpiCashWealth').style.color=cssVar('--text');$('kpiCashSub').textContent=maxTerm>0?`After ${horizonTxt(maxTerm)} at ${fmt.pct(riskFreeRate/100)} risk-free`:'Cash left after buying outright.';
 
   renderMainChart(results);renderComparisonTable(results);renderAmortTabs(results);updateSensScenarioDropdown();
   // The sweep is built from the same purchase cost, cash and rates as the panel
@@ -775,21 +775,35 @@ function rerender(){
   scheduleSensitivity();
 }
 
+/* The main chart's x unit, chosen per render. Module-level because an
+   in-place update keeps the tooltip and hover closures of the first render. */
+let chartXUnit='year';
+function xAxisTitle(){const u=chartXUnit;return u.charAt(0).toUpperCase()+u.slice(1)+'s';}
+function xLabelOf(v){const n=+v,u=xAxisTitle().slice(0,-1);return Number.isInteger(n)?`${u} ${n}`:`${u} ${n.toFixed(2)}`;}
+// Terms are whole periods, so a converted horizon is whole too; the snap only
+// clears float dust like 12.000000000000002.
+function snapUnit(x){const r=Math.round(x);return Math.abs(x-r)<1e-9?r:x;}
+
 function renderMainChart(results){
   const metric=$('chartMetric').value;
   const titles={wealth:'Ending Wealth Over Time',netBenefit:'Net Benefit vs Cash Purchase',investmentValue:'Investment Value Over Time',loanBalance:'Loan Balance Over Time'};
   $('chartTitle').textContent=titles[metric]||'Chart';
-  // Plot on a real-time (years) x-axis so scenarios with different payment
-  // frequencies align by actual duration, not by raw period index (a 5-year
-  // yearly loan and a 5-year monthly loan must both span 0–5 on the axis).
+  // Plot on a real-time x-axis so scenarios with different payment
+  // frequencies align by actual duration, not by raw period index. The unit is
+  // the finest repayment period on show: three monthly plans read in months
+  // (not 0.25 of a year), and a yearly loan beside a weekly one reads in weeks.
   const maxYears=results.reduce((m,r)=>r?Math.max(m,r.n/r.ppy):m,0);
   if(maxYears===0){if(chartInstance){chartInstance.destroy();chartInstance=null;}return;}
+  const axisFreq=results.reduce((f,r)=>r&&periodsPerYear(r.freq)>periodsPerYear(f)?r.freq:f,'yearly');
+  const upy=periodsPerYear(axisFreq);
+  chartXUnit=freqLabel(axisFreq);
   const rfAnnual=latestResults.riskFreeRate/100;
   const left=Math.max(0,latestResults.availableCash-latestResults.purchaseCost);
-  // Shared ~monthly sampling grid: every line uses identical x positions so the
-  // multi-scenario tooltip stays aligned.
-  const steps=Math.max(1,Math.round(maxYears*12));
-  const xs=[];for(let k=0;k<=steps;k++)xs.push(maxYears*k/steps);
+  // Shared sampling grid, one point per axis period: every line uses identical
+  // x positions so the multi-scenario tooltip stays aligned. A horizon that
+  // ends part-way through a period gets that end point too.
+  const maxX=snapUnit(maxYears*upy);
+  const xs=[];for(let k=0;k<maxX;k++)xs.push(k);xs.push(maxX);
 
   // Metric value of a result at a (possibly fractional) period index. Within the
   // recorded timeline it interpolates between periods; past the loan term the
@@ -818,23 +832,23 @@ function renderMainChart(results){
   // run in lockstep.
   const pushSeries=(ds,label)=>{datasets.push(ds);legendItems.push({label,spec:SharedLegend.specOf(ds)});};
   if(metric==='wealth'){
-    const cd=xs.map(yr=>({x:yr,y:left*Math.pow(1+rfAnnual,yr)}));
+    const cd=xs.map(x=>({x,y:left*Math.pow(1+rfAnnual,x/upy)}));
     pushSeries({label:'Cash Purchase',data:cd,borderColor:cssVar('--muted'),backgroundColor:'transparent',borderWidth:2,borderDash:[6,4],pointRadius:0,pointHoverRadius:4,tension:.3,fill:false},'Cash Purchase');
   }
   results.forEach(r=>{if(!r)return;const color=r.color;
     const rfP_r=Math.pow(1+rfAnnual,1/r.ppy)-1;
-    const data=xs.map(yr=>({x:yr,y:periodValue(r, yr*r.ppy, rfP_r)}));
+    const data=xs.map(x=>({x,y:periodValue(r, x/upy*r.ppy, rfP_r)}));
     r.bandSeries=null;
     pushSeries({label:r.name,data,borderColor:color,backgroundColor:color+'22',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:.3,fill:false,fvcRef:r},r.name);
     if(r.bandLo&&r.bandHi){
-      const lo=xs.map(yr=>periodValue(r.bandLo, yr*r.bandLo.ppy, rfP_r));
-      const hi=xs.map(yr=>periodValue(r.bandHi, yr*r.bandHi.ppy, rfP_r));
+      const lo=xs.map(x=>periodValue(r.bandLo, x/upy*r.bandLo.ppy, rfP_r));
+      const hi=xs.map(x=>periodValue(r.bandHi, x/upy*r.bandHi.ppy, rfP_r));
       let maxDiff=0;for(let k=0;k<xs.length;k++)maxDiff=Math.max(maxDiff,Math.abs(hi[k]-lo[k]));
       // A band narrower than fifty cents is noise, not information.
       if(maxDiff>0.5){
         r.bandSeries={lo,hi};bandColors.push(color);
-        bandDatasets.push({label:r.name+' (band)',data:xs.map((yr,k)=>({x:yr,y:hi[k]})),borderColor:'transparent',backgroundColor:'transparent',borderWidth:0,pointRadius:0,pointHoverRadius:0,tension:.3,fill:false,isBand:true});
-        bandDatasets.push({label:r.name+' (band)',data:xs.map((yr,k)=>({x:yr,y:lo[k]})),borderColor:'transparent',backgroundColor:color+'30',borderWidth:0,pointRadius:0,pointHoverRadius:0,tension:.3,fill:'-1',isBand:true});
+        bandDatasets.push({label:r.name+' (band)',data:xs.map((x,k)=>({x,y:hi[k]})),borderColor:'transparent',backgroundColor:'transparent',borderWidth:0,pointRadius:0,pointHoverRadius:0,tension:.3,fill:false,isBand:true});
+        bandDatasets.push({label:r.name+' (band)',data:xs.map((x,k)=>({x,y:lo[k]})),borderColor:'transparent',backgroundColor:color+'30',borderWidth:0,pointRadius:0,pointHoverRadius:0,tension:.3,fill:'-1',isBand:true});
       }
     }
   });
@@ -849,7 +863,6 @@ function renderMainChart(results){
   const le=$('chartLegend');le.innerHTML='';
   legendItems.forEach(l=>{const d=document.createElement('div');d.className='legend-item';SharedLegend.attach(d,l.spec,l.label);le.appendChild(d);});
   const yAxisLabel={wealth:`Wealth (${moneySymbol()})`,netBenefit:`Net Benefit (${moneySymbol()})`,investmentValue:`Investment Value (${moneySymbol()})`,loanBalance:`Loan Balance (${moneySymbol()})`}[metric]||`Value (${moneySymbol()})`;
-  const xLabelOf=v=>{const n=+v;return Number.isInteger(n)?`Year ${n}`:`Year ${n.toFixed(2)}`;};
   const gc=cssVar('--chart-grid'),mc=cssVar('--chart-text'),tc=cssVar('--text');
   const tipLight=document.body.classList.contains('light');
   const tipBg=tipLight?'#FFFFFF':'#1e1e2e',tipTitle=tipLight?'#2D3436':'#EAF1FF',tipBody=tipLight?'#4A5A6A':'#A8B6CF',tipBorder=tipLight?'#D4DEEF':gc;
@@ -879,12 +892,12 @@ function renderMainChart(results){
       if(Math.abs(b-a)>0.5)t+=` (${fmt.currency(a,true)} – ${fmt.currency(b,true)})`;
     }
     return t;
-  }},backgroundColor:tipBg,titleColor:tipTitle,bodyColor:tipBody,borderColor:tipBorder,borderWidth:1,padding:10,}),zoom:SharedZoom.options({min:0,max:maxYears,points:xs.length}),sharedYFit:{auto:{axes:['y']}}},scales:{x:{type:'linear',title:{display:true,text:'Years',color:mc,font:{size:12}},ticks:{color:mc,maxTicksLimit:12,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:yAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
+  }},backgroundColor:tipBg,titleColor:tipTitle,bodyColor:tipBody,borderColor:tipBorder,borderWidth:1,padding:10,}),zoom:SharedZoom.options({min:0,max:maxX,points:xs.length}),sharedYFit:{auto:{axes:['y']}}},scales:{x:{type:'linear',bounds:'data',title:{display:true,text:xAxisTitle(),color:mc,font:{size:12}},ticks:{color:mc,maxTicksLimit:12,precision:0,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:yAxisLabel,color:mc,font:{size:12}},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
   // The limits travel with the data: a shorter term means a shorter axis to
   // pan across, so they are rewritten on an in-place update too.
   // New data means a new view: whatever window a pan or a pinch left behind
   // is dropped so the reader sees the whole of what was just computed.
-  if(chartInstance){SharedZoom.resetView(chartInstance);chartInstance.data=cfg.data;chartInstance.options.plugins.zoom=cfg.options.plugins.zoom;chartInstance.options.scales.x.ticks.color=mc;chartInstance.options.scales.x.grid.color=gc;chartInstance.options.scales.x.title.color=mc;chartInstance.options.scales.y.ticks.color=mc;chartInstance.options.scales.y.grid.color=gc;chartInstance.options.scales.y.title.color=mc;chartInstance.options.scales.y.title.text=yAxisLabel;chartInstance.update('none');}
+  if(chartInstance){SharedZoom.resetView(chartInstance);chartInstance.data=cfg.data;chartInstance.options.plugins.zoom=cfg.options.plugins.zoom;chartInstance.options.scales.x.ticks.color=mc;chartInstance.options.scales.x.grid.color=gc;chartInstance.options.scales.x.title.color=mc;chartInstance.options.scales.x.title.text=xAxisTitle();chartInstance.options.scales.y.ticks.color=mc;chartInstance.options.scales.y.grid.color=gc;chartInstance.options.scales.y.title.color=mc;chartInstance.options.scales.y.title.text=yAxisLabel;chartInstance.update('none');}
   else chartInstance=new Chart($('chartCanvas'),{...cfg,plugins:[SharedZoom.plugin]});
 }
 
