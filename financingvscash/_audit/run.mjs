@@ -120,11 +120,12 @@ async function compTable(){
     return {xTitle:ch.options.scales.x.title.text, xType:ch.options.scales.x.type,
             lastX:last?last.x:null, lastY:last?last.y:null};
   });
-  // On a time (years) axis the yearly scenario ends at x = its actual term (5)
-  // with y = its 5-year ending wealth (== the comparison-table Ending Wealth),
-  // instead of being compounded out to period 60 (60 years).
-  const ok = chart.xType==='linear' && Math.abs(chart.lastX-5)<1e-6 && Math.abs(chart.lastY-tableEW) < Math.abs(tableEW)*0.01;
-  check('F2 mixed-frequency chart uses a time axis; yearly scenario ends at its 5-yr wealth',
+  // The axis counts the finest repayment period on show (months, beside the
+  // monthly default), so the yearly scenario ends at x = 60 months = its actual
+  // 5-year term, with y = its 5-year ending wealth (== the comparison-table
+  // Ending Wealth), instead of being compounded out to period 60 (60 years).
+  const ok = chart.xType==='linear' && chart.xTitle==='Months' && Math.abs(chart.lastX-60)<1e-6 && Math.abs(chart.lastY-tableEW) < Math.abs(tableEW)*0.01;
+  check('F2 mixed-frequency chart uses a time axis in the finest period; yearly scenario ends at its 5-yr wealth',
     ok,
     `x-axis "${chart.xTitle}" (${chart.xType}); yearly scenario ends at x=${chart.lastX}, y=${chart.lastY?.toFixed(0)} vs table Ending Wealth ${tableEW.toFixed(0)}`);
 }
@@ -390,7 +391,7 @@ const PRICE=50000,CASH=80000,RF=4.5,PPY=12,N=60;
     if(b.length!==2)return null;
     const width=x=>{const i=b[0].data.findIndex(p=>Math.abs(p.x-x)<0.05);
       return i<0?null:Math.abs(b[0].data[i].y-b[1].data[i].y);};
-    return{atYear1:width(1),atYear2:width(2),atYear4:width(4),atEnd:Math.abs(b[0].data[b[0].data.length-1].y-b[1].data[b[1].data.length-1].y)};
+    return{atYear1:width(12),atYear2:width(24),atYear4:width(48),atEnd:Math.abs(b[0].data[b[0].data.length-1].y-b[1].data[b[1].data.length-1].y)};
   });
   check('F12 fixed then floating: the band is shut across the fixed years and opens after the switch',
     !!w&&w.atYear1<0.5&&w.atYear2<0.5&&w.atYear4>1&&w.atEnd>w.atYear4,
@@ -407,7 +408,7 @@ const PRICE=50000,CASH=80000,RF=4.5,PPY=12,N=60;
     return{txt:document.getElementById('hoverBox').textContent};
   });
   check('F19 the hover read-out names the period, every series once, and the band as a range',
-    !out.err&&/^Year /.test(out.txt)&&/Mixed: /.test(out.txt)&&/\(.+ – .+\)/.test(out.txt)&&!/\(band\)/.test(out.txt),
+    !out.err&&/^Month /.test(out.txt)&&/Mixed: /.test(out.txt)&&/\(.+ – .+\)/.test(out.txt)&&!/\(band\)/.test(out.txt),
     out.err||`"${out.txt.slice(0,130)}"`);
 }
 

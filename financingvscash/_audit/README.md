@@ -9,7 +9,8 @@ edge cases.
 Covered (`run.mjs`):
 
 - F1  default scenarios' ending wealth and net benefit vs an independent replay
-- F2  mixed payment frequencies share one real-time (years) chart axis
+- F2  mixed payment frequencies share one real-time chart axis, counted in the
+      finest repayment period on show
 - F3  changing the repayment frequency converts the term, not just its unit
 - F4  a down payment plus fee beyond available cash is explained, not dropped
 - F5  flat rate: interest is P0 x r x n and the instalment is P0/n + P0 x r
