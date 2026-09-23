@@ -622,12 +622,10 @@ function drawdownBands(P, det, opts){
     }
     for(y = 0; y < at.length; y++) samples[y][p] = path[at[y]];
   }
-  var bands = {p10: [], p25: [], p75: [], p90: []};
+  var bands = {p10: [], p90: []};
   samples.forEach(function(col){
     col = Array.prototype.slice.call(col).sort(function(a, b){ return a - b; });
     bands.p10.push(quantile(col, 0.10));
-    bands.p25.push(quantile(col, 0.25));
-    bands.p75.push(quantile(col, 0.75));
     bands.p90.push(quantile(col, 0.90));
   });
   return {bands: bands, startYear: startYear, years: chartYears, paths: nPaths};
@@ -1606,7 +1604,14 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
       // cannot print labels on top of each other across the join.
       ticks: {color: t.muted, font: {size: 11}, maxTicksLimit: 5, includeBounds: false,
               callback: function(v){ return fmt.currency(v, true); }},
-      grid: {color: t.grid}
+      /* Zero is the line a balance is read against: above it the money
+         lasts, under it the plan has failed. So it is drawn heavier than the
+         other gridlines, in the axis text colour. Ticks are whole multiples
+         of their step, so zero is always one of them when it is on the axis. */
+      grid: {
+        color: function(c){ return c.tick && c.tick.value === 0 ? t.muted : t.grid; },
+        lineWidth: function(c){ return c.tick && c.tick.value === 0 ? 1.6 : 1; }
+      }
     };
     /* A spacer in the middle of the stack, so the two panes read as two
        pictures rather than one picture with a line through it. It plots
@@ -1808,11 +1813,10 @@ function renderCharts(res){
   var retLabel = 'Retire at ' + fmt.age(res.P.ageRetire);
 
   /* The range of balances, shaded round the expected line from the year the
-     draws begin: the middle half of the simulated futures in a deeper shade,
-     the worst to the best tenth in a lighter one. Held as whole-plan arrays,
-     blank before the fan opens, so the fitter reads them by the same year
-     index as every other series. */
-  var fan = {p10: [], p25: [], p75: [], p90: []}, fanFrom = null;
+     draws begin, worst tenth of the simulated futures to the best. Held as
+     whole-plan arrays, blank before the fan opens, so the fitter reads them by
+     the same year index as every other series. */
+  var fan = {p10: [], p90: []}, fanFrom = null;
   if(res.dd){
     fanFrom = res.dd.startYear;
     Object.keys(fan).forEach(function(q){
@@ -1822,14 +1826,33 @@ function renderCharts(res){
       }
     });
   }
+  /* Leave a Legacy is funded only if the balance ends on the bequest, so the
+     bequest is drawn across the pane as the line to end above. It is entered
+     in today's money, so in future's money it is that sum in each year's
+     money, the same way the table and the "Left at" card state it. */
+  var legacyLine = res.ui.mode === 'legacy'
+    ? scale(res.needCurve.map(function(){ return Math.max(0, res.P.legacy); }))
+    : null;
 
   var fit2 = makeYFit(y0, [income, spend], [income, spend], {includeZero: true});
-  /* The pane is sized to the expected balance and the middle half of the
-     futures. Decades of drawing down spread the outer tenths an order of
-     magnitude past the line, so sized to them the line and the point where
-     futures start running out would both be a sliver; the outer band is
-     allowed off the edges instead. */
-  var fit3 = makeYFit(y0, [bal, fan.p75], [bal, fan.p25], {includeZero: true, topPad: 2.2});
+  /* The balance pane is sized to what it is read against: the expected
+     balance, zero, and the bequest when there is one. Decades of drawing down
+     spread the band an order of magnitude past the line, so it is given a
+     margin rather than the axis: it may widen the pane by up to BAND_ROOM of
+     that span on either side, and past that it is clipped. The margin is what
+     keeps a band that dips under zero visibly under zero, which is how the
+     pane shows the futures that fail. */
+  var BAND_ROOM = 0.3;
+  var balLines = legacyLine ? [bal, legacyLine] : [bal];
+  var fitLine = makeYFit(y0, balLines, balLines, {includeZero: true, topPad: 2.2});
+  var fitFan = makeYFit(y0, [fan.p90], [fan.p10], {includeZero: true, topPad: 2.2});
+  var fit3 = function(xMin, xMax){
+    var l = fitLine(xMin, xMax), f = res.dd ? fitFan(xMin, xMax) : null;
+    if(!l || !f) return l || f;
+    var room = BAND_ROOM * (l.max - l.min);
+    return {min: Math.min(l.min, Math.max(f.min, l.min - room)),
+            max: Math.max(l.max, Math.min(f.max, l.max + room))};
+  };
 
   /* A vertical rule at the year the two areas change sides, so the reader does
      not have to count years along the axis to find it. One per pane, drawn
@@ -1872,30 +1895,28 @@ function renderCharts(res){
      spec:{type:'area', width:0, fill: withAlpha(t.c, 0.28), fill2: withAlpha(t.b, 0.28)}},
     {label:'Balance, lower panel', datasets:[2]}
   ];
-  /* Each band is a pair of datasets, an invisible lower edge and an upper
-     one filled down to it, drawn under the line and keyed as one block, the
-     way the path chart keys its own range. The upper edges come first so the
-     hover card reads from the best futures down to the worst. The outer pair
-     is `noAutoFit`: it is the one the pane lets run off its edges. */
+  /* The band is a pair of datasets, an invisible lower edge and an upper one
+     filled down to it, drawn under the line and keyed as one block, the way
+     the path chart keys its own range. Both edges are `noAutoFit`: the pane
+     gives them a margin, not the axis, and clips them past it. */
   if(res.dd){
-    var outerFill = withAlpha(t.a, 0.12), innerFill = withAlpha(t.a, 0.24);
-    var outerSpec = {type: 'area', fill: outerFill};
-    var innerSpec = {type: 'area', fill: withAlpha(t.a, 0.33)};   // as it shows, over the outer
-    var fanPts = function(arr){ return pts(arr.slice(fanFrom), y0 + fanFrom); };
-    var edge = function(label, arr, fill, spec, outer){
-      return {label: label, data: fanPts(arr), yAxisID: 'yBal',
+    var bandFill = withAlpha(t.a, 0.16);
+    var bandSpec = {type: 'area', fill: bandFill};
+    var edge = function(label, arr, fill){
+      return {label: label, data: pts(arr.slice(fanFrom), y0 + fanFrom), yAxisID: 'yBal',
               borderColor: withAlpha(t.a, 0), backgroundColor: fill || 'transparent', borderWidth: 0,
-              pointRadius: 0, fill: false, order: 4, legendSpec: spec, noAutoFit: outer};
+              pointRadius: 0, fill: false, order: 4, legendSpec: bandSpec, noAutoFit: true};
     };
     var b10 = ds2.length;
-    ds2.push(edge('Balance, best 10%', fan.p90, outerFill, outerSpec, true));
-    ds2.push(edge('Balance, best 25%', fan.p75, innerFill, innerSpec, false));
-    ds2.push(edge('Balance, worst 25%', fan.p25, null, innerSpec, false));
-    ds2.push(edge('Balance, worst 10%', fan.p10, null, outerSpec, true));
-    ds2[b10].fill = b10 + 3;
-    ds2[b10 + 1].fill = b10 + 2;
-    legend2.push({label:'Middle half of balances', datasets:[b10 + 1, b10 + 2], mark: b10 + 1});
-    legend2.push({label:'Range of balances, worst 10% to best 10%', datasets:[b10, b10 + 3], mark: b10});
+    ds2.push(edge('Balance, best 10%', fan.p90, bandFill));
+    ds2.push(edge('Balance, worst 10%', fan.p10, null));
+    ds2[b10].fill = b10 + 1;
+    legend2.push({label:'Range of balances, worst 10% to best 10%', datasets:[b10, b10 + 1], mark: b10});
+  }
+  if(legacyLine){
+    ds2.push({label:'Target legacy', data: pts(legacyLine, y0), yAxisID:'yBal', borderColor: t.d,
+              borderWidth: 1.8, borderDash:[6,4], pointRadius: 0, fill: false, order: 2});
+    legend2.push({label:'Target legacy', datasets:[ds2.length - 1]});
   }
   if(marked){
     // One rule, drawn in both panes, so hiding it hides the whole line down
