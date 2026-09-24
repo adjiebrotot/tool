@@ -218,6 +218,14 @@
       <input class="num-input" id="randomSeed" type="number" min="0" step="1" value="25823952204" />
     </div>
     <div class="field-row">
+      <div class="field-label">Trade at <span class="tip-icon" data-tip="Every rule decides on a day's close. This sets when the order fills: that close, or the next trading day's open or close.">?</span></div>
+      <select class="num-input" id="execTiming" style="cursor:pointer">
+        <option value="close">Same day's close</option>
+        <option value="next-open" selected>Next day's open</option>
+        <option value="next-close">Next day's close</option>
+      </select>
+    </div>
+    <div class="field-row">
       <div class="field-label">Risk-Free Rate (% p.a.) <span class="tip-icon" data-tip="The yearly return you could earn without risk. Sharpe and Sortino measure the return earned above it.">?</span></div>
       <input class="num-input" id="riskFreeRate" data-no-stale type="number" min="0" step="0.1" value="4" />
     </div>
@@ -335,8 +343,8 @@
     </div>
     <div class="table-wrap">
       <table id="detailTable">
-        <thead id="detailHead"><tr><th>Date</th><th>Price</th><th>Deposited</th><th>Units</th><th>Total Units</th><th>Equity</th><th>Return</th></tr></thead>
-        <tbody id="detailBody"><tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">Add securities to see detailed data.</td></tr></tbody>
+        <thead id="detailHead"><tr><th>Date</th><th>Decided</th><th>Price</th><th>Invested</th><th>Units</th><th>Total Units</th><th>Total Deposited</th><th>Equity</th><th>Return</th></tr></thead>
+        <tbody id="detailBody"><tr><td colspan="9" style="color:var(--muted);text-align:center;padding:20px">Add securities to see detailed data.</td></tr></tbody>
       </table>
     </div>
   </section>

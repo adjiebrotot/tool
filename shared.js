@@ -197,20 +197,38 @@
   // dates), deduping by date so a freshly-fetched tail/front can be folded into
   // the cached history without re-downloading what we already hold. `b` wins on
   // overlapping dates. OHLC arrays are merged only when present on either input.
+  //
+  // Adjusted closes are restated after every dividend and split, so history
+  // cached weeks ago and a tail fetched today can sit on different bases.
+  // Stitched as they are, a 10:1 split reads as a 90% crash on the seam day and
+  // every dividend in between as a small fake drop. `b` is the fresher fetch, so
+  // the part of `a` it does not cover is rescaled onto b's basis by the ratio of
+  // the two on the latest day they share. `a`'s own last day is never used for
+  // that ratio: it may have been fetched mid-session, before the close was final.
+  function rebaseFactor(a, b){
+    if(!a || !b || !a.dates || !b.dates || !a.prices || !b.prices) return 1;
+    var bIdx = Object.create(null), j, k, pa, pb;
+    for(j = 0; j < b.dates.length; j++) bIdx[b.dates[j]] = j;
+    for(j = a.dates.length - 2; j >= 0; j--){
+      k = bIdx[a.dates[j]];
+      if(k === undefined) continue;
+      pa = a.prices[j]; pb = b.prices[k];
+      if(!(isFinite(pa) && pa > 0 && isFinite(pb) && pb > 0)) continue;
+      var f = pb / pa;
+      return Math.abs(f - 1) < 1e-9 ? 1 : f;
+    }
+    return 1;
+  }
   function mergeSeries(a, b){
     var map = Object.create(null), i;
-    function absorb(s){
+    function absorb(s, f){
       if(!s || !s.dates) return;
+      function sc(arr){ var v = arr ? arr[i] : undefined; return (f !== 1 && typeof v === 'number') ? v * f : v; }
       for(i=0;i<s.dates.length;i++){
-        map[s.dates[i]] = {
-          p: s.prices ? s.prices[i] : undefined,
-          o: s.opens ? s.opens[i] : undefined,
-          h: s.highs ? s.highs[i] : undefined,
-          l: s.lows  ? s.lows[i]  : undefined
-        };
+        map[s.dates[i]] = { p: sc(s.prices), o: sc(s.opens), h: sc(s.highs), l: sc(s.lows) };
       }
     }
-    absorb(a); absorb(b); // b wins on overlapping dates
+    absorb(a, rebaseFactor(a, b)); absorb(b, 1); // b wins on overlapping dates
     var dates = Object.keys(map).sort();
     var prices = dates.map(function(d){ return map[d].p; });
     var out = { dates: dates, prices: prices };
@@ -299,6 +317,19 @@
     return merged;
   }
 
+  // Where a tail refresh should start. Not at coverageEnd itself: that day may
+  // be a weekend with no bar, or a bar fetched mid-session. Reaching a couple of
+  // weeks back lands several finished closes in both the cache and the new
+  // fetch, which is what mergeSeries needs to put them on one basis.
+  function tailStart(entry){
+    var end = entry && entry.coverageEnd;
+    var last = entry && entry.dates && entry.dates.length ? entry.dates[entry.dates.length - 1] : end;
+    if(!last) return end;
+    var p = String(last).split('-');
+    var d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] - 14)).toISOString().slice(0, 10);
+    return (end && end < d) ? end : d;
+  }
+
   // Single-ticker convenience wrapper (kept for the portfolio tool and any
   // caller that wants one series). Throws on failure like the old API.
   async function yfFetchPrices(ticker, startDate, endDate){
@@ -316,6 +347,7 @@
     fetchPrices: yfFetchPrices,
     fetchPricesBatch: yfFetchPricesBatch,
     mergeSeries: mergeSeries,
+    tailStart: tailStart,
     setEndpoint: function(url){ WORKER_ENDPOINT = url || ''; },
     // Soft daily request cap (shared across both tools on this origin).
     getDailyLimit: function(){ return DAILY_REQUEST_LIMIT; },
@@ -367,7 +399,9 @@
   // incremental front/tail fetch never discards history we already hold.
   function pcStore(tk, r, fetchStart, fetchEnd){
     if(!(r && !r.error && r.dates && r.dates.length)) return false;
-    var prev = priceCache[tk];
+    // A series dated on another basis (the Worker's `basis` tag) is replaced,
+    // never merged: stitching the two would duplicate or shift trading days.
+    var prev = (priceCache[tk] && priceCache[tk].basis === r.basis) ? priceCache[tk] : null;
     var dates = r.dates, prices = r.prices, opens = r.opens, highs = r.highs, lows = r.lows;
     if(prev && prev.dates && prev.dates.length){
       var m = mergeSeries(
@@ -383,7 +417,8 @@
       coverageStart: prev ? pcMinIso(prev.coverageStart, fetchStart) : fetchStart,
       coverageEnd:   prev ? pcMaxIso(prev.coverageEnd, fetchEnd)     : fetchEnd,
       source: r.source,
-      kind: r.kind
+      kind: r.kind,
+      basis: r.basis
     };
     if(opens && highs && lows){ entry.opens = opens; entry.highs = highs; entry.lows = lows; }
     priceCache[tk] = entry;
@@ -435,7 +470,7 @@
         segments.push([start, end]);
       } else {
         if(start < prev.coverageStart) segments.push([start, prev.coverageStart]);
-        if(end   > prev.coverageEnd)   segments.push([prev.coverageEnd, end]);
+        if(end   > prev.coverageEnd)   segments.push([tailStart(prev), end]);
       }
       var lastErr = null, i, seg, map, r;
       for(i = 0; i < segments.length; i++){
@@ -444,6 +479,15 @@
         r = map[tk];
         if(!r || r.error){ lastErr = new Error((r && r.error) || 'fetch failed'); continue; }
         pcStore(tk, r, seg[0], seg[1]);
+      }
+      // A partial fetch that came back on a new date basis replaced the cached
+      // history rather than extending it, so the whole window is fetched again.
+      if(prev && priceCache[tk] && priceCache[tk].basis !== prev.basis && segments.length &&
+         (segments[0][0] !== start || segments[0][1] !== end)){
+        map = await yfFetchPricesBatch([tk], start, end);
+        r = map[tk];
+        if(!r || r.error) lastErr = new Error((r && r.error) || 'fetch failed');
+        else pcStore(tk, r, start, end);
       }
       if(!priceCache[tk]) throw lastErr || new Error('No price data for ' + tk + ' in that range');
       // Only widen the recorded coverage when every segment came back clean.
@@ -630,7 +674,30 @@
     return period==='weekly' ? isoWeekBucket(dateStr) : dateStr.slice(0,7);
   }
 
+  // When a decision is filled. Every rule in both DCA tools decides on a trading
+  // day's close (a scheduled date, or the close a signal fires on); `exec` says
+  // where the order fills:
+  //   'close'      that same close (lag 0)
+  //   'next-open'  the next trading day's open (lag 1), the evening-review habit
+  //   'next-close' the next trading day's close (lag 1)
+  // Returns { lag, fill } with fill[j] the price an order executing on day j
+  // pays. A missing open reads as the previous close, the nearest price that
+  // exists; proxy[j] marks the days that needed it.
+  var EXEC_MODES = ['close', 'next-open', 'next-close'];
+  function execPlan(closes, opens, exec){
+    var mode = EXEC_MODES.indexOf(exec) >= 0 ? exec : 'next-open';
+    var n = closes.length, fill = new Array(n), proxy = new Array(n).fill(false), j, o;
+    for(j = 0; j < n; j++){
+      if(mode !== 'next-open'){ fill[j] = closes[j]; continue; }
+      o = opens ? opens[j] : undefined;
+      if(Number.isFinite(o) && o > 0) fill[j] = o;
+      else { fill[j] = j > 0 ? closes[j - 1] : closes[j]; proxy[j] = true; }
+    }
+    return { mode: mode, lag: mode === 'close' ? 0 : 1, fill: fill, proxy: proxy };
+  }
+
   global.SharedTA = {
+    execPlan: execPlan, EXEC_MODES: EXEC_MODES,
     smaSeries: smaSeries, emaSeries: emaSeries, maSeries: maSeries,
     rsiSeries: rsiSeries, bollingerSeries: bollingerSeries,
     macdSeries: macdSeries, adxSeries: adxSeries, buildTech: buildTech,

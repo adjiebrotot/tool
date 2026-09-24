@@ -359,7 +359,7 @@
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label">Selling fee (%) <span class="tip-icon" data-tip="Charged on every sale made while rebalancing. Purchases pay the buying fee above instead.">?</span></div>
+      <div class="field-label">Selling fee (%) <span class="tip-icon" data-tip="Charged on every sale: rebalancing trims, and reserve-asset sales that fund a trigger. Purchases pay the buying fee above instead.">?</span></div>
       <div class="currency-wrap">
         <input class="currency-input money-input has-suffix" id="sellFee" type="text" inputmode="numeric" value="0.1" />
         <span class="suffix">%</span>
@@ -389,6 +389,14 @@
     <div class="field-row">
       <div class="field-label">Simulation Seed <span class="tip-icon" data-tip="Fixes the random numbers behind simulated assets, so one seed always reproduces the same price path.">?</span></div>
       <input class="num-input" id="randomSeed" type="number" min="0" step="1" value="25823952204" />
+    </div>
+    <div class="field-row">
+      <div class="field-label">Trade at <span class="tip-icon" data-tip="Every top-up, trigger and rebalance decides on a day's close. This sets when its orders fill: that close, or the next trading day's open or close.">?</span></div>
+      <select class="num-input" id="execTiming" style="cursor:pointer">
+        <option value="close">Same day's close</option>
+        <option value="next-open" selected>Next day's open</option>
+        <option value="next-close">Next day's close</option>
+      </select>
     </div>
 
   </div>
@@ -532,8 +540,8 @@
       </div>
       <div class="table-wrap">
         <table id="compTable">
-          <thead id="compHead"><tr><th>Date</th><th>Event</th><th>Cash</th><th>Deposited</th><th>Portfolio Value</th></tr></thead>
-          <tbody id="compBody"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">Add assets and run to see the breakdown.</td></tr></tbody>
+          <thead id="compHead"><tr><th>Date</th><th>Decided</th><th>Event</th><th>Cash</th><th>Deposited</th><th>Interest</th><th>Fees</th><th>Portfolio Value</th></tr></thead>
+          <tbody id="compBody"><tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">Add assets and run to see the breakdown.</td></tr></tbody>
         </table>
       </div>
     </div>
