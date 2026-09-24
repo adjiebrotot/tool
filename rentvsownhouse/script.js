@@ -566,8 +566,8 @@ const CITY_PRESETS = {
     mortgageTerm: 30,
     houseGrowth: 4.5,
     sellingCostPct: 2.5, // selling: agent ~2.0% + marketing/legal ~0.5% (REIWA typical)
-    setupCost: 32500,
-    setupCostType: 'dollar',
+    setupCost: 4.33, // % of price (≈ 32500 at the preset price)
+    setupCostType: 'pct',
     ownOngoingCost: 8500,
     ownOngoingCostFreq: 'yearly',
     ownOngoingCostType: 'dollar',
@@ -600,8 +600,8 @@ const CITY_PRESETS = {
     mortgageTerm: 30,
     houseGrowth: 3.0,
     sellingCostPct: 2.5, // selling: agent ~2.0% + marketing/legal ~0.5%
-    setupCost: 45500,
-    setupCostType: 'dollar',
+    setupCost: 5.69, // % of price (≈ 45500 at the preset price)
+    setupCostType: 'pct',
     ownOngoingCost: 9500,
     ownOngoingCostFreq: 'yearly',
     ownOngoingCostType: 'dollar',
@@ -634,8 +634,8 @@ const CITY_PRESETS = {
     mortgageTerm: 30,
     houseGrowth: 3.5,
     sellingCostPct: 2.5, // selling: agent ~2.0% + marketing/legal ~0.5%
-    setupCost: 44200,
-    setupCostType: 'dollar',
+    setupCost: 4.21, // % of price (≈ 44200 at the preset price)
+    setupCostType: 'pct',
     ownOngoingCost: 11000,
     ownOngoingCostFreq: 'yearly',
     ownOngoingCostType: 'dollar',
@@ -669,8 +669,8 @@ const CITY_PRESETS = {
     mortgageTerm: 30,
     houseGrowth: 4.5,
     sellingCostPct: 2.0, // selling: agent ~1.5–2% (CEA norm) + legal ~0.3%; no SSD after the holding period
-    setupCost: 65000,
-    setupCostType: 'dollar',
+    setupCost: 3.61, // % of price (≈ 65000 at the preset price)
+    setupCostType: 'pct',
     ownOngoingCost: 7000,
     ownOngoingCostFreq: 'yearly',
     ownOngoingCostType: 'dollar',
@@ -704,8 +704,8 @@ const CITY_PRESETS = {
     mortgageTerm: 30,
     houseGrowth: 3.0,
     sellingCostPct: 3.0, // selling: agent up to 3% (BOVAEA cap) + legal; RPGT nil for citizens after 5 years
-    setupCost: 40000,
-    setupCostType: 'dollar',
+    setupCost: 4.0, // % of price (≈ 40000 at the preset price)
+    setupCostType: 'pct',
     ownOngoingCost: 8000,
     ownOngoingCostFreq: 'yearly',
     ownOngoingCostType: 'dollar',
@@ -737,8 +737,8 @@ const CITY_PRESETS = {
     mortgageTerm: 20,
     houseGrowth: 5.5,
     sellingCostPct: 5.5, // selling: agent ~3% + PPh final 2.5% on the sale (PP 34/2016)
-    setupCost: 120000000,
-    setupCostType: 'dollar',
+    setupCost: 6.0, // % of price (≈ 120000000 at the preset price)
+    setupCostType: 'pct',
     ownOngoingCost: 21000000,
     ownOngoingCostFreq: 'yearly',
     ownOngoingCostType: 'dollar',
@@ -895,6 +895,11 @@ function updateCurrencyPrefixes(){
   ['initialCashPrefix','monthlyBudgetPrefix','propertyPricePrefix','setupCostPrefix','ownOngoingCostPrefix','rentAmountPrefix','rentOngoingCostPrefix'].forEach(id=>{
     const el = $(id);
     if(el) el.textContent = sym;
+  });
+  // Simple-mode cost fields: the prefix follows the field's $/% selector
+  [['setupCostPrefix','setupCostType'],['ownOngoingCostPrefix','ownOngoingCostType'],['rentOngoingCostPrefix','rentOngoingCostType']].forEach(([pid,tid])=>{
+    const el = $(pid), type = $(tid);
+    if(el && type && type.value==='pct') el.textContent = '%';
   });
   // Dynamic cost-item rows: $ items show the currency symbol, % items show %
   document.querySelectorAll('.cost-item-row').forEach(row=>{
