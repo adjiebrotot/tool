@@ -353,7 +353,7 @@ function renderComparisonChart(canvas, opts){
     borderDash: (s.dash && s.dash.length) ? s.dash : undefined,
     pointRadius: 0,
     pointHoverRadius: 6,
-    tension: 0.3,
+    tension: 0.3, cubicInterpolationMode:'monotone',
     fill: false,
   }));
   const xTickCallback = function(val, i){

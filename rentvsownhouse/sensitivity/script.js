@@ -337,8 +337,6 @@ function parseNum(val){
 }
 function parseFloatSafe(val, fb){ const n=parseFloat(String(val).replace(/,/g,'')); return isNaN(n)?fb:n; }
 function parseIntSafe(val, fb){ const n=parseInt(String(val).replace(/,/g,'')); return isNaN(n)?fb:n; }
-function toYearly(val,freq){ if(freq==='weekly') return val*52; if(freq==='monthly') return val*12; return val; }
-function toMonthly(val,freq){ if(freq==='weekly') return val*52/12; if(freq==='yearly') return val/12; return val; }
 
 /* Thousands separators, keeping up to 2 decimals (mirrors formatMoneyValue() in
    the main tool). Cost fields double as "% of value" fields, so rounding here
@@ -371,118 +369,10 @@ const cssVar = n => getComputedStyle(document.body).getPropertyValue(n).trim();
 function escAttr(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 /* ── COMPUTE ENGINE ──
-   Ported from the main tool (../script.js) so that identical inputs produce
-   identical results. Pure functions of the state object built by buildStateObj. */
-function calcMonthlyMortgage(principal, annualRate, termYears, type){
-  const r = annualRate/100/12, n = termYears*12;
-  if(type==='io') return principal*r;
-  if(r===0) return principal/n;
-  return principal*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
-}
-
-/* Detailed mortgage rate schedule: ordered, consecutive periods
-   [{toYear, type:'fixed'|'floating', rate, rateMin, rateMax}] normalised to
-   [{from, to, min, max}] covering years 1..term (last period auto-extends).
-   Floating periods are evaluated at the band midpoint. */
-function normalizeRatePeriods(periods, term, fallbackRate){
-  const out = [];
-  let from = 1;
-  if(Array.isArray(periods)){
-    for(let i=0; i<periods.length && from<=term; i++){
-      const p = periods[i];
-      let to = Math.round(Number(p.toYear)||0);
-      to = Math.min(term, Math.max(from, to));
-      if(i === periods.length-1) to = term;
-      let min, max;
-      if(p.type==='floating'){
-        const a = Number(p.rateMin)||0, b = Number(p.rateMax)||0;
-        min = Math.min(a,b); max = Math.max(a,b);
-      } else {
-        min = max = Number(p.rate)||0;
-      }
-      out.push({from, to, min, max});
-      from = to+1;
-    }
-  }
-  if(!out.length) out.push({from:1, to:term, min:fallbackRate, max:fallbackRate});
-  out[out.length-1].to = term;
-  return out;
-}
-function rateBandForMortgageYear(norm, my){
-  for(let i=0;i<norm.length;i++){ if(my>=norm[i].from && my<=norm[i].to) return norm[i]; }
-  return norm[norm.length-1];
-}
-/* Per-mortgage-year schedule of {rate, r12, monthlyPayment, principalStart, principalEnd}.
-   When the rate changes, the P&I payment is re-amortised over the remaining term
-   on the outstanding balance (standard variable-rate mortgage accounting). */
-function buildMortgageSchedule(loan, term, type, years, norm){
-  const sched = [];
-  let principal = loan;
-  for(let my=1; my<=years; my++){
-    const band = rateBandForMortgageYear(norm, Math.min(my, term));
-    const rate = (band.min+band.max)/2;
-    const r12 = rate/100/12;
-    let pay = 0, balloon = 0;
-    if(principal > 1e-2 && my <= term){
-      pay = type==='io' ? principal * r12 : calcMonthlyMortgage(principal, rate, term - my + 1, 'pi');
-    }
-    const principalStart = principal;
-    if(type!=='io' && pay > 0){
-      for(let m=0;m<12;m++){
-        if(principal <= 1e-2){ principal = 0; break; }
-        const intr = principal * r12;
-        principal = Math.max(0, principal - Math.min(pay - intr, principal));
-      }
-    }
-    // Interest-only: the whole balance falls due with the term's last payment
-    if(type==='io' && my===term && principal > 1e-2){ balloon = principal; principal = 0; }
-    sched.push({rate, r12, monthlyPayment: pay, balloon, principalStart, principalEnd: principal});
-  }
-  return sched;
-}
-function getRateNorm(S){
-  if(S.mortgageMode !== 'detailed') return [{from:1, to:S.mortgageTerm, min:S.mortgageRate, max:S.mortgageRate}];
-  return normalizeRatePeriods(S.ratePeriods, S.mortgageTerm, S.mortgageRate);
-}
-
-/* Cost items (simple ↔ detailed): simple mode is normalised to a single-item
-   list so the engine has exactly one code path.
-   Setup basis:   'fixed' ($) | 'pct' (% of buy price).
-   Ongoing basis: 'weekly'|'monthly'|'yearly' ($ inflated p.a.) |
-                  'pct' (own: % of property value; rent: % of annual rent). */
-function getOwnSetupItems(S){
-  if(S.ownCostsMode==='detailed' && Array.isArray(S.ownSetupCosts) && S.ownSetupCosts.length) return S.ownSetupCosts;
-  return [{amount:S.setupCost, basis:S.setupCostType==='pct' ? 'pct' : 'fixed'}];
-}
-function getOwnOngoingItems(S){
-  if(S.ownCostsMode==='detailed' && Array.isArray(S.ownOngoingCosts) && S.ownOngoingCosts.length) return S.ownOngoingCosts;
-  return [{amount:S.ownOngoingCost, basis:S.ownOngoingCostType==='pct' ? 'pct' : S.ownOngoingCostFreq, inflation:S.ownOngoingInflation}];
-}
-function getRentOngoingItems(S){
-  if(S.rentCostsMode==='detailed' && Array.isArray(S.rentOngoingCosts) && S.rentOngoingCosts.length) return S.rentOngoingCosts;
-  return [{amount:S.rentOngoingCost, basis:S.rentOngoingCostType==='pct' ? 'pct' : S.rentOngoingCostFreq, inflation:S.rentOngoingInflation}];
-}
-function setupCostTotal(S, price){
-  return getOwnSetupItems(S).reduce((t,it)=>{
-    const amt = Number(it.amount)||0;
-    return t + (it.basis==='pct' ? price*amt/100 : amt);
-  }, 0);
-}
-function ownOngoingYearlyAt(S, yr, propValue){
-  return getOwnOngoingItems(S).reduce((t,it)=>{
-    const amt = Number(it.amount)||0;
-    if(it.basis==='pct') return t + propValue*amt/100;
-    return t + toYearly(amt, it.basis) * Math.pow(1+(Number(it.inflation)||0)/100, yr-1);
-  }, 0);
-}
-function rentOngoingYearlyAt(S, yr, rentMonthly){
-  return getRentOngoingItems(S).reduce((t,it)=>{
-    const amt = Number(it.amount)||0;
-    if(it.basis==='pct') return t + rentMonthly*12*amt/100;
-    return t + toYearly(amt, it.basis) * Math.pow(1+(Number(it.inflation)||0)/100, yr-1);
-  }, 0);
-}
-
+   The model is ../engine.js, the very file the main page runs, so identical
+   inputs give identical results by construction. This page only maps a
+   scenario onto the engine's state object (buildStateObj). Floating rates are
+   read at the band midpoint, as the main page's tables and lines are. */
 function buildStateObj(sc){
   const mortgageDetailed = modes.mortgageMode === 'detailed';
   return {
@@ -520,121 +410,13 @@ function buildStateObj(sc){
     ownOngoingCosts:     sc.ownOngoingCosts || null,
     rentCostsMode:       modes.rentCostsMode,
     rentOngoingCosts:    sc.rentOngoingCosts || null,
+    rtbEnabled:          false, // Rent-Then-Buy is a main-page scenario only
+    rtbBuyYear:          5,
   };
 }
 
 function computeModel(S){
-  const P   = S.propertyPrice;
-  const dp  = P * S.downPaymentPct/100;
-  const loan = P - dp;
-  const rfr  = S.riskFreeRate/100;
-  const h    = S.houseGrowth/100;
-  const ri   = S.rentInflation/100;
-
-  const setupCostDollar = setupCostTotal(S, P);
-  const rateNorm = getRateNorm(S);
-  const schedYears = Math.max(S.horizon, 1);
-  const sched = buildMortgageSchedule(loan, S.mortgageTerm, S.mortgageType, schedYears, rateNorm);
-  const payAt = yr => sched[Math.min(Math.max(yr,1), sched.length)-1].monthlyPayment;
-  const rentMonthly0 = toMonthly(S.rentAmount, S.rentFreq);
-  const rentOngoingYearly0 = rentOngoingYearlyAt(S, 1, rentMonthly0);
-
-  function ownRequiredMonthly(yr){
-    const propVal = P * Math.pow(1+h, Math.max(0,yr-1));
-    const ownOngoingMonthly = ownOngoingYearlyAt(S, yr, propVal) / 12;
-    return payAt(yr) + ownOngoingMonthly;
-  }
-  function rentRequiredMonthly(yr){
-    const cur = rentMonthly0 * Math.pow(1+ri, yr-1);
-    return cur + (rentOngoingYearlyAt(S, yr, cur) / 12);
-  }
-
-  const budgetIsManual = S.monthlyBudget > 0;
-  const budgetGrowth   = budgetIsManual ? S.monthlyBudgetIncrease/100 : 0;
-  function getMonthlyBudget(yr){
-    if(budgetIsManual) return S.monthlyBudget * Math.pow(1+budgetGrowth, yr-1);
-    return Math.max(ownRequiredMonthly(yr), rentRequiredMonthly(yr));
-  }
-
-  const requiredNow     = dp + setupCostDollar;
-  const autoInitialCash = Math.max(requiredNow, rentMonthly0*12+rentOngoingYearly0);
-  const initialCashUsed = S.initialCash > 0 ? S.initialCash : autoInitialCash;
-  const ownCashStart    = initialCashUsed - requiredNow;
-  const renterStart     = initialCashUsed;
-
-  const rows = [];
-  let ownPropValue = P, ownPrincipal = loan, ownCash = ownCashStart;
-  let ownAccumCost = setupCostDollar, ownAccumInterest = 0;
-  let rentCash = renterStart, rentAccumCost = 0;
-
-  rows.push({ year:0, ownPropValue, ownPrincipal, ownCash,
-    ownHouseEquity:ownPropValue-ownPrincipal, ownNetEquity:ownPropValue-ownPrincipal+ownCash,
-    ownAccumCost:setupCostDollar, ownAccumInterest:0, ownMortgagePayment:0,
-    rentCash, rentNetEquity:rentCash, rentAccumCost:0, rentRent:rentMonthly0*12 });
-
-  const rfm = Math.pow(1+rfr,1/12)-1;
-
-  for(let yr=1; yr<=S.horizon; yr++){
-    const yrSched = sched[yr-1];
-    const mPayYr  = yrSched.monthlyPayment;
-    const r12     = yrSched.r12;
-    const curRent = rentMonthly0 * Math.pow(1+ri, yr-1);
-    const oom = ownOngoingYearlyAt(S, yr, ownPropValue) / 12;
-    const rom = rentOngoingYearlyAt(S, yr, curRent) / 12;
-
-    // Per-year cashflow tracking (mirrors the main tool so the shared CSV
-    // builders see an identical row schema).
-    const ownBegCash = ownCash, rentBegCash = rentCash;
-    let yearInterest = 0;
-    let ownYearBudget = 0, ownYearMortPmt = 0;
-    let ownYearOngoingPart = 0, rentYearOngoingPart = 0;
-    let ownYearInterestInc = 0, rentYearInterestInc = 0;
-    let rentYearCost = 0;
-    for(let m=0; m<12; m++){
-      const hasMort = ownPrincipal > 1e-2;
-      const mMort   = hasMort ? mPayYr : 0;
-      const mOwnCost  = mMort + oom;
-      const mRentCost = curRent + rom;
-      const mBudget = getMonthlyBudget(yr);
-      ownYearBudget += mBudget;
-      let mInt = 0;
-      if(hasMort){
-        mInt = ownPrincipal * r12;
-        const prin = S.mortgageType==='pi' ? Math.min(mPayYr-mInt, ownPrincipal) : 0;
-        yearInterest += mInt; ownPrincipal = Math.max(0, ownPrincipal-prin); ownAccumInterest += mInt;
-      }
-      ownYearMortPmt += mMort;
-      ownYearInterestInc  += ownCash  * rfm;
-      rentYearInterestInc += rentCash * rfm;
-      const ownSurplus  = mBudget - mOwnCost;
-      const rentSurplus = mBudget - mRentCost;
-      ownCash  = ownCash  * (1+rfm) + ownSurplus;
-      rentCash = rentCash * (1+rfm) + rentSurplus;
-      ownYearOngoingPart  += oom;
-      rentYearOngoingPart += rom;
-      ownAccumCost  += S.costInterestOnly ? mInt+oom : mOwnCost;
-      rentAccumCost += mRentCost;
-      rentYearCost  += mRentCost;
-    }
-    // Interest-only: the balance is repaid from cash at the end of the term
-    if(yrSched.balloon > 0 && ownPrincipal > 1e-2){
-      const due = ownPrincipal;
-      ownCash -= due; ownYearMortPmt += due; ownPrincipal = 0;
-      if(!S.costInterestOnly) ownAccumCost += due;
-    }
-    const ownYearSurplus  = ownYearBudget - ownYearMortPmt - ownYearOngoingPart;
-    const rentYearSurplus = ownYearBudget - rentYearCost;
-    ownPropValue *= (1+h);
-    const ownHouseEquity = ownPropValue - ownPrincipal;
-    rows.push({ year:yr, ownPropValue, ownPrincipal, ownCash,
-      ownHouseEquity, ownNetEquity:ownHouseEquity+ownCash, ownAccumCost, ownAccumInterest,
-      ownYearInterest:yearInterest, ownRateYr:yrSched.rate, ownMortgagePayment:mPayYr*12,
-      ownYearPrincipal: Math.max(0, ownYearMortPmt - yearInterest),
-      ownBegCash, ownYearBudget, ownYearSurplus, ownYearOngoing: ownYearOngoingPart, ownYearInterestInc,
-      rentCash, rentNetEquity:rentCash, rentAccumCost, rentRent: curRent*12,
-      rentBegCash, rentYearSurplus, rentYearOngoing: rentYearOngoingPart, rentYearInterestInc });
-  }
-  return { rows, initialCashUsed, ownCashStart, renterStart };
+  return RVOEngine.computeModel(S, 'mid');
 }
 
 /* ── HELPERS ── */
@@ -1584,6 +1366,9 @@ function wireEvents(){
       let val = ptype==='integer' ? parseIntSafe(e.target.value, scenarios[si][key]) : parseFloatSafe(e.target.value, scenarios[si][key]);
       if(p.min!=null) val = Math.max(p.min, val);
       if(p.max!=null) val = Math.min(p.max, val);
+      // Percentages hold two decimals, as the main page's sliders do, so any
+      // scenario typed here can be set there exactly
+      if(ptype==='percent') val = Math.round(val*100)/100;
       scenarios[si][key] = val;
       e.target.value = fmtInputVal(val, ptype);
       if(key==='horizon'){

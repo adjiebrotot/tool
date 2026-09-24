@@ -326,14 +326,17 @@ async function fullCase(title, setup){
   // I5 KPI cards
   const cards = await grabCards();
   const last = mid.rows[mid.rows.length-1];
-  let be=null; for(let i=1;i<mid.rows.length;i++){ if(mid.rows[i].ownNet>=mid.rows[i].rentNet){ be=i; break; } }
+  // Breakeven = the year owning moves ahead for good (ahead from then to the horizon)
+  let be=null; for(let i=mid.rows.length-1;i>=1 && mid.rows[i].ownNet>=mid.rows[i].rentNet;i--) be=i;
   const budgets = mid.rows.slice(1).map(r=>r.budgetM);
   const bMin = Math.min(...budgets), bMax = Math.max(...budgets);
   const expBudget = bMax-bMin>0.5 ? `${await fmtC(bMin)}–${await fmtC(bMax)}` : await fmtC(bMin);
   const expDiff = (last.ownNet-last.rentNet>=0?'+':'')+await fmtC(last.ownNet-last.rentNet);
   check('I5 Initial Cash card == replay start cash', cards.initialCash===await fmtC(mid.start), `${cards.initialCash} vs ${await fmtC(mid.start)}`);
   check('I5 Budget card == min–max of the monthly budgets in the table', cards.budget===expBudget, `${cards.budget} vs ${expBudget}`);
-  check('I5 Breakeven card == first year own ≥ rent', be===null ? cards.breakeven==='—' : cards.breakeven.endsWith(String(be)), `${cards.breakeven} vs ${be}`);
+  check('I5 Breakeven card == year own moves ahead for good', be===null ? cards.breakeven==='—' : cards.breakeven.endsWith(' '+be), `${cards.breakeven} vs ${be}`);
+  check('I5 Breakeven and Equity Difference cards agree (a breakeven means Own ends ahead)',
+    (cards.breakeven==='—') === (last.ownNet < last.rentNet), `${cards.breakeven} / ${cards.diff}`);
   check('I5 Equity Difference card == own − rent at horizon', cards.diff===expDiff, `${cards.diff} vs ${expDiff}`);
 
   // I6 tiles
@@ -427,6 +430,30 @@ await fullCase('F5 floating whole term 3–8%, 25y term, 15y horizon', async()=>
   own.slice(1).forEach(r=>{ const rhs=r.Beg_Cash+r.Ann_Budget+r.Interest_Inc-(r.Principal_Exp+r.Interest_Exp+r.Ongoing_Exp);
     if(!near(r.End_Cash,rhs,5)) bad.push(`yr${r.Year}: ${r.End_Cash} vs ${rhs.toFixed(0)}`); });
   check('I9 interest-only: own cash identity holds every year, balloon year included', bad.length===0, bad.slice(0,3).join('; '));
+}
+
+// ═══ Case F9: owning leads early, then renting pulls ahead ═══
+await fullCase('F9 low growth, high cash return: Own ahead in year 1, behind at the horizon', async()=>{
+  await setInputs({houseGrowth:2, riskFreeRate:6, mortgageRate:4, setupCost:0, rentInflation:0});
+});
+
+// ═══ Case F10: the CAGR helper's figure is the one the model runs on ═══
+{
+  console.log('\n── F10 CAGR helper → house growth ──');
+  await page.evaluate(()=>window.__RVO.resetAll());
+  const applied = await page.evaluate(()=>{
+    const years=[...document.querySelectorAll('#cagrRows .cagr-year')], prices=[...document.querySelectorAll('#cagrRows .cagr-price')];
+    years[0].value='2015'; prices[0].value='500000'; years[1].value='2025'; prices[1].value='779500';
+    document.getElementById('cagrCalc').click();
+    return {shown: document.getElementById('cagrResult').textContent, slider: document.getElementById('houseGrowth').value};
+  });
+  await page.waitForTimeout(120);
+  const own = await grabCsv('own');
+  const cagr = (Math.pow(779500/500000, 1/10)-1)*100;
+  const g = +cagr.toFixed(2);
+  check('I10 CAGR result is applied to the model unrounded by the slider',
+    +applied.slider===g && near(own[1].Prop_Value, 800000*(1+g/100), 1),
+    `CAGR ${cagr.toFixed(4)}%, shown "${applied.shown}", slider ${applied.slider}, yr1 value ${own[1].Prop_Value} vs ${(800000*(1+g/100)).toFixed(0)}`);
 }
 
 // ═══ Case F8: interest-only, 10y term, rent-then-buy at year 5, 20y horizon ═══

@@ -198,7 +198,7 @@
         <span id="unitPctPa1" style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
         <span class="slider-value" id="riskFreeRateVal">4.50%</span>
       </div>
-      <input type="range" id="riskFreeRate" min="-10" max="25" step="0.1" value="4.5"/>
+      <input type="range" id="riskFreeRate" min="-10" max="25" step="0.01" value="4.5"/>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelInitialCash">Modal Awal</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(opsional)</span></div>
@@ -222,7 +222,7 @@
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
         <span class="slider-value" id="monthlyBudgetIncreaseVal">0.00%</span>
       </div>
-      <input type="range" id="monthlyBudgetIncrease" min="0" max="25" step="0.1" value="0"/>
+      <input type="range" id="monthlyBudgetIncrease" min="0" max="25" step="0.01" value="0"/>
       <div class="help" id="helpBudgetGrows">Budget grows from <span id="budgetIncreaseBase" style="color:var(--gold);font-weight:700;">—</span> at this rate each year.</div>
     </div>
     <div class="field-row">
@@ -269,7 +269,7 @@
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctOfPrice">% dari harga properti</span>
         <span class="slider-value" id="downPaymentPctVal">20%</span>
       </div>
-      <input type="range" id="downPaymentPct" min="0" max="100" step="1" value="20"/>
+      <input type="range" id="downPaymentPct" min="0" max="100" step="0.01" value="20"/>
       <div class="help" id="helpDownPayment">Down payment = <span id="downPaymentDollar" style="color:var(--gold);font-weight:700;">$160,000</span></div>
     </div>
     <div class="section-label" data-i18n="sectionMortgage">KPR</div>
@@ -306,7 +306,7 @@
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
         <span class="slider-value" id="mortgageRateVal">6.00%</span>
       </div>
-      <input type="range" id="mortgageRate" min="0" max="25" step="0.1" value="6"/>
+      <input type="range" id="mortgageRate" min="0" max="25" step="0.01" value="6"/>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelMortgageTerm">Jangka Waktu KPR</span> <span class="tip-icon" data-tip-key="mortgageTerm">?</span></div>
@@ -330,7 +330,7 @@
         <span id="unitPctCagr" style="font-size:.82rem;color:var(--muted)">% p.a. CAGR</span>
         <span class="slider-value" id="houseGrowthVal">5.00%</span>
       </div>
-      <input type="range" id="houseGrowth" min="-10" max="25" step="0.1" value="5"/>
+      <input type="range" id="houseGrowth" min="-10" max="25" step="0.01" value="5"/>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelCalcCAGR">Hitung CAGR dari Harga Historis</span> <span class="tip-icon" data-tip-key="calcCagr">?</span></div>
@@ -401,7 +401,7 @@
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
         <span class="slider-value" id="ownOngoingInflationVal">0.00%</span>
       </div>
-      <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.1" value="0"/>
+      <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.01" value="0"/>
     </div>
     </div><!-- /ownCostsSimple -->
     <div id="ownCostsDetailed" style="display:none;">
@@ -442,7 +442,7 @@
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
         <span class="slider-value" id="rentInflationVal">3.00%</span>
       </div>
-      <input type="range" id="rentInflation" min="-10" max="25" step="0.1" value="3"/>
+      <input type="range" id="rentInflation" min="-10" max="25" step="0.01" value="3"/>
     </div>
     <div class="section-label" data-i18n="sectionCostsRenting">Biaya Menyewa</div>
     <div class="field-row">
@@ -477,7 +477,7 @@
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
         <span class="slider-value" id="rentOngoingInflationVal">0.00%</span>
       </div>
-      <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.1" value="0"/>
+      <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.01" value="0"/>
     </div>
     </div><!-- /rentCostsSimple -->
     <div id="rentCostsDetailed" style="display:none;">
@@ -509,7 +509,7 @@
     <div class="metric card">
       <div class="label" data-i18n="kpiBreakevenLabel">Tahun Breakeven<span class="tip-icon" data-i18n-tip="kpiBreakevenTip">?</span></div>
       <div class="value" id="kpiBreakeven">—</div>
-      <div class="sub" data-i18n="kpiBreakevenSub">Saat kekayaan bersih Beli melampaui Sewa</div>
+      <div class="sub" data-i18n="kpiBreakevenSub">Saat kekayaan bersih Beli melampaui Sewa seterusnya</div>
     </div>
     <div class="metric card">
       <div class="label" data-i18n="kpiDiffLabel">Perbedaan Kekayaan Bersih<span class="tip-icon" data-i18n-tip="kpiDiffTip">?</span></div>
@@ -584,6 +584,7 @@
 
 <script src="../../shared.js"></script>
 <script src="../cashflow-export.js"></script>
+<script src="../engine.js"></script>
 <script>window.DEFAULT_LANG='id';</script>
 <script src="../script.js"></script>
 <script src="tour.js"></script>

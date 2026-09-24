@@ -1,7 +1,12 @@
-# Rent vs Own Sensitivity — audit harness
+# Rent vs Own Sensitivity — audit harnesses
 
-Verifies the sensitivity tool's ported engine against the main tool
-(byte-identical cashflow CSVs for identical inputs), the table outputs against
-the CSVs, and the summary-CSV column layout.
+Both pages run the one engine, `../../engine.js`, so a disagreement can only
+come from how each page turns its inputs into the engine's state.
 
-Run: `node run.mjs`
+`node parity.mjs [count]` types the same scenarios (fixed edge cases plus
+seeded random ones across every mode) into the main page's sidebar and this
+page's first column, and requires the Own and Rent cashflow exports to be
+byte-identical.
+
+`node run.mjs` checks the defaults match between the two pages, the table
+outputs against the CSVs, and the summary-CSV column layout.
