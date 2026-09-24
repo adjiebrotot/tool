@@ -2279,9 +2279,77 @@
 
   global.SharedAbbr = makeAbbr(global);
 
+  /* ── Fit KPI / tile values ──
+     A figure too long for its tile ("Rp14,914,099/mo") is shortened in place
+     ("Rp14.9m/mo") rather than wrapped or spilled past the border. Only
+     numbers with thousand groups (or 5+ digits) are touched, so years and
+     small values never change; the full figure stays in the tooltip. */
+  var FIT_SEL = '.tile .value, .metric .value, .metric .val';
+  var FIT_SUFFIX = [[1e12,'t'],[1e9,'b'],[1e6,'m'],[1e3,'k']];
+  var FIT_NUM = /\d{1,3}(?:([,.])\d{3})(?:\1\d{3})*(?:[.,]\d+)?|\d{5,}(?:\.\d+)?/g;
+  function fitParse(str){
+    var m = str.match(/^\d{1,3}([,.])\d{3}/);
+    var sep = m ? m[1] : null;
+    if (sep) str = str.split(sep).join('');
+    return parseFloat(str.replace(',', '.'));
+  }
+  function fitCompact(text, dp){
+    return text.replace(FIT_NUM, function(tok){
+      var n = fitParse(tok);
+      for (var i = 0; i < FIT_SUFFIX.length; i++) {
+        if (n >= FIT_SUFFIX[i][0]) {
+          var v = n / FIT_SUFFIX[i][0];
+          return (dp ? String(Number(v.toFixed(dp))) : String(Math.round(v))) + FIT_SUFFIX[i][1];
+        }
+      }
+      return tok;
+    });
+  }
+  function fitOne(el, force){
+    if (el.children.length) return;
+    var text = el.textContent;
+    if (text !== el.__fitShown) el.__fitFull = text;
+    else if (!force && el.clientWidth === el.__fitW) return;
+    var full = el.__fitFull, shown = full;
+    var ws = el.style.whiteSpace;
+    el.style.whiteSpace = 'nowrap';
+    if (el.textContent !== full) el.textContent = full;
+    if (el.clientWidth && el.scrollWidth > el.clientWidth + 1) {
+      for (var dp = 2; dp >= 0; dp--) {
+        shown = fitCompact(full, dp);
+        el.textContent = shown;
+        if (el.scrollWidth <= el.clientWidth + 1) break;
+      }
+    }
+    el.style.whiteSpace = ws;
+    if (shown !== full) el.title = full; else if (el.title === el.__fitTitle) el.removeAttribute('title');
+    el.__fitTitle = shown !== full ? full : null;
+    el.__fitShown = shown;
+    el.__fitW = el.clientWidth;
+  }
+  function fitAll(force){
+    var els = document.querySelectorAll(FIT_SEL);
+    for (var i = 0; i < els.length; i++) fitOne(els[i], force);
+  }
+  function initFit(){
+    var queued = false;
+    function queue(){
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function(){ queued = false; fitAll(false); });
+    }
+    if (global.MutationObserver) {
+      new MutationObserver(queue).observe(document.body, {childList:true, subtree:true, characterData:true});
+    }
+    global.addEventListener('resize', queue);
+    queue();
+  }
+  global.SharedFit = { fitAll: fitAll, compact: fitCompact };
+
   function initShared(){
     initTooltip();
     global.SharedAbbr.init();
+    initFit();
   }
 
   if (document.readyState === 'loading') {
