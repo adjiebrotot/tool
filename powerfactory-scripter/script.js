@@ -979,6 +979,7 @@ function addInputRow(data = {}) {
     // offered for custom attributes the tool does not know.
     tr.classList.toggle('iv-attr-known', d !== null);
     if (d !== null) setInputDiscrete(idx, d);
+    setInputBinary(idx, detectBinaryAttr(document.getElementById(`iv-obj-${idx}`)?.value, document.getElementById(`iv-var-${idx}`)?.value));
   };
   document.getElementById(`iv-var-${idx}`).addEventListener('input', detect);
   document.getElementById(`iv-obj-${idx}`).addEventListener('input', detect);
@@ -999,12 +1000,33 @@ function setInputDiscrete(idx, on) {
   syncInputFormColumn();
 }
 
+// A 0/1 attribute needs no choice: Range 0 to 1, bounds locked.
+function setInputBinary(idx, on) {
+  const tr = document.getElementById(`input-row-${idx}`);
+  if (!tr) return;
+  const was = tr.classList.contains('iv-binary');
+  if (was === on) return;
+  tr.classList.toggle('iv-binary', on);
+  const lb = document.getElementById(`iv-lb-${idx}`);
+  const ub = document.getElementById(`iv-ub-${idx}`);
+  if (on) {
+    tr.classList.remove('iv-list');
+    const btn = document.getElementById(`iv-form-${idx}`);
+    if (btn) btn.textContent = 'Range';
+    if (lb) lb.value = '0';
+    if (ub) ub.value = '1';
+  }
+  [lb, ub].forEach(el => { if (el) el.readOnly = on; });
+  refreshLiveWarnings();
+}
+
 function toggleInputDiscrete(idx) {
   if (document.getElementById(`input-row-${idx}`)?.classList.contains('iv-attr-known')) return;
   setInputDiscrete(idx, !document.getElementById(`input-row-${idx}`)?.classList.contains('iv-discrete'));
 }
 
 function toggleInputList(idx) {
+  if (document.getElementById(`input-row-${idx}`)?.classList.contains('iv-binary')) return;
   const isList = document.getElementById(`input-row-${idx}`)?.classList.toggle('iv-list');
   const btn = document.getElementById(`iv-form-${idx}`);
   if (btn) btn.textContent = isList ? 'List' : 'Range';
@@ -1040,7 +1062,28 @@ function isDiscreteAttrItem(item) {
   return false;
 }
 
+/* On/off attributes (outserv, is*, allow*, flags, "0 = ..., 1 = ..." with no
+   higher option) only ever take 0 or 1, so their bounds are locked. */
+function isBinaryAttrItem(item) {
+  if (!isDiscreteAttrItem(item)) return false;
+  const name = String(item.var || '').replace(/^[a-z]:/, '');
+  const desc = String(item.desc || '');
+  if (/^(outserv|outServ\w*|is[A-Z0-9_]\w*|allow[A-Z]\w*)$/.test(name)) return true;
+  if (/\bflag\b/i.test(desc)) return true;
+  return /0\s*=/.test(desc) && /1\s*=/.test(desc) && !/[2-9]\s*=/.test(desc);
+}
+
 function detectDiscreteAttr(objectQuery, attr) {
+  const item = findInputAttrItem(objectQuery, attr);
+  return item === null ? null : isDiscreteAttrItem(item);
+}
+
+function detectBinaryAttr(objectQuery, attr) {
+  const item = findInputAttrItem(objectQuery, attr);
+  return item !== null && isBinaryAttrItem(item);
+}
+
+function findInputAttrItem(objectQuery, attr) {
   const key = String(attr || '').trim().toLowerCase();
   if (!key) return null;
   const cls = extractPfClass(objectQuery || '');
@@ -1050,7 +1093,7 @@ function detectDiscreteAttr(objectQuery, attr) {
   const bare = k => k.replace(/^[a-z]:/, '');
   const item = (list || []).find(it => String(it.var || '').toLowerCase() === key)
     || (list || []).find(it => bare(String(it.var || '').toLowerCase()) === bare(key));
-  return item ? isDiscreteAttrItem(item) : null;
+  return item || null;
 }
 
 /* Parse an Integer row's values text: comma-separated integers and inclusive
