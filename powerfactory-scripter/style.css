@@ -809,7 +809,8 @@
 
   /* Inline "int" toggle inside the Attribute cell */
   #input-table td.iv-attr-cell { position: relative; }
-  #input-table:not(.input-table-hide-bounds) td.iv-attr-cell input { padding-right: 30px; }
+  #input-table:not(.input-table-hide-bounds) tr:not(.iv-attr-known) td.iv-attr-cell input { padding-right: 30px; }
+  tr.iv-attr-known .iv-int-toggle { display: none; }
   .iv-int-toggle {
     position: absolute;
     right: 8px;
