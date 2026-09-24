@@ -786,6 +786,9 @@
   #input-table .iv-form-toggle { display: none; }
   #input-table tr.iv-discrete td.col-step input { display: none; }
   #input-table tr.iv-discrete .iv-form-toggle { display: inline-flex; }
+  #input-table tr.iv-binary .iv-form-toggle { display: none; }
+  #input-table tr.iv-binary td.col-lb input,
+  #input-table tr.iv-binary td.col-ub input { opacity: .6; cursor: not-allowed; }
   #input-table tr.iv-discrete.iv-list td.col-lb,
   #input-table tr.iv-discrete.iv-list td.col-ub { display: none; }
   #input-table:not(.input-table-hide-bounds) tr.iv-discrete.iv-list td.col-vals { display: table-cell; }
