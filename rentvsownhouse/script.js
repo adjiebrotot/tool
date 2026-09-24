@@ -57,6 +57,8 @@ const LANG = {
     labelPeriodEnd: 'Last year of this period',
     sectionPropertyGrowth: 'Property Growth',
     labelHouseGrowth: 'House Price Growth (RPPI)',
+    labelSellingCost: 'Selling Cost',
+    unitPctOfValue: '% of sale price',
     labelCalcCAGR: 'Calculate CAGR from Historical Prices',
     btnShowTool: 'Show Tool',
     btnHideTool: 'Hide Tool',
@@ -96,7 +98,7 @@ const LANG = {
     labelCurrencySymbol: 'Currency Symbol',
     /* KPI */
     kpiInitialCashLabel: 'Initial Cash',
-    kpiInitialCashTip: 'Starting cash in both scenarios. Left blank, it is the deposit plus setup costs, and the Rent-Then-Buy need when that is on.',
+    kpiInitialCashTip: 'Starting cash in every scenario. Left blank, it is the larger of the deposit plus setup costs or a year of rent.',
     kpiInitialCashSub: 'Starting capital at Year 0',
     kpiBudgetLabel: 'Monthly Housing Budget',
     kpiBudgetSub: 'Min–max monthly budget over horizon',
@@ -147,7 +149,7 @@ const LANG = {
     subInitialCashLeftover: (x) => `Leftover ${x} invested at risk-free rate from day one.`,
     subInitialCashExact: 'Exactly covers down payment + setup cost — no surplus.',
     subInitialCashAuto: (x) => `Auto: ${x} (down payment + setup cost). Any excess is invested at the risk-free rate.`,
-    subInitialCashRTB: (x,y,z,n) => `Auto: ${x} (raised from ${y} to cover RTB future purchase of ${z} at Yr ${n}).`,
+    subInitialCashRTB: (x,y,z,n) => `Auto: ${x}. Rent-Then-Buy needs ${z} for its purchase at Yr ${n}; any shortfall then is borrowed at the mortgage rate.`,
     warnInitialCashShort: (x,y,z) => `⚠️ Initial cash ${x} is ${y} short of down payment + setup cost (${z}). The shortfall reduces the loan equity at start.`,
     subRequiredCash: (x) => `Required: ${x} (down payment + setup cost).`,
     warnBudgetLow: (x,y,z) => `⚠️ Budget (${x}/mo) is below both total own cost (${y}/mo incl. ongoing) and rent cost (${z}/mo incl. ongoing). Surplus will be negative and cash may decline below zero.`,
@@ -165,7 +167,7 @@ const LANG = {
     thPrincipalExp: 'Principal Exp.',
     thInterestExp: 'Interest Exp.',
     thOngoingExp: 'Ongoing Exp.',
-    thInterestInc: 'Interest Inc.',
+    thInterestInc: 'Cash Interest',
     thSurplus: 'Surplus',
     thEndCash: 'End Cash',
     thPropValue: 'Prop. Value',
@@ -246,6 +248,8 @@ const LANG = {
     labelPeriodEnd: 'Tahun terakhir periode ini',
     sectionPropertyGrowth: 'Pertumbuhan Properti',
     labelHouseGrowth: 'Kenaikan Harga Properti (RPPI)',
+    labelSellingCost: 'Biaya Penjualan',
+    unitPctOfValue: '% dari harga jual',
     labelCalcCAGR: 'Hitung CAGR dari Harga Historis',
     btnShowTool: 'Tampilkan Alat',
     btnHideTool: 'Sembunyikan Alat',
@@ -285,7 +289,7 @@ const LANG = {
     labelCurrencySymbol: 'Simbol Mata Uang',
     /* KPI */
     kpiInitialCashLabel: 'Modal Awal',
-    kpiInitialCashTip: 'Kas awal di kedua skenario. Jika dikosongkan, dihitung dari Uang Muka (DP) + biaya awal, dan kebutuhan Sewa Dulu jika aktif.',
+    kpiInitialCashTip: 'Kas awal di semua skenario. Jika dikosongkan, dipakai yang lebih besar antara Uang Muka (DP) + biaya awal atau sewa setahun.',
     kpiInitialCashSub: 'Modal awal di Tahun 0',
     kpiBudgetLabel: 'Anggaran Perumahan Bulanan',
     kpiBudgetSub: 'Anggaran bulanan min–maks selama jangka waktu',
@@ -333,7 +337,7 @@ const LANG = {
     subInitialCashLeftover: (x) => `Sisa ${x} diinvestasikan pada suku bunga bebas risiko mulai hari pertama.`,
     subInitialCashExact: 'Tepat menutup Uang Muka (DP) + biaya awal pembelian — tidak ada sisa.',
     subInitialCashAuto: (x) => `Otomatis: ${x} (Uang Muka (DP) + biaya awal pembelian). Kelebihan diinvestasikan pada suku bunga bebas risiko.`,
-    subInitialCashRTB: (x,y,z,n) => `Otomatis: ${x} (dinaikkan dari ${y} untuk menutup pembelian Sewa Dulu sebesar ${z} di Thn ${n}).`,
+    subInitialCashRTB: (x,y,z,n) => `Otomatis: ${x}. Sewa Dulu butuh ${z} untuk membeli di Thn ${n}; kekurangannya dipinjam dengan bunga KPR.`,
     warnInitialCashShort: (x,y,z) => `⚠️ Modal Awal ${x} kurang ${y} dari Uang Muka (DP) + biaya awal pembelian (${z}). Kekurangan mengurangi ekuitas pinjaman awal.`,
     subRequiredCash: (x) => `Dibutuhkan: ${x} (Uang Muka (DP) + biaya awal pembelian).`,
     warnBudgetLow: (x,y,z) => `⚠️ Anggaran (${x}/bln) di bawah total biaya beli (${y}/bln termasuk rutin) dan biaya sewa (${z}/bln termasuk rutin). Surplus akan negatif dan kas dapat turun di bawah nol.`,
@@ -351,7 +355,7 @@ const LANG = {
     thPrincipalExp: 'Pokok Pinjaman',
     thInterestExp: 'Bunga',
     thOngoingExp: 'Biaya Rutin',
-    thInterestInc: 'Pend. Bunga',
+    thInterestInc: 'Bunga Kas',
     thSurplus: 'Surplus',
     thEndCash: 'Kas Akhir',
     thPropValue: 'Nilai Properti',
@@ -505,6 +509,7 @@ const DEFAULTS = {
   mortgageRate: 6.0,
   mortgageTerm: 30,
   houseGrowth: 5.0,
+  sellingCostPct: 2.5,
   setupCost: 32000,
   setupCostType: 'dollar',
   ownOngoingCost: 6000,
@@ -550,6 +555,7 @@ const CITY_PRESETS = {
     mortgageRate: 6.1,
     mortgageTerm: 30,
     houseGrowth: 4.5,
+    sellingCostPct: 2.5, // selling: agent ~2.0% + marketing/legal ~0.5% (REIWA typical)
     setupCost: 32500,
     setupCostType: 'dollar',
     ownOngoingCost: 8500,
@@ -583,6 +589,7 @@ const CITY_PRESETS = {
     mortgageRate: 6.1,
     mortgageTerm: 30,
     houseGrowth: 3.0,
+    sellingCostPct: 2.5, // selling: agent ~2.0% + marketing/legal ~0.5%
     setupCost: 45500,
     setupCostType: 'dollar',
     ownOngoingCost: 9500,
@@ -616,6 +623,7 @@ const CITY_PRESETS = {
     mortgageRate: 6.1,
     mortgageTerm: 30,
     houseGrowth: 3.5,
+    sellingCostPct: 2.5, // selling: agent ~2.0% + marketing/legal ~0.5%
     setupCost: 44200,
     setupCostType: 'dollar',
     ownOngoingCost: 11000,
@@ -650,6 +658,7 @@ const CITY_PRESETS = {
     mortgageRate: 2.5,
     mortgageTerm: 30,
     houseGrowth: 4.5,
+    sellingCostPct: 2.0, // selling: agent ~1.5–2% (CEA norm) + legal ~0.3%; no SSD after the holding period
     setupCost: 65000,
     setupCostType: 'dollar',
     ownOngoingCost: 7000,
@@ -684,6 +693,7 @@ const CITY_PRESETS = {
     mortgageRate: 4.3,
     mortgageTerm: 30,
     houseGrowth: 3.0,
+    sellingCostPct: 3.0, // selling: agent up to 3% (BOVAEA cap) + legal; RPGT nil for citizens after 5 years
     setupCost: 40000,
     setupCostType: 'dollar',
     ownOngoingCost: 8000,
@@ -716,6 +726,7 @@ const CITY_PRESETS = {
     mortgageRate: 9.5,
     mortgageTerm: 20,
     houseGrowth: 5.5,
+    sellingCostPct: 5.5, // selling: agent ~3% + PPh final 2.5% on the sale (PP 34/2016)
     setupCost: 120000000,
     setupCostType: 'dollar',
     ownOngoingCost: 21000000,
@@ -828,6 +839,7 @@ function readInputs(){
   S.mortgageRate    = parseFloatSafe($('mortgageRate').value, DEFAULTS.mortgageRate);
   S.mortgageTerm    = parseIntSafe($('mortgageTerm').value, DEFAULTS.mortgageTerm);
   S.houseGrowth     = parseFloatSafe($('houseGrowth').value, DEFAULTS.houseGrowth);
+  S.sellingCostPct  = Math.max(0, parseFloatSafe($('sellingCostPct').value, DEFAULTS.sellingCostPct));
   S.setupCost       = Math.max(0, parseNum($('setupCost').value)||0);
   S.setupCostType   = $('setupCostType').value;
   S.ownOngoingCost  = Math.max(0, parseNum($('ownOngoingCost').value)||0);
@@ -893,6 +905,7 @@ function refreshLabels(){
   $('mortgageTermVal').textContent        = S.mortgageTerm+T('yrsSuffix');
   if(S.mortgageMode === 'detailed') syncRatePeriodLabels();
   $('houseGrowthVal').textContent         = S.houseGrowth.toFixed(2)+'%';
+  $('sellingCostPctVal').textContent      = S.sellingCostPct.toFixed(2)+'%';
   $('rentInflationVal').textContent       = S.rentInflation.toFixed(2)+'%';
   $('ownOngoingInflationVal').textContent = S.ownOngoingInflation.toFixed(2)+'%';
   $('rentOngoingInflationVal').textContent= S.rentOngoingInflation.toFixed(2)+'%';
@@ -937,7 +950,7 @@ function refreshLabels(){
     }
   } else {
     cashWarn.style.display='none';
-    if(S.rtbEnabled && plan.rtbPresentCost > required){
+    if(S.rtbEnabled){
       cashSub.textContent = T('subInitialCashRTB')(fmt.currency(plan.autoInitialCash), fmt.currency(required), fmt.currency(plan.rtbFutureCost), S.rtbBuyYear);
     } else {
       cashSub.textContent = T('subInitialCashAuto')(fmt.currency(plan.autoInitialCash));
@@ -1462,6 +1475,7 @@ function resetAll(){
   $('mortgageRate').value   = DEFAULTS.mortgageRate;
   $('mortgageTerm').value   = DEFAULTS.mortgageTerm;
   $('houseGrowth').value    = DEFAULTS.houseGrowth;
+  $('sellingCostPct').value = DEFAULTS.sellingCostPct;
   $('setupCost').value      = formatMoneyValue(DEFAULTS.setupCost);
   $('setupCostType').value  = DEFAULTS.setupCostType;
   $('ownOngoingCost').value = formatMoneyValue(DEFAULTS.ownOngoingCost);
@@ -1512,6 +1526,7 @@ function applyPreset(cityKey){
   $('mortgageRate').value        = p.mortgageRate;
   $('mortgageTerm').value        = p.mortgageTerm;
   $('houseGrowth').value         = p.houseGrowth;
+  $('sellingCostPct').value      = p.sellingCostPct;
   $('setupCost').value           = formatMoneyValue(p.setupCost);
   $('setupCostType').value       = p.setupCostType;
   $('ownOngoingCost').value      = formatMoneyValue(p.ownOngoingCost);
@@ -1984,7 +1999,7 @@ function updateCagrToolVisibility(show){
 });
 
 ['propertyPrice','downPaymentPct','monthlyBudget','riskFreeRate','horizon',
- 'mortgageRate','mortgageTerm','houseGrowth','setupCost','setupCostType',
+ 'mortgageRate','mortgageTerm','houseGrowth','sellingCostPct','setupCost','setupCostType',
  'ownOngoingCost','ownOngoingCostFreq','ownOngoingCostType','ownOngoingInflation',
  'rentAmount','rentFreq','rentInflation','rentOngoingCost','rentOngoingCostFreq','rentOngoingCostType','rentOngoingInflation',
  'rtbBuyYear','monthlyBudgetIncrease','initialCash','currencySymbol'
@@ -2170,7 +2185,7 @@ function makeSliderEditable(valSpan,rangeEl){
 }
 [['riskFreeRate','riskFreeRateVal'],['monthlyBudgetIncrease','monthlyBudgetIncreaseVal'],
  ['horizon','horizonVal'],['rtbBuyYear','rtbBuyYearVal'],['downPaymentPct','downPaymentPctVal'],
- ['mortgageRate','mortgageRateVal'],['mortgageTerm','mortgageTermVal'],['houseGrowth','houseGrowthVal'],
+ ['mortgageRate','mortgageRateVal'],['mortgageTerm','mortgageTermVal'],['houseGrowth','houseGrowthVal'],['sellingCostPct','sellingCostPctVal'],
  ['ownOngoingInflation','ownOngoingInflationVal'],['rentInflation','rentInflationVal'],
  ['rentOngoingInflation','rentOngoingInflationVal']
 ].forEach(([rid,vid])=>makeSliderEditable($(vid),$(rid)));

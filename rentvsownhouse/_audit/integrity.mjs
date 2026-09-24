@@ -18,6 +18,12 @@
 //       set, Rent has no band at all; with the automatic budget Rent's band is
 //       exactly the owner's extra repayment invested at the risk-free rate
 //   I8  rent-then-buy on a floating schedule: table == replay, chart == table
+//   I9  interest-only balance repaid at the end of its term
+//   I10 the CAGR helper's figure is the one the model uses
+//   I11 a later loan pays the schedule's rates for the calendar years it runs
+//   I12 switching Rent-Then-Buy on changes nothing in Own or Rent
+//   I13 net equity is after selling costs; I14 cash below zero is borrowed
+//       at the mortgage rate
 //
 // Run: node integrity.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
@@ -51,11 +57,13 @@ function rateAt(periods, my, variant){
   const p = periods.find(q=>my>=q.from && my<=q.to) || periods[periods.length-1];
   return variant==='low'?p.min : variant==='high'?p.max : (p.min+p.max)/2;
 }
-// One loan, year by year: {rate, pay, begBal, endBal, interest, principal}
-function loanYears(loan, term, periods, variant, years, io){
+// One loan, year by year: {rate, pay, begBal, endBal, interest, principal}.
+// The schedule is rates by calendar year, so a loan taken out at the end of
+// year `start` pays in its year my the rate of year start+my.
+function loanYears(loan, term, periods, variant, years, io, start=0){
   const out=[]; let bal=loan;
   for(let my=1; my<=years; my++){
-    const rate = rateAt(periods, Math.min(my,term), variant);
+    const rate = rateAt(periods, my+start, variant);
     const r = rate/100/12;
     let pay = 0, interest=0, principal=0; const beg=bal;
     // Interest-only: interest for the term, then the balance falls due at its end
@@ -74,19 +82,22 @@ function replay(inp, variant){
   const loan = P*(1-dpPct/100), dp = P*dpPct/100;
   const own = loanYears(loan, term, periods, variant, H, inp.io);
   const rtbPrice = P*Math.pow(1+h, buyYear), rtbDp = rtbPrice*dpPct/100;
-  const rtbLoan = rtb ? loanYears(rtbPrice-rtbDp, term, periods, variant, H, inp.io) : null;
+  const rtbLoan = rtb ? loanYears(rtbPrice-rtbDp, term, periods, variant, H, inp.io, buyYear) : null;
+  const rtbSetup = setup*rtbPrice/P;          // $ setup in today's money, scaled to the later price
+  const net = (V, bal) => V*(1-inp.sell/100) - bal; // equity if sold: price less selling costs, less loan
   const rfm = Math.pow(1+rfr,1/12)-1;
   const ownOng = y => ownOngoing*Math.pow(1+ownOngoingInfl, y-1);
   const rentAt = y => rentM0*Math.pow(1+ri, y-1);
   const ownReq = y => own[y-1].pay + ownOng(y)/12;
   const rentReq = y => rentAt(y) + rentOngoing/12;
-  const rtbReq = y => !rtb ? 0 : y<=buyYear ? rentReq(y) : rtbLoan[y-buyYear-1].pay + ownOng(y)/12;
-  const budgetAt = y => budget>0 ? budget*Math.pow(1+budgetGrowth, y-1) : Math.max(ownReq(y), rentReq(y), rtbReq(y));
-  const start = initialCash>0 ? initialCash
-    : Math.max(dp+setup, rentM0*12+rentOngoing, rtb ? (rtbDp+setup)/Math.pow(1+rfr,buyYear) : 0);
+  // Budget and starting cash come from Own and Rent only (Rent-Then-Buy never moves them)
+  const budgetAt = y => budget>0 ? budget*Math.pow(1+budgetGrowth, y-1) : Math.max(ownReq(y), rentReq(y));
+  const start = initialCash>0 ? initialCash : Math.max(dp+setup, rentM0*12+rentOngoing);
+  // Cash earns the risk-free rate; below zero it is borrowed at that year's mortgage rate
+  const grow = (c, y) => 1 + (c>=0 ? rfm : own[y-1].rate/100/12);
   let oc = start-dp-setup, rc = start, tc = start, bal = loan, tBal = 0, V = P, tV = 0;
   let oCost = setup, rCost = 0, tCost = 0;
-  const rows=[{year:0, ownNet:V-bal+oc, rentNet:rc, ownCash:oc, rentCash:rc, ownCost:oCost, rentCost:0,
+  const rows=[{year:0, ownNet:net(V,bal)+oc, rentNet:rc, ownCash:oc, rentCash:rc, ownCost:oCost, rentCost:0,
                rtbNet:tc, rtbCash:tc, rtbCost:0, budgetM:0}];
   for(let y=1; y<=H; y++){
     const b = budgetAt(y), L = own[y-1];
@@ -94,30 +105,30 @@ function replay(inp, variant){
       const pay = bal>0.01 ? L.pay : 0;
       const i = bal*L.rate/100/12*(pay>0?1:0);
       if(!inp.io && pay>0) bal -= Math.min(pay-i, bal);
-      oc = oc*(1+rfm) + b - pay - ownOng(y)/12;
-      rc = rc*(1+rfm) + b - rentReq(y);
+      oc = oc*grow(oc,y) + b - pay - ownOng(y)/12;
+      rc = rc*grow(rc,y) + b - rentReq(y);
       oCost += i + ownOng(y)/12;
       rCost += rentReq(y);
       if(rtb){
-        if(y<=buyYear){ tc = tc*(1+rfm) + b - rentReq(y); tCost += rentReq(y); }
+        if(y<=buyYear){ tc = tc*grow(tc,y) + b - rentReq(y); tCost += rentReq(y); }
         else {
           const TL = rtbLoan[y-buyYear-1];
           const tp = tBal>0.01 ? TL.pay : 0;
           const ti = tBal*TL.rate/100/12*(tp>0?1:0);
           if(!inp.io && tp>0) tBal -= Math.min(tp-ti, tBal);
-          tc = tc*(1+rfm) + b - tp - ownOng(y)/12;
+          tc = tc*grow(tc,y) + b - tp - ownOng(y)/12;
           tCost += ti + ownOng(y)/12;
         }
       }
     }
     if(inp.io && y===inp.term && bal>0.01){ oc -= bal; bal = 0; }
     if(inp.io && rtb && y-buyYear===inp.term && tBal>0.01){ tc -= tBal; tBal = 0; }
-    if(rtb && y===buyYear){ tc -= rtbDp+setup; tCost += setup; tBal = rtbPrice-rtbDp; tV = rtbPrice; }
+    if(rtb && y===buyYear){ tc -= rtbDp+rtbSetup; tCost += rtbSetup; tBal = rtbPrice-rtbDp; tV = rtbPrice; }
     else if(rtb && y>buyYear){ tV *= 1+h; }
     V *= 1+h;
-    rows.push({year:y, ownNet:V-bal+oc, rentNet:rc, ownCash:oc, rentCash:rc, ownCost:oCost, rentCost:rCost,
+    rows.push({year:y, ownNet:net(V,bal)+oc, rentNet:rc, ownCash:oc, rentCash:rc, ownCost:oCost, rentCost:rCost,
                ownBal:bal, ownPay:L.pay, rate:L.rate,
-               rtbNet: rtb ? (y>=buyYear ? tV-tBal+tc : tc) : null, rtbCash: rtb?tc:null, rtbCost: rtb?tCost:null,
+               rtbNet: rtb ? (y>=buyYear ? net(tV,tBal)+tc : tc) : null, rtbCash: rtb?tc:null, rtbCost: rtb?tCost:null,
                budgetM:b});
   }
   return {rows, own, rtbLoan, start};
@@ -215,7 +226,7 @@ const state = ()=>page.evaluate(()=>{
     ratePeriods: [...document.querySelectorAll('#ratePeriodRows .rate-period-row')].map(r=>({
       type:r.querySelector('.rp-type').value, toYear: r.querySelector('.rp-to')? +r.querySelector('.rp-to').value : 999,
       rate:+r.querySelector('.rp-rate').value, rateMin:+r.querySelector('.rp-min').value, rateMax:+r.querySelector('.rp-max').value})),
-    houseGrowth:n('houseGrowth'), riskFreeRate:n('riskFreeRate'), rentAmount:n('rentAmount'), rentFreq:v('rentFreq'),
+    houseGrowth:n('houseGrowth'), sellingCostPct:n('sellingCostPct'), riskFreeRate:n('riskFreeRate'), rentAmount:n('rentAmount'), rentFreq:v('rentFreq'),
     rentInflation:n('rentInflation'), ownOngoingCost:n('ownOngoingCost'), ownOngoingCostFreq:v('ownOngoingCostFreq'),
     ownOngoingInflation:n('ownOngoingInflation'), rentOngoingCost:n('rentOngoingCost'), rentOngoingCostFreq:v('rentOngoingCostFreq'),
     setupCost:n('setupCost'), monthlyBudget:n('monthlyBudget'), monthlyBudgetIncrease:n('monthlyBudgetIncrease'),
@@ -240,7 +251,7 @@ function inputsFromS(S){
     h:S.houseGrowth/100, rfr:S.riskFreeRate/100, rentM0:toM(S.rentAmount,S.rentFreq), ri:S.rentInflation/100,
     ownOngoing: toY(S.ownOngoingCost,S.ownOngoingCostFreq), ownOngoingInfl:S.ownOngoingInflation/100,
     rentOngoing: toY(S.rentOngoingCost,S.rentOngoingCostFreq),
-    setup:S.setupCost, budget:S.monthlyBudget, budgetGrowth:S.monthlyBudgetIncrease/100,
+    setup:S.setupCost, sell:S.sellingCostPct, budget:S.monthlyBudget, budgetGrowth:S.monthlyBudgetIncrease/100,
     initialCash:S.initialCash, rtb:S.rtbEnabled, buyYear:S.rtbBuyYear,
   };
 }
@@ -412,6 +423,9 @@ await fullCase('F5 floating whole term 3–8%, 25y term, 15y horizon', async()=>
   const pays=[R.lo,R.mid,R.hi].flatMap(x=>x.rtbLoan.slice(0,yrs).map(y=>y.pay)).filter(p=>p>0);
   const cards = await grabCards();
   const exp = `${await fmtFull(Math.min(...pays))}–${await fmtFull(Math.max(...pays))}`;
+  const y6 = rtb.find(r=>r.Year===6);
+  check('I11 RTB loan (bought end of yr 5) pays the schedule\'s yr-6 rate, not its yr-1 fixed rate',
+    y6 && near(y6.Rate_Pct, 7, 0.001), `yr6 rate ${y6 && y6.Rate_Pct}% (schedule: yr1–5 fixed 6%, then floating 5–9%, mid 7%)`);
   check('I8 RTB Monthly Mortgage tile spans every repayment the band reaches', cards.rtb[5][1].startsWith(exp), `${cards.rtb[5][1]} vs ${exp}/mo`);
 }
 
@@ -430,6 +444,43 @@ await fullCase('F5 floating whole term 3–8%, 25y term, 15y horizon', async()=>
   own.slice(1).forEach(r=>{ const rhs=r.Beg_Cash+r.Ann_Budget+r.Interest_Inc-(r.Principal_Exp+r.Interest_Exp+r.Ongoing_Exp);
     if(!near(r.End_Cash,rhs,5)) bad.push(`yr${r.Year}: ${r.End_Cash} vs ${rhs.toFixed(0)}`); });
   check('I9 interest-only: own cash identity holds every year, balloon year included', bad.length===0, bad.slice(0,3).join('; '));
+}
+
+// ═══ Case F11: switching Rent-Then-Buy on leaves Own and Rent untouched ═══
+{
+  console.log('\n── F11 Rent-Then-Buy on/off vs Own and Rent ──');
+  for(const [lbl, extra] of [['automatic budget and cash', {}], ['floating schedule', 'float'], ['set budget, set cash', {monthlyBudget:4200, initialCash:150000}]]){
+    await page.evaluate(()=>window.__RVO.resetAll());
+    if(extra==='float') await setSchedule(SCHED); else await setInputs(extra);
+    const offOwn = await grabCsv('own'), offRent = await grabCsv('rent');
+    const offCards = await grabCards();
+    await setInputs({rtbEnabled:true, rtbBuyYear:8});
+    const onOwn = await grabCsv('own'), onRent = await grabCsv('rent');
+    const onCards = await grabCards();
+    const same = JSON.stringify(offOwn)===JSON.stringify(onOwn) && JSON.stringify(offRent)===JSON.stringify(onRent)
+      && offCards.initialCash===onCards.initialCash && offCards.budget===onCards.budget && offCards.breakeven===onCards.breakeven && offCards.diff===onCards.diff;
+    check(`I12 ${lbl}: Own + Rent tables and the KPI cards are identical with Rent-Then-Buy on`, same,
+      `cash ${offCards.initialCash}→${onCards.initialCash}, budget ${offCards.budget}→${onCards.budget}, own yr30 ${offOwn[offOwn.length-1].Net_Equity}→${onOwn[onOwn.length-1].Net_Equity}`);
+  }
+}
+
+// ═══ Case F12: selling costs and borrowed cash, stated directly ═══
+{
+  console.log('\n── F12 selling costs; cash below zero ──');
+  await page.evaluate(()=>window.__RVO.resetAll());
+  const own = await grabCsv('own');
+  const exp0 = 192000 - 32000 - 800000*0.025 ; // start cash − setup − selling cost on today's price
+  check('I13 year-0 Own net equity = starting cash − setup − selling cost (buy and sell at once)',
+    near(own[0].Net_Equity, exp0, 1) && near(own[0].House_Equity, 800000*0.975-640000, 1), `net ${own[0].Net_Equity} vs ${exp0}; house ${own[0].House_Equity}`);
+  await setInputs({monthlyBudget:3000}); // below the ~$4,337 own cost: Own runs a shortfall
+  const o2 = await grabCsv('own');
+  const neg = o2.find(r=>r.Year>0 && r.Beg_Cash<0);
+  // Replay that year month by month at each candidate rate
+  const yearInterest = (r)=>{ const m=(neg.Ann_Budget-neg.Principal_Exp-neg.Interest_Exp-neg.Ongoing_Exp)/12; let c=neg.Beg_Cash, t=0; for(let i=0;i<12;i++){ t+=c*r; c=c*(1+r)+m; } return t; };
+  const at6 = neg ? yearInterest(0.06/12) : 0, atRfr = neg ? yearInterest(Math.pow(1.045,1/12)-1) : 0;
+  check('I14 cash below zero pays the mortgage rate (6%), not the 4.5% risk-free rate',
+    neg && near(neg.Interest_Inc, at6, 2),
+    neg ? `yr${neg.Year}: interest ${neg.Interest_Inc} vs ${at6.toFixed(0)} at 6% (${atRfr.toFixed(0)} at 4.5%)` : 'no shortfall year');
 }
 
 // ═══ Case F9: owning leads early, then renting pulls ahead ═══

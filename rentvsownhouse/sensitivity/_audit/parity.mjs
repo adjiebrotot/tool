@@ -64,7 +64,7 @@ function randomScenario(){
     riskFreeRate: grid(-1, 9, 0.01), initialCash: pick([0,0,50000,250000,1200000]),
     monthlyBudget: pick([0,0,3000,6500,12000]), monthlyBudgetIncrease: grid(0, 6, 0.01),
     propertyPrice: pick([50000,420000,800000,1350000,2600000]), downPaymentPct: grid(0,100,0.01),
-    mortgageRate: grid(0, 12, 0.01), mortgageTerm: term, houseGrowth: grid(-3, 9, 0.01),
+    mortgageRate: grid(0, 12, 0.01), mortgageTerm: term, houseGrowth: grid(-3, 9, 0.01), sellingCostPct: grid(0, 7, 0.01),
     setupCostType: pick(['dollar','pct']), setupCost: 0,
     ownOngoingCostType: pick(['dollar','pct']), ownOngoingCostFreq: pick(['yearly','monthly','weekly']), ownOngoingCost: 0,
     ownOngoingInflation: grid(0, 6, 0.01),
@@ -101,6 +101,7 @@ const EDGE = [
   ['defaults, detailed mortgage with a floating tail', {mortgageMode:'detailed', ratePeriods:[{toYear:5,type:'fixed',rate:6},{toYear:30,type:'floating',rateMin:5,rateMax:9}]}],
   ['zero rent', {rentAmount:0, rentFreq:'monthly'}],
   ['zero mortgage rate', {mortgageRate:0}],
+  ['no selling cost', {sellingCostPct:0}],
   ['100% down payment', {downPaymentPct:100}],
   ['interest-only past its term', {mortgageMode:'detailed', mortgageType:'io', costInterestOnly:false, mortgageTerm:10, horizon:25, ratePeriods:[{toYear:10,type:'floating',rateMin:4,rateMax:7}]}],
   ['set budget with growth and a cash shortfall', {monthlyBudget:2500, monthlyBudgetIncrease:3, initialCash:50000}],
@@ -117,7 +118,7 @@ async function applyMain(page, sc){
     const fmtMoney = v => v===0 ? '0' : Number(v).toLocaleString('en-AU',{maximumFractionDigits:2});
     // Frequencies before the amounts they rescale
     ['setupCostType','ownOngoingCostType','ownOngoingCostFreq','rentOngoingCostType','rentOngoingCostFreq','rentFreq'].forEach(k=>val(k, sc[k]));
-    ['horizon','riskFreeRate','monthlyBudgetIncrease','downPaymentPct','mortgageRate','mortgageTerm','houseGrowth',
+    ['horizon','riskFreeRate','monthlyBudgetIncrease','downPaymentPct','mortgageRate','mortgageTerm','houseGrowth','sellingCostPct',
      'ownOngoingInflation','rentInflation','rentOngoingInflation'].forEach(k=>val(k, sc[k]));
     ['initialCash','monthlyBudget','propertyPrice','setupCost','ownOngoingCost','rentAmount','rentOngoingCost'].forEach(k=>val(k, fmtMoney(sc[k])));
     if(sc.mortgageMode==='detailed'){
@@ -168,7 +169,7 @@ async function applySens(page, sc){
     ['setupCostType','ownOngoingCostType','ownOngoingCostFreq','rentOngoingCostType','rentOngoingCostFreq','rentFreq','mortgageType'].forEach(k=>sel(k, sc[k]));
     bool('costInterestOnly', sc.costInterestOnly);
     ['horizon','riskFreeRate','initialCash','monthlyBudget','monthlyBudgetIncrease','propertyPrice','downPaymentPct','mortgageRate',
-     'mortgageTerm','houseGrowth','setupCost','ownOngoingCost','ownOngoingInflation','rentAmount','rentInflation','rentOngoingCost','rentOngoingInflation']
+     'mortgageTerm','houseGrowth','sellingCostPct','setupCost','ownOngoingCost','ownOngoingInflation','rentAmount','rentInflation','rentOngoingCost','rentOngoingInflation']
       .forEach(k=>inp(k, sc[k]));
     const cell=(cls,idx,extra='')=>q('.'+cls+'[data-si="0"][data-idx="'+idx+'"]'+extra);
     if(sc.mortgageMode==='detailed'){

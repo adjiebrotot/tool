@@ -66,6 +66,7 @@ const LANG_SENS = {
     pMortgageRate: 'Mortgage Rate',
     pMortgageTerm: 'Mortgage Term',
     pHouseGrowth: 'House Growth (RPPI)',
+    pSellingCost: 'Selling Cost',
     pSetupCost: 'Setup Cost',
     pSetupCostType: 'Setup Cost Type',
     pOwnOngoingCost: 'Ongoing Cost (Own)',
@@ -107,6 +108,7 @@ const LANG_SENS = {
     uAuto: '0 = auto',
     uPctOfPrice: '% of price',
     uPctPaCagr: '% p.a. CAGR',
+    uPctOfSale: '% of sale price',
     optPI: 'P&I — Principal & Interest',
     optIO: 'IO — Interest Only',
     optFixedAmount: 'Fixed amount ($)',
@@ -177,6 +179,7 @@ const LANG_SENS = {
     pMortgageRate: 'Bunga KPR',
     pMortgageTerm: 'Jangka Waktu KPR',
     pHouseGrowth: 'Kenaikan Harga Properti (RPPI)',
+    pSellingCost: 'Biaya Penjualan',
     pSetupCost: 'Biaya Awal Pembelian',
     pSetupCostType: 'Tipe Biaya Awal',
     pOwnOngoingCost: 'Biaya Rutin (Beli)',
@@ -218,6 +221,7 @@ const LANG_SENS = {
     uAuto: '0 = otomatis',
     uPctOfPrice: '% dari harga',
     uPctPaCagr: '%/thn CAGR',
+    uPctOfSale: '% dari harga jual',
     optPI: 'P&I — Pokok & Bunga',
     optIO: 'IO — Bunga Saja',
     optFixedAmount: 'Jumlah Tetap ($)',
@@ -265,6 +269,7 @@ const PARAMS = [
   {key:'mortgageRate',         labelKey:'pMortgageRate',         type:'percent',  unitKey:'uPctPa',      min:0,   max:25,  step:0.05, tip:'mortgageRate'},
   {key:'mortgageTerm',         labelKey:'pMortgageTerm',         type:'integer',  unitKey:'uYrs',        min:5,   max:50,  step:1,    tip:'mortgageTerm'},
   {key:'houseGrowth',          labelKey:'pHouseGrowth',          type:'percent',  unitKey:'uPctPaCagr',  min:-10, max:25,  step:0.1,  tip:'houseGrowth'},
+  {key:'sellingCostPct',       labelKey:'pSellingCost',          type:'percent',  unitKey:'uPctOfSale',  min:0,   max:15,  step:0.1,  tip:'sellingCost'},
   {key:'setupCost',            labelKey:'pSetupCost',            type:'currency',                        min:0,            step:500,  tip:'setupCost'},
   {key:'setupCostType',        labelKey:'pSetupCostType',        type:'select',   options:[{v:'dollar',lk:'optFixedAmount'},{v:'pct',lk:'optPctPropertyPrice'}], tip:'setupCost'},
   {key:'ownOngoingCost',       labelKey:'pOwnOngoingCost',       type:'currency',                        min:0,            step:100,  tip:'ownOngoingCost', subgroup:'own-cost'},
@@ -292,6 +297,7 @@ const DEFAULT_SCENARIO = {
   mortgageTerm: 30,
   riskFreeRate: 4.5,
   houseGrowth: 5.0,
+  sellingCostPct: 2.5,
   horizon: 30,
   setupCost: 32000,
   setupCostType: 'dollar',
@@ -384,6 +390,7 @@ function buildStateObj(sc){
     mortgageTerm:        sc.mortgageTerm ?? 30,
     riskFreeRate:        sc.riskFreeRate ?? 4.5,
     houseGrowth:         sc.houseGrowth ?? 5.0,
+    sellingCostPct:      sc.sellingCostPct ?? 2.5,
     horizon:             Math.max(1, sc.horizon || 30),
     setupCost:           Math.max(0, sc.setupCost || 0),
     setupCostType:       sc.setupCostType || 'dollar',
@@ -538,6 +545,7 @@ function buildRenderRows(){
     rows.push(P('costInterestOnly'));
   }
   rows.push(P('houseGrowth'));
+  rows.push(P('sellingCostPct'));
   rows.push({type:'mode', modeKey:'ownCostsMode', labelKey:'pOwnCostsMode', tip:'ownCostsMode'});
   if(modes.ownCostsMode==='simple'){
     ['setupCost','setupCostType','ownOngoingCost','ownOngoingCostFreq','ownOngoingCostType','ownOngoingInflation'].forEach(k=>rows.push(P(k)));

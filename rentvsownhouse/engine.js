@@ -81,11 +81,15 @@ function rateFromBand(band, variant){
    principal × period rate for the term, and the whole balance falls due with the
    last payment of the term (`balloon`), paid from cash: an interest-only loan is
    never carried past its term. */
-function buildMortgageSchedule(loan, term, type, years, norm, variant){
+function buildMortgageSchedule(loan, term, type, years, norm, variant, startYear){
+  // The schedule is a view of rates by calendar year: a loan taken out at the
+  // end of year `startYear` pays, in its year my, the rate of year startYear+my
+  // (past the schedule's end, its last period's rate).
+  startYear = startYear || 0;
   const sched = [];
   let principal = loan;
   for(let my=1; my<=years; my++){
-    const band = rateBandForMortgageYear(norm, Math.min(my, term));
+    const band = rateBandForMortgageYear(norm, my + startYear);
     const rate = rateFromBand(band, variant);
     const r12 = rate/100/12;
     let pay = 0, balloon = 0;
@@ -132,12 +136,20 @@ function getRentOngoingItems(S){
   if(S.rentCostsMode==='detailed' && Array.isArray(S.rentOngoingCosts) && S.rentOngoingCosts.length) return S.rentOngoingCosts;
   return [{amount:S.rentOngoingCost, basis:S.rentOngoingCostType==='pct' ? 'pct' : S.rentOngoingCostFreq, inflation:S.rentOngoingInflation}];
 }
-// Total one-time setup cost for a purchase at `price` (% items scale with price).
+// Total one-time setup cost for a purchase at `price`. % items are a share of
+// that price; $ items are in today's money for today's price, so a later
+// purchase at a higher price (Rent-Then-Buy) scales them by the same ratio.
 function setupCostTotal(S, price){
+  const scale = S.propertyPrice > 0 ? price/S.propertyPrice : 1;
   return getOwnSetupItems(S).reduce((t,it)=>{
     const amt = Number(it.amount)||0;
-    return t + (it.basis==='pct' ? price*amt/100 : amt);
+    return t + (it.basis==='pct' ? price*amt/100 : amt*scale);
   }, 0);
+}
+// Equity left in a home worth `value` owing `loan` if it were sold: the price
+// less the selling costs (agent, marketing, legal, seller taxes) and the loan.
+function houseEquityAt(S, value, loan){
+  return value*(1 - (Number(S.sellingCostPct)||0)/100) - loan;
 }
 // Yearly ongoing cost of owning for year `yr`, given the property value at the
 // start of that year (% items track the value; $ items inflate from year 1).
@@ -158,11 +170,12 @@ function rentOngoingYearlyAt(S, yr, rentMonthly){
 }
 
 /* The cash the model starts with. A figure the reader set is used as is;
-   left blank, it is the most any scenario needs on day one:
+   left blank, it is the larger of what Own and Rent need on day one:
      Own   the deposit plus setup costs,
-     Rent  the first year of rent and renting costs,
-     RTB   the deposit plus setup at the future price, discounted back to
-           today at the risk-free rate (what must be set aside now). */
+     Rent  the first year of rent and renting costs.
+   Rent-Then-Buy's deposit plus setup at the future price is reported beside
+   it (and its value today at the risk-free rate); a shortfall on the day is
+   borrowed, as any negative cash is. */
 function initialCashPlan(S){
   S = normalizeState(S);
   const P = S.propertyPrice, rfr = S.riskFreeRate/100, h = S.houseGrowth/100;
@@ -175,7 +188,9 @@ function initialCashPlan(S){
     rtbFutureCost  = price*S.downPaymentPct/100 + setupCostTotal(S, price);
     rtbPresentCost = (1+rfr) > 0 ? rtbFutureCost/Math.pow(1+rfr, S.rtbBuyYear) : rtbFutureCost;
   }
-  const autoInitialCash = Math.max(requiredNow, rentFirstYearCost, rtbPresentCost);
+  // Rent-Then-Buy's future need is reported, but does not raise the figure:
+  // switching that scenario on must leave Own and Rent exactly as they were.
+  const autoInitialCash = Math.max(requiredNow, rentFirstYearCost);
   return {requiredNow, rentFirstYearCost, rtbFutureCost, rtbPresentCost, autoInitialCash,
           initialCashUsed: S.initialCash > 0 ? S.initialCash : autoInitialCash};
 }
@@ -213,7 +228,7 @@ function computeModel(S, variant){
   const rtbLoan0      = rtbEnabled ? Math.max(0, rtbPropPrice0 - rtbDP0) : 0;
   // RTB schedule is indexed by mortgage year (year 1 = first year after purchase)
   const rtbSched0     = rtbEnabled
-    ? buildMortgageSchedule(rtbLoan0, S.mortgageTerm, S.mortgageType, schedYears, rateNorm, variant)
+    ? buildMortgageSchedule(rtbLoan0, S.mortgageTerm, S.mortgageType, schedYears, rateNorm, variant, buyYear)
     : null;
 
   function ownRequiredMonthly(year){
@@ -227,24 +242,11 @@ function computeModel(S, variant){
     return currentRentMonthly + (rentOngoingYearlyAt(S, year, currentRentMonthly) / 12);
   }
 
-  function rtbRequiredMonthly(year){
-    if(!rtbEnabled) return 0;
-    if(year <= buyYear) return rentRequiredMonthly(year);
-    const propValueAtYearStart = P * Math.pow(1+h, Math.max(0, year-1));
-    const ownOngoingMonthly = ownOngoingYearlyAt(S, year, propValueAtYearStart) / 12;
-    const yearsOwned = year - buyYear;
-    const rtbMortgageMonthly = yearsOwned >= 1
-      ? rtbSched0[Math.min(yearsOwned, rtbSched0.length)-1].monthlyPayment
-      : 0;
-    return rtbMortgageMonthly + ownOngoingMonthly;
-  }
-
+  // The automatic budget is set by Own and Rent alone, so switching
+  // Rent-Then-Buy on or off never moves those two; Rent-Then-Buy gets the same
+  // budget and borrows (see cashRate) when its later mortgage needs more.
   function getAutoMonthlyBudgetForYear(year){
-    return Math.max(
-      ownRequiredMonthly(year),
-      rentRequiredMonthly(year),
-      rtbRequiredMonthly(year)
-    );
+    return Math.max(ownRequiredMonthly(year), rentRequiredMonthly(year));
   }
 
   // ── Monthly budget ──
@@ -276,12 +278,12 @@ function computeModel(S, variant){
   rows.push({
     year:0,
     ownPropValue, ownPrincipal, ownCash,
-    ownHouseEquity: ownPropValue - ownPrincipal,
-    ownNetEquity: ownPropValue - ownPrincipal + ownCash,
+    ownHouseEquity: houseEquityAt(S, ownPropValue, ownPrincipal),
+    ownNetEquity: houseEquityAt(S, ownPropValue, ownPrincipal) + ownCash,
     ownAccumCost: setupCostDollar, ownAccumInterest:0,
     ownMortgagePayment:0,
     rentCash, rentNetEquity:rentCash, rentAccumCost:0, rentRent:rentMonthly0*12,
-    netEquityOwn: ownPropValue - ownPrincipal + ownCash,
+    netEquityOwn: houseEquityAt(S, ownPropValue, ownPrincipal) + ownCash,
     netEquityRent: rentCash,
     cashOwn: ownCash,
     cashRent: rentCash,
@@ -291,6 +293,11 @@ function computeModel(S, variant){
   });
 
   const rfm = Math.pow(1+rfr, 1/12)-1; // monthly risk-free
+  // Monthly rate on a cash balance in year yr: idle cash earns the risk-free
+  // rate; cash below zero is money borrowed, charged the mortgage rate of that
+  // year (the schedule's last rate once the term is over). The same rule for
+  // every scenario.
+  const cashRate = (c, yr) => c >= 0 ? rfm : ownSched[Math.min(yr, ownSched.length)-1].r12;
 
   for(let yr=1; yr<=S.horizon; yr++){
     // Mortgage rate & payment for this year (re-amortised when the rate changes)
@@ -349,14 +356,16 @@ function computeModel(S, variant){
       ownYearMortPmt += mMortgage;
 
       // ── Interest income on cash (BEFORE updating cash) ──
-      ownYearInterestInc  += ownCash * rfm;
-      rentYearInterestInc += rentCash * rfm;
+      const ownCashR  = cashRate(ownCash, yr);
+      const rentCashR = cashRate(rentCash, yr);
+      ownYearInterestInc  += ownCash * ownCashR;
+      rentYearInterestInc += rentCash * rentCashR;
 
       // ── Liquid cash: cash × (1+RFR) + (budget − cost) ──
       const ownSurplus  = mBudget - mOwnCost;
       const rentSurplus = mBudget - mRentCost;
-      ownCash  = ownCash  * (1+rfm) + ownSurplus;
-      rentCash = rentCash * (1+rfm) + rentSurplus;
+      ownCash  = ownCash  * (1+ownCashR) + ownSurplus;
+      rentCash = rentCash * (1+rentCashR) + rentSurplus;
 
       ownYearOngoingPart  += ownOngoingMonthly;
       rentYearOngoingPart += rentOngoingMonthly;
@@ -386,7 +395,7 @@ function computeModel(S, variant){
     // House appreciates at end of year
     ownPropValue = ownPropValue * (1+h);
 
-    const ownHouseEquity = ownPropValue - ownPrincipal;
+    const ownHouseEquity = houseEquityAt(S, ownPropValue, ownPrincipal);
     const ownNetEquity   = ownHouseEquity + ownCash;  // equity = property + liquid cash
     const rentNetEquity  = rentCash;                  // renter has no property
 
@@ -425,7 +434,7 @@ function computeModel(S, variant){
   // ── RENT-THEN-BUY SCENARIO ──
   let rtbRows = null;
   if(S.rtbEnabled){
-    rtbRows = computeRTB(S, monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, initialCashUsed, getAutoMonthlyBudgetForYear, rtbSched0);
+    rtbRows = computeRTB(S, monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, initialCashUsed, getAutoMonthlyBudgetForYear, rtbSched0, cashRate);
   }
 
   // Range of in-term payments within the horizon (varies under a detailed rate schedule)
@@ -459,18 +468,18 @@ function computeModel(S, variant){
 }
 
 /* ── RENT-THEN-BUY COMPUTATION ──
-   Phase 1 (yr 0..buyYear-1): identical to pure rent — renter invests dp+setupCost + monthly surplus.
-   Phase 2 (yr buyYear..horizon): buys at then-market price; uses accumulated cash as down payment.
-     - If cash >= setupCost (at new price) + some down, uses full cash as down + setup, remainder goes to principal.
-     - New mortgage on remaining principal at same rate/term.
-     - From buyYear onward, cashflows mirror "own" but starting from the new property price.
+   Phase 1 (yr 1..buyYear): renting, on the same budget and starting cash as Rent.
+   At the end of buyYear it buys at the then-market price: the same deposit %,
+   setup costs scaled to that price, and a new loan of the same type and term
+   whose rates follow the schedule's calendar years from the purchase onward.
+   Phase 2 (yr buyYear+1..horizon): owning, on the same budget as Own and Rent.
+   Cash that goes below zero (a deposit it could not cover, a repayment above
+   the budget) is borrowed at the mortgage rate, as in every scenario.
 */
-function computeRTB(S, monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, initialCashUsed, getAutoMonthlyBudgetForYear, rtbSched){
+function computeRTB(S, monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, initialCashUsed, getAutoMonthlyBudgetForYear, rtbSched, cashRate){
   const P0  = S.propertyPrice;
   const h   = S.houseGrowth/100;
   const ri  = S.rentInflation/100;
-  const rfr = S.riskFreeRate/100;
-  const rfm = Math.pow(1+rfr, 1/12)-1;
   const buyYear = S.rtbBuyYear;
 
   // RTB renter starts with initialCashUsed (same as pure rent scenario)
@@ -519,9 +528,10 @@ function computeRTB(S, monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly
         const mBudget = budgetIsManual
           ? monthlyBudget0 * Math.pow(1+budgetGrowth, yr-1)
           : getAutoMonthlyBudgetForYear(yr);
-        rtbP1YearInterestInc += rtbCash * rfm;
+        const rtbCashR = cashRate(rtbCash, yr);
+        rtbP1YearInterestInc += rtbCash * rtbCashR;
         const surplus = mBudget - mRentCost;
-        rtbCash = rtbCash*(1+rfm) + surplus;
+        rtbCash = rtbCash*(1+rtbCashR) + surplus;
         rtbP1YearSurplus += surplus;
         rtbP1YearBudget  += mBudget;
         rtbP1YearCost    += mRentCost;
@@ -551,10 +561,11 @@ function computeRTB(S, monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly
         rtbPropValue = rtbPropValueAtBuy;
         rtbMPayment  = rtbSched.length ? rtbSched[0].monthlyPayment : 0;
 
-        // Net Equity = house equity (propValue − loan) + remaining cash
-        // Drop vs pre-buy = only the setup cost (DP converts from liquid cash to house equity)
-        const rtbHouseEquity = rtbPropValue - rtbPrincipal; // = rtbDPAtBuy
-        const rtbNetEquity   = rtbHouseEquity + rtbCash2;   // ≈ preBuyCash − setupCost
+        // Net Equity = house equity (value less selling costs, less loan) + remaining cash.
+        // The drop vs pre-buy is the setup cost plus the selling costs a sale would incur
+        // (the deposit itself only moves from cash into the house).
+        const rtbHouseEquity = houseEquityAt(S, rtbPropValue, rtbPrincipal); // = DP less selling costs
+        const rtbNetEquity   = rtbHouseEquity + rtbCash2;   // = preBuyCash − setup − selling costs
         rows.push({
           year:yr,
           phase:'buy-transition',
@@ -634,9 +645,10 @@ function computeRTB(S, monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly
         const mBudget = budgetIsManual
           ? monthlyBudget0 * Math.pow(1+budgetGrowth, yr-1)
           : getAutoMonthlyBudgetForYear(yr);
-        rtbYearInterestInc2 += rtbCash2 * rfm;
+        const rtbCashR = cashRate(rtbCash2, yr);
+        rtbYearInterestInc2 += rtbCash2 * rtbCashR;
         const surplus = mBudget - mOwnCost;
-        rtbCash2 = rtbCash2*(1+rfm) + surplus;
+        rtbCash2 = rtbCash2*(1+rtbCashR) + surplus;
         rtbYearBudget2   += mBudget;
         rtbYearOngoing2  += ownOngoingMonthly;
 
@@ -656,7 +668,7 @@ function computeRTB(S, monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly
       }
       rtbPropValue = rtbPropValue * (1+h);
 
-      const rtbHouseEquity = rtbPropValue - rtbPrincipal;
+      const rtbHouseEquity = houseEquityAt(S, rtbPropValue, rtbPrincipal);
       const rtbNetEquity = rtbHouseEquity + rtbCash2;
       const rtbYearSurplus2 = rtbYearBudget2 - rtbYearMortPmt2 - rtbYearOngoing2;
       rows.push({
@@ -688,6 +700,6 @@ function computeRTB(S, monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly
 global.RVOEngine = {
   toYearly, toMonthly, calcMonthlyMortgage, normalizeRatePeriods, buildMortgageSchedule,
   getRateNorm, scheduleHasFloat, setupCostTotal, ownOngoingYearlyAt, rentOngoingYearlyAt,
-  normalizeState, initialCashPlan, computeModel,
+  normalizeState, initialCashPlan, houseEquityAt, computeModel,
 };
 })(window);

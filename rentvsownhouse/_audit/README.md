@@ -12,7 +12,10 @@ independent replay of the documented maths: table == replay, chart lines ==
 table, floating-rate band edges == replay at the low and high rate paths, KPI
 cards and summary tiles == the rows they summarise, re-amortisation at each rate
 change, what a floating rate does to Rent (nothing with a set budget; exactly
-the owner's extra repayment invested with the automatic one), and the
-interest-only balloon at the end of the term.
+the owner's extra repayment invested with the automatic one), the
+interest-only balloon at the end of the term, selling costs in net equity,
+cash below zero borrowed at the mortgage rate, a later Rent-Then-Buy loan on
+the schedule's calendar-year rates, and Rent-Then-Buy leaving Own and Rent
+untouched when switched on.
 
 (See also ../audit/ — the earlier JS↔Python cross-model audit.)
