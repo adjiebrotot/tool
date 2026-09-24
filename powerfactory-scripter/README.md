@@ -269,7 +269,7 @@ These functions respond to form changes and update conditional visibility and dy
 | `getInputRows()` | Reads all input rows from DOM, returns array of row objects matching the `inputVariables` schema. `dtype` is inferred via `inferDtype(lower, upper, step)`. |
 | `removeRow(id)` | Generic — removes any `<tr>` by element ID. Used by input rows and constraint rows. |
 | `inferDtype(lower, upper, step)` | Returns `"int"` if all three values are integers (or empty), `"float"` otherwise. |
-| `detectDiscreteAttr(obj, attr)` / `integerInputError(iv)` | Integer / on-off attributes (flags, modes, tap positions) are detected from the attribute catalogue by PowerFactory naming (`isDiscreteAttrItem`); the inline `int` toggle in the Attribute cell overrides it for custom attributes. Such rows have no step: the Step cell holds a Range \| List toggle. Range keeps Lower / Upper (whole numbers; blank = 0 and 1); List takes e.g. `0,1,5`. A list with gaps becomes a `"values"` list in the generated spec: Brute Force iterates it as-is, Optimisation searches its index `0..n-1` and maps back. |
+| `detectDiscreteAttr(obj, attr)` / `integerInputError(iv)` | Integer / on-off attributes (flags, modes, tap positions) are detected from the attribute catalogue by PowerFactory naming (`isDiscreteAttrItem`); the inline `int` toggle in the Attribute cell overrides it for custom attributes. Such rows have no step: the Step cell holds one button showing Range or List; click to switch. Range keeps Lower / Upper (whole numbers; blank = 0 and 1); List takes e.g. `0,1,5`. A list with gaps becomes a `"values"` list in the generated spec: Brute Force iterates it as-is, Optimisation searches its index `0..n-1` and maps back. |
 
 **Output Variables Container (`#output-vars-container`)**
 

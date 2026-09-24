@@ -963,7 +963,7 @@ function addInputRow(data = {}) {
     <td class="col-vals" colspan="2"><input type="text" id="iv-vals-${idx}" value="${data.values||''}" placeholder="0,1,5" autocomplete="off" /></td>
     <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" autocomplete="off" />
       <button type="button" class="iv-form-toggle" id="iv-form-${idx}" onclick="toggleInputList(${idx})"
-        title="Range: every integer from Lower to Upper. List: only the values you type, e.g. 0,1,5."><span>Range</span><span>List</span></button></td>
+        title="Range: every integer from Lower to Upper. List: only the values you type, e.g. 0,1,5. Click to switch.">${data.list ? 'List' : 'Range'}</button></td>
     <td class="td-action">
       <button class="btn btn-remove btn-icon" title="Remove" onclick="removeRow('input-row-${idx}')">✕</button>
     </td>
@@ -1000,7 +1000,9 @@ function toggleInputDiscrete(idx) {
 }
 
 function toggleInputList(idx) {
-  document.getElementById(`input-row-${idx}`)?.classList.toggle('iv-list');
+  const isList = document.getElementById(`input-row-${idx}`)?.classList.toggle('iv-list');
+  const btn = document.getElementById(`iv-form-${idx}`);
+  if (btn) btn.textContent = isList ? 'List' : 'Range';
   refreshLiveWarnings();
 }
 
