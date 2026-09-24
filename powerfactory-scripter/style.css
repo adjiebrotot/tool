@@ -776,7 +776,62 @@
   /* ── COLUMN HIDING FOR INPUT TABLE ──────────────────────────────── */
   .input-table-hide-step .col-step { display: none; }
   .input-table-hide-bounds .col-lb,
-  .input-table-hide-bounds .col-ub  { display: none; }
+  .input-table-hide-bounds .col-ub,
+  .input-table-hide-bounds .col-vals,
+  .input-table-hide-bounds .iv-int-toggle { display: none; }
+
+  /* Integer / on-off rows: the Step cell holds a Range | List toggle;
+     List swaps Lower + Upper for one values field. */
+  #input-table td.col-vals,
+  #input-table .iv-form-toggle { display: none; }
+  #input-table tr.iv-discrete td.col-step input { display: none; }
+  #input-table tr.iv-discrete .iv-form-toggle { display: inline-flex; }
+  #input-table tr.iv-discrete.iv-list td.col-lb,
+  #input-table tr.iv-discrete.iv-list td.col-ub { display: none; }
+  #input-table:not(.input-table-hide-bounds) tr.iv-discrete.iv-list td.col-vals { display: table-cell; }
+  /* Optimisation: keep the column for the toggle while integer rows exist */
+  #input-table.input-table-show-form .col-step { display: table-cell; }
+  #input-table.input-table-show-form tr:not(.iv-discrete) td.col-step input { visibility: hidden; }
+  .iv-form-toggle {
+    width: 100%;
+    padding: 5px 4px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    justify-content: center;
+  }
+  .iv-form-toggle:hover { background: var(--highlight); }
+
+  /* Inline "int" toggle inside the Attribute cell */
+  #input-table td.iv-attr-cell { position: relative; }
+  #input-table:not(.input-table-hide-bounds) td.iv-attr-cell input { padding-right: 30px; }
+  .iv-int-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 1px 4px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 9px;
+    line-height: 1.3;
+    cursor: pointer;
+    opacity: 0.55;
+  }
+  .iv-int-toggle:hover { opacity: 1; }
+  .iv-int-toggle[aria-pressed="true"] {
+    opacity: 1;
+    color: var(--accent);
+    border-color: var(--accent);
+  }
 
   /* ── APP FOOTER ──────────────────────────────────────────────── */
   .app-footer {

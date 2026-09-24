@@ -19,7 +19,7 @@ function setTip(id, text) {
    so repeating all of it is a paragraph explaining a choice already made.
    Keyed by the control's value; setOptionTips() keeps them current. */
 const TIP_PROBLEM_TYPE = {
-  brute_force:  '<strong>Brute Force:</strong> runs every combination of the input values. Total runs = the product of all step counts.',
+  brute_force:  '<strong>Brute Force:</strong> runs every combination of the input values. Total runs = the product of the number of values per input.',
   optimisation: '<strong>Optimisation:</strong> a search algorithm hunts for the best input combination. Pick it in Optimisation Settings.',
   custom:       '<strong>Custom:</strong> reads the input values row by row from an Excel file. Download the template for the format.',
   contingency:  '<strong>Contingency:</strong> trips each matched element in turn, one at a time (N-1) or two (N-2). Wildcards resolve at runtime, so no Excel file is needed.'
@@ -262,6 +262,7 @@ function onProblemTypeChange() {
   // Optimisation: hide step size only; Custom: hide step + bounds
   table.classList.toggle('input-table-hide-step', pt === 'optimisation' || pt === 'custom');
   table.classList.toggle('input-table-hide-bounds', pt === 'custom');
+  syncInputFormColumn();
 }
 
 function onStudyTypeChange() {
@@ -954,16 +955,130 @@ function addInputRow(data = {}) {
     <td style="color:var(--muted);font-family:var(--mono);font-size:11px;vertical-align:middle">${rowNum}</td>
     <td><input type="text" id="iv-name-${idx}" value="${data.name||''}" placeholder="Var name" autocomplete="off" /></td>
     <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" autocomplete="off" /></td>
-    <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" /></td>
+    <td class="iv-attr-cell"><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" />
+      <button type="button" class="iv-int-toggle" id="iv-int-${idx}" onclick="toggleInputDiscrete(${idx})"
+        title="Integer / on-off attribute: whole-number values with no step. Set automatically from the attribute; click to switch.">int</button></td>
     <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" autocomplete="off" /></td>
     <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" autocomplete="off" /></td>
-    <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" autocomplete="off" /></td>
+    <td class="col-vals" colspan="2"><input type="text" id="iv-vals-${idx}" value="${data.values||''}" placeholder="0,1,5" autocomplete="off" /></td>
+    <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" autocomplete="off" />
+      <button type="button" class="iv-form-toggle" id="iv-form-${idx}" onclick="toggleInputList(${idx})"
+        title="Range: every integer from Lower to Upper. List: only the values you type, e.g. 0,1,5. Click to switch.">${data.list ? 'List' : 'Range'}</button></td>
     <td class="td-action">
       <button class="btn btn-remove btn-icon" title="Remove" onclick="removeRow('input-row-${idx}')">✕</button>
     </td>
   `;
   tbody.appendChild(tr);
   attachInputComboBoxes(idx);
+  if (data.list) tr.classList.add('iv-list');
+  setInputDiscrete(idx, !!data.discrete);
+  // Picking or typing a known attribute sets the row's value mode for it.
+  const detect = () => {
+    const d = detectDiscreteAttr(document.getElementById(`iv-obj-${idx}`)?.value, document.getElementById(`iv-var-${idx}`)?.value);
+    if (d !== null) setInputDiscrete(idx, d);
+  };
+  document.getElementById(`iv-var-${idx}`).addEventListener('input', detect);
+  document.getElementById(`iv-obj-${idx}`).addEventListener('input', detect);
+}
+
+/* Integer / on-off attributes (modes, flags, tap positions) have no step:
+   the Step cell becomes a Range | List toggle. Range keeps Lower / Upper
+   (blank = 0 and 1, so a flag needs nothing); List swaps them for one field
+   such as 0,1,5. The integer mode is detected from the attribute catalogue,
+   with a small "int" toggle in the Attribute cell for custom attributes. */
+function setInputDiscrete(idx, on) {
+  document.getElementById(`input-row-${idx}`)?.classList.toggle('iv-discrete', on);
+  const btn = document.getElementById(`iv-int-${idx}`);
+  if (btn) btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  const ub = document.getElementById(`iv-ub-${idx}`);
+  if (ub) ub.placeholder = on ? '1' : '10';
+  syncInputFormColumn();
+}
+
+function toggleInputDiscrete(idx) {
+  setInputDiscrete(idx, !document.getElementById(`input-row-${idx}`)?.classList.contains('iv-discrete'));
+}
+
+function toggleInputList(idx) {
+  const isList = document.getElementById(`input-row-${idx}`)?.classList.toggle('iv-list');
+  const btn = document.getElementById(`iv-form-${idx}`);
+  if (btn) btn.textContent = isList ? 'List' : 'Range';
+  refreshLiveWarnings();
+}
+
+// Optimisation hides Step Size, but an integer row still needs its Range |
+// List toggle there, so the column stays while any integer row exists.
+function syncInputFormColumn() {
+  const table = document.getElementById('input-table');
+  if (!table) return;
+  const anyDiscrete = !!table.querySelector('tr.iv-discrete');
+  const isOpt = document.getElementById('problem-type')?.value === 'optimisation';
+  table.classList.toggle('input-table-show-form', isOpt && anyDiscrete);
+  const th = document.getElementById('th-step-label');
+  if (th) th.innerHTML = isOpt ? 'Range<br>/ List' : 'Step<br>Size';
+}
+
+/* The catalogue has no data type, so a known attribute is read as discrete
+   from PowerFactory's naming: unitless flags and modes (outserv, is*, allow*,
+   i_*, iopt_*, iXxx, short ixxx), tap positions and counts. Returns true /
+   false for a catalogue attribute, or null for an unknown (custom) one. */
+function isDiscreteAttrItem(item) {
+  if (!item || item.unit) return false;
+  const name = String(item.var || '').replace(/^[a-z]:/, '');
+  const desc = String(item.desc || '');
+  if (/factor|error|objective|ratio|gain|constant|coefficient|exponent|weight|value$/i.test(desc) &&
+      !/(0\s*=|flag)/i.test(desc)) return false;
+  if (/(0\s*=|\bflag\b)/i.test(desc)) return true;
+  if (/^(outserv|outServ\w*|is[A-Z0-9_]\w*|allow[A-Z]\w*|i_\w+|iopt\w*|i[A-Z]\w*|i[a-z]{1,3}_\w+|i[a-z]{2,7}|iter\w*)$/.test(name)) return true;
+  if (/\bposition\b/i.test(desc)) return true;
+  if (/^n/.test(name) && /(tap|number|parallel|^no\.?\s)/i.test(desc)) return true;
+  return false;
+}
+
+function detectDiscreteAttr(objectQuery, attr) {
+  const key = String(attr || '').trim().toLowerCase();
+  if (!key) return null;
+  const cls = extractPfClass(objectQuery || '');
+  const list = cls.startsWith('Evt') ? EVT_PARAMS[cls]
+    : cls.startsWith('Typ') ? (PF_REF.typParams || {})[cls]
+    : (PF_REF.params || {})[cls];
+  const bare = k => k.replace(/^[a-z]:/, '');
+  const item = (list || []).find(it => String(it.var || '').toLowerCase() === key)
+    || (list || []).find(it => bare(String(it.var || '').toLowerCase()) === bare(key));
+  return item ? isDiscreteAttrItem(item) : null;
+}
+
+/* Parse an Integer row's values text: comma-separated integers and inclusive
+   ranges, e.g. "0-3", "0,1,5", "-2 to 2", "0-2, 5". Returns the sorted,
+   de-duplicated list, or null if any part is not an integer / range. */
+function parseIntegerValues(text) {
+  const parts = String(text || '').split(/[,;]/).map(p => p.trim()).filter(Boolean);
+  if (!parts.length) return null;
+  const out = new Set();
+  for (const part of parts) {
+    const range = part.match(/^(-?\d+)\s*(?:-|–|\.\.|to)\s*(-?\d+)$/i);
+    if (range) {
+      let a = parseInt(range[1], 10), b = parseInt(range[2], 10);
+      if (a > b) [a, b] = [b, a];
+      if (b - a > 10000) return null;
+      for (let v = a; v <= b; v++) out.add(v);
+    } else if (/^-?\d+$/.test(part)) {
+      out.add(parseInt(part, 10));
+    } else {
+      return null;
+    }
+  }
+  return [...out].sort((a, b) => a - b);
+}
+
+// Problem with an integer row's values, or '' when it is fine.
+function integerInputError(iv) {
+  if (!iv.discrete) return '';
+  if (iv.list) return iv.values && !parseIntegerValues(iv.values) ? 'enter the integer values as a list, e.g. 0,1,5.' : '';
+  const isInt = v => Number.isInteger(Number(v));
+  if (!isInt(iv.lower) || !isInt(iv.upper)) return 'integer attribute, so Lower and Upper must be whole numbers.';
+  if (Number(iv.lower) > Number(iv.upper)) return 'Lower must not be above Upper.';
+  return '';
 }
 
 function removeRow(id) {
@@ -987,13 +1102,28 @@ function getInputRows() {
     const rawName = document.getElementById(`iv-name-${idx}`)?.value?.trim() || '';
     const name = rawName || `input_${i}`;
     const objectQuery = document.getElementById(`iv-obj-${idx}`)?.value?.trim() || '';
-    return {
+    const discrete = document.getElementById(`input-row-${idx}`)?.classList.contains('iv-discrete');
+    const row = {
       name,
       object_query: objectQuery,
       variable:     document.getElementById(`iv-var-${idx}`)?.value?.trim() || '',
       lower, upper, step,
       dtype: inferDtype(lower, upper, step),
     };
+    if (discrete && tr.classList.contains('iv-list')) {
+      const values = document.getElementById(`iv-vals-${idx}`)?.value?.trim() || '';
+      const list = parseIntegerValues(values || '0,1') || [0, 1];
+      Object.assign(row, {
+        discrete: true, list: true, values,
+        lower: String(list[0]), upper: String(list[list.length - 1]), step: '1', dtype: 'int',
+      });
+      // A gap in the list (e.g. 0,1,5) cannot be written as lower/upper, so
+      // the exact values travel with the spec.
+      if (list.length !== list[list.length - 1] - list[0] + 1) row.choices = list;
+    } else if (discrete) {
+      Object.assign(row, { discrete: true, step: '1', dtype: 'int' });
+    }
+    return row;
   });
 }
 
@@ -1580,6 +1710,8 @@ function validateConfig(cfg) {
   cfg.inputVariables.forEach((iv, i) => {
     if (!iv.object_query) errors.push(`Input variable #${i + 1}: Object is required.`);
     if (!iv.variable)     errors.push(`Input variable #${i + 1}: Variable is required.`);
+    const intMsg = ['brute_force', 'optimisation'].includes(init.problemType) && integerInputError(iv);
+    if (intMsg) errors.push(`Input variable #${i + 1}: ${intMsg}`);
   });
 
   cfg.outputVariables.forEach((ov, i) => {
@@ -1739,6 +1871,12 @@ function updateTimeseriesAvailability() {
 
 function getLiveWarnings(cfg) {
   const warnings = [...validateCustomCalcWarnings(cfg), ...buildObjectTypeWarnings(cfg)];
+  if (['brute_force', 'optimisation'].includes(cfg.initialisation.problemType)) {
+    cfg.inputVariables.forEach((iv, i) => {
+      const msg = integerInputError(iv);
+      if (msg) warnings.push(`Input variable #${i + 1}: ${msg}`);
+    });
+  }
   const st = cfg.initialisation.studyType;
   const isDynamic = st === 'dynamic_rms' || st === 'dynamic_emt';
   if (!isDynamic && cfg.outputVariables.some(ov => ov.type === 'timeseries')) {
