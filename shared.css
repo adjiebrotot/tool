@@ -447,3 +447,8 @@ html{scrollbar-gutter:stable;}
    more tabs where icon + text side by side would not fit. */
 .ctrl-tabs.stacked .ctrl-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;line-height:1.2;}
 .ctrl-tabs.stacked .tico{vertical-align:baseline;width:1.5em;height:1.5em;}
+
+/* Long figures (e.g. "Rp14,914,099/mo") must wrap inside their tile rather
+   than spill past its border: grid items shrink to the track, values break. */
+.metric,.tile{min-width:0;}
+.metric .value,.metric .val,.tile .value{overflow-wrap:anywhere;}
