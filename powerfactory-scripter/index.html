@@ -248,7 +248,7 @@
           <div class="info-extra" id="input-info-extra">
             <code>GetCalcRelevantObjects()</code> resolves the object query; <code>SetAttribute()</code> writes the value before each run.<br/>
             <strong>Brute Force:</strong> Step Size is the increment (not number of steps); every combination is iterated.<br/>
-            <strong>Type:</strong> use <em>Integer</em> for mode switches (e.g. <code>0-3</code> or <code>0,1,5</code>) and <em>On/Off</em> for 0/1 flags; neither needs bounds or a step.<br/>
+            <strong>Integer / on-off attributes</strong> (modes, flags, tap positions) take a list of values instead: blank means <code>0,1</code>, or enter <code>0-3</code> or <code>0,1,5</code>. This is set from the attribute; the <code>int</code> toggle in the Attribute cell switches it for custom attributes.<br/>
             <strong>Optimisation:</strong> Bounds define the search space; step is unused.<br/>
             <strong>Custom:</strong> Values come from a scenario Excel file (bounds and step are unused).<br/>
             Wildcards (e.g. <code>*.ElmDsl</code>) match multiple objects — the same value is applied to all matched objects.
@@ -262,7 +262,6 @@
                 <th>Name <span class="tip-icon" data-tip="Python identifier used as the column header in the results CSV.">?</span></th>
                 <th>Object <span class="tip-icon" data-tip="PF object query (e.g. Gen.ElmSym, *.ElmDsl). Wildcards match all objects of that class.">?</span></th>
                 <th>Attribute <span class="tip-icon" data-tip="Writable numeric/boolean PF parameter to set via SetAttribute() before each run (e.g. e:qgini, e:usetp).">?</span></th>
-                <th class="col-kind">Type <span class="tip-icon" data-tip="Number: a continuous range with a step. Integer: mode values, as a range (0-3) or a list (0,1,5), no step. On/Off: tries 0 and 1, nothing to fill in.">?</span></th>
                 <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tip-icon" id="tt-lb" data-tip="Start of the swept range (inclusive).">?</span></th>
                 <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tip-icon" id="tt-ub" data-tip="End of the swept range (inclusive).">?</span></th>
                 <th class="col-step"><span class="th-two-line">Step<br>Size</span> <span class="tip-icon" data-tip="Both bounds are included: lb=0, ub=10, step=0.5 gives [0, 0.5, …, 10].">?</span></th>

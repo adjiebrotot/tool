@@ -947,7 +947,6 @@ let inputRowCounter = 0;
 
 function addInputRow(data = {}) {
   const idx = inputRowCounter++;
-  const kind = INPUT_KINDS.includes(data.kind) ? data.kind : 'number';
   const tbody = document.getElementById('input-tbody');
   const tr = document.createElement('tr');
   tr.id = `input-row-${idx}`;
@@ -956,38 +955,42 @@ function addInputRow(data = {}) {
     <td style="color:var(--muted);font-family:var(--mono);font-size:11px;vertical-align:middle">${rowNum}</td>
     <td><input type="text" id="iv-name-${idx}" value="${data.name||''}" placeholder="Var name" autocomplete="off" /></td>
     <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" autocomplete="off" /></td>
-    <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" /></td>
-    <td class="col-kind"><select id="iv-kind-${idx}" onchange="onInputKindChange(${idx})" title="Number: a continuous range. Integer: mode values, as a range or a list. On/Off: 0 and 1.">
-      <option value="number"${kind === 'number' ? ' selected' : ''}>Number</option>
-      <option value="integer"${kind === 'integer' ? ' selected' : ''}>Integer</option>
-      <option value="boolean"${kind === 'boolean' ? ' selected' : ''}>On/Off</option>
-    </select></td>
+    <td class="iv-attr-cell"><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" />
+      <button type="button" class="iv-int-toggle" id="iv-int-${idx}" onclick="toggleInputDiscrete(${idx})"
+        title="Integer / on-off attribute: enter the values to try (0,1 or 0-3 or 0,1,5) instead of bounds and step. Set automatically from the attribute; click to switch.">int</button></td>
     <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" autocomplete="off" /></td>
     <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" autocomplete="off" /></td>
     <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" autocomplete="off" /></td>
-    <td class="col-vals"><input type="text" id="iv-vals-${idx}" value="${data.values||''}" placeholder="0-3  or  0,1,5" autocomplete="off" /><span class="iv-bool-note">Tries 0 and 1</span></td>
+    <td class="col-vals"><input type="text" id="iv-vals-${idx}" value="${data.values||''}" placeholder="0,1  (or 0-3, 0,1,5)" autocomplete="off" /></td>
     <td class="td-action">
       <button class="btn btn-remove btn-icon" title="Remove" onclick="removeRow('input-row-${idx}')">✕</button>
     </td>
   `;
   tbody.appendChild(tr);
   attachInputComboBoxes(idx);
-  onInputKindChange(idx);
+  setInputDiscrete(idx, !!data.discrete);
+  // Picking or typing a known attribute sets the row's value mode for it.
+  const detect = () => {
+    const d = detectDiscreteAttr(document.getElementById(`iv-obj-${idx}`)?.value, document.getElementById(`iv-var-${idx}`)?.value);
+    if (d !== null) setInputDiscrete(idx, d);
+  };
+  document.getElementById(`iv-var-${idx}`).addEventListener('input', detect);
+  document.getElementById(`iv-obj-${idx}`).addEventListener('input', detect);
 }
 
-/* Value type per input row. Number keeps Lower / Upper / Step. Integer and
-   On/Off are mode selectors, so a step makes no sense: Integer takes one
-   text field ("0-3" or "0,1,5"), On/Off needs nothing at all. The row swaps
-   the three number cells for one "values" cell spanning the visible ones. */
-const INPUT_KINDS = ['number', 'integer', 'boolean'];
-
-function onInputKindChange(idx) {
-  const tr = document.getElementById(`input-row-${idx}`);
-  const kind = document.getElementById(`iv-kind-${idx}`)?.value || 'number';
-  if (!tr) return;
-  tr.classList.toggle('iv-discrete', kind !== 'number');
-  tr.classList.toggle('iv-boolean', kind === 'boolean');
+/* Integer / on-off attributes (modes, flags, tap positions) take a list of
+   values instead of Lower / Upper / Step. The row swaps the three number
+   cells for one "values" cell; blank means 0,1. The mode is detected from the
+   attribute catalogue, with a small "int" toggle for custom attributes. */
+function setInputDiscrete(idx, on) {
+  document.getElementById(`input-row-${idx}`)?.classList.toggle('iv-discrete', on);
+  const btn = document.getElementById(`iv-int-${idx}`);
+  if (btn) btn.setAttribute('aria-pressed', on ? 'true' : 'false');
   syncInputValueSpans();
+}
+
+function toggleInputDiscrete(idx) {
+  setInputDiscrete(idx, !document.getElementById(`input-row-${idx}`)?.classList.contains('iv-discrete'));
 }
 
 // The values cell spans the bound/step columns that are visible for the
@@ -996,12 +999,37 @@ function syncInputValueSpans() {
   const table = document.getElementById('input-table');
   if (!table) return;
   const span = table.classList.contains('input-table-hide-step') ? 2 : 3;
-  const isOpt = document.getElementById('problem-type')?.value === 'optimisation';
-  table.querySelectorAll('td.col-vals').forEach(td => {
-    td.colSpan = span;
-    const note = td.querySelector('.iv-bool-note');
-    if (note) note.textContent = isOpt ? 'Searches 0 or 1' : 'Tries 0 and 1';
-  });
+  table.querySelectorAll('td.col-vals').forEach(td => { td.colSpan = span; });
+}
+
+/* The catalogue has no data type, so a known attribute is read as discrete
+   from PowerFactory's naming: unitless flags and modes (outserv, is*, allow*,
+   i_*, iopt_*, iXxx, short ixxx), tap positions and counts. Returns true /
+   false for a catalogue attribute, or null for an unknown (custom) one. */
+function isDiscreteAttrItem(item) {
+  if (!item || item.unit) return false;
+  const name = String(item.var || '').replace(/^[a-z]:/, '');
+  const desc = String(item.desc || '');
+  if (/factor|error|objective|ratio|gain|constant|coefficient|exponent|weight|value$/i.test(desc) &&
+      !/(0\s*=|flag)/i.test(desc)) return false;
+  if (/(0\s*=|\bflag\b)/i.test(desc)) return true;
+  if (/^(outserv|outServ\w*|is[A-Z0-9_]\w*|allow[A-Z]\w*|i_\w+|iopt\w*|i[A-Z]\w*|i[a-z]{1,3}_\w+|i[a-z]{2,7}|iter\w*)$/.test(name)) return true;
+  if (/\bposition\b/i.test(desc)) return true;
+  if (/^n/.test(name) && /(tap|number|parallel|^no\.?\s)/i.test(desc)) return true;
+  return false;
+}
+
+function detectDiscreteAttr(objectQuery, attr) {
+  const key = String(attr || '').trim().toLowerCase();
+  if (!key) return null;
+  const cls = extractPfClass(objectQuery || '');
+  const list = cls.startsWith('Evt') ? EVT_PARAMS[cls]
+    : cls.startsWith('Typ') ? (PF_REF.typParams || {})[cls]
+    : (PF_REF.params || {})[cls];
+  const bare = k => k.replace(/^[a-z]:/, '');
+  const item = (list || []).find(it => String(it.var || '').toLowerCase() === key)
+    || (list || []).find(it => bare(String(it.var || '').toLowerCase()) === bare(key));
+  return item ? isDiscreteAttrItem(item) : null;
 }
 
 /* Parse an Integer row's values text: comma-separated integers and inclusive
@@ -1048,7 +1076,7 @@ function getInputRows() {
     const rawName = document.getElementById(`iv-name-${idx}`)?.value?.trim() || '';
     const name = rawName || `input_${i}`;
     const objectQuery = document.getElementById(`iv-obj-${idx}`)?.value?.trim() || '';
-    const kind = document.getElementById(`iv-kind-${idx}`)?.value || 'number';
+    const discrete = document.getElementById(`input-row-${idx}`)?.classList.contains('iv-discrete');
     const row = {
       name,
       object_query: objectQuery,
@@ -1056,13 +1084,11 @@ function getInputRows() {
       lower, upper, step,
       dtype: inferDtype(lower, upper, step),
     };
-    if (kind === 'boolean') {
-      Object.assign(row, { kind, lower: '0', upper: '1', step: '1', dtype: 'int' });
-    } else if (kind === 'integer') {
+    if (discrete) {
       const values = document.getElementById(`iv-vals-${idx}`)?.value?.trim() || '';
-      const list = parseIntegerValues(values) || [0, 1];
+      const list = parseIntegerValues(values || '0,1') || [0, 1];
       Object.assign(row, {
-        kind, values,
+        discrete: true, values,
         lower: String(list[0]), upper: String(list[list.length - 1]), step: '1', dtype: 'int',
       });
       // A gap in the list (e.g. 0,1,5) cannot be written as lower/upper, so
@@ -1656,8 +1682,8 @@ function validateConfig(cfg) {
   cfg.inputVariables.forEach((iv, i) => {
     if (!iv.object_query) errors.push(`Input variable #${i + 1}: Object is required.`);
     if (!iv.variable)     errors.push(`Input variable #${i + 1}: Variable is required.`);
-    if (iv.kind === 'integer' && ['brute_force', 'optimisation'].includes(init.problemType) && !parseIntegerValues(iv.values))
-      errors.push(`Input variable #${i + 1}: enter integer values as a range (0-3) or a list (0,1,5).`);
+    if (iv.discrete && iv.values && ['brute_force', 'optimisation'].includes(init.problemType) && !parseIntegerValues(iv.values))
+      errors.push(`Input variable #${i + 1}: enter integer values as a list (0,1,5) or a range (0-3).`);
   });
 
   cfg.outputVariables.forEach((ov, i) => {
@@ -1819,8 +1845,8 @@ function getLiveWarnings(cfg) {
   const warnings = [...validateCustomCalcWarnings(cfg), ...buildObjectTypeWarnings(cfg)];
   if (['brute_force', 'optimisation'].includes(cfg.initialisation.problemType)) {
     cfg.inputVariables.forEach((iv, i) => {
-      if (iv.kind === 'integer' && !parseIntegerValues(iv.values)) {
-        warnings.push(`Input variable #${i + 1}: enter integer values as a range (0-3) or a list (0,1,5).`);
+      if (iv.discrete && iv.values && !parseIntegerValues(iv.values)) {
+        warnings.push(`Input variable #${i + 1}: enter integer values as a list (0,1,5) or a range (0-3).`);
       }
     });
   }
