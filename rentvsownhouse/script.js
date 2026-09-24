@@ -42,7 +42,7 @@ const LANG = {
     labelPI: 'Principal & Interest',
     helpPI: 'Pay down loan each period; builds equity faster.',
     labelIO: 'Interest Only',
-    helpIO: 'Pay only interest; principal unchanged until term ends.',
+    helpIO: 'Pay only interest; the full principal is repaid from cash at the end of the term.',
     labelCostInterestOnly: 'Cost = Interest Only',
     labelMortgageRate: 'Mortgage Rate',
     labelMortgageTerm: 'Mortgage Term',
@@ -98,7 +98,7 @@ const LANG = {
     kpiInitialCashLabel: 'Initial Cash',
     kpiInitialCashTip: 'Starting cash in both scenarios. Left blank, it is the deposit plus setup costs, and the Rent-Then-Buy need when that is on.',
     kpiInitialCashSub: 'Starting capital at Year 0',
-    kpiBudgetLabel: 'Yearly Housing Budget',
+    kpiBudgetLabel: 'Monthly Housing Budget',
     kpiBudgetSub: 'Min–max monthly budget over horizon',
     kpiBreakevenLabel: 'Breakeven Year',
     kpiBreakevenTip: 'The first year Buy net equity (house plus cash) passes the Rent scenario. Before it, renting is ahead.',
@@ -231,7 +231,7 @@ const LANG = {
     labelPI: 'Pokok & Bunga',
     helpPI: 'Cicilan mengurangi bunga dan saldo pinjaman setiap periode; ekuitas bertambah lebih cepat.',
     labelIO: 'Bunga Saja',
-    helpIO: 'Hanya membayar bunga; pokok pinjaman tidak berubah hingga akhir jangka waktu.',
+    helpIO: 'Hanya membayar bunga; seluruh pokok dilunasi dari kas di akhir jangka waktu.',
     labelCostInterestOnly: 'Biaya = Bunga Saja',
     labelMortgageRate: 'Bunga KPR',
     labelMortgageTerm: 'Jangka Waktu KPR',
@@ -287,7 +287,7 @@ const LANG = {
     kpiInitialCashLabel: 'Modal Awal',
     kpiInitialCashTip: 'Kas awal di kedua skenario. Jika dikosongkan, dihitung dari Uang Muka (DP) + biaya awal, dan kebutuhan Sewa Dulu jika aktif.',
     kpiInitialCashSub: 'Modal awal di Tahun 0',
-    kpiBudgetLabel: 'Anggaran Perumahan Tahunan',
+    kpiBudgetLabel: 'Anggaran Perumahan Bulanan',
     kpiBudgetSub: 'Anggaran bulanan min–maks selama jangka waktu',
     kpiBreakevenLabel: 'Tahun Breakeven',
     kpiBreakevenTip: 'Tahun pertama kekayaan bersih Beli (properti + kas) melampaui skenario Sewa. Sebelum itu, menyewa lebih unggul.',
@@ -864,8 +864,9 @@ function rateFromBand(band, variant){
 /* Per-mortgage-year schedule of {rate, r12, monthlyPayment, principalStart, principalEnd}.
    When the rate changes, the P&I payment is re-amortised over the remaining term on the
    outstanding balance (standard variable-rate mortgage accounting). IO loans pay
-   principal × period rate; past the term they keep paying at the last period's rate
-   while the principal is still outstanding (matches existing IO behaviour). */
+   principal × period rate for the term, and the whole balance falls due with the
+   last payment of the term (`balloon`), paid from cash: an interest-only loan is
+   never carried past its term. */
 function buildMortgageSchedule(loan, term, type, years, norm, variant){
   const sched = [];
   let principal = loan;
@@ -873,10 +874,9 @@ function buildMortgageSchedule(loan, term, type, years, norm, variant){
     const band = rateBandForMortgageYear(norm, Math.min(my, term));
     const rate = rateFromBand(band, variant);
     const r12 = rate/100/12;
-    let pay = 0;
-    if(principal > 1e-2){
-      if(type==='io') pay = principal * r12;
-      else if(my <= term) pay = calcMonthlyMortgage(principal, rate, term - my + 1, 'pi');
+    let pay = 0, balloon = 0;
+    if(principal > 1e-2 && my <= term){
+      pay = type==='io' ? principal * r12 : calcMonthlyMortgage(principal, rate, term - my + 1, 'pi');
     }
     const principalStart = principal;
     if(type!=='io' && pay > 0){
@@ -886,7 +886,8 @@ function buildMortgageSchedule(loan, term, type, years, norm, variant){
         principal = Math.max(0, principal - Math.min(pay - intr, principal));
       }
     }
-    sched.push({rate, r12, monthlyPayment: pay, principalStart, principalEnd: principal});
+    if(type==='io' && my===term && principal > 1e-2){ balloon = principal; principal = 0; }
+    sched.push({rate, r12, monthlyPayment: pay, balloon, principalStart, principalEnd: principal});
   }
   return sched;
 }
@@ -1290,6 +1291,15 @@ function computeModel(variant){
       ownYearCost   += ownCostThisMonth;
       rentYearCost  += mRentCost;
     }
+    // Interest-only: the balance falls due with the term's last payment and is
+    // repaid from cash (principal, not a cost, unless costs count the whole repayment)
+    if(yrSched.balloon > 0 && ownPrincipal > 1e-2){
+      const due = ownPrincipal;
+      ownCash       -= due;
+      ownYearMortPmt += due;
+      ownPrincipal   = 0;
+      if(!S.costInterestOnly){ ownAccumCost += due; ownYearCost += due; }
+    }
     // Derived year values
     const ownYearSurplus  = ownYearBudget - ownYearMortPmt - ownYearOngoingPart;
     const rentYearSurplus = ownYearBudget - rentYearCost;
@@ -1340,16 +1350,19 @@ function computeModel(variant){
     rtbRows = computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, initialCashUsed, getAutoMonthlyBudgetForYear, rtbSched0);
   }
 
-  // Range of in-term payments (varies under a detailed rate schedule)
-  const inTermPays = ownSched.slice(0, Math.min(S.mortgageTerm, ownSched.length))
-    .map(s=>s.monthlyPayment).filter(p=>p>0);
-  const mPaymentMin = inTermPays.length ? Math.min(...inTermPays) : 0;
-  const mPaymentMax = inTermPays.length ? Math.max(...inTermPays) : 0;
+  // Range of in-term payments within the horizon (varies under a detailed rate schedule)
+  const payRange = (sched, years) => {
+    const pays = (sched||[]).slice(0, Math.max(0, Math.min(S.mortgageTerm, years)))
+      .map(s=>s.monthlyPayment).filter(p=>p>0);
+    return pays.length ? [Math.min(...pays), Math.max(...pays)] : [0, 0];
+  };
+  const [mPaymentMin, mPaymentMax] = payRange(ownSched, S.horizon);
+  const [rtbPaymentMin, rtbPaymentMax] = payRange(rtbSched0, S.horizon - buyYear);
 
   const last = rows[rows.length-1];
   return {
     rows, breakeven,
-    monthlyBudget, mPayment, mPaymentMin, mPaymentMax, rentMonthly0,
+    monthlyBudget, mPayment, mPaymentMin, mPaymentMax, rtbPaymentMin, rtbPaymentMax, rentMonthly0,
     rtbRows,
     initialCashUsed, ownCashStart, renterStartCapital,
     summary:{
@@ -1554,6 +1567,14 @@ function computeRTB(monthlyBudget0, budgetGrowth, budgetIsManual, rentMonthly0, 
           : mOwnCost;
         rtbAccumCost += rtbCostThisMonth;
         rtbYearCost2 += rtbCostThisMonth;
+      }
+      if(rtbSYr.balloon > 0 && rtbPrincipal > 1e-2){
+        const due = rtbPrincipal;
+        rtbCash2         -= due;
+        rtbYearMortPmt2  += due;
+        rtbYearPrincipal += due;
+        rtbPrincipal      = 0;
+        if(!S.costInterestOnly){ rtbAccumCost += due; rtbYearCost2 += due; }
       }
       rtbPropValue = rtbPropValue * (1+h);
 
@@ -1813,7 +1834,9 @@ function updateKPIs(state){
   if(monthlyBudgets.length){
     const minBudget = Math.min(...monthlyBudgets);
     const maxBudget = Math.max(...monthlyBudgets);
-    $('kpiBudgetRange').textContent = `${fmt.currency(minBudget, true)}–${fmt.currency(maxBudget, true)}`;
+    $('kpiBudgetRange').textContent = (maxBudget - minBudget) > 0.5
+      ? `${fmt.currency(minBudget, true)}–${fmt.currency(maxBudget, true)}`
+      : fmt.currency(minBudget, true);
   } else {
     $('kpiBudgetRange').textContent = '—';
   }
@@ -1838,13 +1861,17 @@ function updateKPIs(state){
 }
 
 /* ── SUMMARY TILES ── */
+function payRangeText(lo, hi, single){
+  return (hi - lo) > 0.5
+    ? `${fmt.currency(lo)}–${fmt.currency(hi)}${T('perMo')}`
+    : `${fmt.currency(single)}${T('perMo')}`;
+}
 function updateSummary(state){
   const {summary,mPayment,mPaymentMin,mPaymentMax,rentMonthly0,monthlyBudget,initialCashUsed,ownCashStart,renterStartCapital} = state;
   const yrs = S.horizon;
-  // Payments vary over the term under a detailed rate schedule → show the range
-  const mPayTxt = (mPaymentMax - mPaymentMin) > 0.5
-    ? `${fmt.currency(mPaymentMin,true)}–${fmt.currency(mPaymentMax,true)}${T('perMo')}`
-    : `${fmt.currency(mPayment)}${T('perMo')}`;
+  // Payments vary over the term under a detailed rate schedule → show the range,
+  // in whole dollars: a compact "$4k–$4k" would hide the very spread it reports
+  const mPayTxt = payRangeText(mPaymentMin, mPaymentMax, mPayment);
 
   $('ownSummary').innerHTML = `
     <div class="tile"><div class="label">${T('tileNetEquity')} (${T('thYear')} ${yrs})</div><div class="value ${summary.ownNetEquity>=0?'pos':'neg'}">${fmt.currency(summary.ownNetEquity,true)}</div></div>
@@ -2009,7 +2036,7 @@ function updateRTBSummary(state){
     <div class="tile"><div class="label">${T('tileHouseEquity')} (${T('thYear')} ${yrs})</div><div class="value pos">${fmt.currency(last.rtbHouseEquity||0,true)}</div></div>
     <div class="tile"><div class="label">${T('tileLiquidCash')} (${T('thYear')} ${yrs})</div><div class="value">${fmt.currency((last.rtbCash2||last.rtbCash||0),true)}</div></div>
     <div class="tile"><div class="label">${T('tilePropPriceAtBuy')} (${T('thYear')} ${S.rtbBuyYear})</div><div class="value">${fmt.currency(rtbPropValueAtBuy||0,true)}</div></div>
-    <div class="tile"><div class="label">${T('tileMonthlyMortgage')}</div><div class="value">${fmt.currency(rtbMPayment||0)}${T('perMo')}</div></div>
+    <div class="tile"><div class="label">${T('tileMonthlyMortgage')}</div><div class="value">${payRangeText(state.rtbPaymentMin, state.rtbPaymentMax, rtbMPayment||0)}</div></div>
   `;
 }
 
@@ -2060,6 +2087,15 @@ function rerender(){
         });
       }
       return o;
+    });
+    // The repayment tiles span every repayment the band can reach, not just the mid path
+    [lowState, highState].forEach(v=>{
+      [['mPaymentMin','mPaymentMax'],['rtbPaymentMin','rtbPaymentMax']].forEach(([a,b])=>{
+        if(v[b] > 0){
+          state[a] = state[b] > 0 ? Math.min(state[a], v[a]) : v[a];
+          state[b] = Math.max(state[b], v[b]);
+        }
+      });
     });
   }
 

@@ -422,10 +422,9 @@ function buildMortgageSchedule(loan, term, type, years, norm){
     const band = rateBandForMortgageYear(norm, Math.min(my, term));
     const rate = (band.min+band.max)/2;
     const r12 = rate/100/12;
-    let pay = 0;
-    if(principal > 1e-2){
-      if(type==='io') pay = principal * r12;
-      else if(my <= term) pay = calcMonthlyMortgage(principal, rate, term - my + 1, 'pi');
+    let pay = 0, balloon = 0;
+    if(principal > 1e-2 && my <= term){
+      pay = type==='io' ? principal * r12 : calcMonthlyMortgage(principal, rate, term - my + 1, 'pi');
     }
     const principalStart = principal;
     if(type!=='io' && pay > 0){
@@ -435,7 +434,9 @@ function buildMortgageSchedule(loan, term, type, years, norm){
         principal = Math.max(0, principal - Math.min(pay - intr, principal));
       }
     }
-    sched.push({rate, r12, monthlyPayment: pay, principalStart, principalEnd: principal});
+    // Interest-only: the whole balance falls due with the term's last payment
+    if(type==='io' && my===term && principal > 1e-2){ balloon = principal; principal = 0; }
+    sched.push({rate, r12, monthlyPayment: pay, balloon, principalStart, principalEnd: principal});
   }
   return sched;
 }
@@ -614,6 +615,12 @@ function computeModel(S){
       ownAccumCost  += S.costInterestOnly ? mInt+oom : mOwnCost;
       rentAccumCost += mRentCost;
       rentYearCost  += mRentCost;
+    }
+    // Interest-only: the balance is repaid from cash at the end of the term
+    if(yrSched.balloon > 0 && ownPrincipal > 1e-2){
+      const due = ownPrincipal;
+      ownCash -= due; ownYearMortPmt += due; ownPrincipal = 0;
+      if(!S.costInterestOnly) ownAccumCost += due;
     }
     const ownYearSurplus  = ownYearBudget - ownYearMortPmt - ownYearOngoingPart;
     const rentYearSurplus = ownYearBudget - rentYearCost;

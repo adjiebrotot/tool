@@ -20,7 +20,7 @@ var RVO_TIPS_EN = {
   },
   mortgageType: {
     pi: "<strong>Principal &amp; Interest:</strong> every payment cuts the balance, so equity builds from the first one. Interest Only pays interest alone.",
-    io: "<strong>Interest Only:</strong> payments cover interest and the balance never falls, so repayments build no equity. The monthly cost is lower."
+    io: "<strong>Interest Only:</strong> payments cover interest alone, so they build no equity. The whole balance is repaid from cash when the term ends."
   },
   costInterestOnly: {
     on:  "<strong>On:</strong> Accumulated Cost counts interest and ongoing costs only, since principal becomes equity rather than money lost.",
@@ -47,7 +47,7 @@ var RVO_TIPS_EN = {
   rentOngoingInflation: "Yearly rise in fixed-dollar renting costs. A % of annual rent already grows with rent inflation.",
   riskFreeRate:         "Return on idle cash in both scenarios: surplus above the rent or the repayment, plus any leftover initial cash.",
   initialCash:          "Cash you hold today. Buy spends it on the deposit and setup costs, Rent invests all of it. Blank means exactly deposit plus setup, nothing spare.",
-  monthlyBudget:        "Monthly cash for housing. Blank follows the higher of rent or repayment each year. Surplus above the actual cost is invested.",
+  monthlyBudget:        "Monthly cash for housing. Blank follows the higher of rent or repayment each year, so a floating rate also moves what the renter invests.",
   monthlyBudgetIncrease: {
     manual: "Compounds your monthly budget each year, for wage growth or CPI. It widens the surplus, or shrinks the shortfall, over time.",
     auto:   "Grows the monthly budget each year. Inert while the budget is automatic, so set a budget above for it to bite."
@@ -66,7 +66,7 @@ var RVO_TIPS_ID = {
   },
   mortgageType: {
     pi: "<strong>Pokok &amp; Bunga:</strong> tiap cicilan mengurangi saldo, jadi ekuitas bertambah sejak cicilan pertama. Bunga Saja hanya menutup bunga.",
-    io: "<strong>Bunga Saja:</strong> cicilan hanya menutup bunga dan pokok tidak berubah, jadi cicilan tidak membangun ekuitas. Cicilan bulanan lebih ringan."
+    io: "<strong>Bunga Saja:</strong> cicilan hanya menutup bunga, jadi tidak membangun ekuitas. Seluruh pokok dilunasi dari kas saat jangka waktu berakhir."
   },
   costInterestOnly: {
     on:  "<strong>Aktif:</strong> Biaya Kumulatif hanya menghitung bunga dan biaya rutin, karena cicilan pokok menjadi ekuitas, bukan uang yang hilang.",
@@ -93,7 +93,7 @@ var RVO_TIPS_ID = {
   rentOngoingInflation: "Kenaikan tahunan biaya menyewa bernominal tetap. Item % dari sewa tahunan sudah naik bersama kenaikan sewa.",
   riskFreeRate:         "Return atas kas menganggur di kedua skenario: surplus di atas sewa atau cicilan, ditambah sisa kas awal.",
   initialCash:          "Kas yang Anda miliki sekarang. Skenario Beli memakainya untuk DP dan biaya awal, Sewa menginvestasikan semuanya. Kosong berarti tepat DP + biaya awal.",
-  monthlyBudget:        "Kas bulanan untuk biaya perumahan. Kosong berarti mengikuti cicilan atau sewa tertinggi tiap tahun. Sisa di atas biaya aktual diinvestasikan.",
+  monthlyBudget:        "Kas bulanan untuk biaya perumahan. Kosong berarti mengikuti cicilan atau sewa tertinggi tiap tahun, jadi bunga mengambang ikut mengubah investasi penyewa.",
   monthlyBudgetIncrease: {
     manual: "Menaikkan anggaran bulanan Anda tiap tahun secara berbunga, untuk kenaikan gaji atau CPI. Surplus melebar seiring waktu.",
     auto:   "Menaikkan anggaran bulanan tiap tahun. Tidak berpengaruh selama anggaran otomatis, jadi tetapkan anggaran di atas."
