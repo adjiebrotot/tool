@@ -98,7 +98,7 @@ const LANG = {
     labelCurrencySymbol: 'Currency Symbol',
     /* KPI */
     kpiInitialCashLabel: 'Initial Cash',
-    kpiInitialCashTip: 'Starting cash in every scenario. Left blank, it is the larger of the deposit plus setup costs or a year of rent.',
+    kpiInitialCashTip: 'Starting cash in every scenario. Left blank, it is the most any scenario needs up front: deposit plus setup, a year of rent, or what Rent-Then-Buy needs today to fund its later deposit.',
     kpiInitialCashSub: 'Starting capital at Year 0',
     kpiBudgetLabel: 'Monthly Housing Budget',
     kpiBudgetSub: 'Min–max monthly budget over horizon',
@@ -149,7 +149,12 @@ const LANG = {
     subInitialCashLeftover: (x) => `Leftover ${x} invested at risk-free rate from day one.`,
     subInitialCashExact: 'Exactly covers down payment + setup cost — no surplus.',
     subInitialCashAuto: (x) => `Auto: ${x} (down payment + setup cost). Any excess is invested at the risk-free rate.`,
-    subInitialCashRTB: (x,y,z,n) => `Auto: ${x}. Rent-Then-Buy needs ${z} for its purchase at Yr ${n}; any shortfall then is borrowed at the mortgage rate.`,
+    subInitialCashRTB: (x,y,z,n) => `Auto: ${x}. Enough, with what it saves by then, for Rent-Then-Buy's ${z} deposit and setup at Yr ${n}.`,
+    warnInitialCashRTB: (x,y,z,n) => `⚠️ Initial cash ${x} is ${y} short of what Rent-Then-Buy needs today (${z}) to fund its purchase at Yr ${n}.`,
+    warnShortfall: (list) => `⚠️ Cash runs below zero in ${list}. The mortgage is the only borrowing in this model, so raise the budget or initial cash, or clear them for the automatic figures.`,
+    warnShortfallIO: (list) => `⚠️ Cash runs below zero in ${list}, when the interest-only balance falls due. Set a higher budget or initial cash to save for it.`,
+    shortfallItem: (name, yr, amt) => `${name} from Yr ${yr} (down to ${amt})`,
+    nameOwn: 'Own', nameRent: 'Rent', nameRTB: 'Rent-Then-Buy',
     warnInitialCashShort: (x,y,z) => `⚠️ Initial cash ${x} is ${y} short of down payment + setup cost (${z}). The shortfall reduces the loan equity at start.`,
     subRequiredCash: (x) => `Required: ${x} (down payment + setup cost).`,
     warnBudgetLow: (x,y,z) => `⚠️ Budget (${x}/mo) is below both total own cost (${y}/mo incl. ongoing) and rent cost (${z}/mo incl. ongoing). Surplus will be negative and cash may decline below zero.`,
@@ -289,7 +294,7 @@ const LANG = {
     labelCurrencySymbol: 'Simbol Mata Uang',
     /* KPI */
     kpiInitialCashLabel: 'Modal Awal',
-    kpiInitialCashTip: 'Kas awal di semua skenario. Jika dikosongkan, dipakai yang lebih besar antara Uang Muka (DP) + biaya awal atau sewa setahun.',
+    kpiInitialCashTip: 'Kas awal di semua skenario. Jika dikosongkan, dipakai kebutuhan awal terbesar: Uang Muka (DP) + biaya awal, sewa setahun, atau kas yang dibutuhkan Sewa Dulu sekarang untuk DP-nya nanti.',
     kpiInitialCashSub: 'Modal awal di Tahun 0',
     kpiBudgetLabel: 'Anggaran Perumahan Bulanan',
     kpiBudgetSub: 'Anggaran bulanan min–maks selama jangka waktu',
@@ -337,7 +342,12 @@ const LANG = {
     subInitialCashLeftover: (x) => `Sisa ${x} diinvestasikan pada suku bunga bebas risiko mulai hari pertama.`,
     subInitialCashExact: 'Tepat menutup Uang Muka (DP) + biaya awal pembelian — tidak ada sisa.',
     subInitialCashAuto: (x) => `Otomatis: ${x} (Uang Muka (DP) + biaya awal pembelian). Kelebihan diinvestasikan pada suku bunga bebas risiko.`,
-    subInitialCashRTB: (x,y,z,n) => `Otomatis: ${x}. Sewa Dulu butuh ${z} untuk membeli di Thn ${n}; kekurangannya dipinjam dengan bunga KPR.`,
+    subInitialCashRTB: (x,y,z,n) => `Otomatis: ${x}. Bersama tabungannya, cukup untuk DP dan biaya awal Sewa Dulu sebesar ${z} di Thn ${n}.`,
+    warnInitialCashRTB: (x,y,z,n) => `⚠️ Modal Awal ${x} kurang ${y} dari kebutuhan Sewa Dulu hari ini (${z}) untuk membeli di Thn ${n}.`,
+    warnShortfall: (list) => `⚠️ Kas turun di bawah nol pada ${list}. KPR adalah satu-satunya pinjaman di model ini, jadi naikkan anggaran atau modal awal, atau kosongkan untuk angka otomatis.`,
+    warnShortfallIO: (list) => `⚠️ Kas turun di bawah nol pada ${list}, saat pokok KPR bunga saja jatuh tempo. Tetapkan anggaran atau modal awal lebih tinggi untuk menabungnya.`,
+    shortfallItem: (name, yr, amt) => `${name} mulai Thn ${yr} (hingga ${amt})`,
+    nameOwn: 'Beli', nameRent: 'Sewa', nameRTB: 'Sewa Dulu',
     warnInitialCashShort: (x,y,z) => `⚠️ Modal Awal ${x} kurang ${y} dari Uang Muka (DP) + biaya awal pembelian (${z}). Kekurangan mengurangi ekuitas pinjaman awal.`,
     subRequiredCash: (x) => `Dibutuhkan: ${x} (Uang Muka (DP) + biaya awal pembelian).`,
     warnBudgetLow: (x,y,z) => `⚠️ Anggaran (${x}/bln) di bawah total biaya beli (${y}/bln termasuk rutin) dan biaya sewa (${z}/bln termasuk rutin). Surplus akan negatif dan kas dapat turun di bawah nol.`,
@@ -938,10 +948,15 @@ function refreshLabels(){
   const cashSub  = $('initialCashSub');
   if(S.initialCash > 0){
     const leftover = S.initialCash - required;
+    const rtbShort = S.rtbEnabled ? plan.rtbRequiredNow - S.initialCash : 0;
     if(leftover < 0){
       cashWarn.style.display='block';
       cashWarn.textContent=T('warnInitialCashShort')(fmt.currency(S.initialCash), fmt.currency(-leftover), fmt.currency(required));
       cashSub.textContent = T('subRequiredCash')(fmt.currency(required));
+    } else if(rtbShort > 0.5){
+      cashWarn.style.display='block';
+      cashWarn.textContent=T('warnInitialCashRTB')(fmt.currency(S.initialCash), fmt.currency(rtbShort), fmt.currency(plan.rtbRequiredNow), S.rtbBuyYear);
+      cashSub.textContent = T('subInitialCashLeftover')(fmt.currency(leftover));
     } else {
       cashWarn.style.display='none';
       cashSub.textContent = leftover > 0
@@ -1199,6 +1214,7 @@ function updateKPIs(state){
   $('kpiDiff').style.color = diff>=0 ? cssVar('--data-pos-em') : cssVar('--data-neg-em');
 
   const warn = $('warningBanner');
+  const msgs = [];
   if(S.monthlyBudget > 0){
     // Year-1 ongoing costs for warning purposes
     const ownOngoingWarn  = ownOngoingYearlyAt(1, S.propertyPrice)/12;
@@ -1206,10 +1222,21 @@ function updateKPIs(state){
     const ownTotalWarn  = mPayment + ownOngoingWarn;
     const rentTotalWarn = rentMonthly0 + rentOngoingWarn;
     if(monthlyBudget < ownTotalWarn && monthlyBudget < rentTotalWarn){
-      warn.style.display='block';
-      warn.textContent=T('warnBudgetLow')(fmt.currency(monthlyBudget), fmt.currency(ownTotalWarn,true), fmt.currency(rentTotalWarn,true));
-    } else { warn.style.display='none'; }
-  } else { warn.style.display='none'; }
+      msgs.push(T('warnBudgetLow')(fmt.currency(monthlyBudget), fmt.currency(ownTotalWarn,true), fmt.currency(rentTotalWarn,true)));
+    }
+  }
+  // Any scenario whose cash goes below zero on any rate path: the model does
+  // not borrow beyond the mortgage, so say so rather than hide it
+  const sf = state.shortfalls || {};
+  const items = [['own','nameOwn'],['rent','nameRent'],['rtb','nameRTB']]
+    .filter(([k])=>sf[k])
+    .map(([k,nm])=>T('shortfallItem')(T(nm), sf[k].year, fmt.currency(sf[k].worst, true)));
+  // With the automatic budget and cash only an interest-only balance falling
+  // due can do it: they cover repayments, not the lump sum at the term's end
+  const autoFigures = !(S.monthlyBudget > 0) && !(S.initialCash > 0);
+  if(items.length) msgs.push(T(autoFigures ? 'warnShortfallIO' : 'warnShortfall')(items.join(', ')));
+  warn.style.display = msgs.length ? 'block' : 'none';
+  warn.textContent = msgs.join(' ');
 }
 
 /* ── SUMMARY TILES ── */
@@ -1439,6 +1466,13 @@ function rerender(){
         });
       }
       return o;
+    });
+    // Shortfall warnings cover every rate path, not just the mid one
+    [lowState, highState].forEach(v=>{
+      Object.keys(v.shortfalls).forEach(k=>{
+        const a = state.shortfalls[k], b = v.shortfalls[k];
+        if(b) state.shortfalls[k] = a ? {year: Math.min(a.year, b.year), worst: Math.min(a.worst, b.worst)} : b;
+      });
     });
     // The repayment tiles span every repayment the band can reach, not just the mid path
     [lowState, highState].forEach(v=>{
