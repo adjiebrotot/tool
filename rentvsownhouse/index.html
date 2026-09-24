@@ -201,7 +201,7 @@
         <span id="unitPctPa1" style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
         <span class="slider-value" id="riskFreeRateVal">4.50%</span>
       </div>
-      <input type="range" id="riskFreeRate" min="-10" max="25" step="0.1" value="4.5"/>
+      <input type="range" id="riskFreeRate" min="-10" max="25" step="0.01" value="4.5"/>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelInitialCash">Initial Cash</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(optional)</span></div>
@@ -225,7 +225,7 @@
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
         <span class="slider-value" id="monthlyBudgetIncreaseVal">0.00%</span>
       </div>
-      <input type="range" id="monthlyBudgetIncrease" min="0" max="25" step="0.1" value="0"/>
+      <input type="range" id="monthlyBudgetIncrease" min="0" max="25" step="0.01" value="0"/>
       <div class="help" id="helpBudgetGrows">Budget grows from <span id="budgetIncreaseBase" style="color:var(--gold);font-weight:700;">—</span> at this rate each year.</div>
     </div>
     <div class="field-row">
@@ -272,7 +272,7 @@
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctOfPrice">% of property price</span>
         <span class="slider-value" id="downPaymentPctVal">20%</span>
       </div>
-      <input type="range" id="downPaymentPct" min="0" max="100" step="1" value="20"/>
+      <input type="range" id="downPaymentPct" min="0" max="100" step="0.01" value="20"/>
       <div class="help" id="helpDownPayment">Down payment = <span id="downPaymentDollar" style="color:var(--gold);font-weight:700;">$160,000</span></div>
     </div>
     <div class="section-label" data-i18n="sectionMortgage">Mortgage</div>
@@ -292,7 +292,7 @@
         </label>
         <label class="radio-opt" id="radioIO">
           <input type="radio" name="mortgageType" value="io"/>
-          <div class="radio-opt-text"><strong data-i18n="labelIO">Interest Only</strong><span data-i18n="helpIO">Pay only interest; principal unchanged until term ends.</span></div>
+          <div class="radio-opt-text"><strong data-i18n="labelIO">Interest Only</strong><span data-i18n="helpIO">Pay only interest; the full principal is repaid from cash at the end of the term.</span></div>
         </label>
       </div>
       <div class="toggle-row" style="margin-top:8px;padding-top:8px;padding-bottom:0;">
@@ -309,7 +309,7 @@
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
         <span class="slider-value" id="mortgageRateVal">6.00%</span>
       </div>
-      <input type="range" id="mortgageRate" min="0" max="25" step="0.1" value="6"/>
+      <input type="range" id="mortgageRate" min="0" max="25" step="0.01" value="6"/>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelMortgageTerm">Mortgage Term</span> <span class="tip-icon" data-tip-key="mortgageTerm">?</span></div>
@@ -333,7 +333,15 @@
         <span id="unitPctCagr" style="font-size:.82rem;color:var(--muted)">% p.a. CAGR</span>
         <span class="slider-value" id="houseGrowthVal">5.00%</span>
       </div>
-      <input type="range" id="houseGrowth" min="-10" max="25" step="0.1" value="5"/>
+      <input type="range" id="houseGrowth" min="-10" max="25" step="0.01" value="5"/>
+    </div>
+    <div class="field-row">
+      <div class="field-label"><span data-i18n="labelSellingCost">Selling Cost</span> <span class="tip-icon" data-tip-key="sellingCost">?</span></div>
+      <div class="slider-head" style="margin-bottom:4px;">
+        <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctOfValue">% of sale price</span>
+        <span class="slider-value" id="sellingCostPctVal">2.50%</span>
+      </div>
+      <input type="range" id="sellingCostPct" min="0" max="15" step="0.01" value="2.5"/>
     </div>
     <div class="field-row">
       <div class="field-label"><span data-i18n="labelCalcCAGR">Calculate CAGR from Historical Prices</span> <span class="tip-icon" data-tip-key="calcCagr">?</span></div>
@@ -404,7 +412,7 @@
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
         <span class="slider-value" id="ownOngoingInflationVal">0.00%</span>
       </div>
-      <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.1" value="0"/>
+      <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.01" value="0"/>
     </div>
     </div><!-- /ownCostsSimple -->
     <div id="ownCostsDetailed" style="display:none;">
@@ -445,7 +453,7 @@
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
         <span class="slider-value" id="rentInflationVal">3.00%</span>
       </div>
-      <input type="range" id="rentInflation" min="-10" max="25" step="0.1" value="3"/>
+      <input type="range" id="rentInflation" min="-10" max="25" step="0.01" value="3"/>
     </div>
     <div class="section-label" data-i18n="sectionCostsRenting">Costs of Renting</div>
     <div class="field-row">
@@ -480,7 +488,7 @@
         <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
         <span class="slider-value" id="rentOngoingInflationVal">0.00%</span>
       </div>
-      <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.1" value="0"/>
+      <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.01" value="0"/>
     </div>
     </div><!-- /rentCostsSimple -->
     <div id="rentCostsDetailed" style="display:none;">
@@ -505,14 +513,14 @@
       <div class="sub" data-i18n="kpiInitialCashSub">Starting capital at Year 0</div>
     </div>
     <div class="metric card">
-      <div class="label" data-i18n="kpiBudgetLabel">Yearly Housing Budget</div>
+      <div class="label" data-i18n="kpiBudgetLabel">Monthly Housing Budget</div>
       <div class="value" id="kpiBudgetRange">—</div>
       <div class="sub" data-i18n="kpiBudgetSub">Min–max monthly budget over horizon</div>
     </div>
     <div class="metric card">
       <div class="label" data-i18n="kpiBreakevenLabel">Breakeven Year <span class="tip-icon" data-i18n-tip="kpiBreakevenTip">?</span></div>
       <div class="value" id="kpiBreakeven">—</div>
-      <div class="sub" data-i18n="kpiBreakevenSub">When owning net equity overtakes renting</div>
+      <div class="sub" data-i18n="kpiBreakevenSub">When owning net equity overtakes renting for good</div>
     </div>
     <div class="metric card">
       <div class="label" data-i18n="kpiDiffLabel">Equity Difference <span class="tip-icon" data-i18n-tip="kpiDiffTip">?</span></div>
@@ -587,6 +595,7 @@
 
 <script src="../shared.js"></script>
 <script src="cashflow-export.js"></script>
+<script src="engine.js"></script>
 <script src="script.js"></script>
 <script src="tour.js"></script>
 <script src="../tour-shared.js"></script>

@@ -118,15 +118,16 @@ await setInputs({rtbEnabled:true, rtbBuyYear:5});
   const buyRow = rtb.find(r=>r.__raw.includes('buy-transition'));
   const price5 = 800000*Math.pow(1.05,5);
   const dp5 = price5*0.20, loan5 = price5-dp5;
-  check('R6 RTB transition: house equity = DP on grown price; loan = price − DP',
-    buyRow && near(buyRow.House_Equity, dp5, 5) && near(buyRow.Principal_Left, loan5, 5),
-    buyRow?`equity ${buyRow.House_Equity} vs ${dp5.toFixed(0)}; loan ${buyRow.Principal_Left} vs ${loan5.toFixed(0)}`:'no buy-transition row');
+  const sell5 = price5*0.025; // default selling cost 2.5% of the sale price
+  check('R6 RTB transition: house equity = DP on grown price less selling costs; loan = price − DP',
+    buyRow && near(buyRow.House_Equity, dp5-sell5, 5) && near(buyRow.Principal_Left, loan5, 5),
+    buyRow?`equity ${buyRow.House_Equity} vs ${(dp5-sell5).toFixed(0)}; loan ${buyRow.Principal_Left} vs ${loan5.toFixed(0)}`:'no buy-transition row');
   // RTB cash identity across phases
   let bad=[];
   rtb.slice(1).forEach(r=>{
-    // buy-transition year also spends DP + setup (default setup is a FIXED
-    // $32,000 item — fixed-$ setup items deliberately do not scale with price)
-    const rhs=r.Beg_Cash + r.Ann_Budget + r.Interest_Inc - (r.Total_Exp||0) - (r.__raw.includes('buy-transition')? (32000 + dp5) : 0);
+    // buy-transition year also spends DP + setup (the default $32,000 setup is
+    // in today's money for today's price, so it scales with the later price)
+    const rhs=r.Beg_Cash + r.Ann_Budget + r.Interest_Inc - (r.Total_Exp||0) - (r.__raw.includes('buy-transition')? (32000*price5/800000 + dp5) : 0);
     if(!near(r.End_Cash, rhs, Math.max(6, Math.abs(r.End_Cash)*0.001))) bad.push(`yr${r.Year}(${r.__raw.split(',')[1]}): End ${r.End_Cash} vs ${rhs.toFixed(0)}`);
   });
   check('R7 RTB cash identity holds every year (incl. purchase year outlay)', bad.length===0, bad.slice(0,4).join('; '));

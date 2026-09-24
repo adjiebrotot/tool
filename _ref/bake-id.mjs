@@ -92,7 +92,7 @@ const TOOLS = [
     description: 'Simulasikan sewa vs beli rumah dalam jangka panjang: bandingkan kas, ekuitas, dan kekayaan bersih berdasarkan asumsi harga properti, KPR, sewa, dan imbal hasil investasi.',
     ogTitle: 'Sewa vs Beli Rumah: Simulasi Skenario Properti',
     ogDescription: 'Simulasikan sewa vs beli rumah dalam jangka panjang dengan membandingkan kas, ekuitas, dan kekayaan bersih.',
-    sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js'],
+    sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js', 'engine.js'],
     extraReplacements: [["renderRVOFooter('../logos/')", "renderRVOFooter('../../logos/')"]],
     ldJson: [
       {

@@ -67,7 +67,9 @@ cause.
 
 Harnesses live in `costofliving-comparator/`, `dcasimulator/`, `financialfreedom/`,
 `financingvscash/`, `financingvscash/loan-types/`, `pisahvsgabung/`, `rentvsownhouse/`, and
-`rentvsownhouse/sensitivity/`. `rentvsownhouse/audit/` is the earlier
+`rentvsownhouse/sensitivity/`. The Rent vs Own page and its Sensitivity page run one shared engine
+(`rentvsownhouse/engine.js`), and `rentvsownhouse/sensitivity/_audit/parity.mjs` types the same
+scenarios into both and requires byte-identical cashflow exports. `rentvsownhouse/audit/` is the earlier
 JS-versus-Python cross-model audit that these superseded; its CSV outputs are generated, not
 committed. `powerfactory-scripter/audit/` validates generated scripts against a nine-bus reference
 case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain
