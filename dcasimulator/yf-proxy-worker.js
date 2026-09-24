@@ -207,6 +207,10 @@ async function fetchOneTicker(ticker, start, end, ctx) {
           ? { opens: series.opens, highs: series.highs, lows: series.lows } : {}),
         source: p.source,
         kind: p.kind,
+        // Every date is the exchange's own trading day (see parseYahoo). Clients
+        // replace, rather than merge into, any cached series without this tag,
+        // since those were dated by the UTC timestamp and can sit a day early.
+        basis: DATE_BASIS,
       };
     } catch (err) {
       lastError = err;
@@ -295,6 +299,9 @@ function classify(ticker, startDate, endDate) {
   return providers;
 }
 
+// Tag carried on every result: dates are the exchange's local trading day.
+const DATE_BASIS = 'exchange-day';
+
 function parseYahoo(text) {
   const jsonStart = text.indexOf('{');
   const data = JSON.parse(jsonStart > 0 ? text.slice(jsonStart) : text);
@@ -308,11 +315,18 @@ function parseYahoo(text) {
   const rawCloses = quote.close || adj;           // unadjusted close, for the OHLC ratio
   if (!ts || !closes) throw new Error('No price series');
   const opensR = quote.open, highsR = quote.high, lowsR = quote.low;
+  // Yahoo stamps a daily bar at the session's open, in UTC. Read as a UTC date
+  // that is a day early wherever the open falls before midnight UTC: every ASX
+  // bar during Australian daylight saving (10:00 AEDT is 23:00 UTC the day
+  // before) and every NZX bar. Shifting by the exchange's offset first gives the
+  // trading day the exchange itself reports.
+  const meta = result.meta || {};
+  const off = Number.isFinite(meta.gmtoffset) ? meta.gmtoffset : 0;
   const dates = [], prices = [], opens = [], highs = [], lows = [];
   for (let i = 0; i < ts.length; i++) {
     const c = closes[i];
     if (c == null) continue;
-    dates.push(new Date(ts[i] * 1000).toISOString().slice(0, 10));
+    dates.push(new Date((ts[i] + off) * 1000).toISOString().slice(0, 10));
     prices.push(c);
     // Scale O/H/L by the same split/dividend factor as the adjusted close so the
     // candles line up with the price series the simulator uses everywhere else.

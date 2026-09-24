@@ -195,7 +195,9 @@ const fmt = {
     if(compact&&abs>=1e3) return sign+sym+(abs/1e3).toFixed(0)+'k';
     return sign+sym+Math.round(abs).toLocaleString('en-US');
   },
-  pct(v,d=2){ const n=Number(v||0); return (Math.abs(n)<=1?n*100:n).toFixed(d)+'%'; },
+  // Always a fraction: 1.5 is 150%. Guessing fraction-or-percent from the size
+  // printed any ROI above 100% as 1.50%.
+  pct(v,d=2){ return (Number(v||0)*100).toFixed(d)+'%'; },
   num(v,d=0){ return Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); },
   date(d){ return d instanceof Date ? d.toISOString().slice(0,10) : d; },
 };
@@ -263,8 +265,7 @@ function computeMetrics(res){
   return {sharpe, sortino, cagrTwr, cagrMwr};
 }
 const fmtRatio  = v => (v==null||!isFinite(v)) ? ' - ' : v.toFixed(2);
-// Always treat the input as a fraction (avoids fmt.pct's fraction-or-percent
-// ambiguity, which would misread a CAGR above 100%).
+// Takes a fraction, like fmt.pct; null or non-finite reads as ' - '.
 const fmtMetPct = v => (v==null||!isFinite(v)) ? ' - ' : (v*100).toFixed(2)+'%';
 // Hover explanations for each advanced metric (avoid double quotes - used in data-tip).
 const METRIC_TIPS = {
@@ -808,7 +809,7 @@ async function ensureTickerCached(ticker, requestedStart, requestedEnd){
       segments.push([requestedStart, requestedEnd]);
     } else {
       if(requestedStart < latestEntry.coverageStart) segments.push([requestedStart, latestEntry.coverageStart]);
-      if(requestedEnd   > latestEntry.coverageEnd)   segments.push([latestEntry.coverageEnd, requestedEnd]);
+      if(requestedEnd   > latestEntry.coverageEnd)   segments.push([SharedYF.tailStart(latestEntry), requestedEnd]);
     }
     let got = false;
     for(const [segStart, segEnd] of segments){
@@ -917,7 +918,9 @@ function loadedTickers(){ return Object.keys(priceCache).sort(); }
 // tail/front fetch never discards data we already hold.
 function storeBatchResult(tk, r, fetchStart, fetchEnd){
   if(!(r && !r.error && r.dates && r.dates.length)) return false;
-  const prev = priceCache[tk];
+  // A cached series dated on a different basis (see `basis` in the Worker) is
+  // replaced, never merged: stitching the two would duplicate or shift days.
+  const prev = (priceCache[tk] && priceCache[tk].basis === r.basis) ? priceCache[tk] : null;
   let dates = r.dates, prices = r.prices;
   // OHLC is carried through only when the Worker returns it (newer deployments).
   let opens = r.opens, highs = r.highs, lows = r.lows;
@@ -933,7 +936,7 @@ function storeBatchResult(tk, r, fetchStart, fetchEnd){
     cachedStart: dates[0], cachedEnd: dates[dates.length-1],
     coverageStart: prev ? minIso(prev.coverageStart, fetchStart) : fetchStart,
     coverageEnd: prev ? maxIso(prev.coverageEnd, fetchEnd) : fetchEnd,
-    source: r.source, kind: r.kind
+    source: r.source, kind: r.kind, basis: r.basis
   };
   return true;
 }
@@ -1031,7 +1034,8 @@ async function loadTickerPool(){
     const e = priceCache[t];
     if(e && e.coverageStart <= POOL_FETCH_START && e.coverageEnd < fetchEnd){
       tailNeed.push(t);                                   // only the recent tail is missing
-      if(e.coverageEnd < tailStart) tailStart = e.coverageEnd;
+      const ts = SharedYF.tailStart(e);                    // overlaps the cache, see shared.js
+      if(ts < tailStart) tailStart = ts;
     } else {
       fullNeed.push(t);                                   // no cache (or a front gap) → full history
     }
@@ -1068,6 +1072,9 @@ async function loadTickerPool(){
     if(tailNeed.length){
       const map = await SharedYF.fetchPricesBatch(tailNeed, tailStart, fetchEnd);
       absorb(tailNeed, tailStart, map);
+      // A tail dated on a new basis replaces the cached history (storeBatchResult),
+      // so that ticker needs its full history again.
+      for(const t of tailNeed){ const e=priceCache[t]; if(e && e.coverageStart > POOL_FETCH_START && !fullNeed.includes(t)){ fullNeed.push(t); ok--; } }
     }
     if(fullNeed.length){
       const map = await SharedYF.fetchPricesBatch(fullNeed, POOL_FETCH_START, fetchEnd);
@@ -1274,15 +1281,17 @@ function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentum
     // Once per period (month or week): invest on the first day price moves the
     // set % from the period's opening price; otherwise skip (or buy at the end
     // of the period when "Invest at End of …" is on).
+    // The move is measured exactly as the Portfolio tool's Price % move trigger
+    // measures it (price / open - 1 against the threshold), so a price sitting on
+    // the threshold fires in both or in neither; p >= open*(1+t) rounds differently.
     const threshold=(momentumPct||5)/100;
     groupIndicesByPeriod(dates, period).forEach(idxs=>{
       const refPrice=prices[idxs[0]];
       let invested=false;
       for(const i of idxs){
-        const p=prices[i];
-        if(style==='momentum-peak'&&p>=refPrice*(1+threshold)){
-          result.push(i); invested=true; break;
-        } else if(style==='momentum-dip'&&p<=refPrice*(1-threshold)){
+        if(!(refPrice>0) || !(Number.isFinite(prices[i]) && prices[i]>0)) continue;
+        const move=prices[i]/refPrice-1;
+        if(style==='momentum-peak' ? move>=threshold : move<=-threshold){
           result.push(i); invested=true; break;
         }
       }
@@ -1360,6 +1369,20 @@ function simulateSecurity(sec){
   // dollars.
   const endPx=tradable(dates.length-1)?prices[dates.length-1]:0;
   return { investRows, dailyRows, finalEquity: runUnits*endPx, totalDeposited:runDeposited };
+}
+
+// Reduce price series to the dates present in all of them (OHLC carried along).
+// Pure, so the audit harness can lift it off the page.
+function alignToCommonDates(series){
+  let common=series[0].dates.slice();
+  for(let k=1;k<series.length;k++){ const have=new Set(series[k].dates); common=common.filter(d=>have.has(d)); }
+  return series.map(pd=>{
+    const at=new Map(pd.dates.map((d,i)=>[d,i]));
+    const pick=arr=>common.map(d=>arr[at.get(d)]);
+    const out={dates:common.slice(), prices:pick(pd.prices)};
+    if(pd.opens && pd.highs && pd.lows){ out.opens=pick(pd.opens); out.highs=pick(pd.highs); out.lows=pick(pd.lows); }
+    return out;
+  });
 }
 
 /* ─── SIMULATE BUTTON GATING ──────────────────────────────────────────────────
@@ -1456,27 +1479,16 @@ async function runSimulation(){
   const loadedSecs = securities.filter(s=>s.priceData&&s.priceData.dates.length);
   if(!loadedSecs.length){ showWarning('No securities with data loaded.'); return; }
 
-  const latestStart = loadedSecs.map(s=>s.priceData.dates[0]).sort().pop();
-  const earliestEnd = loadedSecs.map(s=>s.priceData.dates[s.priceData.dates.length-1]).sort()[0];
+  // Every scenario runs on the trading days they all share, as the Portfolio
+  // tool does. Trimming only the range left each scenario on its own calendar,
+  // so two markets with different holidays (or a 7-day crypto series) drew
+  // their points under each other's dates on the charts.
+  const aligned = alignToCommonDates(loadedSecs.map(s=>s.priceData));
+  if(aligned[0].dates.length<2){ showWarning('No overlapping trading days between scenarios.'); return; }
+  loadedSecs.forEach((sec,k)=>{ sec.priceData=aligned[k]; });
+  const axis=aligned[0].dates;
 
-  if(latestStart>=earliestEnd){ showWarning('No overlapping date range between securities.'); return; }
-
-  // Trim all to common range (carry OHLC along when present)
-  for(const sec of loadedSecs){
-    const pd=sec.priceData;
-    const si=pd.dates.findIndex(d=>d>=latestStart);
-    const ei=pd.dates.findLastIndex(d=>d<=earliestEnd);
-    if(si<0||ei<0) continue;
-    const trimmed={dates:pd.dates.slice(si,ei+1), prices:pd.prices.slice(si,ei+1)};
-    if(pd.opens && pd.highs && pd.lows){
-      trimmed.opens=pd.opens.slice(si,ei+1);
-      trimmed.highs=pd.highs.slice(si,ei+1);
-      trimmed.lows =pd.lows.slice(si,ei+1);
-    }
-    sec.priceData=trimmed;
-  }
-
-  showStatus($('dateRangeStatus'),`Date range: ${latestStart} → ${earliestEnd}`,'ok');
+  showStatus($('dateRangeStatus'),`Date range: ${axis[0]} → ${axis[axis.length-1]} (${axis.length} days)`,'ok');
 
   // Run simulations
   simResults=[];
@@ -1994,9 +2006,10 @@ function endpointRowHtml(d, label){
   return `<tr class="detail-endpoint">
     <td>${d.date}<span class="detail-row-tag">${label}</span></td>
     <td>${fmt.currency(d.price)}</td>
-    <td>${fmt.currency(d.totalDeposited)}</td>
+    <td>—</td>
     <td>—</td>
     <td>${d.totalUnits.toFixed(6)}</td>
+    <td>${fmt.currency(d.totalDeposited)}</td>
     <td>${fmt.currency(d.equity)}</td>
     <td style="color:${color}">${fmt.pct(ret)}</td>
   </tr>`;
@@ -2006,7 +2019,7 @@ function renderDetailTable(idx){
   const res=simResults[idx];
   if(!res) return;
   const tbody=$('detailBody');
-  if(!res.investRows.length){ tbody.innerHTML='<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">No investment dates in range.</td></tr>'; return; }
+  if(!res.investRows.length){ tbody.innerHTML='<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">No investment dates in range.</td></tr>'; return; }
   const daily=res.dailyRows;
   const first=daily[0], last=daily[daily.length-1];
   let html='';
@@ -2020,6 +2033,7 @@ function renderDetailTable(idx){
       <td>${fmt.currency(r.amountInvested)}</td>
       <td>${r.unitsAdded.toFixed(6)}</td>
       <td>${r.totalUnits.toFixed(6)}</td>
+      <td>${fmt.currency(r.totalDeposited)}</td>
       <td>${fmt.currency(r.equity)}</td>
       <td style="color:${color}">${fmt.pct(r.returnPct/100)}</td>
     </tr>`;
@@ -2077,7 +2091,7 @@ function resetWorkspace(){
   if(priceChartInstance){ priceChartInstance.destroy(); priceChartInstance=null; }
   if(equityChartInstance){ equityChartInstance.destroy(); equityChartInstance=null; }
   $('summaryGrid').innerHTML='';
-  $('detailBody').innerHTML='<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">Add securities to see detailed data.</td></tr>';
+  $('detailBody').innerHTML='<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">Add securities to see detailed data.</td></tr>';
   $('detailSelect').innerHTML='';
   activeDetailSec=0;
   $('priceLegend').innerHTML=''; $('equityLegend').innerHTML='';
@@ -2346,9 +2360,17 @@ $('downloadBtn').addEventListener('click',()=>{
   if(!simResults.length){ showWarning('Run simulation first.'); return; }
   const idx=activeDetailSec<simResults.length?activeDetailSec:0;
   const res=simResults[idx]; if(!res) return;
-  const headers=['Date','Price','Amount_Invested','Units_Added','Total_Units','Equity','Return_Pct'];
-  const lines=res.investRows.map(r=>[r.date,r.price.toFixed(4),r.amountInvested.toFixed(2),
-    r.unitsAdded.toFixed(6),r.totalUnits.toFixed(6),r.equity.toFixed(2),r.returnPct.toFixed(2)].join(','));
+  // The same rows the table shows: the first and last day bracket the buys, so
+  // the file ends on the final equity the summary reports.
+  const headers=['Date','Row','Price','Amount_Invested','Units_Added','Total_Units','Total_Deposited','Equity','Return_Pct'];
+  const endRow=(d,tag)=>[d.date,tag,d.price.toFixed(4),'','',d.totalUnits.toFixed(6),d.totalDeposited.toFixed(2),d.equity.toFixed(2),
+    (d.totalDeposited>0?(d.equity-d.totalDeposited)/d.totalDeposited*100:0).toFixed(2)].join(',');
+  const daily=res.dailyRows, first=daily[0], last=daily[daily.length-1];
+  const buys=res.investRows;
+  const lines=buys.map(r=>[r.date,'buy',r.price.toFixed(4),r.amountInvested.toFixed(2),
+    r.unitsAdded.toFixed(6),r.totalUnits.toFixed(6),r.totalDeposited.toFixed(2),r.equity.toFixed(2),r.returnPct.toFixed(2)].join(','));
+  if(first && (!buys.length || first.date!==buys[0].date)) lines.unshift(endRow(first,'start'));
+  if(last && (!buys.length || last.date!==buys[buys.length-1].date)) lines.push(endRow(last,'final'));
   const csv='# Made using tool.adjiebrotots.com/dcasimulator\n'+[headers.join(','),...lines].join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));

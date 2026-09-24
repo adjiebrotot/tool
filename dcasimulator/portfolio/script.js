@@ -205,7 +205,9 @@ const fmt = {
     if(compact&&abs>=1e3) return sign+sym+(abs/1e3).toFixed(0)+'k';
     return sign+sym+Math.round(abs).toLocaleString('en-US');
   },
-  pct(v,d=2){ const n=Number(v||0); return (Math.abs(n)<=1?n*100:n).toFixed(d)+'%'; },
+  // Always a fraction: 1.5 is 150%. Guessing fraction-or-percent from the size
+  // printed any ROI above 100% as 1.50%.
+  pct(v,d=2){ return (Number(v||0)*100).toFixed(d)+'%'; },
   num(v,d=0){ return Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); },
 };
 
@@ -294,8 +296,7 @@ function computeMetrics(res){
   return {sharpe, sortino, cagrTwr, cagrMwr};
 }
 const fmtRatio  = v => (v==null||!isFinite(v)) ? ' - ' : v.toFixed(2);
-// Always treat the input as a fraction (avoids fmt.pct's fraction-or-percent
-// ambiguity, which would misread a CAGR above 100%).
+// Takes a fraction, like fmt.pct; null or non-finite reads as ' - '.
 const fmtMetPct = v => (v==null||!isFinite(v)) ? ' - ' : (v*100).toFixed(2)+'%';
 // Hover explanations for each advanced metric (avoid double quotes - used in data-tip).
 const METRIC_TIPS = {
@@ -348,7 +349,19 @@ function generateGBMPrices(startDate, endDate, annualReturn, annualStd, startPri
     }
     d=new Date(d.getTime()+86400000);
   }
-  return {dates, prices};
+  // Intraday O/H/L drawn exactly as the single-asset tool draws them, from the
+  // same generator after the closes, so one seed gives one set of candles on
+  // both pages and the close path is untouched.
+  const opens=[], highs=[], lows=[];
+  const idv=sigma*Math.sqrt(dt);
+  for(let i=0;i<prices.length;i++){
+    const c=prices[i];
+    const open=i===0?c:prices[i-1];
+    const hi=Math.max(open,c)*(1+Math.abs(randomFn())*idv*0.8);
+    const lo=Math.min(open,c)*(1-Math.abs(randomFn())*idv*0.8);
+    opens.push(open); highs.push(hi); lows.push(Math.max(1e-6,lo));
+  }
+  return {dates, prices, opens, highs, lows};
 }
 
 /* ─── YAHOO FINANCE FETCH (shared engine from ../../shared.js) ─── */
@@ -375,7 +388,7 @@ async function ensureTickerCached(ticker, reqStart, reqEnd){
     if(!e){ segments.push([reqStart, reqEnd]); }
     else {
       if(reqStart < e.coverageStart) segments.push([reqStart, e.coverageStart]);
-      if(reqEnd   > e.coverageEnd)   segments.push([e.coverageEnd, reqEnd]);
+      if(reqEnd   > e.coverageEnd)   segments.push([SharedYF.tailStart(e), reqEnd]);
     }
     let got=false;
     for(const [segStart, segEnd] of segments){
@@ -398,7 +411,9 @@ function getCachedPriceSlice(ticker, startDate, endDate){
   const si=e.dates.findIndex(d=>d>=startDate);
   const ei=e.dates.findLastIndex(d=>d<=endDate);
   if(si<0||ei<0||si>ei) return null;
-  return {dates:e.dates.slice(si,ei+1), prices:e.prices.slice(si,ei+1)};
+  const out={dates:e.dates.slice(si,ei+1), prices:e.prices.slice(si,ei+1)};
+  if(e.opens && e.highs && e.lows){ out.opens=e.opens.slice(si,ei+1); out.highs=e.highs.slice(si,ei+1); out.lows=e.lows.slice(si,ei+1); }
+  return out;
 }
 function isTickerRangeCovered(ticker, startDate, endDate){
   const tk=String(ticker||'').trim().toUpperCase();
@@ -455,18 +470,26 @@ function loadedTickers(){ return Object.keys(priceCache).sort(); }
 // tail/front fetch never discards cached data) and widens the coverage window.
 function storeBatchResult(tk, r, fetchStart, fetchEnd){
   if(!(r && !r.error && r.dates && r.dates.length)) return false;
-  const prev = priceCache[tk];
+  // A cached series dated on a different basis (see `basis` in the Worker) is
+  // replaced, never merged: stitching the two would duplicate or shift days.
+  const prev = (priceCache[tk] && priceCache[tk].basis === r.basis) ? priceCache[tk] : null;
   let dates = r.dates, prices = r.prices;
+  // The cache is shared with the single-asset tool, which draws real candles from
+  // these OHLC arrays, so they are carried through rather than dropped on write.
+  let opens = r.opens, highs = r.highs, lows = r.lows;
   if(prev && prev.dates && prev.dates.length && window.SharedYF && SharedYF.mergeSeries){
-    const m = SharedYF.mergeSeries({dates:prev.dates, prices:prev.prices}, {dates:r.dates, prices:r.prices});
-    dates = m.dates; prices = m.prices;
+    const m = SharedYF.mergeSeries(
+      {dates:prev.dates, prices:prev.prices, opens:prev.opens, highs:prev.highs, lows:prev.lows},
+      {dates:r.dates,    prices:r.prices,    opens:r.opens,    highs:r.highs,    lows:r.lows});
+    dates = m.dates; prices = m.prices; opens = m.opens; highs = m.highs; lows = m.lows;
   }
   priceCache[tk]={
     dates, prices,
+    ...(opens && highs && lows ? {opens, highs, lows} : {}),
     cachedStart: dates[0], cachedEnd: dates[dates.length-1],
     coverageStart: prev ? minIso(prev.coverageStart, fetchStart) : fetchStart,
     coverageEnd: prev ? maxIso(prev.coverageEnd, fetchEnd) : fetchEnd,
-    source:r.source, kind:r.kind
+    source:r.source, kind:r.kind, basis:r.basis
   };
   return true;
 }
@@ -604,7 +627,7 @@ async function loadTickerPool(){
     if(isTickerRangeCovered(t,POOL_FETCH_START,fetchEnd)) continue;
     const e=priceCache[t];
     if(e && e.coverageStart<=POOL_FETCH_START && e.coverageEnd<fetchEnd){
-      tailNeed.push(t); if(e.coverageEnd<tailStart) tailStart=e.coverageEnd;
+      tailNeed.push(t); const ts=SharedYF.tailStart(e); if(ts<tailStart) tailStart=ts;
     } else { fullNeed.push(t); }
   }
   const need=fullNeed.length+tailNeed.length;
@@ -631,7 +654,12 @@ async function loadTickerPool(){
         else failed.push(t+(map[t]&&map[t].error?' ('+map[t].error+')':''));
       }
     };
-    if(tailNeed.length){ absorb(tailNeed, tailStart, await SharedYF.fetchPricesBatch(tailNeed,tailStart,fetchEnd)); }
+    if(tailNeed.length){
+      absorb(tailNeed, tailStart, await SharedYF.fetchPricesBatch(tailNeed,tailStart,fetchEnd));
+      // A tail dated on a new basis replaces the cached history (storeBatchResult),
+      // so that ticker needs its full history again.
+      for(const t of tailNeed){ const e=priceCache[t]; if(e && e.coverageStart>POOL_FETCH_START && !fullNeed.includes(t)){ fullNeed.push(t); ok--; } }
+    }
     if(fullNeed.length){ absorb(fullNeed, POOL_FETCH_START, await SharedYF.fetchPricesBatch(fullNeed,POOL_FETCH_START,fetchEnd)); }
     persistPriceCache();
     if(failed.length&&ok) showStatus($('poolStatus'),ok+' loaded · could not load: '+failed.join(', '),'warn');
@@ -1551,6 +1579,7 @@ function buyByWeights(assets, state, i, buyFee, wts){
     const dollars=cash*((wts[k]||0)/100);
     if(dollars<=0 || !pxOk(a,i)) return;
     state.units[a.id]+=dollars*(1-buyFee)/a.px[i];
+    state.fees+=dollars*buyFee;
     state.cash-=dollars;
   });
   if(state.cash<1e-9) state.cash=0;
@@ -1567,6 +1596,7 @@ function buyUnderweight(assets, state, i, buyFee, wts){
     const spend=deficits[k]*scale;
     if(spend<=0) return;
     state.units[a.id]+=spend*(1-buyFee)/a.px[i];
+    state.fees+=spend*buyFee;
     state.cash-=spend;
   });
   if(state.cash<1e-9) state.cash=0;
@@ -1583,6 +1613,7 @@ function fullRebalance(assets, state, i, buyFee, sellFee, wts){
       const sellDollars=value-target;
       state.units[a.id]-=sellDollars/price;
       state.cash+=sellDollars*(1-sellFee);
+      state.fees+=sellDollars*sellFee;
     }
   });
   // Buy underweight with whatever cash is available (scaled to avoid overspend)
@@ -1590,7 +1621,7 @@ function fullRebalance(assets, state, i, buyFee, sellFee, wts){
   const totalBuy=buys.reduce((s,b)=>s+b,0);
   if(totalBuy>0){
     const scale=Math.min(1, state.cash/totalBuy);
-    assets.forEach((a,k)=>{ const spend=buys[k]*scale; if(spend<=0) return; state.units[a.id]+=spend*(1-buyFee)/a.px[i]; state.cash-=spend; });
+    assets.forEach((a,k)=>{ const spend=buys[k]*scale; if(spend<=0) return; state.units[a.id]+=spend*(1-buyFee)/a.px[i]; state.fees+=spend*buyFee; state.cash-=spend; });
   }
   if(state.cash<1e-9) state.cash=0;
 }
@@ -1651,7 +1682,8 @@ function buildAssetTriggerSignals(assets, common, topupSet){
         for(let i=0;i<n;i++){
           const k = SharedTA.periodKey(common[i], period);
           if(k!==curKey){ curKey=k; openPx=px[i]; }
-          if(openPx==null||openPx<=0) continue;
+          // A missing or non-positive quote (the open or today's) is not a move.
+          if(!(openPx>0) || !(Number.isFinite(px[i]) && px[i]>0)) continue;
           const move = px[i]/openPx - 1;
           raw[i] = dir==='rise' ? (move >= pct) : (move <= -pct);
         }
@@ -1709,11 +1741,14 @@ function deployTriggered(assets, state, i, triggeredIdx, buyFee, sellFee, reserv
   if(!triggeredIdx.length) return;
   const T=state.cash+investedValue(assets,state,i);
   if(T<=0) return;
+  // Targets read through normWeights, as every other method's do, so weights the
+  // run accepted within its 0.5% tolerance are scaled to 100% rather than used raw.
+  const wts=normWeights(assets.map(a=>a.weight||0));
   const buys={}; let need=0;
   triggeredIdx.forEach(k=>{
     const a=assets[k];
     if(!pxOk(a,i)) return;
-    const def=Math.max(0, T*((a.weight||0)/100) - state.units[a.id]*a.px[i]);
+    const def=Math.max(0, T*(wts[k]/100) - state.units[a.id]*a.px[i]);
     if(def>0){ buys[k]=def; need+=def; }
   });
   if(need<=0) return;
@@ -1728,6 +1763,7 @@ function deployTriggered(assets, state, i, triggeredIdx, buyFee, sellFee, reserv
       const sellValue=Math.min(wantValue, haveValue);
       state.units[r.id]-=sellValue/r.px[i];
       state.cash+=sellValue*(1-sellFee);
+      state.fees+=sellValue*sellFee;
     }
   }
   const scale=Math.min(1, state.cash/need);
@@ -1735,6 +1771,7 @@ function deployTriggered(assets, state, i, triggeredIdx, buyFee, sellFee, reserv
     const spend=(buys[k]||0)*scale; if(spend<=0) return;
     const a=assets[k];
     state.units[a.id]+=spend*(1-buyFee)/a.px[i];
+    state.fees+=spend*buyFee;
     state.cash-=spend;
   });
   if(state.cash<1e-9) state.cash=0;
@@ -1765,7 +1802,9 @@ function simulatePortfolio(p, assets, common, rfPx){
   const triggerSig=isRule ? buildAssetTriggerSignals(assets, common, topupSet) : null;
   const reserveOnlyWts=(reserveIdx>=0) ? assets.map((a,k)=>k===reserveIdx?100:0) : null;
 
-  const state={cash:0, units:{}};
+  // fees and interest run alongside cash and units so every row closes:
+  // total = cumTopup + interest - fees + (market gain on the holdings).
+  const state={cash:0, units:{}, fees:0, interest:0};
   assets.forEach(a=>state.units[a.id]=0);
   const rows=[]; let cumTopup=0;
   for(let i=0;i<common.length;i++){
@@ -1774,7 +1813,7 @@ function simulatePortfolio(p, assets, common, rfPx){
     // buys different assets on different days, so the buy markers are per-asset.
     const unitsBefore={};
     assets.forEach(a=>unitsBefore[a.id]=state.units[a.id]);
-    if(i>0){ state.cash *= (rfMode==='ticker' && rfPx ? (rfPx[i]/rfPx[i-1]) : rfDayFactor); }
+    if(i>0){ const c0=state.cash; state.cash *= (rfMode==='ticker' && rfPx ? (rfPx[i]/rfPx[i-1]) : rfDayFactor); state.interest+=state.cash-c0; }
     if(topupSet.has(i)){
       // Each top-up compounds the base amount by the yearly increase, stepping
       // up once per full year elapsed since the first day of the simulation.
@@ -1825,7 +1864,8 @@ function simulatePortfolio(p, assets, common, rfPx){
       const v=pxOk(a,i)?state.units[a.id]*a.px[i]:0; assetVals[a.id]=v; invested+=v;
       if(state.units[a.id] > unitsBefore[a.id]+1e-12) bought.push(a.id);
     });
-    rows.push({date:common[i], cash:state.cash, assetVals, invested, total:state.cash+invested, cumTopup, event:ev.join(' + '), bought});
+    rows.push({date:common[i], cash:state.cash, assetVals, units:Object.assign({}, state.units), invested, total:state.cash+invested, cumTopup,
+      fees:state.fees, interest:state.interest, event:ev.join(' + '), bought});
   }
   return rows;
 }
@@ -1931,7 +1971,11 @@ async function runSimulation(){
     portfolios.forEach(p=>{
       const active=p.assets.filter(a=>a.priceData&&a.priceData.dates.length);
       if(!active.length) return;
-      active.forEach(a=>{ const m=new Map(); a.priceData.dates.forEach((d,i)=>m.set(d,a.priceData.prices[i])); a.px=common.map(d=>m.get(d)); });
+      active.forEach(a=>{
+        const pd=a.priceData, at=new Map(); pd.dates.forEach((d,i)=>at.set(d,i));
+        a.px=common.map(d=>pd.prices[at.get(d)]);
+        a.ohlc=(pd.opens && pd.highs && pd.lows) ? {o:common.map(d=>pd.opens[at.get(d)]), h:common.map(d=>pd.highs[at.get(d)]), l:common.map(d=>pd.lows[at.get(d)])} : null;
+      });
       let rfPx=null;
       if(p._rfData){ const m=new Map(); p._rfData.dates.forEach((d,i)=>m.set(d,p._rfData.prices[i])); rfPx=common.map(d=>m.get(d)); }
       const rows=simulatePortfolio(p, active, common, rfPx);
@@ -1939,7 +1983,7 @@ async function runSimulation(){
       // its trigger so the Security Prices subsection can chart prices, candlesticks
       // and (for Rule-Based tech triggers) the underlying indicators on demand.
       results.push({ id:p.id, name:p.name, colorHex:p.colorHex, rows, rfPx, rfRate:(p.rf.mode==='ticker'?0:(p.rf.rate||0)), method:p.rebal.method,
-        assets:active.map(a=>({id:a.id,name:a.name,colorHex:a.colorHex,weight:a.weight,type:a.type,px:a.px.slice(),trigger:a.trigger})) });
+        assets:active.map(a=>({id:a.id,name:a.name,colorHex:a.colorHex,weight:a.weight,type:a.type,px:a.px.slice(),ohlc:a.ohlc,trigger:a.trigger})) });
       // reflect "loaded" badges for tickers in the active portfolio's asset list
       if(p.id===activePortfolioId){ active.forEach(a=>{ const el=$('aLoad'+a.id); if(el&&a.type==='ticker'){ el.className='status-bar status-ok'; el.textContent='✓ Loaded'; } }); }
     });
@@ -2101,9 +2145,10 @@ function updateCompChart(){
    more, opt-in per-asset buy-date triangles, and (for the Rule-Based method's
    tech triggers) the underlying technical indicators stacked below the price. */
 
-// Synthesise plausible intraday OHLC from a close-price series so candlestick mode
-// has real candles. The portfolio's price feed carries closes only, so open is the
-// prior close and the wicks extend a quarter of the day's move past open/close.
+// Real OHLC is used when the price feed carries it (seeded custom assets always
+// do, tickers once the Worker returns it), exactly as the single-asset tool does.
+// Otherwise candles are synthesised from closes: open is the prior close and the
+// wicks extend a quarter of the day's move past open/close.
 function buildPriceOHLC(closes){
   const o=[],h=[],l=[];
   for(let i=0;i<closes.length;i++){
@@ -2224,7 +2269,7 @@ function updatePriceChart(){
       borderColor: showCandles ? 'transparent' : color,
       backgroundColor:color+'22', borderWidth:2.5, pointRadius:0,
       pointHoverRadius:showCandles?0:5, tension:0.2, fill:false };
-    if(showCandles) ds._ohlc=buildPriceOHLC(a.px);
+    if(showCandles) ds._ohlc=a.ohlc ? {o:a.ohlc.o, h:a.ohlc.h, l:a.ohlc.l, c:a.px.slice()} : buildPriceOHLC(a.px);
     return ds;
   });
 
@@ -2364,9 +2409,12 @@ function updatePriceChart(){
 function updateSummary(){
   const sg=$('summaryGrid'); sg.innerHTML='';
   if(!simResults.length){ return; }
-  // Identify the best final value to highlight the winner.
-  let bestId=null, bestVal=-Infinity;
-  simResults.forEach(res=>{ const v=res.rows[res.rows.length-1].total; if(v>bestVal){ bestVal=v; bestId=res.id; } });
+  // Star a winner only when it leads on all three figures its tile shows: final
+  // value, net gain and ROI. With different top-ups those can disagree, and a
+  // star on the biggest pot beside a smaller ROI would contradict the tile.
+  const figs=simResults.map(res=>{ const l=res.rows[res.rows.length-1]; const g=l.total-l.cumTopup; return {id:res.id, v:l.total, g, r:l.cumTopup>0?g/l.cumTopup:0}; });
+  const leader=key=>figs.reduce((b,f)=>f[key]>b[key]?f:b, figs[0]).id;
+  const bestId=(figs.length && leader('v')===leader('g') && leader('v')===leader('r')) ? leader('v') : null;
 
   const advStyle=`display:${showAdvanced?'grid':'none'}`;
   simResults.forEach(res=>{
@@ -2410,12 +2458,14 @@ function updateTable(){
   const head=$('compHead'), body=$('compBody');
   if(!simResults.length){ return; }
   const res=simResults.find(r=>r.id===activeDetailId)||simResults[0];
-  head.innerHTML=`<tr><th>Date</th><th>Event</th><th class="cash-cell">Cash</th>${res.assets.map(a=>`<th>${a.name}</th>`).join('')}<th>Deposited</th><th>Portfolio Value</th></tr>`;
+  // Interest and Fees are running totals, so any row closes on its own:
+  // Portfolio Value - Deposited - Interest + Fees is what the market added.
+  head.innerHTML=`<tr><th>Date</th><th>Event</th><th class="cash-cell">Cash</th>${res.assets.map(a=>`<th>${escapeHtml(a.name)}</th>`).join('')}<th>Deposited</th><th>Interest</th><th>Fees</th><th>Portfolio Value</th></tr>`;
   const rows=breakdownRows(res.rows);
   body.innerHTML=rows.map(({row:r,tag})=>{
     const label=tag?`<span class="detail-row-tag">${tag}</span>`:'';
     const evt=r.event||(tag?(tag==='start'?'Start of simulation':'End of simulation'):'');
-    return `<tr${tag?' class="detail-endpoint"':''}><td>${r.date}${label}</td><td>${evt}</td><td class="cash-cell">${fmt.currency(r.cash)}</td>${res.assets.map(a=>`<td>${fmt.currency(r.assetVals[a.id]||0)}</td>`).join('')}<td>${fmt.currency(r.cumTopup)}</td><td>${fmt.currency(r.total)}</td></tr>`;
+    return `<tr${tag?' class="detail-endpoint"':''}><td>${r.date}${label}</td><td>${evt}</td><td class="cash-cell">${fmt.currency(r.cash)}</td>${res.assets.map(a=>`<td>${fmt.currency(r.assetVals[a.id]||0)}</td>`).join('')}<td>${fmt.currency(r.cumTopup)}</td><td>${fmt.currency(r.interest)}</td><td>${fmt.currency(r.fees)}</td><td>${fmt.currency(r.total)}</td></tr>`;
   }).join('');
 }
 
@@ -2464,10 +2514,16 @@ function cleanCSV(text){
 $('downloadBtn').addEventListener('click',()=>{
   if(!simResults.length){ showWarning('Run a simulation first.'); return; }
   const res=simResults.find(r=>r.id===activeDetailId)||simResults[0];
-  const header=['Date','Cash',...res.assets.map(a=>a.name),'Invested','PortfolioValue','CumulativeTopups'];
-  const lines=[header.join(',')];
-  res.rows.forEach(r=>{
-    const row=[r.date, r.cash.toFixed(2), ...res.assets.map(a=>(r.assetVals[a.id]||0).toFixed(2)), r.invested.toFixed(2), r.total.toFixed(2), r.cumTopup.toFixed(2)];
+  // Units and price per asset make every value in the file re-derivable
+  // (value = units x price, PortfolioValue = Cash + Invested), and the running
+  // Interest and Fees close the books against CumulativeTopups.
+  const q=v=>{ const t=String(v); return /[",\n]/.test(t) ? '"'+t.replace(/"/g,'""')+'"' : t; };
+  const header=['Date','Event','Cash',...res.assets.flatMap(a=>[a.name+' Units', a.name+' Price', a.name]),'Invested','PortfolioValue','CumulativeTopups','CumulativeInterest','CumulativeFees'];
+  const lines=[header.map(q).join(',')];
+  res.rows.forEach((r,ri)=>{
+    const row=[r.date, q(r.event||''), r.cash.toFixed(2),
+      ...res.assets.flatMap(a=>[(r.units?r.units[a.id]:0).toFixed(8), Number.isFinite(a.px[ri])?a.px[ri].toFixed(4):'', (r.assetVals[a.id]||0).toFixed(2)]),
+      r.invested.toFixed(2), r.total.toFixed(2), r.cumTopup.toFixed(2), r.interest.toFixed(2), r.fees.toFixed(2)];
     lines.push(row.join(','));
   });
   const blob=new Blob([cleanCSV(lines.join('\n'))],{type:'text/csv'});
@@ -2499,8 +2555,10 @@ function buildSettingsObj(){
 }
 // Rebuild one portfolio from a saved snapshot, merging onto current defaults so
 // older files still get any newer fields, and clearing transient/cache fields.
-function normalizeLoadedPortfolio(src){
-  const base=makePortfolio(src.name, src.colorHex);   // for default sub-objects
+function normalizeLoadedPortfolio(src, idx){
+  // A file without colours would otherwise give every portfolio the first
+  // palette colour, and two lines on one chart would be indistinguishable.
+  const base=makePortfolio(src.name, src.colorHex||PORTFOLIO_COLOR_HEX[(idx||0) % PORTFOLIO_COLOR_HEX.length]);
   base.id = src.id||base.id;
   base.name = src.name||base.name;
   base.colorHex = src.colorHex||base.colorHex;
@@ -2529,7 +2587,7 @@ function importSettings(obj){
   if(g.endDate) $('endDate').value=g.endDate;
   if(g.tickerPool!=null){ const inp=$('tickerPoolInput'); if(inp) inp.value=g.tickerPool; }
   if(Array.isArray(g.simPool)){ simPool=g.simPool.filter(x=>x&&x.name).map(x=>({name:x.name, returnPct:Number(x.returnPct)||0, stdPct:Math.max(0,Number(x.stdPct)||0)})); persistSimPool(); renderPoolChips(); refreshAssetPoolSelect(); }
-  portfolios=(obj.portfolios||[]).map(normalizeLoadedPortfolio);
+  portfolios=(obj.portfolios||[]).map((src,idx)=>normalizeLoadedPortfolio(src,idx));
   simResults=[]; commonDates=[];
   markFresh();
   portfolioIdCounter = portfolios.reduce((m,p)=>Math.max(m, p.id||0), 0);
@@ -2783,8 +2841,8 @@ function resetWorkspace(){
   $('priceCandleToggle').checked=false; $('priceBuyDateToggle').checked=false; $('priceTechToggle').checked=false;
   $('priceTechToggleWrap').style.display='none';
   $('summaryGrid').innerHTML='';
-  $('compHead').innerHTML='<tr><th>Date</th><th>Event</th><th>Cash</th><th>Deposited</th><th>Portfolio Value</th></tr>';
-  $('compBody').innerHTML='<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">Add portfolios and run to see the breakdown.</td></tr>';
+  $('compHead').innerHTML='<tr><th>Date</th><th>Event</th><th>Cash</th><th>Deposited</th><th>Interest</th><th>Fees</th><th>Portfolio Value</th></tr>';
+  $('compBody').innerHTML='<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">Add portfolios and run to see the breakdown.</td></tr>';
   $('valueLegend').innerHTML=''; $('compLegend').innerHTML=''; $('priceLegend').innerHTML='';
   $('detailPfSelect').innerHTML='';
   $('valueHoverBox').textContent='Configure portfolios and run to compare value over time.';

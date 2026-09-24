@@ -52,7 +52,7 @@ checks its output against an independent replay of the documented mathematics, r
 the tool's own code:
 
 ```sh
-cd <tool>/_audit && node run.mjs      # dcasimulator uses run.js
+cd <tool>/_audit && node run.mjs      # dcasimulator uses run.js and integrity.js
 ```
 
 `financingvscash/_audit/` carries a second harness beside that one.

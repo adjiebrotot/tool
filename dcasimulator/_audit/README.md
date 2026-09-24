@@ -21,6 +21,32 @@ accounting integrity and cross-tool consistency against real Adj.Close data.
 
 Run: `node run.js` and `node metrics.js`.
 
+- `integrity.js` - the one that keeps no copies. It lifts every engine function it
+  runs straight out of `../script.js` and `../portfolio/script.js`, so it checks the
+  code users run, and holds both tools to four promises:
+  - **Accounting.** Every single-asset row is units x price with running totals, and
+    CAGR (MWR) really zeroes the NPV of the cash flows. Every portfolio row closes as
+    value = top-ups + interest - fees + market gain, with the market gain rebuilt
+    independently from the day-to-day holdings and prices, for every method, fees on,
+    a fixed cash rate and a cash ticker.
+  - **Triggers.** The price path after a cut day is swapped for a different one, and
+    every buy and ledger row up to the cut must not move, for every style, trigger and
+    method. The four Forward styles are checked to fail this, as their warning says.
+  - **Parity.** A date-based plan and a 100% single-asset portfolio topped up on the
+    same day agree on every daily value, deposit, buy date, the final value and all four
+    advanced metrics, on a weekday and a holiday calendar. A triggered plan (End of
+    period on) and a Rule-Based portfolio agree on every buy and unit; the two tools
+    book the money at different moments by design (the main tool when it buys, the
+    portfolio when it is topped up), so their deposit lines differ during the wait.
+    Prices landing exactly on a % threshold fire in both tools or neither.
+  - **Display and data.** Percentages above 100%, the shared date axis the main
+    tool's charts index by, the split-safe cache merge, and the Worker's exchange-day
+    dating.
+
+  `node integrity.js --ui` also opens one scenario file in both real pages, headless,
+  and compares what is on screen: final value, ROI, total topped up, the four metrics,
+  and the last row of each breakdown table. Chart.js is served from `_ref/.libcache/`.
+
 Price data: both prefer the real Adj.Close CSVs. Point at them with
 `DCA_FIXTURE_DIR=/path/to/csvs node run.js`. If the CSVs are not found they fall
 back to deterministic seeded GBM series with the same shape (low-vol money-market

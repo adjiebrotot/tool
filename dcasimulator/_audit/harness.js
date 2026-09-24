@@ -24,8 +24,10 @@ function loadShared(){
   window.addEventListener = noop;
   window.navigator = { clipboard:{} };
   window.getComputedStyle = ()=>({ getPropertyValue:()=>'' });
-  const fn = new Function('window','document','global', code + '\n;return window;');
-  return fn(window, document, window);
+  window.requestAnimationFrame = fn=>{ fn(); return 0; };
+  window.cancelAnimationFrame = noop;
+  const fn = new Function('window','document','global','requestAnimationFrame','cancelAnimationFrame', code + '\n;return window;');
+  return fn(window, document, window, window.requestAnimationFrame, window.cancelAnimationFrame);
 }
 const SharedTA = loadShared().SharedTA;
 if(!SharedTA || !SharedTA.buildTech) throw new Error('SharedTA failed to load');
@@ -121,9 +123,10 @@ function getInvestmentDates(priceData, style, dayOrDate, momentumPct=5, momentum
     const threshold=(momentumPct||5)/100;
     groupIndicesByPeriod(dates, period).forEach(idxs=>{
       const refPrice=prices[idxs[0]]; let invested=false;
-      for(const i of idxs){ const p=prices[i];
-        if(style==='momentum-peak'&&p>=refPrice*(1+threshold)){ result.push(i); invested=true; break; }
-        else if(style==='momentum-dip'&&p<=refPrice*(1-threshold)){ result.push(i); invested=true; break; } }
+      for(const i of idxs){
+        if(!(refPrice>0) || !(Number.isFinite(prices[i]) && prices[i]>0)) continue;
+        const move=prices[i]/refPrice-1;
+        if(style==='momentum-peak' ? move>=threshold : move<=-threshold){ result.push(i); invested=true; break; } }
       if(!invested&&momentumEOM) result.push(idxs[idxs.length-1]);
     });
   } else if(TECH_STYLES.includes(style)){
@@ -298,7 +301,7 @@ function buildAssetTriggerSignals(assets, common, topupSet){
         let curKey=null, openPx=null;
         for(let i=0;i<n;i++){ const k = SharedTA.periodKey(common[i], period);
           if(k!==curKey){ curKey=k; openPx=px[i]; }
-          if(openPx==null||openPx<=0) continue;
+          if(!(openPx>0) || !(Number.isFinite(px[i]) && px[i]>0)) continue;
           const move = px[i]/openPx - 1;
           raw[i] = dir==='rise' ? (move >= pct) : (move <= -pct); }
       } else {
@@ -329,8 +332,9 @@ function buildAssetTriggerSignals(assets, common, topupSet){
 function deployTriggered(assets, state, i, triggeredIdx, buyFee, sellFee, reserveIdx){
   if(!triggeredIdx.length) return;
   const T=state.cash+investedValue(assets,state,i); if(T<=0) return;
+  const wts=normWeights(assets.map(a=>a.weight||0));
   const buys={}; let need=0;
-  triggeredIdx.forEach(k=>{ const a=assets[k]; if(!pxOk(a,i)) return; const def=Math.max(0, T*((a.weight||0)/100) - state.units[a.id]*a.px[i]); if(def>0){ buys[k]=def; need+=def; } });
+  triggeredIdx.forEach(k=>{ const a=assets[k]; if(!pxOk(a,i)) return; const def=Math.max(0, T*(wts[k]/100) - state.units[a.id]*a.px[i]); if(def>0){ buys[k]=def; need+=def; } });
   if(need<=0) return;
   if(reserveIdx!=null && reserveIdx>=0 && assets[reserveIdx] && pxOk(assets[reserveIdx],i)){
     const r=assets[reserveIdx]; const shortfall=Math.max(0, need - state.cash);
