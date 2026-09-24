@@ -262,7 +262,7 @@ function onProblemTypeChange() {
   // Optimisation: hide step size only; Custom: hide step + bounds
   table.classList.toggle('input-table-hide-step', pt === 'optimisation' || pt === 'custom');
   table.classList.toggle('input-table-hide-bounds', pt === 'custom');
-  syncInputValueSpans();
+  syncInputFormColumn();
 }
 
 function onStudyTypeChange() {
@@ -957,17 +957,20 @@ function addInputRow(data = {}) {
     <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" autocomplete="off" /></td>
     <td class="iv-attr-cell"><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" />
       <button type="button" class="iv-int-toggle" id="iv-int-${idx}" onclick="toggleInputDiscrete(${idx})"
-        title="Integer / on-off attribute: enter the values to try (0,1 or 0-3 or 0,1,5) instead of bounds and step. Set automatically from the attribute; click to switch.">int</button></td>
+        title="Integer / on-off attribute: whole-number values with no step. Set automatically from the attribute; click to switch.">int</button></td>
     <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" autocomplete="off" /></td>
     <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" autocomplete="off" /></td>
-    <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" autocomplete="off" /></td>
-    <td class="col-vals"><input type="text" id="iv-vals-${idx}" value="${data.values||''}" placeholder="0,1  (or 0-3, 0,1,5)" autocomplete="off" /></td>
+    <td class="col-vals" colspan="2"><input type="text" id="iv-vals-${idx}" value="${data.values||''}" placeholder="0,1,5" autocomplete="off" /></td>
+    <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" autocomplete="off" />
+      <button type="button" class="iv-form-toggle" id="iv-form-${idx}" onclick="toggleInputList(${idx})"
+        title="Range: every integer from Lower to Upper. List: only the values you type, e.g. 0,1,5."><span>Range</span><span>List</span></button></td>
     <td class="td-action">
       <button class="btn btn-remove btn-icon" title="Remove" onclick="removeRow('input-row-${idx}')">✕</button>
     </td>
   `;
   tbody.appendChild(tr);
   attachInputComboBoxes(idx);
+  if (data.list) tr.classList.add('iv-list');
   setInputDiscrete(idx, !!data.discrete);
   // Picking or typing a known attribute sets the row's value mode for it.
   const detect = () => {
@@ -978,28 +981,39 @@ function addInputRow(data = {}) {
   document.getElementById(`iv-obj-${idx}`).addEventListener('input', detect);
 }
 
-/* Integer / on-off attributes (modes, flags, tap positions) take a list of
-   values instead of Lower / Upper / Step. The row swaps the three number
-   cells for one "values" cell; blank means 0,1. The mode is detected from the
-   attribute catalogue, with a small "int" toggle for custom attributes. */
+/* Integer / on-off attributes (modes, flags, tap positions) have no step:
+   the Step cell becomes a Range | List toggle. Range keeps Lower / Upper
+   (blank = 0 and 1, so a flag needs nothing); List swaps them for one field
+   such as 0,1,5. The integer mode is detected from the attribute catalogue,
+   with a small "int" toggle in the Attribute cell for custom attributes. */
 function setInputDiscrete(idx, on) {
   document.getElementById(`input-row-${idx}`)?.classList.toggle('iv-discrete', on);
   const btn = document.getElementById(`iv-int-${idx}`);
   if (btn) btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-  syncInputValueSpans();
+  const ub = document.getElementById(`iv-ub-${idx}`);
+  if (ub) ub.placeholder = on ? '1' : '10';
+  syncInputFormColumn();
 }
 
 function toggleInputDiscrete(idx) {
   setInputDiscrete(idx, !document.getElementById(`input-row-${idx}`)?.classList.contains('iv-discrete'));
 }
 
-// The values cell spans the bound/step columns that are visible for the
-// current problem type: 3 in Brute Force, 2 in Optimisation (no step).
-function syncInputValueSpans() {
+function toggleInputList(idx) {
+  document.getElementById(`input-row-${idx}`)?.classList.toggle('iv-list');
+  refreshLiveWarnings();
+}
+
+// Optimisation hides Step Size, but an integer row still needs its Range |
+// List toggle there, so the column stays while any integer row exists.
+function syncInputFormColumn() {
   const table = document.getElementById('input-table');
   if (!table) return;
-  const span = table.classList.contains('input-table-hide-step') ? 2 : 3;
-  table.querySelectorAll('td.col-vals').forEach(td => { td.colSpan = span; });
+  const anyDiscrete = !!table.querySelector('tr.iv-discrete');
+  const isOpt = document.getElementById('problem-type')?.value === 'optimisation';
+  table.classList.toggle('input-table-show-form', isOpt && anyDiscrete);
+  const th = document.getElementById('th-step-label');
+  if (th) th.innerHTML = isOpt ? 'Range<br>/ List' : 'Step<br>Size';
 }
 
 /* The catalogue has no data type, so a known attribute is read as discrete
@@ -1055,6 +1069,16 @@ function parseIntegerValues(text) {
   return [...out].sort((a, b) => a - b);
 }
 
+// Problem with an integer row's values, or '' when it is fine.
+function integerInputError(iv) {
+  if (!iv.discrete) return '';
+  if (iv.list) return iv.values && !parseIntegerValues(iv.values) ? 'enter the integer values as a list, e.g. 0,1,5.' : '';
+  const isInt = v => Number.isInteger(Number(v));
+  if (!isInt(iv.lower) || !isInt(iv.upper)) return 'integer attribute, so Lower and Upper must be whole numbers.';
+  if (Number(iv.lower) > Number(iv.upper)) return 'Lower must not be above Upper.';
+  return '';
+}
+
 function removeRow(id) {
   const el = document.getElementById(id);
   if (el) el.remove();
@@ -1084,16 +1108,18 @@ function getInputRows() {
       lower, upper, step,
       dtype: inferDtype(lower, upper, step),
     };
-    if (discrete) {
+    if (discrete && tr.classList.contains('iv-list')) {
       const values = document.getElementById(`iv-vals-${idx}`)?.value?.trim() || '';
       const list = parseIntegerValues(values || '0,1') || [0, 1];
       Object.assign(row, {
-        discrete: true, values,
+        discrete: true, list: true, values,
         lower: String(list[0]), upper: String(list[list.length - 1]), step: '1', dtype: 'int',
       });
       // A gap in the list (e.g. 0,1,5) cannot be written as lower/upper, so
       // the exact values travel with the spec.
       if (list.length !== list[list.length - 1] - list[0] + 1) row.choices = list;
+    } else if (discrete) {
+      Object.assign(row, { discrete: true, step: '1', dtype: 'int' });
     }
     return row;
   });
@@ -1682,8 +1708,8 @@ function validateConfig(cfg) {
   cfg.inputVariables.forEach((iv, i) => {
     if (!iv.object_query) errors.push(`Input variable #${i + 1}: Object is required.`);
     if (!iv.variable)     errors.push(`Input variable #${i + 1}: Variable is required.`);
-    if (iv.discrete && iv.values && ['brute_force', 'optimisation'].includes(init.problemType) && !parseIntegerValues(iv.values))
-      errors.push(`Input variable #${i + 1}: enter integer values as a list (0,1,5) or a range (0-3).`);
+    const intMsg = ['brute_force', 'optimisation'].includes(init.problemType) && integerInputError(iv);
+    if (intMsg) errors.push(`Input variable #${i + 1}: ${intMsg}`);
   });
 
   cfg.outputVariables.forEach((ov, i) => {
@@ -1845,9 +1871,8 @@ function getLiveWarnings(cfg) {
   const warnings = [...validateCustomCalcWarnings(cfg), ...buildObjectTypeWarnings(cfg)];
   if (['brute_force', 'optimisation'].includes(cfg.initialisation.problemType)) {
     cfg.inputVariables.forEach((iv, i) => {
-      if (iv.discrete && iv.values && !parseIntegerValues(iv.values)) {
-        warnings.push(`Input variable #${i + 1}: enter integer values as a list (0,1,5) or a range (0-3).`);
-      }
+      const msg = integerInputError(iv);
+      if (msg) warnings.push(`Input variable #${i + 1}: ${msg}`);
     });
   }
   const st = cfg.initialisation.studyType;

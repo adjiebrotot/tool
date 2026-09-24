@@ -780,12 +780,42 @@
   .input-table-hide-bounds .col-vals,
   .input-table-hide-bounds .iv-int-toggle { display: none; }
 
-  /* Integer / on-off rows: one values cell replaces bounds + step */
-  #input-table td.col-vals { display: none; }
-  #input-table tr.iv-discrete td.col-lb,
-  #input-table tr.iv-discrete td.col-ub,
-  #input-table tr.iv-discrete td.col-step { display: none; }
-  #input-table:not(.input-table-hide-bounds) tr.iv-discrete td.col-vals { display: table-cell; }
+  /* Integer / on-off rows: the Step cell holds a Range | List toggle;
+     List swaps Lower + Upper for one values field. */
+  #input-table td.col-vals,
+  #input-table .iv-form-toggle { display: none; }
+  #input-table tr.iv-discrete td.col-step input { display: none; }
+  #input-table tr.iv-discrete .iv-form-toggle { display: inline-flex; }
+  #input-table tr.iv-discrete.iv-list td.col-lb,
+  #input-table tr.iv-discrete.iv-list td.col-ub { display: none; }
+  #input-table:not(.input-table-hide-bounds) tr.iv-discrete.iv-list td.col-vals { display: table-cell; }
+  /* Optimisation: keep the column for the toggle while integer rows exist */
+  #input-table.input-table-show-form .col-step { display: table-cell; }
+  #input-table.input-table-show-form tr:not(.iv-discrete) td.col-step input { visibility: hidden; }
+  .iv-form-toggle {
+    width: 100%;
+    min-width: 70px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    overflow: hidden;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 10.5px;
+  }
+  .iv-form-toggle span {
+    flex: 1;
+    padding: 5px 1px;
+    color: var(--muted);
+    text-align: center;
+  }
+  #input-table tr:not(.iv-list) .iv-form-toggle span:first-child,
+  #input-table tr.iv-list .iv-form-toggle span:last-child {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
 
   /* Inline "int" toggle inside the Attribute cell */
   #input-table td.iv-attr-cell { position: relative; }
