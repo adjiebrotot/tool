@@ -19,7 +19,7 @@ function setTip(id, text) {
    so repeating all of it is a paragraph explaining a choice already made.
    Keyed by the control's value; setOptionTips() keeps them current. */
 const TIP_PROBLEM_TYPE = {
-  brute_force:  '<strong>Brute Force:</strong> runs every combination of the input values. Total runs = the product of all step counts.',
+  brute_force:  '<strong>Brute Force:</strong> runs every combination of the input values. Total runs = the product of the number of values per input.',
   optimisation: '<strong>Optimisation:</strong> a search algorithm hunts for the best input combination. Pick it in Optimisation Settings.',
   custom:       '<strong>Custom:</strong> reads the input values row by row from an Excel file. Download the template for the format.',
   contingency:  '<strong>Contingency:</strong> trips each matched element in turn, one at a time (N-1) or two (N-2). Wildcards resolve at runtime, so no Excel file is needed.'
@@ -262,6 +262,7 @@ function onProblemTypeChange() {
   // Optimisation: hide step size only; Custom: hide step + bounds
   table.classList.toggle('input-table-hide-step', pt === 'optimisation' || pt === 'custom');
   table.classList.toggle('input-table-hide-bounds', pt === 'custom');
+  syncInputValueSpans();
 }
 
 function onStudyTypeChange() {
@@ -946,6 +947,7 @@ let inputRowCounter = 0;
 
 function addInputRow(data = {}) {
   const idx = inputRowCounter++;
+  const kind = INPUT_KINDS.includes(data.kind) ? data.kind : 'number';
   const tbody = document.getElementById('input-tbody');
   const tr = document.createElement('tr');
   tr.id = `input-row-${idx}`;
@@ -955,15 +957,74 @@ function addInputRow(data = {}) {
     <td><input type="text" id="iv-name-${idx}" value="${data.name||''}" placeholder="Var name" autocomplete="off" /></td>
     <td><input type="text" id="iv-obj-${idx}" value="${data.object_query||''}" placeholder="Element.ElmType" autocomplete="off" /></td>
     <td><input type="text" id="iv-var-${idx}" value="${data.variable||''}" placeholder="Attribute name" autocomplete="off" /></td>
+    <td class="col-kind"><select id="iv-kind-${idx}" onchange="onInputKindChange(${idx})" title="Number: a continuous range. Integer: mode values, as a range or a list. On/Off: 0 and 1.">
+      <option value="number"${kind === 'number' ? ' selected' : ''}>Number</option>
+      <option value="integer"${kind === 'integer' ? ' selected' : ''}>Integer</option>
+      <option value="boolean"${kind === 'boolean' ? ' selected' : ''}>On/Off</option>
+    </select></td>
     <td class="col-lb"><input type="number" id="iv-lb-${idx}" value="${data.lower!==undefined?data.lower:''}" placeholder="0" step="any" autocomplete="off" /></td>
     <td class="col-ub"><input type="number" id="iv-ub-${idx}" value="${data.upper!==undefined?data.upper:''}" placeholder="10" step="any" autocomplete="off" /></td>
     <td class="col-step"><input type="number" id="iv-step-${idx}" value="${data.step!==undefined?data.step:''}" placeholder="0.5" step="any" autocomplete="off" /></td>
+    <td class="col-vals"><input type="text" id="iv-vals-${idx}" value="${data.values||''}" placeholder="0-3  or  0,1,5" autocomplete="off" /><span class="iv-bool-note">Tries 0 and 1</span></td>
     <td class="td-action">
       <button class="btn btn-remove btn-icon" title="Remove" onclick="removeRow('input-row-${idx}')">✕</button>
     </td>
   `;
   tbody.appendChild(tr);
   attachInputComboBoxes(idx);
+  onInputKindChange(idx);
+}
+
+/* Value type per input row. Number keeps Lower / Upper / Step. Integer and
+   On/Off are mode selectors, so a step makes no sense: Integer takes one
+   text field ("0-3" or "0,1,5"), On/Off needs nothing at all. The row swaps
+   the three number cells for one "values" cell spanning the visible ones. */
+const INPUT_KINDS = ['number', 'integer', 'boolean'];
+
+function onInputKindChange(idx) {
+  const tr = document.getElementById(`input-row-${idx}`);
+  const kind = document.getElementById(`iv-kind-${idx}`)?.value || 'number';
+  if (!tr) return;
+  tr.classList.toggle('iv-discrete', kind !== 'number');
+  tr.classList.toggle('iv-boolean', kind === 'boolean');
+  syncInputValueSpans();
+}
+
+// The values cell spans the bound/step columns that are visible for the
+// current problem type: 3 in Brute Force, 2 in Optimisation (no step).
+function syncInputValueSpans() {
+  const table = document.getElementById('input-table');
+  if (!table) return;
+  const span = table.classList.contains('input-table-hide-step') ? 2 : 3;
+  const isOpt = document.getElementById('problem-type')?.value === 'optimisation';
+  table.querySelectorAll('td.col-vals').forEach(td => {
+    td.colSpan = span;
+    const note = td.querySelector('.iv-bool-note');
+    if (note) note.textContent = isOpt ? 'Searches 0 or 1' : 'Tries 0 and 1';
+  });
+}
+
+/* Parse an Integer row's values text: comma-separated integers and inclusive
+   ranges, e.g. "0-3", "0,1,5", "-2 to 2", "0-2, 5". Returns the sorted,
+   de-duplicated list, or null if any part is not an integer / range. */
+function parseIntegerValues(text) {
+  const parts = String(text || '').split(/[,;]/).map(p => p.trim()).filter(Boolean);
+  if (!parts.length) return null;
+  const out = new Set();
+  for (const part of parts) {
+    const range = part.match(/^(-?\d+)\s*(?:-|–|\.\.|to)\s*(-?\d+)$/i);
+    if (range) {
+      let a = parseInt(range[1], 10), b = parseInt(range[2], 10);
+      if (a > b) [a, b] = [b, a];
+      if (b - a > 10000) return null;
+      for (let v = a; v <= b; v++) out.add(v);
+    } else if (/^-?\d+$/.test(part)) {
+      out.add(parseInt(part, 10));
+    } else {
+      return null;
+    }
+  }
+  return [...out].sort((a, b) => a - b);
 }
 
 function removeRow(id) {
@@ -987,13 +1048,28 @@ function getInputRows() {
     const rawName = document.getElementById(`iv-name-${idx}`)?.value?.trim() || '';
     const name = rawName || `input_${i}`;
     const objectQuery = document.getElementById(`iv-obj-${idx}`)?.value?.trim() || '';
-    return {
+    const kind = document.getElementById(`iv-kind-${idx}`)?.value || 'number';
+    const row = {
       name,
       object_query: objectQuery,
       variable:     document.getElementById(`iv-var-${idx}`)?.value?.trim() || '',
       lower, upper, step,
       dtype: inferDtype(lower, upper, step),
     };
+    if (kind === 'boolean') {
+      Object.assign(row, { kind, lower: '0', upper: '1', step: '1', dtype: 'int' });
+    } else if (kind === 'integer') {
+      const values = document.getElementById(`iv-vals-${idx}`)?.value?.trim() || '';
+      const list = parseIntegerValues(values) || [0, 1];
+      Object.assign(row, {
+        kind, values,
+        lower: String(list[0]), upper: String(list[list.length - 1]), step: '1', dtype: 'int',
+      });
+      // A gap in the list (e.g. 0,1,5) cannot be written as lower/upper, so
+      // the exact values travel with the spec.
+      if (list.length !== list[list.length - 1] - list[0] + 1) row.choices = list;
+    }
+    return row;
   });
 }
 
@@ -1580,6 +1656,8 @@ function validateConfig(cfg) {
   cfg.inputVariables.forEach((iv, i) => {
     if (!iv.object_query) errors.push(`Input variable #${i + 1}: Object is required.`);
     if (!iv.variable)     errors.push(`Input variable #${i + 1}: Variable is required.`);
+    if (iv.kind === 'integer' && ['brute_force', 'optimisation'].includes(init.problemType) && !parseIntegerValues(iv.values))
+      errors.push(`Input variable #${i + 1}: enter integer values as a range (0-3) or a list (0,1,5).`);
   });
 
   cfg.outputVariables.forEach((ov, i) => {
@@ -1739,6 +1817,13 @@ function updateTimeseriesAvailability() {
 
 function getLiveWarnings(cfg) {
   const warnings = [...validateCustomCalcWarnings(cfg), ...buildObjectTypeWarnings(cfg)];
+  if (['brute_force', 'optimisation'].includes(cfg.initialisation.problemType)) {
+    cfg.inputVariables.forEach((iv, i) => {
+      if (iv.kind === 'integer' && !parseIntegerValues(iv.values)) {
+        warnings.push(`Input variable #${i + 1}: enter integer values as a range (0-3) or a list (0,1,5).`);
+      }
+    });
+  }
   const st = cfg.initialisation.studyType;
   const isDynamic = st === 'dynamic_rms' || st === 'dynamic_emt';
   if (!isDynamic && cfg.outputVariables.some(ov => ov.type === 'timeseries')) {

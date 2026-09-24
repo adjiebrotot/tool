@@ -776,7 +776,27 @@
   /* ── COLUMN HIDING FOR INPUT TABLE ──────────────────────────────── */
   .input-table-hide-step .col-step { display: none; }
   .input-table-hide-bounds .col-lb,
-  .input-table-hide-bounds .col-ub  { display: none; }
+  .input-table-hide-bounds .col-ub,
+  .input-table-hide-bounds .col-kind,
+  .input-table-hide-bounds .col-vals { display: none; }
+
+  /* Integer / On-Off rows: one values cell replaces bounds + step */
+  #input-table td.col-vals { display: none; }
+  #input-table tr.iv-discrete td.col-lb,
+  #input-table tr.iv-discrete td.col-ub,
+  #input-table tr.iv-discrete td.col-step { display: none; }
+  #input-table:not(.input-table-hide-bounds) tr.iv-discrete td.col-vals { display: table-cell; }
+  #input-table .iv-bool-note { display: none; }
+  #input-table tr.iv-boolean td.col-vals input { display: none; }
+  #input-table td.col-kind select { min-width: 84px; }
+  #input-table tr.iv-boolean .iv-bool-note {
+    display: block;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 12px;
+    text-align: left;
+    padding: 6px 4px;
+  }
 
   /* ── APP FOOTER ──────────────────────────────────────────────── */
   .app-footer {

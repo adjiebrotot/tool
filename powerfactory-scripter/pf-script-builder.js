@@ -901,7 +901,8 @@ function buildInputSpecs(cfg) {
         "lower":        ${iv.lower || 0},
         "upper":        ${iv.upper || 1},
         "step":         ${iv.step || 1},
-        "dtype":        "${iv.dtype || 'float'}"
+        "dtype":        "${iv.dtype || 'float'}"${Array.isArray(iv.choices) && iv.choices.length
+          ? `,\n        "values":       [${iv.choices.join(', ')}]` : ''}
     },\n`;
     }
   });
@@ -948,7 +949,8 @@ input_ranges = {}
 
 for i, spec in enumerate(input_specs):
     input_objects[i] = get_input_objects(app, spec["object_query"])
-    input_ranges[i] = build_range(spec["lower"], spec["upper"], spec["step"], spec["dtype"])
+    # An explicit "values" list (e.g. mode 0, 1, 5) is used as-is
+    input_ranges[i] = spec.get("values") or build_range(spec["lower"], spec["upper"], spec["step"], spec["dtype"])
 
 `;
   }
@@ -1415,7 +1417,13 @@ for _spec in _col_specs:
     const counterScope = cfg.initialisation.codingStyle === 'notebook' ? 'global' : 'nonlocal';
 
     pre += `
-effective_bounds = [(float(spec["lower"]), float(spec["upper"])) for spec in input_specs]
+# A spec with an explicit "values" list (e.g. mode 0, 1, 5) is searched by its
+# position in that list, 0 .. len-1; evaluate_one_case maps it back.
+effective_bounds = [
+    (0.0, float(len(spec["values"]) - 1)) if spec.get("values")
+    else (float(spec["lower"]), float(spec["upper"]))
+    for spec in input_specs
+]
 
 # Cache initial attribute values — restored after each evaluate_one_case call
 _input_restore_list = []
@@ -1438,7 +1446,14 @@ def evaluate_one_case(param_values):
         # Optimisers (e.g. skopt) hand back numpy scalars such as numpy.int64 /
         # numpy.float64. PowerFactory's SetAttribute only accepts native Python
         # numbers ("not a 'double' object" otherwise), so coerce by declared dtype.
-        value = int(value) if spec["dtype"] == "int" else float(value)
+        # Continuous searchers propose fractions for integer inputs: round them.
+        if spec.get("values"):
+            _pos = min(max(int(round(float(value))), 0), len(spec["values"]) - 1)
+            value = int(spec["values"][_pos])
+        elif spec["dtype"] == "int":
+            value = int(round(float(value)))
+        else:
+            value = float(value)
         for obj in input_objects[spec_idx]:
             obj.SetAttribute(spec["variable"], value)
         if len(input_objects[spec_idx]) == 1:
@@ -1521,7 +1536,9 @@ def resolve_objective_value(row, name):
     if (alg === 'gp_minimize') {
       pre += `space = []\n`;
       pre += `for spec_idx, spec in enumerate(input_specs):\n`;
-      pre += `    if spec["dtype"] == "int":\n`;
+      pre += `    if spec.get("values"):\n`;
+      pre += `        space.append(Integer(0, len(spec["values"]) - 1, name=f"slot_{spec_idx}"))\n`;
+      pre += `    elif spec["dtype"] == "int":\n`;
       pre += `        space.append(Integer(int(spec["lower"]), int(spec["upper"]), name=f"slot_{spec_idx}"))\n`;
       pre += `    else:\n`;
       pre += `        space.append(Real(float(spec["lower"]), float(spec["upper"]), name=f"slot_{spec_idx}"))\n\n`;

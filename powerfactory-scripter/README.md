@@ -162,6 +162,9 @@ Conditional visibility is driven by the `.cond-hidden` CSS class (`display: none
       upper: "10",             // string number
       step: "0.5",             // string number — increment (brute_force only)
       dtype: "float",          // "float" | "int" — inferred from lower/upper/step values
+      kind: "number",          // optional: "number" (default) | "integer" | "boolean"
+      values: "",              // "integer" only — range or list text, e.g. "0-3" or "0,1,5"
+      choices: [0, 1, 5],      // "integer" only, set when the list has gaps — emitted as spec "values"
     }
   ],
 
@@ -265,6 +268,7 @@ These functions respond to form changes and update conditional visibility and dy
 | `getInputRows()` | Reads all input rows from DOM, returns array of row objects matching the `inputVariables` schema. `dtype` is inferred via `inferDtype(lower, upper, step)`. |
 | `removeRow(id)` | Generic — removes any `<tr>` by element ID. Used by input rows and constraint rows. |
 | `inferDtype(lower, upper, step)` | Returns `"int"` if all three values are integers (or empty), `"float"` otherwise. |
+| `onInputKindChange(idx)` / `parseIntegerValues(text)` | Per-row value type. **Integer** rows take one text field (range `0-3`, list `0,1,5`, or both) and **On/Off** rows need nothing; both set `dtype: "int"`, `step: 1`. A list with gaps becomes a `"values"` list in the generated spec: Brute Force iterates it as-is, Optimisation searches its index `0..n-1` and maps back. |
 
 **Output Variables Container (`#output-vars-container`)**
 
