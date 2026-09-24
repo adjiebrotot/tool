@@ -73,6 +73,10 @@ let runDebounceTimer = null;
 let currentRandomSeed = DEFAULT_RANDOM_SEED;
 const DEFAULT_RISK_FREE_RATE = 4;          // % p.a., baseline for Sharpe/Sortino
 let currentRiskFreeRate = DEFAULT_RISK_FREE_RATE;
+// Settings > Trade at: where a decision fills (see SharedTA.execPlan). Next
+// day's open by default: review in the evening, place the order next morning.
+const DEFAULT_EXEC_TIMING = 'next-open';
+let currentExecTiming = DEFAULT_EXEC_TIMING;
 
 /* ─── PRICE CACHE ─── */
 // Keyed by ticker. Stores the widest date range ever fetched so simulations
@@ -206,14 +210,9 @@ const fmt = {
    Risk/return statistics shown in the Final Summary when "Advanced metrics" is on.
    - Sharpe / Sortino use daily time-weighted (price) returns above the risk-free
      rate set in Settings (Risk-Free Rate, default 4% p.a.).
-   - CAGR (TWR) annualises the geometric price return (cash-flow neutral).
+   - CAGR (TWR) annualises the geometric daily return net of each day's deposit.
    - CAGR (MWR) is the annualised IRR of actual deposits → final equity. */
 const TRADING_DAYS = 252;
-function dailyReturns(prices){
-  const r=[];
-  for(let i=1;i<prices.length;i++){ const p0=prices[i-1], p1=prices[i]; r.push(p0>0?p1/p0-1:0); }
-  return r;
-}
 function statMean(a){ return a.length ? a.reduce((s,x)=>s+x,0)/a.length : 0; }
 function statStdev(a){ if(a.length<2) return 0; const m=statMean(a); return Math.sqrt(a.reduce((s,x)=>s+(x-m)*(x-m),0)/(a.length-1)); }
 function downsideDev(a,mar=0){ if(!a.length) return 0; const d=a.map(x=>Math.min(0,x-mar)); return Math.sqrt(d.reduce((s,x)=>s+x*x,0)/a.length); }
@@ -247,9 +246,17 @@ function computeMetrics(res){
   // neither is the time they took, so the growth window and the annualisation
   // window share one basis. This is also what the portfolio tool measures, which
   // keeps a single 100% holding there identical to a scenario here.
-  const start=days.findIndex(r=>r.totalUnits>0);
+  const start=days.findIndex(r=>r.equity>0);
   const held=start>=0 ? days.slice(start) : [];
-  const rets=dailyReturns(held.map(r=>r.price));
+  // Each day's return with that day's deposit taken out, the Portfolio tool's
+  // definition. With fills at the close it is the asset's own close-to-close
+  // return; with a fill at the open it also carries the new money's open-to-close
+  // move, which a plain price return would miss.
+  const rets=[];
+  for(let k=1;k<held.length;k++){
+    const prev=held[k-1].equity, flow=held[k].totalDeposited-held[k-1].totalDeposited;
+    rets.push(prev>0 ? (held[k].equity-flow)/prev-1 : 0);
+  }
   // Daily risk-free rate derived from the annual rate set in Settings.
   const rf=Math.pow(1+currentRiskFreeRate/100, 1/TRADING_DAYS)-1;
   const exc=rets.map(r=>r-rf);
@@ -271,7 +278,7 @@ const fmtMetPct = v => (v==null||!isFinite(v)) ? ' - ' : (v*100).toFixed(2)+'%';
 const METRIC_TIPS = {
   sharpe:  '<strong>Sharpe:</strong> return above the risk-free rate, divided by how much the returns bounce around. Annualised from daily returns. Higher is better.',
   sortino: '<strong>Sortino:</strong> Sharpe counting downside only, so upside swings are not treated as risk.',
-  twr:     '<strong>CAGR (TWR):</strong> compound annual growth of the asset itself, from the first buy onward, ignoring when you deposited.',
+  twr:     '<strong>CAGR (TWR):</strong> compound annual growth of the holding from the first buy onward, each day measured net of that day’s deposit.',
   mwr:     '<strong>CAGR (MWR):</strong> compound annual growth of your own money, the IRR of your real deposits against your final equity.',
 };
 const metricCell = (label,val,tip)=>`<div><span data-tip="${tip}" style="color:var(--muted);cursor:help;border-bottom:1px dotted var(--border)">${label}</span> <b>${val}</b></div>`;
@@ -1165,6 +1172,10 @@ $('randomSeed').addEventListener('input',e=>{
   currentRandomSeed = sanitizeSeed(e.target.value);
   scheduleRun();
 });
+$('execTiming').addEventListener('change',e=>{
+  currentExecTiming = SharedTA.EXEC_MODES.includes(e.target.value) ? e.target.value : DEFAULT_EXEC_TIMING;
+  scheduleRun();
+});
 $('riskFreeRate').addEventListener('input',e=>{
   const n=parseFloat(e.target.value);
   currentRiskFreeRate = Number.isFinite(n) ? Math.max(0,n) : 0;
@@ -1316,51 +1327,49 @@ function investAmountAt(base, yearlyIncreasePct, startStr, dateStr){
   return base*Math.pow(1+r, Math.max(0,yrs));
 }
 
-function simulateSecurity(sec){
+// `exec` (Settings: Trade at) moves each fill off the day the rule decides on:
+// the decision is always taken at that day's close, the order fills at that
+// close, the next day's open or the next day's close (SharedTA.execPlan). The
+// money is deposited on the day it buys, at the price it buys at. A decision on
+// the last day with a next-day fill has no next day, so it never fills.
+function simulateSecurity(sec, exec){
   const {dates, prices} = sec.priceData;
   const investIdxs = getInvestmentDates(sec.priceData, sec.style, sec.dayOrDate, sec.momentumPct, sec.momentumEOM, sec.tech, sec.techEOM, sec.period||'monthly');
-  const investSet = new Set(investIdxs);
+  const plan = SharedTA.execPlan(prices, sec.priceData.opens, exec);
+  const decidedOn = new Map();                       // fill day -> decision day
+  investIdxs.forEach(i=>{ if(i+plan.lag<dates.length) decidedOn.set(i+plan.lag, i); });
   const startStr = dates[0];
   const yinc = sec.yearlyIncrease||0;
 
-  let totalUnits=0, totalDeposited=0;
   // A missing, zero or negative price is bad data, not a tradable day. Without
   // this guard one such tick buys Infinity units and every downstream number
   // (equity, ROI, metrics) becomes Infinity/NaN.
-  const tradable=i=>Number.isFinite(prices[i]) && prices[i]>0;
+  const ok=v=>Number.isFinite(v) && v>0;
+  const tradable=i=>ok(prices[i]);
 
-  // Build a running state over all trading days
-  const investRows=[];
+  let totalUnits=0, totalDeposited=0, openProxied=0;
+  const investRows=[], dailyRows=[];
   for(let i=0;i<dates.length;i++){
-    if(investSet.has(i) && tradable(i)){
-      const price=prices[i];
+    if(decidedOn.has(i) && ok(plan.fill[i])){
+      const price=plan.fill[i];
       const amt=investAmountAt(sec.amount, yinc, startStr, dates[i]);
       const units=amt/price;
       totalUnits+=units;
       totalDeposited+=amt;
+      if(plan.proxy[i]) openProxied++;
       investRows.push({
-        date:dates[i], price, amountInvested:amt, unitsAdded:units,
+        date:dates[i], signalDate:dates[decidedOn.get(i)], price, amountInvested:amt, unitsAdded:units,
         totalUnits, totalDeposited, equity:totalUnits*price,
         // Nothing deposited yet (e.g. a contribution of 0) means no return to
         // report, not 0/0.
         returnPct: totalDeposited>0 ? (totalUnits*price-totalDeposited)/totalDeposited*100 : 0
       });
     }
-  }
-
-  // Also daily equity for chart
-  let runUnits=0, runDeposited=0;
-  const dailyRows=[];
-  for(let i=0;i<dates.length;i++){
-    if(investSet.has(i) && tradable(i)){
-      const amt=investAmountAt(sec.amount, yinc, startStr, dates[i]);
-      runUnits+=amt/prices[i];
-      runDeposited+=amt;
-    }
+    // The day closes at its closing price, whatever the fill was.
     dailyRows.push({
       date:dates[i], price:prices[i],
-      totalUnits:runUnits, totalDeposited:runDeposited,
-      equity:runUnits*(tradable(i)?prices[i]:0)
+      totalUnits, totalDeposited,
+      equity:totalUnits*(tradable(i)?prices[i]:0)
     });
   }
 
@@ -1368,7 +1377,9 @@ function simulateSecurity(sec){
   // unusable - never at the old `||1` fallback, which reported the unit count as
   // dollars.
   const endPx=tradable(dates.length-1)?prices[dates.length-1]:0;
-  return { investRows, dailyRows, finalEquity: runUnits*endPx, totalDeposited:runDeposited };
+  // Decisions on the last day(s) that a next-day fill never reached.
+  const unfilled=investIdxs.filter(i=>i+plan.lag>=dates.length).length;
+  return { investRows, dailyRows, finalEquity: totalUnits*endPx, totalDeposited, exec:plan.mode, openProxied, unfilled };
 }
 
 // Reduce price series to the dates present in all of them (OHLC carried along).
@@ -1494,7 +1505,7 @@ async function runSimulation(){
   simResults=[];
   for(const sec of loadedSecs){
     try {
-      const res=simulateSecurity(sec);
+      const res=simulateSecurity(sec, currentExecTiming);
       simResults.push({sec, ...res});
     } catch(e){
       console.error('Sim error for '+sec.name, e);
@@ -1502,6 +1513,14 @@ async function runSimulation(){
   }
 
   if(!simResults.length){ showWarning('Simulation produced no results.'); return; }
+  // Say so when a fill had to stand in for a missing open, or a decision on the
+  // last day had no next day to fill on.
+  const notes=[];
+  simResults.forEach(r=>{
+    if(r.openProxied) notes.push(`${r.sec.name}: ${r.openProxied} trade(s) at the previous close, no open price in the data`);
+    if(r.unfilled) notes.push(`${r.sec.name}: ${r.unfilled} decision(s) on the last day not filled`);
+  });
+  if(notes.length) showStatus($('dateRangeStatus'),`Date range: ${axis[0]} → ${axis[axis.length-1]} (${axis.length} days). ${notes.join('. ')}.`,'warn');
 
   hideStatus($('fetchStatus'));
   updatePriceChart();
@@ -2005,6 +2024,7 @@ function endpointRowHtml(d, label){
   const color=ret>=0?'var(--positive-em)':'var(--negative-em)';
   return `<tr class="detail-endpoint">
     <td>${d.date}<span class="detail-row-tag">${label}</span></td>
+    <td>—</td>
     <td>${fmt.currency(d.price)}</td>
     <td>—</td>
     <td>—</td>
@@ -2019,7 +2039,7 @@ function renderDetailTable(idx){
   const res=simResults[idx];
   if(!res) return;
   const tbody=$('detailBody');
-  if(!res.investRows.length){ tbody.innerHTML='<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">No investment dates in range.</td></tr>'; return; }
+  if(!res.investRows.length){ tbody.innerHTML='<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:20px">No investment dates in range.</td></tr>'; return; }
   const daily=res.dailyRows;
   const first=daily[0], last=daily[daily.length-1];
   let html='';
@@ -2029,6 +2049,7 @@ function renderDetailTable(idx){
     const color=r.returnPct>=0?'var(--positive-em)':'var(--negative-em)';
     html+=`<tr>
       <td>${r.date}</td>
+      <td>${r.signalDate}</td>
       <td>${fmt.currency(r.price)}</td>
       <td>${fmt.currency(r.amountInvested)}</td>
       <td>${r.unitsAdded.toFixed(6)}</td>
@@ -2091,7 +2112,7 @@ function resetWorkspace(){
   if(priceChartInstance){ priceChartInstance.destroy(); priceChartInstance=null; }
   if(equityChartInstance){ equityChartInstance.destroy(); equityChartInstance=null; }
   $('summaryGrid').innerHTML='';
-  $('detailBody').innerHTML='<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">Add securities to see detailed data.</td></tr>';
+  $('detailBody').innerHTML='<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:20px">Add securities to see detailed data.</td></tr>';
   $('detailSelect').innerHTML='';
   activeDetailSec=0;
   $('priceLegend').innerHTML=''; $('equityLegend').innerHTML='';
@@ -2100,6 +2121,7 @@ function resetWorkspace(){
   $('currencySymbol').value='$';
   $('randomSeed').value=DEFAULT_RANDOM_SEED;
   $('riskFreeRate').value=DEFAULT_RISK_FREE_RATE;
+  $('execTiming').value=DEFAULT_EXEC_TIMING; currentExecTiming=DEFAULT_EXEC_TIMING;
   hideStatus($('fetchStatus')); hideStatus($('dateRangeStatus')); hideWarning();
   setPoolLocked(false); hideStatus($('poolStatus')); setDataMode('real');
 }
@@ -2362,12 +2384,12 @@ $('downloadBtn').addEventListener('click',()=>{
   const res=simResults[idx]; if(!res) return;
   // The same rows the table shows: the first and last day bracket the buys, so
   // the file ends on the final equity the summary reports.
-  const headers=['Date','Row','Price','Amount_Invested','Units_Added','Total_Units','Total_Deposited','Equity','Return_Pct'];
-  const endRow=(d,tag)=>[d.date,tag,d.price.toFixed(4),'','',d.totalUnits.toFixed(6),d.totalDeposited.toFixed(2),d.equity.toFixed(2),
+  const headers=['Date','Row','Decided','Price','Amount_Invested','Units_Added','Total_Units','Total_Deposited','Equity','Return_Pct'];
+  const endRow=(d,tag)=>[d.date,tag,'',d.price.toFixed(4),'','',d.totalUnits.toFixed(6),d.totalDeposited.toFixed(2),d.equity.toFixed(2),
     (d.totalDeposited>0?(d.equity-d.totalDeposited)/d.totalDeposited*100:0).toFixed(2)].join(',');
   const daily=res.dailyRows, first=daily[0], last=daily[daily.length-1];
   const buys=res.investRows;
-  const lines=buys.map(r=>[r.date,'buy',r.price.toFixed(4),r.amountInvested.toFixed(2),
+  const lines=buys.map(r=>[r.date,'buy',r.signalDate,r.price.toFixed(4),r.amountInvested.toFixed(2),
     r.unitsAdded.toFixed(6),r.totalUnits.toFixed(6),r.totalDeposited.toFixed(2),r.equity.toFixed(2),r.returnPct.toFixed(2)].join(','));
   if(first && (!buys.length || first.date!==buys[0].date)) lines.unshift(endRow(first,'start'));
   if(last && (!buys.length || last.date!==buys[buys.length-1].date)) lines.push(endRow(last,'final'));
@@ -2394,6 +2416,7 @@ function buildSettingsObj(){
       currencySymbol: currentCurrencySymbol,
       randomSeed: currentRandomSeed,
       riskFreeRate: currentRiskFreeRate,
+      execTiming: currentExecTiming,
       startDate: $('startDate').value,
       endDate: $('endDate').value,
       tickerPool: ($('tickerPoolInput')||{}).value || '',
@@ -2410,6 +2433,10 @@ function importSettings(obj){
   if(g.currencySymbol){ $('currencySymbol').value=g.currencySymbol; currentCurrencySymbol=g.currencySymbol; const pfx=$('cfgAmountPrefix'); if(pfx) pfx.textContent=currentCurrencySymbol||'$'; }
   if(g.randomSeed!=null){ $('randomSeed').value=g.randomSeed; currentRandomSeed=sanitizeSeed(g.randomSeed); }
   if(g.riskFreeRate!=null){ $('riskFreeRate').value=g.riskFreeRate; const n=parseFloat(g.riskFreeRate); currentRiskFreeRate=Number.isFinite(n)?Math.max(0,n):0; }
+  // A file saved before Trade at existed filled at the close, which is what it
+  // said then; it reopens on the default, the setting it would get today.
+  currentExecTiming = SharedTA.EXEC_MODES.includes(g.execTiming) ? g.execTiming : DEFAULT_EXEC_TIMING;
+  $('execTiming').value=currentExecTiming;
   if(g.startDate) $('startDate').value=g.startDate;
   if(g.endDate) $('endDate').value=g.endDate;
   if(g.tickerPool!=null){ const inp=$('tickerPoolInput'); if(inp) inp.value=g.tickerPool; }

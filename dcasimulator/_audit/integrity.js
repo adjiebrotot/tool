@@ -103,7 +103,7 @@ const COMMON_FNS = ['sanitizeSeed', 'parseDate', 'isoDate', 'createSeededRng', '
   'statMean', 'statStdev', 'downsideDev', 'xirr', 'computeMetrics', 'fmt'];
 
 function mainModule(riskFreeRate){
-  const code = lift(MAIN_SRC, COMMON_FNS.concat(['dailyReturns', 'groupIndicesByPeriod', 'periodSignalDates',
+  const code = lift(MAIN_SRC, COMMON_FNS.concat(['groupIndicesByPeriod', 'periodSignalDates',
     'getInvestmentDates', 'investAmountAt', 'simulateSecurity', 'alignToCommonDates']), 'script.js');
   return new Function('SharedTA', 'currentRiskFreeRate', `
     const DEFAULT_RANDOM_SEED = 25823952204, TRADING_DAYS = 252;
@@ -147,8 +147,31 @@ function perturbAfter(prices, cut, salt){
   return out;
 }
 
-const EQ = gbm(M, 'Equity', 9, 18);          // long equity-like path
-const BD = gbm(M, 'Bonds', 3, 5);            // low-vol path
+// Opens with a real overnight gap. The generator's own opens are the prior close,
+// which would make a next-day-open fill indistinguishable from the previous close.
+function withGaps(pd, salt){
+  const rng = M.createSeededRng(salt);
+  return Object.assign({}, pd, { opens: pd.prices.map((c, i) => i ? pd.prices[i - 1] * Math.exp((rng() - 0.5) * 0.02) : c) });
+}
+// The same, for a whole price record: closes and opens after `cut` both change.
+function perturbPd(pd, cut, salt){
+  const prices = perturbAfter(pd.prices, cut, salt), rng = M.createSeededRng(salt + 1);
+  const opens = pd.opens.map((o, i) => i > cut ? prices[i - 1] * Math.exp((rng() - 0.5) * 0.02) : o);
+  return Object.assign({}, pd, { prices, opens });
+}
+// Where an order executing on day j fills, restated from the Settings wording
+// rather than read off SharedTA: a lag of one day for the two next-day modes, the
+// open when there is one, else the previous close.
+const EXECS = ['close', 'next-open', 'next-close'];
+const LAG = { 'close': 0, 'next-open': 1, 'next-close': 1 };
+function fillOf(pd, j, exec){
+  if(exec !== 'next-open') return pd.prices[j];
+  const o = pd.opens && pd.opens[j];
+  return (Number.isFinite(o) && o > 0) ? o : pd.prices[j - 1];
+}
+
+const EQ = withGaps(gbm(M, 'Equity', 9, 18), 5);   // long equity-like path
+const BD = withGaps(gbm(M, 'Bonds', 3, 5), 6);     // low-vol path
 const EQ_US = withHolidays(EQ, 11);          // two calendars of the same asset
 const BD_AU = withHolidays(BD, 37);
 
@@ -167,9 +190,19 @@ function secOf(style, pd, extra = {}){
 
 /* ═══ A. ACCOUNTING ═════════════════════════════════════════════════════════ */
 console.log('A. accounting');
-for(const style of ALL_STYLES) for(const period of ['monthly', 'weekly']) for(const yinc of [0, 7]){
-  const res = M.simulateSecurity(secOf(style, EQ, { period, yearlyIncrease: yinc, momentumEOM: period === 'monthly', techEOM: period === 'monthly' }));
-  const tag = `[main ${style} ${period} +${yinc}%]`;
+for(const exec of EXECS) for(const style of ALL_STYLES) for(const period of ['monthly', 'weekly']) for(const yinc of [0, 7]){
+  const sec = secOf(style, EQ, { period, yearlyIncrease: yinc, momentumEOM: period === 'monthly', techEOM: period === 'monthly' });
+  const res = M.simulateSecurity(sec, exec);
+  const tag = `[main ${exec} ${style} ${period} +${yinc}%]`;
+  // Fills: each decision the style makes fills `lag` days later at the fill price,
+  // and a decision with no day left to fill on is reported, not bought.
+  const at = new Map(EQ.dates.map((d, i) => [d, i]));
+  const decisions = M.getInvestmentDates(EQ, style, sec.dayOrDate, sec.momentumPct, sec.momentumEOM, sec.tech, sec.techEOM, period);
+  const lag = LAG[exec], n = EQ.dates.length;
+  const fillsOk = res.investRows.length === decisions.filter(d => d + lag < n).length &&
+    res.investRows.every(r => at.get(r.date) - at.get(r.signalDate) === lag && decisions.includes(at.get(r.signalDate)) && r.price === fillOf(EQ, at.get(r.date), exec)) &&
+    res.unfilled === decisions.filter(d => d + lag >= n).length;
+  ok(fillsOk, `${tag} every decision fills ${lag} day(s) later at the ${exec === 'next-open' ? 'open' : 'close'}, and only then`);
   let units = 0, dep = 0, rowsOk = true, amtOk = true;
   for(const r of res.investRows){
     units += r.unitsAdded; dep += r.amountInvested;
@@ -203,8 +236,9 @@ for(const style of ALL_STYLES) for(const period of ['monthly', 'weekly']) for(co
 }
 
 // Portfolio: rebuild the market gain from holdings and prices, independently.
-function checkPortfolioBooks(tag, p, assets, dates, rfPx){
-  const rows = P.simulatePortfolio(p, assets, dates, rfPx);
+function checkPortfolioBooks(tag, p, assets, dates, rfPx, exec = 'close'){
+  const rows = P.simulatePortfolio(p, assets, dates, rfPx, exec);
+  tag = `${tag.slice(0, -1)} ${exec}]`;
   const ledger = rows.every(r => r.units && Number.isFinite(r.fees) && Number.isFinite(r.interest));
   ok(ledger, `${tag} every row carries units, running fees and running interest`);
   if(!ledger) return rows;
@@ -214,7 +248,14 @@ function checkPortfolioBooks(tag, p, assets, dates, rfPx){
     const inv = assets.reduce((s, a) => s + r.units[a.id] * a.px[i], 0);
     if(!close(r.invested, inv, 1e-9) || !close(r.total, r.cash + inv, 1e-9)) rowOk = false;
     for(const a of assets) if(!close(r.assetVals[a.id], r.units[a.id] * a.px[i])) rowOk = false;
-    if(i > 0){ const q = rows[i - 1]; for(const a of assets) gain += q.units[a.id] * (a.px[i] - a.px[i - 1]); }
+    // Overnight and intraday: yesterday's units ride close to close, and today's
+    // change in units rides from its fill price to the close.
+    const q = i > 0 ? rows[i - 1] : null;
+    for(const a of assets){
+      const before = q ? q.units[a.id] : 0;
+      if(q) gain += before * (a.px[i] - a.px[i - 1]);
+      if(r.units[a.id] !== before) gain += (r.units[a.id] - before) * (a.px[i] - fillOf({ prices: a.px, opens: a.ohlc && a.ohlc.o }, i, exec));
+    }
     if(!close(r.total, r.cumTopup + r.interest - r.fees + gain, 1e-7)) closeOk = false;
     if(r.cash < -1e-9 || r.fees < -1e-12 || assets.some(a => r.units[a.id] < -1e-12)) signOk = false;
   }
@@ -232,8 +273,8 @@ function pf(method, extra = {}){
 }
 const axis = EQ.dates;
 const mkAssets = (w1, w2, t1, t2) => [
-  { id: 1, weight: w1, px: EQ.prices.slice(), trigger: t1 },
-  { id: 2, weight: w2, px: BD.prices.slice(), trigger: t2 }];
+  { id: 1, weight: w1, px: EQ.prices.slice(), ohlc: { o: EQ.opens.slice() }, trigger: t1 },
+  { id: 2, weight: w2, px: BD.prices.slice(), ohlc: { o: BD.opens.slice() }, trigger: t2 }];
 const dip = { type: 'pct', direction: 'drop', pct: 5, ref: 'period', period: 'monthly', eom: false };
 for(const [tag, p, assets] of [
   ['constant-allocation', pf('constant-allocation'), mkAssets(60, 40)],
@@ -246,45 +287,48 @@ for(const [tag, p, assets] of [
   ['rule-trigger rolling top', pf('rule-trigger'), mkAssets(100, 0, { type: 'pct', direction: 'drop', pct: 6, ref: 'top', lookback: 40 }, dip)],
   ['weights within tolerance (99.6%)', pf('rule-trigger'), mkAssets(59.8, 39.8, dip, dip)],
 ]){
-  checkPortfolioBooks(`[pf ${tag}]`, p, assets, axis, null);
+  for(const exec of EXECS) checkPortfolioBooks(`[pf ${tag}]`, p, assets, axis, null, exec);
 }
 { // rf ticker instead of a fixed rate: interest follows the ticker, books still close
   const rfPx = gbm(M, 'Cash', 2, 1).prices;
-  checkPortfolioBooks('[pf rf ticker]', pf('rule-trigger', { rf: { mode: 'ticker', rate: 0, ticker: 'X' } }), mkAssets(70, 30, dip, dip), axis, rfPx);
+  for(const exec of EXECS) checkPortfolioBooks('[pf rf ticker]', pf('rule-trigger', { rf: { mode: 'ticker', rate: 0, ticker: 'X' } }), mkAssets(70, 30, dip, dip), axis, rfPx, exec);
 }
 { // closed forms: fees = f x every dollar bought; idle cash compounds at the rate
-  const rows = P.simulatePortfolio(pf('constant-allocation'), mkAssets(60, 40), axis, null);
+  const rows = P.simulatePortfolio(pf('constant-allocation'), mkAssets(60, 40), axis, null, 'next-open');
   const last = rows[rows.length - 1];
   ok(Number.isFinite(last.fees) && close(last.fees, last.cumTopup * 0.0025), '[pf closed form] constant allocation pays exactly buy fee x top-ups', `${last.fees} vs ${last.cumTopup * 0.0025}`);
   ok(last.interest === 0, '[pf closed form] fully invested at every top-up: no idle cash, no interest');
   const never = { type: 'pct', direction: 'drop', pct: 99, ref: 'period', period: 'monthly', eom: false };
-  const r2 = P.simulatePortfolio(pf('rule-trigger'), mkAssets(50, 50, never, never), axis, null);
+  const r2 = P.simulatePortfolio(pf('rule-trigger'), mkAssets(50, 50, never, never), axis, null, 'next-open');
   const f = Math.pow(1.03, 1 / 252); let cash = 0; const tops = P.getScheduleIndices(axis, pf('x').topupSched);
-  r2.forEach((r, i) => { if(i) cash *= f; if(tops.has(i)) cash += r.cumTopup - (i ? r2[i - 1].cumTopup : 0); });
+  r2.forEach((r, i) => { if(i) cash *= f; if(tops.has(i - 1)) cash += r.cumTopup - r2[i - 1].cumTopup; });
   const l2 = r2[r2.length - 1];
   ok(close(l2.cash, cash) && close(l2.interest, l2.total - l2.cumTopup), '[pf closed form] a trigger that never fires leaves every top-up compounding at the cash rate');
 }
 { // weights the run accepts within its 0.5% tolerance deploy fully on a trigger
   const at = { type: 'at-topup' };
-  const rows = P.simulatePortfolio(pf('rule-trigger', { rf: { mode: 'rate', rate: 0 } }), mkAssets(59.8, 39.8, at, at), axis, null);
+  const rows = P.simulatePortfolio(pf('rule-trigger', { rf: { mode: 'rate', rate: 0 } }), mkAssets(59.8, 39.8, at, at), axis, null, 'next-open');
   ok(rows.every(r => r.cash < 1e-6), '[pf] rule-trigger with weights summing to 99.6% leaves no stray cash (targets normalised)');
 }
 
 /* ═══ B. TRIGGER CAUSALITY ══════════════════════════════════════════════════ */
 console.log('B. trigger causality (future replaced after each cut)');
 const CUTS = [300, 777, 1500, 2600];
-for(const style of ALL_STYLES) for(const period of ['monthly', 'weekly']){
+for(const exec of EXECS) for(const style of ALL_STYLES) for(const period of ['monthly', 'weekly']){
   if((style === 'monthly-date' || style === 'weekly-day' || FORWARD.has(style)) && period === 'weekly') continue;
   let causal = true, where = '';
-  for(const cut of CUTS){
-    const alt = { dates: EQ.dates, prices: perturbAfter(EQ.prices, cut, cut * 7 + 1) };
-    const a = M.simulateSecurity(secOf(style, EQ, { period }));
-    const b = M.simulateSecurity(secOf(style, alt, { period }));
+  // A Forward style only shows its lookahead when a cut lands inside a period
+  // whose best day comes after it, so it gets dense cuts rather than four.
+  const cuts = FORWARD.has(style) ? Array.from({ length: 60 }, (_, k) => 40 + k * 53) : CUTS;
+  for(const cut of cuts){
+    const alt = perturbPd(EQ, cut, cut * 7 + 1);
+    const a = M.simulateSecurity(secOf(style, EQ, { period }), exec);
+    const b = M.simulateSecurity(secOf(style, alt, { period }), exec);
     const pre = rows => rows.filter(r => r.date <= EQ.dates[cut]).map(r => r.date + ':' + r.totalUnits.toFixed(12)).join('|');
     if(pre(a.investRows) !== pre(b.investRows) || pre(a.dailyRows) !== pre(b.dailyRows)){ causal = false; where = 'cut ' + EQ.dates[cut]; }
   }
-  if(FORWARD.has(style)) ok(!causal, `[main ${style}] Forward style is flagged as needing the future, and does`);
-  else ok(causal, `[main ${style} ${period}] no buy or ledger row up to a day depends on a later price`, where);
+  if(FORWARD.has(style)) ok(!causal, `[main ${exec} ${style}] Forward style is flagged as needing the future, and does`);
+  else ok(causal, `[main ${exec} ${style} ${period}] no buy or ledger row up to a day depends on a later price`, where);
 }
 const PF_CASES = [
   ['constant-allocation', pf('constant-allocation'), () => mkAssets(60, 40)],
@@ -298,18 +342,30 @@ const PF_CASES = [
     ['rule ' + t, pf('rule-trigger'), () => mkAssets(70, 30, { type: t, period: 'monthly', eom: true, tech: TECH }, { type: 'at-topup' })]),
   ['rule asset reserve', pf('rule-trigger', { rebal: Object.assign(pf('x').rebal, { method: 'rule-trigger', reserveMode: 'asset', reserveAssetId: 2 }) }), () => mkAssets(80, 20, dip, dip)],
 ];
-for(const [tag, p, mk] of PF_CASES){
+for(const exec of EXECS) for(const [tag0, p, mk] of PF_CASES){
+  const tag = exec + ' ' + tag0;
   let causal = true, where = '';
   for(const cut of CUTS){
     const A = mk(), B = mk();
-    B.forEach((a, k) => { a.px = perturbAfter(a.px, cut, cut * 13 + k); });
-    const ra = P.simulatePortfolio(p, A, axis, null), rb = P.simulatePortfolio(p, B, axis, null);
+    B.forEach((a, k) => { const alt = perturbPd({ prices: a.px, opens: a.ohlc.o }, cut, cut * 13 + k); a.px = alt.prices; a.ohlc = { o: alt.opens }; });
+    const ra = P.simulatePortfolio(p, A, axis, null, exec), rb = P.simulatePortfolio(p, B, axis, null, exec);
     for(let i = 0; i <= cut; i++){
       const x = ra[i], y = rb[i];
       if(x.total !== y.total || x.cash !== y.cash || x.fees !== y.fees || x.event !== y.event || x.bought.join() !== y.bought.join()){ causal = false; where = 'cut ' + axis[cut] + ', diverged ' + axis[i]; break; }
     }
   }
   ok(causal, `[pf ${tag}] no ledger row, event or buy up to a day depends on a later price`, where);
+}
+
+// Every portfolio event lands `lag` days after the day that decided it, and a
+// next-day mode never trades on the decision day itself.
+for(const exec of EXECS) for(const [tag0, p, mk] of PF_CASES){
+  const rows = P.simulatePortfolio(p, mk(), axis, null, exec);
+  const at = new Map(axis.map((d, i) => [d, i]));
+  const tops = P.getScheduleIndices(axis, p.topupSched);
+  const lagOk = rows.every((r, i) => !r.event || (r.decided && i - at.get(r.decided) === LAG[exec]));
+  const topOk = rows.every((r, i) => r.event.includes('Top-up') === tops.has(i - LAG[exec]));
+  ok(lagOk && topOk, `[pf ${exec} ${tag0}] every event fills ${LAG[exec]} day(s) after its decision; top-ups arrive on the fill day`);
 }
 
 /* ═══ C. PARITY: main tool vs portfolio tool ════════════════════════════════ */
@@ -345,18 +401,19 @@ function compareRuns(tag, mainRes, rows, mainRf){
   ok(close(mainRes.finalEquity, last.total, 1e-12), `${tag} identical final value`, `${mainRes.finalEquity} vs ${last.total}`);
   metricsSame(tag, mainModule(mainRf).computeMetrics(mainRes), P.computeMetrics({ rows, rfPx: null, rfRate: mainRf }));
 }
-const one = (px, trigger) => [{ id: 1, weight: 100, px: px.slice(), trigger }];
 const zeroFee = (method, sched, rate, extra = {}) => pf(method, Object.assign({
   topup: { amount: 500, yearlyIncrease: 6 }, topupSched: Object.assign({}, pf('x').topupSched, sched), rf: { mode: 'rate', rate, ticker: '' },
   rebal: Object.assign({}, pf('x').rebal, { method, buyFee: 0, sellFee: 0 }) }, extra));
-for(const [label, pd] of [['weekday calendar', EQ], ['holiday calendar', EQ_US]]){
+for(const exec of EXECS) for(const [label0, pd] of [['weekday calendar', EQ], ['holiday calendar', EQ_US]]){
+  const label = exec + ', ' + label0;
+  const one = (px, trigger) => [{ id: 1, weight: 100, px: px.slice(), ohlc: { o: pd.opens.slice() }, trigger }];
   // Date-based DCA = a 100% single-asset portfolio topped up on the same day.
   for(const method of ['constant-allocation', 'towards-weight', 'constant-weight']){
-    const m1 = M.simulateSecurity(secOf('monthly-date', pd, { amount: 500, yearlyIncrease: 6, dayOrDate: 15 }));
-    compareRuns(`[parity ${label}] monthly day 15 vs ${method}`, m1, P.simulatePortfolio(zeroFee(method, { period: 'monthly', daysOfMonth: [15] }, 4), one(pd.prices), pd.dates, null), 4);
+    const m1 = M.simulateSecurity(secOf('monthly-date', pd, { amount: 500, yearlyIncrease: 6, dayOrDate: 15 }), exec);
+    compareRuns(`[parity ${label}] monthly day 15 vs ${method}`, m1, P.simulatePortfolio(zeroFee(method, { period: 'monthly', daysOfMonth: [15] }, 4), one(pd.prices), pd.dates, null, exec), 4);
   }
-  const w1 = M.simulateSecurity(secOf('weekly-day', pd, { amount: 500, yearlyIncrease: 6, dayOrDate: 3 }));
-  compareRuns(`[parity ${label}] weekly Wednesday vs constant-allocation`, w1, P.simulatePortfolio(zeroFee('constant-allocation', { period: 'weekly', weekdays: [3] }, 4), one(pd.prices), pd.dates, null), 4);
+  const w1 = M.simulateSecurity(secOf('weekly-day', pd, { amount: 500, yearlyIncrease: 6, dayOrDate: 3 }), exec);
+  compareRuns(`[parity ${label}] weekly Wednesday vs constant-allocation`, w1, P.simulatePortfolio(zeroFee('constant-allocation', { period: 'weekly', weekdays: [3] }, 4), one(pd.prices), pd.dates, null, exec), 4);
   // Triggered DCA with End-of-period on = a rule-trigger portfolio whose top-up
   // lands on the period's first day and waits (at 0%) for the trigger.
   for(const period of ['monthly', 'weekly']){
@@ -371,14 +428,19 @@ for(const [label, pd] of [['weekday calendar', EQ], ['holiday calendar', EQ_US]]
       // figures differ during the wait, while every purchase must not: same days,
       // same units, same final value. (A yearly step-up is left at 0: an
       // anniversary between top-up and trigger prices the two differently.)
-      const m = M.simulateSecurity(secOf(style, pd, { amount: 500, yearlyIncrease: 0, period, momentumPct: 4 }));
+      const m = M.simulateSecurity(secOf(style, pd, { amount: 500, yearlyIncrease: 0, period, momentumPct: 4 }), exec);
       const p0 = zeroFee('rule-trigger', sched, 0); p0.topup.yearlyIncrease = 0;
-      const rows = P.simulatePortfolio(p0, one(pd.prices, Object.assign({ period, eom: true }, trig)), pd.dates, null);
+      const rows = P.simulatePortfolio(p0, one(pd.prices, Object.assign({ period, eom: true }, trig)), pd.dates, null, exec);
       const tag = `[parity ${label}] ${style} ${period} vs rule-trigger`;
       ok(rows.filter(r => r.bought.length).map(r => r.date).join() === m.investRows.map(r => r.date).join(), `${tag} identical buy dates`);
       const unitsSame = m.dailyRows.every((d, i) => rows[i].units && close(d.totalUnits, rows[i].units[1], 1e-12));
-      ok(unitsSame && close(m.finalEquity, rows[rows.length - 1].total, 1e-12), `${tag} identical units every day and identical final value`,
-        `${m.finalEquity} vs ${rows[rows.length - 1].total}`);
+      // Holdings match exactly; any extra is cash the portfolio has booked and not
+      // yet spent (a top-up whose decision fell on the last day, with nothing left
+      // to fill on), and at a 0% cash rate that is exactly the unspent top-ups.
+      const L = rows[rows.length - 1];
+      ok(unitsSame && close(m.finalEquity, L.invested, 1e-12) && close(L.cash, L.cumTopup - m.totalDeposited, 1e-9),
+        `${tag} identical units every day, identical holdings, and the only difference is unspent top-ups held as cash`,
+        `${m.finalEquity} vs ${L.invested}, cash ${L.cash} vs ${L.cumTopup - m.totalDeposited}`);
       ok(rows.every((r, i) => r.cumTopup >= m.dailyRows[i].totalDeposited - 1e-9), `${tag} the portfolio has never booked less than the main tool has invested`);
     }
   }
@@ -469,11 +531,13 @@ async function uiChecks(){
   // row, then a file. Both scripts live in an IIFE, so the screen is the only
   // interface there is, and it is also what this check is about.
   const open = async (pg, obj) => {
+    // Clear the board first, so the wait below sees this file's run, not the last one.
+    await pg.evaluate(() => { document.getElementById('summaryGrid').innerHTML = ''; });
     const [chooser] = await Promise.all([pg.waitForEvent('filechooser'), pg.click('.scenario-load')]);
     await chooser.setFiles({ name: 's.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(obj)) });
     await pg.waitForFunction(() => document.querySelector('#summaryGrid .tile .value'));
     // The checkbox is a styled switch; its label is what a person clicks.
-    await pg.click('label:has(#showAdvancedToggle)');
+    if(!await pg.isChecked('#showAdvancedToggle')) await pg.click('label:has(#showAdvancedToggle)');
     await pg.waitForFunction(() => document.getElementById('showAdvancedToggle').checked);
     return pg.evaluate(() => {
       const tile = document.querySelector('#summaryGrid .tile');
@@ -499,7 +563,8 @@ async function uiChecks(){
     assets: [{ id: 1, type: 'custom', name: 'Twin', returnPct: 7, stdPct: 16, weight: 100 }] }] });
   // The same scenario, independently: the page's own generator, both engines.
   const px = gbm(M, 'Twin', 7, 16, '2014-01-01', '2024-06-30');
-  const ref = M.simulateSecurity(secOf('monthly-date', px, { amount: 500, yearlyIncrease: 6, dayOrDate: 15 }));
+  // The files carry no Trade at, so both pages must open on the default: next day's open.
+  const ref = M.simulateSecurity(secOf('monthly-date', px, { amount: 500, yearlyIncrease: 6, dayOrDate: 15 }), 'next-open');
   const money = v => '$' + Math.round(v).toLocaleString('en-US');
   const roi = ((ref.finalEquity - ref.totalDeposited) / ref.totalDeposited * 100).toFixed(2) + '%';
   ok(m.value === p.value && m.value === money(ref.finalEquity), `[ui] both pages show the same final value (${m.value} / ${p.value}, engine ${money(ref.finalEquity)})`);
@@ -514,6 +579,23 @@ async function uiChecks(){
   ok(pc('Interest') > 0 && pc('Fees') > 0 && p.last[pc('Fees')] === '$0' && p.last[pc('Deposited')] === money(ref.totalDeposited),
     '[ui] portfolio table carries Interest and Fees, and they are nil for a fee-free fully invested plan', p.head.join('|') + ' / ' + p.last.join('|'));
   ok(m.range.includes(px.dates[0]) && m.range.includes(px.dates[px.dates.length - 1]), '[ui] main tool reports the shared axis it ran on', m.range);
+  // Both pages open on next day's open, and a file that names another mode moves both.
+  const sel = async pg => pg.evaluate(() => document.getElementById('execTiming').value);
+  ok(await sel(mainPg) === 'next-open' && await sel(pfPg) === 'next-open', '[ui] Trade at defaults to next day\'s open on both pages');
+  for(const exec of ['close', 'next-close']){
+    const m2 = await open(mainPg, { app: 'dca-single', version: 1, global: Object.assign({ riskFreeRate: 4, execTiming: exec }, glob),
+      securities: [{ type: 'custom', name: 'Twin', returnPct: 7, stdPct: 16, amount: 500, yearlyIncrease: 6, style: 'monthly-date', dayOrDate: 15 }] });
+    const p2 = await open(pfPg, { app: 'dca-portfolio', version: 1, global: Object.assign({ execTiming: exec }, glob), activePortfolioId: 1, portfolios: [{
+      id: 1, name: 'Twin 100%', colorHex: '#3b82f6', assetIdCounter: 1, topup: { amount: 500, yearlyIncrease: 6 },
+      topupSched: { period: 'monthly', weekdays: [1], weekParity: 0, daysOfMonth: [15], dayOfMonth: 15, quarterStart: 1, month: 1 },
+      rf: { mode: 'rate', rate: 4, ticker: '' },
+      rebal: { method: 'constant-allocation', cwTiming: 'at-topup', buyFee: 0, sellFee: 0, reserveMode: 'cash', reserveAssetId: null, lookbackMonths: 6, rankWeights: [] },
+      assets: [{ id: 1, type: 'custom', name: 'Twin', returnPct: 7, stdPct: 16, weight: 100 }] }] });
+    const r2 = M.simulateSecurity(secOf('monthly-date', px, { amount: 500, yearlyIncrease: 6, dayOrDate: 15 }), exec);
+    ok(await sel(mainPg) === exec && await sel(pfPg) === exec, `[ui] a file saying ${exec} sets Trade at on both pages`);
+    ok(m2.value === p2.value && m2.value === money(r2.finalEquity) && m2.adv.join() === p2.adv.join(),
+      `[ui] ${exec}: both pages show ${money(r2.finalEquity)} and the same metrics (${m2.value} / ${p2.value})`);
+  }
   await browser.close(); server.close();
 }
 

@@ -674,7 +674,30 @@
     return period==='weekly' ? isoWeekBucket(dateStr) : dateStr.slice(0,7);
   }
 
+  // When a decision is filled. Every rule in both DCA tools decides on a trading
+  // day's close (a scheduled date, or the close a signal fires on); `exec` says
+  // where the order fills:
+  //   'close'      that same close (lag 0)
+  //   'next-open'  the next trading day's open (lag 1), the evening-review habit
+  //   'next-close' the next trading day's close (lag 1)
+  // Returns { lag, fill } with fill[j] the price an order executing on day j
+  // pays. A missing open reads as the previous close, the nearest price that
+  // exists; proxy[j] marks the days that needed it.
+  var EXEC_MODES = ['close', 'next-open', 'next-close'];
+  function execPlan(closes, opens, exec){
+    var mode = EXEC_MODES.indexOf(exec) >= 0 ? exec : 'next-open';
+    var n = closes.length, fill = new Array(n), proxy = new Array(n).fill(false), j, o;
+    for(j = 0; j < n; j++){
+      if(mode !== 'next-open'){ fill[j] = closes[j]; continue; }
+      o = opens ? opens[j] : undefined;
+      if(Number.isFinite(o) && o > 0) fill[j] = o;
+      else { fill[j] = j > 0 ? closes[j - 1] : closes[j]; proxy[j] = true; }
+    }
+    return { mode: mode, lag: mode === 'close' ? 0 : 1, fill: fill, proxy: proxy };
+  }
+
   global.SharedTA = {
+    execPlan: execPlan, EXEC_MODES: EXEC_MODES,
     smaSeries: smaSeries, emaSeries: emaSeries, maSeries: maSeries,
     rsiSeries: rsiSeries, bollingerSeries: bollingerSeries,
     macdSeries: macdSeries, adxSeries: adxSeries, buildTech: buildTech,

@@ -102,6 +102,10 @@ let commonDates = [];            // shared date axis for the last run
 let valueChart = null, compChart = null, priceChart = null;
 let currentCurrencySymbol = '$';
 let currentRandomSeed = DEFAULT_RANDOM_SEED;
+// Settings > Trade at: where a decision fills (see SharedTA.execPlan). Next
+// day's open by default: review in the evening, place the order next morning.
+const DEFAULT_EXEC_TIMING = 'next-open';
+let currentExecTiming = DEFAULT_EXEC_TIMING;
 let showTopups = true;
 let showAdvanced = false;        // Final Summary: reveal Sharpe/Sortino/CAGR rows
 let compViewMode = 'dollar';     // 'dollar' = absolute value · 'percent' = % of portfolio
@@ -1778,49 +1782,63 @@ function deployTriggered(assets, state, i, triggeredIdx, buyFee, sellFee, reserv
 }
 
 /* ─── SIMULATE A SINGLE PORTFOLIO OVER THE COMMON AXIS ─── */
-function simulatePortfolio(p, assets, common, rfPx){
+// `exec` (Settings: Trade at) separates deciding from trading. Every schedule,
+// trigger and rebalance decides on a day's close; the whole event (the top-up
+// arriving, the buys and sells it starts) then happens on the fill day at the
+// fill prices of SharedTA.execPlan: that close, the next day's open or the next
+// day's close. Ranks and signals are read on the decision day; the orders are
+// sized at the prices they fill at. Rows always value the holdings at the close.
+function simulatePortfolio(p, assets, common, rfPx, exec){
   const method=p.rebal.method, cwTiming=p.rebal.cwTiming;
   const buyFee=(p.rebal.buyFee||0)/100, sellFee=(p.rebal.sellFee||0)/100;
   const baseAmount=p.topup.amount||0;
   const yinc=(p.topup.yearlyIncrease||0)/100;
-  const startStr=common[0];
+  const startStr=common[0], n=common.length;
   const rfMode=p.rf.mode, rfRate=p.rf.rate||0;
   const rfDayFactor=Math.pow(1+rfRate/100, 1/252);
   const topupSet=getScheduleIndices(common, p.topupSched);
   let rebalSet=new Set();
   if(method==='constant-weight' && cwTiming==='schedule') rebalSet=getScheduleIndices(common, p.rebalSched);
 
+  // ── Fills: the same assets, priced at what an order executing that day pays ──
+  const plans=assets.map(a=>SharedTA.execPlan(a.px, a.ohlc && a.ohlc.o, exec));
+  const lag=plans.length ? plans[0].lag : 0;
+  const X=assets.map((a,k)=>Object.assign({}, a, {px:plans[k].fill}));
+
   // ── Dynamic-weight (momentum rank) pre-compute ──
   const lbDays=Math.max(1, Math.round((p.rebal.lookbackMonths||6)*21));
   let rankWeights=(p.rebal.rankWeights&&p.rebal.rankWeights.length)?p.rebal.rankWeights.slice():assets.map(()=>100/assets.length);
   while(rankWeights.length<assets.length) rankWeights.push(0);  // unranked tail → 0%
-  const dynWts=i=>momentumWeights(assets,i,lbDays,rankWeights);
+  const dynWts=d=>momentumWeights(assets,d,lbDays,rankWeights);   // ranked on the decision day's closes
 
   // ── Rule-based (trigger) pre-compute ──
   const isRule=method==='rule-trigger';
   const reserveIdx=(isRule && p.rebal.reserveMode==='asset') ? assets.findIndex(a=>a.id===p.rebal.reserveAssetId) : -1;
   const triggerSig=isRule ? buildAssetTriggerSignals(assets, common, topupSet) : null;
   const reserveOnlyWts=(reserveIdx>=0) ? assets.map((a,k)=>k===reserveIdx?100:0) : null;
+  const firedOn=d=>{ const f=[]; if(isRule) for(let k=0;k<assets.length;k++){ if(k!==reserveIdx && triggerSig[k] && triggerSig[k][d]) f.push(k); } return f; };
 
   // fees and interest run alongside cash and units so every row closes:
   // total = cumTopup + interest - fees + (market gain on the holdings).
   const state={cash:0, units:{}, fees:0, interest:0};
   assets.forEach(a=>state.units[a.id]=0);
-  const rows=[]; let cumTopup=0;
-  for(let i=0;i<common.length;i++){
+  const rows=[]; let cumTopup=0, openProxied=0;
+  for(let i=0;i<n;i++){
     // Snapshot holdings before the day's buying/selling so we can flag, per asset,
     // which ones were actually bought today (units increased). Each method/trigger
     // buys different assets on different days, so the buy markers are per-asset.
     const unitsBefore={};
     assets.forEach(a=>unitsBefore[a.id]=state.units[a.id]);
     if(i>0){ const c0=state.cash; state.cash *= (rfMode==='ticker' && rfPx ? (rfPx[i]/rfPx[i-1]) : rfDayFactor); state.interest+=state.cash-c0; }
-    if(topupSet.has(i)){
+    const d=i-lag;                       // the decision this day's orders carry out
+    const topup=d>=0 && topupSet.has(d);
+    if(topup){
       // Each top-up compounds the base amount by the yearly increase, stepping
       // up once per full year elapsed since the first day of the simulation.
       const amount = yinc ? baseAmount*Math.pow(1+yinc, Math.max(0,Math.floor((parseDate(common[i])-parseDate(startStr))/(365.25*86400000)))) : baseAmount;
       state.cash+=amount; cumTopup+=amount;
-      if(method==='constant-allocation') buyByWeights(assets,state,i,buyFee);
-      else if(method==='towards-weight') buyUnderweight(assets,state,i,buyFee);
+      if(method==='constant-allocation') buyByWeights(X,state,i,buyFee);
+      else if(method==='towards-weight') buyUnderweight(X,state,i,buyFee);
       else if(method==='constant-weight'){
         // At-top-up timing rebalances on every contribution: deploy the fresh cash
         // into underweight assets and trim overweight ones back to target in one
@@ -1828,45 +1846,50 @@ function simulatePortfolio(p, assets, common, rfPx){
         // Separate-schedule timing instead parks the top-up in the Risk-Free
         // Account; it sits there earning the risk-free rate until the next
         // scheduled rebalance deploys it (buy underweight + sell overweight) at once.
-        if(cwTiming==='at-topup'){ buyUnderweight(assets,state,i,buyFee); fullRebalance(assets,state,i,buyFee,sellFee); }
+        if(cwTiming==='at-topup'){ buyUnderweight(X,state,i,buyFee); fullRebalance(X,state,i,buyFee,sellFee); }
         // else: leave the contribution in the reserve until the scheduled rebalance.
       }
       else if(method==='dynamic-momentum'){
         // Trend Following deploys the fresh top-up by rank, exactly like Constant
         // Allocation but with weights assigned to momentum ranks rather than fixed
         // assets. No selling/rebalancing: the contribution alone is split by rank.
-        buyByWeights(assets,state,i,buyFee,dynWts(i));
+        buyByWeights(X,state,i,buyFee,dynWts(d));
       }
       else if(isRule && reserveOnlyWts){
         // Reserve is a holding asset: park the fresh cash in it immediately.
-        buyByWeights(assets,state,i,buyFee,reserveOnlyWts);
+        buyByWeights(X,state,i,buyFee,reserveOnlyWts);
       }
       // rule-trigger with cash reserve: leave the top-up as cash (it compounds
       // at the risk-free rate) until a trigger deploys it below.
     }
     // Rule-based deployment runs every day, not just on top-up days.
     let firedToday=false;
-    if(isRule){
-      const fired=[];
-      for(let k=0;k<assets.length;k++){ if(k===reserveIdx) continue; if(triggerSig[k] && triggerSig[k][i]) fired.push(k); }
-      if(fired.length){ deployTriggered(assets,state,i,fired,buyFee,sellFee,reserveIdx); firedToday=true; }
+    if(isRule && d>=0){
+      const fired=firedOn(d);
+      if(fired.length){ deployTriggered(X,state,i,fired,buyFee,sellFee,reserveIdx); firedToday=true; }
     }
-    if(rebalSet.has(i)) fullRebalance(assets,state,i,buyFee,sellFee);
+    const rebal=d>=0 && rebalSet.has(d);
+    if(rebal) fullRebalance(X,state,i,buyFee,sellFee);
     // Tag each day with the events that occurred, so the Detailed Breakdown can show
     // the start, every top-up / rebalance / trigger deployment, and the final day.
     const ev=[];
-    if(topupSet.has(i)) ev.push('Top-up');
-    if(isRule && firedToday) ev.push('Trigger');
-    if(rebalSet.has(i)) ev.push('Rebalance');
+    if(topup) ev.push('Top-up');
+    if(firedToday) ev.push('Trigger');
+    if(rebal) ev.push('Rebalance');
     const assetVals={}; let invested=0;
     const bought=[];
-    assets.forEach(a=>{
+    assets.forEach((a,k)=>{
       const v=pxOk(a,i)?state.units[a.id]*a.px[i]:0; assetVals[a.id]=v; invested+=v;
       if(state.units[a.id] > unitsBefore[a.id]+1e-12) bought.push(a.id);
+      if(Math.abs(state.units[a.id]-unitsBefore[a.id])>1e-12 && plans[k].proxy[i]) openProxied++;
     });
-    rows.push({date:common[i], cash:state.cash, assetVals, units:Object.assign({}, state.units), invested, total:state.cash+invested, cumTopup,
+    rows.push({date:common[i], decided:(ev.length && lag)?common[d]:(ev.length?common[i]:''), cash:state.cash, assetVals, units:Object.assign({}, state.units), invested, total:state.cash+invested, cumTopup,
       fees:state.fees, interest:state.interest, event:ev.join(' + '), bought});
   }
+  // Decisions on the last day(s) that a next-day fill never reached.
+  let unfilled=0;
+  for(let d=Math.max(0,n-lag); d<n; d++) if(topupSet.has(d) || rebalSet.has(d) || firedOn(d).length) unfilled++;
+  rows.openProxied=openProxied; rows.unfilled=unfilled; rows.exec=plans.length?plans[0].mode:exec;
   return rows;
 }
 
@@ -1967,7 +1990,7 @@ async function runSimulation(){
     commonDates=common;
 
     // Run each portfolio independently on the shared axis.
-    const results=[];
+    const results=[], fillNotes=[];
     portfolios.forEach(p=>{
       const active=p.assets.filter(a=>a.priceData&&a.priceData.dates.length);
       if(!active.length) return;
@@ -1978,10 +2001,12 @@ async function runSimulation(){
       });
       let rfPx=null;
       if(p._rfData){ const m=new Map(); p._rfData.dates.forEach((d,i)=>m.set(d,p._rfData.prices[i])); rfPx=common.map(d=>m.get(d)); }
-      const rows=simulatePortfolio(p, active, common, rfPx);
+      const rows=simulatePortfolio(p, active, common, rfPx, currentExecTiming);
       // Carry each asset's close-price series (aligned to the shared date axis) and
       // its trigger so the Security Prices subsection can chart prices, candlesticks
       // and (for Rule-Based tech triggers) the underlying indicators on demand.
+      if(rows.openProxied) fillNotes.push(`${p.name}: ${rows.openProxied} trade(s) at the previous close, no open price in the data`);
+      if(rows.unfilled) fillNotes.push(`${p.name}: ${rows.unfilled} decision(s) on the last day not filled`);
       results.push({ id:p.id, name:p.name, colorHex:p.colorHex, rows, rfPx, rfRate:(p.rf.mode==='ticker'?0:(p.rf.rate||0)), method:p.rebal.method,
         assets:active.map(a=>({id:a.id,name:a.name,colorHex:a.colorHex,weight:a.weight,type:a.type,px:a.px.slice(),ohlc:a.ohlc,trigger:a.trigger})) });
       // reflect "loaded" badges for tickers in the active portfolio's asset list
@@ -1992,7 +2017,7 @@ async function runSimulation(){
     simResults=results;
     if(!simResults.some(r=>r.id===activeDetailId)) activeDetailId=simResults[0].id;
 
-    showStatus($('dateRangeStatus'),`Date range: ${common[0]} → ${common[common.length-1]} (${common.length} days)`,'ok');
+    showStatus($('dateRangeStatus'),`Date range: ${common[0]} → ${common[common.length-1]} (${common.length} days)`+(fillNotes.length?'. '+fillNotes.join('. ')+'.':''), fillNotes.length?'warn':'ok');
     hideStatus($('assetFetchStatus'));
     renderViewSelectors();
     updateValueChart();
@@ -2460,12 +2485,12 @@ function updateTable(){
   const res=simResults.find(r=>r.id===activeDetailId)||simResults[0];
   // Interest and Fees are running totals, so any row closes on its own:
   // Portfolio Value - Deposited - Interest + Fees is what the market added.
-  head.innerHTML=`<tr><th>Date</th><th>Event</th><th class="cash-cell">Cash</th>${res.assets.map(a=>`<th>${escapeHtml(a.name)}</th>`).join('')}<th>Deposited</th><th>Interest</th><th>Fees</th><th>Portfolio Value</th></tr>`;
+  head.innerHTML=`<tr><th>Date</th><th>Decided</th><th>Event</th><th class="cash-cell">Cash</th>${res.assets.map(a=>`<th>${escapeHtml(a.name)}</th>`).join('')}<th>Deposited</th><th>Interest</th><th>Fees</th><th>Portfolio Value</th></tr>`;
   const rows=breakdownRows(res.rows);
   body.innerHTML=rows.map(({row:r,tag})=>{
     const label=tag?`<span class="detail-row-tag">${tag}</span>`:'';
     const evt=r.event||(tag?(tag==='start'?'Start of simulation':'End of simulation'):'');
-    return `<tr${tag?' class="detail-endpoint"':''}><td>${r.date}${label}</td><td>${evt}</td><td class="cash-cell">${fmt.currency(r.cash)}</td>${res.assets.map(a=>`<td>${fmt.currency(r.assetVals[a.id]||0)}</td>`).join('')}<td>${fmt.currency(r.cumTopup)}</td><td>${fmt.currency(r.interest)}</td><td>${fmt.currency(r.fees)}</td><td>${fmt.currency(r.total)}</td></tr>`;
+    return `<tr${tag?' class="detail-endpoint"':''}><td>${r.date}${label}</td><td>${r.decided||'—'}</td><td>${evt}</td><td class="cash-cell">${fmt.currency(r.cash)}</td>${res.assets.map(a=>`<td>${fmt.currency(r.assetVals[a.id]||0)}</td>`).join('')}<td>${fmt.currency(r.cumTopup)}</td><td>${fmt.currency(r.interest)}</td><td>${fmt.currency(r.fees)}</td><td>${fmt.currency(r.total)}</td></tr>`;
   }).join('');
 }
 
@@ -2518,10 +2543,10 @@ $('downloadBtn').addEventListener('click',()=>{
   // (value = units x price, PortfolioValue = Cash + Invested), and the running
   // Interest and Fees close the books against CumulativeTopups.
   const q=v=>{ const t=String(v); return /[",\n]/.test(t) ? '"'+t.replace(/"/g,'""')+'"' : t; };
-  const header=['Date','Event','Cash',...res.assets.flatMap(a=>[a.name+' Units', a.name+' Price', a.name]),'Invested','PortfolioValue','CumulativeTopups','CumulativeInterest','CumulativeFees'];
+  const header=['Date','Decided','Event','Cash',...res.assets.flatMap(a=>[a.name+' Units', a.name+' Price', a.name]),'Invested','PortfolioValue','CumulativeTopups','CumulativeInterest','CumulativeFees'];
   const lines=[header.map(q).join(',')];
   res.rows.forEach((r,ri)=>{
-    const row=[r.date, q(r.event||''), r.cash.toFixed(2),
+    const row=[r.date, r.decided||'', q(r.event||''), r.cash.toFixed(2),
       ...res.assets.flatMap(a=>[(r.units?r.units[a.id]:0).toFixed(8), Number.isFinite(a.px[ri])?a.px[ri].toFixed(4):'', (r.assetVals[a.id]||0).toFixed(2)]),
       r.invested.toFixed(2), r.total.toFixed(2), r.cumTopup.toFixed(2), r.interest.toFixed(2), r.fees.toFixed(2)];
     lines.push(row.join(','));
@@ -2544,6 +2569,7 @@ function buildSettingsObj(){
     global:{
       currencySymbol: currentCurrencySymbol,
       randomSeed: currentRandomSeed,
+      execTiming: currentExecTiming,
       startDate: $('startDate').value,
       endDate: $('endDate').value,
       tickerPool: ($('tickerPoolInput')||{}).value || '',
@@ -2583,6 +2609,9 @@ function importSettings(obj){
   const g=obj.global||{};
   if(g.currencySymbol){ $('currencySymbol').value=g.currencySymbol; currentCurrencySymbol=g.currencySymbol; }
   if(g.randomSeed!=null){ $('randomSeed').value=g.randomSeed; currentRandomSeed=sanitizeSeed(g.randomSeed); }
+  // A file saved before Trade at existed reopens on the default.
+  currentExecTiming=SharedTA.EXEC_MODES.includes(g.execTiming)?g.execTiming:DEFAULT_EXEC_TIMING;
+  $('execTiming').value=currentExecTiming;
   if(g.startDate) $('startDate').value=g.startDate;
   if(g.endDate) $('endDate').value=g.endDate;
   if(g.tickerPool!=null){ const inp=$('tickerPoolInput'); if(inp) inp.value=g.tickerPool; }
@@ -2767,6 +2796,7 @@ $('currencySymbol').addEventListener('change',e=>{
   if(simResults.length){ updateValueChart(); updatePriceChart(); updateCompChart(); updateSummary(); updateTable(); }
 });
 $('randomSeed').addEventListener('input',e=>{ currentRandomSeed=sanitizeSeed(e.target.value); });
+$('execTiming').addEventListener('change',e=>{ currentExecTiming=SharedTA.EXEC_MODES.includes(e.target.value)?e.target.value:DEFAULT_EXEC_TIMING; });
 
 /* ─── THEME ─── */
 $('themeToggle').addEventListener('click',()=>{
@@ -2837,12 +2867,13 @@ function resetWorkspace(){
   if(compChart){ compChart.destroy(); compChart=null; }
   if(priceChart){ priceChart.destroy(); priceChart=null; }
   $('currencySymbol').value='$'; $('randomSeed').value=DEFAULT_RANDOM_SEED;
+  $('execTiming').value=DEFAULT_EXEC_TIMING; currentExecTiming=DEFAULT_EXEC_TIMING;
   $('showTopupsToggle').checked=true;
   $('priceCandleToggle').checked=false; $('priceBuyDateToggle').checked=false; $('priceTechToggle').checked=false;
   $('priceTechToggleWrap').style.display='none';
   $('summaryGrid').innerHTML='';
-  $('compHead').innerHTML='<tr><th>Date</th><th>Event</th><th>Cash</th><th>Deposited</th><th>Interest</th><th>Fees</th><th>Portfolio Value</th></tr>';
-  $('compBody').innerHTML='<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">Add portfolios and run to see the breakdown.</td></tr>';
+  $('compHead').innerHTML='<tr><th>Date</th><th>Decided</th><th>Event</th><th>Cash</th><th>Deposited</th><th>Interest</th><th>Fees</th><th>Portfolio Value</th></tr>';
+  $('compBody').innerHTML='<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">Add portfolios and run to see the breakdown.</td></tr>';
   $('valueLegend').innerHTML=''; $('compLegend').innerHTML=''; $('priceLegend').innerHTML='';
   $('detailPfSelect').innerHTML='';
   $('valueHoverBox').textContent='Configure portfolios and run to compare value over time.';

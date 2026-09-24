@@ -39,6 +39,10 @@ Run: `node run.js` and `node metrics.js`.
     book the money at different moments by design (the main tool when it buys, the
     portfolio when it is topped up), so their deposit lines differ during the wait.
     Prices landing exactly on a % threshold fire in both tools or neither.
+  - **Trade at.** Every check above runs for all three fill modes (same day's close,
+    next day's open, next day's close). Each decision is checked to fill exactly one
+    day later in the next-day modes, at the open or close restated independently, and
+    the portfolio's market gain is rebuilt with each new unit's fill-to-close move.
   - **Display and data.** Percentages above 100%, the shared date axis the main
     tool's charts index by, the split-safe cache merge, and the Worker's exchange-day
     dating.
