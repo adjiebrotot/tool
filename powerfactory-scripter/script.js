@@ -975,10 +975,14 @@ function addInputRow(data = {}) {
   // Picking or typing a known attribute sets the row's value mode for it.
   const detect = () => {
     const d = detectDiscreteAttr(document.getElementById(`iv-obj-${idx}`)?.value, document.getElementById(`iv-var-${idx}`)?.value);
+    // A catalogue attribute fixes its own mode, so the "int" toggle is only
+    // offered for custom attributes the tool does not know.
+    tr.classList.toggle('iv-attr-known', d !== null);
     if (d !== null) setInputDiscrete(idx, d);
   };
   document.getElementById(`iv-var-${idx}`).addEventListener('input', detect);
   document.getElementById(`iv-obj-${idx}`).addEventListener('input', detect);
+  detect();
 }
 
 /* Integer / on-off attributes (modes, flags, tap positions) have no step:
@@ -996,6 +1000,7 @@ function setInputDiscrete(idx, on) {
 }
 
 function toggleInputDiscrete(idx) {
+  if (document.getElementById(`input-row-${idx}`)?.classList.contains('iv-attr-known')) return;
   setInputDiscrete(idx, !document.getElementById(`input-row-${idx}`)?.classList.contains('iv-discrete'));
 }
 
