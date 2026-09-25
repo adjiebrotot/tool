@@ -145,78 +145,81 @@
           </select>
         </div>
 
-        <div class="field-row" style="border-top:1px solid var(--border);padding-top:12px;">
-          <div class="field-label" style="margin-bottom:8px;" data-i18n="inputMethodLabel">Cara Input Penghasilan</div>
-          <div class="input-mode-toggle">
-            <button class="mode-btn active" id="modeBtnTotal" data-i18n="modeTotalBtn">Total + % Bagi</button>
-            <button class="mode-btn" id="modeBtnSplit" data-i18n="modeSplitBtn">Suami + Istri</button>
+        <div class="field-group">
+          <div class="group-title" data-i18n="groupIncome">Penghasilan</div>
+          <div class="field-row">
+            <div class="field-label" style="margin-bottom:8px;" data-i18n="inputMethodLabel">Cara Input Penghasilan</div>
+            <div class="input-mode-toggle">
+              <button class="mode-btn active" id="modeBtnTotal" data-i18n="modeTotalBtn">Total + % Bagi</button>
+              <button class="mode-btn" id="modeBtnSplit" data-i18n="modeSplitBtn">Suami + Istri</button>
+            </div>
           </div>
-        </div>
 
-        <!-- Mode A: Total + Split % -->
-        <div id="modeTotal">
-          <div class="field-row">
-            <div class="field-label"><span data-i18n="totalSalaryLabel">Total Gaji Kotor Tahunan Rumah Tangga</span></div>
-            <div class="currency-wrap">
-              <span class="prefix">Rp</span>
-              <input class="currency-input" id="totalSalaryInput" type="text" inputmode="numeric" value="500,000,000" />
+          <!-- Mode A: Total + Split % -->
+          <div class="fg-sub" id="modeTotal">
+            <div class="field-row">
+              <div class="field-label"><span data-i18n="totalSalaryLabel">Total Gaji Kotor Tahunan Rumah Tangga</span></div>
+              <div class="currency-wrap">
+                <span class="prefix">Rp</span>
+                <input class="currency-input" id="totalSalaryInput" type="text" inputmode="numeric" value="500,000,000" />
+              </div>
+            </div>
+            <div class="slider-block">
+              <div class="slider-head">
+                <div class="slider-label"><span data-i18n="wifeShareLabel">Porsi penghasilan istri</span></div>
+                <div class="slider-value" id="splitValue">50%</div>
+              </div>
+              <input id="splitPct" type="range" min="0" max="100" step="1" value="50" />
+            </div>
+            <div class="field-row">
+              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Total Potongan Tahunan (Pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Pengurang seperti biaya jabatan atau iuran pensiun, dikurangkan dari penghasilan kotor sebelum PTKP lalu dibagi sesuai porsi penghasilan masing-masing.">?</span></div>
+              <div class="currency-wrap">
+                <span class="prefix">Rp</span>
+                <input class="currency-input" id="deductionInput" type="text" inputmode="numeric" value="0" />
+              </div>
             </div>
           </div>
-          <div class="slider-block">
-            <div class="slider-head">
-              <div class="slider-label"><span data-i18n="wifeShareLabel">Porsi penghasilan istri</span></div>
-              <div class="slider-value" id="splitValue">50%</div>
-            </div>
-            <input id="splitPct" type="range" min="0" max="100" step="1" value="50" />
-          </div>
-          <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Total Potongan Tahunan (Pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Pengurang seperti biaya jabatan atau iuran pensiun, dikurangkan dari penghasilan kotor sebelum PTKP lalu dibagi sesuai porsi penghasilan masing-masing.">?</span></div>
-            <div class="currency-wrap">
-              <span class="prefix">Rp</span>
-              <input class="currency-input" id="deductionInput" type="text" inputmode="numeric" value="0" />
-            </div>
-          </div>
-        </div>
 
-        <!-- Mode B: Individual inputs -->
-        <div id="modeIndividual" style="display:none;">
-          <div class="field-row">
-            <div class="field-label" data-i18n="husbandSalaryLabel">Gaji Kotor Tahunan Suami</div>
-            <div class="currency-wrap">
-              <span class="prefix">Rp</span>
-              <input class="currency-input" id="husbandSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
+          <!-- Mode B: Individual inputs -->
+          <div class="fg-sub" id="modeIndividual" style="display:none;">
+            <div class="field-row">
+              <div class="field-label" data-i18n="husbandSalaryLabel">Gaji Kotor Tahunan Suami</div>
+              <div class="currency-wrap">
+                <span class="prefix">Rp</span>
+                <input class="currency-input" id="husbandSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
+              </div>
             </div>
-          </div>
-          <div class="field-row">
-            <div class="field-label" data-i18n="wifeSalaryLabel">Gaji Kotor Tahunan Istri</div>
-            <div class="currency-wrap">
-              <span class="prefix">Rp</span>
-              <input class="currency-input" id="wifeSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
+            <div class="field-row">
+              <div class="field-label" data-i18n="wifeSalaryLabel">Gaji Kotor Tahunan Istri</div>
+              <div class="currency-wrap">
+                <span class="prefix">Rp</span>
+                <input class="currency-input" id="wifeSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
+              </div>
             </div>
-          </div>
-          <div class="field-row" style="padding-top:4px">
-            <div class="field-sub"><span data-i18n="combinedPrefix">Total:</span> <strong id="combinedLabel">Rp 500,000,000</strong> &nbsp;|&nbsp; <span data-i18n="wifeSharePrefix">Porsi istri:</span> <strong id="splitDerivedLabel">50.0%</strong></div>
-          </div>
-          <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="husbandDeductionLabel">Potongan Tahunan Suami (Pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Pengurang yang hanya dikurangkan dari penghasilan kotor suami, diterapkan sebelum PTKP.">?</span></div>
-            <div class="currency-wrap">
-              <span class="prefix">Rp</span>
-              <input class="currency-input" id="husbandDeductionInput" type="text" inputmode="numeric" value="0" />
+            <div class="field-row" style="padding-top:4px">
+              <div class="field-sub"><span data-i18n="combinedPrefix">Total:</span> <strong id="combinedLabel">Rp 500,000,000</strong> &nbsp;|&nbsp; <span data-i18n="wifeSharePrefix">Porsi istri:</span> <strong id="splitDerivedLabel">50.0%</strong></div>
             </div>
-          </div>
-          <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeDeductionLabel">Potongan Tahunan Istri (Pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Pengurang yang hanya dikurangkan dari penghasilan kotor istri, diterapkan sebelum PTKP.">?</span></div>
-            <div class="currency-wrap">
-              <span class="prefix">Rp</span>
-              <input class="currency-input" id="wifeDeductionInput" type="text" inputmode="numeric" value="0" />
+            <div class="field-row">
+              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="husbandDeductionLabel">Potongan Tahunan Suami (Pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Pengurang yang hanya dikurangkan dari penghasilan kotor suami, diterapkan sebelum PTKP.">?</span></div>
+              <div class="currency-wrap">
+                <span class="prefix">Rp</span>
+                <input class="currency-input" id="husbandDeductionInput" type="text" inputmode="numeric" value="0" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeDeductionLabel">Potongan Tahunan Istri (Pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Pengurang yang hanya dikurangkan dari penghasilan kotor istri, diterapkan sebelum PTKP.">?</span></div>
+              <div class="currency-wrap">
+                <span class="prefix">Rp</span>
+                <input class="currency-input" id="wifeDeductionInput" type="text" inputmode="numeric" value="0" />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="ctrl-panel" id="tab-advanced">
-        <div class="bracket-section" style="border-top:none;padding-top:0">
-          <div class="bracket-section-label" data-i18n="ptkpSectionLabel">Nilai PTKP (Rp)</div>
+        <div class="field-group bracket-group">
+          <div class="group-title" data-i18n="ptkpSectionLabel">Nilai PTKP (Rp)</div>
           <div class="ptkp-row">
             <div class="ptkp-label-sm" data-i18n="ptkpTK0">TK/0 — Tidak Kawin (dasar)</div>
             <input class="num-input-sm" id="ptkpBase" type="text" inputmode="numeric" value="54,000,000" />
@@ -236,8 +239,8 @@
           <div class="help" style="margin-top:4px"><span data-i18n="ptkpComputedPrefix">PTKP dihitung → Pisah:</span> <strong id="ptkpHDisplay">—</strong> <span data-i18n="ptkpHLabel">(S)</span> + <strong id="ptkpWDisplay">—</strong> <span data-i18n="ptkpWLabel">(I)</span> | <span data-i18n="ptkpGLabel">Gabung:</span> <strong id="ptkpGDisplay">—</strong></div>
         </div>
 
-        <div class="bracket-section">
-          <div class="bracket-section-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Lapisan Tarif PPh 21</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Ubah setiap ambang batas dan tarif. Kolom &quot;Dari&quot; terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Menaikkan batas melewati lapisan di bawahnya akan menghapusnya.">?</span></div>
+        <div class="field-group bracket-group">
+          <div class="group-title" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Lapisan Tarif PPh 21</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Ubah setiap ambang batas dan tarif. Kolom &quot;Dari&quot; terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Menaikkan batas melewati lapisan di bawahnya akan menghapusnya.">?</span></div>
           <div class="bracket-row-header">
             <div class="bracket-col-label" id="bracketColFrom">From (Rp)</div>
             <div class="bracket-col-label" id="bracketColTo">To (Rp) <span style="font-size:0.68rem">(last=∞)</span></div>
@@ -246,8 +249,8 @@
           <div id="bracketsContainer"></div>
         </div>
 
-        <div class="bracket-section">
-          <div class="info-box" style="margin-top:8px" id="infoBoxContent"><strong>Pisah Harta (K/0 + TK/0):</strong> Masing-masing pasangan mengajukan SPT sendiri. Suami menggunakan PTKP K/0, istri menggunakan PTKP TK/0. Keduanya mengakses lapisan tarif secara terpisah.<br><br><strong>Gabung Harta (K/I/0):</strong> Penghasilan digabung dalam satu SPT bersama. Menggunakan PTKP K/I/0. Satu tangga lapisan tarif untuk seluruh penghasilan.</div>
+        <div class="bracket-info">
+          <div class="info-box" style="margin-top:14px" id="infoBoxContent"><strong>Pisah Harta (K/0 + TK/0):</strong> Masing-masing pasangan mengajukan SPT sendiri. Suami menggunakan PTKP K/0, istri menggunakan PTKP TK/0. Keduanya mengakses lapisan tarif secara terpisah.<br><br><strong>Gabung Harta (K/I/0):</strong> Penghasilan digabung dalam satu SPT bersama. Menggunakan PTKP K/I/0. Satu tangga lapisan tarif untuk seluruh penghasilan.</div>
         </div>
       </div>
 

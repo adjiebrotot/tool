@@ -313,15 +313,36 @@ follows the button's colour in both themes and lights up with the active tab.
 Emoji outside a tab bar are fine where they are decoration rather than an icon
 (the 🌙 / ☀️ theme toggle, the footer flags).
 
-### Section Label
+### Field Group (grouping rows in a control panel)
 
-```css
-.section-label {
-  font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--accent); margin: 14px 0 8px; padding-bottom: 5px; border-bottom: 1px solid var(--border);
-}
-.section-label:first-child { margin-top: 0; }
+Related rows in a control panel go in a `.field-group`: a tinted, rounded box with a
+small uppercase `.group-title`. Styled in shared.css, so a tool writes only the markup.
+Put a lone setting that belongs to no group (a currency picker at the top of a tab)
+outside any box rather than in a one-row group.
+
+```html
+<div class="field-group">
+  <div class="group-title">Costs of Owning</div>
+  <div class="field-row">…Costs Mode…</div>
+  <div class="fg-sub" id="ownCostsSimple">   <!-- rows shown/hidden together -->
+    <div class="field-row">…Setup Cost…</div>
+    <div class="field-row">…Ongoing Costs…</div>
+  </div>
+  <div class="fg-body">…free-form content that is not a row…</div>
+</div>
 ```
+
+- Every `.field-row`, `.toggle-row` and `.slider-block` in a group is ruled off from
+  the one above it, the first included, so hiding a row never leaves a doubled or
+  missing hairline. Drop any inline `border-top:none;padding-top:0` a row carried as
+  the first thing in its panel.
+- `.fg-sub` is a plain wrapper for a run of rows that show or hide as one (a Simple /
+  Detailed mode). Its rows are ruled like the group's own.
+- The first group in a `.ctrl-panel` sits flush with the panel's padding.
+
+The older bare `.section-label` (an uppercase label with an underline, rows loose
+below it) is still used for headings that sit over something other than form rows,
+such as the loaded-asset chips in the DCA Data tab. Do not use it to head form rows.
 
 ### Slider Block
 

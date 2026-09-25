@@ -29,8 +29,6 @@ body{margin:0;font-family:'DM Sans',system-ui,-apple-system,sans-serif;color:var
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent);}
 .ctrl-panel{display:none;padding:14px 16px 18px;}
 .ctrl-panel.active{display:block;}
-.section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border);}
-.section-label:first-child{margin-top:0;}
 .slider-block{padding:10px 0 14px;border-top:1px solid var(--border);}
 .slider-block:first-of-type{border-top:none;}
 .slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;}

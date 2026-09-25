@@ -6,6 +6,7 @@
 
    FORM FIELD CLASSES — use these for any new tool's inputs:
      .field-row / .field-label / .field-sub  — labelled field wrapper
+     .field-group / .group-title  — tinted box that groups related rows
      .num-input      — numeric text input (DM Sans, tabular-nums)
      .txt-input      — free-text input (DM Sans)
      .sel-input      — <select> dropdown (DM Sans, custom chevron)
@@ -210,6 +211,28 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
    ============================================================ */
 .field-row{display:flex;flex-direction:column;gap:5px;padding:10px 0 14px;border-top:1px solid var(--border);}
 .field-row:first-of-type{border-top:none;}
+
+/* FIELD GROUP — a tinted box that gathers related rows in a control panel
+   under one small uppercase title:
+     <div class="field-group">
+       <div class="group-title">Costs of Owning</div>
+       <div class="field-row">…</div>
+       <div class="fg-sub" id="…">…rows shown/hidden together…</div>
+       <div class="fg-body">…free-form content that is not a row…</div>
+     </div>
+   Every row inside is ruled off from the one above it, the first included,
+   so a hidden row never leaves a doubled or missing hairline. A .fg-sub is a
+   plain wrapper that shows or hides a run of rows as one; its rows are ruled
+   the same way as the group's own. */
+.field-group{border:1px solid var(--border);border-radius:12px;padding:0 14px 6px;margin-top:14px;background:var(--bg-subtle);}
+.ctrl-panel>.field-group:first-child{margin-top:0;}
+.group-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);padding:10px 0 2px;}
+.field-group>.field-row,.field-group>.toggle-row,.field-group>.slider-block{border-top:1px solid var(--border);}
+.field-group>.slider-block{padding-top:12px;}
+.field-group>.fg-sub>.field-row,.field-group>.fg-sub>.toggle-row,.field-group>.fg-sub>.slider-block{border-top:1px solid var(--border);}
+.field-group>.fg-sub>.slider-block{padding-top:12px;}
+.field-group>.fg-body{padding:8px 0 8px;}
+
 .field-label{font-weight:700;font-size:.9rem;}
 .field-sub{color:var(--muted);font-size:.8rem;line-height:1.35;margin-top:2px;}
 .num-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);font-variant-numeric:tabular-nums;}

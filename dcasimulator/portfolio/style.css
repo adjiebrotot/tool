@@ -108,6 +108,8 @@ body.light .weight-row.wt-total.bad .wt-name,body.light .weight-row.wt-total.bad
 .sub-tab.active{background:var(--accent);color:#fff}
 .sub-panel{display:none}
 .sub-panel.active{display:block}
+.sub-panel>.field-group:first-child{margin-top:0}
+.field-group>.radio-group{margin-bottom:10px}
 
 /* Segmented view toggle (Composition chart: $ value / % of portfolio) */
 .seg-toggle{display:inline-flex;gap:2px;background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:3px;flex-shrink:0}

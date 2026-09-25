@@ -207,25 +207,32 @@
 
   <!-- ── Investment ── -->
   <div class="ctrl-panel" id="tab-invest">
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Invested assets today <i class="tip-icon" data-tip="What you already hold that earns the return below. Not the home you live in.">?</i></span></div>
-      <div class="currency-wrap">
-        <span class="prefix" id="assetsPrefix">$</span>
-        <input class="currency-input fmt-num" id="assets" type="text" inputmode="decimal" value="100,000"/>
+    <div class="field-group">
+      <div class="group-title">What you hold</div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Invested assets today <i class="tip-icon" data-tip="What you already hold that earns the return below. Not the home you live in.">?</i></span></div>
+        <div class="currency-wrap">
+          <span class="prefix" id="assetsPrefix">$</span>
+          <input class="currency-input fmt-num" id="assets" type="text" inputmode="decimal" value="100,000"/>
+        </div>
       </div>
     </div>
-    <div class="field-row">
-      <div class="field-label">Asset</div>
-      <select class="sel-input" id="assetPreset"></select>
-      <p class="note" id="presetNote"></p>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Expected return (CAGR), % p.a. <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees.">?</i></span></div>
-      <input class="num-input" id="ret" type="number" min="-5" max="40" step="0.1" value="8"/>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Volatility, % p.a. <i class="tip-icon" data-tip="How much the return bounces year to year. Use 0 for a single smooth projection.">?</i></span></div>
-      <input class="num-input" id="std" type="number" min="0" max="80" step="0.1" value="15"/>
+
+    <div class="field-group">
+      <div class="group-title">Return assumptions</div>
+      <div class="field-row">
+        <div class="field-label">Asset</div>
+        <select class="sel-input" id="assetPreset"></select>
+        <p class="note" id="presetNote"></p>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Expected return (CAGR), % p.a. <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees.">?</i></span></div>
+        <input class="num-input" id="ret" type="number" min="-5" max="40" step="0.1" value="8"/>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Volatility, % p.a. <i class="tip-icon" data-tip="How much the return bounces year to year. Use 0 for a single smooth projection.">?</i></span></div>
+        <input class="num-input" id="std" type="number" min="0" max="80" step="0.1" value="15"/>
+      </div>
     </div>
 
     <div class="field-group">
@@ -244,42 +251,45 @@
 
   <!-- ── Goal ── -->
   <div class="ctrl-panel" id="tab-goal">
-    <div class="field-row">
-      <div class="field-label">What should the money do?</div>
-      <div class="radio-group" id="modeGroup">
-        <label class="radio-opt selected">
-          <input type="radio" name="ffmode" value="die" checked/>
-          <div class="radio-opt-text">
-            <strong>Just Die</strong>
-            Runs to nothing at your life expectancy. Cheapest, and no margin if you live longer.
-          </div>
-        </label>
-        <label class="radio-opt">
-          <input type="radio" name="ffmode" value="legacy"/>
-          <div class="radio-opt-text">
-            <strong>Leave a Legacy</strong>
-            A set amount, in today's money, is still there at your life expectancy.
-          </div>
-        </label>
-        <label class="radio-opt">
-          <input type="radio" name="ffmode" value="rich"/>
-          <div class="radio-opt-text">
-            <strong>Die Rich</strong>
-            Spend only the real growth, so it lasts forever. Needs a return above inflation.
-          </div>
-        </label>
+    <div class="field-group">
+      <div class="group-title">Retirement goal</div>
+      <div class="field-row">
+        <div class="field-label">What should the money do?</div>
+        <div class="radio-group" id="modeGroup">
+          <label class="radio-opt selected">
+            <input type="radio" name="ffmode" value="die" checked/>
+            <div class="radio-opt-text">
+              <strong>Just Die</strong>
+              Runs to nothing at your life expectancy. Cheapest, and no margin if you live longer.
+            </div>
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="ffmode" value="legacy"/>
+            <div class="radio-opt-text">
+              <strong>Leave a Legacy</strong>
+              A set amount, in today's money, is still there at your life expectancy.
+            </div>
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="ffmode" value="rich"/>
+            <div class="radio-opt-text">
+              <strong>Die Rich</strong>
+              Spend only the real growth, so it lasts forever. Needs a return above inflation.
+            </div>
+          </label>
+        </div>
       </div>
-    </div>
-    <div class="field-row" id="legacyRow" style="display:none;">
-      <div class="field-label"><span class="tip-wrap">Amount to leave behind <i class="tip-icon" data-tip="In today's money.">?</i></span></div>
-      <div class="currency-wrap">
-        <span class="prefix" id="legacyPrefix">$</span>
-        <input class="currency-input fmt-num" id="legacy" type="text" inputmode="decimal" value="500,000"/>
+      <div class="field-row" id="legacyRow" style="display:none;">
+        <div class="field-label"><span class="tip-wrap">Amount to leave behind <i class="tip-icon" data-tip="In today's money.">?</i></span></div>
+        <div class="currency-wrap">
+          <span class="prefix" id="legacyPrefix">$</span>
+          <input class="currency-input fmt-num" id="legacy" type="text" inputmode="decimal" value="500,000"/>
+        </div>
       </div>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Retirement spending, % of today <i class="tip-icon" data-tip="100% spends the same as now. 80% if the mortgage is gone.">?</i></span></div>
-      <input class="num-input" id="retireMultiplier" type="number" min="10" max="300" step="1" value="100"/>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Retirement spending, % of today <i class="tip-icon" data-tip="100% spends the same as now. 80% if the mortgage is gone.">?</i></span></div>
+        <input class="num-input" id="retireMultiplier" type="number" min="10" max="300" step="1" value="100"/>
+      </div>
     </div>
 
     <div class="field-group">
@@ -288,7 +298,7 @@
         <div class="toggle-label"><span class="tip-wrap">Include a pension <i class="tip-icon" data-tip="Reduces the pot you need, but only from its start age.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="pensionOn"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
-      <div id="pensionRows" style="display:none;">
+      <div class="fg-sub" id="pensionRows" style="display:none;">
         <div class="field-row">
           <div class="field-label">Pension starts at age</div>
           <input class="num-input" id="pensionStartAge" type="number" min="40" max="90" step="1" value="67"/>
@@ -318,21 +328,28 @@
 
   <!-- ── Settings ── -->
   <div class="ctrl-panel" id="tab-settings">
-    <div class="toggle-row">
-      <div class="toggle-label"><span class="tip-wrap">Show Present Value <i class="tip-icon" data-tip="<strong>Off:</strong> future's money.<br><strong>On:</strong> today's money. The plan is the same either way.">?</i></span></div>
-      <label class="toggle-switch"><input type="checkbox" id="showReal"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+    <div class="field-group">
+      <div class="group-title">Display</div>
+      <div class="toggle-row">
+        <div class="toggle-label"><span class="tip-wrap">Show Present Value <i class="tip-icon" data-tip="<strong>Off:</strong> future's money.<br><strong>On:</strong> today's money. The plan is the same either way.">?</i></span></div>
+        <label class="toggle-switch"><input type="checkbox" id="showReal"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+      </div>
     </div>
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Simulated futures <i class="tip-icon" data-tip="How many random paths the band and the probability are built from.">?</i></span></div>
-      <input class="num-input" id="paths" type="number" min="100" max="5000" step="100" value="1000"/>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Confidence level, % <i class="tip-icon" data-tip="The share of simulated futures the confidence pot has to survive.">?</i></span></div>
-      <input class="num-input" id="confidence" type="number" min="50" max="99" step="1" value="90"/>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Random seed <i class="tip-icon" data-tip="The same seed gives the same simulated futures.">?</i></span></div>
-      <input class="num-input" id="seed" type="number" min="1" step="1" value="20260921"/>
+
+    <div class="field-group">
+      <div class="group-title">Simulation</div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Simulated futures <i class="tip-icon" data-tip="How many random paths the band and the probability are built from.">?</i></span></div>
+        <input class="num-input" id="paths" type="number" min="100" max="5000" step="100" value="1000"/>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Confidence level, % <i class="tip-icon" data-tip="The share of simulated futures the confidence pot has to survive.">?</i></span></div>
+        <input class="num-input" id="confidence" type="number" min="50" max="99" step="1" value="90"/>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Random seed <i class="tip-icon" data-tip="The same seed gives the same simulated futures.">?</i></span></div>
+        <input class="num-input" id="seed" type="number" min="1" step="1" value="20260921"/>
+      </div>
     </div>
   </div>
   </div><!-- /ctrl-scroll -->
