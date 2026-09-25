@@ -83,6 +83,8 @@ let displayMs = Date.now();
 let travel = null, travelZone = null, tweenRaf = 0, tweening = false;
 let lastMinute = -1, offsetSig = '';
 let obstacles = [], padTop = 90, padBottom = 90;
+// On a phone: how much taller the credits are open than folded, and whether they are open.
+let footExtra = 0, footOpen = false;
 let C = {}, hatchCache = new Map(), twCache = new Map();
 let ready = false;
 
@@ -339,11 +341,41 @@ function build(topo) {
   for (const [old, cur] of Object.entries(aliases)) (reverseAlias[cur] = reverseAlias[cur] || []).push(old);
   const perCc = {};
   geoms.forEach(g => { perCc[g.properties.cc] = (perCc[g.properties.cc] || 0) + 1; });
+  const polysOf = g => g.type === 'Polygon' ? [g.arcs] : g.type === 'MultiPolygon' ? g.arcs : [];
+  // Some zones are laid over another rather than cut out of it: Urumqi
+  // (Xinjiang) sits on top of Shanghai, which still covers all of China.
+  // Neighbours share an edge running opposite ways; a zone that runs every
+  // shared edge the same way as one other zone lies on it. Cut it out as a
+  // hole, so the base neither paints nor answers a tap there, and count an
+  // edge's owners by direction, so edges a hole doubles cancel and the
+  // overlay's own inner edge becomes its border with the base.
+  const tally = full.map(() => new Map());
+  geoms.forEach((g, i) => polysOf(g).forEach(p => p.forEach(r => r.forEach(a => {
+    const m = tally[a < 0 ? ~a : a]; m.set(i, (m.get(i) || 0) + (a < 0 ? -1 : 1));
+  }))));
+  geoms.forEach((g, i) => {
+    let base = -1, ok = true;
+    polysOf(g).forEach(p => p.forEach(r => r.forEach(a => {
+      const m = tally[a < 0 ? ~a : a];
+      if (m.size === 1) return;
+      const same = [...m].filter(([j, s]) => j !== i && Math.sign(s) === Math.sign(m.get(i))).map(([j]) => j);
+      if (base < 0 && same.length === 1) base = same[0];
+      if (!same.includes(base)) ok = false;
+    })));
+    if (!ok || base < 0) return;
+    const bp = polysOf(geoms[base]);
+    const holes = polysOf(g).map(p => p[0].slice().reverse().map(a => ~a));
+    // Onto the base polygon the overlay shares edges with.
+    const edge = new Set(polysOf(g).flat(2).map(a => a < 0 ? ~a : a));
+    const host = bp.find(p => p[0].some(a => edge.has(a < 0 ? ~a : a))) || bp[0];
+    host.push(...holes);
+    holes.flat().forEach(a => { const m = tally[a < 0 ? ~a : a]; m.set(base, (m.get(base) || 0) + (a < 0 ? -1 : 1)); });
+  });
+  tally.forEach((m, a) => m.forEach((s, i) => { if (s) owners[a].push(i); }));
 
   zones = geoms.map((g, i) => {
     const pr = g.properties;
-    const polys = g.type === 'Polygon' ? [g.arcs] : g.type === 'MultiPolygon' ? g.arcs : [];
-    polys.forEach(p => p.forEach(r => r.forEach(a => { const o = owners[a < 0 ? ~a : a]; if (!o.includes(i)) o.push(i); })));
+    const polys = polysOf(g);
     // The name the browser knows it by: the zone itself, else an old name
     // for it (an older browser may know Europe/Kiev but not Europe/Kyiv).
     let tz = null, fmt = null;
@@ -724,10 +756,12 @@ function drawStrip(ctx, cs) {
 // ── ZOOM / PAN ───────────────────────────────────────────────────────────
 // North and south the map stops at its crop lines, but may slide until they
 // meet the cards on top and the controls below, so a place near the edge (New
-// Zealand, Patagonia) can still be brought clear of them.
+// Zealand, Patagonia) can still be brought clear of them. On a phone it may
+// slide a little further up, to make room for the credits to open.
+const southStop = k => vh - Math.max(0, padBottom - 10) - Y1 * k;
 function constrain(t) {
   const k = t.k;
-  const lo = vh - Math.max(0, padBottom - 10) - Y1 * k, hi = Math.max(0, padTop - 10) - Y0 * k;
+  const lo = southStop(k) - footExtra, hi = Math.max(0, padTop - 10) - Y0 * k;
   const y = lo > hi ? (lo + hi) / 2 : Math.min(hi, Math.max(lo, t.y));
   return y === t.y ? t : d3.zoomIdentity.translate(t.x, y).scale(k);
 }
@@ -817,6 +851,7 @@ function onZoom(ev) {
   if (view === 'tz' && !flying && T.k > minK * TZ_MAX_ZOOM) setView('jur');
   if (!cardPinned) hideCard();
   else followCard();
+  updateFoot();
   requestDraw(true);
 }
 
@@ -1106,6 +1141,22 @@ $('themeToggle').addEventListener('click', () => {
 
 // Labels steer clear of the cards floating on the map, and a region is
 // framed in the space between them.
+function setFootOpen(open) {
+  if (open === footOpen) return;
+  footOpen = open;
+  app.classList.toggle('foot-open', open);
+  updateObstacles();
+}
+// Open once the map is dragged past half the room the credits need.
+function updateFoot() {
+  if (!footExtra) return setFootOpen(false);
+  const lo = southStop(T.k), hi = Math.max(0, padTop - 10) - Y0 * T.k;
+  setFootOpen(T.y <= lo - footExtra / 2 || lo - footExtra > hi);
+}
+$('footPeek').addEventListener('click', () => {
+  if (!ready) return;
+  flyTo(constrain(d3.zoomIdentity.translate(T.x, -1e9).scale(T.k)), 500);
+});
 function updateObstacles() {
   const ar = app.getBoundingClientRect();
   obstacles = [];
@@ -1117,8 +1168,18 @@ function updateObstacles() {
   if (view === 'tz') obstacles.push([0, 0, vw, STRIP_H]);
   const top = Math.max(document.querySelector('.wc-now').getBoundingClientRect().bottom, document.querySelector('.wc-nav').getBoundingClientRect().bottom) - ar.top;
   const ctl = document.querySelector('.wc-controls').getBoundingClientRect().top - ar.top;
-  padTop = top + 10; padBottom = vh - ctl + 10;
+  // Measured both ways on the spot; the class flips back before any paint.
+  footExtra = 0;
+  if (matchMedia('(max-width:640px)').matches) {
+    const foot = document.querySelector('.wc-foot');
+    app.classList.remove('foot-open'); const shut = foot.offsetHeight;
+    app.classList.add('foot-open'); footExtra = Math.max(0, foot.offsetHeight - shut);
+    app.classList.toggle('foot-open', footOpen);
+  }
+  // The controls ride up when the credits open; pad as if they were folded.
+  padTop = top + 10; padBottom = vh - ctl + 10 - (footOpen ? footExtra : 0);
   app.style.setProperty('--wc-panel-bottom', (vh - ctl + 8) + 'px');
+  if (T) updateFoot();
   requestDraw(false);
 }
 
@@ -1178,6 +1239,7 @@ function start(topo) {
     view: () => view,
     card: () => (cardZone ? $('placeCard').innerText : null),
     labels: () => lastLabels.slice(),
+    zoneAt: (lon, lat) => { const [x, y] = [T.x + projX(lon) * T.k, T.y + projY(lat) * T.k], z = zoneAt(x, y); return z && z.id; },
     // Kinds of the borders two zones share: 1 country, 2 state line, 3 time border.
     borderKinds: (a, b) => {
       const ia = byId.get(a).i, ib = byId.get(b).i, out = new Set();

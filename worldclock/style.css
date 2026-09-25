@@ -102,6 +102,7 @@ body:not(.light) .seg-btn.active{color:var(--text-inv);}
 .wc-foot img{height:12px;width:auto;border-radius:2px;vertical-align:-2px;margin-right:4px;}
 .wc-foot a{color:inherit;}
 .wc-foot a:hover{color:var(--text);}
+.wc-foot-peek{display:none;}
 
 /* ---------- Time Travel panel ---------- */
 .wc-travel{position:absolute;left:12px;bottom:var(--wc-panel-bottom,110px);width:min(360px,calc(100% - 24px));padding:14px 16px 16px;z-index:6;}
@@ -167,4 +168,9 @@ body:not(.light) .wc-travel .txt-input{color-scheme:dark;}
   .wc-foot{font-size:.6rem;padding:2px 10px;line-height:1.5;}
   .wc-foot-item{display:block;}
   .wc-foot-item+.wc-foot-item{margin-left:0;}
+  /* On a phone the credits fold to a tiny tab, and open in full once the
+     map is dragged to its southern edge (or the tab is tapped). */
+  .wc-app:not(.foot-open) .wc-foot{padding:0;background:none;}
+  .wc-app:not(.foot-open) .wc-foot-body{display:none;}
+  .wc-app:not(.foot-open) .wc-foot-peek{display:block;margin:0 auto;padding:0 8px;border:none;border-radius:6px;background:color-mix(in srgb,var(--panel) 70%,transparent);color:var(--muted);font:inherit;font-size:.5rem;line-height:1.5;opacity:.75;cursor:pointer;}
 }

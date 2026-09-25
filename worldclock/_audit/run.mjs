@@ -241,8 +241,13 @@ console.log(`World Clock audit — zoneinfo tzdata ${tzdataVersion}, fixed now $
     check(`W9 ${label}: a border is a time border exactly when its two clocks differ`, bad.length === 0, bad.join('; ') || pairs.length + ' borders');
   };
   const PAIRS = [['Australia/Perth', 'Australia/Darwin'], ['Australia/Sydney', 'Australia/Brisbane'], ['Australia/Sydney', 'Australia/Melbourne'],
-    ['Australia/Adelaide', 'Australia/Darwin'], ['Australia/Adelaide', 'Australia/Sydney'], ['Europe/Madrid', 'Europe/Lisbon'], ['Europe/Madrid', 'Europe/Paris']];
+    ['Australia/Adelaide', 'Australia/Darwin'], ['Australia/Adelaide', 'Australia/Sydney'], ['Europe/Madrid', 'Europe/Lisbon'], ['Europe/Madrid', 'Europe/Paris'],
+    // Xinjiang: Urumqi is laid over Shanghai in the source data, and is cut out of it.
+    ['Asia/Almaty', 'Asia/Urumqi'], ['Asia/Bishkek', 'Asia/Urumqi'], ['Asia/Dushanbe', 'Asia/Urumqi'], ['Asia/Hovd', 'Asia/Urumqi'],
+    ['Asia/Shanghai', 'Asia/Urumqi'], ['Asia/Almaty', 'Asia/Tashkent'], ['Asia/Almaty', 'Asia/Bishkek']];
   await kindsAt(PAIRS, NOW, 'late September');
+  const tapped = await page.evaluate(() => [window.__worldclock.zoneAt(85, 42), window.__worldclock.zoneAt(116, 34)]);
+  check('W9 a tap in Xinjiang finds Urumqi, not the Shanghai zone under it', tapped[0] === 'Asia/Urumqi' && tapped[1] === 'Asia/Shanghai', tapped.join(' '));
 
   // W3 Time Travel
   await page.click('#zoomHome');
