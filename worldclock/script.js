@@ -83,6 +83,8 @@ let displayMs = Date.now();
 let travel = null, travelZone = null, tweenRaf = 0, tweening = false;
 let lastMinute = -1, offsetSig = '';
 let obstacles = [], padTop = 90, padBottom = 90;
+// On a phone: how much taller the credits are open than folded, and whether they are open.
+let footExtra = 0, footOpen = false;
 let C = {}, hatchCache = new Map(), twCache = new Map();
 let ready = false;
 
@@ -754,10 +756,12 @@ function drawStrip(ctx, cs) {
 // ── ZOOM / PAN ───────────────────────────────────────────────────────────
 // North and south the map stops at its crop lines, but may slide until they
 // meet the cards on top and the controls below, so a place near the edge (New
-// Zealand, Patagonia) can still be brought clear of them.
+// Zealand, Patagonia) can still be brought clear of them. On a phone it may
+// slide a little further up, to make room for the credits to open.
+const southStop = k => vh - Math.max(0, padBottom - 10) - Y1 * k;
 function constrain(t) {
   const k = t.k;
-  const lo = vh - Math.max(0, padBottom - 10) - Y1 * k, hi = Math.max(0, padTop - 10) - Y0 * k;
+  const lo = southStop(k) - footExtra, hi = Math.max(0, padTop - 10) - Y0 * k;
   const y = lo > hi ? (lo + hi) / 2 : Math.min(hi, Math.max(lo, t.y));
   return y === t.y ? t : d3.zoomIdentity.translate(t.x, y).scale(k);
 }
@@ -847,6 +851,7 @@ function onZoom(ev) {
   if (view === 'tz' && !flying && T.k > minK * TZ_MAX_ZOOM) setView('jur');
   if (!cardPinned) hideCard();
   else followCard();
+  updateFoot();
   requestDraw(true);
 }
 
@@ -1136,6 +1141,22 @@ $('themeToggle').addEventListener('click', () => {
 
 // Labels steer clear of the cards floating on the map, and a region is
 // framed in the space between them.
+function setFootOpen(open) {
+  if (open === footOpen) return;
+  footOpen = open;
+  app.classList.toggle('foot-open', open);
+  updateObstacles();
+}
+// Open once the map is dragged past half the room the credits need.
+function updateFoot() {
+  if (!footExtra) return setFootOpen(false);
+  const lo = southStop(T.k), hi = Math.max(0, padTop - 10) - Y0 * T.k;
+  setFootOpen(T.y <= lo - footExtra / 2 || lo - footExtra > hi);
+}
+$('footPeek').addEventListener('click', () => {
+  if (!ready) return;
+  flyTo(constrain(d3.zoomIdentity.translate(T.x, -1e9).scale(T.k)), 500);
+});
 function updateObstacles() {
   const ar = app.getBoundingClientRect();
   obstacles = [];
@@ -1147,8 +1168,18 @@ function updateObstacles() {
   if (view === 'tz') obstacles.push([0, 0, vw, STRIP_H]);
   const top = Math.max(document.querySelector('.wc-now').getBoundingClientRect().bottom, document.querySelector('.wc-nav').getBoundingClientRect().bottom) - ar.top;
   const ctl = document.querySelector('.wc-controls').getBoundingClientRect().top - ar.top;
-  padTop = top + 10; padBottom = vh - ctl + 10;
+  // Measured both ways on the spot; the class flips back before any paint.
+  footExtra = 0;
+  if (matchMedia('(max-width:640px)').matches) {
+    const foot = document.querySelector('.wc-foot');
+    app.classList.remove('foot-open'); const shut = foot.offsetHeight;
+    app.classList.add('foot-open'); footExtra = Math.max(0, foot.offsetHeight - shut);
+    app.classList.toggle('foot-open', footOpen);
+  }
+  // The controls ride up when the credits open; pad as if they were folded.
+  padTop = top + 10; padBottom = vh - ctl + 10 - (footOpen ? footExtra : 0);
   app.style.setProperty('--wc-panel-bottom', (vh - ctl + 8) + 'px');
+  if (T) updateFoot();
   requestDraw(false);
 }
 
