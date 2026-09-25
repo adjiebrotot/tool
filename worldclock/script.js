@@ -339,11 +339,41 @@ function build(topo) {
   for (const [old, cur] of Object.entries(aliases)) (reverseAlias[cur] = reverseAlias[cur] || []).push(old);
   const perCc = {};
   geoms.forEach(g => { perCc[g.properties.cc] = (perCc[g.properties.cc] || 0) + 1; });
+  const polysOf = g => g.type === 'Polygon' ? [g.arcs] : g.type === 'MultiPolygon' ? g.arcs : [];
+  // Some zones are laid over another rather than cut out of it: Urumqi
+  // (Xinjiang) sits on top of Shanghai, which still covers all of China.
+  // Neighbours share an edge running opposite ways; a zone that runs every
+  // shared edge the same way as one other zone lies on it. Cut it out as a
+  // hole, so the base neither paints nor answers a tap there, and count an
+  // edge's owners by direction, so edges a hole doubles cancel and the
+  // overlay's own inner edge becomes its border with the base.
+  const tally = full.map(() => new Map());
+  geoms.forEach((g, i) => polysOf(g).forEach(p => p.forEach(r => r.forEach(a => {
+    const m = tally[a < 0 ? ~a : a]; m.set(i, (m.get(i) || 0) + (a < 0 ? -1 : 1));
+  }))));
+  geoms.forEach((g, i) => {
+    let base = -1, ok = true;
+    polysOf(g).forEach(p => p.forEach(r => r.forEach(a => {
+      const m = tally[a < 0 ? ~a : a];
+      if (m.size === 1) return;
+      const same = [...m].filter(([j, s]) => j !== i && Math.sign(s) === Math.sign(m.get(i))).map(([j]) => j);
+      if (base < 0 && same.length === 1) base = same[0];
+      if (!same.includes(base)) ok = false;
+    })));
+    if (!ok || base < 0) return;
+    const bp = polysOf(geoms[base]);
+    const holes = polysOf(g).map(p => p[0].slice().reverse().map(a => ~a));
+    // Onto the base polygon the overlay shares edges with.
+    const edge = new Set(polysOf(g).flat(2).map(a => a < 0 ? ~a : a));
+    const host = bp.find(p => p[0].some(a => edge.has(a < 0 ? ~a : a))) || bp[0];
+    host.push(...holes);
+    holes.flat().forEach(a => { const m = tally[a < 0 ? ~a : a]; m.set(base, (m.get(base) || 0) + (a < 0 ? -1 : 1)); });
+  });
+  tally.forEach((m, a) => m.forEach((s, i) => { if (s) owners[a].push(i); }));
 
   zones = geoms.map((g, i) => {
     const pr = g.properties;
-    const polys = g.type === 'Polygon' ? [g.arcs] : g.type === 'MultiPolygon' ? g.arcs : [];
-    polys.forEach(p => p.forEach(r => r.forEach(a => { const o = owners[a < 0 ? ~a : a]; if (!o.includes(i)) o.push(i); })));
+    const polys = polysOf(g);
     // The name the browser knows it by: the zone itself, else an old name
     // for it (an older browser may know Europe/Kiev but not Europe/Kyiv).
     let tz = null, fmt = null;
@@ -1178,6 +1208,7 @@ function start(topo) {
     view: () => view,
     card: () => (cardZone ? $('placeCard').innerText : null),
     labels: () => lastLabels.slice(),
+    zoneAt: (lon, lat) => { const [x, y] = [T.x + projX(lon) * T.k, T.y + projY(lat) * T.k], z = zoneAt(x, y); return z && z.id; },
     // Kinds of the borders two zones share: 1 country, 2 state line, 3 time border.
     borderKinds: (a, b) => {
       const ia = byId.get(a).i, ib = byId.get(b).i, out = new Set();
