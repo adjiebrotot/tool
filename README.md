@@ -30,6 +30,7 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 | [Cost of Living Comparator](https://tool.adjiebrotots.com/costofliving-comparator/) | Compare living costs across cities. |
 | [Video to GIF](https://tool.adjiebrotots.com/videotogif/) | Convert video to GIF locally — videos never leave your device. |
 | [Random Picker](https://tool.adjiebrotots.com/randompicker/) | Pick one option at random with a spinning wheel, a 3D dice roll, a slot machine, or a Galton board. |
+| [World Clock](https://tool.adjiebrotots.com/worldclock/) | A live full-screen world map with the local time on every country, state and territory, opening on your own region. Time Travel to any date and time in any place to convert a meeting time, daylight saving included; zoom out for a classic time zone map. |
 
 ## Repo layout
 
@@ -66,8 +67,13 @@ down payment. No modelling choice can move a zero, so a drift names its own
 cause.
 
 Harnesses live in `costofliving-comparator/`, `dcasimulator/`, `financialfreedom/`,
-`financingvscash/`, `financingvscash/loan-types/`, `pisahvsgabung/`, `rentvsownhouse/`, and
-`rentvsownhouse/sensitivity/`. The Rent vs Own page and its Sensitivity page run one shared engine
+`financingvscash/`, `financingvscash/loan-types/`, `pisahvsgabung/`, `rentvsownhouse/`,
+`rentvsownhouse/sensitivity/`, and `worldclock/`. The World Clock's harness checks every clock on
+its map, for all 407 zones and across Time Travel jumps over daylight-saving changes,
+against Python's `zoneinfo`, which reads the system's tz database rather than Chromium's.
+Its map, `worldclock/zones.json`, is built by `worldclock/_build/build.mjs` from a
+timezone-boundary-builder release clipped to Natural Earth coastlines; re-run it when a
+new release is out. The Rent vs Own page and its Sensitivity page run one shared engine
 (`rentvsownhouse/engine.js`), and `rentvsownhouse/sensitivity/_audit/parity.mjs` types the same
 scenarios into both and requires byte-identical cashflow exports. `rentvsownhouse/audit/` is the earlier
 JS-versus-Python cross-model audit that these superseded; its CSV outputs are generated, not

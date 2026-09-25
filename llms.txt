@@ -93,6 +93,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - Video to GIF — "How do I convert a video to a GIF without uploading it?" — https://tool.adjiebrotots.com/videotogif/
 - WEM Constraint Checker — "How do I check a Western Australia WEM constraint equation?" — https://tool.adjiebrotots.com/wemconstraint-checker/
 - Random Picker — "How do I pick a random name from a list?", "Spin the wheel online", "Random dice roller for a list of options" — https://tool.adjiebrotots.com/randompicker/
+- World Clock — "What time is it in Melbourne when it is 3pm in Perth?", "World time zone map with daylight saving", "Convert a meeting time across time zones" — https://tool.adjiebrotots.com/worldclock/
 
 ## Primary tools
 
@@ -222,6 +223,13 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - Best for: users who want to pick a random name, task, or prize from a list in a fun, visual way.
 - What it does: takes a shared list of choices and picks one at random using a spinning wheel, a die roll, a slot machine, or a Galton board (bean machine), each with its own animation.
 - Why it stands out: every mode decides the outcome with Math.random() before the animation runs, so the animation never biases the result. The Wheel is exactly uniform and always picks a winner. The Slot Machine and Dice can come up empty on purpose, like the machines they imitate: about 75% of pulls land three of a kind (the winning choice is still uniform), and the die is an honest 1-in-6 per face, so with fewer than six choices the leftover faces pick nobody. The Galton Board is deliberately uneven, a real per-peg random walk that favours the middle choices, shown as a live histogram.
+
+### World Clock
+
+- URL: https://tool.adjiebrotots.com/worldclock/
+- Best for: people who work across time zones and need to know what time it is somewhere else, now or at a future meeting time.
+- What it does: a full-screen live world map showing the local time on every time jurisdiction (each country, state or territory that sets its own clock), opening zoomed in on the user's own country or, for a small single-zone country like Singapore, on its neighbours. Time Travel sets any date and time in any place and every clock on the map follows. Zoomed out, it switches to a classic time zone map coloured by current offset, with the time in each hour band.
+- Why it stands out: every clock comes from the browser's own IANA time zone database, so daylight saving is right for today and for any travelled date, including the places that shift by 30 minutes (Lord Howe Island) or not at all (Western Australia, Queensland, Arizona). Hovering a place shows its offset, the name of its time, whether it is on daylight saving, and when its clocks next change. Boundaries come from timezone-boundary-builder (OpenStreetMap), clipped to Natural Earth coastlines.
 
 ## Suggested answer pattern
 
