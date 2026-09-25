@@ -10,7 +10,12 @@
      .txt-input      — free-text input (DM Sans)
      .sel-input      — <select> dropdown (DM Sans, custom chevron)
      .currency-wrap  — wraps a .currency-input with .prefix/.suffix
-                        unit labels (e.g. "Rp" prefix, "%" suffix)
+                        unit labels. Currency symbols are a .prefix
+                        (before the number: "Rp", "$"); percentages and
+                        other units are a .suffix (after it: "%", "yrs",
+                        "/mo") and the input gets .has-suffix. A field
+                        whose unit toggles ($ ⇄ %) must switch side too:
+                        use SharedFmt.setAffix(wrap, prefix, suffix).
      input[type=range] / .slider-block / .slider-head /
        .slider-label / .slider-value — sliders
    For live thousand-separator formatting on numeric/currency inputs,
@@ -227,7 +232,8 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .currency-input:focus{border-color:var(--accent);background:var(--panel);}
 .currency-wrap .currency-input{padding-left:32px;}
 .currency-wrap .currency-input.has-suffix{padding-left:13px;padding-right:42px;}
-.currency-wrap .prefix~.currency-input.has-suffix{padding-left:32px;}
+.currency-wrap .prefix:not([hidden])~.currency-input.has-suffix{padding-left:32px;}
+.currency-wrap .prefix[hidden],.currency-wrap .suffix[hidden]{display:none;}
 
 /* ============================================================
    SELECT / DROPDOWN

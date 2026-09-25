@@ -58,11 +58,37 @@
     });
   }
 
+  /* Unit label beside a .currency-input. A currency symbol is a PREFIX
+     ("$ 1,000", "Rp 1,000"); a percentage or any other trailing unit is a
+     SUFFIX ("4.5 %", "30 yrs", "/mo"). Fields whose unit switches between
+     the two (a $/% selector) call this instead of rewriting the prefix's text,
+     so "%" never ends up in front of the number. Pass '' to hide a side. */
+  function setAffix(wrap, prefix, suffix){
+    if (!wrap) return;
+    var input = wrap.querySelector('.currency-input');
+    var pre = wrap.querySelector('.prefix');
+    var suf = wrap.querySelector('.suffix');
+    if (prefix && !pre) {
+      pre = document.createElement('span');
+      pre.className = 'prefix';
+      wrap.insertBefore(pre, wrap.firstChild);
+    }
+    if (suffix && !suf) {
+      suf = document.createElement('span');
+      suf.className = 'suffix';
+      wrap.appendChild(suf);
+    }
+    if (pre) { if (prefix) pre.textContent = prefix; pre.hidden = !prefix; }
+    if (suf) { if (suffix) suf.textContent = suffix; suf.hidden = !suffix; }
+    if (input) input.classList.toggle('has-suffix', !!suffix);
+  }
+
   global.SharedFmt = {
     formatThousands: formatThousands,
     parseFormatted: parseFormatted,
     liveFormat: liveFormat,
-    attachCurrencyInput: attachCurrencyInput
+    attachCurrencyInput: attachCurrencyInput,
+    setAffix: setAffix
   };
 
   /* ── Frequency conversion ───────────────────────────────────────────────

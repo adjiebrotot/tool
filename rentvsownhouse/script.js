@@ -896,17 +896,21 @@ function updateCurrencyPrefixes(){
     const el = $(id);
     if(el) el.textContent = sym;
   });
-  // Simple-mode cost fields: the prefix follows the field's $/% selector
+  // Simple-mode cost fields: the unit follows the field's $/% selector —
+  // the currency symbol leads the number, "%" trails it
   [['setupCostPrefix','setupCostType'],['ownOngoingCostPrefix','ownOngoingCostType'],['rentOngoingCostPrefix','rentOngoingCostType']].forEach(([pid,tid])=>{
     const el = $(pid), type = $(tid);
-    if(el && type && type.value==='pct') el.textContent = '%';
+    if(el && type) setCostUnit(el.closest('.currency-wrap'), type.value==='pct', sym);
   });
-  // Dynamic cost-item rows: $ items show the currency symbol, % items show %
+  // Dynamic cost-item rows: same rule, keyed off each row's basis select
   document.querySelectorAll('.cost-item-row').forEach(row=>{
-    const pre = row.querySelector('.prefix');
     const basis = row.querySelector('.ci-basis')?.value;
-    if(pre) pre.textContent = basis==='pct' ? '%' : sym;
+    setCostUnit(row.querySelector('.currency-wrap'), basis==='pct', sym);
   });
+}
+
+function setCostUnit(wrap, isPct, sym){
+  SharedFmt.setAffix(wrap, isPct ? '' : sym, isPct ? '%' : '');
 }
 
 function refreshLabels(){
@@ -1866,8 +1870,9 @@ function buildCostItemRow(key, item, idx, count){
     </div>
     <div class="ci-line">
       <div class="currency-wrap">
-        <span class="prefix">${isPct?'%':sym}</span>
-        <input class="currency-input money-input ci-amount" type="text" inputmode="numeric" value="${formatMoneyValue(item.amount||0)}"/>
+        <span class="prefix"${isPct?' hidden':''}>${sym}</span>
+        <input class="currency-input money-input ci-amount${isPct?' has-suffix':''}" type="text" inputmode="numeric" value="${formatMoneyValue(item.amount||0)}"/>
+        <span class="suffix"${isPct?'':' hidden'}>%</span>
       </div>
       <select class="ci-basis">${optsHtml}</select>
     </div>${inflHtml}`;
@@ -1953,8 +1958,7 @@ function wireCostListEvents(key){
     if(e.target.classList.contains('ci-basis')){
       const row = e.target.closest('.cost-item-row');
       const pct = e.target.value === 'pct';
-      const pre = row.querySelector('.prefix');
-      if(pre) pre.textContent = pct ? '%' : moneySymbol();
+      setCostUnit(row.querySelector('.currency-wrap'), pct, moneySymbol());
       const infl = row.querySelector('.ci-infl-wrap');
       if(infl) infl.style.display = pct ? 'none' : '';
     }

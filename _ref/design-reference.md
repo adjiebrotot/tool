@@ -403,7 +403,12 @@ input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
 .txt-input:focus { border-color: var(--accent); background: var(--panel); }
 .txt-input::placeholder { color: var(--muted); }
 
-/* Currency input: prefix/suffix unit labels */
+/* Currency input: prefix/suffix unit labels.
+   .prefix = currency symbol, before the number ("$", "Rp").
+   .suffix = percentage or other unit, after the number ("%", "yrs", "/mo");
+   the input also gets .has-suffix. A field with a $/% selector switches
+   side with SharedFmt.setAffix(wrap, prefix, suffix) — never put "%" in a
+   .prefix. */
 .currency-wrap { position: relative; }
 .currency-wrap .prefix,
 .currency-wrap .suffix {
@@ -429,7 +434,8 @@ input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
 .currency-input:focus { border-color: var(--accent); background: var(--panel); }
 .currency-wrap .currency-input { padding-left: 32px; }
 .currency-wrap .currency-input.has-suffix { padding-left: 13px; padding-right: 42px; }
-.currency-wrap .prefix ~ .currency-input.has-suffix { padding-left: 32px; }
+.currency-wrap .prefix:not([hidden]) ~ .currency-input.has-suffix { padding-left: 32px; }
+.currency-wrap .prefix[hidden], .currency-wrap .suffix[hidden] { display: none; }
 ```
 
 For live thousand-separator formatting, use `shared.js`:
