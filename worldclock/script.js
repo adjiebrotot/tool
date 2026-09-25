@@ -218,7 +218,15 @@ function tzFill(off, forText) {
 }
 function zoneFill(z, forText) {
   if (view === 'tz' && z.fmt) return tzFill(z.off, forText);
-  return z === userZone ? C.you : C.land;
+  return marked(z) ? C.you : C.land;
+}
+// The chosen Time Travel place is highlighted like home while the panel is
+// open or a travel is in effect.
+let markZone = null;
+const marked = z => z === userZone || z === markZone;
+function updateMark() {
+  const m = travelZone && (travel || !$('travelPanel').hidden) ? travelZone : null;
+  if (m !== markZone) { markZone = m; requestDraw(true); }
 }
 
 // ── MAP DATA ─────────────────────────────────────────────────────────────
@@ -459,7 +467,7 @@ function build(topo) {
     }
   });
 }
-const folded = z => z !== userZone && z.near.some(o => o.fmt && o.off === z.off);
+const folded = z => !marked(z) && z.near.some(o => o.fmt && o.off === z.off);
 
 // Border kinds from the clocks on either side, now.
 function updateBorders() {
@@ -632,7 +640,7 @@ const screenSize = (z, k) => Math.max(z.bbox[2] - z.bbox[0], z.bbox[3] - z.bbox[
 // (Hawaii, Fiji, New Zealand); atolls wait until you zoom in. Your own zone
 // always does.
 const regional = k => k > minK * 2;
-const pinnable = (z, k) => z.island && (regional(k) || z === userZone || z.km2 >= 5000);
+const pinnable = (z, k) => z.island && (regional(k) || marked(z) || z.km2 >= 5000);
 const isDotNow = (z, k) => pinnable(z, k) && (!z.hasGeom || screenSize(z, k) < 5);
 const isPinNow = (z, k) => pinnable(z, k) && (!z.hasGeom || screenSize(z, k) < 40 || z.lpArea * k * k < 260);
 let lastLabels = [];
@@ -662,11 +670,11 @@ function drawLabels() {
       if (dot) {
         ctx.beginPath(); ctx.arc(sx, sy, z === hover ? 4.5 : 3.2, 0, 2 * Math.PI);
         ctx.fillStyle = zoneFill(z, true); ctx.fill();
-        ctx.lineWidth = z === hover || z === userZone ? 2 : 1.2;
-        ctx.strokeStyle = z === hover ? C.hoverLine : z === userZone ? C.youText : C.coast; ctx.stroke();
+        ctx.lineWidth = z === hover || marked(z) ? 2 : 1.2;
+        ctx.strokeStyle = z === hover ? C.hoverLine : marked(z) ? C.youText : C.coast; ctx.stroke();
       }
       const area = z.lpArea * k * k, pin = isPinNow(z, k);
-      cands.push({ z, sx, sy, dot, pin, area, pri: z === userZone ? Infinity : pin ? area * 0.25 : area });
+      cands.push({ z, sx, sy, dot, pin, area, pri: marked(z) ? Infinity : pin ? area * 0.25 : area });
     }
   }
   cands.sort((a, b) => b.pri - a.pri);
@@ -679,7 +687,7 @@ function drawLabels() {
   };
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
   for (const cd of cands) {
-    const z = cd.z, you = z === userZone;
+    const z = cd.z, you = marked(z);
     if (!z.timeStr) continue;
     if (!cd.pin && !you && cd.area < 260) continue;
     const head = tzv ? gmt(z.off) : z.name;
@@ -787,8 +795,7 @@ const km = (lon1, lat1, lon2, lat2) => {
 // Your country, as much of it as lies within 4,000 km of you, widened to at
 // least 60° by 30° (44° wide on a phone) so that a small or single-zone country shows its
 // neighbours: Singapore opens on South-East Asia, Perth on Australia.
-function focusBox() {
-  const z = userZone;
+function focusBox(z = userZone) {
   if (!z || !z.lp) return null;
   const own = [];
   for (const o of zones) {
@@ -835,8 +842,8 @@ function focusBox() {
   }
   return [cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2];
 }
-function homeTransform() {
-  const box = focusBox();
+function homeTransform(z) {
+  const box = focusBox(z);
   return box ? boxTransform(box) : worldTransform(centreX());
 }
 function flyTo(target, dur) {
@@ -1007,6 +1014,7 @@ function tweenTo(target, done) {
 function setTravelling(on) {
   $('travelling').hidden = !on;
   $('travelBtn').classList.toggle('on', on);
+  updateMark();
   requestAnimationFrame(updateObstacles);
 }
 function travelFmt() { return travelZone ? travelZone.fmt : userFmt; }
@@ -1044,6 +1052,7 @@ function openTravel(open) {
     if (!travel) fillTravelFields(displayMs);
     showPlace();
   }
+  updateMark();
   requestAnimationFrame(updateObstacles);
 }
 $('travelBtn').addEventListener('click', () => openTravel($('travelPanel').hidden));
@@ -1096,10 +1105,13 @@ function choosePick(i) {
   pickEls.list.classList.remove('open');
   setTravelPlace(e.z);
   pickEls.input.blur();
+  // Bring the new place into view; a tap on the map already has it there.
+  if (ready && travelZone) { if (view === 'tz') setView('jur'); flyTo(homeTransform(travelZone), 1000); }
 }
 function setTravelPlace(z) {
   travelZone = z && z !== userZone ? z : null;
   showPlace();
+  updateMark();
   if ($('travelDate').value && $('travelTime').value) applyTravel();
 }
 pickEls.input.addEventListener('focus', () => { pickEls.input.select(); renderPicker(); });
