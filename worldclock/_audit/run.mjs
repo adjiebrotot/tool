@@ -23,6 +23,10 @@
 //   W8  the map data: every zone's label sits inside its own shape, the
 //       browser knows every zone, and no border runs the width of the map
 //       (the date-line slicing a sphere-cut land layer causes)
+//   W9  microstates and atolls fold into a bigger neighbour on the same
+//       clock (one label for Italy and the Vatican), and a border is drawn as
+//       a time border exactly when the clocks on its two sides differ, so it
+//       changes with daylight saving
 //
 // Run: node run.mjs  (the first run fetches d3 into _ref/.libcache/; after that
 // it runs offline). Exits non-zero if any check fails.
@@ -210,12 +214,35 @@ console.log(`World Clock audit — zoneinfo tzdata ${tzdataVersion}, fixed now $
 
   // W7
   const t0 = await hook(page, 'transform');
+  for (let i = 0; i < 3; i++) { await page.click('#zoomOut'); await page.waitForTimeout(300); }
+  const worldLabels = await hook(page, 'labels');
+  const atolls = ['Pacific/Tarawa', 'Pacific/Funafuti', 'Pacific/Majuro', 'Pacific/Wake', 'Pacific/Midway', 'Pacific/Fakaofo', 'Pacific/Nauru'].filter(id => worldLabels.includes(id));
+  check('W9 world view: Hawaii and New Zealand keep a clock, atolls wait for a closer look', worldLabels.includes('Pacific/Honolulu') && worldLabels.includes('Pacific/Auckland') && atolls.length === 0, atolls.join(' '));
+  await page.click('#zoomHome');
+  await page.waitForTimeout(300);
   await page.click('#viewGroup .seg-btn[data-val=tz]');
   await page.waitForTimeout(200);
   const t1 = await hook(page, 'transform');
   check('W7 choosing Time zones zooms out to the world', (await hook(page, 'view')) === 'tz' && t1.k < t0.k && t1.k <= t1.minK * 1.01, `k ${t0.k.toFixed(2)} → ${t1.k.toFixed(2)} (world ${t1.minK.toFixed(2)})`);
   for (let i = 0; i < 3; i++) { await page.click('#zoomIn'); await page.waitForTimeout(350); }
   check('W7 zooming in hands back to Jurisdictions', (await hook(page, 'view')) === 'jur', 'view ' + await hook(page, 'view'));
+
+  // W9 time borders follow the clocks, checked against zoneinfo
+  const kindsAt = async (pairs, ms, label) => {
+    const r = py({ off: pairs.flatMap(([a, b]) => [[a, ms], [b, ms]]) });
+    const bad = [];
+    for (let i = 0; i < pairs.length; i++) {
+      const [a, b] = pairs[i], same = r.off[2 * i] === r.off[2 * i + 1];
+      const kinds = await page.evaluate(([x, y]) => window.__worldclock.borderKinds(x, y), [a, b]);
+      const sameCountry = zones.find(z => z.id === a).cc === zones.find(z => z.id === b).cc;
+      const want = !same ? 3 : sameCountry ? 2 : 1;
+      if (kinds.length !== 1 || kinds[0] !== want) bad.push(`${a}|${b}: ${JSON.stringify(kinds)}, want ${want}`);
+    }
+    check(`W9 ${label}: a border is a time border exactly when its two clocks differ`, bad.length === 0, bad.join('; ') || pairs.length + ' borders');
+  };
+  const PAIRS = [['Australia/Perth', 'Australia/Darwin'], ['Australia/Sydney', 'Australia/Brisbane'], ['Australia/Sydney', 'Australia/Melbourne'],
+    ['Australia/Adelaide', 'Australia/Darwin'], ['Australia/Adelaide', 'Australia/Sydney'], ['Europe/Madrid', 'Europe/Lisbon'], ['Europe/Madrid', 'Europe/Paris']];
+  await kindsAt(PAIRS, NOW, 'late September');
 
   // W3 Time Travel
   await page.click('#zoomHome');
@@ -244,6 +271,8 @@ console.log(`World Clock audit — zoneinfo tzdata ${tzdataVersion}, fixed now $
     const mel = zs.find(z => z.id === 'Australia/Melbourne');
     check('W3 …is 6pm in Melbourne (daylight saving there, none in WA)', mel.time === '18:00', mel.time);
   });
+  // NSW and SA are on daylight saving now, Queensland and the NT are not.
+  await kindsAt(PAIRS, await hook(page, 'displayMs'), 'travelled to 10 Nov');
   const P = id => { const z = zones.find(z => z.id === id); return { id, name: z.name, country: z.country, search: z.name }; };
   await travel(P('Australia/Sydney'), '2026-10-04', '02:30', 'W3 a skipped time (Sydney, clocks forward)');
   await travel(P('Australia/Sydney'), '2027-04-04', '02:30', 'W3 a repeated time (Sydney, clocks back)');
@@ -285,12 +314,18 @@ for (const [tz, label, must] of [
   ['Pacific/Auckland', 'Auckland', ['Pacific/Chatham', 'Australia/Sydney', 'Pacific/Norfolk']],
   ['America/Santiago', 'Santiago', ['America/Argentina/Buenos_Aires', 'America/Lima']],
   ['Asia/Calcutta', 'an old zone name (Asia/Calcutta)', ['Asia/Karachi', 'Asia/Dhaka']],
+  ['Europe/Rome', 'Rome', ['Europe/Paris', 'Europe/Athens', 'Africa/Tunis']],
 ]) {
   const { ctx, page, errors } = await openAs(tz);
   const userZone = (await hook(page, 'user')).zone;
   await checkRegion(page, label, userZone, must);
   if (tz === 'America/Santiago') await checkCard(page, 'America/Santiago');
   if (tz === 'Europe/London') await checkCard(page, 'Europe/London');
+  if (tz === 'Europe/Rome') {
+    const shown = await hook(page, 'labels');
+    const folded = ['Europe/Vatican', 'Europe/San_Marino', 'Europe/Monaco', 'Europe/Malta', 'Europe/Luxembourg', 'Europe/Busingen'].filter(id => shown.includes(id));
+    check('W9 Rome: one clock for Italy, none for the microstates around it', shown.includes('Europe/Rome') && shown.includes('Europe/Paris') && folded.length === 0, folded.length ? 'labelled: ' + folded.join(' ') : '');
+  }
   await checkAllClocks(page, `W2 now, as a ${label} user`, tz);
   check(`${label} run: no page errors`, errors.length === 0, errors.join('; '));
   await ctx.close();

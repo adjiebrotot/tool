@@ -8,9 +8,11 @@
 /* ---------- map tokens ---------- */
 /* Dark (default): a night map, deep blue sea and slate land. */
 body{
-  --wc-sea:#17386A; --wc-sea-alt:#1C4178;
-  --wc-land:#253650; --wc-you:#1F4F45;
-  --wc-coast:#4B6FA8; --wc-border:#5A7098; --wc-inner:#435679;
+  --wc-sea:var(--info-bg); --wc-sea-alt:#17355F;
+  --wc-land:#2E3E5A; --wc-you:#255A4F;
+  --wc-coast:#3F5E8E; --wc-border:#4E6286; --wc-inner:#3E5075;
+  /* A border the clock changes across: the one line that has to stand out. */
+  --wc-time-line:var(--accent);
   --wc-hover:rgba(141,187,255,.20); --wc-hover-line:#8DBBFF;
   --wc-label:#EAF1FF; --wc-label-muted:#A8B6CF; --wc-you-text:#8FCDBD;
   /* Time zones view: one colour per hour of offset, cycling every six hours. */
@@ -18,11 +20,13 @@ body{
   --wc-tz-3:#3E3360; --wc-tz-4:#5A3B2D; --wc-tz-5:#3B5130;
   --wc-strip-h:40px;
 }
-/* Light: the design system's blue for the sea, white for the land. */
+/* Light: the design system's soft blue (--info-border) for the sea, white
+   for the land. */
 body.light{
-  --wc-sea:#5A91E8; --wc-sea-alt:#6C9EEC;
+  --wc-sea:var(--info-border); --wc-sea-alt:#9DBEFF;
   --wc-land:#FFFFFF; --wc-you:#DCF2E9;
-  --wc-coast:#3A71C8; --wc-border:#A3B7D6; --wc-inner:#C7D4E9;
+  --wc-coast:#6F9DEB; --wc-border:#B4C3DB; --wc-inner:#CCD7E8;
+  --wc-time-line:var(--accent-strong);
   --wc-hover:rgba(90,145,232,.16); --wc-hover-line:#3A71C8;
   --wc-label:#2D3436; --wc-label-muted:#7F8C8D; --wc-you-text:#1F7A5C;
   --wc-tz-0:#CDEEE2; --wc-tz-1:#FDE7C2; --wc-tz-2:#F6D5DE;

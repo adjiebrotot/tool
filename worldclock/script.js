@@ -71,7 +71,7 @@ const EXTRA_PLACES = {
 
 // ── STATE ────────────────────────────────────────────────────────────────
 let zones = [], byId = new Map(), aliases = {};
-let arcsLod = [], arcCat = [], arcBox = [], meshCache = [];
+let arcsLod = [], arcCat = [], arcBox = [], arcOwners = [], meshCache = [];
 let userTz = 'UTC', userFmt = null, userZone = null, userPlace = 'UTC', userOff = 0;
 let view = 'jur';
 let T = null;                  // d3 zoom transform
@@ -181,7 +181,7 @@ function readColors() {
   const v = n => cs.getPropertyValue(n).trim();
   C = {
     sea: v('--wc-sea'), seaAlt: v('--wc-sea-alt'), land: v('--wc-land'), you: v('--wc-you'),
-    coast: v('--wc-coast'), border: v('--wc-border'), inner: v('--wc-inner'),
+    coast: v('--wc-coast'), border: v('--wc-border'), inner: v('--wc-inner'), timeLine: v('--wc-time-line'),
     hover: v('--wc-hover'), hoverLine: v('--wc-hover-line'),
     label: v('--wc-label'), muted: v('--wc-label-muted'), youText: v('--wc-you-text'),
     panel: v('--panel'), line: v('--border'),
@@ -270,8 +270,10 @@ function zonePath(z, l) {
   return (z.paths[l] = path);
 }
 // Borders, bucketed by kind and by grid cell so a zoomed-in view strokes
-// only the cells it can see. Kind 0 coast, 1 country border, 2 a border
-// inside one country (a state line).
+// only the cells it can see. Kind 0 coast; 1 a country border and 2 a state
+// line, both with the same time on each side; 3 a border the clock changes
+// across. Kinds follow the clocks (see updateBorders), so a line can turn
+// into a time border when one side starts daylight saving.
 function meshes(l) {
   if (meshCache[l]) return meshCache[l];
   const arcs = arcsAt(l), GX = 16, GY = 8, cells = new Map();
@@ -375,14 +377,15 @@ function build(topo) {
     z.search = norm([country, city, pr.id.replace(/_/g, ' ')].concat((reverseAlias[pr.id] || []).map(a => a.split('/').pop().replace(/_/g, ' '))).join(' | '));
     return z;
   });
-  arcCat = owners.map(o => o.length === 1 ? 0 : o.length === 2 ? (zones[o[0]].cc === zones[o[1]].cc ? 2 : 1) : -1);
+  arcOwners = owners;
+  arcCat = owners.map(() => -2);
   zones.forEach(z => {
     byId.set(z.id, z);
     // A zone with nothing but coastline is an island and is drawn as a dot
     // once it is too small to see. A zone with no land left at this scale
     // (an atoll, Monaco) is a dot too, unless it sits inside another zone.
     z.island = z.hasGeom
-      ? z.polys.every(p => p.every(r => r.every(a => arcCat[a < 0 ? ~a : a] === 0)))
+      ? z.polys.every(p => p.every(r => r.every(a => owners[a < 0 ? ~a : a].length === 1)))
       : !zones.some(o => o.hasGeom && o !== z && o.bbox[0] <= z.lpx && z.lpx <= o.bbox[2] && o.bbox[1] <= z.lpy && z.lpy <= o.bbox[3] && hitCtx.isPointInPath(zonePath(o, 2), z.lpx, z.lpy, 'evenodd'));
     z.showable = !!z.fmt && (z.hasGeom || z.island);
   });
@@ -397,6 +400,50 @@ function build(topo) {
     ccKnown[z.cc] = ccKnown[z.cc] !== false && (z.hasGeom || !z.island);
   });
   zones.forEach(z => { if (perCc[z.cc] === 1 || (ccKnown[z.cc] && z.trueArea >= 0.75 * ccArea[z.cc])) z.name = z.country; });
+
+  // Microstates and atolls fold into a bigger neighbour: a place under
+  // 5,000 km² with a larger zone within 300 km gets no clock of its own
+  // while the two read the same time (Vatican City and Italy, Jersey and the
+  // UK, Singapore and Malaysia). Lord Howe or the Chathams, on a clock of
+  // their own, keep theirs.
+  const KM_PER_UNIT = 40075 / W;
+  zones.forEach(z => {
+    z.km2 = z.trueArea * KM_PER_UNIT * KM_PER_UNIT;
+    z.near = [];
+  });
+  zones.forEach(z => {
+    if (z.km2 >= 5000 || !z.lp) return;
+    const reach = 300 / KM_PER_UNIT / Math.cos(z.lp[1] * RAD);
+    for (const o of zones) {
+      if (o === z || !o.hasGeom || o.km2 <= z.km2) continue;
+      const b = o.bbox;
+      if (z.lpx < b[0] - reach || z.lpx > b[2] + reach || z.lpy < b[1] - reach || z.lpy > b[3] + reach) continue;
+      let best = Infinity;
+      for (const poly of o.polys) {
+        const pts = ringPoints(poly[0], full);
+        for (let q = 0; q < pts.length; q += 2) best = Math.min(best, (pts[q] - z.lpx) ** 2 + (pts[q + 1] - z.lpy) ** 2);
+      }
+      if (Math.sqrt(best) <= reach || hitCtx.isPointInPath(zonePath(o, 2), z.lpx, z.lpy, 'evenodd')) z.near.push(o);
+    }
+  });
+}
+const folded = z => z !== userZone && z.near.some(o => o.fmt && o.off === z.off);
+
+// Border kinds from the clocks on either side, now.
+function updateBorders() {
+  let changed = false;
+  for (let i = 0; i < arcOwners.length; i++) {
+    const o = arcOwners[i];
+    let kind = -1;
+    if (o.length === 1) kind = 0;
+    else if (o.length === 2) {
+      const a = zones[o[0]], b = zones[o[1]];
+      kind = a.fmt && b.fmt && a.off !== b.off ? 3 : a.cc === b.cc ? 2 : 1;
+    }
+    if (arcCat[i] !== kind) { arcCat[i] = kind; changed = true; }
+  }
+  if (changed) meshCache = [];
+  return changed;
 }
 
 // ── THE USER ─────────────────────────────────────────────────────────────
@@ -420,7 +467,11 @@ function refreshTime(force) {
   if (!ready) return;
   const minute = Math.floor(displayMs / 60000);
   let offChanged = false;
-  if (force || minute !== lastMinute) { lastMinute = minute; offChanged = computeOffsets(); }
+  if (force || minute !== lastMinute) {
+    lastMinute = minute;
+    offChanged = computeOffsets();
+    if (offChanged) updateBorders();
+  }
   userOff = offsetAt(userFmt, displayMs);
   const uw = wall(displayMs, userOff), uKey = dayKey(uw);
   let changed = false;
@@ -431,7 +482,7 @@ function refreshTime(force) {
     if (t !== z.timeStr || d !== z.dateStr) { z.timeStr = t; z.dateStr = d; changed = true; }
   }
   renderNow(uw);
-  if (changed || offChanged) requestDraw(offChanged && view === 'tz');
+  if (changed || offChanged) requestDraw(offChanged);
   if (cardZone && !$('placeCard').hidden) renderCard();
 }
 const nowEls = {};
@@ -511,8 +562,9 @@ function drawBase() {
       if (cell.kind !== kind) {
         kind = cell.kind;
         if (kind === 0) { ctx.strokeStyle = C.coast; ctx.lineWidth = 0.8 / k; ctx.setLineDash([]); }
-        else if (kind === 1) { ctx.strokeStyle = C.border; ctx.lineWidth = 1 / k; ctx.setLineDash([]); }
-        // State lines are dashed once there is room to see the dashes.
+        else if (kind === 3) { ctx.strokeStyle = C.timeLine; ctx.lineWidth = (k > minK * 2.5 ? 1.8 : 1.3) / k; ctx.setLineDash([]); }
+        else if (kind === 1) { ctx.strokeStyle = C.border; ctx.lineWidth = 0.9 / k; ctx.setLineDash([]); }
+        // Same-time state lines are dashed once there is room for the dashes.
         else { ctx.strokeStyle = C.inner; ctx.lineWidth = 0.9 / k; ctx.setLineDash(k > minK * 2.5 ? [3 / k, 2.5 / k] : []); }
       }
       ctx.stroke(cell.path);
@@ -543,10 +595,15 @@ function tw(font, s) {
   return w;
 }
 const screenSize = (z, k) => Math.max(z.bbox[2] - z.bbox[0], z.bbox[3] - z.bbox[1]) * k;
-const isDotNow = (z, k) => z.island && (!z.hasGeom || screenSize(z, k) < 5);
-// An island too small to hold its own label is labelled like a dot: a pill
-// just above it, out over the sea.
-const isPinNow = (z, k) => z.island && (!z.hasGeom || screenSize(z, k) < 40);
+// Islands too small to see get a dot, and a label pinned just above them
+// out over the sea. On the world view only islands of 5,000 km² or more do
+// (Hawaii, Fiji, New Zealand); atolls wait until you zoom in. Your own zone
+// always does.
+const regional = k => k > minK * 2;
+const pinnable = (z, k) => z.island && (regional(k) || z === userZone || z.km2 >= 5000);
+const isDotNow = (z, k) => pinnable(z, k) && (!z.hasGeom || screenSize(z, k) < 5);
+const isPinNow = (z, k) => pinnable(z, k) && (!z.hasGeom || screenSize(z, k) < 40 || z.lpArea * k * k < 260);
+let lastLabels = [];
 
 function drawLabels() {
   const ctx = lctx, k = T.k, cs = copies();
@@ -562,12 +619,11 @@ function drawLabels() {
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   }
 
-  // Islands too small to see are drawn as dots so they can still be found.
   const cands = [];
   for (const c of cs) {
     const ox = T.x + c * W * k;
     for (const z of zones) {
-      if (!z.showable || !z.lp) continue;
+      if (!z.showable || !z.lp || folded(z)) continue;
       const sx = ox + z.lpx * k, sy = T.y + z.lpy * k;
       if (sx < -120 || sx > vw + 120 || sy < -60 || sy > vh + 60) continue;
       const dot = isDotNow(z, k);
@@ -610,6 +666,10 @@ function drawLabels() {
       const box = { x: cd.sx - w / 2, y: cd.pin ? cd.sy - lift - h : cd.sy - h / 2, w, h, key: head };
       if (box.x < 2 || box.y < 2 || box.x + w > vw - 2 || box.y + h > vh - 2 || hits(box)) continue;
       if (tzv && placed.some(p => p.key === head && Math.hypot(p.x - box.x, p.y - box.y) < 260)) break;
+      // One clock is enough for neighbouring zones of one country that read
+      // the same time (Argentina's provinces, Indiana's counties).
+      if (!tzv && !you && placed.some(p => p.cc === z.cc && p.time === z.timeStr && Math.hypot(p.cx - cd.sx, p.cy - cd.sy) < 90)) break;
+      Object.assign(box, { id: z.id, cc: z.cc, time: z.timeStr, cx: cd.sx, cy: cd.sy });
       placed.push(box);
       const halo = zoneFill(z, true);
       if (cd.pin) {
@@ -628,6 +688,7 @@ function drawLabels() {
       break;
     }
   }
+  lastLabels = placed.map(p => p.id);
   if (tzv) drawStrip(ctx, cs);
 }
 
@@ -765,7 +826,7 @@ function zoneAt(sx, sy) {
   for (const c of copies()) {
     const ox = T.x + c * W * k;
     for (const z of zones) {
-      if (!z.showable || !isDotNow(z, k)) continue;
+      if (!z.showable || folded(z) || !isDotNow(z, k)) continue;
       const d = (ox + z.lpx * k - sx) ** 2 + (T.y + z.lpy * k - sy) ** 2;
       if (d < bestD) { bestD = d; best = z; }
     }
@@ -861,7 +922,7 @@ $('placeCard').addEventListener('click', e => { if (e.target.closest('[data-clos
 
 // ── VIEW ─────────────────────────────────────────────────────────────────
 const TIP_VIEW = {
-  jur: '<strong>Jurisdictions:</strong> every place that sets its own clock, with its local time. Hover or tap one for its details.',
+  jur: '<strong>Jurisdictions:</strong> every place that sets its own clock. A bold line marks where the time changes. Hover or tap a place for details.',
   tz: '<strong>Time zones:</strong> places coloured by their offset from GMT right now, so daylight saving moves a place into the next colour.',
 };
 function setView(v) {
@@ -1105,6 +1166,13 @@ function start(topo) {
     project: (lon, lat) => [T.x + projX(lon) * T.k, T.y + projY(lat) * T.k],
     view: () => view,
     card: () => (cardZone ? $('placeCard').innerText : null),
+    labels: () => lastLabels.slice(),
+    // Kinds of the borders two zones share: 1 country, 2 state line, 3 time border.
+    borderKinds: (a, b) => {
+      const ia = byId.get(a).i, ib = byId.get(b).i, out = new Set();
+      arcOwners.forEach((o, i) => { if (o.length === 2 && o.includes(ia) && o.includes(ib)) out.add(arcCat[i]); });
+      return [...out];
+    },
   };
 }
 

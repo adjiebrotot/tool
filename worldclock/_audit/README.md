@@ -27,6 +27,14 @@ Chromium's ICU, so the replay does not share the page's code or its data.
   knows every zone, and no border edge spans the map (the date-line slicing
   that a sphere-cut land layer causes).
 
+- **W9** Microstates and atolls fold into a bigger neighbour on the same
+  clock: one label for Italy, none for the Vatican, San Marino, Monaco or
+  Malta; atolls get no clock on the world view while Hawaii and New Zealand
+  keep theirs. A border is drawn as a time border exactly when `zoneinfo`
+  puts different clocks on its two sides, checked in late September and again
+  in November, when NSW and South Australia have started daylight saving and
+  Queensland and the Northern Territory have not.
+
 Run: `node run.mjs`. The first run caches d3 in `_ref/.libcache/`; later runs
 are offline. Exits non-zero if any check fails.
 
