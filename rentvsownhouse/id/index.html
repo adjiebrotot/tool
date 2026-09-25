@@ -191,310 +191,326 @@
         <option value="฿">฿ — Baht</option>
       </select>
     </div>
-    <div class="section-label" data-i18n="sectionCash">Kas</div>
-    <div class="field-row">
-      <div class="field-label" data-i18n="labelRiskFreeRate">Suku Bunga Bebas Risiko<span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
-      <div class="slider-head" style="margin-bottom:4px;">
-        <span id="unitPctPa1" style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
-        <span class="slider-value" id="riskFreeRateVal">4.50%</span>
-      </div>
-      <input type="range" id="riskFreeRate" min="-10" max="25" step="0.01" value="4.5"/>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelInitialCash">Modal Awal</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(opsional)</span></div>
-      <div class="currency-wrap">
-        <span class="prefix" id="initialCashPrefix">$</span>
-        <input class="currency-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" value=""/>
-      </div>
-      <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Default ke Uang Muka (DP) + biaya awal pembelian. Kelebihan diinvestasikan pada suku bunga bebas risiko.</div>
-      <div class="warning" id="initialCashWarn" style="display:none;margin:6px 0 0;"></div>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelMonthlyBudget">Anggaran Rumah Bulanan</span> <span class="tip-icon" data-tip-key="monthlyBudget">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(opsional)</span></div>
-      <div class="currency-wrap">
-        <span class="prefix" id="monthlyBudgetPrefix">$</span>
-        <input class="currency-input money-input" id="monthlyBudget" type="text" inputmode="numeric" data-money="true" value="0"/>
-      </div>
-    </div>
-    <div class="field-row" id="budgetIncreaseRow" style="display:none;">
-      <div class="field-label"><span data-i18n="labelBudgetIncrease">Kenaikan Anggaran Tahunan</span> <span class="tip-icon" data-tip-key="monthlyBudgetIncrease">?</span></div>
-      <div class="slider-head" style="margin-bottom:4px;">
-        <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
-        <span class="slider-value" id="monthlyBudgetIncreaseVal">0.00%</span>
-      </div>
-      <input type="range" id="monthlyBudgetIncrease" min="0" max="25" step="0.01" value="0"/>
-      <div class="help" id="helpBudgetGrows">Budget grows from <span id="budgetIncreaseBase" style="color:var(--gold);font-weight:700;">—</span> at this rate each year.</div>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelTimeHorizon">Jangka Waktu</span> <span class="tip-icon" data-tip-key="horizon">?</span></div>
-      <div class="slider-head" style="margin-bottom:4px;">
-        <span style="font-size:.82rem;color:var(--muted)" data-i18n="labelYears">tahun</span>
-        <span class="slider-value" id="horizonVal">30 yrs</span>
-      </div>
-      <input type="range" id="horizon" min="5" max="100" step="1" value="30"/>
-    </div>
-    <div class="section-label" data-i18n="sectionRTB">Skenario Sewa Dulu, Beli Kemudian</div>
-    <div class="toggle-row">
-      <span class="toggle-label"><span data-i18n="labelEnableRTB">Aktifkan Sewa Dulu, Beli Kemudian</span> <span class="tip-icon" data-tip-key="rtbEnabled">?</span></span>
-      <label class="toggle-switch" id="rtbToggleWrap">
-        <input type="checkbox" id="rtbEnabled"/>
-        <div class="toggle-track"><div class="toggle-knob"></div></div>
-      </label>
-    </div>
-    <div id="rtbParams" style="display:none;">
-      <div class="field-row" style="border-top:none;padding-top:0;">
-        <div class="field-label"><span data-i18n="labelBuyAtYear">Beli di Tahun</span> <span class="tip-icon" data-tip-key="rtbBuyAtYear">?</span></div>
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionCash">Kas</div>
+      <div class="field-row">
+        <div class="field-label" data-i18n="labelRiskFreeRate">Suku Bunga Bebas Risiko<span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
         <div class="slider-head" style="margin-bottom:4px;">
-          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitYearsRentingFirst">tahun menyewa lebih dahulu</span>
-          <span class="slider-value" id="rtbBuyYearVal">5 yrs</span>
+          <span id="unitPctPa1" style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
+          <span class="slider-value" id="riskFreeRateVal">4.50%</span>
         </div>
-        <input type="range" id="rtbBuyYear" min="1" max="50" step="1" value="5"/>
+        <input type="range" id="riskFreeRate" min="-10" max="25" step="0.01" value="4.5"/>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelInitialCash">Modal Awal</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(opsional)</span></div>
+        <div class="currency-wrap">
+          <span class="prefix" id="initialCashPrefix">$</span>
+          <input class="currency-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" value=""/>
+        </div>
+        <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Default ke Uang Muka (DP) + biaya awal pembelian. Kelebihan diinvestasikan pada suku bunga bebas risiko.</div>
+        <div class="warning" id="initialCashWarn" style="display:none;margin:6px 0 0;"></div>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelMonthlyBudget">Anggaran Rumah Bulanan</span> <span class="tip-icon" data-tip-key="monthlyBudget">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(opsional)</span></div>
+        <div class="currency-wrap">
+          <span class="prefix" id="monthlyBudgetPrefix">$</span>
+          <input class="currency-input money-input" id="monthlyBudget" type="text" inputmode="numeric" data-money="true" value="0"/>
+        </div>
+      </div>
+      <div class="field-row" id="budgetIncreaseRow" style="display:none;">
+        <div class="field-label"><span data-i18n="labelBudgetIncrease">Kenaikan Anggaran Tahunan</span> <span class="tip-icon" data-tip-key="monthlyBudgetIncrease">?</span></div>
+        <div class="slider-head" style="margin-bottom:4px;">
+          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
+          <span class="slider-value" id="monthlyBudgetIncreaseVal">0.00%</span>
+        </div>
+        <input type="range" id="monthlyBudgetIncrease" min="0" max="25" step="0.01" value="0"/>
+        <div class="help" id="helpBudgetGrows">Budget grows from <span id="budgetIncreaseBase" style="color:var(--gold);font-weight:700;">—</span> at this rate each year.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelTimeHorizon">Jangka Waktu</span> <span class="tip-icon" data-tip-key="horizon">?</span></div>
+        <div class="slider-head" style="margin-bottom:4px;">
+          <span style="font-size:.82rem;color:var(--muted)" data-i18n="labelYears">tahun</span>
+          <span class="slider-value" id="horizonVal">30 yrs</span>
+        </div>
+        <input type="range" id="horizon" min="5" max="100" step="1" value="30"/>
+      </div>
+    </div>
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionRTB">Skenario Sewa Dulu, Beli Kemudian</div>
+      <div class="toggle-row">
+        <span class="toggle-label"><span data-i18n="labelEnableRTB">Aktifkan Sewa Dulu, Beli Kemudian</span> <span class="tip-icon" data-tip-key="rtbEnabled">?</span></span>
+        <label class="toggle-switch" id="rtbToggleWrap">
+          <input type="checkbox" id="rtbEnabled"/>
+          <div class="toggle-track"><div class="toggle-knob"></div></div>
+        </label>
+      </div>
+      <div class="fg-sub" id="rtbParams" style="display:none;">
+        <div class="field-row">
+          <div class="field-label"><span data-i18n="labelBuyAtYear">Beli di Tahun</span> <span class="tip-icon" data-tip-key="rtbBuyAtYear">?</span></div>
+          <div class="slider-head" style="margin-bottom:4px;">
+            <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitYearsRentingFirst">tahun menyewa lebih dahulu</span>
+            <span class="slider-value" id="rtbBuyYearVal">5 yrs</span>
+          </div>
+          <input type="range" id="rtbBuyYear" min="1" max="50" step="1" value="5"/>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- OWN TAB -->
   <div class="ctrl-panel" id="tab-own">
-    <div class="section-label" data-i18n="sectionProperty">Properti</div>
-    <div class="field-row" style="border-top:none;padding-top:0;">
-      <div class="field-label"><span data-i18n="labelPropertyPrice">Harga Properti</span> <span class="tip-icon" data-tip-key="propertyPrice">?</span></div>
-      <div class="currency-wrap">
-        <span class="prefix" id="propertyPricePrefix">$</span>
-        <input class="currency-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelDownPayment">Uang Muka (DP)</span> <span class="tip-icon" data-tip-key="downPaymentPct">?</span></div>
-      <div class="slider-head" style="margin-bottom:4px;">
-        <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctOfPrice">% dari harga properti</span>
-        <span class="slider-value" id="downPaymentPctVal">20%</span>
-      </div>
-      <input type="range" id="downPaymentPct" min="0" max="100" step="0.01" value="20"/>
-      <div class="help" id="helpDownPayment">Down payment = <span id="downPaymentDollar" style="color:var(--gold);font-weight:700;">$160,000</span></div>
-    </div>
-    <div class="section-label" data-i18n="sectionMortgage">KPR</div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelMortgageMode">Mode KPR</span> <span class="tip-icon" data-tip-key="mortgageMode">?</span></div>
-      <div class="seg-group" id="mortgageModeGroup">
-        <button type="button" class="seg-btn active" data-val="simple" data-i18n="segSimple">Sederhana</button>
-        <button type="button" class="seg-btn" data-val="detailed" data-i18n="segDetailed">Rinci</button>
-      </div>
-    </div>
-    <div class="field-row" id="mortgageTypeRow" style="display:none;">
-      <div class="field-label"><span data-i18n="labelMortgageType">Jenis KPR</span> <span class="tip-icon" data-tip-key="mortgageType">?</span></div>
-      <div class="radio-group">
-        <label class="radio-opt selected" id="radioPI">
-          <input type="radio" name="mortgageType" value="pi" checked/>
-          <div class="radio-opt-text"><strong data-i18n="labelPI">Pokok &amp; Bunga</strong><span data-i18n="helpPI">Cicilan mengurangi bunga dan saldo pinjaman setiap periode; ekuitas bertambah lebih cepat.</span></div>
-        </label>
-        <label class="radio-opt" id="radioIO">
-          <input type="radio" name="mortgageType" value="io"/>
-          <div class="radio-opt-text"><strong data-i18n="labelIO">Bunga Saja</strong><span data-i18n="helpIO">Hanya membayar bunga; seluruh pokok dilunasi dari kas di akhir jangka waktu.</span></div>
-        </label>
-      </div>
-      <div class="toggle-row" style="margin-top:8px;padding-top:8px;padding-bottom:0;">
-        <span class="toggle-label"><span data-i18n="labelCostInterestOnly">Biaya = Bunga Saja</span> <span class="tip-icon" data-tip-key="costInterestOnly">?</span></span>
-        <label class="toggle-switch">
-          <input type="checkbox" id="costInterestOnly" checked/>
-          <div class="toggle-track"><div class="toggle-knob"></div></div>
-        </label>
-      </div>
-    </div>
-    <div class="field-row" id="mortgageRateRow">
-      <div class="field-label"><span data-i18n="labelMortgageRate">Bunga KPR</span> <span class="tip-icon" data-tip-key="mortgageRate">?</span></div>
-      <div class="slider-head" style="margin-bottom:4px;">
-        <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
-        <span class="slider-value" id="mortgageRateVal">6.00%</span>
-      </div>
-      <input type="range" id="mortgageRate" min="0" max="25" step="0.01" value="6"/>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelMortgageTerm">Jangka Waktu KPR</span> <span class="tip-icon" data-tip-key="mortgageTerm">?</span></div>
-      <div class="slider-head" style="margin-bottom:4px;">
-        <span style="font-size:.82rem;color:var(--muted)" data-i18n="labelYears">tahun</span>
-        <span class="slider-value" id="mortgageTermVal">30 yrs</span>
-      </div>
-      <input type="range" id="mortgageTerm" min="5" max="50" step="1" value="30"/>
-    </div>
-    <div class="field-row" id="rateScheduleRow" style="display:none;">
-      <div class="field-label"><span data-i18n="labelRateSchedule">Jadwal Bunga KPR</span> <span class="tip-icon" data-tip-key="rateSchedule">?</span></div>
-      <div class="rate-periods" id="ratePeriodRows"></div>
-      <div class="rate-schedule-actions">
-        <button class="btn-primary btn-sm" id="addRatePeriod" type="button" data-i18n="btnAddPeriod">+ Tambah Periode</button>
-      </div>
-    </div>
-    <div class="section-label" data-i18n="sectionPropertyGrowth">Pertumbuhan Properti</div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelHouseGrowth">Kenaikan Harga Properti (RPPI)</span> <span class="tip-icon" data-tip-key="houseGrowth">?</span></div>
-      <div class="slider-head" style="margin-bottom:4px;">
-        <span id="unitPctCagr" style="font-size:.82rem;color:var(--muted)">% p.a. CAGR</span>
-        <span class="slider-value" id="houseGrowthVal">5.00%</span>
-      </div>
-      <input type="range" id="houseGrowth" min="-10" max="25" step="0.01" value="5"/>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelSellingCost">Biaya Penjualan</span> <span class="tip-icon" data-tip-key="sellingCost">?</span></div>
-      <div class="slider-head" style="margin-bottom:4px;">
-        <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctOfValue">% dari harga jual</span>
-        <span class="slider-value" id="sellingCostPctVal">2.50%</span>
-      </div>
-      <input type="range" id="sellingCostPct" min="0" max="15" step="0.01" value="2.5"/>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelCalcCAGR">Hitung CAGR dari Harga Historis</span> <span class="tip-icon" data-tip-key="calcCagr">?</span></div>
-      <button class="btn-secondary cagr-toggle-btn" id="cagrToolToggle" type="button" data-i18n="btnShowTool">Tampilkan Alat</button>
-      <div class="cagr-box" id="cagrToolWrap" style="display:none;">
-        <div id="cagrRows">
-          <div class="cagr-row">
-            <input type="number" placeholder="Year e.g. 2002" class="cagr-year"/>
-            <input type="text" inputmode="numeric" placeholder="Price e.g. 175,000" class="cagr-price money-input" data-money="true"/>
-            <button class="cagr-btn delete cagr-delete" type="button" disabled data-i18n-title="btnDelete" title="Hapus" aria-label="Hapus">✕</button>
-          </div>
-          <div class="cagr-row">
-            <input type="number" placeholder="Year e.g. 2025" class="cagr-year"/>
-            <input type="text" inputmode="numeric" placeholder="Price e.g. 400,000" class="cagr-price money-input" data-money="true"/>
-            <button class="cagr-btn delete cagr-delete" type="button" disabled data-i18n-title="btnDelete" title="Hapus" aria-label="Hapus">✕</button>
-          </div>
-        </div>
-        <div class="cagr-actions">
-          <button class="cagr-btn" id="cagrAddRow" type="button" data-i18n="btnAddRow">+ Baris</button>
-          <button class="cagr-btn" id="cagrCalc" type="button" style="background:var(--accent2);" data-i18n="btnCalcCAGR">Hitung CAGR →</button>
-        </div>
-        <div class="cagr-result" id="cagrResult"></div>
-      </div>
-    </div>
-    <div class="section-label" data-i18n="sectionCostsOwning">Biaya Kepemilikan</div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelCostsMode">Mode Biaya</span> <span class="tip-icon" data-tip-key="ownCostsMode">?</span></div>
-      <div class="seg-group" id="ownCostsModeGroup">
-        <button type="button" class="seg-btn active" data-val="simple" data-i18n="segSimple">Sederhana</button>
-        <button type="button" class="seg-btn" data-val="detailed" data-i18n="segDetailed">Rinci</button>
-      </div>
-    </div>
-    <div id="ownCostsSimple">
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelSetupCost">Biaya Awal Pembelian (BPHTB, Notaris, dll.)</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
-      <div class="input-row">
-        <div class="currency-wrap">
-          <span class="prefix" id="setupCostPrefix">$</span>
-          <input class="currency-input money-input" id="setupCost" type="text" inputmode="numeric" data-money="true" value="32,000"/>
-        </div>
-        <select id="setupCostType">
-          <option value="dollar" data-i18n-opt="optDollar">$</option>
-          <option value="pct">%</option>
-        </select>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelOwnOngoing">Biaya Rutin Kepemilikan</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
-      <div class="input-row">
-        <div class="currency-wrap">
-          <span class="prefix" id="ownOngoingCostPrefix">$</span>
-          <input class="currency-input money-input" id="ownOngoingCost" type="text" inputmode="numeric" data-money="true" value="6,000"/>
-        </div>
-        <select id="ownOngoingCostFreq">
-          <option value="yearly" data-i18n-opt="optYearly">Tahunan</option>
-          <option value="monthly" data-i18n-opt="optMonthly">Bulanan</option>
-          <option value="weekly" data-i18n-opt="optWeekly">Mingguan</option>
-        </select>
-      </div>
-      <select id="ownOngoingCostType" style="margin-top:6px;width:100%;">
-        <option value="dollar" data-i18n-opt="optFixedAmount">Jumlah Tetap</option>
-        <option value="pct" data-i18n-opt="optPctPropertyValue">% dari Nilai Properti</option>
-      </select>
-    </div>
-    <div class="field-row" id="ownOngoingInflationRow">
-      <div class="field-label"><span data-i18n="labelOwnInflation">Inflasi Biaya Rutin Kepemilikan</span> <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
-      <div class="slider-head" style="margin-bottom:4px;">
-        <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
-        <span class="slider-value" id="ownOngoingInflationVal">0.00%</span>
-      </div>
-      <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.01" value="0"/>
-    </div>
-    </div><!-- /ownCostsSimple -->
-    <div id="ownCostsDetailed" style="display:none;">
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionProperty">Properti</div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelSetupCosts">Biaya Awal Pembelian</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
-        <div class="cost-items" id="ownSetupCostRows"></div>
-        <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnSetupCost" type="button" data-i18n="btnAddSetupCost">+ Tambah Biaya Awal</button></div>
+        <div class="field-label"><span data-i18n="labelPropertyPrice">Harga Properti</span> <span class="tip-icon" data-tip-key="propertyPrice">?</span></div>
+        <div class="currency-wrap">
+          <span class="prefix" id="propertyPricePrefix">$</span>
+          <input class="currency-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
+        </div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelOngoingCostsList">Biaya Rutin</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
-        <div class="cost-items" id="ownOngoingCostRows"></div>
-        <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Tambah Biaya Rutin</button></div>
+        <div class="field-label"><span data-i18n="labelDownPayment">Uang Muka (DP)</span> <span class="tip-icon" data-tip-key="downPaymentPct">?</span></div>
+        <div class="slider-head" style="margin-bottom:4px;">
+          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctOfPrice">% dari harga properti</span>
+          <span class="slider-value" id="downPaymentPctVal">20%</span>
+        </div>
+        <input type="range" id="downPaymentPct" min="0" max="100" step="0.01" value="20"/>
+        <div class="help" id="helpDownPayment">Down payment = <span id="downPaymentDollar" style="color:var(--gold);font-weight:700;">$160,000</span></div>
       </div>
-    </div><!-- /ownCostsDetailed -->
+    </div>
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionMortgage">KPR</div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelMortgageMode">Mode KPR</span> <span class="tip-icon" data-tip-key="mortgageMode">?</span></div>
+        <div class="seg-group" id="mortgageModeGroup">
+          <button type="button" class="seg-btn active" data-val="simple" data-i18n="segSimple">Sederhana</button>
+          <button type="button" class="seg-btn" data-val="detailed" data-i18n="segDetailed">Rinci</button>
+        </div>
+      </div>
+      <div class="field-row" id="mortgageTypeRow" style="display:none;">
+        <div class="field-label"><span data-i18n="labelMortgageType">Jenis KPR</span> <span class="tip-icon" data-tip-key="mortgageType">?</span></div>
+        <div class="radio-group">
+          <label class="radio-opt selected" id="radioPI">
+            <input type="radio" name="mortgageType" value="pi" checked/>
+            <div class="radio-opt-text"><strong data-i18n="labelPI">Pokok &amp; Bunga</strong><span data-i18n="helpPI">Cicilan mengurangi bunga dan saldo pinjaman setiap periode; ekuitas bertambah lebih cepat.</span></div>
+          </label>
+          <label class="radio-opt" id="radioIO">
+            <input type="radio" name="mortgageType" value="io"/>
+            <div class="radio-opt-text"><strong data-i18n="labelIO">Bunga Saja</strong><span data-i18n="helpIO">Hanya membayar bunga; seluruh pokok dilunasi dari kas di akhir jangka waktu.</span></div>
+          </label>
+        </div>
+        <div class="toggle-row" style="margin-top:8px;padding-top:8px;padding-bottom:0;">
+          <span class="toggle-label"><span data-i18n="labelCostInterestOnly">Biaya = Bunga Saja</span> <span class="tip-icon" data-tip-key="costInterestOnly">?</span></span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="costInterestOnly" checked/>
+            <div class="toggle-track"><div class="toggle-knob"></div></div>
+          </label>
+        </div>
+      </div>
+      <div class="field-row" id="mortgageRateRow">
+        <div class="field-label"><span data-i18n="labelMortgageRate">Bunga KPR</span> <span class="tip-icon" data-tip-key="mortgageRate">?</span></div>
+        <div class="slider-head" style="margin-bottom:4px;">
+          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
+          <span class="slider-value" id="mortgageRateVal">6.00%</span>
+        </div>
+        <input type="range" id="mortgageRate" min="0" max="25" step="0.01" value="6"/>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelMortgageTerm">Jangka Waktu KPR</span> <span class="tip-icon" data-tip-key="mortgageTerm">?</span></div>
+        <div class="slider-head" style="margin-bottom:4px;">
+          <span style="font-size:.82rem;color:var(--muted)" data-i18n="labelYears">tahun</span>
+          <span class="slider-value" id="mortgageTermVal">30 yrs</span>
+        </div>
+        <input type="range" id="mortgageTerm" min="5" max="50" step="1" value="30"/>
+      </div>
+      <div class="field-row" id="rateScheduleRow" style="display:none;">
+        <div class="field-label"><span data-i18n="labelRateSchedule">Jadwal Bunga KPR</span> <span class="tip-icon" data-tip-key="rateSchedule">?</span></div>
+        <div class="rate-periods" id="ratePeriodRows"></div>
+        <div class="rate-schedule-actions">
+          <button class="btn-primary btn-sm" id="addRatePeriod" type="button" data-i18n="btnAddPeriod">+ Tambah Periode</button>
+        </div>
+      </div>
+    </div>
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionPropertyGrowth">Pertumbuhan Properti</div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelHouseGrowth">Kenaikan Harga Properti (RPPI)</span> <span class="tip-icon" data-tip-key="houseGrowth">?</span></div>
+        <div class="slider-head" style="margin-bottom:4px;">
+          <span id="unitPctCagr" style="font-size:.82rem;color:var(--muted)">% p.a. CAGR</span>
+          <span class="slider-value" id="houseGrowthVal">5.00%</span>
+        </div>
+        <input type="range" id="houseGrowth" min="-10" max="25" step="0.01" value="5"/>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelSellingCost">Biaya Penjualan</span> <span class="tip-icon" data-tip-key="sellingCost">?</span></div>
+        <div class="slider-head" style="margin-bottom:4px;">
+          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctOfValue">% dari harga jual</span>
+          <span class="slider-value" id="sellingCostPctVal">2.50%</span>
+        </div>
+        <input type="range" id="sellingCostPct" min="0" max="15" step="0.01" value="2.5"/>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelCalcCAGR">Hitung CAGR dari Harga Historis</span> <span class="tip-icon" data-tip-key="calcCagr">?</span></div>
+        <button class="btn-secondary cagr-toggle-btn" id="cagrToolToggle" type="button" data-i18n="btnShowTool">Tampilkan Alat</button>
+        <div class="cagr-box" id="cagrToolWrap" style="display:none;">
+          <div id="cagrRows">
+            <div class="cagr-row">
+              <input type="number" placeholder="Year e.g. 2002" class="cagr-year"/>
+              <input type="text" inputmode="numeric" placeholder="Price e.g. 175,000" class="cagr-price money-input" data-money="true"/>
+              <button class="cagr-btn delete cagr-delete" type="button" disabled data-i18n-title="btnDelete" title="Hapus" aria-label="Hapus">✕</button>
+            </div>
+            <div class="cagr-row">
+              <input type="number" placeholder="Year e.g. 2025" class="cagr-year"/>
+              <input type="text" inputmode="numeric" placeholder="Price e.g. 400,000" class="cagr-price money-input" data-money="true"/>
+              <button class="cagr-btn delete cagr-delete" type="button" disabled data-i18n-title="btnDelete" title="Hapus" aria-label="Hapus">✕</button>
+            </div>
+          </div>
+          <div class="cagr-actions">
+            <button class="cagr-btn" id="cagrAddRow" type="button" data-i18n="btnAddRow">+ Baris</button>
+            <button class="cagr-btn" id="cagrCalc" type="button" style="background:var(--accent2);" data-i18n="btnCalcCAGR">Hitung CAGR →</button>
+          </div>
+          <div class="cagr-result" id="cagrResult"></div>
+        </div>
+      </div>
+    </div>
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionCostsOwning">Biaya Kepemilikan</div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelCostsMode">Mode Biaya</span> <span class="tip-icon" data-tip-key="ownCostsMode">?</span></div>
+        <div class="seg-group" id="ownCostsModeGroup">
+          <button type="button" class="seg-btn active" data-val="simple" data-i18n="segSimple">Sederhana</button>
+          <button type="button" class="seg-btn" data-val="detailed" data-i18n="segDetailed">Rinci</button>
+        </div>
+      </div>
+      <div class="fg-sub" id="ownCostsSimple">
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelSetupCost">Biaya Awal Pembelian (BPHTB, Notaris, dll.)</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
+        <div class="input-row">
+          <div class="currency-wrap">
+            <span class="prefix" id="setupCostPrefix">$</span>
+            <input class="currency-input money-input" id="setupCost" type="text" inputmode="numeric" data-money="true" value="32,000"/>
+          </div>
+          <select id="setupCostType">
+            <option value="dollar" data-i18n-opt="optDollar">$</option>
+            <option value="pct">%</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelOwnOngoing">Biaya Rutin Kepemilikan</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
+        <div class="input-row">
+          <div class="currency-wrap">
+            <span class="prefix" id="ownOngoingCostPrefix">$</span>
+            <input class="currency-input money-input" id="ownOngoingCost" type="text" inputmode="numeric" data-money="true" value="6,000"/>
+          </div>
+          <select id="ownOngoingCostFreq">
+            <option value="yearly" data-i18n-opt="optYearly">Tahunan</option>
+            <option value="monthly" data-i18n-opt="optMonthly">Bulanan</option>
+            <option value="weekly" data-i18n-opt="optWeekly">Mingguan</option>
+          </select>
+        </div>
+        <select id="ownOngoingCostType" style="margin-top:6px;width:100%;">
+          <option value="dollar" data-i18n-opt="optFixedAmount">Jumlah Tetap</option>
+          <option value="pct" data-i18n-opt="optPctPropertyValue">% dari Nilai Properti</option>
+        </select>
+      </div>
+      <div class="field-row" id="ownOngoingInflationRow">
+        <div class="field-label"><span data-i18n="labelOwnInflation">Inflasi Biaya Rutin Kepemilikan</span> <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
+        <div class="slider-head" style="margin-bottom:4px;">
+          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
+          <span class="slider-value" id="ownOngoingInflationVal">0.00%</span>
+        </div>
+        <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.01" value="0"/>
+      </div>
+      </div><!-- /ownCostsSimple -->
+      <div class="fg-sub" id="ownCostsDetailed" style="display:none;">
+        <div class="field-row">
+          <div class="field-label"><span data-i18n="labelSetupCosts">Biaya Awal Pembelian</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
+          <div class="cost-items" id="ownSetupCostRows"></div>
+          <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnSetupCost" type="button" data-i18n="btnAddSetupCost">+ Tambah Biaya Awal</button></div>
+        </div>
+        <div class="field-row">
+          <div class="field-label"><span data-i18n="labelOngoingCostsList">Biaya Rutin</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
+          <div class="cost-items" id="ownOngoingCostRows"></div>
+          <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Tambah Biaya Rutin</button></div>
+        </div>
+      </div><!-- /ownCostsDetailed -->
+    </div>
   </div>
 
   <!-- RENT TAB -->
   <div class="ctrl-panel" id="tab-rent">
-    <div class="section-label" data-i18n="sectionRentalPayments">Pembayaran Sewa</div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelRentAmount">Biaya Sewa</span> <span class="tip-icon" data-tip-key="rentAmount">?</span></div>
-      <div class="input-row">
-        <div class="currency-wrap">
-          <span class="prefix" id="rentAmountPrefix">$</span>
-          <input class="currency-input money-input" id="rentAmount" type="text" inputmode="numeric" data-money="true" value="2,800"/>
-        </div>
-        <select id="rentFreq">
-          <option value="monthly" data-i18n-opt="optMonthly">Bulanan</option>
-          <option value="weekly" data-i18n-opt="optWeekly">Mingguan</option>
-          <option value="yearly" data-i18n-opt="optYearly">Tahunan</option>
-        </select>
-      </div>
-      <div class="field-sub" id="rentMonthlyDisplaySub">Rent = <span id="rentMonthlyDisplay" style="color:var(--gold);font-weight:700;">$2,800/mo</span></div>
-    </div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelRentInflation">Kenaikan Sewa Tahunan</span> <span class="tip-icon" data-tip-key="rentInflation">?</span></div>
-      <div class="slider-head" style="margin-bottom:4px;">
-        <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
-        <span class="slider-value" id="rentInflationVal">3.00%</span>
-      </div>
-      <input type="range" id="rentInflation" min="-10" max="25" step="0.01" value="3"/>
-    </div>
-    <div class="section-label" data-i18n="sectionCostsRenting">Biaya Menyewa</div>
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelCostsMode">Mode Biaya</span> <span class="tip-icon" data-tip-key="rentCostsMode">?</span></div>
-      <div class="seg-group" id="rentCostsModeGroup">
-        <button type="button" class="seg-btn active" data-val="simple" data-i18n="segSimple">Sederhana</button>
-        <button type="button" class="seg-btn" data-val="detailed" data-i18n="segDetailed">Rinci</button>
-      </div>
-    </div>
-    <div id="rentCostsSimple">
-    <div class="field-row">
-      <div class="field-label"><span data-i18n="labelRentOngoing">Biaya Rutin Menyewa</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
-      <div class="input-row">
-        <div class="currency-wrap">
-          <span class="prefix" id="rentOngoingCostPrefix">$</span>
-          <input class="currency-input money-input" id="rentOngoingCost" type="text" inputmode="numeric" data-money="true" value="1,200"/>
-        </div>
-        <select id="rentOngoingCostFreq">
-          <option value="yearly" data-i18n-opt="optYearly">Tahunan</option>
-          <option value="monthly" data-i18n-opt="optMonthly">Bulanan</option>
-          <option value="weekly" data-i18n-opt="optWeekly">Mingguan</option>
-        </select>
-      </div>
-      <select id="rentOngoingCostType" style="margin-top:6px;width:100%;">
-        <option value="dollar" data-i18n-opt="optFixedAmount">Jumlah Tetap</option>
-        <option value="pct" data-i18n-opt="optPctAnnualRent">% dari Sewa Tahunan</option>
-      </select>
-    </div>
-    <div class="field-row" id="rentOngoingInflationRow">
-      <div class="field-label"><span data-i18n="labelRentOngoingInflation">Inflasi Biaya Rutin Menyewa</span> <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
-      <div class="slider-head" style="margin-bottom:4px;">
-        <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
-        <span class="slider-value" id="rentOngoingInflationVal">0.00%</span>
-      </div>
-      <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.01" value="0"/>
-    </div>
-    </div><!-- /rentCostsSimple -->
-    <div id="rentCostsDetailed" style="display:none;">
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionRentalPayments">Pembayaran Sewa</div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelOngoingCostsList">Biaya Rutin</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
-        <div class="cost-items" id="rentOngoingCostRows"></div>
-        <div class="rate-schedule-actions"><button class="cagr-btn" id="addRentOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Tambah Biaya Rutin</button></div>
+        <div class="field-label"><span data-i18n="labelRentAmount">Biaya Sewa</span> <span class="tip-icon" data-tip-key="rentAmount">?</span></div>
+        <div class="input-row">
+          <div class="currency-wrap">
+            <span class="prefix" id="rentAmountPrefix">$</span>
+            <input class="currency-input money-input" id="rentAmount" type="text" inputmode="numeric" data-money="true" value="2,800"/>
+          </div>
+          <select id="rentFreq">
+            <option value="monthly" data-i18n-opt="optMonthly">Bulanan</option>
+            <option value="weekly" data-i18n-opt="optWeekly">Mingguan</option>
+            <option value="yearly" data-i18n-opt="optYearly">Tahunan</option>
+          </select>
+        </div>
+        <div class="field-sub" id="rentMonthlyDisplaySub">Rent = <span id="rentMonthlyDisplay" style="color:var(--gold);font-weight:700;">$2,800/mo</span></div>
       </div>
-    </div><!-- /rentCostsDetailed -->
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelRentInflation">Kenaikan Sewa Tahunan</span> <span class="tip-icon" data-tip-key="rentInflation">?</span></div>
+        <div class="slider-head" style="margin-bottom:4px;">
+          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
+          <span class="slider-value" id="rentInflationVal">3.00%</span>
+        </div>
+        <input type="range" id="rentInflation" min="-10" max="25" step="0.01" value="3"/>
+      </div>
+    </div>
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionCostsRenting">Biaya Menyewa</div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelCostsMode">Mode Biaya</span> <span class="tip-icon" data-tip-key="rentCostsMode">?</span></div>
+        <div class="seg-group" id="rentCostsModeGroup">
+          <button type="button" class="seg-btn active" data-val="simple" data-i18n="segSimple">Sederhana</button>
+          <button type="button" class="seg-btn" data-val="detailed" data-i18n="segDetailed">Rinci</button>
+        </div>
+      </div>
+      <div class="fg-sub" id="rentCostsSimple">
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelRentOngoing">Biaya Rutin Menyewa</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
+        <div class="input-row">
+          <div class="currency-wrap">
+            <span class="prefix" id="rentOngoingCostPrefix">$</span>
+            <input class="currency-input money-input" id="rentOngoingCost" type="text" inputmode="numeric" data-money="true" value="1,200"/>
+          </div>
+          <select id="rentOngoingCostFreq">
+            <option value="yearly" data-i18n-opt="optYearly">Tahunan</option>
+            <option value="monthly" data-i18n-opt="optMonthly">Bulanan</option>
+            <option value="weekly" data-i18n-opt="optWeekly">Mingguan</option>
+          </select>
+        </div>
+        <select id="rentOngoingCostType" style="margin-top:6px;width:100%;">
+          <option value="dollar" data-i18n-opt="optFixedAmount">Jumlah Tetap</option>
+          <option value="pct" data-i18n-opt="optPctAnnualRent">% dari Sewa Tahunan</option>
+        </select>
+      </div>
+      <div class="field-row" id="rentOngoingInflationRow">
+        <div class="field-label"><span data-i18n="labelRentOngoingInflation">Inflasi Biaya Rutin Menyewa</span> <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
+        <div class="slider-head" style="margin-bottom:4px;">
+          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">%/tahun</span>
+          <span class="slider-value" id="rentOngoingInflationVal">0.00%</span>
+        </div>
+        <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.01" value="0"/>
+      </div>
+      </div><!-- /rentCostsSimple -->
+      <div class="fg-sub" id="rentCostsDetailed" style="display:none;">
+        <div class="field-row">
+          <div class="field-label"><span data-i18n="labelOngoingCostsList">Biaya Rutin</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
+          <div class="cost-items" id="rentOngoingCostRows"></div>
+          <div class="rate-schedule-actions"><button class="cagr-btn" id="addRentOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Tambah Biaya Rutin</button></div>
+        </div>
+      </div><!-- /rentCostsDetailed -->
+    </div>
   </div>
 
   <div class="warning" id="warningBanner"></div>

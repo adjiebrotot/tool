@@ -26,19 +26,15 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 /* ── Control panel extras ── */
 .ctrl-tab{padding:10px 4px;font-size:.78rem;line-height:1.3;}
 .ctrl-tabs.stacked .tico{width:1.45em;height:1.45em;}
-.field-group{border:1px solid var(--border);border-radius:12px;padding:0 14px 6px;margin-top:14px;background:var(--bg-subtle);}
-.field-group>.field-row,.field-group>.toggle-row,.field-group>.slider-block{border-top:1px solid var(--border);}
-.field-group>.slider-block{padding-top:12px;}
 /* Every panel is a stack of cards, so the first card needs no extra gap above
    the panel's own padding. */
 .ctrl-panel>:first-child{margin-top:0;}
 /* markFirstRows() in script.js marks the first row still showing inside each
    card. A hairline there would double the card's own border or underline the
-   group title, so it is dropped. Kept at the same specificity as the rules
-   above, and after them, so it wins. */
+   group title, so it is dropped. Kept at the same specificity as the
+   .field-group rules in shared.css, and loaded after them, so it wins. */
 .field-group>.rule-off,.mode-block>.rule-off,.ctrl-panel>.rule-off{border-top:none;}
 .field-group>.slider-block.rule-off{padding-top:4px;}
-.group-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);padding:10px 0 2px;}
 .inline-row{display:flex;gap:8px;align-items:center;}
 .inline-row .grow{flex:1;min-width:0;}
 .shade-wrap{flex:0 0 92px;width:92px;}

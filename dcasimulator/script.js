@@ -522,26 +522,32 @@ function renderScenarioConfig(){
         <input type="color" id="cfgColor" data-no-stale value="${sec.colorHex||LINE_COLOR_HEX[0]}" title="Pick colour" style="width:34px;height:34px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--input-bg);padding:2px;flex-shrink:0"/>
       </div>
 
-      <div class="section-label">Top-Ups</div>
-      <div class="sec-row">
-        <label>Amount per top-up <span class="tip-icon" data-tip="How much is invested on each purchase date, before any yearly increase is applied.">?</span></label>
-        <div class="currency-wrap">
-          <span class="prefix" id="cfgAmountPrefix">${escapeHtml(sym)}</span>
-          <input class="currency-input money-input" id="cfgAmount" type="text" inputmode="numeric" value="${fmtN(sec.amount)}"/>
+      <div class="field-group">
+        <div class="group-title">Top-Ups</div>
+        <div class="sec-row">
+          <label>Amount per top-up <span class="tip-icon" data-tip="How much is invested on each purchase date, before any yearly increase is applied.">?</span></label>
+          <div class="currency-wrap">
+            <span class="prefix" id="cfgAmountPrefix">${escapeHtml(sym)}</span>
+            <input class="currency-input money-input" id="cfgAmount" type="text" inputmode="numeric" value="${fmtN(sec.amount)}"/>
+          </div>
         </div>
-      </div>
-      <div class="sec-row">
-        <label>Yearly increase <span class="tip-icon" data-tip="Grows the invested amount once a year and compounds: 10 makes year 2 +10% and year 3 +21%. 0 keeps it flat.">?</span></label>
-        <div class="currency-wrap">
-          <input class="currency-input money-input has-suffix" id="cfgYearlyInc" type="text" inputmode="numeric" value="${fmtN(sec.yearlyIncrease||0)}"/>
-          <span class="suffix">%</span>
+        <div class="sec-row">
+          <label>Yearly increase <span class="tip-icon" data-tip="Grows the invested amount once a year and compounds: 10 makes year 2 +10% and year 3 +21%. 0 keeps it flat.">?</span></label>
+          <div class="currency-wrap">
+            <input class="currency-input money-input has-suffix" id="cfgYearlyInc" type="text" inputmode="numeric" value="${fmtN(sec.yearlyIncrease||0)}"/>
+            <span class="suffix">%</span>
+          </div>
         </div>
       </div>
 
-      <div class="section-label">Asset</div>
-      ${assetSelectBody}
-      <div class="section-label">Investment Style</div>
-      <div id="styleBlock${sec.id}">${styleBlockInner(sec)}</div>
+      <div class="field-group">
+        <div class="group-title">Asset</div>
+        <div class="fg-body">${assetSelectBody}</div>
+      </div>
+      <div class="field-group">
+        <div class="group-title">Investment Style</div>
+        <div class="fg-body" id="styleBlock${sec.id}">${styleBlockInner(sec)}</div>
+      </div>
     </div>`;
 
   $('cfgName').addEventListener('input',e=>{ sec.name=e.target.value; renderScenarioBar(); refreshResultLabels(); });
