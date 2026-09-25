@@ -194,14 +194,15 @@ function readColors() {
 const tzIndex = off => mod(Math.floor(off / 60), 6);
 // A zone on a half or quarter hour is striped in the colours of the two
 // whole hours it sits between, as on a printed time zone map.
-function hatch(i) {
-  const key = i + ':' + DPR;
+function hatch(i) { return stripes(C.tz[i], C.tz[(i + 1) % 6]); }
+function stripes(bg, fg) {
+  const key = bg + ':' + fg + ':' + DPR;
   if (hatchCache.has(key)) return hatchCache.get(key);
   const s = Math.round(9 * DPR), c = document.createElement('canvas');
   c.width = c.height = s;
   const x = c.getContext('2d');
-  x.fillStyle = C.tz[i]; x.fillRect(0, 0, s, s);
-  x.strokeStyle = C.tz[(i + 1) % 6]; x.lineWidth = s * 0.34;
+  x.fillStyle = bg; x.fillRect(0, 0, s, s);
+  x.strokeStyle = fg; x.lineWidth = s * 0.34;
   x.beginPath();
   for (const o of [-s, 0, s]) { x.moveTo(o, s); x.lineTo(o + s, 0); }
   x.stroke();
@@ -212,18 +213,23 @@ function hatch(i) {
 function tzFill(off, forText) {
   const i = tzIndex(off);
   if (off % 60 === 0 || forText) return C.tz[i];
-  const pat = hatch(i);
+  return screenPat(hatch(i));
+}
+function screenPat(pat) {
   if (pat.setTransform) pat.setTransform(new DOMMatrix([1 / (T.k * DPR), 0, 0, 1 / (T.k * DPR), 0, 0]));
   return pat;
 }
 function zoneFill(z, forText) {
   if (view === 'tz' && z.fmt) return tzFill(z.off, forText);
-  return marked(z) ? C.you : C.land;
+  if (marked(z)) return C.you;
+  // Home, while a travel place holds the highlight, keeps a striped trace.
+  if (z === userZone) return forText ? C.land : screenPat(stripes(C.land, C.you));
+  return C.land;
 }
-// The chosen Time Travel place is highlighted like home while the panel is
+// The chosen Time Travel place takes home's highlight while the panel is
 // open or a travel is in effect.
 let markZone = null;
-const marked = z => z === userZone || z === markZone;
+const marked = z => z === (markZone || userZone);
 function updateMark() {
   const m = travelZone && (travel || !$('travelPanel').hidden) ? travelZone : null;
   if (m !== markZone) { markZone = m; requestDraw(true); }
