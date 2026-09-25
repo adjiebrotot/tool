@@ -77,7 +77,7 @@ let view = 'jur';
 let T = null;                  // d3 zoom transform
 let zoom = null, minK = 1, flying = false;
 let vw = 0, vh = 0, DPR = 1;
-let hover = null, cardZone = null, cardPinned = false, cardAt = [0, 0];
+let hover = null, cardZone = null, cardPinned = false, cardAt = [0, 0], cardMap = null;
 let showSeconds = false;
 let displayMs = Date.now();
 let travel = null, travelZone = null, tweenRaf = 0, tweening = false;
@@ -816,6 +816,7 @@ function onZoom(ev) {
   T = ev.transform;
   if (view === 'tz' && !flying && T.k > minK * TZ_MAX_ZOOM) setView('jur');
   if (!cardPinned) hideCard();
+  else followCard();
   requestDraw(true);
 }
 
@@ -882,8 +883,18 @@ function placeCard() {
   if (top + h > vh - 8) top = y - h - 16;
   card.style.transform = 'translate(' + Math.max(8, left) + 'px,' + Math.max(8, top) + 'px)';
 }
+// A pinned card rides with the spot that was tapped, and closes once
+// that spot is dragged off the map, so it never floats over somewhere else.
+function followCard() {
+  if (!cardZone || !cardMap) return;
+  const x = T.x + cardMap[0] * T.k, y = T.y + cardMap[1] * T.k;
+  if (x < 0 || y < 0 || x > vw || y > vh) { hideCard(); setHover(null); return; }
+  cardAt = [x, y];
+  placeCard();
+}
 function showCard(z, x, y, pin) {
   cardZone = z; cardPinned = !!pin; cardAt = [x, y];
+  cardMap = [(x - T.x) / T.k, (y - T.y) / T.k];
   const card = $('placeCard');
   card.hidden = false;
   card.classList.toggle('pinned', cardPinned);
