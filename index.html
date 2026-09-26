@@ -202,50 +202,33 @@
       min-height: 1.6em;
     }
 
-    .install-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.6rem 1rem;
+    .install-banner {
       margin-top: 1.25rem;
+      padding: 0.6rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--input-bg);
     }
 
-    .install-row:not(:has(:not([hidden]))) {
+    .install-banner[hidden],
+    .install-banner:not([data-mode="ios"]) .install-ios,
+    .install-banner[data-mode="ios"] .install-prompt {
       display: none;
     }
 
-    .install-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 1.1rem;
+    .hero .install-banner p {
+      font-size: 1rem;
+    }
+
+    .install-link {
+      padding: 0;
       border: 0;
-      border-radius: var(--radius-pill);
-      background: var(--accent);
-      color: #fff;
+      background: none;
+      color: var(--accent-strong);
       font: inherit;
-      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 2px;
       cursor: pointer;
-      box-shadow: var(--shadow-sm);
-      transition: background var(--motion-fast);
-    }
-
-    .install-btn:hover {
-      background: var(--accent-strong);
-    }
-
-    .install-btn:focus-visible {
-      outline: 2px solid var(--accent-strong);
-      outline-offset: 3px;
-    }
-
-    .install-btn[hidden],
-    .install-hint[hidden] {
-      display: none;
-    }
-
-    .hero .install-hint {
-      font-size: 0.95rem;
     }
 
     .typewriter {
@@ -1190,14 +1173,9 @@
         <p class="hero-tagline" aria-hidden="true">
           Help you with <span class="typewriter"><span id="typeText" class="type-text"></span></span>
         </p>
-        <div class="install-row">
-          <button type="button" class="install-btn" data-pwa-install aria-controls="installHint" aria-expanded="false" hidden>
-            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-            Install app
-          </button>
-          <p class="install-hint" id="installHint" hidden>
-            On iPhone or iPad: tap <strong>Share</strong> in Safari, then <strong>Add to Home Screen</strong>.
-          </p>
+        <div class="install-banner" data-pwa-install hidden>
+          <p class="install-prompt">Use these tools offline: <button type="button" class="install-link" data-pwa-install-go>install this site as an app</button>.</p>
+          <p class="install-ios">Use these tools offline: tap Share in Safari, then Add to Home Screen.</p>
         </div>
         <p class="visually-hidden" itemprop="description">
           Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.

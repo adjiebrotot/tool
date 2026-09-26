@@ -1,9 +1,10 @@
 /* Makes the site an installable app (PWA): registers the service worker and
- * drives any [data-pwa-install] button on the page. Loaded by every page.
+ * shows any [data-pwa-install] banner on the page. Loaded by every page.
  *
  * Chrome and Edge fire beforeinstallprompt when the site can be installed; the
- * button then opens the browser's own install dialog. iOS has no such event,
- * so there the button explains the Share > Add to Home Screen route instead.
+ * banner's [data-pwa-install-go] link then opens the browser's own install
+ * dialog. iOS has no such event, so there the banner (data-mode="ios") gives
+ * the Share > Add to Home Screen route instead.
  * Nothing shows once the app is already running installed.
  */
 (function () {
@@ -21,31 +22,31 @@
             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   var deferred = null;
 
-  function buttons() { return document.querySelectorAll('[data-pwa-install]'); }
-  function show(on) { buttons().forEach(function (b) { b.hidden = !on; }); }
+  function banners() { return document.querySelectorAll('[data-pwa-install]'); }
+  function show(mode) {
+    banners().forEach(function (b) {
+      b.hidden = !mode;
+      if (mode) b.dataset.mode = mode;
+    });
+  }
 
   window.addEventListener('beforeinstallprompt', function (e) {
     deferred = e;
-    show(true);
+    if (!standalone) show('prompt');
   });
   window.addEventListener('appinstalled', function () {
     deferred = null;
-    show(false);
+    show(null);
   });
 
   document.addEventListener('DOMContentLoaded', function () {
-    if (standalone) return show(false);
-    if (ios) show(true);
-    buttons().forEach(function (b) {
+    if (standalone) return show(null);
+    if (ios) show('ios');
+    document.querySelectorAll('[data-pwa-install-go]').forEach(function (b) {
       b.addEventListener('click', function () {
-        if (deferred) {
-          deferred.prompt();
-          deferred.userChoice.finally(function () { deferred = null; show(false); });
-        } else if (ios) {
-          var hint = document.getElementById(b.getAttribute('aria-controls'));
-          if (hint) hint.hidden = !hint.hidden;
-          b.setAttribute('aria-expanded', hint && !hint.hidden ? 'true' : 'false');
-        }
+        if (!deferred) return;
+        deferred.prompt();
+        deferred.userChoice.finally(function () { deferred = null; show(null); });
       });
     });
   });
