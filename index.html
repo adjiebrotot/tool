@@ -203,11 +203,14 @@
     }
 
     .install-banner {
-      margin-top: 1.25rem;
-      padding: 0.6rem 0.9rem;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+      padding: 0.3rem 0.7rem;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       background: var(--input-bg);
+      color: var(--muted);
+      font-size: 0.85rem;
     }
 
     .install-banner[hidden],
@@ -216,8 +219,8 @@
       display: none;
     }
 
-    .hero .install-banner p {
-      font-size: 1rem;
+    .install-banner p {
+      margin: 0;
     }
 
     .install-link {
@@ -1173,10 +1176,6 @@
         <p class="hero-tagline" aria-hidden="true">
           Help you with <span class="typewriter"><span id="typeText" class="type-text"></span></span>
         </p>
-        <div class="install-banner" data-pwa-install hidden>
-          <p class="install-prompt">Use these tools offline: <button type="button" class="install-link" data-pwa-install-go>install this site as an app</button>.</p>
-          <p class="install-ios">Use these tools offline: tap Share in Safari, then Add to Home Screen.</p>
-        </div>
         <p class="visually-hidden" itemprop="description">
           Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.
         </p>
@@ -1186,6 +1185,10 @@
 
   <main>
     <section class="container" aria-labelledby="tool-directory-heading" id="tool-directory">
+      <div class="install-banner" data-pwa-install hidden>
+        <p class="install-prompt">Use these tools offline: <button type="button" class="install-link" data-pwa-install-go>install this site as an app</button>.</p>
+        <p class="install-ios">Use these tools offline: tap Share in Safari, then Add to Home Screen.</p>
+      </div>
       <div class="section-heading">
         <div>
           <h2 id="tool-directory-heading">Tool directory</h2>
