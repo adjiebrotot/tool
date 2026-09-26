@@ -22,6 +22,9 @@
   <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
   <link rel="alternate" type="text/markdown" href="https://tool.adjiebrotots.com/llms.txt" title="LLM-readable guide to Adjie Brotot Tools">
   <link rel="icon" type="image/svg+xml" href="logos/logo.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="logos/apple-touch-icon.png">
+  <script src="pwa.js" defer></script>
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="Adjie Brotot Tools">
@@ -197,6 +200,38 @@
       font-size: clamp(1.05rem, 1.9vw, 1.3rem);
       font-weight: 500;
       min-height: 1.6em;
+    }
+
+    .install-banner {
+      display: inline-block;
+      margin-bottom: 0.75rem;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--input-bg);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .install-banner[hidden],
+    .install-banner:not([data-mode="ios"]) .install-ios,
+    .install-banner[data-mode="ios"] .install-prompt {
+      display: none;
+    }
+
+    .install-banner p {
+      margin: 0;
+    }
+
+    .install-link {
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--accent-strong);
+      font: inherit;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
     }
 
     .typewriter {
@@ -1150,6 +1185,10 @@
 
   <main>
     <section class="container" aria-labelledby="tool-directory-heading" id="tool-directory">
+      <div class="install-banner" data-pwa-install hidden>
+        <p class="install-prompt">Use these tools offline: <button type="button" class="install-link" data-pwa-install-go>install this site as an app</button>.</p>
+        <p class="install-ios">Use these tools offline: tap Share in Safari, then Add to Home Screen.</p>
+      </div>
       <div class="section-heading">
         <div>
           <h2 id="tool-directory-heading">Tool directory</h2>
