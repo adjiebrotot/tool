@@ -203,14 +203,14 @@
     }
 
     .install-banner {
-      display: inline-block;
-      margin-bottom: 0.75rem;
-      padding: 0.3rem 0.7rem;
+      margin-bottom: 14px;
+      padding: 11px 18px;
       border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      background: var(--input-bg);
+      border-radius: var(--radius-xl);
+      background: rgba(141, 187, 255, 0.07);
       color: var(--muted);
       font-size: 0.85rem;
+      line-height: 1.5;
     }
 
     .install-banner[hidden],
@@ -223,15 +223,26 @@
       margin: 0;
     }
 
+    .install-banner strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
     .install-link {
       padding: 0;
       border: 0;
       background: none;
-      color: var(--accent-strong);
+      color: var(--accent);
       font: inherit;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .install-link:hover,
+    .install-link:focus-visible {
       text-decoration: underline;
       text-underline-offset: 2px;
-      cursor: pointer;
     }
 
     .typewriter {
@@ -1186,8 +1197,8 @@
   <main>
     <section class="container" aria-labelledby="tool-directory-heading" id="tool-directory">
       <div class="install-banner" data-pwa-install hidden>
-        <p class="install-prompt">Use these tools offline: <button type="button" class="install-link" data-pwa-install-go>install this site as an app</button>.</p>
-        <p class="install-ios">Use these tools offline: tap Share in Safari, then Add to Home Screen.</p>
+        <p class="install-prompt">Want these tools offline? <button type="button" class="install-link" data-pwa-install-go>Install Adjie Brotools as an app</button>.</p>
+        <p class="install-ios">Want these tools offline? Tap <strong>Share</strong> in Safari, then <strong>Add to Home Screen</strong>.</p>
       </div>
       <div class="section-heading">
         <div>
