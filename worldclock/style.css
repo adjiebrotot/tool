@@ -18,6 +18,9 @@ body{
   /* Time zones view: one colour per hour of offset, cycling every six hours. */
   --wc-tz-0:#245446; --wc-tz-1:#574625; --wc-tz-2:#55303D;
   --wc-tz-3:#3E3360; --wc-tz-4:#5A3B2D; --wc-tz-5:#3B5130;
+  /* The night side of the Earth: this colour laid over the map at up to this
+     opacity, fading in through twilight. */
+  --wc-night:#050A18; --wc-night-alpha:.34;
   --wc-strip-h:40px;
 }
 /* Light: the design system's soft blue (--info-border) for the sea, white
@@ -31,6 +34,7 @@ body.light{
   --wc-label:#2D3436; --wc-label-muted:#7F8C8D; --wc-you-text:#1F7A5C;
   --wc-tz-0:#CDEEE2; --wc-tz-1:#FDE7C2; --wc-tz-2:#F6D5DE;
   --wc-tz-3:#E4D9F3; --wc-tz-4:#FFDCCB; --wc-tz-5:#DDEFC8;
+  --wc-night:#1B2A4A; --wc-night-alpha:.16;
 }
 
 html,body{height:100%;}
@@ -40,6 +44,7 @@ body{margin:0;overflow:hidden;overscroll-behavior:none;}
 .wc-app{position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:var(--wc-sea);-webkit-user-select:none;user-select:none;}
 .wc-app [hidden]{display:none !important;}
 .wc-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+#nightCanvas{pointer-events:none;}
 #labelCanvas{cursor:grab;touch-action:none;}
 #labelCanvas:active{cursor:grabbing;}
 #labelCanvas.over-place{cursor:pointer;}
