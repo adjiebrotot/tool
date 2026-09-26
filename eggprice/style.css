@@ -1,0 +1,109 @@
+/* ============================================================
+   EGG PRICE — page-specific styles
+   Tokens come from ../dark.css, ../light.css, ../shared.css.
+   ============================================================ */
+
+:root{ --egg-shell:#D8A06C; --egg-yolk:#F4A01C; --egg-white:#EFE6D6; }
+body.light{ --egg-shell:#C98B55; --egg-yolk:#E8920C; --egg-white:#F3E6D3; }
+
+.container{max-width:1180px;}
+.header-left h1{display:flex;align-items:center;}
+.header-right{display:flex;gap:8px;align-items:center;}
+.card{margin-bottom:16px;}
+
+/* ---------- stage: 3D eggs with a card under each ---------- */
+.stage-card{padding:14px 14px 16px;overflow:hidden;}
+.stage-scroll{overflow-x:auto;}
+.stage-inner{position:relative;}
+#eggCanvas{display:none;width:100%;height:260px;cursor:pointer;}
+body.gl3d #eggCanvas{display:block;}
+.egg-cards{display:grid;gap:10px;}
+
+.egg-card{position:relative;padding:12px 12px 11px;border-radius:var(--radius-xl);border:1.5px solid var(--border);background:var(--input-bg);cursor:pointer;transition:border-color var(--transition-fast),box-shadow var(--transition-fast);text-align:center;}
+.egg-card:hover{border-color:var(--accent2);}
+.egg-card.sel{border-color:var(--accent);box-shadow:var(--shadow);}
+.egg-card.best{background:var(--positive-bg);}
+.egg-card.bad{opacity:.55;cursor:default;}
+.egg-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.ec-badge{display:inline-flex;margin-bottom:6px;font-size:.72rem;padding:2px 8px;}
+.ec-name{font-weight:800;font-size:1rem;line-height:1.25;}
+.ec-sub{color:var(--muted);font-size:.78rem;margin-bottom:9px;}
+.ec-bar{display:flex;height:10px;border-radius:var(--radius-pill);overflow:hidden;margin:0 0 9px;background:var(--border);}
+.ec-bar-egg{background:var(--egg-yolk);}
+.ec-bar-shell{background:var(--egg-shell);}
+.ec-row{display:flex;align-items:center;gap:7px;font-size:.88rem;padding:2px 0;}
+.ec-row span:nth-child(2){color:var(--muted);font-weight:600;}
+.ec-row b{margin-left:auto;font-size:1.02rem;}
+.sw{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+.sw-egg{background:var(--egg-yolk);}
+.sw-shell{background:var(--egg-shell);}
+.ec-net{margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-weight:700;color:var(--accent);font-size:.92rem;}
+.ec-net span{color:var(--muted);font-weight:500;font-size:.78rem;margin-left:2px;}
+
+/* ---------- the maths ---------- */
+.math-card{padding:0;}
+.math-sum{display:flex;align-items:center;gap:9px;padding:14px 18px;cursor:pointer;list-style:none;font-weight:700;font-size:.95rem;user-select:none;}
+.math-sum::-webkit-details-marker{display:none;}
+.math-sum:hover{color:var(--accent);}
+.math-ico{width:1.2em;height:1.2em;color:var(--accent);flex-shrink:0;}
+.math-egg{color:var(--muted);font-weight:600;font-size:.85rem;}
+.math-chev{width:1.1em;height:1.1em;margin-left:auto;color:var(--muted);transition:transform var(--transition-fast);}
+.math-card[open] .math-chev{transform:rotate(180deg);}
+.math-card[open] .math-sum{border-bottom:1px solid var(--border);}
+.math-card .math-grid{padding:16px;}
+.math-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:16px;align-items:center;}
+.math-svg{width:100%;height:auto;display:block;}
+.m-shell{fill:var(--egg-shell);}
+.m-slice{fill:var(--accent);opacity:.2;stroke:var(--accent);stroke-width:.6;stroke-opacity:.5;}
+.m-slice.alt{opacity:.32;}
+.m-outline{fill:none;stroke:var(--text);stroke-width:1.6;}
+.m-inner{fill:none;stroke:var(--text);stroke-width:.8;stroke-opacity:.45;}
+.m-axis{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4;}
+.m-dim{stroke:var(--accent2);stroke-width:1.4;}
+.m-arrow{fill:var(--accent2);}
+.m-lbl{fill:var(--muted);font:600 13px 'DM Mono',monospace;}
+.m-mid{text-anchor:middle;fill:var(--accent2);}
+.m-y{fill:var(--text);font-style:italic;}
+.m-t{fill:var(--egg-shell);font-weight:700;}
+
+.math-steps{display:flex;flex-direction:column;gap:6px;}
+.mx-row{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;align-items:center;padding:6px 12px;border-radius:var(--radius-lg);background:var(--input-bg);border:1px solid var(--border);}
+.mx-row:last-child{border-color:var(--accent);}
+.mx-lbl{color:var(--muted);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;line-height:1.3;}
+.mx-f{display:flex;flex-wrap:wrap;align-items:center;column-gap:.45em;row-gap:4px;color:var(--text);padding:3px 0;}
+.mx-p{white-space:nowrap;}
+.mx-p.mx-new{margin-left:1.1em;}
+.mx-p.mx-raw{white-space:normal;overflow-wrap:anywhere;font:500 .8rem 'DM Mono',monospace;}
+.mx-f .katex{font-size:1.12em;}
+.mx-r{color:var(--accent);font-weight:700;}
+.mx-c{color:var(--accent2);}
+
+/* ---------- table ---------- */
+.table-card{padding:6px 0 0;}
+.table-wrap{max-height:none;padding:0 12px;}
+.pack-table th,.pack-table td{padding:7px 6px;vertical-align:middle;}
+.pack-table th{text-align:left;}
+.pack-table td{text-align:left;}
+.pack-table th:nth-child(5),.pack-table th:nth-child(6),.pack-table td:nth-child(5),.pack-table td:nth-child(6){text-align:right;}
+.cell-name{min-width:130px;font-weight:700;}
+.pack-table .currency-wrap{width:120px;}
+.pack-table .currency-wrap.cell-eggs{width:80px;}
+.pack-table .currency-wrap.cell-eggs .currency-input{padding-left:13px;}
+.c-net.is-best{color:var(--positive-em);font-weight:700;}
+tr.bad .c-gross,tr.bad .c-net{color:var(--negative-em);}
+.row-del{background:none;border:1px solid transparent;color:var(--muted);border-radius:var(--radius-sm);width:30px;height:30px;cursor:pointer;font-size:.9rem;}
+.row-del:hover:not(:disabled){color:var(--negative-em);border-color:var(--negative-border);}
+.row-del:disabled{opacity:.3;cursor:default;}
+
+@media (max-width: 900px){
+  .math-grid{grid-template-columns:1fr;}
+}
+@media (max-width: 600px){
+  #eggCanvas{height:210px;}
+  .mx-row{grid-template-columns:1fr;gap:2px;}
+  .mx-f .katex{font-size:1em;}
+}
+
+/* Keeps the page intact if the KaTeX stylesheet ever fails to load. */
+.mx-f .katex-mathml{position:absolute;clip:rect(1px,1px,1px,1px);padding:0;border:0;height:1px;width:1px;overflow:hidden;}
+.mx-f{max-width:100%;overflow:hidden;}

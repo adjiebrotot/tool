@@ -31,6 +31,7 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 | [Video to GIF](https://tool.adjiebrotots.com/videotogif/) | Convert video to GIF locally — videos never leave your device. |
 | [Random Picker](https://tool.adjiebrotots.com/randompicker/) | Pick one option at random with a spinning wheel, a 3D dice roll, a slot machine, or a Galton board. |
 | [World Clock](https://tool.adjiebrotots.com/worldclock/) | A live full-screen world map with the local time on every country, state and territory, opening on your own region. Time Travel to any date and time in any place to convert a meeting time, daylight saving included; zoom out for a classic time zone map. |
+| [Egg Price](https://tool.adjiebrotots.com/eggprice/) | See how much of each egg carton you pay for shell and how much for the egg, with the price per gram of egg only. 3D eggs to scale, cut open, with the shape maths behind the shell weight. |
 
 ## Repo layout
 
