@@ -1,8 +1,12 @@
 /* Service worker for the installable app (PWA).
  *
- * Online, every page and file comes from the network first, so a deploy is
- * live on the next load exactly as it is without the app installed. Whatever
- * loads is also kept in the cache, so a tool opened once still opens offline.
+ * Online, every page and file comes from the network first, and is checked
+ * with the server each time (a cheap 304 when unchanged) rather than reused
+ * from the browser's 10-minute HTTP cache, so a deploy (a new tool or an
+ * update) is live on the very next load. Whatever loads is also kept in the
+ * cache, so a tool opened once still opens offline. The service worker itself
+ * is re-checked by the browser on every visit, and pwa.js asks an app left
+ * open to reload when a newer deploy is out.
  * Libraries and fonts from the CDNs are pinned by URL, so they are served
  * from the cache first and refreshed in the background.
  *
@@ -41,7 +45,8 @@ self.addEventListener('activate', event => {
     for (const key of await caches.keys()) {
       if (key.startsWith('brotools-') && !keep.includes(key)) await caches.delete(key);
     }
-    if (self.registration.navigationPreload) await self.registration.navigationPreload.enable();
+    // v1 turned navigation preload on; nothing reads it any more.
+    if (self.registration.navigationPreload) await self.registration.navigationPreload.disable();
     await self.clients.claim();
   })());
 });
@@ -63,7 +68,7 @@ async function networkFirst(event) {
   const req = event.request;
   const cache = await caches.open(PAGES);
   try {
-    const res = (await event.preloadResponse) || await fetch(req);
+    const res = revalidate(await fetch(req, { cache: 'no-cache' }));
     if (res.ok) event.waitUntil(cache.put(req, res.clone()));
     return res;
   } catch (err) {
@@ -76,6 +81,17 @@ async function networkFirst(event) {
     }
     throw err;
   }
+}
+
+// GitHub Pages sends max-age=600, and Chrome keeps a script or stylesheet
+// that is still "fresh" in memory and reuses it without asking this worker,
+// so an app reopened within 10 minutes of a deploy would run the old code.
+// Handing the page a copy marked no-cache sends every load back through here.
+function revalidate(res) {
+  if (res.type !== 'basic' || res.status === 206) return res;
+  const headers = new Headers(res.headers);
+  headers.set('Cache-Control', 'no-cache');
+  return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
 }
 
 async function cacheFirst(event) {
