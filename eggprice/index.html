@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Egg Price: What You Pay for Shell vs Egg | Adjie Brotools</title>
+<meta name="description" content="Compare egg cartons by the price of the egg you actually eat. See how much of each pack price pays for shell and how much for the egg inside, with a 3D egg model.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tool.adjiebrotots.com/eggprice/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Egg Price: What You Pay for Shell vs Egg">
+<meta property="og:description" content="Compare egg cartons by the price of the egg you actually eat. See how much of each pack price pays for shell and how much for the egg inside.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/eggprice/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Egg Price: What You Pay for Shell vs Egg">
+<meta name="twitter:description" content="Compare egg cartons by the price of the egg you actually eat. See how much of each pack price pays for shell and how much for the egg inside.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Egg Price",
+  "url": "https://tool.adjiebrotots.com/eggprice/",
+  "description": "Compare egg cartons by the price of the egg you actually eat. See how much of each pack price pays for shell and how much for the egg inside, with a 3D egg model.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "keywords": "egg price per gram, egg shell weight, cheapest egg size, medium vs large vs jumbo eggs, egg price comparison, egg unit price"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Which egg size is the best value per gram?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Compare the price per gram of egg without the shell, not the pack price per gram. Smaller eggs carry a larger share of shell, so a pack that looks cheaper per gram can cost more per gram of egg you eat. The free Egg Price tool at https://tool.adjiebrotots.com/eggprice/ works it out for any pack sizes and prices."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much of an egg's weight is shell?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Roughly 9 to 12 percent. The shell is about the same thickness on every egg, so its weight follows the egg's surface area while the egg's weight follows its volume. A 42 g egg is about 11 percent shell and a 67 g egg about 9.5 percent."
+      }
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../dark.css">
+<link rel="stylesheet" href="../light.css">
+<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="style.css">
+<script src="../shared.js"></script>
+</head>
+<body class="light">
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M12 2.5c-3.9 0-7 6.1-7 11 0 4.4 3.1 8 7 8s7-3.6 7-8c0-4.9-3.1-11-7-11z"/> <circle fill="var(--accent2)" stroke="none" cx="12" cy="14.2" r="3.2"/> </svg>Egg Price</h1>
+      <p>Pay for the egg, not the shell.</p>
+    </div>
+    <div class="header-right">
+      <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
+      <button class="btn-theme" id="themeToggle">🌙 Dark</button>
+    </div>
+  </div>
+
+  <!-- EGGS, TO SCALE -->
+  <section class="card stage-card">
+    <div class="stage-scroll x-scroll">
+      <div class="stage-inner" id="stageInner">
+        <canvas id="eggCanvas" aria-label="Your egg sizes to scale, cut open to show the shell"></canvas>
+        <div class="egg-cards" id="eggCards" data-no-abbr></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE MATHS, FOR THE SELECTED EGG -->
+  <section class="card math-card">
+    <div class="math-grid">
+      <svg id="mathSvg" class="math-svg" viewBox="0 0 520 300" role="img" aria-label="Egg profile with the volume slices"></svg>
+      <div class="math-chips" id="mathChips"></div>
+    </div>
+  </section>
+
+  <!-- THE PACKS -->
+  <section class="card table-card">
+    <div class="table-wrap x-scroll">
+      <table class="pack-table">
+        <thead>
+          <tr>
+            <th>Size</th>
+            <th>Eggs</th>
+            <th>Grams</th>
+            <th>Price</th>
+            <th>$/g pack</th>
+            <th>$/g egg only</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="packBody" data-no-abbr data-no-persist></tbody>
+      </table>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" id="addBtn">＋ Add size</button>
+      <button class="btn-secondary" id="resetBtn">↺ Reset</button>
+    </div>
+  </section>
+
+</div><!-- /container -->
+
+<footer class="page-footer">
+  <section class="page-footer-info">
+    <div style="display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
+      <img src="../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Made in Australia by Indonesian engineer.</span>
+      </div>
+    </div>
+  </section>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="eggmath.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

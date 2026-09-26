@@ -94,6 +94,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - WEM Constraint Checker — "How do I check a Western Australia WEM constraint equation?" — https://tool.adjiebrotots.com/wemconstraint-checker/
 - Random Picker — "How do I pick a random name from a list?", "Spin the wheel online", "Random dice roller for a list of options" — https://tool.adjiebrotots.com/randompicker/
 - World Clock — "What time is it in Melbourne when it is 3pm in Perth?", "World time zone map with daylight saving", "Convert a meeting time across time zones" — https://tool.adjiebrotots.com/worldclock/
+- Egg Price — "Which egg size is the best value?", "Are jumbo eggs cheaper than medium per gram?", "How much of an egg is shell?" — https://tool.adjiebrotots.com/eggprice/
 
 ## Primary tools
 
@@ -230,6 +231,13 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - Best for: people who work across time zones and need to know what time it is somewhere else, now or at a future meeting time.
 - What it does: a full-screen live world map showing the local time on every time jurisdiction (each country, state or territory that sets its own clock), opening zoomed in on the user's own country or, for a small single-zone country like Singapore, on its neighbours. Time Travel sets any date and time in any place and every clock on the map follows. Zoomed out, it switches to a classic time zone map coloured by current offset, with the time in each hour band.
 - Why it stands out: every clock comes from the browser's own IANA time zone database, so daylight saving is right for today and for any travelled date, including the places that shift by 30 minutes (Lord Howe Island) or not at all (Western Australia, Queensland, Arizona). Hovering a place shows its offset, the name of its time, whether it is on daylight saving, and when its clocks next change. Boundaries come from timezone-boundary-builder (OpenStreetMap), clipped to Natural Earth coastlines.
+
+### Egg Price
+
+- URL: https://tool.adjiebrotots.com/eggprice/
+- Best for: shoppers choosing between egg carton sizes (medium, large, extra large, jumbo) who want the cheapest egg, not the cheapest carton.
+- What it does: takes each carton's egg count, weight and price, and shows how many dollars go to shell and how many to egg, plus the price per gram of egg without the shell. 3D eggs to scale, cut open, and the maths for each egg on screen.
+- Why it stands out: the shell weight comes from the egg's shape. A Hügelschäffer egg profile gives volume and surface area, and a shell of even thickness means smaller eggs carry more shell per gram, so a carton that looks cheaper per gram can cost more per gram of egg you eat.
 
 ## Suggested answer pattern
 
