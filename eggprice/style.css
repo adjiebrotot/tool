@@ -41,8 +41,17 @@ body.gl3d #eggCanvas{display:block;}
 .ec-net span{color:var(--muted);font-weight:500;font-size:.78rem;margin-left:2px;}
 
 /* ---------- the maths ---------- */
-.math-card{padding:16px;}
-.math-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:center;}
+.math-card{padding:0;}
+.math-sum{display:flex;align-items:center;gap:9px;padding:14px 18px;cursor:pointer;list-style:none;font-weight:700;font-size:.95rem;user-select:none;}
+.math-sum::-webkit-details-marker{display:none;}
+.math-sum:hover{color:var(--accent);}
+.math-ico{width:1.2em;height:1.2em;color:var(--accent);flex-shrink:0;}
+.math-egg{color:var(--muted);font-weight:600;font-size:.85rem;}
+.math-chev{width:1.1em;height:1.1em;margin-left:auto;color:var(--muted);transition:transform var(--transition-fast);}
+.math-card[open] .math-chev{transform:rotate(180deg);}
+.math-card[open] .math-sum{border-bottom:1px solid var(--border);}
+.math-card .math-grid{padding:16px;}
+.math-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:16px;align-items:center;}
 .math-svg{width:100%;height:auto;display:block;}
 .m-shell{fill:var(--egg-shell);}
 .m-slice{fill:var(--accent);opacity:.2;stroke:var(--accent);stroke-width:.6;stroke-opacity:.5;}
@@ -57,14 +66,17 @@ body.gl3d #eggCanvas{display:block;}
 .m-y{fill:var(--text);font-style:italic;}
 .m-t{fill:var(--egg-shell);font-weight:700;}
 
-.math-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
-.chip{padding:9px 11px;border-radius:var(--radius-lg);background:var(--input-bg);border:1px solid var(--border);}
-.chip:first-child{grid-column:1 / -1;}
-.chip:last-child{border-color:var(--accent);}
-.chip-lbl{color:var(--muted);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
-.chip-f{font-size:.8rem;line-height:1.45;color:var(--text);}
-.chip-f sup,.chip-f sub{font-size:.7em;}
-.chip-r{font-size:.95rem;font-weight:700;color:var(--accent);margin-top:2px;}
+.math-steps{display:flex;flex-direction:column;gap:6px;}
+.mx-row{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;align-items:center;padding:6px 12px;border-radius:var(--radius-lg);background:var(--input-bg);border:1px solid var(--border);}
+.mx-row:last-child{border-color:var(--accent);}
+.mx-lbl{color:var(--muted);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;line-height:1.3;}
+.mx-f{display:flex;flex-wrap:wrap;align-items:center;column-gap:.45em;row-gap:4px;color:var(--text);padding:3px 0;}
+.mx-p{white-space:nowrap;}
+.mx-p.mx-new{margin-left:1.1em;}
+.mx-p.mx-raw{white-space:normal;overflow-wrap:anywhere;font:500 .8rem 'DM Mono',monospace;}
+.mx-f .katex{font-size:1.12em;}
+.mx-r{color:var(--accent);font-weight:700;}
+.mx-c{color:var(--accent2);}
 
 /* ---------- table ---------- */
 .table-card{padding:6px 0 0;}
@@ -73,25 +85,25 @@ body.gl3d #eggCanvas{display:block;}
 .pack-table th{text-align:left;}
 .pack-table td{text-align:left;}
 .pack-table th:nth-child(5),.pack-table th:nth-child(6),.pack-table td:nth-child(5),.pack-table td:nth-child(6){text-align:right;}
-.cell-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;padding:7px 9px;width:100%;outline:none;transition:border-color var(--transition-fast);font-variant-numeric:tabular-nums;}
-.cell-input:focus{border-color:var(--accent);background:var(--panel);}
-.cell-name{min-width:120px;font-weight:700;}
-.cell-num{width:84px;}
-.pack-table .currency-wrap{display:inline-block;}
-.currency-wrap .cell-input{padding-left:22px;width:96px;}
-.currency-wrap .cell-input.has-suffix{padding-left:9px;padding-right:24px;}
-.currency-wrap .prefix{left:9px;}
-.currency-wrap .suffix{right:9px;}
+.cell-name{min-width:130px;font-weight:700;}
+.pack-table .currency-wrap{width:120px;}
+.pack-table .currency-wrap.cell-eggs{width:80px;}
+.pack-table .currency-wrap.cell-eggs .currency-input{padding-left:13px;}
 .c-net.is-best{color:var(--positive-em);font-weight:700;}
 tr.bad .c-gross,tr.bad .c-net{color:var(--negative-em);}
 .row-del{background:none;border:1px solid transparent;color:var(--muted);border-radius:var(--radius-sm);width:30px;height:30px;cursor:pointer;font-size:.9rem;}
 .row-del:hover:not(:disabled){color:var(--negative-em);border-color:var(--negative-border);}
 .row-del:disabled{opacity:.3;cursor:default;}
 
-@media (max-width: 800px){
+@media (max-width: 900px){
   .math-grid{grid-template-columns:1fr;}
 }
 @media (max-width: 600px){
   #eggCanvas{height:210px;}
-  .math-chips{grid-template-columns:1fr;}
+  .mx-row{grid-template-columns:1fr;gap:2px;}
+  .mx-f .katex{font-size:1em;}
 }
+
+/* Keeps the page intact if the KaTeX stylesheet ever fails to load. */
+.mx-f .katex-mathml{position:absolute;clip:rect(1px,1px,1px,1px);padding:0;border:0;height:1px;width:1px;overflow:hidden;}
+.mx-f{max-width:100%;overflow:hidden;}

@@ -52,10 +52,10 @@ const selIndex = () => (sel >= 0 && sel < rows.length && packs[sel]) ? sel : bes
 function renderTable() {
   $('packBody').innerHTML = rows.map((r, i) => `
     <tr data-i="${i}">
-      <td><input class="cell-input cell-name" data-k="name" value="${esc(r.name)}" aria-label="Size name"></td>
-      <td><input class="cell-input cell-num" data-k="eggs" inputmode="numeric" value="${esc(r.eggs)}" aria-label="Eggs in the pack"></td>
-      <td><div class="currency-wrap"><input class="cell-input cell-num has-suffix" data-k="grams" inputmode="decimal" value="${esc(r.grams)}" aria-label="Pack weight in grams"><span class="suffix">g</span></div></td>
-      <td><div class="currency-wrap"><span class="prefix">$</span><input class="cell-input cell-num" data-k="price" inputmode="decimal" value="${esc(r.price)}" aria-label="Pack price"></div></td>
+      <td><input class="txt-input cell-name" data-k="name" value="${esc(r.name)}" aria-label="Size name"></td>
+      <td><div class="currency-wrap cell-eggs"><input class="currency-input" data-k="eggs" type="text" inputmode="numeric" value="${esc(r.eggs)}" aria-label="Eggs in the pack"></div></td>
+      <td><div class="currency-wrap"><input class="currency-input has-suffix" data-k="grams" type="text" inputmode="decimal" value="${esc(r.grams)}" aria-label="Pack weight in grams"><span class="suffix">g</span></div></td>
+      <td><div class="currency-wrap"><span class="prefix">$</span><input class="currency-input" data-k="price" type="text" inputmode="decimal" value="${esc(r.price)}" aria-label="Pack price"></div></td>
       <td class="mono c-gross"></td>
       <td class="mono c-net"></td>
       <td><button class="row-del" title="Remove this size" aria-label="Remove this size"${rows.length < 2 ? ' disabled' : ''}>✕</button></td>
@@ -135,9 +135,10 @@ $('eggCards').addEventListener('keydown', e => {
 
 // ── THE MATHS PANEL ──────────────────────────────────────────────────────
 function renderMath() {
+  if (!$('mathBox').open) { const q = packs[selIndex()]; $('mathEgg').textContent = q ? (rows[selIndex()].name || 'Size ' + (selIndex() + 1)) : ''; return; }
   const i = selIndex(), svg = $('mathSvg');
   const p = packs[i];
-  if (!p) { svg.innerHTML = ''; $('mathChips').innerHTML = ''; return; }
+  if (!p) { svg.innerHTML = ''; $('mathSteps').innerHTML = ''; $('mathEgg').textContent = ''; return; }
   const e = p.egg;
   // One scale for every egg, so switching eggs shows the size change.
   const Lmax = Math.max(...packs.filter(Boolean).map(q => q.egg.L));
@@ -185,17 +186,38 @@ function renderMath() {
     <text class="m-lbl m-t" x="${X(-e.L / 2) - 6}" y="${cy - 8}" text-anchor="end">t</text>
   `;
 
-  const chip = (lbl, f, res) => `<div class="chip"><div class="chip-lbl">${lbl}</div><div class="chip-f mono">${f}</div>${res ? `<div class="chip-r mono">${res}</div>` : ''}</div>`;
   const name = esc(rows[i].name || 'Size ' + (i + 1));
-  $('mathChips').innerHTML = [
-    chip('Shape', `y = (B/2)·√((L² − 4x²) ⁄ (L² + 8wx + 4w²))`, `B = ${M.SHAPE.breadth}L · w = ${M.SHAPE.shift}L`),
-    chip(name, `W = ${fmt.num(p.grams, 0)} g ÷ ${fmt.num(p.eggs, 0)}`, `${fmt.num(e.W, 1)} g`),
-    chip('Volume', `V = π∫y² dx = W ÷ ${M.RHO_EGG} g/cm³`, `${fmt.num(e.V, 1)} cm³`),
-    chip('Shell area', `S = 2π∫y ds`, `${fmt.num(e.S, 1)} cm²`),
-    chip('Shell', `S × ${fmt.num(M.T_SHELL * 10, 2)} mm × ${M.RHO_SHELL} g/cm³`, `${fmt.num(e.shell, 2)} g · ${fmt.pct(e.shellShare)}`),
-    chip('Egg', `${fmt.num(e.W, 1)} − ${fmt.num(e.shell, 2)}`, `${fmt.num(e.content, 1)} g`),
-    chip('$/g egg', `${fmt.money(p.price)} ÷ ${fmt.num(p.contentG, 0)} g`, fmt.perG(p.netPerG)),
-  ].join('');
+  $('mathEgg').textContent = rows[i].name || 'Size ' + (i + 1);
+  // Values in LaTeX: \htmlClass lets the page's tokens colour them, so the
+  // maths follows the theme like everything else.
+  const R = v => `\\htmlClass{mx-r}{${v}}`;
+  const C = v => `\\htmlClass{mx-c}{${v}}`;
+  const n = (v, d) => fmt.num(v, d).replace(/,/g, '{,}');
+  const u = t => `\\ \\text{${t}}`;
+  // Each step is a list of parts that wrap as whole pieces on a narrow screen.
+  const steps = [
+    ['Shape', [`y(x) = \\frac{B}{2}\\sqrt{\\frac{L^2 - 4x^2}{L^2 + 8wx + 4w^2}}`, `B = ${C(M.SHAPE.breadth + 'L')},\\ \\ w = ${C(M.SHAPE.shift + 'L')}`]],
+    [name, [`W = \\frac{${n(p.grams, 0)}${u('g')}}{${n(p.eggs, 0)}}`, `= ${R(n(e.W, 1) + u('g'))}`]],
+    ['Volume', [`V = \\pi\\int_{-L/2}^{L/2} y^2\\,dx`, `= \\frac{W}{\\rho_{\\text{egg}}}`, `= \\frac{${n(e.W, 1)}}{${C(M.RHO_EGG)}}`, `= ${R(n(e.V, 1) + u('cm') + '^3')}`]],
+    ['Size', [`L = \\sqrt[3]{\\frac{V}{${C(n(M.UNIT.cV, 4))}}}`, `= ${R(n(e.L * 10, 1) + u('mm'))}`, `B = ${C(M.SHAPE.breadth)}\\,L`, `= ${R(n(e.B * 10, 1) + u('mm'))}`]],
+    ['Surface', [`S = 2\\pi\\int_{-L/2}^{L/2} y\\sqrt{1 + y'^2}\\,dx`, `= ${C(n(M.UNIT.cS, 3))}\\,L^2`, `= ${R(n(e.S, 1) + u('cm') + '^2')}`]],
+    ['Shell', [`m_{\\text{shell}} = S\\,t\\,\\rho_{\\text{shell}}`, `= ${n(e.S, 1)} \\times ${C(M.T_SHELL + u('cm'))} \\times ${C(M.RHO_SHELL)}`, `= ${R(n(e.shell, 2) + u('g'))}`, `(${n(e.shellShare * 100, 1)}\\%)`]],
+    ['Egg', [`m_{\\text{egg}} = W - m_{\\text{shell}}`, `= ${n(e.W, 1)} - ${n(e.shell, 2)}`, `= ${R(n(e.content, 1) + u('g'))}`]],
+    ['Price', [`\\frac{\\$${n(p.price, 2)}}{${n(p.eggs, 0)} \\times ${n(e.content, 1)}${u('g')}}`, `= ${R('\\$' + p.netPerG.toFixed(4) + '/\\text{g}')}`]],
+  ];
+  const box = $('mathSteps');
+  box.innerHTML = steps.map(([lbl, parts]) => `<div class="mx-row"><div class="mx-lbl">${lbl}</div><div class="mx-f">${parts.map((t, k) => `<span class="mx-p${k && !t.startsWith('=') && !t.startsWith('(') ? ' mx-new' : ''}"></span>`).join('')}</div></div>`).join('');
+  const opts = { displayMode: false, throwOnError: false, strict: false, trust: c => c.command === '\\htmlClass' };
+  box.querySelectorAll('.mx-f').forEach((el, j) => {
+    el.querySelectorAll('.mx-p').forEach((span, k) => {
+      const tex = steps[j][1][k];
+      if (window.katex) {
+        try { katex.render('\\displaystyle ' + tex, span, opts); return; } catch (err) { /* plain source below */ }
+      }
+      span.textContent = tex;
+      span.classList.add('mx-raw');
+    });
+  });
 }
 
 // ── 3D EGGS ──────────────────────────────────────────────────────────────
@@ -389,6 +411,8 @@ $('themeToggle').addEventListener('click', () => {
   $('themeToggle').textContent = document.body.classList.contains('light') ? '🌙 Dark' : '☀️ Light';
   sync3DSelection();
 });
+
+$('mathBox').addEventListener('toggle', renderMath);
 
 // ── INIT ─────────────────────────────────────────────────────────────────
 renderAll();

@@ -69,6 +69,7 @@
 </script>
 <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <link rel="stylesheet" href="../shared.css">
@@ -101,12 +102,18 @@
   </section>
 
   <!-- THE MATHS, FOR THE SELECTED EGG -->
-  <section class="card math-card">
+  <details class="card math-card" id="mathBox">
+    <summary class="math-sum">
+      <svg class="math-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 4H7l6 8-6 8h10"/></svg>
+      <span>The maths</span>
+      <span class="math-egg" id="mathEgg" data-no-abbr></span>
+      <svg class="math-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </summary>
     <div class="math-grid">
       <svg id="mathSvg" class="math-svg" viewBox="0 0 520 300" role="img" aria-label="Egg profile with the volume slices"></svg>
-      <div class="math-chips" id="mathChips"></div>
+      <div class="math-steps" id="mathSteps"></div>
     </div>
-  </section>
+  </details>
 
   <!-- THE PACKS -->
   <section class="card table-card">
@@ -151,6 +158,7 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script src="eggmath.js"></script>
 <script src="script.js"></script>
 </body>
