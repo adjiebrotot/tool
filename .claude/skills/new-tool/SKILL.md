@@ -18,6 +18,10 @@ it before writing markup, and reuse its components (control panel, tabs, sliders
 tables, tooltips, charts) rather than inventing new ones. Include the shared layers in order:
 
 ```html
+<link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<link rel="manifest" href="../manifest.webmanifest">       <!-- installable app (PWA) -->
+<link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
+<script src="../pwa.js" defer></script>                   <!-- registers the service worker -->
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <link rel="stylesheet" href="../shared.css">
