@@ -1,8 +1,8 @@
 // Charts — site-wide check.
 //
-// Every tool that draws an interactive chart makes the reader the same three
+// Every tool that draws an interactive chart makes the reader the same four
 // promises, and this drives the real pages in headless Chromium to hold them
-// to all three:
+// to all four:
 //
 //   1. THE EXPORT ROW IS ONE ROW. Every chart carries the same cluster, in the
 //      same order — ⬇ SVG, ⬇ PNG, ⧉ copy, ⟳ reset zoom — drawn at the same
@@ -16,6 +16,11 @@
 //      sized to that slice, so the shape under the reader's nose is the shape
 //      they can read — not a flat smear against a scale built for the rest of
 //      the series.
+//   4. AXIS TEXT NEVER LANDS ON AXIS TEXT. No title or tick label overlaps
+//      another, runs off the canvas, or spills out of the pane it names, on a
+//      desktop, a phone and a small phone. Stacked panes are where it breaks.
+//
+// SHOT=<dir> saves each chart as the check saw it; ONLY=<name> runs one page.
 //
 // The real Chart.js and chartjs-plugin-zoom are used, not a stub, because the
 // promises are about what those libraries do: the files are fetched once into
@@ -271,6 +276,98 @@ const ZOOM_PROBE = (canvasIds) => {
   return out;
 };
 
+/* Every piece of text an axis draws — its title and each tick label — as the
+   box it actually occupies on the canvas, so two of them landing on each other
+   can be caught by geometry rather than by eye. A chart of stacked panes
+   (financialfreedom's flows over balance, dcasimulator's price over its
+   oscillators) is where this goes wrong: Chart.js narrows every left axis to
+   a share of the width, and centres each title on its own pane whatever the
+   pane's height, so a long title runs into the pane beside it. */
+const TEXT_PROBE = (canvasIds) => {
+  const H = window.Chart.helpers;
+  const out = [];
+  const selectors = canvasIds.length ? canvasIds : [];
+  for (const id of selectors) {
+    const cv = document.getElementById(id) || document.querySelector(id);
+    const chart = cv && window.Chart.getChart(cv);
+    if (!chart || cv.offsetParent === null) continue;
+    const ctx = chart.ctx;
+    const boxes = [];
+    const measure = (text, font) => { ctx.save(); ctx.font = font.string; const w = ctx.measureText(text).width; ctx.restore(); return w; };
+    for (const sc of Object.values(chart.scales)) {
+      const o = sc.options;
+      if (!o || o.display === false || !sc.width && !sc.height) continue;
+      const horiz = sc.isHorizontal();
+      const pos = o.position;
+      const t = o.title;
+      if (t && t.display && t.text) {
+        const font = H.toFont(t.font);
+        const pad = H.toPadding(t.padding);
+        const lines = Array.isArray(t.text) ? t.text : [t.text];
+        const w = Math.max(...lines.map(l => measure(String(l), font)));
+        const thick = font.lineHeight * lines.length;
+        if (horiz) {
+          const cx = (sc.left + sc.right) / 2;
+          const bottom = pos === 'top' ? sc.top + pad.top + thick : sc.bottom - pad.bottom;
+          boxes.push({ kind: 'title', scale: sc.id, text: lines.join(' '),
+            x0: cx - w / 2, x1: cx + w / 2, y0: bottom - thick, y1: bottom,
+            pane: { y0: sc.top, y1: sc.bottom, x0: sc.left, x1: sc.right } });
+        } else {
+          const cy = (sc.top + sc.bottom) / 2;
+          const x0 = pos === 'right' ? sc.right - pad.top - thick : sc.left + pad.top;
+          boxes.push({ kind: 'title', scale: sc.id, text: lines.join(' '),
+            x0, x1: x0 + thick, y0: cy - w / 2, y1: cy + w / 2,
+            pane: { y0: sc.top, y1: sc.bottom, x0: sc.left, x1: sc.right } });
+        }
+      }
+      if (o.ticks && o.ticks.display !== false && sc.getLabelItems) {
+        for (const it of sc.getLabelItems()) {
+          const lo = it.options || {};
+          if (lo.rotation) continue;               // rotated labels are Chart.js's own business
+          const font = it.font;
+          const lines = Array.isArray(it.label) ? it.label : [it.label];
+          const w = Math.max(...lines.map(l => measure(String(l), font)));
+          const h = font.size * lines.length;
+          const [x, y] = lo.translation || [0, 0];
+          const ty = y + (it.textOffset || 0);
+          let x0 = lo.textAlign === 'right' ? x - w : lo.textAlign === 'center' ? x - w / 2 : x;
+          let y0 = lo.textBaseline === 'top' ? ty : lo.textBaseline === 'bottom' ? ty - h : ty - h / 2;
+          boxes.push({ kind: 'tick', scale: sc.id, text: lines.join(' '), x0, x1: x0 + w, y0, y1: y0 + h });
+        }
+      }
+    }
+    const hits = [];
+    const tol = 0.5;
+    for (let i = 0; i < boxes.length; i++) {
+      const a = boxes[i];
+      // A title has to fit the pane it names: longer than its axis, it spills
+      // into the neighbouring pane or off the canvas.
+      if (a.kind === 'title') {
+        const horiz = a.y1 - a.y0 < a.x1 - a.x0 && a.pane.x1 - a.pane.x0 > a.pane.y1 - a.pane.y0;
+        const p = a.pane;
+        if (!horiz && (a.y0 < p.y0 - tol || a.y1 > p.y1 + tol))
+          hits.push(`${a.scale} title "${a.text}" (${Math.round(a.y1 - a.y0)}px) is taller than its pane (${Math.round(p.y1 - p.y0)}px)`);
+        if (horiz && (a.x0 < p.x0 - tol || a.x1 > p.x1 + tol))
+          hits.push(`${a.scale} title "${a.text}" is wider than its axis`);
+      }
+      for (let j = i + 1; j < boxes.length; j++) {
+        const b = boxes[j];
+        if (a.kind === 'tick' && b.kind === 'tick' && a.scale === b.scale) continue; // Chart.js's autoSkip
+        const ox = Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0);
+        const oy = Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0);
+        if (ox > tol && oy > tol)
+          hits.push(`${a.scale} ${a.kind} "${a.text}" overlaps ${b.scale} ${b.kind} "${b.text}"`);
+      }
+      // Nothing an axis writes may leave the canvas.
+      if (a.x0 < -tol || a.y0 < -tol || a.x1 > chart.width + tol || a.y1 > chart.height + tol)
+        hits.push(`${a.scale} ${a.kind} "${a.text}" runs off the canvas`);
+    }
+    out.push({ id, width: chart.width, height: chart.height, count: boxes.length, hits,
+               scales: Object.keys(chart.scales).filter(k => chart.scales[k].options.display !== false) });
+  }
+  return out;
+};
+
 /* ── What each page has to show before it can be checked ─────────────────── */
 const PAGES = [
   {
@@ -375,6 +472,65 @@ const PAGES = [
   /* The Indonesian pages are baked from the English ones, so they carry the
      same row and the same charts — and have to prove it. */
   { name: 'pisahvsgabung/id', url: '/pisahvsgabung/id/', charts: ['chartCanvas', 'chartCanvas2'] },
+  /* The states the gesture checks above never reach but the axis-text check
+     has to: a sensitivity sweep, and the DCA price chart with its oscillator
+     panes stacked under the price, which is the tallest stack on the site. */
+  {
+    name: 'financingvscash (sensitivity)',
+    url: '/financingvscash/',
+    charts: ['sensCanvas'],
+    textOnly: true,
+    async prep(page) {
+      await page.click('.ctrl-tab[data-tab="sens"]');
+      await page.click('#mode2d');
+      await page.waitForFunction(
+        () => !!window.Chart.getChart(document.getElementById('sensCanvas')), null, { timeout: 20000 });
+    },
+  },
+  {
+    name: 'dcasimulator (indicators)',
+    url: '/dcasimulator/',
+    charts: ['priceCanvas'],
+    textOnly: true,
+    async prep(page) {
+      await page.fill('#tickerPoolInput', 'TEST');
+      await page.click('#loadTickersBtn');
+      await page.waitForTimeout(1200);
+      await page.click('.ctrl-tab[data-tab="securities"]');
+      // One oscillator family per seeded security, so the stack is as tall
+      // as the page lets it get.
+      await page.evaluate(() => {
+        const styles = ['tech-rsi', 'tech-macd-hist', 'tech-adx'];
+        while (document.querySelectorAll('.sc-tab').length < 3) document.getElementById('addScenarioBtn').click();
+        const n = document.querySelectorAll('.sc-tab').length;
+        for (let i = 0; i < n; i++) {
+          document.querySelectorAll('.sc-tab')[i].click();
+          document.querySelector('#scenarioConfig .cat-pill[data-cat="tech"]').click();
+          const r = document.querySelector(`#scenarioConfig input[type=radio][value="${styles[i % styles.length]}"]`);
+          r.checked = true;
+          r.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+      await page.click('#simBtn');
+      await page.waitForFunction(
+        () => !!window.Chart.getChart(document.getElementById('priceCanvas')), null, { timeout: 60000 });
+      // The switch is a styled label over a hidden checkbox.
+      await page.evaluate(() => {
+        const t = document.getElementById('showTechToggle');
+        t.checked = true;
+        t.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      // The price chart opens on the first scenario alone; show them all, so
+      // every oscillator family gets its pane. Each click rebuilds the key.
+      for (let k = 0; k < 6; k++) {
+        const hidden = await page.$('#priceLegend .legend-item.hidden');
+        if (!hidden) break;
+        await hidden.evaluate(el => el.click());
+        await page.waitForTimeout(150);
+      }
+      await page.waitForTimeout(600);
+    },
+  },
   { name: 'rentvsownhouse/id', url: '/rentvsownhouse/id/', charts: ['chartCanvas'] },
 ];
 
@@ -418,9 +574,32 @@ const rank = label => {
   return i < 0 ? 99 : i;
 };
 
+/* ── 4. axis text never lands on axis text ── */
+async function checkAxisText(page, spec, where) {
+  if (!spec.charts.length) return;
+  const res = await page.evaluate(TEXT_PROBE, spec.charts);
+  // SHOT=<dir> saves each chart as the check saw it, for a look by eye.
+  if (process.env.SHOT) {
+    mkdirSync(process.env.SHOT, { recursive: true });
+    for (const r of res) {
+      const el = await page.$('#' + r.id).catch(() => null) || await page.$(r.id);
+      if (el) await el.screenshot({ path: join(process.env.SHOT,
+        (spec.name + '-' + r.id + '-' + where).replace(/[^a-z0-9]+/gi, '_') + '.png') }).catch(() => {});
+    }
+  }
+  for (const r of res) {
+    check(`${spec.name} [${r.id}] T1 ${where}: no axis title or tick label overlaps another, or leaves its pane`,
+          r.hits.length === 0,
+          r.hits.length ? r.hits.slice(0, 4).join('; ') + (r.hits.length > 4 ? ` (+${r.hits.length - 4} more)` : '')
+                        : `${r.count} text boxes on ${r.width}×${r.height} (${r.scales.join(", ")})`);
+  }
+}
+
 const styles = new Map();   // font/padding seen across the whole site
 
+const ONLY = process.env.ONLY;   // e.g. ONLY=financialfreedom, to rerun one page
 for (const spec of PAGES) {
+  if (ONLY && !spec.name.includes(ONLY)) continue;
   console.log('\n── ' + spec.name + ' ──');
   const { ctx, page } = await newPage({ width: 1440, height: 1000 });
   const errors = [];
@@ -432,6 +611,19 @@ for (const spec of PAGES) {
     catch (e) { check(spec.name + ': the page reaches a chart', false, e.message); await ctx.close(); continue; }
   }
   await page.waitForTimeout(500);
+
+  if (spec.textOnly) {
+    await checkAxisText(page, spec, 'on a desktop');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.waitForTimeout(400);
+    await checkAxisText(page, spec, 'on a phone');
+    await page.setViewportSize({ width: 360, height: 740 });
+    await page.waitForTimeout(400);
+    await checkAxisText(page, spec, 'on a small phone');
+    check(spec.name + ' E no page errors', errors.length === 0, errors.slice(0, 2).join(' | '));
+    await ctx.close();
+    continue;
+  }
 
   /* ── 1. the export row ── */
   const clusters = await page.evaluate(CLUSTER_PROBE);
@@ -504,6 +696,8 @@ for (const spec of PAGES) {
     }
   }
 
+  await checkAxisText(page, spec, 'on a desktop');
+
   /* ── a Plotly plot keeps the same promises by hand ── */
   if (spec.plotly) {
     const r = await page.evaluate(PLOTLY_PROBE);
@@ -536,6 +730,10 @@ for (const spec of PAGES) {
   }
   check(spec.name + ' M1 on a phone the cluster takes the full width', fullWidth, mProblems.filter(p => !/overflows/.test(p)).join('; '));
   check(spec.name + ' M2 and every button stays inside the card', fits, mProblems.filter(p => /overflows/.test(p)).join('; '));
+  await checkAxisText(page, spec, 'on a phone');
+  await page.setViewportSize({ width: 360, height: 740 });
+  await page.waitForTimeout(400);
+  await checkAxisText(page, spec, 'on a small phone');
 
   check(spec.name + ' E no page errors', errors.length === 0, errors.slice(0, 2).join(' | '));
   await ctx.close();
@@ -544,7 +742,7 @@ for (const spec of PAGES) {
 /* One size for the whole site: every export button on every page has to have
    come back with the same font, padding and corner. */
 console.log('\n── across the site ──');
-check('S1 every export button is drawn identically everywhere', styles.size === 1,
+if (styles.size) check('S1 every export button is drawn identically everywhere', styles.size === 1,
       [...styles.entries()].map(([k, n]) => `${k} ×${n}`).join('  |  '));
 
 await browser.close();

@@ -404,7 +404,9 @@ body.light tr:hover td{background:rgba(90,145,232,0.04);}
      and the page scroll carries the panel. */
   .controls:has(.ctrl-scroll){display:block;max-height:none;}
   .ctrl-scroll{flex:0 0 auto;overflow:visible;}
-  .canvas-wrap{height:380px!important;}
+  /* No !important: a tool that sizes its own chart for a phone (a stacked
+     chart needs more height than a single pane) has to be able to. */
+  .canvas-wrap{height:380px;}
   .summary-grid{grid-template-columns:repeat(2,1fr);}
   .header{flex-direction:column;gap:10px;padding:16px 18px;}
   .container{padding:16px;}
