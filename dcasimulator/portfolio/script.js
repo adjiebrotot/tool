@@ -2423,7 +2423,8 @@ function updatePriceChart(){
   }
 
   if(priceChart) priceChart.destroy();
-  priceChart=new Chart($('priceCanvas'),{type:'line',data:{labels:dates,datasets},options:buildPriceOpts(),plugins:[SharedZoom.plugin]});
+  // SharedPane (shared.js) keeps each stacked pane's axis text inside its pane.
+  priceChart=new Chart($('priceCanvas'),{type:'line',data:{labels:dates,datasets},options:buildPriceOpts(),plugins:[SharedZoom.plugin,SharedPane.plugin]});
   priceChart.update();
 }
 

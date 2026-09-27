@@ -2439,6 +2439,105 @@
   }
   global.SharedFit = { fitAll: fitAll, compact: fitCompact };
 
+  /* ── SharedPane: axis text on a chart of stacked panes ───────────────────
+     A chart that stacks several y axes on one canvas (Financial Freedom's flows
+     over its balance, the DCA price chart over its oscillators) breaks two of
+     Chart.js's assumptions about axis text, and on a phone both showed:
+
+     1. Every left axis is capped at half the width over the number of left
+        axes. With a price pane and three oscillators that is an eighth of a
+        phone, narrower than a title plus "-$2.00m", so the labels were drawn
+        under the title and off the canvas. A stacked axis is given the width
+        its own text needs instead, up to two fifths of the canvas.
+     2. A title is centred on its own pane and never clipped to it, so a title
+        longer than its pane is tall ("Balance, future's money" on a pane 90px
+        high) runs across the pane beside it. Each title gives way in steps
+        once the panes are laid out: the whole title; the same words on two
+        lines, broken at ", " or " ("; then the words before the break alone.
+
+     Wiring is one plugin, `plugins: [SharedPane.plugin]`. It only acts on
+     scales that carry `stack`, so a chart without stacked axes never notices
+     it. The title steps down only within one pane height (a two-line title
+     makes the axis wider and the pane no taller, so it can never argue for the
+     longer one), which keeps it from flipping between two frames. */
+  function paneTitleSteps(full){
+    var at = full.indexOf(', '), keep = 1, skip = 2;
+    if(at < 0){ at = full.indexOf(' ('); keep = 0; skip = 1; }
+    if(at <= 0) return [full];
+    return [full, [full.slice(0, at + keep), full.slice(at + skip)], full.slice(0, at)];
+  }
+  function paneAxisFit(scale){
+    var H = global.Chart && global.Chart.helpers;
+    if(!H || !scale._getLabelSizes || !scale.ticks || !scale.ticks.length || scale.isHorizontal()) return;
+    var o = scale.options;
+    var lines = o.title && o.title.display ? (Array.isArray(o.title.text) ? o.title.text.length : 1) : 0;
+    var title = lines ? H.toFont(o.title.font).lineHeight * lines + H.toPadding(o.title.padding).height : 0;
+    var tick = o.grid && o.grid.display !== false && o.grid.drawTicks !== false ? (o.grid.tickLength || 0) : 0;
+    var labels = o.ticks.display === false ? 0 : scale._getLabelSizes().widest.width + (o.ticks.padding || 0) * 2;
+    var need = Math.ceil(title + tick + labels);
+    scale.width = Math.max(scale.width, Math.min(need, scale.chart.width * 0.4));
+  }
+  var PANE_PLUGIN = {
+    id: 'sharedPane',
+    beforeUpdate: function(chart){
+      var scales = chart.options && chart.options.scales;
+      if(!scales) return;
+      Object.keys(scales).forEach(function(id){
+        var cfg = scales[id];
+        if(!cfg || !cfg.stack || cfg.display === false || cfg.afterFit) return;
+        cfg.afterFit = paneAxisFit;
+      });
+    },
+    afterLayout: function(chart){
+      var H = global.Chart && global.Chart.helpers;
+      if(!H || !chart.ctx || !chart.scales || !chart.options.scales) return;
+      var memo = chart.$sharedPane || (chart.$sharedPane = {});
+      var relayout = false;
+      var lineCount = function(v){ return Array.isArray(v) ? v.length : 1; };
+      Object.keys(chart.scales).forEach(function(id){
+        var sc = chart.scales[id], cfg = chart.options.scales[id];
+        if(!sc.options || !sc.options.stack || sc.isHorizontal() || !cfg || !cfg.title || !cfg.title.display) return;
+        // The whole title is remembered on the options it came in on, so a
+        // chart given new options starts again from the whole of the new one.
+        if(cfg.title.$full == null || (cfg.title.$shown != null &&
+           JSON.stringify(cfg.title.$shown) !== JSON.stringify(cfg.title.text))){
+          cfg.title.$full = String(cfg.title.text);
+        }
+        var full = cfg.title.$full;
+        var steps = paneTitleSteps(full);
+        var room = Math.round(sc.bottom - sc.top - 4);
+        var ctx = chart.ctx;
+        ctx.save();
+        ctx.font = H.toFont(sc.options.title.font).string;
+        var pick = steps.length - 1;
+        for(var i = 0; i < steps.length; i++){
+          var lines = Array.isArray(steps[i]) ? steps[i] : [steps[i]];
+          var widest = Math.max.apply(null, lines.map(function(l){ return ctx.measureText(l).width; }));
+          if(widest <= room){ pick = i; break; }
+        }
+        ctx.restore();
+        var key = id + '|' + full, last = memo[key];
+        if(last && last.room === room) pick = Math.max(pick, last.pick);
+        memo[key] = {pick: pick, room: room};
+        var want = steps[pick], had = cfg.title.text;
+        cfg.title.$shown = want;
+        if(JSON.stringify(had) === JSON.stringify(want)) return;
+        cfg.title.text = want;
+        // Same line count: the axis keeps its width, so this frame can simply
+        // draw the new words. A different count needs the layout run again.
+        if(lineCount(had) !== lineCount(want)) relayout = true;
+        else sc.options.title.text = want;
+      });
+      if(relayout && !chart.$sharedPaneBusy){
+        chart.$sharedPaneBusy = true;
+        Promise.resolve().then(function(){
+          try { if(chart.canvas) chart.update('none'); } finally { chart.$sharedPaneBusy = false; }
+        });
+      }
+    }
+  };
+  global.SharedPane = { plugin: PANE_PLUGIN, axisFit: paneAxisFit, titleSteps: paneTitleSteps };
+
   function initShared(){
     initTooltip();
     global.SharedAbbr.init();

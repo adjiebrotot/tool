@@ -1623,6 +1623,12 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
     o.scales[lower.id + 'Gap'] = {
       type: 'linear', position: 'left', stack: 'ffCash',
       stackWeight: lower.gapWeight || 0.12, min: 0, max: 1,
+      /* `display: false` still takes its share of the stack's height, but it
+         is left out of the count Chart.js divides the width by: every left
+         axis is capped at a half of the width over the number of VISIBLE left
+         axes, so a spacer that counted cut both real axes to a sixth of a
+         phone's width, and their labels ran under their titles. */
+      display: false,
       ticks: {display: false},
       grid: {display: false, drawTicks: false},
       border: {display: false}
@@ -1956,7 +1962,8 @@ function renderCharts(res){
   if(chart2) chart2.destroy();
   chart2 = new Chart($('ddChart').getContext('2d'), {
     type:'line',
-    plugins:[Y_FIT_PLUGIN],
+    // SharedPane (shared.js) keeps each pane's axis text inside its pane.
+    plugins:[Y_FIT_PLUGIN, SharedPane.plugin],
     data:{datasets: ds2},
     options: baseOptions(res, t, 'hover2', ageOf, y0, y0 + years,
                          {yTitle: 'A year', fitY: fit2,

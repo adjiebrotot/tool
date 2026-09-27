@@ -1844,7 +1844,8 @@ function updatePriceChart(){
     priceChartInstance.options=buildPriceOpts();
     priceChartInstance.update('none');
   } else {
-    priceChartInstance=new Chart($('priceCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildPriceOpts(),plugins:[SharedZoom.plugin]});
+    // SharedPane (shared.js) keeps each stacked pane's axis text inside its pane.
+    priceChartInstance=new Chart($('priceCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildPriceOpts(),plugins:[SharedZoom.plugin,SharedPane.plugin]});
   }
 }
 
