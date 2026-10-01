@@ -68,6 +68,12 @@ has to leave you level with paying cash — for any loan type, frequency, term o
 down payment. No modelling choice can move a zero, so a drift names its own
 cause.
 
+`financialfreedom/_audit/` also carries `regression.mjs`, which holds every plan
+that could be entered before life stages to the figures the old code gave, to
+the last binary digit: 238 plans, the unchanged Quick Start buttons, and old
+mini-cache files reopened, against a recorded baseline or, with
+`--live <rev>`, against the old page loaded from git beside the new one.
+
 Harnesses live in `costofliving-comparator/`, `dcasimulator/`, `financialfreedom/`,
 `financingvscash/`, `financingvscash/loan-types/`, `pisahvsgabung/`, `rentvsownhouse/`,
 `rentvsownhouse/sensitivity/`, and `worldclock/`. The World Clock's harness checks every clock on

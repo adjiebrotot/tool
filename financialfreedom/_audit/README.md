@@ -44,6 +44,53 @@ means the maths agrees rather than an implementation being compared to itself:
 
 Run: `node run.mjs`
 
+## Previous plans, to the last binary digit: `regression.mjs`
+
+`run.mjs` checks the maths against a replay. `regression.mjs` checks something
+narrower and stricter: that adding Money out and life stages moved NO plan that
+could be entered before them. Not to the cent, to the last binary digit,
+compared with `Object.is` on every value: every number the engine produces
+(parameters, the verdict and its remedies, every series, the Monte Carlo
+bands, every simulated future's required pot, the drawdown band), every row of
+the table, every byte of the CSV, every point on both charts, and the text of
+the verdicts, the cards and the notes. The assumptions list was reworded, so
+only its figures are compared.
+
+    node regression.mjs                  this page against baseline.json
+    node regression.mjs --live ca850bc   this page beside the old one, from git
+    node regression.mjs --record ca850bc rewrite baseline.json from the old page
+
+The plans are 38 hand-picked ones aimed at each branch of the engine (all three
+goals, both savings models and moneys, every period, frozen and indexed
+pensions, both ends of the slider, a plan that runs out, one no pot funds with
+its remedies, one already free, the retirement share at 10%, 300% and in
+fractions, zero inflation, zero and negative real returns, a fractional age,
+the six Quick Start plans as they stood) and 200 random ones. A plan from before
+is written with `retireMultiplier`; on the new page it is Retirement expenses at
+that share of living, Simple, no stages. The four Quick Start buttons whose
+scenario did not change are clicked on both pages. Then the mini cache: the old
+page saves 58 of the plans the way a returning reader's browser holds them, and
+a fresh new page has to open each one, `retireMultiplier` and all, to the same
+figures. A scenario file is the same snapshot, so it rides the same path.
+
+`--live` is the strongest form and names the first value that differs.
+`baseline.json` holds a digest per group per plan, recorded from ca850bc (the
+commit before life stages), so the default mode needs no git history. Both
+pages run in the same Chromium in `--live`; if the baseline mode ever fails on
+a different Chromium while `--live` passes, the difference is the platform's
+own floating point, not the page.
+
+It was mutation-tested. Computing a share as `X * pct / 100` instead of the old
+`X * (pct / 100)` is the same on paper and fails R1 and R3 at the last digit
+(Moderate FIRE's retirement spending 5416.666666666667 against
+5416.666666666668), which is why the page keeps the old order. Rounding a
+migrated share to the new field's display precision fails R3 (37.25% is not
+37.3%). The "spend less" remedy applies its cut to the living figure itself
+whenever every other expense is a share of it, the old arithmetic exactly; the
+other order only differs where a bisection probe lands within about 1e-15 of
+the funding threshold, so no plan here tells the two apart, and the page does
+not rely on that.
+
 ## Covered
 
 The three goals and their exact closed forms; the zero-real-return limit, where

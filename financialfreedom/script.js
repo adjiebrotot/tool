@@ -388,10 +388,16 @@ function normalDraws(rng){
 
 /* A level of spending as a real monthly figure (step 3c): an amount in the
    period it was entered against, or a percentage of today's living expenses.
-   Negative spending is not a thing anyone can enter on purpose, so it is 0. */
+   Negative spending is not a thing anyone can enter on purpose, so it is 0.
+
+   The share is taken as X * (pct / 100), in exactly that order, because that
+   is how the retirement multiplier was always computed. X * pct / 100 is the
+   same number on paper and can differ in the last binary digit, and a plan
+   saved before life stages existed has to give back the same figures to the
+   last digit, not merely to the cent (the audit's regression.mjs holds it). */
 function expenseLevel(amount, basis, livingMonthly){
   var a = Math.max(0, Number(amount) || 0);
-  return basis === 'pct' ? livingMonthly * a / 100 : perMonth(a, basis);
+  return basis === 'pct' ? livingMonthly * (a / 100) : perMonth(a, basis);
 }
 
 // A stage's age bound, or null when it is blank or not a number.
@@ -843,13 +849,18 @@ function solveRemedies(ui){
      amount or a stage untouched and quote a share that does not fund. */
   var MIN_LIVABLE = 0.2;
   var lo = 0, hi = 1, mid, k;
-  var canFund = function(mult){
-    return fundedByRetirement(buildParams(Object.assign({}, ui, {spendScale: mult})));
-  };
-  // The sentence names today's living expenses when they are the only figure
-  // being cut; otherwise it says the whole plan moves.
+  /* When every other expense is a share of living, cutting living cuts them
+     all, so the cut is applied to the living figure itself, exactly as it was
+     before life stages: (expense x share) converted to a month, not the month
+     scaled afterwards, which can land a binary digit away and, at the edge of
+     the bisection, on a different answer. The sentence then names today's
+     living expenses; otherwise it says the whole plan moves. */
   var onlyLiving = ui.retireExpensePeriod === 'pct' &&
     !(ui.expenseMode === 'detailed' && buildParams(ui).stages.length);
+  var canFund = function(mult){
+    return fundedByRetirement(buildParams(Object.assign({}, ui,
+      onlyLiving ? {expense: ui.expense * mult} : {spendScale: mult})));
+  };
   if(canFund(MIN_LIVABLE)){
     lo = MIN_LIVABLE;
     for(k = 0; k < 40; k++){
@@ -3430,11 +3441,13 @@ function migrateRetireMultiplier(saved){
   var f = saved && (saved.__fields || saved);
   if(!f || typeof f !== 'object') return;
   if(f['v:retireMultiplier'] == null || f['v:retireExpense'] != null) return;
-  var pct = Number(String(f['v:retireMultiplier']).replace(/,/g, ''));
-  if(!isFinite(pct)) return;
+  /* Read the way the old field was read, num() then clamped to 10..300, so a
+     blank or out-of-range value means what it meant then. Written back as the
+     number itself, not rounded to the new field's display precision. */
+  var pct = clamp(num(f['v:retireMultiplier'], 100), 10, 300);
   $('retireExpensePeriod').value = 'pct';
   $('retireExpensePeriod').dataset.prev = 'pct';
-  $('retireExpense').value = fmtAmount(Math.max(0, pct), 'pct');
+  $('retireExpense').value = String(pct);
 }
 
 /* ─── INIT ─── */

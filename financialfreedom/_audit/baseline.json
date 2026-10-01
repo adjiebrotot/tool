@@ -1,0 +1,4664 @@
+{
+ "recordedFrom": "ca850bc",
+ "groups": [
+  "P",
+  "diag",
+  "series",
+  "headline",
+  "mc",
+  "reqs",
+  "dd",
+  "table",
+  "tableText",
+  "csv",
+  "charts",
+  "text",
+  "assumptionFigures"
+ ],
+ "cases": {
+  "defaults": {
+   "digest": {
+    "P": "35ce2e94119e18ae40ad",
+    "diag": "7ae4ca18156f45c72384",
+    "series": "0188e9be4026879fc620",
+    "headline": "9bfbde3cada4cb677e38",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "e5666cef887814278c6a",
+    "dd": "6749ae72d50d1168f009",
+    "table": "cebcb89615721c5d6728",
+    "tableText": "6efe82d8b31396c9bce5",
+    "csv": "f6ed6dfe3f81a04a4126",
+    "charts": "736ca26124150ddb9e26",
+    "text": "24d2a97cfe490e173aa2",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 910616.0020287922,
+   "ffAge": 46.33333333333333
+  },
+  "defaults, today's money": {
+   "digest": {
+    "P": "35ce2e94119e18ae40ad",
+    "diag": "7ae4ca18156f45c72384",
+    "series": "0188e9be4026879fc620",
+    "headline": "9bfbde3cada4cb677e38",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "e5666cef887814278c6a",
+    "dd": "6749ae72d50d1168f009",
+    "table": "4e92e2d38d90d42a4ef5",
+    "tableText": "eafc7adb2513b10404a1",
+    "csv": "8384d1010a01f464f6da",
+    "charts": "ada7a2bb1b1002399406",
+    "text": "bc9799b92518d03c84ed",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 910616.0020287922,
+   "ffAge": 46.33333333333333
+  },
+  "income model": {
+   "digest": {
+    "P": "9350e67ec3073d7a9857",
+    "diag": "af8fab21fcb8d499327e",
+    "series": "d398093838ba6fb27d11",
+    "headline": "0cb35f4d16d7e791c2e2",
+    "mc": "7e72d4a741553a37c3b2",
+    "reqs": "e5666cef887814278c6a",
+    "dd": "e07f69d80977478ce487",
+    "table": "90bb5232e4f4d520bee6",
+    "tableText": "d51e10b01efffb849c96",
+    "csv": "4e872e30423589e3e7f0",
+    "charts": "1dd665bd757df0b11ecc",
+    "text": "c19a30f7e7b7bafec575",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 910616.0020287922,
+   "ffAge": 41.916666666666664
+  },
+  "weekly and monthly periods": {
+   "digest": {
+    "P": "95114d0d2a91975849df",
+    "diag": "142258e9e885aa54f097",
+    "series": "a46784f0c7043f6b1f00",
+    "headline": "ae95f3e9bc10ffa33ae4",
+    "mc": "a0467a06183acea908ae",
+    "reqs": "257ce1d9f00edd37eabb",
+    "dd": "31072447ea6e498d4dd9",
+    "table": "dc923ff56665549fe881",
+    "tableText": "f8515b370125e2cc7be5",
+    "csv": "12b3cdbcbfc7a682dc3e",
+    "charts": "78d904c407c53576a34e",
+    "text": "0f7e082d9c40b83eaaf7",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 868120.5886007799,
+   "ffAge": 45.5
+  },
+  "legacy goal": {
+   "digest": {
+    "P": "7605bff2dce3f9647923",
+    "diag": "1980a01784cb4c9ba039",
+    "series": "423684675f5b81a729af",
+    "headline": "72b59c4f9d0e712c088b",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "31416520a77ff699b4ba",
+    "dd": "6749ae72d50d1168f009",
+    "table": "cebcb89615721c5d6728",
+    "tableText": "6efe82d8b31396c9bce5",
+    "csv": "f6ed6dfe3f81a04a4126",
+    "charts": "a151d3fefe87da2d78cc",
+    "text": "2cf47b8e22de2448832c",
+    "assumptionFigures": "b28bf97f422d5a9e40b8"
+   },
+   "needAtRetire": 1098221.605795679,
+   "ffAge": 47.41666666666667
+  },
+  "die rich": {
+   "digest": {
+    "P": "06e059a903667e6ba4e1",
+    "diag": "a992d72c972b37e636a7",
+    "series": "32803d9f0df39339a0b9",
+    "headline": "20e67347a01a758f32a1",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "4e369880abad3a490985",
+    "dd": "6749ae72d50d1168f009",
+    "table": "cebcb89615721c5d6728",
+    "tableText": "6efe82d8b31396c9bce5",
+    "csv": "f6ed6dfe3f81a04a4126",
+    "charts": "c3091399a1393b95ea71",
+    "text": "88e0e3ee415d06f54d25",
+    "assumptionFigures": "f15e656e82b1e08abf43"
+   },
+   "needAtRetire": 1150422.3028134734,
+   "ffAge": 47.66666666666667
+  },
+  "die rich, frozen pension": {
+   "digest": {
+    "P": "77b61ca7702b9ccda462",
+    "diag": "75fae47f997b9bfc9a15",
+    "series": "9f204a2d1de99fc13ffe",
+    "headline": "9f55d05203c4eb2b183c",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "27095cf616cda7e39aaf",
+    "dd": "40eeabcb4646ad1d017c",
+    "table": "cd80abad5ed903c4177a",
+    "tableText": "2ebedcebbb680fd87973",
+    "csv": "7e21487ad6bfc6ae4c55",
+    "charts": "e14b55f46370b205d2c5",
+    "text": "14b985a298751c1b38bf",
+    "assumptionFigures": "31b6462e68893c740c22"
+   },
+   "needAtRetire": 1059711.134671401,
+   "ffAge": 47.16666666666667
+  },
+  "indexed pension bridge": {
+   "digest": {
+    "P": "1d9e7582f3e8408217b5",
+    "diag": "a29e25532555168ed9e5",
+    "series": "9de7791238df36a02c1a",
+    "headline": "91d7980fa32774c91114",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "a6d6a3cc11a08929a989",
+    "dd": "734c498ef6a047a2859f",
+    "table": "dc7bf43d3138da37571c",
+    "tableText": "7c965b799dcec132be54",
+    "csv": "eba517be081ae02a1f49",
+    "charts": "e144ea7aaa70eae3991e",
+    "text": "2bbbc94b0fc4573b69d9",
+    "assumptionFigures": "d444d49b9ab9b19cacaa"
+   },
+   "needAtRetire": 758052.141610824,
+   "ffAge": 45
+  },
+  "pension bigger than spending": {
+   "digest": {
+    "P": "3ab763b81efa0a52ce21",
+    "diag": "b67b817a853be095b94b",
+    "series": "a9879064f30338d637e2",
+    "headline": "9937d33d8e7cc7a4074f",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "6fa57d6eddb883beff40",
+    "dd": "f3267cacb3440b89f6ec",
+    "table": "354274b3ab4f3ffdc780",
+    "tableText": "8ca9483c1f38afb00ad7",
+    "csv": "b49e72d7076a5e139600",
+    "charts": "6fce9d01465576cad212",
+    "text": "6996332175d1277b34e3",
+    "assumptionFigures": "049026de6b45aaeff0ae"
+   },
+   "needAtRetire": 468306.05931701435,
+   "ffAge": 42.083333333333336
+  },
+  "stop today": {
+   "digest": {
+    "P": "77991d35c7e63a717e50",
+    "diag": "028044dc2782b9b96f24",
+    "series": "8b39339e59ee75635e45",
+    "headline": "9a72929f06eb8efaf115",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "c5fedd95ec3b89e8d88f",
+    "dd": "9d93092732ce792e8376",
+    "table": "d8ee28906634a0450c81",
+    "tableText": "fedd2946ff5de2e3a59f",
+    "csv": "da1e945675e962384163",
+    "charts": "cc5de3525fbaea7c1a99",
+    "text": "aa5f77efe4a0c2c65c7a",
+    "assumptionFigures": "6cad111ea027d50ba006"
+   },
+   "needAtRetire": 1100434.5185403468,
+   "ffAge": 46.33333333333333
+  },
+  "never stop": {
+   "digest": {
+    "P": "822916f73c1b11dde454",
+    "diag": "7ae4ca18156f45c72384",
+    "series": "8b520551080d3a76131d",
+    "headline": "d31293aee5fe962d4227",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "8faaac11502ad55ef5ca",
+    "dd": "74234e98afe7498fb5da",
+    "table": "ba62f740aa069a41e093",
+    "tableText": "a39974506db3ca07500b",
+    "csv": "95028e49044ab6aebf11",
+    "charts": "43a4f65d639fa550112d",
+    "text": "73c16d4580403a8842b6",
+    "assumptionFigures": "158548a1d902ff587bd0"
+   },
+   "needAtRetire": 0,
+   "ffAge": 46.33333333333333
+  },
+  "runs out": {
+   "digest": {
+    "P": "687c2535ff7fdb7782e3",
+    "diag": "eda06d640f358fbc4f1c",
+    "series": "1acd1c1a5608c1f7b524",
+    "headline": "6ee2a969fb6c9c982fb5",
+    "mc": "8e6f7afeff87da506365",
+    "reqs": "92eb8d63ca13ec7a2464",
+    "dd": "cee49ebdaa6c46e7c941",
+    "table": "22e09fe413ba0c350e31",
+    "tableText": "6f8afcf02e3f08117aea",
+    "csv": "8214709f62e3123d5d2b",
+    "charts": "9683efe2f35812fa7926",
+    "text": "470152b24a0c3a82b0b2",
+    "assumptionFigures": "eecf26ab046e512b1870"
+   },
+   "needAtRetire": 1066115.4673666903,
+   "ffAge": 60.75
+  },
+  "nothing funds it": {
+   "digest": {
+    "P": "47fa7854a0ff5796e958",
+    "diag": "3ecd8209c538a0301370",
+    "series": "d9a8b44e950da9faef48",
+    "headline": "a19082b6c314af552916",
+    "mc": "021e6277f1a123e1d12d",
+    "reqs": "e5666cef887814278c6a",
+    "dd": "cc5ffe89dceafd0a6116",
+    "table": "9c568b0001cd4ea11bed",
+    "tableText": "be35bd1614fb325e9635",
+    "csv": "7c28a2f6d8a69d1c5205",
+    "charts": "bd3dca03c6eac10e5ce8",
+    "text": "bd6c41c937ca302561aa",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 910616.0020287922,
+   "ffAge": null
+  },
+  "tight, every remedy": {
+   "digest": {
+    "P": "661534aceb270b2a338d",
+    "diag": "ab2fcb6b4788fbe4f01e",
+    "series": "e6bb9279a040bdaf2e1a",
+    "headline": "b654eafe492a362380ca",
+    "mc": "d5f605b075d4187d4e76",
+    "reqs": "e5666cef887814278c6a",
+    "dd": "44ad5f7170900229adf9",
+    "table": "24815deab60fa2aea19e",
+    "tableText": "d6ae534089520e0022f1",
+    "csv": "f0cf8f49a10ba30b5218",
+    "charts": "5d9e4edc8330d9ad7db8",
+    "text": "6c6ff69435887b557ece",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 910616.0020287922,
+   "ffAge": 68.33333333333334
+  },
+  "tight, income model": {
+   "digest": {
+    "P": "c46df781535cd097a905",
+    "diag": "c255110c168ed020aa6a",
+    "series": "9d0b08bb650d10255f69",
+    "headline": "d6a541a0089e2919de7a",
+    "mc": "e4f4093f40047e99afba",
+    "reqs": "e5666cef887814278c6a",
+    "dd": "21ef1878a70f580d6827",
+    "table": "48eb7b6e8770326064fb",
+    "tableText": "7c6b72fcc77cf1c88e46",
+    "csv": "89ab06cc49e44dc9fc9c",
+    "charts": "5698167d393545ee2b3b",
+    "text": "082d1c21055cf2a7a562",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 910616.0020287922,
+   "ffAge": 65.5
+  },
+  "already free": {
+   "digest": {
+    "P": "257c961f7fa2273bacd0",
+    "diag": "5d350696cedaebc8de1c",
+    "series": "368ec97eceb28afef029",
+    "headline": "5ac52c7ba94d143b7d66",
+    "mc": "74a8686cc326822ec1e4",
+    "reqs": "e5666cef887814278c6a",
+    "dd": "6ee7ed3e2a673d5ce08b",
+    "table": "45cb8039440cbc70f22d",
+    "tableText": "3f82453eadb591771100",
+    "csv": "ae546f8a5dcaed316547",
+    "charts": "fa3e642a8920bba301a1",
+    "text": "a72b3f68615c333223a3",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 910616.0020287922,
+   "ffAge": 30
+  },
+  "share at 10%": {
+   "digest": {
+    "P": "3a87fc66a16d27a05fa0",
+    "diag": "2dfb84b4927346e63b30",
+    "series": "038c4a33cdaf4fccd29c",
+    "headline": "9b3a9eb7f4da20b2bdbf",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "ae7c22d566cf18442d21",
+    "dd": "6602333495975a69de44",
+    "table": "e63409bd663376e6307f",
+    "tableText": "ccae3d8d702f48105f92",
+    "csv": "5ad8011b7be1e76f6455",
+    "charts": "e45850d5602bc00ad85f",
+    "text": "0975bacadd2a827975cc",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 91061.60020287932,
+   "ffAge": 30.333333333333332
+  },
+  "share at 300%": {
+   "digest": {
+    "P": "caed3bd202f81987b438",
+    "diag": "ba4f61d677be00357829",
+    "series": "d42fe79f8a1219ace1f6",
+    "headline": "9c5ddf853c1184d10346",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "ef354f2fa8764dc71ff2",
+    "dd": "11b92f3db2c28c9cf20f",
+    "table": "a3b4644653b0ae8525ab",
+    "tableText": "95b8844a0b880a9e41b0",
+    "csv": "343217ab0ad33c66094f",
+    "charts": "48c35d8d985256609501",
+    "text": "1979aae5be3008916ce2",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 2731848.006086381,
+   "ffAge": 59.83333333333333
+  },
+  "share at 85.5%": {
+   "digest": {
+    "P": "9d43a350f951c56ea064",
+    "diag": "b437ce9f6a13a670acc2",
+    "series": "a8215069c02aca9ae663",
+    "headline": "896527b6d4f311dad014",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "8f7909d9dc7c2c121a88",
+    "dd": "b1f38bafc53ba9fc0d64",
+    "table": "baa3705d71bef1feb105",
+    "tableText": "888adf454f5b71558b9e",
+    "csv": "b6e29e80422359913ec9",
+    "charts": "07c14d481e3b525bcf40",
+    "text": "5244043a3e3d0dc21b71",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 778576.6817346175,
+   "ffAge": 44.666666666666664
+  },
+  "share at 37.25%": {
+   "digest": {
+    "P": "f529ea00bc428de5753b",
+    "diag": "8bc90f8bc1b68a8c073d",
+    "series": "2a5dbe46d7c6ae103d69",
+    "headline": "17b7fe731c22c04e94b5",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "bd0174a19fa5e0725107",
+    "dd": "2ec59641e718f17a5614",
+    "table": "82f0769bfced692a9d6d",
+    "tableText": "14f8a86e7db249f782c7",
+    "csv": "48f266dfa6d97a84edfc",
+    "charts": "a77aa9b2e7b72d58aeb9",
+    "text": "951b55dbc4594f5f8ced",
+    "assumptionFigures": "15dac3621c91a2c7cd21"
+   },
+   "needAtRetire": 391317.12846874923,
+   "ffAge": 37.333333333333336
+  },
+  "share at 95% (odd binary)": {
+   "digest": {
+    "P": "347377ded4b6f2ea8020",
+    "diag": "59ff1917943596780be6",
+    "series": "925a682d1855615b4ab9",
+    "headline": "946add79b6e22ea69337",
+    "mc": "3e6a292e1ae772e43e8e",
+    "reqs": "e4e03c99e11bf2317cc7",
+    "dd": "e67d1b7437c5c2f5f330",
+    "table": "9349bed1293279465463",
+    "tableText": "91241ae2814ad65e3b5b",
+    "csv": "4815dc972ef32c616311",
+    "charts": "09a94793cee122e5b68b",
+    "text": "9b0a481e7228d6ef0de7",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 1171238.8548894424,
+   "ffAge": 49.25
+  },
+  "zero inflation": {
+   "digest": {
+    "P": "8d38df40cf824969693c",
+    "diag": "be68f3a69262911848d5",
+    "series": "726d12887e8d533868b6",
+    "headline": "d81a06ec99ffa39e9b15",
+    "mc": "d4a9223048a4bf5d1535",
+    "reqs": "2f4df356ae20ca86f8a4",
+    "dd": "691b546cb9e9100edece",
+    "table": "33d311dd743fcbf9ee85",
+    "tableText": "2508c7ef42aca0f72879",
+    "csv": "ac17684326e1923b5176",
+    "charts": "6a5068a8e2c1b47e5eb8",
+    "text": "105557d782e4f6e62410",
+    "assumptionFigures": "dcda0be8e08b74a817dd"
+   },
+   "needAtRetire": 704393.1138906657,
+   "ffAge": 40.416666666666664
+  },
+  "zero real return": {
+   "digest": {
+    "P": "2cf748c93b2ef67cae4b",
+    "diag": "2791d7f3a43bb5512147",
+    "series": "f24a9df26abca589acfe",
+    "headline": "8ba183005e686d164c24",
+    "mc": "f90809e4938325f0ba13",
+    "reqs": "b206c67404f35fd099fb",
+    "dd": "b98a44227cc820ea0758",
+    "table": "7bf2acb0964f2d7e5fda",
+    "tableText": "1e94a7886e1d0d7ce9ef",
+    "csv": "92bedc166e91b05fe95b",
+    "charts": "0bf1f2353cf622026f58",
+    "text": "581a157ff9977359ce40",
+    "assumptionFigures": "ae756aa0258086b99703"
+   },
+   "needAtRetire": 1800000,
+   "ffAge": 67.75
+  },
+  "below inflation, die rich": {
+   "digest": {
+    "P": "7980f57e7c15010609b0",
+    "diag": "1c18af3642788aff5fdb",
+    "series": "d21264d7db8750c9cb7c",
+    "headline": "e01add0e47efd27c388a",
+    "mc": "4daac14c00ebd277043a",
+    "reqs": "6cbbd4c92163e9ce5987",
+    "dd": "d06d6c44c3ceac2d711c",
+    "table": "026158cd9135f2e67874",
+    "tableText": "33101169fc81f44306b7",
+    "csv": "4c99da4e040b9848b89b",
+    "charts": "543260798e1ec5316b94",
+    "text": "75137d61472c791ab1af",
+    "assumptionFigures": "0222bd0ab5f9ba730d97"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "below inflation, just die": {
+   "digest": {
+    "P": "92e7c2583e51a7a18f82",
+    "diag": "4456ca09cc5cc9e4a05c",
+    "series": "fc0b27fb47f0c34de4ae",
+    "headline": "a9948ac5c3d1a7d5dfce",
+    "mc": "4daac14c00ebd277043a",
+    "reqs": "58ff4b6cc4d5510b6a39",
+    "dd": "d06d6c44c3ceac2d711c",
+    "table": "026158cd9135f2e67874",
+    "tableText": "33101169fc81f44306b7",
+    "csv": "4c99da4e040b9848b89b",
+    "charts": "7e4ae420353b08eec9f8",
+    "text": "a6abd7aceb3b85430775",
+    "assumptionFigures": "4a4aef159c4e3d6f51e9"
+   },
+   "needAtRetire": 2440856.033117789,
+   "ffAge": 78.66666666666666
+  },
+  "fractional age now": {
+   "digest": {
+    "P": "33162a5fa306505ed9e1",
+    "diag": "c10560e5e520bebc7740",
+    "series": "f1bdf5c8d3318939eefa",
+    "headline": "ec21bc7dd012eb2e935e",
+    "mc": "56a07ad689af0b56a09e",
+    "reqs": "77a151960728626d4fed",
+    "dd": "7733d0827200d6229628",
+    "table": "bafde5c5cebd17efad8c",
+    "tableText": "d94a28db8b2083822037",
+    "csv": "1bbc35ef766350a1cd2b",
+    "charts": "23ae2185168e8e987835",
+    "text": "92eb125242dda4445783",
+    "assumptionFigures": "c7eb5a298a4d2ef1ae0f"
+   },
+   "needAtRetire": 1008234.7142575246,
+   "ffAge": 49.58333333333333
+  },
+  "zero volatility": {
+   "digest": {
+    "P": "859cdedcfd89d37381b3",
+    "diag": "7ae4ca18156f45c72384",
+    "series": "0188e9be4026879fc620",
+    "headline": "d94f2f736f2d2eb2143d",
+    "mc": "0d77eb462f64e11b8510",
+    "reqs": "4ce1daebda774a1d0c17",
+    "dd": "69d9d948ab25f9066680",
+    "table": "cebcb89615721c5d6728",
+    "tableText": "6efe82d8b31396c9bce5",
+    "csv": "f6ed6dfe3f81a04a4126",
+    "charts": "3f54553e96c163a14ac1",
+    "text": "e4fe46d37f96ad8812fd",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 910616.0020287922,
+   "ffAge": 46.33333333333333
+  },
+  "rupiah, 5000 paths": {
+   "digest": {
+    "P": "5ff5146e41477eaa4539",
+    "diag": "0d6d3031b50b7a88fefa",
+    "series": "51e107e4dc421acb0062",
+    "headline": "7f79c7e0ec8765334702",
+    "mc": "c12454c9ce43c0ce3ac8",
+    "reqs": "438511b26ca39d26f2d3",
+    "dd": "5185208676ba79d05b9a",
+    "table": "d5c1c4b4d0dde587e01a",
+    "tableText": "0ad72b7fa0ee771afbad",
+    "csv": "3a680090bad227e56ca3",
+    "charts": "4721c690ddbf75c2771b",
+    "text": "30f1b574783a4b774ae0",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 2731848006.0863786,
+   "ffAge": 40.25
+  },
+  "confidence 99, other seed": {
+   "digest": {
+    "P": "35ce2e94119e18ae40ad",
+    "diag": "7ae4ca18156f45c72384",
+    "series": "0188e9be4026879fc620",
+    "headline": "1ef67c39b69400478c63",
+    "mc": "408a4dea37dab1de5402",
+    "reqs": "135e507b7be2605afa04",
+    "dd": "f240f448fc7a3f3981eb",
+    "table": "cebcb89615721c5d6728",
+    "tableText": "6efe82d8b31396c9bce5",
+    "csv": "f6ed6dfe3f81a04a4126",
+    "charts": "2bdb217f97b757416db4",
+    "text": "c7d6344653c927f01f13",
+    "assumptionFigures": "b356fade22ac3b1f73e5"
+   },
+   "needAtRetire": 910616.0020287922,
+   "ffAge": 46.33333333333333
+  },
+  "late starter, slider at 70": {
+   "digest": {
+    "P": "6a9b8fb6d4e652f5aec3",
+    "diag": "13f64bb87bd9caaf2559",
+    "series": "9d53ead87137ac183523",
+    "headline": "c8494364855252c92ce2",
+    "mc": "03124c99b89921100db6",
+    "reqs": "e2c1a438541c9d615985",
+    "dd": "ac159fa4c300921ff1cd",
+    "table": "fef8ed9edd715cd7afb9",
+    "tableText": "1d999e6848d5817b0afd",
+    "csv": "984437298ce7eaee36ad",
+    "charts": "b8cd26c56561580f0580",
+    "text": "f5e409ec8d142ee68e63",
+    "assumptionFigures": "1dfc9ebce210779a0963"
+   },
+   "needAtRetire": 264357.03605179756,
+   "ffAge": 60.5
+  },
+  "old frugal at 35": {
+   "digest": {
+    "P": "1b6e163879b0b701e45c",
+    "diag": "f0c6fb30f6215d23cc75",
+    "series": "95393fdf9ad8d67580bb",
+    "headline": "cd2eeaef17dde63f42f2",
+    "mc": "59421f5c6c9c172250c1",
+    "reqs": "7ce9b847e917ce69ec10",
+    "dd": "162290564dd8ce440a3d",
+    "table": "4fd9e97161f083510baf",
+    "tableText": "305767f86831e810c8ee",
+    "csv": "8fe8172596bf477558b6",
+    "charts": "0dfc9f044f7f388ead9d",
+    "text": "7c6ee734c1eb96908ccc",
+    "assumptionFigures": "d48544feda235d499d34"
+   },
+   "needAtRetire": 507959.74851054006,
+   "ffAge": 34.166666666666664
+  },
+  "old family legacy at 50": {
+   "digest": {
+    "P": "eaff0a5d90efb8286ff3",
+    "diag": "b145a3f6e160c364ce49",
+    "series": "f756ad20a2b1645c0624",
+    "headline": "82498f700a364b43df59",
+    "mc": "92d0ae5dcfdb856dc157",
+    "reqs": "9097b1f0a3174459d954",
+    "dd": "4429ae0de27e35c7e56a",
+    "table": "ef984a1fdca44adf0b7c",
+    "tableText": "1225ea4a6f0ccbafa603",
+    "csv": "08b72f0ab5d483021086",
+    "charts": "99570a513a898a08d807",
+    "text": "5cda9c411c5a8765bba8",
+    "assumptionFigures": "5ab690b34a67208b8f07"
+   },
+   "needAtRetire": 1278610.203683007,
+   "ffAge": 49.333333333333336
+  },
+  "old moderate, seeded": {
+   "digest": {
+    "P": "9f846eb55c56de3e2789",
+    "diag": "3a50e43ed34ee3fb80a3",
+    "series": "13be208582e16b99f561",
+    "headline": "97c7afe5de89e85083aa",
+    "mc": "9c596eff8506ead0c7dc",
+    "reqs": "e1e2e955bb2a4046b777",
+    "dd": "550120f1cf66625c320f",
+    "table": "d497962bf2e31b8646aa",
+    "tableText": "d181fda1fca0e657a5a2",
+    "csv": "a8c543132400f5dadea0",
+    "charts": "8fdf287f04a33d89e5d3",
+    "text": "1c47f65cd8c4a1d762c9",
+    "assumptionFigures": "eafd9e97e47ced9ae2b1"
+   },
+   "needAtRetire": 1056774.392956553,
+   "ffAge": 44.333333333333336
+  },
+  "old frugal, seeded": {
+   "digest": {
+    "P": "1b6e163879b0b701e45c",
+    "diag": "f0c6fb30f6215d23cc75",
+    "series": "95393fdf9ad8d67580bb",
+    "headline": "cd2eeaef17dde63f42f2",
+    "mc": "59421f5c6c9c172250c1",
+    "reqs": "7ce9b847e917ce69ec10",
+    "dd": "162290564dd8ce440a3d",
+    "table": "4fd9e97161f083510baf",
+    "tableText": "305767f86831e810c8ee",
+    "csv": "8fe8172596bf477558b6",
+    "charts": "0dfc9f044f7f388ead9d",
+    "text": "7c6ee734c1eb96908ccc",
+    "assumptionFigures": "d48544feda235d499d34"
+   },
+   "needAtRetire": 507959.74851054006,
+   "ffAge": 34.166666666666664
+  },
+  "old geoarbitrage, seeded": {
+   "digest": {
+    "P": "890ed499c589a7f875c1",
+    "diag": "9fa949a9679c88a33529",
+    "series": "6b0ffae48aa45649a4c6",
+    "headline": "c7e1f57e9ca94288ef20",
+    "mc": "2dc5e7fbcf3545be96d7",
+    "reqs": "fd369274d8162e4418be",
+    "dd": "acfc953790d0e902556c",
+    "table": "1077775d76987ae4ad7e",
+    "tableText": "002bbbe431278c9e100b",
+    "csv": "54d614e19c5a4aed776c",
+    "charts": "70e68e287fecff19ed51",
+    "text": "7a66a86b320a14eb0ac5",
+    "assumptionFigures": "fc791ba8a94a7ddf877e"
+   },
+   "needAtRetire": 490130.6210627648,
+   "ffAge": 41.416666666666664
+  },
+  "old fatfire, seeded": {
+   "digest": {
+    "P": "3f6bc0be7e37c3ed042d",
+    "diag": "1991f8b22e6ec6913fe1",
+    "series": "900e9cc56202c95345b1",
+    "headline": "1a03040169c444a30cfe",
+    "mc": "adee90d9dc0724255efa",
+    "reqs": "8ba74ec27e1d4ddfa301",
+    "dd": "1755da2de5ae78e7a2cf",
+    "table": "de4be18633861ba093c9",
+    "tableText": "c7057b1da0ca1969696b",
+    "csv": "b4be2e35eeccfd64dda2",
+    "charts": "857b1ac52ad6bd47e4e0",
+    "text": "2ca462951c7ec54489e3",
+    "assumptionFigures": "aa94ec972347bca82da0"
+   },
+   "needAtRetire": 1704298.7870088862,
+   "ffAge": 42.833333333333336
+  },
+  "old legacy, seeded": {
+   "digest": {
+    "P": "eaff0a5d90efb8286ff3",
+    "diag": "b145a3f6e160c364ce49",
+    "series": "f756ad20a2b1645c0624",
+    "headline": "82498f700a364b43df59",
+    "mc": "92d0ae5dcfdb856dc157",
+    "reqs": "9097b1f0a3174459d954",
+    "dd": "4429ae0de27e35c7e56a",
+    "table": "ef984a1fdca44adf0b7c",
+    "tableText": "1225ea4a6f0ccbafa603",
+    "csv": "08b72f0ab5d483021086",
+    "charts": "99570a513a898a08d807",
+    "text": "5cda9c411c5a8765bba8",
+    "assumptionFigures": "5ab690b34a67208b8f07"
+   },
+   "needAtRetire": 1278610.203683007,
+   "ffAge": 49.333333333333336
+  },
+  "old latestart, seeded": {
+   "digest": {
+    "P": "3fb965d76b913ab0edae",
+    "diag": "13f64bb87bd9caaf2559",
+    "series": "fcf6e73c20961cd360d4",
+    "headline": "65428371412e9c74fbf4",
+    "mc": "03124c99b89921100db6",
+    "reqs": "20229e33f0bdb11d6219",
+    "dd": "e3e597edcdf78a1e08bd",
+    "table": "74e65293ed982544cd79",
+    "tableText": "a9d269b6902605497e9b",
+    "csv": "9cc45c0521b0ceb87bdd",
+    "charts": "93bb160f62d9220e7e6c",
+    "text": "6fab32ddb9f0c623461e",
+    "assumptionFigures": "efc1289495b6429ec6b4"
+   },
+   "needAtRetire": 478371.7283210907,
+   "ffAge": 60.5
+  },
+  "fuzz #0": {
+   "digest": {
+    "P": "4ad29be31ac080037882",
+    "diag": "be4ca7d6eef93fb43838",
+    "series": "93186af35caf1c841d4e",
+    "headline": "c3e57c1338303f8e38ac",
+    "mc": "1787ef179a31538449f7",
+    "reqs": "75a80cb102f97e4a9e31",
+    "dd": "c29029c09969d3d0b12d",
+    "table": "6c2939a10e629e066d74",
+    "tableText": "00de36b0f84fe1369776",
+    "csv": "b27e160ffeb91be1c8af",
+    "charts": "639ac068ca28cf2b472e",
+    "text": "69be01e6ca32f2e990f1",
+    "assumptionFigures": "749ef4031483212d25b7"
+   },
+   "needAtRetire": 107410421.0851625,
+   "ffAge": null
+  },
+  "fuzz #1": {
+   "digest": {
+    "P": "614ef82b80d9d5c87f32",
+    "diag": "a707f0b95139246daf5a",
+    "series": "a0f903371d25de85a32c",
+    "headline": "67d765db8ab1006a6b92",
+    "mc": "ee98c59715576c5ed042",
+    "reqs": "bf0ceacbf861074aa637",
+    "dd": "d26e91e31573bd8a0ca8",
+    "table": "d1535fed10378719fd7a",
+    "tableText": "8a4b34a8ba95f6be857c",
+    "csv": "073abd5518f64bb1d25f",
+    "charts": "2843aaf56a1e1d7c3e52",
+    "text": "fe6506f085ac076cd711",
+    "assumptionFigures": "aae197ddbc3d756c20ca"
+   },
+   "needAtRetire": 20919534.850883894,
+   "ffAge": 32.166666666666664
+  },
+  "fuzz #2": {
+   "digest": {
+    "P": "c9b9906d2dfa4db802e4",
+    "diag": "b95fa637aec33fa8ee09",
+    "series": "ce60bbca784b94726c70",
+    "headline": "5b1ae7d11b5f6f0b9bf8",
+    "mc": "f4dece952f80c069d32b",
+    "reqs": "0e0275a0627ba2c25222",
+    "dd": "31c3ba4923204025f29c",
+    "table": "c1ee89094fb914c929d0",
+    "tableText": "49edab1fdf5c2083e7bf",
+    "csv": "baa215b860fa6b597158",
+    "charts": "03378b101a57bbc6ffe5",
+    "text": "a6ec197d53b6b31c2bf4",
+    "assumptionFigures": "6e8690b13e8ac0f39049"
+   },
+   "needAtRetire": 7514259.040998653,
+   "ffAge": null
+  },
+  "fuzz #3": {
+   "digest": {
+    "P": "fa4460378c6848551298",
+    "diag": "fe6e9821a7afcbe0693e",
+    "series": "8269a889e0bd36c26789",
+    "headline": "6359d81c421c9d5404c1",
+    "mc": "acd9290d2ca6cdb5e613",
+    "reqs": "2800f5be559832268558",
+    "dd": "9167f81905a0067df060",
+    "table": "b90341ed4c32febd9386",
+    "tableText": "2c613d8fbae31d510667",
+    "csv": "79588075abf90e282bb0",
+    "charts": "b87a482e94cc7788fb6a",
+    "text": "727c4c9a6af8d1bdce3e",
+    "assumptionFigures": "3e97221d7a23e1d3e477"
+   },
+   "needAtRetire": 35578097.79070379,
+   "ffAge": 40.75
+  },
+  "fuzz #4": {
+   "digest": {
+    "P": "e676c946802636274b84",
+    "diag": "44758849b3714b96e34e",
+    "series": "3d6ffb04ba2922abe768",
+    "headline": "19d44100ff449ea702de",
+    "mc": "810bea658a7eef252395",
+    "reqs": "78a2b2cace81503999c0",
+    "dd": "a413eaf46c8655b42dd0",
+    "table": "bcfe1c5f5e7309ec11b5",
+    "tableText": "1ec88d1bf7cde6951630",
+    "csv": "dad546be8bf5a888e7a2",
+    "charts": "9748a98f01d4c7b39a31",
+    "text": "5f5b68acf6a8c0ec1a68",
+    "assumptionFigures": "c74739ed50372961b1df"
+   },
+   "needAtRetire": 11847143.15741953,
+   "ffAge": 21.833333333333332
+  },
+  "fuzz #5": {
+   "digest": {
+    "P": "cb034369fe6a60e341f6",
+    "diag": "88b749ca365a53f8b018",
+    "series": "5350a9b030a00e3b13fd",
+    "headline": "248993748be7a63a7337",
+    "mc": "b77a6c07ded79daf8b7c",
+    "reqs": "634ac8974a86bcde39e9",
+    "dd": "b89e6a40bd1462848db0",
+    "table": "8b178635ef9999abed82",
+    "tableText": "aa3b1945546fb05c6375",
+    "csv": "3efba590204531e39890",
+    "charts": "c2536587bd9506c503c9",
+    "text": "1bfcbe154c1d00d664fd",
+    "assumptionFigures": "d3a778c6991cfb8092ac"
+   },
+   "needAtRetire": 777366.2729585271,
+   "ffAge": 35.25
+  },
+  "fuzz #6": {
+   "digest": {
+    "P": "5aa75143bc45ca1cb13d",
+    "diag": "58123d237be11400f80c",
+    "series": "0eeb262d36e5926f0586",
+    "headline": "7a7c78256da924d73024",
+    "mc": "1e8fd5a80b381b82659c",
+    "reqs": "c88d5fc3a01f743d2c76",
+    "dd": "812a4bcbd849da419ba0",
+    "table": "aca8f56de4411e7d5890",
+    "tableText": "ba89c8dab77bdbf363ce",
+    "csv": "bcdb0af2fb0fcadaa105",
+    "charts": "c07be43fe700a2555a31",
+    "text": "fb17c8580b486db633bb",
+    "assumptionFigures": "7c7c3e2a4be19ea3e8e2"
+   },
+   "needAtRetire": 1556230.0906102725,
+   "ffAge": 28.166666666666668
+  },
+  "fuzz #7": {
+   "digest": {
+    "P": "8600ef955aa5de1710fe",
+    "diag": "9c0a8fa66282e3d9f4bb",
+    "series": "58ce5efe3906cbec9676",
+    "headline": "faf0597d83be744fc51d",
+    "mc": "02daa85a9427ca19e544",
+    "reqs": "6ec740d3d895c28b7e42",
+    "dd": "f6bdf16eef09a23105f9",
+    "table": "39b1e3e527f726249d00",
+    "tableText": "f640a3953f3ffeff9520",
+    "csv": "cc7d93c8d0e883a3cbc3",
+    "charts": "ae6d500a8921c260f806",
+    "text": "58fdcd4591c0a2fda457",
+    "assumptionFigures": "48ba6456a1a0c3195787"
+   },
+   "needAtRetire": 29582677.087606512,
+   "ffAge": null
+  },
+  "fuzz #8": {
+   "digest": {
+    "P": "2e790fea94b1d4ccfbd3",
+    "diag": "9ce250924acdc82036cd",
+    "series": "44b789757091a75e8178",
+    "headline": "a93ae726f67eca40e5f0",
+    "mc": "302f2f4557d27b0cd938",
+    "reqs": "98d27e8591823de22d94",
+    "dd": "40b4a349c27267a86795",
+    "table": "2f87be7b4199f556ad3d",
+    "tableText": "3feea4762da9e2aea9b1",
+    "csv": "42bd7d6d9a3eb4b52540",
+    "charts": "24b32ecbbf53fc8ab9cf",
+    "text": "941194e236eb7e1d2748",
+    "assumptionFigures": "a3725129af0e0b73cbe2"
+   },
+   "needAtRetire": 726702355.9535506,
+   "ffAge": null
+  },
+  "fuzz #9": {
+   "digest": {
+    "P": "a1f70cbf6e40dae82e0c",
+    "diag": "6a60afd0d88a562630b6",
+    "series": "34a1eddb0b97522b90a4",
+    "headline": "f9ce1152fde043833cd6",
+    "mc": "145ecaf179d00393a44c",
+    "reqs": "3d40b80d74423f63d130",
+    "dd": "995ce67f2c046fd830ae",
+    "table": "bb59e11213ce27d9f6b2",
+    "tableText": "5e86ab031e3d497f4f4a",
+    "csv": "4796f356a7cb6ad63c72",
+    "charts": "82369a6f662b870ca447",
+    "text": "f813e4a17c4fcfd2865b",
+    "assumptionFigures": "6d098e59fdaba493d134"
+   },
+   "needAtRetire": 2299636.9167845882,
+   "ffAge": null
+  },
+  "fuzz #10": {
+   "digest": {
+    "P": "c97ab3dbe6281e406bfb",
+    "diag": "c7819c394bf8e7a0fb9c",
+    "series": "93ca2046716ed282a4d5",
+    "headline": "8582f6cb21abca899c68",
+    "mc": "6429a068db3d2719e3e0",
+    "reqs": "3647749be39de483c30b",
+    "dd": "0018dc8075ae194627cd",
+    "table": "22b5a9cec0186cbd0610",
+    "tableText": "0f1cb079090b51528b49",
+    "csv": "c382a032a573c962d2e3",
+    "charts": "6c2c1bcaed3e947ca142",
+    "text": "0a00403709ecc9a673ae",
+    "assumptionFigures": "7c07a3c79a49a4fa5c74"
+   },
+   "needAtRetire": 1581897.48236881,
+   "ffAge": 41.583333333333336
+  },
+  "fuzz #11": {
+   "digest": {
+    "P": "63d1f4865cd093374c11",
+    "diag": "d7fbd509c1ce2ee9b157",
+    "series": "9307f8d9c3d0c54140ce",
+    "headline": "abea1d5b4d94dc191971",
+    "mc": "8996e2127c7df14faa82",
+    "reqs": "cd51f424271e01ae466d",
+    "dd": "de12c6bb1810085e4067",
+    "table": "3fc7cb8c89709b46a95c",
+    "tableText": "2168bea0651f46494256",
+    "csv": "52141062ca225b0dc411",
+    "charts": "9a6c1c04b1bee3ce51a2",
+    "text": "937a63d6736c48791f2f",
+    "assumptionFigures": "e2c958490103a202f66b"
+   },
+   "needAtRetire": 2451132.823044046,
+   "ffAge": null
+  },
+  "fuzz #12": {
+   "digest": {
+    "P": "85dd3ad5ce6153db0d7f",
+    "diag": "90175f7dddad5b0c69f1",
+    "series": "4b77a8dd2437b61a554b",
+    "headline": "8872e78f0de85a9c2842",
+    "mc": "6abcf73e746aec634590",
+    "reqs": "6543276ea0d6aa15a352",
+    "dd": "2f16ced10561666ef324",
+    "table": "6395b8e12c76504070c0",
+    "tableText": "d7ae6e46226d66cdbc04",
+    "csv": "d68bcf962b3233909a12",
+    "charts": "838721a67eace5168127",
+    "text": "15fda03c564b1066bb2d",
+    "assumptionFigures": "b9c90b2b6167b0b98606"
+   },
+   "needAtRetire": 5941508.364789549,
+   "ffAge": 86.58333333333334
+  },
+  "fuzz #13": {
+   "digest": {
+    "P": "681ca4b696431f64e74f",
+    "diag": "2acea84cf3ba5c733b72",
+    "series": "4853344ef171aa478fcd",
+    "headline": "12334980f6e348bb743f",
+    "mc": "6c02ba81944883f59a47",
+    "reqs": "42e559c1232e43295bbc",
+    "dd": "758370087037fda7697a",
+    "table": "013f903c60807f795188",
+    "tableText": "4cc474087e30c3cd7695",
+    "csv": "4ad5f93f2e9af98bc6c7",
+    "charts": "a31727d20e0d1a9cc650",
+    "text": "1a45fa218b41409fd984",
+    "assumptionFigures": "a7d20abfea0064c55e1c"
+   },
+   "needAtRetire": 1458358.540811493,
+   "ffAge": 56.75
+  },
+  "fuzz #14": {
+   "digest": {
+    "P": "50d0693790a0028bb74e",
+    "diag": "e495dfa24c63cfddd0d2",
+    "series": "6059195afc6c98313fc7",
+    "headline": "4db89b894a3e646c6f43",
+    "mc": "b5c72fce4705cfcd7f99",
+    "reqs": "7e8cf5c58338fc5eb060",
+    "dd": "8f827edbc602966ce9c7",
+    "table": "76b8de22ca8122a7b5d8",
+    "tableText": "d39960bb06053ad7632f",
+    "csv": "42d8598bc7de57e7e229",
+    "charts": "48f3feb24d24b8d745b5",
+    "text": "08468da56c07790822ff",
+    "assumptionFigures": "2b9b060357a98b49cad8"
+   },
+   "needAtRetire": 256068001.03437135,
+   "ffAge": null
+  },
+  "fuzz #15": {
+   "digest": {
+    "P": "0534d99b0fd3042f1189",
+    "diag": "5febc0de4bd79712ac73",
+    "series": "a61e096281f7aead8121",
+    "headline": "a2be7272ddad2cc3f8a3",
+    "mc": "2856d5952aa46604800b",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "6a823ddb5e29f8f6bd22",
+    "table": "66cfda9e75bdb3b3a500",
+    "tableText": "9a28eb7af82ee3369085",
+    "csv": "01fd4db830908de80d42",
+    "charts": "57d6fefc0a3a7601e9fd",
+    "text": "5200485507bcc5d4d0ea",
+    "assumptionFigures": "49104747bdac800b7449"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #16": {
+   "digest": {
+    "P": "a76b8bc13af6b39e0368",
+    "diag": "0dd521e160128c8e4693",
+    "series": "a09f653ea39c43c3e6e7",
+    "headline": "c38d472679cb093c6d62",
+    "mc": "3d59c12e665dea183dff",
+    "reqs": "ce73d87fd940ac577284",
+    "dd": "ebb0fded302874d8c934",
+    "table": "65def10ed86e619eb91a",
+    "tableText": "4f2eb8ea3542cf5d3bd6",
+    "csv": "4401918efde579498d6b",
+    "charts": "46504418a014feb2975d",
+    "text": "4026b37101549ae79226",
+    "assumptionFigures": "88f15d7a10b6672f0766"
+   },
+   "needAtRetire": 256115.00834562135,
+   "ffAge": 48
+  },
+  "fuzz #17": {
+   "digest": {
+    "P": "9e3ef12e00c76c77d71d",
+    "diag": "de9a527280812152342e",
+    "series": "0101fa59769feb4258db",
+    "headline": "f8f6460fb1c3dc6845bd",
+    "mc": "fb146752a23691ed493a",
+    "reqs": "25ce3f12ed999f46d03b",
+    "dd": "89e34c581eaf4aad33e6",
+    "table": "d1fbcd00c7aa5ec1b940",
+    "tableText": "3e7bff6c67e5aca86f0b",
+    "csv": "34958b3255ef417ef921",
+    "charts": "5560ac85891e9f10eef4",
+    "text": "4c671f0cfe7a3264da61",
+    "assumptionFigures": "07da709e0d01c43945a4"
+   },
+   "needAtRetire": 110715.9239116407,
+   "ffAge": 53
+  },
+  "fuzz #18": {
+   "digest": {
+    "P": "6462d00a1fe26320cf42",
+    "diag": "4e65d09f431302a0fa71",
+    "series": "ba440cd8d9418c91e9de",
+    "headline": "e5c646b20a40c31cabdd",
+    "mc": "ab3cdf04c72e6f8f072b",
+    "reqs": "de8a20057e838d9a58c7",
+    "dd": "3fa6c6bb610270542322",
+    "table": "fa461fa2aabe61d0a6cb",
+    "tableText": "98a30ac21d472c85e879",
+    "csv": "a1c1acff90ad02348644",
+    "charts": "2c8d7b60e2e0ea43dbb8",
+    "text": "41d095f2d6dc1a8b2222",
+    "assumptionFigures": "75035c6ab527930471c7"
+   },
+   "needAtRetire": 2185438.137060273,
+   "ffAge": 46.5
+  },
+  "fuzz #19": {
+   "digest": {
+    "P": "bf4cf34c8449deb3a69f",
+    "diag": "826d35e8e8b6436bb8b5",
+    "series": "444f9aee954d8034b69b",
+    "headline": "99fa4b55dd9e759d741d",
+    "mc": "f4bdd5707083b3d1339c",
+    "reqs": "9430d961beff49c1883f",
+    "dd": "44e68bd205121e090f4b",
+    "table": "cf6526170d155dfed252",
+    "tableText": "512faa78536ea2da8d9d",
+    "csv": "38382429a9a23ff10d5c",
+    "charts": "66ce914d28c744e82416",
+    "text": "c7e5b414260e6d7fa186",
+    "assumptionFigures": "9552b6385a256ee844f0"
+   },
+   "needAtRetire": 3674794.648266308,
+   "ffAge": 58.583333333333336
+  },
+  "fuzz #20": {
+   "digest": {
+    "P": "189930858d24e8de1088",
+    "diag": "fac51ea93dd6b8d27d8f",
+    "series": "0d891f3c564ca70a978d",
+    "headline": "02ec7e888f4702c655c4",
+    "mc": "498ab8eb9cf4876db232",
+    "reqs": "80b1900a478e734416fc",
+    "dd": "573a9ccdff4b1218f06b",
+    "table": "0766655536a51aa801ba",
+    "tableText": "5a8e1cc0c6d84bb99ab9",
+    "csv": "07768aa5cf936f93c131",
+    "charts": "4605ab511f2deeaa5d7c",
+    "text": "b057a9e2f8e1c2b38cda",
+    "assumptionFigures": "f3106eb24bac773d1e21"
+   },
+   "needAtRetire": 4119207.497647682,
+   "ffAge": 40.166666666666664
+  },
+  "fuzz #21": {
+   "digest": {
+    "P": "ea67a04ad012d1434b16",
+    "diag": "8fd96a4a37927fabfa4f",
+    "series": "d19dafbfdebda55f97bf",
+    "headline": "c9f2d94c09c197e31ab7",
+    "mc": "b3f2c47c1d51c1a2a5e9",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "066636eb59e88f9387d0",
+    "table": "47a06156b433f7e0a488",
+    "tableText": "5ab03fcfef65f48f2a9b",
+    "csv": "748fb2babc4392c71f68",
+    "charts": "bceabf36ee42361ef139",
+    "text": "2f67ecf6c6678de6bf75",
+    "assumptionFigures": "6ca9c00bd00a5f7a5dc5"
+   },
+   "needAtRetire": 0,
+   "ffAge": 27.5
+  },
+  "fuzz #22": {
+   "digest": {
+    "P": "d69c90d1cd2a74fc82ae",
+    "diag": "5d350696cedaebc8de1c",
+    "series": "27eb6d3e9e3ab4e246be",
+    "headline": "cfdf434b7536c2e6e5a3",
+    "mc": "a5cb54309cba62caf623",
+    "reqs": "3abc5f425187cb95155a",
+    "dd": "ded552794b5f025f1f1b",
+    "table": "5f48de918bac508b29ba",
+    "tableText": "d0b13fc95851f680278f",
+    "csv": "e20e0e5cb525b3b30b20",
+    "charts": "158d0bdb388a63cf72b2",
+    "text": "352eb1e930bdb38d429e",
+    "assumptionFigures": "ab4b0b1bc4969542f10a"
+   },
+   "needAtRetire": 633602.6952846815,
+   "ffAge": 30
+  },
+  "fuzz #23": {
+   "digest": {
+    "P": "7c725b7f61be0056aaa7",
+    "diag": "3620ac2d2129c61f23f2",
+    "series": "d19e1f626e089ed71de2",
+    "headline": "ed2963927f7230bd0feb",
+    "mc": "a7dfb3f6cf33224ea91a",
+    "reqs": "92a338ce9a049350941f",
+    "dd": "3d356104cf8a8a8396f7",
+    "table": "b0015af7286cbcc29f84",
+    "tableText": "a060dce59a05f2282592",
+    "csv": "4ebf3ee1e507adfc41c8",
+    "charts": "874ef813abc8d5334983",
+    "text": "a77552bc660bca18e557",
+    "assumptionFigures": "f5ddd0b8a64e30b96b75"
+   },
+   "needAtRetire": 7118485.4540626155,
+   "ffAge": null
+  },
+  "fuzz #24": {
+   "digest": {
+    "P": "40f2e366214cb553abfd",
+    "diag": "2b67b5539d6862ee3ff5",
+    "series": "9b2401b66cf1ffc874b1",
+    "headline": "72e23c203f57d2ab5b5a",
+    "mc": "fb594b19c078160169e3",
+    "reqs": "1da957020afd1604e953",
+    "dd": "807327b5390ecfa77e95",
+    "table": "af66a8430f650724034a",
+    "tableText": "f757960589728bf378d2",
+    "csv": "5c0a320a3a023d695bbb",
+    "charts": "4a3f1b0311797d5b43c1",
+    "text": "b1d2643f723e4d1a4500",
+    "assumptionFigures": "1f1099f26adb83f35e07"
+   },
+   "needAtRetire": 4949143.10448243,
+   "ffAge": 55.333333333333336
+  },
+  "fuzz #25": {
+   "digest": {
+    "P": "06b47329852a2eb7f32c",
+    "diag": "8add863ce3f479987c0a",
+    "series": "367126c1322d1cec6891",
+    "headline": "250ac92266313de9a28e",
+    "mc": "c8bef8c5212d64d797e0",
+    "reqs": "dc48f7c086136e46b87d",
+    "dd": "813f8fdd526915b536f6",
+    "table": "92a7e69a7cdfa640ac5b",
+    "tableText": "436bf9bab83b847e8a79",
+    "csv": "67c7422b6beed738ecbe",
+    "charts": "ac98f16b9bde9086c516",
+    "text": "a5c278941edf81b5a6cf",
+    "assumptionFigures": "599be2aa913a295b4be6"
+   },
+   "needAtRetire": 3744598.4387667426,
+   "ffAge": 37.25
+  },
+  "fuzz #26": {
+   "digest": {
+    "P": "3113663d8c72e76ff6cc",
+    "diag": "e27205531b7ba0a4e90f",
+    "series": "16d51e55fe389231e8ea",
+    "headline": "d99e281b5c371740b5f2",
+    "mc": "0d862ce559fd803bdfd8",
+    "reqs": "1fad1bcabec6efee39fc",
+    "dd": "8e51e1dfd2e31676761b",
+    "table": "6838584f9dda18e5d543",
+    "tableText": "da10b3443dc900efc967",
+    "csv": "b34d71a02270daeca4ec",
+    "charts": "b6bcf116a8561a9dd603",
+    "text": "4f1c3f279c13bc2dc809",
+    "assumptionFigures": "75553eff15dee86e229a"
+   },
+   "needAtRetire": 61130154.090133324,
+   "ffAge": 63
+  },
+  "fuzz #27": {
+   "digest": {
+    "P": "acc2daaae5e075def20f",
+    "diag": "620ff348e7dc8e4838c1",
+    "series": "08ef13e2215da71f0a97",
+    "headline": "033324ae280c649ee246",
+    "mc": "ddeb385c84a969267269",
+    "reqs": "a9f2495e7451730af592",
+    "dd": "12d3b6ca194c4eebea88",
+    "table": "fb9d87df62d3faa044b8",
+    "tableText": "a43f101df295710792d4",
+    "csv": "96f7268b9df314003f3c",
+    "charts": "b29795baea680ce44796",
+    "text": "fe032a4e1c214159c010",
+    "assumptionFigures": "ed3b25cc4113ce17e74f"
+   },
+   "needAtRetire": 213011.119431658,
+   "ffAge": 26
+  },
+  "fuzz #28": {
+   "digest": {
+    "P": "527543dae4c82e8512ad",
+    "diag": "d53ee70cfae5e14d6d42",
+    "series": "14813e2f8e125d9d4ba2",
+    "headline": "998218fcb652eda7c031",
+    "mc": "1b042e3b79f2606d7a03",
+    "reqs": "a8f94a923ce1c2a8d282",
+    "dd": "280aa6dafc7055fb6af3",
+    "table": "9cb10ec716d91014589f",
+    "tableText": "f652bbc33baa8d31af7b",
+    "csv": "215a42a3542b83a35372",
+    "charts": "4e509944620aac300dd2",
+    "text": "4a1ae41a7d96af9dda51",
+    "assumptionFigures": "4973e04682585ed09dc8"
+   },
+   "needAtRetire": 76863204.5731888,
+   "ffAge": null
+  },
+  "fuzz #29": {
+   "digest": {
+    "P": "44a46da880d403fe8794",
+    "diag": "ca5efb0153ab52ec8667",
+    "series": "fefa5667b439431e76e0",
+    "headline": "4a0a5b6d99f0eedb8542",
+    "mc": "63c4226071c01d7bc1e9",
+    "reqs": "1b025a4795ee1bcc4e16",
+    "dd": "3d3fd745481b03856465",
+    "table": "06bbd65b692e524ad8ce",
+    "tableText": "d4022c6223796f22df12",
+    "csv": "47e157a8864300ca5cd8",
+    "charts": "7a4ab7eb9f93b976da7d",
+    "text": "75fa00fecde9932cb6ad",
+    "assumptionFigures": "95b0f675caec08742117"
+   },
+   "needAtRetire": 10578694.495701684,
+   "ffAge": null
+  },
+  "fuzz #30": {
+   "digest": {
+    "P": "e12db1a1040ff86d30b3",
+    "diag": "c6a3a8d4cdd3e85c30e4",
+    "series": "8a0576b747fce2729cdc",
+    "headline": "1e10b3e6360afd82510c",
+    "mc": "426aa135bcad40c7a958",
+    "reqs": "17e64419e42b06154532",
+    "dd": "f3705ef87f2a8f52876e",
+    "table": "24e64493f063b9b994a5",
+    "tableText": "7ba8e2b6235f6192bf05",
+    "csv": "799a7e771ba98ec015e6",
+    "charts": "b1f4362ed7357be3f694",
+    "text": "0d1bf6f393fc3e52300a",
+    "assumptionFigures": "ff6d4b780873267780fd"
+   },
+   "needAtRetire": 7009845.8376936605,
+   "ffAge": null
+  },
+  "fuzz #31": {
+   "digest": {
+    "P": "6c494933a18ad2fc6ec2",
+    "diag": "73dca57e1da8988a8d5b",
+    "series": "34d16584bb0af11ae016",
+    "headline": "dbc92514130e72b0b57e",
+    "mc": "703c3dc0b0e6c4384667",
+    "reqs": "79bf60784b1326aed3f2",
+    "dd": "845d540897258f4e0452",
+    "table": "a49ef7121134c9979b15",
+    "tableText": "a463b5216109b9cff13b",
+    "csv": "c122c79242af16c68284",
+    "charts": "3cf082bb9462f816f608",
+    "text": "1680d13db451ae03ec19",
+    "assumptionFigures": "18aa54e6e1d796d2534d"
+   },
+   "needAtRetire": 134052147.15963301,
+   "ffAge": null
+  },
+  "fuzz #32": {
+   "digest": {
+    "P": "dbf09d3f138682c13935",
+    "diag": "1445f29dce9fa956b977",
+    "series": "169bbece5e5350a88f1d",
+    "headline": "fa8d0d042a6743fd84e6",
+    "mc": "c976933eb917728edfec",
+    "reqs": "9b748e55e0ac3fc87f2d",
+    "dd": "af8453c965945dcf6c23",
+    "table": "991165933c1ab8edaf9e",
+    "tableText": "70336f95dab19dd8d47e",
+    "csv": "31dcfbccf071b66bf16e",
+    "charts": "58002557478996546675",
+    "text": "1709fedf04f903eb8c72",
+    "assumptionFigures": "ca4a7c11beb4a8ab39da"
+   },
+   "needAtRetire": 2469355.58195758,
+   "ffAge": 71
+  },
+  "fuzz #33": {
+   "digest": {
+    "P": "07aa46b962440081901f",
+    "diag": "3dd6138679c9df75729b",
+    "series": "50393e2f1eea05dda3df",
+    "headline": "dfab8008b402e42c7e40",
+    "mc": "261abd2673804f960bbc",
+    "reqs": "b62d72fef97a5d6c1170",
+    "dd": "150a24bf23a2526ba5df",
+    "table": "0f6e9ce9b98970fb4962",
+    "tableText": "c32e591d8ddf97a52ff8",
+    "csv": "2eaafa7336872935e999",
+    "charts": "ba701d5a3a04b7855c15",
+    "text": "b57d96edbdd8acccac14",
+    "assumptionFigures": "62b781a43e1d70076007"
+   },
+   "needAtRetire": 77453158.78789039,
+   "ffAge": null
+  },
+  "fuzz #34": {
+   "digest": {
+    "P": "6a8d1932e31d228fca27",
+    "diag": "4b1f75c89c0d25e8bdf7",
+    "series": "c2814415afd0272fd1e7",
+    "headline": "e7fbb1a6db21bc130074",
+    "mc": "f5e403805d685808eb29",
+    "reqs": "dfdb772fb3ddd54fd377",
+    "dd": "069c0aff9811cfa3aaf6",
+    "table": "ca03119f953d9bf2a0af",
+    "tableText": "02619f2f81bfa6390046",
+    "csv": "94a06328b3aaf67ecaef",
+    "charts": "dbfc279346bd5f716c4a",
+    "text": "52059e18bc98515577e0",
+    "assumptionFigures": "5cd15fdf9428c9e8a1d4"
+   },
+   "needAtRetire": 52348.78650320678,
+   "ffAge": 61
+  },
+  "fuzz #35": {
+   "digest": {
+    "P": "0b62798fe587afd71894",
+    "diag": "64ed354db3f0269f03ce",
+    "series": "e0ea06405403337a31c3",
+    "headline": "a120567fc647c00533af",
+    "mc": "11243bf8f6bcffaeade2",
+    "reqs": "fbcea4e2aee60374a1f7",
+    "dd": "9605cdb92707fc84856e",
+    "table": "8f4124431851eb59f6c3",
+    "tableText": "7d6473e5e1ffa5a85688",
+    "csv": "20b2db2b1459b4b5d382",
+    "charts": "74e5dc07c2c4a1dcc702",
+    "text": "3cd3ff967319a956f6ed",
+    "assumptionFigures": "2846cb29e5925d436a88"
+   },
+   "needAtRetire": 108002528.15507099,
+   "ffAge": 63.25
+  },
+  "fuzz #36": {
+   "digest": {
+    "P": "969efa711bd930705a63",
+    "diag": "e63010d65bc475ea293f",
+    "series": "5e7daf67d8a01c58996e",
+    "headline": "bc7fc97801348570be22",
+    "mc": "7489ef0acb58021a5b83",
+    "reqs": "3dffdeb865a6fac95642",
+    "dd": "5fb5281b7fc2c3520d7e",
+    "table": "90a253de51d1e35a1df2",
+    "tableText": "d8a30989a9334912e882",
+    "csv": "2a7917b57c752c68abd1",
+    "charts": "e2b8d24b3548109c2884",
+    "text": "ec80239f0d3a24c5c5cd",
+    "assumptionFigures": "6c27331a5394759606ae"
+   },
+   "needAtRetire": 210122.4624842406,
+   "ffAge": 37
+  },
+  "fuzz #37": {
+   "digest": {
+    "P": "29a2fdb73c959b4a33a1",
+    "diag": "2b9d95cacb7c1a795198",
+    "series": "271d4cb34b11a6999550",
+    "headline": "0b10e297e3af19114d1e",
+    "mc": "20770ad03cab20b11be3",
+    "reqs": "12425226f6848a992b11",
+    "dd": "9bf02cbbd6de67ccdbec",
+    "table": "2af0ef4012407ded8981",
+    "tableText": "8be7367a77ecf69b32dd",
+    "csv": "143da6b3cf748b77826a",
+    "charts": "1947e42ce2796f5ecfea",
+    "text": "aa5f07bc1585f5a4c3fc",
+    "assumptionFigures": "610c2e8302a66886384b"
+   },
+   "needAtRetire": 397003.40929459984,
+   "ffAge": 30
+  },
+  "fuzz #38": {
+   "digest": {
+    "P": "335c989afd69de478e5e",
+    "diag": "b8b98b442d6c6560b459",
+    "series": "de6a4f75eea3a1016187",
+    "headline": "e126c862a3f52224c2e8",
+    "mc": "667f909ab230ac6cf318",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "aca5e4eb9f485f68b31e",
+    "table": "f8daf61a743429c97f1a",
+    "tableText": "e0770fbf8f789a7537ee",
+    "csv": "fe1c20badbc657b60132",
+    "charts": "88f53159010c2a9f3273",
+    "text": "66628788409043a1a21e",
+    "assumptionFigures": "cef1540659a88e41260f"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #39": {
+   "digest": {
+    "P": "e57b57a14df60ee67b6b",
+    "diag": "3dec364b07c4dca09a0a",
+    "series": "c4ab03219bfcc95d1e47",
+    "headline": "5dd42c9a8acf79bb55f4",
+    "mc": "7ba232b2887a1360ab5c",
+    "reqs": "e12c43207fd62140df92",
+    "dd": "86cc552e83000064b549",
+    "table": "ebeddce0ced0f36fa813",
+    "tableText": "ff00ace131806d64025d",
+    "csv": "3d3bc6b101d6a1d68ca9",
+    "charts": "d3062e2b79cf1c287473",
+    "text": "833f2eae4c3285064227",
+    "assumptionFigures": "e60928afbeae39c44273"
+   },
+   "needAtRetire": 10007592.36664871,
+   "ffAge": 22.75
+  },
+  "fuzz #40": {
+   "digest": {
+    "P": "c71c13484e678c9b7923",
+    "diag": "5d350696cedaebc8de1c",
+    "series": "abbd5c04ed5a85b3d230",
+    "headline": "e8f4d444f72bb4d93f3d",
+    "mc": "ac2f77ca9d6c1d336637",
+    "reqs": "bfee7a36fbcb9f9a3efd",
+    "dd": "bf51be1844f2ca7c9c50",
+    "table": "ff1acc799842e996ead6",
+    "tableText": "1949686addae150a2917",
+    "csv": "326add5631a6be456ac7",
+    "charts": "8127ff1d72a65fab2b92",
+    "text": "7550ccad9f54c8bb410e",
+    "assumptionFigures": "f8117d9eb0879408ad7a"
+   },
+   "needAtRetire": 615259.7712444848,
+   "ffAge": 30
+  },
+  "fuzz #41": {
+   "digest": {
+    "P": "f01f400bad92fc8e4355",
+    "diag": "43b52b457a44dff2291c",
+    "series": "5940fdd4861c1923f322",
+    "headline": "2bfa0b829ba60f726ed9",
+    "mc": "e36924461962253bc434",
+    "reqs": "cd598bd6d43f68f6c637",
+    "dd": "29af89beba6af28ed55e",
+    "table": "2717be12ab1624dd00b7",
+    "tableText": "fbcc40ab06fd6a6a507e",
+    "csv": "c740320c73bb7e8b8a22",
+    "charts": "1710fe80e5a959c35361",
+    "text": "0a70cc77df8d34558257",
+    "assumptionFigures": "e8594c75c57145f446e7"
+   },
+   "needAtRetire": 209450236.50396603,
+   "ffAge": 64.5
+  },
+  "fuzz #42": {
+   "digest": {
+    "P": "cc3a6c46bf990a5ecbc3",
+    "diag": "29749a35625dda3f8e75",
+    "series": "128edaabf742d6fa0f6e",
+    "headline": "87536a52a93644016f6a",
+    "mc": "93b8c2040347c44c2d7d",
+    "reqs": "aca0731d37471b4cf957",
+    "dd": "e36ae13e4788afc451c2",
+    "table": "7becabe61d09a32af178",
+    "tableText": "d1f6b5cf92f059d497da",
+    "csv": "e5d2a028c5f2a4d9bf21",
+    "charts": "9598d3c512bfae83880e",
+    "text": "b6030f42a34147cfe2b8",
+    "assumptionFigures": "6c0e854cd918434ffb83"
+   },
+   "needAtRetire": 133652601.99516743,
+   "ffAge": null
+  },
+  "fuzz #43": {
+   "digest": {
+    "P": "b16d3ad71635224a535e",
+    "diag": "450b54f81ad476bd7e7b",
+    "series": "7eeb9223512dbf1fc280",
+    "headline": "633e1b252afe15b8bc1e",
+    "mc": "f47647dd540a725bafa3",
+    "reqs": "1a8c113a44bf9da951cd",
+    "dd": "464671e9f23a1607bb0a",
+    "table": "2384432cde68ccb4280e",
+    "tableText": "ac88f29babe31c80fe8d",
+    "csv": "cda64a9bd54471d16efc",
+    "charts": "50948603cda3d6eac565",
+    "text": "e9dba0a50c8c10bd85de",
+    "assumptionFigures": "f5648bebbd12bc2d3f40"
+   },
+   "needAtRetire": 1030051.9605333343,
+   "ffAge": 23
+  },
+  "fuzz #44": {
+   "digest": {
+    "P": "fbfdb27243ed002931ae",
+    "diag": "1b71b389ae758f47613e",
+    "series": "efbab15e3a85d1cbc659",
+    "headline": "070bce0e933601f32161",
+    "mc": "fea0758779022ab94247",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "09b724b714fcca216ef2",
+    "table": "16292ffd82f935949ad1",
+    "tableText": "4f62ddc58a3554bf6621",
+    "csv": "8f190b091919dcdd2667",
+    "charts": "638d16a66650e90eddbd",
+    "text": "6cb4426d868bbcb3f42b",
+    "assumptionFigures": "59ac19c939b5b4e1cbb3"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #45": {
+   "digest": {
+    "P": "8a1a9979f6da6a509fa4",
+    "diag": "8c33aec0f11d4e4a5da7",
+    "series": "00ec96390a173042b4e0",
+    "headline": "a568fa457a94af1f0864",
+    "mc": "f50479a77512d70488cc",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "672b2e5fa9d1c2ed746a",
+    "table": "c39158cd64d1fcfd2906",
+    "tableText": "f7ffc55f8e88b155beb7",
+    "csv": "9c351a5c7c144e1651a2",
+    "charts": "dc64c53a1d9728199b05",
+    "text": "b892d9ace263251bc3db",
+    "assumptionFigures": "9a65a34fdbc659f4d82f"
+   },
+   "needAtRetire": 0,
+   "ffAge": 47
+  },
+  "fuzz #46": {
+   "digest": {
+    "P": "4c99ce401fcee5a03ef6",
+    "diag": "36bf7367631890fb9455",
+    "series": "6b72719c64666ec49a8f",
+    "headline": "5a67cb11ef0adf350f9b",
+    "mc": "c4b9c11aa0b210bd58a8",
+    "reqs": "224045648a66b2ff1fd6",
+    "dd": "69c0ddf2ac4aa1ffd516",
+    "table": "a930be2c057466973f33",
+    "tableText": "86751c7e996723483b59",
+    "csv": "97843799a7477822d489",
+    "charts": "d8fc7205d61dea336b72",
+    "text": "9375f0a500f12d29b1d8",
+    "assumptionFigures": "c2b66aa3783ca60c77c6"
+   },
+   "needAtRetire": 26854910.506517317,
+   "ffAge": 46.583333333333336
+  },
+  "fuzz #47": {
+   "digest": {
+    "P": "840e72304476b1821849",
+    "diag": "2a5b382264e7ef85cb83",
+    "series": "04135e19efbc7231fbd5",
+    "headline": "96d13cb6b97d118767f9",
+    "mc": "9b330f4d9af0e0b30605",
+    "reqs": "d3f239bace429ad63e97",
+    "dd": "4497e4faeef63be4b426",
+    "table": "cd954cfd71cd83371adb",
+    "tableText": "0016d09d80700f7660d1",
+    "csv": "f520b6052d505a49f246",
+    "charts": "4b4b4c8c5980ce5e5017",
+    "text": "d9c4e82c32bfb5b762ae",
+    "assumptionFigures": "578d3fdc688841ca08c5"
+   },
+   "needAtRetire": 88869691.15439248,
+   "ffAge": null
+  },
+  "fuzz #48": {
+   "digest": {
+    "P": "13603be77908b135ecc7",
+    "diag": "a118edf5a8f2871f6e61",
+    "series": "0a4fc30c9aadda7d3961",
+    "headline": "f0da5ede364deadc6923",
+    "mc": "259e34686b5d7a6b3fb1",
+    "reqs": "51c35ee43ee21b343411",
+    "dd": "c527244ba192f7b6ef5b",
+    "table": "21158a72cf822ef61b59",
+    "tableText": "0811a5a819544e205a70",
+    "csv": "917a7d019b5a4851c9f1",
+    "charts": "2d8e0f60a541e95838bc",
+    "text": "c131ce7edfb34d8dcbab",
+    "assumptionFigures": "3cf43ae2ed5bb3f921a8"
+   },
+   "needAtRetire": 2991.415591395043,
+   "ffAge": 34
+  },
+  "fuzz #49": {
+   "digest": {
+    "P": "2b898c440e69cd2a9b88",
+    "diag": "910edefc8017817e84ce",
+    "series": "c90d1cf7698219541425",
+    "headline": "f9c4f6a4ed723c2c940b",
+    "mc": "26da872b5f0f6c4f2eec",
+    "reqs": "d309c46474e97a5c5554",
+    "dd": "061433e7c811c32dda5a",
+    "table": "49065b35b3b7740f14fb",
+    "tableText": "8293cd82a4e4ffa21618",
+    "csv": "a2cc9eeed8a676bae8e7",
+    "charts": "1f1c1ec481e1bbf9d925",
+    "text": "5729e5e2b27aaf43ee30",
+    "assumptionFigures": "720a0a34c11370ed2b24"
+   },
+   "needAtRetire": 10354862.477373429,
+   "ffAge": null
+  },
+  "fuzz #50": {
+   "digest": {
+    "P": "32dd52eed88f132441bc",
+    "diag": "35fd828f5ba4ae613071",
+    "series": "55e67331f6bee3cea76f",
+    "headline": "dd569ed897bb0983f961",
+    "mc": "c54ade5acf339def0792",
+    "reqs": "5218f3560f8a0d25982f",
+    "dd": "f90270ae79ee8f059b1c",
+    "table": "a1bf834e31b630f43b09",
+    "tableText": "30d053b8208091213879",
+    "csv": "df852c97e47cd0e77a18",
+    "charts": "77e470bdf1e3db50aea9",
+    "text": "9d64b71c0544254b4e86",
+    "assumptionFigures": "75e3cd2a6d7569c64ab5"
+   },
+   "needAtRetire": 222877797.36961782,
+   "ffAge": null
+  },
+  "fuzz #51": {
+   "digest": {
+    "P": "94f511152f2ca6c30d5c",
+    "diag": "65064f508189b244a0d1",
+    "series": "1f5c40b65d36319c91b9",
+    "headline": "01ec7eafec668cd4264c",
+    "mc": "ef16343804a642e06297",
+    "reqs": "be834dd12fa2350d82bf",
+    "dd": "8afc1435c870cba220ea",
+    "table": "3c0cedd92f60ad23b004",
+    "tableText": "9ebdf2cd7e965bd634bd",
+    "csv": "99fac1b1207493de093c",
+    "charts": "aa23d6ea32cb53b1724c",
+    "text": "8aada536316b190092ce",
+    "assumptionFigures": "d1a6655899ff1fe760e9"
+   },
+   "needAtRetire": 710673.3078641291,
+   "ffAge": 56.166666666666664
+  },
+  "fuzz #52": {
+   "digest": {
+    "P": "8e0e5bd5fc873e185962",
+    "diag": "e63010d65bc475ea293f",
+    "series": "c5041a6e596b8e42a378",
+    "headline": "0cde63a1ea70f6d996a3",
+    "mc": "b82b9b8a11c6d6270e51",
+    "reqs": "3547b4cc7ff442a13ede",
+    "dd": "8d9bf712820ebdb1d63c",
+    "table": "ea0d7e37ed40a0d8513b",
+    "tableText": "ee12f2693f0f5436d32a",
+    "csv": "5eeb16fe27b441cf9530",
+    "charts": "a355de21138252ac5789",
+    "text": "d496abddb562196e62f9",
+    "assumptionFigures": "9e8ccdd66addcdaa9df6"
+   },
+   "needAtRetire": 14459.187299918229,
+   "ffAge": 37
+  },
+  "fuzz #53": {
+   "digest": {
+    "P": "af5e4e7d974fab156ffa",
+    "diag": "41b8c2362040515d970d",
+    "series": "37ddbc24b6e4dc88673b",
+    "headline": "80e2871ce08020608403",
+    "mc": "8f86095ed4137a2c8fff",
+    "reqs": "521c83b989322bb96825",
+    "dd": "6d21198fc43d2f4c92e5",
+    "table": "797e8e3b2ac273affc00",
+    "tableText": "b9891b7a6625d2e42cd3",
+    "csv": "272561314b002ac0b976",
+    "charts": "65932576d39247b11235",
+    "text": "8072ccf8f894c93d84d6",
+    "assumptionFigures": "26ba8e18b2ef4ca26218"
+   },
+   "needAtRetire": 1081480.0583230758,
+   "ffAge": 43.666666666666664
+  },
+  "fuzz #54": {
+   "digest": {
+    "P": "dd4bc5898e813b01f846",
+    "diag": "44e33938776f82e2bda0",
+    "series": "f80616f09045886df2db",
+    "headline": "8eb2d85f0a706b952612",
+    "mc": "da0e7ce5a18712007552",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "5a99c7aa21c7829991dc",
+    "table": "0d31200c9d41b4437eea",
+    "tableText": "0478ed01ffce8b4a412f",
+    "csv": "289bc8914659c1556705",
+    "charts": "1e1149c2aea12723ff39",
+    "text": "513378dbf2bb602c558f",
+    "assumptionFigures": "9552ddf1ad31ad42be5b"
+   },
+   "needAtRetire": 0,
+   "ffAge": 65
+  },
+  "fuzz #55": {
+   "digest": {
+    "P": "dda352fbf54b2e1e71bc",
+    "diag": "0721b71091b258657e2d",
+    "series": "fe1b4a4c9ee1e67172f2",
+    "headline": "758043d307d718603622",
+    "mc": "98a5995c10c133f16594",
+    "reqs": "f6c363c5c0ffe886326a",
+    "dd": "a0baf610100ef093c8ec",
+    "table": "49d62d965fa8a23a0921",
+    "tableText": "1ffac4e459608cad76b8",
+    "csv": "22f3f7b977ee9bec9807",
+    "charts": "346d2c6d48e1033ec0d7",
+    "text": "85c9b882166177162cc2",
+    "assumptionFigures": "66801dc68ce8825afcc8"
+   },
+   "needAtRetire": 148223290.69311175,
+   "ffAge": null
+  },
+  "fuzz #56": {
+   "digest": {
+    "P": "87b9467e584e31a2216f",
+    "diag": "a1dda43e860aa2e88197",
+    "series": "a017ac2aa56241ab59a5",
+    "headline": "082661ce981d55d1619d",
+    "mc": "5df56c345c0839db6a05",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "b993125f739dafed1f89",
+    "table": "2b6679626894cd5e1ee3",
+    "tableText": "f57abd38e0f478abcbb4",
+    "csv": "15ec8a439ab03f01c742",
+    "charts": "08755f679b8eb876a038",
+    "text": "a2f80ea440f1955fbc44",
+    "assumptionFigures": "7274d65ee101bf16e832"
+   },
+   "needAtRetire": 0,
+   "ffAge": 62.75
+  },
+  "fuzz #57": {
+   "digest": {
+    "P": "c05e2ec26c5667a6fd54",
+    "diag": "ad540bb75e55d9209dee",
+    "series": "dd06d5bf154260ae324c",
+    "headline": "51c7cbed4ee7d0f30df1",
+    "mc": "028c9ba3770b2dfb394b",
+    "reqs": "8d4eb852cfcda237ba88",
+    "dd": "8fabb66b1e64bcef109b",
+    "table": "95766896ba6b5e3727ff",
+    "tableText": "dfbae08a40d83df46629",
+    "csv": "4be7c68041af2ac3f59d",
+    "charts": "f6318585fc3a5fb9a450",
+    "text": "655c8847ef8fbba610bf",
+    "assumptionFigures": "0c94c0bad898afd3f3b4"
+   },
+   "needAtRetire": 5981990.822230342,
+   "ffAge": null
+  },
+  "fuzz #58": {
+   "digest": {
+    "P": "b945d1de8abc9cdd0934",
+    "diag": "59f8be691f347844f260",
+    "series": "b7632fe13d6f1ab286d5",
+    "headline": "5c986d532c0d7a13c475",
+    "mc": "c35c4a7709944bdd386c",
+    "reqs": "4f121a7953c2354997c7",
+    "dd": "a3e0b4759cc5251d7b7d",
+    "table": "d5c48951e153fdba532d",
+    "tableText": "8a8f619af9252cc95dc4",
+    "csv": "eaf1f1702e95f5494061",
+    "charts": "fa86afda02bc57494840",
+    "text": "17de57d5fab8112b6e82",
+    "assumptionFigures": "2181dd22d0748ac22030"
+   },
+   "needAtRetire": 259820.17840344147,
+   "ffAge": 58
+  },
+  "fuzz #59": {
+   "digest": {
+    "P": "0a0e49bd358023551a6f",
+    "diag": "ef68905829f87bc363b3",
+    "series": "b876643c26e2d1349f23",
+    "headline": "ef8e0b0d2f6e2f6dc1d5",
+    "mc": "a126c93cb8631c657007",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "4347f3742b748a4348d5",
+    "table": "1866888273f1d942bb11",
+    "tableText": "370421e409e28b4defec",
+    "csv": "ab9edbba5b628f444e36",
+    "charts": "2a4d1fbe952b31c57a68",
+    "text": "b327e1682ac4ebdb9429",
+    "assumptionFigures": "32d8bcac38e363ca822b"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #60": {
+   "digest": {
+    "P": "b833b14a097f2dffac5c",
+    "diag": "d6cdca0c42945586ae9e",
+    "series": "bd94e037b958a87e61bf",
+    "headline": "b8780a3035668357dcac",
+    "mc": "1466570460eaac42f78d",
+    "reqs": "d237bfcd79539357c654",
+    "dd": "aecb23ed21040e5ea593",
+    "table": "9695f9434dd1476cd06b",
+    "tableText": "6c7a80dcc8aa72a209ee",
+    "csv": "3f631ca4b8df9e202fb5",
+    "charts": "0bce9b429701ef23fc31",
+    "text": "7f73a4369c8c3fa80e6a",
+    "assumptionFigures": "dc74afa855b827f3d252"
+   },
+   "needAtRetire": 302814.74624848756,
+   "ffAge": 46
+  },
+  "fuzz #61": {
+   "digest": {
+    "P": "f3181c381358b82a2d77",
+    "diag": "c29f6e7f0441357247e7",
+    "series": "b24e35380dd9e5e497a2",
+    "headline": "1cda77d94c70c94e44ee",
+    "mc": "dd9dfbca18bd7c43a55a",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "ee2774045cde669dd680",
+    "table": "1176300709514809621f",
+    "tableText": "d3b02a1687cc8fefb350",
+    "csv": "a112b85a59f108185880",
+    "charts": "f7980d59e800ed6f5b2e",
+    "text": "2da4d81a4695d52a4849",
+    "assumptionFigures": "98ffe832465de353f88d"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #62": {
+   "digest": {
+    "P": "d6d55819040e2f71fc4d",
+    "diag": "4b354e27f1572249a79f",
+    "series": "9bf4af8b44f93a389379",
+    "headline": "6f714837be0bd1fac674",
+    "mc": "4da0545b27353b2b96ab",
+    "reqs": "4f589c60f6cc8a31cee5",
+    "dd": "d34a46ddf1f61c440dd4",
+    "table": "605f1d1a89175808927c",
+    "tableText": "b215e892f675a46ae033",
+    "csv": "b295c56891a1dfb86c1e",
+    "charts": "5b072349555239a0d90b",
+    "text": "816faa6d0492a7f8380e",
+    "assumptionFigures": "24e94db030eecd0f4a99"
+   },
+   "needAtRetire": 182849077.05803487,
+   "ffAge": 65.08333333333333
+  },
+  "fuzz #63": {
+   "digest": {
+    "P": "588fb0ece352e96433ab",
+    "diag": "e99bcfaa50f20a5459e2",
+    "series": "6154201f6e01c02d8709",
+    "headline": "34277eafd04c227722ed",
+    "mc": "46d921560ba1bac4eead",
+    "reqs": "b8252f1dc7101accadef",
+    "dd": "00f40fa71d9a9194c48a",
+    "table": "2e785642308f06f4def3",
+    "tableText": "0c7870a1988a59eafed0",
+    "csv": "5733cce8802502b47b54",
+    "charts": "2c5fded7e7d87dbcb352",
+    "text": "e58d90e7eeb7bee25d63",
+    "assumptionFigures": "daf6eb3f6ca8d2bc3fa2"
+   },
+   "needAtRetire": 12532906.90365556,
+   "ffAge": 34.083333333333336
+  },
+  "fuzz #64": {
+   "digest": {
+    "P": "0c829211154a85187dad",
+    "diag": "771897cd94292d968cd5",
+    "series": "745033b058d50c020ef1",
+    "headline": "81ba5b051931117a6383",
+    "mc": "a0cd3b124a85121226c2",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "74234e98afe7498fb5da",
+    "table": "8145857da3b5dea25c1b",
+    "tableText": "05edff74f70586f1982d",
+    "csv": "5728e1c265fc36e11b76",
+    "charts": "86a113c163a15235e355",
+    "text": "e2903e0bd3c052afe59e",
+    "assumptionFigures": "d146e56ccc0a4df225e3"
+   },
+   "needAtRetire": 0,
+   "ffAge": 45.083333333333336
+  },
+  "fuzz #65": {
+   "digest": {
+    "P": "25f230d2d331093e76df",
+    "diag": "b98dc8b792ef85aaa947",
+    "series": "61a27095c3079c75358d",
+    "headline": "79006b2db9b784e9c585",
+    "mc": "409af4cbd468723473ae",
+    "reqs": "b0be5a0c7f22ffb45360",
+    "dd": "66913932c076246ee134",
+    "table": "eee8055a0cca1ee88615",
+    "tableText": "1f20e4263a3fe71a764d",
+    "csv": "9322e0e3970ef68a77bb",
+    "charts": "1c69d64e9d36465bf41c",
+    "text": "f74a7132d206c9ae1711",
+    "assumptionFigures": "b1271daf54871aadd732"
+   },
+   "needAtRetire": 242615143.09705716,
+   "ffAge": null
+  },
+  "fuzz #66": {
+   "digest": {
+    "P": "1d2ae5f1e820476e9b7e",
+    "diag": "227c8dbcbd88b18aa24a",
+    "series": "66b378e9431a1fcf9b46",
+    "headline": "303401943cc73ed42062",
+    "mc": "b09a9e6b49ef8b3f7dc9",
+    "reqs": "54c02516417c2c035a2e",
+    "dd": "a262f8246182e9e1cfde",
+    "table": "08c1cac9bbccceb5c018",
+    "tableText": "f4a00e6a21305ae04424",
+    "csv": "9acdb6078f9f83cec05b",
+    "charts": "5954b99303ccd5b7e0b6",
+    "text": "ef03f6bfff1ffc1af0bd",
+    "assumptionFigures": "364d527b093bbc3911c3"
+   },
+   "needAtRetire": 438657489.6130337,
+   "ffAge": null
+  },
+  "fuzz #67": {
+   "digest": {
+    "P": "00fb7e92be1378fbfd0a",
+    "diag": "cc1c4016a8900a4baa89",
+    "series": "3ee68a73e2b80482fa00",
+    "headline": "0b5617160a41e5af18b4",
+    "mc": "8589a4357179e78fbb50",
+    "reqs": "18702d28b22e3063d826",
+    "dd": "13bbe0f09b363575214d",
+    "table": "2d6beedb19f8311b63cf",
+    "tableText": "610abe44b9fb76751476",
+    "csv": "8f95f180f78844e65aad",
+    "charts": "c871af1e1e8aad20a795",
+    "text": "7184f724cba9cf35c5d3",
+    "assumptionFigures": "da8a58743ebddf81e053"
+   },
+   "needAtRetire": 57151190.02139087,
+   "ffAge": null
+  },
+  "fuzz #68": {
+   "digest": {
+    "P": "84a54df7d2c06cfca278",
+    "diag": "f18954a8f8eca22eeab7",
+    "series": "85193a4bd5878a6b709a",
+    "headline": "985b4c25d4dca5dbd884",
+    "mc": "4d10d20b9ed94d918360",
+    "reqs": "841ee396f9c1e2c5cfcb",
+    "dd": "a689c348f0a6613a51f4",
+    "table": "43adfc9eb90e755a74c0",
+    "tableText": "04157df69c828508e655",
+    "csv": "64c8c83c493abf8c0d30",
+    "charts": "5d8726385683ecd23c63",
+    "text": "d01bf42da7e41ef37827",
+    "assumptionFigures": "347e5bebbcc2ab6785fb"
+   },
+   "needAtRetire": 1188571008.5975814,
+   "ffAge": null
+  },
+  "fuzz #69": {
+   "digest": {
+    "P": "a5543f74ed0706d6bff9",
+    "diag": "2829c73fb2e80cbedb95",
+    "series": "16cc6109efd4a3a067a6",
+    "headline": "b2cc8795d9ad6a043f1d",
+    "mc": "3b290b5372ba3e335d96",
+    "reqs": "73dc123c6ff2480dcca1",
+    "dd": "092048f919e20e12304d",
+    "table": "eaab4f9c6cd34bcd17df",
+    "tableText": "28f29d4840160360e228",
+    "csv": "2b9b4ea8a75d36a06f04",
+    "charts": "fca5f9066c6d679fd281",
+    "text": "568509f028dbf28fc28d",
+    "assumptionFigures": "3145303ef5406459b370"
+   },
+   "needAtRetire": 12829546.87988664,
+   "ffAge": null
+  },
+  "fuzz #70": {
+   "digest": {
+    "P": "ecdb0fb03438b6aca4df",
+    "diag": "da86295e7e98447289fc",
+    "series": "c3e276d7d877989ec19c",
+    "headline": "4ebb5df990f3a8a9896d",
+    "mc": "b5dc49a188ac019901ec",
+    "reqs": "df1b8f8be474afd0b936",
+    "dd": "268beed01bca8a1a7e21",
+    "table": "d6d93d078591b4a8e302",
+    "tableText": "3d3ec823462d111cff53",
+    "csv": "50476965753e3403d842",
+    "charts": "c6427ca0a4b6f566b644",
+    "text": "a94f3ecce9d73b970307",
+    "assumptionFigures": "85695fb852a8277683ae"
+   },
+   "needAtRetire": 4459158.223671955,
+   "ffAge": 39.166666666666664
+  },
+  "fuzz #71": {
+   "digest": {
+    "P": "39c90152f1905ce42e84",
+    "diag": "b2edac344b8388bc77b9",
+    "series": "119a9e89e86689324954",
+    "headline": "14ddfb86f00c8ac5d375",
+    "mc": "9a3360d918708151b0e1",
+    "reqs": "23e0415cb568519c036b",
+    "dd": "ced928ce2202f760d4ae",
+    "table": "2c7b31f13845c9c32f49",
+    "tableText": "e593f775eda5f1ae8c23",
+    "csv": "2ff90bf986d249437630",
+    "charts": "797c8663bdc286ef3b60",
+    "text": "1b123370e91c93144092",
+    "assumptionFigures": "08e4adaf9e170923ccaa"
+   },
+   "needAtRetire": 37229458.66525296,
+   "ffAge": 49.583333333333336
+  },
+  "fuzz #72": {
+   "digest": {
+    "P": "3c7458cc25d6e7c0d2db",
+    "diag": "52b52f96722ef4c24b54",
+    "series": "ba7d6d05a0d19a5a0fbf",
+    "headline": "611a33085cbd133bd8e5",
+    "mc": "3003449db6198802f291",
+    "reqs": "8fb632b48925adeee0d2",
+    "dd": "16c9084c98303add52c2",
+    "table": "4a46b904baf3bd296676",
+    "tableText": "85e4a30ed6cad48d81bb",
+    "csv": "6aa3e3e996b72c2a7fec",
+    "charts": "24e9cdaa39c738112aa6",
+    "text": "880c2aa1a1e9f2f7bf45",
+    "assumptionFigures": "8f25b0ec23a5a05414ea"
+   },
+   "needAtRetire": 1548586.5728693758,
+   "ffAge": 36.333333333333336
+  },
+  "fuzz #73": {
+   "digest": {
+    "P": "4e78edf8248873d25cd5",
+    "diag": "50a1a411c1f4cb05c363",
+    "series": "ac17f650c0d39469b791",
+    "headline": "b02e664130817b12fe5e",
+    "mc": "51d08a50d4e1a0998f7b",
+    "reqs": "4679df9ac617fbe4255d",
+    "dd": "791eb802b1b60bbf6c2c",
+    "table": "e57ea4c87c1eee395238",
+    "tableText": "b5370b92160cd9a72fe0",
+    "csv": "35854cde58acad4836bf",
+    "charts": "6eee849f2b56735136c9",
+    "text": "d4454dd645dd9b41eccf",
+    "assumptionFigures": "85eccb7aaba31affd8fe"
+   },
+   "needAtRetire": 1951380.5439741078,
+   "ffAge": 50.083333333333336
+  },
+  "fuzz #74": {
+   "digest": {
+    "P": "8bc4fe897c2703c462f7",
+    "diag": "59f8be691f347844f260",
+    "series": "4115a3c52926268c5400",
+    "headline": "24787e6f721cc5bc9172",
+    "mc": "3099d4835ef9f4dc5f9b",
+    "reqs": "6fc20a8ed5fa982daaba",
+    "dd": "9b2be4e18b6a779c710a",
+    "table": "2fa5fddfbcd023c228ce",
+    "tableText": "cdc8cca23c716cad0369",
+    "csv": "fcef8b9956dafa40f58a",
+    "charts": "1ec878c49cf29d56cd22",
+    "text": "0f683868a72f6fd1fdd2",
+    "assumptionFigures": "c32c4489b21730f7f99e"
+   },
+   "needAtRetire": 601224.3530983997,
+   "ffAge": 58
+  },
+  "fuzz #75": {
+   "digest": {
+    "P": "4cfed587713589e64b8b",
+    "diag": "3e89b57d643c2030fc59",
+    "series": "5f5d2b76df7a3ffeb579",
+    "headline": "dc0ccc4eea0e9659ac02",
+    "mc": "cc51d3b73a2400349cf7",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "e2225f13fff73b44a402",
+    "table": "78b16c123bf2d4ce568c",
+    "tableText": "0aa14718eb2c8bb6e806",
+    "csv": "3e29b2da009905791641",
+    "charts": "9ff31a219665c53d4281",
+    "text": "3d26891dfdfeb1de44aa",
+    "assumptionFigures": "733b267efce8a6874b45"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #76": {
+   "digest": {
+    "P": "4f24abc5ceadd419f85e",
+    "diag": "4b1f75c89c0d25e8bdf7",
+    "series": "247d95bb465354d70e6e",
+    "headline": "502c034d5065ea107b38",
+    "mc": "4f64722737f657e4657a",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "ca8674f7e084e9717e4a",
+    "table": "da8a584585e2330e4a35",
+    "tableText": "3699ac124affc3e32e7d",
+    "csv": "6c18a1da9c12d1b99fcf",
+    "charts": "cb44a1b167d8b59bf63b",
+    "text": "b8c0a3987c90582a3b7a",
+    "assumptionFigures": "ab77adeaec2dae3b685d"
+   },
+   "needAtRetire": 0,
+   "ffAge": 61
+  },
+  "fuzz #77": {
+   "digest": {
+    "P": "df30734ed19e4b34520c",
+    "diag": "dee0d13d7949bb7a35cc",
+    "series": "209fc5b06489567c8384",
+    "headline": "ee9e31a738ee18751ea1",
+    "mc": "cb859f504ce09b5d840e",
+    "reqs": "f7d8a667a5374385cae1",
+    "dd": "480bd0a52d6d3e037a46",
+    "table": "09ce7f6ce11178a6b9dc",
+    "tableText": "a56d4073cc626d5b8b24",
+    "csv": "a42bb867f2043d6ce350",
+    "charts": "eba58503338c13434541",
+    "text": "3f1b8fca9307d26e1c81",
+    "assumptionFigures": "544904352adfe5053042"
+   },
+   "needAtRetire": 5557345.979365102,
+   "ffAge": 39.666666666666664
+  },
+  "fuzz #78": {
+   "digest": {
+    "P": "b4afbdeb87db154c16dc",
+    "diag": "b8600613ec66bc11e2a9",
+    "series": "7441e42418ecac2551df",
+    "headline": "555134bbc2a4d20887c1",
+    "mc": "6078ac834ca48cdbff18",
+    "reqs": "9f35bb72393dc6c74a2b",
+    "dd": "ef3df5ac41ce1354c2cd",
+    "table": "382299f0ce009fbb1203",
+    "tableText": "f0aad8e62f918505a51a",
+    "csv": "423db26c821260388529",
+    "charts": "81b2556f39c4ddcb0b91",
+    "text": "c82551823527a4ca1bd7",
+    "assumptionFigures": "7cf79a5b193bb0b9f083"
+   },
+   "needAtRetire": 1594196.0430757024,
+   "ffAge": 61.583333333333336
+  },
+  "fuzz #79": {
+   "digest": {
+    "P": "f51be364a44b1a7f436f",
+    "diag": "b8266b8b7faea17ce2a9",
+    "series": "0b23344947fa55385312",
+    "headline": "5f30f24c06e99e075f28",
+    "mc": "fc7ee666b54f5767af8e",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "d7168de50b22c600fec9",
+    "table": "c7c2a08f4fe3b92f5310",
+    "tableText": "e2c3dc0ac4d0b5a43192",
+    "csv": "623e92037ae06db195c5",
+    "charts": "b64fd03a86045f489f0e",
+    "text": "e8db779e0472ea2c28c0",
+    "assumptionFigures": "7826206f1e776105885f"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #80": {
+   "digest": {
+    "P": "757c656e750ad1f5de37",
+    "diag": "fd046446fad2ede11b74",
+    "series": "ddb069693bf5b3103e9a",
+    "headline": "190a2b97b6e7018c6569",
+    "mc": "24fb87006f7cf78f23ad",
+    "reqs": "b4320d79b75ef2cdec60",
+    "dd": "c5555acb39b75faea8ef",
+    "table": "ef25e3672c9f510010b0",
+    "tableText": "396529373e5c238f2b7e",
+    "csv": "062912862e3e5d1499ff",
+    "charts": "e7d9ca10a5597e19c60f",
+    "text": "f7f9e5c7dabf777a28d9",
+    "assumptionFigures": "c35786673a3b54c0019d"
+   },
+   "needAtRetire": 186689.70687190568,
+   "ffAge": 67
+  },
+  "fuzz #81": {
+   "digest": {
+    "P": "ac128772ef834e211a39",
+    "diag": "26a4f426411452045782",
+    "series": "57ea5422e2ec2ca00ed9",
+    "headline": "b55b65672c864d30ee31",
+    "mc": "db1efd773387518dc8e3",
+    "reqs": "4bf733acf27e8af82d2a",
+    "dd": "9beedeea42df325edc3a",
+    "table": "f048aa94297738f634bb",
+    "tableText": "11dddb424b56dc54df60",
+    "csv": "a69b41d57209e01edeba",
+    "charts": "b73e6e7b2e53c9371b8f",
+    "text": "335f721808dfcfe79795",
+    "assumptionFigures": "e695bf1d74c7446510e3"
+   },
+   "needAtRetire": 85210925.53963165,
+   "ffAge": 82.58333333333334
+  },
+  "fuzz #82": {
+   "digest": {
+    "P": "aaa0246645ed2bbd3e35",
+    "diag": "838157b53ffd42ae50f5",
+    "series": "f1928ed82c20357a4b3e",
+    "headline": "04033ae67d411b6f9885",
+    "mc": "81dc27f522c7c640120d",
+    "reqs": "c86ae3daac295410032e",
+    "dd": "b3355f823651935bd45e",
+    "table": "6388ba6795b9af90331f",
+    "tableText": "eb76aca780c12329cf38",
+    "csv": "bf374ac7c49cbe4c9a78",
+    "charts": "8758dc9c40e4ba99b349",
+    "text": "ad33403ca6628a0a7c63",
+    "assumptionFigures": "f7c523bb9e1762966445"
+   },
+   "needAtRetire": 4682637.562906979,
+   "ffAge": 44.25
+  },
+  "fuzz #83": {
+   "digest": {
+    "P": "c5fec0fa854d4241293b",
+    "diag": "5b5e4294e4955526024a",
+    "series": "aa3dda2daf0f30a9bbfe",
+    "headline": "d7a3f7ed2316567bd694",
+    "mc": "dc352e215f64bf1278df",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "f5b5dd18da07a558ee9e",
+    "table": "6c1d333cac04147fa111",
+    "tableText": "2266c637d81a9119fb09",
+    "csv": "75bc3664200f4a010799",
+    "charts": "93345f997f7a6791566d",
+    "text": "d449e099f6ba0a0993b0",
+    "assumptionFigures": "bfac14d97f0106599cda"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #84": {
+   "digest": {
+    "P": "230db0788e71207abdd2",
+    "diag": "06730f60c3ad89355aa1",
+    "series": "b5809cf9aa9dc02e1c27",
+    "headline": "e9ad44735016f42f89fe",
+    "mc": "fc440b151ba030f7755c",
+    "reqs": "2d4b24fd8be038e7ea96",
+    "dd": "f4ad13db7293c3e498a4",
+    "table": "051ebfa343a4d26e2970",
+    "tableText": "89db4ffb1c2e4527afd3",
+    "csv": "6f4dad9f6f7805ed720a",
+    "charts": "c655d2a75d579f3b49a7",
+    "text": "6b43fcc34f14baa729b3",
+    "assumptionFigures": "03e3afc1116337144b92"
+   },
+   "needAtRetire": 443364.5007792623,
+   "ffAge": 39
+  },
+  "fuzz #85": {
+   "digest": {
+    "P": "569f958e4ce71f358676",
+    "diag": "6b64848b827b9e3fc06c",
+    "series": "2386f3db8c503161e708",
+    "headline": "bcbaf0d0ff611b483728",
+    "mc": "0eff3b0ef2bab3c24a91",
+    "reqs": "30b0b80fbdd994a06b65",
+    "dd": "74234e98afe7498fb5da",
+    "table": "99385b70f8b673214bd4",
+    "tableText": "92c9ec8167d2cb772b75",
+    "csv": "2b95a00ede8cc79b2088",
+    "charts": "8e28b5ea90a607ff4ccb",
+    "text": "59c4d13787ee2eca152a",
+    "assumptionFigures": "6e0e49e8f04059cfc7ff"
+   },
+   "needAtRetire": 1719872,
+   "ffAge": 59
+  },
+  "fuzz #86": {
+   "digest": {
+    "P": "61c6e5db7bebe3435407",
+    "diag": "59f7484bd0f6c7c3f944",
+    "series": "288cf4a9dfca5623bc5c",
+    "headline": "131039966fa1abde9e8d",
+    "mc": "d83dd0e5063cb5c0be37",
+    "reqs": "52280f39f6c8da5b24f2",
+    "dd": "c8653f379f9fe888c4ff",
+    "table": "f0f818ddd1d8ce08e59a",
+    "tableText": "4b460dc870e12b74ea21",
+    "csv": "ea1fd3aee23bcce63652",
+    "charts": "e2d09d6e177cd81e3386",
+    "text": "f2d64e0daee956005e36",
+    "assumptionFigures": "a58e1af0899266b2d54d"
+   },
+   "needAtRetire": 913477.6516750305,
+   "ffAge": 24.666666666666668
+  },
+  "fuzz #87": {
+   "digest": {
+    "P": "58b8e71ba18f83c7934a",
+    "diag": "c787af708b9810142b96",
+    "series": "8fbfbb6f66b067c310c0",
+    "headline": "24e03658cabb9aabfedd",
+    "mc": "88710e3e00fb781d83e3",
+    "reqs": "d60a22f95ac4f8e1574e",
+    "dd": "6bedf14ccd925ecf95b5",
+    "table": "489e6e033510f4fb9593",
+    "tableText": "95fbf0cda94929a4934b",
+    "csv": "42f633c8525ce6fb3125",
+    "charts": "f57e45e1f012fb4f92c3",
+    "text": "ee5825caf363e38ff1de",
+    "assumptionFigures": "dfc343e3f802a6b8f454"
+   },
+   "needAtRetire": 11090209.313828917,
+   "ffAge": 35.833333333333336
+  },
+  "fuzz #88": {
+   "digest": {
+    "P": "87a1fa852e01c2ff2280",
+    "diag": "7554e16093a17755e612",
+    "series": "57af7f68cfd0d745e945",
+    "headline": "8b828fe7bea2128889ef",
+    "mc": "c0dd4be8d1e73767ce60",
+    "reqs": "36c77334a16b84422ff1",
+    "dd": "8780a51c1d50996ca961",
+    "table": "8a65baff5d4c25d3dbb6",
+    "tableText": "88717b719de0c43dc236",
+    "csv": "9a99f52a5f9ee59f89cb",
+    "charts": "011b2ccd37cb4a2a040a",
+    "text": "d0b5c205224fe2e18626",
+    "assumptionFigures": "7cde000a3b67e5c4851d"
+   },
+   "needAtRetire": 8574220.242587045,
+   "ffAge": null
+  },
+  "fuzz #89": {
+   "digest": {
+    "P": "3debe763a266d3ac22aa",
+    "diag": "864bea8b99fd98658de0",
+    "series": "0cc2e26f7741506aa6a7",
+    "headline": "83221ac80677f93a8bfb",
+    "mc": "4c06691c538423ef7282",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "e82362d35e70e739751d",
+    "table": "ba12f40a67bbeac063de",
+    "tableText": "eb172e500d4cb9368668",
+    "csv": "60808687b892495fa9fe",
+    "charts": "7e65022ba4654371dd6f",
+    "text": "20ac54c195744b4f0fe7",
+    "assumptionFigures": "32d8bcac38e363ca822b"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #90": {
+   "digest": {
+    "P": "eb2cbce8e569116b9a11",
+    "diag": "4262bb5501a9668b4b8c",
+    "series": "eba79a86c12ab23afc4e",
+    "headline": "f08fecfa2a8621eda2fc",
+    "mc": "2c201e89c5506c063e17",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "72dae5458f89d7d202dd",
+    "table": "31a90350a9f822675812",
+    "tableText": "846d9125dc823c9c3043",
+    "csv": "575e28346203a833254a",
+    "charts": "c18f9985ada0b1f7a2e0",
+    "text": "545cd8a19493bb13a28f",
+    "assumptionFigures": "41500a40200c3a7972ba"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #91": {
+   "digest": {
+    "P": "ab9dad47aa57edc1fd65",
+    "diag": "7e17dea4c1bc48dc5733",
+    "series": "7713a61e4ae4458efcc4",
+    "headline": "3cb6f7b67a891854227f",
+    "mc": "9230d5fcf0af9a381bd1",
+    "reqs": "663ea4f0828ad49a1d70",
+    "dd": "9df51141f247d3a6c1cd",
+    "table": "3f6d1e36ee46a6f6f197",
+    "tableText": "a31e2b5d500dc95ae184",
+    "csv": "d221509a9389a7491f62",
+    "charts": "3723ff61b7bfde34c706",
+    "text": "c23616372a4fd8ef876e",
+    "assumptionFigures": "f2a5b8c6b2de8fd1d7df"
+   },
+   "needAtRetire": 573094184.211926,
+   "ffAge": null
+  },
+  "fuzz #92": {
+   "digest": {
+    "P": "477bacf27ccdcf0fe9bb",
+    "diag": "0b1d2dd5e37e79c67a17",
+    "series": "7a0dd73099103beb234e",
+    "headline": "943506dc64e834ea973e",
+    "mc": "6c2f7b8c1f0b70134fd7",
+    "reqs": "d2cf6e0cc2273a21f6b1",
+    "dd": "85215d7d4ab4c378e2ff",
+    "table": "b88f14abce3ed1db1b23",
+    "tableText": "6f86975d01ca23ffd0f3",
+    "csv": "11b2310bca80ceec1d32",
+    "charts": "90270024aba55731a712",
+    "text": "2a2755b32633e6d321b7",
+    "assumptionFigures": "74a5b63707686983860e"
+   },
+   "needAtRetire": 8888141.376018867,
+   "ffAge": null
+  },
+  "fuzz #93": {
+   "digest": {
+    "P": "5e334833128878422670",
+    "diag": "d7639fbcf4ae12b77168",
+    "series": "224e3117faaf1a576e24",
+    "headline": "a6e1ba8e24ad47dbf0a0",
+    "mc": "987cf265b9fc41599b11",
+    "reqs": "0843ab3638f2ee094a92",
+    "dd": "46e5aa89021cf475b94d",
+    "table": "b5d9ad508a8face895bf",
+    "tableText": "4a7caaf22b22844d401d",
+    "csv": "521256a6b10f34f85264",
+    "charts": "443ed5630aff749061dd",
+    "text": "d12f2bac0febe575111e",
+    "assumptionFigures": "c8b9857c6f9818ed0ce7"
+   },
+   "needAtRetire": 5830302.779216619,
+   "ffAge": 34.333333333333336
+  },
+  "fuzz #94": {
+   "digest": {
+    "P": "09e5d4a39624daa0933c",
+    "diag": "1c761c6a88f395377e07",
+    "series": "3bf6453c0089f1ceec13",
+    "headline": "1c3cccd785814adf8e78",
+    "mc": "49859f98b91c4ad7dae7",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "f13fc85e3583c4c380e2",
+    "table": "ef176ce4a85cff70169a",
+    "tableText": "344ff5ef02c401735f95",
+    "csv": "3da3a2ebb4c2e9b8ed3a",
+    "charts": "e30debe4bf7d44658be6",
+    "text": "4a5c3f4928cba10bf107",
+    "assumptionFigures": "41500a40200c3a7972ba"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #95": {
+   "digest": {
+    "P": "3ad1fbc0db8ff48a16c8",
+    "diag": "2a99af5452aec8758fb7",
+    "series": "144a801f9d90a84c673c",
+    "headline": "9fa5fd2af6d460589010",
+    "mc": "48543089b2f4d0049199",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "acd4b0b87467839d0307",
+    "table": "5296fa40ca69f2b407f5",
+    "tableText": "5be6e75a02e292fbe408",
+    "csv": "a4541c7d53b69bdb9066",
+    "charts": "d3b309d2906453d96692",
+    "text": "aaef239323f74fb85a25",
+    "assumptionFigures": "00e731199f36d4f2a2cf"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #96": {
+   "digest": {
+    "P": "d14a307c7f3253d45358",
+    "diag": "ed593dff8ec710a37558",
+    "series": "9778a1eb552e91082139",
+    "headline": "2d58737ad715e049c045",
+    "mc": "dd66c0ce953238b8e90b",
+    "reqs": "cc1fd15794cebe27b1b1",
+    "dd": "a2bb75ca152ecaf4bcd7",
+    "table": "c6534df936041ddbd19c",
+    "tableText": "956ef951ea074d079738",
+    "csv": "7b31982d7cb6d15eba34",
+    "charts": "2ed28193b1788213dbdb",
+    "text": "4f22c2b47b89ff43c68a",
+    "assumptionFigures": "fd1dc9bc0d7aa9e7000d"
+   },
+   "needAtRetire": 1833096.4385793211,
+   "ffAge": 51.083333333333336
+  },
+  "fuzz #97": {
+   "digest": {
+    "P": "4a870ee7e95f8da2494f",
+    "diag": "5dcc333ab7867415555c",
+    "series": "13bb32e2ea5dc8a63da2",
+    "headline": "cad943a83fa8725251ba",
+    "mc": "3afd51fe3b5f234a9082",
+    "reqs": "16227673e3bc459db360",
+    "dd": "ff2a67f1d998fbac822e",
+    "table": "f85cdaed3af9130a612a",
+    "tableText": "ca0699a8e7929ea0775b",
+    "csv": "d4213c9820f2908b2729",
+    "charts": "1ce1e641b3d1ed3458db",
+    "text": "173bec2d490d72059cbd",
+    "assumptionFigures": "bb5af5f1318a29e060e6"
+   },
+   "needAtRetire": 1649649.1425611079,
+   "ffAge": 39.416666666666664
+  },
+  "fuzz #98": {
+   "digest": {
+    "P": "18a115d9695098f53ab6",
+    "diag": "227370bc2dbad20b4327",
+    "series": "05539c55718b761dfdcc",
+    "headline": "08175ec3d4b8000ebe78",
+    "mc": "98ae72c412c15843cf8f",
+    "reqs": "8093050e5e89c5ee5665",
+    "dd": "501f5b391a7fad512878",
+    "table": "464a754a5706ac93498d",
+    "tableText": "e017d8f86ff7a8420f0d",
+    "csv": "ff8971f1df35d9073655",
+    "charts": "6f021d9ab81e62820cd7",
+    "text": "ef6fb5ee99330c3723b0",
+    "assumptionFigures": "e9c4b37e5d8d8ba559e6"
+   },
+   "needAtRetire": 840347.7880282782,
+   "ffAge": 20.583333333333332
+  },
+  "fuzz #99": {
+   "digest": {
+    "P": "1ab5c3d9a31edf743047",
+    "diag": "a27f8b0aaba526ff7153",
+    "series": "9f00c21f4296411f9b31",
+    "headline": "bf6d9d6c5c0baf9580b8",
+    "mc": "d5a1e8353d602c84522c",
+    "reqs": "a8707e3e0a0e09f70a1e",
+    "dd": "a72a250e9610497ae70f",
+    "table": "24593ff5ce11bccc4ec5",
+    "tableText": "4628674ccaf4fec24ace",
+    "csv": "9bd7aefa478a5e7d5e15",
+    "charts": "0336b7c9ce78be21505f",
+    "text": "bbc69565090d860295ac",
+    "assumptionFigures": "09edb2e263cb207f2df6"
+   },
+   "needAtRetire": 119949546.9058664,
+   "ffAge": 52.75
+  },
+  "fuzz #100": {
+   "digest": {
+    "P": "2ce4cee6ad4603f4d000",
+    "diag": "bd8b355cfcd77d676d9f",
+    "series": "b6b7449e509e7ca7adb7",
+    "headline": "afbeec0d3b9e66daedd1",
+    "mc": "0b3a9479c8c86e76c491",
+    "reqs": "288647ed0cabf7e0e908",
+    "dd": "067b20f1c97058d45c7f",
+    "table": "b07147146f32bc286d0d",
+    "tableText": "f87dda63d1326634b8ed",
+    "csv": "2f221ab6c5f9bec45049",
+    "charts": "20e9aa0a6e3cac9fea82",
+    "text": "e7c6c95936e829b918de",
+    "assumptionFigures": "d923002c13f35c033afe"
+   },
+   "needAtRetire": 2282106.919198455,
+   "ffAge": 48.333333333333336
+  },
+  "fuzz #101": {
+   "digest": {
+    "P": "fa8964a538eba20f12a4",
+    "diag": "d33c03d78f4bd7abec7d",
+    "series": "a4048d4d3e2ff941b329",
+    "headline": "cfb47e3b2b364933e849",
+    "mc": "33c6f1202c2afb95bb52",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "3d1fd4b0cc5068433905",
+    "table": "a5dddfd6a424ee6b4b86",
+    "tableText": "b0bde055f70022773a66",
+    "csv": "ce5a97e6766a9837dc49",
+    "charts": "451271a2a6fe66299030",
+    "text": "6b8d3171920364cdd404",
+    "assumptionFigures": "a500ae9053714260f75f"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #102": {
+   "digest": {
+    "P": "2d25e71c6d0fb34dc5f7",
+    "diag": "93e418649de4ed022f43",
+    "series": "320a800f1df5c7a8676e",
+    "headline": "f4151432bc37142e25d8",
+    "mc": "bdc5783607100fd3895a",
+    "reqs": "d8beb3ed6fe2e94e0d8f",
+    "dd": "cc5563018210127e3c78",
+    "table": "b967286911ba3ff89b3a",
+    "tableText": "463b9294a7b6e5bf7bbd",
+    "csv": "71f116e85999a5467ac3",
+    "charts": "4d0cb81b0ba04712ef33",
+    "text": "1ca03eaa1e15972d7c23",
+    "assumptionFigures": "a581441e127a5cbf7db6"
+   },
+   "needAtRetire": 255895300.15866184,
+   "ffAge": 93.91666666666666
+  },
+  "fuzz #103": {
+   "digest": {
+    "P": "1aeab43018ec7b1b0c63",
+    "diag": "263497040418df489bc7",
+    "series": "b0843e4162c851c1f8c4",
+    "headline": "3b5c44c645caa558cd6f",
+    "mc": "c95d6c52b7e46ca5368f",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "69c58beb598ab5407a06",
+    "table": "bb8c41f3d81989c4b5c6",
+    "tableText": "59772ceece4449c1df29",
+    "csv": "77e3ffda182820c26e8a",
+    "charts": "cda5dc9d070bc8c849b4",
+    "text": "dc9ef5c2635b68a25b20",
+    "assumptionFigures": "5cad229cf4c66edd9fba"
+   },
+   "needAtRetire": 0,
+   "ffAge": 35.083333333333336
+  },
+  "fuzz #104": {
+   "digest": {
+    "P": "0a8e756dec0cc165d014",
+    "diag": "1d26468ea863322135df",
+    "series": "3d0bd371322b0d0463cd",
+    "headline": "293f5cf4084c13ce1084",
+    "mc": "47c6d7490da2f075db51",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "48b644b1290cbbaea5f3",
+    "table": "a6ee6fbd35cdb72424f4",
+    "tableText": "7d7a3d91f1a0ae89955c",
+    "csv": "f18a74e0194858aff75a",
+    "charts": "8fa4f3b2c77817a56764",
+    "text": "0bc2f309969daa893ca0",
+    "assumptionFigures": "c383ce935a6f1d66a93c"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #105": {
+   "digest": {
+    "P": "e896b77ced01ceedffe9",
+    "diag": "b20c28c73cea0c21f989",
+    "series": "fe57ffaaeb30f0065761",
+    "headline": "cdd16a5c87ea4627eda5",
+    "mc": "c94d112ea15c330d4929",
+    "reqs": "7e6d1b581454328dbbfc",
+    "dd": "f57041428a7dba22ccd5",
+    "table": "0451521a8bc11d972c74",
+    "tableText": "3beb320ca5f6b6e17e10",
+    "csv": "e97ac0c73e02629ca3c8",
+    "charts": "a447bfd7ec073ed87ac2",
+    "text": "feeef021d017f4e682dc",
+    "assumptionFigures": "a46dfa492ccd5b1f4cf1"
+   },
+   "needAtRetire": 4512390.442379958,
+   "ffAge": 41.75
+  },
+  "fuzz #106": {
+   "digest": {
+    "P": "f9eb5b5a4da2ba64c6f7",
+    "diag": "2054585e86053acfe34b",
+    "series": "54f25c011b56ddbe8d6c",
+    "headline": "7502052fb644442bc0ed",
+    "mc": "2f2f2f280ece274a3bb9",
+    "reqs": "2424e85e84e53cf828fb",
+    "dd": "153c5093f5b094f4ba6e",
+    "table": "d0178b33caabb55b9d8f",
+    "tableText": "a8090f10e5c94b50af8f",
+    "csv": "c234327bb627d6859fb4",
+    "charts": "cf92a5a59ce0d4944aae",
+    "text": "7fc4a7369c7b2b5d8efe",
+    "assumptionFigures": "7a628f0d8cb14a8962a5"
+   },
+   "needAtRetire": 9332236.8209813,
+   "ffAge": null
+  },
+  "fuzz #107": {
+   "digest": {
+    "P": "e604f0cdfae3844300fa",
+    "diag": "13bda3d7824df6b7ee50",
+    "series": "4e625ee217e731d7624c",
+    "headline": "d2a305befba68af578de",
+    "mc": "77e9eae7fa2760237f82",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "5014b72f06916eb0e608",
+    "table": "edfcf487da7cdda3ef0a",
+    "tableText": "51b66a62d16efeb17c26",
+    "csv": "9ec231ff6a6b6872f9a0",
+    "charts": "039135dad7ff4601667c",
+    "text": "b7ba227bb315407c1128",
+    "assumptionFigures": "68e6d9f0633d89a2c20e"
+   },
+   "needAtRetire": 0,
+   "ffAge": 42
+  },
+  "fuzz #108": {
+   "digest": {
+    "P": "8d29ff11c09abbe012cb",
+    "diag": "0b328fa764b9d71cf164",
+    "series": "1cb95b05651ad892679a",
+    "headline": "8192b377ae493552a456",
+    "mc": "3c69826687317210145b",
+    "reqs": "90ddda5d7b56a402b774",
+    "dd": "c42c85767958633df0c7",
+    "table": "3fb8a16d51f95aecc647",
+    "tableText": "9494ac70f54fd79845c1",
+    "csv": "cd764a98319b1dba7479",
+    "charts": "b54094be7e7251967190",
+    "text": "d4aaf1e519222dd43e1e",
+    "assumptionFigures": "9f2b6d69ef7f3b8ca7b2"
+   },
+   "needAtRetire": 11234351.194346607,
+   "ffAge": null
+  },
+  "fuzz #109": {
+   "digest": {
+    "P": "7a8ccfbd8aa95c771cc8",
+    "diag": "3454b99191aae26f9444",
+    "series": "74059185156f3c10c49c",
+    "headline": "8e65cd9e61b360edfadd",
+    "mc": "8d4fde848b2ceffc05ab",
+    "reqs": "bd1731f0094639d9487b",
+    "dd": "d1b567194b8c15831f7e",
+    "table": "f31c8f91239fbb23d6fb",
+    "tableText": "298e40375a1077217a84",
+    "csv": "e8cf25f8588a0e7d055e",
+    "charts": "c45bb50824877c56b5f0",
+    "text": "655fcf62e7694f3b2332",
+    "assumptionFigures": "f346f325004a932c4af0"
+   },
+   "needAtRetire": 860176.1979711894,
+   "ffAge": 27
+  },
+  "fuzz #110": {
+   "digest": {
+    "P": "ba6aa4f5ff596a62ddcc",
+    "diag": "356efc72fe39c6d6e49a",
+    "series": "d20466051e3502f874e4",
+    "headline": "96a4170d43bf8c65575f",
+    "mc": "46d9d26f168c5a951d37",
+    "reqs": "408dae1db3ab8d71ad62",
+    "dd": "0f8d8f91272248ab2971",
+    "table": "b1a17a4b18ea2942415c",
+    "tableText": "98488be35770edfa5cde",
+    "csv": "f20625d7201cde8240c6",
+    "charts": "e6f9fd7c2eb19a8f9eb9",
+    "text": "b3eccbe450eb2ad55b36",
+    "assumptionFigures": "3407d8efdd43d6439c31"
+   },
+   "needAtRetire": 5211130.882115382,
+   "ffAge": 45.75
+  },
+  "fuzz #111": {
+   "digest": {
+    "P": "fef4f434844cb386182c",
+    "diag": "b123dba62e5f02292627",
+    "series": "2b847482820433eededa",
+    "headline": "fec4f719241ef16dd621",
+    "mc": "b12883fbed39585098a6",
+    "reqs": "887ed0437446abb5066f",
+    "dd": "7e2b0a4341999cbc48e0",
+    "table": "00be0f1835db55fa97cd",
+    "tableText": "c7b2cb1c58c9a051a98e",
+    "csv": "2fbd543b876d9c8c5525",
+    "charts": "f2947ff5533ebabf32f2",
+    "text": "0fcf35118cab83b7fc2d",
+    "assumptionFigures": "76d81261141d9cc30c5c"
+   },
+   "needAtRetire": 226347388.85262513,
+   "ffAge": null
+  },
+  "fuzz #112": {
+   "digest": {
+    "P": "a7235cc666b48e90df0e",
+    "diag": "204449b372b300f2cd6c",
+    "series": "04f2f748bd93c3c92775",
+    "headline": "c0168298a5b46a3c1b0f",
+    "mc": "01ca3a00b1b6fee14558",
+    "reqs": "ebbfec0781b04156dc86",
+    "dd": "74234e98afe7498fb5da",
+    "table": "49ef99285db9b469da9f",
+    "tableText": "5cd1b710b63b2d8a75bc",
+    "csv": "3bc7e0073941d500166b",
+    "charts": "a1f8b20223e45d324984",
+    "text": "bb5f0ad2cd5f1a23d834",
+    "assumptionFigures": "ea0a81fe8b41d022029a"
+   },
+   "needAtRetire": 1696316,
+   "ffAge": null
+  },
+  "fuzz #113": {
+   "digest": {
+    "P": "fedcbbc97da1b856756a",
+    "diag": "2a5f233e9083346ad0e0",
+    "series": "6f8f796ec2fbd31c2f4d",
+    "headline": "23c8fb1f60eb06521b10",
+    "mc": "cab79bed9a395ef1f480",
+    "reqs": "cec8f8c54119d0878f95",
+    "dd": "4088b86a9fec7cbe9513",
+    "table": "3e3b3b93ab43b47b3db0",
+    "tableText": "2c6ab0ed7179d6656fa5",
+    "csv": "409c64a19fcd2770d6e5",
+    "charts": "43d05200686ffc690460",
+    "text": "629e2e3fd873fe5eac7e",
+    "assumptionFigures": "0d4e7b0427f640b327c5"
+   },
+   "needAtRetire": 163816.52242770838,
+   "ffAge": 62
+  },
+  "fuzz #114": {
+   "digest": {
+    "P": "bf22e7d6b574519d6b38",
+    "diag": "9e9282789963fc072921",
+    "series": "a2ad0427d40be8d0d102",
+    "headline": "e4fdf52d99f42963521f",
+    "mc": "f6997f03eb580dff8410",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "d1e1ba34032f047cf5fa",
+    "table": "648d89a08c8fa42ded7a",
+    "tableText": "a2a0d6db6537f38ce8b5",
+    "csv": "cda2f71adad78e367b28",
+    "charts": "aef3863aa0375f98a6a8",
+    "text": "5b182db143dacbaf8ca1",
+    "assumptionFigures": "51c874510a2e2d9a7087"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #115": {
+   "digest": {
+    "P": "7675dc035825d394980c",
+    "diag": "dec08cce441515d2e8b0",
+    "series": "894baedad547132c98a5",
+    "headline": "12bb2a020f69500ad6cf",
+    "mc": "74b11a1fecf7023165b6",
+    "reqs": "70a411df70d038be1fba",
+    "dd": "41fd0591bb0c7aa475ac",
+    "table": "0e045a7962fe82913c02",
+    "tableText": "98e604409d9e278ed796",
+    "csv": "eaf90308f55564aad99c",
+    "charts": "7323d808c1bd008aec41",
+    "text": "da6a7b0980d9a0d451b6",
+    "assumptionFigures": "15afe5496df5e2dbff69"
+   },
+   "needAtRetire": 123452.75370354945,
+   "ffAge": 67
+  },
+  "fuzz #116": {
+   "digest": {
+    "P": "3921a6e7f21afe99118b",
+    "diag": "9fa949a9679c88a33529",
+    "series": "dc1531eb9cc51bdf4cec",
+    "headline": "f7e481dde7ea0ea746f6",
+    "mc": "79517840ead1dfac061d",
+    "reqs": "58694198bc373937ed5a",
+    "dd": "655d912f3565038b0fa8",
+    "table": "b49e381cfcc55b35d051",
+    "tableText": "43caf4d86b379c4e7067",
+    "csv": "ce58190278167fcc70a0",
+    "charts": "70e92938b537d846cc8b",
+    "text": "cab6911bde93c959e057",
+    "assumptionFigures": "0cb9dbe8c1568866c718"
+   },
+   "needAtRetire": 48609490.881451674,
+   "ffAge": 41.416666666666664
+  },
+  "fuzz #117": {
+   "digest": {
+    "P": "e42021bb92dd556478cc",
+    "diag": "cd76035bd6814db14d8a",
+    "series": "af4b56894c469e9044b4",
+    "headline": "012f9aa397594b07a105",
+    "mc": "cbd55cb99ba3830a642a",
+    "reqs": "994759f1e631e76e3c0e",
+    "dd": "4ef95c1f0b6e5c1592a0",
+    "table": "910d25598c320b32fccb",
+    "tableText": "168df28e37d5d01a656b",
+    "csv": "0f593e54a58774a2849b",
+    "charts": "d176c682f78d37ee6c4c",
+    "text": "419c9b1a786a0481ab79",
+    "assumptionFigures": "9b915cc1a4fed7a40c5c"
+   },
+   "needAtRetire": 262927.28553415806,
+   "ffAge": 43.083333333333336
+  },
+  "fuzz #118": {
+   "digest": {
+    "P": "d28e00b84608ad3cd53e",
+    "diag": "bae19b184bc131cd0dd1",
+    "series": "d860de9d03f1df368270",
+    "headline": "289a8026d6d27e7105e1",
+    "mc": "04cce9367914a7e9a9d2",
+    "reqs": "1701b5e3015f081b017c",
+    "dd": "75680d9da59f4533e48e",
+    "table": "0333ae83e92ec8959a87",
+    "tableText": "2ae2a4db3c4c108ef884",
+    "csv": "47234502fe7ad070880a",
+    "charts": "3f5379c6510889ac7a25",
+    "text": "1d05e0354c147aebb2df",
+    "assumptionFigures": "8388a5a13d311e002f46"
+   },
+   "needAtRetire": 22730467.530834347,
+   "ffAge": 74.75
+  },
+  "fuzz #119": {
+   "digest": {
+    "P": "9236cc9c034ce07e8f54",
+    "diag": "562a31ec8484dac0136b",
+    "series": "356ee0e1f0110e285ec0",
+    "headline": "460716b4b795e36e31ce",
+    "mc": "3b3091d7d355a3bfc023",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "0132d02c90c68801af88",
+    "table": "0c6f1467d3d376428b65",
+    "tableText": "c89e2cb2c15b132c44e9",
+    "csv": "7f2c3d657bc634e016ae",
+    "charts": "15112f8281595d964b9e",
+    "text": "3d56fb4ee1836c8315d6",
+    "assumptionFigures": "27c964ea112cf75a44a0"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #120": {
+   "digest": {
+    "P": "3260d12ab9c3ddd51fb8",
+    "diag": "4001343ce12ede25838b",
+    "series": "96454a0a2d3d11d3c497",
+    "headline": "b6c9279ae367d424a7e5",
+    "mc": "fad868eee0fad78ac1c6",
+    "reqs": "f207c0d4998fd866d9be",
+    "dd": "1c408a6d17ba967ac2c0",
+    "table": "b85346e3631c28810ec4",
+    "tableText": "a70a8b7ef9015e048622",
+    "csv": "b13723466a9e366e9b40",
+    "charts": "2702d3c53be85f6dd5b2",
+    "text": "8788f1c5f3b75d87de35",
+    "assumptionFigures": "6571db36bd8ed51d6aa9"
+   },
+   "needAtRetire": 8739451.762823923,
+   "ffAge": 52.91666666666667
+  },
+  "fuzz #121": {
+   "digest": {
+    "P": "746c6bde7c0c5b206c2f",
+    "diag": "a6dad032105dc5f0162b",
+    "series": "037291d35584e0a97132",
+    "headline": "4c6ab536c6c491549ea7",
+    "mc": "1ff65ec1d5e005e954ab",
+    "reqs": "86f4ac73994576ebd165",
+    "dd": "11e6e1b5d5d52e4ca411",
+    "table": "996b467acf0e130e4d54",
+    "tableText": "fef5a6d5cd386e649196",
+    "csv": "0230ca64caee9a6e0636",
+    "charts": "3f1e8ea6b9d5afd984ef",
+    "text": "15e896bdfe5193802252",
+    "assumptionFigures": "1a3c025dc77b5abb34f4"
+   },
+   "needAtRetire": 16844771.787398092,
+   "ffAge": null
+  },
+  "fuzz #122": {
+   "digest": {
+    "P": "2ae77f00ce023a0f6620",
+    "diag": "6520ae01996d8eb5d997",
+    "series": "f186a8652c763ce97409",
+    "headline": "499fda96cac9419c5b98",
+    "mc": "a332b605070112427448",
+    "reqs": "1ff96078cdca4827773c",
+    "dd": "e79ba1e39107b1deabf1",
+    "table": "14f80d59940104ad6620",
+    "tableText": "e74208a9b2a61c071a86",
+    "csv": "bbf8330638a335780c40",
+    "charts": "64713716c8b304715e0b",
+    "text": "c5e789c579b1265b5804",
+    "assumptionFigures": "33daff661ed8944f7099"
+   },
+   "needAtRetire": 11649059.307707444,
+   "ffAge": 61.75
+  },
+  "fuzz #123": {
+   "digest": {
+    "P": "3c2c1e515c926f3a963a",
+    "diag": "0824fcc36043ef401b54",
+    "series": "297d3301f60e674ddbf9",
+    "headline": "dcf7a4a42006e5b8808e",
+    "mc": "e4ff265271ca0628f073",
+    "reqs": "3aea5d7383e6dd53fa70",
+    "dd": "c10c95dc23d8f73e68bb",
+    "table": "416e08a5b00e7c63625d",
+    "tableText": "93eed59177cfa2cdf630",
+    "csv": "8a96d77c18c9019d4648",
+    "charts": "f7f03f99e1a82754b535",
+    "text": "a305d1f7fb0af5e8bca4",
+    "assumptionFigures": "c2596857d3591f502661"
+   },
+   "needAtRetire": 90610343.27300437,
+   "ffAge": null
+  },
+  "fuzz #124": {
+   "digest": {
+    "P": "cde5ccc3e8f7b8ab0a03",
+    "diag": "36bef7acf2b71113d2d2",
+    "series": "b6a0c7b26d1ad2d60473",
+    "headline": "4691de2fcbab6e72277b",
+    "mc": "1741185b0317d936370f",
+    "reqs": "5b4c5ade311cab2b25e6",
+    "dd": "f14afca6354897413c4d",
+    "table": "5bed8ef9e60be8928488",
+    "tableText": "15bc639c478899d9520f",
+    "csv": "ef7fa12fa8ee638ef9d2",
+    "charts": "61f79207c09e40366218",
+    "text": "6afbe958ffcf653008c8",
+    "assumptionFigures": "5ea9d39c97784d1bf032"
+   },
+   "needAtRetire": 471305093.0024218,
+   "ffAge": null
+  },
+  "fuzz #125": {
+   "digest": {
+    "P": "3be79c7e2fb9553903fd",
+    "diag": "23ce0463fe8e90f6faa8",
+    "series": "633b07c845f282d36bbf",
+    "headline": "77325e1c853881c64b20",
+    "mc": "f0fe2b5236141f6061d0",
+    "reqs": "66c8ff200828a199d51b",
+    "dd": "6773958516a9395c1efe",
+    "table": "b130e79060a3287468f7",
+    "tableText": "5899491e498471377deb",
+    "csv": "bc7f57451c43fc7184ae",
+    "charts": "b7a56b3cf0194e97f216",
+    "text": "46e982cfd136703f8828",
+    "assumptionFigures": "9b847544bd761ab7deea"
+   },
+   "needAtRetire": 18599219.75092839,
+   "ffAge": 79.33333333333333
+  },
+  "fuzz #126": {
+   "digest": {
+    "P": "40c919d7331df67a8e3f",
+    "diag": "268d4a99b2b07f47efa4",
+    "series": "a8b6c116944687d81ecd",
+    "headline": "c50279e233589f117431",
+    "mc": "1a303705f060ebfd592b",
+    "reqs": "2025d36989eab2f7f3e5",
+    "dd": "e9178a50759297ce3634",
+    "table": "9d0fc9b326afcdadd1f9",
+    "tableText": "aeeade3f8ab2e73386f7",
+    "csv": "a91eeb516f8fa0f52c4e",
+    "charts": "b03079103e9c3d4fd4b2",
+    "text": "82d42f19bbcc7d6d2cfa",
+    "assumptionFigures": "476020426e6e10d69f73"
+   },
+   "needAtRetire": 135204.15856482007,
+   "ffAge": 63
+  },
+  "fuzz #127": {
+   "digest": {
+    "P": "39c58d9521646524d483",
+    "diag": "292a41dbc9971488234e",
+    "series": "e198fdd53f05f59eb683",
+    "headline": "b7b86456d455b401f002",
+    "mc": "cd808adc9e91b4cf6dc6",
+    "reqs": "b4b32e536d2b5442e360",
+    "dd": "78bb14419a22a40cae13",
+    "table": "df67e22e629d071c86f0",
+    "tableText": "b81b53604d16e3647f60",
+    "csv": "7c17329a53758a4f9862",
+    "charts": "4480b55f3025560f574b",
+    "text": "668ab7cdd6e28e466206",
+    "assumptionFigures": "ed3baaf8e334ef429bfb"
+   },
+   "needAtRetire": 671625.701221186,
+   "ffAge": 40.333333333333336
+  },
+  "fuzz #128": {
+   "digest": {
+    "P": "2fdd1447388c02070f01",
+    "diag": "9fb41de2e5b399abc59a",
+    "series": "85b07db37d1086b8a3a7",
+    "headline": "b66c2065ac9cd1aae0e4",
+    "mc": "afb593d5655bdd4fe087",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "62fe1e4c1fb1ffe50d07",
+    "table": "38dde7d5cbf15f5bebbd",
+    "tableText": "f27fe0a7d4351190fc61",
+    "csv": "a1a47cbb57b2377baa61",
+    "charts": "70515fa23bdd74d7a565",
+    "text": "1a42dbaea9a0296adee2",
+    "assumptionFigures": "c9f1fb623399acefdeda"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #129": {
+   "digest": {
+    "P": "a110e0e163b4dd84af1b",
+    "diag": "0ec420fc7f486d139000",
+    "series": "9dc1894d9189c34ad302",
+    "headline": "af1bd944288d6c1f30a8",
+    "mc": "f0771dc39644c7ad9143",
+    "reqs": "91621a36b886c43f06e5",
+    "dd": "5b8d89813a567ed15504",
+    "table": "9aa360f5afa255c692b5",
+    "tableText": "2a04873bdacb5d2483f1",
+    "csv": "aeda737424bc62c2db60",
+    "charts": "ea37f1de32ba7ac756c3",
+    "text": "c388790933c2de520095",
+    "assumptionFigures": "60493693c2c20ff7ed0e"
+   },
+   "needAtRetire": 27204316.72704573,
+   "ffAge": 81.91666666666667
+  },
+  "fuzz #130": {
+   "digest": {
+    "P": "f0467226bae15e049e28",
+    "diag": "feb12e27481cda69b8a6",
+    "series": "1006f702253912954e03",
+    "headline": "13099aa008fbfed6901a",
+    "mc": "da44ea4447bdce8fd039",
+    "reqs": "d69859c3a32bc731838c",
+    "dd": "6bc5fdcd0a71f1c17ce2",
+    "table": "58726fad591d86e14b88",
+    "tableText": "8a23ea6f34302656a066",
+    "csv": "790549e45c22db233a18",
+    "charts": "36af2c0974db9d0095d8",
+    "text": "a3a1a1a44a0619938cd5",
+    "assumptionFigures": "fbf3c47a57e5de920de4"
+   },
+   "needAtRetire": 124499137.8120028,
+   "ffAge": 32.75
+  },
+  "fuzz #131": {
+   "digest": {
+    "P": "89c5a5093ab266b8fe6e",
+    "diag": "193982f6cef2243763c8",
+    "series": "10a99d7f168455f783bb",
+    "headline": "86b4bbef6eee730f24ff",
+    "mc": "51053101ad7917a4cf8d",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "6738a7d738867f1e6601",
+    "table": "5fc7f60ec271a90080bc",
+    "tableText": "b11f57d557b14ac47214",
+    "csv": "c83df97ee96595e67771",
+    "charts": "5947508f4b8bdbcc7cf6",
+    "text": "a0da1cecf6a6c3d2281d",
+    "assumptionFigures": "ae5f5282f2219e1bd420"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #132": {
+   "digest": {
+    "P": "06c2ee76a60b8f139930",
+    "diag": "3c1da6c464c8ea2cc19c",
+    "series": "39813fd9d41f1e14854c",
+    "headline": "0925ef04824431c7dfff",
+    "mc": "dc1e18a9a8b2cfed7572",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "ba8cec6e4651545b3716",
+    "table": "4626588f3f0311a9beee",
+    "tableText": "769c2e34fb84a7d52bb2",
+    "csv": "d4412d0dafe0413b2a6d",
+    "charts": "754213d47b4da34b50e7",
+    "text": "e4bf31df5e70c9193e7d",
+    "assumptionFigures": "32139ec0380648cbeb8d"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #133": {
+   "digest": {
+    "P": "bcdc94674602693806b9",
+    "diag": "36344f1a8b937d50deb2",
+    "series": "e29fe458c9e14e879efc",
+    "headline": "708d466dc74fa469f94a",
+    "mc": "8733b9dd7b8b1ee8faf8",
+    "reqs": "e14c387d8a5df396501d",
+    "dd": "d83df53390c615a0cc5f",
+    "table": "eeb568b9ef1d2b42531e",
+    "tableText": "30673aaad7ff6be2cd3e",
+    "csv": "3884818ec1d397a2dce9",
+    "charts": "ff1e6eebd309cd8de35c",
+    "text": "697229c3430a010ae6fa",
+    "assumptionFigures": "571db9449bc204582f0e"
+   },
+   "needAtRetire": 1177067.433129876,
+   "ffAge": 62.416666666666664
+  },
+  "fuzz #134": {
+   "digest": {
+    "P": "d6f6092a005733c271f0",
+    "diag": "0d9b88ddf5501110f8da",
+    "series": "0386d0fdf85dda08c867",
+    "headline": "8e22b76919606f31e9ea",
+    "mc": "16cac535f6e66f2a8e7b",
+    "reqs": "32540b918a3114e68cbe",
+    "dd": "5845cbc99b64e5c8cca7",
+    "table": "93bd2053e2345198727a",
+    "tableText": "b177a533a1c9696a019d",
+    "csv": "d5ae1eba570bab6ca0f9",
+    "charts": "2365445951106aabbafa",
+    "text": "ad6e116289176e8751f6",
+    "assumptionFigures": "1df7a6ec9a0cd8b3584e"
+   },
+   "needAtRetire": 4118749.692721066,
+   "ffAge": 78.58333333333333
+  },
+  "fuzz #135": {
+   "digest": {
+    "P": "d3480287c5d757e823bc",
+    "diag": "6ecfe54900b02bf3a3d3",
+    "series": "2903171023b37ab20837",
+    "headline": "3de1b0761b76f1dc0252",
+    "mc": "18b1eecbd2743125d286",
+    "reqs": "9777decfab73b22c35f4",
+    "dd": "74234e98afe7498fb5da",
+    "table": "d1ca5aa5db4652948b91",
+    "tableText": "40a4d7fd6964b6454761",
+    "csv": "1075f69a3d688e809acf",
+    "charts": "74d46c9ce5914b037f42",
+    "text": "da8d1cf4855b758dc517",
+    "assumptionFigures": "2a5d3fc5e645c89da5e6"
+   },
+   "needAtRetire": 10974869.558149518,
+   "ffAge": null
+  },
+  "fuzz #136": {
+   "digest": {
+    "P": "99aad46794718535f3d8",
+    "diag": "d6cdca0c42945586ae9e",
+    "series": "6ea25f1adf2963f0237d",
+    "headline": "a76366ca9060ebaecb37",
+    "mc": "5da206bfa59f2714c19d",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "74234e98afe7498fb5da",
+    "table": "0e5b4fd5bfbe4ba5b64f",
+    "tableText": "3c5377306149d0c57d74",
+    "csv": "b43be13836ad5e18ee52",
+    "charts": "0a791bddd43ab8db8610",
+    "text": "bb86f81f78c3e998b8e0",
+    "assumptionFigures": "5840e4f33983a7cbc24e"
+   },
+   "needAtRetire": 0,
+   "ffAge": 46
+  },
+  "fuzz #137": {
+   "digest": {
+    "P": "00de23a2dc5bf5001eca",
+    "diag": "a284b2b25cc946a57d09",
+    "series": "75774529328cbe44ac16",
+    "headline": "8165069e112fc0667462",
+    "mc": "fbeda14b8b06530be4e5",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "3e2c5e6507a82e942c3d",
+    "table": "135daab54c2d6ce6b95e",
+    "tableText": "4a295450c78eb4d1f465",
+    "csv": "09a04b659cb5fa0aa197",
+    "charts": "f2cf3887ce027b40f90e",
+    "text": "cb2974e93f40a1f2133b",
+    "assumptionFigures": "ae5f5282f2219e1bd420"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #138": {
+   "digest": {
+    "P": "65941627f1cd99951f84",
+    "diag": "c9fadd827d0549542ed0",
+    "series": "aa50c18c9187b42eb016",
+    "headline": "c2d10f0e730ab75cc47c",
+    "mc": "f5ee9d9eb9a3ca203ebf",
+    "reqs": "178f3c23045bff7ccc37",
+    "dd": "981aa74df4f3b4ca1992",
+    "table": "c248669d4df21dc40161",
+    "tableText": "8a9647ae10682ff66151",
+    "csv": "8dec4ee4c35145270b3c",
+    "charts": "ef3f11d075d633cddfdc",
+    "text": "1848c102064908e87cc9",
+    "assumptionFigures": "6e51b4b61d1a307b0269"
+   },
+   "needAtRetire": 16756.809689661346,
+   "ffAge": 18
+  },
+  "fuzz #139": {
+   "digest": {
+    "P": "0af661f369244f6da917",
+    "diag": "2a5b382264e7ef85cb83",
+    "series": "1c9e7c1c9794b86d6553",
+    "headline": "80150471f0c32ee1cff0",
+    "mc": "4e461a2e4b197a601be4",
+    "reqs": "f29dc92b7b7491e7e45d",
+    "dd": "ce1ebb30648cc6a79886",
+    "table": "725e4ece51346a8fd17a",
+    "tableText": "11e19cd3ede1f32dee15",
+    "csv": "27a4aa7880dc9b5299a2",
+    "charts": "d9fb68d2098bcefae3e2",
+    "text": "184ac9ccf4560c4dcc4a",
+    "assumptionFigures": "73d5e5232069ceaf02a3"
+   },
+   "needAtRetire": 1943225.9440468482,
+   "ffAge": null
+  },
+  "fuzz #140": {
+   "digest": {
+    "P": "acedd2130c384ac50995",
+    "diag": "03b86545278b9ebff73d",
+    "series": "20a15ae1591c434a8cc3",
+    "headline": "e53a949d4321790c6e46",
+    "mc": "c02aeb5c54d2148bf744",
+    "reqs": "8df0cd0dd30273b6ce2e",
+    "dd": "3219cf0d6189fa352eda",
+    "table": "a307047071813ca0ccc4",
+    "tableText": "1dae1ea6a851c6f61e8e",
+    "csv": "698223cdf127d05486a9",
+    "charts": "c91e79b12b4d32e0062e",
+    "text": "00fe11823cd0b72eb8fc",
+    "assumptionFigures": "5ec9558c9e265e3f1f18"
+   },
+   "needAtRetire": 834343.818732118,
+   "ffAge": 64.08333333333333
+  },
+  "fuzz #141": {
+   "digest": {
+    "P": "9ecdc5cd4fb8d8716a86",
+    "diag": "d43c474a8ab731038797",
+    "series": "bf3142048527d12df443",
+    "headline": "76cacc659b768a94412b",
+    "mc": "26dd0b0768d4f3af53d6",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "ea2aaaa1c9a7de256477",
+    "table": "a184e9b49534d23a53c1",
+    "tableText": "043e9dde2f692444d83d",
+    "csv": "b5c6d13645c8e0faa9a1",
+    "charts": "8bc78654ac83b4b29dc8",
+    "text": "1b59a9dae66b75663552",
+    "assumptionFigures": "5212b40799a8338cf024"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #142": {
+   "digest": {
+    "P": "2ae41c217906009579da",
+    "diag": "92c8ffabeb653f50818c",
+    "series": "5a8423cc30df55e18431",
+    "headline": "432e1e22b77aa3dd041f",
+    "mc": "bfbe669f0fde816d2939",
+    "reqs": "c2592d83315e2d737222",
+    "dd": "2919013fb59542fd8d91",
+    "table": "b6eb530f7ae99807f0cf",
+    "tableText": "ec4e228676f71599283c",
+    "csv": "95293917f83c40ec2bd3",
+    "charts": "0aa448731dcdab870663",
+    "text": "ad9f6e8bcc02e23cc62f",
+    "assumptionFigures": "10575a8c939e85ad564b"
+   },
+   "needAtRetire": 145811165.45497763,
+   "ffAge": 64.91666666666667
+  },
+  "fuzz #143": {
+   "digest": {
+    "P": "67832d0fc8608702a749",
+    "diag": "e035b6ee2fb589202b17",
+    "series": "a142b934cc550ca1d08e",
+    "headline": "54496b3e9ce2b5545844",
+    "mc": "5f0d6ad886709fdec9ea",
+    "reqs": "59b3f6d7671a02fc3fac",
+    "dd": "518e057e3d074c8f9b95",
+    "table": "1eedaf659caa241dd2cb",
+    "tableText": "2fbf7e60d72f1e689380",
+    "csv": "72cea032080bc6d60f43",
+    "charts": "0daaaa5175fc66aff1b9",
+    "text": "072cc48b90a7180f4390",
+    "assumptionFigures": "6bd39876282fbded8cd7"
+   },
+   "needAtRetire": 2609897.4951875154,
+   "ffAge": 31.333333333333332
+  },
+  "fuzz #144": {
+   "digest": {
+    "P": "3eda0f24aa209a9ffd83",
+    "diag": "36a3f10153ec51566693",
+    "series": "7f66ecb5700368db1b88",
+    "headline": "396636f23842745a1361",
+    "mc": "c12036152d2182396aa9",
+    "reqs": "ed5579831749574246a4",
+    "dd": "65d700450ab5251e8fd2",
+    "table": "6220e66aacd23582dd1d",
+    "tableText": "63211f62f75d74f30288",
+    "csv": "288ec3c0ac16e7e04854",
+    "charts": "b12119665a5d2deab4dd",
+    "text": "0e5a0af7045629c4614e",
+    "assumptionFigures": "c1a69800ea5024cd1a9b"
+   },
+   "needAtRetire": 673091.1539045689,
+   "ffAge": 24
+  },
+  "fuzz #145": {
+   "digest": {
+    "P": "ccc423c01cacc9ba09fc",
+    "diag": "9552da6768a1225e2436",
+    "series": "0145230b5aaa6e86bfd9",
+    "headline": "bef1262173ed5f5ab42f",
+    "mc": "2aada43092e4a4b02baa",
+    "reqs": "29403994b66ccd87641b",
+    "dd": "bc602090ea089589f876",
+    "table": "d022a75195865a33375d",
+    "tableText": "246e1bf9be175cceb059",
+    "csv": "667038902f1f0c672864",
+    "charts": "b41d0f36b380a54460da",
+    "text": "c88ac76866d6c184a8f5",
+    "assumptionFigures": "934e635c648fe9582dc0"
+   },
+   "needAtRetire": 14873558.187805677,
+   "ffAge": 98.75
+  },
+  "fuzz #146": {
+   "digest": {
+    "P": "d8238032fdc538628314",
+    "diag": "316cc1fbc34b2cc2182c",
+    "series": "5b2f75990b2074b95864",
+    "headline": "0d61bd7a384b0b1652bf",
+    "mc": "ca1f4e3ebe953a303236",
+    "reqs": "e12d9268487f402eee52",
+    "dd": "53805cf5ee9f29200953",
+    "table": "19a83b35cc47a3a2ef82",
+    "tableText": "362081a811ecf7606326",
+    "csv": "45b769916dfd67337826",
+    "charts": "0aa68738188787c7e521",
+    "text": "8a0f51beb345f28d813e",
+    "assumptionFigures": "8b719a9f06c41b4926ae"
+   },
+   "needAtRetire": 10439472.238714948,
+   "ffAge": null
+  },
+  "fuzz #147": {
+   "digest": {
+    "P": "6a9310628857f2c7e178",
+    "diag": "495a72db31f13cb085d6",
+    "series": "f6f0a6592e7f564d6fbb",
+    "headline": "4d938d0fbe9e2a38e8e6",
+    "mc": "78053d2156b32a1c0054",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "ac94afd7a8045fc393ad",
+    "table": "bab561fe9a63418b64ee",
+    "tableText": "16d62c48c125ff327409",
+    "csv": "6cb7d2586ba5dcacc8df",
+    "charts": "d76b225051b1dccffb73",
+    "text": "22e525d74faa64fd6501",
+    "assumptionFigures": "8acf9f08777173f75fa6"
+   },
+   "needAtRetire": 0,
+   "ffAge": 49
+  },
+  "fuzz #148": {
+   "digest": {
+    "P": "c5d42bea85f0f9e1f298",
+    "diag": "c40a175347de36fcd47b",
+    "series": "c33e65dc60d5aeed32ad",
+    "headline": "98935ecff4bce7d3fcf2",
+    "mc": "786713083b5e329d8b1a",
+    "reqs": "4e463b43d1ee39b6d4ac",
+    "dd": "74234e98afe7498fb5da",
+    "table": "ecf4212699c5361938f5",
+    "tableText": "dfb351598b877303bc39",
+    "csv": "7b1bb6cf1b753e53dccc",
+    "charts": "ab6ee9c5d0783df8aebf",
+    "text": "50cd8cecb61c547f0eca",
+    "assumptionFigures": "5094699736b72a243209"
+   },
+   "needAtRetire": 1104732,
+   "ffAge": 41.75
+  },
+  "fuzz #149": {
+   "digest": {
+    "P": "f6c27ca1bd0531adaf9d",
+    "diag": "80bf47aec55402c70062",
+    "series": "9934018a49fcaf57904f",
+    "headline": "560d940ea1a9c51a1310",
+    "mc": "539eefed475b04384dd1",
+    "reqs": "c99349418c992e5f607f",
+    "dd": "bc609e89f55619088b0a",
+    "table": "994e1c567cfab940071f",
+    "tableText": "78a711de32510b62c96a",
+    "csv": "10d915d4a6c5b3408ae8",
+    "charts": "a761ced456b217b6d5c5",
+    "text": "b3e730c6fde2c813b42f",
+    "assumptionFigures": "e5357d06cb581eef8f76"
+   },
+   "needAtRetire": 352953310.23184586,
+   "ffAge": 58.75
+  },
+  "fuzz #150": {
+   "digest": {
+    "P": "1f1c8e1020f9d280b33a",
+    "diag": "58520c06bf72e7d2349e",
+    "series": "36918b075da15fa77ad4",
+    "headline": "e0f2541ce3bb3e50193d",
+    "mc": "509e8f92d1d9197ed14b",
+    "reqs": "f08db2af1647391c928e",
+    "dd": "40b31f298934199c56cd",
+    "table": "ef6d4c45adceeb1e13b2",
+    "tableText": "0510f6d20a4c7ad2edd0",
+    "csv": "4c7571678ed50f64ee3e",
+    "charts": "7d3fa034383bace0abc7",
+    "text": "f3a7ce6be962321100e8",
+    "assumptionFigures": "bfdb7948c7336c008a6d"
+   },
+   "needAtRetire": 19675011.317341596,
+   "ffAge": null
+  },
+  "fuzz #151": {
+   "digest": {
+    "P": "14e1bce8725c122cd49e",
+    "diag": "2ac4fdd6853680a3ab45",
+    "series": "04c637753abb39fdb587",
+    "headline": "220e9dfa2c85cf3ee8f8",
+    "mc": "080ac4865dff6cdd8f03",
+    "reqs": "b19d41e2667fe9da6862",
+    "dd": "7c6b2c2e1bf7ef9940b1",
+    "table": "91df2f985a820e06b85f",
+    "tableText": "159c779f63b9b393fd39",
+    "csv": "40f34bd36fc2eecedf5d",
+    "charts": "f06571bf488c250bfa71",
+    "text": "a4b2076c5f610b867596",
+    "assumptionFigures": "3e2f144d5466e21b8f6c"
+   },
+   "needAtRetire": 4344947.820427345,
+   "ffAge": 27.083333333333332
+  },
+  "fuzz #152": {
+   "digest": {
+    "P": "ce8f8581461bf2f4ed6d",
+    "diag": "355b993366056a8d3059",
+    "series": "ae965d61180f998fc8c6",
+    "headline": "1df7f420249223e51703",
+    "mc": "0d64db09829f1432e49e",
+    "reqs": "5e5950c45d3e054b0e63",
+    "dd": "2fc2be03d4e292b2df2f",
+    "table": "b4c9ccb7af2c791eb4db",
+    "tableText": "f2de3aab0444f3e90369",
+    "csv": "b3cedd70b49f7594c592",
+    "charts": "1e6b99e029357d328803",
+    "text": "1f65e2100c23302f65c5",
+    "assumptionFigures": "6a5bdb66f496f74e5d34"
+   },
+   "needAtRetire": 1191354.9778031008,
+   "ffAge": 47.166666666666664
+  },
+  "fuzz #153": {
+   "digest": {
+    "P": "c181090912e8164b5b6d",
+    "diag": "dbc7abddf8234f02b968",
+    "series": "2b705de2a7208e40196d",
+    "headline": "b91ec2df53a0792bcf8f",
+    "mc": "fbc08d1c80418c4d28b4",
+    "reqs": "0252136d016f56a6465c",
+    "dd": "b4ab0d349fef609b8d33",
+    "table": "acd4f34f6b9c7eae1ee7",
+    "tableText": "3a51ce740e4da11f94eb",
+    "csv": "ddbb07879ab37ba7dcee",
+    "charts": "2f3e89d9fb0a3b98742d",
+    "text": "cfa6c695c8944bc37e1d",
+    "assumptionFigures": "5d5442a52848ee9aa455"
+   },
+   "needAtRetire": 41778370.850571275,
+   "ffAge": null
+  },
+  "fuzz #154": {
+   "digest": {
+    "P": "c10364a52c753936f75c",
+    "diag": "162a062c7b09a82d3cf5",
+    "series": "1e8c7f0c9ee8b51ad541",
+    "headline": "246e7dcabf5a46a13f0c",
+    "mc": "ed4e06c9989ad4a0eaeb",
+    "reqs": "1c5807872f6f9d7bc86c",
+    "dd": "a0a16abe3e99557bbceb",
+    "table": "514967f43dc7910f8249",
+    "tableText": "0504ff63b60c5bc06e23",
+    "csv": "576961009014689e23ae",
+    "charts": "b5d468e9e0bd41dbd532",
+    "text": "c26e8892347bd72c2470",
+    "assumptionFigures": "44b14947833bfcfe1096"
+   },
+   "needAtRetire": 428507.03413839627,
+   "ffAge": 22
+  },
+  "fuzz #155": {
+   "digest": {
+    "P": "f33b8f34df5c8057dfb6",
+    "diag": "4890c1f4192dc9c713c1",
+    "series": "430a2cac9413a5b3c68a",
+    "headline": "b2544b6a7017f8abc9b2",
+    "mc": "a65a3b0dcdee3b628d21",
+    "reqs": "7da81308c1a6d10f94f0",
+    "dd": "a4d56de1a3b315ca8302",
+    "table": "6514c7a45b256bfb9e48",
+    "tableText": "f29ef1b2fe0d3a9b7677",
+    "csv": "d5d7c54f3d17ae7d63ad",
+    "charts": "7ad3d95b4d8972ad5b60",
+    "text": "755936b851691dc69c38",
+    "assumptionFigures": "22ab1dd385030da5d3eb"
+   },
+   "needAtRetire": 8797352.867798708,
+   "ffAge": null
+  },
+  "fuzz #156": {
+   "digest": {
+    "P": "6c0d6c4c7b8b154d607e",
+    "diag": "e9fa9bf054fcbbc300a2",
+    "series": "42eeccfeaf0b68cd6c63",
+    "headline": "3d75c7e008b65317f630",
+    "mc": "6ddaec8f955e4128830c",
+    "reqs": "ca7e7138040190301e23",
+    "dd": "fcbb05f0c531d7e83b52",
+    "table": "16765b4dcb6206d2f1cf",
+    "tableText": "bdb3bc59e427caa4ce1d",
+    "csv": "2b1110eb9ee910bd2d6c",
+    "charts": "655dc538c96006095b20",
+    "text": "02001cc78ee3d4bce02f",
+    "assumptionFigures": "571cb22892a4c8a36e18"
+   },
+   "needAtRetire": 19569191.597407784,
+   "ffAge": null
+  },
+  "fuzz #157": {
+   "digest": {
+    "P": "c3ce03d0718823935497",
+    "diag": "391aee386e599d479b0d",
+    "series": "c183eb255ef05b5f5b07",
+    "headline": "7590134c43ab74768797",
+    "mc": "9cfcb1be6caeca8d4ceb",
+    "reqs": "0f315f1e9492063de12c",
+    "dd": "97890159a9a52a47feab",
+    "table": "0d3e81a4092957e8d200",
+    "tableText": "51bf206e4d02608ba1df",
+    "csv": "547b28ed0025e180b173",
+    "charts": "858f25beac8877919a00",
+    "text": "33e9d841298b65fb4dea",
+    "assumptionFigures": "6187ac0ff0016fd405b9"
+   },
+   "needAtRetire": 16580422.133785708,
+   "ffAge": null
+  },
+  "fuzz #158": {
+   "digest": {
+    "P": "e8253502b9aaff0f1afe",
+    "diag": "2a5b382264e7ef85cb83",
+    "series": "9722137b17160b86660a",
+    "headline": "3bef799467924e7a8a00",
+    "mc": "e04c51553c92291f37da",
+    "reqs": "e09d84c85517a9f37f1d",
+    "dd": "533285d2cfe22d82ec19",
+    "table": "735217adab17dbcfea34",
+    "tableText": "850b4b354cf94588cb31",
+    "csv": "efd5aa3a957cae8e20c5",
+    "charts": "2df49c03e65ae199e07d",
+    "text": "1f885e071dd23b64ee4e",
+    "assumptionFigures": "8a1a9db69d6f3457c0b7"
+   },
+   "needAtRetire": 121116241.95714773,
+   "ffAge": null
+  },
+  "fuzz #159": {
+   "digest": {
+    "P": "d980bf2df225db173461",
+    "diag": "89549211932937c3845c",
+    "series": "34d07ee3e4c72077e3f8",
+    "headline": "18a9a09c1314dd92ed13",
+    "mc": "2ca129a3987ae343b6f7",
+    "reqs": "754eb2d14d44eb4eb26f",
+    "dd": "1df6a62ef6614ebf48cd",
+    "table": "647bb310c60f36251de5",
+    "tableText": "93ee4f59a685823422fa",
+    "csv": "0c30df5d1fd5282a68f5",
+    "charts": "76b2c17a6e456c315b85",
+    "text": "f629471ed54a40971469",
+    "assumptionFigures": "4bc47a3cd40681c27d41"
+   },
+   "needAtRetire": 734495.8363336305,
+   "ffAge": 44
+  },
+  "fuzz #160": {
+   "digest": {
+    "P": "cd59cd87c6aa6445ee8f",
+    "diag": "c1bd374f333b5ea57f61",
+    "series": "79c41cb38b6758a3b29d",
+    "headline": "8ce69e3f1db0cc97e214",
+    "mc": "4d64ed53e1f2ea72b3d2",
+    "reqs": "d84e13bb8f9e1a8f2077",
+    "dd": "d8767c3df0189a2b5890",
+    "table": "1ab0ff703284ad716544",
+    "tableText": "d07e3de5c18e12c9408a",
+    "csv": "89016f644b6150934ce6",
+    "charts": "a192967127280891e94c",
+    "text": "db2b67ab7c61ccf7dad6",
+    "assumptionFigures": "b75efb629c6498f4cc32"
+   },
+   "needAtRetire": 30684197.581189387,
+   "ffAge": 36.25
+  },
+  "fuzz #161": {
+   "digest": {
+    "P": "5e19126844547ff9598b",
+    "diag": "2731a4d4ba5b2e834042",
+    "series": "b9fcccc875733f3aabf2",
+    "headline": "f09b7eace627be33fb5b",
+    "mc": "c1c7de18c257d130a656",
+    "reqs": "fbc8cd3b031b20c3f529",
+    "dd": "357eb1887742f54972c7",
+    "table": "2f71ab6ff3963d6ccb6d",
+    "tableText": "4d30cd4043ef7774cbb7",
+    "csv": "673f4d28e5a0cbf3a64c",
+    "charts": "ffa6fc69df268b148df6",
+    "text": "d37e1290bbe318808120",
+    "assumptionFigures": "29e324ac99934bcdf816"
+   },
+   "needAtRetire": 28188458.051675104,
+   "ffAge": 51.083333333333336
+  },
+  "fuzz #162": {
+   "digest": {
+    "P": "f21b00726fb49890c912",
+    "diag": "d0c7dc1959ad098b9e80",
+    "series": "09eee61ac466a2036232",
+    "headline": "bc17f4b3fc32a78979b5",
+    "mc": "2acd6559c5d4747b4f16",
+    "reqs": "17b1586e25adcbe9524f",
+    "dd": "e3ebf0717bba089cd7c6",
+    "table": "fda3be2a734c57ee2a19",
+    "tableText": "e39a51bb818122367d86",
+    "csv": "e0807458b3a8f8e4f7ba",
+    "charts": "23d8a37d6690446d07ad",
+    "text": "61f35a5f7bcdc98e1591",
+    "assumptionFigures": "d09b970bf828ee42cea1"
+   },
+   "needAtRetire": 41468737.56345872,
+   "ffAge": 43.666666666666664
+  },
+  "fuzz #163": {
+   "digest": {
+    "P": "a693f47f813f297ca4d3",
+    "diag": "c1fbbede124676dabae0",
+    "series": "bf1446f86ce27da1ac4a",
+    "headline": "11612f89894f811e2738",
+    "mc": "2056cdf779ad3b724243",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "850172a3216ca91169d0",
+    "table": "6ec7ebe7150bc538c9d1",
+    "tableText": "2cb0b5bd287e9c43278b",
+    "csv": "ff53732c6ea0126f54d3",
+    "charts": "ae9d6ca196eb6cfb535a",
+    "text": "ed768fb481d7afea3d87",
+    "assumptionFigures": "30ba42178528fdfea713"
+   },
+   "needAtRetire": 0,
+   "ffAge": null
+  },
+  "fuzz #164": {
+   "digest": {
+    "P": "96fb8fc913baaa94d404",
+    "diag": "4b1f75c89c0d25e8bdf7",
+    "series": "849774d8a9ee01652735",
+    "headline": "adc616aef81376262fde",
+    "mc": "072a9d5a2a390ff2e2ab",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "4e67f51b975a1ca8b863",
+    "table": "3412666a4ae24fd84fcf",
+    "tableText": "b1206cbec33e7eca1c9d",
+    "csv": "baa370b6ea13b2075121",
+    "charts": "6945ecd8558840e8fb5c",
+    "text": "825c994e4fa9bb95ec1d",
+    "assumptionFigures": "6045774d3db682ce3853"
+   },
+   "needAtRetire": 0,
+   "ffAge": 61
+  },
+  "fuzz #165": {
+   "digest": {
+    "P": "c0298ad9314a9d60b3b8",
+    "diag": "402529ad5062f2842598",
+    "series": "e73c6fe34d3a5d329d8d",
+    "headline": "08385940b4872e2c0355",
+    "mc": "400a5b7d588ab13b3324",
+    "reqs": "2bd7695bac4ab14cb0eb",
+    "dd": "4ec53ea4004927af1934",
+    "table": "39d1601520e55e4805b1",
+    "tableText": "aba89792c09a0b5de593",
+    "csv": "61ba85347d6c8921ca36",
+    "charts": "4eb210add96fef2a16b7",
+    "text": "96699aed894b120c34a2",
+    "assumptionFigures": "ed75eb1590e761dfbdde"
+   },
+   "needAtRetire": 8252565.244105846,
+   "ffAge": null
+  },
+  "fuzz #166": {
+   "digest": {
+    "P": "c4cfabf6d4327d3a23ef",
+    "diag": "2a5b382264e7ef85cb83",
+    "series": "a15be4d3bf6c155b9107",
+    "headline": "b050c4011a42bf8208f9",
+    "mc": "97db3b3d0fb28e120e0d",
+    "reqs": "5746b15c8e8f4f4659b1",
+    "dd": "2a500e8e395be73bdceb",
+    "table": "c4210439241d4949cfbe",
+    "tableText": "5885ba781199d9db43b9",
+    "csv": "3da7883f0995f4f071c3",
+    "charts": "b9a23dda4e757c5f0a85",
+    "text": "5ad639e84bcb35e75e2c",
+    "assumptionFigures": "ba9d2bae6fe828374dc9"
+   },
+   "needAtRetire": 96822788.78759287,
+   "ffAge": null
+  },
+  "fuzz #167": {
+   "digest": {
+    "P": "b5d8a13e78bf866fe3a4",
+    "diag": "2ddd1fe4244917e2a6f1",
+    "series": "6353826ca72f8bfb4094",
+    "headline": "6a3f6b393c1d13302464",
+    "mc": "ed68eb0c9f006daf560c",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "ed47028c9e154d06765c",
+    "table": "d530e3abc592d5aa0355",
+    "tableText": "02f124df37ab36d7b57c",
+    "csv": "ec1889deef7869a779a6",
+    "charts": "c5fab0eb02a76e3a97d9",
+    "text": "49bea1869fc3f290e9d3",
+    "assumptionFigures": "3b38364c8a021d018979"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #168": {
+   "digest": {
+    "P": "ac86f15e61234354607d",
+    "diag": "bfdf15cc54c5b118e34a",
+    "series": "83c58ab6a6967c0c2421",
+    "headline": "0842e0902821c2d5f9f3",
+    "mc": "858b84e14584385b3b82",
+    "reqs": "b15c5b153df266bf10fe",
+    "dd": "81af2c027a987fa419d2",
+    "table": "48d397bbfb1ccd12bac5",
+    "tableText": "eb3565906cb0a2242c19",
+    "csv": "2a5231a67ae1cc3bb975",
+    "charts": "06dd7c6076df17ef00a3",
+    "text": "9a072e577eea31d3b357",
+    "assumptionFigures": "05262524f0728c5a8dea"
+   },
+   "needAtRetire": 2035884.8235663646,
+   "ffAge": 84.75
+  },
+  "fuzz #169": {
+   "digest": {
+    "P": "834bdae368e83005143a",
+    "diag": "d2bd9a8a8c84ecef7965",
+    "series": "844f9f47e2a3db9104f7",
+    "headline": "f5ea0475c2fdde9e0690",
+    "mc": "e28321d97a624dac8e1c",
+    "reqs": "85edd31c726657c49660",
+    "dd": "0868b5e545170aa44c06",
+    "table": "ebcbbb79a156959672f7",
+    "tableText": "06854642c5320c1fb49b",
+    "csv": "f42621c330a8dede0bdd",
+    "charts": "1fcf7250aa59d4dfafab",
+    "text": "26168e707052e70397a1",
+    "assumptionFigures": "c1b8528e1fc12533d3c6"
+   },
+   "needAtRetire": 3817118.171211448,
+   "ffAge": null
+  },
+  "fuzz #170": {
+   "digest": {
+    "P": "58a38b16c8058fd5068f",
+    "diag": "1cc260233d6da342ce30",
+    "series": "32f85b8c9c1655b6a5d9",
+    "headline": "339b1b9664d02ed0c038",
+    "mc": "5777cf2f1b76841fa025",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "73aabef68ad70df6cba5",
+    "table": "cbbe04b45a097fcd416f",
+    "tableText": "534866c498c8a2a2d891",
+    "csv": "91603af9e7a23c6b0063",
+    "charts": "27f0f76c6da89147bce6",
+    "text": "89428a5f238d621357cd",
+    "assumptionFigures": "46c1c3d4fe1c28d1b2f5"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #171": {
+   "digest": {
+    "P": "5ce1a805fbf0946fad1a",
+    "diag": "e6ef93f286fb2981dd23",
+    "series": "7305ff27be34f88369a3",
+    "headline": "23e1382233e2deedfdc0",
+    "mc": "c88a2f18c76284e663ce",
+    "reqs": "9d3e897c1b0cdedd3a57",
+    "dd": "52e3eb316c8f011308f1",
+    "table": "06efdcf6c2a2e8cae347",
+    "tableText": "f9283b96bb2e58c14a04",
+    "csv": "b9b3f4c600978b9507f7",
+    "charts": "a3590bc1ccb7a21f91d4",
+    "text": "bcde9496a1fdb853125c",
+    "assumptionFigures": "447f34cc48995e829fc8"
+   },
+   "needAtRetire": 8535528.630350268,
+   "ffAge": 70.75
+  },
+  "fuzz #172": {
+   "digest": {
+    "P": "f0f57692f40c74b542a8",
+    "diag": "4af83befbcd138be9962",
+    "series": "b506a090265c7bb212b2",
+    "headline": "dcf568957f759f8ecc45",
+    "mc": "205e62cb58b5454a23c9",
+    "reqs": "ac506a3c697946591218",
+    "dd": "8eee65592327466e02ef",
+    "table": "8662c4100f4586310900",
+    "tableText": "8f3c7ad4d63fb7488165",
+    "csv": "ee61f977084bea7dee38",
+    "charts": "45d99089358dccab300f",
+    "text": "ec346cad6bdd117dde3e",
+    "assumptionFigures": "27bb5617ed6f7624d226"
+   },
+   "needAtRetire": 24022422.641871598,
+   "ffAge": null
+  },
+  "fuzz #173": {
+   "digest": {
+    "P": "195041ea495f582d27ad",
+    "diag": "2648449c71715efd128b",
+    "series": "410023fcc4555e91e31b",
+    "headline": "f9404b2528cf2e3c91c3",
+    "mc": "a2edbf96a6a60229c4e6",
+    "reqs": "311c4382d18934a98d93",
+    "dd": "67e0e8d833c16aff6219",
+    "table": "af5e6058d607ada6c62c",
+    "tableText": "7bbe5ca9baed9aea4488",
+    "csv": "a8b6ff294db72c472421",
+    "charts": "aa9e41a3093a57ef2784",
+    "text": "0bb0542e6bebf7e94ef2",
+    "assumptionFigures": "c0118882d89a9c386d74"
+   },
+   "needAtRetire": 385854.37821708375,
+   "ffAge": 63.166666666666664
+  },
+  "fuzz #174": {
+   "digest": {
+    "P": "ffac10e0cd867547ba7c",
+    "diag": "6a0448256ddeda8e124d",
+    "series": "d1400e190b188e2490d0",
+    "headline": "456c6427eb8f53dcdcf7",
+    "mc": "8ca622147958bcd15786",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "9d9fab9230b65eed3414",
+    "table": "9355966296faafc2a464",
+    "tableText": "9507e7835555df3e7e8f",
+    "csv": "e6686bb52669128ff440",
+    "charts": "d963878d9ff38383ecaf",
+    "text": "66f78ebcccae7d2a14a2",
+    "assumptionFigures": "12e603e6f430c269b0b7"
+   },
+   "needAtRetire": 0,
+   "ffAge": 68
+  },
+  "fuzz #175": {
+   "digest": {
+    "P": "848838d32c6969c3a19b",
+    "diag": "0b821290a5598e7038e0",
+    "series": "953dd501a993b2fea375",
+    "headline": "ff523bf8001d227f9aca",
+    "mc": "96e83aaf618e582f3f95",
+    "reqs": "032b7aa10d55aabc7781",
+    "dd": "45f44dc4feeaf4ea7a51",
+    "table": "a609d07cec2f41195881",
+    "tableText": "858a190137f54744fd1c",
+    "csv": "60e9201a7b73a1ca5528",
+    "charts": "6392108a2950f82048e9",
+    "text": "72e13a7e24a2aa0c46b9",
+    "assumptionFigures": "49123b04d842cb729efc"
+   },
+   "needAtRetire": 11538866.99713355,
+   "ffAge": 50.91666666666667
+  },
+  "fuzz #176": {
+   "digest": {
+    "P": "cc38a50f84f43bef71e0",
+    "diag": "4a939b139b509bf2e4b9",
+    "series": "5d0bd9b11848e070305e",
+    "headline": "1c99772df4d032a0bac8",
+    "mc": "d9a4b469fa38c1bc90bb",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "5cf659d80c1d5b4b310d",
+    "table": "8c00b7828eb5a85e7faa",
+    "tableText": "d768d6505819eba6f8fb",
+    "csv": "c69ef1d2fb68cab3bd21",
+    "charts": "bfcf46674441769533e9",
+    "text": "a9bea2f994ef656129a7",
+    "assumptionFigures": "02691fb5d404ad0d1d74"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #177": {
+   "digest": {
+    "P": "f1678999941e72f2fde9",
+    "diag": "2a5f233e9083346ad0e0",
+    "series": "76d9419797e766157a5b",
+    "headline": "1bb734a636f93513aebb",
+    "mc": "0fa1d0ecd00007f61e8f",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "d5a83c0e2ad3c2d8c66d",
+    "table": "de2a62c8d2ba07c5e626",
+    "tableText": "b080dfd2d21d3ed22e44",
+    "csv": "b8bdedc9fe8b827a267e",
+    "charts": "7556a337588566aa7945",
+    "text": "5a4def434bb81cee3a64",
+    "assumptionFigures": "93ada5cb2bd9b3939c48"
+   },
+   "needAtRetire": 0,
+   "ffAge": 62
+  },
+  "fuzz #178": {
+   "digest": {
+    "P": "3b5be56168d2448d6216",
+    "diag": "78595360656dc1215d07",
+    "series": "c652a63d811b56178d25",
+    "headline": "93ae63a19fb9d953149d",
+    "mc": "b65b560a56f9fb5002b1",
+    "reqs": "7f178b7fe5817443141c",
+    "dd": "4f80d9f0062efd62939f",
+    "table": "8171af9f4fe47695258b",
+    "tableText": "3a9f1d4e80007e914969",
+    "csv": "7103296b212dfdb6ffc8",
+    "charts": "d8d2dc0e3551c9dc0668",
+    "text": "3de797b7f072aae11194",
+    "assumptionFigures": "aa4b4a4331558d0b736a"
+   },
+   "needAtRetire": 8866970797.284578,
+   "ffAge": null
+  },
+  "fuzz #179": {
+   "digest": {
+    "P": "a11a583ac8838e8884d5",
+    "diag": "9cf1a578e1d7f597ce01",
+    "series": "31f1b72f43c9e4a19bb2",
+    "headline": "eb7a3e8d4946f3745942",
+    "mc": "7139f66c74ca9c1db280",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "1de90f94066c18089e06",
+    "table": "cc88a90e3b2201956894",
+    "tableText": "8ca04ce5028cae76a7c5",
+    "csv": "15261e05ef38a87d7d2e",
+    "charts": "927c6967e17616856239",
+    "text": "9c9a6c238c25612dcddb",
+    "assumptionFigures": "9fefaa2a7b4b8ab41370"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #180": {
+   "digest": {
+    "P": "a2f827178ef460206c84",
+    "diag": "7a986dea5605c87beac7",
+    "series": "94bf69120be3fbf62cdf",
+    "headline": "973394087e89029a0e36",
+    "mc": "4db744378b99e1290511",
+    "reqs": "6088bd2519662eecf983",
+    "dd": "9ad883b497910ed7748d",
+    "table": "e688886b7df16d63e524",
+    "tableText": "b7e6681e75c2ae9ed4e3",
+    "csv": "a42236471b29131023d5",
+    "charts": "1615519445a8f0cab6dc",
+    "text": "926d4a10b9be4303646d",
+    "assumptionFigures": "778dc051f947b8c9e527"
+   },
+   "needAtRetire": 38372963.72000021,
+   "ffAge": 86.41666666666667
+  },
+  "fuzz #181": {
+   "digest": {
+    "P": "16bdd548f82f121012e3",
+    "diag": "846231f17a4596789926",
+    "series": "2e23765aa30e6235f173",
+    "headline": "af2fb6c7c8c8080b466d",
+    "mc": "5f7bb27c2baa69c91b32",
+    "reqs": "9010685b07dac08160d5",
+    "dd": "e7ab83ca90ae58f4d823",
+    "table": "08c540c28eb0e4b5353a",
+    "tableText": "a54546692a5f17b39cea",
+    "csv": "a5bec738549a4a700551",
+    "charts": "b901033dcdcff9778b71",
+    "text": "0b0acd646ff7b7cbc1c9",
+    "assumptionFigures": "bf3edc8abed24d46ecca"
+   },
+   "needAtRetire": 3699783.596854661,
+   "ffAge": null
+  },
+  "fuzz #182": {
+   "digest": {
+    "P": "8724b9cc6474b13d4797",
+    "diag": "abc8287312bc1a52729e",
+    "series": "9938dc8e19adca547568",
+    "headline": "81cb48c2b0644ad98ef1",
+    "mc": "fe991c90c9bc24f7b067",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "753cfb904d1441900b02",
+    "table": "e67e005aa7186c6b10c4",
+    "tableText": "cbe3fb390da35a63e8a4",
+    "csv": "ab1ddcb1a6e6a3b79c8a",
+    "charts": "0419e5e6689b3def12e6",
+    "text": "d473202fbf859ee42cfc",
+    "assumptionFigures": "bead1385ccf46ba08778"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #183": {
+   "digest": {
+    "P": "b23dd699e05fb30ab3d5",
+    "diag": "e035b6ee2fb589202b17",
+    "series": "335f25917d66381ad746",
+    "headline": "a5fbdfa451f506d9969e",
+    "mc": "62ccd7b30262645bd732",
+    "reqs": "998ad79a666ecb703362",
+    "dd": "b32b74af9e7168ec340d",
+    "table": "6ff0450e7001e1ad9c63",
+    "tableText": "3da3e9246e5a1dcaa54e",
+    "csv": "9ba8173abbbb8d96e885",
+    "charts": "a1bfbca252e390d7f319",
+    "text": "4bf95b46a9449c3beb3f",
+    "assumptionFigures": "094a4cef5f1a73898681"
+   },
+   "needAtRetire": 371261.49276384735,
+   "ffAge": 31.333333333333332
+  },
+  "fuzz #184": {
+   "digest": {
+    "P": "263e4aa04affb8b81ee9",
+    "diag": "a98e4b49b9debeb5ee9a",
+    "series": "6c2363fadafd2de914e4",
+    "headline": "29a26a89907877ec45ce",
+    "mc": "fae7a5bebcfc59771888",
+    "reqs": "bfb921a252317e4b15d4",
+    "dd": "a1def65a1104dbf22f51",
+    "table": "f995d7a33df6a49ef344",
+    "tableText": "a945430142527595e5b9",
+    "csv": "c6588f5a77a1ce219598",
+    "charts": "87cce9946978acc6f932",
+    "text": "090bf7d64312c80f473d",
+    "assumptionFigures": "75b34c051be6cbdc6b5a"
+   },
+   "needAtRetire": 4802149.5869336715,
+   "ffAge": 39.25
+  },
+  "fuzz #185": {
+   "digest": {
+    "P": "c16e1a8f96b117ab2e27",
+    "diag": "356efc72fe39c6d6e49a",
+    "series": "30dfa8dc7d6a281d8739",
+    "headline": "0d19e51acc329add4fd0",
+    "mc": "dbab88e9e8a957e9ec40",
+    "reqs": "ffda2fc105c0c30f0139",
+    "dd": "f513403afadb1f771193",
+    "table": "06c52427298c24f9c33e",
+    "tableText": "df00ee374f0dbd68e137",
+    "csv": "115c6c28b6228bb3c87b",
+    "charts": "59baf6a141e026486851",
+    "text": "aef6d454b3ab6361752e",
+    "assumptionFigures": "683f3da6de0a93a43c57"
+   },
+   "needAtRetire": 5609553.152703533,
+   "ffAge": 45.75
+  },
+  "fuzz #186": {
+   "digest": {
+    "P": "518a3206f9e0791da518",
+    "diag": "4d61a1aeaa704373b350",
+    "series": "748d9fa345767f63f781",
+    "headline": "2f429e540c9ffca0e3d0",
+    "mc": "ecaa1e3e98926dfde459",
+    "reqs": "929303697154a616c182",
+    "dd": "b108e8a1c3977930440a",
+    "table": "e918ab64f07a2ead54de",
+    "tableText": "b80f77fa54edc2f97669",
+    "csv": "924543583693adc99e78",
+    "charts": "c92fc6c92b196320001b",
+    "text": "827b0d26316b2cee189d",
+    "assumptionFigures": "55cdafc64fe056aad330"
+   },
+   "needAtRetire": 673274.3531403576,
+   "ffAge": 50
+  },
+  "fuzz #187": {
+   "digest": {
+    "P": "31479d4ea52d15f52cef",
+    "diag": "59f8be691f347844f260",
+    "series": "598deb454e6a495139bc",
+    "headline": "698ff8bc5fa41d1d927f",
+    "mc": "b0fb08501efd90792ec1",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "071ba686d982ea8bb4b1",
+    "table": "e6b2d96fdbd0c632dad5",
+    "tableText": "29c6769e20baad7ec56b",
+    "csv": "8f4bc0d42ad233d013f8",
+    "charts": "54849cbb915921cb10a8",
+    "text": "738d5bb363238de01fe5",
+    "assumptionFigures": "1eb58de08e7487012466"
+   },
+   "needAtRetire": 0,
+   "ffAge": 58
+  },
+  "fuzz #188": {
+   "digest": {
+    "P": "e60539dc32f62601b3cd",
+    "diag": "c3680f2e985f594e3739",
+    "series": "40f289862d01f8ab41d2",
+    "headline": "01ae5e42dea184762fd6",
+    "mc": "c174e6fe895df1fe21a8",
+    "reqs": "e365e0c56699cbff0416",
+    "dd": "64a8daf82b9a19ec917b",
+    "table": "bd4659402b368773860e",
+    "tableText": "6896edc6ce0b46034709",
+    "csv": "cb864763ca20915f1d7a",
+    "charts": "230bb9f682d4b09ab92b",
+    "text": "03cbd88754396a80ac57",
+    "assumptionFigures": "d42ed24e1c990458a45c"
+   },
+   "needAtRetire": 2457292.9292754475,
+   "ffAge": 48.083333333333336
+  },
+  "fuzz #189": {
+   "digest": {
+    "P": "9997b6dc6cebf3161269",
+    "diag": "61b12f7f236067b83624",
+    "series": "a513d686a53ee1d65acd",
+    "headline": "10ef821d262f822e5640",
+    "mc": "3a8354439367d4b307df",
+    "reqs": "aa09064fe038dd56a545",
+    "dd": "649f79eff2441e790aa5",
+    "table": "6a47a4cd3e8f5fd20990",
+    "tableText": "e7cf166f23a3d791ac2b",
+    "csv": "bd7f1a66ec2a60aae025",
+    "charts": "54bbf2e532ad632b37b4",
+    "text": "e4664be8f740941f7619",
+    "assumptionFigures": "90b3bb80e68b5413386c"
+   },
+   "needAtRetire": 22856367.946923338,
+   "ffAge": 61.666666666666664
+  },
+  "fuzz #190": {
+   "digest": {
+    "P": "a2896775f54e7c593202",
+    "diag": "a3023d6baa4f12254452",
+    "series": "33daf76661cfc6f78c1d",
+    "headline": "456e912257943f89845d",
+    "mc": "f3bae0a6a97713eb08b5",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "4673ed1c90c4ac7c6192",
+    "table": "93aa639e181cd8275f36",
+    "tableText": "3639b9f10f2915e2b63e",
+    "csv": "3a83ac46f26805397b35",
+    "charts": "16546c613d8ff744df58",
+    "text": "ac710692e0c2cc5d0994",
+    "assumptionFigures": "0222bd0ab5f9ba730d97"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #191": {
+   "digest": {
+    "P": "8aeca855bba16589e235",
+    "diag": "e5d8633236ecfcda5520",
+    "series": "0d41417763c4fb7b71af",
+    "headline": "aab472d7ce9a7a992d9c",
+    "mc": "389aed0651768ea17158",
+    "reqs": "acb942031a5864dc384f",
+    "dd": "db878afed4a0a0ed45e9",
+    "table": "c926b9c434df130d09e1",
+    "tableText": "63203abf2dbe4f11940d",
+    "csv": "754a4456b8c6d1a22fea",
+    "charts": "b9e1a2c04966552d8fbb",
+    "text": "e898a9a264046fc873b6",
+    "assumptionFigures": "cabc27d77a1b92ef910b"
+   },
+   "needAtRetire": 162764587.9091379,
+   "ffAge": null
+  },
+  "fuzz #192": {
+   "digest": {
+    "P": "5da7afdca566779f349a",
+    "diag": "7649c0ec3a2d1a64d93b",
+    "series": "a2e5c6701197f7e19723",
+    "headline": "2d04b8d4e0d45bd3c0c0",
+    "mc": "b62a1674f73909fee66f",
+    "reqs": "70f1bfaf613b081f7a02",
+    "dd": "b286c79a3c6209f884bf",
+    "table": "7cdd97c39a9ef39a0a74",
+    "tableText": "07267ad5b7dd592c94fb",
+    "csv": "e70e0021dbf9a417310f",
+    "charts": "cac20faf849200dda54c",
+    "text": "f0c3d8217d1cdf4735d1",
+    "assumptionFigures": "272305c2df26a590f828"
+   },
+   "needAtRetire": 2709706.5090969927,
+   "ffAge": 28.833333333333332
+  },
+  "fuzz #193": {
+   "digest": {
+    "P": "564fbdf56fb391528767",
+    "diag": "346f4f178941998c47ac",
+    "series": "5e5fa6fa04670c3b6b96",
+    "headline": "d604672e821c71e0be4a",
+    "mc": "0b610bf9cb583833ee6b",
+    "reqs": "5ef08464627cf8d640d0",
+    "dd": "d66617cc7eb361bc35ae",
+    "table": "47856deab33ca5866f34",
+    "tableText": "0c834b44e9d370b18c8d",
+    "csv": "a7a738cb8523c8092af1",
+    "charts": "0b9c8633ef4332099778",
+    "text": "3e4670a787cc1c8f7663",
+    "assumptionFigures": "9a61d6aa08a74fc3e18b"
+   },
+   "needAtRetire": 1776413.3694152297,
+   "ffAge": null
+  },
+  "fuzz #194": {
+   "digest": {
+    "P": "ae33f228e9af5e1c860f",
+    "diag": "e9967dbf15df7dc2567c",
+    "series": "c8a1fe342f953e95706f",
+    "headline": "e0704042fb57b57cf8d3",
+    "mc": "5d104d7166c6c01b78f0",
+    "reqs": "cf7d7aa1aaca0eb4ed9f",
+    "dd": "1e90906b7892e665009e",
+    "table": "e26745a54e5df0ad4aaf",
+    "tableText": "d61545481698cd8d37f1",
+    "csv": "5908857d1bce847ec430",
+    "charts": "a13e40d265c0791cac90",
+    "text": "85bf1e1c284c8f39acd2",
+    "assumptionFigures": "6eaa0c06cb263c5b4c1a"
+   },
+   "needAtRetire": 2195107.5064820624,
+   "ffAge": 77.16666666666667
+  },
+  "fuzz #195": {
+   "digest": {
+    "P": "d331ccf2c6c11292f7c1",
+    "diag": "514f8d3412b4758646ad",
+    "series": "9a1aa6498a3d45380456",
+    "headline": "33715ef6a55c2998e5d5",
+    "mc": "51c34d9c6a2b62821e92",
+    "reqs": "b09f6c088c7da9754ce4",
+    "dd": "c3d7813cff2bb12cf124",
+    "table": "75e83ed9fb3211e192a2",
+    "tableText": "becd654d40263de3e153",
+    "csv": "7296d8742a9a96634209",
+    "charts": "333fbb7b787a16351d43",
+    "text": "26c64ad0bad0d7371e41",
+    "assumptionFigures": "8be15cd6c1df07574d8c"
+   },
+   "needAtRetire": 36138273.677752994,
+   "ffAge": 26.166666666666668
+  },
+  "fuzz #196": {
+   "digest": {
+    "P": "45d85eba8b9ec27c2c65",
+    "diag": "14f096bc2622c7084bb5",
+    "series": "9ec2d011c50f9bf85d3f",
+    "headline": "26e30f99ff02f646ca9f",
+    "mc": "9900fb0e20df6798cc33",
+    "reqs": "df7bd7bc93cee0703b85",
+    "dd": "3b2bd423c895708d236b",
+    "table": "f00185220ea83343d066",
+    "tableText": "03391e87dcf567883e5f",
+    "csv": "05bc9fc5f211a0796035",
+    "charts": "4f5d275951bfa847d2dc",
+    "text": "b4f7d949814a8357d1e7",
+    "assumptionFigures": "2dd764d18b33a907e79f"
+   },
+   "needAtRetire": 0,
+   "ffAge": 52
+  },
+  "fuzz #197": {
+   "digest": {
+    "P": "f956aaa7a8000bbcba76",
+    "diag": "ff37e665c605dccaedb3",
+    "series": "3afad9af835c1142352f",
+    "headline": "8d7b0aff110ed6c0cbb1",
+    "mc": "7d616efd69b7daa274a0",
+    "reqs": "b735471a3a9a91777f0e",
+    "dd": "84aa1103ae70be5362c5",
+    "table": "01c93e6721f4fcac1e4b",
+    "tableText": "7ef4cb2169703185c125",
+    "csv": "b738c670cb73b022eef8",
+    "charts": "d44242d8079a7985019c",
+    "text": "54e84d4dd2f4bb73550e",
+    "assumptionFigures": "8a0887eac28c1366ed91"
+   },
+   "needAtRetire": null,
+   "ffAge": null
+  },
+  "fuzz #198": {
+   "digest": {
+    "P": "597c7ba5da5551036207",
+    "diag": "f9f42ce7cba92c0c474a",
+    "series": "4ec59893953d9ddae660",
+    "headline": "70d7d3acfd262cd486b3",
+    "mc": "2ece2089653b6990e888",
+    "reqs": "6ecf38689a5d826338b1",
+    "dd": "a2017b2cbd3fd89ffac9",
+    "table": "fd3fa14a16f7945a80ca",
+    "tableText": "2003e0c11d16ba2b74df",
+    "csv": "ba323e0bdb77a080c51a",
+    "charts": "a5a87e1acb6e89ae4a5e",
+    "text": "ff191cbd8da13e2da7e3",
+    "assumptionFigures": "ae0eb55e9c6acf76bd05"
+   },
+   "needAtRetire": 36141971.69528854,
+   "ffAge": null
+  },
+  "fuzz #199": {
+   "digest": {
+    "P": "2cdafcf23169e9714c51",
+    "diag": "1ce1d3f4c85e43e00390",
+    "series": "ca4016b22bcd2ee8574d",
+    "headline": "9fdfef32e3eaef1cfc94",
+    "mc": "10a41a039336748129e3",
+    "reqs": "79adf3d4e573c7bc361f",
+    "dd": "243b91649eb6f41d8677",
+    "table": "73d8c905c8fd588e50f0",
+    "tableText": "a9a6602f3b8310ee99b0",
+    "csv": "5f9e4b1be836ef98c8db",
+    "charts": "f56054ff29b234c9a91d",
+    "text": "2b645e22b433d8e597c1",
+    "assumptionFigures": "f634523802a7cd53208d"
+   },
+   "needAtRetire": 15121747.309839182,
+   "ffAge": 76.08333333333333
+  }
+ },
+ "buttons": {
+  "moderate": {
+   "P": "9f846eb55c56de3e2789",
+   "diag": "3a50e43ed34ee3fb80a3",
+   "series": "13be208582e16b99f561",
+   "headline": "97c7afe5de89e85083aa",
+   "mc": "9c596eff8506ead0c7dc",
+   "reqs": "e1e2e955bb2a4046b777",
+   "dd": "550120f1cf66625c320f",
+   "table": "d497962bf2e31b8646aa",
+   "tableText": "d181fda1fca0e657a5a2",
+   "csv": "a8c543132400f5dadea0",
+   "charts": "8fdf287f04a33d89e5d3",
+   "text": "1c47f65cd8c4a1d762c9",
+   "assumptionFigures": "eafd9e97e47ced9ae2b1"
+  },
+  "geoarbitrage": {
+   "P": "890ed499c589a7f875c1",
+   "diag": "9fa949a9679c88a33529",
+   "series": "6b0ffae48aa45649a4c6",
+   "headline": "c7e1f57e9ca94288ef20",
+   "mc": "2dc5e7fbcf3545be96d7",
+   "reqs": "fd369274d8162e4418be",
+   "dd": "acfc953790d0e902556c",
+   "table": "1077775d76987ae4ad7e",
+   "tableText": "002bbbe431278c9e100b",
+   "csv": "54d614e19c5a4aed776c",
+   "charts": "70e68e287fecff19ed51",
+   "text": "7a66a86b320a14eb0ac5",
+   "assumptionFigures": "fc791ba8a94a7ddf877e"
+  },
+  "fatfire": {
+   "P": "3f6bc0be7e37c3ed042d",
+   "diag": "1991f8b22e6ec6913fe1",
+   "series": "900e9cc56202c95345b1",
+   "headline": "1a03040169c444a30cfe",
+   "mc": "adee90d9dc0724255efa",
+   "reqs": "8ba74ec27e1d4ddfa301",
+   "dd": "1755da2de5ae78e7a2cf",
+   "table": "de4be18633861ba093c9",
+   "tableText": "c7057b1da0ca1969696b",
+   "csv": "b4be2e35eeccfd64dda2",
+   "charts": "857b1ac52ad6bd47e4e0",
+   "text": "2ca462951c7ec54489e3",
+   "assumptionFigures": "aa94ec972347bca82da0"
+  },
+  "latestart": {
+   "P": "3fb965d76b913ab0edae",
+   "diag": "13f64bb87bd9caaf2559",
+   "series": "fcf6e73c20961cd360d4",
+   "headline": "65428371412e9c74fbf4",
+   "mc": "03124c99b89921100db6",
+   "reqs": "20229e33f0bdb11d6219",
+   "dd": "e3e597edcdf78a1e08bd",
+   "table": "74e65293ed982544cd79",
+   "tableText": "a9d269b6902605497e9b",
+   "csv": "9cc45c0521b0ceb87bdd",
+   "charts": "93bb160f62d9220e7e6c",
+   "text": "6fab32ddb9f0c623461e",
+   "assumptionFigures": "efc1289495b6429ec6b4"
+  }
+ },
+ "caches": {
+  "defaults": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "defaults, today's money": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":true,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "income model": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"110,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "weekly and monthly periods": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"2,600\",\"v:savingsPeriod\":\"monthly\",\"v:growth\":\"3\",\"v:expense\":\"1,100\",\"v:expensePeriod\":\"weekly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "legacy goal": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"legacy\",\"v:legacy\":\"900,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "die rich": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"rich\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "die rich, frozen pension": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"rich\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"70\",\"v:pensionAmount\":\"600\",\"v:pensionPeriod\":\"weekly\",\"c:pensionIndexed\":false,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "indexed pension bridge": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"55\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "pension bigger than spending": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"60\",\"v:pensionAmount\":\"80,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"50\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "stop today": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"30\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "never stop": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"90\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "runs out": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"10,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"20,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"40\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "nothing funds it": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"0\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"0\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "tight, every remedy": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"6,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"0\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "tight, income model": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"64,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"0\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "already free": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"5,000,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "share at 10%": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"10\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "share at 300%": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"300\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "share at 85.5%": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"85.5\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "share at 37.25%": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"legacy\",\"v:legacy\":\"250,000\",\"v:retireMultiplier\":\"37.25\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "share at 95% (odd binary)": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"81,234\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"95\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "zero inflation": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"0\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "zero real return": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"2.5\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "below inflation, die rich": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"4\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"2\",\"v:std\":\"15\",\"r:ffmode\":\"rich\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "below inflation, just die": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"4\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"2\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "fractional age now": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"33.5\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"50\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "zero volatility": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"0\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "rupiah, 5000 paths": "{\"__fields\":{\"v:currency\":\"IDR\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"120,000,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"180,000,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"900,000,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"5000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "confidence 99, other seed": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"90\",\"v:savings\":\"30,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"60,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"100,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"99\",\"v:seed\":\"7\",\"v:ageRetire\":\"60\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "late starter, slider at 70": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"52\",\"v:ageDie\":\"92\",\"v:savings\":\"25,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"2\",\"v:expense\":\"55,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"180,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"6.5\",\"v:std\":\"10\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"85\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"70\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "old frugal at 35": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"28\",\"v:ageDie\":\"92\",\"v:savings\":\"92,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"2.5\",\"v:expense\":\"30,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"40,000\",\"v:assetPreset\":\"world\",\"v:ret\":\"8.5\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"35\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "old family legacy at 50": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"40\",\"v:ageDie\":\"90\",\"v:savings\":\"55,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"80,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"350,000\",\"v:assetPreset\":\"world\",\"v:ret\":\"8.5\",\"v:std\":\"15\",\"r:ffmode\":\"legacy\",\"v:legacy\":\"750,000\",\"v:retireMultiplier\":\"95\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"50\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "old moderate, seeded": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"32\",\"v:ageDie\":\"90\",\"v:savings\":\"45,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"65,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"120,000\",\"v:assetPreset\":\"world\",\"v:ret\":\"8.5\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"45\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "old frugal, seeded": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"28\",\"v:ageDie\":\"92\",\"v:savings\":\"92,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"2.5\",\"v:expense\":\"30,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"40,000\",\"v:assetPreset\":\"world\",\"v:ret\":\"8.5\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"35\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "old geoarbitrage, seeded": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"34\",\"v:ageDie\":\"88\",\"v:savings\":\"40,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"70,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"3\",\"v:assets\":\"90,000\",\"v:assetPreset\":\"world\",\"v:ret\":\"8.5\",\"v:std\":\"15\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"40\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"42\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "old fatfire, seeded": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"38\",\"v:ageDie\":\"90\",\"v:savings\":\"320,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"120,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"400,000\",\"v:assetPreset\":\"us\",\"v:ret\":\"10\",\"v:std\":\"15.5\",\"r:ffmode\":\"rich\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"100\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"43\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "old legacy, seeded": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"40\",\"v:ageDie\":\"90\",\"v:savings\":\"55,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"3\",\"v:expense\":\"80,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"350,000\",\"v:assetPreset\":\"world\",\"v:ret\":\"8.5\",\"v:std\":\"15\",\"r:ffmode\":\"legacy\",\"v:legacy\":\"750,000\",\"v:retireMultiplier\":\"95\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"50\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "old latestart, seeded": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"52\",\"v:ageDie\":\"92\",\"v:savings\":\"25,000\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"2\",\"v:expense\":\"55,000\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"180,000\",\"v:assetPreset\":\"custom\",\"v:ret\":\"6.5\",\"v:std\":\"10\",\"r:ffmode\":\"die\",\"v:legacy\":\"500,000\",\"v:retireMultiplier\":\"85\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"29,000\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"1000\",\"v:confidence\":\"90\",\"v:seed\":\"20260921\",\"v:ageRetire\":\"61\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "fuzz #0": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"48\",\"v:ageDie\":\"92\",\"v:savings\":\"219,650\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"-2.8\",\"v:expense\":\"109,223\",\"v:expensePeriod\":\"weekly\",\"v:inflation\":\"9.7\",\"v:assets\":\"2,265,325\",\"v:assetPreset\":\"custom\",\"v:ret\":\"8.4\",\"v:std\":\"33.9\",\"r:ffmode\":\"legacy\",\"v:legacy\":\"1,751,895\",\"v:retireMultiplier\":\"158\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"74\",\"v:pensionAmount\":\"30,717\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":false,\"c:showReal\":false,\"v:paths\":\"60\",\"v:confidence\":\"78\",\"v:seed\":\"373471\",\"v:ageRetire\":\"81\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "fuzz #10": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"36\",\"v:ageDie\":\"71\",\"v:savings\":\"20,406\",\"v:savingsPeriod\":\"weekly\",\"v:growth\":\"5.8\",\"v:expense\":\"105,880\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"8.6\",\"v:assets\":\"1,170,972\",\"v:assetPreset\":\"custom\",\"v:ret\":\"7.6\",\"v:std\":\"29.1\",\"r:ffmode\":\"die\",\"v:legacy\":\"1,017,369\",\"v:retireMultiplier\":\"180\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"45\",\"v:pensionAmount\":\"37,770\",\"v:pensionPeriod\":\"monthly\",\"c:pensionIndexed\":false,\"c:showReal\":false,\"v:paths\":\"60\",\"v:confidence\":\"98\",\"v:seed\":\"176168\",\"v:ageRetire\":\"63\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "fuzz #20": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"38\",\"v:ageDie\":\"43\",\"v:savings\":\"176,257\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"5.4\",\"v:expense\":\"134,185\",\"v:expensePeriod\":\"monthly\",\"v:inflation\":\"0.5\",\"v:assets\":\"2,511,281\",\"v:assetPreset\":\"custom\",\"v:ret\":\"2.6\",\"v:std\":\"18.8\",\"r:ffmode\":\"legacy\",\"v:legacy\":\"278,121\",\"v:retireMultiplier\":\"62.44\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"67\",\"v:pensionAmount\":\"23,485\",\"v:pensionPeriod\":\"monthly\",\"c:pensionIndexed\":false,\"c:showReal\":false,\"v:paths\":\"60\",\"v:confidence\":\"57\",\"v:seed\":\"749879\",\"v:ageRetire\":\"39\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "fuzz #30": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"69\",\"v:ageDie\":\"85\",\"v:savings\":\"28,868\",\"v:savingsPeriod\":\"monthly\",\"v:growth\":\"8.3\",\"v:expense\":\"84,364\",\"v:expensePeriod\":\"monthly\",\"v:inflation\":\"7.3\",\"v:assets\":\"1,852,003\",\"v:assetPreset\":\"custom\",\"v:ret\":\"14.8\",\"v:std\":\"25.6\",\"r:ffmode\":\"legacy\",\"v:legacy\":\"1,909,395\",\"v:retireMultiplier\":\"94\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"49\",\"v:pensionAmount\":\"76,320\",\"v:pensionPeriod\":\"weekly\",\"c:pensionIndexed\":false,\"c:showReal\":true,\"v:paths\":\"60\",\"v:confidence\":\"89\",\"v:seed\":\"555455\",\"v:ageRetire\":\"77\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "fuzz #40": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"30\",\"v:ageDie\":\"48\",\"v:savings\":\"6,245\",\"v:savingsPeriod\":\"weekly\",\"v:growth\":\"2.5\",\"v:expense\":\"44,260\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"12.2\",\"v:assets\":\"1,616,010\",\"v:assetPreset\":\"custom\",\"v:ret\":\"16.7\",\"v:std\":\"4.3\",\"r:ffmode\":\"legacy\",\"v:legacy\":\"893,151\",\"v:retireMultiplier\":\"21\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"51\",\"v:pensionAmount\":\"72,096\",\"v:pensionPeriod\":\"monthly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"60\",\"v:confidence\":\"68\",\"v:seed\":\"692538\",\"v:ageRetire\":\"34\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "fuzz #50": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"42\",\"v:ageDie\":\"82\",\"v:savings\":\"124,395\",\"v:savingsPeriod\":\"weekly\",\"v:growth\":\"11.4\",\"v:expense\":\"119,434\",\"v:expensePeriod\":\"weekly\",\"v:inflation\":\"13\",\"v:assets\":\"2,191,127\",\"v:assetPreset\":\"custom\",\"v:ret\":\"5.8\",\"v:std\":\"4.4\",\"r:ffmode\":\"die\",\"v:legacy\":\"1,262,677\",\"v:retireMultiplier\":\"56.6\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"84\",\"v:pensionAmount\":\"11,987\",\"v:pensionPeriod\":\"weekly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"60\",\"v:confidence\":\"92\",\"v:seed\":\"50144\",\"v:ageRetire\":\"57\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "fuzz #60": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"46\",\"v:ageDie\":\"78\",\"v:savings\":\"170,927\",\"v:savingsPeriod\":\"weekly\",\"v:growth\":\"1.2\",\"v:expense\":\"1,089\",\"v:expensePeriod\":\"monthly\",\"v:inflation\":\"0.2\",\"v:assets\":\"2,237,600\",\"v:assetPreset\":\"custom\",\"v:ret\":\"12\",\"v:std\":\"3.3\",\"r:ffmode\":\"legacy\",\"v:legacy\":\"825,847\",\"v:retireMultiplier\":\"292\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"75\",\"v:pensionAmount\":\"10,480\",\"v:pensionPeriod\":\"weekly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"60\",\"v:confidence\":\"52\",\"v:seed\":\"281441\",\"v:ageRetire\":\"56\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "fuzz #70": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"38\",\"v:ageDie\":\"57\",\"v:savings\":\"221,451\",\"v:savingsPeriod\":\"monthly\",\"v:growth\":\"-4.9\",\"v:expense\":\"79,466\",\"v:expensePeriod\":\"monthly\",\"v:inflation\":\"10.7\",\"v:assets\":\"1,569,624\",\"v:assetPreset\":\"custom\",\"v:ret\":\"15.9\",\"v:std\":\"39.9\",\"r:ffmode\":\"die\",\"v:legacy\":\"394,011\",\"v:retireMultiplier\":\"38.1\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"42\",\"v:pensionAmount\":\"1,451\",\"v:pensionPeriod\":\"monthly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"60\",\"v:confidence\":\"64\",\"v:seed\":\"506430\",\"v:ageRetire\":\"39\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "fuzz #80": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"65\",\"v:ageDie\":\"81\",\"v:savings\":\"189,334\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"7.3\",\"v:expense\":\"153,616\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"13.3\",\"v:assets\":\"219,519\",\"v:assetPreset\":\"custom\",\"v:ret\":\"4.6\",\"v:std\":\"1.1\",\"r:ffmode\":\"die\",\"v:legacy\":\"1,281,016\",\"v:retireMultiplier\":\"13\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"62\",\"v:pensionAmount\":\"51,685\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":false,\"c:showReal\":true,\"v:paths\":\"60\",\"v:confidence\":\"88\",\"v:seed\":\"246573\",\"v:ageRetire\":\"74\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "fuzz #90": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"65\",\"v:ageDie\":\"71\",\"v:savings\":\"25,253\",\"v:savingsPeriod\":\"monthly\",\"v:growth\":\"11.3\",\"v:expense\":\"63,062\",\"v:expensePeriod\":\"weekly\",\"v:inflation\":\"12.4\",\"v:assets\":\"1,417,373\",\"v:assetPreset\":\"custom\",\"v:ret\":\"12.4\",\"v:std\":\"24.5\",\"r:ffmode\":\"rich\",\"v:legacy\":\"1,764,631\",\"v:retireMultiplier\":\"264\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"88\",\"v:pensionAmount\":\"2,335\",\"v:pensionPeriod\":\"weekly\",\"c:pensionIndexed\":false,\"c:showReal\":true,\"v:paths\":\"60\",\"v:confidence\":\"67\",\"v:seed\":\"212294\",\"v:ageRetire\":\"70\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "fuzz #100": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"45\",\"v:ageDie\":\"78\",\"v:savings\":\"112,373\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"5.3\",\"v:expense\":\"103,158\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"2.5\",\"v:assets\":\"2,342,034\",\"v:assetPreset\":\"custom\",\"v:ret\":\"5.1\",\"v:std\":\"26.3\",\"r:ffmode\":\"die\",\"v:legacy\":\"95,599\",\"v:retireMultiplier\":\"148\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"42\",\"v:pensionAmount\":\"42,223\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":false,\"c:showReal\":false,\"v:paths\":\"60\",\"v:confidence\":\"57\",\"v:seed\":\"165341\",\"v:ageRetire\":\"54\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "fuzz #110": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"44\",\"v:ageDie\":\"65\",\"v:savings\":\"57,738\",\"v:savingsPeriod\":\"weekly\",\"v:growth\":\"5.4\",\"v:expense\":\"162,382\",\"v:expensePeriod\":\"yearly\",\"v:inflation\":\"12.6\",\"v:assets\":\"2,133,782\",\"v:assetPreset\":\"custom\",\"v:ret\":\"15.2\",\"v:std\":\"14\",\"r:ffmode\":\"die\",\"v:legacy\":\"1,254,404\",\"v:retireMultiplier\":\"267.55\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"81\",\"v:pensionAmount\":\"3,150\",\"v:pensionPeriod\":\"weekly\",\"c:pensionIndexed\":false,\"c:showReal\":false,\"v:paths\":\"60\",\"v:confidence\":\"80\",\"v:seed\":\"940227\",\"v:ageRetire\":\"51\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "fuzz #120": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"36\",\"v:ageDie\":\"55\",\"v:savings\":\"52,972\",\"v:savingsPeriod\":\"weekly\",\"v:growth\":\"7.7\",\"v:expense\":\"82,016\",\"v:expensePeriod\":\"weekly\",\"v:inflation\":\"0.6\",\"v:assets\":\"2,578,349\",\"v:assetPreset\":\"custom\",\"v:ret\":\"4.1\",\"v:std\":\"31.7\",\"r:ffmode\":\"die\",\"v:legacy\":\"201,403\",\"v:retireMultiplier\":\"210\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"52\",\"v:pensionAmount\":\"6,588\",\"v:pensionPeriod\":\"monthly\",\"c:pensionIndexed\":true,\"c:showReal\":true,\"v:paths\":\"60\",\"v:confidence\":\"97\",\"v:seed\":\"746731\",\"v:ageRetire\":\"54\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "fuzz #130": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"23\",\"v:ageDie\":\"33\",\"v:savings\":\"241,957\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"11.5\",\"v:expense\":\"162,859\",\"v:expensePeriod\":\"weekly\",\"v:inflation\":\"10.4\",\"v:assets\":\"1,527,538\",\"v:assetPreset\":\"custom\",\"v:ret\":\"11.4\",\"v:std\":\"35.6\",\"r:ffmode\":\"die\",\"v:legacy\":\"743,620\",\"v:retireMultiplier\":\"170\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"76\",\"v:pensionAmount\":\"55,841\",\"v:pensionPeriod\":\"monthly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"60\",\"v:confidence\":\"77\",\"v:seed\":\"218074\",\"v:ageRetire\":\"24\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "fuzz #140": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"64\",\"v:ageDie\":\"95\",\"v:savings\":\"234,447\",\"v:savingsPeriod\":\"weekly\",\"v:growth\":\"7.3\",\"v:expense\":\"3,639\",\"v:expensePeriod\":\"monthly\",\"v:inflation\":\"2.6\",\"v:assets\":\"719,313\",\"v:assetPreset\":\"custom\",\"v:ret\":\"19.3\",\"v:std\":\"25.7\",\"r:ffmode\":\"rich\",\"v:legacy\":\"1,892,722\",\"v:retireMultiplier\":\"286.33\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"42\",\"v:pensionAmount\":\"77,006\",\"v:pensionPeriod\":\"weekly\",\"c:pensionIndexed\":false,\"c:showReal\":false,\"v:paths\":\"60\",\"v:confidence\":\"62\",\"v:seed\":\"953688\",\"v:ageRetire\":\"72\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "fuzz #150": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"69\",\"v:ageDie\":\"75\",\"v:savings\":\"34,218\",\"v:savingsPeriod\":\"monthly\",\"v:growth\":\"0.4\",\"v:expense\":\"36,093\",\"v:expensePeriod\":\"monthly\",\"v:inflation\":\"7.8\",\"v:assets\":\"2,523,889\",\"v:assetPreset\":\"custom\",\"v:ret\":\"14.8\",\"v:std\":\"12.7\",\"r:ffmode\":\"rich\",\"v:legacy\":\"674,437\",\"v:retireMultiplier\":\"287\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"59\",\"v:pensionAmount\":\"19,902\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":false,\"c:showReal\":true,\"v:paths\":\"60\",\"v:confidence\":\"59\",\"v:seed\":\"294359\",\"v:ageRetire\":\"70\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "fuzz #160": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"29\",\"v:ageDie\":\"38\",\"v:savings\":\"19,685\",\"v:savingsPeriod\":\"weekly\",\"v:growth\":\"4.5\",\"v:expense\":\"52,042\",\"v:expensePeriod\":\"weekly\",\"v:inflation\":\"4.9\",\"v:assets\":\"1,668,067\",\"v:assetPreset\":\"custom\",\"v:ret\":\"7.3\",\"v:std\":\"14.2\",\"r:ffmode\":\"die\",\"v:legacy\":\"1,686,618\",\"v:retireMultiplier\":\"201.9\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"86\",\"v:pensionAmount\":\"52,536\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":true,\"v:paths\":\"60\",\"v:confidence\":\"72\",\"v:seed\":\"905789\",\"v:ageRetire\":\"32\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "fuzz #170": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"44\",\"v:ageDie\":\"58\",\"v:savings\":\"180,412\",\"v:savingsPeriod\":\"weekly\",\"v:growth\":\"-0.4\",\"v:expense\":\"12,274\",\"v:expensePeriod\":\"monthly\",\"v:inflation\":\"7.8\",\"v:assets\":\"1,660,061\",\"v:assetPreset\":\"custom\",\"v:ret\":\"-2\",\"v:std\":\"9.4\",\"r:ffmode\":\"rich\",\"v:legacy\":\"788,145\",\"v:retireMultiplier\":\"131.6\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"85\",\"v:pensionAmount\":\"35,958\",\"v:pensionPeriod\":\"monthly\",\"c:pensionIndexed\":false,\"c:showReal\":true,\"v:paths\":\"60\",\"v:confidence\":\"55\",\"v:seed\":\"973245\",\"v:ageRetire\":\"47\"},\"__extra\":{\"savingsMode\":\"income\"}}",
+  "fuzz #180": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"69\",\"v:ageDie\":\"88\",\"v:savings\":\"190,529\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"-4.6\",\"v:expense\":\"122,731\",\"v:expensePeriod\":\"monthly\",\"v:inflation\":\"7\",\"v:assets\":\"2,018,872\",\"v:assetPreset\":\"custom\",\"v:ret\":\"7\",\"v:std\":\"36\",\"r:ffmode\":\"legacy\",\"v:legacy\":\"66,164\",\"v:retireMultiplier\":\"144.5\",\"c:pensionOn\":false,\"v:pensionStartAge\":\"81\",\"v:pensionAmount\":\"1,903\",\"v:pensionPeriod\":\"monthly\",\"c:pensionIndexed\":false,\"c:showReal\":true,\"v:paths\":\"60\",\"v:confidence\":\"64\",\"v:seed\":\"787153\",\"v:ageRetire\":\"70\"},\"__extra\":{\"savingsMode\":\"savings\"}}",
+  "fuzz #190": "{\"__fields\":{\"v:currency\":\"AUD\",\"v:ageNow\":\"59\",\"v:ageDie\":\"70\",\"v:savings\":\"189,816\",\"v:savingsPeriod\":\"yearly\",\"v:growth\":\"-0.1\",\"v:expense\":\"113,496\",\"v:expensePeriod\":\"weekly\",\"v:inflation\":\"4\",\"v:assets\":\"1,717,160\",\"v:assetPreset\":\"custom\",\"v:ret\":\"3.7\",\"v:std\":\"34.5\",\"r:ffmode\":\"rich\",\"v:legacy\":\"1,690,120\",\"v:retireMultiplier\":\"293\",\"c:pensionOn\":true,\"v:pensionStartAge\":\"81\",\"v:pensionAmount\":\"52,578\",\"v:pensionPeriod\":\"yearly\",\"c:pensionIndexed\":true,\"c:showReal\":false,\"v:paths\":\"60\",\"v:confidence\":\"71\",\"v:seed\":\"469983\",\"v:ageRetire\":\"64\"},\"__extra\":{\"savingsMode\":\"savings\"}}"
+ }
+}
