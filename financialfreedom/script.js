@@ -1255,7 +1255,6 @@ function syncMoneyOut(){
   syncStageChrome();
   syncStageAges();
   syncStageNotes();
-  syncStageSpans();
   renderStageTimeline();
 }
 
@@ -1481,44 +1480,6 @@ function onStageAges(){
     if(Number(f.value) !== s.from || f.value.trim() === '') f.value = String(s.from);
     if(Number(t.value) !== s.to || t.value.trim() === '') t.value = String(s.to);
   });
-}
-
-/* The two locked stages say, in a line each, which ages they cover at the
-   retirement age on the slider. The second line is the one that answers "why
-   did my spending not drop when I stopped work": it names the stage it waits
-   for. */
-function syncStageSpans(){
-  var P = buildParams(UI), now = P.ageNow, R = P.ageRetire, die = P.ageDie;
-  if(!(die > now)){ $('livingSpan').textContent = ''; $('retireSpan').textContent = ''; return; }
-  var runs = spendingTimeline(P);
-  var name = function(st){ return '<span data-no-abbr>' + escapeHtml(stageLabel(st)) + '</span>'; };
-  var a = function(x){ return escapeHtml(fmt.age(x)); };
-  var before = P.stages.some(function(st){ return st.from < R - 1e-9 && st.to > now + 1e-9; });
-  $('livingSpan').innerHTML = R <= now + 1e-9
-    ? 'You stop work now, so this only sets what each % of living is a share of.'
-    : 'From ' + a(now) + ' (now) to ' + a(R) + ', when you stop work' +
-      (before ? ', wherever no stage applies.' : '.');
-  var html;
-  if(R >= die - 1e-9){
-    html = 'Not used: you never stop work on this setting.';
-  } else {
-    var k = -1;
-    for(var i = 0; i < runs.length; i++){ if(!runs[i].stage && runs[i].retired){ k = i; break; } }
-    var later = P.stages.some(function(st){ return st.from > R + 1e-9 && st.from < die - 1e-9; });
-    /* Retirement starts on a whole month from today, which with a fractional
-       age now can sit a part of a month after the slider's age. So "a stage
-       made it wait" is read off the run before it, not off the ages. */
-    var waited = k > 0 && runs[k - 1].stage && runs[k].from > R + 1e-9;
-    if(k < 0){
-      html = 'Not used: your stages cover every age from ' + a(R) + ', when you stop work, to ' + a(die) + '.';
-    } else if(!waited){
-      html = 'From ' + a(R) + ', when you stop work, to ' + a(die) +
-        (later ? ', wherever no stage applies.' : '.');
-    } else {
-      html = 'From ' + a(runs[k].from) + ', once \u201c' + name(runs[k - 1].stage) + '\u201d ends. You stop work at ' + a(R) + '.';
-    }
-  }
-  $('retireSpan').innerHTML = html;
 }
 
 /* The stage list resolved into what you would actually spend, age by age, at

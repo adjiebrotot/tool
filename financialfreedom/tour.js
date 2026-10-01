@@ -32,7 +32,10 @@ window.__TOUR = {
       },
       title: '② Your money in and out',
       body: 'Your ages, then <strong>Money in</strong>: savings entered directly, or your net ' +
-            'income with the gap worked out for you. Then <strong>Money out</strong>: living ' +
+            'income with the gap worked out for you, and a government pension if you will get ' +
+            'one: per week, month or year, with a switch for whether it rises with inflation, ' +
+            'because plenty of countries pay a flat figure that never does. ' +
+            'Then <strong>Money out</strong>: living ' +
             'expenses now and retirement expenses once you stop. Switch it to ' +
             '<strong>Detailed</strong> and those two become the first and last of a list of ' +
             'life stages, with yours between them in age order: kids, a hustle, slower later ' +
@@ -61,9 +64,7 @@ window.__TOUR = {
       body: '<strong>Just Die</strong> runs the pot down to nothing at your life expectancy. ' +
             '<strong>Leave a Legacy</strong> keeps a set amount. <strong>Die Rich</strong> ' +
             'spends only the real growth, so it lasts forever. The three need very different ' +
-            'amounts, and this is where a government pension goes too — per week, month or ' +
-            'year, and with a switch for whether it rises with inflation, because plenty of ' +
-            'countries pay a flat figure that never does.'
+            'amounts.'
     },
     {
       target: '#simBtn',

@@ -4011,10 +4011,7 @@ const KIDS = [
 
 /* F71: the two locked stages. In Detailed mode living and retirement
    expenses are the first and last card of the list, named and locked: the
-   same two fields as in Simple, so nothing is copied between modes. Each says
-   in a line which ages it covers at the slider's retirement age, and the
-   retirement line names the stage it waits for, which is the answer to "why
-   did my spending not drop when I stopped work". */
+   same two fields as in Simple, so nothing is copied between modes. */
 {
   const r = await page.evaluate(() => {
     const $ = id => document.getElementById(id), F = window.__FF;
@@ -4033,21 +4030,11 @@ const KIDS = [
     F.render();
     out.restored = locked.map(i => i.value).join(' | ');
     out.tips = Array.from(g.querySelectorAll('.money-stage .stage-head .tip-icon')).map(t => t.getAttribute('data-tip'));
-    out.slider = F.UI.ageRetire;
-    out.living = $('livingSpan').textContent; out.retire = $('retireSpan').textContent;
-    const sl = $('ageRetire');
-    const at = v => { sl.value = v; F.render(); return [$('livingSpan').textContent, $('retireSpan').textContent]; };
-    out.at60 = at(60); out.at90 = at(90); out.at33 = at(33);
-    at(out.slider);
-    const rows = document.querySelectorAll('#stageRows .stage-row');
-    const end = rows[rows.length - 1].querySelector('.stage-to');
-    end.value = '90'; end.dispatchEvent(new Event('change', {bubbles: true}));
-    out.covered = $('retireSpan').textContent;
     const expense = $('expense').value;
     document.querySelector('#expenseModeGroup .seg-btn[data-val="simple"]').click();
     out.simpleFrame = locked.every(i => !shown(i.closest('.stage-head'))) &&
       Array.from(g.querySelectorAll('.money-stage .simple-only')).every(shown) &&
-      !shown($('livingSpan')) && !shown($('retireSpan')) && $('expense').value === expense;
+      $('expense').value === expense;
     F.resetToDefaults();
     return out;
   });
@@ -4061,41 +4048,8 @@ const KIDS = [
     /baseline/.test(tl) && /comes back to this/.test(tl) && /stop work/.test(tr) && /finished/.test(tr) &&
     r.tips.every(t => t.replace(/<[^>]+>/g, '').length <= 150),
     r.tips.map(t => '"' + t.replace(/<[^>]+>/g, '') + '"').join(' / '));
-  check('F71d each locked stage says which ages it covers; retirement names the stage it waits for',
-    r.living === `From 33 (now) to ${r.slider}, when you stop work, wherever no stage applies.` &&
-    r.retire === `From 56, once “1st kid leaves” ends. You stop work at ${r.slider}.`,
-    `"${r.living}" / "${r.retire}"`);
-  check('F71e and both lines follow the slider, at either end of it too',
-    r.at60[1] === 'From 60, when you stop work, to 90.' && /^From 33 \(now\) to 60/.test(r.at60[0]) &&
-    /^Not used: you never stop work/.test(r.at90[1]) && /^You stop work now/.test(r.at33[0]) &&
-    /^Not used: your stages cover every age from/.test(r.covered),
-    `${r.at60[1]} | ${r.at90[1]} | ${r.at33[0]} | ${r.covered}`);
-  check('F71f Simple shows the same two fields as plain rows: no lock, no age line, the same figures',
+  check('F71f Simple shows the same two fields as plain rows: no lock, the same figures',
     r.simpleFrame, `plain rows ${r.simpleFrame}`);
-}
-
-/* F71h: a fractional age now puts the retirement month a part of a month past
-   the slider's age. The retirement line used to look for a stage to name in
-   that sliver and throw; it has to read the plan instead, at any age now. */
-{
-  const before = pageErrors.length;
-  const r = await page.evaluate(() => {
-    const $ = id => document.getElementById(id), F = window.__FF, out = [];
-    F.applyQuickStart('legacy');
-    for(const now of ['33.4', '33.5', '33.75', '42.1']){
-      $('ageNow').value = now;
-      for(const ra of [34, 47, 55, 60]){
-        $('ageRetire').value = ra;
-        try { F.render(); } catch(e){ out.push(now + '/' + ra + ': ' + e.message); continue; }
-        const t = $('retireSpan').textContent;
-        if(!/^(From|Not used)/.test(t)) out.push(now + '/' + ra + ': "' + t + '"');
-      }
-    }
-    F.resetToDefaults();
-    return out;
-  });
-  check('F71h a fractional age now never breaks the retirement line, at any slider age',
-    r.length === 0 && pageErrors.length === before, r.slice(0, 2).join(' | ') || '16 settings read cleanly');
 }
 
 // F71g: Detailed with no stages of its own is the Simple plan, to the last digit.
