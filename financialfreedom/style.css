@@ -92,7 +92,6 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .money-stage .stage-name-locked:focus{border-color:var(--border);}
 .stage-lock{display:inline-flex;align-items:center;justify-content:center;width:31px;height:28px;color:var(--muted);flex-shrink:0;}
 .stage-lock svg{width:15px;height:15px;}
-.stage-span{margin:0;font-size:.79rem;line-height:1.45;color:var(--muted);}
 
 /* What the list resolves to, at the slider's retirement age. */
 .stage-timeline{margin-top:10px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-subtle);}
