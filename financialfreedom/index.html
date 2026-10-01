@@ -129,7 +129,7 @@
       <button class="quick-start-btn" data-preset="geoarbitrage" data-tip="Earn in Australia, retire in Bali: living expenses stay $70,000, retirement expenses are 40% of them. That one figure under Money out is the lever.">Geoarbitrage, Bali</button>
       <button class="quick-start-btn" data-preset="fatfire" data-tip="High earner on $320,000 net, spending $120,000, under Die Rich: only real growth is ever spent, so the pot lasts forever. Forever costs the most.">Fat FIRE, forever</button>
       <button class="quick-start-btn" data-preset="legacy" data-tip="A couple at 33 with two kids ahead, as life stages: 125% of today's $70,000 with one at home, 150% with two, until 56. And $750,000 left at 90.">Family legacy</button>
-      <button class="quick-start-btn" data-preset="latestart" data-tip="Starting at 52 on a balanced 6.5% return, pension on from 67, retirement expenses 85%. Switch the pension off on the Goal tab and freedom moves years later.">Late start, on a pension</button>
+      <button class="quick-start-btn" data-preset="latestart" data-tip="Starting at 52 on a balanced 6.5% return, pension on from 67, retirement expenses 85%. Switch the pension off under Money in and freedom moves years later.">Late start, on a pension</button>
     </div>
   </div>
   <div class="ctrl-scroll">
@@ -185,6 +185,35 @@
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Growth of that amount, % p.a. <i class="tip-icon" data-tip="How fast the amount above grows each year, before inflation. Pay rises live here.">?</i></span></div>
         <input class="num-input" id="growth" type="number" min="-10" max="30" step="0.1" value="3"/>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label"><span class="tip-wrap">Government or age pension <i class="tip-icon" data-tip="Income from its start age, so it reduces the pot you need from then on.">?</i></span></div>
+        <label class="toggle-switch"><input type="checkbox" id="pensionOn"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+      </div>
+      <div class="fg-sub" id="pensionRows" style="display:none;">
+        <div class="field-row">
+          <div class="field-label">Pension starts at age</div>
+          <input class="num-input" id="pensionStartAge" type="number" min="40" max="90" step="1" value="67"/>
+        </div>
+        <div class="field-row">
+          <div class="field-label"><span class="tip-wrap">Pension amount <i class="tip-icon" data-tip="What it pays today. Counted as income from its start age.">?</i></span></div>
+          <div class="inline-row">
+            <div class="currency-wrap grow">
+              <span class="prefix" id="pensionAmountPrefix">$</span>
+              <input class="currency-input fmt-num" id="pensionAmount" type="text" inputmode="decimal" value="29,000"/>
+            </div>
+            <select class="sel-input period" id="pensionPeriod">
+              <option value="weekly">a week</option>
+              <option value="monthly">a month</option>
+              <option value="yearly" selected>a year</option>
+            </select>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label"><span class="tip-wrap">Rises with inflation <i class="tip-icon" data-tip="<strong>On:</strong> indexed, so it keeps its value.<br><strong>Off:</strong> a flat figure that buys less every year.">?</i></span></div>
+          <label class="toggle-switch"><input type="checkbox" id="pensionIndexed" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+        </div>
+        <p class="note" id="pensionNote"></p>
       </div>
     </div>
 
@@ -340,39 +369,6 @@
           <span class="prefix" id="legacyPrefix">$</span>
           <input class="currency-input fmt-num" id="legacy" type="text" inputmode="decimal" value="500,000"/>
         </div>
-      </div>
-    </div>
-
-    <div class="field-group">
-      <div class="group-title">Government or age pension</div>
-      <div class="toggle-row">
-        <div class="toggle-label"><span class="tip-wrap">Include a pension <i class="tip-icon" data-tip="Reduces the pot you need, but only from its start age.">?</i></span></div>
-        <label class="toggle-switch"><input type="checkbox" id="pensionOn"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
-      </div>
-      <div class="fg-sub" id="pensionRows" style="display:none;">
-        <div class="field-row">
-          <div class="field-label">Pension starts at age</div>
-          <input class="num-input" id="pensionStartAge" type="number" min="40" max="90" step="1" value="67"/>
-        </div>
-        <div class="field-row">
-          <div class="field-label"><span class="tip-wrap">Pension amount <i class="tip-icon" data-tip="What it pays today. Counted as income from its start age.">?</i></span></div>
-          <div class="inline-row">
-            <div class="currency-wrap grow">
-              <span class="prefix" id="pensionAmountPrefix">$</span>
-              <input class="currency-input fmt-num" id="pensionAmount" type="text" inputmode="decimal" value="29,000"/>
-            </div>
-            <select class="sel-input period" id="pensionPeriod">
-              <option value="weekly">a week</option>
-              <option value="monthly">a month</option>
-              <option value="yearly" selected>a year</option>
-            </select>
-          </div>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-label"><span class="tip-wrap">Rises with inflation <i class="tip-icon" data-tip="<strong>On:</strong> indexed, so it keeps its value.<br><strong>Off:</strong> a flat figure that buys less every year.">?</i></span></div>
-          <label class="toggle-switch"><input type="checkbox" id="pensionIndexed" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
-        </div>
-        <p class="note" id="pensionNote"></p>
       </div>
     </div>
   </div>
