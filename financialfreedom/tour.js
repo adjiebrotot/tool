@@ -34,8 +34,9 @@ window.__TOUR = {
       body: 'Your ages, then <strong>Money in</strong>: savings entered directly, or your net ' +
             'income with the gap worked out for you. Then <strong>Money out</strong>: living ' +
             'expenses now and retirement expenses once you stop. Switch it to ' +
-            '<strong>Detailed</strong> to add life stages, such as kids, a hustle or slower ' +
-            'later years, each between two ages, as a share of today\u2019s spending or an amount.'
+            '<strong>Detailed</strong> and those two become the first and last of a list of ' +
+            'life stages, with yours between them in age order: kids, a hustle, slower later ' +
+            'years. Retirement expenses wait for any stage still running when you stop.'
     },
     {
       target: '#tab-invest',

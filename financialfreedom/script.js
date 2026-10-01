@@ -72,27 +72,34 @@
      zero before the start age. With zero inflation the two coincide exactly.
 
    Step 3c  Spending by age: the life stages.
-     Two base levels, both real and monthly:
+     Two base levels, both real and monthly, and both always there:
        X   living expenses, entered as an amount (never as a percentage)
-       Xr  retirement expenses, an amount or pct / 100 x X
+       Xr  retirement expenses, an amount or X x (pct / 100)
      Simple mode stops there: X while working, Xr once retired. Detailed mode
-     adds stages, each a span of ages [from, to) with a level of its own (an
-     amount, or a percentage of X). A blank `to` runs to the end of the plan.
+     shows the two as the FIRST and LAST stage of a list, named and locked,
+     and the reader's own stages sit between them. Each own stage is a span
+     of ages [from, to) with a level of its own (an amount, or a share of X).
+
+     The own stages run in LIST ORDER and never overlap. One rule puts any
+     list in that shape, the form and the engine alike (orderStages):
+       a blank `from` starts where the stage above ended
+       a blank `to` runs to the life expectancy
+       `from` is never earlier than the end of the stage above
+       `to` is at least a year after `from`, and nothing passes age 120
+     Gaps between stages are allowed, and a gap falls back to a base level.
      The spending at age a, with retirement at age R, is
-       the level of the active stage with the LATEST `from`, if any stage
-       has from <= a < to  (a tie goes to the stage further down the list)
-       otherwise X when a < R, and Xr when a >= R
+       the level of the stage whose span holds a, if any
+       otherwise X when a < R (the baseline), and Xr when a >= R
      So a stage replaces whichever base level applies, working or retired, for
      exactly the ages it names. Ages are compared directly, the way the pension
      start is, so a stage at 34 starts with the month you turn 34.
 
-     Why a span and not just a start age: the retirement age moves (the slider,
-     and the freedom solve tries every month), so a stage defined only by when
-     it starts would be cut short by an early retirement or would outlive a late
-     one. Kids still cost money if you stop work while they are at home, and the
-     spending after they leave is not a working-life figure. A span holds still
-     wherever retirement lands. Leaving `to` blank on every stage gives the plain
-     timeline, each stage running until a later one starts.
+     Why a span, and why retirement expenses wait for it: the retirement age
+     moves (the slider, and the freedom solve tries every month). Kids still
+     cost money if you stop work while they are at home, so a stage running
+     when you stop keeps running to its own end, and only then do retirement
+     expenses take over. Spending you defined never drops just because the
+     retirement age moved earlier.
 
    Step 4  Accumulation, while still working. Return over the month, savings
      added at the end of it:
@@ -136,8 +143,10 @@
      An unindexed pension has faded to almost nothing by age 120, so the Die
      Rich perpetuity is taken on the net draw AT the horizon, which is then
      within a whisker of the full expense. The months either side of it are
-     covered by the same forward pass as every other month. A stage with no end
-     is still running at the horizon, so its level is the one taken for ever.
+     covered by the same forward pass as every other month. No life stage
+     reaches past age 120 and a stage's end age is not part of it, so for ever
+     is always priced on retirement expenses; a stage running to 120 is paid
+     for up to the horizon, like any other month.
 
    Step 7  The earliest financial freedom age. Two curves over age: what the
      investment accumulates to, and the pot step 6 requires if you stopped at
@@ -407,22 +416,48 @@ function stageAge(v){
   return isFinite(n) ? n : null;
 }
 
-/* The stages the engine runs, in the order they were listed: only in Detailed
-   mode, and only the ones that cover at least one age. A blank end runs to
-   the end of the plan. `index` is the row it came from, which breaks a tie
-   between two stages starting at the same age. */
+// The oldest age a stage may reach, the slider's own ceiling.
+var STAGE_AGE_MAX = 120;
+
+/* Step 3c's ordering rule, and the only place it is written down in code. The
+   form writes its result back into the age fields once a figure is finished,
+   and the engine applies it again to whatever it is handed (a saved file, a
+   list mid-edit), so what is computed is always a list that is on screen.
+
+   In list order: a blank start begins where the stage above ended (at 0 for
+   the first), a blank end runs to the life expectancy, a start is pushed to
+   the end of the stage above, an end is at least a year after its start, and
+   nothing passes STAGE_AGE_MAX. A stage with no room left above that age is
+   given an empty span, which covers nothing. Every other field is kept. */
+function orderStages(stages, ageDie){
+  var prevEnd = 0;
+  return (stages || []).map(function(s){
+    var out = Object.assign({}, s);
+    var from = stageAge(s && s.from), to = stageAge(s && s.to);
+    if(from === null) from = prevEnd;
+    from = Math.max(from, prevEnd, 0);
+    if(to === null) to = ageDie;
+    if(from >= STAGE_AGE_MAX){
+      from = STAGE_AGE_MAX; to = STAGE_AGE_MAX;
+    } else {
+      to = Math.min(STAGE_AGE_MAX, Math.max(to, from + 1));
+    }
+    out.from = from; out.to = to;
+    prevEnd = to;
+    return out;
+  });
+}
+
+/* The stages the engine runs: only in Detailed mode, put in order by
+   orderStages, and only the ones that cover at least one age. `index` is the
+   row each came from, so a label can name it. */
 function buildStages(ui, livingMonthly, scale){
   if(ui.expenseMode !== 'detailed' || !Array.isArray(ui.stages)) return [];
   var out = [];
-  ui.stages.forEach(function(s, idx){
-    if(!s) return;
-    var from = stageAge(s.from);
-    if(from === null) return;
-    var to = stageAge(s.to);
-    if(to === null) to = Infinity;
-    if(!(to > from)) return;
+  orderStages(ui.stages, ui.ageDie).forEach(function(s, idx){
+    if(!(s.to > s.from)) return;
     out.push({
-      name: String(s.name || '').trim(), from: from, to: to, index: idx,
+      name: String(s.name || '').trim(), from: s.from, to: s.to, index: idx,
       level: expenseLevel(s.amount, s.period, livingMonthly) * scale
     });
   });
@@ -475,9 +510,9 @@ function pensionAt(P, age){
   return P.pensionMonthly / Math.pow(1 + P.inflation, Math.max(0, age - P.ageNow));
 }
 
-/* The life stage covering absolute age `age`, or null (step 3c). Of the stages
-   whose span holds the age, the one that started LATEST wins, and of two that
-   start together the one further down the list. The tolerance is the
+/* The life stage covering absolute age `age`, or null (step 3c). Stages are
+   in order and never overlap, so at most one holds any age; should two ever
+   be handed in overlapping, the later start would win. The tolerance is the
    pension's, so a stage at 34 is in force from the month you turn 34. */
 function stageAt(P, age){
   var best = null, s, k;
@@ -532,8 +567,8 @@ function spendAt(P, t){
 /* The spending plan as runs of months, today to the life expectancy, at the
    retirement age in P: each run one base level or one stage, with the ages it
    spans and its real monthly level. This is what the stage list resolves to,
-   overlaps and all, and the panel prints it so the rule is on screen rather
-   than in a tooltip. Built month by month from spendAt's own rule, so the two
+   gaps and all, and the panel prints it so the rule is on screen rather than
+   in a tooltip. Built month by month from spendAt's own rule, so the two
    cannot disagree. */
 function spendingTimeline(P){
   var total = Math.max(1, months(P.ageNow, P.ageDie)), accM = accMonths(P);
@@ -1078,7 +1113,7 @@ function readInputs(){
     ? $('retireExpensePeriod').value : 'pct';
   // The rows are read in Simple mode too: they are kept, not run, so a switch
   // back to Detailed finds them as they were left.
-  UI.stages = readStages();
+  UI.stages = orderStages(readStages(), UI.ageDie);
   var checked = document.querySelector('input[name="ffmode"]:checked');
   UI.mode = checked ? checked.value : 'die';
   UI.pensionOn = $('pensionOn').checked;
@@ -1191,7 +1226,7 @@ function syncVisibility(){
    retirement figure is entered against. Each tip carries the state it is in. */
 var TIP_EXPENSE_MODE = {
   simple: '<strong>Simple:</strong> living expenses while you work, retirement expenses once you stop. Detailed adds stages, such as kids.',
-  detailed: '<strong>Detailed:</strong> between its two ages a stage replaces your living or retirement expenses. Where two overlap, the later start wins.'
+  detailed: '<strong>Detailed:</strong> your own stages sit between living and retirement expenses, in age order. Each covers its own ages, working or retired.'
 };
 var TIP_RETIRE_EXPENSE = {
   pct: '<strong>% of living:</strong> follows your living expenses, from the age you stop work. 80% if the mortgage is gone by then.',
@@ -1201,7 +1236,15 @@ function syncMoneyOut(){
   var detailed = UI.expenseMode === 'detailed', pct = UI.retireExpensePeriod === 'pct';
   $('expenseModeTip').setAttribute('data-tip', TIP_EXPENSE_MODE[UI.expenseMode] || TIP_EXPENSE_MODE.simple);
   $('retireExpenseTip').setAttribute('data-tip', pct ? TIP_RETIRE_EXPENSE.pct : TIP_RETIRE_EXPENSE.money);
+  /* Detailed frames living and retirement expenses as the first and last
+     stage, locked. They are the same two fields as in Simple, so switching
+     mode moves nothing; only the frame changes. */
+  $('moneyOut').classList.toggle('is-detailed', detailed);
   $('stagesBlock').style.display = detailed ? '' : 'none';
+  // The two names are fixed. A script or an extension may still write to a
+  // read-only field, so the names are put back on every pass.
+  $('livingRow').querySelector('.stage-name-locked').value = 'Living expenses';
+  $('retireRow').querySelector('.stage-name-locked').value = 'Retirement expenses';
   var X0 = perMonth(UI.expense, UI.expensePeriod);
   var Xr = expenseLevel(UI.retireExpense, UI.retireExpensePeriod, X0);
   $('retireExpenseNote').textContent = pct
@@ -1210,7 +1253,9 @@ function syncMoneyOut(){
   $('retireExpensePeriod').dataset.prev = UI.retireExpensePeriod;
   document.querySelectorAll('#stageRows .stage-basis').forEach(function(sel){ sel.dataset.prev = sel.value; });
   syncStageChrome();
+  syncStageAges();
   syncStageNotes();
+  syncStageSpans();
   renderStageTimeline();
 }
 
@@ -1287,12 +1332,19 @@ function onBasisChange(sel, input){
   input.value = fmtAmount(next === null ? was : next, to);
 }
 
-function blankStage(){
-  // Five years out for ten years: inside a working life for most plans, so a
-  // stage added and not yet edited cannot quietly replace retirement spending.
-  var from = clamp(Math.round(UI.ageNow) + 5, 0, 120);
-  return {name: '', from: from, to: Math.min(120, from + 10), amount: 100, period: 'pct'};
+/* A new stage starts where the last one ends, or five years from now when it
+   is the first, and runs ten years at 100% of living: the same as the
+   baseline, so adding one changes nothing until it is filled in. */
+function blankStage(stages){
+  var last = stages && stages.length ? stages[stages.length - 1] : null;
+  var from = last && last.to !== null ? last.to : Math.round(UI.ageNow) + 5;
+  from = clamp(from, 0, STAGE_AGE_MAX);
+  return {name: '', from: from, to: Math.min(STAGE_AGE_MAX, from + 10), amount: 100, period: 'pct'};
 }
+
+// The life expectancy as the form holds it now, read the way readInputs reads
+// it, for putting a list in order before the next render has run.
+function formAgeDie(){ return clamp(num($('ageDie').value, UI_DEFAULTS.ageDie), 2, 120); }
 
 // A stage as the page will hold it, from whatever a saved file carried.
 function cleanStage(s){
@@ -1323,8 +1375,8 @@ function stageRowHtml(s, idx){
       '<input type="number" class="num-input stage-from" min="0" max="120" step="1" aria-label="From age"' +
         ' value="' + ageVal(s.from) + '"/>' +
       '<span class="stage-lbl">to</span>' +
-      '<input type="number" class="num-input stage-to" min="0" max="120" step="1" placeholder="end"' +
-        ' aria-label="To age, blank to run until a later stage" value="' + ageVal(s.to) + '"/>' +
+      '<input type="number" class="num-input stage-to" min="0" max="120" step="1"' +
+        ' aria-label="To age, blank for your life expectancy" value="' + ageVal(s.to) + '"/>' +
     '</div>' +
     '<div class="inline-row">' +
       '<div class="currency-wrap grow">' +
@@ -1344,7 +1396,8 @@ function stageRowHtml(s, idx){
    leaves them alone and keeps the list through `extra` instead. */
 function renderStageRows(stages){
   var wrap = $('stageRows');
-  wrap.innerHTML = (stages || []).map(stageRowHtml).join('');
+  stages = orderStages((stages || []).map(cleanStage), formAgeDie());
+  wrap.innerHTML = stages.map(stageRowHtml).join('');
   wrap.querySelectorAll('.stage-basis').forEach(function(sel){ sel.dataset.prev = sel.value; });
   syncStageChrome();
 }
@@ -1375,23 +1428,103 @@ function stageLabel(s){ return s.name || ('Stage ' + (s.index + 1)); }
    share of living and a share as an amount, or why it will never apply. */
 function syncStageNotes(){
   var X0 = perMonth(UI.expense, UI.expensePeriod);
+  var R = UI.ageRetire, rich = UI.mode === 'rich';
   document.querySelectorAll('#stageRows .stage-row').forEach(function(row, idx){
     var s = UI.stages[idx], el = row.querySelector('.stage-note');
     if(!s || !el) return;
-    var msg;
-    if(s.from === null) msg = 'Give it a starting age, or it never applies.';
-    else if(s.to !== null && s.to <= s.from) msg = 'It ends before it starts, so it never applies.';
-    else if(s.from >= UI.ageDie) msg = 'It starts after your life expectancy, so it never applies.';
-    else if(s.period === 'pct') msg = 'About ' + fmt.currency(expenseLevel(s.amount, 'pct', X0) * 12) + ' a year in today’s money.';
-    else msg = X0 > 0 ? fmt.pct(expenseLevel(s.amount, s.period, X0) / X0 * 100, 0) + ' of your living expenses.' : '';
+    var msg, off = false;
+    if(!(s.to > s.from)){
+      msg = 'No room left after the stage above, so it never applies.'; off = true;
+    } else if(s.to <= UI.ageNow){
+      msg = 'It ended before your age now, so it never applies.'; off = true;
+    } else if(s.from >= UI.ageDie){
+      msg = rich ? 'It starts after your life expectancy; Die Rich still pays for it.'
+                 : 'It starts after your life expectancy, so it never applies.';
+      off = !rich;
+    } else {
+      msg = s.period === 'pct'
+        ? 'About ' + fmt.currency(expenseLevel(s.amount, 'pct', X0) * 12) + ' a year in today\u2019s money.'
+        : (X0 > 0 ? fmt.pct(expenseLevel(s.amount, s.period, X0) / X0 * 100, 0) + ' of your living expenses.' : '');
+      // The one thing a reader could otherwise expect to happen: stopping
+      // work in the middle of a stage does not end it.
+      if(s.from < R - 1e-9 && s.to > R + 1e-9 && R < UI.ageDie - 1e-9){
+        msg += ' Still running when you stop work at ' + fmt.age(R) + ', so it carries on to ' + fmt.age(s.to) + '.';
+      }
+    }
     el.textContent = msg;
-    row.classList.toggle('stage-off', /never applies/.test(msg));
+    row.classList.toggle('stage-off', off);
   });
 }
 
+/* Each age field carries the bound the ordering rule will hold it to, so the
+   spinner stops there and the browser marks a figure outside it. The rule
+   itself is applied when a figure is finished (onStageAges). */
+function syncStageAges(){
+  document.querySelectorAll('#stageRows .stage-row').forEach(function(row, idx){
+    var prev = idx > 0 ? UI.stages[idx - 1] : null, s = UI.stages[idx];
+    var fromIn = row.querySelector('.stage-from'), toIn = row.querySelector('.stage-to');
+    fromIn.min = prev ? String(prev.to) : '0';
+    toIn.min = s ? String(Math.min(STAGE_AGE_MAX, s.from + 1)) : '1';
+    toIn.placeholder = String(UI.ageDie);
+  });
+}
+
+/* Write the ordering rule's answer back into the age fields, so the list on
+   screen is the list the engine runs. Called once a figure is finished
+   (change), never on each keystroke, or typing 56 would be stopped at 5. */
+function onStageAges(){
+  var ordered = orderStages(readStages(), formAgeDie());
+  document.querySelectorAll('#stageRows .stage-row').forEach(function(row, idx){
+    var s = ordered[idx];
+    if(!s) return;
+    var f = row.querySelector('.stage-from'), t = row.querySelector('.stage-to');
+    if(Number(f.value) !== s.from || f.value.trim() === '') f.value = String(s.from);
+    if(Number(t.value) !== s.to || t.value.trim() === '') t.value = String(s.to);
+  });
+}
+
+/* The two locked stages say, in a line each, which ages they cover at the
+   retirement age on the slider. The second line is the one that answers "why
+   did my spending not drop when I stopped work": it names the stage it waits
+   for. */
+function syncStageSpans(){
+  var P = buildParams(UI), now = P.ageNow, R = P.ageRetire, die = P.ageDie;
+  if(!(die > now)){ $('livingSpan').textContent = ''; $('retireSpan').textContent = ''; return; }
+  var runs = spendingTimeline(P);
+  var name = function(st){ return '<span data-no-abbr>' + escapeHtml(stageLabel(st)) + '</span>'; };
+  var a = function(x){ return escapeHtml(fmt.age(x)); };
+  var before = P.stages.some(function(st){ return st.from < R - 1e-9 && st.to > now + 1e-9; });
+  $('livingSpan').innerHTML = R <= now + 1e-9
+    ? 'You stop work now, so this only sets what each % of living is a share of.'
+    : 'From ' + a(now) + ' (now) to ' + a(R) + ', when you stop work' +
+      (before ? ', wherever no stage applies.' : '.');
+  var html;
+  if(R >= die - 1e-9){
+    html = 'Not used: you never stop work on this setting.';
+  } else {
+    var k = -1;
+    for(var i = 0; i < runs.length; i++){ if(!runs[i].stage && runs[i].retired){ k = i; break; } }
+    var later = P.stages.some(function(st){ return st.from > R + 1e-9 && st.from < die - 1e-9; });
+    /* Retirement starts on a whole month from today, which with a fractional
+       age now can sit a part of a month after the slider's age. So "a stage
+       made it wait" is read off the run before it, not off the ages. */
+    var waited = k > 0 && runs[k - 1].stage && runs[k].from > R + 1e-9;
+    if(k < 0){
+      html = 'Not used: your stages cover every age from ' + a(R) + ', when you stop work, to ' + a(die) + '.';
+    } else if(!waited){
+      html = 'From ' + a(R) + ', when you stop work, to ' + a(die) +
+        (later ? ', wherever no stage applies.' : '.');
+    } else {
+      html = 'From ' + a(runs[k].from) + ', once \u201c' + name(runs[k - 1].stage) + '\u201d ends. You stop work at ' + a(R) + '.';
+    }
+  }
+  $('retireSpan').innerHTML = html;
+}
+
 /* The stage list resolved into what you would actually spend, age by age, at
-   the retirement age on the slider. Overlaps are where a reader cannot guess
-   the rule, so the answer is printed instead of explained. */
+   the retirement age on the slider. Gaps, and a stage still running when you
+   stop work, are where a reader cannot guess the rule, so the answer is
+   printed instead of explained. */
 function renderStageTimeline(){
   var el = $('stageTimeline');
   if(!el) return;
@@ -1420,9 +1553,9 @@ function setExpenseMode(mode, silent){
 }
 
 function addStage(){
-  var stages = readStages();
+  var stages = orderStages(readStages(), formAgeDie());
   if(stages.length >= MAX_STAGES) return;
-  stages.push(blankStage());
+  stages.push(blankStage(stages));
   renderStageRows(stages);
   if(persist) persist.schedule();
   markStale();
@@ -1459,7 +1592,9 @@ function wireStages(){
     if(t.classList.contains('stage-name')) syncForm(); else markStale();
   });
   wrap.addEventListener('change', function(e){
-    if(e.target.classList.contains('stage-basis')) markStale();
+    var c = e.target.classList;
+    if(c.contains('stage-from') || c.contains('stage-to')){ onStageAges(); markStale(); }
+    if(c.contains('stage-basis')) markStale();
   });
   wrap.addEventListener('blur', function(e){
     var t = e.target;
@@ -2544,7 +2679,7 @@ function renderAssumptions(res){
   ];
   if(res.ui.expenseMode === 'detailed' && res.P.stages.length){
     items.splice(2, 0, '<strong>Life stages replace, they do not add.</strong> Between its two ages a stage is what you spend, working or retired.' +
-      info('Where two stages overlap, the one that starts later wins. Outside every stage you spend your living expenses, then your retirement expenses.'));
+      info('Stages run in age order and never overlap. Outside them you spend living expenses until you stop work, then retirement expenses, once any stage running then has ended.'));
   }
   if(res.ui.pensionOn){
     items.splice(3, 0, (res.P.pensionIndexed
@@ -3112,12 +3247,13 @@ var QUICK_START_SCENARIOS = {
      the forty-odd years from stopping to dying, which is why it adds a
      fraction of its face value to the pot.
 
-     The kids are life stages, as a share of what the couple spends now: 125%
-     with one at home from 34, 150% with both from 36, until the younger leaves
-     at 56. The 2nd kid's stage starts later, so it wins where the two overlap,
-     and both end at 56 so the 125% does not linger. On net income the kids cut
-     the saving from $80,000 a year to $45,000, and the plan frees up while
-     they are still at home, so the pot carries them to 56 as well. */
+     The kids are life stages in age order, as a share of what the couple
+     spends now: 125% with one at home from 34, 150% with both from 36, back
+     to 125% when the elder leaves at 54, and the baseline once the younger
+     leaves at 56. Stages never overlap, so each one is the household as it
+     stands, not one child's cost. On net income the kids cut the saving from
+     $80,000 a year to $45,000, and the plan frees up while they are still at
+     home, so the pot carries them to 56: retirement expenses wait for them. */
   legacy: {
     label: 'Family legacy',
     vals: {
@@ -3129,8 +3265,9 @@ var QUICK_START_SCENARIOS = {
       mode: 'legacy', legacy: 750000, retireExpense: 95, retireExpensePeriod: 'pct',
       expenseMode: 'detailed',
       stages: [
-        {name: '1st kid', from: 34, to: 56, amount: 125, period: 'pct'},
-        {name: '2nd kid', from: 36, to: 56, amount: 150, period: 'pct'}
+        {name: '1st kid', from: 34, to: 36, amount: 125, period: 'pct'},
+        {name: '2nd kid', from: 36, to: 54, amount: 150, period: 'pct'},
+        {name: '1st kid leaves', from: 54, to: 56, amount: 125, period: 'pct'}
       ]
     }
   },
@@ -3467,7 +3604,8 @@ function init(){
         // The stage list lives in rows with no id, so it rides here, read
         // straight off the rows so an edit not yet run is still kept.
         save: function(){
-          return {savingsMode: UI.savingsMode, expenseMode: UI.expenseMode, stages: readStages()};
+          return {savingsMode: UI.savingsMode, expenseMode: UI.expenseMode,
+                  stages: orderStages(readStages(), formAgeDie())};
         },
         restore: function(saved){
           if(!saved) return;

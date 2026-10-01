@@ -65,26 +65,40 @@ const mo = (a, b) => Math.round((b - a) * 12);
 const perMo = (amt, period) =>
   period === 'weekly' ? amt * 52 / 12 : (period === 'yearly' ? amt / 12 : amt);
 
-/* Step 3c, the life stages, written as a PRIORITY LIST rather than the page's
-   scan. Each stage is sorted once, latest start first and, of two that start
-   together, the one further down the list first; the spending at an age is
-   then the first stage in that order whose span holds it. The page instead
-   walks every stage and keeps the best one it has seen. A stage counts only in
-   Detailed mode, only with a start age, and only if it ends after it starts;
-   a blank end runs for ever. A share of living is that share of today's
+/* Step 3c, the life stages. The ordering rule is written here as a fold over
+   the list carrying the previous END, the page writes it as a map carrying a
+   running variable (orderStages); then the replay looks a stage up by scanning
+   the ordered spans with find(), the page by keeping the best one it meets.
+
+     start  = typed start, or the previous end when blank; never before the
+              previous end (0 for the first)
+     end    = typed end, or the life expectancy when blank; at least a year
+              after the start; never past 120
+     a start at or past 120 has no room: an empty span, which covers nothing
+
+   Only Detailed mode runs stages. A share of living is that share of today's
    living expenses, an amount is its own period converted to a month. */
 const refLevel = (amount, basis, X0) =>
-  basis === 'pct' ? X0 * Math.max(0, amount || 0) / 100 : perMo(Math.max(0, amount || 0), basis);
+  basis === 'pct' ? X0 * (Math.max(0, amount || 0) / 100) : perMo(Math.max(0, amount || 0), basis);
+const REF_CAP = 120;
+function refOrder(list, ageDie){
+  const blank = v => v === '' || v == null || !isFinite(Number(v));
+  return list.reduce((acc, s, idx) => {
+    const prevEnd = acc.length ? acc[acc.length - 1].to : 0;
+    const start = Math.max(blank(s && s.from) ? prevEnd : Number(s.from), prevEnd, 0);
+    const want = blank(s && s.to) ? ageDie : Number(s.to);
+    const span = start >= REF_CAP ? {from: REF_CAP, to: REF_CAP}
+      : {from: start, to: Math.min(REF_CAP, Math.max(want, start + 1))};
+    acc.push(Object.assign({idx}, s || {}, span));
+    return acc;
+  }, []);
+}
 function refStages(ui, X0){
   if(ui.expenseMode !== 'detailed' || !Array.isArray(ui.stages)) return [];
-  const blank = v => v === '' || v == null || !isFinite(Number(v));
-  return ui.stages
-    .map((s, idx) => ({s, idx}))
-    .filter(({s}) => s && !blank(s.from))
-    .map(({s, idx}) => ({idx, from: Number(s.from), to: blank(s.to) ? Infinity : Number(s.to),
-                          level: refLevel(Number(s.amount), s.period, X0), name: s.name}))
+  return refOrder(ui.stages, ui.ageDie)
     .filter(st => st.to > st.from)
-    .sort((a, b) => (b.from - a.from) || (b.idx - a.idx));
+    .map(st => ({idx: st.idx, from: st.from, to: st.to, name: st.name,
+                 level: refLevel(Number(st.amount), st.period, X0)}));
 }
 const refStageAt = (p, age) =>
   p.stages.find(st => age >= st.from - 1e-9 && age < st.to - 1e-9) || null;
@@ -3416,28 +3430,31 @@ console.log('\n── Fuzz: 200 random plans, every invariant at once ──');
 
 console.log('\n── Life stages: Money out, Simple and Detailed ──');
 
-/* F67: Money out in Detailed mode. Each stage is a span of ages with a level of
-   spending that REPLACES living or retirement expenses for exactly those ages,
-   working or retired; outside every stage the base is living expenses until
-   the retirement age and retirement expenses after it; and where two stages
-   overlap the later start wins, a tie going to the stage further down the
-   list. The replay reads the list as a priority order (refStageAt), the page
-   scans it and keeps the best (stageAt), and the two have to agree month for
-   month before anything downstream of them is compared.
+/* F67: Money out in Detailed mode. Living and retirement expenses are the
+   locked first and last stages; the reader's own stages sit between them in
+   LIST ORDER and never overlap, each a span of ages with a level that REPLACES
+   living or retirement expenses for exactly those ages, working or retired.
+   A gap falls back to living expenses before the retirement age and to
+   retirement expenses after it, so a stage still running when you stop work
+   carries on, and retirement expenses wait for it to end. The replay orders
+   the list with its own fold (refOrder) and looks stages up with find(); the
+   page orders with a map and keeps the best match. The two have to agree month
+   for month before anything downstream of them is compared.
 
-   AWKWARD is every shape a list can take at once: an amount on a monthly
-   basis, a stage nested inside another (the outer one has to resume after it),
-   two stages starting at the same age, a stage that ends before it starts, a
-   stage with no start, and an open-ended stage after a closed one. */
+   AWKWARD is every shape a typed list can take at once, and what the ordering
+   rule has to make of each: an amount on a monthly basis, a gap, a stage typed
+   to start inside the one above (pushed to its end), a blank start (begins
+   where the one above ended), an end typed before its start (a year after
+   it), a blank end (the life expectancy), and a stage with no room left
+   (starts past 120: covers nothing). */
 const AWKWARD = [
   {name: 'Hustle', from: 30, to: 35, amount: 2000, period: 'monthly'},
   {name: 'Kids', from: 38, to: 60, amount: 130, period: 'pct'},
-  {name: 'Sabbatical', from: 45, to: 46, amount: 900, period: 'weekly'},
-  {name: 'Tie, earlier row', from: 70, to: null, amount: 70, period: 'pct'},
-  {name: 'Tie, later row', from: 70, to: 80, amount: 60, period: 'pct'},
-  {name: 'Backwards', from: 50, to: 40, amount: 500, period: 'pct'},
-  {name: 'No start', from: null, to: 60, amount: 500, period: 'pct'},
-  {name: 'Late', from: 85, to: null, amount: 55000, period: 'yearly'}
+  {name: 'Sabbatical, typed inside Kids', from: 45, to: 46, amount: 900, period: 'weekly'},
+  {name: 'No start', from: null, to: 66, amount: 70, period: 'pct'},
+  {name: 'Ends before it starts', from: 70, to: 40, amount: 60, period: 'pct'},
+  {name: 'No end', from: 80, to: null, amount: 55000, period: 'yearly'},
+  {name: 'No room', from: 130, to: 140, amount: 500, period: 'pct'}
 ];
 const awkward = Object.assign({}, base, {
   showReal: true, ageNow: 30, ageDie: 92, ageRetire: 52,
@@ -3446,9 +3463,11 @@ const awkward = Object.assign({}, base, {
   retireExpense: 80, retireExpensePeriod: 'pct',
   expenseMode: 'detailed', stages: AWKWARD
 });
+// Two kids as the household stands at each age, in order, as Family legacy has them.
 const KIDS = [
-  {name: '1st kid', from: 34, to: 56, amount: 125, period: 'pct'},
-  {name: '2nd kid', from: 36, to: 56, amount: 150, period: 'pct'}
+  {name: '1st kid', from: 34, to: 36, amount: 125, period: 'pct'},
+  {name: '2nd kid', from: 36, to: 54, amount: 150, period: 'pct'},
+  {name: '1st kid leaves', from: 54, to: 56, amount: 125, period: 'pct'}
 ];
 
 {
@@ -3472,17 +3491,18 @@ const KIDS = [
   /* The same rule worked by hand, at the ages where it is easiest to get
      wrong. Living is 60,000 a year (5,000 a month), retirement 80% of it. */
   const at = await engine(Object.assign({}, awkward, {ageRetire: 52}), `({
-    a31: F.spendAt(P, 12), a36: F.spendAt(P, 72), a45h: F.spendAt(P, 186), a46: F.spendAt(P, 192),
-    a55: F.spendAt(P, 300), a60: F.spendAt(P, 360), a70: F.spendAt(P, 480), a79: F.spendAt(P, 588),
-    a80: F.spendAt(P, 600), a86: F.spendAt(P, 672)
+    a31: F.spendAt(P, 12), a36: F.spendAt(P, 72), a45h: F.spendAt(P, 186), a55: F.spendAt(P, 300),
+    a60: F.spendAt(P, 360), a62: F.spendAt(P, 384), a67: F.spendAt(P, 444), a70: F.spendAt(P, 480),
+    a71: F.spendAt(P, 492), a86: F.spendAt(P, 672), a91: F.spendAt(P, 732)
   })`);
-  const hand = {a31: 2000, a36: 5000, a45h: 900 * 52 / 12, a46: 6500, a55: 6500, a60: 4000,
-                a70: 3000, a79: 3000, a80: 3500, a86: 55000 / 12};
+  const hand = {a31: 2000, a36: 5000, a45h: 6500, a55: 6500, a60: 900 * 52 / 12, a62: 3500,
+                a67: 4000, a70: 3000, a71: 4000, a86: 55000 / 12, a91: 55000 / 12};
   const off = Object.keys(hand).filter(k => Math.abs(at[k] - hand[k]) > 1e-9);
-  check('F67b worked by hand: nested, tied, backwards, startless and open-ended stages resolve as documented',
+  check('F67b worked by hand: a pushed start, a blank start, a backwards end, a blank end and no room resolve as documented',
     off.length === 0,
     off.map(k => `${k} page ${at[k]} want ${hand[k]}`).join(' | ') ||
-    'hustle 2,000 · living 5,000 · sabbatical 3,900 inside kids 6,500 · kids resume · retired 4,000 · tie to the later row · open stage back at 80 · late 4,583');
+    'hustle 2,000 · gap 5,000 · kids 6,500, still at 55 after stopping at 52 · sabbatical pushed to 60, 3,900 · ' +
+    'no start from 61, 3,500 · gap retired 4,000 · backwards 70 to 71, 3,000 · no end to 92, 4,583');
 }
 
 // F67c: the required pot, solved forwards by the page and backwards by the replay.
@@ -3627,7 +3647,7 @@ const KIDS = [
   }, [awkward]);
   check('F67j Simple mode ignores a stage list it is still holding, to the cent',
     r.same && r.needA === r.needB && r.ffA === r.ffB && r.stagesA === 0 && r.stagesC === 6 && r.needC !== r.needA,
-    `simple ${r.needA.toFixed(2)} = no stages ${r.needB.toFixed(2)}, detailed ${r.needC.toFixed(2)} with ${r.stagesC} live stages of 8`);
+    `simple ${r.needA.toFixed(2)} = no stages ${r.needB.toFixed(2)}, detailed ${r.needC.toFixed(2)} with ${r.stagesC} live stages of 7`);
 }
 
 // F67k: an amount and a percentage that say the same thing are the same plan.
@@ -3670,16 +3690,23 @@ const KIDS = [
 {
   const open = Object.assign({}, base, {showReal: true, mode: 'rich', ageNow: 40, ageDie: 90, ageRetire: 55,
     expense: 60000, retireExpense: 100, retireExpensePeriod: 'pct', expenseMode: 'detailed',
-    stages: [{name: 'Slow', from: 50, to: null, amount: 70, period: 'pct'}]});
+    stages: [{name: 'Slow', from: 50, to: 120, amount: 70, period: 'pct'}]});
   const p = refParams(open);
   const got = await engine(open, 'F.requiredPot(P, P.ageRetire)');
-  const perp = 0.7 * 5000 * (1 + p.rm) / p.rm;
-  const closed = Object.assign({}, open, {stages: [{name: 'Slow', from: 50, to: 80, amount: 70, period: 'pct'}]});
-  const got2 = await engine(closed, 'F.requiredPot(P, P.ageRetire)');
-  const want2 = refRequired(refParams(closed), 55);
-  check('F67m Die Rich with a stage that never ends is the perpetuity on that stage, exactly',
-    close(got, perp, 0.01), `page ${got.toFixed(2)} vs ${perp.toFixed(2)}`);
-  check('F67m2 and with a stage that ends, the perpetuity on retirement expenses walked back over it',
+  /* No stage passes 120 and a stage's end age is not part of it, so for ever
+     is priced on retirement expenses at the horizon: an annuity-due on the
+     stage from 55 to 120, then the perpetuity-due on 5,000 a month from 120,
+     discounted back. A closed form, beside the replay. */
+  const n = mo(55, 120), R1 = 1 + p.rm;
+  const perp = 3500 * (1 - Math.pow(R1, -n)) / p.rm * R1 + 5000 * R1 / p.rm / Math.pow(R1, n);
+  // A blank end is the life expectancy, so Die Rich pays retirement expenses after it.
+  const blank = Object.assign({}, open, {stages: [{name: 'Slow', from: 50, to: null, amount: 70, period: 'pct'}]});
+  const got2 = await engine(blank, 'F.requiredPot(P, P.ageRetire)');
+  const want2 = refRequired(refParams(blank), 55);
+  check('F67m Die Rich with a stage to 120 pays for it to the horizon, then prices for ever on retirement expenses',
+    close(got, perp, 0.01) && close(got, refRequired(p, 55), 0.01),
+    `page ${got.toFixed(2)} vs closed form ${perp.toFixed(2)} and replay ${refRequired(p, 55).toFixed(2)}`);
+  check('F67m2 and with a blank end, the stage ends at the life expectancy and retirement expenses carry on from there',
     close(got2, want2, 0.01) && got2 > got && got2 < 5000 * (1 + p.rm) / p.rm,
     `page ${got2.toFixed(2)} vs replay ${want2.toFixed(2)}, between the two perpetuities`);
 }
@@ -3692,12 +3719,12 @@ const KIDS = [
     const F = window.__FF;
     const P = r => F.buildParams(Object.assign({}, F.UI_DEFAULTS, u, {ageRetire: r}));
     const at = (r, age) => F.spendAt(P(r), Math.round((age - 33) * 12)) * 12;
-    return {early50: at(46, 50), early57: at(46, 57), late50: at(60, 50), late57: at(60, 57), late61: at(60, 61),
-            one: at(46, 35)};
+    return {early50: at(46, 50), early55: at(46, 55), early57: at(46, 57), late50: at(60, 50),
+            late57: at(60, 57), late61: at(60, 61), one: at(46, 35)};
   }, [fam]);
-  check('F67n stopping work at 46 keeps both kids at 150% until 56, then retirement expenses',
-    close(r.early50, 105000, 1e-6) && close(r.early57, 66500, 1e-6),
-    `at 50 ${r.early50.toFixed(0)}, at 57 ${r.early57.toFixed(0)}`);
+  check('F67n stopping work at 46 does not cut the kids: 150% to 54, 125% to 56, only then retirement expenses',
+    close(r.early50, 105000, 1e-6) && close(r.early55, 87500, 1e-6) && close(r.early57, 66500, 1e-6),
+    `at 50 ${r.early50.toFixed(0)}, at 55 ${r.early55.toFixed(0)}, at 57 ${r.early57.toFixed(0)}`);
   check('F67n2 working to 60 the kids end at 56 too, then living, then retirement expenses',
     close(r.late50, 105000, 1e-6) && close(r.late57, 70000, 1e-6) && close(r.late61, 66500, 1e-6) &&
     close(r.one, 87500, 1e-6),
@@ -3741,8 +3768,8 @@ const KIDS = [
   check('F67p the printed timeline covers today to the life expectancy in unbroken runs, each at the replay\'s level',
     gaps === 0 && wrong.length === 0 && close(r[0].from, 30, 1e-9) && close(r[r.length - 1].to, 92, 1e-9),
     wrong[0] || names);
-  check('F67p2 and the two stages that never apply are not in it',
-    !/Backwards|No start/.test(names), names);
+  check('F67p2 and the stage with no room left is not in it',
+    !/No room/.test(names) && /Ends before it starts/.test(names), names);
 }
 
 // F67q: "spend less" cuts every expense, and the share it quotes funds the plan.
@@ -3909,17 +3936,6 @@ const KIDS = [
     out.rowMonth = amt.value;
     sel.value = 'pct'; sel.dispatchEvent(new Event('change', {bubbles: true}));
     out.rowPct = amt.value;
-    // Notes for the stages that will never apply.
-    const second = rows()[1];
-    second.querySelector('.stage-from').value = '60'; second.querySelector('.stage-to').value = '50';
-    second.querySelector('.stage-to').dispatchEvent(new Event('input', {bubbles: true}));
-    out.backNote = second.querySelector('.stage-note').textContent;
-    out.backOff = second.classList.contains('stage-off');
-    second.querySelector('.stage-from').value = ''; second.querySelector('.stage-from').dispatchEvent(new Event('input', {bubbles: true}));
-    out.blankNote = second.querySelector('.stage-note').textContent;
-    second.querySelector('.stage-from').value = '95'; second.querySelector('.stage-to').value = '';
-    second.querySelector('.stage-from').dispatchEvent(new Event('input', {bubbles: true}));
-    out.lateNote = second.querySelector('.stage-note').textContent;
     F.resetToDefaults();
     return out;
   });
@@ -3935,10 +3951,172 @@ const KIDS = [
     r.rowYear === '75,000' && r.rowMonth === '6,250' && r.rowPct === '125' && r.rowPrefix &&
     /125% of your living expenses/.test(r.rowNote),
     `${r.rowYear} a year, ${r.rowMonth} a month, ${r.rowPct}%; note "${r.rowNote}"`);
-  check('F68l a stage that can never apply says why, under its own row',
-    /ends before it starts/.test(r.backNote) && r.backOff && /starting age/.test(r.blankNote) &&
-    /after your life expectancy/.test(r.lateNote),
-    `"${r.backNote}" / "${r.blankNote}" / "${r.lateNote}"`);
+}
+
+/* F68l: the ordering rule, as the reader meets it. It is applied when an age
+   is FINISHED (change), never on a keystroke, or typing 56 would be stopped at
+   5; then the fields show exactly the list the engine runs. */
+{
+  const r = await page.evaluate(() => {
+    const $ = id => document.getElementById(id), F = window.__FF;
+    F.resetToDefaults();
+    document.querySelector('#expenseModeGroup .seg-btn[data-val="detailed"]').click();
+    for(let k = 0; k < 4; k++) $('addStage').click();
+    const rows = () => Array.from(document.querySelectorAll('#stageRows .stage-row'));
+    const ages = () => rows().map(x => x.querySelector('.stage-from').value + '-' + x.querySelector('.stage-to').value).join(' ');
+    const type = (i, cls, v, commit) => {
+      const el = rows()[i].querySelector(cls);
+      el.value = v;
+      el.dispatchEvent(new Event('input', {bubbles: true}));
+      if(commit) el.dispatchEvent(new Event('change', {bubbles: true}));
+    };
+    const note = i => rows()[i].querySelector('.stage-note').textContent;
+    const out = {added: ages()};
+    type(0, '.stage-to', '5', false);  out.midType = ages();
+    type(0, '.stage-to', '56', true);  out.pushed = ages();
+    out.runsPast = note(0);
+    type(2, '.stage-to', '50', true);  out.backwards = ages();
+    type(3, '.stage-from', '', true);  out.blankFrom = ages();
+    type(3, '.stage-to', '', true);    out.blankTo = ages();
+    out.engine = F.UI.stages.map(x => x.from + '-' + x.to).join(' ');
+    out.mins = rows().map(x => x.querySelector('.stage-from').min + '/' + x.querySelector('.stage-to').min).join(' ');
+    type(0, '.stage-from', '10', true); type(0, '.stage-to', '20', true);
+    out.past = note(0); out.pastOff = rows()[0].classList.contains('stage-off');
+    type(3, '.stage-from', '95', true);
+    out.late = note(3); out.lateOff = rows()[3].classList.contains('stage-off');
+    type(3, '.stage-from', '125', true);
+    out.noRoom = note(3); out.noRoomAges = ages().split(' ')[3];
+    out.slider = F.UI.ageRetire;
+    F.resetToDefaults();
+    return out;
+  });
+  check('F68l a stage\'s end is left alone mid-keystroke, and once finished pushes the next stage to start where it ends',
+    r.added === '35-45 45-55 55-65 65-75' && r.midType === '35-5 45-55 55-65 65-75' &&
+    r.pushed === '35-56 56-57 57-65 65-75',
+    `${r.added} → typing ${r.midType} → finished ${r.pushed}`);
+  check('F68l2 an end before its start becomes a year after it; a blank start follows the stage above; a blank end is the life expectancy; gaps stay',
+    r.backwards === '35-56 56-57 57-58 65-75' && r.blankFrom === '35-56 56-57 57-58 58-75' &&
+    r.blankTo === '35-56 56-57 57-58 58-90',
+    `${r.backwards} → ${r.blankFrom} → ${r.blankTo}`);
+  check('F68l3 the engine runs exactly the list on screen, and each age field carries the bound the rule holds it to',
+    r.engine === r.blankTo && r.mins === '0/36 56/57 57/58 58/59',
+    `engine ${r.engine}; min from/to ${r.mins}`);
+  check('F68l4 a stage running when you stop work says it carries on; one that cannot apply says why',
+    new RegExp('Still running when you stop work at ' + r.slider + ', so it carries on to 56').test(r.runsPast) &&
+    /ended before your age now/.test(r.past) && r.pastOff &&
+    /after your life expectancy, so it never applies/.test(r.late) && r.lateOff &&
+    /No room left/.test(r.noRoom) && r.noRoomAges === '120-120',
+    `"${r.runsPast.replace(/^About [^.]*\. /, '')}" / "${r.past}" / "${r.late}" / "${r.noRoom}"`);
+}
+
+/* F71: the two locked stages. In Detailed mode living and retirement
+   expenses are the first and last card of the list, named and locked: the
+   same two fields as in Simple, so nothing is copied between modes. Each says
+   in a line which ages it covers at the slider's retirement age, and the
+   retirement line names the stage it waits for, which is the answer to "why
+   did my spending not drop when I stopped work". */
+{
+  const r = await page.evaluate(() => {
+    const $ = id => document.getElementById(id), F = window.__FF;
+    F.applyQuickStart('legacy');
+    const out = {}, g = $('moneyOut');
+    const shown = el => getComputedStyle(el).display !== 'none';
+    out.order = Array.from(g.querySelectorAll('.money-stage, #stageRows .stage-row'))
+      .map(c => c.querySelector('.stage-name').value).join(' | ');
+    const locked = Array.from(g.querySelectorAll('.stage-name-locked'));
+    out.locked = locked.length;
+    out.readonly = locked.every(i => i.readOnly && shown(i.closest('.stage-head')));
+    out.noDelete = Array.from(g.querySelectorAll('.money-stage'))
+      .every(c => !c.querySelector('.stage-del') && !!c.querySelector('.stage-lock'));
+    out.ownDelete = Array.from(g.querySelectorAll('#stageRows .stage-row')).every(c => !!c.querySelector('.stage-del'));
+    locked[0].value = 'Hacked'; locked[1].value = 'Hacked';
+    F.render();
+    out.restored = locked.map(i => i.value).join(' | ');
+    out.tips = Array.from(g.querySelectorAll('.money-stage .stage-head .tip-icon')).map(t => t.getAttribute('data-tip'));
+    out.slider = F.UI.ageRetire;
+    out.living = $('livingSpan').textContent; out.retire = $('retireSpan').textContent;
+    const sl = $('ageRetire');
+    const at = v => { sl.value = v; F.render(); return [$('livingSpan').textContent, $('retireSpan').textContent]; };
+    out.at60 = at(60); out.at90 = at(90); out.at33 = at(33);
+    at(out.slider);
+    const rows = document.querySelectorAll('#stageRows .stage-row');
+    const end = rows[rows.length - 1].querySelector('.stage-to');
+    end.value = '90'; end.dispatchEvent(new Event('change', {bubbles: true}));
+    out.covered = $('retireSpan').textContent;
+    const expense = $('expense').value;
+    document.querySelector('#expenseModeGroup .seg-btn[data-val="simple"]').click();
+    out.simpleFrame = locked.every(i => !shown(i.closest('.stage-head'))) &&
+      Array.from(g.querySelectorAll('.money-stage .simple-only')).every(shown) &&
+      !shown($('livingSpan')) && !shown($('retireSpan')) && $('expense').value === expense;
+    F.resetToDefaults();
+    return out;
+  });
+  check('F71 Detailed lists living expenses first and retirement expenses last, your own stages between them',
+    r.order === 'Living expenses | 1st kid | 2nd kid | 1st kid leaves | Retirement expenses', r.order);
+  check('F71b both names are locked: read-only, a lock where the remove button would be, and put back if a script writes to them',
+    r.locked === 2 && r.readonly && r.noDelete && r.ownDelete && r.restored === 'Living expenses | Retirement expenses',
+    `read-only ${r.readonly}, lock and no remove ${r.noDelete}, after a write: ${r.restored}`);
+  const [tl, tr] = r.tips;
+  check('F71c their tips say it in a sentence each: living is the baseline a gap comes back to; retirement waits for any stage still running',
+    /baseline/.test(tl) && /comes back to this/.test(tl) && /stop work/.test(tr) && /finished/.test(tr) &&
+    r.tips.every(t => t.replace(/<[^>]+>/g, '').length <= 150),
+    r.tips.map(t => '"' + t.replace(/<[^>]+>/g, '') + '"').join(' / '));
+  check('F71d each locked stage says which ages it covers; retirement names the stage it waits for',
+    r.living === `From 33 (now) to ${r.slider}, when you stop work, wherever no stage applies.` &&
+    r.retire === `From 56, once “1st kid leaves” ends. You stop work at ${r.slider}.`,
+    `"${r.living}" / "${r.retire}"`);
+  check('F71e and both lines follow the slider, at either end of it too',
+    r.at60[1] === 'From 60, when you stop work, to 90.' && /^From 33 \(now\) to 60/.test(r.at60[0]) &&
+    /^Not used: you never stop work/.test(r.at90[1]) && /^You stop work now/.test(r.at33[0]) &&
+    /^Not used: your stages cover every age from/.test(r.covered),
+    `${r.at60[1]} | ${r.at90[1]} | ${r.at33[0]} | ${r.covered}`);
+  check('F71f Simple shows the same two fields as plain rows: no lock, no age line, the same figures',
+    r.simpleFrame, `plain rows ${r.simpleFrame}`);
+}
+
+/* F71h: a fractional age now puts the retirement month a part of a month past
+   the slider's age. The retirement line used to look for a stage to name in
+   that sliver and throw; it has to read the plan instead, at any age now. */
+{
+  const before = pageErrors.length;
+  const r = await page.evaluate(() => {
+    const $ = id => document.getElementById(id), F = window.__FF, out = [];
+    F.applyQuickStart('legacy');
+    for(const now of ['33.4', '33.5', '33.75', '42.1']){
+      $('ageNow').value = now;
+      for(const ra of [34, 47, 55, 60]){
+        $('ageRetire').value = ra;
+        try { F.render(); } catch(e){ out.push(now + '/' + ra + ': ' + e.message); continue; }
+        const t = $('retireSpan').textContent;
+        if(!/^(From|Not used)/.test(t)) out.push(now + '/' + ra + ': "' + t + '"');
+      }
+    }
+    F.resetToDefaults();
+    return out;
+  });
+  check('F71h a fractional age now never breaks the retirement line, at any slider age',
+    r.length === 0 && pageErrors.length === before, r.slice(0, 2).join(' | ') || '16 settings read cleanly');
+}
+
+// F71g: Detailed with no stages of its own is the Simple plan, to the last digit.
+{
+  const diffs = await page.evaluate(() => {
+    const F = window.__FF;
+    const plans = [{}, {mode: 'legacy'}, {mode: 'rich', pensionOn: true, pensionIndexed: false},
+      {savingsMode: 'income', savings: 110000, retireExpense: 45000, retireExpensePeriod: 'yearly'},
+      {savings: 6000, assets: 0}];
+    const pick = x => JSON.stringify([Array.from(x.det), Array.from(x.acc), Array.from(x.deposited), x.needCurve,
+      x.incomeCurve, x.expenseCurve, x.flowCurve, x.needAtRetire, x.potAtRetire, x.leftAtDeath, x.successAtPlan,
+      x.confPot, x.ffAge, Array.from(x.reqs.sorted), x.mc.bands, x.dd && x.dd.bands, x.diag.status,
+      (x.diag.remedies || []).map(m => m.text), F.tableRows(x)]);
+    return plans.map((u, k) => {
+      const a = F.compute(Object.assign({}, F.UI_DEFAULTS, u, {expenseMode: 'simple'}));
+      const b = F.compute(Object.assign({}, F.UI_DEFAULTS, u, {expenseMode: 'detailed', stages: []}));
+      return pick(a) === pick(b) ? null : k;
+    }).filter(k => k !== null);
+  });
+  check('F71g Detailed with no stages of your own gives the Simple plan to the last digit: engine, odds, remedies, table',
+    diffs.length === 0, diffs.length ? 'differs on plan ' + diffs.join(', ') : '5 plans identical');
 }
 
 // F68m-o: the timeline note, the Simulate gate, and user text kept as text.
@@ -3995,7 +4173,7 @@ const KIDS = [
   check('F68o a stage name is user text: never markup, and never decorated as jargon',
     r.imgs === 0 && !r.pwned && r.noAbbr >= 2, `${r.imgs} img elements, pwned ${r.pwned}, ${r.noAbbr} names marked data-no-abbr`);
   check('F68p Simple keeps the rows but runs without them; Detailed brings the same answer back',
-    r.rowsKept === 2 && r.needSimple !== r.need1 && close(r.need1, r.need2, 1e-9),
+    r.rowsKept === KIDS.length && r.needSimple !== r.need1 && close(r.need1, r.need2, 1e-9),
     `${r.need1.toFixed(0)} → simple ${r.needSimple.toFixed(0)} → ${r.need2.toFixed(0)}, ${r.rowsKept} rows kept`);
 }
 
@@ -4011,7 +4189,7 @@ const KIDS = [
     $('retireExpensePeriod').dispatchEvent(new Event('change', {bubbles: true}));
     // A third stage, open-ended, typed by hand.
     $('addStage').click();
-    const row = document.querySelectorAll('#stageRows .stage-row')[2];
+    const all = document.querySelectorAll('#stageRows .stage-row'), row = all[all.length - 1];
     row.querySelector('.stage-name').value = 'Slower years';
     row.querySelector('.stage-from').value = '75'; row.querySelector('.stage-to').value = '';
     row.querySelector('.stage-amount').value = '70';

@@ -128,7 +128,7 @@
       <button class="quick-start-btn" data-preset="frugal" data-tip="Lean FIRE at 28 on $92,000 net, $30,000 spent. A hustle age to 33 on 80% saves harder; a relax age from 40 to 55 on 120% needs a bigger pot.">Frugal Living</button>
       <button class="quick-start-btn" data-preset="geoarbitrage" data-tip="Earn in Australia, retire in Bali: living expenses stay $70,000, retirement expenses are 40% of them. That one figure under Money out is the lever.">Geoarbitrage, Bali</button>
       <button class="quick-start-btn" data-preset="fatfire" data-tip="High earner on $320,000 net, spending $120,000, under Die Rich: only real growth is ever spent, so the pot lasts forever. Forever costs the most.">Fat FIRE, forever</button>
-      <button class="quick-start-btn" data-preset="legacy" data-tip="A couple at 33 with two kids ahead, as life stages: 125% then 150% of today's $70,000 until 56. And $750,000 in today's money still there at 90.">Family legacy</button>
+      <button class="quick-start-btn" data-preset="legacy" data-tip="A couple at 33 with two kids ahead, as life stages: 125% of today's $70,000 with one at home, 150% with two, until 56. And $750,000 left at 90.">Family legacy</button>
       <button class="quick-start-btn" data-preset="latestart" data-tip="Starting at 52 on a balanced 6.5% return, pension on from 67, retirement expenses 85%. Switch the pension off on the Goal tab and freedom moves years later.">Late start, on a pension</button>
     </div>
   </div>
@@ -189,8 +189,11 @@
     </div>
 
     <!-- Money out. Simple is two figures, one while you work and one once you
-         stop. Detailed keeps both and adds life stages, each a span of ages
-         with its own level of spending. Every figure is in today's money. -->
+         stop. Detailed shows those same two as the first and last stage of a
+         list, named and locked, with the reader's own stages between them in
+         age order. The two locked rows are the SAME fields in both modes, so
+         nothing is copied between them; Detailed only changes their frame.
+         Every figure is in today's money. -->
     <div class="field-group" id="moneyOut">
       <div class="group-title">Money out</div>
       <div class="field-row">
@@ -202,8 +205,14 @@
           </div>
         </div>
       </div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Living expenses <i class="tip-icon" data-tip="What you spend to live now, in today's money. Every % of living below is a share of it.">?</i></span></div>
+      <div class="field-row money-stage" id="livingRow">
+        <div class="field-label simple-only"><span class="tip-wrap">Living expenses <i class="tip-icon" data-tip="What you spend to live now, in today's money. Every % of living is a share of it.">?</i></span></div>
+        <div class="stage-head detailed-only">
+          <input type="text" class="txt-input stage-name stage-name-locked" value="Living expenses" readonly aria-readonly="true" aria-label="Stage name, fixed"/>
+          <span class="tip-wrap"><i class="tip-icon" data-tip="<strong>The baseline.</strong> Before you stop work, any age no stage covers comes back to this. Every % of living is a share of it.">?</i></span>
+          <span class="stage-lock" title="Every plan has this stage, so it cannot be renamed or removed" aria-label="Fixed stage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
+        </div>
+        <p class="stage-span detailed-only" id="livingSpan"></p>
         <div class="inline-row">
           <div class="currency-wrap grow">
             <span class="prefix" id="expensePrefix">$</span>
@@ -216,8 +225,19 @@
           </select>
         </div>
       </div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Retirement expenses <i class="tip-icon" id="retireExpenseTip" data-tip="">?</i></span></div>
+      <div class="fg-sub" id="stagesBlock" style="display:none;">
+        <div class="stage-list" id="stageRows"></div>
+        <p class="note" id="stagesEmpty">Add a stage between these two for a stretch of life that costs more or less, such as kids or a hustle.</p>
+        <div class="stage-actions"><button class="btn-secondary btn-sm" id="addStage" type="button">+ Add stage</button></div>
+      </div>
+      <div class="field-row money-stage" id="retireRow">
+        <div class="field-label simple-only"><span class="tip-wrap">Retirement expenses <i class="tip-icon" id="retireExpenseTip" data-tip="">?</i></span></div>
+        <div class="stage-head detailed-only">
+          <input type="text" class="txt-input stage-name stage-name-locked" value="Retirement expenses" readonly aria-readonly="true" aria-label="Stage name, fixed"/>
+          <span class="tip-wrap"><i class="tip-icon" data-tip="<strong>Takes over when you stop work</strong>, once any stage still running has finished. After that it fills any gap between stages.">?</i></span>
+          <span class="stage-lock" title="Every plan has this stage, so it cannot be renamed or removed" aria-label="Fixed stage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
+        </div>
+        <p class="stage-span detailed-only" id="retireSpan"></p>
         <div class="inline-row">
           <div class="currency-wrap grow" id="retireExpenseWrap">
             <span class="prefix" id="retireExpensePrefix" hidden>$</span>
@@ -233,15 +253,7 @@
         </div>
         <p class="note" id="retireExpenseNote"></p>
       </div>
-      <div class="fg-sub" id="stagesBlock" style="display:none;">
-        <div class="field-row">
-          <div class="field-label">Stages</div>
-          <div class="stage-list" id="stageRows"></div>
-          <p class="note" id="stagesEmpty">No stages yet. Add one for a stretch of life that costs more or less, such as kids or a hustle.</p>
-          <div class="stage-actions"><button class="btn-secondary btn-sm" id="addStage" type="button">+ Add stage</button></div>
-          <div class="stage-timeline" id="stageTimeline"></div>
-        </div>
-      </div>
+      <div class="stage-timeline detailed-only" id="stageTimeline"></div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Inflation, % p.a. <i class="tip-icon" data-tip="It lifts your expenses, and the pot you need with them.">?</i></span></div>
         <input class="num-input" id="inflation" type="number" min="0" max="30" step="0.1" value="2.5"/>
