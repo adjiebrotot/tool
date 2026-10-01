@@ -18,10 +18,11 @@ window.__TOUR = {
       title: '① Start from a worked plan',
       body: 'One click fills every tab with a saver who already exists: a ' +
             '<strong>moderate</strong> 40% saver, a <strong>frugal</strong> one living on a ' +
-            'third of their pay, a <strong>geoarbitrageur</strong> retiring to Bali on 40% of ' +
-            'what home costs, a high earner who never spends capital, a legacy to hand on, ' +
-            'and a <strong>late starter</strong> leaning on the age pension. ' +
-            'Then change any figure over the top of it.'
+            'third of their pay through a hustle age and a relax age, a ' +
+            '<strong>geoarbitrageur</strong> retiring to Bali on 40% of what home costs, a high ' +
+            'earner who never spends capital, a <strong>young family</strong> with two kids ' +
+            'ahead and a legacy to hand on, and a <strong>late starter</strong> leaning on the ' +
+            'age pension. Then change any figure over the top of it.'
     },
     {
       target: '#tab-you',
@@ -30,10 +31,12 @@ window.__TOUR = {
         if (tab && !tab.classList.contains('active')) tab.click();
       },
       title: '② Your money in and out',
-      body: 'Your ages, what you <strong>spend</strong>, and what you <strong>save</strong>. ' +
-            'You can enter savings directly, or enter your net income and let the tool work ' +
-            'out the gap. Those are two different models and the note under the field says ' +
-            'which one is running.'
+      body: 'Your ages, then <strong>Money in</strong>: savings entered directly, or your net ' +
+            'income with the gap worked out for you. Then <strong>Money out</strong>: living ' +
+            'expenses now and retirement expenses once you stop. Switch it to ' +
+            '<strong>Detailed</strong> and those two become the first and last of a list of ' +
+            'life stages, with yours between them in age order: kids, a hustle, slower later ' +
+            'years. Retirement expenses wait for any stage still running when you stop.'
     },
     {
       target: '#tab-invest',

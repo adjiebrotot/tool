@@ -104,6 +104,28 @@ const val=(page,id)=>page.inputValue('#'+id);
     ? String(Math.round(Number(qsExpense.replace(/,/g,''))/12).toLocaleString('en-US'))
     : String(Math.round(Number(qsExpense.replace(/,/g,''))*12).toLocaleString('en-US'));
   check('ff converts from the period a Quick Start left', after, want);
+
+  /* Retirement expenses and each life stage take a share of living as well as
+     a period. Between two periods the figure is rescaled; to or from a share
+     it is converted through today's living expenses, read off the form. */
+  await page.evaluate(()=>{ window.__FF.resetToDefaults(); });
+  check('ff retirement expenses start at 100% of living', await val(page,'retireExpense'), '100');
+  await setSel(page,'retireExpensePeriod','yearly');
+  check('ff 100% of 60,000 a year -> a year', await val(page,'retireExpense'), '60,000');
+  await setSel(page,'retireExpensePeriod','weekly');
+  check('ff 60,000 a year -> a week', await val(page,'retireExpense'), '1,154');
+  await setSel(page,'retireExpensePeriod','pct');
+  check('ff 1,154 a week -> % of living', await val(page,'retireExpense'), '100');
+  check('ff the engine reads the share it shows',
+    await page.evaluate(()=>window.__FF.UI.retireExpense+' '+window.__FF.UI.retireExpensePeriod), '100 pct');
+  await page.click('#expenseModeGroup .seg-btn[data-val="detailed"]');
+  await page.click('#addStage');
+  await page.selectOption('#stageRows .stage-basis', 'monthly');
+  check('ff a stage at 100% of living -> a month', await page.inputValue('#stageRows .stage-amount'), '5,000');
+  await page.selectOption('#stageRows .stage-basis', 'yearly');
+  check('ff a stage at 5,000 a month -> a year', await page.inputValue('#stageRows .stage-amount'), '60,000');
+  check('ff and the stage the engine runs moved with it',
+    await page.evaluate(()=>{ const s=window.__FF.UI.stages[0]; return s.amount+' '+s.period; }), '60000 yearly');
   await page.close();
 }
 

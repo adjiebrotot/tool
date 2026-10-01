@@ -39,7 +39,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
    answer still shows up. */
 const PAGES = [
   { path: 'borrowingcapacity/',        preset: 'couple',       probe: '.metrics' },
-  { path: 'financialfreedom/',         preset: 'geoarbitrage', probe: '.metrics' },
+  // Family legacy carries life stages, the list that lives in JS rather than in a form control.
+  { path: 'financialfreedom/',         preset: 'legacy',       probe: '.metrics' },
   { path: 'financingvscash/',          preset: 'car',          probe: '#verdict' },
   { path: 'rentvsownhouse/',           preset: 'singapore',    probe: '.metrics' },
   { path: 'rentvsownhouse/id/',        preset: 'jakarta',      probe: '.metrics' },
