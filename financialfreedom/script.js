@@ -22,15 +22,18 @@
    Step 1  Normalise the inputs.
      Expenses, savings and the pension all arrive weekly, monthly or yearly and
      are converted to a monthly figure (weekly x 52/12, yearly / 12). Ages are
-     decimal years; month counts are round((b - a) * 12).
+     decimal years; month counts are round((b - a) * 12). Every expense other
+     than today's living expenses may instead be entered as a percentage of
+     them, which is the same figure scaled: pct / 100 x X.
 
    Step 2  Strip out inflation, using Fisher rather than subtraction.
      rr   = (1 + r) / (1 + i) - 1        real annual return
      gr   = (1 + g) / (1 + i) - 1        real annual growth of savings/income
      rm   = (1 + rr)^(1/12) - 1          real monthly return
      gm   = (1 + gr)^(1/12) - 1          real monthly growth
-     Expenses are constant in real terms by construction, so they never appear
-     with an inflation factor again. Nominal figures are only ever produced for
+     Expenses are entered in today's money and held constant in real terms
+     within each life stage (step 3c), so they never appear with an inflation
+     factor again. Nominal figures are only ever produced for
      display, by multiplying a real figure at year y by (1 + i)^y. That is what
      the page shows by DEFAULT, because a balance in the money of its own year
      is the figure the statement will actually read; Show Present Value turns
@@ -39,18 +42,21 @@
    Step 3  Savings depend on WHICH field was entered. These are two different
      models and the panel says which one is running.
        entered Savings:    S(t) = S0 * (1 + gm)^t
-       entered Net Income: S(t) = I0 * (1 + gm)^t - X       (may go negative)
-     where X is the real monthly expense and t is months from today.
+       entered Net Income: S(t) = I0 * (1 + gm)^t - E(t)    (may go negative)
+     where E(t) is the real monthly spending of a working month (step 3c) and
+     t is months from today. A stage that costs more while you work therefore
+     cuts what you save under Net Income, and changes nothing under Savings,
+     where the amount saved is what was entered.
 
      The page also plots income and spending side by side, so both are carried
      as series in their own right, with the identity SAVED = INCOME - SPENT
      holding in every month of the plan, working or retired:
        working, entered Net Income:  income = I0 * (1 + gm)^t
-       working, entered Savings:     income = S(t) + X, the take-home pay that
+       working, entered Savings:     income = S(t) + E(t), the take-home pay that
                                      saving that much while spending that much
                                      implies. Nothing else in the engine uses it.
        retired:                      income = the pension, or zero before it
-                                     starts. Spending is Xr, so the gap is the
+                                     starts. Spending is Er(t), so the gap is the
                                      net draw of step 5 with its sign flipped.
 
    Step 3b  The pension, and whether it keeps its value.
@@ -65,6 +71,29 @@
      never indexed has already lost value by the time it starts. Both forms are
      zero before the start age. With zero inflation the two coincide exactly.
 
+   Step 3c  Spending by age: the life stages.
+     Two base levels, both real and monthly:
+       X   living expenses, entered as an amount (never as a percentage)
+       Xr  retirement expenses, an amount or pct / 100 x X
+     Simple mode stops there: X while working, Xr once retired. Detailed mode
+     adds stages, each a span of ages [from, to) with a level of its own (an
+     amount, or a percentage of X). A blank `to` runs to the end of the plan.
+     The spending at age a, with retirement at age R, is
+       the level of the active stage with the LATEST `from`, if any stage
+       has from <= a < to  (a tie goes to the stage further down the list)
+       otherwise X when a < R, and Xr when a >= R
+     So a stage replaces whichever base level applies, working or retired, for
+     exactly the ages it names. Ages are compared directly, the way the pension
+     start is, so a stage at 34 starts with the month you turn 34.
+
+     Why a span and not just a start age: the retirement age moves (the slider,
+     and the freedom solve tries every month), so a stage defined only by when
+     it starts would be cut short by an early retirement or would outlive a late
+     one. Kids still cost money if you stop work while they are at home, and the
+     spending after they leave is not a working-life figure. A span holds still
+     wherever retirement lands. Leaving `to` blank on every stage gives the plain
+     timeline, each stage running until a later one starts.
+
    Step 4  Accumulation, while still working. Return over the month, savings
      added at the end of it:
        W(t+1) = W(t) * (1 + rm) + S(t),      W(0) = current invested assets
@@ -75,20 +104,20 @@
 
    Step 5  Drawdown, once retired. Expenses out and any pension in at the
      START of the month, return over the month:
-       W(t+1) = (W(t) - Xr + P(t)) * (1 + rm)
-     Xr is the real monthly expense in retirement (today's expense times the
-     retirement multiplier). This is section 2 only: the balance line there
-     accumulates to the slider age and draws down from it. It is plotted as it
-     comes out, so a plan that runs out is drawn below zero rather than flat
-     along it: the negative balance is the size of the miss, and the table and
-     the "Left at" card read the same figure.
+       W(t+1) = (W(t) - Er(t) + P(t)) * (1 + rm)
+     Er(t) is the real monthly spending of a retired month: Xr, or the level
+     of whichever life stage covers that age (step 3c). This is section 2
+     only: the balance line there accumulates to the slider age and draws down
+     from it. It is plotted as it comes out, so a plan that runs out is drawn
+     below zero rather than flat along it: the negative balance is the size of
+     the miss, and the table and the "Left at" card read the same figure.
 
    Step 6  The pot required to stop work at age A. Because step 5 is AFFINE in
      the starting pot, one pass gives every constraint exactly. Track the
      post-withdrawal balance as b(t) = a(t) * W + d(t):
        each month:  d -= c(t);  record the constraint a*W + d >= 0;
                     then a *= growth(t);  d *= growth(t)
-     with c(t) = Xr - P(t). The pot must satisfy every month's
+     with c(t) = Er(t) - P(t). The pot must satisfy every month's
      "never below zero" constraint plus one terminal condition:
        Just Die        terminal >= 0
        Leave a Legacy  terminal >= legacy
@@ -99,25 +128,28 @@
                        fall through the bridge years and then hold for ever,
                        and that comparison would wrongly reject it.
      The answer is the largest of those lower bounds. With a constant monthly
-     return this reduces to the textbook annuity-due and perpetuity-due forms,
-     which is check 1 of the audit:
+     return and no life stages this reduces to the textbook annuity-due and
+     perpetuity-due forms, which is check 1 of the audit:
        Just Die   W = Xr * (1 - (1+rm)^-n) / rm * (1 + rm),  limit Xr * n at rm = 0
        Legacy     W = that + legacy / (1 + rm)^n
        Die Rich   W = Xr * (1 + rm) / rm,  needs rm > 0
      An unindexed pension has faded to almost nothing by age 120, so the Die
      Rich perpetuity is taken on the net draw AT the horizon, which is then
      within a whisker of the full expense. The months either side of it are
-     covered by the same forward pass as every other month.
+     covered by the same forward pass as every other month. A stage with no end
+     is still running at the horizon, so its level is the one taken for ever.
 
    Step 7  The earliest financial freedom age. Two curves over age: what the
      investment accumulates to, and the pot step 6 requires if you stopped at
-     that age. Accumulated is non-decreasing under the savings model, required
-     is non-increasing, so they cross at most once. The first month where
-     accumulated >= required is the answer. The search excludes the final month
-     only: at the death age itself there is nothing left to fund, so every plan
-     would qualify. No crossing before then means the plan is not achievable.
-     Neither curve depends on the retirement age, which is why section 1 does
-     not move when the slider does.
+     that age. In Simple mode accumulated is non-decreasing under the savings
+     model and required is non-increasing, so they cross at most once. Life
+     stages can bend either curve (a costly stage ahead raises the pot needed
+     before it), so in general the answer is defined as what it always was:
+     the FIRST month where accumulated >= required. The search excludes the
+     final month only: at the death age itself there is nothing left to
+     fund, so every plan would qualify. No crossing before then means the
+     plan is not achievable. Neither curve depends on the retirement age,
+     which is why section 1 does not move when the slider does.
 
    Step 8  Monte Carlo. The same recurrences with a random monthly growth
      factor instead of (1 + rm):
@@ -159,11 +191,11 @@
      balance and the year's flows.
 
    Not modelled, deliberately: tax, fees beyond whatever the return input is
-   already net of, lumpy one-off spending, and any change in the expense level
-   other than the retirement multiplier. Nor a separate crash test: one
-   hand-placed drawdown told the reader less than step 8 already does, because
-   the volatility puts a crash somewhere in thousands of futures, including the
-   ones that land it the month you retire.
+   already net of, and lumpy one-off spending: a stage changes spending for
+   whole months at a time, never for a single bill. Nor a separate crash
+   test: one hand-placed drawdown told the reader less than step 8 already
+   does, because the volatility puts a crash somewhere in thousands of
+   futures, including the ones that land it the month you retire.
 */
 (function(){
 'use strict';
@@ -220,14 +252,30 @@ var UI_DEFAULTS = {
   growth: 3, inflation: 2.5,
   assetPreset: 'custom', ret: 8, std: 15, ticker: '',
   assets: 100000,
-  mode: 'die', legacy: 500000, retireMultiplier: 100,
+  // Retirement expenses: an amount a week, month or year, or `pct` of living.
+  expenseMode: 'simple', retireExpense: 100, retireExpensePeriod: 'pct',
+  // Life stages, read only in Detailed mode. Each is
+  // {name, from, to, amount, period}, `to` null for "runs to the end".
+  stages: [],
+  mode: 'die', legacy: 500000,
   pensionOn: false, pensionStartAge: 67,
   pensionAmount: 29000, pensionPeriod: 'yearly', pensionIndexed: true,
   showReal: false, paths: 1000, seed: 20260921,
   confidence: 90
 };
 
-var UI = Object.assign({}, UI_DEFAULTS);
+// The most stages one plan carries. Past this a list is a spreadsheet.
+var MAX_STAGES = 12;
+
+var UI = cloneUI(UI_DEFAULTS);
+
+/* A copy that shares no stage objects with its source, so editing the form can
+   never write back into the defaults or into a Quick Start scenario. */
+function cloneUI(ui){
+  var out = Object.assign({}, ui);
+  out.stages = (ui.stages || []).map(function(s){ return Object.assign({}, s); });
+  return out;
+}
 
 /* ─── HELPERS ─── */
 var $ = function(id){ return document.getElementById(id); };
@@ -338,12 +386,53 @@ function normalDraws(rng){
 
 /* ─── ENGINE ─── */
 
+/* A level of spending as a real monthly figure (step 3c): an amount in the
+   period it was entered against, or a percentage of today's living expenses.
+   Negative spending is not a thing anyone can enter on purpose, so it is 0. */
+function expenseLevel(amount, basis, livingMonthly){
+  var a = Math.max(0, Number(amount) || 0);
+  return basis === 'pct' ? livingMonthly * a / 100 : perMonth(a, basis);
+}
+
+// A stage's age bound, or null when it is blank or not a number.
+function stageAge(v){
+  if(v === '' || v == null) return null;
+  var n = Number(v);
+  return isFinite(n) ? n : null;
+}
+
+/* The stages the engine runs, in the order they were listed: only in Detailed
+   mode, and only the ones that cover at least one age. A blank end runs to
+   the end of the plan. `index` is the row it came from, which breaks a tie
+   between two stages starting at the same age. */
+function buildStages(ui, livingMonthly, scale){
+  if(ui.expenseMode !== 'detailed' || !Array.isArray(ui.stages)) return [];
+  var out = [];
+  ui.stages.forEach(function(s, idx){
+    if(!s) return;
+    var from = stageAge(s.from);
+    if(from === null) return;
+    var to = stageAge(s.to);
+    if(to === null) to = Infinity;
+    if(!(to > from)) return;
+    out.push({
+      name: String(s.name || '').trim(), from: from, to: to, index: idx,
+      level: expenseLevel(s.amount, s.period, livingMonthly) * scale
+    });
+  });
+  return out;
+}
+
 // Turn raw UI values into the real, monthly parameter set the engine uses.
 function buildParams(ui){
   var i  = ui.inflation / 100;
   var rr = (1 + ui.ret / 100) / (1 + i) - 1;
   var gr = (1 + ui.growth / 100) / (1 + i) - 1;
-  var X  = perMonth(ui.expense, ui.expensePeriod);
+  /* `spendScale` is not a field. It is how the "spend less" remedy asks what
+     happens when EVERY expense is cut by the same share: living, retirement
+     and each stage, whether it was entered as an amount or a percentage. */
+  var scale = ui.spendScale == null ? 1 : Math.max(0, Number(ui.spendScale) || 0);
+  var X0 = perMonth(ui.expense, ui.expensePeriod);
   var entered = perMonth(ui.savings, ui.savingsPeriod);
   return {
     mode: ui.mode,
@@ -353,8 +442,9 @@ function buildParams(ui){
     rm: Math.pow(1 + rr, 1 / 12) - 1,
     gm: Math.pow(1 + gr, 1 / 12) - 1,
     sigma: Math.max(0, ui.std) / 100,
-    X: X,
-    Xr: X * (ui.retireMultiplier / 100),
+    X: X0 * scale,
+    Xr: expenseLevel(ui.retireExpense, ui.retireExpensePeriod, X0) * scale,
+    stages: buildStages(ui, X0, scale),
     savingsMode: ui.savingsMode,
     S0: ui.savingsMode === 'savings' ? entered : 0,
     I0: ui.savingsMode === 'income' ? entered : 0,
@@ -379,14 +469,35 @@ function pensionAt(P, age){
   return P.pensionMonthly / Math.pow(1 + P.inflation, Math.max(0, age - P.ageNow));
 }
 
+/* The life stage covering absolute age `age`, or null (step 3c). Of the stages
+   whose span holds the age, the one that started LATEST wins, and of two that
+   start together the one further down the list. The tolerance is the
+   pension's, so a stage at 34 is in force from the month you turn 34. */
+function stageAt(P, age){
+  var best = null, s, k;
+  for(k = 0; k < P.stages.length; k++){
+    s = P.stages[k];
+    if(age < s.from - 1e-9 || age >= s.to - 1e-9) continue;
+    if(best === null || s.from >= best.from) best = s;
+  }
+  return best;
+}
+
+// Real monthly spending at `age` in a working month, and in a retired one.
+// A stage replaces either base level for the ages it covers.
+function workSpendAt(P, age){ var s = stageAt(P, age); return s ? s.level : P.X; }
+function retireSpendAt(P, age){ var s = stageAt(P, age); return s ? s.level : P.Xr; }
+
 // Real monthly savings t months from today, while still working (step 3).
 function savingsAt(P, t){
   var f = Math.pow(1 + P.gm, t);
-  return P.savingsMode === 'income' ? (P.I0 * f - P.X) : (P.S0 * f);
+  return P.savingsMode === 'income'
+    ? (P.I0 * f - workSpendAt(P, P.ageNow + t / 12))
+    : (P.S0 * f);
 }
 
 // Net real monthly draw during retirement at absolute age `age` (step 5).
-function drawAt(P, age){ return P.Xr - pensionAt(P, age); }
+function drawAt(P, age){ return retireSpendAt(P, age) - pensionAt(P, age); }
 
 // Months of work left. Every series below splits on this exact month, so the
 // engine and the plotted cash flows cannot disagree about when work stops.
@@ -398,14 +509,44 @@ function accMonths(P){ return Math.max(0, months(P.ageNow, P.ageRetire)); }
    consistent with what was entered. Once retired it is the pension alone. */
 function incomeAt(P, t){
   if(t < accMonths(P)){
-    return P.savingsMode === 'income' ? P.I0 * Math.pow(1 + P.gm, t) : savingsAt(P, t) + P.X;
+    return P.savingsMode === 'income'
+      ? P.I0 * Math.pow(1 + P.gm, t)
+      : savingsAt(P, t) + workSpendAt(P, P.ageNow + t / 12);
   }
   return pensionAt(P, P.ageNow + t / 12);
 }
 
-// Real monthly spending t months from today. Flat by construction in real
-// terms; the retirement multiplier is the one thing that moves it.
-function spendAt(P, t){ return t < accMonths(P) ? P.X : P.Xr; }
+// Real monthly spending t months from today. Flat in real terms within a
+// stage; stopping work and the life stages are the only things that move it.
+function spendAt(P, t){
+  var age = P.ageNow + t / 12;
+  return t < accMonths(P) ? workSpendAt(P, age) : retireSpendAt(P, age);
+}
+
+/* The spending plan as runs of months, today to the life expectancy, at the
+   retirement age in P: each run one base level or one stage, with the ages it
+   spans and its real monthly level. This is what the stage list resolves to,
+   overlaps and all, and the panel prints it so the rule is on screen rather
+   than in a tooltip. Built month by month from spendAt's own rule, so the two
+   cannot disagree. */
+function spendingTimeline(P){
+  var total = Math.max(1, months(P.ageNow, P.ageDie)), accM = accMonths(P);
+  var runs = [], cur = null, t, age, s, retired, key;
+  for(t = 0; t < total; t++){
+    age = P.ageNow + t / 12;
+    s = stageAt(P, age);
+    retired = t >= accM;
+    key = s ? 'stage' + s.index : (retired ? 'retire' : 'living');
+    if(!cur || cur.key !== key){
+      cur = {key: key, from: age, to: age + 1 / 12, stage: s, retired: retired,
+             level: s ? s.level : (retired ? P.Xr : P.X)};
+      runs.push(cur);
+    } else {
+      cur.to = age + 1 / 12;
+    }
+  }
+  return runs;
+}
 
 /* Money in less money out, the quantity the second chart fills and the table's
    Saved column. It is savingsAt(t) while working and -drawAt(age) once retired,
@@ -696,11 +837,19 @@ function solveRemedies(ui){
   // today's spending is not advice anyone can act on, so it is not offered:
   // with no savings at all, the bisection would otherwise land on "spend
   // nothing", which is true and useless.
+  /* Every expense is cut by the same share, living, retirement and each life
+     stage alike, whether it was entered as an amount or as a percentage of
+     living. Cutting only today's living expenses would leave a retirement
+     amount or a stage untouched and quote a share that does not fund. */
   var MIN_LIVABLE = 0.2;
   var lo = 0, hi = 1, mid, k;
   var canFund = function(mult){
-    return fundedByRetirement(buildParams(Object.assign({}, ui, {expense: ui.expense * mult})));
+    return fundedByRetirement(buildParams(Object.assign({}, ui, {spendScale: mult})));
   };
+  // The sentence names today's living expenses when they are the only figure
+  // being cut; otherwise it says the whole plan moves.
+  var onlyLiving = ui.retireExpensePeriod === 'pct' &&
+    !(ui.expenseMode === 'detailed' && buildParams(ui).stages.length);
   if(canFund(MIN_LIVABLE)){
     lo = MIN_LIVABLE;
     for(k = 0; k < 40; k++){
@@ -716,8 +865,11 @@ function solveRemedies(ui){
       out.push({
         key: 'spend',
         label: 'Spend less',
-        text: 'cut spending to ' + fmt.pct(shown * 100, 0) + ' of today, about ' +
-              fmt.currency(perMonth(ui.expense * shown, ui.expensePeriod)) + ' a month'
+        text: onlyLiving
+          ? 'cut spending to ' + fmt.pct(shown * 100, 0) + ' of today, about ' +
+            fmt.currency(perMonth(ui.expense * shown, ui.expensePeriod)) + ' a month'
+          : 'cut every expense in the plan to ' + fmt.pct(shown * 100, 0) + ' of it, so about ' +
+            fmt.currency(perMonth(ui.expense * shown, ui.expensePeriod)) + ' a month today'
       });
     }
   }
@@ -910,7 +1062,12 @@ function readInputs(){
   UI.ticker = $('ticker').value.trim().toUpperCase();
   UI.assets = Math.max(0, SharedFmt.parseFormatted($('assets').value) || 0);
   UI.legacy = Math.max(0, SharedFmt.parseFormatted($('legacy').value) || 0);
-  UI.retireMultiplier = clamp(num($('retireMultiplier').value, 100), 10, 300);
+  UI.retireExpense = Math.max(0, SharedFmt.parseFormatted($('retireExpense').value) || 0);
+  UI.retireExpensePeriod = BASIS_KEYS.indexOf($('retireExpensePeriod').value) >= 0
+    ? $('retireExpensePeriod').value : 'pct';
+  // The rows are read in Simple mode too: they are kept, not run, so a switch
+  // back to Detailed finds them as they were left.
+  UI.stages = readStages();
   var checked = document.querySelector('input[name="ffmode"]:checked');
   UI.mode = checked ? checked.value : 'die';
   UI.pensionOn = $('pensionOn').checked;
@@ -1011,11 +1168,39 @@ function syncVisibility(){
       info('Income grows at the rate below, expenses rise with inflation, so what you save changes every year.')
     : 'This amount grows at the rate below.' +
       info('Expenses size the pot you need but do not change what you save. Switch to Net income to have the gap worked out for you.');
+  syncMoneyOut();
   var preset = PRESET_ASSETS[UI.assetPreset];
   $('presetNote').innerHTML = UI.assetPreset === 'custom'
     ? 'Your own figures, or pick a preset to start from.'
     : 'Long-run history, not a forecast.' +
       info('Nominal, before tax and fees, as at ' + PRESETS_AS_AT + '. Every field stays editable.');
+}
+
+/* Money out follows its own two switches: which mode is on, and what the
+   retirement figure is entered against. Each tip carries the state it is in. */
+var TIP_EXPENSE_MODE = {
+  simple: '<strong>Simple:</strong> living expenses while you work, retirement expenses once you stop. Detailed adds stages, such as kids.',
+  detailed: '<strong>Detailed:</strong> between its two ages a stage replaces your living or retirement expenses. Where two overlap, the later start wins.'
+};
+var TIP_RETIRE_EXPENSE = {
+  pct: '<strong>% of living:</strong> follows your living expenses, from the age you stop work. 80% if the mortgage is gone by then.',
+  money: '<strong>A fixed amount</strong> in today’s money, from the age you stop work. It does not follow your living expenses.'
+};
+function syncMoneyOut(){
+  var detailed = UI.expenseMode === 'detailed', pct = UI.retireExpensePeriod === 'pct';
+  $('expenseModeTip').setAttribute('data-tip', TIP_EXPENSE_MODE[UI.expenseMode] || TIP_EXPENSE_MODE.simple);
+  $('retireExpenseTip').setAttribute('data-tip', pct ? TIP_RETIRE_EXPENSE.pct : TIP_RETIRE_EXPENSE.money);
+  $('stagesBlock').style.display = detailed ? '' : 'none';
+  var X0 = perMonth(UI.expense, UI.expensePeriod);
+  var Xr = expenseLevel(UI.retireExpense, UI.retireExpensePeriod, X0);
+  $('retireExpenseNote').textContent = pct
+    ? 'About ' + fmt.currency(Xr * 12) + ' a year in today’s money.'
+    : (X0 > 0 ? fmt.pct(Xr / X0 * 100, 0) + ' of your living expenses.' : '');
+  $('retireExpensePeriod').dataset.prev = UI.retireExpensePeriod;
+  document.querySelectorAll('#stageRows .stage-basis').forEach(function(sel){ sel.dataset.prev = sel.value; });
+  syncStageChrome();
+  syncStageNotes();
+  renderStageTimeline();
 }
 
 function syncCurrencyPrefixes(){
@@ -1024,6 +1209,260 @@ function syncCurrencyPrefixes(){
     var el = $(id + 'Prefix');
     if(el) el.textContent = fmt.symbol;
   });
+  // A spending figure on a share of living carries "%" after it, an amount
+  // the currency in front: never "%" where the symbol goes.
+  syncBasisAffix($('retireExpenseWrap'), UI.retireExpensePeriod);
+  retireFmt.maxDecimals = basisDecimals(UI.retireExpensePeriod);
+  document.querySelectorAll('#stageRows .stage-row').forEach(function(row){
+    syncBasisAffix(row.querySelector('.currency-wrap'), row.querySelector('.stage-basis').value);
+  });
+}
+
+/* ─── MONEY OUT: retirement expenses and the life stages ─── */
+
+/* What a spending figure can be entered against. Today's living expenses take
+   the three periods only; everything else may also be a share of them. */
+var BASIS_OPTIONS = [
+  ['pct', '% of living'], ['weekly', 'a week'], ['monthly', 'a month'], ['yearly', 'a year']
+];
+var BASIS_KEYS = BASIS_OPTIONS.map(function(o){ return o[0]; });
+
+// A share of living takes a decimal (83.3%); money is whole currency units.
+function basisDecimals(basis){ return basis === 'pct' ? 1 : 0; }
+function fmtAmount(v, basis){
+  var d = basisDecimals(basis), p = Math.pow(10, d);
+  var n = Math.round((Number(v) || 0) * p) / p;
+  return SharedFmt.formatThousands(String(n), {maxDecimals: d});
+}
+function syncBasisAffix(wrap, basis){
+  var pct = basis === 'pct';
+  SharedFmt.setAffix(wrap, pct ? '' : fmt.symbol, pct ? '%' : '');
+}
+// The retirement field's formatter options, kept live so its precision follows
+// the basis it is entered against.
+var retireFmt = {maxDecimals: 1};
+
+// Today's living expenses as a real monthly figure, read off the form.
+function livingMonthlyNow(){
+  return perMonth(Math.max(0, SharedFmt.parseFormatted($('expense').value) || 0), $('expensePeriod').value);
+}
+
+/* A spending figure follows its basis the way SharedFreq makes an amount
+   follow its period: 1,000 a month becomes 12,000 a year. A move to or from a
+   share of living converts through today's living expenses, so 100% of 60,000
+   a year becomes 60,000 a year rather than 100 a year, and 45,000 a year
+   becomes 75%. With no living expenses there is no share to convert through,
+   so null: the figure is left as typed. */
+function convertSpend(amount, from, to, livingMonthly){
+  if(from === to || !isFinite(amount)) return amount;
+  if(from !== 'pct' && to !== 'pct') return SharedFreq.convert(amount, from, to, 0);
+  if(!(livingMonthly > 0)) return null;
+  if(to === 'pct') return Math.round(perMonth(amount, from) / livingMonthly * 1000) / 10;
+  return Math.round(livingMonthly * amount / 100 * 12 / SharedFreq.perYear[to]);
+}
+
+/* Runs on a basis select's own change, BEFORE anything reads the form, so the
+   converted figure is already in the field. The basis it moves FROM is kept on
+   the select, and re-read whenever the form is synced, because a Quick Start,
+   the mini cache and a re-render all set the select without an event. */
+function onBasisChange(sel, input){
+  var from = sel.dataset.prev || sel.value, to = sel.value;
+  sel.dataset.prev = to;
+  if(from === to) return;
+  var raw = String(input.value == null ? '' : input.value).trim();
+  if(raw === '') return;
+  var was = SharedFmt.parseFormatted(raw);
+  var next = convertSpend(was, from, to, livingMonthlyNow());
+  input.value = fmtAmount(next === null ? was : next, to);
+}
+
+function blankStage(){
+  // Five years out for ten years: inside a working life for most plans, so a
+  // stage added and not yet edited cannot quietly replace retirement spending.
+  var from = clamp(Math.round(UI.ageNow) + 5, 0, 120);
+  return {name: '', from: from, to: Math.min(120, from + 10), amount: 100, period: 'pct'};
+}
+
+// A stage as the page will hold it, from whatever a saved file carried.
+function cleanStage(s){
+  s = s || {};
+  var age = function(v){ var n = stageAge(v); return n === null ? null : clamp(n, 0, 120); };
+  return {
+    name: String(s.name == null ? '' : s.name).slice(0, 40),
+    from: age(s.from), to: age(s.to),
+    amount: Math.max(0, Number(s.amount) || 0),
+    period: BASIS_KEYS.indexOf(s.period) >= 0 ? s.period : 'pct'
+  };
+}
+
+function stageRowHtml(s, idx){
+  var basis = s.period || 'pct', pct = basis === 'pct';
+  var opts = BASIS_OPTIONS.map(function(o){
+    return '<option value="' + o[0] + '"' + (o[0] === basis ? ' selected' : '') + '>' + o[1] + '</option>';
+  }).join('');
+  var ageVal = function(v){ return v === null || v === undefined ? '' : escapeHtml(String(v)); };
+  return '<div class="stage-row" data-idx="' + idx + '">' +
+    '<div class="stage-head">' +
+      '<input type="text" class="txt-input stage-name" maxlength="40" placeholder="Name it, e.g. 1st kid"' +
+        ' aria-label="Stage name" value="' + escapeHtml(s.name || '') + '"/>' +
+      '<button type="button" class="stage-del" title="Remove this stage" aria-label="Remove this stage">✕</button>' +
+    '</div>' +
+    '<div class="stage-ages">' +
+      '<span class="stage-lbl">From age</span>' +
+      '<input type="number" class="num-input stage-from" min="0" max="120" step="1" aria-label="From age"' +
+        ' value="' + ageVal(s.from) + '"/>' +
+      '<span class="stage-lbl">to</span>' +
+      '<input type="number" class="num-input stage-to" min="0" max="120" step="1" placeholder="end"' +
+        ' aria-label="To age, blank to run until a later stage" value="' + ageVal(s.to) + '"/>' +
+    '</div>' +
+    '<div class="inline-row">' +
+      '<div class="currency-wrap grow">' +
+        '<span class="prefix"' + (pct ? ' hidden' : '') + '>' + escapeHtml(fmt.symbol) + '</span>' +
+        '<input class="currency-input stage-amount' + (pct ? ' has-suffix' : '') + '" type="text"' +
+          ' inputmode="decimal" aria-label="Spending in this stage" value="' + fmtAmount(s.amount, basis) + '"/>' +
+        '<span class="suffix"' + (pct ? '' : ' hidden') + '>%</span>' +
+      '</div>' +
+      '<select class="sel-input period basis stage-basis" aria-label="Entered as">' + opts + '</select>' +
+    '</div>' +
+    '<p class="note stage-note"></p>' +
+  '</div>';
+}
+
+/* The list is drawn from state and read back from the DOM, the way the cost
+   lists on the Rent vs Own page are. Its inputs carry no id, so the mini cache
+   leaves them alone and keeps the list through `extra` instead. */
+function renderStageRows(stages){
+  var wrap = $('stageRows');
+  wrap.innerHTML = (stages || []).map(stageRowHtml).join('');
+  wrap.querySelectorAll('.stage-basis').forEach(function(sel){ sel.dataset.prev = sel.value; });
+  syncStageChrome();
+}
+
+function readStages(){
+  return Array.prototype.map.call(document.querySelectorAll('#stageRows .stage-row'), function(row){
+    var q = function(c){ return row.querySelector(c); };
+    return cleanStage({
+      name: q('.stage-name').value.trim(),
+      from: q('.stage-from').value.trim(),
+      to: q('.stage-to').value.trim(),
+      amount: SharedFmt.parseFormatted(q('.stage-amount').value),
+      period: q('.stage-basis').value
+    });
+  });
+}
+
+function syncStageChrome(){
+  var n = document.querySelectorAll('#stageRows .stage-row').length;
+  $('stagesEmpty').style.display = n ? 'none' : '';
+  $('addStage').disabled = n >= MAX_STAGES;
+  $('addStage').title = n >= MAX_STAGES ? 'Up to ' + MAX_STAGES + ' stages' : '';
+}
+
+function stageLabel(s){ return s.name || ('Stage ' + (s.index + 1)); }
+
+/* Under each row, the one thing its own fields do not show: an amount as a
+   share of living and a share as an amount, or why it will never apply. */
+function syncStageNotes(){
+  var X0 = perMonth(UI.expense, UI.expensePeriod);
+  document.querySelectorAll('#stageRows .stage-row').forEach(function(row, idx){
+    var s = UI.stages[idx], el = row.querySelector('.stage-note');
+    if(!s || !el) return;
+    var msg;
+    if(s.from === null) msg = 'Give it a starting age, or it never applies.';
+    else if(s.to !== null && s.to <= s.from) msg = 'It ends before it starts, so it never applies.';
+    else if(s.from >= UI.ageDie) msg = 'It starts after your life expectancy, so it never applies.';
+    else if(s.period === 'pct') msg = 'About ' + fmt.currency(expenseLevel(s.amount, 'pct', X0) * 12) + ' a year in today’s money.';
+    else msg = X0 > 0 ? fmt.pct(expenseLevel(s.amount, s.period, X0) / X0 * 100, 0) + ' of your living expenses.' : '';
+    el.textContent = msg;
+    row.classList.toggle('stage-off', /never applies/.test(msg));
+  });
+}
+
+/* The stage list resolved into what you would actually spend, age by age, at
+   the retirement age on the slider. Overlaps are where a reader cannot guess
+   the rule, so the answer is printed instead of explained. */
+function renderStageTimeline(){
+  var el = $('stageTimeline');
+  if(!el) return;
+  var P = buildParams(UI);
+  if(UI.expenseMode !== 'detailed' || !P.stages.length || !(P.ageDie > P.ageNow)){
+    el.innerHTML = ''; el.style.display = 'none'; return;
+  }
+  var runs = spendingTimeline(P);
+  el.style.display = '';
+  el.innerHTML = '<div class="tl-head">How it plays out if you stop work at ' + escapeHtml(fmt.age(P.ageRetire)) +
+    ': a year, in today’s money</div><ol class="tl-list">' + runs.map(function(r){
+      var name = r.stage ? '<span data-no-abbr>' + escapeHtml(stageLabel(r.stage)) + '</span>'
+                         : (r.retired ? 'Retirement expenses' : 'Living expenses');
+      return '<li><span class="tl-ages">' + escapeHtml(fmt.age(r.from)) + ' to ' + escapeHtml(fmt.age(r.to)) +
+        '</span><span class="tl-name">' + name + '</span><span class="tl-amt">' +
+        escapeHtml(fmt.currency(r.level * 12)) + '</span></li>';
+    }).join('') + '</ol>';
+}
+
+function setExpenseMode(mode, silent){
+  UI.expenseMode = (mode === 'detailed') ? 'detailed' : 'simple';
+  document.querySelectorAll('#expenseModeGroup .seg-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.val === UI.expenseMode);
+  });
+  if(!silent){ if(persist) persist.schedule(); markStale(); }
+}
+
+function addStage(){
+  var stages = readStages();
+  if(stages.length >= MAX_STAGES) return;
+  stages.push(blankStage());
+  renderStageRows(stages);
+  if(persist) persist.schedule();
+  markStale();
+  var rows = document.querySelectorAll('#stageRows .stage-name');
+  if(rows.length) rows[rows.length - 1].focus();
+}
+
+function removeStage(idx){
+  var stages = readStages();
+  stages.splice(idx, 1);
+  renderStageRows(stages);
+  if(persist) persist.schedule();
+  markStale();
+}
+
+function wireStages(){
+  var wrap = $('stageRows');
+  // Conversion first, on both events a select fires, so the new figure is in
+  // the row before the stale mark reads the form.
+  var basis = function(e){
+    var sel = e.target;
+    if(!sel.classList || !sel.classList.contains('stage-basis')) return;
+    onBasisChange(sel, sel.closest('.stage-row').querySelector('.stage-amount'));
+  };
+  wrap.addEventListener('input', basis);
+  wrap.addEventListener('change', basis);
+  wrap.addEventListener('input', function(e){
+    var t = e.target;
+    if(t.classList.contains('stage-amount')){
+      var b = t.closest('.stage-row').querySelector('.stage-basis').value;
+      SharedFmt.liveFormat(t, {maxDecimals: basisDecimals(b)});
+    }
+    // A name changes no figure, only the labels the panel prints.
+    if(t.classList.contains('stage-name')) syncForm(); else markStale();
+  });
+  wrap.addEventListener('change', function(e){
+    if(e.target.classList.contains('stage-basis')) markStale();
+  });
+  wrap.addEventListener('blur', function(e){
+    var t = e.target;
+    if(t.classList && t.classList.contains('stage-amount')){
+      var b = t.closest('.stage-row').querySelector('.stage-basis').value;
+      t.value = fmtAmount(SharedFmt.parseFormatted(t.value), b);
+    }
+  }, true);
+  wrap.addEventListener('click', function(e){
+    var del = e.target.closest('.stage-del');
+    if(!del) return;
+    removeStage(Number(del.closest('.stage-row').dataset.idx));
+  });
+  $('addStage').addEventListener('click', addStage);
 }
 
 /* ─── RENDER ─── */
@@ -1256,7 +1695,9 @@ function renderMetrics(res){
   var retireYearIdx = Math.max(0, Math.round(res.P.ageRetire - res.P.ageNow));
   var dieYearIdx = Math.max(0, Math.round(res.P.ageDie - res.P.ageNow));
   var modeName = {die:'Just Die', legacy:'Leave a Legacy', rich:'Die Rich'}[res.ui.mode];
-  var yearsOf = function(pot){ return pot / Math.max(1e-9, res.P.Xr * 12); };
+  /* "So many years of spending" counts in the spending of the first year
+     retired at that age: Xr, or the life stage that covers it. */
+  var yearsOf = function(pot, age){ return pot / Math.max(1e-9, retireSpendAt(res.P, age) * 12); };
 
   // ── Section 1 ──
   var free = res.ffAge;
@@ -1273,7 +1714,7 @@ function renderMetrics(res){
     ? '—' : fmt.currency(show(res, freePot, freeIdx), true);
   $('mFreePotSub').textContent = (freePot == null || !isFinite(freePot))
     ? 'No pot funds this plan.'
-    : fmt.num(yearsOf(freePot), 1) + 'x a year of retirement spending, for ' + modeName +
+    : fmt.num(yearsOf(freePot, free), 1) + 'x a year of retirement spending, for ' + modeName +
       (res.ui.showReal ? ', in today\u2019s money.' : ', in the money of that year.');
 
   $('mRealRet').textContent = fmt.pct(res.P.rr * 100, 2);
@@ -1285,9 +1726,9 @@ function renderMetrics(res){
   // ── Section 2, all at the slider age ──
   var need = res.needAtRetire, have = res.potAtRetire;
   $('mNeed').textContent = isFinite(need) ? fmt.currency(show(res, need, retireYearIdx), true) : 'Not possible';
-  var swr = isFinite(need) && need > 0 ? (res.P.Xr * 12 / need * 100) : null;
+  var swr = isFinite(need) && need > 0 ? (retireSpendAt(res.P, res.P.ageRetire) * 12 / need * 100) : null;
   $('mNeedSub').textContent = isFinite(need)
-    ? 'Your FIRE number for ' + modeName + ': ' + fmt.num(yearsOf(need), 1) + 'x a year of spending' +
+    ? 'Your FIRE number for ' + modeName + ': ' + fmt.num(yearsOf(need, res.P.ageRetire), 1) + 'x a year of spending' +
       (swr == null ? '' : ', a ' + fmt.pct(swr, 2) + ' SWR') +
       (res.ui.showReal ? '.' : ', in ' + (res.thisYear + retireYearIdx) + ' dollars.')
     : 'No pot works at this real return.';
@@ -2053,7 +2494,7 @@ function renderTable(res){
 /* ─── ASSUMPTIONS ─── */
 
 function renderAssumptions(res){
-  var swr = res.needAtRetire > 0 ? (res.P.Xr * 12 / res.needAtRetire * 100) : null;
+  var swr = res.needAtRetire > 0 ? (retireSpendAt(res.P, res.P.ageRetire) * 12 / res.needAtRetire * 100) : null;
   var items = [
     '<strong>No tax.</strong> Enter everything net of it.' +
       info('Tax differs too much between countries, and between an ordinary account and a pension wrapper, to model honestly in one tool.'),
@@ -2085,8 +2526,15 @@ function renderAssumptions(res){
       : '<strong>Income is implied, not entered.</strong> It is what you save plus what you spend.' +
         info('You entered savings, so the income shown is what saving and spending that much implies. Switch to Net income on the You tab to enter it directly.')),
 
-    '<strong>Not modelled:</strong> one-off costs, a mortgage ending, aged care, or any spending change beyond the retirement percentage.'
+    (res.ui.expenseMode === 'detailed'
+      ? '<strong>Not modelled:</strong> one-off costs. A life stage changes spending for whole months, never for a single bill.'
+      : '<strong>Not modelled:</strong> one-off costs, or any change in spending beyond your retirement expenses.' +
+        info('Switch Money out to Detailed to add life stages: kids, a lean stretch, slower later years.'))
   ];
+  if(res.ui.expenseMode === 'detailed' && res.P.stages.length){
+    items.splice(2, 0, '<strong>Life stages replace, they do not add.</strong> Between its two ages a stage is what you spend, working or retired.' +
+      info('Where two stages overlap, the one that starts later wins. Outside every stage you spend your living expenses, then your retirement expenses.'));
+  }
   if(res.ui.pensionOn){
     items.splice(3, 0, (res.P.pensionIndexed
       ? '<strong>The pension rises with inflation</strong>, so it keeps its value for ever.'
@@ -2523,12 +2971,17 @@ function downloadCsv(){
      Frugal Living      the net income model, where spending less does two jobs
                         at once: it fills the pot faster AND shrinks the pot
                         needed, which is why a lean saver frees up in years
-                        rather than decades.
-     Geoarbitrage       the retirement spending multiplier. Same earner, same
-                        saving, retiring somewhere that costs 40% of home.
+                        rather than decades. Detailed Money out, with a hustle
+                        age that saves harder and a relax age that spends more
+                        once free: life stages cut both ways.
+     Geoarbitrage       retirement expenses as a share of living. Same earner,
+                        same saving, retiring somewhere that costs 40% of home.
      Fat FIRE forever   Die Rich, the goal that never touches the capital.
      Family legacy      Leave a Legacy, where the bequest is discounted back to
-                        the day you stop and so costs less than its face value.
+                        the day you stop and so costs less than its face value,
+                        and two kids as life stages. On net income, so the kids
+                        cut saving while they are at home, and they are still at
+                        home when the plan frees up, so the pot pays for them.
      Late start         the pension, and a return that is not all equity. Switch
                         the pension off and freedom moves years later.
 
@@ -2543,8 +2996,12 @@ function downloadCsv(){
      3%, because a cost base in a developing economy is the one case where the
      single inflation figure this page models is being asked to cover two.
    - Savings rates are deliberately archetypal, not median: 41% for a moderate
-     saver, 67% for a frugal one, 63% for a high earner who has not inflated
-     their lifestyle with their pay.
+     saver, 67% for a frugal one (74% through the hustle), 63% for a high
+     earner who has not inflated their lifestyle with their pay, and 53% for
+     the young family before the kids arrive, 30% with both at home.
+   - Life stages are entered as a share of living expenses, so each one reads
+     as "this much of what we spend now" and follows the living figure if the
+     reader changes it.
    - No scenario sets a retirement age. The slider is seeded from the plan's own
      freedom age by seedRetireAge(), so every scenario opens on the earliest
      stop that works. Read what that costs: the crossing is solved on the
@@ -2554,10 +3011,11 @@ function downloadCsv(){
      board's whole lesson.
 
    The audit harness in _audit/ pins all of it: every field landing on its own
-   control, the return agreeing with the named preset, every scenario reaching
-   freedom, the slider opening on that age, and the three tips that claim a
-   lever — the frugal saver's years of work, the Bali multiplier, the late
-   starter's pension. */
+   control, every stage landing on its own row, the return agreeing with the
+   named preset, every scenario reaching freedom, the slider opening on that
+   age, and the tips that claim a lever: the frugal saver's years of work and
+   both of its stages, the Bali retirement expenses, the young family's kids,
+   the late starter's pension. */
 var QUICK_START_SCENARIOS = {
 
   /* 32, on $110,000 take-home: $65,000 spent, $45,000 saved. Global equity,
@@ -2571,14 +3029,21 @@ var QUICK_START_SCENARIOS = {
       savingsMode: 'savings', savings: 45000, savingsPeriod: 'yearly',
       growth: 3, inflation: 2.5,
       assetPreset: 'world', assets: 120000,
-      mode: 'die', retireMultiplier: 100
+      mode: 'die', retireExpense: 100, retireExpensePeriod: 'pct'
     }
   },
 
   /* Lean FIRE at 28. Entered as NET INCOME, which is the model that makes the
      point: the $30,000 spending line is subtracted from the income to get the
      saving AND multiplied into the pot, so cutting it moves both ends. Two
-     thirds of the pay packet saved gets there in years, not decades. */
+     thirds of the pay packet saved gets there in years, not decades.
+
+     Two life stages show the lever cutting both ways. The hustle age lives on
+     80% for five years, which under net income is $6,000 a year more saved.
+     The relax age spends 120% from 40 to 55, the fun years once free, and
+     because it falls after the crossing it is paid for out of the pot: it
+     makes the pot bigger rather than the saving smaller. Outside both, the
+     plan spends $30,000, working or not. */
   frugal: {
     label: 'Frugal Living',
     vals: {
@@ -2587,7 +3052,12 @@ var QUICK_START_SCENARIOS = {
       savingsMode: 'income', savings: 92000, savingsPeriod: 'yearly',
       growth: 2.5, inflation: 2.5,
       assetPreset: 'world', assets: 40000,
-      mode: 'die', retireMultiplier: 100
+      mode: 'die', retireExpense: 100, retireExpensePeriod: 'pct',
+      expenseMode: 'detailed',
+      stages: [
+        {name: 'Hustle age', from: 28, to: 33, amount: 80, period: 'pct'},
+        {name: 'Relax age', from: 40, to: 55, amount: 120, period: 'pct'}
+      ]
     }
   },
 
@@ -2605,7 +3075,7 @@ var QUICK_START_SCENARIOS = {
       savingsMode: 'savings', savings: 40000, savingsPeriod: 'yearly',
       growth: 3, inflation: 3,
       assetPreset: 'world', assets: 90000,
-      mode: 'die', retireMultiplier: 40
+      mode: 'die', retireExpense: 40, retireExpensePeriod: 'pct'
     }
   },
 
@@ -2621,23 +3091,36 @@ var QUICK_START_SCENARIOS = {
       savingsMode: 'income', savings: 320000, savingsPeriod: 'yearly',
       growth: 3, inflation: 2.5,
       assetPreset: 'us', assets: 400000,
-      mode: 'rich', retireMultiplier: 100
+      mode: 'rich', retireExpense: 100, retireExpensePeriod: 'pct'
     }
   },
 
-  /* 40, with a house's worth to hand on: $750,000 in TODAY'S money still there
-     at 90, on top of 95% of today's spending because the mortgage is gone by
-     then. The bequest is discounted over the thirty-odd years from stopping to
-     dying, which is why it adds a fraction of its face value to the pot. */
+  /* A couple at 33 on $150,000 take-home, two kids ahead and a house's worth to
+     hand on: $750,000 in TODAY'S money still there at 90, on top of 95% of
+     today's spending once the kids have gone. The bequest is discounted over
+     the forty-odd years from stopping to dying, which is why it adds a
+     fraction of its face value to the pot.
+
+     The kids are life stages, as a share of what the couple spends now: 125%
+     with one at home from 34, 150% with both from 36, until the younger leaves
+     at 56. The 2nd kid's stage starts later, so it wins where the two overlap,
+     and both end at 56 so the 125% does not linger. On net income the kids cut
+     the saving from $80,000 a year to $45,000, and the plan frees up while
+     they are still at home, so the pot carries them to 56 as well. */
   legacy: {
     label: 'Family legacy',
     vals: {
-      ageNow: 40, ageDie: 90,
-      expense: 80000, expensePeriod: 'yearly',
-      savingsMode: 'savings', savings: 55000, savingsPeriod: 'yearly',
+      ageNow: 33, ageDie: 90,
+      expense: 70000, expensePeriod: 'yearly',
+      savingsMode: 'income', savings: 150000, savingsPeriod: 'yearly',
       growth: 3, inflation: 2.5,
-      assetPreset: 'world', assets: 350000,
-      mode: 'legacy', legacy: 750000, retireMultiplier: 95
+      assetPreset: 'world', assets: 150000,
+      mode: 'legacy', legacy: 750000, retireExpense: 95, retireExpensePeriod: 'pct',
+      expenseMode: 'detailed',
+      stages: [
+        {name: '1st kid', from: 34, to: 56, amount: 125, period: 'pct'},
+        {name: '2nd kid', from: 36, to: 56, amount: 150, period: 'pct'}
+      ]
     }
   },
 
@@ -2654,7 +3137,7 @@ var QUICK_START_SCENARIOS = {
       savingsMode: 'savings', savings: 25000, savingsPeriod: 'yearly',
       growth: 2, inflation: 2.5,
       assetPreset: 'custom', ret: 6.5, std: 10, assets: 180000,
-      mode: 'die', retireMultiplier: 85,
+      mode: 'die', retireExpense: 85, retireExpensePeriod: 'pct',
       pensionOn: true, pensionStartAge: 67,
       pensionAmount: 29000, pensionPeriod: 'yearly', pensionIndexed: true
     }
@@ -2676,7 +3159,7 @@ function applyQuickStart(key){
   var s = QUICK_START_SCENARIOS[key];
   if(!s) return;
 
-  var plan = Object.assign({}, UI_DEFAULTS, s.vals);
+  var plan = cloneUI(Object.assign({}, UI_DEFAULTS, s.vals));
   var preset = PRESET_ASSETS[plan.assetPreset];
   if(preset && plan.assetPreset !== 'custom'){ plan.ret = preset.ret; plan.std = preset.std; }
 
@@ -2725,7 +3208,11 @@ function applyUIToDom(ui){
   $('std').value = ui.std;
   $('assets').value = SharedFmt.formatThousands(ui.assets);
   $('legacy').value = SharedFmt.formatThousands(ui.legacy);
-  $('retireMultiplier').value = ui.retireMultiplier;
+  $('retireExpensePeriod').value = ui.retireExpensePeriod;
+  $('retireExpensePeriod').dataset.prev = ui.retireExpensePeriod;
+  $('retireExpense').value = fmtAmount(ui.retireExpense, ui.retireExpensePeriod);
+  setExpenseMode(ui.expenseMode, true);
+  renderStageRows((ui.stages || []).map(cleanStage));
   $('pensionOn').checked = !!ui.pensionOn;
   $('pensionStartAge').value = ui.pensionStartAge;
   $('pensionAmount').value = SharedFmt.formatThousands(ui.pensionAmount);
@@ -2791,8 +3278,11 @@ function wire(){
   ['expense', 'savings', 'assets', 'legacy', 'pensionAmount'].forEach(function(id){
     SharedFmt.attachCurrencyInput($(id), {maxDecimals: 0, onChange: markStale});
   });
+  // Its precision follows its basis, so it formats through the live options.
+  retireFmt.onChange = markStale;
+  SharedFmt.attachCurrencyInput($('retireExpense'), retireFmt);
 
-  ['ageNow','ageDie','growth','inflation','ret','std','retireMultiplier',
+  ['ageNow','ageDie','growth','inflation','ret','std',
    'pensionStartAge','paths','confidence','seed'].forEach(function(id){
     $(id).addEventListener('input', markStale);
   });
@@ -2805,9 +3295,22 @@ function wire(){
     SharedFreq.attachSelect($(pair[1]), $(pair[0]), {maxDecimals: 0});
   });
 
-  ['expensePeriod','savingsPeriod','pensionPeriod','currency'].forEach(function(id){
+  /* Retirement expenses follow their basis the same way, and through today's
+     living expenses when the move is to or from a share of them. */
+  ['input', 'change'].forEach(function(ev){
+    $('retireExpensePeriod').addEventListener(ev, function(){
+      onBasisChange($('retireExpensePeriod'), $('retireExpense'));
+    });
+  });
+
+  ['expensePeriod','savingsPeriod','pensionPeriod','retireExpensePeriod','currency'].forEach(function(id){
     $(id).addEventListener('change', markStale);
   });
+
+  document.querySelectorAll('#expenseModeGroup .seg-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ setExpenseMode(btn.dataset.val); });
+  });
+  wireStages();
 
   /* The retirement slider is the exception to the Simulate gate, because sweeping
      it IS the question this board asks: it is a sensitivity control, and one you
@@ -2911,12 +3414,27 @@ function resetToDefaults(){
   tickerInfo = null;
   $('ticker').value = '';
   tickerStatus('');
-  Object.assign(UI, UI_DEFAULTS);
+  Object.assign(UI, cloneUI(UI_DEFAULTS));
   applyUIToDom(UI_DEFAULTS);
   seedRetireAge();
   markQuickStart(null);
   if(persist) persist.schedule();
   render();
+}
+
+/* Before Money out, retirement spending was one number on the Goal tab, a
+   percentage of today's, saved as `retireMultiplier`. A cache or a scenario
+   file from then still opens to the same plan: the figure becomes Retirement
+   expenses on the % of living basis it always was. */
+function migrateRetireMultiplier(saved){
+  var f = saved && (saved.__fields || saved);
+  if(!f || typeof f !== 'object') return;
+  if(f['v:retireMultiplier'] == null || f['v:retireExpense'] != null) return;
+  var pct = Number(String(f['v:retireMultiplier']).replace(/,/g, ''));
+  if(!isFinite(pct)) return;
+  $('retireExpensePeriod').value = 'pct';
+  $('retireExpensePeriod').dataset.prev = 'pct';
+  $('retireExpense').value = fmtAmount(Math.max(0, pct), 'pct');
 }
 
 /* ─── INIT ─── */
@@ -2931,10 +3449,19 @@ function init(){
   if(window.Persist){
     // Language-agnostic namespace, so an Indonesian page could share this cache.
     persist = Persist.init('financialfreedom', {
-      onRestore: function(){ render(); },
+      onRestore: function(saved){ migrateRetireMultiplier(saved); render(); },
       extra: {
-        save: function(){ return {savingsMode: UI.savingsMode}; },
-        restore: function(saved){ if(saved && saved.savingsMode) setSavingsMode(saved.savingsMode, true); }
+        // The stage list lives in rows with no id, so it rides here, read
+        // straight off the rows so an edit not yet run is still kept.
+        save: function(){
+          return {savingsMode: UI.savingsMode, expenseMode: UI.expenseMode, stages: readStages()};
+        },
+        restore: function(saved){
+          if(!saved) return;
+          if(saved.savingsMode) setSavingsMode(saved.savingsMode, true);
+          if(saved.expenseMode) setExpenseMode(saved.expenseMode, true);
+          if(Array.isArray(saved.stages)) renderStageRows(saved.stages.slice(0, MAX_STAGES).map(cleanStage));
+        }
       }
     });
     SharedScenario.mount('.quick-start-row', { tool: 'financialfreedom', persist: persist });
@@ -2964,6 +3491,15 @@ window.__FF = {
   buildParams: buildParams,
   savingsAt: savingsAt,
   drawAt: drawAt,
+  stageAt: stageAt,
+  workSpendAt: workSpendAt,
+  retireSpendAt: retireSpendAt,
+  spendingTimeline: spendingTimeline,
+  expenseLevel: expenseLevel,
+  convertSpend: convertSpend,
+  cleanStage: cleanStage,
+  readStages: readStages,
+  MAX_STAGES: MAX_STAGES,
   requiredPot: requiredPot,
   accumulate: accumulate,
   accMonths: accMonths,
