@@ -1814,8 +1814,15 @@ for(const [name, extra] of [
       balSeries: bal ? bal.data.map(p => p.y) : null,
       balPeakIdx: bal ? bal.data.reduce((best, p, k) => p.y > bal.data[best].y ? k : best, 0) : null,
       marker: !!label(cash, 'Retire at 60'),
-      // One rule down the whole picture: the same entry, drawn once per pane.
-      markerAxes: cash.data.datasets.filter(d => d.label === 'Retire at 60').map(d => d.yAxisID),
+      // One rule down the whole picture: one keyed dataset, drawn full height
+      // by the rules plugin at the retirement year.
+      markerCount: cash.data.datasets.filter(d => d.label === 'Retire at 60').length,
+      markerRule: (() => {
+        const rules = (cash.options.plugins.ffRules || {}).rules || [];
+        const k = cash.data.datasets.findIndex(d => d.label === 'Retire at 60');
+        const rule = rules.find(x => x.dataset === k);
+        return rule ? {x: rule.x, empty: cash.data.datasets[k].data.length === 0} : null;
+      })(),
       stillHasPotLines: !!(label(cash, 'Your pot') || label(cash, 'Your pot after a crash')),
       legend2: Array.from(document.querySelectorAll('#legend2 .legend-item')).map(x => x.textContent.trim()),
       legend3: !!document.getElementById('legend3'),
@@ -1953,12 +1960,12 @@ for(const [name, extra] of [
   /* One card, one key: the balance rides in the same legend as the flows, and
      the retirement rule — drawn once in each pane — is ONE entry, so hiding it
      takes the whole rule down the picture rather than half of it. */
-  check('F44g3 one key covers both panes, and the retirement rule is one entry drawn in each',
+  check('F44g3 one key covers both panes, and the retirement rule is one entry drawn the full height',
     !r.legend3 && r.legend2.some(l => /^balance/i.test(l)) &&
     r.legend2.filter(l => /retire at 60/i.test(l)).length === 1 &&
-    r.markerAxes.length === 2 && r.markerAxes.includes('y') && r.markerAxes.includes('yBal') &&
+    r.markerCount === 1 && !!r.markerRule && r.markerRule.empty &&
     !r.legend2.some(l => /right axis/i.test(l)),
-    `${r.legend2.join(' | ')}  ||  rule on ${r.markerAxes.join(' + ')}`);
+    `${r.legend2.join(' | ')}  ||  rule ${JSON.stringify(r.markerRule)}`);
   /* The key is grouped by pane rather than each label saying where to look:
      an "Upper panel:" row for the flows and the retirement rule, a "Lower
      panel:" row for the balance and everything read against it. The export

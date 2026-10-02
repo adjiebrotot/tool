@@ -1991,6 +1991,112 @@ var PANE_CLIP_PLUGIN = {
   }
 };
 
+/* The life stages as sections of the x axis. Each stage is a rounded chip in
+   a ribbon above the plot, spanning its ages, with its name inside; behind
+   the plot its years carry a faint tint, alternating between two strengths so
+   two stages that meet still read as two. No rules are drawn down the plot:
+   the gridlines and the "Retire at" rule are already there, and more lines
+   would only compete with the data.
+
+   The names go on the chart rather than in the key because a stage is a
+   stretch of years, not a series: there is nothing in it to hide or show.
+   Drawn by a plugin, not by datasets, so no stage turns up in the hover card
+   or the key, and positions are read off the x scale on every draw, so the
+   sections follow a zoom or a pan. `sections` is [{x0, x1, label}] in plotted
+   x (calendar years). A name too long for its chip is shortened to fit, and
+   a chip with no room for a name is drawn bare. Both exports copy the canvas,
+   so they carry the sections too. */
+var STAGE_RIBBON_H = 20, STAGE_RIBBON_GAP = 6;
+var STAGE_LABEL_ROOM = STAGE_RIBBON_H + STAGE_RIBBON_GAP + 6;
+// A section's on-screen left and right edges, or null when it is off screen.
+function stageSpan(sx, a, s){
+  var l = Math.max(a.left, sx.getPixelForValue(s.x0));
+  var r = Math.min(a.right, sx.getPixelForValue(s.x1));
+  return r - l >= 1 ? {l: l, r: r} : null;
+}
+var STAGE_SECTIONS_PLUGIN = {
+  id: 'ffStageSections',
+  // The tint goes under the data, one block per pane so the seam between the
+  // two panes stays clear.
+  beforeDatasetsDraw: function(chart, args, opts){
+    var list = opts && opts.sections, sx = chart.scales.x, a = chart.chartArea;
+    if(!list || !list.length || !sx || !a) return;
+    var panes = (opts.panes || []).map(function(id){ return chart.scales[id]; })
+      .filter(function(sc){ return sc; });
+    if(!panes.length) panes = [{top: a.top, bottom: a.bottom}];
+    var ctx = chart.ctx;
+    ctx.save();
+    list.forEach(function(s, i){
+      var sp = stageSpan(sx, a, s);
+      if(!sp) return;
+      ctx.fillStyle = i % 2 ? opts.tint2 : opts.tint;
+      panes.forEach(function(p){ ctx.fillRect(sp.l, p.top, sp.r - sp.l, p.bottom - p.top); });
+    });
+    ctx.restore();
+  },
+  afterDatasetsDraw: function(chart, args, opts){
+    var list = opts && opts.sections, sx = chart.scales.x, a = chart.chartArea;
+    if(!list || !list.length || !sx || !a) return;
+    var ctx = chart.ctx, top = a.top - STAGE_RIBBON_GAP - STAGE_RIBBON_H;
+    ctx.save();
+    // A phone-width chart gets a size smaller, so more of the names fit.
+    ctx.font = '600 ' + (a.right - a.left < 400 ? 10 : 11) + 'px DM Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    list.forEach(function(s){
+      var sp = stageSpan(sx, a, s);
+      if(!sp) return;
+      // One pixel off each end, so two stages that meet leave a 2px gap.
+      var l = sp.l + 1, w = sp.r - sp.l - 2;
+      if(w < 2) return;
+      var rad = Math.min(6, w / 2);
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(l, top, w, STAGE_RIBBON_H, rad);
+      else ctx.rect(l, top, w, STAGE_RIBBON_H);
+      ctx.fillStyle = opts.chip;
+      ctx.fill();
+      var room = w - 10, text = s.label;
+      if(room < 14) return;
+      if(ctx.measureText(text).width > room){
+        while(text.length > 1 && ctx.measureText(text + '…').width > room) text = text.slice(0, -1);
+        text = text.trimEnd() + '…';
+        if(ctx.measureText(text).width > room) return;
+      }
+      ctx.fillStyle = opts.textColor;
+      ctx.fillText(text, l + w / 2, top + STAGE_RIBBON_H / 2 + 0.5);
+    });
+    ctx.restore();
+  }
+};
+
+/* Vertical rules the full height of the plot, through every pane and the
+   seam between them, at a plotted x. Each rule is drawn in the look of the
+   dataset it names and only while that dataset is visible, so the key hides
+   and shows it like any series. `rules` is [{x, dataset}]. */
+var RULES_PLUGIN = {
+  id: 'ffRules',
+  afterDatasetsDraw: function(chart, args, opts){
+    var list = opts && opts.rules, sx = chart.scales.x, a = chart.chartArea;
+    if(!list || !list.length || !sx || !a) return;
+    var ctx = chart.ctx;
+    list.forEach(function(r){
+      var ds = chart.data.datasets[r.dataset];
+      if(!ds || !chart.isDatasetVisible(r.dataset)) return;
+      var px = sx.getPixelForValue(r.x);
+      if(!(px >= a.left && px <= a.right)) return;
+      ctx.save();
+      ctx.strokeStyle = ds.borderColor;
+      ctx.lineWidth = ds.borderWidth || 1;
+      ctx.setLineDash(ds.borderDash || []);
+      ctx.beginPath();
+      ctx.moveTo(px, a.top);
+      ctx.lineTo(px, a.bottom);
+      ctx.stroke();
+      ctx.restore();
+    });
+  }
+};
+
 /* Chart.js resolves an `index` tooltip by DATA INDEX: it takes the nearest
    element, reads its index, and pulls that index out of every other dataset.
    Every series here is one point per year EXCEPT the droplines, which are two
@@ -2431,17 +2537,14 @@ function renderCharts(res){
   };
 
   /* A vertical rule at the year the two areas change sides, so the reader does
-     not have to count years along the axis to find it. One per pane, drawn
-     from the floor of that pane to its ceiling as the WHOLE plan sizes them:
-     a zoomed-in window can only ever be narrower, so the rule spans its pane
-     at every zoom and is clipped to it rather than falling short. */
-  var paneSpan = function(fit){ return fit(y0, y0 + years) || {min: 0, max: 0}; };
-  var retireLine = function(axisId, span){
-    return {label: retLabel, yAxisID: axisId,
-            data:[{x: y0 + retIdx, y: span.min}, {x: y0 + retIdx, y: span.max}],
-            borderColor: withAlpha(t.e, 0.6), borderWidth: 1.4, borderDash:[4,4],
-            pointRadius: 0, fill: false, order: -1, ffTipHide: true};
-  };
+     not have to count years along the axis to find it. It runs the full
+     height of the plot, top of the flows to the floor of the balance, seam
+     and all, so it reads as one line through the picture. The dataset holds
+     no points: it is the rule's handle for the key, which hides and shows
+     it, and its look is what RULES_PLUGIN draws the rule in. */
+  var retireLine = {label: retLabel, data: [], yAxisID: 'y',
+                    borderColor: withAlpha(t.e, 0.6), borderWidth: 1.4, borderDash:[4,4],
+                    pointRadius: 0, fill: false, ffTipHide: true};
   var marked = retIdx > 0 && retIdx < years;
 
   var ds2 = [
@@ -2497,26 +2600,41 @@ function renderCharts(res){
     legend2.push({label:'Target legacy', datasets:[ds2.length - 1], group: LOWER});
   }
   if(marked){
-    // One rule, drawn in both panes, so hiding it hides the whole line down
-    // the picture rather than half of it.
-    ds2.push(retireLine('y', paneSpan(fit2)));
-    ds2.push(retireLine('yBal', paneSpan(fit3)));
+    var retireDs = ds2.length;
+    ds2.push(retireLine);
     // Drawn down both panes, and read against the flows first, where income
     // stops, so it is keyed with the upper one.
-    legend2.push({label: retLabel, datasets:[ds2.length - 2, ds2.length - 1], group: UPPER});
+    legend2.push({label: retLabel, datasets:[retireDs], group: UPPER});
   }
+
+  /* The life stages, as sections of the x axis (STAGE_SECTIONS_PLUGIN). Only
+     the reader's own stages: the base levels either side of them need no
+     name, and stopping work already has its own rule. */
+  var sections = res.P.stages.map(function(s){
+    return {x0: y0 + (s.from - res.P.ageNow), x1: y0 + (s.to - res.P.ageNow), label: stageLabel(s)};
+  }).filter(function(s){ return s.x1 > y0 && s.x0 < y0 + years; });
+  var opts2 = baseOptions(res, t, 'hover2', ageOf, y0, y0 + years,
+                          {yTitle: 'A year', fitY: fit2,
+                           lowerPane: {id: 'yBal', title: 'Balance', fitY: fit3,
+                                       weight: 1, topWeight: 2}});
+  if(sections.length){
+    opts2.layout = {padding: {top: STAGE_LABEL_ROOM}};
+    opts2.plugins.ffStageSections = {
+      sections: sections, panes: ['y', 'yBal'], textColor: t.text,
+      chip: withAlpha(t.muted, 0.13), tint: withAlpha(t.muted, 0.04), tint2: withAlpha(t.muted, 0.075)
+    };
+  }
+
+  if(marked) opts2.plugins.ffRules = {rules: [{x: y0 + retIdx, dataset: retireDs}]};
 
   registerPaneClip();
   if(chart2) chart2.destroy();
   chart2 = new Chart($('ddChart').getContext('2d'), {
     type:'line',
     // SharedPane (shared.js) keeps each pane's axis text inside its pane.
-    plugins:[Y_FIT_PLUGIN, SharedPane.plugin],
+    plugins:[Y_FIT_PLUGIN, SharedPane.plugin, STAGE_SECTIONS_PLUGIN, RULES_PLUGIN],
     data:{datasets: ds2},
-    options: baseOptions(res, t, 'hover2', ageOf, y0, y0 + years,
-                         {yTitle: 'A year', fitY: fit2,
-                          lowerPane: {id: 'yBal', title: 'Balance', fitY: fit3,
-                                      weight: 1, topWeight: 2}})
+    options: opts2
   });
   // Both panes are refitted to the x window on the same update, so a zoom
   // cannot leave one of them scaled for a view it is no longer showing.
