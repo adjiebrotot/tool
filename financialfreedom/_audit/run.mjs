@@ -814,11 +814,11 @@ console.log('\n── Feasibility ──');
 
 console.log('\n── Page and presentation ──');
 
-/* F47: what the reader sees having touched nothing. Future dollars are the
-   DEFAULT now, because they are the figures the account will actually read and
-   a reader who has never met real terms takes them at face value; today's
-   money is the opt-in behind Show Present Value. This block runs before
-   anything below flips that toggle, so it reads the page as it loads. */
+/* F47: what the reader sees having touched nothing. Today's money is the
+   DEFAULT: the toggle reads Show in Present Value and is on as the page loads,
+   so the plotted balance is the engine's real figure, unscaled. Future's money
+   is the opt-out. This block runs before anything below flips that toggle, so
+   it reads the page as it loads. */
 {
   const r = await page.evaluate(() => {
     const box = document.getElementById('showReal');
@@ -834,22 +834,21 @@ console.log('\n── Page and presentation ──');
       label: row ? row.querySelector('.toggle-label').textContent.trim() : '',
       plottedLast: plotted[plotted.length - 1],
       realLast: res.acc[Math.min(res.years * 12, res.acc.length - 1)],
-      infl: res.P.inflation, years: res.years,
       yTitle: path.options.scales.y.title.text
     };
   });
-  check('F47 the money toggle asks for Present Value, not for the money of the day',
-    r.exists && r.oldGone && /present value/i.test(r.label), r.label);
-  check('F47b and it is off on arrival, so future\u2019s money is what you see first',
-    r.checked === false && r.defaulted === false,
+  check('F47 the money toggle reads Show in Present Value',
+    r.exists && r.oldGone && /show in present value/i.test(r.label), r.label);
+  check('F47b and it is on arrival, so today\u2019s money is what you see first',
+    r.checked === true && r.defaulted === true,
     `checked ${r.checked}, default ${r.defaulted}`);
-  check('F47c so the plotted balance carries the inflation factor unasked',
-    close(r.plottedLast, r.realLast * Math.pow(1 + r.infl, r.years), 0.01),
+  check('F47c so the plotted balance is the real figure, with no inflation factor',
+    close(r.plottedLast, r.realLast, 0.01),
     `${r.plottedLast.toFixed(0)} plotted vs ${r.realLast.toFixed(0)} real`);
   /* The money mode is named in a currency-agnostic way: the tool draws in
      whatever currency the reader picked, so it cannot call it dollars. */
   check('F47d and the axis names which money that is, without naming a currency',
-    /future['\u2019]s money/.test(r.yTitle) && !/dollar/i.test(r.yTitle), r.yTitle);
+    /today['\u2019]s money/.test(r.yTitle) && !/dollar/i.test(r.yTitle), r.yTitle);
 }
 
 /* F48: the page is two boards now, and each figure has to sit with the
@@ -965,7 +964,11 @@ console.log('\n── Page and presentation ──');
 
 /* F50: zooming the x axis re-fits the y axis. Without it the window the reader
    asked for is drawn against a scale built for the other fifty years, which is
-   a flat line however interesting the slice is. */
+   a flat line however interesting the slice is. Read in future's money: there
+   inflation lifts the late years well clear of the early ones, which is what
+   gives F50g a ceiling to drop. The page opens in today's money now, so this
+   block asks for future's money itself; the flip back follows F50. */
+await page.evaluate(() => { document.getElementById('showReal').checked = false; window.__FF.render(); });
 {
   const r = await page.evaluate(() => {
     const path = window.__charts.find(c => c.data.datasets.some(d => d.label === 'Investment outcome'));
@@ -1098,8 +1101,8 @@ console.log('\n── Page and presentation ──');
 }
 
 /* Everything from here down reads the plan in today's money, because the
-   replay is written in real terms. The default is pinned by F47 above, once,
-   before this flips it. */
+   replay is written in real terms. The default is pinned by F47 above, and F50
+   switches to future's money for its own check; this puts today's money back. */
 await page.evaluate(() => { document.getElementById('showReal').checked = true; window.__FF.render(); });
 
 // F23: real to nominal is exactly the inflation factor, to the cent.

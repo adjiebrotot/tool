@@ -1133,7 +1133,13 @@ function buildBracketEditor(){
 }
 
 /* ── PNG ── */
-function downloadChartPng(canvasId, filename, chartTitle, legendId, shouldDownload = true) {
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function downloadChartPng(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return downloadChartPngAtSize.apply(null, args); });
+}
+function downloadChartPngAtSize(canvasId, filename, chartTitle, legendId, shouldDownload = true) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
@@ -1236,7 +1242,13 @@ async function copyCanvasPngToClipboard(canvas) {
   await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
 }
 
-function downloadChartSvg(canvasId, filename, chartTitle, legendId) {
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function downloadChartSvg(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return downloadChartSvgAtSize.apply(null, args); });
+}
+function downloadChartSvgAtSize(canvasId, filename, chartTitle, legendId) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;

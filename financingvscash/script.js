@@ -2114,7 +2114,13 @@ $('downloadBtn').addEventListener('click',()=>{
 });
 
 /* ─── DOWNLOAD CHART PNG ─── */
-function downloadChartJsPng(canvasId, filename, chartTitle, legendId, shouldDownload = true) {
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function downloadChartJsPng(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return downloadChartJsPngAtSize.apply(null, args); });
+}
+function downloadChartJsPngAtSize(canvasId, filename, chartTitle, legendId, shouldDownload = true) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
@@ -2217,7 +2223,13 @@ async function copyCanvasPngToClipboard(canvas) {
   await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
 }
 
-function downloadChartJsSvg(canvasId, filename, chartTitle, legendId) {
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function downloadChartJsSvg(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return downloadChartJsSvgAtSize.apply(null, args); });
+}
+function downloadChartJsSvgAtSize(canvasId, filename, chartTitle, legendId) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
@@ -2307,6 +2319,9 @@ $('sens2dPngBtn').addEventListener('click', () => {
   const title = document.getElementById('sens2dTitle')?.textContent || 'Finance vs Cash — 2D Sensitivity';
   downloadChartJsPng('sensCanvas', 'financing_sensitivity_2d.png', title, 'sensLegend');
 });
+// The 3D surface exports at its desktop size (the .surface-wrap box on a wide
+// screen), not at whatever width the phone happens to give it.
+const SENS3D_EXPORT_SIZE = { width:940, height:520 };
 async function withSens3dPngAnnotations(callback) {
   await ensurePlotly();
   const title3d = document.getElementById('sens3dTitle')?.textContent || 'Finance vs Cash — 3D Sensitivity Surface';
@@ -2325,7 +2340,7 @@ async function withSens3dPngAnnotations(callback) {
   finally { await Plotly.relayout('plotly3d', { annotations:[], images:[] }); }
 }
 $('sens3dPngBtn').addEventListener('click', async () => {
-  await withSens3dPngAnnotations(() => Plotly.downloadImage('plotly3d', { format:'png', filename:'financing_sensitivity_3d', scale:3 }));
+  await withSens3dPngAnnotations(() => Plotly.downloadImage('plotly3d', Object.assign({ format:'png', filename:'financing_sensitivity_3d', scale:3 }, SENS3D_EXPORT_SIZE)));
 });
 async function copyPlotlyPngToClipboard(plotId, options) {
   if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
@@ -2344,7 +2359,7 @@ $('sens2dCopyPngBtn').addEventListener('click', async () => {
   catch(err){ alert('PNG copy failed: ' + err.message); }
 });
 $('sens3dCopyPngBtn').addEventListener('click', async () => {
-  try { await withSens3dPngAnnotations(() => copyPlotlyPngToClipboard('plotly3d', { format:'png', scale:3 })); alert('PNG copied to clipboard.'); }
+  try { await withSens3dPngAnnotations(() => copyPlotlyPngToClipboard('plotly3d', Object.assign({ format:'png', scale:3 }, SENS3D_EXPORT_SIZE))); alert('PNG copied to clipboard.'); }
   catch(err){ alert('PNG copy failed: ' + err.message); }
 });
 $('chartSvgBtn').addEventListener('click', () => {
@@ -2369,7 +2384,7 @@ $('sens3dSvgBtn').addEventListener('click', async () => {
     font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' },
   };
   await Plotly.relayout('plotly3d', { annotations:[titleAnnotation, wmAnnotation], images:[wmPlotlyImage()] });
-  await Plotly.downloadImage('plotly3d', { format:'svg', filename:'financing_sensitivity_3d' });
+  await Plotly.downloadImage('plotly3d', Object.assign({ format:'svg', filename:'financing_sensitivity_3d' }, SENS3D_EXPORT_SIZE));
   await Plotly.relayout('plotly3d', { annotations:[], images:[] });
 });
 

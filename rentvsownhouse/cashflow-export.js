@@ -147,7 +147,13 @@ function downloadCSV(filename, csvText){
      `swatch` is a SharedLegend spec — the mark the series is drawn with — so
      the exported key shows lines as lines, bands as bands, markers as markers.
    ────────────────────────────────────────────────────────────────────────── */
-function exportChartPNG(src, opts){
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function exportChartPNG(src){
+  var args = arguments;
+  return SharedExport.atDesktopSize(src, function(){ return exportChartPNGAtSize.apply(null, args); });
+}
+function exportChartPNGAtSize(src, opts){
   opts = opts || {};
   if(!src) return null;
   const legendItems = opts.legendItems || [];
@@ -246,7 +252,13 @@ async function copyChartPNG(src, opts){
   await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
 }
 
-function exportChartSVG(src, opts){
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function exportChartSVG(src){
+  var args = arguments;
+  return SharedExport.atDesktopSize(src, function(){ return exportChartSVGAtSize.apply(null, args); });
+}
+function exportChartSVGAtSize(src, opts){
   opts = opts || {};
   if(!src) return;
   const legendItems = opts.legendItems || [];
