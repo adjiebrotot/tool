@@ -2531,7 +2531,11 @@
       if(relayout && !chart.$sharedPaneBusy){
         chart.$sharedPaneBusy = true;
         Promise.resolve().then(function(){
-          try { if(chart.canvas) chart.update('none'); } finally { chart.$sharedPaneBusy = false; }
+          /* Stopped first: a still-running animation from the update before
+             would otherwise carry on to the positions of the OLD layout after
+             this one has placed every point, leaving the lines drawn off their
+             own x axis (three years early on a phone). */
+          try { if(chart.canvas){ chart.stop(); chart.update('none'); } } finally { chart.$sharedPaneBusy = false; }
         });
       }
     }
