@@ -1991,6 +1991,65 @@ var PANE_CLIP_PLUGIN = {
   }
 };
 
+/* The life stages as sections of the x axis: a dashed rule down the whole
+   plot at each stage's first and last age, and the stage's name printed
+   above the plot, centred on the part of its span that is on screen. The
+   names go on the chart rather than in the key because a stage is a stretch
+   of years, not a series: there is nothing in it to hide or show.
+
+   Drawn by a plugin, not by datasets, so no stage turns up in the hover card
+   or the key, and positions are read off the x scale on every draw, so the
+   sections follow a zoom or a pan. `sections` is [{x0, x1, label}] in plotted
+   x (calendar years). A name too long for its section is shortened to fit,
+   and one with no room at all is left out rather than drawn over its
+   neighbour. Both exports copy the canvas, so they carry the sections too. */
+var STAGE_LABEL_ROOM = 18;
+var STAGE_SECTIONS_PLUGIN = {
+  id: 'ffStageSections',
+  afterDatasetsDraw: function(chart, args, opts){
+    var list = opts && opts.sections, sx = chart.scales.x, a = chart.chartArea;
+    if(!list || !list.length || !sx || !a) return;
+    var ctx = chart.ctx, edges = {};
+    list.forEach(function(s){ edges[s.x0] = true; edges[s.x1] = true; });
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(a.left, a.top, a.right - a.left, a.bottom - a.top);
+    ctx.clip();
+    ctx.strokeStyle = opts.color;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 4]);
+    Object.keys(edges).forEach(function(k){
+      var px = Math.round(sx.getPixelForValue(Number(k))) + 0.5;
+      if(px <= a.left + 0.5 || px >= a.right - 0.5) return;
+      ctx.beginPath();
+      ctx.moveTo(px, a.top);
+      ctx.lineTo(px, a.bottom);
+      ctx.stroke();
+    });
+    ctx.restore();
+
+    ctx.save();
+    ctx.font = '600 11px DM Sans, sans-serif';
+    ctx.fillStyle = opts.textColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    list.forEach(function(s){
+      var l = Math.max(a.left, sx.getPixelForValue(s.x0));
+      var r = Math.min(a.right, sx.getPixelForValue(s.x1));
+      var room = r - l - 6;
+      if(room < 14) return;
+      var text = s.label;
+      if(ctx.measureText(text).width > room){
+        while(text.length > 1 && ctx.measureText(text + '…').width > room) text = text.slice(0, -1);
+        text = text.trimEnd() + '…';
+        if(ctx.measureText(text).width > room) return;
+      }
+      ctx.fillText(text, (l + r) / 2, a.top - 4);
+    });
+    ctx.restore();
+  }
+};
+
 /* Chart.js resolves an `index` tooltip by DATA INDEX: it takes the nearest
    element, reads its index, and pulls that index out of every other dataset.
    Every series here is one point per year EXCEPT the droplines, which are two
@@ -2506,17 +2565,29 @@ function renderCharts(res){
     legend2.push({label: retLabel, datasets:[ds2.length - 2, ds2.length - 1], group: UPPER});
   }
 
+  /* The life stages, as sections of the x axis (STAGE_SECTIONS_PLUGIN). Only
+     the reader's own stages: the base levels either side of them need no
+     name, and stopping work already has its own rule. */
+  var sections = res.P.stages.map(function(s){
+    return {x0: y0 + (s.from - res.P.ageNow), x1: y0 + (s.to - res.P.ageNow), label: stageLabel(s)};
+  }).filter(function(s){ return s.x1 > y0 && s.x0 < y0 + years; });
+  var opts2 = baseOptions(res, t, 'hover2', ageOf, y0, y0 + years,
+                          {yTitle: 'A year', fitY: fit2,
+                           lowerPane: {id: 'yBal', title: 'Balance', fitY: fit3,
+                                       weight: 1, topWeight: 2}});
+  if(sections.length){
+    opts2.layout = {padding: {top: STAGE_LABEL_ROOM}};
+    opts2.plugins.ffStageSections = {sections: sections, color: withAlpha(t.muted, 0.7), textColor: t.text};
+  }
+
   registerPaneClip();
   if(chart2) chart2.destroy();
   chart2 = new Chart($('ddChart').getContext('2d'), {
     type:'line',
     // SharedPane (shared.js) keeps each pane's axis text inside its pane.
-    plugins:[Y_FIT_PLUGIN, SharedPane.plugin],
+    plugins:[Y_FIT_PLUGIN, SharedPane.plugin, STAGE_SECTIONS_PLUGIN],
     data:{datasets: ds2},
-    options: baseOptions(res, t, 'hover2', ageOf, y0, y0 + years,
-                         {yTitle: 'A year', fitY: fit2,
-                          lowerPane: {id: 'yBal', title: 'Balance', fitY: fit3,
-                                      weight: 1, topWeight: 2}})
+    options: opts2
   });
   // Both panes are refitted to the x window on the same update, so a zoom
   // cannot leave one of them scaled for a view it is no longer showing.
