@@ -545,6 +545,14 @@
     <section class="chart-card card">
       <div class="chart-head">
         <h3>Income, spending and the balance they leave</h3>
+        <!-- Which life stages run along the top of the chart. Shown only when
+             both Money in and Money out are Detailed with stages of their own;
+             with one side staged, that side is drawn and there is nothing to
+             choose. -->
+        <div class="seg-toggle" id="stageViewGroup" role="group" aria-label="Life stages shown on the chart" style="display:none;">
+          <button class="seg-btn" data-val="in" type="button" title="Show the Money in stages along the top of the chart">Income stages</button>
+          <button class="seg-btn active" data-val="out" type="button" title="Show the Money out stages along the top of the chart">Expense stages</button>
+        </div>
         <div class="btn-cluster">
           <button class="btn-secondary btn-sm" id="ddSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
           <button class="btn-secondary btn-sm" id="ddPngBtn" title="Download this chart as PNG">⬇ PNG</button>

@@ -4991,6 +4991,52 @@ console.log('\n── Quick Start scenarios ──');
   check('F65o a simple scenario after a staged one carries no stage over, shown or run',
     left.rows === 0 && left.mode === 'simple' && left.block === 'none' && left.live === 0,
     `${left.rows} rows, ${left.mode}, ${left.live} stages run`);
+
+  /* The cashflow chart has one stage ribbon. With both sides staged a switch
+     beside its title picks which list runs along it; with one side staged,
+     that side runs along it and the switch is hidden. */
+  const ribbon = () => page.evaluate(() => {
+    const c = window.__charts.find(ch => ch.options.scales && ch.options.scales.yBal);
+    const o = c && c.options.plugins && c.options.plugins.ffStageSections;
+    const g = document.getElementById('stageViewGroup');
+    const a = g.querySelector('.seg-btn.active');
+    return {labels: o && o.sections ? o.sections.map(s => s.label) : [],
+            shown: g.style.display !== 'none', active: a ? a.dataset.val : null,
+            out: window.__FF.last.P.stages.map(s => s.name),
+            inn: window.__FF.last.P.inStages.map(s => s.name)};
+  });
+  const pickView = v => page.evaluate(v => {
+    document.querySelector('#stageViewGroup .seg-btn[data-val="' + v + '"]').click();
+  }, v).then(() => page.waitForTimeout(150));
+  const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+
+  await apply('frugal');
+  await pickView('out');
+  const bothOut = await ribbon();
+  await pickView('in');
+  const bothIn = await ribbon();
+  check('F65p both sides staged: the switch shows, and picks which stages run along the chart',
+    bothOut.shown && bothOut.active === 'out' && same(bothOut.labels, bothOut.out) &&
+    bothIn.shown && bothIn.active === 'in' && same(bothIn.labels, bothIn.inn) && bothIn.inn.length > 0,
+    `out [${bothOut.labels.join(', ')}], in [${bothIn.labels.join(', ')}]`);
+
+  await apply('legacy');
+  const outOnly = await ribbon();
+  check('F65q only Money out staged: no switch, and its stages run along the chart',
+    !outOnly.shown && outOnly.inn.length === 0 && outOnly.out.length > 0 && same(outOnly.labels, outOnly.out),
+    `[${outOnly.labels.join(', ')}]`);
+
+  await apply('frugal');
+  await page.evaluate(() => {
+    document.querySelector('#expenseModeGroup .seg-btn[data-val="simple"]').click();
+    document.getElementById('simBtn').click();
+  });
+  await page.waitForTimeout(300);
+  const inOnly = await ribbon();
+  check('F65r only Money in staged: no switch, and its stages run along the chart',
+    !inOnly.shown && inOnly.out.length === 0 && inOnly.inn.length > 0 && same(inOnly.labels, inOnly.inn),
+    `[${inOnly.labels.join(', ')}]`);
+  await pickView('out');
 }
 
 console.log('\n── Coming back tomorrow ──');
