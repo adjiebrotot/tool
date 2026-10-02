@@ -41,6 +41,20 @@ means the maths agrees rather than an implementation being compared to itself:
   everywhere at once. With stages the closed-form future value no longer
   applies, so `refAccum` falls back to the discounted sum of every month's
   saving rather than the page's recurrence.
+- the income stages of step 3d share that ordering fold, are found with
+  `find()` (a stage ending at 120 has no end), and grow by a **yearly real
+  factor** `((1 + g) / (1 + i))^years` from the later of their start and
+  today, where the page compounds a real monthly rate month by month. Once
+  retired, a stage still paid after you stop work stands in `refPension`,
+  where the pension stood, so `refRequired`, `refForward` and `refLifetime`
+  pick it up without a line of their own. F72 to F77 compare the two month by
+  month in both models, by hand at every awkward shape a list can take, and
+  for the pot, the accumulation, the balance and the freedom age. F73 pins
+  that Detailed with no stages of its own is Simple to the last digit, and
+  that a pension entered as a stage (indexed, from 67, to 120) needs the pot
+  the Simple pension needs. Simple Money in was checked against the page
+  before income stages with `regression.mjs --live` and is unchanged to the
+  last binary digit.
 
 Run: `node run.mjs`
 
