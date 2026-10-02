@@ -368,13 +368,13 @@ in the money of the day, freedom at a later age costs MORE, while in today's
 money it costs less because fewer years are left to fund. Both are true at once
 and the page has to say which one it is showing.
 
-**Which money the page opens in.** Future dollars are the default, because a
-balance in the money of its own year is the figure a statement will actually
-read; today's money is the opt-in, behind Show Present Value. F47 pins that from
-the page as it loads — the toggle's wording, its unchecked state, the defaults
-object, the axis title, and the plotted balance genuinely carrying the inflation
-factor without anyone asking for it. Everything after F47 flips the toggle on,
-because the replay is written in real terms.
+**Which money the page opens in.** Today's money is the default: the toggle
+reads Show in Present Value and is on as the page loads, so every figure is in
+present value; future's money (the money of each year) is the opt-out. F47 pins
+that from the page as it loads: the toggle's wording, its checked state, the
+defaults object, the axis title, and the plotted balance being the engine's
+real figure with no inflation factor applied. Everything after F47 keeps the
+toggle on, because the replay is written in real terms.
 
 **A point in time is a date, not a decimal.** The crossing falls between two
 yearly samples, so its x is 2039.1666…, and F49 pins every place that used to

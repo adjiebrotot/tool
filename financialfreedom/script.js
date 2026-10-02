@@ -34,10 +34,10 @@
      Expenses are entered in today's money and held constant in real terms
      within each life stage (step 3c), so they never appear with an inflation
      factor again. Nominal figures are only ever produced for
-     display, by multiplying a real figure at year y by (1 + i)^y. That is what
-     the page shows by DEFAULT, because a balance in the money of its own year
-     is the figure the statement will actually read; Show Present Value turns
-     the factor back off and leaves everything in today's money.
+     display, by multiplying a real figure at year y by (1 + i)^y. The page
+     opens in today's money (Show in Present Value is on by DEFAULT); turning
+     it off applies the factor, so each balance reads in the money of its own
+     year, the figure the statement will actually read.
 
    Step 3  Savings depend on WHICH field was entered. These are two different
      models and the panel says which one is running.
@@ -269,7 +269,7 @@ var UI_DEFAULTS = {
   mode: 'die', legacy: 500000,
   pensionOn: false, pensionStartAge: 67,
   pensionAmount: 29000, pensionPeriod: 'yearly', pensionIndexed: true,
-  showReal: false, paths: 1000, seed: 20260921,
+  showReal: true, paths: 1000, seed: 20260921,
   confidence: 90
 };
 
@@ -1636,10 +1636,10 @@ function compute(ui){
   };
 }
 
-/* Today's money to the money of year y, for display only. Future's money is
-   the default: it is what the account will actually read in that year, and
-   a reader who has not met real terms before takes them at face value. Show
-   Present Value leaves the engine's own real figures alone instead. */
+/* Today's money to the money of year y, for display only. Today's money is
+   the default (Show in Present Value on), which leaves the engine's own real
+   figures alone; switching it off shows what the account will actually read
+   in that year. */
 function show(res, value, yearIndex){
   if(value == null || !isFinite(value)) return value;
   if(res.ui.showReal) return value;
@@ -1681,7 +1681,7 @@ function renderInflationNote(res){
     escapeHtml(fmt.age(res.P.ageRetire)) + ', and ' +
     escapeHtml(fmt.currency(now * Math.pow(1 + i, toDie))) + ' at ' +
     escapeHtml(fmt.age(res.P.ageDie)) + '.' +
-    info('Same life, bigger figure. Turn on Show Present Value in Settings to read it in today\'s money instead.');
+    info('Same life, bigger figure. Turn on Show in Present Value in Settings to read it in today\'s money instead.');
 }
 
 /* What the indexation switch actually does to the reader's own pension. The
@@ -2607,7 +2607,7 @@ function renderAssumptions(res){
       info('Tax differs too much between countries, and between an ordinary account and a pension wrapper, to model honestly in one tool.'),
 
     '<strong>Shown in ' + moneyMode(res) + '.</strong> Spending holds its value, so it rises with inflation.' +
-      info('Future\u2019s money is what the account will read: the plan times each year\'s inflation factor. Show Present Value strips it back out.'),
+      info('Future\u2019s money is what the account will read: the plan times each year\'s inflation factor. Show in Present Value strips it back out.'),
 
     '<strong>Inflation is ' + fmt.pct(res.ui.inflation, 1) + ' a year</strong> and applies to every year, working or retired.' +
       info('Living costs, the pot needed and the pension all rise with it, and the return is discounted by it (Fisher, not subtraction).'),
@@ -2850,7 +2850,13 @@ function saveBlob(blob, filename){
   URL.revokeObjectURL(url);
 }
 
-function chartPng(canvasId, filename, chartTitle, legendId, shouldDownload){
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function chartPng(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return chartPngAtSize.apply(null, args); });
+}
+function chartPngAtSize(canvasId, filename, chartTitle, legendId, shouldDownload){
   var src = $(canvasId);
   if(!src) return null;
   var dpr = window.devicePixelRatio || 1;
@@ -2958,7 +2964,13 @@ function copyCanvasPng(canvas){
   });
 }
 
-function chartSvg(canvasId, filename, chartTitle, legendId){
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function chartSvg(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return chartSvgAtSize.apply(null, args); });
+}
+function chartSvgAtSize(canvasId, filename, chartTitle, legendId){
   var src = $(canvasId);
   if(!src) return;
   var dpr = window.devicePixelRatio || 1;

@@ -1013,33 +1013,45 @@ function exportCsv(){
 // Composite the chart onto a titled canvas so the PNG stands alone. Five caps
 // told apart by their dash patterns are unreadable without a key, so the
 // export carries the page's own legend, drawn with the same marks.
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
 function chartPng(){
+  var args = arguments;
+  return SharedExport.atDesktopSize('chartCanvas', function(){ return chartPngAtSize.apply(null, args); });
+}
+function chartPngAtSize(){
   const src = $('chartCanvas');
   const pad = 28, headH = 74, footH = 34;
   const items = SharedLegend.itemsOf('chartLegend');
   const K = 1.4;                                   // 15px label ↔ a 15px-scale mark
   const markW = SharedLegend.W * K, gap = 10, itemGap = 26;
   const legendH = items.length ? 34 : 0;
+  // Laid out in CSS px and painted at a fixed 3x, so the picture is the same
+  // whatever the screen's pixel density.
+  const dpr = window.devicePixelRatio || 1, OUT = 3;
+  const plotW = Math.round(src.width / dpr), plotH = Math.round(src.height / dpr);
+  const outW = plotW + pad*2, outH = plotH + headH + legendH + footH + pad;
   const out = document.createElement('canvas');
-  out.width = src.width + pad*2;
-  out.height = src.height + headH + legendH + footH + pad;
+  out.width = outW * OUT;
+  out.height = outH * OUT;
   const ctx = out.getContext('2d');
+  ctx.scale(OUT, OUT);
   ctx.fillStyle = cssVar('--panel') || '#fff';
-  ctx.fillRect(0,0,out.width,out.height);
+  ctx.fillRect(0,0,outW,outH);
   ctx.fillStyle = cssVar('--text');
   ctx.font = '700 26px "DM Sans", sans-serif';
   ctx.fillText('Borrowing capacity across the income range', pad, pad+22);
   ctx.fillStyle = cssVar('--muted');
   ctx.font = '400 15px "DM Sans", sans-serif';
   if(last) ctx.fillText(`Capacity ${fmt.money0(last.r.maxLoan)} · binding constraint: ${last.r.binding.label} · assessed at ${fmt.pct(last.r.assessRate)}`, pad, pad+48);
-  ctx.drawImage(src, pad, headH);
+  ctx.drawImage(src, pad, headH, plotW, plotH);
   if(items.length){
     ctx.font = '500 15px "DM Sans", sans-serif';
     ctx.textBaseline = 'middle';
     const widths = items.map(it => markW + gap + ctx.measureText(it.label).width);
     const totalW = widths.reduce((a,b)=>a+b, 0) + itemGap * (items.length - 1);
-    let x = Math.max(pad, (out.width - totalW) / 2);
-    const cy = headH + src.height + legendH/2;
+    let x = Math.max(pad, (outW - totalW) / 2);
+    const cy = headH + plotH + legendH/2;
     items.forEach((it, i) => {
       SharedLegend.paint(ctx, it.swatch || {color:it.color}, x, cy, K);
       x += markW + gap;
@@ -1051,7 +1063,7 @@ function chartPng(){
     ctx.fillStyle = cssVar('--muted');
   }
   ctx.font = '400 13px "DM Sans", sans-serif';
-  ctx.fillText('Made using tool.adjiebrotots.com/borrowingcapacity', pad, out.height - 14);
+  ctx.fillText('Made using tool.adjiebrotots.com/borrowingcapacity', pad, outH - 14);
   return out;
 }
 
@@ -1060,7 +1072,13 @@ function chartPng(){
    formats. The plot itself is the canvas Chart.js drew, embedded as an image;
    everything around it is vector, which is what makes the text on an SVG stay
    crisp at any size. */
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
 function chartSvg(){
+  var args = arguments;
+  return SharedExport.atDesktopSize('chartCanvas', function(){ return chartSvgAtSize.apply(null, args); });
+}
+function chartSvgAtSize(){
   const src = $('chartCanvas');
   const NS = 'http://www.w3.org/2000/svg', XL = 'http://www.w3.org/1999/xlink';
   const dpr = window.devicePixelRatio || 1;

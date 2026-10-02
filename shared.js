@@ -2538,6 +2538,88 @@
   };
   global.SharedPane = { plugin: PANE_PLUGIN, axisFit: paneAxisFit, titleSteps: paneTitleSteps };
 
+  /* ── SharedExport — an exported chart is always the desktop chart ─────────
+     A PNG or SVG export copies the live canvas, so on a phone it used to copy
+     the phone's narrow, squat chart: squeezed axes, a legend packed into a
+     column. An exported image is read on its own, away from the device, so it
+     should have the one ideal proportion the chart was designed at.
+
+         SharedExport.atDesktopSize('chartCanvas', function(){ ...read it... });
+
+     For the duration of `fn` the chart's wrapper is laid out at the desktop
+     width and at the height the tool's stylesheet gives it OUTSIDE any media
+     query, and the Chart.js chart is redrawn at that size. Everything happens
+     in one synchronous task, so the page never paints the large chart; a
+     Promise returned by `fn` keeps the size until it settles. A chart already
+     at desktop size, or anything that is not a Chart.js canvas, is passed
+     straight through. */
+  var EXPORT_W = 940;
+
+  // The wrapper's height as the desktop stylesheet sets it: the last plain
+  // (non-media) rule that matches, or an inline height, in px.
+  function desktopHeight(el){
+    var h = 0;
+    function scan(rules){
+      Array.prototype.forEach.call(rules, function(rule){
+        if (rule.type !== 1) return;                     // CSSStyleRule only
+        var v = rule.style && rule.style.getPropertyValue('height');
+        var px = /^\s*(\d+(?:\.\d+)?)px\s*$/.exec(v || '');
+        if (!px) return;
+        try { if (el.matches(rule.selectorText)) h = parseFloat(px[1]); } catch (e) { /* bad selector */ }
+      });
+    }
+    Array.prototype.forEach.call(document.styleSheets, function(sheet){
+      var rules;
+      try { rules = sheet.cssRules; } catch (e) { return; }  // cross-origin sheet
+      if (rules) scan(rules);
+    });
+    var inline = /^\s*(\d+(?:\.\d+)?)px\s*$/.exec(el.style.height || '');
+    return inline ? parseFloat(inline[1]) : h;
+  }
+
+  var exportDepth = 0;
+  function atDesktopSize(canvas, fn){
+    if (typeof canvas === 'string') canvas = document.getElementById(canvas);
+    var Chart = global.Chart;
+    var chart = canvas && Chart && Chart.getChart ? Chart.getChart(canvas) : null;
+    var wrap = canvas && canvas.parentElement;
+    if (!chart || !wrap || exportDepth) return fn();
+    var H = desktopHeight(wrap) || wrap.clientHeight;
+    var W = Math.max(EXPORT_W, wrap.clientWidth);
+    if (wrap.clientWidth >= EXPORT_W * 0.9 && Math.abs(wrap.clientHeight - H) < 2) return fn();
+
+    var savedStyle = wrap.getAttribute('style');
+    function restore(){
+      exportDepth--;
+      if (savedStyle == null) wrap.removeAttribute('style');
+      else wrap.setAttribute('style', savedStyle);
+      chart.resize();
+      chart.update('none');
+    }
+    exportDepth++;
+    try {
+      // !important, because some tools pin a mobile height with !important.
+      wrap.style.setProperty('width', W + 'px', 'important');
+      wrap.style.setProperty('max-width', 'none', 'important');
+      wrap.style.setProperty('height', H + 'px', 'important');
+      chart.stop();
+      chart.resize();
+      chart.update('none');
+    } catch (e) { restore(); throw e; }
+
+    var out;
+    try { out = fn(); }
+    catch (e) { restore(); throw e; }
+    if (out && typeof out.then === 'function') {
+      return out.then(function(v){ restore(); return v; },
+                      function(err){ restore(); throw err; });
+    }
+    restore();
+    return out;
+  }
+
+  global.SharedExport = { atDesktopSize: atDesktopSize, desktopHeight: desktopHeight, WIDTH: EXPORT_W };
+
   function initShared(){
     initTooltip();
     global.SharedAbbr.init();

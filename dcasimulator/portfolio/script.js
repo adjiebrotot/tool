@@ -2635,7 +2635,13 @@ SharedScenario.mount('.quick-start-row', {
 });
 
 /* ─── CHART PNG EXPORT ─── */
-function exportChartPng(canvasId, filename, chartTitle, legendId, download=true){
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function exportChartPng(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return exportChartPngAtSize.apply(null, args); });
+}
+function exportChartPngAtSize(canvasId, filename, chartTitle, legendId, download=true){
   const src=$(canvasId); if(!src) return null;
   const dpr=window.devicePixelRatio||1, OUT=3;
   const chartW=Math.round(src.width/dpr*OUT), chartH=Math.round(src.height/dpr*OUT);
@@ -2687,7 +2693,13 @@ async function copyCanvasPng(canvas){
    Wraps the Chart.js canvas as a raster <image> inside a vector SVG, then adds a
    real vector title, legend swatches/labels and the watermark around it, so the
    download stays crisp at the chart frame and is drop-in for slides/docs. */
-function downloadChartSvg(canvasId, filename, chartTitle, legendId){
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function downloadChartSvg(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return downloadChartSvgAtSize.apply(null, args); });
+}
+function downloadChartSvgAtSize(canvasId, filename, chartTitle, legendId){
   const srcC=$(canvasId); if(!srcC) return;
   const dpr=window.devicePixelRatio||1;
   const chartW=Math.round(srcC.width/dpr), chartH=Math.round(srcC.height/dpr);
