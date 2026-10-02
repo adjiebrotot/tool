@@ -105,6 +105,30 @@ const refStageAt = (p, age) =>
 const refWork = (p, age) => { const st = refStageAt(p, age); return st ? st.level : p.X; };
 const refRetired = (p, age) => { const st = refStageAt(p, age); return st ? st.level : p.Xr; };
 
+/* Step 3d, the income stages, on the same ordering fold. Growth is written as
+   a yearly real factor raised to the years elapsed, ((1 + g) / (1 + i))^y,
+   where the page compounds a real MONTHLY rate month by month; the two agree
+   only if both the Fisher step and the "from its own start" rule do. A stage
+   that ends at the cap has no end, so it is found at 120 itself too. */
+function refInStages(ui){
+  if(ui.incomeMode !== 'detailed' || !Array.isArray(ui.inStages)) return [];
+  const i = ui.inflation / 100;
+  return refOrder(ui.inStages, ui.ageDie)
+    .filter(st => st.to > st.from)
+    .map(st => ({idx: st.idx, from: st.from, to: st.to, name: st.name, keeps: !!st.keeps,
+                 monthly: perMo(Number(st.amount) || 0, st.period),
+                 real: (1 + Number(st.growth) / 100) / (1 + i),
+                 start: Math.max(st.from, ui.ageNow)}));
+}
+const refInStageAt = (p, age) =>
+  p.inStages.find(st => age >= st.from - 1e-9 && (st.to >= REF_CAP || age < st.to - 1e-9)) || null;
+const refInMoney = (st, age) => st.monthly * Math.pow(st.real, Math.max(0, age - st.start));
+// Detailed Money in, a working month: the stage on that age, else today's figure.
+function refWorkIn(p, t){
+  const age = p.ageNow + t / 12, st = refInStageAt(p, age);
+  return st ? refInMoney(st, age) : p.entered * Math.pow(1 + p.gm, t);
+}
+
 // Same normalisation as step 1-3 of the documented maths, written out longhand.
 function refParams(ui){
   const i = ui.inflation / 100;
@@ -123,9 +147,11 @@ function refParams(ui){
     stages: refStages(ui, X),
     savingsMode: ui.savingsMode || 'savings',
     entered, A0: ui.assets, legacy: ui.legacy,
-    pensionOn: !!ui.pensionOn, pStart: ui.pensionStartAge,
+    inDetailed: ui.incomeMode === 'detailed', inStages: refInStages(ui),
+    // Detailed Money in carries its pension as a stage, never as the rows.
+    pensionOn: !!ui.pensionOn && ui.incomeMode !== 'detailed', pStart: ui.pensionStartAge,
     pIndexed: ui.pensionIndexed !== false,
-    pMonthly: ui.pensionOn ? perMo(ui.pensionAmount, ui.pensionPeriod || 'yearly') : 0
+    pMonthly: ui.pensionOn && ui.incomeMode !== 'detailed' ? perMo(ui.pensionAmount, ui.pensionPeriod || 'yearly') : 0
   };
 }
 /* Step 3b, written as a discount factor rather than as the page's branch. An
@@ -133,6 +159,11 @@ function refParams(ui){
    value is deflated from TODAY — the amount entered is what it pays now, and
    the years before it starts erode it just as the years after do. */
 const refPension = (p, age) => {
+  // Detailed: whatever stage is still paid once you stop work stands here.
+  if(p.inDetailed){
+    const st = refInStageAt(p, age);
+    return st && st.keeps ? refInMoney(st, age) : 0;
+  }
   if(!(p.pensionOn && age >= p.pStart - 1e-9)) return 0;
   return p.pIndexed ? p.pMonthly : p.pMonthly * Math.pow(1 + p.infl, -(age - p.ageNow));
 };
@@ -141,7 +172,7 @@ const refHorizon = p => p.mode === 'rich' ? Math.max(120, p.ageDie) : p.ageDie;
 // BACKWARD recursion, floored at zero. Different formulation from the page.
 function refRequired(p, ra){
   const rm = p.rm;
-  if(p.mode === 'rich' && (p.stages.length || (p.pensionOn && !p.pIndexed))){
+  if(p.mode === 'rich' && (p.stages.length || p.inDetailed || (p.pensionOn && !p.pIndexed))){
     /* With life stages, or a pension that is never indexed and so keeps
        eroding, the flows do not settle when the pension starts, and the bridge
        shortcut below would overstate the pot. The perpetuity is taken on the
@@ -207,6 +238,10 @@ function refForward(p, W, ra, ha){
 }
 
 function refSavings(p, t){
+  if(p.inDetailed){
+    const m = refWorkIn(p, t);
+    return p.savingsMode === 'income' ? m - refWork(p, p.ageNow + t / 12) : m;
+  }
   const f = Math.pow(1 + p.gm, t);
   return p.savingsMode === 'income' ? (p.entered * f - refWork(p, p.ageNow + t / 12)) : (p.entered * f);
 }
@@ -218,7 +253,7 @@ function refSavings(p, t){
 function refAccum(p, n){
   const R = 1 + p.rm, G = 1 + p.gm;
   let fv = p.A0 * Math.pow(R, n);
-  if(p.stages.length){
+  if(p.stages.length || p.inDetailed){
     for(let t = 0; t < n; t++) fv += refSavings(p, t) * Math.pow(R, n - 1 - t);
     return fv;
   }
@@ -243,7 +278,7 @@ const refAccMonths = p => Math.max(0, mo(p.ageNow, p.ageRetire));
 function refIncome(p, t){
   if(t < refAccMonths(p)){
     return p.savingsMode === 'income'
-      ? p.entered * Math.pow(1 + p.gm, t)
+      ? (p.inDetailed ? refWorkIn(p, t) : p.entered * Math.pow(1 + p.gm, t))
       : refSavings(p, t) + refWork(p, p.ageNow + t / 12);   // savings plus spending
   }
   return refPension(p, p.ageNow + t / 12);
@@ -4354,6 +4389,285 @@ const KIDS = [
     bad.band.concat(bad.card).slice(0, 3).join(', ') || `replayed on ${banded} plans`);
 }
 
+console.log('\n── Life stages: Money in, Simple and Detailed ──');
+
+/* F72: Money in, Detailed (step 3d). Today's figure is the locked first
+   stage; the reader's own stages follow it on the same ordering rule as Money
+   out's, each with its own figure, its own growth FROM ITS OWN START, and a
+   switch for whether it is still paid once you stop work. While working a
+   stage replaces today's figure for its ages; once retired only a stage still
+   paid comes in, standing where the pension stood, and there are no pension
+   rows. The replay orders with refOrder, finds with find(), and grows with a
+   yearly real factor to the power of the years elapsed; the page compounds a
+   monthly rate. INCOME_AWKWARD is every shape a list can take: a stage that
+   began before today (grows from today), a gap back to today's figure, a stage
+   typed inside the one above, a blank start, a stage not paid once you stop
+   that starts after you stop, a still-paid one across the retirement age, one
+   to 120 (no end), and one with no room. */
+const INCOME_AWKWARD = [
+  {name: 'Began before today', from: 25, to: 33, amount: 7000, period: 'monthly', growth: 5, keeps: false},
+  {name: 'Study', from: 36, to: 38, amount: 300, period: 'weekly', growth: 0, keeps: false},
+  {name: 'Typed inside Study', from: 37, to: 45, amount: 140000, period: 'yearly', growth: 4, keeps: false},
+  {name: 'No start', from: null, to: 50, amount: 90000, period: 'yearly', growth: 1, keeps: false},
+  {name: 'Part time', from: 58, to: 66, amount: 30000, period: 'yearly', growth: 2.5, keeps: true},
+  {name: 'Consulting, not kept', from: 66, to: 67, amount: 50000, period: 'yearly', growth: 2.5, keeps: false},
+  {name: 'Pension', from: 67, to: 120, amount: 29000, period: 'yearly', growth: 2.5, keeps: true},
+  {name: 'No room', from: 125, to: 130, amount: 999, period: 'yearly', growth: 0, keeps: true}
+];
+const inAwk = Object.assign({}, base, {
+  ageNow: 30, ageDie: 90, ageRetire: 55, inflation: 2.5, growth: 3,
+  savings: 80000, savingsPeriod: 'yearly', expense: 50000, expensePeriod: 'yearly',
+  retireExpense: 90, retireExpensePeriod: 'pct', incomeMode: 'detailed', inStages: INCOME_AWKWARD
+});
+
+{
+  // Month by month, both models, at retirement ages before, inside and after the stages.
+  const bad = [];
+  let compared = 0;
+  for(const savingsMode of ['savings', 'income']){
+    for(const ra of [30, 34, 41, 55, 62, 70, 90]){
+      const ui = Object.assign({}, inAwk, {savingsMode, ageRetire: ra});
+      const p = refParams(ui);
+      const total = mo(ui.ageNow, ui.ageDie);
+      const got = await engine(ui, `Array.from({length: ${total}}, (_, t) => [F.savingsAt(P, t), F.incomeAt(P, t), F.flowAt(P, t)])`);
+      for(let t = 0; t < total; t++){
+        compared++;
+        const want = [refSavings(p, t), refIncome(p, t), refIncome(p, t) - refSpend(p, t)];
+        const off = want.findIndex((w, k) => Math.abs(got[t][k] - w) > 1e-6 * Math.max(1, Math.abs(w)));
+        if(off >= 0){ bad.push(`${savingsMode} retire ${ra}, month ${t}, field ${off}: page ${got[t][off]} vs ${want[off]}`); break; }
+      }
+    }
+  }
+  check('F72 Detailed Money in matches the replay month by month: saving, income and the net flow, both models, seven retirement ages',
+    bad.length === 0, bad[0] || `${compared} months agree`);
+
+  /* The rule worked by hand, at the ages where it is easiest to get wrong.
+     Inflation 2.5%, so a 2.5% growth is flat in today's money; savings model,
+     so a working month saves the stage's figure, stopping work at 62. */
+  const at = await engine(Object.assign({}, inAwk, {ageRetire: 62}), `({
+    a30: F.savingsAt(P, 0), a31: F.savingsAt(P, 12), a34: F.savingsAt(P, 48), a36: F.savingsAt(P, 72),
+    a38: F.savingsAt(P, 96), a39: F.savingsAt(P, 108), a46: F.savingsAt(P, 192), a52: F.savingsAt(P, 264),
+    a60: F.savingsAt(P, 360), a63: F.incomeAt(P, 396), a66: F.incomeAt(P, 432), a70: F.incomeAt(P, 480),
+    h120: F.laterInAt(P, 120)
+  })`);
+  const g = (pct, yrs) => Math.pow((1 + pct / 100) / 1.025, yrs);
+  const hand = {
+    a30: 7000, a31: 7000 * g(5, 1),                       // began before today: grows from today
+    a34: 80000 / 12 * g(3, 4),                             // gap: today's figure, grown from today
+    a36: 300 * 52 / 12, a38: 140000 / 12 * g(4, 0),        // Study; the one typed inside it starts at 38
+    a39: 140000 / 12 * g(4, 1),
+    a46: 90000 / 12 * g(1, 1),                             // blank start: from 45, grows from 45
+    a52: 80000 / 12 * g(3, 22),                            // gap again
+    a60: 30000 / 12, a63: 30000 / 12,                      // part time, still paid after stopping at 62
+    a66: 0,                                                // consulting is not kept: nothing
+    a70: 29000 / 12, h120: 29000 / 12                       // the pension, to 120, so for life
+  };
+  const off = Object.keys(hand).filter(k => Math.abs(at[k] - hand[k]) > 1e-6 * Math.max(1, hand[k]));
+  check('F72b worked by hand: a stage begun before today, a gap, a pushed start, a blank start, still paid or not, and 120 for life',
+    off.length === 0,
+    off.map(k => `${k} page ${at[k]} want ${hand[k]}`).join(' | ') ||
+    '7,000 growing from today · gap 6,668 · study 1,300 · pushed to 38 · blank start from 45 · part time on at 63 · consulting off · pension at 120');
+}
+
+// F72c: the pot, the accumulation, the balance and the freedom age, against the replay.
+{
+  const bad = [];
+  let n = 0;
+  for(const mode of ['die', 'legacy', 'rich']){
+    for(const savingsMode of ['savings', 'income']){
+      for(const ra of [33, 41, 55, 62, 68]){
+        const ui = Object.assign({}, inAwk, {mode, savingsMode, ageRetire: ra, legacy: 300000});
+        const p = refParams(ui);
+        const nAcc = mo(ui.ageNow, ra);
+        const got = await engine(ui, `({need: F.requiredPot(P, P.ageRetire), acc: F.accumulate(P, ${nAcc})[${nAcc}],
+          bal: Array.from(F.lifetimeSeries(P).balance)})`);
+        n++;
+        const want = refRequired(p, ra), wAcc = refAccum(p, nAcc), wBal = refLifetime(p);
+        if(!close(got.need, want, Math.max(0.01, 1e-9 * want))) bad.push(`${mode} ${savingsMode} ${ra}: pot ${got.need} vs ${want}`);
+        if(!close(got.acc, wAcc, Math.max(0.01, 1e-9 * Math.abs(wAcc)))) bad.push(`${mode} ${savingsMode} ${ra}: accum ${got.acc} vs ${wAcc}`);
+        const k = wBal.findIndex((w, t) => !close(got.bal[t], w, Math.max(0.01, 1e-9 * Math.abs(w))));
+        if(k >= 0) bad.push(`${mode} ${savingsMode} ${ra}: balance month ${k} ${got.bal[k]} vs ${wBal[k]}`);
+      }
+    }
+  }
+  check('F72c the pot, the accumulation and the balance agree with the replay, every goal, both models',
+    bad.length === 0, bad.slice(0, 3).join(' | ') || `${n} plans agree`);
+
+  // Freedom: the page's earliest crossing against a brute-force scan of the replay's own curves.
+  const offs = [];
+  for(const savingsMode of ['savings', 'income']){
+    for(const mode of ['die', 'rich']){
+      const ui = Object.assign({}, inAwk, {mode, savingsMode, savings: 60000, assets: 50000});
+      const p = refParams(ui);
+      const got = await engine(ui, 'F.solveFreedomAge(P)');
+      let want = null;
+      const total = mo(ui.ageNow, ui.ageDie), acc = [p.A0];
+      for(let t = 0; t < total; t++) acc.push(acc[t] * (1 + p.rm) + refSavings(p, t));
+      for(let t = 0; t < total; t++){
+        if(acc[t] >= refRequired(p, ui.ageNow + t / 12) - 1e-6){ want = ui.ageNow + t / 12; break; }
+      }
+      if(!(got === want || (got != null && want != null && Math.abs(got - want) < 1e-9))) offs.push(`${savingsMode} ${mode}: page ${got} vs ${want}`);
+    }
+  }
+  check('F72d the freedom age is the replay’s own earliest crossing, both models',
+    offs.length === 0, offs.join(' | ') || 'same month everywhere');
+}
+
+/* F73: what the switch does. Detailed with no stages of its own is Simple with
+   no pension, to the last digit; Simple ignores any stages it is carrying; and
+   a pension is just a stage: indexed from 67, for life, it gives the pot the
+   Simple pension gives, for every retirement age before it, every goal. */
+{
+  const plain = Object.assign({}, base, {pensionOn: false});
+  const r = await engine(plain, `(() => {
+    const D = F.buildParams(Object.assign({}, ui, {incomeMode: 'detailed', inStages: []}));
+    const S2 = F.buildParams(Object.assign({}, ui, {incomeMode: 'simple', inStages: ${JSON.stringify(INCOME_AWKWARD)}}));
+    const n = F.months(P.ageNow, P.ageDie), same = [];
+    for(const Q of [D, S2]){
+      let ok = true;
+      for(let t = 0; t < n; t++) if(!Object.is(F.savingsAt(Q, t), F.savingsAt(P, t)) || !Object.is(F.incomeAt(Q, t), F.incomeAt(P, t))) { ok = false; break; }
+      same.push(ok && Object.is(F.requiredPot(Q, 45), F.requiredPot(P, 45)) && Object.is(F.solveFreedomAge(Q), F.solveFreedomAge(P)));
+    }
+    return same;
+  })()`);
+  check('F73 Detailed with no stages of its own is Simple, to the last digit, and Simple ignores stages it carries',
+    r[0] && r[1], `detailed-empty ${r[0]}, simple-with-stages ${r[1]}`);
+
+  const offs = [];
+  for(const mode of ['die', 'legacy', 'rich']){
+    for(const ra of [45, 55, 60, 66]){
+      const simple = Object.assign({}, base, {mode, ageRetire: ra, legacy: 200000, pensionOn: true, pensionStartAge: 67,
+        pensionAmount: 29000, pensionPeriod: 'yearly', pensionIndexed: true});
+      const staged = Object.assign({}, simple, {incomeMode: 'detailed',
+        inStages: [{name: 'Age pension', from: 67, to: 120, amount: 29000, period: 'yearly', growth: simple.inflation, keeps: true}]});
+      const a = await engine(simple, 'F.requiredPot(P, P.ageRetire)');
+      const b = await engine(staged, '[F.requiredPot(P, P.ageRetire), P.pensionOn]');
+      if(!close(a, b[0], Math.max(1e-6, 1e-12 * a)) || b[1] !== false) offs.push(`${mode} at ${ra}: ${a} vs ${b[0]}, pension rows on ${b[1]}`);
+    }
+  }
+  check('F73b a pension is just a stage: indexed, from 67, to 120, it needs the pot the Simple pension needs',
+    offs.length === 0, offs.join(' | ') || 'same pot at 12 plans, and the pension rows are off in Detailed');
+}
+
+/* F74: the form. Detailed hides the pension rows and shows the list; today's
+   figure is the locked first card, named for the switch above it; a Simple
+   pension carries over as a stage on the switch; and each card's note says
+   what stopping work does to it. */
+{
+  await page.evaluate(() => window.__FF.resetToDefaults());
+  const r = await page.evaluate(() => {
+    const $ = id => document.getElementById(id);
+    const shown = el => !!el && el.offsetParent !== null && getComputedStyle(el).display !== 'none';
+    const out = {};
+    out.simple = {list: shown($('inStagesBlock')), pension: shown($('pensionOn')), name: shown($('incomeNowName'))};
+    $('pensionOn').checked = true; $('pensionOn').dispatchEvent(new Event('change', {bubbles: true}));
+    $('pensionStartAge').value = '66'; $('pensionIndexed').checked = false;
+    document.querySelector('#incomeModeGroup .seg-btn[data-val="detailed"]').click();
+    out.detailed = {list: shown($('inStagesBlock')), pension: shown($('pensionOn')), rows: shown($('pensionRows')),
+      name: $('incomeNowName').value, nameShown: shown($('incomeNowName')), readOnly: $('incomeNowName').readOnly,
+      label: $('savingsLabel').textContent};
+    out.carried = window.__FF.UI.inStages.map(s => [s.name, s.from, s.to, s.amount, s.period, s.growth, s.keeps]);
+    document.querySelector('#savingsModeGroup .seg-btn[data-val="income"]').click();
+    out.renamed = $('incomeNowName').value;
+    return out;
+  });
+  check('F74 Detailed shows the stage list and hides the pension rows; Simple the other way round',
+    !r.simple.list && r.simple.pension && !r.simple.name && r.detailed.list && !r.detailed.pension && !r.detailed.rows,
+    JSON.stringify({simple: r.simple, detailed: {list: r.detailed.list, pension: r.detailed.pension}}));
+  check('F74b today’s figure is the locked first card, named for the model the switch is on',
+    r.detailed.nameShown && r.detailed.readOnly && r.detailed.name === 'Savings today' && r.renamed === 'Net income today' &&
+    r.detailed.label === 'Each stage is', `"${r.detailed.name}" → "${r.renamed}", switch labelled "${r.detailed.label}"`);
+  const c = r.carried[0] || [];
+  check('F74c a Simple pension carries over as a stage still paid for life: frozen, so 0% growth',
+    r.carried.length === 1 && c[0] === 'Age pension' && c[1] === 66 && c[2] === 120 && c[3] === 29000 &&
+    c[4] === 'yearly' && c[5] === 0 && c[6] === true, JSON.stringify(r.carried));
+
+  // The notes: stopping work inside a stage, a stage after it, and the timeline.
+  const notes = await page.evaluate(() => {
+    const F = window.__FF;
+    F.applyQuickStart('frugal');
+    const rows = Array.from(document.querySelectorAll('#inStageRows .stage-row'));
+    const note = i => rows[i].querySelector('.stage-note').textContent;
+    const out = {retire: F.UI.ageRetire, hustle: note(0), relax: note(1), pension: note(2),
+      tl: Array.from(document.querySelectorAll('#inTimeline li')).map(li => li.textContent)};
+    // Switch the relax age's part-time work off: it starts after you stop, so it is never paid.
+    const keep = rows[1].querySelector('.in-keeps');
+    keep.checked = false; keep.dispatchEvent(new Event('change', {bubbles: true}));
+    out.relaxOff = note(1); out.relaxDashed = rows[1].classList.contains('stage-off');
+    document.getElementById('simBtn').click();
+    out.potOff = F.last.needAtRetire;
+    keep.checked = true; keep.dispatchEvent(new Event('change', {bubbles: true}));
+    document.getElementById('simBtn').click();
+    out.potOn = F.last.needAtRetire;
+    return out;
+  });
+  check('F74d a stage that is not still paid says it stops when you stop work, inside it',
+    /when you stop work and it stops/.test(notes.hustle) && notes.retire < 33, `stop at ${notes.retire}: "${notes.hustle}"`);
+  check('F74e and one that starts after you stop says it is never paid, dashed, and the pot has to cover it',
+    /never paid/.test(notes.relaxOff) && notes.relaxDashed && notes.potOff > notes.potOn + 1000,
+    `"${notes.relaxOff}" pot ${notes.potOn.toFixed(0)} → ${notes.potOff.toFixed(0)}`);
+  check('F74f the timeline names each run, with nothing coming in between the still-paid stages',
+    notes.tl.length === 5 && /Hustle age/.test(notes.tl[0]) && /→/.test(notes.tl[0]) &&
+    /Nothing coming in/.test(notes.tl[1]) && /Relax age/.test(notes.tl[2]) && /Nothing coming in/.test(notes.tl[3]) &&
+    /Age pension/.test(notes.tl[4]), notes.tl.join(' | '));
+}
+
+/* F75: the "save more" remedy has no single figure to raise in Detailed, so
+   it asks for a flat amount in every working month; that amount has to close
+   the gap, and a dollar less must not. */
+{
+  const ui = Object.assign({}, inAwk, {ageRetire: 45, savings: 20000, assets: 20000, expense: 60000,
+    inStages: [{name: 'Lean years', from: 35, to: 45, amount: 10000, period: 'yearly', growth: 3, keeps: false}]});
+  const r = await engine(ui, `(() => {
+    const rem = F.solveRemedies(ui).filter(x => x.key === 'save')[0];
+    if(!rem) return null;
+    const amt = Number(rem.text.replace(/,/g, '').match(/[0-9.]+/)[0]);
+    const n = F.months(P.ageNow, P.ageRetire), need = F.requiredPot(P, P.ageRetire);
+    const at = x => F.accumulate(F.buildParams(Object.assign({}, ui, {extraIn: x})), n)[n];
+    return {text: rem.text, amt, over: at(amt + 1) >= need, under: at(amt - 1) < need};
+  })()`);
+  check('F75 Detailed’s "save more" is a flat monthly amount that closes the gap, and a dollar less does not',
+    !!r && r.over && r.under && /every month you work/.test(r.text), r ? `"${r.text}"` : 'no remedy offered');
+}
+
+/* F76: Frugal Living carries the claim its tip makes, on the Money in side:
+   the hustle age frees the saver sooner, and the stages still paid once free
+   (the part-time relax age and the age pension) shrink the pot. */
+{
+  const r = await page.evaluate(() => {
+    const F = window.__FF, s = F.QUICK_START_SCENARIOS.frugal.vals;
+    const plan = Object.assign({}, F.UI_DEFAULTS, s, {ret: F.PRESET_ASSETS[s.assetPreset].ret, std: F.PRESET_ASSETS[s.assetPreset].std});
+    const P = F.buildParams(plan), ff = F.solveFreedomAge(P);
+    const without = names => F.buildParams(Object.assign({}, plan, {inStages: plan.inStages.filter(x => names.indexOf(x.name) < 0)}));
+    const noHustle = F.solveFreedomAge(without(['Hustle age']));
+    const potAt = Q => F.requiredPot(Q, ff);
+    return {ff, noHustle, pot: potAt(P), potNoKept: potAt(without(['Relax age', 'Age pension'])),
+            simple: F.solveFreedomAge(F.buildParams(Object.assign({}, plan, {incomeMode: 'simple'})))};
+  });
+  check('F76 Frugal Living: the hustle age frees the saver sooner, and the stages still paid once free shrink the pot',
+    r.noHustle > r.ff + 0.05 && r.potNoKept > r.pot * 1.1 && r.simple > r.ff,
+    `free at ${r.ff.toFixed(2)}, without the hustle ${r.noHustle.toFixed(2)}, all Simple ${r.simple.toFixed(2)}; ` +
+    `pot ${r.pot.toFixed(0)}, without the part time and pension ${r.potNoKept.toFixed(0)}`);
+}
+
+// F77: the mini cache brings Detailed Money in back, every stage as typed.
+{
+  const snap = () => page.evaluate(() => ({ui: JSON.stringify({m: window.__FF.UI.incomeMode, s: window.__FF.UI.inStages}),
+    need: window.__FF.last.needAtRetire, seg: document.querySelector('#incomeModeGroup .seg-btn.active').dataset.val}));
+  await page.evaluate(() => window.__FF.applyQuickStart('frugal'));
+  const before = await snap();
+  await page.waitForTimeout(700);
+  await page.reload({waitUntil: 'load'});
+  await page.waitForFunction(() => !!window.__FF, null, {timeout: 10000});
+  await page.waitForTimeout(400);
+  const after = await snap();
+  check('F77 a reload brings back Detailed Money in and every income stage, to the same answer',
+    after.ui === before.ui && after.seg === 'detailed' && close(after.need, before.need, 0.01),
+    `${after.ui.slice(0, 120)}… pot ${before.need.toFixed(0)} → ${after.need.toFixed(0)}`);
+  await page.evaluate(() => { try { localStorage.removeItem('abt:save:financialfreedom:v1'); } catch(e){} });
+}
+await page.evaluate(() => window.__FF.resetToDefaults());
+
 console.log('\n── Quick Start scenarios ──');
 
 /* F65: the Quick Start buttons. Each one is a claim that the whole form now
@@ -4422,6 +4736,18 @@ console.log('\n── Quick Start scenarios ──');
       out.savingsMode = seg ? seg.dataset.val : null;
       const eseg = document.querySelector('#expenseModeGroup .seg-btn.active');
       out.expenseMode = eseg ? eseg.dataset.val : null;
+      const iseg = document.querySelector('#incomeModeGroup .seg-btn.active');
+      out.incomeMode = iseg ? iseg.dataset.val : null;
+      out.inStages = Array.from(document.querySelectorAll('#inStageRows .stage-row')).map(r => ({
+        name: r.querySelector('.in-name').value,
+        from: r.querySelector('.in-from').value,
+        to: r.querySelector('.in-to').value,
+        amount: r.querySelector('.in-amount').value,
+        period: r.querySelector('.in-period').value,
+        growth: r.querySelector('.in-growth').value,
+        keeps: r.querySelector('.in-keeps').checked,
+        shown: getComputedStyle(document.getElementById('inStagesBlock')).display !== 'none'
+      }));
       const radio = document.querySelector('input[name="ffmode"]:checked');
       out.mode = radio ? radio.value : null;
       out.stages = Array.from(document.querySelectorAll('#stageRows .stage-row')).map(r => ({
@@ -4435,7 +4761,7 @@ console.log('\n── Quick Start scenarios ──');
         shown: document.getElementById('stagesBlock').style.display !== 'none'
       }));
       ids.forEach(id => {
-        if(['savingsMode', 'expenseMode', 'mode', 'stages'].includes(id)) return;
+        if(['savingsMode', 'expenseMode', 'mode', 'stages', 'incomeMode', 'inStages'].includes(id)) return;
         const el = document.getElementById(id);
         out[id] = el ? (el.type === 'checkbox' ? el.checked : el.value) : null;
       });
@@ -4462,8 +4788,31 @@ console.log('\n── Quick Start scenarios ──');
     const wantMode = vals.expenseMode || DEFAULTS.expenseMode;
     if(got.expenseMode !== wantMode) landed.push(`${key}.expenseMode: ${got.expenseMode} want ${wantMode}`);
 
+    // Money in's stages, the same way, with their growth and their switch.
+    const wantIn = vals.inStages || [];
+    if(got.inStages.length !== wantIn.length)
+      landed.push(`${key}.inStages: ${got.inStages.length} rows want ${wantIn.length}`);
+    wantIn.forEach((st, i) => {
+      const row = got.inStages[i];
+      if(!row) return;
+      const num = v => v === '' ? null : parseFloat(String(v).replace(/,/g, ''));
+      const bad = [];
+      if(row.name !== st.name) bad.push(`name ${row.name}`);
+      if(num(row.from) !== st.from) bad.push(`from ${row.from}`);
+      // A blank end is written back as the life expectancy it stands for.
+      if(num(row.to) !== (st.to == null ? vals.ageDie : st.to)) bad.push(`to ${row.to}`);
+      if(!close(num(row.amount), st.amount, 1e-9)) bad.push(`amount ${row.amount}`);
+      if(row.period !== st.period) bad.push(`period ${row.period}`);
+      if(!close(num(row.growth), st.growth, 1e-9)) bad.push(`growth ${row.growth}`);
+      if(row.keeps !== !!st.keeps) bad.push(`keeps ${row.keeps}`);
+      if(!row.shown) bad.push('row hidden');
+      if(bad.length) landed.push(`${key}.inStages[${i}]: ${bad.join(', ')}`);
+    });
+    const wantIn2 = vals.incomeMode || DEFAULTS.incomeMode;
+    if(got.incomeMode !== wantIn2) landed.push(`${key}.incomeMode: ${got.incomeMode} want ${wantIn2}`);
+
     Object.entries(vals).forEach(([id, want]) => {
-      if(id === 'stages' || id === 'expenseMode') return;
+      if(['stages', 'expenseMode', 'inStages', 'incomeMode'].includes(id)) return;
       const live = got[id];
       if(live === null){ landed.push(`${key}.${id}: no such control`); return; }
       const ok = typeof want === 'number'

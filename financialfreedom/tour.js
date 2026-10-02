@@ -18,7 +18,7 @@ window.__TOUR = {
       title: '① Start from a worked plan',
       body: 'One click fills every tab with a saver who already exists: a ' +
             '<strong>moderate</strong> 40% saver, a <strong>frugal</strong> one living on a ' +
-            'third of their pay through a hustle age and a relax age, a ' +
+            'third of their pay, earning and spending in stages through a hustle age and a relax age, a ' +
             '<strong>geoarbitrageur</strong> retiring to Bali on 40% of what home costs, a high ' +
             'earner who never spends capital, a <strong>young family</strong> with two kids ' +
             'ahead and a legacy to hand on, and a <strong>late starter</strong> leaning on the ' +
@@ -33,8 +33,9 @@ window.__TOUR = {
       title: '② Your money in and out',
       body: 'Your ages, then <strong>Money in</strong>: savings entered directly, or your net ' +
             'income with the gap worked out for you, and a government pension if you will get ' +
-            'one: per week, month or year, with a switch for whether it rises with inflation, ' +
-            'because plenty of countries pay a flat figure that never does. ' +
+            'one. Switch it to <strong>Detailed</strong> for income stages, such as study, a ' +
+            'hustle or part-time work, each growing from its own start; a pension is just a ' +
+            'stage still paid after you stop work. ' +
             'Then <strong>Money out</strong>: living ' +
             'expenses now and retirement expenses once you stop. Switch it to ' +
             '<strong>Detailed</strong> and those two become the first and last of a list of ' +

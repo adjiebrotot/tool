@@ -93,6 +93,35 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .stage-lock{display:inline-flex;align-items:center;justify-content:center;width:31px;height:28px;color:var(--muted);flex-shrink:0;}
 .stage-lock svg{width:15px;height:15px;}
 
+/* ── Detailed Money in: today's figure as the locked first stage ──
+   The same two fields as in Simple (the figure and its growth), framed as the
+   first card of the list. In Simple the model switch and the figure read as
+   one row, the way they always did. */
+#moneyIn:not(.is-detailed) .detailed-only{display:none !important;}
+#moneyIn.is-detailed .simple-only{display:none !important;}
+#moneyIn:not(.is-detailed) #savingsModeRow{padding-bottom:0;}
+#moneyIn:not(.is-detailed) #savingsRow{padding-top:5px;border-top:none;}
+#moneyIn.is-detailed>.money-stage{display:grid;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 10px;gap:7px;margin:10px 0 0;}
+#moneyIn.is-detailed>.money-stage>.field-row{padding:0;border-top:none;gap:7px;}
+#moneyIn.is-detailed>.money-stage .txt-input,#moneyIn.is-detailed>.money-stage .currency-input,#moneyIn.is-detailed>.money-stage .num-input{background:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.86rem;}
+#moneyIn.is-detailed>.money-stage .txt-input,#moneyIn.is-detailed>.money-stage .num-input{padding-left:9px;padding-right:9px;}
+#moneyIn.is-detailed>.money-stage .sel-input{background-color:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.84rem;}
+#moneyIn.is-detailed>.money-stage .note{margin:0;}
+#moneyIn.is-detailed>.money-stage .stage-name-locked{background:var(--bg-subtle);}
+#moneyIn.is-detailed>#inStagesBlock{margin-top:8px;}
+#moneyIn.is-detailed>.stage-timeline{margin-bottom:12px;}
+/* Growth reads as a sentence on a card, "Grows 3 % a year, from today", the
+   way a stage's ages read "From age 28 to 33". */
+#moneyIn.is-detailed .growth-line,.stage-grow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+#moneyIn.is-detailed #growth,.stage-grow .num-input{width:5.4em;flex:0 0 auto;}
+#moneyIn.is-detailed .growth-line,.stage-grow{flex-wrap:nowrap;}
+.grow-tail{flex:1 1 0;min-width:0;}
+/* Whether a stage is still paid once you stop work: a switch on the card. */
+.stage-keep{display:flex;align-items:center;gap:7px;}
+.stage-keep .stage-lbl{flex:1;color:var(--text);font-weight:600;}
+.stage-keep .tip-wrap{flex-shrink:0;}
+.stage-row .toggle-track{background:var(--panel);}
+
 /* What the list resolves to, at the slider's retirement age. */
 .stage-timeline{margin-top:10px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-subtle);}
 .tl-head{font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:5px;}
