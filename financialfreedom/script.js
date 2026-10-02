@@ -3125,7 +3125,10 @@ function chartSvgAtSize(canvasId, filename, chartTitle, legendId){
   var img = document.createElementNS(NS, 'image');
   img.setAttribute('x', 0); img.setAttribute('y', titleH);
   img.setAttribute('width', chartW); img.setAttribute('height', chartH);
-  img.setAttributeNS(xl, 'href', src.toDataURL('image/png'));
+  // Plain href first: SVG 2 viewers (and some converters) ignore xlink:href,
+  // which left the chart blank with only the title, legend and logo showing.
+  var chartHref = src.toDataURL('image/png');
+  img.setAttribute('href', chartHref); img.setAttributeNS(xl, 'href', chartHref);
   svg.appendChild(img);
   legendRows.forEach(function(row, ri){
     var x = Math.max(margin, (svgW - row.width) / 2);
