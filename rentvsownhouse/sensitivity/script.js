@@ -905,16 +905,31 @@ function parseCSVText(text){
 }
 
 // Reverse maps: translated label → param key / mode key (both languages).
+/* Row labels a CSV saved before the October 2026 relabel carries. The importer
+   reads rows by label, so an old file must still find its rows under the
+   names it was written with, in either language. */
+const LEGACY_ROW_LABELS = {
+  pHorizon:       ['Horizon'],
+  pHouseGrowth:   ['House Growth (RPPI)'],
+  pMonthlyBudget: ['Anggaran Rumah Bulanan'],
+  pMortgageType:  ['Tipe KPR'],
+  pMortgageMode:  ['Mortgage Mode', 'Mode KPR'],
+  pOwnCostsMode:  ['Own Costs Mode', 'Mode Biaya Beli'],
+  pRentCostsMode: ['Rent Costs Mode', 'Mode Biaya Sewa'],
+};
 function buildReverseLabelMaps(){
   const norm = s => String(s||'').trim().toLowerCase();
   const paramByLabel = {}, modeByLabel = {};
+  const MODES = [['pMortgageMode','mortgageMode'],['pOwnCostsMode','ownCostsMode'],['pRentCostsMode','rentCostsMode']];
   ['en','id'].forEach(lg=>{
     const L = LANG_SENS[lg];
     PARAMS.forEach(p=>{ const lbl = L[p.labelKey]; if(typeof lbl==='string') paramByLabel[norm(lbl)] = p.key; });
-    [['pMortgageMode','mortgageMode'],['pOwnCostsMode','ownCostsMode'],['pRentCostsMode','rentCostsMode']].forEach(([lk,mk])=>{
+    MODES.forEach(([lk,mk])=>{
       const lbl = L[lk]; if(typeof lbl==='string') modeByLabel[norm(lbl)] = mk;
     });
   });
+  PARAMS.forEach(p=>{ (LEGACY_ROW_LABELS[p.labelKey]||[]).forEach(l=>{ if(!(norm(l) in paramByLabel)) paramByLabel[norm(l)] = p.key; }); });
+  MODES.forEach(([lk,mk])=>{ (LEGACY_ROW_LABELS[lk]||[]).forEach(l=>{ if(!(norm(l) in modeByLabel)) modeByLabel[norm(l)] = mk; }); });
   return {paramByLabel, modeByLabel};
 }
 
