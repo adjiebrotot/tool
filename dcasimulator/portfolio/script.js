@@ -987,7 +987,7 @@ function renderWeightTable(){
     p.assets.map(a=>`
       <div class="weight-row">
         <span class="wt-name"><span class="color-dot" style="background:${assetColor(a)}"></span><span class="wt-label">${a.name}</span></span>
-        <span class="wt-input"><input class="num-input" id="wt${a.id}" type="number" min="0" max="100" step="1" value="${a.weight}"/><span class="wt-pct">%</span></span>
+        <span class="wt-input"><input class="num-input" id="wt${a.id}" type="number" data-unit="%" min="0" max="100" step="1" value="${a.weight}"/><span class="wt-pct">%</span></span>
       </div>`).join('')
   }<div class="weight-row wt-total"><span class="wt-name">Total</span><span class="wt-input" id="wtTotalCell"></span></div></div>`;
 
@@ -1082,7 +1082,7 @@ function renderRankWeightTable(){
     rw.map((w,idx)=>`
       <div class="weight-row">
         <span class="wt-name"><span class="wt-label">Rank ${idx+1}${idx===0?' · best':''}</span></span>
-        <span class="wt-input"><input class="num-input" id="rw${idx}" type="number" min="0" max="100" step="1" value="${w}"/><span class="wt-pct">%</span></span>
+        <span class="wt-input"><input class="num-input" id="rw${idx}" type="number" data-unit="%" min="0" max="100" step="1" value="${w}"/><span class="wt-pct">%</span></span>
       </div>`).join('')
   }<div class="weight-row wt-total"><span class="wt-name">Total</span><span class="wt-input" id="rwTotalCell"></span></div></div>`;
   rw.forEach((w,idx)=>{

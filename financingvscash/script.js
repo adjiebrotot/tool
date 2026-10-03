@@ -1867,7 +1867,26 @@ document.querySelectorAll('.ctrl-tab').forEach(btn=>{btn.addEventListener('click
 $('mode2d').addEventListener('click',()=>{sensMode='2d';$('mode2d').classList.add('active');$('mode3d').classList.remove('active');$('sensYBlock').style.display='none';scheduleSensitivity();});
 $('mode3d').addEventListener('click',()=>{sensMode='3d';$('mode3d').classList.add('active');$('mode2d').classList.remove('active');$('sensYBlock').style.display='';scheduleSensitivity();});
 $('sensScenario').addEventListener('change',updateSensTermLabels);
-$('sensVarX').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarX').value,sensSelectedFreq(),sensSelectedScenario());$('sensXStart').value=a;$('sensXEnd').value=b;});
+/* A sweep range is typed in the unit of the variable it sweeps: % for a rate,
+   the term's own period for a term, money for a repayment. The fields carry
+   that unit after the number and the limits that go with it. */
+function syncSensUnits(){
+  [['X','sensVarX'],['Y','sensVarY']].forEach(([ax,selId])=>{
+    const sel=$(selId); if(!sel) return;
+    const opt=sel.selectedOptions[0], label=opt?opt.textContent:'';
+    const m=label.match(/\(([^)]+)\)\s*$/);
+    const unit=m?m[1]:moneySymbol();
+    const pct=unit==='%', money=!m;
+    ['Start','End'].forEach(w=>{
+      const el=$('sens'+ax+w); if(!el) return;
+      el.min=pct?'0':(money?'0':'1'); el.max=pct?'100':(money?'1000000000000':'3000');
+      const suf=el.parentElement&&el.parentElement.querySelector('.sens-unit'); if(suf) suf.textContent=unit;
+    });
+  });
+}
+$('sensVarX').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarX').value,sensSelectedFreq(),sensSelectedScenario());$('sensXStart').value=a;$('sensXEnd').value=b;syncSensUnits();});
+$('sensVarY').addEventListener('change',syncSensUnits);
+syncSensUnits();
 $('sensVarY').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarY').value,sensSelectedFreq(),sensSelectedScenario());$('sensYStart').value=a;$('sensYEnd').value=b;});
 // Every control in the Sensitivity panel redraws the sweep, the two above
 // included: their own listeners re-seed the axis range first, and this one runs

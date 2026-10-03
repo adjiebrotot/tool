@@ -1216,6 +1216,8 @@ function buildBracketEditor(){
     toEl.type='text';
     toEl.inputMode='numeric';
     toEl.placeholder='∞';
+    toEl.setAttribute('data-unit','Rp');
+    toEl.setAttribute('data-min','0'); toEl.setAttribute('data-max','100000000000000'); toEl.setAttribute('data-grouped','');
     if(b.to!==null) toEl.value=formatBracketNum(b.to);
     toEl.disabled=(i===S.brackets.length-1);
     toEl.addEventListener('input',function(){

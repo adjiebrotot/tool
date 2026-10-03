@@ -429,7 +429,7 @@
       </div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Random seed <i class="tip-icon" data-tip="The same seed gives the same simulated futures.">?</i></span></div>
-        <input class="num-input" id="seed" type="number" inputmode="numeric" min="1" step="1" value="20260921"/>
+        <input class="num-input" id="seed" type="number" inputmode="numeric" min="1" step="1" value="20260921" data-unitless data-unbounded/>
       </div>
     </div>
   </div>
@@ -508,7 +508,7 @@
              every render. The static pair is the widest either age can be, so a
              value restored from the last visit is never clamped by a stale bound
              before the render that would have widened it. -->
-        <input type="range" id="ageRetire" min="0" max="120" step="1" value="60" data-readout="ageRetireVal"/>
+        <input type="range" id="ageRetire" min="0" max="120" step="1" value="60" data-readout="ageRetireVal" data-unit="yrs"/>
         <div class="slider-scale"><span id="retireScaleMin">Age now</span><span id="retireScaleMax">Life expectancy</span></div>
       </div>
       <!-- The verdict ON THE SLIDER'S OWN AGE, directly under the handle that

@@ -315,7 +315,7 @@
       <div class="field-row"><div class="field-label">X-Axis Variable</div>
         <select class="sel-input" id="sensVarX"><option value="financeRate" id="sensVarXRateOpt">Finance Rate (%)</option><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="term" id="sensVarXTermOpt">Term (months)</option><option value="payment" id="sensVarXPayOpt">Repayment Amount</option><option value="residual" id="sensVarXResOpt">Residual (%)</option></select>
       </div>
-      <div class="field-row"><div class="field-label">X Range</div><div class="inline-row"><input class="num-input" id="sensXStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensXEnd" type="number" step="0.5" value="10"/></div></div>
+      <div class="field-row"><div class="field-label">X Range</div><div class="inline-row"><div class="currency-wrap grow"><input class="currency-input has-suffix wide-suffix" id="sensXStart" type="number" step="0.5" min="0" max="100" value="1"/><span class="suffix sens-unit">%</span></div><span style="color:var(--muted);font-size:.85rem;">to</span><div class="currency-wrap grow"><input class="currency-input has-suffix wide-suffix" id="sensXEnd" type="number" step="0.5" min="0" max="100" value="10"/><span class="suffix sens-unit">%</span></div></div></div>
     </div>
     <div id="sensYBlock" style="display:none;">
       <div class="field-group">
@@ -323,7 +323,7 @@
         <div class="field-row"><div class="field-label">Y-Axis Variable</div>
           <select class="sel-input" id="sensVarY"><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="financeRate" id="sensVarYRateOpt">Finance Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="term" id="sensVarYTermOpt">Term (months)</option><option value="payment" id="sensVarYPayOpt">Repayment Amount</option><option value="residual" id="sensVarYResOpt">Residual (%)</option></select>
         </div>
-        <div class="field-row"><div class="field-label">Y Range</div><div class="inline-row"><input class="num-input" id="sensYStart" type="number" step="0.5" value="1"/><span style="color:var(--muted);font-size:.85rem;">to</span><input class="num-input" id="sensYEnd" type="number" step="0.5" value="8"/></div></div>
+        <div class="field-row"><div class="field-label">Y Range</div><div class="inline-row"><div class="currency-wrap grow"><input class="currency-input has-suffix wide-suffix" id="sensYStart" type="number" step="0.5" min="0" max="100" value="1"/><span class="suffix sens-unit">%</span></div><span style="color:var(--muted);font-size:.85rem;">to</span><div class="currency-wrap grow"><input class="currency-input has-suffix wide-suffix" id="sensYEnd" type="number" step="0.5" min="0" max="100" value="8"/><span class="suffix sens-unit">%</span></div></div></div>
       </div>
     </div>
     <div class="field-group">

@@ -635,7 +635,7 @@ function renderSimpleFxSection(from,to){
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%;">
       <span style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;">Custom FX Rate</span>
       <span style="font-size:0.88rem;white-space:nowrap;">1&nbsp;<strong>${tc}</strong>&nbsp;=</span>
-      <input type="text" inputmode="decimal" class="num-input" id="simpleFxInput"
+      <input type="text" inputmode="decimal" class="num-input" id="simpleFxInput" data-unit="${fc}" data-min="0" data-max="1000000000"
         value="${S.customFxSimple!=null?S.customFxSimple:''}"
         placeholder="${defFmt}"
         style="width:130px;"/>
@@ -647,7 +647,7 @@ function renderSimpleFxSection(from,to){
         <span class="fx-shock-title">What if ${tc} moves?</span>
         <span class="fx-shock-val" id="fxShockVal">${fxShockReadout(from,to)}</span>
       </div>
-      <input type="range" id="fxShockSlider" min="-${FX_SHOCK_LIMIT}" max="${FX_SHOCK_LIMIT}" step="1" value="${pct}"
+      <input type="range" id="fxShockSlider" data-unit="%" min="-${FX_SHOCK_LIMIT}" max="${FX_SHOCK_LIMIT}" step="1" value="${pct}"
         aria-label="Exchange rate scenario, percent change in ${tc} against ${fc}"/>
       <div class="fx-shock-note">
         <span>${to.city} costs stay the same in ${tc}. Only ${fc} conversions move.</span>
@@ -665,6 +665,9 @@ function renderSimpleFxSection(from,to){
     inp.addEventListener('blur',()=>{render();});
   }
   const sl=document.getElementById('fxShockSlider');
+  // Both ends named under it, like every finance slider (drawn here because
+  // this card is built after the page's first pass).
+  if(sl && window.SharedSlider) SharedSlider.enhance(sl);
   if(sl){
     // Refresh the readout and the results in place. A full render() here would
     // replace the range input mid-drag and the gesture would die.
@@ -807,6 +810,9 @@ function buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,t
   if(Math.abs(nomDiffTC)<0.5){nomTxt=`Living in ${toName} gives roughly the <strong>same nominal savings</strong> as ${from.city}`;}
   else if(nomPos){nomTxt=`Living in ${toName} gives you <span style="color:var(--positive-em);font-weight:700;">${fmtC(Math.abs(nomDiffTC),tc)}${fc!==tc?' (≈ '+fmtC(Math.abs(nomDiffFC),fc)+')':''}</span> <strong>more</strong> in monthly savings`;}
   else{nomTxt=`Living in ${toName} gives you <span style="color:var(--negative-em);font-weight:700;">${fmtC(Math.abs(nomDiffTC),tc)}${fc!==tc?' (≈ '+fmtC(Math.abs(nomDiffFC),fc)+')':''}</span> <strong>less</strong> in monthly savings`;}
+  // A ratio needs a salary on both sides; until then the sentence stops at the
+  // savings gap rather than printing a dash inside it.
+  if(tRatio==null||fRatio==null) return `${nomTxt}.`+fxShockLine(from,to,true);
   if(Math.abs(ratDiff)<0.5){ratTxt=`with a similar savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)})`;}
   else if(ratPos){ratTxt=`<strong>and</strong> a higher savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)}, +${fmtP(Math.abs(ratDiff))})`;}
   else{ratTxt=`${contradict?'<strong>but</strong>':'<strong>and</strong>'} a lower savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)}, −${fmtP(Math.abs(ratDiff))})`;}
@@ -1022,7 +1028,7 @@ function buildDetailHTML(fromCity,toCities){
     return`<td class="num-td">
       <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;flex-wrap:wrap;">
         <span style="font-size:0.75rem;white-space:nowrap;">1&nbsp;<strong>${destCurr}</strong>&nbsp;=</span>
-        <input type="text" inputmode="decimal" class="num-input dt-fx-inp" data-ci="${i}"
+        <input type="text" inputmode="decimal" class="num-input dt-fx-inp" data-ci="${i}" data-unit="${fc}" data-min="0" data-max="1000000000"
           value="${curCustomFx!=null?curCustomFx:''}"
           placeholder="${defFx}"
           style="width:80px;padding:4px 6px;font-size:0.78rem;"/>

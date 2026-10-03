@@ -731,7 +731,7 @@ function buildTableHTML(){
       } else if(p.type==='boolean'){
         inp = `<div class="param-bool-wrap"><input type="checkbox" class="param-bool" data-si="${i}" data-key="${p.key}"${sc[p.key]!==false?' checked':''}/><span class="param-bool-label">${T('boolEnabled')}</span></div>`;
       } else {
-        inp = `<input class="param-input" type="text" inputmode="numeric" data-si="${i}" data-key="${p.key}" data-ptype="${p.type}" value="${escAttr(fmtInputVal(sc[p.key], p.type))}"/>`;
+        inp = `<input class="param-input" type="text" inputmode="numeric" data-si="${i}" data-key="${p.key}" data-ptype="${p.type}" data-unit="${escAttr(unitForParam(p))}" data-min="${p.min!=null?p.min:0}" data-max="${p.max!=null?p.max:1000000000000}" value="${escAttr(fmtInputVal(sc[p.key], p.type))}"/>`;
       }
       if(isDynamicUnit(p.key)){
         inp += `<span class="ongoing-unit" data-si="${i}" data-cost-key="${p.key}">${escHtml(getOngoingCostUnit(sc, p.key))}</span>`;
