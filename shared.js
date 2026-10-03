@@ -2624,10 +2624,446 @@
 
   global.SharedExport = { atDesktopSize: atDesktopSize, desktopHeight: desktopHeight, WIDTH: EXPORT_W };
 
+  /* ══ Finance tool skeleton ═══════════════════════════════════════════════
+     The behaviours every finance tool shares, so the same field behaves the
+     same way on every page. See "Finance tool skeleton" in
+     _ref/design-reference.md. */
+  function pageLang(){
+    var l = (document.documentElement.getAttribute('lang') || 'en').toLowerCase();
+    return l.indexOf('id') === 0 ? 'id' : 'en';
+  }
+  function decimalsOf(step){
+    if(step == null || step === '' || step === 'any' || !isFinite(+step)) return null;
+    var s = String(+step), e = s.indexOf('e-');
+    if(e >= 0) return parseInt(s.slice(e + 2), 10);
+    var i = s.indexOf('.');
+    return i < 0 ? 0 : s.length - i - 1;
+  }
+  // A number as a reader writes it: no float dust, a real minus sign.
+  function plainNumber(v, maxDp){
+    var n = +(+v).toFixed(maxDp == null ? 10 : maxDp);
+    var s = String(Math.abs(n));
+    if(Math.abs(n) >= 10000) s = Math.abs(n).toLocaleString('en-US', {maximumFractionDigits: maxDp == null ? 10 : maxDp});
+    return (n < 0 ? '−' : '') + s;
+  }
+
+  /* ── SharedBounds — a field refuses a value outside its range ─────────────
+     Rule: the boundary and the step of a field are stated by the field itself,
+     not by a sentence. A typed field declares them the way a slider does:
+
+         <input type="number" min="0" max="30" step="0.1">             (native)
+         <input type="text" class="currency-input" data-min="0"
+                data-max="100000000000" data-step="1">                 (money)
+
+     When the reader leaves the field (its change event), a value past either
+     end is pulled back to that end and snapped to the step, and a small note
+     under the field says so for a moment ("Max 30 %/yr"), so the change is
+     never silent. Snapping alone, inside the range, is silent: that is what a
+     slider does too. Runs in the capture phase, so the tool's own change
+     handler already reads the corrected value; an input event is fired as
+     well, for tools that only listen to input. A blank field is left blank:
+     several tools read blank as "work it out for me". */
+  function makeBounds(){
+    var TEXT = { en: { max: 'Max', min: 'Min' }, id: { max: 'Maks.', min: 'Min.' } };
+    var hintEl = null, hintTimer = null, hintFor = null;
+    function raw(el, name){
+      var v = el.getAttribute('data-' + name);
+      if(v == null && (el.type || '').toLowerCase() === 'number') v = el.getAttribute(name);
+      return v == null || v === '' ? null : v;
+    }
+    function limits(el){
+      if(!el || el.tagName !== 'INPUT') return null;
+      var t = (el.type || 'text').toLowerCase();
+      if(t !== 'text' && t !== 'number' && t !== 'tel') return null;
+      var mn = raw(el, 'min'), mx = raw(el, 'max'), st = raw(el, 'step');
+      if(mn == null && mx == null) return null;
+      return {
+        min: mn == null ? -Infinity : parseFloat(mn),
+        max: mx == null ? Infinity : parseFloat(mx),
+        step: st == null || st === 'any' ? null : parseFloat(st)
+      };
+    }
+    function parse(el){
+      var s = String(el.value == null ? '' : el.value).replace(/,/g, '').replace(/−/g, '-').trim();
+      if(s === '' || s === '-' || s === '.' || s === '-.') return NaN;
+      var n = parseFloat(s);
+      return isFinite(n) ? n : NaN;
+    }
+    function grouped(el){
+      return /,/.test(el.value || '') || el.getAttribute('data-money') === 'true' ||
+             el.classList.contains('money-input') || el.hasAttribute('data-grouped');
+    }
+    function format(el, v, lim){
+      var dp = decimalsOf(lim.step);
+      if(grouped(el)) return SharedFmtRef().formatThousands(String(v), {maxDecimals: dp == null ? 2 : dp, allowNegative: v < 0});
+      var n = dp == null ? +(+v).toPrecision(12) : +(+v).toFixed(dp);
+      return String(n);
+    }
+    function unitOf(el){
+      var pre = '', suf = el.getAttribute('data-unit') || '';
+      var wrap = el.closest('.currency-wrap');
+      if(wrap){
+        var p = wrap.querySelector('.prefix'), s = wrap.querySelector('.suffix');
+        if(p && !p.hidden) pre = (p.textContent || '').trim();
+        if(s && !s.hidden) suf = (s.textContent || '').trim();
+      }
+      return {pre: pre, suf: suf};
+    }
+    function boundText(el, v, lim){
+      var u = unitOf(el), dp = decimalsOf(lim.step);
+      var num = plainNumber(v, dp == null ? 2 : dp);
+      if(grouped(el)) num = (v < 0 ? '−' : '') + Math.abs(v).toLocaleString('en-US', {maximumFractionDigits: dp == null ? 2 : dp});
+      return (u.pre ? u.pre + ' ' : '') + num + (u.suf ? ' ' + u.suf : '');
+    }
+    function showHint(el, text){
+      if(!hintEl){
+        hintEl = document.createElement('div');
+        hintEl.id = 'boundHint';
+        hintEl.setAttribute('role', 'status');
+        hintEl.setAttribute('aria-live', 'polite');
+        hintEl.setAttribute('data-no-abbr', '');
+        document.body.appendChild(hintEl);
+      }
+      var box = (el.closest('.currency-wrap') || el).getBoundingClientRect();
+      hintEl.textContent = text;
+      hintEl.style.left = Math.max(8, Math.min(box.left, window.innerWidth - 268)) + 'px';
+      hintEl.style.top = Math.min(window.innerHeight - 30, box.bottom + 4) + 'px';
+      hintEl.classList.add('visible');
+      if(hintFor && hintFor !== el) hintFor.classList.remove('bound-flash');
+      hintFor = el;
+      el.classList.add('bound-flash');
+      clearTimeout(hintTimer);
+      hintTimer = setTimeout(hideHint, 2600);
+    }
+    function hideHint(){
+      if(hintEl) hintEl.classList.remove('visible');
+      if(hintFor) hintFor.classList.remove('bound-flash');
+      hintFor = null;
+    }
+    // Pull one field back inside its range. Returns true when it changed.
+    function apply(el){
+      var lim = limits(el);
+      if(!lim) return false;
+      var v = parse(el);
+      if(!isFinite(v)) return false;
+      var out = v, hit = null;
+      if(out > lim.max){ out = lim.max; hit = 'max'; }
+      if(out < lim.min){ out = lim.min; hit = 'min'; }
+      if(lim.step && isFinite(lim.step) && lim.step > 0){
+        var base = isFinite(lim.min) ? lim.min : 0;
+        var dp = decimalsOf(lim.step);
+        out = +(Math.round((out - base) / lim.step) * lim.step + base).toFixed(dp == null ? 10 : dp);
+        if(out > lim.max) out = +(out - lim.step).toFixed(dp == null ? 10 : dp);
+        if(out < lim.min) out = +(out + lim.step).toFixed(dp == null ? 10 : dp);
+      }
+      if(Math.abs(out - v) < 1e-12) return false;
+      el.value = format(el, out, lim);
+      if(hit) showHint(el, TEXT[pageLang()][hit] + ' ' + boundText(el, out, lim));
+      return true;
+    }
+    function onChange(e){
+      var el = e.target;
+      if(!el || el.tagName !== 'INPUT' || el.__boundsBusy) return;
+      if(!limits(el)) return;
+      if(apply(el)){
+        el.__boundsBusy = true;
+        try { el.dispatchEvent(new Event('input', {bubbles: true})); }
+        finally { el.__boundsBusy = false; }
+      }
+    }
+    document.addEventListener('change', onChange, true);
+    global.addEventListener('scroll', function(){ if(hintFor) hideHint(); }, true);
+    return { apply: apply, limits: limits, hint: showHint };
+  }
+  // SharedFmt is defined above in this same file; read it lazily all the same.
+  function SharedFmtRef(){ return global.SharedFmt; }
+  global.SharedBounds = makeBounds();
+
+  /* ── SharedSlider — a slider names both ends and takes a typed value ──────
+     Every range input gets its min and max written under it (in the unit its
+     readout uses), and its readout (.slider-value) becomes a small box: click
+     or Enter, type a figure, and it lands on the slider clamped to the same
+     ends and snapped to the same step. The ends follow the slider when a tool
+     moves its min or max at run time.
+
+     Found automatically at start-up; a slider added later calls
+     SharedSlider.enhance(range). Opt-outs: data-no-ends (the tool draws its
+     own scale), data-no-edit on the readout. data-unit on the range overrides
+     the unit read off the readout; data-readout="<id>" names a readout that
+     does not sit in the slider's own row. */
+  function makeSlider(){
+    var TEXT = { en: 'Click to type a value', id: 'Klik untuk mengetik nilai' };
+    function readoutOf(range){
+      var id = range.getAttribute('data-readout');
+      if(id) return document.getElementById(id);
+      var box = range.closest('.slider-block, .field-row, .sc-field, .slider-wrap');
+      if(!box || box.querySelectorAll('input[type=range]').length !== 1) return null;
+      return box.querySelector('.slider-value');
+    }
+    function unitParts(range, ro){
+      if(range.hasAttribute('data-unit')) return {pre: range.getAttribute('data-prefix') || '', suf: range.getAttribute('data-unit')};
+      var text = ro ? (ro.textContent || '').trim() : '';
+      var m = /^([^\d−+\-]*)[−+\-]?[\d.,]+(.*)$/.exec(text);
+      if(!m) return {pre: '', suf: ''};
+      var pre = m[1].trim(), rest = m[2], suf = '';
+      var u = /^\s?(%|×|x\b)/.exec(rest);
+      if(u) suf = u[1];
+      else { var w = /^(\s?[A-Za-z]+)/.exec(rest); if(w) suf = w[1]; }
+      return {pre: pre, suf: suf};
+    }
+    function endText(v, step, p){
+      var dp = decimalsOf(step);
+      return p.pre + plainNumber(v, dp == null ? 2 : Math.min(dp, 2)) + p.suf;
+    }
+    function editable(ro, range){
+      if(ro.__shEdit) return;
+      ro.__shEdit = true;
+      ro.classList.add('is-editable');
+      ro.setAttribute('tabindex', '0');
+      ro.setAttribute('role', 'button');
+      ro.setAttribute('title', TEXT[pageLang()]);
+      var inp = document.createElement('input');
+      inp.type = 'text';
+      inp.inputMode = 'decimal';
+      inp.className = 'slider-val-edit';
+      inp.setAttribute('data-no-persist', '');
+      inp.setAttribute('aria-label', TEXT[pageLang()]);
+      ro.parentNode.insertBefore(inp, ro.nextSibling);
+      function open(){
+        inp.value = String(parseFloat(range.value));
+        ro.style.display = 'none';
+        inp.style.display = 'inline-block';
+        inp.focus();
+        inp.select();
+      }
+      var cancelled = false;
+      function commit(){
+        if(!cancelled){
+          var v = parseFloat(String(inp.value).replace(/,/g, '').replace(/−/g, '-'));
+          if(isFinite(v)){
+            var mn = parseFloat(range.min), mx = parseFloat(range.max), st = parseFloat(range.step) || 1;
+            if(!isFinite(mn)) mn = 0;
+            if(!isFinite(mx)) mx = 100;
+            var c = Math.min(mx, Math.max(mn, v));
+            var dp = decimalsOf(st);
+            var snapped = +(Math.round((c - mn) / st) * st + mn).toFixed(dp == null ? 10 : dp);
+            if(snapped > mx) snapped = mx;
+            range.value = String(snapped);
+            range.dispatchEvent(new Event('input', {bubbles: true}));
+            range.dispatchEvent(new Event('change', {bubbles: true}));
+            if(c !== v){
+              var id = pageLang() === 'id';
+              var word = v > mx ? (id ? 'Maks.' : 'Max') : (id ? 'Min.' : 'Min');
+              global.SharedBounds.hint(ro, word + ' ' + endText(c, st, unitParts(range, ro)));
+            }
+          }
+        }
+        cancelled = false;
+        inp.style.display = 'none';
+        ro.style.display = '';
+      }
+      ro.addEventListener('click', open);
+      ro.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); }
+      });
+      inp.addEventListener('blur', commit);
+      inp.addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){ e.preventDefault(); inp.blur(); }
+        else if(e.key === 'Escape'){ cancelled = true; inp.blur(); }
+      });
+    }
+    function enhance(range){
+      if(!range || range.__shSlider || range.type !== 'range') return;
+      range.__shSlider = true;
+      var ro = readoutOf(range);
+      var next = range.nextElementSibling;
+      var ownScale = range.hasAttribute('data-no-ends') ||
+        (next && next.classList && (next.classList.contains('slider-scale') || next.classList.contains('range-ends')));
+      if(!ownScale){
+        var ends = document.createElement('div');
+        ends.className = 'range-ends';
+        ends.setAttribute('aria-hidden', 'true');
+        ends.setAttribute('data-no-abbr', '');
+        ends.innerHTML = '<span></span><span></span>';
+        range.insertAdjacentElement('afterend', ends);
+        var draw = function(){
+          var p = unitParts(range, ro);
+          ends.children[0].textContent = endText(range.min === '' ? 0 : range.min, range.step, p);
+          ends.children[1].textContent = endText(range.max === '' ? 100 : range.max, range.step, p);
+        };
+        draw();
+        if(global.MutationObserver){
+          new MutationObserver(draw).observe(range, {attributes: true, attributeFilter: ['min', 'max', 'step']});
+          if(ro) new MutationObserver(draw).observe(ro, {childList: true, characterData: true, subtree: true});
+        }
+      }
+      if(ro && !ro.hasAttribute('data-no-edit')) editable(ro, range);
+    }
+    function scan(root){
+      (root || document).querySelectorAll('input[type=range]').forEach(enhance);
+    }
+    return { enhance: enhance, scan: scan };
+  }
+  global.SharedSlider = makeSlider();
+
+  /* ── SharedSeg — a small count picked with buttons, kept in a <select> ────
+     A choice among a handful of numbers (dependants 0 to 3, adults 1 or 2) is
+     one tap on a segmented control rather than a dropdown to open or a slider
+     to land. The <select> stays on the page as the field the tool reads, the
+     mini cache saves and a scenario file carries; it is only hidden, and the
+     buttons follow it however its value is set (a click, a preset, a restored
+     file). labelOf(option) shortens a button's text; the option's own text
+     stays as the button's title. */
+  function fromSelect(sel, opts){
+    opts = opts || {};
+    if(!sel || sel.__seg) return null;
+    sel.__seg = true;
+    var group = document.createElement('div');
+    group.className = 'seg-group seg-count' + (opts.className ? ' ' + opts.className : '');
+    group.setAttribute('role', 'radiogroup');
+    group.setAttribute('data-no-abbr', '');
+    if(opts.ariaLabel) group.setAttribute('aria-label', opts.ariaLabel);
+    function sync(){
+      var v = sel.value;
+      Array.prototype.forEach.call(group.children, function(b){
+        var on = b.getAttribute('data-val') === v;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+    }
+    function build(){
+      group.innerHTML = '';
+      Array.prototype.forEach.call(sel.options, function(o){
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'seg-btn';
+        b.setAttribute('role', 'radio');
+        b.setAttribute('data-val', o.value);
+        b.textContent = opts.labelOf ? opts.labelOf(o) : o.value;
+        b.title = (o.textContent || '').trim();
+        b.addEventListener('click', function(){
+          if(sel.value === o.value) return;
+          sel.value = o.value;
+          sel.dispatchEvent(new Event('input', {bubbles: true}));
+          sel.dispatchEvent(new Event('change', {bubbles: true}));
+        });
+        group.appendChild(b);
+      });
+      sync();
+    }
+    sel.classList.add('seg-source');
+    sel.setAttribute('tabindex', '-1');
+    sel.setAttribute('aria-hidden', 'true');
+    if(sel.parentElement) sel.parentElement.classList.add('seg-host');
+    sel.insertAdjacentElement('afterend', group);
+    // Presets and restores set .value without an event; follow them anyway.
+    ['value', 'selectedIndex'].forEach(function(prop){
+      var d = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, prop);
+      if(!d || !d.set) return;
+      Object.defineProperty(sel, prop, {
+        configurable: true,
+        get: function(){ return d.get.call(this); },
+        set: function(v){ d.set.call(this, v); sync(); }
+      });
+    });
+    sel.addEventListener('change', sync);
+    sel.addEventListener('input', sync);
+    if(global.MutationObserver) new MutationObserver(build).observe(sel, {childList: true, subtree: true, characterData: true});
+    build();
+    return { sync: sync, group: group };
+  }
+  global.SharedSeg = { fromSelect: fromSelect };
+
+  /* ── SharedFold — the long table waits behind a button ───────────────────
+     A year-by-year table is the most specific thing a tool shows, so it opens
+     closed: its header row (title, CSV button) stays, and a "Show table"
+     button beside the title opens the rest. The reader's choice is kept on
+     this device. The CSV button exports the whole table either way.
+
+         SharedFold.attach(card, { key: 'rentvsownhouse', bodies: [tabs, wrap],
+                                   onOpen: resyncStickyHeader });            */
+  function makeFold(){
+    var TEXT = { en: {show: 'Show table', hide: 'Hide table'}, id: {show: 'Tampilkan tabel', hide: 'Sembunyikan tabel'} };
+    function attach(card, opts){
+      opts = opts || {};
+      if(!card || card.__fold) return null;
+      card.__fold = true;
+      var t = TEXT[pageLang()];
+      var bodies = (opts.bodies || []).map(function(b){ return typeof b === 'string' ? card.querySelector(b) : b; }).filter(Boolean);
+      bodies.forEach(function(b){ b.classList.add('fold-body'); });
+      var host = opts.host ? (typeof opts.host === 'string' ? card.querySelector(opts.host) : opts.host)
+                           : card.querySelector('.detail-head, .chart-head');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn-secondary btn-sm fold-btn';
+      btn.setAttribute('data-no-abbr', '');
+      var cluster = host ? host.querySelector('.btn-cluster') : null;
+      if(cluster && cluster.parentElement === host) host.insertBefore(btn, cluster);
+      else if(host) host.appendChild(btn);
+      else card.insertBefore(btn, card.firstChild);
+      var key = opts.key ? 'abt:fold:' + opts.key : null;
+      var open = false;
+      try { open = !!key && localStorage.getItem(key) === '1'; } catch(e){}
+      function set(o, byReader){
+        open = !!o;
+        card.classList.toggle('is-folded', !open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.innerHTML = '<span>' + (open ? t.hide : t.show) + '</span><span class="fold-chev" aria-hidden="true">▾</span>';
+        if(byReader && key){ try { localStorage.setItem(key, open ? '1' : '0'); } catch(e){} }
+        if(open && typeof opts.onOpen === 'function') opts.onOpen();
+      }
+      btn.addEventListener('click', function(){ set(!open, true); });
+      set(open, false);
+      return { open: function(){ set(true, true); }, close: function(){ set(false, true); }, isOpen: function(){ return open; }, button: btn };
+    }
+    return { attach: attach };
+  }
+  global.SharedFold = makeFold();
+
+  /* ── SharedVerdict — the answer as one sentence, above the cards ──────────
+     tone: '' (a fair comparison: rent or own, separate or joint), 'good',
+     'bad' or 'warn' (a pass or a miss against a goal the reader set).
+     title and body are HTML the tool builds from its own figures. */
+  function setVerdict(el, v){
+    if(typeof el === 'string') el = document.getElementById(el);
+    if(!el) return;
+    el.classList.remove('good', 'bad', 'warn');
+    if(!v){ el.classList.remove('visible'); el.innerHTML = ''; return; }
+    if(v.tone) el.classList.add(v.tone);
+    el.innerHTML = '<h2>' + v.title + '</h2>' + (v.body ? '<p>' + v.body + '</p>' : '');
+    el.classList.add('visible');
+  }
+  global.SharedVerdict = { set: setVerdict };
+
+  /* ── SharedPalette — neutral options never wear red ───────────────────────
+     Two options a reader is choosing between (own or rent, separate or joint,
+     loan A or loan B) are neither good nor bad, so they take the neutral
+     sequence: blue, then gold, then teal, rose, purple. Red and the positive
+     blue stay for direction (a gain, a loss, money in, money out). Duplicates
+     are dropped by their resolved colour, because in dark mode --line-e and
+     --gold are the same gold. Blue against gold stays distinct for all three
+     common kinds of colour blindness (see the design reference). */
+  var NEUTRAL_VARS = ['--line-a', '--gold', '--line-c', '--line-d', '--line-e'];
+  function neutralColours(el){
+    var cs = getComputedStyle(el || document.body), out = [], seen = {};
+    NEUTRAL_VARS.forEach(function(name){
+      var c = cs.getPropertyValue(name).trim();
+      var k = c.toLowerCase();
+      if(c && !seen[k]){ seen[k] = true; out.push(c); }
+    });
+    return out;
+  }
+  global.SharedPalette = {
+    NEUTRAL_VARS: NEUTRAL_VARS,
+    neutral: neutralColours,
+    at: function(i, el){ var l = neutralColours(el); return l.length ? l[((i % l.length) + l.length) % l.length] : ''; }
+  };
+
   function initShared(){
     initTooltip();
     global.SharedAbbr.init();
     initFit();
+    global.SharedSlider.scan();
   }
 
   if (document.readyState === 'loading') {
