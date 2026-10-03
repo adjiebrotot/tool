@@ -43,7 +43,7 @@ async function open(rel){
   });
   // The guided tour offers itself on a first visit and its backdrop eats clicks.
   await page.addInitScript(()=>{
-    ['rvo-tour-v1-seen','rvo-id-tour-v1-seen','rvos-tour-v1-seen','ff-tour-v3-seen',
+    ['rvo-tour-v1-seen','rvo-id-tour-v1-seen','rvos-tour-v1-seen','ff-tour-v3-seen','ff-tour-v4-seen',
      'dca-tour-v1-seen','dcapf-tour-v1-seen'].forEach(k=>{ try { localStorage.setItem(k,'1'); } catch(e){} });
   });
   await page.goto(url(rel), {waitUntil:'load'});
@@ -87,7 +87,8 @@ const val=(page,id)=>page.inputValue('#'+id);
   check('ff 1,154 a week -> a year', await val(page,'expense'), '60,008');
   await setSel(page,'savingsPeriod','monthly');
   check('ff savings 30,000 a year -> a month', await val(page,'savings'), '2,500');
-  await page.click('.ctrl-tab[data-tab="goal"]');
+  // The pension rows sit under Money in, on the You tab.
+  await page.click('.ctrl-tab[data-tab="you"]');
   await page.evaluate(()=>{ const c=document.getElementById('pensionOn'); c.checked=true; c.dispatchEvent(new Event('change',{bubbles:true})); });
   await page.waitForTimeout(100);
   await setSel(page,'pensionPeriod','monthly');
