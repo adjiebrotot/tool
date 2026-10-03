@@ -11,9 +11,10 @@ window.__TOUR = {
     {
       target: null,
       title: '👋 Selamat datang di Pisah vs Gabung Harta',
-      body: 'Tur singkat ini menunjukkan cara membandingkan PPh 21 suami istri saat lapor terpisah ' +
-            '(<strong>Pisah Harta</strong>) dan lapor digabung (<strong>Gabung Harta</strong>), ' +
-            'sehingga Anda tahu mana yang pajaknya lebih kecil. Hanya sekitar satu menit.'
+      body: 'Tur singkat ini menunjukkan cara membandingkan PPh 21 skema <strong>Pisah ' +
+            'Harta</strong> dan <strong>Gabung Harta</strong> untuk pasangan suami istri, ' +
+            'sehingga Anda tahu skema mana yang menghasilkan total pajak lebih rendah. ' +
+            'Hanya sekitar satu menit.'
     },
     {
       target: '.quick-start-row',
@@ -37,13 +38,13 @@ window.__TOUR = {
     {
       target: '#tab-advanced',
       onEnter: function () {
-        // Langkah ini menjelaskan isi panel Aturan pajak, jadi buka panelnya,
+        // Langkah ini menjelaskan isi panel PTKP & Lapisan Pajak, jadi buka panelnya,
         // jangan menyorot tab yang masih harus dicari pengguna.
         var tab = document.querySelector('.ctrl-tab[data-tab="advanced"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '③ Periksa aturan pajak',
-      body: 'Inilah <strong>Aturan pajak</strong>, sudah kami bukakan. Nilai PTKP dan lapisan tarif ' +
+      title: '③ Periksa PTKP dan lapisan tarif',
+      body: 'Inilah <strong>PTKP &amp; Lapisan Pajak</strong>, sudah kami bukakan. Nilai PTKP dan lapisan tarif ' +
             'PPh 21 dimulai dari ketentuan; ubah hanya bila ingin memodelkan aturan lain.'
     },
     {
@@ -54,21 +55,22 @@ window.__TOUR = {
         if (tab && !tab.classList.contains('active')) tab.click();
       },
       title: '④ Baca jawabannya',
-      body: 'Kalimat di atas menyebut cara lapor mana yang lebih murah untuk rumah tangga Anda dan ' +
-            'selisihnya per tahun, lalu di mana cara yang lebih murah berganti.'
+      body: 'Kalimat di atas menyebut apakah <strong>Pisah Harta</strong> atau <strong>Gabung ' +
+            'Harta</strong> yang lebih murah untuk rumah tangga Anda dan selisihnya per tahun, ' +
+            'lalu di mana titik breakeven-nya.'
     },
     {
       target: '.metrics',
       title: '⑤ Angka di baliknya',
-      body: 'Kartu pertama adalah penghematannya, dengan warna cara yang lebih murah. Dua kartu lain ' +
-            'adalah total pajak per tahun tiap cara dan porsinya dari gaji kotor.'
+      body: 'Kartu pertama adalah penghematan pajaknya, dengan warna skema yang lebih murah. Dua ' +
+            'kartu lain adalah total pajak per tahun tiap skema dan tarif efektifnya.'
     },
     {
       target: '.chart-card',
       title: '⑥ Bandingkan di berbagai gaji',
       body: 'Grafik menggeser gaji rumah tangga dari Rp 100 juta sampai Rp 5 miliar per tahun pada ' +
-            'porsi Anda. Biru adalah Pisah Harta dan emas adalah Gabung Harta; catatan di bawah grafik ' +
-            'kedua menyebut di mana cara yang lebih murah berganti.'
+            'porsi Anda. Biru adalah Pisah Harta dan emas adalah Gabung Harta; analisis breakeven di ' +
+            'bawah grafik kedua menyebut kapan yang satu menjadi lebih murah dari yang lain.'
     },
     {
       target: '#detailSection',

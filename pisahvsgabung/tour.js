@@ -1,7 +1,7 @@
 /* Guided-tour config for the Pisah Harta vs Gabung Harta calculator.
    The shared engine (../tour-shared.js) reads this object. v2: the tour
    follows the redesigned page (Quick Start is the way back to the start,
-   Household and Tax rules tabs, the answer sentence, the table behind
+   Household and PTKP & Brackets tabs, the answer sentence, the table behind
    Show table), so readers who took v1 are offered it again. */
 window.__TOUR = {
   seenKey: 'pvg-tour-v2-seen',
@@ -10,9 +10,9 @@ window.__TOUR = {
     {
       target: null,
       title: '👋 Welcome to Pisah vs Gabung Harta',
-      body: 'This quick tour shows how to compare filing separately (<strong>Pisah Harta</strong>) ' +
-            'and filing jointly (<strong>Gabung Harta</strong>) for a married couple\'s PPh 21, so ' +
-            'you can see which costs less tax. It takes about a minute.'
+      body: 'This quick tour shows how to compare <strong>Pisah Harta</strong> and ' +
+            '<strong>Gabung Harta</strong> PPh 21 for a married couple, so you can see which ' +
+            'filing scheme results in lower total tax. It takes about a minute.'
     },
     {
       target: '.quick-start-row',
@@ -36,13 +36,13 @@ window.__TOUR = {
     {
       target: '#tab-advanced',
       onEnter: function () {
-        // The step describes what is inside Tax rules, so open that panel
+        // The step describes what is inside PTKP & Brackets, so open that panel
         // rather than spotlighting a tab the user still has to find.
         var tab = document.querySelector('.ctrl-tab[data-tab="advanced"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '③ Check the tax rules',
-      body: 'This is <strong>Tax rules</strong>, now open for you. The PTKP amounts and the PPh 21 ' +
+      title: '③ Check PTKP and brackets',
+      body: 'This is <strong>PTKP &amp; Brackets</strong>, now open for you. The PTKP amounts and the PPh 21 ' +
             'brackets start at the statutory values; change them only to model a different rule.'
     },
     {
@@ -53,21 +53,22 @@ window.__TOUR = {
         if (tab && !tab.classList.contains('active')) tab.click();
       },
       title: '④ Read the answer',
-      body: 'The sentence at the top says which way of filing is cheaper for your household and by ' +
-            'how much a year, then where the cheaper way switches.'
+      body: 'The sentence at the top says whether <strong>Pisah Harta</strong> or <strong>Gabung ' +
+            'Harta</strong> is cheaper for your household and by how much a year, then where the ' +
+            'crossover sits.'
     },
     {
       target: '.metrics',
       title: '⑤ The figures behind it',
-      body: 'The first card is the saving, in the colour of the cheaper way. The other two are each ' +
-            'way\'s total tax a year and its share of gross salary.'
+      body: 'The first card is the tax saving, in the colour of the cheaper scheme. The other two are ' +
+            'each scheme\'s total tax a year and its effective rate.'
     },
     {
       target: '.chart-card',
       title: '⑥ Compare across salaries',
       body: 'The charts run the household salary from Rp 100 million to Rp 5 billion a year at your ' +
-            'split. Blue is Pisah Harta and gold is Gabung Harta; the note under the second chart says ' +
-            'where the cheaper way switches.'
+            'split. Blue is Pisah Harta and gold is Gabung Harta; the crossover analysis under the ' +
+            'second chart says where one becomes cheaper than the other.'
     },
     {
       target: '#detailSection',

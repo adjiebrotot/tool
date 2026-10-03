@@ -113,7 +113,7 @@
   <section class="header card">
     <div>
       <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="8.5" cy="12" r="5.5"/> <circle stroke="var(--accent2)" cx="15.5" cy="12" r="5.5"/> </svg>PPh 21: Pisah Harta vs Gabung Harta</h1>
-      <p data-i18n="subtitle">Bandingkan PPh 21 pasangan suami istri saat lapor terpisah (Pisah Harta) atau digabung (Gabung Harta).</p>
+      <p data-i18n="subtitle">Bandingkan PPh orang pribadi di Indonesia antara skema Pisah Harta dan Gabung Harta.</p>
     </div>
     <div class="header-right">
       <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back" data-i18n="btnBack">← Alat Lainnya</a>
@@ -127,15 +127,15 @@
       <div class="quick-start-row">
         <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg><span data-i18n="quickStartLabel">Mulai Cepat</span></span><span class="tip-icon" data-i18n-tip="quickStartTip" data-tip="Mengisi tab Rumah tangga dengan contoh dan mengembalikan PTKP serta lapisan tarif ke ketentuan. Penghasilan setara adalah contoh saat halaman dibuka.">?</span>
         <div class="quick-start-btns">
-          <button class="quick-start-btn" data-preset="even" data-i18n="qsEven" data-i18n-tip="qsEvenTip" data-tip="Rp 500 juta per tahun dibagi rata, tanpa tanggungan: angka saat halaman dibuka. Lapor terpisah hemat Rp 19,8 juta.">Penghasilan setara, tanpa anak</button>
-          <button class="quick-start-btn" data-preset="single" data-i18n="qsSingle" data-i18n-tip="qsSingleTip" data-tip="Suami berpenghasilan Rp 300 juta per tahun, istri tidak berpenghasilan, dua anak. PTKP istri terbuang saat lapor terpisah, jadi lapor digabung hemat Rp 8,1 juta.">Keluarga satu penghasilan</button>
-          <button class="quick-start-btn" data-preset="double" data-i18n="qsDouble" data-i18n-tip="qsDoubleTip" data-tip="Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Lapor terpisah memberi tiap pasangan lapisan tarifnya sendiri, jadi hemat Rp 34,8 juta.">Keluarga dua penghasilan</button>
+          <button class="quick-start-btn" data-preset="even" data-i18n="qsEven" data-i18n-tip="qsEvenTip" data-tip="Rp 500 juta per tahun dibagi rata, tanpa tanggungan: angka saat halaman dibuka. Pisah Harta hemat Rp 19,8 juta.">Penghasilan setara, tanpa anak</button>
+          <button class="quick-start-btn" data-preset="single" data-i18n="qsSingle" data-i18n-tip="qsSingleTip" data-tip="Suami berpenghasilan Rp 300 juta per tahun, istri tidak berpenghasilan, dua anak. PTKP istri terbuang saat Pisah, jadi Gabung hemat Rp 8,1 juta.">Keluarga satu penghasilan</button>
+          <button class="quick-start-btn" data-preset="double" data-i18n="qsDouble" data-i18n-tip="qsDoubleTip" data-tip="Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Saat Pisah masing-masing menapaki lapisan tarifnya sendiri, jadi Pisah hemat Rp 34,8 juta.">Keluarga dua penghasilan</button>
         </div>
       </div>
       <div class="ctrl-scroll">
       <div class="ctrl-tabs">
         <button class="ctrl-tab active" data-tab="inputs"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.6" y="3.4" width="16.8" height="17.2" rx="2.4"/><path d="M7.4 9h9.2M7.4 13h9.2M7.4 17h5.2"/></svg><span data-i18n="tabInputs">Rumah tangga</span></button>
-        <button class="ctrl-tab" data-tab="advanced"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.4 20.2h4.5v-4.6h4.5V11h4.5V6.4h3.7"/></svg><span data-i18n="tabAdvanced">Aturan pajak</span></button>
+        <button class="ctrl-tab" data-tab="advanced"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.4 20.2h4.5v-4.6h4.5V11h4.5V6.4h3.7"/></svg><span data-i18n="tabAdvanced">PTKP &amp; Lapisan Pajak</span></button>
       </div>
 
       <div class="ctrl-panel active" id="tab-inputs">
@@ -248,11 +248,11 @@
             <div class="ptkp-label-sm" data-i18n="ptkpDep">Tambahan per tanggungan</div>
             <div class="currency-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpDependent" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="4,500,000" /></div>
           </div>
-          <div class="derived"><span data-i18n="ptkpComputedPrefix">PTKP rumah tangga ini, lapor terpisah:</span> <b id="ptkpHDisplay">—</b> <span data-i18n="ptkpHLabel">suami</span> + <b id="ptkpWDisplay">—</b> <span data-i18n="ptkpWLabel">istri</span>. <span data-i18n="ptkpGLabel">Lapor digabung:</span> <b id="ptkpGDisplay">—</b>.</div>
+          <div class="derived"><span data-i18n="ptkpComputedPrefix">PTKP rumah tangga ini dengan Pisah Harta:</span> <b id="ptkpHDisplay">—</b> <span data-i18n="ptkpHLabel">suami</span> + <b id="ptkpWDisplay">—</b> <span data-i18n="ptkpWLabel">istri</span>. <span data-i18n="ptkpGLabel">Gabung Harta:</span> <b id="ptkpGDisplay">—</b>.</div>
         </div>
 
         <div class="field-group bracket-group">
-          <div class="group-title" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Lapisan tarif atas penghasilan kena pajak (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Ubah setiap ambang batas dan tarif. Kolom &quot;Dari&quot; terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Menaikkan batas melewati lapisan di bawahnya akan menghapusnya.">?</span></div>
+          <div class="group-title" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Lapisan tarif PPh 21</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Ubah setiap ambang batas dan tarif. Kolom &quot;Dari&quot; terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Menaikkan batas melewati lapisan di bawahnya akan menghapusnya.">?</span></div>
           <div class="bracket-row-header">
             <div class="bracket-col-label" id="bracketColFrom" data-i18n="bracketFrom">Dari (Rp)</div>
             <div class="bracket-col-label" id="bracketColTo" data-i18n="bracketTo">Sampai (Rp)</div>
@@ -277,17 +277,17 @@
       <!-- KPI CARDS: the saving first, then the two totals it comes from -->
       <section class="metrics">
         <div class="metric card">
-          <div class="label" data-i18n="kpiSavingLabel">Dihemat oleh cara yang lebih murah</div>
+          <div class="label" data-i18n="kpiSavingLabel">Penghematan pajak (opsi lebih murah)</div>
           <div class="value" id="kpiSaving">—</div>
           <div class="sub" id="kpiWinner"></div>
         </div>
         <div class="metric card">
-          <div class="label"><span class="opt-key opt-key-pisah" aria-hidden="true"></span><span data-i18n="kpiPisahLabel">Total pajak, lapor terpisah (Pisah Harta)</span></div>
+          <div class="label"><span class="opt-key opt-key-pisah" aria-hidden="true"></span><span data-i18n="kpiPisahLabel">Pisah Harta: total pajak</span> <span class="tip-icon" data-i18n-tip="kpiPisahTip" data-tip="Suami dan istri masing-masing melapor SPT sendiri. Tarif efektif adalah pajak sebagai porsi gaji kotor.">?</span></div>
           <div class="value" id="kpiPisah">—</div>
           <div class="sub" id="kpiPisahRate"></div>
         </div>
         <div class="metric card">
-          <div class="label"><span class="opt-key opt-key-gabung" aria-hidden="true"></span><span data-i18n="kpiGabungLabel">Total pajak, lapor digabung (Gabung Harta)</span></div>
+          <div class="label"><span class="opt-key opt-key-gabung" aria-hidden="true"></span><span data-i18n="kpiGabungLabel">Gabung Harta: total pajak</span> <span class="tip-icon" data-i18n-tip="kpiGabungTip" data-tip="Suami dan istri melapor satu SPT atas penghasilan gabungan.">?</span></div>
           <div class="value" id="kpiGabung">—</div>
           <div class="sub" id="kpiGabungRate"></div>
         </div>
@@ -313,7 +313,7 @@
 
       <section class="chart-card card" style="margin-bottom:18px;">
         <div class="chart-head">
-          <h2 data-i18n="chart2Title">Pajak Gabung Harta dikurangi pajak Pisah Harta</h2>
+          <h2 data-i18n="chart2Title">Selisih pajak (Gabung − Pisah)</h2>
           <div class="btn-cluster">
             <button class="btn-secondary btn-sm" id="chart2SvgBtn" data-i18n-title="btnSvgTitle" title="Unduh grafik ini sebagai SVG">⬇ SVG</button>
             <button class="btn-secondary btn-sm" id="chart2PngBtn" data-i18n-title="btnPngTitle" title="Unduh grafik ini sebagai PNG">⬇ PNG</button>
@@ -321,27 +321,27 @@
             <button class="btn-secondary btn-sm btn-icon" id="chartResetZoom2" data-i18n-title="btnResetZoomTitle" title="Atur ulang zoom">⟳</button>
           </div>
         </div>
-        <p class="muted" style="font-size:0.84rem;margin-top:4px;" data-i18n="chart2Sub">Di atas nol, lapor terpisah (Pisah Harta) lebih murah sebesar selisih itu. Di bawah nol, lapor digabung (Gabung Harta) yang lebih murah.</p>
+        <p class="muted" style="font-size:0.84rem;margin-top:4px;" data-i18n="chart2Sub">Di atas nol, Pisah Harta lebih murah sebesar selisih itu. Di bawah nol, Gabung Harta yang lebih murah.</p>
         <div class="legend" id="chartLegend2"></div>
         <div class="canvas-wrap">
           <canvas id="chartCanvas2"></canvas>
         </div>
         <div class="hover-box" id="hoverBox2" data-i18n="hoverBox2">Arahkan kursor ke grafik untuk melihat selisihnya.</div>
         <div class="crossover-box">
-          <h3 data-i18n="crossoverTitle">Titik pergantian cara yang lebih murah</h3>
+          <h3 data-i18n="crossoverTitle">Analisis breakeven</h3>
           <div id="crossoverInfo"></div>
         </div>
       </section>
 
       <section class="summary-card card">
-        <h3 data-i18n="summaryTitle">Angka rumah tangga Anda, per tahun</h3>
+        <h3 data-i18n="summaryTitle">Ringkasan pada gaji saat ini, per tahun</h3>
         <div class="summary-grid" id="summaryGrid"></div>
       </section>
 
       <!-- TAX AT EACH SALARY (opens from Show table) -->
       <section class="detail-section card" id="detailSection">
         <div class="detail-head">
-          <h3 data-i18n="detailTitle">Pajak pada tiap gaji rumah tangga</h3>
+          <h3 data-i18n="detailTitle">Rincian detail per gaji</h3>
           <div class="btn-cluster">
             <button class="btn-secondary btn-sm" id="downloadBtn" type="button" data-i18n-title="btnCsvTitle" title="Unduh tabel ini sebagai CSV">⬇ CSV</button>
           </div>
