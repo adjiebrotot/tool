@@ -29,6 +29,135 @@ And add the font import at the top of your page's `style.css`:
 
 ---
 
+## Finance Tool Skeleton (the rules every finance tool keeps)
+
+Every finance tool on the site (Rent vs Own and its Sensitivity page, Pisah vs
+Gabung, Borrowing Capacity, Finance vs Cash, Financial Freedom, the DCA Scenario
+Explorer and Portfolio, Cost of Living) is built on one skeleton, so what a
+reader learns on one page carries to the next. `_ref/form-check.mjs` holds the
+pages to it; a new finance tool joins its `PAGES` list and the `FINANCE` list in
+`shared.js` (which switches on SharedBounds' native limits and SharedSlider's
+automatic pass).
+
+### The seven rules
+
+1. **Group** related inputs in a `.field-group`, generic before specific.
+2. **Self-explanatory titles, tooltips for the explanation.** Keep the field's
+   own term, including the jargon the reader will meet elsewhere (Risk-Free
+   Rate, Binding constraint, Pisah Harta, Net equity), and give it a one-line
+   plain tooltip. Do not rename jargon into a sentence. Abbreviations are the
+   exception: spell them out with the term in brackets ("Income cover (NSR)",
+   "safe withdrawal rate (SWR)", "Estimated", not "Est.").
+3. **The control fits the value.** A figure the reader knows exactly is typed;
+   a guess (growth, inflation, a what-if) is a slider; a small count is a
+   segmented control (`SharedSeg.fromSelect`, the `<select>` stays the field the
+   tool reads and saves).
+4. **The same structure on every tool** (below).
+5. **Every input and output states its unit** (below).
+6. **The form enforces the bounds** (below).
+7. **Colour means the same thing everywhere** (below).
+
+### Layout
+
+Inputs, top to bottom: Quick Start and save/open, a first tab with the four to
+six figures anyone knows (**Currency first**), topic tabs, then a last tab
+called **Assumptions** (inflation, growth, simulation settings, fill timing).
+Keep old tab ids when a tab is renamed (`data-tab="settings"` / `#tab-settings`
+stay on Financial Freedom and DCA), so saved tabs and scenario files still land.
+
+Outputs, top to bottom: the one-sentence answer (`.verdict`), three or four KPI
+cards with the answer first, the main chart, other charts, per-option tiles,
+tables (folded), and last the **What this assumes** card.
+
+A display option that changes how results READ (today's money, chart metric,
+candlesticks) sits beside the results it changes, never in the input panel.
+
+### The answer: `.verdict` and `SharedVerdict`
+
+```js
+SharedVerdict.set('verdict', { tone: '', title: 'Owning ends <span class="v-num">$84,200</span> ahead after 30 years.', body: '…' });
+```
+
+`tone` is `''` for a fair comparison of options (rent or own, two loans, two
+portfolios), `good` / `bad` / `warn` only for a pass or miss against a goal the
+reader set. Handle ties and missing input in words ("ended level", "enter both
+salaries"), never with a dash inside the sentence. When the options put
+different money in, compare the return on it, not the final value (the DCA
+verdicts).
+
+### Units
+
+The unit is the field's affix, never the label: currency before the number
+(`.prefix`), everything else after it (`.suffix`). Vocabulary: `%`, `%/yr`,
+`yrs`, `/mo`, `/yr`, `days`, `×`, `months`, `paths`, `points`. A per-period
+amount pairs with a period select (`a week / a month / a year`), and the amount
+follows its period (`SharedFreq`). A field whose unit sits in a table's column
+header declares it with `data-unit`; a field with no unit at all (a seed, a day
+of month) carries `data-unitless`. Sentence-style rows ("From age 28 to 33",
+"Grows 3 %/yr from today") keep the unit words in the sentence.
+
+Outputs: every y axis names its unit (`Price ($)`, `Total tax (Rp a year)`,
+`Balance, today's money`), every x axis is titled, and every table says its
+unit once over it (`.unit-note`).
+
+### Bounds
+
+A typed number declares its range: native `min` / `max` / `step` on a number
+field, `data-min` / `data-max` on a money text field. `SharedBounds` pulls a
+value past either end back on change and says so ("Max 30 %/yr"); a blank field
+stays blank. A field whose unit changes with a select (a share of living or an
+amount) moves its `data-max` with it. `data-unbounded` opts out a threshold in
+the price's own units. Sliders show both ends under them and take a typed value
+in their readout (`SharedSlider`; call `SharedSlider.enhance(range)` for a
+slider built after load, with `data-readout` naming its readout).
+
+### Detail
+
+One Simple/Detailed control per group it changes, labelled **Detail**, first in
+that group.
+
+### Colour
+
+Options a reader weighs (rent or own, separate or joint, loan offers,
+scenarios, portfolios, assets) take the neutral sequence from `SharedPalette`:
+blue, gold, teal, rose, purple, light blue, never red. Red and the positive blue
+stay for direction: money out, a loss, a bar to clear. A picked colour is stored;
+an unpicked one is a palette slot resolved in the current theme, so it follows
+dark and light. Nothing is typed in as a hex: candles and histograms read
+`--line-c` / `--line-b`, cash reads `--muted`, status boxes read the
+`--info-*` / `--error-*` / `--success-*` / `--warning-*` tokens.
+
+Why blue and gold first: CIEDE2000 distance under full-severity colour-vision
+deficiency (Machado 2009):
+
+| Pair | Theme | Normal | Protan | Deutan | Tritan |
+| --- | --- | --- | --- | --- | --- |
+| blue / gold | light | 49.2 | 55.9 | 55.9 | 69.5 |
+| blue / gold | dark | 44.2 | 45.2 | 48.8 | 40.9 |
+| blue / teal | light | 33.8 | 32.3 | 26.4 | **8.1** |
+| blue / teal | dark | 27.5 | 25.5 | 21.1 | **6.2** |
+| blue / purple | light | 27.8 | 14.8 | **9.4** | 51.8 |
+
+Blue and gold stay apart for every kind; teal fails tritanopia and the light
+purple fails deuteranopia, so they come later in the sequence. In dark mode
+gold is also the warning text colour, so a gold series never carries a warning
+meaning of its own.
+
+### Tables and caveats
+
+A year-by-year table opens closed behind **Show table** (`SharedFold.attach(card,
+{key, bodies})`); its CSV button exports it either way. Every tool closes with
+a `.assumes-card` listing what the model includes and leaves out, with the
+figures that drive it.
+
+### Page text
+
+No em-dashes in page text, tips or placeholders; a lone `—` marking an empty
+cell is fine. When a tour changes, bump its `seenKey` version so returning
+readers see it again (checks treat any `<tool>-tour-vN-seen` as seen).
+
+---
+
 ## CSS Variables & Theming
 
 ### `dark.css` (default — applies to `:root`)
@@ -855,8 +984,10 @@ dropping the button:
    instance — must live on its own control. `dcasimulator` keeps that on
    **Clear all** in the Data tab.
 
-Keep Reset on a tool with no scenarios (`pisahvsgabung`, `financingvscash`), and
-keep it where it means *empty the canvas* rather than *go back to the start*
+Every finance tool now has Quick Start scenarios and no Reset: Pisah vs Gabung
+dropped its button once its "Equal incomes, no children" scenario covered it. Keep Reset on a tool
+with no scenarios, and keep it where it means *empty the canvas* rather than *go
+back to the start*
 (`sankeycreator`'s Reset restores the demo, Clear empties the table).
 
 ```css
@@ -1427,11 +1558,10 @@ const fmt = {
 
 | Purpose | CSS Variable |
 |---------|-------------|
-| Primary/default scenario line | `--line-a` / `--accent` |
-| Secondary scenario line | `--line-b` |
-| Third scenario line | `--line-c` / `--accent2` (mint) |
-| Fourth scenario line | `--line-d` / `--accent3` (rose) |
-| Fifth scenario line | `--line-e` (gold) |
+| First option line | `--line-a` (blue) |
+| Second option line | `--gold` |
+| Third, fourth, fifth option lines | `--line-c` (teal), `--line-d` (rose), `--line-e` (purple) |
+| Money out, a loss, a bar to clear | `--line-b` / `--negative` (red, never an option) |
 | Slider value labels | `--accent` |
 | Muted labels / help text | `--muted` |
 | Positive deltas (text/badge on dark) | `--positive-em` / `--data-pos-em` |
@@ -1444,7 +1574,7 @@ const fmt = {
 
 **Colour semantics**:
 - Blue family (`--accent`, `--positive`) → brand leadership + critical positive data
-- Red family (`--negative`, `--accent3` dark) → critical negative / destructive / error
+- Red family (`--negative`, `--line-b`) → direction only: money out, a loss, a bar to clear, an error; never an option a reader is choosing between (see Finance Tool Skeleton → Colour)
 - Mint (`--accent2`) → secondary supportive / calm / soft success
 - Rose / gold (`--accent3` light, `--gold`) → accent / warm emphasis / tertiary
 - Monospace (`DM Mono`) → all numeric values and data

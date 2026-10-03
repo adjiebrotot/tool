@@ -32,6 +32,12 @@ build step, no server.
   licence + made-in for plain tools.
 - **Mini cache**: wire `Persist.init('<toolname>', …)` from `shared.js` so returning users keep
   their work; use `extra` for non-form state and `data-no-persist` for transient controls.
+- **Finance tools**: follow **Finance Tool Skeleton** in the design reference and the seven-rule
+  checklist in `.claude/skills/new-tool/SKILL.md`: Currency first, an Assumptions tab last, the
+  answer sentence first in the results and a What this assumes card last, units inside every
+  field and on every axis, bounds the form enforces, jargon kept with a one-line tip (spell out
+  abbreviations only), neutral options in `SharedPalette` colours and never red. Add the page to
+  `FINANCE` in `shared.js` and `PAGES` in `_ref/form-check.mjs`.
 
 ## When done
 
