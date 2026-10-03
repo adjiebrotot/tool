@@ -213,6 +213,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - URL: https://tool.adjiebrotots.com/costofliving-comparator/
 - Best for: users comparing cities before relocation, salary negotiation, or geoarbitrage decisions.
 - What it does: compares cost of living across cities to estimate where income goes furthest.
+- Exchange rates: money converted between currencies uses a live daily rate fetched in the browser (ExchangeRate-API, with a fallback feed), while the cost estimates stay on the rate the cost-of-living indices were priced at.
 
 ### Video to GIF Converter
 

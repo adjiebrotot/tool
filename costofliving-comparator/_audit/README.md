@@ -24,4 +24,12 @@ column's money where it was, including through a sweep of 60 random switches,
 unticking and ticking again, and a reload. Every Savings and Required salary
 cell is replayed from the raw JSON and the page state, without the tool's code.
 
-Run: `node run.mjs` and `node freq.mjs`
+`live.mjs` audits the live exchange rates, with every feed mocked. Money that
+crosses the border must move at the live rate, while the index estimate stays
+on the bundled rate the indices were priced at. A failing feed falls through to
+the next, every feed failing leaves the bundled rate, a rate far off the bundled
+one (a redenomination the feed got wrong) or a feed older than the bundled file
+is not trusted, a late rate redraws the results, and a saved rate is reused
+until it is six hours old.
+
+Run: `node run.mjs`, `node freq.mjs` and `node live.mjs`
