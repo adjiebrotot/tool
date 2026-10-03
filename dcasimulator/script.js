@@ -529,14 +529,14 @@ function renderScenarioConfig(){
           <label>Amount per top-up <span class="tip-icon" data-tip="How much is invested on each purchase date, before any yearly increase is applied.">?</span></label>
           <div class="currency-wrap">
             <span class="prefix" id="cfgAmountPrefix">${escapeHtml(sym)}</span>
-            <input class="currency-input money-input" id="cfgAmount" type="text" inputmode="numeric" value="${fmtN(sec.amount)}"/>
+            <input class="currency-input money-input" id="cfgAmount" type="text" inputmode="numeric" data-min="0" data-max="100000000000" value="${fmtN(sec.amount)}"/>
           </div>
         </div>
         <div class="sec-row">
           <label>Yearly increase <span class="tip-icon" data-tip="Grows the invested amount once a year and compounds: 10 makes year 2 +10% and year 3 +21%. 0 keeps it flat.">?</span></label>
           <div class="currency-wrap">
-            <input class="currency-input money-input has-suffix" id="cfgYearlyInc" type="text" inputmode="numeric" value="${fmtN(sec.yearlyIncrease||0)}"/>
-            <span class="suffix">%</span>
+            <input class="currency-input money-input has-suffix" id="cfgYearlyInc" type="text" inputmode="numeric" data-min="0" data-max="100" value="${fmtN(sec.yearlyIncrease||0)}"/>
+            <span class="suffix">%/yr</span>
           </div>
         </div>
       </div>
