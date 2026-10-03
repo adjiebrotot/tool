@@ -7,32 +7,32 @@ var Tips = window.RVO_TIPS || {};
 let lang = (window.DEFAULT_LANG === 'id') ? 'id' : 'en';
 const LANG_SENS = {
   en: {
-    sensTitle: 'Rent vs Own — Sensitivity Tool',
-    sensSubtitle: 'Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.',
+    sensTitle: 'Rent vs Own: Sensitivity Tool',
+    sensSubtitle: 'Compare several rent-or-buy scenarios side by side, with the same model as the main calculator.',
     btnBack: '← Back',
     labelCurrency: 'Currency:',
     labelMetric: 'Metric:',
-    labelAtYear: 'At Year:',
+    labelAtYear: 'At year:',
     yearHint: "(clamped to each scenario's horizon)",
     btnCSV: '⬇ CSV',
     btnUploadCSV: '⬆ CSV',
     btnCompareAll: 'Compare',
     csvParseError: 'Could not read this CSV. Make sure it is a sensitivity CSV exported from this tool.',
-    gcTitle: 'All Scenarios',
+    gcTitle: 'All scenarios',
     gcScenariosLabel: 'Scenarios:',
     gcShowOwn: 'Own',
     gcShowRent: 'Rent',
-    metricNetEquity: 'Net Equity',
-    metricLiquidCash: 'Liquid Cash',
-    metricAccumCost: 'Accum. Cost',
+    metricNetEquity: 'Net equity',
+    metricLiquidCash: 'Cash in hand',
+    metricAccumCost: 'Total cost so far',
     tableHeaderParam: 'Parameter',
     tableHeaderUnit: 'Unit',
     btnAddScenario: '+ Scenario',
     scenPlaceholder: 'Scenario',
-    cappedAt: (n) => `capped at yr ${n}`,
-    ownOutputLabel: (ml) => `Own — ${ml}`,
-    rentOutputLabel: (ml) => `Rent — ${ml}`,
-    deltaLabel: 'Δ Own − Rent',
+    cappedAt: (n) => `capped at year ${n}`,
+    ownOutputLabel: (ml) => `Own: ${ml}`,
+    rentOutputLabel: (ml) => `Rent: ${ml}`,
+    deltaLabel: 'Own minus rent',
     actionsLabel: 'Per-scenario',
     dlOwnTitle: 'Download Own cashflow (CSV)',
     dlRentTitle: 'Download Rent cashflow (CSV)',
@@ -52,103 +52,105 @@ const LANG_SENS = {
     boolEnabled: 'Enabled',
     dupTitle: 'Duplicate',
     removeTitle: 'Remove',
-    sepGeneral: 'General',
-    sepOwn: 'Own — Property & Mortgage',
-    sepRent: 'Rent — Rental Payments & Costs',
-    pHorizon: 'Horizon',
-    pRiskFreeRate: 'Risk-Free Rate',
-    pInitialCash: 'Initial Cash',
-    pMonthlyBudget: 'Monthly Housing Budget',
-    pMonthlyBudgetIncrease: 'Budget Annual Increase',
-    pPropertyPrice: 'Property Price',
-    pDownPaymentPct: 'Down Payment',
-    pMortgageType: 'Mortgage Type',
-    pMortgageRate: 'Mortgage Rate',
-    pMortgageTerm: 'Mortgage Term',
-    pHouseGrowth: 'House Growth (RPPI)',
-    pSellingCost: 'Selling Cost',
-    pSetupCost: 'Setup Cost',
-    pSetupCostType: 'Setup Cost Type',
-    pOwnOngoingCost: 'Ongoing Cost (Own)',
-    pOwnOngoingCostFreq: 'Own Cost Frequency',
-    pOwnOngoingCostType: 'Own Cost Type',
-    pOwnOngoingInflation: 'Own Cost Inflation',
-    pCostInterestOnly: 'Cost = Interest Only',
-    pRentAmount: 'Rent Amount',
-    pRentFreq: 'Rent Frequency',
-    pRentInflation: 'Rent Inflation',
-    pRentOngoingCost: 'Ongoing Cost (Rent)',
-    pRentOngoingCostFreq: 'Rent Cost Frequency',
-    pRentOngoingCostType: 'Rent Cost Type',
-    pRentOngoingInflation: 'Rent Cost Inflation',
-    pMortgageMode: 'Mortgage Mode',
-    pOwnCostsMode: 'Own Costs Mode',
-    pRentCostsMode: 'Rent Costs Mode',
+    sepGeneral: 'Assumptions and your cash',
+    sepOwn: 'Home: price, mortgage and costs',
+    sepRent: 'Rent: payments and costs',
+    pHorizon: 'Years to compare',
+    pRiskFreeRate: 'Spare cash earns (risk-free rate)',
+    pInitialCash: 'Cash you have now',
+    pMonthlyBudget: 'Monthly housing budget',
+    pMonthlyBudgetIncrease: 'Budget rises each year',
+    pPropertyPrice: 'Home price',
+    pDownPaymentPct: 'Down payment',
+    pMortgageType: 'Mortgage type',
+    pMortgageRate: 'Mortgage rate',
+    pMortgageTerm: 'Mortgage term',
+    pHouseGrowth: 'Home value growth (RPPI)',
+    pSellingCost: 'Cost of selling',
+    pSetupCost: 'One-off buying costs',
+    pSetupCostType: 'Buying costs as',
+    pOwnOngoingCost: 'Running costs of owning',
+    pOwnOngoingCostFreq: 'Owning costs, how often',
+    pOwnOngoingCostType: 'Owning costs as',
+    pOwnOngoingInflation: 'Owning costs rise each year',
+    pCostInterestOnly: 'Count interest only as a cost',
+    pRentAmount: 'Rent you pay',
+    pRentFreq: 'Rent, how often',
+    pRentInflation: 'Rent rises each year',
+    pRentOngoingCost: 'Running costs of renting',
+    pRentOngoingCostFreq: 'Renting costs, how often',
+    pRentOngoingCostType: 'Renting costs as',
+    pRentOngoingInflation: 'Renting costs rise each year',
+    pMortgageMode: 'Mortgage detail',
+    pOwnCostsMode: 'Owning costs detail',
+    pRentCostsMode: 'Renting costs detail',
     segSimple: 'Simple',
     segDetailed: 'Detailed',
-    pRatePeriodN: (k) => `Rate Period ${k}`,
-    pSetupCostN: (k) => `Setup Cost ${k}`,
-    pOwnOngoingN: (k) => `Own Ongoing Cost ${k}`,
-    pRentOngoingN: (k) => `Rent Ongoing Cost ${k}`,
-    btnAddPeriod: '+ Rate Period',
-    btnAddSetupCost: '+ Setup Cost',
-    btnAddOngoingCost: '+ Ongoing Cost',
+    pRatePeriodN: (k) => `Rate, period ${k}`,
+    pSetupCostN: (k) => `Buying cost ${k}`,
+    pOwnOngoingN: (k) => `Owning running cost ${k}`,
+    pRentOngoingN: (k) => `Renting running cost ${k}`,
+    btnAddPeriod: '+ Rate period',
+    btnAddSetupCost: '+ Buying cost',
+    btnAddOngoingCost: '+ Running cost',
     optFixed: 'Fixed',
     optFloating: 'Floating',
-    uYr: 'Yr',
-    uToYr: 'to yr',
-    lblInfl: 'infl.',
+    uYr: 'Year',
+    uToYr: 'to year',
+    lblInfl: 'rises',
     optPerYear: '/ yr',
     optPerMonth: '/ mo',
     optPerWeek: '/ wk',
     optPctBuyPrice: '% of buy price',
     notUsed: 'not used in this scenario',
     uYrs: 'yrs',
-    uPctPa: '% p.a.',
+    uPctPa: '%/yr',
     uAuto: '0 = auto',
     uPctOfPrice: '% of price',
-    uPctPaCagr: '% p.a. CAGR',
+    uPctPaCagr: '%/yr',
     uPctOfSale: '% of sale price',
-    optPI: 'P&I — Principal & Interest',
-    optIO: 'IO — Interest Only',
+    optPI: 'Principal and interest (P&I)',
+    optIO: 'Interest only (IO)',
     optFixedAmount: 'Fixed amount ($)',
-    optPctPropertyPrice: '% of property price',
-    optYearly: 'Yearly',
-    optMonthly: 'Monthly',
-    optWeekly: 'Weekly',
-    optFixedDollar: 'Fixed $ amount',
-    optPctPropertyValue: '% of property value',
-    optPctAnnualRent: '% of annual rent',
+    optPctPropertyPrice: '% of home price',
+    optYearly: 'a year',
+    optMonthly: 'a month',
+    optWeekly: 'a week',
+    optFixedDollar: 'Fixed amount',
+    optPctPropertyValue: '% of home value',
+    optPctAnnualRent: '% of yearly rent',
     pctOfRent: '% of rent',
     pctOfValue: '% of value',
+    hintMax: 'Max',
+    hintMin: 'Min',
   },
   id: {
-    sensTitle: 'Rent vs Own — Sensitivity Tool',
-    sensSubtitle: 'Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti — membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.',
+    sensTitle: 'Sewa vs Beli: Alat Sensitivitas',
+    sensSubtitle: 'Bandingkan beberapa skenario sewa atau beli secara berdampingan, dengan model yang sama seperti kalkulator utama.',
     btnBack: '← Kembali',
     labelCurrency: 'Mata Uang:',
     labelMetric: 'Metrik:',
-    labelAtYear: 'Pada Tahun:',
+    labelAtYear: 'Di tahun:',
     yearHint: '(dibatasi oleh jangka waktu masing-masing skenario)',
     btnCSV: '⬇ CSV',
     btnUploadCSV: '⬆ CSV',
     btnCompareAll: 'Bandingkan',
     csvParseError: 'Tidak dapat membaca CSV ini. Pastikan file adalah CSV sensitivitas yang diekspor dari alat ini.',
-    gcTitle: 'Semua Skenario',
+    gcTitle: 'Semua skenario',
     gcScenariosLabel: 'Skenario:',
     gcShowOwn: 'Beli',
     gcShowRent: 'Sewa',
-    metricNetEquity: 'Kekayaan Bersih',
-    metricLiquidCash: 'Uang Tunai',
-    metricAccumCost: 'Biaya Kumulatif',
+    metricNetEquity: 'Kekayaan bersih',
+    metricLiquidCash: 'Kas di tangan',
+    metricAccumCost: 'Total biaya sejauh ini',
     tableHeaderParam: 'Parameter',
     tableHeaderUnit: 'Unit',
     btnAddScenario: '+ Skenario',
     scenPlaceholder: 'Skenario',
-    cappedAt: (n) => `dipotong di thn ${n}`,
-    ownOutputLabel: (ml) => `Beli — ${ml}`,
-    rentOutputLabel: (ml) => `Sewa — ${ml}`,
-    deltaLabel: 'Δ Beli − Sewa',
+    cappedAt: (n) => `dibatasi di tahun ke-${n}`,
+    ownOutputLabel: (ml) => `Beli: ${ml}`,
+    rentOutputLabel: (ml) => `Sewa: ${ml}`,
+    deltaLabel: 'Beli dikurangi sewa',
     actionsLabel: 'Per-skenario',
     dlOwnTitle: 'Unduh arus kas Beli (CSV)',
     dlRentTitle: 'Unduh arus kas Sewa (CSV)',
@@ -165,52 +167,52 @@ const LANG_SENS = {
     boolEnabled: 'Aktif',
     dupTitle: 'Duplikat',
     removeTitle: 'Hapus',
-    sepGeneral: 'Umum',
-    sepOwn: 'Beli — Properti & KPR',
-    sepRent: 'Sewa — Pembayaran & Biaya',
-    pHorizon: 'Jangka Waktu',
-    pRiskFreeRate: 'Suku Bunga Bebas Risiko',
-    pInitialCash: 'Modal Awal',
-    pMonthlyBudget: 'Anggaran Rumah Bulanan',
-    pMonthlyBudgetIncrease: 'Kenaikan Anggaran Tahunan',
-    pPropertyPrice: 'Harga Properti',
+    sepGeneral: 'Asumsi dan kas Anda',
+    sepOwn: 'Rumah: harga, KPR, dan biaya',
+    sepRent: 'Sewa: pembayaran dan biaya',
+    pHorizon: 'Jangka waktu perbandingan',
+    pRiskFreeRate: 'Imbal hasil kas (bebas risiko)',
+    pInitialCash: 'Kas yang Anda miliki sekarang',
+    pMonthlyBudget: 'Anggaran perumahan bulanan',
+    pMonthlyBudgetIncrease: 'Kenaikan anggaran per tahun',
+    pPropertyPrice: 'Harga rumah',
     pDownPaymentPct: 'Uang Muka (DP)',
-    pMortgageType: 'Tipe KPR',
+    pMortgageType: 'Jenis KPR',
     pMortgageRate: 'Bunga KPR',
-    pMortgageTerm: 'Jangka Waktu KPR',
-    pHouseGrowth: 'Kenaikan Harga Properti (RPPI)',
-    pSellingCost: 'Biaya Penjualan',
-    pSetupCost: 'Biaya Awal Pembelian',
-    pSetupCostType: 'Tipe Biaya Awal',
-    pOwnOngoingCost: 'Biaya Rutin (Beli)',
-    pOwnOngoingCostFreq: 'Frekuensi Biaya Rutin Beli',
-    pOwnOngoingCostType: 'Tipe Biaya Rutin Beli',
-    pOwnOngoingInflation: 'Inflasi Biaya Rutin Beli',
-    pCostInterestOnly: 'Biaya = Bunga Saja',
-    pRentAmount: 'Biaya Sewa',
-    pRentFreq: 'Frekuensi Sewa',
-    pRentInflation: 'Kenaikan Sewa Tahunan',
-    pRentOngoingCost: 'Biaya Rutin (Sewa)',
-    pRentOngoingCostFreq: 'Frekuensi Biaya Rutin Sewa',
-    pRentOngoingCostType: 'Tipe Biaya Rutin Sewa',
-    pRentOngoingInflation: 'Inflasi Biaya Rutin Sewa',
-    pMortgageMode: 'Mode KPR',
-    pOwnCostsMode: 'Mode Biaya Beli',
-    pRentCostsMode: 'Mode Biaya Sewa',
+    pMortgageTerm: 'Jangka waktu KPR',
+    pHouseGrowth: 'Kenaikan nilai rumah (RPPI)',
+    pSellingCost: 'Biaya menjual',
+    pSetupCost: 'Biaya awal pembelian',
+    pSetupCostType: 'Biaya awal sebagai',
+    pOwnOngoingCost: 'Biaya rutin kepemilikan',
+    pOwnOngoingCostFreq: 'Biaya kepemilikan, seberapa sering',
+    pOwnOngoingCostType: 'Biaya kepemilikan sebagai',
+    pOwnOngoingInflation: 'Kenaikan biaya kepemilikan per tahun',
+    pCostInterestOnly: 'Hanya bunga dihitung sebagai biaya',
+    pRentAmount: 'Sewa yang Anda bayar',
+    pRentFreq: 'Sewa, seberapa sering',
+    pRentInflation: 'Kenaikan sewa per tahun',
+    pRentOngoingCost: 'Biaya rutin menyewa',
+    pRentOngoingCostFreq: 'Biaya menyewa, seberapa sering',
+    pRentOngoingCostType: 'Biaya menyewa sebagai',
+    pRentOngoingInflation: 'Kenaikan biaya menyewa per tahun',
+    pMortgageMode: 'Rincian KPR',
+    pOwnCostsMode: 'Rincian biaya kepemilikan',
+    pRentCostsMode: 'Rincian biaya menyewa',
     segSimple: 'Sederhana',
     segDetailed: 'Rinci',
-    pRatePeriodN: (k) => `Periode Bunga ${k}`,
-    pSetupCostN: (k) => `Biaya Awal ${k}`,
-    pOwnOngoingN: (k) => `Biaya Rutin Beli ${k}`,
-    pRentOngoingN: (k) => `Biaya Rutin Sewa ${k}`,
-    btnAddPeriod: '+ Periode Bunga',
-    btnAddSetupCost: '+ Biaya Awal',
-    btnAddOngoingCost: '+ Biaya Rutin',
+    pRatePeriodN: (k) => `Bunga, periode ${k}`,
+    pSetupCostN: (k) => `Biaya awal ${k}`,
+    pOwnOngoingN: (k) => `Biaya rutin kepemilikan ${k}`,
+    pRentOngoingN: (k) => `Biaya rutin menyewa ${k}`,
+    btnAddPeriod: '+ Periode bunga',
+    btnAddSetupCost: '+ Biaya awal',
+    btnAddOngoingCost: '+ Biaya rutin',
     optFixed: 'Tetap',
     optFloating: 'Mengambang',
-    uYr: 'Thn',
-    uToYr: 's.d. thn',
-    lblInfl: 'infl.',
+    uYr: 'Tahun',
+    uToYr: 'hingga tahun',
+    lblInfl: 'naik',
     optPerYear: '/ thn',
     optPerMonth: '/ bln',
     optPerWeek: '/ mgg',
@@ -220,20 +222,22 @@ const LANG_SENS = {
     uPctPa: '%/thn',
     uAuto: '0 = otomatis',
     uPctOfPrice: '% dari harga',
-    uPctPaCagr: '%/thn CAGR',
+    uPctPaCagr: '%/thn',
     uPctOfSale: '% dari harga jual',
-    optPI: 'P&I — Pokok & Bunga',
-    optIO: 'IO — Bunga Saja',
+    optPI: 'Pokok dan bunga (P&I)',
+    optIO: 'Bunga saja (IO)',
     optFixedAmount: 'Jumlah Tetap ($)',
-    optPctPropertyPrice: '% dari harga properti',
-    optYearly: 'Tahunan',
-    optMonthly: 'Bulanan',
-    optWeekly: 'Mingguan',
-    optFixedDollar: 'Jumlah Tetap',
-    optPctPropertyValue: '% dari nilai properti',
+    optPctPropertyPrice: '% dari harga rumah',
+    optYearly: 'per tahun',
+    optMonthly: 'per bulan',
+    optWeekly: 'per minggu',
+    optFixedDollar: 'Jumlah tetap',
+    optPctPropertyValue: '% dari nilai rumah',
     optPctAnnualRent: '% dari sewa tahunan',
     pctOfRent: '% dari sewa',
     pctOfValue: '% dari nilai',
+    hintMax: 'Maks.',
+    hintMin: 'Min.',
   }
 };
 function T(key){ return LANG_SENS[lang][key] !== undefined ? LANG_SENS[lang][key] : (LANG_SENS.en[key] !== undefined ? LANG_SENS.en[key] : key); }
@@ -441,7 +445,14 @@ function getMetricValues(i){
   if(metric==='cash')      return {own:row.ownCash,      rent:row.rentCash};
   return                          {own:row.ownAccumCost, rent:row.rentAccumCost};
 }
-function deltaColor(d){ return metric==='cost' ? (d>0?'neg-val':'pos-val') : (d>=0?'pos-val':'neg-val'); }
+/* Own and rent are two fair options, so the difference wears the colour of
+   the one that comes out ahead (blue own, gold rent), as on the main page,
+   rather than gain-and-loss blue and red. For costs, ahead means cheaper. */
+function deltaColor(d){
+  if(Math.abs(d) < 0.5) return '';
+  const ownAhead = metric==='cost' ? d < 0 : d > 0;
+  return ownAhead ? 'own-val' : 'rent-val';
+}
 const symOf = sc => (sc && sc.currencySymbol) || '$';
 
 /* ── DETAILED MODE: per-scenario list seeding & helpers ── */
@@ -1084,12 +1095,12 @@ function scenarioChartData(si, met){
     labels: rows.map(r=>r.year),
     series: [
       {label:T('seriesOwn'),  data:rows.map(r=>r[ownKey]||0),  color:cssVar('--line-a')},
-      {label:T('seriesRent'), data:rows.map(r=>r[rentKey]||0), color:cssVar('--line-b')},
+      {label:T('seriesRent'), data:rows.map(r=>r[rentKey]||0), color:cssVar('--gold')},
     ],
   };
 }
 function chartModalTitle(){
-  return `${scenarios[chartModal.si].name||T('scenPlaceholder')} — ${metricLabelOf(chartModal.met)}`;
+  return `${scenarios[chartModal.si].name||T('scenPlaceholder')}: ${metricLabelOf(chartModal.met)}`;
 }
 function chartModalLegendItems(){
   // Built from the same series the chart is rendered from, so each entry
@@ -1187,12 +1198,14 @@ function closeChartModal(){
    sharing the scenario's colour. Per-scenario include/colour pickers plus
    Own/Rent visibility toggles, all the standard graph exports (SVG/PNG/copy/
    reset) and metric switching. */
-const GC_PALETTE = ['#4F8DFD','#E8743B','#19A979','#945ECF','#E0529C','#13A4B4','#C9A227','#5B6470','#D1495B','#2E86AB'];
+/* Scenario lines take the design system's neutral sequence (blue, gold,
+   teal, rose, purple): a scenario is not good or bad, so none is red. */
+function gcColour(i){ return SharedPalette.at(i); }
 let globalChart = { el:null, chart:null, met:'netEquity', include:[], colors:[], showOwn:true, showRent:true };
 
 function gcInitState(){
   globalChart.include = scenarios.map(()=>true);
-  globalChart.colors  = scenarios.map((_,i)=> GC_PALETTE[i % GC_PALETTE.length]);
+  globalChart.colors  = scenarios.map((_,i)=> gcColour(i));
   globalChart.showOwn = true;
   globalChart.showRent = true;
   globalChart.met = metric;
@@ -1218,15 +1231,22 @@ function gcChartData(){
     const res = scenarioResults[i];
     const rows = (res && res.rows) ? res.rows : [];
     if(!rows.length) return;
-    const color = globalChart.colors[i] || GC_PALETTE[i % GC_PALETTE.length];
+    const color = globalChart.colors[i] || gcColour(i);
     if(globalChart.showOwn)
-      series.push({label:`${sc.name||T('scenPlaceholder')} — ${T('seriesOwn')}`,  data:rows.map(r=>r[ownKey]||0),  color, dash:null});
+      series.push({label:`${sc.name||T('scenPlaceholder')}: ${T('seriesOwn')}`,  data:rows.map(r=>r[ownKey]||0),  color, dash:null});
     if(globalChart.showRent)
-      series.push({label:`${sc.name||T('scenPlaceholder')} — ${T('seriesRent')}`, data:rows.map(r=>r[rentKey]||0), color, dash:[5,4]});
+      series.push({label:`${sc.name||T('scenPlaceholder')}: ${T('seriesRent')}`, data:rows.map(r=>r[rentKey]||0), color, dash:[5,4]});
   });
   return {labels, series};
 }
-function gcTitle(){ return `${T('gcTitle')} — ${metricLabelOf(globalChart.met)}`; }
+function gcTitle(){ return `${T('gcTitle')}: ${metricLabelOf(globalChart.met)}`; }
+// <input type=color> takes only #rrggbb; tokens resolve to hex already, but
+// keep the picker safe if one ever resolves to rgb().
+function toHexColour(c){
+  const m = /^rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(String(c||''));
+  if(!m) return String(c||'#5A91E8').slice(0,7);
+  return '#'+[m[1],m[2],m[3]].map(n=>(+n).toString(16).padStart(2,'0')).join('');
+}
 function gcLegendItems(){
   // Own and rent share a scenario's colour and are told apart by the dash, so
   // the exported key has to carry the dash too.
@@ -1301,7 +1321,7 @@ function gcRenderScenarioPickers(){
   wrap.innerHTML = scenarios.map((sc,i)=>`
     <label class="gc-scen-item">
       <input type="checkbox" class="gc-include" data-i="${i}"${globalChart.include[i]?' checked':''}/>
-      <input type="color" class="gc-color" data-i="${i}" value="${escAttr(globalChart.colors[i]||GC_PALETTE[i%GC_PALETTE.length])}"/>
+      <input type="color" class="gc-color" data-i="${i}" value="${escAttr(toHexColour(globalChart.colors[i]||gcColour(i)))}"/>
       <span class="gc-scen-name">${escHtml(sc.name||(T('scenPlaceholder')+' '+(i+1)))}</span>
     </label>`).join('');
   wrap.querySelectorAll('.gc-include').forEach(el=>{
@@ -1372,8 +1392,14 @@ function wireEvents(){
       const p = PARAM_MAP[key];
       if(!p) return;
       let val = ptype==='integer' ? parseIntSafe(e.target.value, scenarios[si][key]) : parseFloatSafe(e.target.value, scenarios[si][key]);
+      const typed = val;
       if(p.min!=null) val = Math.max(p.min, val);
       if(p.max!=null) val = Math.min(p.max, val);
+      // A value past either end is pulled back to it, and says so (SharedBounds' note)
+      if(val !== typed && window.SharedBounds){
+        const unit = p.unitKey && p.unitKey!=='uAuto' ? ' '+T(p.unitKey) : '';
+        SharedBounds.hint(e.target, T(typed > val ? 'hintMax' : 'hintMin')+' '+fmtInputVal(val, ptype)+unit);
+      }
       // Percentages hold two decimals, as the main page's sliders do, so any
       // scenario typed here can be set there exactly
       if(ptype==='percent') val = Math.round(val*100)/100;

@@ -1,7 +1,7 @@
 /* Konfigurasi tur berpemandu untuk Alat Analisis Sensitivitas Sewa vs Beli
    (versi Indonesia). Mesin bersama (../../../tour-shared.js) membaca objek ini. */
 window.__TOUR = {
-  seenKey: 'rvos-id-tour-v1-seen',
+  seenKey: 'rvos-id-tour-v2-seen',
   launchLabel: '🧭 Ikuti tur',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
@@ -29,10 +29,10 @@ window.__TOUR = {
       // in its own row beside the metric buttons.
       target: ['#metricGroup', '#yearInput'],
       title: '② Pilih metrik dan tahun',
-      body: 'Bandingkan berdasarkan <strong>Ekuitas Bersih</strong>, <strong>Kas ' +
-            'Likuid</strong>, atau <strong>Biaya Kumulatif</strong>, lalu atur ' +
-            '<strong>tahun</strong> evaluasi. Begitulah cara menemukan titik breakeven ' +
-            'antar skenario.'
+      body: 'Bandingkan berdasarkan <strong>Kekayaan bersih</strong>, <strong>Kas di ' +
+            'tangan</strong>, atau <strong>Total biaya sejauh ini</strong>, lalu atur ' +
+            '<strong>tahun</strong> evaluasinya. <strong>Beli dikurangi sewa</strong> di ' +
+            'bawah berwarna sesuai pilihan yang unggul: biru untuk membeli, emas untuk menyewa.'
     },
     {
       target: '.csv-actions',
