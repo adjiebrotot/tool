@@ -1208,6 +1208,7 @@ function yearly(arr, years){
 var persist = null, rendering = false, stale = false, retireTimer = null;
 var chart1 = null, chart2 = null;
 var last = null;                 // the most recent computed result
+var stageView = 'out';           // the cashflow chart's stage ribbon, 'in' or 'out', when both are staged
 var tickerInfo = null;           // {ticker, stats, source} once a fetch succeeds
 
 function withAlpha(hex, a){
@@ -1658,6 +1659,26 @@ function setExpenseMode(mode, silent){
     b.classList.toggle('active', b.dataset.val === UI.expenseMode);
   });
   if(!silent){ if(persist) persist.schedule(); markStale(); }
+}
+
+/* The cashflow chart's stage switch. It only picks which list the chart
+   draws, so it redraws the charts from the last result instead of marking the
+   plan stale: nothing the engine computes depends on it. */
+function syncStageView(visible){
+  var g = $('stageViewGroup');
+  if(!g) return;
+  g.style.display = visible ? '' : 'none';
+  g.querySelectorAll('.seg-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.val === stageView);
+  });
+}
+
+function setStageView(view, silent){
+  stageView = view === 'in' ? 'in' : 'out';
+  syncStageView($('stageViewGroup') && $('stageViewGroup').style.display !== 'none');
+  if(silent) return;
+  if(persist) persist.schedule();
+  if(last) renderCharts(last);
 }
 
 function addStage(){
@@ -3063,8 +3084,16 @@ function renderCharts(res){
 
   /* The life stages, as sections of the x axis (STAGE_SECTIONS_PLUGIN). Only
      the reader's own stages: the base levels either side of them need no
-     name, and stopping work already has its own rule. */
-  var sections = res.P.stages.map(function(s){
+     name, and stopping work already has its own rule. One ribbon has room for
+     one list, so when both sides are staged the switch beside the title picks
+     which; with only one side staged, that side is drawn and the switch is
+     hidden. */
+  var outStages = res.P.stages || [], inStages = res.P.inStages || [];
+  var bothStaged = outStages.length > 0 && inStages.length > 0;
+  syncStageView(bothStaged);
+  var shownStages = bothStaged ? (stageView === 'in' ? inStages : outStages)
+                               : (outStages.length ? outStages : inStages);
+  var sections = shownStages.map(function(s){
     return {x0: y0 + (s.from - res.P.ageNow), x1: y0 + (s.to - res.P.ageNow), label: stageLabel(s)};
   }).filter(function(s){ return s.x1 > y0 && s.x0 < y0 + years; });
   var opts2 = baseOptions(res, t, 'hover2', ageOf, y0, y0 + years,
@@ -4031,6 +4060,9 @@ function wire(){
     btn.addEventListener('click', function(){ setIncomeMode(btn.dataset.val); });
   });
   wireInStages();
+  document.querySelectorAll('#stageViewGroup .seg-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ setStageView(btn.dataset.val); });
+  });
 
   /* The retirement slider is the exception to the Simulate gate, because sweeping
      it IS the question this board asks: it is a sensitivity control, and one you
@@ -4178,7 +4210,8 @@ function init(){
         save: function(){
           return {savingsMode: UI.savingsMode, expenseMode: UI.expenseMode,
                   stages: orderStages(readStages(), formAgeDie()),
-                  incomeMode: UI.incomeMode, inStages: orderStages(readInStages(), formAgeDie())};
+                  incomeMode: UI.incomeMode, inStages: orderStages(readInStages(), formAgeDie()),
+                  stageView: stageView};
         },
         restore: function(saved){
           if(!saved) return;
@@ -4187,6 +4220,7 @@ function init(){
           if(Array.isArray(saved.stages)) renderStageRows(saved.stages.slice(0, MAX_STAGES).map(cleanStage));
           if(saved.incomeMode) setIncomeMode(saved.incomeMode, true);
           if(Array.isArray(saved.inStages)) renderInStageRows(saved.inStages.slice(0, MAX_STAGES).map(cleanInStage));
+          if(saved.stageView) setStageView(saved.stageView, true);
         }
       }
     });
