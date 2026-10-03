@@ -589,7 +589,7 @@ let persist = null;
 // one Simple field reads correctly on either side of it.
 const SIMPLE_INC = {
   employee: {
-    label: 'Employment income before tax',
+    label: 'Total employment income',
     tip: 'Gross pay for the year, before tax and <strong>excluding</strong> employer super. Counted in full, as a lender treats base salary.'
   },
   self: {
@@ -676,7 +676,7 @@ function renderKpis(r, p){
   $('kpiBind').textContent = r.binding.label;
   $('kpiBind').className = 'value small';
   const secondLowest = r.caps.filter(c=>c.key!==r.binding.key).reduce((a,c)=>Math.min(a,c.value), Infinity);
-  $('kpiBindSub').textContent = `next cap is ${fmt.money0(secondLowest)}, ${fmt.money0(secondLowest - r.maxLoan)} higher`;
+  $('kpiBindSub').textContent = `next limit is ${fmt.money0(secondLowest)}, ${fmt.money0(secondLowest - r.maxLoan)} above`;
 
   $('kpiPrice').textContent = fmt.money0(r.maxPrice);
   $('kpiPriceSub').textContent = p.depositMode === 'pct'
@@ -685,7 +685,7 @@ function renderKpis(r, p){
 
   $('kpiRepay').textContent = fmt.money0(r.repayAtMax)+'/mo';
   const actualRepay = amortPayment(r.maxLoan*r.lmiFactor, p.prodRate/100/12, Math.max(1,p.termYears)*12);
-  $('kpiRepaySub').textContent = `${fmt.money0(actualRepay)}/mo at the ${fmt.pct(p.prodRate)} rate you were offered`;
+  $('kpiRepaySub').textContent = `${fmt.money0(actualRepay)}/mo at the ${fmt.pct(p.prodRate)} product rate`;
 
   $('kpiNsr').textContent = fmt.ratio(r.nsr);
   $('kpiNsr').className = 'value ' + (r.nsrPass ? 'pos' : 'neg');
@@ -745,13 +745,13 @@ function renderCaps(r){
       fmt.money0(c.value),
       c.key===r.binding.key ? '—' : '+'+fmt.money0(c.value - r.maxLoan),
       c.key===r.binding.key
-        ? '<span class="badge badge-info">Sets the limit</span>'
+        ? '<span class="badge badge-info">Binding</span>'
         : '<span class="badge badge-muted">Room left</span>'
     ],
     cellCls: ['','','','']
   }));
   rows.push({ cls:'total', cells:['Borrowing capacity', fmt.money0(r.maxLoan), '', ''], cellCls:['','','',''] });
-  $('capsTableWrap').innerHTML = table(['Cap','Largest loan it allows','Room above your capacity','Status'], rows);
+  $('capsTableWrap').innerHTML = table(['Constraint','Limit','Headroom','Status'], rows);
 }
 
 function renderBuild(r, p){
@@ -795,7 +795,7 @@ function renderIncome(r){
   if(!rows.length) rows.push({ cells:['No income entered','$0','—','$0'], cellCls:['','','',''] });
   rows.push({ cls:'total', cells:['Total', fmt.money0(r.grossUnshaded),
         fmt.pct(r.grossUnshaded ? r.grossAssessable/r.grossUnshaded*100 : 0, 1), fmt.money0(r.grossAssessable)], cellCls:['','','',''] });
-  $('incomeTableWrap').innerHTML = table(['Income','Entered, $ a year','Share counted','Counted, $ a year'], rows);
+  $('incomeTableWrap').innerHTML = table(['Stream','Entered, $ a year','Shading','Assessable, $ a year'], rows);
 }
 
 function renderCommitments(r){
@@ -805,7 +805,7 @@ function renderCommitments(r){
   if(!rows.length) rows.push({ cells:['No commitments entered','$0',''], cellCls:['','','note'] });
   rows.push({ cls:'total', cells:['Total monthly commitments', fmt.money0(r.commitments),
         r.commitRaw < 0 ? 'floored at zero, the closures exceed every other commitment' : ''], cellCls:['','','note'] });
-  $('commTableWrap').innerHTML = table(['Commitment','$ a month','Note'], rows);
+  $('commTableWrap').innerHTML = table(['Item','$ a month','Note'], rows);
 }
 
 // The HEM benchmark is not a warning, it is the number the assessment actually

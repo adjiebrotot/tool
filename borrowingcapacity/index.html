@@ -168,7 +168,7 @@
     <!-- Detailed: employee -->
     <div class="field-group" data-adv="inc" data-who="employee">
       <div class="group-title">Employment</div>
-      <div class="stream-head" aria-hidden="true"><span>Amount</span><span>Counted</span></div>
+      <div class="stream-head" aria-hidden="true"><span>Amount</span><span>Shading</span></div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Base salary (PAYG) <i class="tip-icon" data-tip="Gross base salary before tax and <strong>excluding</strong> employer super. Counted in full by every lender.">?</i></span></div>
         <div class="inline-row">
@@ -209,7 +209,7 @@
     <!-- Detailed: self-employed -->
     <div class="field-group" data-adv="inc" data-who="self">
       <div class="group-title">Self-employed</div>
-      <div class="stream-head" aria-hidden="true"><span>Amount</span><span>Counted</span></div>
+      <div class="stream-head" aria-hidden="true"><span>Amount</span><span>Shading</span></div>
       <div class="field-row">
         <div class="field-label">Two year average profit after tax (NPAT)</div>
         <div class="inline-row">
@@ -312,7 +312,7 @@
         </select>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Applicants (adults in the household) <i class="tip-icon" data-tip="One or two people on the loan. Two applicants are taxed as two people, and HEM assumes a couple's living costs.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Adults in the household <i class="tip-icon" data-tip="One or two people on the loan. Two applicants are taxed as two people, and HEM assumes a couple's living costs.">?</i></span></div>
         <select class="sel-input" id="adults">
           <option value="1">1 applicant</option>
           <option value="2" selected>2 applicants</option>
@@ -399,7 +399,7 @@
         <div class="currency-wrap"><span class="prefix">$</span><input class="currency-input fmt-num" id="olBal" type="text" inputmode="decimal" data-min="0" data-max="1000000000" value="0"></div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Interest rate you pay now <i class="tip-icon" data-tip="The rate you pay today. The lender reassesses it at the higher of this plus 3.00% and its own floor.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Actual rate <i class="tip-icon" data-tip="The rate you pay today. The lender reassesses it at the higher of this plus 3.00% and its own floor.">?</i></span></div>
         <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="olRate" type="text" inputmode="decimal" data-min="0" data-max="30" value="6.20"><span class="suffix">%/yr</span></div>
         <div class="field-sub" data-simple="debts" id="olSimpleNote"></div>
       </div>
@@ -428,7 +428,7 @@
         <div class="field-sub" data-simple="debts" id="cardSimpleNote"></div>
       </div>
       <div class="slider-block" data-adv="debts">
-        <div class="slider-head"><div class="slider-label">Share of the limit counted each month</div><div class="slider-value" id="cardPctValue">3.80%</div></div>
+        <div class="slider-head"><div class="slider-label">Assessed monthly rate</div><div class="slider-value" id="cardPctValue">3.80%</div></div>
         <input id="cardPct" type="range" min="3" max="3.8" step="0.05" value="3.8">
         <div class="help">Share of the limit charged as a monthly repayment. Lenders use 3.0% to 3.8%.</div>
       </div>
@@ -515,7 +515,7 @@
     <div class="field-group">
       <div class="group-title">The loan</div>
       <div class="field-row">
-        <div class="field-label">Interest rate offered</div>
+        <div class="field-label"><span class="tip-wrap">Product rate offered <i class="tip-icon" data-tip="The interest rate on the loan the lender offers you.">?</i></span></div>
         <div class="currency-wrap"><input class="currency-input has-suffix fmt-pct" id="prodRate" type="text" inputmode="decimal" data-min="0" data-max="30" value="5.90"><span class="suffix">%/yr</span></div>
       </div>
       <div class="field-row">
@@ -644,9 +644,9 @@
 
   <section class="metrics">
     <div class="metric card"><div class="label"><span class="tip-wrap">Borrowing capacity <i class="tip-icon" data-tip="The smallest of the four caps: serviceability, debt to income, loan to value, and deposit.">?</i></span></div><div class="value" id="kpiLoan">—</div><div class="sub" id="kpiLoanSub"></div></div>
-    <div class="metric card"><div class="label"><span class="tip-wrap">What sets the limit (binding cap) <i class="tip-icon" data-tip="The cap that is actually holding you back. Lift this one first: the other three have room left.">?</i></span></div><div class="value" id="kpiBind">—</div><div class="sub" id="kpiBindSub"></div></div>
-    <div class="metric card"><div class="label"><span class="tip-wrap">Most you could pay for a home <i class="tip-icon" data-tip="Capacity plus the deposit left over. In percentage duty mode it reads slightly low, so re-enter it as the price to converge.">?</i></span></div><div class="value" id="kpiPrice">—</div><div class="sub" id="kpiPriceSub"></div></div>
-    <div class="metric card"><div class="label"><span class="tip-wrap">Repayment the lender tests <i class="tip-icon" data-tip="Monthly repayment on the capacity figure at the assessment rate, not at the rate you were quoted.">?</i></span></div><div class="value" id="kpiRepay">—</div><div class="sub" id="kpiRepaySub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Binding constraint <i class="tip-icon" data-tip="The one of the four caps that limits how much you can borrow. Lift this one first.">?</i></span></div><div class="value" id="kpiBind">—</div><div class="sub" id="kpiBindSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Max purchase price <i class="tip-icon" data-tip="Capacity plus the deposit left over. In percentage duty mode it reads slightly low, so re-enter it as the price to converge.">?</i></span></div><div class="value" id="kpiPrice">—</div><div class="sub" id="kpiPriceSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Assessed repayment <i class="tip-icon" data-tip="The monthly repayment at the rate the lender tests you at, which is higher than the rate you are offered.">?</i></span></div><div class="value" id="kpiRepay">—</div><div class="sub" id="kpiRepaySub"></div></div>
     <div class="metric card"><div class="label"><span class="tip-wrap">Income cover (NSR) <i class="tip-icon" data-tip="Net Service Ratio: net income divided by living costs, commitments and the new repayment. At 1.00 or more, income covers them all.">?</i></span></div><div class="value" id="kpiNsr">—</div><div class="sub" id="kpiNsrSub"></div></div>
     <div class="metric card"><div class="label"><span class="tip-wrap">Left each month (UMI) <i class="tip-icon" data-tip="Uncommitted Monthly Income: what is left each month after living costs, commitments and the new repayment.">?</i></span></div><div class="value" id="kpiUmi">—</div><div class="sub" id="kpiUmiSub"></div></div>
   </section>
@@ -675,19 +675,19 @@
         <button class="btn-secondary btn-sm" id="csvBtn" title="Download this table as CSV">⬇ CSV</button>
       </div>
     </div>
-    <p class="unit-note">Each cap is the largest loan it allows, in dollars. Your borrowing capacity is the smallest of the four.</p>
+    <p class="unit-note">Each limit is the largest loan that cap allows, in dollars. Your borrowing capacity is the smallest of the four.</p>
     <div class="table-wrap" id="capsTableWrap"></div>
   </section>
 
   <section class="detail-section card">
-    <h2>How serviceability is worked out</h2>
+    <h2>Serviceability build-up</h2>
     <p class="unit-note">Dollars a month and a year. Amounts taken off income carry a minus sign.</p>
     <div class="table-wrap" id="buildTableWrap"></div>
   </section>
 
   <section class="detail-section card">
-    <h2>Income a lender counts (shading)</h2>
-    <p class="unit-note">Dollars a year. Each stream counts at its share, so the counted figure can sit below what you earn.</p>
+    <h2>Income shading <i class="tip-icon" data-tip="Shading is the share of each income a lender counts. A bonus might count at 80%, base salary in full.">?</i></h2>
+    <p class="unit-note">Dollars a year. Each stream counts at its shading, so the assessable figure can sit below what you earn.</p>
     <div class="table-wrap" id="incomeTableWrap"></div>
   </section>
 

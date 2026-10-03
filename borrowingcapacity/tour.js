@@ -11,8 +11,8 @@
    Both delegate to window.__BC_TOUR, which script.js exposes.
 
    v2 follows the redesign: the answer sentence, the Purchase tab (was Caps),
-   the one "Detail" switch per section and the plain KPI names, so readers who
-   took v1 are offered it again. */
+   the one "Detail" switch per section and the spelled-out NSR and UMI, so
+   readers who took v1 are offered it again. */
 window.__TOUR = {
   seenKey: 'bc-tour-v2-seen',
   launchLabel: '🧭 Take a tour',
@@ -72,7 +72,7 @@ window.__TOUR = {
     {
       target: '.metrics',
       title: '⑤ The figures behind it',
-      body: '<strong>What sets the limit</strong> names the cap actually holding him back; ' +
+      body: '<strong>Binding constraint</strong> names the cap actually holding him back; ' +
             'the other three have room left. For him it is serviceability, which is what ' +
             'stops most Australian borrowers. <strong>Income cover (NSR)</strong> and ' +
             '<strong>Left each month (UMI)</strong> show how tightly the answer closes.'
@@ -88,8 +88,8 @@ window.__TOUR = {
     {
       target: null,
       title: '✅ You are all set',
-      body: 'Four tables below the chart break down the four caps, how serviceability ' +
-            'is worked out, the income a lender counts and your monthly commitments, and ' +
+      body: 'Four tables below the chart break down the four caps, the serviceability ' +
+            'build-up line by line, your income shading and your monthly commitments, and ' +
             '<strong>CSV</strong> exports the lot. The page ends with what it assumes. ' +
             'Everything runs privately in your browser, free. Replay this tour any time ' +
             'via <strong>Take a tour</strong> in the header.'
