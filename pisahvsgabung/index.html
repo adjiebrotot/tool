@@ -111,8 +111,8 @@
 <div class="container">
   <section class="header card">
     <div>
-      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="8.5" cy="12" r="5.5"/> <circle stroke="var(--accent2)" cx="15.5" cy="12" r="5.5"/> </svg>PPh — Pisah Harta vs Gabung Harta</h1>
-      <p data-i18n="subtitle">Compare Indonesian personal income tax under separate filing (Pisah Harta) vs joint filing (Gabung Harta).</p>
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="8.5" cy="12" r="5.5"/> <circle stroke="var(--accent2)" cx="15.5" cy="12" r="5.5"/> </svg>PPh 21: Pisah Harta vs Gabung Harta</h1>
+      <p data-i18n="subtitle">Compare a married couple's income tax (PPh 21) when they file separately (Pisah Harta) or jointly (Gabung Harta).</p>
     </div>
     <div class="header-right">
       <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back" data-i18n="btnBack">← Other Tools</a>
@@ -124,95 +124,104 @@
   <section class="layout">
     <aside class="controls card">
       <div class="quick-start-row">
-        <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg><span data-i18n="quickStartLabel">Quick Start</span></span><span class="tip-icon" data-i18n-tip="quickStartTip" data-tip="Fills the Inputs tab with a worked household and resets PTKP and brackets to statute. Change any figure over the top of it.">?</span>
+        <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg><span data-i18n="quickStartLabel">Quick Start</span></span><span class="tip-icon" data-i18n-tip="quickStartTip" data-tip="Fills the Household tab with a worked example and puts PTKP and the tax brackets back to the statutory values. Equal incomes is the example the page opens with.">?</span>
         <div class="quick-start-btns">
-          <button class="quick-start-btn" data-preset="single" data-i18n="qsSingle" data-i18n-tip="qsSingleTip" data-tip="Husband earns Rp 300 million, wife earns nothing, two children. Her own PTKP goes unused under Pisah, so Gabung saves Rp 8.1 million.">Single income family</button>
-          <button class="quick-start-btn" data-preset="double" data-i18n="qsDouble" data-i18n-tip="qsDoubleTip" data-tip="Husband Rp 400 million, wife Rp 300 million, one child. Under Pisah each climbs their own bracket ladder, which saves Rp 34.8 million.">Double income family</button>
+          <button class="quick-start-btn" data-preset="even" data-i18n="qsEven" data-i18n-tip="qsEvenTip" data-tip="Rp 500 million a year shared equally, no dependants: the figures the page opens with. Filing separately saves Rp 19.8 million.">Equal incomes, no children</button>
+          <button class="quick-start-btn" data-preset="single" data-i18n="qsSingle" data-i18n-tip="qsSingleTip" data-tip="Husband earns Rp 300 million a year, wife earns nothing, two children. Her own PTKP goes unused when filing separately, so filing jointly saves Rp 8.1 million.">Single income family</button>
+          <button class="quick-start-btn" data-preset="double" data-i18n="qsDouble" data-i18n-tip="qsDoubleTip" data-tip="Husband Rp 400 million a year, wife Rp 300 million, one child. Filing separately gives each spouse their own set of brackets, which saves Rp 34.8 million.">Double income family</button>
         </div>
       </div>
       <div class="ctrl-scroll">
       <div class="ctrl-tabs">
-        <button class="ctrl-tab active" data-tab="inputs"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.6" y="3.4" width="16.8" height="17.2" rx="2.4"/><path d="M7.4 9h9.2M7.4 13h9.2M7.4 17h5.2"/></svg><span data-i18n="tabInputs">Inputs</span></button>
-        <button class="ctrl-tab" data-tab="advanced"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.4 20.2h4.5v-4.6h4.5V11h4.5V6.4h3.7"/></svg><span data-i18n="tabAdvanced">PTKP &amp; Brackets</span></button>
+        <button class="ctrl-tab active" data-tab="inputs"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.6" y="3.4" width="16.8" height="17.2" rx="2.4"/><path d="M7.4 9h9.2M7.4 13h9.2M7.4 17h5.2"/></svg><span data-i18n="tabInputs">Household</span></button>
+        <button class="ctrl-tab" data-tab="advanced"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.4 20.2h4.5v-4.6h4.5V11h4.5V6.4h3.7"/></svg><span data-i18n="tabAdvanced">Tax rules</span></button>
       </div>
 
       <div class="ctrl-panel active" id="tab-inputs">
-        <div class="field-row">
-          <div class="field-label" data-i18n="dependentsLabel">Number of Dependents (Tanggungan)</div>
-          <select class="num-input sel-input" id="dependents">
-            <option value="0" selected data-i18n-opt="dep0">0 — no dependents</option>
-            <option value="1" data-i18n-opt="dep1">1 — one child (anak)</option>
-            <option value="2" data-i18n-opt="dep2">2 — two children (anak)</option>
-            <option value="3" data-i18n-opt="dep3">3 — three children (anak)</option>
-          </select>
+        <div class="field-group">
+          <div class="group-title" data-i18n="groupFamily">Family</div>
+          <div class="field-row">
+            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="dependentsLabel">Dependants (tanggungan)</span> <span class="tip-icon" data-i18n-tip="dependentsTip" data-tip="Family members you support, such as children. Each one adds to the tax-free allowance (PTKP), and at most three count.">?</span></div>
+            <select class="num-input sel-input" id="dependents">
+              <option value="0" selected data-i18n-opt="dep0">No dependants</option>
+              <option value="1" data-i18n-opt="dep1">1 dependant</option>
+              <option value="2" data-i18n-opt="dep2">2 dependants</option>
+              <option value="3" data-i18n-opt="dep3">3 dependants</option>
+            </select>
+          </div>
         </div>
 
         <div class="field-group">
           <div class="group-title" data-i18n="groupIncome">Income</div>
           <div class="field-row">
-            <div class="field-label" style="margin-bottom:8px;" data-i18n="inputMethodLabel">Income Input Method</div>
-            <div class="input-mode-toggle">
-              <button class="mode-btn active" id="modeBtnTotal" data-i18n="modeTotalBtn">Total + Split %</button>
-              <button class="mode-btn" id="modeBtnSplit" data-i18n="modeSplitBtn">Husband + Wife</button>
+            <div class="field-label" data-i18n="inputMethodLabel">Enter income as</div>
+            <div class="seg-group input-mode-toggle" role="group">
+              <button class="seg-btn mode-btn active" id="modeBtnTotal" type="button" data-i18n="modeTotalBtn">Total and split</button>
+              <button class="seg-btn mode-btn" id="modeBtnSplit" type="button" data-i18n="modeSplitBtn">Each spouse</button>
             </div>
           </div>
 
-          <!-- Mode A: Total + Split % -->
+          <!-- Mode A: the household total and the wife's share of it -->
           <div class="fg-sub" id="modeTotal">
             <div class="field-row">
-              <div class="field-label"><span data-i18n="totalSalaryLabel">Total Household Annual Gross Salary</span></div>
+              <div class="field-label" data-i18n="totalSalaryLabel">Household gross salary (both spouses)</div>
               <div class="currency-wrap">
                 <span class="prefix">Rp</span>
-                <input class="currency-input" id="totalSalaryInput" type="text" inputmode="numeric" value="500,000,000" />
+                <input class="currency-input has-suffix" id="totalSalaryInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="500,000,000" />
+                <span class="suffix" data-i18n="unitPerYr">/yr</span>
               </div>
             </div>
             <div class="slider-block">
               <div class="slider-head">
-                <div class="slider-label"><span data-i18n="wifeShareLabel">Wife's share of income</span></div>
+                <div class="slider-label"><span data-i18n="wifeShareLabel">Wife's share of that salary</span></div>
                 <div class="slider-value" id="splitValue">50%</div>
               </div>
               <input id="splitPct" type="range" min="0" max="100" step="1" value="50" />
+              <div class="derived" id="splitDerived"></div>
             </div>
             <div class="field-row">
-              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Combined Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Deductions such as biaya jabatan or iuran pensiun, taken off gross income before PTKP and split in proportion to what each spouse earns.">?</span></div>
+              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Deductions, both spouses (pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Deductions such as biaya jabatan or iuran pensiun, taken off gross income before PTKP and split in proportion to what each spouse earns.">?</span></div>
               <div class="currency-wrap">
                 <span class="prefix">Rp</span>
-                <input class="currency-input" id="deductionInput" type="text" inputmode="numeric" value="0" />
+                <input class="currency-input has-suffix" id="deductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
+                <span class="suffix" data-i18n="unitPerYr">/yr</span>
               </div>
             </div>
           </div>
 
-          <!-- Mode B: Individual inputs -->
+          <!-- Mode B: each spouse's own salary and deductions -->
           <div class="fg-sub" id="modeIndividual" style="display:none;">
             <div class="field-row">
-              <div class="field-label" data-i18n="husbandSalaryLabel">Husband's Annual Gross Salary</div>
+              <div class="field-label" data-i18n="husbandSalaryLabel">Husband's gross salary</div>
               <div class="currency-wrap">
                 <span class="prefix">Rp</span>
-                <input class="currency-input" id="husbandSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
+                <input class="currency-input has-suffix" id="husbandSalaryInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="250,000,000" />
+                <span class="suffix" data-i18n="unitPerYr">/yr</span>
               </div>
             </div>
             <div class="field-row">
-              <div class="field-label" data-i18n="wifeSalaryLabel">Wife's Annual Gross Salary</div>
+              <div class="field-label" data-i18n="wifeSalaryLabel">Wife's gross salary</div>
               <div class="currency-wrap">
                 <span class="prefix">Rp</span>
-                <input class="currency-input" id="wifeSalaryInput" type="text" inputmode="numeric" value="250,000,000" />
+                <input class="currency-input has-suffix" id="wifeSalaryInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="250,000,000" />
+                <span class="suffix" data-i18n="unitPerYr">/yr</span>
               </div>
-            </div>
-            <div class="field-row" style="padding-top:4px">
-              <div class="field-sub"><span data-i18n="combinedPrefix">Combined:</span> <strong id="combinedLabel">Rp 500,000,000</strong> &nbsp;|&nbsp; <span data-i18n="wifeSharePrefix">Wife share:</span> <strong id="splitDerivedLabel">50.0%</strong></div>
+              <div class="derived"><span data-i18n="combinedPrefix">Together</span> <b id="combinedLabel">Rp 500,000,000</b> <span data-i18n="combinedSuffix">a year, wife's share</span> <b id="splitDerivedLabel">50.0%</b></div>
             </div>
             <div class="field-row">
-              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="husbandDeductionLabel">Husband's Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Deductions that come off the husband's gross income only, applied before PTKP.">?</span></div>
+              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="husbandDeductionLabel">Husband's deductions (pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Deductions that come off the husband's gross income only, applied before PTKP.">?</span></div>
               <div class="currency-wrap">
                 <span class="prefix">Rp</span>
-                <input class="currency-input" id="husbandDeductionInput" type="text" inputmode="numeric" value="0" />
+                <input class="currency-input has-suffix" id="husbandDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
+                <span class="suffix" data-i18n="unitPerYr">/yr</span>
               </div>
             </div>
             <div class="field-row">
-              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeDeductionLabel">Wife's Annual Deductions (Pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Deductions that come off the wife's gross income only, applied before PTKP.">?</span></div>
+              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeDeductionLabel">Wife's deductions (pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Deductions that come off the wife's gross income only, applied before PTKP.">?</span></div>
               <div class="currency-wrap">
                 <span class="prefix">Rp</span>
-                <input class="currency-input" id="wifeDeductionInput" type="text" inputmode="numeric" value="0" />
+                <input class="currency-input has-suffix" id="wifeDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
+                <span class="suffix" data-i18n="unitPerYr">/yr</span>
               </div>
             </div>
           </div>
@@ -221,86 +230,74 @@
 
       <div class="ctrl-panel" id="tab-advanced">
         <div class="field-group bracket-group">
-          <div class="group-title" data-i18n="ptkpSectionLabel">PTKP Values (Rp)</div>
+          <div class="group-title" data-i18n="ptkpSectionLabel">Tax-free allowance a year (PTKP)</div>
           <div class="ptkp-row">
-            <div class="ptkp-label-sm" data-i18n="ptkpTK0">TK/0 — Single (base)</div>
-            <input class="num-input-sm" id="ptkpBase" type="text" inputmode="numeric" value="54,000,000" />
+            <div class="ptkp-label-sm" data-i18n="ptkpTK0">Base, for each taxpayer (TK/0)</div>
+            <div class="currency-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpBase" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="54,000,000" /></div>
           </div>
           <div class="ptkp-row">
-            <div class="ptkp-label-sm" data-i18n="ptkpK">K — Married addition</div>
-            <input class="num-input-sm" id="ptkpMarried" type="text" inputmode="numeric" value="4,500,000" />
+            <div class="ptkp-label-sm" data-i18n="ptkpK">Added if married (K)</div>
+            <div class="currency-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpMarried" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="4,500,000" /></div>
           </div>
           <div class="ptkp-row">
-            <div class="ptkp-label-sm" data-i18n="ptkpI">I — Working spouse addition</div>
-            <input class="num-input-sm" id="ptkpSpouse" type="text" inputmode="numeric" value="54,000,000" />
+            <div class="ptkp-label-sm" data-i18n="ptkpI">Added when the wife's income is combined (I)</div>
+            <div class="currency-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpSpouse" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="54,000,000" /></div>
           </div>
           <div class="ptkp-row">
-            <div class="ptkp-label-sm" data-i18n="ptkpDep">Per dependent (tanggungan)</div>
-            <input class="num-input-sm" id="ptkpDependent" type="text" inputmode="numeric" value="4,500,000" />
+            <div class="ptkp-label-sm" data-i18n="ptkpDep">Added for each dependant</div>
+            <div class="currency-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpDependent" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="4,500,000" /></div>
           </div>
-          <div class="help" style="margin-top:4px"><span data-i18n="ptkpComputedPrefix">Computed PTKP → Pisah:</span> <strong id="ptkpHDisplay">—</strong> <span data-i18n="ptkpHLabel">(H)</span> + <strong id="ptkpWDisplay">—</strong> <span data-i18n="ptkpWLabel">(W)</span> | <span data-i18n="ptkpGLabel">Gabung:</span> <strong id="ptkpGDisplay">—</strong></div>
+          <div class="derived"><span data-i18n="ptkpComputedPrefix">This household's PTKP, filing separately:</span> <b id="ptkpHDisplay">—</b> <span data-i18n="ptkpHLabel">husband</span> + <b id="ptkpWDisplay">—</b> <span data-i18n="ptkpWLabel">wife</span>. <span data-i18n="ptkpGLabel">Filing jointly:</span> <b id="ptkpGDisplay">—</b>.</div>
         </div>
 
         <div class="field-group bracket-group">
-          <div class="group-title" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Tax Brackets (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit each threshold and rate. The &quot;From&quot; column fills itself in, and only the last bracket is open-ended. Raising a bound past the ones beneath it deletes them.">?</span></div>
+          <div class="group-title" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Tax brackets on taxable income (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit each threshold and rate. The &quot;From&quot; column fills itself in, and only the last bracket has no upper limit. Raising a limit past the ones beneath it deletes them.">?</span></div>
           <div class="bracket-row-header">
-            <div class="bracket-col-label" id="bracketColFrom">From (Rp)</div>
-            <div class="bracket-col-label" id="bracketColTo">To (Rp) <span style="font-size:0.68rem">(last=∞)</span></div>
-            <div class="bracket-col-label" id="bracketColRate">Rate (%)</div>
+            <div class="bracket-col-label" id="bracketColFrom" data-i18n="bracketFrom">From (Rp)</div>
+            <div class="bracket-col-label" id="bracketColTo" data-i18n="bracketTo">Up to (Rp)</div>
+            <div class="bracket-col-label" id="bracketColRate" data-i18n="bracketRate">Rate (%)</div>
           </div>
           <div id="bracketsContainer"></div>
         </div>
 
         <div class="bracket-info">
           <div class="info-box" style="margin-top:14px" id="infoBoxContent">
-            <strong>Pisah Harta (K/0 + TK/0):</strong> Each spouse files their own SPT. Husband uses PTKP K/0, wife uses PTKP TK/0. Double bracket access.<br><br>
-            <strong>Gabung Harta (K/I/0):</strong> Combined income, single SPT. Uses PTKP K/I/0. One bracket ladder for all income.
+            <strong>Pisah Harta (K/0 + TK/0):</strong> Each spouse files their own SPT. Husband uses PTKP K/0, wife uses PTKP TK/0. Each has their own set of brackets.<br><br>
+            <strong>Gabung Harta (K/I/0):</strong> Combined income, one SPT. Uses PTKP K/I/0. One set of brackets for all the income.
           </div>
         </div>
       </div>
 
       <div class="warning" id="capWarning"></div>
-
-      <div class="btn-row">
-        <button class="btn-primary" id="resetBtn" data-i18n="resetBtn">↺ Reset</button>
-      </div>
       </div>
     </aside>
 
     <main>
+      <!-- THE ANSWER, IN ONE SENTENCE -->
+      <div class="verdict card" id="verdict"></div>
+
+      <!-- KPI CARDS: the saving first, then the two totals it comes from -->
       <section class="metrics">
         <div class="metric card">
-          <div class="label" data-i18n="kpiPisahLabel">Pisah Harta — Total Tax</div>
+          <div class="label" data-i18n="kpiSavingLabel">Saved by the cheaper way</div>
+          <div class="value" id="kpiSaving">—</div>
+          <div class="sub" id="kpiWinner"></div>
+        </div>
+        <div class="metric card">
+          <div class="label"><span class="opt-key opt-key-pisah" aria-hidden="true"></span><span data-i18n="kpiPisahLabel">Total tax, filing separately (Pisah Harta)</span></div>
           <div class="value" id="kpiPisah">—</div>
           <div class="sub" id="kpiPisahRate"></div>
         </div>
         <div class="metric card">
-          <div class="label" data-i18n="kpiGabungLabel">Gabung Harta — Total Tax</div>
+          <div class="label"><span class="opt-key opt-key-gabung" aria-hidden="true"></span><span data-i18n="kpiGabungLabel">Total tax, filing jointly (Gabung Harta)</span></div>
           <div class="value" id="kpiGabung">—</div>
           <div class="sub" id="kpiGabungRate"></div>
-        </div>
-        <div class="metric card">
-          <div class="label" data-i18n="kpiSavingLabel">Tax Savings (Cheaper Option)</div>
-          <div class="value" id="kpiSaving">—</div>
-          <div class="sub" id="kpiWinner"></div>
-        </div>
-      </section>
-
-      <section class="position-card" id="positionCard">
-        <div class="pos-title" data-i18n="posTitle">📍 Your Current Tax Position</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;">
-          <div class="position-row"><span class="pos-label" data-i18n="posPtkpPisahH">PTKP (Pisah H)</span><span class="pos-val" id="posP_ptkpH">—</span></div>
-          <div class="position-row"><span class="pos-label" data-i18n="posPtkpPisahW">PTKP (Pisah W)</span><span class="pos-val" id="posP_ptkpW">—</span></div>
-          <div class="position-row"><span class="pos-label" data-i18n="posPtkpGabung">PTKP (Gabung)</span><span class="pos-val" id="posG_ptkp">—</span></div>
-          <div class="position-row"><span class="pos-label" data-i18n="posMaxMarginal">Max Marginal Bracket</span><span class="pos-val" id="posMarginBracket">—</span></div>
-          <div class="position-row"><span class="pos-label" data-i18n="posEffPisah">Effective Rate — Pisah</span><span class="pos-val" id="posEffPisah">—</span></div>
-          <div class="position-row"><span class="pos-label" data-i18n="posEffGabung">Effective Rate — Gabung</span><span class="pos-val" id="posEffGabung">—</span></div>
         </div>
       </section>
 
       <section class="chart-card card" style="margin-bottom:18px;">
         <div class="chart-head">
-          <h2 data-i18n="chart1Title">Total Tax by Household Salary</h2>
+          <h2 data-i18n="chart1Title">Total tax a year, by household salary</h2>
           <div class="btn-cluster">
             <button class="btn-secondary btn-sm" id="chart1SvgBtn" data-i18n-title="btnSvgTitle" title="Download this chart as SVG">⬇ SVG</button>
             <button class="btn-secondary btn-sm" id="chart1PngBtn" data-i18n-title="btnPngTitle" title="Download this chart as PNG">⬇ PNG</button>
@@ -308,7 +305,7 @@
             <button class="btn-secondary btn-sm btn-icon" id="chartResetZoom" data-i18n-title="btnResetZoomTitle" title="Reset zoom">⟳</button>
           </div>
         </div>
-        <p class="muted" style="font-size:0.84rem;margin-top:4px;" data-i18n="chart1Sub">Shows total tax payable across salary range. The gap between lines = tax savings.</p>
+        <p class="muted" style="font-size:0.84rem;margin-top:4px;" data-i18n="chart1Sub">Each line is the household's total tax for the year if it files that way, with the wife's share held where you set it. The gap between the lines is the saving.</p>
         <div class="legend" id="chartLegend"></div>
         <div class="canvas-wrap">
           <canvas id="chartCanvas"></canvas>
@@ -318,7 +315,7 @@
 
       <section class="chart-card card" style="margin-bottom:18px;">
         <div class="chart-head">
-          <h2 data-i18n="chart2Title">Tax Difference (Gabung − Pisah)</h2>
+          <h2 data-i18n="chart2Title">Gabung Harta tax minus Pisah Harta tax</h2>
           <div class="btn-cluster">
             <button class="btn-secondary btn-sm" id="chart2SvgBtn" data-i18n-title="btnSvgTitle" title="Download this chart as SVG">⬇ SVG</button>
             <button class="btn-secondary btn-sm" id="chart2PngBtn" data-i18n-title="btnPngTitle" title="Download this chart as PNG">⬇ PNG</button>
@@ -326,38 +323,44 @@
             <button class="btn-secondary btn-sm btn-icon" id="chartResetZoom2" data-i18n-title="btnResetZoomTitle" title="Reset zoom">⟳</button>
           </div>
         </div>
-        <p class="muted" style="font-size:0.84rem;margin-top:4px;" data-i18n="chart2Sub">Positive = Gabung Harta pays more (Pisah Harta wins). Negative = Gabung Harta pays less (Gabung Harta wins).</p>
+        <p class="muted" style="font-size:0.84rem;margin-top:4px;" data-i18n="chart2Sub">Above zero, filing separately (Pisah Harta) is cheaper by that much. Below zero, filing jointly (Gabung Harta) is.</p>
         <div class="legend" id="chartLegend2"></div>
         <div class="canvas-wrap">
           <canvas id="chartCanvas2"></canvas>
         </div>
         <div class="hover-box" id="hoverBox2" data-i18n="hoverBox2">Hover over the chart to inspect the difference.</div>
-      </section>
-
-      <section class="bottom">
-        <div class="card" style="padding:20px;">
-          <h3 data-i18n="summaryTitle">Summary at Current Salary</h3>
-          <div class="summary-grid" id="summaryGrid"></div>
-        </div>
-        <div class="card" style="padding:20px;">
-          <h3 data-i18n="crossoverTitle">Crossover Analysis</h3>
-          <div id="crossoverInfo" style="font-size:0.9rem;line-height:1.6;"></div>
+        <div class="crossover-box">
+          <h3 data-i18n="crossoverTitle">Where the cheaper way switches (crossover)</h3>
+          <div id="crossoverInfo"></div>
         </div>
       </section>
 
-      <section class="detail-section card">
+      <section class="summary-card card">
+        <h3 data-i18n="summaryTitle">Your household's figures, a year</h3>
+        <div class="summary-grid" id="summaryGrid"></div>
+      </section>
+
+      <!-- TAX AT EACH SALARY (opens from Show table) -->
+      <section class="detail-section card" id="detailSection">
         <div class="detail-head">
-          <h3 data-i18n="detailTitle">Detailed Breakdown by Salary</h3>
+          <h3 data-i18n="detailTitle">Tax at each household salary</h3>
           <div class="btn-cluster">
             <button class="btn-secondary btn-sm" id="downloadBtn" type="button" data-i18n-title="btnCsvTitle" title="Download this table as CSV">⬇ CSV</button>
           </div>
         </div>
-        <div class="tab-btns">
+        <p class="unit-note" id="tableUnitNote" data-i18n="tableUnitNote">Rupiah a year, with the wife's share held where you set it. Household salary is both spouses' gross salary together.</p>
+        <div class="tab-btns" id="tableTabs">
           <button class="tab-btn active" data-scenario="comparison" data-i18n="tabComparison">Comparison</button>
-          <button class="tab-btn" data-scenario="pisah" data-i18n="tabPisah">Pisah Harta Detail</button>
-          <button class="tab-btn" data-scenario="gabung" data-i18n="tabGabung">Gabung Harta Detail</button>
+          <button class="tab-btn" data-scenario="pisah" data-i18n="tabPisah">Pisah Harta detail</button>
+          <button class="tab-btn" data-scenario="gabung" data-i18n="tabGabung">Gabung Harta detail</button>
         </div>
         <div class="table-wrap" id="detailTable"></div>
+      </section>
+
+      <!-- WHAT THIS ASSUMES -->
+      <section class="assumes-card card">
+        <h2 data-i18n="assumesTitle">What this assumes</h2>
+        <ul class="assumptions" id="assumptions"></ul>
       </section>
     </main>
   </section>
@@ -374,7 +377,7 @@
       <img src="../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
       <div style="display:flex;align-items:center;gap:10px">
         <img src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
+        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: free to use, modify, and share with source code disclosed.</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
         <img src="../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
