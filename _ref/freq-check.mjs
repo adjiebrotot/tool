@@ -42,9 +42,11 @@ async function open(rel){
     return r.fulfill({contentType:'application/javascript', body:'/*stub*/'});
   });
   // The guided tour offers itself on a first visit and its backdrop eats clicks.
+  // Every tour reads "<tool>-tour-v<N>-seen", and N moves whenever a tour is
+  // rewritten, so any such key reads as seen rather than a list that goes stale.
   await page.addInitScript(()=>{
-    ['rvo-tour-v1-seen','rvo-id-tour-v1-seen','rvos-tour-v1-seen','ff-tour-v3-seen','ff-tour-v4-seen',
-     'dca-tour-v1-seen','dcapf-tour-v1-seen'].forEach(k=>{ try { localStorage.setItem(k,'1'); } catch(e){} });
+    const get = Storage.prototype.getItem;
+    Storage.prototype.getItem = function(k){ return /-tour-v\d+-seen$/.test(k) ? '1' : get.call(this, k); };
   });
   await page.goto(url(rel), {waitUntil:'load'});
   await page.evaluate(()=>{ document.querySelectorAll('[class*="tour-backdrop"],[class*="tour-pop"],[class*="tour-offer"]').forEach(n=>n.remove()); });

@@ -27,7 +27,7 @@ p,.muted{color:var(--muted);line-height:1.55}
 .slider-block:first-of-type{border-top:none;padding-top:4px}
 .slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
 .slider-label{font-weight:700;font-size:.88rem}
-.slider-value{color:var(--gold);font-weight:700;font-variant-numeric:tabular-nums;font-size:.88rem;cursor:text;}
+.slider-value{color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums;font-size:.88rem;cursor:text;font-family:'DM Mono',monospace;}
 input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .slider-val-edit{display:none;width:4.5em;background:transparent;border:none;border-bottom:1.5px solid var(--gold);color:var(--gold);font-weight:700;font-size:.88rem;font-variant-numeric:tabular-nums;text-align:right;outline:none;padding:0 1px;}
 .help{color:var(--muted);font-size:.8rem;margin-top:4px;line-height:1.4}
@@ -56,18 +56,18 @@ body.light .num-input option,body.light .txt-input option{background:#ffffff;col
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
 .btn-theme:hover{border-color:var(--accent);color:var(--text)}
 .pool-chip{display:inline-flex;align-items:center;gap:4px;background:var(--input-bg);border:1px solid var(--border);border-radius:999px;padding:3px 6px 3px 10px;font-size:.78rem;font-weight:700;color:var(--text);font-family:'DM Mono',monospace}
-.pool-chip-warn{border-color:#f59e0b;color:#f59e0b}
-.pool-chip-sim{border-color:rgba(143,205,189,.5);color:#8FCDBD}
+.pool-chip-warn{border-color:var(--gold);color:var(--gold)}
+.pool-chip-sim{border-color:var(--accent2);color:var(--accent2)}
 .seg-toggle{display:inline-flex;gap:2px;background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:3px}
 .seg-toggle .seg-btn{border-radius:6px;border:none}
 .seg-toggle .seg-btn+.seg-btn{border-left:none}
 .pool-chip-del{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:none;border-radius:50%;background:transparent;color:var(--muted);font-size:.95rem;line-height:1;cursor:pointer;padding:0;font-family:inherit;transition:all .12s}
-.pool-chip-del:hover{background:#ef4444;color:#fff}
+.pool-chip-del:hover{background:var(--negative-em);color:var(--text-inv)}
 .pool-chips-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;border-bottom:1px solid var(--border);padding-bottom:5px;margin:14px 0 0}
 .pool-chips-head:first-child{margin-top:0}
 .pool-chips-head .section-label{margin:0;padding:0;border-bottom:none;flex:1}
 .pool-clear-btn{background:transparent;border:none;color:var(--muted);font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;padding:0;font-family:inherit;transition:color .12s;white-space:nowrap}
-.pool-clear-btn:hover{color:#ef4444}
+.pool-clear-btn:hover{color:var(--negative-em)}
 .rate-info{font-weight:600}
 .rate-info.rate-info-low{color:var(--gold)}
 .rate-info:empty{display:none}
@@ -90,7 +90,7 @@ body.light .num-input option,body.light .txt-input option{background:#ffffff;col
 .sc-bar-actions{display:flex;flex-direction:column;gap:5px;flex-shrink:0;padding-left:9px;border-left:1px solid var(--border)}
 .sc-act-btn{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;font-size:.95rem;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--text);cursor:pointer;font-family:inherit;padding:0;transition:all .15s}
 .sc-act-btn:hover{border-color:var(--accent2);color:var(--accent2)}
-.sc-act-btn.sc-act-del:hover{border-color:#ef4444;color:#ef4444}
+.sc-act-btn.sc-act-del:hover{border-color:var(--negative-em);color:var(--negative-em)}
 .txt-input:disabled{opacity:.6;cursor:not-allowed}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
 .metric{padding:16px 18px}
@@ -137,8 +137,8 @@ tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 .sec-card{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .sec-name{font-weight:700;font-size:.88rem;flex:1}
 .sec-badge{font-size:.72rem;padding:2px 7px;border-radius:6px;font-weight:700}
-.badge-ticker{background:rgba(141,187,255,.18);color:#8DBBFF}
-.badge-custom{background:rgba(143,205,189,.18);color:#8FCDBD}
+.badge-ticker{background:var(--info-bg);color:var(--accent)}
+.badge-custom{background:var(--bg-subtle);color:var(--accent2)}
 .sec-row{display:flex;gap:8px;align-items:center;margin:0;padding:6px 0;flex-wrap:wrap}
 .sec-row label{font-size:.8rem;color:var(--muted);min-width:80px;flex-shrink:0}
 .sec-row .num-input,.sec-row .txt-input{flex:1;min-width:80px}
@@ -154,13 +154,12 @@ tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 .radio-opt input[type=radio]{margin-top:2px;accent-color:var(--accent);flex-shrink:0}
 .radio-opt-text{font-size:.8rem;line-height:1.4;color:var(--muted)}
 .radio-opt-text strong{color:var(--text);font-weight:700;display:block;margin-bottom:1px;font-size:.84rem}
-.warning{margin:0 18px 18px;padding:9px 12px;border-radius:10px;background:#4A3412;border:1px solid rgba(255,210,140,.25);color:#FFD28C;display:none;font-size:.82rem;line-height:1.5}
-body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4A00}
+.warning{margin:0 18px 18px;padding:9px 12px;border-radius:10px;background:var(--warning-bg);border:1px solid var(--border);color:var(--warning-text);display:none;font-size:.82rem;line-height:1.5}
 .status-bar{font-size:.8rem;padding:6px 10px;border-radius:8px;margin-top:8px;display:none}
-.status-loading{background:#132E56;border:1px solid rgba(141,187,255,.25);color:#A8C9FF;display:block}
-.status-error{background:#4A1D26;border:1px solid rgba(255,139,139,.25);color:#FFB3BA;display:block}
-.status-ok{background:#103529;border:1px solid rgba(143,205,189,.25);color:#9BE7B4;display:block}
-.status-warn{background:#473210;border:1px solid rgba(255,206,128,.28);color:#FFD79A;display:block}
+.status-loading{background:var(--info-bg);border:1px solid var(--info-border);color:var(--info-text);display:block}
+.status-error{background:var(--error-bg);border:1px solid var(--border);color:var(--error-text);display:block}
+.status-ok{background:var(--success-bg);border:1px solid var(--border);color:var(--success-text);display:block}
+.status-warn{background:var(--warning-bg);border:1px solid var(--border);color:var(--warning-text);display:block}
 /* .tip-icon / .tip-icon.warn now provided by shared.css */
 /* Toggle switch */
 .toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0 0}
@@ -242,6 +241,13 @@ body.light .warning{background:#FFF0D9;border-color:rgba(122,74,0,.2);color:#7A4
 .param-grp{display:flex;gap:6px;align-items:center;flex:1;min-width:0}
 .param-row .num-input{max-width:80px}
 .param-row .txt-input{flex:1;min-width:0}
+/* Dropdowns inside a parameter row keep the shared chevron style at row size. */
+.param-row .sel-input{flex:1;min-width:0;padding-top:7px;padding-bottom:7px;font-size:.84rem}
+.param-grp .sel-input{flex:0 0 84px;max-width:84px}
+/* Look-back lengths carry their unit inside the field. */
+.param-row .unit-days{flex:0 0 112px;max-width:112px}
+.param-row .unit-x{flex:0 0 90px;max-width:90px}
+.param-row .currency-wrap .currency-input{padding-top:7px;padding-bottom:7px;font-size:.86rem}
 .param-note{font-size:.74rem;color:var(--muted);line-height:1.35;margin:4px 0 2px;font-style:italic}
 .param-note.warn-note{color:var(--gold);font-style:normal;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22);border-radius:8px;padding:6px 9px;margin:8px 0}
 .tech-eom{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);cursor:pointer;padding:6px 0 2px;line-height:1.35}
@@ -273,3 +279,8 @@ body.is-stale .stale-note{display:block}
 body.is-stale main .card{opacity:.45}
 main .card{transition:opacity var(--transition-fast)}
 .btn-primary.needs-run{box-shadow:0 0 0 2px var(--card-bg),0 0 0 4px var(--accent2)}
+/* Currency leads the first tab, as on every finance tool. */
+.currency-row{padding-top:0;border-top:none;margin-bottom:6px}
+/* The answer and the caveats: shared.css styles them; spacing to match this page. */
+main>.verdict{margin-bottom:18px}
+main>.assumes-card{margin-top:18px}
