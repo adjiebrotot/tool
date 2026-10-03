@@ -2666,9 +2666,12 @@
   function makeBounds(){
     var TEXT = { en: { max: 'Max', min: 'Min' }, id: { max: 'Maks.', min: 'Min.' } };
     var hintEl = null, hintTimer = null, hintFor = null;
+    // data-min / data-max opt a field in anywhere. A native number field's own
+    // min / max count too, on the finance tools (where this was designed);
+    // other pages keep their number fields as they were.
     function raw(el, name){
       var v = el.getAttribute('data-' + name);
-      if(v == null && (el.type || '').toLowerCase() === 'number') v = el.getAttribute(name);
+      if(v == null && (el.type || '').toLowerCase() === 'number' && inFinanceTool()) v = el.getAttribute(name);
       return v == null || v === '' ? null : v;
     }
     function limits(el){
@@ -2790,7 +2793,17 @@
      SharedSlider.enhance(range). Opt-outs: data-no-ends (the tool draws its
      own scale), data-no-edit on the readout. data-unit on the range overrides
      the unit read off the readout; data-readout="<id>" names a readout that
-     does not sit in the slider's own row. */
+     does not sit in the slider's own row.
+
+     The automatic pass runs on the finance tools only (FINANCE below); any
+     other page opts in by calling SharedSlider.scan() itself. A readout that
+     already has a tool's own typing box beside it keeps that box. */
+  var FINANCE = ['rentvsownhouse', 'pisahvsgabung', 'borrowingcapacity', 'financingvscash',
+                 'financialfreedom', 'dcasimulator', 'costofliving-comparator'];
+  function inFinanceTool(){
+    var path = String((global.location && global.location.pathname) || '');
+    return path.split('/').some(function(seg){ return FINANCE.indexOf(seg) > -1; });
+  }
   function makeSlider(){
     var TEXT = { en: 'Click to type a value', id: 'Klik untuk mengetik nilai' };
     function readoutOf(range){
@@ -2818,6 +2831,9 @@
     function editable(ro, range){
       if(ro.__shEdit) return;
       ro.__shEdit = true;
+      // The tool already makes this readout typeable: one box, not two.
+      var sib = ro.nextElementSibling;
+      if(sib && sib.classList && sib.classList.contains('slider-val-edit')) return;
       ro.classList.add('is-editable');
       ro.setAttribute('tabindex', '0');
       ro.setAttribute('role', 'button');
@@ -2902,7 +2918,7 @@
     function scan(root){
       (root || document).querySelectorAll('input[type=range]').forEach(enhance);
     }
-    return { enhance: enhance, scan: scan };
+    return { enhance: enhance, scan: scan, auto: inFinanceTool };
   }
   global.SharedSlider = makeSlider();
 
@@ -3063,7 +3079,7 @@
     initTooltip();
     global.SharedAbbr.init();
     initFit();
-    global.SharedSlider.scan();
+    if(global.SharedSlider.auto()) global.SharedSlider.scan();
   }
 
   if (document.readyState === 'loading') {
