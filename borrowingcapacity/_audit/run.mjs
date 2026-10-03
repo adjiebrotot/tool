@@ -209,7 +209,7 @@ await page.goto(PAGE, { waitUntil:'load' });
 // page.evaluate(), which a backdrop cannot block, but a step that seeds a Quick
 // Start scenario would still land on top of a test's own inputs. Mark the tour
 // as already seen so the run is deterministic.
-await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v1-seen','1'); } catch(e){} });
+await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v2-seen','1'); } catch(e){} });
 await page.reload({ waitUntil:'load' });
 await page.waitForTimeout(250);
 
@@ -656,7 +656,7 @@ async function reset(){
       && restoredModes.capsMode === 'detailed'
       && await page.evaluate(() => document.querySelector('#incModeGroup .seg-btn[data-val="detailed"]').classList.contains('active')),
     `restored ${JSON.stringify(restoredModes)}`);
-  await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v1-seen','1'); } catch(e){} });
+  await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v2-seen','1'); } catch(e){} });
 }
 
 /* ══════════════ B17 — Simple and Detailed describe the same person ══════════════ */
