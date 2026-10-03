@@ -511,7 +511,7 @@ await fullCase('F5 floating whole term 3–8%, 25y term, 15y horizon', async()=>
     neg ? `yr${neg.Year}: interest ${neg.Interest_Inc} vs ${atRfr.toFixed(0)} at 4.5% (${at6.toFixed(0)} at 6%)` : 'no shortfall year');
   const banner = await page.evaluate(()=>{ const w=document.getElementById('warningBanner'); return w.style.display==='none' ? '' : w.textContent; });
   check('I14 a shortfall from a set budget is flagged, naming the scenario and year',
-    banner.includes('Own from Yr '+o2.find(r=>r.Year>0 && r.End_Cash<0).Year), banner);
+    banner.includes('Own from year '+o2.find(r=>r.Year>0 && r.End_Cash<0).Year), banner);
 }
 
 // ═══ Case F9: owning leads early, then renting pulls ahead ═══

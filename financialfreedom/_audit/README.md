@@ -73,6 +73,14 @@ only its figures are compared.
     node regression.mjs                  this page against baseline.json
     node regression.mjs --live ca850bc   this page beside the old one, from git
     node regression.mjs --record ca850bc rewrite baseline.json from the old page
+    node regression.mjs --live HEAD      this page beside the last commit: the
+                                         check for a change that must not move
+                                         a figure (a relabel, a layout change)
+
+`--live` feeds each side the plan in the form that side reads: `retireMultiplier`
+to a page from before life stages, Retirement expenses to any page since. A
+reworded sentence on the cards, the table note or the verdicts shows up as a
+text difference by design; every number still has to match to the last digit.
 
 The plans are 38 hand-picked ones aimed at each branch of the engine (all three
 goals, both savings models and moneys, every period, frozen and indexed

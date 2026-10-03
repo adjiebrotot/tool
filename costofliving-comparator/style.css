@@ -1,4 +1,7 @@
-:root {
+/* Dark mode takes dark.css's tokens; these two are this page's own. */
+:root{--override-bg:rgba(255,210,140,0.14);--override-border:#C99A2E;}
+/* Light mode keeps this page's own shades of the light tokens. */
+body.light {
   --bg:#F0F4FF; --bg-subtle:#F8FBFF; --panel:#FFFFFF; --panel-raised:#FFFFFF;
   --text:#2D3436; --muted:#7F8C8D; --text-inv:#FFFFFF; --border:#E0E6F0;
   --accent:#8BB8F8; --accent-strong:#5A91E8; --accent2:#4A9E87; --accent3:#C46A7E;
@@ -28,9 +31,7 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;font-size:0.88rem;}
 /* Card */
 .card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);}
 
-/* Header */
-.header{padding:20px 26px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;}
-.header-right{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+/* Header: the layout is shared.css's, so the buttons stay top right. */
 
 /* Toggle rows */
 .mode-card{padding:14px 20px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px;}
@@ -38,7 +39,7 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;font-size:0.88rem;}
 .toggle-label{font-size:0.88rem;color:var(--muted);font-weight:500;white-space:nowrap;}
 .seg-group{display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px;}
 .seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 14px;font-size:0.85rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 140ms;font-family:inherit;white-space:nowrap;flex-shrink:0;}
-.seg-btn.active{background:var(--accent-strong);color:#fff;box-shadow:var(--shadow-sm);}
+.seg-btn.active{background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}
 .seg-btn:hover:not(.active){color:var(--text);}
 
 /* City pickers */
@@ -125,7 +126,13 @@ select{background:var(--input-bg);border:1px solid var(--border);border-radius:9
 .req-val{font-family:'DM Mono',monospace;font-size:1.15rem;font-weight:800;color:var(--positive-em);}
 
 /* Summary box */
-.summary-box{margin-top:16px;padding:14px 18px;background:var(--info-bg);border:1px solid var(--info-border);border-radius:11px;font-size:0.88rem;line-height:1.7;color:var(--info-text);}
+/* The answer, first: the same neutral card every finance tool opens its
+   results with, above the two cities rather than under them. */
+.summary-box{margin:0 0 16px;padding:14px 18px;background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-xl,14px);font-size:1rem;font-weight:600;line-height:1.6;color:var(--text);}
+/* A per-month unit inside the field, after the number. */
+.input-wrap .per-tag{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:0.78rem;font-weight:700;color:var(--muted);pointer-events:none;white-space:nowrap;}
+.input-wrap .num-input.has-per{padding-right:46px;}
+.assumes-card{margin-top:16px;}
 
 /* Detail table */
 /* Scrolls sideways only, so Firefox is asked for the thin themed bar back
@@ -159,7 +166,7 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
 .btn-add:hover{border-color:var(--accent-strong);color:var(--accent-strong);}
 .btn-remove{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:0.9rem;padding:2px 5px;border-radius:5px;transition:all 130ms;}
 .btn-remove:hover{background:var(--negative-bg);color:var(--negative-em);}
-.btn-primary{background:var(--accent-strong);color:#fff;border:none;border-radius:9px;padding:9px 20px;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;transition:opacity 140ms;}
+.btn-primary{background:var(--accent-strong);color:var(--text-inv);border:none;border-radius:9px;padding:9px 20px;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;transition:opacity 140ms;}
 .btn-primary:hover{opacity:.85;}
 .btn-theme{background:var(--card-bg);border:1px solid var(--border);border-radius:9px;padding:7px 16px;font-size:0.85rem;font-weight:600;color:var(--text);cursor:pointer;font-family:inherit;transition:all 140ms;}
 .btn-theme:hover{border-color:var(--accent-strong);color:var(--accent-strong);}

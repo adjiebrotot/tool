@@ -519,7 +519,7 @@ async function uiChecks(){
   const page = async (url) => {
     const pg = await browser.newPage();
     // A first visit opens the guided tour over the page; mark it seen.
-    await pg.addInitScript(() => { try { localStorage.setItem('dca-tour-v1-seen', '1'); localStorage.setItem('dcapf-tour-v1-seen', '1'); } catch(_){} });
+    await pg.addInitScript(() => { try { ['dca-tour-v1-seen', 'dca-tour-v2-seen', 'dcapf-tour-v1-seen', 'dcapf-tour-v2-seen'].forEach(k => localStorage.setItem(k, '1')); } catch(_){} });
     await pg.route(u => !u.href.startsWith(`http://127.0.0.1:${port}`), route => {
       const lib = LIBS.find(l => route.request().url().endsWith(l));
       return lib ? route.fulfill({ path: path.join(libDir, path.basename(lib)), contentType: 'text/javascript' }) : route.abort();

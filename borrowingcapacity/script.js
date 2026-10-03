@@ -630,12 +630,11 @@ const DEPOSIT_TIPS = {
 };
 
 function syncUI(){
-  $('depsValue').textContent    = fmt.num(num('deps'));
   $('incSplitValue').textContent = fmt.pct(num('incSplit'), 0);
   $('cardPctValue').textContent = fmt.pct(num('cardPct'));
   $('bufferValue').textContent  = fmt.pct(num('buffer'));
   $('floorValue').textContent   = fmt.pct(num('floorRate'));
-  $('nsrValue').textContent     = num('nsrMin').toFixed(2);
+  $('nsrValue').textContent     = num('nsrMin').toFixed(2)+'×';
   $('dtiValue').textContent     = num('dtiCap').toFixed(2)+'×';
   $('lvrValue').textContent     = fmt.pct(num('lvrMax'),0);
 
@@ -664,7 +663,7 @@ function syncUI(){
     + `whatever the balance.`;
   $('loanSimpleNote').textContent = `Tested at the higher of ${fmt.pct(num('prodRate') + num('buffer'))} `
     + `(product rate plus the ${fmt.pct(num('buffer'))} APRA buffer) and the ${fmt.pct(num('floorRate'))} lender floor, `
-    + `keeping ${fmt.money0(num('umiReq'))}/mo spare and an NSR of at least ${num('nsrMin').toFixed(2)}.`;
+    + `keeping ${fmt.money0(num('umiReq'))}/mo left over (UMI) and income cover (NSR) of at least ${num('nsrMin').toFixed(2)}.`;
   $('lvrSimpleNote').textContent = bool('lmiCap')
     ? `Ceiling lifted to 95% LVR, with the ${fmt.pct(num('lmiRate'))} premium capitalised onto the loan.`
     : 'Ceiling held at 80% LVR, the level that avoids LMI.';
@@ -697,6 +696,40 @@ function renderKpis(r, p){
   $('kpiUmiSub').textContent = (r.umiPass ? 'passes' : 'fails') + ` the ${fmt.money0(p.umiReq)} minimum surplus`;
 }
 
+/* What each cap means, in the words the verdict uses. */
+const CAP_WHY = {
+  serv: 'serviceability: what your income can repay after tax, living costs and debts',
+  dti:  'debt to income: total debt as a multiple of income',
+  lvr:  'loan to value: the loan as a share of the property',
+  dep:  'your deposit: the loan it can support at the loan to value limit'
+};
+
+/* The answer in one sentence: what a lender would lend, and whether that buys
+   the home the reader priced. A pass or a miss against their own price, so
+   the tone says which; the figures underneath say why. */
+function renderVerdict(r, p){
+  const loan = fmt.money0(r.maxLoan), price = fmt.money0(p.price);
+  let tone, title;
+  if(r.maxLoan < 1){
+    tone = 'bad';
+    title = 'On these figures a lender would not lend anything.';
+  } else if(p.price > 0 && r.maxPrice + 0.5 >= p.price){
+    tone = 'good';
+    title = `A lender would likely lend you up to <span class="v-num">${loan}</span>, enough for the ${price} home you entered.`;
+  } else if(p.price > 0){
+    tone = 'warn';
+    title = `A lender would likely lend you up to <span class="v-num">${loan}</span>, <span class="v-num">${fmt.money0(p.price - r.maxPrice)}</span> short of the ${price} home you entered.`;
+  } else {
+    tone = '';
+    title = `A lender would likely lend you up to <span class="v-num">${loan}</span>.`;
+  }
+  const body = [];
+  if(r.maxLoan >= 1) body.push(`With your deposit that buys a home of up to ${fmt.money0(r.maxPrice)}.`);
+  body.push(`The limit is set by ${CAP_WHY[r.binding.key] || r.binding.label.toLowerCase()}.`);
+  if(r.maxRepay <= 0) body.push('Income left after tax, living costs and debts does not cover any repayment at the assessment rate.');
+  SharedVerdict.set('verdict', { tone, title, body: body.join(' ') });
+}
+
 function table(head, rows){
   return '<table><thead><tr>' + head.map(h=>`<th>${h}</th>`).join('') + '</tr></thead><tbody>'
        + rows.map(r => `<tr class="${r.cls||''}">` + r.cells.map((c,idx) =>
@@ -712,8 +745,8 @@ function renderCaps(r){
       fmt.money0(c.value),
       c.key===r.binding.key ? '—' : '+'+fmt.money0(c.value - r.maxLoan),
       c.key===r.binding.key
-        ? '<span class="badge badge-warning">Binding</span>'
-        : '<span class="badge badge-info">Slack</span>'
+        ? '<span class="badge badge-info">Binding</span>'
+        : '<span class="badge badge-muted">Room left</span>'
     ],
     cellCls: ['','','','']
   }));
@@ -752,7 +785,7 @@ function renderBuild(r, p){
         'serviced on top of the base loan'], cellCls:['','','','note'] });
   rows.push({ cls:'total', cells:['Loan this supports', fmt.money0(r.Lserv), '',
         'maximum repayment inverted through the annuity formula'], cellCls:['','','','note'] });
-  $('buildTableWrap').innerHTML = table(['Item','Monthly','Annual','Note'], rows);
+  $('buildTableWrap').innerHTML = table(['Item','$ a month','$ a year','Note'], rows);
 }
 
 function renderIncome(r){
@@ -762,17 +795,17 @@ function renderIncome(r){
   if(!rows.length) rows.push({ cells:['No income entered','$0','—','$0'], cellCls:['','','',''] });
   rows.push({ cls:'total', cells:['Total', fmt.money0(r.grossUnshaded),
         fmt.pct(r.grossUnshaded ? r.grossAssessable/r.grossUnshaded*100 : 0, 1), fmt.money0(r.grossAssessable)], cellCls:['','','',''] });
-  $('incomeTableWrap').innerHTML = table(['Stream','Entered, annual','Shading','Assessable'], rows);
+  $('incomeTableWrap').innerHTML = table(['Stream','Entered, $ a year','Shading','Assessable, $ a year'], rows);
 }
 
 function renderCommitments(r){
   const rows = r.commitLines.filter(l => l.value !== 0).map(l => ({
-    cells:[l.label, fmt.money0(l.value), l.note], cellCls:['', l.value<0?'pos':'neg', 'note']
+    cells:[l.label, fmt.money0(l.value), l.note], cellCls:['', l.value<0?'pos':'', 'note']
   }));
   if(!rows.length) rows.push({ cells:['No commitments entered','$0',''], cellCls:['','','note'] });
   rows.push({ cls:'total', cells:['Total monthly commitments', fmt.money0(r.commitments),
-        r.commitRaw < 0 ? 'floored at zero, the closures exceed every other commitment' : ''], cellCls:['','neg','note'] });
-  $('commTableWrap').innerHTML = table(['Item','Monthly','Note'], rows);
+        r.commitRaw < 0 ? 'floored at zero, the closures exceed every other commitment' : ''], cellCls:['','','note'] });
+  $('commTableWrap').innerHTML = table(['Item','$ a month','Note'], rows);
 }
 
 // The HEM benchmark is not a warning, it is the number the assessment actually
@@ -822,10 +855,10 @@ function renderWarnings(r, p){
 // colour alone to tell the four constraints apart.
 const SERIES = [
   { key:'cap',  label:'Borrowing capacity', varName:'--accent-strong', width:3.4, dash:[]     },
-  { key:'serv', label:'Serviceability',     varName:'--accent2',       width:1.9, dash:[7,4]  },
-  { key:'dti',  label:'Debt to income',     varName:'--line-b',        width:1.9, dash:[2,3]  },
-  { key:'lvr',  label:'Loan to value',      varName:'--gold',          width:1.9, dash:[11,4] },
-  { key:'dep',  label:'Deposit',            varName:'--line-d',        width:1.9, dash:[1,4]  }
+  { key:'serv', label:'Serviceability',     varName:'--line-c',        width:1.9, dash:[7,4]  },
+  { key:'dti',  label:'Debt to income',     varName:'--gold',          width:1.9, dash:[2,3]  },
+  { key:'lvr',  label:'Loan to value',      varName:'--line-d',        width:1.9, dash:[11,4] },
+  { key:'dep',  label:'Deposit',            varName:'--muted',         width:1.9, dash:[1,4]  }
 ];
 
 function renderLegend(datasets){
@@ -926,7 +959,7 @@ function updateChart(sweep, userIdx){
       x: {
         type:'linear',
         ...(bounded ? { min:xMin, max:xMax } : {}),
-        title:{ display:true, text:'Gross income, pre-tax ($ per year)', color:muted, font:{size:11} },
+        title:{ display:true, text:'Gross income before tax ($ a year)', color:muted, font:{size:11} },
         ticks:{ color:muted, maxTicksLimit:9, font:{size:11}, callback:v => fmt.currency(v, true) },
         grid:{ color:grid }
       },
@@ -958,6 +991,7 @@ function render(){
   const sweep = buildSweep(p);
   last = { p, r, sweep };
 
+  renderVerdict(r, p);
   renderKpis(r, p);
   renderCaps(r);
   renderBuild(r, p);
@@ -1306,7 +1340,7 @@ const QUICK_START_SCENARIOS = {
   /* Brisbane first home buyer with a study loan still running. The deposit is
      the binding cap here, not income: $70k against a $650k price is under 11%,
      and without LMI the lender stops at 80% of the price. Tick "LMI capitalised"
-     on the Caps tab and capacity lifts from $264k to $292k, because the ceiling
+     on the Purchase tab and capacity lifts from $264k to $292k, because the ceiling
      moves to 95% and serviceability takes over as the binding cap.
 
      The deposit has to be genuinely thin for that to be true. At $90k saved the
@@ -1408,6 +1442,8 @@ function wireSegments(){
 
 function init(){
   captureDefaults();
+  SharedSeg.fromSelect($('adults'), { labelOf: o => o.value, ariaLabel: 'Applicants' });
+  SharedSeg.fromSelect($('deps'), { labelOf: o => o.value, ariaLabel: 'Dependants' });
 
   document.querySelectorAll('.fmt-num').forEach(el =>
     SharedFmt.attachCurrencyInput(el, { maxDecimals:2 }));

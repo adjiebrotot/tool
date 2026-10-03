@@ -34,6 +34,36 @@ tables, tooltips, charts) rather than inventing new ones. Include the shared lay
 The fastest way to stay consistent is to open the closest existing tool and mirror its
 structure. Theme toggle, dark/light behaviour, and fonts should match the others exactly.
 
+### A finance tool: the seven-rule checklist
+
+A calculator that handles money follows **Finance Tool Skeleton** in the design reference.
+Before calling it done, every line here must hold:
+
+- [ ] **Grouped**: inputs in `.field-group`s, generic before specific; first tab holds the
+      four to six figures anyone knows, Currency first; a last **Assumptions** tab holds the
+      guesses (inflation, growth, simulation, fill timing).
+- [ ] **Titles stay the real term, tooltips explain it**: keep jargon (Risk-Free Rate,
+      Binding constraint) with a one-line plain tip; spell out abbreviations with the term
+      in brackets ("safe withdrawal rate (SWR)").
+- [ ] **The control fits the value**: known figures typed, guesses on sliders, small counts
+      as segmented buttons (`SharedSeg.fromSelect`). One **Detail: Simple | Detailed** switch
+      per group, first in it.
+- [ ] **Same structure**: results open with a one-sentence answer (`SharedVerdict`, neutral
+      tone for a comparison of options), then KPI cards, charts, tables folded behind
+      **Show table** (`SharedFold`), and a closing **What this assumes** card. Display options
+      sit beside the results they change.
+- [ ] **Units everywhere**: the unit is the field's prefix or suffix, never the label;
+      `data-unit` when it lives in a column header, `data-unitless` for a seed. Every y axis
+      names its unit, every x axis is titled, every table says its unit once (`.unit-note`).
+- [ ] **Bounds enforced by the form**: min/max on every typed number (`data-min`/`data-max`
+      on money), SharedBounds pulls values back; sliders name both ends and take a typed value.
+- [ ] **Colour means one thing**: options take `SharedPalette`'s neutral sequence (blue,
+      gold, teal, rose…), never red; red is direction only; no hex typed into code, every
+      colour a token, in both themes.
+
+Add the page to `FINANCE` in `shared.js` and to `PAGES` in `_ref/form-check.mjs`, and run
+`node _ref/form-check.mjs` (ONLY=<path> for one page). No em-dashes in page text.
+
 ## 2. SEO — match the standard head + register the page
 
 Copy the SEO block from an existing tool's `<head>` and adapt it: `<title>`, `<meta
@@ -97,6 +127,9 @@ Scale the rigor to the risk:
   page headless and checks the engine against an independent replay of the documented maths,
   plus edge cases). Follow the pattern in `financingvscash/_audit/`, `costofliving-comparator/_audit/`,
   etc. Verify calculation/formula/code integrity, not just that the page renders.
+- **Every finance tool** also passes `node _ref/form-check.mjs` (units, bounds, slider ends,
+  axis units, no em-dash, no red option, answer and caveats) alongside `_ref/quickstart-check.mjs`,
+  `_ref/scenario-check.mjs`, `_ref/chart-check.mjs`, `_ref/tip-check.mjs` and `_ref/abbr-check.mjs`.
 - **Plain utility/visualiser tools with no risky finance/engineering output** — a visual check
   is enough: load the page, exercise the main flow, confirm it looks right and nothing errors.
 

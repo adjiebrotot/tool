@@ -355,7 +355,7 @@ await page.route('**/*', route => {
 // The guided tour opens itself on a first visit and its backdrop intercepts
 // every click, so mark it seen before anything loads.
 await page.addInitScript(() => {
-  try { localStorage.setItem('ff-tour-v3-seen', '1'); } catch(_e){}
+  try { localStorage.setItem('ff-tour-v4-seen', '1'); } catch(_e){}
 });
 await page.goto(PAGE, {waitUntil: 'load'});
 await page.waitForFunction(() => !!window.__FF, null, {timeout: 10000});
@@ -850,7 +850,7 @@ console.log('\n── Feasibility ──');
 console.log('\n── Page and presentation ──');
 
 /* F47: what the reader sees having touched nothing. Today's money is the
-   DEFAULT: the toggle reads Show in Present Value and is on as the page loads,
+   DEFAULT: the toggle reads Show in today's money and is on as the page loads,
    so the plotted balance is the engine's real figure, unscaled. Future's money
    is the opt-out. This block runs before anything below flips that toggle, so
    it reads the page as it loads. */
@@ -872,8 +872,8 @@ console.log('\n── Page and presentation ──');
       yTitle: path.options.scales.y.title.text
     };
   });
-  check('F47 the money toggle reads Show in Present Value',
-    r.exists && r.oldGone && /show in present value/i.test(r.label), r.label);
+  check('F47 the money toggle reads Show in today\u2019s money',
+    r.exists && r.oldGone && /show in today['\u2019]s money/i.test(r.label), r.label);
   check('F47b and it is on arrival, so today\u2019s money is what you see first',
     r.checked === true && r.defaulted === true,
     `checked ${r.checked}, default ${r.defaulted}`);
@@ -990,8 +990,8 @@ console.log('\n── Page and presentation ──');
   check('F49c while a whole year is still just the year', /^\d{4},/.test(r.wholeTitle || ''),
     r.wholeTitle);
   check('F49d the hover line under the chart says the same thing',
-    /^[A-Z][a-z]{2} \d{4},/.test(r.hover) && !/\d\.\d/.test(r.hover.split('—')[0]),
-    r.hover.split('—')[0].trim());
+    /^[A-Z][a-z]{2} \d{4},/.test(r.hover) && !/\d\.\d/.test(r.hover.split('|')[0]),
+    r.hover.split('|')[0].trim());
   check('F49e and so does the age you reach freedom in',
     /[A-Z][a-z]{2} \d{4}\.$/.test(r.freeSub) && !/in \d+\.\d/.test(r.freeSub), r.freeSub);
   check('F49f the axis tick itself stays a whole year', /^\d{4}$/.test(String(r.tick)), String(r.tick));

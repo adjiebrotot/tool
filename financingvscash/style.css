@@ -3,14 +3,12 @@
   --line-f:#B3D1FF;
 }
 body.light{
-  --accent2:#3aaa86;
-  --line-a:#5A91E8;--line-b:#E63939;--line-c:#3aaa86;--line-d:#b07a00;--line-e:#c45e7a;--line-f:#0052CC;
+  --line-f:#0052CC;
 }
 *{box-sizing:border-box;min-width:0;}
 body{margin:0;overflow-x:hidden;font-family:'DM Sans',system-ui,sans-serif;color:var(--text);background:var(--bg);transition:background .25s,color .25s;}
 .container{max-width:1440px;margin:0 auto;padding:24px;}
 .card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);}
-.header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;}
 h1{margin:0 0 4px;font-size:1.85rem;font-weight:800;letter-spacing:-.02em;}
 h2{margin:0 0 10px;font-size:1.1rem;font-weight:700;}
 h3{margin:0 0 8px;font-size:.88rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
@@ -29,14 +27,10 @@ p,.muted{color:var(--muted);line-height:1.55;margin:0;}
 .quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
 .quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit;}
 .quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
-.quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(58,170,134,.15);}
+.quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-theme:hover{border-color:var(--accent);color:var(--text);}
 .btn-back{text-decoration:none;display:inline-flex;align-items:center;}
-/* The tagline names the loan types now, so give it the remaining width and let
-   it wrap inside the header rather than pushing the buttons onto their own row. */
-.header>div:first-child{flex:1 1 380px;min-width:0;}
-.header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
 .ctrl-tab{flex:1;padding:11px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent);}
 .ctrl-panel{display:none;padding:16px 18px 20px;}
@@ -58,9 +52,8 @@ body.light .sel-input option{background:#FFFFFF;color:#2D3436;}
 .slider-block:first-of-type{border-top:none;padding-top:4px;}
 .slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:7px;}
 .slider-label{font-weight:700;font-size:.88rem;}
-.slider-value{color:var(--gold);font-weight:700;font-variant-numeric:tabular-nums;font-size:.88rem;font-family:'DM Mono',monospace;cursor:text;}
+.slider-value{color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums;font-size:.88rem;font-family:'DM Mono',monospace;}
 input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
-.slider-val-edit{display:none;width:5em;background:transparent;border:none;border-bottom:1.5px solid var(--gold);color:var(--gold);font-weight:700;font-size:.88rem;font-variant-numeric:tabular-nums;font-family:'DM Mono',monospace;text-align:right;outline:none;padding:0 1px;}
 .help{color:var(--muted);font-size:.78rem;margin-top:5px;line-height:1.4;}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px 18px;border-top:1px solid var(--border);}
 .btn-primary{background:var(--accent);color:white;border:none;border-radius:10px;padding:11px 16px;font-weight:600;cursor:pointer;font-size:.88rem;transition:opacity .15s;font-family:inherit;}
@@ -106,8 +99,7 @@ body.light .scenario-card:hover{border-color:rgba(0,0,0,.2);}
 .sc-btn.del:hover{border-color:var(--negative-em);color:var(--negative-em);}
 .warning{margin:0 18px 14px;padding:10px 13px;border-radius:10px;background:rgba(255,210,140,.15);border:1px solid rgba(255,210,140,.3);color:var(--gold);display:none;font-size:.82rem;line-height:1.5;}
 body.light .warning{background:#FFF0D9;border-color:rgba(176,122,0,.2);color:#7A4A00;}
-.neg-carry{margin:0 18px 14px;padding:10px 13px;border-radius:10px;background:rgba(255,139,139,.1);border:1px solid rgba(255,139,139,.2);color:var(--negative-em);display:none;font-size:.82rem;line-height:1.5;}
-body.light .neg-carry{background:#FDECEC;border-color:#F3A5A5;color:#E63939;}
+.neg-carry{margin:0 18px 14px;padding:10px 13px;border-radius:10px;background:var(--warning-bg);border:1px solid rgba(255,210,140,.35);color:var(--warning-text);display:none;font-size:.82rem;line-height:1.5;}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.84rem;}
 th,td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}
 th:first-child,td:first-child{text-align:left;white-space:normal;}
@@ -177,8 +169,6 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
   .controls{position:static;max-height:none;}
   .canvas-wrap{height:380px!important;}
   .metrics{grid-template-columns:repeat(2,1fr);}
-  .header{flex-direction:column;gap:12px;}
-  .header>div:first-child{flex:none;}
 }
 @media(max-width:600px){
   h1{font-size:1.35rem;}
@@ -186,3 +176,19 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
   .metrics{grid-template-columns:1fr;}
   .btn-row{flex-direction:column;}
 }
+
+/* ── Redesign: shared skeleton fit ── */
+/* M6: the Optimization Target sits in the Best Strategy card it decides. */
+.kpi-opt{margin-top:10px;padding-top:8px;border-top:1px solid var(--border);}
+.kpi-opt-label{color:var(--muted);font-size:.74rem;font-weight:700;margin-bottom:4px;}
+.sel-input.sel-sm{padding:6px 28px 6px 10px;font-size:.8rem;background-position:right 9px center;}
+/* M6: the chart's metric is a switch on the chart itself. */
+.chart-switch-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 0 4px;}
+.chart-switch-label{color:var(--muted);font-size:.8rem;font-weight:700;}
+.chart-switch-row .seg-source{position:absolute;}
+.seg-group.chart-switch{width:auto;}
+.seg-group.chart-switch .seg-btn{flex:0 0 auto;font-family:inherit;}
+.chart-head h2 .tip-icon{vertical-align:middle;}
+.detail-section .unit-note{margin:-4px 0 12px;}
+.verdict{margin-bottom:18px;}
+.assumes-card{margin-top:18px;}

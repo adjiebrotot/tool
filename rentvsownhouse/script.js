@@ -6,113 +6,113 @@ let lang = (window.DEFAULT_LANG === 'id') ? 'id' : 'en';
 const LANG = {
   en: {
     /* header */
-    subtitle: 'Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.',
+    subtitle: 'Model the long-term financial outcome of renting vs buying property, comparing cash, equity and net wealth over time.',
     btnBack: '← Other Tools',
     sensitivityHtml: 'Power user? Compare multiple scenarios side-by-side with our <a href="/rentvsownhouse/sensitivity/" style="color:var(--accent);font-weight:700;text-decoration:none;">Sensitivity Analysis Tool</a>.',
     /* sidebar */
     quickStartLabel: 'Quick Start',
     quickStartTip: 'Prefills with a median two-bedroom apartment in the city centre or inner suburbs.',
     tabGeneral: 'General',
-    tabOwn: 'Own',
+    tabOwn: 'Home',
     tabRent: 'Rent',
     sectionCash: 'Cash',
     labelRiskFreeRate: 'Risk-Free Rate',
-    unitPctPa: '% p.a.',
-    labelInitialCash: 'Initial Cash',
+    unitPctPa: '%/yr',
+    labelInitialCash: 'Initial cash',
     labelOptional: '(optional)',
-    subInitialCashDefault: 'Defaults to down payment + setup cost. Any excess is invested at the risk-free rate.',
-    labelMonthlyBudget: 'Monthly Housing Budget',
-    labelBudgetIncrease: 'Budget Annual Increase',
+    subInitialCashDefault: 'Defaults to the down payment plus setup cost. Any excess is invested at the risk-free rate.',
+    labelMonthlyBudget: 'Monthly housing budget',
+    labelBudgetIncrease: 'Budget annual increase',
     helpBudgetGrowsPrefix: 'Budget grows from',
     helpBudgetGrowsSuffix: 'at this rate each year.',
-    labelTimeHorizon: 'Time Horizon',
+    labelTimeHorizon: 'Time horizon',
     labelYears: 'years',
     yrsSuffix: ' yrs',
-    sectionRTB: 'Rent-Then-Buy Scenario',
+    sectionRTB: 'Rent-Then-Buy scenario',
     labelEnableRTB: 'Enable Rent-Then-Buy',
-    labelBuyAtYear: 'Buy at Year',
+    labelBuyAtYear: 'Buy at year',
     unitYearsRentingFirst: 'years of renting first',
     sectionProperty: 'Property',
-    labelPropertyPrice: 'Property Price',
-    labelDownPayment: 'Down Payment',
+    labelPropertyPrice: 'Property price',
+    labelDownPayment: 'Down payment',
     helpDownPaymentPrefix: 'Down payment = ',
-    unitPctOfPrice: '% of property price',
+    unitPctOfPrice: '% of price',
     sectionMortgage: 'Mortgage',
-    labelMortgageType: 'Mortgage Type',
+    labelMortgageType: 'Mortgage type',
     labelPI: 'Principal & Interest',
     helpPI: 'Pay down loan each period; builds equity faster.',
     labelIO: 'Interest Only',
     helpIO: 'Pay only interest; the full principal is repaid from cash at the end of the term.',
-    labelCostInterestOnly: 'Cost = Interest Only',
-    labelMortgageRate: 'Mortgage Rate',
-    labelMortgageTerm: 'Mortgage Term',
-    labelMortgageMode: 'Mortgage Mode',
+    labelCostInterestOnly: 'Cost = interest only',
+    labelMortgageRate: 'Mortgage rate',
+    labelMortgageTerm: 'Mortgage term',
+    labelMortgageMode: 'Detail',
     segSimple: 'Simple',
     segDetailed: 'Detailed',
-    labelRateSchedule: 'Mortgage Rate Schedule',
+    labelRateSchedule: 'Mortgage rate schedule',
     btnAddPeriod: '+ Add Period',
     optFixed: 'Fixed',
     optFloating: 'Floating',
     labelYear: 'Year',
     labelPeriodEnd: 'Last year of this period',
-    sectionPropertyGrowth: 'Property Growth',
-    labelHouseGrowth: 'House Price Growth (RPPI)',
-    labelSellingCost: 'Selling Cost',
+    sectionPropertyGrowth: 'Property growth',
+    labelHouseGrowth: 'House price growth (RPPI)',
+    labelSellingCost: 'Selling cost',
     unitPctOfValue: '% of sale price',
-    labelCalcCAGR: 'Calculate CAGR from Historical Prices',
-    btnShowTool: 'Show Tool',
-    btnHideTool: 'Hide Tool',
+    labelCalcCAGR: 'Calculate compound annual growth (CAGR) from historical prices',
+    btnShowTool: 'Show tool',
+    btnHideTool: 'Hide tool',
     btnDelete: 'Delete',
     btnAddRow: '+ Row',
-    btnCalcCAGR: 'Calc CAGR →',
-    sectionCostsOwning: 'Costs of Owning',
-    labelCostsMode: 'Costs Mode',
-    labelSetupCosts: 'Setup Costs',
-    labelOngoingCostsList: 'Ongoing Costs',
-    btnAddSetupCost: '+ Add Setup Cost',
-    btnAddOngoingCost: '+ Add Ongoing Cost',
+    btnCalcCAGR: 'Calculate CAGR',
+    sectionCostsOwning: 'Costs of owning',
+    labelCostsMode: 'Detail',
+    labelSetupCosts: 'Setup costs',
+    labelOngoingCostsList: 'Ongoing costs',
+    btnAddSetupCost: '+ Add setup cost',
+    btnAddOngoingCost: '+ Add ongoing cost',
     phCostName: 'Name (optional)',
-    optPerYear: 'per year',
-    optPerMonth: 'per month',
-    optPerWeek: 'per week',
+    optPerYear: 'a year',
+    optPerMonth: 'a month',
+    optPerWeek: 'a week',
     optPctBuyPrice: '% of buy price',
     labelInflation: 'Inflation',
-    labelSetupCost: 'Setup Cost (Stamp Duty, Legal, etc.)',
+    labelSetupCost: 'Setup cost (stamp duty, legal, etc.)',
     optDollar: '$',
-    labelOwnOngoing: 'Ongoing Costs of Owning',
-    optYearly: 'Yearly',
-    optMonthly: 'Monthly',
-    optWeekly: 'Weekly',
-    optFixedAmount: 'Fixed $ amount',
+    labelOwnOngoing: 'Ongoing costs of owning',
+    optYearly: 'a year',
+    optMonthly: 'a month',
+    optWeekly: 'a week',
+    optFixedAmount: 'Fixed amount',
     optPctPropertyValue: '% of property value',
-    labelOwnInflation: 'Own Ongoing Cost Inflation',
-    sectionRentalPayments: 'Rental Payments',
-    labelRentAmount: 'Rent Amount',
+    labelOwnInflation: 'Own ongoing cost inflation',
+    sectionRentalPayments: 'Rental payments',
+    labelRentAmount: 'Rent amount',
     rentPrefix: 'Rent = ',
     perMo: '/mo',
-    labelRentInflation: 'Rent Inflation',
-    sectionCostsRenting: 'Costs of Renting',
-    labelRentOngoing: 'Ongoing Costs of Renting',
-    optPctAnnualRent: '% of annual rent',
-    labelRentOngoingInflation: 'Rent Ongoing Cost Inflation',
+    labelRentInflation: 'Rent inflation',
+    sectionCostsRenting: 'Costs of renting',
+    labelRentOngoing: 'Ongoing costs of renting',
+    optPctAnnualRent: '% of yearly rent',
+    labelRentOngoingInflation: 'Rent ongoing cost inflation',
     labelCurrencySymbol: 'Currency Symbol',
     /* KPI */
-    kpiInitialCashLabel: 'Initial Cash',
+    kpiInitialCashLabel: 'Initial cash',
     kpiInitialCashTip: 'Starting cash in every scenario. Left blank, it is the most any scenario needs up front: deposit plus setup, a year of rent, or what Rent-Then-Buy needs today to fund its later deposit.',
     kpiInitialCashSub: 'Starting capital at Year 0',
-    kpiBudgetLabel: 'Monthly Housing Budget',
-    kpiBudgetSub: 'Min–max monthly budget over horizon',
-    kpiBreakevenLabel: 'Breakeven Year',
-    kpiBreakevenTip: 'The year Buy net equity (house plus cash) passes Rent for good: from then to the horizon, owning stays ahead.',
+    kpiBudgetLabel: 'Monthly housing budget',
+    kpiBudgetSub: 'Min–max monthly budget over the horizon',
+    kpiBreakevenLabel: 'Breakeven year',
+    kpiBreakevenTip: 'The year owning gets ahead of renting and stays ahead to the end of the horizon.',
     kpiBreakevenSub: 'When owning net equity overtakes renting for good',
-    kpiDiffLabel: 'Equity Difference',
-    kpiDiffTip: 'Own net equity minus Rent net equity at the final year. Green means buying wins, red means renting and investing wins.',
-    kpiDiffSub: 'Own minus Rent at final year',
+    kpiDiffLabel: 'Equity difference',
+    kpiDiffTip: 'Own net equity minus rent net equity at the final year. Positive means owning ends ahead.',
+    kpiDiffSub: 'Own minus rent at the final year',
     /* chart */
     chartTitle: 'Comparison',
-    btnNetEquity: 'Net Equity',
-    btnLiquidCash: 'Liquid Cash',
-    btnAccumCost: 'Accum. Cost',
+    btnNetEquity: 'Net equity',
+    btnLiquidCash: 'Liquid cash',
+    btnAccumCost: 'Accumulated cost',
     btnZoom: '⟳',
     /* Buttons in the export cluster are glyphs or two-word labels, so the
        title attribute is what says what each one does, in the wording every
@@ -124,191 +124,246 @@ const LANG = {
     btnCsvTitle: 'Download this table as CSV',
     chartHoverHint: 'Hover over the chart to inspect a year.',
     /* summary */
-    ownSnapshotTitle: 'Own — Snapshot',
-    rentSnapshotTitle: 'Rent — Snapshot',
-    rtbSnapshotTitle: '🔄 Rent-Then-Buy — Snapshot',
+    ownSnapshotTitle: 'Own snapshot',
+    rentSnapshotTitle: 'Rent snapshot',
+    rtbSnapshotTitle: 'Rent-Then-Buy snapshot',
     rtbSnapshotTip: 'The Rent-Then-Buy scenario at the final year. Savings fund the deposit at the buy year, on the price by then, and a new mortgage starts.',
     /* detail tabs */
-    tabOwnCashflow: 'Own Cashflow',
-    tabRentCashflow: 'Rent Cashflow',
-    tabRTBCashflow: 'Rent-Then-Buy Cashflow',
+    tabOwnCashflow: 'Own cashflow',
+    tabRentCashflow: 'Rent cashflow',
+    tabRTBCashflow: 'Rent-Then-Buy cashflow',
     btnCSV: '⬇ CSV',
     /* chart series */
-    seriesOwnNetEquity: 'Own — Net Equity',
-    seriesRentNetEquity: 'Rent — Net Equity',
-    seriesRTBNetEquity: 'Rent-Then-Buy — Net Equity',
-    seriesOwnCash: 'Own — Liquid Cash',
-    seriesRentCash: 'Rent — Liquid Cash',
-    seriesRTBCash: 'Rent-Then-Buy — Liquid Cash',
-    seriesOwnCost: 'Own — Accum. Cost (Mortgage+Ongoing)',
-    seriesRentCost: 'Rent — Accum. Cost (Rent+Ongoing)',
-    seriesRTBCost: 'Rent-Then-Buy — Accum. Cost',
+    seriesOwnNetEquity: 'Own: net equity',
+    seriesRentNetEquity: 'Rent: net equity',
+    seriesRTBNetEquity: 'Rent-Then-Buy: net equity',
+    seriesOwnCash: 'Own: liquid cash',
+    seriesRentCash: 'Rent: liquid cash',
+    seriesRTBCash: 'Rent-Then-Buy: liquid cash',
+    seriesOwnCost: 'Own: accumulated cost (mortgage + ongoing)',
+    seriesRentCost: 'Rent: accumulated cost (rent + ongoing)',
+    seriesRTBCost: 'Rent-Then-Buy: accumulated cost',
     seriesRateBand: 'Floating-rate range (min–max)',
     /* dynamic messages */
     kpiBreakevenYear: 'Year ',
-    subInitialCashLeftover: (x) => `Leftover ${x} invested at risk-free rate from day one.`,
-    subInitialCashExact: 'Exactly covers down payment + setup cost — no surplus.',
-    subInitialCashAuto: (x) => `Auto: ${x} (down payment + setup cost). Any excess is invested at the risk-free rate.`,
-    subInitialCashRTB: (x,y,z,n) => `Auto: ${x}. Enough, with what it saves by then, for Rent-Then-Buy's ${z} deposit and setup at Yr ${n}.`,
-    warnInitialCashRTB: (x,y,z,n) => `⚠️ Initial cash ${x} is ${y} short of what Rent-Then-Buy needs today (${z}) to fund its purchase at Yr ${n}.`,
-    warnShortfall: (list) => `⚠️ Cash runs below zero in ${list}. The mortgage is the only borrowing in this model, so raise the budget or initial cash, or clear them for the automatic figures.`,
-    warnShortfallIO: (list) => `⚠️ Cash runs below zero in ${list}, when the interest-only balance falls due. Set a higher budget or initial cash to save for it.`,
-    shortfallItem: (name, yr, amt) => `${name} from Yr ${yr} (down to ${amt})`,
-    nameOwn: 'Own', nameRent: 'Rent', nameRTB: 'Rent-Then-Buy',
-    warnInitialCashShort: (x,y,z) => `⚠️ Initial cash ${x} is ${y} short of down payment + setup cost (${z}). The shortfall reduces the loan equity at start.`,
-    subRequiredCash: (x) => `Required: ${x} (down payment + setup cost).`,
-    warnBudgetLow: (x,y,z) => `⚠️ Budget (${x}/mo) is below both total own cost (${y}/mo incl. ongoing) and rent cost (${z}/mo incl. ongoing). Surplus will be negative and cash may decline below zero.`,
-    cagrResult: (x) => `CAGR: ${x}% p.a. — applied ✓`,
+    subInitialCashLeftover: (x) => `Leftover ${x} earns the risk-free rate from day one.`,
+    subInitialCashExact: 'Exactly covers the down payment and setup cost, with no surplus.',
+    subInitialCashAuto: (x) => `Auto: ${x} (down payment plus setup cost). Any excess earns the risk-free rate.`,
+    subInitialCashRTB: (x,y,z,n) => `Auto: ${x}. With what it saves by then, enough for the ${z} deposit and setup cost when Rent-Then-Buy buys in year ${n}.`,
+    warnInitialCashRTB: (x,y,z,n) => `⚠️ Initial cash, ${x}, is ${y} short of what Rent-Then-Buy needs today (${z}) to buy in year ${n}.`,
+    warnShortfall: (list) => `⚠️ Cash runs below zero in ${list}. The mortgage is the only borrowing in this model, so raise the budget or the initial cash, or clear them for the automatic figures.`,
+    warnShortfallIO: (list) => `⚠️ Cash runs below zero in ${list}, when the interest-only balance falls due. Set a higher budget or more cash now to save for it.`,
+    shortfallItem: (name, yr, amt) => `${name} from year ${yr} (down to ${amt})`,
+    nameOwn: 'Own',
+    warnInitialCashShort: (x,y,z) => `⚠️ Initial cash, ${x}, is ${y} short of the down payment plus setup cost (${z}). The shortfall reduces the equity you start with.`,
+    subRequiredCash: (x) => `Needed: ${x} (down payment plus setup cost).`,
+    warnBudgetLow: (x,y,z) => `⚠️ The budget (${x}/mo) is below both the cost of owning (${y}/mo with ongoing costs) and of renting (${z}/mo with ongoing costs). The surplus turns negative and cash may fall below zero.`,
+    cagrResult: (x) => `Growth: ${x}%/yr, applied to House price growth ✓`,
     cagrNeedPoints: 'Need at least 2 valid year and price points.',
     cagrEndYearError: 'End year must be after start year.',
     /* table headers */
     thYear: 'Year',
     thRate: 'Rate',
-    thCashPosition: 'Cash Position',
-    thMortgagePosition: 'Mortgage Position',
-    thFinancialPosition: 'Financial Position',
-    thBegCash: 'Beg. Cash',
-    thAnnBudget: 'Ann. Budget',
-    thPrincipalExp: 'Principal Exp.',
-    thInterestExp: 'Interest Exp.',
-    thOngoingExp: 'Ongoing Exp.',
-    thInterestInc: 'Cash Interest',
+    thCashPosition: 'Cash position',
+    thMortgagePosition: 'Mortgage position',
+    thFinancialPosition: 'Financial position',
+    thBegCash: 'Cash at start',
+    thAnnBudget: 'Annual budget',
+    thPrincipalExp: 'Principal expense',
+    thInterestExp: 'Interest expense',
+    thOngoingExp: 'Ongoing expense',
+    thInterestInc: 'Cash interest',
     thSurplus: 'Surplus',
-    thEndCash: 'End Cash',
-    thPropValue: 'Prop. Value',
-    thPrincipalLeft: 'Principal Left',
-    thHouseEquity: 'House Equity',
-    thNetEquity: 'Net Equity',
-    thAccumCost: 'Accum. Cost',
+    thEndCash: 'Cash at end',
+    thPropValue: 'Property value',
+    thPrincipalLeft: 'Principal left',
+    thHouseEquity: 'House equity',
+    thNetEquity: 'Net equity',
+    thAccumCost: 'Accumulated cost',
     thPhase: 'Phase',
-    thTotalExp: 'Total Exp.',
-    thRentExp: 'Rent Exp.',
-    thPurchaseOutlay: 'Purchase Outlay',
+    thTotalExp: 'Total expense',
+    thRentExp: 'Rent expense',
+    thPurchaseOutlay: 'Purchase outlay',
     /* summary tile labels */
-    tileNetEquity: 'Net Equity',
-    tileAccumCost: 'Accumulated Cost',
-    tileHouseEquity: 'House Equity',
-    tileLiquidCash: 'Liquid Cash',
-    tileMonthlyMortgage: 'Monthly Mortgage',
-    tilePrincipalRemaining: 'Principal Remaining',
-    tileYearlyRent: 'Yearly Rent',
-    tilePropPriceAtBuy: 'Property Price at Buy',
+    tileNetEquity: 'Net equity',
+    tileAccumCost: 'Accumulated cost',
+    tileHouseEquity: 'House equity',
+    tileLiquidCash: 'Liquid cash',
+    tileMonthlyMortgage: 'Monthly mortgage',
+    tilePrincipalRemaining: 'Principal remaining',
+    tileYearlyRent: 'Yearly rent',
+    tilePropPriceAtBuy: 'Property price at buy',
     /* phase labels */
     phaseRenting: 'Renting',
-    phaseBought: '🔄 Bought',
+    phaseBought: 'Bought',
     phaseOwning: 'Owning',
     /* chart tooltip */
     chartTooltipYear: 'Year ',
+    tabAssumptions: 'Assumptions',
+    sectionSavings: 'Savings and time horizon',
+    unitPctYr: '%/yr',
+    unitYrs: 'yrs',
+    perMoUnit: '/mo',
+    labelDetail: 'Detail',
+    unitPctOfSale: '% of sale',
+    curDollar: '$ Dollar',
+    curEuro: '€ Euro',
+    curPound: '£ Pound',
+    curYen: '¥ Yen or Yuan',
+    curWon: '₩ Won',
+    curPeso: '₱ Peso',
+    curRupiah: 'Rp Rupiah',
+    curRinggit: 'RM Ringgit',
+    curBaht: '฿ Baht',
+    phCagrYear1: 'Year, e.g. 2002',
+    phCagrPrice1: 'Price, e.g. 175,000',
+    phCagrYear2: 'Year, e.g. 2025',
+    phCagrPrice2: 'Price, e.g. 400,000',
+    phCagrYear: 'Year, e.g. 2020',
+    phCagrPrice: 'Price, e.g. 450,000',
+    kpiBreakevenNone: 'No breakeven within the horizon',
+    kpiDiffSubYear: (n) => `Net equity in year ${n}`,
+    chartSub: 'In future dollars, not adjusted for inflation.',
+    axisYear: 'Year',
+    axisNetEquity: 'Net equity',
+    axisCash: 'Liquid cash',
+    axisCost: 'Accumulated cost',
+    tableTitle: 'Cashflow by year',
+    tableUnitNote: 'Every figure is for that year, in future dollars. Money out is shown with a minus sign.',
+    exportNetEquity: 'Rent vs Own: net equity over time',
+    exportCash: 'Rent vs Own: liquid cash over time',
+    exportCost: 'Rent vs Own: accumulated cost',
+    exportDefault: 'Rent vs Own: financial comparison',
+    nameRent: 'Rent',
+    nameRTB: 'Rent-Then-Buy',
+    verdictOwn: (amt, yrs) => `Owning ends <span class="v-num">${amt}</span> ahead of renting after ${yrs} years.`,
+    verdictRent: (amt, yrs) => `Renting and investing the difference ends <span class="v-num">${amt}</span> ahead of owning after ${yrs} years.`,
+    verdictTie: (yrs) => `Owning and renting end level after ${yrs} years.`,
+    verdictBreakeven: (be) => `Owning pulls ahead for good in year ${be}.`,
+    verdictNoBreakeven: (yrs) => `Owning does not pull ahead for good within ${yrs} years.`,
+    verdictEquity: (own, rent, yrs) => `Net equity in year ${yrs}: owning ${own}, renting ${rent}, in future dollars.`,
+    verdictRTB: (val, yr) => `Rent-Then-Buy, buying after ${yr} years, ends at ${val}.`,
+    assumesTitle: 'What this assumes',
+    assumes: [
+      '<strong>Future dollars.</strong> Prices, rents and costs grow at the rates you set, and nothing is converted back to today\'s money.',
+      '<strong>One budget for every scenario.</strong> Each month the same housing budget pays each scenario\'s costs, and whatever is left over is saved.',
+      '<strong>Savings earn the risk-free rate,</strong> compounding monthly, in every scenario.',
+      '<strong>A blank budget or cash is worked out for you:</strong> the budget is the highest cost of any scenario that year, and the cash covers what every scenario needs up front.',
+      '<strong>Net equity counts the home as if sold that year,</strong> after selling costs and the loan still owed, plus cash.',
+      '<strong>The mortgage is the only borrowing.</strong> Cash that would fall below zero is flagged, not borrowed.',
+      '<strong>The home grows in value at the end of each year</strong> and rent rises each year, at the rates you set.',
+      '<strong>No tax</strong> is modelled on interest, savings or the sale of the home.'
+    ],
   },
   id: {
     /* header */
-    subtitle: 'Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti — membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.',
+    subtitle: 'Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti, membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.',
     btnBack: '← Other Tools',
     sensitivityHtml: 'Power user? Bandingkan beberapa skenario secara berdampingan dengan <a href="/rentvsownhouse/sensitivity/id/" style="color:var(--accent);font-weight:700;text-decoration:none;">Alat Analisis Sensitivitas</a> kami.',
     /* sidebar */
     quickStartLabel: 'Mulai Cepat',
     quickStartTip: 'Isi otomatis dengan harga median apartemen 2 kamar di pusat kota atau pinggiran kota.',
     tabGeneral: 'Umum',
-    tabOwn: 'Beli',
+    tabOwn: 'Rumah',
     tabRent: 'Sewa',
     sectionCash: 'Kas',
     labelRiskFreeRate: 'Suku Bunga Bebas Risiko',
-    unitPctPa: '%/tahun',
-    labelInitialCash: 'Modal Awal',
+    unitPctPa: '%/thn',
+    labelInitialCash: 'Modal awal',
     labelOptional: '(opsional)',
     subInitialCashDefault: 'Default ke Uang Muka (DP) + biaya awal pembelian. Kelebihan diinvestasikan pada suku bunga bebas risiko.',
-    labelMonthlyBudget: 'Anggaran Rumah Bulanan',
-    labelBudgetIncrease: 'Kenaikan Anggaran Tahunan',
+    labelMonthlyBudget: 'Anggaran perumahan bulanan',
+    labelBudgetIncrease: 'Kenaikan anggaran tahunan',
     helpBudgetGrowsPrefix: 'Anggaran tumbuh dari',
-    helpBudgetGrowsSuffix: 'per tahun.',
-    labelTimeHorizon: 'Jangka Waktu',
+    helpBudgetGrowsSuffix: 'dengan laju ini setiap tahun.',
+    labelTimeHorizon: 'Jangka waktu',
     labelYears: 'tahun',
     yrsSuffix: ' thn',
     sectionRTB: 'Skenario Sewa Dulu, Beli Kemudian',
     labelEnableRTB: 'Aktifkan Sewa Dulu, Beli Kemudian',
-    labelBuyAtYear: 'Beli di Tahun',
+    labelBuyAtYear: 'Beli di tahun',
     unitYearsRentingFirst: 'tahun menyewa lebih dahulu',
     sectionProperty: 'Properti',
-    labelPropertyPrice: 'Harga Properti',
+    labelPropertyPrice: 'Harga properti',
     labelDownPayment: 'Uang Muka (DP)',
     helpDownPaymentPrefix: 'Uang Muka (DP) = ',
-    unitPctOfPrice: '% dari harga properti',
+    unitPctOfPrice: '% dari harga',
     sectionMortgage: 'KPR',
     labelMortgageType: 'Jenis KPR',
     labelPI: 'Pokok & Bunga',
     helpPI: 'Cicilan mengurangi bunga dan saldo pinjaman setiap periode; ekuitas bertambah lebih cepat.',
     labelIO: 'Bunga Saja',
     helpIO: 'Hanya membayar bunga; seluruh pokok dilunasi dari kas di akhir jangka waktu.',
-    labelCostInterestOnly: 'Biaya = Bunga Saja',
+    labelCostInterestOnly: 'Biaya = bunga saja',
     labelMortgageRate: 'Bunga KPR',
-    labelMortgageTerm: 'Jangka Waktu KPR',
-    labelMortgageMode: 'Mode KPR',
+    labelMortgageTerm: 'Jangka waktu KPR',
+    labelMortgageMode: 'Rincian',
     segSimple: 'Sederhana',
     segDetailed: 'Rinci',
-    labelRateSchedule: 'Jadwal Bunga KPR',
+    labelRateSchedule: 'Jadwal bunga KPR',
     btnAddPeriod: '+ Tambah Periode',
     optFixed: 'Tetap (Fixed)',
     optFloating: 'Mengambang (Floating)',
     labelYear: 'Tahun',
     labelPeriodEnd: 'Tahun terakhir periode ini',
-    sectionPropertyGrowth: 'Pertumbuhan Properti',
-    labelHouseGrowth: 'Kenaikan Harga Properti (RPPI)',
-    labelSellingCost: 'Biaya Penjualan',
+    sectionPropertyGrowth: 'Pertumbuhan properti',
+    labelHouseGrowth: 'Kenaikan harga properti (RPPI)',
+    labelSellingCost: 'Biaya penjualan',
     unitPctOfValue: '% dari harga jual',
-    labelCalcCAGR: 'Hitung CAGR dari Harga Historis',
-    btnShowTool: 'Tampilkan Alat',
-    btnHideTool: 'Sembunyikan Alat',
+    labelCalcCAGR: 'Hitung pertumbuhan tahunan majemuk (CAGR) dari harga historis',
+    btnShowTool: 'Tampilkan alat',
+    btnHideTool: 'Sembunyikan alat',
     btnDelete: 'Hapus',
     btnAddRow: '+ Baris',
-    btnCalcCAGR: 'Hitung CAGR →',
-    sectionCostsOwning: 'Biaya Kepemilikan',
-    labelCostsMode: 'Mode Biaya',
-    labelSetupCosts: 'Biaya Awal Pembelian',
-    labelOngoingCostsList: 'Biaya Rutin',
-    btnAddSetupCost: '+ Tambah Biaya Awal',
-    btnAddOngoingCost: '+ Tambah Biaya Rutin',
+    btnCalcCAGR: 'Hitung CAGR',
+    sectionCostsOwning: 'Biaya kepemilikan',
+    labelCostsMode: 'Rincian',
+    labelSetupCosts: 'Biaya awal pembelian',
+    labelOngoingCostsList: 'Biaya rutin',
+    btnAddSetupCost: '+ Tambah biaya awal',
+    btnAddOngoingCost: '+ Tambah biaya rutin',
     phCostName: 'Nama (opsional)',
     optPerYear: 'per tahun',
     optPerMonth: 'per bulan',
     optPerWeek: 'per minggu',
     optPctBuyPrice: '% dari harga beli',
     labelInflation: 'Inflasi',
-    labelSetupCost: 'Biaya Awal Pembelian (BPHTB, Notaris, dll.)',
+    labelSetupCost: 'Biaya awal pembelian (BPHTB, notaris, dll.)',
     optDollar: '$',
-    labelOwnOngoing: 'Biaya Rutin Kepemilikan',
-    optYearly: 'Tahunan',
-    optMonthly: 'Bulanan',
-    optWeekly: 'Mingguan',
-    optFixedAmount: 'Jumlah Tetap',
-    optPctPropertyValue: '% dari Nilai Properti',
-    labelOwnInflation: 'Inflasi Biaya Rutin Kepemilikan',
-    sectionRentalPayments: 'Pembayaran Sewa',
-    labelRentAmount: 'Biaya Sewa',
+    labelOwnOngoing: 'Biaya rutin kepemilikan',
+    optYearly: 'per tahun',
+    optMonthly: 'per bulan',
+    optWeekly: 'per minggu',
+    optFixedAmount: 'Jumlah tetap',
+    optPctPropertyValue: '% dari nilai properti',
+    labelOwnInflation: 'Inflasi biaya rutin kepemilikan',
+    sectionRentalPayments: 'Pembayaran sewa',
+    labelRentAmount: 'Biaya sewa',
     rentPrefix: 'Sewa = ',
     perMo: '/bln',
-    labelRentInflation: 'Kenaikan Sewa Tahunan',
-    sectionCostsRenting: 'Biaya Menyewa',
-    labelRentOngoing: 'Biaya Rutin Menyewa',
-    optPctAnnualRent: '% dari Sewa Tahunan',
-    labelRentOngoingInflation: 'Inflasi Biaya Rutin Menyewa',
+    labelRentInflation: 'Kenaikan sewa tahunan',
+    sectionCostsRenting: 'Biaya menyewa',
+    labelRentOngoing: 'Biaya rutin menyewa',
+    optPctAnnualRent: '% dari sewa tahunan',
+    labelRentOngoingInflation: 'Inflasi biaya rutin menyewa',
     labelCurrencySymbol: 'Simbol Mata Uang',
     /* KPI */
-    kpiInitialCashLabel: 'Modal Awal',
+    kpiInitialCashLabel: 'Modal awal',
     kpiInitialCashTip: 'Kas awal di semua skenario. Jika dikosongkan, dipakai kebutuhan awal terbesar: Uang Muka (DP) + biaya awal, sewa setahun, atau kas yang dibutuhkan Sewa Dulu sekarang untuk DP-nya nanti.',
     kpiInitialCashSub: 'Modal awal di Tahun 0',
-    kpiBudgetLabel: 'Anggaran Perumahan Bulanan',
+    kpiBudgetLabel: 'Anggaran perumahan bulanan',
     kpiBudgetSub: 'Anggaran bulanan min–maks selama jangka waktu',
-    kpiBreakevenLabel: 'Tahun Breakeven',
-    kpiBreakevenTip: 'Tahun kekayaan bersih Beli (properti + kas) melampaui Sewa seterusnya: sejak itu hingga akhir proyeksi, membeli tetap unggul.',
+    kpiBreakevenLabel: 'Tahun breakeven',
+    kpiBreakevenTip: 'Tahun ketika membeli unggul atas menyewa dan tetap unggul hingga akhir jangka waktu.',
     kpiBreakevenSub: 'Saat kekayaan bersih Beli melampaui Sewa seterusnya',
-    kpiDiffLabel: 'Perbedaan Kekayaan Bersih',
-    kpiDiffTip: 'Kekayaan Bersih Beli dikurangi Kekayaan Bersih Sewa di tahun terakhir. Hijau berarti beli menang, merah berarti sewa dan investasi menang.',
+    kpiDiffLabel: 'Perbedaan kekayaan bersih',
+    kpiDiffTip: 'Kekayaan bersih Beli dikurangi Sewa di tahun terakhir. Positif berarti membeli unggul.',
     kpiDiffSub: 'Beli dikurangi Sewa di tahun terakhir',
     /* chart */
     chartTitle: 'Perbandingan',
-    btnNetEquity: 'Kekayaan Bersih',
-    btnLiquidCash: 'Uang Tunai',
-    btnAccumCost: 'Biaya Kumulatif',
+    btnNetEquity: 'Kekayaan bersih',
+    btnLiquidCash: 'Uang tunai',
+    btnAccumCost: 'Biaya kumulatif',
     btnZoom: '⟳',
     btnSvgTitle: 'Unduh grafik ini sebagai SVG',
     btnPngTitle: 'Unduh grafik ini sebagai PNG',
@@ -317,81 +372,136 @@ const LANG = {
     btnCsvTitle: 'Unduh tabel ini sebagai CSV',
     chartHoverHint: 'Arahkan kursor ke grafik untuk melihat detail per tahun.',
     /* summary */
-    ownSnapshotTitle: 'Beli — Ringkasan',
-    rentSnapshotTitle: 'Sewa — Ringkasan',
-    rtbSnapshotTitle: '🔄 Sewa Dulu, Beli Kemudian — Ringkasan',
+    ownSnapshotTitle: 'Ringkasan Beli',
+    rentSnapshotTitle: 'Ringkasan Sewa',
+    rtbSnapshotTitle: 'Ringkasan Sewa Dulu, Beli Kemudian',
     rtbSnapshotTip: 'Skenario Sewa Dulu, Beli Kemudian pada tahun terakhir. Tabungan menjadi Uang Muka (DP) pada harga saat itu, lalu KPR baru dimulai.',
     /* detail tabs */
-    tabOwnCashflow: 'Arus Kas Beli',
-    tabRentCashflow: 'Arus Kas Sewa',
-    tabRTBCashflow: 'Arus Kas Sewa Dulu, Beli Kemudian',
+    tabOwnCashflow: 'Arus kas Beli',
+    tabRentCashflow: 'Arus kas Sewa',
+    tabRTBCashflow: 'Arus kas Sewa Dulu, Beli Kemudian',
     btnCSV: '⬇ CSV',
     /* chart series */
-    seriesOwnNetEquity: 'Beli — Kekayaan Bersih',
-    seriesRentNetEquity: 'Sewa — Kekayaan Bersih',
-    seriesRTBNetEquity: 'Sewa Dulu, Beli Kemudian — Kekayaan Bersih',
-    seriesOwnCash: 'Beli — Uang Tunai',
-    seriesRentCash: 'Sewa — Uang Tunai',
-    seriesRTBCash: 'Sewa Dulu, Beli Kemudian — Uang Tunai',
-    seriesOwnCost: 'Beli — Biaya Kumulatif (KPR+Rutin)',
-    seriesRentCost: 'Sewa — Biaya Kumulatif (Sewa+Rutin)',
-    seriesRTBCost: 'Sewa Dulu, Beli Kemudian — Biaya Kumulatif',
+    seriesOwnNetEquity: 'Beli: kekayaan bersih',
+    seriesRentNetEquity: 'Sewa: kekayaan bersih',
+    seriesRTBNetEquity: 'Sewa Dulu, Beli Kemudian: kekayaan bersih',
+    seriesOwnCash: 'Beli: uang tunai',
+    seriesRentCash: 'Sewa: uang tunai',
+    seriesRTBCash: 'Sewa Dulu, Beli Kemudian: uang tunai',
+    seriesOwnCost: 'Beli: biaya kumulatif (KPR + rutin)',
+    seriesRentCost: 'Sewa: biaya kumulatif (sewa + rutin)',
+    seriesRTBCost: 'Sewa Dulu, Beli Kemudian: biaya kumulatif',
     seriesRateBand: 'Rentang suku bunga mengambang (min–maks)',
     /* dynamic messages */
     kpiBreakevenYear: 'Tahun ',
-    subInitialCashLeftover: (x) => `Sisa ${x} diinvestasikan pada suku bunga bebas risiko mulai hari pertama.`,
-    subInitialCashExact: 'Tepat menutup Uang Muka (DP) + biaya awal pembelian — tidak ada sisa.',
-    subInitialCashAuto: (x) => `Otomatis: ${x} (Uang Muka (DP) + biaya awal pembelian). Kelebihan diinvestasikan pada suku bunga bebas risiko.`,
-    subInitialCashRTB: (x,y,z,n) => `Otomatis: ${x}. Bersama tabungannya, cukup untuk DP dan biaya awal Sewa Dulu sebesar ${z} di Thn ${n}.`,
-    warnInitialCashRTB: (x,y,z,n) => `⚠️ Modal Awal ${x} kurang ${y} dari kebutuhan Sewa Dulu hari ini (${z}) untuk membeli di Thn ${n}.`,
+    subInitialCashLeftover: (x) => `Sisa ${x} mendapat suku bunga bebas risiko sejak hari pertama.`,
+    subInitialCashExact: 'Tepat menutup Uang Muka (DP) + biaya awal pembelian, tanpa sisa.',
+    subInitialCashAuto: (x) => `Otomatis: ${x} (Uang Muka (DP) ditambah biaya awal pembelian). Kelebihannya mendapat suku bunga bebas risiko.`,
+    subInitialCashRTB: (x,y,z,n) => `Otomatis: ${x}. Bersama tabungannya, cukup untuk DP dan biaya awal sebesar ${z} saat Sewa Dulu membeli di tahun ke-${n}.`,
+    warnInitialCashRTB: (x,y,z,n) => `⚠️ Modal awal, ${x}, kurang ${y} dari kebutuhan Sewa Dulu hari ini (${z}) untuk membeli di tahun ke-${n}.`,
     warnShortfall: (list) => `⚠️ Kas turun di bawah nol pada ${list}. KPR adalah satu-satunya pinjaman di model ini, jadi naikkan anggaran atau modal awal, atau kosongkan untuk angka otomatis.`,
-    warnShortfallIO: (list) => `⚠️ Kas turun di bawah nol pada ${list}, saat pokok KPR bunga saja jatuh tempo. Tetapkan anggaran atau modal awal lebih tinggi untuk menabungnya.`,
-    shortfallItem: (name, yr, amt) => `${name} mulai Thn ${yr} (hingga ${amt})`,
-    nameOwn: 'Beli', nameRent: 'Sewa', nameRTB: 'Sewa Dulu',
-    warnInitialCashShort: (x,y,z) => `⚠️ Modal Awal ${x} kurang ${y} dari Uang Muka (DP) + biaya awal pembelian (${z}). Kekurangan mengurangi ekuitas pinjaman awal.`,
-    subRequiredCash: (x) => `Dibutuhkan: ${x} (Uang Muka (DP) + biaya awal pembelian).`,
-    warnBudgetLow: (x,y,z) => `⚠️ Anggaran (${x}/bln) di bawah total biaya beli (${y}/bln termasuk rutin) dan biaya sewa (${z}/bln termasuk rutin). Surplus akan negatif dan kas dapat turun di bawah nol.`,
-    cagrResult: (x) => `CAGR: ${x}%/thn — diterapkan ✓`,
+    warnShortfallIO: (list) => `⚠️ Kas turun di bawah nol pada ${list}, saat pokok KPR bunga saja jatuh tempo. Tetapkan anggaran atau kas awal lebih tinggi untuk menabungnya.`,
+    shortfallItem: (name, yr, amt) => `${name} mulai tahun ke-${yr} (hingga ${amt})`,
+    nameOwn: 'Beli',
+    warnInitialCashShort: (x,y,z) => `⚠️ Modal awal, ${x}, kurang ${y} dari Uang Muka (DP) ditambah biaya awal pembelian (${z}). Kekurangannya mengurangi ekuitas awal Anda.`,
+    subRequiredCash: (x) => `Dibutuhkan: ${x} (Uang Muka (DP) ditambah biaya awal pembelian).`,
+    warnBudgetLow: (x,y,z) => `⚠️ Anggaran (${x}/bln) di bawah biaya membeli (${y}/bln termasuk biaya rutin) dan biaya menyewa (${z}/bln termasuk biaya rutin). Surplus menjadi negatif dan kas dapat turun di bawah nol.`,
+    cagrResult: (x) => `Kenaikan: ${x}%/thn, diterapkan ke Kenaikan harga properti ✓`,
     cagrNeedPoints: 'Butuh minimal 2 pasangan tahun dan harga yang valid.',
     cagrEndYearError: 'Tahun akhir harus setelah tahun awal.',
     /* table headers */
     thYear: 'Tahun',
     thRate: 'Bunga',
-    thCashPosition: 'Posisi Kas',
+    thCashPosition: 'Posisi kas',
     thMortgagePosition: 'Posisi KPR',
-    thFinancialPosition: 'Posisi Keuangan',
-    thBegCash: 'Kas Awal',
-    thAnnBudget: 'Anggaran',
-    thPrincipalExp: 'Pokok Pinjaman',
+    thFinancialPosition: 'Posisi keuangan',
+    thBegCash: 'Kas awal',
+    thAnnBudget: 'Anggaran tahunan',
+    thPrincipalExp: 'Pokok pinjaman',
     thInterestExp: 'Bunga',
-    thOngoingExp: 'Biaya Rutin',
-    thInterestInc: 'Bunga Kas',
+    thOngoingExp: 'Biaya rutin',
+    thInterestInc: 'Bunga kas',
     thSurplus: 'Surplus',
-    thEndCash: 'Kas Akhir',
-    thPropValue: 'Nilai Properti',
-    thPrincipalLeft: 'Sisa Pokok',
-    thHouseEquity: 'Nilai Bersih Properti',
-    thNetEquity: 'Kekayaan Bersih',
-    thAccumCost: 'Biaya Kumulatif',
+    thEndCash: 'Kas akhir',
+    thPropValue: 'Nilai properti',
+    thPrincipalLeft: 'Sisa pokok',
+    thHouseEquity: 'Nilai bersih properti',
+    thNetEquity: 'Kekayaan bersih',
+    thAccumCost: 'Biaya kumulatif',
     thPhase: 'Fase',
-    thTotalExp: 'Total Pengeluaran',
-    thRentExp: 'Biaya Sewa',
-    thPurchaseOutlay: 'Pengeluaran Beli',
+    thTotalExp: 'Total pengeluaran',
+    thRentExp: 'Biaya sewa',
+    thPurchaseOutlay: 'Pengeluaran beli',
     /* summary tile labels */
-    tileNetEquity: 'Kekayaan Bersih',
-    tileAccumCost: 'Biaya Kumulatif',
-    tileHouseEquity: 'Nilai Bersih Properti',
-    tileLiquidCash: 'Uang Tunai',
-    tileMonthlyMortgage: 'Cicilan KPR Bulanan',
-    tilePrincipalRemaining: 'Sisa Pokok Pinjaman',
-    tileYearlyRent: 'Sewa Tahunan',
-    tilePropPriceAtBuy: 'Harga Properti Saat Beli',
+    tileNetEquity: 'Kekayaan bersih',
+    tileAccumCost: 'Biaya kumulatif',
+    tileHouseEquity: 'Nilai bersih properti',
+    tileLiquidCash: 'Uang tunai',
+    tileMonthlyMortgage: 'Cicilan KPR bulanan',
+    tilePrincipalRemaining: 'Sisa pokok pinjaman',
+    tileYearlyRent: 'Sewa tahunan',
+    tilePropPriceAtBuy: 'Harga properti saat beli',
     /* phase labels */
     phaseRenting: 'Menyewa',
-    phaseBought: '🔄 Baru Dibeli',
+    phaseBought: 'Baru dibeli',
     phaseOwning: 'Memiliki',
     /* chart tooltip */
     chartTooltipYear: 'Tahun ',
+    tabAssumptions: 'Asumsi',
+    sectionSavings: 'Tabungan dan jangka waktu',
+    unitPctYr: '%/thn',
+    unitYrs: 'thn',
+    perMoUnit: '/bln',
+    labelDetail: 'Rincian',
+    unitPctOfSale: '% harga jual',
+    curDollar: '$ Dolar',
+    curEuro: '€ Euro',
+    curPound: '£ Pound',
+    curYen: '¥ Yen atau Yuan',
+    curWon: '₩ Won',
+    curPeso: '₱ Peso',
+    curRupiah: 'Rp Rupiah',
+    curRinggit: 'RM Ringgit',
+    curBaht: '฿ Baht',
+    phCagrYear1: 'Tahun, mis. 2002',
+    phCagrPrice1: 'Harga, mis. 175,000',
+    phCagrYear2: 'Tahun, mis. 2025',
+    phCagrPrice2: 'Harga, mis. 400,000',
+    phCagrYear: 'Tahun, mis. 2020',
+    phCagrPrice: 'Harga, mis. 450,000',
+    kpiBreakevenNone: 'Tidak ada breakeven dalam jangka waktu',
+    kpiDiffSubYear: (n) => `Kekayaan bersih di tahun ke-${n}`,
+    chartSub: 'Dalam nilai masa depan, tidak disesuaikan dengan inflasi.',
+    axisYear: 'Tahun',
+    axisNetEquity: 'Kekayaan bersih',
+    axisCash: 'Uang tunai',
+    axisCost: 'Biaya kumulatif',
+    tableTitle: 'Arus kas per tahun',
+    tableUnitNote: 'Setiap angka untuk tahun itu, dalam nilai masa depan. Uang keluar ditampilkan dengan tanda minus.',
+    exportNetEquity: 'Sewa vs Beli: kekayaan bersih dari waktu ke waktu',
+    exportCash: 'Sewa vs Beli: uang tunai dari waktu ke waktu',
+    exportCost: 'Sewa vs Beli: biaya kumulatif',
+    exportDefault: 'Sewa vs Beli: perbandingan keuangan',
+    nameRent: 'Sewa',
+    nameRTB: 'Sewa Dulu',
+    verdictOwn: (amt, yrs) => `Membeli unggul <span class="v-num">${amt}</span> dari menyewa setelah ${yrs} tahun.`,
+    verdictRent: (amt, yrs) => `Menyewa dan menginvestasikan selisihnya unggul <span class="v-num">${amt}</span> dari membeli setelah ${yrs} tahun.`,
+    verdictTie: (yrs) => `Membeli dan menyewa berakhir seimbang setelah ${yrs} tahun.`,
+    verdictBreakeven: (be) => `Membeli mulai unggul seterusnya di tahun ke-${be}.`,
+    verdictNoBreakeven: (yrs) => `Membeli tidak unggul seterusnya dalam ${yrs} tahun.`,
+    verdictEquity: (own, rent, yrs) => `Kekayaan bersih di tahun ke-${yrs}: membeli ${own}, menyewa ${rent}, dalam nilai masa depan.`,
+    verdictRTB: (val, yr) => `Sewa Dulu, Beli Kemudian (membeli setelah ${yr} tahun) berakhir di ${val}.`,
+    assumesTitle: 'Asumsi yang dipakai',
+    assumes: [
+      '<strong>Nilai masa depan.</strong> Harga, sewa, dan biaya tumbuh sesuai laju yang Anda tetapkan, dan tidak dikonversi kembali ke nilai hari ini.',
+      '<strong>Satu anggaran untuk semua skenario.</strong> Setiap bulan anggaran perumahan yang sama membayar biaya tiap skenario, dan sisanya ditabung.',
+      '<strong>Tabungan mendapat suku bunga bebas risiko,</strong> berbunga bulanan, di semua skenario.',
+      '<strong>Anggaran atau kas yang dikosongkan dihitung otomatis:</strong> anggaran adalah biaya tertinggi semua skenario pada tahun itu, dan kas menutup kebutuhan awal semua skenario.',
+      '<strong>Kekayaan bersih menghitung rumah seolah dijual tahun itu,</strong> setelah biaya penjualan dan sisa pinjaman, ditambah kas.',
+      '<strong>KPR adalah satu-satunya pinjaman.</strong> Kas yang akan turun di bawah nol ditandai, bukan dipinjamkan.',
+      '<strong>Nilai rumah naik di akhir setiap tahun</strong> dan sewa naik setiap tahun, sesuai laju yang Anda tetapkan.',
+      '<strong>Tidak ada pajak</strong> yang dimodelkan atas bunga, tabungan, atau penjualan rumah.'
+    ],
   },
 };
 function T(key){ return LANG[lang][key] !== undefined ? LANG[lang][key] : (LANG.en[key] !== undefined ? LANG.en[key] : key); }
@@ -440,44 +550,11 @@ function applyLang(){
     const isShown = document.getElementById('cagrToolWrap')?.style.display !== 'none';
     cagrBtn.textContent = isShown ? T('btnHideTool') : T('btnShowTool');
   }
-  /* rent monthly display prefix */
-  const rentSub = document.getElementById('rentMonthlyDisplaySub');
-  if(rentSub){
-    const span = rentSub.querySelector('#rentMonthlyDisplay');
-    if(span){
-      rentSub.childNodes.forEach(n=>{ if(n.nodeType===3) n.remove(); });
-      rentSub.insertBefore(document.createTextNode(T('rentPrefix')), span);
-    }
-  }
-  /* help texts that have embedded dynamic spans */
-  const helpBG = document.getElementById('helpBudgetGrows');
-  if(helpBG){
-    const span = helpBG.querySelector('#budgetIncreaseBase');
-    const txt = span ? span.textContent : '—';
-    if(span){
-      helpBG.textContent = '';
-      helpBG.appendChild(document.createTextNode(T('helpBudgetGrowsPrefix')+' '));
-      const s = document.createElement('span');
-      s.id='budgetIncreaseBase'; s.style.color='var(--gold)'; s.style.fontWeight='700'; s.textContent=txt;
-      helpBG.appendChild(s);
-      helpBG.appendChild(document.createTextNode(' '+T('helpBudgetGrowsSuffix')));
-    }
-  }
-  const helpDP = document.getElementById('helpDownPayment');
-  if(helpDP){
-    const span = helpDP.querySelector('#downPaymentDollar');
-    const txt = span ? span.textContent : '';
-    if(span){
-      helpDP.textContent = '';
-      helpDP.appendChild(document.createTextNode(T('helpDownPaymentPrefix')));
-      const s = document.createElement('span');
-      s.id='downPaymentDollar'; s.style.color='var(--gold)'; s.style.fontWeight='700'; s.textContent=txt;
-      helpDP.appendChild(s);
-    }
-  }
-  /* update RPPI abbr title for houseGrowth label */
-  const rPPIAbbr = document.querySelector('[data-i18n="labelHouseGrowth"]');
-  if(rPPIAbbr) rPPIAbbr.innerHTML = T('labelHouseGrowth')+' ';
+  /* placeholders */
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    const val = T(el.dataset.i18nPh);
+    if(val && typeof val === 'string') el.setAttribute('placeholder', val);
+  });
   /* switch tooltip text for data-tip-key elements based on language */
   if(window.RVO_APPLY_TIPS) RVO_APPLY_TIPS(tipTable());
 }
@@ -916,18 +993,19 @@ function setCostUnit(wrap, isPct, sym){
 function refreshLabels(){
   syncTipVariants();
   const dp = S.propertyPrice * S.downPaymentPct/100;
-  $('downPaymentPctVal').textContent = S.downPaymentPct+'%';
+  /* Every readout carries its unit, so the slider's own ends (drawn by
+     SharedSlider from the same text) and the figure agree. */
+  const pctYr = v => v.toFixed(2)+T('unitPctYr');
+  $('downPaymentPctVal').textContent = S.downPaymentPct+T('unitPctOfPrice');
   $('downPaymentDollar').textContent = fmt.currency(dp);
-  $('riskFreeRateVal').textContent   = S.riskFreeRate.toFixed(2)+'%';
+  $('riskFreeRateVal').textContent   = pctYr(S.riskFreeRate);
   $('horizonVal').textContent        = S.horizon+T('yrsSuffix');
-  $('mortgageRateVal').textContent        = S.mortgageRate.toFixed(2)+'%';
-  $('mortgageTermVal').textContent        = S.mortgageTerm+T('yrsSuffix');
   if(S.mortgageMode === 'detailed') syncRatePeriodLabels();
-  $('houseGrowthVal').textContent         = S.houseGrowth.toFixed(2)+'%';
-  $('sellingCostPctVal').textContent      = S.sellingCostPct.toFixed(2)+'%';
-  $('rentInflationVal').textContent       = S.rentInflation.toFixed(2)+'%';
-  $('ownOngoingInflationVal').textContent = S.ownOngoingInflation.toFixed(2)+'%';
-  $('rentOngoingInflationVal').textContent= S.rentOngoingInflation.toFixed(2)+'%';
+  $('houseGrowthVal').textContent         = pctYr(S.houseGrowth);
+  $('sellingCostPctVal').textContent      = S.sellingCostPct.toFixed(2)+T('unitPctOfSale');
+  $('rentInflationVal').textContent       = pctYr(S.rentInflation);
+  $('ownOngoingInflationVal').textContent = pctYr(S.ownOngoingInflation);
+  $('rentOngoingInflationVal').textContent= pctYr(S.rentOngoingInflation);
   // Show inflation sliders only for fixed-$ mode
   $('ownOngoingInflationRow').style.display  = S.ownOngoingCostType==='dollar' ? '' : 'none';
   $('rentOngoingInflationRow').style.display = S.rentOngoingCostType==='dollar' ? '' : 'none';
@@ -945,7 +1023,7 @@ function refreshLabels(){
   // Show/hide budget increase row only when budget is manually set
   const budgetSet = S.monthlyBudget > 0;
   $('budgetIncreaseRow').style.display = budgetSet ? 'block' : 'none';
-  $('monthlyBudgetIncreaseVal').textContent = S.monthlyBudgetIncrease.toFixed(2)+'%';
+  $('monthlyBudgetIncreaseVal').textContent = pctYr(S.monthlyBudgetIncrease);
   if(budgetSet){
     $('budgetIncreaseBase').textContent = fmt.currency(S.monthlyBudget)+T('perMo');
   }
@@ -1013,7 +1091,7 @@ function buildLegend(series, hasBand){
   if(hasBand){
     const b = document.createElement('div');
     b.className='legend-item';
-    SharedLegend.attach(b, {type:'area', fill:cssVar('--line-a')+'30', fill2:cssVar('--line-b')+'30'}, T('seriesRateBand'));
+    SharedLegend.attach(b, {type:'area', fill:cssVar('--line-a')+'30', fill2:cssVar('--gold')+'30'}, T('seriesRateBand'));
     el.appendChild(b);
   }
 }
@@ -1023,7 +1101,7 @@ function getGraphSeries(){
   if(activeGraph==='netEquity'){
     const s = [
       {key:'netEquityOwn',  colorVar:'--line-a', label:T('seriesOwnNetEquity')},
-      {key:'netEquityRent', colorVar:'--line-b', label:T('seriesRentNetEquity')},
+      {key:'netEquityRent', colorVar:'--gold', label:T('seriesRentNetEquity')},
     ];
     if(haRTB) s.push({key:'netEquityRTB', colorVar:'--line-c', label:T('seriesRTBNetEquity')});
     return s;
@@ -1031,14 +1109,14 @@ function getGraphSeries(){
   if(activeGraph==='cash'){
     const s = [
       {key:'cashOwn',  colorVar:'--line-a', label:T('seriesOwnCash')},
-      {key:'cashRent', colorVar:'--line-b', label:T('seriesRentCash')},
+      {key:'cashRent', colorVar:'--gold', label:T('seriesRentCash')},
     ];
     if(haRTB) s.push({key:'cashRTB', colorVar:'--line-c', label:T('seriesRTBCash')});
     return s;
   }
   const s = [
     {key:'costOwn',  colorVar:'--line-a', label:T('seriesOwnCost')},
-    {key:'costRent', colorVar:'--line-b', label:T('seriesRentCost')},
+    {key:'costRent', colorVar:'--gold', label:T('seriesRentCost')},
   ];
   if(haRTB) s.push({key:'costRTB', colorVar:'--line-c', label:T('seriesRTBCost')});
   return s;
@@ -1048,7 +1126,7 @@ function renderChart(rows){
   const series = getGraphSeries();
   buildLegend(series, !!latestHasBand);
   const sym = $('currencySymbol').value || '$';
-  const yAxisTitle = activeGraph==='netEquity' ? `Net Equity (${sym})` : activeGraph==='cash' ? `Liquid Cash (${sym})` : `Accumulated Cost (${sym})`;
+  const yAxisTitle = `${T(activeGraph==='netEquity' ? 'axisNetEquity' : activeGraph==='cash' ? 'axisCash' : 'axisCost')} (${sym})`;
   // Use integer year numbers for labels — must be plain numbers, not strings
   const labels   = rows.map(r=> (typeof r.year === 'number' && isFinite(r.year)) ? r.year : 0);
   const rtbBuyYearIdx = S.rtbEnabled ? labels.indexOf(S.rtbBuyYear) : -1;
@@ -1170,7 +1248,7 @@ function renderChart(rows){
         sharedYFit:{auto:{axes:['y'],includeZero:true}},
       },
       scales:{
-        x:{title:{display:true,text:'Year',color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,maxTicksLimit:12,font:{family:"'DM Mono', monospace",size:11},callback:xTickCallback},grid:{color:g}},
+        x:{title:{display:true,text:T('axisYear'),color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,maxTicksLimit:12,font:{family:"'DM Mono', monospace",size:11},callback:xTickCallback},grid:{color:g}},
         y:{title:{display:true,text:yAxisTitle,color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,font:{family:"'DM Mono', monospace",size:11},callback:v=>fmt.currency(v,true)},grid:{color:g}},
       },
     },
@@ -1217,10 +1295,17 @@ function updateKPIs(state){
     $('kpiBudgetRange').textContent = '—';
   }
   $('kpiBreakeven').textContent = breakeven ? T('kpiBreakevenYear')+breakeven : '—';
-  $('kpiBreakeven').style.color = breakeven ? cssVar('--accent') : cssVar('--muted');
+  /* Own and rent are two fair options, not a good and a bad one, so the
+     figures wear the option's own line colour (blue own, gold rent) rather
+     than the gain / loss pair. */
+  $('kpiBreakeven').style.color = breakeven ? cssVar('--line-a') : cssVar('--muted');
+  const beSub = $('kpiBreakeven').parentElement.querySelector('.sub');
+  if(beSub) beSub.textContent = breakeven ? T('kpiBreakevenSub') : T('kpiBreakevenNone');
   const diff = summary.diff;
   $('kpiDiff').textContent = (diff>=0?'+':'')+fmt.currency(diff, true);
-  $('kpiDiff').style.color = diff>=0 ? cssVar('--data-pos-em') : cssVar('--data-neg-em');
+  $('kpiDiff').style.color = Math.abs(diff) < 0.5 ? cssVar('--text') : diff>0 ? cssVar('--line-a') : cssVar('--gold');
+  $('kpiDiffSub').textContent = T('kpiDiffSubYear')(S.horizon);
+  renderVerdict(state);
 
   const warn = $('warningBanner');
   const msgs = [];
@@ -1246,6 +1331,32 @@ function updateKPIs(state){
   if(items.length) msgs.push(T(autoFigures ? 'warnShortfallIO' : 'warnShortfall')(items.join(', ')));
   warn.style.display = msgs.length ? 'block' : 'none';
   warn.textContent = msgs.join(' ');
+}
+
+/* ── VERDICT ──
+   The whole answer in one sentence, above the cards: which option ends
+   ahead, by how much, after how long, and when owning pulls ahead. A fair
+   comparison, so the banner is neutral rather than good or bad. */
+function renderVerdict(state){
+  const {summary, breakeven} = state;
+  const yrs = S.horizon, diff = summary.diff;
+  let title;
+  if(Math.abs(diff) < 0.5) title = T('verdictTie')(yrs);
+  else if(diff > 0) title = T('verdictOwn')(fmt.currency(diff, true), yrs);
+  else title = T('verdictRent')(fmt.currency(-diff, true), yrs);
+  const body = [breakeven ? T('verdictBreakeven')(breakeven) : T('verdictNoBreakeven')(yrs),
+                T('verdictEquity')(fmt.currency(summary.ownNetEquity, true), fmt.currency(summary.rentNetEquity, true), yrs)];
+  if(S.rtbEnabled && state.rtbRows && state.rtbRows.rows && state.rtbRows.rows.length){
+    const last = state.rtbRows.rows[state.rtbRows.rows.length-1];
+    body.push(T('verdictRTB')(fmt.currency(last.rtbNetEquity, true), S.rtbBuyYear));
+  }
+  SharedVerdict.set('verdict', {tone:'', title, body: body.join(' ')});
+}
+
+/* ── WHAT THIS ASSUMES ── */
+function renderAssumptions(){
+  const list = T('assumes');
+  $('assumptions').innerHTML = Array.isArray(list) ? list.map(x=>'<li>'+x+'</li>').join('') : '';
 }
 
 /* ── SUMMARY TILES ── */
@@ -1280,12 +1391,22 @@ function updateSummary(state){
   `;
 }
 
-/* ── DETAIL TABLE ── */
+/* ── DETAIL TABLE ──
+   Money keeps its direction in the figure, not only in the colour: what
+   leaves the pocket is negative and red, what comes in is positive and blue,
+   balances and prices are plain. A surplus takes the colour of its sign. */
 function updateDetailTable(rows, rtbRows){
   const wrap = $('detailTableWrap');
   const na = '—';
-  const c  = (v,compact=true) => fmt.currency(v,compact);
+  const z  = v => Math.abs(Number(v)||0) < 0.5 ? 0 : Number(v);
+  const c  = (v,compact=true) => fmt.currency(z(v),compact);
   const pos = cssVar('--data-pos-em'), neg = cssVar('--data-neg-em');
+  // Money out: shown below zero, red while there is any
+  const outCell = v => { const a = z(v); return `<td style="color:${a>0?neg:'inherit'}">${c(-a)}</td>`; };
+  // Money in: shown above zero, blue while there is any
+  const inCell  = v => { const a = z(v); return `<td style="color:${a>0?pos:'inherit'}">${a>0?'+':''}${c(a)}</td>`; };
+  // A signed figure: blue above zero, red below
+  const signCell = (v, cls='') => { const a = z(v); return `<td${cls?` class="${cls}"`:''} style="color:${a>0?pos:a<0?neg:'inherit'}">${a>0?'+':''}${c(a)}</td>`; };
   let html = '';
 
   if(activeTable==='own'){
@@ -1308,18 +1429,18 @@ function updateDetailTable(rows, rtbRows){
       html+=`<tr>
         <td class="td-sep-right">${r.year}</td>
         <td>${y0?na:c(r.ownBegCash||0)}</td>
-        <td style="color:var(--accent)">${y0?na:c(r.ownYearBudget||0)}</td>
-        <td style="color:${neg}">${y0?na:c(r.ownYearPrincipal||0)}</td>
-        <td style="color:${neg}">${y0?na:c(r.ownYearInterest||0)}</td>
-        <td style="color:${neg}">${y0?na:c(r.ownYearOngoing||0)}</td>
-        <td style="color:${pos}">${y0?na:c(r.ownYearInterestInc||0)}</td>
-        <td style="color:var(--gold)">${y0?na:c(r.ownYearSurplus||0)}</td>
+        <td>${y0?na:c(r.ownYearBudget||0)}</td>
+        ${y0?`<td>${na}</td>`:outCell(r.ownYearPrincipal||0)}
+        ${y0?`<td>${na}</td>`:outCell(r.ownYearInterest||0)}
+        ${y0?`<td>${na}</td>`:outCell(r.ownYearOngoing||0)}
+        ${y0?`<td>${na}</td>`:inCell(r.ownYearInterestInc||0)}
+        ${y0?`<td>${na}</td>`:signCell(r.ownYearSurplus||0)}
         <td class="td-sep-right">${c(r.ownCash)}</td>
         <td>${hasLoanYr && r.ownRateYr!==undefined ? r.ownRateYr.toFixed(2)+'%' : na}</td>
         <td>${c(r.ownPropValue)}</td>
         <td>${c(r.ownPrincipal)}</td>
-        <td class="td-sep-right" style="color:${pos}">${c(r.ownHouseEquity)}</td>
-        <td style="color:${r.ownNetEquity>=0?pos:neg}">${c(r.ownNetEquity)}</td>
+        <td class="td-sep-right" style="color:${z(r.ownHouseEquity)>=0?pos:neg}">${c(r.ownHouseEquity)}</td>
+        <td style="color:${z(r.ownNetEquity)>=0?pos:neg}">${c(r.ownNetEquity)}</td>
         <td style="color:${neg}">${c(r.ownAccumCost)}</td>
       </tr>`;
     });
@@ -1341,13 +1462,13 @@ function updateDetailTable(rows, rtbRows){
       html+=`<tr>
         <td class="td-sep-right">${r.year}</td>
         <td>${y0?na:c(r.rentBegCash||0)}</td>
-        <td style="color:var(--accent)">${y0?na:c(r.ownYearBudget||0)}</td>
-        <td style="color:${neg}">${y0?na:c(r.rentRent||0)}</td>
-        <td style="color:${neg}">${y0?na:c(r.rentYearOngoing||0)}</td>
-        <td style="color:${pos}">${y0?na:c(r.rentYearInterestInc||0)}</td>
-        <td style="color:var(--gold)">${y0?na:c(r.rentYearSurplus||0)}</td>
+        <td>${y0?na:c(r.ownYearBudget||0)}</td>
+        ${y0?`<td>${na}</td>`:outCell(r.rentRent||0)}
+        ${y0?`<td>${na}</td>`:outCell(r.rentYearOngoing||0)}
+        ${y0?`<td>${na}</td>`:inCell(r.rentYearInterestInc||0)}
+        ${y0?`<td>${na}</td>`:signCell(r.rentYearSurplus||0)}
         <td class="td-sep-right">${c(r.rentCash)}</td>
-        <td style="color:${pos}">${c(r.rentNetEquity)}</td>
+        <td style="color:${z(r.rentNetEquity)>=0?pos:neg}">${c(r.rentNetEquity)}</td>
         <td style="color:${neg}">${y0?na:c(r.rentAccumCost)}</td>
       </tr>`;
     });
@@ -1369,7 +1490,7 @@ function updateDetailTable(rows, rtbRows){
     </thead><tbody>`;
     rtbRows.forEach(r=>{
       const y0 = r.year===0;
-      const phaseLabel = r.phase==='rent'?`<span class="ricon ricon-rent" aria-hidden="true"></span>${T('phaseRenting')}`: r.phase==='buy-transition'?T('phaseBought'):`<span class="ricon ricon-own" aria-hidden="true"></span>${T('phaseOwning')}`;
+      const phaseLabel = r.phase==='rent'?`<span class="ricon ricon-rent" aria-hidden="true"></span>${T('phaseRenting')}`: r.phase==='buy-transition'?`<span class="ricon ricon-rtb" aria-hidden="true"></span>${T('phaseBought')}`:`<span class="ricon ricon-own" aria-hidden="true"></span>${T('phaseOwning')}`;
       const isOwning = r.phase!=='rent';
       const cash = r.phase==='rent' ? r.rtbCash||0 : r.rtbCash2||0;
       // Total expense = principal + interest + ongoing (for both renting and owning)
@@ -1379,20 +1500,20 @@ function updateDetailTable(rows, rtbRows){
         <td class="td-sep-right">${r.year}</td>
         <td class="td-sep-right">${phaseLabel}</td>
         <td>${y0?na:c(r.rtbBegCash||0)}</td>
-        <td style="color:var(--accent)">${y0?na:c(r.rtbYearBudget||0)}</td>
-        <td style="color:${neg}">${y0?na:c(rtbTotalExp)}</td>
-        <td style="color:${neg}">${y0||!isOwning?na:c(r.rtbYearPrincipal||0)}</td>
-        <td style="color:${neg}">${y0||!isOwning?na:c(r.rtbYearInterest||0)}</td>
-        <td style="color:${neg}">${y0?na:c(r.rtbYearOngoing||0)}</td>
-        <td style="color:${pos}">${y0?na:c(r.rtbYearInterestInc||0)}</td>
-        <td style="color:var(--gold)">${y0?na:c(r.rtbYearSurplus||0)}</td>
-        <td style="color:${neg}">${y0?na:c(r.rtbPurchaseOutlay||0)}</td>
+        <td>${y0?na:c(r.rtbYearBudget||0)}</td>
+        ${y0?`<td>${na}</td>`:outCell(rtbTotalExp)}
+        ${y0||!isOwning?`<td>${na}</td>`:outCell(r.rtbYearPrincipal||0)}
+        ${y0||!isOwning?`<td>${na}</td>`:outCell(r.rtbYearInterest||0)}
+        ${y0?`<td>${na}</td>`:outCell(r.rtbYearOngoing||0)}
+        ${y0?`<td>${na}</td>`:inCell(r.rtbYearInterestInc||0)}
+        ${y0?`<td>${na}</td>`:signCell(r.rtbYearSurplus||0)}
+        ${y0?`<td>${na}</td>`:outCell(r.rtbPurchaseOutlay||0)}
         <td class="td-sep-right">${c(cash)}</td>
         <td>${rtbHasLoanYr ? r.rtbRateYr.toFixed(2)+'%' : na}</td>
         <td>${y0||!isOwning?na:c(r.rtbPropValue||0)}</td>
         <td>${y0||!isOwning?na:c(r.rtbPrincipal||0)}</td>
-        <td class="td-sep-right" style="color:${pos}">${y0||!isOwning?na:c(r.rtbHouseEquity||0)}</td>
-        <td style="color:${r.rtbNetEquity>=0?pos:neg}">${c(r.rtbNetEquity)}</td>
+        <td class="td-sep-right" style="color:${y0||!isOwning?'inherit':z(r.rtbHouseEquity||0)>=0?pos:neg}">${y0||!isOwning?na:c(r.rtbHouseEquity||0)}</td>
+        <td style="color:${z(r.rtbNetEquity)>=0?pos:neg}">${c(r.rtbNetEquity)}</td>
         <td style="color:${neg}">${y0?na:c(r.rtbAccumCost)}</td>
       </tr>`;
     });
@@ -1620,9 +1741,9 @@ function applyPreset(cityKey){
 // exporters. The heavy lifting (canvas/SVG composition, watermark) lives in the
 // shared RVOExport module so the main tool and sensitivity tool export identically.
 function chartExportMeta(){
-  const chartTitleMap = {netEquity:'Rent vs Own — Net Equity Over Time', cash:'Rent vs Own — Liquid Cash Over Time', cost:'Rent vs Own — Accumulated Cost Over Time'};
+  const chartTitleMap = {netEquity:T('exportNetEquity'), cash:T('exportCash'), cost:T('exportCost')};
   return {
-    title: chartTitleMap[activeGraph] || 'Rent vs Own — Financial Comparison',
+    title: chartTitleMap[activeGraph] || T('exportDefault'),
     // Read off the key on the page, so the export carries the same marks the
     // reader just saw — dashed two-colour line and shaded band included.
     legendItems: SharedLegend.itemsOf('chartLegend'),
@@ -1871,10 +1992,10 @@ function buildCostItemRow(key, item, idx, count){
     <div class="ci-line">
       <div class="currency-wrap">
         <span class="prefix"${isPct?' hidden':''}>${sym}</span>
-        <input class="currency-input money-input ci-amount${isPct?' has-suffix':''}" type="text" inputmode="numeric" value="${formatMoneyValue(item.amount||0)}"/>
+        <input class="currency-input money-input ci-amount${isPct?' has-suffix':''}" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="${formatMoneyValue(item.amount||0)}"/>
         <span class="suffix"${isPct?'':' hidden'}>%</span>
       </div>
-      <select class="ci-basis">${optsHtml}</select>
+      <select class="sel-input ci-basis">${optsHtml}</select>
     </div>${inflHtml}`;
   // The period this row's amount was entered against, read back off the select
   // so an item that arrived without a basis records the one it actually shows.
@@ -1985,8 +2106,8 @@ function buildCagrRow(year='', price=''){
   const row=document.createElement('div');
   row.className='cagr-row';
   row.innerHTML = `
-    <input type="number" placeholder="Year e.g. 2020" class="cagr-year" value="${year}"/>
-    <input type="text" inputmode="numeric" placeholder="Price e.g. 450,000" class="cagr-price money-input" data-money="true" value="${price}"/>
+    <input type="number" placeholder="${T('phCagrYear')}" class="cagr-year" min="1800" max="2200" step="1" value="${year}"/>
+    <input type="text" inputmode="numeric" placeholder="${T('phCagrPrice')}" class="cagr-price money-input" data-money="true" data-min="0" data-max="1000000000000" value="${price}"/>
     <button class="cagr-btn delete cagr-delete" type="button" aria-label="${T('btnDelete')}" title="${T('btnDelete')}">✕</button>
   `;
   const priceEl = row.querySelector('.cagr-price');
@@ -2177,7 +2298,7 @@ $('themeToggle').addEventListener('click',()=>{
 // Apply persisted theme on load (body defaults to light; remove class if stored dark)
 if(localStorage.getItem('pf-theme')==='dark'){document.body.classList.remove('light');$('themeToggle').textContent='☀️ Light';}
 window.addEventListener('resize', syncDetailHeaderLayout);
-$('chartCanvas').addEventListener('mouseleave',()=>{ $('hoverBox').textContent='Hover over the chart to inspect a year.'; });
+$('chartCanvas').addEventListener('mouseleave',()=>{ $('hoverBox').textContent=T('chartHoverHint'); });
 $('cagrCalc').addEventListener('click', calcCAGR);
 $('cagrToolToggle').addEventListener('click',()=>{
   const show = $('cagrToolWrap').style.display === 'none';
@@ -2201,37 +2322,8 @@ $('cagrRows').addEventListener('blur',(e)=>{
   formatMoneyInput(input);
 }, true);
 
-/* ── SLIDER EDITABLE ── */
-function makeSliderEditable(valSpan,rangeEl){
-  if(!valSpan||!rangeEl)return;
-  const inp=document.createElement('input');
-  inp.type='text';inp.className='slider-val-edit';
-  valSpan.parentNode.insertBefore(inp,valSpan.nextSibling);
-  valSpan.addEventListener('click',()=>{
-    inp.value=parseFloat(rangeEl.value);
-    valSpan.style.display='none';inp.style.display='inline';
-    inp.focus();inp.select();
-  });
-  function commit(){
-    const raw=parseFloat(inp.value);
-    if(!isNaN(raw)){
-      const mn=parseFloat(rangeEl.min),mx=parseFloat(rangeEl.max),st=parseFloat(rangeEl.step)||1;
-      const v=+(Math.round(Math.min(mx,Math.max(mn,raw))/st)*st).toFixed(10);
-      rangeEl.value=v;
-      rangeEl.dispatchEvent(new Event('input',{bubbles:true}));
-      rangeEl.dispatchEvent(new Event('change',{bubbles:true}));
-    }
-    inp.style.display='none';valSpan.style.display='';
-  }
-  inp.addEventListener('blur',commit);
-  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}else if(e.key==='Escape'){inp.value='';commit();}});
-}
-[['riskFreeRate','riskFreeRateVal'],['monthlyBudgetIncrease','monthlyBudgetIncreaseVal'],
- ['horizon','horizonVal'],['rtbBuyYear','rtbBuyYearVal'],['downPaymentPct','downPaymentPctVal'],
- ['mortgageRate','mortgageRateVal'],['mortgageTerm','mortgageTermVal'],['houseGrowth','houseGrowthVal'],['sellingCostPct','sellingCostPctVal'],
- ['ownOngoingInflation','ownOngoingInflationVal'],['rentInflation','rentInflationVal'],
- ['rentOngoingInflation','rentOngoingInflationVal']
-].forEach(([rid,vid])=>makeSliderEditable($(vid),$(rid)));
+/* Slider readouts take a typed value and every slider names its ends:
+   SharedSlider (shared.js) does both, for this page and every other tool. */
 
 /* ── INIT ── */
 // Populate data-tip from centralised RVO_TIPS (tooltips.js)
@@ -2242,7 +2334,16 @@ syncCagrDeleteButtons();
 updateCagrToolVisibility(false);
 updateMortgageModeUI();
 updateCostsModeUI();
+renderAssumptions();
 rerender();
+
+/* The year-by-year table is the most specific thing on the page, so it
+   opens closed under its own header; the CSV button exports it either way. */
+SharedFold.attach($('detailSection'), {
+  key: 'rentvsownhouse',
+  bodies: ['#tableUnitNote', '#tableTabs', '#detailTableWrap'],
+  onOpen: syncDetailHeaderLayout
+});
 
 /* The page has no Reset button — every Quick Start city already opens with a
    full resetAll() — but the audit harness still needs a documented way back to
