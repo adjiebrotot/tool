@@ -120,7 +120,7 @@ async function openPage(legacy){
   // the page under test.
   const page = await (await browser.newContext()).newPage();
   page.on('pageerror', e=>{ console.log('PAGEERROR:', e.message); fail++; });
-  await page.addInitScript(()=>{ try{ localStorage.setItem('col-tour-v1-seen','1'); }catch(e){} });
+  await page.addInitScript(()=>{ try{ localStorage.setItem('col-tour-v1-seen','1'); localStorage.setItem('col-tour-v2-seen','1'); }catch(e){} });
   const legacySrc = legacy ? {
     'script.js': execFileSync('git',['show',`${BASE}:costofliving-comparator/script.js`],{cwd:ROOT}).toString(),
     'index.html': execFileSync('git',['show',`${BASE}:costofliving-comparator/index.html`],{cwd:ROOT}).toString(),
