@@ -29,8 +29,8 @@ window.__TOUR = {
       // in its own row beside the metric buttons.
       target: ['#metricGroup', '#yearInput'],
       title: '② Pilih metrik dan tahun',
-      body: 'Bandingkan berdasarkan <strong>Kekayaan bersih</strong>, <strong>Kas di ' +
-            'tangan</strong>, atau <strong>Total biaya sejauh ini</strong>, lalu atur ' +
+      body: 'Bandingkan berdasarkan <strong>Kekayaan bersih</strong>, <strong>Uang ' +
+            'tunai</strong>, atau <strong>Biaya kumulatif</strong>, lalu atur ' +
             '<strong>tahun</strong> evaluasinya. <strong>Beli dikurangi sewa</strong> di ' +
             'bawah berwarna sesuai pilihan yang unggul: biru untuk membeli, emas untuk menyewa.'
     },

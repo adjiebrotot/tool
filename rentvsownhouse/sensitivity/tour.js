@@ -27,8 +27,8 @@ window.__TOUR = {
       // in its own row beside the metric buttons.
       target: ['#metricGroup', '#yearInput'],
       title: '② Choose the metric and year',
-      body: 'Compare on <strong>Net equity</strong>, <strong>Cash in hand</strong> or ' +
-            '<strong>Total cost so far</strong>, and set the <strong>year</strong> to ' +
+      body: 'Compare on <strong>Net equity</strong>, <strong>Liquid cash</strong> or ' +
+            '<strong>Accumulated cost</strong>, and set the <strong>year</strong> to ' +
             'evaluate at. <strong>Own minus rent</strong> at the bottom takes the colour of ' +
             'whichever comes out ahead: blue for owning, gold for renting.'
     },

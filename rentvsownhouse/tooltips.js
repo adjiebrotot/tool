@@ -23,14 +23,14 @@ var RVO_TIPS_EN = {
     io: "<strong>Interest Only:</strong> payments cover interest alone, so they build no equity. The whole balance is repaid from cash when the term ends."
   },
   costInterestOnly: {
-    on:  "<strong>On:</strong> Total cost counts interest and running costs only, since principal becomes equity rather than money lost.",
-    off: "<strong>Off:</strong> the whole repayment plus running costs counts as a cost, principal included."
+    on:  "<strong>On:</strong> Accumulated cost counts interest and ongoing costs only, since principal becomes equity rather than money lost.",
+    off: "<strong>Off:</strong> the whole repayment plus ongoing costs counts as a cost, principal included."
   },
   mortgageRate:         "Annual rate on the loan, held flat for the whole term. It sets the repayment and the total interest.",
-  rateSchedule:         "Rates by year of the loan, each period <strong>Fixed</strong> or <strong>Floating</strong> in a band. When renting first, the loan starts this schedule at its year 1 when it buys.",
+  rateSchedule:         "Rates by year of the loan, each period <strong>Fixed</strong> or <strong>Floating</strong> in a band. Rent-Then-Buy starts this schedule at its year 1 when it buys.",
   mortgageTerm:         "Years the loan is amortised over. Longer means a smaller repayment and more interest. Once it is repaid, the whole budget turns into savings.",
   sellingCost:          "Agent, marketing, legal and seller taxes if the home is sold. House and net equity are shown after it, as if sold that year.",
-  houseGrowth:          "Yearly growth in home value (RPPI). It drives home equity and the later price when renting first. The tool below works it out from past prices.",
+  houseGrowth:          "How fast house prices grow each year (RPPI). It drives house equity and the Rent-Then-Buy price. The tool below works it out from past prices.",
   ownCostsMode: {
     simple:   "<strong>Simple:</strong> one setup cost and one ongoing cost. Detailed lists each one, with its own unit, inflation or percentage basis.",
     detailed: "<strong>Detailed:</strong> each cost on its own line. Setup as $ or % of price, ongoing per week, month or year with its own inflation, or % of value."
@@ -39,24 +39,26 @@ var RVO_TIPS_EN = {
     simple:   "<strong>Simple:</strong> one ongoing cost of renting. Detailed lists each one separately.",
     detailed: "<strong>Detailed:</strong> each cost on its own line, per week, month or year with its own inflation, or as a % of annual rent."
   },
-  setupCost:            "One-off costs at purchase: stamp duty, conveyancing, inspection. Paid from savings. A later rent-first purchase scales them to its price.",
+  setupCost:            "One-off costs at purchase: stamp duty, conveyancing, inspection. Paid from savings. A later Rent-Then-Buy purchase scales them to its price.",
   ownOngoingCost:       "Yearly costs beyond the loan: rates, insurance, maintenance, strata, land tax. Fixed amounts grow at their own inflation, % items track the value.",
   ownOngoingInflation:  "Yearly rise in fixed-dollar ownership costs. A % of property value already grows with the house.",
   rentAmount:           "Rent as it stands today, per week, month or year. It grows each year at rent inflation, and any budget surplus above it is invested.",
   rentInflation:        "How fast rent rises each year, historically around CPI or a little above. Faster rent erodes the renter's surplus.",
   rentOngoingCost:      "Costs on top of the rent: contents and renters' insurance, connection fees. No rates or building upkeep, so well below the owner's.",
   rentOngoingInflation: "Yearly rise in fixed-dollar renting costs. A % of annual rent already grows with rent inflation.",
-  riskFreeRate:         "Return on idle cash in every scenario. The mortgage is the only borrowing: blank budget and cash are sized so no scenario runs short.",
-  initialCash:          "Cash you hold today. Owning spends it on the deposit and buying costs, renting invests all of it. Blank covers what every scenario needs up front, a later deposit included.",
+  riskFreeRate:         "What spare cash earns each year, like a savings account. It applies in every scenario.",
+  initialCash:          "Cash you hold today. Owning spends it on the deposit and setup cost, renting invests all of it. Blank covers what every scenario needs up front, a later deposit included.",
   monthlyBudget:        "Monthly cash for housing. Blank follows the highest cost of any scenario each year, repayments at the top of a floating range, so every scenario can pay at any rate.",
   monthlyBudgetIncrease: {
     manual: "Compounds your monthly budget each year, for wage growth or CPI. It widens the surplus, or shrinks the shortfall, over time.",
     auto:   "Grows the monthly budget each year. Inert while the budget is automatic, so set a budget above for it to bite."
   },
-  horizon:              "Years to project. A longer run lets property compounding and the loan payoff play out. Up to 100.",
+  horizon:              "How many years the comparison runs, up to 100. A longer run lets property growth and the loan payoff play out.",
   rtbEnabled:           "A third scenario: rent for some years, then buy at the price by then, on the same budget. A blank budget or cash grows to fund it, which also moves Own and Rent.",
   rtbBuyAtYear:         "Buy at the end of this year, at the price grown by RPPI. The mortgage starts then as a new loan: full term, rate schedule from its year 1.",
-  calcCagr:             "Enter year and price pairs. The yearly growth they imply (CAGR) is applied to Home value growth above.",
+  calcCagr:             "Enter year and price pairs. The yearly growth they imply (CAGR) is applied to House price growth above.",
+  graphMetric:          "Net equity: the home if sold, minus the loan, plus cash. Liquid cash: cash in the bank. Accumulated cost: what housing has cost so far.",
+  cashflowTable:        "Cash position: cash in and out that year. Mortgage position: the home and the loan. Financial position: net equity and accumulated cost.",
 };
 var RVO_TIPS_ID = {
   propertyPrice:        "Harga pasar properti saat ini. Menjadi nilai awal ekuitas rumah dan besaran KPR.",
@@ -77,7 +79,7 @@ var RVO_TIPS_ID = {
   rateSchedule:         "Bunga per tahun KPR, tiap periode <strong>Tetap</strong> atau <strong>Mengambang</strong> dalam pita. KPR Sewa Dulu memulai jadwal ini dari tahun ke-1 saat membeli.",
   mortgageTerm:         "Jumlah tahun pelunasan pinjaman. Lebih panjang berarti cicilan lebih kecil dan bunga lebih besar. Setelah lunas, seluruh anggaran menjadi tabungan.",
   sellingCost:          "Komisi agen, pemasaran, notaris dan pajak penjual jika rumah dijual. Ekuitas rumah dan bersih ditampilkan setelahnya, seolah dijual tahun itu.",
-  houseGrowth:          "Kenaikan nilai rumah per tahun (RPPI). Mendorong ekuitas rumah dan harga beli saat sewa dulu. Alat di bawah menghitungnya dari harga historis.",
+  houseGrowth:          "Kenaikan harga properti per tahun (RPPI). Mendorong nilai bersih properti dan harga beli Sewa Dulu. Alat di bawah menghitungnya dari harga historis.",
   ownCostsMode: {
     simple:   "<strong>Sederhana:</strong> satu biaya awal dan satu biaya rutin. Rinci mendaftar tiap biaya dengan satuan, inflasi, atau dasar persentasenya sendiri.",
     detailed: "<strong>Rinci:</strong> tiap biaya satu baris. Biaya awal nominal atau % harga, biaya rutin per minggu, bulan atau tahun dengan inflasinya, atau % nilai."
@@ -93,17 +95,19 @@ var RVO_TIPS_ID = {
   rentInflation:        "Laju kenaikan sewa per tahun, secara historis sekitar CPI atau sedikit di atasnya. Semakin cepat, surplus penyewa makin terkikis.",
   rentOngoingCost:      "Biaya di luar sewa pokok: asuransi isi rumah, biaya koneksi utilitas. Tanpa PBB atau perawatan gedung, jadi jauh di bawah biaya pemilik.",
   rentOngoingInflation: "Kenaikan tahunan biaya menyewa bernominal tetap. Item % dari sewa tahunan sudah naik bersama kenaikan sewa.",
-  riskFreeRate:         "Return atas kas menganggur di semua skenario. KPR satu-satunya pinjaman: anggaran dan kas kosong diatur agar tidak ada skenario yang kekurangan.",
+  riskFreeRate:         "Imbal hasil kas yang tidak terpakai per tahun, seperti tabungan atau deposito. Berlaku di semua skenario.",
   initialCash:          "Kas yang Anda miliki sekarang. Skenario Beli memakainya untuk DP dan biaya awal, Sewa menginvestasikan semuanya. Kosong berarti cukup untuk kebutuhan awal semua skenario, termasuk DP Sewa Dulu nanti.",
   monthlyBudget:        "Kas bulanan untuk biaya perumahan. Kosong berarti mengikuti biaya tertinggi semua skenario tiap tahun, cicilan pada batas atas bunga mengambang, jadi semua skenario sanggup membayar.",
   monthlyBudgetIncrease: {
     manual: "Menaikkan anggaran bulanan Anda tiap tahun secara berbunga, untuk kenaikan gaji atau CPI. Surplus melebar seiring waktu.",
     auto:   "Menaikkan anggaran bulanan tiap tahun. Tidak berpengaruh selama anggaran otomatis, jadi tetapkan anggaran di atas."
   },
-  horizon:              "Jumlah tahun proyeksi. Makin panjang, efek compounding properti dan pelunasan KPR makin terlihat. Hingga 100 tahun.",
+  horizon:              "Berapa tahun perbandingan dijalankan, hingga 100 tahun. Makin panjang, efek kenaikan properti dan pelunasan KPR makin terlihat.",
   rtbEnabled:           "Skenario ketiga: menyewa X tahun, lalu membeli pada harga saat itu, dengan anggaran yang sama. Anggaran atau modal awal kosong ikut naik untuk mendanainya, jadi Beli dan Sewa ikut berubah.",
   rtbBuyAtYear:         "Membeli di akhir tahun ini, pada harga yang tumbuh sesuai RPPI. KPR baru dimulai saat itu: jangka waktu penuh, jadwal bunga dari tahun ke-1.",
-  calcCagr:             "Masukkan pasangan tahun dan harga. Kenaikan tahunan (CAGR) hasilnya diterapkan ke Kenaikan nilai rumah di atas.",
+  calcCagr:             "Masukkan pasangan tahun dan harga. Kenaikan tahunan (CAGR) hasilnya diterapkan ke Kenaikan harga properti di atas.",
+  graphMetric:          "Kekayaan bersih: rumah jika dijual, dikurangi pinjaman, ditambah kas. Uang tunai: kas di bank. Biaya kumulatif: total biaya perumahan sejauh ini.",
+  cashflowTable:        "Posisi kas: kas masuk dan keluar tahun itu. Posisi KPR: rumah dan pinjaman. Posisi keuangan: kekayaan bersih dan biaya kumulatif.",
 };
 // RVO_TIPS returns EN by default; pages switch to ID via RVO_TIPS_ID when needed
 var RVO_TIPS = RVO_TIPS_EN;

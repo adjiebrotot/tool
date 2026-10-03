@@ -31,9 +31,9 @@ window.__TOUR = {
       },
       title: '② Angka yang Anda tahu lebih dulu',
       body: '<strong>Rumah</strong> berisi harga, uang muka, KPR, dan biaya kepemilikan. ' +
-            '<strong>Sewa</strong> berisi sewa, biayanya, dan skenario opsional sewa dulu ' +
-            'lalu beli. <strong>Asumsi</strong> berisi perkiraan masa depan: imbal hasil ' +
-            'tabungan, kenaikan nilai rumah, dan jangka waktu perbandingan. Setiap isian ' +
+            '<strong>Sewa</strong> berisi sewa, biayanya, dan skenario opsional <strong>Sewa ' +
+            'Dulu, Beli Kemudian</strong>. <strong>Asumsi</strong> berisi perkiraan masa depan: ' +
+            'suku bunga bebas risiko tabungan, kenaikan harga properti, dan jangka waktu. Setiap isian ' +
             'menampilkan satuannya, dan angka slider bisa diklik lalu diketik.'
     },
     {
@@ -46,17 +46,17 @@ window.__TOUR = {
     {
       target: '.metrics',
       title: '④ Angka kunci',
-      body: 'Selisih antara membeli dan menyewa di akhir, <strong>tahun titik ' +
-            'impas</strong>, lalu kas awal yang sama dan anggaran perumahan bulanan ' +
-            'yang dipakai bersama.'
+      body: '<strong>Perbedaan kekayaan bersih</strong> antara membeli dan menyewa di akhir, ' +
+            '<strong>tahun breakeven</strong>, lalu modal awal yang sama dan anggaran perumahan ' +
+            'bulanan yang dipakai bersama.'
     },
     {
       target: '.chart-card',
       title: '⑤ Bandingkan dari waktu ke waktu',
-      body: 'Ganti grafik antara <strong>Kekayaan bersih</strong>, <strong>Kas di ' +
-            'tangan</strong>, dan <strong>Total biaya sejauh ini</strong> untuk melihat ' +
-            'bagaimana tiap jalur berjalan tahun demi tahun. Ekspor tampilan apa pun ' +
-            'sebagai SVG atau PNG.'
+      body: 'Ganti grafik antara <strong>Kekayaan bersih</strong>, <strong>Uang ' +
+            'tunai</strong>, dan <strong>Biaya kumulatif</strong> untuk melihat ' +
+            'bagaimana tiap jalur berjalan tahun demi tahun. Tanda ? di sebelahnya ' +
+            'menjelaskan artinya. Ekspor tampilan apa pun sebagai SVG atau PNG.'
     },
     {
       target: '#detailSection',

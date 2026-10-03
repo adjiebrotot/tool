@@ -187,7 +187,7 @@
   <!-- HOME TAB -->
   <div class="ctrl-panel active" id="tab-own">
     <div class="field-row" style="border-top:none;padding-top:0;">
-      <div class="field-label" data-i18n="labelCurrencySymbol">Currency</div>
+      <div class="field-label" data-i18n="labelCurrencySymbol">Currency Symbol</div>
       <select class="sel-input" id="currencySymbol">
         <option value="$" selected data-i18n-opt="curDollar">$ Dollar</option>
         <option value="€" data-i18n-opt="curEuro">€ Euro</option>
@@ -201,9 +201,9 @@
       </select>
     </div>
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionProperty">Price and deposit</div>
+      <div class="group-title" data-i18n="sectionProperty">Property</div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelPropertyPrice">Home price</span> <span class="tip-icon" data-tip-key="propertyPrice">?</span></div>
+        <div class="field-label"><span data-i18n="labelPropertyPrice">Property price</span> <span class="tip-icon" data-tip-key="propertyPrice">?</span></div>
         <div class="currency-wrap">
           <span class="prefix" id="propertyPricePrefix">$</span>
           <input class="currency-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" data-min="50000" data-max="1000000000000" value="800,000"/>
@@ -215,7 +215,7 @@
           <span class="slider-value" id="downPaymentPctVal">20% of price</span>
         </div>
         <input type="range" id="downPaymentPct" min="0" max="100" step="0.01" value="20"/>
-        <div class="derived" id="helpDownPayment"><span data-i18n="helpDownPaymentPrefix">That is</span> <b id="downPaymentDollar">$160,000</b></div>
+        <div class="derived" id="helpDownPayment"><span data-i18n="helpDownPaymentPrefix">Down payment = </span> <b id="downPaymentDollar">$160,000</b></div>
       </div>
     </div>
     <div class="field-group">
@@ -240,7 +240,7 @@
           </label>
         </div>
         <div class="toggle-row" style="margin-top:8px;padding-top:8px;padding-bottom:0;">
-          <span class="toggle-label"><span data-i18n="labelCostInterestOnly">Count interest only as a cost</span> <span class="tip-icon" data-tip-key="costInterestOnly">?</span></span>
+          <span class="toggle-label"><span data-i18n="labelCostInterestOnly">Cost = interest only</span> <span class="tip-icon" data-tip-key="costInterestOnly">?</span></span>
           <label class="toggle-switch">
             <input type="checkbox" id="costInterestOnly" checked/>
             <div class="toggle-track"><div class="toggle-knob"></div></div>
@@ -262,7 +262,7 @@
         </div>
       </div>
       <div class="field-row" id="rateScheduleRow" style="display:none;">
-        <div class="field-label"><span data-i18n="labelRateSchedule">Rate by year of the loan</span> <span class="tip-icon" data-tip-key="rateSchedule">?</span></div>
+        <div class="field-label"><span data-i18n="labelRateSchedule">Mortgage rate schedule</span> <span class="tip-icon" data-tip-key="rateSchedule">?</span></div>
         <div class="rate-periods" id="ratePeriodRows"></div>
         <div class="rate-schedule-actions">
           <button class="btn-primary btn-sm" id="addRatePeriod" type="button" data-i18n="btnAddPeriod">+ Add Period</button>
@@ -280,7 +280,7 @@
       </div>
       <div class="fg-sub" id="ownCostsSimple">
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelSetupCost">One-off buying costs (stamp duty, legal)</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
+        <div class="field-label"><span data-i18n="labelSetupCost">Setup cost (stamp duty, legal, etc.)</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
         <div class="input-row">
           <div class="currency-wrap">
             <span class="prefix" id="setupCostPrefix">$</span>
@@ -293,7 +293,7 @@
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelOwnOngoing">Running costs of owning</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
+        <div class="field-label"><span data-i18n="labelOwnOngoing">Ongoing costs of owning</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
         <div class="input-row">
           <div class="currency-wrap">
             <span class="prefix" id="ownOngoingCostPrefix">$</span>
@@ -312,7 +312,7 @@
       </div>
       <div class="field-row" id="ownOngoingInflationRow">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelOwnInflation">Running costs rise each year</span> <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
+          <div class="field-label"><span data-i18n="labelOwnInflation">Own ongoing cost inflation</span> <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
           <span class="slider-value" id="ownOngoingInflationVal">0.00%/yr</span>
         </div>
         <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.01" value="0"/>
@@ -320,14 +320,14 @@
       </div><!-- /ownCostsSimple -->
       <div class="fg-sub" id="ownCostsDetailed" style="display:none;">
         <div class="field-row">
-          <div class="field-label"><span data-i18n="labelSetupCosts">One-off buying costs</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
+          <div class="field-label"><span data-i18n="labelSetupCosts">Setup costs</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
           <div class="cost-items" id="ownSetupCostRows"></div>
-          <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnSetupCost" type="button" data-i18n="btnAddSetupCost">+ Add buying cost</button></div>
+          <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnSetupCost" type="button" data-i18n="btnAddSetupCost">+ Add setup cost</button></div>
         </div>
         <div class="field-row">
-          <div class="field-label"><span data-i18n="labelOngoingCostsList">Running costs</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
+          <div class="field-label"><span data-i18n="labelOngoingCostsList">Ongoing costs</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
           <div class="cost-items" id="ownOngoingCostRows"></div>
-          <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Add running cost</button></div>
+          <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Add ongoing cost</button></div>
         </div>
       </div><!-- /ownCostsDetailed -->
     </div>
@@ -336,9 +336,9 @@
   <!-- RENT TAB -->
   <div class="ctrl-panel" id="tab-rent">
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionRentalPayments">Rent</div>
+      <div class="group-title" data-i18n="sectionRentalPayments">Rental payments</div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelRentAmount">Rent you pay</span> <span class="tip-icon" data-tip-key="rentAmount">?</span></div>
+        <div class="field-label"><span data-i18n="labelRentAmount">Rent amount</span> <span class="tip-icon" data-tip-key="rentAmount">?</span></div>
         <div class="input-row">
           <div class="currency-wrap">
             <span class="prefix" id="rentAmountPrefix">$</span>
@@ -350,11 +350,11 @@
             <option value="yearly" data-i18n-opt="optYearly">a year</option>
           </select>
         </div>
-        <div class="derived" id="rentMonthlyDisplaySub"><span data-i18n="rentPrefix">That is</span> <b id="rentMonthlyDisplay">$2,800/mo</b></div>
+        <div class="derived" id="rentMonthlyDisplaySub"><span data-i18n="rentPrefix">Rent = </span> <b id="rentMonthlyDisplay">$2,800/mo</b></div>
       </div>
       <div class="field-row">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelRentInflation">Rent rises each year</span> <span class="tip-icon" data-tip-key="rentInflation">?</span></div>
+          <div class="field-label"><span data-i18n="labelRentInflation">Rent inflation</span> <span class="tip-icon" data-tip-key="rentInflation">?</span></div>
           <span class="slider-value" id="rentInflationVal">3.00%/yr</span>
         </div>
         <input type="range" id="rentInflation" min="-10" max="25" step="0.01" value="3"/>
@@ -371,7 +371,7 @@
       </div>
       <div class="fg-sub" id="rentCostsSimple">
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelRentOngoing">Running costs of renting</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
+        <div class="field-label"><span data-i18n="labelRentOngoing">Ongoing costs of renting</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
         <div class="input-row">
           <div class="currency-wrap">
             <span class="prefix" id="rentOngoingCostPrefix">$</span>
@@ -390,7 +390,7 @@
       </div>
       <div class="field-row" id="rentOngoingInflationRow">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelRentOngoingInflation">Running costs rise each year</span> <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
+          <div class="field-label"><span data-i18n="labelRentOngoingInflation">Rent ongoing cost inflation</span> <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
           <span class="slider-value" id="rentOngoingInflationVal">0.00%/yr</span>
         </div>
         <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.01" value="0"/>
@@ -398,16 +398,16 @@
       </div><!-- /rentCostsSimple -->
       <div class="fg-sub" id="rentCostsDetailed" style="display:none;">
         <div class="field-row">
-          <div class="field-label"><span data-i18n="labelOngoingCostsList">Running costs</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
+          <div class="field-label"><span data-i18n="labelOngoingCostsList">Ongoing costs</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
           <div class="cost-items" id="rentOngoingCostRows"></div>
-          <div class="rate-schedule-actions"><button class="cagr-btn" id="addRentOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Add running cost</button></div>
+          <div class="rate-schedule-actions"><button class="cagr-btn" id="addRentOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Add ongoing cost</button></div>
         </div>
       </div><!-- /rentCostsDetailed -->
     </div>
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionRTB">Rent first, then buy (optional)</div>
+      <div class="group-title" data-i18n="sectionRTB">Rent-Then-Buy scenario</div>
       <div class="toggle-row">
-        <span class="toggle-label"><span data-i18n="labelEnableRTB">Add this scenario</span> <span class="tip-icon" data-tip-key="rtbEnabled">?</span></span>
+        <span class="toggle-label"><span data-i18n="labelEnableRTB">Enable Rent-Then-Buy</span> <span class="tip-icon" data-tip-key="rtbEnabled">?</span></span>
         <label class="toggle-switch" id="rtbToggleWrap">
           <input type="checkbox" id="rtbEnabled"/>
           <div class="toggle-track"><div class="toggle-knob"></div></div>
@@ -416,7 +416,7 @@
       <div class="fg-sub" id="rtbParams" style="display:none;">
         <div class="field-row">
           <div class="slider-head">
-            <div class="field-label"><span data-i18n="labelBuyAtYear">Buy after renting for</span> <span class="tip-icon" data-tip-key="rtbBuyAtYear">?</span></div>
+            <div class="field-label"><span data-i18n="labelBuyAtYear">Buy at year</span> <span class="tip-icon" data-tip-key="rtbBuyAtYear">?</span></div>
             <span class="slider-value" id="rtbBuyYearVal">5 yrs</span>
           </div>
           <input type="range" id="rtbBuyYear" min="1" max="50" step="1" value="5"/>
@@ -428,40 +428,40 @@
   <!-- ASSUMPTIONS TAB -->
   <div class="ctrl-panel" id="tab-general">
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionSavings">Savings and time</div>
+      <div class="group-title" data-i18n="sectionSavings">Savings and time horizon</div>
       <div class="field-row">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelRiskFreeRate">What your spare cash earns (risk-free rate)</span> <span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
+          <div class="field-label"><span data-i18n="labelRiskFreeRate">Risk-Free Rate</span> <span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
           <span class="slider-value" id="riskFreeRateVal">4.50%/yr</span>
         </div>
         <input type="range" id="riskFreeRate" min="-10" max="25" step="0.01" value="4.5"/>
       </div>
       <div class="field-row">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelTimeHorizon">Years to compare</span> <span class="tip-icon" data-tip-key="horizon">?</span></div>
+          <div class="field-label"><span data-i18n="labelTimeHorizon">Time horizon</span> <span class="tip-icon" data-tip-key="horizon">?</span></div>
           <span class="slider-value" id="horizonVal">30 yrs</span>
         </div>
         <input type="range" id="horizon" min="5" max="100" step="1" value="30"/>
       </div>
     </div>
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionPropertyGrowth">Home value over time</div>
+      <div class="group-title" data-i18n="sectionPropertyGrowth">Property growth</div>
       <div class="field-row">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelHouseGrowth">Home value growth (RPPI)</span> <span class="tip-icon" data-tip-key="houseGrowth">?</span></div>
+          <div class="field-label"><span data-i18n="labelHouseGrowth">House price growth (RPPI)</span> <span class="tip-icon" data-tip-key="houseGrowth">?</span></div>
           <span class="slider-value" id="houseGrowthVal">5.00%/yr</span>
         </div>
         <input type="range" id="houseGrowth" min="-10" max="25" step="0.01" value="5"/>
       </div>
       <div class="field-row">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelSellingCost">Cost of selling</span> <span class="tip-icon" data-tip-key="sellingCost">?</span></div>
+          <div class="field-label"><span data-i18n="labelSellingCost">Selling cost</span> <span class="tip-icon" data-tip-key="sellingCost">?</span></div>
           <span class="slider-value" id="sellingCostPctVal">2.50% of sale</span>
         </div>
         <input type="range" id="sellingCostPct" min="0" max="15" step="0.01" value="2.5"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelCalcCAGR">Work out growth from past prices</span> <span class="tip-icon" data-tip-key="calcCagr">?</span></div>
+        <div class="field-label"><span data-i18n="labelCalcCAGR">Calculate compound annual growth (CAGR) from historical prices</span> <span class="tip-icon" data-tip-key="calcCagr">?</span></div>
         <button class="btn-secondary cagr-toggle-btn" id="cagrToolToggle" type="button" data-i18n="btnShowTool">Show Tool</button>
         <div class="cagr-box" id="cagrToolWrap" style="display:none;">
           <div id="cagrRows">
@@ -478,21 +478,21 @@
           </div>
           <div class="cagr-actions">
             <button class="cagr-btn" id="cagrAddRow" type="button" data-i18n="btnAddRow">+ Row</button>
-            <button class="cagr-btn" id="cagrCalc" type="button" data-i18n="btnCalcCAGR">Work it out</button>
+            <button class="cagr-btn" id="cagrCalc" type="button" data-i18n="btnCalcCAGR">Calculate CAGR</button>
           </div>
           <div class="cagr-result" id="cagrResult"></div>
         </div>
       </div>
     </div>
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionCash">Your cash (optional)</div>
+      <div class="group-title" data-i18n="sectionCash">Cash</div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelInitialCash">Cash you have now</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(optional)</span></div>
+        <div class="field-label"><span data-i18n="labelInitialCash">Initial cash</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(optional)</span></div>
         <div class="currency-wrap">
           <span class="prefix" id="initialCashPrefix">$</span>
           <input class="currency-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value=""/>
         </div>
-        <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Defaults to the down payment plus buying costs. Any excess earns the risk-free rate.</div>
+        <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Defaults to the down payment plus setup cost. Any excess is invested at the risk-free rate.</div>
         <div class="warning" id="initialCashWarn" style="display:none;margin:6px 0 0;"></div>
       </div>
       <div class="field-row">
@@ -505,11 +505,11 @@
       </div>
       <div class="field-row" id="budgetIncreaseRow" style="display:none;">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelBudgetIncrease">Budget rises each year</span> <span class="tip-icon" data-tip-key="monthlyBudgetIncrease">?</span></div>
+          <div class="field-label"><span data-i18n="labelBudgetIncrease">Budget annual increase</span> <span class="tip-icon" data-tip-key="monthlyBudgetIncrease">?</span></div>
           <span class="slider-value" id="monthlyBudgetIncreaseVal">0.00%/yr</span>
         </div>
         <input type="range" id="monthlyBudgetIncrease" min="0" max="25" step="0.01" value="0"/>
-        <div class="derived" id="helpBudgetGrows"><span data-i18n="helpBudgetGrowsPrefix">Grows from</span> <b id="budgetIncreaseBase">—</b> <span data-i18n="helpBudgetGrowsSuffix">at this rate each year.</span></div>
+        <div class="derived" id="helpBudgetGrows"><span data-i18n="helpBudgetGrowsPrefix">Budget grows from</span> <b id="budgetIncreaseBase">—</b> <span data-i18n="helpBudgetGrowsSuffix">at this rate each year.</span></div>
       </div>
     </div>
   </div>
@@ -525,24 +525,24 @@
   <!-- KPI CARDS: the answer first, the two figures it starts from after -->
   <section class="metrics">
     <div class="metric card">
-      <div class="label"><span data-i18n="kpiDiffLabel">Own minus rent</span> <span class="tip-icon" data-i18n-tip="kpiDiffTip">?</span></div>
+      <div class="label"><span data-i18n="kpiDiffLabel">Equity difference</span> <span class="tip-icon" data-i18n-tip="kpiDiffTip">?</span></div>
       <div class="value" id="kpiDiff">—</div>
-      <div class="sub" id="kpiDiffSub" data-i18n="kpiDiffSub">Net equity at the final year</div>
+      <div class="sub" id="kpiDiffSub" data-i18n="kpiDiffSub">Own minus rent at the final year</div>
     </div>
     <div class="metric card">
-      <div class="label"><span data-i18n="kpiBreakevenLabel">Owning pulls ahead</span> <span class="tip-icon" data-i18n-tip="kpiBreakevenTip">?</span></div>
+      <div class="label"><span data-i18n="kpiBreakevenLabel">Breakeven year</span> <span class="tip-icon" data-i18n-tip="kpiBreakevenTip">?</span></div>
       <div class="value" id="kpiBreakeven">—</div>
-      <div class="sub" data-i18n="kpiBreakevenSub">and stays ahead to the end (breakeven)</div>
+      <div class="sub" data-i18n="kpiBreakevenSub">When owning net equity overtakes renting for good</div>
     </div>
     <div class="metric card">
-      <div class="label"><span data-i18n="kpiInitialCashLabel">Cash at the start</span> <span class="tip-icon" data-i18n-tip="kpiInitialCashTip">?</span></div>
+      <div class="label"><span data-i18n="kpiInitialCashLabel">Initial cash</span> <span class="tip-icon" data-i18n-tip="kpiInitialCashTip">?</span></div>
       <div class="value" id="kpiInitialCash">—</div>
-      <div class="sub" data-i18n="kpiInitialCashSub">Year 0, the same in every scenario</div>
+      <div class="sub" data-i18n="kpiInitialCashSub">Starting capital at Year 0</div>
     </div>
     <div class="metric card">
       <div class="label"><span data-i18n="kpiBudgetLabel">Monthly housing budget</span></div>
       <div class="value" id="kpiBudgetRange">—</div>
-      <div class="sub" data-i18n="kpiBudgetSub">Lowest to highest over the years</div>
+      <div class="sub" data-i18n="kpiBudgetSub">Min–max monthly budget over the horizon</div>
     </div>
   </section>
 
@@ -552,11 +552,12 @@
          switches stay beside the title, the export cluster sits hard right in
          the order every other tool on the site uses. -->
     <div class="chart-head">
-      <h2 data-i18n="chartTitle">Own vs rent over time</h2>
+      <h2 data-i18n="chartTitle">Comparison</h2>
       <div class="chart-controls">
         <button class="graph-btn active" data-graph="netEquity" id="graphNetEquity" data-i18n="btnNetEquity">Net equity</button>
-        <button class="graph-btn" data-graph="cash" id="graphCash" data-i18n="btnLiquidCash">Cash in hand</button>
-        <button class="graph-btn" data-graph="cost" id="graphCost" data-i18n="btnAccumCost">Total cost so far</button>
+        <button class="graph-btn" data-graph="cash" id="graphCash" data-i18n="btnLiquidCash">Liquid cash</button>
+        <button class="graph-btn" data-graph="cost" id="graphCost" data-i18n="btnAccumCost">Accumulated cost</button>
+        <span class="tip-icon" data-tip-key="graphMetric">?</span>
       </div>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="svgBtn" data-i18n-title="btnSvgTitle" title="Download this chart as SVG">⬇ SVG</button>
@@ -574,17 +575,17 @@
   <!-- PER-OPTION DETAIL -->
   <section class="bottom" id="summarySection">
     <div class="card">
-      <h3 id="ownSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="ownSnapshotTitle">Owning, in detail</span></h3>
+      <h3 id="ownSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="ownSnapshotTitle">Own snapshot</span></h3>
       <div class="summary-grid" id="ownSummary"></div>
     </div>
     <div class="card">
-      <h3 id="rentSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="rentSnapshotTitle">Renting, in detail</span></h3>
+      <h3 id="rentSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="rentSnapshotTitle">Rent snapshot</span></h3>
       <div class="summary-grid" id="rentSummary"></div>
     </div>
   </section>
   <section id="rtbSummarySection" style="display:none;margin-bottom:18px;">
     <div class="card">
-      <h3 id="rtbSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-rtb" aria-hidden="true"></span><span data-i18n="rtbSnapshotTitle">Rent first, then buy, in detail</span> <span class="tip-icon" data-i18n-tip="rtbSnapshotTip">?</span></h3>
+      <h3 id="rtbSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-rtb" aria-hidden="true"></span><span data-i18n="rtbSnapshotTitle">Rent-Then-Buy snapshot</span> <span class="tip-icon" data-i18n-tip="rtbSnapshotTip">?</span></h3>
       <div class="summary-grid" id="rtbSummary"></div>
     </div>
   </section>
@@ -592,7 +593,7 @@
   <!-- YEAR BY YEAR (opens from Show table) -->
   <section class="detail-section card" id="detailSection">
     <div class="detail-head">
-      <h3 data-i18n="tableTitle">Year by year</h3>
+      <h3><span data-i18n="tableTitle">Cashflow by year</span> <span class="tip-icon" data-tip-key="cashflowTable">?</span></h3>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="downloadBtn" type="button" data-i18n="btnCSV" data-i18n-title="btnCsvTitle" title="Download this table as CSV">⬇ CSV</button>
       </div>
@@ -600,9 +601,9 @@
     <p class="unit-note" id="tableUnitNote" data-i18n="tableUnitNote">Every figure is for that year, in future dollars. Money out is shown with a minus sign.</p>
     <div class="tab-controls" id="tableTabs">
       <div class="tab-row">
-        <button class="tab-btn active" data-table="own"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="tabOwnCashflow">Owning</span></button>
-        <button class="tab-btn" data-table="rent"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="tabRentCashflow">Renting</span></button>
-        <button class="tab-btn" id="rtbTableTab" data-table="rtb" style="display:none;"><span class="ricon ricon-rtb" aria-hidden="true"></span><span data-i18n="tabRTBCashflow">Rent first, then buy</span></button>
+        <button class="tab-btn active" data-table="own"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="tabOwnCashflow">Own cashflow</span></button>
+        <button class="tab-btn" data-table="rent"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="tabRentCashflow">Rent cashflow</span></button>
+        <button class="tab-btn" id="rtbTableTab" data-table="rtb" style="display:none;"><span class="ricon ricon-rtb" aria-hidden="true"></span><span data-i18n="tabRTBCashflow">Rent-Then-Buy cashflow</span></button>
       </div>
     </div>
     <div class="table-wrap" id="detailTableWrap"></div>

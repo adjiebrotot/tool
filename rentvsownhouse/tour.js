@@ -30,30 +30,32 @@ window.__TOUR = {
       title: '② The figures you know first',
       body: '<strong>Home</strong> holds the price, the down payment, the mortgage and ' +
             'the costs of owning. <strong>Rent</strong> holds the rent, its costs, and an ' +
-            'optional rent-first-then-buy scenario. <strong>Assumptions</strong> holds the ' +
-            'guesses about the future: what your savings earn, how fast the home grows in ' +
-            'value, and how many years to compare. Every field shows its unit, and a ' +
+            'optional <strong>Rent-Then-Buy</strong> scenario. <strong>Assumptions</strong> holds ' +
+            'the guesses about the future: the risk-free rate your savings earn, house price ' +
+            'growth, and the time horizon. Every field shows its unit, and a ' +
             'slider\'s figure can be clicked and typed.'
     },
     {
       target: '#verdict',
       title: '③ The answer in one sentence',
-      body: 'Which comes out ahead, by how much and after how long, and the year owning ' +
-            'pulls ahead for good. Blue is owning and gold is renting, here and on the chart.'
+      body: 'Which comes out ahead, by how much and after how long, and the breakeven year ' +
+            'when owning pulls ahead for good. Blue is owning and gold is renting, here and on ' +
+            'the chart.'
     },
     {
       target: '.metrics',
       title: '④ The key numbers',
-      body: 'The difference between owning and renting at the end, the ' +
-            '<strong>breakeven year</strong>, then the cash both start with and the ' +
+      body: 'The <strong>equity difference</strong> between owning and renting at the end, ' +
+            'the <strong>breakeven year</strong>, then the initial cash both start with and the ' +
             'monthly housing budget both share.'
     },
     {
       target: '.chart-card',
       title: '⑤ Compare over time',
-      body: 'Switch the chart between <strong>Net equity</strong>, <strong>Cash in ' +
-            'hand</strong> and <strong>Total cost so far</strong> to see how each path ' +
-            'plays out year by year. Export any view as SVG or PNG.'
+      body: 'Switch the chart between <strong>Net equity</strong>, <strong>Liquid ' +
+            'cash</strong> and <strong>Accumulated cost</strong> to see how each path ' +
+            'plays out year by year. The ? beside them says what each one means. Export any ' +
+            'view as SVG or PNG.'
     },
     {
       target: '#detailSection',

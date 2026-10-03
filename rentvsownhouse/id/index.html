@@ -184,7 +184,7 @@
   <!-- HOME TAB -->
   <div class="ctrl-panel active" id="tab-own">
     <div class="field-row" style="border-top:none;padding-top:0;">
-      <div class="field-label" data-i18n="labelCurrencySymbol">Mata uang</div>
+      <div class="field-label" data-i18n="labelCurrencySymbol">Simbol Mata Uang</div>
       <select class="sel-input" id="currencySymbol">
         <option value="$" selected data-i18n-opt="curDollar">$ Dolar</option>
         <option value="€" data-i18n-opt="curEuro">€ Euro</option>
@@ -198,9 +198,9 @@
       </select>
     </div>
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionProperty">Harga dan uang muka</div>
+      <div class="group-title" data-i18n="sectionProperty">Properti</div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelPropertyPrice">Harga rumah</span> <span class="tip-icon" data-tip-key="propertyPrice">?</span></div>
+        <div class="field-label"><span data-i18n="labelPropertyPrice">Harga properti</span> <span class="tip-icon" data-tip-key="propertyPrice">?</span></div>
         <div class="currency-wrap">
           <span class="prefix" id="propertyPricePrefix">$</span>
           <input class="currency-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" data-min="50000" data-max="1000000000000" value="800,000"/>
@@ -212,7 +212,7 @@
           <span class="slider-value" id="downPaymentPctVal">20% of price</span>
         </div>
         <input type="range" id="downPaymentPct" min="0" max="100" step="0.01" value="20"/>
-        <div class="derived" id="helpDownPayment"><span data-i18n="helpDownPaymentPrefix">Senilai</span> <b id="downPaymentDollar">$160,000</b></div>
+        <div class="derived" id="helpDownPayment"><span data-i18n="helpDownPaymentPrefix">Uang Muka (DP) = </span> <b id="downPaymentDollar">$160,000</b></div>
       </div>
     </div>
     <div class="field-group">
@@ -237,7 +237,7 @@
           </label>
         </div>
         <div class="toggle-row" style="margin-top:8px;padding-top:8px;padding-bottom:0;">
-          <span class="toggle-label"><span data-i18n="labelCostInterestOnly">Hanya bunga dihitung sebagai biaya</span> <span class="tip-icon" data-tip-key="costInterestOnly">?</span></span>
+          <span class="toggle-label"><span data-i18n="labelCostInterestOnly">Biaya = bunga saja</span> <span class="tip-icon" data-tip-key="costInterestOnly">?</span></span>
           <label class="toggle-switch">
             <input type="checkbox" id="costInterestOnly" checked/>
             <div class="toggle-track"><div class="toggle-knob"></div></div>
@@ -259,7 +259,7 @@
         </div>
       </div>
       <div class="field-row" id="rateScheduleRow" style="display:none;">
-        <div class="field-label"><span data-i18n="labelRateSchedule">Bunga per tahun KPR</span> <span class="tip-icon" data-tip-key="rateSchedule">?</span></div>
+        <div class="field-label"><span data-i18n="labelRateSchedule">Jadwal bunga KPR</span> <span class="tip-icon" data-tip-key="rateSchedule">?</span></div>
         <div class="rate-periods" id="ratePeriodRows"></div>
         <div class="rate-schedule-actions">
           <button class="btn-primary btn-sm" id="addRatePeriod" type="button" data-i18n="btnAddPeriod">+ Tambah Periode</button>
@@ -277,7 +277,7 @@
       </div>
       <div class="fg-sub" id="ownCostsSimple">
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelSetupCost">Biaya awal pembelian (BPHTB, notaris)</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
+        <div class="field-label"><span data-i18n="labelSetupCost">Biaya awal pembelian (BPHTB, notaris, dll.)</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
         <div class="input-row">
           <div class="currency-wrap">
             <span class="prefix" id="setupCostPrefix">$</span>
@@ -304,12 +304,12 @@
         </div>
         <select class="sel-input" id="ownOngoingCostType" style="margin-top:6px;">
           <option value="dollar" data-i18n-opt="optFixedAmount">Jumlah tetap</option>
-          <option value="pct" data-i18n-opt="optPctPropertyValue">% dari nilai rumah</option>
+          <option value="pct" data-i18n-opt="optPctPropertyValue">% dari nilai properti</option>
         </select>
       </div>
       <div class="field-row" id="ownOngoingInflationRow">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelOwnInflation">Kenaikan biaya rutin per tahun</span> <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
+          <div class="field-label"><span data-i18n="labelOwnInflation">Inflasi biaya rutin kepemilikan</span> <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
           <span class="slider-value" id="ownOngoingInflationVal">0.00%/yr</span>
         </div>
         <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.01" value="0"/>
@@ -333,9 +333,9 @@
   <!-- RENT TAB -->
   <div class="ctrl-panel" id="tab-rent">
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionRentalPayments">Sewa</div>
+      <div class="group-title" data-i18n="sectionRentalPayments">Pembayaran sewa</div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelRentAmount">Sewa yang Anda bayar</span> <span class="tip-icon" data-tip-key="rentAmount">?</span></div>
+        <div class="field-label"><span data-i18n="labelRentAmount">Biaya sewa</span> <span class="tip-icon" data-tip-key="rentAmount">?</span></div>
         <div class="input-row">
           <div class="currency-wrap">
             <span class="prefix" id="rentAmountPrefix">$</span>
@@ -347,11 +347,11 @@
             <option value="yearly" data-i18n-opt="optYearly">per tahun</option>
           </select>
         </div>
-        <div class="derived" id="rentMonthlyDisplaySub"><span data-i18n="rentPrefix">Setara</span> <b id="rentMonthlyDisplay">$2,800/mo</b></div>
+        <div class="derived" id="rentMonthlyDisplaySub"><span data-i18n="rentPrefix">Sewa = </span> <b id="rentMonthlyDisplay">$2,800/mo</b></div>
       </div>
       <div class="field-row">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelRentInflation">Kenaikan sewa per tahun</span> <span class="tip-icon" data-tip-key="rentInflation">?</span></div>
+          <div class="field-label"><span data-i18n="labelRentInflation">Kenaikan sewa tahunan</span> <span class="tip-icon" data-tip-key="rentInflation">?</span></div>
           <span class="slider-value" id="rentInflationVal">3.00%/yr</span>
         </div>
         <input type="range" id="rentInflation" min="-10" max="25" step="0.01" value="3"/>
@@ -387,7 +387,7 @@
       </div>
       <div class="field-row" id="rentOngoingInflationRow">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelRentOngoingInflation">Kenaikan biaya rutin per tahun</span> <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
+          <div class="field-label"><span data-i18n="labelRentOngoingInflation">Inflasi biaya rutin menyewa</span> <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
           <span class="slider-value" id="rentOngoingInflationVal">0.00%/yr</span>
         </div>
         <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.01" value="0"/>
@@ -402,9 +402,9 @@
       </div><!-- /rentCostsDetailed -->
     </div>
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionRTB">Sewa dulu, lalu beli (opsional)</div>
+      <div class="group-title" data-i18n="sectionRTB">Skenario Sewa Dulu, Beli Kemudian</div>
       <div class="toggle-row">
-        <span class="toggle-label"><span data-i18n="labelEnableRTB">Tambahkan skenario ini</span> <span class="tip-icon" data-tip-key="rtbEnabled">?</span></span>
+        <span class="toggle-label"><span data-i18n="labelEnableRTB">Aktifkan Sewa Dulu, Beli Kemudian</span> <span class="tip-icon" data-tip-key="rtbEnabled">?</span></span>
         <label class="toggle-switch" id="rtbToggleWrap">
           <input type="checkbox" id="rtbEnabled"/>
           <div class="toggle-track"><div class="toggle-knob"></div></div>
@@ -413,7 +413,7 @@
       <div class="fg-sub" id="rtbParams" style="display:none;">
         <div class="field-row">
           <div class="slider-head">
-            <div class="field-label"><span data-i18n="labelBuyAtYear">Beli setelah menyewa selama</span> <span class="tip-icon" data-tip-key="rtbBuyAtYear">?</span></div>
+            <div class="field-label"><span data-i18n="labelBuyAtYear">Beli di tahun</span> <span class="tip-icon" data-tip-key="rtbBuyAtYear">?</span></div>
             <span class="slider-value" id="rtbBuyYearVal">5 yrs</span>
           </div>
           <input type="range" id="rtbBuyYear" min="1" max="50" step="1" value="5"/>
@@ -425,40 +425,40 @@
   <!-- ASSUMPTIONS TAB -->
   <div class="ctrl-panel" id="tab-general">
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionSavings">Tabungan dan waktu</div>
+      <div class="group-title" data-i18n="sectionSavings">Tabungan dan jangka waktu</div>
       <div class="field-row">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelRiskFreeRate">Imbal hasil kas Anda (suku bunga bebas risiko)</span> <span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
+          <div class="field-label"><span data-i18n="labelRiskFreeRate">Suku Bunga Bebas Risiko</span> <span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
           <span class="slider-value" id="riskFreeRateVal">4.50%/yr</span>
         </div>
         <input type="range" id="riskFreeRate" min="-10" max="25" step="0.01" value="4.5"/>
       </div>
       <div class="field-row">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelTimeHorizon">Jangka waktu perbandingan</span> <span class="tip-icon" data-tip-key="horizon">?</span></div>
+          <div class="field-label"><span data-i18n="labelTimeHorizon">Jangka waktu</span> <span class="tip-icon" data-tip-key="horizon">?</span></div>
           <span class="slider-value" id="horizonVal">30 yrs</span>
         </div>
         <input type="range" id="horizon" min="5" max="100" step="1" value="30"/>
       </div>
     </div>
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionPropertyGrowth">Nilai rumah dari waktu ke waktu</div>
+      <div class="group-title" data-i18n="sectionPropertyGrowth">Pertumbuhan properti</div>
       <div class="field-row">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelHouseGrowth">Kenaikan nilai rumah (RPPI)</span> <span class="tip-icon" data-tip-key="houseGrowth">?</span></div>
+          <div class="field-label"><span data-i18n="labelHouseGrowth">Kenaikan harga properti (RPPI)</span> <span class="tip-icon" data-tip-key="houseGrowth">?</span></div>
           <span class="slider-value" id="houseGrowthVal">5.00%/yr</span>
         </div>
         <input type="range" id="houseGrowth" min="-10" max="25" step="0.01" value="5"/>
       </div>
       <div class="field-row">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelSellingCost">Biaya menjual</span> <span class="tip-icon" data-tip-key="sellingCost">?</span></div>
+          <div class="field-label"><span data-i18n="labelSellingCost">Biaya penjualan</span> <span class="tip-icon" data-tip-key="sellingCost">?</span></div>
           <span class="slider-value" id="sellingCostPctVal">2.50% of sale</span>
         </div>
         <input type="range" id="sellingCostPct" min="0" max="15" step="0.01" value="2.5"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelCalcCAGR">Hitung kenaikan dari harga historis</span> <span class="tip-icon" data-tip-key="calcCagr">?</span></div>
+        <div class="field-label"><span data-i18n="labelCalcCAGR">Hitung pertumbuhan tahunan majemuk (CAGR) dari harga historis</span> <span class="tip-icon" data-tip-key="calcCagr">?</span></div>
         <button class="btn-secondary cagr-toggle-btn" id="cagrToolToggle" type="button" data-i18n="btnShowTool">Tampilkan alat</button>
         <div class="cagr-box" id="cagrToolWrap" style="display:none;">
           <div id="cagrRows">
@@ -475,21 +475,21 @@
           </div>
           <div class="cagr-actions">
             <button class="cagr-btn" id="cagrAddRow" type="button" data-i18n="btnAddRow">+ Baris</button>
-            <button class="cagr-btn" id="cagrCalc" type="button" data-i18n="btnCalcCAGR">Hitung</button>
+            <button class="cagr-btn" id="cagrCalc" type="button" data-i18n="btnCalcCAGR">Hitung CAGR</button>
           </div>
           <div class="cagr-result" id="cagrResult"></div>
         </div>
       </div>
     </div>
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionCash">Kas Anda (opsional)</div>
+      <div class="group-title" data-i18n="sectionCash">Kas</div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelInitialCash">Kas yang Anda miliki sekarang</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(opsional)</span></div>
+        <div class="field-label"><span data-i18n="labelInitialCash">Modal awal</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(opsional)</span></div>
         <div class="currency-wrap">
           <span class="prefix" id="initialCashPrefix">$</span>
           <input class="currency-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value=""/>
         </div>
-        <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Default ke Uang Muka (DP) ditambah biaya awal pembelian. Kelebihannya mendapat suku bunga bebas risiko.</div>
+        <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Default ke Uang Muka (DP) + biaya awal pembelian. Kelebihan diinvestasikan pada suku bunga bebas risiko.</div>
         <div class="warning" id="initialCashWarn" style="display:none;margin:6px 0 0;"></div>
       </div>
       <div class="field-row">
@@ -502,11 +502,11 @@
       </div>
       <div class="field-row" id="budgetIncreaseRow" style="display:none;">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelBudgetIncrease">Kenaikan anggaran per tahun</span> <span class="tip-icon" data-tip-key="monthlyBudgetIncrease">?</span></div>
+          <div class="field-label"><span data-i18n="labelBudgetIncrease">Kenaikan anggaran tahunan</span> <span class="tip-icon" data-tip-key="monthlyBudgetIncrease">?</span></div>
           <span class="slider-value" id="monthlyBudgetIncreaseVal">0.00%/yr</span>
         </div>
         <input type="range" id="monthlyBudgetIncrease" min="0" max="25" step="0.01" value="0"/>
-        <div class="derived" id="helpBudgetGrows"><span data-i18n="helpBudgetGrowsPrefix">Tumbuh dari</span> <b id="budgetIncreaseBase">—</b> <span data-i18n="helpBudgetGrowsSuffix">dengan laju ini setiap tahun.</span></div>
+        <div class="derived" id="helpBudgetGrows"><span data-i18n="helpBudgetGrowsPrefix">Anggaran tumbuh dari</span> <b id="budgetIncreaseBase">—</b> <span data-i18n="helpBudgetGrowsSuffix">dengan laju ini setiap tahun.</span></div>
       </div>
     </div>
   </div>
@@ -522,24 +522,24 @@
   <!-- KPI CARDS: the answer first, the two figures it starts from after -->
   <section class="metrics">
     <div class="metric card">
-      <div class="label"><span data-i18n="kpiDiffLabel">Beli dikurangi sewa</span> <span class="tip-icon" data-i18n-tip="kpiDiffTip">?</span></div>
+      <div class="label"><span data-i18n="kpiDiffLabel">Perbedaan kekayaan bersih</span> <span class="tip-icon" data-i18n-tip="kpiDiffTip">?</span></div>
       <div class="value" id="kpiDiff">—</div>
-      <div class="sub" id="kpiDiffSub" data-i18n="kpiDiffSub">Kekayaan bersih di tahun terakhir</div>
+      <div class="sub" id="kpiDiffSub" data-i18n="kpiDiffSub">Beli dikurangi Sewa di tahun terakhir</div>
     </div>
     <div class="metric card">
-      <div class="label"><span data-i18n="kpiBreakevenLabel">Membeli mulai unggul</span> <span class="tip-icon" data-i18n-tip="kpiBreakevenTip">?</span></div>
+      <div class="label"><span data-i18n="kpiBreakevenLabel">Tahun breakeven</span> <span class="tip-icon" data-i18n-tip="kpiBreakevenTip">?</span></div>
       <div class="value" id="kpiBreakeven">—</div>
-      <div class="sub" data-i18n="kpiBreakevenSub">dan tetap unggul hingga akhir (titik impas)</div>
+      <div class="sub" data-i18n="kpiBreakevenSub">Saat kekayaan bersih Beli melampaui Sewa seterusnya</div>
     </div>
     <div class="metric card">
-      <div class="label"><span data-i18n="kpiInitialCashLabel">Kas di awal</span> <span class="tip-icon" data-i18n-tip="kpiInitialCashTip">?</span></div>
+      <div class="label"><span data-i18n="kpiInitialCashLabel">Modal awal</span> <span class="tip-icon" data-i18n-tip="kpiInitialCashTip">?</span></div>
       <div class="value" id="kpiInitialCash">—</div>
-      <div class="sub" data-i18n="kpiInitialCashSub">Tahun 0, sama di semua skenario</div>
+      <div class="sub" data-i18n="kpiInitialCashSub">Modal awal di Tahun 0</div>
     </div>
     <div class="metric card">
       <div class="label"><span data-i18n="kpiBudgetLabel">Anggaran perumahan bulanan</span></div>
       <div class="value" id="kpiBudgetRange">—</div>
-      <div class="sub" data-i18n="kpiBudgetSub">Terendah hingga tertinggi selama jangka waktu</div>
+      <div class="sub" data-i18n="kpiBudgetSub">Anggaran bulanan min–maks selama jangka waktu</div>
     </div>
   </section>
 
@@ -549,11 +549,12 @@
          switches stay beside the title, the export cluster sits hard right in
          the order every other tool on the site uses. -->
     <div class="chart-head">
-      <h2 data-i18n="chartTitle">Beli vs sewa dari waktu ke waktu</h2>
+      <h2 data-i18n="chartTitle">Perbandingan</h2>
       <div class="chart-controls">
         <button class="graph-btn active" data-graph="netEquity" id="graphNetEquity" data-i18n="btnNetEquity">Kekayaan bersih</button>
-        <button class="graph-btn" data-graph="cash" id="graphCash" data-i18n="btnLiquidCash">Kas di tangan</button>
-        <button class="graph-btn" data-graph="cost" id="graphCost" data-i18n="btnAccumCost">Total biaya sejauh ini</button>
+        <button class="graph-btn" data-graph="cash" id="graphCash" data-i18n="btnLiquidCash">Uang tunai</button>
+        <button class="graph-btn" data-graph="cost" id="graphCost" data-i18n="btnAccumCost">Biaya kumulatif</button>
+        <span class="tip-icon" data-tip-key="graphMetric">?</span>
       </div>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="svgBtn" data-i18n-title="btnSvgTitle" title="Unduh grafik ini sebagai SVG">⬇ SVG</button>
@@ -571,17 +572,17 @@
   <!-- PER-OPTION DETAIL -->
   <section class="bottom" id="summarySection">
     <div class="card">
-      <h3 id="ownSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="ownSnapshotTitle">Membeli, rinciannya</span></h3>
+      <h3 id="ownSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="ownSnapshotTitle">Ringkasan Beli</span></h3>
       <div class="summary-grid" id="ownSummary"></div>
     </div>
     <div class="card">
-      <h3 id="rentSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="rentSnapshotTitle">Menyewa, rinciannya</span></h3>
+      <h3 id="rentSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="rentSnapshotTitle">Ringkasan Sewa</span></h3>
       <div class="summary-grid" id="rentSummary"></div>
     </div>
   </section>
   <section id="rtbSummarySection" style="display:none;margin-bottom:18px;">
     <div class="card">
-      <h3 id="rtbSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-rtb" aria-hidden="true"></span><span data-i18n="rtbSnapshotTitle">Sewa dulu, lalu beli, rinciannya</span> <span class="tip-icon" data-i18n-tip="rtbSnapshotTip">?</span></h3>
+      <h3 id="rtbSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-rtb" aria-hidden="true"></span><span data-i18n="rtbSnapshotTitle">Ringkasan Sewa Dulu, Beli Kemudian</span> <span class="tip-icon" data-i18n-tip="rtbSnapshotTip">?</span></h3>
       <div class="summary-grid" id="rtbSummary"></div>
     </div>
   </section>
@@ -589,7 +590,7 @@
   <!-- YEAR BY YEAR (opens from Show table) -->
   <section class="detail-section card" id="detailSection">
     <div class="detail-head">
-      <h3 data-i18n="tableTitle">Per tahun</h3>
+      <h3><span data-i18n="tableTitle">Arus kas per tahun</span> <span class="tip-icon" data-tip-key="cashflowTable">?</span></h3>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="downloadBtn" type="button" data-i18n="btnCSV" data-i18n-title="btnCsvTitle" title="Unduh tabel ini sebagai CSV">⬇ CSV</button>
       </div>
@@ -597,9 +598,9 @@
     <p class="unit-note" id="tableUnitNote" data-i18n="tableUnitNote">Setiap angka untuk tahun itu, dalam nilai masa depan. Uang keluar ditampilkan dengan tanda minus.</p>
     <div class="tab-controls" id="tableTabs">
       <div class="tab-row">
-        <button class="tab-btn active" data-table="own"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="tabOwnCashflow">Membeli</span></button>
-        <button class="tab-btn" data-table="rent"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="tabRentCashflow">Menyewa</span></button>
-        <button class="tab-btn" id="rtbTableTab" data-table="rtb" style="display:none;"><span class="ricon ricon-rtb" aria-hidden="true"></span><span data-i18n="tabRTBCashflow">Sewa dulu, lalu beli</span></button>
+        <button class="tab-btn active" data-table="own"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="tabOwnCashflow">Arus kas Beli</span></button>
+        <button class="tab-btn" data-table="rent"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="tabRentCashflow">Arus kas Sewa</span></button>
+        <button class="tab-btn" id="rtbTableTab" data-table="rtb" style="display:none;"><span class="ricon ricon-rtb" aria-hidden="true"></span><span data-i18n="tabRTBCashflow">Arus kas Sewa Dulu, Beli Kemudian</span></button>
       </div>
     </div>
     <div class="table-wrap" id="detailTableWrap"></div>
