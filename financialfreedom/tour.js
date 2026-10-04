@@ -146,7 +146,7 @@ window.__TOUR = {
       target: null,
       title: '✅ That is the whole thing',
       body: 'Nothing leaves your browser, and your inputs are remembered for next time. ' +
-            'Replay this tour any time via <strong>Take a tour</strong> in the header.'
+            'Replay this tour any time via the <strong>🧭</strong> button in the header.'
     }
   ]
 };

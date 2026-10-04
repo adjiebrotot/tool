@@ -70,7 +70,7 @@ window.__TOUR = {
       title: '✅ You\'re all set',
       body: 'That\'s the workflow. Try the other Quick Start examples, or browse ' +
             'the <strong>Samples &amp; Guides</strong> page for more. You can replay ' +
-            'this tour any time via <strong>Take a tour</strong> in the header.'
+            'this tour any time via the <strong>🧭</strong> button in the header.'
     }
   ]
 };

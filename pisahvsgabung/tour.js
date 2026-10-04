@@ -81,7 +81,7 @@ window.__TOUR = {
       target: null,
       title: '✅ You are all set',
       body: 'That is the whole workflow, free, private and with no account. Replay this tour any ' +
-            'time via <strong>Take a tour</strong> in the header.'
+            'time via the <strong>🧭</strong> button in the header.'
     }
   ]
 };

@@ -71,7 +71,7 @@ window.__TOUR = {
       body: 'That is the workflow, and it runs privately in your browser, free. Want to ' +
             'compare many scenarios at once? Try the <strong>Sensitivity Analysis ' +
             'Tool</strong> linked near the top. Replay this tour any time via ' +
-            '<strong>Take a tour</strong>.'
+            'the <strong>🧭</strong> button.'
     }
   ]
 };

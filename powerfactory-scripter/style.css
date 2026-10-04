@@ -1046,3 +1046,23 @@
     .info-box, code { word-break: break-word; }
     .btn-row { flex-wrap: wrap; }
   }
+  @media (max-width: 600px) {
+    /* Too narrow for the title and the buttons side by side: the buttons kept
+       their width and ran over the title, so they take a row of their own. */
+    header {
+      flex-wrap: wrap;
+    }
+    .header-left,
+    .header-right {
+      flex: 1 1 100%;
+    }
+    .header-right {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+    .header-nav {
+      justify-content: flex-start;
+    }
+  }

@@ -63,9 +63,16 @@ code{font-family:'DM Mono',monospace;background:var(--input-bg);padding:1px 5px;
 .editor-table td{padding:2px 3px;border-bottom:1px solid var(--border);vertical-align:top}
 .editor-table tbody tr:last-child td{border-bottom:none}
 .editor-table tbody tr:hover td{background:var(--input-bg)}
-.editor-table .td-color{width:36px;text-align:center;vertical-align:middle}
-.editor-table .td-del{width:28px;text-align:center;vertical-align:middle}
+.editor-table .td-color{width:32px;text-align:center;vertical-align:middle}
+.editor-table .td-del{width:24px;text-align:center;vertical-align:middle}
 .editor-table .td-amt{text-align:right;vertical-align:top}
+/* Fixed columns: From and To share what the amount, colour and delete
+   columns leave, so a name wraps between words rather than letter by letter
+   in a sliver left over by the amount heading. */
+.editor-table{table-layout:fixed}
+.editor-table th:nth-child(3){width:88px;white-space:normal}
+.editor-table th:nth-child(4){width:32px}
+.editor-table th:nth-child(5){width:24px}
 .tc-inp{width:100%;background:transparent;border:none;outline:none;resize:none;overflow:hidden;font-size:.8rem;color:var(--text);padding:3px 2px;min-height:26px;line-height:1.5;font-family:'DM Sans',system-ui,sans-serif;display:block}
 .tc-inp::placeholder{color:var(--muted);opacity:.5}
 .tc-amt{text-align:right;color:var(--value-highlight);font-weight:700;font-family:'DM Mono',monospace;min-height:26px;padding:3px 4px 3px 2px}

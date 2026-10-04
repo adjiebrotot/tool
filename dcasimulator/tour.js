@@ -78,7 +78,7 @@ window.__TOUR = {
       title: '✅ You are all set',
       body: 'That is the workflow. Power user comparing whole portfolios? Try the ' +
             '<strong>Portfolio DCA Simulator</strong> linked near the top. Replay this ' +
-            'tour any time via <strong>Take a tour</strong> in the header.'
+            'tour any time via the <strong>🧭</strong> button in the header.'
     }
   ]
 };

@@ -25,6 +25,8 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 .seg-btn{background:transparent;border:none;padding:7px 14px;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;}
 .seg-btn.active{background:var(--accent);color:#fff;}
 .seg-btn:not(.active):hover{color:var(--text);}
+/* A label with a shorter phone-width form shows the long one by default. */
+.lbl-short{display:none;}
 
 /* Year input */
 .year-wrap{display:flex;align-items:center;gap:8px;}
@@ -208,14 +210,34 @@ tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
   .container{padding:10px 12px;}
   .header{flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px;}
   .header-left h1{font-size:1.25rem;}
-  .header-right{flex-wrap:nowrap;}
-  .header-right .btn-theme{flex:1;text-align:center;justify-content:center;}
+  /* Each button grows from its own width, never below it, so a long label
+     (Kembali, the tour) is never clipped by an equal share of the row. */
+  .header-right{flex-wrap:wrap;gap:6px;}
+  .header-right .btn-theme{flex:1 1 auto;min-width:max-content;padding:8px 10px;text-align:center;justify-content:center;}
   /* Save/open take a row of their own rather than squeezing the four above. */
-  .header-right{flex-wrap:wrap;}
   .header-right .scenario-io{flex:1 0 100%;}
   .header-right .scenario-io-btn{flex:1;}
   .controls-bar{flex-direction:column;align-items:stretch;gap:10px;}
   .ctrl-row{justify-content:space-between;flex-wrap:wrap;}
   .controls-bar .csv-actions{margin-left:0!important;align-self:stretch;}
-  .controls-bar .csv-actions .btn-theme{flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:8px 6px;}
+  .controls-bar .csv-actions .btn-theme{flex:1 1 auto;min-width:max-content;display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:8px 10px;}
+  /* The metric switch takes the full width under its label, options sharing it. */
+  .controls-bar .seg-group{flex:1 1 100%;}
+  .controls-bar .seg-btn{flex:1 1 auto;padding:7px 10px;}
+  /* Chart popups: the three metrics share one row, Own and Rent the next,
+     rather than wrapping wherever each name happens to end. */
+  .chart-modal-overlay{padding:10px;}
+  .chart-modal{padding:14px;}
+  /* Only the title shares a line with the close button; the rows below it
+     take the full width. */
+  .chart-modal .chart-head{padding-right:0;}
+  .chart-modal .chart-head h2{padding-right:42px;}
+  .chart-modal .chart-controls{width:100%;gap:6px;}
+  .chart-modal .chart-controls .graph-btn{flex:1 1 auto;padding:6px 8px;white-space:nowrap;text-align:center;}
+  .chart-modal .chart-controls .gc-toggle{flex:1 1 40%;display:inline-flex;align-items:center;justify-content:center;}
+}
+/* Below this the three metric names no longer fit one row in full. */
+@media(max-width:400px){
+  .lbl-long{display:none;}
+  .lbl-short{display:inline;}
 }

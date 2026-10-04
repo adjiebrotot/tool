@@ -132,6 +132,11 @@
 }
 .pf-tour-launch:hover { border-color: var(--accent); color: var(--accent); }
 
+/* Long label on a wide screen, short one on a phone (see launchShort). */
+.pf-tour-short { display: none; }
+
 @media (max-width: 640px) {
   .pf-tour-tooltip { width: calc(100vw - 24px); }
+  .pf-tour-long { display: none; }
+  .pf-tour-short { display: inline; }
 }
