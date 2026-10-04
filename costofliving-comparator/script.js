@@ -46,8 +46,33 @@ async function loadData() {
 
   const el = document.getElementById('dataUpdatedText');
   if(el) el.textContent = `Cost of living data updated ${META_COL}, currency rates updated ${META_RATE}.`;
+  renderAssumptions();
 
   init();
+}
+
+// ═══════════════════════════════════════════════════════════
+// THEME, and what the page assumes
+// ═══════════════════════════════════════════════════════════
+{
+  const tt = document.getElementById('themeToggle');
+  if(tt) tt.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    tt.textContent = document.body.classList.contains('light') ? '🌙 Dark' : '☀️ Light';
+  });
+}
+function renderAssumptions(){
+  const ul = document.getElementById('assumptions');
+  if(!ul) return;
+  const items = [
+    '<strong>City prices are indices, not quotes.</strong> Expenses in the other city are your own figure scaled by the two cities\' cost-of-living index'+(META_COL?', updated '+META_COL:'')+'.',
+    '<strong>The same lifestyle in both places.</strong> The estimate keeps what you buy fixed and changes only what it costs there.',
+    '<strong>Include or exclude housing</strong> switches between the full index and the one without rent, for housing an employer pays for.',
+    '<strong>Salaries are net</strong>, after tax, as you enter them; nothing here works out tax.',
+    '<strong>Currencies convert at one rate</strong>'+(META_RATE?', updated '+META_RATE:'')+', or at the rate you type in. The rate slider asks what happens if it moves.',
+    '<strong>Monthly in Simple mode.</strong> Detailed mode can take each row per week, fortnight, month or year, or as a unit price times how many.'
+  ];
+  ul.innerHTML = items.map(t => '<li>'+t+'</li>').join('');
 }
 
 function parseMonthYear(dateStr) {
@@ -610,7 +635,7 @@ function renderSimpleFxSection(from,to){
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%;">
       <span style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;">Custom FX Rate</span>
       <span style="font-size:0.88rem;white-space:nowrap;">1&nbsp;<strong>${tc}</strong>&nbsp;=</span>
-      <input type="text" inputmode="decimal" class="num-input" id="simpleFxInput"
+      <input type="text" inputmode="decimal" class="num-input" id="simpleFxInput" data-unit="${fc}" data-min="0" data-max="1000000000"
         value="${S.customFxSimple!=null?S.customFxSimple:''}"
         placeholder="${defFmt}"
         style="width:130px;"/>
@@ -622,7 +647,7 @@ function renderSimpleFxSection(from,to){
         <span class="fx-shock-title">What if ${tc} moves?</span>
         <span class="fx-shock-val" id="fxShockVal">${fxShockReadout(from,to)}</span>
       </div>
-      <input type="range" id="fxShockSlider" min="-${FX_SHOCK_LIMIT}" max="${FX_SHOCK_LIMIT}" step="1" value="${pct}"
+      <input type="range" id="fxShockSlider" data-unit="%" min="-${FX_SHOCK_LIMIT}" max="${FX_SHOCK_LIMIT}" step="1" value="${pct}"
         aria-label="Exchange rate scenario, percent change in ${tc} against ${fc}"/>
       <div class="fx-shock-note">
         <span>${to.city} costs stay the same in ${tc}. Only ${fc} conversions move.</span>
@@ -640,6 +665,9 @@ function renderSimpleFxSection(from,to){
     inp.addEventListener('blur',()=>{render();});
   }
   const sl=document.getElementById('fxShockSlider');
+  // Both ends named under it, like every finance slider (drawn here because
+  // this card is built after the page's first pass).
+  if(sl && window.SharedSlider) SharedSlider.enhance(sl);
   if(sl){
     // Refresh the readout and the results in place. A full render() here would
     // replace the range input mid-drag and the gesture would die.
@@ -697,22 +725,23 @@ function renderSimpleSave(area,from,to){
 
   area.innerHTML=`
 <section class="analysis-card card">
+  <div class="summary-box" id="ss_summary">${buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,tRatio)}</div>
   <div class="compare-cols">
     <div class="col-card">
       <div class="col-header">📍 ${from.city}, ${from.country}</div>
       <div class="col-sub">${fc}</div>
       <div class="field-row">
-        <div class="field-label">Net Monthly Salary</div>
-        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="ss_fs" value="${formatMoneyValue(fs)||''}" placeholder="0"/></div>
+        <div class="field-label">Net salary</div>
+        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="ss_fs" data-min="0" data-max="100000000000" value="${formatMoneyValue(fs)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(fs,fc,tc)}
       </div>
       <div class="field-row">
-        <div class="field-label">Monthly Expenses</div>
-        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="ss_fe" value="${formatMoneyValue(fe)||''}" placeholder="0"/></div>
+        <div class="field-label">Expenses</div>
+        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="ss_fe" data-min="0" data-max="100000000000" value="${formatMoneyValue(fe)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(fe,fc,tc)}
       </div>
       <div class="field-row">
-        <div class="field-label">Monthly Savings</div>
+        <div class="field-label">Monthly savings</div>
         <div class="sav-block ${fSav>=0?'positive':'negative'}">
           <div class="sav-val">${fmtC(fSav,fc)}</div>
           ${cc(fSav,fc,tc)}
@@ -724,13 +753,13 @@ function renderSimpleSave(area,from,to){
       <div class="col-header">🏁 ${to.city}, ${to.country}</div>
       <div class="col-sub">${tc}</div>
       <div class="field-row">
-        <div class="field-label">Net Monthly Salary</div>
-        <div class="input-wrap"><span class="curr-tag">${tc}</span><input type="text" inputmode="decimal" class="num-input" id="ss_ts" value="${formatMoneyValue(ts)||''}" placeholder="0"/></div>
+        <div class="field-label">Net salary</div>
+        <div class="input-wrap"><span class="curr-tag">${tc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="ss_ts" data-min="0" data-max="100000000000" value="${formatMoneyValue(ts)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(ts,tc,fc)}
       </div>
       <div class="field-row">
         <div class="field-label">
-          Est. Monthly Expenses
+          Estimated monthly expenses
           <span class="tip-icon" data-tip="Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio between cities. Data updated ${META_COL}.${estTipFx(from,to)}">?</span>
         </div>
         <div class="sav-block neutral">
@@ -739,7 +768,7 @@ function renderSimpleSave(area,from,to){
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label">Monthly Savings</div>
+        <div class="field-label">Monthly savings</div>
         <div class="sav-block ${tSav>=0?'positive':'negative'}">
           <div class="sav-val">${fmtC(tSav,tc)}</div>
           ${cc(tSav,tc,fc)}
@@ -748,7 +777,6 @@ function renderSimpleSave(area,from,to){
       </div>
     </div>
   </div>
-  <div class="summary-box" id="ss_summary">${buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,tRatio)}</div>
 </section>`;
 
   const fsEl = document.getElementById('ss_fs');
@@ -782,6 +810,9 @@ function buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,t
   if(Math.abs(nomDiffTC)<0.5){nomTxt=`Living in ${toName} gives roughly the <strong>same nominal savings</strong> as ${from.city}`;}
   else if(nomPos){nomTxt=`Living in ${toName} gives you <span style="color:var(--positive-em);font-weight:700;">${fmtC(Math.abs(nomDiffTC),tc)}${fc!==tc?' (≈ '+fmtC(Math.abs(nomDiffFC),fc)+')':''}</span> <strong>more</strong> in monthly savings`;}
   else{nomTxt=`Living in ${toName} gives you <span style="color:var(--negative-em);font-weight:700;">${fmtC(Math.abs(nomDiffTC),tc)}${fc!==tc?' (≈ '+fmtC(Math.abs(nomDiffFC),fc)+')':''}</span> <strong>less</strong> in monthly savings`;}
+  // A ratio needs a salary on both sides; until then the sentence stops at the
+  // savings gap rather than printing a dash inside it.
+  if(tRatio==null||fRatio==null) return `${nomTxt}.`+fxShockLine(from,to,true);
   if(Math.abs(ratDiff)<0.5){ratTxt=`with a similar savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)})`;}
   else if(ratPos){ratTxt=`<strong>and</strong> a higher savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)}, +${fmtP(Math.abs(ratDiff))})`;}
   else{ratTxt=`${contradict?'<strong>but</strong>':'<strong>and</strong>'} a lower savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)}, −${fmtP(Math.abs(ratDiff))})`;}
@@ -827,22 +858,23 @@ function renderSimpleEarn(area,from,to){
       <button class="seg-btn ${S.savingsTarget==='nominal'?'active':''}" data-val="nominal">Nominal savings</button>
     </div>
   </div>
+  <div class="summary-box">${buildEarnSummary(from,to,fc,tc,M,toReq,fSav,fRatPct,toRatio,te,fRatio)}</div>
   <div class="compare-cols">
     <div class="col-card">
       <div class="col-header">📍 ${from.city}, ${from.country}</div>
       <div class="col-sub">${fc}</div>
       <div class="field-row">
-        <div class="field-label">Net Monthly Salary</div>
-        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="se_fs" value="${formatMoneyValue(fs)||''}" placeholder="0"/></div>
+        <div class="field-label">Net salary</div>
+        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="se_fs" data-min="0" data-max="100000000000" value="${formatMoneyValue(fs)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(fs,fc,tc)}
       </div>
       <div class="field-row">
-        <div class="field-label">Monthly Expenses</div>
-        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="se_fe" value="${formatMoneyValue(fe)||''}" placeholder="0"/></div>
+        <div class="field-label">Expenses</div>
+        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="se_fe" data-min="0" data-max="100000000000" value="${formatMoneyValue(fe)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(fe,fc,tc)}
       </div>
       <div class="field-row">
-        <div class="field-label">Monthly Savings</div>
+        <div class="field-label">Monthly savings</div>
         <div class="sav-block ${fSav>=0?'positive':'negative'}">
           <div class="sav-val">${fmtC(fSav,fc)}</div>
           ${cc(fSav,fc,tc)}
@@ -854,7 +886,7 @@ function renderSimpleEarn(area,from,to){
       <div class="col-header">🏁 ${to.city}, ${to.country}</div>
       <div class="col-sub">${tc}</div>
       <div class="field-row">
-        <div class="field-label">Required Net Salary${reqTip?` <span class="tip-icon" data-tip="${reqTip}">?</span>`:''}</div>
+        <div class="field-label">Required net monthly salary${reqTip?` <span class="tip-icon" data-tip="${reqTip}">?</span>`:''}</div>
         <div class="sav-block positive">
           <div class="req-val">${fmtC(toReq,tc)}</div>
           ${cc(toReq,tc,fc)}
@@ -862,7 +894,7 @@ function renderSimpleEarn(area,from,to){
       </div>
       <div class="field-row">
         <div class="field-label">
-          Est. Monthly Expenses
+          Estimated monthly expenses
           <span class="tip-icon" data-tip="Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio. Data updated ${META_COL}.${estTipFx(from,to)}">?</span>
         </div>
         <div class="sav-block neutral">
@@ -871,7 +903,7 @@ function renderSimpleEarn(area,from,to){
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label">Monthly Savings</div>
+        <div class="field-label">Monthly savings</div>
         <div class="sav-block ${toSav==null?'neutral':(toSav>=0?'positive':'negative')}">
           <div class="sav-val">${fmtC(toSav,tc)}</div>
           ${cc(toSav,tc,fc)}
@@ -880,7 +912,6 @@ function renderSimpleEarn(area,from,to){
       </div>
     </div>
   </div>
-  <div class="summary-box">${buildEarnSummary(from,to,fc,tc,M,toReq,fSav,fRatPct,toRatio,te,fRatio)}</div>
 </section>`;
 
   const sefsEl = document.getElementById('se_fs');
@@ -997,7 +1028,7 @@ function buildDetailHTML(fromCity,toCities){
     return`<td class="num-td">
       <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;flex-wrap:wrap;">
         <span style="font-size:0.75rem;white-space:nowrap;">1&nbsp;<strong>${destCurr}</strong>&nbsp;=</span>
-        <input type="text" inputmode="decimal" class="num-input dt-fx-inp" data-ci="${i}"
+        <input type="text" inputmode="decimal" class="num-input dt-fx-inp" data-ci="${i}" data-unit="${fc}" data-min="0" data-max="1000000000"
           value="${curCustomFx!=null?curCustomFx:''}"
           placeholder="${defFx}"
           style="width:80px;padding:4px 6px;font-size:0.78rem;"/>
@@ -1028,7 +1059,7 @@ function buildDetailHTML(fromCity,toCities){
   const savLabel=cf?`<br><select class="freq-sel" id="dtSavingsFreq" aria-label="Savings frequency">${unitOptions('',savFreq)}</select>`:'';
 
   // Salary row
-  let salFrom=`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="dt_fs" value="${formatMoneyValue(S.detailFromSalary)||''}" placeholder="0" style="width:110px;"/></div></td>`;
+  let salFrom=`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="dt_fs" data-min="0" data-max="100000000000" value="${formatMoneyValue(S.detailFromSalary)||''}" placeholder="0" style="width:110px;"/></div></td>`;
   let salTos=toCities.map((tc,i)=>{
     const curr=tc?tc.currency:'—';
     if(S.goal==='earn'){
@@ -1038,7 +1069,7 @@ function buildDetailHTML(fromCity,toCities){
       const why=(req==null&&fromCity&&tc)?` <span class="tip-icon" data-tip="${reqSalNoteDetail(i,fromCity,tc)}">?</span>`:'';
       return`<td class="num-td"><span style="color:var(--positive-em);font-weight:700;">${fmtC(req,curr)}</span><br><span class="sub-num">required${why}</span></td>`;
     }
-    return`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${curr}</span><input type="text" inputmode="decimal" class="num-input dt-to-sal" data-ci="${i}" value="${formatMoneyValue(S.detailToSalaries[i])||''}" placeholder="0" style="width:100px;"/></div></td>`;
+    return`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${curr}</span><input type="text" inputmode="decimal" class="num-input dt-to-sal" data-ci="${i}" data-min="0" data-max="100000000000" value="${formatMoneyValue(S.detailToSalaries[i])||''}" placeholder="0" style="width:100px;"/></div></td>`;
   }).join('');
 
   // Expense rows
@@ -1048,7 +1079,7 @@ function buildDetailHTML(fromCity,toCities){
     const unit=rowUnit(row), U=UNITS[unit];
     const unitHtml=cf?`<select class="freq-sel dt-unit" data-ri="${ri}" aria-label="${cat.label.replace(/^\S+\s/,'')} frequency">${unitOptions(row.catId,unit)}</select>
       ${U?`<div class="qty-line">
-        <input type="text" inputmode="decimal" class="num-input dt-qty" data-ri="${ri}" value="${fmtDec(rowQty(row),4)}" aria-label="${U.many} per period"/>
+        <input type="text" inputmode="decimal" class="num-input dt-qty" data-ri="${ri}" data-min="0" data-max="100000" value="${fmtDec(rowQty(row),4)}" aria-label="${U.many} per period"/>
         <span>${U.many} a</span>
         <select class="dt-qty-per" data-ri="${ri}" aria-label="Period for ${U.many}">${periodOptions(validPeriod(row.qtyPer))}</select>
       </div>`:''}`:'';
@@ -1059,7 +1090,7 @@ function buildDetailHTML(fromCity,toCities){
       </div>
       ${unitHtml}
     </td>
-    <td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input dt-from-exp" data-ri="${ri}" value="${rowFieldValue(fv,row)||''}" placeholder="0" style="width:110px;"/></div>${fromCity?unitTotalLine(fv,fc,row):''}</td>`;
+    <td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input dt-from-exp" data-ri="${ri}" data-min="0" data-max="100000000000" value="${rowFieldValue(fv,row)||''}" placeholder="0" style="width:110px;"/></div>${fromCity?unitTotalLine(fv,fc,row):''}</td>`;
 
     toCities.forEach((tc,ci)=>{
       if(!tc||!fromCity){cols+=`<td class="num-td">—</td>`;return;}
@@ -1075,7 +1106,7 @@ function buildDetailHTML(fromCity,toCities){
       cols+=`<td class="num-td ${isOv?'overridden':''}">
         <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">
           <span class="curr-tag" style="font-size:0.73rem;">${tc.currency}</span>
-          <input type="text" inputmode="decimal" class="num-input dt-to-exp" data-ri="${ri}" data-ci="${ci}"
+          <input type="text" inputmode="decimal" class="num-input dt-to-exp" data-ri="${ri}" data-ci="${ci}" data-min="0" data-max="100000000000"
             value="${dispVal!=null&&dispVal>0?rowFieldValue(dispVal,row):''}"
             placeholder="${hasCalc?(calc>0?Math.round(calc):'0'):'—'}"
             title="Edit to override estimate"

@@ -103,8 +103,9 @@ await page.waitForTimeout(300);
 // ── T4: bracket editor accepts a "to" below the previous bracket's "to" and the
 //        progressive tax then computes with a NEGATIVE bracket width (tax drops). ──
 {
-  // back to defaults first
-  await page.click('#resetBtn');
+  // back to defaults first: the "Equal incomes" Quick Start example is the
+  // page's starting point (the tool has no Reset button)
+  await page.click('.quick-start-btn[data-preset="even"]');
   await page.waitForTimeout(150);
   const before = await page.evaluate(()=>document.getElementById('kpiGabung').textContent);
   // Advanced tab → set bracket #2 (60,000,001–250,000,000) upper bound to 10,000

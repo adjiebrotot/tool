@@ -44,8 +44,7 @@
 .weight-row .wt-pct{color:var(--muted)}
 .weight-row.wt-total{border-bottom:none;font-weight:800;color:var(--text);padding-top:8px}
 .weight-row.wt-total .wt-input{font-family:'DM Mono',monospace}
-.weight-row.wt-total.bad .wt-name,.weight-row.wt-total.bad .wt-input{color:#FFD28C}
-body.light .weight-row.wt-total.bad .wt-name,body.light .weight-row.wt-total.bad .wt-input{color:#7A4A00}
+.weight-row.wt-total.bad .wt-name,.weight-row.wt-total.bad .wt-input{color:var(--warning-text)}
 
 /* Schedule editor */
 .sched-box{margin-top:4px}
@@ -84,7 +83,7 @@ body.light .weight-row.wt-total.bad .wt-name,body.light .weight-row.wt-total.bad
 .pf-bar-actions{display:flex;flex-direction:column;gap:5px;flex-shrink:0;padding-left:9px;border-left:1px solid var(--border)}
 .pf-act-btn{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;font-size:.95rem;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--text);cursor:pointer;font-family:inherit;padding:0;transition:all .15s}
 .pf-act-btn:hover{border-color:var(--accent2);color:var(--accent2)}
-.pf-act-btn.pf-act-del:hover{border-color:#ef4444;color:#ef4444}
+.pf-act-btn.pf-act-del:hover{border-color:var(--negative-em);color:var(--negative-em)}
 
 /* Portfolio chooser on the Detailed Breakdown header (drives every subsection) */
 /* Sized by its own content inside the export cluster (see the DCA simulator). */

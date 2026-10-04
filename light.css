@@ -31,5 +31,5 @@ body.light {
   --scrollbar-thumb:#C3D0E6;--scrollbar-thumb-hover:#9AB2D8;
   /* Chart line colours */
   --line-a:#5A91E8;--line-b:#E63939;--line-c:#4A9E87;--line-d:#C46A7E;--line-e:#9B59B6;
-  --line-rtb-rent:#E63939;--line-rtb-own:#5A91E8;
+  --line-rtb-rent:#B45309;--line-rtb-own:#5A91E8;
 }

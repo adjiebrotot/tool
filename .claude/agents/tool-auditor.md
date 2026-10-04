@@ -27,6 +27,13 @@ Read `.claude/skills/new-tool/SKILL.md`, then verify:
    on a plain one.
 6. **Mini cache** — persists the right state, restores cleanly, and excludes transient controls
    (`data-no-persist`).
+7. **Finance skeleton** (finance tools) — run `node _ref/form-check.mjs` (ONLY=<path>): every
+   number field states its unit and limits and the form enforces them, sliders name both ends,
+   axes name units, no em-dash, no option drawn red, the answer sentence and the What this
+   assumes card present. Then read the page against the seven-rule checklist in
+   `.claude/skills/new-tool/SKILL.md`, including the parts a script cannot judge: grouping,
+   Currency first and Assumptions last, controls that fit the value, tooltips that explain the
+   jargon without renaming it, and an answer sentence that is true for ties and missing input.
 
 ## Verify the maths (the important part)
 

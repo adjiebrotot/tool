@@ -1,7 +1,7 @@
 /* Guided-tour config for the Rent vs Own Sensitivity Analysis Tool.
    The shared engine (../../tour-shared.js) reads this object. */
 window.__TOUR = {
-  seenKey: 'rvos-tour-v1-seen',
+  seenKey: 'rvos-tour-v2-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
@@ -19,17 +19,18 @@ window.__TOUR = {
       title: '① Each column is a scenario',
       body: 'Add a column for every case you want to test, for example different ' +
             'deposits, mortgage rates, or cities. Edit any assumption inline and the whole ' +
-            'table recalculates instantly, so you can spot which factors move the result ' +
-            'most.'
+            'table recalculates instantly. The Unit column says what each row is in, and a ' +
+            'figure past a row\'s limits is pulled back to it.'
     },
     {
       // The step names both controls, so highlight both: the year box sits
       // in its own row beside the metric buttons.
       target: ['#metricGroup', '#yearInput'],
       title: '② Choose the metric and year',
-      body: 'Compare on <strong>Net Equity</strong>, <strong>Liquid Cash</strong>, or ' +
-            '<strong>Accumulated Cost</strong>, and set the <strong>year</strong> to ' +
-            'evaluate at. This is how you find the breakeven point across scenarios.'
+      body: 'Compare on <strong>Net equity</strong>, <strong>Liquid cash</strong> or ' +
+            '<strong>Accumulated cost</strong>, and set the <strong>year</strong> to ' +
+            'evaluate at. <strong>Own minus rent</strong> at the bottom takes the colour of ' +
+            'whichever comes out ahead: blue for owning, gold for renting.'
     },
     {
       target: '.csv-actions',
