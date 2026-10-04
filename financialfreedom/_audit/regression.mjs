@@ -213,7 +213,9 @@ async function openPage(which, cache){
   await page.addInitScript(([key, blob]) => {
     try {
       localStorage.clear();
+      // The old page from git reads v3, this one v4.
       localStorage.setItem('ff-tour-v3-seen', '1');
+      localStorage.setItem('ff-tour-v4-seen', '1');
       if(blob) localStorage.setItem(key, blob);
     } catch(e){}
   }, [KEY, cache || null]);
@@ -361,6 +363,12 @@ if(MODE === 'record' || MODE === 'live'){
 
 const oldSide = MODE === 'baseline' ? null : await openPage('old');
 const newSide = MODE === 'record' ? null : await openPage('new');
+/* A page from before life stages reads `retireMultiplier`; any page since reads
+   Retirement expenses. Feed the old side the plan in the form IT reads, so
+   `--live HEAD` compares the same plan on both sides rather than handing a
+   current page a field it no longer has. */
+const oldReadsNew = oldSide ? await oldSide.page.evaluate(() => 'retireExpense' in window.__FF.UI_DEFAULTS) : false;
+const forOld = ui => oldReadsNew ? toNew(ui) : ui;
 const record = {recordedFrom: REV, groups: GROUPS, cases: {}, buttons: {}, caches: {}};
 const base = MODE === 'baseline' ? JSON.parse(readFileSync(BASELINE, 'utf8')) : null;
 if(base) console.log(`  baseline recorded from ${base.recordedFrom}, ${Object.keys(base.cases).length} plans`);
@@ -375,7 +383,7 @@ for(const n of names){
     want = base.cases[n];
     if(!want){ bad.cases.push(`${n}: not in the baseline`); continue; }
   } else {
-    const s = await snapCase(oldSide.page, ui);
+    const s = await snapCase(oldSide.page, forOld(ui));
     oldSnaps[n] = s;
     if(CACHED.includes(n)) record.caches[n] = await cacheOf(oldSide.page);
     want = {digest: digest(s), needAtRetire: s.headline.needAtRetire, ffAge: s.headline.ffAge};

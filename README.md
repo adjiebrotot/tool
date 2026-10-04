@@ -89,7 +89,7 @@ committed. `powerfactory-scripter/audit/` validates generated scripts against a 
 case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain
 CPython, with no PowerFactory needed.
 
-Six cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
+Seven cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
 ships Quick Start scenarios instead of a Reset button and proves the claim that lets it: it
 applies each scenario to a freshly loaded page and to a page whose every control has been
 scribbled over, and the two have to land on identical form state across every tab — plus, where a
@@ -127,6 +127,14 @@ option that is *selected* rather than a list of all of them. A tip that carried 
 (no definition, unit, rule or caveat) is deleted rather than shortened, so every (i) on a page is
 a promise that something non-obvious sits behind it. Pass a path fragment
 (`node _ref/tip-check.mjs rentvsownhouse`) to run one tool.
+
+`node _ref/form-check.mjs` holds every finance page to the shared finance skeleton
+(`_ref/design-reference.md`, Finance Tool Skeleton): it opens every tab and sub-tab and fails if a
+number field loses its unit or its limits, if a value typed past a field's maximum is not pulled
+back, if a slider loses its end labels, if a chart axis loses its title or a y axis its unit, if
+an em-dash appears in page text, tips or placeholders, if an option a reader is choosing between
+is drawn in red, or if a tool loses its one-sentence answer or its What this assumes card.
+`ONLY=<path>` runs one page.
 
 `node _ref/abbr-check.mjs` loads every page and
 checks the abbreviation glossary (`SharedAbbr`): that decoration never lands in a link,

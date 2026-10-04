@@ -33,7 +33,7 @@
       +   '<img src="' + logosPath + 'australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">'
       +   '<div style="display:flex;align-items:center;gap:10px">'
       +     '<img src="' + logosPath + 'gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">'
-      +     '<span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>'
+      +     '<span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: free to use, modify, and share with source code disclosed.</span>'
       +   '</div>'
       +   '<div style="display:flex;align-items:center;gap:10px">'
       +     '<img src="' + logosPath + 'indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">'

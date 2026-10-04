@@ -35,7 +35,7 @@
      within each life stage (step 3c), so they never appear with an inflation
      factor again. Nominal figures are only ever produced for
      display, by multiplying a real figure at year y by (1 + i)^y. The page
-     opens in today's money (Show in Present Value is on by DEFAULT); turning
+     opens in today's money (Show in today's money is on by DEFAULT); turning
      it off applies the factor, so each balance reads in the money of its own
      year, the figure the statement will actually read.
 
@@ -1440,7 +1440,12 @@ function fmtAmount(v, basis){
 function syncBasisAffix(wrap, basis){
   var pct = basis === 'pct';
   SharedFmt.setAffix(wrap, pct ? '' : fmt.symbol, pct ? '%' : '');
+  // The field's own bound follows its unit, the way SharedBounds reads it: a
+  // share of living stops at 1,000%, an amount at the money fields' ceiling.
+  var input = wrap && wrap.querySelector('input');
+  if(input) input.setAttribute('data-max', pct ? SPEND_MAX_PCT : SPEND_MAX_MONEY);
 }
+var SPEND_MAX_PCT = '1000', SPEND_MAX_MONEY = '100000000000';
 // The retirement field's formatter options, kept live so its precision follows
 // the basis it is entered against.
 var retireFmt = {maxDecimals: 1};
@@ -1529,7 +1534,8 @@ function stageRowHtml(s, idx){
       '<div class="currency-wrap grow">' +
         '<span class="prefix"' + (pct ? ' hidden' : '') + '>' + escapeHtml(fmt.symbol) + '</span>' +
         '<input class="currency-input stage-amount' + (pct ? ' has-suffix' : '') + '" type="text"' +
-          ' inputmode="decimal" aria-label="Spending in this stage" value="' + fmtAmount(s.amount, basis) + '"/>' +
+          ' inputmode="decimal" data-min="0" data-max="' + (pct ? SPEND_MAX_PCT : SPEND_MAX_MONEY) + '"' +
+          ' aria-label="Spending in this stage" value="' + fmtAmount(s.amount, basis) + '"/>' +
         '<span class="suffix"' + (pct ? '' : ' hidden') + '>%</span>' +
       '</div>' +
       '<select class="sel-input period basis stage-basis" aria-label="Entered as">' + opts + '</select>' +
@@ -1805,16 +1811,19 @@ function inStageRowHtml(s, idx){
     '<div class="inline-row">' +
       '<div class="currency-wrap grow">' +
         '<span class="prefix">' + escapeHtml(fmt.symbol) + '</span>' +
-        '<input class="currency-input in-amount" type="text" inputmode="decimal"' +
+        '<input class="currency-input in-amount" type="text" inputmode="decimal" data-min="0" data-max="' + SPEND_MAX_MONEY + '"' +
           ' aria-label="Money in during this stage" value="' + SharedFmt.formatThousands(String(Math.round(s.amount))) + '"/>' +
       '</div>' +
       '<select class="sel-input period in-period" aria-label="Per">' + opts + '</select>' +
     '</div>' +
     '<div class="stage-grow">' +
       '<span class="stage-lbl">Grows</span>' +
-      '<input type="number" class="num-input in-growth" min="-10" max="30" step="0.1" aria-label="Growth, % a year"' +
-        ' value="' + escapeHtml(String(s.growth)) + '"/>' +
-      '<span class="stage-lbl grow-tail in-growth-from">% a year</span>' +
+      '<div class="currency-wrap grow-wrap">' +
+        '<input type="number" class="currency-input has-suffix in-growth" inputmode="decimal" min="-10" max="30" step="0.1"' +
+          ' aria-label="Growth, % a year" value="' + escapeHtml(String(s.growth)) + '"/>' +
+        '<span class="suffix">%/yr</span>' +
+      '</div>' +
+      '<span class="stage-lbl grow-tail in-growth-from">from today</span>' +
     '</div>' +
     '<div class="stage-keep">' +
       '<span class="stage-lbl">Still paid after you stop work</span>' +
@@ -1878,8 +1887,8 @@ function syncInStageAges(){
     row.querySelector('.in-from').min = prev ? String(prev.to) : '0';
     row.querySelector('.in-to').min = s ? String(Math.min(STAGE_AGE_MAX, s.from + 1)) : '1';
     row.querySelector('.in-to').placeholder = String(UI.ageDie);
-    row.querySelector('.in-growth-from').textContent = !s ? '% a year'
-      : (s.from <= UI.ageNow ? '% a year, from today' : '% a year, from age ' + fmt.age(s.from));
+    row.querySelector('.in-growth-from').textContent = !s ? ''
+      : (s.from <= UI.ageNow ? 'from today' : 'from age ' + fmt.age(s.from));
   });
 }
 
@@ -2112,7 +2121,7 @@ function compute(ui){
 }
 
 /* Today's money to the money of year y, for display only. Today's money is
-   the default (Show in Present Value on), which leaves the engine's own real
+   the default (Show in today's money on), which leaves the engine's own real
    figures alone; switching it off shows what the account will actually read
    in that year. */
 function show(res, value, yearIndex){
@@ -2156,7 +2165,7 @@ function renderInflationNote(res){
     escapeHtml(fmt.age(res.P.ageRetire)) + ', and ' +
     escapeHtml(fmt.currency(now * Math.pow(1 + i, toDie))) + ' at ' +
     escapeHtml(fmt.age(res.P.ageDie)) + '.' +
-    info('Same life, bigger figure. Turn on Show in Present Value in Settings to read it in today\'s money instead.');
+    info('Same life, bigger figure. While Show in today\u2019s money, beside the results, is on, the page reads it in today\u2019s money instead.');
 }
 
 /* What the indexation switch actually does to the reader's own pension. The
@@ -2311,7 +2320,7 @@ function renderMetrics(res){
   var swr = isFinite(need) && need > 0 ? (retireSpendAt(res.P, res.P.ageRetire) * 12 / need * 100) : null;
   $('mNeedSub').textContent = isFinite(need)
     ? 'Your FIRE number for ' + modeName + ': ' + fmt.num(yearsOf(need, res.P.ageRetire), 1) + 'x a year of spending' +
-      (swr == null ? '' : ', a ' + fmt.pct(swr, 2) + ' SWR') +
+      (swr == null ? '' : ', a ' + fmt.pct(swr, 2) + ' safe withdrawal rate (SWR)') +
       (res.ui.showReal ? '.' : ', in ' + (res.thisYear + retireYearIdx) + ' dollars.')
     : 'No pot works at this real return.';
 
@@ -2670,7 +2679,7 @@ function baseOptions(res, t, hoverId, ageOf, xMin, xMax, opts){
           afterBody: function(items){
             if(!items.length) return;
             var yr = items[0].parsed.x;
-            $(hoverId).textContent = whenLabel(res, yr) + ', age ' + fmt.age(ageOf(yr)) + '  —  ' +
+            $(hoverId).textContent = whenLabel(res, yr) + ', age ' + fmt.age(ageOf(yr)) + '  |  ' +
               items.map(function(i){ return i.dataset.label + ': ' + fmt.currency(i.parsed.y, true); }).join('  |  ');
           }
         }
@@ -3191,7 +3200,7 @@ function renderTable(res){
   $('tableWrap').innerHTML =
     '<table><thead><tr><th>Year</th><th>Age</th><th>Balance</th><th>Income</th><th>Expense</th>' +
     '<th>Saved / drawn</th><th>Growth</th></tr></thead><tbody>' + rows + '</tbody></table>';
-  $('tableSub').innerHTML = 'In ' + moneyMode(res) + '.' +
+  $('tableSub').innerHTML = escapeHtml(fmt.symbol) + ' in ' + moneyMode(res) + ', a year per row.' +
     info('Balance is the pot AT that age; the other columns are the twelve months after it. ' +
          (res.ui.savingsMode === 'income'
            ? 'Income is what you entered.'
@@ -3208,7 +3217,7 @@ function renderAssumptions(res){
       info('Tax differs too much between countries, and between an ordinary account and a pension wrapper, to model honestly in one tool.'),
 
     '<strong>Shown in ' + moneyMode(res) + '.</strong> Spending holds its value, so it rises with inflation.' +
-      info('Future\u2019s money is what the account will read: the plan times each year\'s inflation factor. Show in Present Value strips it back out.'),
+      info('Future\u2019s money is what the account will read: the plan times each year\'s inflation factor. Show in today\u2019s money strips it back out.'),
 
     '<strong>Inflation is ' + fmt.pct(res.ui.inflation, 1) + ' a year</strong> and applies to every year, working or retired.' +
       info('Living costs, the pot needed and the pension all rise with it, and the return is discounted by it (Fisher, not subtraction).'),
@@ -3216,7 +3225,7 @@ function renderAssumptions(res){
     '<strong>The two sections are two different questions.</strong> Path to freedom never withdraws; Cashflows always does.' +
       info('Path to freedom keeps paying in and compares the pot with what each age needs. Cashflows stops at the slider age and draws down.'),
 
-    '<strong>Your FIRE number</strong> implies a ' + (swr == null ? 'n/a' : fmt.pct(swr, 2)) + ' SWR.' +
+    '<strong>Your FIRE number</strong> implies a ' + (swr == null ? 'n/a' : fmt.pct(swr, 2)) + ' safe withdrawal rate (SWR).' +
       info('The share of the pot you spend in the first year. The familiar 25 times rule is the same arithmetic at a 4% real return.'),
 
     '<strong>The shaded band is not a path.</strong>' +
@@ -3254,7 +3263,7 @@ function renderAssumptions(res){
       : '<strong>The pension never rises</strong>, so it buys less every year.') +
       info(res.P.pensionIndexed
         ? 'A flat line in today\u2019s money and a rising figure in the money of the day. It starts at age ' + fmt.age(res.P.pensionStartAge) + ' and counts as income from then on, which is why it lowers the pot you need.'
-        : 'A flat figure in the money of the day and a sinking one in today\u2019s money. The erosion is measured from TODAY, not from the start age, because the amount you entered is what it pays now — so the years before you claim it wear it down too. Turn on "Rises with inflation" if your country indexes its pension.'));
+        : 'A flat figure in the money of the day and a sinking one in today\u2019s money. The erosion is measured from TODAY, not from the start age, because the amount you entered is what it pays now, so the years before you claim it wear it down too. Turn on "Rises with inflation" if your country indexes its pension.'));
   }
   if(res.ui.mode === 'rich'){
     items.splice(3, 0, '<strong>Forever is tested to age ' + RICH_HORIZON_AGE + '.</strong>' +
@@ -4225,6 +4234,12 @@ function init(){
       }
     });
     SharedScenario.mount('.quick-start-row', { tool: 'financialfreedom', persist: persist });
+  }
+  /* The year-by-year table is the most specific thing on the page, so it opens
+     closed behind Show table; the CSV button exports it either way. */
+  if(window.SharedFold){
+    SharedFold.attach($('boardCash').querySelector('.detail-section'),
+      {key: 'financialfreedom', bodies: ['#tableSub', '#tableWrap']});
   }
   tickerStatus('Nothing is fetched until you press Fetch.' + rateSuffix());
   render();

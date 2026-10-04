@@ -6,11 +6,16 @@
 //       three result rows at the bottom don't, so scenario values shift one
 //       column left under the wrong header.
 //   S3  view-year output equals the cashflow CSV at that year (Net Equity).
+//   S4  a summary CSV saved before the October 2026 relabel ("Horizon",
+//       "House Growth (RPPI)", "Mortgage Mode", "Anggaran Rumah Bulanan"…)
+//       still opens: every value it carries comes back out, simple and
+//       detailed, English and Indonesian (fixtures/ were exported from 5e63a62).
 // Run: node run.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { readFileSync, readdirSync } from 'node:fs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SENS = pathToFileURL(join(HERE, '..', 'index.html')).href;
@@ -100,6 +105,30 @@ const sensRent = await sensCsv('rent');
   const fmt = v=>{ const a=Math.abs(v); const s=v<0?'−':''; if(a>=1e9) return s+'$'+(a/1e9).toFixed(2)+'b'; if(a>=1e6) return s+'$'+(a/1e6).toFixed(2)+'m'; if(a>=1000) return s+'$'+(a/1000).toFixed(0)+'k'; return s+'$'+Math.round(a); };
   check('S3 table Own output at view year matches the cashflow CSV', outOwn===fmt(netEq),
     `table ${outOwn} vs csv-derived ${fmt(netEq)}`);
+}
+
+// S4 — old summary CSVs, opened by the current importer
+{
+  const cells = l => (l.match(/("([^"]|"")*"|[^,]*)(,|$)/g) || []).map(c => c.replace(/,$/, '').replace(/^"|"$/g, '').replace(/""/g, '"'));
+  // The parameter section: rows up to the first blank line, values only (the
+  // label and unit columns are allowed to have been renamed).
+  const values = txt => { const out = []; for (const l of txt.replace(/\r/g, '').split('\n')) { if (!l.trim()) break; out.push(cells(l).slice(2).join('|')); } return out.slice(1); };
+  const dir = join(HERE, 'fixtures');
+  for (const f of readdirSync(dir).filter(n => /^pre-relabel-.*\.csv$/.test(n)).sort()) {
+    const old = readFileSync(join(dir, f), 'utf8');
+    const page = await open(SENS);
+    await page.evaluate(() => { window.__summary = null; const orig = RVOExport.cleanCSV; RVOExport.cleanCSV = t => { window.__summary = t; return orig(t); };
+      URL.createObjectURL = () => 'blob:stub'; HTMLAnchorElement.prototype.click = function(){}; window.alert = m => { window.__alert = m; }; });
+    await page.setInputFiles('#csvFileInput', { name: f, mimeType: 'text/csv', buffer: Buffer.from(old) });
+    await page.waitForTimeout(600);
+    await page.evaluate(() => document.getElementById('downloadCSVBtn').click());
+    const now = await page.evaluate(() => window.__summary || '');
+    const a = values(old), b = values(now);
+    const bad = a.map((v, i) => v === b[i] ? null : `row ${i + 1}: ${v} -> ${b[i]}`).filter(Boolean);
+    check(`S4 ${f} reopens with every value it carries`, bad.length === 0 && a.length === b.length && !(await page.evaluate(() => window.__alert)),
+      bad.slice(0, 3).join(' | ') || `${a.length} parameter rows`);
+    await page.close();
+  }
 }
 
 await browser.close();

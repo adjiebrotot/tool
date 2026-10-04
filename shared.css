@@ -154,8 +154,16 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;}
 
 /* ============================================================
    HEADER
+   ------------------------------------------------------------
+   Title and subtitle on the left, the button cluster hard right, on every
+   tool. The left block grows from a zero basis, so however long the subtitle
+   runs it wraps inside its own column instead of pushing the buttons onto a
+   line of their own under the title (which is what a tool's own
+   `flex-wrap:wrap` used to do on a long subtitle).
    ============================================================ */
-.header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;}
+.header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+.header>:first-child{flex:1 1 0%;min-width:0;}
+.header-right{display:flex;gap:8px;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end;align-items:center;}
 
 /* ============================================================
    DARK / LIGHT TOGGLE BUTTON
@@ -409,6 +417,8 @@ body.light tr:hover td{background:rgba(90,145,232,0.04);}
   .canvas-wrap{height:380px;}
   .summary-grid{grid-template-columns:repeat(2,1fr);}
   .header{flex-direction:column;gap:10px;padding:16px 18px;}
+  .header>:first-child{flex:0 0 auto;}
+  .header-right{justify-content:flex-start;}
   .container{padding:16px;}
 }
 @media(max-width:600px){
@@ -484,3 +494,122 @@ html{scrollbar-gutter:stable;}
    and wrapping is the last resort if even the short form is too wide. */
 .metric,.tile{min-width:0;}
 .metric .value,.metric .val,.tile .value{overflow-wrap:anywhere;}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   FINANCE TOOL SKELETON
+   ──────────────────────────────────────────────────────────────────────────
+   The pieces every finance tool shares, so a reader who learns one tool can
+   read the next: a field states its unit and refuses a value outside its
+   range, a slider names both of its ends and takes a typed value, the answer
+   opens with one plain sentence, the year-by-year table waits behind a
+   button, and the page closes on what it assumes. See "Finance tool
+   skeleton" in _ref/design-reference.md for when each one is used.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Segmented control (Simple | Detailed, Employee | Self-employed …) ──
+   The design reference's canonical look. A tool may set its own layout (a
+   full-width group, a smaller pill), never its own colours. */
+/* Zero specificity (:where), so a tool that already draws its own group keeps
+   every property it sets and only picks up the ones it leaves open. */
+:where(.seg-group){display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;}
+:where(.seg-group)>:where(.seg-btn){background:transparent;border:none;border-radius:7px;padding:5px 12px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;}
+:where(.seg-group)>:where(.seg-btn.active){background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}
+:where(.seg-group)>:where(.seg-btn:hover:not(.active)){color:var(--text);}
+:where(.seg-group)>:where(.seg-btn:focus-visible){outline:2px solid var(--accent);outline-offset:1px;}
+
+/* ── Detail level: one control, one wording, one place ──
+   "Detail  [Simple | Detailed]" as the first row of the group (or tab) it
+   governs. Simple holds the figures anyone knows; Detailed adds rows, it
+   never changes what a Simple field means. */
+.field-row.detail-row,.detail-row{flex-direction:row;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.detail-row .field-label{display:inline-flex;align-items:center;gap:5px;}
+.detail-row .seg-group{margin-top:0;flex:0 0 auto;}
+.detail-row .seg-btn{flex:0 0 auto;}
+
+/* ── A count picked from a few values (dependants, adults, 0 to 6) ──
+   SharedSeg.fromSelect() draws it from a <select> that stays on the page as
+   the field the tool reads and the mini cache saves; the buttons are the
+   control a reader uses. */
+.seg-count{display:flex;width:100%;}
+.seg-count .seg-btn{flex:1 1 0;padding:6px 6px;min-width:2.2em;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;}
+.seg-source{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important;}
+.seg-host{position:relative;}
+
+/* ── Units live inside the field ──
+   A field's unit is its affix (.currency-wrap .prefix / .suffix), so a label
+   never carries "(% p.a.)". The suffix can be a word or two ("%/yr",
+   "yrs", "/mo"); this keeps the number clear of it. */
+.currency-wrap .suffix{white-space:nowrap;}
+.currency-wrap .currency-input.has-suffix.wide-suffix{padding-right:64px;}
+
+/* ── A field that refused a value outside its range ──
+   SharedBounds pulls the value back to the nearest end and says so in a small
+   note pinned under the field for a moment, so the change is never silent.
+   The note floats (fixed, like the tooltip) so it never shifts the layout of
+   the row it sits under. */
+#boundHint{position:fixed;z-index:99990;left:0;top:0;pointer-events:none;max-width:260px;padding:4px 9px;border-radius:var(--radius-sm);background:var(--warning-bg);border:1px solid rgba(255,210,140,.45);color:var(--warning-text);font-size:.76rem;font-weight:700;line-height:1.35;box-shadow:var(--shadow-sm);opacity:0;transition:opacity var(--motion-fast);}
+#boundHint.visible{opacity:1;}
+.bound-flash{border-color:var(--gold)!important;}
+
+/* ── Sliders: both ends named, the readout takes a typed value ──
+   SharedSlider writes the ends under every slider in a control panel from
+   the slider's own min and max, and turns the readout into a box a reader
+   can click and type into, clamped to the same ends and steps. */
+.range-ends{display:flex;justify-content:space-between;gap:8px;margin-top:2px;color:var(--muted);font-size:.72rem;line-height:1.2;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;pointer-events:none;}
+.slider-head .slider-value{flex:0 0 auto;}
+.slider-value.is-editable{display:inline-block;cursor:text;padding:1px 8px;min-width:4.4em;text-align:right;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--input-bg);white-space:nowrap;transition:border-color var(--motion-fast);}
+.slider-value.is-editable:hover{border-color:var(--accent);}
+.slider-val-edit{display:none;width:6em;padding:1px 8px;border:1.5px solid var(--accent);border-radius:var(--radius-sm);background:var(--panel);color:var(--accent);font-weight:700;font-size:.88rem;font-variant-numeric:tabular-nums;font-family:'DM Mono',monospace;text-align:right;outline:none;}
+
+/* ── A figure worked out from the fields above it ──
+   "Down payment = $160,000". Read, not entered, so it is quiet: muted text,
+   the figure in the text colour. Gold is the warning colour in dark mode and
+   is not used here. */
+.derived{color:var(--muted);font-size:.8rem;line-height:1.4;margin-top:4px;}
+.derived b,.derived strong,.derived .derived-val{color:var(--text);font-weight:700;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;}
+
+/* ── The verdict: the answer in one plain sentence, above everything ──
+   Neutral when the tool compares two fair options (rent or own, file
+   separately or jointly), good / bad / warn when the answer is a pass or a
+   miss against a goal the reader set. */
+.verdict{padding:16px 18px;margin-bottom:18px;border-radius:var(--radius-xl);border:1px solid var(--border);background:var(--bg-subtle);display:none;}
+.verdict.visible{display:block;}
+.verdict h2{margin:0 0 6px;font-size:1.05rem;line-height:1.4;}
+/* A verdict whose heading says the whole thing carries no body line under it. */
+.verdict h2:last-child{margin-bottom:0;}
+.verdict p{margin:0;color:var(--muted);font-size:.88rem;line-height:1.55;}
+.verdict.good{border-color:var(--positive-border);background:var(--positive-bg);}
+.verdict.good h2{color:var(--positive-em);}
+.verdict.bad{border-color:var(--negative-border);background:var(--negative-bg);}
+.verdict.bad h2{color:var(--negative-em);}
+.verdict.warn{border-color:rgba(255,210,140,.35);background:var(--warning-bg);}
+.verdict.warn h2{color:var(--warning-text);}
+.verdict .v-num{font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;white-space:nowrap;}
+
+/* ── Units of a table, said once over it ── */
+.unit-note{color:var(--muted);font-size:.78rem;line-height:1.4;margin:4px 0 10px;}
+
+/* ── Year-by-year table, behind a button ──
+   SharedFold collapses the long table under its own header row; the CSV
+   button beside it still exports the whole thing while it is closed. */
+.fold-btn,.btn-secondary.fold-btn{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;}
+.fold-btn .fold-chev{display:inline-block;transition:transform var(--motion-fast);}
+.fold-btn[aria-expanded="true"] .fold-chev{transform:rotate(180deg);}
+.is-folded .fold-body{display:none!important;}
+
+/* ── What this assumes: the page closes on its own caveats ── */
+.assumes-card{padding:20px;margin-bottom:18px;}
+.assumes-card h2{margin:0 0 10px;font-size:1.1rem;}
+.assumptions{margin:0;padding-left:18px;color:var(--muted);font-size:.85rem;line-height:1.65;}
+.assumptions li+li{margin-top:5px;}
+.assumptions strong{color:var(--text);}
+
+/* ── Assumptions tab glyph (mask form, for the tools whose tab bars use
+   .ricon). The .tico form is the same drawing inline. ── */
+.ricon-assume{background-color:currentColor;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6.5h4M12 6.5h8M4 12h10M18 12h2M4 17.5h2M10 17.5h10'/%3E%3Ccircle cx='10' cy='6.5' r='2'/%3E%3Ccircle cx='16' cy='12' r='2'/%3E%3Ccircle cx='8' cy='17.5' r='2'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6.5h4M12 6.5h8M4 12h10M18 12h2M4 17.5h2M10 17.5h10'/%3E%3Ccircle cx='10' cy='6.5' r='2'/%3E%3Ccircle cx='16' cy='12' r='2'/%3E%3Ccircle cx='8' cy='17.5' r='2'/%3E%3C/svg%3E");}
+
+/* A typed number field draws no spinner arrows: the unit sits where they
+   would, and the field's own min, max and step already bound it. */
+.currency-input[type=number]{-moz-appearance:textfield;appearance:textfield;}
+.currency-input[type=number]::-webkit-inner-spin-button,.currency-input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.ctrl-tabs.stacked .ricon{margin-right:0;width:1.35em;height:1.35em;}

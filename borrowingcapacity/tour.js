@@ -8,9 +8,13 @@
 
    Because that overwrites whatever was on screen, saveState and restoreState
    hand the user their own figures back when the tour ends, however it ends.
-   Both delegate to window.__BC_TOUR, which script.js exposes. */
+   Both delegate to window.__BC_TOUR, which script.js exposes.
+
+   v2 follows the redesign: the answer sentence, the Purchase tab (was Caps),
+   the one "Detail" switch per section and the spelled-out NSR and UMI, so
+   readers who took v1 are offered it again. */
 window.__TOUR = {
-  seenKey: 'bc-tour-v1-seen',
+  seenKey: 'bc-tour-v2-seen',
   launchLabel: '🧭 Take a tour',
   saveState: function () {
     return window.__BC_TOUR ? window.__BC_TOUR.saveState() : null;
@@ -44,8 +48,8 @@ window.__TOUR = {
       title: '② Five tabs, in the order a lender asks',
       body: '<strong>Income</strong> is what you earn, <strong>Household</strong> is ' +
             'who you support and where you live, <strong>Debts</strong> is what you ' +
-            'already owe, <strong>Loan</strong> is the product and the assessment ' +
-            'settings, and <strong>Caps</strong> is the property and the ceilings.'
+            'already owe, <strong>Loan</strong> is the rate, term and assessment ' +
+            'settings, and <strong>Purchase</strong> is the price, deposit and costs.'
     },
     {
       target: '#incModeGroup',
@@ -54,23 +58,28 @@ window.__TOUR = {
         if (tab && !tab.classList.contains('active')) tab.click();
       },
       title: '③ Simple or Detailed, section by section',
-      body: '<strong>Simple</strong> takes one gross figure. <strong>Detailed</strong> ' +
-            'splits it into each stream and exposes the shading factor, the share a ' +
-            'lender is willing to count. A bonus is typically counted at 80%, base ' +
-            'salary in full. Four sections carry this switch, and you can mix them.'
+      body: 'Each section opens with a <strong>Detail</strong> switch. <strong>Simple</strong> ' +
+            'takes one gross figure a year. <strong>Detailed</strong> splits it into each ' +
+            'stream with the share a lender counts: a bonus typically at 80%, base salary ' +
+            'in full. Four sections carry the switch, and you can mix them.'
+    },
+    {
+      target: '#verdict',
+      title: '④ Read the answer',
+      body: 'The sentence at the top says how much a lender would likely lend him, ' +
+            'whether that buys the home he priced, and which cap sets the limit.'
     },
     {
       target: '.metrics',
-      title: '④ Read the binding constraint first',
-      body: 'Six numbers summarise the run. <strong>Binding constraint</strong> is the ' +
-            'one to read first: it names the cap actually holding you back, and the ' +
-            'other three have slack. For him it is serviceability, which is what ' +
-            'stops most Australian borrowers. <strong>NSR</strong> and ' +
-            '<strong>UMI</strong> show how tightly the answer closes.'
+      title: '⑤ The figures behind it',
+      body: '<strong>Binding constraint</strong> names the cap actually holding him back; ' +
+            'the other three have room left. For him it is serviceability, which is what ' +
+            'stops most Australian borrowers. <strong>Income cover (NSR)</strong> and ' +
+            '<strong>Left each month (UMI)</strong> show how tightly the answer closes.'
     },
     {
       target: '.chart-card',
-      title: '⑤ See every cap across the income range',
+      title: '⑥ See every cap across the income range',
       body: 'He sits at the centre of a sweep across the income range, with all ' +
             'four caps plotted. Your capacity is the <strong>lowest line at every ' +
             'point</strong>, so you can see exactly where one cap hands over to ' +
@@ -80,10 +89,10 @@ window.__TOUR = {
       target: null,
       title: '✅ You are all set',
       body: 'Four tables below the chart break down the four caps, the serviceability ' +
-            'build-up line by line, your income shading and your monthly commitments, ' +
-            'and <strong>CSV</strong> exports the lot. Everything runs privately in ' +
-            'your browser, free. Replay this tour any time via <strong>Take a ' +
-            'tour</strong> in the header.'
+            'build-up line by line, your income shading and your monthly commitments, and ' +
+            '<strong>CSV</strong> exports the lot. The page ends with what it assumes. ' +
+            'Everything runs privately in your browser, free. Replay this tour any time ' +
+            'via <strong>Take a tour</strong> in the header.'
     }
   ]
 };

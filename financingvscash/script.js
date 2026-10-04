@@ -14,21 +14,31 @@ function wmPlotlyImage(){
     sizex:0.035, sizey:0.05, sizing:'contain', opacity:0.22, layer:'above' };
 }
 const $=id=>document.getElementById(id);
-const SCENARIO_COLORS=['--line-a','--line-b','--line-c','--line-d','--line-e','--line-f'];
+/* Scenarios are options a reader is choosing between, neither good nor bad, so
+   they take the neutral sequence (SharedPalette): blue, gold, teal, rose, then
+   purple and a light blue. Red stays for money lost. A slot that resolves to a
+   colour an earlier slot already has (dark mode's --line-e is its gold) is
+   skipped, so two scenarios never share a colour while slots remain. */
+const SCENARIO_COLORS=['--line-a','--gold','--line-c','--line-d','--line-e','--line-f'];
 /* A missing custom property resolves to an empty string, which would paint
    nothing and, once concatenated with the band's alpha suffix, produce a colour
    string Chart.js cannot read. The stylesheet does define all six slots, so
    this is a guard rather than a fix: it only matters if one is ever dropped. */
-const SCENARIO_COLORS_FALLBACK=['#5A91E8','#E63939','#3aaa86','#b07a00','#c45e7a','#0052CC'];
+const SCENARIO_COLORS_FALLBACK=['#5A91E8','#B45309','#4A9E87','#C46A7E','#9B59B6','#0052CC'];
 function cssVar(n){return getComputedStyle(document.body).getPropertyValue(n).trim();}
 /* A scenario keeps its palette slot unless the user picks a colour for it, in
    which case that literal hex wins in both themes. Anything that draws or
    labels a scenario asks here, so the dot, the lines, the band shading, the
    sensitivity curve and the Best KPI can never disagree. */
 function isHexColor(v){return typeof v==='string'&&/^#[0-9a-fA-F]{6}$/.test(v);}
+function scenarioPalette(){
+  const seen={},out=[];
+  SCENARIO_COLORS.forEach((v,k)=>{const c=cssVar(v)||SCENARIO_COLORS_FALLBACK[k];const key=c.toLowerCase();if(!seen[key]){seen[key]=1;out.push(c);}});
+  return out;
+}
 function defaultScenarioColor(i){
-  const slot=SCENARIO_COLORS[i%SCENARIO_COLORS.length];
-  return cssVar(slot)||SCENARIO_COLORS_FALLBACK[i%SCENARIO_COLORS_FALLBACK.length];
+  const l=scenarioPalette();
+  return l[i%l.length];
 }
 function scenarioColor(sc,i){
   return (sc&&isHexColor(sc.color))?sc.color:defaultScenarioColor(i);
@@ -691,6 +701,7 @@ function rerender(){
     $('compTableWrap').innerHTML='<p class="muted">Adjust inputs above to run the simulation.</p>';
     $('amortTabs').innerHTML='';
     $('amortTableWrap').innerHTML='<p class="muted">Adjust inputs above to run the simulation.</p>';
+    SharedVerdict.set('verdict',null);
     return;
   }
   $('warnBanner').style.display='none';$('warnBanner').textContent='';
@@ -759,7 +770,7 @@ function rerender(){
   // KPIs
   const tie=!!bestResult&&Math.abs(bestResult.netBenefit)<=NB_EPS;
   if(tie){$('kpiBest').textContent='Break-even';$('kpiBest').style.color=cssVar('--text');$('kpiBestSub').textContent=bestResult.name+' is level with paying cash.';}
-  else if(allNeg||!bestResult){$('kpiBest').textContent='Cash Purchase';$('kpiBest').style.color=cssVar('--accent2');$('kpiBestSub').textContent=valid.length?'No financing scenario beats paying cash.':'Add scenarios to compare.';}
+  else if(allNeg||!bestResult){$('kpiBest').textContent='Cash Purchase';$('kpiBest').style.color=cssVar('--text');$('kpiBestSub').textContent=valid.length?'No financing scenario beats paying cash.':'Add scenarios to compare.';}
   else{$('kpiBest').textContent=bestResult.name;$('kpiBest').style.color=bestResult.color;$('kpiBestSub').textContent='Based on '+$('optTarget').selectedOptions[0].text.toLowerCase()+'.';}
   if(bestResult){const nb=snapNB(bestResult.netBenefit),cashWins=allNeg&&!tie;$('kpiNetBenefit').textContent=fmt.currency(nb,true);$('kpiNetBenefit').style.color=nb>0?cssVar('--positive-em'):nb<0?cssVar('--negative-em'):cssVar('--text');$('kpiNetSub').textContent=nb>0?'Financing is more wealth-efficient':nb<0?'Cash purchase preserves more wealth':'Financing and paying cash end up level';
     // The "(Best)" tiles must describe the strategy the verdict names: when the
@@ -768,11 +779,37 @@ function rerender(){
   else{$('kpiNetBenefit').textContent='—';$('kpiNetBenefit').style.color=cssVar('--text');$('kpiNetSub').textContent='';$('kpiInterest').textContent='—';$('kpiInterest').style.color=cssVar('--text');$('kpiIntSub').textContent='';}
   $('kpiCashWealth').textContent=fmt.currency(cashBase.endWealth,true);$('kpiCashWealth').style.color=cssVar('--text');$('kpiCashSub').textContent=maxTerm>0?`After ${horizonTxt(maxTerm)} at ${fmt.pct(riskFreeRate/100)} risk-free`:'Cash left after buying outright.';
 
+  renderVerdict(valid,bestResult,tie,allNeg,riskFreeRate,maxTerm);
   renderMainChart(results);renderComparisonTable(results);renderAmortTabs(results);updateSensScenarioDropdown();
   // The sweep is built from the same purchase cost, cash and rates as the panel
   // above it, so it has to move when they do. Leaving it to a button meant a
   // surface could sit there describing a plan the reader had already edited.
   scheduleSensitivity();
+}
+
+/* The answer in one sentence, in the page's own terms. Paying cash and each
+   financing scenario are options, not good and bad, so the tone is neutral;
+   the Net Benefit figure carries the sign. */
+function renderVerdict(valid,best,tie,allNeg,rf,maxTerm){
+  if(!valid.length){SharedVerdict.set('verdict',{tone:'',title:'Add a financing scenario to compare it with paying cash.'});return;}
+  const v=x=>'<span class="v-num">'+fmt.currency(snapNB(x),true)+'</span>';
+  const closest=valid.reduce((a,r)=>r.netBenefit>a.netBenefit?r:a,valid[0]);
+  let title,body=[];
+  if(tie){
+    title=`${best.name} and a Cash Purchase end level after ${horizonTxt(best.termYears)}.`;
+  } else if(allNeg||!best){
+    title='Cash Purchase is the Best Strategy: no financing scenario beats paying cash.';
+    body.push(`The closest, ${closest.name}, has a Net Benefit vs Cash of ${v(closest.netBenefit)} after ${horizonTxt(closest.termYears)}.`);
+  } else if(best.netBenefit>NB_EPS){
+    title=`${best.name} beats a Cash Purchase by ${v(best.netBenefit)} after ${horizonTxt(best.termYears)}.`;
+  } else {
+    const what=$('optTarget').selectedOptions[0].text;
+    title=`${best.name} has the ${what.replace(/^Lowest /,'lowest ')}, but a Cash Purchase still comes out ahead.`;
+    body.push(`Its Net Benefit vs Cash is ${v(best.netBenefit)} after ${horizonTxt(best.termYears)}.`);
+  }
+  const r=best&&!allNeg?best:closest;
+  if(r&&r.effectiveRate!=null) body.push(`Its effective rate is ${fmt.pct(r.effectiveRate/100)} a year against a ${fmt.pct(rf/100)} Risk-Free Rate.`);
+  SharedVerdict.set('verdict',{tone:'',title,body:body.join(' ')});
 }
 
 /* The main chart's x unit, chosen per render. Module-level because an
@@ -788,6 +825,11 @@ function renderMainChart(results){
   const metric=$('chartMetric').value;
   const titles={wealth:'Ending Wealth Over Time',netBenefit:'Net Benefit vs Cash Purchase',investmentValue:'Investment Value Over Time',loanBalance:'Loan Balance Over Time'};
   $('chartTitle').textContent=titles[metric]||'Chart';
+  const tips={wealth:'Ending Wealth: the cash you still have invested, minus what you still owe on the loan.',
+    netBenefit:'Net Benefit: how far ahead of paying cash each scenario is. Below zero, paying cash is better.',
+    investmentValue:'Investment Value: the cash you keep invested, after each repayment comes out of it.',
+    loanBalance:'Loan Balance: what you still owe on the loan.'};
+  const tipEl=$('tipChartMetric');if(tipEl)tipEl.setAttribute('data-tip',tips[metric]||'');
   // Plot on a real-time x-axis so scenarios with different payment
   // frequencies align by actual duration, not by raw period index. The unit is
   // the finest repayment period on show: three monthly plans read in months
@@ -1131,9 +1173,9 @@ function runSensitivity(){
     } else {
       // The objective line, plus the dashed zero rule it is read against.
       sensLe.appendChild(SharedLegend.item(SharedLegend.fromDataset(datasets[0]), baseSc.name));
-      sensLe.appendChild(SharedLegend.item(SharedLegend.fromDataset(datasets[1]), 'Break-even (zero)'));
+      sensLe.appendChild(SharedLegend.item(SharedLegend.fromDataset(datasets[1]), (obj==='netBenefit'||obj==='inflAdjNetBenefit')?'Break-even (zero)':'Zero'));
     }
-    const cfg={type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:SharedChartTip.options({callbacks:{title:c=>`${xL}: ${c[0].label}`,label:c=>Number.isFinite(c.parsed.y)?`${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`:`${c.dataset.label}: not feasible`}}),zoom:SharedZoom.options({min:0,max:labels.length-1,points:labels.length}),sharedYFit:{auto:{axes:['y']}}},scales:{x:{title:{display:true,text:xL,color:mc},ticks:{color:mc,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:objL,color:mc},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
+    const cfg={type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:SharedChartTip.options({callbacks:{title:c=>`${xL}: ${c[0].label}`,label:c=>Number.isFinite(c.parsed.y)?`${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`:`${c.dataset.label}: not feasible`}}),zoom:SharedZoom.options({min:0,max:labels.length-1,points:labels.length}),sharedYFit:{auto:{axes:['y']}}},scales:{x:{title:{display:true,text:xL,color:mc},ticks:{color:mc,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:objL+' ('+moneySymbol()+')',color:mc},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
     if(sensChartInstance){SharedZoom.resetView(sensChartInstance);sensChartInstance.data=cfg.data;sensChartInstance.options=cfg.options;sensChartInstance.update('none');}
     else sensChartInstance=new Chart($('sensCanvas'),{...cfg,plugins:[SharedZoom.plugin]});
   } else {
@@ -1151,8 +1193,11 @@ function runSensitivity(){
     for(let yi=0;yi<steps;yi++){const row=[];for(let xi=0;xi<steps;xi++){let m=applyVar(baseSc,varX,xVals[xi]);m=applyVar(m,varY,yVals[yi]);const v=getNetBenefit(m,pc,ac,inflR,inflOn,obj);row.push(v);}zData.push(row);} // null = infeasible, Plotly leaves a hole
 
     const isLight=document.body.classList.contains('light');
+    const costLike=obj==='totalInterest'||obj==='totalFinanceCost';
     const plotData=[{type:'surface',x:xVals,y:yVals,z:zData,
       colorscale:[[0,'#E63939'],[0.25,'#FFD28C'],[0.5,'#F8FBFF'],[0.75,'#8FCDBD'],[1,'#8DBBFF']],
+      reversescale:costLike,
+      ...(costLike?{}:{cmid:0}),
       contours:{z:{show:true,usecolormap:true,highlightcolor:'#fff',project:{z:false}}},
       hovertemplate:`${xL}: %{x:.2f}<br>${yL}: %{y:.2f}<br>${zL}: ${moneySymbol()}%{z:,.0f}<extra></extra>`
     }];
@@ -1161,7 +1206,7 @@ function runSensitivity(){
       scene:{
         xaxis:{title:xL,color:isLight?'#2D3436':'#A8B6CF',gridcolor:isLight?'#E0E6F0':'#2C3A52'},
         yaxis:{title:yL,color:isLight?'#2D3436':'#A8B6CF',gridcolor:isLight?'#E0E6F0':'#2C3A52'},
-        zaxis:{title:zL,color:isLight?'#2D3436':'#A8B6CF',gridcolor:isLight?'#E0E6F0':'#2C3A52',tickprefix:moneySymbol(),tickformat:',.0f'},
+        zaxis:{title:zL+' ('+moneySymbol()+')',color:isLight?'#2D3436':'#A8B6CF',gridcolor:isLight?'#E0E6F0':'#2C3A52',tickprefix:moneySymbol(),tickformat:',.0f'},
         bgcolor:isLight?'#F0F4FF':'#0F1728',
         camera:{eye:{x:1.8,y:1.8,z:1.2}}
       },
@@ -1280,7 +1325,7 @@ const DYNAMIC_TIPS=[
     lowestInterest:'<strong>Lowest Total Interest:</strong> the scenario that pays the least interest, fees aside.',
     lowestCost:'<strong>Lowest Financing Cost:</strong> the smallest total borrowing cost, interest plus fees.'}],
   ['tipInflation','inflationToggle',{
-    on:'Ending wealth is also shown in today\'s dollars, discounted at the inflation rate below.',
+    on:'The comparison also shows the Net Benefit in today\'s dollars (Inflation-Adj Net Benefit), discounted at the inflation rate below.',
     off:'Only nominal future dollars are shown. Turn this on to also read them in today\'s money.'}],
 ];
 
@@ -1308,9 +1353,9 @@ function syncDynamicTips(){
 
 function updateTermLabel(freq){
   const unit=termUnitLabel(freq);
-  // Update the label text node (first child of tip-wrap)
-  const lbl=$('termLabel');
-  lbl.firstChild.textContent='Term ('+unit+') ';
+  // The unit sits inside the field, not in the label.
+  const u=$('termUnit');if(u)u.textContent=unit;
+  const io=$('scIoUnit');if(io)io.textContent=unit;
   const sub=$('termSub');
   if(freq==='weekly')sub.textContent='Number of weekly payments (e.g. 260 = 5 years).';
   else if(freq==='fortnightly')sub.textContent='Number of fortnightly payments (e.g. 130 = 5 years).';
@@ -1572,9 +1617,10 @@ function updateEditorVisibility(){
   show('scResidualRow',t==='balloon');
   const unit=termUnitLabel(editorTermFreq);
   const rl=$('scRateLabel');
-  if(rl&&rl.firstChild)rl.firstChild.textContent=(t==='flat'?'Flat Rate (annual %) ':t==='bullet'?'Interest Rate (annual %) ':'Finance Rate (annual %) ');
+  if(rl&&rl.firstChild)rl.firstChild.textContent=(t==='flat'?'Flat Rate ':t==='bullet'?'Interest Rate ':'Finance Rate ');
   const il=$('scIoLabel');
-  if(il&&il.firstChild)il.firstChild.textContent=(t==='deferred'?'Payment Holiday ('+unit+') ':'Interest-Only ('+unit+') ');
+  if(il&&il.firstChild)il.firstChild.textContent=(t==='deferred'?'Payment Holiday ':'Interest-Only ');
+  const iu=$('scIoUnit');if(iu)iu.textContent=unit;
   const isub=$('scIoSub');
   if(isub)isub.textContent=t==='deferred'
     ?'Repayments start after this many '+unit+'. Interest is added to the debt meanwhile.'
@@ -1645,7 +1691,6 @@ function openEditor(idx){
   $('scName').value=sc.name;
   $('scColor').value=scenarioColor(sc,idx);
   $('scRate').value=sc.financeRate;
-  $('scRateVal').textContent=fmt.pct(sc.financeRate/100);
   $('scDownPct').value=Math.min(100,Math.max(0,sc.downPaymentPct||0));
   $('scDownVal').textContent=fmt.pct(($('scDownPct').value||0)/100,0);
   $('scTerm').value=sc.termPeriods;
@@ -1697,10 +1742,9 @@ $('saveScenarioBtn').addEventListener('click',()=>{saveEditor();closeEditor();})
 $('cancelScenarioBtn').addEventListener('click',closeEditor);
 
 // Base RF rate slider
-['input','change'].forEach(evt=>{$('baseRf').addEventListener(evt,()=>{$('baseRfVal').textContent=fmt.pct(parseFloat($('baseRf').value)/100);rerender();});});
+['input','change'].forEach(evt=>{$('baseRf').addEventListener(evt,()=>{$('baseRfVal').textContent=fmt.pct(parseFloat($('baseRf').value)/100)+'/yr';rerender();});});
 
 // Finance rate slider in editor — live update display
-['input','change'].forEach(evt=>{$('scRate').addEventListener(evt,()=>{$('scRateVal').textContent=fmt.pct(parseFloat($('scRate').value)/100);});});
 ['input','change'].forEach(evt=>{$('scDownPct').addEventListener(evt,()=>{$('scDownVal').textContent=fmt.pct(parseFloat($('scDownPct').value||0)/100,0);});});
 
 // Freq change: convert the Term field to the new unit so the loan DURATION is
@@ -1823,7 +1867,26 @@ document.querySelectorAll('.ctrl-tab').forEach(btn=>{btn.addEventListener('click
 $('mode2d').addEventListener('click',()=>{sensMode='2d';$('mode2d').classList.add('active');$('mode3d').classList.remove('active');$('sensYBlock').style.display='none';scheduleSensitivity();});
 $('mode3d').addEventListener('click',()=>{sensMode='3d';$('mode3d').classList.add('active');$('mode2d').classList.remove('active');$('sensYBlock').style.display='';scheduleSensitivity();});
 $('sensScenario').addEventListener('change',updateSensTermLabels);
-$('sensVarX').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarX').value,sensSelectedFreq(),sensSelectedScenario());$('sensXStart').value=a;$('sensXEnd').value=b;});
+/* A sweep range is typed in the unit of the variable it sweeps: % for a rate,
+   the term's own period for a term, money for a repayment. The fields carry
+   that unit after the number and the limits that go with it. */
+function syncSensUnits(){
+  [['X','sensVarX'],['Y','sensVarY']].forEach(([ax,selId])=>{
+    const sel=$(selId); if(!sel) return;
+    const opt=sel.selectedOptions[0], label=opt?opt.textContent:'';
+    const m=label.match(/\(([^)]+)\)\s*$/);
+    const unit=m?m[1]:moneySymbol();
+    const pct=unit==='%', money=!m;
+    ['Start','End'].forEach(w=>{
+      const el=$('sens'+ax+w); if(!el) return;
+      el.min=pct?'0':(money?'0':'1'); el.max=pct?'100':(money?'1000000000000':'3000');
+      const suf=el.parentElement&&el.parentElement.querySelector('.sens-unit'); if(suf) suf.textContent=unit;
+    });
+  });
+}
+$('sensVarX').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarX').value,sensSelectedFreq(),sensSelectedScenario());$('sensXStart').value=a;$('sensXEnd').value=b;syncSensUnits();});
+$('sensVarY').addEventListener('change',syncSensUnits);
+syncSensUnits();
 $('sensVarY').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarY').value,sensSelectedFreq(),sensSelectedScenario());$('sensYStart').value=a;$('sensYEnd').value=b;});
 // Every control in the Sensitivity panel redraws the sweep, the two above
 // included: their own listeners re-seed the axis range first, and this one runs
@@ -2021,7 +2084,7 @@ function applyQuickStart(key){
   $('purchaseCost').value=fmt.fmtInput(b.purchaseCost);
   $('availableCash').value=fmt.fmtInput(b.availableCash);
   $('baseRf').value=b.riskFree;
-  $('baseRfVal').textContent=fmt.pct(b.riskFree/100);
+  $('baseRfVal').textContent=fmt.pct(b.riskFree/100)+'/yr';
   $('rateConvention').value=b.rateConvention;
   rateConvention=b.rateConvention;
   $('inflationToggle').checked=!!b.inflationOn;
@@ -2402,35 +2465,16 @@ $('sens3dResetView').addEventListener('click', async () => {
   await Plotly.relayout('plotly3d', {'scene.camera': {eye:{x:1.8, y:1.8, z:1.2}}});
 });
 
-/* ─── Slider Editable ─── */
-function makeSliderEditable(valSpan,rangeEl){
-  if(!valSpan||!rangeEl)return;
-  const inp=document.createElement('input');
-  inp.type='text';inp.className='slider-val-edit';
-  valSpan.parentNode.insertBefore(inp,valSpan.nextSibling);
-  valSpan.addEventListener('click',()=>{
-    inp.value=parseFloat(rangeEl.value);
-    valSpan.style.display='none';inp.style.display='inline';
-    inp.focus();inp.select();
-  });
-  function commit(){
-    const raw=parseFloat(inp.value);
-    if(!isNaN(raw)){
-      const mn=parseFloat(rangeEl.min),mx=parseFloat(rangeEl.max),st=parseFloat(rangeEl.step)||1;
-      const v=+(Math.round(Math.min(mx,Math.max(mn,raw))/st)*st).toFixed(10);
-      rangeEl.value=v;
-      rangeEl.dispatchEvent(new Event('input',{bubbles:true}));
-      rangeEl.dispatchEvent(new Event('change',{bubbles:true}));
-    }
-    inp.style.display='none';valSpan.style.display='';
-  }
-  inp.addEventListener('blur',commit);
-  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}else if(e.key==='Escape'){inp.value='';commit();}});
-}
-[['baseRf','baseRfVal'],['scRate','scRateVal'],['scDownPct','scDownVal']
-].forEach(([rid,vid])=>makeSliderEditable($(vid),$(rid)));
+/* Slider readouts are typeable through SharedSlider (shared.js), the same box
+   every finance tool carries. */
 
 /* ─── Init ─── */
+// The chart's own choice sits on the chart (M6). The <select> stays as the
+// field the cache saves and the presets set; the buttons follow it.
+SharedSeg.fromSelect($('chartMetric'),{className:'chart-switch',ariaLabel:'Chart Metric',
+  labelOf:o=>({wealth:'Ending Wealth',netBenefit:'Net Benefit',investmentValue:'Investment Value',loanBalance:'Loan Balance'})[o.value]||o.textContent});
+// One row per repayment is the most specific thing here, so it opens closed.
+SharedFold.attach($('amortSection'),{key:'financingvscash',bodies:['#amortUnitNote','#amortTabs','#amortTableWrap']});
 scenarios.push(defaultScenario('60mo Monthly @ 5%',5));
 scenarios.push({...defaultScenario('36mo Monthly @ 7%',7),termPeriods:36,financeRate:7});
 setupFmtInputs();renderScenarioList();rerender();
@@ -2449,7 +2493,7 @@ syncDynamicTips();
    sensitivity panel are marked data-no-persist — they are transient. */
 persist = Persist.init('financingvscash', {
   onRestore: function(){
-    $('baseRfVal').textContent = fmt.pct(parseFloat($('baseRf').value)/100);
+    $('baseRfVal').textContent = fmt.pct(parseFloat($('baseRf').value)/100)+'/yr';
     renderScenarioList();
     updateSensScenarioDropdown();
     rerender();
