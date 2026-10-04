@@ -25,6 +25,10 @@ const LANG_SENS = {
     metricNetEquity: 'Net equity',
     metricLiquidCash: 'Liquid cash',
     metricAccumCost: 'Accumulated cost',
+    // Phone-width forms of the metric switch, so its three options keep one row.
+    metricNetEquityShort: 'Net equity',
+    metricLiquidCashShort: 'Liq. cash',
+    metricAccumCostShort: 'Accum. cost',
     tableHeaderParam: 'Parameter',
     tableHeaderUnit: 'Unit',
     btnAddScenario: '+ Scenario',
@@ -144,6 +148,9 @@ const LANG_SENS = {
     metricNetEquity: 'Kekayaan bersih',
     metricLiquidCash: 'Uang tunai',
     metricAccumCost: 'Biaya kumulatif',
+    metricNetEquityShort: 'Kekayaan bersih',
+    metricLiquidCashShort: 'Tunai',
+    metricAccumCostShort: 'Total biaya',
     tableHeaderParam: 'Parameter',
     tableHeaderUnit: 'Unit',
     btnAddScenario: '+ Skenario',
@@ -1133,6 +1140,10 @@ function chartModalLegendItems(){
     swatch: SharedLegend.spec({color:s.color, width:2.5, dash:s.dash}),
   }));
 }
+// A metric button's name, in full and in its phone-width form (see .lbl-short).
+function metricBtnLabel(key){
+  return `<span class="lbl-long">${escHtml(T(key))}</span><span class="lbl-short">${escHtml(T(key + 'Short'))}</span>`;
+}
 function buildChartModal(){
   if(chartModal.el) return chartModal.el;
   const overlay = document.createElement('div');
@@ -1143,9 +1154,9 @@ function buildChartModal(){
       <div class="chart-head">
         <h2 class="chart-modal-title"></h2>
         <div class="chart-controls">
-          <button class="graph-btn cm-met" data-met="netEquity">${T('metricNetEquity')}</button>
-          <button class="graph-btn cm-met" data-met="cash">${T('metricLiquidCash')}</button>
-          <button class="graph-btn cm-met" data-met="cost">${T('metricAccumCost')}</button>
+          <button class="graph-btn cm-met" data-met="netEquity">${metricBtnLabel('metricNetEquity')}</button>
+          <button class="graph-btn cm-met" data-met="cash">${metricBtnLabel('metricLiquidCash')}</button>
+          <button class="graph-btn cm-met" data-met="cost">${metricBtnLabel('metricAccumCost')}</button>
         </div>
         <div class="btn-cluster">
           <button class="btn-secondary btn-sm" data-act="svg" title="${escAttr(T('btnSvgTitle'))}">⬇ SVG</button>
@@ -1288,9 +1299,9 @@ function buildGlobalChartModal(){
       <div class="chart-head">
         <h2 class="chart-modal-title gc-title"></h2>
         <div class="chart-controls">
-          <button class="graph-btn gc-met" data-met="netEquity">${T('metricNetEquity')}</button>
-          <button class="graph-btn gc-met" data-met="cash">${T('metricLiquidCash')}</button>
-          <button class="graph-btn gc-met" data-met="cost">${T('metricAccumCost')}</button>
+          <button class="graph-btn gc-met" data-met="netEquity">${metricBtnLabel('metricNetEquity')}</button>
+          <button class="graph-btn gc-met" data-met="cash">${metricBtnLabel('metricLiquidCash')}</button>
+          <button class="graph-btn gc-met" data-met="cost">${metricBtnLabel('metricAccumCost')}</button>
           <button class="graph-btn gc-toggle gc-own" data-series="own"><span class="ricon ricon-own" aria-hidden="true"></span>${T('gcShowOwn')}</button>
           <button class="graph-btn gc-toggle gc-rent" data-series="rent"><span class="ricon ricon-rent" aria-hidden="true"></span>${T('gcShowRent')}</button>
         </div>

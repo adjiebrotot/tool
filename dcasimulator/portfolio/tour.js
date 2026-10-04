@@ -82,7 +82,7 @@ window.__TOUR = {
       title: '✅ You are all set',
       body: 'That is the workflow. Prefer comparing single assets instead? Use the ' +
             '<strong>Single-Asset DCA</strong> tool linked in the header. Replay this tour ' +
-            'any time via <strong>Take a tour</strong>.'
+            'any time via the <strong>🧭</strong> button.'
     }
   ]
 };

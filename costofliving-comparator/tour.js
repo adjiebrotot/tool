@@ -81,7 +81,7 @@ window.__TOUR = {
       body: 'That is the whole workflow. The <strong>Jakarta → Perth</strong> example ' +
             'stays loaded, so swap in your own cities and numbers straight over the top ' +
             'of it. Everything runs privately in your browser, free, with no account. ' +
-            'Replay this tour any time via <strong>Take a tour</strong> in the header.'
+            'Replay this tour any time via the <strong>🧭</strong> button in the header.'
     }
   ]
 };

@@ -5,6 +5,7 @@
 window.__TOUR = {
   seenKey: 'pvg-id-tour-v2-seen',
   launchLabel: '🧭 Ikuti tur',
+  launchShort: '🧭 Tur',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
   steps: [
@@ -82,7 +83,7 @@ window.__TOUR = {
       target: null,
       title: '✅ Selesai',
       body: 'Itu seluruh alurnya, gratis, privat, dan tanpa akun. Putar ulang tur kapan saja lewat ' +
-            '<strong>Ikuti tur</strong> di header.'
+            'tombol <strong>🧭</strong> di header.'
     }
   ]
 };

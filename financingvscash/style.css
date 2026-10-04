@@ -175,6 +175,15 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
   .container{padding:10px;}
   .metrics{grid-template-columns:1fr;}
   .btn-row{flex-direction:column;}
+  /* Four tabs share a phone's width by what their names need rather than in
+     equal quarters, so "Assumptions" is not squeezed past its edges. */
+  .ctrl-tab{flex:1 1 auto;padding:11px 3px;}
+  /* The chart's four views as two even rows rather than an uneven wrap. */
+  .seg-group.chart-switch{display:grid;grid-template-columns:1fr 1fr;width:100%;}
+  .seg-group.chart-switch .seg-btn{text-align:center;}
+}
+@media(max-width:380px){
+  .ctrl-tab{font-size:.76rem;}
 }
 
 /* ── Redesign: shared skeleton fit ── */

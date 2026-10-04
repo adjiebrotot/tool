@@ -13,6 +13,7 @@
      window.__TOUR = {
        seenKey:     'unique-per-tool-key',   // localStorage flag
        launchLabel: '🧭 Take a tour',        // header button text (optional)
+       launchShort: '🧭 Tour',               // its phone-width form (optional)
        labels:      { skip, back, next, start, done, dialog }, // optional
        saveState:   function () { ... },   // optional, see below
        restoreState:function (snapshot) { ... },
@@ -44,6 +45,9 @@
   var CFG = window.__TOUR || {};
   var SEEN_KEY = CFG.seenKey || 'ab-tour-generic-seen';
   var LAUNCH_LABEL = CFG.launchLabel || '🧭 Take a tour';
+  // On a phone the header holds Back, language, tour and theme in one row,
+  // and the long label is what pushes it to a second, so it shortens there.
+  var LAUNCH_SHORT = CFG.launchShort || (LAUNCH_LABEL === '🧭 Take a tour' ? '🧭 Tour' : '');
   var steps = Array.isArray(CFG.steps) ? CFG.steps : [];
 
   /* Button copy. Defaults are English; the translated pages pass their own
@@ -369,7 +373,18 @@
       btn.className = model.className.replace(/\bbtn-back\b/g, '').trim();
     }
     if (!btn.className) btn.className = 'pf-tour-launch';
-    btn.textContent = LAUNCH_LABEL;
+    if (LAUNCH_SHORT) {
+      var long = document.createElement('span');
+      long.className = 'pf-tour-long';
+      long.textContent = LAUNCH_LABEL;
+      var short = document.createElement('span');
+      short.className = 'pf-tour-short';
+      short.textContent = LAUNCH_SHORT;
+      btn.appendChild(long);
+      btn.appendChild(short);
+    } else {
+      btn.textContent = LAUNCH_LABEL;
+    }
     btn.setAttribute('aria-label', 'Take a guided tour of this tool');
     btn.addEventListener('click', start);
     // Insert before the theme toggle so it sits next to it.

@@ -58,6 +58,9 @@ table.ticker-table td.nm{font-family:'DM Sans',sans-serif;white-space:normal;col
 .use-hint a:hover{opacity:.8}
 
 @media(max-width:600px){
+  /* Phone size like the other tools' titles; inline so the icon leads the
+     first line instead of standing in a column beside three. */
+  .header-left h1{font-size:1.35rem;display:block}
   table.ticker-table th,table.ticker-table td{padding:7px 9px;font-size:.8rem}
   .country-block h2{font-size:1.06rem}
 }

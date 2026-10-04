@@ -4,6 +4,7 @@
 window.__TOUR = {
   seenKey: 'rvo-id-tour-v2-seen',
   launchLabel: '🧭 Ikuti tur',
+  launchShort: '🧭 Tur',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
   steps: [
@@ -72,7 +73,7 @@ window.__TOUR = {
       body: 'Itu seluruh alurnya, dan semuanya berjalan secara privat di browser Anda, ' +
             'gratis. Ingin membandingkan banyak skenario sekaligus? Coba <strong>Alat ' +
             'Analisis Sensitivitas</strong> di bagian atas. Putar ulang tur kapan saja ' +
-            'lewat <strong>Ikuti tur</strong>.'
+            'lewat tombol <strong>🧭</strong>.'
     }
   ]
 };

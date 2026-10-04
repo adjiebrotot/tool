@@ -3,6 +3,7 @@
 window.__TOUR = {
   seenKey: 'rvos-id-tour-v2-seen',
   launchLabel: '🧭 Ikuti tur',
+  launchShort: '🧭 Tur',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
   steps: [
@@ -46,7 +47,7 @@ window.__TOUR = {
       title: '✅ Selesai',
       body: 'Itu seluruh alurnya. Butuh tampilan detail untuk satu kasus? Gunakan alat ' +
             '<strong>Sewa vs Beli</strong> utama lewat tautan Kembali. Putar ulang tur ' +
-            'kapan saja lewat <strong>Ikuti tur</strong>.'
+            'kapan saja lewat tombol <strong>🧭</strong>.'
     }
   ]
 };

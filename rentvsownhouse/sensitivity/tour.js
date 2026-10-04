@@ -44,7 +44,7 @@ window.__TOUR = {
       title: '✅ You are all set',
       body: 'That is the workflow. Need the detailed single-case view instead? Use the ' +
             'main <strong>Rent vs Own</strong> tool via the Back link. Replay this tour ' +
-            'any time via <strong>Take a tour</strong>.'
+            'any time via the <strong>🧭</strong> button.'
     }
   ]
 };

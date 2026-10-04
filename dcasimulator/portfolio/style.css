@@ -105,6 +105,11 @@
 .sub-tab{flex:1 1 0;padding:7px 4px;text-align:center;font-weight:700;font-size:.78rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-radius:7px;transition:all .15s;white-space:nowrap;font-family:inherit}
 .sub-tab:hover{color:var(--text)}
 .sub-tab.active{background:var(--accent);color:#fff}
+@media(max-width:600px){
+  /* Same stacking as the main tabs, so "Rebalancing" is never clipped. */
+  .sub-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;line-height:1.2}
+  .sub-tab .tico{vertical-align:baseline}
+}
 .sub-panel{display:none}
 .sub-panel.active{display:block}
 .sub-panel>.field-group:first-child{margin-top:0}

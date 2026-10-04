@@ -92,7 +92,7 @@ window.__TOUR = {
             'build-up line by line, your income shading and your monthly commitments, and ' +
             '<strong>CSV</strong> exports the lot. The page ends with what it assumes. ' +
             'Everything runs privately in your browser, free. Replay this tour any time ' +
-            'via <strong>Take a tour</strong> in the header.'
+            'via the <strong>🧭</strong> button in the header.'
     }
   ]
 };
