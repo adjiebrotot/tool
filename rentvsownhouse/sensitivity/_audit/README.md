@@ -14,3 +14,7 @@ summary CSVs in `fixtures/`, exported before the October 2026 relabel (English
 and Indonesian, simple and detailed), and requires every value in them to come
 back out: the importer reads rows by label, so a renamed row must keep its old
 label in `LEGACY_ROW_LABELS` or files people already saved lose it.
+
+`node drag.mjs` checks the draggable scenario columns: a move only reorders
+the scenarios, so each one must keep every input and result, by pointer and by
+the arrow keys, and the summary CSV follows the new order.

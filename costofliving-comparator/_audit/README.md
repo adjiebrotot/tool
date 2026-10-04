@@ -41,3 +41,16 @@ is not trusted, a late rate redraws the results, and a saved rate is reused
 until it is six hours old.
 
 Run: `node run.mjs`, `node freq.mjs` and `node live.mjs`
+
+`drag.mjs` checks the Detailed table's draggable city columns. Whichever city
+lands first becomes the From city, and the promise is that a move changes no
+figure: the table is read off the screen city by city before and after each
+move and every income, expense, savings and ratio must match. Under "I need
+to earn" the promoted city's required salary becomes its typed income (also
+replayed from the raw JSON) and the old From city's required salary comes out
+at the income it had, with no cell turned into an override; dragging back is
+an exact round trip. Under "I can save", with a custom rate and overrides, the
+rate is re-quoted against the new From city (the old From column takes its
+inverse) and only the figures an estimate cannot give back become overrides.
+It also covers nominal targets with custom frequency, keyboard moves, Escape
+and a drop back in place.
