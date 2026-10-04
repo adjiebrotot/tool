@@ -13,6 +13,14 @@ no absolutely positioned element may escape to the page (the currency tags
 once did, stacking on one spot over the card), and every currency tag must
 sit inside its own cell.
 
+It also checks the six Quick Start scenarios. Each is the page's only reset,
+so applied over a messy page (custom frequency on, a nominal target, an
+override, simple-mode cities and a custom rate) it must open exactly as it does
+on a fresh page. Each one's Required salaries are then replayed from the raw
+JSON: the home budget index-scaled to each destination, divided by one minus
+the home savings ratio, and every destination's savings ratio must read the
+same as home's.
+
 `freq.mjs` is the accounting integrity audit for Detailed mode's custom
 frequency checkbox, a conversion add-on that changes the units amounts are
 typed in, never the money. Unticked, the table must match the pre-feature
