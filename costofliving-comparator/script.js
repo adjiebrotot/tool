@@ -240,6 +240,8 @@ const S = {
   detailSavingsFreq: 'monthly',  // the period Savings is shown in; display only
   detailPrevIncomeFreq: null,    // remembered while the feature is off
 };
+// A Quick Start scenario opens from these, never from whatever is on screen.
+const S_DEFAULTS = JSON.parse(JSON.stringify(S));
 let persist = null; // mini cache handle (assigned at init)
 
 // ═══════════════════════════════════════════════════════════
@@ -1698,6 +1700,64 @@ function tourRestoreState(snap){
   syncSegButtons();
   render();
 }
+// ═══════════════════════════════════════════════════════════
+// QUICK START
+// Each scenario opens the Detailed table on one home city and its regional
+// peers, with the goal set to "I need to earn" and the target to the savings
+// ratio, so the Net Income row answers one question: what each destination
+// must pay to save the same share of pay as home does.
+//
+// Every figure is monthly, net of tax, in the home city's currency, and a
+// plausible single professional's budget there. Each budget leaves a round
+// savings ratio (20, 25, 30 or 40%) so the target reads at a glance. Rows the
+// home city's people rarely pay (fuel in Singapore, New York, London or Tokyo,
+// where most commute by train) are left out rather than set to zero.
+// ═══════════════════════════════════════════════════════════
+const QUICK_START={
+  'sg-au':{from:['Singapore','Singapore'],to:[['Sydney','Australia'],['Melbourne','Australia'],['Brisbane','Australia'],['Perth','Australia']],
+    salary:8000,       rows:[['rent',3500],['groceries',600],['eating_out',700],['utilities',200],['other',1000]]},
+  'sea':{from:['Jakarta','Indonesia'],to:[['Kuala Lumpur','Malaysia'],['Bangkok','Thailand'],['Ho Chi Minh City','Vietnam']],
+    salary:25000000,   rows:[['rent',7000000],['groceries',3000000],['eating_out',2500000],['utilities',1200000],['fuel',800000],['other',3000000]]},
+  'us':{from:['New York, NY','United States'],to:[['San Francisco, CA','United States'],['Seattle, WA','United States'],['Austin, TX','United States']],
+    salary:8500,       rows:[['rent',4000],['groceries',600],['eating_out',700],['utilities',200],['other',1300]]},
+  'eu':{from:['London','United Kingdom'],to:[['Paris','France'],['Amsterdam','Netherlands'],['Berlin','Germany']],
+    salary:4500,       rows:[['rent',2100],['groceries',350],['eating_out',400],['utilities',250],['other',500]]},
+  'me':{from:['Dubai','United Arab Emirates'],to:[['Abu Dhabi','United Arab Emirates'],['Doha','Qatar'],['Riyadh','Saudi Arabia']],
+    salary:30000,      rows:[['rent',9000],['groceries',2000],['eating_out',2000],['utilities',800],['fuel',400],['other',3800]]},
+  'ea':{from:['Tokyo','Japan'],to:[['Seoul','South Korea'],['Hong Kong','Hong Kong (China)'],['Shanghai','China']],
+    salary:450000,     rows:[['rent',140000],['groceries',50000],['eating_out',45000],['utilities',15000],['other',65000]]},
+};
+// Exact city and country only: London, Canada must never stand in for London.
+function exactCityKey(name,country){
+  const c=CITIES.find(x=>x.city===name&&x.country===country);
+  return c?cityKey(c):'';
+}
+function applyQuickStart(id){
+  const q=QUICK_START[id];
+  if(!q||!CITIES.length)return;
+  // From the defaults, so no mode, override, custom rate or simple-mode figure
+  // from the comparison before survives the switch.
+  Object.keys(S).forEach(k=>{delete S[k];});
+  Object.assign(S,JSON.parse(JSON.stringify(S_DEFAULTS)));
+  S.mode='detailed'; S.goal='earn'; S.savingsTarget='ratio';
+  S.detailFromKey=exactCityKey(q.from[0],q.from[1]);
+  S.detailToCities=q.to.map(t=>exactCityKey(t[0],t[1]));
+  S.detailToSalaries=q.to.map(()=>0);
+  S.customFxDetailed=q.to.map(()=>null);
+  S.detailFromSalary=q.salary;
+  S.detailRows=q.rows.map(([catId,amt])=>({catId,fromAmount:amt,overrides:{}}));
+  buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
+  buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
+  syncSegButtons();
+  document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.toggle('active',b.dataset.preset===id));
+  render();
+  if(persist)persist.save();
+}
+function wireQuickStart(){
+  document.querySelectorAll('.quick-start-btn').forEach(btn=>
+    btn.addEventListener('click',()=>applyQuickStart(btn.dataset.preset)));
+}
+
 window.__COL_TOUR = {
   seedSimple: seedSimpleDemo, seedDetailed: seedDetailedDemo,
   saveState: tourSaveState, restoreState: tourRestoreState
@@ -1714,6 +1774,7 @@ function init(){
   buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
 
   wireGlobalToggles();
+  wireQuickStart();
   render();
 
   /* ── Mini cache ──────────────────────────────────────────────────────────
@@ -1732,8 +1793,7 @@ function init(){
       restore: function(e){ if(e && typeof e==='object') Object.assign(S, e); }
     }
   });
-  // No Quick Start row here, so save/open sit in the header beside Other Tools.
-  SharedScenario.mount('.header-right', { tool: 'costofliving-comparator', persist: persist });
+  SharedScenario.mount('.quick-start-row', { tool: 'costofliving-comparator', persist: persist });
 }
 
 loadData();
