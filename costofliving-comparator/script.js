@@ -5,9 +5,11 @@
 // DATA (loaded async)
 // ═══════════════════════════════════════════════════════════
 let CITIES = [];
-let RATES = {};
+let RATES = {};      // bundled: units per USD the indices were priced at
+let LIVE = null;     // {rates, date, source, url}: market units per USD, or null
 let META_COL = '';
 let META_RATE = '';
+let RATE_DATE = '';  // bundled rates' YYYY-MM-DD, the floor for a live rate
 
 // Build lookup
 const CITY_MAP = {};
@@ -22,6 +24,7 @@ async function loadData() {
 
   META_COL = parseMonthYear(colJson.metadata.updated_on);
   META_RATE = parseMonthYear(rateJson.metadata.updated_on);
+  RATE_DATE = rateJson.metadata.updated_on || '';
 
   CITIES = colJson.data.map(c => ({
     city: c.city,
@@ -44,11 +47,144 @@ async function loadData() {
 
   rateJson.data.forEach(r => { RATES[r.currency] = r.usd_rate; });
 
-  const el = document.getElementById('dataUpdatedText');
-  if(el) el.textContent = `Cost of living data updated ${META_COL}, currency rates updated ${META_RATE}.`;
-  renderAssumptions();
+  // A live rate saved on an earlier visit is used straight away, so the page
+  // never opens on the old bundled rate and then jumps.
+  const saved = readLiveCache();
+  if(saved) LIVE = saved.live;
+  updateDataText();
 
   init();
+
+  if(!saved || Date.now() - saved.savedAt > LIVE_TTL) refreshLiveRates();
+}
+
+// ═══════════════════════════════════════════════════════════
+// LIVE EXCHANGE RATES
+//
+// The bundled currency_rates.json is the rate the indices were priced at, so
+// it stays the one the index estimates use (see the FX SHOCK note below: local
+// prices are sticky, and a newer rate must not reprice a city in its own
+// currency). Money that crosses the border is a different matter. It moves at
+// today's market rate, so that one comes from a free, keyless, CORS-open daily
+// feed, straight from the browser. Any failure falls back to the next source,
+// then to the bundled file, so the tool always has a rate.
+//
+// Feeds publish once a day. The result is kept in localStorage and asked for
+// again after LIVE_TTL, which keeps us well inside the feeds' fair-use limits.
+// ═══════════════════════════════════════════════════════════
+const LIVE_KEY = 'costofliving-comparator:live-fx';
+const LIVE_TTL = 6 * 3600 * 1000;    // ask again after 6 hours
+const LIVE_TIMEOUT = 8000;           // per source, in ms
+// A live rate more than this many times off the bundled one is a feed error or
+// a redenomination the feed has not caught up with (the two feeds once disagreed
+// 100x on the Syrian pound), never a market move. That currency keeps the
+// bundled rate.
+const LIVE_SANITY = 5;
+
+// Each source returns {date, rates} with rates in units per USD, upper-case
+// codes, or throws.
+const LIVE_SOURCES = [
+  {
+    name: 'ExchangeRate-API',
+    home: 'https://www.exchangerate-api.com',
+    url: 'https://open.er-api.com/v6/latest/USD',
+    parse: j => {
+      if(!j || j.result !== 'success' || !j.rates) throw new Error('bad payload');
+      return { date: new Date(j.time_last_update_unix * 1000).toISOString().slice(0,10), rates: j.rates };
+    }
+  },
+  ...['https://latest.currency-api.pages.dev/v1/currencies/usd.min.json',
+      'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json'
+  ].map(url => ({
+    name: 'Fawaz Ahmed\'s Currency API',
+    home: 'https://github.com/fawazahmed0/exchange-api',
+    url,
+    parse: j => {
+      if(!j || !j.usd || !j.date) throw new Error('bad payload');
+      const rates = {};
+      Object.keys(j.usd).forEach(k => { rates[k.toUpperCase()] = j.usd[k]; });
+      return { date: j.date, rates };
+    }
+  })),
+];
+
+// Keeps only the currencies the dataset uses, and only rates that pass the
+// sanity bound against the bundled one. null when nothing usable is left, or
+// the feed is older than the bundled file.
+function cleanLive(raw, src){
+  if(!raw || !/^\d{4}-\d{2}-\d{2}$/.test(raw.date) || raw.date < RATE_DATE) return null;
+  const rates = {};
+  Object.keys(RATES).forEach(c => {
+    const v = Number(raw.rates[c]), b = RATES[c];
+    if(isFinite(v) && v > 0 && b > 0 && v/b < LIVE_SANITY && b/v < LIVE_SANITY) rates[c] = v;
+  });
+  if(!Object.keys(rates).length) return null;
+  return { rates, date: raw.date, source: src.name, url: src.home };
+}
+
+function readLiveCache(){
+  try {
+    const raw = JSON.parse(localStorage.getItem(LIVE_KEY) || 'null');
+    if(!raw || !raw.live || !raw.live.rates || !isFinite(raw.savedAt)) return null;
+    // Re-screen with the current bundled file, which may be newer than the cache.
+    const live = cleanLive(raw.live, { name: raw.live.source, home: raw.live.url });
+    return live ? { live, savedAt: raw.savedAt } : null;
+  } catch(e) { return null; }
+}
+
+async function fetchJson(url){
+  const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+  const t = ctl ? setTimeout(() => ctl.abort(), LIVE_TIMEOUT) : 0;
+  try {
+    const res = await fetch(url, { cache: 'no-cache', signal: ctl ? ctl.signal : undefined });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  } finally { clearTimeout(t); }
+}
+
+async function refreshLiveRates(){
+  for(const src of LIVE_SOURCES){
+    try {
+      const live = cleanLive(src.parse(await fetchJson(src.url)), src);
+      if(!live) continue;
+      // Never trade a newer saved rate for an older one from a lagging mirror.
+      if(LIVE && LIVE.date > live.date) return;
+      LIVE = live;
+      try { localStorage.setItem(LIVE_KEY, JSON.stringify({ savedAt: Date.now(), live })); } catch(e) {}
+      updateDataText();
+      rerenderForRates();
+      return;
+    } catch(e) { /* next source */ }
+  }
+}
+
+// Redraw with the new rate, unless the user is typing in the results: a redraw
+// would drop their cursor, and every field already redraws on blur.
+function rerenderForRates(){
+  const a = document.activeElement;
+  if(a && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName) && a.closest('#analysisArea, #simpleFxCard')) return;
+  render();
+}
+
+function updateDataText(){
+  renderAssumptions();
+  const el = document.getElementById('dataUpdatedText');
+  if(!el) return;
+  el.textContent = `Cost of living data updated ${META_COL}. `;
+  if(LIVE){
+    el.append('Live exchange rates as of ' + fmtDay(LIVE.date) + ', from ');
+    const a = document.createElement('a');
+    a.href = LIVE.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = LIVE.source;
+    el.append(a, '.');
+  } else {
+    el.append(`Exchange rates updated ${META_RATE} (live rates unavailable).`);
+  }
+}
+
+function fmtDay(iso){
+  const p = String(iso).split('-');
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return parseInt(p[2],10) + ' ' + (months[parseInt(p[1],10)-1] || p[1]) + ' ' + p[0];
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -69,7 +205,9 @@ function renderAssumptions(){
     '<strong>The same lifestyle in both places.</strong> The estimate keeps what you buy fixed and changes only what it costs there.',
     '<strong>Include or exclude housing</strong> switches between the full index and the one without rent, for housing an employer pays for.',
     '<strong>Salaries are net</strong>, after tax, as you enter them; nothing here works out tax.',
-    '<strong>Currencies convert at one rate</strong>'+(META_RATE?', updated '+META_RATE:'')+', or at the rate you type in. The rate slider asks what happens if it moves.',
+    (LIVE
+      ? '<strong>Money crossing currencies converts at the live rate</strong> of '+fmtDay(LIVE.date)+', or at the rate you type in. The rate slider asks what happens if it moves. City estimates keep the rate the index was priced at.'
+      : '<strong>Currencies convert at one rate</strong>'+(META_RATE?', updated '+META_RATE:'')+', or at the rate you type in. The rate slider asks what happens if it moves.'),
     '<strong>Monthly in Simple mode.</strong> Detailed mode can take each row per week, fortnight, month or year, or as a unit price times how many.'
   ];
   ul.innerHTML = items.map(t => '<li>'+t+'</li>').join('');
@@ -171,13 +309,22 @@ function cityDisplay(c){return c.city+', '+c.country;}
 
 // Returns 0 (falsy) for a currency with no known USD rate so the conversion
 // guards below fire and the UI shows "—" instead of silently converting 1:1.
+// This is the bundled rate the indices were priced at.
 function getRate(curr){return RATES[curr]||0;}
 
-// Returns number of fromCurr per 1 toCurr using DB rates (DST/SRC notation)
-function getDefaultFxRate(fromCurr, toCurr){
+// fromCurr per 1 toCurr at today's market rate: the live feed when it has
+// both currencies, else the bundled pair. Never one of each, which would
+// splice two different days into one rate. 0 when neither knows them.
+function marketFx(fromCurr,toCurr){
+  const lf=LIVE&&LIVE.rates[fromCurr], lt=LIVE&&LIVE.rates[toCurr];
+  if(lf&&lt)return lf/lt;
   const fr=getRate(fromCurr), tr=getRate(toCurr);
-  if(!tr)return 0;
-  return fr/tr;
+  return(fr&&tr)?fr/tr:0;
+}
+
+// Returns number of fromCurr per 1 toCurr at the market rate (DST/SRC notation)
+function getDefaultFxRate(fromCurr, toCurr){
+  return marketFx(fromCurr,toCurr);
 }
 
 // Convert expense from one city to another.
@@ -197,10 +344,11 @@ function convertExpense(amount, fromCity, toCity, indexKey, customRate){
   return amount/fr*(ti/fi)*tr;
 }
 
+// Money crossing the border, so it moves at the market rate.
 function convertCurr(amount,fromCurr,toCurr){
-  const fr=getRate(fromCurr), tr=getRate(toCurr);
-  if(!fr||!tr)return NaN; // unknown rate → let the display fall back to "—"
-  return amount/fr*tr;
+  const fx=marketFx(fromCurr,toCurr);
+  if(!fx)return NaN; // unknown rate → let the display fall back to "—"
+  return amount/fx;
 }
 
 // Composite "utilities" weights (they must sum to 1 for a complete city).
@@ -281,7 +429,7 @@ function pruneCustomFx(){
 //
 // S.fxShock is a percentage move in the DESTINATION currency's strength against
 // the source currency, applied on top of whatever base rate is in force (the
-// bundled one, or the user's custom rate).
+// live market rate, or the user's custom rate).
 //
 // Local prices are sticky and the exchange rate is not. A weaker Rupiah does
 // not reprice a Perth lunch in AUD, and it does not reprice a Jakarta lunch in
@@ -331,8 +479,10 @@ function simpleMults(fromCity,toCity){
   // The rate the indices were priced at. Falls back to the user's rate only
   // when the dataset has none at all, since some rate beats no estimate.
   const priced = (fr&&tr) ? fr/tr : (cfx || NaN);
-  // The rate money actually crosses at: the user's if given, then the scenario.
-  const market = (cfx || priced) * fxShockMult(fromCity,toCity);
+  // The rate money actually crosses at: the user's if given, else today's
+  // market rate, then the scenario on top.
+  const today = marketFx(fromCity?fromCity.currency:'', toCity?toCity.currency:'');
+  const market = (cfx || today || priced) * fxShockMult(fromCity,toCity);
   return {
     priced, market,
     idxMult:    1/priced,   // src->dst, index estimate only (local prices are sticky)
