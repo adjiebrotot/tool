@@ -51,6 +51,7 @@ const LANG_SENS = {
     seriesRent: 'Rent',
     boolEnabled: 'Enabled',
     dupTitle: 'Duplicate',
+    dragTitle: 'Drag to reorder scenarios',
     removeTitle: 'Remove',
     sepGeneral: 'Assumptions',
     sepOwn: 'Home: property & mortgage',
@@ -166,6 +167,7 @@ const LANG_SENS = {
     seriesRent: 'Sewa',
     boolEnabled: 'Aktif',
     dupTitle: 'Duplikat',
+    dragTitle: 'Seret untuk mengurutkan skenario',
     removeTitle: 'Hapus',
     sepGeneral: 'Asumsi',
     sepOwn: 'Rumah: properti & KPR',
@@ -515,6 +517,10 @@ function addScenario(){
   scenarios.push(clone);
   rerender();
 }
+function moveScenario(from, to){
+  scenarios.splice(to, 0, scenarios.splice(from, 1)[0]);
+  scenarioResults.splice(to, 0, scenarioResults.splice(from, 1)[0]);
+}
 function removeScenario(i){
   if(scenarios.length<=1) return;
   scenarios.splice(i,1); scenarioResults.splice(i,1); rerender();
@@ -660,6 +666,7 @@ function buildTableHTML(){
     const clamped = Math.min(viewYear, sc.horizon||30);
     return `<th class="scen-th"><div class="scen-header-cell">
       <div class="scen-header-actions">
+        ${n>1?`<button type="button" class="col-grip" data-col-grip="${i}" title="${escAttr(T('dragTitle'))}" aria-label="${escAttr(T('dragTitle'))}">⠿</button>`:''}
         <input class="scen-name-input" data-si="${i}" value="${escHtml(sc.name)}" placeholder="${T('scenPlaceholder')} ${i+1}"/>
         <button class="btn-dupe" data-si="${i}" title="${T('dupTitle')}">⧉</button>
         ${n>1?`<button class="btn-remove rmv-scen" data-si="${i}" title="${T('removeTitle')}">✕</button>`:''}
@@ -1611,6 +1618,13 @@ function wireEvents(){
 
   const addBtn = document.getElementById('addScenBtn');
   if(addBtn) addBtn.addEventListener('click', addScenario);
+
+  // Column drag: reorders the scenarios. Each one carries all its own inputs
+  // and results, so a move is visual only and changes no figure.
+  SharedColDrag.attach(document.querySelector('#tableWrap table.dt'), {
+    scope: document.getElementById('tableWrap'),
+    onMove: (from, to)=>{ moveScenario(from, to); rerender(); }
+  });
 
   document.querySelectorAll('.rmv-scen').forEach(btn=>{
     btn.addEventListener('click', ()=> removeScenario(+btn.dataset.si));

@@ -3075,6 +3075,161 @@
     at: function(i, el){ var l = neutralColours(el); return l.length ? l[((i % l.length) + l.length) % l.length] : ''; }
   };
 
+  /* ── SharedColDrag — pick up a table column and drop it somewhere else ────
+     A grip in a header cell (any element carrying data-col-grip="<n>", where
+     n counts the draggable columns only, left to right) lifts its whole
+     column: the cells slide with the pointer, a line shows where they will
+     land (past a column's middle is past that column), and the tool is told the move as onMove(from, to), both in that
+     same count. What a move means is the tool's business; this only reports
+     it, and the tool redraws. Mouse, pen and touch alike, and the keyboard:
+     a focused grip moves its column one place on the left and right arrows.
+     Escape, or dropping it back where it was, cancels.
+
+         SharedColDrag.attach(table, { onMove: function(from, to){ ... } });  */
+  function makeColDrag(){
+    var THRESHOLD = 4;     // px of travel before a press becomes a drag
+    var EDGE = 48;         // px from a scroller's edge where it starts scrolling
+    // Grid column a cell starts at, counting the colspans before it.
+    function gridCol(cell){ var x = 0, c = cell; while((c = c.previousElementSibling)) x += c.colSpan || 1; return x; }
+    // Every one-column cell at grid column `col`. A cell spanning several
+    // (a section heading, a full-width add button) belongs to no one column,
+    // so it stays where it is.
+    function cellsAt(table, col){
+      var out = [];
+      Array.prototype.forEach.call(table.rows, function(tr){
+        var x = 0;
+        for(var i = 0; i < tr.cells.length; i++){
+          var c = tr.cells[i], span = c.colSpan || 1;
+          if(x === col){ if(span === 1) out.push(c); break; }
+          x += span;
+          if(x > col) break;
+        }
+      });
+      return out;
+    }
+    function scrollerOf(el){
+      for(var p = el.parentElement; p && p !== document.body; p = p.parentElement){
+        var ox = getComputedStyle(p).overflowX;
+        if((ox === 'auto' || ox === 'scroll') && p.scrollWidth > p.clientWidth) return p;
+      }
+      return null;
+    }
+    function attach(table, opts){
+      if(!table || !opts || typeof opts.onMove !== 'function') return;
+      var grips = Array.prototype.slice.call(table.querySelectorAll('[data-col-grip]'));
+      var heads = [];
+      grips.forEach(function(g){ heads[+g.getAttribute('data-col-grip')] = g.closest('th,td'); });
+      if(heads.length < 2 || heads.some(function(h){ return !h; })) return;
+      var scope = opts.scope || document;
+
+      function move(from, to, refocus){
+        if(to === from || to < 0 || to >= heads.length) return;
+        opts.onMove(from, to);
+        if(refocus){
+          // The tool has usually rebuilt the table: find the grip again.
+          var g = scope.querySelector('[data-col-grip="' + to + '"]');
+          if(g) g.focus();
+        }
+      }
+
+      grips.forEach(function(grip){
+        var from = +grip.getAttribute('data-col-grip');
+        grip.addEventListener('keydown', function(e){
+          var d = e.key === 'ArrowLeft' ? -1 : e.key === 'ArrowRight' ? 1 : 0;
+          if(!d) return;
+          e.preventDefault();
+          move(from, from + d, true);
+        });
+        grip.addEventListener('click', function(e){ e.preventDefault(); });
+        grip.addEventListener('pointerdown', function(e){
+          if(e.button !== 0) return;
+          e.preventDefault();
+          drag(e, grip, from);
+        });
+      });
+
+      function drag(e, grip, from){
+        var startX = e.clientX, lastX = startX, dragging = false, to = from, raf = 0, done = false;
+        var cells = cellsAt(table, gridCol(heads[from]));
+        var sc = scrollerOf(table), scroll0 = sc ? sc.scrollLeft : 0;
+        // Layout rects taken once, before anything moves; later frames shift
+        // them by however far the scroller has travelled since.
+        var R = heads.map(function(h){ var r = h.getBoundingClientRect(); return { l: r.left, r: r.right, m: (r.left + r.right) / 2 }; });
+        var minDx = R[0].l - R[from].l, maxDx = R[R.length - 1].r - R[from].r;
+        var others = heads.map(function(_, i){ return i; }).filter(function(i){ return i !== from; });
+        var line = null;
+        try { grip.setPointerCapture(e.pointerId); } catch(_){}
+
+        function frame(){
+          raf = 0;
+          if(!dragging || done) return;
+          if(sc){
+            var b = sc.getBoundingClientRect(), v = 0;
+            if(lastX < b.left + EDGE) v = -Math.ceil((b.left + EDGE - lastX) / 4);
+            else if(lastX > b.right - EDGE) v = Math.ceil((lastX - b.right + EDGE) / 4);
+            if(v){ sc.scrollLeft += Math.max(-16, Math.min(16, v)); }
+          }
+          var s = sc ? sc.scrollLeft - scroll0 : 0;
+          // The cells stop at the table's draggable span. The landing place
+          // follows the pointer: past a column's middle is past that column.
+          var dx = Math.max(minDx, Math.min(maxDx, lastX - startX + s));
+          cells.forEach(function(c){ c.style.transform = 'translateX(' + dx + 'px)'; });
+          to = others.filter(function(i){ return R[i].m - s < lastX; }).length;
+          if(to === from){ line.style.display = 'none'; }
+          else {
+            var x = to > from ? R[others[to - 1]].r : R[others[to]].l;
+            var t = table.getBoundingClientRect();
+            line.style.display = '';
+            line.style.left = (x - s) + 'px';
+            line.style.top = t.top + 'px';
+            line.style.height = t.height + 'px';
+          }
+          if(sc) raf = requestAnimationFrame(frame);   // keep edge-scrolling while held still
+        }
+        function begin(){
+          dragging = true;
+          document.body.classList.add('col-dragging');
+          cells.forEach(function(c){ c.classList.add('col-drag-src'); });
+          line = document.createElement('div');
+          line.className = 'col-drop-line';
+          line.style.display = 'none';
+          document.body.appendChild(line);
+        }
+        function onMove(ev){
+          lastX = ev.clientX;
+          if(!dragging){
+            if(Math.abs(lastX - startX) < THRESHOLD) return;
+            begin();
+          }
+          if(!raf) raf = requestAnimationFrame(frame);
+        }
+        function end(commit){
+          if(done) return;
+          done = true;
+          if(raf) cancelAnimationFrame(raf);
+          grip.removeEventListener('pointermove', onMove);
+          grip.removeEventListener('pointerup', onUp);
+          grip.removeEventListener('pointercancel', onCancel);
+          document.removeEventListener('keydown', onKey, true);
+          try { grip.releasePointerCapture(e.pointerId); } catch(_){}
+          cells.forEach(function(c){ c.classList.remove('col-drag-src'); c.style.transform = ''; });
+          document.body.classList.remove('col-dragging');
+          if(line) line.remove();
+          if(commit && dragging) move(from, to, false);
+        }
+        function onUp(){ end(true); }
+        function onCancel(){ end(false); }
+        function onKey(ev){ if(ev.key === 'Escape'){ ev.preventDefault(); end(false); } }
+        grip.addEventListener('pointermove', onMove);
+        grip.addEventListener('pointerup', onUp);
+        grip.addEventListener('pointercancel', onCancel);
+        document.addEventListener('keydown', onKey, true);
+      }
+    }
+    return { attach: attach };
+  }
+  global.SharedColDrag = makeColDrag();
+
   function initShared(){
     initTooltip();
     global.SharedAbbr.init();

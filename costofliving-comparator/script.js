@@ -1146,13 +1146,21 @@ function renderDetailed(area){
   wireDetail(fromCity,toCities);
 }
 
+// A column's grip: n counts the city columns, From first.
+function gripHtml(n,tip){
+  return`<button type="button" class="col-grip" data-col-grip="${n}" title="${tip}" aria-label="${tip} Arrow keys move it one place.">⠿</button>`;
+}
+
 function buildDetailHTML(fromCity,toCities){
   const fc=fromCity?fromCity.currency:'—';
   const tcs=toCities.map(c=>c?c.currency:'—');
 
   // City search headers using inline selects for detail mode
   let thFrom=`<th class="city-th">
-    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;">📍 FROM CITY</div>
+    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:4px;">
+      ${gripHtml(0,'Drag to move the From city. The city that lands first becomes the From city.')}
+      <span>📍 FROM CITY</span>
+    </div>
     <div class="city-picker" id="dtFromPicker" style="min-width:160px;"></div>
     <div class="sub-num" style="margin-top:3px;">${fc}</div>
   </th>`;
@@ -1160,7 +1168,8 @@ function buildDetailHTML(fromCity,toCities){
   let thTos=toCities.map((tc,i)=>{
     const destCurr=tcs[i];
     return`<th class="city-th">
-    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:6px;">
+    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:4px;">
+      ${gripHtml(i+1,'Drag to move this city. Drop it first to make it the From city, keeping its figures.')}
       <span>🏁 DESTINATION ${i+1}</span>
       <button class="btn-remove rmv-city-btn" data-ci="${i}" title="Remove destination">✕</button>
     </div>
@@ -1335,7 +1344,7 @@ ${goalHtml}
     </tbody>
   </table>
 </div>
-<div class="util-note" style="margin-top:8px;">Data in cells with <span style="display:inline-block;padding:1px 6px;background:var(--override-bg);border:1px solid var(--override-border);border-radius:3px;font-size:0.75rem;font-family:'DM Mono',monospace;">yellow background</span> has been manually overridden. Clear the field to revert to the calculated estimate.</div>`;
+<div class="util-note" style="margin-top:8px;">Drag <span class="col-grip" style="cursor:default;display:inline;padding:0;" aria-hidden="true">⠿</span> to move a city column. The first city is the From city, and every figure keeps its value when a column moves. Data in cells with <span style="display:inline-block;padding:1px 6px;background:var(--override-bg);border:1px solid var(--override-border);border-radius:3px;font-size:0.75rem;font-family:'DM Mono',monospace;">yellow background</span> has been manually overridden. Clear the field to revert to the calculated estimate.</div>`;
 }
 
 // null = no honest estimate for this cell (missing index or missing FX rate).
@@ -1410,6 +1419,105 @@ function calcReqSal(ci,fromCity,toCity){
   const fSavInTo=customFx?fSav/customFx:convertCurr(fSav,fromCity.currency,toCity.currency);
   if(!isFinite(fSavInTo))return null;
   return totToExp+fSavInTo;
+}
+
+// ═══════════════════════════════════════════════════════════
+// COLUMN DRAG (Detailed mode)
+//
+// The table's city columns are one list, From first: column 0 is the From
+// city and column i+1 is destination i. Dragging a column reorders that list,
+// and whichever city lands first becomes the From city.
+//
+// A move rearranges the table and changes no figure. Every cell keeps the
+// value it showed, in its own city's currency:
+//
+//   Net Income  the new From city's income is the figure its column showed:
+//               the required salary under "I need to earn", or its typed
+//               income under "I can save". The old From city's income goes
+//               to its new column as that column's typed income.
+//   Expenses    the new From city's amounts are the figures its column
+//               showed, estimate or override. Every destination cell keeps
+//               its figure too: where the estimate from the new From city
+//               already gives it (the usual case, as the index ratio cancels
+//               through the middle city) the cell stays an estimate, and
+//               where it would not (a custom rate, or an override in the new
+//               From column) the figure is kept as an override.
+//   FX rate     a custom rate is quoted as From currency per 1 destination
+//               currency, so it is re-quoted against the new From city: the
+//               same crossing rates, seen from another side. The old From
+//               city's column takes the inverse of the rate that was on the
+//               new From city's column.
+// ═══════════════════════════════════════════════════════════
+function sameFig(a,b){return Math.abs(a-b)<=1e-9*Math.max(1,Math.abs(a),Math.abs(b));}
+function moveDetailColumn(from,to){
+  const n=S.detailToCities.length+1;
+  if(from===to||from<0||to<0||from>=n||to>=n)return;
+  // perm[new column] = old column
+  const perm=[...Array(n).keys()];
+  perm.splice(to,0,perm.splice(from,1)[0]);
+
+  // Everything each old column shows, read before anything changes.
+  const keys=[S.detailFromKey,...S.detailToCities];
+  const cities=keys.map(getCity);
+  const fromCity=cities[0], fc=currOf(fromCity);
+  const custom=[null,...S.detailToCities.map((_,i)=>detailFx(i,fromCity,cities[i+1]))];
+  // From currency per 1 unit of each column's currency, as the table uses it.
+  const rate=cities.map((c,j)=>j===0?1:(custom[j]||(c&&fromCity?getDefaultFxRate(fc,c.currency):0)));
+  const shown=S.detailRows.map(row=>{
+    const cat=CATS.find(c=>c.id===row.catId)||CATS[0];
+    return keys.map((_,j)=>{
+      if(j===0)return{v:row.fromAmount||0,ov:false};
+      const k=String(j-1);
+      if(row.overrides&&(k in row.overrides))return{v:row.overrides[k]||0,ov:true};
+      const v=(fromCity&&cities[j])?calcExp(row.fromAmount||0,fromCity,cities[j],cat.index,custom[j]):null;
+      return{v:(v!=null&&isFinite(v))?v:null,ov:false};
+    });
+  });
+  const salary=keys.map((_,j)=>{
+    if(j===0)return S.detailFromSalary||0;
+    const typed=S.detailToSalaries[j-1]||0;
+    if(S.goal!=='earn')return typed;
+    const req=calcReqSal(j-1,fromCity,cities[j]);
+    return req==null?typed:req/incomeMult();
+  });
+
+  // The new layout.
+  const p=perm[0], rest=perm.slice(1);
+  S.detailFromKey=keys[p]||'';
+  S.detailToCities=rest.map(q=>keys[q]||'');
+  S.detailFromSalary=salary[p];
+  S.detailToSalaries=rest.map(q=>q===0?salary[0]:(S.detailToSalaries[q-1]||0));
+  const nf=currOf(cities[p]);
+  S.customFxDetailed=rest.map(q=>{
+    if(p===0)return custom[q];                   // same From city: rates stand
+    if(!custom[p]&&!custom[q])return null;       // both on the market rate already
+    const c=cities[q];
+    if(!c||!cities[p]||!rate[p]||!rate[q])return null;
+    const r=rate[q]/rate[p];
+    if(!isFinite(r)||r<=0)return null;
+    const def=getDefaultFxRate(nf,c.currency);
+    return(def&&sameFig(r,def))?null:r;
+  });
+  S.detailRows.forEach((row,ri)=>{
+    const sp=shown[ri][p];
+    row.fromAmount=sp.v==null?0:sp.v;
+    row.overrides={};
+  });
+  pruneCustomFx();
+
+  // Each destination cell keeps its figure: an override where the estimate
+  // from the new From city would not give it back.
+  const nFrom=getCity(S.detailFromKey);
+  S.detailRows.forEach((row,ri)=>{
+    const cat=CATS.find(c=>c.id===row.catId)||CATS[0];
+    rest.forEach((q,j)=>{
+      const old=shown[ri][q];
+      if(old.v==null&&!old.ov)return;
+      const c=getCity(S.detailToCities[j]);
+      const est=(nFrom&&c)?calcExp(row.fromAmount,nFrom,c,cat.index,detailFx(j,nFrom,c)):null;
+      if(old.ov||est==null||!isFinite(est)||!sameFig(est,old.v))row.overrides[String(j)]=old.v;
+    });
+  });
 }
 
 function wireDetail(fromCity,toCities){
@@ -1544,6 +1652,12 @@ function wireDetail(fromCity,toCities){
   document.querySelectorAll('.dt-to-sal').forEach(inp=>{
     inp.addEventListener('input', () => { liveMoney(inp); S.detailToSalaries[+inp.dataset.ci] = parseNum(inp.value); });
     inp.addEventListener('blur', e => { formatMoneyInput(e.target); renderDetailArea(); });
+  });
+
+  // Column drag: From is column 0, destination i is column i+1.
+  SharedColDrag.attach(document.querySelector('#detailSec table.dt'),{
+    scope:document.getElementById('analysisArea'),
+    onMove:(from,to)=>{moveDetailColumn(from,to);renderDetailArea();}
   });
 
   // Target toggle (earn mode)
