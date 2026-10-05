@@ -44,6 +44,25 @@ function toggleSection(id) {
   if (collapsed) renderAll();
 }
 
+/* ── Formulas ─────────────────────────────────────────────────────────────
+   Every formula on the page is written as LaTeX in a .tex element and typeset
+   here by KaTeX. The ones in an equation block get display style, so their
+   fractions and powers are full size. Without KaTeX (offline before it was
+   ever cached) the source stays on screen, which still reads as the formula. */
+(function renderFormulas() {
+  document.querySelectorAll('.tex').forEach(el => {
+    const src = el.textContent.trim();
+    if (window.katex) {
+      try {
+        katex.render((el.closest('.eq') ? '\\displaystyle ' : '') + src, el, { throwOnError: true });
+        return;
+      } catch (err) { /* plain source below */ }
+    }
+    el.textContent = src;
+    el.classList.add('tex-raw');
+  });
+})();
+
 function toggleFaq(questionEl) {
   const answer = questionEl.nextElementSibling;
   const open = answer.classList.contains('open');

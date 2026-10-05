@@ -72,6 +72,14 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 body.light .canvas-wrap{background:linear-gradient(180deg,rgba(0,0,0,.015),rgba(0,0,0,0));}
 .hover-box{margin-top:10px;color:var(--muted);font-size:.86rem;min-height:22px;}
 .scenario-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+/* Editing mode: the editor is a box of its own and the list steps aside. */
+#tab-scenarios.editing .scenario-list,#tab-scenarios.editing #addScenarioBtn{display:none;}
+.sc-editor{border:1px solid var(--border);border-radius:12px;padding:12px 14px 14px;background:var(--bg-subtle);}
+.sc-editor-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.sc-editor-head h3{margin:0;min-width:0;overflow-wrap:anywhere;}
+.sc-editor-close{flex-shrink:0;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:.85rem;line-height:1;cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s;}
+.sc-editor-close:hover{border-color:var(--accent);color:var(--text);}
+.sc-editor-close:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 .scenario-card{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:border-color .15s;}
 .scenario-card:hover{border-color:rgba(255,255,255,.15);}
 body.light .scenario-card:hover{border-color:rgba(0,0,0,.2);}

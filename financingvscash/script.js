@@ -1280,7 +1280,7 @@ function renderScenarioList(){
   scenarios.forEach((sc,i)=>{
     const div=document.createElement('div');div.className='scenario-card'+(editingIdx===i?' active':'');const color=scenarioColor(sc,i);
     div.innerHTML=`<div class="sc-header"><div class="sc-name"><input type="color" class="sc-dot" data-idx="${i}" value="${color}" title="Click to change this scenario's colour" aria-label="Colour for ${sc.name}"/>${sc.name}</div><div class="sc-actions"><button class="sc-btn" data-action="edit" data-idx="${i}" title="Edit">✎</button><button class="sc-btn" data-action="dup" data-idx="${i}" title="Duplicate">⧉</button><button class="sc-btn del" data-action="del" data-idx="${i}" title="Delete">✕</button></div></div><div class="sc-summary">${scSummaryRate(sc)} · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down${(sc.loanType&&sc.loanType!=='annuity')?' · '+LOAN_TYPE_LABEL[sc.loanType]:''}${scenarioHasFloat(sc)?' · variable':''}</div>`;
-    div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)',color:null});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;$('scenarioEditor').style.display='none';}renderScenarioList();rerender();}});});
+    div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)',color:null});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;showEditor(false);}renderScenarioList();rerender();}});});
     const dot=div.querySelector('.sc-dot');
     // The dot sits inside the card, whose own click opens the editor; without
     // this the swatch would open the editor before the colour picker appeared.
@@ -1716,7 +1716,7 @@ function openEditor(idx){
   syncSegGroups();
   renderSchedRows('rate');renderSchedRows('payment');
   updateEditorVisibility();updateImpliedRate();
-  $('scenarioEditor').style.display='block';
+  showEditor(true);
   renderScenarioList();
 }
 
@@ -1732,7 +1732,13 @@ function saveEditor(){
   renderScenarioList();rerender();
 }
 
-function closeEditor(){editingIdx=-1;editorDraft=null;$('scenarioEditor').style.display='none';renderScenarioList();}
+// The list and the Add button hide while the editor is open, so it is plain
+// which scenario is being edited and there is nothing else to click into.
+function showEditor(open){
+  $('scenarioEditor').style.display=open?'block':'none';
+  $('tab-scenarios').classList.toggle('editing',open);
+}
+function closeEditor(){editingIdx=-1;editorDraft=null;showEditor(false);renderScenarioList();}
 
 /* ─── Events ─── */
 $('addScenarioBtn').addEventListener('click',()=>{scenarios.push(defaultScenario());openEditor(scenarios.length-1);rerender();});
@@ -1740,6 +1746,7 @@ $('scColor').addEventListener('input',e=>applyScenarioColor(editingIdx,e.target.
 $('scColor').addEventListener('change',e=>applyScenarioColor(editingIdx,e.target.value,false));
 $('saveScenarioBtn').addEventListener('click',()=>{saveEditor();closeEditor();});
 $('cancelScenarioBtn').addEventListener('click',closeEditor);
+$('closeScenarioBtn').addEventListener('click',closeEditor);
 
 // Base RF rate slider
 ['input','change'].forEach(evt=>{$('baseRf').addEventListener(evt,()=>{$('baseRfVal').textContent=fmt.pct(parseFloat($('baseRf').value)/100)+'/yr';rerender();});});
@@ -2107,7 +2114,7 @@ function applyQuickStart(key){
 
   // The editor and the amortisation tab are views onto the plan before this one.
   editingIdx=-1;editorDraft=null;activeAmortIdx=0;
-  $('scenarioEditor').style.display='none';
+  showEditor(false);
 
   /* The sensitivity panel is marked data-no-persist, but it is still on screen,
      so it is part of what a reset has to clear. Nulling the two range caches is

@@ -182,8 +182,14 @@
     <h3>Financing Scenarios</h3>
     <div class="scenario-list" id="scenarioList"></div>
     <button class="btn-primary btn-sm" id="addScenarioBtn" style="width:100%;margin-bottom:12px;">+ Add Scenario</button>
-    <div id="scenarioEditor" style="display:none;" data-no-persist>
-      <h3 id="editorTitle">Edit Scenario</h3>
+    <!-- While the editor is open the list and Add button above it are hidden
+         (#tab-scenarios.editing), so the box is the only thing on the tab. The
+         X discards edits, the same as Cancel at the bottom. -->
+    <div id="scenarioEditor" class="sc-editor" style="display:none;" data-no-persist>
+      <div class="sc-editor-head">
+        <h3 id="editorTitle">Edit Scenario</h3>
+        <button type="button" class="sc-editor-close" id="closeScenarioBtn" title="Close without saving" aria-label="Close the scenario editor without saving">✕</button>
+      </div>
       <div class="field-row" id="scNameRow"><div class="field-label">Scenario Name</div><div class="inline-row"><input class="num-input" id="scName" type="text" value=""/><input type="color" class="color-series-picker" id="scColor" title="Scenario colour" aria-label="Scenario colour"/></div></div>
       <div id="scFields">
         <div class="field-row" id="scLoanTypeRow">
