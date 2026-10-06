@@ -44,10 +44,10 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .dt td{padding:7px 9px;border:1px solid var(--border);vertical-align:middle;}
 .dt .num-td{font-family:'DM Mono',monospace;text-align:right;}
 .dt .label-td{font-weight:600;min-width:200px;white-space:nowrap;color:var(--text);background:var(--input-bg);}
-.dt .unit-td{min-width:90px;white-space:nowrap;color:var(--muted);background:var(--input-bg);font-family:'DM Mono',monospace;font-size:.74rem;}
-.dt .unit-th{min-width:90px;}
 .dt .scen-th{min-width:185px;text-align:center;}
 .dt .scen-td{min-width:185px;}
+/* The column under "+ Scenario": no inputs, just the table's edge. */
+.dt td.trail-td{background:var(--input-bg);}
 
 /* Scenario header */
 .scen-header-cell{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;}
@@ -75,7 +75,21 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .dt tr.subgroup-row td.label-td{padding-left:26px;}
 .dt tr.subgroup-first td{border-top:1.5px solid var(--accent);}
 .dt tr.subgroup-last td{border-bottom:1.5px solid var(--accent);}
-.ongoing-unit{display:block;font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px;}
+
+/* Grouped rows: a deciding field (a cost's type, a frequency, the budget)
+   and the fields it governs read as one block. No rule runs between them,
+   only around the group, and each governed field hangs off the one above it
+   by a connector in the label column. */
+.dt tr.grp:not(.grp-first) td{border-top:none;padding-top:3px;}
+.dt tr.grp:not(.grp-last) td{border-bottom:none;padding-bottom:3px;}
+.dt tr.grp-child td.label-td{position:relative;padding-left:32px;font-weight:500;}
+.dt tr.grp td.label-td::before,.dt tr.grp td.label-td::after{content:'';position:absolute;left:16px;pointer-events:none;border-color:color-mix(in srgb,var(--muted) 45%,transparent);border-style:solid;border-width:0;}
+.dt tr.grp-first:not(.grp-child) td.label-td{position:relative;}
+/* Down from under the deciding field's name… */
+.dt tr.grp-first:not(.grp-last) td.label-td::after{top:calc(50% + 9px);bottom:0;border-left-width:1.5px;}
+/* …into each governed field (an elbow), and on past it while more follow. */
+.dt tr.grp-child td.label-td::before{top:0;height:50%;width:9px;border-left-width:1.5px;border-bottom-width:1.5px;border-bottom-left-radius:5px;}
+.dt tr.grp-child:not(.grp-last) td.label-td::after{top:50%;bottom:0;border-left-width:1.5px;}
 
 /* Output rows */
 .dt tr.out-own td{background:var(--data-pos-bg);font-weight:700;}
@@ -88,9 +102,18 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .own-val{color:var(--line-a);}
 .rent-val{color:var(--gold);}
 
-/* Param inputs */
-.param-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;font-family:'DM Sans',sans-serif;font-variant-numeric:tabular-nums;padding:5px 8px;width:100%;min-width:100px;transition:border-color var(--motion-fast);}
-.param-input:focus{outline:none;border-color:var(--accent);}
+/* Param inputs. The unit sits inside the field, as on the main page: a
+   currency before the number, anything else after it. The box is the wrap,
+   so a unit of any length ("Rp", "% of value") takes its own room. */
+.param-wrap{display:flex;align-items:center;background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);min-width:100px;transition:border-color var(--motion-fast);}
+.param-wrap:focus-within{border-color:var(--accent);}
+.param-wrap .prefix,.param-wrap .suffix{flex:0 0 auto;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:700;white-space:nowrap;pointer-events:none;}
+.param-wrap .prefix{padding-left:8px;}
+.param-wrap .suffix{padding-right:8px;font-weight:600;}
+.param-input{flex:1 1 auto;background:transparent;border:none;color:var(--text);font-size:.82rem;font-family:'DM Sans',sans-serif;font-variant-numeric:tabular-nums;padding:5px 8px;width:100%;min-width:0;}
+.param-wrap .prefix+.param-input{padding-left:5px;}
+.param-input:focus{outline:none;}
+.param-input::placeholder{color:var(--muted);opacity:.8;}
 .param-select{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;font-family:inherit;padding:5px 8px;width:100%;cursor:pointer;outline:none;transition:border-color var(--motion-fast);}
 .param-select:focus{border-color:var(--accent);}
 .param-bool-wrap{display:flex;align-items:center;gap:7px;padding:3px 0;}
@@ -126,6 +149,8 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
   opacity:.55;
   cursor:not-allowed;
 }
+/* Why a field is unused in this scenario ("Not used for a % cost"). */
+.inactive-note{display:block;font-family:'DM Sans',sans-serif;font-size:.74rem;font-style:italic;color:var(--muted);padding:3px 2px;white-space:nowrap;}
 
 /* Per-scenario add buttons for periods / cost items */
 .dt td.add-td{background:var(--panel-raised);}

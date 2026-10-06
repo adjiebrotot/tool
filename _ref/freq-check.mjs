@@ -180,6 +180,7 @@ const val=(page,id)=>page.inputValue('#'+id);
 
 /* ── rentvsownhouse sensitivity ────────────────────────────────────── */
 {
+  const SharedFreqPerYear = {yearly:1, monthly:12, weekly:52};
   const page = await open('rentvsownhouse/sensitivity/index.html');
   const amt  = '.param-input[data-key="rentAmount"][data-si="0"]';
   const freq = '.param-select[data-key="rentFreq"][data-si="0"]';
@@ -201,12 +202,39 @@ const val=(page,id)=>page.inputValue('#'+id);
   await page.waitForTimeout(200);
   check('sens own cost a year -> a month',
     Number(String(await page.inputValue(cAmt)).replace(/,/g,'')), Math.round(c0/12*100)/100);
+  // Money and "%" convert too, against what the "%" is a share of: 500 a
+  // month of owning costs on the default 800,000 home is 0.75% of its value.
   await page.selectOption(cType,'pct');
   await page.waitForTimeout(200);
-  const pctVal = await page.inputValue(cAmt);
-  await page.selectOption(cFreq,'yearly');
+  check('sens own cost 500 a month -> % of property value', await page.inputValue(cAmt), '0.75');
+  // A "%" cost is not money per period, so it offers no frequency to move.
+  check('sens a % cost has no frequency to move', await page.locator(cFreq).count(), 0);
+  await page.selectOption(cType,'dollar');
   await page.waitForTimeout(200);
-  check('sens a % basis is left alone', await page.inputValue(cAmt), pctVal);
+  check('sens own cost % of property value -> 500 a month', await page.inputValue(cAmt), '500');
+  check('sens own cost keeps its frequency through a % round trip', await page.inputValue(cFreq), 'monthly');
+
+  const sAmt  = '.param-input[data-key="setupCost"][data-si="0"]';
+  const sType = '.param-select[data-key="setupCostType"][data-si="0"]';
+  await page.selectOption(sType,'pct');
+  await page.waitForTimeout(200);
+  check('sens setup cost 32,000 -> % of an 800,000 price', await page.inputValue(sAmt), '4');
+  await page.selectOption(sType,'dollar');
+  await page.waitForTimeout(200);
+  check('sens setup cost 4% of price -> 32,000', await page.inputValue(sAmt), '32,000');
+
+  // Renting costs are a share of a year of rent (2,800 a month here).
+  const rcAmt  = '.param-input[data-key="rentOngoingCost"][data-si="0"]';
+  const rcType = '.param-select[data-key="rentOngoingCostType"][data-si="0"]';
+  await page.selectOption(rcType,'pct');
+  await page.waitForTimeout(200);
+  check('sens rent cost 1,200 a year -> % of yearly rent', await page.inputValue(rcAmt), '3.57');
+  // The "%" holds two decimals (as the main page's field does), so the way
+  // back lands within 0.005% of a year of rent, not always on the cent.
+  await page.selectOption(rcType,'dollar');
+  await page.waitForTimeout(200);
+  check('sens rent cost % of yearly rent -> back to about 1,200 a year',
+    Math.abs(Number(String(await page.inputValue(rcAmt)).replace(/,/g,'')) - 1200) <= 33600*0.00005, true);
 
   // Detailed per-scenario cost rows.
   await page.evaluate(()=>document.querySelector('.mode-seg[data-mode-key="rentCostsMode"] .seg-btn[data-val="detailed"]').click());
@@ -220,6 +248,13 @@ const val=(page,id)=>page.inputValue('#'+id);
   const d1 = Number(String(await page.inputValue(rowAmt)).replace(/,/g,''));
   check('sens detailed cost row rescales with its basis',
     d1, b0==='yearly' ? Math.round(d0/12*100)/100 : Math.round(d0*12*100)/100);
+  // …and restates as a "%" of a year of rent.
+  const b1 = await page.inputValue(rowBasis);
+  const yearRent = Number(String(await page.inputValue(amt)).replace(/,/g,''))*12; // rent is back to a month
+  await page.selectOption(rowBasis, 'pct');
+  await page.waitForTimeout(200);
+  check('sens detailed cost row money -> % of yearly rent',
+    Number(await page.inputValue(rowAmt)), Math.round(d1*SharedFreqPerYear[b1]/yearRent*100*100)/100);
   await page.close();
 }
 
