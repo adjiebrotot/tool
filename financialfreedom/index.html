@@ -169,7 +169,7 @@
       <div class="group-title">Money in</div>
       <div class="field-row">
         <div class="field-head">
-          <div class="field-label"><span class="tip-wrap">Detail <i class="tip-icon" id="incomeModeTip" data-tip="">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Detail <i class="tip-icon" id="incomeModeTip" data-tip="" data-tip-options>?</i></span></div>
           <div class="seg-toggle" id="incomeModeGroup">
             <button class="seg-btn active" data-val="simple" type="button">Simple</button>
             <button class="seg-btn" data-val="detailed" type="button">Detailed</button>
@@ -178,7 +178,7 @@
       </div>
       <div class="field-row" id="savingsModeRow">
         <div class="field-head">
-          <div class="field-label"><span class="tip-wrap"><span id="savingsLabel">Savings</span> <i class="tip-icon" id="savingsTip" data-tip="">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap"><span id="savingsLabel">Savings</span> <i class="tip-icon" id="savingsTip" data-tip="" data-tip-options>?</i></span></div>
           <div class="seg-toggle" id="savingsModeGroup">
             <button class="seg-btn active" data-val="savings" type="button">Savings</button>
             <button class="seg-btn" data-val="income" type="button">Net income</button>
@@ -245,7 +245,7 @@
           </div>
         </div>
         <div class="toggle-row">
-          <div class="toggle-label"><span class="tip-wrap">Rises with inflation <i class="tip-icon" data-tip="<strong>On:</strong> indexed, so it keeps its value.<br><strong>Off:</strong> a flat figure that buys less every year.">?</i></span></div>
+          <div class="toggle-label"><span class="tip-wrap">Rises with inflation <i class="tip-icon" data-tip="<ul><li><strong>On:</strong> indexed, so it keeps its value.</li><li><strong>Off:</strong> a flat figure that buys less every year.</li></ul>">?</i></span></div>
           <label class="toggle-switch"><input type="checkbox" id="pensionIndexed" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
         </div>
         <p class="note" id="pensionNote"></p>
@@ -262,7 +262,7 @@
       <div class="group-title">Money out</div>
       <div class="field-row">
         <div class="field-head">
-          <div class="field-label"><span class="tip-wrap">Detail <i class="tip-icon" id="expenseModeTip" data-tip="">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Detail <i class="tip-icon" id="expenseModeTip" data-tip="" data-tip-options>?</i></span></div>
           <div class="seg-toggle" id="expenseModeGroup">
             <button class="seg-btn active" data-val="simple" type="button">Simple</button>
             <button class="seg-btn" data-val="detailed" type="button">Detailed</button>
@@ -294,7 +294,7 @@
         <div class="stage-actions"><button class="btn-secondary btn-sm" id="addStage" type="button">+ Add stage</button></div>
       </div>
       <div class="field-row money-stage" id="retireRow">
-        <div class="field-label simple-only"><span class="tip-wrap">Retirement expenses <i class="tip-icon" id="retireExpenseTip" data-tip="">?</i></span></div>
+        <div class="field-label simple-only"><span class="tip-wrap">Retirement expenses <i class="tip-icon" id="retireExpenseTip" data-tip="" data-tip-options>?</i></span></div>
         <div class="stage-head detailed-only">
           <input type="text" class="txt-input stage-name stage-name-locked" value="Retirement expenses" readonly aria-readonly="true" aria-label="Stage name, fixed"/>
           <span class="tip-wrap"><i class="tip-icon" data-tip="<strong>Takes over when you stop work</strong>, once any stage still running has finished. After that it fills any gap between stages.">?</i></span>
@@ -452,7 +452,7 @@
       <!-- A way of READING every figure on the page, not an assumption, so it
            sits with the results it changes rather than in the input panel. -->
       <div class="toggle-row money-toggle">
-        <div class="toggle-label"><span class="tip-wrap">Show in today's money <i class="tip-icon" data-tip="<strong>On:</strong> every figure in today's money.<br><strong>Off:</strong> in the money of each year, as the account will read. The plan is the same either way.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap">Show in today's money <i class="tip-icon" data-tip="The plan is the same either way.<ul><li><strong>On:</strong> every figure in today's money.</li><li><strong>Off:</strong> in the money of each year, as the account will read.</li></ul>">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="showReal" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
     </header>

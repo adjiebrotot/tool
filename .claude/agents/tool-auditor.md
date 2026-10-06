@@ -20,7 +20,9 @@ Read `.claude/skills/new-tool/SKILL.md`, then verify:
 2. **SEO** — full `<head>` (title, description, canonical, OG, Twitter, JSON-LD
    `WebApplication`, gtag); registered in `sitemap.xml` and `llms.txt`.
 3. **Language** — plain, correct, **no em-dashes** in user copy, no excessive prose; notes live
-   in tooltips, not inline.
+   in tooltips, not inline. Run `node _ref/tip-check.mjs <tool>`: tips that explain options
+   are a `<ul>` of at most three `<strong>Name:</strong>` items, or explain the selected
+   option only and carry `data-tip-options`.
 4. **Root index.html** — not modified unless the user asked for it.
 5. **Footer** — full disclaimer for finance/tax/engineering tools; licence + made-in only for
    plain tools. Flag a missing disclaimer on a risky tool, and flag an unnecessary disclaimer

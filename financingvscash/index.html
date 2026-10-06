@@ -187,7 +187,7 @@
       <div class="field-row" id="scNameRow"><div class="field-label">Scenario Name</div><div class="inline-row"><input class="num-input" id="scName" type="text" value=""/><input type="color" class="color-series-picker" id="scColor" title="Scenario colour" aria-label="Scenario colour"/></div></div>
       <div id="scFields">
         <div class="field-row" id="scLoanTypeRow">
-          <div class="field-label"><span class="tip-wrap">Loan Type <i class="tip-icon" id="tipLoanType" data-tip="">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Loan Type <i class="tip-icon" id="tipLoanType" data-tip="" data-tip-options>?</i></span></div>
           <select class="sel-input" id="scLoanType">
             <option value="annuity" selected>Amortizing (fixed payment, default)</option>
             <option value="flat">Flat rate (interest on original)</option>
@@ -214,7 +214,7 @@
           <div class="field-sub" id="termSub">Number of monthly payments (e.g. 60 = 5 years).</div>
         </div>
         <div class="field-row" id="scRateModeRow">
-          <div class="field-label"><span class="tip-wrap">Rate Basis <i class="tip-icon" id="tipRateMode" data-tip="">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Rate Basis <i class="tip-icon" id="tipRateMode" data-tip="" data-tip-options>?</i></span></div>
           <div class="seg-group" id="scRateModeGroup">
             <button type="button" class="seg-btn active" data-val="simple">Simple</button>
             <button type="button" class="seg-btn" data-val="schedule">Schedule</button>
@@ -230,7 +230,7 @@
           <div class="sched-actions"><button class="btn-primary btn-sm" id="addRatePeriodBtn" type="button">+ Add Period</button></div>
         </div>
         <div class="field-row" id="scPaymentModeRow" style="display:none;">
-          <div class="field-label"><span class="tip-wrap">Repayment Basis <i class="tip-icon" id="tipPaymentMode" data-tip="">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Repayment Basis <i class="tip-icon" id="tipPaymentMode" data-tip="" data-tip-options>?</i></span></div>
           <div class="seg-group" id="scPaymentModeGroup">
             <button type="button" class="seg-btn active" data-val="single">Single</button>
             <button type="button" class="seg-btn" data-val="schedule">Schedule</button>
@@ -260,7 +260,7 @@
         <div class="field-row" id="scFeeRow"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="A one-off fee to set the loan up, as a fixed amount or a % of the amount financed.">?</i></span></div>
           <div class="inline-row"><input class="num-input fmt-num" id="scFeeAmt" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="0"/><select class="sel-input" id="scFeeType" style="min-width:70px;"><option value="fixed">$</option><option value="pct">%</option></select></div>
         </div>
-        <div class="field-row" id="scFeeTreatmentRow"><div class="field-label"><span class="tip-wrap">Fee Treatment <i class="tip-icon" id="tipFeeTreatment" data-tip="">?</i></span></div>
+        <div class="field-row" id="scFeeTreatmentRow"><div class="field-label"><span class="tip-wrap">Fee Treatment <i class="tip-icon" id="tipFeeTreatment" data-tip="" data-tip-options>?</i></span></div>
           <select class="sel-input" id="scFeeTreatment"><option value="upfront" selected>Paid upfront from cash</option><option value="capitalise">Added to the loan</option><option value="discount">Deducted from the advance</option></select>
         </div>
         <div class="field-row" id="scAdminFeeRow"><div class="field-label"><span class="tip-wrap">Admin Fee <i class="tip-icon" data-tip="A fixed fee on every repayment, such as account-keeping. It runs the full term, so the total is this times the number of payments.">?</i></span></div>
@@ -282,14 +282,14 @@
         <input id="baseRf" type="range" min="0" max="20" step="0.1" value="4.5"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Rate Convention <i class="tip-icon" id="tipRateConvention" data-tip="">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Rate Convention <i class="tip-icon" id="tipRateConvention" data-tip="" data-tip-options>?</i></span></div>
         <select class="sel-input" id="rateConvention"><option value="ear" selected>Effective annual (EAR)</option><option value="nominal">Nominal annual (APR)</option></select>
       </div>
     </div>
     <div class="field-group">
       <div class="group-title">Inflation</div>
       <div class="toggle-row">
-        <div class="toggle-label"><span class="tip-wrap">Enable Inflation Adjustment <i class="tip-icon" id="tipInflation" data-tip="">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap">Enable Inflation Adjustment <i class="tip-icon" id="tipInflation" data-tip="<ul><li><strong>On:</strong> also shows the Net Benefit in today's dollars (Inflation-Adj Net Benefit), discounted at the inflation rate below.</li><li><strong>Off:</strong> nominal future dollars only.</li></ul>">?</i></span></div>
         <label class="toggle"><input type="checkbox" id="inflationToggle"/><span class="slider"></span></label>
       </div>
       <div class="field-row" id="inflationRow" style="display:none;">
@@ -346,7 +346,7 @@
   <section class="metrics">
     <div class="metric card"><div class="label"><span class="tip-wrap">Best Strategy <i class="tip-icon" data-tip="The option that comes out ahead on the Optimization Target below.">?</i></span></div><div class="value" id="kpiBest">—</div><div class="sub" id="kpiBestSub"></div>
       <div class="kpi-opt">
-        <div class="kpi-opt-label"><span class="tip-wrap">Optimization Target <i class="tip-icon" id="tipOptTarget" data-tip="">?</i></span></div>
+        <div class="kpi-opt-label"><span class="tip-wrap">Optimization Target <i class="tip-icon" id="tipOptTarget" data-tip="" data-tip-options>?</i></span></div>
         <select class="sel-input sel-sm" id="optTarget"><option value="netBenefit">Highest Net Benefit</option><option value="lowestInterest">Lowest Total Interest</option><option value="lowestCost">Lowest Financing Cost</option></select>
       </div>
     </div>
@@ -356,7 +356,7 @@
   </section>
   <section class="chart-card card">
     <div class="chart-head">
-      <h2><span id="chartTitle">Ending Wealth Over Time</span> <i class="tip-icon" id="tipChartMetric" data-tip="">?</i></h2>
+      <h2><span id="chartTitle">Ending Wealth Over Time</span> <i class="tip-icon" id="tipChartMetric" data-tip="" data-tip-options>?</i></h2>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="chartSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="chartPngBtn" title="Download this chart as PNG">⬇ PNG</button>

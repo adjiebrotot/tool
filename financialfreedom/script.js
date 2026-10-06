@@ -1372,12 +1372,12 @@ function syncVisibility(){
 /* Money out follows its own two switches: which mode is on, and what the
    retirement figure is entered against. Each tip carries the state it is in. */
 var TIP_EXPENSE_MODE = {
-  simple: '<strong>Simple:</strong> living expenses while you work, retirement expenses once you stop. Detailed adds stages, such as kids.',
+  simple: '<strong>Simple:</strong> living expenses while you work, retirement expenses once you stop.',
   detailed: '<strong>Detailed:</strong> your own stages sit between living and retirement expenses, in age order. Each covers its own ages, working or retired.'
 };
 var TIP_RETIRE_EXPENSE = {
   pct: '<strong>% of living:</strong> follows your living expenses, from the age you stop work. 80% if the mortgage is gone by then.',
-  money: '<strong>A fixed amount</strong> in today’s money, from the age you stop work. It does not follow your living expenses.'
+  money: '<strong>A week, month or year:</strong> a fixed amount in today’s money, from the age you stop work. It does not follow your living expenses.'
 };
 function syncMoneyOut(){
   var detailed = UI.expenseMode === 'detailed', pct = UI.retireExpensePeriod === 'pct';
@@ -1753,7 +1753,7 @@ function wireStages(){
    the stage's own start, and whether it is still paid once you stop work. */
 
 var TIP_INCOME_MODE = {
-  simple: '<strong>Simple:</strong> one figure that grows from today, and a pension if you have one. Detailed adds stages, such as study or a hustle.',
+  simple: '<strong>Simple:</strong> one figure that grows from today, and a pension if you have one.',
   detailed: '<strong>Detailed:</strong> your own stages follow today’s figure in age order, each with its own amount and growth from its start. A pension is a stage too.'
 };
 var TIP_IN_KEEPS = 'On for a pension, rent or part-time work you keep: it still comes in once you stop work. Grow a pension at inflation if indexed, and end it at 120 for life.';

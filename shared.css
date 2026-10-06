@@ -32,6 +32,15 @@
 #globalTooltip strong{color:var(--accent-strong);font-weight:700;}
 #globalTooltip br{display:block;margin-top:5px;content:'';}
 #globalTooltip.visible{display:block;opacity:1;}
+/* Options explained in a tip: a real list, at most three short items. More
+   than that, or long ones, and the tip explains the selected option only and
+   carries .tip-hint (added by shared.js for [data-tip-options]). */
+#globalTooltip ul{margin:4px 0 0;padding-left:16px;}
+#globalTooltip ul:first-child{margin-top:0;}
+#globalTooltip li{margin:3px 0 0;}
+#globalTooltip li:first-child{margin-top:0;}
+#globalTooltip li::marker{color:var(--muted);}
+#globalTooltip .tip-hint{display:block;margin-top:6px;font-size:.7rem;line-height:1.4;color:var(--muted);}
 #globalTooltip .tt-arrow{position:absolute;bottom:-7px;width:12px;height:7px;overflow:hidden;transform:translateX(-50%);}
 #globalTooltip .tt-arrow::before{content:'';display:block;width:10px;height:10px;background:var(--panel);border:1px solid var(--border);transform:rotate(45deg) translate(-3px,-3px);}
 #globalTooltip.flip-below .tt-arrow{bottom:auto;top:-7px;}

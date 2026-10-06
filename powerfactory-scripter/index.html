@@ -205,7 +205,7 @@
           </div>
         </div>
         <div class="form-row">
-          <label>Problem Type <span class="tip-icon" id="tt-problem-type" data-tip="">?</span></label>
+          <label>Problem Type <span class="tip-icon" id="tt-problem-type" data-tip="" data-tip-options>?</span></label>
           <select id="problem-type" onchange="onProblemTypeChange()">
             <option value="brute_force">Brute Force</option>
             <option value="optimisation">Optimisation</option>
@@ -214,7 +214,7 @@
           </select>
         </div>
         <div class="form-row">
-          <label>Study Type <span class="tip-icon" id="tt-study-type" data-tip="">?</span></label>
+          <label>Study Type <span class="tip-icon" id="tt-study-type" data-tip="" data-tip-options>?</span></label>
           <select id="study-type" onchange="onStudyTypeChange()">
             <option value="steady_state">Steady State</option>
             <option value="dynamic_rms">Dynamic RMS</option>
@@ -229,7 +229,7 @@
           </div>
         </div>
         <div class="form-row">
-          <label>Coding Style <span class="tip-icon" id="tt-coding-style" data-tip="">?</span></label>
+          <label>Coding Style <span class="tip-icon" id="tt-coding-style" data-tip="<ul><li><strong>Python File:</strong> wraps everything in main(), ready to run as a plain script.</li><li><strong>Notebook Style:</strong> splits the code into labelled cells for Jupyter or VS Code.</li></ul>">?</span></label>
           <select id="coding-style" onchange="onCodingStyleChange()">
             <option value="python_file">Python File</option>
             <option value="notebook">Notebook Style</option>
@@ -345,7 +345,7 @@
           <button class="btn btn-ghost btn-xs" onclick="addContingencyRow()">+ Add Element Type</button>
         </div>
         <div class="form-row" style="margin-top:12px;">
-          <label>Contingency Type <span class="tip-icon" data-tip="<strong>N-1:</strong> one element is tripped per run.<br><strong>N-2:</strong> two elements are tripped together per run.">?</span></label>
+          <label>Contingency Type <span class="tip-icon" data-tip="<ul><li><strong>N-1:</strong> one element is tripped per run.</li><li><strong>N-2:</strong> two elements are tripped together per run.</li></ul>">?</span></label>
           <select id="contingency-n" onchange="onContingencyNChange()">
             <option value="1">N-1</option>
             <option value="2">N-2</option>
@@ -353,7 +353,7 @@
         </div>
         <div class="checkbox-row cond-hidden" id="row-contingency-combine" style="margin-top:4px;">
           <input type="checkbox" id="contingency-combine" />
-          <label for="contingency-combine">Combine element types <span class="tip-icon" data-tip="<strong>Ticked:</strong> an N-2 pair may mix types, such as a line with a generator.<br><strong>Unticked:</strong> pairs form within one type only.">?</span></label>
+          <label for="contingency-combine">Combine element types <span class="tip-icon" data-tip="<ul><li><strong>Ticked:</strong> an N-2 pair may mix types, such as a line with a generator.</li><li><strong>Unticked:</strong> pairs form within one type only.</li></ul>">?</span></label>
         </div>
       </div>
     </div>
@@ -390,7 +390,7 @@
       </div>
       <div class="section-body">
         <div class="form-row">
-          <label>Sense <span class="tip-icon" data-tip="<strong>Minimise:</strong> the objective goes to the algorithm as it is.<br><strong>Maximise:</strong> it is negated internally, since every scipy algorithm minimises.">?</span></label>
+          <label>Sense <span class="tip-icon" data-tip="<ul><li><strong>Minimise:</strong> the objective goes to the algorithm as it is.</li><li><strong>Maximise:</strong> it is negated internally, since every scipy algorithm minimises.</li></ul>">?</span></label>
           <select id="optim-sense">
             <option value="minimise">Minimise</option>
             <option value="maximise">Maximise</option>
@@ -405,7 +405,7 @@
           </div>
         </div>
         <div class="form-row">
-          <label>Algorithm <span class="tip-icon" data-alg-tip data-tip="">?</span></label>
+          <label>Algorithm <span class="tip-icon" data-alg-tip data-tip="" data-tip-options>?</span></label>
           <div style="display:flex;align-items:center;gap:6px;min-width:0;">
             <select id="optim-algorithm" onchange="updateAlgorithmUI()" style="flex:1;min-width:0;">
               <option value="placeholder">Manual (Placeholder)</option>

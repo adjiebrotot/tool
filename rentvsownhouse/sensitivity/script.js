@@ -603,6 +603,7 @@ function tipHtmlFor(tipKey, variant){
   const tipText = window.RVO_TIP ? RVO_TIP(tipKey, variant, tipTable()) : '';
   return tipText ? `<span class="tip-icon" data-tip-key="${escAttr(tipKey)}"`
     + (variant ? ` data-tip-variant="${escAttr(variant)}"` : '')
+    + (variant && (window.RVO_OPTION_TIPS || []).includes(tipKey) ? ' data-tip-options' : '')
     + ` data-tip="${escAttr(tipText)}">?</span>` : '';
 }
 
