@@ -1269,9 +1269,15 @@ function carryCaps(nextMode){
 
    Under the shipped APRA settings (5.90% product rate, 3.00% buffer, 5.50%
    floor) serviceability binds for almost every realistic borrower. That is the
-   lesson, not an accident of the numbers. The first home buyer is the one
-   deliberate contrast: a thin deposit binds instead, and capitalising LMI is
-   the lever that moves it.
+   lesson, not an accident of the numbers.
+
+   Every scenario is a buyer who can afford the home they priced, so the
+   verdict opens on "enough" and the reader sees what a workable purchase looks
+   like before they start pushing it. Each price is what that borrower would
+   realistically shop for, not what the city median says, and each clears its
+   price with a few percent to spare so the first slider nudge can tip it over.
+   The first home buyer is the one deliberate contrast: they only get there
+   because LMI is capitalised, and turning it off lets the thin deposit bind.
 
    The DTI cap is unreachable here and no scenario should chase it. Stripped to
    zero declared expenses, zero commitments and no minimum surplus, the
@@ -1287,7 +1293,9 @@ const QUICK_START_SCENARIOS = {
      detailed debts swap the flat note under the card for the rate itself, the
      one commitment here whose setting is worth arguing with a lender about.
      The car loan rows are the same in either mode.
-     NSW duty on $1.7M = $76,555, which is 4.50%. Strata, rates and insurance on
+     $1.35M buys a two-bedroom apartment in the inner east or lower north
+     shore, which is what $320k on paper actually services at the assessment
+     rate. NSW duty on $1.35M = $57,305, which is 4.24%. Strata, rates and insurance on
      an inner Sydney apartment run far above the $350/mo the page opens on. */
   'finance-bro': {
     label: 'Finance Bro, Sydney',
@@ -1300,14 +1308,16 @@ const QUICK_START_SCENARIOS = {
       hasCard:true, cardLimit:25000,
       hasPersonal:true, persRepay:950, persBal:42000,
       newPropCosts:900,
-      price:1700000, savings:550000, dutyMode:'pct', dutyPct:'4.50', otherCosts:4000
+      price:1350000, savings:550000, dutyMode:'pct', dutyPct:'4.24', otherCosts:4000
     }
   },
 
   /* Melbourne couple, two school-age children, one income each. $185k combined
      is roughly a teacher plus a mid-level public servant. Two applicants means
      two taxpayers, so the income split matters here more than anywhere else.
-     VIC duty on $950k = $52,070, which is 5.48%. */
+     $300k is savings plus the equity from selling a first apartment, buying a
+     family house in the middle-ring suburbs.
+     VIC duty on $920k = $50,270, which is 5.46%. */
   'couple': {
     label: 'Couple, Melbourne',
     modes: { incWho:'employee', incMode:'simple', debtsMode:'simple',
@@ -1317,13 +1327,14 @@ const QUICK_START_SCENARIOS = {
       privHealth:true, taxYear:'2026-27', helpMode:'none',
       incSimple:185000,
       hasCard:true, cardLimit:15000, newPropCosts:450,
-      price:950000, savings:250000, dutyMode:'pct', dutyPct:'5.48', otherCosts:4000
+      price:920000, savings:300000, dutyMode:'pct', dutyPct:'5.46', otherCosts:4000
     }
   },
 
-  /* The ordinary single Perth buyer. $105k is close to WA full-time average
-     ordinary earnings. No dependants, no car loan, one modest card.
-     WA duty on $650k = $24,890, which is 3.83%. */
+  /* The ordinary single Perth buyer. $110k is close to WA full-time average
+     ordinary earnings. No dependants, no car loan, one modest card. A $560k
+     townhouse or older house in the outer suburbs, after years of saving.
+     WA duty on $560k = $20,615, which is 3.68%. */
   'geoff': {
     label: 'Average Man, Perth',
     modes: { incWho:'employee', incMode:'simple', debtsMode:'simple',
@@ -1331,21 +1342,22 @@ const QUICK_START_SCENARIOS = {
     vals: {
       city:'Perth', adults:'1', deps:0, declaredExp:2800, privHealth:true,
       taxYear:'2026-27', helpMode:'none',
-      incSimple:105000,
+      incSimple:110000,
       hasCard:true, cardLimit:8000, newPropCosts:350,
-      price:650000, savings:150000, dutyMode:'pct', dutyPct:'3.83', otherCosts:4000
+      price:560000, savings:180000, dutyMode:'pct', dutyPct:'3.68', otherCosts:4000
     }
   },
 
-  /* Brisbane first home buyer with a study loan still running. The deposit is
-     the binding cap here, not income: $70k against a $650k price is under 11%,
-     and without LMI the lender stops at 80% of the price. Tick "LMI capitalised"
-     on the Purchase tab and capacity lifts from $264k to $292k, because the ceiling
-     moves to 95% and serviceability takes over as the binding cap.
+  /* Brisbane first home buyer with a study loan still running, buying a $480k
+     unit on $120k. $70k saved is under 15% of the price, so this only works
+     because LMI is capitalised: the ceiling sits at 95% and serviceability is
+     the binding cap. Turn "LMI capitalised" off on the Purchase tab and the
+     lender stops at 80% of the price, the deposit binds instead, and capacity
+     falls from $427k to $264k, $150k short of the same unit.
 
-     The deposit has to be genuinely thin for that to be true. At $90k saved the
-     two caps sit 1.5% apart and capitalising the premium makes the borrower
-     WORSE off, which is the opposite of the lesson. B27d guards that margin.
+     The deposit has to be genuinely thin for that to be true, and the loan has
+     to sit clear of the 95% ceiling, or a small change flips which cap binds.
+     B27d and B27g guard both margins.
 
      QLD first home concession is a full exemption to $700,000, so duty is nil. */
   'first-home': {
@@ -1355,18 +1367,19 @@ const QUICK_START_SCENARIOS = {
     vals: {
       city:'Brisbane', adults:'1', deps:0, declaredExp:2600, privHealth:true,
       taxYear:'2026-27', helpMode:'tax', helpThreshold:67000,
-      incSimple:95000,
+      incSimple:120000,
       hasCard:true, cardLimit:5000, newPropCosts:400,
-      price:650000, savings:70000, dutyMode:'pct', dutyPct:'0.00', otherCosts:4000,
-      lmiCap:false
+      price:480000, savings:70000, dutyMode:'pct', dutyPct:'0.00', otherCosts:4000,
+      lmiCap:true
     }
   },
 
   /* Adelaide sole trader, one dependant. $165k is two-year average net profit
      after add-backs, which is what a lender assesses for the self-employed, and
      the Employee / Self-employed switch is what puts the form on that side.
-     A ute under finance is the commitment that bites.
-     SA duty on $850k = $40,580, which is 4.77%. */
+     A ute under finance is the commitment that bites. A family house in the
+     northern or southern suburbs.
+     SA duty on $780k = $36,730, which is 4.71%. */
   'tradie': {
     label: 'Self-employed tradie, Adelaide',
     modes: { incWho:'self', incMode:'simple', debtsMode:'simple',
@@ -1377,7 +1390,7 @@ const QUICK_START_SCENARIOS = {
       incSimple:165000,
       hasCard:true, cardLimit:20000, newPropCosts:380,
       hasPersonal:true, persRepay:950, persBal:48000,
-      price:850000, savings:300000, dutyMode:'pct', dutyPct:'4.77', otherCosts:4000
+      price:780000, savings:300000, dutyMode:'pct', dutyPct:'4.71', otherCosts:4000
     }
   }
 };
