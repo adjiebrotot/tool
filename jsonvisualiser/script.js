@@ -260,6 +260,41 @@ $('jsonTextInput').addEventListener('keydown', (e) => {
   if((e.ctrlKey || e.metaKey) && e.key === 'Enter') $('loadTextBtn').click();
 });
 
+// ─── SAMPLE ──────────────────────────────────────────────────────────────────
+// A small online-shop API response that uses every JSON type, nests a few
+// levels deep, repeats array items (so Schema Mode has something to fold) and
+// carries one long string (for Wrap Text). It goes in through the paste box,
+// so the text itself is there to read and edit.
+const SAMPLE_JSON = {
+  store: 'Brotools Coffee Co.',
+  open: true,
+  rating: 4.7,
+  closedOn: null,
+  address: { street: '12 Harbour Lane', city: 'Sydney', postcode: '2000', geo: { lat: -33.8688, lng: 151.2093 } },
+  tags: ['coffee', 'bakery', 'takeaway'],
+  products: [
+    { id: 101, name: 'Flat White', price: 5.2, inStock: true, sizes: ['small', 'regular', 'large'],
+      nutrition: { kcal: 110, milk: 'full cream', sugarFree: true } },
+    { id: 102, name: 'Banana Bread', price: 6.5, inStock: true, sizes: ['slice'],
+      nutrition: { kcal: 320, milk: null, sugarFree: false } },
+    { id: 103, name: 'Cold Brew', price: 6.0, inStock: false, sizes: ['regular', 'large'],
+      nutrition: { kcal: 5, milk: null, sugarFree: true } },
+  ],
+  orders: [
+    { orderId: 'A-2041', placedAt: '2026-10-06T08:15:00Z', items: [{ productId: 101, qty: 2 }, { productId: 102, qty: 1 }], paid: true },
+    { orderId: 'A-2042', placedAt: '2026-10-06T08:22:41Z', items: [{ productId: 103, qty: 1 }], paid: false },
+  ],
+  openingHours: { mon: '07:00-15:00', tue: '07:00-15:00', wed: '07:00-15:00', thu: '07:00-15:00', fri: '07:00-16:00', sat: '08:00-14:00', sun: null },
+  about: 'A neighbourhood cafe roasting its own single-origin beans on site every Tuesday. This line is deliberately long so you can see how the tree shortens long values when collapsed, and how the Wrap Text toggle lets them flow across several lines instead.',
+};
+
+$('sampleBtn').addEventListener('click', () => {
+  const text = JSON.stringify(SAMPLE_JSON, null, 2);
+  $('jsonTextInput').value = text;
+  showLoading('Parsing sample JSON...');
+  handleRawJSON(text, 'sample-store.json', text.length, 'paste');
+});
+
 // ─── LOADING / ERROR STATES ──────────────────────────────────────────────────
 function showLoading(msg='Parsing JSON...'){
   $('emptyState').style.display = 'none';

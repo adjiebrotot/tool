@@ -111,73 +111,88 @@
 
         <!-- DATA TAB -->
         <div class="ctrl-panel active" id="tab-data">
-          <div class="section-title">Upload File</div>
-          <div class="upload-zone" id="uploadZone">
-            <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.tsv"/>
-            <div class="upload-icon"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 15.4v3.4a2 2 0 0 0 2 2h12.8a2 2 0 0 0 2-2v-3.4"/><path d="M12 15.6V3.6"/><path d="M7.6 8 12 3.6 16.4 8"/></svg></div>
-            <div class="upload-text">Drop file here or click to browse</div>
-            <div class="upload-sub">CSV, Excel (.xlsx .xls), TSV</div>
-            <div class="file-name" id="fileName" data-no-abbr></div>
-          </div>
-
           <div class="field-group">
-            <label>Header row number <span class="tip-icon" data-tip="Which row holds your column names. If the headers sit on the third row of the file, enter 3.">?</span></label>
-            <input type="number" id="headerRow" value="1" min="1" max="50" style="width:90px" data-no-persist/>
+            <div class="group-title">Upload file</div>
+            <div class="fg-body">
+              <div class="upload-zone" id="uploadZone">
+                <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.tsv"/>
+                <div class="upload-icon"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 15.4v3.4a2 2 0 0 0 2 2h12.8a2 2 0 0 0 2-2v-3.4"/><path d="M12 15.6V3.6"/><path d="M7.6 8 12 3.6 16.4 8"/></svg></div>
+                <div class="upload-text">Drop file here or click to browse</div>
+                <div class="upload-sub">CSV, Excel (.xlsx .xls), TSV</div>
+                <div class="file-name" id="fileName" data-no-abbr></div>
+              </div>
+              <button class="btn-secondary btn-sample" id="sampleBtn" type="button">Load a sample dataset</button>
+            </div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Header row number <i class="tip-icon" data-tip="Which row holds your column names. If the headers sit on the third row of the file, enter 3.">?</i></span></div>
+              <input type="number" id="headerRow" value="1" min="1" max="50" style="width:90px" data-no-persist/>
+            </div>
           </div>
         </div>
 
         <!-- AXES TAB -->
         <div class="ctrl-panel" id="tab-axes">
           <div class="field-group">
-            <div class="section-title" style="margin-bottom:8px">Dimension</div>
-            <div class="dim-btns">
-              <button class="dim-btn active" data-dim="2">2D</button>
-              <button class="dim-btn" data-dim="3">3D</button>
-              <button class="dim-btn" data-dim="4">4D</button>
+            <div class="group-title">Dimension</div>
+            <div class="fg-body">
+              <div class="dim-btns">
+                <button class="dim-btn active" data-dim="2">2D</button>
+                <button class="dim-btn" data-dim="3">3D</button>
+                <button class="dim-btn" data-dim="4">4D</button>
+              </div>
+              <div class="help" id="dimHelp">Line graph: X axis + one or more Y series</div>
             </div>
-            <div class="help" id="dimHelp">Line graph — X axis + one or more Y series</div>
           </div>
 
-          <hr class="sep" style="margin-top:4px"/>
-
-          <div id="axesContent" data-no-abbr>
-            <div style="color:var(--muted);font-size:.86rem;padding:6px 0;text-align:center">Upload a file first to configure axes.</div>
+          <div class="field-group">
+            <div class="group-title">Axes</div>
+            <div id="axesContent" data-no-abbr>
+              <div class="fg-body empty-note">Upload a file first to configure axes.</div>
+            </div>
           </div>
         </div>
 
         <!-- STYLE TAB -->
         <div class="ctrl-panel" id="tab-style">
           <div class="field-group">
-            <div class="section-title">Chart Title</div>
-            <input type="text" id="chartTitle" placeholder="My Chart"/>
+            <div class="group-title">Chart</div>
+            <div class="field-row">
+              <div class="field-label">Chart title</div>
+              <input type="text" id="chartTitle" placeholder="My Chart"/>
+            </div>
           </div>
 
           <!-- 2D series colours -->
-          <div id="seriesColourSection" style="display:none">
-            <hr class="sep"/>
-            <div class="section-title">Series Colours</div>
-            <div class="color-series-list" id="colorSeriesList" data-no-abbr>
-              <div style="color:var(--muted);font-size:.83rem">Select Y columns in Axes tab first.</div>
+          <div class="field-group" id="seriesColourSection" style="display:none">
+            <div class="group-title">Series colours</div>
+            <div class="fg-body">
+              <div class="color-series-list" id="colorSeriesList" data-no-abbr>
+                <div class="empty-note">Select Y columns in Axes tab first.</div>
+              </div>
             </div>
           </div>
 
           <!-- 3D/4D colourmap -->
-          <div id="heatmapSection" style="display:none">
-            <hr class="sep"/>
-            <div class="section-title">Colour Map</div>
-            <div class="colormap-grid" id="colormapGrid"></div>
+          <div class="field-group" id="heatmapSection" style="display:none">
+            <div class="group-title">Colour map</div>
+            <div class="fg-body">
+              <div class="colormap-grid" id="colormapGrid"></div>
+            </div>
           </div>
 
-          <hr class="sep"/>
-          <div class="section-title">Marker (3D / 4D)</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <div class="field-group" style="margin-bottom:0">
-              <label>Size</label>
-              <input type="number" id="markerSize" value="6" min="2" max="20"/>
-            </div>
-            <div class="field-group" style="margin-bottom:0">
-              <label>Opacity</label>
-              <input type="number" id="markerOpacity" value="0.85" min="0.1" max="1" step="0.05"/>
+          <div class="field-group">
+            <div class="group-title">Marker (3D / 4D)</div>
+            <div class="fg-body">
+              <div class="marker-grid">
+                <div>
+                  <div class="field-label">Size</div>
+                  <input type="number" id="markerSize" value="6" min="2" max="20"/>
+                </div>
+                <div>
+                  <div class="field-label">Opacity</div>
+                  <input type="number" id="markerOpacity" value="0.85" min="0.1" max="1" step="0.05"/>
+                </div>
+              </div>
             </div>
           </div>
         </div>
