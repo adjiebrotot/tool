@@ -156,6 +156,13 @@ const CASES = Object.assign({}, HAND, fuzzPlans());
 // The mini cache is replayed for every hand case and every tenth fuzz plan.
 const CACHED = Object.keys(CASES).filter(n => !/^fuzz/.test(n) || Number(n.split('#')[1]) % 10 === 0);
 
+// The currency picker moved from codes to display symbols later than the
+// change toNew() bridges, so only this page's side is given symbols.
+const SYM = {AUD: '$', USD: '$', SGD: '$', IDR: 'Rp', GBP: '£', EUR: '€'};
+function toSymbols(ui){
+  return (ui.currency in SYM) ? Object.assign({}, ui, {currency: SYM[ui.currency]}) : ui;
+}
+
 // An old plan, as the new page reads it.
 function toNew(ui){
   const out = Object.assign({}, ui);
@@ -390,7 +397,7 @@ for(const n of names){
     record.cases[n] = want;
   }
   if(MODE === 'record') continue;
-  const got = await snapCase(newSide.page, toNew(ui));
+  const got = await snapCase(newSide.page, toSymbols(toNew(ui)));
   compared++;
   if(MODE === 'live'){
     const d = firstDiff(oldSnaps[n], got);

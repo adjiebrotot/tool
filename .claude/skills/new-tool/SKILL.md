@@ -42,6 +42,11 @@ Before calling it done, every line here must hold:
 - [ ] **Grouped**: inputs in `.field-group`s, generic before specific; first tab holds the
       four to six figures anyone knows, Currency first; a last **Assumptions** tab holds the
       guesses (inflation, growth, simulation, fill timing).
+- [ ] **Currency is a symbol unless it converts**: a display-only picker is an empty
+      `<select data-currency-symbols>` filled by `SharedCurrency` in `shared.js` (the one
+      symbol list, $ € £ ¥ Rp…; add `data-currency-none` for a "None" option), labelled
+      "Currency Symbol". ISO codes (AUD, USD, EUR) are only for a tool that really applies an
+      exchange rate, like the Cost of Living Comparator.
 - [ ] **Titles stay the real term, tooltips explain it**: keep jargon (Risk-Free Rate,
       Binding constraint) with a one-line plain tip; spell out abbreviations with the term
       in brackets ("safe withdrawal rate (SWR)").
