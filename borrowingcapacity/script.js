@@ -602,24 +602,24 @@ const SIMPLE_INC = {
    ---------------------------------------------------------------------------
    A Simple/Detailed row used to carry both halves of the explanation at once,
    which is two paragraphs to read a switch you have already made. Each tip now
-   leads with the mode that is live and keeps one clause on what the other mode
-   would add, which is all the switch is asking. Keyed by UI key, then value. */
+   explains the mode that is live, and the shared tooltip adds the line saying
+   the other mode has its own (data-tip-options). Keyed by UI key, then value. */
 const MODE_TIPS = {
   incMode: {
-    simple:   '<strong>Simple</strong> counts one gross figure in full, as a lender treats base salary or business profit. Detailed splits it per stream.',
-    detailed: '<strong>Detailed</strong> takes each stream with its own shading, the share a lender counts. Simple takes one gross figure in full.'
+    simple:   '<strong>Simple:</strong> counts one gross figure in full, as a lender treats base salary or business profit.',
+    detailed: '<strong>Detailed:</strong> takes each stream with its own shading, the share a lender counts.'
   },
   debtsMode: {
-    simple:   '<strong>Simple</strong> takes the headline figure of each debt you tick, on the standard settings shown beneath it. Detailed opens those up.',
-    detailed: '<strong>Detailed</strong> sets each rate, term, repayment type and the rate charged on card limits. Simple assesses on the standards.'
+    simple:   '<strong>Simple:</strong> takes the headline figure of each debt you tick, on the standard settings shown beneath it.',
+    detailed: '<strong>Detailed:</strong> sets each rate, term, repayment type and the rate charged on card limits.'
   },
   loanMode: {
-    simple:   '<strong>Simple</strong> asks for the rate and term, then tests you on the standard APRA settings below. Detailed lets you move them.',
-    detailed: '<strong>Detailed</strong> moves the buffer, lender floor, minimum surplus and minimum NSR to one lender&rsquo;s policy. Simple uses APRA standards.'
+    simple:   '<strong>Simple:</strong> asks for the rate and term, then tests you on the standard APRA settings below.',
+    detailed: '<strong>Detailed:</strong> moves the buffer, lender floor, minimum surplus and minimum NSR to one lender&rsquo;s policy.'
   },
   capsMode: {
-    simple:   '<strong>Simple</strong> takes the price, deposit and purchase costs, and reads the LVR ceiling off the LMI switch. Detailed adds the rest.',
-    detailed: '<strong>Detailed</strong> adds the DTI cap and its income basis, a separate bank valuation, and the LVR ceiling as its own dial.'
+    simple:   '<strong>Simple:</strong> takes the price, deposit and purchase costs, and reads the LVR ceiling off the LMI switch.',
+    detailed: '<strong>Detailed:</strong> adds the DTI cap and its income basis, a separate bank valuation, and the LVR ceiling as its own dial.'
   }
 };
 

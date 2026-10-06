@@ -1,9 +1,12 @@
 /* ================================================================
    TOOLTIP HELPER
 ================================================================ */
-function tip(text, id = '') {
+// `options` marks a tip that explains the selected option only, so the shared
+// tooltip adds the line saying the other options have their own.
+function tip(text, id = '', options = false) {
   const idAttr = id ? ` id="${id}"` : '';
-  return `<span class="tip-icon"${idAttr} data-tip="${text.replace(/"/g, '&quot;')}">?</span>`;
+  const optAttr = options ? ' data-tip-options' : '';
+  return `<span class="tip-icon"${idAttr}${optAttr} data-tip="${text.replace(/"/g, '&quot;')}">?</span>`;
 }
 
 /* ================================================================
@@ -17,7 +20,9 @@ function setTip(id, text) {
 /* Option-list tooltips: the (i) beside a dropdown carries the option that is
    SELECTED, not the whole list. The list itself is on screen in the dropdown,
    so repeating all of it is a paragraph explaining a choice already made.
-   Keyed by the control's value; setOptionTips() keeps them current. */
+   Keyed by the control's value; setOptionTips() keeps them current, and the
+   tip's data-tip-options adds the shared "change the option" line. Two short
+   options (Coding Style) are listed in the markup instead. */
 const TIP_PROBLEM_TYPE = {
   brute_force:  '<strong>Brute Force:</strong> runs every combination of the input values. Total runs = the product of the number of values per input.',
   optimisation: '<strong>Optimisation:</strong> a search algorithm hunts for the best input combination. Pick it in Optimisation Settings.',
@@ -30,18 +35,13 @@ const TIP_STUDY_TYPE = {
   dynamic_emt:  '<strong>Dynamic EMT:</strong> an EMT simulation (ComSim) on every iteration. Timeseries outputs are available.',
   harmonic:     '<strong>Harmonic:</strong> a harmonic frequency sweep (ComHlf) on every iteration.'
 };
-const TIP_CODING_STYLE = {
-  python_file: '<strong>Python File:</strong> wraps everything in main(), ready to run as a plain script.',
-  notebook:    '<strong>Notebook Style:</strong> splits the code into labelled cells for Jupyter or VS Code.'
-};
 
-// Point each option-list tip at the option on screen. Called from the three
-// change handlers and once at start-up.
+// Point each option-list tip at the option on screen. Called from the change
+// handlers and once at start-up.
 function setOptionTips() {
   const val = id => (document.getElementById(id) || {}).value;
   setTip('tt-problem-type', TIP_PROBLEM_TYPE[val('problem-type')] || '');
   setTip('tt-study-type',   TIP_STUDY_TYPE[val('study-type')] || '');
-  setTip('tt-coding-style', TIP_CODING_STYLE[val('coding-style')] || '');
 }
 const TIP_OUTPUT_TYPE = {
   attribute:          '<strong>Scalar:</strong> reads one value after the solve, through obj.GetAttribute().',
@@ -1266,7 +1266,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
         <option value="timeseries" ${type==='timeseries'?'selected':''}>Timeseries</option>
         <option value="custom_calculation" ${type==='custom_calculation'?'selected':''}>Custom Calculation</option>
       </select>
-      ${tip(TIP_OUTPUT_TYPE[type] || TIP_OUTPUT_TYPE.attribute, `${id}-tt-type`)}
+      ${tip(TIP_OUTPUT_TYPE[type] || TIP_OUTPUT_TYPE.attribute, `${id}-tt-type`, true)}
       <input type="text" id="${id}-name" value="${data.name||''}" placeholder="Output var name"
         style="flex:1;font-size:12px;padding:3px 8px;min-width:80px;" oninput="onOutputNameChange()" autocomplete="off" />
       ${tip('Python name for this output. It must be unique across every input and output.')}
@@ -1291,7 +1291,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       </div>
       <!-- METRIC (hidden for single_attribute and custom_calculation) -->
       <div class="form-row ${(isAttr||isCust)?'cond-hidden':''}" id="${id}-row-metric">
-        <label>Metric ${tip(TIP_METRIC[metric] || TIP_METRIC.maximum, `${id}-tt-metric`)}</label>
+        <label>Metric ${tip(TIP_METRIC[metric] || TIP_METRIC.maximum, `${id}-tt-metric`, true)}</label>
         <select id="${id}-metric" onchange="onMetricChange('${id}')">
           ${metricOptions}
         </select>

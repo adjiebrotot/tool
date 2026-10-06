@@ -825,10 +825,10 @@ function renderMainChart(results){
   const metric=$('chartMetric').value;
   const titles={wealth:'Ending Wealth Over Time',netBenefit:'Net Benefit vs Cash Purchase',investmentValue:'Investment Value Over Time',loanBalance:'Loan Balance Over Time'};
   $('chartTitle').textContent=titles[metric]||'Chart';
-  const tips={wealth:'Ending Wealth: the cash you still have invested, minus what you still owe on the loan.',
-    netBenefit:'Net Benefit: how far ahead of paying cash each scenario is. Below zero, paying cash is better.',
-    investmentValue:'Investment Value: the cash you keep invested, after each repayment comes out of it.',
-    loanBalance:'Loan Balance: what you still owe on the loan.'};
+  const tips={wealth:'<strong>Ending Wealth:</strong> the cash you still have invested, minus what you still owe on the loan.',
+    netBenefit:'<strong>Net Benefit:</strong> how far ahead of paying cash each scenario is. Below zero, paying cash is better.',
+    investmentValue:'<strong>Investment Value:</strong> the cash you keep invested, after each repayment comes out of it.',
+    loanBalance:'<strong>Loan Balance:</strong> what you still owe on the loan.'};
   const tipEl=$('tipChartMetric');if(tipEl)tipEl.setAttribute('data-tip',tips[metric]||'');
   // Plot on a real-time x-axis so scenarios with different payment
   // frequencies align by actual duration, not by raw period index. The unit is
@@ -1296,9 +1296,10 @@ function renderScenarioList(){
    Seven loan types, four frequencies and three fee treatments used to arrive as
    one tip listing every option at once, which is a paragraph to read a choice
    you have already made. Each of these tips now carries only the option that is
-   selected, so the (i) beside a control explains the control's current state.
-   Each entry is [tip element, the control it follows, the text per value]. A
-   checkbox reads as 'on' or 'off'. */
+   selected, so the (i) beside a control explains the control's current state,
+   and its data-tip-options has the shared tooltip say the other options have
+   their own. Each entry is [tip element, the control it follows, the text per
+   value]. A checkbox reads as 'on' or 'off'. */
 const DYNAMIC_TIPS=[
   ['tipLoanType','scLoanType',{
     annuity:'<strong>Amortizing:</strong> one equal instalment, interest charged on what you still owe. The standard loan, and the default here.',
@@ -1324,14 +1325,11 @@ const DYNAMIC_TIPS=[
     netBenefit:'<strong>Highest Net Benefit:</strong> the scenario that leaves you wealthiest at the end against paying cash.',
     lowestInterest:'<strong>Lowest Total Interest:</strong> the scenario that pays the least interest, fees aside.',
     lowestCost:'<strong>Lowest Financing Cost:</strong> the smallest total borrowing cost, interest plus fees.'}],
-  ['tipInflation','inflationToggle',{
-    on:'The comparison also shows the Net Benefit in today\'s dollars (Inflation-Adj Net Benefit), discounted at the inflation rate below.',
-    off:'Only nominal future dollars are shown. Turn this on to also read them in today\'s money.'}],
 ];
 
 // The two segmented controls live on the editor draft rather than on an input.
 const RATE_MODE_TIPS={
-  simple:'<strong>Simple:</strong> one rate for the whole term. Schedule splits the term into fixed or floating periods instead.',
+  simple:'<strong>Simple:</strong> one rate for the whole term.',
   schedule:'<strong>Schedule:</strong> consecutive periods, each Fixed at one rate or Floating between a min and a max. That is how a 2 year fixed that reverts behaves.'
 };
 const PAYMENT_MODE_TIPS={

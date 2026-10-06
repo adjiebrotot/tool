@@ -1059,13 +1059,46 @@ Four rules follow from that:
   needs nothing said, it has no (i).
 - **A dependent field's tip follows the field.** See below.
 
+### Tips that explain options: a list, or the selected one
+
+When a tip explains the options of a control (or the series of a chart, or the
+sections of a table), it never runs them together as a paragraph. Two forms,
+and the choice is by size:
+
+- **Three options or fewer, each a short clause:** a real list, every item
+  opening with the option's name in `<strong>`, colon included. Anything that
+  holds for all of them goes before the list as one plain sentence.
+
+  ```html
+  <span class="tip-icon" data-tip="<ul><li><strong>Net equity:</strong> the home if sold, minus the loan, plus cash.</li><li><strong>Liquid cash:</strong> cash in the bank.</li><li><strong>Accumulated cost:</strong> what housing has cost so far.</li></ul>">?</span>
+  ```
+
+- **More than three, or any one of them needs a long sentence:** the tip
+  explains the **selected** option only, in the same `<strong>Name:</strong>`
+  form, and the element carries `data-tip-options`. The shared tooltip then adds
+  a small muted line under it, "Change the option to see the others explained."
+  (Indonesian on an `lang="id"` page), so the reader knows the other options have
+  their own. Do not add a clause on what the other option does; that line is the
+  pointer. Wiring is as in "Dependent tooltips" below.
+
+  ```html
+  <i class="tip-icon" id="tipLoanType" data-tip="" data-tip-options>?</i>
+  ```
+
+A list never carries `data-tip-options`, and a tip that follows a control
+without naming an option (a state, such as a slider that is inert until a
+budget is set) does not carry it either. `tip-check` enforces all of this: two
+or more "Name:" runs outside a list fail, a list of more than three items fails,
+and a tip that changes with its control and opens with `<strong>Name:</strong>`
+fails without `data-tip-options`.
+
 ### Dependent tooltips: say the state you are in
 
 A dropdown with seven options used to mean a tip listing all seven, which is the
 longest tip on any page and the least read: the options are already on screen in
 the dropdown, and six of the seven describe a choice the reader did not make. So
-a tip that hangs off a control carries the option that is **selected**, with at
-most one clause on what switching would do:
+a tip that hangs off a control carries the option that is **selected**, and
+`data-tip-options` adds the line saying the others have their own:
 
 ```js
 const TIP_STUDY_TYPE = {
@@ -1076,18 +1109,18 @@ const TIP_STUDY_TYPE = {
 setTip('tt-study-type', TIP_STUDY_TYPE[$('study-type').value] || '');
 ```
 
-The same shape covers a Simple/Detailed switch (`<strong>Simple</strong> counts
-one gross figure in full. Detailed splits it per stream.`), a unit that changes
+The same shape covers a Simple/Detailed switch (`<strong>Simple:</strong> counts
+one gross figure in full.`), a unit that changes
 what a field is asking for (deposit as an amount versus a share of the price), and
 a field that is inert until another one is set (a budget-growth slider while the
 budget is automatic). Where a tool already keeps a table of tip text, give the
 entry variants keyed by state rather than a second element:
 `rentvsownhouse/tooltips.js` does this, and `RVO_APPLY_TIPS` reads each element's
-`data-tip-variant`.
+`data-tip-variant` (and sets `data-tip-options` for the keys in `RVO_OPTION_TIPS`).
 
 Wire it so the control keeps its own tip current, from the handler that already
-runs on change, and leave the markup's `data-tip` empty (`data-tip=""`) so an
-unwired tip shows up as a blank bubble rather than as stale text. `tip-check`
+runs on change, and leave the markup's `data-tip` empty (`data-tip=""`, plus
+`data-tip-options` when it names an option) so an unwired tip shows up as a blank bubble rather than as stale text. `tip-check`
 fails on an empty tip for exactly that reason.
 
 ### Global Tooltip (Dynamic, triggered by `data-tip`)
@@ -1127,6 +1160,10 @@ Auto-created by `shared.js`. Appears on hover, positioned intelligently to avoid
 #globalTooltip strong { color: var(--accent-strong); font-weight: 700; }
 #globalTooltip br { display: block; margin-top: 5px; content: ''; }
 #globalTooltip.visible { display: block; opacity: 1; }
+/* Options listed in a tip, and the line under a selected-option tip */
+#globalTooltip ul { margin: 4px 0 0; padding-left: 16px; }
+#globalTooltip li { margin: 3px 0 0; }
+#globalTooltip .tip-hint { display: block; margin-top: 6px; font-size: .7rem; color: var(--muted); }
 
 /* Arrow pointer */
 #globalTooltip .tt-arrow {

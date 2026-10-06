@@ -26,7 +26,9 @@ build step, no server.
 - **SEO**: copy and adapt the standard `<head>` block (title, description, canonical, OG,
   Twitter, JSON-LD `WebApplication`, gtag). Add the tool to `sitemap.xml` and `llms.txt`.
 - **Language**: plain and tight, **no em-dashes** in user copy, no walls of text. Notes go in
-  `data-tip` tooltips, and prefer dynamic/on-demand tooltips over long ones.
+  `data-tip` tooltips, and prefer dynamic/on-demand tooltips over long ones. A tip that
+  explains options lists them (`<ul>`, `<strong>Name:</strong>`, three short ones at most) or
+  explains only the selected one with `data-tip-options`.
 - **Do not edit the root `index.html`** unless the user explicitly asks.
 - **Footer**: full disclaimer + licence + made-in for finance/tax/engineering tools; just
   licence + made-in for plain tools.

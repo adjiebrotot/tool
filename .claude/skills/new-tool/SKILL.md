@@ -87,6 +87,11 @@ block. Then register the tool site-wide:
   A tip has to carry a domain fact: a definition, a unit, a rule, a caveat, a behaviour
   nobody could guess. If the only missing word is something like "annual", put it in the
   label instead of hiding it in a hover.
+- A tooltip that **explains options** names each one in `<strong>Name:</strong>` and never
+  runs them together as a paragraph. Three or fewer short ones: a `<ul>` list. More than
+  three, or any needing a long sentence: explain only the **selected** option and add
+  `data-tip-options`, which makes the shared tooltip add a small "Change the option to see
+  the others explained." line. See "Tips that explain options" in `_ref/design-reference.md`.
 - A tooltip on a **dependent** field is written to follow that field: it carries the option
   that is selected, or the state the control is in, not a list of every option. Leave its
   markup `data-tip=""` and fill it from the handler that already runs on change.

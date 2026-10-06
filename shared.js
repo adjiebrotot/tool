@@ -1829,6 +1829,17 @@
     var PAD = 8;
     var activeIcon = null;
 
+    /* A tip on an options control explains only the option that is selected
+       (see "Tooltips" in _ref/design-reference.md). The element says so with
+       data-tip-options, and this small line under the tip tells the reader the
+       other options have their own explanation. */
+    function optionsHint(){
+      var id = /^id\b/i.test(document.documentElement.lang || '');
+      return '<span class="tip-hint">' +
+        (id ? 'Ganti pilihan untuk melihat penjelasan lainnya.'
+            : 'Change the option to see the others explained.') + '</span>';
+    }
+
     function hide(){
       activeIcon = null;
       tt.classList.remove('visible');
@@ -1881,7 +1892,7 @@
       if (!tip) { hide(); return; }
 
       activeIcon = icon;
-      ttText.innerHTML = tip;
+      ttText.innerHTML = tip + (icon.hasAttribute('data-tip-options') ? optionsHint() : '');
       tt.classList.add('visible');
       tt.style.display = 'block';
       tt.style.opacity = '0';

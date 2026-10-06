@@ -12,6 +12,12 @@
 //     than on the markup, so <strong> and <br> are not charged to the author;
 //   - no tip is left empty, which is how an unwired dynamic tip shows up;
 //   - no em-dash anywhere in tip copy (site-wide house rule);
+//   - a tip that explains options lists them: <strong>name:</strong> items in
+//     a <ul>, never two or more "Name: ..." runs in one paragraph, and never
+//     more than three items. Past three (or past short items) the tip explains
+//     the selected option only and carries data-tip-options, which has the
+//     shared tooltip add the "change the option" line; so a tip that changes
+//     with its control and leads with <strong>Option:</strong> must carry it;
 //   - tips that depend on another control really do follow it: every <select>
 //     and every segmented control on the page is driven through all of its
 //     values, and the budget is re-checked in each state. A page that changes
@@ -108,7 +114,7 @@ await ctx.addInitScript(() => {
 const READ = () => {
   const plain = html => {
     const d = document.createElement('div');
-    d.innerHTML = html.replace(/<br\s*\/?>/gi, ' ');
+    d.innerHTML = html.replace(/<br\s*\/?>|<\/li>/gi, ' ');
     return (d.textContent || '').replace(/\s+/g, ' ').trim();
   };
   return [...document.querySelectorAll('[data-tip]')]
@@ -118,6 +124,8 @@ const READ = () => {
       return {
         raw,
         text: plain(raw),
+        options: el.hasAttribute('data-tip-options'),
+        id: el.id || '',
         where: el.id || (el.className && String(el.className).split(' ')[0]) || el.tagName.toLowerCase(),
         label: (el.closest('.tip-wrap, .field-label, .mode-row, .slider-label, label, h2, .metric') || el)
                  .textContent.replace(/\s+/g, ' ').trim().slice(0, 40)
@@ -179,6 +187,23 @@ for (const file of pages(ROOT).filter(f => f.includes(ONLY))) {
   const dynamic = new Set(flat.map(t => t.where + '\u0000' + t.text)).size >
                   new Set(flat.map(t => t.where)).size;
 
+  /* Options in a tip: a list, or one option at a time. Read the text that is
+     not already inside a list item, and count the "Name:" runs that open it or
+     follow a full stop or a line break. Two or more is a list of options
+     written as a paragraph. */
+  const OPTION_RUN = /(?:^|[.!?]\s+|<br\s*\/?>\s*)(?:<strong>\s*)?[A-Z%][^\s.:<>]*(?:\s[^\s.:<>]+){0,2}:(?:\s*<\/strong>)?\s/g;
+  const outsideList = raw => raw.replace(/<ul[\s\S]*?<\/ul>/gi, ' ');
+  const paraList = flat.filter(t =>
+    (outsideList(t.raw).match(OPTION_RUN) || []).length >= 2 ||
+    (outsideList(t.raw).match(/<strong>[^<]{1,40}:\s*<\/strong>/g) || []).length >= 2);
+  const longList = flat.filter(t => (t.raw.match(/<li\b/gi) || []).length > 3);
+  const listWithHint = flat.filter(t => t.options && /<ul\b/i.test(t.raw));
+  // A tip that follows its control and names the option it is on.
+  const byId = new Map();
+  for (const t of flat) if (t.id) (byId.get(t.id) || byId.set(t.id, new Set()).get(t.id)).add(t.raw);
+  const unhinted = flat.filter(t => t.id && byId.get(t.id).size > 1 && !t.options &&
+                                    /^<strong>[^<]{1,40}:\s*<\/strong>/.test(t.raw));
+
   const longest = [...tips].sort((a, b) => b.text.length - a.text.length).slice(0, 3);
   const med = [...tips].map(t => t.text.length).sort((a, b) => a - b)[Math.floor(tips.length / 2)];
   grandTotal += tips.length;
@@ -198,6 +223,14 @@ for (const file of pages(ROOT).filter(f => f.includes(ONLY))) {
   check(`${rel} no em-dash in tip copy`,
     dash.length === 0,
     dash.length ? dash.slice(0, 3).map(t => t.where).join(', ') : 'clean');
+  check(`${rel} options are a list (at most three), or one option at a time`,
+    paraList.length + longList.length === 0,
+    [...paraList.slice(0, 2).map(t => `paragraph ${t.where}: "${t.text.slice(0, 50)}…"`),
+     ...longList.slice(0, 2).map(t => `${(t.raw.match(/<li\b/gi) || []).length} items ${t.where}`)].join(' | ') || 'clean');
+  check(`${rel} a tip on the selected option carries data-tip-options, a list does not`,
+    unhinted.length + listWithHint.length === 0,
+    [...new Set([...unhinted.map(t => 'no hint ' + t.where), ...listWithHint.map(t => 'list with hint ' + t.where)])]
+      .slice(0, 4).join(', ') || 'clean');
   check(`${rel} no page errors while the tips were driven`,
     errors.length === 0, errors[0] || 'clean');
 

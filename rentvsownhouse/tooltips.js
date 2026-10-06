@@ -5,38 +5,34 @@
 // otherwise get wrong. A tip is read standing up in a small bubble, so anything
 // longer goes unread.
 //
-// A tip is either a string, or a set of VARIANTS keyed by the state its control
-// is in. A variant tip explains the state you are actually in and keeps one
-// clause for what the other state would do, instead of listing every state at
-// once and leaving the reader to find their own. The page sets the state with
-// data-tip-variant and RVO_APPLY_TIPS picks it up; anything that cannot say
-// which state it is in gets the first variant.
+// A tip that explains options lists them, <strong>name:</strong> first, in a
+// <ul> of at most three short items. Past that, it is a set of VARIANTS keyed
+// by the option selected, and explains that option only; RVO_OPTION_TIPS names
+// those, and the shared tooltip adds a small line saying the other options
+// have their own. A variant can also follow a state rather than an option
+// (monthlyBudgetIncrease). The page sets the state with data-tip-variant and
+// RVO_APPLY_TIPS picks it up; anything that cannot say which state it is in
+// gets the first variant.
 var RVO_TIPS_EN = {
   propertyPrice:        "Market price you would pay today. It sets the starting house equity and the loan size.",
   downPaymentPct:       "Share of the price paid upfront. 100% models an all-cash buy, and the renter invests the same amount instead. 20% is not always best.",
   mortgageMode: {
-    simple:   "<strong>Simple:</strong> principal and interest at one rate for the whole term. Detailed adds the loan type, cost accounting and a rate schedule.",
-    detailed: "<strong>Detailed:</strong> loan type, cost accounting, and a year-by-year rate schedule. Simple is one flat rate for the whole term."
+    simple:   "<strong>Simple:</strong> principal and interest at one rate for the whole term.",
+    detailed: "<strong>Detailed:</strong> adds the loan type, cost accounting, and a year-by-year rate schedule."
   },
-  mortgageType: {
-    pi: "<strong>Principal &amp; Interest:</strong> every payment cuts the balance, so equity builds from the first one. Interest Only pays interest alone.",
-    io: "<strong>Interest Only:</strong> payments cover interest alone, so they build no equity. The whole balance is repaid from cash when the term ends."
-  },
-  costInterestOnly: {
-    on:  "<strong>On:</strong> Accumulated cost counts interest and ongoing costs only, since principal becomes equity rather than money lost.",
-    off: "<strong>Off:</strong> the whole repayment plus ongoing costs counts as a cost, principal included."
-  },
+  mortgageType:         "<ul><li><strong>Principal &amp; Interest:</strong> each payment cuts the balance, building equity.</li><li><strong>Interest Only:</strong> builds no equity. The balance is repaid from cash at the end.</li></ul>",
+  costInterestOnly:     "What Accumulated cost counts.<ul><li><strong>On:</strong> interest and ongoing costs, since principal becomes equity.</li><li><strong>Off:</strong> the whole repayment and ongoing costs.</li></ul>",
   mortgageRate:         "Annual rate on the loan, held flat for the whole term. It sets the repayment and the total interest.",
   rateSchedule:         "Rates by year of the loan, each period <strong>Fixed</strong> or <strong>Floating</strong> in a band. Rent-Then-Buy starts this schedule at its year 1 when it buys.",
   mortgageTerm:         "Years the loan is amortised over. Longer means a smaller repayment and more interest. Once it is repaid, the whole budget turns into savings.",
   sellingCost:          "Agent, marketing, legal and seller taxes if the home is sold. House and net equity are shown after it, as if sold that year.",
   houseGrowth:          "How fast house prices grow each year (RPPI). It drives house equity and the Rent-Then-Buy price. The tool below works it out from past prices.",
   ownCostsMode: {
-    simple:   "<strong>Simple:</strong> one setup cost and one ongoing cost. Detailed lists each one, with its own unit, inflation or percentage basis.",
+    simple:   "<strong>Simple:</strong> one setup cost and one ongoing cost.",
     detailed: "<strong>Detailed:</strong> each cost on its own line. Setup as $ or % of price, ongoing per week, month or year with its own inflation, or % of value."
   },
   rentCostsMode: {
-    simple:   "<strong>Simple:</strong> one ongoing cost of renting. Detailed lists each one separately.",
+    simple:   "<strong>Simple:</strong> one ongoing cost of renting.",
     detailed: "<strong>Detailed:</strong> each cost on its own line, per week, month or year with its own inflation, or as a % of annual rent."
   },
   setupCost:            "One-off costs at purchase: stamp duty, conveyancing, inspection. Paid from savings. A later Rent-Then-Buy purchase scales them to its price.",
@@ -57,35 +53,29 @@ var RVO_TIPS_EN = {
   rtbEnabled:           "A third scenario: rent for some years, then buy at the price by then, on the same budget. A blank budget or cash grows to fund it, which also moves Own and Rent.",
   rtbBuyAtYear:         "Buy at the end of this year, at the price grown by RPPI. The mortgage starts then as a new loan: full term, rate schedule from its year 1.",
   calcCagr:             "Enter year and price pairs. The yearly growth they imply (CAGR) is applied to House price growth above.",
-  graphMetric:          "Net equity: the home if sold, minus the loan, plus cash. Liquid cash: cash in the bank. Accumulated cost: what housing has cost so far.",
-  cashflowTable:        "Cash position: cash in and out that year. Mortgage position: the home and the loan. Financial position: net equity and accumulated cost.",
+  graphMetric:          "<ul><li><strong>Net equity:</strong> the home if sold, minus the loan, plus cash.</li><li><strong>Liquid cash:</strong> cash in the bank.</li><li><strong>Accumulated cost:</strong> what housing has cost so far.</li></ul>",
+  cashflowTable:        "<ul><li><strong>Cash position:</strong> cash in and out that year.</li><li><strong>Mortgage position:</strong> the home and the loan.</li><li><strong>Financial position:</strong> net equity and accumulated cost.</li></ul>",
 };
 var RVO_TIPS_ID = {
   propertyPrice:        "Harga pasar properti saat ini. Menjadi nilai awal ekuitas rumah dan besaran KPR.",
   downPaymentPct:       "Persentase harga yang dibayar di muka. 100% berarti pembelian tunai, dan penyewa menginvestasikan jumlah yang sama. 20% tidak selalu optimal.",
   mortgageMode: {
-    simple:   "<strong>Sederhana:</strong> Pokok &amp; Bunga dengan satu suku bunga untuk seluruh jangka waktu. Rinci menambah jenis KPR, akuntansi biaya, dan jadwal bunga.",
-    detailed: "<strong>Rinci:</strong> jenis KPR, akuntansi biaya, dan jadwal bunga per periode. Sederhana memakai satu suku bunga tetap."
+    simple:   "<strong>Sederhana:</strong> Pokok &amp; Bunga dengan satu suku bunga untuk seluruh jangka waktu.",
+    detailed: "<strong>Rinci:</strong> menambah jenis KPR, akuntansi biaya, dan jadwal bunga per periode."
   },
-  mortgageType: {
-    pi: "<strong>Pokok &amp; Bunga:</strong> tiap cicilan mengurangi saldo, jadi ekuitas bertambah sejak cicilan pertama. Bunga Saja hanya menutup bunga.",
-    io: "<strong>Bunga Saja:</strong> cicilan hanya menutup bunga, jadi tidak membangun ekuitas. Seluruh pokok dilunasi dari kas saat jangka waktu berakhir."
-  },
-  costInterestOnly: {
-    on:  "<strong>Aktif:</strong> Total biaya hanya menghitung bunga dan biaya rutin, karena cicilan pokok menjadi ekuitas, bukan uang yang hilang.",
-    off: "<strong>Nonaktif:</strong> seluruh cicilan ditambah biaya rutin dihitung sebagai pengeluaran, termasuk pokoknya."
-  },
+  mortgageType:         "<ul><li><strong>Pokok &amp; Bunga:</strong> tiap cicilan mengurangi saldo, membangun ekuitas.</li><li><strong>Bunga Saja:</strong> tidak membangun ekuitas. Pokok dilunasi dari kas di akhir.</li></ul>",
+  costInterestOnly:     "Yang dihitung Biaya kumulatif.<ul><li><strong>Aktif:</strong> bunga dan biaya rutin, karena pokok menjadi ekuitas.</li><li><strong>Nonaktif:</strong> seluruh cicilan dan biaya rutin.</li></ul>",
   mortgageRate:         "Suku bunga tahunan KPR, tetap sepanjang jangka waktu. Menentukan besar cicilan dan total bunga.",
   rateSchedule:         "Bunga per tahun KPR, tiap periode <strong>Tetap</strong> atau <strong>Mengambang</strong> dalam pita. KPR Sewa Dulu memulai jadwal ini dari tahun ke-1 saat membeli.",
   mortgageTerm:         "Jumlah tahun pelunasan pinjaman. Lebih panjang berarti cicilan lebih kecil dan bunga lebih besar. Setelah lunas, seluruh anggaran menjadi tabungan.",
   sellingCost:          "Komisi agen, pemasaran, notaris dan pajak penjual jika rumah dijual. Ekuitas rumah dan bersih ditampilkan setelahnya, seolah dijual tahun itu.",
   houseGrowth:          "Kenaikan harga properti per tahun (RPPI). Mendorong nilai bersih properti dan harga beli Sewa Dulu. Alat di bawah menghitungnya dari harga historis.",
   ownCostsMode: {
-    simple:   "<strong>Sederhana:</strong> satu biaya awal dan satu biaya rutin. Rinci mendaftar tiap biaya dengan satuan, inflasi, atau dasar persentasenya sendiri.",
+    simple:   "<strong>Sederhana:</strong> satu biaya awal dan satu biaya rutin.",
     detailed: "<strong>Rinci:</strong> tiap biaya satu baris. Biaya awal nominal atau % harga, biaya rutin per minggu, bulan atau tahun dengan inflasinya, atau % nilai."
   },
   rentCostsMode: {
-    simple:   "<strong>Sederhana:</strong> satu biaya rutin menyewa. Rinci mendaftar tiap biaya satu per satu.",
+    simple:   "<strong>Sederhana:</strong> satu biaya rutin menyewa.",
     detailed: "<strong>Rinci:</strong> tiap biaya satu baris, per minggu, bulan atau tahun dengan inflasinya sendiri, atau % dari sewa tahunan."
   },
   setupCost:            "Biaya satu kali saat membeli: BPHTB, notaris, inspeksi. Dibayar dari tabungan. Pembelian Sewa Dulu di kemudian hari menyesuaikannya dengan harganya.",
@@ -106,9 +96,13 @@ var RVO_TIPS_ID = {
   rtbEnabled:           "Skenario ketiga: menyewa X tahun, lalu membeli pada harga saat itu, dengan anggaran yang sama. Anggaran atau modal awal kosong ikut naik untuk mendanainya, jadi Beli dan Sewa ikut berubah.",
   rtbBuyAtYear:         "Membeli di akhir tahun ini, pada harga yang tumbuh sesuai RPPI. KPR baru dimulai saat itu: jangka waktu penuh, jadwal bunga dari tahun ke-1.",
   calcCagr:             "Masukkan pasangan tahun dan harga. Kenaikan tahunan (CAGR) hasilnya diterapkan ke Kenaikan harga properti di atas.",
-  graphMetric:          "Kekayaan bersih: rumah jika dijual, dikurangi pinjaman, ditambah kas. Uang tunai: kas di bank. Biaya kumulatif: total biaya perumahan sejauh ini.",
-  cashflowTable:        "Posisi kas: kas masuk dan keluar tahun itu. Posisi KPR: rumah dan pinjaman. Posisi keuangan: kekayaan bersih dan biaya kumulatif.",
+  graphMetric:          "<ul><li><strong>Kekayaan bersih:</strong> rumah jika dijual, dikurangi pinjaman, ditambah kas.</li><li><strong>Uang tunai:</strong> kas di bank.</li><li><strong>Biaya kumulatif:</strong> total biaya perumahan sejauh ini.</li></ul>",
+  cashflowTable:        "<ul><li><strong>Posisi kas:</strong> kas masuk dan keluar tahun itu.</li><li><strong>Posisi KPR:</strong> rumah dan pinjaman.</li><li><strong>Posisi keuangan:</strong> kekayaan bersih dan biaya kumulatif.</li></ul>",
 };
+// Variant tips keyed by the option selected: explained one option at a time,
+// with the shared "change the option" line under them (data-tip-options).
+var RVO_OPTION_TIPS = ['mortgageMode', 'ownCostsMode', 'rentCostsMode'];
+
 // RVO_TIPS returns EN by default; pages switch to ID via RVO_TIPS_ID when needed
 var RVO_TIPS = RVO_TIPS_EN;
 
@@ -127,7 +121,9 @@ function RVO_TIP(key, variant, tips){
    state change land. */
 function RVO_APPLY_TIPS(tips, root){
   (root || document).querySelectorAll('[data-tip-key]').forEach(function(el){
-    var text = RVO_TIP(el.getAttribute('data-tip-key'), el.getAttribute('data-tip-variant'), tips);
+    var key = el.getAttribute('data-tip-key');
+    var text = RVO_TIP(key, el.getAttribute('data-tip-variant'), tips);
     if(text) el.setAttribute('data-tip', text);
+    el.toggleAttribute('data-tip-options', RVO_OPTION_TIPS.indexOf(key) >= 0);
   });
 }

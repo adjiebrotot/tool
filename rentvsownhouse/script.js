@@ -569,10 +569,8 @@ function tipTable(){
    from refreshLabels(), i.e. on every rerender. */
 const TIP_VARIANTS = {
   mortgageMode:          () => S.mortgageMode,
-  mortgageType:          () => S.mortgageType,
   ownCostsMode:          () => S.ownCostsMode,
   rentCostsMode:         () => S.rentCostsMode,
-  costInterestOnly:      () => S.costInterestOnly ? 'on' : 'off',
   // The budget growth slider does nothing until a manual budget exists.
   monthlyBudgetIncrease: () => S.monthlyBudget > 0 ? 'manual' : 'auto'
 };
