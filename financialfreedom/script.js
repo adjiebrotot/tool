@@ -232,17 +232,6 @@
 
 /* ─── CONSTANTS ─── */
 
-// Display only. No conversion is performed, so the figures mean whatever
-// currency the user entered them in.
-var CURRENCIES = {
-  AUD: {locale:'en-AU', label:'AUD - Australian Dollar'},
-  USD: {locale:'en-US', label:'USD - US Dollar'},
-  IDR: {locale:'id-ID', label:'IDR - Indonesian Rupiah'},
-  SGD: {locale:'en-SG', label:'SGD - Singapore Dollar'},
-  GBP: {locale:'en-GB', label:'GBP - British Pound'},
-  EUR: {locale:'de-DE', label:'EUR - Euro'}
-};
-
 /* Long-run NOMINAL figures, before tax and before fees. They are starting
    points, not forecasts, and every field stays editable after a preset is
    picked. Sources and the window each figure is drawn from, as at 2026-09:
@@ -275,7 +264,9 @@ var MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','
 var TICKER_HISTORY_START = '1990-01-01';
 
 var UI_DEFAULTS = {
-  currency: 'AUD',
+  // A symbol, not a currency code: display only, nothing is converted, so the
+  // figures mean whatever money the user entered them in (see SharedCurrency).
+  currency: '$',
   ageNow: 30, ageRetire: 60, ageDie: 90,
   expense: 60000, expensePeriod: 'yearly',
   savingsMode: 'savings', savings: 30000, savingsPeriod: 'yearly',
@@ -336,23 +327,14 @@ function escapeHtml(s){
   });
 }
 
-/* Display formatting. The currency is a display choice, so the symbol and the
-   locale are both read from the current selection rather than hardcoded. */
+/* Display formatting. The currency is a display choice, so the symbol is read
+   from the current selection rather than hardcoded. Digits are grouped the
+   same way whatever the symbol, as in the input fields. */
 var fmt = {
-  code: 'AUD',
   locale: 'en-AU',
   symbol: '$',
-  setCurrency: function(code){
-    var c = CURRENCIES[code] || CURRENCIES.AUD;
-    fmt.code = CURRENCIES[code] ? code : 'AUD';
-    fmt.locale = c.locale;
-    try {
-      var parts = new Intl.NumberFormat(c.locale, {style:'currency', currency:fmt.code})
-        .formatToParts(0);
-      for(var i = 0; i < parts.length; i++){
-        if(parts[i].type === 'currency'){ fmt.symbol = parts[i].value; break; }
-      }
-    } catch(_e){ fmt.symbol = '$'; }
+  setCurrency: function(sym){
+    fmt.symbol = SharedCurrency.toSymbol(sym);
   },
   currency: function(v, compact){
     var n = Number(v || 0);
@@ -362,11 +344,8 @@ var fmt = {
     if(compact && abs >= 1e9) return sign + fmt.symbol + (abs / 1e9).toFixed(2) + 'b';
     if(compact && abs >= 1e6) return sign + fmt.symbol + (abs / 1e6).toFixed(2) + 'm';
     if(compact && abs >= 1e3) return sign + fmt.symbol + (abs / 1e3).toFixed(0) + 'k';
-    try {
-      return new Intl.NumberFormat(fmt.locale, {
-        style:'currency', currency:fmt.code, maximumFractionDigits:0
-      }).format(n);
-    } catch(_e){ return sign + fmt.symbol + Math.round(abs).toLocaleString('en-AU'); }
+    // A hyphen here, as Intl's currency format drew it before the move to symbols.
+    return (n < 0 ? '-' : '') + fmt.symbol + Math.round(abs).toLocaleString(fmt.locale);
   },
   pct: function(v, decimals){
     var n = Number(v || 0);
@@ -3936,7 +3915,7 @@ function markQuickStart(key){
 }
 
 function applyUIToDom(ui){
-  $('currency').value = ui.currency;
+  $('currency').value = SharedCurrency.toSymbol(ui.currency);
   $('ageNow').value = ui.ageNow;
   $('ageDie').value = ui.ageDie;
   /* Open the slider's span back up BEFORE writing the handle. A range input
@@ -3998,10 +3977,6 @@ function setSavingsMode(mode, silent){
 }
 
 function populateSelects(){
-  var cur = $('currency');
-  cur.innerHTML = Object.keys(CURRENCIES).map(function(code){
-    return '<option value="' + code + '">' + escapeHtml(CURRENCIES[code].label) + '</option>';
-  }).join('');
   var pre = $('assetPreset');
   pre.innerHTML = Object.keys(PRESET_ASSETS).map(function(key){
     return '<option value="' + key + '">' + escapeHtml(PRESET_ASSETS[key].label) + '</option>';
@@ -4200,6 +4175,15 @@ function migrateRetireMultiplier(saved){
   $('retireExpense').value = String(pct);
 }
 
+/* The picker used to offer currency codes (AUD, IDR…) for what was only ever
+   a display choice. A mini cache or scenario file from then carries the code,
+   which the symbol list no longer has, so map it to the symbol it showed. */
+function migrateCurrencyCode(saved){
+  var f = saved && (saved.__fields || saved);
+  if(!f || typeof f !== 'object' || f['v:currency'] == null) return;
+  $('currency').value = SharedCurrency.toSymbol(f['v:currency']);
+}
+
 /* ─── INIT ─── */
 
 function init(){
@@ -4212,7 +4196,7 @@ function init(){
   if(window.Persist){
     // Language-agnostic namespace, so an Indonesian page could share this cache.
     persist = Persist.init('financialfreedom', {
-      onRestore: function(saved){ migrateRetireMultiplier(saved); render(); },
+      onRestore: function(saved){ migrateRetireMultiplier(saved); migrateCurrencyCode(saved); render(); },
       extra: {
         // The stage list lives in rows with no id, so it rides here, read
         // straight off the rows so an edit not yet run is still kept.
@@ -4256,7 +4240,6 @@ if(document.readyState === 'loading'){
 window.__FF = {
   resetToDefaults: resetToDefaults,
   seedRetireAge: seedRetireAge,
-  CURRENCIES: CURRENCIES,
   PRESET_ASSETS: PRESET_ASSETS,
   UI_DEFAULTS: UI_DEFAULTS,
   QUICK_START_SCENARIOS: QUICK_START_SCENARIOS,

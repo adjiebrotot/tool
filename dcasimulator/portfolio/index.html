@@ -103,18 +103,8 @@
   <!-- DATA TAB -->
   <div class="ctrl-panel active" id="tab-data">
     <div class="field-row currency-row">
-      <div class="field-label">Currency <span class="tip-icon" data-tip="The symbol money is shown in. Nothing is converted between currencies.">?</span></div>
-      <select class="sel-input" id="currencySymbol" data-no-stale>
-        <option value="$" selected>$ - Dollar</option>
-        <option value="€">€ - Euro</option>
-        <option value="£">£ - Pound</option>
-        <option value="¥">¥ - Yen / Yuan</option>
-        <option value="₩">₩ - Won</option>
-        <option value="Rp">Rp - Rupiah</option>
-        <option value="RM">RM - Ringgit</option>
-        <option value="฿">฿ - Baht</option>
-        <option value=""> - None (Agnostic)</option>
-      </select>
+      <div class="field-label">Currency Symbol <span class="tip-icon" data-tip="The symbol money is shown in. Nothing is converted between currencies.">?</span></div>
+      <select class="sel-input" id="currencySymbol" data-no-stale data-currency-symbols data-currency-none></select>
     </div>
     <div id="poolChipsWrap" style="display:none">
       <div class="pool-chips-head">

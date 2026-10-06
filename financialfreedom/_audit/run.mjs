@@ -1224,23 +1224,30 @@ await page.evaluate(() => { document.getElementById('showReal').checked = true; 
   const r = await page.evaluate(() => {
     const need = window.__FF.last.needAtRetire;
     const out = {};
-    ['AUD', 'IDR', 'GBP'].forEach(code => {
-      document.getElementById('currency').value = code;
+    ['$', 'Rp', '£'].forEach(sym => {
+      document.getElementById('currency').value = sym;
       window.__FF.render();
-      out[code] = {text: document.getElementById('mNeed').textContent,
-                   value: window.__FF.last.needAtRetire};
+      out[sym] = {text: document.getElementById('mNeed').textContent,
+                  value: window.__FF.last.needAtRetire};
     });
-    document.getElementById('currency').value = 'AUD';
+    document.getElementById('currency').value = '$';
     window.__FF.render();
     out.base = need;
     return out;
   });
   check('F27 switching currency leaves the underlying number untouched',
-    close(r.AUD.value, r.base, 0.01) && close(r.IDR.value, r.base, 0.01) && close(r.GBP.value, r.base, 0.01),
-    `${r.AUD.value.toFixed(0)} / ${r.IDR.value.toFixed(0)} / ${r.GBP.value.toFixed(0)}`);
+    close(r['$'].value, r.base, 0.01) && close(r.Rp.value, r.base, 0.01) && close(r['£'].value, r.base, 0.01),
+    `${r['$'].value.toFixed(0)} / ${r.Rp.value.toFixed(0)} / ${r['£'].value.toFixed(0)}`);
   check('F27b but does change what is displayed',
-    r.AUD.text !== r.IDR.text && r.IDR.text !== r.GBP.text,
-    `${r.AUD.text} | ${r.IDR.text} | ${r.GBP.text}`);
+    r['$'].text !== r.Rp.text && r.Rp.text !== r['£'].text,
+    `${r['$'].text} | ${r.Rp.text} | ${r['£'].text}`);
+  /* F27c: the picker offers symbols, not codes. A code promises a conversion
+     this page never makes; codes belong to the Cost of Living Comparator. */
+  const opts = await page.evaluate(() =>
+    Array.from(document.getElementById('currency').options).map(o => o.value));
+  check('F27c the currency picker lists symbols from the shared list, no ISO codes',
+    opts.length > 10 && opts[0] === '$' && opts.includes('Rp') && !opts.some(v => /^[A-Z]{3}$/.test(v) && v !== 'CHF'),
+    opts.join(' '));
 }
 
 // F28: the shared price cache must round-trip every field the DCA tools read

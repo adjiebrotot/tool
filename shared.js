@@ -91,6 +91,118 @@
     setAffix: setAffix
   };
 
+  /* ── Currency symbol picker ─────────────────────────────────────────────
+     Two kinds of currency choice live on this site, and they are kept apart:
+
+       - A SYMBOL is cosmetic. Nothing is converted; the figures mean whatever
+         money the reader typed them in, and the picker only decides what is
+         drawn in front of them. Every such picker is built from the one list
+         below, so the tools offer the same choices in the same order.
+       - An ISO CODE (AUD, USD, EUR…) is reserved for a tool that really
+         converts between currencies with an exchange rate (the Cost of Living
+         Comparator). A code on a display-only picker would promise a
+         conversion that never happens.
+
+     Mark the <select> with data-currency-symbols and leave it empty; it is
+     filled when this file loads (every tool loads shared.js at the end of
+     <body>, after its form, and before its own script reads or restores the
+     value). The labels follow <html lang>: "id" gets Indonesian names.
+       data-currency-none  adds a "None" option (value "") for tools that can
+                           draw money with no symbol at all.
+     A symbol may stand for several currencies ($ is the US, Australian,
+     Singapore… dollar), which is fine precisely because nothing converts. */
+  var CURRENCY_SYMBOLS = [
+    {sym:'$',   en:'Dollar',                       id:'Dolar'},
+    {sym:'€',   en:'Euro',                         id:'Euro'},
+    {sym:'£',   en:'Pound',                        id:'Pound'},
+    {sym:'¥',   en:'Yen / Yuan',                   id:'Yen / Yuan'},
+    {sym:'₹',   en:'Rupee (India)',                id:'Rupee (India)'},
+    {sym:'Rs',  en:'Rupee (Pakistan, Sri Lanka)',  id:'Rupee (Pakistan, Sri Lanka)'},
+    {sym:'Rp',  en:'Rupiah',                       id:'Rupiah'},
+    {sym:'RM',  en:'Ringgit',                      id:'Ringgit'},
+    {sym:'₱',   en:'Peso (Philippines)',           id:'Peso (Filipina)'},
+    {sym:'฿',   en:'Baht',                         id:'Baht'},
+    {sym:'₫',   en:'Dong',                         id:'Dong'},
+    {sym:'₩',   en:'Won',                          id:'Won'},
+    {sym:'CHF', en:'Swiss Franc',                  id:'Franc Swiss'},
+    {sym:'kr',  en:'Krona / Krone',                id:'Krona / Krone'},
+    {sym:'zł',  en:'Złoty',                        id:'Zloty'},
+    {sym:'₺',   en:'Lira',                         id:'Lira'},
+    {sym:'₽',   en:'Ruble',                        id:'Rubel'},
+    {sym:'₪',   en:'Shekel',                       id:'Shekel'},
+    {sym:'R',   en:'Rand',                         id:'Rand'},
+    {sym:'R$',  en:'Real',                         id:'Real'},
+    {sym:'₦',   en:'Naira',                        id:'Naira'},
+    {sym:'₿',   en:'Bitcoin',                      id:'Bitcoin'}
+  ];
+
+  /* Saved plans from before a tool moved from codes to symbols carry a code.
+     Read through this so an old file or mini cache still opens on the symbol
+     it used to show. */
+  var CODE_TO_SYMBOL = {
+    AUD:'$', USD:'$', SGD:'$', NZD:'$', CAD:'$', HKD:'$', TWD:'$', MXN:'$',
+    EUR:'€', GBP:'£', JPY:'¥', CNY:'¥', INR:'₹', PKR:'Rs', LKR:'Rs', NPR:'Rs',
+    IDR:'Rp', MYR:'RM', PHP:'₱', THB:'฿', VND:'₫', KRW:'₩', CHF:'CHF',
+    SEK:'kr', NOK:'kr', DKK:'kr', ISK:'kr', PLN:'zł', TRY:'₺', RUB:'₽',
+    ILS:'₪', ZAR:'R', BRL:'R$', NGN:'₦', BTC:'₿'
+  };
+
+  function currencyLang(lang){
+    lang = lang || (document.documentElement && document.documentElement.lang) || 'en';
+    return /^id/i.test(lang) ? 'id' : 'en';
+  }
+  function hasSymbol(sym){
+    for(var i = 0; i < CURRENCY_SYMBOLS.length; i++) if(CURRENCY_SYMBOLS[i].sym === sym) return true;
+    return false;
+  }
+  /* A value as a tool may find it saved: a listed symbol stays, a code from
+     before the move maps to its symbol, anything else falls back. */
+  function toSymbol(v, fallback){
+    if(fallback === undefined) fallback = '$';
+    if(typeof v !== 'string') return fallback;
+    if(hasSymbol(v)) return v;
+    var code = v.trim().toUpperCase();
+    return Object.prototype.hasOwnProperty.call(CODE_TO_SYMBOL, code) ? CODE_TO_SYMBOL[code] : fallback;
+  }
+  /* Fill (or refill, e.g. on a language change) a symbol <select>. The
+     current value is kept when it is still on the list. */
+  function fillCurrency(sel, opts){
+    if(!sel) return;
+    opts = opts || {};
+    var lang = currencyLang(opts.lang);
+    var none = opts.none != null ? !!opts.none : sel.hasAttribute('data-currency-none');
+    // An empty <select> reads '' — that is "nothing chosen yet", not "None".
+    var keep = opts.value != null ? opts.value
+      : (sel.options.length ? sel.value : (sel.getAttribute('data-currency-default') || '$'));
+    sel.innerHTML = '';
+    CURRENCY_SYMBOLS.forEach(function(c){
+      var o = document.createElement('option');
+      o.value = c.sym;
+      o.textContent = c.sym + ' ' + c[lang];
+      sel.appendChild(o);
+    });
+    if(none){
+      var o = document.createElement('option');
+      o.value = '';
+      o.textContent = lang === 'id' ? 'Tanpa simbol' : 'None (no symbol)';
+      sel.appendChild(o);
+    }
+    sel.value = (keep === '' && none) || hasSymbol(keep) ? keep : '$';
+  }
+  function fillAllCurrency(){
+    var els = document.querySelectorAll('select[data-currency-symbols]');
+    for(var i = 0; i < els.length; i++) if(!els[i].options.length) fillCurrency(els[i]);
+  }
+  fillAllCurrency();
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fillAllCurrency);
+
+  global.SharedCurrency = {
+    SYMBOLS: CURRENCY_SYMBOLS,
+    fill: fillCurrency,
+    has: hasSymbol,
+    toSymbol: toSymbol
+  };
+
   /* ── Frequency conversion ───────────────────────────────────────────────
      A per-period amount only means something next to its period: $500 a month
      is $6,000 a year, not $500 a year. So when a frequency control moves, the
