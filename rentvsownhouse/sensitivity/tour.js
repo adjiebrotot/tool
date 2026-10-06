@@ -19,8 +19,8 @@ window.__TOUR = {
       title: '① Each column is a scenario',
       body: 'Add a column for every case you want to test, for example different ' +
             'deposits, mortgage rates, or cities. Edit any assumption inline and the whole ' +
-            'table recalculates instantly. The Unit column says what each row is in, and a ' +
-            'figure past a row\'s limits is pulled back to it.'
+            'table recalculates instantly. Each field shows its unit, and a figure past a ' +
+            'row\'s limits is pulled back to it.'
     },
     {
       // The step names both controls, so highlight both: the year box sits
