@@ -120,6 +120,7 @@
 <link rel="stylesheet" href="../../light.css">
 <link rel="stylesheet" href="../../shared.css">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 </head>
 <body class="light">
 
@@ -165,25 +166,25 @@
         payments push it back down.</strong></p>
 
       <div class="eq-block" data-no-abbr>
-        <div class="eq"><span class="lhs">balance after a period</span><span>&nbsp;=&nbsp;balance &times; (1 + r) &minus; payment</span></div>
+        <div class="eq"><span class="lhs tex">\text{balance after a period}</span><span class="tex">{} = \text{balance} \times (1 + r) - \text{payment}</span></div>
         <div class="eq-where">
-          <span><b>P</b> the amount financed, after any down payment</span>
-          <span><b>n</b> how many repayments there are</span>
-          <span><b>r</b> the interest rate for one period</span>
-          <span><b>k</b> how many periods the special phase lasts</span>
-          <span><b>R</b> the residual left at the end</span>
-          <span><b>PMT</b> the level instalment</span>
+          <span><b class="tex">P</b> the amount financed, after any down payment</span>
+          <span><b class="tex">n</b> how many repayments there are</span>
+          <span><b class="tex">r</b> the interest rate for one period</span>
+          <span><b class="tex">k</b> how many periods the special phase lasts</span>
+          <span><b class="tex">R</b> the residual left at the end</span>
+          <span><b class="tex">\mathrm{PMT}</b> the level instalment</span>
         </div>
       </div>
 
       <ul class="assumption-list">
         <li><strong>The period is a repayment, not a year.</strong> Every example here pays monthly, so
-          <code>n = 60</code> means five years and <code>r</code> is a monthly rate.</li>
+          <span class="tex">n = 60</span> means five years and <span class="tex">r</span> is a monthly rate.</li>
         <li><strong>Interest is charged on what you still owe</strong> at the start of the period. Flat rate is
           the one exception, and that exception is the whole reason it costs what it costs.</li>
         <li><strong>The last payment always clears the debt exactly</strong>, whatever is left on it.</li>
         <li><strong>The amount financed is the price less the down payment.</strong> A $45,000 car with 10% down
-          is a <code>$40,500</code> loan, and that is the <code>P</code> every formula uses.</li>
+          is a <code>$40,500</code> loan, and that is the <span class="tex">P</span> every formula uses.</li>
       </ul>
 
       <div class="sub-section" style="margin-top:22px;">
@@ -191,11 +192,11 @@
         <p class="objective-text">There are two honest ways to do this, and which one is right depends on how the
           lender quoted the rate. The tool calls the choice <strong>Rate Convention</strong>, on the Assumptions tab.</p>
         <div class="eq-block" data-no-abbr>
-          <div class="eq"><span class="lhs">effective</span><span>&nbsp;r&nbsp;=&nbsp;(1 + yearly rate)<sup>1/12</sup> &minus; 1</span><span class="cmt">the default, and what a yearly rate means</span></div>
-          <div class="eq"><span class="lhs">nominal</span><span>&nbsp;r&nbsp;=&nbsp;yearly rate &divide; 12</span><span class="cmt">when the contract states a rate per month</span></div>
+          <div class="eq"><span class="lhs tex">\text{effective}\ \ r</span><span class="tex">{} = (1 + \text{yearly rate})^{1/12} - 1</span><span class="cmt">the default, and what a yearly rate means</span></div>
+          <div class="eq"><span class="lhs tex">\text{nominal}\ \ r</span><span class="tex">{} = \dfrac{\text{yearly rate}}{12}</span><span class="cmt">when the contract states a rate per month</span></div>
         </div>
         <p class="hint">Effective is the honest reading of a rate quoted per year: twelve months of
-          <code>r</code> compound back to exactly the yearly figure. An <code>8.4%</code> loan charges
+          <span class="tex">r</span> compound back to exactly the yearly figure. An <code>8.4%</code> loan charges
           <code>0.674413%</code> a month, not <code>0.7%</code>.</p>
         <p class="hint">Nominal is the honest reading of a rate quoted per month. Indonesian vehicle credit is
           sold as <code>0.9% a month</code> and written up as <code>10.8% a year</code>; compounding that back
@@ -287,13 +288,11 @@
       <div class="sub-section">
         <div class="sub-section-title"><span class="step-badge">2</span> Formula</div>
         <div class="eq-block" data-no-abbr>
-          <div class="eq"><span class="lhs">PMT</span>&nbsp;=&nbsp;P ×
-            <span class="frac"><span class="num">r (1 + r)<sup>n</sup></span><span class="den">(1 + r)<sup>n</sup> − 1</span></span>
-          </div>
-          <div class="eq"><span class="lhs">interest</span>&nbsp;=&nbsp;balance × r<span class="cmt">this period</span></div>
-          <div class="eq"><span class="lhs">principal</span>&nbsp;=&nbsp;PMT − interest<span class="cmt">the rest of the payment</span></div>
+          <div class="eq"><span class="lhs tex">\mathrm{PMT}</span><span class="tex">{} = P \times \dfrac{r\,(1 + r)^{n}}{(1 + r)^{n} - 1}</span></div>
+          <div class="eq"><span class="lhs tex">\text{interest}</span><span class="tex">{} = \text{balance} \times r</span><span class="cmt">this period</span></div>
+          <div class="eq"><span class="lhs tex">\text{principal}</span><span class="tex">{} = \mathrm{PMT} - \text{interest}</span><span class="cmt">the rest of the payment</span></div>
         </div>
-        <p class="hint">If the rate is zero the formula collapses to <code>PMT = P / n</code>, which is what a genuine
+        <p class="hint">If the rate is zero the formula collapses to <span class="tex">\mathrm{PMT} = P / n</span>, which is what a genuine
           0% plan looks like. The tool's <strong>Quick Start → Card</strong> preset is built on exactly that, three
           0% instalment plans where the only cost is the conversion fee.</p>
       </div>
@@ -303,8 +302,8 @@
         <div class="qs-badge"><span class="qs-icon">▸</span><span>In the tool: <b>Quick Start → Car</b>, the scenario
           called <b>5yr loan, 10% down</b>.</span></div>
         <p class="objective-text"><strong>A $45,000 car, 10% down, over five years at 8.4%.</strong> The deposit is
-          $4,500, so <code>P = $40,500</code>, <code>n = 60</code>, and at the effective convention
-          <code>r = (1.084)<sup>1/12</sup> − 1 = 0.674413%</code> a month.</p>
+          $4,500, so <span class="tex">P = \$40{,}500</span>, <span class="tex">n = 60</span>, and at the effective convention
+          <span class="tex">r = (1.084)^{1/12} - 1 = 0.674413\%</span> a month.</p>
 
         <div class="fig-grid">
           <div class="fig"><div class="fig-k">Monthly payment</div><div class="fig-v" data-fig="ex-amort.first">$823.00</div><div class="fig-sub">the same all 60 months</div></div>
@@ -313,7 +312,7 @@
           <div class="fig"><div class="fig-k">Effective rate</div><div class="fig-v" data-fig="ex-amort.ear">8.40%</div><div class="fig-sub">the quoted rate, because nothing is hidden</div></div>
         </div>
 
-        <p class="hint">The first payment is mostly interest, <code>40,500 × 0.674413% = $273.14</code>, leaving
+        <p class="hint">The first payment is mostly interest, <span class="tex">40{,}500 \times 0.674413\% = \$273.14</span>, leaving
           <code>$549.86</code> to come off the debt. By the last payment the interest is down to <code>$5.51</code>
           and almost the whole <code>$823.00</code> clears principal. The payment never changes. What changes is what
           it buys.</p>
@@ -379,12 +378,12 @@
       <div class="sub-section">
         <div class="sub-section-title"><span class="step-badge">2</span> Formula</div>
         <div class="eq-block" data-no-abbr>
-          <div class="eq"><span class="lhs">interest</span>&nbsp;=&nbsp;P × r<span class="cmt">every period, never changes</span></div>
-          <div class="eq"><span class="lhs">principal</span>&nbsp;=&nbsp;<span class="frac"><span class="num">P</span><span class="den">n</span></span><span class="cmt">every period, never changes</span></div>
-          <div class="eq"><span class="lhs">PMT</span>&nbsp;=&nbsp;<span class="frac"><span class="num">P</span><span class="den">n</span></span>&nbsp;+&nbsp;P × r</div>
-          <div class="eq"><span class="lhs">total interest</span>&nbsp;=&nbsp;P × r × n</div>
+          <div class="eq"><span class="lhs tex">\text{interest}</span><span class="tex">{} = P \times r</span><span class="cmt">every period, never changes</span></div>
+          <div class="eq"><span class="lhs tex">\text{principal}</span><span class="tex">{} = \dfrac{P}{n}</span><span class="cmt">every period, never changes</span></div>
+          <div class="eq"><span class="lhs tex">\mathrm{PMT}</span><span class="tex">{} = \dfrac{P}{n} + P \times r</span></div>
+          <div class="eq"><span class="lhs tex">\text{total interest}</span><span class="tex">{} = P \times r \times n</span></div>
         </div>
-        <p class="hint">Notice there is no <code>(1 + r)<sup>n</sup></code> anywhere. Nothing compounds, nothing
+        <p class="hint">Notice there is no <span class="tex">(1 + r)^{n}</span> anywhere. Nothing compounds, nothing
           shrinks, and that simplicity is exactly why the quoted number is so misleading.</p>
       </div>
 
@@ -394,9 +393,9 @@
           also switches Rate Convention to <b>Nominal</b>, because the deal is quoted per month.</span></div>
         <p class="objective-text">A motorbike costs <code>Rp 35,000,000</code> with <code>20%</code> down, financed
           over <code>36 months</code> at <strong>0.9% a month flat</strong>, written up as
-          <code>10.8% a year</code>. So <code>P = Rp 28,000,000</code>, <code>n = 36</code> and
-          <code>r = 10.8% ÷ 12 = 0.9%</code>, giving <code>28,000,000 × 0.009 = Rp 252,000</code> of interest every
-          month on top of <code>28,000,000 ÷ 36 = Rp 777,778</code> of principal.</p>
+          <code>10.8% a year</code>. So <span class="tex">P = \text{Rp}\,28{,}000{,}000</span>, <span class="tex">n = 36</span> and
+          <span class="tex">r = 10.8\% \div 12 = 0.9\%</span>, giving <span class="tex">28{,}000{,}000 \times 0.009 = \text{Rp}\,252{,}000</span> of interest every
+          month on top of <span class="tex">28{,}000{,}000 \div 36 = \text{Rp}\,777{,}778</span> of principal.</p>
 
         <div class="fig-grid">
           <div class="fig"><div class="fig-k">Monthly payment</div><div class="fig-v" data-fig="ex-flat-id.first">Rp 1,029,778</div></div>
@@ -447,8 +446,8 @@
         <p class="objective-text">A bank buys a machine for <code>$50,000</code> and sells it to you for
           <code>$60,000</code>, payable in <code>48 equal instalments</code> of <code>$1,250</code>. No interest rate
           is quoted at all, only a fixed <code>$10,000</code> margin. That is a flat rate loan with
-          <code>P = 50,000</code>, <code>n = 48</code> and a flat <code>5%</code> a year, because
-          <code>50,000 × 5% × 4 years = 10,000</code>. A margin is a per-period figure, so it reads as nominal, the
+          <span class="tex">P = 50{,}000</span>, <span class="tex">n = 48</span> and a flat <code>5%</code> a year, because
+          <span class="tex">50{,}000 \times 5\% \times 4\ \text{years} = 10{,}000</span>. A margin is a per-period figure, so it reads as nominal, the
           same as the motorbike.</p>
 
         <div class="fig-grid">
@@ -493,10 +492,10 @@
 
       <div class="sub-section">
         <div class="sub-section-title"><span class="step-badge">1</span> Definition</div>
-        <p class="objective-text">For the first <code>k</code> periods you pay <strong>only the interest</strong>.
+        <p class="objective-text">For the first <span class="tex">k</span> periods you pay <strong>only the interest</strong>.
           None of it touches the principal, so the debt sits exactly where it started. After that the loan turns into
           an ordinary amortizing one, sized to clear the untouched balance over whatever term is left.</p>
-        <p class="objective-text">If <code>k</code> equals the full term the loan never amortises at all: you pay
+        <p class="objective-text">If <span class="tex">k</span> equals the full term the loan never amortises at all: you pay
           interest the whole way and hand back the entire principal on the last day.</p>
         <div class="where-row">
           <span class="where-label">Where you meet it</span>
@@ -510,14 +509,11 @@
       <div class="sub-section">
         <div class="sub-section-title"><span class="step-badge">2</span> Formula</div>
         <div class="eq-block" data-no-abbr>
-          <div class="eq"><span class="lhs">PMT</span>&nbsp;=&nbsp;P × r<span class="cmt">while the period number is at or below k</span></div>
-          <div class="eq"><span class="lhs">PMT</span>&nbsp;=&nbsp;P ×
-            <span class="frac"><span class="num">r (1 + r)<sup>n − k</sup></span><span class="den">(1 + r)<sup>n − k</sup> − 1</span></span>
-            <span class="cmt">afterwards</span>
-          </div>
+          <div class="eq"><span class="lhs tex">\mathrm{PMT}</span><span class="tex">{} = P \times r</span><span class="cmt">while the period number is at or below <span class="tex">k</span></span></div>
+          <div class="eq"><span class="lhs tex">\mathrm{PMT}</span><span class="tex">{} = P \times \dfrac{r\,(1 + r)^{n-k}}{(1 + r)^{n-k} - 1}</span><span class="cmt">afterwards</span></div>
         </div>
-        <p class="hint">The second line is the amortizing formula from card 01 with <code>n − k</code> in place of
-          <code>n</code>. The same debt now has fewer periods to clear, so the payment jumps.</p>
+        <p class="hint">The second line is the amortizing formula from card 01 with <span class="tex">n - k</span> in place of
+          <span class="tex">n</span>. The same debt now has fewer periods to clear, so the payment jumps.</p>
       </div>
 
       <div class="sub-section">
@@ -526,9 +522,9 @@
           the first scenario's Loan Type to <b>Interest-only</b> with <b>60</b> interest-only periods. No preset opens
           on this shape, because it is a choice you add to an ordinary loan.</span></div>
         <p class="objective-text">A <code>$650,000</code> property with <code>20%</code> down gives
-          <code>P = $520,000</code> over <code>30 years</code> at <code>6.10%</code>, so <code>n = 360</code> and
-          <code>r = 0.494652%</code> a month. Investors in Australia and New Zealand routinely take the first
-          <code>5 years</code> interest-only to keep early cash flow positive, which makes <code>k = 60</code>.</p>
+          <span class="tex">P = \$520{,}000</span> over <code>30 years</code> at <code>6.10%</code>, so <span class="tex">n = 360</span> and
+          <span class="tex">r = 0.494652\%</span> a month. Investors in Australia and New Zealand routinely take the first
+          <code>5 years</code> interest-only to keep early cash flow positive, which makes <span class="tex">k = 60</span>.</p>
 
         <div class="fig-grid">
           <div class="fig good"><div class="fig-k">Years 1 to 5</div><div class="fig-v" data-fig="ex-io-prop.first">$2,572.19</div><div class="fig-sub">interest only</div></div>
@@ -567,7 +563,7 @@
         <div class="sub-section-title"><span class="step-badge">3</span> Example B: a bridging loan, pure interest-only</div>
         <p class="objective-text">You borrow <code>$80,000</code> at <code>10%</code> for <code>12 months</code> to
           cover a settlement gap, and repay the principal in one lump when your other property sells. Here
-          <code>k = n = 12</code> and <code>r = 0.797414%</code>.</p>
+          <span class="tex">k = n = 12</span> and <span class="tex">r = 0.797414\%</span>.</p>
 
         <div class="fig-grid">
           <div class="fig"><div class="fig-k">Months 1 to 11</div><div class="fig-v" data-fig="ex-io-bridge.first">$637.93</div><div class="fig-sub">interest only</div></div>
@@ -576,7 +572,7 @@
           <div class="fig"><div class="fig-k">Effective rate</div><div class="fig-v" data-fig="ex-io-bridge.ear">10.00%</div></div>
         </div>
 
-        <p class="hint">With no principal ever repaid, the interest is simply <code>P × r × n</code>, the same
+        <p class="hint">With no principal ever repaid, the interest is simply <span class="tex">P \times r \times n</span>, the same
           expression as a flat rate loan. The difference is that here you really do keep the money the whole time, so
           the effective rate stays honest at 10.00% instead of nearly doubling.</p>
 
@@ -624,13 +620,8 @@
       <div class="sub-section">
         <div class="sub-section-title"><span class="step-badge">2</span> Formula</div>
         <div class="eq-block" data-no-abbr>
-          <div class="eq"><span class="lhs">PMT</span>&nbsp;=&nbsp;
-            <span>( P −</span>
-            <span class="frac"><span class="num">R</span><span class="den">(1 + r)<sup>n</sup></span></span>
-            <span>) ×</span>
-            <span class="frac"><span class="num">r (1 + r)<sup>n</sup></span><span class="den">(1 + r)<sup>n</sup> − 1</span></span>
-          </div>
-          <div class="eq"><span class="lhs">final payment</span>&nbsp;=&nbsp;PMT + R</div>
+          <div class="eq"><span class="lhs tex">\mathrm{PMT}</span><span class="tex">{} = \left(P - \dfrac{R}{(1 + r)^{n}}\right) \times \dfrac{r\,(1 + r)^{n}}{(1 + r)^{n} - 1}</span></div>
+          <div class="eq"><span class="lhs tex">\text{final payment}</span><span class="tex">{} = \mathrm{PMT} + R</span></div>
         </div>
         <p class="hint">Read it as the amortizing formula with a smaller principal. You take today's value of the
           residual out of the loan first, amortise only what is left, and hand the residual back at the end.</p>
@@ -642,8 +633,8 @@
           called <b>5yr with 35% balloon</b>. It is the same loan as card 01, so the two sit side by side on one
           chart.</span></div>
         <p class="objective-text"><strong>The same $45,000 car, now with a 35% residual.</strong>
-          <code>P = $40,500</code>, <code>n = 60</code>, <code>r = 0.674413%</code>, and
-          <code>R = 40,500 × 35% = $14,175</code>.</p>
+          <span class="tex">P = \$40{,}500</span>, <span class="tex">n = 60</span>, <span class="tex">r = 0.674413\%</span>, and
+          <span class="tex">R = 40{,}500 \times 35\% = \$14{,}175</span>.</p>
 
         <div class="fig-grid">
           <div class="fig good"><div class="fig-k">Monthly payment</div><div class="fig-v" data-fig="ex-balloon.first">$630.55</div><div class="fig-sub">$192.45 less than card 01</div></div>
@@ -715,10 +706,10 @@
       <div class="sub-section">
         <div class="sub-section-title"><span class="step-badge">2</span> Formula</div>
         <div class="eq-block" data-no-abbr>
-          <div class="eq"><span class="lhs">balance<sub>i</sub></span><span>&nbsp;=&nbsp;balance<sub>i&minus;1</sub>&nbsp;&times;&nbsp;(1 + r) &minus; payment<sub>i</sub></span></div>
-          <div class="eq"><span class="lhs">find r</span><span>&nbsp;such that&nbsp;balance<sub>n</sub>&nbsp;=&nbsp;0</span></div>
+          <div class="eq"><span class="lhs tex">\text{balance}_{i}</span><span class="tex">{} = \text{balance}_{i-1} \times (1 + r) - \text{payment}_{i}</span></div>
+          <div class="eq"><span class="lhs tex">\text{find}\ \ r</span><span class="tex">\quad\text{such that}\quad \text{balance}_{n} = 0</span></div>
         </div>
-        <p class="hint">There is no way to rearrange that into <code>r = something</code>, so it is found by trial.
+        <p class="hint">There is no way to rearrange that into <span class="tex">r = \text{something}</span>, so it is found by trial.
           Guess a rate, run the whole schedule, see whether the last balance overshoots or undershoots zero, then
           halve your search range and guess again. Twenty or so rounds pin it to more decimals than money has. The
           tool does this for you and calls the answer the <strong>Implied Rate</strong>.</p>
@@ -731,7 +722,7 @@
           rate.</span></div>
         <p class="objective-text">An <code>$1,800</code> phone, offered as <strong>twelve payments of $150</strong>.
           Twelve times $150 is <code>$1,800</code> exactly, the same as the cash price, so there is nothing extra to
-          find. Run the balance forward and it lands on zero with <code>r = 0</code>.</p>
+          find. Run the balance forward and it lands on zero with <span class="tex">r = 0</span>.</p>
 
         <div class="fig-grid">
           <div class="fig"><div class="fig-k">Amount financed</div><div class="fig-v">$1,800.00</div><div class="fig-sub">the cash price</div></div>
@@ -832,9 +823,9 @@
       <div class="sub-section">
         <div class="sub-section-title"><span class="step-badge">2</span> Formula</div>
         <div class="eq-block" data-no-abbr>
-          <div class="eq"><span class="lhs">balance<sub>i</sub></span><span>&nbsp;=&nbsp;balance<sub>i&minus;1</sub>&nbsp;&times;&nbsp;(1 + r)</span><span class="cmt">nothing is paid, so nothing comes off</span></div>
-          <div class="eq"><span class="lhs">final payment</span><span>&nbsp;=&nbsp;P × (1 + r)<sup>n</sup></span></div>
-          <div class="eq"><span class="lhs">total interest</span><span>&nbsp;=&nbsp;P × ( (1 + r)<sup>n</sup> − 1 )</span></div>
+          <div class="eq"><span class="lhs tex">\text{balance}_{i}</span><span class="tex">{} = \text{balance}_{i-1} \times (1 + r)</span><span class="cmt">nothing is paid, so nothing comes off</span></div>
+          <div class="eq"><span class="lhs tex">\text{final payment}</span><span class="tex">{} = P \times (1 + r)^{n}</span></div>
+          <div class="eq"><span class="lhs tex">\text{total interest}</span><span class="tex">{} = P \times \left((1 + r)^{n} - 1\right)</span></div>
         </div>
         <p class="hint">This is plain compound growth. It is the same formula a savings account uses, pointed the
           other way.</p>
@@ -847,7 +838,7 @@
           below.</span></div>
         <p class="objective-text"><strong>A block of land held for two years.</strong> You borrow
           <code>$100,000</code> at <code>12%</code> for <code>24 months</code> and settle everything when the block
-          sells. So <code>P = 100,000</code>, <code>n = 24</code>, <code>r = 0.948879%</code>.</p>
+          sells. So <span class="tex">P = 100{,}000</span>, <span class="tex">n = 24</span>, <span class="tex">r = 0.948879\%</span>.</p>
 
         <div class="fig-grid">
           <div class="fig good"><div class="fig-k">Months 1 to 23</div><div class="fig-v">$0.00</div><div class="fig-sub">nothing is due</div></div>
@@ -888,7 +879,7 @@
 
       <div class="sub-section">
         <div class="sub-section-title"><span class="step-badge">1</span> Definition</div>
-        <p class="objective-text">You pay <strong>nothing for the first <code>k</code> periods</strong>, but interest
+        <p class="objective-text">You pay <strong>nothing for the first <span class="tex">k</span> periods</strong>, but interest
           still runs and is added to the debt. Normal instalments then start on a <em>bigger</em> balance with
           <em>fewer</em> periods left to clear it.</p>
         <p class="objective-text">This is the only structure where the debt climbs above what you originally borrowed
@@ -905,10 +896,8 @@
       <div class="sub-section">
         <div class="sub-section-title"><span class="step-badge">2</span> Formula</div>
         <div class="eq-block" data-no-abbr>
-          <div class="eq"><span class="lhs">balance after the holiday</span><span>&nbsp;=&nbsp;P × (1 + r)<sup>k</sup></span></div>
-          <div class="eq"><span class="lhs">PMT</span><span>&nbsp;=&nbsp;P × (1 + r)<sup>k</sup> ×</span>
-            <span class="frac"><span class="num">r (1 + r)<sup>n − k</sup></span><span class="den">(1 + r)<sup>n − k</sup> − 1</span></span>
-          </div>
+          <div class="eq"><span class="lhs tex">\text{balance after the holiday}</span><span class="tex">{} = P \times (1 + r)^{k}</span></div>
+          <div class="eq"><span class="lhs tex">\mathrm{PMT}</span><span class="tex">{} = P \times (1 + r)^{k} \times \dfrac{r\,(1 + r)^{n-k}}{(1 + r)^{n-k} - 1}</span></div>
         </div>
         <p class="hint">Card 06 for the holiday, then card 01 for the rest. Nothing new, just the two joined
           end to end.</p>
@@ -920,7 +909,7 @@
           on the loan-balance chart, because the lesson here is the shape of that line.</span></div>
         <p class="objective-text"><strong>Buy now, pay nothing for twelve months.</strong> A <code>$6,000</code>
           fit-out financed at <code>19.9%</code> over <code>36 months</code> with the first <code>12 months</code>
-          free of payments. So <code>n = 36</code>, <code>k = 12</code>, <code>r = 1.523894%</code>.</p>
+          free of payments. So <span class="tex">n = 36</span>, <span class="tex">k = 12</span>, <span class="tex">r = 1.523894\%</span>.</p>
 
         <div class="fig-grid">
           <div class="fig good"><div class="fig-k">Months 1 to 12</div><div class="fig-v">$0.00</div><div class="fig-sub">the advertised part</div></div>
@@ -1274,6 +1263,7 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script src="../../shared.js"></script>
 <script src="script.js"></script>
 
