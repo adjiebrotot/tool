@@ -986,6 +986,7 @@ function updateChart(sweep, userIdx){
 
 function render(){
   syncUI();
+  syncUnitSwitches();
   const p = readInputs();
   const r = compute(p);
   const sweep = buildSweep(p);
@@ -1430,6 +1431,53 @@ function applyQuickStart(key){
   render();
 }
 
+/* Deposit and stamp duty each take an amount or a percentage of the price.
+   Switching one restates its figure rather than keeping it, so the answer
+   stays where it was: 4% duty on a $900,000 price becomes $36,000, and back.
+   The two deposit questions differ (see compute, step 7): an amount is the
+   cash in the bank and the purchase costs come out of it first, a percentage
+   is the down payment itself with the costs paid on top. So $200,000 of
+   savings with $40,000 of costs is a 17.778% deposit, the same $160,000 down,
+   and the way back adds the costs again. A percentage is held to the field's
+   three decimals, an amount to the cent; a deposit is kept within 0 to 100%
+   of the price. The mode it converts FROM is kept on the select and re-read on
+   every render, since a Quick Start or the mini cache sets it silently. */
+const UNIT_SWITCHES = {
+  dutyMode(to){
+    const price = num('price');
+    if(to === 'amount') setAmount('dutyAmt', Math.round(price*num('dutyPct'))/100);
+    else if(price > 0) setPct('dutyPct', num('dutyAmt')/price*100);
+  },
+  depositMode(to){
+    const price = num('price');
+    const duty  = str('dutyMode') === 'pct' ? price*num('dutyPct')/100 : num('dutyAmt');
+    const costs = duty + num('otherCosts');
+    if(to === 'amount') setAmount('savings', Math.round((price*num('depositPct')/100 + costs)*100)/100);
+    else if(price > 0) setPct('depositPct', Math.min(100, Math.max(0, (num('savings') - costs)/price*100)));
+  }
+};
+const setPct = (id, v) => { $(id).value = SharedFmt.formatThousands(String(Math.round(v*1000)/1000), { maxDecimals:3 }); };
+function syncUnitSwitches(){
+  Object.keys(UNIT_SWITCHES).forEach(id => { $(id).dataset.prev = $(id).value; });
+}
+// Listens on the select itself, so it runs before the panel-wide render.
+function wireUnitSwitches(){
+  Object.keys(UNIT_SWITCHES).forEach(id => {
+    const sel = $(id);
+    const sync = () => { sel.dataset.prev = sel.value; };
+    sync();
+    sel.addEventListener('focus', sync);
+    sel.addEventListener('mousedown', sync);
+    const onSwitch = () => {
+      const from = sel.dataset.prev, to = sel.value;
+      sel.dataset.prev = to;
+      if(from && from !== to) UNIT_SWITCHES[id](to);
+    };
+    sel.addEventListener('input', onSwitch);
+    sel.addEventListener('change', onSwitch);
+  });
+}
+
 function wireQuickStart(){
   document.querySelectorAll('.quick-start-btn').forEach(btn =>
     btn.addEventListener('click', () => applyQuickStart(btn.dataset.preset)));
@@ -1494,6 +1542,7 @@ function init(){
   });
 
   wireSegments();
+  wireUnitSwitches();
   wireQuickStart();
 
   // Persist stores form controls on its own. The segmented controls are

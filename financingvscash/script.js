@@ -1697,6 +1697,7 @@ function openEditor(idx){
   updateTermLabel(sc.freq);
   $('scFeeAmt').value=fmt.fmtInput(sc.feeAmt);
   $('scFeeType').value=sc.feeType;
+  $('scFeeType').dataset.prev=$('scFeeType').value; // the basis a fee switch converts from
   $('scAdminFee').value=fmt.fmtInput(sc.adminFee||0);
   $('scFeeTreatment').value=['upfront','capitalise','discount'].includes(sc.feeTreatment)?sc.feeTreatment:'upfront';
   $('scLoanType').value=LOAN_TYPES.includes(sc.loanType)?sc.loanType:'annuity';
@@ -1757,18 +1758,31 @@ $('closeScenarioBtn').addEventListener('click',closeEditor);
 $('scFreq').addEventListener('change',()=>{
   const newFreq=$('scFreq').value;
   if(newFreq!==editorTermFreq){
-    const curTerm=parseFloat($('scTerm').value)||defaultTerm(editorTermFreq);
-    const years=termToYears(curTerm, editorTermFreq);
-    const scale=periodsPerYear(newFreq)/periodsPerYear(editorTermFreq);
+    const oldFreq=editorTermFreq;
+    const curTerm=parseFloat($('scTerm').value)||defaultTerm(oldFreq);
+    const years=termToYears(curTerm, oldFreq);
+    const scale=periodsPerYear(newFreq)/periodsPerYear(oldFreq);
     $('scTerm').value=Math.max(1,Math.round(years*periodsPerYear(newFreq)));
     // Schedule boundaries and the interest-only span are counted in repayments
     // too, so they scale with the unit exactly as the term does.
     const io=parseFloat($('scIoPeriods').value);
     if(isFinite(io))$('scIoPeriods').value=Math.max(0,Math.round(io*scale));
+    // A repayment and the admin fee are amounts per repayment, so they follow
+    // the period the way every money field does (SharedFreq): $500 a month
+    // becomes $115.38 a week, which keeps what goes out over a year, and with
+    // it the loan and its rate, the same rather than four times larger.
+    const perPayment=v=>{const c=SharedFreq.convert(Number(v)||0,oldFreq,newFreq,2);return c===null?(Number(v)||0):c;};
+    ['scKnownPayment','scAdminFee'].forEach(id=>{
+      if(String($(id).value).trim()!=='')$(id).value=fmt.fmtInput(perPayment(parseNumInput($(id))));
+    });
     editorTermFreq=newFreq;
     if(editorDraft){
       ['ratePeriods','paymentPeriods'].forEach(k=>{
-        if(Array.isArray(editorDraft[k]))editorDraft[k]=editorDraft[k].map(x=>Object.assign({},x,{toPeriod:Math.max(1,Math.round((Number(x.toPeriod)||1)*scale))}));
+        if(Array.isArray(editorDraft[k]))editorDraft[k]=editorDraft[k].map(x=>{
+          const o=Object.assign({},x,{toPeriod:Math.max(1,Math.round((Number(x.toPeriod)||1)*scale))});
+          if(k==='paymentPeriods')o.amount=perPayment(x.amount);
+          return o;
+        });
       });
       renderSchedRows('rate');renderSchedRows('payment');
     }
@@ -1776,6 +1790,40 @@ $('scFreq').addEventListener('change',()=>{
   updateTermLabel(newFreq);
   updateEditorVisibility();updateImpliedRate();
 });
+
+/* The origination fee as money or as a % of the amount financed: switching
+   restates it so the scenario pays the same fee, $600 on a $30,000 loan
+   becoming 2%, rather than turning into a 600% fee. The amount financed is
+   the price less the down payment, capped by the cash on hand exactly as
+   computeScenario caps it. Under "Deducted from the advance" a % grosses the
+   loan up (resolveFinancing), so there the share that costs $600 is
+   600 / 30,600. Rounded to two decimals, as a change of frequency is. Wired
+   before the implied-rate preview below so it reads the converted fee. */
+function editorFinanceBase(){
+  const pc=Math.max(0,parseNumInput($('purchaseCost')));
+  const downPct=Math.min(100,Math.max(0,parseFloat($('scDownPct').value)||0));
+  return pc-Math.min(pc*(downPct/100),pc,parseNumInput($('availableCash')));
+}
+function convertFee(amount,from,to,base,treatment){
+  if(from===to)return amount;
+  const r2=v=>Math.round(v*100)/100, disc=treatment==='discount';
+  if(to==='pct')return base>0?r2(disc?amount/(base+amount)*100:amount/base*100):null;
+  if(disc&&amount>=100)return null;
+  return r2(disc?base*amount/(100-amount):base*amount/100);
+}
+(()=>{
+  const sel=$('scFeeType'),amt=$('scFeeAmt');
+  const sync=()=>{sel.dataset.prev=sel.value;};
+  sel.addEventListener('focus',sync);sel.addEventListener('mousedown',sync);
+  const onType=()=>{
+    const from=sel.dataset.prev||sel.value,to=sel.value;
+    sel.dataset.prev=to;
+    if(from===to||String(amt.value).trim()==='')return;
+    const next=convertFee(parseNumInput(amt),from,to,editorFinanceBase(),$('scFeeTreatment').value);
+    if(next!==null)amt.value=fmt.fmtInput(next);
+  };
+  sel.addEventListener('input',onType);sel.addEventListener('change',onType);
+})();
 
 /* ─── Loan type, schedules, fee treatment, rate convention ─── */
 $('scLoanType').addEventListener('change',()=>{

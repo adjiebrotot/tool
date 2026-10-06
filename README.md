@@ -89,7 +89,7 @@ committed. `powerfactory-scripter/audit/` validates generated scripts against a 
 case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain
 CPython, with no PowerFactory needed.
 
-Seven cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
+Eight cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
 ships Quick Start scenarios instead of a Reset button and proves the claim that lets it: it
 applies each scenario to a freshly loaded page and to a page whose every control has been
 scribbled over, and the two have to land on identical form state across every tab — plus, where a
@@ -104,6 +104,19 @@ another, which has to refuse it untouched.
 control and checks that moving the control rescales the money: the arithmetic and its
 rounding, the bases that are not periods at all (a "% of value" cost is left as typed),
 and that the tool's own state moved with the field rather than just its markup.
+
+`node _ref/unit-check.mjs` drives every control that changes a field's unit, not only a
+frequency: money and a "%" of the price, the home's value or a year of rent (Rent vs Own and
+its detailed cost rows), a fee as money or a % of the amount financed and the per-repayment
+amounts under a new repayment frequency (Finance vs Cash), a deposit or stamp duty as an amount
+or a % of the price (Borrowing Capacity), a weekly or a monthly buying style (DCA), and a
+household total with a share or each spouse's own salary (PPh 21). Each switch restates the
+field so it describes the same money, and the check holds that to the tool's own answer rather
+than to the field: the cashflow export, the comparison table, every borrowing cap or the tax
+sweep is read before and after the switch and has to match, line for line where the new figure
+is exact, and a switch back has to give back what was typed. Where the new unit cannot hold the
+figure exactly (a "%" to two decimals, a split to whole percents) it states the bound the
+rounding allows and holds the drift inside it. `ONLY=<name>` runs one tool.
 
 `node _ref/chart-check.mjs` drives every page that draws an interactive chart and holds it to
 the four things a chart here promises: that the export cluster is the same row everywhere —

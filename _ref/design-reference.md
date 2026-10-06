@@ -91,7 +91,15 @@ The unit is the field's affix, never the label: currency before the number
 (`.prefix`), everything else after it (`.suffix`). Vocabulary: `%`, `%/yr`,
 `yrs`, `/mo`, `/yr`, `days`, `×`, `months`, `paths`, `points`. A per-period
 amount pairs with a period select (`a week / a month / a year`), and the amount
-follows its period (`SharedFreq`). A field whose unit sits in a table's column
+follows its period (`SharedFreq`). The same holds for any control that changes
+a field's unit when the two are comparable: money and a "%" of something, a
+monthly and a weekly cadence, a household total with a share and each person's
+own figure. The field is restated in the new unit so it describes the same
+money ($32,000 on an $800,000 price becomes 4%, not 32,000%), rounded to the
+field's own precision, and a switch back gives back what was typed. Only the
+reader's own switch converts; a Quick Start or an opened file sets its figures
+with its units. `_ref/unit-check.mjs` holds every such switch to the tool's
+answer, which must not move. A field whose unit sits in a table's column
 header declares it with `data-unit`; a field with no unit at all (a seed, a day
 of month) carries `data-unitless`. Sentence-style rows ("From age 28 to 33",
 "Grows 3 %/yr from today") keep the unit words in the sentence.
