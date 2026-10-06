@@ -171,6 +171,37 @@ function rentOngoingYearlyAt(S, yr, rentMonthly){
   }, 0);
 }
 
+/* ── MONEY ⇄ "%" ──
+   A "%" cost is a share of something, so moving a cost between money and "%"
+   restates it against that rather than keeping the figure: $32,000 on an
+   $800,000 home is 4% of the price, and $500 a month of owning costs is 0.75%
+   of its value. The base is what the functions above measure the share
+   against in year 1 (the price for setup and owning costs, a year of rent for
+   renting costs), so year 1 costs the same either way. A setup cost stays the
+   same in every year, since a fixed one scales with the price it is paid on.
+   Later years of an ongoing cost follow the new basis: a "%" tracks the
+   home's value or the rent, a fixed amount its own inflation. Rounded to the
+   field's two decimals, as a change of frequency is. Both pages convert
+   through these, so the same switch gives the same figure on either. */
+const BASIS_PER_YEAR = {fixed:1, yearly:1, monthly:12, weekly:52};
+function pctBase(S, of){
+  if(of==='rent') return toMonthly(Math.max(0, Number(S.rentAmount)||0), S.rentFreq||'monthly') * 12;
+  return Math.max(50000, Number(S.propertyPrice)||800000); // as both pages read the price
+}
+// from/to are bases: 'fixed' (one-off money), a frequency, or 'pct'. null when
+// there is nothing to convert against (a "%" of no rent) or the two are not
+// comparable (one-off money against money a period).
+function convertCostBasis(amount, from, to, base){
+  amount = Number(amount)||0;
+  if(from === to) return amount;
+  const r2 = v => Math.round(v*100)/100;
+  const f = BASIS_PER_YEAR[from], t = BASIS_PER_YEAR[to];
+  if(f && t) return (from==='fixed' || to==='fixed') ? null : r2(amount*f/t);
+  if(to==='pct' && f && base > 0) return r2(amount*f/base*100);
+  if(from==='pct' && t)           return r2(amount/100*base/t);
+  return null;
+}
+
 /* The monthly housing budget, the same for every scenario and every rate
    path. A figure the reader set grows at its own rate. Left blank, each year
    it is the most any scenario needs that year:
@@ -733,6 +764,6 @@ function computeRTB(S, rentMonthly0, initialCashUsed, budgetAt, rtbSched, rfm){
 global.RVOEngine = {
   toYearly, toMonthly, calcMonthlyMortgage, normalizeRatePeriods, buildMortgageSchedule,
   getRateNorm, scheduleHasFloat, setupCostTotal, ownOngoingYearlyAt, rentOngoingYearlyAt,
-  normalizeState, budgetPlan, initialCashPlan, houseEquityAt, computeModel,
+  pctBase, convertCostBasis, normalizeState, budgetPlan, initialCashPlan, houseEquityAt, computeModel,
 };
 })(window);

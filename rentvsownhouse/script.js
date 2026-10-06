@@ -895,8 +895,27 @@ function ownOngoingYearlyAt(yr, propValue){ return E.ownOngoingYearlyAt(S, yr, p
 function rentOngoingYearlyAt(yr, rentMonthly){ return E.rentOngoingYearlyAt(S, yr, rentMonthly); }
 function computeModel(variant){ return E.computeModel(S, variant); }
 
+/* The simple cost fields whose type picks money or a "%", and what that "%" is
+   a share of. */
+const COST_TYPES = [
+  {amountId:'setupCost',       typeId:'setupCostType',       freqId:null,                  of:'price'},
+  {amountId:'ownOngoingCost',  typeId:'ownOngoingCostType',  freqId:'ownOngoingCostFreq',  of:'price'},
+  {amountId:'rentOngoingCost', typeId:'rentOngoingCostType', freqId:'rentOngoingCostFreq', of:'rent'},
+];
+// What a "%" cost is a share of, off the form as it stands, read the way
+// readInputs reads it.
+function formCostBase(of){
+  const rent = $('rentAmount').value;
+  return E.pctBase({
+    propertyPrice: parseNum($('propertyPrice').value) || DEFAULTS.propertyPrice,
+    rentAmount: String(rent).trim()==='' ? DEFAULTS.rentAmount : parseNum(rent),
+    rentFreq: $('rentFreq').value,
+  }, of);
+}
+
 /* ── READ INPUTS ── */
 function readInputs(){
+  COST_TYPES.forEach(c=>{ const sel = $(c.typeId); if(sel) sel.dataset.prev = sel.value; });
   S.propertyPrice   = Math.max(50000, parseNum($('propertyPrice').value)||DEFAULTS.propertyPrice);
   S.downPaymentPct  = parseFloatSafe($('downPaymentPct').value, DEFAULTS.downPaymentPct);
   S.monthlyBudget   = Math.max(0, parseNum($('monthlyBudget').value)||0);
@@ -2025,13 +2044,13 @@ function wireCostListEvents(key){
   const cfg = COST_LISTS[key];
   const wrap = $(cfg.rowsId);
   if(!wrap) return;
-  /* Same rescaling as the simple fields above, one row at a time: the period a
+  /* Same conversion as the simple fields above, one row at a time: between
+     periods, and between money and a "%" of what this list's "%" is a share
+     of (a year of rent for renting costs, the price otherwise). The basis a
      row's amount was entered against lives on the select, because the row is
-     rebuilt from state rather than kept around. A move to or from the "% of
-     value" basis is not a change of period, and SharedFreq.convert returns
-     null for it, so the amount stays as typed. Registered before the handlers
-     below, and on `input` as well as `change`, so the converted amount is in
-     the row before either rerenders. */
+     rebuilt from state rather than kept around. Registered before the
+     handlers below, and on `input` as well as `change`, so the converted
+     amount is in the row before either rerenders. */
   const convertBasis = e=>{
     const sel = e.target;
     if(!sel.classList || !sel.classList.contains('ci-basis')) return;
@@ -2039,8 +2058,8 @@ function wireCostListEvents(key){
     sel.dataset.prev = to;
     if(from === to) return;
     const amt = sel.closest('.cost-item-row')?.querySelector('.ci-amount');
-    if(!amt) return;
-    const next = SharedFreq.convert(parseNum(amt.value), from, to, 2);
+    if(!amt || String(amt.value).trim()==='') return;
+    const next = E.convertCostBasis(parseNum(amt.value), from, to, formCostBase(key==='rentOngoing' ? 'rent' : 'price'));
     if(next !== null) amt.value = formatMoneyValue(next);
   };
   wrap.addEventListener('input', convertBasis);
@@ -2140,6 +2159,32 @@ function updateCagrToolVisibility(show){
     format: formatMoneyValue,
     skip: typeId ? (()=>$(typeId).value === 'pct') : null
   });
+});
+
+/* A cost's type moves it between money and a "%" of something, so the figure
+   is restated against what the "%" is a share of rather than kept: $32,000 of
+   setup on an $800,000 home becomes 4%, not 32,000%, and 4% becomes $32,000
+   again. Year 1 costs the same either way (see convertCostBasis in engine.js,
+   which the Sensitivity page converts through too). Wired before the rerender
+   below, like the frequencies above, so the form it reads is already converted.
+   The type it moves FROM is kept on the select and re-read whenever the form
+   is (readInputs), because a Quick Start or an opened file sets it silently. */
+COST_TYPES.forEach(({amountId, typeId, freqId, of})=>{
+  const sel = $(typeId), amt = $(amountId);
+  const asBasis = t => t==='pct' ? 'pct' : (freqId ? $(freqId).value : 'fixed');
+  const sync = ()=>{ sel.dataset.prev = sel.value; };
+  sync();
+  sel.addEventListener('focus', sync);
+  sel.addEventListener('mousedown', sync);
+  const onType = ()=>{
+    const from = sel.dataset.prev || sel.value, to = sel.value;
+    sel.dataset.prev = to;
+    if(from === to || String(amt.value).trim()==='') return;
+    const next = E.convertCostBasis(parseNum(amt.value), asBasis(from), asBasis(to), formCostBase(of));
+    if(next !== null) amt.value = formatMoneyValue(next);
+  };
+  sel.addEventListener('input', onType);
+  sel.addEventListener('change', onType);
 });
 
 ['propertyPrice','downPaymentPct','monthlyBudget','riskFreeRate','horizon',

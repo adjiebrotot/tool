@@ -161,8 +161,9 @@ const val=(page,id)=>page.inputValue('#'+id);
   check('rvo detailed row 1,200 a year -> a month', await page.inputValue(row+' .ci-amount'), '100');
   await page.selectOption(row+' .ci-basis','weekly');
   check('rvo detailed row 100 a month -> a week', await page.inputValue(row+' .ci-amount'), '23.08');
+  // …and restates as a "%" of a year of rent: 23.08 a week of a 33,600 year.
   await page.selectOption(row+' .ci-basis','pct');
-  check('rvo detailed row -> % basis left alone', await page.inputValue(row+' .ci-amount'), '23.08');
+  check('rvo detailed row 23.08 a week -> % of yearly rent', await page.inputValue(row+' .ci-amount'), '3.57');
   await page.close();
 }
 

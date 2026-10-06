@@ -605,29 +605,9 @@ function csvUnit(p){
 /* ── MONEY ⇄ "%" ──
    A "%" cost is a share of something, so moving a cost between money and "%"
    restates it against that rather than keeping the figure: $32,000 on an
-   $800,000 home is 4% of the price, and $500 a month of owning costs is 0.75%
-   of its value. The base is what the engine measures the share against in
-   year 1 (the price for setup and owning costs, a year of rent for renting
-   costs), so year 1 costs the same either way. Later years follow the new
-   basis: a "%" tracks the home's value or the rent, a fixed amount its own
-   inflation. Rounded to the field's two decimals, as a change of frequency is. */
-function pctBase(sc, of){
-  if(of==='rent') return RVOEngine.toMonthly(Math.max(0, sc.rentAmount || 0), sc.rentFreq || 'monthly') * 12;
-  return Math.max(50000, sc.propertyPrice || 800000); // as buildStateObj reads it
-}
-// from/to are bases: 'fixed' (one-off money), a frequency, or 'pct'. null when
-// there is nothing to convert against (a "%" of no rent).
-function convertCostBasis(amount, from, to, base){
-  amount = Number(amount) || 0;
-  if(from === to) return amount;
-  const freq = SharedFreq.convert(amount, from, to, 2);
-  if(freq !== null) return freq;
-  const perYear = b => b==='fixed' ? 1 : SharedFreq.perYear[b];
-  const r2 = v => Math.round(v*100)/100;
-  if(to==='pct' && perYear(from) && base > 0) return r2(amount * perYear(from) / base * 100);
-  if(from==='pct' && perYear(to))             return r2(amount / 100 * base / perYear(to));
-  return null;
-}
+   $800,000 home is 4% of the price. The conversion lives in the engine, with
+   the main page's, so one switch gives one figure on both pages. */
+const pctBase = RVOEngine.pctBase, convertCostBasis = RVOEngine.convertCostBasis;
 
 /* ── BUILD TABLE ── */
 

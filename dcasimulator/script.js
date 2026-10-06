@@ -721,6 +721,23 @@ function styleParamsBody(sec){
   return ''; // forward-looking styles have no parameters
 }
 
+/* How often a scenario's style buys: the date and forward styles by their
+   name, momentum and technical ones at most once per their Frequency. The
+   amount is per purchase, so moving between the two cadences rescales it
+   (SharedFreq): 500 a month is 115.38 a week, the same money over a year. */
+function purchaseCadence(sec){
+  const s=sec.style||'';
+  if(MOMENTUM_STYLES.includes(s)||TECH_STYLES.includes(s)) return sec.period==='weekly'?'weekly':'monthly';
+  return s.startsWith('weekly')?'weekly':'monthly';
+}
+function rescaleAmount(sec, from, to){
+  const conv=(from===to)?null:SharedFreq.convert(sec.amount, from, to, 2);
+  if(conv===null) return;
+  sec.amount=conv;
+  const amtEl=$('cfgAmount');
+  if(amtEl) amtEl.value=SharedFmt.formatThousands(conv,{maxDecimals:2});
+}
+
 function refreshStyleBlock(sec){
   const c=$(`styleBlock${sec.id}`); if(!c) return;
   c.innerHTML=styleBlockInner(sec);
@@ -736,7 +753,12 @@ function wireStyleBlock(sec){
   // Style radios
   c.querySelectorAll(`input[name="secStyle${sec.id}"]`).forEach(r=>{
     r.addEventListener('change',()=>{
+      // A style that buys weekly rather than monthly (or back) makes the amount
+      // per purchase a different amount a year, so it is rescaled as the
+      // Frequency toggle below rescales it.
+      const was=purchaseCadence(sec);
       sec.style=r.value;
+      rescaleAmount(sec, was, purchaseCadence(sec));
       sec.catOpen=styleCategory(sec.style);
       if(showDayRow(sec.style)) sec.dayOrDate=1;
       refreshStyleBlock(sec);
@@ -762,12 +784,7 @@ function wireStyleBlock(sec){
       const prev=sec.period==='weekly'?'weekly':'monthly';
       // The amount is per purchase, so a narrower window has to buy less for the
       // scenario to keep putting the same money in over a year.
-      const conv=(next===prev)?null:SharedFreq.convert(sec.amount, prev, next, 2);
-      if(conv!==null){
-        sec.amount=conv;
-        const amtEl=$('cfgAmount');
-        if(amtEl) amtEl.value=SharedFmt.formatThousands(conv,{maxDecimals:2});
-      }
+      rescaleAmount(sec, prev, next);
       sec.period=next;
       refreshStyleBlock(sec);
       scheduleRun();

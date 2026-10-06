@@ -1508,8 +1508,33 @@ function downloadCsv(){
   el.addEventListener('blur',function(){ formatBracketInput(this); rerender(); });
 });
 
-$('modeBtnTotal').addEventListener('click',()=>setInputMode('total'));
-$('modeBtnSplit').addEventListener('click',()=>setInputMode('individual'));
+/* The two modes describe the same household, so a click carries the figures
+   across rather than showing the other mode's old ones: Rp 500,000,000 split
+   40% to the wife becomes Rp 300,000,000 and Rp 200,000,000, and the
+   deduction is split by the same share, as Total mode splits it. The way back
+   adds them up, but the share slider holds whole percents and Total mode
+   splits a deduction pro rata, so a split it cannot hold (400M and 300M is
+   42.857%) lands on the nearest one. Only a click converts; a Quick Start or
+   the mini cache picks a mode with its own figures. */
+function carryAcrossModes(to){
+  if(to === S.inputMode) return;
+  const rp = el => Math.max(0, SharedFmt.parseFormatted(el.value) || 0);
+  const put = (el, n) => { el.value = Math.round(n).toLocaleString('en-US'); };
+  if(to === 'individual'){
+    const total = rp(els.totalSalaryInput), ded = rp(els.deductionInput);
+    const share = Math.max(0, Math.min(100, parseFloat(els.splitPct.value) || 0)) / 100;
+    const wife = Math.round(total*share), wifeDed = Math.round(ded*share);
+    put(els.husbandSalaryInput, total - wife);       put(els.wifeSalaryInput, wife);
+    put(els.husbandDeductionInput, ded - wifeDed);   put(els.wifeDeductionInput, wifeDed);
+  } else {
+    const h = rp(els.husbandSalaryInput), w = rp(els.wifeSalaryInput);
+    put(els.totalSalaryInput, h + w);
+    put(els.deductionInput, rp(els.husbandDeductionInput) + rp(els.wifeDeductionInput));
+    if(h + w > 0) els.splitPct.value = Math.round(w/(h + w)*100);
+  }
+}
+$('modeBtnTotal').addEventListener('click',()=>{ carryAcrossModes('total'); setInputMode('total'); });
+$('modeBtnSplit').addEventListener('click',()=>{ carryAcrossModes('individual'); setInputMode('individual'); });
 
 els.dependents.addEventListener('change',rerender);
 document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.addEventListener('click',()=>applyQuickStart(btn.dataset.preset)));
