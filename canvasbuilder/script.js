@@ -720,7 +720,9 @@ document.getElementById('jsonFileInput').addEventListener('change',e=>{
   r.readAsText(f); e.target.value='';
 });
 
-function doLoad(data){
+// `ask` says whether to confirm before replacing what is on the canvas; by
+// default only unsaved work is protected.
+function doLoad(data, ask=S.isDirty&&hasContent(), toast='Canvas loaded ✓', after=null){
   const apply=()=>{
     const type=data['canvas-type']==='vpc'?'vpc':'bmc';
     S.canvasType=type; S.canvasName=data['canvas-name']||'Untitled Canvas';
@@ -752,11 +754,73 @@ function doLoad(data){
       }));
     });
     S.selectedItem=null; markClean(); renderCanvas();
-    showToast('Canvas loaded ✓','success');
+    if(after) after();
+    showToast(toast,'success');
   };
-  if(S.isDirty&&hasContent())
+  if(ask)
     showConfirm('📂','Load Canvas','Loading will replace the current canvas. Proceed?',apply,null);
   else apply();
+}
+
+/* ══ SAMPLE ══════════════════════════════════════════
+   One made-up business (a mobile bike-repair subscription) told on both
+   canvases, so whichever is open gets a filled-in example. It goes through
+   doLoad like a saved file. A note is [text, x, y] or [text, x, y, size, font]
+   in px from the top left of its cell; the VPC circle's notes sit well inside
+   the curve. A y is a minimum: once drawn, notes in the same column are pushed
+   down clear of the one above, since how a note wraps depends on the screen.
+   Rich text is kept as HTML, as the editor saves it. */
+const SAMPLE_NAME='PedalPal bike care';
+const SAMPLE_NOTES={
+  bmc:{
+    'key-partners':          [['Local bike shops',8,8],['Parts wholesalers',8,44],['Apartment building managers',8,80]],
+    'key-activities':        [['Mobile repairs',8,8],['Booking and van routing',8,44],['Mechanic training',8,80]],
+    'key-resources':         [['Repair vans and tools',8,8],['Certified mechanics',8,44],['Booking app',8,80]],
+    'value-propositions':    [['<b>Repairs at your door</b>',8,8,15],['Fixed monthly price',8,48],['Same-week service',8,84],['Safety check every visit',8,120],['Never haul a bike to a shop again!',8,170,20,"'Caveat',cursive"]],
+    'customer-relationships':[['Self-serve booking',8,8],['A named mechanic per suburb',8,44],['Monthly ride-ready reminder',8,80]],
+    'channels':              [['Mobile app',8,8],['Bike-shop referrals',8,44],['Community rides',8,80]],
+    'customer-segments':     [['Daily commuters',8,8],['Families with kids\' bikes',8,44],['E-bike owners',8,80],['Office bike fleets',8,116]],
+    'cost-structure':        [['Mechanic wages',8,8],['Van running costs',8,44],['Spare parts',240,8],['App hosting',240,44]],
+    'revenue-streams':       [['Monthly subscription',8,8],['Parts at cost plus margin',8,44],['One-off repairs',240,8],['Corporate fleet plans',240,44]],
+  },
+  vpc:{
+    'gain-creators':    [['Book a slot in under a minute',8,8],['Same mechanic every visit',8,44],['Ride-ready report after each service',8,80]],
+    'products-services':[['<b>Monthly care plan</b>',8,8],['Mobile repair van',8,44],['Booking app',8,80]],
+    'pain-relievers':   [['No trip to the shop',8,8],['Fixed price, no surprise bills',8,44],['Loan bike if a repair runs long',8,80]],
+    'gains':            [['Bike always ready',150,100],['Predictable costs',140,240],['More time riding',150,276]],
+    'customer-jobs':    [['Commute to work',16,110],['Keep the bike safe',16,146],['Fix flats fast',16,182],['Ride with the family',16,360]],
+    'pains':            [['Shop is far away',130,130],['Waiting days for repairs',110,166],['Unclear prices',130,202]],
+  },
+};
+function buildSample(type){
+  const data={'canvas-name':SAMPLE_NAME,'canvas-type':type};
+  Object.entries(SAMPLE_NOTES[type]).forEach(([id,notes])=>{
+    data[id]=notes.map(([value,x,y,size,font])=>({value,'font-size':size||13,'font-family':font||'',location:{x,y}}));
+  });
+  return data;
+}
+document.getElementById('sampleBtn').addEventListener('click',()=>{
+  // Ask before replacing anything on the canvas, saved or not: the sample is
+  // not the reader's own work, so it must never silently take its place.
+  doLoad(buildSample(S.canvasType), hasContent(), 'Sample loaded ✓', unstackSample);
+});
+function unstackSample(){
+  // The VPC circle is sized by a ResizeObserver after the render, so measure
+  // once layout has settled, not straight away.
+  requestAnimationFrame(()=>requestAnimationFrame(unstackNow));
+}
+function unstackNow(){
+  Object.entries(S.sections).forEach(([id,items])=>{
+    const bottom={}; // column x -> bottom edge of the last note placed there
+    [...items].sort((a,b)=>a.y-b.y).forEach(item=>{
+      const el=document.querySelector(`.text-item[data-item-id="${item.id}"]`);
+      if(!el) return;
+      if(bottom[item.x]!=null && item.y<bottom[item.x]+8){
+        item.y=bottom[item.x]+8; el.style.top=item.y+'px';
+      }
+      bottom[item.x]=item.y+el.offsetHeight;
+    });
+  });
 }
 
 /* ══ THEME TOGGLE ════════════════════════════════════ */

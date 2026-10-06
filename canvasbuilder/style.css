@@ -407,11 +407,11 @@ body.light .text-item.selected, .export-light-theme .text-item.selected { box-sh
   .brand { order:0; margin-right:auto; }
   #themeBtn, .toolbar a.btn { order:1; padding:6px 10px; }
   /* Bases that add up past one row keep the picker and title together on
-     the second and the four actions together on the third at every width. */
+     the second and the five actions together on the third at every width. */
   #canvasTypeSelect { order:2; flex:1 1 60%; min-width:0; font-size:.8rem; padding-right:24px; }
   #canvasNameInput { order:2; flex:1 1 30%; min-width:0; }
   .dirty-dot { order:2; }
-  #savePngBtn, #copyPngBtn, #saveJsonBtn, #loadJsonBtn { order:3; flex:1 1 20%; justify-content:center; }
+  #savePngBtn, #copyPngBtn, #saveJsonBtn, #loadJsonBtn, #sampleBtn { order:3; flex:1 1 15%; justify-content:center; }
 }
 /* Scrollbars come from shared.css: no vertical bar anywhere, a themed
    horizontal one where a surface scrolls sideways. */
