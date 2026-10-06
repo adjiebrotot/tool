@@ -58,11 +58,13 @@ not off readInputs(), which renames and derives, so a scenario writing to an id
 that no longer exists is caught rather than papered over), binding on the cap it
 is documented to bind on, never inheriting the previous scenario's commitments,
 and clearing its highlight on Reset. Two of those checks exist because the
-scenarios got them wrong first: the first home buyer must gain capacity when LMI
-is capitalised, not merely change which cap binds, and no scenario may bind
+scenarios got them wrong first: the first home buyer must have more capacity with LMI
+capitalised than without, not merely a different binding cap, and no scenario may bind
 within 5% of its next cap. On a thin margin, capitalising the premium divides
 serviceability by 1 plus the rate and leaves the borrower worse off, which is
-the reverse of the lesson the button claims to teach.
+the reverse of the lesson the button claims to teach. Every scenario must also
+be able to afford the home it prices, so each verdict opens on "enough" rather
+than "short".
 
 The tour is covered too: every step's selector resolving to an element with a
 real box, saveState returning null on a page nobody has touched so a first-time

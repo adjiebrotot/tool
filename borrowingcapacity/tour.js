@@ -39,7 +39,7 @@ window.__TOUR = {
       title: '① Start from a worked example',
       body: 'One click fills every tab with a real borrower. We have loaded ' +
             '<strong>Average Man in Perth</strong> for you, a single buyer on ' +
-            '$105,000, so the rest of the tour has his numbers on screen. There is ' +
+            '$110,000, so the rest of the tour has his numbers on screen. There is ' +
             'also a Sydney high earner, a Melbourne couple, a first home buyer and a ' +
             'self-employed tradie.'
     },
