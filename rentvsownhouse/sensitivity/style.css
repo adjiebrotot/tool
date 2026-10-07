@@ -23,7 +23,7 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 /* Segmented controls */
 .seg-group{display:inline-flex;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
 .seg-btn{background:transparent;border:none;padding:7px 14px;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;}
-.seg-btn.active{background:var(--accent);color:#fff;}
+.seg-btn.active{background:var(--accent);color:var(--text-inv);}
 .seg-btn:not(.active):hover{color:var(--text);}
 /* A label with a shorter phone-width form shows the long one by default. */
 .lbl-short{display:none;}

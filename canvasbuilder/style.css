@@ -82,9 +82,9 @@ select.tb-control {
 }
 .btn:hover { border-color:var(--accent); box-shadow:var(--shadow-sm); }
 .btn:active { transform:scale(.97); }
-.btn-primary { background:var(--accent-strong); border-color:var(--accent-strong); color:#fff; }
+.btn-primary { background:var(--accent-strong); border-color:var(--accent-strong); color:var(--text-inv); }
 .btn-primary:hover { opacity:.88; border-color:var(--accent-strong); }
-.btn-green { background:var(--accent2); border-color:var(--accent2); color:#fff; }
+.btn-green { background:var(--accent2); border-color:var(--accent2); color:var(--text-inv); }
 .btn-green:hover { opacity:.88; }
 .dirty-dot { width:7px; height:7px; background:var(--negative-em); border-radius:50%;
   display:none; flex-shrink:0; }

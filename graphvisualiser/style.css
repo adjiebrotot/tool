@@ -3,8 +3,11 @@
   --input-bg:rgba(255,255,255,0.06);--card-bg:rgba(255,255,255,0.03);
   --value-highlight:#8DBBFF;
 }
+/* Light mode takes light.css's accents: the pale #8BB8F8 this page used to
+   set put white text on a fill too light to read, so Visualise looked greyed
+   out even when it was ready. */
 body.light {
-  --accent:#8BB8F8;--accent-strong:#5A91E8;--accent2:#B8E0D2;--accent3:#FFD6E0;
+  --accent3:#FFD6E0;
   --input-bg:rgba(0,0,0,0.04);--card-bg:rgba(255,255,255,0.85);
   --shadow:0 2px 16px rgba(120,160,220,0.10);--shadow-lg:0 4px 32px rgba(120,160,220,0.14);
   --value-highlight:#5A91E8;
@@ -41,7 +44,19 @@ body{margin:0;font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-hei
 .btn-visualise{width:100%;padding:13px 22px;background:var(--accent);color:var(--text-inv);border:none;border-radius:12px;font-weight:800;font-size:.95rem;cursor:pointer;transition:opacity 150ms,transform 150ms;font-family:inherit;letter-spacing:.01em;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 18px rgba(141,187,255,.2)}
 .btn-visualise:hover{opacity:.88}
 .btn-visualise:active{transform:scale(.97)}
-.btn-visualise:disabled{opacity:.38;cursor:not-allowed}
+/* No data yet: a flat grey slab, not a faded blue one, so it cannot be
+   mistaken for a button that is merely pale. */
+.btn-visualise:disabled,.btn-visualise:disabled:hover{background:var(--input-bg);color:var(--muted);border:1.5px dashed var(--border);box-shadow:none;opacity:1;cursor:not-allowed;transform:none}
+
+/* The Visualise gate (the same contract as financialfreedom's Simulate).
+   The chart is drawn on Visualise, not on every change, so the page has to say
+   when what is on screen no longer matches the settings: the button gains a
+   ring and a note, and a chart already drawn steps back until it is redrawn. */
+.vis-note{font-size:.78rem;font-weight:700;text-align:center;margin:-4px 0 0;color:var(--muted)}
+.vis-note.is-stale{color:var(--accent2)}
+.btn-visualise.needs-run{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent2)}
+#plotDiv,.info-row{transition:opacity 150ms}
+body.is-stale #plotDiv,body.is-stale .info-row{opacity:.45}
 
 /* FIELD GROUPS — the boxes, titles and rows are shared.css's
    (.field-group / .group-title / .field-row / .fg-body); only what sits
@@ -68,7 +83,7 @@ select[multiple] option:checked{background:var(--accent);color:var(--text-inv)}
 /* DIMENSION BUTTONS */
 .dim-btns{display:flex;gap:7px}
 .dim-btn{flex:1;padding:9px 6px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--muted);font-weight:700;font-size:.88rem;cursor:pointer;transition:all 150ms;font-family:inherit;text-align:center}
-.dim-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(141,187,255,.08)}
+.dim-btn.active{border-color:var(--accent);color:var(--accent-strong);background:rgba(141,187,255,.14)}
 
 /* UPLOAD ZONE */
 .upload-zone{border:2px dashed var(--border);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:all 200ms;margin-bottom:10px;position:relative}
@@ -122,7 +137,7 @@ select[multiple] option:checked{background:var(--accent);color:var(--text-inv)}
 /* COLORMAP GRID */
 .colormap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px}
 .colormap-btn{padding:7px 6px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:.76rem;font-weight:700;color:var(--muted);text-align:center;transition:all 150ms;font-family:inherit}
-.colormap-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(141,187,255,.08)}
+.colormap-btn.active{border-color:var(--accent);color:var(--accent-strong);background:rgba(141,187,255,.14)}
 .colormap-preview{height:7px;border-radius:4px;margin-bottom:4px}
 
 /* FOOTER */

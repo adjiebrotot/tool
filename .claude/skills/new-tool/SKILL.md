@@ -160,6 +160,15 @@ over ~150ms (or if it fetches anything) it needs a real gate that actually gates
 A tool with Quick Start scenarios needs no Reset, provided each scenario opens
 from the defaults rather than from whatever is on screen.
 
+A gate is only honest if its states read at a glance (`financialfreedom` is the model):
+- **Ready / up to date**: solid accent fill, text in `var(--text-inv)`, never a hard-coded
+  `#fff` (the dark accent is pale, so white text on it reads as greyed out). The same goes for
+  every active tab, pill or segmented button filled with an accent.
+- **Out of date**: the moment an input changes, the button gets `.needs-run` (an `--accent2`
+  ring), a short note says to press it, and the results dim (`body.is-stale`) until it is run.
+- **Disabled**: `shared.css` dims any native `:disabled` button and stops its hover and press
+  effects. Never override `--accent` with a paler shade on a page that fills buttons with it.
+
 ## Mini cache (nice to have)
 
 Tools remember the user's work between visits via `Persist` in `shared.js`. When inputs map to

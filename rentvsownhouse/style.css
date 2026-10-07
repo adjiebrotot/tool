@@ -55,7 +55,7 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 /* Segmented control (Simple / Detailed mortgage mode) */
 .seg-group{display:flex;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;margin-top:4px;}
 .seg-btn{flex:1;background:transparent;border:none;border-radius:7px;padding:7px 14px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;}
-.seg-btn.active{background:var(--accent);color:#fff;}
+.seg-btn.active{background:var(--accent);color:var(--text-inv);}
 .seg-btn:hover:not(.active){color:var(--text);}
 /* Mortgage rate schedule (detailed mode) */
 .rate-periods{display:grid;gap:8px;margin-top:6px;}
@@ -100,7 +100,7 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 .cagr-actions{display:flex;flex-wrap:wrap;gap:8px;}
 .cagr-row input{width:100%;min-width:0;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:8px 10px;outline:none;transition:border-color var(--motion-fast);}
 .cagr-row input:focus{border-color:var(--accent);}
-.cagr-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 12px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity var(--motion-fast);}
+.cagr-btn{background:var(--accent);color:var(--text-inv);border:none;border-radius:var(--radius-sm);padding:8px 12px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity var(--motion-fast);}
 .cagr-btn:hover{opacity:.85;}
 .cagr-btn.delete{background:transparent;color:var(--negative-em);border:1px solid var(--data-neg-border);padding-inline:10px;}
 .cagr-btn.delete:disabled{opacity:.45;cursor:not-allowed;}

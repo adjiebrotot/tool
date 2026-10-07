@@ -317,6 +317,17 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
 .btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:11px 22px;font-weight:700;font-size:.9rem;cursor:pointer;transition:border-color var(--transition-fast);font-family:inherit;}
 .btn-secondary:hover{border-color:var(--accent);}
 .btn-secondary:active{transform:scale(.97);}
+/* Native [disabled], site-wide. Without this a disabled .btn-primary or
+   .btn-secondary looked exactly like a live one, and its hover still faded and
+   its press still squashed it, so nothing told the reader it would do nothing.
+   :where() keeps it at the weight of one class, so a tool's own :disabled rule wins;
+   the :hover/:active lines only stop a tool's hover and press effects playing
+   on a button that cannot be pressed. */
+:where(button,input[type=button],input[type=submit]):disabled{opacity:.45;cursor:not-allowed;}
+:where(button,input[type=button],input[type=submit]):disabled:hover,
+:where(button,input[type=button],input[type=submit]):disabled:active{transform:none;}
+.btn-primary:disabled:hover,.btn-primary:disabled:active{opacity:.45;transform:none;}
+.btn-secondary:disabled:hover,.btn-secondary:disabled:active{border-color:var(--border);transform:none;}
 
 /* ============================================================
    CHART CARD TOOLBAR
