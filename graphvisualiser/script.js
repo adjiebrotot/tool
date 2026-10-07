@@ -64,6 +64,7 @@ document.querySelectorAll('.dim-btn').forEach(btn => {
     document.getElementById('dimHelp').textContent = DIM_HELP[S.dim];
     if (S.headers.length) buildAxesUI();
     refreshStyleTab();
+    markStale();
   };
 });
 
@@ -175,6 +176,7 @@ function onDataLoaded() {
   buildAxesUI();
   buildColormapGrid();
   document.getElementById('renderBtn').disabled = false;
+  markStale();
   // Auto-switch to Axes tab
   document.querySelectorAll('.ctrl-tab,.ctrl-panel').forEach(el => el.classList.remove('active'));
   document.querySelector('[data-tab="axes"]').classList.add('active');
@@ -284,6 +286,7 @@ function buildColormapGrid() {
 function selectColormap(name) {
   S.colormap = name;
   document.querySelectorAll('.colormap-btn').forEach(b => b.classList.toggle('active', b.dataset.cmap===name));
+  markStale();
 }
 
 // ─── AXIS SELECTIONS ──────────────────────────────────────────────────────────
@@ -307,6 +310,36 @@ function getColumnValues(col, rows, numeric=true) {
     return v;
   });
 }
+
+// ─── THE VISUALISE GATE ───────────────────────────────────────────────────────
+/* The chart is drawn on Visualise, so any change in the sidebar after a draw
+   leaves a chart that no longer matches the settings. Say so: the button gets
+   a ring and a note, and a chart already on screen steps back until redrawn. */
+let drawn = false;
+function setVisNote(text, stale) {
+  const n = document.getElementById('visNote');
+  n.textContent = text;
+  n.classList.toggle('is-stale', !!stale);
+}
+function markStale() {
+  if (!S.raw) return;
+  document.getElementById('renderBtn').classList.add('needs-run');
+  document.body.classList.toggle('is-stale', drawn);
+  if (drawn) setStatus('Out of date', 'warning');
+  setVisNote(drawn ? 'Settings changed. Press Visualise to redraw' : 'Data loaded. Press Visualise to draw it', true);
+}
+function clearStale() {
+  drawn = true;
+  document.getElementById('renderBtn').classList.remove('needs-run');
+  document.body.classList.remove('is-stale');
+  setVisNote('Chart is up to date', false);
+}
+// Every setting lives in the sidebar, so one listener covers them all. The
+// header row and file input re-parse, which marks stale through onDataLoaded.
+['input', 'change'].forEach(ev => document.querySelector('.sidebar').addEventListener(ev, e => {
+  if (e.target.closest('#renderBtn')) return;
+  markStale();
+}));
 
 // ─── RENDER ───────────────────────────────────────────────────────────────────
 document.getElementById('renderBtn').onclick = renderChart;
@@ -430,6 +463,7 @@ function renderChart() {
 
   document.getElementById('chartPanelTitle').textContent = title;
   setStatus('Rendered', 'success');
+  clearStale();
 }
 
 /* ─── ZOOM: BOUNDED, AND A Y AXIS THAT FOLLOWS THE X WINDOW ───────────────────
