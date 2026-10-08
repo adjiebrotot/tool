@@ -1070,7 +1070,6 @@ function renderTables(r){
     const t2 = m.terms.findIndex(t => t.j === j && t.pow === 2);
     if(t2 >= 0) rows.push({ term: termName(f, 2), coef: m.coef.q[j], w: m.beta[t2 + 1], pct: null });
   });
-  r.coefRows = rows;
   $('coefTableWrap').innerHTML =
     `<table><thead><tr><th>Term</th><th>Coefficient</th>${isLog ? '<th>% per unit</th>' : ''}<th>Standardised weight</th></tr></thead><tbody>` +
     rows.map(x => x.dropped
@@ -1463,26 +1462,7 @@ async function copyPng(){
   setTimeout(() => { btn.textContent = '⧉'; }, 1400);
 }
 
-/* ─── Table CSVs ─── */
-function itemsCsv(){
-  const r = last; if(!r || r.error) return;
-  const s = r.o.sym;
-  const lines = [['Item', `Asking (${s})`, `Fair price (${s})`, `Range low (${s})`, `Range high (${s})`, `Gap (${s})`, 'Gap %']];
-  r.items.forEach(it => {
-    if(it.incomplete){ lines.push([it.name, '', '', '', '', '', '']); return; }
-    lines.push([it.name, it.asking === null ? '' : it.asking.toFixed(0), it.fair.toFixed(0), it.range[0].toFixed(0), it.range[1].toFixed(0),
-      it.gap === null ? '' : it.gap.toFixed(0), it.gapPct === null ? '' : (it.gapPct * 100).toFixed(2)]);
-  });
-  downloadText('valuate-everything-items.csv', lines.map(l => l.map(v => csvCell(v, ',')).join(',')).join('\n'));
-}
-function coefCsv(){
-  const r = last; if(!r || r.error || !r.coefRows) return;
-  const lines = [['Term', 'Coefficient', 'Percent per unit', 'Standardised weight']];
-  r.coefRows.forEach(x => lines.push(x.dropped ? [x.term, 'dropped', '', ''] : [x.term, fmt.plain(x.coef), x.pct === null ? '' : (x.pct * 100).toFixed(4), x.w === null ? '' : fmt.plain(x.w)]));
-  lines.push([]);
-  lines.push([r.eqText || '']);
-  downloadText('valuate-everything-model.csv', lines.map(l => l.map(v => csvCell(v, ',')).join(',')).join('\n'));
-}
+/* ─── Listings CSV ─── */
 function dataCsv(){
   const r = last; if(!r || r.error) return;
   const s = r.o.sym, p = r.prep, m = r.model;
@@ -1592,8 +1572,6 @@ function init(){
   $('pngBtn').addEventListener('click', () => exportImage('png'));
   $('copyBtn').addEventListener('click', copyPng);
   $('resetViewBtn').addEventListener('click', resetView);
-  $('itemsCsvBtn').addEventListener('click', itemsCsv);
-  $('coefCsvBtn').addEventListener('click', coefCsv);
   $('dataCsvBtn').addEventListener('click', dataCsv);
 
   document.querySelectorAll('.quick-start-btn').forEach(btn =>
