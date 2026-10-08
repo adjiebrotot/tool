@@ -891,7 +891,64 @@ function render(){
   renderKpis(r);
   renderTables(r);
   renderWarnings(r);
+  renderAssumptions(r);
   scheduleChart();
+}
+
+/* What this assumes, built from this fit: the listings, features, model and
+   items actually in play. A feature type nobody used, or a data year column
+   that never differs from the current year, says nothing. */
+function renderAssumptions(r){
+  const el = $('assumptions'); if(!el) return;
+  if(r.error || !r.model){
+    el.innerHTML = '<li><strong>Valuate a complete set of listings</strong> to see what the fit rests on.</li>';
+    return;
+  }
+  const s = r.o.sym, m = r.model, prep = r.prep, F = prep.features;
+  const names = fs => { const a = fs.map(f => esc(f.name)); return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; };
+  const items = [];
+
+  items.push(`<strong>Your ${m.n} listings are a fair sample of the market.</strong> The model only knows these prices` +
+    (m.n < 15 ? ', so with this few a single odd sale moves the answer.' : '.') +
+    (prep.skipped.length ? ` ${prep.skipped.length} ${prep.skipped.length === 1 ? 'row with a blank or unreadable cell is' : 'rows with a blank or unreadable cell are'} left out.` : ''));
+
+  const used = F.filter(f => !m.dropped.includes(f.name));
+  const nums = used.filter(f => f.type !== 'bool');
+  const MODEL = {
+    linear: `each adds a fixed amount to the price`,
+    log: `each moves the price by a fixed percentage`,
+    quadratic: `each adds an amount that can bend${nums.length < used.length ? ' (a Yes/No feature stays a fixed amount)' : ''}`,
+    ridge: `each adds a fixed amount, pulled toward zero at λ = ${m.lambda.toFixed(2)}`
+  };
+  items.push(`<strong>${names(used)}: ${MODEL[m.model] || MODEL.linear}.</strong>` +
+    (m.dropped.length ? ` ${m.dropped.map(esc).join(', ')} ${m.dropped.length === 1 ? 'is' : 'are'} the same in every listing, so ${m.dropped.length === 1 ? 'it is' : 'they are'} left out.` : ''));
+
+  const older = prep.dataYear.filter(y => y < r.o.year);
+  if(older.length){
+    const oldest = Math.min.apply(null, prep.dataYear);
+    items.push(r.o.inflation > 0
+      ? `<strong>Older prices are lifted to ${r.o.year} money at ${(r.o.inflation * 100).toFixed(1)}% a year</strong> from each listing's data year, ${oldest} at the earliest.`
+      : `<strong>Older prices, from ${oldest} on, are taken as they are,</strong> with no inflation to lift them to ${r.o.year} money.`);
+  }
+  const years = used.filter(f => f.type === 'year');
+  if(years.length)
+    items.push(`<strong>${names(years)} ${years.length === 1 ? 'becomes an age,' : 'become ages,'}</strong> at each listing's data year for the market data and at ${r.o.year} for the items to buy.`);
+  const bools = used.filter(f => f.type === 'bool');
+  if(bools.length)
+    items.push(`<strong>${names(bools)} ${bools.length === 1 ? 'counts' : 'count'} as 1 for yes and 0 for no.</strong>`);
+
+  const good = r.items.filter(it => !it.incomplete && !it.bad);
+  if(good.length){
+    items.push(m.model === 'log'
+      ? `<strong>The range is one typical error either side,</strong> about ±${(Math.expm1(m.rmseLog) * 100).toFixed(1)}% of the fair price: how far real prices scatter, not a confidence interval.`
+      : `<strong>The range is one typical error either side,</strong> ±${fmt.money(m.rmse, s)}: how far real prices scatter, not a confidence interval.`);
+    good.filter(it => it.outside.length).forEach(it =>
+      items.push(`<strong>${esc(it.name)} is extrapolated:</strong> its ${it.outside.map(esc).join(' and ')} ${it.outside.length === 1 ? 'is' : 'are'} outside the listings' range.`));
+    if(good.some(it => it.asking !== null))
+      items.push('<strong>Asking prices are judged against the model,</strong> never added to it.');
+  }
+
+  el.innerHTML = items.map(t => '<li>' + t + '</li>').join('');
 }
 
 function renderStatus(r){

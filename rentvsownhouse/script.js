@@ -235,16 +235,6 @@ const LANG = {
     verdictEquity: (own, rent, yrs) => `Net equity in year ${yrs}: owning ${own}, renting ${rent}, in future dollars.`,
     verdictRTB: (val, yr) => `Rent-Then-Buy, buying after ${yr} years, ends at ${val}.`,
     assumesTitle: 'What this assumes',
-    assumes: [
-      '<strong>Future dollars.</strong> Prices, rents and costs grow at the rates you set, and nothing is converted back to today\'s money.',
-      '<strong>One budget for every scenario.</strong> Each month the same housing budget pays each scenario\'s costs, and whatever is left over is saved.',
-      '<strong>Savings earn the risk-free rate,</strong> compounding monthly, in every scenario.',
-      '<strong>A blank budget or cash is worked out for you:</strong> the budget is the highest cost of any scenario that year, and the cash covers what every scenario needs up front.',
-      '<strong>Net equity counts the home as if sold that year,</strong> after selling costs and the loan still owed, plus cash.',
-      '<strong>The mortgage is the only borrowing.</strong> Cash that would fall below zero is flagged, not borrowed.',
-      '<strong>The home grows in value at the end of each year</strong> and rent rises each year, at the rates you set.',
-      '<strong>No tax</strong> is modelled on interest, savings or the sale of the home.'
-    ],
   },
   id: {
     /* header */
@@ -474,16 +464,6 @@ const LANG = {
     verdictEquity: (own, rent, yrs) => `Kekayaan bersih di tahun ke-${yrs}: membeli ${own}, menyewa ${rent}, dalam nilai masa depan.`,
     verdictRTB: (val, yr) => `Sewa Dulu, Beli Kemudian (membeli setelah ${yr} tahun) berakhir di ${val}.`,
     assumesTitle: 'Asumsi yang dipakai',
-    assumes: [
-      '<strong>Nilai masa depan.</strong> Harga, sewa, dan biaya tumbuh sesuai laju yang Anda tetapkan, dan tidak dikonversi kembali ke nilai hari ini.',
-      '<strong>Satu anggaran untuk semua skenario.</strong> Setiap bulan anggaran perumahan yang sama membayar biaya tiap skenario, dan sisanya ditabung.',
-      '<strong>Tabungan mendapat suku bunga bebas risiko,</strong> berbunga bulanan, di semua skenario.',
-      '<strong>Anggaran atau kas yang dikosongkan dihitung otomatis:</strong> anggaran adalah biaya tertinggi semua skenario pada tahun itu, dan kas menutup kebutuhan awal semua skenario.',
-      '<strong>Kekayaan bersih menghitung rumah seolah dijual tahun itu,</strong> setelah biaya penjualan dan sisa pinjaman, ditambah kas.',
-      '<strong>KPR adalah satu-satunya pinjaman.</strong> Kas yang akan turun di bawah nol ditandai, bukan dipinjamkan.',
-      '<strong>Nilai rumah naik di akhir setiap tahun</strong> dan sewa naik setiap tahun, sesuai laju yang Anda tetapkan.',
-      '<strong>Tidak ada pajak</strong> yang dimodelkan atas bunga, tabungan, atau penjualan rumah.'
-    ],
   },
 };
 function T(key){ return LANG[lang][key] !== undefined ? LANG[lang][key] : (LANG.en[key] !== undefined ? LANG.en[key] : key); }
@@ -1141,10 +1121,119 @@ function renderVerdict(state){
   SharedVerdict.set('verdict', {tone:'', title, body: body.join(' ')});
 }
 
-/* ── WHAT THIS ASSUMES ── */
-function renderAssumptions(){
-  const list = T('assumes');
-  $('assumptions').innerHTML = Array.isArray(list) ? list.map(x=>'<li>'+x+'</li>').join('') : '';
+/* ── WHAT THIS ASSUMES ──
+   Built from this plan: every line names the figure that drives it, and a
+   feature left off (Rent-Then-Buy, a cost left at zero) says nothing. */
+function renderAssumptions(state){
+  const id = lang === 'id';
+  const L = (en, idText) => id ? idText : en;
+  const m = v => fmt.currency(v);
+  const pc = v => (+(Number(v)||0).toFixed(2)) + '%';
+  const yrs = S.horizon;
+  const perMo = T('perMo');
+  const items = [];
+
+  if(S.monthlyBudget > 0){
+    const g = S.monthlyBudgetIncrease;
+    items.push(L(
+      `<strong>Your ${m(S.monthlyBudget)}${perMo} housing budget pays each scenario's costs</strong>${g ? ', rising ' + pc(g) + ' a year' : ''}, and whatever is left over is saved.`,
+      `<strong>Anggaran perumahan ${m(S.monthlyBudget)}${perMo} membayar biaya tiap skenario</strong>${g ? ', naik ' + pc(g) + ' per tahun' : ''}, dan sisanya ditabung.`));
+  } else {
+    items.push(L(
+      `<strong>With no budget entered, it is the dearest scenario's cost each year</strong> (${m(state.monthlyBudget)}${perMo} in year 1), and whatever the others leave over is saved.`,
+      `<strong>Tanpa anggaran, anggarannya adalah biaya skenario termahal tiap tahun</strong> (${m(state.monthlyBudget)}${perMo} di tahun 1), dan sisa skenario lain ditabung.`));
+  }
+  items.push(S.initialCash > 0
+    ? L(`<strong>Every scenario starts with your ${m(S.initialCash)} of cash.</strong>`,
+        `<strong>Setiap skenario mulai dengan kas Anda ${m(S.initialCash)}.</strong>`)
+    : L(`<strong>With no starting cash entered, every scenario starts with ${m(state.initialCashUsed)},</strong> enough for what each one needs up front.`,
+        `<strong>Tanpa kas awal, setiap skenario mulai dengan ${m(state.initialCashUsed)},</strong> cukup untuk kebutuhan awal masing-masing.`));
+  items.push(L(
+    `<strong>Savings earn ${pc(S.riskFreeRate)} a year,</strong> compounded monthly and untaxed, in every scenario.`,
+    `<strong>Tabungan menghasilkan ${pc(S.riskFreeRate)} per tahun,</strong> berbunga bulanan dan tanpa pajak, di setiap skenario.`));
+
+  const rentPart = state.rentMonthly0 > 0
+    ? L(`rent rises ${pc(S.rentInflation)} a year from ${m(state.rentMonthly0)}${perMo}`, `sewa naik ${pc(S.rentInflation)} per tahun dari ${m(state.rentMonthly0)}${perMo}`)
+    : L('renting costs no rent', 'menyewa tanpa biaya sewa');
+  items.push(L(
+    `<strong>The home grows ${pc(S.houseGrowth)} a year,</strong> to ${fmt.currency(state.summary.ownPropValue, true)} by year ${yrs}, and ${rentPart}. Every figure is in future dollars, not today's money.`,
+    `<strong>Nilai rumah naik ${pc(S.houseGrowth)} per tahun,</strong> menjadi ${fmt.currency(state.summary.ownPropValue, true)} di tahun ${yrs}, dan ${rentPart}. Semua angka dalam nilai uang masa depan, bukan nilai hari ini.`));
+
+  const loan = S.propertyPrice * (1 - S.downPaymentPct/100);
+  if(S.mortgageMode !== 'detailed'){
+    items.push(L(
+      `<strong>The ${m(loan)} loan is at a fixed ${pc(S.mortgageRate)},</strong> principal and interest over ${S.mortgageTerm} years. Accumulated cost counts the interest, not the principal repaid.`,
+      `<strong>Pinjaman ${m(loan)} berbunga tetap ${pc(S.mortgageRate)},</strong> pokok dan bunga selama ${S.mortgageTerm} tahun. Biaya kumulatif menghitung bunganya, bukan pokok yang dilunasi.`));
+  } else {
+    const norm = getOwnRateNorm();
+    const band = p => p.max - p.min > 1e-9 ? pc(p.min) + L(' to ', ' sampai ') + pc(p.max) + L(' floating', ' mengambang') : pc(p.min) + L(' fixed', ' tetap');
+    const sched = norm.map(p => band(p) + L(' to year ', ' sampai tahun ') + p.to).join(', ');
+    const io = S.mortgageType === 'io';
+    let txt = L(
+      `<strong>The ${m(loan)} loan is ${io ? 'interest only' : 'principal and interest'} over ${S.mortgageTerm} years:</strong> ${sched}.`,
+      `<strong>Pinjaman ${m(loan)} ${io ? 'hanya bunga' : 'pokok dan bunga'} selama ${S.mortgageTerm} tahun:</strong> ${sched}.`);
+    if(scheduleHasFloat()) txt += L(' Floating periods run at the middle of their range; the band shows the low and high.',
+      ' Periode mengambang memakai titik tengah rentangnya; pita menunjukkan batas bawah dan atasnya.');
+    if(norm.length > 1 && !io) txt += L(' Each rate change re-spreads the balance over the term left.', ' Setiap perubahan bunga menghitung ulang cicilan atas sisa pokok dan sisa tenor.');
+    if(io && S.mortgageTerm <= yrs) txt += L(' The whole balance falls due in year ' + S.mortgageTerm + ', paid from cash.', ' Seluruh pokok jatuh tempo di tahun ' + S.mortgageTerm + ', dibayar dari kas.');
+    txt += S.costInterestOnly
+      ? L(' Accumulated cost counts the interest, not the principal repaid.', ' Biaya kumulatif menghitung bunga, bukan pokok yang dilunasi.')
+      : L(' Accumulated cost counts the whole repayment.', ' Biaya kumulatif menghitung seluruh cicilan.');
+    items.push(txt);
+  }
+
+  // Ongoing costs: only a cost the reader entered, with how it grows.
+  const costLine = (list, yr1, who, pctOf) => {
+    const on = list.filter(it => Number(it.amount) > 0);
+    if(!on.length) return null;
+    if(on.length === 1){
+      const it = on[0];
+      if(it.basis === 'pct') return L(
+        `<strong>${who.en} ${pc(it.amount)} of ${pctOf.en} a year</strong> (${m(yr1)} in year 1), so the cost grows with it.`,
+        `<strong>${who.id} ${pc(it.amount)} dari ${pctOf.id} per tahun</strong> (${m(yr1)} di tahun 1), sehingga ikut naik bersamanya.`);
+      const g = Number(it.inflation)||0;
+      return L(
+        `<strong>${who.en} ${m(yr1)} a year,</strong> ${g ? 'rising ' + pc(g) + ' a year' : 'flat, with no inflation applied'}.`,
+        `<strong>${who.id} ${m(yr1)} per tahun,</strong> ${g ? 'naik ' + pc(g) + ' per tahun' : 'tetap, tanpa inflasi'}.`);
+    }
+    const notes = [];
+    if(on.some(it => it.basis === 'pct')) notes.push(L('the % items follow ' + pctOf.en, 'item % mengikuti ' + pctOf.id));
+    const cash = on.filter(it => it.basis !== 'pct');
+    if(cash.length){
+      const rates = [...new Set(cash.map(it => Number(it.inflation)||0))];
+      notes.push(rates.length > 1 ? L('the money items rise at their own rates', 'item nominal naik dengan lajunya masing-masing')
+        : rates[0] ? L('the money items rise ' + pc(rates[0]) + ' a year', 'item nominal naik ' + pc(rates[0]) + ' per tahun')
+        : L('the money items stay flat, with no inflation', 'item nominal tetap, tanpa inflasi'));
+    }
+    return L(
+      `<strong>${who.en} ${m(yr1)} in year 1</strong> across ${on.length} items: ${notes.join('; ')}.`,
+      `<strong>${who.id} ${m(yr1)} di tahun 1</strong> dari ${on.length} item: ${notes.join('; ')}.`);
+  };
+  const ownLine = costLine(
+    S.ownCostsMode==='detailed' && Array.isArray(S.ownOngoingCosts) && S.ownOngoingCosts.length ? S.ownOngoingCosts
+      : [{amount:S.ownOngoingCost, basis:S.ownOngoingCostType==='pct' ? 'pct' : S.ownOngoingCostFreq, inflation:S.ownOngoingInflation}],
+    ownOngoingYearlyAt(1, S.propertyPrice), {en: 'Owning costs', id: 'Biaya memiliki'}, {en: "the home's value", id: 'nilai rumah'});
+  if(ownLine) items.push(ownLine);
+  const rentLine = costLine(
+    S.rentCostsMode==='detailed' && Array.isArray(S.rentOngoingCosts) && S.rentOngoingCosts.length ? S.rentOngoingCosts
+      : [{amount:S.rentOngoingCost, basis:S.rentOngoingCostType==='pct' ? 'pct' : S.rentOngoingCostFreq, inflation:S.rentOngoingInflation}],
+    rentOngoingYearlyAt(1, state.rentMonthly0), {en: 'Renting costs, on top of rent,', id: 'Biaya menyewa, di luar sewa,'}, {en: 'the rent', id: 'sewa'});
+  if(rentLine) items.push(rentLine);
+
+  if(S.rtbEnabled && state.rtbRows){
+    const r = state.rtbRows;
+    items.push(L(
+      `<strong>${T('nameRTB')} buys at the end of year ${S.rtbBuyYear}</strong> at ${fmt.currency(r.rtbPropValueAtBuy||0, true)}, with the same ${pc(S.downPaymentPct)} deposit, setup costs scaled to that price, and a new loan on the same terms.`,
+      `<strong>${T('nameRTB')} membeli di akhir tahun ${S.rtbBuyYear}</strong> seharga ${fmt.currency(r.rtbPropValueAtBuy||0, true)}, dengan uang muka ${pc(S.downPaymentPct)} yang sama, biaya awal disesuaikan dengan harga itu, dan pinjaman baru dengan syarat yang sama.`));
+  }
+
+  items.push(S.sellingCostPct > 0
+    ? L(`<strong>Net equity counts the home as sold in year ${yrs},</strong> less ${pc(S.sellingCostPct)} selling costs and the loan still owed, plus cash. No tax is taken on the gain.`,
+        `<strong>Ekuitas bersih menghitung rumah seolah dijual di tahun ${yrs},</strong> dikurangi biaya jual ${pc(S.sellingCostPct)} dan sisa pinjaman, ditambah kas. Keuntungannya tidak dikenai pajak.`)
+    : L(`<strong>Net equity counts the home as sold in year ${yrs}</strong> with no selling costs, less the loan still owed, plus cash. No tax is taken on the gain.`,
+        `<strong>Ekuitas bersih menghitung rumah seolah dijual di tahun ${yrs}</strong> tanpa biaya jual, dikurangi sisa pinjaman, ditambah kas. Keuntungannya tidak dikenai pajak.`));
+
+  $('assumptions').innerHTML = items.map(x=>'<li>'+x+'</li>').join('');
 }
 
 /* ── SUMMARY TILES ── */
@@ -1413,6 +1502,7 @@ function rerender(){
   $('rtbTableTab').style.display = S.rtbEnabled ? 'inline-block' : 'none';
   if(!S.rtbEnabled && activeTable==='rtb'){ activeTable='own'; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.table==='own')); }
   updateRTBSummary(state);
+  renderAssumptions(state);
   if(persist) persist.schedule(); // rerender is the universal funnel — save any state change
 }
 
@@ -2148,7 +2238,6 @@ syncCagrDeleteButtons();
 updateCagrToolVisibility(false);
 updateMortgageModeUI();
 updateCostsModeUI();
-renderAssumptions();
 rerender();
 
 /* The year-by-year table is the most specific thing on the page, so it

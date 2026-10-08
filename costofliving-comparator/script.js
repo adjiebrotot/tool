@@ -197,19 +197,90 @@ function fmtDay(iso){
     tt.textContent = document.body.classList.contains('light') ? '🌙 Dark' : '☀️ Light';
   });
 }
+// Built from the cities, figures and rates on screen: every line names what it
+// rests on, and a feature left unused (a custom rate, the rate slider, a typed
+// override) says nothing.
 function renderAssumptions(){
   const ul = document.getElementById('assumptions');
   if(!ul) return;
-  const items = [
-    '<strong>City prices are indices, not quotes.</strong> Expenses in the other city are your own figure scaled by the two cities\' cost-of-living index'+(META_COL?', updated '+META_COL:'')+'.',
-    '<strong>The same lifestyle in both places.</strong> The estimate keeps what you buy fixed and changes only what it costs there.',
-    '<strong>Include or exclude housing</strong> switches between the full index and the one without rent, for housing an employer pays for.',
-    '<strong>Salaries are net</strong>, after tax, as you enter them; nothing here works out tax.',
-    (LIVE
-      ? '<strong>Money crossing currencies converts at the live rate</strong> of '+fmtDay(LIVE.date)+', or at the rate you type in. The rate slider asks what happens if it moves. City estimates keep the rate the index was priced at.'
-      : '<strong>Currencies convert at one rate</strong>'+(META_RATE?', updated '+META_RATE:'')+', or at the rate you type in. The rate slider asks what happens if it moves.'),
-    '<strong>Monthly in Simple mode.</strong> Detailed mode can take each row per week, fortnight, month or year, or as a unit price times how many.'
-  ];
+  const items = [];
+  const updated = META_COL ? ', updated '+META_COL : '';
+  // How money crosses between two currencies: the reader's rate, or the market's.
+  const fxItem = (from, tos, customOf, shock) => {
+    const crossing = tos.filter(t => t.city.currency !== from.currency);
+    if(!crossing.length) return;
+    const seen = new Set();
+    const quote = crossing.filter(t => { const k = t.city.currency+'|'+(customOf(t)||''); if(seen.has(k)) return false; seen.add(k); return true; }).map(t => {
+      const c = customOf(t);
+      const r = c || marketFx(from.currency, t.city.currency);
+      return '1 '+t.city.currency+' = '+fmtFx(r)+' '+from.currency+(c ? ' (your rate)' : '');
+    }).join(', ');
+    const anyCustom = crossing.some(t => customOf(t));
+    const src = crossing.every(t => customOf(t)) ? 'your rate'
+      : LIVE ? 'the live rate of '+fmtDay(LIVE.date) : 'the rate of '+(META_RATE || 'the dataset');
+    let txt = '<strong>Money crossing currencies converts at '+src+':</strong> '+quote+'.';
+    if(shock) txt += ' The rate slider moves '+crossing[0].city.currency+' '+(shock > 0 ? '+' : '')+shock+'% on top of that.';
+    if(anyCustom || shock) txt += ' City estimates keep the rate the index was priced at.';
+    items.push(txt);
+  };
+  const salaryItem = list => {
+    const on = list.filter(x => x.amount > 0);
+    if(!on.length) return;
+    items.push('<strong>Salaries are after tax, as you entered them:</strong> '+
+      on.map(x => fmtC(x.amount, x.curr)+' in '+x.city).join(', ')+'. Nothing here works out tax.');
+  };
+  const targetItem = () => {
+    if(S.goal !== 'earn') return;
+    items.push(S.savingsTarget === 'ratio'
+      ? '<strong>The salary you need keeps your savings ratio,</strong> the share of income you save now.'
+      : '<strong>The salary you need keeps the same amount of savings,</strong> converted at the market rate.');
+  };
+
+  if(S.mode === 'simple'){
+    const from = getCity(S.fromKey), to = getCity(S.toKey);
+    if(!from || !to){
+      items.push('<strong>Pick a From and a To city</strong> to see what the comparison rests on.');
+    } else {
+      const ck = coliKey(), fi = getIdx(from, ck), ti = getIdx(to, ck);
+      const housing = S.housing === 'include' ? 'with housing' : 'without housing, as when an employer pays for it';
+      if(fi && ti){
+        const fe = S.fromExpense || 0, te = estDestExpense(from, to, fe);
+        items.push('<strong>'+to.city+' costs '+fmtP(ti/fi*100, 0)+' of what '+from.city+' does</strong> on the cost-of-living index '+housing+updated+'.'+
+          (fe > 0 && isFinite(te) ? ' Your '+fmtC(fe, from.currency)+' a month of spending becomes '+fmtC(te, to.currency)+' there, for the same lifestyle.' : ''));
+      }
+      salaryItem([{amount: S.fromSalary||0, curr: from.currency, city: from.city}]
+        .concat(S.goal === 'save' ? [{amount: S.toSalary||0, curr: to.currency, city: to.city}] : []));
+      targetItem();
+      fxItem(from, [{city: to}], () => simpleFx(from, to), fxShockPct());
+    }
+  } else {
+    const from = getCity(S.detailFromKey);
+    const tos = (S.detailToCities||[]).map((k, i) => ({city: getCity(k), i})).filter(t => t.city);
+    if(!from || !tos.length){
+      items.push('<strong>Pick a From city and at least one destination</strong> to see what the comparison rests on.');
+    } else {
+      const rows = S.detailRows.filter(r => (r.fromAmount||0) > 0 || (r.overrides && Object.keys(r.overrides).length));
+      if(rows.length){
+        const cats = [...new Set(rows.map(r => r.catId))].map(id => CATS.find(c => c.id === id) || CATS[0]);
+        const scaled = cats.filter(c => c.index !== 'currency_only').map(c => c.label.replace(/^\S+\s/, '').toLowerCase());
+        const fxOnly = cats.filter(c => c.index === 'currency_only').map(c => c.label.replace(/^\S+\s/, '').toLowerCase());
+        let txt = '<strong>Each of your '+rows.length+' expense '+(rows.length === 1 ? 'row is' : 'rows is')+' scaled by its own category index</strong> from '+from.city+' to '+tos.map(t => t.city.city).join(', ')+updated+', for the same lifestyle';
+        if(scaled.length) txt += ': '+scaled.join(', ');
+        txt += '.';
+        if(fxOnly.length) txt += ' '+fxOnly.join(' and ').replace(/^./, c => c.toUpperCase())+' change only by the exchange rate.';
+        items.push(txt);
+        const overrides = rows.reduce((n, r) => n + (r.overrides ? Object.keys(r.overrides).filter(k => tos.some(t => String(t.i) === k)).length : 0), 0);
+        if(overrides) items.push('<strong>Your '+overrides+' typed '+(overrides === 1 ? 'figure replaces' : 'figures replace')+' the estimate</strong> in '+(overrides === 1 ? 'its cell' : 'those cells')+'.');
+        if(S.customFreq && (rows.some(r => rowUnit(r) !== 'monthly') || validPeriod(S.detailIncomeFreq) !== 'monthly')){
+          items.push('<strong>Every amount is turned into a month</strong> at its own period or unit price before it is compared.');
+        }
+      }
+      salaryItem([{amount: fromSalaryMonthly(), curr: from.currency, city: from.city}]
+        .concat(S.goal === 'save' ? tos.map(t => ({amount: (S.detailToSalaries[t.i]||0)*incomeMult(), curr: t.city.currency, city: t.city.city})) : []));
+      targetItem();
+      fxItem(from, tos, t => detailFx(t.i, from, t.city), 0);
+    }
+  }
   ul.innerHTML = items.map(t => '<li>'+t+'</li>').join('');
 }
 
@@ -790,12 +861,14 @@ function renderAnalysisArea(){
     const from=getCity(S.fromKey), to=getCity(S.toKey);
     if(!from||!to){
       area.innerHTML=`<div class="card placeholder"><div class="icon">🗺️</div><div>Select a <strong>From</strong> and <strong>To</strong> city above to begin your analysis.</div></div>`;
+      renderAssumptions();
       return;
     }
     S.goal==='save'?renderSimpleSave(area,from,to):renderSimpleEarn(area,from,to);
   } else {
     renderDetailed(area);
   }
+  renderAssumptions();
 }
 
 function renderSimpleFxSection(from,to){

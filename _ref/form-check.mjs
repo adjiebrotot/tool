@@ -25,7 +25,8 @@
 //      a reader is choosing between that lands on red fails.
 //   7. THE ANSWER LEADS AND THE CAVEATS CLOSE. A tool that shows results on
 //      arrival opens them with its one-sentence answer, and every tool closes
-//      with a What this assumes card.
+//      with a What this assumes card. The card is built from the reader's own
+//      plan, so it may be short; it only has to say something.
 //
 // ONLY=<path> runs one page, e.g. ONLY=financialfreedom.
 // Run: node _ref/form-check.mjs
@@ -318,7 +319,7 @@ for (const P of PAGES) {
   if (P.assumes !== false) {
     const n = await page.evaluate(() => { const c = document.querySelector('.assumes-card');
       return c && c.offsetParent !== null ? c.querySelectorAll('li').length : -1; });
-    check(`${P.path} 7b a What this assumes card closes the page`, n >= 3, n < 0 ? 'missing' : n + ' items');
+    check(`${P.path} 7b a What this assumes card closes the page`, n >= 1, n < 0 ? 'missing' : n + ' items');
   }
 
   // Enforcement, last because it changes the plan: a value typed past a typed

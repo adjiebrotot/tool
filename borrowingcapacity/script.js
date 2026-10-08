@@ -1001,7 +1001,75 @@ function render(){
   renderHemNote(r, p);
   renderDepositNote(r, p);
   renderWarnings(r, p);
+  renderAssumptions(r, p);
   updateChart(sweep, sweep.tiny ? -1 : USER_INDEX);
+}
+
+/* ── What this assumes ──
+   Built from this application: every line names the figure it rests on, and
+   a debt, income stream or option left unused says nothing. */
+function renderAssumptions(r, p){
+  const el = $('assumptions'); if(!el) return;
+  const pc = v => (+(Number(v)||0).toFixed(2)) + '%';
+  const m = fmt.money0;
+  const items = [];
+
+  const ioYrs = p.newType === 'io' ? Math.min(p.newIo, p.termYears) : 0;
+  items.push(`<strong>The new loan is tested at ${pc(r.assessRate)},</strong> ` +
+    (p.prodRate + p.buffer >= p.floorRate
+      ? `your ${pc(p.prodRate)} rate plus the ${pc(p.buffer)} buffer`
+      : `the ${pc(p.floorRate)} lender floor, above your ${pc(p.prodRate)} rate plus the ${pc(p.buffer)} buffer`) +
+    `, as principal and interest over ${Math.round(r.nMonths/12)} years${ioYrs ? ' after ' + ioYrs + ' years interest only' : ''}` +
+    (p.umiReq > 0 ? `, with ${m(p.umiReq)} a month left over (UMI)` : '') +
+    '. Lenders set these differently, so treat the answer as a guide, not a pre-approval.');
+
+  const shaded = r.streams.filter(s => s.amount > 0 && s.shade < 100);
+  if(UI.incMode === 'simple' || !shaded.length){
+    items.push(`<strong>Your ${m(r.grossUnshaded)} a year of income counts in full.</strong>`);
+  } else {
+    items.push(`<strong>Income counts at the share you set:</strong> ` +
+      shaded.map(s => s.label.toLowerCase() + ' ' + pc(s.shade)).join(', ') + `, so ${m(r.grossAssessable)} of ${m(r.grossUnshaded)} is assessed.`);
+  }
+  if(r.rentalLoss > 0 && p.negGear)
+    items.push(`<strong>The ${m(r.rentalLoss)} rental loss is negatively geared</strong> at the higher earner's ${pc(r.mRate * 100)} marginal rate.`);
+
+  const extras = [];
+  if(r.surcharge > 0) extras.push(`the ${m(r.surcharge)} Medicare levy surcharge, without private hospital cover`);
+  if(r.helpAsTax > 0) extras.push(`${m(r.helpAsTax)} of study loan repayments`);
+  items.push(`<strong>Tax is the ${p.taxYear} resident scale</strong> with LITO and the Medicare levy` +
+    (extras.length ? ', plus ' + extras.join(' and ') : '') +
+    (p.adults >= 2
+      ? (p.incSplit > 0 ? `. Two applicants are taxed as two people on a ${pc(100 - clamp(p.incSplit, 0, 50))} / ${pc(clamp(p.incSplit, 0, 50))} split.` : '. All the income is taxed in applicant 1\'s name.')
+      : '.'));
+  if(r.helpAsCommitment > 0) items.push(`<strong>Study loan repayments of ${m(r.helpCommMonthly)} a month count as a commitment,</strong> not as tax.`);
+
+  const where = p.city === 'Regional' ? 'a regional area' : p.city;
+  const house = (p.adults >= 2 ? 'a couple' : 'a single') + (p.deps ? ' with ' + p.deps + (p.deps === 1 ? ' dependant' : ' dependants') : '');
+  items.push(r.hemBinds
+    ? `<strong>Living costs are ${m(r.living)} a month,</strong> the HEM benchmark for ${house} in ${where}` + (p.declaredExp > 0 ? `, above the ${m(p.declaredExp)} you declared.` : '.')
+    : `<strong>Living costs are the ${m(r.living)} a month you declared,</strong> above the ${m(r.hem)} HEM benchmark for ${house} in ${where}.`);
+
+  if(p.olBal > 0)
+    items.push(`<strong>Your ${m(p.olBal)} of other loans is reassessed at ${pc(r.otherAssessRate)}</strong> over the ${Math.round(r.otherMonths/12)} years left, ${m(r.otherRepay)} a month.`);
+  if(p.cardLimit > 0)
+    items.push(`<strong>Cards and lines of credit count at ${pc(p.cardPct)} of the ${m(p.cardLimit)} limit,</strong> not the balance.`);
+
+  const lvrBase = p.valuation < p.price ? 'the ' + m(p.valuation) + ' valuation' : 'the price';
+  items.push(`<strong>Capacity is the lowest of four caps, here ${r.binding.label.toLowerCase()}.</strong> ` +
+    `Debt is held to ${fmt.num(p.dtiCap, p.dtiCap % 1 ? 1 : 0)}× ${p.dtiBasis === 'assessable' ? 'assessable' : 'gross'} income and the loan to ${pc(p.lvrMax)} of ${lvrBase}` +
+    (p.lmiCap ? `, with LMI of ${pc(p.lmiRate)} added to the loan.` : '.'));
+
+  if(p.price > 0){
+    const duty = p.dutyMode === 'pct'
+      ? `<strong>Stamp duty is ${pc(p.dutyPct)} of the price, ${m(r.stampDuty)}.</strong>`
+      : `<strong>Stamp duty is the ${m(r.stampDuty)} you entered.</strong>`;
+    items.push(duty + ' State concessions and first home grants are not worked out for you.');
+    items.push(p.depositMode === 'pct'
+      ? `<strong>Your ${pc(p.depositPct)} deposit is paid on top of</strong> ${m(r.purchaseCosts)} of stamp duty and costs.`
+      : `<strong>Your ${m(p.savings)} of savings pays ${m(r.purchaseCosts)} of stamp duty and costs first,</strong> leaving ${m(Math.max(0, r.availFunds))} as the deposit.`);
+  }
+
+  el.innerHTML = items.map(t => '<li>' + t + '</li>').join('');
 }
 
 /* ───────────────────────── Exports ───────────────────────── */

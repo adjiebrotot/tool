@@ -703,6 +703,7 @@ function rerender(){
     $('amortTabs').innerHTML='';
     $('amortTableWrap').innerHTML='<p class="muted">Adjust inputs above to run the simulation.</p>';
     SharedVerdict.set('verdict',null);
+    renderAssumptions(null);
     return;
   }
   $('warnBanner').style.display='none';$('warnBanner').textContent='';
@@ -781,11 +782,67 @@ function rerender(){
   $('kpiCashWealth').textContent=fmt.currency(cashBase.endWealth,true);$('kpiCashWealth').style.color=cssVar('--text');$('kpiCashSub').textContent=maxTerm>0?`After ${horizonTxt(maxTerm)} at ${fmt.pct(riskFreeRate/100)} risk-free`:'Cash left after buying outright.';
 
   renderVerdict(valid,bestResult,tie,allNeg,riskFreeRate,maxTerm);
+  renderAssumptions(latestResults);
   renderMainChart(results);renderComparisonTable(results);renderAmortTabs(results);updateSensScenarioDropdown();
   // The sweep is built from the same purchase cost, cash and rates as the panel
   // above it, so it has to move when they do. Leaving it to a button meant a
   // surface could sit there describing a plan the reader had already edited.
   scheduleSensitivity();
+}
+
+/* What this assumes, built from the plan on screen: the cash, rates, fees and
+   scenarios actually entered. A fee left at nil, a fixed rate or inflation
+   switched off says nothing about the feature it would have used. */
+function renderAssumptions(L){
+  const el=$('assumptions');if(!el)return;
+  const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const pc=v=>(+(Number(v)||0).toFixed(3))+'%';
+  const list=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+  if(!L){el.innerHTML='<li><strong>Enter the purchase cost and your available cash</strong> to see what the comparison rests on.</li>';return;}
+  const valid=L.results.map((r,i)=>r?{r,sc:scenarios[i]}:null).filter(Boolean);
+  const nm=x=>'<span data-no-abbr>'+esc(x.sc.name)+'</span>';
+  const items=[];
+
+  items.push('<strong>Paying cash and every scenario start from your '+fmt.currency(L.availableCash)+'.</strong> Whatever is not spent up front earns '+
+    pc(L.riskFreeRate)+' a year, untaxed and compounded once each repayment period, and each repayment comes out of it.');
+  items.push('<strong>The '+fmt.currency(L.purchaseCost)+' purchase costs the same either way,</strong> and what it is later worth is left out of both.');
+
+  if(valid.length){
+    const terms=[...new Set(valid.map(v=>v.r.termYears))];
+    items.push(terms.length===1
+      ? '<strong>'+(valid.length===1?'The scenario is':'Each scenario is')+' scored after '+horizonTxt(terms[0])+'</strong> against paying cash over the same time.'
+      : '<strong>Each scenario is scored at the end of its own term</strong> against paying cash over the same time. Cash Purchase Wealth runs to the longest, '+horizonTxt(L.maxTerm)+'.');
+
+    const conv=valid.find(v=>v.sc.freq!=='yearly'&&v.sc.loanType!=='knownPayment');
+    if(conv){
+      const ppy=periodsPerYear(conv.sc.freq), rate=conv.sc.financeRate;
+      items.push(rateConvention==='nominal'
+        ? '<strong>Loan rates are divided down to the repayment period</strong> (nominal, APR): '+pc(rate)+' a year is '+pc(rate/ppy)+' a '+freqLabel(conv.sc.freq)+'.'
+        : '<strong>Loan rates are compounded down to the repayment period</strong> (effective, EAR): '+pc(rate)+' a year is '+pc(toPeriodRate(rate,ppy)*100)+' a '+freqLabel(conv.sc.freq)+'.');
+    }
+
+    const HOW={upfront:'paid up front',capitalise:'added to the loan',discount:'deducted from the advance'};
+    const fees=new Map();
+    valid.forEach(v=>{
+      const sc=v.sc, bits=[];
+      if(sc.feeAmt>0)bits.push((sc.feeType==='pct'?'a '+pc(sc.feeAmt):'a '+fmt.currency(sc.feeAmt))+' origination fee '+HOW[sc.feeTreatment]);
+      if(sc.adminFee>0)bits.push('a '+fmt.currency(sc.adminFee)+' admin fee on every repayment');
+      if(!bits.length)return;
+      const k=list(bits);
+      if(!fees.has(k))fees.set(k,[]);
+      fees.get(k).push(v);
+    });
+    fees.forEach((vs,k)=>items.push('<strong>'+(vs.length===valid.length&&vs.length>1?'Every scenario charges ':list(vs.map(nm))+(vs.length===1?' charges ':' each charge '))+k+'.</strong>'));
+
+    const floating=valid.filter(v=>scenarioHasFloat(v.sc));
+    if(floating.length)items.push('<strong>The floating rate in '+list(floating.map(nm))+' is run three times,</strong> at its minimum, middle and maximum. The chart shades that range; the tables use the middle.');
+  }
+
+  items.push(L.inflationEnabled
+    ? '<strong>Amounts are in future dollars.</strong> The comparison adds an Inflation-Adj Net Benefit in today\'s money, at '+pc(L.inflationRate)+' a year.'
+    : '<strong>Amounts are in future dollars,</strong> with no adjustment for inflation.');
+
+  el.innerHTML=items.map(t=>'<li>'+t+'</li>').join('');
 }
 
 /* The answer in one sentence, in the page's own terms. Paying cash and each

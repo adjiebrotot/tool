@@ -171,17 +171,6 @@ const LANG = {
     warnCapH: 'Husband',
     warnCapW: 'Wife',
     assumesTitle: 'What this assumes',
-    assumes: [
-      '<strong>Every figure is for one tax year,</strong> in rupiah.',
-      '<strong>Only salary is taxed here (PPh 21).</strong> Other income, income taxed at a final rate, tax already withheld and tax credits are not modelled.',
-      '<strong>Deductions come off gross salary before PTKP,</strong> in full as you enter them, up to that spouse\'s salary. The biaya jabatan cap (5% of gross salary, at most Rp 6,000,000 a year) is flagged, not applied.',
-      '<strong>With "Total and split", the deductions are shared</strong> between husband and wife in proportion to their salaries.',
-      '<strong>Pisah Harta:</strong> the husband\'s PTKP takes the married amount and every dependant; the wife has only her own base amount.',
-      '<strong>Gabung Harta:</strong> one SPT on the couple\'s combined net income, with the base, married, combined-wife and dependant amounts of PTKP.',
-      '<strong>Taxable income (PKP) is rounded down</strong> to a whole Rp 1,000 before the brackets apply (UU PPh Pasal 17).',
-      '<strong>At most three dependants count,</strong> and the PTKP amounts and brackets are the ones on the PTKP & Brackets tab: statutory unless you change them.',
-      '<strong>The charts and the table hold the wife\'s share fixed</strong> and move the household salary from Rp 100 million to Rp 5 billion a year. The Gabung Harta detail table shares the joint tax between husband and wife by net income.'
-    ],
   },
   id: {
     subtitle: 'Bandingkan PPh orang pribadi di Indonesia antara skema Pisah Harta dan Gabung Harta.',
@@ -336,17 +325,6 @@ const LANG = {
     warnCapH: 'Suami',
     warnCapW: 'Istri',
     assumesTitle: 'Asumsi yang dipakai',
-    assumes: [
-      '<strong>Setiap angka untuk satu tahun pajak,</strong> dalam rupiah.',
-      '<strong>Hanya gaji yang dihitung (PPh 21).</strong> Penghasilan lain, penghasilan yang dikenai pajak final, pajak yang sudah dipotong, dan kredit pajak tidak dimodelkan.',
-      '<strong>Pengurang dikurangkan dari gaji kotor sebelum PTKP,</strong> penuh sesuai isian Anda, paling banyak sebesar gaji pasangan itu. Batas biaya jabatan (5% gaji kotor, maksimal Rp 6,000,000 per tahun) hanya diberi peringatan, tidak diterapkan.',
-      '<strong>Pada "Total dan porsi", pengurang dibagi</strong> antara suami dan istri sesuai porsi gaji masing-masing.',
-      '<strong>Pisah Harta:</strong> PTKP suami mencakup tambahan kawin dan semua tanggungan; istri hanya memakai PTKP dasarnya sendiri.',
-      '<strong>Gabung Harta:</strong> satu SPT atas penghasilan neto gabungan, dengan PTKP dasar, tambahan kawin, tambahan istri yang penghasilannya digabung, dan tanggungan.',
-      '<strong>Penghasilan kena pajak (PKP) dibulatkan ke bawah</strong> ke ribuan rupiah penuh sebelum lapisan tarif diterapkan (UU PPh Pasal 17).',
-      '<strong>Paling banyak tiga tanggungan dihitung,</strong> dan nilai PTKP serta lapisan tarif mengikuti tab PTKP & Lapisan Pajak: sesuai ketentuan kecuali Anda mengubahnya.',
-      '<strong>Grafik dan tabel menahan porsi istri tetap</strong> dan menggeser gaji rumah tangga dari Rp 100 juta sampai Rp 5 miliar per tahun. Tabel detail Gabung Harta membagi pajak gabungan antara suami dan istri menurut penghasilan neto.'
-    ],
   }
 };
 
@@ -1122,12 +1100,60 @@ function rerender(){
   updateKPIs(state);
   updateSummary(state);
   updateDetailTable(state.rows);
+  renderAssumptions(state);
 }
 
-/* ── What this assumes ── */
-function renderAssumptions(){
-  const list=T('assumes');
-  $('assumptions').innerHTML=Array.isArray(list)?list.map(x=>'<li>'+x+'</li>').join(''):'';
+/* ── What this assumes ──
+   Built from this household, so every line names a figure the reader entered
+   or one the rules derive from it, and a field left at nil says nothing. */
+function renderAssumptions(state){
+  const c = state.summary.current;
+  const id = lang === 'id';
+  const L = (en, idText) => id ? idText : en;
+  const rp = fmt.full;
+  const items = [];
+
+  items.push(L(
+    `<strong>Only salary is taxed (PPh 21):</strong> ${rp(c.totalGross)} a year for the household. Other income, income taxed at a final rate and tax already withheld are left out.`,
+    `<strong>Hanya gaji yang dihitung (PPh 21):</strong> ${rp(c.totalGross)} per tahun untuk rumah tangga. Penghasilan lain, penghasilan yang dikenai pajak final, dan pajak yang sudah dipotong tidak dihitung.`));
+
+  const hDed = c.husbandGross - c.husbandNet, wDed = c.wifeGross - c.wifeNet;
+  if (S.inputMode === 'total' && S.deduction > 0) {
+    items.push(L(
+      `<strong>Your ${rp(S.deduction)} of deductions is shared by salary:</strong> ${rp(hDed)} off the husband's and ${rp(wDed)} off the wife's, before PTKP.`,
+      `<strong>Pengurang ${rp(S.deduction)} dibagi menurut gaji:</strong> ${rp(hDed)} dari gaji suami dan ${rp(wDed)} dari gaji istri, sebelum PTKP.`));
+  } else if (S.inputMode === 'individual' && (S.husbandDeduction > 0 || S.wifeDeduction > 0)) {
+    const capped = S.husbandDeduction > S.husbandSalary || S.wifeDeduction > S.wifeSalary;
+    items.push(L(
+      `<strong>Deductions come off each salary before PTKP:</strong> ${rp(hDed)} for the husband, ${rp(wDed)} for the wife.` + (capped ? ' A deduction larger than that spouse\'s salary counts only up to the salary.' : ''),
+      `<strong>Pengurang dikurangkan dari gaji masing-masing sebelum PTKP:</strong> ${rp(hDed)} untuk suami, ${rp(wDed)} untuk istri.` + (capped ? ' Pengurang yang melebihi gaji pasangan itu hanya dihitung sebesar gajinya.' : '')));
+  }
+
+  const dep = S.dependents;
+  items.push(L(
+    `<strong>Pisah Harta:</strong> the husband's PTKP is ${rp(c.ptkpH)}, with the married amount${dep ? ' and your ' + dep + (dep === 1 ? ' dependant' : ' dependants') : ''}; the wife keeps her own ${rp(c.ptkpW)}.`,
+    `<strong>Pisah Harta:</strong> PTKP suami ${rp(c.ptkpH)}, dengan tambahan kawin${dep ? ' dan ' + dep + ' tanggungan Anda' : ''}; istri memakai PTKP sendiri ${rp(c.ptkpW)}.`));
+  items.push(L(
+    `<strong>Gabung Harta:</strong> one SPT on ${rp(c.netIncome)} of combined net income, with a PTKP of ${rp(c.ptkpGabung)}.`,
+    `<strong>Gabung Harta:</strong> satu SPT atas penghasilan neto gabungan ${rp(c.netIncome)}, dengan PTKP ${rp(c.ptkpGabung)}.`));
+
+  const ptkpEdited = S.ptkpBase !== PTKP_BASE_DEFAULT || S.ptkpMarried !== PTKP_MARRIED_DEFAULT ||
+    S.ptkpSpouse !== PTKP_SPOUSE_DEFAULT || S.ptkpDependent !== PTKP_DEPENDENT_DEFAULT;
+  const bracketsEdited = JSON.stringify(S.brackets.map(b => [b.to, b.rate])) !==
+    JSON.stringify(BRACKETS_DEFAULT.map(b => [b.to, b.rate]));
+  if (ptkpEdited || bracketsEdited) {
+    const what = ptkpEdited && bracketsEdited ? L('PTKP amounts and tax brackets', 'nilai PTKP dan lapisan tarif')
+      : ptkpEdited ? L('PTKP amounts', 'nilai PTKP') : L('tax brackets', 'lapisan tarif');
+    items.push(L(
+      `<strong>Your own ${what} apply,</strong> not the statutory ones.`,
+      `<strong>Memakai ${what} hasil ubahan Anda,</strong> bukan yang sesuai ketentuan.`));
+  }
+
+  items.push(L(
+    `<strong>The charts and table keep the wife's ${splitPctLabel()}% share fixed</strong>${S.deduction > 0 ? ' and the deductions at ' + rp(S.deduction) : ''}, moving the household salary from Rp 100 million to Rp 5 billion a year. Gabung Harta's tax is shared between you by net income.`,
+    `<strong>Grafik dan tabel menahan porsi istri tetap ${splitPctLabel()}%</strong>${S.deduction > 0 ? ' dan pengurang tetap ' + rp(S.deduction) : ''}, sambil menggeser gaji rumah tangga dari Rp 100 juta sampai Rp 5 miliar per tahun. Pajak Gabung Harta dibagi antara suami dan istri menurut penghasilan neto.`));
+
+  $('assumptions').innerHTML = items.map(x => '<li>' + x + '</li>').join('');
 }
 
 /* ── Reset ── */
@@ -1580,7 +1606,6 @@ $('chartCanvas2').addEventListener('mouseleave',()=>{$('hoverBox2').textContent=
 SharedSeg.fromSelect(els.dependents, { labelOf: o => o.value, ariaLabel: T('dependentsLabel') });
 // The table is the most specific thing on the page, so it opens closed.
 SharedFold.attach($('detailSection'), { key: 'pisahvsgabung', bodies: ['#tableUnitNote', '#tableTabs', '#detailTable'] });
-renderAssumptions();
 buildBracketEditor();
 rerender();
 

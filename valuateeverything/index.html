@@ -310,15 +310,7 @@
   <!-- WHAT THIS ASSUMES -->
   <section class="assumes-card card">
     <h2>What this assumes</h2>
-    <ul class="assumptions">
-      <li><strong>The listings are a fair sample of the market.</strong> The model only knows the prices you give it, so a few odd sales or a thin sample move the answer.</li>
-      <li><strong>Each feature has a steady effect.</strong> Linear adds a fixed amount per unit, Log-linear a fixed percentage, Quadratic lets the effect bend, and Ridge pulls each effect slightly toward zero.</li>
-      <li><strong>Older prices are restated in today's money</strong> at one flat inflation rate, from the listing's data year to the current year. A blank data year counts as the current year.</li>
-      <li><strong>A year becomes an age,</strong> measured at the listing's data year for the market data and at the current year for the items to buy.</li>
-      <li><strong>Yes/No features count as 1 or 0,</strong> and every feature is standardised before fitting, so a large unit such as kilometres cannot swamp a small one. This changes how the terms are scaled, not what Linear predicts.</li>
-      <li><strong>The range is one typical error either side,</strong> a guide to how far real prices scatter, not a confidence interval. Features outside the range of the listings are extrapolated and flagged.</li>
-      <li><strong>Items to buy are never added to the model.</strong> Their asking prices are judged against it, nothing more.</li>
-    </ul>
+    <ul class="assumptions" id="assumptions"></ul>
   </section>
 </main>
 </section>
