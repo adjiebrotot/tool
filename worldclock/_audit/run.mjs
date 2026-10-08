@@ -257,7 +257,7 @@ console.log(`World Clock audit — zoneinfo tzdata ${tzdataVersion}, fixed now $
       await page.click('#placeSearch');
       await page.fill('#placeSearch', place.search);
       await page.waitForTimeout(100);
-      const idx = await page.$$eval('#placeList .city-opt', (opts, want) => opts.findIndex(o => o.firstElementChild.textContent === want.name && o.textContent.includes(want.country)), place);
+      const idx = await page.$$eval('#placeList .city-opt', (opts, want) => opts.findIndex(o => o.querySelector('.combo-main').textContent === want.name && o.textContent.includes(want.country)), place);
       if (idx < 0) { check(`${label}: found ${place.name} in the picker`, false, ''); return; }
       await page.locator('#placeList .city-opt').nth(idx).dispatchEvent('mousedown');
     }
